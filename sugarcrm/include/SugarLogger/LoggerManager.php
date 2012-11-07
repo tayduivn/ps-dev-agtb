@@ -93,6 +93,24 @@ class LoggerManager
  		}
  	}
 
+ 	/**
+ 	 * Check if this log level will be producing any logging
+ 	 * @param string $method
+ 	 * @return boolean
+ 	 */
+ 	public function wouldLog($method)
+ 	{
+ 	    if ( !isset(self::$_levelMapping[$method]) )
+ 	    	$method = $this->_level;
+ 	    if($method == $this->_level
+ 	    		//otherwise if we have a level mapping for the method and that level is less than or equal to the current level let's let it log
+ 	    		|| (!empty(self::$_levelMapping[$method])
+ 	    				&& self::$_levelMapping[$this->_level] >= self::$_levelMapping[$method]) ) {
+ 	        return true;
+ 	    }
+ 	    return false;
+ 	}
+
 	/**
      * Used for doing design-by-contract assertions in the code; when the condition fails we'll write
      * the message to the debug log
@@ -153,22 +171,15 @@ class LoggerManager
  	 */
  	protected function _findAvailableLoggers()
  	{
- 	    $locations = array('include/SugarLogger','custom/include/SugarLogger');
+ 	    $locations = SugarAutoLoader::getFilesCustom('include/SugarLogger');
  	    foreach ( $locations as $location ) {
-            if (sugar_is_dir($location) && $dir = opendir($location)) {
-                while (($file = readdir($dir)) !== false) {
-                    if ($file == ".."
-                            || $file == "."
-                            || $file == "LoggerTemplate.php"
-                            || $file == "LoggerManager.php"
-                            || !is_file("$location/$file")
-                            )
-                        continue;
-                    require_once("$location/$file");
-                    $loggerClass = basename($file, ".php");
-                    if ( class_exists($loggerClass) && class_implements($loggerClass,'LoggerTemplate') )
-                        self::$_loggers[$loggerClass] = new $loggerClass();
-                }
+ 	        $loggerClass = basename($location, ".php");
+            if($loggerClass == "LoggerTemplate" || $loggerClass == "LoggerManager") {
+                continue;
+            }
+            require_once $location;
+            if ( class_exists($loggerClass) && class_implements($loggerClass,'LoggerTemplate') ) {
+                self::$_loggers[$loggerClass] = new $loggerClass();
             }
         }
  	}

@@ -46,9 +46,10 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
         //BEGIN SUGARCRM flav=pro ONLY
         "wireless_modules" => array("section" => "wireless_modules","extdir" => "WirelessModuleRegistry", "file" => 'wireless_module_registry.ext.php'),
         "wireless_subpanels" => array("section" => "wireless_subpanels", "extdir" => "WirelessLayoutdefs",     "file" => 'wireless.subpaneldefs.ext.php'),
-        //END SUGARCRM flav=pro ONLY
+    //END SUGARCRM flav=pro ONLY
+        'tabledictionary' => array("section" => '', "extdir" => "TableDictionary", "file" => "tabledictionary.ext.php", "module" => "application"),
 );
-if(file_exists("custom/application/Ext/Extensions/extensions.ext.php")) {
+if(SugarAutoLoader::existing("custom/application/Ext/Extensions/extensions.ext.php")) {
     include("custom/application/Ext/Extensions/extensions.ext.php");
 }
 

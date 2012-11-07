@@ -48,8 +48,10 @@ class Bug44206Test extends Sugar_PHPUnit_Framework_TestCase
     public function setUp()
     {
         $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
+        SugarTestHelper::setUp('beanFiles');
+        SugarTestHelper::setUp('beanList');
 
-        $this->opportunity = new Opportunity();
+        $this->opportunity = SugarTestOpportunityUtilities::createOpportunity();
         $this->opportunity->currency_id = -99;
         $this->opportunity->save();
     }
@@ -62,9 +64,7 @@ class Bug44206Test extends Sugar_PHPUnit_Framework_TestCase
      */
     public function tearDown()
     {
-        if (!empty($this->opportunity)) {
-            $this->opportunity->mark_deleted($this->opportunity->id);
-        }
+        SugarTestOpportunityUtilities::removeAllCreatedOpportunities();
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
         unset($GLOBALS['current_user']);
     }

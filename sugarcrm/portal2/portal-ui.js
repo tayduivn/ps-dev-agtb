@@ -46,10 +46,12 @@
      */
     var __superFieldRender__ = app.view.SupportPortalField.prototype._render;
     app.view.SupportPortalField.prototype._render = function() {
+        _.each(this.$('[rel="tooltip"]'), function(element) {
+            $(element).tooltip('hide');
+        })
         __superFieldRender__.call(this);
         this.$("input[placeholder]").placeholder();
     };
-
 
 
 })(SUGAR.App);

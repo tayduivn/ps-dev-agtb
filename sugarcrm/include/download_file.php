@@ -129,6 +129,13 @@ class DownloadFile {
                 if ($bean->field_defs[$field]['type'] == 'image') {
                     $filename = $bean->{$field};
                     $filepath = 'upload://' . $filename;
+                    
+                    // Quick existence check to make sure we are actually working 
+                    // on a real file
+                    if (!file_exists($filepath)) {
+                        return false;
+                    }
+                    
                     $filedata = getimagesize($filepath);
 
                     // Add in image height and width
@@ -207,7 +214,13 @@ class DownloadFile {
                     }
 
                     $filepath = $this->getFilePathFromId($fileid);
-
+                    
+                    // Quick existence check to make sure we are actually working 
+                    // on a real file
+                    if (!file_exists($filepath)) {
+                        return false;
+                    }
+                    
                     if (empty($fileurl) && !empty($bean->doc_url)) {
                         $fileurl = $bean->doc_url;
                     }
@@ -310,18 +323,10 @@ class DownloadFile {
      * Gets the mime type of a file
      *
      * @param string $filename Path to the file
-     * @return string
+     * @return string|false The string mime type or false if the file does not exist
      */
     public function getMimeType($filename) {
-        if( function_exists( 'mime_content_type' ) ) {
-            $mimetype = mime_content_type($filename);
-        } elseif( function_exists( 'ext2mime' ) ) {
-            $mimetype = ext2mime($filename);
-        } else {
-            $mimetype = 'application/octet-stream';
-        }
-
-        return $mimetype;
+        return get_file_mime_type($filename);
     }
 
     /**

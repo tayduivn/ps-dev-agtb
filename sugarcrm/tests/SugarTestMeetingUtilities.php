@@ -35,6 +35,9 @@ class SugarTestMeetingUtilities
         $name = 'Meeting';
         $meeting = new Meeting();
         $meeting->name = $name . $time;
+        $meeting->duration_hours = '0';
+        $meeting->duration_minutes = '15';
+        $meeting->date_start = TimeDate::getInstance()->getNow()->asDb();
         if(!empty($id))
         {
             $meeting->new_with_id = true;
@@ -94,4 +97,3 @@ class SugarTestMeetingUtilities
         return $meeting_ids;
     }
 }
-?>

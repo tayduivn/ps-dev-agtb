@@ -25,40 +25,40 @@ require_once 'modules/Opportunities/Opportunity.php';
 
 class SugarTestOpportunityUtilities
 {
-    
+
     private static $_createdOpportunities = array();
-    
+
     private static $_createdAccount = null;
-    
+
     private function __construct()
     {
     }
-    
+
     private function _createAccount($time)
     {
-        if (self::$_createdAccount === null) 
+        if (self::$_createdAccount === null)
         {
             $name = 'SugarOpportunityAccount';
             $account = new Account();
             $account->name = $name . $time;
             $account->email1 = 'account@' . $time . 'sugar.com';
             $account->save();
-            
+
             $GLOBALS['db']->commit();
             self::$_createdAccount = $account;
         }
 
         return self::$_createdAccount;
     }
-    
+
     private function _createOpportunity($id, $time, $account)
     {
-        global $timedate;
+        $timedate = TimeDate::getInstance();
         $name = 'SugarOpportunity';
 
         $opportunity = new Opportunity();
-            
-        if (!empty($id)) 
+
+        if (!empty($id))
         {
             $opportunity->new_with_id = true;
             $opportunity->id = $id;
@@ -68,42 +68,45 @@ class SugarTestOpportunityUtilities
         $opportunity->amount       = 10000;
         $opportunity->account_id   = $account->id;
         $opportunity->account_name = $account->name;
-        $opportunity->date_closed  = $timedate->to_display_date_time(gmdate("Y-m-d H:i:s"));
+        $opportunity->date_closed  = $timedate->getNow()->asDbDate();
         $opportunity->save();
 
         $GLOBALS['db']->commit();
-        
+
         self::$_createdOpportunities[] = $opportunity;
-        
+
         return $opportunity;
     }
-    
+
     public static function createOpportunity($id = '')
     {
         $time        = mt_rand();
         $account     = self::_createAccount($time);
         $opportunity = self::_createOpportunity($id, $time, $account);
-        
+
         return $opportunity;
     }
-    
+
     public static function setCreatedOpportunity($opportunity_ids)
     {
-        foreach ($opportunity_ids as $opportunity_id) 
+        foreach ($opportunity_ids as $opportunity_id)
         {
             $opportunity = new Opportunity();
             $opportunity->id = $opportunity_id;
             self::$_createdOpportunities[] = $opportunity;
         }
     }
-    
+
     public static function removeAllCreatedOpportunities()
     {
         $opportunity_ids = self::getCreatedOpportunityIds();
-        
+
         if (!empty($opportunity_ids))
         {
+            $GLOBALS['db']->query('DELETE FROM products_audit WHERE parent_id IN (SELECT id FROM products WHERE opportunity_id IN (\'' . implode("', '", $opportunity_ids) . '\'))');
+        	$GLOBALS['db']->query('DELETE FROM products WHERE opportunity_id IN (\'' . implode("', '", $opportunity_ids) . '\')');
             $GLOBALS['db']->query('DELETE FROM opportunities WHERE id IN (\'' . implode("', '", $opportunity_ids) . '\')');
+            $GLOBALS['db']->query('DELETE FROM opportunities_audit WHERE parent_id IN (\'' . implode("', '", $opportunity_ids) . '\')');
             $GLOBALS['db']->query('DELETE FROM opportunities_contacts WHERE opportunity_id IN (\'' . implode("', '", $opportunity_ids) . '\')');
         }
 
@@ -111,17 +114,18 @@ class SugarTestOpportunityUtilities
         {
             $GLOBALS['db']->query('DELETE FROM accounts WHERE id = \'' . self::$_createdAccount->id . '\'');
         }
+        self::$_createdOpportunities = array();
     }
-    
+
     public static function getCreatedOpportunityIds()
     {
         $opportunity_ids = array();
-        
-        foreach (self::$_createdOpportunities as $opportunity) 
+
+        foreach (self::$_createdOpportunities as $opportunity)
         {
             $opportunity_ids[] = $opportunity->id;
         }
-        
+
         return $opportunity_ids;
     }
 }

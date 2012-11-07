@@ -63,5 +63,16 @@ class SugarTestCampaignUtilities
         }
         return $campaign_ids;
     }
+
+    public static function setCreatedCampaign($ids)
+    {
+        $ids = is_array($ids) ? $ids : array($ids);
+        foreach ( $ids as $id )
+        {
+            $campaign = new Campaign();
+            $campaign->id = $id;
+            self::$_createdCampaigns[] = $campaign;
+        }
+    }
 }
 ?>

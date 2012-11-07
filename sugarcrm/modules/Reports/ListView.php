@@ -33,15 +33,10 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 require_once('include/contextMenus/contextMenu.php');
 require_once('modules/Reports/schedule/ReportSchedule.php');
 require_once('modules/Reports/ListViewReports.php');
-if(file_exists('custom/modules/Reports/metadata/listviewdefs.php')){
-    require_once('custom/modules/Reports/metadata/listviewdefs.php');
-}else{
-    require_once('modules/Reports/metadata/listviewdefs.php');
-}
-
 require_once('modules/Reports/SearchFormReports.php');
 require_once('include/ListView/ListViewSmarty.php');
 
+require SugarAutoLoader::loadWithMetafiles('Reports', 'listviewdefs');
 
 global $published_report_titles;
 global $my_report_titles;

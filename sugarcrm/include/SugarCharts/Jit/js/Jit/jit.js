@@ -97,6 +97,7 @@ function pad(number, length) {
 
 };
 
+
 var Url = {
  
 	// public method for url encoding
@@ -186,6 +187,23 @@ function array_match(needle, haystack) {
     return new Array(count,indexValue);
 };
 
+
+ $.isTouchScreen =  function() {
+     // first check if we have forced use of the touch enhanced interface
+     if (Get_Cookie("touchscreen") == '1') {
+         return true;
+     }
+
+     // next check if we should use the touch interface with our device
+     if ((navigator.userAgent.match(/iPad/i) != null)) {
+         return true;
+     }
+
+     return false;
+ };
+
+
+
 $.roundedRect = function (ctx,x,y,width,height,radius,fillType){
   ctx.beginPath();
   ctx.moveTo(x,y+radius);
@@ -204,9 +222,40 @@ $.roundedRect = function (ctx,x,y,width,height,radius,fillType){
 	}
 };
 
-$.saveImageFile = function (id,jsonfilename,imageExt) {
+$.dashedLine = function(ctx,x, y, x2, y2, dashArray){
+    if(! dashArray) dashArray=[10,5];
+    var dashCount = dashArray.length;
+    var dx = (x2 - x);
+    var dy = (y2 - y);
+    var xSlope = (Math.abs(dx) > Math.abs(dy));
+    var slope = (xSlope) ? dy / dx : dx / dy;
+
+    ctx.moveTo(x, y);
+    var distRemaining = Math.sqrt(dx * dx + dy * dy);
+    var dashIndex = 0;
+    while(distRemaining >= 0.1){
+        var dashLength = Math.min(distRemaining, dashArray[dashIndex % dashCount]);
+        var step = Math.sqrt(dashLength * dashLength / (1 + slope * slope));
+        if(xSlope){
+            if(dx < 0) step = -step;
+            x += step
+            y += slope * step;
+        }else{
+            if(dy < 0) step = -step;
+            x += slope * step;
+            y += step;
+        }
+        ctx[(dashIndex % 2 == 0) ? 'lineTo' : 'moveTo'](x, y);
+        distRemaining -= dashLength;
+        dashIndex++;
+    }
+}
+
+
+
+$.saveImageFile = function (id,jsonfilename,imageExt,saveTo) {
 	var parts = jsonfilename.split("/");
-	var filename = parts[2].replace(".js","."+imageExt);
+	var filename = parts[parts.length - 1].replace(".js","."+imageExt);
 	var oCanvas = document.getElementById(id+"-canvas");
 	
 	if(oCanvas) {
@@ -215,29 +264,23 @@ $.saveImageFile = function (id,jsonfilename,imageExt) {
 		} else {
 			var strDataURI = oCanvas.toDataURL("image/png");
 		}
-		var handleFailure = function(o){
-			//alert('failed to write image' + filename);
-			//remove alert since chrome triggers this function when user navigates away from page before image gets written.
-		}	
-		var handleSuccess = function(o){
-		}			
-		var callback =
-		{
-		  success:handleSuccess,
-		  failure:handleFailure,
-		  argument: { foo:'foo', bar:''}
-		};
-		var path = "index.php?action=DynamicAction&DynamicAction=saveImage&module=Charts&to_pdf=1";
-		var postData = "imageStr=" + strDataURI + "&filename=" + filename;
-		var request = YAHOO.util.Connect.asyncRequest('POST', path, callback, postData);
+
+        if(saveTo == undefined) {
+            var url =  "index.php?action=DynamicAction&DynamicAction=saveImage&module=Charts&to_pdf=1";
+        } else {
+            var url = saveTo;
+        }
+        jQuery.post(url, {imageStr: strDataURI, filename: filename  })
+            .success(function() {  })
+            .error(function() {  });
 	}
 };
 
-$.saveImageTest = function (id,jsonfilename,imageExt) {
+$.saveImageTest = function (id,jsonfilename,imageExt,saveTo) {
 		if(typeof FlashCanvas != "undefined") {
-			setTimeout(function(){$.saveImageFile(id,jsonfilename,imageExt)},10000);
+			setTimeout(function(){$.saveImageFile(id,jsonfilename,imageExt,saveTo)},10000);
 		} else {
-			$.saveImageFile(id,jsonfilename,imageExt);
+			$.saveImageFile(id,jsonfilename,imageExt,saveTo);
 		}
 	};
 /*
@@ -321,7 +364,7 @@ $.each = function(iterable, fn) {
       fn(iterable[key], key);
   } else {
     for ( var i = 0, l = iterable.length; i < l; i++)
-      fn(iterable[i], i);
+      fn(iterable[i], i, iterable[i+1]);
   }
 };
 
@@ -1746,8 +1789,8 @@ Options.Tips = {
   
   enable: false,
   type: 'auto',
-  offsetX: 20,
-  offsetY: 20,
+  offsetX: 0,
+  offsetY: 15,
   force: false,
   onShow: $.empty,
   onHide: $.empty
@@ -2208,12 +2251,15 @@ var MouseEventsManager = new Class({
         return this.pos;
       },
       getNode: function() {
+      	
+      	var canvas = that.viz.canvas;
+      	
         if(this.getNodeCalled) return this.node;
         this.getNodeCalled = true;
         for(var id in graph.nodes) {
           var n = graph.nodes[id],
               geom = n && ntypes[n.getData('type')],
-              contains = geom && geom.contains && geom.contains.call(fx, n, this.getPos());
+              contains = geom && geom.contains && geom.contains.call(fx, n, this.getPos(),canvas);
           if(contains) {
             this.contains = contains;
             return that.node = this.node = n;
@@ -2438,16 +2484,29 @@ Extras.Classes.Tips = new Class({
   initializePost: function() {
     //add DOM tooltip
     if(document.body) {
-      var tip = $('_tooltip') || document.createElement('div');
-      tip.id = '_tooltip';
-      tip.className = 'tip';
+      var tip = $('#tiptip_holder') || document.createElement('div');
+      tip.id = 'tiptip_holder';
+      tip.className = 'tip_bottom';
+
+       var tip_content = $('#tiptip_content') || document.createElement('div'),
+           tip_arrow = $('#tiptip_arrow') || document.createElement('div'),
+           tip_arrow_inner = $('#tiptip_arrow_inner') || document.createElement('div');
+       tip_arrow.setAttribute("style","margin-left:5px; margin-top: -12px;");
+       tip_content.id = "tiptip_content";
+       tip_arrow_inner.id = "tiptip_arrow_inner";
+       tip_arrow.id = "tiptip_arrow";
       $.extend(tip.style, {
         position: 'absolute',
         display: 'none',
         zIndex: 13000
       });
+
+      tip.appendChild(tip_arrow);
+      tip_arrow.appendChild(tip_arrow_inner);
+      tip.appendChild(tip_content);
       document.body.appendChild(tip);
       this.tip = tip;
+      this.tip_content = tip_content;
       this.node = false;
     }
   },
@@ -2475,7 +2534,7 @@ Extras.Classes.Tips = new Class({
     var label;
     if(this.dom && (label = this.isLabel(e, win))) {
       this.node = this.viz.graph.getNode(label.id);
-      this.config.onShow(this.tip, this.node, label);
+      this.config.onShow(this.tip_content, this.node, label);
     }
   },
   
@@ -2491,7 +2550,7 @@ Extras.Classes.Tips = new Class({
       }
       if(this.config.force || !this.node || this.node.id != node.id) {
         this.node = node;
-        this.config.onShow(this.tip, node, opt.getContains());
+        this.config.onShow(this.tip_content, node, opt.getContains());
       }
       this.setTooltipPosition($.event.getPos(e, win));
     }
@@ -2501,7 +2560,7 @@ Extras.Classes.Tips = new Class({
     var tip = this.tip, 
         style = tip.style, 
         cont = this.config;
-    style.display = '';
+    style.display = 'block';
     //get window dimensions
     var win = {
       'height': document.body.clientHeight,
@@ -2512,16 +2571,21 @@ Extras.Classes.Tips = new Class({
       'width': tip.offsetWidth,
       'height': tip.offsetHeight  
     };
-    //set tooltip position
     var x = cont.offsetX, y = cont.offsetY;
-    style.top = ((pos.y + y + obj.height > win.height)?  
-        (pos.y - obj.height - y) : pos.y + y) + 'px';
-    style.left = ((pos.x + obj.width + x > win.width)? 
-        (pos.x - obj.width - x) : pos.x + x) + 'px';
+      style.top = ((pos.y + y + obj.height > win.height)?
+          (pos.y - obj.height - y) : pos.y + y) + 'px';
+    // UIUX-138
+      if(pos.x + obj.width + x > win.width) {
+          style.left = (pos.x - obj.width - x) + 'px';
+          tip.className = "tip_bottom right"
+      } else {
+          style.left = (pos.x + x) +'px';
+          tip.className = "tip_bottom"
+      }
   },
   
   hide: function(triggerCallback) {
-    if(!SUGAR.util.isTouchScreen()) {
+    if(!$.isTouchScreen()) {
     	this.tip.style.display = 'none';
     }
     triggerCallback && this.config.onHide();
@@ -9469,8 +9533,194 @@ $jit.ST.Plot = new Class({
           }
         }), animating);
         if(scale >= 0) node.drawn = true;
-    },   
-   
+    },
+
+    /**
+     * Return array with correct positions for each element
+     *
+     * @param {Array} dimArray
+     * @param {Number} fontHeight
+     * @return {Array}
+     */
+    positions: function(dimArray, fontHeight)
+    {
+        var group = [];
+        var isLastElem = false;
+        var i;
+        var newArray = [];
+        var position = 0;
+        var currentState;
+
+
+        for (i = 0; i < dimArray.length; i++)
+        {
+            currentState = {type: 'element', position: position, height: dimArray[i], font: fontHeight, filament: true};
+            if (dimArray[i] <= fontHeight)
+            {
+                if (isLastElem)
+                {
+                    group = [];
+                }
+                group.push(currentState);
+                isLastElem = false;
+            }
+            else
+            {
+                group.push(currentState);
+                newArray.push({type: 'group', val:group, groupHeight: 0, groupPosition: group[0].position});
+                group = [];
+                isLastElem = true;
+            }
+            position += dimArray[i];
+        }
+        if (group.length > 0)
+        {
+            newArray.push({type: 'group', val: group, groupHeight: 0, groupPosition: group[0].position});
+            group = [];
+        }
+        var figureHeight = position;
+
+        for (i = 0; i < newArray.length; i++)
+        {
+            newArray[i] = this.pipelineGetHeight(newArray[i]);
+        }
+
+        newArray = this.pipelineMoveBlocks(newArray, figureHeight, fontHeight);
+
+        var ret = [];
+        for (i = 0; i < newArray.length; i++)
+        {
+            group = newArray[i].val;
+            for (var k = 0; k < group.length; k++)
+            {
+                ret.push(group[k]);
+            }
+        }
+        return ret;
+    },
+
+    /**
+     * Return recalculation group height(groupHeight) and positions of elements
+     *
+     * @param {Array} group
+     * @return {Array}
+     */
+    pipelineGetHeight: function(group)
+    {
+        var position = 0;
+        var between = 3;
+        var count = group.val.length;
+        var fontHeight = group.val[0].font;
+        var positionStart = group.val[0].position;
+
+        if (count == 1)
+        {
+            group.groupHeight = group.val[0].font;
+            group.val[0].filament = false;
+            return group;
+        }
+
+        if (count == 2)
+        {
+            group.groupHeight = fontHeight * 2 + between;
+            group.val[1].position = positionStart + fontHeight + between;
+            group.val[0].filament = false;
+            group.val[1].filament = false;
+            return group;
+        }
+
+        var even = true;
+        for (var i = 0; i < group.val.length; i++)
+        {
+            group.val[i].position = positionStart + position;
+            even = i % 2;
+            position += between;
+            if (even)
+            {
+                group.val[i].filament = false;
+                position += fontHeight;
+            }
+            else
+            {
+                group.val[i].filament = true;
+            }
+        }
+        group.groupHeight = (group.val[group.val.length - 1].position - group.val[0].position) + fontHeight + between;
+        return group;
+    },
+
+    /**
+     * Return array with new group and elements positions relation figure layout border
+     *
+     * @param {Array} block
+     * @param {Number} figureheight
+     * @param {Number} fontHeight
+     * @return {Array}
+     */
+    pipelineMoveBlocks: function(block, figureheight, fontHeight)
+    {
+        var offset;
+        var rebuild;
+        if (block.length < 2)
+        {
+            return block;
+        }
+
+        var lastValue = block[block.length - 1];
+        var prelastValue;
+        if ((lastValue.groupPosition + lastValue.groupHeight) > figureheight)
+        {
+            offset = (figureheight - lastValue.groupHeight) - lastValue.groupPosition;
+            lastValue.groupPosition += offset;
+            for (var li = 0; li < lastValue.val.length; li++)
+            {
+                lastValue.val[li].position += offset;
+            }
+            prelastValue = block[block.length - 2];
+            if (prelastValue.groupPosition + fontHeight > lastValue.groupPosition)
+            {
+                block[block.length - 2] = this.pipelineMergeGroup(lastValue, prelastValue);
+                block.pop();
+                rebuild = true;
+            }
+            if (block.length < 3)
+            {
+                return block;
+            }
+        }
+        for (var i = 1; i < block.length; i++)
+        {
+            if ( (block[i - 1].groupPosition + block[i - 1].groupHeight) > block[i].groupPosition)
+            {
+                block[i - 1] = this.pipelineMergeGroup(block[i], block[i - 1]);
+                block.splice(i, 1);
+                rebuild = true;
+            }
+        }
+        if (rebuild)
+        {
+            block = this.pipelineMoveBlocks(block, figureheight, fontHeight);
+        }
+        return block;
+    },
+
+    /**
+     * Merge two groups
+     * 
+     * @param {Array} lastValue
+     * @param {Array} prelastValue
+     * @return {Array}
+     */
+    pipelineMergeGroup: function(lastValue, prelastValue)
+    {
+        var newGroup;
+        newGroup = prelastValue;
+        newGroup.val = newGroup.val.concat(lastValue.val);
+        newGroup = this.pipelineGetHeight(newGroup);
+        newGroup.groupPosition = prelastValue.groupPosition;
+        return newGroup;
+    },
+
     /*
         Method: getAlignedPos
         
@@ -10462,7 +10712,7 @@ $jit.LineChart = new Class({
       var acumLeft = 0, acumRight = 0;
       var lastNode = (l-1 == i) ? true : false; 
       ch.push({
-        'id': prefix + val.label,
+        'id': prefix + (val.chart_id || val.label),
         'name': val.label,
         'data': {
           'value': valArray,
@@ -11176,7 +11426,7 @@ $jit.AreaChart = new Class({
       var valArray = $.zip(valLeft, valRight);
       var acumLeft = 0, acumRight = 0;
       ch.push({
-        'id': prefix + val.label,
+        'id': prefix + (val.chart_id || val.label),
         'name': val.label,
         'data': {
           'value': valArray,
@@ -11571,7 +11821,9 @@ Options.BarChart = {
   renderBackground: false,
   orientation: 'horizontal',
   showAggregates: true,
+  segmentStacked: false,
   showLabels: true,
+  dataPointSize: 10,
   Ticks: {
 	enable: false,
 	segments: 4,
@@ -11605,10 +11857,16 @@ $jit.ST.Plot.NodeTypes.implement({
           valueArray = node.getData('valueArray'),
           stringArray = node.getData('stringArray'),
           linkArray = node.getData('linkArray'),
+          goalMarkerLabel = node.getData('goalMarkerLabel'),
+          goalMarker = node.getData('goalMarker'),
+          goalMarkerNext = node.getData('goalMarkerNext'),
+          goalMarkerColor = node.getData('goalMarkerColor'),
+          goalMarkerType = node.getData('goalMarkerType'),
           gvl = node.getData('gvl'),
           colorArray = node.getData('colorArray'),
           colorLength = colorArray.length,
-          nodeCount = node.getData('nodeCount');
+          nodeCount = node.getData('nodeCount'),
+          nodeIndex = node.getData('nodeIndex');
       var ctx = canvas.getCtx(),
      	  canvasSize = canvas.getSize(),
           opt = {},
@@ -11618,10 +11876,13 @@ $jit.ST.Plot.NodeTypes.implement({
           horz = config.orientation == 'horizontal',
           aggregates = config.showAggregates,
           showLabels = config.showLabels,
+          showNodeLabels = config.showNodeLabels,
           label = config.Label,
-          margin = config.Margin;
-          
-          
+          margin = config.Margin,
+          chartDim = node.getData('chartDim'),
+          maxTickValue = node.getData('maxTickValue'),
+          dataPointSize = config.dataPointSize;
+
       if (colorArray && dimArray && stringArray) {
         for (var i=0, l=dimArray.length, acum=0, valAcum=0; i<l; i++) {
         	acum += (dimArray[i] || 0);
@@ -11646,7 +11907,7 @@ $jit.ST.Plot.NodeTypes.implement({
             var linear;
             
 
-          
+          //drawing bar segements with background colors
             if(horz) {
               linear = ctx.createLinearGradient(x + acum + dimArray[i]/2, y, 
                   x + acum + dimArray[i]/2, y + height);
@@ -11675,11 +11936,14 @@ $jit.ST.Plot.NodeTypes.implement({
               xCoord = x;
               yCoord = y - acum - dimArray[i];
               chartBarWidth = width;
-              chartBarHeight = dimArray[i];
+              chartBarHeight = dimArray[i] - ((config.segmentStacked) ? 1 : 0);
           }
-          ctx.fillRect(xCoord, yCoord, chartBarWidth, chartBarHeight);
 
-          // add label
+          ctx.globalCompositeOperation = "destination-over";
+          ctx.fillRect(xCoord, yCoord, chartBarWidth, chartBarHeight);
+          ctx.globalCompositeOperation = "source-over";
+
+          // add labels inside bar with rounded filled background
           if (chartBarHeight > 0)
           {
               ctx.font = label.style + ' ' + (label.size - 2) + 'px ' + label.family;
@@ -11693,20 +11957,20 @@ $jit.ST.Plot.NodeTypes.implement({
               labelBoxHeight = label.size + labelTextPaddingY;
 
               // do NOT draw label if label box is smaller than chartBarHeight
-              if ((horz && (labelBoxWidth < chartBarWidth)) || (!horz && (labelBoxHeight < chartBarHeight)))
+              if ((horz && (labelBoxWidth < chartBarWidth) && showNodeLabels(labelText)) || (!horz && (labelBoxHeight < chartBarHeight) && showNodeLabels(labelText)))
               {
                   labelBoxX = xCoord + chartBarWidth/2 - mtxt.width/2 - labelTextPaddingX/2;
                   labelBoxY = yCoord + chartBarHeight/2 - labelBoxHeight/2;
 
-                  ctx.fillStyle = "rgba(255,255,255,.2)";
+                  ctx.fillStyle = "rgba(255,255,255,.5)";
                   $.roundedRect(ctx, labelBoxX, labelBoxY, labelBoxWidth, labelBoxHeight, 4, "fill");
                   ctx.fillStyle = "rgba(0,0,0,.8)";
                   $.roundedRect(ctx, labelBoxX, labelBoxY, labelBoxWidth, labelBoxHeight, 4, "stroke");
                   ctx.textAlign = 'center';
-                  ctx.fillStyle = "rgba(255,255,255,.6)";
+                  //ctx.fillStyle = "rgba(255,255,255,.6)";
+                  //ctx.fillText(labelText, labelBoxX + mtxt.width/2 + labelTextPaddingX/2, labelBoxY + labelBoxHeight/2);
+                  ctx.fillStyle = "rgba(0,0,0,1)";
                   ctx.fillText(labelText, labelBoxX + mtxt.width/2 + labelTextPaddingX/2, labelBoxY + labelBoxHeight/2);
-                  ctx.fillStyle = "rgba(0,0,0,.6)";
-                  ctx.fillText(labelText, labelBoxX + mtxt.width/2 + labelTextPaddingX/2 + 1, labelBoxY + labelBoxHeight/2 + 1);
               }
           }
 
@@ -11717,6 +11981,84 @@ $jit.ST.Plot.NodeTypes.implement({
           acum += (dimArray[i] || 0);
           valAcum += (valueArray[i] || 0);
         }
+          if(gvl) {
+              acumValueLabel = gvl;
+          } else {
+              acumValueLabel = valAcum;
+          }
+      //draw watermark
+      //  console.log(goalMarker);
+      if(goalMarkerType != undefined) {
+          for (var i=0; i<goalMarker.length; i++){
+              ctx.strokeStyle = goalMarkerColor[i];
+              ctx.lineWidth   = 4;
+
+              var goalMarkerDim = chartDim/maxTickValue * goalMarker[i],
+                  goalMarkerNextDim = chartDim/maxTickValue * goalMarkerNext[i];
+              if(horz) {
+                  if(goalMarkerType[i] == 'group' && nodeIndex == nodeCount-1) {
+
+                      var y1 = -canvasSize.height / 2 + margin.top + (title.text ? title.size + title.offset : 0),
+                          y2 = canvasSize.height/2 - (margin.bottom + label.size + config.labelOffset + (subtitle.text ? subtitle.size + subtitle.offset : 0)),
+                          x1 = x + goalMarkerDim,
+                          x2 = x + goalMarkerDim;
+                      ctx.beginPath();
+                      $.dashedLine(ctx,x1, y1, x2, y2);
+                      ctx.closePath();
+                      ctx.stroke();
+                  } else if(goalMarkerType[i] == 'individual') {
+                      ctx.beginPath();
+                      $.dashedLine(ctx,x + goalMarkerDim, y, x + (acum/valAcum * goalMarker[i]), y + height);
+                      ctx.closePath();
+                      ctx.stroke();
+                  }
+              } else {
+                  if(goalMarkerType[i] == 'group' && nodeIndex == nodeCount-1) {
+                      var x1 = -canvasSize.width / 2 + margin.left + config.labelOffset + label.size - 1,
+                          x2 = canvasSize.width/2 - margin.right,
+                          y1 = y - goalMarkerDim,
+                          y2 = y - goalMarkerDim;
+                      ctx.beginPath();
+                      //console.log(x1, y1, x2, y2)
+                      $.dashedLine(ctx,x1, y1, x2, y2);
+                      ctx.closePath();
+                      ctx.stroke();
+                  } else if(goalMarkerType[i] == 'individual') {
+                      ctx.beginPath();
+                      $.dashedLine(ctx,x, y - goalMarkerDim, x + width, y - (acum/valAcum * goalMarker[i]));
+                      ctx.closePath();
+                      ctx.stroke();
+                  } else if(goalMarkerType[i] == 'pareto') {
+                      ctx.fillStyle = ctx.strokeStyle;
+                      ctx.lineWidth = 4;
+                      ctx.lineCap = "round";
+
+
+                      if(nodeIndex < nodeCount -1  ) {
+                          ctx.save();
+                          //render line segment, dimarray[i][0] is the curent datapoint, dimarrya[i][1] is the next datapoint, we need both in the current iteration to draw the line segment
+//                          console.log(node)
+                          ctx.beginPath();
+                          ctx.moveTo(pos.x, pos.y  - goalMarkerDim + (dataPointSize/2));
+                          ctx.lineTo(pos.x + this.config.siblingOffset + width, pos.y - goalMarkerNextDim + (dataPointSize/2));
+                          ctx.stroke();
+                          ctx.restore();
+                      }
+                      //render data point
+
+                      ctx.beginPath();
+                      ctx.arc(pos.x , pos.y - (goalMarkerDim - dataPointSize/2),dataPointSize,0, Math.PI*2, true);
+                      ctx.closePath();
+                      ctx.fill();
+
+
+//                      ctx.fillRect(pos.x - (dataPointSize/2), pos.y - goalMarkerDim,dataPointSize,dataPointSize);
+
+                  }
+              }
+          }
+
+      }
         if(border) {
           ctx.save();
           ctx.lineWidth = 2;
@@ -11733,11 +12075,7 @@ $jit.ST.Plot.NodeTypes.implement({
           ctx.fillStyle = ctx.strokeStyle = label.color;
           ctx.font = label.style + ' ' + label.size + 'px ' + label.family;
           ctx.textBaseline = 'middle';
-		  	if(gvl) {
-				acumValueLabel = gvl;
-			} else {
-				acumValueLabel = valAcum;
-			}
+
           if(aggregates(node.name, valAcum)) {
             if(!horz) {
 			  ctx.textAlign = 'center';
@@ -11777,6 +12115,8 @@ $jit.ST.Plot.NodeTypes.implement({
             }
           }
           if(showLabels(node.name, valAcum, node)) {
+          	ctx.fillStyle = ctx.strokeStyle = label.color;
+          	
             if(horz) {
 
 
@@ -11837,9 +12177,106 @@ $jit.ST.Plot.NodeTypes.implement({
           algnPos = this.getAlignedPos(pos, width, height),
           x = algnPos.x, y = algnPos.y,
           dimArray = node.getData('dimArray'),
+          valueArray = node.getData('valueArray'),
           config = node.getData('config'),
           rx = mpos.x - x,
-          horz = config.orientation == 'horizontal';
+          horz = config.orientation == 'horizontal',
+          goalMarkerLabel = node.getData('goalMarkerLabel'),
+          goalMarker = node.getData('goalMarker'),
+          goalMarkerColor = node.getData('goalMarkerColor'),
+          goalMarkerType = node.getData('goalMarkerType'),
+          goalMarkerValueLabel = node.getData('goalMarkerValueLabel'),
+          nodeCount = node.getData('nodeCount'),
+          nodeIndex = node.getData('nodeIndex'),
+          label = config.Label,
+          margin = config.Margin,
+          canvasSize = this.viz.canvas.getSize(),
+          chartDim = node.getData('chartDim'),
+          maxTickValue = node.getData('maxTickValue'),
+          dataPointSize = config.dataPointSize;
+
+	     //console.log("mx:" + mpos.x + " x1:" + x1 + " x2:" + x2);
+	    // console.log("my:" + mpos.y + " y1:" + y1);
+
+		//check for goal marker line
+        if(goalMarker != undefined)   {
+            for (var i=0; i<goalMarker.length; i++){
+                var goalMarkerDim = chartDim/maxTickValue * goalMarker[i];
+                if(horz) {
+
+                    if(goalMarkerType[i] == 'group' && nodeIndex == nodeCount-1 ) {
+                        var x1 = (x + goalMarkerDim) - 2,
+                            x2 = (x + goalMarkerDim) + 2,
+                            y1 = -canvasSize.height / 2 + margin.top + (title.text ? title.size + title.offset : 0),
+                            y2 = canvasSize.height/2 - (margin.bottom + label.size + config.labelOffset + (subtitle.text ? subtitle.size + subtitle.offset : 0));
+                    } else if(goalMarkerType[i] == 'individual') {
+                        var x1 = (x + goalMarkerDim) - 2,
+                            x2 = (x + goalMarkerDim) + 2,
+                            y1 = y,
+                            y2 = y + height;
+
+                    }
+
+                    if(mpos.x > x1 && mpos.x < x2 && mpos.y > y1 && mpos.y < y2){
+                        return {
+                            'name': goalMarkerLabel[i],
+                            'value':goalMarker[i],
+                            'valuelabel':goalMarkerValueLabel[i],
+                            'type': 'marker'
+                        }
+                    }
+                } else {
+                    if(goalMarkerType[i] == 'group' && nodeIndex == nodeCount-1) {
+                        var x1 = -canvasSize.width / 2 + margin.left + config.labelOffset + label.size - 1,
+                            x2 = canvasSize.width/2 - margin.right,
+                            y1 = (y - goalMarkerDim) - 2,
+                            y2 = (y - goalMarkerDim) + 2;
+                        if(mpos.x > x1 && mpos.x < x2 && mpos.y > y1 && mpos.y < y2){
+                            return {
+                                'name': goalMarkerLabel[i],
+                                'value':goalMarker[i],
+                                'valuelabel':goalMarkerValueLabel[i],
+                                'type': 'marker'
+                            }
+                        }
+                    } else if(goalMarkerType[i] == 'individual') {
+                        var x1 = x,
+                            x2 = x + width,
+                            y1 = (y - goalMarkerDim) - 2,
+                            y2 = (y - goalMarkerDim) + 2;
+                        if(mpos.x > x1 && mpos.x < x2 && mpos.y > y1 && mpos.y < y2){
+                            return {
+                                'name': goalMarkerLabel[i],
+                                'value':goalMarker[i],
+                                'valuelabel':goalMarkerValueLabel[i],
+                                'type': 'marker'
+                            }
+                        }
+
+
+                    } else if(goalMarkerType[i] == 'pareto') {
+
+                        var x1 = pos.x + (dataPointSize/2),
+                            y1 = (pos.y - goalMarkerDim) + 2;
+                        var r = dataPointSize;
+                        if ((mpos.x-x1)*(mpos.x-x1)+(mpos.y-y1)*(mpos.y-y1) < r*r) {
+
+                            return {
+                                'name': goalMarkerLabel[i],
+                                'value':goalMarker[i],
+                                'valuelabel':goalMarkerValueLabel[i],
+                                'type': 'marker'
+                            }
+                        }
+
+                    }
+
+
+
+                }
+            }
+        }
+		
       //bounding box check
       if(horz) {
         if(mpos.x < x || mpos.x > x + width
@@ -11852,6 +12289,8 @@ $jit.ST.Plot.NodeTypes.implement({
             return false;
           }
       }
+
+      
       //deep check
       for(var i=0, l=dimArray.length, acum=(horz? x:y); i<l; i++) {
         var dimi = dimArray[i];
@@ -11874,12 +12313,16 @@ $jit.ST.Plot.NodeTypes.implement({
           acum -= dimi;
           var intersec = acum;
           if(mpos.y >= intersec) {
+              var percent = 0;
+              if(node.getData('valueArray')[i] > 0) {
+                  percent = ((node.getData('valueArray')[i]/node.getData('barTotalValue')) * 100).toFixed(1);
+              }
             return {
               'name': node.getData('stringArray')[i],
               'color': node.getData('colorArray')[i],
               'value': node.getData('valueArray')[i],
 			  'valuelabel': node.getData('valuelabelArray')[i],
-			  'percentage': ((node.getData('valueArray')[i]/node.getData('barTotalValue')) * 100).toFixed(1),
+			  'percentage': percent,
               'link': url,
               'label': node.name
             };
@@ -11891,7 +12334,7 @@ $jit.ST.Plot.NodeTypes.implement({
   },
   'barchart-grouped' : {
     'render' : function(node, canvas) {
-      var pos = node.pos.getc(true), 
+      var pos = node.pos.getc(true),
           width = node.getData('width'),
           height = node.getData('height'),
           algnPos = this.getAlignedPos(pos, width, height),
@@ -11900,9 +12343,17 @@ $jit.ST.Plot.NodeTypes.implement({
           valueArray = node.getData('valueArray'),
           valuelabelArray = node.getData('valuelabelArray'),
           linkArray = node.getData('linkArray'),
-          valueLength = valueArray.length,
+          goalMarkerLabel = node.getData('goalMarkerLabel'),
+          goalMarker = node.getData('goalMarker'),
+          goalMarkerNext = node.getData('goalMarkerNext'),
+          goalMarkerColor = node.getData('goalMarkerColor'),
+          goalMarkerType = node.getData('goalMarkerType'),
+          gvl = node.getData('gvl'),
           colorArray = node.getData('colorArray'),
           colorLength = colorArray.length,
+          nodeCount = node.getData('nodeCount'),
+          nodeIndex = node.getData('nodeIndex');
+          valueLength = valueArray.length,
           stringArray = node.getData('stringArray'); 
 
       var ctx = canvas.getCtx(),
@@ -11917,12 +12368,14 @@ $jit.ST.Plot.NodeTypes.implement({
           label = config.Label,
           shadow = config.shadow,
           margin = config.Margin,
-          fixedDim = (horz? height : width) / valueLength;
+          fixedDim = (horz? height : width) / valueLength,
+          chartDim = node.getData('chartDim'),
+          maxTickValue = node.getData('maxTickValue'),
+          dataPointSize = config.dataPointSize;
       
       //drop shadow
       
        maxValue = Math.max.apply(null, dimArray);
-       
        
 	  
 	   ctx.fillStyle = "rgba(0,0,0,.2)";
@@ -11988,7 +12441,8 @@ $jit.ST.Plot.NodeTypes.implement({
           if(horz) {
             ctx.fillRect(x, y + fixedDim * i, dimArray[i], fixedDim);
           } else {
-            ctx.fillRect(x + fixedDim * i, y - dimArray[i], fixedDim, dimArray[i]);
+            var space = (i*5)
+            ctx.fillRect((x + fixedDim * i)+space, y - dimArray[i], fixedDim, dimArray[i]);
           }
           if(border && border.name == stringArray[i]) {
             opt.acum = fixedDim * i;
@@ -12080,6 +12534,79 @@ $jit.ST.Plot.NodeTypes.implement({
 				}
 			}
         }
+          if (goalMarkerType != undefined) {
+              for (var i = 0; i < goalMarker.length; i++) {
+                  ctx.strokeStyle = goalMarkerColor[i];
+                  ctx.lineWidth = 3;
+
+                  var goalMarkerDim = chartDim / maxTickValue * goalMarker[i],
+                      goalMarkerNextDim = chartDim / maxTickValue * goalMarkerNext[i];
+                  if (horz) {
+                      if (goalMarkerType[i] == 'group' && nodeIndex == nodeCount - 1) {
+
+                          var y1 = -canvasSize.height / 2 + margin.top + (title.text ? title.size + title.offset : 0),
+                              y2 = canvasSize.height / 2 - (margin.bottom + label.size + config.labelOffset + (subtitle.text ? subtitle.size + subtitle.offset : 0)),
+                              x1 = x + goalMarkerDim,
+                              x2 = x + goalMarkerDim;
+                          ctx.beginPath();
+                          $.dashedLine(ctx, x1, y1, x2, y2);
+                          ctx.closePath();
+                          ctx.stroke();
+                      } else if (goalMarkerType[i] == 'individual') {
+                          ctx.beginPath();
+                          $.dashedLine(ctx, x + goalMarkerDim, y, x + (acum / valAcum * goalMarker[i]), y + height);
+                          ctx.closePath();
+                          ctx.stroke();
+                      }
+                  } else {
+                      if (goalMarkerType[i] == 'group' && nodeIndex == nodeCount - 1) {
+                          var x1 = -canvasSize.width / 2 + margin.left + config.labelOffset + label.size - 1,
+                              x2 = canvasSize.width / 2 - margin.right,
+                              y1 = y - goalMarkerDim,
+                              y2 = y - goalMarkerDim;
+                          ctx.beginPath();
+                          //console.log(x1, y1, x2, y2)
+                          $.dashedLine(ctx, x1, y1, x2, y2);
+                          ctx.closePath();
+                          ctx.stroke();
+                      } else if (goalMarkerType[i] == 'individual') {
+                          ctx.beginPath();
+                          $.dashedLine(ctx, x, y - goalMarkerDim, x + width, y - (acum / valAcum * goalMarker[i]));
+                          ctx.closePath();
+                          ctx.stroke();
+                      } else if (goalMarkerType[i] == 'pareto') {
+                          ctx.fillStyle = ctx.strokeStyle;
+                          ctx.lineWidth = 4;
+                          ctx.lineCap = "round";
+
+                          var start = pos.x;
+
+                          if(i == 1) {
+                              start = pos.x-(width/4);
+                          } else if(i == 2) {
+                              start = pos.x+(width/4);
+                          }
+
+                          if (nodeIndex < nodeCount - 1) {
+                              ctx.save();
+                              ctx.beginPath();
+                              ctx.moveTo(start, pos.y - goalMarkerDim + (dataPointSize / 2));
+                              ctx.lineTo(start + this.config.siblingOffset + width, pos.y - goalMarkerNextDim + (dataPointSize / 2));
+                              ctx.stroke();
+                              ctx.restore();
+                          }
+                          //render data point
+
+                          ctx.beginPath();
+                          ctx.arc(start, pos.y - (goalMarkerDim - dataPointSize / 2), dataPointSize, 0, Math.PI * 2, true);
+                          ctx.closePath();
+                          ctx.fill();
+
+                      }
+                  }
+              }
+
+          }
         if(border) {
           ctx.save();
           ctx.lineWidth = 2;
@@ -12104,8 +12631,15 @@ $jit.ST.Plot.NodeTypes.implement({
               ctx.rotate(Math.PI / 2);
               ctx.fillText(node.name, 0, 0);
             } else {
-              ctx.textAlign = 'center';
-              ctx.fillText(node.name, x + width/2, y + label.size/2 + config.labelOffset);
+                if(nodeCount > 8) {
+                    ctx.textAlign = 'left';
+                    ctx.translate(x + width/2, y + label.size/2 + config.labelOffset);
+                    ctx.rotate(45* Math.PI / 180);
+                    ctx.fillText(node.name, 0, 0);
+                } else {
+                    ctx.textAlign = 'center';
+                    ctx.fillText(node.name, x + width/2, y + label.size/2 + config.labelOffset);
+                }
             }
           }
           ctx.restore();
@@ -12123,7 +12657,105 @@ $jit.ST.Plot.NodeTypes.implement({
           config = node.getData('config'),
           rx = mpos.x - x,
           horz = config.orientation == 'horizontal',
-          fixedDim = (horz? height : width) / len;
+          fixedDim = (horz? height : width) / len,
+          goalMarkerLabel = node.getData('goalMarkerLabel'),
+          goalMarker = node.getData('goalMarker'),
+          goalMarkerColor = node.getData('goalMarkerColor'),
+          goalMarkerType = node.getData('goalMarkerType'),
+          goalMarkerValueLabel = node.getData('goalMarkerValueLabel'),
+          nodeCount = node.getData('nodeCount'),
+          nodeIndex = node.getData('nodeIndex'),
+          label = config.Label,
+          margin = config.Margin,
+          canvasSize = this.viz.canvas.getSize(),
+          chartDim = node.getData('chartDim'),
+          maxTickValue = node.getData('maxTickValue'),
+          dataPointSize = config.dataPointSize;
+
+
+        if(goalMarker != undefined)   {
+            for (var i=0; i<goalMarker.length; i++){
+                var goalMarkerDim = chartDim/maxTickValue * goalMarker[i];
+                if(horz) {
+
+                    if(goalMarkerType[i] == 'group' && nodeIndex == nodeCount-1 ) {
+                        var x1 = (x + goalMarkerDim) - 2,
+                            x2 = (x + goalMarkerDim) + 2,
+                            y1 = -canvasSize.height / 2 + margin.top + (title.text ? title.size + title.offset : 0),
+                            y2 = canvasSize.height/2 - (margin.bottom + label.size + config.labelOffset + (subtitle.text ? subtitle.size + subtitle.offset : 0));
+                    } else if(goalMarkerType[i] == 'individual') {
+                        var x1 = (x + goalMarkerDim) - 2,
+                            x2 = (x + goalMarkerDim) + 2,
+                            y1 = y,
+                            y2 = y + height;
+
+                    }
+
+                    if(mpos.x > x1 && mpos.x < x2 && mpos.y > y1 && mpos.y < y2){
+                        return {
+                            'name': goalMarkerLabel[i],
+                            'value':goalMarker[i],
+                            'valuelabel':goalMarkerValueLabel[i],
+                            'type': 'marker'
+                        }
+                    }
+                } else {
+                    if(goalMarkerType[i] == 'group' && nodeIndex == nodeCount-1) {
+                        var x1 = -canvasSize.width / 2 + margin.left + config.labelOffset + label.size - 1,
+                            x2 = canvasSize.width/2 - margin.right,
+                            y1 = (y - goalMarkerDim) - 2,
+                            y2 = (y - goalMarkerDim) + 2;
+                        if(mpos.x > x1 && mpos.x < x2 && mpos.y > y1 && mpos.y < y2){
+                            return {
+                                'name': goalMarkerLabel[i],
+                                'value':goalMarker[i],
+                                'valuelabel':goalMarkerValueLabel[i],
+                                'type': 'marker'
+                            }
+                        }
+                    } else if(goalMarkerType[i] == 'individual') {
+                        var x1 = x,
+                            x2 = x + width,
+                            y1 = (y - goalMarkerDim) - 2,
+                            y2 = (y - goalMarkerDim) + 2;
+                        if(mpos.x > x1 && mpos.x < x2 && mpos.y > y1 && mpos.y < y2){
+                            return {
+                                'name': goalMarkerLabel[i],
+                                'value':goalMarker[i],
+                                'valuelabel':goalMarkerValueLabel[i],
+                                'type': 'marker'
+                            }
+                        }
+
+
+                    } else if(goalMarkerType[i] == 'pareto') {
+
+                        var start = pos.x;
+
+                          if(i == 1) {
+                              start = pos.x-(width/4);
+                          } else if(i == 2) {
+                              start = pos.x+(width/4);
+                          }
+
+                        var x1 = start + (dataPointSize/2),
+                            y1 = (pos.y - goalMarkerDim) + 2;
+                        var r = dataPointSize;
+                        if ((mpos.x-x1)*(mpos.x-x1)+(mpos.y-y1)*(mpos.y-y1) < r*r) {
+
+                            return {
+                                'name': goalMarkerLabel[i],
+                                'value':goalMarker[i],
+                                'valuelabel':goalMarkerValueLabel[i],
+                                'type': 'marker'
+                            }
+                        }
+
+                    }
+                }
+            }
+        }
+
       //bounding box check
       if(horz) {
         if(mpos.x < x || mpos.x > x + width
@@ -12155,8 +12787,9 @@ $jit.ST.Plot.NodeTypes.implement({
             };
           }
         } else {
-          var limit = x + fixedDim * i;
-          if(mpos.x >= limit && mpos.x <= limit + fixedDim && mpos.y >= y - dimi) {
+            var space = (i*5)
+          var limit = (x + fixedDim * i)+space;
+          if(mpos.x >= limit && mpos.x <= (limit + fixedDim)+space && mpos.y >= y - dimi) {
             return {
               'name': node.getData('stringArray')[i],
               'color': node.getData('colorArray')[i],
@@ -12199,6 +12832,7 @@ $jit.ST.Plot.NodeTypes.implement({
           aggregates = config.showAggregates,
           showLabels = config.showLabels,
           label = config.Label,
+          nodeCount = node.getData('nodeCount'),
           fixedDim = (horz? height : width) / valueLength,
           margin = config.Margin;
       
@@ -12343,8 +12977,7 @@ $jit.ST.Plot.NodeTypes.implement({
 				ctx.fillText(node.name + ": " + valAcum, 0, 0);
 
             } else {
-              
-			  if(stringArray.length > 8) {
+			  if(nodeCount > 8) {
 				ctx.textAlign = 'left';
 				ctx.translate(x + width/2, y + label.size/2 + config.labelOffset);
 				ctx.rotate(45* Math.PI / 180);
@@ -12447,10 +13080,14 @@ $jit.BarChart = new Class({
     var showLabels = this.config.showLabels,
         typeLabels = $.type(showLabels),
         showAggregates = this.config.showAggregates,
-        typeAggregates = $.type(showAggregates);
+        typeAggregates = $.type(showAggregates),
+        showNodeLabels = this.config.showNodeLabels,
+        typeNodeLabels = $.type(showNodeLabels);
+                
     this.config.showLabels = typeLabels == 'function'? showLabels : $.lambda(showLabels);
     this.config.showAggregates = typeAggregates == 'function'? showAggregates : $.lambda(showAggregates);
-    Options.Fx.clearCanvas = false;
+    this.config.showNodeLabels = typeNodeLabels == 'function'? showNodeLabels : $.lambda(showNodeLabels);
+    //Options.Fx.clearCanvas = false;
     this.initializeViz();
   },
   
@@ -12493,7 +13130,7 @@ $jit.BarChart = new Class({
         onShow: function(tip, node, contains) {
           var elem = contains;
           config.Tips.onShow(tip, elem, node);
-			  if(elem.link != 'undefined' && elem.link != '') {
+			  if(elem.link != undefined && elem.link != '') {
 				document.body.style.cursor = 'pointer';
 			  }
         },
@@ -12511,6 +13148,7 @@ $jit.BarChart = new Class({
           config.Events.onClick(elem, eventInfo, evt);
         },
         onMouseMove: function(node, eventInfo, evt) {
+        	
           if(!config.hoveredColor) return;
           if(node) {
             var elem = eventInfo.getContains();
@@ -12668,7 +13306,7 @@ $jit.BarChart = new Class({
         marginHeight = (title.text? title.size + title.offset : 0) + (subtitle.text? subtitle.size + subtitle.offset : 0) + margin.top + margin.bottom,
         horz = config.orientation == 'horizontal',
         fixedDim = (size[horz? 'height':'width'] - (horz? marginHeight:marginWidth) - (ticks.enable? config.Label.size + config.labelOffset : 0) - (l -1) * config.barsOffset) / l,
-        fixedDim = (fixedDim > 40) ? 40 : fixedDim;
+        fixedDim = (fixedDim > 40) ? 40 : fixedDim,
         whiteSpace = size.width - (marginWidth + (fixedDim * l));
         //bug in IE7 when vertical bar charts load in dashlets where number of bars exceed a certain width, canvas renders with an incorrect width, a hard refresh fixes the problem
         if(!horz && typeof FlashCanvas != "undefined" && size.width < 250)
@@ -12677,7 +13315,8 @@ $jit.BarChart = new Class({
         if(!grouped && !horz) {
         	st.config.siblingOffset = whiteSpace/(l+1);
         }
-        
+
+
         
         
 	//Bars offset
@@ -12697,11 +13336,13 @@ $jit.BarChart = new Class({
 		st.config.offsetX = (margin.right - margin.left)/2;
 	  }
     }
+
     this.st = st;
     this.canvas = this.st.canvas;
+
   },
-  
- 
+
+
   
   renderTitle: function() {
   	var canvas = this.canvas,
@@ -12844,7 +13485,9 @@ $jit.BarChart = new Class({
             ctx.restore();
             ctx.fillStyle = ticks.color;
             // Drawing line
+            ctx.globalCompositeOperation = "destination-over";
             ctx.fillRect(Math.round(axis) + i * pixelsPerStep * humanNumber, -size.height / 2 + margin.top + (title.text ? title.size + title.offset : 0) - (shadow.enable ? shadow.size : 0), 1, lineHeight + (shadow.enable ? shadow.size * 2: 0));
+            ctx.globalCompositeOperation = "source-over";
         }
 	} else {
 	
@@ -12912,7 +13555,9 @@ $jit.BarChart = new Class({
             }
             ctx.restore();
 			ctx.fillStyle = ticks.color;
+            ctx.globalCompositeOperation = "destination-over";
 			ctx.fillRect(-size.width / 2 + margin.left + config.labelOffset + label.size, iY, size.width - margin.right - margin.left - config.labelOffset - label.size, 1);
+            ctx.globalCompositeOperation = "source-over";
         }
 	}
 	
@@ -12999,7 +13644,10 @@ $jit.BarChart = new Class({
         that = this,
 		colorLength = color.length,
 		nameLength = name.length;
-        groupTotalValue = 0;
+        groupTotalValue = 0,
+        properties = $.splat(json.properties)[0];
+
+
     for(var i=0, values=json.values, l=values.length; i<l; i++) {
     	var val = values[i];
       	var valArray = $.splat(val.values);
@@ -13014,13 +13662,41 @@ $jit.BarChart = new Class({
       var titleArray = $.splat(values[i].titles);
       var barTotalValue = valArray.sum();
       var acum = 0;
+
+
+      if(properties['goal_marker_type'] != undefined) {
+
+//          console.log(values[n].goalmarkervalue)
+          var goalMarker = values[i].goalmarkervalue,
+              goalMarkerNext = (i < l-1) ? values[i+1].goalmarkervalue : "",
+              goalMarkerValueLabel = values[i].goalmarkervaluelabel,
+              goalMarkerLabel = properties['goal_marker_label'],
+              goalMarkerColor = properties['goal_marker_color'],
+              goalMarkerType = properties['goal_marker_type'];
+      }   else {
+          var goalMarker = "",
+              goalMarkerValueLabel = "",
+              goalMarkerLabel = "",
+              goalMarkerColor = "",
+              goalMarkerType = "";
+
+
+      }
+
+
       ch.push({
-        'id': prefix + val.label,
+        'id': prefix + (val.chart_id || val.label),
         'name': val.label,
         
         'data': {
           'value': valArray,
           '$linkArray': linkArray,
+          '$goalMarker': goalMarker,
+          '$goalMarkerNext': goalMarkerNext,
+          '$goalMarkerLabel': goalMarkerLabel,
+          '$goalMarkerValueLabel': goalMarkerValueLabel,
+          '$goalMarkerColor': goalMarkerColor,
+          '$goalMarkerType': goalMarkerType,
 		  '$gvl': val.gvaluelabel,
           '$titleArray': titleArray,
           '$valueArray': valArray,
@@ -13031,6 +13707,7 @@ $jit.BarChart = new Class({
           '$barTotalValue': barTotalValue,
           '$groupTotalValue': groupTotalValue,
           '$nodeCount': values.length,
+          '$nodeIndex': i,
           '$gradient': gradient,
           '$config': config
         },
@@ -13051,22 +13728,7 @@ $jit.BarChart = new Class({
     
     this.normalizeDims();
     
-    if(renderBackground) {
-   		this.renderBackground();
-    }
-	
-	if(!animate && ticks.enable) {
-		this.renderTicks();
-	}
-	if(!animate && note.text) {
-		this.renderScrollNote();
-	}
-	if(!animate && title.text) {
-		this.renderTitle();
-	}
-	if(!animate && subtitle.text) {
-		this.renderSubtitle();
-	}
+
 
     st.compute();
     st.select(st.root);
@@ -13091,6 +13753,23 @@ $jit.BarChart = new Class({
     } else {
       this.busy = false;
     }
+
+      if(renderBackground) {
+          this.renderBackground();
+      }
+
+      if(!animate && ticks.enable) {
+          this.renderTicks();
+      }
+      if(!animate && note.text) {
+          this.renderScrollNote();
+      }
+      if(!animate && title.text) {
+          this.renderTitle();
+      }
+      if(!animate && subtitle.text) {
+          this.renderSubtitle();
+      }
   },
   
   /*
@@ -13116,20 +13795,34 @@ $jit.BarChart = new Class({
   updateJSON: function(json, onComplete) {
     if(this.busy) return;
     this.busy = true;
-    
+
     var st = this.st;
     var graph = st.graph;
-    var values = json.values;
-    var animate = this.config.animate;
+    var config = this.config;
+    var values = json.values,
+        renderBackground = config.renderBackground,
+        animate = config.animate,
+        ticks = config.Ticks,
+        title = config.Title,
+        note = config.ScrollNote;
     var that = this;
-    var horz = this.config.orientation == 'horizontal';
-    $.each(values, function(v) {
+    var horz = this.config.orientation == 'horizontal',
+        properties = $.splat(json.properties)[0];
+    $.each(values, function(v,i,f) {
       var n = graph.getByName(v.label);
       if(n) {
         n.setData('valueArray', $.splat(v.values));
         if(json.label) {
           n.setData('stringArray', $.splat(json.label));
         }
+      if(v.goalmarkervalue != undefined)   {
+          var goalMarkerNext = (i < values.length-1) ? f.goalmarkervalue : "";
+//          console.log(v)
+          n.setData('goalMarker', v.goalmarkervalue);
+          n.setData('goalMarkerNext', goalMarkerNext);
+          n.setData('goalMarkerValueLabel', v.goalmarkervaluelabel);
+      }
+
       }
     });
     this.normalizeDims();
@@ -13155,7 +13848,27 @@ $jit.BarChart = new Class({
           }
         });
       }
+    } else {
+        this.busy = false;
     }
+
+  if(renderBackground) {
+      this.renderBackground();
+  }
+
+  if(!animate && ticks.enable) {
+      this.renderTicks();
+  }
+  if(!animate && note.text) {
+      this.renderScrollNote();
+  }
+  if(!animate && title.text) {
+      this.renderTitle();
+  }
+  if(!animate && subtitle.text) {
+      this.renderSubtitle();
+  }
+
   },
   
   //adds the little brown bar when hovering the node
@@ -13191,8 +13904,12 @@ $jit.BarChart = new Class({
   */  
   getLegend: function() {
     var legend = new Array();
+    var wmlegend = new Array();
     var name = new Array();
     var color = new Array();
+    var wmname = new Array();
+    var wmcolor = new Array();
+    var wmtype = new Array();
     var n;
     this.st.graph.getNode(this.st.root).eachAdjacency(function(adj) {
       n = adj.nodeTo;
@@ -13203,8 +13920,20 @@ $jit.BarChart = new Class({
       color[i] = colors[i % len];
       name[i] = s;
     });
+
+    var wmcolors = n.getData('goalMarkerColor'),
+        wmlen = wmcolors.length;
+    var wmtype = n.getData('goalMarkerType');
+    $.each(n.getData('goalMarkerLabel'), function(s, i) {
+      wmcolor[i] = wmcolors[i % wmlen];
+      wmname[i] = s;
+    });
 	legend['name'] = name;
 	legend['color'] = color;
+    wmlegend['name'] = wmname;
+    wmlegend['color'] = wmcolor;
+    wmlegend['type'] = wmtype;
+    legend['wmlegend'] = wmlegend;
     return legend;
   },
   
@@ -13248,7 +13977,14 @@ $jit.BarChart = new Class({
         acum = Math.max.apply(null, valArray);
       }
       maxValue = maxValue>acum? maxValue:acum;
+
+     if (n.getData('goalMarker') != "" && n.getData('goalMarker') != undefined) {
+         var waterMarkMax  =  Math.max.apply(null,n.getData('goalMarker'));
+         maxValue = maxValue>waterMarkMax? maxValue:waterMarkMax;
+     }
     });
+
+      //console.log(maxValue);
     return maxValue;
   },
   
@@ -13260,6 +13996,7 @@ $jit.BarChart = new Class({
   normalizeDims: function() {
     //number of elements
     var root = this.st.graph.getNode(this.st.root), l=0;
+
     root.eachAdjacency(function() {
       l++;
     });
@@ -13351,8 +14088,10 @@ $jit.BarChart = new Class({
       	fixedDim = animateValue.length * 40;
       }
       n.setData(dim1, fixedDim);
-      
-      
+      n.setData('maxTickValue',maxTickValue);
+      n.setData('chartDim',height);
+
+
       if(animate) {
         n.setData(dim2, acum * height / maxValue, 'end');
         n.setData('dimArray', $.map(n.getData('valueArray'), function(n) { 
@@ -13436,7 +14175,7 @@ $jit.ST.Plot.NodeTypes.implement({
           ratio = .65;
 
       if (colorArray && dimArray && stringArray) {
-      	
+          var newDimArray = this.positions(dimArray, label.size);
       	
       	// horizontal lines
       	for (var i=0, l=dimArray.length, acum=0, valAcum=0; i<l; i++) {
@@ -13449,26 +14188,38 @@ $jit.ST.Plot.NodeTypes.implement({
        		 var valueLabel = String(valuelabelArray[i]);
        	     var mV = ctx.measureText(stringValue);
              var mVL = ctx.measureText(valueLabel);
+           var next_mVL = 0;
+           var next_mV = 0;
+           if ((i + 1) < l)
+           {
+               next_mV = ctx.measureText(stringArray[i + 1]);
+               next_mVL = ctx.measureText(String(valuelabelArray[i + 1]));
+           }
+           else
+           {
+               next_mV = mV;
+               next_mVL = mVL;
+           }
           	 var previousElementHeight = (i > 0) ? dimArray[i - 1] : 100;
 		 	 var labelOffsetHeight = (previousElementHeight < label.size && i > 0) ? ((dimArray[i] > label.size) ? (dimArray[i]/2) - (label.size/2) : label.size) : 0;
 		  	 var topWidth = minWidth + ((acum + dimArray[i]) * ratio);
-          	 var bottomWidth = minWidth + ((acum) * ratio);  
-         	 var bottomWidthLabel = minWidth + ((acum + labelOffsetHeight) * ratio);  
-		 	 var labelOffsetRight = (previousElementHeight < label.size && i > 0) ? ((i%2!=0 && dimArray[i] < label.size) ? mV.width + 20 : 0) : 0;
-		 	 var labelOffsetLeft = (previousElementHeight < label.size && i > 0) ? ((i%2!=0 && dimArray[i] < label.size) ? mVL.width + 20 : 0) : 0;
+          	 var bottomWidth = minWidth + ((acum) * ratio);
+           var bottomWidthLabel = minWidth + (newDimArray[i].position * ratio);
+           var labelOffsetRight = (newDimArray[i].filament) ? (next_mV.width + 25) : 0;
+           var labelOffsetLeft = (newDimArray[i].filament) ? (next_mVL.width + 25) : 0;
 //             ctx.fillRect((-bottomWidth/2) - mVL.width - config.labelOffset , y - acum, bottomWidth + mVL.width + mV.width + (config.labelOffset*2), 1);
 
 			//right lines
 			ctx.beginPath();
 			ctx.moveTo(bottomWidth/2,y - acum); //
-			ctx.lineTo(bottomWidthLabel/2 + (labelOffset-10),y - acum - labelOffsetHeight);  // top right
-			ctx.lineTo(bottomWidthLabel/2 + (labelOffset) + labelOffsetRight + mV.width,y - acum - labelOffsetHeight);  // bottom right
+           ctx.lineTo(bottomWidthLabel / 2 + (labelOffset - 10), y - newDimArray[i].position);  // top right
+           ctx.lineTo(bottomWidthLabel / 2 + (labelOffset) + labelOffsetRight + mV.width, y - newDimArray[i].position);  // bottom right
 			ctx.stroke();
 			//left lines
 			ctx.beginPath();
 			ctx.moveTo(-bottomWidth/2,y - acum); //
-			ctx.lineTo(-bottomWidthLabel/2 - (labelOffset-10),y - acum - labelOffsetHeight);  // top right
-			ctx.lineTo(-bottomWidthLabel/2 - (labelOffset) - labelOffsetLeft -mVL.width,y - acum - labelOffsetHeight);  // bottom right
+           ctx.lineTo( - bottomWidthLabel / 2 - (labelOffset - 10), y - newDimArray[i].position);  // top right
+           ctx.lineTo( - bottomWidthLabel / 2 - (labelOffset) - labelOffsetLeft - mVL.width, y - newDimArray[i].position);  // bottom right
 			ctx.stroke();
        }
 	}
@@ -13494,14 +14245,24 @@ $jit.ST.Plot.NodeTypes.implement({
 		  	  	  var mV = 10;
 	              var mVL = 10;	
 		  	  }
+            if ((i + 1) < l)
+            {
+                next_mV = ctx.measureText(stringArray[i + 1]);
+                next_mVL = ctx.measureText(String(valuelabelArray[i + 1]));
+            }
+            else
+            {
+                next_mV = mV;
+                next_mVL = mVL;
+            }
 		      var previousElementHeight = (i > 0) ? dimArray[i - 1] : 100;
 		      var labelOffsetHeight = (previousElementHeight < label.size && i > 0) ? ((dimArray[i] > label.size) ? (dimArray[i]/2) - (label.size/2) : label.size) : 0;
-		      var labelOffsetRight = (previousElementHeight < label.size && i > 0) ? ((i%2!=0 && dimArray[i] < label.size) ? mV.width + 20 : 0) : 0;
-		      var labelOffsetLeft = (previousElementHeight < label.size && i > 0) ? ((i%2!=0 && dimArray[i] < label.size) ? mVL.width + 20 : 0) : 0;
+            var labelOffsetRight = (newDimArray[i].filament) ? (next_mV.width + 20) : 0;
+            var labelOffsetLeft = (newDimArray[i].filament) ? (next_mVL.width + 20) : 0;
 		      
           var topWidth = minWidth + ((acum + dimArray[i]) * ratio);
           var bottomWidth = minWidth + ((acum) * ratio);
-          var bottomWidthLabel = minWidth + ((acum + labelOffsetHeight) * ratio);
+            var bottomWidthLabel = minWidth + (newDimArray[i].position * ratio);
           
 
           if(gradient) {
@@ -13552,9 +14313,9 @@ $jit.ST.Plot.NodeTypes.implement({
 
 		      
               ctx.textAlign = 'left';
-              ctx.fillText(stringArray[i],(bottomWidthLabel/2) + labelOffset + labelOffsetRight, y - acum - labelOffsetHeight - label.size/2);
+              ctx.fillText(stringArray[i], (bottomWidthLabel / 2) + labelOffset + labelOffsetRight, y - newDimArray[i].position - label.size / 2);
               ctx.textAlign = 'right';
-              ctx.fillText(valuelabelArray[i],(-bottomWidthLabel/2) - labelOffset - labelOffsetLeft, y - acum - labelOffsetHeight - label.size/2);
+              ctx.fillText(valuelabelArray[i], (- bottomWidthLabel / 2) - labelOffset - labelOffsetLeft, y - newDimArray[i].position - label.size / 2);
 	      }
           ctx.restore();
         }
@@ -13985,7 +14746,7 @@ $jit.FunnelChart = new Class({
     percentageArray.reverse();
     
       ch.push({
-        'id': prefix + val.label,
+        'id': prefix + (val.chart_id || val.label),
         'name': val.label,
         
         'data': {
@@ -15473,6 +16234,7 @@ $jit.Sunburst.Plot.NodeTypes.implement({
 	          ctx.arc(xpos, ypos, acum + .01, begin, end, false);
 	          ctx.arc(xpos, ypos, acum + dimi+4 + .01, end, begin, true);    
 	          ctx.fill();
+                  ctx.fillStyle = ctx.strokeStyle = colori;
 	          
 	          if(gradient && dimi) {
 	            var radialGradient = ctx.createRadialGradient(xpos, ypos, acum + config.sliceOffset,
@@ -15837,7 +16599,7 @@ $jit.PieChart = new Class({
       
  
       ch.push({
-        'id': prefix + val.label,
+        'id': prefix + (val.chart_id || val.label),
         'name': val.label,
         'data': {
           'value': valArray,
@@ -16707,7 +17469,7 @@ $jit.GaugeChart = new Class({
 		  var valuelabelsArray = $.splat(val.valuelabels);
 
 		  ch.push({
-			'id': prefix + val.label,
+			'id': prefix + (val.chart_id || val.label),
 			'name': val.label,
 			'data': {
 			  'value': valArray,

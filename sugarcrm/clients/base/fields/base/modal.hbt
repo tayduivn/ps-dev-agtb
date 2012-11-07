@@ -1,3 +1,2 @@
     <input type="text" class="center" value="{{value}}" placeholder="{{label}}">
-    </div>
     <p class="help-block"></p>

@@ -1,0 +1,20 @@
+<tr>
+    <td>{{str "LBL_TOTAL" "Forecasts"}}</td>
+    <td class="tright">{{formatCurrency quota "-99"}}</td>
+
+    {{#if show_worksheet_likely}}
+        <td class="tright">{{formatCurrency likely_case "-99"}}</td>
+        <td class="tright">{{formatCurrency likely_adjusted "-99"}}</td>
+    {{/if}}
+
+    {{#if show_worksheet_best}}
+        <td class="tright">{{formatCurrency best_case "-99"}}</td>
+        <td class="tright">{{formatCurrency best_adjusted "-99"}}</td>
+    {{/if}}
+
+    {{#if show_worksheet_worst}}
+        <td class="tright">{{formatCurrency worst_case "-99"}}</td>
+        <td class="tright">{{formatCurrency worst_adjusted "-99"}}</td>
+    {{/if}}
+    <td>&nbsp;</td>
+</tr>

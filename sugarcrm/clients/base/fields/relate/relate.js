@@ -8,15 +8,15 @@
      */
     initialize: function(options) {
         _.bindAll(this);
-        this.app.view.Field.prototype.initialize.call(this, options);
-        this.optionsTemplateC = this.app.template.getField(this.type, "options");
+        app.view.Field.prototype.initialize.call(this, options);
+        this.optionsTemplateC = app.template.getField(this.type, "options");
     },
     /**
      * Renders relate field
      */
     _render: function() {
         var self = this;
-        var result = this.app.view.Field.prototype._render.call(this);
+        var result = app.view.Field.prototype._render.call(this);
         this.$(".relateEdit").chosen({
             no_results_text: "Searching for " // TODO Add labels support
         }).change(function(event) {

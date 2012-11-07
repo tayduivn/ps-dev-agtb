@@ -49,10 +49,7 @@ class ParserModifyPortalConfig extends ModuleBuilderParser
         $portalConfig = array(
             'platform' => 'portal',
             'debugSugarApi' => true,
-            'logLevel' => array(
-                'name' => 'DEBUG',
-                'value' => 2
-            ),
+            'logLevel' => 'DEBUG',
             'logWriter' => 'ConsoleWriter',
             'logFormatter' => 'SimpleFormatter',
             'metadataTypes' => array(),
@@ -95,9 +92,14 @@ class ParserModifyPortalConfig extends ModuleBuilderParser
             $portalConfig['appStatus'] = 'offline';
             $portalConfig['on'] = 0;
         }
-
+        //TODO: Remove after we resolve issues with test associated to this
+        $GLOBALS['log']->fatal("Updating portal config");
         foreach ($portalConfig as $fieldKey => $fieldValue) {
-            $GLOBALS ['system_config']->saveSetting('portal', $fieldKey, json_encode($fieldValue));
+
+            if(!$GLOBALS ['system_config']->saveSetting('portal', $fieldKey, json_encode($fieldValue))){
+                $GLOBALS['log']->fatal("Error saving portal config var $fieldKey, orig: $fieldValue , json:".json_encode($fieldValue));
+            }
+
         }
 
         // Clear the Contacts file b/c portal flag affects rendering
@@ -142,6 +144,21 @@ class ParserModifyPortalConfig extends ModuleBuilderParser
             $user->portal_only = '1';
             $user->save();
             $id = $user->id;
+            
+            // Make the oauthkey record for this portal user now if it doesn't exists
+            $clientSeed = BeanFactory::newBean('OAuthKeys');
+            $clientBean = $clientSeed->fetchKey('support_portal', 'oauth2');
+            
+            if (!$clientBean) {
+                $newKey = BeanFactory::newBean('OAuthKeys');
+                $newKey->oauth_type = 'oauth2';
+                $newKey->c_secret = '';
+                $newKey->client_type = 'support_portal';
+                $newKey->c_key = 'support_portal';
+                $newKey->name = 'OAuth Support Portal Key';
+                $newKey->description = 'This OAuth key is automatically created by the OAuth2.0 system to enable logins to the serf-service portal system in Sugar.';
+                $newKey->save();
+            }
 
             // set user id in system settings
             $GLOBALS ['system_config']->saveSetting('supportPortal', 'RegCreatedBy', $id);

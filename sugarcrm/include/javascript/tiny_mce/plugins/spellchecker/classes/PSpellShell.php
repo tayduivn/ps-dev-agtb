@@ -113,5 +113,3 @@ class PSpellShell extends SpellChecker {
 		return "cat $file | $bin -a --lang=$lang --encoding=utf-8 -H";
 	}
 }
-
-?>

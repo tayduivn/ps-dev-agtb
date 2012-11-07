@@ -19,19 +19,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *to the License for the specific language governing these rights and limitations under the License.
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
-/*********************************************************************************
- * $Id: User.php 56851 2010-06-07 22:17:02Z jenny $
- * Description: TODO:  To be written.
- * Portions created by SugarCRM are Copyright (C) SugarCRM, Inc.
- * All Rights Reserved.
- * Contributor(s): ______________________________________..
- ********************************************************************************/
-
 require_once('include/SugarObjects/templates/person/Person.php');
-
-//BEGIN SUGARCRM flav=dce ONLY
-
-//END SUGARCRM flav=dce ONLY
 
 // User is used to store customer information.
 class User extends Person {
@@ -101,26 +89,15 @@ class User extends Person {
 
 	// This is used to retrieve related fields from form posts.
 	var $additional_column_fields = array ('reports_to_name'
-//BEGIN SUGARCRM flav=dce ONLY
-,'instance_id'
-//END SUGARCRM flav=dce ONLY
 	);
 
 	var $emailAddress;
 
 
 	var $new_schema = true;
-//BEGIN SUGARCRM flav=dce ONLY
-    var $relationship_fields = Array('instance_id'=>'dceinstances');
-	var $dceinstance_role;
-    var $dceinstance_rel_id;
-    var $instance_id;
-    var $dceinstance_role_id;
-    var $rel_dceinstance_table = "dceinstances_users";
-//END SUGARCRM flav=dce ONLY
 
-	function User() {
-		parent::Person();
+	public function __construct() {
+		parent::__construct();
 		//BEGIN SUGARCRM flav=pro ONLY
 		$this->disable_row_level_security = true;
 		//END SUGARCRM flav=pro ONLY
@@ -543,10 +520,8 @@ class User extends Person {
 		}
 
 
-		//BEGIN SUGARCRM flav=sales ONLY
 		// set some default preferences when creating a new user
-		$setNewUserPreferences = empty($this->id);
-		//END SUGARCRM flav=sales ONLY
+		$setNewUserPreferences = empty($this->id) || !empty($this->new_with_id);
 
 		//BEGIN SUGARCRM flav=pro ONLY
 
@@ -593,14 +568,17 @@ class User extends Person {
 		}
 		//END SUGARCRM flav=pro ONLY
 
-		//BEGIN SUGARCRM flav=sales ONLY
 		// set some default preferences when creating a new user
 		if ( $setNewUserPreferences ) {
+		//BEGIN SUGARCRM flav=sales ONLY
 		    // set default reminder time to 30 minutes
 		    $this->setPreference('reminder_time', 1800);
 		    $this->setPreference('mailmerge_on', 'on');
-		}
 		//END SUGARCRM flav=sales ONLY
+	        if(!$this->getPreference('calendar_publish_key')) {
+		        $this->setPreference('calendar_publish_key', create_guid());
+	        }
+		}
 
         $this->savePreferencesToDB();
         return $this->id;
@@ -1770,6 +1748,10 @@ EOQ;
      * @return bool
      */
     public function isDeveloperForAnyModule() {
+        if(empty($this->id)) {
+            // empty user is no developer
+            return false;
+        }
         if ($this->isAdmin()) {
             return true;
         }
@@ -1799,6 +1781,10 @@ EOQ;
      * @return bool
      */
     public function isDeveloperForModule($module) {
+        if(empty($this->id)) {
+            // empty user is no developer
+            return false;
+        }
         if ($this->isAdmin()) {
             return true;
         }
@@ -1831,6 +1817,10 @@ EOQ;
      * @return bool
      */
     public function isAdminForModule($module) {
+        if(empty($this->id)) {
+            // empty user is no admin
+            return false;
+        }
         if ($this->isAdmin()) {
             return true;
         }
@@ -1859,55 +1849,6 @@ EOQ;
         	return true;
         }
 	}
-
-	//BEGIN SUGARCRM flav!=com ONLY
-	function preprocess_fields_on_save(){
-		parent::preprocess_fields_on_save();
-        require_once('include/upload_file.php');
-		$upload_file = new UploadFile("picture");
-
-		//remove file
-		if (isset($_REQUEST['remove_imagefile_picture']) && $_REQUEST['remove_imagefile_picture'] == 1)
-		{
-			$upload_file->unlink_file($this->picture);
-			$this->picture="";
-		}
-
-		//uploadfile
-		if (isset($_FILES['picture']) && !empty($_FILES['picture']["name"]))
-		{
-			//confirm only image file type can be uploaded
-			$imgType = array('image/gif', 'image/png', 'image/bmp', 'image/jpeg', 'image/jpg', 'image/pjpeg');
-			if (in_array($_FILES['picture']["type"], $imgType))
-			{
-				if ($upload_file->confirm_upload())
-				{
-					$this->picture = create_guid().".png";
-					$upload_file->final_move( $this->picture);
-					$path=$upload_file->get_upload_path($this->picture);
-					if(!verify_image_file($path)) {
-					    $this->picture = '';
-					}
-				}
-			} else {
-				$this->picture = create_guid().".png";
-				$file = "include/images/default-profile.png";
-				$newfile = "upload://$this->picture";
-				if (!copy($file, $newfile)) {
-		   			global $app_strings;
-		        	$GLOBALS['log']->fatal(string_format($app_strings['ERR_FILE_NOT_FOUND'], array($file)));
-
-				}
-			}
-		}
-
-		//duplicate field handling (in the event the Duplicate button was pressed)
-		if(empty($this->picture) && !empty($_REQUEST['picture_duplicate'])) {
-           $this->picture = $_REQUEST['picture_duplicate'];
-		}
-	}
-	//END SUGARCRM flav!=com ONLY
-
 
    function create_new_list_query($order_by, $where,$filter=array(),$params=array(), $show_deleted = 0,$join_type='', $return_array = false,$parentbean=null, $singleSelect = false)
    {	//call parent method, specifying for array to be returned
@@ -2240,4 +2181,94 @@ EOQ;
             return $result == true;
         }
     }
+
+    /**
+     * @static
+     * This function to determine if a given user id is a manager.  A manager is defined as someone who has direct reports
+     *
+     * @param String user_id The id of the user to check
+     * @param boolean include_deleted Boolean value indicating whether or not to include deleted records (defaults to FALSE)
+     * @return boolean TRUE if user id is a manager; FALSE otherwise
+     */
+    public static function isManager($user_id, $include_deleted=false)
+    {
+        $query = 'SELECT count(id) as total FROM users WHERE reports_to_id = ' .  $GLOBALS['db']->quoted(clean_string($user_id));
+        if(!$include_deleted)
+        {
+            $query .= " AND deleted=0";
+        }
+        $count = $GLOBALS['db']->getOne($query);
+        return $count > 0;
+    }
+
+
+    /**
+     * @static
+     * This function is used to determine if a given user id is a top level manager.  A top level manager is defined as someone
+     * who has direct reports, but does not have to report to anyone (reports_to_id is null).
+     *
+     * This is functionally equivalent to User::isManager($user->id) && empty($user->reports_to_id)
+     *
+     * @param String user_id The id of the user to check
+     * @param boolean include_deleted Boolean value indicating whether or not to include deleted records of reportees (defaults to FALSE)
+     * @return boolean TRUE if user id is a top level manager; FALSE otherwise
+     */
+    public static function isTopLevelManager($user_id, $include_deleted=false)
+    {
+        if(User::isManager($user_id, $include_deleted))
+        {
+            $query = 'SELECT reports_to_id FROM users WHERE id = ' . $GLOBALS['db']->quoted(clean_string($user_id));
+            $reports_to_id = $GLOBALS['db']->getOne($query);
+            return $reports_to_id !== false;
+        }
+        return false;
+    }
+
+    //BEGIN SUGARCRM flav=int ONLY
+    /**
+     * This is a convenience function to get all the user ids that report to the invoking user instance
+     *
+     * @param $returnSelf boolean value indicating whether or not to also return the invoking user's id in result (true by default)
+     * @param $fromCache boolean value indicating whether or not to use the available cached values (true by default)
+     *
+     */
+    /*
+    function get_reports_to_hierarchy($returnSelf=true, $fromCache=true)
+    {
+
+        if(empty($this->id))
+        {
+           return array();
+        }
+
+        $sql = $this->db->getRecursiveSelectSQL('users', 'id', 'reports_to_id', 'id, user_name', false, "id = '{$this->id}' AND status = 'Active' AND deleted = 0");
+
+        if($fromCache)
+        {
+           $cached_ids = get_register_value('reports_to_hierarchy', $this->id);
+           if(!empty($cached_ids))
+           {
+               return $cached_ids;
+           }
+        }
+
+        $result = $this->db->query($sql);
+        $ids = array();
+        while($row = $this->db->fetchByAssoc($result))
+        {
+            $ids[$row['id']] = $row['id'];
+        }
+
+        //Check whether or not to return own id
+        if(!$returnSelf && isset($ids[$this->id]))
+        {
+            unset($ids[$this->id]);
+        }
+
+        //Cache the results for this reports to hierarchy sql statement
+        set_register_value('reports_to_hierarchy', $this->id, $ids);
+        return $ids;
+    }
+    */
+    //END SUGARCRM flav=int ONLY
 }

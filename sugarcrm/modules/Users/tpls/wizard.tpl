@@ -197,7 +197,6 @@ function disableReturnSubmission(e) {
                         <td ><slot><select tabindex='14' name='timeformat'>{$TIMEOPTIONS}</select></slot></td>
 
                     </tr>
-                    <!--//BEGIN SUGARCRM flav!=dce ONLY -->
                     <tr>
                         <td colspan="4"><hr /></td>
                     </tr>
@@ -236,7 +235,6 @@ function disableReturnSubmission(e) {
                                     type='text' maxlength='1' size='1' value='{$NUM_GRP_SEP}'
                                     onkeydown='setSigDigits();' onkeyup='setSigDigits();'></td>
                     </tr>
-                    <!--//END SUGARCRM flav!=dce ONLY -->
                     <tr>
                         <td colspan="4"><hr /></td>
                     </tr>
@@ -436,7 +434,14 @@ var SugarWizard = new function()
                 {/if}
                 {literal}
                 break;
+            case 'locale':
+                if (document.getElementById("default_number_grouping_seperator").value == document.getElementById("default_decimal_seperator").value) {
+	            	alert(SUGAR.language.get('app_strings','ERR_DECIMAL_SEP_EQ_THOUSANDS_SEP'));
+		            isError = true
+                }
+                break
             }
+
             if (isError == true)
                 return false;
         }

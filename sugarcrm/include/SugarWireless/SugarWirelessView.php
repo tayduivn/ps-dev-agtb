@@ -20,13 +20,6 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *to the License for the specific language governing these rights and limitations under the License.
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
-/*********************************************************************************
- * $Id$
- * Portions created by SugarCRM are Copyright (C) SugarCRM, Inc.
- * All Rights Reserved.
- * Contributor(s): ______________________________________..
- ********************************************************************************/
-
 /**
  *
  * SugarWirelessView extends SugarView and is the base class for wireless views.
@@ -100,13 +93,16 @@ class SugarWirelessView extends SugarView
         $filename =  $metadataPath . 'mobile/views/' . $filepath . '/' . $filepath . '.php';
 
         // Last ditch effort here, using the old old system
-        if (!file_exists($filename)) {
+        if (!SugarAutoLoader::fileExists($filename)) {
             // Revert metadata path back to original base metadata style
             $metadataPath = str_replace('/clients/', '/metadata/', $metadataPath);
             
             // Special case wireless search
             if (preg_match('#wireless_(.+)_search#', $view)) {
                 $filename = $metadataPath . 'search.php';
+                if (!file_exists($filename)) {
+                    $filename = $metadataPath . 'searchdefs.php';
+                }
             } else {
                 $wireless = strpos($view, 'wireless') !== false;
                 $viewType = str_replace('wireless', '', $view);
@@ -257,7 +253,8 @@ class SugarWirelessView extends SugarView
         return $ret;
     }
 
-    public function getSubpanelDefs($layout_def_key = "", $original_only = false) {
+    public function getSubpanelDefs($layout_def_key = "", $original_only = false)
+    {
         $layout_defs  = array(
             $this->module => array ( ),
             $layout_def_key  =>  array ( )
@@ -266,14 +263,15 @@ class SugarWirelessView extends SugarView
 		if (empty ( $this->subpanel_layout_defs ) || (! empty ( $layout_def_key ) && empty ( $layout_defs [ $layout_def_key ] )))
 		{
 			require_once("include/SubPanel/SubPanelDefinitions.php");
-            if (!$original_only && file_exists('custom/modules/'.$this->module.'/metadata/wireless.subpaneldefs.php')){
-                require_once('custom/modules/'.$this->module.'/metadata/wireless.subpaneldefs.php');
-            }
-            else if (file_exists('modules/'.$this->module.'/metadata/wireless.subpaneldefs.php')){
-                require_once('modules/'.$this->module.'/metadata/wireless.subpaneldefs.php');
-            }
-            if (! $original_only && file_exists ( 'custom/modules/' . $this->module . '/Ext/WirelessLayoutdefs/wireless.subpaneldefs.ext.php' ))
-				require ('custom/modules/' . $this->module . '/Ext/WirelessLayoutdefs/wireless.subpaneldefs.ext.php') ;
+			$dirs = array('modules/'.$this->module.'/metadata/wireless.subpaneldefs.php');
+			if(!$original_only) {
+			    $dirs[] = 'custom/modules/'.$this->module.'/metadata/wireless.subpaneldefs.php';
+			    $dirs[] = SugarAutoLoader::loadExtension("wireless_subpanels", $this->module);
+			}
+
+			foreach(SugarAutoLoader::existing($dirs) as $file) {
+			    require $file;
+			}
 
 			if (! empty ( $layout_def_key ))
 				$this->subpanel_layout_defs = $layout_defs [ $layout_def_key ] ;
@@ -552,8 +550,7 @@ class SugarWirelessView extends SugarView
 	       	 	}
 
 	       	 	if(!$valueFormatted) {
-	       	 	   $this->bean->format_field($this->bean->field_defs[$name]);
-                   $value = isset($this->bean->$name) ? $this->bean->$name : '';
+	       	 	   $value = isset($this->bean->$name) ? $this->bean->$name : '';
 	       	 	}
 
 	            $field_defs[$name]['value'] = $value;

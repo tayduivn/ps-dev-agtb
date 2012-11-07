@@ -89,7 +89,7 @@ array (
       'javascript' => '{sugar_getscript file="cache/include/javascript/sugar_grp_jsolait.js"}
 <script type="text/javascript">{$JSON_CONFIG_JAVASCRIPT}</script>
 <script>toggle_portal_flag();function toggle_portal_flag()  {ldelim} {$TOGGLE_JS} {rdelim}
-function formSubmitCheck(){ldelim}var duration=true;if(typeof(isValidDuration)!="undefined"){ldelim}duration=isValidDuration();{rdelim}if(check_form(\'EditView\') && isValidDuration() && CAL.checkRecurrenceForm()){ldelim}SUGAR.ajaxUI.submitForm("EditView");{rdelim}{rdelim}</script>',
+function formSubmitCheck(){ldelim}var duration=true;if(typeof(isValidDuration)!="undefined"){ldelim}duration=isValidDuration();{rdelim}if(check_form(\'EditView\') && duration && CAL.checkRecurrenceForm()){ldelim}SUGAR.ajaxUI.submitForm("EditView");{rdelim}{rdelim}</script>',
 
        'useTabs' => false,
     ),
@@ -133,8 +133,14 @@ function formSubmitCheck(){ldelim}var duration=true;if(typeof(isValidDuration)!=
             'name' => 'duration_hours',
             'label' => 'LBL_DURATION',
             'customCode' => '{literal}<script type="text/javascript">function isValidDuration() { form = document.getElementById(\'EditView\'); if ( form.duration_hours.value + form.duration_minutes.value <= 0 ) { alert(\'{/literal}{$MOD.NOTICE_DURATION_TIME}{literal}\'); return false; } return true; }</script>{/literal}<input id="duration_hours" name="duration_hours" size="2" maxlength="2" type="text" value="{$fields.duration_hours.value}" onkeyup="SugarWidgetScheduler.update_time();"/>{$fields.duration_minutes.value}&nbsp;<span class="dateFormat">{$MOD.LBL_HOURS_MINUTES}</span>',
-
           ),
+          array (
+            'name' => 'add_parent_invitee',
+    		'comment' => 'Link to add invitees',
+    		'customCode' => '<a id="add_parent_invitee" style="color:#0B578F; text-decoration:underline; cursor:pointer" onclick="SugarWidgetSchedulerAttendees.formAddParent();">{$MOD.LBL_ADD_PARENT_INVITEE}</a>',
+          ),
+        ),
+        array (
           array(
             'name' => 'reminder_time',
             'customCode' => '{include file="modules/Meetings/tpls/reminders.tpl"}',

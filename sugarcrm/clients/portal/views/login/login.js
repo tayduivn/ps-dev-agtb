@@ -42,19 +42,23 @@
     },
     login: function() {
         var self = this;
+        // hack - for some unknown reason, app is undefined in success/error hooks below. This rectifies that.
+        self.__app = app;
+
         if (this.model.isValid()) {
             $('#content').hide();
             app.alert.show('login', {level:'process', title:'LBL_PORTAL_LOADING', autoClose:false});
             var args = {password: this.model.get("password"), username: this.model.get("username")};
 
-            this.app.login(args, null, {
+            app.login(args, null, {
                 error: function() {
+                    var app = self.__app;
                     app.alert.dismiss('login');
                     $('#content').show();
                 },
                 success: function() {
                     $(".navbar").show();
-                    var app = self.app;
+                    var app = self.__app;
                     app.events.on('app:sync:complete', function() {
                         app.alert.dismiss('login');
                         $('#content').show();
@@ -80,7 +84,7 @@
      */
     _isSupportedBrowser:function () {
         var supportedBrowsers = {
-            msie:{min:9, max:10},
+            msie:{min:9},
             safari:{min:500},
             mozilla:{min:13},
             chrome:{min:500}

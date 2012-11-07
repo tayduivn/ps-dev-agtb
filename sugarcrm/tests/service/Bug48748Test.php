@@ -1,4 +1,5 @@
 <?php
+//FILE SUGARCRM flav=pro ONLY
 /*********************************************************************************
  * The contents of this file are subject to the SugarCRM Professional End User
  * License Agreement ("License") which can be viewed at
@@ -21,6 +22,7 @@
  * Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.;
  * All Rights Reserved.
  ********************************************************************************/
+//FILE SUGARCRM flav=pro ONLY
 
 require_once('tests/service/RestTestCase.php');
 
@@ -63,6 +65,7 @@ $string = <<<EOQ
 EOQ;
             fputs( $fh, $string);
             fclose( $fh );
+            SugarAutoLoader::addToMap('custom/modules/' . $this->package . '/Ext/WirelessLayoutdefs/wireless.subpaneldefs.ext.php', true);
         }
 
 
@@ -90,6 +93,7 @@ EOQ;
             rmdir_recursive('custom/modules/' . $this->package . '_bak');
         } else {
             rmdir_recursive('custom/modules/' . $this->package);
+            SugarAutoLoader::delFromMap('custom/modules/' . $this->package, true);
         }
 
         unset($_SESSION['avail_modules'][$this->package]);

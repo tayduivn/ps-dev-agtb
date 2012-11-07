@@ -99,8 +99,8 @@ class EmailTemplate extends SugarBean {
 		'accept_status_name',
 	);
 
-	function EmailTemplate() {
-		parent::SugarBean();
+	public function __construct() {
+		parent::__construct();
 		//BEGIN SUGARCRM flav=pro ONLY
 		global $current_user;
 		if(!empty($current_user)) {
@@ -166,8 +166,10 @@ class EmailTemplate extends SugarBean {
 						(in_array($field_def['name'], $this->badFields)) ) {
 				        continue;
 				    }
+                    
+                    // Set a label if it doesn't exist
 				    if(!isset($field_def['vname'])) {
-				    	//echo $key;
+				    	$field_def['vname'] = empty($field_def['name']) ? $key : $field_def['name'];
 				    }
 				    // valid def found, process
 				    $optionKey = strtolower("{$prefixes[$collectionKey]}{$key}");

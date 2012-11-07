@@ -35,7 +35,7 @@ require_once('modules/ModuleBuilder/views/view.listview.php');
 
 class ViewPortalListView extends ViewListView 
 {
-    function __construct()
+    public function __construct()
     {
         $this->editModule = $_REQUEST['view_module'];
         $this->editLayout = $_REQUEST['view'];
@@ -89,7 +89,7 @@ class ViewPortalListView extends ViewListView
 
 		$ajax->addCrumb(translate('LBL_SUGARPORTAL', 'ModuleBuilder'), 'ModuleBuilder.main("sugarportal")');
         $ajax->addCrumb(translate('LBL_LAYOUTS', 'ModuleBuilder'), 'ModuleBuilder.getContent("module=ModuleBuilder&action=wizard&portal=1&layout=1")');
-  		$ajax->addCrumb(ucwords($this->editModule), 'ModuleBuilder.getContent("module=ModuleBuilder&action=wizard&portal=1&editModule='.$this->editModule.'")');
+  		$ajax->addCrumb(ucwords(translate('LBL_MODULE_NAME',$this->editModule)), 'ModuleBuilder.getContent("module=ModuleBuilder&action=wizard&portal=1&view_module='.$this->editModule.'")');
 		$ajax->addCrumb(ucwords($this->editLayout), '');
 
         return $ajax;

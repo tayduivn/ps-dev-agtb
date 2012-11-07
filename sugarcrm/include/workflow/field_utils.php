@@ -129,7 +129,7 @@ include_once('include/workflow/expression_utils.php');
 
 				//Set the value select
 				$sorted_fields = array();
-				if(!empty($target_field_array['function'])){ 
+				if(!empty($target_field_array['function'])){
 					$function = $target_field_array['function'];
 					if(is_array($function) && isset($function['name'])){
 	       				$function = $target_field_array['function']['name'];
@@ -140,9 +140,9 @@ include_once('include/workflow/expression_utils.php');
 						if(!empty($target_field_array['function']['include'])){
 								require_once($target_field_array['function']['include']);
 						}
-					}	
-					$sorted_fields = $function();					
-				}else{	
+					}
+					$sorted_fields = $function();
+				}else{
 					$sorted_fields = $app_list_strings[$target_field_array['options']];
 				}
 				if (isset($sorted_fields)) {
@@ -221,7 +221,7 @@ include_once('include/workflow/expression_utils.php');
             $field_type =="encrypt" ||
 			$field_type =="name" ||
 			$field_type =="phone" ||
-			$field_type =="email" || 
+			$field_type =="email" ||
 			$field_type =="url"
 			){
 				$output_array['real_type'] = $field_type;
@@ -347,7 +347,7 @@ include_once('include/workflow/expression_utils.php');
 
 				//Set the value select
 				$user_array = get_user_array(TRUE, "Active", "", true, null, ' AND is_group=0 ');
-				
+
 				//$column_select = get_select_options_with_id($app_list_strings[$target_field_array['options']], $selected_value);
 				$column_select = get_select_options_with_id($user_array, $selected_value);
 				$value_select =  "<select id='".$meta_array['parent_type']."__field_value' name='".$meta_array['parent_type']."_field_value' tabindex='2'>".$column_select."</select>";
@@ -853,11 +853,8 @@ function check_special_fields($field_name, $source_object, $use_past_array=false
 }
 
 function execute_special_logic($field_name, &$source_object){
-	if(file_exists('modules/'.$source_object->module_dir.'/SaveOverload.php'))
+	if(SugarAutoLoader::requireWithCustom('modules/'.$source_object->module_dir.'/SaveOverload.php'))
 	{
-		require_once('modules/'.$source_object->module_dir.'/SaveOverload.php');
 		perform_save($source_object);
 	}
 }
-
-?>

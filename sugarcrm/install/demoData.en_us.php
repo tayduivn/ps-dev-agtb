@@ -21594,7 +21594,7 @@ $sugar_demodata['kbdocument_seed_data_kbtags'] = array(
 $sugar_demodata['kbdocument_seed_data'][] = array(
     'name' => 'Connecting to the Internet',
     'start_date' => '2010-01-01',
-    'exp_date' => '2010-12-31',
+    'exp_date' => '2015-12-31',
     'body' => '<p>To connect your device to the Internet, use any application that accesses the Internet. You can connect using either Wi-Fi or Bluetooth.</p>',
     'tags' => array(
         'WiFi, Bluetooth, and Networking',
@@ -21604,7 +21604,7 @@ $sugar_demodata['kbdocument_seed_data'][] = array(
 $sugar_demodata['kbdocument_seed_data'][] = array(
     'name' => 'Charging the battery',
     'start_date' => '2010-01-01',
-    'exp_date' => '2010-12-31',
+    'exp_date' => '2015-12-31',
     'body' => '<p>To charge the battery, try the following:</p>
    <ul><li>Connect device to a power outlet using the included cable and the USB power adapter.</li>
     <li>Connect to a high-power USB 2.0 port using the included cable.</li></ul>',
@@ -21617,7 +21617,7 @@ $sugar_demodata['kbdocument_seed_data'][] = array(
 $sugar_demodata['kbdocument_seed_data'][] = array(
     'name' => 'How to print',
     'start_date' => '2010-01-01',
-    'exp_date' => '2010-12-31',
+    'exp_date' => '2015-12-31',
     'body' => '<p>In order to print, you first need to send your file to your computer. Access and print the file from your computer.</p>',
     'tags' => array(
         'Basic Usage',
@@ -21628,7 +21628,7 @@ $sugar_demodata['kbdocument_seed_data'][] = array(
 $sugar_demodata['kbdocument_seed_data'][] = array(
     'name' => 'How to change the language',
     'start_date' => '2010-01-01',
-    'exp_date' => '2010-12-31',
+    'exp_date' => '2015-12-31',
     'body' => '<p>If your device is not set to your preferred language, please make sure you have completed the setup. In the Settings screen, select Languages. Select the language you prefer.</p>',
     'tags' => array(
         'Basic Usage',
@@ -21774,5 +21774,30 @@ $sugar_demodata['quotes_seed_data']['quotes'][1] = array(
 );
 //END Quotes demo data
 
+//BEGIN Opportunities demo data
+$sugar_demodata['opportunities_seed_data']['opportunities'][1] = array(
 
+    'bundle_data' => array(
+		0 => array (
+		    'bundle_name' => 'Mirrors',
+		    'bundle_stage' => 'Draft',
+		    'comment' => 'Reflective Mirrors',
+		    'products' => array (
+				1 => array('name'=>'Reflective Mirror Widget', 'quantity'=>'2'),
+			),
+		),
+
+
+        0 => array (
+      		    'bundle_name' => 'Mirrors',
+      		    'bundle_stage' => 'Draft',
+      		    'comment' => 'Reflective Mirrors',
+      		    'products' => array (
+      				1 => array('name'=>'Reflective Mirror Widget', 'quantity'=>'2'),
+      			),
+      	),
+
+	),
+);
+//END Opportunities demo data
 ?>

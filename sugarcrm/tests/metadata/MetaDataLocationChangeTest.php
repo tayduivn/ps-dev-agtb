@@ -95,8 +95,9 @@ class MetaDataLocationChangeTest extends Sugar_PHPUnit_Framework_TestCase
     //BEGIN SUGARCRM flav=ent ONLY
     public function testPortalModulesAreCorrect()
     {
-        $mm = new MetaDataManager($GLOBALS['current_user'], array('portal'));
-        $data = $mm->getModuleList('portal');
+        require_once 'clients/portal/api/MetadataPortalApi.php';
+        $api = new MetadataPortalApi();
+        $data = $api->getModuleList();
         foreach ($this->_expectedPortalModules as $module) {
             $this->assertNotEmpty($data[$module], "$module module not found in module list");
         }

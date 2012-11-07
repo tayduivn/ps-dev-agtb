@@ -78,6 +78,7 @@ $mod_strings = array (
 	'LNK_CASE_LIST'						=> 'View Cases',
     'LNK_NEW_CASE'						=> 'Create Case',
     'LNK_CREATE'                        => 'Create Case',
+    'LNK_CREATE_WHEN_EMPTY'             => 'Create a Case now.',
 	'NTC_REMOVE_FROM_BUG_CONFIRMATION'	=> 'Are you sure you want to remove this case from the bug?',
 	'NTC_REMOVE_INVITEE'				=> 'Are you sure you want to remove this contact from the case?',
 	'LBL_LIST_DATE_CREATED'			=> 'Date Created',
@@ -93,9 +94,6 @@ $mod_strings = array (
 
     'LBL_CREATED_USER' => 'Created User',
     'LBL_MODIFIED_USER' => 'Modified User',
-    //BEGIN SUGARCRM flav=dce ONLY
-    'LBL_DCEINSTANCES_SUBPANEL_TITLE'=>'Instances',
-    //END SUGARCRM flav=dce ONLY
     'LBL_PROJECT_SUBPANEL_TITLE' => 'Projects',
     'LBL_CASE_INFORMATION' => 'Overview',
 

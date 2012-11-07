@@ -87,6 +87,7 @@ class SugarWebServiceUtilv3_1 extends SugarWebServiceUtilv3
         return $enabled_modules;
     }
 
+//BEGIN SUGARCRM flav=pro ONLY
     /**
      * Examine the wireless_module_registry to determine which modules have been enabled for the mobile view.
      *
@@ -95,13 +96,12 @@ class SugarWebServiceUtilv3_1 extends SugarWebServiceUtilv3
      */
     function get_visible_mobile_modules($availModules)
     {
-        foreach ( array ( '','custom/') as $prefix)
-        {
-        	if(file_exists($prefix.'include/MVC/Controller/wireless_module_registry.php'))
-        		require $prefix.'include/MVC/Controller/wireless_module_registry.php' ;
+        foreach(SugarAutoLoader::existingCustom('include/MVC/Controller/wireless_module_registry.php') as $file) {
+            require $file;
         }
         return $this->getModulesFromList($wireless_module_registry, $availModules);
     }
+//END SUGARCRM flav=pro ONLY
 
     /**
      * Examine the application to determine which modules have been enabled..
@@ -141,16 +141,10 @@ class SugarWebServiceUtilv3_1 extends SugarWebServiceUtilv3
         $manager->loadVardef( $moduleName , $beanName ) ;
 
         // obtain the field definitions used by generateSearchWhere (duplicate code in view.list.php)
-        if(file_exists('custom/modules/'.$moduleName.'/metadata/metafiles.php')){
-            require('custom/modules/'.$moduleName.'/metadata/metafiles.php');
-        }elseif(file_exists('modules/'.$moduleName.'/metadata/metafiles.php')){
-            require('modules/'.$moduleName.'/metadata/metafiles.php');
+        $defs = SugarAutoLoader::loadWithMetafiles($moduleName, 'SearchFields', 'searchfields');
+        if($defs) {
+            require $defs;
         }
-
-        if(!empty($metafiles[$moduleName]['searchfields']))
-            require $metafiles[$moduleName]['searchfields'] ;
-        elseif(file_exists("modules/{$moduleName}/metadata/SearchFields.php"))
-            require "modules/{$moduleName}/metadata/SearchFields.php" ;
 
         $fields = array();
         foreach ( $dictionary [ $beanName ][ 'fields' ] as $field => $def )
@@ -353,56 +347,6 @@ class SugarWebServiceUtilv3_1 extends SugarWebServiceUtilv3
 	    return $contents;
 	}
 
-	function get_module_view_defs($module_name, $type, $view){
-        require_once('include/MVC/View/SugarView.php');
-        $metadataFile = null;
-        $results = array();
-        $view = strtolower($view);
-        switch (strtolower($type)){
-            case 'wireless':
-                if( $view == 'list'){
-                    require_once('include/SugarWireless/SugarWirelessListView.php');
-                    $GLOBALS['module'] = $module_name; //WirelessView keys off global variable not instance variable...
-                    $v = new SugarWirelessListView();
-                    $results = $v->getMetaDataFile();
-                }
-                elseif ($view == 'subpanel')
-                    $results = $this->get_subpanel_defs($module_name, $type);
-                else{
-                    require_once('include/SugarWireless/SugarWirelessView.php');
-                    $v = new SugarWirelessView();
-                    $v->module = $module_name;
-                    $fullView = ucfirst($view) . 'View';
-                    $meta = $v->getMetaDataFile('Wireless' . $fullView);
-                    $metadataFile = $meta['filename'];
-                    require($metadataFile);
-                    //Wireless detail metadata may actually be just edit metadata.
-                    $results = isset($viewdefs[$meta['module_name']][$fullView] ) ? $viewdefs[$meta['module_name']][$fullView] : $viewdefs[$meta['module_name']]['EditView'];
-                }
-
-                break;
-            case 'default':
-            default:
-                if ($view == 'subpanel')
-                    $results = $this->get_subpanel_defs($module_name, $type);
-                else
-                {
-                    $v = new SugarView(null,array());
-                    $v->module = $module_name;
-                    $v->type = $view;
-                    $fullView = ucfirst($view) . 'View';
-                    $metadataFile = $v->getMetaDataFile();
-                    require_once($metadataFile);
-                    if($view == 'list')
-                        $results = $listViewDefs[$module_name];
-                    else
-                        $results = $viewdefs[$module_name][$fullView];
-                }
-        }
-
-        return $results;
-    }
-
     /**
      * Equivalent of get_list function within SugarBean but allows the possibility to pass in an indicator
      * if the list should filter for favorites.  Should eventually update the SugarBean function as well.
@@ -430,7 +374,7 @@ class SugarWebServiceUtilv3_1 extends SugarWebServiceUtilv3
      * Add ACL values to metadata files.
      *
      * @param String $module_name
-     * @param String $view_type (wireless or detail)
+     * @param String $view_type
      * @param String $view  (list, detail,edit, etc)
      * @param array $metadata The metadata for the view type and view.
      * @return unknown
@@ -444,6 +388,7 @@ class SugarWebServiceUtilv3_1 extends SugarWebServiceUtilv3
 	       return $metadata;
 	}
 
+//BEGIN SUGARCRM flav=pro ONLY
 	/**
 	 * Parse wireless listview metadata and add ACL values.
 	 *
@@ -514,6 +459,8 @@ class SugarWebServiceUtilv3_1 extends SugarWebServiceUtilv3
 	    $results['panels'] = $aclRows;
 	    return $results;
 	}
+//END SUGARCRM flav=pro ONLY
+
 	/**
 	 * Return the field level acl raw value.  We cannot use the hasAccess call as we do not have a valid bean
 	 * record at the moment and therefore can not specify the is_owner flag.  We need the raw access value so we

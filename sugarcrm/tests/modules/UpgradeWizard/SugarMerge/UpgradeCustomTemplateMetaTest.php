@@ -23,44 +23,74 @@
  ********************************************************************************/
 require_once 'include/dir_inc.php';
 
-class UpgradeCustomTemplateMetaTest extends Sugar_PHPUnit_Framework_TestCase  {
+class UpgradeCustomTemplateMetaTest extends Sugar_PHPUnit_Framework_TestCase
+{
 
     var $merge;
 
     function setUp()
     {
-       SugarTestMergeUtilities::setupFiles(array('Calls', 'Meetings'), array('editviewdefs'), 'tests/modules/UpgradeWizard/SugarMerge/metadata_files');
+        SugarTestMergeUtilities::setupFiles(array('Calls', 'Meetings', 'Notes'), array('editviewdefs'), 'tests/modules/UpgradeWizard/SugarMerge/metadata_files');
     }
 
 
     function tearDown()
     {
-       SugarTestMergeUtilities::teardownFiles();
+        SugarTestMergeUtilities::teardownFiles();
     }
 
+    /**
+     * @group SugarMerge
+     */
     function testMergeCallsEditviewdefsFor611()
     {
-       require_once 'modules/UpgradeWizard/SugarMerge/EditViewMerge.php';
-       $this->merge = new EditViewMerge();
-       $this->merge->merge('Calls', 'tests/modules/UpgradeWizard/SugarMerge/metadata_files/611/modules/Calls/metadata/editviewdefs.php','modules/Calls/metadata/editviewdefs.php','custom/modules/Calls/metadata/editviewdefs.php');
+        require_once 'modules/UpgradeWizard/SugarMerge/EditViewMerge.php';
+        $this->merge = new EditViewMerge();
+        $this->merge->merge('Calls', 'tests/modules/UpgradeWizard/SugarMerge/metadata_files/611/modules/Calls/metadata/editviewdefs.php', 'modules/Calls/metadata/editviewdefs.php', 'custom/modules/Calls/metadata/editviewdefs.php');
 
-       //Load file
-       require('custom/modules/Calls/metadata/editviewdefs.php');
+        //Load file
+        require('custom/modules/Calls/metadata/editviewdefs.php');
 
         $this->assertNotContains('forms[0]', $viewdefs['Calls']['EditView']['templateMeta']['form']['buttons'][0]['customCode'], "forms[0] did not get replaced");
     }
 
+    /**
+     * @group SugarMerge
+     */
     function testMergeMeetingsEditviewdefsFor611()
     {
-       require_once 'modules/UpgradeWizard/SugarMerge/EditViewMerge.php';
-       $this->merge = new EditViewMerge();
-       $this->merge->merge('Meetings', 'tests/modules/UpgradeWizard/SugarMerge/metadata_files/611/modules/Meetings/metadata/editviewdefs.php','modules/Meetings/metadata/editviewdefs.php','custom/modules/Meetings/metadata/editviewdefs.php');
+        require_once 'modules/UpgradeWizard/SugarMerge/EditViewMerge.php';
+        $this->merge = new EditViewMerge();
+        $this->merge->merge('Meetings', 'tests/modules/UpgradeWizard/SugarMerge/metadata_files/611/modules/Meetings/metadata/editviewdefs.php', 'modules/Meetings/metadata/editviewdefs.php', 'custom/modules/Meetings/metadata/editviewdefs.php');
 
-       //Load file
-       require('custom/modules/Meetings/metadata/editviewdefs.php');
+        //Load file
+        require('custom/modules/Meetings/metadata/editviewdefs.php');
 
         $this->assertNotContains('this.form.', $viewdefs['Meetings']['EditView']['templateMeta']['form']['buttons'][0]['customCode'], "this.form did not get replaced");
     }
 
+
+    /**
+     * Custom button definitions should not be kept during upgrade
+     * @group SugarMerge
+     */
+    function testMergeCustomButtonsAndStudioChanges()
+    {
+        require_once 'modules/UpgradeWizard/SugarMerge/EditViewMerge.php';
+        $this->merge = new EditViewMerge();
+        $this->merge->merge('Notes', 'tests/modules/UpgradeWizard/SugarMerge/metadata_files/610/modules/Notes/metadata/editviewdefs.php', 'modules/Notes/metadata/editviewdefs.php', 'custom/modules/Notes/metadata/editviewdefs.php');
+
+        //Load file
+        require('custom/modules/Notes/metadata/editviewdefs.php');
+
+        //Assert that custom Buttons are not kept
+        $this->assertArrayNotHasKey('buttons', $viewdefs['Notes']['EditView']['templateMeta']['form'], "Buttons array picked up from custom file");
+
+        //Assert that studio possible changes are retained
+        $this->assertArrayHasKey('useTabs', $viewdefs['Notes']['EditView']['templateMeta']);
+        $this->assertArrayHasKey('tabDefs', $viewdefs['Notes']['EditView']['templateMeta']);
+        $this->assertArrayHasKey('syncDetailEditViews', $viewdefs['Notes']['EditView']['templateMeta']);
+
+    }
 
 }

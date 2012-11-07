@@ -87,7 +87,7 @@ class ViewSugarFieldCollection{
             }
             if(isset($GLOBALS['beanList'][$this->module_dir])){
                 $class = $GLOBALS['beanList'][$this->module_dir];
-                if(file_exists($GLOBALS['beanFiles'][$class])){
+                if(SugarAutoLoader::fileExists($GLOBALS['beanFiles'][$class])){
                     $this->bean = loadBean($this->module_dir);
                     $this->bean->retrieve($_REQUEST['bean_id']);
                     if($this->bean->load_relationship($this->vardef['name'])){
@@ -136,7 +136,7 @@ class ViewSugarFieldCollection{
                 }
                 if(isset($GLOBALS['beanList'][ $this->related_module])){
                     $class = $GLOBALS['beanList'][$this->related_module];
-                    if(file_exists($GLOBALS['beanFiles'][$class])){
+                    if(SugarAutoLoader::fileExists($GLOBALS['beanFiles'][$class])){
                         $mod = loadBean($this->module_dir);
                         $mod->relDepth = $this->bean->relDepth + 1;
                         $mod->retrieve($primary_id);
@@ -501,39 +501,33 @@ FRA;
     }
 
 
-
-    function findTemplate($view){
+    function findTemplate($view, $classList = null)
+    {
         static $tplCache = array();
 
         if ( isset($tplCache[$this->type][$view]) ) {
             return $tplCache[$this->type][$view];
         }
 
-        $lastClass = get_class($this);
-        $classList = array($this->type,str_replace('ViewSugarField','',$lastClass));
-        while ( $lastClass = get_parent_class($lastClass) ) {
-            $classList[] = str_replace('ViewSugarField','',$lastClass);
+        if(!is_array($classList)) {
+            $lastClass = get_class($this);
+            $classList = array($this->type,str_replace('ViewSugarField','',$lastClass));
+            while ( $lastClass = get_parent_class($lastClass) ) {
+                $classList[] = str_replace('ViewSugarField','',$lastClass);
+            }
         }
 
         $tplName = '';
         foreach ( $classList as $className ) {
             global $current_language;
             if(isset($current_language)) {
-                $tplName = 'include/SugarFields/Fields/'. $className .'/'. $current_language . '.' . $view .'.tpl';
-                if ( file_exists('custom/'.$tplName) ) {
-                    $tplName = 'custom/'.$tplName;
-                    break;
-                }
-                if ( file_exists($tplName) ) {
+                $tplName = SugarAutoLoader::existingCustomOne('include/SugarFields/Fields/'. $className .'/'. $current_language . '.' . $view .'.tpl');
+                if ( $tplName ) {
                     break;
                 }
             }
-            $tplName = 'include/SugarFields/Fields/'. $className .'/'. $view .'.tpl';
-            if ( file_exists('custom/'.$tplName) ) {
-                $tplName = 'custom/'.$tplName;
-                break;
-            }
-            if ( file_exists($tplName) ) {
+            $tplName = SugarAutoLoader::existingCustomOne('include/SugarFields/Fields/'. $className .'/'. $view .'.tpl');
+            if ($tplName) {
                 break;
             }
         }

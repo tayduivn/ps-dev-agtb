@@ -43,6 +43,7 @@ class Bug53288Test extends Sugar_PHPUnit_Framework_TestCase
 
     public function setUp()
     {
+        $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('beanList');
         SugarTestHelper::setUp('app_list_strings');
@@ -56,6 +57,7 @@ class Bug53288Test extends Sugar_PHPUnit_Framework_TestCase
         SugarTestProspectUtilities::removeAllCreatedProspects();
         SugarTestProspectListsUtilities::removeProspectLists($this->_oProspectList->id);
         $_REQUEST = array();
+        SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
         SugarTestHelper::tearDown();
     }
 

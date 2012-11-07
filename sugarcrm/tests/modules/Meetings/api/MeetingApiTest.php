@@ -34,7 +34,6 @@ class MeetingsApiTest extends RestTestBase
         {
             $meeting = new Meeting();
             $meeting->name = "Test Meeting {$x}";
-            $meeting->save();
             $meeting->date_start = gmdate("Y-m-d H:i:s", strtotime("+{$x} days"));
             $meeting->date_end  = gmdate("Y-m-d H:i:s", strtotime("+{$x} days"));
             $meeting->assigned_user_id = $this->_user->id;
@@ -48,7 +47,9 @@ class MeetingsApiTest extends RestTestBase
 
 
         // set the FTS engine as down and make sure the config removes FTS
-        searchEngineDown();
+        $admin = new Administration();
+        $admin->saveSetting('info', 'fts_down', 1);
+
         $this->config_file_override = '';
         if(file_exists('config_override.php')) {
             $this->config_file_override = file_get_contents('config_override.php');
@@ -65,7 +66,9 @@ class MeetingsApiTest extends RestTestBase
     public function tearDown()
     {
         // restore FTS and config override
-        restoreSearchEngine();
+        $admin = new Administration();
+        $admin->saveSetting('info', 'fts_down', 0);
+
         file_put_contents('config_override.php', $this->config_file_override);
         foreach($this->meetings AS $meeting)
         {

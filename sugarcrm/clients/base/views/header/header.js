@@ -10,7 +10,7 @@
         'click #module_list li a': 'onModuleTabClicked',
         'click #createList li a': 'onCreateClicked',
         'click .typeahead a': 'clearSearch',
-        'click .navbar-search span.add-on': 'gotoFullSearchResultsPage'
+        'click .navbar-search .btn': 'gotoFullSearchResultsPage'
     },
 
     /**
@@ -23,6 +23,7 @@
     _renderHtml: function() {
         var self = this,
             menuTemplate;
+
         if (!app.api.isAuthenticated() || app.config.appStatus == 'offline') return;
 
         self.setModuleInfo();
@@ -32,9 +33,19 @@
 
         // Search ahead drop down menu stuff
         menuTemplate = app.template.getView('dropdown-menu');
+
         this.$('.search-query').searchahead({
             request:  self.fireSearchRequest,
             compiler: menuTemplate,
+            throttleMillis: (app.config.requiredElapsed || 500),
+            throttle: function(callback, millis) {
+               if(!self.debounceFunction) {
+                    self.debounceFunction = _.debounce(function(){
+                        callback();
+                    }, millis || 500);
+                } 
+                self.debounceFunction();
+            },
             onEnterFn: function(hrefOrTerm, isHref) {
                 // if full href treat as user clicking link
                 if(isHref) {
@@ -53,12 +64,13 @@
      */
     fireSearchRequest: function (term) {
         var plugin = this, mlist, params;
+
         mlist = app.metadata.getModuleNames(true).join(','); // visible
         params = {q: term, fields: 'name, id', module_list: mlist, max_num: app.config.maxSearchQueryResult};
 
         app.api.search(params, {
             success:function(data) {
-                data.module_list = app.metadata.getModuleNames(true);
+                data.module_list = app.metadata.getModuleNames(true,"create");
                 plugin.provide(data);
             },
             error:function(error) {
@@ -77,10 +89,15 @@
         // application requirements so I'd rather do here than change plugin.
         evt.preventDefault();
         evt.stopPropagation();
+
         // URI encode search query string so that it can be safely
         // decoded by search handler (bug55572)
         term = encodeURIComponent(this.$('.search-query').val());
+
         if(term && term.length) {
+            // Bug 57853 Shouldn't show the search result pop up window after click the global search button.
+            // This prevents anymore dropdowns (note we re-init if/when _renderHtml gets called again)
+            this.$('.search-query').searchahead('disable', 1000);
             app.router.navigate('#search/'+term, {trigger: true});
         }
     },
@@ -122,18 +139,7 @@
         try {
             singularModules = SUGAR.App.lang.getAppListStrings("moduleListSingular");
             if(singularModules) {
-                _.each(self.module_list, function(loadedModule) {
-
-                    // Continue on Leads, Notes, or KBDocuments, but for all others:
-                    // check access to create and push to list
-                    if(loadedModule === 'Leads' || loadedModule === 'Notes' || loadedModule === 'KBDocuments') {
-                        app.logger.debug("Not a module user can create so not putting in dropdown. Skipping: "+loadedModule);
-                    } else {
-                        if(app.acl.hasAccess('create', loadedModule)) {
-                            self.createListLabels.push(loadedModule);
-                        }
-                    }
-                });
+                self.createListLabels = this.creatableModuleList;
             }
         } catch(e) {
             return;
@@ -143,7 +149,8 @@
         var self = this;
         this.createListLabels = [];
         this.currentModule = this.module;
-        this.module_list = app.metadata.getModuleNames(true);
+        this.module_list = app.metadata.getModuleNames(true, 'list');
+        this.creatableModuleList = app.metadata.getModuleNames(true,"create");
     },
 
     /**

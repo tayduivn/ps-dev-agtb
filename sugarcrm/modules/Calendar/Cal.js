@@ -1609,11 +1609,32 @@
 			if(CAL.view == 'shared'){
 				// Pick the div that contains 2 custom attributes we
 				// use for storing values in case of 'shared' view
-				parentWithUserValues = $('div[user_id][user_name]'); 
+				parentWithUserValues = $('div[user_id][user_name]');
 				// Pull out the values
 				user_name = parentWithUserValues.attr('user_name');
 				user_id = parentWithUserValues.attr('user_id');
-				
+
+				// Shared by multiple users, need to get attributes from user whom is clicked
+				if (parentWithUserValues.length > 1) {
+				    var theUserName, theUserId;
+				    var theUser = cell.parentNode;
+				    while (theUser) {
+				        if (theUser.getAttribute("user_name") && theUser.getAttribute("user_id")) {
+				            theUserName = theUser.getAttribute("user_name");
+				            theUserId = theUser.getAttribute("user_id");
+				            break;
+				        }
+				        else {
+				            theUser = theUser.parentNode;
+				        }
+				    }
+				    // Found user in the parentNode iteration, use it
+				    if (theUserName && theUserId) {
+				        user_name = theUserName;
+				        user_id = theUserId;
+				    }
+				}
+
 				CAL.GR_update_user(user_id);
 			}else{
 				user_id = CAL.current_user_id;
@@ -1660,8 +1681,12 @@
 									if(res.access == 'yes'){
 										
 										if(typeof res.limit_error != "undefined"){
-											var alert_msg = CAL.lbl_repeat_limit_error;
-											alert(alert_msg.replace("\$limit",res.limit));
+											var limitErrorMsg = CAL.lbl_repeat_limit_error;
+											var module = $("#current_module").val()
+											var moduleTitle = SUGAR.language.get('app_list_strings', 'moduleListSingular')[module].toLowerCase();
+											limitErrorMsg = limitErrorMsg.replace("\$limit", res.limit).replace("\$moduleTitle", moduleTitle);
+											alert(limitErrorMsg);
+											
 											CAL.get("title-cal-edit").innerHTML = CAL.lbl_edit;											
 											ajaxStatus.hideStatus();											
 											CAL.enable_buttons();

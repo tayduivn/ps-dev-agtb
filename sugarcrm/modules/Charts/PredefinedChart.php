@@ -19,23 +19,16 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *to the License for the specific language governing these rights and limitations under the License.
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
-/*********************************************************************************
- * $Id$
+
+/**
  * Description: Class defining queries of predefined charts.
- * Portions created by SugarCRM are Copyright (C) SugarCRM, Inc.
- * All Rights Reserved.
- * Contributor(s): ______________________________________.
- ********************************************************************************/
-
-
-
-class PredefinedChart{
+ */
+class PredefinedChart
+{
 	var $params = array();
 
-	function PredefinedChart(){
-	}
-
-	function predefinedChartQuery($chart, $params=array()){
+	function predefinedChartQuery($chart, $params=array())
+	{
 		switch($chart){
 			case 'pipeline_by_sales_stage':
 			case 'pipeline_by_sales_stage_funnel':
@@ -526,8 +519,9 @@ class PredefinedChart{
 	//END SUGARCRM flav=pro ONLY
 
 	// This function will grab a query from the custom directory to be used for charting
-	function customChartQuery($chart){
-		if (file_exists('custom/Charts/' . $chart . '.php')){
+	function customChartQuery($chart)
+	{
+		if (SugarAutoLoader::existing('custom/Charts/' . $chart . '.php')) {
 			require_once('custom/Charts/' . $chart . '.php');
 			return customChartQuery();
 		}

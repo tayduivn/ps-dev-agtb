@@ -151,13 +151,15 @@ class Localization {
 	 * wrapper for whatever currency system we implement
 	 */
 	function loadCurrencies() {
-		// doing it dirty here
-		global $db;
+		// trying to use DBManagerFactory here fails in install.php,
+        // so leaving this as global $db.
+        //$db = DBManagerFactory::getInstance();
+        global $db;
 		global $sugar_config;
 
-		if(empty($db)) {
-			return array();
-		}
+        if(empty($db)) {
+            return array();
+        }
 
         $load = sugar_cache_retrieve('currency_list');
         if ( !is_array($load) ) {
@@ -166,7 +168,7 @@ class Localization {
 				'name'		=> $sugar_config['default_currency_name'],
 				'symbol'	=> $sugar_config['default_currency_symbol'],
 				'conversion_rate' => 1
-				);
+		    );
 
             $q = "SELECT id, name, symbol, conversion_rate FROM currencies WHERE status = 'Active' and deleted = 0";
             $r = $db->query($q);
@@ -427,12 +429,14 @@ class Localization {
 	////	NUMBER DISPLAY FORMATTING CODE
 	function getDecimalSeparator($user=null) {
         // Bug50887 this is purposefully misspelled as ..._seperator to match the way it's defined throughout the app.
-		$dec = $this->getPrecedentPreference('default_decimal_seperator', $user);
+		$dec = $this->getPrecedentPreference('dec_sep', $user);
+        $dec = $dec ? $dec : $this->getPrecedentPreference('default_decimal_seperator', $user);
 		return $dec;
 	}
 
 	function getNumberGroupingSeparator($user=null) {
-		$sep = $this->getPrecedentPreference('default_number_grouping_seperator', $user);
+		$sep = $this->getPrecedentPreference('num_grp_sep', $user);
+        $sep = $sep ? $sep : $this->getPrecedentPreference('default_number_grouping_seperator', $user);
 		return $sep;
 	}
 
@@ -442,8 +446,10 @@ class Localization {
 	}
 
 	function getCurrencySymbol($user=null) {
-		$dec = $this->getPrecedentPreference('default_currency_symbol', $user);
-		return $dec;
+        $currencyId = $this->getPrecedentPreference('currency', $user);
+        $currencyId = $currencyId ? $currencyId : '-99';
+		$currency = SugarCurrency::getCurrencyByID($currencyId);
+		return $currency->symbol;
 	}
 
 	/**

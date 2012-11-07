@@ -3303,11 +3303,14 @@ function upgradeUserPreferences() {
             $current_user->savePreferencesToDB();
         }
 
-        //BEGIN SUGARCRM flav=pro ONLY
         $changed = false;
+        if(!$current_user->getPreference('calendar_publish_key')) {
+        	// set publish key if not set already
+        	$current_user->setPreference('calendar_publish_key', create_guid());
+        	$changed = true;
+        }
 
-
-          
+        //BEGIN SUGARCRM flav=pro ONLY
 	      //Set the user theme to be 'Sugar' theme since this is run for CE flavor conversions
 	      $userTheme = $current_user->getPreference('user_theme', 'global');
 
@@ -3384,17 +3387,17 @@ function upgradeUserPreferences() {
 				$current_user->setPreference('pages', $pages, 0, 'Home');
                 $changed = true;
 		  } //if
-
-		  // we need to force save the changes to disk, otherwise we lose them.
-          if($changed)
-          {
-		    $current_user->savePreferencesToDB();
-          }
-
         //END SUGARCRM flav=pro ONLY
+
+        // we need to force save the changes to disk, otherwise we lose them.
+        if($changed)
+        {
+            $current_user->savePreferencesToDB();
+        }
+
 	} //while
 //BEGIN SUGARCRM flav=pro ONLY
-    
+
     /*
 	 * This section checks to see if the Tracker settings for the corresponding versions have been
 	 * disabled and the regular tracker (for breadcrumbs) enabled.  If so, then it will also disable
@@ -4033,27 +4036,6 @@ function upgradeModulesForTeam() {
         }
 	}
 	//END SUGARCRM flav=pro ONLY
-
-	/**
-	 * upgradeDateTimeFields
-	 *
-	 * This method came from bug: 39757 where the date_end field is a date field and not a datetime field
-	 * which prevents you from performing timezone offset calculations once the data has been saved.
-	 *
-	 * @param path String location to log file, empty by default
-	 */
-	function upgradeDateTimeFields($path)
-	{
-		//bug: 39757
-		global $db;
-		$meetingsSql = "UPDATE meetings SET date_end = ".$db->convert("date_start", 'add_time', array('duration_hours', 'duration_minutes'));
-		$callsSql = "UPDATE calls SET date_end = ".$db->convert("date_start", 'add_time', array('duration_hours', 'duration_minutes'));
-    	logThis('upgradeDateTimeFields Meetings SQL:' . $meetingsSql, $path);
-		$db->query($meetingsSql);
-
-		logThis('upgradeDateTimeFields Calls SQL:' . $callsSql, $path);
-		$db->query($callsSql);
-	}
 
 	/**
 	 * upgradeDocumentTypeFields
@@ -4794,5 +4776,26 @@ function addPdfManagerTemplate() {
     include 'install/seed_data/PdfManager_SeedData.php';
     
     logThis('End addPdfManagerTemplate');
+}
+
+
+/**
+ *
+ * This function creats job queue for old opportunities to be upgraded w/ commit_stage, date_closed_timestamp,
+ * best/worst cases, related product for forecasting
+ */
+function updateOpportunitiesForForecasting()
+{
+    global $current_user;
+    //Create an entry in the job queue to run UpdateOppsJob which handles updating all opportunities
+    $job = BeanFactory::getBean('SchedulersJobs');;
+    $job->name = "Update Old Opportunities";
+    $job->status = SchedulersJob::JOB_STATUS_QUEUED;
+    $job->target = "class::SugarJobUpdateOpportunities";
+    $job->data = '';
+    $job->retry_count = 0;
+    $job->assigned_user_id = $current_user->id;
+    $job->save();
+    return $job->id;
 }
 //END SUGARCRM flav=pro ONLY

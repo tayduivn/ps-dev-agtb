@@ -50,12 +50,13 @@ class SessionManager extends SugarBean {
     var $table_name = "session_active";
     var $history_table_name = "session_history";
     var $object_name = "SessionManager";
+    var $module_name = 'SessionManager';
     var $module_dir = 'Administration';
     var $disable_custom_fields = true;
      var $column_fields = Array( "id", "session_id", "last_request_time");
 
-    function SessionManager() {
-        parent::SugarBean();
+    public function __construct() {
+        parent::__construct();
         $this->disable_row_level_security =true;
     }
 
@@ -98,8 +99,9 @@ class SessionManager extends SugarBean {
 
             $num = $num_users;
 
-            if(file_exists('modules/Administration/ncc_config.php')){
-                require('modules/Administration/ncc_config.php');
+            $config = SugarAutoLoader::existingCustomOne('modules/Administration/ncc_config.php');
+            if($config){
+                require $config;
                 $num = $ncc_config['value'];
             }
 

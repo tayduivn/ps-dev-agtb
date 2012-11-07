@@ -64,9 +64,9 @@ class Team extends SugarBean
 
 	var $new_schema = true;
 
-	function Team()
+	public function __construct()
 	{
-		parent::SugarBean();
+		parent::__construct();
 		$this->disable_row_level_security =true;
 	}
 

@@ -22,59 +22,15 @@
  * All Rights Reserved.
  ********************************************************************************/
 
-require_once('tests/rest/RestTestBase.php');
+require_once('tests/rest/RestFileTestBase.php');
 
-class RestFileTest extends RestTestBase {
-    protected $_note;
-    protected $_note_id;
-    protected $_contact;
-    protected $_contact_id;
-    protected $_testfile1 = 'Bug55655-01.txt';
-    protected $_testfile2 = 'Bug55655-02.txt';
-    
-    public function setUp()
-    {
-        parent::setUp();
-        
-        // Create two sample text files for uploading
-        sugar_file_put_contents($this->_testfile1, create_guid());
-        sugar_file_put_contents($this->_testfile2, create_guid());
-
-        // Create a test contact and a test note
-        $contact = new Contact();
-        $contact->first_name = 'UNIT TEST';
-        $contact->last_name = 'TESTY TEST';
-        $contact->save();
-        $this->_contact_id = $contact->id;
-        $this->_contact = $contact;
-
-        $note = new Note();
-        $note->name = 'UNIT TEST';
-        $note->description = 'UNIT TEST';
-        $note->save();
-        $this->_note_id = $note->id;
-        $this->_note = $note;
-        $GLOBALS['db']->commit();
-    }
-    
-    public function tearDown()
-    {
-        unlink($this->_testfile1);
-        unlink($this->_testfile2);
-        
-        parent::tearDown();
-
-        $GLOBALS['db']->query("DELETE FROM contacts WHERE id= '{$this->_contact_id}'");
-        $GLOBALS['db']->query("DELETE FROM notes WHERE id = '{$this->_note_id}'");
-
-        unset($this->_contact, $this->_note);
-        $GLOBALS['db']->commit();
-    }
-
+class RestFileTest extends RestFileTestBase
+{
     /**
      * @group rest
      */
-    public function testGetList() {
+    public function testGetList()
+    {
         //BEGIN SUGARCRM flav=pro ONLY
         $restReply = $this->_restCall('Contacts/' . $this->_contact_id . '/file/');
         $this->assertNotEmpty($restReply['reply'], 'First reply was empty');
@@ -89,7 +45,8 @@ class RestFileTest extends RestTestBase {
     /**
      * @group rest
      */
-    public function testPostUploadImageToContact() {
+    public function testPostUploadImageToContact()
+    {
         $post = array('picture' => '@include/images/badge_256.png');
         $reply = $this->_restCall('Contacts/' . $this->_contact_id . '/file/picture', $post);
         $this->assertArrayHasKey('picture', $reply['reply'], 'Reply is missing field name key');
@@ -101,11 +58,12 @@ class RestFileTest extends RestTestBase {
         $this->assertEquals($this->_contact_id, $fetch['reply']['id'], 'Known contact id and fetched contact id do not match');
         $this->assertEquals($reply['reply']['picture']['name'], $fetch['reply']['picture'], 'Contact picture field and picture file name do not match');
     }
-    
+
     /**
      * @group rest
      */
-    public function testPostUploadImageToContactWithHTMLJSONResponse() {
+    public function testPostUploadImageToContactWithHTMLJSONResponse()
+    {
         $post = array('picture' => '@include/images/badge_256.png');
         $reply = $this->_restCall('Contacts/' . $this->_contact_id . '/file/picture?format=sugar-html-json', $post);
         //$this->assertArrayHasKey('picture', $reply['reply'], 'Reply is missing field name key');
@@ -122,7 +80,8 @@ class RestFileTest extends RestTestBase {
     /**
      * @group rest
      */
-    public function testPutUploadImageToContact() {
+    public function testPutUploadImageToContact()
+    {
         $filename = 'include/images/badge_256.png';
         $opts = array(CURLOPT_INFILESIZE => filesize($filename), CURLOPT_INFILE => fopen($filename, 'r'));
         $headers = array('Content-Type: image/png', 'filename: ' . basename($filename));
@@ -140,7 +99,8 @@ class RestFileTest extends RestTestBase {
     /**
      * @group rest
      */
-    public function testDeleteImageFromContact() {
+    public function testDeleteImageFromContact()
+    {
         $reply = $this->_restCall('Contacts/' . $this->_contact_id . '/file/picture', '', 'DELETE');
         $this->assertArrayHasKey('picture', $reply['reply'], 'Reply is missing fields');
     }
@@ -148,7 +108,8 @@ class RestFileTest extends RestTestBase {
     /**
      * @group rest
      */
-    public function testPostUploadFileToNote() {
+    public function testPostUploadFileToNote()
+    {
         $post = array('filename' => '@' . $this->_testfile1);
         $restReply = $this->_restCall('Notes/' . $this->_note_id . '/file/filename', $post);
         $this->assertArrayHasKey('filename', $restReply['reply'], 'Reply is missing file name key');
@@ -164,7 +125,8 @@ class RestFileTest extends RestTestBase {
     /**
      * @group rest
      */
-    public function testPutUploadFileToNote() {
+    public function testPutUploadFileToNote()
+    {
         $params = array('filename' => $this->_testfile2, 'type' => 'text/plain');
         $restReply = $this->_restCallFilePut('Notes/' . $this->_note_id . '/file/filename', $params);
         $this->assertArrayHasKey('filename', $restReply['reply'], 'Reply is missing file name key');
@@ -180,15 +142,17 @@ class RestFileTest extends RestTestBase {
     /**
      * @group rest
      */
-    public function testDeleteFileFromNote() {
+    public function testDeleteFileFromNote()
+    {
         $reply = $this->_restCall('Notes/' . $this->_note_id . '/file/filename', '', 'DELETE');
         $this->assertArrayHasKey('filename', $reply['reply'], 'Reply is missing fields');
     }
-    
+
     /**
      * @group rest
      */
-    public function testSimulateFileTooLarge() {
+    public function testSimulateFileTooLarge()
+    {
         // We need to skip for now, IIS doesn't appreciate this level of trickery
         $this->markTestSkipped();
 
@@ -196,17 +160,18 @@ class RestFileTest extends RestTestBase {
         $reply = $this->_restCall('Notes/' . $this->_note_id . '/file/filename', '', 'POST');
         $this->assertArrayHasKey('error', $reply['reply'], 'No error message returned');
         $this->assertEquals('request_too_large', $reply['reply']['error'], 'Expected error string not returned');
-        
+
         // One more time, this time without sending the oauth_token (simulates a clobbered body)
         $reply = $this->_restCallNoAuthHeader('Notes/' . $this->_note_id . '/file/filename', '', 'POST');
         $this->assertArrayHasKey('error', $reply['reply'], 'No error message returned');
         $this->assertEquals('request_too_large', $reply['reply']['error'], 'Expected error string not returned');
     }
-    
+
     /**
      * @group rest
      */
-    public function testNeedLoginWhenNoAuthTokenAndNotAFileRequest() {
+    public function testNeedLoginWhenNoAuthTokenAndNotAFileRequest()
+    {
         // We need to skip for now, IIS doesn't appreciate this level of trickery
         $this->markTestSkipped();
 
@@ -214,55 +179,11 @@ class RestFileTest extends RestTestBase {
         $reply = $this->_restCallNoAuthHeader('Notes');
         $this->assertArrayHasKey('error', $reply['reply'], 'No error message returned');
         $this->assertEquals('need_login', $reply['reply']['error'], 'Expected error string not returned');
-        
+
         $reply = $this->_restCallNoAuthHeader('Notes', '', 'POST');
         $this->assertArrayHasKey('error', $reply['reply'], 'No error message returned');
         $this->assertEquals('need_login', $reply['reply']['error'], 'Expected error string not returned');
     }
-    
-    protected function _restCallNoAuthHeader($urlPart,$postBody='',$httpAction='', $addedOpts = array(), $addedHeaders = array())
-    {
-        $urlBase = $GLOBALS['sugar_config']['site_url'].'/api/rest.php/v6/';
-        $ch = curl_init($urlBase.$urlPart);
-        if (!empty($postBody)) {
-            if (empty($httpAction)) {
-                $httpAction = 'POST';
-                curl_setopt($ch, CURLOPT_POST, 1); // This sets the POST array
-                $requestMethodSet = true;
-            }
 
-            curl_setopt($ch, CURLOPT_POSTFIELDS, $postBody);
-        } else {
-            if (empty($httpAction)) {
-                $httpAction = 'GET';
-            }
-        }
-        
-        // Only set a custom request for not POST with a body
-        // This affects the server and how it sets its superglobals
-        if (empty($requestMethodSet)) {
-            if ($httpAction == 'PUT' && empty($postBody) ) {
-                curl_setopt($ch, CURLOPT_PUT, 1);
-            } else {
-                curl_setopt($ch, CURLOPT_CUSTOMREQUEST, $httpAction);
-            }
-        }
-        curl_setopt($ch, CURLOPT_HTTPHEADER, $addedHeaders);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($ch, CURLINFO_HEADER_OUT, true);
-
-        if (is_array($addedOpts) && !empty($addedOpts)) {
-            // I know curl_setopt_array() exists, just wasn't sure if it was hurting stuff
-            foreach ($addedOpts as $opt => $val) {
-                curl_setopt($ch, $opt, $val);
-            }
-        }
-
-        $httpReply = curl_exec($ch);
-        $httpInfo = curl_getinfo($ch);
-        $httpError = $httpReply === false ? curl_error($ch) : null;
-
-        return array('info' => $httpInfo, 'reply' => json_decode($httpReply,true), 'replyRaw' => $httpReply, 'error' => $httpError);
-    }
 }
 

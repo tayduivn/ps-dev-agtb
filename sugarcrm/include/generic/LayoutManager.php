@@ -291,13 +291,7 @@ class LayoutManager
 		// At this point, we have a class name and we do not have a valid class defined.
 		if(!class_exists($class_name))
 		{
-
-			// The class does not exist.  Try including it.
-			if (file_exists('custom/include/generic/SugarWidgets/'.$class_name.'.php'))
-				require_once('custom/include/generic/SugarWidgets/'.$class_name.'.php');
-			else if (file_exists('include/generic/SugarWidgets/'.$class_name.'.php'))
-				require_once('include/generic/SugarWidgets/'.$class_name.'.php');
-
+            SugarAutoLoader::requireWithCustom("include/generic/SugarWidgets/{$class_name}.php");
 			if(!class_exists($class_name))
 			{
 				// If we still do not have a class, oops....
@@ -360,7 +354,7 @@ class LayoutManager
         if ($grabId) {
             return $theclass->getWidgetId();
         }
-        
+
 		return $theclass->display($widget_def, null, null);
 	}
 

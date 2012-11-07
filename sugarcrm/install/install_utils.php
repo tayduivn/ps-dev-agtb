@@ -607,10 +607,10 @@ function handleDbCreateSugarUser() {
         echo $mod_strings['LBL_PERFORM_DONE'];
     } else {
           echo "<div style='color:red;'>";
-          echo "An error occured when creating user:<br>";
+          echo "An error occurred when creating user:<br>";
           echo "$err<br>";
           echo "</div>";
-          installLog("An error occured when creating user: $err");
+          installLog("An error occurred when creating user: $err");
     }
 }
 
@@ -934,16 +934,16 @@ RedirectMatch 403 {$ignoreCase}/+upload
 RedirectMatch 403 {$ignoreCase}/+custom/+blowfish
 RedirectMatch 403 {$ignoreCase}/+cache/+diagnostic
 RedirectMatch 403 {$ignoreCase}/+files\.md5$
-//BEGIN SUGARCRM flav=ent ONLY
 <IfModule mod_rewrite.c>
     Options +FollowSymLinks
     RewriteEngine On
     RewriteCond %{REQUEST_FILENAME} !-d
     RewriteCond %{REQUEST_FILENAME} !-f
     RewriteRule ^rest/(.*)$ api/rest.php?__sugar_url=$1 [L,QSA]
+//BEGIN SUGARCRM flav=ent ONLY
     RewriteRule ^portal/(.*)$ portal2/$1 [L,QSA]
-</IfModule>
 //END SUGARCRM flav=ent ONLY
+</IfModule>
 # END SUGARCRM RESTRICTIONS
 EOQ;
 
@@ -1203,7 +1203,6 @@ function insert_default_settings(){
     $db->query( "INSERT INTO config (category, name, value) VALUES ( 'license', 'key',          '' )" );
 
       //END SUGARCRM lic=sub ONLY
-
 
     //insert default tracker settings
     $db->query("INSERT INTO config (category, name, value) VALUES ('tracker', 'Tracker', '1')");
@@ -2154,7 +2153,8 @@ function create_past_date()
 {
     global $timedate;
     $now = $timedate->getNow(true);
-    $day=$now->day-mt_rand(1, 365);
+    $day_of_year = date('z') + 1;
+    $day=$now->day-mt_rand(1, $day_of_year);
     return $timedate->asDbDate($now->get_day_begin($day));
 }
 
@@ -2185,13 +2185,19 @@ function post_install_modules(){
 }
 
 function get_help_button_url(){
-    $help_url = 'http://www.sugarcrm.com/docs/Administration_Guides/CommunityEdition_Admin_Guide_5.0/toc.html';
+    $help_url = 'http://support.sugarcrm.com/02_Documentation/01_Sugar_Editions/05_Sugar_Community_Edition';
+    //BEGIN SUGARCRM flav=corp ONLY
+    $help_url = 'http://support.sugarcrm.com/02_Documentation/01_Sugar_Editions/03_Sugar_Corporate';
+    //END SUGARCRM flav=corp ONLY
     //BEGIN SUGARCRM flav=pro ONLY
-    $help_url = 'http://www.sugarcrm.com/docs/Administration_Guides/Professional_Admin_Guide_5.0/toc.html';
+    $help_url = 'http://support.sugarcrm.com/02_Documentation/01_Sugar_Editions/04_Sugar_Professional';
     //END SUGARCRM flav=pro ONLY
     //BEGIN SUGARCRM flav=ent ONLY
-    $help_url = 'http://www.sugarcrm.com/docs/Administration_Guides/Enterprise_Admin_Guide_5.0/toc.html';
+    $help_url = 'http://support.sugarcrm.com/02_Documentation/01_Sugar_Editions/02_Sugar_Enterprise';
     //END SUGARCRM flav=ent ONLY
+    //BEGIN SUGARCRM flav=ult ONLY
+    $help_url = 'http://support.sugarcrm.com/02_Documentation/01_Sugar_Editions/01_Sugar_Ultimate';
+    //END SUGARCRM flav=ult ONLY
 
     return $help_url;
 }

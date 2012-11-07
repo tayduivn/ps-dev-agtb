@@ -1,4 +1,5 @@
 <?php
+if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 /*********************************************************************************
  *The contents of this file are subject to the SugarCRM Professional End User License Agreement
  *("License") which can be viewed at http://www.sugarcrm.com/EULA.
@@ -44,7 +45,7 @@ function make_sugar_config(&$sugar_config)
 	global $default_charset;
 	global $default_currency_name;
 	global $default_currency_symbol;
-	global $default_currency_iso4217;
+    global $default_currency_iso4217;
 	global $defaultDateFormat;
 	global $default_language;
 	global $default_module;
@@ -127,7 +128,7 @@ function make_sugar_config(&$sugar_config)
     'default_theme' => empty($default_theme) ? 'Sugar5' : $default_theme,
     //END SUGARCRM flav=com ONLY
 	//BEGIN SUGARCRM flav!=com ONLY
-    'default_theme' => empty($default_theme) ? 'Sugar' : $default_theme,
+    'default_theme' => empty($default_theme) ? 'RacerX' : $default_theme,
     //END SUGARCRM flav!=com ONLY
     'default_time_format' => empty($defaultTimeFormat) ? 'h:ia' : $defaultTimeFormat,
 	'default_user_is_admin' => empty($default_user_is_admin) ? false : $default_user_is_admin,
@@ -453,7 +454,6 @@ function get_sugar_config_defaults() {
 	    'lockoutexpirationlogin' => '',
 		),
     	'use_sprites' => function_exists('imagecreatetruecolor'),
-
 	//END SUGARCRM flav=pro ONLY
 		'use_real_names' => true,
 
@@ -484,20 +484,16 @@ function get_sugar_config_defaults() {
 /**
  * @deprecated use SugarView::getMenu() instead
  */
-function load_menu($path){
+function load_menu($path)
+{
 	global $module_menu;
 
-	if(file_exists($path . 'Menu.php'))
-	{
-		require($path . 'Menu.php');
-	}
-	if(file_exists('custom/' . $path . 'Ext/Menus/menu.ext.php'))
-	{
-		require('custom/' . $path . 'Ext/Menus/menu.ext.php');
-	}
-	if(file_exists('custom/application/Ext/Menus/menu.ext.php'))
-	{
-		require('custom/application/Ext/Menus/menu.ext.php');
+	foreach(SugarAutoLoader::existing(
+	    $path . 'Menu.php',
+	    'custom/' . $path . 'Ext/Menus/menu.ext.php',
+	    'custom/application/Ext/Menus/menu.ext.php'
+	) as $file) {
+	    require $file;
 	}
 	return $module_menu;
 }
@@ -518,17 +514,8 @@ function get_notify_template_file($language){
 	 */
 
 	// set $file to the base code template so it's set if none of the conditions pass
-	$file = "include/language/en_us.notify_template.html";
-
-	if(file_exists("custom/include/language/{$language}.notify_template.html")){
-		$file = "custom/include/language/{$language}.notify_template.html";
-	}
-	else if(file_exists("include/language/{$language}.notify_template.html")){
-		$file = "include/language/{$language}.notify_template.html";
-	}
-	else if(file_exists("custom/include/language/en_us.notify_template.html")){
-		$file = "custom/include/language/en_us.notify_template.html";
-	}
+	$file = SugarAutoLoader::existingCustomOne("include/language/en_us.notify_template.html",
+	    "include/language/{$language}.notify_template.html");
 
 	return $file;
 }
@@ -999,19 +986,14 @@ function return_app_list_strings_language($language)
 	$app_list_strings_array = array();
 
 	foreach ( $langs as $lang ) {
-	    $app_list_strings = array();
-	    if(file_exists("include/language/$lang.lang.php")) {
-            include("include/language/$lang.lang.php");
-            $GLOBALS['log']->info("Found language file: $lang.lang.php");
-        }
-        if(file_exists("include/language/$lang.lang.override.php")) {
-            include("include/language/$lang.lang.override.php");
-            $GLOBALS['log']->info("Found override language file: $lang.lang.override.php");
-        }
-        if(file_exists("include/language/$lang.lang.php.override")) {
-            include("include/language/$lang.lang.php.override");
-            $GLOBALS['log']->info("Found override language file: $lang.lang.php.override");
-        }
+	    foreach(SugarAutoLoader::existing(
+	        "include/language/$lang.lang.php",
+	        "include/language/$lang.lang.override.php",
+	        "include/language/$lang.lang.php.override"
+	    ) as $file) {
+            include $file;
+            $GLOBALS['log']->info("Found language file: $file");
+	    }
 
         $app_list_strings_array[] = $app_list_strings;
     }
@@ -1021,18 +1003,18 @@ function return_app_list_strings_language($language)
         $app_list_strings = sugarLangArrayMerge($app_list_strings, $app_list_strings_item);
     }
 
+
     foreach ( $langs as $lang ) {
-        if(file_exists("custom/application/Ext/Language/$lang.lang.ext.php")) {
-            $app_list_strings = _mergeCustomAppListStrings("custom/application/Ext/Language/$lang.lang.ext.php" , $app_list_strings);
-            $GLOBALS['log']->info("Found extended language file: $lang.lang.ext.php");
-        }
-        if(file_exists("custom/include/language/$lang.lang.php")) {
-            include("custom/include/language/$lang.lang.php");
-            $GLOBALS['log']->info("Found custom language file: $lang.lang.php");
+        foreach(SugarAutoLoader::existing(
+            "custom/application/Ext/Language/$lang.lang.ext.php",
+            "custom/include/language/$lang.lang.php"
+        ) as $file) {
+            $app_list_strings = _mergeCustomAppListStrings($file , $app_list_strings);
+            $GLOBALS['log']->info("Found extended language file: $file");
         }
     }
 
-	if(!isset($app_list_strings)) {
+    if(!isset($app_list_strings)) {
 		$GLOBALS['log']->fatal("Unable to load the application language file for the selected language ($language) or the default language ($default_language) or the en_us language");
 		return null;
 	}
@@ -1057,30 +1039,30 @@ function return_app_list_strings_language($language)
  * @return array
  */
  //jchi 25347
-function _mergeCustomAppListStrings($file , $app_list_strings){
+function _mergeCustomAppListStrings($file , $app_list_strings)
+{
 	$app_list_strings_original = $app_list_strings;
 	unset($app_list_strings);
-        // FG - bug 45525 - $exemptDropdown array is defined (once) here, not inside the foreach
-        //                  This way, language file can add items to save specific standard codelist from being overwritten
-        $exemptDropdowns = array();
+    // FG - bug 45525 - $exemptDropdown array is defined (once) here, not inside the foreach
+    //                  This way, language file can add items to save specific standard codelist from being overwritten
+    $exemptDropdowns = array();
 	include($file);
-	if(!isset($app_list_strings) || !is_array($app_list_strings)){
+	if(empty($app_list_strings) || !is_array($app_list_strings)){
 		return $app_list_strings_original;
 	}
 	//Bug 25347: We should not merge custom dropdown fields unless they relate to parent fields or the module list.
-
-        // FG - bug 45525 - Specific codelists must NOT be overwritten
+    // FG - bug 45525 - Specific codelists must NOT be overwritten
 	$exemptDropdowns[] = "moduleList";
 	$exemptDropdowns[] = "moduleListSingular";
-        $exemptDropdowns[] = "parent_type_display";
-        $exemptDropdowns[] = "record_type_display";
-        $exemptDropdowns[] = "record_type_display_notes";
+	$exemptDropdowns[] = "parent_type_display";
+    $exemptDropdowns[] = "record_type_display";
+    $exemptDropdowns[] = "record_type_display_notes";
 
 	foreach($app_list_strings as $key=>$value)
 	{
 		if (!in_array($key, $exemptDropdowns) && array_key_exists($key, $app_list_strings_original))
 		{
-	   		unset($app_list_strings_original["$key"]);
+	   		unset($app_list_strings_original[$key]);
 		}
    }
    $app_list_strings = sugarArrayMergeRecursive($app_list_strings_original , $app_list_strings);
@@ -1120,29 +1102,19 @@ function return_application_language($language)
 	$langs[] = $language;
 
 	$app_strings_array = array();
-
 	foreach ( $langs as $lang ) {
-	    $app_strings = array();
-	    if(file_exists("include/language/$lang.lang.php")) {
-            include("include/language/$lang.lang.php");
-            $GLOBALS['log']->info("Found language file: $lang.lang.php");
-        }
-        if(file_exists("include/language/$lang.lang.override.php")) {
-            include("include/language/$lang.lang.override.php");
-            $GLOBALS['log']->info("Found override language file: $lang.lang.override.php");
-        }
-        if(file_exists("include/language/$lang.lang.php.override")) {
-            include("include/language/$lang.lang.php.override");
-            $GLOBALS['log']->info("Found override language file: $lang.lang.php.override");
-        }
-        if(file_exists("custom/application/Ext/Language/$lang.lang.ext.php")) {
-            include("custom/application/Ext/Language/$lang.lang.ext.php");
-            $GLOBALS['log']->info("Found extended language file: $lang.lang.ext.php");
-        }
-        if(file_exists("custom/include/language/$lang.lang.php")) {
-            include("custom/include/language/$lang.lang.php");
-            $GLOBALS['log']->info("Found custom language file: $lang.lang.php");
-        }
+		$app_list_strings = array();
+		foreach(SugarAutoLoader::existing(
+				"include/language/$lang.lang.php",
+				"include/language/$lang.lang.override.php",
+				"include/language/$lang.lang.php.override",
+		        "custom/application/Ext/Language/$lang.lang.ext.php",
+		        "custom/include/language/$lang.lang.php"
+		) as $file) {
+			include $file;
+			$GLOBALS['log']->info("Found language file: $file");
+		}
+
         $app_strings_array[] = $app_strings;
 	}
 
@@ -1299,17 +1271,11 @@ function return_mod_list_strings_language($language,$module) {
 	if($language_used != $default_language)
 	$en_mod_list_strings = $mod_list_strings;
 
-	if(file_exists("modules/$module/language/$language.lang.php")) {
-		include("modules/$module/language/$language.lang.php");
-	}
-
-	if(file_exists("modules/$module/language/$language.lang.override.php")){
-		include("modules/$module/language/$language.lang.override.php");
-	}
-
-	if(file_exists("modules/$module/language/$language.lang.php.override")){
-		echo 'Please Change:<br>' . "modules/$module/language/$language.lang.php.override" . '<br>to<br>' . 'Please Change:<br>' . "modules/$module/language/$language.lang.override.php";
-		include("modules/$module/language/$language.lang.php.override");
+	foreach(SugarAutoLoader::existing(
+	    "modules/$module/language/$language.lang.php",
+	    "modules/$module/language/$language.lang.override.php",
+	    "modules/$module/language/$language.lang.php.override") as $file) {
+		include $file;
 	}
 
 	// cn: bug 6048 - merge en_us with requested language
@@ -1340,15 +1306,15 @@ function return_theme_language($language, $theme)
 
 	$language_used = $language;
 	$default_language = $sugar_config['default_language'];
+    $path = SugarThemeRegistry::get($theme)->getFilePath();
 
-	include(SugarThemeRegistry::get($theme)->getFilePath()."/language/$current_language.lang.php");
-	if(file_exists(SugarThemeRegistry::get($theme)->getFilePath()."/language/$current_language.lang.override.php")){
-		include(SugarThemeRegistry::get($theme)->getFilePath()."/language/$current_language.lang.override.php");
-	}
-	if(file_exists(SugarThemeRegistry::get($theme)->getFilePath()."/language/$current_language.lang.php.override")){
-		echo 'Please Change:<br>' . SugarThemeRegistry::get($theme)->getFilePath()."/language/$current_language.lang.php.override" . '<br>to<br>' . 'Please Change:<br>' . SugarThemeRegistry::get($theme)->getFilePath()."/language/$current_language.lang.override.php";
-		include(SugarThemeRegistry::get($theme)->getFilePath()."/language/$current_language.lang.php.override");
-	}
+    foreach(SugarAutoLoader::existing(
+        $path."/language/$current_language.lang.php",
+        $path."/language/$current_language.lang.override.php",
+        $path."/language/$current_language.lang.php.override"
+    ) as $file) {
+        include $file;
+    }
 	if(!isset($theme_strings))
 	{
 		$GLOBALS['log']->warn("Unable to find the theme file for language: ".$language." and theme: ".$theme);
@@ -1442,15 +1408,9 @@ function generate_where_statement($where_clauses)
  * @return bool False on failure
  */
 function is_guid($guid) {
-	if(strlen($guid) != 36) {
-		return false;
-	}
 
-	if(preg_match("/\w{8}-\w{4}-\w{4}-\w{4}-\w{12}/i", $guid)) {
-		return true;
-	}
+    return strlen($guid) == 36 && preg_match("/\w{8}-\w{4}-\w{4}-\w{4}-\w{12}/i", $guid);
 
-	return true;;
 }
 
 
@@ -1532,7 +1492,7 @@ function displayStudioForCurrentUser()
     }
     $access = $current_user->getDeveloperModules();
     foreach ($access as $key=>$mod) {
-		if(file_exists('modules/'. $mod . '/metadata/studio.php')) {
+		if(SugarAutoLoader::fileExists('modules/'. $mod . '/metadata/studio.php')) {
 		    $_SESSION['display_studio_for_user'] = true;
             return true;
 		}
@@ -3308,7 +3268,6 @@ function check_logic_hook_file($module_name, $event, $action_array){
 
 		$new_contents = replace_or_add_logic_type($hook_array);
 		write_logic_file($module_name, $new_contents);
-
 		//end if add_element is true
 	}
 
@@ -3403,7 +3362,7 @@ function display_stack_trace($textOnly=false){
 }
 
 function StackTraceErrorHandler($errno, $errstr, $errfile,$errline, $errcontext) {
-	$error_msg = " $errstr occured in <b>$errfile</b> on line $errline [" . date("Y-m-d H:i:s") . ']';
+	$error_msg = " $errstr occurred in <b>$errfile</b> on line $errline [" . date("Y-m-d H:i:s") . ']';
 	$halt_script = true;
 	switch($errno){
 		case 2048: return; //depricated we have lots of these ignore them
@@ -3749,7 +3708,7 @@ function get_module_info($module_name){
 	}
 	//END SUGARCRM flav!=sales ONLY
 
-	if(!file_exists('modules/'. $module_name . '/'.$class_name.'.php')){
+	if(!SugarAutoLoader::fileExists('modules/'. $module_name . '/'.$class_name.'.php')){
 		return;
 	}
 
@@ -3860,6 +3819,10 @@ function getPhpInfo($level=-1) {
 function string_format($format, $args){
 	$result = $format;
 
+    if ( !is_array($args) ) {
+        return;
+    }
+
     /** Bug47277 fix.
      * If args array has only one argument, and it's empty, so empty single quotes are used '' . That's because
      * IN () fails and IN ('') works.
@@ -3875,9 +3838,13 @@ function string_format($format, $args){
     }
     /* End of fix */
 
-	for($i = 0; $i < count($args); $i++){
-		$result = str_replace('{'.$i.'}', $args[$i], $result);
-	}
+    $replaceArray = array();
+    foreach ( $args as $search => $replace ) {
+        $replaceArray['{'. $search .'}'] = $replace;
+    }
+
+    $result = str_replace(array_keys($replaceArray),array_values($replaceArray),$format);
+ 
 	return $result;
 }
 
@@ -4785,7 +4752,7 @@ function encodeMultienumValue($arr) {
  * @return $ret_array['join']: extra join condition
  */
 function create_export_query_relate_link_patch($module, $searchFields, $where){
-	if(file_exists('modules/'.$module.'/SearchForm.html')){
+	if(SugarAutoLoader::fileExists('modules/'.$module.'/SearchForm.html')){
 		$ret_array['where'] = $where;
 		return $ret_array;
 	}
@@ -5095,15 +5062,6 @@ function sql_like_string($str, $like_char, $wildcard = '%', $appendWildcard = tr
 	return str_replace($wildcard, $like_char, $str);
 }
 
-//check to see if custom utils exists
-if(file_exists('custom/include/custom_utils.php')){
-	include_once('custom/include/custom_utils.php');
-}
-
-//check to see if custom utils exists in Extension framework
-if(file_exists('custom/application/Ext/Utils/custom_utils.ext.php')) {
-    include_once('custom/application/Ext/Utils/custom_utils.ext.php');
-}
 /**
  * @param $input - the input string to sanitize
  * @param int $quotes - use quotes
@@ -5192,9 +5150,9 @@ function get_language_header()
  */
 function get_custom_file_if_exists($file)
 {
-    return file_exists("custom/{$file}") ? "custom/{$file}" : $file;
+    $newfile = SugarAutoLoader::existingCustomOne($file);
+    return $newfile?$newfile:$file;
 }
-
 
 /**
  * get_help_url
@@ -5255,52 +5213,6 @@ function generateETagHeader($etag){
 	}
 }
 
-
-/**
- * isSearchEngineDown
- *
- * This function checks the existence of a cache file
- *
- * @return boolean true if file found, false otherwise
- */
-function isSearchEngineDown()
-{
-    $cacheDir = empty($GLOBALS['sugar_config']['cache_dir']) ? 'cache/' : $GLOBALS['sugar_config']['cache_dir'];
-    if (file_exists($cacheDir.'fts/fts_down'))
-    {
-        return true;
-    }
-    return false;
-}
-
-/**
- * searchEngineDown
- *
- * This function creates a cache file to indicate search engine is down
- *
- */
-function searchEngineDown()
-{
-    $cacheDir = create_cache_directory('fts/');
-    sugar_touch($cacheDir.'/fts_down');
-}
-
-/**
- * restoreSearchEngine
- *
- * This function removes the cache file to indicate search engine has been restored
- *
- */
-function restoreSearchEngine()
-{
-    $cacheDir = empty($GLOBALS['sugar_config']['cache_dir']) ? 'cache/' : $GLOBALS['sugar_config']['cache_dir'];
-    $down_file = $cacheDir.'fts/fts_down';
-    if (file_exists($down_file))
-    {
-        unlink($down_file);
-    }
-}
-
 /**
  * getReportNameTranslation
  *
@@ -5351,3 +5263,36 @@ function clean_sensitive_data($defs, $data)
     return $data;
 }
 
+/**
+ * Return relations with labels for duplicates
+ */
+function getDuplicateRelationListWithTitle($def, $var_def, $module)
+{
+    global $current_language;
+    $select_array = array_unique($def);
+    if (count($select_array) < count($def))
+    {
+        $temp_module_strings = return_module_language($current_language, $module);
+        $temp_duplicate_array = array_diff_assoc($def, $select_array);
+        $temp_duplicate_array = array_merge($temp_duplicate_array, array_intersect($select_array, $temp_duplicate_array));
+        
+        foreach ($temp_duplicate_array as $temp_key => $temp_value)
+        {
+            // Don't add duplicate relationships
+            if (!empty($var_def[$temp_key]['relationship']) && array_key_exists($var_def[$temp_key]['relationship'], $select_array))
+            {
+                continue;
+            }
+            $select_array[$temp_key] = $temp_value;
+        }
+        
+        // Add the relationship name for easier recognition
+        foreach ($select_array as $key => $value)
+        {
+            $select_array[$key] .= ' (' . $key . ')';
+        }
+    }
+    
+    asort($select_array);
+    return $select_array;
+}

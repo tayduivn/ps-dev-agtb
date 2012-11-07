@@ -133,6 +133,7 @@ $mod_strings = array (
 	'LBL_CHANGE_SYSTEM_PASSWORD'		=> 'Please provide a new password.',
 	'LBL_CHANGE_PASSWORD_TITLE'         => 'Password',
     'LBL_CHOOSE_A_KEY'					=> 'Choose a key to prevent unauthorized publishing of your calendar',
+    'LBL_NO_KEY'                        => 'Key is not set. Please set key to enable publishing.',
 	'LBL_CHOOSE_WHICH'					=> 'Select which modules are accessible within the top navigation bar. Designate the order in which you would like the modules to appear.',
 	'LBL_CITY'							=> 'City',
 
@@ -317,6 +318,9 @@ $mod_strings = array (
 	'LBL_PROVIDE_USERNAME_AND_EMAIL' 	=> 'Provide both a User Name and an Email Address.',
 	'LBL_PUBLISH_KEY'					=> 'Publish Key',
 
+    'LBL_QUOTAS'                        => 'Quotas',
+    'LBL_FORECASTS'                     => 'Forecasts',
+    'LBL_WORKSHEETS'                    => 'Worksheets',
 	'LBL_RECAPTCHA_NEW_CAPTCHA'         => 'Get another CAPTCHA',
 	'LBL_RECAPTCHA_SOUND'				=> 'Switch to Sound',
 	'LBL_RECAPTCHA_IMAGE'				=> 'Switch to Image',
@@ -546,13 +550,6 @@ $mod_strings = array (
 	'LBL_RESOURCE_NAME' => 'Name',
 	'LBL_RESOURCE_TYPE' => 'Type',
 
-    //BEGIN SUGARCRM flav=dce ONLY
-    'LBL_USER_DCEINST_FORM_TITLE' => 'User-Instance:',
-    'LBL_DCEINST_NAME' => 'Instance Name',
-    'LBL_LIST_USER_ROLE' => 'Role',
-    'LBL_USER_ROLE' => 'Role',
-    'LBL_DCEINSTANCES' => 'Instances',
-    //END SUGARCRM flav=dce ONLY
 	'LBL_PDF_SETTINGS'  =>  'PDF Settings',
 	'LBL_PDF_PAGE_FORMAT'  =>  'Page Format',
 	'LBL_PDF_PAGE_FORMAT_TEXT'  =>  'The format used for pages',

@@ -158,8 +158,8 @@ class Expression extends SugarBean {
 	// This is the list of fields that are required
 	var $required_fields =  array();
 
-	function Expression() {
-		parent::SugarBean();
+	public function __construct() {
+		parent::__construct();
 
 		$this->disable_row_level_security =true;
 
@@ -224,6 +224,7 @@ class Expression extends SugarBean {
 	
 	function get_selector_array($type, $value, $dom_name, $text_only_array=false, $meta_filter_name="", $only_related_modules = false, $trigger_type="", $only_plural = false){
 		global $app_list_strings;
+		global $current_language;
 
 		if($type=='assigned_user_id' || $type=='assigned_user_name'){
 			
@@ -258,15 +259,18 @@ class Expression extends SugarBean {
 		    		$meta_filter_name = $process_dictionary['TriggersCreateStep1']['elements'][$trigger_type]['trigger_type_override'];
 		    	}	
 		    }
-			$temp_module->call_vardef_handler($meta_filter_name);
-		    if($_GET['opener_id']=='rel_module')
+            $temp_module->call_vardef_handler($meta_filter_name);
+            if($_GET['opener_id']=='rel_module')
             {
                 $temp_select_array = $temp_module->vardef_handler->get_vardef_array(false, false, true, false);
-            } else {
-                 $temp_select_array = $temp_module->vardef_handler->get_vardef_array(true);
+                $select_array = getDuplicateRelationListWithTitle($temp_select_array, $temp_module->vardef_handler->module_object->field_defs, $temp_module->vardef_handler->module_object->module_dir);
             }
-			$select_array = array_unique($temp_select_array);			
-            asort($select_array);		
+            else
+            {
+                $select_array = $temp_module->vardef_handler->get_vardef_array(true);
+                $select_array = array_unique($select_array);
+                asort($select_array);
+            }
 	
 		//end if type is field
 		}	

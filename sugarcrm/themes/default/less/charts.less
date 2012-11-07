@@ -1,7 +1,7 @@
 
 .chartContainer {
 	float: left;
-	margin:auto;
+	margin: 8px auto 20px!important;
 	width: 100%
 	}
 	
@@ -9,6 +9,7 @@
 	overflow: auto;
 	max-height: 600px;	
 	position: relative;
+    clear: both;
 }
 
 .chartCanvas {
@@ -19,28 +20,67 @@
 	background-repeat:repeat-x;
 }
 
-.query-color {
-	width: 16px;
-	height: 16px;
-	display: inline-block;
-	margin-right: 10px;
-	border: 1px solid #999;
-}
+
 
 .legend {
-	padding: 10px 20px;
-	float: left;
+padding: 0;
+width: 100%;
+float: left;
+margin-left: 20px;
+
+    .waterMark {
+        width: 10px;
+        height: 10px;
+        background-image: url(../../../../index.php?entryPoint=getImage&imageName=watermark-white.png);
+        background-repeat: no-repeat;
+        margin-right: 5px;
+        margin-top: 3px;
+        float: left;
+    }
+
+    .waterMark.pareto {
+        background-image: url(../../../../index.php?entryPoint=getImage&imageName=pareto-white.png);
+    }
+
+    .query-color {
+        width: 10px;
+        height: 10px;
+        display: inline-block;
+        margin-right: 5px;
+        border: 1px solid #999;
+        float: left;
+    }
+
+    .col {
+        float: left;
+        width: 70%;
+    }
+
+    .col2 {
+        float: left;
+        width: 30%;
+        text-align: right;
+    }
+
+    .label {
+        float: left;
+        background-color: transparent;
+        color: @grayDarker;
+        font-size: 12px;
+        margin-right: 10px;
+    }
+
+    .label:hover {
+        color: @grayDarker!important;
+    }
+
+    .legendGroup {
+        display: inline-block;
+
+    }
+
 }
 
-.legend table td.label {
-	padding: 0px 20px 5px 0px;
-	text-align: left;
-    background-color: transparent;
-}
-
-.legend table td.label:hover {
-	color: @grayDarker;	
-}
 
 /*TOOLTIPS*/
 .tip {

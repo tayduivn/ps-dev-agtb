@@ -41,12 +41,18 @@ class RestLoginTest extends RestTestBase
         $GLOBALS['db']->query("DELETE FROM oauth_tokens WHERE consumer LIKE '_unit_%'");
         if ( isset($this->contact->id) ) {
             $GLOBALS['db']->query("DELETE FROM contacts WHERE id = '".$this->contact->id."'");
-            $GLOBALS['db']->query("DELETE FROM contacts_cstm WHERE id = '".$this->contact->id."'");
+            if ($GLOBALS['db']->tableExists('contacts_cstm')) {
+                $GLOBALS['db']->query("DELETE FROM contacts_cstm WHERE id_c = '".$this->contact->id."'");
+            }
         }
         if ( isset($this->apiuser->id) ) {
             $GLOBALS['db']->query("DELETE FROM users WHERE id = '".$this->apiuser->id."'");
-            $GLOBALS['db']->query("DELETE FROM users_cstm WHERE id = '".$this->apiuser->id."'");
+            if ($GLOBALS['db']->tableExists('users_cstm')) {
+                $GLOBALS['db']->query("DELETE FROM users_cstm WHERE id_c = '".$this->apiuser->id."'");
+            }
         }
+        $GLOBALS ['system_config']->saveSetting('supportPortal', 'RegCreatedBy', '');
+        $GLOBALS ['system_config']->saveSetting('portal', 'on', 0);
         $GLOBALS['db']->commit();
     }
 
@@ -61,6 +67,7 @@ class RestLoginTest extends RestTestBase
             'password' => $this->_user->user_name,
             'client_id' => 'sugar',
             'client_secret' => '',
+            'platform' => 'base',
         );
 
         $reply = $this->_restCall('oauth2/token',json_encode($args));
@@ -124,6 +131,7 @@ class RestLoginTest extends RestTestBase
             'password' => $this->_user->user_name,
             'client_id' => $consumer->c_key,
             'client_secret' => '',
+            'platform' => 'base',
         );
         
         $reply = $this->_restCall('oauth2/token',json_encode($args));
@@ -148,6 +156,7 @@ class RestLoginTest extends RestTestBase
             'password' => $this->_user->user_name,
             'client_id' => 'sugar',
             'client_secret' => '',
+            'platform' => 'base',
         );
         
         $reply = $this->_restCall('oauth2/token',json_encode($args));
@@ -168,6 +177,7 @@ class RestLoginTest extends RestTestBase
             'refresh_token' => $refreshToken,
             'client_id' => 'sugar',
             'client_secret' => '',
+            'platform' => 'base',
         );
         
         // Prevents _restCall from automatically logging in
@@ -185,6 +195,7 @@ class RestLoginTest extends RestTestBase
         $replyPing = $this->_restCall('ping');
         $this->assertEquals('pong',$replyPing['reply']);
     }
+
     //BEGIN SUGARCRM flav=pro ONLY
     /**
      * @group rest
@@ -213,7 +224,8 @@ class RestLoginTest extends RestTestBase
         $this->contact->portal_active = '1';
         $this->contact->portal_password = User::getPasswordHash("unittest");
         $this->contact->save();
-
+        $GLOBALS ['system_config']->saveSetting('supportPortal', 'RegCreatedBy', $this->apiuser->id);
+        $GLOBALS ['system_config']->saveSetting('portal', 'on', 1);
         $GLOBALS['db']->commit();
         
         $args = array(
@@ -262,6 +274,7 @@ class RestLoginTest extends RestTestBase
                                                           
     }
     //END SUGARCRM flav=pro ONLY
+
     /**
      * @group rest
      */
@@ -298,7 +311,6 @@ class RestLoginTest extends RestTestBase
         $this->authToken = 'LOGGING_IN';
         $replyPing = $this->_restCall('ping?oauth_token='.$generatedSession);
         $this->assertEquals('pong',$replyPing['reply']);
-        error_reporting($er);
         
     }
 
@@ -312,6 +324,7 @@ class RestLoginTest extends RestTestBase
             'password' => 'this is not the correct password',
             'client_id' => 'sugar',
             'client_secret' => '',
+            'platform' => 'base',
         );
 
         $reply = $this->_restCall('oauth2/token',json_encode($args));

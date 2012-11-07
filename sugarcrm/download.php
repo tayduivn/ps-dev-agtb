@@ -49,7 +49,7 @@ else {
 	    	}
 		}
     	$bean_name = $beanList[$module];
-	    if(!file_exists('modules/' . $module . '/' . $bean_name . '.php')) {
+	    if(!SugarAutoLoader::existing('modules/' . $module . '/' . $bean_name . '.php')) {
 	         die($app_strings['ERROR_TYPE_NOT_VALID']);
 	    }
 
@@ -99,11 +99,11 @@ else {
 	if(isset($_REQUEST['isTempFile']) && ($_REQUEST['type']=="SugarFieldImage")) {
 	    $local_location =  "upload://{$_REQUEST['id']}";
     }
-    
+
     if(isset($_REQUEST['isTempFile']) && ($_REQUEST['type']=="SugarFieldImage") && (isset($_REQUEST['isProfile'])) && empty($_REQUEST['id'])) {
     	$local_location = "include/images/default-profile.png";
     }
-    
+
 	if(!file_exists( $local_location ) || strpos($local_location, "..")) {
 		die($app_strings['ERR_INVALID_FILE_REFERENCE']);
 	} else {

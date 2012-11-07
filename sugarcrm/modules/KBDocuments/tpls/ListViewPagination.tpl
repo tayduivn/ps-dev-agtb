@@ -35,11 +35,6 @@
 				<tr>
 					<td nowrap="nowrap" width='2%' class='paginationActionButtons'>
 						{$actionsLink}&nbsp;
-						<!--//BEGIN SUGARCRM flav=dce ONLY -->
-						{$DCEUpgradeLink}
-						{$DCEUpgradeButton}
-						{$DCEDryRunButton}
-						<!--//END SUGARCRM flav=dce ONLY -->
 						&nbsp;{$selectedObjectsSpan}
 					</td>
 					<td  nowrap='nowrap' width='1%' align="right" class='paginationChangeButtons'>

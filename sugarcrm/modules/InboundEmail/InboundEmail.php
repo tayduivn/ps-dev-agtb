@@ -148,10 +148,10 @@ class InboundEmail extends SugarBean {
 	/**
 	 * Sole constructor
 	 */
-	function InboundEmail() {
+	public function __construct() {
 	    $this->InboundEmailCachePath = sugar_cached('modules/InboundEmail');
 	    $this->EmailCachePath = sugar_cached('modules/Emails');
-	    parent::SugarBean();
+	    parent::__construct();
 		if(function_exists("imap_timeout")) {
 			/*
 			 * 1: Open
@@ -275,12 +275,9 @@ class InboundEmail extends SugarBean {
 	 * @param string $msgPart
 	 * @return string
 	 */
-	function customGetMessageText($msgPart) {
-		$custom = "custom/modules/InboundEmail/getMessageText.php";
-
-		if(file_exists($custom)) {
-			include_once($custom);
-
+	function customGetMessageText($msgPart)
+	{
+		if(SugarAutoLoader::requireWithCustom("modules/InboundEmail/getMessageText.php")) {
 			if(function_exists("custom_getMessageText")) {
 				$GLOBALS['log']->debug("*** INBOUND EMAIL-CUSTOM_LOGIC: calling custom_getMessageText()");
 				$msgPart = custom_getMessageText($msgPart);
@@ -4135,6 +4132,9 @@ class InboundEmail extends SugarBean {
 
 			$email->message_id		= $this->compoundMessageId; // filled by importDupeCheck();
 
+            // save uid to have ability to remove message from imap/pop
+            $email->message_uid     = $uid;
+
 			$oldPrefix = $this->imagePrefix;
 			if(!$forDisplay) {
 				// Store CIDs in imported messages, convert on display
@@ -6683,11 +6683,7 @@ class Overview {
 		global $dictionary;
 
 		if(!isset($dictionary['email_cache']) || empty($dictionary['email_cache'])) {
-			if(file_exists('custom/metadata/email_cacheMetaData.php')) {
-			   include('custom/metadata/email_cacheMetaData.php');
-			} else {
-			   include('metadata/email_cacheMetaData.php');
-			}
+		    include SugarAutoLoader::existingCustomOne('metadata/email_cacheMetaData.php');
 		}
 
 		$this->fieldDefs = $dictionary['email_cache']['fields'];

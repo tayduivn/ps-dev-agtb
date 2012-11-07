@@ -110,20 +110,30 @@ require_once 'SugarTestTrackerUtility.php';
 require_once 'SugarTestImportUtilities.php';
 require_once 'SugarTestMergeUtilities.php';
 require_once 'SugarTestTaskUtilities.php';
+require_once 'SugarTestCurrencyUtilities.php';
 require_once 'SugarTestOpportunityUtilities.php';
+require_once 'SugarTestJobQueueUtilities.php';
+
 //BEGIN SUGARCRM flav=pro ONLY
-require_once 'SugarTestTeamUtilities.php';
-require_once 'SugarTestQuoteUtilities.php';
+require_once 'SugarTestForecastUtilities.php';
 require_once 'SugarTestProductUtilities.php';
+require_once 'SugarTestProductCategoryUtilities.php';
 require_once 'SugarTestProductTypeUtilities.php';
 require_once 'SugarTestProductBundleUtilities.php';
+require_once 'SugarTestQuotaUtilities.php';
+require_once 'SugarTestQuoteUtilities.php';
+require_once 'SugarTestTeamUtilities.php';
+require_once 'SugarTestTimePeriodUtilities.php';
+require_once 'SugarTestWorksheetUtilities.php';
 require_once 'SugarTestProspectUtilities.php';
 require_once 'SugarTestProspectListsUtilities.php';
+require_once 'SugarTestNotificationUtilities.php';
 //END SUGARCRM flav=pro ONLY
 require_once 'SugarTestRelationshipUtilities.php';
 
 $GLOBALS['db']->commit();
 
+define('CHECK_FILE_MAPS', false);
 // define our testcase subclass
 class Sugar_PHPUnit_Framework_TestCase extends PHPUnit_Framework_TestCase
 {
@@ -133,6 +143,8 @@ class Sugar_PHPUnit_Framework_TestCase extends PHPUnit_Framework_TestCase
 
     protected function assertPreConditions()
     {
+        $GLOBALS['runningTest'] = $this->getName(false);
+        $GLOBALS['runningTestClass'] = get_class($this);
         if(isset($GLOBALS['log'])) {
             $GLOBALS['log']->info("START TEST: {$this->getName(false)}");
         }
@@ -170,6 +182,40 @@ class Sugar_PHPUnit_Framework_TestCase extends PHPUnit_Framework_TestCase
         unset($GLOBALS['saving_relationships']);
         unset($GLOBALS['updating_relationships']);
         $GLOBALS['timedate']->clearCache();
+        if(constant('CHECK_FILE_MAPS')) {
+            if(!self::compareArray(SugarAutoLoader::scanDir(""), SugarAutoLoader::$filemap)) {
+                SugarAutoLoader::buildCache();
+            }
+        }
+    }
+
+    public static function compareArray($arr1, $arr2, $path = "")
+    {
+        if(!is_array($arr2)) {
+            echo ("\nERROR[{$GLOBALS['runningTestClass']}:{$GLOBALS['runningTest']}]: Difference in ./{$path} - is file in map but should be directory!\n");
+        }
+        foreach($arr2 as $key => $value) {
+            $keypath = "{$path}$key/";
+            if(in_array($keypath, SugarAutoLoader::$exclude)) {
+                unset($arr1[$key]);
+                continue;
+            }
+            if(!isset($arr1[$key])) {
+                echo ("\nERROR[{$GLOBALS['runningTestClass']}:{$GLOBALS['runningTest']}]: Difference in {$path}$key - in map but not on disk\n");
+                return false;
+            }
+            if(is_array($arr1[$key])) {
+                if(!self::compareArray($arr1[$key], $arr2[$key], $keypath)) {
+                    return false;
+                }
+            }
+            unset($arr1[$key]);
+        }
+        foreach($arr1 as $key => $value) {
+            echo ("\nERROR[{$GLOBALS['runningTestClass']}:{$GLOBALS['runningTest']}]: Difference in {$path}$key - on disk but not in map!\n");
+            return false;
+        }
+        return true;
     }
 }
 
@@ -248,6 +294,18 @@ class Sugar_PHPUnit_Framework_OutputTestCase extends PHPUnit_Extensions_OutputTe
         $this->setOutputCheck(array($this, "NotRegexCallback"));
     }
 
+    public static function tearDownAfterClass()
+    {
+        unset($GLOBALS['disable_date_format']);
+        unset($GLOBALS['saving_relationships']);
+        unset($GLOBALS['updating_relationships']);
+        $GLOBALS['timedate']->clearCache();
+        if(constant('CHECK_FILE_MAPS')) {
+            if(!Sugar_PHPUnit_Framework_TestCase::compareArray(SugarAutoLoader::scanDir(""), SugarAutoLoader::$filemap)) {
+                SugarAutoLoader::buildCache();
+            }
+        }
+    }
 }
 
 // define a mock logger interface; used for capturing logging messages emited
@@ -473,7 +531,7 @@ class SugarTestHelper
 
         // Restoring of theme
         SugarThemeRegistry::set(self::$systemVars['SugarThemeRegistry']->dirName);
-
+        SugarCache::$isCacheReset = false;
         return true;
     }
 

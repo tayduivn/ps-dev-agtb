@@ -34,7 +34,7 @@ class ACLField  extends ACLAction
     var $new_schema = true;
 
     function ACLField(){
-        parent::SugarBean();
+        parent::__construct();
         //BEGIN SUGARCRM flav=pro ONLY
         $this->disable_row_level_security =true;
         //END SUGARCRM flav=pro ONLY
@@ -285,9 +285,6 @@ class ACLField  extends ACLAction
         static $is_admin = null;
         if (is_null($is_admin)) {
             $is_admin = is_admin($GLOBALS['current_user']);
-            if ( !$is_admin ) {
-                $is_admin = $GLOBALS['current_user']->isAdminForModule($module);
-            }            
         }
         if ($is_admin) {
             return 4;

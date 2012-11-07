@@ -32,6 +32,7 @@
         backToLogin(true);
         app.alert.show("invalid_client_error", {level: "error", messages: "LBL_PORTAL_AUTH_FAILED", title:"LBL_PORTAL_AUTH_FAILED_TITLE", autoClose: true});
     };
+    
     /**
      * Invalid request handler. 
      */
@@ -60,7 +61,12 @@
      * 403 Forbidden error handler. 
      */
     app.error.handleForbiddenError = function(error) {
-        app.alert.show("forbidden_request_error", {level: "error", messages: "LBL_PORTAL_RESOURCE_UNAVAILABLE", title:"LBL_PORTAL_RESOURCE_UNAVAILABLE_TITLE", autoClose: true});
+        app.alert.dismissAll();
+        // If portal is not configured, return to login screen if necessary
+        if(error.code == "portal_not_configured"){
+            backToLogin(true);
+        }
+        app.alert.show("forbidden_request_error", {level: "error", messages: error.message ? error.message : "LBL_PORTAL_RESOURCE_UNAVAILABLE", title:"LBL_PORTAL_RESOURCE_UNAVAILABLE_TITLE", autoClose: true});
     };
     
     /**

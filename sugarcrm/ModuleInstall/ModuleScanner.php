@@ -52,10 +52,18 @@ class ModuleScanner{
 
 	);
 
+	/**
+	 * config settings
+	 * @var array
+	 */
+	private $config = array();
+	private $config_hash;
+
 	private $blackListExempt = array();
 	private $classBlackListExempt = array();
 
-	private $validExt = array('png', 'gif', 'jpg', 'css', 'js', 'php', 'txt', 'html', 'htm', 'tpl', 'pdf', 'md5', 'xml');
+    // Bug 56717 - adding hbt extension to the whitelist - rgonzalez
+	private $validExt = array('png', 'gif', 'jpg', 'css', 'js', 'php', 'txt', 'html', 'htm', 'tpl', 'pdf', 'md5', 'xml', 'hbt');
 	private $classBlackList = array(
         // Class names specified here must be in lowercase as the implementation
         // of the tokenizer converts all tokens to lowercase.
@@ -76,6 +84,7 @@ class ModuleScanner{
 	private $blackList = array(
     'popen',
     'proc_open',
+	'error_log',
     'escapeshellarg',
     'escapeshellcmd',
     'proc_close',
@@ -388,20 +397,24 @@ class ModuleScanner{
 	}
 
 	public function __construct(){
-		if(!empty($GLOBALS['sugar_config']['moduleInstaller']['blackListExempt'])){
-			$this->blackListExempt = array_merge($this->blackListExempt, $GLOBALS['sugar_config']['moduleInstaller']['blackListExempt']);
+	    if(!empty($GLOBALS['sugar_config']['moduleInstaller'])) {
+	        $this->config = $GLOBALS['sugar_config']['moduleInstaller'];
+	    }
+
+		if(!empty($this->config['blackListExempt'])){
+			$this->blackListExempt = array_merge($this->blackListExempt, $this->config['blackListExempt']);
 		}
-		if(!empty($GLOBALS['sugar_config']['moduleInstaller']['blackList'])){
-			$this->blackList = array_merge($this->blackList, $GLOBALS['sugar_config']['moduleInstaller']['blackList']);
+		if(!empty($this->config['blackList'])){
+			$this->blackList = array_merge($this->blackList, $this->config['blackList']);
 		}
-        if(!empty($GLOBALS['sugar_config']['moduleInstaller']['classBlackListExempt'])){
-            $this->classBlackListExempt = array_merge($this->classBlackListExempt, $GLOBALS['sugar_config']['moduleInstaller']['classBlackListExempt']);
+        if(!empty($this->config['classBlackListExempt'])){
+            $this->classBlackListExempt = array_merge($this->classBlackListExempt, $this->config['classBlackListExempt']);
         }
-        if(!empty($GLOBALS['sugar_config']['moduleInstaller']['classBlackList'])){
-            $this->classBlackList = array_merge($this->classBlackList, $GLOBALS['sugar_config']['moduleInstaller']['classBlackList']);
+        if(!empty($this->config['classBlackList'])){
+            $this->classBlackList = array_merge($this->classBlackList, $this->config['classBlackList']);
         }
-	  if(!empty($GLOBALS['sugar_config']['moduleInstaller']['validExt'])){
-			$this->validExt = array_merge($this->validExt, $GLOBALS['sugar_config']['moduleInstaller']['validExt']);
+	  if(!empty($this->config['validExt'])){
+			$this->validExt = array_merge($this->validExt, $this->config['validExt']);
 		}
 
 	}
@@ -426,7 +439,7 @@ class ModuleScanner{
 	/**
 	 *Ensures that a file has a valid extension
 	 */
-	private function isValidExtension($file){
+	public function isValidExtension($file){
 		$file = strtolower($file);
 
 		$extPos = strrpos($file, '.');
@@ -592,12 +605,16 @@ class ModuleScanner{
 		if(!empty($fileIssues)){
 			return $fileIssues;
 		}
-		include($manifestPath);
-
+		$this->lockConfig();
+		list($manifest, $installdefs) = MSLoadManifest($manifestPath);
+		$fileIssues = $this->checkConfig($manifestPath);
+		if(!empty($fileIssues)){
+			return $fileIssues;
+		}
 
 		//scan for disabled actions
-		if(isset($GLOBALS['sugar_config']['moduleInstaller']['disableActions'])){
-			foreach($GLOBALS['sugar_config']['moduleInstaller']['disableActions'] as $action){
+		if(isset($this->config['disableActions'])){
+			foreach($this->config['disableActions'] as $action){
 				if(isset($installdefs[$this->manifestMap[$action]])){
 					$issues[] = translate('ML_INVALID_ACTION_IN_MANIFEST') . $this->manifestMap[$action];
 				}
@@ -605,7 +622,7 @@ class ModuleScanner{
 		}
 
 		//now lets scan for files that will override our files
-		if(empty($GLOBALS['sugar_config']['moduleInstaller']['disableRestrictedCopy']) && isset($installdefs['copy'])){
+		if(empty($this->config['disableRestrictedCopy']) && isset($installdefs['copy'])){
 			foreach($installdefs['copy'] as $copy){
 				$from = str_replace('<basepath>', $this->pathToModule, $copy['from']);
 				$to = $copy['to'];
@@ -679,7 +696,7 @@ class ModuleScanner{
 	public function scanPackage($path){
 		$this->pathToModule = $path;
 		$this->scanManifest($path . '/manifest.php');
-		if(empty($GLOBALS['sugar_config']['moduleInstaller']['disableFileScan'])){
+		if(empty($this->config['disableFileScan'])){
 			$this->scanDir($path);
 		}
 	}
@@ -715,8 +732,43 @@ class ModuleScanner{
 
 	}
 
+	/**
+	 * Lock config settings
+	 */
+	public function lockConfig()
+	{
+	    if(empty($this->config_hash)) {
+	        $this->config_hash = md5(serialize($GLOBALS['sugar_config']));
+	    }
+	}
+
+	/**
+	 * Check if config was modified. Return
+	 * @param string $file
+	 * @return array Errors if something wrong, false if no problems
+	 */
+	public function checkConfig($file)
+	{
+	    $config_hash_after = md5(serialize($GLOBALS['sugar_config']));
+	    if($config_hash_after != $this->config_hash) {
+	        $this->issues['file'][$file] = array(translate('ML_CONFIG_OVERRIDE'));
+	        return $this->issues;
+	    }
+	    return false;
+	}
 
 }
 
+/**
+ * Load manifest file
+ * Outside of the class to isolate the context
+ * @param string $manifest_file
+ * @return array
+ */
+function MSLoadManifest($manifest_file)
+{
+	include( $manifest_file );
+	return array($manifest, $installdefs);
+}
 
 ?>

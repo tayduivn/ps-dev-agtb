@@ -73,6 +73,7 @@ $config['blackList']['com'] = array(
 'sugarcrm/include/externalAPI/Facebook'=>1,
 'sugarcrm/include/externalAPI/Google'=>1,
 'sugarcrm/include/externalAPI/GoToMeeting'=>1,
+'sugarcrm/include/externalAPI/IBMSmartCloud'=>1,
 'sugarcrm/include/externalAPI/LotusLive'=>1,
 'sugarcrm/include/externalAPI/LotusLiveDirect'=>1,
 'sugarcrm/include/externalAPI/LotusLiveCastIron'=>1,
@@ -286,6 +287,10 @@ $config['blackList']['com'] = array(
 
 'sugarcrm/portal2' =>1,
 'sugarcrm/tests/portal2'=>1,
+'sugarcrm/tests/include/SugarForecasting'=>1,
+'sugarcrm/tests/modules/Forecasts'=>1,
+'sugarcrm/tests/modules/ForecastSchedule'=>1,
+'sugarcrm/tests/modules/Forecasts/api'=>1,
 'sugarcrm/sidecar' =>1 
 );
 $build = 'com';

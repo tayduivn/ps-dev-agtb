@@ -99,7 +99,6 @@
                 <td><slot>{$MOD.LBL_MAILMERGE_TEXT}&nbsp;</slot></td>
                 </tr>
                 <!--//END SUGARCRM flav!=sales ONLY -->
-                <!--//BEGIN SUGARCRM flav!=dce ONLY -->
                 <!--//BEGIN SUGARCRM flav=ent ONLY -->
                 <tr>
                 <td valign="top" scope="row"><slot>{$APP.LBL_OC_STATUS|strip_semicolon}:</slot></td>
@@ -107,7 +106,6 @@
                 <td><slot>{$APP.LBL_OC_STATUS_TEXT}&nbsp;</slot></td>
                 </tr>
                 <!--//END SUGARCRM flav=ent ONLY -->
-                <!--//END SUGARCRM flav!=dce ONLY -->
                 <tr>
                 <td valign="top" scope="row"><slot>{$MOD.LBL_SETTINGS_URL|strip_semicolon}:</slot></td>
                 <td valign="top" nowrap><slot>{$SETTINGS_URL}</slot></td>
@@ -128,7 +126,6 @@
                 <td><slot><input tabindex='3' name='use_real_names' disabled class="checkbox" type="checkbox" {$USE_REAL_NAMES}></slot></td>
                 <td><slot>{$MOD.LBL_USE_REAL_NAMES_DESC}</slot></td>
                 </tr>
-                <!--//BEGIN SUGARCRM flav!=dce ONLY -->
                 <!--//BEGIN SUGARCRM flav=pro ONLY -->
                 <tr>
                 <td scope="row" valign="top"><slot>{$MOD.LBL_OWN_OPPS|strip_semicolon}:</slot></td>
@@ -136,7 +133,6 @@
                 <td><slot>{$MOD.LBL_OWN_OPPS_DESC}</slot></td>
                 </tr>
                 <!--//END SUGARCRM flav=pro ONLY -->
-                <!--//END SUGARCRM flav!=dce ONLY -->
                 {if $DISPLAY_EXTERNAL_AUTH}
                 <tr>
                   <td scope="row" valign="top"><slot>{$EXTERNAL_AUTH_CLASS|strip_semicolon}:</slot></td>
@@ -168,7 +164,6 @@
                     <td nowrap><slot>{$TIMEZONE}&nbsp;</slot></td>
                     <td><slot>{$MOD.LBL_ZONE_TEXT}&nbsp;</slot></td>
                 </tr>
-                <!--//BEGIN SUGARCRM flav!=dce ONLY -->
                 <tr>
                     <td width="15%" scope="row"><slot>{$MOD.LBL_CURRENCY|strip_semicolon}:</slot></td>
                     <td><slot>{$CURRENCY_DISPLAY}&nbsp;</slot></td>
@@ -179,7 +174,6 @@
                     <td><slot>{$CURRENCY_SIG_DIGITS}&nbsp;</slot></td>
                     <td><slot>{$MOD.LBL_CURRENCY_SIG_DIGITS_DESC}&nbsp;</slot></td>
                 </tr>
-                <!--//END SUGARCRM flav!=dce ONLY -->
                 <tr>
                     <td width="15%" scope="row"><slot>{$MOD.LBL_NUMBER_GROUPING_SEP|strip_semicolon}:</slot></td>
                     <td><slot>{$NUM_GRP_SEP}&nbsp;</slot></td>
@@ -230,7 +224,6 @@
         {/if}
         <!--//END SUGARCRM flav=pro ONLY -->
 
-        <!--//BEGIN SUGARCRM flav!=dce ONLY -->
         <!--//BEGIN SUGARCRM flav!=sales ONLY -->
         <div id='calendar_options'>
             <table width="100%" border="0" cellspacing="0" cellpadding="0" class="detail view">
@@ -244,17 +237,17 @@
             </tr>
             <tr>
             <td width="15%" scope="row"><slot><nobr>{$MOD.LBL_YOUR_PUBLISH_URL|strip_semicolon}:</nobr></slot></td>
-            <td colspan=2><slot>{$CALENDAR_PUBLISH_URL}</slot></td>
+            <td colspan=2>{if $CALENDAR_PUBLISH_KEY}{$CALENDAR_PUBLISH_URL}{else}{$MOD.LBL_NO_KEY}{/if}</td>
             </tr>
             <tr>
             <td width="15%" scope="row"><slot>{$MOD.LBL_SEARCH_URL|strip_semicolon}:</slot></td>
-            <td colspan=2><slot>{$CALENDAR_SEARCH_URL}</slot></td>
+            <td colspan=2><slot>{if $CALENDAR_PUBLISH_KEY}{$CALENDAR_SEARCH_URL}{else}{$MOD.LBL_NO_KEY}{/if}</slot></td>
             </tr>
             <tr>
             <td width="15%" scope="row"><slot>{$MOD.LBL_ICAL_PUB_URL|strip_semicolon}: {sugar_help text=$MOD.LBL_ICAL_PUB_URL_HELP}</slot></td>
-            <td colspan=2><slot>{$CALENDAR_ICAL_URL}</slot></td>
+            <td colspan=2><slot>{if $CALENDAR_PUBLISH_KEY}{$CALENDAR_ICAL_URL}{else}{$MOD.LBL_NO_KEY}{/if}</slot></td>
             </tr>
-            <tr> 
+            <tr>
             <td width="15%" scope="row"><slot>{$MOD.LBL_FDOW|strip_semicolon}:</slot></td>
             <td><slot>{$FDOWDISPLAY}&nbsp;</slot></td>
             <td><slot></slot>{$MOD.LBL_FDOW_TEXT}&nbsp;</td>
@@ -262,7 +255,6 @@
             </table>
         </div>
         <!--//END SUGARCRM flav!=sales ONLY -->
-        <!--//END SUGARCRM flav!=dce ONLY -->
         <!--//BEGIN SUGARCRM flav!=sales ONLY -->
         <div id='edit_tabs'>
             <table width="100%" border="0" cellspacing="0" cellpadding="0"  class="detail view">

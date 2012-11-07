@@ -54,7 +54,7 @@ class CalendarDisplay {
 	 * @param Calendar $cal
 	 * @param string $dashlet_id for dashlet mode
 	 */
-	function __construct(Calendar $cal,$dashlet_id = ""){
+	public function __construct(Calendar $cal,$dashlet_id = ""){
 		$this->cal = $cal;
 		$this->dashlet_id = $dashlet_id;
 	}
@@ -86,7 +86,7 @@ class CalendarDisplay {
 
 		$ss->assign('dashlet',$cal->dashlet);
 		$ss->assign('grid_start_ts',intval($cal->grid_start_ts));
-		
+
 		$ss->assign('year', $cal->date_time->format('Y'));
 		$ss->assign('month', $cal->date_time->format('m'));
 		$ss->assign('day', $cal->date_time->format('d'));
@@ -110,7 +110,7 @@ class CalendarDisplay {
 			$height = 20;
 		}
 		$ss->assign('basic_min_height',$height);
-		
+
 		$ss->assign('isPrint', $this->cal->isPrint() ? 'true': 'false');
 
 
@@ -141,26 +141,13 @@ class CalendarDisplay {
 
 		if($_REQUEST['module'] == "Calendar"){
 			$this->load_settings_template($ss);
-			$settings = "custom/modules/Calendar/tpls/settings.tpl";
-			if(!file_exists($settings))
-				$settings = "modules/Calendar/tpls/settings.tpl";
-			$ss->assign("settings",$settings);
+			$ss->assign("settings",SugarAutoLoader::existingCustomOne("modules/Calendar/tpls/settings.tpl"));
 		}
 
-		$main = "custom/modules/Calendar/tpls/main.tpl";
-		if(!file_exists($main))
-			$main = "modules/Calendar/tpls/main.tpl";
-
-		$form_tpl = "custom/modules/Calendar/tpls/form.tpl";
-		if(!file_exists($form_tpl))
-			$form_tpl = "modules/Calendar/tpls/form.tpl";
-		$ss->assign("form",$form_tpl);
+		$ss->assign("form",SugarAutoLoader::existingCustomOne("modules/Calendar/tpls/form.tpl"));
 
 		if($this->cal->enable_repeat){
-			$repeat_tpl = "custom/modules/Calendar/tpls/repeat.tpl";
-			if(!file_exists($repeat_tpl))
-				$repeat_tpl = "modules/Calendar/tpls/repeat.tpl";
-			$ss->assign("repeat",$repeat_tpl);
+			$ss->assign("repeat", SugarAutoLoader::existingCustomOne("modules/Calendar/tpls/repeat.tpl"));
 
 			$repeat_intervals = array();
 			for($i = 1; $i <= 30; $i++)
@@ -178,9 +165,7 @@ class CalendarDisplay {
 
 		}
 
-
-
-		echo $ss->fetch($main);
+		echo $ss->fetch(SugarAutoLoader::existingCustomOne("modules/Calendar/tpls/main.tpl"));
 
 		// grid
 		$grid = new CalendarGrid($cal);
@@ -436,10 +421,7 @@ class CalendarDisplay {
 
 		$ss->assign('date_info',$this->get_date_info($this->cal->view,$this->cal->date_time));
 
-		$header = "custom/modules/Calendar/tpls/header.tpl";
-		if(!file_exists($header))
-			$header = "modules/Calendar/tpls/header.tpl";
-		echo $ss->fetch($header);
+		echo $ss->fetch(SugarAutoLoader::existingCustomOne("modules/Calendar/tpls/header.tpl"));
 	}
 
 	/**
@@ -455,10 +437,7 @@ class CalendarDisplay {
 		$ss->assign('previous',$this->get_previous_calendar());
 		$ss->assign('next',$this->get_next_calendar());
 
-		$footer = "custom/modules/Calendar/tpls/footer.tpl";
-		if(!file_exists($footer))
-			$footer = "modules/Calendar/tpls/footer.tpl";
-		echo $ss->fetch($footer);
+		echo $ss->fetch(SugarAutoLoader::existingCustomOne("modules/Calendar/tpls/footer.tpl"));
 	}
 
 	/**
@@ -467,7 +446,7 @@ class CalendarDisplay {
 	public function display_title(){
 		global $mod_strings;
 		//Hack to make this 6.5 compatible until this module is converted to MVC
-        echo "<div class='moduleTitle'><h2>". $mod_strings['LBL_MODULE_TITLE'] ."</h2></div>"; 
+        echo "<div class='moduleTitle'><h2>". $mod_strings['LBL_MODULE_TITLE'] ."</h2></div>";
 	}
 
 	/**

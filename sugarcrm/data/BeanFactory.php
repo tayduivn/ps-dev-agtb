@@ -40,7 +40,7 @@ class BeanFactory {
      * @static
      * @param String $module
      * @param String $id
-     * @param Array $params A name/value array of parameters. Names: encode, deleted, 
+     * @param Array $params A name/value array of parameters. Names: encode, deleted,
      * //BEGIN SUGARCRM flav=pro ONLY
      *        disable_row_level_security
      * //END SUGARCRM flav=pro ONLY
@@ -51,16 +51,16 @@ class BeanFactory {
      */
     public static function getBean($module, $id = null, $params = array(), $deleted = true)
     {
-    	
+
     	// Check if params is an array, if not use old arguments
     	if (isset($params) && !is_array($params)) {
     		$params = array('encode' => $params);
     	}
-    	
+
     	// Pull values from $params array
     	$encode = isset($params['encode']) ? $params['encode'] : true;
     	$deleted = isset($params['deleted']) ? $params['deleted'] : $deleted;
-    	
+
         if (!isset(self::$loadedBeans[$module])) {
             self::$loadedBeans[$module] = array();
             self::$touched[$module] = array();
@@ -79,7 +79,7 @@ class BeanFactory {
                 // Pro+ versions, to disable team check if we have rights
                 // to change the parent bean, but not the related (e.g. change Account Name of Opportunity) 
                 if (!empty($params['disable_row_level_security'])) {
-                    $bean->disable_row_level_security = true;	
+                    $bean->disable_row_level_security = true;
                 }
                 //END SUGARCRM flav=pro ONLY
                 $result = $bean->retrieve($id, $encode, $deleted);

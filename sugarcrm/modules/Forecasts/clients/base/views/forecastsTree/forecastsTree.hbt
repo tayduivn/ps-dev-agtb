@@ -1,0 +1,12 @@
+<div class="btn-toolbar pull-left" id="forecastsTree">
+    <div class="btn-group">
+        <a class="dropdown-toggle btn btn-invisible" data-toggle="dropdown" href="#">
+            <span class="caret"></span>
+        </a>
+        <ul class="dropdown-menu carettop">
+            <li>
+                <div id="people" class="jstree-sugar" id="forecasts-jstree"></div>
+            </li>
+        </ul>
+    </div>
+</div>

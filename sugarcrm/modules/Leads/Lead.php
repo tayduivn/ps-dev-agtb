@@ -134,8 +134,8 @@ class Lead extends Person {
 	var $additional_column_fields = Array('assigned_user_name', 'task_id', 'note_id', 'meeting_id', 'call_id', 'email_id');
 	var $relationship_fields = Array('email_id'=>'emails','call_id'=>'calls','meeting_id'=>'meetings','task_id'=>'tasks',);
 
-	function Lead() {
-		parent::Person();
+	public function __construct() {
+		parent::__construct();
 		//BEGIN SUGARCRM flav=pro ONLY
 		global $current_user;	
 		if(!empty($current_user)) {
@@ -429,7 +429,7 @@ class Lead extends Person {
         global $locale;
 
 		$xtpl->assign("LEAD_NAME", $locale->getLocaleFormattedName($lead->first_name, $lead->last_name, $lead->salutation));
-		$xtpl->assign("LEAD_SOURCE", (isset($lead->lead_source) ? $app_list_strings['lead_source_dom'][$lead->lead_source] : ""));
+		$xtpl->assign("LEAD_SOURCE", (isset($lead->lead_source) && isset($app_list_strings['lead_source_dom'][$lead->lead_source]) ? $app_list_strings['lead_source_dom'][$lead->lead_source] : ""));
 		$xtpl->assign("LEAD_STATUS", (isset($lead->status)? $app_list_strings['lead_status_dom'][$lead->status]:""));
 		$xtpl->assign("LEAD_DESCRIPTION", $lead->description);
 

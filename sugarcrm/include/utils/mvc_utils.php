@@ -28,12 +28,7 @@
 
 function loadParentView($type)
 {
-    if(file_exists('custom/include/MVC/View/views/view.'.$type.'.php'))
-    {
-        require_once('custom/include/MVC/View/views/view.'.$type.'.php');
-    } else if(file_exists('include/MVC/View/views/view.'.$type.'.php')) {
-        require_once('include/MVC/View/views/view.'.$type.'.php');
-    }
+    SugarAutoLoader::requireWithCustom('include/MVC/View/views/view.'.$type.'.php');
 }
 
 
@@ -118,14 +113,6 @@ function ajaxBannedModules(){
         'DataSets',
         'ReportMaker',
         //END SUGARCRM flav=ent ONLY
-        //BEGIN SUGARCRM flav=dce ONLY
-        'DCEInstances',
-        'DCEClusters',
-        'DCEDataBases',
-        'DCETemplates',
-        'DCEActions',
-        'DCEReports',
-        //END SUGARCRM flav=dce ONLY
         "Administration",
         "ModuleBuilder",
         'Schedulers',

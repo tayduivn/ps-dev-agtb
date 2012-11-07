@@ -21,7 +21,6 @@
  * Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.;
  * All Rights Reserved.
  ********************************************************************************/
-
 require_once 'modules/SchedulersJobs/SchedulersJob.php';
 require_once 'tests/SugarTestUserUtilities.php';
 require_once 'tests/SugarTestAccountUtilities.php';
@@ -57,6 +56,7 @@ class RunnableSchedulersJobsTest extends Sugar_PHPUnit_Framework_TestCase
         foreach($data as $key => $val) {
             $job->$key = $val;
         }
+        $job->execute_time = empty($job->execute_time) ? TimeDate::getInstance()->getNow()->asDb() : $job->execute_time;
         $job->save();
         $this->jobs[] = $job->id;
         return $job;
@@ -101,6 +101,7 @@ class TestRunnableJob implements RunnableSchedulerJob
         $this->job->runnable_ran = true;
         $this->job->runnable_data = $data;
         $this->job->succeedJob();
+        return $this->job->resolution;
     }
 
     public function setJob(SchedulersJob $job)

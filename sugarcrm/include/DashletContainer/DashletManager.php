@@ -116,11 +116,9 @@ class DashletManager
 	{
         if(empty(DashletManager::$dashDefs[$focusBean->module_dir])){
             $dashletdefs = array();
-            $filePath = 'modules/' . $focusBean->module_dir . '/metadata/subdashdefs.php';
-            if(file_exists('custom/' . $filePath)){
-                include('custom/' . $filePath);
-            }else if(file_exists($filePath)){
-                include($filePath);
+            $filePath = SugarAutoLoader::existingCustomOne('modules/' . $focusBean->module_dir . '/metadata/subdashdefs.php');
+            if(!empty($filePath)) {
+                include $filePath;
             }
             if(!empty($dashletdefs)){
                 DashletManager::$dashDefs[$focusBean->module_dir] = $dashletdefs;

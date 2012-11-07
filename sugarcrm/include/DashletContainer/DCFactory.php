@@ -51,23 +51,15 @@ class DCFactory
 	 * @static
 	 * @return DashletContainer
 	 */
-	public static function getContainer(
-	    $dashletMetaDataFile,
-	    $container = null
-	    )
+	public static function getContainer($dashletMetaDataFile, $container = null)
 	{
 		if($container == null)
 			$container = self::$defaultContainer;
 
-		$path = 'include/DashletContainer/Containers/' . $container .'.php';
-		if(file_exists('custom/'. $path))
-			require_once('custom/'. $path);
-		elseif(file_exists($path))
-			require_once($path);
-		else
+		if(!SugarAutoLoader::requireWithCustom('include/DashletContainer/Containers/' . $container .'.php'))
 		    return false;
 
-		$class = (class_exists('Custom' . $container))? 'Custom' . $container : $container;
+		$class = SugarAutoLoader::customClass($container);
 
 		if ( !class_exists($class) )
 		    return false;

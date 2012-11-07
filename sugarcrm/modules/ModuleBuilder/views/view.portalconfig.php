@@ -75,14 +75,14 @@ class ViewPortalConfig extends SugarView
         };
 
         $admin = new Administration();
-       	$admin->retrieveSettings();
 
+        $portalConfig = $admin->getConfigForModule('portal','support');
         $smarty = new Sugar_Smarty();
         $smarty->assign('disabledDisplayModulesList', $disabledModules);
         $smarty->assign('disabledDisplayModules', $disabledModulesFlag);
         foreach ($portalFields as $fieldName=>$fieldDefault) {
-            if (isset($admin->settings['portal_'.$fieldName])) {
-                $smarty->assign($fieldName, json_decode(html_entity_decode($admin->settings['portal_'.$fieldName])));
+            if (isset($portalConfig[$fieldName])) {
+                $smarty->assign($fieldName, html_entity_decode($portalConfig[$fieldName]));
             } else {
                 $smarty->assign($fieldName,$fieldDefault);
             }
@@ -90,6 +90,7 @@ class ViewPortalConfig extends SugarView
         $smarty->assign('userList', $userList);
         $smarty->assign('welcome', $GLOBALS['mod_strings']['LBL_SYNCP_WELCOME']);
         $smarty->assign('mod', $GLOBALS['mod_strings']);
+        $smarty->assign('siteURL', $GLOBALS['sugar_config']['site_url']);
         if (isset($_REQUEST['label']))
         {
             $smarty->assign('label',$_REQUEST['label']);
@@ -98,7 +99,7 @@ class ViewPortalConfig extends SugarView
         $smarty->assign('options',$options);
         $ajax = new AjaxCompose();
         $ajax->addCrumb(translate('LBL_SUGARPORTAL', 'ModuleBuilder'), 'ModuleBuilder.main("sugarportal")');
-        $ajax->addCrumb(translate('LBL_SUGARPORTAL', 'ModuleBuilder'), 'ModuleBuilder.getContent("module=ModuleBuilder&action=portalconfig")');
+        $ajax->addCrumb(ucwords(translate('LBL_PORTAL_CONFIGURE')), '');
         $ajax->addSection('center', translate('LBL_SUGARPORTAL', 'ModuleBuilder'), $smarty->fetch('modules/ModuleBuilder/tpls/portalconfig.tpl'));
 		$GLOBALS['log']->debug($smarty->fetch('modules/ModuleBuilder/tpls/portalconfig.tpl'));
         echo $ajax->getJavascript();

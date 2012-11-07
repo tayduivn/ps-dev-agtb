@@ -43,7 +43,7 @@ class ModuleBuilderViewWizard extends SugarView
 
 	private $editModule ;
 
-	function __construct()
+	public function __construct()
 	{
 		if ( isset ( $_REQUEST [ 'view' ] ) )
 			$this->view = $_REQUEST [ 'view' ] ;

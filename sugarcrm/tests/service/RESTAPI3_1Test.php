@@ -38,8 +38,10 @@ class RESTAPI3_1Test extends Sugar_PHPUnit_Framework_TestCase
     public function setUp()
     {
         //Reload langauge strings
-        $GLOBALS['app_strings'] = return_application_language($GLOBALS['current_language']);
-        $GLOBALS['app_list_strings'] = return_app_list_strings_language($GLOBALS['current_language']);
+        SugarTestHelper::setUp('app_strings');
+        SugarTestHelper::setUp('app_list_strings');
+        SugarTestHelper::setUp('beanFiles');
+        SugarTestHelper::setUp('beanList');
         $GLOBALS['mod_strings'] = return_module_language($GLOBALS['current_language'], 'Accounts');
         //Create an anonymous user for login purposes/
         $this->_user = SugarTestUserUtilities::createAnonymousUser();
@@ -60,6 +62,7 @@ class RESTAPI3_1Test extends Sugar_PHPUnit_Framework_TestCase
 	    unset($GLOBALS['mod_strings']);
         SugarTestHelper::tearDown();
 	}
+
 
     protected function _makeRESTCall($method,$parameters)
     {
@@ -120,6 +123,7 @@ class RESTAPI3_1Test extends Sugar_PHPUnit_Framework_TestCase
         $this->assertTrue(!empty($result['id']) && $result['id'] != -1,$this->_returnLastRawResponse());
     }
 
+//BEGIN SUGARCRM flav=pro ONLY
     /**
      * Test the available modules returned from the login call to make sure they are correct.
      *
@@ -137,6 +141,7 @@ class RESTAPI3_1Test extends Sugar_PHPUnit_Framework_TestCase
 
         $this->assertEquals(count($actualModuleList), count($expectedModuleList), "Could not get available modules during login" );
     }
+//END SUGARCRM flav=pro ONLY
 
     public function testGetSingleModuleLanguage()
     {
@@ -208,6 +213,7 @@ class RESTAPI3_1Test extends Sugar_PHPUnit_Framework_TestCase
     {
         $quote = new Quote();
         $quote->name = "Test " . uniqid();
+        $quote->date_quote_expected_closed = TimeDate::getInstance()->getNow()->asDbDate();
         $quote->save(FALSE);
 
         $result = $this->_login(); // Logging in just before the REST call as this will also commit any pending DB changes
@@ -222,7 +228,7 @@ class RESTAPI3_1Test extends Sugar_PHPUnit_Framework_TestCase
 
         $this->assertTrue( !empty($results['file_contents']) );
     }
-    //END SUGARCRM flav=pro ONLY
+
      /**
      * Test the available modules returned from the login call to make sure they are correct.
      *
@@ -256,7 +262,7 @@ class RESTAPI3_1Test extends Sugar_PHPUnit_Framework_TestCase
         }
         $this->assertEquals(count($actualModuleList), count($expectedModuleList), "Could not get available modules during login" );
     }
-
+    //END SUGARCRM flav=pro ONLY
 
     function _aclEditViewFieldProvider()
     {
@@ -329,4 +335,103 @@ class RESTAPI3_1Test extends Sugar_PHPUnit_Framework_TestCase
             }
         }
     }
+
+
+    //BEGIN SUGARCRM flav=pro ONLY
+        public static function _wirelessGridModuleLayoutProvider()
+        {
+            return array(
+                array('module' => 'Accounts', 'view' => 'edit', 'metadatafile' => 'modules/Accounts/clients/mobile/views/edit/edit.php',),
+                array('module' => 'Accounts', 'view' => 'detail', 'metadatafile' => 'modules/Accounts/clients/mobile/views/detail/detail.php',),
+            );
+
+        }
+
+        /**
+         * Leaving as a provider in the event we need to extend it in the future
+         *
+         * @static
+         * @return array
+         */
+        public static function _wirelessListModuleLayoutProvider()
+        {
+            return array(
+                array('module' => 'Cases'),
+            );
+
+        }
+
+        /**
+         * @dataProvider _wirelessListModuleLayoutProvider
+         */
+        public function testGetWirelessListModuleLayout($module)
+        {
+            $result = $this->_login();
+            $session = $result['id'];
+
+            $type = 'wireless';
+            $view = 'list';
+
+            $result = $this->_makeRESTCall('get_module_layout',
+                            array(
+                                'session' => $session,
+                                'module' => array($module),
+                                'type' => array($type),
+                                'view' => array($view))
+                            );
+
+            // This is carried over metadata from pre-6.6 OOTB installations
+            // This test if for backward compatibility with older API clients
+            require 'tests/service/metadata/' . $module . 'legacy' . $view . '.php';
+
+            $legacy = $listViewDefs[$module];
+
+            $this->assertTrue(isset($result[$module][$type][$view]), 'Result did not contain expected data');
+            $this->assertArrayHasKey('NAME', $result[$module][$type][$view], 'NAME not found in the REST call result');
+
+            $legacyKeys = array_keys($legacy);
+            sort($legacyKeys);
+
+            $convertedKeys = array_keys($result[$module][$type][$view]);
+            sort($convertedKeys);
+
+            $this->assertEquals($legacyKeys, $convertedKeys, 'Converted list def keys not the same as known list def keys');
+        }
+
+        /**
+         * @dataProvider _wirelessGridModuleLayoutProvider
+         */
+        public function testGetWirelessGridModuleLayout($module, $view, $metadatafile)
+        {
+            $result = $this->_login();
+            $session = $result['id'];
+
+            $type = 'wireless';
+            $result = $this->_makeRESTCall('get_module_layout',
+                            array(
+                                'session' => $session,
+                                'module' => array($module),
+                                'type' => array($type),
+                                'view' => array($view))
+                            );
+            require 'tests/service/metadata/' . $module . 'legacy' . $view . '.php';
+
+            // This is carried over metadata from pre-6.6 OOTB installations
+            $legacy = $viewdefs[$module][ucfirst($view) .'View' ];
+            unset($viewdefs); // Prevent clash with current viewdefs
+
+            // Get our current OOTB metadata
+            require $metadatafile;
+            $current = $viewdefs[$module]['mobile']['view'][$view];
+
+            $legacyFields = $legacy['panels'];
+            $currentFields = $current['panels'][0]['fields'];
+
+            $this->assertArrayHasKey('panels', $result[$module][$type][$view], 'REST call result does not have a panels array');
+
+            $panels = $result[$module][$type][$view]['panels'];
+            $this->assertTrue(isset($panels[0][0]['name']), 'No name index in the first row array of panel fields');
+            $this->assertEquals(count($legacyFields), count($currentFields), 'Field count differs between legacy and current metadata');
+        }
+        //END SUGARCRM flav=pro ONLY
 }

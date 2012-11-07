@@ -1,0 +1,370 @@
+/**
+ * View that displays committed forecasts for current user.  If the manager view is selected, the Forecasts
+ * of Rollup type are shown; otherwise the Forecasts of Direct type are shown.
+ *
+ * @class View.Views.GridView
+ * @alias SUGAR.App.layout.GridView
+ * @extends View.View
+ */
+({
+    /**
+     * The url for the REST endpoint
+     */
+    url : 'rest/v10/Forecasts/committed',
+
+    /**
+     * The class selector representing the element which contains the view output
+     */
+    viewSelector : '.forecastsCommitted',
+
+    /**
+     * Stores the Backbone collection of Forecast models
+     */
+    _collection : {},
+
+    /**
+     * Stores the best case to display in the view
+     */
+    bestCase : 0,
+
+    /**
+     * Stores the likely case to display in the view
+     */
+    likelyCase : 0,
+
+    /**
+     * Stores the likely case to display in the view
+     */
+    worstCase : 0,
+
+
+    /**
+     * Used to query for the user_id value in Forecasts
+     */
+    userId : '',
+
+    /**
+     * Used to query for the timeperiod_id value in Forecasts
+     */
+    timePeriodId : '',
+
+    /**
+     * Used to query for the forecast_type value in Forecasts
+     */
+    forecastType : 'Direct',
+
+    /**
+     * Stores the historical log of the Forecast entries
+     */
+    historyLog : [],
+
+    /**
+     * Stores the Forecast totals to use when creating a new entry
+     */
+    totals : null,
+
+    /**
+     * Stores the previous totals to display in the view
+     */
+    previousTotals : null,
+
+    /**
+     * Template to use when updating the bestCase on the committed bar
+     */
+    bestTemplate : _.template('<%= bestCase %>&nbsp;<span class="icon-sm committed_arrow<%= bestCaseCls %>"></span>'),
+
+    /**
+     * Template to use when updating the likelyCase on the committed bar
+     */
+    likelyTemplate : _.template('<%= likelyCase %>&nbsp;<span class="icon-sm committed_arrow<%= likelyCaseCls %>"></span>'),
+
+    /**
+     * Template to use when updating the worstCase on the committed bar
+     */
+    worstTemplate : _.template('<%= worstCase %>&nbsp;<span class="icon-sm committed_arrow<%= worstCaseCls %>"></span>'),
+
+    savedTotal : null,
+
+    runningFetch : false,
+
+    /**
+     * the timeperiod field metadata that gets used at render time
+     */
+    timeperiod: {},
+
+    /**
+     * Show The Likely Box
+     */
+    show_likely: true,
+
+    /**
+     * Show The Best Box
+     */
+    show_best: false,
+
+    /**
+     * Show This Wost Box
+     */
+    show_worst: false,
+
+    initialize : function(options) {
+        app.view.View.prototype.initialize.call(this, options);
+
+        this._collection = this.context.forecasts.committed;
+
+        this.userId = app.user.get('id');
+        this.forecastType = (app.user.get('isManager') == true && app.user.get('showOpps') == false) ? 'Rollup' : 'Direct';
+        this.timePeriodId = app.defaultSelections.timeperiod_id.id;
+        this.selectedUser = {id: app.user.get('id'), "isManager":app.user.get('isManager'), "showOpps": false};
+
+        this.bestCase = 0;
+        this.likelyCase = 0;
+
+        this._collection.url = this.createUrl();
+
+        this.show_likely = options.context.forecasts.config.get('show_worksheet_likely');
+        this.show_best = options.context.forecasts.config.get('show_worksheet_best');
+        this.show_worst = options.context.forecasts.config.get('show_worksheet_worst');
+    },
+
+    createUrl : function() {
+        var urlParams = {
+            user_id: this.userId,
+            timeperiod_id : this.timePeriodId,
+            forecast_type : this.forecastType
+        };
+        return app.api.buildURL('Forecasts', 'committed', '', urlParams);
+    },
+
+    updateCommitted: function() {
+        this.runningFetch = true;
+        this.bestCase = 0;
+        this.likelyCase = 0;
+        this.worstCase = 0;
+        this.likelyCaseCls = '';
+        this.bestCaseCls = '';
+        this.worstCaseCls = '';
+        this._collection.url = this.createUrl();
+        this._collection.fetch();
+    },
+
+    bindDataChange: function() {
+
+        var self = this;
+
+        this._collection.on("reset", function() {
+            this.runningFetch = false;
+            if(!_.isEmpty(this.savedTotal)) {
+                this.updateTotals(this.savedTotal);
+            }
+        }, this);
+
+        if(this.context && this.context.forecasts) {
+            this.context.forecasts.on("change:selectedUser", function(context, user) {
+                self.userId = user.id;
+                self.fullName = user.full_name;
+                self.forecastType = user.showOpps ? 'Direct' : 'Rollup';
+                self.selectedUser = user;
+                // when ever the users changes, empty out the saved totals
+                self.totals = null;
+                self.updateCommitted();
+            }, this);
+            this.context.forecasts.on("change:selectedTimePeriod", function(context, timePeriod) {
+                self.timePeriodId = timePeriod.id;
+                self.updateCommitted();
+            }, this);
+            this.context.forecasts.on("change:updatedTotals", function(context, totals) {
+                if(self.selectedUser.isManager == true && self.selectedUser.showOpps == false) {
+                    return;
+                }
+                self.updateTotals(totals);
+            }, this);
+            this.context.forecasts.on("change:updatedManagerTotals", function(context, totals) {
+                if(self.selectedUser.isManager == true && self.selectedUser.showOpps == false) {
+                    self.updateTotals(totals);
+                }
+            }, this);
+            this.context.forecasts.on("change:commitForecastFlag", function(context, flag) {
+                if(flag) {
+                    // reset flag without triggering event
+                    self.context.forecasts.set({commitForecastFlag : false}, {silent:true})
+                    self.commitForecast();
+                }
+            }, this);
+        }
+    },
+
+    /**
+     * Common code to update the totals
+     *
+     * @param totals
+     */
+    updateTotals : function (totals) {
+        var self = this;    
+        
+        // these fields don't matter when it comes to tracking these values so just 0 them out.
+        // we don't care about this field
+        if(!_.isUndefined(totals.quota)) {
+            totals.quota = 0;
+        }
+
+        if(!_.isEqual(self.totals, totals)) {
+
+            var best = {};
+            var likely = {};
+            var worst = {};
+            // get the last committed value
+            var previousCommit = null;
+            if(!_.isEmpty(this._collection.models))
+            {
+               previousCommit = _.first(this._collection.models);
+            } else {
+               var hasTotals = !_.isNull(self.totals);
+               previousCommit = new Backbone.Model({
+                    best_case : (hasTotals ? self.totals.best_case : 0),
+                    likely_case : (hasTotals ? self.totals.amount : 0),
+                    worst_case : (hasTotals ? self.totals.worst_case : 0)
+               });
+            }
+
+            if(this.runningFetch == true) {
+               self.savedTotal = totals;
+               return;
+            } else if (!_.isEmpty(self.savedTotal)) {
+                //This line is needed since we need to clean up savedTotals if it has something and you are processing a set of totals.
+                //The reason for this is that the method gets called again once the reset is done on the collection if one is ran.
+                self.savedTotal = null;
+            }
+
+            if(self.selectedUser.isManager == true && self.selectedUser.showOpps === false) {
+                // management view
+                best.bestCaseCls = this.getColorArrow(totals.best_adjusted, previousCommit.get('best_case'));
+                best.bestCase = app.currency.formatAmountLocale(totals.best_adjusted);
+                likely.likelyCaseCls = this.getColorArrow(totals.likely_adjusted, previousCommit.get('likely_case'));
+                likely.likelyCase = app.currency.formatAmountLocale(totals.likely_adjusted);
+                worst.worstCaseCls = this.getColorArrow(totals.worst_adjusted, previousCommit.get('worst_case'));
+                worst.worstCase = app.currency.formatAmountLocale(totals.worst_adjusted);
+            } else {
+                // sales rep view
+                best.bestCaseCls = this.getColorArrow(totals.best_case, previousCommit.get('best_case'));
+                best.bestCase = app.currency.formatAmountLocale(totals.best_case);
+                likely.likelyCaseCls = this.getColorArrow(totals.amount, previousCommit.get('likely_case'));
+                likely.likelyCase = app.currency.formatAmountLocale(totals.amount);
+                worst.worstCaseCls = this.getColorArrow(totals.worst_case, previousCommit.get('worst_case'));
+                worst.worstCase = app.currency.formatAmountLocale(totals.worst_case);
+            }
+            
+            if(!_.isEmpty(best.bestCaseCls) || !_.isEmpty(likely.likelyCaseCls))
+            {
+            	self.context.forecasts.trigger("forecasts:commitButtons:enabled");
+            }
+
+            self.bestCaseCls = best.bestCaseCls;
+            self.bestCase = best.bestCase;
+            self.likelyCaseCls = likely.likelyCaseCls;
+            self.likelyCase = likely.likelyCase;
+            self.worstCaseCls = worst.worstCaseCls;
+            self.worstCase = worst.worstCase;
+
+            $('h2#best').html(this.bestTemplate(best));
+            $('h2#likely').html(this.likelyTemplate(likely));
+            $('h2#worst').html(this.worstTemplate(worst));
+
+        }
+
+        self.totals = totals;
+    },
+
+    /**
+     * Utility method to get the arrow and color depending on how the values match up.
+     *
+     * @param newValue
+     * @param currentValue
+     * @return {String}
+     */
+    getColorArrow: function(newValue, currentValue)
+    {
+        var cls = '';
+
+        cls = (newValue > currentValue) ? ' icon-arrow-up font-green' : ' icon-arrow-down font-red';
+        cls = (newValue == currentValue) ? '' : cls;
+
+        return cls
+    },
+
+    /**
+     * commit the forecast and by creating a forecast entry if the totals have been updated and the new forecast entry
+     * is different from the previous one (best_case and likely_case are not exactly identical)
+     *
+     */
+    commitForecast: function() {
+        var self = this;
+        var worksheetData = {};
+        
+        var currentWorksheet = self.context.forecasts.get("currentWorksheet");
+        
+        if(currentWorksheet == "worksheet"){
+        	var worksheetDataCurrent = [];
+        	var worksheetDataNew = [];
+        	_.each(self.context.forecasts[currentWorksheet].models, function(item){
+        		//if isDirty is defined this has been saved from the worksheet save so we can skip it here 
+        		if(_.isUndefined(item.get("isDirty"))){
+        			if(_.isEmpty(item.get("worksheet_id"))){
+            			worksheetDataNew.push(item.attributes);
+            		}
+            		else{
+            			worksheetDataCurrent.push(item.attributes);
+            		}
+        		}        		
+        	});
+        	worksheetData = {"current": worksheetDataCurrent, "new": worksheetDataNew};
+        } 
+        
+        self.context.forecasts.trigger("forecasts:commitButtons:disabled");
+
+        //If the totals have not been set, don't save
+        if(!self.totals)
+        {
+            return;
+        }
+
+        var forecast = new this._collection.model();
+        forecast.url = self.url;
+        var user = this.context.forecasts.get('selectedUser');
+
+        var forecastData = {};
+       
+        if(user.isManager == true && user.showOpps == false) {
+            forecastData.best_case = self.totals.best_adjusted;
+            forecastData.likely_case = self.totals.likely_adjusted;
+            forecastData.worst_case = self.totals.worst_adjusted;
+        } else {
+            forecastData.best_case = self.totals.best_case;
+            forecastData.likely_case = self.totals.amount;
+            forecastData.worst_case = self.totals.worst_case;
+        }
+
+        forecastData.currency_id = -99; //Always default to the base currency
+        forecastData.base_rate = 1; //Base rate is always 1
+        forecastData.timeperiod_id = self.timePeriodId;
+        forecastData.forecast_type = self.forecastType;
+        forecastData.amount = self.totals.amount;
+        forecastData.opp_count = self.totals.included_opp_count;
+        forecastData.worksheetData = worksheetData;
+
+        // apply data to model then save
+        forecast.set(forecastData);
+        forecast.save({}, {success:function(){
+        	self.context.forecasts.trigger("forecasts:committed:saved");
+        }});
+
+        // clear out the arrows
+        self.likelyCaseCls = '';
+        self.bestCaseCls = '';
+        self.worstCaseCls = '';
+
+        self.previous = self.totals;
+        self._collection.url = self.url;
+        self._collection.unshift(forecast);
+    }
+})

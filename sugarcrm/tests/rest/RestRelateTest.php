@@ -54,13 +54,19 @@ class RestRelateTest extends RestTestBase {
         $contactIds = "('".implode("','",$contactIds)."')";
         
         $GLOBALS['db']->query("DELETE FROM accounts WHERE id IN {$accountIds}");
-        $GLOBALS['db']->query("DELETE FROM accounts_cstm WHERE id IN {$accountIds}");
+        if ($GLOBALS['db']->tableExists('accounts_cstm')) {
+            $GLOBALS['db']->query("DELETE FROM accounts_cstm WHERE id_c IN {$accountIds}");
+        }
         $GLOBALS['db']->query("DELETE FROM opportunities WHERE id IN {$oppIds}");
-        $GLOBALS['db']->query("DELETE FROM opportunities_cstm WHERE id IN {$oppIds}");
+        if ($GLOBALS['db']->tableExists('opportunities_cstm')) {
+            $GLOBALS['db']->query("DELETE FROM opportunities_cstm WHERE id_c IN {$oppIds}");
+        }
         $GLOBALS['db']->query("DELETE FROM accounts_opportunities WHERE opportunity_id IN {$oppIds}");
         $GLOBALS['db']->query("DELETE FROM opportunities_contacts WHERE opportunity_id IN {$oppIds}");
         $GLOBALS['db']->query("DELETE FROM contacts WHERE id IN {$contactIds}");
-        $GLOBALS['db']->query("DELETE FROM contacts_cstm WHERE id IN {$contactIds}");
+        if ($GLOBALS['db']->tableExists('contacts_cstm')) {
+            $GLOBALS['db']->query("DELETE FROM contacts_cstm WHERE id_c IN {$contactIds}");
+        }
         $GLOBALS['db']->query("DELETE FROM accounts_contacts WHERE contact_id IN {$contactIds}");
         
         parent::tearDown();
@@ -104,7 +110,7 @@ class RestRelateTest extends RestTestBase {
             $opp = new Opportunity();
             $opp->name = "UNIT TEST ".($i+1)." - ".create_guid();
             $opp->amount = (10000*$i)+500;
-            $opp->date_closed = '2014-12-'.($i+1);
+            $opp->date_closed = sprintf('2014-12-%02d', ($i+1));
             $opp->sales_stage = $GLOBALS['app_list_strings']['sales_stage_dom']['Qualification'];
             $opp->save();
             $this->opps[] = $opp;

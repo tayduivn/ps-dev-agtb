@@ -91,10 +91,6 @@ $global_control_links['about'] = array('linkinfo' => array($app_strings['LNK_ABO
 'submenu' => ''
 );
 
-if (sugar_is_file('custom/include/globalControlLinks.php')) {
-    include('custom/include/globalControlLinks.php');
+foreach(SugarAutoLoader::existing('custom/include/globalControlLinks.php', SugarAutoLoader::loadExtension("links")) as $file) {
+    include $file;
 }
-if (sugar_is_file('custom/application/Ext/GlobalLinks/links.ext.php')) {
-    include('custom/application/Ext/GlobalLinks/links.ext.php');
-}
-?>

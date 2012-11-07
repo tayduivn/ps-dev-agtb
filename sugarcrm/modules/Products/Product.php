@@ -19,20 +19,6 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *to the License for the specific language governing these rights and limitations under the License.
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
-/*********************************************************************************
- * $Id: Product.php 55090 2010-03-05 05:24:16Z rob $
- * Description:
- ********************************************************************************/
-
-
-
-
-
-
-
-
-
-
 
 // Product is used to store customer information.
 class Product extends SugarBean {
@@ -85,6 +71,16 @@ class Product extends SugarBean {
     var $currency_name;
     var $default_currency_symbol;
     var $discount_amount;
+    var $best_case = 0;
+    var $likely_case = 0;
+    var $worst_case = 0;
+    var $base_rate;
+    var $probability;
+    var $date_closed;
+    var $date_closed_timestamp;
+    var $commit_stage;
+    var $assigned_user_id;
+    var $opportunity_id;
 
 	// These are for related fields
 	var $type_name;
@@ -113,6 +109,8 @@ class Product extends SugarBean {
 	var $new_schema = true;
 	var $importable = true;
 
+    var $experts;
+
 	// This is used to retrieve related fields from form posts.
 	var $additional_column_fields = Array('quote_id', 'quote_name','related_product_id');
 
@@ -128,9 +126,9 @@ class Product extends SugarBean {
 								 'weight',  'support_name', 'support_term',
 								 'support_description', 'support_contact');
 
-	function Product() {
+	public function __construct() {
 
-		parent::SugarBean();
+		parent::__construct();
 
 		$this->team_id = 1; // make the item globally accessible
 
@@ -700,8 +698,48 @@ class Product extends SugarBean {
 	}
 
 
+    function getExperts()
+    {
+        $query = "SELECT pt.category_id category_id FROM product_templates pt WHERE pt.id = '$this->id'";
 
+        $result = $this->db->query($query,true, "Error getting product category id: ");
 
+        $row = $this->db->fetchByAssoc($result);
+
+        if($row != null)
+        {
+            $this->product_category_id = $row['category_id'];
+            $this->getProductOwners($this->product_category_id);
+        }
+        else
+        {
+            $this->experts = '';
+        }
+    }
+
+    function getProductOwners($category_id)
+    {
+        $query = "SELECT assigned_user_id, parent_id FROM product_categories pc WHERE id = '$category_id'";
+
+        $result = $this->db->query($query, true, "Error getting product category additional fields: ");
+        $row = $this->db->fetchByAssoc($result);
+
+        if ($row != null)
+        {
+            $this->experts[] = $row['assigned_user_id'];
+            $this->getProductOwners($row['parent_id']);
+            $this->expert_id = $row['assigned_user_id'];
+        }
+        else
+        {
+            $this->expert_id = '';
+        }
+    }
 }
 
-?>
+
+function get_expert_array()
+{
+    require_once("include/utils.php");
+    return get_user_array();
+}

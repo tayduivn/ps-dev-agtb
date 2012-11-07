@@ -1,0 +1,12 @@
+<div class="topline">
+    <div class="view-forecastsTimeperiod title">
+    </div>
+    <div class="view-forecastsCommitted">
+    </div>
+    <div class="clearfix"></div>
+    <div class="view-forecastsCommitLog">
+    </div>
+    <div class="clearfix"></div>
+    <div class="view-forecastsFilter"></div>
+</div>
+<div class="clearfix"></div>

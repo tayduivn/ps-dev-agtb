@@ -51,6 +51,7 @@ class ForecastOpportunities extends SugarBean {
     var $current_timeperiod_id;
 
     var $object_name = 'ForecastOpportunities';
+    var $module_name = 'ForecastOpportunities';
     var $module_dir = 'Forecasts';
 
     var $table_name = 'opportunities';
@@ -67,10 +68,10 @@ class ForecastOpportunities extends SugarBean {
 
     var $new_schema = true;
 
-    function ForecastOpportunities() {
+    public function __construct() {
         global $current_user, $db;
 
-        parent::SugarBean();
+        parent::__construct();
         $this->disable_row_level_security =true;
 
 
@@ -160,7 +161,7 @@ class ForecastOpportunities extends SugarBean {
         //$custom_join='';
 
         $query = "SELECT ";
-        $query .= " opportunities.id, opportunities.name , amount_usdollar as revenue,  ((amount_usdollar * probability)/100) as weighted_value, probability";
+        $query .= " opportunities.id, opportunities.name , opportunities.amount_usdollar as revenue,  ((opportunities.amount_usdollar * opportunities.probability)/100) as weighted_value, probability";
 
         if($custom_join){
             $query .= $custom_join['select'];
@@ -192,7 +193,7 @@ class ForecastOpportunities extends SugarBean {
         }
         $ret_array=array();
         $ret_array['select'] = "SELECT  opportunities.id, opportunities.name ,opportunities.assigned_user_id opportunity_owner, opportunities.amount_usdollar as revenue,  ((opportunities.amount_usdollar * opportunities.probability)/100) as weighted_value, opportunities.probability,opportunities.description, opportunities.next_step,opportunities.opportunity_type";
-        $ret_array['select'] .=" ,worksheet.id worksheet_id, best_case,likely_case,worst_case ";
+        $ret_array['select'] .=" ,worksheet.id worksheet_id, opportunities.best_case,opportunities.worst_case ";
         $ret_array['from'] = " FROM opportunities  ";
         $ret_array['where']  = " INNER JOIN timeperiods on 1=1 LEFT JOIN worksheet on opportunities.id = worksheet.related_id and worksheet.user_id='{$this->fo_user_id}' and worksheet.timeperiod_id='{$this->fo_timeperiod_id}' and worksheet.forecast_type='{$this->fo_forecast_type}'";
         $ret_array['where'] .= ' WHERE '. $where;
@@ -200,17 +201,16 @@ class ForecastOpportunities extends SugarBean {
         return $ret_array;
     }
 
-    //get oppotunity forecast summary
+    //get opportunity forecast summary
     function get_opportunity_summary($currency_format=true) {
 
         $abc = array();
-        $amount_usdollar = $this->db->convert("amount_usdollar", "IFNULL", array(0));
-        $probability = $this->db->convert("probability", "IFNULL", array(0));
+        $amount_usdollar = $this->db->convert("opportunities.amount_usdollar", "IFNULL", array(0));
+        $probability = $this->db->convert("opportunities.probability", "IFNULL", array(0));
         $query1 = "SELECT count(*) as opportunitycount, sum(amount_usdollar) as total_amount,
-        	sum((amount_usdollar * probability)/100) as weightedvalue,
-        	sum(".$this->db->convert("best_case","IFNULL", array("(($amount_usdollar * $probability)/100)")).") total_best_case,
-        	sum(".$this->db->convert("likely_case","IFNULL", array("(($amount_usdollar * $probability)/100)")).") total_likely_case,
-        	sum(".$this->db->convert("worst_case","IFNULL", array("(($amount_usdollar * $probability)/100)")).") total_worst_case";
+        	sum((amount_usdollar * opportunities.probability)/100) as weightedvalue,
+        	sum(".$this->db->convert("opportunities.best_case","IFNULL", array("(($amount_usdollar * $probability)/100)")).") total_best_case,
+        	sum(".$this->db->convert("opportunities.worst_case","IFNULL", array("(($amount_usdollar * $probability)/100)")).") total_worst_case";
 
         $query1 .= " FROM timeperiods, opportunities ";
         $query1 .= " LEFT JOIN worksheet on opportunities.id = worksheet.related_id and worksheet.user_id='{$this->fo_user_id}' and worksheet.timeperiod_id='{$this->fo_timeperiod_id}' and worksheet.forecast_type='{$this->fo_forecast_type}'";

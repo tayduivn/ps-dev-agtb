@@ -43,6 +43,36 @@ class RestCurrentUserTest extends RestTestBase {
         $this->assertNotEmpty($restReply['reply']['current_user']['id']);
         $this->assertNotEmpty($restReply['reply']['current_user']['currency_id']);
         $this->assertNotEmpty($restReply['reply']['current_user']['decimal_precision']);
+        $this->assertNotEmpty($restReply['reply']['current_user']['primary_team_id']);
+        $this->assertNotEmpty($restReply['reply']['current_user']['primary_team_name']);
+    }
+
+    /**
+     * @group rest
+     */
+    public function testRetrieveDefaults()  {
+        global $current_user,$sugar_config;
+        $real_current_user = $current_user;
+        // The reset preferences call will fail because it's trying to mess with a session
+        // unless the "current user" isn't the user we are changing the preferences on.
+        $current_user = new User();
+        $current_user->id = 'NOT-THE-REAL-THING';
+        $real_current_user->resetPreferences();
+        $current_user = $real_current_user;
+
+        $restReply = $this->_restCall('me');
+        $this->assertEquals($sugar_config['datef'],$restReply['reply']['current_user']['datepref'],"trd: Date pref is not the default");
+        $this->assertEquals($sugar_config['default_time_format'],$restReply['reply']['current_user']['timepref'],"trd: Time pref is not the default");
+
+        $current_user->setPreference('datef','m/d/Y');
+        $current_user->setPreference('timef','H:i a');
+        $current_user->savePreferencesToDB();
+        
+        // Need to logout and log back in, preferences are cached in the session.
+        $this->_restLogin();
+        $restReply = $this->_restCall('me');
+        $this->assertEquals('m/d/Y',$restReply['reply']['current_user']['datepref'],"trd: Date pref is not the configured value");
+        $this->assertEquals('H:i a',$restReply['reply']['current_user']['timepref'],"trd: Time pref is not the configured value");
     }
 
     /**

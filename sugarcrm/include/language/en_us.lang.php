@@ -57,6 +57,7 @@ $app_list_strings = array (
     'ProductTypes' => 'Product Types',
     'ProductTemplates' => 'Product Catalog',
   //END SUGARCRM flav=pro ONLY
+
   //BEGIN SUGARCRM flav=pro || flav=sales ONLY
     'Reports' => 'Reports',
     'Reports_1'=>'Reports',
@@ -64,6 +65,8 @@ $app_list_strings = array (
   //BEGIN SUGARCRM flav=pro ONLY
     'Forecasts' => 'Forecasts',
     'ForecastSchedule'=>'Forecast Schedule',
+    'ForecastWorksheets' => 'Forecast Worksheets',
+    'ForecastManagerWorksheets' => 'Forecast Manager Worksheets',
     'MergeRecords'=>'Merge Records',
     'Quotas' => 'Quotas',
     'Teams' => 'Teams',
@@ -101,6 +104,7 @@ $app_list_strings = array (
 //BEGIN SUGARCRM flav=pro ONLY
     'WorkFlow' => 'Workflow Definitions',
     'EAPM' => 'External Accounts',
+    'Worksheet' => 'Worksheet',
 //END SUGARCRM flav=pro ONLY
     'Users' => 'Users',
     'Employees' => 'Employees',
@@ -130,15 +134,6 @@ $app_list_strings = array (
 //BEGIN SUGARCRM flav=pro ONLY
 	'PdfManager' => 'PDF Manager',
 //END SUGARCRM flav=pro ONLY
-//BEGIN SUGARCRM flav=dce ONLY
-
-    'DCEDataBases' => 'Databases',
-    'DCEClusters' => 'Clusters',
-    'DCEInstances' => 'Instances',
-    'DCETemplates' => 'Templates',
-    'DCEActions' => 'Actions',
-    'DCEReports'=>'DCE Reports',
-//END SUGARCRM flav=dce ONLY
 
     'OAuthKeys' => 'OAuth Consumer Keys',
     'OAuthTokens' => 'OAuth Tokens',
@@ -169,6 +164,8 @@ $app_list_strings = array (
     'Products' => 'Product',
     'Reports' => 'Report',
     'Forecasts' => 'Forecast',
+    'ForecastWorksheets' => 'Forecast Worksheet',
+    'ForecastManagerWorksheets' => 'Forecast Manager Worksheet',
     'ForecastSchedule'=>'Forecast Schedule',
     'Quotas' => 'Quota',
     'Teams' => 'Team',
@@ -346,6 +343,28 @@ $app_list_strings = array (
     'Closed Won' => 'Closed Won',
     'Closed Lost' => 'Closed Lost',
   ),
+
+  'commit_stage_binary_dom' => array (
+    'include' => 'Include',
+    'exclude' => 'Exclude',
+  ),
+  'commit_stage_dom' =>
+  array (
+    'include' => 'Include',
+    'upside'  => 'Upside',
+    'exclude' => 'Exclude',
+  ),
+
+//BEGIN SUGARCRM flav=ent ONLY
+  'commit_stage_custom_dom' => array(
+      'include' => 'Include',
+      'customRange0' => 'Custom 1',
+      'customRange1' => 'Custom 2',
+      'customRange2' => 'Custom 3',
+      'exclude' => 'Exclude',
+  ),
+//END SUGARCRM flav=ent ONLY
+
   'in_total_group_stages' => array (
     'Draft' => 'Draft',
     'Negotiation' => 'Negotiation',
@@ -591,7 +610,6 @@ $app_list_strings = array (
 
   'record_type_display_notes' =>
   array (
-//BEGIN SUGARCRM flav!=dce ONLY
     'Accounts' => 'Account',
     'Contacts' => 'Contact',
     'Opportunities' => 'Opportunity',
@@ -615,19 +633,10 @@ $app_list_strings = array (
 
     'Meetings' => 'Meeting',
     'Calls' => 'Call',
-//END SUGARCRM flav!=dce ONLY
-//BEGIN SUGARCRM flav=dce ONLY
-    'Accounts' => 'Account',
-    'Contacts' => 'Contact',
-    'Cases' => 'Case',
-    'Emails' => 'Email',
-    'DCEInstances' => 'Instance',
-//END SUGARCRM flav=dce ONLY
   ),
 
   'parent_type_display' =>
   array (
-//BEGIN SUGARCRM flav!=dce ONLY
     'Accounts' => 'Account',
     'Contacts' => 'Contact',
     'Tasks' => 'Task',
@@ -652,15 +661,6 @@ $app_list_strings = array (
     'Prospects' => 'Target',
     //END SUGARCRM flav!=sales ONLY
 
-//END SUGARCRM flav!=dce ONLY
-//BEGIN SUGARCRM flav=dce ONLY
-
-    'Accounts' => 'Account',
-    'Contacts' => 'Contact',
-    'Cases' => 'Case',
-    'Tasks' => 'Task',
-    'DCEInstances' => 'Instance',
-//END SUGARCRM flav=dce ONLY
   ),
 
   //BEGIN SUGARCRM flav=pro ONLY
@@ -1685,106 +1685,6 @@ $app_list_strings = array (
         'hbar'  => 'Horizontal Bar',
     ),
     //END SUGARCRM flav=pro ONLY
-    //BEGIN SUGARCRM flav=dce ONLY
-    'server_status_list' => array (
-      'active' => 'Active',
-      'maintenance' => 'Maintenance',
-      'rebooting' => 'Rebooting',
-    ),
-    'instance_status_list' => array (
-      'new' => 'New',
-      'live' => 'Live',
-      'in_progress' => 'In Progress',
-      'archived' => 'Archived',
-    ),
-    'action_status_list' => array (
-      'queued' => 'Queued',
-      'started' => 'Started',
-      'pending' => 'Pending',
-      'suspended' => 'Suspended',
-      'completed' => 'Completed',
-      'done' => 'Done',
-      'failed' => 'Failed',
-    ),
-    'action_priority_list' => array (
-      '3' => 'Urgent',
-      '2' => 'High',
-      '1' => 'Medium',
-      '0' => 'Low',
-    ),
-    'action_type_list' => array (
-      'create' => 'Create',
-      'convert' => 'Convert',
-      'clone' => 'Clone',
-      'recover' => 'Recover',
-      'archive' => 'Archive',
-      'delete' => 'Delete',
-      'toggle_on' => 'Enable Support User',
-      'toggle_off' => 'Disable Support User',
-      'upgrade_live' => 'Upgrade Live',
-      'upgrade_test' => 'Upgrade Test',
-      'key' => 'Update Key',
-      'report' => 'DCE Report',
-    ),
-    'status_list' => array (
-        'active' => 'Active',
-        'innactive' => 'Innactive',
-        'pending_approval' => 'Pending Approval',
-        'dummy' => 'Place Holder',
-    ),
-    'production_duration_default_key' => '365',
-    'production_duration_list' => array (
-        '365' => '1 year',
-    ),
-    'production_extended_duration_default_key' => '0',
-    'production_extended_duration_list' => array (
-        '0' => '',
-        '365' => '1 year',
-    ),
-    'convert_status_list' => array (
-        'no' => 'Not Converted',
-        'yes' => 'Converted',
-        'error' => 'Could Not Convert',
-    ),
-
-    'evaluation_duration_default_key' => '30',
-    'evaluation_duration_list' => array (
-        '15' => '15 days',
-        '30' => '30 days',
-    ),
-    'evaluation_extended_duration_default_key' => '0',
-    'evaluation_extended_duration_list' => array (
-        '0' => '',
-        '15' => '15 days',
-        '30' => '30 days',
-    ),
-    'instance_type_list' => array (
-        'evaluation' => 'Evaluation',
-        'production' => 'Production',
-    ),
-    'url_format_list' => array (
-        'URL/Instance_Name' => '(URL)/(Instance Name)',
-        'Instance_Name.URL' => '(Instance Name).(URL)',
-    ),
-  //Note:  do not translate dceinstance_contact_relationship_type_default_key
-//       it is the key for the default dceinstance_contact_relationship_type_dom value
-  'dceinstance_contact_relationship_type_default_key' => 'Primary Decision Maker',
-  'dceinstance_contact_relationship_type_dom' =>
-  array (
-    '' => '',
-    'Primary Decision Maker' => 'Primary Decision Maker',
-    'Technical Decision Maker' => 'Technical Decision Maker',
-  ),
-  //Note:  do not translate dceinstance_user_relationship_type_default_key
-//       it is the key for the default dceinstance_user_relationship_type_dom value
-  'dceinstance_user_relationship_type_default_key' => 'Sales Rep',
-  'dceinstance_user_relationship_type_dom' =>
-  array (
-    '' => '',
-    'Sales Rep' => 'Sales Rep',
-    'Support Rep' => 'Support Rep',
-  ),
-//END SUGARCRM flav=dce ONLY
     'release_status_dom' =>
     array (
         'Active' => 'Active',
@@ -1870,6 +1770,18 @@ $app_list_strings = array (
         'move' => 'Move',
         'donothing' => 'Do Nothing'
   ),
+    //BEGIN SUGARCRM flav=pro ONLY
+    'forecasts_chart_options_group' => array(
+        'forecast' => 'Included In Forecast',
+        'sales_stage' => 'Sales Stage',
+        'probability' => 'Probability'
+    ),
+    'forecasts_chart_options_dataset' => array(
+        'likely' => 'Likely',
+        'best' => 'Best',
+        'worst' => 'Worst'
+    ),
+    //END SUGARCRM flav=pro ONLY
 );
 
 $app_strings = array (
@@ -2096,7 +2008,7 @@ $app_strings = array (
     'LBL_EMAIL_DELETE_ERROR_DESC'           => 'You do not have access to this area. Contact your site administrator to obtain access.',
     'LBL_EMAIL_ERROR_DUPE_FOLDER_NAME'      => 'Sugar Folder names must be unique.',
     'LBL_EMAIL_ERROR_EMPTY'                 => 'Please enter some search criteria.',
-    'LBL_EMAIL_ERROR_GENERAL_TITLE'         => 'An error has occured',
+    'LBL_EMAIL_ERROR_GENERAL_TITLE'         => 'An error has occurred',
     'LBL_EMAIL_ERROR_LIST_NAME'             => 'An email list with that name already exists',
     'LBL_EMAIL_ERROR_MESSAGE_DELETED'       => 'Message Removed from Server',
     'LBL_EMAIL_ERROR_IMAP_MESSAGE_DELETED'  => 'Either message Removed from Server or moved to a different folder',
@@ -2109,7 +2021,7 @@ $app_strings = array (
     'LBL_EMAIL_ERROR_NO_IMAP_FOLDER_RENAME' => 'IMAP folder renaming is not supported at this time.',
     'LBL_EMAIL_ERROR_SERVER'                => 'A mail server address is required.',
     'LBL_EMAIL_ERROR_SAVE_ACCOUNT'          => 'The mail account may not have been saved.',
-    'LBL_EMAIL_ERROR_TIMEOUT'               => 'An error has occured while communicating with the mail server.',
+    'LBL_EMAIL_ERROR_TIMEOUT'               => 'An error has occurred while communicating with the mail server.',
     'LBL_EMAIL_ERROR_USER'                  => 'A login name is required.',
     'LBL_EMAIL_ERROR_PASSWORD'              => 'A password is required.',
     'LBL_EMAIL_ERROR_PORT'                  => 'A mail server port is required.',
@@ -2402,12 +2314,12 @@ $app_strings = array (
     'NO_QUERY_SELECTED' => 'The data format you have selected does not contain a query.  Please select a custom query for this data format.',
     //END SUGARCRM flav=ent ONLY
 
-    'ERR_AJAX_LOAD'     => 'An error has occured:',
+    'ERR_AJAX_LOAD'     => 'An error has occurred:',
     'ERR_AJAX_LOAD_FAILURE'     => 'There was an error processing your request, please try again at a later time.',
     'ERR_AJAX_LOAD_FOOTER' => 'If this error persists, please have your administrator disable Ajax for this module',
     'ERR_CREATING_FIELDS' => 'Error filling in additional detail fields: ',
     'ERR_CREATING_TABLE' => 'Error creating table: ',
-    'ERR_DECIMAL_SEP_EQ_THOUSANDS_SEP'  => "The decimal separator cannot use the same character as the thousands separator.\\n\\n  Please change the values.",
+    'ERR_DECIMAL_SEP_EQ_THOUSANDS_SEP'  => "The decimal separator cannot use the same character as the thousands separator.\n\nPlease change one of the values.",
     'ERR_DELETE_RECORD' => 'A record number must be specified to delete the contact.',
     'ERR_EXPORT_DISABLED' => 'Exports Disabled.',
     'ERR_EXPORT_TYPE' => 'Error exporting ',
@@ -2446,10 +2358,40 @@ $app_strings = array (
     'ERR_DB_FAIL' => 'Database failure. Please refer to sugarcrm.log for details.',
     'ERR_EXTERNAL_API_403' => 'Permission Denied. File type is not supported.',
     'ERR_DB_VERSION' => 'Sugar CRM {0} Files May Only Be Used With A Sugar CRM {1} Database.',
+    'ERR_DB_QUERY' => '{0}: query failed: {1}',
+
+    'EXCEPTION_CREATE_MODULE_NOT_AUTHORIZED' => 'You are not authorized to create {moduleName}. Contact your administrator if you need access.',
+
+    // Default SugarApiException error messages
+    'EXCEPTION_UNKNOWN_EXCEPTION'       => 'Your request failed due to an unknown exception.',
+    'EXCEPTION_FATAL_ERROR'             => 'Your request failed to complete.  A fatal error occurred.  Check logs for more details.',
+    'EXCEPTION_NEED_LOGIN'              => 'You need to be logged in to perform this action.',
+    'EXCEPTION_NOT_AUTHORIZED'          => 'You are not authorized to perform this action. Contact your administrator if you need access.',
+    'EXCEPTION_INACTIVE_PORTAL_USER'    => 'You cannot access Portal because your portal account is inactive. Please contact customer support if you need access.',
+    'EXCEPTION_PORTAL_NOT_CONFIGURED'   => 'Portal is not configured properly.  Contact your Portal Administrator for assistance.',
+    'EXCEPTION_NO_METHOD'               => 'Your request was not supported. Could not find the HTTP method of your request for this path.',
+    'EXCEPTION_NOT_FOUND'               => 'Your requested resource was not found.  Could not find a handler for the path specified in the request.',
+    'EXCEPTION_MISSING_PARAMTER'        => 'A required parameter in your request was missing.',
+    'EXCEPTION_INVALID_PARAMETER'       => 'A parameter in your request was invalid.',
+    'EXCEPTION_REQUEST_FAILURE'         => 'Your request failed to complete.',
+    'EXCEPTION_REQUEST_TOO_LARGE'       => 'Your request is too large to process.',
+
 
     //BEGIN SUGARCRM flav=pro ONLY
     //Lotus Live specific error messages
     'ERR_EXTERNAL_API_LOTUS_LIVE_CONFLICT' => 'A file with the same name already exists in the system.',
+
+    //Forecast specific error messages
+    'ERR_TIMEPERIOD_UNDEFINED_FOR_DATE' => 'Error Timeperiod undefined for date {0}',
+    'ERR_TIMEPERIOD_ALREADY_HAS_LEAVES' => 'This TimePeriod already has leaves',
+    'ERR_TIMEPERIOD_ALREADY_LEAF' => 'Leaf Time Periods cannot have leaves',
+    'ERR_TIMEPERIOD_TYPE_DOES_NOT_EXIST' => 'Unable to retrieve any timeperiods of type: {0}',
+    'LBL_CURRENT_TIMEPERIOD' => 'Current Time Period',
+    'LBL_PREVIOUS_TIMEPERIOD' => 'Previous Time Period',
+    'LBL_NEXT_TIMEPERIOD' => 'Next Time Period',
+    'LBL_PREVIOUS_CURRENT_NEXT_TIMEPERIODS' => 'Previous,Current,Next',
+
+
     //END SUGARCRM flav=pro ONLY
 
     'LBL_ACCOUNT'=>'Account',
@@ -2482,13 +2424,8 @@ $app_strings = array (
     'LBL_BILL_TO_ACCOUNT'=>'Bill to Account',
     'LBL_BILL_TO_CONTACT'=>'Bill to Contact',
     'LBL_BILLING_ADDRESS'=>'Billing Address',
-//BEGIN SUGARCRM flav=dce ONLY
-    'LBL_BROWSER_TITLE' => 'Sugar DCE',
-//END SUGARCRM flav=dce ONLY
     'LBL_QUICK_CREATE_TITLE' => 'Quick Create',
-//BEGIN SUGARCRM flav!=dce ONLY
     'LBL_BROWSER_TITLE' => 'SugarCRM - Commercial Open Source CRM',
-//END SUGARCRM flav!=dce ONLY
     'LBL_BUGS'=>'Bugs',
     'LBL_BY' => 'by',
     'LBL_CALLS'=>'Calls',
@@ -2836,9 +2773,6 @@ $app_strings = array (
     'LBL_TABGROUP_SALES' => 'Sales',
     'LBL_TABGROUP_SUPPORT' => 'Support',
     'LBL_TABGROUP_TOOLS' => 'Tools',
-//BEGIN SUGARCRM flav=dce ONLY
-    'LBL_TABGROUP_DCE' => 'DCE',
-//END SUGARCRM flav=dce ONLY
     'LBL_TASKS'=>'Tasks',
     'LBL_TEAMS_LINK'=>'Teams',
     'LBL_THEME_COLOR'=>'Color',
@@ -2881,6 +2815,7 @@ $app_strings = array (
     'LNK_GET_LATEST_TOOLTIP'=>'Replace with latest version',
     'LNK_HELP' => 'Help',
     'LNK_CREATE' => 'Create',
+    'LNK_CREATE_WHEN_EMPTY' => 'Create a record now.',
     'LNK_LIST_END' => 'End',
     'LNK_LIST_NEXT' => 'Next',
     'LNK_LIST_PREVIOUS' => 'Previous',
@@ -2917,7 +2852,7 @@ $app_strings = array (
     'ERROR_FULLY_EXPIRED'=> "Your company's license for SugarCRM has expired for more than 7 days and needs to be brought up to date. Only admins may login.",
     'ERROR_LICENSE_EXPIRED'=> "Your company's license for SugarCRM needs to be updated. Only admins may login",
     'ERROR_LICENSE_VALIDATION'=> "Your company's license for SugarCRM needs to be validated. Only admins may login",
-    'WARN_BROWSER_VERSION_WARNING' => '<b>Warning:</b> Your browser version is no longer supported or you are using an unsupported browser.',
+    'WARN_BROWSER_VERSION_WARNING' => '<p><b>Warning:</b>The browser or browser version you are using is not supported.</p><p>The following browser versions are recommended</p><ul><li>Internet Explorer 9</li><li>Mozilla Firefox 14, 15 </li><li>Safari 6</li><li>Google Chrome 22 (or latest version)</li></ul>',
     'WARN_LICENSE_SEATS'=>  "Warning: The number of active users is already the maximum number of licenses allowed.",
     'WARN_LICENSE_SEATS_MAXED'=>  "Warning: The number of active users exceeds the maximum number of licenses allowed.",
     'WARN_ONLY_ADMINS'=> "Only admins may log in.",
@@ -2930,6 +2865,7 @@ $app_strings = array (
     'ERROR_FIELD_REQUIRED' => 'Error. This field is required.',
     'ERROR_MINVALUE' => 'Error. This minimum value of this field is {{this}}.',
     'ERROR_MAXVALUE' => 'Error. This maximum value of this field is {{this}}.',
+    'ERROR_DATETIME' => 'Error. This field requires a valid date.',
     'ERROR_NO_BEAN' => 'Failed to get bean.',
     'LBL_DUP_MERGE'=>'Find Duplicates',
     'LBL_MANAGE_SUBSCRIPTIONS'=>'Manage Subscriptions',
@@ -3010,6 +2946,7 @@ $app_strings = array (
     'LBL_REMOVE' => 'Remove',
     'LBL_TRAINING' => 'Support',
     'ERR_DATABASE_CONN_DROPPED'=>'Error executing a query. Possibly, your database dropped the connection. Please refresh this page, you may need to restart you web server.',
+    'ERR_DATABSE_RELATIONSHIP_QUERY'=>'Error setting {0} relationship: {1}',
     'ERR_MSSQL_DB_CONTEXT' =>'Changed database context to',
   'ERR_MSSQL_WARNING' =>'Warning:',
 
@@ -3150,22 +3087,6 @@ $app_strings = array (
     'LBL_PLUGIN_LOTUS_DESC' => 'Integrate Sugar with Lotus Notes.',
      //END SUGARCRM flav=ent ONLY
 
-    //BEGIN SUGARCRM flav=dce ONLY
-    //DCE
-    'LBL_DCEDEPLOY_LABEL' => 'Deploy',
-    'LBL_DCEDELETE_LABEL' => 'Delete',
-    'LBL_DCEUPGRADE_LABEL' => 'Upgrade',
-    'LBL_DCEARCHIVE_BUTTON' => 'Archive',
-    'LBL_DCECLONE_BUTTON' => 'Clone',
-    'LBL_DCERECOVER_BUTTON' => 'Recover',
-    'LBL_DCESUPPORTUSER_ENABLE_BUTTON' => 'Enable Support User',
-    'LBL_DCESUPPORTUSER_DISABLE_BUTTON' => 'Disable Support User',
-    'LBL_DCECONVERTINSTANCE_BUTTON' => 'Convert Instance',
-    'LBL_DCETEMPLATE_CONVERT' => 'Convert Template',
-    'LBL_DCERESTARTEMAIL_LABEL' => 'Resend Email',
-    'LBL_DCERESTARTACTION_LABEL' => 'Restart Action',
-    'LNK_DCEUPGRADE_SEARCH' => 'Upgrade Search',
-    //END SUGARCRM flav=dce ONLY
 
     //jc:#12287 - For javascript validation messages
     'MSG_IS_NOT_BEFORE' => 'is not before',
@@ -3376,6 +3297,10 @@ $app_strings = array (
     'LBL_CANCEL_BUTTON_KEY' => 'l',
     'LBL_CANCEL_BUTTON_LABEL' => 'Cancel',
     'LBL_CANCEL_BUTTON_TITLE' => 'Cancel',
+    'LBL_START_BUTTON_LABEL' => 'Start',
+    'LBL_START_BUTTON_TITLE' => 'Start',
+    'LBL_FINISH_BUTTON_LABEL' => 'Finish',
+    'LBL_FINISH_BUTTON_TITLE' => 'Finish',
     'LBL_FIRST_INPUT_EDIT_VIEW_KEY' => '7',
     'LBL_ADV_SEARCH_LNK_KEY' => '8',
     'LBL_FIRST_INPUT_SEARCH_KEY' => '9',
@@ -3408,6 +3333,10 @@ $app_strings = array (
     'LBL_SEARCH_BY' => 'Search by',
     'LBL_PREVIEW' => 'Preview',
     'LBL_STREAM_NO_RECORDS' => 'This record has no notes at this time. Please add a note by clicking on the add note link.',
+
+    //SugarApiExceptionNotAuthorized language string
+    'SUGAR_API_EXCEPTION_NOT_AUTHORIZED' => 'Not allowed to edit field {0} in module: {1}',
+
     'LBL_LOGIN_BUTTON_LABEL' => 'Log In',
     'LBL_TOUR' => 'Activity View Tour',
     'LNK_TOUR' => 'Tour',
@@ -3417,7 +3346,89 @@ $app_strings = array (
     'LBL_LOADING_LANGUAGE' => 'Loading language pack',
     'LBL_UPLOADING' => 'Uploading',
 
+    //theme roller
+    'BorderColor' => 'Border Color',
+    'NavigationBar' => 'Navigation Bar',
+    'PrimaryButton' => 'Primary Button',
+
+    //begin portal
+    //BEGIN SUGARCRM flav=ent ONLY
+    // for nomad mobile
+    'LBL_RELATED_MODULE' => 'Related {{this}}',
+    'LBL_RELATED_MODULE_PLURAL' => 'Related {{this}}',
+    'LBL_CREATE_MODULE' => 'Create {{this}}',
+    'LBL_EDIT' => 'Edit {{this}}',
+    'LBL_ASSOC' => 'Associate {{this}}',
+    'LBL_ASSIGN' => 'Assign {{this}}',
+    'LBL_EDIT_RELATED' => 'Edit Related {{this}}',
+    'LBL_CREATE_RELATED' => 'Create Related {{this}}',
+    'LBL_ASSOC_EXISTING' => 'Associate Existing {{this}}',
+    'LBL_SEARCH_ALL' => 'Search all {{this}}',
+    'LBL_SEARCH_ALL_RECORDS' => 'Search all records',
+    'LBL_OK' => 'OK',
+    'LBL_YES' => 'Yes',
+    'LBL_NO' => 'No',
+    'LBL_CALL_BUTTON' => 'Call',
+    'LBL_SMS_BUTTON' => 'SMS',
+    'LBL_EMAIL_BUTTON' => 'Email',
+    'LBL_UNLINK_BUTTON' => 'Unlink',
+    'LBL_MAP_BUTTON' => 'Map',
+    'LBL_FILE_BUTTON' => 'File',
+    'LBL_WARNING' => 'Warning',
+    'LBL_CONFIRM' => 'Confirm',
+    'LBL_CREATE_RELATED_RECORD' => 'Create Related Record',
+    'LBL_ASSOC_RELATED_RECORD' => 'Associate Existing Record',
+    'LBL_CHOOSE_LINK' => 'Choose Link Type',
+    'LBL_HOME' => 'Home',
+    'ERR_NO_DOCS' => 'No Documents Available',
+    'ERR_NO_RECORDS_SELECTED' => 'You haven\'t selected any records.',
+    'LBL_DELETING' => 'Deleting...',
+    'LBL_UNLINKING' => 'Unlinking...',
+    'LBL_UNLINKED' => 'Unlinked',
+    'LBL_LEGAL' => 'Legal',
+    'LBL_UPCOMING' => 'Upcoming',
+    'LBL_RECENTLY_UPDATED' => 'Recent',
+
+    //BEGIN SUGARCRM flav=pro ONLY
+    // for nomad mobile
+    'LBL_MOBILE_SHOW_MORE' => 'Show more...',
+    'LBL_MOBILE_SHOW_MORE_TOP' => 'Show more...',
+    'LBL_MOBILE_NO_RECORDS' => 'No records found',
+    'LBL_MOBILE_SEARCH_TEAMS' => 'Search Teams',
+    'LBL_MOBILE_LOGING_OUT' => 'Please wait while logging out...',
+    'LBL_MOBILE_RELOGIN_BUTTON' => 'Re-login',
+    'LBL_MOBILE_META_SYNC_FAILED' => 'Unable to sync with server. Retry?',
+    'LBL_MOBILE_PRIVACY_TERMS_CONDITIONS' => 'Privacy, Terms, & Conditions',
+    'LBL_MOBILE_APP_VERSION' => 'App Version',
+    'LBL_MOBILE_SERVER_VERSION' => 'Server Version',
+    'LBL_MOBILE_SERVER_URL' => 'Server URL',
+    'LBL_MOBILE_PTR_PULL' => 'Pull down to refresh...',
+    'LBL_MOBILE_PTR_RELEASE' => 'Release to refresh...',
+    'LBL_MOBILE_EDIT_REL' => 'Edit Relationship',
+    'LBL_MOBILE_DESKTOP' => 'Desktop Version',
+    'LBL_MOBILE_DELETE_CONFIRM' => 'Are you sure you want to delete this record?',
+    'LBL_MOBILE_UNLINK_CONFIRM' => 'Are you sure you want to unlink this record?',
+    'LBL_MOBILE_LOG_CALL_CONFIRM' => 'Would you like to log your last call?',
+    'LBL_MOBILE_CHOOSE_RECIPIENT' => 'Choose recepient',
+    'LBL_MOBILE_CHOOSE_PHONE' => 'Choose phone number',
+    'LBL_MOBILE_CHOOSE_URL' => 'Choose URL',
+    'LBL_MOBILE_CHOOSE_DOC' => 'Choose document',
+    'LBL_MOBILE_CHOOSE_LOCATION' => 'Choose location',
+    'LBL_MOBILE_NO_ACTIONS_AVAILABLE' => 'No Actions Available',
+    'ERR_MOBILE_NOT_AUTHORIZED' => 'Access not authorized.',
+    'ERR_MOBILE_INVALID_CREDS' => 'Invalid username or password',
+    'ERR_MOBILE_SESSION_EXPIRED' => 'Your session has been expired',
+    'ERR_MOBILE_NOT_FOUND' => 'Resource not found',
+    'ERR_MOBILE_TIMEOUT' => 'Request timeout',
+    'ERR_MOBILE_CONNECTION_FAILED' => 'Can\'t reach the server',
+    'ERR_MOBILE_INTERNAL' => 'Internal error ({{code}}). Please try again later.',
+    'ERR_MOBILE_VALIDATION' => 'Record is invalid',
+    'ERR_MOBILE_EMAIL' => 'Error. Invalid Email Address.',
+
+    //END SUGARCRM flav=pro ONLY
+
     //for portal
+    'LBL_PORTAL_SEARCH' => 'Search by Name, Number',
     'LBL_SIGNUP_BUTTON_LABEL' => 'Sign Up',
     'LBL_PORTAL_SIGNUP_PROCESS' => 'Registering',
     'LBL_PORTAL_SIGNUP_TITLE' => 'Thank you for signing up!',
@@ -3441,27 +3452,23 @@ $app_strings = array (
     'LBL_PORTAL_NOT_ENABLED_MSG' => "We're Sorry, but this feature is not available at this time.",
 
     //for portal system tour
-    'LBL_PORTAL_TOUR_WELCOME_TITLE' => 'Welcome to Portal',
-    'LBL_PORTAL_TOUR_WATCH_VIDEO' => 'Watch: What\'s new in Portal',
-    'LBL_PORTAL_TOUR_FEATURES_1' => 'Feature 1',
-    'LBL_PORTAL_TOUR_FEATURES_2' => 'Feature 2',
-    'LBL_PORTAL_TOUR_FEATURES_3' => 'Feature 3',
-    'LBL_PORTAL_TOUR_FEATURES_4' => 'Feature 4',
-    'LBL_PORTAL_TOUR_MORE_INFO_1' => 'And much more!',
-    'LBL_PORTAL_TOUR_MORE_INFO_2' => 'For a full list visit the What\'s New in Portal',
+    'LBL_PORTAL_TOUR_SCREEN1_TITLE' => 'Welcome to Portal Tour',
+    'LBL_PORTAL_TOUR_SCREEN1_BODY' => '<ul class="features"><li class="icon-ok">Faster and Interactive user experience</li><li class="icon-ok">Introducing internationalization</li><li class="icon-ok">Dashboard views to track new and updated Bugs, Cases and Knowledge Base articles</li><li class="icon-ok">Global Search</li><li class="icon-ok">Ability to change password</li></ul><p class="small">And much more!</p><p class="small">For a full list visit the <a href="javascript:void window.open(\'http://support.sugarcrm.com/02_Documentation/01_Sugar_Editions/\')">What\'s New in Portal</a>. </p>',
     'LBL_PORTAL_TOUR_TAKE_TOUR_LNK' => 'Take the tour',
     'LBL_PORTAL_TOUR_SKIP_LNK' => 'Skip',
     'LBL_PORTAL_TOUR_NEXT_LNK' => 'Next',
     'LBL_PORTAL_TOUR_BACK_LNK' => 'Back',
     'LBL_PORTAL_TOUR_DONE_LNK' => 'Done',
-    'LBL_PORTAL_TOUR_CASES_TITLE' => 'Cases',
-    'LBL_PORTAL_TOUR_CASES_BODY' => 'All your cases go here',
-    'LBL_PORTAL_TOUR_SEARCH_TITLE' => 'Search',
-    'LBL_PORTAL_TOUR_SEARCH_BODY' => 'Search keywords or case numbers',
-    'LBL_PORTAL_TOUR_QUICK_TITLE' => 'Quick Create',
-    'LBL_PORTAL_TOUR_QUICK_BODY' => 'You can perform all your quick actions here',
-    'LBL_PORTAL_TOUR_DONE_TITLE' => 'You\'re Done!',
-    'LBL_PORTAL_TOUR_DONE_BODY' => 'You can always retake the tour or read documentation for more information.',
+    'LBL_PORTAL_TOUR_SCREEN2_TITLE' => 'Dashboard',
+    'LBL_PORTAL_TOUR_SCREEN2_BODY' => '<p>The Dashboards represent your home page. It displays a quick synopsis of your company’s Cases, KB Articles, and Bugs.</p> <p>Click the Sugar cube icon on the top left corner of any Portal page to navigate back to the Dashboard.</p> <p>Each Dashboard shows the five last modified records per module. To view additional records, click on the module link.</p>',
+    'LBL_PORTAL_TOUR_SCREEN3_TITLE' => 'Footer',
+    'LBL_PORTAL_TOUR_SCREEN3_BODY' => '<p>Your footer bar can be used for the following: <ul class="features"><li class="icon-ok">Language: When you have selected your preferred language, all labels in the Portal will be translated. Note: Language can only be selected from footer during login.</li><li class="icon-ok">Tour: Familiarize yourself with the new Sugar Portal features.</li><li class="icon-ok">Print: Create a print out of the Sugar Portal page for your personal records.</li> <li class="icon-ok">Top: Navigate to the top of the Sugar Portal page you are in.</li></ul></p>',
+    'LBL_PORTAL_TOUR_SCREEN4_TITLE' => 'Search',
+    'LBL_PORTAL_TOUR_SCREEN4_BODY' => '<p>There are two types of search:</p><ul class="features"><li class="icon-ok">Global Search – located in the navigation bar. Here you can search for Cases, Bugs, and Knowledge Base Documents by their names and numbers.</li> <li class="icon-ok">Specific module Search – located in the top of the list view in each module. <br><img src="../themes/default/images/ppt-search.png" height="200" width="530" style="margin-top: 10px;"><i class="icon-arrow-left icon-lg" style="float: right; position: relative; right: 311px; top: -147px;"></i></li></ul>',
+    'LBL_PORTAL_TOUR_SCREEN5_TITLE' => 'Profile',
+    'LBL_PORTAL_TOUR_SCREEN5_BODY' => '<p>From the profile page you will, for instance, be able to change password, update email address, and change preferred language. </p>',
+    'LBL_PORTAL_TOUR_SCREEN6_TITLE' => 'You\'re Done!',
+    'LBL_PORTAL_TOUR_SCREEN6_BODY' => 'You can always retake the tour or read <a href="javascript:void window.open(\'http://support.sugarcrm.com/02_Documentation/01_Sugar_Editions/\')">documentation</a> for more information.',
 
     //for portal errors
     'LBL_PORTAL_INVALID_CREDS' => 'The username/password combination provided is incorrect, please try again.',
@@ -3475,13 +3482,13 @@ $app_strings = array (
     'LBL_PORTAL_REQUEST_TIMEOUT' => 'The request timed out.',
     'LBL_PORTAL_REQUEST_TIMEOUT_TITLE' => 'Request timeout',
     'LBL_PORTAL_UNAUTHORIZED' =>'We\'re sorry, but it appears you are unauthorized to access this resource.',
-    'LBL_PORTAL_UNAUTHORIZED_TITLE' =>'HTTP Error: 401 Unauthorized',
+    'LBL_PORTAL_UNAUTHORIZED_TITLE' =>'HTTP Error: Unauthorized',
     'LBL_PORTAL_RESOURCE_UNAVAILABLE' => 'Resource not available.',
-    'LBL_PORTAL_RESOURCE_UNAVAILABLE_TITLE' => 'HTTP Error: 403 Forbidden',
+    'LBL_PORTAL_RESOURCE_UNAVAILABLE_TITLE' => 'HTTP Error: Forbidden',
     'LBL_PORTAL_METHOD_NOT_ALLOWED' => 'HTTP method not allowed for this resource. Please contact technical support.',
-    'LBL_PORTAL_METHOD_NOT_ALLOWED_TITLE' => 'HTTP Error: 405 Method Not Allowed',
+    'LBL_PORTAL_METHOD_NOT_ALLOWED_TITLE' => 'HTTP Error: Method Not Allowed',
     'LBL_PORTAL_PRECONDITION_MISSING' => 'Request failure, or, missing/invalid parameter. Please contact technical support',
-    'LBL_PORTAL_PRECONDITION_MISSING_TITLE' => 'HTTP Error: 412',
+    'LBL_PORTAL_PRECONDITION_MISSING_TITLE' => 'HTTP Error: ',
     'LBL_PORTAL_MIN_MODULES' => 'At minimum, you need to have the Cases, Bugs or Knowledge Base module enabled to use this application.',
     'LBL_PORTAL_ERROR' => 'Error',
     'LBL_PORTAL_ROUTE_ERROR'=>'Issue loading module. Please try again later or contact support.',
@@ -3491,6 +3498,8 @@ $app_strings = array (
     'LBL_PORTAL_PASSWORD_UPDATE_FAILED' => 'Update password failed. Please try again or contact technical support.',
     'LBL_PORTAL_PASSWORD_VERIFICATION_FAILED' => 'Password entered does not match that in our system.', 
     'LBL_PORTAL_PASSWORD_SUCCESS_CHANGED' => 'Your password has been successfully updated.',
+    //end portal
+    //END SUGARCRM flav=ent ONLY
 
     //sidecar errors
     'ERR_HTTP_DEFAULT_TYPE' => 'Unknown',
@@ -3516,7 +3525,9 @@ $app_strings = array (
 
     'LBL_SYNCED_RECURRING_MSG' => 'You cannot edit this record because it was synced from an external client.',
     'LBL_EXISTING' => 'Existing',
+    'LBL_PANEL_DEFAULT' => 'Default',
 );
+
 
 $app_list_strings['moduleList']['Library'] = 'Library';
 $app_list_strings['library_type'] = array('Books'=>'Book', 'Music'=>'Music', 'DVD'=>'DVD', 'Magazines'=>'Magazines');
@@ -4308,7 +4319,7 @@ $app_list_strings['state_dom'] = array(
     'Sugar'=>'Sugar',
     'WebEx'=>'WebEx',
     'GoToMeeting'=>'GoToMeeting',
-    'LotusLive'=>'LotusLive',
+    'IBMSmartCloud'=>'IBM SmartCloud',
     'Google' => 'Google',
     'Box' => 'Box.net',
     'Facebook'=>'Facebook',
@@ -4364,10 +4375,43 @@ $app_strings ['documentation'] = array (
 	'PRO' => '04_Sugar_Professional',
 	'COM' => '05_Sugar_Community_Edition'
 );
-    //BEGIN SUGARCRM flav=pro ONLY
-	$app_list_strings ['pdfmanager_yes_no_list'] = array (
-		'yes' => 'Yes' ,
-		'no' => 'No',
-	);
-    //END SUGARCRM flav=pro ONLY
+//BEGIN SUGARCRM flav=pro ONLY
+$app_list_strings['forecasts_config_category_options_dom'] = array(
+    'show_binary' => 'Two Categories',
+    'show_buckets' => 'Three Categories',
+//END SUGARCRM flav=pro ONLY
+//BEGIN SUGARCRM flav=ent ONLY
+    'show_n_buckets' => 'Custom Categories',
+//END SUGARCRM flav=ent ONLY
+//BEGIN SUGARCRM flav=pro ONLY
+);
+$app_list_strings['forecasts_timeperiod_types_dom'] = array(
+    'chronological' => 'Date Based Year',
+);
+$app_list_strings['forecasts_timeperiod_options_dom'] = array(
+    'Annual' => 'Yearly (Quarterly leaf periods)',
+    'Quarter' => 'Quarterly (Monthly leaf periods)',
+);
+
+$app_list_strings['forecasts_timeperiod_month_options_dom'] = array(
+   			'' => '',
+   			'1' => 'January',
+   			'2' => 'February',
+   			'3' => 'March',
+   			'4' => 'April',
+   			'5' => 'May',
+   			'6' => 'June',
+   			'7' => 'July',
+   			'8' => 'August',
+   			'9' => 'September',
+   			'10' => 'October',
+   			'11' => 'November',
+   			'12' => 'December',
+   		);
+
+$app_list_strings ['pdfmanager_yes_no_list'] = array (
+    'yes' => 'Yes' ,
+    'no' => 'No',
+);
+//END SUGARCRM flav=pro ONLY
 ?>

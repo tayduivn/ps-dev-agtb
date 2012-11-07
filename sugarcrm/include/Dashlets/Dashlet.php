@@ -281,26 +281,17 @@ class Dashlet
 
         if(!isset($dashletStrings[$dashletClassname])) {
             // load current language strings for current language, else default to english
-            if(is_file($dashletDirectory . $dashletClassname . '/' . $dashletClassname . '.' . $current_language . '.lang.php')
-                    || is_file('custom/' . $dashletDirectory . $dashletClassname . '/' . $dashletClassname . '.' . $current_language . '.lang.php') ) {
-                if(is_file($dashletDirectory . $dashletClassname . '/' . $dashletClassname . '.' . $current_language . '.lang.php')) {
-                    require($dashletDirectory . $dashletClassname . '/' . $dashletClassname . '.' . $current_language . '.lang.php');
-                }
-                if(is_file('custom/' . $dashletDirectory . $dashletClassname . '/' . $dashletClassname . '.' . $current_language . '.lang.php')) {
-                    require('custom/' . $dashletDirectory . $dashletClassname . '/' . $dashletClassname . '.' . $current_language . '.lang.php');
-                }
-            }
-            else {
-                if(is_file($dashletDirectory . $dashletClassname . '/' . $dashletClassname . '.en_us.lang.php')) {
-                    require($dashletDirectory . $dashletClassname . '/' . $dashletClassname . '.en_us.lang.php');
-                }
-                if(is_file('custom/' . $dashletDirectory . $dashletClassname . '/' . $dashletClassname . '.en_us.lang.php')) {
-                    require('custom/' . $dashletDirectory . $dashletClassname . '/' . $dashletClassname . '.en_us.lang.php');
-                }
+            $lang_file = SugarAutoLoader::existingCustomOne(
+                $dashletDirectory . $dashletClassname . '/' . $dashletClassname . '.en_us.lang.php',
+                $dashletDirectory . $dashletClassname . '/' . $dashletClassname . ".{$current_language}.lang.php"
+            );
+            if($lang_file) {
+                require $lang_file;
             }
         }
-
-        $this->dashletStrings = $dashletStrings[$dashletClassname];
+        if(isset($dashletStrings[$dashletClassname])) {
+            $this->dashletStrings = $dashletStrings[$dashletClassname];
+        }
     }
 
     /**

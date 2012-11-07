@@ -35,7 +35,7 @@ class ViewList extends SugarView{
 
         $metadataFile = $this->getMetaDataFile();
 
-        if( !file_exists($metadataFile) )
+        if( empty($metadataFile) )
             sugar_die($GLOBALS['app_strings']['LBL_NO_ACTION'] );
 
         require($metadataFile);
@@ -169,18 +169,14 @@ class ViewList extends SugarView{
                 $view = 'basic_search';
             }
         }
+        $this->view = $view;
 
         $this->use_old_search = true;
-        if ((file_exists('modules/' . $this->module . '/SearchForm.html')
-                && !file_exists('modules/' . $this->module . '/metadata/searchdefs.php'))
-            || (file_exists('custom/modules/' . $this->module . '/SearchForm.html')
-                && !file_exists('custom/modules/' . $this->module . '/metadata/searchdefs.php')))
-        {
+        if (SugarAutoLoader::existingCustom('modules/' . $this->module . '/SearchForm.html') &&
+            !SugarAutoLoader::existingCustom('modules/' . $this->module . '/metadata/searchdefs.php')) {
             require_once('include/SearchForm/SearchForm.php');
             $this->searchForm = new SearchForm($this->module, $this->seed);
-        }
-        else
-        {
+        }  else {
             $this->use_old_search = false;
             require_once('include/SearchForm/SearchForm2.php');
 
@@ -192,7 +188,8 @@ class ViewList extends SugarView{
         }
     }
 
-    function processSearchForm(){
+    function processSearchForm()
+    {
         if(isset($_REQUEST['query']))
         {
             // we have a query
@@ -209,7 +206,7 @@ class ViewList extends SugarView{
             $GLOBALS['log']->info("List View Where Clause: $this->where");
         }
         if($this->use_old_search){
-            switch($view) {
+            switch($this->view) {
                 case 'basic_search':
                     $this->searchForm->setup();
                     $this->searchForm->displayBasic($this->headers);
@@ -249,4 +246,3 @@ class ViewList extends SugarView{
         return new SearchForm($seed, $module, $action);
     }
 }
-?>

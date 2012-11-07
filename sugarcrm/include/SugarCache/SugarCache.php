@@ -44,27 +44,22 @@ class SugarCache
     protected static function _init()
     {
         $lastPriority = 1000;
-        $locations = array('include/SugarCache','custom/include/SugarCache');
+        $locations = SugarAutoLoader::getFilesCustom('include/SugarCache');
+        if(empty($locations)) {
+            $locations = array('include/SugarCache/SugarCacheMemory.php');
+        }
  	    foreach ( $locations as $location ) {
-            if (sugar_is_dir($location) && $dir = opendir($location)) {
-                while (($file = readdir($dir)) !== false) {
-                    if ($file == ".."
-                            || $file == "."
-                            || !is_file("$location/$file")
-                            )
-                        continue;
-                    require_once("$location/$file");
-                    $cacheClass = basename($file, ".php");
-                    if ( class_exists($cacheClass) && is_subclass_of($cacheClass,'SugarCacheAbstract') ) {
-                        $GLOBALS['log']->debug("Found cache backend $cacheClass");
-                        $cacheInstance = new $cacheClass();
-                        if ( $cacheInstance->useBackend()
-                                && $cacheInstance->getPriority() < $lastPriority ) {
-                            $GLOBALS['log']->debug("Using cache backend $cacheClass, since ".$cacheInstance->getPriority()." is less than ".$lastPriority);
-                            self::$_cacheInstance = $cacheInstance;
-                            $lastPriority = $cacheInstance->getPriority();
-                        }
-                    }
+            $cacheClass = basename($location, ".php");
+            if($cacheClass == 'SugarCache') continue;
+ 	        require_once $location;
+            if ( class_exists($cacheClass) && is_subclass_of($cacheClass,'SugarCacheAbstract') ) {
+                $GLOBALS['log']->debug("Found cache backend $cacheClass");
+                $cacheInstance = new $cacheClass();
+                if ( $cacheInstance->useBackend()
+                        && $cacheInstance->getPriority() < $lastPriority ) {
+                    $GLOBALS['log']->debug("Using cache backend $cacheClass, since ".$cacheInstance->getPriority()." is less than ".$lastPriority);
+                    self::$_cacheInstance = $cacheInstance;
+                    $lastPriority = $cacheInstance->getPriority();
                 }
             }
         }
@@ -113,6 +108,18 @@ class SugarCache
                     break;
                 }
             }
+        }
+    }
+
+    /**
+     * Try to reset file from caches
+     */
+    public static function cleanFile( $file )
+    {
+        // APC
+        if ( function_exists('apc_delete_file') && ini_get('apc.stat') == 0 )
+        {
+            apc_delete_file( $file );
         }
     }
 }

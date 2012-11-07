@@ -20,14 +20,12 @@ if(!defined('sugarEntry'))define('sugarEntry', true);
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  *
  ********************************************************************************/
+require_once('service/core/SugarWebServiceImpl.php');
+require_once('SugarWebServiceUtilv3.php');
 
 /**
  * This class is an implemenatation class for all the rest services
  */
-require_once('service/core/SugarWebServiceImpl.php');
-require_once('SugarWebServiceUtilv3.php');
-
-
 class SugarWebServiceImplv3 extends SugarWebServiceImpl {
 
     public function __construct()
@@ -274,9 +272,11 @@ class SugarWebServiceImplv3 extends SugarWebServiceImpl {
     	    case 'default':
     	        $modules = self::$helperObject->get_visible_modules($availModules);
     	       break;
+//BEGIN SUGARCRM flav=pro ONLY
     	    case 'mobile':
     	        $modules = self::$helperObject->get_visible_mobile_modules($availModules);
     	        break;
+//END SUGARCRM flav=pro ONLY
     	    case 'all':
     	    default:
     	        $modules = $availModules;
@@ -456,12 +456,9 @@ class SugarWebServiceImplv3 extends SugarWebServiceImpl {
     				if(count($select_fields) > 0)
     				    $filterFields = $select_fields;
     				else {
-    				    if(file_exists('custom/modules/'.$seed->module_dir.'/metadata/listviewdefs.php'))
-    					   require_once('custom/modules/'.$seed->module_dir.'/metadata/listviewdefs.php');
-        				else
-        					require_once('modules/'.$seed->module_dir.'/metadata/listviewdefs.php');
+    				    require_once SugarAutoLoader::loadWithMetafiles($seed->module_dir, 'listviewdefs');
 
-        				$filterFields = array();
+    				    $filterFields = array();
         				foreach($listViewDefs[$seed->module_dir] as $colName => $param) {
         	                if(!empty($param['default']) && $param['default'] == true)
         	                    $filterFields[] = strtolower($colName);

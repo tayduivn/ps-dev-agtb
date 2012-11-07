@@ -26,7 +26,7 @@ class ViewRollupWizard extends SugarView
 {
     var $vars = array("tmodule", "selLink", 'type');
 
-    function __construct()
+    public function __construct()
     {
         parent::__construct();
         foreach($this->vars as $var)

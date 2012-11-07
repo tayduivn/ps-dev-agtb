@@ -68,8 +68,8 @@ class KBTag extends SugarBean {
 	 );
 	  
 
-	function KBTag() {
-		parent :: SugarBean();
+	public function __construct() {
+		parent::__construct();
 		$this->setupCustomFields('KBTags'); //parameter is module name
 		$this->disable_row_level_security = false;
 	}
@@ -79,7 +79,7 @@ class KBTag extends SugarBean {
         //Default the tag id to 1 which will make it global
         $this->team_id = '1';
         //END SUGARCRM flav=pro ONLY
-		return parent :: save($check_notify);
+		return parent::save($check_notify);
 	}
 	function get_summary_text() {
 		return "$this->tag_name";

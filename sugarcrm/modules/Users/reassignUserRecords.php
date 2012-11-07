@@ -18,7 +18,6 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *Your Warranty, Limitations of liability and Indemnity are expressly stated in the License.  Please refer
  *to the License for the specific language governing these rights and limitations under the License.
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
- * $Id: additionalDetails.php 13782 2006-06-06 17:58:55Z majed $
  *********************************************************************************/
 //BEGIN SUGARCRM flav=pro ONLY
 require_once('include/SugarFields/Fields/Teamset/SugarFieldTeamset.php');
@@ -40,6 +39,8 @@ if(!$GLOBALS['current_user']->isAdminForModule('Users')
 
 global $locale;
 
+$db = DBManagerFactory::getInstance();
+
 $return_module = isset($_REQUEST['return_module']) ? $_REQUEST['return_module'] : '';
 $return_action = isset($_REQUEST['return_action']) ? $_REQUEST['return_action'] : '';
 $return_id = isset($_REQUEST['return_id']) ? $_REQUEST['return_id'] : '';
@@ -51,9 +52,8 @@ else
 echo "<h2 class='moduleTitle' style=\"margin-bottom:0px;\">{$mod_strings_users['LBL_REASS_SCRIPT_TITLE']}</h2>";
 
 // Include Metadata for processing
-require_once("modules/Users/metadata/reassignScriptMetadata.php");
-if(file_exists("custom/modules/Users/reassignScriptMetadata_override.php")){
-	include("custom/modules/Users/reassignScriptMetadata_override.php");
+foreach(SugarAutoLoader::existingCustom('modules/Users/metadata/reassignScriptMetadata.php', 'modules/Users/reassignScriptMetadata_override.php') as $file) {
+    include $file;
 }
 
 if(!empty($_GET['record'])){
@@ -266,8 +266,9 @@ else if(!isset($_GET['execute'])){
 	$tousername = $_POST['touser'];
 
 	$query = "select user_name, id from users where id in ('{$_POST['fromuser']}', '{$_POST['touser']}')";
-	$res = $GLOBALS['db']->query($query);
-	while($row = $GLOBALS['db']->fetchByAssoc($res)){
+
+	$res = $db->query($query);
+	while($row = $db->fetchByAssoc($res)){
 		if($row['id'] == $_POST['fromuser'])
 			$fromusername = $row['user_name'];
 		if($row['id'] == $_POST['touser'])
@@ -297,7 +298,7 @@ else if(!isset($_GET['execute'])){
 	$sugar_smarty = new Sugar_Smarty();
         $help_img = smarty_function_sugar_help(array("text"=>$mod_strings['LBL_REASS_VERBOSE_HELP']),$sugar_smarty);
 	echo "<BR><input type=checkbox name=verbose> {$mod_strings_users['LBL_REASS_VERBOSE_OUTPUT']}".$help_img."<BR>\n";
-	
+
 	//END SUGARCRM flav!=sales ONLY
 	unset($_SESSION['reassignRecords']['modules']);
 	$beanListFlip = array_flip($_SESSION['reassignRecords']['assignedModuleListCache']);
@@ -327,14 +328,24 @@ else if(!isset($_GET['execute'])){
 			      "date_modified = '".TimeDate::getInstance()->nowDb()."', ".
 			      "modified_user_id = '{$current_user->id}' ";
 		//BEGIN SUGARCRM flav=pro ONLY
-
-        //make sure team id is set, and the module is not EAPM, which does not have team/teamset fields
-		if(!empty($team_id) && $module!='EAPM'){
+        //make sure team_id and team_set_id columns are available
+		if(!empty($team_id) && isset($object->field_defs['team_id']))
+        {
 			$q_set .= ", team_id = '{$team_id}', team_set_id = '{$team_set_id}' ";
 		}
 		//END SUGARCRM flav=pro ONLY
 		$q_tables   = " {$object->table_name} ";
 		$q_where  = "where {$object->table_name}.deleted=0 and {$object->table_name}.assigned_user_id = '{$_POST['fromuser']}' ";
+
+        // nutmeg sfa-219 : Fix reassignment of records when user set to Inactive
+        // for products reassign items that are not related to opportunity
+        // products with opportunity will be reassigned if user select ForecastWorksheet module
+        //BEGIN SUGARCRM flav=pro ONLY
+        if ( $module == 'Product' )
+        {
+            $q_where .= " and {$object->table_name}.opportunity_id IS NULL ";
+        }
+        //END SUGARCRM flav=pro ONLY
 
 		// Process conditions based on metadata
 		if(isset($moduleFilters[$p_module]['fields']) && is_array($moduleFilters[$p_module]['fields'])){
@@ -390,8 +401,8 @@ else if(!isset($_GET['execute'])){
 		$_SESSION['reassignRecords']['modules'][$module]['query'] = $query;
 		$_SESSION['reassignRecords']['modules'][$module]['update'] = $updatequery;
 
-		$res = $GLOBALS['db']->query($countquery);
-		$row = $GLOBALS['db']->fetchByAssoc($res);
+		$res = $db->query($countquery);
+		$row = $db->fetchByAssoc($res);
 
 		echo "{$row['count']} {$mod_strings_users['LBL_REASS_RECORDS_FROM']} {$app_list_strings['moduleList'][$p_module]} {$mod_strings_users['LBL_REASS_WILL_BE_UPDATED']}\n<BR>\n";
 		echo "<input type=checkbox name={$module}_workflow> {$mod_strings_users['LBL_REASS_WORK_NOTIF_AUDIT']}<BR>\n";
@@ -432,14 +443,29 @@ else if(isset($_GET['execute']) && $_GET['execute'] == true){
 
 		echo "<h5>{$mod_strings_users['LBL_PROCESSING']} {$app_list_strings['moduleList'][$p_module]}</h5>";
 
-		$res = $GLOBALS['db']->query($query, true);
+        //BEGIN SUGARCRM flav=com ONLY
+        $res = $db->query($query, true);
+        $affected_rows = $db->getAffectedRowCount($res);
+        //END SUGARCRM flav=com ONLY
+
+        //BEGIN SUGARCRM flav=pro ONLY
+        // nutmeg sfa-219 : Fix reassignment of records when user set to Inactive
+        if ( $module == 'ForecastWorksheet' )
+        {
+            $affected_rows = ForecastWorksheet::reassignForecast($fromuser, $touser);
+        }
+        else
+        {
+            $res = $db->query($query, true);
+            $affected_rows = $db->getAffectedRowCount($res);
+        }
+        //END SUGARCRM flav=pro ONLY
 
 		//echo "<i>Workflow and Notifications <b>".($workflow ? "enabled" : "disabled")."</b> for this module record reassignment</i>\n<BR>\n";
 		echo "<table border='0' cellspacing='0' cellpadding='0'  class='detail view'>\n";
 		echo "<tr>\n";
 		echo "<td>\n";
 		if(! $workflow){
-			$affected_rows = $GLOBALS['db']->getAffectedRowCount($res);
 			echo "{$mod_strings_users['LBL_UPDATE_FINISH']}: $affected_rows {$mod_strings_users['LBL_AFFECTED']}<BR>\n";
 		}
 		else{
@@ -447,7 +473,7 @@ else if(isset($_GET['execute']) && $_GET['execute'] == true){
 			$failarr = array();
 
 			require_once($beanFiles[$module]);
-			while($row = $GLOBALS['db']->fetchByAssoc($res)){
+			while($row = $db->fetchByAssoc($res)){
 				$bean = new $module();
 				if(empty($row['id'])){
 					continue;

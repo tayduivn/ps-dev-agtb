@@ -37,7 +37,7 @@ $viewdefs['Bugs']['mobile']['view']['edit'] = array(
 
     'panels' => array(
         array(
-            'label' => 'LBL_PANEL_1',
+            'label' => 'LBL_PANEL_DEFAULT',
             'fields' => array(
                 array('name' => 'bug_number', 'displayParams' => array('required' => false, 'wireless_detail_only' => true,)),
                 'priority',
@@ -46,6 +46,8 @@ $viewdefs['Bugs']['mobile']['view']['edit'] = array(
                     'name' => 'name',
                     'label' => 'LBL_SUBJECT',
                 ),
+                'description',
+                'resolution',
                 'assigned_user_name',
                 //BEGIN SUGARCRM flav=pro ONLY
                 'team_name',

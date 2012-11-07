@@ -36,6 +36,7 @@ class SugarTestCallUtilities
     	$name = 'Call';
     	$call = new Call();
         $call->name = $name . $time;
+        $call->date_start = TimeDate::getInstance()->getNow()->asDb();
         $call->save();
         self::$_createdCalls[] = $call;
         return $call;

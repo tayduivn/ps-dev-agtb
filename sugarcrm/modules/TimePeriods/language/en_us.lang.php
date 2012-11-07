@@ -29,10 +29,11 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 $mod_strings = array (
   'LBL_NAME' =>   'ID',
-  'LBL_TP_NAME' => 'Time Period',
+  'LBL_TP_NAME' => 'Name',
   'LBL_TP_START_DATE' => 'Start Date',
   'LBL_TP_END_DATE' => 'End Date',
-  'LBL_TP_FISCAL_YEAR' => 'Fiscal Year',  
+  'LBL_TP_FISCAL_YEAR' => 'Fiscal Year',
+  'LBL_TP_TYPE' => 'Time Period Type',
   'LBL_MODULE_NAME' => 'Time Periods',
   'LBL_MODULE_TITLE' => 'Time Periods: Home',
   'LBL_SEARCH_FORM_TITLE' => 'Time Period Search',
@@ -40,7 +41,9 @@ $mod_strings = array (
   'LBL_NEW_FORM_TITLE' => 'New Time Period',
   'LNK_NEW_TIMEPERIOD' => 'Create Time Period',
   'LNK_TIMEPERIOD_LIST' => 'View Time Periods',
-  'LBL_TP_IS_FISCAL_YEAR' => 'Is Fiscal  Year?',
+  'LBL_TP_IS_FISCAL_YEAR' => 'Is Fiscal Year?',
+  'LBL_TP_IS_FISCAL' => 'Is Fiscal Time Span?',
+  'LBL_TP_IS_LEAF' => 'Is Leaf?',
   'LBL_PARENT_ID' =>  'Parent Id',
   'LBL_CREATED_BY' => 'Created by',
   'LBL_DATE_ENTERED' => 'Date Entered',
@@ -51,7 +54,7 @@ $mod_strings = array (
   'LBL_SEARCH_TP_START_DATE' => 'Start Date',
   'LBL_SEARCH_TP_END_DATE' => 'End Date',
   'ERR_TIME_PERIOD_DATE_RANGE' => 'Time period end date should be later than start date.',
-	'LBL_EDITLAYOUT' => 'Edit Layout' /*for 508 compliance fix*/,
+  'LBL_EDITLAYOUT' => 'Edit Layout' /*for 508 compliance fix*/,
 );
 
 ?>

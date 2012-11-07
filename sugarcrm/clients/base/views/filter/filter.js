@@ -9,7 +9,7 @@
 ({
     previousTerms: {},
     events: {
-        'keyup .dataTables_filter input': 'filterList'
+        'keyup .dataTables_filter input': 'queueAndDelay'
     },
     _renderHtml: function() {
         // this needs to be reset every render because the field set on the collection changes
@@ -22,35 +22,37 @@
         var self = this;
         var moduleMeta = app.metadata.getModule(this.module);
         var results = new Array();
+        // Allowed fields limited to int, varchar because of search limitations
+        var allowedFields = ["int","varchar","name"];
         _.each(moduleMeta.fields, function(fieldMeta, fieldName) {
             var fMeta = fieldMeta;
-            if(fMeta.unified_search && _.indexOf(self.collection.fields, fieldName) >= 0) {
+            if(fMeta.unified_search && _.indexOf(self.collection.fields, fieldName) >= 0 && _.indexOf(allowedFields, fMeta.type) !== -1) {
                 results.push(app.lang.get(fMeta.vname, self.module));
             }
         });
         return results;
     },
-    filterList: function(evt) {
-        var self = this,
-            term, previousTerm;
+    queueAndDelay: function(evt) {
+        var self = this;
 
-        previousTerm = self.getPreviousTerm(this.module);
-        term = self.$(evt.currentTarget).val();
-        self.setPreviousTerm(term, this.module);
-
-        if(term && term.length) {
-            _.delay(function() {
-                self.fireSearchRequest(term);
-            }, app.config.requiredElapsed);
-
-        // If user removing characters and down to 0 chars reset table to all data
-        } else if(previousTerm && !term.length) {
-            this.collection.fetch({limit: this.context.get('limit') || null });
-
-        // Edge case - just in case user might highlight the input and hit 'Back' to delete.
-        } else if(!term && evt.which === 8) {
-            this.collection.fetch({limit: this.context.get('limit') || null });
-        }
+        if(!self.debounceFunction) {
+            self.debounceFunction = _.debounce(function(){
+                var term, previousTerm;
+                
+                previousTerm = self.getPreviousTerm(this.module);
+                term = self.$(evt.currentTarget).val();
+                self.setPreviousTerm(term, this.module);
+                
+                if(term && term.length) {
+                    self.setPreviousTerm(term, this.module);
+                    self.fireSearchRequest(term);
+                } else if(previousTerm && !term.length) {
+                    // If user removing characters and down to 0 chars reset table to all data
+                    this.collection.fetch({limit: this.context.get('limit') || null });
+                } 
+            }, app.config.requiredElapsed || 500);
+        } 
+        self.debounceFunction();
     },
     fireSearchRequest: function(term) {
         var self = this;
