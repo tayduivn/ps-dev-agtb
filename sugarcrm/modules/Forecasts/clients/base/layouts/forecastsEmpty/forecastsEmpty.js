@@ -79,7 +79,11 @@
             } else {
                 // we have a success save, so we need to call the app.sync() and then redirect back to the index
                 //app.alert.show('loading', {level: 'process', title : 'Loading'});
-                app.alert.show('success', {level: 'success', title :'Success:', messages: ['You successfully set up your forecasting module. Please wait while it loads.']})
+                app.alert.show('success', {
+                    level: 'success',
+                    title : app.lang.get("LBL_FORECASTS_WIZARD_SUCCESS_TITLE", "Forecasts"),
+                    messages: [app.lang.get("LBL_FORECASTS_WIZARD_SUCCESS_MESSAGE", "Forecasts")]
+                });
                 app.sync({callback: function() {
                     window.location.hash = "#";
                 }});
