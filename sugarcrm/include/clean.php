@@ -87,6 +87,7 @@ class SugarCleaner
         $config->set('HTML.TidyLevel', 'light');
         $config->set('HTML.ForbiddenElements', array('body' => true, 'html' => true));
         $config->set('AutoFormat.RemoveEmpty', false);
+        $config->set('Cache.SerializerPermissions', 0775);
         // for style
         //$config->set('Filter.ExtractStyleBlocks', true);
         $config->set('Filter.ExtractStyleBlocks.TidyImpl', false); // can't use csstidy, GPL
