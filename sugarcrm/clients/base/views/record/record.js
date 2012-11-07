@@ -429,5 +429,13 @@
         }
 
         //TODO: toggle panes
+    },
+
+    /**
+     * Set the title in the header pane
+     * @param title
+     */
+    setTitle: function(title) {
+        this.$('.headerpane').prepend('<h1>' + title + '</h1>');
     }
 })
