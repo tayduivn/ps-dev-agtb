@@ -2,7 +2,12 @@
 
     // Add custom events here for now
     app.events.on("app:init", function() {
-        // app.data.declareModels();
+
+        // TODO: Check if this is still necessary.
+        app.template.compile("alert",
+            "<div class=\"{{alertClass}} {{#if autoClose}}timeten{{/if}}\">" +
+                "<a class=\"close\" data-dismiss=\"alert\">x</a>{{#if title}}<strong>{{str title}}</strong>{{/if}}" +
+                "{{#each messages}}<p>{{str this}}</p>{{/each}}</div>");
 
         // Override detail/edit view routes
         function recordHandler(module, id, action) {
@@ -281,9 +286,19 @@
         Analytics = function () {};
 
         Analytics.prototype.start = function(id) {
+            var timing = window.performance ? window.performance.timing : {};
             _gaq.push(['_setAccount', id]);
             // allow localhost
             _gaq.push(['_setDomainName', 'none']);
+
+            // Set a higher sampling rate since our page hit count is << 1M/day.
+            _gaq.push(['_setSampleRate', '80']);
+            _gaq.push(['_setSiteSpeedSampleRate', 80]);
+            if(!_(timing).isEmpty()) {
+                _gaq.push(['_trackTiming', 'Performance API', 'Network latency', timing.responseEnd-timing.fetchStart]);
+                _gaq.push(['_trackTiming', 'Performance API', 'Page load', timing.loadEventEnd-timing.responseEnd]);
+                _gaq.push(['_trackTiming', 'Performance API', 'Navigation delay', timing.loadEventEnd-timing.navigationStart]);
+            }
         };
         Analytics.prototype.trackPageView = function(pageUri) {
             _gaq.push(['_trackPageview', pageUri]);

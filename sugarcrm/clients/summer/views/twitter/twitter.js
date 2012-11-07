@@ -1,9 +1,4 @@
 ({
-    initialize: function(options) {
-        _.bindAll(this);
-        app.view.View.prototype.initialize.call(this, options);
-    },
-
     render: function() {
         if (this.tweets) {
             app.view.View.prototype.render.call(this);
@@ -30,8 +25,7 @@
                 var tweets = [];
 
                 _.each(data, function(tweet) {
-                    var time = new Date(tweet.created_at.replace(/^\w+ (\w+) (\d+) ([\d:]+) \+0000 (\d+)$/,
-        "$1 $2 $4 $3 UTC")),
+                    var time = new Date(tweet.created_at.replace(/^\w+ (\w+) (\d+) ([\d:]+) \+0000 (\d+)$/, "$1 $2 $4 $3 UTC")),
                         date = app.date.format(time, "Y-m-d H:i:s"),
                         text = tweet.text,
                         sourceUrl = tweet.source,
@@ -50,14 +44,12 @@
                 }, this);
 
                 this.tweets = tweets;
-
-                app.view.View.prototype.render.call(this);
+                this.render();
             }
         });
     },
 
     bindDataChange: function() {
-        var self = this;
-        this.model.on('change', self.getTweets, this);
+        this.model.on('change', this.getTweets, this);
     }
 })

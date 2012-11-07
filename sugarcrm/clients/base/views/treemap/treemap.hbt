@@ -1,0 +1,4 @@
+<div class="block thumbnail padded">
+  <h4>Opportunities closing this month</h4>
+  <div class="opportunities-treemap"><svg></svg></div>
+</div>

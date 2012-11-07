@@ -85,7 +85,6 @@
                 "sidecar/src/view/view.js" => "summer/summer.min.js",
                 "sidecar/src/view/field.js" => "summer/summer.min.js",
                 "sidecar/src/view/layout.js" => "summer/summer.min.js",
-                "summer/views/alert-view.js" => "summer/summer.min.js",
                 "sidecar/src/view/alert.js" => "summer/summer.min.js",
                 "summer/summer.js" => "summer/summer.min.js",
                 "styleguide/assets/js/bootstrap-transition.js" => "summer/summer.min.js",

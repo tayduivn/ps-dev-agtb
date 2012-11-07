@@ -1,0 +1,6 @@
+{{#if results}}
+<div class="block thumbnail padded">
+  <h4>{{results.properties.title}}</h4>
+  <div id="{{guid}}"><svg></svg></div>
+</div>
+{{/if}}

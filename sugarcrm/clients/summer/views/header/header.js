@@ -121,7 +121,7 @@
             module: 'Users',
             id: this.userId,
             field: 'picture'
-        }) : "../clients/summer/views/imagesearch/anonymous.jpg"; 
+        }) : "../styleguide/assets/img/profile.png";
     },    
     /**
      * Creates the task create drop down list
