@@ -188,16 +188,33 @@
         return cls
     },
 
+    /**
+     * Utility method to reset the committed log in the event that no models are returned for the 
+     * selected user/timeperiod
+     */
+    resetCommittedLog:function(){
+    	this.bestCase = 0;
+        this.likelyCase = 0;
+        this.worstCase = 0;
+        this.previousBestCase = 0;
+        this.previousLikelyCase = 0;
+        this.previousWorstCase = 0;
+        this.showHistoryLog = false;
+        this.previousDateEntered = "";
+    },
+
     buildForecastsCommitted:function () {
         var self = this;
         var count = 0;
         var previousModel;
-
+        
         //Reset the history log
         self.historyLog = [];
 
-        // if we have no models, exit out of the method
+        // if we have no models, reset component render, and exit.
         if (_.isEmpty(self._collection.models)) {
+        	self.resetCommittedLog();
+        	self.render();
             return;
         }
 
