@@ -21,9 +21,7 @@
  * All Rights Reserved.
  ********************************************************************************/
 
-(function (app) {
-
-    app.view.layouts.ForecastsTabbedConfigLayout = app.view.Layout.extend({
+({
 
         /**
          * Saved Labels to use for the Breadcrumbs
@@ -104,6 +102,4 @@
             this.$el.find('.modal-content:first').toggleClass('hide show');
             this.$el.find('.modal-navigation li:first').addClass('active');
         }
-    });
-
-})(SUGAR.App)
+})

@@ -1,6 +1,6 @@
 <?php
-$viewdefs['Forecasts']['base']['layout']['forecasts'] = array(
-    'type' => 'forecasts',
+$viewdefs['Forecasts']['base']['layout']['index'] = array(
+    'type' => 'index',
     'components' => array(
         array(
             'view' => 'forecastsChart',
@@ -50,7 +50,7 @@ $viewdefs['Forecasts']['base']['layout']['forecasts'] = array(
             'view' => 'forecastsCommitButtons',
         ),
         array(
-            'layout' => 'forecastsInfo'
+            'layout' => 'info'
         ),
     ),
 );

@@ -2,8 +2,8 @@
     var _rrh = {
         index: function(){
             var forecastModule = 'Forecasts';
-            var forecastLayout = 'forecasts';
-            if(app.viewModule == 'forecastsEmpty') {
+            var forecastLayout = 'index';
+            if(app.viewModule == 'config') {
                 forecastLayout = app.viewModule;
             }
             app.controller.loadView({
