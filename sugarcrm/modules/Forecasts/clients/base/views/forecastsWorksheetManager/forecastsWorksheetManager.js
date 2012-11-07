@@ -62,9 +62,9 @@
         this.timePeriod = app.defaultSelections.timeperiod_id.id
         this.category = app.defaultSelections.category.id
 
-        this.collection = this.context.forecasts.worksheetmanager;
-        this.collection.url = this.createURL();
-        this.collection.isDirty = false;
+        this._collection = this.context.forecasts.worksheetmanager;
+        this._collection.url = this.createURL();
+        this._collection.isDirty = false;
 
         this.totalModel = new (Backbone.Model.extend(
             {
@@ -90,8 +90,8 @@
         if(!this.showMe()){
         	return false;
         }
-        this.collection = this.context.forecasts.worksheetmanager;
-        this.collection.url = this.createURL();
+        this._collection = this.context.forecasts.worksheetmanager;
+        this._collection.url = this.createURL();
         this.safeFetch(true);
     },
 
@@ -99,15 +99,16 @@
      * Clean up any left over bound data to our context
      */
     unbindData : function() {
+        if(this._collection) this._collection.off(null, null, this);
         if(this.context.forecasts) this.context.forecasts.off(null, null, this);
         if(this.context.forecasts.worksheetmanager) this.context.forecasts.worksheetmanager.off(null, null, this);
         app.view.View.prototype.unbindData.call(this);
     },
 
     bindDataChange: function() {
-        if(this.collection)
+        if(this._collection)
         {
-            this.collection.on("reset", function(){
+            this._collection.on("reset", function(){
             	this.render();
             }, this);
         }
@@ -176,7 +177,7 @@
             
             var worksheet = this;
             $(window).bind("beforeunload",function(){
-                if(worksheet.collection.isDirty){
+                if(worksheet._collection.isDirty){
                 	return app.lang.get("LBL_WORKSHEET_SAVE_CONFIRM_UNLOAD", "Forecasts");
                 }            	
             });
@@ -226,7 +227,7 @@
         {
             fetch = true;
         }
-    	var collection = this.collection;
+    	var collection = this._collection;
     	var self = this;
     	if(collection.isDirty){
     		//unsaved changes, ask if you want to save.
@@ -349,7 +350,7 @@
         );
 
         //see if anything in the model is a draft version
-        _.each(this.collection.models, function(model, index){
+        _.each(this._collection.models, function(model, index){
         	if(model.get("version") == 0){
         		enableCommit = true;
         	}
@@ -461,7 +462,7 @@
         }
 
 
-        _.each(self.collection.models, function (model) {
+        _.each(self._collection.models, function (model) {
 
            var base_rate = parseFloat(model.get('base_rate'));
            amount 			+= app.currency.convertWithRate(model.get('amount'), base_rate);

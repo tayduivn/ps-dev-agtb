@@ -69,7 +69,7 @@
         this.isExpandableRows = false;
 
         app.view.View.prototype.initialize.call(this, options);
-        this.collection = this.context.forecasts.worksheet;
+        this._collection = this.context.forecasts.worksheet;
 
         //set up base selected user
     	this.selectedUser = {id: app.user.get('id'), "isManager":app.user.get('isManager'), "showOpps": false};
@@ -77,7 +77,7 @@
         // INIT tree with logged-in user       
         this.timePeriod = app.defaultSelections.timeperiod_id.id;
         this.updateWorksheetBySelectedCategory(app.defaultSelections.category);
-        this.collection.url = this.createURL();
+        this._collection.url = this.createURL();
     },
 
     /**
@@ -173,6 +173,7 @@
      * Clean up any left over bound data to our context
      */
     unbindData : function() {
+        if(this._collection) this._collection.off(null, null, this);
         if(this.context.forecasts) this.context.forecasts.off(null, null, this);
         if(this.context.forecasts.worksheet) this.context.forecasts.worksheet.off(null, null, this);
         app.view.View.prototype.unbindData.call(this);
@@ -184,10 +185,10 @@
      */
     bindDataChange: function(params) {
         var self = this;
-        if (this.collection) {
-            this.collection.on("reset", function() { self.calculateTotals(), self.render(); }, this);
-            this.collection.on("change", function() {
-                _.each(this.collection.models, function(element){
+        if (this._collection) {
+            this._collection.on("reset", function() { self.calculateTotals(), self.render(); }, this);
+            this._collection.on("change", function() {
+                _.each(this._collection.models, function(element){
                     if(element.hasChanged("commit_stage")) {
                         this.gTable.fnDestroy();
                         this.gTable = this.$('.worksheetTable').dataTable(self.gTableDefs);
@@ -278,7 +279,7 @@
             var worksheet = this;
             $(window).bind("beforeunload",function(){
             	//if the record is dirty, warn the user.
-                if(worksheet.collection.isDirty){
+                if(worksheet._collection.isDirty){
                 	return app.lang.get("LBL_WORKSHEET_SAVE_CONFIRM_UNLOAD", "Forecasts");
                 }
                 //special manager cases for messages
@@ -344,7 +345,7 @@
         {
             fetch = true;
         }
-    	var collection = this.collection;
+    	var collection = this._collection;
     	var self = this;
     	
     	/*
@@ -667,7 +668,7 @@
         var sales_stage_won_setting = this.context.forecasts.config.get('sales_stage_won') || [];
         var sales_stage_lost_setting = this.context.forecasts.config.get('sales_stage_lost') || [];
 
-        _.each(self.collection.models, function (model) {
+        _.each(self._collection.models, function (model) {
             var won = _.include(sales_stage_won_setting, model.get('sales_stage'))
                 lost = _.include(sales_stage_lost_setting, model.get('sales_stage')),
                 amount = parseFloat(model.get('likely_case')),
@@ -713,7 +714,7 @@
             'won_count' : wonCount,
             'won_amount' : wonAmount,
             'included_opp_count' : includedCount,
-            'total_opp_count' : self.collection.models.length
+            'total_opp_count' : self._collection.models.length
         };
 
         this.context.forecasts.unset("updatedTotals", {silent: true});
@@ -730,7 +731,7 @@
         if(this.selectedUser && !this.selectedUser){
         	return false;
         }
-        this.collection.url = this.createURL();
+        this._collection.url = this.createURL();
         this.safeFetch(true);
     },
 
@@ -794,7 +795,7 @@
         if(!this.showMe()){
         	return false;
         }
-        this.collection.url = this.createURL();
+        this._collection.url = this.createURL();
         this.safeFetch(true);
     },
 

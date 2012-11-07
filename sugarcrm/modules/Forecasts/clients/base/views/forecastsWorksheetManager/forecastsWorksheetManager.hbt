@@ -10,7 +10,7 @@
     </tr>
     </thead>
     <tbody>
-    {{#each ../collection.models}}
+    {{#each ../_collection.models}}
     <tr>
         {{#each ../fields}}
         {{#if enabled}}
