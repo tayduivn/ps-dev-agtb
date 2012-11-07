@@ -149,6 +149,12 @@ class ForecastsDefaults
     public static function upgradeColumns() {
         $db = DBManagerFactory::getInstance();
 
+        $nonDefaultRates = array();
+        $result = $db->query("SELECT id, conversion_rate FROM currencies WHERE deleted = 0 AND id <> '-99'");
+        while($row = $db->fetchByAssoc($result)) {
+            $nonDefaultRates[$row['id']] = $row['conversion_rate'];
+        }
+
         //Update the currency_id and base_rate columns for existing records so that we have currency_id and base_rate values set up correctly
         $tables = array('opportunities', 'products', 'worksheet', 'forecasts', 'forecast_schedule', 'quotes', 'quotas');
         foreach($tables as $table)
@@ -183,8 +189,12 @@ class ForecastsDefaults
             }
             // Update currency_id to base (-99) with NULL values
             $db->query("UPDATE {$table} t SET t.currency_id='-99' WHERE t.currency_id IS NULL");
+
             // Update base_rate for from currency table for NULL values
-            $db->query("UPDATE {$table} t, currencies c SET t.base_rate = c.conversion_rate WHERE t.base_rate IS NULL AND t.currency_id IS NOT NULL AND t.currency_id <> '-99' AND t.currency_id = c.id");
+            foreach($nonDefaultRates as $id=>$rate) {
+                $db->query(sprintf("UPDATE {$table} SET base_rate = %d WHERE base_rate IS NULL AND currency_id IS NOT NULL AND currency_id <> '-99' AND currency_id = '%s'", $rate, $id));
+            }
+
             // Update remaining base_rate for records with NULL values
             $db->query("UPDATE {$table} SET base_rate = 1 WHERE base_rate IS NULL");
         }
