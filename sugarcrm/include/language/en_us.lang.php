@@ -3439,7 +3439,8 @@ $app_strings = array (
     'BorderColor' => 'Border Color',
     'NavigationBar' => 'Navigation Bar',
     'PrimaryButton' => 'Primary Button',
-
+    
+  	//BEGIN SUGARCRM flav=PRO ONLY
     //in app tour
     'LBL_TOUR_PDF_MANAGER' => 'New PDF Manager',
     'LBL_TOUR_PDF_MANAGER_DESCRIPTION' => '<div style="float: left;"><div class="well" style="float: left; width: 157px; margin-right: 20px;"><img src="themes/default/images/pt-pdf-manager.png" width="157" height="167"><div class="caption">PDF Manager link in Admin</div></div><div style="float: left; width: 400px;"><ul><li class="icon-ok">Admin users can modify predefined Quote and Invoice Templates</li><li class="icon-ok">Admin users can add new templates for standard or custom modules utilizing a flexible HTML editor</li><li class="icon-ok">The new PDF Manager enables companies to create custom, personalized PDF documents by merging data from any record in any module</li></ul><p>Click on Admin under Profile menu to find a link to the PDF Manager under the System settings</p><i class="icon-arrow-left icon-lg" style="float: right; position: relative; right: 444px; top: -92px;"></i></div></div><div class="clear"></div>',
@@ -3461,7 +3462,8 @@ $app_strings = array (
     'LNK_TOUR_DOCUMENTATION' => 'documentation',
     'LBL_TOUR_CALENDAR_URL_1' => 'Do you share your SugarCRM calendar with 3rd party applications, such as Microsoft Outlook or Exchange? If so, you have a new URL. This new, more secure URL includes a personal key which will prevent unauthorized publishing of your calendar.',
     'LBL_TOUR_CALENDAR_URL_2' => 'Retrieve your new shared calendar URL.',
-
+    //END SUGARCRM flav=PRO ONLY
+    
     //begin portal
     //BEGIN SUGARCRM flav=ent ONLY
 
