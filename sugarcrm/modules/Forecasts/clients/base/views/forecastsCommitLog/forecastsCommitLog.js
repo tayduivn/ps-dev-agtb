@@ -193,7 +193,7 @@
      * selected user/timeperiod
      */
     resetCommittedLog:function(){
-    	this.bestCase = 0;
+        this.bestCase = 0;
         this.likelyCase = 0;
         this.worstCase = 0;
         this.previousBestCase = 0;
@@ -213,8 +213,8 @@
 
         // if we have no models, reset component render, and exit.
         if (_.isEmpty(self._collection.models)) {
-        	self.resetCommittedLog();
-        	self.render();
+            self.resetCommittedLog();
+            self.render();
             return;
         }
 
