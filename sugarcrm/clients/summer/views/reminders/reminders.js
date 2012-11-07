@@ -1,16 +1,17 @@
 ({
     events: {
-        'click .todo-pills': function(e) { this.pillSwitcher(e, this) },
-        'click .todo-container': 'persistMenu',
-        'click .todo': 'handleEscKey',
-        'click .todo-add': 'todoSubmit',
-        'keyup .todo-subject':'todoSubmit',
-        'keyup .todo-date':'todoSubmit',
-        'focus .todo-date': 'showDatePicker',
-        'click .todo-status': 'changeStatus',
-        'click .todo-remove': 'removeTodo'
+        'click .reminders-pills': function(e) { this.pillSwitcher(e, this) },
+        'click .reminders-container': 'persistMenu',
+        'click .reminders': 'handleEscKey',
+        'click .reminders-add': 'submitReminder',
+        'keyup .reminders-subject':'submitReminder',
+        'keyup .reminders-date':'submitReminder',
+        'focus .reminders-date': 'showDatePicker',
+        'click .reminders-status': 'changeStatus',
+        'click .reminders-remove': 'removeReminder'
     },
 
+    tagName: 'span',
     open: false,
 
     initialize: function(options) {
@@ -50,7 +51,7 @@
             self.render();
         }, this);
 
-        app.events.on("app:view:todo-list:refresh", function(model, action) {
+        app.events.on("app:view:reminders-record:refresh", function(model, action) {
             var taskType = self.getTaskType(model.attributes.date_due),
                 givenModel = model;
 
@@ -94,27 +95,27 @@
     handleEscKey: function() {
         var self = this;
         _.defer(function() {
-            self.$(".todo-subject").focus();
+            self.$(".reminders-subject").focus();
         });
 
-        if( !(this.$(".todo-list-widget").is(".open")) ) {
+        if( !(this.$(".reminders-widget").is(".open")) ) {
             // attach namespaced keyup event listener
-            this.$(".todo-subject,.todo-date").on("keyup.escape", function() {
+            this.$(".reminders-subject,.reminders-date").on("keyup.escape", function() {
                 // If esc was pressed
                 if( event.keyCode == 27 ) {
-                    self.$(".todo-list-widget").removeClass("open");
+                    self.$(".reminders-widget").removeClass("open");
                     // remove event listener
-                    self.$(".todo-subject,.todo-date").off("keyup.escape");
+                    self.$(".reminders-subject,.reminders-date").off("keyup.escape");
                 }
             });
         }
         else {
             // remove event listener
-            this.$(".todo-subject,.todo-date").off("keyup.escape");
+            this.$(".reminders-subject,.reminders-date").off("keyup.escape");
         }
     },
     showDatePicker: function() {
-        this.$(".todo-date").datepicker({
+        this.$(".reminders-date").datepicker({
             dateFormat: "yy-mm-dd"
         });
         $("#ui-datepicker-div").css("z-index", 1032);
@@ -122,45 +123,45 @@
             e.stopPropagation();
         });
     },
-    pillSwitcher: function(e, context) {
-        var clickedEl = context.$(e.target);
-        var clickedIndex = context.$(".todo-pills").index(clickedEl.closest(".todo-pills"));
+    pillSwitcher: function(e, scope) {
+        var clickedEl = scope.$(e.target);
+        var clickedIndex = scope.$(".reminders-pills").index(clickedEl.closest(".reminders-pills"));
 
-        context.$(".todo-pills.active").removeClass("active");
-        context.$(".tab-pane.active").removeClass("active");
-        clickedEl.closest(".todo-pills").addClass("active");
-        context.$(context.$(".tab-pane")[clickedIndex]).addClass("active");
+        scope.$(".reminders-pills.active").removeClass("active");
+        scope.$(".tab-pane.active").removeClass("active");
+        clickedEl.closest(".reminders-pills").addClass("active");
+        scope.$(scope.$(".tab-pane")[clickedIndex]).addClass("active");
 
         // this is "state-machine information" that will later get fed into render
         switch(clickedIndex) {
             case 0:
-                context.overduePillActive = true;
-                context.todayPillActive = false;
-                context.upcomingPillActive = false;
-                context.allPillActive = false;
+                scope.overduePillActive = true;
+                scope.todayPillActive = false;
+                scope.upcomingPillActive = false;
+                scope.allPillActive = false;
                 break;
             case 1:
-                context.overduePillActive = false;
-                context.todayPillActive = true;
-                context.upcomingPillActive = false;
-                context.allPillActive = false;
+                scope.overduePillActive = false;
+                scope.todayPillActive = true;
+                scope.upcomingPillActive = false;
+                scope.allPillActive = false;
                 break;
             case 2:
-                context.overduePillActive = false;
-                context.todayPillActive = false;
-                context.upcomingPillActive = true;
-                context.allPillActive = false;
+                scope.overduePillActive = false;
+                scope.todayPillActive = false;
+                scope.upcomingPillActive = true;
+                scope.allPillActive = false;
                 break;
             case 3:
-                context.overduePillActive = false;
-                context.todayPillActive = false;
-                context.upcomingPillActive = false;
-                context.allPillActive = true;
+                scope.overduePillActive = false;
+                scope.todayPillActive = false;
+                scope.upcomingPillActive = false;
+                scope.allPillActive = true;
                 break;
         }
     },
     getModelInfo: function(e) {
-        var clickedEl = this.$(e.target).parents(".todo-item-container")[0],
+        var clickedEl = this.$(e.target).parents(".reminders-item-container")[0],
             modelIndex = (this.$(".tab-pane.active").children()).index(clickedEl),
             parentID = this.$(".tab-pane.active").attr("id"),
             record;
@@ -184,7 +185,7 @@
 
         return {index: modelIndex, modList: record};
     },
-    removeTodo: function(e) {
+    removeReminder: function(e) {
         var self = this,
             modelInfo = this.getModelInfo(e),
             modelIndex = modelInfo.index,
@@ -197,7 +198,7 @@
             self.open = true;
             self.render();
             if( self.model.attributes.parent_id ) {
-                app.events.trigger("app:view:todo:refresh", self.model, "delete");
+                app.events.trigger("app:view:reminders:refresh", self.model, "delete");
             }
         }});
     },
@@ -228,47 +229,34 @@
 
         // call trigger only if we're updating a related record
         if( this.model.attributes.parent_id ) {
-            app.events.trigger("app:view:todo:refresh", this.model, "update_status");
+            app.events.trigger("app:view:reminders:refresh", this.model, "update_status");
         }
     },
-    _renderHtml: function() {
+    _renderHtml: function(){
         this.isAuthenticated = app.api.isAuthenticated();
-        if (app.config && app.config.logoURL) {
-            this.logoURL=app.config.logoURL;
-        }
         app.view.View.prototype._renderHtml.call(this);
     },
-    _render: function() {
-        app.view.View.prototype._render.call(this);
-
-        // This will move the entire widget's html to the footer - currently this is needed since the footer
-        // buttons are part of footer.js, but to-dos need to have their own view/template.
-        // TODO: change the structure of the to-do widget (button field that calls a layout with views)
-        if( $(".instance-picker")[0] && $(".instance-picker").siblings(".todo-list-widget").length == 0 ) {
-            $(".instance-picker").after(this.$el);
-        }
-    },
-    getTaskType: function(todoDate) {
+    getTaskType: function(reminderDate) {
         var todayBegin = new Date().setHours(0,0,0,0),
             todayEnd   = new Date().setHours(23,59,59,999),
-            splitValue = /^(\d{4}-\d{2}-\d{2})T(\d{2}:\d{2}:\d{2})\.*\d*([Z+-].*)$/.exec(todoDate),
-            todoStamp  = app.date.parse(splitValue[1] + " " + splitValue[2]).getTime();
+            splitValue = /^(\d{4}-\d{2}-\d{2})T(\d{2}:\d{2}:\d{2})\.*\d*([Z+-].*)$/.exec(reminderDate),
+            reminderStamp  = app.date.parse(splitValue[1] + " " + splitValue[2]).getTime();
 
         // If the task falls in today's range
-        if( todoStamp >= todayBegin && todoStamp <= todayEnd ) {
+        if( reminderStamp >= todayBegin && reminderStamp <= todayEnd ) {
             return "today";
         }
-        else if( todoStamp < todayBegin ) {
+        else if( reminderStamp < todayBegin ) {
             return "overdue";
         }
         else {
             return "upcoming";
         }
     },
-    validateTodo: function(e) {
-        var subjectEl = this.$(".todo-subject"),
+    validateReminder: function(e) {
+        var subjectEl = this.$(".reminders-subject"),
             subjectVal = subjectEl.val(),
-            dateEl = this.$(".todo-date"),
+            dateEl = this.$(".reminders-date"),
             dateVal = dateEl.val(),
             dateObj = app.date.parse(dateVal, app.date.guessFormat(dateVal));
 
@@ -295,7 +283,7 @@
                 "date_due": datetime
             });
 
-            if( this.$(".todo-related").is(":checked") ) {
+            if( this.$(".reminders-related").is(":checked") ) {
                 this.model.set({"parent_id": this.modelID});
                 this.model.set({"parent_type": this.currModule});
             }
@@ -307,7 +295,7 @@
             // only trigger a refresh if the user wants to relate the to-do
             // to the current record
             if( this.model.attributes.parent_id ) {
-                app.events.trigger("app:view:todo:refresh", this.model, "create");
+                app.events.trigger("app:view:reminders:refresh", this.model, "create");
             }
 
             subjectEl.val("");
@@ -316,11 +304,11 @@
             this.render();
         }
     },
-    todoSubmit: function(e) {
+    submitReminder: function(e) {
         var target = this.$(e.target),
-            dateInput = this.$(".todo-date-container");
+            dateInput = this.$(".reminders-date-container");
 
-        if( target.hasClass("todo-subject") || target.hasClass("todo-date") ) {
+        if( target.hasClass("reminders-subject") || target.hasClass("reminders-date") ) {
             // show the date-picker input field
             if( !(dateInput.is(":visible")) ) {
                 dateInput.css("display", "inline-block");
@@ -328,12 +316,12 @@
             // if enter was pressed
             if( e.keyCode == 13 ) {
                 // validate
-                this.validateTodo(e);
+                this.validateReminder(e);
             }
         }
         else {
             // Add button was clicked
-            this.validateTodo(e);
+            this.validateReminder(e);
         }
     },
 
