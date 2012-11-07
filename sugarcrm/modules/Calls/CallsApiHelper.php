@@ -82,7 +82,9 @@ class CallsApiHelper extends SugarBeanApiHelper
             //END SUGARCRM flav!=sales ONLY
 
 
-            vCal::cache_sugar_vcal($GLOBALS['current_user']);
+            if(in_array($GLOBALS['current_user']->id, $userInvitees)) {
+                vCal::cache_sugar_vcal($GLOBALS['current_user']);
+            }
         }
 
 
