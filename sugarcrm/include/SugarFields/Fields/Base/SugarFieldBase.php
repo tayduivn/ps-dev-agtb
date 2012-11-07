@@ -19,17 +19,11 @@ class SugarFieldBase {
     public $error;
     var $ss; // Sugar Smarty Object
     var $hasButton = false;
-    protected static $base;
+    protected static $base = array();
 
     function SugarFieldBase($type) {
     	$this->type = $type;
         $this->ss = new Sugar_Smarty();
-        if(empty(self::$base) && !empty($GLOBALS['current_language'])) {
-            self::$base = SugarAutoLoader::existingCustomOne("include/SugarFields/Fields/Base/{$GLOBALS['current_language']}.ListView.tpl");
-        }
-        if(empty(self::$base)) {
-            self::$base = SugarAutoLoader::existingCustomOne('include/SugarFields/Fields/Base/ListView.tpl');
-        }
     }
 
     function fetch($path)
@@ -48,6 +42,24 @@ class SugarFieldBase {
             $additional .= ' <img ' . $this->image . '>';
         }
     	return $this->ss->fetch($path) . $additional;
+    }
+
+    /**
+     * Get base view - cache it since base view is the same for all fields
+     * @param string $view
+     * @return string Base view filename
+     */
+    protected function getBase($view)
+    {
+        if(!isset(self::$base[$view])) {
+            if(!empty($GLOBALS['current_language'])) {
+            	self::$base[$view] = SugarAutoLoader::existingCustomOne("include/SugarFields/Fields/Base/{$GLOBALS['current_language']}.$view.tpl");
+            }
+            if(empty(self::$base[$view])) {
+            	self::$base[$view] = SugarAutoLoader::existingCustomOne("include/SugarFields/Fields/Base/$view.tpl");
+            }
+        }
+        return self::$base[$view];
     }
 
     function findTemplate($view){
@@ -79,7 +91,7 @@ class SugarFieldBase {
             }
         }
         if(empty($tplName)) {
-            $tplName = self::$base;
+            $tplName = $this->getBase($view);
         }
 
         $tplCache[$this->type][$view] = $tplName;
