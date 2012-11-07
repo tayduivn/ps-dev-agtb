@@ -85,12 +85,16 @@
         options = {
             success: function() {
                 app.alert.dismiss('save_profile_edit_view');
+                self.checkFileFieldsAndProcessUpload(self.model, {
+                    success: function () {
 
-                var langKey = self.model.get('preferred_language');
-                if (langKey && langKey != app.lang.getLanguage())
-                    app.lang.setLanguage(langKey,{},{noUserUpdate: true});
+                        var langKey = self.model.get('preferred_language');
+                        if (langKey && langKey != app.lang.getLanguage())
+                            app.lang.setLanguage(langKey,{},{noUserUpdate: true});
 
-                app.router.navigate('profile', {trigger: true});
+                        app.router.navigate('profile', {trigger: true});
+                    }
+                });
             },
             error: function(error) {
                 app.alert.dismiss('save_profile_edit_view');
