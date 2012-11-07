@@ -36,53 +36,22 @@ class CallsApiHelper extends SugarBeanApiHelper
         $data = parent::populateFromApi($bean, $submittedData, $options);
 
         if($bean->status != 'Held') {
-            $userInvitees = (isset($submittedData['user_invitees'])) ? $submittedData['user_invitees'] : array();
-            $contactInvitees = (isset($submittedData['contact_invitees'])) ? $submittedData['contact_invitees'] : array();
-            $leadInvitees = (isset($submittedData['lead_invitees'])) ? $submittedData['lead_invitees'] : array();
 
-            $existingUsers = (isset($submittedData['existing_invitees'])) ? $submittedData['existing_invitees'] : array();
-            $existingContacts = (isset($submittedData['existing_contact_invitees'])) ? $submittedData['existing_contact_invitees'] : array();
-            $existingLeads =  (isset($submittedData['existing_lead_invitees'])) ? $submittedData['existing_lead_invitees'] : array();
-
-            if (!empty($submittedData['relate_to']) && $submittedData['relate_to'] == 'Contacts') {
-                if (!empty($submittedData['relate_id']) && !in_array($submittedData['relate_id'], $contactInvitees)) {
-                    $contactInvitees[] = $submittedData['relate_id'];
-                }
-            }
-
-            //BEGIN SUGARCRM flav!=sales ONLY
-
-            if (!empty($submittedData['relate_to']) && $submittedData['relate_to'] == 'Leads') {
-                if (!empty($submittedData['relate_id']) && !in_array($submittedData['relate_id'], $leadInvitees)) {
-                    $leadInvitees[] = $submittedData['relate_id'];
-                }
-            }
-            //END SUGARCRM flav!=sales ONLY
-
-            if(!in_array($bean->assigned_user_id, $userInvitees)) {
-                $userInvitees[] = $bean->assigned_user_id;
-            }
-
-            // Call the Call module's save function to handle saving other fields besides
+            $userInvitees[] = $bean->assigned_user_id;
+             // Call the Call module's save function to handle saving other fields besides
             // the users and contacts relationships
 
             $bean->update_vcal = false;    // Bug #49195 : don't update vcal b/s related users aren't saved yet, create vcal cache below
 
             $bean->users_arr = $userInvitees;
-            $bean->contacts_arr = $contactInvitees;
-            $bean->leads_arr = $leadInvitees;
 
             $bean->save(true);
 
-            $bean->setUserInvitees($userInvitees, $existingUsers);
-            $bean->setContactInvitees($contactInvitees, $existingContacts);
-
-            //BEGIN SUGARCRM flav!=sales ONLY
-            $bean->setLeadInvitees($leadInvitees, $existingLeads);
-            //END SUGARCRM flav!=sales ONLY
+            $bean->setUserInvitees($userInvitees);
 
 
-            if(in_array($GLOBALS['current_user']->id, $userInvitees)) {
+
+            if($GLOBALS['current_user']->id == $bean->assigned_user_id) {
                 vCal::cache_sugar_vcal($GLOBALS['current_user']);
             }
         }

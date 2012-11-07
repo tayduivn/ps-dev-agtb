@@ -25,27 +25,10 @@
 require_once('tests/rest/RestTestBase.php');
 
 class RestCallHelperTest extends RestTestBase {
-    public function setUp()
-    {
-        parent::setUp();
-        // create a lead
-        $lead = BeanFactory::newBean('Leads');
-        $lead->name = 'Test Lead';
-        $lead->save();
-        $this->lead_id = $lead->id;
-        // create a contact
-        $contact = BeanFactory::newBean('Contacts');
-        $contact->first_name = 'Test';
-        $contact->last_name = 'McTester';
-        $contact->save();
-        $this->contact_id = $contact->id;
-    }
 
     public function tearDown()
     {
         parent::tearDown();
-        $GLOBALS['db']->query("DELETE FROM contacts WHERE id = '{$this->contact_id}'");
-        $GLOBALS['db']->query("DELETE FROM leads WHERE id = '{$this->lead_id}'");
         $GLOBALS['db']->query("DELETE FROM calls WHERE id = '{$this->call_id}'");
     }
 
@@ -56,8 +39,6 @@ class RestCallHelperTest extends RestTestBase {
             'name' => 'Test call',
             'duration' => 1,
             'start_date' => date('Y-m-d'),
-            'contact_invitees' => array($this->contact_id),
-            'lead_invitees' => array($this->lead_id),
             'assigned_user_id' => $GLOBALS['current_user']->id,
         );
 
@@ -67,15 +48,6 @@ class RestCallHelperTest extends RestTestBase {
 
         $call_id = $restReply['reply']['id'];
         $this->call_id = $call_id;
-        // verify the contact has the call
-        $restReplyContact = $this->_restCall("Contacts/{$this->contact_id}/link/calls");
-
-        $this->assertEquals($call_id, $restReplyContact['reply']['records'][0]['id'], "The Contacts call was incorrect");
-
-        // verify the lead has the call
-        $restReplyLead = $this->_restCall("Leads/{$this->lead_id}/link/calls");
-
-        $this->assertEquals($call_id, $restReplyLead['reply']['records'][0]['id'], "The Leads call was incorrect");
 
         // verify the user has the meeting, which will validate on calendar
         $restReplyUser = $this->_restCall("Users/{$GLOBALS['current_user']->id}/link/calls");
