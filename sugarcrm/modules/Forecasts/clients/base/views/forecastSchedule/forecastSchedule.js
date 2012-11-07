@@ -1,6 +1,14 @@
 /**
  * View that displays expected opportunities
  * @extends View.View
+ *
+ *
+ * Events Triggered
+ *
+ * forecasts:commitButtons:enabled
+ *      on: context.forecasts
+ *      by: collection reset event
+ *
  */
 ({
 

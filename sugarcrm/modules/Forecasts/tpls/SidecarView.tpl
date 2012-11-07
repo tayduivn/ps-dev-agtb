@@ -1,3 +1,4 @@
+<link rel="stylesheet" type="text/css" href="{$css_url}" />
 <div class="content" id="forecasts">
     <div class="alert-top">
         <div class="alert alert-process">

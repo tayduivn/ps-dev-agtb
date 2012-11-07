@@ -28,6 +28,7 @@
 
 require_once('modules/Forecasts/clients/base/api/ForecastsFiltersApi.php');
 require_once('modules/Forecasts/clients/base/api/ForecastsChartApi.php');
+require_once("include/SugarTheme/SidecarTheme.php");
 
 class ForecastsViewSidecar extends SidecarView
 {
@@ -46,6 +47,10 @@ class ForecastsViewSidecar extends SidecarView
      */
     public function display()
     {
+        //Load sidecar theme css
+        $theme = new SidecarTheme();
+        $this->ss->assign("css_url", $theme->getCSSURL());
+
         $module = $this->module;
         $displayTemplate = get_custom_file_if_exists("modules/Forecasts/tpls/SidecarView.tpl");
 
@@ -114,7 +119,7 @@ class ForecastsViewSidecar extends SidecarView
             ),
             'serverUrl' => $sugar_config['site_url'].'/rest/v10',
             'siteUrl' => $sugar_config['site_url'],
-            'loadCss' => 'url',
+            'loadCss' => false,
             'unsecureRoutes' => array('login', 'error'),
             'clientID' => 'sugar',
             'authStore'  => 'sugarAuthStore',

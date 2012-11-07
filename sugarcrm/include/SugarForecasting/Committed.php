@@ -171,7 +171,13 @@ class SugarForecasting_Committed extends SugarForecasting_AbstractForecast imple
                                     
             $db->query($sql, true);                      
         }
-        
+
+        //TODO-sfa remove this once the ability to map buckets when they get changed is implemented (SFA-215).
+        $admin = BeanFactory::getBean('Administration');
+        $settings = $admin->getConfigForModule('Forecasts');
+        if (!isset($settings['has_commits']) || !$settings['has_commits']) {
+            $admin->saveSetting('Forecasts', 'has_commits', true, 'base');
+        }
 
         $timedate = TimeDate::getInstance();
         $forecast->date_entered = $this->convertDateTimeToISO($forecast->date_entered);

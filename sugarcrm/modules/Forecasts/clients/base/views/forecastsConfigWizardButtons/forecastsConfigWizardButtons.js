@@ -1,3 +1,16 @@
+/**
+ * Events Triggered
+ *
+ * modal:close
+ *      on: layout.context
+ *      by: close()
+ *      when: the user closes the modal
+ *
+ * modal:close
+ *      on: layout.context
+ *      by: save()
+ *      when: the new config model has saved successfully
+ */
 ({
     /**
      * The Current Active Panel Index
@@ -20,8 +33,9 @@
 
     events:{
         'click [name=close_button]':'close',
-        'click [name=save_button]':'save',
+        'click [name=done_button]':'save',
         'click [name=next_button]':'next',
+        'click [name=start_button]':'start',
         'click [name=previous_button]':'previous',
         'click .breadcrumb.two li a':'breadcrumb'
     },
@@ -40,6 +54,16 @@
      */
     close:function (evt) {
         this.layout.context.trigger("modal:close");
+    },
+
+    start : function(evt) {
+        // hide the start button
+        $(evt.target).addClass('hide');
+
+        this.$el.find('a[name=next_button]').toggleClass('hide show');
+        this.$el.find('a[name=previous_button]').toggleClass('hide show');
+
+        this.next(evt);
     },
 
     /**
@@ -90,7 +114,7 @@
 
     breadcrumb:function (evt) {
         // ignore the click if the crumb is already active
-        if ($(evt.target).parent().is(".disabled") == true) {
+        if ($(evt.target).parent().is(".active,.disabled") == false) {
             // get the index of the clicked crumb
             var clickedCrumb = $(evt.target).data('index');
 
@@ -157,10 +181,17 @@
         if (nextPanel > 0 && nextPanel != this.totalPanels) {
             this.$el.find('[name=next_button]').removeClass('disabled');
             this.$el.find('[name=previous_button]').removeClass('disabled');
+            if(this.$el.find('[name=done_button]').hasClass('show')) {
+                this.$el.find('[name=done_button]').toggleClass('hide show');
+            }
+            if(this.$el.find('[name=next_button ]').hasClass('hide')) {
+                this.$el.find('[name=next_button]').toggleClass('hide show');
+            }
         } else if (nextPanel == 0) {
             this.$el.find('[name=previous_button]').addClass('disabled');
         } else if (nextPanel == this.totalPanels) {
-            this.$el.find('[name=next_button]').addClass('disabled')
+            this.$el.find('[name=next_button]').toggleClass('hide show');
+            this.$el.find('[name=done_button]').toggleClass('hide show');
         }
 
         // hide the current active panel
@@ -174,7 +205,9 @@
      * @param next
      */
     switchNavigationTab:function (next) {
-        $(this.navTabs[this.activePanel]).toggleClass('active disabled');
-        $(this.navTabs[next]).toggleClass('active disabled');
+        $(this.navTabs[next]).removeClass('disabled');
+
+        $(this.navTabs[this.activePanel]).toggleClass('active');
+        $(this.navTabs[next]).toggleClass('active');
     }
 })
