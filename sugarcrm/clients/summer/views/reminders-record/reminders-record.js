@@ -1,12 +1,12 @@
 ({
     events: {
-        'click .todo-pills': function(e) { app.view.views.TodoView.prototype.pillSwitcher(e, this) },
-        'focus .todo-date': 'showDatePicker',
-        'click .todo-status': 'changeStatus',
-        'click .todo-remove': 'removeTodo',
-        'click .todo-add': 'todoSubmit',
-        'keyup .todo-subject':'todoSubmit',
-        'keyup .todo-date':'todoSubmit'
+        'click .reminders-pills': function(e) { app.view.views.RemindersView.prototype.pillSwitcher(e, this) },
+        'focus .reminders-date': 'showDatePicker',
+        'click .reminders-status': 'changeStatus',
+        'click .reminders-remove': 'removeReminder',
+        'click .reminders-add': 'submitReminder',
+        'keyup .reminders-subject':'submitReminder',
+        'keyup .reminders-date':'submitReminder'
     },
 
     initialize: function(options) {
@@ -33,8 +33,8 @@
             }
         }, this);
 
-        app.events.on("app:view:todo:refresh", function(model, action) {
-            var taskType = app.view.views.TodoView.prototype.getTaskType(model.attributes.date_due),
+        app.events.on("app:view:reminders:refresh", function(model, action) {
+            var taskType = app.view.views.RemindersView.prototype.getTaskType(model.attributes.date_due),
                 givenModel = model;
 
             if( self.collection ) {
@@ -69,28 +69,28 @@
         });
     },
     showDatePicker: function() {
-        this.$(".todo-date").datepicker({
+        this.$(".reminders-date").datepicker({
             dateFormat: "yy-mm-dd"
         });
     },
     getModelInfo: function(e) {
-        var clickedEl = this.$(e.target).parents(".todo-item-container")[0],
+        var clickedEl = this.$(e.target).parents(".reminders-item-container")[0],
             modelIndex = (this.$(".tab-pane.active").children()).index(clickedEl),
             parentID = this.$(".tab-pane.active").attr("id"),
             record;
 
         switch(parentID) {
-            case "todo-overdue":
+            case "reminders-overdue":
                 record = this.collection.modelList['overdue'];
                 break;
-            case "todo-today":
+            case "reminders-today":
                 record = this.collection.modelList['today'];
                 break;
-            case "todo-upcoming":
+            case "reminders-upcoming":
                 record = this.collection.modelList['upcoming'];
                 break;
-            case "todo-all":
-                var taskType = app.view.views.TodoView.prototype.getTaskType(this.collection.models[modelIndex].attributes.date_due);
+            case "reminders-all":
+                var taskType = app.view.views.RemindersView.prototype.getTaskType(this.collection.models[modelIndex].attributes.date_due);
                 record = this.collection.modelList[taskType];
                 modelIndex = _.indexOf(_.pluck(record, 'id'), this.collection.models[modelIndex].id);
                 break;
@@ -98,7 +98,7 @@
 
         return {index: modelIndex, modList: record};
     },
-    removeTodo: function(e) {
+    removeReminder: function(e) {
         var self = this,
             modelInfo = this.getModelInfo(e),
             modelIndex = modelInfo.index,
@@ -108,7 +108,7 @@
         this.model.destroy({ success: function() {
             record.splice(modelIndex, 1);
             self.render();
-            app.events.trigger("app:view:todo-list:refresh", self.model, "delete");
+            app.events.trigger("app:view:reminders-record:refresh", self.model, "delete");
         }});
     },
     changeStatus: function(e) {
@@ -134,12 +134,12 @@
 
         this.model.save();
         this.render();
-        app.events.trigger("app:view:todo-list:refresh", this.model, "update_status");
+        app.events.trigger("app:view:reminders-record:refresh", this.model, "update_status");
     },
-    validateTodo: function(e) {
-        var subjectEl = this.$(".todo-subject"),
+    validateReminder: function(e) {
+        var subjectEl = this.$(".reminders-subject"),
             subjectVal = subjectEl.val(),
-            dateEl = this.$(".todo-date"),
+            dateEl = this.$(".reminders-date"),
             dateVal = dateEl.val(),
             dateObj = app.date.parse(dateVal, app.date.guessFormat(dateVal));
 
@@ -170,19 +170,19 @@
 
             this.collection.add(this.model);
             this.model.save();
-            this.collection.modelList[app.view.views.TodoView.prototype.getTaskType(datetime)].push(this.model);
-            app.events.trigger("app:view:todo-list:refresh", this.model, "create");
+            this.collection.modelList[app.view.views.RemindersView.prototype.getTaskType(datetime)].push(this.model);
+            app.events.trigger("app:view:reminders-record:refresh", this.model, "create");
 
             subjectEl.val("");
             dateEl.val("");
             this.render();
         }
     },
-    todoSubmit: function(e) {
+    submitReminder: function(e) {
         var target = this.$(e.target),
-            dateInput = this.$(".todo-date-container");
+            dateInput = this.$(".reminders-date-container");
 
-        if( target.hasClass("todo-subject") || target.hasClass("todo-date") ) {
+        if( target.hasClass("reminders-subject") || target.hasClass("reminders-date") ) {
             // show the date-picker input field
             if( !(dateInput.is(":visible")) ) {
                 dateInput.css("display", "inline-block");
@@ -190,12 +190,12 @@
             // if enter was pressed
             if( e.keyCode == 13 ) {
                 // validate
-                this.validateTodo(e);
+                this.validateReminder(e);
             }
         }
         else {
             // Add button was clicked
-            this.validateTodo(e);
+            this.validateReminder(e);
         }
     },
     populateModelList: function(collection) {
@@ -206,7 +206,7 @@
             upcoming: []
         };
         _.each(collection.models, function(model) {
-            collection.modelList[app.view.views.TodoView.prototype.getTaskType(model.attributes.date_due)].push(model);
+            collection.modelList[app.view.views.RemindersView.prototype.getTaskType(model.attributes.date_due)].push(model);
         });
     },
     bindDataChange: function() {

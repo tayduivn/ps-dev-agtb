@@ -6,6 +6,6 @@ $layout->push(array('view'=>'news'));
 $layout->push(array('view'=>'influencers'));
 $layout->push(array('view'=>'similar-opportunities'));
 $layout->push(array('view' => 'recommended-experts'));
-$layout->push(array('view'=>'todo-list'));
+$layout->push(array('view'=>'reminders-record'));
 
 $viewdefs['Opportunities']['summer']['layout']['sidebar'] = $layout->getLayout();
