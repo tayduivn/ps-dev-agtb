@@ -139,8 +139,10 @@ class CurrentUserApi extends SugarApi {
         $user_data['full_name'] = $current_user->full_name;
         $user_data['user_name'] = $current_user->user_name;
         $user_data['acl'] = $this->getAcls($platform);
+        //BEGIN SUGARCRM flav=pro ONLY
         $user_data['primary_team_name'] = $current_user->team_name;
         $user_data['primary_team_id'] = $current_user->team_id;
+        //END SUGARCRM flav=pro ONLY
         if(isset($current_user->preferred_language)) {
             $user_data['preferred_language'] = $current_user->preferred_language;
         }

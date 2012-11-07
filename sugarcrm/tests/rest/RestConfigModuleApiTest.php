@@ -66,8 +66,9 @@ class RestConfigModuleApiTest extends RestTestBase {
      */
     public function testRetrieveConfigSettingsByValidModuleNoSettings()
     {
+
         $restReply = $this->_restCall('Opportunities/config?platform=base');
-        $this->assertEmpty($restReply['reply']);
+        $this->assertNotEmpty($restReply['reply']['error_message']);
     }
 
     /**
@@ -85,7 +86,7 @@ class RestConfigModuleApiTest extends RestTestBase {
      */
     public function testRetrieveSettingsByValidModuleWithPlatformReturnsSettings()
     {
-        $restReply = $this->_restCall('Forecasts/config?platform=base');
+        $restReply = $this->_restCall('Forecasts/config?platform=base')
         $this->assertEquals('200', $restReply['info']['http_code']);
         $this->assertTrue($restReply['reply'] > 0);
     }
