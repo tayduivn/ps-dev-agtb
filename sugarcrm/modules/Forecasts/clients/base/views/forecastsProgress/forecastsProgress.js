@@ -267,13 +267,11 @@
 
         var method = self.shouldRollup ? "progressManager" : "progressRep";
 
-       var urlParams = {
+        var urlParams = {
             user_id: self.selectedUser.id,
             timeperiod_id : self.selectedTimePeriod.id
         };
-       var url = app.api.buildURL('Forecasts', method, '', urlParams);
-
-
+        var url = app.api.buildURL('Forecasts', method, '', urlParams);
         app.api.call('read', url, null, null, {
             success: function(data) {
                 if(self.shouldRollup) {
