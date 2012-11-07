@@ -454,6 +454,22 @@ class ViewConvertLead extends SugarView
             $lead->account_id = $selectedBeans['Accounts']->id;
         }
 
+        // Saving beans with priorities.
+        // Contacts and Accounts should be saved before lead activities to create correct relations
+        $saveBeanPriority = array('Contacts', 'Accounts');
+        $tempBeans = array();
+
+        foreach ($saveBeanPriority as $name)
+        {
+            if (isset($beans[$name]))
+            {
+                $tempBeans[$name] = $beans[$name];
+            }
+        }
+
+        $beans = array_merge($tempBeans, $beans);
+        unset($tempBeans);
+
         //Handle non-contacts relationships
         foreach ($beans as $bean)
         {
