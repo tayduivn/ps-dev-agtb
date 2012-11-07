@@ -69,7 +69,7 @@
 					{/if}
 				{else}
 					{* this is where the ajax sorting goes, set the sort urls appropriately*}
-		                <a href="javascript:sortBrowseList('{$pageData.urls.orderBy}','{$params.orderBy|default:$colHeader|lower}')" class='listViewThLinkS1'>{sugar_translate label=$params.label module=$pageData.bean.moduleDir}&nbsp;&nbsp;
+                        <a href='javascript:SUGAR.kb.sortBrowseList({$pageData.queries.orderBy|@json},"{$params.orderBy|default:$colHeader|lower}", true)' class='listViewThLinkS1'>{sugar_translate label=$params.label module=$pageData.bean.moduleDir}&nbsp;&nbsp;
 						{if $params.orderBy|default:$colHeader|lower == $pageData.ordering.orderBy}
 							{if $pageData.ordering.sortOrder == 'ASC'}
                                 {capture assign="imageName"}arrow_down.{$arrowExt}{/capture}

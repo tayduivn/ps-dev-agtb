@@ -65,7 +65,7 @@ class AssignToUserAction extends AbstractAction{
                     to_pdf: 'true',
                     module: 'Home',
                     action: 'quicksearchQuery',
-                    data: encodeURIComponent(YAHOO.lang.JSON.stringify(sqs_objects['EditView_' + this.target])),
+                    data: YAHOO.lang.JSON.stringify(sqs_objects['EditView_' + this.target]),
                     query: userName
                 });
                 this.sqs = sqs_objects['EditView_' + this.target];
