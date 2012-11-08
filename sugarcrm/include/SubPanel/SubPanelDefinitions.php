@@ -172,7 +172,8 @@ class aSubPanel
 	//return the definition of buttons. looks for buttons in 2 locations.
 	function get_buttons ()
 	{
-		$buttons = array ( ) ;
+		global $sugar_config;
+        
 		if (isset ( $this->_instance_properties [ 'top_buttons' ] ))
 		{
 			//this will happen only in the case of sub-panels with multiple sources(activities).
@@ -190,7 +191,16 @@ class aSubPanel
 		{
 			global $modListHeader ;
 			global $modules_exempt_from_availability_check ;
-			if (isset ( $modListHeader ) && (! (array_key_exists ( 'Emails', $modListHeader ) or array_key_exists ( 'Emails', $modules_exempt_from_availability_check ))))
+            
+            // Bug 58087 - Compose Email in activities sub panel for offline client
+            // Need to add logic to check for offline client since the Compose Email
+            // action was looking at the module list and Emails are in the exempt list.
+			if (
+                (isset($modListHeader) && (!(array_key_exists('Emails', $modListHeader) || array_key_exists('Emails', $modules_exempt_from_availability_check))))
+                ||
+                // Checks for offline client
+                (!empty($sugar_config['disc_client']) && !empty($sugar_config['oc_converted']))
+            )
 			{
 				foreach ( $buttons as $key => $button )
 				{
