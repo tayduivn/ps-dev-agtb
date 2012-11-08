@@ -5,12 +5,15 @@
  				
         $(".dblclicka").editable('blah.php',{ 
           indicator : 'Saving ...',
-          cssclass   : "editable",
-          tooltip   : 'Click to edit...'
+          cssclass   : "inlined",
+          tooltip   : 'Click to edit...',
+          callback : function(value, settings) {
+            window.location = index.html;
+          }
         })
           $(".dblclick").editable('blah.php',{ 
             indicator : 'Saving ...',
-            cssclass   : "editable",
+            cssclass   : "inlined",
             tooltip   : 'Click to edit...',
             callback : function(value, settings) {
               window.location = index.html;

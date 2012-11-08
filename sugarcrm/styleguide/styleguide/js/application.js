@@ -184,15 +184,15 @@
       $('.btngroup .btn').button();
     }
 
-    // editable example
-    $('.dblclick').hover(
-      function () {
-        $(this).before('<span class="editble"><i class="icon-pencil icon-sm"></i></span>');
-      },
-      function () {
-        $('span.editble').remove();
-      }
-    );
+     // editable example
+    $('.dblclicka').hover(
+       function () {
+       $(this).before('<span class="inlined"><i class="icon-pencil"></i></span>');
+       },
+       function () {
+        $('.inlined').remove();
+       }
+     );
 
 
     $(".omnibar").toggle(
