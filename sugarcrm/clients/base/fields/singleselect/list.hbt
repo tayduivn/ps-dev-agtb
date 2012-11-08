@@ -1,0 +1,1 @@
+<input type="radio" name="pick" value="{{model.id}}" data-module="{{module}}" {{#if selected}}checked{{/if}}>
