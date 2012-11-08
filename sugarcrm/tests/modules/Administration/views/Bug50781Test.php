@@ -34,12 +34,16 @@ class Bug50781Test extends Sugar_PHPUnit_Framework_OutputTestCase
 {
     public function setup()
     {
-        $beanList = array();
-		$beanFiles = array();
-		require('include/modules.php');
-		$GLOBALS['beanList'] = $beanList;
-		$GLOBALS['beanFiles'] = $beanFiles;
+        SugarTestHelper::setUp('beanFiles');
+        SugarTestHelper::setUp('beanList');
+        SugarTestHelper::setUp('app_list_strings');
     }
+
+    public function tearDown()
+    {
+        SugarTestHelper::tearDown();
+    }
+
     /**
     * @group 50781
     */
@@ -56,4 +60,3 @@ class Bug50781Test extends Sugar_PHPUnit_Framework_OutputTestCase
 
     }
 }
-?>

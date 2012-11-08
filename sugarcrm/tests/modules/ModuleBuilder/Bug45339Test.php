@@ -141,7 +141,7 @@ class Bug45339Test extends Sugar_PHPUnit_Framework_TestCase
 
         SugarRelationshipFactory::deleteCache();
 
-        unset($_REQUEST);
+        $_REQUEST = array();
 
         SugarTestHelper::tearDown();
     }
