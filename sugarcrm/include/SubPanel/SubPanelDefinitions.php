@@ -621,9 +621,12 @@ class SubPanelDefinitions
 
 				//check permissions.
 				$exempt = array_key_exists ( $values_array [ 'module' ], $modules_exempt_from_availability_check ) ;
-				$ok = $exempt || ( (! ACLController::moduleSupportsACL ( $values_array [ 'module' ] ) || ACLController::checkAccess ( $values_array [ 'module' ], 'list', true ) ) ) ;
+				$ok = $exempt || (in_array($values_array['module'], $GLOBALS['moduleList']) &&
+                    (!ACLController::moduleSupportsACL ( $values_array [ 'module' ] ) ||
+                     ACLController::checkAccess ( $values_array [ 'module' ], 'list', true ) )
+                ) ;
 
-				$GLOBALS [ 'log' ]->debug ( "SubPanelDefinitions->get_available_tabs(): " . $key . "= " . ( $exempt ? "exempt " : "not exempt " .( $ok ? " ACL OK" : "" ) ) ) ;
+				$GLOBALS['log']->debug("SubPanelDefinitions->get_available_tabs(): $key = " . ($exempt ? "exempt " : "not exempt " . ( $ok ? " ACL OK" : "" ) ) ) ;
 
 				if ( $ok )
 				{
@@ -638,12 +641,6 @@ class SubPanelDefinitions
 		}
 
 		ksort ( $this->_visible_tabs_array ) ;
-        // get case insensitive intersection
-        foreach($this->_visible_tabs_array AS $i=>$v) {
-            if (!in_array(ucfirst($v), $GLOBALS['moduleList'])) {
-                unset($this->_visible_tabs_array[$i]);
-            }
-        }
 		return $this->_visible_tabs_array ;
 	}
 
