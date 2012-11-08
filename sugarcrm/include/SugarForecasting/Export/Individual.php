@@ -65,22 +65,30 @@ class SugarForecasting_Export_Individual extends SugarForecasting_Export_Abstrac
         $data = $obj->process();
 
         $fields_array = array(
-            'id'=>'id',
-            'product_id'=>'product_id',
             'date_closed'=>'date_closed',
             'sales_stage'=>'sales_stage',
-            'assigned_user_id'=>'assigned_user_id',
-            'amount'=>'amount',
-            'worksheet_id'=>'worksheet_id',
             'name'=>'name',
-            'currency_id'=>'currency_id',
-            'base_rate'=>'base_rate',
-            'best_case'=>'best_case',
-            'worst_case'=>'worst_case',
-            'likely_case'=>'likely_case',
             'commit_stage'=>'commit_stage',
             'probability'=>'probability',
         );
+
+        $admin = BeanFactory::getBean('Administration');
+        $settings = $admin->getConfigForModule('Forecasts');
+
+        if ($settings['show_worksheet_best'])
+        {
+            $fields_array['best_case'] = 'best_case';
+        }
+
+        if ($settings['show_worksheet_likely'])
+        {
+            $fields_array['likely_case'] = 'likely_case';
+        }
+
+        if ($settings['show_worksheet_worst'])
+        {
+            $fields_array['worst_case'] = 'worst_case';
+        }
 
         $seed = BeanFactory::getBean('ForecastWorksheets');
 

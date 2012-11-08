@@ -178,6 +178,14 @@ class EditViewMerge{
  			'ProspectLists' => array('created_by_name'=>'date_entered', 'modified_by_name'=>'date_modified'),
             'Prospects' => array('created_by_name'=>'date_entered', 'modified_by_name'=>'date_modified'),
 	);
+
+    /*
+     * In order to maintain changes to buttons, customcode, ect during upgrade
+     * we will now take existing custom values for useTabs, tabDefs and
+     * syncDetailEditViews for all modules. Everything else comes from the
+     * new viewdefs. - rgonzalez
+     */
+    protected $templateMetaVarsToMerge = array('useTabs', 'tabDefs', 'syncDetailEditViews');
 	
 	/**
 	 * Clears out the values of the arrays so that the same object can be utilized
@@ -498,24 +506,25 @@ class EditViewMerge{
 		return $panels;
 	}
 	
-	/**
-	 * Merge the templateMeta entry for the view defs.  Also assume that any changes made in the custom files should
-	 * have precedence since they must be changed manually, even over new files that may be provided in the upgarde
-	 * patch.
-	 *
-	 */
-	protected function mergeTemplateMeta()
-	{
-        //this is to handle the situation in Calls/Meetings where we updated the templateMeta and will fail if we don't update this.
-        //long term we should not do this and should provide a way for calls/meetings to update themselves.
-	    if( isset($this->customData[$this->module][$this->viewDefs][$this->templateMetaName]) && strcmp(strtolower($this->module), 'calls') != 0 && strcmp(strtolower($this->module), 'meetings') != 0 )
-	    {   
-	    	//We should no longer merge in custom template meta. Using the custom template meta will mean that no new buttons/ect can be added to the top of the edit/detail views.
-            $this->newData[$this->module][$this->viewDefs][$this->templateMetaName] = $this->originalData[$this->module][$this->viewDefs][$this->templateMetaName];
+    /**
+     * Merge the templateMeta entry for the view defs.  Only merge studio accessible
+     * changes to the templateMeta. Upgrade entries should take precedence in all other
+     * cases.
+     */
+    protected function mergeTemplateMeta()
+    {
+        if (isset($this->customData[$this->module][$this->viewDefs][$this->templateMetaName])
+            && is_array($this->customData[$this->module][$this->viewDefs][$this->templateMetaName])
+        ) {
+            foreach ($this->customData[$this->module][$this->viewDefs][$this->templateMetaName] as $key => $value) {
+                if (in_array($key, $this->templateMetaVarsToMerge)) {
+                    $this->newData[$this->module][$this->viewDefs][$this->templateMetaName][$key] = $value;
+                }
+            }
 
-	    }
+        }
 
-	}
+    }
 	
 	/**
 	 * Sets the panel section for the meta-data after it has been merged

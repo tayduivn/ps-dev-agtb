@@ -28,6 +28,7 @@
 
 require_once('modules/Forecasts/clients/base/api/ForecastsFiltersApi.php');
 require_once('modules/Forecasts/clients/base/api/ForecastsChartApi.php');
+require_once("include/SugarTheme/SidecarTheme.php");
 
 class ForecastsViewSidecar extends SidecarView
 {
@@ -47,6 +48,10 @@ class ForecastsViewSidecar extends SidecarView
     public function display()
     {
         global $current_user, $sugar_config;
+
+        //Load sidecar theme css
+        $theme = new SidecarTheme();
+        $this->ss->assign("css_url", $theme->getCSSURL());
 
         $admin = BeanFactory::getBean('Administration');
         $adminCfg = $admin->getConfigForModule('Forecasts');
@@ -92,13 +97,12 @@ class ForecastsViewSidecar extends SidecarView
             $forecasts_timeframes_dom = TimePeriod::get_not_fiscal_timeperiods_dom();
             // TODO:  These should probably get moved in with the config/admin settings, or by themselves since this file will probably going away.
             $id = TimePeriod::getCurrentId();
-            $defaultSelections["timeperiod_id"]["id"] = $id;
-            $defaultSelections["timeperiod_id"]["label"] = $forecasts_timeframes_dom[$id];
+            $defaultSelections["timeperiod_id"]["id"] = $id ? $id : '';
+            $defaultSelections["timeperiod_id"]["label"] = $id ? $forecasts_timeframes_dom[$id] : '';
 
             // INVESTIGATE:  these need to be more dynamic and deal with potential customizations based on how filters are built in admin and/or studio
             $admin = BeanFactory::getBean("Administration");
             $forecastsSettings = $admin->getConfigForModule("Forecasts", "base");
-
             $defaultSelections["category"] = array("include");
             $defaultSelections["group_by"] = 'forecast';
             $defaultSelections["dataset"] = 'likely';
@@ -126,7 +130,7 @@ class ForecastsViewSidecar extends SidecarView
             ),
             'serverUrl' => $sugar_config['site_url'].'/rest/v10',
             'siteUrl' => $sugar_config['site_url'],
-            'loadCss' => 'url',
+            'loadCss' => false,
             'unsecureRoutes' => array('login', 'error'),
             'clientID' => 'sugar',
             'authStore'  => 'sugarAuthStore',

@@ -55,8 +55,8 @@ class SugarFeed extends Basic {
 		var $assigned_user_name;
 		var $assigned_user_link;
 
-	function SugarFeed(){
-		parent::Basic();
+	public function __construct(){
+		parent::__construct();
 	}
 
     static function activateModuleFeed( $module, $updateDB = true ) {
@@ -297,7 +297,7 @@ class SugarFeed extends Basic {
 
         sugar_cache_put('SugarFeedLinkType',$linkTypeList);
 
-        create_cache_directory($cachedfile);
+        create_cache_directory('modules/SugarFeed/linkTypeCache.php');
         write_array_to_file('linkTypeList', $linkTypeList, $cachedfile);
 
         return $linkTypeList;

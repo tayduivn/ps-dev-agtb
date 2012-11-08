@@ -99,6 +99,19 @@
      */
     timeperiod: {},
 
+    /**
+     * Store the Best Case Number from the very last commit in the log
+     */
+    previousBestCase: '',
+    /**
+     * Store the Likely Case Number from the very last commit in the log
+     */
+    previousLikelyCase: '',
+    /**
+     * Store the Worst Case Number from the very last commit in the log
+     */
+    previousWorstCase: '',
+
     events : {
         'click i[id=show_hide_history_log]' : 'showHideHistoryLog'
     },
@@ -175,16 +188,33 @@
         return cls
     },
 
+    /**
+     * Utility method to reset the committed log in the event that no models are returned for the 
+     * selected user/timeperiod
+     */
+    resetCommittedLog:function(){
+        this.bestCase = 0;
+        this.likelyCase = 0;
+        this.worstCase = 0;
+        this.previousBestCase = 0;
+        this.previousLikelyCase = 0;
+        this.previousWorstCase = 0;
+        this.showHistoryLog = false;
+        this.previousDateEntered = "";
+    },
+
     buildForecastsCommitted:function () {
         var self = this;
         var count = 0;
         var previousModel;
-
+        
         //Reset the history log
         self.historyLog = [];
 
-        // if we have no models, exit out of the method
+        // if we have no models, reset component render, and exit.
         if (_.isEmpty(self._collection.models)) {
+            self.resetCommittedLog();
+            self.render();
             return;
         }
 
@@ -210,6 +240,11 @@
             self.historyLog.push(app.forecasts.utils.createHistoryLog(model, previousModel));
             previousModel = model;
         });
+
+        // save the values from the last model to display in the dataset line on the interface
+        this.previousBestCase = app.currency.formatAmountLocale(previousModel.get('best_case'));
+        this.previousLikelyCase = app.currency.formatAmountLocale(previousModel.get('likely_case'));
+        this.previousWorstCase = app.currency.formatAmountLocale(previousModel.get('worst_case'));
 
         self.render();
     }

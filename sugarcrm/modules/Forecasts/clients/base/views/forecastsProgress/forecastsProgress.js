@@ -40,9 +40,9 @@
             quota_worst_amount : 0,
             quota_worst_percent : 0,
             quota_worst_above : 0,
-            show_projected_likely: options.context.forecasts.config.get('show_projected_likely'),
-            show_projected_best: options.context.forecasts.config.get('show_projected_best'),
-            show_projected_worst: options.context.forecasts.config.get('show_projected_worst'),
+            show_likely: options.context.forecasts.config.get('show_worksheet_likely'),
+            show_best: options.context.forecasts.config.get('show_worksheet_best'),
+            show_worst: options.context.forecasts.config.get('show_worksheet_worst'),
             pipeline : 0
         });
 
@@ -68,11 +68,18 @@
         }
 
         if (this.context.forecasts) {
-            //update uer
+            //update user
             this.context.forecasts.on("change:selectedUser reset:selectedUser",
             function(context, selectedUser) {
                 this.updateProgressForSelectedUser(selectedUser);
                 this.updateProgress();
+            }, this);
+
+            //commits could have changed quotas or any other number being used in the projected panel, do a fresh pull
+            this.context.forecasts.on("change:commitForecastFlag", function(context, flag) {
+                if(flag) {
+                    this.updateProgress();
+                }
             }, this);
 
             //update timeperiod

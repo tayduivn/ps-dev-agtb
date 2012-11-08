@@ -44,6 +44,7 @@ $dictionary['KBDocument'] = array('table' => 'kbdocuments',
     'importable' => 'required',
   	'unified_search' => true,
   	'full_text_search' => array('boost' => 3),
+    'sortable' => true,
   ),
 
 'name' =>
@@ -75,6 +76,7 @@ $dictionary['KBDocument'] = array('table' => 'kbdocuments',
     'vname' => 'LBL_DOC_ACTIVE_DATE',
     'type' => 'date',
     'importable' => 'required',
+    'sortable' => true,
   ),
 
 'exp_date' =>
@@ -82,6 +84,7 @@ $dictionary['KBDocument'] = array('table' => 'kbdocuments',
     'name' => 'exp_date',
     'vname' => 'LBL_DOC_EXP_DATE',
     'type' => 'date',
+    'sortable' => true,
   ),
 
   'status_id' =>

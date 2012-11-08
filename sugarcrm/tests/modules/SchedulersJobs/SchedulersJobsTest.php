@@ -59,6 +59,7 @@ class SchedulersJobsTest extends Sugar_PHPUnit_Framework_TestCase
         foreach($data as $key => $val) {
             $job->$key = $val;
         }
+        $job->execute_time = empty($job->execute_time) ? TimeDate::getInstance()->getNow()->asDb() : $job->execute_time;
         $job->save();
         $this->jobs[] = $job->id;
         return $job;

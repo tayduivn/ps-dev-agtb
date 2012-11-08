@@ -68,12 +68,16 @@ class ReportsToHierarchyTest extends Sugar_PHPUnit_Framework_TestCase
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
     }
 
+    //BEGIN SUGARCRM flav=int ONLY
     /**
      * @group hierarchies
      */
+    /*
     public function testReportsToHierarchyFunction()
     {
         global $current_user;
+        $db = DBManagerFactory::getInstance();
+
         $ids = $current_user->get_reports_to_hierarchy();
         $this->assertEquals(5, count($ids));
 
@@ -104,4 +108,6 @@ class ReportsToHierarchyTest extends Sugar_PHPUnit_Framework_TestCase
         $ids = $this->employee4->get_reports_to_hierarchy(false, false);
         $this->assertEquals(0, count($ids));
     }
+    */
+    //END SUGARCRM flav=int ONLY
 }

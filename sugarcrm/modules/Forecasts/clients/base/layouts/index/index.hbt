@@ -7,7 +7,7 @@
                 <div class="view-forecastsTree"></div>
                 <div class="view-forecastsCommitButtons"></div>
             </div>
-            <div class="view-forecastsInfo"></div>
+            <div class="view-info"></div>
             <div>
                 <div id="view-sales-rep" class="hide">
                     <div class="view-forecastsWorksheet"></div>

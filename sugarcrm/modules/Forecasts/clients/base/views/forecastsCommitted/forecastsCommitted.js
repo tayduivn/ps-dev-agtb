@@ -5,7 +5,25 @@
  * @class View.Views.GridView
  * @alias SUGAR.App.layout.GridView
  * @extends View.View
+ *
+ *
+ * Events Triggered
+ *
+ * forecasts:commitButtons:enabled
+ *      on: context.forecasts
+ *      by: updateTotals()
+ *
+ * forecasts:commitButtons:disabled
+ *      on: context.forecasts
+ *      by: commitForecast()
+ *
+ * forecasts:committed:saved
+ *      on: context.forecasts
+ *      by: commitForecast()
+ *      when: the new forecast model has saved successfully
  */
+
+
 ({
     /**
      * The url for the REST endpoint
@@ -33,6 +51,12 @@
     likelyCase : 0,
 
     /**
+     * Stores the likely case to display in the view
+     */
+    worstCase : 0,
+
+
+    /**
      * Used to query for the user_id value in Forecasts
      */
     userId : '',
@@ -50,7 +74,7 @@
     /**
      * Stores the historical log of the Forecast entries
      */
-    historyLog : Array(),
+    historyLog : [],
 
     /**
      * Stores the Forecast totals to use when creating a new entry
@@ -68,9 +92,14 @@
     bestTemplate : _.template('<%= bestCase %>&nbsp;<span class="icon-sm committed_arrow<%= bestCaseCls %>"></span>'),
 
     /**
-     * Template to use wen updating the likelyCase on the committed bar
+     * Template to use when updating the likelyCase on the committed bar
      */
     likelyTemplate : _.template('<%= likelyCase %>&nbsp;<span class="icon-sm committed_arrow<%= likelyCaseCls %>"></span>'),
+
+    /**
+     * Template to use when updating the worstCase on the committed bar
+     */
+    worstTemplate : _.template('<%= worstCase %>&nbsp;<span class="icon-sm committed_arrow<%= worstCaseCls %>"></span>'),
 
     savedTotal : null,
 
@@ -81,13 +110,26 @@
      */
     timeperiod: {},
 
+    /**
+     * Show The Likely Box
+     */
+    show_likely: true,
+
+    /**
+     * Show The Best Box
+     */
+    show_best: false,
+
+    /**
+     * Show This Wost Box
+     */
+    show_worst: false,
 
     initialize : function(options) {
         app.view.View.prototype.initialize.call(this, options);
 
         this._collection = this.context.forecasts.committed;
 
-        this.userId = app.user.get('id');
         this.forecastType = (app.user.get('isManager') == true && app.user.get('showOpps') == false) ? 'Rollup' : 'Direct';
         this.timePeriodId = app.defaultSelections.timeperiod_id.id;
         this.selectedUser = {id: app.user.get('id'), "isManager":app.user.get('isManager'), "showOpps": false};
@@ -96,11 +138,15 @@
         this.likelyCase = 0;
 
         this._collection.url = this.createUrl();
+
+        this.show_likely = options.context.forecasts.config.get('show_worksheet_likely');
+        this.show_best = options.context.forecasts.config.get('show_worksheet_best');
+        this.show_worst = options.context.forecasts.config.get('show_worksheet_worst');
     },
 
     createUrl : function() {
         var urlParams = {
-            user_id: this.userId,
+            user_id: this.selectedUser.id,
             timeperiod_id : this.timePeriodId,
             forecast_type : this.forecastType
         };
@@ -111,8 +157,11 @@
         this.runningFetch = true;
         this.bestCase = 0;
         this.likelyCase = 0;
+        this.worstCase = 0;
         this.likelyCaseCls = '';
         this.bestCaseCls = '';
+        this.worstCaseCls = '';
+        this.totals = null;
         this._collection.url = this.createUrl();
         this._collection.fetch();
     },
@@ -130,12 +179,8 @@
 
         if(this.context && this.context.forecasts) {
             this.context.forecasts.on("change:selectedUser", function(context, user) {
-                self.userId = user.id;
-                self.fullName = user.full_name;
                 self.forecastType = user.showOpps ? 'Direct' : 'Rollup';
-                self.selectedUser = user;
-                // when ever the users changes, empty out the saved totals
-                self.totals = null;
+                self.selectedUser = user;              
                 self.updateCommitted();
             }, this);
             this.context.forecasts.on("change:selectedTimePeriod", function(context, timePeriod) {
@@ -169,18 +214,8 @@
      * @param totals
      */
     updateTotals : function (totals) {
-        var self = this;
-
-        var allZero = true;
-        _.each(totals, function(value, key) {
-            if(key == "timeperiod_id") return;
-            if(value != 0) {
-                allZero = false;
-            }
-        });
-
-        if(allZero == true) return;
-
+        var self = this;    
+        
         // these fields don't matter when it comes to tracking these values so just 0 them out.
         // we don't care about this field
         if(!_.isUndefined(totals.quota)) {
@@ -191,6 +226,7 @@
 
             var best = {};
             var likely = {};
+            var worst = {};
             // get the last committed value
             var previousCommit = null;
             if(!_.isEmpty(this._collection.models))
@@ -220,27 +256,33 @@
                 best.bestCase = app.currency.formatAmountLocale(totals.best_adjusted);
                 likely.likelyCaseCls = this.getColorArrow(totals.likely_adjusted, previousCommit.get('likely_case'));
                 likely.likelyCase = app.currency.formatAmountLocale(totals.likely_adjusted);
+                worst.worstCaseCls = this.getColorArrow(totals.worst_adjusted, previousCommit.get('worst_case'));
+                worst.worstCase = app.currency.formatAmountLocale(totals.worst_adjusted);
             } else {
                 // sales rep view
                 best.bestCaseCls = this.getColorArrow(totals.best_case, previousCommit.get('best_case'));
                 best.bestCase = app.currency.formatAmountLocale(totals.best_case);
                 likely.likelyCaseCls = this.getColorArrow(totals.amount, previousCommit.get('likely_case'));
                 likely.likelyCase = app.currency.formatAmountLocale(totals.amount);
+                worst.worstCaseCls = this.getColorArrow(totals.worst_case, previousCommit.get('worst_case'));
+                worst.worstCase = app.currency.formatAmountLocale(totals.worst_case);
             }
             
             if(!_.isEmpty(best.bestCaseCls) || !_.isEmpty(likely.likelyCaseCls))
             {
-            	self.context.forecasts.set({commitButtonEnabled: true});
-            	self.context.forecasts.set({commitButtonEnabledFromCommitted: true});
+            	self.context.forecasts.trigger("forecasts:commitButtons:enabled");
             }
 
             self.bestCaseCls = best.bestCaseCls;
             self.bestCase = best.bestCase;
             self.likelyCaseCls = likely.likelyCaseCls;
             self.likelyCase = likely.likelyCase;
+            self.worstCaseCls = worst.worstCaseCls;
+            self.worstCase = worst.worstCase;
 
             $('h2#best').html(this.bestTemplate(best));
             $('h2#likely').html(this.likelyTemplate(likely));
+            $('h2#worst').html(this.worstTemplate(worst));
 
         }
 
@@ -292,11 +334,7 @@
         	worksheetData = {"current": worksheetDataCurrent, "new": worksheetDataNew};
         } 
         
-        if(!self.context.forecasts.get('commitButtonEnabled')) {
-            return false;
-        }
-
-        self.context.forecasts.set({commitButtonEnabled : false});
+        self.context.forecasts.trigger("forecasts:commitButtons:disabled");
 
         //If the totals have not been set, don't save
         if(!self.totals)
@@ -306,11 +344,10 @@
 
         var forecast = new this._collection.model();
         forecast.url = self.url;
-        var user = this.context.forecasts.get('selectedUser');
-
+        
         var forecastData = {};
-
-        if(user.isManager == true && user.showOpps == false) {
+       
+        if(self.selectedUser.isManager == true && self.selectedUser.showOpps == false) {
             forecastData.best_case = self.totals.best_adjusted;
             forecastData.likely_case = self.totals.likely_adjusted;
             forecastData.worst_case = self.totals.worst_adjusted;
@@ -330,11 +367,14 @@
 
         // apply data to model then save
         forecast.set(forecastData);
-        forecast.save();
+        forecast.save({}, {success:function(){
+        	self.context.forecasts.trigger("forecasts:committed:saved");
+        }});
 
         // clear out the arrows
         self.likelyCaseCls = '';
         self.bestCaseCls = '';
+        self.worstCaseCls = '';
 
         self.previous = self.totals;
         self._collection.url = self.url;

@@ -3,6 +3,19 @@
  * @class View.Views.WorksheetView
  * @alias SUGAR.App.layout.WorksheetView
  * @extends View.View
+ *
+ *
+ * Events Triggered
+ *
+ * forecasts:commitButtons:enabled
+ *      on: context.forecasts
+ *      by: _render()
+ *      when: done rendering if enableCommit is true
+ *
+ * forecasts:worksheetmanager:rendered
+ *      on: context.forecasts
+ *      by: _render()
+ *      when: done rendering
  */
 ({
     url: 'rest/v10/ForecastManagerWorksheets',
@@ -209,21 +222,23 @@
     	if(collection.isDirty){
     		//unsaved changes, ask if you want to save.
     		if(confirm(app.lang.get("LBL_WORKSHEET_SAVE_CONFIRM", "Forecasts"))){
+    			var modelCount = 0;
+    			var saveCount = 0;
     			_.each(collection.models, function(model, index){
 					var isDirty = model.get("isDirty");
-					if(typeof(isDirty) == "boolean" && isDirty ){
+					if(_.isBoolean(isDirty) && isDirty ){
+						modelCount++;
         				model.set({draft: 1}, {silent:true});
-        				model.save();
+        				model.save({}, {success:function(){
+        					saveCount++;
+        					if(saveCount === modelCount){
+        						collection.isDirty = false;
+        						collection.fetch();
+        					}
+        				}});
         				model.set({isDirty: false}, {silent:true});
-        			}
+        			}  
 				});
-    			collection.isDirty = false;
-				$.when(!collection.isDirty).then(function(){
-	    			self.context.forecasts.set({reloadCommitButton: true});
-	    			if(fetch){
-	    				collection.fetch();
-	    			}
-    		});
 
 		}
     		else{
@@ -272,9 +287,9 @@
         }
         $("#view-sales-rep").addClass('hide').removeClass('show');
         $("#view-manager").addClass('show').removeClass('hide');
-        this.context.forecasts.set({commitButtonEnabled: false});
         this.context.forecasts.set({checkDirtyWorksheetFlag: true});
         this.context.forecasts.set({currentWorksheet: "worksheetmanager"});
+        
         app.view.View.prototype._render.call(this);
 
         // parse metadata into columnDefs
@@ -287,7 +302,6 @@
                 // in case we add column rearranging
                 var fieldDef = {
                     "sName": fields[i].name,
-                    "sWidth" : (fields[i].name == "name") ? '30%' : '10%',
                     "bVisible" : this.checkConfigForColumnVisibility(fields[i].name)
                 };
 
@@ -301,6 +315,12 @@
                             fieldDef["sSortDataType"] = "dom-number";
                             fieldDef["sType"] = "numeric";
                             fieldDef["sClass"] = "number";
+                            break;
+                    }
+                    switch(fields[i].name)
+                    {
+                        case "name":
+                            fieldDef["sWidth"] = "30%";
                             break;
                     }
                 }
@@ -326,11 +346,11 @@
         	}
         });
         if (enableCommit) {
-        	self.context.forecasts.set({commitButtonEnabled: true});
+        	self.context.forecasts.trigger("forecasts:commitButtons:enabled");
         }
         
         this.calculateTotals();
-        self.context.forecasts.trigger('forecasts:worksheetmanager:render');
+        self.context.forecasts.trigger('forecasts:worksheetmanager:rendered');
 
     },
 
@@ -468,6 +488,8 @@
             'worst_adjusted' : worst_adjusted
         };
 
+        // we need to remove it, just in case it's the same to force it to re-render
+        this.context.forecasts.unset("updatedManagerTotals", {silent: true});
         this.context.forecasts.set("updatedManagerTotals", totals);
     },
 

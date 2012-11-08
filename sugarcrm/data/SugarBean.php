@@ -295,6 +295,12 @@ class SugarBean
     protected $is_updated_dependent_fields = false;
 
     /**
+     * Blowfish encryption key
+     * @var string
+     */
+    static protected $field_key;
+
+    /**
      * This method has been moved into the __construct() method to follow php standards
      *
      * @see __construct()
@@ -304,7 +310,7 @@ class SugarBean
     {
         self::__construct();
     }
-	
+
     /**
      * Constructor for the bean, it performs following tasks:
      *
@@ -2648,7 +2654,7 @@ class SugarBean
              {
                  $this->fetched_rel_row[$rel_field_name['name']] = $this->$rel_field_name['name'];
              }
-         }        
+         }
         //make a copy of fields in the relationship_fields array. These field values will be used to
         //clear relationship.
         foreach ( $this->field_defs as $key => $def )
@@ -6112,6 +6118,15 @@ class SugarBean
             $this->$street_field = trim($this->$street_field, "\n");
         }
     }
+
+    protected function getEncryptKey()
+    {
+        if(empty(self::$field_key)) {
+            self::$field_key = blowfishGetKey('encrypt_field');
+        }
+        return self::$field_key;
+    }
+
 /**
  * Encrpyt and base64 encode an 'encrypt' field type in the bean using Blowfish. The default system key is stored in cache/Blowfish/{keytype}
  * @param STRING value -plain text value of the bean field.
@@ -6120,7 +6135,7 @@ class SugarBean
     function encrpyt_before_save($value)
     {
         require_once("include/utils/encryption_utils.php");
-        return blowfishEncode(blowfishGetKey('encrypt_field'),$value);
+        return blowfishEncode($this->getEncryptKey(), $value);
     }
 
 /**
@@ -6130,8 +6145,9 @@ class SugarBean
  */
     function decrypt_after_retrieve($value)
     {
+        if(empty($value)) return $value; // no need to decrypt empty
         require_once("include/utils/encryption_utils.php");
-        return blowfishDecode(blowfishGetKey('encrypt_field'), $value);
+        return blowfishDecode($this->getEncryptKey(), $value);
     }
 
     /**

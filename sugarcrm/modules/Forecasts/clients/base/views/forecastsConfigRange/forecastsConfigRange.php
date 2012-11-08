@@ -34,7 +34,7 @@ $viewdefs['Forecasts']['base']['view']['forecastsConfigRange'] = array(
                     'label' => 'LBL_FORECASTS_CONFIG_WORKSHEET_RANGE_LIKELY',
                     'default' => false,
                     'enabled' => true,
-                    'view' => 'edit',
+                    'view' => 'detail',
                 ),
                 array(
                     'name' => 'show_worksheet_best',
@@ -42,7 +42,7 @@ $viewdefs['Forecasts']['base']['view']['forecastsConfigRange'] = array(
                     'label' => 'LBL_FORECASTS_CONFIG_WORKSHEET_RANGE_BEST',
                     'default' => false,
                     'enabled' => true,
-                    'view' => 'edit',
+                    'view' => 'forecastsWorksheet',
                 ),
                 array(
                     'name' => 'show_worksheet_worst',
@@ -50,10 +50,12 @@ $viewdefs['Forecasts']['base']['view']['forecastsConfigRange'] = array(
                     'label' => 'LBL_FORECASTS_CONFIG_WORKSHEET_RANGE_WORST',
                     'default' => false,
                     'enabled' => true,
-                    'view' => 'edit',
+                    'view' => 'forecastsWorksheet',
                 ),
             ),
         ),
+        //TODO-sfa - this will be revisited in a future sprint and determined whether it should go in 6.7, 6.8 or later
+        // BEGIN SUGARCRM flav=int ONLY
         array(
             'label' => 'LBL_FORECASTS_CONFIG_PROJECTED_RANGE',
             'fields' => array(
@@ -63,7 +65,7 @@ $viewdefs['Forecasts']['base']['view']['forecastsConfigRange'] = array(
                     'label' => 'LBL_FORECASTS_CONFIG_PROJECTED_RANGE_LIKELY',
                     'default' => false,
                     'enabled' => true,
-                    'view' => 'edit',
+                    'view' => 'detail',
                 ),
                 array(
                     'name' => 'show_projected_best',
@@ -83,5 +85,6 @@ $viewdefs['Forecasts']['base']['view']['forecastsConfigRange'] = array(
                 ),
             ),
         ),
+        // END SUGARCRM flav=int ONLY
     ),
 );

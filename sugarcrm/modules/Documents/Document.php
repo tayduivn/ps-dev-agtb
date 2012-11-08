@@ -81,8 +81,8 @@ class Document extends SugarBean {
 	 );
 
 
-	function Document() {
-		parent :: SugarBean();
+	public function __construct() {
+		parent::__construct();
 		$this->setupCustomFields('Documents'); //parameter is module name
 		$this->disable_row_level_security = false;
 	}
@@ -180,7 +180,7 @@ class Document extends SugarBean {
             }
         }
 
-		return parent :: save($check_notify);
+		return parent::save($check_notify);
 	}
 	function get_summary_text() {
 		return "$this->document_name";

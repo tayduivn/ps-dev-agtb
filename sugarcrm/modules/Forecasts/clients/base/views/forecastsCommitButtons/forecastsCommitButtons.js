@@ -1,3 +1,14 @@
+/**
+ * Events Triggered
+ *
+ * forecasts:commitButtons:disabled
+ *      on: context.forecasts
+ *      by: change:selectedUser, change:selectedTimePeriod
+ *
+ * modal:forecastsTabbedConfig:open - to cause modal.js to pop up
+ *      on: layout
+ *      by: triggerConfigModal()
+ */
 ({
 
     /**
@@ -45,13 +56,21 @@
                 if(self.showCommitButton != oldShowButtons) {
                     self._render();
                 }
-            });
-            this.context.forecasts.on("change:commitButtonEnabled", this.commitButtonStateChangeHandler, self);
+            });           
             this.context.forecasts.on("change:reloadCommitButton", function(){
             	self._render();
             }, self);
             this.context.forecasts.worksheet.on("change", this.showSaveButton, self);
             this.context.forecasts.worksheetmanager.on("change", this.showSaveButton, self);
+            this.context.forecasts.on("forecasts:forecastcommitbuttons:triggerCommit", this.triggerCommit, self);
+            this.context.forecasts.on("change:selectedUser", function(){
+            	this.context.forecasts.trigger("forecasts:commitButtons:disabled");
+            }, this);
+            this.context.forecasts.on("change:selectedTimePeriod", function(){
+            	this.context.forecasts.trigger("forecasts:commitButtons:disabled");
+            }, this);
+            this.context.forecasts.on("forecasts:commitButtons:enabled", this.enableCommitButton, this);
+            this.context.forecasts.on("forecasts:commitButtons:disabled", this.disableCommitButton, this);
         }
     },
 
@@ -79,8 +98,8 @@
     	
 		_.each(worksheet.models, function(model, index){
 			var isDirty = model.get("isDirty");
-			if(typeof(isDirty) == "boolean" && isDirty ){
-				self.context.forecasts.set({commitButtonEnabled: true});
+			if(_.isBoolean(isDirty) && isDirty){
+				self.enableCommitButton();
 				self.$el.find('a[id=save_draft]').removeClass('disabled');
 				//if something in the worksheet is dirty, we need to flag the entire worksheet as dirty.
 				worksheet.isDirty = true;
@@ -88,20 +107,26 @@
 		});
     	
     },
-
+    
     /**
-     * Event Handler for when the context commitButtonEnabled variable changes
-     * @param context
-     * @param commitButtonEnabled boolean value for the changed commitButtonEnabled from the context
+     * Event handler to disable/reset the commit/save button
      */
-    commitButtonStateChangeHandler: function(context, commitButtonEnabled){
+    disableCommitButton: function(){
     	var commitbtn =  this.$el.find('#commit_forecast');
-    	if(commitButtonEnabled){
-    		commitbtn.removeClass("disabled");
-    	}
-    	else{
-    		commitbtn.addClass("disabled");
-    	}
+    	var savebtn = this.$el.find('#save_draft');
+    	commitbtn.addClass("disabled");
+    	savebtn.addClass("disabled");
+    	
+    	this.commitButtonEnabled = true;
+    },
+    
+    /**
+     * Event handler to disable/reset the commit button
+     */
+    enableCommitButton: function(){
+    	var commitbtn =  this.$el.find('#commit_forecast');
+    	commitbtn.removeClass("disabled");
+    	this.commitButtonEnabled = false;
     },
 
     /**
@@ -120,25 +145,30 @@
     		_.each(models, function(model, index){
     			var isDirty = model.get("isDirty");
     			if(model.get("version") == 0 || (typeof(isDirty) == "boolean" && isDirty)){
-    				var values = {};
+
     				modelCount++;
-                    values["draft"] = 0;
-                    values["isDirty"] = false;
-                    values["timeperiod_id"] = self.context.forecasts.get("selectedTimePeriod").id;
-        			values["current_user"] = app.user.get('id');
-        			model.set(values, {silent:true});
+
+        			model.set({
+                        draft : 0,
+                        isDirty : false,
+                        timeperiod_id : self.context.forecasts.get("selectedTimePeriod").id,
+                        current_user : app.user.get('id')},
+                        {silent:true}
+                    );
     				model.url = worksheet.url.split("?")[0] + "/" + model.get("id");
     				model.save({}, {success:function(){
     					saveCount++;
-    					if(saveCount === modelCount){
-    						self.context.forecasts.set({reloadWorksheetFlag: true});
+                        //The saveCount === modelCount is being done so that the call to reloadWorksheetFlag is only done after the last
+                        //Ajax request is made.  In the future this could perhaps be altered to use the deferred architecture in JQuery
+    					if(saveCount === modelCount && self.context.forecasts.get("currentWorksheet") == "worksheetmanager") {
+    							self.context.forecasts.set({reloadWorksheetFlag: true});
     					}
     				}});
     				worksheet.isDirty = false;
     			}    			    				
     		});
-    		
-    		savebtn.addClass("disabled");
+
+            savebtn.addClass("disabled");
     		self.context.forecasts.set({commitForecastFlag: true});
     	}        
     },
@@ -153,7 +183,16 @@
             span: 10,
             before: {
                 hide: function() {
-                    window.location = 'index.php?module=Forecasts';
+                    // Check to see if we're closing modal via cancel button
+                    // We have no event passed here to get which button was clicked
+                    if(this.context.forecasts.get('saveClicked')) {
+                        // cancel was not clicked, so refresh the page redirecting to the Forecasts module
+                        window.location = 'index.php?module=Forecasts';
+                    } else {
+                        // reset without a change event in case they click settings again
+                        // before refreshing the page
+                        this.context.forecasts.set({ saveClicked : false }, {silent:true});
+                    }
                 }
             }
         };
@@ -166,7 +205,6 @@
      * Handles Save Draft button being clicked
      */
     triggerSaveDraft: function() {
-        //todo: implement save draft functionality, or trigger flag on context if save is handled elsewhere
     	var savebtn = this.$el.find('#save_draft');
     	if(!savebtn.hasClass("disabled")){
     		var worksheet = this.context.forecasts[this.context.forecasts.get("currentWorksheet")];
@@ -175,22 +213,17 @@
     		var saveCount = 0;
     		_.each(worksheet.models, function(model, index){
     			var isDirty = model.get("isDirty");
-    			if(typeof(isDirty) == "boolean" && isDirty ){
+    			if(_.isBoolean(isDirty) && isDirty){
     				modelCount++;
     				model.set({draft: 1}, {silent:true});
-    				model.save({}, {success:function(){
-    					saveCount++;
-    					if(saveCount === modelCount){
-    						self.context.forecasts.set({reloadWorksheetFlag: true});
-    					}
-    				}});
+    				model.save();
     				model.set({isDirty: false}, {silent:true});
     				worksheet.isDirty = false;
     			}    			    				
     		});
-    		
-    		savebtn.addClass("disabled");
-    		this.context.forecasts.set({commitButtonEnabled: true});
+
+            savebtn.addClass("disabled");
+    		this.enableCommitButton();
     	}
     	
     },
@@ -227,8 +260,19 @@
         var url = 'index.php?module=Forecasts&action=';
         url += (this.context.forecasts.get("currentWorksheet") == 'worksheetmanager') ?  'ExportManagerWorksheet' : 'ExportWorksheet';
         url += '&user_id=' + this.context.forecasts.get('selectedUser').id;
-        url += '&timeperiod_id=' + $("#date_filter").val();
-        document.location.href = url;
+        url += '&timeperiod_id=' + $("#timeperiod").val();
+        
+        var dlFrame = $("#forecastsDlFrame");
+        //check to see if we got something back
+        if(dlFrame.length == 0)
+        {
+        	//if not, create an element
+        	dlFrame = $("<iframe>");
+        	dlFrame.attr("id", "forecastsDlFrame");
+        	dlFrame.css("display", "none");
+        	$("body").append(dlFrame);
+        }
+        dlFrame.attr("src", url);
     },
 
     /**

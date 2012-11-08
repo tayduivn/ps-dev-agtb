@@ -76,8 +76,8 @@ class Queue extends SugarBean {
 	/**
 	 * Sole constructor
 	 */
-	function Queue() {
-		parent::SugarBean();
+	public function __construct() {
+		parent::__construct();
 
 		$this->queueCachePath = sugar_cached('modules/Queues');
 

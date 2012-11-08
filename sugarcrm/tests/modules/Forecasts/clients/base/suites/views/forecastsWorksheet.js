@@ -344,6 +344,18 @@ describe("The forecasts worksheet", function(){
     	it("forecasts.worksheet.on should have been called with change", function(){
     		expect(view.context.forecasts.worksheet.on).toHaveBeenCalledWith("change");
     	});
+    	
+    	it("forecasts.on should have been called with forecasts:committed:saved", function(){
+    		expect(view.context.forecasts.on).toHaveBeenCalledWith("forecasts:committed:saved");
+    	});
+    	
+    	it("forecasts.on should have been called with forecasts:commitButtons:enabled", function(){
+    		expect(view.context.forecasts.on).toHaveBeenCalledWith("forecasts:commitButtons:enabled");
+    	});
+    	
+    	it("forecasts.on should have been called with forecasts:commitButtons:disabled", function(){
+    		expect(view.context.forecasts.on).toHaveBeenCalledWith("forecasts:commitButtons:disabled");
+    	});
 
         /*
          * Skip this test.  Expected Opportunities is not a part of nutmeg

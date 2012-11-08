@@ -31,6 +31,7 @@ class ForecastsDefaultsTest extends Sugar_PHPUnit_Framework_TestCase
     private static $currentConfig;
 
     public static function setUpBeforeClass() {
+        SugarTestHelper::setUp('current_user');
     	SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('beanList');
         // Save the current config to be put back later
@@ -142,6 +143,34 @@ class ForecastsDefaultsTest extends Sugar_PHPUnit_Framework_TestCase
 
         // Check value from ForecastDefaults
         $this->assertEquals('Annual', $adminConfig['timeperiod_interval'], "On an upgrade with config data already set up, default settings that don't override pre-existing settings should be in the config table");
+
+
+    }
+
+    /**
+     * setupForecastsSettingsForIsUpgradeProvider
+     *
+     * This is the data provider for testForecastsSettingsForIsUpgradeProvider
+     */
+    public function setupForecastsSettingsForIsUpgradeProvider() {
+        return array(
+            array(true, 1),
+            array(false, 0)
+        );
+    }
+
+    /**
+     * Test the is_upgrade flag depending on whether  $isUpgrade parameter in ForecastsDefaults::setupForecastSettings is true or false
+     *
+     * @dataProvider setupForecastsSettingsForIsUpgradeProvider
+     * @group forecasts
+     *
+     */
+    public function testSetupForecastsSettingsForIsUpgrade($isUpgrade, $expectedValue) {
+        ForecastsDefaults::setupForecastSettings($isUpgrade);
+        $admin = BeanFactory::getBean('Administration');
+        $adminConfig = $admin->getConfigForModule('Forecasts');
+        $this->assertEquals($expectedValue, $adminConfig['is_upgrade']);
     }
 
     /**
@@ -175,6 +204,12 @@ class ForecastsDefaultsTest extends Sugar_PHPUnit_Framework_TestCase
     }
 
 
+    /**
+     * This tests checks to ensure that the base_rate and currency_id values for the opportunities table are correctly
+     * set after running the ForecastsDefaults::upgradeColumns() function
+     *
+     * @group forecasts
+     */
     public function testOpportunitySaves() {
         require_once('modules/Forecasts/ForecastsDefaults.php');
         $db = DBManagerFactory::getInstance();

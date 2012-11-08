@@ -36,6 +36,8 @@ class ForecastsDefaults
         $admin = BeanFactory::getBean('Administration');
 
         $forecastConfig = self::getDefaults();
+        // set is_upgrade
+        $forecastConfig['is_upgrade'] = $isUpgrade ? 1 : 0;
 
         // Any version-specific changes to the defaults can be added here
         // and determined by $currentVersion & $targetVersion
@@ -78,18 +80,23 @@ class ForecastsDefaults
         return array(
             // this is used to indicate whether the admin wizard should be shown on first run (for admin only, otherwise a message telling a non-admin to tell their admin to set it up)
             'is_setup' => $isSetup,
+            // this is used to indicate whether we are coming from an upgraded instance
+            'is_upgrade' => 0,
+            //TODO-sfa remove this once the ability to map buckets when they get changed is implemented (SFA-215).
+            // this is used to indicate whether any user has made commits since the forecasts module has been set up.
+            'has_commits' => 0,
             // sets whether forecasting timeperiods will be set up based on fiscal or calendar periods, options come from forecasts_timeperiod_types_dom
             'timeperiod_type' => 'chronological', //options:  'chronological' or 'fiscal'
             // the timeperiod intervals users can forecasts over, options come from forecasts_timeperiod_options_dom
-            'timeperiod_interval' => 'Annual',
+            'timeperiod_interval' => TimePeriod::ANNUAL_TYPE,
             // the leaf interval that gets the extra week if main period is fiscal + quaterly, options come from forecasts_timeperiod_leaf_quarterly_options_dom, (first, middle, last)
-            'timeperiod_leaf_interval' => 'Quarter',
-            'timeperiod_start_month' => '7',
+            'timeperiod_leaf_interval' => TimePeriod::QUARTER_TYPE,
+            'timeperiod_start_month' => '1',
             'timeperiod_start_day' => '1',
             // number of timeperiods forward from the current that are displayed
-            'timeperiods_shown_forward' => 4,
+            'timeperiod_shown_forward' => 2,
             // number of timeperiods in the past from the current that are displayed
-            'timeperiods_shown_backward' => 4,
+            'timeperiod_shown_backward' => 2,
             // used to indicate the available option for grouping opportunities
             'forecast_categories' => 'show_binary',  // options:  'show_binary', 'show_buckets', 'show_custom_buckets'
             // used to reference the app_list_string entry to indicate the commit stage list to use
@@ -98,10 +105,10 @@ class ForecastsDefaults
             'show_binary_ranges' => array('include' => array('min' => 70, 'max' => 100), 'exclude' => array('min' => 0, 'max' => 69)),
             // the defined bucket ranges the different buckets opportunities will fall in by default based on their probability
             'show_buckets_ranges' => array('include' => array('min' => 85, 'max' => 100), 'upside' => array('min' => 70, 'max' => 84), 'exclude' => array('min' => 0, 'max' => 69)),
-            //BEGIN SUGARCRM flav=ent ONLY
+            //BEGIN SUGARCRM flav=int ONLY
             // the defined custom ranges the different buckets opportunities will fall in by default based on their probability
             'show_custom_ranges' => array('include' => array('min' => 70, 'max' => 100), 'exclude' => array('min' => 0, 'max' => 69)),
-            //END SUGARCRM flav=ent ONLY
+            //END SUGARCRM flav=int ONLY
 
             //sales_stage_won are all sales_stage opportunity values indicating the opportunity is won
             'sales_stage_won' => array('Closed Won'),
@@ -142,6 +149,12 @@ class ForecastsDefaults
     public static function upgradeColumns() {
         $db = DBManagerFactory::getInstance();
 
+        $nonDefaultRates = array();
+        $result = $db->query("SELECT id, conversion_rate FROM currencies WHERE deleted = 0 AND id <> '-99'");
+        while($row = $db->fetchByAssoc($result)) {
+            $nonDefaultRates[$row['id']] = $row['conversion_rate'];
+        }
+
         //Update the currency_id and base_rate columns for existing records so that we have currency_id and base_rate values set up correctly
         $tables = array('opportunities', 'products', 'worksheet', 'forecasts', 'forecast_schedule', 'quotes', 'quotas');
         foreach($tables as $table)
@@ -176,8 +189,12 @@ class ForecastsDefaults
             }
             // Update currency_id to base (-99) with NULL values
             $db->query("UPDATE {$table} t SET t.currency_id='-99' WHERE t.currency_id IS NULL");
+
             // Update base_rate for from currency table for NULL values
-            $db->query("UPDATE {$table} t, currencies c SET t.base_rate = c.conversion_rate WHERE t.base_rate IS NULL AND t.currency_id IS NOT NULL AND t.currency_id <> '-99' AND t.currency_id = c.id");
+            foreach($nonDefaultRates as $id=>$rate) {
+                $db->query(sprintf("UPDATE {$table} SET base_rate = %d WHERE base_rate IS NULL AND currency_id IS NOT NULL AND currency_id <> '-99' AND currency_id = '%s'", $rate, $id));
+            }
+
             // Update remaining base_rate for records with NULL values
             $db->query("UPDATE {$table} SET base_rate = 1 WHERE base_rate IS NULL");
         }

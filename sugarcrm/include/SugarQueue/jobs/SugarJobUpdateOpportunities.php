@@ -31,10 +31,12 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 require_once('modules/SchedulersJobs/SchedulersJob.php');
 
 /**
- * Class to run a job which should upgrade every old opp
- * with commit stage, date_closed_timestamp, best/worst cases and related product
+ * SugarJobUpdateOpportunities.php
+ *
+ * Class to run a job which should upgrade every old opp with commit stage, date_closed_timestamp,
+ * best/worst cases and related product
  */
-class UpdateOppsJob implements RunnableSchedulerJob {
+class SugarJobUpdateOpportunities implements RunnableSchedulerJob {
 
     protected $job;
 
@@ -60,51 +62,10 @@ class UpdateOppsJob implements RunnableSchedulerJob {
 
         while (($row = $db->fetchByAssoc($result)) != null)
         {
-            $opp = BeanFactory::getBean('Opportunities', $row['id']);
+            $opp = BeanFactory::getBean('Opportunities');
+            $opp->retrieve($row['id']);
             $opp->save();
         }
-
-        $td = TimeDate::getInstance();
-        $now = $td->getNow()->asDb();
-        $guidSQL = $db->getGuidSQL();
-
-        $sql = "INSERT INTO products (id,
-                                    name,
-                                    date_entered,
-                                    date_modified,
-                                    likely_case,
-                                    best_case,
-                                    worst_case,
-                                    cost_price,
-                                    quantity,
-                                    currency_id,
-                                    base_rate,
-                                    probability,
-                                    date_closed,
-                                    date_closed_timestamp,
-                                    assigned_user_id,
-                                    opportunity_id,
-                                    commit_stage)
-                SELECT  {$guidSQL},
-                        name,
-                        '{$now}',
-                        '{$now}',
-                        amount,
-                        amount,
-                        amount,
-                        amount,
-                        1,
-                        currency_id,
-                        base_rate,
-                        probability,
-                        date_closed,
-                        date_closed_timestamp,
-                        assigned_user_id,
-                        id,
-                        commit_stage
-                FROM opportunities 
-                WHERE deleted = 0";
-        $db->query($sql);
-        $db->commit();
+        return true;
     }
 }

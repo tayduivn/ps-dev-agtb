@@ -115,11 +115,6 @@ class SugarForecasting_Export_IndividualTest extends Sugar_PHPUnit_Framework_Tes
             "user_id" => $this->reportee['user']->id,
             "timeperiod_id" => $this->timeperiod->id
         );
-
-        //Reset all columns to be shown
-        self::$admin->saveSetting('Forecasts', 'show_worksheet_likely', 1, 'base');
-        self::$admin->saveSetting('Forecasts', 'show_worksheet_best', 1, 'base');
-        self::$admin->saveSetting('Forecasts', 'show_worksheet_worst', 1, 'base');
     }
 
     public function tearDown()
@@ -130,6 +125,10 @@ class SugarForecasting_Export_IndividualTest extends Sugar_PHPUnit_Framework_Tes
     public static function tearDownAfterClass()
     {
         SugarTestHelper::tearDown();
+        //Reset all columns to default
+        self::$admin->saveSetting('Forecasts', 'show_worksheet_likely', 1, 'base');
+        self::$admin->saveSetting('Forecasts', 'show_worksheet_best', 1, 'base');
+        self::$admin->saveSetting('Forecasts', 'show_worksheet_worst', 0, 'base');
     }
 
     /**
@@ -141,8 +140,12 @@ class SugarForecasting_Export_IndividualTest extends Sugar_PHPUnit_Framework_Tes
    {
        return array
        (
-           array('', 'assertRegExp', '/Worst Case/'),
-           array('show_worksheet_worst', 'assertRegExp', '/Worst Case/'), //Test that we will still show Worst Case
+           array('show_worksheet_best', '1', 'assertRegExp', '/Best Case/'),
+           array('show_worksheet_best', '0', 'assertNotRegExp', '/Best Case/'),
+           array('show_worksheet_likely', '1', 'assertRegExp', '/Likely Case/'),
+           array('show_worksheet_likely', '0', 'assertNotRegExp', '/Likely Case/'),
+           array('show_worksheet_worst', '1', 'assertRegExp', '/Worst Case/'),
+           array('show_worksheet_worst', '0', 'assertNotRegExp', '/Worst Case/'),
        );
    }
 
@@ -156,7 +159,7 @@ class SugarForecasting_Export_IndividualTest extends Sugar_PHPUnit_Framework_Tes
      *
      * @dataProvider exportForecastWorksheetProvider
      */
-   public function testExport($hide, $method, $expectedRegex)
+   public function testExport($hide, $value, $method, $expectedRegex)
    {
         global $current_user;
         $current_user = $this->reportee['user'];
@@ -164,11 +167,8 @@ class SugarForecasting_Export_IndividualTest extends Sugar_PHPUnit_Framework_Tes
         $args['timeperiod_id'] = $this->timeperiod->id;
         $args['user_id'] = $this->repData['id'];
 
-        //Check if we should hide any columns
-        if(!empty($hide))
-        {
-           self::$admin->saveSetting('Forecasts', $hide, 0, 'base');
-        }
+        //hide/show any columns
+        self::$admin->saveSetting('Forecasts', $hide, $value, 'base');
 
         $obj = new SugarForecasting_Export_Individual($args);
         $content = $obj->process();

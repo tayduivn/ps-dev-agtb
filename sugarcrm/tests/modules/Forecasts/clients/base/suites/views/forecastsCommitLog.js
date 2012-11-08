@@ -26,6 +26,7 @@ describe("The forecastCommitted view", function(){
         app = SugarTest.app;
         view = SugarTest.loadFile("../modules/Forecasts/clients/base/views/forecastsCommitLog", "forecastsCommitLog", "js", function(d) { return eval(d); });
         SugarTest.loadFile("../sidecar/src/utils", "currency", "js", function(d) { return eval(d); });
+        SugarTest.loadFile("../sidecar/src/utils", "date", "js", function(d) { return eval(d); });
         SugarTest.loadFile("../modules/Forecasts/clients/base/lib", "ForecastsUtils", "js", function(d) { return eval(d); });
 
         view.render = function() {};
@@ -105,7 +106,9 @@ describe("The forecastCommitted view", function(){
 
             it("be in the user format", function(){
                 view.buildForecastsCommitted();
-                expect(view.previousDateEntered).toEqual('12/05/2012 10:12:25');
+                var testDate = new Date('2012-12-05T11:14:25-04:00');
+                var dateFormatted = app.date.format(testDate,app.user.get('datepref') + ' ' +  app.user.get('timepref'));
+                expect(view.previousDateEntered).toEqual(dateFormatted);
             });
         })
     });

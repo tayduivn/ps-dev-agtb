@@ -39,6 +39,7 @@ if(!defined('SUGAR_SMARTY_DIR'))
  */
 class Sugar_Smarty extends Smarty
 {
+    protected static $_plugins_dir;
 	function Sugar_Smarty()
 	{
 		if(!file_exists(SUGAR_SMARTY_DIR))mkdir_recursive(SUGAR_SMARTY_DIR, true);
@@ -52,12 +53,15 @@ class Sugar_Smarty extends Smarty
 		$this->cache_dir = SUGAR_SMARTY_DIR . 'cache';
 		$this->request_use_auto_globals = true; // to disable Smarty from using long arrays
 
-		if(SugarAutoLoader::fileExists('custom/include/Smarty/plugins'))
-        {
-			$plugins_dir[] = 'custom/include/Smarty/plugins';
+        if(empty(self::$_plugins_dir)) {
+            self::$_plugins_dir = array();
+            if(SugarAutoLoader::fileExists('custom/include/Smarty/plugins'))
+            {
+                self::$_plugins_dir[] = 'custom/include/Smarty/plugins';
+            }
+            self::$_plugins_dir[] = 'include/Smarty/plugins';
         }
-		$plugins_dir[] = 'include/Smarty/plugins';
-		$this->plugins_dir = $plugins_dir;
+        $this->plugins_dir = self::$_plugins_dir;
 
 		//BEGIN SUGARCRM flav=int ONLY
 		$this->clear_all_cache(); // removes pre-compiled template files for debugging

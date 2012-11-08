@@ -59,6 +59,58 @@ class CurrentUserApi extends SugarApi {
                 'shortHelp' => "Verifies current user's password",
                 'longHelp' => 'include/api/help/verify_password.html',
             ),
+
+            'userPreferences' =>  array(
+                'reqType' => 'GET',
+                'path' => array('me','preferences'),
+                'pathVars'=> array(),
+                'method' => 'userPreferences',
+                'shortHelp' => "Returns all the current user's stored preferences",
+                'longHelp' => 'include/api/help/user_preferences.html',
+            ),
+
+            'userPreferencesSave' =>  array(
+                'reqType' => 'PUT',
+                'path' => array('me','preferences'),
+                'pathVars'=> array(),
+                'method' => 'userPreferencesSave',
+                'shortHelp' => "Mass Save Updated Preferences For a User",
+                'longHelp' => 'include/api/help/user_preferences.html',
+            ),
+
+            'userPreference' =>  array(
+                'reqType' => 'GET',
+                'path' => array('me','preference', '?'),
+                'pathVars'=> array('', '', 'preference_name'),
+                'method' => 'userPreference',
+                'shortHelp' => "Returns a specific preference for the current user",
+                'longHelp' => 'include/api/help/user_preferences.html',
+            ),
+
+            'userPreferenceCreate' =>  array(
+                'reqType' => 'POST',
+                'path' => array('me','preference', '?'),
+                'pathVars'=> array('', '', 'preference_name'),
+                'method' => 'userPreferenceSave',
+                'shortHelp' => "Create a preference for the current user",
+                'longHelp' => 'include/api/help/user_preferences.html',
+            ),
+            'userPreferenceUpdate' =>  array(
+                'reqType' => 'PUT',
+                'path' => array('me','preference', '?'),
+                'pathVars'=> array('', '', 'preference_name'),
+                'method' => 'userPreferenceSave',
+                'shortHelp' => "Update a specific preference for the current user",
+                'longHelp' => 'include/api/help/user_preferences.html',
+            ),
+            'userPreferenceDelete' =>  array(
+                'reqType' => 'DELETE',
+                'path' => array('me','preference', '?'),
+                'pathVars'=> array('', '', 'preference_name'),
+                'method' => 'userPreferenceDelete',
+                'shortHelp' => "Delete a specific preference for the current user",
+                'longHelp' => 'include/api/help/user_preferences.html',
+            ),
         );
     }
 
@@ -78,48 +130,6 @@ class CurrentUserApi extends SugarApi {
         
         if ( isset($args['platform']) ) {
             $platform = array(basename($args['platform']),'base');
-/*
-        global $current_user;
-        global $locale;
-        $user_data = array(
-            'timezone' => $current_user->getPreference('timezone'),
-            'datepref' => $current_user->getPreference('datef'),
-            'timepref' => $current_user->getPreference('timef'),
-        );
-
-        // user currency prefs
-        $currency = BeanFactory::getBean('Currencies');
-        $currency_id = $current_user->getPreference('currency');
-        $currency->retrieve($currency_id);
-        $user_data['currency_id'] = $currency->id;
-        $user_data['currency_name'] = $currency->name;
-        $user_data['currency_symbol'] = $currency->symbol;
-        $user_data['currency_iso'] = $currency->iso4217;
-        $user_data['currency_rate'] = $currency->conversion_rate;
-        // user number formatting prefs
-        $user_data['decimal_precision'] = $locale->getPrecision();
-        $user_data['decimal_separator'] = $locale->getDecimalSeparator();
-        $user_data['number_grouping_separator'] = $locale->getNumberGroupingSeparator();
-
-        if ( isset($_SESSION['type']) && $_SESSION['type'] == 'support_portal' ) {
-            $contact = BeanFactory::getBean('Contacts',$_SESSION['contact_id']);
-            $user_data['type'] = 'support_portal';
-            $user_data['user_id'] = $current_user->id;
-            $user_data['user_name'] = $current_user->user_name;
-            $user_data['id'] = $_SESSION['contact_id'];
-            
-            // We need to ask the visibility system for the list of account ids
-            $visibility = new SupportPortalVisibility($contact);
-            $user_data['account_ids'] = $visibility->getAccountIds();
-
-            $user_data['full_name'] = $contact->full_name;
-            $user_data['portal_name'] = $contact->portal_name;
-            if(isset($contact->preferred_language))
-            {
-                $user_data['preferred_language'] = $contact->preferred_language;
-            }
->>>>>>> toffee
-*/
         } else {
             $platform = array('base');
         }
@@ -129,10 +139,13 @@ class CurrentUserApi extends SugarApi {
         $user_data['full_name'] = $current_user->full_name;
         $user_data['user_name'] = $current_user->user_name;
         $user_data['acl'] = $this->getAcls($platform);
+        //BEGIN SUGARCRM flav=pro ONLY
+        $user_data['primary_team_name'] = $current_user->team_name;
+        $user_data['primary_team_id'] = $current_user->team_id;
+        //END SUGARCRM flav=pro ONLY
         if(isset($current_user->preferred_language)) {
             $user_data['preferred_language'] = $current_user->preferred_language;
         }
-        
         return array('current_user' => $user_data);
     }
     
@@ -358,6 +371,117 @@ class CurrentUserApi extends SugarApi {
         return $current_user->getPreference('loginexpiration');
     }
 
+    /**
+     * Return all the current users preferences
+     *
+     * @param RestService $api          Api Service
+     * @param array $args               Array of arguments from the rest call
+     * @return mixed                    User Preferences, if the category exists.  If it doesn't then return an empty array
+     */
+    public function userPreferences($api, $args) {
+        $current_user = $this->getUserBean();
+
+        $category = 'global';
+        if(isset($args['category'])) {
+            $category = $args['category'];
+        }
+
+        $prefs = (isset($current_user->user_preferences[$category])) ?
+                        $current_user->user_preferences[$category] :
+                        array();
+
+        return $prefs;
+    }
+    /**
+     * Update multiple user preferences at once
+     *
+     * @param RestService $api          Api Service
+     * @param array $args               Array of arguments from the rest call
+     * @return mixed                    Return the updated keys with their values
+     */
+    public function userPreferencesSave($api, $args) {
+        $current_user = $this->getUserBean();
+
+        $category = 'global';
+        if(isset($args['category'])) {
+            $category = $args['category'];
+            unset($args['category']);
+        }
+
+        // set each of the args in the array
+        foreach($args as $key => $value) {
+            $current_user->setPreference($key, $value, 0, $category);
+        }
+
+        // save the preferences to the db
+        $current_user->savePreferencesToDB();
+
+        return $args;
+    }
+
+    /**
+     * Return a specific preference for the key that was passed in.
+     *
+     * @param RestService $api
+     * @param array $args
+     * @return mixed
+     * @return mixed
+     */
+    public function userPreference($api, $args) {
+        $current_user = $this->getUserBean();
+
+        $category = 'global';
+        if(isset($args['category'])) {
+            $category = $args['category'];
+        }
+
+        $pref = $current_user->getPreference($args['preference_name'], $category);
+
+        return (!is_null($pref)) ? $pref : "";
+    }
+
+    /**
+     * Update a preference.  The key is part of the url and the value comes from the value $args variable
+     *
+     * @param RestService $api
+     * @param array $args
+     * @return array
+     */
+    public function userPreferenceSave($api, $args) {
+        $current_user = $this->getUserBean();
+
+        $category = 'global';
+        if(isset($args['category'])) {
+            $category = $args['category'];
+        }
+
+        $current_user->setPreference($args['preference_name'], $args['value'], 0, $category);
+        $current_user->savePreferencesToDB();
+
+        return array($args['preference_name'] => $args['value']);
+    }
+
+    /**
+     * Delete a preference.  Since there is no way to actually delete with out resetting the whole category, we just
+     * set the value of the key = null.
+     *
+     * @param RestService $api
+     * @param array $args
+     * @return mixed
+     */
+    public function userPreferenceDelete($api, $args) {
+        $current_user = $this->getUserBean();
+
+        $category = 'global';
+        if(isset($args['category'])) {
+            $category = $args['category'];
+        }
+
+        $current_user->setPreference($args['preference_name'], null, 0, $category);
+        $current_user->savePreferencesToDB();
+
+        return $args['preference_name'];
+    }
 
 
 }

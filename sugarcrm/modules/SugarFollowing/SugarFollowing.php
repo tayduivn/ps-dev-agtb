@@ -53,8 +53,8 @@ class SugarFollowing extends Basic {
 		var $module;
 		var $record_id;
 		var $tag;
-	function SugarFollowing(){	
-		parent::Basic();
+	public function __construct(){
+		parent::__construct();
 	}
 	
 	static function generateIcon($on, $module, $record){

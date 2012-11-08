@@ -2318,7 +2318,7 @@ $app_strings = array (
     'ERR_AJAX_LOAD_FOOTER' => 'If this error persists, please have your administrator disable Ajax for this module',
     'ERR_CREATING_FIELDS' => 'Error filling in additional detail fields: ',
     'ERR_CREATING_TABLE' => 'Error creating table: ',
-    'ERR_DECIMAL_SEP_EQ_THOUSANDS_SEP'  => "The decimal separator cannot use the same character as the thousands separator.\\n\\n  Please change the values.",
+    'ERR_DECIMAL_SEP_EQ_THOUSANDS_SEP'  => "The decimal separator cannot use the same character as the thousands separator.\n\nPlease change one of the values.",
     'ERR_DELETE_RECORD' => 'A record number must be specified to delete the contact.',
     'ERR_EXPORT_DISABLED' => 'Exports Disabled.',
     'ERR_EXPORT_TYPE' => 'Error exporting ',
@@ -2382,10 +2382,14 @@ $app_strings = array (
 
     //Forecast specific error messages
     'ERR_TIMEPERIOD_UNDEFINED_FOR_DATE' => 'Error Timeperiod undefined for date {0}',
+    'ERR_TIMEPERIOD_ALREADY_HAS_LEAVES' => 'This TimePeriod already has leaves',
+    'ERR_TIMEPERIOD_ALREADY_LEAF' => 'Leaf Time Periods cannot have leaves',
+    'ERR_TIMEPERIOD_TYPE_DOES_NOT_EXIST' => 'Unable to retrieve any timeperiods of type: {0}',
     'LBL_CURRENT_TIMEPERIOD' => 'Current Time Period',
     'LBL_PREVIOUS_TIMEPERIOD' => 'Previous Time Period',
     'LBL_NEXT_TIMEPERIOD' => 'Next Time Period',
     'LBL_PREVIOUS_CURRENT_NEXT_TIMEPERIODS' => 'Previous,Current,Next',
+
 
     //END SUGARCRM flav=pro ONLY
 
@@ -3292,6 +3296,10 @@ $app_strings = array (
     'LBL_CANCEL_BUTTON_KEY' => 'l',
     'LBL_CANCEL_BUTTON_LABEL' => 'Cancel',
     'LBL_CANCEL_BUTTON_TITLE' => 'Cancel',
+    'LBL_START_BUTTON_LABEL' => 'Start',
+    'LBL_START_BUTTON_TITLE' => 'Start',
+    'LBL_FINISH_BUTTON_LABEL' => 'Finish',
+    'LBL_FINISH_BUTTON_TITLE' => 'Finish',
     'LBL_FIRST_INPUT_EDIT_VIEW_KEY' => '7',
     'LBL_ADV_SEARCH_LNK_KEY' => '8',
     'LBL_FIRST_INPUT_SEARCH_KEY' => '9',
@@ -3337,6 +3345,87 @@ $app_strings = array (
     'LBL_LOADING_LANGUAGE' => 'Loading language pack',
     'LBL_UPLOADING' => 'Uploading',
 
+    //theme roller
+    'BorderColor' => 'Border Color',
+    'NavigationBar' => 'Navigation Bar',
+    'PrimaryButton' => 'Primary Button',
+
+    //begin portal
+    //BEGIN SUGARCRM flav=ent ONLY
+    // for nomad mobile
+    'LBL_RELATED_MODULE' => 'Related {{this}}',
+    'LBL_RELATED_MODULE_PLURAL' => 'Related {{this}}',
+    'LBL_CREATE_MODULE' => 'Create {{this}}',
+    'LBL_EDIT' => 'Edit {{this}}',
+    'LBL_ASSOC' => 'Associate {{this}}',
+    'LBL_ASSIGN' => 'Assign {{this}}',
+    'LBL_EDIT_RELATED' => 'Edit Related {{this}}',
+    'LBL_CREATE_RELATED' => 'Create Related {{this}}',
+    'LBL_ASSOC_EXISTING' => 'Associate Existing {{this}}',
+    'LBL_SEARCH_ALL' => 'Search all {{this}}',
+    'LBL_SEARCH_ALL_RECORDS' => 'Search all records',
+    'LBL_OK' => 'OK',
+    'LBL_YES' => 'Yes',
+    'LBL_NO' => 'No',
+    'LBL_CALL_BUTTON' => 'Call',
+    'LBL_SMS_BUTTON' => 'SMS',
+    'LBL_EMAIL_BUTTON' => 'Email',
+    'LBL_UNLINK_BUTTON' => 'Unlink',
+    'LBL_MAP_BUTTON' => 'Map',
+    'LBL_FILE_BUTTON' => 'File',
+    'LBL_WARNING' => 'Warning',
+    'LBL_CONFIRM' => 'Confirm',
+    'LBL_CREATE_RELATED_RECORD' => 'Create Related Record',
+    'LBL_ASSOC_RELATED_RECORD' => 'Associate Existing Record',
+    'LBL_CHOOSE_LINK' => 'Choose Link Type',
+    'LBL_HOME' => 'Home',
+    'ERR_NO_DOCS' => 'No Documents Available',
+    'ERR_NO_RECORDS_SELECTED' => 'You haven\'t selected any records.',
+    'LBL_DELETING' => 'Deleting...',
+    'LBL_UNLINKING' => 'Unlinking...',
+    'LBL_UNLINKED' => 'Unlinked',
+    'LBL_LEGAL' => 'Legal',
+    'LBL_UPCOMING' => 'Upcoming',
+    'LBL_RECENTLY_UPDATED' => 'Recent',
+
+    //BEGIN SUGARCRM flav=pro ONLY
+    // for nomad mobile
+    'LBL_MOBILE_SHOW_MORE' => 'Show more...',
+    'LBL_MOBILE_SHOW_MORE_TOP' => 'Show more...',
+    'LBL_MOBILE_NO_RECORDS' => 'No records found',
+    'LBL_MOBILE_SEARCH_TEAMS' => 'Search Teams',
+    'LBL_MOBILE_LOGING_OUT' => 'Please wait while logging out...',
+    'LBL_MOBILE_RELOGIN_BUTTON' => 'Re-login',
+    'LBL_MOBILE_META_SYNC_FAILED' => 'Unable to sync with server. Retry?',
+    'LBL_MOBILE_PRIVACY_TERMS_CONDITIONS' => 'Privacy, Terms, & Conditions',
+    'LBL_MOBILE_APP_VERSION' => 'App Version',
+    'LBL_MOBILE_SERVER_VERSION' => 'Server Version',
+    'LBL_MOBILE_SERVER_URL' => 'Server URL',
+    'LBL_MOBILE_PTR_PULL' => 'Pull down to refresh...',
+    'LBL_MOBILE_PTR_RELEASE' => 'Release to refresh...',
+    'LBL_MOBILE_EDIT_REL' => 'Edit Relationship',
+    'LBL_MOBILE_DESKTOP' => 'Desktop Version',
+    'LBL_MOBILE_DELETE_CONFIRM' => 'Are you sure you want to delete this record?',
+    'LBL_MOBILE_UNLINK_CONFIRM' => 'Are you sure you want to unlink this record?',
+    'LBL_MOBILE_LOG_CALL_CONFIRM' => 'Would you like to log your last call?',
+    'LBL_MOBILE_CHOOSE_RECIPIENT' => 'Choose recepient',
+    'LBL_MOBILE_CHOOSE_PHONE' => 'Choose phone number',
+    'LBL_MOBILE_CHOOSE_URL' => 'Choose URL',
+    'LBL_MOBILE_CHOOSE_DOC' => 'Choose document',
+    'LBL_MOBILE_CHOOSE_LOCATION' => 'Choose location',
+    'LBL_MOBILE_NO_ACTIONS_AVAILABLE' => 'No Actions Available',
+    'ERR_MOBILE_NOT_AUTHORIZED' => 'Access not authorized.',
+    'ERR_MOBILE_INVALID_CREDS' => 'Invalid username or password',
+    'ERR_MOBILE_SESSION_EXPIRED' => 'Your session has been expired',
+    'ERR_MOBILE_NOT_FOUND' => 'Resource not found',
+    'ERR_MOBILE_TIMEOUT' => 'Request timeout',
+    'ERR_MOBILE_CONNECTION_FAILED' => 'Can\'t reach the server',
+    'ERR_MOBILE_INTERNAL' => 'Internal error ({{code}}). Please try again later.',
+    'ERR_MOBILE_VALIDATION' => 'Record is invalid',
+    'ERR_MOBILE_EMAIL' => 'Error. Invalid Email Address.',
+
+    //END SUGARCRM flav=pro ONLY
+
     //for portal
     'LBL_PORTAL_SEARCH' => 'Search by Name, Number',
     'LBL_SIGNUP_BUTTON_LABEL' => 'Sign Up',
@@ -3372,7 +3461,7 @@ $app_strings = array (
     'LBL_PORTAL_TOUR_SCREEN2_TITLE' => 'Dashboard',
     'LBL_PORTAL_TOUR_SCREEN2_BODY' => '<p>The Dashboards represent your home page. It displays a quick synopsis of your company’s Cases, KB Articles, and Bugs.</p> <p>Click the Sugar cube icon on the top left corner of any Portal page to navigate back to the Dashboard.</p> <p>Each Dashboard shows the five last modified records per module. To view additional records, click on the module link.</p>',
     'LBL_PORTAL_TOUR_SCREEN3_TITLE' => 'Footer',
-    'LBL_PORTAL_TOUR_SCREEN3_BODY' => '<p>Your footer bar can be used for the following: <ul class="features"><li class="icon-ok">Tour: Familiarize yourself with the new Sugar Portal features.</li><li class="icon-ok">Print: Create a print out of the Sugar Portal page for your personal records.</li> <li class="icon-ok">Top: Navigate to the top of the Sugar Portal page you are in.</li></ul></p>',
+    'LBL_PORTAL_TOUR_SCREEN3_BODY' => '<p>Your footer bar can be used for the following: <ul class="features"><li class="icon-ok">Language: When you have selected your preferred language, all labels in the Portal will be translated. Note: Language can only be selected from footer during login.</li><li class="icon-ok">Tour: Familiarize yourself with the new Sugar Portal features.</li><li class="icon-ok">Print: Create a print out of the Sugar Portal page for your personal records.</li> <li class="icon-ok">Top: Navigate to the top of the Sugar Portal page you are in.</li></ul></p>',
     'LBL_PORTAL_TOUR_SCREEN4_TITLE' => 'Search',
     'LBL_PORTAL_TOUR_SCREEN4_BODY' => '<p>There are two types of search:</p><ul class="features"><li class="icon-ok">Global Search – located in the navigation bar. Here you can search for Cases, Bugs, and Knowledge Base Documents by their names and numbers.</li> <li class="icon-ok">Specific module Search – located in the top of the list view in each module. <br><img src="../themes/default/images/ppt-search.png" height="200" width="530" style="margin-top: 10px;"><i class="icon-arrow-left icon-lg" style="float: right; position: relative; right: 311px; top: -147px;"></i></li></ul>',
     'LBL_PORTAL_TOUR_SCREEN5_TITLE' => 'Profile',
@@ -3408,6 +3497,8 @@ $app_strings = array (
     'LBL_PORTAL_PASSWORD_UPDATE_FAILED' => 'Update password failed. Please try again or contact technical support.',
     'LBL_PORTAL_PASSWORD_VERIFICATION_FAILED' => 'Password entered does not match that in our system.', 
     'LBL_PORTAL_PASSWORD_SUCCESS_CHANGED' => 'Your password has been successfully updated.',
+    //end portal
+    //END SUGARCRM flav=ent ONLY
 
     //sidecar errors
     'ERR_HTTP_DEFAULT_TYPE' => 'Unknown',
@@ -4297,13 +4388,10 @@ $app_list_strings['forecasts_timeperiod_types_dom'] = array(
     'chronological' => 'Date Based Year',
 );
 $app_list_strings['forecasts_timeperiod_options_dom'] = array(
-    'Annual' => 'Yearly',
-    'Quarter' => 'Quarterly',
+    'Annual' => 'Yearly (Quarterly leaf periods)',
+    'Quarter' => 'Quarterly (Monthly leaf periods)',
 );
-$app_list_strings['forecasts_timeperiod_leaf_quarterly_options_dom'] = array(
-    'Quarter' => 'Quarterly',
 
-);
 $app_list_strings['forecasts_timeperiod_month_options_dom'] = array(
    			'' => '',
    			'1' => 'January',

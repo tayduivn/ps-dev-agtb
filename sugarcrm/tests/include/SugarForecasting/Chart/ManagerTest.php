@@ -54,7 +54,8 @@ class SugarForecasting_Chart_ManagerTest extends Sugar_PHPUnit_Framework_TestCas
 
         self::$users['manager'] = SugarTestForecastUtilities::createForecastUser(array(
             'timeperiod_id' => $timeperiod->id,
-            'currency_id' => self::$currency->id
+            'currency_id' => self::$currency->id,
+            //'createQuota' => false
         ));
 
         global $current_user;
@@ -64,6 +65,7 @@ class SugarForecasting_Chart_ManagerTest extends Sugar_PHPUnit_Framework_TestCas
         $config = array(
             'timeperiod_id' => $timeperiod->id,
             'currency_id' => self::$currency->id,
+            //'createQuota' => false,
             'user' =>
             array('manager', 'reports_to' => self::$users['manager']['user']->id)
         );
@@ -73,6 +75,7 @@ class SugarForecasting_Chart_ManagerTest extends Sugar_PHPUnit_Framework_TestCas
     public static function tearDownAfterClass()
     {
         SugarTestHelper::tearDown();
+        SugarTestQuotaUtilities::removeAllCreatedQuotas();
         SugarTestTimePeriodUtilities::removeAllCreatedTimePeriods();
         SugarTestForecastUtilities::cleanUpCreatedForecastUsers();
         SugarTestCurrencyUtilities::removeAllCreatedCurrencies();
@@ -86,6 +89,14 @@ class SugarForecasting_Chart_ManagerTest extends Sugar_PHPUnit_Framework_TestCas
      */
     public function testQuotaConvertedToBase()
     {
+        $db = DBManagerFactory::getInstance();
+        if ( !$db->supports('recursive_query') )
+        {
+            // @see SugarForecasting_Chart_Manager::process() -> getManagerData()
+            // @see also SugarForecasting_Manager::process() -> loadUsers()
+            $this->markTestSkipped('DBManager does not support recursive query');
+        }
+
         $obj = new SugarForecasting_Chart_Manager(self::$args);
         $data = $obj->process();
 
@@ -104,6 +115,14 @@ class SugarForecasting_Chart_ManagerTest extends Sugar_PHPUnit_Framework_TestCas
      */
     public function testQuotaLabelContainsBaseCurrencySymbol()
     {
+        $db = DBManagerFactory::getInstance();
+        if ( !$db->supports('recursive_query') )
+        {
+            // @see SugarForecasting_Chart_Manager::process() -> getManagerData()
+            // @see also SugarForecasting_Manager::process() -> loadUsers()
+            $this->markTestSkipped('DBManager does not support recursive query');
+        }
+
         $obj = new SugarForecasting_Chart_Manager(self::$args);
         $data = $obj->process();
 
@@ -118,6 +137,14 @@ class SugarForecasting_Chart_ManagerTest extends Sugar_PHPUnit_Framework_TestCas
      */
     public function testChartValuesConvertedToBase($user, $type, $dataset, $position)
     {
+        $db = DBManagerFactory::getInstance();
+        if ( !$db->supports('recursive_query') )
+        {
+            // @see SugarForecasting_Chart_Manager::process() -> getManagerData()
+            // @see also SugarForecasting_Manager::process() -> loadUsers()
+            $this->markTestSkipped('DBManager does not support recursive query');
+        }
+
         $args = self::$args;
         $args['dataset'] = $dataset;
 
@@ -147,6 +174,14 @@ class SugarForecasting_Chart_ManagerTest extends Sugar_PHPUnit_Framework_TestCas
      */
     public function testChartValuesLabelsContainsBaseCurrencySymbol($user, $type, $dataset, $position)
     {
+        $db = DBManagerFactory::getInstance();
+        if ( !$db->supports('recursive_query') )
+        {
+            // @see SugarForecasting_Chart_Manager::process() -> getManagerData()
+            // @see also SugarForecasting_Manager::process() -> loadUsers()
+            $this->markTestSkipped('DBManager does not support recursive query');
+        }
+
         $args = self::$args;
         $args['dataset'] = $dataset;
 
@@ -172,6 +207,14 @@ class SugarForecasting_Chart_ManagerTest extends Sugar_PHPUnit_Framework_TestCas
      */
     public function testLoadUsersReturnsTwoUsersForCurrentUser()
     {
+        $db = DBManagerFactory::getInstance();
+        if ( !$db->supports('recursive_query') )
+        {
+            // @see SugarForecasting_Chart_Manager::process() -> getManagerData()
+            // @see also SugarForecasting_Manager::process() -> loadUsers()
+            $this->markTestSkipped('DBManager does not support recursive query');
+        }
+
         $obj = new SugarForecasting_Chart_Manager(self::$args);
         $data = $obj->process();
 
@@ -191,6 +234,14 @@ class SugarForecasting_Chart_ManagerTest extends Sugar_PHPUnit_Framework_TestCas
      */
     public function testChartParetoLinesConvertedToBase($type, $dataset, $chart_position, $user_position)
     {
+        $db = DBManagerFactory::getInstance();
+        if ( !$db->supports('recursive_query') )
+        {
+            // @see SugarForecasting_Chart_Manager::process() -> getManagerData()
+            // @see also SugarForecasting_Manager::process() -> loadUsers()
+            $this->markTestSkipped('DBManager does not support recursive query');
+        }
+
         $args = self::$args;
         $args['dataset'] = $dataset;
 
@@ -231,6 +282,14 @@ class SugarForecasting_Chart_ManagerTest extends Sugar_PHPUnit_Framework_TestCas
     public function testTopLevelManagerUserDataOnlyContainsName()
     {
         global $locale;
+        $db = DBManagerFactory::getInstance();
+        if ( !$db->supports('recursive_query') )
+        {
+            // @see SugarForecasting_Chart_Manager::process() -> getManagerData()
+            // @see also SugarForecasting_Manager::process() -> loadUsers()
+            $this->markTestSkipped('DBManager does not support recursive query');
+        }
+
         $obj = new SugarForecasting_Chart_Manager(self::$args);
         $data = $obj->process();
         $managerName = $locale->getLocaleFormattedName(self::$users['manager']['user']->first_name, self::$users['manager']['user']->last_name);
@@ -258,6 +317,14 @@ class SugarForecasting_Chart_ManagerTest extends Sugar_PHPUnit_Framework_TestCas
      */
     public function testChartParetoLinesLabelsContainsBaseCurrencySymbol($type, $dataset, $chart_position, $user_position)
     {
+        $db = DBManagerFactory::getInstance();
+        if ( !$db->supports('recursive_query') )
+        {
+            // @see SugarForecasting_Chart_Manager::process() -> getManagerData()
+            // @see also SugarForecasting_Manager::process() -> loadUsers()
+            $this->markTestSkipped('DBManager does not support recursive query');
+        }
+
         $args = self::$args;
         $args['dataset'] = $dataset;
 
@@ -329,6 +396,14 @@ class SugarForecasting_Chart_ManagerTest extends Sugar_PHPUnit_Framework_TestCas
      */
     public function testTopLevelManagerQuotaEqualToWorksheetData()
     {
+        $db = DBManagerFactory::getInstance();
+        if ( !$db->supports('recursive_query') )
+        {
+            // @see SugarForecasting_Chart_Manager::process() -> getManagerData()
+            // @see also SugarForecasting_Manager::process() -> loadUsers()
+            $this->markTestSkipped('DBManager does not support recursive query');
+        }
+
         $obj = new SugarForecasting_Chart_Manager(self::$args);
         $data = $obj->process();
 
@@ -346,20 +421,47 @@ class SugarForecasting_Chart_ManagerTest extends Sugar_PHPUnit_Framework_TestCas
     /**
      * @group forecasts
      * @group forecastschart
+     * @outputBuffering disabled
      */
     public function testMidLevelManagerQuotaEqualToRollup()
     {
+        $db = DBManagerFactory::getInstance();
+        if ( !$db->supports('recursive_query') )
+        {
+            // @see SugarForecasting_Chart_Manager::process() -> getManagerData()
+            // @see also SugarForecasting_Manager::process() -> loadUsers()
+            $this->markTestSkipped('DBManager does not support recursive query');
+        }
+
         $reportee = SugarTestUserUtilities::createAnonymousUser(false);
         $reportee->reports_to_id = self::$users['reportee']['user']->id;
         $reportee->save();
 
         // add a rollup quota for the new reportee user
         /* @var $quota Quota */
-        $quota = SugarTestQuotaUtilities::createQuota(1500);
-        $quota->quota_type = "Rollup";
-        $quota->timeperiod_id = SugarTestForecastUtilities::getCreatedTimePeriod()->id;
-        $quota->user_id = self::$users['reportee']['user']->id;
-        $quota->save();
+        $result = $db->limitQuery(sprintf("SELECT id FROM quotas WHERE quota_type = 'Rollup' AND user_id = '%s' AND timeperiod_id = '%s' AND deleted = 0 ORDER BY date_modified DESC",
+            self::$users['reportee']['user']->id,
+            SugarTestForecastUtilities::getCreatedTimePeriod()->id),
+            0,
+            1
+        );
+
+        if(!empty($result)) {
+            $row = $db->fetchByAssoc($result);
+            $quota = BeanFactory::getBean('Quotas', $row['id']);
+            $quota->amount = 1500;
+            $quota->currency_id = '-99';
+            $quota->quota_type = "Rollup";
+            $quota->timeperiod_id = SugarTestForecastUtilities::getCreatedTimePeriod()->id;
+            $quota->user_id = self::$users['reportee']['user']->id;
+            $quota->save();
+        } else {
+            $quota = SugarTestQuotaUtilities::createQuota(1500);
+            $quota->quota_type = "Rollup";
+            $quota->timeperiod_id = SugarTestForecastUtilities::getCreatedTimePeriod()->id;
+            $quota->user_id = self::$users['reportee']['user']->id;
+            $quota->save();
+        }
 
         $args = self::$args;
         $args['user_id'] = self::$users['reportee']['user']->id;

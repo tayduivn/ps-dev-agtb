@@ -1,11 +1,10 @@
-(function(app) {
+({
     /**
      * Layout that places views in columns with each view in a column
-     * @class View.Layouts.ColumnsLayout
-     * @alias SUGAR.App.layout.ColumnsLayout
+     * @class View.Layouts.ForecastsLayout
+     * @alias SUGAR.App.layout.ForecastsLayout
      * @extends View.Layout
      */
-    app.view.layouts.ForecastsLayout = app.view.Layout.extend({
 
         /**
          * Holds the metadata for each of the components used in forecasts
@@ -73,21 +72,20 @@
                  */
                 updatedManagerTotals : {},
 
+                /**
+                 * todo-sfa keep track of changes to modal.js and when they have proper events being passed
+                 * we can do away with this
+                 *
+                 * set by forecastsConfigTabbedButtons.js when the saved button is clicked so that it's callback
+                 * can check this variable to know which button was clicked
+                 */
+                saveClicked : false,
+
                 // todo: the following three booleans need to be refactored out and made into events, not flags/booleans
                 /**
                  * boolean to use across components to enable commit button or not
                  */
-                reloadCommitButton : false,
-
-                /**
-                 * boolean to use across components to enable commit button or not
-                 */
-                commitButtonEnabled : false,
-                
-                /**
-                 * boolean to use across components to determine if the commit button was enabled by the committed widget
-                 */
-                commitButtonEnabledFromCommitted : false,
+                reloadCommitButton : false,       
 
                 /**
                  * forecastsCommitButtons triggers this flag to tell forecastsCommitted to call commitForecast()
@@ -301,6 +299,5 @@
                 this.$el.append(comp.$el);
             }
         }
-    });
 
-})(SUGAR.App)
+})
