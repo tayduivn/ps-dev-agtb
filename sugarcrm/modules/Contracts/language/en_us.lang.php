@@ -30,6 +30,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 $mod_strings = array (
 	// module labels
 	'LBL_MODULE_NAME' => 'Contracts',
+	'LBL_MODULE_NAME_SINGULAR' => 'Contract',
 	'LBL_MODULE_TITLE' => 'Contracts: Home',
 	
 	// quick menu link labels

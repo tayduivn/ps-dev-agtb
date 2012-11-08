@@ -39,6 +39,7 @@ $mod_strings = array (
   'LBL_TEAM_ID' => 'Team Id',
   'LBL_LIST_FORM_TITLE' => 'Notifications List',
   'LBL_MODULE_NAME' => 'Notifications',
+  'LBL_MODULE_NAME_SINGULAR' => 'Notification',
   'LBL_MODULE_TITLE' => 'Notifications',
   'LBL_HOMEPAGE_TITLE' => 'My Notifications',
   'LNK_NEW_RECORD' => 'Create Notifications',

@@ -29,6 +29,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 $mod_strings = array (
   'LBL_MODULE_NAME' => 'Expression Engine',
+  'LBL_MODULE_NAME_SINGULAR' => 'Expression Engine',
   'func_descriptions' => array (
 
 ),

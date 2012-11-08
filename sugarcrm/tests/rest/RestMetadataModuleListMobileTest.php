@@ -55,7 +55,7 @@ class RestMetadataModuleListMobileTest extends RestTestBase {
     public function testMetadataGetModuleListMobile() {
         $this->_clearMetadataCache();
         $restReply = $this->_restCall('metadata?type_filter=module_list&platform=mobile');
-
+        
         foreach (SugarAutoLoader::existingCustom('include/MVC/Controller/wireless_module_registry.php') as $file) {
             require $file;
         }

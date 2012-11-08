@@ -29,6 +29,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 $mod_strings = array (
   'LBL_MODULE_NAME' => 'Tax Rates',
+  'LBL_MODULE_NAME_SINGULAR' => 'Tax Rate',
   'LBL_MODULE_TITLE' => 'Tax Rate: Home',
   'LBL_SEARCH_FORM_TITLE' => 'Tax Rate Search',
   'LBL_LIST_FORM_TITLE' => 'Tax Rate List',

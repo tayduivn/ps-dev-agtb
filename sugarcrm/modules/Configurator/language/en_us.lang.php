@@ -83,6 +83,7 @@ $mod_strings = array (
 	'LBL_MODULE_FAVICON'               => 'Display module icon as favicon',
     'LBL_MODULE_FAVICON_HELP'   => 'If you are in a module with an icon, use the module\'s icon as the favicon, instead of the theme\'s favicon, in the browser tab.',
 	'LBL_MODULE_NAME'=>'System Settings',
+	'LBL_MODULE_NAME_SINGULAR' => 'System Setting',
     'LBL_MODULE_ID'  => 'Configurator',
 	'LBL_MODULE_TITLE'=>'User Interface',
 	'LBL_NOTIFY_FROMADDRESS' => '"From" Address:',

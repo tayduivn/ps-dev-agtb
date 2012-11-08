@@ -35,6 +35,7 @@ $mod_strings = array (
   'LBL_TP_FISCAL_YEAR' => 'Fiscal Year',
   'LBL_TP_TYPE' => 'Time Period Type',
   'LBL_MODULE_NAME' => 'Time Periods',
+  'LBL_MODULE_NAME_SINGULAR' => 'Time Period',
   'LBL_MODULE_TITLE' => 'Time Periods: Home',
   'LBL_SEARCH_FORM_TITLE' => 'Time Period Search',
   'LBL_LIST_FORM_TITLE' => 'Time Periods',
