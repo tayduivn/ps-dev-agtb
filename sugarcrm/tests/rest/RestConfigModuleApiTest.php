@@ -86,7 +86,7 @@ class RestConfigModuleApiTest extends RestTestBase {
      */
     public function testRetrieveSettingsByValidModuleWithPlatformReturnsSettings()
     {
-        $restReply = $this->_restCall('Forecasts/config?platform=base')
+        $restReply = $this->_restCall('Forecasts/config?platform=base');
         $this->assertEquals('200', $restReply['info']['http_code']);
         $this->assertTrue($restReply['reply'] > 0);
     }
