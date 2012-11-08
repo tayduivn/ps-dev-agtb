@@ -35,7 +35,7 @@
         });
 
         // re-render when the worksheet is rendered as well,
-        this.context.forecasts.on('forecasts:worksheetmanager:render', function() {
+        this.context.forecasts.on('forecasts:worksheetmanager:rendered', function() {
             self._render();
         });
 

@@ -29,7 +29,7 @@
 
         if(self.context && self.context.forecasts) {
             //Bind to the worksheetmanager render event so we know that the view has been rendered
-            self.context.forecasts.on("forecasts:worksheetmanager:render", function() {
+            self.context.forecasts.on("forecasts:worksheetmanager:rendered", function() {
                 self.mDeferred.resolve();
             });
             //Bind to the committed model being reset so we know that the model has been updated

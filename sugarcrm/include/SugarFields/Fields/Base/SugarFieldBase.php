@@ -19,6 +19,8 @@ class SugarFieldBase {
     public $error;
     var $ss; // Sugar Smarty Object
     var $hasButton = false;
+    protected static $base = array();
+
     function SugarFieldBase($type) {
     	$this->type = $type;
         $this->ss = new Sugar_Smarty();
@@ -39,7 +41,25 @@ class SugarFieldBase {
         if(!empty($this->image)){
             $additional .= ' <img ' . $this->image . '>';
         }
-    	return $this->ss->fetchCustom($path) . $additional;
+    	return $this->ss->fetch($path) . $additional;
+    }
+
+    /**
+     * Get base view - cache it since base view is the same for all fields
+     * @param string $view
+     * @return string Base view filename
+     */
+    protected function getBase($view)
+    {
+        if(!isset(self::$base[$view])) {
+            if(!empty($GLOBALS['current_language'])) {
+            	self::$base[$view] = SugarAutoLoader::existingCustomOne("include/SugarFields/Fields/Base/{$GLOBALS['current_language']}.$view.tpl");
+            }
+            if(empty(self::$base[$view])) {
+            	self::$base[$view] = SugarAutoLoader::existingCustomOne("include/SugarFields/Fields/Base/$view.tpl");
+            }
+        }
+        return self::$base[$view];
     }
 
     function findTemplate($view){
@@ -54,10 +74,11 @@ class SugarFieldBase {
         while ( $lastClass = get_parent_class($lastClass) ) {
             $classList[] = str_replace('SugarField','',$lastClass);
         }
+        array_pop($classList); // remove this class - $base handles that
 
         $tplName = '';
+        global $current_language;
         foreach ( $classList as $className ) {
-            global $current_language;
             if(isset($current_language)) {
                 $tplName = SugarAutoLoader::existingCustomOne('include/SugarFields/Fields/'. $className .'/'. $current_language . '.' . $view .'.tpl');
                 if ($tplName) {
@@ -68,6 +89,9 @@ class SugarFieldBase {
             if ($tplName) {
                 break;
             }
+        }
+        if(empty($tplName)) {
+            $tplName = $this->getBase($view);
         }
 
         $tplCache[$this->type][$view] = $tplName;
@@ -607,22 +631,22 @@ class SugarFieldBase {
     /**
      * Gets normalized values for defs. Used by the MetaDataManager at first for
      * API responses, but can be used througout the app.
-     * 
+     *
      * @param array $vardef
-     * @return array A transformed vardef with normalizations applied   
+     * @return array A transformed vardef with normalizations applied
      */
     public function getNormalizedDefs($vardef) {
         // Handle normalizations that need to be applied
         if (isset($vardef['default'])) {
             $vardef['default'] = $this->normalizeDefaultValue($vardef['default']);
         }
-        
+
         return $vardef;
     }
-    
+
     /**
      * Normalizes a default value
-     * 
+     *
      * @param mixed $value The value to normalize
      * @return string
      */

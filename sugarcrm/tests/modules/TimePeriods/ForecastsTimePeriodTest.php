@@ -513,7 +513,7 @@ class ForecastsTimePeriodTest extends Sugar_PHPUnit_Framework_TestCase
 
         if($isUpgrade && $direction == 'forward') {
             $start_date = $db->getOne("SELECT max(start_date) FROM timeperiods WHERE type = '{$parentType}' AND deleted = 0");
-            $expectedDate = $timedate->fromDbDate($start_date);
+            $expectedDate = $timedate->fromDbDate(substr($start_date, 0, 10));
         }
 
         $tp = $direction == 'backward' ? TimePeriod::getEarliest($parentType) : TimePeriod::getLatest($parentType);
@@ -527,7 +527,7 @@ class ForecastsTimePeriodTest extends Sugar_PHPUnit_Framework_TestCase
         //If this is an upgrade the expectedDate should be forward from what the current time period is
         if($isUpgrade && $direction == 'forward') {
             $start_date = $db->getOne("SELECT max(start_date) FROM timeperiods WHERE type = '{$leafType}' AND deleted = 0");
-            $expectedDate = $timedate->fromDbDate($start_date);
+            $expectedDate = $timedate->fromDbDate(substr($start_date, 0, 10));
         }
 
         $this->assertEquals($expectedDate->asDbDate(), $tp->start_date, "Failed creating {$expectedLeaves} leaf timeperiods");

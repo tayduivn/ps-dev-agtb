@@ -25,16 +25,17 @@ describe("The forecastsTabbedConfig layout controller", function(){
 
     beforeEach(function() {
         var options = {
-            context: {
-                set: function() {}
-            },
+            context: new Backbone.Model(),
             meta: {
+                type: 'tabbedConfig',
                 components: {}
             }
         };
 
+        options.context.forecasts = new Backbone.Model();
+
         app = SugarTest.app;
-        SugarTest.loadFile("../modules/Forecasts/clients/base/layouts/forecastsTabbedConfig", "forecastsTabbedConfig", "js", function(d) {
+        var tabbedController = SugarTest.loadFile("../modules/Forecasts/clients/base/layouts/tabbedConfig", "tabbedConfig", "js", function(d) {
             return eval(d);
         });
         stubs = [];
@@ -53,7 +54,13 @@ describe("The forecastsTabbedConfig layout controller", function(){
         }));
         stubs.push(sinon.stub(app.view.Layout.prototype, "initialize", function (options) {}));
 
-        layout = new app.view.layouts.ForecastsTabbedConfigLayout(options);
+        layout = SugarTest.createComponent('Layout', {
+            name: "tabbedConfig",
+            module: "Forecasts",
+            context: options.context,
+            meta : options.meta,
+            controller: tabbedController
+        });
     });
 
     afterEach(function() {
