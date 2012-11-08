@@ -222,12 +222,13 @@
 
             }, this);
             this.context.forecasts.on("forecasts:committed:saved", function(){
-            	if(this.needsReloaded){
+                if(this.needsReloaded){
             		var model = this.context.forecasts.worksheet;
             		model.url = this.createURL();
             		this.safeFetch();
             		this.needsReloaded = false;
             	}
+                this.mgrNeedsCommitted = true;
             	
             }, this);
             
