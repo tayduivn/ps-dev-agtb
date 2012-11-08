@@ -32,13 +32,6 @@ abstract class SugarForecasting_Export_AbstractExport extends SugarForecasting_A
 {
 
     /**
-     * Are we a manager
-     *
-     * @var bool
-     */
-    protected $isManager = false;
-
-    /**
      * Where we store the data we want to use
      *
      * @var array
@@ -68,27 +61,6 @@ abstract class SugarForecasting_Export_AbstractExport extends SugarForecasting_A
         return $this->dataArray;
     }
 
-
-    /**
-     * getFilename
-     *
-     * @return string name of the filename to export contents into
-     */
-    protected function getFilename()
-    {
-        if(!isset($this->args['timeperiod_id']) || !isset($this->args['user_id']))
-        {
-            global $current_user;
-            $timedate = TimeDate::getInstance();
-            $timeStamp = $timedate->asUserTs($timedate->getNow(), $current_user);
-            return $timeStamp . '.csv';
-        }
-
-        $timePeriod = BeanFactory::getBean('TimePeriods');
-        $timePeriod->retrieve($this->args['timeperiod_id']);
-        $filename = sprintf("%s_to_%s_%s_%s.csv", $timePeriod->start_date, $timePeriod->end_date, $this->args['user_id'], $this->isManager ? 'manager' : 'individual');
-        return $filename;
-    }
 
     /**
      * getContent
@@ -183,6 +155,17 @@ abstract class SugarForecasting_Export_AbstractExport extends SugarForecasting_A
         return $content;
     }
 
+
+    /**
+     * getFilename
+     *
+     * @return string name of the filename to export contents into
+     */
+    public function getFilename() {
+        $timePeriod = BeanFactory::getBean('TimePeriods');
+        $timePeriod->retrieve($this->args['timeperiod_id']);
+        return $timePeriod->name;
+    }
 
 
     /**
