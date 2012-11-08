@@ -25,7 +25,7 @@
     gTable:'',
     // boolean for enabled expandable row behavior
     isExpandableRows:'',
-    collection:{},
+    _collection:{},
 
 
     /**

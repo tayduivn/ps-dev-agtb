@@ -40,7 +40,7 @@
     // boolean for enabled expandable row behavior
     isExpandableRows:'',
     isEditableWorksheet:false,
-    collection:{},
+    _collection:{},
     columnDefs : [],
     needsRelaoded : false,
     mgrNeedsCommitted : false,
