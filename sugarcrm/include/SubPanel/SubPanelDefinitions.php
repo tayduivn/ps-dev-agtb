@@ -619,9 +619,12 @@ class SubPanelDefinitions
 					continue;
 				}
 
+
+                //History and Activities are special subpanels that are not listed in the global module list,
+                $allModules = array_merge(array("History", "Activities"), $GLOBALS['moduleList'] );
 				//check permissions.
-				$exempt = array_key_exists ( $values_array [ 'module' ], $modules_exempt_from_availability_check ) ;
-				$ok = $exempt || (in_array($values_array['module'], $GLOBALS['moduleList']) &&
+                $exempt = array_key_exists ( $values_array [ 'module' ], $modules_exempt_from_availability_check ) ;
+				$ok = $exempt || (in_array($values_array['module'], $allModules) &&
                     (!ACLController::moduleSupportsACL ( $values_array [ 'module' ] ) ||
                      ACLController::checkAccess ( $values_array [ 'module' ], 'list', true ) )
                 ) ;
