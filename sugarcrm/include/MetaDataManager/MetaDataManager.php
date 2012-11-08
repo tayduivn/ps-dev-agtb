@@ -773,8 +773,15 @@ class MetaDataManager {
         $metadataFiles = glob(sugar_cached('api/metadata/').'*');
         if ( is_array($metadataFiles) ) {
             foreach ( $metadataFiles as $metadataFile ) {
-                @unlink($metadataFile);
+                // This removes the file and the reference from the map. This does
+                // NOT save the file map since that would be expensive in a loop
+                // of many deletes.
+                SugarAutoLoader::unlink($metadataFile);
             }
+            
+            // This saves the map. Once. Instead of a bunch of times in the loop
+            // above.
+            SugarAutoLoader::saveMap();
         }
     }
 }
