@@ -231,7 +231,6 @@
     $sidecar_forecasts['modules/Forecasts/clients/base/lib/ClickToEdit.js'] = $cached_file;
     $sidecar_forecasts['modules/Forecasts/clients/base/lib/BucketGridEnum.js'] = $cached_file;
     $sidecar_forecasts['modules/Forecasts/clients/base/lib/ForecastsUtils.js'] = $cached_file;
-    //$sidecar_forecasts['modules/Forecasts/clients/base/views/alert-view/alert-view.js'] = $cached_file;
     $sidecar_forecasts['modules/Forecasts/tpls/SidecarView.js'] = $cached_file;
     $sidecar_forecasts['include/javascript/twitterbootstrap/js/bootstrap-tooltip.js'] = $cached_file;
     $sidecar_forecasts['include/javascript/twitterbootstrap/js/bootstrap-popover.js'] = $cached_file;

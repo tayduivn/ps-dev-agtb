@@ -14,7 +14,6 @@
      * @param options
      */
     initialize: function (options) {
-        //_.bindAll(this); // Don't want to worry about keeping track of "this"
         app.view.View.prototype.initialize.call(this, options);
 
         this.model = new Backbone.Model({
