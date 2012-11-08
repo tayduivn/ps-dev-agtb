@@ -239,7 +239,11 @@ class aSubPanel
             // Originally caused by the fix for Bug 49439
             // Get the shown subpanel module list 
             $subPanelDefinitions = new SubPanelDefinitions($this->parent_bean);
-            $subPanelModules = $subPanelDefinitions->get_all_subpanels(true);
+            
+            // Bug 58089 - History sub panel doesn't show any record.
+            // Rather than check ALL subpanels, we only need to really check to
+            // see if the module(s) we are checking are not hidden.
+            $hiddenSubPanels = $subPanelDefinitions->get_hidden_subpanels();
             
 			$panels = $this->get_inst_prop_value ( 'collection_list' ) ;
 			foreach ( $panels as $panel => $properties )
@@ -247,8 +251,8 @@ class aSubPanel
                 // Lowercase the collection module to check against the subpanel list
                 $lcModule = strtolower($properties['module']);
                 
-                // Add a check for module subpanel visibility. If not visible, but exempt, pass it
-                if (isset($subPanelModules[$lcModule]) || isset($modules_exempt_from_availability_check[$properties['module']]))
+                // Add a check for module subpanel visibility. If hidden, but exempt, pass it
+                if (!in_array($lcModule, $hiddenSubPanels) || isset($modules_exempt_from_availability_check[$properties['module']]))
 				{
 					$this->sub_subpanels [ $panel ] = new aSubPanel ( $panel, $properties, $this->parent_bean ) ;
 				}
