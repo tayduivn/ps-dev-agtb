@@ -122,6 +122,7 @@ abstract class RestTestBase extends Sugar_PHPUnit_Framework_TestCase
         curl_setopt($ch, CURLOPT_HTTPHEADER, $addedHeaders);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLINFO_HEADER_OUT, true);
+        curl_setopt($ch, CURLOPT_HEADER, true);
 
 
         if (is_array($addedOpts) && !empty($addedOpts)) {
@@ -135,7 +136,16 @@ abstract class RestTestBase extends Sugar_PHPUnit_Framework_TestCase
         $httpInfo = curl_getinfo($ch);
         $httpError = $httpReply === false ? curl_error($ch) : null;
         $GLOBALS['db']->commit();
-        return array('info' => $httpInfo, 'reply' => json_decode($httpReply,true), 'replyRaw' => $httpReply, 'error' => $httpError);
+        
+        // Handle the headers from the reply
+        $headerLen = curl_getinfo($ch, CURLINFO_HEADER_SIZE);
+        $httpHeaders = substr($httpReply, 0, $headerLen);
+        $httpHeaders = $this->_parseHeaderString($httpHeaders);
+        
+        // Get just the body for parsing the reply
+        $httpReply = substr($httpReply, $headerLen);
+        
+        return array('info' => $httpInfo, 'reply' => json_decode($httpReply,true), 'replyRaw' => $httpReply, 'error' => $httpError, 'headers' => $httpHeaders);
     }
 
     /**
@@ -236,5 +246,26 @@ abstract class RestTestBase extends Sugar_PHPUnit_Framework_TestCase
                 @unlink($metadataFile);
             }
         }
+    }
+
+    /**
+     * Parses response headers from a curl request. Acts similar to get_headers()
+     * 
+     * @param string $header
+     * @return array
+     */
+    protected function _parseHeaderString($header) {
+        $lines = explode("\n", rtrim($header));
+        $headers = array();
+        foreach ($lines as $line) {
+            $parts = explode(": ", rtrim($line));
+            if (count($parts) == 1) {
+                $headers[] = $parts[0];
+            } else {
+                $headers[$parts[0]] = $parts[1];
+            }
+        }
+        
+        return $headers;
     }
 }
