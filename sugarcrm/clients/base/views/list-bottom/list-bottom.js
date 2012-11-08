@@ -37,7 +37,9 @@
         _.each(this.collection.models, function(model) {
             model.old = true;
         });
-        app.alert.show('show_more_records', {level:'process', title:app.lang.getAppString('LBL_PORTAL_LOADING')});
+        
+        // Display loading message
+        app.alert.show('show_more_records_' + self.cid, {level:'process', title:app.lang.getAppString('LBL_PORTAL_LOADING')});
         
         // save current screen position
         var screenPosition = $('html').offset().top;
@@ -49,7 +51,8 @@
         options.add = true;
             
         options.success = function() {
-            app.alert.dismiss('show_more_records');
+            // Hide loading message
+            app.alert.dismiss('show_more_records_' + self.cid);
             self.layout.trigger("list:paginate:success");
             self.render();
             // retrieve old screen position
