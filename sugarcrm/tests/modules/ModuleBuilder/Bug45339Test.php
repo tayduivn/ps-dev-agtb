@@ -89,14 +89,16 @@ class Bug45339Test extends Sugar_PHPUnit_Framework_TestCase
         $this->relationContactAccount = $relationContactAccount->addFromPost();
         $relationContactAccount->save();
         $relationContactAccount->build();
+        SugarTestHelper::setUp('relation', array(
+            'Contacts',
+            'Accounts'
+        ));
 
-
-           //create a new field for accounts
+        //create a new field for accounts
         $this->field = get_widget('varchar');
         $this->field->id = 'Accountstest_45339333_c';
         $this->field->name = 'test_45339333_c';
         $this->field->vname = 'LBL_TEST_CUSTOM_C';
-        //$this->field->comments = NULL;
         $this->field->help = NULL;
         $this->field->custom_module = 'Accounts';
         $this->field->type = 'varchar';
