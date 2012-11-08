@@ -365,13 +365,8 @@ class M2MRelationship extends SugarRelationship
             $relatedSeed->add_team_security_where_clause($from);
         }
         //END SUGARCRM flav=pro ONLY
-        if (!empty($params['where'])) {
+        if (!empty($params['where']))
             $from .= ", $whereTable";
-            if (isset($relatedSeed->custom_fields)) {
-                $customJoin = $relatedSeed->custom_fields->getJOIN();
-                $from .= $customJoin ? $customJoin['join'] : '';
-            }
-        }
 
         if (empty($params['return_as_array'])) {
             $query = "SELECT $targetKey id FROM $from WHERE $where AND $rel_table.deleted=$deleted";
