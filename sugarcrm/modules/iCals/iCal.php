@@ -216,7 +216,7 @@ class iCal extends vCal {
         }
 
         $hide_tasks = true;
-        if (!empty($_REQUEST['show_tasks_as_events']) && ($_REQUEST['show_tasks_as_events'] == "1"  || $_REQUEST['show_tasks_as_events'] == "true")
+        if (!empty($_REQUEST['show_tasks_as_events']) && ($_REQUEST['show_tasks_as_events'] == "1"  || $_REQUEST['show_tasks_as_events'] == "true"))
         {
             $hide_tasks = false;
         }
@@ -534,5 +534,3 @@ class iCal extends vCal {
     }
 
 }
-
-?>
