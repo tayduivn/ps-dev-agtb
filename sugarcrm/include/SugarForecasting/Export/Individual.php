@@ -100,10 +100,7 @@ class SugarForecasting_Export_Individual extends SugarForecasting_Export_Abstrac
      */
     public function getFilename()
     {
-        $timePeriod = BeanFactory::getBean('TimePeriods');
-        $timePeriod->retrieve($this->args['timeperiod_id']);
-        $filename = sprintf("%s_rep_forecast.csv", $timePeriod->name);
-        return $filename;
+        return sprintf("%s_rep_forecast.csv", parent::getFilename());
     }
 
 }
