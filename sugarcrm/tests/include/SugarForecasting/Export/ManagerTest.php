@@ -227,7 +227,7 @@ class SugarForecasting_Export_ManagerTest extends Sugar_PHPUnit_Framework_TestCa
         $args['user_id'] = self::$manager2['user']->id;
         $obj = new SugarForecasting_Export_Manager($args);
 
-        $this->assertRegExp('/\_manager.csv$/', $obj->getFilename());
+        $this->assertRegExp('/\_manager\_forecast.csv$/', $obj->getFilename());
     }
 
 }

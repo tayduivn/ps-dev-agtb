@@ -114,7 +114,7 @@ class SugarForecasting_Export_Manager extends SugarForecasting_Export_AbstractEx
     {
         $timePeriod = BeanFactory::getBean('TimePeriods');
         $timePeriod->retrieve($this->args['timeperiod_id']);
-        $filename = sprintf("%s_manager.csv", $timePeriod->name);
+        $filename = sprintf("%s_manager_forecast.csv", $timePeriod->name);
         return $filename;
     }
 
