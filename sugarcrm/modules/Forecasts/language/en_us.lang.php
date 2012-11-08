@@ -387,5 +387,6 @@ $mod_strings = array (
     'LBL_FORECASTS_CONFIG_VARIABLES_FORMULA_DESC' => 'Therefore the pipeline formula will be:',
 
     'LBL_FORECASTS_WIZARD_SUCCESS_TITLE' => 'Success:',
-    'LBL_FORECASTS_WIZARD_SUCCESS_MESSAGE' => 'You successfully set up your forecasting module. Please wait while the forecasts module loads.'
+    'LBL_FORECASTS_WIZARD_SUCCESS_MESSAGE' => 'You successfully set up your forecasting module. Please wait while the module loads.',
+    'LBL_FORECASTS_TABBED_CONFIG_SUCCESS_MESSAGE' => 'The setting has been saved. Please wait while the module reloads.'
 );

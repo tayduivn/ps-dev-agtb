@@ -201,7 +201,7 @@
                             level: 'success',
                             closeable: false,
                             title : app.lang.get("LBL_FORECASTS_WIZARD_SUCCESS_TITLE", "Forecasts") + ":",
-                            messages: ['The setting have been saved. Pleae wait while the module reloads.']
+                            messages: [app.lang.get("LBL_FORECASTS_TABBED_CONFIG_SUCCESS_MESSAGE", "Forecasts")]
                         });
                         // call tell the metadata to sync to get the updated config's and refresh the layout
                         app.sync();
