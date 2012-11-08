@@ -78,7 +78,6 @@
                 window.location = 'index.php?module=Home';
             } else {
                 // we have a success save, so we need to call the app.sync() and then redirect back to the index
-                app.alert.init();
                 app.alert.show('success', {
                     level: 'success',
                     title : app.lang.get("LBL_FORECASTS_WIZARD_SUCCESS_TITLE", "Forecasts") + ":",
