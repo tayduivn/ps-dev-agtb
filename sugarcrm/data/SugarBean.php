@@ -2600,14 +2600,14 @@ class SugarBean
 
         // ADD FAVORITES LEFT JOIN, this will add favorites to the bean
         // TODO: add global vardef for my_favorite field
-        // We should only add Favorites if we know what module we are using and if we have a user. 
+        // We should only add Favorites if we know what module we are using and if we have a user.
 
         if(isset($this->module_name) && !empty($this->module_name) && !empty($GLOBALS['current_user']) && $this->isFavoritesEnabled()) {
             $query_select .= ', sf.id AS my_favorite';
-            $query_from .= " LEFT JOIN sugarfavorites sf ON sf.deleted = 0 AND sf.module = '{$this->module_name}' AND sf.record_id = '{$id}' AND sf.assigned_user_id = '{$GLOBALS['current_user']->id}'";
+            $query_from .= " LEFT JOIN sugarfavorites sf ON sf.deleted = 0 AND sf.module = '{$this->module_name}' AND sf.record_id = {$this->db->quoted($id)} AND sf.assigned_user_id = '{$GLOBALS['current_user']->id}'";
         }
         //END SUGARCRM flav=pro ONLY
-        
+
         $query = "SELECT $query_select FROM $query_from ";
         //BEGIN SUGARCRM flav=pro ONLY
         if(!$this->disable_row_level_security)
@@ -5120,7 +5120,7 @@ class SugarBean
             }
             $module_name = $this->module_name;
         }
-        
+
         if (!empty($listview_def))
         {
             $temp_field_defs = $this->field_defs;
