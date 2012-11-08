@@ -638,7 +638,12 @@ class SubPanelDefinitions
 		}
 
 		ksort ( $this->_visible_tabs_array ) ;
-        $this->_visible_tabs_array = array_intersect($this->_visible_tabs_array, $GLOBALS['moduleList']);
+        // get case insensitive intersection
+        foreach($this->_visible_tabs_array AS $i=>$v) {
+            if (!in_array(ucfirst($v), $GLOBALS['moduleList'])) {
+                unset($this->_visible_tabs_array[$i]);
+            }
+        }
 		return $this->_visible_tabs_array ;
 	}
 
