@@ -66,8 +66,9 @@ class RestConfigModuleApiTest extends RestTestBase {
      */
     public function testRetrieveConfigSettingsByValidModuleNoSettings()
     {
+
         $restReply = $this->_restCall('Opportunities/config?platform=base');
-        $this->assertEmpty($restReply['reply']);
+        $this->assertNotEmpty($restReply['reply']['error_message']);
     }
 
     /**
