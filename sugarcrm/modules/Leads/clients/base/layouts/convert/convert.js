@@ -1,6 +1,7 @@
 ({
     events:{
-        'click [name=convert_continue_button]':'processContinue'
+        'click [name=convert_continue_button]':'processContinue',
+        'click [name=pick]': 'selectDuplicate'
     },
 
     _placeComponent: function(component, def) {
@@ -38,6 +39,7 @@
         this.$('.accordion').on('show', function (e) {
             self.initiateContinue(e);
         });
+        this.initiateSubComponents(this.meta.modules);
     },
 
     render:function () {
@@ -51,7 +53,6 @@
         });
 
         this.initiateAccordion(this.meta.modules);
-        this.initiateSubComponents(this.meta.modules);
         //  this.populateRecordModelsFromLeadsData();
         this.showAccordion(firstModule);
     },
@@ -108,7 +109,7 @@
 
         _.each(modulesMetadata, function (moduleMeta, index, list) {
             var def = {
-                    'view':'list',
+                    'view':'list-singleselect',
                     'context':{'module':moduleMeta.module}
                 };
 
@@ -120,6 +121,7 @@
             };
 
             self.insertRecordViewInAccordionBody(moduleMeta, def);
+            self.context.convertModel.addSubModel(moduleMeta.module, new Backbone.Model());
         });
     },
 
@@ -185,7 +187,7 @@
     },
 
     /**
-     * Save the convert model and process the responsessou
+     * Save the convert model and process the response
      */
     processConvert:function () {
         var self = this;
@@ -228,10 +230,23 @@
 
             addSubModel:function (name, model) {
                 this.set(name, model);
+            },
+
+            getSubModel:function (name) {
+                return this.get(name);
             }
         });
 
         return new convertModel();
+    },
+
+    selectDuplicate: function(e) {
+        var $selectedRadio = this.$(e.target),
+            recordId = $selectedRadio.val(),
+            module = $selectedRadio.attr('data-module'),
+            subModel = this.context.convertModel.getSubModel(module);
+
+        subModel.set('id', recordId);
     },
 
     /**
