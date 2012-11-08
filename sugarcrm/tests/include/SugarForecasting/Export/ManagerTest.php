@@ -214,4 +214,20 @@ class SugarForecasting_Export_ManagerTest extends Sugar_PHPUnit_Framework_TestCa
         $this->$method($expectedRegex, $content);
    }
 
+
+    /**
+     * This is a function to test the getFilename function
+     * @group export
+     * @group forecasts
+     */
+    public function testGetFilename()
+    {
+        $args = array();
+        $args['timeperiod_id'] = self::$timeperiod->id;
+        $args['user_id'] = self::$manager2['user']->id;
+        $obj = new SugarForecasting_Export_Manager($args);
+
+        $this->assertRegExp('/\_manager.csv$/', $obj->getFilename());
+    }
+
 }

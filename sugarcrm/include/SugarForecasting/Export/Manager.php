@@ -37,7 +37,6 @@ class SugarForecasting_Export_Manager extends SugarForecasting_Export_AbstractEx
      */
     public function __construct($args)
     {
-        $this->isManager = true;
         parent::__construct($args);
     }
 
@@ -103,6 +102,20 @@ class SugarForecasting_Export_Manager extends SugarForecasting_Export_AbstractEx
         $seed = BeanFactory::getBean('ForecastManagerWorksheets');
 
         return $this->getContent($data, $seed, $fields_array);
+    }
+
+
+    /**
+     * getFilename
+     *
+     * @return string name of the filename to export contents into
+     */
+    public function getFilename()
+    {
+        $timePeriod = BeanFactory::getBean('TimePeriods');
+        $timePeriod->retrieve($this->args['timeperiod_id']);
+        $filename = sprintf("%s_manager.csv", $timePeriod->name);
+        return $filename;
     }
 
 }
