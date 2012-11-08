@@ -1,9 +1,9 @@
-describe("datebase", function() {
+describe("basedatepicker", function() {
     var app, field;
 
     beforeEach(function() {
         app = SugarTest.app;
-        field = SugarTest.createField("base","basedate", "basedate", "detail");
+        field = SugarTest.createField("base","basedatepicker", "basedatepicker", "detail");
         // To avoid calling initialize we just set these here
         field.usersDatePrefs = 'm/d/Y';
     });
@@ -15,35 +15,8 @@ describe("datebase", function() {
         field = null;
     });
 
-    describe("datebase core functions", function() {
+    describe("basedatepicker core functions", function() {
 
-        it("should unformat to iso 8601 compatible date string", function() {
-            var yr='1999', m='01', d='23', actual;
-            actual = field.unformat(yr+'-'+m+'-'+d);
-            expect(actual.match(/1999\-01\-23T.*Z/)).toBeTruthy();
-        });
-        it("should unformat to same object passed in if falsy", function() {
-            var stub;
-            expect(field.unformat('')).toEqual('');
-            expect(field.unformat(false)).toEqual(false);
-            expect(field.unformat(null)).toEqual(null);
-            stub = sinon.stub(app.logger, 'error')
-            expect(field.unformat('yogabba')).toEqual('yogabba');
-            expect(stub).toHaveBeenCalledOnce();
-            stub.restore();
-        });
-
-        it('should build unformatted string per REST API required input', function() {
-            var actual, expected;
-            actual   = field._buildUnformatted('09/12/1970', '02', '00');
-            expect(/1970\-09\-12T.*\:00\:00.*Z$/.test(actual)).toBeTruthy()
-
-            // Regardless of user's prefs should still be API formatted
-            field.usersDatePrefs = 'Y.m.d';
-            field.userTimePrefs  = 'H.i s';
-            actual   = field._buildUnformatted('1970.09.12', '02', '00');
-            expect(/1970\-09\-12T.*\:00\:00.*Z$/.test(actual)).toBeTruthy()
-        });
         it('should return today date if date string passed in is falsy', function() {
             var stub = sinon.stub(app.date, 'format');
             field.usersDatePrefs = 'Y.m.d';
@@ -83,6 +56,18 @@ describe("datebase", function() {
             field.options = {def: {}};
             expect(field._isEditView()).toBeFalsy();
         });
+
+        it("should set server date string depending on whether stripIsoTZ is true or false",function() {
+            var today = new Date();
+            field.stripIsoTZ = false; // let the browser interpret iso 8601 TZ
+            expect(field._setServerDateString(today).match(/Z$/)).toBeTruthy();
+            expect(field._setServerDateString(today).match(/T/)).toBeTruthy();
+            field.stripIsoTZ = true;
+            expect(field._setServerDateString(today).match(/Z$/)).toBeFalsy();
+            expect(field._setServerDateString(today).match(/T/)).toBeTruthy(); // should still have T delimiter
+            field.stripIsoTZ = false;
+        });
+
         it("should identify if view is new edit view with no value or not", function() {
             var originalType,
                 isNewStub = sinon.stub(field.model, 'isNew', function() { return true; });
@@ -147,7 +132,7 @@ describe("datebase", function() {
 
     });
 
-    describe("datebase datepicker related", function() {
+    describe("basedatepicker datepicker related", function() {
         var jqFn, expectedValValue, datepickerStub;
 
         // Essentially, the following stubs out this.$('doesnt_matter').<val & datepicker>
@@ -225,8 +210,6 @@ describe("datebase", function() {
             expect(stub.args[0][1]).toEqual(expected.hours);
             expect(stub.args[0][2]).toEqual(expected.minutes);
         });
-
-
 
     });
      
