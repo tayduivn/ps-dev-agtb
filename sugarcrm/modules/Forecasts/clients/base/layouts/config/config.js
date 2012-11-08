@@ -81,7 +81,7 @@
                 //app.alert.show('loading', {level: 'process', title : 'Loading'});
                 app.alert.show('success', {
                     level: 'success',
-                    title : app.lang.get("LBL_FORECASTS_WIZARD_SUCCESS_TITLE", "Forecasts"),
+                    title : app.lang.get("LBL_FORECASTS_WIZARD_SUCCESS_TITLE", "Forecasts") + ":",
                     messages: [app.lang.get("LBL_FORECASTS_WIZARD_SUCCESS_MESSAGE", "Forecasts")]
                 });
                 app.sync({callback: function() {

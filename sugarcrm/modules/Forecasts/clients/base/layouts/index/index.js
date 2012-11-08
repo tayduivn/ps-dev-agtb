@@ -278,6 +278,21 @@
             } else {
                 this.$el.append(comp.$el);
             }
-        }
+        },
+
+    /**
+     * Override render so we can init the alerts for the page to use.
+     *
+     * @return {*}
+     * @private
+     */
+    _render : function() {
+        app.view.Layout.prototype._render.call(this);
+
+        // init the alerts
+        app.alert.init();
+
+        return this;
+    }
 
 })

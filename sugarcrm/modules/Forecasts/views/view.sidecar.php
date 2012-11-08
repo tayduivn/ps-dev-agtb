@@ -114,7 +114,7 @@ class ForecastsViewSidecar extends SidecarView
             'platform' => 'base',
             'additionalComponents' => array(
                 'alert' => array(
-                    'target' => '#alert'
+                    'target' => '#alerts'
                 )
             ),
             'serverUrl' => $sugar_config['site_url'].'/rest/v10',
