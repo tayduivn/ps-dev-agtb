@@ -26,6 +26,7 @@ $mod_strings = array (
 	'LBL_ROLE' => 'Role: ',
 	'LBL_LANGUAGE' => 'Language: ',
 	'LBL_MODULE_NAME' => 'Roles',
+	'LBL_MODULE_NAME_SINGULAR' => 'Role',
 	'LBL_MODULE_TITLE' => 'Roles: Home',
 	'LBL_SEARCH_FORM_TITLE' => 'Role Search',
 	'LBL_LIST_FORM_TITLE' => 'Role List',

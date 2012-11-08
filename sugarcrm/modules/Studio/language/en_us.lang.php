@@ -141,6 +141,7 @@ $mod_strings = array (
 'LBL_MODULES'=>'Modules',
 //nsingh: begin bug#15095 fix
 'LBL_MODULE_NAME' => 'Administration',
+'LBL_MODULE_NAME_SINGULAR' => 'Administration',
 'LBL_CONFIGURE_GROUP_TABS' => 'Configure Module Menu Filters',
  //end bug #15095 fix
 'LBL_GROUP_TAB_WELCOME'=>'The filters below will be displayed in the More list in the module menu for users to use to view groups of modules within the menu. Drag and drop modules to and from the filters. Note: Empty filters will not be displayed in the menu.',
