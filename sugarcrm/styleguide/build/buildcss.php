@@ -15,7 +15,10 @@ try {
     $less = new lessc('../less/clients/' . $client . '/config.less');
     if (isset($_GET["min"]) && $_GET["min"]=="true") $less->setFormatter("compressed");
     file_put_contents('../styleguide/css/bootstrap.css', $less->parse($variables));
-    
+
+    //$variables['baseUrl'] = '"../../../../../styleguide/assets"';
+    //file_put_contents('../../cache/themes/clients/base/default/bootstrap.css', $less->parse($variables));
+
     //build bootstrap-mobile.css
     $less = new lessc('../less/clients/mobile/config.less');
     if (isset($_GET["min"]) && $_GET["min"]=="true") $less->setFormatter("compressed");
