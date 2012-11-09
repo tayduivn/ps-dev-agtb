@@ -328,7 +328,7 @@ $app_list_strings = array (
   'fts_type' => array (
       '' => '',
       'Elastic' => 'elasticsearch',
-      'Ghetto'  => 'ghettosearch'
+      'DBFTS'  => 'dbfts',
   ),
   'sales_stage_dom' =>
   array (

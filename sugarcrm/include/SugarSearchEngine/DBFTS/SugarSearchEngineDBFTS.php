@@ -23,12 +23,12 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 require_once('include/SugarSearchEngine/SugarSearchEngineAbstractBase.php');
 require_once('include/SugarSearchEngine/SugarSearchEngineMetadataHelper.php');
 require_once('include/SugarSearchEngine/SugarSearchEngineHighlighter.php');
-require_once('include/SugarSearchEngine/Ghetto/SugarSearchEngineGhettoResultSet.php');
+require_once('include/SugarSearchEngine/DBFTS/SugarSearchEngineDBFTSResultSet.php');
 
 /**
- * Engine implementation for GhettoSearch
+ * Engine implementation for DBFTSSearch
  */
-class SugarSearchEngineGhetto extends SugarSearchEngineAbstractBase
+class SugarSearchEngineDBFTS extends SugarSearchEngineAbstractBase
 {
     private $_config = array();
     private $_client = null;
@@ -103,41 +103,40 @@ class SugarSearchEngineGhetto extends SugarSearchEngineAbstractBase
         if(empty($searchFields))
             return false;
 
-        $ghettoBean = BeanFactory::newBean('GhettoSearch');
-        $current_records = $ghettoBean->getAllRecords($bean);
+        $dbftsBean = BeanFactory::newBean('DBFTS');
+        $current_records = $dbftsBean->getAllRecords($bean);
         
         foreach($searchFields as $fieldName => $fieldDef)
         {
-            //TODO: CHANGE ME
-            $ghettoBean = BeanFactory::newBean('GhettoSearch');                            
+            $dbftsBean = BeanFactory::newBean('DBFTS');
             //All fields have already been formatted to db values at this point so no further processing necessary
             if(!empty($bean->$fieldName) || (isset($current_records[$fieldName]) && $current_records[$fieldName]->field_value != $bean->$fieldName)) {
-                $ghettoBean->field_name = $fieldName;
-                $ghettoBean->field_value = $bean->$fieldName;
-                $ghettoBean->boost = 1;
+                $dbftsBean->field_name = $fieldName;
+                $dbftsBean->field_value = $bean->$fieldName;
+                $dbftsBean->boost = (isset($bean->field_defs[$fieldName]['full_text_search']['boost'])) ? $bean->field_defs[$fieldName]['full_text_search']['boost'] : 1;
                 if(isset($current_records[$fieldName]))
                 {
-                    $ghettoBean->id = $current_records[$fieldName]->id;
+                    $dbftsBean->id = $current_records[$fieldName]->id;
                 }
 
-                $ghettoBean->parent_type = $bean->module_dir;
-                $ghettoBean->parent_id = $bean->id;
-                $ghettoBean->team_set_id = $bean->team_set_id;
-                $ghettoBean->save();                
+                $dbftsBean->parent_type = $bean->module_dir;
+                $dbftsBean->parent_id = $bean->id;
+                $dbftsBean->team_set_id = $bean->team_set_id;
+                $dbftsBean->save();                
             }
         }
         
-        $ghettoBean = BeanFactory::newBean('GhettoSearch');
+        $dbftsBean = BeanFactory::newBean('DBFTS');
         if(isset($current_records['assigned_user_id']))
         {
-            $ghettoBean->id = $current_records['assigned_user_id']->id;
+            $dbftsBean->id = $current_records['assigned_user_id']->id;
         }
-        $ghettoBean->team_set_id = $bean->team_set_id;
-        $ghettoBean->field_name = 'assigned_user_id';
-        $ghettoBean->field_value = $bean->assigned_user_id;
-        $ghettoBean->parent_type = $bean->module_dir;
-        $ghettoBean->parent_id = $bean->id;
-        $ghettoBean->save();
+        $dbftsBean->team_set_id = $bean->team_set_id;
+        $dbftsBean->field_name = 'assigned_user_id';
+        $dbftsBean->field_value = $bean->assigned_user_id;
+        $dbftsBean->parent_type = $bean->module_dir;
+        $dbftsBean->parent_id = $bean->id;
+        $dbftsBean->save();
 
     }
 
@@ -164,10 +163,9 @@ class SugarSearchEngineGhetto extends SugarSearchEngineAbstractBase
             return false;
         }
 
-        //TODO: add deleteAllRecords
-        // create a ghetto bean function that deletes all records for a specific module id
-        $ghettoBean = BeanFactory::newBean('GhettoSearch');
-        $ghettoBean->deleteAllRecords($bean);
+        // create a dbfts bean function that deletes all records for a specific module id
+        $dbftsBean = BeanFactory::newBean('DBFTS');
+        $dbftsBean->deleteAllRecords($bean);
         return true;
     }
 
@@ -345,23 +343,23 @@ class SugarSearchEngineGhetto extends SugarSearchEngineAbstractBase
         $GLOBALS['log']->info("Going to search with query $queryString");
 
 
-        $ghettoBean = BeanFactory::newBean('GhettoSearch');
+        $dbftsBean = BeanFactory::newBean('DBFTS');
 
-        $results = $ghettoBean->performSearch($queryString, $offset, $limit, $options);
+        $results = $dbftsBean->performSearch($queryString, $offset, $limit, $options);
 
         $return = array();
 
-        foreach($results AS $ghettoLicious) {
-            $bean = BeanFactory::getBean($ghettoLicious->parent_type, $ghettoLicious->parent_id);
-            $return[$bean->id] = new SugarSearchEngineGhettoResult($bean);
+        foreach($results AS $result) {
+            $bean = BeanFactory::getBean($result->parent_type, $result->parent_id);
+            $return[$bean->id] = new SugarSearchEngineDBFTSResult($bean);
         }
         $return = array_values($return);
-        $resultset = new SugarSearchEngineGhettoResultSet($return);
+        $resultset = new SugarSearchEngineDBFTSResultSet($return);
         return $resultset;
     }
     
     public function getServerStatus() {
-        return array('valid' => true, 'status' => "Yo, We be searchin' yo' dataz, dawg.");
+        return array('valid' => true, 'status' => "DBFTS is currently online and ready.");
     }
     
     public function bulkInsert(array $docs) {}

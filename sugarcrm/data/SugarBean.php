@@ -6354,5 +6354,4 @@ class SugarBean
 	{
 		return $this->create_new_list_query($order_by, $where, array(), array(), 0, '', false, $this, true, true);
 	}
- 
 }

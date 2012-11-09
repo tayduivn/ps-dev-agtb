@@ -26,18 +26,37 @@
  * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
-/**
- * THIS CLASS IS FOR DEVELOPERS TO MAKE CUSTOMIZATIONS IN
- */
-require_once('modules/GhettoSearch/GhettoSearch_sugar.php');
-class GhettoSearch extends GhettoSearch_sugar
+class DBFTS extends Basic
 {
+    var $new_schema = true;
+    var $module_dir = 'DBFTS';
+    var $object_name = 'DBFTS';
+    var $table_name = 'dbfts_search';
+    var $importable = false;
+    var $id;
+    var $name;
+    var $date_entered;
+    var $date_modified;
+    var $modified_user_id;
+    var $modified_by_name;
+    var $created_by;
+    var $created_by_name;
+    var $description;
+    var $deleted;
+    var $created_by_link;
+    var $modified_user_link;
+    var $team_id;
+    var $team_set_id;
+    var $team_count;
+    var $team_name;
+    var $team_link;
+    var $team_count_link;
+    var $teams;
 
-    function GhettoSearch()
+    function __construct()
     {
-        parent::GhettoSearch_sugar();
+        parent::__construct();
     }
-
 
     function performSearch($queryString, $offset = 0, $limit = 20, $options = array()) {
     	$returns = array();
@@ -48,9 +67,9 @@ class GhettoSearch extends GhettoSearch_sugar
         $this->addVisibilityWhere($query);
 
         $results = $this->db->limitQuery($query, $offset, $limit);
-        $GLOBALS['log']->fatal("\r\n\r\n::::::\r\n\r\n" . $query . "\r\n\r\n::::::\r\n\r\n");
-    	while($row = $this->db->fetchByAssoc($results)) {
-    		$returns[] = BeanFactory::getBean('GhettoSearch', $row['id']);
+        
+        while($row = $this->db->fetchByAssoc($results)) {
+    		$returns[] = BeanFactory::getBean('DBFTS', $row['id']);
     	}
 
     	return $returns;
@@ -90,14 +109,28 @@ class GhettoSearch extends GhettoSearch_sugar
         $returns = array();
         $results = $this->db->query("SELECT id, field_name FROM {$this->table_name} WHERE parent_type = '{$bean->module_dir}' AND parent_id = '{$bean->id}'");
         while($row = $this->db->fetchByAssoc($results)) {
-            $returns[$row['field_name']] = BeanFactory::getBean('GhettoSearch', $row['id']);
+            $returns[$row['field_name']] = BeanFactory::getBean('DBFTS', $row['id']);
         }
         return $returns;
     }
 
     function deleteAllRecords($bean) {
-        $this->db->query("DELETE FROM {$this->table_name} WHERE parent_type = '{$bean->module_dir}' AND parent_id = '{$bean->id}'");
+        if(empty($bean)) {
+            $this->db->query("DELETE FROM {$this->table_name}");
+        }
+        else {
+            $this->db->query("DELETE FROM {$this->table_name} WHERE parent_type = '{$bean->module_dir}' AND parent_id = '{$bean->id}'");
+        }
         return true;
+    }
+
+    function bean_implements($interface)
+    {
+        switch ($interface) {
+            case 'ACL':
+                return true;
+        }
+        return false;
     }
 }
 

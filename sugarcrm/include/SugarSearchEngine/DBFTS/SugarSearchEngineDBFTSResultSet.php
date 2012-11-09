@@ -20,72 +20,94 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *Portions created by SugarCRM are Copyright (C) 2006 SugarCRM, Inc.; All Rights
  *Reserved.
  ********************************************************************************/
+require_once('include/SugarSearchEngine/DBFTS/SugarSearchEngineDBFTSResult.php');
+require_once("include/SugarSearchEngine/Interface.php");
 
-require_once("include/SugarSearchEngine/SugarSearchEngineAbstractResult.php");
-require_once("include/SugarSearchEngine/SugarSearchEngineHighlighter.php");
-
-/**
- * Adapter class to Elastica Result
- */
-class SugarSearchEngineGhettoResult extends SugarSearchEngineAbstractResult
+class SugarSearchEngineDBFTSResultSet implements SugarSearchEngineResultSet
 {
-    /**
-     * @var \Elastica_Result
-     */
-    protected $bean;
-
-    public function __construct(SugarBean $result)
-    {
-        $this->bean = $result;
-        if($this->bean === FALSE)
-        {
-            $GLOBALS['log']->fatal("Unable to load bean with id for FTS result set: {$this->getId()}");
-        }
-    }
 
     /**
-     * Return the id of the
+     * param array
      *
-     * @return string
-     */
-    public function getId()
+     **/
+    private $dbftsResults;
+
+    public function __construct(array $rs)
     {
-        return $this->bean->id;
+        $this->dbftsResults = $rs;
+    }
+    
+    /**
+     * Return the total number of hits found from our search
+     *
+     * @return int
+     */
+    public function getTotalHits()
+    {
+        return count($this->dbftsResults);
     }
 
     /**
+     * Return facets associated with this search.
      *
      * @return array
      */
-    public function getModule()
+    public function getFacets()
     {
-        return $this->bean->module_dir;
-    }
-
-
-    public function getModuleName()
-    {
-        return $this->bean->module_dir;   
+        return false;
     }
 
     /**
+     * Return the facet results for the modules used in the search.
      *
-     * @return integer
+     * @return array|bool
      */
-    public function getScore()
+    public function getModuleFacet()
     {
-        return 52;
+        return false;
+    }
+    /**
+     * Get the total amount of time the search took to complete.
+     *
+     * @return int
+     */
+    public function getTotalTime()
+    {
+        return false;
+    }
+
+    public function current()
+    {
+        return current($this->dbftsResults);
+    }
+
+    public function key()
+    {
+        return key($this->dbftsResults);
+    }
+
+    public function next()
+    {
+        return next($this->dbftsResults);
+    }
+
+    public function rewind()
+    {
+        reset($this->dbftsResults);
+    }
+
+    public function valid()
+    {
+        return isset($this->dbftsResults[$this->key()]);
     }
 
     /**
-     * This function returns an array of highlighted key-value pairs.
+     * Return the count of hits returned, may not necessarily equal total hits.
      *
-     * @param maxFields integer the maximum number of fields to return for each hit
-     *
-     * @return array of key value pairs
+     * @return int
      */
-    public function getHighlightedHitText($maxFields = 1)
+    public function count()
     {
-        return array();
+        return count($this->dbftsResults);
     }
 }

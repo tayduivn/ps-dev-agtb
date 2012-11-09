@@ -113,7 +113,7 @@ $config['blackList']['com'] = array(
 'sugarcrm/include/SugarObjects/templates/sale/icons/sale_bar_32.png'=>1,
 
 'sugarcrm/include/SugarSearchEngine/Elastic'=>1,
-'sugarcrm/include/SugarSearchEngine/Ghetto'=>1,
+'sugarcrm/include/SugarSearchEngine/DBFTS'=>1,
 
 'sugarcrm/modules/Notifications'=>1,
 'sugarcrm/themes/default/images/icon_notifications.gif'=>1,
