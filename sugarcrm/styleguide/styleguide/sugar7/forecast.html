@@ -4,6 +4,7 @@
   <meta charset="utf-8">
   <title>Forecast - SugarCRM</title>
   <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+  <meta http-equiv="x-ua-compatible" content="IE=8">
   <meta name="description" content="">
   <meta name="author" content="">
   <!--[if lt IE 9]>
@@ -13,240 +14,236 @@
   <link href="../css/nv.d3.css" rel="stylesheet" type="text/css">
 </head>
 <body>
-  <div class="navbar navbar-fixed-top">
-    <div class="navbar-inner">
-      <div class="container-fluid">
-        <div class="nav-collapse">
-          <ul id="navMenu" class="nav">
-            <li><a class="cube" href="dashboard.html" rel="tooltip" title="Dashboard"></a></li>
-            <li class="menu-item"><a href="#">Accounts</a></li>
-            <li class="menu-item"><a href="#">Contacts</a></li>
-            <li class="menu-item"><a href="opportunity.html">Opportunities</a></li>
-            <li class="menu-item active"><a href="forecast.html">Forecasts</a></li>
-            <li class="menu-item"><a href="#">Leads</a></li>
-            <li class="menu-item"><a href="#">Campaigns</a></li>
-            <li class="menu-item"><a href="#">Quotes</a></li>
-            <li class="menu-item"><a href="#">Subscriptions</a></li>
-            <li class="menu-item"><a href="#">Reports</a></li>
-            <li class="menu-item"><a href="#">Documents</a></li>
-            <li class="menu-item"><a href="#">oppQ</a></li>
-            <li class="menu-item"><a href="#">Emails</a></li>
-            <li class="menu-item"><a href="#">Products</a></li>
-            <li class="menu-item"><a href="#">Cases</a></li>
-            <li class="dropdown" id="more">
-              <a href="#" class="dropdown-toggle" data-toggle="dropdown">More <b class="caret"></b></a>
-              <ul class="dropdown-menu" id="moreLinks">
-                <li class="divider"></li>
-                <li><a href="#">Filter Menu By</a></li>
-              </ul>
-            </li>
-          </ul>
-          <ul id="navForms" class="nav pull-right">
-            <li class="divider-vertical"></li>
-            <li class="dropdown">
-              <button href="#" class="btn btn-danger dropdown-toggle" data-toggle="dropdown">3</button>
-              <ul class="dropdown-menu">
-                <li><a href="">System-wide maintenance &hellip;</a></li>
-                <li class="divider"></li>
-                <li><a href="">Upgrade to 7.0!</a></li>
-                <li class="divider"></li>
-                <li><a href="">Please take our survey.</a></li>
-              </ul>
-            </li>
-            <li class="divider-vertical"></li>
-            <li class="dropdown">
-              <a href="#" class="dropdown-toggle" data-toggle="dropdown"><img src="../img/avatar_sabra.jpg" alt="skahn" class="avatar">skhan <b class="caret"></b></a>
-              <ul class="dropdown-menu">
-                <li><a href="#">Profile</a></li>
-                <li><a href="#">Password</a></li>
-                <li><a href="#">Advanced</a></li>
-                <li><a href="#">External Accounts</a></li>
-                <li class="divider"></li>
-                <li><a href="#">Log Out</a></li>
-              </ul>
-            </li>
-            <li class="divider-vertical"></li>
-            <li class="dropdown">
-              <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="icon-plus icon-md"></i> <b class="caret"></b></a>
-              <ul class="dropdown-menu quick">
-                <li><a href="#">Create Account</a></li>
-                <li><a href="#">Create Contact</a></li>
-                <li><a href="#">Create Opportunity</a></li>
-              </ul>
-            </li>
-          </ul>
-          <div id="searchForm">
-            <form class="navbar-search pull-right" action="">
-              <input type="text" class="search-query span2" placeholder="Search" data-provide="typeahead" data-items="10" data-source="[&quot;Bad links in Pitch&quot;,&quot;Broken images in pdf&quot;,&quot;Misspellings everywhere&quot;,&quot;404 on faq&quot;,&quot;HTML is broken&quot;,&quot;Page link is not redirecting&quot;,&quot;Improper text in search placeholder&quot;,&quot;Misaligned elements&quot;,&quot;Need new text on log in&quot;,&quot;Image broken on profile&quot;]">
-              <div class="advanced">
-                <div class="btn-toolbar pull-right">
+  <div id="sugarcrm">
+    <div id="sidecar">
+      <div id="alert" class="alert-top"></div>
+      <div id="header">
+        <div class="navbar navbar-fixed-top">
+          <div class="navbar-inner">
+            <div class="container-fluid">
+              <div class="nav-collapse">
+                <ul id="navMenu" class="nav">
+                  <li><a class="cube" href="dashboard.html" rel="tooltip" title="Dashboard"></a></li>
+                  <li class="menu-item"><a href="#">Accounts</a></li>
+                  <li class="menu-item"><a href="#">Contacts</a></li>
+                  <li class="menu-item"><a href="opportunity.html">Opportunities</a></li>
+                  <li class="menu-item active"><a href="forecast.html">Forecasts</a></li>
+                  <li class="menu-item"><a href="#">Leads</a></li>
+                  <li class="menu-item"><a href="#">Campaigns</a></li>
+                  <li class="menu-item"><a href="#">Quotes</a></li>
+                  <li class="menu-item"><a href="#">Subscriptions</a></li>
+                  <li class="menu-item"><a href="#">Reports</a></li>
+                  <li class="menu-item"><a href="#">Documents</a></li>
+                  <li class="menu-item"><a href="#">oppQ</a></li>
+                  <li class="menu-item"><a href="#">Emails</a></li>
+                  <li class="menu-item"><a href="#">Products</a></li>
+                  <li class="menu-item"><a href="#">Cases</a></li>
+                  <li class="dropdown" id="more">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">More <b class="caret"></b></a>
+                    <ul class="dropdown-menu" id="moreLinks">
+                      <li class="divider"></li>
+                      <li><a href="#">Filter Menu By</a></li>
+                    </ul>
+                  </li>
+                </ul>
+                <ul id="navForms" class="nav pull-right">
+                  <li class="divider-vertical"></li>
+                  <li class="dropdown">
+                    <button href="#" class="btn btn-danger dropdown-toggle" data-toggle="dropdown">3</button>
+                    <ul class="dropdown-menu">
+                      <li><a href="">System-wide maintenance &hellip;</a></li>
+                      <li class="divider"></li>
+                      <li><a href="">Upgrade to 7.0!</a></li>
+                      <li class="divider"></li>
+                      <li><a href="">Please take our survey.</a></li>
+                    </ul>
+                  </li>
+                  <li class="divider-vertical"></li>
+                  <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown"><img src="../img/avatar_sabra.jpg" alt="skahn" class="avatar">skhan <b class="caret"></b></a>
+                    <ul class="dropdown-menu">
+                      <li><a href="#">Profile</a></li>
+                      <li><a href="#">Password</a></li>
+                      <li><a href="#">Advanced</a></li>
+                      <li><a href="#">External Accounts</a></li>
+                      <li class="divider"></li>
+                      <li><a href="#">Log Out</a></li>
+                    </ul>
+                  </li>
+                  <li class="divider-vertical"></li>
+                  <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="icon-plus icon-md"></i> <b class="caret"></b></a>
+                    <ul class="dropdown-menu quick">
+                      <li><a href="#">Create Account</a></li>
+                      <li><a href="#">Create Contact</a></li>
+                      <li><a href="#">Create Opportunity</a></li>
+                    </ul>
+                  </li>
+                </ul>
+                <div id="searchForm">
+                  <form class="navbar-search pull-right" action="">
+                    <input type="text" class="search-query span2" placeholder="Search" data-provide="typeahead" data-items="10" data-source="[&quot;Bad links in Pitch&quot;,&quot;Broken images in pdf&quot;,&quot;Misspellings everywhere&quot;,&quot;404 on faq&quot;,&quot;HTML is broken&quot;,&quot;Page link is not redirecting&quot;,&quot;Improper text in search placeholder&quot;,&quot;Misaligned elements&quot;,&quot;Need new text on log in&quot;,&quot;Image broken on profile&quot;]">
+                    <div class="advanced">
+                      <div class="btn-toolbar pull-right">
+                        <div class="btn-group">
+                          <a class="advanced btn-invisible dropdown-toggle" data-toggle="dropdown" href="#">
+                            <span class="caret"></span>
+                          </a>
+                          <ul class="dropdown-menu">
+                            <li class="title">Advanced Search:</li>
+                            <li class="divider"></li>
+                            <li><input type="checkbox"> Accounts</li>
+                            <li><input type="checkbox"> Cases</li>
+                            <li><input type="checkbox"> Opportunities</li>
+                            <li><input type="checkbox"> Reports</li>
+                          </ul>
+                          <a class="btn btn-inverse" href="#"><i class="icon icon-search"></i></a>
+                        </div>
+                      </div>
+                    </div>
+                  </form>
+                </div>
+              </div><!-- /.nav-collapse -->
+            </div>
+          </div><!-- /navbar-inner -->
+        </div>
+      </div>
+      <div id="content">
+        <div class="layout_Forecasts container-fluid">
+          <div class="row-fluid">
+            <div class="main-pane span8">
+              <div class="headerpane">
+                <h1>Sabra Khan </h1>
+                <div class="btn-toolbar pull-left">
                   <div class="btn-group">
-                    <a class="advanced btn-invisible dropdown-toggle" data-toggle="dropdown" href="#">
+                    <a class="dropdown-toggle btn btn-invisible" data-toggle="dropdown" href="#">
+                      <span class="caret"></span>
+                    </a>
+                    <ul class="dropdown-menu carettop">
+                      <li><div id="people"></div> </li>
+                    </ul>
+                  </div>
+                </div>
+                <div class="btn-toolbar pull-right form-change-actions">
+                  <a href="forecast.html" class="btn hide" >Save Draft</a>
+                  <a href="forecast.html" class="btn btn-primary hide"><i class="icon-upload"></i> Commit</a>
+
+                  <div id="pageConfig"  class="btn-group">
+                    <a class="btn" href="#">Export CSV</a><a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
                       <span class="caret"></span>
                     </a>
                     <ul class="dropdown-menu">
-                      <li class="title">Advanced Search:</li>
-                      <li class="divider"></li>
-                      <li><input type="checkbox"> Accounts</li>
-                      <li><input type="checkbox"> Cases</li>
-                      <li><input type="checkbox"> Opportunities</li>
-                      <li><input type="checkbox"> Reports</li>
+                      <li><a href="#">Export PDF</a></li>
+                      <li><a id="tabs_setup_btn" href="#">Settings</a></li>
                     </ul>
-                    <a class="btn btn-inverse" href="#"><i class="icon icon-search"></i></a>
                   </div>
+
+                  <a class="btn btn-invisible drawerTrig" href="#">
+                    <span class="expand">
+                    <i class="icon-chevron-right one"></i>
+                    <i class="icon-chevron-right two"></i>
+                    </span>
+                    <span class="collapse hide">
+                    <i class="icon-chevron-left one"></i>
+                    <i class="icon-chevron-left two"></i>
+                    </span>
+                  </a>
                 </div>
               </div>
-            </form>
-          </div>
-        </div><!-- /.nav-collapse -->
-      </div>
-    </div><!-- /navbar-inner -->
-  </div>
-
-  <div id="main">
-    <div id="content">
-      <div class="content" id="forecasts">
-        <div class="layout_Forecasts">
-          <div id="alert" class="alert-top"></div>
-
-          <div class="container-fluid">
-            <div class="row-fluid">
-              <div class="span8 main-pane">
-                <div class="headerpane">
-                    <h1>Sabra Khan </h1>
-                    <div class="btn-toolbar pull-left">
-                        <div class="btn-group">
-                            <a class="dropdown-toggle btn btn-invisible" data-toggle="dropdown" href="#">
-                                <span class="caret"></span>
-                            </a>
-                            <ul class="dropdown-menu carettop">
-                                <li><div id="people"></div> </li>
-                            </ul>
+              <div class="topline">
+                <div class="title">
+                    <div class="control-group datefilter">
+                        <label for="date_filter" class="control-label">Timeframe</label>
+                        <div class="controls ">
+                            <select id="date_filter" data-placeholder="Choose a forecast period..." class="chzn-select" tabindex="0">
+                                <option value="2012-01-01 - 2012-03-30" selected="selected">Q1 2012</option>
+                                <option value="2012-04-01 - 2012-06-30">Q2 2012</option>
+                                <option value="2012-07-01 - 2012-09-30">Q3 2012</option>
+                                <option value="2012-10-01 - 2012-12-30">Q4 2012</option>
+                            </select>
                         </div>
-                    </div>
-                    <div class="btn-toolbar pull-right form-change-actions">
-                        <a href="forecast.html" class="btn hide" >Save Draft</a>
-                        <a href="forecast.html" class="btn btn-primary hide"><i class="icon-upload"></i> Commit</a>
-
-                        <div id="pageConfig"  class="btn-group">
-                            <a class="btn" href="#">Export CSV</a><a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
-                            <span class="caret"></span>
-                        </a>
-                            <ul class="dropdown-menu">
-                                <li><a href="#">Export PDF</a></li>
-                                <li><a id="tabs_setup_btn" href="#">Settings</a></li>
-                            </ul>
-                        </div>
-
-                        <a class="btn btn-invisible drawerTrig"  href="#">
-                      <span class="expand">
-                      <i class="icon-chevron-right one"></i>
-                      <i class="icon-chevron-right two"></i>
-                      </span>
-                      <span class="collapse hide">
-                      <i class="icon-chevron-left one"></i>
-                      <i class="icon-chevron-left two"></i>
-                      </span>
-
-                        </a>
                     </div>
                 </div>
+                <div class="datapoint1">Best<br>
+                  <h2 id="best"></h2>
+                  <i class="icon-arrow-up"></i> 123,300
+                </div>
 
-                <div class="topline">
-                  <div class="title">
-                      <div class="control-group datefilter">
-                          <label for="date_filter" class="control-label">Timeframe</label>
-                          <div class="controls ">
-                              <select id="date_filter" data-placeholder="Choose a forecast period..." class="chzn-select" tabindex="0">
-                                  <option value="2012-01-01 - 2012-03-30" selected="selected">Q1 2012</option>
-                                  <option value="2012-04-01 - 2012-06-30">Q2 2012</option>
-                                  <option value="2012-07-01 - 2012-09-30">Q3 2012</option>
-                                  <option value="2012-10-01 - 2012-12-30">Q4 2012</option>
-                              </select>
-                          </div>
-                      </div>
-                  </div>
-                  <div class="datapoint1">Best<br>
-                    <h2 id="best"></h2> <i class="icon-arrow-up"></i><br>
-                      123,300
-                  </div>
+                <div class="divider"></div>
+                <div class="datapoint2">Likely<br>
+                  <h2 id="likely"></h2>
+                  <i class="icon-arrow-up"></i> 123,300
+                </div>
 
-                  <div class="divider"></div>
-                  <div class="datapoint2">Likely<br>
-                    <h2 id="likely"></h2>  <i class="icon-arrow-up"></i><br>
-                      123,300
-                  </div>
+                <div class="clearfix"></div>
 
-                  <div class="clearfix"></div>
-
-                  <div class="log drawer">
-                    <div class="title pull-left">
-                      <strong>Previous</strong>:  3 days ago on May 29, 2012 at 4:30 pm EST
-                    </div>
-                    <div class="toggle pull-left">
-                      <i class="icon-caret-down icon-sm"></i>
-                    </div>
-                    <span class="divider"></span>
+                <div class="log drawer">
+                  <div class="title pull-left">
+                    <strong>Previous</strong>:  3 days ago on May 29, 2012 at 4:30 pm EST
                   </div>
-                  <div class="hide extend results">
-                      <article>
-                        Updated forecast best up <i class="icon-arrow-up"></i> $10,000 to $125,000 and likely <i class="icon-arrow-down"></i> down $1,000 to $105,000<br>
-                        <date>1 day ago on 2012/03/02 at 1:15 PM EST</date>
-                      </article>
-                      <article>
+                  <div class="toggle pull-left">
+                    <i class="icon-caret-down icon-sm"></i>
+                  </div>
+                  <span class="divider"></span>
+                </div>
+                <div class="hide extend results">
+                    <article>
                       Updated forecast best up <i class="icon-arrow-up"></i> $10,000 to $125,000 and likely <i class="icon-arrow-down"></i> down $1,000 to $105,000<br>
-                        <date>1 day ago on 2012/03/02 at 1:15 PM EST</date>
-                      </article>
-                  </div>
-
-                  <div class="control-group filter">
-                      <div class="controls">
-                          <div class="filter forecast">
-                              <select id="sales_stage_filter" class="chzn-select forecast" multiple data-placeholder=" ">
-                                <option value="Committed" selected="selected">Committed</option>
-                                <option value="Upside">Upside</option>
-                                <option value="Downside">Downside</option>
-                              </select>
-                              <!--<legend class="chzn-select-legend">Filter <i class="icon-caret-down"></i></legend>-->
-                          </div>
-                      </div>
-                  </div>
-
-                  <div id="dynamic"></div>
+                      <date>1 day ago on 2012/03/02 at 1:15 PM EST</date>
+                    </article>
+                    <article>
+                    Updated forecast best up <i class="icon-arrow-up"></i> $10,000 to $125,000 and likely <i class="icon-arrow-down"></i> down $1,000 to $105,000<br>
+                      <date>1 day ago on 2012/03/02 at 1:15 PM EST</date>
+                    </article>
                 </div>
-              </div>
-              <div class="span4 tab-content side">
-                <div class="tab-pane active side-pane">
-                  <div class="thumbnail viz">
-                    <div class="view-forecastsChart">
-                      <div>
-                        <div class="btn-toolbar pull-right">
-                          <form class="dropdown form-horizontal" id="forecastsChartDisplayOptions">
-                            <a href="#" class="btn btn-invisible btn-expand-full"><span class="icon-resize-full"></span></a>
-                            <a href="#forecastsChartDisplayOptions" data-toggle="dropdown" class="dropdown-toggle btn btn-invisible"><span class="icon-cog"></span></a>
-                            <ul class="dropdown-menu left carettop" id="chartDisplayOptions">
-                              <div class="datasetOptions">
-                                <li><a href="#"><label class="radio checked"><i class="icon-ok"></i>&nbsp;Likely</label></a></li>
-                                <li><a href="#"><label class="radio"><i class="icon-ok"></i>&nbsp;Best</label></a></li>
-                                <li><a href="#"><label class="radio"><i class="icon-ok"></i>&nbsp;Worst</label></a></li>
-                              </div>
-                              <div class="groupByOptions" style="display: none; ">
-                                <li class="divider"></li>
-                                <li><a href="#"><label class="radio checked"><i class="icon-ok"></i>&nbsp;Included In Forecast</label></a></li>
-                                <li><a href="#"><label class="radio"><i class="icon-ok"></i>&nbsp;Sales Stage</label></a></li>
-                                <li><a href="#"><label class="radio"><i class="icon-ok"></i>&nbsp;Probability</label></a></li>
-                              </div>
-                            </ul>
-                          </form>
+
+                <div class="control-group filter">
+                    <div class="controls">
+                        <div class="filter forecast">
+                            <select id="sales_stage_filter" class="chzn-select forecast" multiple data-placeholder=" ">
+                              <option value="Committed" selected="selected">Committed</option>
+                              <option value="Upside">Upside</option>
+                              <option value="Downside">Downside</option>
+                            </select>
+                            <!--<legend class="chzn-select-legend">Filter <i class="icon-caret-down"></i></legend>-->
                         </div>
-                        <h4>Forecast for Q4 2012</h4>
-                        <div class="tcenter">
-                          <div id="chart" class="tcenter">
-                            <div class="chart-container">
-                              <div id="sbdb620e51-8350-c596-06d1-4f866bfcfd5b" class="scrollBars">
-                                <div id="db620e51-8350-c596-06d1-4f866bfcfd5b" class="nv-chart">
-                                  <svg></svg>
-                                </div>
+                    </div>
+                </div>
+
+                <div id="dynamic"></div>
+              </div>
+            </div>
+            <div class="side sidebar-content span4">
+              <div class="side-pane active">
+                <div class="thumbnail viz">
+                  <div class="view-forecastsChart">
+                    <div>
+                      <div class="btn-toolbar pull-right">
+                        <form class="dropdown form-horizontal" id="forecastsChartDisplayOptions">
+                          <a href="#" class="btn btn-invisible btn-expand-full"><span class="icon-resize-full"></span></a>
+                          <a href="#forecastsChartDisplayOptions" data-toggle="dropdown" class="dropdown-toggle btn btn-invisible"><span class="icon-cog"></span></a>
+                          <ul class="dropdown-menu left carettop" id="chartDisplayOptions">
+                            <div class="datasetOptions">
+                              <li><a href="#"><label class="radio checked"><i class="icon-ok"></i>&nbsp;Likely</label></a></li>
+                              <li><a href="#"><label class="radio"><i class="icon-ok"></i>&nbsp;Best</label></a></li>
+                              <li><a href="#"><label class="radio"><i class="icon-ok"></i>&nbsp;Worst</label></a></li>
+                            </div>
+                            <div class="groupByOptions" style="display: none; ">
+                              <li class="divider"></li>
+                              <li><a href="#"><label class="radio checked"><i class="icon-ok"></i>&nbsp;Included In Forecast</label></a></li>
+                              <li><a href="#"><label class="radio"><i class="icon-ok"></i>&nbsp;Sales Stage</label></a></li>
+                              <li><a href="#"><label class="radio"><i class="icon-ok"></i>&nbsp;Probability</label></a></li>
+                            </div>
+                          </ul>
+                        </form>
+                      </div>
+                      <h4>Forecast for Q4 2012</h4>
+                      <div class="tcenter">
+                        <div id="chart" class="tcenter">
+                          <div class="chart-container">
+                            <div id="sbdb620e51-8350-c596-06d1-4f866bfcfd5b" class="scrollBars">
+                              <div id="db620e51-8350-c596-06d1-4f866bfcfd5b" class="nv-chart">
+                                <svg></svg>
                               </div>
                             </div>
                           </div>
@@ -254,135 +251,137 @@
                       </div>
                     </div>
                   </div>
+                </div>
 
-                  <div class="clearfix"></div>
+                <div class="clearfix"></div>
 
-                  <div class="block thumbnail" id="guages">
-                    <h4>Projected</h4>
-                    <div class="row-fluid">
-                      <strong>
-                        <span class="span6">
-                          Quota
-                        </span>
-                        <span class="span6 tright">
-                          $200,000
-                        </span>
-                      </strong>
-                    </div>
-                    <div class="row-fluid">
+                <div class="block thumbnail" id="guages">
+                  <h4>Projected</h4>
+                  <div class="row-fluid">
+                    <strong>
                       <span class="span6">
-                        Likely to Quota
+                        Quota
                       </span>
-                      <span class="span1 tright">
-                        100%
-                      </span>
-                      <span class="span5 tright">
-                        $222,200,000
-                      </span>
-                    </div>
-                    <div class="row-fluid">
-                      <span class="span6">
-                        Likely to Closed
-                      </span>
-                      <span class="span1 tright">
-                        100%
-                      </span>
-                      <span class="span5 tright">
-                        $20,000
-                      </span>
-                    </div>
-                    <div class="row-fluid">
-                      <strong>
-                        <span class="span6">
-                          Closed
-                        </span>
-                        <span class="span6 tright">
-                          $200,000
-                        </span>
-                      </strong>
-                    </div>
-                    <div class="row-fluid">
-                      <span class="span6">
-                        Closed to Likely
-                      </span>
-                      <span class="span1 tright">
-                        5%
-                      </span>
-                      <span class="span5 tright">
-                        $2,200,000
-                      </span>
-                    </div>
-                    <div class="row-fluid">
-                      <span class="span6">
-                        Closed to Best
-                      </span>
-                      <span class="span1 tright">
-                        45%
-                      </span>
-                      <span class="span5 tright">
+                      <span class="span6 tright">
                         $200,000
                       </span>
-                    </div>
+                    </strong>
                   </div>
                   <div class="row-fluid">
-                    <div class="span4 tcenter">
-                      Opportunities<br>
-                      <strong>12</strong>
-                    </div>
-                    <div class="span4 tcenter">
-                      Revenue<br>
-                      <strong>120,000</strong>
-                    </div>
-                    <div class="span4 tcenter">
-                      Pipeline Size<br>
-                      <strong>x2</strong>
-                    </div>
+                    <span class="span6">
+                      Likely to Quota
+                    </span>
+                    <span class="span1 tright">
+                      100%
+                    </span>
+                    <span class="span5 tright">
+                      $222,200,000
+                    </span>
+                  </div>
+                  <div class="row-fluid">
+                    <span class="span6">
+                      Likely to Closed
+                    </span>
+                    <span class="span1 tright">
+                      100%
+                    </span>
+                    <span class="span5 tright">
+                      $20,000
+                    </span>
+                  </div>
+                  <div class="row-fluid">
+                    <strong>
+                      <span class="span6">
+                        Closed
+                      </span>
+                      <span class="span6 tright">
+                        $200,000
+                      </span>
+                    </strong>
+                  </div>
+                  <div class="row-fluid">
+                    <span class="span6">
+                      Closed to Likely
+                    </span>
+                    <span class="span1 tright">
+                      5%
+                    </span>
+                    <span class="span5 tright">
+                      $2,200,000
+                    </span>
+                  </div>
+                  <div class="row-fluid">
+                    <span class="span6">
+                      Closed to Best
+                    </span>
+                    <span class="span1 tright">
+                      45%
+                    </span>
+                    <span class="span5 tright">
+                      $200,000
+                    </span>
                   </div>
                 </div>
-                <div class="tab-pane" id="file1">
-                   <div class="block" id="">
-                      <a href="#overview" data-toggle="tab" class="actions"><i class="icon-remove"></i></a>
-                      <h4>Screenshot_766.png</h4>
-                      <br>
-                      <img src="http://placehold.it/400x300">
-                      <div class="card2">
-                        <div class="row-fluid">
-                           <div class="span3">Added:</div>
-                           <div class="span9">1 hour ago at 3:00 pm EST</div>
-                         </div>
-                         <div class="row-fluid">
-                           <div class="span3">Added By:</div>
-                           <div class="span9"><a href="profile_skhan.html">Sabra Khan</a></div>
-                         </div>
-                         <div class="row-fluid">
-                           <div class="span3">File Type:</div>
-                           <div class="span9">PNG</div>
-                         </div>
-                       </div>
-                    </div>
+                <div class="row-fluid">
+                  <div class="span4 tcenter">
+                    Opportunities<br>
+                    <strong>12</strong>
+                  </div>
+                  <div class="span4 tcenter">
+                    Revenue<br>
+                    <strong>120,000</strong>
+                  </div>
+                  <div class="span4 tcenter">
+                    Pipeline Size<br>
+                    <strong>x2</strong>
+                  </div>
                 </div>
+              </div>
+              <div class="tab-pane hide" id="file1">
+                 <div class="block" id="">
+                    <a href="#overview" data-toggle="tab" class="actions"><i class="icon-remove"></i></a>
+                    <h4>Screenshot_766.png</h4>
+                    <br>
+                    <img src="http://placehold.it/400x300">
+                    <div class="card2">
+                      <div class="row-fluid">
+                         <div class="span3">Added:</div>
+                         <div class="span9">1 hour ago at 3:00 pm EST</div>
+                       </div>
+                       <div class="row-fluid">
+                         <div class="span3">Added By:</div>
+                         <div class="span9"><a href="profile_skhan.html">Sabra Khan</a></div>
+                       </div>
+                       <div class="row-fluid">
+                         <div class="span3">File Type:</div>
+                         <div class="span9">PNG</div>
+                       </div>
+                     </div>
+                  </div>
               </div>
             </div>
           </div>
         </div>
       </div>
-
-      <footer>
-        <div class="row-fluid">
-          <div class="span6"><a href="" class="logo">SugarCRM</a></div>
-          <div class="span6">
-            <div class="btn-toolbar pull-right">
-              <div class="btn-group">
-                <a data-toggle="modal" title="Activity View Tour" href="#systemTour" class="btn btn-invisible"><i class="icon-road"></i> Tour</a>
-                <a data-toggle="modal" title="Feedback" href="#systemFeedback" class="btn btn-invisible"><i class="icon-comment"></i> Feedback</a>
-                <a data-toggle="modal" title="Support" href="#systemSupport" class="btn btn-invisible"><i class="icon-question-sign"></i> Support</a>
+      <div id="footer">
+        <footer>
+          <div class="row-fluid">
+            <div class="span6"><a href="" class="logo">SugarCRM</a></div>
+            <div class="span6">
+              <div class="btn-toolbar pull-right">
+                <div class="btn-group">
+                  <a data-toggle="modal" title="Activity View Tour" href="#systemTour" class="btn btn-invisible"><i class="icon-road"></i> Tour</a>
+                  <a data-toggle="modal" title="Feedback" href="#systemFeedback" class="btn btn-invisible"><i class="icon-comment"></i> Feedback</a>
+                  <a data-toggle="modal" title="Support" href="#systemSupport" class="btn btn-invisible"><i class="icon-question-sign"></i> Support</a>
+                </div>
               </div>
             </div>
           </div>
-        </div>
-      </footer>
-
+        </footer>
+      </div>
     </div>
+  </div>
+  <div class="modal hide" id="systemTour">
   </div>
   <script src="../js/jquery-1.7.2.min.js"></script>
   <script src="../../assets/js/bootstrap.min.js"></script>
@@ -410,971 +409,911 @@
 
   <script>
       //instantiate D3 chart using NVD3
-    var d3Chart = null
-      , d3ChartContainer = d3.select('#db620e51-8350-c596-06d1-4f866bfcfd5b svg');
+      var d3Chart = null
+        , d3ChartContainer = d3.select('#db620e51-8350-c596-06d1-4f866bfcfd5b svg');
 
-	  nv.addGraph({
-	    generate: function() {
-	        var chart = nv.models.paretoChart()
-                //.margin({top: 0, right: 0, bottom: 40, left: 40})
-                .showControls(false)
-                .showTitle(false)
-                .stacked(false)
-                .colorData( 'default' )
-                .colorFill( 'default' );
+      nv.addGraph({
+        generate: function() {
+            var chart = nv.models.paretoChart()
+                  //.margin({top: 0, right: 0, bottom: 40, left: 40})
+                  .showControls(false)
+                  .showTitle(false)
+                  .stacked(false)
+                  .colorData( 'default' )
+                  .colorFill( 'default' );
 
-	        d3ChartContainer
-	          .datum(this.translateDataToD3(forecast_data_Q1))
-	          .transition().duration(500).call(chart);
+            d3ChartContainer
+              .datum(this.translateDataToD3(forecast_data_Q1))
+              .transition().duration(500).call(chart);
 
-	        nv.utils.windowResize(chart.update);
+            nv.utils.windowResize(chart.update);
 
-	        return chart;
-	    },
-      translateDataToD3 : function( json, params )
-      {
-          return {
-              'properties':{
-                  'title': json.properties[0].title
-                , 'quota': parseInt(json.values[0].goalmarkervalue[0],10)
-                // bar group data (x-axis)
-                , 'groupData': json.values.map( function(d,i){
-                      return {
-                        'group': i
-                      , 'l': json.values[i].label
-                      , 't': json.values[i].values.reduce( function(p, c, i, a){
-                          return parseInt(p,10) + parseInt(c,10);
+            return chart;
+        },
+        translateDataToD3 : function( json, params )
+        {
+            return {
+                'properties':{
+                    'title': json.properties[0].title
+                  , 'quota': parseInt(json.values[0].goalmarkervalue[0],10)
+                  // bar group data (x-axis)
+                  , 'groupData': json.values.map( function(d,i){
+                        return {
+                          'group': i
+                        , 'l': json.values[i].label
+                        , 't': json.values[i].values.reduce( function(p, c, i, a){
+                            return parseInt(p,10) + parseInt(c,10);
+                          })
+                        }
+                    })
+                }
+                // series data
+              , 'data': json.label.map( function(d,i){
+                    return {
+                        'key': d
+                      , 'type': 'bar'
+                      , 'series': i
+                      , 'values': json.values.map( function(e,j){
+                            return { 'series': i, 'x': j+1, 'y': parseInt(e.values[i],10),  y0: 0 };
                         })
-                      }
-                  })
-              }
-              // series data
-            , 'data': json.label.map( function(d,i){
-                  return {
-                      'key': d
-                    , 'type': 'bar'
-                    , 'series': i
-                    , 'values': json.values.map( function(e,j){
-                          return { 'series': i, 'x': j+1, 'y': parseInt(e.values[i],10),  y0: 0 };
-                      })
-                    , 'valuesOrig': json.values.map( function(e,j){
-                          return { 'series': i, 'x': j+1, 'y': parseInt(e.values[i],10),  y0: 0 };
-                      })
-                  }
-              }).concat(
-                  json.properties[0].goal_marker_label.filter( function(d,i){
-                      return d !== 'Quota';
-                    }).map( function(d,i){
-                      return {
-                          'key': d
-                        , 'type': 'line'
-                        , 'series': i
-                        , 'values': json.values.map( function(e,j){
-                            return { 'series': i, 'x': j+1, 'y': parseInt(e.goalmarkervalue[i+1],10) };
-                          })
-                        , 'valuesOrig': json.values.map( function(e,j){
-                            return { 'series': i, 'x': j+1, 'y': parseInt(e.goalmarkervalue[i+1],10) };
-                          })
-                      }
-                  })
-              )
-          };
-      },
-	    callback: function(graph) {
-	      d3Chart = graph;
-	    }
-	  });
-
-    $('.thumbnail.viz .btn-expand-full').on('click', toggleExpand);
-
-    function toggleExpand()
-    {
-        if ( $('.thumbnail.viz').hasClass('expanded') )
-        {
-            $('.thumbnail.viz').removeClass('expanded');
-            $('.thumbnail.viz .nv-chart').css({'height':'300px'});
-            $('.thumbnail.viz .btn-expand-full').addClass('btn-invisible');
-            $('.thumbnail.viz .btn-expand-full span').removeClass('icon-resize-small');
+                      , 'valuesOrig': json.values.map( function(e,j){
+                            return { 'series': i, 'x': j+1, 'y': parseInt(e.values[i],10),  y0: 0 };
+                        })
+                    }
+                }).concat(
+                    json.properties[0].goal_marker_label.filter( function(d,i){
+                        return d !== 'Quota';
+                      }).map( function(d,i){
+                        return {
+                            'key': d
+                          , 'type': 'line'
+                          , 'series': i
+                          , 'values': json.values.map( function(e,j){
+                              return { 'series': i, 'x': j+1, 'y': parseInt(e.goalmarkervalue[i+1],10) };
+                            })
+                          , 'valuesOrig': json.values.map( function(e,j){
+                              return { 'series': i, 'x': j+1, 'y': parseInt(e.goalmarkervalue[i+1],10) };
+                            })
+                        }
+                    })
+                )
+            };
+        },
+        callback: function(graph) {
+          d3Chart = graph;
         }
-        else
-        {
-            $('.thumbnail.viz').addClass('expanded');
-            $('.thumbnail.viz .nv-chart').css({'height':$(window).height()-168});
-            $('.thumbnail.viz .btn-expand-full').removeClass('btn-invisible');
-            $('.thumbnail.viz .btn-expand-full span').addClass('icon-resize-small');
-        }
-        d3Chart.update();
-    }
+      });
 
+      $('.thumbnail.viz .btn-expand-full').on('click', toggleExpand);
+
+      function toggleExpand()
+      {
+          if ( $('.thumbnail.viz').hasClass('expanded') )
+          {
+              $('.thumbnail.viz').removeClass('expanded');
+              $('.thumbnail.viz .nv-chart').css({'height':'300px'});
+              $('.thumbnail.viz .btn-expand-full').addClass('btn-invisible');
+              $('.thumbnail.viz .btn-expand-full span').removeClass('icon-resize-small');
+          }
+          else
+          {
+              $('.thumbnail.viz').addClass('expanded');
+              $('.thumbnail.viz .nv-chart').css({'height':$(window).height()-168});
+              $('.thumbnail.viz .btn-expand-full').removeClass('btn-invisible');
+              $('.thumbnail.viz .btn-expand-full span').addClass('icon-resize-small');
+          }
+          d3Chart.update();
+      }
   </script>
 
+  <script type="text/javascript" charset="utf-8">
+      /* Data set - can contain whatever information you want */
+      function quarter(val) {
+          var quarter = "";
+          switch (val){
+              case "2012-01-01 - 2012-03-30":
+                  quarter = "q1";
+                  break;
+              case "2012-04-01 - 2012-06-30":
+                  quarter = "q2";
+                  break;
+              case "2012-07-01 - 2012-09-30":
+                  quarter = "q3";
+                  break;
+              case "2012-10-01 - 2012-12-30":
+                  quarter = "q4";
+                  break;
+          }
+          return quarter;
+      }
 
-    <script type="text/javascript" charset="utf-8">
-        /* Data set - can contain whatever information you want */
-        function quarter(val) {
-            var quarter = "";
-            switch (val){
-                case "2012-01-01 - 2012-03-30":
-                    quarter = "q1";
-                    break;
-                case "2012-04-01 - 2012-06-30":
-                    quarter = "q2";
-                    break;
-                case "2012-07-01 - 2012-09-30":
-                    quarter = "q3";
-                    break;
-                case "2012-10-01 - 2012-12-30":
-                    quarter = "q4";
-                    break;
-            }
-
-            return quarter;
-
-        }
-
-
-        function invokeSaveButtons(){
+      function invokeSaveButtons(){
           $('#headerbar .form-change-actions .btn').show();
-        }
+      }
 
+      $(document).ready(function() {
 
-        $(document).ready(function() {
-
-            //http://jsfiddle.net/vNqTF/
-            $(window).resize(  (function(){
-                // Closure to initialize everything...
-                // Clone all links in the menu and add them to the "more" tab
-                $("#navMenu").find("li.menu-item").each(function(index){
-                    $(this).clone().removeClass('active').insertBefore('#moreLinks > li.divider');
-                });
-                // Get links in menu and in "more" tab, calculate total width of links
-                var menuLinks = (function(){
-                        var links = $("#navMenu > li.menu-item");
-                        links.each(function(){
-                            // Pre-calculate link widths to make checkWidth function more efficient
-                            $(this).data("linkWidth", $(this).outerWidth(true));
-                        });
-                        return links;
-                    })()
-                  , moreLinks = $("#moreLinks > li.menu-item")
-                  , linksWidth = $("#navMenu").children().get().reduce(function(a,b){ return a + $(b).outerWidth(true); }, 0)
-                  , moreWidth = $("#more").outerWidth(true) + $('#navMenu > li:first-child').outerWidth(true) + $('#navMenu > li:first-child').offset().left
-                    // Function that actually checks which links to display/hide
-                  , checkWidth = function(){
-                      var menuWidth = $('#navForms').position().left - $("#searchForm").outerWidth(true) - 10
-                        , w = moreWidth;
-                      menuLinks.each(function(index){
-                          // Sum up link widths and compare to menu width
-                          w += $(this).data("linkWidth");
-                          if (w > menuWidth) {
-                              // Links already too wide, hide all remaining links
-                              menuLinks.slice(index).hide();
-                              moreLinks.slice(index).show();
-                              return false;
-                          }
-                          moreLinks.eq(index).hide();
-                          $(this).show();
+          //http://jsfiddle.net/vNqTF/
+          $(window).resize(  (function(){
+              // Closure to initialize everything...
+              // Clone all links in the menu and add them to the "more" tab
+              $("#navMenu").find("li.menu-item").each(function(index){
+                  $(this).clone().removeClass('active').insertBefore('#moreLinks > li.divider');
+              });
+              // Get links in menu and in "more" tab, calculate total width of links
+              var menuLinks = (function(){
+                      var links = $("#navMenu > li.menu-item");
+                      links.each(function(){
+                          // Pre-calculate link widths to make checkWidth function more efficient
+                          $(this).data("linkWidth", $(this).outerWidth(true));
                       });
-                  };
-                // Adjust menu to initial conditions (will hide links in "more" tab if window wide enough at beginning)
-                checkWidth();
-                // Return the actual function from the closure that will be executed when window is resized
-                return checkWidth;
-            }())
-            );
-
-            // using chosen plugin for multi select as a single select, due to styling needed from multiselect.
-            // https://sugarcrm.atlassian.net/browse/UIUX-117
-            $("#sales_stage_filter_chzn .chzn-results > li").bind('click',function(){
-              var li_active = $("ul.chzn-choices").find('.search-choice').first().attr('id'),
-                  li_orig = li_active.replace("_chzn_c_","_chzn_o_");
-
-              // if not active filter "pills" exist, do not remove pill from dom
-              if($("ul.chzn-choices").find('.search-choice').length > 1) {
-                $("ul.chzn-choices").find('.search-choice').first().remove();
-              }
-
-              $("#"+li_orig).removeClass("result-selected").addClass("active-result");
-              if($('.chzn-container').hasClass('chzn-container-active') === true ) {
-                $('.chzn-container').removeClass('chzn-container-active');
-              }
-            });
-
-            var chzn_legend = '<legend class="chzn-select-legend">Filter <i class="icon-caret-down"></i></legend>';
-            $('#sales_stage_filter_chzn .chzn-choices').prepend(chzn_legend);
-
-            $('.chzn-results').find('li').after("<span class='icon-ok' />");
-
-
-
-
-            $('form.editable input').live('change',function(){
-              invokeSaveButtons();
-            });
-
-            //$('#date_filter').ready(function(){
-            $.fn.dataTableExt.afnFiltering.push(
-                    function( oSettings, aData, iDataIndex ) {
-                        var probability =100;
-//                        var probability = parseFloat(aData[4].replace(/<div class='sugareditable'><span class='click'>/,'').replace(/<\/span><\/div>/,''));
-                        var probability_select = 0;
-  //                      var probability_select = $('#probability_filter')[0].value;
-
-
-                       //date filters
-                        var dateRange = $('#date_filter')[0].value;
-
-                        // parse the range from a single field into min and max, remove " - "
-                        var dateMin = dateRange.substring(0,4) + dateRange.substring(5,7)  + dateRange.substring(8,10);
-                        var dateMax = dateRange.substring(13,17) + dateRange.substring(18,20) + dateRange.substring(21,23);
-
-                        // 4 here is the column where my dates are.
-                        var date = aData[2];
-
-                        // remove the time stamp out of my date
-                        // 2010-04-11 20:48:22 -> 2010-04-11
-                        date = date.substring(0,10);
-                        // remove the "-" characters
-                        // 2010-04-11 -> 20100411
-                        date = date.substring(0,4) + date.substring(5,7) + date.substring( 8,10 )
-
-                        // run through cases
-                        if ( (dateMin == "" && date <= dateMax) && (probability >= probability_select)){
-                            return true;
+                      return links;
+                  })()
+                , moreLinks = $("#moreLinks > li.menu-item")
+                , linksWidth = $("#navMenu").children().get().reduce(function(a,b){ return a + $(b).outerWidth(true); }, 0)
+                , moreWidth = $("#more").outerWidth(true) + $('#navMenu > li:first-child').outerWidth(true) + $('#navMenu > li:first-child').offset().left
+                  // Function that actually checks which links to display/hide
+                , checkWidth = function(){
+                    var menuWidth = $('#navForms').position().left - $("#searchForm").outerWidth(true) - 10
+                        , w = moreWidth;
+                    menuLinks.each(function(index){
+                        // Sum up link widths and compare to menu width
+                        w += $(this).data("linkWidth");
+                        if (w > menuWidth) {
+                            // Links already too wide, hide all remaining links
+                            menuLinks.slice(index).hide();
+                            moreLinks.slice(index).show();
+                            return false;
                         }
-                        else if ( (dateMin =="" && date <= dateMax)  && (probability >= probability_select)){
-                            return true;
-                        }
-                        else if ( (dateMin <= date && "" == dateMax)  && (probability >= probability_select)){
-                            return true;
-                        }
-                        else if ( (dateMin <= date && date <= dateMax)  && (probability >= probability_select)){
-                            return true;
-                        }
+                        moreLinks.eq(index).hide();
+                        $(this).show();
+                    });
+                };
+              // Adjust menu to initial conditions (will hide links in "more" tab if window wide enough at beginning)
+              checkWidth();
+              // Return the actual function from the closure that will be executed when window is resized
+              return checkWidth;
+          }()) );
 
+          // using chosen plugin for multi select as a single select, due to styling needed from multiselect.
+          // https://sugarcrm.atlassian.net/browse/UIUX-117
+          $("#sales_stage_filter_chzn .chzn-results > li").bind('click',function(){
+            var li_active = $("ul.chzn-choices").find('.search-choice').first().attr('id'),
+                li_orig = li_active.replace("_chzn_c_","_chzn_o_");
 
-                        return false;
-                    }
-            );
-
-
-            //});
-
-            function fnFormatDetails ( oTable, nTr )
-            {
-                var aData = oTable.fnGetData( nTr );
-                var sOut = '<div class="extend results">'+aData[8]+'</div>';
-
-                return sOut;
+            // if not active filter "pills" exist, do not remove pill from dom
+            if($("ul.chzn-choices").find('.search-choice').length > 1) {
+              $("ul.chzn-choices").find('.search-choice').first().remove();
             }
 
+            $("#"+li_orig).removeClass("result-selected").addClass("active-result");
+            if($('.chzn-container').hasClass('chzn-container-active') === true ) {
+              $('.chzn-container').removeClass('chzn-container-active');
+            }
+          });
 
+          var chzn_legend = '<legend class="chzn-select-legend">Filter <i class="icon-caret-down"></i></legend>';
+          $('#sales_stage_filter_chzn .chzn-choices').prepend(chzn_legend);
 
-            $('#dynamic').html( '<table cellpadding="0" cellspacing="0" border="0" class="table table-striped datatableInput data2" id="example"><thead></thead>' +
-                    '<tbody></tbody>' +
-                    '<tfoot>' +
-                        '<tr class="overall">' +
-                        '<th></th>' +
-                        '<th>Overall Total</th>' +
-                        '<th></th><th></th><th></th><th></th><th></th><th></th><th></th><th></th>' +
-                        '</tr>' +
-                    '</tfoot></table>' );
-            var oTable = $('#example').dataTable( {
+          $('.chzn-results').find('li').after("<span class='icon-ok' />");
 
+          $('form.editable input').live('change',function(){
+              invokeSaveButtons();
+          });
 
-  //              "bFilter": true,
-                "bInfo":false,
-                "bPaginate": false,
-                "bProcessing": true,
-                "bAutoWidth": false,
-                "sAjaxSource": 'sabra_json.txt' ,
-                "aoColumns": [
-                    {
-                        "sTitle": "Commit",
-                        "bVisible": false,
-                        "bSortable": false,
-                        "sClass": "tcenter",
-                        "fnRender": function(obj) {
-                            var sReturn = obj.aData[ obj.iDataColumn ];
-                            var ret = "<input class='tog' type='checkbox' name='checkbox-"+sReturn+"' id='checkbox-"+sReturn+"' checked />";
-                            return ret;
-                        }
-                    },
-                    {
-                        "sTitle": "Name",
-                        "sWidth": "15%",
-                        "fnRender": function(obj) {
-                            var sReturn = obj.aData[ obj.iDataColumn ];
-                            var ret = "<div class='sugareditable'>" + sReturn + "</div>";
-                            return ret;
-                        }
-                    },
-                    { "sTitle": "Close Date",
-                       "bVisible" : false
-                    },
-                    { "sTitle": "Quota",
-                       "sClass": "number",
-                        "fnRender": function(obj) {
-                            var sReturn = obj.aData[ obj.iDataColumn ];
-                            var ret = "<div class='sugareditable'><span class='format'>" + sReturn + "</span></div>";
-                            return ret;
-                        }
-                    },
-                    { "sTitle": "Best",
-                        "sClass": "number best",
-                        "sWidth": "20%",
-                        "fnRender": function(obj) {
-                            var sReturn = obj.aData[ obj.iDataColumn ];
-                            var conversion = obj.aData[ obj.iDataColumn ] * 1.3;
-                            var ret = "<label class='original'>"+conversion+"</label><div class='converted'><div class='sugareditable'><span class='click format'>" + sReturn + "</span></div></div>";
-                            return ret;
-                        }
-                    },
-                    { "sTitle": "Best (adjusted)",
-                        "sClass": "number",
-                        "fnRender": function(obj) {
-                            var sReturn = obj.aData[ obj.iDataColumn ];
-                            var ret = "<div class='sugareditable'><span class='format'>" + sReturn + "</span></div>";
-                            return ret;
-                        }
-                    },
-                    { "sTitle": "Likely" ,
-                        "sClass": "number likely",
-                        "sWidth": "20%",
-                        "fnRender": function(obj) {
-                            var sReturn = obj.aData[ obj.iDataColumn ];
-                            var conversion = obj.aData[ obj.iDataColumn ] * 1.3;
-                            var ret = "<label class='original'>"+conversion+"</label><div class='converted'><div class='sugareditable'><span class='click format'>" + sReturn + "</span></div></div>";
-                            return ret;
-                        }
-                    },
-                    { "sTitle": "Likely (adjusted)" ,
-                        "sClass": "number",
-                        "fnRender": function(obj) {
-                            var sReturn = obj.aData[ obj.iDataColumn ];
-                            var ret = "<div class='sugareditable'><span class='format'>" + sReturn + "</span></div>";
-                            return ret;
-                        }
-                    }
+          //$('#date_filter').ready(function(){
+          $.fn.dataTableExt.afnFiltering.push(
+              function( oSettings, aData, iDataIndex ) {
+                  var probability =100;
+                  //var probability = parseFloat(aData[4].replace(/<div class='sugareditable'><span class='click'>/,'').replace(/<\/span><\/div>/,''));
+                  var probability_select = 0;
+                  //var probability_select = $('#probability_filter')[0].value;
 
-                ],
-                "fnRowCallback": function( nRow, aData, iDisplayIndex, iDisplayIndexFull ) {
-                    // Bold the grade for all 'A' grade browsers
+                  //date filters
+                  var dateRange = $('#date_filter')[0].value;
 
+                  // parse the range from a single field into min and max, remove " - "
+                  var dateMin = dateRange.substring(0,4) + dateRange.substring(5,7)  + dateRange.substring(8,10);
+                  var dateMax = dateRange.substring(13,17) + dateRange.substring(18,20) + dateRange.substring(21,23);
 
+                  // 4 here is the column where my dates are.
+                  var date = aData[2];
 
-                },
-                "fnInitComplete": function(oSettings, json) {
+                  // remove the time stamp out of my date
+                  // 2010-04-11 20:48:22 -> 2010-04-11
+                  date = date.substring(0,10);
+                  // remove the "-" characters
+                  // 2010-04-11 -> 20100411
+                  date = date.substring(0,4) + date.substring(5,7) + date.substring( 8,10 )
 
-                    var nCloneTh = document.createElement( 'th' );
-                    var nCloneTh2 = document.createElement( 'th' );
-                    // variable for current side-pane content file
-                    var currentSidebarDetails = 'sabra_details.html';
+                  // run through cases
+                  if ( (dateMin == "" && date <= dateMax) && (probability >= probability_select)){
+                      return true;
+                  }
+                  else if ( (dateMin =="" && date <= dateMax)  && (probability >= probability_select)){
+                      return true;
+                  }
+                  else if ( (dateMin <= date && "" == dateMax)  && (probability >= probability_select)){
+                      return true;
+                  }
+                  else if ( (dateMin <= date && date <= dateMax)  && (probability >= probability_select)){
+                      return true;
+                  }
 
-                    $('#example thead tr').each( function () {
-                        $(this).append(nCloneTh);
-                        $(this).append(nCloneTh2);
-                    } );
+                  return false;
+              }
+          );
 
-                    // toggle detail display of row level data preview
-                    $('#example .sales-rep').live('click', function () {
-                        var nTr = $(this).parents('tr')[0];
-                        var aData = oTable.fnGetData( nTr );
-                        $(".content").removeClass("preview");
-                        $("td",oTable).removeClass("highlighted");
-                        $("td,th",oTable).removeClass("preview");
-                        currentSidebarDetails = ( currentSidebarDetails === 'sabra_details.html' ) ? 'mark_details.html' : 'sabra_details.html';
-                        jQuery.ajax({
-                            url: currentSidebarDetails + "?r=" + new Date().getTime(),
-                            dataType:"text",
-                            async: false,
-                            success: function(data) {
-                                if(data !== undefined){
-                                    $("#folded").replaceWith(data);
-                                }
-                            }
-                        });
-                    } );
+          function fnFormatDetails ( oTable, nTr ) {
+              var aData = oTable.fnGetData( nTr );
+              var sOut = '<div class="extend results">'+aData[8]+'</div>';
 
-                    $('#example tbody tr').each( function () {
-                        var aData = oTable.fnGetData( $(this)[0] );
-                        var nCloneTd = document.createElement( 'td' );
-                        var nCloneTd2 = document.createElement( 'td' );
-                        if(aData[8] !== "") {
-                            nCloneTd.innerHTML = '<i class="icon-exclamation-sign label label-warn" style="cursor: pointer;"></i>';
-                        }
+              return sOut;
+          }
 
-                        nCloneTd2.innerHTML += ' <i class="icon-eye-open" style="cursor: pointer;"></i>';
+          $('#dynamic').html( '<table cellpadding="0" cellspacing="0" border="0" class="table table-striped datatableInput data2" id="example"><thead></thead>' +
+                '<tbody></tbody>' +
+                '<tfoot>' +
+                    '<tr class="overall">' +
+                    '<th></th>' +
+                    '<th>Overall Total</th>' +
+                    '<th></th><th></th><th></th><th></th><th></th><th></th><th></th><th></th>' +
+                    '</tr>' +
+                '</tfoot></table>' );
 
-                        nCloneTd.className = "center";
-                        $(this).append(nCloneTd);
-                        $(this).append(nCloneTd2);
-                    } );
+          var oTable = $('#example').dataTable({
+              // "bFilter": true,
+              "bInfo":false,
+              "bPaginate": false,
+              "bProcessing": true,
+              "bAutoWidth": false,
+              "sAjaxSource": 'sabra_json.txt' ,
+              "aoColumns": [
+                  {
+                      "sTitle": "Commit",
+                      "bVisible": false,
+                      "bSortable": false,
+                      "sClass": "tcenter",
+                      "fnRender": function(obj) {
+                          var sReturn = obj.aData[ obj.iDataColumn ];
+                          var ret = "<input class='tog' type='checkbox' name='checkbox-"+sReturn+"' id='checkbox-"+sReturn+"' checked />";
+                          return ret;
+                      }
+                  },
+                  {
+                      "sTitle": "Name",
+                      "sWidth": "15%",
+                      "fnRender": function(obj) {
+                          var sReturn = obj.aData[ obj.iDataColumn ];
+                          var ret = "<div class='sugareditable'>" + sReturn + "</div>";
+                          return ret;
+                      }
+                  },
+                  { "sTitle": "Close Date",
+                     "bVisible" : false
+                  },
+                  { "sTitle": "Quota",
+                     "sClass": "number",
+                      "fnRender": function(obj) {
+                          var sReturn = obj.aData[ obj.iDataColumn ];
+                          var ret = "<div class='sugareditable'><span class='format'>" + sReturn + "</span></div>";
+                          return ret;
+                      }
+                  },
+                  { "sTitle": "Best",
+                      "sClass": "number best",
+                      "sWidth": "20%",
+                      "fnRender": function(obj) {
+                          var sReturn = obj.aData[ obj.iDataColumn ];
+                          var conversion = obj.aData[ obj.iDataColumn ] * 1.3;
+                          var ret = "<label class='original'>"+conversion+"</label><div class='converted'><div class='sugareditable'><span class='click format'>" + sReturn + "</span></div></div>";
+                          return ret;
+                      }
+                  },
+                  { "sTitle": "Best (adjusted)",
+                      "sClass": "number",
+                      "fnRender": function(obj) {
+                          var sReturn = obj.aData[ obj.iDataColumn ];
+                          var ret = "<div class='sugareditable'><span class='format'>" + sReturn + "</span></div>";
+                          return ret;
+                      }
+                  },
+                  { "sTitle": "Likely" ,
+                      "sClass": "number likely",
+                      "sWidth": "20%",
+                      "fnRender": function(obj) {
+                          var sReturn = obj.aData[ obj.iDataColumn ];
+                          var conversion = obj.aData[ obj.iDataColumn ] * 1.3;
+                          var ret = "<label class='original'>"+conversion+"</label><div class='converted'><div class='sugareditable'><span class='click format'>" + sReturn + "</span></div></div>";
+                          return ret;
+                      }
+                  },
+                  { "sTitle": "Likely (adjusted)" ,
+                      "sClass": "number",
+                      "fnRender": function(obj) {
+                          var sReturn = obj.aData[ obj.iDataColumn ];
+                          var ret = "<div class='sugareditable'><span class='format'>" + sReturn + "</span></div>";
+                          return ret;
+                      }
+                  }
+              ],
+              "fnRowCallback": function( nRow, aData, iDisplayIndex, iDisplayIndexFull ) {
+                // Bold the grade for all 'A' grade browsers
+              },
+              "fnInitComplete": function(oSettings, json) {
 
-                    $('#example tbody td i.icon-exclamation-sign').live('click', function () {
-                        var nTr = $(this).parents('tr')[0];
-                        if ( oTable.fnIsOpen(nTr) )
-                        {
-                            // This row is already open - close it *
-                            //$(this).attr("class","icon-plus-sign");
-                            oTable.fnClose( nTr );
-                        }
-                        else
-                        {
-                            //Open this row
-                            //$(this).attr("class","icon-minus-sign");
-                            var colspan = $(nTr).children('td').length;
+                  var nCloneTh = document.createElement( 'th' );
+                  var nCloneTh2 = document.createElement( 'th' );
+                  // variable for current side-pane content file
+                  var currentSidebarDetails = 'sabra_details.html';
+                  var sideSelector = '.side.sidebar-content.span4';
+                  var contentSelector = '#content';
 
-                            oTable.fnOpen( nTr, fnFormatDetails(oTable, nTr), 'details' );
-                            $(nTr).next().children("td").attr("colspan",colspan);
-                        }
-                    } );
+                  $('#example thead tr').each( function () {
+                      $(this).append(nCloneTh);
+                      $(this).append(nCloneTh2);
+                  } );
 
-                    $('.closeSubdetail').live('click', function(){
-                            $('.content').removeClass('preview');
-                            $('td').removeClass('highlighted');
-                            $('td,th').removeClass('preview above below');
-                            jQuery.ajax({
-                                url: currentSidebarDetails + '?r=' + new Date().getTime(),
-                                dataType:'text',
-                                async: false,
-                                success: function(data) {
-                                    if(data !== undefined){
-                                        $('#folded').replaceWith(data);
-                                    }
-                                }
-                            });
-                    });
+                  // toggle detail display of row level data preview
+                  $('#example .sales-rep').live('click', function () {
+                      var nTr = $(this).parents('tr')[0];
+                      var aData = oTable.fnGetData( nTr );
+                      $(contentSelector).removeClass("preview");
+                      $("td",oTable).removeClass("highlighted");
+                      $("td,th",oTable).removeClass("preview");
+                      currentSidebarDetails = ( currentSidebarDetails === 'sabra_details.html' ) ? 'mark_details.html' : 'sabra_details.html';
+                      jQuery.ajax({
+                          url: currentSidebarDetails + "?r=" + new Date().getTime(),
+                          dataType:"text",
+                          async: false,
+                          success: function(data) {
+                              if(data !== undefined){
+                                  $(sideSelector).replaceWith(data);
+                              }
+                          }
+                      });
+                  } );
 
-                    // preview previous/next record in table
-                    $('.previous-row,.next-row').live('click', function() {
+                  $('#example tbody tr').each( function () {
+                      var aData = oTable.fnGetData( $(this)[0] );
+                      var nCloneTd = document.createElement( 'td' );
+                      var nCloneTd2 = document.createElement( 'td' );
+                      if(aData[8] !== "") {
+                          nCloneTd.innerHTML = '<i class="icon-exclamation-sign label label-warn" style="cursor: pointer;"></i>';
+                      }
+
+                      nCloneTd2.innerHTML += ' <i class="icon-eye-open" style="cursor: pointer;"></i>';
+
+                      nCloneTd.className = "center";
+                      $(this).append(nCloneTd);
+                      $(this).append(nCloneTd2);
+                  } );
+
+                  $('#example tbody td i.icon-exclamation-sign').live('click', function () {
+                      var nTr = $(this).parents('tr')[0];
+                      if ( oTable.fnIsOpen(nTr) )
+                      {
+                          // This row is already open - close it *
+                          //$(this).attr("class","icon-plus-sign");
+                          oTable.fnClose( nTr );
+                      }
+                      else
+                      {
+                          //Open this row
+                          //$(this).attr("class","icon-minus-sign");
+                          var colspan = $(nTr).children('td').length;
+
+                          oTable.fnOpen( nTr, fnFormatDetails(oTable, nTr), 'details' );
+                          $(nTr).next().children("td").attr("colspan",colspan);
+                      }
+                  } );
+
+                  $('.closeSubdetail').live('click', function(){
+                      $(contentSelector).removeClass('preview');
+                      $('td').removeClass('highlighted');
+                      $('td,th').removeClass('preview above below');
+                      jQuery.ajax({
+                          url: currentSidebarDetails + '?r=' + new Date().getTime(),
+                          dataType:'text',
+                          async: false,
+                          success: function(data) {
+                              if(data !== undefined){
+                                  $(sideSelector).replaceWith(data);
+                              }
+                          }
+                      });
+                  });
+
+                  // preview previous/next record in table
+                  $('.previous-row,.next-row').live('click', function() {
                       var cTr = $('td.highlighted').parent('tr');
                       var aTr = ($(this).hasClass('previous-row')) ? cTr.prev('tr') : cTr.next('tr');
                       if (aTr.length!==0)
                       {
-                        $(aTr).find('.icon-eye-open').trigger('click');
+                          $(aTr).find('.icon-eye-open').trigger('click');
                       }
-                    });
+                  });
 
-                    // toggle preview display of row level data preview
-                    $('#example tbody td i.icon-eye-open').live('click', function () {
-                        var cTr = $(this).parents('tr')[0],
-                            pTr = $(this).parents('tr').prev('tr'),
-                            nTr = $(this).parents('tr').next('tr');
-                        //hand condition when first row selected
-                        if (pTr.length===0) {
+                  // toggle preview display of row level data preview
+                  $('#example tbody td i.icon-eye-open').live('click', function () {
+                      var cTr = $(this).parents('tr')[0],
+                          pTr = $(this).parents('tr').prev('tr'),
+                          nTr = $(this).parents('tr').next('tr');
+                      //hand condition when first row selected
+                      if (pTr.length===0) {
                           pTr = $(this).parents('table').find('thead tr');
-                        }
-                        if (nTr.length===0) {
+                      }
+                      if (nTr.length===0) {
                           nTr = $(this).parents('table').find('tfoot tr');
-                        }
-                        var aData = oTable.fnGetData( cTr );
+                      }
+                      var aData = oTable.fnGetData( cTr );
 
                       //console.log(cTr)
 
-                        if($('td',cTr).hasClass('highlighted')) {
-                            $('.content').removeClass('preview');
-                            $('td',cTr).removeClass('highlighted');
-                            $('td,th',pTr).removeClass('preview above below');
-                            $('td,th',nTr).removeClass('preview below above');
-                            jQuery.ajax({
-                                url: currentSidebarDetails + '?r=' + new Date().getTime(),
-                                dataType:'text',
-                                async: false,
-                                success: function(data) {
-                                    if(data !== undefined){
-                                        $('#folded').replaceWith(data);
-                                    }
-                                }
-                            });
-                        } else  {
-                            $('.content').addClass('preview');
-                            $('td',oTable).removeClass('highlighted');
-                            $('td',cTr).addClass('highlighted');
-                            $('td,th',oTable).removeClass('preview above below');
-                            $('td,th',pTr).addClass('preview above');
-                            $('td,th',nTr).addClass('preview below');
-                            jQuery.ajax({
-                                url: aData[9]+'_preview.html?r=' + new Date().getTime(),
-                                dataType:'text',
-                                async: false,
-                                success: function(data) {
-                                    if(data !== undefined){
-                                        $('#folded').replaceWith(data);
-                                    }
-                                }
-                            });
-                        }
-                    } );
-
-                    $('input.tog').click(function(){
-
-                            var nTr = $(this).parents('tr')[0];
-
-                              if(!$(this).attr('checked')) {
-                                  $(nTr).addClass('disabled');
-                              } else {
-                                  $(nTr).removeClass('disabled');
+                      if($('td',cTr).hasClass('highlighted')) {
+                          $(contentSelector).removeClass('preview');
+                          $('td',cTr).removeClass('highlighted');
+                          $('td,th',pTr).removeClass('preview above below');
+                          $('td,th',nTr).removeClass('preview below above');
+                          jQuery.ajax({
+                              url: currentSidebarDetails + '?r=' + new Date().getTime(),
+                              dataType:'text',
+                              async: false,
+                              success: function(data) {
+                                  if(data !== undefined){
+                                      $(sideSelector).replaceWith(data);
+                                  }
                               }
+                          });
+                      } else  {
+                          $(contentSelector).addClass('preview');
+                          $('td',oTable).removeClass('highlighted');
+                          $('td',cTr).addClass('highlighted');
+                          $('td,th',oTable).removeClass('preview above below');
+                          $('td,th',pTr).addClass('preview above');
+                          $('td,th',nTr).addClass('preview below');
+                          jQuery.ajax({
+                              url: aData[9]+'_preview.html?r=' + new Date().getTime(),
+                              dataType:'text',
+                              async: false,
+                              success: function(data) {
 
-                            var iStart = oSettings._iDisplayStart;
-                            var iEnd = oSettings._iDisplayEnd;
-                            var aiDisplay = oSettings.aiDisplay;
-                            var amountTotal = 0;
-                            var bestTotal = 0;
-                            var likelyTotal = 0;
-                            //
+                                  if(data !== undefined){
+                                      $(sideSelector).replaceWith(data);
+                                  }
+                              }
+                          });
+                      }
+                  } );
 
-                            $('#example tbody').children('tr').each(function(i) {
-                                var tdInclude = $(this).children('td')[0];
-                                var isChecked = $(tdInclude).find('input').attr('checked');
-                                //var tdAmount =$(this).children('td')[5];
-                                var tdBest =$(this).children('td')[5];
-                                var tdLikely =$(this).children('td')[6];
+                  $('input.tog').click(function(){
 
+                      var nTr = $(this).parents('tr')[0];
 
+                      if(!$(this).attr('checked')) {
+                          $(nTr).addClass('disabled');
+                      } else {
+                          $(nTr).removeClass('disabled');
+                      }
 
-                                if(isChecked) {
+                      var iStart = oSettings._iDisplayStart;
+                      var iEnd = oSettings._iDisplayEnd;
+                      var aiDisplay = oSettings.aiDisplay;
+                      var amountTotal = 0;
+                      var bestTotal = 0;
+                      var likelyTotal = 0;
 
-                                    //amountTotal += parseFloat($(tdAmount).find('span').html().replace(/,/,""));
-                                    bestTotal += parseFloat($(tdBest).find('span').html().replace(/,/,""));
-                                    likelyTotal += parseFloat($(tdLikely).find('span').html().replace(/,/,""));
-                                }
+                      $('#example tbody').children('tr').each(function(i) {
+                          var tdInclude = $(this).children('td')[0];
+                          var isChecked = $(tdInclude).find('input').attr('checked');
+                          //var tdAmount =$(this).children('td')[5];
+                          var tdBest =$(this).children('td')[5];
+                          var tdLikely =$(this).children('td')[6];
 
-                            }) ;
-                            var foot = $(oTable).children('tfoot')[0];
-                            var trs = $(foot).children('tr');
-                            var included = $(trs)[0];
-                            var includedCells =  $(included).children('th');
+                          if(isChecked) {
+                              //amountTotal += parseFloat($(tdAmount).find('span').html().replace(/,/,""));
+                              bestTotal += parseFloat($(tdBest).find('span').html().replace(/,/,""));
+                              likelyTotal += parseFloat($(tdLikely).find('span').html().replace(/,/,""));
+                          }
+                      });
 
-                            //$(includedCells[1]).html(amountTotal).prettynumber({delimiter : ','});
-                            $(includedCells[1]).html(bestTotal).prettynumber({delimiter : ','});
-                            $(includedCells[2]).html(likelyTotal).prettynumber({delimiter : ','});
+                      var foot = $(oTable).children('tfoot')[0];
+                      var trs = $(foot).children('tr');
+                      var included = $(trs)[0];
+                      var includedCells =  $(included).children('th');
 
-                            $('h2#best').html(bestTotal).prettynumber({delimiter : ','});
-                            $('h2#likely').html(likelyTotal).prettynumber({delimiter : ','});
-                    })
+                      //$(includedCells[1]).html(amountTotal).prettynumber({delimiter : ','});
+                      $(includedCells[1]).html(bestTotal).prettynumber({delimiter : ','});
+                      $(includedCells[2]).html(likelyTotal).prettynumber({delimiter : ','});
 
+                      $('h2#best').html(bestTotal).prettynumber({delimiter : ','});
+                      $('h2#likely').html(likelyTotal).prettynumber({delimiter : ','});
+                  });
 
-                    $('[rel="clickover"]').clickover() ;
-                    $('[rel="clickoverTop"]').clickover({placement: "top"}) ;
-                    $('[rel="clickoverBottom"]').clickover({placement: "bottom"})
-                    $('td .format').prettynumber({delimiter : ','}).prepend('$');
-                    $('td label.original').prettynumber({delimiter : ','}).prepend('€');
+                  $('[rel="clickover"]').clickover() ;
+                  $('[rel="clickoverTop"]').clickover({placement: "top"}) ;
+                  $('[rel="clickoverBottom"]').clickover({placement: "bottom"})
+                  $('td .format').prettynumber({delimiter : ','}).prepend('$');
+                  $('td label.original').prettynumber({delimiter : ','}).prepend('€');
 
-                    // Function to get the Max value in Array
-                    Array.max = function( array ){
-                        return Math.max.apply( Math, array );
-                    };
+                  // Function to get the Max value in Array
+                  Array.max = function( array ){
+                      return Math.max.apply( Math, array );
+                  };
 
-                    // Function to get the Min value in Array
-                    Array.min = function( array ){
-                        return Math.min.apply( Math, array );
-                    };
+                  // Function to get the Min value in Array
+                  Array.min = function( array ){
+                      return Math.min.apply( Math, array );
+                  };
 
-                    var likelyWidths= $('.likely .converted').map(function() {
-                        return $(this).width();
-                    }).get();
+                  var likelyWidths= $('.likely .converted').map(function() {
+                      return $(this).width();
+                  }).get();
 
-                    var likelyLabelWidths= $('.likely label.original').map(function() {
-                        return $(this).width();
-                    }).get();
+                  var likelyLabelWidths= $('.likely label.original').map(function() {
+                      return $(this).width();
+                  }).get();
 
-                    var bestWidths= $('.best .converted').map(function() {
-                        return $(this).width();
-                    }).get();
+                  var bestWidths= $('.best .converted').map(function() {
+                      return $(this).width();
+                  }).get();
 
-                    var bestLabelWidths= $('.best label.original').map(function() {
-                        return $(this).width();
-                    }).get();
+                  var bestLabelWidths= $('.best label.original').map(function() {
+                      return $(this).width();
+                  }).get();
 
+                  $('.likely .converted').width(Array.max(likelyWidths));
+                  $('.likely label.original').width(Array.max(likelyLabelWidths));
+                  $('.best .converted').width(Array.max(bestWidths));
+                  $('.best label.original').width(Array.max(bestLabelWidths));
+              },
+              "fnFooterCallback": function ( nFoot, aaData, iStart, iEnd, aiDisplay ) {
+                  var quotaTotal = 0;
+                  var bestAdTotal = 0;
+                  var bestTotal = 0;
+                  var likelyTotal = 0;
+                  var likelyAdTotal = 0;
+                  for ( var i=iStart ; i<iEnd ; i++ )
+                  {
+                      //amountTotal += parseFloat(aaData[ aiDisplay[i] ][5].replace(/<span class='format'>/,'').replace(/<\/span>/,''));
+                      quotaTotal += parseFloat(aaData[ aiDisplay[i] ][3].replace(/<div class='sugareditable'><span class='format'>/,'').replace(/<\/span><\/div>/,''));
+                      bestAdTotal += parseFloat(aaData[ aiDisplay[i] ][5].replace(/<div class='sugareditable'><span class='format'>/,'').replace(/<\/span><\/div>/,''));
+                      likelyAdTotal += parseFloat(aaData[ aiDisplay[i] ][7].replace(/<div class='sugareditable'><span class='format'>/,'').replace(/<\/span><\/div>/,''));
+                      bestTotal += parseFloat(aaData[ aiDisplay[i] ][4].replace(/<label class='original'>[0-9]*<\/label>/,'').replace(/<div class='converted'><div class='sugareditable'><span class='click format'>/,'').replace(/<\/span><\/div><\/div>/,''));
+                      likelyTotal += parseFloat(aaData[ aiDisplay[i] ][6].replace(/<label class='original'>[0-9]*<\/label>/,'').replace(/<div class='converted'><div class='sugareditable'><span class='click format'>/,'').replace(/<\/span><\/div><\/div>/,''));
+                  }
 
-                    $('.likely .converted').width(Array.max(likelyWidths));
-                    $('.likely label.original').width(Array.max(likelyLabelWidths));
-                    $('.best .converted').width(Array.max(bestWidths));
-                    $('.best label.original').width(Array.max(bestLabelWidths));
+                  /* Modify the footer row to match what we want */
+                  //  var nCells = nFoot.getElementsByTagName('th');
+                  var foot = $(oTable).children('tfoot')[0];
+                  var trs = $(foot).children('tr');
+                  var overall = $(trs)[0];
+                  //var included = $(trs)[0];
+                  var overallCells =  $(overall).children('th');
+                  //var includedCells =  $(included).children('th');
+                  // console.log($(overall).children('th'))
+                  //$(overallCells[1]).html(amountTotal).prettynumber({delimiter : ','});
+                  $(overallCells[1]).html(quotaTotal).prettynumber({delimiter : ','}).prepend("$");
+                  $(overallCells[2]).html(bestTotal).prettynumber({delimiter : ','}).prepend("$");
+                  $(overallCells[3]).html(bestAdTotal).prettynumber({delimiter : ','}).prepend("$");
+                  $(overallCells[4]).html(likelyTotal).prettynumber({delimiter : ','}).prepend("$");
+                  $(overallCells[5]).html(likelyAdTotal).prettynumber({delimiter : ','}).prepend("$");
+                  //$(includedCells[1]).html(amountTotal).prettynumber({delimiter : ','});
+                  //$(includedCells[1]).html(bestTotal).prettynumber({delimiter : ','});
+                  //$(includedCells[2]).html(likelyTotal).prettynumber({delimiter : ','});
 
+                  $('h2#best').html(bestTotal).prettynumber({delimiter : ','}).prepend("$");
+                  $('h2#likely').html(likelyTotal).prettynumber({delimiter : ','}).prepend("$");
+                  /* var minWidth =  $('.datapoint2').css("min-width").replace(/px/,'');
+                  var dp1Delta = ($('.datapoint1').width() - minWidth) - 20;
+                  var dp1Width = ($('.datapoint1').width());
+                  var dp2Delta = ($('.datapoint2').width() - minWidth);
 
-                },
-                "fnFooterCallback": function ( nFoot, aaData, iStart, iEnd, aiDisplay ) {
-                    var quotaTotal = 0;
-                    var bestAdTotal = 0;
-                    var bestTotal = 0;
-                    var likelyTotal = 0;
-                    var likelyAdTotal = 0;
-                    for ( var i=iStart ; i<iEnd ; i++ )
-                    {
-                        //amountTotal += parseFloat(aaData[ aiDisplay[i] ][5].replace(/<span class='format'>/,'').replace(/<\/span>/,''));
-                        quotaTotal += parseFloat(aaData[ aiDisplay[i] ][3].replace(/<div class='sugareditable'><span class='format'>/,'').replace(/<\/span><\/div>/,''));
-                        bestAdTotal += parseFloat(aaData[ aiDisplay[i] ][5].replace(/<div class='sugareditable'><span class='format'>/,'').replace(/<\/span><\/div>/,''));
-                        likelyAdTotal += parseFloat(aaData[ aiDisplay[i] ][7].replace(/<div class='sugareditable'><span class='format'>/,'').replace(/<\/span><\/div>/,''));
-                        bestTotal += parseFloat(aaData[ aiDisplay[i] ][4].replace(/<label class='original'>[0-9]*<\/label>/,'').replace(/<div class='converted'><div class='sugareditable'><span class='click format'>/,'').replace(/<\/span><\/div><\/div>/,''));
-                        likelyTotal += parseFloat(aaData[ aiDisplay[i] ][6].replace(/<label class='original'>[0-9]*<\/label>/,'').replace(/<div class='converted'><div class='sugareditable'><span class='click format'>/,'').replace(/<\/span><\/div><\/div>/,''));
-                    }
+                  var dp2Right =   dp1Width + dp2Delta;
+                  $('.datapoint1').css('right',dp1Delta+"px")
+                  $('.datapoint2').css('right',dp2Right+"px")   */
+              },
+              "fnDrawCallback": function( oSettings ) {
+                  $('#example tbody td .click').editable('save.php',{
+                      //loadurl: "load.php",
+                      indicator : 'Saving ...',
+                      cssclass   : "editable",
+                      // onblur : "ignore",
+                      callback : function(value, settings) {
+                          var val  = parseInt(value.replace(/,/,''));
+                          //updateChart("forecast-json-update.js",forecast.chartObject);
 
-                    /* Modify the footer row to match what we want */
-  //                  var nCells = nFoot.getElementsByTagName('th');
-                    var foot = $(oTable).children('tfoot')[0];
-                    var trs = $(foot).children('tr');
-                    var overall = $(trs)[0];
-                    //var included = $(trs)[0];
-                    var overallCells =  $(overall).children('th');
-                    //var includedCells =  $(included).children('th');
-  //                  console.log($(overall).children('th'))
-                    //$(overallCells[1]).html(amountTotal).prettynumber({delimiter : ','});
-                    $(overallCells[1]).html(quotaTotal).prettynumber({delimiter : ','}).prepend("$");
-                    $(overallCells[2]).html(bestTotal).prettynumber({delimiter : ','}).prepend("$");
-                    $(overallCells[3]).html(bestAdTotal).prettynumber({delimiter : ','}).prepend("$");
-                    $(overallCells[4]).html(likelyTotal).prettynumber({delimiter : ','}).prepend("$");
-                    $(overallCells[5]).html(likelyAdTotal).prettynumber({delimiter : ','}).prepend("$");
-                    //$(includedCells[1]).html(amountTotal).prettynumber({delimiter : ','});
-                    //$(includedCells[1]).html(bestTotal).prettynumber({delimiter : ','});
-                    //$(includedCells[2]).html(likelyTotal).prettynumber({delimiter : ','});
+                          var cellIndex = $(this).parent().parent()[0].cellIndex;
+                          var rowIndex = $(this).parent().parent().parent()[0]._DT_RowIndex;
 
-                    $('h2#best').html(bestTotal).prettynumber({delimiter : ','}).prepend("$");
-                    $('h2#likely').html(likelyTotal).prettynumber({delimiter : ','}).prepend("$");
-                   /*  var minWidth =  $('.datapoint2').css("min-width").replace(/px/,'');
-                    var dp1Delta = ($('.datapoint1').width() - minWidth) - 20;
-                    var dp1Width = ($('.datapoint1').width());
-                    var dp2Delta = ($('.datapoint2').width() - minWidth);
+                          //console.log(forecast.chartObject.json)
+                          oTable.fnUpdate( val, rowIndex, cellIndex);
 
-                    var dp2Right =   dp1Width + dp2Delta;
-                    $('.datapoint1').css('right',dp1Delta+"px")
-                    $('.datapoint2').css('right',dp2Right+"px")   */
+                          var likely = $('h2#likely').html().replace(/,/,"")
+                          //var json =  forecast.chartObject.json;
+                          // var json = d3ChartContainer.datum();
 
+                          // $(json.values).each( function(i) {
+                          //     if(rowIndex == i) {
+                          //         this.goalmarkervalue[1] =  val/1000;
+                          //         this.goalmarkervaluelabel[1] =  val/1000+"K";
+                          //     }
+                          // });
 
+                          // updateChart(forecast.chartObject);
+                          oTable.fnDraw();
+                          //return (value);
+                      }
+                  });
+              }
+          });
 
-                },
-                "fnDrawCallback": function( oSettings ) {
-                    $('#example tbody td .click').editable('save.php',{
-                        //loadurl: "load.php",
-                        indicator : 'Saving ...',
-                        cssclass   : "editable",
-//                         onblur : "ignore",
-                        callback : function(value, settings) {
-                            var val  = parseInt(value.replace(/,/,''));
-                            //updateChart("forecast-json-update.js",forecast.chartObject);
+          $('span.click input').live({
+              focus:function() {
+                  var divParent = $(this).parents('div')[0],
+                  divParentWidth = $(divParent).width();
+                  $(divParent).addClass('focus');
+              },
+              blur: function() {
+                  var divParent = $(this).parents('div')[0],
+                      divParentWidth = $(divParent).width();
+                  setTimeout(function(){
+                     $(divParent).removeClass('focus')
+                  }, 500)
+              }
+          });
 
-                            var cellIndex = $(this).parent().parent()[0].cellIndex;
-                            var rowIndex = $(this).parent().parent().parent()[0]._DT_RowIndex;
+          // sugareditable example
 
+          var addEditIcon = function() {
+              $("body").on("mouseenter","span.click", function() {
+                  $(this).before('<span class="edit-icon"><i class="icon-pencil icon-sm"></i></span>');
+              });
+              $("body").on("mouseleave","span.click", function() {
+                  $('span.edit-icon').remove();
+              });
+          };
 
-  //                                                 console.log(forecast.chartObject.json)
+          var removeEditIcon = function() {
+              $("body").off('mouseenter',"span.click");
+              $("body").off('mouseleave',"span.click");
+          };
 
-                            oTable.fnUpdate( val, rowIndex, cellIndex);
+          addEditIcon();
 
+          /*
+          $('#edit-worksheet').click(function(){
+                     var ison = $('div.sugareditable').hasClass('edit-mode');
+                     if(ison) {
+                        $('div.sugareditable').removeClass('edit-mode');
+                        $(this).removeClass('down');
+                         showEditIcon();
+                     }   else {
+                        $('div.sugareditable').addClass('edit-mode');
+                         $(this).addClass('down');
 
-                            var likely = $('h2#likely').html().replace(/,/,"")
-                            //var json =  forecast.chartObject.json;
-                            // var json = d3ChartContainer.datum();
-
-                            // $(json.values).each( function(i) {
-                            //     if(rowIndex == i) {
-                            //         this.goalmarkervalue[1] =  val/1000;
-                            //         this.goalmarkervaluelabel[1] =  val/1000+"K";
-                            //     }
-                            // });
-
-                            // updateChart(forecast.chartObject);
-                            oTable.fnDraw();
-                            //return (value);
-                        }
-                    });
-
-                }
-            } );
-
-
-            $('span.click input').live({
-
-                focus:function() {
-                var divParent = $(this).parents('div')[0],
-                        divParentWidth = $(divParent).width();
-                $(divParent).addClass('focus');
-
-
-                },
-
-                blur: function() {
-                    var divParent = $(this).parents('div')[0],
-                            divParentWidth = $(divParent).width();
-                   setTimeout(function(){
-                       $(divParent).removeClass('focus')
-                   }, 500)
-                }
-
-            });
-
-
-             // sugareditable example
-
-            var addEditIcon = function() {
-                $("body").on("mouseenter","span.click", function() {
-                        $(this).before('<span class="edit-icon"><i class="icon-pencil icon-sm"></i></span>');
-                });
-                $("body").on("mouseleave","span.click", function() {
-                        $('span.edit-icon').remove();
-                });
-            };
-
-            var removeEditIcon = function() {
-
-                $("body").off('mouseenter',"span.click");
-                $("body").off('mouseleave',"span.click");
-            };
-
-            addEditIcon();
-
-     /*
-     $('#edit-worksheet').click(function(){
-                 var ison = $('div.sugareditable').hasClass('edit-mode');
-                 if(ison) {
-                    $('div.sugareditable').removeClass('edit-mode');
-                    $(this).removeClass('down');
-                     showEditIcon();
-                 }   else {
-                    $('div.sugareditable').addClass('edit-mode');
-                     $(this).addClass('down');
-
+                     }
                  }
-             }
-         );
-     */
-    //$('.datatableInput ').dataTable({ aoColumnDefs: [{ bSortable: false, aTargets: [0,8]}],"bPaginate": false,"bFilter": true,"bInfo": false,"bAutoWidth": false });
+             );
+          */
+          //$('.datatableInput ').dataTable({ aoColumnDefs: [{ bSortable: false, aTargets: [0,8]}],"bPaginate": false,"bFilter": true,"bInfo": false,"bAutoWidth": false });
 
-    //init chart
-
-
-    //chart types
-    // $('.icon-play').parent().click(function(e){
-    //   e.preventDefault();
-    //   chartConfig["chartType"] = 'funnelChart';
-    //     chartConfig["funnelType"] = 'basic';
-    //   forecast = swapChart(chartId,'forecast-json-funnel.js',css,chartConfig);
-    //   var that = this;
-    //   $('#chartType .btn-group').children("a").each(function() {
-    //     $(this).removeClass('active');
-    //     $(that).addClass('active');
-    //   });
-    // });
-
-    // $('.icon-signal').parent().click(function(e){
-    //   e.preventDefault();
-    //   chartConfig["chartType"] = 'barChart';
-    //   chartConfig["barType"] = 'stacked';
-    //   chartConfig["orientation"] = 'vertical';
-
-    //   forecast = swapChart(chartId,'forecast-json-month.js',css,chartConfig);
-    //   var that = this;
-    //   $('#chartType .btn-group').children("a").each(function() {
-    //     $(this).removeClass('active');
-    //     $(that).addClass('active');
-    //   });
-    // });
+          //init chart
 
 
+          //chart types
+          // $('.icon-play').parent().click(function(e){
+          //   e.preventDefault();
+          //   chartConfig["chartType"] = 'funnelChart';
+          //     chartConfig["funnelType"] = 'basic';
+          //   forecast = swapChart(chartId,'forecast-json-funnel.js',css,chartConfig);
+          //   var that = this;
+          //   $('#chartType .btn-group').children("a").each(function() {
+          //     $(this).removeClass('active');
+          //     $(that).addClass('active');
+          //   });
+          // });
 
-    $("#date_filter").chosen().change(function(formData){
-        var q = quarter(formData.target.value);
-        oTable.fnDraw();
-        chartFile =  'forecast-json-'+q+'-month.js';
-        //forecast = swapChart(chartId,chartFile,css,chartConfig);
-    }).ready(function(){
-         var q = quarter($("#date_filter")[0].value);
-        chartFile =  'forecast-json-'+q+'-month.js';
-        //forecast = swapChart(chartId,chartFile,css,chartConfig);
-    });
+          // $('.icon-signal').parent().click(function(e){
+          //   e.preventDefault();
+          //   chartConfig["chartType"] = 'barChart';
+          //   chartConfig["barType"] = 'stacked';
+          //   chartConfig["orientation"] = 'vertical';
 
-    $("#group_by").chosen().change(function(data){
-        forecast = swapChart(chartId,'forecast-json-'+data.target.value+'.js',css,chartConfig);
-    });
+          //   forecast = swapChart(chartId,'forecast-json-month.js',css,chartConfig);
+          //   var that = this;
+          //   $('#chartType .btn-group').children("a").each(function() {
+          //     $(this).removeClass('active');
+          //     $(that).addClass('active');
+          //   });
+          // });
 
+          $("#date_filter").chosen().change(function(formData){
+              var q = quarter(formData.target.value);
+              oTable.fnDraw();
+              chartFile =  'forecast-json-'+q+'-month.js';
+              //forecast = swapChart(chartId,chartFile,css,chartConfig);
+          }).ready(function(){
+               var q = quarter($("#date_filter")[0].value);
+              chartFile =  'forecast-json-'+q+'-month.js';
+              //forecast = swapChart(chartId,chartFile,css,chartConfig);
+          });
 
-    $("#probability_filter").chosen().change(function(formData){
-  //    forecast = swapChart(chartId,'forecast-json-'+data.target.value+'.js',css,chartConfig);
-        //console.log( oTable.fnFilter( data.target.value, 4 ))
+          $("#group_by").chosen().change(function(data){
+              forecast = swapChart(chartId,'forecast-json-'+data.target.value+'.js',css,chartConfig);
+          });
 
-        oTable.fnDraw();
-        jQuery.ajax({
-            url: "forecast-json-month.js?r=" + new Date().getTime(),
-            dataType:"text",
-            async: false,
-            success: function(data) {
+          $("#probability_filter").chosen().change(function(formData){
+              //forecast = swapChart(chartId,'forecast-json-'+data.target.value+'.js',css,chartConfig);
+              //console.log( oTable.fnFilter( data.target.value, 4 ))
 
-                if(data !== undefined && data != "No Data"){
-                    var json = eval('('+data+')');
+              oTable.fnDraw();
+              jQuery.ajax({
+                  url: "forecast-json-month.js?r=" + new Date().getTime(),
+                  dataType:"text",
+                  async: false,
+                  success: function(data) {
 
+                      if(data !== undefined && data != "No Data"){
+                          var json = eval('('+data+')');
 
-                    var likely = $('h2#likely').html().replace(/,/,"");
-                    $(json.values).each( function(i)    {
-                        var probability = this.probability;
-                        var that = this;
-  //          console.log(probability)
-                        $.each(probability , function(j,prob) {
-                            if(prob < formData.target.value)    {
-                                that.values[j] = 0;
-                                that.goalmarkervalue[1] =  likely/1000;
-                                that.goalmarkervaluelabel[1] =  likely/1000+"K";
-
-                            }
-                        });
-
-                    });
-                    //forecast.chartObject.json = json;
-                    //updateChart(forecast.chartObject);
-
-                }
-            }
-        });
-    });
-
-
-    $("#people").jstree({
-        "json_data" : {
-            "data" : [
-                {
-                    "data" : "Parent"
-                },
-                {
-                    "data" : "Sabra Khan",
-                    "state" : "open",
-                    "metadata" : { id : 1 },
-                    "children" : [
-
-                        {"data" : "Mark Gibson","metadata" : { id : 2 }},
-                        {"data" : "James Joplin","metadata" : { id : 3 }},
-                        {"data" : "Terrence Li","metadata" : { id : 4 }},
-                        {"data" : "Amy McCray","metadata" : { id : 5 }, "state" : "closed"}
-                    ]
-                }
-            ]
-        },
-  //                "themes" : { "theme" : "default", "dots" : false },
-        "plugins" : [ "json_data", "ui", "types"]
-
-    })
-            .bind("loaded.jstree", function () {
-                // do stuff when tree is loaded
-                $("#people").addClass("jstree-sugar");
-                $("#people > ul").addClass("list");
-                $("#people > ul > li:first-child").addClass("parent");
-                $("#people > ul > li > a").addClass("jstree-clicked");
+                          var likely = $('h2#likely').html().replace(/,/,"");
+                          $(json.values).each( function(i)    {
+                              var probability = this.probability;
+                              var that = this;
+                              // console.log(probability)
+                              $.each(probability , function(j,prob) {
+                                  if(prob < formData.target.value)    {
+                                      that.values[j] = 0;
+                                      that.goalmarkervalue[1] =  likely/1000;
+                                      that.goalmarkervaluelabel[1] =  likely/1000+"K";
+                                  }
+                              });
+                          });
+                          //forecast.chartObject.json = json;
+                          //updateChart(forecast.chartObject);
+                      }
+                  }
+              });
+          });
 
 
-            })
-            .bind("select_node.jstree", function (e, data) {
-                console.log("load data for id: " + jQuery.data(data.rslt.obj[0], "id"));
-                data.inst.toggle_node(data.rslt.obj);
-            });
+          $("#people").jstree({
+              "json_data" : {
+                  "data" : [
+                      {
+                          "data" : "Parent"
+                      },
+                      {
+                          "data" : "Sabra Khan",
+                          "state" : "open",
+                          "metadata" : { id : 1 },
+                          "children" : [
+                              {"data" : "Mark Gibson","metadata" : { id : 2 }},
+                              {"data" : "James Joplin","metadata" : { id : 3 }},
+                              {"data" : "Terrence Li","metadata" : { id : 4 }},
+                              {"data" : "Amy McCray","metadata" : { id : 5 }, "state" : "closed"}
+                          ]
+                      }
+                  ]
+              },
+              // "themes" : { "theme" : "default", "dots" : false },
+              "plugins" : [ "json_data", "ui", "types"]
+          })
+          .bind("loaded.jstree", function () {
+              // do stuff when tree is loaded
+              $("#people").addClass("jstree-sugar");
+              $("#people > ul").addClass("list");
+              $("#people > ul > li:first-child").addClass("parent");
+              $("#people > ul > li > a").addClass("jstree-clicked");
+          })
+          .bind("select_node.jstree", function (e, data) {
+              console.log("load data for id: " + jQuery.data(data.rslt.obj[0], "id"));
+              data.inst.toggle_node(data.rslt.obj);
+          });
 
 
-            $("#sales_stage_filter").chosen().change(function(formData){
+          $("#sales_stage_filter").chosen().change( function(formData){
 
-          oTable.fnFilter( formData.target.value, 3 );
-        jQuery.ajax({
-            url: "forecast-json-month.js?r=" + new Date().getTime(),
-            dataType:"text",
-            async: false,
-            success: function(data) {
+              oTable.fnFilter( formData.target.value, 3 );
 
-                if(data !== undefined && data != "No Data"){
-                    var json = eval('('+data+')');
+              jQuery.ajax({
+                  url: "forecast-json-month.js?r=" + new Date().getTime(),
+                  dataType:"text",
+                  async: false,
+                  success: function(data) {
 
+                      if(data !== undefined && data != "No Data"){
+                          var json = eval('('+data+')');
 
-                    var likely = $('h2#likely').html().replace(/,/,"");
-                    $(json.values).each( function(i)    {
-                        var sales_stage = this.sales_stage;
-                        var that = this;
-  //          console.log(probability)
-                        $.each(sales_stage , function(j,stage) {
-                            if(stage != formData.target.value && formData.target.value != "")    {
-                                that.values[j] = 0;
-                                that.goalmarkervalue[1] =  likely/1000;
-                                that.goalmarkervaluelabel[1] =  likely/1000+"K";
-                            }
-                        });
+                          var likely = $('h2#likely').html().replace(/,/,"");
+                          $(json.values).each( function(i)    {
+                              var sales_stage = this.sales_stage;
+                              var that = this;
+                              // console.log(probability)
+                              $.each(sales_stage , function(j,stage) {
+                                  if(stage != formData.target.value && formData.target.value != "")    {
+                                      that.values[j] = 0;
+                                      that.goalmarkervalue[1] =  likely/1000;
+                                      that.goalmarkervaluelabel[1] =  likely/1000+"K";
+                                  }
+                              });
+                          });
+                          //forecast.chartObject.json = json;
+                          //updateChart(forecast.chartObject);
+                      }
+                  }
+              });
+          });
 
-                    });
-                    //forecast.chartObject.json = json;
-                    //updateChart(forecast.chartObject);
+          $("#x-axis").chosen().change(function(data){
+            //forecast = swapChart(chartId,'forecast-json-'+data.target.value+'.js',css,chartConfig);
+          });
+          $("#groupby").chosen().change(function(data){
+            //forecast = swapChart(chartId,'forecast-json-q1-'+data.target.value+'.js',css,chartConfig);
+          });
+          $("#dataset").chosen().change(function(data){
+              //forecast = swapChart(chartId,'forecast-json-q1-month'+data.target.value+'.js',css,chartConfig);
+          });
 
-                }
-            }
-        });
+          /*$("#sales_stage_filter_chzn input").on("focus",function(){
+              var left = $('#sales_stage_filter_chzn .chzn-drop').css('left');
 
-    });
+              //console.log(left)
+              if(left == "-9000px") {
+                  $('#sales_stage_filter_chzn .chzn-drop').
+                  width(0)
+              } else {
+                  $('#sales_stage_filter_chzn .chzn-drop').
+                  width(100).
+                  css("left","auto").
+                  css("right","0px")
+              }
+          });
 
-    $("#x-axis").chosen().change(function(data){
-      //forecast = swapChart(chartId,'forecast-json-'+data.target.value+'.js',css,chartConfig);
-    });
-    $("#groupby").chosen().change(function(data){
-      //forecast = swapChart(chartId,'forecast-json-q1-'+data.target.value+'.js',css,chartConfig);
-    });
-    $("#dataset").chosen().change(function(data){
-        //forecast = swapChart(chartId,'forecast-json-q1-month'+data.target.value+'.js',css,chartConfig);
-    });
+          $("#sales_stage_filter_chzn .chzn-drop").on("click",function(){
+              $(this).
+              css("right","auto")
+           });
 
-    /*$("#sales_stage_filter_chzn input").on("focus",function(){
-        var left = $('#sales_stage_filter_chzn .chzn-drop').css('left');
+          $("#sales_stage_filter_chzn").css("width","100%").append('<div class="indicator">Filter <span class="caret"></span></div>');
+          $("#sales_stage_filter_chzn .chzn-drop").addClass('carettop');
+          $("#date_filter_chzn .chzn-drop").addClass('carettop');           */
+          //$("#date_filter_chzn .chzn-results").append('<li class="active-result divider"></li><li class="active-result">+ Add timeframe</li>');
 
-//                console.log(left)
-        if(left == "-9000px") {
-            $('#sales_stage_filter_chzn .chzn-drop').
-            width(0)
-        } else {
-            $('#sales_stage_filter_chzn .chzn-drop').
-            width(100).
-            css("left","auto").
-            css("right","0px")
-        }
+          $("#setup_btn").click(function() {
+              forecastSetup.init({
+                  id: 'setup',
+                  navigation: "breadcrumb",
+                  modalUrl: "setup/setup1.html",
+                  className: 'whatsnew',
+                  onTourFinish: function() {
+                  }
+              });
+          });
 
+          $("#tabs_setup_btn").on('click', function() {
+              forecastSetup.init({
+                  id: 'setup',
+                  navigation: "tabs",
+                  modalUrl: "setup/setup1.html",
+                  className: 'whatsnew',
+                  onTourFinish: function() {
+                  }
+              });
+          });
 
-    });
-
-    $("#sales_stage_filter_chzn .chzn-drop").on("click",function(){
-        $(this).
-        css("right","auto")
-     });
-
-    $("#sales_stage_filter_chzn").css("width","100%").append('<div class="indicator">Filter <span class="caret"></span></div>');
-    $("#sales_stage_filter_chzn .chzn-drop").addClass('carettop');
-    $("#date_filter_chzn .chzn-drop").addClass('carettop');           */
-    //$("#date_filter_chzn .chzn-results").append('<li class="active-result divider"></li><li class="active-result">+ Add timeframe</li>');
-
-    $("#setup_btn").click(function() {
-        forecastSetup.init({
-            id: 'setup',
-            navigation: "breadcrumb",
-            modalUrl: "setup/setup1.html",
-            className: 'whatsnew',
-            onTourFinish: function() {
-            }
-        });
-    });
-
-    $("#tabs_setup_btn").on('click', function() {
-        forecastSetup.init({
-            id: 'setup',
-            navigation: "tabs",
-            modalUrl: "setup/setup1.html",
-            className: 'whatsnew',
-            onTourFinish: function() {
-            }
-        });
-    });
-
-    $('.dropdown-menu .datasetOptions label.radio').each(function(index){
-        $(this).click(function(e){
-              $(this).toggleClass("checked");
-            $('.dropdown-menu .datasetOptions label.radio').each(function(otherIndex){
-                if(otherIndex != index) {
-                    $(this).removeClass("checked");
-                }
-            });
-        });
-    });
-
-  });
-</script>
+          $('.dropdown-menu .datasetOptions label.radio').each(function(index){
+              $(this).click(function(e){
+                    $(this).toggleClass("checked");
+                  $('.dropdown-menu .datasetOptions label.radio').each(function(otherIndex){
+                      if(otherIndex != index) {
+                          $(this).removeClass("checked");
+                      }
+                  });
+              });
+          });
+      });
+  </script>
 </body>
 </html>
