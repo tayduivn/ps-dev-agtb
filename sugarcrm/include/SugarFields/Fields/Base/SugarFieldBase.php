@@ -646,6 +646,11 @@ class SugarFieldBase {
         if (isset($vardef['size'])) {
             $vardef['size'] = $this->normalizeNumeric($vardef['size']);
         }
+        
+        // Bug 57890 - Required values should be boolean
+        if (isset($vardef['required'])) {
+            $vardef['required'] = $this->normalizeBoolean($vardef['required']);
+        }
 
         // Handle normalizations that need to be applied
         if (isset($vardef['default'])) {
@@ -677,5 +682,33 @@ class SugarFieldBase {
         } 
         
         return null;
+    }
+    
+    public function normalizeBoolean($value) {
+        // If the value is already boolean, send it back
+        if ($value === true || $value === false) {
+            return $value;
+        }
+        
+        // Check against known values of booleans
+        $bools = array(
+            0 => false,
+            '0' => false,
+            'no' => false,
+            'off' => false,
+            'false' => false,
+            1 => true,
+            '1' => true,
+            'yes' => true,
+            'on' => true,
+            'true' => true,
+        );
+        
+        if (isset($bools[$value])) {
+            return $bools[$value];
+        }
+        
+        // Just send it back
+        return $value;
     }
 }
