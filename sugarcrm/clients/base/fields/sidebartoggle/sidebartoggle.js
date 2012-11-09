@@ -20,6 +20,6 @@
                 .addClass(pointRightClass);
         }
 
-        //TODO: toggle panes
+        this.context.trigger('layout:sidebar:toggle');
     }
 })

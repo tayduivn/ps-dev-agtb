@@ -13,6 +13,7 @@
         this.processDef();
 
         this.context.on("togglePreview", function(model) { this.showPreview(); }, this);
+        this.context.on('layout:sidebar:toggle', this.toggleSidebar, this);
     },
 
     processDef: function() {
@@ -51,5 +52,18 @@
     togglePreview: function() {
         this.$(".side-pane").toggleClass("hide");
         this.$(".preview-pane").toggleClass("hide");
+    },
+
+    toggleSidebar: function() {
+        var $main = this.$('.main-pane'),
+            $sidebar = this.$('.sidebar-content');
+
+        if ($sidebar.is(':visible')) {
+            $main.removeClass('span8').addClass('span12');
+            $sidebar.hide();
+        } else {
+            $main.removeClass('span12').addClass('span8');
+            $sidebar.show();
+        }
     }
 })
