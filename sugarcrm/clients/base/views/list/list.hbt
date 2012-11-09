@@ -13,7 +13,7 @@
                         </thead>
                         <tbody role="alert" aria-live="polite" aria-relevant="all">
                         {{#each ../collection.models}}
-                        <tr name="{{module}}_{{attributes.id}}">
+                        <tr name="{{module}}_{{attributes.id}}"{{#if ../../collection.newRecords}}{{#unless old}} class="new"{{/unless}}{{/if}}>
                             {{#each ../fields}}
                             <td>{{field ../../../this ../this}}</td>
                             {{/each}}

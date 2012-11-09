@@ -31,6 +31,11 @@
         //Calculate relative column widths.
         this.calculateRelativeWidths();
 
+        //Set a flag true to the collection if there are new records (see list-bottom.js)
+        //in order to animate the new records
+        this.collection.newRecords = _.find(this.collection.models, function(model) {
+            return model.old === true;
+        })
         app.view.View.prototype._renderHtml.call(this);
         // off prevents multiple bindings for each render
         this.layout.off("list:search:fire", null, this);

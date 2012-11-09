@@ -172,7 +172,8 @@ class aSubPanel
 	//return the definition of buttons. looks for buttons in 2 locations.
 	function get_buttons ()
 	{
-		$buttons = array ( ) ;
+		global $sugar_config;
+        
 		if (isset ( $this->_instance_properties [ 'top_buttons' ] ))
 		{
 			//this will happen only in the case of sub-panels with multiple sources(activities).
@@ -190,7 +191,16 @@ class aSubPanel
 		{
 			global $modListHeader ;
 			global $modules_exempt_from_availability_check ;
-			if (isset ( $modListHeader ) && (! (array_key_exists ( 'Emails', $modListHeader ) or array_key_exists ( 'Emails', $modules_exempt_from_availability_check ))))
+            
+            // Bug 58087 - Compose Email in activities sub panel for offline client
+            // Need to add logic to check for offline client since the Compose Email
+            // action was looking at the module list and Emails are in the exempt list.
+			if (
+                (isset($modListHeader) && (!(array_key_exists('Emails', $modListHeader) || array_key_exists('Emails', $modules_exempt_from_availability_check))))
+                ||
+                // Checks for offline client
+                (!empty($sugar_config['disc_client']) && !empty($sugar_config['oc_converted']))
+            )
 			{
 				foreach ( $buttons as $key => $button )
 				{
@@ -239,7 +249,11 @@ class aSubPanel
             // Originally caused by the fix for Bug 49439
             // Get the shown subpanel module list 
             $subPanelDefinitions = new SubPanelDefinitions($this->parent_bean);
-            $subPanelModules = $subPanelDefinitions->get_all_subpanels(true);
+            
+            // Bug 58089 - History sub panel doesn't show any record.
+            // Rather than check ALL subpanels, we only need to really check to
+            // see if the module(s) we are checking are not hidden.
+            $hiddenSubPanels = $subPanelDefinitions->get_hidden_subpanels();
             
 			$panels = $this->get_inst_prop_value ( 'collection_list' ) ;
 			foreach ( $panels as $panel => $properties )
@@ -247,8 +261,8 @@ class aSubPanel
                 // Lowercase the collection module to check against the subpanel list
                 $lcModule = strtolower($properties['module']);
                 
-                // Add a check for module subpanel visibility. If not visible, but exempt, pass it
-                if (isset($subPanelModules[$lcModule]) || isset($modules_exempt_from_availability_check[$properties['module']]))
+                // Add a check for module subpanel visibility. If hidden, but exempt, pass it
+                if ((is_array($hiddenSubPanels) && !in_array($lcModule, $hiddenSubPanels)) || isset($modules_exempt_from_availability_check[$properties['module']]))
 				{
 					$this->sub_subpanels [ $panel ] = new aSubPanel ( $panel, $properties, $this->parent_bean ) ;
 				}

@@ -7,7 +7,6 @@
  */
     // We listen to event and keep track if search filter is toggled open/close
     filterOpened: false,
-
     events: {
         'click [name=show_more_button]': 'showMoreRecords',
         'click .search': 'showSearch'
@@ -28,14 +27,20 @@
         // normal show more for list view.
         this.layout.off("list:filter:toggled", null, this);
         this.layout.on("list:filter:toggled", this.filterToggled, this);
-    },        
+    },
     filterToggled: function(isOpened) {
         this.filterOpened = isOpened;
     },
     showMoreRecords: function(evt) {
         var self = this, options;
+        // Mark current models as old, in order to animate the new one
+        _.each(this.collection.models, function(model) {
+            model.old = true;
+        });
         app.alert.show('show_more_records', {level:'process', title:app.lang.getAppString('LBL_PORTAL_LOADING')});
         
+        // save current screen position
+        var screenPosition = $('html').offset().top;
 
         // If in "search mode" (the search filter is toggled open) set q:term param
         options = self.filterOpened ? self.getSearchOptions() : {};
@@ -47,7 +52,15 @@
             app.alert.dismiss('show_more_records');
             self.layout.trigger("list:paginate:success");
             self.render();
-            window.scrollTo(0, document.body.scrollHeight);
+            // retrieve old screen position
+            window.scrollTo(0, -1*screenPosition);
+
+            // Animation for new records
+            self.layout.$('tr.new').animate({
+                opacity:1
+            }, 500, function () {
+                $(this).removeAttr('style class');
+            });
         };
         options.limit = this.limit;
         this.collection.paginate(options);
