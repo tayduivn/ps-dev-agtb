@@ -1,4 +1,4 @@
-<?
+<?php
 /**
  * This function sorts the tests alphabetically to make the
  * test runs more consistent.
