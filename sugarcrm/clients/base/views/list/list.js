@@ -124,7 +124,13 @@
         // If injected context with a limit (dashboard) then fetch only that 
         // amount. Also, add true will make it append to already loaded records.
         options.limit   = self.limit || null;
+
+        // Display loading message
+        app.alert.show('loading_' + self.cid, {level:'process', title:app.lang.getAppString('LBL_PORTAL_LOADING')});
+
         options.success = function() {
+            // Hide loading message
+            app.alert.dismiss('loading_' + self.cid);
             self.render();
         };
         
