@@ -91,16 +91,16 @@
             massCollection.off("remove", null, cid);
             massCollection.off("reset", null, cid);
             massCollection.on("add", function(model) {
-                if(this.length > 0) {
+                if(massCollection.length > 0) {
                     self.$(self.actionDropDownTag).removeClass("disabled");
                 }
-                if(this.length == self.view.collection.length) {
+                if(massCollection.length == self.view.collection.length) {
                     self.$(self.fieldTag).attr("checked", true);
                 }
                 self.toggleShowSelectAll();
             }, cid);
             massCollection.on("remove reset", function(model) {
-                if(this.length == 0) {
+                if(massCollection.length == 0) {
                     self.$(self.actionDropDownTag).addClass("disabled");
                 }
                 self.$(self.fieldTag).attr("checked", false);

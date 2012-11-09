@@ -18,7 +18,7 @@
                 {"id":"tour-recommended-contacts", "title":"Your Recommended Contacts", "content":"This widget displays your recommended contacts.", "placement":"left"},
                 {"id":"tour-recommended-invites", "title":"Your Recommended Invites", "content":"This widget displays your recommended invites.", "placement":"left"},
                 {"id":"tour-instances", "title":"Your CRM Instances", "content":"This button allows you to change your CRM instance, and invite users to your instance as well. In addition, you can view users of this instance as well as their last login time.", "placement":"top"},
-                {"id":"tour-todo", "title":"Todo List Widget", "content":"This button opens up a todo list widget, where you can easily add/update/delete tasks assigned to you. If you're viewing a specific record, you can relate tasks to that record through this widget as well.", "placement":"top"}
+                {"id":"tour-reminders", "title":"Todo List Widget", "content":"This button opens up a todo list widget, where you can easily add/update/delete tasks assigned to you. If you're viewing a specific record, you can relate tasks to that record through this widget as well.", "placement":"top"}
             ],
             "tour_overview_data":
                 {"image_url":"[insert image url]"}
@@ -54,7 +54,7 @@
                 {"id":"tour-Accounts-stream", "title":"Company Activity Stream", "content":"This activity stream outlines recent activity in your application related to this specific company.", "placement":"right"},
                 {"id":"tour-Accounts-news", "title":"Google News Widget", "content":"The News widget keeps you up to date with the latest news associated with this company, by displaying related Google News articles.", "placement":"left"},
                 {"id":"tour-Accounts-tweets", "title":"Company Twitter Widget", "content":"After updating this company with their Twitter account, you can view their most recent tweets using this handy widget.", "placement":"left"},
-                {"id":"tour-Accounts-todo-list", "title":"Your Company-related Todo List", "content":"This todo list allows you to add/update/delete your tasks that are associated with this company. You can do the same with the todo button in the footer, by marking the 'Relate to current record' checkbox.", "placement":"left"},
+                {"id":"tour-Accounts-reminders-record", "title":"Your Company-related Todo List", "content":"This todo list allows you to add/update/delete your tasks that are associated with this company. You can do the same with the todo button in the footer, by marking the 'Relate to current record' checkbox.", "placement":"left"},
                 {"id":"tour-Accounts-map", "title":"Company Location", "content":"You can easily view the location of this company with this integrated Google map widget.", "placement":"left"}
             ],
             "tour_overview_data":
@@ -87,7 +87,7 @@
                 {"id":"tour-Contacts-businesscard", "title":"Person's Business Card", "content":"This is the 'business card' view, which displays the person's relevant information. You can edit a field by clicking the pencil icon next to it.", "placement":"right"},
                 {"id":"tour-Contacts-button-bar", "title":"Record Modification Panel", "content":"Need to make changes to this person's information? This panel is used to edit/delete a record.", "placement":"bottom"},
                 {"id":"tour-Contacts-stream", "title":"Person's Activity Stream", "content":"This activity stream outlines recent activity in your application related to this specific person.", "placement":"top"},
-                {"id":"tour-Contacts-todo-list", "title":"Your Person-related Todo List", "content":"This todo list allows you to add/update/delete your tasks that are associated with this person. You can do the same with the todo button in the footer, by marking the 'Relate to current record' checkbox.", "placement":"left"}
+                {"id":"tour-Contacts-reminders-record", "title":"Your Person-related Todo List", "content":"This todo list allows you to add/update/delete your tasks that are associated with this person. You can do the same with the todo button in the footer, by marking the 'Relate to current record' checkbox.", "placement":"left"}
             ],
             "tour_overview_data":
                 {"image_url":"[insert image url]"}
@@ -118,7 +118,7 @@
                 {"id":"tour-Opportunities-businesscard", "title":"Deal Record View", "content":"This editable view displays relevant information associated with the deal. You can edit a field by clicking the pencil icon next to it.", "placement":"right"},
                 {"id":"tour-Opportunities-button-bar", "title":"Record Modification Panel", "content":"Need to make changes to this deal? This panel is used to edit/delete a record.", "placement":"bottom"},
                 {"id":"tour-Opportunities-stream", "title":"Person's Activity Stream", "content":"This activity stream outlines recent activity in your application related to this specific deal.", "placement":"top"},
-                {"id":"tour-Opportunities-todo-list", "title":"Your Deal-related Todo List", "content":"This todo list allows you to add/update/delete your tasks that are associated with this deal. You can do the same with the todo button in the footer, by marking the 'Relate to current record' checkbox.", "placement":"left"}
+                {"id":"tour-Opportunities-reminders-record", "title":"Your Deal-related Todo List", "content":"This todo list allows you to add/update/delete your tasks that are associated with this deal. You can do the same with the todo button in the footer, by marking the 'Relate to current record' checkbox.", "placement":"left"}
             ],
             "tour_overview_data":
                 {"image_url":"[insert image url]"}
