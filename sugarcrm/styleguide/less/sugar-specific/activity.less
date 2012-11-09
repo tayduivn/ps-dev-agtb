@@ -28,19 +28,19 @@ div.sayit.activitystream-comment-box {
 }
 
 .activitystream-pending-attachment {
-position: relative;
-width: 140px;
-border: 4px solid @grayLighter;
-background: @grayLighter;
-float: left;
-height: 141px;
-font-size: 11px !important;
-overflow: hidden;
-margin: 5px 5px 5px 0;
-color: #767676;
+  position: relative;
+  width: 140px;
+  border: 4px solid @grayLighter;
+  background: @grayLighter;
+  float: left;
+  height: 141px;
+  font-size: 11px !important;
+  overflow: hidden;
+  margin: 5px 5px 5px 0;
+  color: #767676;
   .close {
     font-size: 16px;
-    line-height: 14px;  
+    line-height: 14px;
     padding: 0 2px;
     margin-left: 5px;
   }
@@ -49,13 +49,19 @@ color: #767676;
   }
 }
 
-.loading.wide {padding: 0 0 0 20px;}
-
-.commented .control-group {margin-bottom: 0;}
+.commented .control-group {
+  margin-bottom: 0;
+}
 .block.tabs-left .nav-tabs li {
   padding: 0 0 0 20px;
 }
-.omnibar.row {margin: 0;}
+.omnibar.row {
+  margin: 0;
+}
+
+ul.unstyled, ol.unstyled {
+  margin: 0 !important;
+}
 
 article {
   position: relative;
@@ -63,28 +69,6 @@ article {
   padding: 10px 30px 10px 10px;
   line-height: @baseLineHeight;
   border-bottom: 1px solid @grayLighter;
-}
-.side article {
-  padding: 0;
-}
-.side article a {
-  padding: 10px;
-  display: block;
-}
-.side .block.padded ul {
-  padding: 0;
-  margin: -10px 0 0;
-  list-style: none;
-  li {
-  padding: 10px;
-  border-bottom: 1px solid @grayLighter;
-  strong {
-    margin-left: 5px;
-    }
-  }
-}
-ul.unstyled, ol.unstyled {
-  margin: 0 !important;
 }
 
 article .avatar {
@@ -96,21 +80,32 @@ article p {
 	display: block;
 }
 
-#activity article.imgs p {  
+article p:last-child {
+  margin: 0;
+}
+
+article:hover {
+  background: #e1f0fa;
+}
+
+#activity article.imgs p {
   margin-left: 36px;
 }
 
-article p:last-child {
-	margin: 0;
+.results article:nth-child(even),
+.results article:nth-child(odd) {
+	background-color: transparent;
+  border-top: 1px solid lighten(@grayDarker, 15%);
+  border-bottom-color: @grayDarker;
+	padding: 10px 20px;
+}
+.results article:first-child {
+  .box-shadow(~"inset 0 4px 6px rgba(0,0,0,.6)");
 }
 
-.results article:nth-child(even), .results article:nth-child(odd) {
-	background-color: transparent;
-	border-top: 1px solid lighten(@grayLight, 15%);
-	border-bottom: 1px solid lighten(@grayLight, 5%);
-	padding: 10px;
-}
-table.table.dataTable td.details .extend, .filtered.extend, .mu.extend {
+table.table.dataTable td.details .extend,
+.filtered.extend,
+.mu.extend {
   background: darken(@grayLighter, 5%);
   margin: 5px -5px -5px;
   text-align: left;
@@ -118,15 +113,11 @@ table.table.dataTable td.details .extend, .filtered.extend, .mu.extend {
 }
 
 .mu.extend.results {
-    margin-top:-1px;
+  margin-top:-1px;
 }
 
 //from sidecar
 #sActivity article {
-    padding: 10px 45px 10px 0;
-    position: relative !important;
-}
-
-article:hover {
-	background: #e1f0fa;
+  padding: 10px 45px 10px 0;
+  position: relative !important;
 }

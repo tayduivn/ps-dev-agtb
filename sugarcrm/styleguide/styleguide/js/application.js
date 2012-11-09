@@ -76,7 +76,6 @@
       $(this).parent().parent().parent().parent().parent().append('<tr class="alert alert-warning"><td colspan="7" style="text-align: center;">You have selected 10 records. Do you want select <a href="" class="triggermass">select all 300</a> records.</td></tr>');
     });
 
-
     // timeout the alerts
     setTimeout( function (){$('.timeten').fadeOut().remove();}, 9000);
 
@@ -175,8 +174,8 @@
     // column collapse
     $('.drawerTrig').on('click', function () {
       $(this).find('i').toggleClass('icon-chevron-left').toggleClass('icon-chevron-right');
-      $('.side-pane').toggleClass('hide');
-      $('.main-pane').toggleClass("span8").toggleClass("span12");
+      $('.side').toggleClass('hide');
+      $('.main-pane').toggleClass('span8').toggleClass('span12');
       return false;
     });
 
@@ -193,7 +192,6 @@
         $('.inlined').remove();
        }
      );
-
 
     $(".omnibar").toggle(
       function () {
@@ -214,6 +212,7 @@
         return false;
       }
     );
+
     $('.addme').on('click',
       function () {
         $(this).after('<a href="" class="removeme pull-right"><i class="btn btn-invisible icon-minus"></i></a>');
@@ -293,15 +292,12 @@
       $('#moduleActivity .form-search select').chosen();
       //$('#moduleActivity .form-search input').quicksearch('ul.results li');
     }
-    
+
     //popover
     $("[rel=popover]").popover();
     $("[rel=popoverTop]").popover({placement: "top"});
     $("[rel=popoverBottom]").popover({placement: "bottom"});
   });
-
-
-
 
   var uobj = [],
     onUploadChange = function (e) {
@@ -317,15 +313,15 @@
         //this_container.append('<span class="file-upload-status">'+value+'</span>');
         $('<span class="file-upload-status">'+value+'</span>').insertAfter(this_container);
       }
-    }, 
+    },
     onUploadFocus = function () {
       $(this).parent().addClass('focus');
     },
     onUploadBlur = function () {
       $(this).parent().addClass('focus');
     };
-  
-  $('.upload-field-custom input[type=file]').each(function() {     
+
+  $('.upload-field-custom input[type=file]').each(function() {
     // Bind events
     $(this)
       .bind('focus',onUploadFocus)
@@ -339,15 +335,12 @@
       .parent().find('span').css('width',lbl_width)
       .closest('.upload-field-custom').css('width',lbl_width);
 
-    // Set current state 
-    onUploadChange.call(this);      
+    // Set current state
+    onUploadChange.call(this);
 
     // Minimizes the text input part in IE
     $(this).css('width','0');
   });
-
-
-
 
 }(window.jQuery);
 
