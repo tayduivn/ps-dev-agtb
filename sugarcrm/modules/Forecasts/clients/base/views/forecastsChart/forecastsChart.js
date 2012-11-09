@@ -168,7 +168,7 @@
         }, this);
         this.context.forecasts.on('change:selectedUser', function (context, user) {
             if(!_.isEmpty(self.chart)) {
-                self.handleRenderOptions({user_id: user.id, display_manager : ((_.isUndefined(user.showOpps) || user.showOpps === false) && user.isManager === true)});
+                self.handleRenderOptions({user_id: user.id, display_manager : (user.showOpps === false && user.isManager === true)});
                 self.toggleRepOptionsVisibility();
             }
         });
