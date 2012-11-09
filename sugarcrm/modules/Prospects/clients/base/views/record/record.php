@@ -62,65 +62,58 @@ $viewdefs['Prospects']['base']['view']['record'] = array(
                     'type' => 'fieldset',
                     'fields' => array('salutation', 'first_name', 'last_name'),
                 ),
-            )
+            ),
         ),
         array(
             'name' => 'panel_body',
-            'label' => 'LBL_PANEL_2',
-            'columns' => 1,
+            'columns' => 2,
             'labels' => true,
             'labelsOnTop' => false,
             'placeholders' => true,
             'fields' => array(
-                'title',
-                'department',
-                'phone_work',
-                'phone_mobile',
-                'phone_fax',
-                'account_name',
-            )
-        ),
-        array(
-            'name' => 'panel_hidden',
-            'hide' => true,
-            'labelsOnTop' => false,
-            'placeholders' => true,
-            'fields' => array(
                 array(
-                    'name' => 'fieldset_primaryaddress',
+                    'name' => 'account_name',
+                    'span' => 12,
+                ),
+                'title',
+                'email',
+                'department',
+                'phone_mobile',
+                array(
+                    'name' => 'fieldset_address',
                     'type' => 'fieldset',
-                    'label' => 'Billing Address',
+                    'label' => 'Primary Address',
                     'fields' => array(
                         'primary_address_street',
                         'primary_address_city',
                         'primary_address_state',
                         'primary_address_postalcode',
-                        'primary_address_country'
-                    )
+                        'primary_address_country',
+                    ),
                 ),
-                array(
-                    'name' => 'fieldset_altaddress',
-                    'type' => 'fieldset',
-                    'label' => 'Alternate Address',
-                    'fields' => array(
-                        'alt_address_street',
-                        'alt_address_city',
-                        'alt_address_state',
-                        'alt_address_postalcode',
-                        'alt_address_country'
-                    )
-                ),
-                array(
-                    'name' => 'email',
-                    'label' => 'LBL_EMAIL_ADDRESSES',
-                ),
-                'description',
+                'phone_work',
                 'do_not_call',
+                'email_opt_out',
+            ),
+        ),
+        array(
+            'name' => 'panel_hidden',
+            'hide' => true,
+            'columns' => 2,
+            'labelsOnTop' => false,
+            'placeholders' => true,
+            'fields' => array(
+                array(
+                    'name' => 'description',
+                    'span' => 12,
+                ),
+                'phone_other',
+                'referred_by', //TODO: does not exist so the columns are thrown off. remove and make phone_other a span of 12 and the columns dispaly correctly
                 'assigned_user_name',
-                //BEGIN SUGARCRM flav=pro ONLY
+                'date_modified',
                 'team_name',
-                //END SUGARCRM flav=pro ONLY
-            )
-        )
+                'date_entered', //TODO: this won't show until the teams widget is fixed
+            ),
+        ),
     ),
 );
