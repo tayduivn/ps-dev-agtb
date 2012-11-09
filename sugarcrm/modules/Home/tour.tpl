@@ -51,7 +51,7 @@
     <div class="clear"></div>
     
     <div class="modal-footer">
-    <a href="#" id="lamtest" class="btn btn-primary">{$APP.LBL_TOUR_TAKE_TOUR}</a>
+    <a href="#" class="btn btn-primary">{$APP.LBL_TOUR_TAKE_TOUR}</a>
     <a href="#" class="btn btn-invisible">{$APP.LBL_TOUR_SKIP}</a>
     </div>
 </div>
@@ -67,7 +67,7 @@
 			<p>
 			{$APP.LBL_TOUR_REFERENCE_1} <a href="javascript:void window.open('http://support.sugarcrm.com/02_Documentation/01_Sugar_Editions/{$APP.documentation.$sugarFlavor}')">{$APP.LNK_TOUR_DOCUMENTATION}</a> {$APP.LBL_TOUR_REFERENCE_2}
 <br>
-				<i class="icon-arrow-right icon-lg" style="float: right; position: relative; right: -72px; top: -26px;"></i>
+				<i class="icon-arrow-right icon-lg" style="float: right; position: relative; right: -72px; top: -52px;"></i>
 			</p>
 			</div>
 			<div style="float: left">
@@ -78,6 +78,8 @@
     <div class="clear"></div>
     
     <div class="modal-footer">
-    <a href="#" class="btn btn-primary">Close</a>
+    <a href="#" class="btn btn-primary">{$APP.LBL_TOUR_BTN_DONE}</a>
+    <a href="#" class="btn">{$APP.LBL_TOUR_BACK}</a>
+
     </div>
 </div>
