@@ -76,9 +76,6 @@
          }
          });
 
-
-
-
         var result = true;
 
         return result;
@@ -143,6 +140,7 @@
             context = self.context.getChildContext(def.context);
 
         context.prepare();
+        context.set('limit', 3);
 
         var view = app.view.createView({
             context:context,
@@ -150,7 +148,7 @@
             module:moduleMeta.module,
             layout:self,
             id:def.id
-        })
+        });
 
         self.addComponent(view, {moduleName:moduleMeta.module, contentType:contentType});
 
@@ -160,6 +158,8 @@
     },
 
     updateDuplicateMessage: function(view) {
+        var $foundDuplicatePlaceholder = this.$('.accordion-group[data-module=' + view.module + ']').find('.found-duplicate');
+        $foundDuplicatePlaceholder.text(view.collection.length + ' duplicates found'); //todo translate
     },
 
     processContinue:function () {

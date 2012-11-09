@@ -13,16 +13,16 @@
 
 <div class="accordion" id="convert-accordion">
     {{#each meta.modules}}
-        <div class="accordion-group">
+        <div class="accordion-group" data-module="{{this.module}}">
           <div class="accordion-heading">
             <a class="accordion-toggle {{#eq ../firstStep this.module}}active{{/eq}}" data-id="collapse{{this.module}}" data-toggle="collapse" data-parent="#convert-accordion" data-target="#collapse{{this.module}}">
                 <span class="title">Associate {{str "LBL_MODULE_NAME" this.module}}</span>
                 {{#unless this.required}}
                     <span class="optional">(optional)</span>
                 {{/unless}}
-                 <span class="found-duplicate"></span>
-                 <span class="ignore-duplicate pull-right" id="ignore-duplicate-xxx"></span>
-                </a>
+                <span class="found-duplicate"></span>
+                <span class="ignore-duplicate pull-right" id="ignore-duplicate-xxx"></span>
+            </a>
           </div>
           <div id="collapse{{this.module}}" data-module="{{this.module}}" class="accordion-body collapse">
             <div class="accordion-inner">
@@ -33,3 +33,4 @@
         </div>
     {{/each}}
 </div>​
+`
