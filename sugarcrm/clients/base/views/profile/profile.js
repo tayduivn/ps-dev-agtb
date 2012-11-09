@@ -21,6 +21,9 @@
 
             self.loadCurrentUser(currentUserAttributes, function(data) {
                 if(data) {
+                    if(data.full_name){  // Include salutation with full_name in Details view like the Contacts module (Bug58325)
+                        data.full_name = data.salutation + " " + data.full_name;
+                    }
                     self.setModelAndContext(data);
                     app.view.View.prototype.render.call(self);
                     self.renderSubnav(data);
