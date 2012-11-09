@@ -198,7 +198,7 @@ class SugarACL
             return $list;
         }
         foreach($list as $key => $module) {
-            if(self::checkAccess($use_value?$module:$key, $action)) {
+            if(self::checkAccess($use_value?$module:$key, $action, array("owner_override" => true))) {
                 $result[$key] = $module;
             }
         }

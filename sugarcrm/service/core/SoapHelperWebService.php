@@ -324,9 +324,8 @@ function validate_user($user_name, $password){
 
 	function get_user_module_list($user){
 		$GLOBALS['log']->info('Begin: SoapHelperWebServices->get_user_module_list');
-		global $app_list_strings, $current_language;
-		$app_list_strings = return_app_list_strings_language($current_language);
-		$modules = SugarACL::filterModuleList(query_module_access_list($user));
+		global $moduleList;
+		$modules = array_flip(SugarACL::filterModuleList($moduleList)); // module names end up as keys
 		global $modInvisList;
 
 		foreach($modInvisList as $invis){
@@ -334,14 +333,9 @@ function validate_user($user_name, $password){
 		}
 
 		foreach($modules as $key=>$val) {
-		    if(!SugarACL::checkAccess($key, 'access')) {
-		        if(!SugarACL::checkAccess($key, 'access', array("owner_override" => true))) {
-		            // access available, but not to you
-		            $modules[$key] = 'read_only';
-		        } else {
-		            // access denied
-		            unset($modules[$key]);
-		        }
+            if(!SugarACL::checkAccess($key, 'edit', array("owner_override" => true))) {
+                // not accessible for write
+		        $modules[$key] = 'read_only';
 		    } else {
 		        // access ok
 		        if($modules[$key] != 'read_only') $modules[$key] = '';
