@@ -3353,6 +3353,7 @@ $app_strings = array (
     //begin portal
     //BEGIN SUGARCRM flav=ent ONLY
     // for nomad mobile
+    'LBL_OPTIONAL' => 'Optional',
     'LBL_RELATED_MODULE' => 'Related {{this}}',
     'LBL_RELATED_MODULE_PLURAL' => 'Related {{this}}',
     'LBL_CREATE_MODULE' => 'Create {{this}}',
@@ -3436,6 +3437,8 @@ $app_strings = array (
     'ERR_MOBILE_INTERNAL' => 'Internal error ({{code}}). Please try again later.',
     'ERR_MOBILE_VALIDATION' => 'Record is invalid',
     'ERR_MOBILE_EMAIL' => 'Error. Invalid Email Address.',
+    'LBL_MOBILE_FILE_NOT_SUPPORTED' => 'This document type is unsupported.',
+    'LBL_MOBILE_GENERIC_NATIVE_ERROR' => 'An unexpected error has occurred.',
 
     //END SUGARCRM flav=pro ONLY
 
