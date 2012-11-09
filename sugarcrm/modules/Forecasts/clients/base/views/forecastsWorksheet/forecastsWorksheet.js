@@ -84,11 +84,7 @@
      *
      * @return {String}
      */
-    createURL:function(type) {
-        if(_.isUndefined(type)){
-            type = "normal";
-        }
-        
+    createURL:function() {
         var url = this.url;
         var args = {};
         if(this.timePeriod) {
@@ -100,13 +96,7 @@
            args['user_id'] = this.selectedUser.id;
         }
         
-        if(type == "mgrCheck"){
-            url = app.api.buildURL('Forecasts/committed/mgrNeedsCommitted', '', '', args);
-        }
-        else{
-            url = app.api.buildURL('ForecastWorksheets', '', '', args);
-        }
-        
+        url = app.api.buildURL('ForecastWorksheets', '', '', args);
         return url;
     },
         
@@ -460,9 +450,7 @@
          * than the manager sheet.
          */
         if(this.selectedUser.isManager && (app.user.get('id') === this.selectedUser.id ) ){
-            app.api.call("read", this.createURL("mgrCheck"), {}, {success:function(data){
-                self.mgrNeedsCommitted = data["needsCommitted"];
-            }});
+            self.mgrNeedsCommitted = false;
         }          
         
         this.context.forecasts.set({checkDirtyWorksheetFlag: true, 
