@@ -1,36 +1,39 @@
 
 /* Tables
 --------------*/
-table th { white-space: nowrap; }
-table.datatable tbody td { white-space: nowrap; }
-table th:first-child, table td:first-child {padding-left: 20px;}
+table th {
+  white-space: nowrap;
+}
+table.datatable tbody td {
+  white-space: nowrap;
+}
+table th:first-child,
+table td:first-child {
+  padding-left: 20px;
+}
 
 /* Editable
 --------------*/
-.card2 div [class^="span"]  {position: relative;}
-.card2 .icon-pencil {position: absolute; left: -16px; top: 0px; padding: 0 2px !important;.opacity(60);}
+.card2 div [class^="span"] {
+  position: relative;
+}
+.card2 .icon-pencil {
+  position: absolute;
+  left: -16px;
+  top: 0px;
+  padding: 0 2px !important;
+  .opacity(60);
+}
 
 .card2 form, .card2 input, .card2 select, .card2 textarea {
   margin: -5px 0 0 -2px !important;
 }
 
-
-
-/* Misc
--------------------------------------------------- */
-.modal-body .tab-content {
-  overflow: auto;
-  height: 310px;
-}
-.modal-body textarea {text-align: left}
-
-
-
 /* Icons
 ------------------------- */
 .navbar a [class^="icon-"] {
   color: @white !important;
-    font-size: 14px;
+  font-size: 14px;
 }
 .navbar .advanced {
   position: absolute;
@@ -46,67 +49,129 @@ table th:first-child, table td:first-child {padding-left: 20px;}
   margin-top: 8px;
 }
 
-
-
 /* CSS for forecasts subnav
 ------------------------- */
 
 /* Bug 55601 - fix for IE9 so that tree menu is properly rendered */
 .view-forecastsSubnav {
-    z-index: auto;
+  z-index: auto;
 }
-
-#sales_stage_filter_chzn .chzn-drop, #date_filter_chzn .chzn-drop {padding: 0;}
-.topline .control-group.filter  {padding: 5px;}
 
 /* Buttons
 ------------------------- */
 .btn-invisible {
-    background:none;
-    border:1px solid transparent;
-    -webkit-box-shadow:none;
-    -moz-box-shadow:none;
-    box-shadow:none;
+  background: none;
+  border: 1px solid transparent;
+  -webkit-box-shadow: none;
+  -moz-box-shadow: none;
+  box-shadow: none;
 }
 .btn-invisible:hover {
-    border:1px solid #d0cfce;
-    *border:0;
-    border-top-color:#c1bfbe;
+  border: 1px solid #d0cfce;
+  *border: 0;
+  border-top-color: #c1bfbe;
 }
 
 #forecastsCommitButtons {
-    float:right;
-    padding:15px 0px;
+  float: right;
+  padding: 15px 0px;
 }
 
 a#save_draft {
-    margin-right: 8px;
+  margin-right: 8px;
 }
 
 .label, .badge {
-    font-size:10.152px;
-    line-height:12px;
-    color:#000;
-    vertical-align:baseline;
-    white-space:nowrap;
-    background-color:#cdcccb;
-    height:12px;
-    display:inline-block;
+  font-size: 10.152px;
+  line-height: 12px;
+  color: #000;
+  vertical-align: baseline;
+  white-space: nowrap;
+  background-color: #cdcccb;
+  height: 12px;
+  display: inline-block;
 }
 .label {
-    padding:1px 4px 2px;
-    -webkit-border-radius:3px;
-    -moz-border-radius:3px;
-    border-radius:3px;
+  padding: 1px 4px 2px;
+  -webkit-border-radius: 3px;
+  -moz-border-radius: 3px;
+  border-radius: 3px;
 }
 .badge {
-    padding:1px 9px 2px;
-    -webkit-border-radius:9px;
-    -moz-border-radius:9px;
-    border-radius:9px;
+  padding: 1px 9px 2px;
+  -webkit-border-radius: 9px;
+  -moz-border-radius: 9px;
+  border-radius: 9px;
 }
 a.label:hover, a.badge:hover {
-    color:#fff;
-    text-decoration:none;
-    cursor:pointer;
+  color: #fff;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.view-forecastsChart {
+  .dropdown.form-horizontal,
+  .btn-toolbar.pull-right {
+    margin: 1px;
+  }
+  .btn-toolbar .btn {
+    padding: 6px 8px 1px;
+  }
+  .chartContainer {
+    min-width: 400px;
+  }
+  #chart {
+    overflow-x: auto;
+  }
+}
+
+.thumbnail.viz.expanded {
+  position: fixed;
+  top: 48px;
+  left: 0;
+  width: 100% !important;
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+  z-index: 1000;
+  .nv-chart {
+    padding: 20px 20px 10px;
+  }
+  svg text {
+    font-size: 14px;
+  }
+  .nvd3 .nv-x.nv-axis text {
+    font-size: 12px;
+  }
+}
+
+/* make the datatable have no top margin */
+table.dataTable {
+  margin-top: 0px !important;
+
+  td.number, tfoot th.number {
+    text-align: right;
+  }
+
+  th.header-quota {
+    min-width: 70px;
+  }
+  .converted {
+    display: inline-block;
+  }
+  label.original {
+    margin-bottom: 0px;
+    display: inline-block;
+    background-color: @grayLight;
+    .border-radius(4px);
+    padding: 2px 4px;
+  }
+
+}
+
+div.sugareditable {
+  display: inline-block;
+}
+
+div.sugareditable.focus {
+  display: inline-block;
 }
