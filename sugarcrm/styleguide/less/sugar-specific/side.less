@@ -1,11 +1,16 @@
 
-.row-fluid .main-pane.span8,
-.row-fluid .side.sidebar-content.span4 {
+.row-fluid .main-pane,
+.row-fluid .side.sidebar-content {
   position: absolute;
   overflow-y: auto;
   overflow-x: hidden;
   top: 47px;
   bottom: 44px;
+}
+
+.row-fluid .main-pane.below-subnav,
+.row-fluid .side.sidebar-content.below-subnav {
+  top: 92px;
 }
 
 .row-fluid .main-pane.span8 {
@@ -19,7 +24,7 @@
   background-image: url('@{textureSecondary}');
 }
 
-.row-fluid .side.sidebar-content.span4.hide {
+.row-fluid .side.sidebar-content.hide {
   display: none;
 }
 

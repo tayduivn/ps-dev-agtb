@@ -5286,6 +5286,7 @@ footer {
   width:100%;
   left:0;
 }
+.padded { padding:20px; }
 .black { background-color:#000000; }
 .grayDarker { background-color:#313130; }
 .grayDark { background-color:#343433; }
@@ -6675,13 +6676,14 @@ input[type=radio] { display:inline-block; }
   margin-right:15px;
   line-height:4px;
 }
-.row-fluid .main-pane.span8, .row-fluid .side.sidebar-content.span4 {
+.row-fluid .main-pane, .row-fluid .side.sidebar-content {
   position:absolute;
   overflow-y:auto;
   overflow-x:hidden;
   top:47px;
   bottom:44px;
 }
+.row-fluid .main-pane.below-subnav, .row-fluid .side.sidebar-content.below-subnav { top:92px; }
 .row-fluid .main-pane.span8 { width:66%; }
 .row-fluid .side.sidebar-content.span4 {
   right:1px;
@@ -6689,7 +6691,7 @@ input[type=radio] { display:inline-block; }
   width:34%;
   background-image:url('../../assets/img/texture/furley_bg.png');
 }
-.row-fluid .side.sidebar-content.span4.hide { display:none; }
+.row-fluid .side.sidebar-content.hide { display:none; }
 .side {
   border-left:2px solid #cdcccb;
   -webkit-box-shadow:inset 4px 0px 16px -4px rgba(0, 0, 0, .2);
