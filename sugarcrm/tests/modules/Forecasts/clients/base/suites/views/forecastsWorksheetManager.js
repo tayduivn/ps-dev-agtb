@@ -156,7 +156,7 @@ describe("The forecasts manager worksheet", function(){
     
     describe("Forecast Manager Worksheet collection.fetch", function(){
     	beforeEach(function(){    		  		
-    		view.collection.fetch = function(){};
+    		view._collection.fetch = function(){};
     	});
     	 
     	afterEach(function(){
@@ -164,15 +164,15 @@ describe("The forecasts manager worksheet", function(){
     	});
     	
     	it("should not have been called with safeFetch(false) ", function(){
-    		sinon.spy(view.collection, "fetch");
+    		sinon.spy(view._collection, "fetch");
     		view.safeFetch(false);
-    		expect(view.collection.fetch).not.toHaveBeenCalled();
+    		expect(view._collection.fetch).not.toHaveBeenCalled();
     	});
     	
     	it("should have been called with safeFetch(true) ", function(){
-    		sinon.spy(view.collection, "fetch");
+    		sinon.spy(view._collection, "fetch");
     		view.safeFetch();
-    		expect(view.collection.fetch).toHaveBeenCalled();
+    		expect(view._collection.fetch).toHaveBeenCalled();
     	});
     });
     
@@ -190,9 +190,9 @@ describe("The forecasts manager worksheet", function(){
     				},
     				   				
     		};
-    		view.collection.on = function(){};
+    		view._collection.on = function(){};
     		
-    		sinon.spy(view.collection, "on");
+    		sinon.spy(view._collection, "on");
     		sinon.spy(view.context.forecasts, "on");
     		sinon.spy(view.context.forecasts.worksheetmanager, "on");
     		sinon.spy(view.context.forecasts.config, "on");
@@ -200,7 +200,7 @@ describe("The forecasts manager worksheet", function(){
     	});
     	
     	afterEach(function(){
-    		view.collection.on.restore();
+    		view._collection.on.restore();
     		view.context.forecasts.on.restore();
     		view.context.forecasts.worksheetmanager.on.restore();
     		view.context.forecasts.config.on.restore();
@@ -209,7 +209,7 @@ describe("The forecasts manager worksheet", function(){
     	});
     	
     	it("collection.on should have been called with reset", function(){
-    		expect(view.collection.on).toHaveBeenCalledWith("reset");
+    		expect(view._collection.on).toHaveBeenCalledWith("reset");
     	});
     	
     	it("forecasts.on should have been called with selectedUser", function(){
