@@ -36,7 +36,7 @@ function scanFileNameRecursively($path = '', &$name = array() )
 
             if(is_dir($path.DIRECTORY_SEPARATOR.$f) && $f != ".." && $f != ".")
             {
-                scanFileNameRecursively($path.DIRECTORY_SEPARATOR.$f, &$name);
+                scanFileNameRecursively($path.DIRECTORY_SEPARATOR.$f, $name);
             }
             elseif ($f != ".." && $f != "." && stripos($f, 'test') !== false && stripos($f, '.php') !== false)
             {
