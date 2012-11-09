@@ -1,30 +1,9 @@
 /* Misc
 -------------------------------------------------- */
-.modal-body .tab-content {
-  overflow: auto;
-  height: 310px;
-}
-.modal-body textarea {
-  text-align: left;
-}
-
-.main-pane {
-  //padding-left: 72px;
-  position: relative;
-}
 
 .main-pane .vcard2 {
   z-index: 0;
   position: relative;
-}
-
-.main-pane {overflow: hidden;}
-.main-pane, .side-pane, .preview-pane {
-height: 100%;
-overflow-y: auto;
-overflow-x: hidden;
-position: absolute !important;
-top: 47px;
 }
 
 .bcard1 {
@@ -36,106 +15,36 @@ top: 47px;
       margin-bottom: 0;
     }
     span {
-       font-size: @baseFontSize * 1.25;
-       line-height: @baseLineHeight;
-       margin-bottom: 10px;
-       display: block;
+      font-size: @baseFontSize * 1.25;
+      line-height: @baseLineHeight;
+      margin-bottom: 10px;
+      display: block;
     }
   }
 }
 
-.container-fluid.contentflex, .main-pane {
-  margin: 0;
-  padding: 0;
-  width: 100%;
-  left: 0;
-}
-.acomment .avatar {margin-right: 10px;}
-
-.side > .side-pane, .side > .preview-pane {
-    height: 100%;
-    z-index: 1000;
-    margin-top: 0 !important;
-    width: inherit;
-    right: 0;
-    top: 47px !important;
-    background-image: url('@{textureSecondary}');
-    padding: 28px 1.1%;
-    display: block;
-    &.hide {
-      display: none;
-    }
-
-  .preview-pane {
-    display: none;
-    }
-
-  .block {
-    width: 90%;
-    margin-left: 5%;
-    span.label {
-      margin: 0 10px 0 0;
-    }
-  }
-}
-
-
-.side > .side-pane, .side > .preview-pane {
-  .box-shadow(~"inset -1px 2px 20px rgba(0,0,0,.2),inset 1px 0 0 rgba(0,0,0,.1)");
-  top: 0;
-}
-
-.preview-pane .card2 {
-  margin: 10px;
-  .span4 {
-    text-align: right;
-  }
-  .span8 {
-    font-weight: bold;
-  }
+.acomment .avatar {
+  margin-right: 10px;
 }
 
 .more, .less {
   margin: 0 20px 20px;
 }
 
-.commented .avatar {margin-right: 10px !important;}
+.commented .avatar {
+  margin-right: 10px !important;
+}
 
 .login {
   padding: 20px;
   .brand {
-  margin-bottom: 10px;
+    margin-bottom: 10px;
   }
   .login-footer {
-  margin-left: 40px;
-  margin-bottom: 10px;
+    margin-left: 40px;
+    margin-bottom: 10px;
   }
   .box-shadow(~"inset 0 -1px 10px rgba(0,0,0,.1), 0 0 1px rgba(0,0,0,.8), 0 2px 1px rgba(0,0,0,.1)");
-}
-
-.side .accordion {
-  margin: -10px 0 0 0;
-  .accordion-group {
-  margin-bottom: -1px;
-  .border-radius(0);
-  border-color: @grayLighter;
-  }
-}
-
-.side > .side-pane.active .thumbnail {
-  p, li {
-    margin: 10px;
-    }
-    .unstyled li .progress, .unstyled li .progress .bar {
-      height: 12px;
-    }
-    .unstyled {
-    padding-bottom: 20px;
-    }
-}
-
-.side > .side-pane {
-  .box-shadow(~"inset -1px 2px 20px rgba(0,0,0,.2),inset 1px 0 0 rgba(0,0,0,.1)");
 }
 
 .drag:hover {
@@ -164,30 +73,35 @@ img.pull-left {
 }
 .ui-sortable .ui-sortable-placeholder:first-child {margin:0;}
 .ui-sortable .ui-sortable-placeholder {
-visibility: visible !important;
-height: 320px !important;
-background: @grayLighter;
-@shadow: inset 0 3px 5px rgba(0,0,0,.1), inset 2px 2px 0 rgba(0,0,0,.05), inset -2px -2px 0 rgba(0,0,0,.05);
-.box-shadow(@shadow);
+  visibility: visible !important;
+  height: 320px !important;
+  background: @grayLighter;
+  @shadow: inset 0 3px 5px rgba(0,0,0,.1), inset 2px 2px 0 rgba(0,0,0,.05), inset -2px -2px 0 rgba(0,0,0,.05);
+  .box-shadow(@shadow);
 }
-.ui-sortable-placeholder * { visibility: hide; }
+.ui-sortable-placeholder * {
+  visibility: hide;
+}
 
 .titlebar {
   .buttonBackground(@white, @grayLight);
   .border-radius(3px 3px 0 0);
 }
 
-.form-search, .form-addit, .dataTables_filter {
-position: relative;
-margin: -1px 1px 0 0;
-padding: 5px;
-border-top: 1px solid darken(@grayLighter, 5%);
-background: @grayLighter;
-border-bottom: 1px solid darken(@grayLighter, 5%);
-z-index: 1000;
+.form-search,
+.form-addit,
+.dataTables_filter {
+  position: relative;
+  margin: -1px 1px 0 0;
+  padding: 5px;
+  border-top: 1px solid darken(@grayLighter, 5%);
+  background: @grayLighter;
+  border-bottom: 1px solid darken(@grayLighter, 5%);
+  z-index: 1000;
 }
 
-.form-search input.query, .acomment input.reply,  {
+.form-search input.query,
+.acomment input.reply,  {
   margin: 0;
   padding: 6px 8px;
   border: 1px solid darken(@grayLighter, 5%);
@@ -202,7 +116,9 @@ z-index: 1000;
   position: absolute;
 }
 
-.myfilter {position: relative;}
+.myfilter {
+  position: relative;
+}
 
 .omnibar {
   padding: 15px 0 10px 20px;
@@ -218,7 +134,7 @@ z-index: 1000;
 .omnibar:focused .sayit {
   border: solid 1px @grayLight;
   color: @gray;
-  }
+}
 .omnibar .inputactions {
   background: @grayLighter;
   padding: 8px;
@@ -256,7 +172,8 @@ z-index: 1000;
   margin: 0;
 }
 
-.thumbnail h4, .thumbnail h1 {
+.thumbnail h4,
+.thumbnail h1 {
   font-size: 14px !important;
   line-height: @baseLineHeight;
   #gradient > .vertical(@white, @grayLighter);
@@ -294,7 +211,9 @@ z-index: 1000;
   max-width: 100%;
 }
 
-.commented .more {text-decoration: none !important;}
+.commented .more {
+  text-decoration: none !important;
+}
 
 /* Make tables spaced out a bit more */
 h2 + table,
@@ -368,18 +287,30 @@ form.well {
 .record-cell {
   position: relative;
   padding-left: 15px;
-  }
+}
+
 .record {
-    margin: 10px 20px 10px 5px;
-    .icon-pencil {
-        position: absolute !important;
-        top: 20px !important;
-        left: 0px !important;
-        z-index: 0 !important;
-        color: @grayLight !important;
-    }
-    input, select, textarea {
-      position: relative;
-      z-index: 1;
-    }
+  margin: 10px 20px 10px 5px;
+  .icon-pencil {
+      position: absolute !important;
+      top: 20px !important;
+      left: 0px !important;
+      z-index: 0 !important;
+      color: @grayLight !important;
+  }
+  input, select, textarea {
+    position: relative;
+    z-index: 1;
+  }
+}
+
+/* Faded out hr */
+hr.soften {
+  height: 1px;
+  margin: 54px 0;
+  background-image: -webkit-linear-gradient(left, rgba(0,0,0,0), rgba(0,0,0,.1), rgba(0,0,0,0));
+  background-image:    -moz-linear-gradient(left, rgba(0,0,0,0), rgba(0,0,0,.1), rgba(0,0,0,0));
+  background-image:     -ms-linear-gradient(left, rgba(0,0,0,0), rgba(0,0,0,.1), rgba(0,0,0,0));
+  background-image:      -o-linear-gradient(left, rgba(0,0,0,0), rgba(0,0,0,.1), rgba(0,0,0,0));
+  border: 0;
 }

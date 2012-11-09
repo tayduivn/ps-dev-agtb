@@ -41,52 +41,6 @@
     transition: all .2s linear;
 }
 
-#folded > div {
-    width: inherit;
-}
-
-#folded .tab-pane#overview {
-    border-left: none;
-}
-#folded .tab-pane.active#overview {
-    border-left: 1px solid darken(@grayLighter, 4%);
-    .box-shadow(~"inset 6px 0 6px rgba(0,0,0,.2)");
-}
-
-.container-fluid#contentflex {
-    margin: 0;
-    padding: 0;
-}
-
-#dashboard #folded .tab-pane.active {
-    position: fixed !important;
-    top: 47px;
-    right: 0;
-    background-image: url('@{textureSecondary}');
-    height: 100%;
-    overflow: auto;
-    width: inherit;
-    padding: 20px 0;
-    border-left: 3px solid @grayLight;
-}
-
-#dashboard #folded .tab-pane.active.hide {
-    display: none;
-}
-#folded .tab-pane.active {
-    top: 48px;
-    right: 0;
-    background-image: url('@{textureSecondary}');
-    height: 100%;
-    width: auto;
-    padding: 20px 1%;
-    border-left: 2px solid @grayLight;
-}
-#folded .tab-pane .block span.label  {margin: 0 10px 0 0;}
-#folded .tab-pane .block {width: 90%; margin-left: 5%;}
-#folded [data-toggle="tab"].actions {top: 0; color: @gray;}
-#dashboard  #folded .tab-pane.active .thumbnail {margin: 0 20px 20px;}
-
 //55231: fix detail listing view on notes
 //6062ae3b6ab9bac3f9d6f4742e316f5fac0d5b51
 .block span.label {
