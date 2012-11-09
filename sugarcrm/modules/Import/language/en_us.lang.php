@@ -115,6 +115,7 @@ $mod_strings = array (
     'LBL_IMPORT_MODULE_ERROR_LARGE_FILE' => 'File is too large. Max:',
     'LBL_IMPORT_MODULE_ERROR_LARGE_FILE_END' => 'Bytes. Change $sugar_config[\'upload_maxsize\'] in config.php',
     'LBL_MODULE_NAME' => 'Import',
+    'LBL_MODULE_NAME_SINGULAR' => 'Import',
     'LBL_TRY_AGAIN' => 'Try Again',
     'LBL_START_OVER' => 'Start Over',
     'LBL_ERROR' => 'Error:',

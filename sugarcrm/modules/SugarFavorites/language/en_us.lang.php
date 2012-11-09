@@ -37,6 +37,7 @@ $mod_strings = array (
   'LBL_TAG'=>'Tag',
   'LBL_LIST_FORM_TITLE' => 'Favorites List',
   'LBL_MODULE_NAME' => 'Favorites',
+  'LBL_MODULE_NAME_SINGULAR' => 'Favorite',
   'LBL_MODULE_TITLE' => 'Favorites',
   'LBL_HOMEPAGE_TITLE' => 'My Favorite Records',
   'LNK_NEW_RECORD' => 'Create Favorites',

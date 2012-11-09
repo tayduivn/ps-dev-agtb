@@ -196,7 +196,8 @@ $app_list_strings = array (
     'EAPM' => 'External Account',
 //END SUGARCRM flav=pro ONLY
     'Users' => 'User',
-  'SugarFavorites'=>'SugarFavorites'
+  'SugarFavorites'=>'SugarFavorites',
+   'Employees' => 'Employee',
 
         ),
 

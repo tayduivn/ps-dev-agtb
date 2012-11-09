@@ -39,6 +39,7 @@ $mod_strings = array (
 	'LBL_RELATED_TYPE'=>'Related Type',
 	'LBL_DELETED' => 'Deleted',
 	'LBL_MODULE_NAME' =>'Campaign Log',
+	'LBL_MODULE_NAME_SINGULAR' => 'Campaign Log',
 	'LBL_LIST_RECIPIENT_EMAIL'=>'Recipient Email',
 	'LBL_LIST_RECIPIENT_NAME'=>'Recipient Name',
 	'LBL_ARCHIVED'=>'Archived',
