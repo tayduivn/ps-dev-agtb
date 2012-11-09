@@ -47,12 +47,11 @@
                 {/if}
 
 			</div>
-		</div>
 	</div>
     <div class="clear"></div>
     
     <div class="modal-footer">
-    <a href="#" class="btn btn-primary">{$APP.LBL_TOUR_TAKE_TOUR}</a>
+    <a href="#" id="lamtest" class="btn btn-primary">{$APP.LBL_TOUR_TAKE_TOUR}</a>
     <a href="#" class="btn btn-invisible">{$APP.LBL_TOUR_SKIP}</a>
     </div>
 </div>
