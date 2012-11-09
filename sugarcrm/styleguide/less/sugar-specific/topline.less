@@ -1,150 +1,201 @@
 .topline {
-    position: relative;
-    .control-group.filter {
-        background-color: @grayLighter;
-        padding: 5px 5px 0px 5px;
-        margin-bottom: 0px;
-        border-bottom: 1px solid darken(@grayLighter,5%);
-        border-top: 1px solid darken(@grayLighter,5%);
-        position: relative;
-        .indicator {
-            position: absolute;
-            top: 6px;
-            right: 0;
-            padding-right: 15px;
+  position: relative;
 
-            .caret {
-                margin-top: 7px;
-                margin-left: 5px;
-            }
-        }
+  .control-group.filter {
+    background-color: @grayLighter;
+    padding: 5px 20px 0px 20px;
+    margin-bottom: 0px;
+    border-bottom: 1px solid darken(@grayLighter,5%);
+    border-top: 1px solid darken(@grayLighter,5%);
+    position: relative;
+    .indicator {
+      position: absolute;
+      top: 6px;
+      right: 0;
+      padding-right: 15px;
+      .caret {
+        margin-top: 7px;
+        margin-left: 5px;
+      }
+    }
+  }
+
+  .control-group.datefilter {
+    float: left;
+
+    .chzn-single span {
+      font-size: 22px;
     }
 
-    .control-group.datefilter {
-        float: left;
-        .chzn-single span {
-            font-size: 22px;
-        }
+    .chzn-single {
+      border: 0px none;
+      background-image: none;
+      background-color: transparent;
+      .box-shadow(none);
+      padding-left: 0px;
+    }
 
-        .chzn-single {
-            border: 0px none;
-            background-image: none;
-            background-color: transparent;
-            .box-shadow(none);
-            padding-left: 0px;
-        }
+    .chzn-single:focus {
+      .box-shadow(none);
+      border: 0 none;
+    }
 
-        .chzn-single:focus {
-            .box-shadow(none);
-            border: 0 none;
-        }
+    .chzn-container-single .chzn-single div {
+      right: 22px;
+    }
 
-        .chzn-container-single .chzn-single div {
-            right: 22px;
-        }
-
-        .chzn-container-single .chzn-search {
-            display: none;
-        }
-
-        select {
-            width: 160px;
-        }
+    .chzn-container-single .chzn-search {
+      display: none;
     }
 
     select {
-        width: 130px;
+      width: 160px;
     }
+  }
+
+  select {
+    width: 130px;
+  }
+
+  h2 {
+    padding: 0 !important;
+    font-size: 20px;
+    line-height: 28px;
+  }
+
+  hr {
+    margin: 8px 0 -1px;
+    padding: 0;
+    border-top: 2px solid @grayLight;
+  }
+
+  table {
+    margin: 0;
+  }
+
+  /*h2 {
+    padding: 0 5px 0 0 !important;
+    display: inline;
+  }*/
+  .btn {
+    position: absolute;
+    right: 10px;
+    top: 10px;
+  }
+
+  .title {
+    padding: 10px 10px 0 0;
+    margin-left: 20px;
+    float: left;
+  }
+
+  /*.datapoint1,
+  .log .datapoint1 {
+    right: -20px;
+  }
+  .datapoint2,
+  .log .datapoint2 {
+    right: 110px;
+  }*/
+
+  .datapoint1 {
+    float: right;
+    margin-top: 10px;
+    min-width: 120px;
+    padding-right: 20px;
+  }
+  .datapoint2 {
+    float: right;
+    margin-top: 10px;
+    min-width: 120px;
+  }
+
+  .log {
+    position: absolute;
+    overflow: hidden;
+    top: 57px;
+    color: lighten(@gray, 20%); !important;
+    .datapoint1,
+    .datapoint2 {
+      position: absolute;
+      top: 0;
+      width: 120px;
+    }
+    .datapoint1 {
+      right: 150px;
+    }
+    .datapoint2 {
+      right: 20px;
+    }
+
+    .title {
+      padding: 0px 20px 10px 0;
+    }
+  }
+
+  > div.divider {
+    right: 121px;
+    border-right: 1px solid darken(@grayLighter,5%);
+    height: 80px;
+    width: 1px;
+    float: right;
+    top: 0px;
+    padding-left: 10px;
+     margin-right: 10px;
+  }
+
+  .extend {
+    background-color: darken(@gray, 10%);
+    background-color: darken(@gray, 15%) e("\9");
+    background-image: none;
+    color: @grayLighter !important;
+    text-shadow: 0 1px 1px rgba(0,0,0,.75);
+    outline: 0;
+    .box-shadow(~"inset 0 1px 3px rgba(0,0,0,.5)");
+  }
+
+  .row-fluid {
+    margin: 0;
+    padding: 0;
+  }
+
+  .icon-arrow-down:before {
+    color: @red;
+  }
+
+  .icon-arrow-up:before {
+    color: @green;
+  }
 }
-.results {position: relative;
+
+/* from nutmeg
+  .topline {
+
+    div.divider {
+      float: left;
+      right: auto;
+    }
+
+    .datapoints {
+      float: right;
+    }
+
+    .datapoint {
+      float: left;
+      margin-top: 10px;
+      min-width: 120px;
+    }
+
+    .datapoint:last-child {
+      padding-right: 10px;
+    }
+  }
+  */
+.results {
+  position: relative;
   margin: 0 0 0 0;
   padding: 0;
 }
-.data2 {font-size: 12px;}
-.topline h2 {
-  padding: 0 5px 0 0 !important;
-  font-size: 20px;
-  line-height: 28px;
-  display: inline;
-}
-.topline .btn {
-  position: absolute;
-  right: 10px;
-  top: 10px;
-}
-.topline .title {
-  padding: 10px 20px;
-}
-.topline .datapoint1 {
-  float: right;
-  margin-top: 10px;
-  min-width: 120px;
-  padding-right: 10px;
-}
-.topline .datapoint2 {
-  float: right;
-  margin-top: 10px;
-  min-width: 120px;
-}
-.topline .log .title {
-  padding: 0px 20px 10px;
-}
-.topline .log .datapoint1 {
-  position: absolute;
-  right: 150px;
-  top: 0;
-  width: 120px;
-}
-.topline .log .datapoint2 {
-  position: absolute;
-  right: 20px;
-  top: 0;
-  width: 120px;
-}
-
-.topline > div.divider {
-  border-right: 1px solid darken(@grayLighter,5%);
-  height: 80px;
-  width: 1px;
-  float: right;
-  top: 0px;
-  padding-left: 10px;
-   margin-right: 10px;
-}
-.topline .log {
-  position: absolute;
-  overflow: hidden;
-  top: 57px;
-  color: lighten(@gray, 20%); !important;
-}
-
-.topline .extend {
-  background-color: darken(@gray, 10%);
-  background-color: darken(@gray, 15%) e("\9");
-  background-image: none;
-  color: @grayLighter !important;
-  text-shadow: 0 1px 1px rgba(0,0,0,.75);
-  outline: 0;
-  .box-shadow(~"inset 0 1px 3px rgba(0,0,0,.5)");
-}
-
-.topline .row-fluid {
-  margin: 0;
-  padding: 0;
-}
-.topline hr {
-  margin: 8px 0 -1px;
-  padding: 0;
-  border-top: 2px solid @grayLight;
-}
-.topline table {
-  margin: 0;
-}
-
-.topline .icon-arrow-down:before {
-    color: @red;
-}
-
-.topline .icon-arrow-up:before {
-    color: @green;
+.data2 {
+  font-size: 12px;
 }
