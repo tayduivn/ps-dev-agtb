@@ -8287,11 +8287,6 @@ table th:first-child, table td:first-child { padding-left:20px; }
   filter:alpha(opacity=60);
 }
 .card2 form, .card2 input, .card2 select, .card2 textarea { margin:-5px 0 0 -2px !important; }
-.modal-body .tab-content {
-  overflow:auto;
-  height:310px;
-}
-.modal-body textarea { text-align:left; }
 .navbar a [class^="icon-"] {
   color:#ffffff !important;
   font-size:14px;
