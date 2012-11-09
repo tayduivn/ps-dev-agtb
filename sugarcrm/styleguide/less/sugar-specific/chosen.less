@@ -1,5 +1,6 @@
 
-#sales_stage_filter_chzn, #date_filter_chzn {
+#sales_stage_filter_chzn,
+#date_filter_chzn {
   .chzn-drop {
     padding: 10px;
   }
@@ -8,6 +9,7 @@
     background-position: 0px 0px;
   }
 }
+
 .chzn-container-active .chzn-single-with-drop {
   background: @grayLighter;
   border: 1px solid @grayLight;
@@ -30,13 +32,132 @@
   border-bottom: 1px solid darken(@grayLighter, 5%);
 }
 
+#sales_stage_filter_chzn .chzn-drop,
+#date_filter_chzn .chzn-drop {
+  padding: 0;
+}
+
 #date_filter_chzn.chzn-container .chzn-drop.carettop {
   .caret-top(auto,auto,24px,23px);
 }
 
 .chzn-container-multi .chzn-choices .search-field input {
   margin: 0;
-  padding: 0 0 0 8px;
+  padding: 3px 0 0 8px;
   height: 26px;
   line-height: 19px;
+}
+
+/* everything below this is from nutmeg */
+.control-group.filter .chzn-container,
+#date_filter_chzn {
+  .chzn-drop {
+    padding: 10px;
+    border: 1px solid @grayLight;
+  }
+
+  .chzn-single-with-drop div b {
+    background-position: 0px 0px;
+  }
+}
+
+.control-group.filter {
+  .indicator {
+    cursor: pointer;
+  }
+  .chzn-container {
+    .chzn-drop {
+      .caret-top(auto,auto,12px,11px);
+    }
+  }
+}
+
+#date_filter_chzn.chzn-container {
+  .chzn-drop {
+    .caret-top(auto,auto,24px,23px);
+  }
+}
+
+.legend .label {
+  background-color: transparent !important;
+}
+
+/* New Filter https://sugarcrm.atlassian.net/browse/UIUX-117 */
+#sales_stage_filter_chzn {
+  width: 100% !important;
+  margin-bottom: 4px;
+  .search-choice {
+    border-radius: 10px !important;
+    -webkit-border-radius: 10px !important;
+    border: none !important;
+  }
+  .search-choice {
+    background: #E4E4E4;
+    margin-top: 4px;
+    &>a {
+      height: 12px;
+      width: 12px;
+      .border-radius(6px);
+      background-color: #908f8e;
+      background-image: url('@{baseUrl}/img/chosen-sprite-invert.png');
+    }
+  }
+  .chzn-results {
+    .icon-ok {
+      position: absolute;
+      margin-top: -22px;
+      margin-left: 2px;
+      z-index: 1;
+    }
+    &> li {
+      position: relative;
+      text-indent: 22px;
+      z-index: 1;
+      &.active-result {
+        z-index: 2;
+      }
+      &:not(:hover) {
+        background: @white;
+        color: @black;
+      }
+    }
+  }
+}
+
+.filter {
+  position: relative;
+  .chzn-container-multi .chzn-drop .result-selected {
+    display: block;
+    font-weight: bold;
+
+    &:before { //content:"â\00a0\00a0\00a0";
+    //content:"\f00c\00a0\00a0\00a0";
+    }
+  }
+  &.forecast {
+    .chzn-container-active .chzn-drop {
+      right: 0px !important;
+      left: auto !important;
+    }
+  }
+}
+
+.chzn-select-legend {
+  position: absolute;
+  top: 0px;
+  right: 0px;
+  float: right;
+  display: inline-block !important;
+  width: auto;
+  font-size: 12px;
+  border: 0;
+  margin: 0;
+  line-height: 2.2em;
+  color: #999;
+  cursor: pointer;
+  .icon-caret-down {
+    margin-left: 6px;
+    margin-right: 15px;
+    line-height: 4px;
+  }
 }
