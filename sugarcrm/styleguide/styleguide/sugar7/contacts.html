@@ -4,6 +4,7 @@
   <meta charset="utf-8">
   <title>Contacts - SugarCRM</title>
   <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+  <meta http-equiv="x-ua-compatible" content="IE=8">
   <meta name="description" content="">
   <meta name="author" content="">
   <!--[if lt IE 9]>
@@ -12,434 +13,445 @@
   <link href="../css/bootstrap.css" rel="stylesheet">
 </head>
 <body>
-  <div class="navbar navbar-fixed-top">
-    <div class="navbar-inner">
-      <div class="container-fluid">
-        <div class="nav-collapse">
-          <ul class="nav">
-            <li><a class="cube" href="dashboard.html" rel="tooltip" title="Dashboard"></a></li>
-            <li><a href="accounts.html">Accounts</a></li>
-            <li class="active"><a href="contacts.html">Contacts</a></li>
-            <li><a href="forecast.html">Forecasts</a></li>
-            <li><a href="opportunities.html">Opportunities</a></li>
-            <li class="dropdown">
-              <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="icon-chevron-down"></i></a>
-              <ul class="dropdown-menu">
-                <li id="gen17"><a href="index.php?module=Campaigns&amp;action=index" id="moduleTab_Campaigns">Campaigns</a></li>
-                <li id="gen18"><a href="index.php?module=Quotes&amp;action=index" id="moduleTab_Quotes">Quotes</a></li>
-                <li id="gen19"><a href="#ajaxUILoc=index.php%3Fmodule%3DSubscriptions%26action%3Dindex" id="moduleTab_Subscriptions">Subscriptions</a></li>
-              </ul>
-            </li>
-          </ul>
-          <ul class="nav pull-right">
-            <li class="divider-vertical"></li>
-            <li class="dropdown">
-              <button href="#" class="btn btn-danger dropdown-toggle" data-toggle="dropdown">3</button>
-              <ul class="dropdown-menu">
-                <li><a href="">System-wide maintenance &hellip;</a></li>
-                <li><a href="">Upgrade to 7.0!</a></li>
-                <li><a href="">Please take our survey.</a></li>
-              </ul>
-            </li>
-            <li class="divider-vertical"></li>
-            <li class="dropdown">
-              <a href="#" class="dropdown-toggle" data-toggle="dropdown"><img src="../img/avatar_sabra.jpg" alt="skahn" class="avatar">skhan <b class="caret"></b></a>
-              <ul class="dropdown-menu">
-                <li><a href="profile_skhan.html">Profile</a></li>
-                <li><a href="#">Password</a></li>
-                <li><a href="#">Advanced</a></li>
-                <li><a href="#">External Accounts</a></li>
-                <li><a href="#">Log Out</a></li>
-              </ul>
-            </li>
-            <li class="divider-vertical"></li>
-            <li class="dropdown">
-              <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="icon-plus icon-md"></i> <b class="caret"></b></a>
-              <ul class="dropdown-menu quick">
-                <li><a href="create_account.html">Create Account</a></li>
-                <li><a data-toggle="modal" href="#contactModal">Create Contact</a></li>
-                <li><a href="create.html">Create Opportunity</a></li>
-              </ul>
-            </li>
-          </ul>
-          <div id="searchForm">
-            <form class="navbar-search pull-right" action="">
-              <input type="text" class="search-query span2" placeholder="Search" data-provide="typeahead" data-items="10" data-source="[&quot;Bad links in Pitch&quot;,&quot;Broken images in pdf&quot;,&quot;Misspellings everywhere&quot;,&quot;404 on faq&quot;,&quot;HTML is broken&quot;,&quot;Page link is not redirecting&quot;,&quot;Improper text in search placeholder&quot;,&quot;Misaligned elements&quot;,&quot;Need new text on log in&quot;,&quot;Image broken on profile&quot;]">
-              <div class="advanced">
-                <div class="pull-right">
-                  <div class="btn-group">
-                    <a class="advanced dropdown-toggle" data-toggle="dropdown" href="#">
-                      <span class="caret"></span>
-                    </a>
+  <div id="sugarcrm">
+    <div id="sidecar">
+      <div id="alert" class="alert-top"></div>
+      <div id="header">
+        <div class="navbar navbar-fixed-top">
+          <div class="navbar-inner">
+            <div class="container-fluid">
+              <div class="nav-collapse">
+                <ul class="nav">
+                  <li><a class="cube" href="dashboard.html" rel="tooltip" title="Dashboard"></a></li>
+                  <li><a href="accounts.html">Accounts</a></li>
+                  <li class="active"><a href="contacts.html">Contacts</a></li>
+                  <li><a href="forecast.html">Forecasts</a></li>
+                  <li><a href="opportunities.html">Opportunities</a></li>
+                  <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="icon-chevron-down"></i></a>
                     <ul class="dropdown-menu">
-                      <li class="title">Advanced Search:</li>
-                      <li><input type="checkbox"> Accounts</li>
-                      <li><input type="checkbox"> Cases</li>
-                      <li><input type="checkbox"> Opportunities</li>
-                      <li><input type="checkbox"> Reports</li>
+                      <li id="gen17"><a href="index.php?module=Campaigns&amp;action=index" id="moduleTab_Campaigns">Campaigns</a></li>
+                      <li id="gen18"><a href="index.php?module=Quotes&amp;action=index" id="moduleTab_Quotes">Quotes</a></li>
+                      <li id="gen19"><a href="#ajaxUILoc=index.php%3Fmodule%3DSubscriptions%26action%3Dindex" id="moduleTab_Subscriptions">Subscriptions</a></li>
                     </ul>
-                    <a class="btn btn-inverse" href="#"><i class="icon icon-search"></i></a>
+                  </li>
+                </ul>
+                <ul class="nav pull-right">
+                  <li class="divider-vertical"></li>
+                  <li class="dropdown">
+                    <button href="#" class="btn btn-danger dropdown-toggle" data-toggle="dropdown">3</button>
+                    <ul class="dropdown-menu">
+                      <li><a href="">System-wide maintenance &hellip;</a></li>
+                      <li><a href="">Upgrade to 7.0!</a></li>
+                      <li><a href="">Please take our survey.</a></li>
+                    </ul>
+                  </li>
+                  <li class="divider-vertical"></li>
+                  <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown"><img src="../img/avatar_sabra.jpg" alt="skahn" class="avatar">skhan <b class="caret"></b></a>
+                    <ul class="dropdown-menu">
+                      <li><a href="profile_skhan.html">Profile</a></li>
+                      <li><a href="#">Password</a></li>
+                      <li><a href="#">Advanced</a></li>
+                      <li><a href="#">External Accounts</a></li>
+                      <li><a href="#">Log Out</a></li>
+                    </ul>
+                  </li>
+                  <li class="divider-vertical"></li>
+                  <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="icon-plus icon-md"></i> <b class="caret"></b></a>
+                    <ul class="dropdown-menu quick">
+                      <li><a href="create_account.html">Create Account</a></li>
+                      <li><a data-toggle="modal" href="#contactModal">Create Contact</a></li>
+                      <li><a href="create.html">Create Opportunity</a></li>
+                    </ul>
+                  </li>
+                </ul>
+                <div id="searchForm">
+                  <form class="navbar-search pull-right" action="">
+                    <input type="text" class="search-query span2" placeholder="Search" data-provide="typeahead" data-items="10" data-source="[&quot;Bad links in Pitch&quot;,&quot;Broken images in pdf&quot;,&quot;Misspellings everywhere&quot;,&quot;404 on faq&quot;,&quot;HTML is broken&quot;,&quot;Page link is not redirecting&quot;,&quot;Improper text in search placeholder&quot;,&quot;Misaligned elements&quot;,&quot;Need new text on log in&quot;,&quot;Image broken on profile&quot;]">
+                    <div class="advanced">
+                      <div class="pull-right">
+                        <div class="btn-group">
+                          <a class="advanced dropdown-toggle" data-toggle="dropdown" href="#">
+                            <span class="caret"></span>
+                          </a>
+                          <ul class="dropdown-menu">
+                            <li class="title">Advanced Search:</li>
+                            <li><input type="checkbox"> Accounts</li>
+                            <li><input type="checkbox"> Cases</li>
+                            <li><input type="checkbox"> Opportunities</li>
+                            <li><input type="checkbox"> Reports</li>
+                          </ul>
+                          <a class="btn btn-inverse" href="#"><i class="icon icon-search"></i></a>
+                        </div>
+                      </div>
+                    </div>
+                  </form>
+                </div>
+              </div><!-- /.nav-collapse -->
+            </div>
+          </div><!-- /navbar-inner -->
+        </div>
+      </div>
+      <div id="content">
+        <div class="layout_Contacts container-fluid">
+          <div class="row-fluid">
+            <div class="main-pane span8">
+              <div class="headerpane">
+                <h1>Contacts</h1>
+                <div class="btn-toolbar pull-right dropdown">
+                  <a href="#createAccount" data-toggle="modal" title="Create Account" class="btn btn-primary">Create</a>
+                  <a href="#" title="Create Account" class="btn btn-invisible drawerTrig"><i class="icon-chevron-right"></i></a>
+                </div>
+              </div>
+               <form class="form-search" action="">
+              <div class="row-fluid">
+                <div class="span9 myfilter">
+                  <input value="" placeholder="Search contacts..." class="span12">
+                  <div class="actions btn-group dropdown">
+                    <a href="" data-toggle="dropdown" class="dropdown-toggle btn btn-invisible">Filter &nbsp;<i class="icon-caret-down"></i></a>
+                    <ul class="dropdown-menu carettop">
+                      <li><a href="#myAccount">My accounts</a></li>
+                      <li><a href="#myContacts">My contacts</a></li>
+                      <li><a href="#myOpportunities">My opportunities</a></li>
+                      <li class="primary"><a href="#createFilter" class="newfilter">+ Create a filter</a></li>
+                    </ul>
+                  </div>
+                  </div>
+                  <div class="span3">
+                    <div class="pull-right">
+                      <a href="" class="btn btn-invisible"><i class="icon-th-list"></i></a>
+                      <a href="" class="btn btn-invisible"><i class="icon-time"></i></a>
+                      <a href="" class="btn btn-invisible"><i class="icon-calendar"></i></a>
+                      <a href="" class="btn btn-invisible active"><i class="icon-table"></i></a>
+                    </div>
                   </div>
                 </div>
-              </div>
-            </form>
-          </div>
-        </div><!-- /.nav-collapse -->
-      </div>
-    </div><!-- /navbar-inner -->
-  </div>
-  <div class="container-fluid">
-    <div class="row-fluid">
-      <div class="span8 main-pane">
-        <div class="headerpane">
-          <h1>Contacts</h1>
-          <div class="btn-toolbar pull-right dropdown">
-            <a href="#createAccount" data-toggle="modal" title="Create Account" class="btn btn-primary">Create</a>
-            <a href="#" title="Create Account" class="btn btn-invisible drawerTrig"><i class="icon-chevron-right"></i></a>
-          </div>
-        </div>
-         <form class="form-search" action="">
-        <div class="row-fluid">
-          <div class="span9 myfilter">
-            <input value="" placeholder="Search contacts..." class="span12">
-            <div class="actions btn-group dropdown">
-              <a href="" data-toggle="dropdown" class="dropdown-toggle btn btn-invisible">Filter &nbsp;<i class="icon-caret-down"></i></a>
-              <ul class="dropdown-menu carettop">
-                <li><a href="#myAccount">My accounts</a></li>
-                <li><a href="#myContacts">My contacts</a></li>
-                <li><a href="#myOpportunities">My opportunities</a></li>
-                <li class="primary"><a href="#createFilter" class="newfilter">+ Create a filter</a></li>
-              </ul>
-            </div>
-            </div>
-            <div class="span3">
-              <div class="pull-right">
-                <a href="" class="btn btn-invisible"><i class="icon-th-list"></i></a>
-                <a href="" class="btn btn-invisible"><i class="icon-time"></i></a>
-                <a href="" class="btn btn-invisible"><i class="icon-calendar"></i></a>
-                <a href="" class="btn btn-invisible active"><i class="icon-table"></i></a>
-              </div>
-            </div>
-          </div>
-          <div class="filtered extend results hide">
-            <article class="filtered-header">
-              <input placeholder="Select a name...">
-              <div class="pull-right dropdown">
-                <a href="" class="btn">Save</a><a href="" class="btn btn-invisible"><i class="icon-remove"></i></a>
-              </div>
-            </article>
-            <article class="filtered-body">
-              <select class="chzn-select span2 buildit">
-                <option>Name</option>
-                <option>Sales Stage</option>
-              </select>
-              <select class="chzn-select span2">
-                <option>matches</option>
-              </select>
-              <input placeholder="Select a name...">
-              <a href="" class="btn btn-invisible pull-right addme"><i class="icon-plus"></i></a>
-            </article>
-          </div>
-          <div class="mu extend results hide">
-            <article class="filtered-header">
-              <strong>Mass Update</strong>
-              <div class="btn-group pull-right dropdown">
-                <a href="" class="btn">update</a>
-              </div>
-            </article>
-            <article class="filtered-body">
-              <select class="chzn-select buildit">
-                <option>Name</option>
-                <option>Sales Stage</option>
-              </select>
-              <select class="chzn-select">
-                <option>matches</option>
-              </select>
-              <input placeholder="Select a name...">
-              <a href="" class="btn btn-invisible pull-right addme"><i class="icon-plus"></i></a>
-            </article>
-          </div>
-        </form>
-        <table class="table datatable">
-          <thead>
-            <tr>
-              <th class="nosort">
-                <div class="btn-group">
-                  <b class="btn"><input type="checkbox" class="toggle-all"></b>
-                  <a class="btn dropdown-toggle" data-toggle="dropdown" href="#"> <span class="caret"></span></a>
-                  <ul class="dropdown-menu">
-                    <li><a href="#">Email</a></li>
-                    <li><a href="#" class="tmu">Mass Update</a></li>
-                    <li><a href="#">Merge</a></li>
-                    <li><a href="#">Export</a></li>
-                  </ul>
+                <div class="filtered extend results hide">
+                  <article class="filtered-header">
+                    <input placeholder="Select a name...">
+                    <div class="pull-right dropdown">
+                      <a href="" class="btn">Save</a><a href="" class="btn btn-invisible"><i class="icon-remove"></i></a>
+                    </div>
+                  </article>
+                  <article class="filtered-body">
+                    <select class="chzn-select span2 buildit">
+                      <option>Name</option>
+                      <option>Sales Stage</option>
+                    </select>
+                    <select class="chzn-select span2">
+                      <option>matches</option>
+                    </select>
+                    <input placeholder="Select a name...">
+                    <a href="" class="btn btn-invisible pull-right addme"><i class="icon-plus"></i></a>
+                  </article>
                 </div>
-              </th>
-              <th>Name</th>
-              <th>City</th>
-              <th>Country</th>
-              <th>Phone</th>
-              <th>Email</th>
-              <th class="nosort morecol">
-                <a href="" data-toggle="dropdown" class="dropdown-toggle">. . .</a>
-                <ul class="dropdown-menu left carettop">
-                  <li><a href="#myAccount">Column1</a></li>
-                  <li><a href="#myContacts">Column2</a></li>
-                  <li><a href="#myOpportunities">Column3</a></li>
-                </ul>
-              </th>
-            </tr>
-          </thead>
-          <tbody id="listed">
-            <tr>
-              <td><input type="checkbox"> <i class="icon-star"></i></td>
-              <td><a href="opportunity_plato.html">Plato's LED MFT</a></td>
-              <td><span class="dblclick">Cupertino</span></td>
-              <td><span class="dblclick">USA</span></td>
-              <td><span class="dblclick">(408) 555-5271</span></td>
-              <td><a href="mailto:sales@perkins.com">sales@perkins.com</a></td>
-              <td>
-                <span class="hide actions dropdown pull-right btn-group">
-                  <a class="btn" href="#"><i class="icon-eye-open"></i></a>
-                  <a class="btn dropdown-toggle" data-toggle="dropdown" href="#"><span class="icon-caret-down"></span></a>
-                  <ul class="dropdown-menu">
-                    <li><a href="#"><i class="icon-pencil"></i> Edit</a></li>
-                    <li><a href="#"><i class="icon-trash"></i> Delete</a></li>
-                  </ul>
-                </span>
-              </td>
-            </tr>
-            <tr>
-              <td><input type="checkbox"> <i class="icon-star"></i></td>
-              <td><a href="opportunity_plato.html">Plato's LED MFT</a></td>
-              <td><span class="dblclick">Cupertino</span></td>
-              <td><span class="dblclick">USA</span></td>
-              <td><span class="dblclick">(408) 555-5271</span></td>
-              <td><a href="mailto:sales@perkins.com">sales@perkins.com</a></td>
-              <td>
-                <span class="hide actions dropdown pull-right btn-group">
-                  <a class="btn" href="#"><i class="icon-eye-open"></i></a>
-                  <a class="btn dropdown-toggle" data-toggle="dropdown" href="#"><span class="icon-caret-down"></span></a>
-                  <ul class="dropdown-menu">
-                    <li><a href="#"><i class="icon-pencil"></i> Edit</a></li>
-                    <li><a href="#"><i class="icon-trash"></i> Delete</a></li>
-                  </ul>
-                </span>
-              </td>
-            </tr>
-            <tr>
-              <td><input type="checkbox"> <i class="icon-star"></i></td>
-              <td><a href="opportunity_plato.html">Plato's LED MFT</a></td>
-              <td><span class="dblclick">Cupertino</span></td>
-              <td><span class="dblclick">USA</span></td>
-              <td><span class="dblclick">(408) 555-5271</span></td>
-              <td><a href="mailto:sales@perkins.com">sales@perkins.com</a></td>
-              <td>
-                <span class="hide actions dropdown pull-right btn-group">
-                  <a class="btn" href="#"><i class="icon-eye-open"></i></a>
-                  <a class="btn dropdown-toggle" data-toggle="dropdown" href="#"><span class="icon-caret-down"></span></a>
-                  <ul class="dropdown-menu">
-                    <li><a href="#"><i class="icon-pencil"></i> Edit</a></li>
-                    <li><a href="#"><i class="icon-trash"></i> Delete</a></li>
-                  </ul>
-                </span>
-              </td>
-            </tr>
-            <tr>
-              <td><input type="checkbox"> <i class="icon-star"></i></td>
-              <td><a href="opportunity_plato.html">Plato's LED MFT</a></td>
-              <td><span class="dblclick">Cupertino</span></td>
-              <td><span class="dblclick">USA</span></td>
-              <td><span class="dblclick">(408) 555-5271</span></td>
-              <td><a href="mailto:sales@perkins.com">sales@perkins.com</a></td>
-              <td>
-                <span class="hide actions dropdown pull-right btn-group">
-                  <a class="btn" href="#"><i class="icon-eye-open"></i></a>
-                  <a class="btn dropdown-toggle" data-toggle="dropdown" href="#"><span class="icon-caret-down"></span></a>
-                  <ul class="dropdown-menu">
-                    <li><a href="#"><i class="icon-pencil"></i> Edit</a></li>
-                    <li><a href="#"><i class="icon-trash"></i> Delete</a></li>
-                  </ul>
-                </span>
-              </td>
-            </tr>
-            <tr>
-              <td><input type="checkbox"> <i class="icon-star"></i></td>
-              <td><a href="opportunity_plato.html">Plato's LED MFT</a></td>
-              <td><span class="dblclick">San Francisco</span></td>
-              <td><span class="dblclick">USA</span></td>
-              <td><span class="dblclick">	(202) 312-5472</span></td>
-              <td><a href="mailto:sales.support.im@example.com">sales.support.im@example.com</a></td>
-              <td>
-                <span class="hide actions dropdown pull-right btn-group">
-                  <a class="btn" href="#"><i class="icon-eye-open"></i></a>
-                  <a class="btn dropdown-toggle" data-toggle="dropdown" href="#"><span class="icon-caret-down"></span></a>
-                  <ul class="dropdown-menu">
-                    <li><a href="#"><i class="icon-pencil"></i> Edit</a></li>
-                    <li><a href="#"><i class="icon-trash"></i> Delete</a></li>
-                  </ul>
-                </span>
-              </td>
-            </tr>
-            <tr>
-              <td><input type="checkbox"> <i class="icon-star"></i></td>
-              <td><a href="opportunity_plato.html">Plato's LED MFT</a></td>
-              <td><span class="dblclick">Cupertino</span></td>
-              <td><span class="dblclick">USA</span></td>
-              <td><span class="dblclick">(408) 555-5271</span></td>
-              <td><a href="mailto:sales@perkins.com">sales@perkins.com</a></td>
-              <td>
-                <span class="hide actions dropdown pull-right btn-group">
-                  <a class="btn" href="#"><i class="icon-eye-open"></i></a>
-                  <a class="btn dropdown-toggle" data-toggle="dropdown" href="#"><span class="icon-caret-down"></span></a>
-                  <ul class="dropdown-menu">
-                    <li><a href="#"><i class="icon-pencil"></i> Edit</a></li>
-                    <li><a href="#"><i class="icon-trash"></i> Delete</a></li>
-                  </ul>
-                </span>
-              </td>
-            </tr>
-            <tr>
-              <td><input type="checkbox"> <i class="icon-star"></i></td>
-              <td><a href="opportunity_plato.html">Plato's LED MFT</a></td>
-              <td><span class="dblclick">Cupertino</span></td>
-              <td><span class="dblclick">USA</span></td>
-              <td><span class="dblclick">(408) 555-5271</span></td>
-              <td><a href="mailto:sales@perkins.com">sales@perkins.com</a></td>
-              <td>
-                <span class="hide actions dropdown pull-right btn-group">
-                  <a class="btn" href="#"><i class="icon-eye-open"></i></a>
-                  <a class="btn dropdown-toggle" data-toggle="dropdown" href="#"><span class="icon-caret-down"></span></a>
-                  <ul class="dropdown-menu">
-                    <li><a href="#"><i class="icon-pencil"></i> Edit</a></li>
-                    <li><a href="#"><i class="icon-trash"></i> Delete</a></li>
-                  </ul>
-                </span>
-              </td>
-            </tr>
-            <tr>
-              <td><input type="checkbox"> <i class="icon-star"></i></td>
-              <td><a href="opportunity_plato.html">Plato's LED MFT</a></td>
-              <td><span class="dblclick">Cupertino</span></td>
-              <td><span class="dblclick">USA</span></td>
-              <td><span class="dblclick">(408) 555-5271</span></td>
-              <td><a href="mailto:sales@perkins.com">sales@perkins.com</a></td>
-              <td>
-                <span class="hide actions dropdown pull-right btn-group">
-                  <a class="btn" href="#"><i class="icon-eye-open"></i></a>
-                  <a class="btn dropdown-toggle" data-toggle="dropdown" href="#"><span class="icon-caret-down"></span></a>
-                  <ul class="dropdown-menu">
-                    <li><a href="#"><i class="icon-pencil"></i> Edit</a></li>
-                    <li><a href="#"><i class="icon-trash"></i> Delete</a></li>
-                  </ul>
-                </span>
-              </td>
-            </tr>
-            <tr>
-              <td><input type="checkbox"> <i class="icon-star"></i></td>
-              <td><a href="opportunity_plato.html">Plato's LED MFT</a></td>
-              <td><span class="dblclick">Cupertino</span></td>
-              <td><span class="dblclick">USA</span></td>
-              <td><span class="dblclick">(408) 555-5271</span></td>
-              <td><a href="mailto:sales@perkins.com">sales@perkins.com</a></td>
-              <td>
-                <span class="hide actions dropdown pull-right btn-group">
-                  <a class="btn" href="#"><i class="icon-eye-open"></i></a>
-                  <a class="btn dropdown-toggle" data-toggle="dropdown" href="#"><span class="icon-caret-down"></span></a>
-                  <ul class="dropdown-menu">
-                    <li><a href="#"><i class="icon-pencil"></i> Edit</a></li>
-                    <li><a href="#"><i class="icon-trash"></i> Delete</a></li>
-                  </ul>
-                </span>
-              </td>
-            </tr>
-            <tr>
-              <td><input type="checkbox"> <i class="icon-star"></i></td>
-              <td><a href="opportunity_plato.html">Plato's LED MFT</a></td>
-              <td><span class="dblclick">San Francisco</span></td>
-              <td><span class="dblclick">USA</span></td>
-              <td><span class="dblclick">	(202) 312-5472</span></td>
-              <td><a href="mailto:sales.support.im@example.com">sales.support.im@example.com</a></td>
-              <td>
-                <span class="hide actions dropdown pull-right btn-group">
-                  <a class="btn" href="#"><i class="icon-eye-open"></i></a>
-                  <a class="btn dropdown-toggle" data-toggle="dropdown" href="#"><span class="icon-caret-down"></span></a>
-                  <ul class="dropdown-menu">
-                    <li><a href="#"><i class="icon-pencil"></i> Edit</a></li>
-                    <li><a href="#"><i class="icon-trash"></i> Delete</a></li>
-                  </ul>
-                </span>
-              </td>
-            </tr>
-          </tbody>
-        </table>
+                <div class="mu extend results hide">
+                  <article class="filtered-header">
+                    <strong>Mass Update</strong>
+                    <div class="btn-group pull-right dropdown">
+                      <a href="" class="btn">update</a>
+                    </div>
+                  </article>
+                  <article class="filtered-body">
+                    <select class="chzn-select buildit">
+                      <option>Name</option>
+                      <option>Sales Stage</option>
+                    </select>
+                    <select class="chzn-select">
+                      <option>matches</option>
+                    </select>
+                    <input placeholder="Select a name...">
+                    <a href="" class="btn btn-invisible pull-right addme"><i class="icon-plus"></i></a>
+                  </article>
+                </div>
+              </form>
+              <table class="table datatable">
+                <thead>
+                  <tr>
+                    <th class="nosort">
+                      <div class="btn-group">
+                        <b class="btn"><input type="checkbox" class="toggle-all"></b>
+                        <a class="btn dropdown-toggle" data-toggle="dropdown" href="#"> <span class="caret"></span></a>
+                        <ul class="dropdown-menu">
+                          <li><a href="#">Email</a></li>
+                          <li><a href="#" class="tmu">Mass Update</a></li>
+                          <li><a href="#">Merge</a></li>
+                          <li><a href="#">Export</a></li>
+                        </ul>
+                      </div>
+                    </th>
+                    <th>Name</th>
+                    <th>City</th>
+                    <th>Country</th>
+                    <th>Phone</th>
+                    <th>Email</th>
+                    <th class="nosort morecol">
+                      <a href="" data-toggle="dropdown" class="dropdown-toggle">. . .</a>
+                      <ul class="dropdown-menu left carettop">
+                        <li><a href="#myAccount">Column1</a></li>
+                        <li><a href="#myContacts">Column2</a></li>
+                        <li><a href="#myOpportunities">Column3</a></li>
+                      </ul>
+                    </th>
+                  </tr>
+                </thead>
+                <tbody id="listed">
+                  <tr>
+                    <td><input type="checkbox"> <i class="icon-star"></i></td>
+                    <td><a href="opportunity_plato.html">Plato's LED MFT</a></td>
+                    <td><span class="dblclick">Cupertino</span></td>
+                    <td><span class="dblclick">USA</span></td>
+                    <td><span class="dblclick">(408) 555-5271</span></td>
+                    <td><a href="mailto:sales@perkins.com">sales@perkins.com</a></td>
+                    <td>
+                      <span class="hide actions dropdown pull-right btn-group">
+                        <a class="btn" href="#"><i class="icon-eye-open"></i></a>
+                        <a class="btn dropdown-toggle" data-toggle="dropdown" href="#"><span class="icon-caret-down"></span></a>
+                        <ul class="dropdown-menu">
+                          <li><a href="#"><i class="icon-pencil"></i> Edit</a></li>
+                          <li><a href="#"><i class="icon-trash"></i> Delete</a></li>
+                        </ul>
+                      </span>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td><input type="checkbox"> <i class="icon-star"></i></td>
+                    <td><a href="opportunity_plato.html">Plato's LED MFT</a></td>
+                    <td><span class="dblclick">Cupertino</span></td>
+                    <td><span class="dblclick">USA</span></td>
+                    <td><span class="dblclick">(408) 555-5271</span></td>
+                    <td><a href="mailto:sales@perkins.com">sales@perkins.com</a></td>
+                    <td>
+                      <span class="hide actions dropdown pull-right btn-group">
+                        <a class="btn" href="#"><i class="icon-eye-open"></i></a>
+                        <a class="btn dropdown-toggle" data-toggle="dropdown" href="#"><span class="icon-caret-down"></span></a>
+                        <ul class="dropdown-menu">
+                          <li><a href="#"><i class="icon-pencil"></i> Edit</a></li>
+                          <li><a href="#"><i class="icon-trash"></i> Delete</a></li>
+                        </ul>
+                      </span>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td><input type="checkbox"> <i class="icon-star"></i></td>
+                    <td><a href="opportunity_plato.html">Plato's LED MFT</a></td>
+                    <td><span class="dblclick">Cupertino</span></td>
+                    <td><span class="dblclick">USA</span></td>
+                    <td><span class="dblclick">(408) 555-5271</span></td>
+                    <td><a href="mailto:sales@perkins.com">sales@perkins.com</a></td>
+                    <td>
+                      <span class="hide actions dropdown pull-right btn-group">
+                        <a class="btn" href="#"><i class="icon-eye-open"></i></a>
+                        <a class="btn dropdown-toggle" data-toggle="dropdown" href="#"><span class="icon-caret-down"></span></a>
+                        <ul class="dropdown-menu">
+                          <li><a href="#"><i class="icon-pencil"></i> Edit</a></li>
+                          <li><a href="#"><i class="icon-trash"></i> Delete</a></li>
+                        </ul>
+                      </span>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td><input type="checkbox"> <i class="icon-star"></i></td>
+                    <td><a href="opportunity_plato.html">Plato's LED MFT</a></td>
+                    <td><span class="dblclick">Cupertino</span></td>
+                    <td><span class="dblclick">USA</span></td>
+                    <td><span class="dblclick">(408) 555-5271</span></td>
+                    <td><a href="mailto:sales@perkins.com">sales@perkins.com</a></td>
+                    <td>
+                      <span class="hide actions dropdown pull-right btn-group">
+                        <a class="btn" href="#"><i class="icon-eye-open"></i></a>
+                        <a class="btn dropdown-toggle" data-toggle="dropdown" href="#"><span class="icon-caret-down"></span></a>
+                        <ul class="dropdown-menu">
+                          <li><a href="#"><i class="icon-pencil"></i> Edit</a></li>
+                          <li><a href="#"><i class="icon-trash"></i> Delete</a></li>
+                        </ul>
+                      </span>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td><input type="checkbox"> <i class="icon-star"></i></td>
+                    <td><a href="opportunity_plato.html">Plato's LED MFT</a></td>
+                    <td><span class="dblclick">San Francisco</span></td>
+                    <td><span class="dblclick">USA</span></td>
+                    <td><span class="dblclick">	(202) 312-5472</span></td>
+                    <td><a href="mailto:sales.support.im@example.com">sales.support.im@example.com</a></td>
+                    <td>
+                      <span class="hide actions dropdown pull-right btn-group">
+                        <a class="btn" href="#"><i class="icon-eye-open"></i></a>
+                        <a class="btn dropdown-toggle" data-toggle="dropdown" href="#"><span class="icon-caret-down"></span></a>
+                        <ul class="dropdown-menu">
+                          <li><a href="#"><i class="icon-pencil"></i> Edit</a></li>
+                          <li><a href="#"><i class="icon-trash"></i> Delete</a></li>
+                        </ul>
+                      </span>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td><input type="checkbox"> <i class="icon-star"></i></td>
+                    <td><a href="opportunity_plato.html">Plato's LED MFT</a></td>
+                    <td><span class="dblclick">Cupertino</span></td>
+                    <td><span class="dblclick">USA</span></td>
+                    <td><span class="dblclick">(408) 555-5271</span></td>
+                    <td><a href="mailto:sales@perkins.com">sales@perkins.com</a></td>
+                    <td>
+                      <span class="hide actions dropdown pull-right btn-group">
+                        <a class="btn" href="#"><i class="icon-eye-open"></i></a>
+                        <a class="btn dropdown-toggle" data-toggle="dropdown" href="#"><span class="icon-caret-down"></span></a>
+                        <ul class="dropdown-menu">
+                          <li><a href="#"><i class="icon-pencil"></i> Edit</a></li>
+                          <li><a href="#"><i class="icon-trash"></i> Delete</a></li>
+                        </ul>
+                      </span>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td><input type="checkbox"> <i class="icon-star"></i></td>
+                    <td><a href="opportunity_plato.html">Plato's LED MFT</a></td>
+                    <td><span class="dblclick">Cupertino</span></td>
+                    <td><span class="dblclick">USA</span></td>
+                    <td><span class="dblclick">(408) 555-5271</span></td>
+                    <td><a href="mailto:sales@perkins.com">sales@perkins.com</a></td>
+                    <td>
+                      <span class="hide actions dropdown pull-right btn-group">
+                        <a class="btn" href="#"><i class="icon-eye-open"></i></a>
+                        <a class="btn dropdown-toggle" data-toggle="dropdown" href="#"><span class="icon-caret-down"></span></a>
+                        <ul class="dropdown-menu">
+                          <li><a href="#"><i class="icon-pencil"></i> Edit</a></li>
+                          <li><a href="#"><i class="icon-trash"></i> Delete</a></li>
+                        </ul>
+                      </span>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td><input type="checkbox"> <i class="icon-star"></i></td>
+                    <td><a href="opportunity_plato.html">Plato's LED MFT</a></td>
+                    <td><span class="dblclick">Cupertino</span></td>
+                    <td><span class="dblclick">USA</span></td>
+                    <td><span class="dblclick">(408) 555-5271</span></td>
+                    <td><a href="mailto:sales@perkins.com">sales@perkins.com</a></td>
+                    <td>
+                      <span class="hide actions dropdown pull-right btn-group">
+                        <a class="btn" href="#"><i class="icon-eye-open"></i></a>
+                        <a class="btn dropdown-toggle" data-toggle="dropdown" href="#"><span class="icon-caret-down"></span></a>
+                        <ul class="dropdown-menu">
+                          <li><a href="#"><i class="icon-pencil"></i> Edit</a></li>
+                          <li><a href="#"><i class="icon-trash"></i> Delete</a></li>
+                        </ul>
+                      </span>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td><input type="checkbox"> <i class="icon-star"></i></td>
+                    <td><a href="opportunity_plato.html">Plato's LED MFT</a></td>
+                    <td><span class="dblclick">Cupertino</span></td>
+                    <td><span class="dblclick">USA</span></td>
+                    <td><span class="dblclick">(408) 555-5271</span></td>
+                    <td><a href="mailto:sales@perkins.com">sales@perkins.com</a></td>
+                    <td>
+                      <span class="hide actions dropdown pull-right btn-group">
+                        <a class="btn" href="#"><i class="icon-eye-open"></i></a>
+                        <a class="btn dropdown-toggle" data-toggle="dropdown" href="#"><span class="icon-caret-down"></span></a>
+                        <ul class="dropdown-menu">
+                          <li><a href="#"><i class="icon-pencil"></i> Edit</a></li>
+                          <li><a href="#"><i class="icon-trash"></i> Delete</a></li>
+                        </ul>
+                      </span>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td><input type="checkbox"> <i class="icon-star"></i></td>
+                    <td><a href="opportunity_plato.html">Plato's LED MFT</a></td>
+                    <td><span class="dblclick">San Francisco</span></td>
+                    <td><span class="dblclick">USA</span></td>
+                    <td><span class="dblclick">	(202) 312-5472</span></td>
+                    <td><a href="mailto:sales.support.im@example.com">sales.support.im@example.com</a></td>
+                    <td>
+                      <span class="hide actions dropdown pull-right btn-group">
+                        <a class="btn" href="#"><i class="icon-eye-open"></i></a>
+                        <a class="btn dropdown-toggle" data-toggle="dropdown" href="#"><span class="icon-caret-down"></span></a>
+                        <ul class="dropdown-menu">
+                          <li><a href="#"><i class="icon-pencil"></i> Edit</a></li>
+                          <li><a href="#"><i class="icon-trash"></i> Delete</a></li>
+                        </ul>
+                      </span>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="side sidebar-content span4">
+              <div class="side-pane">
+                <div class="block thumbnail">
+                  	<h4>Stats</h4>
+                  	<ul class="listed">
+                  	    <li>
+                  	        Item
+                  	    </li>
+                  	    <li>
+                  	        Item
+                  	    </li>
+                  	    <li>
+                  	        Item
+                  	    </li>
+                  	</ul>
+                </div>
+              </div>
+              <div class="preview-pane hide" id="file1">
+                <div class="block" id="">
+                  <a href="#overview" data-toggle="tab" class="actions"><i class="icon-remove"></i></a>
+                  <h4><span class="label label-file">File</span> Screenshot_766.png</h4>
+                  <br>
+                  <img src="http://placehold.it/400x300">
+                  <div class="card2">
+                    <div class="row-fluid">
+                       <div class="span3">Added:</div>
+                       <div class="span9">1 hour ago at 3:00 pm EST</div>
+                     </div>
+                     <div class="row-fluid">
+                       <div class="span3">Added By:</div>
+                       <div class="span9"><a href="profile_skhan.html">Sabra Khan</a></div>
+                     </div>
+                     <div class="row-fluid">
+                       <div class="span3">File Type:</div>
+                       <div class="span9">PNG</div>
+                     </div>
+                   </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
-      <div class="span4 side">
-        <div class="side-pane">
-          <div class="block thumbnail">
-            	<h4>Stats</h4>
-            	<ul class="listed">
-            	    <li>
-            	        Item
-            	    </li>
-            	    <li>
-            	        Item
-            	    </li>
-            	    <li>
-            	        Item
-            	    </li>
-            	</ul>
+      <div id="footer">
+        <footer>
+          <div class="row-fluid">
+            <div class="span6"><a href="" class="logo">SugarCRM</a></div>
+            <div class="span6">
+              <div class="btn-toolbar pull-right">
+                  <a data-toggle="modal" title="Activity View Tour" href="#systemTour" class="btn btn-invisible"><i class="icon-road"></i> Tour</a>
+                  <span class="dropdown dropup">
+                    <a href="#" class="btn btn-invisible dropdown-toggle" data-toggle="dropdown"><i class="icon-calendar"></i> To Do <b class="caret"></b></a>
+                     <div class="dropdown-menu">
+                      <h4 class="title">Title</h4>
+                      <ul>
+                        <li><a href="#">Item</a></li>
+                        <li><a href="#">Item</a></li>
+                        <li><a href="#">Item</a></li>
+                        <li><a href="#">Item</a></li>
+                      </ul>
+                    </div>
+                  </span>
+                  <a data-toggle="modal" title="Feedback" href="#systemFeedback" class="btn btn-invisible"><i class="icon-comment"></i> Feedback</a>
+                  <a data-toggle="modal" title="Support" href="#systemSupport" class="btn btn-invisible"><i class="icon-question-sign"></i> Support</a>
+              </div>
+            </div>
           </div>
-        </div>
-        <div class="preview-pane hide" id="file1">
-          <div class="block" id="">
-            <a href="#overview" data-toggle="tab" class="actions"><i class="icon-remove"></i></a>
-            <h4><span class="label label-file">File</span> Screenshot_766.png</h4>
-            <br>
-            <img src="http://placehold.it/400x300">
-            <div class="card2">
-              <div class="row-fluid">
-                 <div class="span3">Added:</div>
-                 <div class="span9">1 hour ago at 3:00 pm EST</div>
-               </div>
-               <div class="row-fluid">
-                 <div class="span3">Added By:</div>
-                 <div class="span9"><a href="profile_skhan.html">Sabra Khan</a></div>
-               </div>
-               <div class="row-fluid">
-                 <div class="span3">File Type:</div>
-                 <div class="span9">PNG</div>
-               </div>
-             </div>
-          </div>
-        </div>
+        </footer>
       </div>
     </div>
   </div>
-  <footer>
-    <div class="row-fluid">
-      <div class="span6"><a href="" class="logo">SugarCRM</a></div>
-      <div class="span6">
-        <div class="btn-toolbar pull-right">
-            <a data-toggle="modal" title="Activity View Tour" href="#systemTour" class="btn btn-invisible"><i class="icon-road"></i> Tour</a>
-            <span class="dropdown dropup">
-              <a href="#" class="btn btn-invisible dropdown-toggle" data-toggle="dropdown"><i class="icon-calendar"></i> To Do <b class="caret"></b></a>
-               <div class="dropdown-menu">
-                <h4 class="title">Title</h4>
-                <ul>
-                  <li><a href="#">Item</a></li>
-                  <li><a href="#">Item</a></li>
-                  <li><a href="#">Item</a></li>
-                  <li><a href="#">Item</a></li>
-                </ul>
-              </div>
-            </span>
-            <a data-toggle="modal" title="Feedback" href="#systemFeedback" class="btn btn-invisible"><i class="icon-comment"></i> Feedback</a>
-            <a data-toggle="modal" title="Support" href="#systemSupport" class="btn btn-invisible"><i class="icon-question-sign"></i> Support</a>
-        </div>
-      </div>
-    </div>
-  </footer>
 
   <div class="modal hide" id="systemTour">
 
