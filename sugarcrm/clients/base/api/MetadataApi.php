@@ -87,7 +87,7 @@ class MetadataApi extends SugarApi {
         }
 
         // Default the type filter to everything
-        $this->typeFilter = array('modules','full_module_list','fields','labels','mod_strings','app_strings','app_list_strings','module_list', 'views', 'layouts','relationships','currencies', 'jssource');
+        $this->typeFilter = array('modules','full_module_list','fields','view_templates','labels','mod_strings','app_strings','app_list_strings','module_list', 'views', 'layouts','relationships','currencies', 'jssource');
         if ( !empty($args['type_filter']) ) {
             // Explode is fine here, we control the list of types
             $types = explode(",", $args['type_filter']);
@@ -156,7 +156,7 @@ class MetadataApi extends SugarApi {
             generateETagHeader($data['_hash']);
         }
 
-        $baseChunks = array('fields','app_strings','app_list_strings','module_list', 'views', 'layouts', 'full_module_list','relationships', 'currencies', 'jssource');
+        $baseChunks = array('view_templates','fields','app_strings','app_list_strings','module_list', 'views', 'layouts', 'full_module_list','relationships', 'currencies', 'jssource');
         $perModuleChunks = array('modules','mod_strings');
 
         return $this->filterResults($args, $data, $onlyHash, $baseChunks, $perModuleChunks, $moduleFilter);
@@ -200,7 +200,7 @@ class MetadataApi extends SugarApi {
 
 
         // Default the type filter to everything available to the public, no module info at this time
-        $this->typeFilter = array('fields','app_strings','views', 'layouts', 'config', 'jssource');
+        $this->typeFilter = array('fields','view_templates','app_strings','views', 'layouts', 'config', 'jssource');
 
         if ( !empty($args['type_filter']) ) {
             // Explode is fine here, we control the list of types
@@ -247,7 +247,7 @@ class MetadataApi extends SugarApi {
             "Login" => array("fields" => array()));
         $data["_hash"] = md5(serialize($data));
 
-        $baseChunks = array('fields','app_strings','views', 'layouts', 'config', 'jssource');
+        $baseChunks = array('view_templates','fields','app_strings','views', 'layouts', 'config', 'jssource');
 
         return $this->filterResults($args, $data, $onlyHash, $baseChunks);
     }
@@ -259,23 +259,21 @@ class MetadataApi extends SugarApi {
 
         if (!empty($data['modules']))
         {
-            $firstModule = true;
             if (!empty($compJS))
                 $js .= ",";
 
             $js .= "\n\tmodules:{";
+
+            $allModuleJS = '';
             foreach($data['modules'] as $module => $def)
             {
                 $moduleJS = $this->buildJSForComponents($data['modules'][$module]);
-                if (empty($moduleJS))
-                    continue;
-                $moduleJS = "\n\t\t$module:{{$moduleJS}}";
-                if (!$firstModule)
-                    $moduleJS = "," . $moduleJS;
-                else
-                    $firstModule = false;
-                $js .= $moduleJS;
+                if(!empty($moduleJS)) {
+                    $allModuleJS .= ",\n\t\t$module:{{$moduleJS}}";
+                }
             }
+            //Chop off the first comma in $allModuleJS
+            $js .= substr($allModuleJS, 1);
             $js .= "\n\t}";
         }
 
@@ -292,34 +290,31 @@ class MetadataApi extends SugarApi {
     }
 
     protected function buildJSForComponents(&$data) {
-        $firstType = true;
         $js = "";
         foreach(array('fields', 'views', 'layouts') as $mdType){
             if (!empty($data[$mdType])){
-                if (!$firstType)
-                    $js .= ",";
-                else
-                    $firstType = false;
 
-                $js .= "\n\t$mdType:{";
-                $firstComp = true;
+                $js .= ",\n\t$mdType:{";
+                $comp = '';
+
                 foreach($data[$mdType] as $name => $component) {
                     if (is_array($component) && !empty($component['controller']))
                     {
-                        if (!$firstComp)
-                            $js .= ",";
-                        else
-                            $firstComp = false;
                         $controller = $component['controller'];
-                        $js .= "\n\t\t\"$name\":{controller:$controller}";
-                            unset($data[$mdType][$name]['controller']);
+                        // remove additional symbols in end of js content - it will be included in content
+                        $controller = trim(trim($controller), ",;");
+                        $comp .= ",\n\t\t\"$name\":{controller:$controller}";
+                        unset($data[$mdType][$name]['controller']);
 
                     }
                 }
+                //Chop of the first comma in $comp
+                $js .= substr($comp,1);
                 $js .= "\n\t}";
             }
         }
-        return $js;
+        //Chop of the first comma in $js
+        return substr($js,1);
     }
 
     protected function loadMetadata($hashKey) {
