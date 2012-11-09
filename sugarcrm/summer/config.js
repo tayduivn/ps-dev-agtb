@@ -155,15 +155,9 @@
             header: {
                 target: '#header'
             },
-            alert: {
-                target: '#alert'
-            },
             footer: {
                 target: '#footer',
                 layout: 'footer'
-            },
-            todo: {
-                target: '#todo-widget-container'
             },
             tourguide: {
                 target: '#tourguide'

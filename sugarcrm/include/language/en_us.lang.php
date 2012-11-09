@@ -2630,10 +2630,8 @@ $app_strings = array (
 
     //BEGIN SUGARCRM flav=pro || flav!=sales ONLY
     'LBL_PRODUCT_BUNDLES'=>'Product Bundles',
-    'LBL_PRODUCT_BUNDLES'=>'Product Bundles',
     'LBL_PRODUCTS'=>'Products',
     'LBL_PROJECT_TASKS'=>'Project Tasks',
-    'LBL_PROJECTS'=>'Projects',
     'LBL_PROJECTS'=>'Projects',
     'LBL_QUOTE_TO_OPPORTUNITY_KEY' => 'O',
     'LBL_QUOTE_TO_OPPORTUNITY_LABEL' => 'Create Opportunity from Quote',
@@ -2641,6 +2639,13 @@ $app_strings = array (
     'LBL_QUOTES_SHIP_TO'=>'Quotes Ship to',
     'LBL_QUOTES'=>'Quotes',
     //END SUGARCRM flav=pro || flav!=sales ONLY
+
+    // Strings for Reminder Widget
+    'LBL_REMINDERS' => 'Reminders',
+    'LBL_REMINDERS_OVERDUE' => 'Overdue',
+    'LBL_REMINDERS_UPCOMING' => 'Upcoming',
+    'LBL_REMINDERS_NONE_FOUND' => 'No reminders found.',
+    'LBL_REMINDERS_FINISHED' => 'Finished!',
 
     'LBL_RELATED' => 'Related',
     'LBL_RELATED_INFORMATION' => 'Related Information',
@@ -2784,7 +2789,6 @@ $app_strings = array (
     'LBL_LOGIN_PASSWORD' => 'Password',
     // END LOGIN PAGE STRINGS
 
-    'LBL_SYNC' => 'Sync',
     'LBL_SYNC' => 'Sync',
     'LBL_TABGROUP_ALL' => 'All',
     'LBL_TABGROUP_ACTIVITIES' => 'Activities',

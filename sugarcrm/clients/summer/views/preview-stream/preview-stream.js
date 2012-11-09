@@ -20,7 +20,6 @@
     bindDataChange: function() {
         if (this.collection) {
             this.collection.on("reset", this.render, this);
-            console.log(this.collection);
         }
     }
 })

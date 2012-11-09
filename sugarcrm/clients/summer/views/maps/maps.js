@@ -4,9 +4,12 @@
         address_fields: ['address', 'location']
     },
 
-    _init: function() {
+    initialize: function(opts) {
         var self = this;
-        if (google && _.isFunction(google.load)) {
+
+        app.view.View.prototype.initialize.call(this, opts);
+
+        if (window.google && _.isFunction(google.load)) {
             google.load("maps", "3", {
                 other_params: 'sensor=false',
                 callback: function() {
@@ -19,7 +22,7 @@
                 url: 'https://www.google.com/jsapi',
                 dataType: 'script',
                 success: function() {
-                    self._init();
+                    self.initialize(opts);
                 }
             });
         }
@@ -126,8 +129,6 @@
 
         var _title = this.$("h4");
 
-        //_title.html(dateString);
-
         this.$(".maps-widget .title").text(results[0].formatted_address);
         this.$('#map_panel').show();
         if (this.map) {
@@ -146,12 +147,8 @@
     },
 
     bindDataChange: function() {
-        var self = this;
-        if (this.model) {
-            this.model.on("change", function() {
-                self.getData();
-            }, this);
+        if (this.model && window.google) {
+            this.model.on("change", this.getData(), this);
         }
     }
-
 })
