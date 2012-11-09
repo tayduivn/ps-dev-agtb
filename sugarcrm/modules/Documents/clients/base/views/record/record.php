@@ -55,7 +55,7 @@ $viewdefs['Documents']['base']['view']['record'] = array(
     'panels' => array(
         array(
             'name' => 'panel_header',
-            'header' => true,
+            'header' => true,                                
             'fields' => array(
                 array (
                     'name' => 'filename',
@@ -64,6 +64,9 @@ $viewdefs['Documents']['base']['view']['record'] = array(
                       'link' => 'filename',
                       'id' => 'document_revision_id',
                     ),
+                    'noedit' => true, 
+                    'span' => 12, 
+                    'label' => '',                        
                 ),
             )
         ),
@@ -96,6 +99,7 @@ $viewdefs['Documents']['base']['view']['record'] = array(
         ),
         array(
             'name' => 'panel_hidden',
+            'columns' => 2, 
             'hide' => true,
             'labelsOnTop' => true,
             'placeholders' => true,
