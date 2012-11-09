@@ -1,4 +1,5 @@
 <?php
+//FILE SUGARCRM flav=ent ONLY
 /*********************************************************************************
  * The contents of this file are subject to the SugarCRM Professional End User
  * License Agreement ("License") which can be viewed at
@@ -56,7 +57,6 @@ class RestBug57835Test extends RestTestBase
         $GLOBALS['db']->commit();
     }
 
-    //BEGIN SUGARCRM flav=pro ONLY
     /**
      * @group rest
      */
@@ -100,5 +100,4 @@ class RestBug57835Test extends RestTestBase
         $this->assertEquals('portal_not_configured',$reply['reply']['error']);
                                                           
     }
-    //END SUGARCRM flav=pro ONLY
 }
