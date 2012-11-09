@@ -11,7 +11,7 @@ function sortTests() {
     $suitesXML->testsuites->testsuite = "";
     // add tests manually
     foreach($suitesArray['testsuites']['testsuite']['directory'] as $directoryIdx => $directoryName) {
-        $files =scanFileNameRecursivly($directoryName);
+        $files =scanFileNameRecursively($directoryName);
         sort($files, SORT_STRING);
         $suitesXML->testsuites->testsuite->addChild($directoryName);
         foreach($files as $fileName){
@@ -24,7 +24,7 @@ function sortTests() {
 /**
  * Returns a list of files in a directory recursively with the word test in the filename
  **/
-function scanFileNameRecursivly($path = '', &$name = array() )
+function scanFileNameRecursively($path = '', &$name = array() )
 {
     $path = $path == ''? dirname(__FILE__) : $path;
     $lists = @scandir($path);
@@ -36,9 +36,9 @@ function scanFileNameRecursivly($path = '', &$name = array() )
 
             if(is_dir($path.DIRECTORY_SEPARATOR.$f) && $f != ".." && $f != ".")
             {
-                scanFileNameRecursivly($path.DIRECTORY_SEPARATOR.$f, &$name);
+                scanFileNameRecursively($path.DIRECTORY_SEPARATOR.$f, &$name);
             }
-            elseif ($f != ".." && $f != "." && stripos($f, 'test') !== -1)
+            elseif ($f != ".." && $f != "." && stripos($f, 'test') !== false)
             {
                 $name[] = $path.DIRECTORY_SEPARATOR.$f;
             }
