@@ -18,11 +18,8 @@
 
         _.bindAll(this);
 
-        //start major hack
-        app.view.Component.prototype.initialize.call(this, options);
-        this.context.meta = this.meta
-        //end major hack
-
+        this.context = options.context;
+        this.context.meta = options.meta
         app.view.Layout.prototype.initialize.call(this, options);
 
         //create parent convert model to hold all sub-models
