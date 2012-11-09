@@ -262,7 +262,7 @@ class aSubPanel
                 $lcModule = strtolower($properties['module']);
                 
                 // Add a check for module subpanel visibility. If hidden, but exempt, pass it
-                if (!in_array($lcModule, $hiddenSubPanels) || isset($modules_exempt_from_availability_check[$properties['module']]))
+                if ((is_array($hiddenSubPanels) && !in_array($lcModule, $hiddenSubPanels)) || isset($modules_exempt_from_availability_check[$properties['module']]))
 				{
 					$this->sub_subpanels [ $panel ] = new aSubPanel ( $panel, $properties, $this->parent_bean ) ;
 				}
