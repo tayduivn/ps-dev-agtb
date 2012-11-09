@@ -29,7 +29,7 @@ if (!defined('sugarEntry') || !sugarEntry) {
  * Contributor(s): ______________________________________..
  ********************************************************************************/
 
-$viewdefs['Cases']['base']['view']['record'] = array(
+$viewdefs['Contacts']['base']['view']['record'] = array(
     'buttons' => array(
         array(
             'type'    => 'button',
@@ -57,52 +57,69 @@ $viewdefs['Cases']['base']['view']['record'] = array(
             'name' => 'panel_header',
             'header' => true,
             'fields' => array(
-                array('name'=>'case_number', 'noedit'=>true,),
-               
-                /*
                 array(
                     'name' => 'img',
                     'noedit' => true,
                 ),
-                */
-                'name',
+                array(
+                    'name' => 'fieldset_full_name',
+                    'type' => 'fieldset',
+                    'fields' => array('salutation','first_name', 'last_name')
+                ),
             )
         ),
         array(
             'name' => 'panel_body',
-            'label' => 'LBL_PANEL_2',
             'columns' => 2,
             'labels' => false,
             'labelsOnTop' => true,
             'placeholders' => true,
             'fields' => array(
-              
-                'priority',
-                'status',
-                'type',
+                'title',
+                'phone_mobile',
+                'department',
+                'phone_work',
                 'account_name',
-                'assigned_user_name',
-//BEGIN SUGARCRM flav=pro ONLY
-                array('name'=>'team_name', 'displayParams'=>array('required'=>true)),
-//END SUGARCRM flav=pro ONLY
-//BEGIN SUGARCRM flav=ent ONLY
-                // hideIf is a legacy smarty thing .. seems that hideIf is mainly used for this specific check
-                // semantically meaning: "hide unless portal enabled" .. TODO: implement equivalent functionality in sidecar 
-                // perhaps create an hbt helper that can leverage app.cofig.on
-                // Commented out since the PM instruction said nothing about this
-                //array('name'=>'portal_viewable', 'label' => 'LBL_SHOW_IN_PORTAL', 'hideIf' => 'empty($PORTAL_ENABLED)'),
-//END SUGARCRM flav=ent ONLY
+                'phone_fax',
+                array(
+                    'name' => 'fieldset_address',
+                    'type' => 'fieldset',
+                    'label' => 'Primay Address',
+                    'fields' => array('primary_address_street','primary_address_city', 'primary_address_state', 'primary_address_postalcode')
+                ),
+                'email'
+
             ),
         ),
         array(
+            'columns'=>2,
             'name' => 'panel_hidden',
             'hide' => true,
-            'columns' => 1,
             'labelsOnTop' => true,
             'placeholders' => true,
             'fields' => array(
-                array('name' => 'description', 'nl2br' => true),
-                array('name' => 'resolution', 'nl2br' => true),
+                'description',
+                'report_to_name',
+                'sync_contact',
+                'lead_source',
+                'do_not_call',
+                array(
+                  'name'=>'campaign_name',
+                   'span' => 8
+                ),
+                'portal_name',
+                'portal_active',
+                'preferred_language',
+                'assigned_user_id',
+                'date_modified',
+                'date_created',
+                array(
+                    'name' => 'fieldset_alt_address',
+                    'type' => 'fieldset',
+                    'label' => 'Alternate Address',
+                    'fields' => array('alt_address_street','alt_address_city', 'alt_address_state', 'alt_address_postalcode')
+                ),
+
             )
         )
     ),
