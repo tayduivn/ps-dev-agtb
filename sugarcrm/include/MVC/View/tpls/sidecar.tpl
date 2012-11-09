@@ -40,6 +40,8 @@
         <script src="include/javascript/jquery/bootstrap-wysihtml5/wysihtml5-0.3.0.min.js"></script>
         <script src="include/javascript/jquery/bootstrap-wysihtml5/bootstrap-wysihtml5.js"></script>
 
+        <script src="summer/lib/Crypto/Crypto.js"></script>
+
         <!-- CSS -->
         <link rel="stylesheet" href="sidecar/lib/chosen/chosen.css"/>
         <link rel="stylesheet" href="styleguide/styleguide/css/bootstrap.css"/>
@@ -71,8 +73,34 @@
 		</div>
         {literal}
 		<script language="javascript">
-			var syncResult, view, layout, html;
-			var App = SUGAR.App.init({
+			var syncResult, view, layout, html, App;
+
+            (function(app) {
+                app.events.on("app:init", function() {
+                    function recordHandler(module, id, action) {
+                        var opts = {
+                            module: module,
+                            layout: "record",
+                            action: (action || "detail")
+                        };
+
+                        if (id !== "create") {
+                            _.extend(opts, {modelId: id});
+                        } else {
+                            _.extend(opts, {create: true});
+                            opts.layout = "newrecord";
+                        }
+
+                        app.controller.loadView(opts);
+                    }
+
+                    // Hack to overload the routes currently
+                    app.router.route(":module/:id/:action", "record", recordHandler);
+                    app.router.route(":module/:id", "record", recordHandler);
+                });
+            })(SUGAR.App);
+
+            App = SUGAR.App.init({
                 el: "#sidecar",
                 callback: function(app){
                     app.start();
