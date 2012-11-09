@@ -3,6 +3,7 @@
  */
 
 @import "body.less";
+@import "layouts.less";
 @import "colors.less";
 @import "typography.less";
 @import "breadcrumbs.less";
@@ -29,10 +30,10 @@
 
 @import "chosen.less";
 
+@import "side.less";
+
 /* Forecasting versions */
-//@import "forecasting.less";
 @import "navbar.less";
-//@import "navbar-nutmeg.less";//all major differences with navbar merged
 @import "quickcreate.less"; //forecasting only, from navbar-forecast
 @import "dcmenu.less"; //forecasting only, from navbar-forecast
 @import "clickmenu"; //forecasting only
@@ -42,9 +43,7 @@
 @import "charts"; //major differences, use forecasting version
 @import "setup.less"; //forecasting only
 
-//The topline and sugar-forecast less files still have conflicts between styleguide and sidecar
 @import "topline.less";
-@import "topline-forecast.less";
 @import "sugar-forecast.less"; //totally busts if removed from sidecar, compare with sugar specific modules
 
 //Module specific imports
