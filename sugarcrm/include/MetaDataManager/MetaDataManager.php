@@ -345,40 +345,15 @@ class MetaDataManager {
                 $outputAcl[$action] = 'yes';
             }
         } else if ( isset($acls[$module]['module']) ) {
-            $moduleAcl = $acls[$module]['module'];
-
-            if ( isset($moduleAcl['admin']) && isset($moduleAcl['admin']['aclaccess']) && (($moduleAcl['admin']['aclaccess'] == ACL_ALLOW_ADMIN) || ($moduleAcl['admin']['aclaccess'] == ACL_ALLOW_ADMIN_DEV)) ) {
-                $outputAcl['admin'] = 'yes';
-                $isAdmin = true;
-            } else {
-                $outputAcl['admin'] = 'no';
-                $isAdmin = false;
-            }
-
-            if ( isset($moduleAcl['admin']) && isset($moduleAcl['admin']['aclaccess']) && (($moduleAcl['admin']['aclaccess'] == ACL_ALLOW_DEV) || ($moduleAcl['admin']['aclaccess'] == ACL_ALLOW_ADMIN_DEV)) ) {
-                $outputAcl['developer'] = 'yes';
-            } else {
-                $outputAcl['developer'] = 'no';
-            }
-
-            if ( ($moduleAcl['access']['aclaccess'] == ACL_ALLOW_ENABLED) || $isAdmin ) {
-                $outputAcl['access'] = 'yes';
-            } else {
-                $outputAcl['access'] = 'no';
+            $moduleAcl = $acls[$module]['module'];            
+            // Bug56391 - Use the SugarACL class to determine access to different actions within the module
+            foreach ( array('admin','developer','access','view','list','edit','delete','import','export','massupdate') as $action ) {
+                $outputAcl[$action] = (SugarACL::checkAccess($module, $action, array('user' => $userObject))) ? 'yes' : 'no';
+                $outputAcl[$action] = ($moduleAcl[$action]['aclaccess'] == ACL_ALLOW_OWNER) ? 'owner' : $outputAcl[$action];
             }
 
             // Only loop through the fields if we have a reason to, admins give full access on everything, no access gives no access to anything
             if ( $outputAcl['access'] == 'yes' && $outputAcl['developer'] == 'no' ) {
-
-                foreach ( array('view','list','edit','delete','import','export','massupdate') as $action ) {
-                    if ( $moduleAcl[$action]['aclaccess'] == ACL_ALLOW_ALL ) {
-                        $outputAcl[$action] = 'yes';
-                    } else if ( $moduleAcl[$action]['aclaccess'] == ACL_ALLOW_OWNER ) {
-                        $outputAcl[$action] = 'owner';
-                    } else {
-                        $outputAcl[$action] = 'no';
-                    }
-                }
 
                 // Currently create just uses the edit permission, but there is probably a need for a separate permission for create
                 $outputAcl['create'] = $outputAcl['edit'];
