@@ -4,7 +4,7 @@ describe("basedatepicker", function() {
     beforeEach(function() {
         app = SugarTest.app;
         field = SugarTest.createField("base","basedatepicker", "basedatepicker", "detail");
-        // To avoid calling initialize we just set these here
+        // To avoid calling initialize we just set this here
         field.usersDatePrefs = 'm/d/Y';
     });
 

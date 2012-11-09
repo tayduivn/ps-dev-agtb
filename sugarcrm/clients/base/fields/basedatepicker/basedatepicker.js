@@ -1,12 +1,27 @@
 ({
+    /**
+     * Base implementation for widgets that will use the datepicker. Provides core functionality
+     * which can be extended as follows:
+     * <pre><code>
+     * extendsFrom:'BasedatepickerField',
+     * 
+     * // Derived must also implement method: _setDateIfDefaultValue
+     * _setDateIfDefaultValue: function() {}
+     * </code></pre>
+     * 
+     * Derived widgets can set stripIsoTZ to indicate whether ISO 8601 Timezone information should
+     * be stripped from dates or left in tact.
+     */
     events: {
         'click .icon-calendar': '_toggleDatepicker'
     },
+
     datepickerVisible: false,
 
     // used by hbt template
     dateValue: '', 
 
+    // date format (for just the date part) that the server expects
     serverDateFormat: 'Y-m-d',
 
     // If true, attempts to strip off ISO 8601 TZ related info 
@@ -20,15 +35,18 @@
         this.userTimePrefs  = app.user.get('timepref');
         this.usersDatePrefs = app.user.get('datepref');
 
-        // Only if object has a showAmPm
+        // Only for derived widgets that actually have a showAmPm property
         if (!_.isUndefined(this.showAmPm)) {
 
             // Sugar time format will always have an 'h'. If it ends with either [aA] it requires am/pm.
             this.showAmPm = this.userTimePrefs.match(/[aA]$/)==null ? true : false; // TODO: date.js doesn't yet support g/G options
         }
-
         app.view.Field.prototype.initialize.call(this, options);
     },
+    /**
+     * NOP - Derived fields must implement!
+     */
+    _setDateIfDefaultValue: function() {},
     /**
      * NOP - jquery.timepicker (the plugin we use for time part of datetimecombo widget),
      * triggers both a 'change', and, a 'changeTime' event. If we let base Field's bindDomChange
@@ -37,11 +55,6 @@
      */
     bindDomChange: function() {
         // NOP -- pass through to prevent base Field's bindDomChange from handling
-    },
-    /**
-     * NOP - Derived fields must implement
-     */
-    _setDateIfDefaultValue: function() {
     },
     /**
      * Set our internal time and date values so hbt picks up
@@ -153,8 +166,6 @@
         dateValue = this._getTodayDateStringIfNoDate(dateValue);
         date.prop('value', dateValue); 
     },
-
-
     /**
      * Set the date string for REST Api. If stripT
      * @param {Date} The date we want formatted
@@ -186,12 +197,11 @@
      * @return {Date} date created representing today at midnight
      */
     _setDateNow: function() {
-        // Per the FDD: When the Datetime field is mandatory, the default value
-        // should be SYSDATE and all zeros for Time value
+        // Per FDD: When Datetime field required, default value is SYSDATE, all zeros for Time
         var jsDate = new Date();
+
         jsDate.setHours(0, 0, 0, 0);
         this.model.set(this.name, this._setServerDateString(jsDate), {silent: true}); 
-        //this.model.set(this.name, jsDate.toISOString(), {silent: true}); 
         return jsDate;
     },
     /**
@@ -226,10 +236,6 @@
         return false;
     },
 
-    // TODO: Hack! 
-    // We need to verify that reusing the app_list_strings.dom_cal_* is the way to go on this. Other
-    // option is to just create a new meta property ** sigh ** yet more junk in app list strings!
-    // 
     // Patches our dom_cal_* metadata for use with our datepicker plugin since they're very similar.
     _patchDatepickerMeta: function() {
         var pickerMap = [], pickerMapKey, calMapIndex, mapLen, domCalKey, 
@@ -238,10 +244,7 @@
         appListStrings = app.metadata.getStrings('app_list_strings');
             
         // Note that ordering here is used in following for loop 
-        calendarPropsMap = ['dom_cal_day_long',
-                            'dom_cal_day_short',
-                            'dom_cal_month_long',
-                            'dom_cal_month_short'];
+        calendarPropsMap = ['dom_cal_day_long', 'dom_cal_day_short', 'dom_cal_month_long', 'dom_cal_month_short'];
 
         for (calMapIndex = 0, mapLen = calendarPropsMap.length; calMapIndex < mapLen; calMapIndex++) {
 
@@ -282,6 +285,11 @@
 
         return pickerMap;
     },
+    /**
+     * Helper to determine if this is an edit view
+     * @param  {String}  value value
+     * @return {Boolean} true if edit view 
+     */
     _isNewEditViewWithNoValue: function(value) {
         return (this.model.isNew() && !value && this._isEditView(this._getViewName()));
     },

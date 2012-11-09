@@ -8,7 +8,6 @@
     // used by hbt template (note we inherit dateValue from basedate)
     timeValue: '', 
 
-
     /**
      * Renders widget, sets up date and time pickers, etc.
      * @param  {String} value  
@@ -66,7 +65,7 @@
             return value;
         } else {
             // In case ISO 8601 get it back to js native date which date.format understands
-            // Note that if stripIsoTZ is true, time zone won't matter since it was stripped out.
+            // Note: if stripIsoTZ true, time zone won't matter since it's already been removed.
             jsDate = new Date(value);
         }
 
@@ -333,12 +332,11 @@
         if (!h && !m) {
             o.amPm = 'am';
         }
-        o.hours = h ? h : '00'; // will downstream turn to 12am but internally needs to be 00
+        o.hours   = h ? h : '00'; // may display as 12:00am but internally needs to be 00
         o.minutes = m ? m : '00';
-        
         //Convert 12am to 00 and also 00pm to 12
-        o.hours = o.hours === '12' && o.amPm==='am' ? '00' : o.hours;
-        o.hours = o.hours === '00' && o.amPm==='pm' ? '12' : o.hours;
+        o.hours   = o.hours === '12' && o.amPm==='am' ? '00' : o.hours;
+        o.hours   = o.hours === '00' && o.amPm==='pm' ? '12' : o.hours;
 
         return o;
     }

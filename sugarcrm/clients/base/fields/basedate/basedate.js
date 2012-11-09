@@ -2,6 +2,10 @@
     // date
     extendsFrom:'BasedatepickerField',
 
+    /**
+     * Main render method. Sets up datepicker if view type "edit".
+     * @param  {String} value the value
+     */
     _render: function(value) {
         var self = this, viewName;
 
