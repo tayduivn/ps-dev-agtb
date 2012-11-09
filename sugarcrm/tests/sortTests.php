@@ -6,6 +6,11 @@
 function sortTests() {
     // Load old xml file
     $suitesXML = simplexml_load_file('phpuc.xml');
+    if (!file_exists('phpucOLD.xml')) {
+        copy('phpuc.xml','phpucOLD.xml');
+    } else {
+        return;
+    }
     $suitesArray = toArray($suitesXML);
     unset($suitesXML->testsuites->testsuite);
     $suitesXML->testsuites->testsuite = "";
