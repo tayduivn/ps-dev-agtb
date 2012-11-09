@@ -1,20 +1,18 @@
 (function(app) {
-    var _rrh = {
-        index: function(){
-            var forecastModule = 'Forecasts';
-            var forecastLayout = 'index';
-            if(app.viewModule == 'config') {
-                forecastLayout = app.viewModule;
-            }
-            app.controller.loadView({
-                module: forecastModule,
-                layout: forecastLayout
-            });
-        }
-    }
-
     app.events.on("app:init", function(){
         app.logger.debug("Route changed to " + app.viewModule + " index!");
-        app.router.route("", "index", _rrh.index);
+        app.router.route("", "index", function(){
+            app.controller.loadView({
+                module: 'Forecasts',
+                layout: 'index'
+            });
+        });
+        app.router.route("config", "config", function(){
+            app.controller.loadView({
+                module: "Forecasts",
+                layout: "config"
+            });
+        });
     });
+
 })(SUGAR.App);

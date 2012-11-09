@@ -136,6 +136,17 @@
     },
 
     /**
+     * Clean up any left over bound data to our context
+     */
+    unbindData : function() {
+        if(this.context.forecasts.worksheet) this.context.forecasts.worksheet.off(null, null, this);
+        if(this.context.forecasts.worksheetmanager) this.context.forecasts.worksheetmanager.off(null, null, this);
+        if(this.context.forecasts) this.context.forecasts.off(null, null, this);
+        if(this.values) this.values.off(null, null, this);
+        app.view.View.prototype.unbindData.call(this);
+    },
+
+    /**
      * Listen to changes in values in the context
      */
     bindDataChange:function () {

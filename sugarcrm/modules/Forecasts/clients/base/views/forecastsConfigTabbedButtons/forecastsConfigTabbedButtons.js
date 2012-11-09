@@ -82,7 +82,6 @@
                     self.layout.context.trigger("modal:close");
                 }
             });
-            this.layout.context.trigger("modal:close");
         }
     },
 
