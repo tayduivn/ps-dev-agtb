@@ -32,23 +32,23 @@ if (!defined('sugarEntry') || !sugarEntry) {
 $viewdefs['Accounts']['base']['view']['record'] = array(
     'buttons' => array(
         array(
-            'type'    => 'button',
-            'label'   => 'LBL_SAVE_BUTTON_LABEL',
+            'type' => 'button',
+            'label' => 'LBL_SAVE_BUTTON_LABEL',
             'css_class' => 'hide btn-primary record-save',
         ),
         array(
-            'type'    => 'button',
-            'label'   => 'LBL_CANCEL_BUTTON_LABEL',
+            'type' => 'button',
+            'label' => 'LBL_CANCEL_BUTTON_LABEL',
             'css_class' => 'hide record-cancel',
         ),
         array(
-            'type'    => 'button',
-            'label'   => 'LBL_EDIT_BUTTON_LABEL',
+            'type' => 'button',
+            'label' => 'LBL_EDIT_BUTTON_LABEL',
             'css_class' => 'record-edit',
         ),
         array(
-            'type'    => 'button',
-            'label'   => 'LBL_DELETE_BUTTON_LABEL',
+            'type' => 'button',
+            'label' => 'LBL_DELETE_BUTTON_LABEL',
             'css_class' => 'record-delete',
         ),
     ),
@@ -57,10 +57,6 @@ $viewdefs['Accounts']['base']['view']['record'] = array(
             'name' => 'panel_header',
             'header' => true,
             'fields' => array(
-                array(
-                    'name' => 'img',
-                    'noedit' => true,
-                ),
                 'name',
             )
         ),
@@ -71,29 +67,56 @@ $viewdefs['Accounts']['base']['view']['record'] = array(
             'labelsOnTop' => true,
             'placeholders' => true,
             'fields' => array(
-                'assigned_user_name',
-                'billing_address_street',
-                'industry',
+                'website',
+                'phone_office',
+                'email',
+                'phone_fax',
                 array(
                     'name' => 'fieldset_address',
                     'type' => 'fieldset',
                     'label' => 'Billing Address',
-                    'fields' => array('billing_address_city', 'billing_address_state', 'billing_address_postalcode')
+                    'fields' => array(
+                        'billing_address_street',
+                        'billing_address_city',
+                        'billing_address_state',
+                        'billing_address_postalcode',
+                    ),
                 ),
-                'website',
-                'billing_address_country',
-                'phone_office',
-                'email1'
+                array(
+                    'name' => 'fieldset_address',
+                    'type' => 'fieldset',
+                    'label' => 'Shipping Address',
+                    'fields' => array(
+                        'shipping_address_street',
+                        'shipping_address_city',
+                        'shipping_address_state',
+                        'shipping_address_postalcode',
+                    ),
+                ),
             ),
         ),
         array(
             'name' => 'panel_hidden',
+            'columns' => 2,
             'hide' => true,
             'labelsOnTop' => true,
             'placeholders' => true,
             'fields' => array(
-                'twitter',
-            )
-        )
+                'description',
+                'account_type',
+                'industry',
+                'annual_revenue',
+                'employees',
+                'ticker_symbol',
+                'parent_name',
+                'ownership',
+                'campaign_name',
+                'rating',
+                'assigned_user_name',
+                'date_entered',
+                'team_name',
+                'date_modified',
+            ),
+        ),
     ),
 );
