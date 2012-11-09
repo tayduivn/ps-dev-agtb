@@ -89,46 +89,30 @@ foreach ($timeperiods as $timeperiod_id=>$timeperiod)
                 /* @var $opp Opportunity */
                 $opp = BeanFactory::getBean('Opportunities', $opp_id);
 
-                if($opp->commit_stage == 'include') {
-                    $best += $opp->best_case;
-                    $likely += $opp->amount;
-                    $worst += $opp->worst_case;
+                $best += $opp->best_case;
+                $likely += $opp->amount;
+                $worst += $opp->worst_case;
 
-                    //This is a sales rep's worksheet entry
+                //BEGIN SUGARCRM flav=pro ONLY
+                //This is a sales rep's worksheet entry
+                $products = $opp->getProducts();
+                foreach($products as $prod)
+                {
                     $worksheet = new Worksheet();
                     $worksheet->user_id = $user_id;
                     $worksheet->timeperiod_id = $timeperiod_id;
                     $worksheet->forecast_type = 'Direct';
-                    $worksheet->related_id = $opp->id;
-                    $worksheet->related_forecast_type = '';  //Opportunities do not have a related_forecast_type set
-                    $worksheet->best_case = $opp->best_case + 500;
-                    $worksheet->likely_case = $opp->amount + 500;
-                    $worksheet->worst_case = $opp->worst_case + 500;
-                    $worksheet->commit_stage = $opp->commit_stage;
-                    $worksheet->op_probability = $opp->probability;
+                    $worksheet->related_id = $prod->id;
+                    $worksheet->related_forecast_type = 'Product';   //Set this to 'Product' to indicate a product line
+                    $worksheet->best_case = $prod->best_case + 500;
+                    $worksheet->likely_case = $prod->likely_case + 500;
+                    $worksheet->worst_case = $prod->worst_case + 500;
+                    $worksheet->commit_stage = $prod->commit_stage;
+               		$worksheet->op_probability = $prod->probability;
                     $worksheet->save();
                     $created_ids[] = $worksheet->id;
-
-                    //BEGIN SUGARCRM flav=pro ONLY
-                    $products = $opp->getProducts();
-                    foreach($products as $prod)
-                    {
-                        $worksheet = new Worksheet();
-                        $worksheet->user_id = $user_id;
-                        $worksheet->timeperiod_id = $timeperiod_id;
-                        $worksheet->forecast_type = 'Direct';
-                        $worksheet->related_id = $prod->id;
-                        $worksheet->related_forecast_type = 'Product';   //Set this to 'Product' to indicate a product line
-                        $worksheet->best_case = $prod->best_case + 500;
-                        $worksheet->likely_case = $prod->likely_case + 500;
-                        $worksheet->worst_case = $prod->worst_case + 500;
-                        $worksheet->commit_stage = $prod->commit_stage;
-                   		$worksheet->op_probability = $prod->probability;
-                        $worksheet->save();
-                        $created_ids[] = $worksheet->id;
-                    }
-                    //END SUGARCRM flav=pro ONLY
                 }
+                //END SUGARCRM flav=pro ONLY
             }
 
             //this is the direct worksheet for the manager
