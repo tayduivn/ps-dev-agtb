@@ -1,59 +1,4 @@
 
-.subhead {margin-top: 20px;}
-.subnav-fixed {
-  position: fixed;
-  top: 48px;
-  left: 0;
-  right: 0;
-  z-index: 1020; /* 10 less than .navbar-fixed to prevent any overlap */
-  border-color: #d5d5d5;
-  border-width: 0 0 1px; /* drop the border on the fixed edges */
-  -webkit-border-radius: 0;
-     -moz-border-radius: 0;
-          border-radius: 0;
-  -webkit-box-shadow: inset 0 1px 0 #fff, 0 1px 5px rgba(0,0,0,.1);
-     -moz-box-shadow: inset 0 1px 0 #fff, 0 1px 5px rgba(0,0,0,.1);
-          box-shadow: inset 0 1px 0 #fff, 0 1px 5px rgba(0,0,0,.1);
-  filter: progid:DXImageTransform.Microsoft.gradient(enabled=false); /* IE6-9 */
-}
-.subnav-fixed .nav {
-  width: 938px;
-  margin: 0 auto;
-  padding: 0 1px;
-}
-
-#contentflex #headerbar, .headerpane {
-    height: 60px;
-    z-index: 1000;
-    background: @grayLighter;
-    border-bottom: 1px solid darken(@grayLighter,5%);
-    h1 {
-        float: left;
-        margin-top: 12px;
-        margin-left: 20px;
-    }
-
-    .dropdown-toggle {
-        .box-shadow(none);
-    }
-
-    .span12 {
-        margin-left: 0px;
-    }
-
-    .drawerTrig {
-      margin-right: 10px;
-    }
-
-    .btn-toolbar {
-      margin-top: 15px;
-    }
-
-    .avatar {
-      margin: 10px -5px 0 20px;
-    }
-}
-
 /* Tweak navbar brand link to be super sleek
 -------------------------------------------------- */
 .cube {
@@ -69,7 +14,7 @@
           transition: all .2s linear;
   filter:  ~"progid:DXImageTransform.Microsoft.AlphaImageLoader(src='@{baseUrl}/img/badge_256.png',sizingMethod='scale')";
   -ms-filter: ~"progid:DXImageTransform.Microsoft.AlphaImageLoader(src='@{baseUrl}/img/badge_256.png',sizingMethod='scale')";
-  }
+}
 
 .navbar .navbar-inner {
   height: 44px;
@@ -140,6 +85,9 @@
   margin-right: 0;
 }
 
+.navbar .container-fluid {
+  margin-top: 0;
+}
 
 .navbar .nav > li > a.btn {
   padding: 4px 8px;
@@ -150,9 +98,13 @@
 .avatar img {
   .border-radius(3px);
 }
-.avatar.thumbnail {padding: 3px;}
+.avatar.thumbnail {
+  padding: 3px;
+}
 
-.navbar .avatar, li li .avatar, .avatar img  {
+.navbar .avatar,
+li li .avatar,
+.avatar img  {
   height: 24px;
   width: 24px;
 }
@@ -210,7 +162,8 @@
   position: relative;
 }
 
-.tabbar .active:after, .tabbar .active:before {
+.tabbar .active:after,
+.tabbar .active:before {
   border: solid transparent;
   content: ' ';
   height: 0;
@@ -230,16 +183,15 @@
   border-bottom-color: #aaa;
   top: 10px;
 }
-.subnav .control-group {
-  margin: 0;
-}
-.subnav .control-group .btn-toolbar.pull-right {
-  margin: 0;
-}
+
 
 //54606: align `Email` label with its fields
 //896492a63d300e820c003aa8707c714ed1fb6e3b
-//.control-group.email .btn-mini {margin-right:0;width:auto;height:auto;}
+/*.control-group.email .btn-mini {
+  margin-right:0;
+  width:auto;
+  height:auto;
+}*/
 .control-group.email .controls.pull-left {
   overflow: hidden;
   text-overflow: ellipsis;
@@ -265,21 +217,34 @@ textarea[readonly] {
 .span2 .block {
   padding-right: 10px;
 }
-.block:first-child {border-top: none;}
+.block:first-child {
+  border-top: none;
+}
 
 .block ul.list{
   margin: 0 0 20px;
   padding: 0;
 }
-.block .list li, .listed li  {
+.block .list li,
+.listed li {
   list-style: none;
   margin: 0 0 15px;
   position: relative;
 }
-.listed {margin: 0; padding: 0;}
-.listed li {border-bottom: 1px solid @grayLighter; margin: 0; padding: 8px;}
-.side .block .listed { margin: -10px 0 0; }
-.side .block .listed li:last-child { border-bottom: none;}
+.listed {
+  margin: 0;
+  padding: 0;
+}
+.listed li {
+  border-bottom: 1px solid @grayLighter;
+  margin: 0; padding: 8px;
+}
+.side .block .listed {
+  margin: -10px 0 0;
+}
+.side .block .listed li:last-child {
+  border-bottom: none;
+}
 
 .block .list li.active a {
   background: @grayLighter;
@@ -298,9 +263,12 @@ textarea[readonly] {
   padding: 0;
   border: none;
 }
-.block.thumbnail .nav-tabs {margin: 0; border: none;}
+.block.thumbnail .nav-tabs {
+  margin: 0; border: none;
+}
 
-.block.thumbnail .nav-tabs li, .block.tabs-left .nav-tabs li{
+.block.thumbnail .nav-tabs li,
+.block.tabs-left .nav-tabs li {
   border-bottom: 1px solid darken(@grayLighter, 5%);
   margin-bottom: 10px;
 }
@@ -340,13 +308,20 @@ textarea[readonly] {
 
 }
 
-.bordered .tabs-left .nav-tabs > li > a, .bordered .tabs-left .nav-tabs .on > a, .bordered .tabs-left .nav-tabs .on {
+.bordered .tabs-left .nav-tabs > li > a,
+.bordered .tabs-left .nav-tabs .on > a,
+.bordered .tabs-left .nav-tabs .on {
   padding: 4px;
   margin: 4px -10px 4px 0;
 }
 
-.row-fluid > #charts.span12 {margin-left: 0 !important;}
-h4 i {color: @grayLight;}
+.row-fluid > #charts.span12 {
+  margin-left: 0 !important;
+}
+h4 i {
+  color: @grayLight;
+}
+
 .drawerTrig.pull-right {
   .border-radius(0 2px 2px 0);
   position: relative;
@@ -394,7 +369,9 @@ h4 i {color: @grayLight;}
   top: 5px;
   right: 10px;
 }
-.block .actions, article .actions, .subnav .actions {
+.block .actions,
+article .actions,
+.subnav .actions {
   position: absolute;
   top: -5px;
   right: 0;
@@ -446,7 +423,7 @@ h4 i {color: @grayLight;}
 }
 
 #activity article {
-position: relative;
+  position: relative;
 }
 
 //55160: preview items should be split into separate lines
@@ -459,13 +436,21 @@ position: relative;
   }
 }
 
-.card2 .row-fluid .btn-small { margin-top: -4px; margin-right: 8px; height: 16px; width: 16px;}
-.card2 .row-fluid, .card2 span .row-fluid {
+.card2 .row-fluid .btn-small {
+  margin-top: -4px;
+  margin-right: 8px;
+  height: 16px;
+  width: 16px;
+}
+.card2 .row-fluid,
+.card2 span .row-fluid {
   position: relative;
   padding: 8px 0 0;
 }
 
-#folded .card2 .row-fluid [class*="span"] {padding: 0 0 10px 0;}
+#folded .card2 .row-fluid [class*="span"] {
+  padding: 0 0 10px 0;
+}
 .card2 .extend + .row-fluid, .card2 span:last-child .row-fluid {
   border-bottom: none;
 }
@@ -474,14 +459,16 @@ position: relative;
   margin-top: -2px;
 }
 
-.btn-toolbar {padding-left: 20px;}
+.btn-toolbar {
+  padding-left: 20px;
+}
 
 .actions li {
   border-left: darken(@grayLighter, 5%) solid 1px;
   padding: 0 1px;
 }
 .actions li a {
- margin: 0;
+  margin: 0;
 }
 .actions li:first-child {
   border: none;
@@ -523,7 +510,7 @@ article:hover .actions,  tr:hover .actions {
 }
 #thedrawer h4
 {
-color: @white;
+  color: @white;
 }
 
 .search-query {
