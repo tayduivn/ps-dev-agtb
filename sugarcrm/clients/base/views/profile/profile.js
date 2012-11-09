@@ -21,10 +21,13 @@
 
             self.loadCurrentUser(currentUserAttributes, function(data) {
                 if(data) {
-                    if(data.full_name){  // Include salutation with full_name in Details view like the Contacts module (Bug58325)
-                        data.full_name = data.salutation + " " + data.full_name;
-                    }
                     self.setModelAndContext(data);
+                    if(data.full_name){  // Include salutation with full_name in Details view like the Contacts module (Bug58325)
+                        if(!_.isEmpty(data.salutation)){
+                            var salutation = app.lang.getAppListStrings(self.model.fields.salutation.options)[data.salutation];
+                            self.model.set("full_name",salutation + " " + self.model.get("full_name"), {silent : true});
+                        }
+                    }
                     app.view.View.prototype.render.call(self);
                     self.renderSubnav(data);
                 } 

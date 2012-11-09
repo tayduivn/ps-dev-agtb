@@ -53,9 +53,6 @@
         var self = this, fullName = '', subnavModel = null;
         if (self.context.get('subnavModel')) {
             fullName = data.name ? data.full_name : data.first_name +' '+data.last_name;
-            if(data.full_name){  // Include salutation when viewing full_name like the Contacts module (Bug58325)
-                data.full_name = data.salutation + " " + data.full_name;
-            }
             self.context.get('subnavModel').set({
                 'title': fullName,
                 'meta': self.meta
