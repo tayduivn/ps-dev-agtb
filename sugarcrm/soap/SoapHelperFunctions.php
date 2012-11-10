@@ -286,7 +286,7 @@ function get_name_value($field,$value){
 
 function get_user_module_list($user){
 	global $moduleList, $modInvisList, $beanList, $beanFiles;
-	$modules = array_flip(SugarACL::filterModuleList($moduleList)); // module names end up as keys
+	$modules = array_flip(SugarACL::filterModuleList($moduleList, 'access', true)); // module names end up as keys
 
 	foreach($modInvisList as $invis){
 		$modules[$invis] = 'read_only';
