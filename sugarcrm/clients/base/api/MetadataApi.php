@@ -123,6 +123,7 @@ class MetadataApi extends SugarApi {
             $this->platforms = array('base');
         }
 
+
         $data = array();
 
         $userHashKey = '_PUBLIC_';
@@ -144,11 +145,12 @@ class MetadataApi extends SugarApi {
             }
         }
 
+        $this->jssourceFilter = $this->getJSSourcePlatforms($args);
+
         //If we failed to load the metadata from cache, load it now the hard way.
         if (empty($data)) {
             $data = $this->loadMetadata($hashKey);
         }
-
         $data['jssource'] = $this->buildJSFileFromMD($data, $this->platforms[0]);
 
         //If we had to generate a new hash, create the etag with the new hash
@@ -198,7 +200,6 @@ class MetadataApi extends SugarApi {
             $app_list_strings = return_app_list_strings_language($current_language);
         }
 
-
         // Default the type filter to everything available to the public, no module info at this time
         $this->typeFilter = array('fields','view_templates','app_strings','views', 'layouts', 'config', 'jssource');
 
@@ -235,18 +236,31 @@ class MetadataApi extends SugarApi {
         // Start collecting data
         $data = array();
 
-        $data['fields']  = $mm->getSugarClientFiles('field');
-        $data['views']   = $mm->getSugarClientFiles('view');
-        $data['layouts'] = $mm->getSugarLayouts();
-        $data['view_templates'] = $mm->getViewTemplates();
-        $data['app_strings'] = $mm->getAppStrings();
+        // TODO: We have duplication for things like type_filter, etc., in public and all metadata. They
+        // should use similar approach so we keep it DRY ;)
+        $this->jssourceFilter = $this->getJSSourcePlatforms($args);
+
+        $data['fields']  = $mm->getSugarClientFiles('field', NULL, NULL, $this->jssourceFilter);
+        $data['views']   = $mm->getSugarClientFiles('view', NULL, NULL,  $this->jssourceFilter);
+        $data['layouts'] = $mm->getSugarLayouts($this->jssourceFilter);
+
+//////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////
+// TODO
+// Do we need to do the platform thing for templates too? Maybe I'm
+// missing something, but aren't we loading the same templates for both
+// views.<view>.templates and view_templates here?
+//////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////
+ 
+        $data['view_templates']   = $mm->getViewTemplates();
+        $data['app_strings']      = $mm->getAppStrings();
         $data['app_list_strings'] = $app_list_strings_public;
-        $data['config'] = $this->getConfigs();
-        $data['jssource'] = $this->buildJSFileFromMD($data, $this->platforms[0]);
         $data['modules'] = array(
             "Login" => array("fields" => array()));
+        $data['config']           = $this->getConfigs();
+        $data['jssource']         = $this->buildJSFileFromMD($data, $this->platforms[0]);        
         $data["_hash"] = md5(serialize($data));
-
         $baseChunks = array('view_templates','fields','app_strings','views', 'layouts', 'config', 'jssource');
 
         return $this->filterResults($args, $data, $onlyHash, $baseChunks);
@@ -372,10 +386,12 @@ class MetadataApi extends SugarApi {
                 }
             }
         }
-
+        $data['fields']  = $mm->getSugarClientFiles('field', NULL, NULL, $this->jssourceFilter);
         $data['fields']  = $mm->getSugarClientFiles('field');
+        $data['views']   = $mm->getSugarClientFiles('view', NULL, NULL,  $this->jssourceFilter);
         $data['views']   = $mm->getSugarClientFiles('view');
         $data['layouts'] = $mm->getSugarClientFiles('layout');
+        $data['layouts'] = $mm->getSugarLayouts($this->jssourceFilter);
         $data['view_templates'] = $mm->getViewTemplates();
         $data['app_strings'] = $mm->getAppStrings();
         $data['app_list_strings'] = $mm->getAppListStrings();
@@ -636,26 +652,33 @@ class MetadataApi extends SugarApi {
         return $module_list;
     }
 
-    //TODO: This function needs to be in /me as it is user defined
-    protected function getDisplayModules($moduleList)
-    {
-        global $app_list_strings;
-        $ret = $moduleList;
-        if (!empty($this->user))
-        {
-            // Loading a standard module list
-            require_once("modules/MySettings/TabController.php");
-            $controller = new TabController();
-            $ret = array_intersect_key($controller->get_user_tabs($this->user), $moduleList);
-            foreach($ret as $mod => $lbl)
-            {
-                if (!empty($app_list_strings['moduleList'][$mod])){
-                    $ret[$mod] = $app_list_strings['moduleList'][$mod];
+    /**
+     * Reconciles which platforms jssource components will be built for. Note that this includes
+     * controllers for fields, views, and layouts. If a platform like base is omitted, none of 
+     * these will be added to the built js components.
+     * @return array
+     */
+    private function getJSSourcePlatforms($args) {
+        $arrJSSourcePlatforms = array();
+
+        // If no argument, or, if no jssource_filter supplied, jssourceFilter starts with all 
+        // platforms loaded (jssource components will be built for both their application's
+        // platform (e.g. portal) AND base. 
+        if ( empty($args['jssource_filter']) ) {
+            $arrJSSourcePlatforms = $this->platforms;
+        } else {
+
+            // For clients that don't want extra weight of components e.g. mobile
+            if ( strtolower($args['jssource_filter']) == 'none') {
+                $arrJSSourcePlatforms = null;
+            } else {
+                // Reinitialize our filter since it contained "all" platforms previously
+                $platforms = explode(",", $args['jssource_filter']);
+                if ($platforms != false) {
+                    $arrJSSourcePlatforms = $platforms;
                 }
             }
         }
-
-        return $ret;
-
+        return $arrJSSourcePlatforms;
     }
 }

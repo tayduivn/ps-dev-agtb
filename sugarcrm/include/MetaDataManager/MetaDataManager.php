@@ -455,9 +455,9 @@ class MetaDataManager {
      *
      * @return array
      */
-    public function getSugarLayouts()
+    public function getSugarLayouts($platforms)
     {
-        return $this->getSugarClientFiles('layout');
+        return $this->getSugarClientFiles('layout', NULL, NULL, $platforms);
     }
 
     /**
@@ -465,6 +465,7 @@ class MetaDataManager {
      *
      * @param string $path The directory within a platform
      * @param bool $full Whether to return full paths or dirnames only
+     * @param string $modulePath path to module 
      * @return array
      */
     public function getSugarClientFileDirs($path, $full = false, $modulePath = "") {
@@ -488,14 +489,27 @@ class MetaDataManager {
      * Gets client files of type $type (view, layout, field)
      *
      * @param string $type The type of files to get
+     * @param string $modulePath path to module 
+     * @param string $module the module
+     * @param array $platforms Which platforms to get client files for.
      * @return array
      */
-    public function getSugarClientFiles($type, $modulePath = "", $module="")
+    public function getSugarClientFiles($type, $modulePath = "", $module = "", $platforms = array())
     {
         $result = array();
 
+        // If not called with $platforms will default to all platforms.
+        $platforms = (!empty($platforms) && !count($platforms)) ? $platforms : $this->platforms;
+
+        // Platforms we'll push our loaded components on to.
+        $desiredPlatforms = array();
+        foreach ($platforms as $k) {
+            $desiredPlatforms[$k] = NULL;
+        }
+
         $typePath = $type . 's';
 
+        // Retrieves base directory names for all possible widgets
         $allSugarFiles = $this->getSugarClientFileDirs($typePath, false, $modulePath);
 
         foreach ( $allSugarFiles as $dirname) {
@@ -504,49 +518,52 @@ class MetaDataManager {
             // Check each platform in order of precendence to find the "best" controller
             // Add in meta checking here as well
             $meta = array();
-            foreach ( $this->platforms as $platform ) {
+            $tplDir = array();
+
+            foreach ( $platforms as $platform ) {
                 $dir = "{$modulePath}clients/$platform/$typePath/$dirname/";
                 $controller = SugarAutoLoader::existingCustomOne("{$dir}{$dirname}.js");
                 if (empty($meta)) {
                     $meta = $this->fetchMetadataFromDirs(array($dir), $module);
                 }
                 if ( $controller ) {
-                    $fileData['controller'] = file_get_contents($controller);
-                    // We found a controller, let's get out of here!
-                    break;
+                    $fileData[$platform][$dirname]['controller'] = file_get_contents($controller);
+                }
+
+                // Now get templates
+                $tplDir[0] = "{$modulePath}clients/$platform/$typePath/$dirname/";
+                $templates = $this->fetchTemplates($tplDir);
+                if (!empty($module) && $type != "field"){
+                    //custom views/layouts can only have one templates
+                    $fileData[$platform][$dirname]['template'] = reset($templates);
+                } else {
+                    if (count($templates)) {
+                        $fileData[$platform][$dirname]['templates'] = $templates;
+                    }
+                }
+                // Add the meta
+                if ($meta) {
+                   $fileData[$platform][$dirname]['meta'] = array_shift($meta); // Get the first member
+                }
+
+                // Remove empty fileData members. There's a chance of course we haven't 
+                // found anything and $fileData[$platform] my be unset
+                if (isset($fileData[$platform])) {
+                    foreach ($fileData[$platform] as $k => $v) {
+                        if (empty($v)) {
+                            unset($fileData[$platform][$k]);
+                        }
+                    }
                 }
             }
 
-            // Reverse the platform order so that "better" templates override worse ones
-            $backwardsPlatforms = array_reverse($this->platforms);
-            $templateDirs = array();
-            foreach ( $backwardsPlatforms as $platform ) {
-                $templateDirs[] = "{$modulePath}clients/$platform/$typePath/$dirname/";
+            foreach ($fileData as $pf => $pfData) {
+                $desiredPlatforms[$pf][$dirname] = $pfData[$dirname];
             }
-            $templates = $this->fetchTemplates($templateDirs);
-            if (!empty($module) && $type != "field"){
-                //custom views/layouts can only have one templates
-                $fileData['template'] = reset($templates);
-            }
-            else
-                $fileData['templates'] = $templates;
-
-            if ($meta) {
-               $fileData['meta'] = array_shift($meta); // Get the first member
-            }
-            //$fileData['meta'] = $this->fetchMetadataFromDirs($templateDirs);
-
-            // Remove empty fileData members
-            foreach ($fileData as $k => $v) {
-                if (empty($v)) {
-                    unset($fileData[$k]);
-                }
-            }
-
-            $result[$dirname] = $fileData;
         }
-
+        $result = $desiredPlatforms;
         $result['_hash'] = md5(serialize($result));
+
         return $result;
     }
 
