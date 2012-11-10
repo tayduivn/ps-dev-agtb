@@ -11,7 +11,31 @@
         'mouseenter tr': 'showActions',
         'mouseleave tr': 'hideActions'
     },
+    calculateRelativeWidths: function() {
+        var totalWidth = 0;
+        for (var p in this.meta.panels) {
+            for (var f in this.meta.panels[p].fields) {
+                var field = this.meta.panels[p].fields[f];
+                totalWidth += parseInt(field.width) || 10;
+            }
+            var adjustment = 100 / totalWidth;
+            //Adjust to make sure total is 100
+            for (var f in this.meta.panels[p].fields) {
+                var field = this.meta.panels[p].fields[f];
+                field.width = Math.floor((parseInt(field.width) || 10) * adjustment);
+            }
+        }
+    },
     _renderHtml: function() {
+        
+        //Calculate relative column widths.
+        this.calculateRelativeWidths();
+
+        //Set a flag true to the collection if there are new records (see list-bottom.js)
+        //in order to animate the new records
+        this.collection.newRecords = _.find(this.collection.models, function(model) {
+            return model.old === true;
+        })
         app.view.View.prototype._renderHtml.call(this);
         // off prevents multiple bindings for each render
         this.layout.off("list:search:fire", null, this);
@@ -100,7 +124,13 @@
         // If injected context with a limit (dashboard) then fetch only that 
         // amount. Also, add true will make it append to already loaded records.
         options.limit   = self.limit || null;
+
+        // Display loading message
+        app.alert.show('loading_' + self.cid, {level:'process', title:app.lang.getAppString('LBL_PORTAL_LOADING')});
+
         options.success = function() {
+            // Hide loading message
+            app.alert.dismiss('loading_' + self.cid);
             self.render();
         };
         

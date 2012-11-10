@@ -27,7 +27,7 @@
                 'd': 'dd', // 2 digit
                 'm': 'mm', // 2 digit
                 'y': 'y',  // 2 digit
-                'Y': 'yy', // 4 digit
+                'Y': 'yy'  // 4 digit
             };
             normalizedDateFormat = app.user.get('datepref').replace(/[yYmd]/g, function(s) {
                 return sugar2jQueryUIMap[s];
