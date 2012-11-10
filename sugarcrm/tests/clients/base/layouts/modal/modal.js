@@ -6,32 +6,17 @@ describe("Base.Layout.Modal", function() {
         context = app.context.getContext();
         if (!app.view.layouts.ModalLayout)
         {
-            $.ajax("../clients/base/layouts/modal/modal.js", {
-                async : false,
-                success : function(o) {
-                    ModalLayout = app.view.declareComponent("layout", "modal", null, o, null, true);
-                }
-            });
+            SugarTest.loadComponent("base", "layout", "modal");
         }
 
         if (!app.view.views.ModalHeaderView)
         {
-            $.ajax("../clients/base/views/modal-header/modal-header.js", {
-                async : false,
-                success : function(o) {
-                    app.view.declareComponent("view", "modal-header", null, o, null, true);
-                }
-            });
+            SugarTest.loadComponent("base", "view", "modal-header");
         }
 
         if (!app.view.views.ModalConfirmView)
         {
-            $.ajax("../clients/base/views/modal-confirm/modal-confirm.js", {
-                async : false,
-                success : function(o) {
-                    app.view.declareComponent("view", "modal-confirm", null, o, null, true);
-                }
-            });
+            SugarTest.loadComponent("base", "view", "modal-confirm");
         }
         if (!$.fn.modal) {
             $.fn.modal = function(options) {};
@@ -51,46 +36,50 @@ describe("Base.Layout.Modal", function() {
         var definedTriggerName = 'app:layout:modal:open1',
             calledEventName = '',
             options = {
-                'meta' : {
-                    'showEvent' : definedTriggerName
-                },
-                'context' : context,
-                'layout' : {
-                    on: function(event) {
-                        calledEventName = event;
-                        sinon.stub();
-                    }
+                'showEvent' : definedTriggerName
+            },
+            parent = {
+                on: function(event) {
+                    calledEventName = event;
+                    sinon.stub();
                 }
             };
-        //sinon.spy(options.layout, "on");
-        sinon.spy(context, "on");
-        sinon.spy(options.layout, "on");
-        layout = new ModalLayout(options);
+        sinon.spy(parent, "on");
+        layout = app.view.createLayout({
+            name : "modal",
+            context : context,
+            module : null,
+            meta : options,
+            layout: parent
+        });
         expect(calledEventName).toEqual(definedTriggerName);
-        expect(options.layout.on).toHaveBeenCalledOnce();
-        expect(options.layout.on.calledWith(calledEventName)).toBe(true);
+        expect(parent.on).toHaveBeenCalledOnce();
+        expect(parent.on.calledWith(calledEventName)).toBe(true);
     });
 
     it("should delegate multiple trigger names for showevent", function(){
         var definedTriggerName = ['editpopup', 'detailpopup'],
             calledEventName = '',
             options = {
-                'meta' : {
-                    'showEvent' : definedTriggerName
-                },
-                'context' : context,
-                'layout' : {
-                    on: function(event) {
-                        calledEventName = event;
-                        sinon.stub();
-                    }
+                'showEvent' : definedTriggerName
+            },
+            parent = {
+                on: function(event) {
+                    calledEventName = event;
+                    sinon.stub();
                 }
             };
 
-        sinon.spy(options.layout, "on");
-        layout = new ModalLayout(options);
-        expect(options.layout.on.calledWith('editpopup')).toBe(true);
-        expect(options.layout.on.calledWith('detailpopup')).toBe(true);
+        sinon.spy(parent, "on");
+        layout = app.view.createLayout({
+            name : "modal",
+            context : context,
+            module : null,
+            meta : options,
+            layout: parent
+        });
+        expect(parent.on.calledWith('editpopup')).toBe(true);
+        expect(parent.on.calledWith('detailpopup')).toBe(true);
 
     });
 
@@ -98,18 +87,21 @@ describe("Base.Layout.Modal", function() {
         var definedTriggerName = 'app:layout:modal:open',
             calledEventName = '',
             options = {
-                'meta' : {
-                    'showEvent' : definedTriggerName
-                },
-                'context' : context,
-                'layout' : {
-                    on: function(event) {
-                        calledEventName = event;
-                        sinon.stub();
-                    }
+                'showEvent' : definedTriggerName
+            },
+            parent = {
+                on: function(event) {
+                    calledEventName = event;
+                    sinon.stub();
                 }
             };
-        layout = new ModalLayout(options);
+        layout = app.view.createLayout({
+            name : "modal",
+            context : context,
+            module : null,
+            meta : options,
+            layout: parent
+        });
         expect(layout.$(".modal").length).toEqual(1);
         expect(layout.$(".modal-body").length).toEqual(0);
         var comp = {
@@ -126,19 +118,22 @@ describe("Base.Layout.Modal", function() {
             calledEventName = '',
             calledCaller = null,
             options = {
-                'meta' : {
-                    'showEvent' : definedTriggerName
-                },
-                'context' : context,
-                'layout' : {
-                    on: function(event, caller) {
-                        calledEventName = event;
-                        calledCaller = caller;
-                    }
+                'showEvent' : definedTriggerName
+            },
+            parent = {
+                on: function(event, caller) {
+                    calledEventName = event;
+                    calledCaller = caller;
                 }
             },
             calledModule = 'Accounts';
-        layout = new ModalLayout(options);
+        layout = app.view.createLayout({
+            name : "modal",
+            context : context,
+            module : null,
+            meta : options,
+            layout: parent
+        });
         var comp = {},
             def = {};
         layout._placeComponent(comp, def);
@@ -171,20 +166,23 @@ describe("Base.Layout.Modal", function() {
             calledEventName = '',
             calledCaller = null,
             options = {
-                'meta' : {
-                    'showEvent' : definedTriggerName
-                },
-                'context' : context,
-                'layout' : {
-                    on: function(event, caller) {
-                        calledEventName = event;
-                        calledCaller = caller;
-                    }
+                'showEvent' : definedTriggerName
+            },
+            parent = {
+                on: function(event, caller) {
+                    calledEventName = event;
+                    calledCaller = caller;
                 }
             },
             message = 'blahblah',
             title = 'poo title';
-        layout = new ModalLayout(options);
+        layout = app.view.createLayout({
+            name : "modal",
+            context : context,
+            module : null,
+            meta : options,
+            layout: parent
+        });
         var comp = {},
             def = {};
         calledCaller.call(layout, {
@@ -200,60 +198,68 @@ describe("Base.Layout.Modal", function() {
     it("should adjust the modal width size", function() {
         var definedTriggerName = 'app:layout:modal:open',
             options = {
-                'meta' : {
-                    'showEvent' : definedTriggerName,
-                    'components' : [ { view: 'blah' }]
-                },
-                'context' : context,
-                'layout' : {
-                    on: function(event, caller) {
-                    }
+                'showEvent' : definedTriggerName,
+            },
+            parent = {
+                on: function(event, caller) {
                 }
+            },
+            confirmDialog = {
+                'message' : 'blah',
+                'title' : 'title'
             };
-        layout = new ModalLayout(options);
-        layout.show({width: 4});
+        layout = app.view.createLayout({
+            name : "modal",
+            context : context,
+            module : null,
+            meta : options,
+            layout: parent
+        });
+        layout.show(_.extend({width: 4}, confirmDialog));
         expect(layout.$(".modal").width()).toBe(4);
 
-        layout.show({width: 5});
+        layout.show(_.extend({width: 5}, confirmDialog));
         expect(layout.$(".modal").width()).toBe(5);
         expect(layout.$(".modal").width()).not.toBe(4);
 
-        layout.show({});
+        layout.show(_.extend({}, confirmDialog));
         expect(layout.$(".modal").width()).not.toBe(5);
         expect(layout.$(".modal").width()).not.toBe(4);
     });
 
 
-    xit("should invoke before/after while modal is showing and hiding", function() {
+    it("should invoke before/after while modal is showing and hiding", function() {
         var definedTriggerName = 'app:layout:modal:open',
             options = {
-                'meta' : {
-                    'showEvent' : definedTriggerName,
-                    'components' : [ { view: 'blah' }]
-                },
-                'context' : context,
-                'layout' : {
-                    on: function(event, caller) {
-                    }
+                'showEvent' : definedTriggerName,
+                'components' : [ { view: 'blah' }]
+            },
+            parent = {
+                on: function(event, caller) {
                 }
             };
-        layout = new ModalLayout(options),
-            showOptions = {'blah' : 'yeahhh'};
-        sinon.spy(layout, "_beforeShow");
-        sinon.spy(layout, "_afterShow");
-        sinon.spy(layout, "_beforeHide");
-        sinon.spy(layout, "_afterHide");
+        layout = app.view.createLayout({
+            name : "modal",
+            context : context,
+            module : null,
+            meta : options,
+            layout: parent
+        });
+        layout.triggerBefore = function(event) {
+            sinon.stub();
+        };
+
+        layout.trigger = function(event) {
+            sinon.stub();
+        };
+        var showOptions = {'blah' : 'yeahhh'};
+        sinon.spy(layout, "triggerBefore");
+        sinon.spy(layout, "trigger");
 
         layout.show({options: showOptions});
-        expect(layout._beforeShow).toHaveBeenCalledOnce();
-        expect(layout._beforeShow.calledWith(showOptions)).toBe(true);
-        expect(layout._afterShow).toHaveBeenCalledOnce();
-        expect(layout._afterShow.calledWith(showOptions)).toBe(true);
-        expect(layout._beforeHide).not.toHaveBeenCalledOnce();
-        expect(layout._afterHide).not.toHaveBeenCalledOnce();
+        expect(layout.triggerBefore.calledWith('show')).toBe(true);
+        expect(layout.triggerBefore.calledWith('hide')).toBe(false);
         layout.hide();
-        expect(layout._beforeHide).toHaveBeenCalledOnce();
-        expect(layout._afterHide).toHaveBeenCalledOnce();
-
+        expect(layout.triggerBefore.calledWith('hide')).toBe(true);
     });
 });
