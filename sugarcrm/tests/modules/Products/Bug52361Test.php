@@ -212,6 +212,10 @@ class Bug52361Test extends Sugar_PHPUnit_Framework_OutputTestCase
 
         unset($studio->_viewdefs[$name]);
         $studio->handleSave(false);
+        if (sugar_is_file('custom/Extension/modules/Accounts/Ext/Layoutdefs/_overrideAccount_subpanel_products.php', 'w'))
+        {
+            unlink('custom/Extension/modules/Accounts/Ext/Layoutdefs/_overrideAccount_subpanel_products.php');
+        }
 
         $this->assertContains($this->user->name, $actual, 'User name is not displayed in subpanel');
     }
@@ -270,6 +274,10 @@ class Bug52361Test extends Sugar_PHPUnit_Framework_OutputTestCase
 
         unset($studio->_viewdefs[$name]);
         $studio->handleSave(false);
+        if (sugar_is_file('custom/Extension/modules/Contacts/Ext/Layoutdefs/_overrideContact_subpanel_products.php', 'w'))
+        {
+            unlink('custom/Extension/modules/Contacts/Ext/Layoutdefs/_overrideContact_subpanel_products.php');
+        }
 
         $this->assertContains($this->user->name, $actual, 'User name is not displayed in subpanel');
     }
