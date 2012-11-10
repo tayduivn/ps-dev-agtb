@@ -269,7 +269,7 @@ class VardefManager{
         }
         //Some modules have multiple beans, we need to see if this object has a module_dir that is different from its module_name
         if(!$found){
-            if ($bean)
+            if (!empty($bean))
             {
                 $object_name = BeanFactory::getObjectName($bean->module_dir);
                 if ($bean && $bean->module_dir != $bean->module_name && !empty($object_name))
