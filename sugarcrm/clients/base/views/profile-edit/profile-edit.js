@@ -24,6 +24,7 @@
             currentUserAttributes = {id: app.user.get('id')}; 
             self.loadCurrentUser(currentUserAttributes, function(data) {
                 if(data) {
+                    app.user.addSalutationToFullName(data);
                     self.setModelAndContext(data);
                     app.view.View.prototype.render.call(self);
                     self.$('a.password').text(app.lang.get('LBL_CONTACT_EDIT_PASSWORD_LNK_TEXT'));
