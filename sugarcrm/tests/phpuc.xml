@@ -44,16 +44,6 @@
                 <directory>tests</directory>
             </testsuite>
     </testsuites>
-    <testsuite name="All Sugar Tests">
-        <directory>./tests/data</directory>
-        <directory>./tests/include</directory>
-        <directory>./tests/jssource</directory>
-        <directory>./tests/modules</directory>
-        <directory>./tests/ModuleInstall</directory>
-        <directory>./tests/rest</directory>
-        <directory>./tests/service</directory>
-        <directory>./tests/tests</directory>
-    </testsuite>
     <filter>
         <blacklist>
             <directory suffix=".php">./cache</directory>
