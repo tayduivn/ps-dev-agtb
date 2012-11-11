@@ -60,7 +60,7 @@
         usersTimeFormatPreference = myUser.get('timepref');
 
         // If there is a default 'string' value like "yesterday", format it as a date
-        if(this.model.isNew() && !value && this.def.display_default) {
+        if(this.model.isNew() && !value && this.def.display_default && this.view.name === 'edit') {
             value  = app.date.parseDisplayDefault(this.def.display_default);
             jsDate = app.date.dateFromDisplayDefaultString(value);
             this.model.set(this.name, jsDate.toISOString(), {silent: true}); 

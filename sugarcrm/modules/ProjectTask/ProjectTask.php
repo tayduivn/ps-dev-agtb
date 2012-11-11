@@ -92,7 +92,8 @@ class ProjectTask extends SugarBean {
 	public function __construct($init=true)
 	{
 		parent::__construct();
-		if ($init) {
+		if ($init && empty($GLOBALS['installing'])) {
+
 			// default value for a clean instantiation
 			$this->utilization = 100;
 
@@ -613,7 +614,7 @@ class ProjectTask extends SugarBean {
 	        }
     	}
         return 0;
-    }	
+    }
 
     /**
      * Update percent complete for project tasks with children tasks based on children's values
