@@ -305,21 +305,34 @@ class MetadataApi extends SugarApi {
 
     protected function buildJSForComponents(&$data) {
         $js = "";
-        foreach(array('fields', 'views', 'layouts') as $mdType){
+
+        foreach(array('fields', 'views', 'layouts') as $mdType) {
+
             if (!empty($data[$mdType])){
+                $js .= "\n\t$mdType:{";
+                $firstComp = true;
+                $platforms = $this->jssourceFilter;
 
-                $js .= ",\n\t$mdType:{";
-                $comp = '';
+                foreach ($platforms as $platform) {
 
-                foreach($data[$mdType] as $name => $component) {
-                    if (is_array($component) && !empty($component['controller']))
-                    {
-                        $controller = $component['controller'];
-                        // remove additional symbols in end of js content - it will be included in content
-                        $controller = trim(trim($controller), ",;");
-                        $comp .= ",\n\t\t\"$name\":{controller:$controller}";
-                        unset($data[$mdType][$name]['controller']);
+                    if (isset($data[$mdType][$platform])) {
 
+                        foreach($data[$mdType][$platform] as $name => $component) {
+                            
+                            if (is_array($component) && !empty($component['controller'])) {
+                                if (!$firstComp)
+                                    $js .= ",";
+                                else
+                                    $firstComp = false;
+
+                                $controller = $component['controller'];
+                                // remove additional symbols in end of js content - it will be included in content
+                                $controller = trim(trim($controller), ",;");
+
+                                $js .= "\n\t\t\"$name\":{controller:$controller}";
+                                unset($data[$mdType][$name]['controller']);
+                            }
+                        }
                     }
                 }
                 //Chop of the first comma in $comp
@@ -387,10 +400,7 @@ class MetadataApi extends SugarApi {
             }
         }
         $data['fields']  = $mm->getSugarClientFiles('field', NULL, NULL, $this->jssourceFilter);
-        $data['fields']  = $mm->getSugarClientFiles('field');
         $data['views']   = $mm->getSugarClientFiles('view', NULL, NULL,  $this->jssourceFilter);
-        $data['views']   = $mm->getSugarClientFiles('view');
-        $data['layouts'] = $mm->getSugarClientFiles('layout');
         $data['layouts'] = $mm->getSugarLayouts($this->jssourceFilter);
         $data['view_templates'] = $mm->getViewTemplates();
         $data['app_strings'] = $mm->getAppStrings();

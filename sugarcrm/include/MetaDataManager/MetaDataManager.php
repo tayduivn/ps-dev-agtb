@@ -499,7 +499,7 @@ class MetaDataManager {
         $result = array();
 
         // If not called with $platforms will default to all platforms.
-        $platforms = (!empty($platforms) && !count($platforms)) ? $platforms : $this->platforms;
+        $platforms = (!empty($platforms) && count($platforms)) ? $platforms : $this->platforms;
 
         // Platforms we'll push our loaded components on to.
         $desiredPlatforms = array();
