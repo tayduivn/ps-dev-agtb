@@ -63,7 +63,7 @@ class RestService extends ServiceBase {
 
 
             $route = $this->findRoute($path,$version,$_SERVER['REQUEST_METHOD'],$platform);
-                        
+
             if ( $route == false ) {
                 throw new SugarApiExceptionNoMethod('Could not find any route that accepted a path like: '.$rawPath);
             }
@@ -74,7 +74,7 @@ class RestService extends ServiceBase {
                     throw new SugarApiExceptionNeedLogin("No valid authentication for user.");
                 }
             }
-                
+
             if ( $isLoggedIn ) {
                 // This is needed to load in the app_strings and the app_list_strings and the such
                 $this->loadUserEnvironment();
@@ -107,7 +107,7 @@ class RestService extends ServiceBase {
             } else {
                 $getVars = array();
             }
-            
+
 
             if ( isset($route['rawPostContents']) && $route['rawPostContents'] ) {
                 // This route wants the raw post contents
@@ -138,15 +138,15 @@ class RestService extends ServiceBase {
                     $postVars = array();
                 }
             }
-            
-            // I know this looks a little weird, overriding post vars with get vars, but 
+
+            // I know this looks a little weird, overriding post vars with get vars, but
             // in the case of REST, get vars are fairly uncommon and pretty explicit, where
             // the posted document is probably the output of a generated form.
             $argArray = array_merge($postVars,$getVars,$pathVars);
 
             $apiClass = $this->loadApiClass($route);
             $apiMethod = $route['method'];
-            
+
             $output = $apiClass->$apiMethod($this,$argArray);
 
             $this->respond($output, $route, $argArray);
@@ -255,7 +255,7 @@ class RestService extends ServiceBase {
                 $outputVars[$varName] = $path[$i];
             }
         }
-        
+
         return $outputVars;
     }
 
@@ -296,7 +296,7 @@ class RestService extends ServiceBase {
             echo($reply);
             die();
         }
-        
+
         // Send proper headers
         header("Content-Type: application/json");
         header("Cache-Control: no-store");
@@ -321,13 +321,13 @@ class RestService extends ServiceBase {
      */
     protected function parsePath($rawPath) {
         $pathBits = explode('/',trim($rawPath,'/'));
-        
+
         $versionBit = array_shift($pathBits);
 
         $version = (float)ltrim($versionBit,'v');
 
         return array($version,$pathBits);
-        
+
     }
 
     /**
@@ -343,9 +343,6 @@ class RestService extends ServiceBase {
         if ( isset($_SERVER['HTTP_OAUTH_TOKEN']) ) {
             // Passing a session id claiming to be an oauth token
             $this->sessionId = $_SERVER['HTTP_OAUTH_TOKEN'];
-
-            $oauthServer = SugarOAuth2Server::getOAuth2Server();
-            $oauthServer->verifyAccessToken($this->sessionId);
         } else if ( isset($_POST['oauth_token']) ) {
             $this->sessionId = $_POST['oauth_token'];
         } else if ( isset($_GET['oauth_token']) ) {
@@ -353,6 +350,8 @@ class RestService extends ServiceBase {
         }
 
         if ( !empty($this->sessionId) ) {
+            $oauthServer = SugarOAuth2Server::getOAuth2Server();
+            $oauthServer->verifyAccessToken($this->sessionId);
             if ( isset($_SESSION['authenticated_user_id']) ) {
                 $valid = true;
                 $GLOBALS['current_user'] = BeanFactory::getBean('Users',$_SESSION['authenticated_user_id']);
@@ -364,7 +363,7 @@ class RestService extends ServiceBase {
             // the auth token being sent as part of the request body, you will get a no auth error
             // message on uploads. This check is in place specifically for file uploads that are too
             // big to be handled by checking for an empty request body for POST and PUT file requests.
-            
+
             // Grab our path elements of the request and see if this is a files request
             $pathParts = $this->parsePath($this->getRawPath());
             if (isset($pathParts[1]) && is_array($pathParts[1]) && in_array('file', $pathParts[1])) {
@@ -388,14 +387,14 @@ class RestService extends ServiceBase {
 
             return false;
         }
-        
+
         //BEGIN SUGARCRM flav=pro ONLY
         SugarApplication::trackLogin();
         //END SUGARCRM flav=pro ONLY
 
         // Setup visibility where needed
         $oauthServer->setupVisibility();
-        
+
         LogicHook::initialize()->call_custom_logic('', 'after_session_start');
 
         $this->user = $GLOBALS['current_user'];
