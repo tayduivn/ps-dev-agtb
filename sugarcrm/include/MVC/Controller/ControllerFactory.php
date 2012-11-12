@@ -21,9 +21,9 @@ class ControllerFactory
 		    $class = SugarAutoLoader::customClass(ucfirst($module).'Controller');
 		} else {
 		    SugarAutoLoader::requireWithCustom('include/MVC/Controller/SugarController.php');
-		    $class = SugarAutoLoader::customClass('CustomSugarController');
+		    $class = SugarAutoLoader::customClass('SugarController');
 		}
-		if(class_exists($class)) {
+		if(class_exists($class, false)) {
 			$controller = new $class();
 		}
 

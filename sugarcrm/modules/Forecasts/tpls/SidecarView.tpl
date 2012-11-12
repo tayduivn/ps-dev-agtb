@@ -1,6 +1,14 @@
-
 <link rel="stylesheet" type="text/css" href="{$css_url}" />
-<div class="content" id="forecasts"></div>
+<div class="content" id="forecasts">
+    <div class="alert-top">
+        <div class="alert alert-process">
+            <strong>Loading</strong>
+            <div class="loading">
+                <span class="l1"></span><span class="l2"></span><span class="l3"></span>
+            </div>
+        </div>
+    </div>
+</div>
 <footer>
     <div class="row-fluid">
         <div class="span6">
@@ -31,13 +39,7 @@
         }
         app.augment("forecasts", _.extend(app.forecasts, {
             initForecast: function(authAccessToken) {
-
-            var forecastData = {/literal} {$initData} {literal};
-
-                // get default selections for filter and category
-                app.defaultSelections = forecastData.defaultSelections;
-                app.initData = forecastData.initData;
-                    app.viewModule = {/literal}'{$module}';{literal}
+                app.viewModule = {/literal}'{$module}';{literal}
                 app.AUTH_ACCESS_TOKEN = authAccessToken;
                 app.AUTH_REFRESH_TOKEN = authAccessToken;
                 app.init({
@@ -45,10 +47,20 @@
                     contentEl: ".content",
                     //keyValueStore: app.sugarAuthStore, //override the keyValueStore
                     callback: function(app) {
-                        app.user.set(app.initData.selectedUser);
-                        // resize the top menu after the layout has been initialized
-                        SUGAR.themes.resizeMenu();
-                        app.start();
+                        var url = app.api.buildURL("Forecasts/init");
+                        app.api.call('GET', url, null, {success: function(forecastData) {
+                            // get default selections for filter and category
+                            app.defaultSelections = forecastData.defaultSelections;
+                            app.initData = forecastData.initData;
+                            app.user.set(app.initData.selectedUser);
+
+                            if(forecastData.initData.forecasts_setup == 0) {
+                                window.location.hash = "#config";
+                            }
+                            // resize the top menu after the layout has been initialized
+                            SUGAR.themes.resizeMenu();
+                            app.start();
+                        }});
                     }
                 });
                 return app;

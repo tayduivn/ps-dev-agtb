@@ -353,7 +353,7 @@ class SugarBean
                 display_notice('<b>missing object_name for ' . $this->object_name . '</b>');
             }
             //END SUGARCRM flav=int ONLY
-            VardefManager::loadVardef($this->module_dir, $this->object_name);
+            VardefManager::loadVardef($this->module_dir, $this->object_name, false, array("bean" => $this));
 
             // build $this->column_fields from the field_defs if they exist
             if (!empty($dictionary[$this->object_name]['fields'])) {
@@ -2591,7 +2591,7 @@ class SugarBean
 
         if(isset($this->module_name) && !empty($this->module_name) && !empty($GLOBALS['current_user']) && $this->isFavoritesEnabled()) {
             $query_select .= ', sf.id AS my_favorite';
-            $query_from .= " LEFT JOIN sugarfavorites sf ON sf.deleted = 0 AND sf.module = '{$this->module_name}' AND sf.record_id = '{$id}' AND sf.assigned_user_id = '{$GLOBALS['current_user']->id}'";
+            $query_from .= " LEFT JOIN sugarfavorites sf ON sf.deleted = 0 AND sf.module = '{$this->module_name}' AND sf.record_id = {$this->db->quoted($id)} AND sf.assigned_user_id = '{$GLOBALS['current_user']->id}'";
         }
         //END SUGARCRM flav=pro ONLY
 

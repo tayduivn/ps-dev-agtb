@@ -350,12 +350,20 @@ mySugarLoader.insert();
 
 {* //BEGIN SUGARCRM flav=pro ONLY*}
 {if $view_tour}
-<link rel="stylesheet" type="text/css" href="themes/default/css/bootstrap.css" id="bootstrapCss"/>
-<link rel="stylesheet" type="text/css" href="modules/Home/tour.css" id="tourCss"/>
-<script src="include/javascript/jquery/bootstrap.min.js" type="text/javascript" id="bootstrapJs"></script>
-<script src="include/javascript/jquery/jquery.popoverext.js" type="text/javascript" id="popoverext"></script>
-<script src="include/javascript/jquery/jquery.effects.custombounce.js" type="text/javascript" id="bounce"></script>
-<script src="include/javascript/tour.js" type="text/javascript" id="tourJs"></script>
-<script src="modules/Home/tour.js" type="text/javascript" id="whatsNewsJs"></script>
+{literal}
+<script type="text/javascript">
+$(document).ready(function() {
+SUGAR.tour.init({
+    id: 'tour',
+    modals: modals,
+    modalUrl: "index.php?module=Home&action=tour&to_pdf=1",
+    prefUrl: "index.php?module=Users&action=UpdateTourStatus&to_pdf=true&viewed=true",
+    className: 'whatsnew',
+    onTourFinish: function() {}
+    });
+});
+</script>
+{/literal}
+
 {/if}
 {* //END SUGARCRM flav=pro ONLY*}

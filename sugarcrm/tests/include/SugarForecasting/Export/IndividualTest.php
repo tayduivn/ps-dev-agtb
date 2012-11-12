@@ -178,4 +178,19 @@ class SugarForecasting_Export_IndividualTest extends Sugar_PHPUnit_Framework_Tes
         $this->$method($expectedRegex, $content);
    }
 
+
+    /**
+     * This is a function to test the getFilename function
+     * @group export
+     * @group forecasts
+     */
+    public function testGetFilename()
+    {
+        $args = array();
+        $args['timeperiod_id'] = $this->timeperiod->id;
+        $args['user_id'] = $this->repData['id'];
+        $obj = new SugarForecasting_Export_Individual($args);
+
+        $this->assertRegExp("/\_rep\_forecast.csv$/", $obj->getFilename());
+    }
 }

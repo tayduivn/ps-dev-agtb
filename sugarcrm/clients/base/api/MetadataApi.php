@@ -180,13 +180,13 @@ class MetadataApi extends SugarApi {
             foreach($admin->settings AS $setting_name => $setting_value) {
                 if(stristr($setting_name, $prefix)) {
                     $key = str_replace($prefix, '', $setting_name);
-                    
+
                     // Empty array was getting decoded as '[]' as tertiary was falsy .. this fixes
                     $decoded = json_decode(html_entity_decode($setting_value));
                     $configs[$key] = $setting_value; // set to fallback in case
                     if (strcasecmp($setting_name, "null") == 0 || $decoded !== NULL) {
                         $configs[$key] = $decoded;
-                    } 
+                    }
                 }
             }
         }
@@ -228,7 +228,7 @@ class MetadataApi extends SugarApi {
         $app_list_strings = $mm->getAppListStrings();
         $app_list_strings_public = array();
         $app_list_strings_public['available_language_dom'] = $app_list_strings['available_language_dom'];
-        
+
         // Let clients fill in any gaps that may need to be filled in
         $app_list_strings_public = $this->fillInAppListStrings($app_list_strings_public, $app_list_strings);
 
@@ -242,7 +242,9 @@ class MetadataApi extends SugarApi {
         $data['app_strings'] = $mm->getAppStrings();
         $data['app_list_strings'] = $app_list_strings_public;
         $data['config'] = $this->getConfigs();
-        $data['jssource'] = $this->buildJSFileFromMD($data, $this->platforms[0]);        
+        $data['jssource'] = $this->buildJSFileFromMD($data, $this->platforms[0]);
+        $data['modules'] = array(
+            "Login" => array("fields" => array()));
         $data["_hash"] = md5(serialize($data));
 
         $baseChunks = array('view_templates','fields','app_strings','views', 'layouts', 'config', 'jssource');
@@ -257,22 +259,21 @@ class MetadataApi extends SugarApi {
 
         if (!empty($data['modules']))
         {
-            $firstModule = true;
             if (!empty($compJS))
                 $js .= ",";
+
             $js .= "\n\tmodules:{";
+
+            $allModuleJS = '';
             foreach($data['modules'] as $module => $def)
             {
                 $moduleJS = $this->buildJSForComponents($data['modules'][$module]);
-                if (empty($moduleJS))
-                    continue;
-                $moduleJS = "\n\t\t$module:{{$moduleJS}}";
-                if (!$firstModule)
-                    $moduleJS = "," . $moduleJS;
-                else
-                    $firstModule = false;
-                $js .= $moduleJS;
+                if(!empty($moduleJS)) {
+                    $allModuleJS .= ",\n\t\t$module:{{$moduleJS}}";
+                }
             }
+            //Chop off the first comma in $allModuleJS
+            $js .= substr($allModuleJS, 1);
             $js .= "\n\t}";
         }
 
@@ -288,46 +289,38 @@ class MetadataApi extends SugarApi {
         return $sugar_config['site_url'] . "/{$path}";
     }
 
-
     protected function buildJSForComponents(&$data) {
-        $firstType = true;
         $js = "";
         foreach(array('fields', 'views', 'layouts') as $mdType){
             if (!empty($data[$mdType])){
-                if (!$firstType)
-                    $js .= ",";
-                else
-                    $firstType = false;
 
-                $js .= "\n\t$mdType:{";
-                $firstComp = true;
+                $js .= ",\n\t$mdType:{";
+                $comp = '';
+
                 foreach($data[$mdType] as $name => $component) {
                     if (is_array($component) && !empty($component['controller']))
                     {
-                        if (!$firstComp)
-                            $js .= ",";
-                        else
-                            $firstComp = false;
                         $controller = $component['controller'];
                         // remove additional symbols in end of js content - it will be included in content
                         $controller = trim(trim($controller), ",;");
-
-                        $js .= "\n\t\t\"$name\":{controller:$controller}";
-                            unset($data[$mdType][$name]['controller']);
+                        $comp .= ",\n\t\t\"$name\":{controller:$controller}";
+                        unset($data[$mdType][$name]['controller']);
 
                     }
                 }
+                //Chop of the first comma in $comp
+                $js .= substr($comp,1);
                 $js .= "\n\t}";
             }
         }
-        return $js;
+        //Chop of the first comma in $js
+        return substr($js,1);
     }
 
     protected function loadMetadata($hashKey) {
         // Start collecting data
-        $data = array();
+        $data = $this->_populateModules(array());
         $mm = $this->getMetadataManager();
-        $data = $this->_populateModules($data);
         // TODO:
         // Sadly, it's now unclear what our abstraction is here. It should be that this class
         // is just for API stuff and $mm is for any metadata data operations. However, since
@@ -336,22 +329,34 @@ class MetadataApi extends SugarApi {
         // inherit as MetadataPortalDataManager and put all accessors, etc., there.
         $data['mod_strings'] = $this->getModStrings($data);
         $data['currencies'] = $this->getSystemCurrencies();
-        $data['module_list'] = $this->cleanUpModuleList($data['module_list']);
 
-        if (isset($_SESSION['type']) && $_SESSION['type']=='support_portal') {
-            $apiPerson = BeanFactory::getBean('Contacts', $_SESSION['contact_id']);
-            // This is a change in the ACL's for users without Accounts
-            $vis = new SupportPortalVisibility($apiPerson);
-            $accounts = $vis->getAccountIds();
-            if (count($accounts)==0) {
-                // This user has no accounts, modify their ACL's so that they match up with enforcement
-                $data['acl']['Accounts']['access'] = 'no';
-                $data['acl']['Cases']['access'] = 'no';
-                foreach ($data['module_list'] as $moduleIndex=>$moduleKey) {
-                    if ($moduleKey == 'Cases') {
-                        unset($data['module_list'][$moduleIndex]);
+        $data['modules'] = array();
+
+        foreach($data['full_module_list'] as $module) {
+            $bean = BeanFactory::newBean($module);
+
+            $modData = $mm->getModuleData($module);
+            $data['modules'][$module] = $modData;
+
+            if (isset($data['modules'][$module]['fields'])) {
+                $fields = $data['modules'][$module]['fields'];
+                foreach($fields as $fieldName => $fieldDef) {
+                    if (isset($fieldDef['type']) && ($fieldDef['type'] == 'relate')) {
+                        if (isset($fieldDef['module']) && !in_array($fieldDef['module'], $data['full_module_list'])) {
+                            $data['full_module_list'][$fieldDef['module']] = $fieldDef['module'];
+                        }
+                    } elseif (isset($fieldDef['type']) && ($fieldDef['type'] == 'link')) {
+                        $bean->load_relationship($fieldDef['name']);
+                        $otherSide = $bean->$fieldDef['name']->getRelatedModuleName();
+                        $data['full_module_list'][$otherSide] = $otherSide;
                     }
                 }
+            }
+        }
+
+        foreach($data['modules'] as $moduleName => $moduleDef) {
+            if (!array_key_exists($moduleName, $data['full_module_list']) && array_key_exists($moduleName, $data['modules'])) {
+                unset($data['modules'][$moduleName]);
             }
         }
 
@@ -432,7 +437,7 @@ class MetadataApi extends SugarApi {
                     unset($data[$chunk]);
                 }
             }
-            
+
             // Relationships are special, they are a baseChunk but also need to pay attention to modules
             if (!empty($moduleFilter) && isset($data['relationships']) ) {
                 // We only want some modules, but we want the relationships
@@ -469,12 +474,12 @@ class MetadataApi extends SugarApi {
 
     /**
      * Gets configs
-     * 
+     *
      * @return array
      */
     protected function getConfigs() {
         $configs = array();
-        
+
         // As of now configs are only for portal
         return $configs;
     }
@@ -482,7 +487,7 @@ class MetadataApi extends SugarApi {
 
     /**
      * Fills in additional app list strings data as needed by the client
-     * 
+     *
      * @param array $public Public app list strings
      * @param array $main Core app list strings
      * @return array
@@ -493,7 +498,7 @@ class MetadataApi extends SugarApi {
 
     /**
      * Gets the list of modules for this client
-     * 
+     *
      * @return array
      */
     protected function getModules() {
@@ -519,7 +524,7 @@ class MetadataApi extends SugarApi {
 
 
     /**
-     * Gets full module list and data for each module. 
+     * Gets full module list and data for each module.
      * Precondition: $data['module_list'] must already be populated.
      *
      * @param array $data load metadata array
@@ -527,18 +532,15 @@ class MetadataApi extends SugarApi {
      */
     private function _populateModules($data) {
         $mm = $this->getMetadataManager();
-        $data['module_list'] = $this->getModuleList();
+        $data['full_module_list'] = $this->getModuleList();
         $data['modules'] = array();
-        $data['full_module_list'] = $data['module_list'];
         foreach($data['full_module_list'] as $module) {
             $bean = BeanFactory::newBean($module);
-            if (!$bean || !is_a($bean,'SugarBean') ) {
-                // There is no bean, we can't get data on this
-                continue;
-            }
             $data['modules'][$module] = $mm->getModuleData($module);
             $this->_relateFields($data, $module, $bean);
         }
+        $data['module_list'] = $this->getDisplayModules($data['full_module_list']);
+
         return $data;
     }
 
@@ -569,7 +571,7 @@ class MetadataApi extends SugarApi {
 
     /**
      * Gets mod strings
-     * 
+     *
      * @param array $data The metadata array
      * @return array
      */
@@ -587,7 +589,7 @@ class MetadataApi extends SugarApi {
     /**
      * Gets currencies
      * @return array
-     */  
+     */
     public function getSystemCurrencies() {
         $currencies = array();
         require_once('modules/Currencies/ListCurrency.php');
@@ -613,7 +615,7 @@ class MetadataApi extends SugarApi {
     }
     /**
      * Cleans up the module list for any modules that should not be on it
-     * 
+     *
      * @param array $module_list The module list array
      * @return array
      */
@@ -630,7 +632,30 @@ class MetadataApi extends SugarApi {
                 }
             }
         }
-        
+
         return $module_list;
+    }
+
+    //TODO: This function needs to be in /me as it is user defined
+    protected function getDisplayModules($moduleList)
+    {
+        global $app_list_strings;
+        $ret = $moduleList;
+        if (!empty($this->user))
+        {
+            // Loading a standard module list
+            require_once("modules/MySettings/TabController.php");
+            $controller = new TabController();
+            $ret = array_intersect_key($controller->get_user_tabs($this->user), $moduleList);
+            foreach($ret as $mod => $lbl)
+            {
+                if (!empty($app_list_strings['moduleList'][$mod])){
+                    $ret[$mod] = $app_list_strings['moduleList'][$mod];
+                }
+            }
+        }
+
+        return $ret;
+
     }
 }

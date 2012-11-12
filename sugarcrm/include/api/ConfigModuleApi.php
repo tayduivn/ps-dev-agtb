@@ -109,7 +109,7 @@ class ConfigModuleApi extends ModuleApi {
     }
 
 
-    protected function hasAccess($module) {
+    public function hasAccess($module) {
         global $current_user;
         return $current_user->isAdminForModule($module);
     }
