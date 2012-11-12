@@ -20,7 +20,6 @@
      * @param data Contact data being patched
      */
     app.user.addSalutationToFullName = function(data){
-        debugger;
         var contactFields = app.metadata.getModule("Contacts").fields;
         if(_.isEmpty(data.name)){
             data.full_name = data.first_name + ' ' + data.last_name;
