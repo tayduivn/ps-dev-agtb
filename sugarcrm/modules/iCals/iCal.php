@@ -215,14 +215,14 @@ class iCal extends vCal {
             $hide_calls = true;
         }
 
-        $hide_tasks = true;
+        $taskAsVTODO = true;
         if (!empty($_REQUEST['show_tasks_as_events']) && ($_REQUEST['show_tasks_as_events'] == "1"  || $_REQUEST['show_tasks_as_events'] == "true"))
         {
-            $hide_tasks = false;
+            $taskAsVTODO = false;
         }
 
         $acts_arr = CalendarActivity::get_activities($user_bean->id,
-            !$hide_tasks,
+            !$taskAsVTODO,
             $start_date_time,
             $end_date_time,
             'month',
@@ -311,7 +311,7 @@ class iCal extends vCal {
                         }
                     }
                 }
-                if ($event->reminder_time > 0 && $event->status != "Held")
+                if (isset($event->reminder_time) && $event->reminder_time > 0 && $event->status != "Held")
                 {
                     $str .= "BEGIN:VALARM\n";
                     $str .= "TRIGGER:-PT" . $event->reminder_time/60 . "M\n";
@@ -343,7 +343,7 @@ class iCal extends vCal {
             }
         }
 
-        if (!$hide_tasks) {
+        if ($taskAsVTODO) {
             require_once('modules/Tasks/Task.php');
             $where = "tasks.assigned_user_id='{$user_bean->id}' ".
                 "AND (tasks.status IS NULL OR (tasks.status!='Deferred')) ".
