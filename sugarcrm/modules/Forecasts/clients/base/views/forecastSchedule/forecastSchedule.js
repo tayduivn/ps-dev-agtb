@@ -1,6 +1,14 @@
 /**
  * View that displays expected opportunities
  * @extends View.View
+ *
+ *
+ * Events Triggered
+ *
+ * forecasts:commitButtons:enabled
+ *      on: context.forecasts
+ *      by: collection reset event
+ *
  */
 ({
 
@@ -13,7 +21,7 @@
     selectedUserId: null,
     timePeriodId: null,
     editableWorksheet: false,
-    _collection:{},
+    collection:{},
     fieldsMeta: {},
     show_worksheet_likely: false,
     show_worksheet_best: false,
@@ -34,8 +42,8 @@
         app.view.View.prototype.initialize.call(this, options);
         this.selectedUserId = options.user_id ? options.user_id : app.user.get('id');
         this.timePeriodId = options.timeperiod_id ? options.timeperiod_id : app.defaultSelections.timeperiod_id.id;
-        this._collection = this.context.forecasts.forecastschedule;
-        this._collection.url = this.createURL();
+        this.collection = this.context.forecasts.forecastschedule;
+        this.collection.url = this.createURL();
         this.fieldsMeta = _.first(this.meta.panels).fields;
 
         // get the config values to determine whether a field should be shown or not.
@@ -63,9 +71,9 @@
      */
     fetchCollection: function(callback)
     {
-        this._collection.url = this.createURL();
+        this.collection.url = this.createURL();
         var self = this;
-        this._collection.fetch({success : function() { 
+        this.collection.fetch({success : function() {
             self.render();
             if(_.isFunction(callback)){
                 callback();
@@ -105,16 +113,24 @@
      
     },
 
+    /**
+     * Clean up any left over bound data to our context
+     */
+    unbindData : function() {
+        if(this.context.forecasts.config) this.context.forecasts.config.off(null, null, this);
+        app.view.View.prototype.unbindData.call(this);
+    },
+
     bindDataChange: function(params) {
         var self = this;
-        this._collection = this.context.forecasts.forecastschedule;
+        this.collection = this.context.forecasts.forecastschedule;
 
-        if (this._collection) {
-            this._collection.on("change", function() {
+        if (this.collection) {
+            this.collection.on("change", function() {
             	self.context.forecasts.trigger("forecasts:commitButtons:enabled");
-                _.each(this._collection.models, function(model, index) {
+                _.each(this.collection.models, function(model, index) {
                     if(model.hasChanged("expected_commit_stage") || model.hasChanged("expected_amount") || model.hasChanged("expected_best_case") || model.hasChanged("expected_worst_case")) {
-                       this._collection.url = this.url;
+                       this.collection.url = this.url;
                        model.save();
                        self.context.forecasts.set('expectedOpportunities', model);
                     }

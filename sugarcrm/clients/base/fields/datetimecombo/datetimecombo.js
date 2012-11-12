@@ -27,7 +27,7 @@
                 'd': 'dd', // 2 digit
                 'm': 'mm', // 2 digit
                 'y': 'y',  // 2 digit
-                'Y': 'yy', // 4 digit
+                'Y': 'yy'  // 4 digit
             };
             normalizedDateFormat = app.user.get('datepref').replace(/[yYmd]/g, function(s) {
                 return sugar2jQueryUIMap[s];
@@ -60,7 +60,7 @@
         usersTimeFormatPreference = myUser.get('timepref');
 
         // If there is a default 'string' value like "yesterday", format it as a date
-        if(this.model.isNew() && !value && this.def.display_default) {
+        if(this.model.isNew() && !value && this.def.display_default && this.view.name === 'edit') {
             value  = app.date.parseDisplayDefault(this.def.display_default);
             jsDate = app.date.dateFromDisplayDefaultString(value);
             this.model.set(this.name, jsDate.toISOString(), {silent: true}); 

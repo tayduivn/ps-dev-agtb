@@ -1,5 +1,9 @@
 #!/usr/bin/env php
 <?php
+// THIS BLOCK IS SUGAR SPECIFIC AND SORTS TESTS TO MAKE RUN ORDER CONSISTENT
+include('sortTests.php');
+sortTests();
+
 /* PHPUnit
  *
  * Copyright (c) 2002-2010, Sebastian Bergmann <sebastian@phpunit.de>.

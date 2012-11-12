@@ -1,3 +1,10 @@
+/**
+ * Events Triggered
+ *
+ * liszt:updated
+ *      on: timperiod_start_day
+ *      by: _setUpTimeperiodStartMonthBind()
+ */
 ({
 
     initialize: function(options) {

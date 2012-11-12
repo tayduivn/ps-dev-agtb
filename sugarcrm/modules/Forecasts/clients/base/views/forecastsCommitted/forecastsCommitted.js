@@ -5,7 +5,25 @@
  * @class View.Views.GridView
  * @alias SUGAR.App.layout.GridView
  * @extends View.View
+ *
+ *
+ * Events Triggered
+ *
+ * forecasts:commitButtons:enabled
+ *      on: context.forecasts
+ *      by: updateTotals()
+ *
+ * forecasts:commitButtons:disabled
+ *      on: context.forecasts
+ *      by: commitForecast()
+ *
+ * forecasts:committed:saved
+ *      on: context.forecasts
+ *      by: commitForecast()
+ *      when: the new forecast model has saved successfully
  */
+
+
 ({
     /**
      * The url for the REST endpoint
@@ -20,7 +38,7 @@
     /**
      * Stores the Backbone collection of Forecast models
      */
-    _collection : {},
+    collection : {},
 
     /**
      * Stores the best case to display in the view
@@ -110,9 +128,8 @@
     initialize : function(options) {
         app.view.View.prototype.initialize.call(this, options);
 
-        this._collection = this.context.forecasts.committed;
+        this.collection = this.context.forecasts.committed;
 
-        this.userId = app.user.get('id');
         this.forecastType = (app.user.get('isManager') == true && app.user.get('showOpps') == false) ? 'Rollup' : 'Direct';
         this.timePeriodId = app.defaultSelections.timeperiod_id.id;
         this.selectedUser = {id: app.user.get('id'), "isManager":app.user.get('isManager'), "showOpps": false};
@@ -120,7 +137,7 @@
         this.bestCase = 0;
         this.likelyCase = 0;
 
-        this._collection.url = this.createUrl();
+        this.collection.url = this.createUrl();
 
         this.show_likely = options.context.forecasts.config.get('show_worksheet_likely');
         this.show_best = options.context.forecasts.config.get('show_worksheet_best');
@@ -129,7 +146,7 @@
 
     createUrl : function() {
         var urlParams = {
-            user_id: this.userId,
+            user_id: this.selectedUser.id,
             timeperiod_id : this.timePeriodId,
             forecast_type : this.forecastType
         };
@@ -144,15 +161,24 @@
         this.likelyCaseCls = '';
         this.bestCaseCls = '';
         this.worstCaseCls = '';
-        this._collection.url = this.createUrl();
-        this._collection.fetch();
+        this.totals = null;
+        this.collection.url = this.createUrl();
+        this.collection.fetch();
+    },
+
+    /**
+     * Clean up any left over bound data to our context
+     */
+    unbindData : function() {
+        if(this.context.forecasts) this.context.forecasts.off(null, null, this);
+        app.view.View.prototype.unbindData.call(this);
     },
 
     bindDataChange: function() {
 
         var self = this;
 
-        this._collection.on("reset", function() {
+        this.collection.on("reset", function() {
             this.runningFetch = false;
             if(!_.isEmpty(this.savedTotal)) {
                 this.updateTotals(this.savedTotal);
@@ -161,12 +187,8 @@
 
         if(this.context && this.context.forecasts) {
             this.context.forecasts.on("change:selectedUser", function(context, user) {
-                self.userId = user.id;
-                self.fullName = user.full_name;
                 self.forecastType = user.showOpps ? 'Direct' : 'Rollup';
-                self.selectedUser = user;
-                // when ever the users changes, empty out the saved totals
-                self.totals = null;
+                self.selectedUser = user;              
                 self.updateCommitted();
             }, this);
             this.context.forecasts.on("change:selectedTimePeriod", function(context, timePeriod) {
@@ -215,9 +237,9 @@
             var worst = {};
             // get the last committed value
             var previousCommit = null;
-            if(!_.isEmpty(this._collection.models))
+            if(!_.isEmpty(this.collection.models))
             {
-               previousCommit = _.first(this._collection.models);
+               previousCommit = _.first(this.collection.models);
             } else {
                var hasTotals = !_.isNull(self.totals);
                previousCommit = new Backbone.Model({
@@ -328,13 +350,12 @@
             return;
         }
 
-        var forecast = new this._collection.model();
+        var forecast = new this.collection.model();
         forecast.url = self.url;
-        var user = this.context.forecasts.get('selectedUser');
-
+        
         var forecastData = {};
        
-        if(user.isManager == true && user.showOpps == false) {
+        if(self.selectedUser.isManager == true && self.selectedUser.showOpps == false) {
             forecastData.best_case = self.totals.best_adjusted;
             forecastData.likely_case = self.totals.likely_adjusted;
             forecastData.worst_case = self.totals.worst_adjusted;
@@ -364,7 +385,7 @@
         self.worstCaseCls = '';
 
         self.previous = self.totals;
-        self._collection.url = self.url;
-        self._collection.unshift(forecast);
+        self.collection.url = self.url;
+        self.collection.unshift(forecast);
     }
 })

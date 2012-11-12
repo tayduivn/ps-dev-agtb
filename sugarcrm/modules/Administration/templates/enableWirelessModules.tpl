@@ -61,13 +61,13 @@
                     </tr>
                     {/if}
                     <tr>
-                        <td scope="row" nowrap="nowrap">{sugar_translate module='Configurator' label='LBL_WIRELESS_LIST_ENTRIES'}: </td>
+                        <td scope="row" nowrap="nowrap">{sugar_translate module='Configurator' label='LBL_WIRELESS_LIST_ENTRIES'}: <br><small>{sugar_translate label='LBL_WIRELESS_LEGACY_ONLY'}</small></td>
                         <td>
                             <input type='text' size='4' id="max_list" name='wl_list_max_entries_per_page' value='{$config.wl_list_max_entries_per_page}'>
                         </td>
                     </tr>
                     <tr>
-                        <td scope="row" nowrap="nowrap">{sugar_translate module='Configurator' label='LBL_WIRELESS_SUBPANEL_LIST_ENTRIES'}: </td>
+                        <td scope="row" nowrap="nowrap">{sugar_translate module='Configurator' label='LBL_WIRELESS_SUBPANEL_LIST_ENTRIES'}: <br><small>{sugar_translate label='LBL_WIRELESS_LEGACY_ONLY'}</small></bt> </td>
                         <td>
                             <input type='text' size='4' id="max_subs" name='wl_list_max_entries_per_subpanel' value='{$config.wl_list_max_entries_per_subpanel}'>
                         </td>
@@ -91,7 +91,10 @@
 	<table border="0" cellspacing="1" cellpadding="1">
 	   <tr>
 	       <td colspan="2">{sugar_translate module='Configurator' label='LBL_MOBILE_MOD_REPORTS_RESTRICTION'}</td>
-	   </tr>
+       </tr>
+        <tr>
+           <td colspan="2">{sugar_translate label='LBL_WIRELESS_SUPPORTED_MODULES'}</td>
+       </tr>
 		<tr>
 			<td>
 				<input title="{$APP.LBL_SAVE_BUTTON_LABEL}" class="button primary" onclick="SUGAR.saveMobileSettings();" type="button" name="button" value="{$APP.LBL_SAVE_BUTTON_LABEL}">

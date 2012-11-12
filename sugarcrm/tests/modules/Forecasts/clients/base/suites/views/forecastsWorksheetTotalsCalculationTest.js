@@ -154,7 +154,8 @@ describe("The forecasts worksheet totals calculation test", function(){
                             expect(updatedTotals.lost_count).toEqual(1);
                             expect(updatedTotals.lost_amount).toEqual(100);
                             expect(updatedTotals.total_opp_count).toEqual(5);
-                        }
+                        },
+                    unset : function(test) {}
                 }
             };
             view.context.forecasts.config = new (Backbone.Model.extend({
@@ -182,7 +183,8 @@ describe("The forecasts worksheet totals calculation test", function(){
                             expect(updatedTotals.lost_amount).toEqual(100);
                             expect(updatedTotals.included_opp_count).toEqual(1);
                             expect(updatedTotals.total_opp_count).toEqual(5);
-                        }
+                        },
+                    unset : function(test) {}
                 }
             };
             view.context.forecasts.config = new (Backbone.Model.extend({
@@ -212,7 +214,8 @@ describe("The forecasts worksheet totals calculation test", function(){
                             expect(updatedTotals.lost_amount).toEqual(200);
                             expect(updatedTotals.included_opp_count).toEqual(1);
                             expect(updatedTotals.total_opp_count).toEqual(5);
-                        }
+                        },
+                    unset : function(test) {}
                 }
             };
             view.context.forecasts.config = new (Backbone.Model.extend({

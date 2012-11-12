@@ -77,7 +77,7 @@
         // find the checked options
         var chkOptions = this.$el.find("div." + divClass + " label.checked");
 
-        // parse the array to get the data-set attribute
+        // parse the array to get the data-set attributed
         var options = [];
         _.each(chkOptions, function(o) {
             options.push($(o).attr('data-set'));
@@ -136,17 +136,28 @@
     },
 
     /**
+     * Clean up any left over bound data to our context
+     */
+    unbindData : function() {
+        if(this.context.forecasts.worksheet) this.context.forecasts.worksheet.off(null, null, this);
+        if(this.context.forecasts.worksheetmanager) this.context.forecasts.worksheetmanager.off(null, null, this);
+        if(this.context.forecasts) this.context.forecasts.off(null, null, this);
+        if(this.values) this.values.off(null, null, this);
+        app.view.View.prototype.unbindData.call(this);
+    },
+
+    /**
      * Listen to changes in values in the context
      */
     bindDataChange:function () {
         var self = this;
-        this.context.forecasts.worksheetmanager.on('reset', function(){
+        this.context.forecasts.worksheetmanager.on('rendered', function(){
             if(self.commitUpdate && self.chartRendered) {
                 self.commitUpdate = false;
                 self.renderChart();
             }
         }, this);
-        this.context.forecasts.worksheet.on('reset', function() {
+        this.context.forecasts.worksheet.on('rendered', function() {
             if(self.commitUpdate && self.chartRendered) {
                 self.renderChart();
             }

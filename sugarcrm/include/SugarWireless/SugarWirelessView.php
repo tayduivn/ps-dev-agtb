@@ -80,6 +80,11 @@ class SugarWirelessView extends SugarView
         if ( $this->action != 'Login' && $this->action != 'SetTimezone' && $this->action != 'Logout')
             $this->set_wl_module_select_list();
         $this->ss->assign('VIEW', $this->action);
+        $wl_module_list = array_keys($this->view_object_map['wireless_module_registry']);
+        if (in_array('Employees', $wl_module_list))
+        {
+            $this->ss->assign('display_employees', true);
+        }
     }
 
     public function getMetaDataFileFallback($view, $moduleName) {
@@ -156,8 +161,11 @@ class SugarWirelessView extends SugarView
 			}
 		}
 		// adding Employees as one-off to select list
-		$wl_module_select_list['Employees'] = $GLOBALS['app_strings']['LBL_EMPLOYEES'];
-        $wl_mod_create_list['Employees'] = 1;
+		if (in_array('Employees', $wl_module_list))
+		{
+		    $wl_module_select_list['Employees'] = $GLOBALS['app_strings']['LBL_EMPLOYEES'];
+		    $wl_mod_create_list['Employees'] = 1;
+		}
 		asort($wl_module_select_list);
 
 		$this->wl_mod_select_list = $wl_module_select_list;

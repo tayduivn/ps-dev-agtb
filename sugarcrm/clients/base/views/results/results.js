@@ -53,7 +53,8 @@
     renderSubnav: function(overrideMessage) {
         if (this.context.get('subnavModel')) {
             this.context.get('subnavModel').set({
-                'title': overrideMessage || 'Show search results for "'+this.lastQuery+'"'
+                'title': overrideMessage
+                    || app.utils.formatString(app.lang.get('LBL_PORTAL_SEARCH_RESULTS_TITLE'),{'query' : this.lastQuery})
             });
         }
     },

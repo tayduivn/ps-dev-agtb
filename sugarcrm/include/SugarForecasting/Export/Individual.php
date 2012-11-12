@@ -37,15 +37,12 @@ class SugarForecasting_Export_Individual extends SugarForecasting_Export_Abstrac
      */
     public function __construct($args)
     {
-        $this->isManager = false;
         parent::__construct($args);
     }
 
 
     public function process()
     {
-        global $current_user;
-
         // base file and class name
         $file = 'include/SugarForecasting/Individual.php';
         $klass = 'SugarForecasting_Individual';
@@ -93,6 +90,17 @@ class SugarForecasting_Export_Individual extends SugarForecasting_Export_Abstrac
         $seed = BeanFactory::getBean('ForecastWorksheets');
 
         return $this->getContent($data, $seed, $fields_array);
+    }
+
+
+    /**
+     * getFilename
+     *
+     * @return string name of the filename to export contents into
+     */
+    public function getFilename()
+    {
+        return sprintf("%s_rep_forecast.csv", parent::getFilename());
     }
 
 }
