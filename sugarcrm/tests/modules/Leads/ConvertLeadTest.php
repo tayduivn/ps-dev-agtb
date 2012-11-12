@@ -33,7 +33,7 @@ class ConvertLeadTest extends Sugar_PHPUnit_Framework_TestCase
     {
         SugarTestHelper::setUp('app_list_strings');
         SugarTestHelper::setUp('mod_strings', array('Leads'));
-        SugarTestHelper::setUp('current_user', array(true, 1));
+        SugarTestHelper::setUp('current_user');
     }
     
     public function tearDown()
