@@ -73,17 +73,28 @@ class SugarFieldImage extends SugarFieldBase {
 			{
 				if ($upload_file->confirm_upload())
 				{
-                    // Capture the old value in case of error
-                    $oldvalue = $bean->$field;
+                    // for saveTempImage API
+                    if (isset($params['temp']) && $params['temp'] == true) {
 
-                    // Create the new field value
-					$bean->$field = create_guid();
+                        // Move to temporary folder
+                        if (!$upload_file->final_move($params['temp_id'], true)) {
+                            // If this was a fail, reset the bean field to original
+                            $this->error = $upload_file->getErrorMessage();
+                        }
+                    } else {
 
-                    // Add checking for actual file move for reporting to consumers
-					if (!$upload_file->final_move($bean->$field)) {
-                        // If this was a fail, reset the bean field to original
-                        $bean->$field = $oldvalue;
-                        $this->error = $upload_file->getErrorMessage();
+                        // Capture the old value in case of error
+                        $oldvalue = $bean->$field;
+
+                        // Create the new field value
+                        $bean->$field = create_guid();
+
+                        // Add checking for actual file move for reporting to consumers
+                        if (!$upload_file->final_move($bean->$field)) {
+                            // If this was a fail, reset the bean field to original
+                            $bean->$field = $oldvalue;
+                            $this->error = $upload_file->getErrorMessage();
+                        }
                     }
 				}
                 else
@@ -93,6 +104,7 @@ class SugarFieldImage extends SugarFieldBase {
                 }
 			}
             else {
+                // Invalid format
                 $this->error = $GLOBALS['app_strings']["LBL_UPLOAD_IMAGE_FILE_INVALID"];
             }
 		}

@@ -40,8 +40,27 @@ class RestFileTest extends RestFileTestBase
         $this->assertNotEmpty($restReply['reply'], 'Second reply was empty');
         $this->assertArrayHasKey('filename', $restReply['reply'], 'Missing response data for Notes');
     }
+        //BEGIN SUGARCRM flav=pro ONLY
+    /**
+     * @group rest
+     */
+    public function testPostUploadImageTempToContact()
+    {
+        // Upload a temporary file
+        $post = array('picture' => '@include/images/badge_256.png');
+        $reply = $this->_restCall('Contacts/temp/file/picture', $post);
+        $this->assertArrayHasKey('picture', $reply['reply'], 'Reply is missing field name key');
+        $this->assertNotEmpty($reply['reply']['picture']['guid'], 'File guid not returned');
 
-    //BEGIN SUGARCRM flav=pro ONLY
+        // Grab the temporary file and make sure it is present
+        $fetch = $this->_restCall('Contacts/temp/file/picture/' . $reply['reply']['picture']['guid']);
+        $this->assertNotEmpty($fetch['replyRaw'], 'Temporary file is missing');
+
+        // Grab the temporary file and make sure it's been deleted
+        $fetch = $this->_restCall('Contacts/temp/file/picture/' . $reply['reply']['picture']['guid']);
+        $this->assertEmpty($fetch['replyRaw'], 'Temporary file is still here');
+    }
+
     /**
      * @group rest
      */
