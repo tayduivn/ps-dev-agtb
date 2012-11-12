@@ -93,6 +93,9 @@ describe("ClickToEdit", function(){
         expect(app.view.ClickToEditField.prototype._checkDatatype(field, ".05")).toBeTruthy();
         expect(app.view.ClickToEditField.prototype._checkDatatype(field, "+.05%")).toBeTruthy();
         expect(app.view.ClickToEditField.prototype._checkDatatype(field, "abc%")).toBeFalsy();
+        expect(app.view.ClickToEditField.prototype._checkDatatype(field, "-10")).toBeFalsy();
+        expect(app.view.ClickToEditField.prototype._checkDatatype(field, "-10.5")).toBeFalsy();
+        expect(app.view.ClickToEditField.prototype._checkDatatype(field, "-233,233.23")).toBeFalsy();
     });
 
     it("should correctly accept input for all text type fields", function() {

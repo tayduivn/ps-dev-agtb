@@ -26,13 +26,16 @@
     app.view.ClickToEditField.prototype._checkDatatype = function(field, value) {
         var ds = app.utils.regexEscape(app.user.get('decimal_separator')) || '.';
         var gs = app.utils.regexEscape(app.user.get('number_grouping_separator')) || ',';
-        var reg = new RegExp("^[\\+\\-]?(\\d+|\\d{1,3}("+gs+"\\d{3})*)?("+ds+"\\d+)?\\%?$");
+        // matches a valid positive decimal number
+        var reg1 = new RegExp("^\\+?(\\d+|\\d{1,3}("+gs+"\\d{3})*)?("+ds+"\\d+)?\\%?$");
+        // matches a valid decimal percentage
+        var reg2 = new RegExp("^[\\+\\-]?\\d+?("+ds+"\\d+)?\\%$");
     	switch(field.type){
             case "int":
             case "numeric":
             case "float":
             case "currency":
-                return !_.isNull(value.match(reg));
+                return !_.isNull(value.match(reg1)) || !_.isNull(value.match(reg2));
                 break;
             default:
                 return true;
