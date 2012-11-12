@@ -44,7 +44,7 @@
         var email = this.model.get("email1") || this.model.get('email2');
         this.email = email;
         this.term = term;
-        var url = '../rest/v10/summer/emails?email=' + email;
+        var url = app.api.buildURL('summer/emails') + '?email=' + email;
         if(this.term){
             url += '&q=' + term + '&limit=20';
         }
