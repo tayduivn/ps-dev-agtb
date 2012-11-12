@@ -6,7 +6,10 @@
 </span>
 </div>
 {{/if}}
-<div>
-<input type="file" name="{{name}}" class="input-xlarge wide tleft">
+<span class="upload-field-custom btn">
+    <label class="file-upload">
+        <span><strong><i class="icon-upload-alt"></i></strong></span>
+        <input type="file" name="{{name}}" />
+    </label>
+</span>
 <p class="help-block"></p>
-</div>
