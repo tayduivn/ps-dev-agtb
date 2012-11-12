@@ -1,88 +1,23 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8">
-  <title>Charting - SugarCRM Patterns and Styleguide</title>
-  <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black">
-  <meta name="description" content="">
-  <meta name="author" content="">
-
-  <!-- HTML5 shim, for IE6-8 support of HTML elements -->
-  <!--[if lt IE 9]>
-    <link href="css/ltie9.css" rel="stylesheet">
-    <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
-  <![endif]-->
-
+  <script src="js/jquery-1.7.2.min.js"></script>
+  <script src="js/ICanHaz.min.js" ></script>
+  <script src="js/styleguide.js"></script>
   <link href="css/bootstrap.css" rel="stylesheet">
-  <link href="css/styleguide.css" rel="stylesheet">
-  <link href="js/google-code-prettify/prettify.css" rel="stylesheet">
-  <link href="css/nv.d3.css" rel="stylesheet" type="text/css">
-
+  <link href="css/nv.d3.css" rel="stylesheet">
+  <script>
+    var page = {
+        "title": "Charting"
+      , "description": "Implementing standard and custom SVG charts for Sugar7 release using the <a href=\"http://d3js.org/\">D3 library</a> and the <a href=\"http://nvd3.com/\">NVD3 framework</a>."
+      , "sections": ["Line","Horizontal Bar","Vertical Bar","Circular","Custom","Implementation"]
+      , "sectionLink": sectionLink
+      , "templates":"head,navbar,masthead,libraries"
+    };
+  </script>
 </head>
-<body data-spy="scroll" data-target=".subnav" data-offset="50" class="scroll">
-
-<!-- Navbar
-  ================================================== -->
-  <div class="navbar navbar-fixed-top">
-    <div class="navbar-inner">
-      <div class="container">
-        <div class="nav-collapse">
-          <ul class="nav">
-            <li><a class="cube" href="index.html" rel="tooltip" title="Dashboard"></a></li>
-            <li>
-              <a href="index.html">Overview</a>
-            </li>
-            <li>
-              <a href="scaffolding.html">Scaffolding</a>
-            </li>
-            <li>
-              <a href="base-css.html">Base CSS</a>
-            </li>
-            <li>
-              <a href="components.html">Components</a>
-            </li>
-            <li>
-              <a href="widgets.html">Widgets</a>
-            </li>
-            <li>
-              <a href="less.html">Quick Styles</a>
-            </li>
-            <li>
-              <a href="theming.html">Theming</a>
-            </li>
-            <li class="active">
-              <a href="charting.html">Charting</a>
-            </li>
-            <li>
-              <a href="sugar7">Prototypes</a>
-            </li>
-          </ul>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <div class="container">
-
-    <!-- Masthead
-    ================================================== -->
-    <header class="jumbotron subhead">
-      <h1>Sugar7 Charting</h1>
-      <p class="lead">Implementing standard and custom SVG charts for Sugar7 release using the <a href="http://d3js.org/">D3 library</a> and the <a href="http://nvd3.com/">NVD3 framework</a>.</p>
-      <div class="subnav">
-        <ul class="nav nav-pills">
-          <li><a href="charting.html#line">Line</a></li>
-          <li><a href="charting.html#horizontal-bar">Horizontal Bar</a></li>
-          <li><a href="charting.html#vertical-bar">Vertical Bar</a></li>
-          <li><a href="charting.html#circular">Circular</a></li>
-          <li><a href="charting.html#custom">Custom</a></li>
-          <li><a href="charting.html#implementation">Implementation</a></li>
-          <li><a href="chart_colors.html">Colors</a></li>
-        </ul>
-      </div>
-    </header>
+<body data-spy="scroll" data-target=".subnav" data-offset="200" class="scroll">
+<div class="container">
 
     <section id="line">
       <div class="page-header">
@@ -448,15 +383,6 @@
     </section>
 
   </div>
-
-  <script src="js/jquery-1.7.2.min.js"></script>
-  <script src="js/google-code-prettify/prettify.js"></script>
-  <script src="../assets/js/bootstrap.min.js"></script>
-  <script src="../assets/js/bootstrap-datepicker.js"></script>
-  <script src="../assets/js/bootstrap-colorpicker.js"></script>
-  <script src="../assets/js/bootstrapx-clickover.js"></script>
-  <script src="js/styleguide.js"></script>
-  <script src="js/application.js"></script>
 
   <!-- new D3 charting library files -->
   <script src="js/nvd3/lib/d3.v2.js"></script>

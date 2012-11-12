@@ -1,107 +1,33 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8">
-    <title>Components - SugarCRM Patterns and Styleguide</title>
-    <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black">
-    <meta name="description" content="">
-    <meta name="author" content="">
-
-    <!-- HTML5 shim, for IE6-8 support of HTML elements -->
-    <!--[if lt IE 9]>
-      <link href="css/ltie9.css" rel="stylesheet">
-      <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
-    <![endif]-->
-
-    <link href="css/bootstrap.css" rel="stylesheet">
-    <link href="css/styleguide.css" rel="stylesheet">
-    <link href="js/google-code-prettify/prettify.css" rel="stylesheet">
-  </head>
-
-  <body data-spy="scroll" data-target=".subnav" data-offset="50" class="scroll">
-
-
-  <!-- Navbar
-    ================================================== -->
-    <div class="navbar navbar-fixed-top">
-      <div class="navbar-inner">
-        <div class="container">
-          <div class="nav-collapse">
-            <ul class="nav">
-              <li><a class="cube" href="index.html" rel="tooltip" title="Dashboard"></a></li>
-              <li>
-                <a href="index.html">Overview</a>
-              </li>
-              <li>
-                <a href="scaffolding.html">Scaffolding</a>
-              </li>
-              <li>
-                <a href="base-css.html">Base CSS</a>
-              </li>
-              <li class="active">
-                <a href="components.html">Components</a>
-              </li>
-              <li>
-                <a href="widgets.html">Widgets</a>
-              </li>
-              <li>
-                <a href="less.html">Quick Styles</a>
-              </li>
-              <li>
-                <a href="theming.html">Theming</a>
-              </li>
-              <li>
-                <a href="charting.html">Charting</a>
-              </li>
-              <li>
-                <a href="sugar7">Prototypes</a>
-              </li>
-            </ul>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div class="container">
-
-<!-- Masthead
-================================================== -->
-<header class="jumbotron subhead">
-  <h1>Components</h1>
-  <p class="lead">Dozens of reusable components are built in to provide navigation, alerts, popovers, and much more.</p>
-  <div class="subnav">
-    <ul class="nav nav-pills">
-      <li class="dropdown">
-        <a class="dropdown-toggle" data-toggle="dropdown" href="#">Buttons <b class="caret"></b></a>
-        <ul class="dropdown-menu">
-          <li><a href="#buttonGroups">Button groups</a></li>
-          <li><a href="#buttonDropdowns">Button dropdowns</a></li>
-        </ul>
-      </li>
-      <li class="dropdown">
-        <a class="dropdown-toggle" data-toggle="dropdown" href="#">Navigation <b class="caret"></b></a>
-        <ul class="dropdown-menu">
-          <li><a href="#navs">Nav, tabs, pills</a></li>
-          <li><a href="#navbar">Navbar</a></li>
-          <li><a href="#breadcrumbs">Breadcrumbs</a></li>
-          <li><a href="#pagination">Pagination</a></li>
-        </ul>
-      </li>
-      <li><a href="#labels">Labels</a></li>
-      <li><a href="#thumbnails">Thumbnails</a></li>
-      <li><a href="#alerts">Alerts</a></li>
-      <li><a href="#progress">Progress bars</a></li>
-    </ul>
-  </div>
-</header>
-
-
+<head>
+  <script src="js/jquery-1.7.2.min.js"></script>
+  <script src="js/ICanHaz.min.js" ></script>
+  <script src="js/styleguide.js"></script>
+  <link href="css/bootstrap.css" rel="stylesheet">
+  <script>
+    var page = {
+        "title": "Components"
+      , "description": "Dozens of reusable components are built in to provide navigation, alerts, popovers, and much more."
+      , "sections": [
+          {"label":"Buttons", "items":['Button groups','Button dropdowns']}
+        , {"label":"Navigation", "items":['Nav, tabs, pills','Navbar','Breadcrumbs','Pagination']}
+        , "Labels"
+        , "Thumbnails"
+        , "Alerts"
+        , "Progress bars"
+      ]
+      , "sectionLink": sectionLink
+      , "templates":"head,navbar,masthead,libraries"
+    };
+  </script>
+</head>
+<body data-spy="scroll" data-target=".subnav" data-offset="200" class="scroll">
+<div class="container">
 
 <!-- Button Groups
 ================================================== -->
-<section id="buttonGroups">
+<section id="buttons">
   <div class="page-header">
     <h1>Button groups <small>Join buttons for more toolbar-like functionality</small></h1>
   </div>
@@ -335,7 +261,7 @@
 
 <!-- Nav, Tabs, & Pills
 ================================================== -->
-<section id="navs">
+<section id="navigation">
   <div class="page-header">
     <h1>Nav, tabs, and pills <small>Highly customizable list-style navigation</small></h1>
   </div>
@@ -1447,7 +1373,7 @@
 
 <!-- Progress bars
 ================================================== -->
-<section id="progress">
+<section id="progress-bars">
   <div class="page-header">
     <h1>Progress bars <small>For loading, redirecting, or action status</small></h1>
   </div>
@@ -1526,14 +1452,5 @@
 
 </section>
 
-    <script src="js/jquery-1.7.2.min.js"></script>
-    <script src="js/google-code-prettify/prettify.js"></script>
-    <script src="../assets/js/bootstrap.min.js"></script>
-    <script src="../assets/js/bootstrap-datepicker.js"></script>
-    <script src="../assets/js/bootstrap-colorpicker.js"></script>
-    <script src="../assets/js/bootstrapx-clickover.js"></script>
-    <script src="js/styleguide.js"></script>
-    <script src="js/application.js"></script>
-
-  </body>
+</body>
 </html>

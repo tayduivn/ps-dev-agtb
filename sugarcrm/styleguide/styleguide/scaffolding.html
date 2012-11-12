@@ -1,75 +1,23 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <meta charset="utf-8">
-    <title>Scaffolding - SugarCRM Patterns and Styleguide</title>
-    <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black">
-    <meta name="description" content="">
-    <meta name="author" content="">
+  <script src="js/jquery-1.7.2.min.js"></script>
+  <script src="js/ICanHaz.min.js" ></script>
+  <script src="js/styleguide.js"></script>
+  <link href="css/bootstrap.css" rel="stylesheet">
+  <script>
+    var page = {
+        "title": "Scaffolding"
+      , "description": "Built on a responsive 12-column grid including fixed- and fluid-width layouts based on that system."
+      , "sections": ["Grid system","Layouts","Responsive design"]
+      , "sectionLink": sectionLink
+      , "templates":"head,navbar,masthead,libraries"
+    };
+  </script>
+</head>
+<body data-spy="scroll" data-target=".subnav" data-offset="200">
+<div class="container">
 
-    <!-- HTML5 shim, for IE6-8 support of HTML elements -->
-    <!--[if lt IE 9]>
-      <link href="css/ltie9.css" rel="stylesheet">
-      <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
-    <![endif]-->
-
-    <link href="css/bootstrap.css" rel="stylesheet">
-    <link href="css/styleguide.css" rel="stylesheet">
-    <link href="js/google-code-prettify/prettify.css" rel="stylesheet">
-  </head>
-  <body data-spy="scroll" data-target=".subnav" data-offset="60" class="scroll">
-    <div class="navbar navbar-fixed-top">
-      <div class="navbar-inner">
-        <div class="container">
-          <div class="nav-collapse">
-            <ul class="nav">
-              <li><a class="cube" href="index.html" rel="tooltip" title="Dashboard"></a></li>
-              <li>
-                <a href="index.html">Overview</a>
-              </li>
-              <li class="active">
-                <a href="scaffolding.html">Scaffolding</a>
-              </li>
-              <li>
-                <a href="base-css.html">Base CSS</a>
-              </li>
-              <li>
-                <a href="components.html">Components</a>
-              </li>
-              <li>
-                <a href="widgets.html">Widgets</a>
-              </li>
-              <li>
-                <a href="less.html">Quick Styles</a>
-              </li>
-              <li>
-                <a href="theming.html">Theming</a>
-              </li>
-              <li>
-                <a href="charting.html">Charting</a>
-              </li>
-              <li>
-                <a href="sugar7">Prototypes</a>
-              </li>
-            </ul>
-          </div>
-        </div>
-      </div>
-    </div>
-    <div class="container">
-      <header class="jumbotron subhead">
-        <h1>Scaffolding</h1>
-        <p class="lead">Built on a responsive 12-column grid. We've also included fixed- and fluid-width layouts based on that system.</p>
-        <div class="subnav">
-          <ul class="nav nav-pills">
-            <li><a href="#grid-system">Grid system</a></li>
-            <li><a href="#layouts">Layouts</a></li>
-            <li><a href="#responsive">Responsive design</a></li>
-          </ul>
-        </div>
-      </header>
       <section id="grid-system">
         <div class="page-header">
           <h1>Grid system <small>12 columns with a responsive twist</small></h1>
@@ -111,12 +59,12 @@
             <p>It also has four responsive variations for various devices and resolutions: phone, tablet portrait, table landscape and small desktops, and large widescreen desktops.</p>
           </div>
           <div class="span4">
-      <pre class="prettyprint linenums">
-      &lt;div class="row"&gt;
-        &lt;div class="span4"&gt;...&lt;/div&gt;
-        &lt;div class="span8"&gt;...&lt;/div&gt;
-      &lt;/div&gt;
-      </pre>
+<pre class="prettyprint linenums">
+&lt;div class="row"&gt;
+  &lt;div class="span4"&gt;...&lt;/div&gt;
+  &lt;div class="span8"&gt;...&lt;/div&gt;
+&lt;/div&gt;
+</pre>
           </div>
           <div class="span4">
             <p>As shown here, a basic layout can be created with two "columns," each spanning a number of the 12 foundational columns we defined as part of our grid system.</p>
@@ -137,12 +85,12 @@
         <div class="row show-grid">
           <div class="span8 offset4">8 offset 4</div>
         </div><!-- /row -->
-      <pre class="prettyprint linenums">
-      &lt;div class="row"&gt;
-        &lt;div class="span4"&gt;...&lt;/div&gt;
-        &lt;div class="span4 offset4"&gt;...&lt;/div&gt;
-      &lt;/div&gt;
-      </pre>
+<pre class="prettyprint linenums">
+&lt;div class="row"&gt;
+  &lt;div class="span4"&gt;...&lt;/div&gt;
+  &lt;div class="span4 offset4"&gt;...&lt;/div&gt;
+&lt;/div&gt;
+</pre>
 
         <br>
 
@@ -166,17 +114,17 @@
             </div>
           </div>
           <div class="span6">
-      <pre class="prettyprint linenums">
-      &lt;div class="row"&gt;
-        &lt;div class="span12"&gt;
-         vel 1 of column
-          &lt;div class="row"&gt;
-            &lt;div class="span6"&gt;Level 2&lt;/div&gt;
-            &lt;div class="span6"&gt;Level 2&lt;/div&gt;
-          &lt;/div&gt;
-        &lt;/div&gt;
-      &lt;/div&gt;
-      </pre>
+<pre class="prettyprint linenums">
+&lt;div class="row"&gt;
+  &lt;div class="span12"&gt;
+   vel 1 of column
+    &lt;div class="row"&gt;
+      &lt;div class="span6"&gt;Level 2&lt;/div&gt;
+      &lt;div class="span6"&gt;Level 2&lt;/div&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+</pre>
           </div>
         </div>
 
@@ -228,6 +176,7 @@
         </div><!-- /row -->
 
       </section>
+
       <section id="layouts">
         <div class="page-header">
           <h1>Layouts <small>Basic templates to create webpages</small></h1>
@@ -240,13 +189,13 @@
             <div class="minicon-layout">
               <div class="minicon-layout-body"></div>
             </div>
-      <pre class="prettyprint linenums">
-      &lt;body&gt;
-        &lt;div class="container"&gt;
-          ...
-        &lt;/div&gt;
-      &lt;/body&gt;
-      </pre>
+<pre class="prettyprint linenums">
+&lt;body&gt;
+  &lt;div class="container"&gt;
+    ...
+  &lt;/div&gt;
+&lt;/body&gt;
+</pre>
           </div><!-- /col -->
           <div class="span6">
             <h2>Fluid layout</h2>
@@ -255,22 +204,23 @@
               <div class="minicon-layout-sidebar"></div>
               <div class="minicon-layout-body"></div>
             </div>
-      <pre class="prettyprint linenums">
-      &lt;div class="container-fluid"&gt;
-        &lt;div class="row-fluid"&gt;
-          &lt;div class="span2"&gt;
-            &lt;!--Sidebar content--&gt;
-          &lt;/div&gt;
-          &lt;div class="span10"&gt;
-            &lt;!--Body content--&gt;
-          &lt;/div&gt;
-        &lt;/div&gt;
-      &lt;/div&gt;
-      </pre>
+<pre class="prettyprint linenums">
+&lt;div class="container-fluid"&gt;
+  &lt;div class="row-fluid"&gt;
+    &lt;div class="span2"&gt;
+      &lt;!--Sidebar content--&gt;
+    &lt;/div&gt;
+    &lt;div class="span10"&gt;
+      &lt;!--Body content--&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+</pre>
           </div><!-- /col -->
         </div><!-- /row -->
       </section>
-      <section id="responsive">
+
+      <section id="responsive-design">
         <div class="page-header">
           <h1>Responsive design <small>Media queries for various devices and resolutions</small></h1>
         </div>
@@ -348,32 +298,23 @@
             <p><strong>Why not just include it?</strong> Truth be told, not everything needs to be responsive. Instead of encouraging developers to remove this feature, we figure it best to enable it.</p>
           </div>
           <div class="span7">
-            <pre class="prettyprint linenums">
-              // Landscape phones and down
-              @media (max-width: 480px) { ... }
+<pre class="prettyprint linenums">
+// Landscape phones and down
+@media (max-width: 480px) { ... }
 
-              // Landscape phone to portrait tablet
-              @media (max-width: 768px) { ... }
+// Landscape phone to portrait tablet
+@media (max-width: 768px) { ... }
 
-              // Portrait tablet to landscape and desktop
-              @media (min-width: 768px) and (max-width: 980px) { ... }
+// Portrait tablet to landscape and desktop
+@media (min-width: 768px) and (max-width: 980px) { ... }
 
-              // Large desktop
-              @media (min-width: 1200px) { .. }
-            </pre>
+// Large desktop
+@media (min-width: 1200px) { .. }
+</pre>
           </div>
         </div>
       </section>
-    </div>
 
-    <script src="js/jquery-1.7.2.min.js"></script>
-    <script src="js/google-code-prettify/prettify.js"></script>
-    <script src="../assets/js/bootstrap.min.js"></script>
-    <script src="../assets/js/bootstrap-datepicker.js"></script>
-    <script src="../assets/js/bootstrap-colorpicker.js"></script>
-    <script src="../assets/js/bootstrapx-clickover.js"></script>
-    <script src="js/styleguide.js"></script>
-    <script src="js/application.js"></script>
-
-  </body>
+</div>
+</body>
 </html>

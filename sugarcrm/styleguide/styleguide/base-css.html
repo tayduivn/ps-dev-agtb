@@ -1,86 +1,22 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8">
-  <title>Base CSS - SugarCRM Patterns and Styleguide</title>
-  <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black">
-  <meta name="description" content="">
-  <meta name="author" content="">
-
-  <!-- HTML5 shim, for IE6-8 support of HTML elements -->
-  <!--[if lt IE 9]>
-    <link href="css/ltie9.css" rel="stylesheet">
-    <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
-  <![endif]-->
-
+  <script src="js/jquery-1.7.2.min.js"></script>
+  <script src="js/ICanHaz.min.js" ></script>
+  <script src="js/styleguide.js"></script>
   <link href="css/bootstrap.css" rel="stylesheet">
-  <link href="css/styleguide.css" rel="stylesheet">
-  <link href="js/google-code-prettify/prettify.css" rel="stylesheet">
+  <script>
+    var page = {
+        "title": "Base CSS"
+      , "description": "On top of the scaffolding, basic HTML elements are styled and enhanced with extensible classes to provide a fresh, consistent look and feel."
+      , "sections": ["Typography","Code","Tables","Forms","Buttons","Icons"]
+      , "sectionLink": sectionLink
+      , "templates":"head,navbar,masthead,libraries"
+    };
+  </script>
 </head>
-<body data-spy="scroll" data-target=".subnav" data-offset="50" class="scroll">
-
-<!-- Navbar
-  ================================================== -->
-  <div class="navbar navbar-fixed-top">
-    <div class="navbar-inner">
-      <div class="container">
-        <div class="nav-collapse">
-          <ul class="nav">
-            <li><a class="cube" href="index.html" rel="tooltip" title="Dashboard"></a></li>
-            <li>
-              <a href="index.html">Overview</a>
-            </li>
-            <li>
-              <a href="scaffolding.html">Scaffolding</a>
-            </li>
-            <li class="active">
-              <a href="base-css.html">Base CSS</a>
-            </li>
-            <li>
-              <a href="components.html">Components</a>
-            </li>
-            <li>
-              <a href="widgets.html">Widgets</a>
-            </li>
-            <li>
-              <a href="less.html">Quick Styles</a>
-            </li>
-            <li>
-              <a href="theming.html">Theming</a>
-            </li>
-            <li>
-              <a href="charting.html">Charting</a>
-            </li>
-            <li>
-              <a href="sugar7">Prototypes</a>
-            </li>
-          </ul>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <div class="container">
-
-    <!-- Masthead
-    ================================================== -->
-    <header class="jumbotron subhead">
-      <h1>Base CSS</h1>
-      <p class="lead">On top of the scaffolding, basic HTML elements are styled and enhanced with extensible classes to provide a fresh, consistent look and feel.</p>
-      <div class="subnav">
-        <ul class="nav nav-pills">
-          <li><a href="#typography">Typography</a></li>
-          <li><a href="#code">Code</a></li>
-          <li><a href="#tables">Tables</a></li>
-          <li><a href="#forms">Forms</a></li>
-          <li><a href="#buttons">Buttons</a></li>
-          <li><a href="#icons">Icons</a></li>
-        </ul>
-      </div>
-    </header>
-
+<body data-spy="scroll" data-target=".subnav" data-offset="200" class="scroll">
+<div class="container">
 
 <!-- Typography
 ================================================== -->
@@ -1311,17 +1247,13 @@ For example, &lt;code&gt;section&lt;/code&gt; should be wrapped as inline.
 </section>
 
 
-
 <!-- Icons
 ================================================== -->
 <section id="icons" class="row">
-        <div class="span12">
-            <h1>Base Icons</h1>
-            <p>Inspired by the Glyphicon set that comes with <a href="http://twitter.github.com/bootstrap/" target="_blank">Twitter Bootstrap 2.0</a>, Font Awesome is designed from scratch for a full array of web-related actions.</p>
-        </div>
-
-
-
+  <div class="span12">
+      <h1>Base Icons</h1>
+      <p>Inspired by the Glyphicon set that comes with <a href="http://twitter.github.com/bootstrap/" target="_blank">Twitter Bootstrap 2.0</a>, Font Awesome is designed from scratch for a full array of web-related actions.</p>
+  </div>
 
   <div class="span12">
     <h1>New Icons in 2.0</h1>
@@ -1418,7 +1350,6 @@ For example, &lt;code&gt;section&lt;/code&gt; should be wrapped as inline.
     </ul>
   </div>
 </section>
-
 
 <section id="all-icons" class="row">
   <div class="span12">
@@ -1823,25 +1754,14 @@ For example, &lt;code&gt;section&lt;/code&gt; should be wrapped as inline.
         </div>
       </form>
       <div>
-                    <span class="rating">
-                        <span class="star"></span><span class="star"></span><span class="star"></span><span class="star"></span><span class="star"></span>
-                    </span>
+        <span class="rating">
+          <span class="star"></span><span class="star"></span><span class="star"></span><span class="star"></span><span class="star"></span>
+        </span>
       </div>
     </div>
   </div>
 </section>
 
-
-
-
-    <script src="js/jquery-1.7.2.min.js"></script>
-    <script src="js/google-code-prettify/prettify.js"></script>
-    <script src="../assets/js/bootstrap.min.js"></script>
-    <script src="../assets/js/bootstrap-datepicker.js"></script>
-    <script src="../assets/js/bootstrap-colorpicker.js"></script>
-    <script src="../assets/js/bootstrapx-clickover.js"></script>
-    <script src="js/styleguide.js"></script>
-    <script src="js/application.js"></script>
-
-  </body>
+</div>
+</body>
 </html>

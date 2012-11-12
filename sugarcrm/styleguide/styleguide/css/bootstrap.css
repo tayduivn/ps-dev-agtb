@@ -5711,6 +5711,19 @@ table.table.dataTable td.details .extend article:nth-child(even), table.table.da
   margin:0;
 }
 #vakata-contextmenu.jstree-sugar-context li ul { margin-left:-4px; }
+.wizard.modal { margin-left:0px; }
+.wizard.modal .modal-body { overflow-y:hidden; }
+.wizard.modal .modal-body .screen { display:none; }
+.wizard.modal .modal-body .modal-content { max-height:327px; }
+.wizard.modal .modal-body .modal-footer .btn + .btn { margin-right:10px; }
+.wizard.modal .modal-body .modal-footer .btn.back { display:none; }
+.wizard.modal .modal-body .modal-footer .btn.next { display:none; }
+.wizard.modal .modal-body .modal-footer .btn.finish { display:none; }
+.wizard.modal ul.nav.nav-tabs {
+  margin-bottom:0px;
+  margin-top:5px;
+}
+.wizard.modal ul.nav.nav-tabs > li:first-child { margin-left:10px; }
 #stream { position:relative; }
 #stream table { margin-top:-15px; }
 #stream tr td { padding:20px 4px; }
