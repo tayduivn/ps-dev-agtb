@@ -177,7 +177,7 @@ abstract class SugarForecasting_Export_AbstractExport extends SugarForecasting_A
     {
         global $locale;
         $filename = $this->getFilename();
-        header("Content-Disposition: attachment; filename={$filename}");
+        header("Content-Disposition: attachment; filename=\"{$filename}\"");
         header("Content-Type: text/x-csv");
         header("Expires: Mon, 26 Jul 1997 05:00:00 GMT" );
         header("Last-Modified: " . TimeDate::httpTime() );
