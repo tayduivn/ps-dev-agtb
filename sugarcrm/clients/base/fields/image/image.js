@@ -1,10 +1,6 @@
 ({
     extendsFrom: 'FileField',
     events: {
-        "mouseenter img" : "showButton",
-        "mouseenter a" : "showButton",
-        "mouseleave a" : "hideButton",
-        "mouseleave img" : "hideButton",
         "click .delete" : "delete",
         "focus input[type=file]": "onUploadFocus",
         "blur input[type=file]": "onUploadBlur",
@@ -25,12 +21,6 @@
                     id: this.model.id,
                     field: this.name
                 }, options);
-    },
-    showButton: function() {
-        this.$(".delete").removeClass("hide");
-    },
-    hideButton: function() {
-        this.$(".delete").addClass("hide");
     },
     delete: function() {
         var self = this;
