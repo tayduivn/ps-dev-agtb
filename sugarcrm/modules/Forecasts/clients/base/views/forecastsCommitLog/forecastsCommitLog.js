@@ -126,9 +126,9 @@
         this.timePeriodId = app.defaultSelections.timeperiod_id.id;
         this.selectedUser = {id: app.user.get('id'), "isManager":app.user.get('isManager'), "showOpps": false};
 
-        this.bestCase = 0;
-        this.likelyCase = 0;
-        this.worstCase = 0;
+        this.bestCase = "";
+        this.likelyCase = "";
+        this.worstCase = "";
         this.showHistoryLog = false;
     },
 
@@ -168,6 +168,9 @@
         this.collection.on("reset", function() {
             self.buildForecastsCommitted();
         }, this);
+        this.context.forecasts.on("forecasts:committed:saved", function(){
+            self.buildForecastsCommitted();
+        }, this);
         this.collection.on("change", function() { self.buildForecastsCommitted(); }, this);
     },
 
@@ -193,12 +196,12 @@
      * selected user/timeperiod
      */
     resetCommittedLog:function(){
-        this.bestCase = 0;
-        this.likelyCase = 0;
-        this.worstCase = 0;
-        this.previousBestCase = 0;
-        this.previousLikelyCase = 0;
-        this.previousWorstCase = 0;
+        this.bestCase = "";
+        this.likelyCase = "";
+        this.worstCase = "";
+        this.previousBestCase = "";
+        this.previousLikelyCase = "";
+        this.previousWorstCase = "";
         this.showHistoryLog = false;
         this.previousDateEntered = "";
     },
@@ -238,7 +241,6 @@
 
         _.each(models, function (model) {
             self.historyLog.push(app.forecasts.utils.createHistoryLog(model, previousModel));
-            previousModel = model;
         });
 
         // save the values from the last model to display in the dataset line on the interface
