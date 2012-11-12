@@ -8614,6 +8614,44 @@ li.ui-timepicker-selected .ui-timepicker-duration, .ui-timepicker-list li:hover 
     left:auto;
   }
 }
+@media print {
+  body { padding:0; }
+  #forecasts #contentflex > .row-fluid > .span8 {
+    width:100%;
+    float:none;
+    margin:0;
+    border:2px solid #ffffff !important;
+  }
+  #forecasts #contentflex #folded {
+    width:100%;
+    float:none;
+    margin:0;
+    page-break-before:always;
+  }
+  #dcmenutop {
+    background:url('../../assets/img/sugar-red-sm.png') 0 0 no-repeat;
+    display:block;
+    margin:0px;
+    padding-bottom:8px;
+    height:20px;
+    width:100%;
+    border:1px solid #ffffff;
+    border-bottom:3px solid #e61718;
+  }
+  #dcmenu, .btn, .toggle, .dropdown-menu, .btn-group, .btn-group.open .dropdown-menu, footer { display:none; }
+  #forecasts #contentflex #folded .tab-pane.active {
+    background:none;
+    border:none;
+    -webkit-box-shadow:none;
+    -moz-box-shadow:none;
+    box-shadow:none;
+  }
+  .chartCanvas, .sorting, .chzn-container-single .chzn-single div b {
+    background:none;
+    filter:none;
+  }
+  :root { -webkit-print-color-adjust:exact; }
+}
 .record {
   clear:both;
   margin-bottom:16px;

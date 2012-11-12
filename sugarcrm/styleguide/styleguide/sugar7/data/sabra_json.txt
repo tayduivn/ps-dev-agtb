@@ -1,9 +1,8 @@
 {
   "aaData": [
     [
-
       "opp1",
-      "<a href='opportunity_plato.html'>Mark Gibson</a>",
+      "<a href=\"#\" class=\"sales-rep\">Mark Gibson</a>",
       "2012-01-01",
       200000,
       5000000000,
@@ -14,9 +13,8 @@
       "mark"
     ],
     [
-
       "opp2",
-      "<a href='opportunity_plato.html'>James Joplin</a>",
+      "<a href=\"#\" class=\"sales-rep\">James Joplin</a>",
       "2012-02-01",
       100000,
       50000,
@@ -27,9 +25,8 @@
       "mark"
     ],
     [
-
       "opp3",
-      "<a href='opportunity_plato.html'>Terrance Li</a>",
+      "<a href=\"#\" class=\"sales-rep\">Terrance Li</a>",
       "2012-03-01",
       200000,
       200000,
@@ -40,9 +37,8 @@
       "mark"
     ],
     [
-
       "opp4",
-      "<a href='opportunity_plato.html'>Amy McCray</a>",
+      "<a href=\"#\" class=\"sales-rep\">Amy McCray</a>",
       "2012-03-01",
       100000,
       50000,
@@ -53,9 +49,8 @@
       "mark"
     ],
     [
-
       "opp5",
-      "<a href='opportunity_plato.html'>My Opportunities</a> ",
+      "<a href=\"#\" class=\"sales-rep\">My Opportunities</a>",
       "2012-03-01",
       70000,
       50000,

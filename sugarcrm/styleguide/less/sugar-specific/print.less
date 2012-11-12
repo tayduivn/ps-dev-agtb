@@ -1,0 +1,51 @@
+@media print {
+    /* Your styles here */
+    body {
+      padding: 0;
+    }
+    #forecasts #contentflex > .row-fluid > .span8 {
+      width: 100%;
+      float: none;
+      margin: 0;
+      border: 2px solid #fff !important;
+    }
+    #forecasts #contentflex #folded {
+      width: 100%;
+      float: none;
+      margin: 0;
+      page-break-before: always;
+    }
+    #dcmenutop {
+      background: url('@{baseUrl}/img/sugar-red-sm.png') 0 0 no-repeat;
+      display: block;
+      margin: 0px;
+      padding-bottom: 8px;
+      height: 20px;
+      width: 100%;
+      border: 1px solid #fff;
+      border-bottom: 3px solid @red;
+    }
+    #dcmenu,
+    .btn,
+    .toggle,
+    .dropdown-menu,
+    .btn-group,
+    .btn-group.open .dropdown-menu,
+    footer {
+      display: none;
+    }
+    #forecasts #contentflex #folded .tab-pane.active {
+      background: none;
+      border: none;
+      .box-shadow(none);
+    }
+    .chartCanvas,
+    .sorting,
+    .chzn-container-single .chzn-single div b {
+      background: none;
+      filter: none;
+    }
+    :root {
+      -webkit-print-color-adjust: exact;
+    }
+}
