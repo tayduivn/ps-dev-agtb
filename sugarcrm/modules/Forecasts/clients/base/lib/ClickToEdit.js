@@ -30,8 +30,10 @@
         var reg1 = new RegExp("^\\+?(\\d+|\\d{1,3}("+gs+"\\d{3})*)?("+ds+"\\d+)?\\%?$");
         // matches a valid decimal percentage
         var reg2 = new RegExp("^[\\+\\-]?\\d+?("+ds+"\\d+)?\\%$");
+        var reg3 = new RegExp("^\\+?\\d+$");
     	switch(field.type){
             case "int":
+                return !_.isNull(value.match(reg3)) && value >= 0 && value <= 100;
             case "numeric":
             case "float":
             case "currency":
@@ -165,7 +167,7 @@
                     // if not, show an error and cancel submit.
                     if(!settings.field.isValid) {
                         $(this).find('.control-group').addClass('error');
-                        var invalid = $('<span class="help-inline jeditable-error"><span class="btn btn-danger"><i class="icon-white icon-exclamation-sign"></i></span> ' + app.lang.get("LBL_CLICKTOEDIT_INVALID", "Forecasts") + '</span>');
+                        var invalid = $('<span class="help-inline jeditable-error" style="white-space: nowrap;"><span class="btn btn-danger"><i class="icon-white icon-exclamation-sign"></i></span> ' + app.lang.get("LBL_CLICKTOEDIT_INVALID", "Forecasts") + '</span>');
                         $(this).find('input').parent().parent().append(invalid);
                         $(this).find('input').select();
                     }

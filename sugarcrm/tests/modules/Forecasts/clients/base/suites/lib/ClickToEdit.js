@@ -110,4 +110,20 @@ describe("ClickToEdit", function(){
         expect(app.view.ClickToEditField.prototype._checkDatatype(field, "abc")).toBeTruthy();
     });
 
+    it("should correctly accept input for all int type fields", function() {
+        field.type = 'int';
+        var clickToEdit = new app.view.ClickToEditField(field, view);
+        expect(app.view.ClickToEditField.prototype._checkDatatype(field, "0")).toBeTruthy();
+        expect(app.view.ClickToEditField.prototype._checkDatatype(field, "+0")).toBeTruthy();
+        expect(app.view.ClickToEditField.prototype._checkDatatype(field, "10")).toBeTruthy();
+        expect(app.view.ClickToEditField.prototype._checkDatatype(field, "+10")).toBeTruthy();
+        expect(app.view.ClickToEditField.prototype._checkDatatype(field, "100")).toBeTruthy();
+        expect(app.view.ClickToEditField.prototype._checkDatatype(field, "+100")).toBeTruthy();
+        expect(app.view.ClickToEditField.prototype._checkDatatype(field, "101")).toBeFalsy();
+        expect(app.view.ClickToEditField.prototype._checkDatatype(field, "-1")).toBeFalsy();
+        expect(app.view.ClickToEditField.prototype._checkDatatype(field, "1%")).toBeFalsy();
+        expect(app.view.ClickToEditField.prototype._checkDatatype(field, "1.14")).toBeFalsy();
+    });
+
+
 });
