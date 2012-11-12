@@ -1,37 +1,51 @@
 ({
     calendarRendered: false,
+    numEvents: 5,
 
     initialize: function(opts) {
         app.view.View.prototype.initialize.call(this, opts);
+
+        if (this.module != "ActivityStream") {
+            this.subcontext = this.context.getChildContext({module: "ActivityStream"});
+            this.subcontext.prepare();
+            this.eventCollection = this.subcontext.get("collection");
+        } else {
+            this.eventCollection = this.collection;
+        }
     },
 
     _addCalendarMonthEvent: function(models) {
-        var events = [], counts = {};
-        var getDate = function(dateString) {
-            var d = app.date.parse(dateString, 'Y-m-d H:i:s');
-            d.setHours(0);
-            d.setMinutes(0);
-            d.setSeconds(0);
-            return d.toDateString();
-        };
+        var events = [],
+            counts = {},
+            getDate = function(dateString) {
+                var d = app.date.parse(dateString, 'Y-m-d H:i:s');
+                d.setHours(0);
+                d.setMinutes(0);
+                d.setSeconds(0);
+                return d.toDateString();
+            };
 
-        $.each(models, function(index, model) {
+        _.each(models, function(model) {
             var dateStr = getDate(model.get('date_created'));
-            if (typeof counts[dateStr] != 'undefined') {
+            if (!_.isUndefined(counts[dateStr])) {
                 counts[dateStr].count += 1;
-            }
-            else {
-                counts[dateStr] = {};
-                counts[dateStr].count = 1;
-                counts[dateStr].id = model.get('id');
-                counts[dateStr].start = new Date(dateStr);
+            } else {
+                counts[dateStr] = {
+                    count: 1,
+                    id: model.get('id'),
+                    start: new Date(dateStr)
+                };
             }
         });
 
-        $.each(counts, function(dateStr, data) {
-            var event = {"allDay": true, "id": data.id};
-            event.start = data.start;
-            event.title = data.count + ' event(s)';
+        _.each(counts, function(data) {
+            var event = {
+                "allDay": true,
+                "id": data.id,
+                start: data.start,
+                title: data.count + ' event(s)'
+            };
+
             events.push(event);
         });
 
@@ -39,38 +53,48 @@
     },
 
     _addCalendarWeekEvent: function(models) {
-        var events = [], numEvents = 5, dateFormat = 'Y-m-d H:i:s';
+        var events = [],
+            dateFormat = 'Y-m-d H:i:s';
 
-        $.each(models, function(index, model) {
-            if (events.length < numEvents) {
-                var event = {allDay: false};
-                event.id = model.get('id');
-                event.start = app.date.parse(model.get("date_created"), dateFormat);
-                event.title = model.get("created_by_name") + " " + model.get("activity_type") + "...";
+        _.each(models, function(model) {
+            var event;
+
+            if (events.length < this.numEvents) {
+                event = {
+                    allDay: false,
+                    id: model.get('id'),
+                    start: app.date.parse(model.get("date_created"), dateFormat),
+                    title: model.get("created_by_name") + " " + model.get("activity_type") + "...",
+                };
                 events.push(event);
-            }
-            else if (events.length == numEvents) {
-                var event = {allDay: true};
-                event.id = model.get('id');
-                event.start = app.date.parse(model.get("date_created"), dateFormat);
-                event.title = (models.length - numEvents) + " more event(s)";
+            } else if (events.length == this.numEvents) {
+                event = {
+                    allDay: true,
+                    id: model.get('id'),
+                    start: app.date.parse(model.get("date_created"), dateFormat),
+                    title: (models.length - this.numEvents) + " more event(s)"
+                };
+
                 events.push(event);
                 return false;
             }
-        });
+        }, this);
 
         return events;
     },
 
     _addCalendarDayEvent: function(models) {
-        var events = [], numEvents = 5;
+        var events = [];
 
-        $.each(models, function(index, model) {
-            var activityType = model.get('activity_type');
-            var event = {allDay: false};
-            event.id = model.get('id');
-            event.start = app.date.parse(model.get("date_created"), 'Y-m-d H:i:s');
-            if (events.length < numEvents) {
+        _.each(models, function(model) {
+            var activityType = model.get('activity_type'),
+                event = {
+                    allDay: false,
+                    id: model.get('id'),
+                    start: app.date.parse(model.get("date_created"), 'Y-m-d H:i:s')
+                };
+
+            if (events.length < this.numEvents) {
                 event.title = model.get("created_by_name") + " " + model.get("activity_type") + " ";
 
                 switch (activityType) {
@@ -99,20 +123,20 @@
                         break;
                 }
                 events.push(event);
-            }
-            else if (events.length == numEvents) {
+            } else if (events.length == this.numEvents) {
                 event.allDay = true;
-                event.title = (models.length - numEvents) + " more event(s)";
+                event.title = (models.length - this.numEvents) + " more event(s)";
                 events.push(event);
                 return false;
             }
-        });
+        }, this);
 
         return events;
     },
 
     renderCalendar: function() {
         var self = this;
+
         // Construct the calendar data.
         var calendar = {
             height: '400',
@@ -126,16 +150,18 @@
                 $('.calendar').fullCalendar('refetchEvents');
             },
             events: function(start, end, callback) {
-                var events = [], view = $('.calendar').fullCalendar('getView'), objarrays;
+                var events = [],
+                    view = self.$('.calendar').fullCalendar('getView'),
+                    objarrays;
+
                 if (view.name == 'month') {
-                    events = self._addCalendarMonthEvent(self.collection.models);
+                    events = self._addCalendarMonthEvent(self.eventCollection.models);
+                } else if (view.name == 'basicWeek') {
+                    events = self._addCalendarWeekEvent(self.eventCollection.models);
+                } else {
+                    events = self._addCalendarDayEvent(self.eventCollection.models);
                 }
-                else if (view.name == 'basicWeek') {
-                    events = self._addCalendarWeekEvent(self.collection.models);
-                }
-                else {
-                    events = self._addCalendarDayEvent(self.collection.models);
-                }
+
                 callback(events);
             },
             eventClick: function(calEvent, jsEvent, view) {
@@ -143,10 +169,8 @@
             }
         };
 
-        if (typeof self.collection.models != 'undefined' && self.collection.models.length) {
-            $('.calendar').html('');
-            $('.calendar').fullCalendar(calendar);
-        }
+        this.$('.calendar').empty();
+        this.$('.calendar').fullCalendar(calendar);
     },
 
     show: function() {

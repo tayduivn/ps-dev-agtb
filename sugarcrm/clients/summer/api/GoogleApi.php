@@ -140,6 +140,7 @@ class GoogleAPI extends SugarApi
         $records = json_decode($res, TRUE);
         if(!empty($records['items'])) {
             foreach($records['items'] as $item) {
+                if(empty($item['embedLink'])) $item['embedLink'] = $item['alternateLink'];
                 $data[] = array(
                     'id' => $item['id'],
                     'name' => $item['title'],

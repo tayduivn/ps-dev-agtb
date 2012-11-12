@@ -619,11 +619,17 @@ class SubPanelDefinitions
 					continue;
 				}
 
-				//check permissions.
-				$exempt = array_key_exists ( $values_array [ 'module' ], $modules_exempt_from_availability_check ) ;
-				$ok = $exempt || ( (! ACLController::moduleSupportsACL ( $values_array [ 'module' ] ) || ACLController::checkAccess ( $values_array [ 'module' ], 'list', true ) ) ) ;
 
-				$GLOBALS [ 'log' ]->debug ( "SubPanelDefinitions->get_available_tabs(): " . $key . "= " . ( $exempt ? "exempt " : "not exempt " .( $ok ? " ACL OK" : "" ) ) ) ;
+                //History and Activities are special subpanels that are not listed in the global module list,
+                $allModules = array_merge(array("History", "Activities"), $GLOBALS['moduleList'] );
+				//check permissions.
+                $exempt = array_key_exists ( $values_array [ 'module' ], $modules_exempt_from_availability_check ) ;
+				$ok = $exempt || (in_array($values_array['module'], $allModules) &&
+                    (!ACLController::moduleSupportsACL ( $values_array [ 'module' ] ) ||
+                     ACLController::checkAccess ( $values_array [ 'module' ], 'list', true ) )
+                ) ;
+
+				$GLOBALS['log']->debug("SubPanelDefinitions->get_available_tabs(): $key = " . ($exempt ? "exempt " : "not exempt " . ( $ok ? " ACL OK" : "" ) ) ) ;
 
 				if ( $ok )
 				{
@@ -638,7 +644,6 @@ class SubPanelDefinitions
 		}
 
 		ksort ( $this->_visible_tabs_array ) ;
-        $this->_visible_tabs_array = array_intersect($this->_visible_tabs_array, $GLOBALS['moduleList']);
 		return $this->_visible_tabs_array ;
 	}
 

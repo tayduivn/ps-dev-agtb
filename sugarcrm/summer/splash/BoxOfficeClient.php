@@ -647,6 +647,7 @@ class BoxOfficeClient
             $msg = $storage->getMessage($id);
             $msgdata = $this->filterHeaders($msg->getHeaders());
             $msgdata['uid'] = $storage->getUniqueId($id);
+            $msgdata['thrid'] = dechex($imap->fetch('X-GM-THRID', $id));
             $messages[] = $msgdata;
         }
         return $messages;

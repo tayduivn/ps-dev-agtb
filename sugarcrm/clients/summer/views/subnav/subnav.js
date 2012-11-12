@@ -1,5 +1,4 @@
 ({
-    events: {},
     initialize: function(options) {
         var self = this;
         app.view.View.prototype.initialize.call(this, options);

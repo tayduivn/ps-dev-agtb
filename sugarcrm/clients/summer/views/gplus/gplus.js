@@ -16,7 +16,7 @@
             dataType: "json",
             success: function ( data ) {
                 if (data.items) {
-                    self.gPlusId = data.items[0].id;      // get the first result
+                    self.gPlusId = data.items[0].id; // get the first result
                     console.log( 'success get google plus id' );
                 }
             },
@@ -118,9 +118,7 @@
         });
     },
 
-    bindDataChange: function () {
-        var self = this;
-        this.model.on( "change", self.getData, this );
+    bindDataChange: function() {
+        this.model.on("change", this.getData, this);
     }
-
 })

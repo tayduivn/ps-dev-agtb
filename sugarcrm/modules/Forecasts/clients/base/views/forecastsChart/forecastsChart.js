@@ -6,7 +6,7 @@
  */
 ({
     values:{},
-    url:'rest/v10/Forecasts/chart',
+    url:app.api.buildURL('Forecasts/chart'),
 
     chart: null,
 
@@ -36,7 +36,7 @@
      * event handler to update which dataset is used.
      */
     changeDisplayOptions : function(evt) {
-        this.handleRenderOptions({dataset: this.handleOptionChange(evt)})
+        this.handleRenderOptions({dataset: this.handleOptionChange(evt)});
     },
 
     /**
@@ -185,7 +185,7 @@
             // set the value of the hiddenSidecar to we can stop the render if the sidebar is hidden
             self.stopRender = value;
             // if the sidebar is not hidden
-            if(value == false){
+            if(value === false){
                 // we need to force the render to happen again
                 self.renderChart();
             }
@@ -214,7 +214,7 @@
     updateChart: function() {
         var self = this;
         SUGAR.charts.update(self.chart, self.url, self.values, _.bind(function(chart){
-            SUGAR.charts.generateLegend(chart, chart.config.injectInto)
+            SUGAR.charts.generateLegend(chart, chart.config.injectInto);
             // update the chart title
             self.$el.find('h4').html(self.chartTitle);
         }, self));
@@ -235,7 +235,7 @@
         var returnDs = {};
         _.each(ds, function(value, key){
             if(cfg.get(cfg_key + key) == 1) {
-                returnDs[key] = value
+                returnDs[key] = value;
             }
         }, self);
         return returnDs;

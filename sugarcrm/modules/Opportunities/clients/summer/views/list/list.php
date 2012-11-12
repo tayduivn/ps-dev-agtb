@@ -63,6 +63,11 @@ $viewdefs['Opportunities']['summer']['view']['list'] = array(
                     'default' => true,
                     'enabled' => true
                 ),
+                array(
+                    'type' => 'preview',
+                    'sortable' => false,
+                    'default' => true,
+                ),
             )
         )
     )

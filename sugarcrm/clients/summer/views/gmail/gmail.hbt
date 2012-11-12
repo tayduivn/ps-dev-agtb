@@ -10,7 +10,7 @@
   </div>
   {{#each emails}}
     <article class='row-fluid'>
-       <a >{{this.subject}}</a>
+       <a href="https://mail.google.com/mail/#all/{{thrid}}">{{this.subject}}</a>
     </article>
   {{/each}}
 </div>
