@@ -2,7 +2,7 @@
 <div{{#if def.width}} style="width: {{def.width}}px"{{/if}} class="dropup">
 <img src="{{fileURL}}">
 <span class="image-overlay-with-button">
-<a href="javascript:void(0)" class="btn btn-mini btn-danger delete hide" rel="tooltip"><i class="icon-trash"></i> {{str "LBL_DELETE"}}</a>
+<a href="javascript:void(0)" class="btn btn-mini btn-danger delete" rel="tooltip"><i class="icon-trash"></i> {{str "LBL_DELETE"}}</a>
 </span>
 </div>
 {{/if}}
