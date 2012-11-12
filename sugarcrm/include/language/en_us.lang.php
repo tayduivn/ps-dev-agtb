@@ -4423,9 +4423,10 @@ $app_list_strings['forecasts_config_category_options_dom'] = array(
     'show_binary' => 'Two Categories',
     'show_buckets' => 'Three Categories',
 //END SUGARCRM flav=pro ONLY
-//BEGIN SUGARCRM flav=ent ONLY
-    'show_n_buckets' => 'Custom Categories',
-//END SUGARCRM flav=ent ONLY
+//BEGIN SUGARCRM flav=int ONLY
+//TODO-sfa Tag this as 'ent' when custom buckets are implemented (SFA-295)
+    'show_custom_buckets' => 'Custom Categories',
+//END SUGARCRM flav=int ONLY
 //BEGIN SUGARCRM flav=pro ONLY
 );
 $app_list_strings['forecasts_timeperiod_types_dom'] = array(
