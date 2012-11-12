@@ -236,23 +236,11 @@ class MetadataApi extends SugarApi {
         // Start collecting data
         $data = array();
 
-        // TODO: We have duplication for things like type_filter, etc., in public and all metadata. They
-        // should use similar approach so we keep it DRY ;)
         $this->jssourceFilter = $this->getJSSourcePlatforms($args);
 
-        $data['fields']  = $mm->getSugarClientFiles('field', NULL, NULL, $this->jssourceFilter);
-        $data['views']   = $mm->getSugarClientFiles('view', NULL, NULL,  $this->jssourceFilter);
-        $data['layouts'] = $mm->getSugarLayouts($this->jssourceFilter);
-
-//////////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////
-// TODO
-// Do we need to do the platform thing for templates too? Maybe I'm
-// missing something, but aren't we loading the same templates for both
-// views.<view>.templates and view_templates here?
-//////////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////
- 
+        $data['fields']  = $mm->getSugarClientFilesForPlatforms('field', NULL, NULL,  $this->jssourceFilter);
+        $data['views']   = $mm->getSugarClientFilesForPlatforms('view', NULL, NULL,   $this->jssourceFilter);
+        $data['layouts'] = $mm->getSugarClientFilesForPlatforms('layout', NULL, NULL, $this->jssourceFilter);
         $data['view_templates']   = $mm->getViewTemplates();
         $data['app_strings']      = $mm->getAppStrings();
         $data['app_list_strings'] = $app_list_strings_public;
@@ -310,15 +298,25 @@ class MetadataApi extends SugarApi {
 
             if (!empty($data[$mdType])){
                 $js .= "\n\t$mdType:{";
-                $firstComp = true;
+                $firstPlatform = true;
                 $platforms = $this->jssourceFilter;
 
                 foreach ($platforms as $platform) {
 
                     if (isset($data[$mdType][$platform])) {
 
+                        // Starts current platform for this component
+
+                        if (!$firstPlatform)
+                            $js .= ",";
+                        else
+                            $firstPlatform = false;
+
+                        $js .= "\n\t\t\"$platform\":{";
+                        $firstComp = true;
+
                         foreach($data[$mdType][$platform] as $name => $component) {
-                            
+
                             if (is_array($component) && !empty($component['controller'])) {
                                 if (!$firstComp)
                                     $js .= ",";
@@ -333,6 +331,8 @@ class MetadataApi extends SugarApi {
                                 unset($data[$mdType][$name]['controller']);
                             }
                         }
+                        // Closes current platform for component
+                        $js .= "\n\t\t}";
                     }
                 }
                 //Chop of the first comma in $comp
@@ -399,9 +399,9 @@ class MetadataApi extends SugarApi {
                 }
             }
         }
-        $data['fields']  = $mm->getSugarClientFiles('field', NULL, NULL, $this->jssourceFilter);
-        $data['views']   = $mm->getSugarClientFiles('view', NULL, NULL,  $this->jssourceFilter);
-        $data['layouts'] = $mm->getSugarLayouts($this->jssourceFilter);
+        $data['fields']  = $mm->getSugarClientFilesForPlatforms('field', NULL, NULL,  $this->jssourceFilter);
+        $data['views']   = $mm->getSugarClientFilesForPlatforms('view', NULL, NULL,   $this->jssourceFilter);
+        $data['layouts'] = $mm->getSugarClientFilesForPlatforms('layout', NULL, NULL, $this->jssourceFilter);
         $data['view_templates'] = $mm->getViewTemplates();
         $data['app_strings'] = $mm->getAppStrings();
         $data['app_list_strings'] = $mm->getAppListStrings();

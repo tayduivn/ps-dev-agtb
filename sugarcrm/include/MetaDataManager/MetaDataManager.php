@@ -457,7 +457,7 @@ class MetaDataManager {
      */
     public function getSugarLayouts($platforms)
     {
-        return $this->getSugarClientFiles('layout', NULL, NULL, $platforms);
+        return $this->getSugarClientFiles('layout');
     }
 
     /**
@@ -489,12 +489,79 @@ class MetaDataManager {
      * Gets client files of type $type (view, layout, field)
      *
      * @param string $type The type of files to get
+     * @return array
+     */
+    public function getSugarClientFiles($type, $modulePath = "", $module="")
+    {
+        $result = array();
+
+        $typePath = $type . 's';
+
+        $allSugarFiles = $this->getSugarClientFileDirs($typePath, false, $modulePath);
+
+        foreach ( $allSugarFiles as $dirname) {
+            // reset $fileData
+            $fileData = array();
+            // Check each platform in order of precendence to find the "best" controller
+            // Add in meta checking here as well
+            $meta = array();
+            foreach ( $this->platforms as $platform ) {
+                $dir = "{$modulePath}clients/$platform/$typePath/$dirname/";
+                $controller = SugarAutoLoader::existingCustomOne("{$dir}{$dirname}.js");
+                if (empty($meta)) {
+                    $meta = $this->fetchMetadataFromDirs(array($dir), $module);
+                }
+                if ( $controller ) {
+                    $fileData['controller'] = file_get_contents($controller);
+                    // We found a controller, let's get out of here!
+                    break;
+                }
+            }
+
+            // Reverse the platform order so that "better" templates override worse ones
+            $backwardsPlatforms = array_reverse($this->platforms);
+            $templateDirs = array();
+            foreach ( $backwardsPlatforms as $platform ) {
+                $templateDirs[] = "{$modulePath}clients/$platform/$typePath/$dirname/";
+            }
+            $templates = $this->fetchTemplates($templateDirs);
+            if (!empty($module) && $type != "field"){
+                //custom views/layouts can only have one templates
+                $fileData['template'] = reset($templates);
+            }
+            else
+                $fileData['templates'] = $templates;
+
+            if ($meta) {
+               $fileData['meta'] = array_shift($meta); // Get the first member
+            }
+            //$fileData['meta'] = $this->fetchMetadataFromDirs($templateDirs);
+
+            // Remove empty fileData members
+            foreach ($fileData as $k => $v) {
+                if (empty($v)) {
+                    unset($fileData[$k]);
+                }
+            }
+
+            $result[$dirname] = $fileData;
+        }
+
+        $result['_hash'] = md5(serialize($result));
+        return $result;
+    }
+
+    /**
+     * Gets client files of type $type (view, layout, field) for all platforms 
+     * specified. Resulting array will be delineated by platform.
+     *
+     * @param string $type The type of files to get
      * @param string $modulePath path to module 
      * @param string $module the module
      * @param array $platforms Which platforms to get client files for.
      * @return array
      */
-    public function getSugarClientFiles($type, $modulePath = "", $module = "", $platforms = array())
+    public function getSugarClientFilesForPlatforms($type, $modulePath = "", $module = "", $platforms = array())
     {
         $result = array();
 
@@ -503,10 +570,6 @@ class MetaDataManager {
 
         // Platforms we'll push our loaded components on to.
         $desiredPlatforms = array();
-        foreach ($platforms as $k) {
-            $desiredPlatforms[$k] = NULL;
-        }
-
         $typePath = $type . 's';
 
         // Retrieves base directory names for all possible widgets
@@ -518,8 +581,8 @@ class MetaDataManager {
             // Check each platform in order of precendence to find the "best" controller
             // Add in meta checking here as well
             $meta = array();
-            $tplDir = array();
 
+            $tplDir = array();
             foreach ( $platforms as $platform ) {
                 $dir = "{$modulePath}clients/$platform/$typePath/$dirname/";
                 $controller = SugarAutoLoader::existingCustomOne("{$dir}{$dirname}.js");
