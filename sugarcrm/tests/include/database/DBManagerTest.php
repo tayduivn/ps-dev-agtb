@@ -2523,4 +2523,302 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
         $GLOBALS['sugar_config']['search_wildcard_char'] = $defaultConfigWildcard;
         $GLOBALS['sugar_config']['search_wildcard_infront'] = $defaultWildcardInFront;
     }
+
+
+    /*
+     *    Prepared Statement Unit Tests
+     *
+     */
+
+    private function setupPreparedStatementStructure()
+    {
+        /* VARDEF - id -  ROW[name] => 'id'
+                            [vname] => 'LBL_ID'
+                         [required] => 'true'
+                             [type] => 'char'
+                       [reportable] => ''
+                          [comment] => 'Unique identifier'
+                           [dbType] => 'id'
+                              [len] => '36'
+         */
+
+
+        // Note the new element 'data' in the fieldDef. This is just a convience for defining the test data
+        // It will be pulled out later and put in to a simple data only array for actually calling the ps methods
+
+        $today=getdate();
+        $tableName = 'testPreparedStatement'; // . mt_rand();
+        $fieldDefs =  array(
+            'intTest'  => array (
+                'name' => 'intTest',
+                'type' => 'int',
+                'len'  => '6',
+                'data' => array(-1,-2,-3,-4,-5,-6,-7,-8,-9,-10),
+            ),
+            'doubleTest' => array (
+                'name' => 'doubleTest',
+                'type' => 'double',
+                'len'  => '6,2',
+                'data' => array(-1.11,-2.22,-3.33,-4.44,-5.55,-6.66,-7.77,-8.88,-9.99,-10.10),
+            ),
+            'floatTest' => array (
+                'name' => 'floatTest',
+                'type' => 'float',
+                'len'  => '6,2',
+                'data' => array(-1.11,-2.22,-3.33,-4.44,-5.55,-6.66,-7.77,-8.88,-9.99,-10.10),
+            ),
+            'uintTest' => array (
+                'name' => 'uintTest',
+                'type' => 'uint',
+                'len'  => '6',
+                'data' => array(1,2,3,4,5,6,7,8,9,10),
+            ),
+            'ulongTest'=> array (
+                'name' => 'ulongTest',
+                'type' => 'ulong',
+                'len'  => '6',
+                'data' => array(1,2,3,4,5,6,7,8,9,10),
+            ),
+            'longTest' => array (
+                'name' => 'longTest',
+                'type' => 'long',
+                'len'  => '6',
+                'data' => array(-1,-2,-3,-4,-5,-6,-7,-8,-9,-10),
+            ),
+            'shortTest'=> array (
+                'name' => 'shortTest',
+                'type' => 'short',
+                'len'  => '3',
+                'data' => array(-1,-2,-3,-4,-5,-6,-7,-8,-9,-10),
+            ),
+            'varcharTest' => array (
+                'name' => 'varcharTest',
+                'type' => 'varchar',
+                'len'  => '255',
+                'data' => array('One','Two','Three','Four','Five','Six','Seven','Eight','Nine','Ten'),
+            ),
+            'textTest' => array (
+                'name' => 'textTest',
+                'type' => 'text',
+                'len'  => '255',
+                'data' => array('One','Two','Three','Four','Five','Six','Seven','Eight','Nine','Ten'),
+            ),
+            'longTextTest' => array (
+                'name' => 'longTextTest',
+                'type' => 'longText',
+                'len'  => '255',
+                'data' => array('One','Two','Three','Four','Five','Six','Seven','Eight','Nine','Ten'),
+            ),
+            'dateTest' => array (
+                'name' => 'dateTest',
+                'type' => 'date',
+                'data' => array($today,$today,$today,$today,$today,$today,$today,$today,$today,$today),
+            ),
+            'enumTest' => array (
+                'name' => 'enumTest',
+                'type' => 'enum',
+                'len'  => '255',
+                'data' => array('One','Two','Three','Four','Five','Six','Seven','Eight','Nine','Ten'),
+            ),
+            'relateTest' => array (
+                'name' => 'relateTest',
+                'type' => 'relate',
+                'len'  => '255',
+                'data' => array('One','Two','Three','Four','Five','Six','Seven','Eight','Nine','Ten'),
+            ),
+            'multienumTest' => array (
+                'name' => 'multienumTestTest',
+                'type' => 'multienumTest',
+                'len'  => '255',
+                'data' => array('One;Two','Two;Three','Three;Four','Four;Five','Five;Six','Six;Seven','Seven;Eight','Eight;Nine','Nine;ten','Ten;Eleven'),
+            ),
+            'htmlTest' => array (
+                'name' => 'htmlTest',
+                'type' => 'html',
+                'len'  => '255',
+                'data' => array('HTML 1','HTML 2','HTML 3','HTML 4','HTML 5','HTML 6','HTML 7','HTML 8','HTML 9','HTML 10'),
+            ),
+            'longhtmlTest' => array (
+                'name' => 'longhtmlTest',
+                'type' => 'longhtml',
+                'len'  => '255',
+                'data' => array('HTML 1','HTML 2','HTML 3','HTML 4','HTML 5','HTML 6','HTML 7','HTML 8','HTML 9','HTML 10'),
+            ),
+            'datetimeTest' => array (
+                'name' => 'datetimeTest',
+                'type' => 'datetime',
+                'data' => array('One','Two','Three','Four','Five','Six','Seven','Eight','Nine','Ten'),
+            ),
+            'datetimecomboTest' => array (
+                'name' => 'datetimecomboTest',
+                'type' => 'datetimecombo',
+                'data' => array($today,$today,$today,$today,$today,$today,$today,$today,$today,$today),
+            ),
+            'timeTest' => array (
+                'name' => 'timeTest',
+                'type' => 'time',
+                'data' => array($today,$today,$today,$today,$today,$today,$today,$today,$today,$today),
+            ),
+            'boolTest' => array (
+                'name' => 'Testbool',
+                'type' => 'bool',
+                'data' => array(true, false, true, false, true, false, true, false, true, false),
+            ),
+            'tinyintTest' => array (
+                'name' => 'tinyintTest',
+                'type' => 'tinyint',
+                'len'  => '3',
+                'data' => array(-1,-2,-3,-4,-5,-6,-7,-8,-9,-10),
+            ),
+            'charTest' => array (
+                'name' => 'charTest',
+                'type' => 'char',
+                'len'  => '255',
+                'data' => array('One','Two','Three','Four','Five','Six','Seven','Eight','Nine','Ten'),
+            ),
+            'blobTest' => array (
+                'name' => 'blobTest',
+                'type' => 'blob',
+                'len'  => '255',
+                'data' => array('One','Two','Three','Four','Five','Six','Seven','Eight','Nine','Ten'),
+            ),
+            'longBlobTest' => array (
+                'name' => 'longBlobTest',
+                'type' => 'longBlob',
+                'len'  => '255',
+                'data' => array('One','Two','Three','Four','Five','Six','Seven','Eight','Nine','Ten'),
+            ),
+            'currencyTest' => array (
+                'name' => 'currencyTest',
+                'type' => 'currency',
+                'len'  => '10,6',
+                'data' => array(-1.111111,-2.222222,-3.333333,-4.444444,-5.555555,-6.666666,-7.777777,-8.888888,-9.999999,-10.101010),
+            ),
+            'decimalTest' => array (
+                'name' => 'decimalTest',
+                'type' => 'decimal',
+                'len'  => '10,2',
+                'data' => array(-1.11,-2.22,-3.33,-4.44,-5.55,-6.66,-7.77,-8.88,-9.99,-10.10),
+                'len' => '',
+            ),
+            'decimal2Test' => array (
+                'name' => 'decimal2Test',
+                'type' => 'decimal2',
+                'len'  => '10,6',
+                'data' => array(-1.111111,-2.222222,-3.333333,-4.444444,-5.555555,-6.666666,-7.777777,-8.888888,-9.999999,-10.101010),
+                'len' => '',
+            ),
+            'id' => array (
+                'name' => 'id',
+                'type' => 'id',
+                'required'=>true,
+                'data'=> array(1,2,3,4,5,6,7,8,9,10),
+            ),
+            'urlTest' => array (
+                'name' => 'urlTest',
+                'type' => 'url',
+                'len'  => '255',
+                'data' => array('http://127.0.0.0','http://127.0.0.0','http://127.0.0.0','http://127.0.0.0','http://127.0.0.0',
+                                'http://127.0.0.0','http://127.0.0.0','http://127.0.0.0','http://127.0.0.0','http://127.0.0.0'),
+            ),
+            'encryptTest' => array (
+                'name' => 'encryptTest',
+                'type' => 'encrypt',
+                'len'  => '255',
+                'data' => array('One','Two','Three','Four','Five','Six','Seven','Eight','Nine','Ten'),
+            ),
+            'fileTest' => array (
+                'name' => 'fileTest',
+                'type' => 'file',
+                'len'  => '255',
+                'data' => array('One','Two','Three','Four','Five','Six','Seven','Eight','Nine','Ten'),
+            ),
+            'decimal_tplTest' => array (
+                'name' => 'decimal_tplTest',
+                'type' => 'decimal_tpl',
+                'len' => '10,6',
+                'data' => array(-1.111111,-2.222222,-3.333333,-4.444444,-5.555555,-6.666666,-7.777777,-8.888888,-9.999999,-10.101010),
+            ),
+
+        );
+        $indexes = array(
+            array(
+                'name'   => 'idx_'. $tableName .'_id',
+                'type'   => 'primary',
+                'fields' => array('id'),
+            ),
+        );
+        if($this->_db->tableExists($tableName)) {
+            return $tableName;
+            $this->_db->dropTableName($tableName);
+        }
+        $this->_db->createTableParams($tableName, $fieldDefs, $indexes);
+
+        return array($tableName, $fieldDefs);
+    }
+
+
+    private function setupPreparedStatementTestData(array $fieldDefs)
+    {
+
+
+        return $psDataArray;
+    }
+
+
+
+
+    /**
+     * @dataProvider providerRecursiveQuery
+     * @group preparedStatements
+     */
+    public function testPreparedStatementsDirectSQL()
+    {
+        if ( !$this->_db->supports('prepared_statements') )
+        {
+            $this->markTestSkipped('DBManager does not support prepared statements');
+        }
+
+        $this->_db->preInstall();
+
+        // setup test table and fill it with data if it doesn't already exist
+        $table = 'testRecursive_';
+        if(!$this->_db->tableExists($table)) {
+            $table = $this->setupRecursiveStructure();
+        }
+
+        // Testing lineage
+        $lineageSQL = $this->_db->getRecursiveSelectSQL($table, 'id', 'parent_id', 'id, parent_id, db_level', true, "id ='$idCurrent'");
+
+        $result = $this->_db->query($lineageSQL);
+
+        while($row = $this->_db->fetchByAssoc($result))
+        {
+
+            $this->assertEquals($idCurrent, $row['id'], "Incorrect id found");
+            if(!empty($row['parent_id'])) $idCurrent = $row['parent_id'];
+            $this->assertEquals($levels--, $row['db_level'], "Incorrect level found");
+        }
+        $this->assertEquals('1', $idCurrent, "Incorrect top node id");
+        $this->assertEquals(0, $levels+1, "Incorrect end level"); //Compensate for extra -1 after last node level assert
+
+        // Testing children
+        $idCurrent = $startId;
+        $childcount = 0;
+        $childrenSQL = $this->_db->getRecursiveSelectSQL($table,'id','parent_id', 'id, parent_id, db_level',false, "id ='$idCurrent'");
+
+        $result = $this->_db->query($childrenSQL);
+
+        while(($row = $this->_db->fetchByAssoc($result)) != null)
+        {
+            $this->assertEquals(0, strpos($row['id'], $idCurrent), "Row id doesn't start with starting id as expected");
+            $childcount++;
+        }
+        $this->assertEquals($nrchildren, $childcount, "Number of found descendants does not match expectations");
+
+    }
+
+
+
+
 }
