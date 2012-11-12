@@ -38,7 +38,7 @@
     /**
      * Stores the Backbone collection of Forecast models
      */
-    _collection : {},
+    collection : {},
 
     /**
      * Stores the best case to display in the view
@@ -128,7 +128,7 @@
     initialize : function(options) {
         app.view.View.prototype.initialize.call(this, options);
 
-        this._collection = this.context.forecasts.committed;
+        this.collection = this.context.forecasts.committed;
 
         this.forecastType = (app.user.get('isManager') == true && app.user.get('showOpps') == false) ? 'Rollup' : 'Direct';
         this.timePeriodId = app.defaultSelections.timeperiod_id.id;
@@ -137,7 +137,7 @@
         this.bestCase = 0;
         this.likelyCase = 0;
 
-        this._collection.url = this.createUrl();
+        this.collection.url = this.createUrl();
 
         this.show_likely = options.context.forecasts.config.get('show_worksheet_likely');
         this.show_best = options.context.forecasts.config.get('show_worksheet_best');
@@ -162,15 +162,23 @@
         this.bestCaseCls = '';
         this.worstCaseCls = '';
         this.totals = null;
-        this._collection.url = this.createUrl();
-        this._collection.fetch();
+        this.collection.url = this.createUrl();
+        this.collection.fetch();
+    },
+
+    /**
+     * Clean up any left over bound data to our context
+     */
+    unbindData : function() {
+        if(this.context.forecasts) this.context.forecasts.off(null, null, this);
+        app.view.View.prototype.unbindData.call(this);
     },
 
     bindDataChange: function() {
 
         var self = this;
 
-        this._collection.on("reset", function() {
+        this.collection.on("reset", function() {
             this.runningFetch = false;
             if(!_.isEmpty(this.savedTotal)) {
                 this.updateTotals(this.savedTotal);
@@ -229,9 +237,9 @@
             var worst = {};
             // get the last committed value
             var previousCommit = null;
-            if(!_.isEmpty(this._collection.models))
+            if(!_.isEmpty(this.collection.models))
             {
-               previousCommit = _.first(this._collection.models);
+               previousCommit = _.first(this.collection.models);
             } else {
                var hasTotals = !_.isNull(self.totals);
                previousCommit = new Backbone.Model({
@@ -342,7 +350,7 @@
             return;
         }
 
-        var forecast = new this._collection.model();
+        var forecast = new this.collection.model();
         forecast.url = self.url;
         
         var forecastData = {};
@@ -377,7 +385,7 @@
         self.worstCaseCls = '';
 
         self.previous = self.totals;
-        self._collection.url = self.url;
-        self._collection.unshift(forecast);
+        self.collection.url = self.url;
+        self.collection.unshift(forecast);
     }
 })

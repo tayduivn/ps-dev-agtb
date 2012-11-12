@@ -24,6 +24,14 @@
         });
     },
 
+    /**
+     * Clean up any left over bound data to our context
+     */
+    unbindData : function() {
+        if(this.context.forecasts) this.context.forecasts.off(null, null, this);
+        app.view.View.prototype.unbindData.call(this);
+    },
+
     bindDataChange: function() {
         var self = this;
         this.context.forecasts.on('change:updatedTotals', function(context, totals){

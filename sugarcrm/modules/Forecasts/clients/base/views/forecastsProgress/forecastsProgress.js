@@ -14,7 +14,6 @@
      * @param options
      */
     initialize: function (options) {
-        _.bindAll(this); // Don't want to worry about keeping track of "this"
         app.view.View.prototype.initialize.call(this, options);
 
         this.model = new Backbone.Model({
@@ -53,6 +52,14 @@
         this.bestTotal = 0;
         this.worstTotal = 0;
         this.updateProgress();
+    },
+
+    /**
+     * Clean up any left over bound data to our context
+     */
+    unbindData : function() {
+        if(this.context.forecasts) this.context.forecasts.off(null, null, this);
+        app.view.View.prototype.unbindData.call(this);
     },
 
     /**
@@ -259,13 +266,11 @@
 
         var method = self.shouldRollup ? "progressManager" : "progressRep";
 
-       var urlParams = {
+        var urlParams = {
             user_id: self.selectedUser.id,
             timeperiod_id : self.selectedTimePeriod.id
         };
-       var url = app.api.buildURL('Forecasts', method, '', urlParams);
-
-
+        var url = app.api.buildURL('Forecasts', method, '', urlParams);
         app.api.call('read', url, null, null, {
             success: function(data) {
                 if(self.shouldRollup) {

@@ -180,7 +180,7 @@ describe("The expected opportunities view tests", function(){
 
 
             var collection = new Backbone.Collection([forecastSchedule]);
-            view._collection = collection;
+            view.collection = collection;
 
             context = {
                 forecasts : {
@@ -193,7 +193,7 @@ describe("The expected opportunities view tests", function(){
             view.context = context;
             view.bindDataChange();
             forecastSchedule.set("expected_commit_stage", "include");
-            view._collection.trigger("change:expected_commit_stage");
+            view.collection.trigger("change:expected_commit_stage");
             expect(forecastSchedule.get("expected_commit_stage")).toEqual("include");
         });
     });

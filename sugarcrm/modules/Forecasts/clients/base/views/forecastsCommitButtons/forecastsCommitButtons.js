@@ -44,6 +44,16 @@
     },
 
     /**
+     * Clean up any left over bound data to our context
+     */
+    unbindData : function() {
+        if(this.context.forecasts.worksheet) this.context.forecasts.worksheet.off(null, null, this);
+        if(this.context.forecasts.worksheetmanager) this.context.forecasts.worksheetmanager.off(null, null, this);
+        if(this.context.forecasts) this.context.forecasts.off(null, null, this);
+        app.view.View.prototype.unbindData.call(this);
+    },
+
+    /**
      * Fires during initialization and if any data changes on this model
      */
     bindDataChange: function() {
@@ -134,39 +144,36 @@
      * as long as commit button is not disabled
      */
     triggerCommit: function() {
-    	var commitbtn =  this.$el.find('#commit_forecast');
-    	var savebtn = this.$el.find('#save_draft');
-    	var worksheet = this.context.forecasts[this.context.forecasts.get("currentWorksheet")];
-    	var self = this;
-    	var modelCount = 0;
-		var saveCount = 0;
+    	var commitbtn =  this.$el.find('#commit_forecast'),
+    	savebtn = this.$el.find('#save_draft'),
+    	worksheet = this.context.forecasts[this.context.forecasts.get("currentWorksheet")],
+    	self = this,
+    	saveCount = 0;
         if(!commitbtn.hasClass("disabled")){
-    		var models = worksheet.models;
-    		_.each(models, function(model, index){
-    			var isDirty = model.get("isDirty");
-    			if(model.get("version") == 0 || (typeof(isDirty) == "boolean" && isDirty)){
-
-    				modelCount++;
-
-        			model.set({
-                        draft : 0,
-                        isDirty : false,
-                        timeperiod_id : self.context.forecasts.get("selectedTimePeriod").id,
-                        current_user : app.user.get('id')},
-                        {silent:true}
-                    );
-    				model.url = worksheet.url.split("?")[0] + "/" + model.get("id");
-    				model.save({}, {success:function(){
-    					saveCount++;
-                        //The saveCount === modelCount is being done so that the call to reloadWorksheetFlag is only done after the last
-                        //Ajax request is made.  In the future this could perhaps be altered to use the deferred architecture in JQuery
-    					if(saveCount === modelCount && self.context.forecasts.get("currentWorksheet") == "worksheetmanager") {
-    							self.context.forecasts.set({reloadWorksheetFlag: true});
-    					}
-    				}});
-    				worksheet.isDirty = false;
-    			}    			    				
-    		});
+            var models = _.filter(worksheet.models, function(model, index) {
+                return (model.get("version") == 0 || (_.isBoolean(model.get("isDirty")) && model.get("isDirty")));
+            }, this);
+            //commit each model that needs saved
+            _.each(models, function(model, index){
+            //set properties on model to aid in save
+                model.set({
+                    "draft" : 0,
+                    "isDirty" : false,
+                    "timeperiod_id" : self.context.forecasts.get("selectedTimePeriod").id,
+                    "current_user" : app.user.get('id')
+                }, {silent:true});
+                //set what url  is used for save
+                model.url = worksheet.url.split("?")[0] + "/" + model.get("id");
+                model.save({}, {success: function() {
+                    saveCount++;
+                    //if this is the last save and this is the manager worksheet, flag the worksheet to reload
+                    if(models.length === saveCount && self.context.forecasts.get("currentWorksheet") == "worksheetmanager") {
+                        self.context.forecasts.set({reloadWorksheetFlag: true});
+                    }
+                }});
+                //this worksheet is clean
+                worksheet.isDirty = false;
+            });
 
             savebtn.addClass("disabled");
     		self.context.forecasts.set({commitForecastFlag: true});
@@ -179,15 +186,22 @@
     triggerConfigModal: function() {
         var params = {
             title: app.lang.get("LBL_FORECASTS_CONFIG_TITLE", "Forecasts"),
-            components: [{layout:"forecastsTabbedConfig"}],
+            components: [{layout:"tabbedConfig"}],
             span: 10,
             before: {
                 hide: function() {
                     // Check to see if we're closing modal via cancel button
                     // We have no event passed here to get which button was clicked
                     if(this.context.forecasts.get('saveClicked')) {
-                        // cancel was not clicked, so refresh the page redirecting to the Forecasts module
-                        window.location = 'index.php?module=Forecasts';
+                        // display a success message
+                        app.alert.show('success', {
+                            level: 'success',
+                            closeable: false,
+                            title : app.lang.get("LBL_FORECASTS_WIZARD_SUCCESS_TITLE", "Forecasts") + ":",
+                            messages: [app.lang.get("LBL_FORECASTS_TABBED_CONFIG_SUCCESS_MESSAGE", "Forecasts")]
+                        });
+                        // call tell the metadata to sync to get the updated config's and refresh the layout
+                        app.sync();
                     } else {
                         // reset without a change event in case they click settings again
                         // before refreshing the page

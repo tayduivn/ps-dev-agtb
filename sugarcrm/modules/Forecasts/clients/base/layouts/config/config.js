@@ -36,11 +36,17 @@
          */
         _render: function () {
             app.view.Layout.prototype._render.call(this);
-            this._showConfigModal();
+            if(this.context.forecasts.config.get('is_setup') == 1) {
+                window.location.hash = "";
+            } else {
+                this._showConfigModal();
+            }
+            // initialize the alerts again.
+            app.alert.init();
             return this;
         },
 
-        _showConfigModal: function(showWizard) {
+        _showConfigModal: function() {
             var self = this;
 
             // begin building params to pass to modal
@@ -53,14 +59,14 @@
             };
 
             if(app.user.getAcls()['Forecasts'].admin == "yes") {
-                params.components = [{layout:"forecastsWizardConfig"}];
+                params.components = [{layout:"wizardConfig"}];
             } else {
                 params.message = app.lang.get("LBL_FORECASTS_CONFIG_USER_SPLASH", "Forecasts");
             }
 
             // callback has to be a function returning the checkSettingsAndRedirect function
             // to maintain the proper context otherwise from modal, "this" is the Window
-            var callback = function() { return self.checkSettingsAndRedirect }
+            var callback = function() { return self.checkSettingsAndRedirect };
             this.trigger("modal:forecastsWizardConfig:open", params, callback);
         },
 
@@ -68,10 +74,18 @@
          * Checks the is_setup config setting and determines where to send the user
          */
         checkSettingsAndRedirect: function() {
-            var loc = 'index.php?module=Forecasts';
             if(!this.context.forecasts.config.get('is_setup')) {
-                loc = 'index.php?module=Home';
+                window.location = 'index.php?module=Home';
+            } else {
+                // we have a success save, so we need to call the app.sync() and then redirect back to the index
+                app.alert.show('success', {
+                    level: 'success',
+                    title : app.lang.get("LBL_FORECASTS_WIZARD_SUCCESS_TITLE", "Forecasts") + ":",
+                    messages: [app.lang.get("LBL_FORECASTS_WIZARD_SUCCESS_MESSAGE", "Forecasts")]
+                });
+                app.sync({callback: function() {
+                    window.location.hash = "#";
+                }});
             }
-            window.location = loc;
         }
 })

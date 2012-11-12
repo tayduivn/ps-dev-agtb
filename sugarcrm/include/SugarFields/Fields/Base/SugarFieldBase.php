@@ -636,11 +636,22 @@ class SugarFieldBase {
      * @return array A transformed vardef with normalizations applied
      */
     public function getNormalizedDefs($vardef) {
+        // Bug 57802 - REST API Metadata: vardef len property must be number, not string
+        // Some vardefs set len and size as strings. Custom fields do the same
+        // so clean that up here before the metadata is returned.
+        if (isset($vardef['len'])) {
+            $vardef['len'] = $this->normalizeNumeric($vardef['len']);
+        }
+        
+        if (isset($vardef['size'])) {
+            $vardef['size'] = $this->normalizeNumeric($vardef['size']);
+        }
+
         // Handle normalizations that need to be applied
         if (isset($vardef['default'])) {
             $vardef['default'] = $this->normalizeDefaultValue($vardef['default']);
         }
-
+        
         return $vardef;
     }
 
@@ -653,5 +664,18 @@ class SugarFieldBase {
     public function normalizeDefaultValue($value) {
         return $value;
     }
+
+    /**
+     * Normalizes numeric def values. For non numeric values, returns null
+     * 
+     * @param mixed $value
+     * @return int|null
+     */
+    public function normalizeNumeric($value) {
+        if (is_numeric($value)) {
+            return intval($value);
+        } 
+        
+        return null;
+    }
 }
-?>

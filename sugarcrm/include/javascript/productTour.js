@@ -1,6 +1,3 @@
-<?php
-//FILE SUGARCRM flav!=sales ONLY
-if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 /**
  * LICENSE: The contents of this file are subject to the SugarCRM Professional
  * End User License Agreement ("License") which can be viewed at
@@ -28,43 +25,30 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * by SugarCRM are Copyright (C) 2006 SugarCRM, Inc.; All Rights Reserved.
  */
 
- // $Id: MyForecastingChartDashlet.php 24275 2007-07-13 04:26:44Z awu $
+var rtl = rtl == "undefined" ? false : rtl;
+var modals=new Array();
+modals[0] = {
+    target: "#globalLinksModule",
+    title: SUGAR.language.get('app_strings', 'LBL_TOUR_PDF_MANAGER'),
+    content: SUGAR.language.get('app_strings', 'LBL_TOUR_PDF_MANAGER_DESCRIPTION'),
+    placement: "bottom"
+};
+modals[1] = {
+    title: SUGAR.language.get('app_strings', 'LBL_TOUR_MEETINGS_CALLS'),
+    content: SUGAR.language.get('app_strings', 'LBL_TOUR_MEETINGS_CALLS_DESCRIPTION')
+};
+modals[2] = {
+    target: "#dcmenuSugarCube",
+    title: SUGAR.language.get('app_strings', 'LBL_TOUR_NOTIFICATIONS'),
+    content: SUGAR.language.get('app_strings', 'LBL_TOUR_NOTIFICATIONS_DESCRIPTION'),
+    placement: "bottom"
+};
+modals[3] = {
+    title: SUGAR.language.get('app_strings', 'LBL_TOUR_SPELL_CHECK'),
+    content: SUGAR.language.get('app_strings', 'LBL_TOUR_SPELL_CHECK_DESCRIPTION')
+};
+modals[4] = {
+    title: SUGAR.language.get('app_strings', 'LBL_TOUR_IE8'),
+    content: SUGAR.language.get('app_strings', 'LBL_TOUR_IE8_DESCRIPTION')
+};
 
-require_once('include/Dashlets/DashletGenericChart.php');
-
-class MyForecastingChartDashlet extends DashletGenericChart 
-{
-    /**
-     * @see Dashlet::$isConfigurable
-     */
-    public $isConfigurable = true;
-    
-    
-    /**
-     * @see DashletGenericChart::$_seedName
-     */
-    protected $_seedName = 'Forecasts';
-    
-    /**
-     * @see Dashlet::$isConfigPanelClearShown
-     */
-    public $isConfigPanelClearShown = false;
-    
-    
-    /**
-     * @see DashletGenericChart::display()
-     */
-    public function display() 
-    {
-        require_once('modules/Forecasts/Charts.php');
-        $forecasting_chart = new forecast_charts();
-        
-        return $this->getTitle('<div align="center"></div>') . 
-            '<div align="center">' . 
-            $forecasting_chart->forecast_history($GLOBALS['current_user'],TimeDate::getInstance()->nowDb(),'Direct',5,true,$this->id) . '</div>'
-			. $this->processAutoRefresh();
-    }  
-
-}
-
-?>
