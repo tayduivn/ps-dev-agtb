@@ -201,7 +201,6 @@ class RestThemeTest extends RestTestBase
         );
     }
 
-    //Bug58031: baseUrl needs to be different for the Theme Editor preview.
     public function testBug58031BaseUrlVariable() {
 
         // TEST 1:  for preview, baseUrl is "../../styleguide/assets"
@@ -226,6 +225,37 @@ class RestThemeTest extends RestTestBase
 
         // TEST= the CSS contains the expected baseUrl
         $this->assertContains("../../../../../styleguide/assets", $css);
+    }
+    
+    /**
+     * @group rest
+     */
+    public function testGetUserPreferredTheme()
+    {
+        $oldPreferredTheme = null;
+        $preferredTheme = 'MyTestPreferredTheme';
+
+        // Save preferred theme stored in session
+        if (isset($_SESSION['authenticated_user_theme'])) {
+            $oldPreferredTheme = $_SESSION['authenticated_user_theme'];
+        }
+        $_SESSION['authenticated_user_theme'] = $preferredTheme;
+
+        // Create a theme without defining a themeName
+        $theme = new SidecarTheme($this->platformTest, null);
+        $paths = $theme->getPaths();
+
+        // Reset session var
+        unset($_SESSION['authenticated_user_theme']);
+        if ($oldPreferredTheme) {
+            $_SESSION['authenticated_user_theme'] = $oldPreferredTheme;
+        }
+
+        // TEST the class has retrieve the user preferred theme
+        $this->assertEquals(
+            $paths['base'],
+            'styleguide/themes/clients/' . $this->platformTest . '/' . $preferredTheme . '/'
+        );
     }
 
     private function rawurlencode($args) {

@@ -47,7 +47,7 @@ class SidecarTheme
     private $paths;
     private $bootstrapCssName = 'bootstrap.css';
 
-    function __construct($client = 'base', $themeName)
+    function __construct($client = 'base', $themeName = null)
     {
         $this->myClient = $client;
 
@@ -64,7 +64,10 @@ class SidecarTheme
      *      * @return string themeName
      */
     private function getUserTheme() {
-        if(isset($_SESSION['authenticated_user_theme']) && $_SESSION['authenticated_user_theme'] != '')	{
+        if(isset($_COOKIE['sugar_user_theme']) && $_COOKIE['sugar_user_theme'] != '') {
+            return $_COOKIE['sugar_user_theme'];
+        }
+        else if(isset($_SESSION['authenticated_user_theme']) && $_SESSION['authenticated_user_theme'] != '')	{
             return $_SESSION['authenticated_user_theme'];
         }
         else {
