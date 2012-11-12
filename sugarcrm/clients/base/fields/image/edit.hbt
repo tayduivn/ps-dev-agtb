@@ -26,15 +26,19 @@
  * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 }}
-{{#if value}}
-<div{{#if def.width}} style="width: {{def.width}}px"{{/if}} class="dropup">
-<img src="{{fileURL}}">
-<span class="image-overlay-with-button">
-<a href="javascript:void(0)" class="btn btn-mini btn-danger delete hide" rel="tooltip"><i class="icon-trash"></i> {{str "LBL_DELETE"}}</a>
-</span>
+<div class="image_field image_edit hide">
+    <label>
+        <span class="image_btn">Edit</span>
+        <span class="image_preview">
+            {{#if value}}
+            <img src="{{value}}">
+            {{else}}
+            <i class="icon-plus"></i>
+            {{/if}}
+        </span>
+        <span class="image_input">
+            <input type="file" name="{{name}}" />
+        </span>
+    </label>
 </div>
-{{/if}}
-<div>
-<input type="file" name="{{name}}" class="input-xlarge wide tleft">
 <p class="help-block"></p>
-</div>

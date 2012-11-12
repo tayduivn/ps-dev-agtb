@@ -42,15 +42,6 @@
         this.createMode = this.context.get("create") ? true : false;
         this.action = this.createMode ? 'edit' : 'detail';
 
-        // Set the save button to show if the model has been edited.
-        this.model.on("change", function() {
-            if (this.inlineEditMode) {
-                this.previousModelState = this.model.previousAttributes();
-                this.setButtonStates(this.STATE.EDIT);
-            }
-        }, this);
-        this.context.on("change:record_label", this.setLabel, this);
-
         this.delegateButtonEvents();
 
         if (this.createMode) {
@@ -253,14 +244,18 @@
     },
 
     bindDataChange: function() {
-        if (this.model) {
-            this.model.on("change", function() {
-                if (this.model.isNotEmpty !== true) {
-                    this.model.isNotEmpty = true;
-                    this.render();
-                }
-            }, this);
-        }
+        this.model.on("change", function(fieldType) {
+            if (this.inlineEditMode) {
+                this.previousModelState = this.model.previousAttributes();
+                this.setButtonStates(this.STATE.EDIT);
+            }
+            if (this.model.isNotEmpty !== true && fieldType !== 'image') {
+                this.model.isNotEmpty = true;
+                this.render();
+            }
+        }, this);
+
+        this.context.on("change:record_label", this.setLabel, this);
     },
 
     duplicateClicked: function() {
@@ -346,7 +341,13 @@
         // TODO: Refactor this for fields to support their own focus handling in future.
         // Add your own field type handling for focus / editing here.
         switch (field.type) {
-            case "img":
+            case "image":
+                var self = this;
+                app.file.checkFileFieldsAndProcessUpload(self.model, {
+                    success: function () {
+                        self.toggleField(field);
+                    }
+                });
                 break;
             default:
                 this.toggleField(field);
@@ -359,16 +360,18 @@
 
         this.model.save({}, {
             success: function() {
-                if (self.createMode) {
-                    app.navigate(self.context, self.model);
-                } else {
-                    self.render();
-                }
+                app.file.checkFileFieldsAndProcessUpload(self.model, {
+                    success: function () {
+
+                        if (self.createMode) {
+                            app.navigate(self.context, self.model);
+                        } else {
+                            self.render();
+                        }
+                    }
+                });
             }
         });
-
-        this.$(".record-save-prompt").hide();
-        this.render();
     },
 
     handleCancel: function() {
@@ -395,8 +398,6 @@
 
     handleKeyDown: function(e, field) {
         app.view.views.EditableView.prototype.handleKeyDown.call(this, e, field);
-        var nextCell,
-            index = field.$el.parent().data("index");
 
         if (e.which == 9) { // If tab
             e.preventDefault();

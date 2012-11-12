@@ -115,6 +115,5 @@ class SugarFieldImage extends SugarFieldBase {
 		}
 	}
 
-
 }
 ?>

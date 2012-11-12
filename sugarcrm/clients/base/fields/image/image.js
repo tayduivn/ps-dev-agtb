@@ -25,24 +25,116 @@
  * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 ({
-    events: {
-        "mouseenter img" : "showButton",
-        "mouseenter a" : "showButton",
-        "mouseleave a" : "hideButton",
-        "mouseleave img" : "hideButton",
-        "click .delete" : "delete"
+    config: {
+        //Default background image to show in no image has been uploaded
+        profile: app.config.siteUrl + "styleguide/assets/img/profile.png"
     },
-    fileUrl : "",
+    events: {
+        "click .delete" : "delete",
+
+        "change input[type=file]": "selectImage"
+    },
+    initialize: function(options) {
+        app.view.Field.prototype.initialize.call(this, options);
+
+        //Define default sizes
+        this.width = parseInt(this.def.width || this.def.height, 10) || 50;
+        this.height = parseInt(this.def.height, 10) || this.width;
+    },
     _render: function() {
-        app.view.Field.prototype._render.call(this);
         this.model.fileField = this.name;
-        this.fileURL = (this.value) ? this.buildUrl() + "&" + this.value : "";
         app.view.Field.prototype._render.call(this);
+
+        //Resize widget before the image is loaded
+        this.resizeWidth(this.width);
+        this.resizeHeight(this.height);
+        this.$('.image_field').removeClass('hide');
+        //Resize widget once the image is loaded
+        this.$('img').addClass('hide').on('load', $.proxy(this.resizeWidget, this));
         return this;
     },
-    bindDataChange:function() {
-        //Keep empty because you cannot set a value of a type `file` input
+    format: function(value){
+        if (value) {
+            value = this.buildUrl() + "&_hash=" + value;
+        }
+        return value;
     },
+    bindDataChange: function() {
+        //Keep empty for edit because you cannot set a value of an input type `file`
+        if (this.view.name != "edit" && this.view.fallbackFieldTemplate != "edit" && this.options.viewName != "edit") {
+            app.view.Field.prototype.bindDataChange.call(this);
+        }
+    },
+    bindDomChange: function() {
+        //Override default behavior
+    },
+    selectImage: function(e) {
+        var self = this,
+            $input = self.$('input[type=file]');
+
+        //Set flag to indicate we are previewing an image
+        self.preview = true;
+
+        //Remove error message
+        self.clearError();
+
+        // Upload a temporary file for preview
+        self.model.uploadFile(
+             self.name,
+             $input,
+             {
+                 field: self.name,
+                 //Callbacks
+                 success: function(rsp) {
+                     //read the guid
+                     var fileId = (rsp[self.name]) ? rsp[self.name]['guid'] : null;
+                     var url = app.api.buildFileURL({
+                                   module: self.module,
+                                   id: 'temp',
+                                   field: self.name,
+                                   fileId: fileId
+                               });
+                      // show image
+                      var image = $('<img>').addClass('hide').attr('src', url).on('load', $.proxy(self.resizeWidget, self));
+                      self.$('.image_preview').html(image);
+
+                     //Trigger a change event with param "image" so the view can detect that the dom changed.
+                     self.model.trigger("change", "image");
+                 },
+                 error: function(error) {
+                     var errors = {};
+                     errors[error.responseText] = {};
+                     self.model.trigger('error:validation:' + this.field, errors);
+                     self.model.trigger('error:validation');
+                     self.displayError();
+                 }
+              },
+             { temp: true }); //for File API to understand we upload a temporary file
+    },
+    delete: function(e) {
+        var self = this;
+        //If we are previewing a file and want to cancel
+        if (this.preview === true) {
+            self.preview = false;
+            self.clearError();
+            self.render();
+        } else {
+        //Otherwise delete the image
+            app.api.call('delete', self.buildUrl({htmlJsonFormat: false}), {}, {
+                    success: function() {
+                        self.model.set(self.name, null);
+                        self.render();
+                    },
+                    error: function(data) {
+                        // refresh token if it has expired
+                        app.error.handleHttpError(data, {});
+                    }}
+            );
+        }
+    },
+    /**
+     * Build URI for File API
+     */
     buildUrl: function(options) {
         return app.api.buildFileURL({
                     module: this.module,
@@ -50,11 +142,67 @@
                     field: this.name
                 }, options);
     },
-    showButton: function() {
-        this.$(".delete").removeClass("hide");
+    /**
+     * Resize widget based on field defs and image size
+     */
+    resizeWidget: function() {
+        var image = this.$('.image_preview img, .image_detail img');
+
+        if  (!image[0]) return;
+
+        var isDefHeight = !_.isUndefined(this.def.height) && this.def.height > 0,
+            isDefWidth = !_.isUndefined(this.def.width) && this.def.width > 0;
+
+        //set width/height defined in field defs
+        if (isDefWidth) {
+            image.css('width', this.width);
+        }
+        if (isDefHeight) {
+            image.css('height', this.height);
+        }
+
+        if (!isDefHeight && !isDefWidth)
+            image.css({
+                'height' : this.height,
+                'width' : this.width
+            });
+
+        //now resize widget
+        //we resize the widget based on current image height
+        this.resizeHeight(image.height());
+        //if height was defined but not width, we want to resize image width to keep
+        //proportionality: this.height/naturalHeight = newWidth/naturalWidth
+        if (isDefHeight && !isDefWidth) {
+            var newWidth = Math.floor((this.height / image[0].naturalHeight) * image[0].naturalWidth);
+            image.css('width', newWidth);
+            this.resizeWidth(newWidth);
+        }
+
+        image.removeClass('hide');
+        this.$('.delete').remove();
+        var icon = this.preview === true ? 'remove' : 'trash';
+        image.closest('label, a').after('<span class="image_btn delete icon-' + icon + ' " />');
     },
-    hideButton: function() {
-        this.$(".delete").addClass("hide");
+    /**
+     * Resize the elements carefully to render a pretty input[type=file]
+     * @param height (in pixels)
+     */
+    resizeHeight: function(height) {
+        var $image_field = this.$('.image_field'),
+            isEdit = this.$('.image_edit').length > 0,
+            $image_btn = $image_field.find('.image_btn'),
+            totalHeight = parseInt(height, 10);
+
+        if (isEdit) {
+            var edit_btn_height = parseInt($image_btn.css('height'), 10) + parseInt($image_btn.css('borderWidth'), 10);
+            totalHeight += edit_btn_height ? edit_btn_height : 0;
+        }
+
+        //Add the edit button height in edit view.
+        totalHeight += 'px';
+        $image_field.css({'height':totalHeight, minHeight:totalHeight, lineHeight:height + 'px'});
+        $image_field.find('label').css({'height':totalHeight, minHeight:totalHeight, lineHeight:height + 'px'});
+        $image_field.find('input').css({'height':height + 'px', minHeight:height + 'px'});
     },
     delete: function() {
         var self = this;
@@ -68,5 +216,42 @@
                     app.error.handleHttpError(data, {});
                 }}
         );
+    },
+    /**
+     * Resize the elements carefully to render a pretty input[type=file]
+     * @param width (in pixels)
+     */
+    resizeWidth: function(width) {
+        var $image_field = this.$('.image_field');
+
+        $image_field.css({'width':width + 'px'});
+        $image_field.find('label').css({'width':width + 'px'});
+        $image_field.find('input').css({'width':width + 'px'});
+    },
+    /**
+     * Handles errors message
+     * @param errors
+     */
+    handleValidationError: function(errors) {
+        if (_.keys(errors).length > 0) {
+            this.$el.closest('.control-group').addClass("error");
+            this.$('.image_field').addClass('error');
+        }
+
+        // For each error add to error help block
+        _.each(errors, function(errorContext, errorName) {
+            this.$('.help-block').append(app.error.getErrorString(errorName, errorContext));
+        }, this);
+    },
+    displayError: function() {
+        this.$('.image_preview').html('<i class="icon-remove"></i>');
+        this.$('.delete').remove();
+        this.$('label').after('<span class="image_btn delete icon-remove" />');
+    },
+    clearError: function() {
+        //Remove error message
+        this.$('.help-block').html('');
+        this.$el.closest('.control-group').removeClass('error');
+        this.$('.image_field').removeClass('error');
     }
 })
