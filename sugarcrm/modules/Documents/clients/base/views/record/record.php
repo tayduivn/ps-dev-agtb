@@ -29,7 +29,7 @@ if (!defined('sugarEntry') || !sugarEntry) {
  * Contributor(s): ______________________________________..
  ********************************************************************************/
 
-$viewdefs['Bugs']['base']['view']['record'] = array(
+$viewdefs['Documents']['base']['view']['record'] = array(
     'buttons' => array(
         array(
             'type'    => 'button',
@@ -55,58 +55,58 @@ $viewdefs['Bugs']['base']['view']['record'] = array(
     'panels' => array(
         array(
             'name' => 'panel_header',
-            'header' => true,
+            'header' => true,                                
             'fields' => array(
-                array('name'=>'bug_number', 'noedit'=>true),
-                'name',
+                array (
+                    'name' => 'filename',
+                    'displayParams' => 
+                    array (
+                      'link' => 'filename',
+                      'id' => 'document_revision_id',
+                    ),
+                    'noedit' => true, 
+                    'span' => 12, 
+                    'label' => '',                        
+                ),
             )
         ),
         array(
             'name' => 'panel_body',
-            //'label' => 'LBL_PANEL_2',
             'columns' => 2,
             'labels' => false,
             'labelsOnTop' => true,
             'placeholders' => true,
             'fields' => array(
-                'priority',
-                'status',
-                'type',
-                'product_category',
-                'source',
-                'resolution',
-
+                'document_name',
+                'status',                    
+                'revision',
+                'template_type',
+                'is_template',
+                'active_date',
+                'category_id',
+                'exp_date',
+                'subcategory_id',
+                'description',
+                //BEGIN SUGARCRM flav!=sales ONLY
+                'related_doc_name',
+                'related_doc_rev_number',
+                //END SUGARCRM flav!=sales ONLY
+                'assigned_user_name',
+                //BEGIN SUGARCRM flav=pro ONLY
+                'team_name',
+                //END SUGARCRM flav=pro ONLY                    
             ),
         ),
         array(
             'name' => 'panel_hidden',
-            'columns' => 2,
-            //'span'=>12,
+            'columns' => 2, 
             'hide' => true,
             'labelsOnTop' => true,
             'placeholders' => true,
             'fields' => array(
-                'found_in_release',
-                'fixed_in_release',
-                array ('name' => 'work_log', 'nl2br' => true,),
-                array('type' => 'html', 'default_value' => ''),
-                /***
-                * TODO: Did we want this? In the biz card it looked like we didn't have this
-                */
-                // array('name'=>'portal_viewable', 'label' => 'LBL_SHOW_IN_PORTAL', 'hideIf' => 'empty($PORTAL_ENABLED)'),
-    //END SUGARCRM flav=ent ONLY
-                'assigned_user_name',
-    //BEGIN SUGARCRM flav=pro ONLY
-    //BEGIN SUGARCRM flav=ent ONLY
-                // hideIf is a legacy smarty thing .. seems that hideIf is mainly used for this specific check
-                // semantically meaning: "hide unless portal enabled" .. TODO: implement equivalent functionality in sidecar 
-                // perhaps create an hbt helper that can leverage app.cofig.on
-
-                array('name'=>'team_name', 'displayParams'=>array('required'=>true)),
-    //END SUGARCRM flav=pro ONLY
-                array ('name' => 'description', 'nl2br' => true,),
-                array('type' => 'html', 'default_value' => ''),
+                'last_rev_created_name',
+                'last_rev_create_date',
             )
-        )
+        )                
     ),
 );

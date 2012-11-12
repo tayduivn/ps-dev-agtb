@@ -29,7 +29,7 @@ if (!defined('sugarEntry') || !sugarEntry) {
  * Contributor(s): ______________________________________..
  ********************************************************************************/
 
-$viewdefs['Bugs']['base']['view']['record'] = array(
+$viewdefs['Calls']['base']['view']['record'] = array(
     'buttons' => array(
         array(
             'type'    => 'button',
@@ -57,55 +57,70 @@ $viewdefs['Bugs']['base']['view']['record'] = array(
             'name' => 'panel_header',
             'header' => true,
             'fields' => array(
-                array('name'=>'bug_number', 'noedit'=>true),
                 'name',
             )
         ),
         array(
             'name' => 'panel_body',
-            //'label' => 'LBL_PANEL_2',
             'columns' => 2,
             'labels' => false,
             'labelsOnTop' => true,
             'placeholders' => true,
             'fields' => array(
-                'priority',
+                array(
+                    'name' => 'date_start',
+                    'label' => 'LBL_DATE_TIME',
+                    'type' => 'datetimecombo',
+                    'fields' => array('date_start')
+                ),
                 'status',
-                'type',
-                'product_category',
-                'source',
-                'resolution',
-
+                array(
+                    'name' => 'date_end',
+                    'label' => 'LBL_DATE_TIME',
+                    'type' => 'datetimecombo',
+                    'fields' => array('date_end')
+                ),
+                array(
+                   //TODO: this field is more cusomized, need to find a way to do display of duration_hours:duration_minutes
+                  'name' => 'duration',
+                  'type' => 'fieldset',
+                  'label' => 'LBL_DURATION',
+                  'fields' => array('duration_hours', 'duration_minutes')
+                ),
             ),
         ),
         array(
             'name' => 'panel_hidden',
-            'columns' => 2,
-            //'span'=>12,
+            'columns' => 1,
             'hide' => true,
             'labelsOnTop' => true,
             'placeholders' => true,
             'fields' => array(
-                'found_in_release',
-                'fixed_in_release',
-                array ('name' => 'work_log', 'nl2br' => true,),
-                array('type' => 'html', 'default_value' => ''),
-                /***
-                * TODO: Did we want this? In the biz card it looked like we didn't have this
-                */
-                // array('name'=>'portal_viewable', 'label' => 'LBL_SHOW_IN_PORTAL', 'hideIf' => 'empty($PORTAL_ENABLED)'),
-    //END SUGARCRM flav=ent ONLY
+                array(
+                    "name" => "description",
+                    "span" => 12,
+                ),
+            )
+        ),
+        array(
+            'name' => 'panel_hidden',
+            'columns' => 2,
+            'hide' => true,
+            'labelsOnTop' => true,
+            'placeholders' => false,
+            'fields' => array(
+                'team_name',
+                array(
+                    'name' => 'date_modified',
+                    'noedit' => true,
+                ),
+                'reminder_time',
+                array(
+                    'name' => 'date_entered',
+                    'noedit' => true,
+                ),
                 'assigned_user_name',
-    //BEGIN SUGARCRM flav=pro ONLY
-    //BEGIN SUGARCRM flav=ent ONLY
-                // hideIf is a legacy smarty thing .. seems that hideIf is mainly used for this specific check
-                // semantically meaning: "hide unless portal enabled" .. TODO: implement equivalent functionality in sidecar 
-                // perhaps create an hbt helper that can leverage app.cofig.on
-
-                array('name'=>'team_name', 'displayParams'=>array('required'=>true)),
-    //END SUGARCRM flav=pro ONLY
-                array ('name' => 'description', 'nl2br' => true,),
-                array('type' => 'html', 'default_value' => ''),
+                ''
             )
         )
     ),
