@@ -1,99 +1,24 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8">
-  <title>Contacts - SugarCRM</title>
-  <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
-  <meta http-equiv="x-ua-compatible" content="IE=8">
-  <meta name="description" content="">
-  <meta name="author" content="">
-  <!--[if lt IE 9]>
-  <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
-  <![endif]-->
   <link href="../css/bootstrap.css" rel="stylesheet">
+  <script>
+    var page = {
+        "title": "Contacts"
+      , "description": ""
+      , "templates": [
+          {"file":"head","target":"head","method":"append"}
+        , {"file":"navbar-master","target":"#header","method":"append"}
+        , {"file":"footer-master","target":"#footer","method":"append"}
+      ]
+    };
+  </script>
 </head>
 <body>
   <div id="sugarcrm">
     <div id="sidecar">
       <div id="alert" class="alert-top"></div>
-      <div id="header">
-        <div class="navbar navbar-fixed-top">
-          <div class="navbar-inner">
-            <div class="container-fluid">
-              <div class="nav-collapse">
-                <ul class="nav">
-                  <li><a class="cube" href="dashboard.html" rel="tooltip" title="Dashboard"></a></li>
-                  <li><a href="accounts.html">Accounts</a></li>
-                  <li class="active"><a href="contacts.html">Contacts</a></li>
-                  <li><a href="forecast.html">Forecasts</a></li>
-                  <li><a href="opportunities.html">Opportunities</a></li>
-                  <li class="dropdown">
-                    <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="icon-chevron-down"></i></a>
-                    <ul class="dropdown-menu">
-                      <li id="gen17"><a href="index.php?module=Campaigns&amp;action=index" id="moduleTab_Campaigns">Campaigns</a></li>
-                      <li id="gen18"><a href="index.php?module=Quotes&amp;action=index" id="moduleTab_Quotes">Quotes</a></li>
-                      <li id="gen19"><a href="#ajaxUILoc=index.php%3Fmodule%3DSubscriptions%26action%3Dindex" id="moduleTab_Subscriptions">Subscriptions</a></li>
-                    </ul>
-                  </li>
-                </ul>
-                <ul class="nav pull-right">
-                  <li class="divider-vertical"></li>
-                  <li class="dropdown">
-                    <button href="#" class="btn btn-danger dropdown-toggle" data-toggle="dropdown">3</button>
-                    <ul class="dropdown-menu">
-                      <li><a href="">System-wide maintenance &hellip;</a></li>
-                      <li><a href="">Upgrade to 7.0!</a></li>
-                      <li><a href="">Please take our survey.</a></li>
-                    </ul>
-                  </li>
-                  <li class="divider-vertical"></li>
-                  <li class="dropdown">
-                    <a href="#" class="dropdown-toggle" data-toggle="dropdown"><img src="../img/avatar_sabra.jpg" alt="skahn" class="avatar">skhan <b class="caret"></b></a>
-                    <ul class="dropdown-menu">
-                      <li><a href="profile_skhan.html">Profile</a></li>
-                      <li><a href="#">Password</a></li>
-                      <li><a href="#">Advanced</a></li>
-                      <li><a href="#">External Accounts</a></li>
-                      <li><a href="#">Log Out</a></li>
-                    </ul>
-                  </li>
-                  <li class="divider-vertical"></li>
-                  <li class="dropdown">
-                    <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="icon-plus icon-md"></i> <b class="caret"></b></a>
-                    <ul class="dropdown-menu quick">
-                      <li><a href="create_account.html">Create Account</a></li>
-                      <li><a data-toggle="modal" href="#contactModal">Create Contact</a></li>
-                      <li><a href="create.html">Create Opportunity</a></li>
-                    </ul>
-                  </li>
-                </ul>
-                <div id="searchForm">
-                  <form class="navbar-search pull-right" action="">
-                    <input type="text" class="search-query span2" placeholder="Search" data-provide="typeahead" data-items="10" data-source="[&quot;Bad links in Pitch&quot;,&quot;Broken images in pdf&quot;,&quot;Misspellings everywhere&quot;,&quot;404 on faq&quot;,&quot;HTML is broken&quot;,&quot;Page link is not redirecting&quot;,&quot;Improper text in search placeholder&quot;,&quot;Misaligned elements&quot;,&quot;Need new text on log in&quot;,&quot;Image broken on profile&quot;]">
-                    <div class="advanced">
-                      <div class="pull-right">
-                        <div class="btn-group">
-                          <a class="advanced dropdown-toggle" data-toggle="dropdown" href="#">
-                            <span class="caret"></span>
-                          </a>
-                          <ul class="dropdown-menu">
-                            <li class="title">Advanced Search:</li>
-                            <li><input type="checkbox"> Accounts</li>
-                            <li><input type="checkbox"> Cases</li>
-                            <li><input type="checkbox"> Opportunities</li>
-                            <li><input type="checkbox"> Reports</li>
-                          </ul>
-                          <a class="btn btn-inverse" href="#"><i class="icon icon-search"></i></a>
-                        </div>
-                      </div>
-                    </div>
-                  </form>
-                </div>
-              </div><!-- /.nav-collapse -->
-            </div>
-          </div><!-- /navbar-inner -->
-        </div>
-      </div>
+      <div id="header"></div>
       <div id="content">
         <div class="layout_Contacts container-fluid">
           <div class="row-fluid">
@@ -105,19 +30,19 @@
                   <a href="#" title="Create Account" class="btn btn-invisible drawerTrig"><i class="icon-chevron-right"></i></a>
                 </div>
               </div>
-               <form class="form-search" action="">
-              <div class="row-fluid">
-                <div class="span9 myfilter">
-                  <input value="" placeholder="Search contacts..." class="span12">
-                  <div class="actions btn-group dropdown">
-                    <a href="" data-toggle="dropdown" class="dropdown-toggle btn btn-invisible">Filter &nbsp;<i class="icon-caret-down"></i></a>
-                    <ul class="dropdown-menu carettop">
-                      <li><a href="#myAccount">My accounts</a></li>
-                      <li><a href="#myContacts">My contacts</a></li>
-                      <li><a href="#myOpportunities">My opportunities</a></li>
-                      <li class="primary"><a href="#createFilter" class="newfilter">+ Create a filter</a></li>
-                    </ul>
-                  </div>
+              <form class="form-search" action="">
+                <div class="row-fluid">
+                  <div class="span9 myfilter">
+                    <input value="" placeholder="Search contacts..." class="span12">
+                    <div class="actions btn-group dropdown">
+                      <a href="" data-toggle="dropdown" class="dropdown-toggle btn btn-invisible">Filter &nbsp;<i class="icon-caret-down"></i></a>
+                      <ul class="dropdown-menu carettop">
+                        <li><a href="#myAccount">My accounts</a></li>
+                        <li><a href="#myContacts">My contacts</a></li>
+                        <li><a href="#myOpportunities">My opportunities</a></li>
+                        <li class="primary"><a href="#createFilter" class="newfilter">+ Create a filter</a></li>
+                      </ul>
+                    </div>
                   </div>
                   <div class="span3">
                     <div class="pull-right">
@@ -424,32 +349,7 @@
           </div>
         </div>
       </div>
-      <div id="footer">
-        <footer>
-          <div class="row-fluid">
-            <div class="span6"><a href="" class="logo">SugarCRM</a></div>
-            <div class="span6">
-              <div class="btn-toolbar pull-right">
-                  <a data-toggle="modal" title="Activity View Tour" href="#systemTour" class="btn btn-invisible"><i class="icon-road"></i> Tour</a>
-                  <span class="dropdown dropup">
-                    <a href="#" class="btn btn-invisible dropdown-toggle" data-toggle="dropdown"><i class="icon-calendar"></i> To Do <b class="caret"></b></a>
-                     <div class="dropdown-menu">
-                      <h4 class="title">Title</h4>
-                      <ul>
-                        <li><a href="#">Item</a></li>
-                        <li><a href="#">Item</a></li>
-                        <li><a href="#">Item</a></li>
-                        <li><a href="#">Item</a></li>
-                      </ul>
-                    </div>
-                  </span>
-                  <a data-toggle="modal" title="Feedback" href="#systemFeedback" class="btn btn-invisible"><i class="icon-comment"></i> Feedback</a>
-                  <a data-toggle="modal" title="Support" href="#systemSupport" class="btn btn-invisible"><i class="icon-question-sign"></i> Support</a>
-              </div>
-            </div>
-          </div>
-        </footer>
-      </div>
+      <div id="footer"></div>
     </div>
   </div>
 
@@ -558,18 +458,12 @@
   </div>
 
   <script src="../js/jquery-1.7.2.min.js"></script>
-  <script src="../../assets/js/bootstrap-transition.js"></script>
-  <script src="../../assets/js/bootstrap-alert.js"></script>
-  <script src="../../assets/js/bootstrap-modal.js"></script>
-  <script src="../../assets/js/bootstrap-collapse.js"></script>
-  <script src="../../assets/js/bootstrap-dropdown.js"></script>
-  <script src="../../assets/js/bootstrap-scrollspy.js"></script>
-  <script src="../../assets/js/bootstrap-tab.js"></script>
-  <script src="../../assets/js/bootstrap-tooltip.js"></script>
-  <script src="../../assets/js/bootstrap-popover.js"></script>
-  <script src="../../assets/js/bootstrap-button.js"></script>
-  <script src="../../assets/js/bootstrap-typeahead.js"></script>
+  <script src="../js/ICanHaz.min.js"></script>
+  <script src="js/prototype.js"></script>
+
+  <script src="../../assets/js/bootstrap.min.js"></script>
   <script src="../../assets/js/bootstrapx-clickover.js"></script>
+  <script src="../../assets/js/bootstrap-datepicker.js"></script>
 
   <script src="../js/jquery.datatables.js"></script>
   <script src="../js/wicked.js"></script>

@@ -342,5 +342,26 @@
     $(this).css('width','0');
   });
 
-}(window.jQuery);
+  $('.modal-link').live('click',function(e){
+    var target = $(this).attr('data-target');
+    if ($('#'+target).length === 0)
+    {
+      jQuery.ajax({
+          url: 'partial/' + target.toLowerCase() + ".html?r=" + new Date().getTime(),
+          dataType:"text",
+          async: false,
+          success: function(data) {
+            if(data !== undefined){
+              $('body').append(data);
+              $(target).modal({
+                keyboard: true,
+                backdrop: 'static'
+              });
+            }
+          }
+      });
+    }
+    $('#'+target).modal('show');
+  });
 
+}(window.jQuery);

@@ -239,7 +239,7 @@ $(document).ready(function() {
             var nCloneTh = document.createElement( 'th' );
             var nCloneTh2 = document.createElement( 'th' );
             // variable for current side-pane content file
-            var currentSidebarDetails = 'sabra_details.html';
+            var currentSidebarDetails = 'partial/sabra_details.html';
             var sideSelector = '.side.sidebar-content.span4';
             var contentSelector = '#content';
 
@@ -255,7 +255,7 @@ $(document).ready(function() {
                 $(contentSelector).removeClass("preview");
                 $("td",oTable).removeClass("highlighted");
                 $("td,th",oTable).removeClass("preview");
-                currentSidebarDetails = ( currentSidebarDetails === 'sabra_details.html' ) ? 'mark_details.html' : 'sabra_details.html';
+                currentSidebarDetails = ( currentSidebarDetails === 'partial/sabra_details.html' ) ? 'partial/mark_details.html' : 'partial/sabra_details.html';
                 jQuery.ajax({
                     url: currentSidebarDetails + "?r=" + new Date().getTime(),
                     dataType:"text",
@@ -369,7 +369,7 @@ $(document).ready(function() {
                     $('td,th',pTr).addClass('preview above');
                     $('td,th',nTr).addClass('preview below');
                     jQuery.ajax({
-                        url: aData[9]+'_preview.html?r=' + new Date().getTime(),
+                        url: 'partial/' + aData[9]+'_preview.html?r=' + new Date().getTime(),
                         dataType:'text',
                         async: false,
                         success: function(data) {
@@ -780,7 +780,7 @@ $(document).ready(function() {
     $("#setup_btn").on('click', function() {
         wizard.init({
             id: 'setup',
-            modalUrl: "setup/setup1.html",
+            modalUrl: "partial/setup1.html",
             className: 'setup',
             headerText: "Forecasting Setup",
             navMenu: new Array("1. Time Period","2. Categories","3. Range"),
