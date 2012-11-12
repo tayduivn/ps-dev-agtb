@@ -58,7 +58,7 @@ class TimePeriod extends SugarBean {
 	var $module_dir = 'TimePeriods';
     var $type;
     var $leaf_period_type;
-    var $leaf_periods = 4;
+    var $leaf_periods;
     var $periods_in_year;
     var $leaf_name_template;
     var $name_template;
@@ -891,6 +891,7 @@ class TimePeriod extends SugarBean {
         }
         return BeanFactory::getBean("{$type}TimePeriods", $id);
     }
+
 }
 
 function get_timeperiods_dom()
