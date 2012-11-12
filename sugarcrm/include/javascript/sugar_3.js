@@ -224,6 +224,13 @@ SUGAR.tour = function() {
                         SUGAR.tour.saveUserPref(params.prefUrl);
                         params.onTourFinish();
                     });
+                    $(tourIdSel+'End a.btn').not('.btn-primary').on("click",function(e){
+                        $(tourIdSel+'End').css("display","none");
+                        var lastModal = modals.length-1;
+                        modalArray[lastModal].modal('show');
+                        $(modals[lastModal].target).popoverext('show');
+                        centerModal();
+                    });
 
                     centerModal();
 
@@ -323,6 +330,7 @@ SUGAR.tour = function() {
                             $(modals[i].target).popoverext('hide');
                             modalArray[i].modal('hide');
                             tourModal.modal("show");
+                            $(tourIdSel+'End').css("display","block");
                             centerModal();
                         }
 

@@ -113,7 +113,9 @@ class DBManagerFactory
     {
         global $sugar_config;
         static $count = 0, $old_count = 0;
-
+        if(empty($sugar_config['dbconfig'])) {
+            return false;
+        }
         //fall back to the default instance name
         if(empty($sugar_config['db'][$instanceName])){
         	$instanceName = '';

@@ -1,10 +1,14 @@
 ({
+    extendsFrom: 'FileField',
     events: {
         "mouseenter img" : "showButton",
         "mouseenter a" : "showButton",
         "mouseleave a" : "hideButton",
         "mouseleave img" : "hideButton",
-        "click .delete" : "delete"
+        "click .delete" : "delete",
+        "focus input[type=file]": "onUploadFocus",
+        "blur input[type=file]": "onUploadBlur",
+        "change input[type=file]": "onUploadChange"
     },
     fileUrl : "",
     _render: function() {
@@ -12,10 +16,8 @@
         this.model.fileField = this.name;
         this.fileURL = (this.value) ? this.buildUrl() + "&" + this.value : "";
         app.view.Field.prototype._render.call(this);
+        this.resizeInput();
         return this;
-    },
-    bindDataChange:function() {
-        //Keep empty because you cannot set a value of a type `file` input
     },
     buildUrl: function(options) {
         return app.api.buildFileURL({

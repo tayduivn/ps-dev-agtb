@@ -1,4 +1,4 @@
-<?
+<?php
 /**
  * This function sorts the tests alphabetically to make the
  * test runs more consistent.
@@ -6,6 +6,11 @@
 function sortTests() {
     // Load old xml file
     $suitesXML = simplexml_load_file('phpuc.xml');
+    if (!file_exists('phpucOLD.xml')) {
+        copy('phpuc.xml','phpucOLD.xml');
+    } else {
+        return;
+    }
     $suitesArray = toArray($suitesXML);
     unset($suitesXML->testsuites->testsuite);
     $suitesXML->testsuites->testsuite = "";
@@ -36,9 +41,9 @@ function scanFileNameRecursively($path = '', &$name = array() )
 
             if(is_dir($path.DIRECTORY_SEPARATOR.$f) && $f != ".." && $f != ".")
             {
-                scanFileNameRecursively($path.DIRECTORY_SEPARATOR.$f, &$name);
+                scanFileNameRecursively($path.DIRECTORY_SEPARATOR.$f, $name);
             }
-            elseif ($f != ".." && $f != "." && stripos($f, 'test') !== false)
+            elseif ($f != ".." && $f != "." && stripos($f, 'test') !== false && stripos($f, '.php') !== false)
             {
                 $name[] = $path.DIRECTORY_SEPARATOR.$f;
             }
