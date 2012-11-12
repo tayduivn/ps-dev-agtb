@@ -159,6 +159,9 @@ $(document).ready(function() {
         "bProcessing": true,
         "bAutoWidth": false,
         "sAjaxSource": 'data/sabra_json.txt' ,
+        // "sScrollX": "100%",
+        // "sScrollXInner": "120%",
+        // "bScrollCollapse": false,
         "aoColumns": [
             {
                 "sTitle": "Commit",
@@ -539,6 +542,11 @@ $(document).ready(function() {
             });
         }
     });
+
+    // new FixedColumns( oTable, {
+    //     "iLeftColumns": 0,
+    //     "iRightColumns": 1
+    // });
 
     $('span.click input').live({
         focus:function() {
