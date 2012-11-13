@@ -60,14 +60,22 @@
 
             if(app.user.getAcls()['Forecasts'].admin == "yes") {
                 params.components = [{layout:"wizardConfig"}];
+                // callback has to be a function returning the checkSettingsAndRedirect function
+                // to maintain the proper context otherwise from modal, "this" is the Window
+                var callback = function() { return self.checkSettingsAndRedirect };
+                this.trigger("modal:forecastsWizardConfig:open", params, callback);
             } else {
-                params.message = app.lang.get("LBL_FORECASTS_CONFIG_USER_SPLASH", "Forecasts");
+                app.alert.init();
+                app.alert.show('no_access_error', {
+                        level: 'error',
+                        messages: app.lang.get("LBL_FORECASTS_CONFIG_USER_SPLASH", "Forecasts"),
+                        title: app.lang.get("LBL_FORECASTS_CONFIG_TITLE", "Forecasts")}
+                );
+                app.alert.get('no_access_error').getCloseSelector().on('click', function(){
+                    return self.checkSettingsAndRedirect();
+                })
             }
 
-            // callback has to be a function returning the checkSettingsAndRedirect function
-            // to maintain the proper context otherwise from modal, "this" is the Window
-            var callback = function() { return self.checkSettingsAndRedirect };
-            this.trigger("modal:forecastsWizardConfig:open", params, callback);
         },
 
         /**
@@ -80,6 +88,8 @@
                 // we have a success save, so we need to call the app.sync() and then redirect back to the index
                 app.alert.show('success', {
                     level: 'success',
+                    autoClose: true,
+                    closeable: false,
                     title : app.lang.get("LBL_FORECASTS_WIZARD_SUCCESS_TITLE", "Forecasts") + ":",
                     messages: [app.lang.get("LBL_FORECASTS_WIZARD_SUCCESS_MESSAGE", "Forecasts")]
                 });
