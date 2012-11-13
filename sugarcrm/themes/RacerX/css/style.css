@@ -5284,6 +5284,8 @@ margin: 2px 4px 0 0;
 .yui-navset .yui-nav, .yui-navset .yui-navset-top .yui-nav {
     background:transparent url('../../../../index.php?entryPoint=getImage&themeName=Sugar&imageName=sugar-yui-tab-bg.png'); 
     border-color: #c3c3c3;
+    background-position: center bottom;
+    background-repeat: repeat-x;
 }
 
 .yui-layout .yui-layout-hd {
