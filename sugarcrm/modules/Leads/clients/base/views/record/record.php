@@ -93,7 +93,7 @@ $viewdefs['Leads']['base']['view']['record'] = array(
                         'primary_address_country',
                     ),
                 ),
-                'phone_office',
+                'phone_work',
                 'do_not_call',
                 'phone_fax',
             )
@@ -135,7 +135,7 @@ $viewdefs['Leads']['base']['view']['record'] = array(
                 //BEGIN SUGARCRM flav=pro ONLY
                 'team_name',
                 //END SUGARCRM flav=pro ONLY
-                'date_created'
+                'date_entered'
             )
         )
     ),

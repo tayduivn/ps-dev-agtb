@@ -57,10 +57,6 @@ $viewdefs['Notes']['base']['view']['record'] = array(
             'name' => 'panel_header',
             'header' => true,
             'fields' => array(
-                array(
-                    'name' => 'img',
-                    'noedit' => true,
-                ),
                 'name',
             )
         ),

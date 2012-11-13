@@ -101,10 +101,28 @@ $viewdefs['Accounts']['base']['view']['record'] = array(
         array(
             'name' => 'panel_hidden',
             'hide' => true,
+            'columns' => 2,
             'labelsOnTop' => true,
             'placeholders' => true,
             'fields' => array(
-                'twitter',
+                array(
+                    'name' => 'description',
+                    'span' => 12
+                ),
+                'account_type',
+                'industry',
+                'annual_revenue',
+                'employees',
+                'sic_code',
+                'ticker_symbol',
+                'member_of',
+                'ownership',
+                'campaign_name',
+                'rating',
+                'assigned_user_name',
+                'date_modified',
+                'teams',
+                'date_entered'
             )
         )
     ),

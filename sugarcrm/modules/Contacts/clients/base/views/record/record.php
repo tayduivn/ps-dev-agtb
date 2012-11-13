@@ -32,23 +32,23 @@ if (!defined('sugarEntry') || !sugarEntry) {
 $viewdefs['Contacts']['base']['view']['record'] = array(
     'buttons' => array(
         array(
-            'type'    => 'button',
-            'label'   => 'LBL_SAVE_BUTTON_LABEL',
+            'type' => 'button',
+            'label' => 'LBL_SAVE_BUTTON_LABEL',
             'css_class' => 'hide btn-primary record-save',
         ),
         array(
-            'type'    => 'button',
-            'label'   => 'LBL_CANCEL_BUTTON_LABEL',
+            'type' => 'button',
+            'label' => 'LBL_CANCEL_BUTTON_LABEL',
             'css_class' => 'hide record-cancel',
         ),
         array(
-            'type'    => 'button',
-            'label'   => 'LBL_EDIT_BUTTON_LABEL',
+            'type' => 'button',
+            'label' => 'LBL_EDIT_BUTTON_LABEL',
             'css_class' => 'record-edit',
         ),
         array(
-            'type'    => 'button',
-            'label'   => 'LBL_DELETE_BUTTON_LABEL',
+            'type' => 'button',
+            'label' => 'LBL_DELETE_BUTTON_LABEL',
             'css_class' => 'record-delete',
         ),
     ),
@@ -64,7 +64,7 @@ $viewdefs['Contacts']['base']['view']['record'] = array(
                 array(
                     'name' => 'fieldset_full_name',
                     'type' => 'fieldset',
-                    'fields' => array('salutation','first_name', 'last_name')
+                    'fields' => array('salutation', 'first_name', 'last_name')
                 ),
             )
         ),
@@ -85,14 +85,14 @@ $viewdefs['Contacts']['base']['view']['record'] = array(
                     'name' => 'fieldset_address',
                     'type' => 'fieldset',
                     'label' => 'Primay Address',
-                    'fields' => array('primary_address_street','primary_address_city', 'primary_address_state', 'primary_address_postalcode')
+                    'fields' => array('primary_address_street', 'primary_address_city', 'primary_address_state', 'primary_address_postalcode')
                 ),
                 'email'
 
             ),
         ),
         array(
-            'columns'=>2,
+            'columns' => 2,
             'name' => 'panel_hidden',
             'hide' => true,
             'labelsOnTop' => true,
@@ -104,20 +104,21 @@ $viewdefs['Contacts']['base']['view']['record'] = array(
                 'lead_source',
                 'do_not_call',
                 array(
-                  'name'=>'campaign_name',
-                   'span' => 8
+                    'name' => 'campaign_name',
+                    'span' => 12
                 ),
                 'portal_name',
                 'portal_active',
                 'preferred_language',
                 'assigned_user_id',
+                'team_name',
                 'date_modified',
-                'date_created',
+                'date_entered',
                 array(
                     'name' => 'fieldset_alt_address',
                     'type' => 'fieldset',
                     'label' => 'Alternate Address',
-                    'fields' => array('alt_address_street','alt_address_city', 'alt_address_state', 'alt_address_postalcode')
+                    'fields' => array('alt_address_street', 'alt_address_city', 'alt_address_state', 'alt_address_postalcode')
                 ),
 
             )

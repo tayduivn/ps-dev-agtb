@@ -84,7 +84,7 @@ $viewdefs['Opportunities']['base']['view']['record'] = array(
                     'name' => 'fieldset_amount',
                     'type' => 'fieldset',
                     'label' => 'LBL_LIST_AMOUNT',
-                    'fields' => array('currency_id', 'amount'),
+                    'fields' => array('amount'),
                 ),
                 array('name'=>'htmlfield', 'type'=>'html', 'default_value'=>'&nbsp;'),
             )

@@ -32,23 +32,23 @@ if (!defined('sugarEntry') || !sugarEntry) {
 $viewdefs['Calls']['base']['view']['record'] = array(
     'buttons' => array(
         array(
-            'type'    => 'button',
-            'label'   => 'LBL_SAVE_BUTTON_LABEL',
+            'type' => 'button',
+            'label' => 'LBL_SAVE_BUTTON_LABEL',
             'css_class' => 'hide btn-primary record-save',
         ),
         array(
-            'type'    => 'button',
-            'label'   => 'LBL_CANCEL_BUTTON_LABEL',
+            'type' => 'button',
+            'label' => 'LBL_CANCEL_BUTTON_LABEL',
             'css_class' => 'hide record-cancel',
         ),
         array(
-            'type'    => 'button',
-            'label'   => 'LBL_EDIT_BUTTON_LABEL',
+            'type' => 'button',
+            'label' => 'LBL_EDIT_BUTTON_LABEL',
             'css_class' => 'record-edit',
         ),
         array(
-            'type'    => 'button',
-            'label'   => 'LBL_DELETE_BUTTON_LABEL',
+            'type' => 'button',
+            'label' => 'LBL_DELETE_BUTTON_LABEL',
             'css_class' => 'record-delete',
         ),
     ),
@@ -80,18 +80,19 @@ $viewdefs['Calls']['base']['view']['record'] = array(
                     'type' => 'datetimecombo',
                     'fields' => array('date_end')
                 ),
+                'parent_name',
                 array(
-                   //TODO: this field is more cusomized, need to find a way to do display of duration_hours:duration_minutes
-                  'name' => 'duration',
-                  'type' => 'fieldset',
-                  'label' => 'LBL_DURATION',
-                  'fields' => array('duration_hours', 'duration_minutes')
+                    //TODO: this field is more cusomized, need to find a way to do display of duration_hours:duration_minutes
+                    'name' => 'duration',
+                    'type' => 'fieldset',
+                    'label' => 'LBL_DURATION',
+                    'fields' => array('duration_hours', 'duration_minutes')
                 ),
             ),
         ),
         array(
             'name' => 'panel_hidden',
-            'columns' => 1,
+            'columns' => 2,
             'hide' => true,
             'labelsOnTop' => true,
             'placeholders' => true,
@@ -100,15 +101,7 @@ $viewdefs['Calls']['base']['view']['record'] = array(
                     "name" => "description",
                     "span" => 12,
                 ),
-            )
-        ),
-        array(
-            'name' => 'panel_hidden',
-            'columns' => 2,
-            'hide' => true,
-            'labelsOnTop' => true,
-            'placeholders' => false,
-            'fields' => array(
+
                 'team_name',
                 array(
                     'name' => 'date_modified',

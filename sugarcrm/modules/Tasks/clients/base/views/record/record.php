@@ -32,23 +32,23 @@ if (!defined('sugarEntry') || !sugarEntry) {
 $viewdefs['Tasks']['base']['view']['record'] = array(
     'buttons' => array(
         array(
-            'type'    => 'button',
-            'label'   => 'LBL_SAVE_BUTTON_LABEL',
+            'type' => 'button',
+            'label' => 'LBL_SAVE_BUTTON_LABEL',
             'css_class' => 'hide btn-primary record-save',
         ),
         array(
-            'type'    => 'button',
-            'label'   => 'LBL_CANCEL_BUTTON_LABEL',
+            'type' => 'button',
+            'label' => 'LBL_CANCEL_BUTTON_LABEL',
             'css_class' => 'hide record-cancel',
         ),
         array(
-            'type'    => 'button',
-            'label'   => 'LBL_EDIT_BUTTON_LABEL',
+            'type' => 'button',
+            'label' => 'LBL_EDIT_BUTTON_LABEL',
             'css_class' => 'record-edit',
         ),
         array(
-            'type'    => 'button',
-            'label'   => 'LBL_DELETE_BUTTON_LABEL',
+            'type' => 'button',
+            'label' => 'LBL_DELETE_BUTTON_LABEL',
             'css_class' => 'record-delete',
         ),
     ),
@@ -69,20 +69,20 @@ $viewdefs['Tasks']['base']['view']['record'] = array(
             'fields' => array(
                 'date_start', 'priority',
                 'date_due', 'status',
-                'assigned_user_id', 'parent_name',
+                'assigned_user_name', 'parent_name',
             ),
         ),
         array(
             'name' => 'panel_hidden',
-            'columns' => 2,
             'hide' => true,
+            'columns' => 2,
             'labelsOnTop' => true,
-            'placeholders' => true,
             'fields' => array(
-                array('name'=>'description', 'span'=>12),
-                'contact_name', 'date_entered',
-                'team_sets', 'date_modified',
-                
+                array('name' => 'description', 'span' => 12),
+                'contact_name',
+                array('label' => 'Created By', 'type' => 'fieldset', 'name' => 'created_by_date', 'fields' => array('created_by_name', 'date_entered')),
+                'team_sets',
+                'date_modified',
             )
         )
     ),
