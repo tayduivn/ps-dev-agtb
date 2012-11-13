@@ -1041,8 +1041,10 @@ class Email extends SugarBean {
 			$this->cc_addrs_names = $this->cleanEmails($this->cc_addrs_names);
 			$this->bcc_addrs_names = $this->cleanEmails($this->bcc_addrs_names);
 			$this->reply_to_addr = $this->cleanEmails($this->reply_to_addr);
-			$this->description = SugarCleaner::cleanHtml($this->description);
-			$this->description_html = SugarCleaner::cleanHtml($this->description_html);
+			// cleaning will be done by SugarBean::cleanBean on save
+//			$this->description = SugarCleaner::cleanHtml($this->description);
+//			$this->description_html = SugarCleaner::cleanHtml($this->description_html);
+//			$this->raw_source = SugarCleaner::cleanHtml($this->description_html, $this->raw_source);
 			$this->saveEmailText();
 			$this->saveEmailAddresses();
 
@@ -1216,6 +1218,7 @@ class Email extends SugarBean {
             $text->$textfield = $this->$mailfield;
         }
         $text->email_id = $this->id;
+        $text->cleanBean();
 		if(!$this->new_with_id) {
             $this->db->update($text);
 		} else {
@@ -1231,9 +1234,9 @@ class Email extends SugarBean {
 
 		if($ret) {
 			$ret->retrieveEmailText();
-		    $ret->raw_source = SugarCleaner::cleanHtml($ret->raw_source);
+		    //$ret->raw_source = SugarCleaner::cleanHtml($ret->raw_source);
 			$ret->description = to_html($ret->description);
-            $ret->description_html = SugarCleaner::cleanHtml($ret->description_html);
+            //$ret->description_html = SugarCleaner::cleanHtml($ret->description_html);
 			$ret->retrieveEmailAddresses();
 
 			$ret->date_start = '';
@@ -2583,7 +2586,7 @@ class Email extends SugarBean {
 
 		//Perform a count query needed for pagination.
 		$countQuery = $this->create_list_count_query($fullQuery);
-		
+
 		$count_rs = $this->db->query($countQuery, false, 'Error executing count query for imported emails search');
 		$count_row = $this->db->fetchByAssoc($count_rs);
 		$total_count = ($count_row != null) ? $count_row['c'] : 0;
@@ -2699,7 +2702,7 @@ class Email extends SugarBean {
              $query['where'] .= " AND NOT EXISTS ( SELECT id FROM notes n WHERE n.parent_id = emails.id AND n.deleted = 0 AND n.filename is not null )";
 
         $fullQuery = "SELECT " . $query['select'] . " " . $query['joins'] . " " . $query['where'];
-        
+
         return $fullQuery;
     }
         /**
@@ -2733,8 +2736,8 @@ class Email extends SugarBean {
 		          $additionalWhereClause[] = "{$properties['table_name']}.$db_key $opp '$searchValue' ";
 		      }
         }
-        
-        
+
+
 
         $isDateFromSearchSet = !empty($_REQUEST['searchDateFrom']);
         $isdateToSearchSet = !empty($_REQUEST['searchDateTo']);
