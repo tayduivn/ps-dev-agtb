@@ -67,6 +67,9 @@ $vardefs = array(
 	    'comment' => 'Date record created',
 	    'enable_range_search' => true,
 	  	'options' => 'date_range_search_dom',
+        'studio' => array(
+            'portaleditview' => false, // Bug58408 - hide from Portal edit layout
+        ),
 	  ),
 	  'date_modified' =>
 	  array (
