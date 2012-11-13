@@ -9,6 +9,32 @@
   padding: 0;
   width: 100%;
   left: 0;
+  top: 47px;
+  bottom: 44px;
+  position: absolute;
+}
+
+#content .container-fluid .row-fluid.record-edit {
+  display: none;
+}
+#content .container-fluid .row-fluid {
+  position: absolute;
+  overflow: hidden;
+  height: 100%;
+  top: 0px;
+}
+
+.edit #content .container-fluid .row-fluid.record-edit {
+  display: block;
+  height: 50%;
+  top: 0px;
+  opacity: 1;
+  border: none;
+}
+.edit #content .container-fluid .row-fluid {
+  top: 50%;
+  opacity: .5;
+  border-top: 4px solid @grayLight;
 }
 
 .padded {

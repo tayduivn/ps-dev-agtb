@@ -365,14 +365,17 @@
   // if tab shown is not overview, switch to preview mode
   $('a[data-toggle="tab"]').live( 'shown', function (e){
     //e.relatedTarget // previous tab
-    var target=$(e.target);
-    if ( target.attr('href') !== '#' ) {
+    var link = $(e.target)
+      , source = link.attr('href')
+      , target = link.attr('data-target');
+
+    if ( source !== '#' ) {
       $.ajax({
-        url: target.attr('href'),
-        success: function(data){ $(target.attr('data-target')).html(data); }
+        url: source,
+        success: function(data){ $(target).html(data); }
       });
     }
-    $('body').toggleClass( 'preview', target.attr('data-target') !== '#overview' );
+    $('body').toggleClass( target.replace('#',''), target !== '#overview' );
   });
 
 }(window.jQuery);

@@ -1,0 +1,103 @@
+<div class="headerpane">
+  <h1>Create Lead</h1>
+  <div class="btn-toolbar pull-right dropdown">
+    <button class="btn btn-invisible btn-link cancel" data-dismiss="tab" target="#">Cancel</button>
+    <a href="partial/lead-view.html" data-toggle="tab" data-target="#edit" title="Save Lead" class="btn btn-primary">Save</a>
+    <a href="#overview" title="Create Lead" class="btn btn-invisible drawerTrig"><i class="icon-chevron-right"></i></a>
+  </div>
+</div>
+<div>
+      <form class="form-horizontal">
+        <fieldset>
+          <div class="control-group">
+            <label for="input01" class="control-label">Name:</label>
+            <div class="controls">
+              <input type="text" id="input01" class="input-xlarge">
+            </div>
+          </div>
+          <div class="control-group">
+            <label for="select01" class="control-label">Sales Stage:</label>
+            <div class="controls">
+              <select id="select01" data-placeholder="Choose a Lead..." class="chzn-select">
+                <option value="pk" selected="selected">Proposal</option>
+                <option value="pk">Closed Won</option>
+                <option value="pk">Closed Lost</option>
+              </select>
+            </div>
+          </div>
+          <div class="control-group">
+            <label for="select02" class="control-label">Account:</label>
+            <div class="controls">
+              <select id="select02" data-placeholder="Choose a Lead..." class="chzn-select">
+                <option value="pk" selected="selected">Perkin Kleiners</option>
+                <option value="pk">Underwater Mining Inc.</option>
+                <option value="pk">Weyland</option>
+              </select>
+            </div>
+          </div>
+          <div class="control-group">
+            <label for="input03" class="control-label">Amount:</label>
+            <div class="controls">
+              <input type="text" id="input01" class="input-xlarge">
+            </div>
+          </div>
+          <div class="control-group">
+            <label for="select03" class="control-label">Assigned to:</label>
+            <div class="controls">
+              <select id="select03" data-placeholder="Choose an Assignee..." class="chzn-select">
+                <option value="pk" selected="selected">Sabra Khan</option>
+                <option value="pk">Sally Smith</option>
+                <option value="pk">Jim Brennan</option>
+              </select>
+            </div>
+          </div>
+        <div class="extend hide">
+          <div class="control-group">
+            <label for="input01" class="control-label">Email:</label>
+            <div class="controls">
+              <input type="text" id="input01" class="input-xlarge">
+              <a href="" class="btn" rel="tooltip" title="Primary"><i class="icon-star"></i></a>
+              <a href="" class="btn" rel="tooltip" title="Add another"><i class="icon-plus"></i></a>
+            </div>
+          </div>
+          <div class="control-group">
+            <label for="input01" class="control-label">Phone:</label>
+            <div class="controls">
+              <input type="text" id="input01" class="input-xlarge">
+              <a href="" class="btn" rel="tooltip" title="Primary"><i class="icon-star"></i></a>
+              <a href="" class="btn" rel="tooltip" title="Add another"><i class="icon-plus"></i></a>
+            </div>
+          </div>
+
+          <div class="control-group">
+            <label for="select01" class="control-label">Teams:</label>
+            <div class="controls">
+              <select data-placeholder="Choose a Lead..." class="chzn-select" tabindex="2">
+                <option value="pk" selected="selected">Global</option>
+                <option value="pk">East</option>
+                <option value="pk">West</option>
+                <option value="pk">North</option>
+                <option value="pk">South</option>
+              </select>
+            </div>
+          </div>
+          <div class="control-group">
+            <label for="select01" class="control-label">Assigned to:</label>
+            <div class="controls">
+              <select data-placeholder="Choose a Lead..." class="chzn-select" tabindex="2">
+                <option value="pk" selected="selected">Administrator</option>
+                <option value="pk">Majed Itani</option>
+                <option value="pk">Uriah Welcome</option>
+              </select>
+            </div>
+          </div>
+        </div>
+      </fieldset>
+    </form>
+</div>
+<div>
+    <a href="javascript:void(0)" name="show_more_button" class="loading wide">More...</a>
+</div>
+<script>
+  $('body').addClass('edit');
+</script>
