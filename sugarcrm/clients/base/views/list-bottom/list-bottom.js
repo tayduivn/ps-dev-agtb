@@ -42,7 +42,7 @@
         app.alert.show('show_more_records_' + self.cid, {level:'process', title:app.lang.getAppString('LBL_PORTAL_LOADING')});
         
         // save current screen position
-        var screenPosition = $('html').offset().top;
+        var screenPosition = $(window).scrollTop();
 
         // If in "search mode" (the search filter is toggled open) set q:term param
         options = self.filterOpened ? self.getSearchOptions() : {};
@@ -56,7 +56,7 @@
             self.layout.trigger("list:paginate:success");
             self.render();
             // retrieve old screen position
-            window.scrollTo(0, -1*screenPosition);
+            window.scrollTo(0, screenPosition);
 
             // Animation for new records
             self.layout.$('tr.new').animate({
