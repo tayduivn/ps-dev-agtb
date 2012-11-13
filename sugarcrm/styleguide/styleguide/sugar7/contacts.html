@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+  <meta charset="utf-8">
   <link href="../css/bootstrap.css" rel="stylesheet">
   <script>
     var page = {
@@ -309,40 +310,18 @@
             <div class="side sidebar-content span4">
               <div class="side-pane">
                 <div class="block thumbnail">
-                  	<h4>Stats</h4>
-                  	<ul class="listed">
-                  	    <li>
-                  	        Item
-                  	    </li>
-                  	    <li>
-                  	        Item
-                  	    </li>
-                  	    <li>
-                  	        Item
-                  	    </li>
-                  	</ul>
-                </div>
-              </div>
-              <div class="preview-pane hide" id="file1">
-                <div class="block" id="">
-                  <a href="#overview" data-toggle="tab" class="actions"><i class="icon-remove"></i></a>
-                  <h4><span class="label label-file">File</span> Screenshot_766.png</h4>
-                  <br>
-                  <img src="http://placehold.it/400x300">
-                  <div class="card2">
-                    <div class="row-fluid">
-                       <div class="span3">Added:</div>
-                       <div class="span9">1 hour ago at 3:00 pm EST</div>
-                     </div>
-                     <div class="row-fluid">
-                       <div class="span3">Added By:</div>
-                       <div class="span9"><a href="profile_skhan.html">Sabra Khan</a></div>
-                     </div>
-                     <div class="row-fluid">
-                       <div class="span3">File Type:</div>
-                       <div class="span9">PNG</div>
-                     </div>
-                   </div>
+                	<h4>Stats</h4>
+                	<ul class="listed">
+              	    <li>
+              	        Item
+              	    </li>
+              	    <li>
+              	        Item
+              	    </li>
+              	    <li>
+              	        Item
+              	    </li>
+                	</ul>
                 </div>
               </div>
             </div>
@@ -352,110 +331,7 @@
       <div id="footer"></div>
     </div>
   </div>
-
-  <div class="modal hide" id="systemTour">
-
-  </div>
-
-  <div class="modal hide" id="adminHistory">
-    <div class="modal-header">
-      <a class="close" data-dismiss="modal">×</a>
-      <h3>Manage History</h3>
-    </div>
-    <div class="modal-body">
-      <div>
-        <form class="form-horizontal">
-          <fieldset>
-            <div class="control-group">
-              <label for="input01" class="control-label">Filter Name</label>
-              <div class="controls">
-                <input type="text" id="input01" class="input-xlarge">
-              </div>
-            </div>
-            <div class="control-group">
-              <label for="input01" class="control-label">Account</label>
-              <div class="controls">
-                <input type="text" id="input01" class="input-xlarge">
-              </div>
-            </div>
-            <div class="control-group">
-              <label for="select01" class="control-label">Result Amount</label>
-              <div class="controls">
-                <select id="select01">
-                  <option>something</option>
-                  <option>2</option>
-                  <option>3</option>
-                  <option>4</option>
-                  <option>5</option>
-                </select>
-              </div>
-            </div>
-            <div class="control-group">
-              <label for="textarea" class="control-label">Keywords</label>
-              <div class="controls">
-                <textarea rows="3" id="textarea" class="input-xlarge"></textarea>
-              </div>
-            </div>
-          </fieldset>
-        </form>
-      </div>
-      <div class="modal-footer">
-        <a href="#" class="btn btn-primary">Save</a>
-        <a href="#" class="btn" data-dismiss="modal">Cancel</a>
-      </div>
-    </div>
-  </div>
-
-  <div class="modal span10 hide" id="createAccount">
-    <div class="modal-header">
-      <a class="close" data-dismiss="modal">×</a>
-      <h3>Create Account</h3>
-    </div>
-    <div class="modal-body">
-      <div>
-        <form class="form-horizontal">
-          <fieldset>
-            <div class="control-group">
-              <label for="input01" class="control-label">Filter Name</label>
-              <div class="controls">
-                <input type="text" id="input01" class="input-xlarge">
-              </div>
-            </div>
-            <div class="control-group">
-              <label for="input01" class="control-label">Account</label>
-              <div class="controls">
-                <input type="text" id="input01" class="input-xlarge">
-              </div>
-            </div>
-            <div class="control-group teams">
-              <label for="select01" class="control-label">Teams:</label>
-              <div class="controls">
-                <select data-placeholder="Choose a account..." class="chzn-select span2" tabindex="2">
-                  <option value="pk">Global</option>
-                  <option value="pk" selected="selected">East</option>
-                  <option value="pk">West</option>
-                  <option value="pk">North</option>
-                  <option value="pk">South</option>
-                </select>
-                <button class="btn add" rel="tooltip" data-original-title="Primary"><i class="icon-star"></i></button>
-                <a href="" class="btn remove" rel="tooltip" data-original-title="Add team"><i class="icon-plus"></i></a>
-              </div>
-            </div>
-            <div class="control-group">
-              <label for="textarea" class="control-label">Keywords</label>
-              <div class="controls">
-                <textarea rows="3" id="textarea" class="input-xlarge"></textarea>
-              </div>
-            </div>
-          </fieldset>
-        </form>
-      </div>
-      <div class="modal-footer">
-        <a href="#" class="btn btn-invisible btn-link" data-dismiss="modal">Cancel</a>
-        <a href="#" class="btn btn-primary">Save</a>
-      </div>
-    </div>
-  </div>
+  <div id="modal"></div>
 
   <script src="../js/jquery-1.7.2.min.js"></script>
   <script src="../js/ICanHaz.min.js"></script>

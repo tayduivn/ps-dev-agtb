@@ -342,26 +342,37 @@
     $(this).css('width','0');
   });
 
+  // add modal content to DOM and show modal
   $('.modal-link').live('click',function(e){
-    var target = $(this).attr('data-target');
-    if ($('#'+target).length === 0)
-    {
       jQuery.ajax({
-          url: 'partial/' + target.toLowerCase() + ".html?r=" + new Date().getTime(),
+          url: $(this).attr('href'), // + "?r=" + new Date().getTime(),
           dataType:"text",
           async: false,
           success: function(data) {
             if(data !== undefined){
-              $('body').append(data);
-              $(target).modal({
+              $('#modal').replaceWith(data);
+              $('#modal').modal({
                 keyboard: true,
-                backdrop: 'static'
+                backdrop: 'static',
+                show: true
               });
             }
           }
       });
+    //$('#'+target).modal('show');
+  });
+
+  // if tab shown is not overview, switch to preview mode
+  $('a[data-toggle="tab"]').live( 'shown', function (e){
+    //e.relatedTarget // previous tab
+    var target=$(e.target);
+    if ( target.attr('href') !== '#' ) {
+      $.ajax({
+        url: target.attr('href'),
+        success: function(data){ $(target.attr('data-target')).html(data); }
+      });
     }
-    $('#'+target).modal('show');
+    $('body').toggleClass( 'preview', target.attr('data-target') !== '#overview' );
   });
 
 }(window.jQuery);

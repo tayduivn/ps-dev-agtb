@@ -1,50 +1,50 @@
-
-<div class="modal hide" id="contactModal">
+<div class="modal hide" id="modal">
   <div class="modal-header">
     <a class="close" data-dismiss="modal">×</a>
-    <h3>Add a Contact</h3>
+    <h3>Add a Task</h3>
   </div>
   <div class="modal-body">
     <div>
       <form class="form-horizontal">
         <fieldset>
           <div class="control-group">
-            <label for="input01" class="control-label">First Name:</label>
+            <label for="input01" class="control-label">Subject:</label>
             <div class="controls">
               <input type="text" id="input01" class="input-xlarge">
             </div>
           </div>
           <div class="control-group">
-            <label for="input01" class="control-label">Last Name:</label>
+            <label for="input01" class="control-label">Start:</label>
             <div class="controls">
               <input type="text" id="input01" class="input-xlarge">
             </div>
           </div>
           <div class="control-group">
-            <label for="input01" class="control-label">Title:</label>
+            <label for="input01" class="control-label">End:</label>
             <div class="controls">
               <input type="text" id="input01" class="input-xlarge">
             </div>
           </div>
           <div class="control-group">
-            <label for="input01" class="control-label">Email:</label>
+            <label for="select01" class="control-label">Status:</label>
             <div class="controls">
-              <input type="text" id="input01" class="input-xlarge">
-              <a href="" class="btn" rel="tooltip" title="Primary"><i class="icon-star"></i></a>
-              <a href="" class="btn" rel="tooltip" title="Add another"><i class="icon-plus"></i></a>
+              <select data-placeholder="Choose a account..." class="chzn-select" tabindex="2">
+                <option value="pk" selected="selected">Not Started</option>
+                <option value="pk">In Progress</option>
+                <option value="pk">Completed</option>
+                <option value="pk">Pending Input</option>
+                <option value="pk">Deferred</option>
+              </select>
             </div>
           </div>
           <div class="control-group">
-            <label for="input01" class="control-label">Phone:</label>
+            <label for="select01" class="control-label">Related to:</label>
             <div class="controls">
-              <input type="text" id="input01" class="input-xlarge">
-              <a href="" class="btn" rel="tooltip" title="Primary"><i class="icon-star"></i></a>
-              <a href="" class="btn" rel="tooltip" title="Add another"><i class="icon-plus"></i></a>
-            </div>
-          </div>
-          <div class="control-group">
-            <label for="select01" class="control-label">Account:</label>
-            <div class="controls">
+              <select data-placeholder="Choose a account..." class="chzn-select" tabindex="2">
+                <option value="pk" selected="selected">Account</option>
+                <option value="pk">Contact</option>
+                <option value="pk">Opportunity</option>
+              </select>
               <select data-placeholder="Choose a account..." class="chzn-select" tabindex="2">
                 <option value="pk" selected="selected">Perkin Kleiners</option>
                 <option value="pk">Underwater Mining Inc.</option>
@@ -55,9 +55,9 @@
           <div class="control-group">
             <label for="select01" class="control-label">Teams:</label>
             <div class="controls">
-              <select data-placeholder="Choose a account..." class="chzn-select" tabindex="2">
-                <option value="pk" selected="selected">Global</option>
-                <option value="pk">East</option>
+              <select data-placeholder="Choose a account..." class="chzn-select" tabindex="2" multiple>
+                <option value="pk">Global</option>
+                <option value="pk" selected="selected">East</option>
                 <option value="pk">West</option>
                 <option value="pk">North</option>
                 <option value="pk">South</option>
@@ -85,6 +85,3 @@
     </div>
   </div>
 </div>
-<script>
-  $(".chzn-select").chosen({ disable_search_threshold: 5 });
-</script>

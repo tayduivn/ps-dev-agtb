@@ -40,10 +40,10 @@
 
 .side > .side-pane,
 .side > .preview-pane {
-  display: block;
+  display: none;
 
-  &.hide {
-    display: none;
+  &.active {
+    display: block;
   }
 
   .block {
@@ -61,12 +61,12 @@
 .side > .preview-pane {
   width: 100%;
   border: none;
+  .block {
+    padding: 28px 5% 0;
+  }
 }
 
-
-
 .side .preview-pane .card2 {
-  margin: 10px;
   .span4 {
     text-align: right;
   }
