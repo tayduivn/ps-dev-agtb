@@ -28,6 +28,11 @@ class XssTest extends Sugar_PHPUnit_Framework_TestCase
 {
     var $email_xss;
 
+    /**
+     * @var mixed
+     */
+    protected $html_allow_objects = null;
+
     public function setUp()
     {
         global $sugar_config;
@@ -36,10 +41,16 @@ class XssTest extends Sugar_PHPUnit_Framework_TestCase
             $this->email_xss = $sugar_config['email_xss'];
             $sugar_config['email_xss'] = '';
         }
+        if (isset($sugar_config['html_allow_objects'])) {
+            $this->html_allow_objects = $sugar_config['html_allow_objects'];
+        }
+        $sugar_config['html_allow_objects'] = true;
+        SugarCleaner::$instance = null;
     }
 
     public function tearDown()
     {
+        $sugar_config['html_allow_objects'] = $this->html_allow_objects;
         if(!empty($this->email_xss))
         {
             global $sugar_config;
