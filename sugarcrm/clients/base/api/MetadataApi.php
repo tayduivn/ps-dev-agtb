@@ -238,9 +238,9 @@ class MetadataApi extends SugarApi {
 
         $this->jssourceFilter = $this->getJSSourcePlatforms($args);
 
-        $data['fields']  = $mm->getSugarClientFilesForPlatforms('field', NULL, NULL,  $this->jssourceFilter);
-        $data['views']   = $mm->getSugarClientFilesForPlatforms('view', NULL, NULL,   $this->jssourceFilter);
-        $data['layouts'] = $mm->getSugarClientFilesForPlatforms('layout', NULL, NULL, $this->jssourceFilter);
+        $data['fields']  = $mm->getSugarClientFilesForPlatforms('field', $this->jssourceFilter);
+        $data['views']   = $mm->getSugarClientFilesForPlatforms('view', $this->jssourceFilter);
+        $data['layouts'] = $mm->getSugarClientFilesForPlatforms('layout', $this->jssourceFilter);
         $data['view_templates']   = $mm->getViewTemplates();
         $data['app_strings']      = $mm->getAppStrings();
         $data['app_list_strings'] = $app_list_strings_public;
@@ -399,9 +399,9 @@ class MetadataApi extends SugarApi {
                 }
             }
         }
-        $data['fields']  = $mm->getSugarClientFilesForPlatforms('field', NULL, NULL,  $this->jssourceFilter);
-        $data['views']   = $mm->getSugarClientFilesForPlatforms('view', NULL, NULL,   $this->jssourceFilter);
-        $data['layouts'] = $mm->getSugarClientFilesForPlatforms('layout', NULL, NULL, $this->jssourceFilter);
+        $data['fields']  = $mm->getSugarClientFilesForPlatforms('field', $this->jssourceFilter);
+        $data['views']   = $mm->getSugarClientFilesForPlatforms('view', $this->jssourceFilter);
+        $data['layouts'] = $mm->getSugarClientFilesForPlatforms('layout', $this->jssourceFilter);
         $data['view_templates'] = $mm->getViewTemplates();
         $data['app_strings'] = $mm->getAppStrings();
         $data['app_list_strings'] = $mm->getAppListStrings();
@@ -663,31 +663,22 @@ class MetadataApi extends SugarApi {
     }
 
     /**
-     * Reconciles which platforms jssource components will be built for. Note that this includes
-     * controllers for fields, views, and layouts. If a platform like base is omitted, none of 
-     * these will be added to the built js components.
+     * Reconciles which platforms jssource components will be built for. 
+     * @param array $args request args
      * @return array
      */
     private function getJSSourcePlatforms($args) {
         $arrJSSourcePlatforms = array();
-
-        // If no argument, or, if no jssource_filter supplied, jssourceFilter starts with all 
-        // platforms loaded (jssource components will be built for both their application's
-        // platform (e.g. portal) AND base. 
-        if ( empty($args['jssource_filter']) ) {
-            $arrJSSourcePlatforms = $this->platforms;
-        } else {
-
-            // For clients that don't want extra weight of components e.g. mobile
-            if ( strtolower($args['jssource_filter']) == 'none') {
-                $arrJSSourcePlatforms = null;
-            } else {
-                // Reinitialize our filter since it contained "all" platforms previously
-                $platforms = explode(",", $args['jssource_filter']);
-                if ($platforms != false) {
-                    $arrJSSourcePlatforms = $platforms;
-                }
+        // If no jssource_filter supplied, jssourceFilter starts with all platforms loaded (jssource
+        // components will be built for both their application's platform (e.g. portal) AND base.
+        // Clients should only set this filter if their widgets do NOT extendFrom base widgets.
+        if (!empty($args['jssource_filter']) ) {
+            $platforms = explode(",", $args['jssource_filter']);
+            if ($platforms != false) {
+                $arrJSSourcePlatforms = $platforms;
             }
+        } else {
+            $arrJSSourcePlatforms = $this->platforms;
         }
         return $arrJSSourcePlatforms;
     }

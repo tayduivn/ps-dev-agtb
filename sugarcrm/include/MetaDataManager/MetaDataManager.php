@@ -455,7 +455,7 @@ class MetaDataManager {
      *
      * @return array
      */
-    public function getSugarLayouts($platforms)
+    public function getSugarLayouts()
     {
         return $this->getSugarClientFiles('layout');
     }
@@ -556,12 +556,10 @@ class MetaDataManager {
      * specified. Resulting array will be delineated by platform.
      *
      * @param string $type The type of files to get
-     * @param string $modulePath path to module 
-     * @param string $module the module
      * @param array $platforms Which platforms to get client files for.
      * @return array
      */
-    public function getSugarClientFilesForPlatforms($type, $modulePath = "", $module = "", $platforms = array())
+    public function getSugarClientFilesForPlatforms($type, $platforms = array())
     {
         $result = array();
 
@@ -573,42 +571,33 @@ class MetaDataManager {
         $typePath = $type . 's';
 
         // Retrieves base directory names for all possible widgets
-        $allSugarFiles = $this->getSugarClientFileDirs($typePath, false, $modulePath);
+        $allSugarFiles = $this->getSugarClientFileDirs($typePath, false, '');
 
         foreach ( $allSugarFiles as $dirname) {
             // reset $fileData
             $fileData = array();
-            // Check each platform in order of precendence to find the "best" controller
-            // Add in meta checking here as well
             $meta = array();
-
             $tplDir = array();
+            
             foreach ( $platforms as $platform ) {
-                $dir = "{$modulePath}clients/$platform/$typePath/$dirname/";
+                $dir = "clients/$platform/$typePath/$dirname/";
                 $controller = SugarAutoLoader::existingCustomOne("{$dir}{$dirname}.js");
                 if (empty($meta)) {
-                    $meta = $this->fetchMetadataFromDirs(array($dir), $module);
+                    $meta = $this->fetchMetadataFromDirs(array($dir), '');
                 }
                 if ( $controller ) {
                     $fileData[$platform][$dirname]['controller'] = file_get_contents($controller);
                 }
-
                 // Now get templates
-                $tplDir[0] = "{$modulePath}clients/$platform/$typePath/$dirname/";
+                $tplDir[0] = "clients/$platform/$typePath/$dirname/";
                 $templates = $this->fetchTemplates($tplDir);
-                if (!empty($module) && $type != "field"){
-                    //custom views/layouts can only have one templates
-                    $fileData[$platform][$dirname]['template'] = reset($templates);
-                } else {
-                    if (count($templates)) {
-                        $fileData[$platform][$dirname]['templates'] = $templates;
-                    }
+                if (count($templates)) {
+                    $fileData[$platform][$dirname]['templates'] = $templates;
                 }
                 // Add the meta
                 if ($meta) {
                    $fileData[$platform][$dirname]['meta'] = array_shift($meta); // Get the first member
                 }
-
                 // Remove empty fileData members. There's a chance of course we haven't 
                 // found anything and $fileData[$platform] my be unset
                 if (isset($fileData[$platform])) {
