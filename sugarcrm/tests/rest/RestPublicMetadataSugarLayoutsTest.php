@@ -123,7 +123,7 @@ class RestPublicMetadataSugarLayoutsTest extends RestTestBase {
         $reply = $this->_restCall('metadata/public?type_filter=layouts&platform=mobile');
         $this->assertNotEmpty($reply['reply']['layouts'], 'Layouts return data is missing');
         $this->assertTrue(isset($reply['reply']['layouts']['_hash']), 'Layout hash is missing.');
-        $this->assertEmpty($reply['reply']['layouts']['dizzle'], 'Incorrectly picked up metadata that should not have been read');
+        $this->assertFalse(isset($reply['reply']['layouts']['dizzle']), 'Incorrectly picked up metadata that should not have been read');
         $this->assertArrayHasKey('wiggle', $reply['reply']['layouts'], 'BASE metadata not picked up');
         $this->assertNotEmpty($reply['reply']['layouts']['wiggle']['meta']['test'], 'Test result data not returned');
     }

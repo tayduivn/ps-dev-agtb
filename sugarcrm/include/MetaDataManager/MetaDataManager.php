@@ -76,49 +76,6 @@ class MetaDataManager {
     }
 
     /**
-     * Gets the view defs for a module for a given view|layout
-     *
-     * @param string $moduleName The name of the module
-     * @param string $viewdefType The type of def (layout or view)
-     * @return array
-     */
-    protected function getModuleViewdefs($moduleName, $viewdefType = 'view') {
-        // Return data
-        $data = array();
-
-        // The metadata filenames that we will be getting
-        $data = array();
-
-        // Module metadata directories for fetching controllers and templates
-        $moduledirs = array();
-
-        // Start with SugarObjects :: basic
-        $basic = "include/SugarObjects/templates/basic/clients/{$this->platforms[0]}/{$viewdefType}s";
-        if (SugarAutoLoader::fileExists($basic)) {
-            $result = $this->getSugarClientFiles($viewdefType, 'include/SugarObjects/templates/basic/', "<module_name>");
-            foreach ($result as $name => $fileArray) {
-                $data[$name] = $fileArray;
-            }
-        }
-
-        // Now get the SugarObjects :: $moduleType files
-        $moduleType = MetaDataFiles::getSugarObjectFileDir($moduleName, $this->platforms[0], $viewdefType);
-        if (SugarAutoLoader::fileExists($moduleType)) {
-            $result = $this->getSugarClientFiles($viewdefType, $moduleType, "<module_name>");
-            foreach ($result as $name => $fileArray) {
-                $data[$name] = $fileArray;
-            }
-        }
-
-        // Now handle the module locations
-        $result = $this->getSugarClientFiles($viewdefType, "modules/{$moduleName}/", $moduleName);
-        foreach ($result as $name => $fileArray) {
-            $data[$name] = $fileArray;
-        }
-
-        return $data;
-    }
-    /**
      * For a specific module get any existing Subpanel Definitions it may have
      * @param string $moduleName
      * @return array
@@ -174,7 +131,7 @@ class MetaDataManager {
      * @return Array A hash of all of the view data.
      */
     public function getModuleViews($moduleName) {
-        return $this->getModuleViewdefs($moduleName, 'view');
+        return $this->getClientFiles('view',$moduleName);
     }
 
     /**
@@ -185,7 +142,7 @@ class MetaDataManager {
      * @return Array A hash of all of the view data.
      */
     public function getModuleLayouts($moduleName) {
-        return $this->getModuleViewdefs($moduleName, 'layout');
+        return $this->getClientFiles('layout', $moduleName);
     }
 
     /**
@@ -196,7 +153,7 @@ class MetaDataManager {
      * @return Array A hash of all of the view data.
      */
     public function getModuleFields($moduleName) {
-        return $this->getModuleViewdefs($moduleName, 'field');
+        return $this->getClientFiles('field', $moduleName);
     }
 
     /**
@@ -436,7 +393,7 @@ class MetaDataManager {
      */
     public function getSugarFields()
     {
-        return $this->getSugarClientFiles('field');
+        return $this->getClientFiles('field');
     }
 
     /**
@@ -446,7 +403,7 @@ class MetaDataManager {
      */
     public function getSugarViews()
     {
-        return $this->getSugarClientFiles('view');
+        return $this->getClientFiles('view');
     }
 
     /**
@@ -457,191 +414,157 @@ class MetaDataManager {
      */
     public function getSugarLayouts()
     {
-        return $this->getSugarClientFiles('layout');
+        return $this->getClientFiles('layout');
     }
 
     /**
-     * Gets the directories for a given path along the known platform stack
-     *
-     * @param string $path The directory within a platform
-     * @param bool $full Whether to return full paths or dirnames only
-     * @return array
-     */
-    public function getSugarClientFileDirs($path, $full = false, $modulePath = "") {
-        $dirs = array();
-        foreach ( $this->platforms as $platform ) {
-            $basedir  = "{$modulePath}clients/{$platform}/{$path}/";
-            // get all dirs there and in custom
-            $alldirs = SugarAutoLoader::getFilesCustom($basedir, true);
-
-            foreach ($alldirs as $dir) {
-                // To prevent doing the work twice, let's sort this out by basename
-                $dirname = basename($dir);
-                $dirs[$dirname] = $full ? $dir . '/' : $dirname;
-            }
-        }
-
-        return $dirs;
-    }
-
-    /**
-     * Gets client files of type $type (view, layout, field)
+     * Gets client files of type $type (view, layout, field) for a module or for the system
      *
      * @param string $type The type of files to get
+     * @param string $module Module name (leave blank to get the system wide files)
      * @return array
      */
-    public function getSugarClientFiles($type, $modulePath = "", $module="")
+    public function getClientFiles($type, $module='')
     {
-        $result = array();
 
-        $typePath = $type . 's';
-
-        $allSugarFiles = $this->getSugarClientFileDirs($typePath, false, $modulePath);
-
-        foreach ( $allSugarFiles as $dirname) {
-            // reset $fileData
-            $fileData = array();
-            // Check each platform in order of precendence to find the "best" controller
-            // Add in meta checking here as well
-            $meta = array();
+        // This is a semi-complicated multi-step process, so we're going to try and make this as easy as possible.
+        
+        // First, build a list of paths to check
+        $checkPaths = array();
+        if ( $module == '' ) {
             foreach ( $this->platforms as $platform ) {
-                $dir = "{$modulePath}clients/$platform/$typePath/$dirname/";
-                $controller = SugarAutoLoader::existingCustomOne("{$dir}{$dirname}.js");
-                if (empty($meta)) {
-                    $meta = $this->fetchMetadataFromDirs(array($dir), $module);
+                // These are sorted in order of priority.
+                // No templates for the non-module stuff
+                $checkPaths['custom/clients/'.$platform.'/'.$type.'s'] = array('platform'=>$platform,'template'=>false);
+                $checkPaths['clients/'.$platform.'/'.$type.'s'] = array('platform'=>$platform,'template'=>false);
+            }
+            
+        } else {
+            foreach ( $this->platforms as $platform ) {
+                // These are sorted in order of priority.
+                // The template flag is if that file needs to be "built" by the metadata loader so it
+                // is no longer a template file, but a real file.
+                $checkPaths['custom/modules/'.$module.'/clients/'.$platform.'/'.$type.'s'] = array('platform'=>$platform,'template'=>false);
+                $checkPaths['modules/'.$module.'/clients/'.$platform.'/'.$type.'s'] = array('platform'=>$platform,'template'=>false);
+                $baseTemplateDir = 'include/SugarObjects/templates/basic/clients/'.$platform.'/'.$type.'s';
+                $nonBaseTemplateDir = MetaDataFiles::getSugarObjectFileDir($module, $platform, $type);
+                if (!empty($nonBaseTemplateDir) && $nonBaseTemplateDir != $baseTemplateDir ) {
+                    $checkPaths['custom/'.$nonBaseTemplateDir] = array('platform'=>$platform,'template'=>true);
+                    $checkPaths[$nonBaseTemplateDir] = array('platform'=>$platform, 'template'=>true);
                 }
-                if ( $controller ) {
-                    $fileData['controller'] = file_get_contents($controller);
-                    // We found a controller, let's get out of here!
+                $checkPaths['custom/'.$baseTemplateDir] = array('platform'=>$platform,'template'=>true);
+                $checkPaths[$baseTemplateDir] = array('platform'=>$platform,'template'=>true);
+            }
+        }
+
+        // Second, get a list of files in those directories, sorted by "relevance"
+        $fileList = array();
+        $templateFiles = array();
+        foreach ( $checkPaths as $path => $pathInfo ) {
+            // Looks at /modules/Accounts/clients/base/views/*
+            // So should pull up "record","list","preview"
+            $dirsInPath = SugarAutoLoader::getDirFiles($path,true);
+            foreach ( $dirsInPath as $fullSubPath ) {
+                $subPath = basename($fullSubPath);
+                // This should find the files in each view/layout
+                // So it should pull up list.js, list.php, list.hbt
+                $filesInDir = SugarAutoLoader::getDirFiles($fullSubPath,false);
+                foreach ( $filesInDir as $fullFile ) {
+                    $file = basename($fullFile);
+                    $fileIndex = $subPath.'/'.$file;
+                    if ( !isset($fileList[$fileIndex]) ) {
+                        $fileList[$fileIndex] = array('path'=>$fullFile, 'file'=>$file, 'subPath'=>$subPath, 'platform'=>$pathInfo['platform']);
+                        if ( $pathInfo['template'] && (substr($file,-4)=='.php') ) {
+                            $templateFiles[] = $fileIndex;
+                        }
+                    }
+                }
+            }
+        }
+
+        // Third, if there are any files in that list that are from template objects build out the final files
+        // Third-and-a-half, load those final files instead of the template object ones.
+        if ( !empty($templateFiles) ) {
+            // We have templates to build
+            foreach ( $templateFiles as $fileIndex ) {
+                $fileInfo = $fileList[$fileIndex];
+                // Unset the entry in filelist so it is only loaded if we successfully generate a new template
+                unset($fileList[$fileIndex]);
+                $viewdefs = array();
+                require $fileInfo['path'];
+                $bean = BeanFactory::getBean($module);
+                if ( !is_a($bean,'SugarBean') ) {
+                    continue;
+                }
+                // Figure out the filename to store this in
+                $pathParts = explode('/',$fileInfo['path']);
+                while ( $pathParts[0] != 'clients' ) {
+                    // Keep stripping off array elements until we hit the clients directory
+                    array_shift($pathParts);
+                    if ( count($pathParts) == 0 ) {
+                        break;
+                    }
+                }
+                if ( count($pathParts) != 0 ) {
+                    // We found the directory
+                    array_unshift($pathParts,'custom','modules',$module);
+                    $outputPath = implode('/',$pathParts);
+                    // Remove the filename off of the path
+                    array_pop($pathParts);
+                    $outputDir = implode('/',$pathParts);
+
+                    $viewdefs = MetaDataFiles::getModuleMetaDataDefsWithReplacements($bean, $viewdefs);
+                    if ( ! isset($viewdefs[$module][$fileInfo['platform']][$type][$fileInfo['subPath']]) ) {
+                        $GLOBALS['log']->error('Could not generate a metadata file for module '.$module.', platform: '.$fileInfo['platform'].', type: '.$type);
+                        continue;
+                    }
+                    $output = "<?php\n".'$viewdefs["'.$module.'"]["'.$fileInfo['platform'].'"]["'.$type.'"]["'.$fileInfo['subPath'].'"] = '.var_export_helper($viewdefs[$module][$fileInfo['platform']][$type][$fileInfo['subPath']]).";\n";
+                    if ( SugarAutoLoader::ensureDir($outputDir) ) {
+                        SugarAutoLoader::put($outputPath, $output);
+                        $fileInfo['path'] = $outputPath;
+                        $fileList[$fileIndex] = $fileInfo;
+                    } else {
+                        // Can't write a new file, just throw away this item.
+                        $GLOBALS['log']->error('Could not write a new metadata entry to '.$outputPath.' cannot load this piece of metadata');
+                    }
+                }
+            }
+        }
+        
+        // Forth, actually load up those files and return them in an array
+        $results = array();
+        foreach ( $fileList as $fileIndex => $fileInfo ) {
+            $extension = substr($fileInfo['path'],-3);
+            switch ( $extension ) {
+                case '.js':
+                    $results[$fileInfo['subPath']]['controller'] = file_get_contents($fileInfo['path']);
                     break;
-                }
-            }
-
-            // Reverse the platform order so that "better" templates override worse ones
-            $backwardsPlatforms = array_reverse($this->platforms);
-            $templateDirs = array();
-            foreach ( $backwardsPlatforms as $platform ) {
-                $templateDirs[] = "{$modulePath}clients/$platform/$typePath/$dirname/";
-            }
-            $templates = $this->fetchTemplates($templateDirs);
-            if (!empty($module) && $type != "field"){
-                //custom views/layouts can only have one templates
-                $fileData['template'] = reset($templates);
-            }
-            else
-                $fileData['templates'] = $templates;
-
-            if ($meta) {
-               $fileData['meta'] = array_shift($meta); // Get the first member
-            }
-            //$fileData['meta'] = $this->fetchMetadataFromDirs($templateDirs);
-
-            // Remove empty fileData members
-            foreach ($fileData as $k => $v) {
-                if (empty($v)) {
-                    unset($fileData[$k]);
-                }
-            }
-
-            $result[$dirname] = $fileData;
-        }
-
-        $result['_hash'] = md5(serialize($result));
-        return $result;
-    }
-
-    /**
-     * Fetches all metadata from a set of directories
-     *
-     * @param array $dirs The directories to read
-     * @return array
-     */
-    protected function fetchMetadataFromDirs($dirs, $module="") {
-        $return = array();
-        foreach ($dirs as $dir) {
-            $dir = rtrim($dir, '/') . '/';
-            $cust = "custom/$dir";
-            $return = array_merge($return, $this->fetchMetadataFromDir($dir, $module), $this->fetchMetadataFromDir($cust, $module));
-        }
-        return $return;
-    }
-
-    /**
-     * Fetches metadata from a single directory
-     *
-     * @param string $dir
-     * @return array
-     */
-    protected function fetchMetadataFromDir($dir, $module = "") {
-        $meta = array();
-        if (SugarAutoLoader::fileExists($dir)) {
-            // Get the client, type amd name for this particular directory
-            preg_match("#clients/([^/]*)/([^/]*)/([^/]*)/#", $dir, $m);
-            $platform = $m[1];
-            $type = substr_replace($m[2], '', -1); // Pluck the 's' from the type
-            $filename = $m[3];
-            $file = rtrim($dir, '/') . '/' . $filename . '.php';
-            if (SugarAutoLoader::fileExists($file)) {
-                // Changed from require_once to require so we can actually get
-                // these on multiple requests for them
-                require $file;
-
-                // Only get the viewdefs if they exist for this platform and file
-                // Also handle search, since those defs are different
-                if (!empty($module)) {
-                    if (isset($searchdefs[$module])) {
-                        $meta[$filename] = $searchdefs[$module];
+                case 'hbt':
+                    $layoutName = substr($fileInfo['file'],0,-4);
+                    $results[$fileInfo['subPath']]['templates'][$layoutName] = file_get_contents($fileInfo['path']);
+                    // $results[$fileInfo['subPath']]['template'] = file_get_contents($fileInfo['path']);
+                    break;
+                case 'php':
+                    $viewdefs = array();
+                    require $fileInfo['path'];
+                    if ( empty($module) ) {
+                        if ( !isset($viewdefs[$fileInfo['platform']][$type][$fileInfo['subPath']]) ) {
+                            $GLOBALS['log']->error('No viewdefs for type: '.$type.' viewdefs @ '.$fileInfo['path']);
+                        } else {
+                            $results[$fileInfo['subPath']]['meta'] = $viewdefs[$fileInfo['platform']][$type][$fileInfo['subPath']];
+                        }
+                    } else {
+                        if ( !isset($viewdefs[$module][$fileInfo['platform']][$type][$fileInfo['subPath']]) ) {
+                            $GLOBALS['log']->error('No viewdefs for module: '.$module.' viewdefs @ '.$fileInfo['path']);
+                        } else {
+                            $results[$fileInfo['subPath']]['meta'] = $viewdefs[$module][$fileInfo['platform']][$type][$fileInfo['subPath']];
+                        }
                     }
-                    else if (isset($viewdefs[$module][$platform][$type][$filename]))
-                    {
-                        $meta[$filename] = $viewdefs[$module][$platform][$type][$filename];
-                    }
-                }
-                else if (isset($viewdefs[$platform][$type][$filename]))
-                {
-                    $meta[$filename] = $viewdefs[$platform][$type][$filename];
-                }
+                    break;
             }
         }
-
-        return $meta;
-    }
-
-    /**
-     * A method to collect templates and pass them back, shared between sugarfields, viewtemplates and per-module templates
-     *
-     * @param $searchDirs array A list of directories to search, custom directories will be searched automatically, ordered by least to most important
-     * @param $extension string A extension to search for, defaults to ".hbt"
-     * @return array An array of template file contents keyed by the template name.
-     */
-    protected function fetchTemplates($searchDirs,$extension='.hbt') {
-        $templates = array();
-
-        foreach ( $searchDirs as $searchDir ) {
-            foreach(SugarAutoLoader::getFilesCustom($searchDir, false, $extension) as $templateFile) {
-
-                $templateName = basename($templateFile, $extension);
-                $templates[$templateName] = file_get_contents($templateFile);
-            }
-        }
-        return $templates;
-    }
-
-    /**
-     * The collector method for view templates
-     *
-     * @return array A hash of the template name and the template contents
-     */
-    public function getViewTemplates() {
-        $backwardsPlatforms = array_reverse($this->platforms);
-        $templateDirs = array();
-        foreach ( $backwardsPlatforms as $platform ) {
-            $moreTemplates = SugarAutoLoader::getFilesCustom("clients/${platform}/views/", true);
-            $templateDirs = array_merge($templateDirs,$moreTemplates);
-        }
-        $templates = $this->fetchTemplates($templateDirs);
-        $templates['_hash'] = md5(serialize($templates));
-        return $templates;
+        $results['_hash'] = md5(serialize($results));
+        return $results;
     }
 
     /**

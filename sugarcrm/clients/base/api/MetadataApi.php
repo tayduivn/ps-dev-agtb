@@ -87,7 +87,7 @@ class MetadataApi extends SugarApi {
         }
 
         // Default the type filter to everything
-        $this->typeFilter = array('modules','full_module_list','fields','view_templates','labels','mod_strings','app_strings','app_list_strings','module_list', 'views', 'layouts','relationships','currencies', 'jssource');
+        $this->typeFilter = array('modules','full_module_list','fields','labels','mod_strings','app_strings','app_list_strings','module_list', 'views', 'layouts','relationships','currencies', 'jssource');
         if ( !empty($args['type_filter']) ) {
             // Explode is fine here, we control the list of types
             $types = explode(",", $args['type_filter']);
@@ -156,7 +156,7 @@ class MetadataApi extends SugarApi {
             generateETagHeader($data['_hash']);
         }
 
-        $baseChunks = array('view_templates','fields','app_strings','app_list_strings','module_list', 'views', 'layouts', 'full_module_list','relationships', 'currencies', 'jssource');
+        $baseChunks = array('fields','app_strings','app_list_strings','module_list', 'views', 'layouts', 'full_module_list','relationships', 'currencies', 'jssource');
         $perModuleChunks = array('modules','mod_strings');
 
         return $this->filterResults($args, $data, $onlyHash, $baseChunks, $perModuleChunks, $moduleFilter);
@@ -200,7 +200,7 @@ class MetadataApi extends SugarApi {
 
 
         // Default the type filter to everything available to the public, no module info at this time
-        $this->typeFilter = array('fields','view_templates','app_strings','views', 'layouts', 'config', 'jssource');
+        $this->typeFilter = array('fields','app_strings','views', 'layouts', 'config', 'jssource');
 
         if ( !empty($args['type_filter']) ) {
             // Explode is fine here, we control the list of types
@@ -235,10 +235,9 @@ class MetadataApi extends SugarApi {
         // Start collecting data
         $data = array();
 
-        $data['fields']  = $mm->getSugarClientFiles('field');
-        $data['views']   = $mm->getSugarClientFiles('view');
+        $data['fields']  = $mm->getSugarFields();
+        $data['views']   = $mm->getSugarViews();
         $data['layouts'] = $mm->getSugarLayouts();
-        $data['view_templates'] = $mm->getViewTemplates();
         $data['app_strings'] = $mm->getAppStrings();
         $data['app_list_strings'] = $app_list_strings_public;
         $data['config'] = $this->getConfigs();
@@ -247,7 +246,7 @@ class MetadataApi extends SugarApi {
             "Login" => array("fields" => array()));
         $data["_hash"] = md5(serialize($data));
 
-        $baseChunks = array('view_templates','fields','app_strings','views', 'layouts', 'config', 'jssource');
+        $baseChunks = array('fields','app_strings','views', 'layouts', 'config', 'jssource');
 
         return $this->filterResults($args, $data, $onlyHash, $baseChunks);
     }
@@ -347,8 +346,10 @@ class MetadataApi extends SugarApi {
                         }
                     } elseif (isset($fieldDef['type']) && ($fieldDef['type'] == 'link')) {
                         $bean->load_relationship($fieldDef['name']);
-                        $otherSide = $bean->$fieldDef['name']->getRelatedModuleName();
-                        $data['full_module_list'][$otherSide] = $otherSide;
+                        if ( isset($bean->$fieldDef['name']) && method_exists($bean->$fieldDef['name'],'getRelatedModuleName') ) {
+                            $otherSide = $bean->$fieldDef['name']->getRelatedModuleName();
+                            $data['full_module_list'][$otherSide] = $otherSide;
+                        }
                     }
                 }
             }
@@ -373,10 +374,9 @@ class MetadataApi extends SugarApi {
             }
         }
 
-        $data['fields']  = $mm->getSugarClientFiles('field');
-        $data['views']   = $mm->getSugarClientFiles('view');
-        $data['layouts'] = $mm->getSugarClientFiles('layout');
-        $data['view_templates'] = $mm->getViewTemplates();
+        $data['fields']  = $mm->getSugarFields();
+        $data['views']   = $mm->getSugarViews();
+        $data['layouts'] = $mm->getSugarLayouts();
         $data['app_strings'] = $mm->getAppStrings();
         $data['app_list_strings'] = $mm->getAppListStrings();
         $data['relationships'] = $mm->getRelationshipData();
@@ -562,8 +562,10 @@ class MetadataApi extends SugarApi {
                     }
                 } elseif (isset($fieldDef['type']) && ($fieldDef['type'] == 'link')) {
                     $bean->load_relationship($fieldDef['name']);
-                    $otherSide = $bean->$fieldDef['name']->getRelatedModuleName();
-                    $data['full_module_list'][$otherSide] = $otherSide;
+                    if ( isset($bean->$fieldDef['name']) && method_exists($bean->$fieldDef['name'],'getRelatedModuleName') ) {
+                        $otherSide = $bean->$fieldDef['name']->getRelatedModuleName();
+                        $data['full_module_list'][$otherSide] = $otherSide;
+                    }
                 }
             }
         }
