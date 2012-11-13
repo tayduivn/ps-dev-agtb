@@ -125,7 +125,8 @@ class ViewLabels extends ViewModulefields
         foreach(return_module_language($selected_lang, $editModule,false) as $name=>$label) {
         		//#25294
         	 	if($allLabels || isset($vnames[$name]) || preg_match( '/lbl_city|lbl_country|lbl_billing_address|lbl_alt_address|lbl_shipping_address|lbl_postal_code|lbl_state$/si' , $name)) {
-                    $formatted_mod_strings[$name] = htmlentities($label, ENT_QUOTES, 'UTF-8');
+                    //$formatted_mod_strings[$name] = htmlentities($label, ENT_QUOTES, 'UTF-8');
+                    $formatted_mod_strings[$name] = html_entity_decode($label);
         	 	}
         }
         //Grab everything from the custom files
@@ -141,7 +142,8 @@ class ViewLabels extends ViewModulefields
         	   include($langfile);
         	   foreach($mod_strings as $key => $label)
         	   {
-                    $formatted_mod_strings[$key] = htmlentities($label, ENT_QUOTES, 'UTF-8');
+                    //$formatted_mod_strings[$key] = htmlentities($label, ENT_QUOTES, 'UTF-8');
+                   $formatted_mod_strings[$key] = html_entity_decode($label);
         	   }
         	}
         }
