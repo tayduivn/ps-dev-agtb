@@ -485,15 +485,19 @@ function replaceAll(text, src, rep) {
 	return text;
 }
 
+/**
+ * Adds form for validation if it doesn't already exist already
+ * @param {string} formname Name of form
+ */
 function addForm(formname) {
-	validate[formname] = new Array();
+    if(typeof validate[formname] == 'undefined'){
+	    validate[formname] = new Array();
+    }
 }
 
 function addToValidate(formname, name, type, required, msg) {
-	if(typeof validate[formname] == 'undefined') {
-		addForm(formname);
-	}
-	validate[formname][validate[formname].length] = new Array(name, type,required, msg);
+	addForm(formname);
+	validate[formname].push([name, type,required, msg]);
 }
 
 // Bug #47961 Callback validator definition
@@ -909,10 +913,24 @@ function check_form(formname) {
 	return validate_form(formname, '');
 }
 
-function add_error_style(formname, input, txt, flash) {
+/**
+ * Adds error style to a form input field with the given message
+ *
+ * @param {string} formname Name of form being used
+ * @param {string} input Name of field having error style applied
+ * @param {string} txt Error message text
+ * @param {boolean} flash Perform flash animation
+ * @param {boolean} sticky Make error style stay unless explicitly removed
+ */
+function add_error_style(formname, input, txt, flash, sticky) {
     var raiseFlag = false;
 	if (typeof flash == "undefined")
 		flash = true;
+    if (typeof sticky !== "boolean"){
+        sticky = false;
+    } else if(sticky) {
+        flash = false; // If sticky, we can't allow message to flash
+    }
 	try {
 	inputHandle = typeof input == "object" ? input : document.forms[formname][input];
 	style = get_current_bgcolor(inputHandle);
@@ -946,11 +964,16 @@ function add_error_style(formname, input, txt, flash) {
         else {
             inputHandle.parentNode.appendChild(errorTextNode);
         }
-        if (flash)
-        	inputHandle.style.backgroundColor = "#FF0000";
-        inputsWithErrors.push(inputHandle);
+        //inputsWithErrors array is used when flashing and removing old messages.
+        // We won't track sticky messages.
+        if(!sticky){
+            if (flash)
+                inputHandle.style.backgroundColor = "#FF0000";
+            inputsWithErrors.push(inputHandle);
+        }
+
 	}
-    if (flash)
+    if (flash && !sticky)
     {
 		// We only need to setup the flashy-flashy on the first entry, it loops through all fields automatically
 	    if ( inputsWithErrors.length == 1 ) {
@@ -1081,6 +1104,7 @@ function isFieldHidden(field)
 }
 //END SUGARCRM flav=pro ONLY
 function validate_form(formname, startsWith){
+
     requiredTxt = SUGAR.language.get('app_strings', 'ERR_MISSING_REQUIRED_FIELDS');
     invalidTxt = SUGAR.language.get('app_strings', 'ERR_INVALID_VALUE');
 
