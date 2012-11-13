@@ -650,6 +650,7 @@ class MetaDataManager {
      * @return array The module strings for the current language
      */
     public function getModuleStrings( $moduleName ) {
+        // Bug 58174 - Escaped labels are sent to the client escaped
         $strings = return_module_language($GLOBALS['current_language'],$moduleName);
         if (is_array($strings)) {
             foreach ($strings as $k => $v) {
