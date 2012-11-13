@@ -260,6 +260,17 @@ class VardefManager{
                 $bean = BeanFactory::newBean($module);
             }
         }
+        if(!empty($params['bean'])) {
+            $bean = $params['bean'];
+        } else {
+            if(!empty($dictionary[$object])) {
+                // to avoid extra refresh - we'll fill it in later
+                if(!isset($GLOBALS['dictionary'][$object]['related_calc_fields'])) {
+                    $GLOBALS['dictionary'][$object]['related_calc_fields'] = array();
+                }
+                $bean = BeanFactory::newBean($module);
+            }
+        }
         //Some modules have multiple beans, we need to see if this object has a module_dir that is different from its module_name
         if(!$found){
             if (!empty($bean))

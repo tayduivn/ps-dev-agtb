@@ -108,7 +108,7 @@ class SugarAutoLoader
 	 * Extensions to include in mapping
 	 * @var string
 	 */
-    public static $exts = array("php", "tpl", "html", "js", "override", 'gif', 'png', 'jpg', 'tif', 'bmp', 'css', 'xml', 'hbt');
+    public static $exts = array("php", "tpl", "html", "js", "override", 'gif', 'png', 'jpg', 'tif', 'bmp', 'css', 'xml', 'hbt', 'less');
     /**
      * File map
      * @var array

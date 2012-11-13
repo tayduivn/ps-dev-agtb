@@ -336,8 +336,9 @@ $mod_strings = array (
     // config panels strings
     // splash screens
     'LBL_FORECASTS_CONFIG_TITLE' => 'Forecasts Setting',
-    'LBL_FORECASTS_CONFIG_ADMIN_SPLASH_1' => 'Welcome to the Forecasts Setting!<p><p>The wizard will guide you through the setup step by step and default values are provided for each section so you\'ll be on your way in no time!',
-    'LBL_FORECASTS_CONFIG_ADMIN_SPLASH_2' => 'You can also do manual setup by clicking ',
+    'LBL_FORECASTS_CONFIG_ADMIN_SPLASH_1' => 'Welcome to the Forecasts Setting!',
+    'LBL_FORECASTS_CONFIG_ADMIN_SPLASH_2' => 'The wizard will guide you through the setup step by step and default values are provided for each section so you\'ll be on your way in no time!',
+    'LBL_FORECASTS_CONFIG_ADMIN_SPLASH_3' => 'You can also do manual setup by clicking ',
     'LNK_FORECASTS_CONFIG_ADMIN_SPLASH_HERE' => 'here.',
     'LBL_FORECASTS_CONFIG_USER_SPLASH' => 'Forecasting has not been configured yet.  Please contact your system administrator.',
 
@@ -364,9 +365,9 @@ $mod_strings = array (
     'LBL_FORECASTS_CONFIG_CATEGORY_SETUP_NOTICE' => 'Please note that Category page will be read only after the first commit or save draft; for this reason the Category should be set up carefully.',
     'LBL_FORECASTS_CONFIG_CATEGORIES' => 'Forecast Category Options:',
     'LBL_FORECASTS_CONFIG_CATEGORY_OPTIONS' => 'Select the way you would like to categorize opportunities.',
-    'LBL_FORECASTS_CONFIG_SHOW_BINARY_RANGES_DESCRIPTION' => 'This option gives a user the ability to be included or omitted from a forecast.',
+    'LBL_FORECASTS_CONFIG_SHOW_BINARY_RANGES_DESCRIPTION' => 'This option gives a user the ability to be included or excluded from a forecast.',
     'LBL_FORECASTS_CONFIG_SHOW_BUCKETS_RANGES_DESCRIPTION' => 'This option gives a user the ability to categorize their opportunities that are not included in the commit but are upside and have the potential of closing if everything goes well and opportunities that are to be omitted from the forecast.',
-    'LBL_FORECASTS_CONFIG_SHOW_CUSTOM_BUCKETS_CATEGORIES' => 'Custom Categories: This option gives a user the ability to categorize their opportunities to be committed into the forecast into a committed category, omitted category and any other categories that you setup.',
+    'LBL_FORECASTS_CONFIG_SHOW_CUSTOM_BUCKETS_CATEGORIES' => 'Custom Categories: This option gives a user the ability to categorize their opportunities to be committed into the forecast into a committed category, excluded category and any other categories that you setup.',
 
     // range config
     'LBL_FORECASTS_CONFIG_WORKSHEET_RANGE' => 'Select the column you would like the user to fill out for their forecast for each opportunity.',
