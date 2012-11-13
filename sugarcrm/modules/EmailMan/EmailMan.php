@@ -817,6 +817,8 @@ class EmailMan extends SugarBean{
                     $mail->setHtmlBody(wordwrap($htmlBody, 900));
                 }
 
+                $mail->clearAttachments(); // need to clear the attachments because the mailer is reused for different emails
+
                 // cn: bug 4684, handle attachments in email templates.
                 if (!empty($this->notes_array)) {
                     foreach($this->notes_array as $note) {

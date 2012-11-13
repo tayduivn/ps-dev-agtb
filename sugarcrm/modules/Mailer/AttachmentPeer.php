@@ -44,9 +44,24 @@ class AttachmentPeer
         $fileName = null;
         $mimeType = "application/octet-stream";
 
-        if (($bean instanceof Document) && (!empty($bean->document_revision_id))) {
+        if ($bean instanceof Document) {
+            if (empty($bean->id)) {
+                throw new MailerException(
+                    "Invalid Attachment: document not found",
+                    MailerException::InvalidAttachment
+                );
+            }
+            $document_revision_id = $bean->document_revision_id;
             $documentRevision = new DocumentRevision();
-            $documentRevision->retrieve($bean->document_revision_id);
+            if (!empty($document_revision_id)) {
+                $documentRevision->retrieve($bean->document_revision_id);
+            }
+            if (empty($document_revision_id) || $documentRevision->id != $document_revision_id) {
+                throw new MailerException(
+                    "Invalid Attachment: Document with Id (" . $bean->id . ")  contains an invalid or empty revision id: (" . $document_revision_id . ")",
+                    MailerException::InvalidAttachment
+                );
+            }
             $bean = $documentRevision;
         }
 
