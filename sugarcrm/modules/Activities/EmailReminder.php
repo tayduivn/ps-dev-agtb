@@ -135,9 +135,20 @@ class EmailReminder
             $subject = $xtpl->text("{$templateName}_Subject");
             $mailer->setSubject($subject);
 
-            // set the body of the email... looks to be plain-text only
-            $textBody = trim($xtpl->text($templateName));
-            $mailer->setTextBody($textBody);
+            // set the body of the email
+            $body = trim($xtpl->text($templateName));
+
+            // the compared strings will be the same if strip_tags had no affect
+            // if the compared strings are equal, then it's a text-only message
+            $textOnly = (strcmp($body, strip_tags($body)) == 0);
+
+            if ($textOnly) {
+                $mailer->setTextBody($body);
+            } else {
+                $textBody = strip_tags(br2nl($body)); // need to create the plain-text part
+                $mailer->setTextBody($textBody);
+                $mailer->setHtmlBody($body);
+            }
 
             foreach ($recipients as $recipient) {
                 // reuse the mailer, but process one send per recipient
