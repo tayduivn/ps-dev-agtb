@@ -3392,7 +3392,7 @@ SE.settings = {
         AjaxObject.startRequest(callbackSettings, urlStandard + '&emailUIAction=saveSettingsGeneral');
 
         if(displayMessage)
-            alert(app_strings.LBL_EMAIL_SETTINGS_SAVED);
+            alert(app_strings.LBL_EMAIL_SETTINGS_SAVED+"\n\n"+app_strings.LBL_EMAIL_SETTINGS_MUST_RELOAD);
 
         SE.settings.settingsDialog.hide();
     },

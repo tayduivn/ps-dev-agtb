@@ -3,6 +3,19 @@
  * @class View.Views.WorksheetView
  * @alias SUGAR.App.layout.WorksheetView
  * @extends View.View
+ *
+ *
+ * Events Triggered
+ *
+ * forecasts:commitButtons:enabled
+ *      on: context.forecasts
+ *      by: _render()
+ *      when: done rendering if enableCommit is true
+ *
+ * forecasts:worksheetmanager:rendered
+ *      on: context.forecasts
+ *      by: _render()
+ *      when: done rendering
  */
 ({
     url: 'rest/v10/ForecastManagerWorksheets',
@@ -80,6 +93,16 @@
         this._collection = this.context.forecasts.worksheetmanager;
         this._collection.url = this.createURL();
         this.safeFetch(true);
+    },
+
+    /**
+     * Clean up any left over bound data to our context
+     */
+    unbindData : function() {
+        if(this._collection) this._collection.off(null, null, this);
+        if(this.context.forecasts) this.context.forecasts.off(null, null, this);
+        if(this.context.forecasts.worksheetmanager) this.context.forecasts.worksheetmanager.off(null, null, this);
+        app.view.View.prototype.unbindData.call(this);
     },
 
     bindDataChange: function() {
@@ -337,7 +360,7 @@
         }
         
         this.calculateTotals();
-        self.context.forecasts.trigger('forecasts:worksheetmanager:render');
+        self.context.forecasts.trigger('forecasts:worksheetmanager:rendered');
 
     },
 

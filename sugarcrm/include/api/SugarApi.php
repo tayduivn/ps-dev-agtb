@@ -77,6 +77,9 @@ abstract class SugarApi {
     {
         $ret = array();
         foreach($beans as $bean){
+            if(!is_subclass_of($bean, 'SugarBean')) {
+                continue;
+            }
             $ret[] = $this->formatBean($api, $args, $bean);
         }
         return $ret;
@@ -175,10 +178,7 @@ abstract class SugarApi {
 
     protected function toggleFavorites($module, $record, $favorite)
     {
-        if($favorite == "false" || $favorite == "0") {
-            $favorite = false;
-        }
-
+        
         $favorite = (bool) $favorite;
 
         $fav_id = SugarFavorites::generateGUID($module,$record);

@@ -1,3 +1,16 @@
+/**
+ * Events Triggered
+ *
+ * modal:close
+ *      on: layout.context
+ *      by: close()
+ *      when: the user closes the modal
+ *
+ * modal:close
+ *      on: layout.context
+ *      by: save()
+ *      when: the new config model has saved successfully
+ */
 ({
     /**
      * The Current Active Panel Index
@@ -60,6 +73,8 @@
     save:function (evt) {
         // If button is disabled, do nothing
         if(!$(evt.target).hasClass('disabled')) {
+            // make it so you can click save again.
+            $(evt.target).addClass('disabled');
             var self = this;
 
             this.model.set('is_setup', true);
@@ -67,11 +82,16 @@
             this.context.forecasts.config.set(this.model.toJSON());
             this.context.forecasts.config.save({}, {
                 success: function() {
-                    // only trigger modal close after save api call has returned
-                    self.layout.context.trigger("modal:close");
+                    var url = app.api.buildURL("Forecasts/init");
+                    app.api.call('GET', url, null, {success: function(forecastData) {
+                        // get default selections for filter and category
+                        app.defaultSelections = forecastData.defaultSelections;
+                        app.initData = forecastData.initData;
+                        // only trigger modal close after save api call has returned
+                        self.layout.context.trigger("modal:close");
+                    }});
                 }
             });
-            this.layout.context.trigger("modal:close");
         }
     },
 

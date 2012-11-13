@@ -274,7 +274,7 @@ $mod_strings = array (
     'LBL_CLICKTOEDIT_INVALID' => 'Invalid',
     'LBL_WORKSHEET_SAVE_CONFIRM' => 'You have unsaved changes in your Worksheet. Press Ok to save these as a draft and continue, or Cancel to discard these changes continue.',
     'LBL_WORKSHEET_COMMIT_CONFIRM' => 'You have saved changes that have not been committed in the rep view. The saved changes will not be visible in the Manager view until you commit.<br>Press OK to commit the changes and continue, or Cancel to not commit the changes and continue.',
-    'LBL_WORKSHEET_COMMIT_ALERT' => 'You have committed your Rep view, but you have not yet committed your Manager view.  Your managers will not see the changes to your Manager view until you commit.',
+    'LBL_WORKSHEET_COMMIT_ALERT' => 'You have committed your Rep view, but not your Manager view; the team\'s forecast will not be committed until your Manager view is committed.',
     'LBL_WORKSHEET_SAVE_CONFIRM_UNLOAD' => 'You have unsaved changes in your Worksheet.',
     'LBL_WORKSHEET_ID' => 'Worksheet ID',
 
@@ -337,7 +337,7 @@ $mod_strings = array (
     // config panels strings
     // splash screens
     'LBL_FORECASTS_CONFIG_TITLE' => 'Forecasts Setting',
-    'LBL_FORECASTS_CONFIG_ADMIN_SPLASH_1' => 'Welcome to the forecasting setup. We\'ll guide you through step by step in setting up x,y and z so you\'ll be on your way in no time. Click next to get started.',
+    'LBL_FORECASTS_CONFIG_ADMIN_SPLASH_1' => 'Welcome to the Forecasts Setting!<p><p>The wizard will guide you through the setup step by step and default values are provided for each section so you\'ll be on your way in no time!',
     'LBL_FORECASTS_CONFIG_ADMIN_SPLASH_2' => 'You can also do manual setup by clicking ',
     'LNK_FORECASTS_CONFIG_ADMIN_SPLASH_HERE' => 'here.',
     'LBL_FORECASTS_CONFIG_USER_SPLASH' => 'Forecasting has not been configured yet.  Please contact your system administrator.',
@@ -386,4 +386,8 @@ $mod_strings = array (
     'LBL_FORECASTS_CONFIG_VARIABLES_CLOSED_LOST_STAGE' => 'Please select the Sales Stage that represent closed and lost opportunities:',
     'LBL_FORECASTS_CONFIG_VARIABLES_CLOSED_WON_STAGE' => 'Please select the Sales Stage that represent closed and won opportunities:',
     'LBL_FORECASTS_CONFIG_VARIABLES_FORMULA_DESC' => 'Therefore the pipeline formula will be:',
+
+    'LBL_FORECASTS_WIZARD_SUCCESS_TITLE' => 'Success:',
+    'LBL_FORECASTS_WIZARD_SUCCESS_MESSAGE' => 'You successfully set up your forecasting module. Please wait while the module loads.',
+    'LBL_FORECASTS_TABBED_CONFIG_SUCCESS_MESSAGE' => 'The setting has been saved. Please wait while the module reloads.'
 );

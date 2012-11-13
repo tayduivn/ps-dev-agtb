@@ -364,7 +364,8 @@ class UserPreference extends SugarBean
                 setcookie('sugar_user_theme', '', time() - 3600); // expire the sugar_user_theme cookie
             }
             unset($_SESSION[$user->user_name."_PREFERENCES"]);
-            if($user->id == $GLOBALS['current_user']->id) {
+            // only call session_destroy() when we have a valid session_id
+            if($user->id == $GLOBALS['current_user']->id && session_id() != "") {
                 session_destroy();
             }
             $this->setPreference('remove_tabs', $remove_tabs);

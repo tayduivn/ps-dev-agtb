@@ -272,8 +272,8 @@ describe("The forecasts worksheet", function(){
         });
     });
    
-    describe("Forecast Worksheet _collection.fetch", function(){
-    	beforeEach(function(){    		  		
+    describe("Forecast Worksheet collection.fetch", function(){
+    	beforeEach(function(){
     		view._collection.fetch = function(){};
     	});
     	 
@@ -325,7 +325,7 @@ describe("The forecasts worksheet", function(){
     		view.context = {};
     	});
     	
-    	it("_collection.on should have been called with reset", function(){
+    	it("collection.on should have been called with reset", function(){
     		expect(view._collection.on).toHaveBeenCalledWith("reset");
     	});
     	
