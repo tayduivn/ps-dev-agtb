@@ -5969,8 +5969,7 @@ footer .btn-toolbar.pull-left {
 }
 .card2 form, .card2 input, .card2 select, .card2 textarea {
   position:relative;
-  margin:-2px 0 0 -2px !important;
-  width:auto !important;
+  margin:0 0 0 -2px !important;
 }
 .inlined {
   margin:0;
@@ -6397,11 +6396,21 @@ h1 span { margin-left:5px; }
   border-radius:3px;
 }
 .radio input[type="radio"], .checkbox input[type="checkbox"] { float:none; }
-.chzn-container-multi .search-field { float:none !important; }
 .chzn-container { margin-top:-1px; }
 .chzn-container .chzn-container-multi { height:28px; }
-.chzn-container-multi .search-field { height:27px; }
+.chzn-container-single .chzn-single span { margin-right:34px; }
+.chzn-container-single .chzn-single abbr {
+  right:20px;
+  text-transform:none;
+  border-bottom:none;
+  cursor:inherit;
+}
+.chzn-container-multi .search-field {
+  float:none !important;
+  height:27px;
+}
 .chzn-container-multi .chzn-choices .search-field input { height:22px !important; }
+.chzn-container-multi .add-on { margin-top:3px; }
 .control-group.error>div:first-child, .control-group.error>div:first-child label, .control-group.error> label {
   font-weight:500;
   color:#b60000;
@@ -8302,7 +8311,6 @@ table th:first-child, table td:first-child { padding-left:20px; }
   opacity:0.6;
   filter:alpha(opacity=60);
 }
-.card2 form, .card2 input, .card2 select, .card2 textarea { margin:-5px 0 0 -2px !important; }
 .navbar a [class^="icon-"] {
   color:#ffffff !important;
   font-size:14px;

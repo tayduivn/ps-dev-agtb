@@ -1,6 +1,7 @@
 .input-append {
 	position:relative;
 	display:inline-block;
+
 	.add-on {
 		border:none;
 		background:transparent !important;
@@ -10,8 +11,8 @@
 		top:0;
 		right:0;
 		*/
-
 	}
+
 	&.textarea,
 	&.select,
 	&.checkbox,
@@ -24,8 +25,6 @@
 	    	border:none;
 	    }
 	}
-
-
 
 	&.checkbox,
 	&.radio {
@@ -49,11 +48,14 @@
 		}
 
 	}
+
 	&.textarea {
 		display:inline;
 	}
+
 	&.select .add-on {
 	}
+
 	input{
 	  .border-radius(@inputBorderRadius);
 	}
@@ -64,10 +66,6 @@
   float: none;
 }
 
-.chzn-container-multi .search-field {
-	float:none !important;
-}
-
 .chzn-container {
 	margin-top:-1px;
 	.chzn-container-multi {
@@ -75,11 +73,24 @@
 	}
 }
 
+.chzn-container-single .chzn-single {
+	span {
+		margin-right: 34px;
+	}
+	abbr {
+	  right: 20px;
+	  text-transform: none;
+	  border-bottom: none;
+	  cursor: inherit;
+	}
+}
+
 .chzn-container-multi {
 	.search-field {
+		float:none !important;
 		height:27px;
 	}
-	.chzn-choices .search-field input {	
+	.chzn-choices .search-field input {
 		height:22px !important;
 	}
 }
@@ -233,7 +244,7 @@ margin-left:4px;
 .upload-field-custom {
 	overflow: hidden;
 	display: inline-block;
-	position: relative; 
+	position: relative;
 	vertical-align: middle;
 	text-align: center;
 	height:18px !important;
@@ -251,7 +262,7 @@ margin-left:4px;
 		filter: alpha(opacity=0);
 	}
 	/*
-	&.focus { 
+	&.focus {
 	  outline: 2px solid yellow;
 	  }
 	*/
@@ -279,7 +290,7 @@ margin-left:4px;
 	& span {
 		width: 100px;
 	}
-}  
+}
 
 .file-upload-status {
   padding:0 0 0 .5em;
