@@ -31,7 +31,7 @@ class TemplateURL extends TemplateText{
 
     var $supports_unified_search = true;
 
-	function __construct()
+	public function __construct()
 	{
 		$this->vardef_map['ext4'] = 'link_target';
 		$this->vardef_map['link_target'] = 'ext4';

@@ -31,41 +31,32 @@ require_once('include/EditView/EditView2.php');
 class CalendarViewQuickEdit extends SugarView
 {
 	public $ev;
-	protected $editable;	
+	protected $editable;
 	
 	public function preDisplay()
-	{	
+	{
 		$this->bean = $this->view_object_map['currentBean'];
-		
+
 		if ($this->bean->ACLAccess('Save')) {
 			$this->editable = 1;
 		} else {
 			$this->editable = 0;
 		}
 	}
-	
+
 	public function display()
 	{
 		require_once("modules/Calendar/CalendarUtils.php");
-		
+
 		$module = $this->view_object_map['currentModule'];
-		
+
 		$_REQUEST['module'] = $module;
-				
+
 		$base = 'modules/' . $module . '/metadata/';
-		$source = 'custom/'.$base.'quickcreatedefs.php';
-		if (!file_exists($source)){
-			$source = $base . 'quickcreatedefs.php';
-			if (!file_exists($source)){
-				$source = 'custom/' . $base . 'editviewdefs.php';
-				if (!file_exists($source)){
-					$source = $base . 'editviewdefs.php';
-				}
-			}
-		}
-		
+		$source = SugarAutoLoader::existingCustomOne($base . 'editviewdefs.php', $base.'quickcreatedefs.php');
+
 		$GLOBALS['mod_strings'] = return_module_language($GLOBALS['current_language'], $module);
-        $tpl = $this->getCustomFilePathIfExists('include/EditView/EditView.tpl');
+        $tpl = SugarAutoLoader::existingCustomOne('include/EditView/EditView.tpl');
 
 		$this->ev = new EditView();
 		$this->ev->view = "QuickCreate";
@@ -97,7 +88,7 @@ class CalendarViewQuickEdit extends SugarView
 			$jsonArr = array_merge($jsonArr, array("repeat" => $this->view_object_map['repeatData']));
 		}
 			
-		ob_clean();		
+		ob_clean();
 		echo json_encode($jsonArr);
 	}
 }

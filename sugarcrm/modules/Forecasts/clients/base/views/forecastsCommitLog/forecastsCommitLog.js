@@ -20,7 +20,7 @@
     /**
      * Stores the Backbone collection of Forecast models
      */
-    _collection : {},
+    collection : {},
 
     /*
      * Stores the name to display in the view
@@ -60,7 +60,7 @@
     /**
      * Stores the historical log of the Forecast entries
      */
-    historyLog : Array(),
+    historyLog: [],
 
     /**
      * Stores the Forecast totals to use when creating a new entry
@@ -99,13 +99,26 @@
      */
     timeperiod: {},
 
+    /**
+     * Store the Best Case Number from the very last commit in the log
+     */
+    previousBestCase: '',
+    /**
+     * Store the Likely Case Number from the very last commit in the log
+     */
+    previousLikelyCase: '',
+    /**
+     * Store the Worst Case Number from the very last commit in the log
+     */
+    previousWorstCase: '',
+
     events : {
         'click i[id=show_hide_history_log]' : 'showHideHistoryLog'
     },
 
     initialize : function(options) {
         app.view.View.prototype.initialize.call(this, options);
-        this._collection = this.context.forecasts.committed;
+        this.collection = this.context.forecasts.committed;
 
         this.fullName = app.user.get('full_name');
         this.userId = app.user.get('id');
@@ -151,11 +164,11 @@
 
     bindDataChange: function() {
         var self = this;
-        this._collection = this.context.forecasts.committed;
-        this._collection.on("reset", function() {
+        this.collection = this.context.forecasts.committed;
+        this.collection.on("reset", function() {
             self.buildForecastsCommitted();
         }, this);
-        this._collection.on("change", function() { self.buildForecastsCommitted(); }, this);
+        this.collection.on("change", function() { self.buildForecastsCommitted(); }, this);
     },
 
     /**
@@ -175,31 +188,63 @@
         return cls
     },
 
-    buildForecastsCommitted: function() {
+    /**
+     * Utility method to reset the committed log in the event that no models are returned for the 
+     * selected user/timeperiod
+     */
+    resetCommittedLog:function(){
+        this.bestCase = 0;
+        this.likelyCase = 0;
+        this.worstCase = 0;
+        this.previousBestCase = 0;
+        this.previousLikelyCase = 0;
+        this.previousWorstCase = 0;
+        this.showHistoryLog = false;
+        this.previousDateEntered = "";
+    },
+
+    buildForecastsCommitted:function () {
         var self = this;
         var count = 0;
         var previousModel;
-
+        
         //Reset the history log
         self.historyLog = [];
-        self.moreLog = [];
 
-        _.each(self._collection.models, function(model)
-        {
-            //Get the first entry
-            if(count == 0) {
-                previousModel = model;
-                var dateEntered = new Date(Date.parse(previousModel.get('date_entered')));
-                if (dateEntered == 'Invalid Date') {
-                    dateEntered = previousModel.get('date_entered');
-                }
-                self.previousDateEntered = app.date.format(dateEntered, app.user.get('datepref') + ' ' + app.user.get('timepref'));
-            } else {
-                self.historyLog.push(app.forecasts.utils.createHistoryLog(model, previousModel));
-                previousModel = model;
-            }
-            count++;
+        // if we have no models, exit out of the method
+        if (_.isEmpty(self.collection.models)) {
+            self.resetCommittedLog();
+            self.render();
+            return;
+        }
+
+        // get the first model so we can get the previous date entered
+        previousModel = _.first(self.collection.models);
+
+        // parse out the previous date entered
+        var dateEntered = new Date(Date.parse(previousModel.get('date_entered')));
+        if (dateEntered == 'Invalid Date') {
+            dateEntered = previousModel.get('date_entered');
+        }
+        // set the previous date entered in the users format
+        self.previousDateEntered = app.date.format(dateEntered, app.user.get('datepref') + ' ' + app.user.get('timepref'));
+
+        // set the start point in the history log
+        self.historyLog.push(app.forecasts.utils.createHistoryLog('', previousModel));
+
+        // get the rest of the models to loop over
+        // by using the length of the models array minus 1 for the first one we already took off
+        models = _.last(self.collection.models, self.collection.models.length-1);
+
+        _.each(models, function (model) {
+            self.historyLog.push(app.forecasts.utils.createHistoryLog(model, previousModel));
+            previousModel = model;
         });
+
+        // save the values from the last model to display in the dataset line on the interface
+        this.previousBestCase = app.currency.formatAmountLocale(previousModel.get('best_case'));
+        this.previousLikelyCase = app.currency.formatAmountLocale(previousModel.get('likely_case'));
+        this.previousWorstCase = app.currency.formatAmountLocale(previousModel.get('worst_case'));
 
         self.render();
     }

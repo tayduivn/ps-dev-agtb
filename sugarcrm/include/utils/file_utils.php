@@ -111,7 +111,14 @@ function write_array_to_file( $the_name, $the_array, $the_file, $mode="w", $head
                     var_export_helper( $the_array ) .
                     ";";
 
-    return sugar_file_put_contents($the_file, $the_string, LOCK_EX) !== false;
+    if(sugar_file_put_contents($the_file, $the_string, LOCK_EX) !== false) {
+        if(substr($the_file, 0, 7) === 'custom/') {
+            // record custom writes to file map
+            SugarAutoLoader::addToMap($the_file);
+        }
+        return true;
+    }
+    return false;
 }
 
 function write_encoded_file( $soap_result, $write_to_dir, $write_to_file="" )

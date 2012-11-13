@@ -59,7 +59,7 @@ class Tracker extends SugarBean
         "visible"
     );
 
-    function Tracker()
+    public function __construct()
     {
         global $dictionary;
         if(isset($this->module_dir) && isset($this->object_name) && !isset($GLOBALS['dictionary'][$this->object_name])){
@@ -67,7 +67,7 @@ class Tracker extends SugarBean
             if(defined('TEMPLATE_URL'))$path = SugarTemplateUtilities::getFilePath($path);
             require_once($path);
         }
-        parent::SugarBean();
+        parent::__construct();
     }
 
     /*
@@ -126,7 +126,8 @@ class Tracker extends SugarBean
         }
     }
 
-    function logPage(){
+    static function logPage()
+    {
         $time_on_last_page = 0;
         //no need to calculate it if it is a redirection page
         if(empty($GLOBALS['app']->headerDisplayed ))return;

@@ -19,12 +19,6 @@ if(!defined('sugarEntry') || !sugarEntry)
  *Your Warranty, Limitations of liability and Indemnity are expressly stated in the License.  Please refer
  *to the License for the specific language governing these rights and limitations under the License.
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
-/*********************************************************************************
- * $Id: Document.php 23743 2007-06-19 01:21:46Z clee $
- * Description: TODO:  To be written.
- * Portions created by SugarCRM are Copyright (C) SugarCRM, Inc.
- * All Rights Reserved.
- * Contributor(s): ______________________________________..
  ********************************************************************************/
 require_once ('include/upload_file.php');
 
@@ -87,8 +81,8 @@ class Document extends SugarBean {
 	 );
 
 
-	function Document() {
-		parent :: SugarBean();
+	public function __construct() {
+		parent::__construct();
 		$this->setupCustomFields('Documents'); //parameter is module name
 		$this->disable_row_level_security = false;
 	}
@@ -186,7 +180,7 @@ class Document extends SugarBean {
             }
         }
 
-		return parent :: save($check_notify);
+		return parent::save($check_notify);
 	}
 	function get_summary_text() {
 		return "$this->document_name";

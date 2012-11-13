@@ -37,7 +37,7 @@ class RenameModules
      *
      * @var string
      */
-    private $selectedLanguage;
+    public $selectedLanguage;
 
     /**
      * An array containing the modules which should be renamed.
@@ -450,13 +450,16 @@ class RenameModules
 
 		$layout_defs = array();
 
-        if ( file_exists( 'modules/' . $bean->module_dir . '/metadata/subpaneldefs.php') )
-            require('modules/' . $bean->module_dir . '/metadata/subpaneldefs.php');
+        foreach( SugarAutoLoader::existingCustom('modules/' . $bean->module_dir . '/metadata/subpaneldefs.php') as $file ) {
+            require $file;
+        }
 
-        if ( file_exists( 'custom/modules/' . $bean->module_dir . '/Ext/Layoutdefs/layoutdefs.ext.php'))
-            require('custom/modules/' . $bean->module_dir . '/Ext/Layoutdefs/layoutdefs.ext.php');
+        $defs = SugarAutoLoader::loadExtension('layoutdefs', $bean->module_dir);
+        if($defs) {
+            require $defs;
+        }
 
-         return isset($layout_defs[$bean->module_dir]['subpanel_setup']) ? $layout_defs[$bean->module_dir]['subpanel_setup'] : $layout_defs;
+        return isset($layout_defs[$bean->module_dir]['subpanel_setup']) ? $layout_defs[$bean->module_dir]['subpanel_setup'] : $layout_defs;
 	}
 
     /**
@@ -701,7 +704,7 @@ class RenameModules
      * @param  $replacementLabels
      * @return void
      */
-    private function changeModuleModStrings($moduleName, $replacementLabels)
+    public function changeModuleModStrings($moduleName, $replacementLabels)
     {
         $GLOBALS['log']->info("Begining to change module labels for: $moduleName");
         $currentModuleStrings = return_module_language($this->selectedLanguage, $moduleName);
@@ -777,7 +780,7 @@ class RenameModules
             $search = call_user_func($modifier, $search);
             $replace = call_user_func($modifier, $replace);
         }
-        
+
         // Bug 47957
         // If nothing was replaced - try to replace original string
         $result = '';
@@ -925,7 +928,7 @@ class RenameModules
      * @param  string $moduleName
      * @return string The 'singular' name of a module.
      */
-    private function getModuleSingularKey($moduleName)
+    public function getModuleSingularKey($moduleName)
     {
         $className = isset($GLOBALS['beanList'][$moduleName]) ? $GLOBALS['beanList'][$moduleName] : null;
         if( is_null($className) || ! class_exists($className) )

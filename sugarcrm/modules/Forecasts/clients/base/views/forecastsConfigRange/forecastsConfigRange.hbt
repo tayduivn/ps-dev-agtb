@@ -1,9 +1,10 @@
 <div class="modal-content hide">
-{{#each meta.panels}}
+    <p></p>
     <p>{{str "LBL_FORECASTS_CONFIG_WORKSHEET_RANGE" "Forecasts"}}</p>
+    <p><em>{{str "LBL_FORECASTS_CONFIG_WORKSHEET_LIKELY_INFO" "Forecasts"}}</em></p>
+{{#each meta.panels}}
     {{#each fields}}
-        <label for="{{name}}">{{str label "Forecasts"}}</label>
-        {{field ../../this ../../model}}
+        <p>{{field ../../this ../../model}}&nbsp;&nbsp;{{str label "Forecasts"}}</p>
     {{/each}}
 {{/each}}
 </div>

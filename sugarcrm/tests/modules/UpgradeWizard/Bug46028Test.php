@@ -83,7 +83,7 @@ array (
 ?>
 EOQ;
 
-    file_put_contents('modules/Opportunities/metadata/SearchFields.php', $searchFieldContents);
+    SugarAutoLoader::put('modules/Opportunities/metadata/SearchFields.php', $searchFieldContents);
 }
 
 public function tearDow()
@@ -92,7 +92,7 @@ public function tearDow()
     {
         file_put_contents('custom/modules/Opportunities/metadata/SearchFields.php', $this->customOpportunitiesSearchFields);
     } else if(file_exists('custom/modules/Opportunities/metadata/SearchFields.php')) {
-        unlink('custom/modules/Opportunities/metadata/SearchFields.php');
+        SugarAutoLoader::unlink('custom/modules/Opportunities/metadata/SearchFields.php', true);
     }
 
     if(!empty($this->opportunitiesSearchFields))

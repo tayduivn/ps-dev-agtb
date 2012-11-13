@@ -57,25 +57,26 @@ $the_string = <<<EOQ
 
 EOQ;
 
-$fp = sugar_fopen('custom/modules/Connectors/metadata/display_config.php', "w" );
-fwrite( $fp, $the_string );
-fclose( $fp );
+SugarAutoLoader::put(CONNECTOR_DISPLAY_CONFIG_FILE, $the_string, true);
     	}
         parent::setUp();
 
    		if(file_exists('custom/modules/Connectors/connectors/sources/ext/rest/twitter/twitter.php')) {
    		   copy_recursive('custom/modules/Connectors/connectors/sources/ext/rest/twitter', 'custom/modules/Connectors/backup/connectors/sources/ext/rest/twitter_backup');
     	   ConnectorsTestUtility::rmdirr('custom/modules/Connectors/backup/sources/ext/rest/twitter');
+    	   SugarAutoLoader::delFromMap('custom/modules/Connectors/backup/sources/ext/rest/twitter');
    		}
 
    		if(file_exists('custom/modules/Connectors/connectors/sources/ext/rest/linkedin/linkedin.php')) {
    		   copy_recursive('custom/modules/Connectors/connectors/sources/ext/rest/linkedin', 'custom/modules/Connectors/backup/connectors/sources/ext/rest/linkedin_backup');
     	   ConnectorsTestUtility::rmdirr('custom/modules/Connectors/backup/sources/ext/rest/linkedin');
+    	   SugarAutoLoader::delFromMap('custom/modules/Connectors/backup/sources/ext/rest/linkedin');
    		}
 
    		if(file_exists('custom/modules/Connectors/connectors/sources/ext/soap/hoovers/hoovers.php')) {
     	   copy_recursive('custom/modules/Connectors/connectors/sources/ext/soap/hoovers', 'custom/modules/Connectors/backup/connectors/sources/ext/soap/hoovers_backup');
    		   ConnectorsTestUtility::rmdirr('custom/modules/Connectors/backup/sources/ext/soap/hoovers');
+    	   SugarAutoLoader::delFromMap('custom/modules/Connectors/backup/sources/ext/rest/hoovers');
    		}
 
    		//Setup the neccessary Smarty configurations

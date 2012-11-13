@@ -25,7 +25,7 @@ class ViewValidateRelatedField extends ViewAjax
 {
     var $vars = array("tmodule", "link", "related");
 
-    function __construct()
+    public function __construct()
     {
         parent::ViewAjax();
         foreach($this->vars as $var)

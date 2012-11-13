@@ -54,7 +54,15 @@
         if (self.context.get('subnavModel')) {
             fullName = data.name ? data.full_name : data.first_name +' '+data.last_name;
             self.context.get('subnavModel').set({
-                'title': fullName
+                'title': fullName,
+                'meta': self.meta
+            });
+            
+            // Bypass subnav click handler
+            $('.subnav').find('[name=save_button]').on('click', function(e) {
+                e.stopPropagation();
+                e.preventDefault();
+                self.saveModel();
             });
         }
     },
@@ -77,12 +85,16 @@
         options = {
             success: function() {
                 app.alert.dismiss('save_profile_edit_view');
+                self.checkFileFieldsAndProcessUpload(self.model, {
+                    success: function () {
 
-                var langKey = self.model.get('preferred_language');
-                if (langKey && langKey != app.lang.getLanguage())
-                    app.lang.setLanguage(langKey,{},{noUserUpdate: true});
+                        var langKey = self.model.get('preferred_language');
+                        if (langKey && langKey != app.lang.getLanguage())
+                            app.lang.setLanguage(langKey,{},{noUserUpdate: true});
 
-                app.router.navigate('profile', {trigger: true});
+                        app.router.navigate('profile', {trigger: true});
+                    }
+                });
             },
             error: function(error) {
                 app.alert.dismiss('save_profile_edit_view');

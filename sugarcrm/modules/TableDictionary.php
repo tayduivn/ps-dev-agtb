@@ -145,7 +145,7 @@ include("metadata/forecast_treeMetaData.php");
 //END SUGARCRM flav=pro ONLY
 include("metadata/oauth_nonce.php");
 
-if(file_exists('custom/application/Ext/TableDictionary/tabledictionary.ext.php')){
-	include('custom/application/Ext/TableDictionary/tabledictionary.ext.php');
+$defs = SugarAutoLoader::loadExtension('tabledictionary');
+if($defs) {
+    require $defs;
 }
-?>

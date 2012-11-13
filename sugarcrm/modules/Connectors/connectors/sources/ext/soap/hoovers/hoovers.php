@@ -40,13 +40,9 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  	protected function initLookupMap()
  	{
  	    if(!empty($this->_lookupMap)) return;
-		if(!file_exists(HOOVERS_LOOKUP_MAPPING_FILE) || ((mktime() - filemtime(HOOVERS_LOOKUP_MAPPING_FILE)) > 2592000)) {
+		if(!SugarAutoLoader::fileExists(HOOVERS_LOOKUP_MAPPING_FILE) || ((mktime() - filemtime(HOOVERS_LOOKUP_MAPPING_FILE)) > 2592000)) {
 	 		try {
 	 		  $result = $this->_client->call('GetAdvancedSearchLookups', array('parameters'=>array()), $namespace='http://applications.dnb.com/webservice/schema/');
-	 		  //BEGIN SUGARCRM flav=int ONLY
-	 		  //$result = $this->_client->__soapCall('GetAdvancedSearchLookups', array('parameters'=>array()), NULL);
-	 		  //END SUGARCRM flav=int ONLY
-
 	 		  if(empty($result)) {
 	 		  	 return;
 	 		  }
@@ -208,7 +204,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  		$countries = array();
  		$states = array();
 
- 		if(file_exists(HOOVERS_LOOKUP_MAPPING_FILE)) {
+ 		if(SugarAutoLoader::fileExists(HOOVERS_LOOKUP_MAPPING_FILE)) {
  		   require(HOOVERS_LOOKUP_MAPPING_FILE);
  		   $countries = array_flip($lookup_mapping['countries']);
  		   $states = array_flip($lookup_mapping['states']);

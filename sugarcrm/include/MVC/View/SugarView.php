@@ -46,6 +46,7 @@ class SugarView
     var $type = null;
     var $responseTime;
     var $fileResources;
+    protected $base_menu;
 
     /**
      * Constructor which will peform the setup.
@@ -55,6 +56,7 @@ class SugarView
         $view_object_map = array()
         )
     {
+        $this->base_menu = SugarAutoLoader::loadExtension("menus", "application");
     }
 
     public function init(
@@ -603,7 +605,7 @@ class SugarView
 
 
         }
-        
+
         if ( isset($extraTabs) && is_array($extraTabs) ) {
             // Adding shortcuts array to extra menu array for displaying shortcuts associated with each module
             $shortcutExtraMenu = array();
@@ -623,12 +625,12 @@ class SugarView
             }
             $ss->assign("shortcutExtraMenu",$shortcutExtraMenu);
         }
-       
+
        if(!empty($current_user)){
        	$ss->assign("max_tabs", $current_user->getPreference("max_tabs"));
-       } 
-      
-       
+       }
+
+
         $imageURL = SugarThemeRegistry::current()->getImageURL("dashboard.png");
         $homeImage = "<img src='$imageURL'>";
 		$ss->assign("homeImage",$homeImage);
@@ -857,6 +859,7 @@ EOHTML;
             echo getVersionedScript('cache/include/javascript/sugar_grp1.js');
             echo getVersionedScript('include/javascript/calendar.js');
 
+
             // output necessary config js in the top of the page
             $config_js = $this->getSugarConfigJS();
             if(!empty($config_js)){
@@ -878,7 +881,7 @@ EOHTML;
             echo getVersionedScript('cache/jsLanguage/'. $GLOBALS['current_language'] . '.js', $GLOBALS['sugar_config']['js_lang_version']);
 
 			echo $this->_getModLanguageJS();
-
+            echo getVersionedScript('include/javascript/productTour.js');
             if(isset( $sugar_config['disc_client']) && $sugar_config['disc_client'])
                 echo getVersionedScript('modules/Sync/headersync.js');
 
@@ -1064,7 +1067,7 @@ EOHTML;
 
         //rrs bug: 20923 - if this image does not exist as per the license, then the proper image will be displayed regardless, so no need
         //to display an empty image here.
-        if(file_exists('include/images/poweredby_sugarcrm_65.png')){
+        if(SugarAutoLoader::fileExists('include/images/poweredby_sugarcrm_65.png')){
             $copyright .= $attribLinkImg;
         }
         // End Required Image
@@ -1086,9 +1089,12 @@ EOHTML;
             $label = (isset($GLOBALS['app_list_strings']['moduleList'][$this->module]) ?
                         $GLOBALS['app_list_strings']['moduleList'][$this->module] : $this->module). ' '.$app_strings['LNK_HELP'];
             $ss->assign('HELP_LINK',SugarThemeRegistry::current()->getLink($url, $label, "id='help_link_two'",
-                'help-dashlet.png', 'class="icon"',null,null,'','left'));
+                '', '',null,null,'','',"<i class='icon-question-sign icon'></i>"));
         }
         // end
+
+        $ss->assign('TOUR_LINK',SugarThemeRegistry::current()->getLink("javascript: void(0);", $app_strings['LNK_TOUR'], "id='tour_link'",
+            '', '',null,null,'','',"<i class='icon-road icon'></i>"));
 
         //BEGIN SUGARCRM flav=pro ONLY
         if (!empty($GLOBALS['sugar_config']['disabled_feedback_widget']))
@@ -1103,7 +1109,9 @@ EOHTML;
      */
     protected function _displaySubPanels()
     {
-        if (isset($this->bean) && !empty($this->bean->id) && (file_exists('modules/' . $this->module . '/metadata/subpaneldefs.php') || file_exists('custom/modules/' . $this->module . '/metadata/subpaneldefs.php') || file_exists('custom/modules/' . $this->module . '/Ext/Layoutdefs/layoutdefs.ext.php'))) {
+        if (!empty($this->bean->id) &&
+            (SugarAutoLoader::existingCustom('modules/' . $this->module . '/metadata/subpaneldefs.php') ||
+             SugarAutoLoader::loadExtension("layoutdefs", $this->module))) {
             $GLOBALS['focus'] = $this->bean;
             require_once ('include/SubPanel/SubPanelTiles.php');
             $subpanel = new SubPanelTiles($this->bean, $this->module);
@@ -1189,7 +1197,7 @@ EOHTML;
      */
     protected function _checkModule()
     {
-        if(!empty($this->module) && !file_exists('modules/'.$this->module)){
+        if(!empty($this->module) && !SugarAutoLoader::fileExists('modules/'.$this->module)){
             $error = str_replace("[module]", "$this->module", $GLOBALS['app_strings']['ERR_CANNOT_FIND_MODULE']);
             $GLOBALS['log']->fatal($error);
             echo $error;
@@ -1333,15 +1341,11 @@ EOHTML;
 
         $module_menu = array();
 
-        if (file_exists('modules/' . $module . '/Menu.php')) {
-            require('modules/' . $module . '/Menu.php');
+        $menus = SugarAutoLoader::existing('modules/' . $module . '/Menu.php', SugarAutoLoader::loadExtension("menus", $module));
+        foreach($menus as $file) {
+            require $file;
         }
-        if (file_exists('custom/modules/' . $module . '/Ext/Menus/menu.ext.php')) {
-            require('custom/modules/' . $module . '/Ext/Menus/menu.ext.php');
-        }
-        if (!file_exists('modules/' . $module . '/Menu.php')
-                && !file_exists('custom/modules/' . $module . '/Ext/Menus/menu.ext.php')
-                && !empty($GLOBALS['mod_strings']['LNK_NEW_RECORD'])) {
+        if (empty($menus) && !empty($GLOBALS['mod_strings']['LNK_NEW_RECORD'])) {
             $module_menu[] = array("index.php?module=$module&action=EditView&return_module=$module&return_action=DetailView",
                 $GLOBALS['mod_strings']['LNK_NEW_RECORD'],"{$GLOBALS['app_strings']['LBL_CREATE_BUTTON_LABEL']}$module" ,$module );
             $module_menu[] = array("index.php?module=$module&action=index", $GLOBALS['mod_strings']['LNK_LIST'],
@@ -1354,8 +1358,8 @@ EOHTML;
                     $module_menu[] = array("index.php?module=Import&action=Step1&import_module=$module&return_module=$module&return_action=index",
                         $app_strings['LBL_IMPORT'], "Import", $module);
         }
-        if (file_exists('custom/application/Ext/Menus/menu.ext.php')) {
-            require('custom/application/Ext/Menus/menu.ext.php');
+        if($this->base_menu) {
+            require $this->base_menu;
         }
 
         $mod_strings = $curr_mod_strings;
@@ -1375,7 +1379,7 @@ EOHTML;
 		$userTabs = query_module_access_list($current_user);
 		//If the home tab is in the user array use it as the default tab, otherwise use the first element in the tab array
 		$defaultTab = (in_array("Home",$userTabs)) ? "Home" : key($userTabs);
-		
+
         // Need to figure out what tab this module belongs to, most modules have their own tabs, but there are exceptions.
         if ( !empty($_REQUEST['module_tab']) )
             return $_REQUEST['module_tab'];
@@ -1465,32 +1469,7 @@ EOHTML;
         $metadataFile = null;
         $foundViewDefs = false;
         $viewDef = strtolower($this->type) . 'viewdefs';
-        $coreMetaPath = 'modules/'.$this->module.'/metadata/' . $viewDef . '.php';
-        if(file_exists('custom/' .$coreMetaPath )){
-            $metadataFile = 'custom/' . $coreMetaPath;
-            $foundViewDefs = true;
-        }else{
-            if(file_exists('custom/modules/'.$this->module.'/metadata/metafiles.php')){
-                require_once('custom/modules/'.$this->module.'/metadata/metafiles.php');
-                if(!empty($metafiles[$this->module][$viewDef])){
-                    $metadataFile = $metafiles[$this->module][$viewDef];
-                    $foundViewDefs = true;
-                }
-            }elseif(file_exists('modules/'.$this->module.'/metadata/metafiles.php')){
-                require_once('modules/'.$this->module.'/metadata/metafiles.php');
-                if(!empty($metafiles[$this->module][$viewDef])){
-                    $metadataFile = $metafiles[$this->module][$viewDef];
-                    $foundViewDefs = true;
-                }
-            }
-        }
-
-        if(!$foundViewDefs && file_exists($coreMetaPath)){
-                $metadataFile = $coreMetaPath;
-        }
-        $GLOBALS['log']->debug("metadatafile=". $metadataFile);
-
-        return $metadataFile;
+        return SugarAutoLoader::loadWithMetafiles($this->module, $viewDef);
     }
 
 
@@ -1751,15 +1730,13 @@ EOHTML;
 
     /**
      * getCustomFilePathIfExists
-     *
-     * This function wraps a call to get_custom_file_if_exists from include/utils.php
-     *
+     * Substitute custom file if it exists
      * @param $file String of filename to check
      * @return $file String of filename including custom directory if found
      */
     protected function getCustomFilePathIfExists($file)
     {
-        return get_custom_file_if_exists($file);
+        return SugarAutoLoader::existingCustomOne($file);
     }
 
 

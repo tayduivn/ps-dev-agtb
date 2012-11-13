@@ -56,8 +56,8 @@ class Version extends SugarBean {
 	// This is used to retrieve related fields from form posts.
 	var $additional_column_fields = Array();
 
-	function Version() {
-		parent::SugarBean();
+	public function __construct() {
+		parent::__construct();
 		//BEGIN SUGARCRM flav=pro ONLY
 		$this->team_id = 1; // make the item globally accessible
 		$this->disable_row_level_security = true;

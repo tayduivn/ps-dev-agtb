@@ -96,7 +96,7 @@
         var onsubmit = settings.onsubmit || function() { };
         var onreset  = settings.onreset  || function() { };
         var onerror  = settings.onerror  || reset;
-          
+
         /* Show tooltip. */
         if (settings.tooltip) {
             $(this).attr('title', settings.tooltip);
@@ -201,7 +201,7 @@
 
                 /* Set input content via POST, GET, given data or existing value. */
                 var input_content;
-                
+
                 if (settings.loadurl) {
                     var t = setTimeout(function() {
                         input.disabled = true;
@@ -234,13 +234,17 @@
                 } else {
                     input_content = self.revert; 
                 }
+
                 content.apply(form, [input_content, settings, self]);
 
                 input.attr('name', settings.name);
         
                 /* Add buttons to the form. */
                 buttons.apply(form, [settings, self]);
-         
+
+                // apply afterform hook
+                afterform.apply(self, [settings, form]);
+
                 /* Add created form to self. */
                 $(self).append(form);
          
@@ -254,10 +258,12 @@
                 if (settings.select) {
                     input.select();
                 }
-        
-                /* discard changes if pressing esc */
+
+                var tabKeyPressed;
                 input.keydown(function(e) {
+                    tabKeyPressed = e.keyCode == 9;
                     if (e.keyCode == 27) {
+                        /* discard changes if pressing esc */
                         e.preventDefault();
                         reset.apply(form, [settings, self]);
                     }
@@ -280,6 +286,18 @@
                             form.submit();
                         }, 200);
                     });
+                } else if ('tab' == settings.onblur) {
+                    input.blur(function(e) {
+                        /* Prevent double submit if submit was clicked. */
+                        t = setTimeout(function() {
+                            if(tabKeyPressed) {
+                                form.submit();
+                                tabKeyPressed = false;
+                            } else {
+                                reset.apply(form, [settings, self]);
+                            }
+                        }, 200);
+                    });
                 } else if ($.isFunction(settings.onblur)) {
                     input.blur(function(e) {
                         settings.onblur.apply(self, [input.val(), settings]);
@@ -291,8 +309,7 @@
                 }
 
                 form.submit(function(e) {
-
-                    if (t) { 
+                    if (t) {
                         clearTimeout(t);
                     }
 
@@ -301,7 +318,7 @@
             
                     /* Call before submit hook. */
                     /* If it returns false abort submitting. */                    
-                    if (false !== onsubmit.apply(form, [settings, self])) { 
+                    if (false !== onsubmit.apply(form, [settings, self])) {
                         /* Custom inputs call before submit hook. */
                         /* If it returns false abort submitting. */
                         if (false !== submit.apply(form, [settings, self])) { 
@@ -361,17 +378,31 @@
                               $.extend(ajaxoptions, settings.ajaxoptions);   
                               $.ajax(ajaxoptions);          
                               
-                            }
+                           }
+
+                            /* form submitted, click next field if tabbed */
+                            if(tabKeyPressed && 'tab' == settings.onblur) {
+                                // focus on the next jeditable field
+                                var idx = $("[jeditable^=true]:visible").index(self);
+                                if (idx == ($("[jeditable^=true]:visible").length-1)) {
+                                    // last field, go to first
+                                    $("[jeditable^=true]:first").click();
+                                } else {
+                                    // go to next field
+                                    $("[jeditable^=true]:visible")[idx+1].click();
+                                }
+                                tabKeyPressed = false;
+                            };
+
                         }
                     }
                     /* Show tooltip again. */
                     $(self).attr('title', settings.tooltip);
 
+                    /* form not submitted */
+
                     return false;
                 });
-
-                // apply afterform hook
-                afterform.apply(this, [settings, form]);
 
             });
             

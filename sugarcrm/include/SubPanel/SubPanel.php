@@ -234,15 +234,12 @@ class SubPanel
 
 	function getModulesWithSubpanels()
 	{
-		global $beanList;
-		$dir = dir('modules');
 		$modules = array();
-		while($entry = $dir->read())
-		{
-			if(file_exists('modules/' . $entry . '/layout_defs.php'))
-			{
-				$modules[$entry] = $entry;
-			}
+		foreach(SugarAutoLoader::getDirFiles("modules", true) as $dir) {
+		    if(SugarAutoLoader::fileExists("$dir/layout_defs.php")) {
+		        $entry = basename($dir);
+		        $modules[$entry] = $entry;
+		    }
 		}
 		return $modules;
 	}
@@ -275,7 +272,8 @@ class SubPanel
   }
 
   //saves overrides for defs
-  function saveSubPanelDefOverride( $panel, $subsection, $override){
+  function saveSubPanelDefOverride( $panel, $subsection, $override)
+  {
   		global $layout_defs, $beanList;
 
   		//save the new subpanel
@@ -315,10 +313,11 @@ class SubPanel
   		$moduleInstaller = new ModuleInstaller();
   		$moduleInstaller->silent = true; // make sure that the ModuleInstaller->log() function doesn't echo while rebuilding the layoutdefs
   		$moduleInstaller->rebuild_layoutdefs();
-  		if (file_exists('modules/'.  $panel->parent_bean->module_dir . '/layout_defs.php'))
-  			include('modules/'.  $panel->parent_bean->module_dir . '/layout_defs.php');
-  		if (file_exists('custom/modules/'.  $panel->parent_bean->module_dir . '/Ext/Layoutdefs/layoutdefs.ext.php'))
-  			include('custom/modules/'.  $panel->parent_bean->module_dir . '/Ext/Layoutdefs/layoutdefs.ext.php');
+  		SugarAutoLoader::buildCache();
+  		foreach(SugarAutoLoader::existing('modules/'.  $panel->parent_bean->module_dir . '/layout_defs.php',
+  		    SugarAutoLoader::loadExtension("layoutdefs", $panel->parent_bean->module_dir)) as $file) {
+  		    include $file;
+  		}
   }
 
 	function get_subpanel_setup($module)

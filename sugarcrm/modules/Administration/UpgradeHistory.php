@@ -54,6 +54,7 @@ class UpgradeHistory extends SugarBean
     var $tracker_visibility = false;
     var $table_name = "upgrade_history";
     var $object_name = "UpgradeHistory";
+    var $module_name = "UpgradeHistory";
     var $column_fields = Array( "id", "filename", "md5sum", "type", "version", "status", "date_entered" );
     var $disable_custom_fields = true;
 
@@ -62,9 +63,9 @@ class UpgradeHistory extends SugarBean
         $this->db->query( "delete from " . $this->table_name . " where id = " . $this->db->quoted($this->id));
     }
 
-    function UpgradeHistory()
+    public function __construct()
     {
-        parent::SugarBean();
+        parent::__construct();
         $this->disable_row_level_security = true;
     }
 

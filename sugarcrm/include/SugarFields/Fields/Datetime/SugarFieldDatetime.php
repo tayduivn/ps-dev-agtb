@@ -86,10 +86,6 @@ class SugarFieldDatetime extends SugarFieldBase {
            $this->ss->assign('id_range_start', "start_range_{$id}");
            $this->ss->assign('id_range_end', "end_range_{$id}");
            $this->ss->assign('id_range_choice', "{$id}_range_choice");
-           if(file_exists('custom/include/SugarFields/Fields/Datetimecombo/RangeSearchForm.tpl'))
-           {
-              return $this->fetch('custom/include/SugarFields/Fields/Datetimecombo/RangeSearchForm.tpl');
-           }
            return $this->fetch('include/SugarFields/Fields/Datetimecombo/RangeSearchForm.tpl');
         }
     	return $this->getSmartyView($parentFieldArray, $vardef, $displayParams, $tabindex, 'EditView');
@@ -102,17 +98,17 @@ class SugarFieldDatetime extends SugarFieldBase {
             $user = $context['notify_user'];
         } else {
             $user = $GLOBALS['current_user'];
-        }       
+        }
         if($vardef['type'] == 'date') {
             if(!$timedate->check_matching_format($inputField, TimeDate::DB_DATE_FORMAT)) {
                 return $inputField;
-            }            
+            }
             // convert without TZ
             return $timedate->to_display($inputField, $timedate->get_db_date_format(),  $timedate->get_date_format($user));
         } else {
             if(!$timedate->check_matching_format($inputField, TimeDate::DB_DATETIME_FORMAT)) {
                 return $inputField;
-            }            
+            }
             return $timedate->to_display_date_time($inputField, true, true, $user);
         }
     }
@@ -183,6 +179,30 @@ class SugarFieldDatetime extends SugarFieldBase {
         return $date->asDb();
     }
 
+    /**
+     * Handles export field sanitizing for field type
+     *
+     * @param $value string value to be sanitized
+     * @param $vardef array representing the vardef definition
+     * @param $focus SugarBean object
+     *
+     * @return string sanitized value
+     */
+    public function exportSanitize($value, $vardef, $focus)
+    {
+        $timedate =  TimeDate::getInstance();
+        $db = DBManagerFactory::getInstance();
+
+        //If it's in ISO format, convert it to db format
+        if(preg_match('/(\d{4})\-?(\d{2})\-?(\d{2})T(\d{2}):?(\d{2}):?(\d{2})\.?\d*([Z+-]?)(\d{0,2}):?(\d{0,2})/i', $value)) {
+           $value = $timedate->fromIso($value)->asDb();
+        } else if(preg_match("/" . TimeDate::DB_DATE_FORMAT . "/", $value)) {
+           $value = $timedate->fromDbDate($value)->asDb();
+        }
+
+        $value = $timedate->to_display_date_time($db->fromConvert($value, 'datetime'));
+        return preg_replace('/([pm|PM|am|AM]+)/', ' \1', $value);
+    }
 
     function getDetailViewSmarty($parentFieldArray, $vardef, $displayParams, $tabindex) {
         global $timedate,$current_user;

@@ -75,10 +75,11 @@ class SidecarTheme
             // We compile it if a we have the custom theme in the file system in /custom/themes or /themes
             $customThemeVars = $this->paths['custom'] . 'variables.less';
             $baseThemeVars = $this->paths['base'] . 'variables.less';
-            if ( file_exists($customThemeVars) || file_exists($baseThemeVars) ) {
-                 $hash = $this->compileTheme();
+            if ( SugarAutoLoader::fileExists($customThemeVars) || SugarAutoLoader::fileExists($baseThemeVars) ) {
+                $this->compileTheme();
                 $cacheCSS = $this->paths['cache'].$hash.".css";
-            } else {
+            }
+            else {
                 // Otherwise we compile the default theme if it exists
                 $clientDefaultTheme = new SidecarTheme($this->myClient, 'default');
                 $hash = $clientDefaultTheme->compileTheme();
@@ -184,7 +185,9 @@ class SidecarTheme
         }
         //Relative path from /cache/themes/clients/PLATFORM/THEMENAME/bootstrap.css
         //              to   /styleguide/assets/
-        $variables['baseUrl'] = '"../../../../../styleguide/assets"';
+        if (!isset($variables['baseUrl'])) {
+            $variables['baseUrl'] = '"../../../../../styleguide/assets"';
+        }
 
         try {
             $css = $less->parse($variables);

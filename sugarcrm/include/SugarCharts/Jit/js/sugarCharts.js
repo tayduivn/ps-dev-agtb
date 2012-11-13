@@ -52,7 +52,6 @@ function loadSugarChart (chartId, jsonFilename, css, chartConfig, params, callba
 
     contentEl = params.contentEl || contentEl;
     minColumnWidth = params.minColumnWidth || minColumnWidth;
-    SUGAR.charts.adjustLegendWidthByParent = params.adjustLegendWidthByParent || false;
 
 			switch(chartConfig["chartType"]) {
 			case "barChart":
@@ -68,27 +67,32 @@ function loadSugarChart (chartId, jsonFilename, css, chartConfig, params, callba
                         {
                             function fixChartContainer(event, itemsCount)
                             {
+                                var chartCanvas = YAHOO.util.Dom.getElementsByClassName('chartCanvas', 'div');
+                                var chartContainer = YAHOO.util.Dom.getElementsByClassName('chartContainer', 'div');
                                 var region = YAHOO.util.Dom.getRegion(contentEl);
-                                if ( region && region.width )
+                                if ( chartContainer.length > 0 && chartCanvas.length > 0 )
                                 {
-                                    // one bar needs about minColumnWidth px to correct display data and labels
-                                    var realWidth = itemsCount * parseInt(minColumnWidth, 10);
-                                    if ( realWidth > region.width )
+                                    if ( region && region.width )
                                     {
-                                        var chartCanvas = YAHOO.util.Dom.getElementsByClassName('chartCanvas', 'div');
-                                        var chartContainer = YAHOO.util.Dom.getElementsByClassName('chartContainer', 'div');
-                                        if ( chartContainer.length > 0 && chartCanvas.length > 0 )
+                                        // one bar needs about minColumnWidth px to correct display data and labels
+                                        var realWidth = itemsCount * parseInt(minColumnWidth, 10);
+                                        chartContainer = YAHOO.util.Dom.get(chartContainer[0]);
+                                        chartCanvas = YAHOO.util.Dom.get(chartCanvas[0]);
+                                        if ( realWidth > region.width )
                                         {
-                                            chartContainer = YAHOO.util.Dom.get(chartContainer[0])
                                             YAHOO.util.Dom.setStyle(chartContainer, 'width', region.width+'px')
-                                            chartCanvas = YAHOO.util.Dom.get(chartCanvas[0]);
                                             YAHOO.util.Dom.setStyle(chartCanvas, 'width', realWidth+'px');
-                                            if (!event)
-                                            {
-                                                YAHOO.util.Event.addListener(window, "resize", fixChartContainer, json.values.length);
-                                            }
+                                        }
+                                        else
+                                        {
+                                            YAHOO.util.Dom.setStyle(chartContainer, 'width', region.width+'px')
+                                            YAHOO.util.Dom.setStyle(chartCanvas, 'width', region.width+'px');
                                         }
                                     }
+                                }
+                                if (!event)
+                                {
+                                    YAHOO.util.Event.addListener(window, "resize", fixChartContainer, json.values.length);
                                 }
                             }
                             fixChartContainer(null, json.values.length);
@@ -208,6 +212,8 @@ function loadSugarChart (chartId, jsonFilename, css, chartConfig, params, callba
                         SUGAR.charts.trackWindowResize(barChart, chartId, data);
                         barChart.json = json;
                         that.chartObject = barChart;
+
+                        SUGAR.charts.setChartObject(barChart);
 
                     }
                     SUGAR.charts.callback(callback);
@@ -675,10 +681,6 @@ function swapChart(chartId,jsonFilename,css,chartConfig){
 
         chart : null,
         /**
-         * if true the lenend container is resized relatively parent element, false - relatively chart canvas
-         */
-        adjustLegendWidthByParent : false,
-        /**
          * Execute callback function if specified
          *
          * @param callback
@@ -688,6 +690,10 @@ function swapChart(chartId,jsonFilename,css,chartConfig){
                 // if the call back is fired, include the chart as the only param
                 callback(this.chart);
             }
+        },
+
+        setChartObject : function(chart) {
+            this.chart = chart;
         },
 
         /**
@@ -734,7 +740,7 @@ function swapChart(chartId,jsonFilename,css,chartConfig){
 
             //adjust legend width to chart width
             jQuery('#legend'+chartId).ready(function() {
-                var chartWidth = SUGAR.charts.adjustLegendWidthByParent ? jQuery('#'+chartId).parent().width() : jQuery('#'+chartId).width();
+                var chartWidth = jQuery('#'+chartId).width();
                 chartWidth = chartWidth - 20;
                 $('#legend'+chartId).width(chartWidth);
                 var legendGroupWidth = new Array();
@@ -821,8 +827,7 @@ function swapChart(chartId,jsonFilename,css,chartConfig){
                         setTimeout(function() {
                             // measure container width
                             var width = container.offsetWidth;
-                            var chartWidth = SUGAR.charts.adjustLegendWidthByParent ? jQuery(container).parent().width() : container.offsetWidth;
-                            var chartWidth = chartWidth - 20;
+                            var chartWidth = width - 20;
                             $('#legend'+chartId).width(chartWidth);
 
                             // display widget before resize, otherwise

@@ -44,9 +44,10 @@ class QueryController extends SugarBean {
     var $type;  //defines id this is a new list order or existing, or delete
                 // New, Save, Delete
     var $disable_custom_fields = true;
+    var $module_name = 'QueryController';
 
-    function QueryController() {
-        parent::SugarBean();
+    public function __construct() {
+        parent::__construct();
 
         $this->disable_row_level_security =true;
 

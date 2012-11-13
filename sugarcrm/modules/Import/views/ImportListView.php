@@ -76,7 +76,7 @@ class ImportListView
      * @param  array $params
      * @param string $tableIdentifier
      */
-    function __construct($dataSource, $params, $tableIdentifier = '')
+    public function __construct($dataSource, $params, $tableIdentifier = '')
     {
         global $sugar_config;
 

@@ -36,7 +36,7 @@ $viewdefs['Forecasts']['base']['view']['forecastsConfigTabbedButtons'] = array(
                 array(
                     'name' => 'close_button',
                     'type' => 'button',
-                    'css_class' => 'btn-invisible btn-link pull-left',
+                    'css_class' => 'btn-invisible btn-link pull-right',
                     'label' => 'LBL_EMAIL_CANCEL',
                     'primary' => false,
                 ),

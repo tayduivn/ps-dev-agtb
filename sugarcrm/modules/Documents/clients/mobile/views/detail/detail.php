@@ -39,7 +39,7 @@ $viewdefs['Documents']['mobile']['view']['detail'] = array(
             'label' => 'LBL_PANEL_DEFAULT',
             'fields' => array(
                 array (
-                    'name' => 'document_name',
+                    'name' => 'name',
                     'label' => 'LBL_DOC_NAME',
                 ),
                 'active_date',

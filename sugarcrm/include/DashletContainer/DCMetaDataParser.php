@@ -68,16 +68,12 @@ class DCMetaDataParser
 	 *
 	 * If the file path is not found or if the meta-data is invalid it will throw an error and return false
 	 *
-	 * @throws FileNotFound and InvalidMetaData errors
-	 * @param $filePath - path to the meta data
-	 * @return bool - success or failure of load
+	 * @param string $filePath path to the meta data
+	 * @return bool success or failure of load
 	 */
-	public function load(
-	    $filePath
-	    )
+	public function load($filePath)
 	{
-		if(file_exists('custom/'. $filePath))
-		    $filePath = 'custom/'. $filePath;
+	    $filePath = SugarAutoLoader::existingCustomOne($filePath);
 
 		$dashletdefs = array();
 		include($filePath);
@@ -111,9 +107,9 @@ class DCMetaDataParser
 	 * This function will be called in conjunction with addDashlet in the Dashlet Container Layout (DCL) with the DCL handling
 	 * layout specific positioning of a dashlet.
 	 *
-	 * @param $dashletID - id of the dashlet (not the instance id of the dashlet)
-	 * @param $group - group it should be added to
-	 * @param $position - position in the group
+	 * @param string $dashletID - id of the dashlet (not the instance id of the dashlet)
+	 * @param string $group - group it should be added to
+	 * @param int $position - position in the group
 	 * @return bool - success or failure of add
 	 */
 	public function addDashlet(
@@ -127,7 +123,7 @@ class DCMetaDataParser
 	/**
 	 * Handles the removing of a dashlet from the meta-data based on an instance id of a dashlet
 	 *
-	 * @param $id - instance id of a dashlet
+	 * @param string $id - instance id of a dashlet
 	 * @return bool - success or failure of remove
 	 */
 	public function removeDashlet(
@@ -139,9 +135,9 @@ class DCMetaDataParser
 	/**
 	 * Allows for moving a dashlet to either a new position in the same group or a new group entirely
 	 *
-	 * @param $id - instance id of a dashlet
-	 * @param $group - group it should be added to
-	 * @param $position - position in the group
+	 * @param string $id - instance id of a dashlet
+	 * @param string $group - group it should be added to
+	 * @param int $position - position in the group
 	 * @return bool - success or failure
 	 */
 	public function moveDashlet(

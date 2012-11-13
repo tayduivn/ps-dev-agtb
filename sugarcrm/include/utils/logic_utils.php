@@ -69,14 +69,14 @@ function replace_or_add_logic_type($hook_array){
 
 
 
-function write_logic_file($module_name, $contents){
-
+function write_logic_file($module_name, $contents)
+{
 		$file = "modules/".$module_name . '/logic_hooks.php';
 		$file = create_custom_directory($file);
 		$fp = sugar_fopen($file, 'wb');
 		fwrite($fp,$contents);
 		fclose($fp);
-
+		SugarAutoLoader::addToMap($file);
 //end function write_logic_file
 }
 

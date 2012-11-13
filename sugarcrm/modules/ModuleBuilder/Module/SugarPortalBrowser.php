@@ -37,15 +37,13 @@ class SugarPortalBrowser
 
     function loadModules()
     {
-        $d = dir('modules');
-		while($e = $d->read()){
-			if (substr($e, 0, 1) == '.' || !is_dir('modules/' . $e)) continue;
-            
-			if ((file_exists("modules/$e/metadata/studio.php")) && $this->isPortalModule($e))
-			{
-				$this->modules[$e] = new SugarPortalModule($e);
-			}
-		}
+        foreach(SugarAutoLoader::getDirFiles("modules", true) as $mdir) {
+            // strip modules/ from name
+            $mname = substr($mdir, 8);
+            if(SugarAutoLoader::fileExists("$mdir/metadata/studio.php")  && $this->isPortalModule($mname)) {
+                $this->modules[$mname] = new SugarPortalModule($mname);
+            }
+        }
     }
 
     function getNodes(){
@@ -59,41 +57,41 @@ class SugarPortalBrowser
         }
         $nodes[] = array(
             'name'=> translate('LBL_LAYOUTS'),
-            'imageTitle' => 'Layouts', 
-            'type'=>'Folder', 
-            'children'=>$layouts, 
+            'imageTitle' => 'Layouts',
+            'type'=>'Folder',
+            'children'=>$layouts,
             'action'=>'module=ModuleBuilder&action=wizard&portal=1&layout=1');
         ksort($nodes);
         return $nodes;
     }
 
     /**
-     * Runs through the views metadata directory to check for expected portal 
+     * Runs through the views metadata directory to check for expected portal
      * files to verify if a given module is a portal module.
-     * 
-     * This replaces the old file path checker that looked for 
-     * portal/modules/$module/metadata. We are now looking for 
+     *
+     * This replaces the old file path checker that looked for
+     * portal/modules/$module/metadata. We are now looking for
      * modules/$module/metadata/portal/views/(edit|list|detail).php
      *
      * @param string $module The module to check portal validity on
      * @return bool True if a portal/view/$type.php file was found
      */
-    function isPortalModule($module) {
+    function isPortalModule($module)
+    {
         // Create the path to search
         $path = "modules/$module/clients/portal/views/";
 
         // Handle it
-        // Bug 55003 - Notes showing as a portal module because it has non 
+        // Bug 55003 - Notes showing as a portal module because it has non
         // standard layouts
         $views = SugarPortalModule::getViewFiles();
         $viewFiles = array_keys($views);
         foreach ($viewFiles as $file) {
-            $dirname = $path . basename($file, '.php') . '/';
-            if (is_dir($dirname) && file_exists($dirname . $file)) {
+            if (SugarAutoLoader::fileExists($path . basename($file, '.php') . '/' . $file)) {
                 return true;
             }
         }
-        
+
         return false;
     }
 

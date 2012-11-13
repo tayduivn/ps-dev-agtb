@@ -20,9 +20,16 @@
             overall_worst: 0,
             show_worksheet_likely: options.context.forecasts.config.get('show_worksheet_likely'),
             show_worksheet_best: options.context.forecasts.config.get('show_worksheet_best'),
-            show_worksheet_worst: options.context.forecasts.config.get('show_worksheet_worst'),
-
+            show_worksheet_worst: options.context.forecasts.config.get('show_worksheet_worst')
         });
+    },
+
+    /**
+     * Clean up any left over bound data to our context
+     */
+    unbindData : function() {
+        if(this.context.forecasts) this.context.forecasts.off(null, null, this);
+        app.view.View.prototype.unbindData.call(this);
     },
 
     bindDataChange: function() {
@@ -45,7 +52,7 @@
         });
         */
 
-        this.context.forecasts.on('forecasts:worksheet:render', function() {
+        this.context.forecasts.on('forecasts:worksheet:rendered forecasts:worksheet:filtered', function() {
             self._render();
         })
     },
@@ -64,7 +71,7 @@
                 $('#forecastsWorksheetTotalsOverallTotals').remove();
             }
             // Add forecastsWorksheetTotals.hbt to the forecastsWorksheet table footer
-            $('#summary tr:last').after(this.template(this.model.toJSON()));
+            $('#summary').html(this.template(this.model.toJSON()));
         }
     }
 })

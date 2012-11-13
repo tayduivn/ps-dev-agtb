@@ -19,16 +19,9 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *to the License for the specific language governing these rights and limitations under the License.
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
-/*********************************************************************************
- * $Id: User.php 56851 2010-06-07 22:17:02Z jenny $
- * Description: TODO:  To be written.
- * Portions created by SugarCRM are Copyright (C) SugarCRM, Inc.
- * All Rights Reserved.
- * Contributor(s): ______________________________________..
- ********************************************************************************/
-
 require_once('include/SugarObjects/templates/person/Person.php');
 require_once "modules/Mailer/MailerFactory.php"; // imports all of the Mailer classes that are needed
+
 
 // User is used to store customer information.
 class User extends Person {
@@ -92,7 +85,10 @@ class User extends Person {
 	var $user_preferences;
 
 	var $importable = true;
-	var $_userPreferenceFocus;
+    /**
+     * @var UserPreference
+     */
+    var $_userPreferenceFocus;
 
 	var $encodeFields = Array ("first_name", "last_name", "description");
 
@@ -105,8 +101,8 @@ class User extends Person {
 
 	var $new_schema = true;
 
-	function User() {
-		parent::Person();
+	public function __construct() {
+		parent::__construct();
 		//BEGIN SUGARCRM flav=pro ONLY
 		$this->disable_row_level_security = true;
 		//END SUGARCRM flav=pro ONLY
@@ -1757,6 +1753,10 @@ EOQ;
      * @return bool
      */
     public function isDeveloperForAnyModule() {
+        if(empty($this->id)) {
+            // empty user is no developer
+            return false;
+        }
         if ($this->isAdmin()) {
             return true;
         }
@@ -1786,6 +1786,10 @@ EOQ;
      * @return bool
      */
     public function isDeveloperForModule($module) {
+        if(empty($this->id)) {
+            // empty user is no developer
+            return false;
+        }
         if ($this->isAdmin()) {
             return true;
         }
@@ -1818,6 +1822,10 @@ EOQ;
      * @return bool
      */
     public function isAdminForModule($module) {
+        if(empty($this->id)) {
+            // empty user is no admin
+            return false;
+        }
         if ($this->isAdmin()) {
             return true;
         }
@@ -2207,7 +2215,7 @@ EOQ;
         return false;
     }
 
-    //BEGIN SUGARCRM flav=pro ONLY
+    //BEGIN SUGARCRM flav=int ONLY
     /**
      * This is a convenience function to get all the user ids that report to the invoking user instance
      *
@@ -2215,6 +2223,7 @@ EOQ;
      * @param $fromCache boolean value indicating whether or not to use the available cached values (true by default)
      *
      */
+    /*
     function get_reports_to_hierarchy($returnSelf=true, $fromCache=true)
     {
 

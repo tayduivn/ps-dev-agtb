@@ -25,16 +25,17 @@ describe("The forecastsTabbedConfig layout controller", function(){
 
     beforeEach(function() {
         var options = {
-            context: {
-                set: function() {}
-            },
+            context: new Backbone.Model(),
             meta: {
+                type: 'tabbedConfig',
                 components: {}
             }
         };
 
+        options.context.forecasts = new Backbone.Model();
+
         app = SugarTest.app;
-        SugarTest.loadFile("../modules/Forecasts/clients/base/layouts/forecastsTabbedConfig", "forecastsTabbedConfig", "js", function(d) {
+        var tabbedController = SugarTest.loadFile("../modules/Forecasts/clients/base/layouts/tabbedConfig", "tabbedConfig", "js", function(d) {
             return eval(d);
         });
         stubs = [];
@@ -53,7 +54,13 @@ describe("The forecastsTabbedConfig layout controller", function(){
         }));
         stubs.push(sinon.stub(app.view.Layout.prototype, "initialize", function (options) {}));
 
-        layout = new app.view.layouts.ForecastsTabbedConfigLayout(options);
+        layout = SugarTest.createComponent('Layout', {
+            name: "tabbedConfig",
+            module: "Forecasts",
+            context: options.context,
+            meta : options.meta,
+            controller: tabbedController
+        });
     });
 
     afterEach(function() {
@@ -68,14 +75,57 @@ describe("The forecastsTabbedConfig layout controller", function(){
 
         it("should return an array containing passed in value", function() {
             layout.registerBreadCrumbLabel('Test1');
-            expect(layout.getBreadCrumbLabels()).toContain('Test1');
+            expect(layout.getBreadCrumbLabels()).toContain({
+                'index': 0,
+                'label': 'Test1'
+            });
         });
 
         it("should only contain contain 1 unique value", function() {
             layout.registerBreadCrumbLabel('Test1');
             layout.registerBreadCrumbLabel('Test1');
             expect(layout.getBreadCrumbLabels().length).toEqual(1);
-            expect(layout.getBreadCrumbLabels()).toContain('Test1');
+            expect(layout.getBreadCrumbLabels()).toContain({
+                'index': 0,
+                'label': 'Test1'
+            });
         })
+    });
+
+    describe("initialize", function () {
+        var options, testLayout;
+
+        beforeEach(function() {
+            options = {
+                context: new Backbone.Model({}),
+                meta: {
+                    components: {}
+                }
+            };
+            options.context.forecasts = new Backbone.Model({});
+        });
+
+        afterEach(function() {
+            delete options;
+            delete testLayout;
+        });
+
+        it("should create a new model if one does not exist", function () {
+            testLayout = new app.view.layouts.ForecastsTabbedConfigLayout(options);
+            expect(testLayout.options.context.attributes.model).toBeDefined();
+        });
+
+        it("should create a copy of the model if one exists, so a cancel will not keep values lying around", function() {
+
+            options.context.forecasts.config = new Backbone.Model({
+                defaults: {
+                    test: 'test'
+                }
+            });
+
+            testLayout = new app.view.layouts.ForecastsTabbedConfigLayout(options);
+            expect(testLayout.options.context.attributes.model).not.toBe(options.context.forecasts.config);
+            expect(testLayout.options.context.attributes.model.attributes).toEqual(options.context.forecasts.config.attributes);
+        });
     });
 });

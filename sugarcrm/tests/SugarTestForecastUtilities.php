@@ -38,6 +38,7 @@ require_once 'modules/Forecasts/Forecast.php';
 class SugarTestForecastUtilities
 {
     private static $_createdForecasts = array();
+    private static $timeperiod;
 
     /**
      * @static
@@ -58,7 +59,7 @@ class SugarTestForecastUtilities
         $forecast->date_modified = db_convert("'" . TimeDate::getInstance()->nowDb() . "'", 'datetime');
         $forecast->date_entered = $forecast->date_modified;
         $forecast->save();
-        self::$_createdForecasts[] = $forecast;
+        self::$_createdForecasts[$forecast->id] = $forecast;
         return $forecast;
     }
 
@@ -69,26 +70,10 @@ class SugarTestForecastUtilities
      */
     public static function removeAllCreatedForecasts()
     {
-        $forecast_ids = self::getCreatedForecastIds();
+        $forecast_ids = array_keys(self::$_createdForecasts);
         $GLOBALS['db']->query('DELETE FROM forecasts WHERE id IN (\'' . implode("', '", $forecast_ids) . '\')');
+        self::$_createdForecasts = array();
     }
-
-    /**
-     * @static
-     * This is a static function to return all ids of created Forecast instances
-     *
-     * @return array of ids of the Forecast instances created
-     */
-    public static function getCreatedForecastIds()
-    {
-        $forecast_ids = array();
-        foreach (self::$_createdForecasts as $fs) {
-            $forecast_ids[] = $fs->id;
-        }
-        return $forecast_ids;
-    }
-
-    protected static $timeperiod;
 
     /**
      * @return TimePeriod
@@ -185,6 +170,7 @@ class SugarTestForecastUtilities
                 $opp->best_case = ($opp_amount + 200);
                 $opp->worst_case = ($opp_amount - 400);
                 $opp->probability = rand(50, 90);
+                $opp->sales_stage = 'Prospecting';
                 $opp->commit_stage = ($include == 1) ? 'include' : 'exclude';
                 $opp->date_closed = $date_closed;
                 $opp->team_id = '1';

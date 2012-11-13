@@ -79,6 +79,11 @@ class ForecastsWorksheetManagerApiTest extends RestTestBase
      */
     protected static $repData;
 
+    /**
+     * @var Administration
+     */
+    protected static $admin;
+
     public static function setUpBeforeClass()
     {
         parent::setUpBeforeClass();
@@ -157,6 +162,8 @@ class ForecastsWorksheetManagerApiTest extends RestTestBase
 
         );
 
+        // get current settings
+        self::$admin = BeanFactory::getBean('Administration');
     }
 
     public function setUp()
@@ -165,11 +172,16 @@ class ForecastsWorksheetManagerApiTest extends RestTestBase
         $this->_user = self::$manager['user'];
         $this->_oldUser = $GLOBALS['current_user'];
         $GLOBALS['current_user'] = $this->_user;
+        //Reset all columns to be shown
+        self::$admin->saveSetting('Forecasts', 'show_worksheet_likely', 1, 'base');
+        self::$admin->saveSetting('Forecasts', 'show_worksheet_best', 1, 'base');
+        self::$admin->saveSetting('Forecasts', 'show_worksheet_worst', 1, 'base');
     }
 
     public static function tearDownAfterClass()
     {
         SugarTestForecastUtilities::cleanUpCreatedForecastUsers();
+        SugarTestForecastUtilities::removeAllCreatedForecasts();
         parent::tearDown();
     }
 
@@ -294,7 +306,17 @@ class ForecastsWorksheetManagerApiTest extends RestTestBase
 
         $restReply = $this->_restCall("ForecastManagerWorksheets?user_id=" . self::$manager['user']->id . '&timeperiod_id=' . self::$timeperiod->id);
 
-        $this->assertSame(0, $restReply['reply'][1]['amount']);
+        $replyAmount = 0;
+		//check to see if the Quota was auto calculated
+		foreach($restReply["reply"] as $record)
+        {
+        	if($record["user_id"] == self::$repData['user_id'])
+        	{
+                $replyAmount = $record["amount"];
+                break;
+        	}
+        }
+        $this->assertSame(0, $replyAmount);
 
         $rep_forecast->deleted = 0;
         $rep_forecast->save();
@@ -414,7 +436,6 @@ class ForecastsWorksheetManagerApiTest extends RestTestBase
             "amount" => self::$reportee['opportunities_total'] + $rep1['opportunities_total'] + $rep2['opportunities_total'],
             "best_adjusted" => SugarTestForecastUtilities::formatTestNumber($tmpWorksheet->best_case),
             "best_case" => SugarTestForecastUtilities::formatTestNumber($tmpForecast->best_case),
-            "commit_stage" => $tmpWorksheet->commit_stage,
             "forecast_id" => $tmpForecast->id,
             "id" => self::$reportee["user"]->id,
             "likely_adjusted" => SugarTestForecastUtilities::formatTestNumber($tmpWorksheet->likely_case),
@@ -435,7 +456,6 @@ class ForecastsWorksheetManagerApiTest extends RestTestBase
                 $this->assertEquals($expected["amount"], $record["amount"], 'Failed retrieving correct amount value');
                 $this->assertEquals($expected["best_adjusted"], $record["best_adjusted"], 'Failed retrieving correct best_adjusted value');
                 $this->assertEquals($expected["best_case"], $record["best_case"], 'Failed retrieving correct best_case value');
-                $this->assertEquals($expected["commit_stage"], $record["commit_stage"], 'Failed retrieving correct forecast value');
                 $this->assertEquals($expected["forecast_id"], $record["forecast_id"], 'Failed retrieving correct forecast_id value');
                 $this->assertEquals($expected["id"], $record["id"], 'Failed retrieving correct id value');
                 $this->assertEquals($expected["likely_adjusted"], $record["likely_adjusted"], 'Failed retrieving correct likely_adjusted value');
@@ -475,7 +495,15 @@ class ForecastsWorksheetManagerApiTest extends RestTestBase
         $expectedName = string_format($current_module_strings['LBL_MY_OPPORTUNITIES'],
             array($locale->getLocaleFormattedName(self::$manager['user']->first_name, self::$manager['user']->last_name))
         );
-        $this->assertEquals($expectedName, $restReply['reply'][0]['name']);
+        $restUserName = '';
+        foreach($restReply['reply'] as $record)
+        {
+            if($record['user_id'] == self::$manager['user']->id) {
+                $restUserName = $record['name'];
+                break;
+            }
+        }
+        $this->assertEquals($expectedName, $restUserName);
         $this->_user->setPreference('default_locale_name_format', $defaultPreference, 0, 'global');
         $this->_user->savePreferencesToDB();
         $this->_user->reloadPreferences();
@@ -524,8 +552,8 @@ class ForecastsWorksheetManagerApiTest extends RestTestBase
         	if($record["id"] == $postData["id"])
         	{
         		$version = $record["version"];
+                break;
         	}
-        	break;
         }
 	
         $this->assertEquals("0", $version, "Draft version was not returned.");
@@ -545,8 +573,8 @@ class ForecastsWorksheetManagerApiTest extends RestTestBase
         	if($record["id"] == $postData["id"])
         	{
         		$version = $record["version"];
+                break;
         	}
-        	break;
         }
         $this->assertEquals("1", $version, "Comitted version was not returned.");
 
@@ -606,8 +634,8 @@ class ForecastsWorksheetManagerApiTest extends RestTestBase
         	if($record["id"] == $postData["id"])
         	{
         		$best_adjusted = $record["best_adjusted"];
+                break;
         	}
-        	break;
         }
         
         $this->assertEquals(self::$managerData2["best_adjusted"] - 100, $best_adjusted, "Draft version was returned");
@@ -680,8 +708,8 @@ class ForecastsWorksheetManagerApiTest extends RestTestBase
         	if($record["user_id"] == $this->_user->id)
         	{
         		$quota = $record["quota"];
+                break;
         	}
-        	break;
         }
                 
         //Since the manager has no overall quota assigned to him from an uber_manager, his total should be recalculated
@@ -710,31 +738,43 @@ class ForecastsWorksheetManagerApiTest extends RestTestBase
         $this->authToken = "";
         
         $response = $this->_restCall("ForecastManagerWorksheets?user_id=" . self::$manager2["user"]->id . "&timeperiod_id=" . self::$timeperiod->id);
-     	
+
+        //get the data for the rep
+         foreach($response["reply"] as $record)
+         {
+            if($record["user_id"] != $this->_user->id)
+            {
+                $repData = $record;
+                break;
+            }
+         }
+         
+         
         $newQuota = 4000;
-        $postData = array(	 "amount" => $response["reply"][1]["amount"],
+        //alter the rep
+        $postData = array(	 "amount" => $repData["amount"],
 							 "quota" => $newQuota,
-                             "quota_id" => $response["reply"][1]["quota_id"],
-                             "best_case" => $response["reply"][1]["best_case"],
-                             "likely_case" => $response["reply"][1]["amount"],
-                             "worst_case" => $response["reply"][1]["worst_case"],
-                             "best_adjusted" => $response["reply"][1]["best_adjusted"],
-                             "likely_adjusted" => $response["reply"][1]["likely_adjusted"],
-                             "worst_adjusted" => $response["reply"][1]["worst_adjusted"],
-                             "forecast" => intval($response["reply"][1]["forecast"]),
-                             "forecast_id" => $response["reply"][1]["forecast_id"],
-                             "id" => $response["reply"][1]["id"],
-                             "worksheet_id" => $response["reply"][1]["worksheet_id"],
-                             "show_opps" => $response["reply"][1]["show_opps"],
-                             "name" => $response["reply"][1]["name"],
-                             "user_id" => $response["reply"][1]["user_id"],
+                             "quota_id" => $repData["quota_id"],
+                             "best_case" => $repData["best_case"],
+                             "likely_case" => $repData["amount"],
+                             "worst_case" => $repData["worst_case"],
+                             "best_adjusted" => $repData["best_adjusted"],
+                             "likely_adjusted" => $repData["likely_adjusted"],
+                             "worst_adjusted" => $repData["worst_adjusted"],
+                             "forecast" => intval($repData["forecast"]),
+                             "forecast_id" => $repData["forecast_id"],
+                             "id" => $repData["id"],
+                             "worksheet_id" => $repData["worksheet_id"],
+                             "show_opps" => $repData["show_opps"],
+                             "name" => $repData["name"],
+                             "user_id" => $repData["user_id"],
                              "current_user" => $this->_user->id,
-                             "timeperiod_id" =>$response["reply"][1]["timeperiod_id"],
+                             "timeperiod_id" =>$repData["timeperiod_id"],
                              "draft" => 0
                         );
         
-        $response = $this->_restCall("ForecastManagerWorksheets/" .  $response["reply"][1]["user_id"], json_encode($postData), "PUT");
-        
+        $response = $this->_restCall("ForecastManagerWorksheets/" .  $repData["user_id"], json_encode($postData), "PUT");
+
         // now get the data back to see if it was saved to all the proper tables.
 		$response = $this->_restCall("ForecastManagerWorksheets?user_id=". self::$manager2["user"]->id . "&timeperiod_id=" . self::$timeperiod->id);
 		
@@ -745,8 +785,8 @@ class ForecastsWorksheetManagerApiTest extends RestTestBase
         	if($record["user_id"] == $this->_user->id)
         	{
         		$quota = $record["quota"];
+                break;
         	}
-        	break;
         }
         
         //Since we set Manager2 to have a overall quota of 5000 in the testForecastWorksheetQuotaRecalc test, the recalc
@@ -758,5 +798,5 @@ class ForecastsWorksheetManagerApiTest extends RestTestBase
         $GLOBALS["current_user"] = $oldUser;
         $this->authToken = "";
      }	
-}
 
+}

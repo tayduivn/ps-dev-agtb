@@ -1020,6 +1020,6 @@ $dictionary['User'] = array(
 	   //END SUGARCRM flav=pro ONLY
     ),
 
-
+    'acls' => array('SugarACLUsers' => true),
 
 );
