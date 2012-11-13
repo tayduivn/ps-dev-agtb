@@ -293,6 +293,7 @@
             ),
 
            $sugar_grp_sidecar = array(
+               'include/javascript/phpjs/base64_encode.js' => 'include/javascript/sugar_sidecar.min.js',
                'sidecar/lib/jquery/jquery.placeholder.min.js'         => 'include/javascript/sugar_sidecar.min.js',
                'styleguide/assets/js/bootstrap-button.js'  => 'include/javascript/sugar_sidecar.min.js',
                'styleguide/assets/js/bootstrap-tooltip.js' => 'include/javascript/sugar_sidecar.min.js',
