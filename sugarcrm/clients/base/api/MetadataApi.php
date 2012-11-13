@@ -293,50 +293,35 @@ class MetadataApi extends SugarApi {
 
     protected function buildJSForComponents(&$data) {
         $js = "";
+        $platforms = $this->jssourceFilter;
 
         foreach(array('fields', 'views', 'layouts') as $mdType) {
 
             if (!empty($data[$mdType])){
-                $js .= "\n\t$mdType:{";
-                $firstPlatform = true;
-                $platforms = $this->jssourceFilter;
+                $js  .= ",\n\t$mdType:{";
+                $plat = '';
 
                 foreach ($platforms as $platform) {
-
                     if (isset($data[$mdType][$platform])) {
-
-                        // Starts current platform for this component
-
-                        if (!$firstPlatform)
-                            $js .= ",";
-                        else
-                            $firstPlatform = false;
-
-                        $js .= "\n\t\t\"$platform\":{";
-                        $firstComp = true;
+                        $plat .= ",\n\t\t\"$platform\":{";
+                        $comp = '';
 
                         foreach($data[$mdType][$platform] as $name => $component) {
-
                             if (is_array($component) && !empty($component['controller'])) {
-                                if (!$firstComp)
-                                    $js .= ",";
-                                else
-                                    $firstComp = false;
-
                                 $controller = $component['controller'];
                                 // remove additional symbols in end of js content - it will be included in content
                                 $controller = trim(trim($controller), ",;");
-
-                                $js .= "\n\t\t\"$name\":{controller:$controller}";
+                                $comp .= ",\n\t\t\"$name\":{controller:$controller}";
                                 unset($data[$mdType][$name]['controller']);
                             }
                         }
-                        // Closes current platform for component
-                        $js .= "\n\t\t}";
+                        //Chop of the first comma in $comp
+                        $plat .= substr($comp,1);
+                        $plat .= "\n\t}";
                     }
                 }
-                //Chop of the first comma in $comp
-                $js .= substr($comp,1);
+                //Chop of the first comma in $plat
+                $js .= substr($plat, 1);
                 $js .= "\n\t}";
             }
         }
@@ -682,4 +667,28 @@ class MetadataApi extends SugarApi {
         }
         return $arrJSSourcePlatforms;
     }
+
+    //TODO: This function needs to be in /me as it is user defined
+    protected function getDisplayModules($moduleList)
+    {
+        global $app_list_strings;
+        $ret = $moduleList;
+        if (!empty($this->user))
+        {
+            // Loading a standard module list
+            require_once("modules/MySettings/TabController.php");
+            $controller = new TabController();
+            $ret = array_intersect_key($controller->get_user_tabs($this->user), $moduleList);
+            foreach($ret as $mod => $lbl)
+            {
+                if (!empty($app_list_strings['moduleList'][$mod])){
+                    $ret[$mod] = $app_list_strings['moduleList'][$mod];
+                }
+            }
+        }
+
+        return $ret;
+
+    }
+
 }
