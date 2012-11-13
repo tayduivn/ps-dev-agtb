@@ -58,6 +58,12 @@ class MonthTimePeriod extends TimePeriod implements TimePeriodInterface {
 
         //The name template
         $this->name_template = "%s %d";
+
+        //The chart label
+        $this->chart_label = "n/j";
+
+        //The chart data interval modifier
+        $this->chart_data_modifier = '+1 week';
     }
 
 
@@ -91,15 +97,15 @@ class MonthTimePeriod extends TimePeriod implements TimePeriodInterface {
             $remainingDays = (($end - $start) / 86400);
 
             //Create the modifier for the timeperiod
-            $modifier = $remainingDays > 7 ? '+1 week' : '+' . ceil($remainingDays) . ' day';
+            $modifier = $remainingDays > 6 ? '+6 day' : '+' . ceil($remainingDays) . ' day';
 
             $val = $chartData;
-            $toDate = strtotime($modifier, $start);
-            $val['label'] = date('n/j', $start) . '-' . date('n/j', $toDate);
+            $val['label'] = date($this->chart_label, $start) . '-' . date($this->chart_label, strtotime($modifier, $start));
 
-            //We internally use $count to store to the corresponding data set for the week in the given timeperiod
+            //We internally use $count to store the corresponding data set for the week in the given timeperiod.
+            //For a one month interval we will most likely get 4 weeks except for the case of non-leap year February
             $weeks[$count++] = $val;
-            $start = $toDate;
+            $start = strtotime($this->chart_data_modifier, $start);
         }
 
         return $weeks;
@@ -117,6 +123,6 @@ class MonthTimePeriod extends TimePeriod implements TimePeriodInterface {
         $closed = strtotime($dateClosed);
         //We are calculating the difference in days between the $dateClosed parameter and the start_date for timeperiod
         //then we divide by 7 (days in week) and use the floor value as the key
-        return floor((ceil(($closed - $start) / 86400)) / 7);
+        return floor((($closed - $start) / 86400) / 7);
     }
 }

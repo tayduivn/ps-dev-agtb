@@ -69,6 +69,15 @@ class QuarterTimePeriod extends TimePeriod implements TimePeriodInterface {
 
         //The leaf name template
         $this->leaf_name_template = "%s %d";
+
+        //The chart label
+        $this->chart_label = "F Y";
+
+        //The date formatting key for chart labels
+        $this->chart_data_key = "m-Y";
+
+        //The chart data interval modifier
+        $this->chart_data_modifier = '+1 month';
     }
 
     /**
@@ -98,9 +107,9 @@ class QuarterTimePeriod extends TimePeriod implements TimePeriodInterface {
 
         while ($start < $end) {
             $val = $chartData;
-            $val['label'] = date('F Y', $start);
-            $months[date('m-Y', $start)] = $val;
-            $start = strtotime('+1 month', $start);
+            $val['label'] = date($this->chart_label, $start);
+            $months[date($this->chart_data_key, $start)] = $val;
+            $start = strtotime($this->chart_data_modifier, $start);
         }
 
         return $months;
@@ -114,6 +123,6 @@ class QuarterTimePeriod extends TimePeriod implements TimePeriodInterface {
      * @return String value of the key to use to map to the chart labels
      */
     public function getChartLabelsKey($dateClosed) {
-        return date('m-Y', strtotime($dateClosed));
+        return date($this->chart_data_key, strtotime($dateClosed));
     }
 }

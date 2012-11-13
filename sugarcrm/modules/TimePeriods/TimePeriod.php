@@ -810,6 +810,29 @@ class TimePeriod extends SugarBean {
         return $count;
     }
 
+
+    /**
+     * Returns the formatted chart label data for the timeperiod
+     *
+     * @param $chartData Array of chart data values
+     * @return formatted Array of chart data values where the labels are broken down by the timeperiod's increments
+     */
+    public function getChartLabels($chartData) {
+        return $chartData;
+    }
+
+
+    /**
+     * Returns the key for the chart label data for the date closed value
+     *
+     * @param String The date_closed value in db date format
+     * @return String value of the key to use to map to the chart labels
+     */
+    public function getChartLabelsKey($dateClosed) {
+        return $dateClosed;
+    }
+
+
     /**
      * Returns the TimePeriod bean instance for the given time period id
      *
