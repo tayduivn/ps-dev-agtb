@@ -197,6 +197,7 @@
                         app.alert.show('success', {
                             level: 'success',
                             closeable: false,
+                            autoClose: true,
                             title : app.lang.get("LBL_FORECASTS_WIZARD_SUCCESS_TITLE", "Forecasts") + ":",
                             messages: [app.lang.get("LBL_FORECASTS_TABBED_CONFIG_SUCCESS_MESSAGE", "Forecasts")]
                         });

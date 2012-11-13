@@ -228,6 +228,39 @@ class RestThemeTest extends RestTestBase
         $this->assertContains("../../../../../styleguide/assets", $css);
     }
 
+    
+    /**
+     * @group rest
+     */
+    public function testGetUserPreferredTheme()
+    {
+        $oldPreferredTheme = null;
+        $preferredTheme = 'MyTestPreferredTheme';
+
+        // Save preferred theme stored in session
+        if (isset($_SESSION['authenticated_user_theme'])) {
+            $oldPreferredTheme = $_SESSION['authenticated_user_theme'];
+        }
+        $_SESSION['authenticated_user_theme'] = $preferredTheme;
+
+        // Create a theme without defining a themeName
+        $theme = new SidecarTheme($this->platformTest, null);
+        $paths = $theme->getPaths();
+
+        // Reset session var
+        unset($_SESSION['authenticated_user_theme']);
+        if ($oldPreferredTheme) {
+            $_SESSION['authenticated_user_theme'] = $oldPreferredTheme;
+        }
+
+        // TEST the class has retrieve the user preferred theme
+        $this->assertEquals(
+            $paths['base'],
+            'styleguide/themes/clients/' . $this->platformTest . '/' . $preferredTheme . '/'
+        );
+    }
+
+
     private function rawurlencode($args) {
         $getString = '?';
         foreach ( $args as $k => $v ) {

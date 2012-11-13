@@ -47,12 +47,33 @@ class SidecarTheme
     private $paths;
     private $bootstrapCssName = 'bootstrap.css';
 
-    function __construct($client = 'base', $themeName = 'default')
+    function __construct($client = 'base', $themeName = null)
     {
         $this->myClient = $client;
-        $this->myTheme = $themeName;
 
+        // Get user theme if the themeName isn't defined
+        if (!$themeName || $themeName == '') {
+            $themeName = $this->getUserTheme();
+        }
+        $this->myTheme = $themeName;
         $this->paths = $this->makePaths($client, $themeName);
+    }
+
+    /**
+     * Get the user preferred theme
+     *      * @return string themeName
+     */
+    private function getUserTheme() {
+        if(isset($_COOKIE['sugar_user_theme']) && $_COOKIE['sugar_user_theme'] != '') {
+            return $_COOKIE['sugar_user_theme'];
+        }
+        else if(isset($_SESSION['authenticated_user_theme']) && $_SESSION['authenticated_user_theme'] != '')	{
+            return $_SESSION['authenticated_user_theme'];
+        }
+        else {
+            global $sugar_config;
+            return $sugar_config['default_theme'];
+        }
     }
 
     /**
