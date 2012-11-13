@@ -533,7 +533,7 @@ function post_install() {
     //bug 57426 was introduced in 654, and it's effects need to be repaired during upgrade.
     //Run the repair script if the original version is greater than 654, but less than 661
     //(bug fix was introduced into 658 and 661 branches)
-     if ('653' < $origVersion  && $origVersion < '661')
+    if ($origVersion > '654' && $origVersion < '661')
     {
         process_email_address_relationships();
     }
