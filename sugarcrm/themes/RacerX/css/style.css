@@ -542,7 +542,7 @@ color: #0e70b8;
 text-decoration: none;
 }
 
-.moduleTitle h2 span.pointer {
+.moduleTitle h2 span.breadCrumbSymbol {
 padding: 0px 10px;
 font-size: 18px;
 line-height: 16px;
@@ -1458,7 +1458,7 @@ background-image:url(../../../../index.php?entryPoint=getImage&imageName=form-bu
 #footer #help a .icon {
     float: left;
     height: 24px;
-    margin: 7px 4px 4px 0px;
+    margin: 5px 4px 4px 0px;
 }
 
 #footer #help a span.title, #footer #productTour a span.title {
@@ -1504,7 +1504,7 @@ background-image:url(../../../../index.php?entryPoint=getImage&imageName=form-bu
 #footer #productTour a .icon {
     float: left;
     height: 22px;
-    margin: 7px 2px 4px 0px;
+    margin: 5px 2px 4px 0px;
 }
 
 #themePicker, #langPicker 
@@ -5969,6 +5969,10 @@ top:0px;
     right:2px;
 }
 
+
+#glblSearchBtn .btn-toolbar {
+    margin: 0px;
+}
 
 #dcmenuwrap{
 margin-left: auto;
