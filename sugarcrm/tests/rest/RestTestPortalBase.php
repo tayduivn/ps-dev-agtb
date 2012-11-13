@@ -189,7 +189,7 @@ class RestTestPortalBase extends RestTestBase {
 
 
         $GLOBALS ['system_config']->saveSetting('supportPortal', 'RegCreatedBy', '');
-        
+        $this->_restLogout();
         parent::tearDown();
     }
 
@@ -213,6 +213,21 @@ class RestTestPortalBase extends RestTestBase {
         }
         $this->authToken = $reply['reply']['access_token'];
         $this->refreshToken = $reply['reply']['refresh_token'];
+    }
+
+    protected function _restLogout()
+    {
+
+        if (!empty($this->authToken) && !empty($this->refreshToken)) {
+            $args = array(
+                'token' => $this->authToken,
+            );
+
+            $reply = $this->_restCall('oauth2/logout',json_encode($args));
+            if ( !isset($reply['reply']['success']) ) {
+                throw new Exception("Rest logout failed, message looked like: ".$reply['replyRaw']);
+            }
+        }
     }
     
     // Copied from parser.portalconfig.php, when that gets merged we should probably just abuse that function.
