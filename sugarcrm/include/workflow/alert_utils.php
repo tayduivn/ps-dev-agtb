@@ -1163,8 +1163,19 @@ function get_system_default_body(&$mail_object, $focus, &$notify_user) {
     $subject = $xtpl->text("{$templateName}_Subject");
     $mail_object->setSubject($subject);
 
-    $textBody = trim($xtpl->text($templateName));
-    $mail_object->setTextBody($textBody); // looks to be plain-text only
+    $body = trim($xtpl->text($templateName));
+
+    // the compared strings will be the same if strip_tags had no affect
+    // if the compared strings are equal, then it's a text-only message
+    $textOnly = (strcmp($body, strip_tags($body)) == 0);
+
+    if ($textOnly) {
+        $mail_object->setTextBody($body);
+    } else {
+        $textBody = strip_tags(br2nl($body)); // need to create the plain-text part
+        $mail_object->setTextBody($textBody);
+        $mail_object->setHtmlBody($body);
+    }
 
     return false; // false=no errors
 }
