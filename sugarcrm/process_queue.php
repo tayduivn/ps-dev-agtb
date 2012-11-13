@@ -150,7 +150,17 @@ foreach ($reportsToEmail as $scheduleInfo) {
                      $savedReport->name .
                      $mod_strings["LBL_SCHEDULED_REPORT_MSG_BODY2"];
 
-            $mailer->setTextBody($body); // looks to be plain-text only
+            // the compared strings will be the same if strip_tags had no affect
+            // if the compared strings are equal, then it's a text-only message
+            $textOnly = (strcmp($body, strip_tags($body)) == 0);
+
+            if ($textOnly) {
+                $mailer->setTextBody($body);
+            } else {
+                $textBody = strip_tags(br2nl($body)); // need to create the plain-text part
+                $mailer->setTextBody($textBody);
+                $mailer->setHtmlBody($body);
+            }
 
             $GLOBALS["log"]->debug("-----> Sending PDF via Email to [ {$recipientEmailAddress} ]");
             $mailer->send();
