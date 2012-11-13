@@ -346,14 +346,29 @@ class MetaDataManager {
         $obj = BeanFactory::getObjectName($module);
 
         $outputAcl = array('fields'=>array());
-        if ( is_admin($userObject) ) {
+        if ( is_admin($userObject) || !SugarACL::moduleSupportsACL($module) ) {
             foreach ( array('admin','developer','access','view','list','edit','delete','import','export','massupdate') as $action ) {
                 $outputAcl[$action] = 'yes';
             }
         } else if ( isset($acls[$module]['module']) ) {
-            $moduleAcl = $acls[$module]['module'];            
+            $moduleAcl = $acls[$module]['module'];
+
+            if ( isset($moduleAcl['admin']) && isset($moduleAcl['admin']['aclaccess']) && (($moduleAcl['admin']['aclaccess'] == ACL_ALLOW_ADMIN) || ($moduleAcl['admin']['aclaccess'] == ACL_ALLOW_ADMIN_DEV)) ) {
+                $outputAcl['admin'] = 'yes';
+                $isAdmin = true;
+            } else {
+                $outputAcl['admin'] = 'no';
+                $isAdmin = false;
+            }
+
+            if ( isset($moduleAcl['admin']) && isset($moduleAcl['admin']['aclaccess']) && (($moduleAcl['admin']['aclaccess'] == ACL_ALLOW_DEV) || ($moduleAcl['admin']['aclaccess'] == ACL_ALLOW_ADMIN_DEV)) ) {
+                $outputAcl['developer'] = 'yes';
+            } else {
+                $outputAcl['developer'] = 'no';
+            }
+
             // Bug56391 - Use the SugarACL class to determine access to different actions within the module
-            foreach ( array('admin','developer','access','view','list','edit','delete','import','export','massupdate') as $action ) {
+            foreach ( array('access','view','list','edit','delete','import','export','massupdate') as $action ) {
                 $outputAcl[$action] = (SugarACL::checkAccess($module, $action, array('user' => $userObject))) ? 'yes' : 'no';
                 $outputAcl[$action] = ($moduleAcl[$action]['aclaccess'] == ACL_ALLOW_OWNER) ? 'owner' : $outputAcl[$action];
             }
@@ -397,7 +412,6 @@ class MetaDataManager {
                             break;
                     }
                 }
-
             }
         }
         $outputAcl['_hash'] = md5(serialize($outputAcl));
