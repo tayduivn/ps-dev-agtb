@@ -36,9 +36,9 @@ class SidecarGridLayoutMetaDataParser extends GridLayoutMetaDataParser {
         //BEGIN SUGARCRM flav=ent ONLY
         'portal' => array(
             // Detail support one set of fields...
-            'detail' => array('parent', 'parent_type', 'iframe', 'encrypt', 'html','currency'),
+            'detail' => array('parent', 'parent_type', 'iframe', 'encrypt', 'html','currency','currency_id'),
             // Edit supports another
-            'edit' => array('parent', 'parent_type', 'iframe', 'encrypt', 'relate', 'html','currency'),
+            'edit' => array('parent', 'parent_type', 'iframe', 'encrypt', 'relate', 'html','currency','currency_id'),
         ),
         //END SUGARCRM flav=ent ONLY
     );
