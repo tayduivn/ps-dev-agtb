@@ -6718,8 +6718,8 @@ input[type=radio] { display:inline-block; }
   -moz-box-shadow:3px -1px 14px 2px rgba(0, 0, 0, .25);
   box-shadow:3px -1px 14px 2px rgba(0, 0, 0, .25);
 }
-.side > .side-pane, .side > .preview-pane { display:block; }
-.side > .side-pane.hide, .side > .preview-pane.hide { display:none; }
+.side > .side-pane, .side > .preview-pane { display:none; }
+.side > .side-pane.active, .side > .preview-pane.active { display:block; }
 .side > .side-pane .block span.label, .side > .preview-pane .block span.label { margin:0 10px 0 0; }
 .side > .side-pane {
   width:90%;
@@ -6729,7 +6729,7 @@ input[type=radio] { display:inline-block; }
   width:100%;
   border:none;
 }
-.side .preview-pane .card2 { margin:10px; }
+.side > .preview-pane .block { padding:28px 5% 0; }
 .side .preview-pane .card2 .span4 { text-align:right; }
 .side .preview-pane .card2 .span8 { font-weight:bold; }
 .side .accordion { margin:-10px 0 0 0; }
