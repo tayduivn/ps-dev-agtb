@@ -67,8 +67,8 @@ class ReportsUtilities
             $mailer->setTextBody($message);
         } else {
             $textBody = strip_tags(br2nl($message)); // need to create the plain-text part
-            $mailer->setHtmlBody($message);
             $mailer->setTextBody($textBody);
+            $mailer->setHtmlBody($message);
         }
 
         // add the recipient...
