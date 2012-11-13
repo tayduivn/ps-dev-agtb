@@ -25,7 +25,7 @@ describe('favorite field', function() {
             views: [],
             layouts: [],
             _hash: "bc6fc50d9d0d3064f5d522d9e15968fa"
-        }
+        };
 
         SugarTest.testMetadata.init();
         SugarTest.testMetadata.addModuleDefinition(moduleName, metadata);
