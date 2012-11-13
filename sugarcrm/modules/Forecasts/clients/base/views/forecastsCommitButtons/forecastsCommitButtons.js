@@ -197,14 +197,12 @@
                         app.alert.show('success', {
                             level: 'success',
                             closeable: false,
+                            autoClose: true,
                             title : app.lang.get("LBL_FORECASTS_WIZARD_SUCCESS_TITLE", "Forecasts") + ":",
                             messages: [app.lang.get("LBL_FORECASTS_TABBED_CONFIG_SUCCESS_MESSAGE", "Forecasts")]
                         });
                         // call tell the metadata to sync to get the updated config's and refresh the layout
-                        app.sync({callback: function(){
-                            // we need to remove the alert, so it will allow other alerts to work
-                            app.alert.dismiss('success');
-                        }});
+                        app.sync();
                     } else {
                         // reset without a change event in case they click settings again
                         // before refreshing the page

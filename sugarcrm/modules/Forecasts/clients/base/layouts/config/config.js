@@ -80,12 +80,12 @@
                 // we have a success save, so we need to call the app.sync() and then redirect back to the index
                 app.alert.show('success', {
                     level: 'success',
+                    autoClose: true,
+                    closeable: false,
                     title : app.lang.get("LBL_FORECASTS_WIZARD_SUCCESS_TITLE", "Forecasts") + ":",
                     messages: [app.lang.get("LBL_FORECASTS_WIZARD_SUCCESS_MESSAGE", "Forecasts")]
                 });
                 app.sync({callback: function() {
-                    // we need to remove the alert, so it will allow other alerts to work
-                    app.alert.dismiss('success');
                     window.location.hash = "#";
                 }});
             }
