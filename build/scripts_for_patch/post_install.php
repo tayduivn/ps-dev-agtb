@@ -964,7 +964,8 @@ function process_email_address_relationships()
 
     // find troubled rows - ones that violate upper(email_address) <> email_address_caps
     $query = "SELECT * FROM email_addresses WHERE deleted=0 AND upper(email_address) <> email_address_caps";
-    foreach ($GLOBALS['db']->query($query) as $row) { // we don't want to be converted to html
+    $result = $GLOBALS['db']->query($query);
+    while ($row = $GLOBALS['db']->fetchByAssoc($result)) {// we don't want to be converted to html
         // determine if they are the same up to escaping -- something else bad might have happened
         if (strtoupper(stripslashes($row['email_address'])) == $row['email_address_caps']) {
             $broken_escaped_emails[] = $row;
@@ -993,9 +994,8 @@ function process_email_address_relationships()
         _logThis('Inconsistent row has address '.$new_email_address.' and caps field '.$old_email_address, $path);
 
         // attempt to find a better row for the new email address
-        $find_new_rows = $GLOBALS['db']->prepare('SELECT * from email_addresses WHERE email_address_caps = ? AND deleted=0');
-        $find_new_rows->execute(array(strtoupper($new_email_address)));
-        $first_new_row = $find_new_rows->fetch();
+        $find_new_rows_qry = $GLOBALS['db']->query("SELECT * from email_addresses WHERE email_address_caps = '".strtoupper($new_email_address)."' AND deleted=0");
+        $first_new_row = $GLOBALS['db']->fetchByAssoc($find_new_rows_qry);
         if ($first_new_row) {
             // this will be our new id
             $new_uuid = $first_new_row['id'];
@@ -1005,24 +1005,19 @@ function process_email_address_relationships()
             // create new uuid
             _logThis('No matching row for new email address '.$new_email_address.', creating one', $path);
             $new_uuid = create_guid();
-            $add_new_row = $GLOBALS['db']->prepare('INSERT INTO email_addresses VALUES '.
-                   '(:uuid, :email_address, :email_address_caps, :invalid_email, :opt_out, :date_created, :date_modified, 0)');
-            $add_new_row->bindParam(':uuid', $new_uuid);
-            $add_new_row->bindParam(':email_address', $new_email_address);
-            $add_new_row->bindParam(':email_address_caps', strtoupper($new_email_address));
-            $add_new_row->bindParam(':opt_out', $row['opt_out']);
-            $add_new_row->bindParam(':invalid_email', $row['invalid_email']);
-            $add_new_row->bindParam(':date_created', $time_changed);
-            $add_new_row->bindParam(':date_modified', $date_modified);
-            $add_new_row->execute();
-            _logThis("Added as $new_uuid", $path);
+            $noMatchQuery = "INSERT INTO email_addresses VALUES ('".$new_uuid."', '".$new_email_address."', '".strtoupper($new_email_address)."', '".
+                     $row['invalid_email']."', '".$row['opt_out']."', '".$time_changed."', '".$GLOBALS['db']->now()."', '0')";
+            $GLOBALS['db']->query($noMatchQuery);
+            _logThis("Added as $new_uuid, query was ".$noMatchQuery, $path);
         }
 
         fix_email_address_relationships($old_uuid, $new_uuid, $time_changed);
 
         _logThis('Restoring old row to proper email address', $path);
-        $restore_old_row = $GLOBALS['db']->prepare('UPDATE email_addresses SET email_address = ? where email_address_caps = ?');
-        $restore_old_row->execute(array(strtolower($old_email_address),$old_email_address));
+        $restore_old_row_qry = "UPDATE email_addresses SET email_address = '".strtolower($old_email_address)."'  where email_address_caps = '".$old_email_address."' ";
+        $GLOBALS['db']->query($restore_old_row_qry);
+
+
     }
 
     // at this point handle duplicate emails
@@ -1037,18 +1032,18 @@ function process_email_address_relationships()
     _logThis('Determining which email addresses are duplicated within the system', $path);
     $dupe_email_addresses = array();
 
-    $query = "SELECT email_address_caps, count(*) AS rowcount FROM email_addresses WHERE deleted=0 GROUP BY email_address_caps HAVING COUNT(*) > 1";
-    foreach ($GLOBALS['db']->query($query) as $row) {
+    $dupe_query = "SELECT email_address_caps, count(*) AS rowcount FROM email_addresses WHERE deleted=0 GROUP BY email_address_caps HAVING COUNT(*) > 1";
+    $dupe_results = $GLOBALS['db']->query($dupe_query);
+    while ($row = $GLOBALS['db']->fetchByAssoc($dupe_results)) {
         $email_address_caps = $row['email_address_caps'];
         _logThis("Found ".$email_address_caps.' with rows='.$row['rowcount'], $path);
 
         $ids = array();
         $opt_out = '0'; // by default don't opt out, unless one of the dupes has an opt-out flag.
         // we want to get id's of all duplicate rows so we can handle relationships
-        $find_matching_rows = $GLOBALS['db']->prepare("SELECT id, opt_out FROM email_addresses WHERE email_address_caps = ? AND deleted=0");
-        $find_matching_rows->execute(array($email_address_caps));
-        $rows = $find_matching_rows->fetchAll();
-        foreach($rows as $matching_email_row) {
+        $find_matching_rows = "SELECT id, opt_out FROM email_addresses WHERE email_address_caps = '".$email_address_caps."' AND deleted=0";
+        $matchingRowResult = $GLOBALS['db']->query($find_matching_rows);
+        while ($matching_email_row = $GLOBALS['db']->fetchByAssoc($matchingRowResult)) {
             $matching_email_id = $matching_email_row['id'];
             _logThis("Found duplicate with id=".$matching_email_id, $path);
             $ids[] = $matching_email_id;
@@ -1104,7 +1099,7 @@ function fix_email_address_relationships($old_uuid, $new_uuid, $time_changed=nul
     //_logThis("Rebuilding SugarLogic Cache", $path);
     _logThis($stm_emails_email_addr, $path);
     $rs = $GLOBALS['db']->query($stm_emails_email_addr);
-    _logThis($rs->rowCount().' row(s) changed.', $path);
+    _logThis(' Number of row(s) changed = '.$GLOBALS['db']->getAffectedRowCount($rs), $path);
 
     //Relates all beans(People) currently related to duplicates of the current email address to the first id in the array of duplicates
     // it is highly unlikely that the records using this email address want the old one, so avoid making a bad guess.
@@ -1112,6 +1107,6 @@ function fix_email_address_relationships($old_uuid, $new_uuid, $time_changed=nul
 
     _logThis($stm_email_addr_bean, $path);
     $rs = $GLOBALS['db']->query($stm_email_addr_bean);
-    _logThis($rs->rowCount().' row(s) changed.', $path);
+    _logThis(' Number of row(s) changed = '.$GLOBALS['db']->getAffectedRowCount($rs), $path);
 }
 
