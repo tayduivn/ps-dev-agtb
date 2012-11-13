@@ -37,6 +37,7 @@ class SugarAutoLoader
 		'Javascript'=>'include/javascript/javascript.php',
         'CustomSugarView' => 'custom/include/MVC/View/SugarView.php',
 	    'Sugar_Smarty' => 'include/Sugar_Smarty.php',
+	    'HTMLPurifier_Bootstrap' => 'include/HTMLPurifier/HTMLPurifier.standalone.php',
 	);
 
 	/**
@@ -114,6 +115,7 @@ class SugarAutoLoader
      * @var array
      */
     public static $filemap = array();
+    public static $memmap = array();
     /**
      * Copy of extension map
      * @var array
@@ -156,6 +158,10 @@ class SugarAutoLoader
 		    } else {
 		        return false;
 		    }
+		}
+
+		if (strncmp('HTMLPurifier', $class, 12) == 0) {
+			return HTMLPurifier_Bootstrap::autoload($class);
 		}
 
 		if(empty(self::$moduleMap)){
@@ -532,6 +538,9 @@ class SugarAutoLoader
      */
     public static function fileExists($filename)
     {
+        if(isset(self::$memmap[$filename])) {
+            return self::$memmap[$filename];
+        }
         if(DIRECTORY_SEPARATOR != '/') {
             $filename = str_replace(DIRECTORY_SEPARATOR, "/", $filename);
         }
@@ -540,13 +549,16 @@ class SugarAutoLoader
         foreach($parts as $part) {
             if(empty($part)) continue; // allow sequences of /s
             if(!isset($data[$part])) {
+                self::$memmap[$filename] = false;
                 return false;
             }
             $data = $data[$part];
         }
         if($data || $data == array()) {
+            self::$memmap[$filename] = true;
             return true;
         }
+        self::$memmap[$filename] = false;
         return false;
     }
 
@@ -609,6 +621,7 @@ class SugarAutoLoader
         $data = self::scanDir("");
         write_array_to_file("existing_files", $data, sugar_cached(self::CACHE_FILE));
         self::$filemap = $data;
+        self::$memmap = array();
 	}
 
 	/**
@@ -625,6 +638,7 @@ class SugarAutoLoader
 	        @include sugar_cached(self::CACHE_FILE);
 	    }
         self::$filemap = $existing_files;
+        self::$memmap = array();
 	}
 
 	/**
@@ -644,7 +658,7 @@ class SugarAutoLoader
 	 */
 	public static function addToMap($filename, $save = true, $dir = false)
 	{
-	    if(self::existing($filename))
+	    if(self::fileExists($filename))
 	        return;
         foreach(self::$exclude as $exclude_pattern) {
             if(substr($filename, 0, strlen($exclude_pattern)) == $exclude_pattern) {
@@ -672,6 +686,7 @@ class SugarAutoLoader
 	    if($save) {
 	        write_array_to_file("existing_files", self::$filemap, sugar_cached(self::CACHE_FILE));
 	    }
+	    self::$memmap[$filename] = 1;
 	}
 
 	/**
@@ -685,7 +700,8 @@ class SugarAutoLoader
 	    if(DIRECTORY_SEPARATOR != '/') {
             $filename = str_replace(DIRECTORY_SEPARATOR, "/", $filename);
         }
-	    $parts = explode('/', $filename);
+	    unset(self::$memmap[$filename]);
+        $parts = explode('/', $filename);
 	    $filename = array_pop($parts);
 	    $data =& self::$filemap;
 	    foreach($parts as $part) {
