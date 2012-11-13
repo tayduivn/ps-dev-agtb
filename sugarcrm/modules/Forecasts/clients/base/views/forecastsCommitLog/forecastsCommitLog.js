@@ -165,13 +165,12 @@
     bindDataChange: function() {
         var self = this;
         this.collection = this.context.forecasts.committed;
-        this.collection.on("reset", function() {
+        this.collection.on("reset change", function() {
             self.buildForecastsCommitted();
         }, this);
         this.context.forecasts.on("forecasts:committed:saved", function(){
             self.buildForecastsCommitted();
-        }, this);
-        this.collection.on("change", function() { self.buildForecastsCommitted(); }, this);
+        }, this);        
     },
 
     /**
