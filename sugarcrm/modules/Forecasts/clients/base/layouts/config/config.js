@@ -84,6 +84,8 @@
                     messages: [app.lang.get("LBL_FORECASTS_WIZARD_SUCCESS_MESSAGE", "Forecasts")]
                 });
                 app.sync({callback: function() {
+                    // we need to remove the alert, so it will allow other alerts to work
+                    app.alert.dismiss('success');
                     window.location.hash = "#";
                 }});
             }
