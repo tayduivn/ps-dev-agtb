@@ -100,9 +100,7 @@ function set_campaignlog_and_save_background(popup_reply_data)
 }
 //END SUGARCRM flav!=sales ONLY
 
-if(typeof SUGAR.portalUserEditViewFormName == 'undefined'){
-    SUGAR.portalUserEditViewFormName = 'EditView';
-}
+SUGAR.portalUserEditViewFormName = SUGAR.portalUserEditViewFormName || 'EditView';
 
 function validatePortalName(e) {
     var portalName = document.getElementById('portal_name');
@@ -113,11 +111,14 @@ function validatePortalName(e) {
        return;
     }
 
-    $(".validation-message",portalName.parentNode).remove();
+    if(portalName.parentNode.lastChild.className
+        && portalName.parentNode.lastChild.className.indexOf('validation-message')  != -1){
+        portalName.parentNode.removeChild(portalName.parentNode.lastChild);
+    }
     
 	var callbackFunction = function success(data) {
 	    //data.responseText contains the count of portal_name that matches input field
-		count = data.responseText;	
+		count = data.responseText;
 		if(count != 0) {
 		   add_error_style(SUGAR.portalUserEditViewFormName, 'portal_name', SUGAR.language.get('app_strings', 'ERR_EXISTING_PORTAL_USERNAME'), false, true);
 		}
