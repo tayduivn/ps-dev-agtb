@@ -175,7 +175,7 @@ class EmailHeadersTest extends Sugar_PHPUnit_Framework_TestCase
     }
 
     /**
-     * From and Subject are the only required headers, although others will be set by default. Since the required
+     * From is the only required header, although others will be set by default. Since the required
      * headers may change over time -- potentially making this test brittle -- this test was written such that it
      * is only concerned with guaranteeing that the headers passed in to the object are present.
      *
@@ -187,7 +187,6 @@ class EmailHeadersTest extends Sugar_PHPUnit_Framework_TestCase
         $customHeaderKey = "X-CUSTOM-HEADER";
         $expected        = array(
             EmailHeaders::From    => $from,
-            EmailHeaders::Subject => "this is a subject",
             $customHeaderKey      => "custom header value",
         );
 
@@ -196,7 +195,6 @@ class EmailHeadersTest extends Sugar_PHPUnit_Framework_TestCase
         $actual = $headers->packageHeaders();
 
         self::assertEquals($expected[EmailHeaders::From]->getEmail(), $actual[EmailHeaders::From][0], "The from should be " . $expected[EmailHeaders::From]->getEmail());
-        self::assertEquals($expected[EmailHeaders::Subject], $actual[EmailHeaders::Subject], "The subject should be {$expected[EmailHeaders::Subject]}");
         self::assertEquals($expected[$customHeaderKey], $actual[$customHeaderKey], "The custom header should be {$expected[$customHeaderKey]}");
     }
 
