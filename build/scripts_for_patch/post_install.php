@@ -965,7 +965,7 @@ function process_email_address_relationships()
     // find troubled rows - ones that violate upper(email_address) <> email_address_caps
     $query = "SELECT * FROM email_addresses WHERE deleted=0 AND upper(email_address) <> email_address_caps";
     $result = $GLOBALS['db']->query($query);
-    while ($row = $GLOBALS['db']->fetchByAssoc($result)) {// we don't want to be converted to html
+    while ($row = $GLOBALS['db']->fetchByAssoc($result,false)) {// we don't want to be converted to html
         // determine if they are the same up to escaping -- something else bad might have happened
         if (strtoupper(stripslashes($row['email_address'])) == $row['email_address_caps']) {
             $broken_escaped_emails[] = $row;
@@ -994,8 +994,8 @@ function process_email_address_relationships()
         _logThis('Inconsistent row has address '.$new_email_address.' and caps field '.$old_email_address, $path);
 
         // attempt to find a better row for the new email address
-        $find_new_rows_qry = $GLOBALS['db']->query("SELECT * from email_addresses WHERE email_address_caps = '".strtoupper($new_email_address)."' AND deleted=0");
-        $first_new_row = $GLOBALS['db']->fetchByAssoc($find_new_rows_qry);
+        $find_new_rows_qry = $GLOBALS['db']->query("SELECT * from email_addresses WHERE email_address_caps = '".$GLOBALS['db']->quote(strtoupper($new_email_address))."' AND deleted=0");
+        $first_new_row = $GLOBALS['db']->fetchByAssoc($find_new_rows_qry,false);
         if ($first_new_row) {
             // this will be our new id
             $new_uuid = $first_new_row['id'];
@@ -1005,7 +1005,7 @@ function process_email_address_relationships()
             // create new uuid
             _logThis('No matching row for new email address '.$new_email_address.', creating one', $path);
             $new_uuid = create_guid();
-            $noMatchQuery = "INSERT INTO email_addresses VALUES ('".$new_uuid."', '".$new_email_address."', '".strtoupper($new_email_address)."', '".
+            $noMatchQuery = "INSERT INTO email_addresses VALUES ('".$new_uuid."', '".$new_email_address."', '".$GLOBALS['db']->quote(strtoupper($new_email_address))."', '".
                      $row['invalid_email']."', '".$row['opt_out']."', '".$time_changed."', '".$GLOBALS['db']->now()."', '0')";
             $GLOBALS['db']->query($noMatchQuery);
             _logThis("Added as $new_uuid, query was ".$noMatchQuery, $path);
@@ -1014,7 +1014,7 @@ function process_email_address_relationships()
         fix_email_address_relationships($old_uuid, $new_uuid, $time_changed);
 
         _logThis('Restoring old row to proper email address', $path);
-        $restore_old_row_qry = "UPDATE email_addresses SET email_address = '".strtolower($old_email_address)."'  where email_address_caps = '".$old_email_address."' ";
+        $restore_old_row_qry = "UPDATE email_addresses SET email_address = '".$GLOBALS['db']->quote(strtolower($old_email_address))."'  where email_address_caps = '".$GLOBALS['db']->quote($old_email_address)."' ";
         $GLOBALS['db']->query($restore_old_row_qry);
 
 
@@ -1034,16 +1034,16 @@ function process_email_address_relationships()
 
     $dupe_query = "SELECT email_address_caps, count(*) AS rowcount FROM email_addresses WHERE deleted=0 GROUP BY email_address_caps HAVING COUNT(*) > 1";
     $dupe_results = $GLOBALS['db']->query($dupe_query);
-    while ($row = $GLOBALS['db']->fetchByAssoc($dupe_results)) {
+    while ($row = $GLOBALS['db']->fetchByAssoc($dupe_results,false)) {
         $email_address_caps = $row['email_address_caps'];
         _logThis("Found ".$email_address_caps.' with rows='.$row['rowcount'], $path);
 
         $ids = array();
         $opt_out = '0'; // by default don't opt out, unless one of the dupes has an opt-out flag.
         // we want to get id's of all duplicate rows so we can handle relationships
-        $find_matching_rows = "SELECT id, opt_out FROM email_addresses WHERE email_address_caps = '".$email_address_caps."' AND deleted=0";
+        $find_matching_rows = "SELECT id, opt_out FROM email_addresses WHERE email_address_caps = '".$GLOBALS['db']->quote($email_address_caps)."' AND deleted=0";
         $matchingRowResult = $GLOBALS['db']->query($find_matching_rows);
-        while ($matching_email_row = $GLOBALS['db']->fetchByAssoc($matchingRowResult)) {
+        while ($matching_email_row = $GLOBALS['db']->fetchByAssoc($matchingRowResult,false)) {
             $matching_email_id = $matching_email_row['id'];
             _logThis("Found duplicate with id=".$matching_email_id, $path);
             $ids[] = $matching_email_id;
