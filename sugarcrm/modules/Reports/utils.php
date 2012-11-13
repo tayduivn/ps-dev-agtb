@@ -57,8 +57,19 @@ class ReportsUtilities
         $mod_strings = return_module_language($this->language, "Reports");
         $mailer->setSubject($mod_strings["ERR_REPORT_INVALID_SUBJECT"]);
 
-        // set the body of the email... looks to be plain-text only
-        $mailer->setTextBody($message);
+        // set the body of the email...
+
+        // the compared strings will be the same if strip_tags had no affect
+        // if the compared strings are equal, then it's a text-only message
+        $textOnly = (strcmp($message, strip_tags($message)) == 0);
+
+        if ($textOnly) {
+            $mailer->setTextBody($message);
+        } else {
+            $textBody = strip_tags(br2nl($message)); // need to create the plain-text part
+            $mailer->setTextBody($textBody);
+            $mailer->setHtmlBody($message);
+        }
 
         // add the recipient...
 
