@@ -92,7 +92,8 @@ $dictionary['ProductTemplate'] = array('table' => 'product_templates',
 		'reportable'=>false,
 		'vname' => 'LBL_TYPE_ID',
 		'importable' => 'true',
-		'comment' => 'Product type (ex: hardware, software)'
+        'comment' => 'Product type (ex: hardware, software)',
+        'references' => 'ProductTypes',
 	),
 
 	'manufacturer_id' =>
@@ -104,7 +105,8 @@ $dictionary['ProductTemplate'] = array('table' => 'product_templates',
 		'reportable'=>false,
 		'vname' =>'LBL_LIST_MANUFACTURER_ID',
 		'importable' => 'true',
-		'comment' => 'Manufacturer of the product'
+        'comment' => 'Manufacturer of the product',
+        'references' => 'Manufacturers',
 	),
 	'manufacturer_name' =>
 	array (
@@ -270,7 +272,8 @@ $dictionary['ProductTemplate'] = array('table' => 'product_templates',
         'required'=>false,
 		'reportable'=>false,
 		'importable' => 'true',
-		'comment' => 'Currency of the product'
+        'comment' => 'Currency of the product',
+        'references' => 'Currencies',
 	),
   'currency_symbol' =>
 	array (
@@ -386,7 +389,7 @@ $dictionary['ProductTemplate'] = array('table' => 'product_templates',
 		'function' => array('name'=>'getPricingFormula', 'returns'=>'html'),
 		'type' => 'varchar',
 		'len' => 100,
-		'comment' => 'Pricing formula (ex: Fixed, Markup over Cost)'
+		'comment' => 'Pricing formula (ex: Fixed, Markup over Cost)',
 	),
 	'pricing_factor' =>
 	array (

@@ -179,7 +179,8 @@ $dictionary['Opportunity'] = array('table' => 'opportunities','audited'=>true, '
     'vname' => 'LBL_CURRENCY',
 	'function'=>array('name'=>'getCurrencyDropDown', 'returns'=>'html'),
     'reportable'=>false,
-    'comment' => 'Currency used for display purposes'
+    'comment' => 'Currency used for display purposes',
+    'references' => 'Currencies',
   ),
   'currency_name'=>
    	   array(
@@ -194,7 +195,8 @@ $dictionary['Opportunity'] = array('table' => 'opportunities','audited'=>true, '
 		'source' => 'non-db',
         'function'=>array('name'=>'getCurrencyNameDropDown', 'returns'=>'html'),
         'studio' => 'false',
-   	    'duplicate_merge' => 'disabled',
+        'duplicate_merge' => 'disabled',
+        'references' => 'Currencies',
 	),
    'currency_symbol'=>
    	   array(
@@ -209,7 +211,8 @@ $dictionary['Opportunity'] = array('table' => 'opportunities','audited'=>true, '
 		'source' => 'non-db',
         'function'=>array('name'=>'getCurrencySymbolDropDown', 'returns'=>'html'),
         'studio' => 'false',
-   	    'duplicate_merge' => 'disabled',
+        'duplicate_merge' => 'disabled',
+        'references' => 'Currencies',
 	),
   'date_closed' =>
   array (

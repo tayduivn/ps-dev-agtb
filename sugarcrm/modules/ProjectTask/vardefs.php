@@ -318,7 +318,8 @@ $dictionary['ProjectTask'] = array('audited'=>true,
 			'validation' => array('type' => 'range', 'min' => 0, 'max' => 100),
 			//'function' => 'getUtilizationDropdown',
     		'function' => array('name'=>'getUtilizationDropdown', 'returns'=>'html', 'include'=>'modules/ProjectTask/ProjectTask.php'),
-			'default' => 100,
+            'default' => 100,
+            'references' => 'ProjectTask',
 		),
 
 		'project_name'=>    array(
