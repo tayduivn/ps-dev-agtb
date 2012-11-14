@@ -60,6 +60,8 @@ class Bug45339Test extends Sugar_PHPUnit_Framework_TestCase
 
     public function setUp()
     {
+        $this->markTestIncomplete("Marking as incomplete as it can take long time to run");
+        return;
         SugarTestHelper::setUp('current_user', array(true, 1));
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('beanList');
@@ -130,6 +132,8 @@ class Bug45339Test extends Sugar_PHPUnit_Framework_TestCase
 
     public function tearDown()
     {
+        $this->markTestIncomplete("Marking as incomplete as it can take long time to run");
+        return;
         $this->df->deleteField($this->field);
         $relationshipAccountContact = new DeployedRelationships($this->relationAccountContact->getLhsModule());
         $relationshipAccountContact->delete($this->relationAccountContact->getName());
@@ -151,6 +155,8 @@ class Bug45339Test extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testGetCustomRelationshipsByModuleName()
     {
+        $this->markTestIncomplete("Marking as incomplete as it can take long time to run");
+        return;
         /* @var $this->mbPackage MBPackage */
         $accountsAllCustomRelationships = $this->mbPackage->getCustomRelationshipsByModuleNameTest('Accounts');
         // Created in the Account module.
@@ -171,6 +177,8 @@ class Bug45339Test extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testGetCustomRelationshipsMetaFilesByModuleName()
     {
+        $this->markTestIncomplete("Marking as incomplete as it can take long time to run");
+        return;
         $accountContactMetaPath = sprintf(
                 'custom%1$smetadata%1$s' . $this->relationAccountContact->getName() . 'MetaData.php',
                 DIRECTORY_SEPARATOR
@@ -205,6 +213,8 @@ class Bug45339Test extends Sugar_PHPUnit_Framework_TestCase
      */
    public function testGetExtensionsList()
     {
+        $this->markTestIncomplete("Marking as incomplete as it can take long time to run");
+        return;
         // Create new relationship between Leads and Accounts
         $_REQUEST['view_module'] = "Leads";
         $_REQUEST['lhs_module'] = "Leads";
@@ -275,6 +285,8 @@ class Bug45339Test extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testGetExtensionsManifestForPackage()
     {
+        $this->markTestIncomplete("Marking as incomplete as it can take long time to run");
+        return;
         /* @var $this->mbPackage MBPackage */
         $this->mbPackage->exportCustom(array('Accounts'), false, false);
         $installDefs = array();
@@ -308,6 +320,8 @@ class Bug45339Test extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testCustomBuildInstall()
     {
+        $this->markTestIncomplete("Marking as incomplete as it can take long time to run");
+        return;
         /* @var $this->mbPackage MBPackage */
         $this->mbPackage->exportCustom(array('Accounts'), false, false);
         $installDefString = $this->mbPackage->customBuildInstall(array('Accounts'), $this->mbPackage->getBuildDir());
