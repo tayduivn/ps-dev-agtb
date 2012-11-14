@@ -1,6 +1,6 @@
 ({
     // date - portal
-    extendsFrom:'BasedateField',
+    extendsFrom:'DateField',
     stripIsoTZ: false
 })
 
