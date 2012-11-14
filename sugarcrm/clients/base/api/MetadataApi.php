@@ -291,6 +291,7 @@ class MetadataApi extends SugarApi {
         return $sugar_config['site_url'] . "/{$path}";
     }
 
+
     protected function buildJSForComponents(&$data) {
         $js = "";
         $platforms = array_reverse($this->jssourceFilter);
@@ -311,7 +312,8 @@ class MetadataApi extends SugarApi {
                                 $controller = $component['controller'];
                                 // remove additional symbols in end of js content - it will be included in content
                                 $controller = trim(trim($controller), ",;");
-                                $comp .= ",\n\t\t\"$name\":{controller:$controller}";
+                                $controller = $this->insertHeaderComment($controller, $mdType, $name, $platform);
+                                $comp .= ",\n\t\t\"$name\":{controller:\n$controller}";
                                 unset($data[$mdType][$name]['controller']);
                             }
                         }
@@ -327,6 +329,19 @@ class MetadataApi extends SugarApi {
         }
         //Chop of the first comma in $js
         return substr($js,1);
+    }
+    
+    // Helper to insert header comments for controllers
+    private function insertHeaderComment($controller, $mdType, $name, $platform) {
+        $singularType = substr($mdType, 0, -1);
+        $needle = '({';
+        $headerComment = "\n\t// " . ucfirst($name) ." ". ucfirst($singularType) . " ($platform)";
+
+        // Find position "after" needle
+        $pos = (strpos($controller, $needle) + strlen($needle));
+
+        // Insert our comment and return ammended controller
+        return substr($controller, 0, $pos) . $headerComment . substr($controller, $pos);
     }
 
     protected function loadMetadata($hashKey) {
