@@ -6,6 +6,8 @@
 
     initialize:function (options) {
         app.view.View.prototype.initialize.call(this, options);
+        _.bindAll(this);
+        this.context.on("lead:convert:populate", this.populateRecordsFromLeads, this);
     },
 
     render:function () {
@@ -76,6 +78,7 @@
     },
 
     handleToggleClick: function(event) {
+      //  this.$( '#collapse' + this.meta.module).css('height', 'auto');
         if (this.$(event.target).hasClass('show-duplicate')) {
             this.toggleSubViews('duplicate');
         } else if (this.$(event.target).hasClass('show-record')) {
@@ -91,6 +94,17 @@
             subModel = this.context.convertModel.getSubModel(module);
 
         subModel.set('id', recordId);
+    },
+
+    populateRecordsFromLeads:function (leadModel) {
+        var self = this;
+
+        //field mappings: copy over data according to the metadata field mapping
+        _.each(self.meta.fieldMapping, function (sourceField, targetField) {
+            if (leadModel.has(sourceField)) {
+                self.recordView.model.set(targetField, leadModel.get(sourceField));
+            }
+        });
     },
 
     toggleSubViews: function(viewToShow) {

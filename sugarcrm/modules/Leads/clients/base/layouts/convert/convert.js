@@ -58,6 +58,9 @@
                 meta: moduleMeta
             });
 
+            view.$el.addClass('accordion-group');
+            view.$el.data('module', moduleMeta.module);
+
             self.addComponent(view); //places panel in the layout
         });
     },
@@ -69,18 +72,14 @@
     render: function () {
         var self = this;
         app.view.Layout.prototype.render.call(this);
-
         //run validation before showing next panel
         this.$('.accordion').on('show', function (e) {
             self.initiateContinue(e);
         });
 
-        //fix height after panel shown
-        this.$('.accordion').on('shown', function (e) {
-            self.$(e.target).css('height', 'auto');
-        });
-
-        this.initiateAccordion(this.meta.modules);
+        $(".collapse").collapse({toggle:false, parent:'#convert-accordion'});
+        this.context.trigger("lead:convert:populate", this.model);
+        //this.initiateAccordion(this.meta.modules);
         this.showPanel(_.first(this.meta.modules).module);
     },
 
@@ -101,7 +100,6 @@
     showPanel: function (moduleName) {
         var panelBody = '#collapse' + moduleName;
         this.$(panelBody).collapse('show');
-        this.$(panelBody).css('height', 'auto');
     },
 
     /**
@@ -217,27 +215,5 @@
         });
 
         return convertSteps;
-    },
-
-    /**
-     * TODO: Figure out how we're going to do this - below is how we did it in early prototype
-     * Iterate over the sub-models and copy Leads data to the sub-models
-     */
-    populateRecordModelsFromLeadsData:function () {
-        var self = this,
-            leadModel = self.model;
-
-        //iterate over sub-models
-        _.each(self.meta.modules, function (element, index, list) {
-            var recordView = self.layout.getComponent(element.module);
-
-            //field mappings: copy over data according to the metadata field mapping
-            _.each(element.fieldMapping, function (sourceField, targetField) {
-                if (leadModel.has(sourceField)) {
-                    recordView.model.set(targetField, leadModel.get(sourceField));
-                }
-            });
-        });
     }
-
 })
