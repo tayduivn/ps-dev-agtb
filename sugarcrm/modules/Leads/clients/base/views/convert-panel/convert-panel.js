@@ -11,7 +11,9 @@
 
         this.currentState = {
             activeView: 'duplicate',
+            duplicateCount: 0,
             selectedId: null,
+            selectedName: '',
             isComplete: false
         };
     },
@@ -19,6 +21,8 @@
     render:function () {
         app.view.View.prototype.render.call(this);
         this.initiateSubComponents(this.meta);
+        this.meta.moduleSingular = this.recordView.moduleSingular;
+        this.updatePanelHeader();
     },
 
     /**
@@ -32,6 +36,8 @@
 
         if (moduleMeta.duplicateCheck) {
             self.duplicateView.collection.on("reset", function(){
+                self.currentState.duplicateCount = self.duplicateView.collection.length;
+                self.updatePanelSubTitle();
                 self.updateDuplicateMessage(self.duplicateView);
                 if (self.duplicateView.collection.length == 0) {
                     self.toggleSubViews('record');
@@ -98,11 +104,50 @@
 
         this.currentState.selectedId = recordId;
         selectedModel = this.duplicateView.collection.get(recordId);
-        this.markCompleted(selectedModel.get('name'));
+        this.currentState.selectedName = selectedModel.get('name');
+        this.currentState.isComplete = true;
     },
 
-    markCompleted: function(nameOfAssociated) {
-        this.$('.title').html('<i class="icon-ok-sign"></i> Associated: ' + nameOfAssociated);
+    updatePanelHeader: function() {
+        this.updatePanelTitle();
+        this.updatePanelSubTitle();
+    },
+
+    //todo: translations
+    updatePanelTitle: function() {
+        var newTitle;
+
+        if (this.currentState.isComplete) {
+            newTitle = '<i class="icon-ok-sign"></i> ' + this.meta.moduleSingular + ' Associated:';
+            if (!this.meta.required) {
+                this.$('.optional').hide();
+            }
+        } else {
+            newTitle = 'Associate ' + this.meta.moduleSingular;
+            if (!this.meta.required) {
+                this.$('.optional').show();
+            }
+        }
+        this.$('.title').html(newTitle);
+    },
+
+    //todo: translations
+    updatePanelSubTitle: function() {
+        var newSubTitle;
+        
+        if (this.currentState.isComplete) {
+            newSubTitle = this.currentState.selectedName;
+        } else if (this.currentState.activeView === 'duplicate') {
+            if (this.currentState.duplicateCount > 0) {
+                newSubTitle = '> ' + this.currentState.duplicateCount + ' duplicates found';
+            }
+        } else if (this.currentState.activeView === 'record') {
+            newSubTitle = '> Create New ' + this.meta.moduleSingular;
+        } else {
+            return;
+        }
+        
+        this.$('.sub-title').html(newSubTitle);
     },
 
     populateRecordsFromLeads:function (leadModel) {
@@ -125,12 +170,18 @@
         showLink = (_.isUndefined(showLink)) ? showView : showLink;
         this.duplicateView.$el.parent().toggle(showView);
         this.$('.show-record').toggle(showLink);
+        if (showView) {
+            this.currentState.activeView = 'duplicate';
+        }
     },
 
     toggleRecordView: function(showView, showLink) {
         showLink = (_.isUndefined(showLink)) ? showView : showLink;
         this.recordView.$el.parent().toggle(showView);
         this.$('.show-duplicate').toggle(showLink);
+        if (showView) {
+            this.currentState.activeView = 'record';
+        }
     },
 
     updateDuplicateMessage: function(view) {

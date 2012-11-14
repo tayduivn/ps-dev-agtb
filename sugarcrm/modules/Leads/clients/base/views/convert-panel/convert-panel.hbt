@@ -1,13 +1,16 @@
     <div class="accordion-heading">
         <a class="accordion-toggle" data-id="collapse{{this.meta.module}}" data-toggle="collapse" data-parent="#convert-accordion" data-target="#collapse{{this.meta.module}}" style="display:inline-block">
-            {{this.meta.moduleNumber}}. <span class="title">Associate {{str "LBL_MODULE_NAME" this.meta.module}}</span>
+            <span class="module-number">{{this.meta.moduleNumber}}.</span>
+            <span class="title"></span>
             {{#unless this.meta.required}}
             <span class="optional">(optional)</span>
             {{/unless}}
-            <span class="found-duplicate"></span>
+            <span class="sub-title"></span>
         </a>
-        <a class="toggle-subview show-record pull-right" href="javascript:void(0)" style="display:inline-block">Ignore duplicates and create new</a>
-        <a class="toggle-subview show-duplicate pull-right" href="javascript:void(0)" style="display:none">Back to duplicates</a>
+        <span class="subview-toggle">
+            <a class="toggle-subview show-record pull-right" href="javascript:void(0)" style="display:inline-block">Ignore duplicates and create new</a>
+            <a class="toggle-subview show-duplicate pull-right" href="javascript:void(0)" style="display:none">Back to duplicates</a>
+        </span>
     </div>
     <div id="collapse{{this.meta.module}}" data-module="{{this.meta.module}}" class="accordion-body collapse">
         <div class="accordion-inner">

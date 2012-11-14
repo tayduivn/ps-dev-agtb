@@ -114,19 +114,15 @@
             //validation or has selected element
             //Add logic to process current step and if complete move to next one
             //check whether or not can continue depending on dependent modules
-            _.bind(this.setNextStepFall, this, nextModule)
+            _.bind(this.updateCompletedPanelHeader, this)
         ], function(error) {
             if (error) {
                 console.log("Saving failed.");
                 //TODO: handle error
             } else {
-                callback();
+                this.setNextStepFall(nextModule);
             }
         });
-
-        var result = true;
-
-        return result;
     },
 
     processContinue:function () {
@@ -140,8 +136,17 @@
     setNextStepFall: function(nextModule) {
         var moduleMeta;
         this.context.currentStep = this.context.steps.search(nextModule);
-
         moduleMeta = this._getModuleMeta(nextModule);
+    },
+
+    updateCompletedPanelHeader: function(callback) {
+        if (!_.isUndefined(this.context.currentStep)) {
+            var currentModule = this.context.currentStep.key,
+                completedView = this._getPanelByModuleName(currentModule);
+
+            completedView.updatePanelHeader();
+        }
+        callback(true);
     },
 
     _getModuleMeta: function(nextModule) {
@@ -150,6 +155,13 @@
         })
 
         return {};
+    },
+
+    //todo: fix to not access this._components directly
+    _getPanelByModuleName: function(moduleName) {
+        return _.find(this._components, function(component) {
+            return ((component.name === 'convert-panel') && (component.meta.module === moduleName));
+        })
     },
 
     /**
