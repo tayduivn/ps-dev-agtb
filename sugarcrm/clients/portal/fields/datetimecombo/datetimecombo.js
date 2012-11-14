@@ -1,5 +1,5 @@
 ({
     // datetimecombo - portal
-	extendsFrom:'BasedatetimecomboField',
+	extendsFrom:'DatetimecomboField',
     stripIsoTZ: false
 })
