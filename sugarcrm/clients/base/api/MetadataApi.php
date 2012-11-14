@@ -293,8 +293,8 @@ class MetadataApi extends SugarApi {
 
     protected function buildJSForComponents(&$data) {
         $js = "";
-        $platforms = $this->jssourceFilter;
-
+        $platforms = array_reverse($this->jssourceFilter);
+        
         foreach(array('fields', 'views', 'layouts') as $mdType) {
 
             if (!empty($data[$mdType])){
