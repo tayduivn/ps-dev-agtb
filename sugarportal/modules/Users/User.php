@@ -465,7 +465,7 @@ class User extends SugarBean {
 			$result = $this->db->query($query, true);
 			$row = $this->db->fetchByAssoc($result);
 			$GLOBALS['log']->debug("select old password query: $query");
-			$GLOBALS['log']->debug("return result of $row");
+			$GLOBALS['log']->debug("return result of ".print_r($row,true));
 
 			if ($row == null) {
 				$GLOBALS['log']->warn("Incorrect old password for ".$this->user_name."");
@@ -499,7 +499,7 @@ class User extends SugarBean {
 		$result = $this->db->query($query, true, "Error filling in additional detail fields");
 
 		$row = $this->db->fetchByAssoc($result);
-		$GLOBALS['log']->debug("additional detail query results: $row");
+		$GLOBALS['log']->debug("additional detail query results: ".print_r($row,true));
 
 		if ($row != null) {
 			$this->reports_to_name = stripslashes($row['first_name'].' '.$row['last_name']);
