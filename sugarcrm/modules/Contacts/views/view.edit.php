@@ -38,11 +38,6 @@ class ContactsViewEdit extends ViewEdit
  	 */
  	public function display()
  	{
-         $admin = new Administration();
-         $admin->retrieveSettings();
-         if(empty($admin->settings['portal_on']) || !$admin->settings['portal_on']) {
-
-         }
         $this->ev->process();
 		if ( !empty($_REQUEST['contact_name']) && !empty($_REQUEST['contact_id'])
             && $this->ev->fieldDefs['report_to_name']['value'] == ''
@@ -50,6 +45,8 @@ class ContactsViewEdit extends ViewEdit
             $this->ev->fieldDefs['report_to_name']['value'] = $_REQUEST['contact_name'];
             $this->ev->fieldDefs['reports_to_id']['value'] = $_REQUEST['contact_id'];
         }
+        $admin = new Administration();
+		$admin->retrieveSettings();
 		if(empty($admin->settings['portal_on']) || !$admin->settings['portal_on']) {
 		   unset($this->ev->sectionPanels[strtoupper('lbl_portal_information')]);
 		} else {
@@ -74,11 +71,10 @@ class ContactsViewEdit extends ViewEdit
            }
 		   echo getVersionedScript('modules/Contacts/Contact.js');
 		   echo '<script language="javascript">';
-           echo 'YAHOO.util.Event.onDOMReady(function() {';
+		   echo 'YAHOO.util.Event.onDOMReady(function() {';
            echo 'addToValidateComparison(\'EditView\', \'portal_password\', \'varchar\', false, SUGAR.language.get(\'app_strings\', \'ERR_SQS_NO_MATCH_FIELD\') + SUGAR.language.get(\'Contacts\', \'LBL_PORTAL_PASSWORD\'), \'portal_password1\');';
            echo 'addToValidateVerified(\'EditView\', \'portal_name_verified\', \'bool\', false, SUGAR.language.get(\'app_strings\', \'ERR_EXISTING_PORTAL_USERNAME\'));';
-           echo 'YAHOO.util.Event.on(\'portal_name\', \'blur\', validatePortalName);';
-           echo 'YAHOO.util.Event.on(\'portal_name\', \'keydown\', handleKeyDown);';
+           echo 'YAHOO.util.Event.on(\'portal_name\', \'blur\', validatePortalName);YAHOO.util.Event.on(\'portal_name\', \'keydown\', handleKeyDown);';
            echo '});';
 		   echo '</script>';
 		}

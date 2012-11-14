@@ -497,18 +497,14 @@ function replaceAll(text, src, rep) {
 	return text;
 }
 
-/**
- * Adds form for validation if it doesn't already exist already
- * @param {string} formname Name of form
- */
 function addForm(formname) {
-    if(typeof validate[formname] == 'undefined'){
-	    validate[formname] = new Array();
-    }
+	validate[formname] = new Array();
 }
 
 function addToValidate(formname, name, type, required, msg) {
-	addForm(formname);
+	if(typeof validate[formname] == 'undefined') {
+		addForm(formname);
+	}
 	validate[formname][validate[formname].length] = new Array(name, type,required, msg);
 }
 
