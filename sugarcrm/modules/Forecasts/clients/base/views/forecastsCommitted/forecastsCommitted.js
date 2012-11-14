@@ -240,12 +240,11 @@
             if(!_.isEmpty(this.collection.models))
             {
                previousCommit = _.first(this.collection.models);
-            } else {
-               var hasTotals = !_.isNull(self.totals);
+            } else {              
                previousCommit = new Backbone.Model({
-                    best_case : (hasTotals ? self.totals.best_case : 0),
-                    likely_case : (hasTotals ? self.totals.amount : 0),
-                    worst_case : (hasTotals ? self.totals.worst_case : 0)
+                    best_case : 0,
+                    likely_case : 0,
+                    worst_case : 0
                });
             }
 

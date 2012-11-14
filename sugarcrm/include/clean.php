@@ -23,7 +23,6 @@
  ********************************************************************************/
 
 require_once 'include/HTMLPurifier/HTMLPurifier.standalone.php';
-require_once 'include/HTMLPurifier/HTMLPurifier.autoload.php';
 
 /**
  * cid: scheme implementation

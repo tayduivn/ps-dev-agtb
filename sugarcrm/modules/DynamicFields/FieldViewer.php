@@ -89,11 +89,11 @@ class FieldViewer{
 			case 'url':
 				require_once('modules/DynamicFields/templates/Fields/Forms/url.php');
 				return get_body($this->ss, $vardef);
-			case 'phone:':
+			case 'phone':
 				require_once('modules/DynamicFields/templates/Fields/Forms/phone.php');
 				return get_body($this->ss, $vardef);
 			default:
-			    if(SugarAutoLoader::requireWithCustom('modules/DynamicFields/templates/Fields/Template'. ucfirst($vardef['type']) . '.php')) {
+			    if(SugarAutoLoader::requireWithCustom('modules/DynamicFields/templates/Fields/Forms/'. $vardef['type'] . '.php')) {
 					return get_body($this->ss, $vardef);
 				}else{
 					return $this->ss->fetch('modules/DynamicFields/templates/Fields/Forms/varchar.tpl');

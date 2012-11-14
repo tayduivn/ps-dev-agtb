@@ -26,16 +26,17 @@ class QuotaTests extends Sugar_PHPUnit_Framework_TestCase
 {
     public function setUp()
     {
-        $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
+        SugarTestHelper::setUp('beanFiles');
+        SugarTestHelper::setUp('beanList');
+        SugarTestHelper::setUp('current_user');
         SugarTestCurrencyUtilities::createCurrency('MonkeyDollars','$','MOD',2.0);
     }
 
     public function tearDown()
     {
-        SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
-        unset($GLOBALS['current_user']);
         SugarTestCurrencyUtilities::removeAllCreatedCurrencies();
         SugarTestQuotaUtilities::removeAllCreatedQuotas();
+        SugarTestHelper::tearDown();
     }
 
     /*

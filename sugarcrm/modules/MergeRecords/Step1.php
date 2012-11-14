@@ -55,7 +55,7 @@ $current_module_strings = return_module_language($current_language, 'MergeRecord
 
 if (!isset($where)) $where = "";
 
-$focus = new MergeRecord();
+$focus = BeanFactory::getBean('MergeRecord');
 
 ////////////////////////////////////////////////////////////
 //get instance of master record and retrieve related record
