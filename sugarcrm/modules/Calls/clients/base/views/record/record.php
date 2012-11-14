@@ -29,26 +29,26 @@ if (!defined('sugarEntry') || !sugarEntry) {
  * Contributor(s): ______________________________________..
  ********************************************************************************/
 
-$viewdefs['ProspectLists']['base']['view']['record'] = array(
+$viewdefs['Calls']['base']['view']['record'] = array(
     'buttons' => array(
         array(
-            'type'    => 'button',
-            'label'   => 'LBL_SAVE_BUTTON_LABEL',
+            'type' => 'button',
+            'label' => 'LBL_SAVE_BUTTON_LABEL',
             'css_class' => 'hide btn-primary record-save',
         ),
         array(
-            'type'    => 'button',
-            'label'   => 'LBL_CANCEL_BUTTON_LABEL',
+            'type' => 'button',
+            'label' => 'LBL_CANCEL_BUTTON_LABEL',
             'css_class' => 'hide record-cancel',
         ),
         array(
-            'type'    => 'button',
-            'label'   => 'LBL_EDIT_BUTTON_LABEL',
+            'type' => 'button',
+            'label' => 'LBL_EDIT_BUTTON_LABEL',
             'css_class' => 'record-edit',
         ),
         array(
-            'type'    => 'button',
-            'label'   => 'LBL_DELETE_BUTTON_LABEL',
+            'type' => 'button',
+            'label' => 'LBL_DELETE_BUTTON_LABEL',
             'css_class' => 'record-delete',
         ),
     ),
@@ -62,40 +62,58 @@ $viewdefs['ProspectLists']['base']['view']['record'] = array(
         ),
         array(
             'name' => 'panel_body',
-            'label' => 'LBL_PANEL_2',
             'columns' => 2,
-            'labels' => true,
+            'labels' => false,
             'labelsOnTop' => true,
             'placeholders' => true,
             'fields' => array(
                 array(
-                    'name' => 'description',
-                    'span' => 12,
+                    'name' => 'date_start',
+                    'label' => 'LBL_DATE_TIME',
+                    'type' => 'datetimecombo',
+                    'fields' => array('date_start')
                 ),
+                'status',
                 array(
-                    'name' => 'list_type',
-                    'displayParams' => array('required' => true),
-                    'span' => 12,
+                    'name' => 'date_end',
+                    'label' => 'LBL_DATE_TIME',
+                    'type' => 'datetimecombo',
+                    'fields' => array('date_end')
                 ),
-//                array(
-//                    'name' => 'domain_name',
-//                    'type' => 'secondary',
-//                    'primary' => array(
-//                        'field' => 'list_type',
-//                        'value' => 'exempt_domain',
-//                    )
-//                ),
-                'assigned_user_name',
-                'date_modified',
-                'terms', // This was defined in the PM spreadsheet, but isn't an existing field. Left here for posterity.
-                'date_created',
+                'parent_name',
+                array(
+                    //TODO: this field is more cusomized, need to find a way to do display of duration_hours:duration_minutes
+                    'name' => 'duration',
+                    'type' => 'fieldset',
+                    'label' => 'LBL_DURATION',
+                    'fields' => array('duration_hours', 'duration_minutes')
+                ),
+            ),
+        ),
+        array(
+            'name' => 'panel_hidden',
+            'columns' => 2,
+            'hide' => true,
+            'labelsOnTop' => true,
+            'placeholders' => true,
+            'fields' => array(
+                array(
+                    "name" => "description",
+                    "span" => 12,
+                ),
 
-                //BEGIN SUGARCRM flav=pro ONLY
+                'team_name',
                 array(
-                    'name' => 'team_name',
-                    'displayParams' => array('display' => true),
+                    'name' => 'date_modified',
+                    'noedit' => true,
                 ),
-                //END SUGARCRM flav=pro ONLY
+                'reminder_time',
+                array(
+                    'name' => 'date_entered',
+                    'noedit' => true,
+                ),
+                'assigned_user_name',
+                ''
             )
         )
     ),

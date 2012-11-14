@@ -28,38 +28,40 @@
                 <a class="btn btn-invisible drawerTrig" href="javascript:void(0);"><span class="icon-chevron-right"></span></a>
             </div>
         </div>
-        {{#each meta.panels}}
-            {{#unless header}}
-                {{#each grid}}
-                    <div class="row-fluid {{../name}} {{#if ../hide}}hide{{/if}}">
-                        {{#each this}}
-                            <span>
-                                {{#unless ../../this.labelsOnTop}}
-                                    {{#if ../../../this.labels}}
-                                        <div class="span{{../this.labelSpan}} tright record-label" >{{str ../this.label ../../../../../../this.model.module}}</div>
-                                    {{/if}}
-                                {{/unless}}
-                                <div class="span{{this.span}} record-cell{{#if cell_css}} {{cell_css}}{{/if}}" data-type="{{type}}" data-name="{{name}}">
-                                    {{#if ../../this.labelsOnTop}}
-                                    <div class='record-label'>{{str this.label ../../../../../this.model.module}}</div>
-                                    {{/if}}
-                                    {{#if name}}
-                                        <span class='normal{{#if css}} {{css}}{{/if}} index{{index}}' data-fieldname="{{name}}" data-index="{{index}}" data-tour="tour-{{../../../../this.module}}-{{name}}">
-                                            {{field ../../../../../this}}
-                                        </span>
-                                    {{/if}}
-                                    {{#unless noedit}}
-                                        <span class="record-edit-link-wrapper" data-name="{{../name}}">
-                                            <a class="record-edit-link icon-pencil" data-type="{{../type}}" data-name="{{../name}}"></a>
-                                        </span>
+        <div class="record">
+            {{#each meta.panels}}
+                {{#unless header}}
+                    {{#each grid}}
+                        <div class="row-fluid {{../name}} {{#if ../hide}}hide{{/if}}">
+                            {{#each this}}
+                                <span>
+                                    {{#unless ../../this.labelsOnTop}}
+                                        {{#if ../../../this.labels}}
+                                            <div class="span{{../this.labelSpan}} tright record-label" >{{str ../this.label ../../../../../../this.model.module}}</div>
+                                        {{/if}}
                                     {{/unless}}
-                                </div>
-                            </span>
-                        {{/each}}
-                    </div>
-                {{/each}}
-            {{/unless}}
-        {{/each}}
+                                    <div class="span{{this.span}} record-cell{{#if cell_css}} {{cell_css}}{{/if}}" data-type="{{type}}" data-name="{{name}}">
+                                        {{#if ../../this.labelsOnTop}}
+                                        <div class='record-label'>{{str this.label ../../../../../this.model.module}}</div>
+                                        {{/if}}
+                                        {{#if name}}
+                                            <span class='normal{{#if css}} {{css}}{{/if}} index{{index}}' data-fieldname="{{name}}" data-index="{{index}}" data-tour="tour-{{../../../../this.module}}-{{name}}">
+                                                {{field ../../../../../this}}
+                                            </span>
+                                        {{/if}}
+                                        {{#unless noedit}}
+                                            <span class="record-edit-link-wrapper" data-name="{{../name}}">
+                                                <a class="record-edit-link icon-pencil" data-type="{{../type}}" data-name="{{../name}}"></a>
+                                            </span>
+                                        {{/unless}}
+                                    </div>
+                                </span>
+                            {{/each}}
+                        </div>
+                    {{/each}}
+                {{/unless}}
+            {{/each}}
+        </div>
     {{else}}
         {{#if context._dataFetched}}{{str "LBL_DETAILVIEW_NO_RECORDS"}}{{else}}{{str "LBL_LOADING"}}{{/if}}
     {{/if}}

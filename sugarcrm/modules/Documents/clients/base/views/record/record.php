@@ -29,7 +29,7 @@ if (!defined('sugarEntry') || !sugarEntry) {
  * Contributor(s): ______________________________________..
  ********************************************************************************/
 
-$viewdefs['ProspectLists']['base']['view']['record'] = array(
+$viewdefs['Documents']['base']['view']['record'] = array(
     'buttons' => array(
         array(
             'type'    => 'button',
@@ -55,48 +55,58 @@ $viewdefs['ProspectLists']['base']['view']['record'] = array(
     'panels' => array(
         array(
             'name' => 'panel_header',
-            'header' => true,
+            'header' => true,                                
             'fields' => array(
-                'name',
+                array (
+                    'name' => 'filename',
+                    'displayParams' => 
+                    array (
+                      'link' => 'filename',
+                      'id' => 'document_revision_id',
+                    ),
+                    'noedit' => true, 
+                    'span' => 12, 
+                    'label' => '',                        
+                ),
             )
         ),
         array(
             'name' => 'panel_body',
-            'label' => 'LBL_PANEL_2',
             'columns' => 2,
-            'labels' => true,
+            'labels' => false,
             'labelsOnTop' => true,
             'placeholders' => true,
             'fields' => array(
-                array(
-                    'name' => 'description',
-                    'span' => 12,
-                ),
-                array(
-                    'name' => 'list_type',
-                    'displayParams' => array('required' => true),
-                    'span' => 12,
-                ),
-//                array(
-//                    'name' => 'domain_name',
-//                    'type' => 'secondary',
-//                    'primary' => array(
-//                        'field' => 'list_type',
-//                        'value' => 'exempt_domain',
-//                    )
-//                ),
+                'document_name',
+                'status',                    
+                'revision',
+                'template_type',
+                'is_template',
+                'active_date',
+                'category_id',
+                'exp_date',
+                'subcategory_id',
+                'description',
+                //BEGIN SUGARCRM flav!=sales ONLY
+                'related_doc_name',
+                'related_doc_rev_number',
+                //END SUGARCRM flav!=sales ONLY
                 'assigned_user_name',
-                'date_modified',
-                'terms', // This was defined in the PM spreadsheet, but isn't an existing field. Left here for posterity.
-                'date_created',
-
                 //BEGIN SUGARCRM flav=pro ONLY
-                array(
-                    'name' => 'team_name',
-                    'displayParams' => array('display' => true),
-                ),
-                //END SUGARCRM flav=pro ONLY
+                'team_name',
+                //END SUGARCRM flav=pro ONLY                    
+            ),
+        ),
+        array(
+            'name' => 'panel_hidden',
+            'columns' => 2, 
+            'hide' => true,
+            'labelsOnTop' => true,
+            'placeholders' => true,
+            'fields' => array(
+                'last_rev_created_name',
+                'last_rev_create_date',
             )
-        )
+        )                
     ),
 );

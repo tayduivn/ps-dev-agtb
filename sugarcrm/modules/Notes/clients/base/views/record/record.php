@@ -29,7 +29,7 @@ if (!defined('sugarEntry') || !sugarEntry) {
  * Contributor(s): ______________________________________..
  ********************************************************************************/
 
-$viewdefs['ProspectLists']['base']['view']['record'] = array(
+$viewdefs['Notes']['base']['view']['record'] = array(
     'buttons' => array(
         array(
             'type'    => 'button',
@@ -62,40 +62,30 @@ $viewdefs['ProspectLists']['base']['view']['record'] = array(
         ),
         array(
             'name' => 'panel_body',
-            'label' => 'LBL_PANEL_2',
             'columns' => 2,
             'labels' => true,
             'labelsOnTop' => true,
             'placeholders' => true,
             'fields' => array(
+                'contact_name',
+                'parent_name',
                 array(
-                    'name' => 'description',
-                    'span' => 12,
+                  'name' => 'description',
+                  'span' => 12,
                 ),
-                array(
-                    'name' => 'list_type',
-                    'displayParams' => array('required' => true),
-                    'span' => 12,
-                ),
-//                array(
-//                    'name' => 'domain_name',
-//                    'type' => 'secondary',
-//                    'primary' => array(
-//                        'field' => 'list_type',
-//                        'value' => 'exempt_domain',
-//                    )
-//                ),
-                'assigned_user_name',
-                'date_modified',
-                'terms', // This was defined in the PM spreadsheet, but isn't an existing field. Left here for posterity.
-                'date_created',
-
-                //BEGIN SUGARCRM flav=pro ONLY
-                array(
-                    'name' => 'team_name',
-                    'displayParams' => array('display' => true),
-                ),
-                //END SUGARCRM flav=pro ONLY
+                'portal_flag',
+            ),
+        ),
+        array(
+            'name' => 'panel_hidden',
+            'hide' => true,
+            'columns' => 2,
+            'labelsOnTop' => true,
+            'placeholders' => true,
+            'fields' => array(
+                'filename',
+                'team_name',
+                'assigned_user_name'
             )
         )
     ),

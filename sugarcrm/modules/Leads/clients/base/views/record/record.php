@@ -67,43 +67,60 @@ $viewdefs['Leads']['base']['view']['record'] = array(
         array(
             'name' => 'panel_body',
             'label' => 'LBL_PANEL_2',
-            'columns' => 1,
+            'columns' => 2,
             'labels' => true,
-            'labelsOnTop' => false,
+            'labelsOnTop' => true,
             'placeholders' => true,
             'fields' => array(
-                'title',
-                'department',
                 'account_name',
-                'phone_work',
-                'phone_mobile',
-
-            )
-        ),
-        array(
-            'name' => 'panel_hidden',
-            'hide' => true,
-            'labelsOnTop' => false,
-            'placeholders' => true,
-            'fields' => array(
-                'phone_fax',
                 'website',
+                'title',
+                array(
+                    'name' => 'email',
+                    'label' => 'LBL_EMAIL_ADDRESSES',
+                ),
+                'department',
+                'phone_mobile',
                 array(
                     'name' => 'fieldset_primaryaddress',
                     'type' => 'fieldset',
-                    'label' => 'Billing Address',
+                    'label' => 'Primary Address',
                     'fields' => array(
                         'primary_address_street',
                         'primary_address_city',
                         'primary_address_state',
                         'primary_address_postalcode',
-                        'primary_address_country'
-                    )
+                        'primary_address_country',
+                    ),
                 ),
+                'phone_work',
+                'do_not_call',
+                'phone_fax',
+            )
+        ),
+        array(
+            'name' => 'panel_hidden',
+            'hide' => true,
+            'label' => 'LBL_PANEL_3',
+            'columns' => 2,
+            'labels' => true,
+            'labelsOnTop' => true,
+            'placeholders' => true,
+            'fields' => array(
+                array(
+                    'name' => 'description',
+                    'span' => 12,
+                ),
+                'status',
+                'status_description',
+                'lead_source',
+                'lead_source_description',
+                'campaign_name',
+                'opportunity_amount',
                 array(
                     'name' => 'fieldset_altaddress',
                     'type' => 'fieldset',
-                    'label' => 'Alternate Address',
+                    'label' => 'Other Address',
                     'fields' => array(
                         'alt_address_street',
                         'alt_address_city',
@@ -112,23 +129,13 @@ $viewdefs['Leads']['base']['view']['record'] = array(
                         'alt_address_country'
                     )
                 ),
-                array(
-                    'name' => 'email',
-                    'label' => 'LBL_EMAIL_ADDRESSES',
-                ),
-                'description',
-                'status',
-                'status_description',
-                'opportunity_amount',
-                'campaign_name',
-                'lead_source',
-                'lead_source_description',
                 'refered_by',
-                'do_not_call',
                 'assigned_user_name',
+                'date_modified',
                 //BEGIN SUGARCRM flav=pro ONLY
                 'team_name',
                 //END SUGARCRM flav=pro ONLY
+                'date_entered'
             )
         )
     ),
