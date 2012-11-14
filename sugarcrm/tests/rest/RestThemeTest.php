@@ -201,6 +201,7 @@ class RestThemeTest extends RestTestBase
         );
     }
 
+    //Bug58031: baseUrl needs to be different for the Theme Editor preview.
     public function testBug58031BaseUrlVariable() {
 
         // TEST 1:  for preview, baseUrl is "../../styleguide/assets"
@@ -226,6 +227,7 @@ class RestThemeTest extends RestTestBase
         // TEST= the CSS contains the expected baseUrl
         $this->assertContains("../../../../../styleguide/assets", $css);
     }
+
     
     /**
      * @group rest
@@ -257,6 +259,7 @@ class RestThemeTest extends RestTestBase
             'styleguide/themes/clients/' . $this->platformTest . '/' . $preferredTheme . '/'
         );
     }
+
 
     private function rawurlencode($args) {
         $getString = '?';

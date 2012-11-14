@@ -538,3 +538,8 @@ ul.clickMenu li ul.subnav, ul.clickMenu ul.subnav-sub, ul.SugarActionMenuIESub {
     border-right: 1px solid #CCCCCC;
     border-left: 0px none;
 }
+
+#pageContainer > div > table td:first-child {
+    padding-left: 20px;
+    padding-right: 0px;
+}

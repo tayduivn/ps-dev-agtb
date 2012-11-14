@@ -36,18 +36,18 @@
 .dcmenu .inner {
     height: 44px;
     min-width: 950px;
-    background-color: #13558f;
-    background-image: -moz-linear-gradient(top, #13558f, #0d3961);
-    background-image: -ms-linear-gradient(top, #13558f, #0d3961);
-    background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#0d3961), to(#0d3961));
-    background-image: -webkit-linear-gradient(top, #13558f, #0d3961);
-    background-image: -o-linear-gradient(top, #13558f, #0d3961);
-    background-image: linear-gradient(top, #13558f, #0d3961);
-    background-repeat: repeat-x;
-    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#13558f', endColorstr='#0d3961', GradientType=0);
-    -webkit-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.25), inset 0 -1px 0 rgba(0, 0, 0, 0.1), 0 4px 0 #0d3961;
-    -moz-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.25), inset 0 -1px 0 rgba(0, 0, 0, 0.1), 0 4px 0 #0d3961;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.25), inset 0 -1px 0 rgba(0, 0, 0, 0.1), 0 4px 0 #0d3961;
+    background-color:#1971bd;
+    background-image:-moz-linear-gradient(top,#1d81d8,#145995);
+    background-image:-ms-linear-gradient(top,#1d81d8,#145995);
+    background-image:-webkit-gradient(linear,0 0,0 100%,from(#1d81d8),to(#145995));
+    background-image:-webkit-linear-gradient(top,#1d81d8,#145995);
+    background-image:-o-linear-gradient(top,#1d81d8,#145995);
+    background-image:linear-gradient(top,#1d81d8,#145995);
+    background-repeat:repeat-x;
+    filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#1d81d8', endColorstr='#145995', GradientType=0);
+    -webkit-box-shadow:0 1px 3px rgba(0,0,0,0.25), inset 0 -1px 0 rgba(0,0,0,0.1), 0 4px 0 #0d3961;
+    -moz-box-shadow:0 1px 3px rgba(0,0,0,0.25), inset 0 -1px 0 rgba(0,0,0,0.1), 0 4px 0 #0d3961;
+    box-shadow:0 1px 3px rgba(0,0,0,0.25), inset 0 -1px 0 rgba(0,0,0,0.1), 0 4px 0 #0d3961;
 
 }
 
@@ -59,22 +59,19 @@
     width: 100%;
     height: 100%;
     background-color: transparent;
-    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#13558f', endColorstr='#0d3961');
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#1d81d8', endColorstr='#145995');
 }
 
 .dcmenuDivider  {
-    border-left: 1px solid #2a5a84;
-    border-right: 1px solid #6ea5d6;
+    border-left:1px solid #145995;
+    border-right:1px solid #1d81d8;
     background-image: none;
     width: 0px;
 }
 
-#glblSearchBtn {
-}
-
-
 #moduleList .sf-menu > li.current > a {
-    background:		#193f61;
+    background:		#114b7e;
+    border-bottom:4px solid #04111e;
 }
 
 ul.megamenu .MMShortcuts li.sfHover a.sf-with-ul,
@@ -89,58 +86,69 @@ ul.sf-sub-modulelist li a:hover,
 #moduleList .sf-menu li a:focus,
 #moduleList .sf-menu li a:hover,
 #moduleList .sf-menu li a:active {
-    background:		#355B7E;
+    background-color:#1a74c2;
     outline:		0;
 }
 
 
 #moduleList .more .selected {
-    background:		#355B7E;
+    background-color:#0e3e68;
 }
 #globalLinksModule ul.clickMenu.SugarActionMenu li a:hover,
 #globalLinksModule ul.clickMenu li:hover span,
 ul.SugarActionMenuIESub li a:hover, ul.clickMenu.SugarActionMenu li a:hover, ul.clickMenu.SugarActionMenu li span.subhover:hover,
 ul#globalLinksSubnav li a:hover, ul#quickCreateULSubnav li a:hover,
 ul.clickMenu:hover, ul.clickMenu li ul.subnav li a:hover,ul.clickMenu li ul.subnav li input:hover, ul.clickMenu.subpanel.records li ul.subnav li a:hover, ul.clickMenu ul.subnav-sub li a:hover { /*--Hover effect for subnav links--*/
-    background-color:		#355B7E;
+    background-color:#1a74c2;
     color:#ffffff !important;
 }
 
-#moduleList .sf-menu > li.current > a {
-    border-color: #193f61;
-}
-
-
 #globalLinksModule:hover, #quickCreate ul.clickMenu > li:hover {
-    background-color: #355B7E;
+    background-color:#1a74c2;
 }
 
 #dcmenuSugarCube:hover {
-    background-color: #355B7E;
+    background-color:#1a74c2;
+}
+.button.primary, .yui-dialog .ft span.default button {
+    *background-color:#1265b7;
+    border-color:#1265b7 #1265b7 #0b3e71;
+    border-color:rgba(0,0,0,0.1) rgba(0,0,0,0.1) rgba(0,0,0,0.25);
+    background-color:#1574d2;
+    background-image:-moz-linear-gradient(top,#177ee5,#1265b7);
+    background-image:-ms-linear-gradient(top,#177ee5,#1265b7);
+    background-image:-webkit-gradient(linear,0 0,0 100%,from(#177ee5),to(#1265b7));
+    background-image:-webkit-linear-gradient(top,#177ee5,#1265b7);
+    background-image:-o-linear-gradient(top,#177ee5,#1265b7);
+    background-image:linear-gradient(top,#177ee5,#1265b7);
+    background-repeat:repeat-x;
+    filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#177ee5', endColorstr='#1265b7', GradientType=0);
+    filter:progid:DXImageTransform.Microsoft.gradient(enabled = false);
 }
 
-.moduleTitle h2 {
-    color:#666;
+.button.primary:hover,.button.primary:focus ,button.primary[selected],.yui-dialog .ft span.default button:hover{
+    background-color:#1265b7;
+    *background-color:#10589f;
 }
-
-.moduleTitle h2 a {
-    color:#0e70b8;
-}
-
 
 #glblSearchBtn .searchIconLink {
-    background-color: #355B7E;
-    background-image: -moz-linear-gradient(top, #355B7E, #26415a);
-    background-image: -ms-linear-gradient(top, #355B7E, #26415a);
-    background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#355B7E), to(#26415a));
-    background-image: -webkit-linear-gradient(top, #355B7E, #26415a);
-    background-image: -o-linear-gradient(top, #355B7E, #26415a);
-    background-image: linear-gradient(top, #355B7E, #26415a);
-    border: 1px solid rgba(38, 65, 90, 0.25);
+    *background-color:#08233b;
+    border-color:#08233b #08233b #000000;
+    border-color:rgba(0,0,0,0.1) rgba(0,0,0,0.1) rgba(0,0,0,0.25);
+    background-color:#0c3356;
+    background-image:-moz-linear-gradient(top,#0e3e68,#08233b);
+    background-image:-ms-linear-gradient(top,#0e3e68,#08233b);
+    background-image:-webkit-gradient(linear,0 0,0 100%,from(#0e3e68),to(#08233b));
+    background-image:-webkit-linear-gradient(top,#0e3e68,#08233b);
+    background-image:-o-linear-gradient(top,#0e3e68,#08233b);
+    background-image:linear-gradient(top,#0e3e68,#08233b);
+    background-repeat:repeat-x;
+    filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#0e3e68', endColorstr='#08233b', GradientType=0);
+    filter:progid:DXImageTransform.Microsoft.gradient(enabled = false);
     top: 0px;
     height: 15px;
 }
 
 #sugar_spot_search {
-    border: 1px solid #355B7E;
+    border: 1px solid #08233b;
 }

@@ -33,27 +33,21 @@
 
 /** From default style.css file **/
 
-
-
-a:link, a:visited {
-color:#689800;
-}
-
 .dcmenu .inner {
     height: 44px;
     min-width: 950px;
-    background-color: #9abd38;
-    background-image: -moz-linear-gradient(top, #9abd38, #617723);
-    background-image: -ms-linear-gradient(top, #9abd38, #617723);
-    background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#9abd38), to(#617723));
-    background-image: -webkit-linear-gradient(top, #9abd38, #617723);
-    background-image: -o-linear-gradient(top, #9abd38, #617723);
-    background-image: linear-gradient(top, #9abd38, #617723);
-    background-repeat: repeat-x;
-    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#9abd38', endColorstr='#617723', GradientType=0);
-    -webkit-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.25), inset 0 -1px 0 rgba(0, 0, 0, 0.1), 0 4px 0 #2f3a11;
-    -moz-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.25), inset 0 -1px 0 rgba(0, 0, 0, 0.1), 0 4px 0 #2f3a11;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.25), inset 0 -1px 0 rgba(0, 0, 0, 0.1), 0 4px 0 #2f3a11;
+    background-color:#79a300;
+    background-image:-moz-linear-gradient(top,#90c200,#577500);
+    background-image:-ms-linear-gradient(top,#90c200,#577500);
+    background-image:-webkit-gradient(linear,0 0,0 100%,from(#90c200),to(#577500));
+    background-image:-webkit-linear-gradient(top,#90c200,#577500);
+    background-image:-o-linear-gradient(top,#90c200,#577500);
+    background-image:linear-gradient(top,#90c200,#577500);
+    background-repeat:repeat-x;
+    filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#90c200', endColorstr='#577500', GradientType=0);
+    -webkit-box-shadow:0 1px 3px rgba(0,0,0,0.25), inset 0 -1px 0 rgba(0,0,0,0.1), 0 4px 0 #2f3a11;
+    -moz-box-shadow:0 1px 3px rgba(0,0,0,0.25), inset 0 -1px 0 rgba(0,0,0,0.1), 0 4px 0 #2f3a11;
+    box-shadow:0 1px 3px rgba(0,0,0,0.25), inset 0 -1px 0 rgba(0,0,0,0.1), 0 4px 0 #2f3a11;
 
 }
 
@@ -65,22 +59,19 @@ color:#689800;
 	width: 100%;
 	height: 100%;
 	background-color: transparent;
-	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#9abd38', endColorstr='#617723');
+	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#90c200', endColorstr='#577500');
 }
 
 .dcmenuDivider  {
-	border-left: 1px solid #748a39;
-	border-right: 1px solid #c7ec61;
+	border-left: 1px solid #577500;
+	border-right: 1px solid #90c200;
 	background-image: none;
 	width: 0px;
 }
 
-#glblSearchBtn {
-}
-
-
 #moduleList .sf-menu > li.current > a {
-	background:		#6ea100;
+    background-color:#445c00 !important;
+    border-bottom:4px solid #000000;
 }
 
 ul.megamenu .MMShortcuts li.sfHover a.sf-with-ul,
@@ -95,146 +86,70 @@ ul.sf-sub-modulelist li a:hover,
 #moduleList .sf-menu li a:focus,
 #moduleList .sf-menu li a:hover,
 #moduleList .sf-menu li a:active {
-	background:		#6ea100;
+	background:		#7da800;
 	outline:		0;
 }
 
 
 #moduleList .more .selected {
-	background:		#6ea100;
+	background:		#314200;
 }
 #globalLinksModule ul.clickMenu.SugarActionMenu li a:hover,
 #globalLinksModule ul.clickMenu li:hover span,
 ul.SugarActionMenuIESub li a:hover, ul.clickMenu.SugarActionMenu li a:hover, ul.clickMenu.SugarActionMenu li span.subhover:hover,
 ul#globalLinksSubnav li a:hover, ul#quickCreateULSubnav li a:hover,
 ul.clickMenu:hover, ul.clickMenu li ul.subnav li a:hover,ul.clickMenu li ul.subnav li input:hover, ul.clickMenu.subpanel.records li ul.subnav li a:hover, ul.clickMenu ul.subnav-sub li a:hover { /*--Hover effect for subnav links--*/
-	background-color:		#6ea100;
+	background-color:		#7da800;
     color:#ffffff !important;
 }
 
-#moduleList .sf-menu > li.current > a {
-    border-color: #465619;
-}
-
-
 #globalLinksModule:hover, #quickCreate ul.clickMenu > li:hover {
-	background-color: #6ea100;	
+	background-color: #7da800;
 }
 
 #dcmenuSugarCube:hover {
-	background-color: #6ea100;	
+	background-color: #7da800;
 }
-
-.moduleTitle h2 {
-    color:#8b9061;
-}
-
-.moduleTitle h2 a {
-    color:#0E901F;
-}
-
-button, input[type="submit"], input[type="reset"], input[type="button"], .button, .buttons .button, .yui-button button {
-background-image: -moz-linear-gradient(center top, 
-	#fdfdfd 0%,
-	#f8f8f8 50%,
-	#f1f1f1 50%,
-	#e6e6e6 100%
-	);
-background-image: -webkit-gradient(
-    linear,
-    left top,
-    left bottom,
-    color-stop(0, #fdfdfd),
-    color-stop(.5, #f8f8f8),
-    color-stop(.5, #f1f1f1),
-    color-stop(1, #e6e6e6)
-   );	
-filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#fdfdfd', endColorstr='#e6e6e6');
-color:#888888;
-border:1px solid #cbdc2b;
-}
-
 
 .button.primary, .yui-dialog .ft span.default button {
-background-image: -moz-linear-gradient(center top, 
-	#d1dfb3 0%,
-	#81a92b 50%,
-	#6a9904 50%,
-	#a1bf62 100%
-	);
-background-image: -webkit-gradient(
-    linear,
-    left top,
-    left bottom,
-    color-stop(0, #d1dfb3),
-    color-stop(.5, #81a92b),
-    color-stop(.5, #6a9904),
-    color-stop(1, #a1bf62)
-   );	
-filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#d1dfb3', endColorstr='#a1bf62');
-border:1px solid #689800;
-text-shadow:-1px -1px #689800;
-color: #fff;
-}
-
-button:hover, input[type=submit]:hover, input[type=reset]:hover, input[type=button]:hover,
-button:focus, input[type=submit]:focus, input[type=reset]:focus, input[type=button]:focus,
-button[selected], input[type=submit][selected], input[type=reset][selected], input[type=button][selected]
-{
-background-image: -moz-linear-gradient(center top, 
-	#fdfdfd 0%,
-	#f8f8f8 50%,
-	#f1f1f1 50%,
-	#e6e6e6 100%
-	);
-background-image: -webkit-gradient(
-    linear,
-    left top,
-    left bottom,
-    color-stop(0, #fdfdfd),
-    color-stop(.5, #f8f8f8),
-    color-stop(.5, #f1f1f1),
-    color-stop(1, #e6e6e6)
-   );	
-filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#fdfdfd', endColorstr='#e6e6e6');
-	border-color: #cbdc2b;
+    *background-color:#456500;
+    border-color:#456500 #456500 #111900;
+    border-color:rgba(0,0,0,0.1) rgba(0,0,0,0.1) rgba(0,0,0,0.25);
+    background-color:#5a8400;
+    background-image:-moz-linear-gradient(top,#689800,#456500);
+    background-image:-ms-linear-gradient(top,#689800,#456500);
+    background-image:-webkit-gradient(linear,0 0,0 100%,from(#689800),to(#456500));
+    background-image:-webkit-linear-gradient(top,#689800,#456500);
+    background-image:-o-linear-gradient(top,#689800,#456500);
+    background-image:linear-gradient(top,#689800,#456500);
+    background-repeat:repeat-x;
+    filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#689800', endColorstr='#456500', GradientType=0);
+    filter:progid:DXImageTransform.Microsoft.gradient(enabled = false);
 }
 
 .button.primary:hover,.button.primary:focus ,button.primary[selected],.yui-dialog .ft span.default button:hover{
-	border: 1px solid #095E14;
-	background-color: #689800;
-	text-shadow: -1px -1px #095E14;
-	background-image: -moz-linear-gradient(center top, 
-	#d1dfb3 0%,
-	#81a92b 50%,
-	#6a9904 50%,
-	#a1bf62 100%
-	);
-background-image: -webkit-gradient(
-    linear,
-    left top,
-    left bottom,
-    color-stop(0, #d1dfb3),
-    color-stop(.5, #81a92b),
-    color-stop(.5, #6a9904),
-    color-stop(1, #a1bf62)
-   );	
-filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#d1dfb3', endColorstr='#a1bf62');
+    background-color:#456500;
+    *background-color:#344c00;
 }
 
 #glblSearchBtn .searchIconLink {
-    background-color: #6EA100;
-    background-image: -moz-linear-gradient(top, #6EA100, #517700);
-    background-image: -ms-linear-gradient(top, #6EA100, #517700);
-    background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#6EA100), to(#517700));
-    background-image: -webkit-linear-gradient(top, #6EA100, #517700);
-    background-image: -o-linear-gradient(top, #6EA100, #517700);
-    background-image: linear-gradient(top, #6EA100, #517700);
-    border: 1px solid rgba(44, 64, 0, 0.25);
+    *background-color:#0b0f00;
+    border-color:#0b0f00 #0b0f00 #000000;
+    border-color:rgba(0,0,0,0.1) rgba(0,0,0,0.1) rgba(0,0,0,0.25);
+    background-color:#222e00;
+    background-image:-moz-linear-gradient(top,#314200,#0b0f00);
+    background-image:-ms-linear-gradient(top,#314200,#0b0f00);
+    background-image:-webkit-gradient(linear,0 0,0 100%,from(#314200),to(#0b0f00));
+    background-image:-webkit-linear-gradient(top,#314200,#0b0f00);
+    background-image:-o-linear-gradient(top,#314200,#0b0f00);
+    background-image:linear-gradient(top,#314200,#0b0f00);
+    background-repeat:repeat-x;
+    filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#314200', endColorstr='#0b0f00', GradientType=0);
+    filter:progid:DXImageTransform.Microsoft.gradient(enabled = false);
     top: 0px;
     height: 15px;
 }
 
 #sugar_spot_search {
-    border: 1px solid #3c5800;
+    border: 1px solid #0b0f00;
 }
