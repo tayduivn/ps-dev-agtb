@@ -37,9 +37,9 @@ class SidecarGridLayoutMetaDataParser extends GridLayoutMetaDataParser {
         //BEGIN SUGARCRM flav=ent ONLY
         'portal' => array(
             // Detail support one set of fields...
-            'detail' => array('parent', 'parent_type', 'iframe', 'encrypt', 'html',),
+            'detail' => array('parent', 'parent_type', 'iframe', 'encrypt', 'html','currency','currency_id'),
             // Edit supports another
-            'edit' => array('parent', 'parent_type', 'iframe', 'encrypt', 'relate', 'html',),
+            'edit' => array('parent', 'parent_type', 'iframe', 'encrypt', 'relate', 'html','currency','currency_id'),
         ),
         //END SUGARCRM flav=ent ONLY
     );
@@ -241,6 +241,8 @@ class SidecarGridLayoutMetaDataParser extends GridLayoutMetaDataParser {
         //$currentFields = $this->getFieldsFromLayout($panels);
 
         $canonicalPanels = array();
+        
+        $maxCols = $this->getMaxColumns();
 
         foreach ($panels as $pName => $panel) {
             $fields = array();
@@ -264,6 +266,26 @@ class SidecarGridLayoutMetaDataParser extends GridLayoutMetaDataParser {
 
                     // filler => ''
                     if ($this->isFiller($cell)) {
+                        // 58308 - Adjust displayColumns on the last field if it 
+                        // is set and we are an end column
+                        if ($maxCols - $offset == 1) {
+                            $lastRowIndex = count($fields) - 1;
+                            if (is_array($fields[$lastRowIndex]) && isset($fields[$lastRowIndex]['displayParams']['colspan'])) {
+                                $redux = $maxCols - $fields[$lastRowIndex]['displayParams']['colspan'];
+                                if ($redux > 0) {
+                                    $fields[$lastRowIndex]['displayParams']['colspan'] = $redux;
+                                } else {
+                                    // Remove the colspan altogether
+                                    unset($fields[$lastRowIndex]['displayParams']['colspan']);
+                                    
+                                    // If displayParams is empty now, get rid of it too
+                                    if (empty($fields[$lastRowIndex]['displayParams'])) {
+                                        unset($fields[$lastRowIndex]['displayParams']);
+                                    }
+                                }
+                            }
+                        }
+                        
                         $lastField = '';
                     }
                     else {

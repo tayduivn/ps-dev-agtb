@@ -72,6 +72,7 @@ class SugarTestForecastUtilities
     {
         $forecast_ids = array_keys(self::$_createdForecasts);
         $GLOBALS['db']->query('DELETE FROM forecasts WHERE id IN (\'' . implode("', '", $forecast_ids) . '\')');
+        self::$_createdForecasts = array();
     }
 
     /**

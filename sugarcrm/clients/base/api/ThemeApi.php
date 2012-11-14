@@ -75,7 +75,7 @@ class ThemeApi extends SugarApi
     {
         // Validating arguments
         $platform = isset($args['platform']) ? $args['platform'] : 'base';
-        $themeName = isset($args['themeName']) ? $args['themeName'] : null;
+        $themeName = isset($args['themeName']) ? $args['themeName'] : 'default';
         $minify = isset($args['min']) ? true : false;
 
         $theme = new SidecarTheme($platform, $themeName);
@@ -85,6 +85,7 @@ class ThemeApi extends SugarApi
         if (isset($args['preview'])) {
             $variables = $theme->getThemeVariables(true);
             $variables = array_merge($variables, $args);
+            $variables['baseUrl'] = '"../../styleguide/assets"';
             $css = $theme->compileBootstrapCss($variables, $minify);
 
             header('Content-type: text/css');
@@ -107,7 +108,7 @@ class ThemeApi extends SugarApi
     {
         // Validating arguments
         $platform = isset($args['platform']) ? $args['platform'] : 'base';
-        $themeName = isset($args['themeName']) ? $args['themeName'] : 'default';
+        $themeName = isset($args['themeName']) ? $args['themeName'] : null;
 
         $theme = new SidecarTheme($platform, $themeName);
         $paths = $theme->getPaths();
@@ -135,7 +136,7 @@ class ThemeApi extends SugarApi
 
         // Validating arguments
         $platform = isset($args['platform']) ? $args['platform'] : 'base';
-        $themeName = isset($args['themeName']) ? $args['themeName'] : 'default';
+        $themeName = isset($args['themeName']) ? $args['themeName'] : null;
 
         $theme = new SidecarTheme($platform, $themeName);
 

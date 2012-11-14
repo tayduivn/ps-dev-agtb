@@ -802,7 +802,7 @@ class MetaDataManager {
             return $source;
         }
     }
-
+    
     /**
      * Clears the API metadata cache of all cache files
      * 

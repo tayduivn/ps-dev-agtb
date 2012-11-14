@@ -38,7 +38,7 @@ describe("The forecastCommitted view", function(){
             var model1 = new Backbone.Model({date_entered:"2012-12-05T11:14:25-04:00", best_case : 100, likely_case : 90, base_rate : 1 });
             var model2 = new Backbone.Model({date_entered:"2012-10-05T11:14:25-04:00", best_case : 110, likely_case : 100, base_rate : 1 });
             var model3 = new Backbone.Model({date_entered:"2012-11-05T11:14:25-04:00", best_case : 120, likely_case : 110, base_rate : 1 });
-            view._collection = new Backbone.Collection([model1, model2, model3]);
+            view.collection = new Backbone.Collection([model1, model2, model3]);
 
             formatAmountLocaleStub = sinon.stub(app.currency, "formatAmountLocale", function(value) {
                 return value;
@@ -53,11 +53,11 @@ describe("The forecastCommitted view", function(){
             formatAmountLocaleStub.restore();
             createHistoryLogStub.restore();
             // empty out the collection
-            view._collection = new Backbone.Collection([]);
+            view.collection = new Backbone.Collection([]);
         });
 
         it("should have an empty historyLog", function() {
-            view._collection = new Backbone.Collection([]);
+            view.collection = new Backbone.Collection([]);
 
             view.buildForecastsCommitted();
             expect(_.isEmpty(view.historyLog)).toBeTruthy();
@@ -65,7 +65,7 @@ describe("The forecastCommitted view", function(){
 
         it("should create one historyLog entry", function() {
             var model1 = new Backbone.Model({date_entered:"2012-12-05T11:14:25-04:00", best_case : 100, likely_case : 90, base_rate : 1 });
-            view._collection = new Backbone.Collection([model1]);
+            view.collection = new Backbone.Collection([model1]);
 
             view.buildForecastsCommitted();
             expect(view.historyLog.length == 1).toBeTruthy();
@@ -112,4 +112,87 @@ describe("The forecastCommitted view", function(){
             });
         })
     });
+    
+    describe("Forecasts Commit Log Bindings ", function(){
+        beforeEach(function(){
+            view.context = {
+                forecasts:{
+                    on: function(event, fcn){},
+                    committed:{
+                        on:  function(event, fcn){}
+                    }
+                }
+            };
+                      
+            sinon.spy(view.context.forecasts.committed, "on");
+            sinon.spy(view.context.forecasts, "on");
+            view.bindDataChange();
+        });
+        
+        afterEach(function(){
+            view.context.forecasts.committed.on.restore();
+            view.context.forecasts.on.restore();
+            delete view.context;
+            delete view.collection;
+            view.context = {};
+            view.collection = {};
+        });
+        
+        //bindDataChange redefines this.collection to be context.forecasts.committed
+        it("collection.on should have been called with 'reset change'", function(){
+            expect(view.collection.on).toHaveBeenCalledWith("reset change");
+        });
+        
+        it("context.forecasts.on should have been called with forecasts:committed:saved", function(){
+            expect(view.context.forecasts.on).toHaveBeenCalledWith("forecasts:committed:saved");
+        });
+    });
+    
+    describe("Forecasts Commit Log Reset (resetCommittedLog)", function(){
+        beforeEach(function(){
+            view.context = {
+                forecasts:{
+                    on: function(event, fcn){},
+                    committed:{
+                        on:  function(event, fcn){}
+                    }
+                }
+            };
+            
+            view.buildForecastsCommitted();
+        });
+        
+        afterEach(function(){
+            delete view.context;
+            delete view.collection;
+            view.context = {};
+            view.collection = {};
+        });
+        
+        it("bestCase should equal ''", function(){
+            expect(view.bestCase).toEqual("");
+        });
+        it("likelyCase should equal ''", function(){
+            expect(view.likelyCase).toEqual("");
+        });
+        it("worstCase should equal ''", function(){
+            expect(view.worstCase).toEqual("");
+        });
+        it("previousBestCase should equal ''", function(){
+            expect(view.previousBestCase).toEqual("");
+        });
+        it("previousLikelyCase should equal ''", function(){
+            expect(view.previousLikelyCase).toEqual("");
+        });
+        it("previousWorstCase should equal ''", function(){
+            expect(view.previousWorstCase).toEqual("");
+        });
+        it("showHistoryLog should equal ''", function(){
+            expect(view.showHistoryLog).toBeFalsy();
+        });
+        it("previousDateEntered should equal ''", function(){
+            expect(view.previousDateEntered).toEqual("");
+        });
+    });
+    
 });

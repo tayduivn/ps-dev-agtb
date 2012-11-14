@@ -1,3 +1,15 @@
-
-        <input type="file" name="{{name}}" class="input-xlarge wide tleft">
-        <p class="help-block"></p>
+{{#if value}}
+<div{{#if def.width}} style="width: {{def.width}}px"{{/if}} class="dropup">
+<img src="{{fileURL}}">
+<span class="image-overlay-with-button">
+<a href="javascript:void(0)" class="btn btn-mini btn-danger delete" rel="tooltip"><i class="icon-trash"></i> {{str "LBL_DELETE"}}</a>
+</span>
+</div>
+{{/if}}
+<span class="upload-field-custom btn">
+    <label class="file-upload">
+        <span><strong><i class="icon-upload-alt"></i></strong></span>
+        <input type="file" name="{{name}}" />
+    </label>
+</span>
+<p class="help-block"></p>

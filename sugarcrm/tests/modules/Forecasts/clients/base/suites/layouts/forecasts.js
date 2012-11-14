@@ -19,27 +19,27 @@
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
-describe("The forecasts layout controller", function(){
+describe("The forecasts index layout controller", function(){
 
     var app, layout, stubs;
 
     beforeEach(function() {
         var options = {
-            context: {
-                forecasts: {
-                    set: function() {}
-                }
-            },
+            context: new Backbone.Model(),
             meta: {
+                type: 'index',
                 components: {}
             }
         };
 
+        options.context.forecasts = new Backbone.Model();
+
         app = SugarTest.app;
-        SugarTest.loadFile("../modules/Forecasts/clients/base/layouts/forecasts", "forecasts", "js", function(d) {
+        var indexController = SugarTest.loadFile("../modules/Forecasts/clients/base/layouts/index", "index", "js", function(d) {
             return eval(d);
         });
-        stubs = new Array();
+
+        stubs = [];
         app.viewModule = "";
         app.initData = {};
         app.defaultSelections = {
@@ -59,9 +59,22 @@ describe("The forecasts layout controller", function(){
                 componentsMeta: {}
             };
         }));
+        stubs.push(sinon.stub(app.metadata, "getModule", function(module){
+            return {
+                config : {
+                    hello : 'world'
+                }
+            };
+        }));
         stubs.push(sinon.stub(app.view.Layout.prototype, "initialize", function (options) {}));
 
-        layout = new app.view.layouts.ForecastsLayout(options);
+        layout = SugarTest.createComponent('Layout', {
+            name: "index",
+            module: "Forecasts",
+            context: options.context,
+            meta : options.meta,
+            controller: indexController
+        });
     });
 
     afterEach(function() {
@@ -69,6 +82,7 @@ describe("The forecasts layout controller", function(){
         _.each(stubs, function(stub) {
             stub.restore();
         });
+        layout = '';
     });
 
     describe("_placeComponent function", function() {

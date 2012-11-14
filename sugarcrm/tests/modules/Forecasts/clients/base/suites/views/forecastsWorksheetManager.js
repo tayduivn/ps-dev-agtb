@@ -154,7 +154,7 @@ describe("The forecasts manager worksheet", function(){
         });
     });
     
-    describe("Forecast Manager Worksheet _collection.fetch", function(){
+    describe("Forecast Manager Worksheet collection.fetch", function(){
     	beforeEach(function(){    		  		
     		view._collection.fetch = function(){};
     	});
@@ -208,7 +208,7 @@ describe("The forecasts manager worksheet", function(){
     		view.context = {};
     	});
     	
-    	it("_collection.on should have been called with reset", function(){
+    	it("collection.on should have been called with reset", function(){
     		expect(view._collection.on).toHaveBeenCalledWith("reset");
     	});
     	

@@ -110,7 +110,11 @@ abstract class SugarForecasting_AbstractForecast extends SugarForecasting_Abstra
         $reportees = array();
 
         while ($row = $db->fetchByAssoc($result)) {
-            $reportees[$row['id']] = $row['user_name'];
+            if ($row['id'] == $user_id) {
+                $reportees = array_merge(array($row['id'] => $row['user_name']), $reportees);
+            } else {
+                $reportees[$row['id']] = $row['user_name'];
+            }
         }
 
         return $reportees;

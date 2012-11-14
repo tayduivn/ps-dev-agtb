@@ -171,69 +171,18 @@ class SugarForecasting_Committed extends SugarForecasting_AbstractForecast imple
                                     
             $db->query($sql, true);                      
         }
-        
+
+        //TODO-sfa remove this once the ability to map buckets when they get changed is implemented (SFA-215).
+        $admin = BeanFactory::getBean('Administration');
+        $settings = $admin->getConfigForModule('Forecasts');
+        if (!isset($settings['has_commits']) || !$settings['has_commits']) {
+            $admin->saveSetting('Forecasts', 'has_commits', true, 'base');
+        }
 
         $timedate = TimeDate::getInstance();
         $forecast->date_entered = $this->convertDateTimeToISO($forecast->date_entered);
         $forecast->date_modified = $this->convertDateTimeToISO($forecast->date_modified);
 
         return $forecast->toArray(true);
-    }
-    
-    /**
-     * mgrNeedsCommitted
-     * This checks to see if the Manager Worksheet committed date is older than the rep
-     * worksheet committed date. If so, it retuns true so the UI can display a warning to the user.
-     * @retun array Array that contains true/false
-     */
-    public function mgrNeedsCommitted()
-    {
-        global $current_user;
-        if($current_user->id != $this->args["user_id"])
-        {
-            return array("needsCommitted"=>false);
-        }
-        $mgrCommitDate = "";
-        $repCommitDate = "";
-        $returnValue = false;
-        
-        $db = DBManagerFactory::getInstance();
-        $queryData = array($this->args["timeperiod_id"], $this->args["user_id"], "Rollup");
-        
-        //Get most recent committed date on the manager sheet
-        $sql = "select date_entered from forecasts " .
-                "where timeperiod_id = '?' " .
-                    "and user_id = '?' " .
-                    "and forecast_type = '?' " .
-                "order by date_entered desc";
-        $sql = $db->limitQuerySql($sql, 0, 1);
-        $result = $db->pQuery($sql, $queryData);
-                
-        if(($row = $db->fetchByAssoc($result)) != null)
-        { 
-            $mgrCommitDate = strtotime($row["date_entered"]);
-        }
-        
-        //Get most recent committed date on the rep sheet -- simple modification to data passed to query
-        $queryData[2] = "Direct";
-        $result = $db->pQuery($sql, $queryData);
-                
-        if(($row = $db->fetchByAssoc($result)) != null)
-        {                       
-            $repCommitDate = strtotime($row["date_entered"]);
-        }
-        
-        //Now, compare dates to see if the manager date is null, or older than the rep date.
-        if($mgrCommitDate == "" && $repCommitDate != ""){
-            $returnValue = true;
-        }
-        else if($repCommitDate == "" || ($repCommitDate == "" && $mgrCommitDate == "")){
-            $returnValue = false;
-        }
-        else if($mgrCommitDate < $repCommitDate){
-            $returnValue = true;
-        }
-        
-        return array("needsCommitted"=>$returnValue);       
     }
 }

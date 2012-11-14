@@ -7,7 +7,6 @@
  */
     // We listen to event and keep track if search filter is toggled open/close
     filterOpened: false,
-
     events: {
         'click [name=show_more_button]': 'showMoreRecords',
         'click .search': 'showSearch'
@@ -28,14 +27,22 @@
         // normal show more for list view.
         this.layout.off("list:filter:toggled", null, this);
         this.layout.on("list:filter:toggled", this.filterToggled, this);
-    },        
+    },
     filterToggled: function(isOpened) {
         this.filterOpened = isOpened;
     },
     showMoreRecords: function(evt) {
         var self = this, options;
-        app.alert.show('show_more_records', {level:'process', title:app.lang.getAppString('LBL_PORTAL_LOADING')});
+        // Mark current models as old, in order to animate the new one
+        _.each(this.collection.models, function(model) {
+            model.old = true;
+        });
         
+        // Display loading message
+        app.alert.show('show_more_records_' + self.cid, {level:'process', title:app.lang.getAppString('LBL_PORTAL_LOADING')});
+        
+        // save current screen position
+        var screenPosition = $(window).scrollTop();
 
         // If in "search mode" (the search filter is toggled open) set q:term param
         options = self.filterOpened ? self.getSearchOptions() : {};
@@ -44,10 +51,19 @@
         options.add = true;
             
         options.success = function() {
-            app.alert.dismiss('show_more_records');
+            // Hide loading message
+            app.alert.dismiss('show_more_records_' + self.cid);
             self.layout.trigger("list:paginate:success");
             self.render();
-            window.scrollTo(0, document.body.scrollHeight);
+            // retrieve old screen position
+            window.scrollTo(0, screenPosition);
+
+            // Animation for new records
+            self.layout.$('tr.new').animate({
+                opacity:1
+            }, 500, function () {
+                $(this).removeAttr('style class');
+            });
         };
         options.limit = this.limit;
         this.collection.paginate(options);

@@ -74,6 +74,8 @@ class DBManagerFactory
                 default:
                     $my_db_manager = self::getManagerByType($type, false);
                     if(empty($my_db_manager)) {
+                        echo $type . "\n";
+                        display_stack_trace();
                         $GLOBALS['log']->fatal("unable to load DB manager for: $type");
                         sugar_die("Cannot load DB manager");
                     }
@@ -109,7 +111,9 @@ class DBManagerFactory
     {
         global $sugar_config;
         static $count = 0, $old_count = 0;
-
+        if(empty($sugar_config['dbconfig'])) {
+            return false;
+        }
         //fall back to the default instance name
         if(empty($sugar_config['db'][$instanceName])){
         	$instanceName = '';

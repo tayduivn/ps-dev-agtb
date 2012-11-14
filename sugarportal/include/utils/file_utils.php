@@ -84,15 +84,7 @@ function write_array_to_file( $the_name, $the_array, $the_file ){
                     "\$$the_name = " .
                     var_export_helper( $the_array ) .
                     ";\n?>\n";
-
-    if( $fh = @fopen( $the_file, "w" ) ){
-        fputs( $fh, $the_string, strlen($the_string) );
-        fclose( $fh );
-        return( true );
-    }
-    else{
-        return( false );
-    }
+    return file_put_contents($the_file, $the_string);
 }
 
 function write_encoded_file( $soap_result, $write_to_dir, $write_to_file="" ){

@@ -249,15 +249,29 @@ class VardefManager{
             require($path);
             $found = true;
         }
+        if(!empty($params['bean'])) {
+            $bean = $params['bean'];
+        } else {
+            if(!empty($dictionary[$object])) {
+                // to avoid extra refresh - we'll fill it in later
+                if(!isset($GLOBALS['dictionary'][$object]['related_calc_fields'])) {
+                    $GLOBALS['dictionary'][$object]['related_calc_fields'] = array();
+                }
+            }
+            // we will instantiate here even though dictionary may not be there,
+            // since in case somebody calls us with wrong module name we need bean
+            // to get $module_dir. This may cause a loop but since the second call will
+            // have the right module name the loop should be short.
+            $bean = BeanFactory::newBean($module);
+        }
         //Some modules have multiple beans, we need to see if this object has a module_dir that is different from its module_name
         if(!$found){
-            $temp = BeanFactory::newBean($module);
-            if ($temp)
+            if ($bean instanceof SugarBean) // weed out non-bean modules
             {
-                $object_name = BeanFactory::getObjectName($temp->module_dir);
-                if ($temp && $temp->module_dir != $temp->module_name && !empty($object_name))
+                $object_name = BeanFactory::getObjectName($bean->module_dir);
+                if ($bean->module_dir != $bean->module_name && !empty($object_name))
                 {
-                    self::refreshVardefs($temp->module_dir, $object_name, $additional_search_paths, $cacheCustom);
+                    self::refreshVardefs($bean->module_dir, $object_name, $additional_search_paths, $cacheCustom, $params);
                 }
             }
         }
@@ -278,6 +292,12 @@ class VardefManager{
         if (empty($params['ignore_rel_calc_fields']))
             self::updateRelCFModules($module, $object);
         //END SUGARCRM flav=pro ONLY
+
+        // Put ACLStatic into vardefs for beans supporting ACLs
+        if(!empty($bean) && !empty($dictionary[$object]) && !isset($dictionary[$object]['acls']['SugarACLStatic'])
+            && $bean->bean_implements('ACL')) {
+            $dictionary[$object]['acls']['SugarACLStatic'] = true;
+        }
 
         //great! now that we have loaded all of our vardefs.
         //let's go save them to the cache file.

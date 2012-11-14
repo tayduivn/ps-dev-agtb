@@ -143,13 +143,14 @@ class ViewFactory{
 			return ViewFactory::_buildClass($class, $bean, $view_object_map);
 		}
 		//Now try the next set of possibilites if it was none of the above
+		//It can be expensive to load classes this way so it's not recommended
 		$class = SugarAutoLoader::customClass('View'.ucfirst($type));
 		if(class_exists($class)){
 			return ViewFactory::_buildClass($class, $bean, $view_object_map);
 		}
 		//Now check if there is a custom SugarView for generic handling
 		// autoloader will check filesystem
-		$class = SugarAutoLoader::customClass('SugarView');
+		$class = SugarAutoLoader::customClass('SugarView', true);
 		//if all else fails return SugarView
 		return new $class($bean, $view_object_map);
 
