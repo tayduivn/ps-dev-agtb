@@ -58,6 +58,12 @@ class MonthTimePeriod extends TimePeriod implements TimePeriodInterface {
 
         //The name template
         $this->name_template = "%s %d";
+
+        //The chart label
+        $this->chart_label = "n/j";
+
+        //The chart data interval modifier
+        $this->chart_data_modifier = '+1 week';
     }
 
 
@@ -71,5 +77,52 @@ class MonthTimePeriod extends TimePeriod implements TimePeriodInterface {
     {
         $timedate = TimeDate::getInstance();
         return sprintf($this->name_template, $timedate->fromDbDate($this->start_date)->format('M'), $timedate->fromDbDate($this->start_date)->format('Y'));
+    }
+
+
+    /**
+     * Returns the formatted chart label data for the timeperiod
+     *
+     * @param $chartData Array of chart data values
+     * @return formatted Array of chart data values where the labels are broken down by the timeperiod's increments
+     */
+    public function getChartLabels($chartData) {
+        $weeks = array();
+
+        $start = strtotime($this->start_date);
+        $end = strtotime($this->end_date);
+        $count = 0;
+        while ($start < $end) {
+            //Find out how many days are left for this period
+            $remainingDays = (($end - $start) / 86400);
+
+            //Create the modifier for the timeperiod
+            $modifier = $remainingDays > 6 ? '+6 day' : '+' . ceil($remainingDays) . ' day';
+
+            $val = $chartData;
+            $val['label'] = date($this->chart_label, $start) . '-' . date($this->chart_label, strtotime($modifier, $start));
+
+            //We internally use $count to store the corresponding data set for the week in the given timeperiod.
+            //For a one month interval we will most likely get 4 weeks except for the case of non-leap year February
+            $weeks[$count++] = $val;
+            $start = strtotime($this->chart_data_modifier, $start);
+        }
+
+        return $weeks;
+    }
+
+
+    /**
+     * Returns the key for the chart label data for the date closed value
+     *
+     * @param String The date_closed value in db date format
+     * @return String value of the key to use to map to the chart labels
+     */
+    public function getChartLabelsKey($dateClosed) {
+        $start = strtotime($this->start_date);
+        $closed = strtotime($dateClosed);
+        //We are calculating the difference in days between the $dateClosed parameter and the start_date for timeperiod
+        //then we divide by 7 (days in week) and use the floor value as the key
+        return floor((($closed - $start) / 86400) / 7);
     }
 }

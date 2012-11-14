@@ -609,4 +609,19 @@ class ForecastsTimePeriodTest extends Sugar_PHPUnit_Framework_TestCase
             $this->assertRegExp('/\d{4}\-03-01/', $timePeriod->start_date, "Failed asserting that parent timeperiods were created on March 1st");
         }
     }
+
+
+    /**
+     * This is a test for the getChartLabels function
+     *
+     * @group timeperiods
+     * @group forecasts
+     */
+    public function testGetChartLabels() {
+        $timePeriod = new MonthTimePeriod();
+        $timePeriod->setStartDate('2012-01-01');
+        $timePeriod->save();
+
+        SugarTestTimePeriodUtilities::$_createdTimePeriods[] = $timePeriod;
+    }
 }
