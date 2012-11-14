@@ -87,6 +87,7 @@ class MysqliManager extends MysqlManager
 	{
         parent::__construct();
         $this->capabilities["recursive_query"] = true;
+        $this->capabilities["prepared_statements"] = true;
 	}
 
 	/**

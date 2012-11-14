@@ -2766,10 +2766,49 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
     }
 
 
+    /**
+     * @group preparedStatements
+     */
+    public function testPreparedStatementsSmoketest()
+    {
+        if ( !$this->_db->supports('prepared_statements') )
+        {
+            $this->markTestSkipped('DBManager does not support prepared statements');
+        }
+
+        echo "-------------------------------------------\n";
+        echo "Initializing testPreparedStatementsSmoketest\n";
+        $tableName = "testPreparedStatement";
+        $params =  array(
+            'id' => array (
+                'name' => 'id',
+                'type' => 'id',
+                'required'=>true,
+            ),
+            'desc' => array (
+                'name' => 'desc',
+                'type' => 'varchar',
+                'len' => '100',
+            ),
+        );
+        if($this->_db->tableExists($tableName)) {
+            $this->_db->dropTableName($tableName);
+        }
+        $this->_db->createTableParams($tableName, $params, $indexes);
+
+        echo "Preparing stmt\n";
+        $data = array(1,"test data");
+        $sql = "INSERT INTO testPreparedStatement(id) VALUES(?int, ?varchar)";
+        $ps = $this->_db->prepareStatement($sql, $data);
+
+        echo "Executing stmt\n";
+        $result = $ps->executeStatement($data);
+        echo "result:";
+        var_dump($result);
+    }
 
 
     /**
-     * @dataProvider providerRecursiveQuery
      * @group preparedStatements
      */
     public function testPreparedStatementsDirectSQL()

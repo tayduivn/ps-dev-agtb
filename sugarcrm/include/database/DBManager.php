@@ -70,7 +70,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 abstract class DBManager
 {
 	/**
-	 * Name of database
+	 * Actual database link, used in concrete classes
 	 * @var resource
 	 */
 	public $database = null;
@@ -2149,6 +2149,18 @@ protected function checkQuery($sql, $object_name = false)
 		$stmt = $this->prepareQuery($sql);
 		return $this->executePreparedQuery($stmt, $data);
 	}
+
+
+
+    public function prepareStatement($sql, array $data){
+
+        $ps = new PreparedStatement($this->database, $sql, $data);
+        return $ps;
+
+    }
+
+
+
 
 /********************** SQL FUNCTIONS ****************************/
     /**
