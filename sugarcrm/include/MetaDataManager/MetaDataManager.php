@@ -385,7 +385,9 @@ class MetaDataManager {
                 $fieldsAcl = $aclField->loadUserFields($module,$obj,$userId,true);
                 //END SUGARCRM flav=pro ONLY
                 foreach ( $fieldsAcl as $field => $fieldAcl ) {
-                    switch ( $fieldAcl ) {
+                    // check field level ACL's from SugarACL
+                    $sugarFieldAcl = SugarACL::getFieldAccess($module, $field, array('user' => $userObject));
+                    switch ( $sugaFieldAcl ) {
                         case ACL_READ_WRITE:
                             // Default, don't need to send anything down
                             break;
