@@ -509,7 +509,7 @@ function addForm(formname) {
 
 function addToValidate(formname, name, type, required, msg) {
 	addForm(formname);
-	validate[formname].push([name, type,required, msg]);
+	validate[formname][validate[formname].length] = new Array(name, type,required, msg);
 }
 
 // Bug #47961 Callback validator definition
