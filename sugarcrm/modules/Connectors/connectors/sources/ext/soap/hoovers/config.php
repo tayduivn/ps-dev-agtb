@@ -26,8 +26,8 @@ $config = array (
   'order' => 2,
   'properties' => 
   array (
-    'hoovers_endpoint' => 'http://hapi.hoovers.com/HooversAPI-33',
-    'hoovers_wsdl' => 'http://hapi.hoovers.com/HooversAPI-33/hooversAPI/hooversAPI.wsdl',
+    'hoovers_endpoint' => 'http://dnbdirect-sandbox.dnb.com/DnBAPI-10',
+    'hoovers_wsdl' => 'http://dnbdirect-sandbox.dnb.com/DnBAPI-10/dnbAPI/dnbAPI.wsdl',
   	'hoovers_api_key' => '',
   ),
 );
