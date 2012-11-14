@@ -257,8 +257,12 @@ class VardefManager{
                 if(!isset($GLOBALS['dictionary'][$object]['related_calc_fields'])) {
                     $GLOBALS['dictionary'][$object]['related_calc_fields'] = array();
                 }
-                $bean = BeanFactory::newBean($module);
             }
+            // we will instantiate here even though dictionary may not be there,
+            // since in case somebody calls us with wrong module name we need bean
+            // to get $module_dir. This may cause a loop but since the second call will
+            // have the right module name the loop should be short.
+            $bean = BeanFactory::newBean($module);
         }
         if(!empty($params['bean'])) {
             $bean = $params['bean'];

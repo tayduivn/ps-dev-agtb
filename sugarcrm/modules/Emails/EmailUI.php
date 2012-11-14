@@ -1494,13 +1494,15 @@ eoq;
 			   unset($EditView->sectionPanels[strtoupper('lbl_portal_information')]);
 			} else {
 			   $jsLanguage .= getVersionedScript("modules/Contacts/Contact.js");
-			   $jsLanguage .= getVersionedScript("modules/Contacts/QuickCreateEmailContact.js");
 			   $jsLanguage .= <<<EOQ
-			    <script language="javascript">
-				   addToValidateComparison('form_EmailQCView_Contacts', 'portal_password', 'varchar', false, SUGAR.language.get('app_strings', 'ERR_SQS_NO_MATCH_FIELD') + SUGAR.language.get('Contacts', 'LBL_PORTAL_PASSWORD'), 'portal_password1');
-		           addToValidateVerified('form_EmailQCView_Contacts', 'portal_name_verified', 'bool', false, SUGAR.language.get('app_strings', 'ERR_EXISTING_PORTAL_USERNAME'));
-		           YAHOO.util.Event.on('portal_name', 'blur', validatePortalName);
-				   YAHOO.util.Event.on('portal_name', 'keydown', handleKeyDown);
+			    <script type="text/javascript">
+			       SUGAR.portalUserEditViewFormName = 'form_EmailQCView_Contacts';
+			       YAHOO.util.Event.onDOMReady(function() {
+                       addToValidateComparison('form_EmailQCView_Contacts', 'portal_password', 'varchar', false, SUGAR.language.get('app_strings', 'ERR_SQS_NO_MATCH_FIELD') + SUGAR.language.get('Contacts', 'LBL_PORTAL_PASSWORD'), 'portal_password1');
+                       addToValidateVerified('form_EmailQCView_Contacts', 'portal_name_verified', 'bool', false, SUGAR.language.get('app_strings', 'ERR_EXISTING_PORTAL_USERNAME'));
+                       YAHOO.util.Event.on('portal_name', 'blur', validatePortalName);
+                       YAHOO.util.Event.on('portal_name', 'keydown', handleKeyDown);
+                   });
 			    </script>
 EOQ;
 			}
