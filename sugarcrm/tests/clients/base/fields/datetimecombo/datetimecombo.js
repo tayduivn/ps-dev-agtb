@@ -2,7 +2,7 @@ function forceTwoDigits(numstr) {
     return numstr.length === 1 ? '0' + numstr: numstr;
 }
 
-describe("basedatetimecombo field", function() {
+describe("datetimecombo field", function() {
     var app, baseDateField, field, myUser;
 
     beforeEach(function() {
@@ -11,8 +11,8 @@ describe("basedatetimecombo field", function() {
         myUser.set('datepref','m/d/Y');
         myUser.set('timepref','H:i');
 
-        baseDateField = SugarTest.createField("base", "basedatepicker", "basedatepicker", "edit");
-        field = SugarTest.createField("base", "basedatetimecombo", "basedatetimecombo", "edit");
+        baseDateField = SugarTest.createField("base", "date", "date", "edit");
+        field = SugarTest.createField("base", "datetimecombo", "datetimecombo", "edit");
 
         // Convenience for any specs that want to avoid calling initialize. (note if 
         // initialize called myUser's datepre/timepref will take precedence)
