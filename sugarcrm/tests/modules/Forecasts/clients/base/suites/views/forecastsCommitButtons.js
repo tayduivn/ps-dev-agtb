@@ -110,7 +110,6 @@ describe("Forecasts Commit Buttons Component", function(){
                     }
             };
             
-            console.log(view);
             confirmStub = sinon.stub(window, 'confirm', function(){return true});
             runExportStub = sinon.stub(view, 'runExport', function(){});            
         });
