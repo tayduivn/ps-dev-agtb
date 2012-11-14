@@ -1,11 +1,10 @@
-describe("base date field", function() {
+describe("date field", function() {
 
-    var app, baseDateField, field;
+    var app, field;
 
     beforeEach(function() {
         app = SugarTest.app;
-        baseDateField = SugarTest.createField("base","basedatepicker", "basedatepicker", "detail");
-        field = SugarTest.createField("base","basedate", "basedate", "detail");
+        field = SugarTest.createField("base","date", "date", "detail");
         // To avoid calling initialize we just set these here
         field.usersDatePrefs = 'm/d/Y';
     });
@@ -14,7 +13,6 @@ describe("base date field", function() {
         app.cache.cutAll();
         app.view.reset();
         delete Handlebars.templates;
-        baseDateField = null;
         field = null;
     });
 
