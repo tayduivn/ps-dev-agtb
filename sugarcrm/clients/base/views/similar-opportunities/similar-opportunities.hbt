@@ -1,4 +1,4 @@
-<div class="block padded thumbnail widget">
+<div class="block thumbnail widget">
     <div class="influencers-widget">
         <h4 data-tour="tour-influencers">Similar Opportunities</h4>
         <div class="influencers-wrapper">
@@ -6,16 +6,16 @@
                 {{#if this.collections.length}}
                     {{#each this.collections}}
                         <li class="influencers-item">
-                            <a href="#Users/{{this.id}}" class="avatar avatar42 pull-left">
-                                <img src="{{this.picture_url}}" alt="{{this.full_name}}">
+                            <a href="#Users/{{this.assigned_user_id}}" class="avatar avatar42 pull-left">
+                                <img src="{{this.picture_url}}" alt="{{this.assigned_user_name}}">
                             </a>
-                            <a href="#Users/{{this.id}}">{{this.full_name}}</a>
+                            <a href="#Users/{{this.assigned_user_id}}">{{this.assigned_user_name}}</a>
                             <br>
-		          	<a href="#Opportunities/{{this.id}}">{{this.name}}</a> with <a href="#Accounts/{{this.account_id}}">{{this.account_name}}</a> for {{this.amount}}     
+                            <a href="#Opportunities/{{this.id}}">{{this.name}}</a> with <a href="#Accounts/{{this.account_id}}">{{this.account_name}}</a> for {{this.amount}}
                         </li>
                     {{/each}}
                 {{else}}
-                    <li class="influencers-item"><em>No influencers found.</em></li>
+                    <li class="influencers-item"><em>No similar opportunities found.</em></li>
                 {{/if}}
             </ul>
         </div>

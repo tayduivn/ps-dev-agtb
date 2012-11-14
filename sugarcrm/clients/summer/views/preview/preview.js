@@ -11,8 +11,12 @@
 
         app.view.View.prototype.initialize.call(this, options);
         this.fallbackFieldTemplate = "detail";
-        this.context.on("togglePreview", this.togglePreview);
-        this.layout.on("preview:pagination:fire", this.switchPreview);
+        this.context.off("togglePreview", null, this);
+        this.context.on("togglePreview", this.togglePreview, this);
+        this.context.off("preview:collection:change", null, this);
+        this.context.on("preview:collection:change", this.updateCollection, this);
+        this.layout.off("preview:pagination:fire", null, this);
+        this.layout.on("preview:pagination:fire", this.switchPreview, this);
     },
 
     _render: function() {
@@ -115,6 +119,13 @@
         this.switching = false;
         this.model.clear();
         this.$el.empty();
+    },
+
+    updateCollection: function(collection) {
+        this.context.set("collection", collection);
+        if( this.collection ) {
+            this.collection = collection;
+        }
     }
 
 })
