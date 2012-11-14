@@ -1032,11 +1032,11 @@ function process_email_address_relationships()
     _logThis('Determining which email addresses are duplicated within the system', $path);
     $dupe_email_addresses = array();
 
-    $dupe_query = "SELECT email_address_caps, count(*) AS rowcount FROM email_addresses WHERE deleted=0 GROUP BY email_address_caps HAVING COUNT(*) > 1";
+    $dupe_query = "SELECT email_address_caps, count(*) AS email_count FROM email_addresses WHERE deleted=0 GROUP BY email_address_caps HAVING COUNT(*) > 1";
     $dupe_results = $GLOBALS['db']->query($dupe_query);
     while ($row = $GLOBALS['db']->fetchByAssoc($dupe_results,false)) {
         $email_address_caps = $row['email_address_caps'];
-        _logThis("Found ".$email_address_caps.' with rows='.$row['rowcount'], $path);
+        _logThis("Found ".$email_address_caps.' with rows='.$row['email_count'], $path);
 
         $ids = array();
         $opt_out = '0'; // by default don't opt out, unless one of the dupes has an opt-out flag.
@@ -1090,16 +1090,12 @@ function fix_email_address_relationships($old_uuid, $new_uuid, $time_changed=nul
     global $path;
     // if we have time query, we need joins
     //Relates all emails currently related to duplicates of the current email address to the first id in the array of duplicates
-    if ($time_changed !== null) {
-        $stm_emails_email_addr = "UPDATE emails_email_addr_rel,emails SET email_address_id='$new_uuid' WHERE emails.id=email_id AND email_address_id='$old_uuid' AND emails.date_entered>='$time_changed'";
-    }
-    else {
+    if ($time_changed == null) {
         $stm_emails_email_addr = "UPDATE emails_email_addr_rel SET email_address_id='$new_uuid' WHERE email_address_id='$old_uuid'";
+        _logThis($stm_emails_email_addr, $path);
+        $rs = $GLOBALS['db']->query($stm_emails_email_addr);
+        _logThis(' Number of row(s) changed = '.$GLOBALS['db']->getAffectedRowCount($rs), $path);
     }
-    //_logThis("Rebuilding SugarLogic Cache", $path);
-    _logThis($stm_emails_email_addr, $path);
-    $rs = $GLOBALS['db']->query($stm_emails_email_addr);
-    _logThis(' Number of row(s) changed = '.$GLOBALS['db']->getAffectedRowCount($rs), $path);
 
     //Relates all beans(People) currently related to duplicates of the current email address to the first id in the array of duplicates
     // it is highly unlikely that the records using this email address want the old one, so avoid making a bad guess.
