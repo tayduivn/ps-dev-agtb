@@ -29,7 +29,7 @@ if (!defined('sugarEntry') || !sugarEntry) {
  * Contributor(s): ______________________________________..
  ********************************************************************************/
 
-$viewdefs['Leads']['base']['view']['leadrecord'] = array(
+$viewdefs['Leads']['base']['view']['record'] = array(
     'type' => 'record',
     'buttons' =>
     array(
