@@ -186,7 +186,7 @@ SUGAR.tour = function() {
         init: function(params) {
             var modals = params.modals;
 
-            tourModal = $('<div id="'+params.id+'" class="modal tour"></div>').modal({backdrop: false}).draggable({handle: ".modal-header"});
+            tourModal = $('<div id="'+params.id+'" class="modal '+params.className+' tour"></div>').modal({backdrop: false}).draggable({handle: ".modal-header"});
 
             var tourIdSel = "#"+params.id;
 
@@ -208,14 +208,6 @@ SUGAR.tour = function() {
                         $(tourIdSel+'End').css("display","block");
                         centerModal();
                     });
-                    $(tourIdSel+' a.close').on("click",function(e){
-                        tourModal.modal("hide");
-                        $(tourIdSel+'Start').css("display","block");
-                        $(tourIdSel+'End').css("display","none");
-                        centerModal();
-                        SUGAR.tour.saveUserPref(params.prefUrl);
-                        params.onTourFinish();
-                    });
                     $(tourIdSel+'End a.btn.btn-primary').on("click",function(e){
                         tourModal.modal("hide");
                         $(tourIdSel+'Start').css("display","block");
@@ -225,11 +217,15 @@ SUGAR.tour = function() {
                         params.onTourFinish();
                     });
                     $(tourIdSel+'End a.btn').not('.btn-primary').on("click",function(e){
-                        $(tourIdSel+'End').css("display","none");
+                        tourModal.modal("hide");
                         var lastModal = modals.length-1;
                         modalArray[lastModal].modal('show');
                         $(modals[lastModal].target).popoverext('show');
                         centerModal();
+                    });
+
+                    $('div.modal.'+params.className+'.tour a.close').live("click",function(e){
+                        closeTour();
                     });
 
                     centerModal();
@@ -308,12 +304,25 @@ SUGAR.tour = function() {
                     $(window).resize(function() {
                         centerModal();
                     });
+
+
+
                     function centerModal() {
                         $(".tour").each(function(){
                             $(this).css("left",$(window).width()/2 - $(this).width()/2);
                             $(this).css("margin-top",-$(this).height()/2);
                         });
 
+                    }
+
+                    function closeTour() {
+                        tourModal.modal("hide");
+                        $(tourIdSel+'Start').css("display","block");
+                        $(tourIdSel+'End').css("display","none");
+                        centerModal();
+                        SUGAR.tour.saveUserPref(params.prefUrl);
+                        $('.popover').blur();
+                        params.onTourFinish();
                     }
 
                     function nextModal (i) {
@@ -330,7 +339,6 @@ SUGAR.tour = function() {
                             $(modals[i].target).popoverext('hide');
                             modalArray[i].modal('hide');
                             tourModal.modal("show");
-                            $(tourIdSel+'End').css("display","block");
                             centerModal();
                         }
 
@@ -348,6 +356,8 @@ SUGAR.tour = function() {
                     function skipTour (i) {
                         $(modals[i].target).popoverext('hide');
                         modalArray[i].modal('hide');
+                        $(tourIdSel+'End').css("display","block");
+                        $(tourIdSel+'Start').css("display","none");
                         tourModal.modal("show");
                         centerModal();
                     }
@@ -384,6 +394,8 @@ SUGAR.tour = function() {
 
                         return content.html();
                     }
+
+
 
 
 
