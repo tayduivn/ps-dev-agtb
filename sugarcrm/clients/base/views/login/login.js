@@ -88,7 +88,7 @@
                                     name: "login_button",
                                     type: "button",
                                     label: "LBL_LOGIN_BUTTON_LABEL",
-                                    'class': "login-submit",
+                                    'css_class': "login-submit",
                                     value: "login",
                                     primary: true
                                 }

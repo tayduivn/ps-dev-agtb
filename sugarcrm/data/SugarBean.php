@@ -1965,13 +1965,13 @@ class SugarBean
             $templateName = $this->getTemplateNameForNotificationEmail();
             $xtpl         = $this->createNotificationEmailTemplate($templateName);
             $subject      = $xtpl->text($templateName . "_Subject");
-            $textBody     = trim($xtpl->text($templateName));
+            $body         = trim($xtpl->text($templateName));
 
             //BEGIN SUGARCRM flav=notifications ONLY
             //Save the notification
             $notification = new Notifications();
             $notification->name = $subject;
-            $notification->description = $textBody;
+            $notification->description = $body;
             $notification->assigned_user_id = $notify_user->id;
             $notification->save(FALSE);
             //END SUGARCRM flav=notifications ONLY
@@ -2008,8 +2008,19 @@ class SugarBean
                 // set the subject of the email
                 $mailer->setSubject($subject);
 
-                // set the body of the email... looks to be plain-text only
-                $mailer->setTextBody($textBody);
+                // set the body of the email...
+
+                // the compared strings will be the same if strip_tags had no affect
+                // if the compared strings are equal, then it's a text-only message
+                $textOnly = (strcmp($body, strip_tags($body)) == 0);
+
+                if ($textOnly) {
+                    $mailer->setTextBody($body);
+                } else {
+                    $textBody = strip_tags(br2nl($body)); // need to create the plain-text part
+                    $mailer->setTextBody($textBody);
+                    $mailer->setHtmlBody($body);
+                }
 
                 // add the recipient
                 $recipientEmailAddress = $notify_user->emailAddress->getPrimaryAddress($notify_user);
