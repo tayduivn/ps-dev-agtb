@@ -29,26 +29,26 @@ if (!defined('sugarEntry') || !sugarEntry) {
  * Contributor(s): ______________________________________..
  ********************************************************************************/
 
-$viewdefs['ProspectLists']['base']['view']['record'] = array(
+$viewdefs['Contacts']['base']['view']['record'] = array(
     'buttons' => array(
         array(
-            'type'    => 'button',
-            'label'   => 'LBL_SAVE_BUTTON_LABEL',
+            'type' => 'button',
+            'label' => 'LBL_SAVE_BUTTON_LABEL',
             'css_class' => 'hide btn-primary record-save',
         ),
         array(
-            'type'    => 'button',
-            'label'   => 'LBL_CANCEL_BUTTON_LABEL',
+            'type' => 'button',
+            'label' => 'LBL_CANCEL_BUTTON_LABEL',
             'css_class' => 'hide record-cancel',
         ),
         array(
-            'type'    => 'button',
-            'label'   => 'LBL_EDIT_BUTTON_LABEL',
+            'type' => 'button',
+            'label' => 'LBL_EDIT_BUTTON_LABEL',
             'css_class' => 'record-edit',
         ),
         array(
-            'type'    => 'button',
-            'label'   => 'LBL_DELETE_BUTTON_LABEL',
+            'type' => 'button',
+            'label' => 'LBL_DELETE_BUTTON_LABEL',
             'css_class' => 'record-delete',
         ),
     ),
@@ -57,45 +57,70 @@ $viewdefs['ProspectLists']['base']['view']['record'] = array(
             'name' => 'panel_header',
             'header' => true,
             'fields' => array(
-                'name',
+                array(
+                    'name' => 'img',
+                    'noedit' => true,
+                ),
+                array(
+                    'name' => 'fieldset_full_name',
+                    'type' => 'fieldset',
+                    'fields' => array('salutation', 'first_name', 'last_name')
+                ),
             )
         ),
         array(
             'name' => 'panel_body',
-            'label' => 'LBL_PANEL_2',
             'columns' => 2,
-            'labels' => true,
+            'labels' => false,
             'labelsOnTop' => true,
             'placeholders' => true,
             'fields' => array(
+                'title',
+                'phone_mobile',
+                'department',
+                'phone_work',
+                'account_name',
+                'phone_fax',
                 array(
-                    'name' => 'description',
-                    'span' => 12,
+                    'name' => 'fieldset_address',
+                    'type' => 'fieldset',
+                    'label' => 'Primay Address',
+                    'fields' => array('primary_address_street', 'primary_address_city', 'primary_address_state', 'primary_address_postalcode')
                 ),
-                array(
-                    'name' => 'list_type',
-                    'displayParams' => array('required' => true),
-                    'span' => 12,
-                ),
-//                array(
-//                    'name' => 'domain_name',
-//                    'type' => 'secondary',
-//                    'primary' => array(
-//                        'field' => 'list_type',
-//                        'value' => 'exempt_domain',
-//                    )
-//                ),
-                'assigned_user_name',
-                'date_modified',
-                'terms', // This was defined in the PM spreadsheet, but isn't an existing field. Left here for posterity.
-                'date_created',
+                'email'
 
-                //BEGIN SUGARCRM flav=pro ONLY
+            ),
+        ),
+        array(
+            'columns' => 2,
+            'name' => 'panel_hidden',
+            'hide' => true,
+            'labelsOnTop' => true,
+            'placeholders' => true,
+            'fields' => array(
+                'description',
+                'report_to_name',
+                'sync_contact',
+                'lead_source',
+                'do_not_call',
                 array(
-                    'name' => 'team_name',
-                    'displayParams' => array('display' => true),
+                    'name' => 'campaign_name',
+                    'span' => 12
                 ),
-                //END SUGARCRM flav=pro ONLY
+                'portal_name',
+                'portal_active',
+                'preferred_language',
+                'assigned_user_id',
+                'team_name',
+                'date_modified',
+                'date_entered',
+                array(
+                    'name' => 'fieldset_alt_address',
+                    'type' => 'fieldset',
+                    'label' => 'Alternate Address',
+                    'fields' => array('alt_address_street', 'alt_address_city', 'alt_address_state', 'alt_address_postalcode')
+                ),
+
             )
         )
     ),

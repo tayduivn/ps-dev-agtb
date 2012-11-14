@@ -857,6 +857,7 @@ class EmailMan extends SugarBean{
             } catch (MailerException $me) {
                 //log send error. save for next attempt after 24hrs. no campaign log entry will be created.
                 $this->set_as_sent($module->email1,false,null,null,'send error');
+                $GLOBALS['log']->error("Emailman::sendMail - Campaign Email Send Error:" . $me->getMessage());
             }
 		}else{
             $this->target_tracker_key=create_guid();
@@ -889,7 +890,6 @@ class EmailMan extends SugarBean{
 
 		$pattern='/[A-Z0-9\._%-]+@[A-Z0-9\.-]+\.[A-Za-z]{2,}$/i';
 		$ret=preg_match($pattern, $email_address);
-		echo $ret;
 		if ($ret===false or $ret==0) {
 			return false;
 		}

@@ -29,7 +29,7 @@ if (!defined('sugarEntry') || !sugarEntry) {
  * Contributor(s): ______________________________________..
  ********************************************************************************/
 
-$viewdefs['ProspectLists']['base']['view']['record'] = array(
+$viewdefs['Meetings']['base']['view']['record'] = array(
     'buttons' => array(
         array(
             'type'    => 'button',
@@ -62,40 +62,40 @@ $viewdefs['ProspectLists']['base']['view']['record'] = array(
         ),
         array(
             'name' => 'panel_body',
-            'label' => 'LBL_PANEL_2',
             'columns' => 2,
-            'labels' => true,
+            'labels' => false,
             'labelsOnTop' => true,
             'placeholders' => true,
             'fields' => array(
+                'type',
+                'status',
+                'date_start',
+                'location',
+                'date_end',
+                'parent_name',
                 array(
-                    'name' => 'description',
-                    'span' => 12,
+                    'name' => 'fieldset_duration',
+                    'type' => 'fieldset',
+                    'label' => 'Duration',
+                    'fields' => array('duration_hours', 'duration_minutes')
                 ),
-                array(
-                    'name' => 'list_type',
-                    'displayParams' => array('required' => true),
-                    'span' => 12,
-                ),
-//                array(
-//                    'name' => 'domain_name',
-//                    'type' => 'secondary',
-//                    'primary' => array(
-//                        'field' => 'list_type',
-//                        'value' => 'exempt_domain',
-//                    )
-//                ),
-                'assigned_user_name',
+            ),
+        ),
+        array(
+            'name' => 'panel_hidden',
+            'columns' => 2,
+            'hide' => true,
+            'labelsOnTop' => true,
+            'placeholders' => true,
+            'fields' => array(
+                array('name' => 'description', 'span' => 8),
+                array('type' => 'html', 'default_value' => ''),
+                'teams',
+                'password',
+                'join_url',
                 'date_modified',
-                'terms', // This was defined in the PM spreadsheet, but isn't an existing field. Left here for posterity.
-                'date_created',
-
-                //BEGIN SUGARCRM flav=pro ONLY
-                array(
-                    'name' => 'team_name',
-                    'displayParams' => array('display' => true),
-                ),
-                //END SUGARCRM flav=pro ONLY
+                'reminder_checked',
+                'date_entered',
             )
         )
     ),

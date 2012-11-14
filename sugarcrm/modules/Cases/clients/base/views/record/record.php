@@ -57,10 +57,14 @@ $viewdefs['Cases']['base']['view']['record'] = array(
             'name' => 'panel_header',
             'header' => true,
             'fields' => array(
+                array('name'=>'case_number', 'noedit'=>true,),
+               
+                /*
                 array(
                     'name' => 'img',
                     'noedit' => true,
                 ),
+                */
                 'name',
             )
         ),
@@ -72,24 +76,34 @@ $viewdefs['Cases']['base']['view']['record'] = array(
             'labelsOnTop' => true,
             'placeholders' => true,
             'fields' => array(
-                array('name'=>'case_number', 'noedit'=>true),
+              
                 'priority',
                 'status',
-                'account_name',
                 'type',
-                array ('name' => 'description', 'nl2br' => true,),
-                array ('name' => 'resolution', 'nl2br' => true,),
-//BEGIN SUGARCRM flav=ent ONLY
-                // hideIf is a legacy smarty thing .. seems that hideIf is mainly used for this specific check
-                // semantically meaning: "hide unless portal enabled" .. TODO: implement equivalent functionality in sidecar 
-                // perhaps create an hbt helper that can leverage app.cofig.on
-                array('name'=>'portal_viewable', 'label' => 'LBL_SHOW_IN_PORTAL', 'hideIf' => 'empty($PORTAL_ENABLED)'),
-//END SUGARCRM flav=ent ONLY
+                'account_name',
                 'assigned_user_name',
 //BEGIN SUGARCRM flav=pro ONLY
                 array('name'=>'team_name', 'displayParams'=>array('required'=>true)),
 //END SUGARCRM flav=pro ONLY
+//BEGIN SUGARCRM flav=ent ONLY
+                // hideIf is a legacy smarty thing .. seems that hideIf is mainly used for this specific check
+                // semantically meaning: "hide unless portal enabled" .. TODO: implement equivalent functionality in sidecar 
+                // perhaps create an hbt helper that can leverage app.cofig.on
+                // Commented out since the PM instruction said nothing about this
+                //array('name'=>'portal_viewable', 'label' => 'LBL_SHOW_IN_PORTAL', 'hideIf' => 'empty($PORTAL_ENABLED)'),
+//END SUGARCRM flav=ent ONLY
             ),
         ),
+        array(
+            'name' => 'panel_hidden',
+            'hide' => true,
+            'columns' => 1,
+            'labelsOnTop' => true,
+            'placeholders' => true,
+            'fields' => array(
+                array('name' => 'description', 'nl2br' => true),
+                array('name' => 'resolution', 'nl2br' => true),
+            )
+        )
     ),
 );
