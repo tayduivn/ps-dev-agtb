@@ -96,6 +96,7 @@ class Meeting extends SugarBean {
 	// so you can run get_users() twice and run query only once
 	var $cached_get_users = null;
 	var $new_schema = true;
+    var $date_changed = false;
 
 	/**
 	 * sole constructor
@@ -618,6 +619,11 @@ class Meeting extends SugarBean {
 	 * Redefine method to attach ics file to notification email
 	 */
 	public function create_notification_email($notify_user){
+        // reset acceptance status for non organizer if date is changed
+        if (($notify_user->id != $GLOBALS['current_user']->id) && $this->date_changed) {
+            $this->set_accept_status($notify_user, 'none');
+        }
+
 		$notify_mail = parent::create_notification_email($notify_user);
 						
 		$path = SugarConfig::getInstance()->get('upload_dir','upload/') . $this->id;
