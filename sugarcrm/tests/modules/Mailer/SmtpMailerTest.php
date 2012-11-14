@@ -270,48 +270,6 @@ class SmtpMailerTest extends Sugar_PHPUnit_Framework_TestCase
      * @group email
      * @group mailer
      */
-    public function testSend_NoMessageParts_TransferBodyThrowsMailerException() {
-        $mockMailer = self::getMock(
-            "SmtpMailer",
-            array(
-                 "transferConfigurations",
-                 "connectToHost",
-                 "transferHeaders",
-                 "transferRecipients",
-                 "transferAttachments",
-            ),
-            array(new OutboundSmtpEmailConfiguration($GLOBALS["current_user"]))
-        );
-
-        $mockMailer->expects(self::once())
-            ->method("transferConfigurations")
-            ->will(self::returnValue(true));
-
-        $mockMailer->expects(self::once())
-            ->method("connectToHost")
-            ->will(self::returnValue(true));
-
-        $mockMailer->expects(self::once())
-            ->method("transferHeaders")
-            ->will(self::returnValue(true));
-
-        $mockMailer->expects(self::once())
-            ->method("transferRecipients")
-            ->will(self::returnValue(true));
-
-        // transferBody should fail between transferRecipients and transferAttachments
-
-        $mockMailer->expects(self::never())
-            ->method("transferAttachments");
-
-        self::setExpectedException("MailerException");
-        $mockMailer->send();
-    }
-
-    /**
-     * @group email
-     * @group mailer
-     */
     public function testSend_PHPMailerAddAttachmentThrowsException_TransferAttachmentsThrowsMailerException() {
         $mockLocale = self::getMock("Localization", array("translateCharset"));
         $mockLocale->expects(self::any())
