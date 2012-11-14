@@ -42,7 +42,7 @@ color:#689800;
 .dcmenu .inner {
     height: 44px;
     min-width: 950px;
-    background-color: #303030;
+    background-color: #9abd38;
     background-image: -moz-linear-gradient(top, #9abd38, #617723);
     background-image: -ms-linear-gradient(top, #9abd38, #617723);
     background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#9abd38), to(#617723));
