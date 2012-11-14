@@ -1595,10 +1595,10 @@ EOHTML;
     public function getBreadCrumbSymbol()
     {
     	if(SugarThemeRegistry::current()->directionality == "ltr") {
-        	return "<span class='pointer'>&raquo;</span>";
+        	return "<span class='breadCrumbSymbol'>&raquo;</span>";
         }
         else {
-        	return "<span class='pointer'>&laquo;</span>";
+        	return "<span class='breadCrumbSymbol'>&laquo;</span>";
         }
     }
 

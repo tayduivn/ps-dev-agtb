@@ -32,6 +32,7 @@
     backupStaticAttributes="false">
     <testsuites>
             <testsuite>
+                <directory>rest</directory>
                 <directory>build</directory>
                 <directory>data</directory>
                 <directory>include</directory>
@@ -39,7 +40,6 @@
                 <directory>jssource</directory>
                 <directory>modules</directory>
                 <directory>ModuleInstall</directory>
-                <directory>rest</directory>
                 <directory>service</directory>
                 <directory>tests</directory>
             </testsuite>

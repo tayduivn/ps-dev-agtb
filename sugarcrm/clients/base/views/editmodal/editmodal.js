@@ -9,6 +9,7 @@
                     app.data.createRelatedBean(app.controller.context.get('model'), null, "notes", {})
                 );
                 this.render();
+                this.$('.modal').modal({backdrop: "static"});
                 this.$('.modal').modal('show');
                 this.context.get('createModel').on("error:validation", function() {
                     this.resetButton();

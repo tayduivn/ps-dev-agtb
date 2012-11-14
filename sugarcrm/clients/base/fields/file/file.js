@@ -1,6 +1,9 @@
 ({
     events: {
-        "click a.file": "startDownload"
+        "click a.file": "startDownload",
+        "focus input[type=file]": "onUploadFocus",
+        "blur input[type=file]": "onUploadBlur",
+        "change input[type=file]": "onUploadChange"
     },
     fileUrl: "",
     _render: function() {
