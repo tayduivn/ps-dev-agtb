@@ -360,7 +360,7 @@ class MetaDataManager {
             }
 
             // Only loop through the fields if we have a reason to, admins give full access on everything, no access gives no access to anything
-            if ( $outputAcl['access'] == 'yes' && $outputAcl['developer'] == 'no' ) {
+            if ( $outputAcl['access'] == 'yes') {
 
                 // Currently create just uses the edit permission, but there is probably a need for a separate permission for create
                 $outputAcl['create'] = $outputAcl['edit'];
