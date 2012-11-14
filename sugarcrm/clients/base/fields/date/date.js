@@ -25,19 +25,32 @@
  * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 ({
-    // date
     /**
+     * Date widget
+     * 
      * Base implementation for widgets that will use the datepicker. Provides core functionality
      * which can be extended as follows:
      * <pre><code>
-     * extendsFrom:'BasedatepickerField',
+     * extendsFrom:'DateField',
      * 
      * // Derived must also implement method: _setDateIfDefaultValue
      * _setDateIfDefaultValue: function() {}
      * </code></pre>
      * 
-     * Derived widgets can set stripIsoTZ to indicate whether ISO 8601 Timezone information should
+     * Derived widgets should set stripIsoTZ to indicate whether ISO 8601 Timezone information should
      * be stripped from dates or left in tact.
+     * 
+     * Any methods defined in date.js may called from derived classes and should work as expected. If
+     * core methods like _render, initialize, etc., are overriden, you should consider calling this
+     * parent at some point in overriden method. For exmaple, in a DateChild widget you may do:
+     * <pre><code>
+     * _render:function(value) {
+     *     this.doSpecialPreParentInitialization();
+     *     app.view.fields.DateField.prototype._render.call(this);// Beware to use: app.view.fields 
+     *     // as it's easy to forget and do app.view.views (notice views not fields at end!)
+     *     this.doSomethingElseAfterParentInitialization();
+     * },
+     * </code></pre>
      */
     events: {
         'click .icon-calendar': '_toggleDatepicker'

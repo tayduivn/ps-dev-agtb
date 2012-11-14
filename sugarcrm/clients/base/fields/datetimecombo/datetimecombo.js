@@ -25,8 +25,12 @@
  * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 ({
-    // datetimecombo
-    extendsFrom:'BasedatepickerField',
+    /**
+     * DateTimeCombo Widget
+     * 
+     * Extends from Date widget but adds the time component.
+     */   
+    extendsFrom:'DateField',
 
     stripIsoTZ: true,
 
@@ -46,13 +50,11 @@
         // Set our internal time and date values so hbt picks up
         self._presetDateValues();
 
-        app.view.Field.prototype._render.call(self);
-
+        app.view.fields.DateField.prototype._render.call(self);
         viewName = self._getViewName();
-
         $(function() {
             if (self._isEditView(viewName)) {
-                self._setupDatepicker();
+                // Note: The Datepicker should be setup in parent DateField
                 self._setupTimepicker();
             }
         });
