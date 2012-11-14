@@ -94,16 +94,17 @@ $viewdefs['Bugs']['base']['view']['record'] = array(
                 * TODO: Did we want this? In the biz card it looked like we didn't have this
                 */
                 // array('name'=>'portal_viewable', 'label' => 'LBL_SHOW_IN_PORTAL', 'hideIf' => 'empty($PORTAL_ENABLED)'),
-    //END SUGARCRM flav=ent ONLY
-                'assigned_user_name',
-    //BEGIN SUGARCRM flav=pro ONLY
-    //BEGIN SUGARCRM flav=ent ONLY
-                // hideIf is a legacy smarty thing .. seems that hideIf is mainly used for this specific check
-                // semantically meaning: "hide unless portal enabled" .. TODO: implement equivalent functionality in sidecar 
-                // perhaps create an hbt helper that can leverage app.cofig.on
 
+                //BEGIN SUGARCRM flav=ent ONLY
+                'assigned_user_name',
+                //END SUGARCRM flav=ent ONLY
+
+                //BEGIN SUGARCRM flav=pro ONLY
+                // hideIf is a legacy smarty thing .. seems that hideIf is mainly used for this specific check
+                // semantically meaning: "hide unless portal enabled" .. TODO: implement equivalent functionality in sidecar
+                // perhaps create an hbt helper that can leverage app.cofig.on
                 array('name'=>'team_name', 'displayParams'=>array('required'=>true)),
-    //END SUGARCRM flav=pro ONLY
+                //END SUGARCRM flav=pro ONLY
                 array ('name' => 'description', 'nl2br' => true,),
                 array('type' => 'html', 'default_value' => ''),
             )
