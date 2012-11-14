@@ -859,6 +859,7 @@ EOHTML;
             echo getVersionedScript('cache/include/javascript/sugar_grp1.js');
             echo getVersionedScript('include/javascript/calendar.js');
 
+
             // output necessary config js in the top of the page
             $config_js = $this->getSugarConfigJS();
             if(!empty($config_js)){
@@ -880,7 +881,7 @@ EOHTML;
             echo getVersionedScript('cache/jsLanguage/'. $GLOBALS['current_language'] . '.js', $GLOBALS['sugar_config']['js_lang_version']);
 
 			echo $this->_getModLanguageJS();
-
+            echo getVersionedScript('include/javascript/productTour.js');
             if(isset( $sugar_config['disc_client']) && $sugar_config['disc_client'])
                 echo getVersionedScript('modules/Sync/headersync.js');
 
@@ -1088,9 +1089,12 @@ EOHTML;
             $label = (isset($GLOBALS['app_list_strings']['moduleList'][$this->module]) ?
                         $GLOBALS['app_list_strings']['moduleList'][$this->module] : $this->module). ' '.$app_strings['LNK_HELP'];
             $ss->assign('HELP_LINK',SugarThemeRegistry::current()->getLink($url, $label, "id='help_link_two'",
-                'help-dashlet.png', 'class="icon"',null,null,'','left'));
+                '', '',null,null,'','',"<i class='icon-question-sign icon'></i>"));
         }
         // end
+
+        $ss->assign('TOUR_LINK',SugarThemeRegistry::current()->getLink("javascript: void(0);", $app_strings['LNK_TOUR'], "id='tour_link'",
+            '', '',null,null,'','',"<i class='icon-road icon'></i>"));
 
         //BEGIN SUGARCRM flav=pro ONLY
         if (!empty($GLOBALS['sugar_config']['disabled_feedback_widget']))

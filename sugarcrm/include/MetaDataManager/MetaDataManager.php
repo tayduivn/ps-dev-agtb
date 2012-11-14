@@ -127,6 +127,10 @@ class MetaDataManager {
     {
         require_once('include/SubPanel/SubPanelDefinitions.php');
         $parent_bean = BeanFactory::getBean($moduleName);
+        //Hack to allow the SubPanelDefinitions class to check the correct module dir
+        if (!$parent_bean){
+            $parent_bean = (object) array('module_dir' => $moduleName);
+        }
 
         $spd = new SubPanelDefinitions($parent_bean);
         $layout_defs = $spd->layout_defs;
@@ -208,7 +212,7 @@ class MetaDataManager {
         //END SUGARCRM flav=pro ONLY
         $vardefs = $this->getVarDef($moduleName);
 
-        $data['fields'] = $vardefs['fields'];
+        $data['fields'] = isset($vardefs['fields']) ? $vardefs['fields'] : array();
         $data['views'] = $this->getModuleViews($moduleName);
         $data['layouts'] = $this->getModuleLayouts($moduleName);
         $data['fieldTemplates'] = $this->getModuleFields($moduleName);
@@ -222,8 +226,10 @@ class MetaDataManager {
         $seed = BeanFactory::newBean($moduleName);
 
         //BEGIN SUGARCRM flav=pro ONLY
-        $favoritesEnabled = ($seed->isFavoritesEnabled() !== false) ? true : false;
-        $data['favoritesEnabled'] = $favoritesEnabled;
+        if ($seed !== false) {
+            $favoritesEnabled = ($seed->isFavoritesEnabled() !== false) ? true : false;
+            $data['favoritesEnabled'] = $favoritesEnabled;
+        }
         //END SUGARCRM flav=pro ONLY
 
         $data["_hash"] = md5(serialize($data));
@@ -644,7 +650,15 @@ class MetaDataManager {
      * @return array The module strings for the current language
      */
     public function getModuleStrings( $moduleName ) {
-        return return_module_language($GLOBALS['current_language'],$moduleName);
+        // Bug 58174 - Escaped labels are sent to the client escaped
+        $strings = return_module_language($GLOBALS['current_language'],$moduleName);
+        if (is_array($strings)) {
+            foreach ($strings as $k => $v) {
+                $strings[$k] = $this->decodeStrings($v);
+            }
+        }
+        
+        return $strings;
     }
 
     /**
@@ -696,7 +710,11 @@ class MetaDataManager {
             $moduleList = array_keys($wireless_module_registry);
         } else {
             // Loading a standard module list
-            $moduleList = array_keys($GLOBALS['app_list_strings']['moduleList']);
+            require_once("modules/MySettings/TabController.php");
+            $controller = new TabController();
+            $moduleList = array_keys($controller->get_user_tabs($this->user));
+            $moduleList[] = 'ActivityStream';
+            $moduleList[] = 'Users';
         }
 
         $oldModuleList = $moduleList;
@@ -762,5 +780,26 @@ class MetaDataManager {
         }
         
         return $this->sfh;
+    }
+
+    /**
+     * Recursive decoder that handles decoding of HTML entities in metadata strings
+     * before returning them to a client
+     * 
+     * @param mixed $source
+     * @return array|string
+     */
+    protected function decodeStrings($source) {
+        if (is_string($source)) {
+            return html_entity_decode($source, ENT_QUOTES, 'UTF-8');
+        } else {
+            if (is_array($source)) {
+                foreach ($source as $k => $v) {
+                    $source[$k] = $this->decodeStrings($v);
+                }
+            }
+            
+            return $source;
+        }
     }
 }

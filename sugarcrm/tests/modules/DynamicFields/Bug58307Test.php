@@ -1,5 +1,4 @@
 <?php
-//FILE SUGARCRM flav=pro ONLY
 /*********************************************************************************
  * The contents of this file are subject to the SugarCRM Professional End User
  * License Agreement ("License") which can be viewed at
@@ -22,72 +21,41 @@
  * Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.;
  * All Rights Reserved.
  ********************************************************************************/
-require_once('include/SugarForecasting/Export/AbstractExport.php');
 
-class SugarForecasting_Export_AbstractExportTest extends Sugar_PHPUnit_Framework_TestCase
+require_once 'modules/DynamicFields/FieldViewer.php';
+
+class Bug58307Test extends Sugar_PHPUnit_Framework_TestCase
 {
-
-    /**
-     * @var MockSugarForecasting_Abstract
-     */
-    protected static $obj;
-
-    public static function setUpBeforeClass()
+    protected $_fv;
+    public function setUp()
     {
-        SugarTestHelper::setUp('beanList');
-        SugarTestHelper::setUp('beanFiles');
-        self::$obj = new MockSugarForecasting_AbstractExport(array());
+        SugarTestHelper::setUp('current_user');
+        SugarTestHelper::setUp('app_list_strings');
+        SugarTestHelper::setUp('app_strings');
+        
+        // Setting the module in the request for this test
+        $_REQUEST['view_module'] = 'Accounts';
+        
+        $this->_fv = new FieldViewer();
     }
-
-    public static function tearDownAfterClass()
+    
+    public function tearDown()
     {
         SugarTestHelper::tearDown();
     }
-
-    /**
-     * getFilenameProvider
-     *
-     */
-    public function getFilenameProvider()
+    
+    public function testPhoneFieldGetsCorrectFieldForm()
     {
-        return array
-        (
-            array(false, '', '', false, '/\d+\.csv/'),
-            array(true, 'abc', '123', false, '/individual\.csv/'),
-            array(true, 'abc', '123', true, '/manager\.csv/'),
+        $vardef = array(
+            'type' => 'phone',
+            'len' => 30,
         );
+        
+        $layout = $this->_fv->getLayout($vardef);
+        
+        // Inspect the layout for things we expect. Yes, this is kinda not 
+        // scientific but to support varies builds this needs to happen this way.
+        $this->assertContains('function forceRange(', $layout, "Layout does not contain expected known function string forceRange");
+        $this->assertContains("<input type='text' name='default' id='default' value='' maxlength='30'>", $layout, "Layout does not contain expected known function call");
     }
-
-    /**
-     * This is a function to test the getFilename function
-     * @group export
-     * @group forecasts
-     * @dataProvider getFileNameProvider
-     */
-    public function testGetFilename($setArgs, $timePeriod, $userId, $isManager, $expectedRegex)
-    {
-        if($setArgs)
-        {
-            self::$obj->setArg('timeperiod_id', $timePeriod);
-            self::$obj->setArg('user_id', $userId);
-            self::$obj->isManager = $isManager;
-        }
-        $this->assertRegExp($expectedRegex, self::$obj->getFilename());
-    }
-}
-
-class MockSugarForecasting_AbstractExport extends SugarForecasting_Export_AbstractExport
-{
-    public $isManager;
-
-    public function getFilename()
-    {
-        return parent::getFilename();
-    }
-
-    public function process() {
-        return parent::process();
-    }
-
-
 }

@@ -4,7 +4,8 @@
                         <tr role="row">
                             {{#each fields}}
                             <th class="{{#isSortable ../../module this}}sorting{{#eq ../../../collection.orderBy.columnName name}}{{{../../../../orderBy.direction}}}{{/eq}} orderBy{{name}}{{/isSortable}}"
-                                role="columnheader" data-fieldname="{{name}}" data-orderby="{{orderBy}}">
+                                role="columnheader" data-fieldname="{{name}}" data-orderby="{{orderBy}}"
+                                style="width: {{width}}%">
                                 {{str label ../../module}}
                             </th>
                             {{/each}}
@@ -12,7 +13,7 @@
                         </thead>
                         <tbody role="alert" aria-live="polite" aria-relevant="all">
                         {{#each ../collection.models}}
-                        <tr name="{{module}}_{{attributes.id}}">
+                        <tr name="{{module}}_{{attributes.id}}"{{#if ../../collection.newRecords}}{{#unless old}} class="new"{{/unless}}{{/if}}>
                             {{#each ../fields}}
                             <td>{{field ../../../this ../this}}</td>
                             {{/each}}
