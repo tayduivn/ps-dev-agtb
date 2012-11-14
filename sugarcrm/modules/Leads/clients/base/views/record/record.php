@@ -57,7 +57,7 @@ $viewdefs['Leads']['base']['view']['record'] = array(
             'type'    => 'button',
             'label'   => 'LBL_DELETE_BUTTON_LABEL',
             'css_class' => 'record-delete',
-        ),
+        )
     ),
     'panels' => array(
         array(
@@ -69,6 +69,11 @@ $viewdefs['Leads']['base']['view']['record'] = array(
                     'type' => 'fieldset',
                     'fields' => array('salutation', 'first_name', 'last_name'),
                 ),
+                array(
+                    'type' => 'badge',
+                    'noedit'=> true,
+                    'related_fields' => array('converted'),
+                )
             )
         ),
         array(

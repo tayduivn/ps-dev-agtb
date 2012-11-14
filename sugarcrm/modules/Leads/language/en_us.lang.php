@@ -170,6 +170,7 @@ $mod_strings = array (
     'LBL_STATUS_DESCRIPTION' => 'Status Description:',
     'LBL_STATUS' => 'Status:',
     'LBL_TITLE' => 'Title:',
+    'LBL_UNCONVERTED'=> 'Unconverted',
     'LNK_IMPORT_VCARD' => 'Create Lead From vCard',
     'LNK_LEAD_LIST' => 'View Leads',
     'LNK_NEW_ACCOUNT' => 'Create Account',

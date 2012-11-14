@@ -58,6 +58,7 @@
                 meta: moduleMeta
             });
 
+            //This is because backbone injects a wrapper element.
             view.$el.addClass('accordion-group');
             view.$el.data('module', moduleMeta.module);
 
