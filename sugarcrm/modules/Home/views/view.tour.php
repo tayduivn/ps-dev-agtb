@@ -10,6 +10,7 @@ class HomeViewTour extends SugarView
     {
         global $sugar_flavor;
         global $current_user;
+        global $app_strings;
         $mod_strings = return_module_language($GLOBALS['current_language'], 'Home');
         $this->ss->assign('mod', $mod_strings);
         $this->ss->assign("sugarFlavor",$sugar_flavor);
