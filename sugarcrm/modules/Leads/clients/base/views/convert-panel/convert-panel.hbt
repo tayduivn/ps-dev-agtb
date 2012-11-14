@@ -1,4 +1,3 @@
-<div class="accordion-group" data-module="{{this.meta.module}}">
     <div class="accordion-heading">
         <a class="accordion-toggle" data-id="collapse{{this.meta.module}}" data-toggle="collapse" data-parent="#convert-accordion" data-target="#collapse{{this.meta.module}}" style="display:inline-block">
             <span class="title">{{this.meta.moduleNumber}}. Associate {{str "LBL_MODULE_NAME" this.meta.module}}</span>
@@ -16,4 +15,3 @@
             <div class="recordView hide"></div>
         </div>
     </div>
-</div>
