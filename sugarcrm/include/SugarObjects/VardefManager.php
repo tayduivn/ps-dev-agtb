@@ -264,21 +264,6 @@ class VardefManager{
             // have the right module name the loop should be short.
             $bean = BeanFactory::newBean($module);
         }
-        if(!empty($params['bean'])) {
-            $bean = $params['bean'];
-        } else {
-            if(!empty($dictionary[$object])) {
-                // to avoid extra refresh - we'll fill it in later
-                if(!isset($GLOBALS['dictionary'][$object]['related_calc_fields'])) {
-                    $GLOBALS['dictionary'][$object]['related_calc_fields'] = array();
-                }
-            }
-            // we will instantiate here even though dictionary may not be there,
-            // since in case somebody calls us with wrong module name we need bean
-            // to get $module_dir. This may cause a loop but since the second call will
-            // have the right module name the loop should be short.
-            $bean = BeanFactory::newBean($module);
-        }
         //Some modules have multiple beans, we need to see if this object has a module_dir that is different from its module_name
         if(!$found){
             if ($bean instanceof SugarBean) // weed out non-bean modules
