@@ -8,6 +8,12 @@
         app.view.View.prototype.initialize.call(this, options);
         _.bindAll(this);
         this.context.on("lead:convert:populate", this.populateRecordsFromLeads, this);
+
+        this.currentState = {
+            activeView: 'duplicate',
+            selectedId: null,
+            isComplete: false
+        };
     },
 
     render:function () {
@@ -78,7 +84,6 @@
     },
 
     handleToggleClick: function(event) {
-      //  this.$( '#collapse' + this.meta.module).css('height', 'auto');
         if (this.$(event.target).hasClass('show-duplicate')) {
             this.toggleSubViews('duplicate');
         } else if (this.$(event.target).hasClass('show-record')) {
@@ -86,14 +91,18 @@
         }
     },
 
-    //TODO: get this working again
     selectDuplicate: function(e) {
         var $selectedRadio = this.$(e.target),
             recordId = $selectedRadio.val(),
-            module = $selectedRadio.attr('data-module'),
-            subModel = this.context.convertModel.getSubModel(module);
+            selectedModel;
 
-        subModel.set('id', recordId);
+        this.currentState.selectedId = recordId;
+        selectedModel = this.duplicateView.collection.get(recordId);
+        this.markCompleted(selectedModel.get('name'));
+    },
+
+    markCompleted: function(nameOfAssociated) {
+        this.$('.title').html('<i class="icon-ok-sign"></i> Associated: ' + nameOfAssociated);
     },
 
     populateRecordsFromLeads:function (leadModel) {
