@@ -7,8 +7,8 @@
     <a href="#overview" title="Create Lead" class="btn btn-invisible drawerTrig"><i class="icon-chevron-right"></i></a>
   </div>
 </div>
-<div class="main-content">
-  <form class="form-horizontal padded">
+<div>
+  <form class="form-horizontal">
     <fieldset>
       <div class="control-group">
         <label for="input01" class="control-label">Name:</label>
@@ -102,5 +102,16 @@
   $('body').addClass('edit');
   $(".chzn-select").chosen({ disable_search_threshold: 5 });
   $(".chzn-select-deselect").chosen({allow_single_deselect:true});
-  loadPartials([{"file":"lead-howto1","target":"#overview-edit","method":"replace"}]);
+    $('.more').toggle(
+      function () {
+        console.log($(this).parent())
+        $(this).parent().prev('.extend').removeClass('hide');
+        $(this).html('Less &nbsp;<i class="icon-caret-up"></i>');
+        return false;
+      },
+      function () {
+        $(this).parent().prev('.extend').addClass('hide');
+        $(this).html('. . .');
+        return false;
+    });
 </script>

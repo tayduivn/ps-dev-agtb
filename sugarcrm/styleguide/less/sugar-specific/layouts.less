@@ -15,26 +15,52 @@
 }
 
 #content .container-fluid .row-fluid.record-edit {
+  position: absolute;
+  height: 0%;
+  top: 0px;
+  bottom: 0%;
   display: none;
 }
-#content .container-fluid .row-fluid {
+#content .container-fluid .row-fluid.record-list {
   position: absolute;
-  overflow: hidden;
   height: 100%;
   top: 0px;
+  bottom: 0px;
+  overflow: hidden;
 }
 
 .edit #content .container-fluid .row-fluid.record-edit {
-  display: block;
   height: 50%;
-  top: 0px;
-  opacity: 1;
-  border: none;
+  bottom: 50%;
+  display: block;
+  .main-pane {
+    .headerpane {
+      position: absolute;
+      left: 0px;
+      right: 1px;
+    }
+    .main-content {
+      position: absolute;
+      left: 0px;
+      right: 0px;
+      top: 60px;
+      bottom: 0px;
+      overflow: auto;
+    }
+  }
 }
-.edit #content .container-fluid .row-fluid {
+.edit #content .container-fluid .row-fluid.record-list {
+  height: 50%;
   top: 50%;
-  opacity: .5;
-  border-top: 4px solid @grayLight;
+}
+
+.edit #content .container-fluid .row-fluid.record-edit.expand {
+  height: auto;
+  bottom: 60px;
+}
+.edit #content .container-fluid .row-fluid.record-list.collapse {
+  height: 62px;
+  top: auto;
 }
 
 .padded {

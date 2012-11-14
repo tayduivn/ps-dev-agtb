@@ -55,22 +55,14 @@
         }
     });
 
-    // add tipsies to grid for scaffolding (styleguide only)
-    if ($('#grid-system').length) {
-      $('#grid-system').tooltip({
-          selector: '.show-grid > div'
-        , title: function () { return $(this).width() + 'px'; }
-      });
-    }
-
     // toggle all stars
-    $('.toggle-all-stars').on('click', function () {
+    $('body').on('click', '.toggle-all-stars', function () {
       $(this).closest('table').toggleClass('active');
       return false;
     });
 
     // toggle all checkboxes
-    $('.toggle-all').on('click', function () {
+    $('body').on('click', '.toggle-all', function () {
       $('table').find('tr.alert').remove();
       $('table').find(':checkbox').attr('checked', this.checked);
       $(this).parent().parent().parent().parent().parent().append('<tr class="alert alert-warning"><td colspan="7" style="text-align: center;">You have selected 10 records. Do you want select <a href="" class="triggermass">select all 300</a> records.</td></tr>');
@@ -80,28 +72,39 @@
     setTimeout( function (){$('.timeten').fadeOut().remove();}, 9000);
 
     // toggle star
-    $('.icon-star').on('click', function () {
+    $('body').on('click', '.icon-star', function () {
       $(this).parent().toggleClass('active');
       return false;
     });
 
     // toggle favorites
-    $('.icon-favorite').on('click', function () {
+    $('body').on('click', '.icon-favorite', function () {
       $(this).toggleClass('active');
       return false;
     });
 
     // toggle more hide
-    $('.more').toggle(
-      function () {
-        $(this).parent().parent().prev('.extend').removeClass('hide');
-        $(this).html('Less &nbsp;<i class="icon-caret-up"></i>');
-        return false;
-      },
-      function () {
-        $(this).parent().parent().prev('.extend').addClass('hide');
-        $(this).html('. . .');
-        return false;
+    // $('.more').toggle(
+    //   function () {
+    //     console.log($(this).parent())
+    //     $(this).parent().prev('.extend').removeClass('hide');
+    //     $(this).html('Less &nbsp;<i class="icon-caret-up"></i>');
+    //     return false;
+    //   },
+    //   function () {
+    //     $(this).parent().prev('.extend').addClass('hide');
+    //     $(this).html('More &nbsp;<i class="icon-caret-down"></i>');
+    //     return false;
+    // });
+
+    $('body').on( 'click', '.more', function() {
+      var link = $(this);
+      $(this).parent().prev('.extend').slideToggle('slow');
+      if ( link.text().indexOf('More') !== -1 ) {
+        link.html('Less &nbsp;<i class="icon-caret-up"></i>');
+      } else {
+        link.html('More &nbsp;<i class="icon-caret-down"></i>');
+      }
     });
 
     // toggle more hide
@@ -172,10 +175,18 @@
     );
 
     // column collapse
-    $('.drawerTrig').on('click', function () {
+    $('body').on('click', '.drawerTrig', function () {
       $(this).find('i').toggleClass('icon-chevron-left').toggleClass('icon-chevron-right');
       $('.side').toggleClass('hide');
       $('.main-pane').toggleClass('span8').toggleClass('span12');
+      return false;
+    });
+
+    // expand edit row
+    $('body').on('click', '.edit-expand', function () {
+      $(this).find('i').toggleClass('icon-chevron-up').toggleClass('icon-chevron-down');
+      $('.record-edit').toggleClass('expand');
+      $('.record-list').toggleClass('collapse');
       return false;
     });
 
@@ -183,15 +194,15 @@
       $('.btngroup .btn').button();
     }
 
-     // editable example
+    // editable example
     $('.dblclicka').hover(
-       function () {
+      function () {
        $(this).before('<span class="inlined"><i class="icon-pencil"></i></span>');
-       },
-       function () {
+      },
+      function () {
         $('.inlined').remove();
-       }
-     );
+      }
+    );
 
     $(".omnibar").toggle(
       function () {
@@ -206,14 +217,13 @@
         return false;
       }
     );
-    $('.tmu').on('click',
-      function () {
+
+    $('body').on('click', '.tmu', function () {
         $('.mu').show();
         return false;
-      }
-    );
+    });
 
-    $('.addme').on('click',
+    $('body').on('click', '.addme',
       function () {
         $(this).after('<a href="" class="removeme pull-right"><i class="btn btn-invisible icon-minus"></i></a>');
         $('.removeme').on('click',
@@ -258,13 +268,13 @@
     });
 
     // toggle module search (needs tap logic for mobile)
-    $('.addit').on('click', function () {
+    $('body').on('click', '.addit', function () {
       $(this).toggleClass('active');
       $(this).parent().parent().parent().find('.form-addit').toggleClass('hide');
       return false;
     });
 
-    $('.search').on('click', function () {
+    $('body').on('click', '.search', function () {
       $(this).toggleClass('active');
       $(this).parent().parent().parent().find('.dataTables_filter').toggle(
         function () {
@@ -330,7 +340,7 @@
 
     // Get label width so we can make button fluid, 12px default left/right padding
     var lbl_width = $(this).parent().find('span strong').width() + 24;
-    console.log(lbl_width);
+    //console.log(lbl_width);
     $(this)
       .parent().find('span').css('width',lbl_width)
       .closest('.upload-field-custom').css('width',lbl_width);
@@ -343,7 +353,7 @@
   });
 
   // add modal content to DOM and show modal
-  $('.modal-link').live('click',function(e){
+  $('body').on('click', '.modal-link', function(e){
       jQuery.ajax({
           url: $(this).attr('href'), // + "?r=" + new Date().getTime(),
           dataType:"text",
@@ -363,11 +373,12 @@
   });
 
   // if tab shown is not overview, switch to preview mode
-  $('a[data-toggle="tab"]').live( 'shown', function (e){
+  $('body').on( 'shown', 'a[data-toggle="tab"]', function (e){
     //e.relatedTarget // previous tab
     var link = $(e.target)
       , source = link.attr('href')
-      , target = link.attr('data-target');
+      , target = link.attr('data-target')
+      , mode = link.attr('data-mode');
 
     if ( source !== '#' ) {
       $.ajax({
@@ -375,7 +386,11 @@
         success: function(data){ $(target).html(data); }
       });
     }
-    $('body').toggleClass( target.replace('#',''), target !== '#overview' );
+    $('body').toggleClass( mode, source !== '#' );
   });
+
+  if (page && page.templates) {
+    loadPartials(page.templates);
+  }
 
 }(window.jQuery);
