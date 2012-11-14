@@ -353,20 +353,6 @@ class MetaDataManager {
         } else if ( isset($acls[$module]['module']) ) {
             $moduleAcl = $acls[$module]['module'];
 
-            if ( isset($moduleAcl['admin']) && isset($moduleAcl['admin']['aclaccess']) && (($moduleAcl['admin']['aclaccess'] == ACL_ALLOW_ADMIN) || ($moduleAcl['admin']['aclaccess'] == ACL_ALLOW_ADMIN_DEV)) ) {
-                $outputAcl['admin'] = 'yes';
-                $isAdmin = true;
-            } else {
-                $outputAcl['admin'] = 'no';
-                $isAdmin = false;
-            }
-
-            if ( isset($moduleAcl['admin']) && isset($moduleAcl['admin']['aclaccess']) && (($moduleAcl['admin']['aclaccess'] == ACL_ALLOW_DEV) || ($moduleAcl['admin']['aclaccess'] == ACL_ALLOW_ADMIN_DEV)) ) {
-                $outputAcl['developer'] = 'yes';
-            } else {
-                $outputAcl['developer'] = 'no';
-            }
-
             // Bug56391 - Use the SugarACL class to determine access to different actions within the module
             foreach ( array('access','view','list','edit','delete','import','export','massupdate') as $action ) {
                 $outputAcl[$action] = (SugarACL::checkAccess($module, $action, array('user' => $userObject))) ? 'yes' : 'no';
