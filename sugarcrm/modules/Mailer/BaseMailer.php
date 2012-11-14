@@ -290,11 +290,11 @@ abstract class BaseMailer implements IMailer
      * Returns true if the value passed in as a parameter is a valid message part. Use this method to determine if a
      * message has an HTML part or a plain-text part. If both parts exist, then the message is multi-part.
      *
-     * @access protected
+     * @access public
      * @param string $part required The content of the message part to inspect.
      * @return bool
      */
-    protected function hasMessagePart($part) {
+    public function hasMessagePart($part) {
         // the content is only valid if it's a string and it's not empty
         if (is_string($part) && trim($part) != "") {
             return true;

@@ -2077,6 +2077,16 @@ EOQ;
             // set the HTML body... it will be null in the text-only case, but that's okay
             $mailer->setHtmlBody($htmlBody);
 
+            // make sure there is at least one message part (but only if the current user is an admin)...
+
+            // even though $htmlBody is already set, resetting it verifies that $mailer actually got it
+            $textBody = $mailer->getTextBody();
+            $htmlBody = $mailer->getHtmlBody();
+
+            if ($current_user->is_admin && !$mailer->hasMessagePart($textBody) && !$mailer->hasMessagePart($htmlBody)) {
+                throw new MailerException("No email body was provided", MailerException::InvalidMessageBody);
+            }
+
             // get the recipient's email address
             $itemail = $this->emailAddress->getPrimaryAddress($this);
 
@@ -2095,7 +2105,7 @@ EOQ;
                 $email->type             = 'archived';
                 $email->deleted          = '0';
                 $email->name             = $emailTemplate->subject;
-                $email->description      = $emailTemplate->body;
+                $email->description      = $textBody;
                 $email->description_html = $htmlBody;
                 $email->from_addr        = $mailer->getHeader(EmailHeaders::From)->getEmail();
                 $email->parent_type      = 'User';
@@ -2125,12 +2135,11 @@ EOQ;
 
                     break;
                 case MailerException::InvalidMessageBody:
-                    if ($current_user->is_admin) {
-                        // both the plain-text and HTML parts are empty, but this is the best error message for now
-                        $result['message'] = $app_strings['LBL_EMAIL_TEMPLATE_EDIT_PLAIN_TEXT'];
-                    } else {
-                        // status=failed to send, but no message is returned to non-admin users
-                    }
+                    // this exception will only be raised if the current user is an admin, so there is no need to
+                    // worry about catching it in a non-admin case and handling the error message accordingly
+
+                    // both the plain-text and HTML parts are empty, but this is the best error message for now
+                    $result['message'] = $app_strings['LBL_EMAIL_TEMPLATE_EDIT_PLAIN_TEXT'];
 
                     break;
                 default:

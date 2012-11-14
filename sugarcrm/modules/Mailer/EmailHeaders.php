@@ -55,6 +55,7 @@ class EmailHeaders
     public function __construct() {
         $this->setPriority(); // set the Priority header to its default
         $this->setRequestConfirmation(); // set the Disposition-Notification-To header to its default
+        $this->setSubject(); // set the Subject header to its default
         $this->clearCustomHeaders(); // initialize the custom headers array
     }
 
@@ -414,19 +415,8 @@ class EmailHeaders
      * @throws MailerException
      */
     private function packageSubject(&$headers) {
-        $subject = $this->getSubject();
-
-        // validate that the Subject header is present, but its setter took care of validating the actual value so that
-        // is not necessary
-        if (empty($subject)) {
-            throw new MailerException(
-                "Invalid header: " . self::Subject . " cannot be null",
-                MailerException::InvalidHeader
-            );
-        }
-
         // add the Subject header to the package
-        $headers[self::Subject] = $subject;
+        $headers[self::Subject] = $this->getSubject();
     }
 
     /**
@@ -472,8 +462,8 @@ class EmailHeaders
      * @param string $subject
      * @throws MailerException
      */
-    private function setSubject($subject = null) {
-        if (!is_null($subject) && !is_string($subject)) {
+    private function setSubject($subject = "") {
+        if (!is_string($subject)) {
             throw new MailerException(
                 "Invalid header: " . self::Subject . " must be a string",
                 MailerException::InvalidHeader
