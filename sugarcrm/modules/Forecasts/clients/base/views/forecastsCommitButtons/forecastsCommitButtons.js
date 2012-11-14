@@ -197,6 +197,7 @@
                         app.alert.show('success', {
                             level: 'success',
                             closeable: false,
+                            autoClose: true,
                             title : app.lang.get("LBL_FORECASTS_WIZARD_SUCCESS_TITLE", "Forecasts") + ":",
                             messages: [app.lang.get("LBL_FORECASTS_TABBED_CONFIG_SUCCESS_MESSAGE", "Forecasts")]
                         });
@@ -271,20 +272,37 @@
      * @param evt
      */
     triggerExport : function(evt) {
+        var savebtn = this.$el.find('#save_draft');
         var url = 'index.php?module=Forecasts&action=';
         url += (this.context.forecasts.get("currentWorksheet") == 'worksheetmanager') ?  'ExportManagerWorksheet' : 'ExportWorksheet';
         url += '&user_id=' + this.context.forecasts.get('selectedUser').id;
         url += '&timeperiod_id=' + $("#timeperiod").val();
         
+        if(!savebtn.hasClass("disabled")){
+            if(confirm(app.lang.get("LBL_WORKSHEET_EXPORT_CONFIRM", "Forecasts"))){
+                this.runExport(url);
+            }
+        }
+        else{
+            this.runExport(url);
+        }
+    },
+    
+    /**
+     * runExport
+     * triggers the browser to download the exported file
+     * @param url URL to the file to download
+     */
+    runExport: function(url){
         var dlFrame = $("#forecastsDlFrame");
         //check to see if we got something back
         if(dlFrame.length == 0)
         {
-        	//if not, create an element
-        	dlFrame = $("<iframe>");
-        	dlFrame.attr("id", "forecastsDlFrame");
-        	dlFrame.css("display", "none");
-        	$("body").append(dlFrame);
+            //if not, create an element
+            dlFrame = $("<iframe>");
+            dlFrame.attr("id", "forecastsDlFrame");
+            dlFrame.css("display", "none");
+            $("body").append(dlFrame);
         }
         dlFrame.attr("src", url);
     },

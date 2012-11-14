@@ -260,7 +260,9 @@
                 }
 
                 var tabKeyPressed;
+                var shiftKeyPressed;
                 input.keydown(function(e) {
+                    shiftKeyPressed = e.shiftKey;
                     tabKeyPressed = e.keyCode == 9;
                     if (e.keyCode == 27) {
                         /* discard changes if pressing esc */
@@ -384,14 +386,25 @@
                             if(tabKeyPressed && 'tab' == settings.onblur) {
                                 // focus on the next jeditable field
                                 var idx = $("[jeditable^=true]:visible").index(self);
-                                if (idx == ($("[jeditable^=true]:visible").length-1)) {
-                                    // last field, go to first
-                                    $("[jeditable^=true]:first").click();
+                                if(!shiftKeyPressed) {
+                                    if (idx == ($("[jeditable^=true]:visible").length-1)) {
+                                        // last field, go to first
+                                        $("[jeditable^=true]:first").click();
+                                    } else {
+                                        // go to next field
+                                        $("[jeditable^=true]:visible")[idx+1].click();
+                                    }
                                 } else {
-                                    // go to next field
-                                    $("[jeditable^=true]:visible")[idx+1].click();
+                                    if (idx == 0) {
+                                        // first field, go to last
+                                        $("[jeditable^=true]:last").click();
+                                    } else {
+                                        // go to prev field
+                                        $("[jeditable^=true]:visible")[idx-1].click();
+                                    }
                                 }
                                 tabKeyPressed = false;
+                                shiftKeyPressed = false;
                             };
 
                         }
