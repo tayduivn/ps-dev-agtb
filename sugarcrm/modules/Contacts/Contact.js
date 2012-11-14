@@ -100,8 +100,8 @@ function set_campaignlog_and_save_background(popup_reply_data)
 }
 //END SUGARCRM flav!=sales ONLY
 
-if(typeof SUGAR.portalUserEditViewFormName == 'undefined'){
-    SUGAR.portalUserEditViewFormName = 'EditView';
+if(typeof SUGAR.contactEditViewFormName == 'undefined'){
+    SUGAR.contactEditViewFormName = 'EditView';
 }
 
 function validatePortalName(e) {
@@ -119,7 +119,7 @@ function validatePortalName(e) {
 	    //data.responseText contains the count of portal_name that matches input field
 		count = data.responseText;	
 		if(count != 0) {
-		   add_error_style(SUGAR.portalUserEditViewFormName, 'portal_name', SUGAR.language.get('app_strings', 'ERR_EXISTING_PORTAL_USERNAME'), false, true);
+		   add_error_style(SUGAR.contactEditViewFormName, 'portal_name', SUGAR.language.get('app_strings', 'ERR_EXISTING_PORTAL_USERNAME'), false, true);
 		}
 		
 	    if(portalNameVerified.parentNode.childNodes.length > 1) {
