@@ -247,6 +247,8 @@ class SidecarTheme
 
         if ($variablesLess) {
             if (!$split) {
+                // Parses the mixins defs     @varName:      mixinName;
+                $output = array_merge($output, $this->parseLessVars("/@([^:|@]+):(\s+)([^\#|@|\(|\"]*?);/", $variablesLess));
                 // Parses the hex colors     @varName:      #aaaaaa;
                 $output = array_merge($output, $this->parseLessVars("/@([^:|@]+):(\s+)(\#.*?);/", $variablesLess));
                 // Parses the rgba colors     @varName:      rgba(0,0,0,0);
@@ -256,6 +258,9 @@ class SidecarTheme
                 // Parses the backgrounds     @varNamePath:      "./path/to/img.jpg";
                 $output = array_merge($output, $this->parseLessVars("/@([^:|@]+Path):(\s+)(\".*?\");/", $variablesLess));
             } else {
+                // Parses the mixins defs     @varName:      mixinName;
+                $output['mixins'] = $this->parseLessVars("/@([^:|@]+):(\s+)([^\#|@|\(|\"]*?);/", $variablesLess, true);
+                // Parses the hex colors     @varName:      #aaaaaa;
                 $output['hex'] = $this->parseLessVars("/@([^:|@]+):(\s+)(\#.*?);/", $variablesLess, true);
                 // Parses the rgba colors     @varName:      rgba(0,0,0,0);
                 $output['rgba'] = $this->parseLessVars("/@([^:|@]+):(\s+)(rgba\(.*?\));/", $variablesLess, true);
