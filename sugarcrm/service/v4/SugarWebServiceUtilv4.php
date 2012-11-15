@@ -65,6 +65,9 @@ class SugarWebServiceUtilv4 extends SugarWebServiceUtilv3_1
                         // Needed for conversion
                         require_once 'include/MetaDataManager/MetaDataConverter.php';
                         $results = MetaDataConverter::toLegacy($viewtype, $viewdefs[$meta['module_name']]['mobile']['view'][$viewtype]);
+                        
+                        // Handle fieldset conversions
+                        $results = MetaDataConverter::fromGridFieldsets($results);
                     } else {
                         //Wireless detail metadata may actually be just edit metadata.
                         $results = isset($viewdefs[$meta['module_name']][$fullView] ) ? $viewdefs[$meta['module_name']][$fullView] : $viewdefs[$meta['module_name']]['EditView'];

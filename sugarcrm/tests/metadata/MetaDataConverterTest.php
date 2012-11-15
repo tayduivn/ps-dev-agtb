@@ -61,5 +61,20 @@ class MetaDataConverterTest extends Sugar_PHPUnit_Framework_TestCase
         $converted = MetaDataConverter::toLegacy('search', $searchdefs);
         $this->assertEquals($converted, $searchdefs, 'Viewdefs converted unexpectedly');
     }
+    
+    public function testConvertFieldsets() {
+        $file = 'tests/metadata/supportfiles/Callsmobileedit.php';
+        require $file;
+        
+        $this->assertInternalType('array', $viewdefs['Calls']['mobile']['view']['edit'], 'Expected view def structure not found for Calls mobile edit');
+        $converted = MetaDataConverter::toLegacy('edit', $viewdefs['Calls']['mobile']['view']['edit']);
+        $converted = MetaDataConverter::fromGridFieldsets($converted);
+        
+        $this->assertTrue(isset($converted['panels'][4][0]), "Conversion failed to convert fieldset at offset 4");
+        $this->assertEquals('duration_hours', $converted['panels'][4][0], "duration_hours did not convert from a fieldset");
+        
+        $this->assertTrue(isset($converted['panels'][5][0]), "Conversion failed to convert fieldset at offset 5");
+        $this->assertEquals('duration_minutes', $converted['panels'][5][0], "duration_minutes did not convert from a fieldset");
+    }
 }
 

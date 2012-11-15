@@ -380,15 +380,30 @@ class SugarWirelessView extends SugarView
 				   }
 				}
 				//END SUGARCRM flav=pro ONLY
-				// set the correct field info based on the view
-				if ($view == 'WirelessDetailView'){
-					$field_info = $this->setup_detail_field($field);
-				}
-				else if ($view == 'WirelessEditView'){
-					$field_info = $this->setup_edit_field($field);
-				}
+                
+                if ($view == 'WirelessDetailView' || $view == 'WirelessEditView') {
+                    // Get our field info method
+                    $method = $view == 'WirelessDetailView' ? 'setup_detail_field' : 'setup_edit_field';                    
+                    
+                    // Handle fieldset splitting as needed
+                    if (is_array($field) && isset($field['type']) && $field['type'] == 'fieldset' && isset($field['related_fields'])) {
+                        $fieldset = array();
+                        foreach ($field['related_fields'] as $fName) {
+                            $info = $this->{$method}($fName);
+                            if (is_array($info)) {
+                                $fieldset[$fName] = $info;
+                            }
+                        }
+                        
+                        $bean_details = array_merge($bean_details, $fieldset);
+                        continue;
+                    }
+                    
+                    // Handle the rest of the regular field defs
+                    $field_info = $this->{$method}($field);
+                }
 
-				if (is_array($field_info)){
+				if (isset($field_info) && is_array($field_info)){
 					if (is_array($field)){
 						$field = $field['name'];
 					}
@@ -411,7 +426,16 @@ class SugarWirelessView extends SugarView
 				return;
 			}
 			else{
-				$type = (isset($field['displayParams']['type'])) ? $field['displayParams']['type'] : $this->bean->field_name_map[$field['name']]['type'];
+                // Handles fieldsets and other field names that are not real fields
+                if (isset($field['displayParams']['type'])) {
+                    $type = $field['displayParams']['type'];
+                } else {
+                    if (isset($this->bean->field_name_map[$field['name']]['type'])) {
+                        $type = $this->bean->field_name_map[$field['name']]['type'];
+                    } else {
+                        return false;
+                    }
+                }
 				$customCode = (isset($field['customCode'])) ? $field['customCode'] : null;
 				$field = $field['name'];
 			}
