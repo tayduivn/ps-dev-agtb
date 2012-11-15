@@ -69,6 +69,15 @@ class QuarterTimePeriod extends TimePeriod implements TimePeriodInterface {
 
         //The leaf name template
         $this->leaf_name_template = "%s %d";
+
+        //The chart label
+        $this->chart_label = "F Y";
+
+        //The date formatting key for chart labels
+        $this->chart_data_key = "m-Y";
+
+        //The chart data interval modifier
+        $this->chart_data_modifier = '+1 month';
     }
 
     /**
@@ -83,4 +92,37 @@ class QuarterTimePeriod extends TimePeriod implements TimePeriodInterface {
         return sprintf($this->name_template, $count, $timedate->fromDbDate($this->start_date)->format('Y'));
     }
 
+
+    /**
+     * Returns the formatted chart label data for the timeperiod
+     *
+     * @param $chartData Array of chart data values
+     * @return formatted Array of chart data values where the labels are broken down by the timeperiod's increments
+     */
+    public function getChartLabels($chartData) {
+        $months = array();
+
+        $start = strtotime($this->start_date);
+        $end = strtotime($this->end_date);
+
+        while ($start < $end) {
+            $val = $chartData;
+            $val['label'] = date($this->chart_label, $start);
+            $months[date($this->chart_data_key, $start)] = $val;
+            $start = strtotime($this->chart_data_modifier, $start);
+        }
+
+        return $months;
+    }
+
+
+    /**
+     * Returns the key for the chart label data for the date closed value
+     *
+     * @param String The date_closed value in db date format
+     * @return String value of the key to use to map to the chart labels
+     */
+    public function getChartLabelsKey($dateClosed) {
+        return date($this->chart_data_key, strtotime($dateClosed));
+    }
 }

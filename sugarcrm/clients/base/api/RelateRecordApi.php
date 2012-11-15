@@ -210,6 +210,9 @@ class RelateRecordApi extends ModuleApi {
 
         $relatedData = $this->getRelatedFields($api, $args, $primaryBean, $linkName, $relatedBean);
         $primaryBean->$linkName->add(array($relatedBean),$relatedData);
+        
+        //Clean up any hanging related records.
+        SugarRelationship::resaveRelatedBeans();
 
         return $this->formatNearAndFarRecords($api,$args,$primaryBean);
     }

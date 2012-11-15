@@ -573,7 +573,15 @@ class MetaDataManager {
      * @return array The module strings for the current language
      */
     public function getModuleStrings( $moduleName ) {
-        return return_module_language($GLOBALS['current_language'],$moduleName);
+        // Bug 58174 - Escaped labels are sent to the client escaped
+        $strings = return_module_language($GLOBALS['current_language'],$moduleName);
+        if (is_array($strings)) {
+            foreach ($strings as $k => $v) {
+                $strings[$k] = $this->decodeStrings($v);
+            }
+        }
+        
+        return $strings;
     }
 
     /**
@@ -695,5 +703,47 @@ class MetaDataManager {
         }
         
         return $this->sfh;
+    }
+
+    /**
+     * Recursive decoder that handles decoding of HTML entities in metadata strings
+     * before returning them to a client
+     * 
+     * @param mixed $source
+     * @return array|string
+     */
+    protected function decodeStrings($source) {
+        if (is_string($source)) {
+            return html_entity_decode($source, ENT_QUOTES, 'UTF-8');
+        } else {
+            if (is_array($source)) {
+                foreach ($source as $k => $v) {
+                    $source[$k] = $this->decodeStrings($v);
+                }
+            }
+            
+            return $source;
+        }
+    }
+    
+    /**
+     * Clears the API metadata cache of all cache files
+     * 
+     * @static
+     */
+    public static function clearAPICache(){
+        $metadataFiles = glob(sugar_cached('api/metadata/').'*');
+        if ( is_array($metadataFiles) ) {
+            foreach ( $metadataFiles as $metadataFile ) {
+                // This removes the file and the reference from the map. This does
+                // NOT save the file map since that would be expensive in a loop
+                // of many deletes.
+                SugarAutoLoader::unlink($metadataFile);
+            }
+            
+            // This saves the map. Once. Instead of a bunch of times in the loop
+            // above.
+            SugarAutoLoader::saveMap();
+        }
     }
 }

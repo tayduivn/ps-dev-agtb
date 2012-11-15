@@ -111,7 +111,7 @@ describe("The forecastsWizardConfig layout controller", function(){
         });
 
         it("should create a new model if one does not exist", function () {
-            testLayout = new app.view.layouts.ForecastsTabbedConfigLayout(options);
+            testLayout = new app.view.layouts.ForecastsWizardConfigLayout(options);
             expect(testLayout.options.context.attributes.model).toBeDefined();
         });
 
@@ -123,7 +123,7 @@ describe("The forecastsWizardConfig layout controller", function(){
                 }
             });
 
-            testLayout = new app.view.layouts.ForecastsTabbedConfigLayout(options);
+            testLayout = new app.view.layouts.ForecastsWizardConfigLayout(options);
             expect(testLayout.options.context.attributes.model).not.toBe(options.context.forecasts.config);
             expect(testLayout.options.context.attributes.model.attributes).toEqual(options.context.forecasts.config.attributes);
         });

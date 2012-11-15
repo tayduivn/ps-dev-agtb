@@ -1,5 +1,4 @@
 <?php
-//FILE SUGARCRM flav=pro ONLY
 /*********************************************************************************
  * The contents of this file are subject to the SugarCRM Professional End User
  * License Agreement ("License") which can be viewed at
@@ -23,37 +22,40 @@
  * All Rights Reserved.
  ********************************************************************************/
 
-class ForecastScheduleTests extends Sugar_PHPUnit_Framework_TestCase
+require_once 'modules/DynamicFields/FieldViewer.php';
+
+class Bug58307Test extends Sugar_PHPUnit_Framework_TestCase
 {
+    protected $_fv;
     public function setUp()
     {
-        $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
-        SugarTestCurrencyUtilities::createCurrency('MonkeyDollars','$','MOD',2.0);
+        SugarTestHelper::setUp('current_user');
+        SugarTestHelper::setUp('app_list_strings');
+        SugarTestHelper::setUp('app_strings');
+        
+        // Setting the module in the request for this test
+        $_REQUEST['view_module'] = 'Accounts';
+        
+        $this->_fv = new FieldViewer();
     }
-
+    
     public function tearDown()
     {
-        SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
-        unset($GLOBALS['current_user']);
-        SugarTestCurrencyUtilities::removeAllCreatedCurrencies();
-        SugarTestTimePeriodUtilities::removeAllCreatedTimePeriods();
-        SugarTestForecastScheduleUtilities::removeAllCreatedForecastSchedules();
+        SugarTestHelper::tearDown();
     }
-
-    /*
-     * Test that the base_rate field is populated with rate
-     * of currency_id
-     *
-     */
-    public function testScheduleSaveRate() {
-        $time_period = SugarTestTimePeriodUtilities::createTimePeriod();
-        $schedule = SugarTestForecastScheduleUtilities::createForecastSchedule($time_period, $GLOBALS['current_user']);
-        $currency = SugarTestCurrencyUtilities::getCurrencyByISO('MOD');
-        $schedule->currency_id = $currency->id;
-        $schedule->save();
-        $this->assertEquals(
-            sprintf('%.6f',$schedule->base_rate),
-            sprintf('%.6f',$currency->conversion_rate)
+    
+    public function testPhoneFieldGetsCorrectFieldForm()
+    {
+        $vardef = array(
+            'type' => 'phone',
+            'len' => 30,
         );
+        
+        $layout = $this->_fv->getLayout($vardef);
+        
+        // Inspect the layout for things we expect. Yes, this is kinda not 
+        // scientific but to support varies builds this needs to happen this way.
+        $this->assertContains('function forceRange(', $layout, "Layout does not contain expected known function string forceRange");
+        $this->assertContains("<input type='text' name='default' id='default' value='' maxlength='30'>", $layout, "Layout does not contain expected known function call");
     }
 }

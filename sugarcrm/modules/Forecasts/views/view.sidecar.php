@@ -49,7 +49,7 @@ class ForecastsViewSidecar extends SidecarView
     {
         //Load sidecar theme css
         $theme = new SidecarTheme();
-        $this->ss->assign("css_url", $theme->getCSSURL());
+        $this->ss->assign("css_url", getVersionedPath($theme->getCSSURL()));
 
         $module = $this->module;
         $displayTemplate = get_custom_file_if_exists("modules/Forecasts/tpls/SidecarView.tpl");

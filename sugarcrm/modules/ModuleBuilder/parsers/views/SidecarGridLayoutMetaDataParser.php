@@ -22,6 +22,7 @@ if (!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *********************************************************************************/
 require_once 'modules/ModuleBuilder/parsers/views/GridLayoutMetaDataParser.php';
 require_once 'modules/ModuleBuilder/parsers/constants.php';
+require_once 'include/MetaDataManager/MetaDataManager.php';
 
 class SidecarGridLayoutMetaDataParser extends GridLayoutMetaDataParser {
     /**
@@ -36,9 +37,9 @@ class SidecarGridLayoutMetaDataParser extends GridLayoutMetaDataParser {
         //BEGIN SUGARCRM flav=ent ONLY
         'portal' => array(
             // Detail support one set of fields...
-            'detail' => array('parent', 'parent_type', 'iframe', 'encrypt', 'html',),
+            'detail' => array('parent', 'parent_type', 'iframe', 'encrypt', 'html','currency','currency_id'),
             // Edit supports another
-            'edit' => array('parent', 'parent_type', 'iframe', 'encrypt', 'relate', 'html',),
+            'edit' => array('parent', 'parent_type', 'iframe', 'encrypt', 'relate', 'html','currency','currency_id'),
         ),
         //END SUGARCRM flav=ent ONLY
     );
@@ -457,5 +458,15 @@ class SidecarGridLayoutMetaDataParser extends GridLayoutMetaDataParser {
         }
         
         return $result;
+    }
+
+    /**
+     * Clears mobile and portal metadata caches that have been created by the API
+     * to allow immediate rendering of changes at the client
+     */
+    protected function _clearCaches() {
+        if ($this->implementation->isDeployed()) {
+            MetaDataManager::clearAPICache();
+        }
     }
 }

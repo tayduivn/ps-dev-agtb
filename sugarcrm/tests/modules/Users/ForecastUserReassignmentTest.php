@@ -515,7 +515,7 @@ class ForecastUserReassignmentTest extends  Sugar_PHPUnit_Framework_OutputTestCa
     {
         $this->_createOpportunityForUser('sally', 10);
         $this->_created_items = ForecastsSeedData::populateSeedData( array($this->_timeperiod->id => $this->_timeperiod) );
-        $worksheets_ids = WorksheetSeedData::populateSeedData();
+        $worksheets_ids = WorksheetSeedData::populateSeedData( array($this->_timeperiod->id => $this->_timeperiod) );
         SugarTestWorksheetUtilities::setCreatedWorksheet($worksheets_ids);
 
         require_once('include/SugarForecasting/Individual.php');
@@ -526,6 +526,7 @@ class ForecastUserReassignmentTest extends  Sugar_PHPUnit_Framework_OutputTestCa
         $current_user = $this->_users['sally'];
         $api = new SugarForecasting_Individual( array('timeperiod_id' => $this->_timeperiod->id, 'user_id' => $this->_users['sally']->id) );
         $result = $api->process();
+        $GLOBALS['log']->fatal(var_export($result, true));
         $this->assertEquals(10, sizeof($result));
 
         $this->_doReassign('sally', 'chris');
