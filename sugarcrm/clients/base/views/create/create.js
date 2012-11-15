@@ -9,6 +9,8 @@
         DUPLICATE: 'duplicate'
     },
 
+    checkDuplicates: false,
+
     /**
      * Initialize the view and prepare the model with default button metadata
      * for the current layout.
@@ -32,7 +34,8 @@
     },
 
     save: function() {
-        if (!this.$('[name=save_button]').hasClass('disabled')) {
+        //TODO: do not save if we need to check for duplicates
+        if (!this.$('[name=save_button]').hasClass('disabled') && !this.checkDuplicates) {
             this.model.save({}, {
                 success: _.bind(function() {
                     //TODO: close pushdown modal instead
@@ -44,7 +47,7 @@
 
     cancel: function() {
         //TODO: close pushdown modal
-        console.log('cancel');
+        window.history.back();
     },
 
     bindDataChange: function() {
