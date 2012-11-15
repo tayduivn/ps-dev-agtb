@@ -4,11 +4,15 @@
     },
     fileUrl : "",
     _render: function() {
-        app.view.Field.prototype._render.call(this);
         this.model.fileField = this.name;
-        this.fileURL = (this.value) ? this.buildUrl() + "&" + this.value : "";
         app.view.Field.prototype._render.call(this);
         return this;
+    },
+    format: function(value){
+        if (value) {
+            value = this.buildUrl() + "&" + value;
+        }
+        return value;
     },
     buildUrl: function(options) {
         return app.api.buildFileURL({

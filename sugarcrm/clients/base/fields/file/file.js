@@ -5,11 +5,12 @@
     fileUrl: "",
     _render: function() {
         // This array will contain objects accessible in the view
-        this.attachments = [];
-
         this.model = this.model || this.view.model;
-        var value = this.model.get(this.name);
-
+        app.view.Field.prototype._render.call(this);
+        return this;
+    },
+    format: function(value) {
+        var attachments = [];
         // Not the same behavior either the value is a string or an array of files
         if (_.isArray(value)) {
             // If it's an array, we get the uri for each files in the response
@@ -18,7 +19,7 @@
                     name: file.name,
                     url: file.uri
                 };
-                this.attachments.push(fileObj);
+                attachments.push(fileObj);
             }, this);
         } else if (value) {
             // If it's a string, build the uri with the api library
@@ -33,10 +34,9 @@
                         htmlJsonFormat: false,
                         passOAuthToken: false
                     })};
-            this.attachments.push(fileObj);
+            attachments.push(fileObj);
         }
-        app.view.Field.prototype._render.call(this);
-        return this;
+        return attachments;
     },
     startDownload: function(e) {
         var self = this;

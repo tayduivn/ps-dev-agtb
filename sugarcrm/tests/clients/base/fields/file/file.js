@@ -18,30 +18,30 @@ describe("file field", function() {
 
     describe("file", function() {
 
-        it("should format an attachment array", function() {
-            model.set('testfile', [
+        it("should format an array", function() {
+            var inputValue = [
                 {name:'filename1.jpg', 'uri': '/path/to/rest'},
                 {name:'filename2.jpg', 'uri': '/path/to/rest'},
                 {name:'filename3.jpg', 'uri': '/path/to/rest'}
-            ]);
+            ];
             var expectedValue = [
                 {name:'filename1.jpg', 'url': '/path/to/rest'},
                 {name:'filename2.jpg', 'url': '/path/to/rest'},
                 {name:'filename3.jpg', 'url': '/path/to/rest'}
             ];
-            field._render();
-            expect(field.attachments).toEqual(expectedValue);
+            var formattedValue = field.format(inputValue);
+            expect(formattedValue).toEqual(expectedValue);
         });
 
 
-        it("should format an attachment array", function() {
-            model.set('testfile', 'filename1.jpg');
+        it("should format a string", function() {
+            var inputValue = 'filename1.jpg';
             var expectedValue = [
                 {name:'filename1.jpg', 'url': '/path/to/rest'}
             ];
-            field._render();
-            expect(field.attachments[0].name).toEqual(expectedValue[0].name);
-            expect(field.attachments[0].url).not.toEqual(expectedValue[0].url);
+            var formattedValue = field.format(inputValue);
+            expect(formattedValue[0].name).toEqual(expectedValue[0].name);
+            expect(formattedValue[0].url).not.toEqual(expectedValue[0].url);
         });
     });
 });
