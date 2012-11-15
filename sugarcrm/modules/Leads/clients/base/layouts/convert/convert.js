@@ -18,6 +18,9 @@
         //create and place all the accordion panels
         this.initializePanels(this.meta.modules);
 
+        //listen for panel status updates
+        this.context.on("lead:convert:panel:update", this.handlePanelUpdate, this);
+
         //listen for convert button click
         this.context.on("lead:convert", this.processConvert, this);
     },
@@ -126,6 +129,10 @@
         });
     },
 
+    handlePanelUpdate: function() {
+        this.enableFinishButton(function(){});
+    },
+
     enableFinishButton: function(callback) {
         var self=this,
             showFinish = _.all(this.meta.modules, function(module){
@@ -144,9 +151,7 @@
     },
 
     setNextStep: function(nextModule) {
-        var moduleMeta;
         this.context.currentStep = this.context.steps.search(nextModule);
-        moduleMeta = this._getModuleMeta(nextModule);
     },
 
     _getModuleMeta: function(nextModule) {

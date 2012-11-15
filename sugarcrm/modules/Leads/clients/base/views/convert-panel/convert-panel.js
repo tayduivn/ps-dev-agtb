@@ -126,7 +126,7 @@
         this.currentState.selectedId = recordId;
         selectedModel = this.duplicateView.collection.get(recordId);
         this.currentState.selectedName = selectedModel.get('name');
-        this.currentState.isComplete = true;
+        this.markCompleted();
     },
 
     updatePanelHeader: function() {
@@ -201,6 +201,7 @@
         if (show) {
             this.currentState.activeView = this.DUPLICATE_VIEW;
         }
+        this.setDirty(false);
     },
 
     toggleRecordView: function(show) {
@@ -211,11 +212,22 @@
         if (show) {
             this.currentState.activeView = this.RECORD_VIEW;
         }
+        this.setDirty(true);
     },
 
     updateDuplicateMessage: function(view) {
         var $foundDuplicatePlaceholder = this.$('.accordion-group[data-module=' + view.module + ']').find('.found-duplicate');
         $foundDuplicatePlaceholder.text(view.collection.length + ' duplicates found'); //todo translate
+    },
+
+    markCompleted: function() {
+        this.currentState.isComplete = true;
+        this.context.trigger("lead:convert:panel:update");
+    },
+
+    setDirty: function(isDirty) {
+        this.currentState.isDirty = isDirty;
+        this.context.trigger("lead:convert:panel:update");
     },
 
     isComplete: function() {
