@@ -44,14 +44,13 @@
                 self.currentState.duplicateCount = self.duplicateView.collection.length;
                 self.updatePanelSubTitle();
                 self.updateDuplicateMessage(self.duplicateView);
-                if (self.duplicateView.collection.length == 0) {
+                if (self.duplicateView.collection.length === 0) {
                     self.toggleSubViews(this.RECORD_VIEW);
                 }
             }, self);
             self.duplicateView.loadData();
         } else {
-            self.toggleDuplicateView(false, false);
-            self.toggleRecordView(true, false);
+            self.toggleSubViews(this.RECORD_VIEW);
         }
     },
 
@@ -195,20 +194,20 @@
         this.toggleRecordView(viewToShow === this.RECORD_VIEW);
     },
     
-    toggleDuplicateView: function(showView, showLink) {
-        showLink = (_.isUndefined(showLink)) ? showView : showLink;
-        this.duplicateView.$el.parent().toggle(showView);
-        this.$('.show-record').toggle(showLink);
-        if (showView) {
+    toggleDuplicateView: function(show) {
+        this.duplicateView.$el.parent().toggle(show);
+        this.$('.show-record').toggle(show);
+        if (show) {
             this.currentState.activeView = this.DUPLICATE_VIEW;
         }
     },
 
-    toggleRecordView: function(showView, showLink) {
-        showLink = (_.isUndefined(showLink)) ? showView : showLink;
-        this.recordView.$el.parent().toggle(showView);
-        this.$('.show-duplicate').toggle(showLink);
-        if (showView) {
+    toggleRecordView: function(show) {
+        this.recordView.$el.parent().toggle(show);
+        if (this.currentState.duplicateCount > 0) {
+            this.$('.show-duplicate').toggle(show);
+        }
+        if (show) {
             this.currentState.activeView = this.RECORD_VIEW;
         }
     },
