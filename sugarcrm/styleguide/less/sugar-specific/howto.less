@@ -1,13 +1,14 @@
 .howto {
-  border: 2px solid @black;
-  .border-radius(4px);
-  background-color: @white;
-  h4 {
-    color: @white;
-    background-color: @black;
-    padding: 6px 8px;
+  border: 2px solid @grayLight;
+  .border-radius(5px);
+  .box-shadow(0px 0px 10px 1px @grayLight);
+  background-color: @infoBackground;
+  h3 {
+    color: lighten(@gray,15%);
+    padding: 6px 12px;
   }
   p {
-    margin: 8px;
+    margin: 12px;
+    color: @gray;
   }
 }

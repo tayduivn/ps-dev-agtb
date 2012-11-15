@@ -175,12 +175,46 @@
 	}
 }
 
-#header .control-group label.hide {
-    display: none;
+.form-horizontal {
+	.row-fluid.control-group {
+		margin: 0;
+		padding: 0;
+	}
+	.controls {
+		margin-left: 0px;
+		padding: 0px 0 0 8px;
+	}
+	div.control-label {
+    float: left;
+    //width: 140px;
+		padding: 5px 0 8px;
+    text-align: right;
+		border-left: 1px solid lighten(@grayLight,10%);
+		border-right: 1px solid lighten(@grayLight,10%);
+    background-color: @grayLighter;
+    label {
+    	color: @grayLight;
+    }
+	}
+	.help-block {
+		margin-top:0;
+	}
+	.chzn-container {
+		margin-top: 1px;
+	}
+	.card2 .control-group:first-child .control-label {
+		.border-radius(4px 0 0 0);
+		border-top: 1px solid lighten(@grayLight,10%);
+	}
+	.card2 .control-group:last-child .control-label {
+		padding-bottom: 0;
+		.border-radius(0 0 0 4px);
+		border-bottom: 1px solid lighten(@grayLight,10%);
+	}
 }
 
-.form-horizontal .help-block {
-	margin-top:0;
+#header .control-group label.hide {
+    display: none;
 }
 
 .form-actions {

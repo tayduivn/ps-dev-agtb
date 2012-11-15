@@ -752,7 +752,7 @@ legend + .control-group {
   content:"";
 }
 .form-horizontal .control-group:after { clear:both; }
-.form-horizontal .control-label {
+.form-horizontal label.control-label {
   float:left;
   width:140px;
   padding-top:5px;
@@ -6499,8 +6499,39 @@ h1 span { margin-left:5px; }
   display:inline-block;
   float:none;
 }
-#header .control-group label.hide { display:none; }
+.form-horizontal .row-fluid.control-group {
+  margin:0;
+  padding:0;
+}
+.form-horizontal .controls {
+  margin-left:0px;
+  padding:0px 0 0 8px;
+}
+.form-horizontal div.control-label {
+  float:left;
+  padding:5px 0 8px;
+  text-align:right;
+  border-left:1px solid #e6e6e5;
+  border-right:1px solid #e6e6e5;
+  background-color:#f5f5f5;
+}
+.form-horizontal div.control-label label { color:#cdcccb; }
 .form-horizontal .help-block { margin-top:0; }
+.form-horizontal .chzn-container { margin-top:1px; }
+.form-horizontal .card2 .control-group:first-child .control-label {
+  border-top:1px solid #e6e6e5;
+  -webkit-border-radius:4px 0 0 0;
+  -moz-border-radius:4px 0 0 0;
+  border-radius:4px 0 0 0;
+}
+.form-horizontal .card2 .control-group:last-child .control-label {
+  padding-bottom:0;
+  border-bottom:1px solid #e6e6e5;
+  -webkit-border-radius:0 0 0 4px;
+  -moz-border-radius:0 0 0 4px;
+  border-radius:0 0 0 4px;
+}
+#header .control-group label.hide { display:none; }
 .form-actions {
   border:none;
   background:transparent;
@@ -8253,18 +8284,23 @@ ul.moduleTabMore.showMore .moduleMenuOverFlowMore, ul.moduleTabMore.showLess .mo
 }
 #pageConfig .dropdown-menu li a { padding:8px; }
 .howto {
-  border:2px solid #000000;
-  background-color:#ffffff;
-  -webkit-border-radius:4px;
-  -moz-border-radius:4px;
-  border-radius:4px;
+  border:2px solid #cdcccb;
+  background-color:#d9edf7;
+  -webkit-border-radius:5px;
+  -moz-border-radius:5px;
+  border-radius:5px;
+  -webkit-box-shadow:0px 0px 10px 1px #cdcccb;
+  -moz-box-shadow:0px 0px 10px 1px #cdcccb;
+  box-shadow:0px 0px 10px 1px #cdcccb;
 }
-.howto h4 {
-  color:#ffffff;
-  background-color:#000000;
-  padding:6px 8px;
+.howto h3 {
+  color:#7e7f82;
+  padding:6px 12px;
 }
-.howto p { margin:8px; }
+.howto p {
+  margin:12px;
+  color:#58595b;
+}
 .topline { position:relative; }
 .topline .control-group.filter {
   background-color:#f5f5f5;
@@ -8641,10 +8677,6 @@ li.ui-timepicker-selected, .ui-timepicker-list li:hover, .ui-timepicker-list:hov
 li.ui-timepicker-selected .ui-timepicker-duration, .ui-timepicker-list li:hover .ui-timepicker-duration { color:#cccccc; }
 @media (max-width: 920px) {
   .side .side-pane.active { position:absolute !important; }
-  .row > [class*="span"], .container-fluid .row-fluid > [class*="span"] {
-    overflow-y:auto !important;
-    margin:0;
-  }
 }
 @media (max-width: 768px) {
   #folded, .row-fluid .span8.main-pane {
