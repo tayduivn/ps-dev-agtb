@@ -1,5 +1,5 @@
 <?php
-if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point'); 
+if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 /*********************************************************************************
  * The contents of this file are subject to the SugarCRM Professional End User
  * License Agreement("License") which can be viewed at
@@ -16,8 +16,8 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * copyrights from the source code or user interface.
  *
  * All copies of the Covered Code must include on each user interface screen:
- *(i) the "Powered by SugarCRM" logo and 
- *(ii) the SugarCRM copyright notice 
+ *(i) the "Powered by SugarCRM" logo and
+ *(ii) the SugarCRM copyright notice
  * in the same form as they appear in the distribution.  See full license for
  * requirements.
  *
@@ -41,7 +41,7 @@ function getAllowedReportModules(&$local_modListHeader, $skipCache = false) {
 	if(isset($reports_mod) && !$skipCache) {
 		return $reports_mod;
 	}
-	
+
 	require_once("modules/MySettings/TabController.php");
 	$controller = new TabController();
 	$tabs = $controller->get_tabs_system();
@@ -49,23 +49,23 @@ function getAllowedReportModules(&$local_modListHeader, $skipCache = false) {
 	if(!is_array($all_modules)) {
 		return array();
 	}
-	
+
 	global $report_map, $beanList, $report_include_modules;
-	
+
 	if(empty($beanList)) {
 		require('include/modules.php');
 	}
-	
+
 	$report_modules = array();
 
 	$subModuleCheckArray = array("Tasks", "Calls", "Meetings", "Notes");
-	
+
 	//BEGIN SUGARCRM flav!=sales ONLY
 	$subModuleProjectArray = array("ProjectTask");
     //END SUGARCRM flav!=sales ONLY
- 
+
 	foreach($beanList as $key=>$value) {
-		
+
 		if(isset($all_modules[$key])) {
 			$report_modules[$key] = $value;
 		}
@@ -79,14 +79,14 @@ function getAllowedReportModules(&$local_modListHeader, $skipCache = false) {
 			(array_key_exists("Calendar", $all_modules) || array_key_exists("Activities", $all_modules))) {
 			$report_modules[$key] = $value;
 		}
-		
+
 		//BEGIN SUGARCRM flav!=sales ONLY
-		if(in_array($key, $subModuleProjectArray) && 
+		if(in_array($key, $subModuleProjectArray) &&
 			array_key_exists("Project", $all_modules)) {
 			$report_modules[$key] = $value;
 		}
 		//END SUGARCRM flav!=sales ONLY
-		 
+
 	    if($key == 'Users' || $key == 'Teams'  || $key =='EmailAddresses') {
             $report_modules[$key] = $value;
         }
@@ -98,33 +98,32 @@ function getAllowedReportModules(&$local_modListHeader, $skipCache = false) {
 	}
 
 	global $beanFiles;
-	
+
 	// Bug 38864 - Parse the reportmoduledefs.php file for a list of modules we should include or disclude from this list
 	//             Provides contents of $exemptModules and $additionalModules arrays
 	$exemptModules     = array();
 	$additionalModules = array();
-	
-	include('modules/Reports/metadata/reportmodulesdefs.php');
-    if (file_exists('custom/modules/Reports/metadata/reportmodulesdefs.php')) {
-        include('custom/modules/Reports/metadata/reportmodulesdefs.php');
-    }
+
+	foreach(SugarAutoLoader::existingCustom('modules/Reports/metadata/reportmodulesdefs.php') as $file) {
+	    include $file;
+	}
 
     foreach ( $report_modules as $module => $class_name ) {
 		if ( !isset($beanFiles[$class_name]) || in_array($module, $exemptModules) ) {
 			unset($report_modules[$module]);
-		}	
+		}
 	}
-	
+
 	foreach ( $additionalModules as $module ) {
         if ( isset($beanList[$module]) ) {
             $report_modules[$module] = $beanList[$module];
         }
     }
-	
+
 	if ( should_hide_iframes() && isset($report_modules['iFrames']) ) {
 	    unset($report_modules['iFrames']);
 	}
-	
+
 	return $report_modules;
 }
 
@@ -143,7 +142,7 @@ $module_map = array(
 	'quotes'		=> 'Quotes',
 //END SUGARCRM flav!=sales ONLY
 	'calls'			=> 'Calls',
-	'cases'			=> 'Cases',						
+	'cases'			=> 'Cases',
 	'contacts'		=> 'Contacts',
 	'emails'		=> 'Emails',
 	'meetings'		=> 'Meetings',
@@ -181,7 +180,7 @@ $my_report_titles = array(
 
 //BEGIN SUGARCRM flav=pro ONLY
 
-	'Contracts'		=> $local_mod_strings['LBL_MY_CONTRACT_REPORTS'],	
+	'Contracts'		=> $local_mod_strings['LBL_MY_CONTRACT_REPORTS'],
 //END SUGARCRM flav=pro ONLY
 );
 
@@ -206,7 +205,7 @@ $my_team_report_titles = array(
     'Emails'        => $local_mod_strings['LBL_MY_TEAM_EMAIL_REPORTS'],
 //BEGIN SUGARCRM flav=pro ONLY
 
-    'Contracts'     => $local_mod_strings['LBL_MY_TEAM_CONTRACT_REPORTS'],   
+    'Contracts'     => $local_mod_strings['LBL_MY_TEAM_CONTRACT_REPORTS'],
 //END SUGARCRM flav=pro ONLY
 );
 
@@ -232,7 +231,7 @@ $published_report_titles = array(
 
 //BEGIN SUGARCRM flav=pro ONLY
 
-	'Contracts'		=> $local_mod_strings['LBL_PUBLISHED_CONTRACT_REPORTS'],	
+	'Contracts'		=> $local_mod_strings['LBL_PUBLISHED_CONTRACT_REPORTS'],
 //END SUGARCRM flav=pro ONLY
 );
 ?>

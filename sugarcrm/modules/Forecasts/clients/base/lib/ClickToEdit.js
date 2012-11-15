@@ -7,6 +7,8 @@
      * @constructor
      */
     app.view.ClickToEditField = function (field, view) {
+        // set attr so tabbing can locate next field
+        field.$el.attr('jeditable','true');
         this.field = field;
         this.view = view;
         this.numberTypes = ['int', 'float', 'currency'];
@@ -58,7 +60,8 @@
             function(value, settings) {
                 // check if input was valid for formatting in callback
                 settings.field.isValid = settings.checkDatatype(settings.field, value);
-                if(value == undefined || value == "") {
+                settings.field.isEditing = false;
+                if(_.isEmpty(value)) {
                     value = settings.field.holder;
                     settings.field.isCancel = true;
                 } else {
@@ -82,7 +85,7 @@
                 view: this.view,
                 numberTypes: this.numberTypes,
                 checkDatatype: this._checkDatatype,
-                onblur: 'cancel',
+                onblur: 'tab',
                 /**
                  * This is called on cancel, such as clicking outside of input field.
                  * Remove currency symbol from front of input field.
@@ -91,13 +94,9 @@
                  * @param {Object} original
                  */
                 onreset: function(settings, original) {
-                    /*
-                    if(settings.field.type == 'currency') {
-                        $(this).parent().parent().find(".cte-symbol").each(function(index, node){
-                            $(node).remove();
-                        });
-                    }
-                    */
+                    // remove any error messages from previous edit
+                    $(this).find(".jeditable-error").remove();
+                    settings.field.isEditing = false;
                 },
                 /**
                  * data returns the string to be edited.
@@ -112,13 +111,12 @@
                       return value;
                   }
 
-                  // run a safety check here.  we can't always be assurred that the model contains a value
+                  // run a safety check here.  we can't always be assured that the model contains a value
                   var fieldValue = settings.field.model.get(settings.field.name);
                   if(fieldValue == null)
                   {
                      return 0;
                   }
-
                   // format for currency editing, remove markup
                   return app.utils.formatNumber(
                       fieldValue,
@@ -139,15 +137,36 @@
                     }
                     // clear styling
                     settings.field.hideCteIcon();
-                    $(this).css("background-color", "");
-                    $(this).css("color", $.data(this, "color"));
-                    $(this).parent().find(".tempMsg").each(function(index, node){
-                        $(node).remove();
-                    });
+                    settings.field.isEditing = true;
                     // hold value for use later in case user enters a +/- percentage, or user enters an empty value
                     if(settings.field.isValid) {
                         settings.field.holder = $(original).html();
                     }
+                },
+                /**
+                 * just before form gets submitted, check if value is valid
+                 * if not, do not submit the form
+                 *
+                 * @param {Object} settings
+                 * @param {Object} self
+                 * @return {Bool}  false on invalid value
+                 */
+                onsubmit: function(settings, self) {
+                    value = $(this).find('input').val();
+                    settings.field.isValid = settings.checkDatatype(settings.field, value);
+
+                    // remove any error messages from previous edit
+                    $(this).find(".jeditable-error").remove();
+
+                    // check to see if the datatype matches the input.
+                    // if not, show an error and cancel submit.
+                    if(!settings.field.isValid) {
+                        $(this).find('.control-group').addClass('error');
+                        var invalid = $('<span class="help-inline jeditable-error"><span class="btn btn-danger"><i class="icon-white icon-exclamation-sign"></i></span> ' + app.lang.get("LBL_CLICKTOEDIT_INVALID", "Forecasts") + '</span>');
+                        $(this).find('input').parent().parent().append(invalid);
+                        $(this).find('input').select();
+                    }
+                    return settings.field.isValid;
                 },
                 /**
                  * access the form after created
@@ -158,15 +177,26 @@
                 afterform: function(settings, form) {
                     // set css on input field
                     var input = form.find('input');
+                    var strlen = input.val().length;
                     if(_.include(settings.numberTypes, settings.field.type)) {
                         // format input field for numeric values
-                        input.attr('style','width: 60px; text-align: right;');
+                        input.wrapAll('<div class="control-group"></div>');
+                        input.wrapAll('<div class="controls"></div>');
+                        if(strlen < 4) {
+                            input.attr('class','input-mini focused tright');
+                        } else if(strlen < 10) {
+                            input.attr('class','input-small focused tright');
+                        } else {
+                            input.attr('class','input-medium focused tright');
+                        }
+                        input.attr('maxlength','26');
                     }
                     // append currency symbol
                     if(settings.field.type == 'currency') {
                         // add symbol before input field
                         var symbol = app.currency.getCurrencySymbol(settings.field.model.get('currency_id'));
-                        input.before('<span class="cte-symbol" style="margin-right: 3px">'+symbol+'</span>');
+                        input.wrapAll('<div class="input-prepend" style="white-space: nowrap"></div>');
+                        input.before('<span class="add-on">'+symbol+'</span>');
                     }
                 },
                 /**
@@ -181,20 +211,8 @@
                     if(settings.field.isCancel) {
                         return value;
                     }
-                    //check to see if the datatype matches the input, if not return and show an error.
-                    if(!settings.field.isValid){
-                    	var invalid = $("<span>" + app.lang.get("LBL_CLICKTOEDIT_INVALID", "Forecasts") + "</span>");
-                    	
-                    	$.data(this, "color", $(this).css("color"));
-                    	$(this).css("background-color", "red");
-                    	$(this).css("color", "white");
-                    	invalid.css("color", "red");
-                    	invalid.css("display", "block");
-                    	invalid.addClass("tempMsg");
-                    	
-                    	$(this).parent().append(invalid);                  	
-                    	return value;
-                    } try {
+
+                    try {
                         var orig = settings.field.holder;
                         // if the user entered a +/- percentage, re-calculate the value based on the percentage
                         if(_.include(settings.numberTypes, settings.field.type)) {
@@ -207,6 +225,8 @@
                             }
                         }
 
+                        var isDirty = !_.isEqual(parseFloat(settings.field.model.get(settings.field.name)), parseFloat(value));
+
                         // unformat the value from user prefs before sending to model
                         value = app.currency.unformatAmountLocale(value);
 
@@ -214,7 +234,7 @@
                         values[settings.field.name] = value;
                         values["timeperiod_id"] = settings.field.context.forecasts.get("selectedTimePeriod").id;
             			values["current_user"] = app.user.get('id');
-            			values["isDirty"] = true;
+            			values["isDirty"] = isDirty;
 
                         //If there is an id, add it to the URL
                         if(settings.field.model.isNew())
@@ -223,12 +243,11 @@
                         } else {
                             settings.field.model.url = settings.view.url + "/" + settings.field.model.get('id');
                         }
-                        
                         settings.field.model.set(values);
-
-                        // re-render the field
-                        $(this).html(this.render());
-
+                        // force the formatting of the amount in the view, in case model did not change
+                        //$(this).html(app.currency.formatAmountLocale(value, settings.field.model.get('currency_id')));
+                        settings.field._render();
+                        settings.field.isEditing = false;
                     } catch (e) {
                         app.logger.error('Unable to save model in forecastsWorksheet.js: _renderClickToEditField - ' + e);
                     }
@@ -245,17 +264,19 @@
      */
     app.view.ClickToEditField.prototype._addCTEIcon = function(){
         // add icon markup
-        this.field.cteIcon = $('<span class="edit-icon" style="position: absolute; left: -3px"><i class="icon-pencil icon-sm"></i></span>');
+        this.field.cteIcon = $('<span class="edit-icon"><i class="icon-pencil icon-sm"></i></span>');
 
         // add events
-        this.field.showCteIcon = function(){
-            this.$el.parent().css('overflow-x', 'visible');
-            this.$el.before(this.cteIcon);
+        this.field.showCteIcon = function() {
+            if(!this.isEditing) {
+                //this.$el.parent().css('overflow-x', 'visible');
+                this.$el.before(this.cteIcon);
+            }
         };
 
-        this.field.hideCteIcon = function(){
+        this.field.hideCteIcon = function() {
             this.$el.parent().find(this.cteIcon).detach();
-            this.$el.parent().css('overflow-x', 'hidden');
+            //this.$el.parent().css('overflow-x', 'hidden');
         };
 
         var events = this.field.events || {};

@@ -23,6 +23,9 @@
         },
 
         render: function(options) {
+            if(_.isUndefined(options)) {
+                return this;
+            }
             var template = this.getAlertTemplate(options.level, options.messages, options.title);
             this.$el.html(template);
 
@@ -160,5 +163,7 @@
                 default:
                     return '';
             }
-        }
+        },
+
+    bindDataChange : function() {}
 })

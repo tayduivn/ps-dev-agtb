@@ -63,6 +63,7 @@ class APIv3Helper
         $op1->id = $op1_id;
         $op1->name = "UNIT TEST $op1_id";
         $op1->assigned_user_id = $user_id;
+        $op1->date_closed = TimeDate::getInstance()->getNow()->asDbDate();
         $op1->save();
         $results[] = array('id' => $op1_id, 'fieldName' => 'name', 'fieldValue' => "UNIT TEST $op1_id");
 
@@ -72,6 +73,7 @@ class APIv3Helper
         $op2->id = $op2_id;
         $op2->name = "UNIT TEST $op2_id";
         $op2->assigned_user_id = 'unittest';
+        $op2->date_closed = TimeDate::getInstance()->getNow()->asDbDate();
         $op2->save();
         $results[] = array('id' => $op2_id, 'fieldName' => 'name', 'fieldValue' => "UNIT TEST $op2_id");
         $GLOBALS['db']->commit();

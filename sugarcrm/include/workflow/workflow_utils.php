@@ -62,25 +62,25 @@ function get_column_select($base_module, $drop_down_module="", $exclusion_array=
 	//Get dictionary data for base bean and all connected beans
 
 	//Get dictionary and focus data for base bean
-		$vardef_name = $beanList[$column_module];
+	$vardef_name = $beanList[$column_module];
 
-		if(!file_exists('modules/'. $column_module . '/vardefs.php')){
-			return;
-		}
+	if(!SugarAutoLoader::existing('modules/'. $column_module . '/vardefs.php')){
+		return;
+	}
 
-		//BEGIN SUGARCRM flav!=sales ONLY
-		if($vardef_name=="aCase"){
-			$class_name = "Case";
-		} else {
-		//END SUGARCRM flav!=sales ONLY
-			$class_name = $vardef_name;
-		//BEGIN SUGARCRM flav!=sales ONLY
-		}
-		//END SUGARCRM flav!=sales ONLY
+	//BEGIN SUGARCRM flav!=sales ONLY
+	if($vardef_name=="aCase"){
+		$class_name = "Case";
+	} else {
+	//END SUGARCRM flav!=sales ONLY
+		$class_name = $vardef_name;
+	//BEGIN SUGARCRM flav!=sales ONLY
+	}
+	//END SUGARCRM flav!=sales ONLY
 
-		include_once('modules/'. $column_module . '/'.$class_name.'.php');
-		$temp_focus = new $vardef_name();
-		add_to_column_select($column_options, $temp_focus, $column_module, $exclusion_array, $inclusion_array, $include_none);
+	include_once('modules/'. $column_module . '/'.$class_name.'.php');
+	$temp_focus = new $vardef_name();
+	add_to_column_select($column_options, $temp_focus, $column_module, $exclusion_array, $inclusion_array, $include_none);
 
 	return $column_options;
 
@@ -285,20 +285,12 @@ include_once("include/workflow/custom_utils.php");
 function process_workflow(& $focus, $logic_hook){
 	//Now just include the modules workflow from this bean
 
-		if($logic_hook=="BeforeSave"){
-
-			$workflow_path = "custom/modules/".$focus->module_dir."/workflow/workflow.php";
-			if(file_exists($workflow_path)){
+		if($logic_hook=="BeforeSave") {
+			foreach(SugarAutoLoader::existing("custom/modules/".$focus->module_dir."/workflow/workflow.php") as $workflow_path) {
 				include_once($workflow_path);
-
 				process_wflow_triggers($focus);
-
-			//if file exists
 			}
-		//end if logic hook is beforesave
 		}
-
-//end function process_workflow
 }
 
 function get_field_type($field_array)
@@ -371,15 +363,9 @@ function build_source_array($type, $field_value, $var_symbol=true){
 
 //Plugin Function
 
-	function get_plugin($plugin_type, $function_name, & $opt){
-
-
+	function get_plugin($plugin_type, $function_name, & $opt)
+	{
 		//eventually expand this and move the plugin_utils.php to include/plugins
-
-		if(!file_exists('include/workflow/plugin_utils.php')){
-			return;
-		}
-
 		include_once('include/workflow/plugin_utils.php');
 
 		if(!function_exists($function_name)){
@@ -387,6 +373,4 @@ function build_source_array($type, $field_value, $var_symbol=true){
 		}
 
 		return $function_name($opt);
-
-	//end function get_plugin
 	}

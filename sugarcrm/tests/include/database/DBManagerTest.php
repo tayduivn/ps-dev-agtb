@@ -2267,6 +2267,11 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testRecursiveQuery($startId, $startDbLevel, $nrchildren)
     {
+        if ( !$this->_db->supports('recursive_query') )
+        {
+            $this->markTestSkipped('DBManager does not support recursive query');
+        }
+
         $idCurrent = $startId;
         $levels = $startDbLevel;
         $this->_db->preInstall();
@@ -2358,6 +2363,12 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
         // CE is failing on CI because of forecast_tree check
         $this->markTestSkipped("This test needs to be modified to use a different table name because forecasts_tree breaks CE builds");
         //END SUGARCRM flav=com ONLY
+        
+        if ( !$this->_db->supports('recursive_query') )
+        {
+            $this->markTestSkipped('DBManager does not support recursive query');
+        }
+        
         $this->_db->preInstall();
 
         // Setup test data

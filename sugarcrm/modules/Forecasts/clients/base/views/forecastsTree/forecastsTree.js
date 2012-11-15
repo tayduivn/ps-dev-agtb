@@ -35,6 +35,14 @@
     },
 
     /**
+     * Clean up any left over bound data to our context
+     */
+    unbindData : function() {
+        if(this.context.forecasts) this.context.forecasts.off(null, null, this);
+        app.view.View.prototype.unbindData.call(this);
+    },
+
+    /**
      * Handles if data changes on the context.forecasts.tree model (and when tree first initializes)
      * Tree is not handled like other components on Forecasts as it uses a 3rdParty lib (jstree)
      * to handle it's data model. The event handler is added here only because bindDataChange is
@@ -57,7 +65,7 @@
     checkRender:function (context, selectedUser) {
         // handle the case for user clicking MyOpportunities first
         if (selectedUser.showOpps) {
-            var nodeId = 'jstree_node_myopps_' + selectedUser.id;
+            var nodeId = (selectedUser.isManager ? 'jstree_node_myopps_' : 'jstree_node_') + selectedUser.user_name;
             this.selectJSTreeNode(nodeId)
             // check before render if we're trying to re-render tree with a fresh root user
             // otherwise do not re-render tree
@@ -77,7 +85,7 @@
                 // we need to "select" the user on the tree to show they're selected
 
                 // create node ID
-                var nodeId = 'jstree_node_' + selectedUser.id;
+                var nodeId = 'jstree_node_' + selectedUser.user_name;
 
                 // select node only if it is not the already selected node
                 if (this.jsTree.jstree('get_selected').attr('id') != nodeId) {
@@ -162,7 +170,7 @@
                     },
                     "ui":{
                         // when the tree re-renders, initially select the root node
-                        "initially_select":[ 'jstree_node_' + self.context.forecasts.get('selectedUser').id ]
+                        "initially_select":[ 'jstree_node_' + self.context.forecasts.get('selectedUser').user_name ]
                     },
                     "types":{
                         "types":{
@@ -191,6 +199,7 @@
 
                         var selectedUser = {
                             'id':userData.id,
+                            'user_name':userData.user_name,
                             'full_name':userData.full_name,
                             'first_name':userData.first_name,
                             'last_name':userData.last_name,

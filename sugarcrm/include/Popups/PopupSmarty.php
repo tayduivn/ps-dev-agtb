@@ -281,17 +281,11 @@ class PopupSmarty extends ListViewSmarty{
 			$params['orderBy'] = $this->_popupMeta['orderBy'];
 		}
 
-		if(file_exists('custom/modules/'.$this->module.'/metadata/metafiles.php')){
-			require('custom/modules/'.$this->module.'/metadata/metafiles.php');
-		}elseif(file_exists('modules/'.$this->module.'/metadata/metafiles.php')){
-			require('modules/'.$this->module.'/metadata/metafiles.php');
-		}
+	    $fieldsfile = SugarAutoLoader::loadWithMetafiles($this->module, 'SearchFields', 'searchfields');
+        if($fieldsfile) {
+        	require $fieldsfile;
+        }
 
-		if(!empty($metafiles[$this->module]['searchfields'])) {
-			require($metafiles[$this->module]['searchfields']);
-		} elseif(file_exists('modules/'.$this->module.'/metadata/SearchFields.php')) {
-			require('modules/'.$this->module.'/metadata/SearchFields.php');
-	    }
         $this->searchdefs[$this->module]['templateMeta']['maxColumns'] = 2;
         $this->searchdefs[$this->module]['templateMeta']['widths']['label'] = 10;
         $this->searchdefs[$this->module]['templateMeta']['widths']['field'] = 30;

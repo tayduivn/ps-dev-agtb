@@ -1,4 +1,2 @@
-    <div class="input-append">
-        <input type="password" name="{{name}}" value="{{value}}" class="input-large">
-        <p class="help-block"></p>
-    </div>
+<input type="password" name="{{name}}" value="{{value}}" class="input-large">
+<p class="help-block"></p>

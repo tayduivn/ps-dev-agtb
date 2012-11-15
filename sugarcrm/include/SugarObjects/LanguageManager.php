@@ -76,17 +76,13 @@ class LanguageManager
 		$templates = array();
 		$fields = array();
 		if(empty($templates[$template])){
-			$path = 'include/SugarObjects/templates/' . $template . '/language/'.$lang.'.lang.php';
-			if(file_exists($path)){
-				require($path);
-				$templates[$template] = $mod_strings;
-			}else{
-				$path = 'include/SugarObjects/implements/' . $template . '/language/'.$lang.'.lang.php';
-				if(file_exists($path)){
-					require($path);
-					$templates[$template] = $mod_strings;
-				}
-			}
+		    foreach(SugarAutoLoader::existing(
+		        'include/SugarObjects/templates/' . $template . '/language/'.$lang.'.lang.php',
+		        'include/SugarObjects/implements/' . $template . '/language/'.$lang.'.lang.php'
+		    ) as $path) {
+		        require($path);
+		        $templates[$template] = $mod_strings;
+		    }
 		}
 		if(!empty($templates[$template])){
 			return $templates[$template];
@@ -196,16 +192,13 @@ class LanguageManager
 		}
 
 		//search a predefined set of locations for the vardef files
-		foreach($lang_paths as $path){
-			if(file_exists($path)){
-				require($path);
-				if(!empty($mod_strings)){
-					if (function_exists('sugarArrayMergeRecursive')){
-						$loaded_mod_strings = sugarArrayMergeRecursive($loaded_mod_strings, $mod_strings);
-					}
-					else{
-						$loaded_mod_strings = sugarLangArrayMerge($loaded_mod_strings, $mod_strings);
-					}
+		foreach(SugarAutoLoader::existing($lang_paths) as $path){
+		    require($path);
+            if(!empty($mod_strings)){
+			    if (function_exists('sugarArrayMergeRecursive')){
+				    $loaded_mod_strings = sugarArrayMergeRecursive($loaded_mod_strings, $mod_strings);
+				} else{
+					$loaded_mod_strings = sugarLangArrayMerge($loaded_mod_strings, $mod_strings);
 				}
 			}
 		}
@@ -216,7 +209,7 @@ class LanguageManager
 			LanguageManager::saveCache($module, $lang, $loaded_mod_strings);
 	}
 
-	function loadModuleLanguage($module, $lang, $refresh=false){
+	static function loadModuleLanguage($module, $lang, $refresh=false){
 		//here check if the cache file exists, if it does then load it, if it doesn't
 		//then call refreshVardef
 		//if either our session or the system is set to developerMode then refresh is set to true

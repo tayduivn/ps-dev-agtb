@@ -306,7 +306,7 @@ class vCard
                                                               '/\.com/i'=>'',
                                         );
                                     // Allow users to override the trimming strings
-                                    if ( file_exists('custom/include/vCardTrimStrings.php') ) {
+                                    if ( SugarAutoLoader::existing('custom/include/vCardTrimStrings.php') ) {
                                         require_once('custom/include/vCardTrimStrings.php');
                                     }
                                     $short_company_name = trim(preg_replace(array_keys($vCardTrimStrings),$vCardTrimStrings,$full_company_name)," ,.");

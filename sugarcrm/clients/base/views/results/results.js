@@ -19,10 +19,7 @@
     events: {
         'click [name=name]': 'gotoDetail',
         'click .icon-eye-open': 'loadPreview',
-        'click span.label': 'sortByModuleName',
-        'hover span.label': 'addPointer',
-        'blur span.label': 'removePointer',
-        'click [name=show_more_button]': 'showMoreResults',
+        'click [name=show_more_button]': 'showMoreResults'
     },
     initialize: function(options) {
         this.options.meta = this._meta;
@@ -35,7 +32,11 @@
     _render: function() {
         var self = this;
         self.lastQuery = self.context.get('query');
+
         self.fireSearchRequest(function(collection) {
+            // Bug 57853: Will brute force dismiss search dropdown if still present.
+            $('.search-query').searchahead('hide');
+
             // Add the records to context's collection
             if(collection && collection.length) {
                 app.view.View.prototype._render.call(self);
@@ -52,7 +53,8 @@
     renderSubnav: function(overrideMessage) {
         if (this.context.get('subnavModel')) {
             this.context.get('subnavModel').set({
-                'title': overrideMessage || 'Show search results for "'+this.lastQuery+'"'
+                'title': overrideMessage
+                    || app.utils.formatString(app.lang.get('LBL_PORTAL_SEARCH_RESULTS_TITLE'),{'query' : this.lastQuery})
             });
         }
     },
@@ -112,23 +114,5 @@
 
         // Fire on parent layout .. works nicely for relatively simple page ;=) 
         this.layout.layout.trigger("search:preview", model);
-    },
-    /**
-     * Sorts by submodule name per spec.
-     */
-    sortByModuleName: function(evt) {
-        var li = this.$('li.search').get();
-        li.sort(function(a, b) {
-            a = this.$('span.label', a).text();
-            b = this.$('span.label', b).text();
-            return (a < b) ? -1 : ((a > b) ? 1 : 0);
-        });
-        this.$('ul.nav-tabs').append(li).show();
-    },
-    addPointer: function(evt) {
-        this.$(evt.currentTarget).css('cursor', 'pointer');
-    },
-    removePointer: function(evt) {
-        this.$(evt.currentTarget).css('cursor', 'none');
     }
 })

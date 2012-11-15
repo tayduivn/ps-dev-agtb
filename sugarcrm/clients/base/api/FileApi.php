@@ -167,6 +167,9 @@ class FileApi extends SugarApi {
         // Set the files array index (for type == file)
         $filesIndex = $prefix . $field;
 
+        // Get the bean before we potentially delete if fails (e.g. see below if attachment too large, etc.)
+        $bean = $this->loadBean($api, $args);
+
         // Simple validation
         // In the case of very large files that are too big for the request too handle AND
         // if the auth token was sent as part of the request body, you will get a no auth error
@@ -174,6 +177,11 @@ class FileApi extends SugarApi {
         // big to be handled by checking for the presence of the $_FILES array and also if it is empty.
         if (isset($_FILES)) {
             if (empty($_FILES)) {
+
+                // If we get here, the attachment was > php.ini upload_max_filesize value so we need to
+                // check if delete_if_fails optional parameter was set true, etc.
+                $this->deleteIfFails($bean, $args);
+
                 // @TODO Localize this exception message
                 throw new SugarApiExceptionRequestTooLarge('Attachment is too large');
             }
@@ -185,9 +193,6 @@ class FileApi extends SugarApi {
             // @TODO Localize this exception message
             throw new SugarApiExceptionMissingParameter("Incorrect field name for attachement: $filesIndex");
         }
-
-        // Get the bean
-        $bean = $this->loadBean($api, $args);
 
         //BEGIN SUGARCRM flav=pro ONLY
         // Handle ACL - if there is no current field data, it is a CREATE
@@ -246,6 +251,10 @@ class FileApi extends SugarApi {
 
                 // Handle errors
                 if (!empty($sf->error)) {
+
+                    // Note, that although the code earlier in this method (where attachment too large) handles 
+                    // if file > php.ini upload_maxsize, we still may have a file > sugarcrm maxsize
+                    $this->deleteIfFails($bean, $args);
                     throw new SugarApiExceptionError($sf->error);
                 }
 
@@ -398,6 +407,33 @@ class FileApi extends SugarApi {
         }
 
         return $this->getFileList($api, $args);
+    }
+
+    /**
+     * Provides ability to mark a SugarBean deleted if related file upload failed (and user passed
+     * the delete_if_fails optional parameter). Note, private to respect "Principle of least privilege"
+     * If you need in derived classes then you may change to protected.
+     * 
+     * @param SugarBean $bean Bean 
+     * @param array $args The request args
+     * @return false if no deletion occured because delete_if_fails was not set otherwise true.
+     */                   
+    private function deleteIfFails($bean, $args) {
+        // Bug 57210: Need to be able to mark a related record 'deleted=1' when a file uploads fails. 
+        // delete_if_fails flag is an optional query string which can trigger this behavior. An example
+        // use case might be: user's in a modal and client: 1. POST's related record 2. uploads file...
+        // If the file was too big, the user may still want to go back and select a smaller file < max;
+        // but now, upon saving, the client will attempt to PUT related record first and if their ACL's
+        // may prevent edit/deletes it would fail. This rectifies such a scenario.
+        if(!empty($args['delete_if_fails'])) {
+
+            // First ensure user owns record
+            if($bean->created_by == $GLOBALS['current_user']->id) {
+                $bean->mark_deleted($bean->id);
+                return true;
+            } 
+        }
+        return false;
     }
 
     /**

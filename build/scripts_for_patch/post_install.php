@@ -348,16 +348,6 @@ function post_install() {
 		upgradeDbAndFileVersion($new_sugar_version);
 	}
 
-	//Set the chart engine
-	if ($origVersion < '620') {
-		_logThis('Set chartEngine in config.php to JS Charts', $path);
-		$sugar_config['chartEngine'] = 'Jit';
-	}
-    // Bug 51075 JennyG - We increased the upload_maxsize in 6.4.
-    if ($origVersion < '642') {
-        _logThis('Set upload_maxsize to the new limit that was introduced in 6.4', $path);
-        $sugar_config['upload_maxsize'] = 30000000;
-    }
 	// Bug 40044 JennyG - We removed modules/Administration/SaveTabs.php in 6.1. and we need to remove it
 	// for upgraded instances.  We need to go through the controller for the Administration module (action_savetabs).
     if(file_exists('modules/Administration/SaveTabs.php'))
@@ -428,61 +418,6 @@ function post_install() {
            _logThis('Renamed cache/blowfish to custom/blowfish');
     }
 
-    if($origVersion < '650') {
-       // move uploads dir
-       if($sugar_config['upload_dir'] == $sugar_config['cache_dir'].'upload/') {
-
-           $sugar_config['upload_dir'] = 'upload/';
-
-           if(file_exists('upload'))
-           {
-               _logThis("Renaming existing upload directory to upload_backup");
-               if(file_exists($sugar_config['cache_dir'].'upload/upgrades')) {
-                   //Somehow the upgrade script has been stop completely, the dump /upload path possibly exists.
-                   $ext = '';
-                   while(file_exists('upload/upgrades_backup'.$ext)) {
-                       $ext = empty($ext) ? 1 : $ext + 1;
-                   }
-                   rename('upload', 'upload_backup'.$ext);
-               } else {
-                   rename('upload', 'upload_backup');
-               }
-           }
-
-           _logThis("Renaming {$sugar_config['cache_dir']}/upload directory to upload");
-           rename($sugar_config['cache_dir'].'upload', 'upload');
-
-           if(!file_exists('upload/index.html') && file_exists('upload_backup/index.html'))
-           {
-              rename('upload_backup/index.html', 'upload/index.html');
-           }
-
-           if(!write_array_to_file( "sugar_config", $sugar_config, "config.php" ) ) {
-              _logThis('*** ERROR: could not write upload config information to config.php!!', $path);
-           }else{
-              _logThis('sugar_config array in config.php has been updated with upload config contents', $path);
-           }
-
-           mkdir($sugar_config['cache_dir'].'upgrades', 0755, true);
-           //Bug#53276: If upgrade patches exists, the move back to the its original path
-           if(file_exists('upload/upgrades/temp')) {
-               if(file_exists($sugar_config['cache_dir'].'upload/upgrades')) {
-                   //Somehow the upgrade script has been stop completely, the daump cache/upload path possibly exists.
-                   $ext = '';
-                   if(file_exists($sugar_config['cache_dir'].'upload/upgrades')) {
-                       while(file_exists($sugar_config['cache_dir'].'upload/upgrades_backup'.$ext)) {
-                           $ext = empty($ext) ? 1 : $ext + 1;
-                       }
-                       rename($sugar_config['cache_dir'].'upload/upgrades', $sugar_config['cache_dir'].'upload/upgrades_backup'.$ext);
-                   }
-               } else {
-                   mkdir($sugar_config['cache_dir'].'upload/upgrades', 0755, true);
-               }
-               rename('upload/upgrades/temp', $sugar_config['cache_dir'].'upload/upgrades/temp');
-           }
-       }
-    }
-
     if($origVersion < '651') {
         // add cleanJobQueue job if not there
         $job = new Scheduler();
@@ -526,6 +461,51 @@ function post_install() {
     require_once("install/install_utils.php");
     handlePortalConfig();
     //END SUGARCRM flav=ent ONLY
+
+     //Patch for bug57431 : Module name isn't updated in portal layout editor
+    updateRenamedModulesLabels();
+}
+
+/**
+ * Patch for bug57431
+ * Compares current moduleList to base moduleList to detect if some modules have been renamed
+ * Run changeModuleModStrings to create new labels based on customizations.
+ */
+function updateRenamedModulesLabels()
+{
+    require_once('modules/Studio/wizards/RenameModules.php');
+    require_once('include/utils.php');
+
+    $klass = new RenameModules();
+    $languages = get_languages();
+
+    foreach ($languages as $langKey => $langName) {
+        //get list strings for this language
+        $strings = return_app_list_strings_language($langKey);
+
+        //get base list strings for this language
+        if (file_exists("include/language/$langKey.lang.php")) {
+            include("include/language/$langKey.lang.php");
+
+            //Keep only renamed modules
+            $renamedModules = array_diff($strings['moduleList'], $app_list_strings['moduleList']);
+
+            foreach ($renamedModules as $moduleId => $moduleName) {
+
+                $klass->selectedLanguage = $langKey;
+
+                $replacementLabels = array(
+                    'singular' => $strings['moduleListSingular'][$moduleId],
+                    'plural' => $strings['moduleList'][$moduleId],
+                    'prev_singular' => $app_list_strings['moduleListSingular'][$moduleId],
+                    'prev_plural' => $app_list_strings['moduleList'][$moduleId],
+                    'key_plural' => $moduleId,
+                    'key_singular' => $klass->getModuleSingularKey($moduleId)
+                );
+                $klass->changeModuleModStrings($moduleId, $replacementLabels);
+            }
+        }
+    }
 }
 
 

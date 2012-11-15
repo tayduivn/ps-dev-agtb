@@ -89,11 +89,13 @@ class SugarCurrencyTest extends Sugar_PHPUnit_Framework_TestCase
 
         // remove test currencies
         SugarTestCurrencyUtilities::removeAllCreatedCurrencies();
+        SugarTestHelper::tearDown();
     }
 
     /**
      * test base currency retrieval
      *
+     * @group currency
      * @access public
      */
     public function testBaseCurrency()
@@ -107,6 +109,7 @@ class SugarCurrencyTest extends Sugar_PHPUnit_Framework_TestCase
     /**
      * test currency retrieval by currency_id
      *
+     * @group currency
      * @access public
      */
     public function testCurrencyGetByID()
@@ -124,6 +127,7 @@ class SugarCurrencyTest extends Sugar_PHPUnit_Framework_TestCase
     /**
      * test currency retrieval by ISO code
      *
+     * @group currency
      * @access public
      */
     public function testCurrencyGetByISO()
@@ -137,6 +141,7 @@ class SugarCurrencyTest extends Sugar_PHPUnit_Framework_TestCase
     /**
      * test currency retrieval by user preferences
      *
+     * @group currency
      * @access public
      */
     public function testCurrencyUserLocale()
@@ -149,6 +154,7 @@ class SugarCurrencyTest extends Sugar_PHPUnit_Framework_TestCase
     /**
      * test dollar amount conversions between currencies
      *
+     * @group currency
      * @access public
      */
     public function testCurrencyConvert()
@@ -197,6 +203,7 @@ class SugarCurrencyTest extends Sugar_PHPUnit_Framework_TestCase
     /**
      * test formatting of currency amount
      *
+     * @group currency
      * @access public
      */
     public function testCurrencyFormat()
@@ -319,6 +326,7 @@ class SugarCurrencyTest extends Sugar_PHPUnit_Framework_TestCase
     /**
      * test affects of changing base currency type
      *
+     * @group currency
      * @access public
      */
     public function testBaseCurrencyChange()

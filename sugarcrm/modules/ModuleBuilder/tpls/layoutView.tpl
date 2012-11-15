@@ -88,9 +88,13 @@
             {if !empty($translate) && !empty($col.label)}
                 {eval var=$col.label assign='newLabel'}
                 {if $from_mb}
-                {$current_mod_strings[$newLabel]}
+                    {if !empty($current_mod_strings[$newLabel])}
+                        {$current_mod_strings[$newLabel]}
+                    {else}
+                        {$col.label}
+                    {/if}
                 {else}
-                {sugar_translate label=$newLabel module=$language}
+                    {sugar_translate label=$newLabel module=$language}
                 {/if}
  			{else}
                 {assign var='label' value=$col.label} 

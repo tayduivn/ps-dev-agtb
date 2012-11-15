@@ -1,4 +1,4 @@
-{{#each _collection.models}}
+{{#each collection.models}}
     {{#with ../expected_commit_stage_field}}
         {{#if enabled}}
             <td><div style="font-weight: normal; width: 100%;" class="{{#if ../../../isBinary}}tcenter{{/if}}">{{field ../../../this ../../this }}</div></td>

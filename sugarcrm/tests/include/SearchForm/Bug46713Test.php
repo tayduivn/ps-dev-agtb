@@ -26,7 +26,7 @@
  * by SugarCRM are Copyright (C) 2004-2011 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
- 
+
 require_once 'modules/DynamicFields/templates/Fields/TemplateInt.php';
 require_once 'modules/DynamicFields/templates/Fields/TemplateDate.php';
 require_once 'include/SearchForm/SearchForm2.php';
@@ -38,9 +38,9 @@ class Bug46713Test extends Sugar_PHPUnit_Framework_TestCase
     var $searchForm;
     var $originalDbType;
     var $smartyTestFile;
-    
+
     public function setUp()
-    {	
+    {
         if(file_exists('custom/modules/Cases/metadata/SearchFields.php'))
         {
             $this->hasExistingCustomSearchFields = true;
@@ -71,14 +71,14 @@ class Bug46713Test extends Sugar_PHPUnit_Framework_TestCase
         );
         $this->originalDbType = $GLOBALS['db']->dbType;
     }
-    
+
     public function tearDown()
     {
         $GLOBALS['db']->dbType = $this->originalDbType;
 
         if(!$this->hasExistingCustomSearchFields)
         {
-            unlink('custom/modules/Cases/metadata/SearchFields.php');
+            SugarAutoLoader::unlink('custom/modules/Cases/metadata/SearchFields.php');
         }
 
         if(file_exists('custom/modules/Cases/metadata/SearchFields.php.bak')) {

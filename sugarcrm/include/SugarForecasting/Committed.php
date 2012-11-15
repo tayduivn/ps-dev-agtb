@@ -83,8 +83,8 @@ class SugarForecasting_Committed extends SugarForecasting_AbstractForecast imple
         global $current_user;
 
         $args = $this->getArgs();
-		$db = DBManagerFactory::getInstance();
-		
+        $db = DBManagerFactory::getInstance();
+        
         $args['opp_count'] = (!isset($args['opp_count'])) ? 0 : $args['opp_count'];
 
         /* @var $forecast Forecast */
@@ -104,25 +104,25 @@ class SugarForecasting_Committed extends SugarForecasting_AbstractForecast imple
         }
         $forecast->save();
 
-		//If there are any new worksheet entries that need created, do that here.
+        //If there are any new worksheet entries that need created, do that here.
         foreach($args["worksheetData"]["new"] as $sheet)
         {
-        	//Update the Worksheet bean
-			$worksheet  = BeanFactory::getBean("Worksheet");
-			$worksheet->timeperiod_id = $args["timeperiod_id"];
-			$worksheet->user_id = $current_user->id;
-	        $worksheet->best_case = $sheet["best_case"];
-	        $worksheet->likely_case = $sheet["likely_case"];
-	        $worksheet->worst_case = $sheet["worst_case"];
-	        $worksheet->op_probability = $sheet["probability"];
-	        $worksheet->commit_stage = $sheet["commit_stage"];
-	        $worksheet->forecast_type = "Direct";
-	        $worksheet->related_forecast_type = "Product";
-	        $worksheet->related_id = $sheet["product_id"];
-	        $worksheet->currency_id = $args["currency_id"];
-	        $worksheet->base_rate = $args["base_rate"];
-	        $worksheet->version = 1;
-	        $worksheet->save();
+            //Update the Worksheet bean
+            $worksheet  = BeanFactory::getBean("Worksheet");
+            $worksheet->timeperiod_id = $args["timeperiod_id"];
+            $worksheet->user_id = $current_user->id;
+            $worksheet->best_case = $sheet["best_case"];
+            $worksheet->likely_case = $sheet["likely_case"];
+            $worksheet->worst_case = $sheet["worst_case"];
+            $worksheet->op_probability = $sheet["probability"];
+            $worksheet->commit_stage = $sheet["commit_stage"];
+            $worksheet->forecast_type = "Direct";
+            $worksheet->related_forecast_type = "Product";
+            $worksheet->related_id = $sheet["product_id"];
+            $worksheet->currency_id = $args["currency_id"];
+            $worksheet->base_rate = $args["base_rate"];
+            $worksheet->version = 1;
+            $worksheet->save();
         }
         
         //Now we need to update any existing sheets using an ANSI standard update join
@@ -130,48 +130,54 @@ class SugarForecasting_Committed extends SugarForecasting_AbstractForecast imple
         $worksheetIds = array();
         foreach($args["worksheetData"]["current"] as $sheet)
         {
-        	$worksheetIds[] = $sheet["worksheet_id"];
+            $worksheetIds[] = $sheet["worksheet_id"];
         }
         
         if(count($worksheetIds) > 0)
         {
-        	$sql = "update worksheet " .
-        	   		"set best_case = 	(" .
-        	   								"select p.best_case " .
-        	   								"from products p " .
-        	   								"where p.id = related_id" .
-        	   							"), " .
-        	   			"likely_case = (" .
-        	   								"select p.likely_case " .
-        	   								"from products p " .
-        	   								"where p.id = related_id" .
-        	   							"), " .
-        	   			"worst_case = (" .
-        	   								"select p.worst_case " .
-        	   								"from products p " .
-        	   								"where p.id = related_id" .
-        	   							"), " .
-        	   			"op_probability = (" .
-        	   									"select p.probability " .
-        	   									"from products p " .
-        	   									"where p.id = related_id" .
-        	   								"), " .
-        	   			"commit_stage = (" .
-        	   								"select p.commit_stage " .
-        	   								"from products p " .
-        	   								"where p.id = related_id" .
-        	   							  "), " .
-        	   			"version = 1 " .
-        	   	"where exists (" .
-        	   					"select * " .
-        	   					"from products p " .
-        	   					"where p.id = related_id" .
-        	   				  ") " .
-        	    "and id in ('" . implode("', '", $worksheetIds) . "')";
-        	        	        	
-        	$db->query($sql, true);      	        	
+            $sql = "update worksheet " .
+                       "set best_case =     (" .
+                                               "select p.best_case " .
+                                               "from products p " .
+                                               "where p.id = related_id" .
+                                           "), " .
+                           "likely_case = (" .
+                                               "select p.likely_case " .
+                                               "from products p " .
+                                               "where p.id = related_id" .
+                                           "), " .
+                           "worst_case = (" .
+                                               "select p.worst_case " .
+                                               "from products p " .
+                                               "where p.id = related_id" .
+                                           "), " .
+                           "op_probability = (" .
+                                                   "select p.probability " .
+                                                   "from products p " .
+                                                   "where p.id = related_id" .
+                                               "), " .
+                           "commit_stage = (" .
+                                               "select p.commit_stage " .
+                                               "from products p " .
+                                               "where p.id = related_id" .
+                                             "), " .
+                           "version = 1 " .
+                   "where exists (" .
+                                   "select * " .
+                                   "from products p " .
+                                   "where p.id = related_id" .
+                                 ") " .
+                "and id in ('" . implode("', '", $worksheetIds) . "')";
+                                    
+            $db->query($sql, true);                      
         }
-        
+
+        //TODO-sfa remove this once the ability to map buckets when they get changed is implemented (SFA-215).
+        $admin = BeanFactory::getBean('Administration');
+        $settings = $admin->getConfigForModule('Forecasts');
+        if (!isset($settings['has_commits']) || !$settings['has_commits']) {
+            $admin->saveSetting('Forecasts', 'has_commits', true, 'base');
+        }
 
         $timedate = TimeDate::getInstance();
         $forecast->date_entered = $this->convertDateTimeToISO($forecast->date_entered);

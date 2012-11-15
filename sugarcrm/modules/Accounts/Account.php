@@ -134,8 +134,8 @@ class Account extends Company {
     var $push_billing;
     var $push_shipping;
 
-	function Account() {
-        parent::Company();
+	public function __construct() {
+        parent::__construct();
 
 		//BEGIN SUGARCRM flav=pro ONLY
 		global $current_user;

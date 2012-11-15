@@ -53,6 +53,7 @@ class RestTestPortalBase extends RestTestBase {
 
         $this->_user->portal_only = '1';
         $this->_user->save();
+        $GLOBALS ['system_config']->saveSetting('supportPortal', 'RegCreatedBy', $this->_user->id);
         $this->role = $this->_getPortalACLRole();
         if (!($this->_user->check_role_membership($this->role->name))) {
             $this->_user->load_relationship('aclroles');
@@ -75,30 +76,31 @@ class RestTestPortalBase extends RestTestBase {
         $this->contact->portal_active = '1';
         $this->contact->portal_password = User::getPasswordHash("unittest");
         $this->contact->save();
-        
+
         $this->portalGuy = $this->contact;
 
         // Adding it to the contacts array makes sure it gets deleted when done
         $this->contacts[] = $this->contact;
 
-        // use consumer to find bean with client_type === support portal
+        // Add the support_portal oauth key
         $this->testConsumer = BeanFactory::newBean('OAuthKeys');
-        $this->testConsumer->getByKey('support_portal', 'oauth2');
-        
-        // If we don't have current consumer, create it and mark it as such
-        if (empty($this->testConsumer->id)) {
-            $this->testConsumer->id = 'UNIT-TEST-portallogin';
-            $this->testConsumer->new_with_id = true;
-            $this->testConsumer->c_key = 'support_portal';
-            $this->testConsumer->c_secret = '';
-            $this->testConsumer->oauth_type = 'oauth2';
-            $this->testConsumer->client_type = 'support_portal';
-            $this->testConsumer->save();
-            
-            // Flag this consumer as having been created in the test
-            $this->testConsumer->createdInTest = true;
-        } 
-        
+
+        // use consumer to find bean with client_type === support portal
+        $this->currentPortalBean = BeanFactory::newBean('OAuthKeys');
+        $this->currentPortalBean->getByKey('support_portal', 'oauth2');
+        $this->currentPortalBean->new_with_id = true;
+
+        $db->query("DELETE FROM ".$this->testConsumer->table_name." WHERE client_type = 'support_portal'");
+
+        // Create a unit test login ID
+        $this->testConsumer->id = 'UNIT-TEST-portallogin';
+        $this->testConsumer->new_with_id = true;
+        $this->testConsumer->c_key = 'support_portal';
+        $this->testConsumer->c_secret = '';
+        $this->testConsumer->oauth_type = 'oauth2';
+        $this->testConsumer->client_type = 'support_portal';
+        $this->testConsumer->save();
+
         $GLOBALS['db']->commit();
     }
     public function tearDown()
@@ -121,7 +123,7 @@ class RestTestPortalBase extends RestTestBase {
                 $GLOBALS['db']->query("DELETE FROM accounts_cstm WHERE id_c IN {$accountIds}");
             }
         }
-        
+
         // Opportunities clean up
         if (count($this->opps)) {
             $oppIds = array();
@@ -131,12 +133,12 @@ class RestTestPortalBase extends RestTestBase {
             $oppIds = "('".implode("','",$oppIds)."')";
             $GLOBALS['db']->query("DELETE FROM opportunities WHERE id IN {$oppIds}");
             $GLOBALS['db']->query("DELETE FROM accounts_opportunities WHERE opportunity_id IN {$oppIds}");
-            $GLOBALS['db']->query("DELETE FROM opportunities_contacts WHERE opportunity_id IN {$oppIds}");            
+            $GLOBALS['db']->query("DELETE FROM opportunities_contacts WHERE opportunity_id IN {$oppIds}");
             if ($GLOBALS['db']->tableExists('opportunities_cstm')) {
                 $GLOBALS['db']->query("DELETE FROM opportunities_cstm WHERE id_c IN {$oppIds}");
             }
         }
-        
+
         // Contacts cleanup
         if (count($this->contacts)) {
             $contactIds = array();
@@ -144,14 +146,14 @@ class RestTestPortalBase extends RestTestBase {
                 $contactIds[] = $contact->id;
             }
             $contactIds = "('".implode("','",$contactIds)."')";
-            
+
             $GLOBALS['db']->query("DELETE FROM contacts WHERE id IN {$contactIds}");
             $GLOBALS['db']->query("DELETE FROM accounts_contacts WHERE contact_id IN {$contactIds}");
             if ($GLOBALS['db']->tableExists('contacts_cstm')) {
                 $GLOBALS['db']->query("DELETE FROM contacts_cstm WHERE id_c IN {$contactIds}");
             }
         }
-        
+
         // Cases cleanup
         if (count($this->cases)) {
             $caseIds = array();
@@ -159,7 +161,7 @@ class RestTestPortalBase extends RestTestBase {
                 $caseIds[] = $aCase->id;
             }
             $caseIds = "('".implode("','",$caseIds)."')";
-            
+
             $GLOBALS['db']->query("DELETE FROM cases WHERE id IN {$caseIds}");
             $GLOBALS['db']->query("DELETE FROM accounts_cases WHERE case_id IN {$caseIds}");
             if ($GLOBALS['db']->tableExists('cases_cstm')) {
@@ -179,7 +181,7 @@ class RestTestPortalBase extends RestTestBase {
                 $GLOBALS['db']->query("DELETE FROM bugs_cstm WHERE id_c IN {$bugIds}");
             }
         }
-        
+
         // Notes cleanup
         if (count($this->notes)) {
             $noteIds = array();
@@ -187,13 +189,13 @@ class RestTestPortalBase extends RestTestBase {
                 $noteIds[] = $note->id;
             }
             $noteIds = "('".implode("','",$noteIds)."')";
-            
+
             $GLOBALS['db']->query("DELETE FROM notes WHERE id IN {$noteIds}");
             if ($GLOBALS['db']->tableExists('notes_cstm')) {
                 $GLOBALS['db']->query("DELETE FROM notes_cstm WHERE id_c IN {$noteIds}");
             }
         }
-        
+
         // KBDocs cleanup
         if (count($this->kbdocs)) {
             $kbdocIds = array();
@@ -206,12 +208,17 @@ class RestTestPortalBase extends RestTestBase {
                 $GLOBALS['db']->query("DELETE FROM kbdocuments_cstm WHERE id_c IN {$kbdocIds}");
             }
         }
-        
-        // If we created the consumer, delete it
-        if(!empty($this->testConsumer->createdInTest)) {
-            $this->testConsumer->mark_deleted($this->testConsumer->id);
+
+        // Delete test support_portal user
+        $db->query("DELETE FROM ".$this->testConsumer->table_name." WHERE client_type = 'support_portal'");
+
+        // Add back original support_portal user
+        if(!empty($this->currentPortalBean->id)) {
+            $this->currentPortalBean->save();
         }
- 
+
+        $GLOBALS ['system_config']->saveSetting('supportPortal', 'RegCreatedBy', '');
+
         parent::tearDown();
     }
 
@@ -226,7 +233,7 @@ class RestTestPortalBase extends RestTestBase {
             'client_secret' => '',
             'platform' => 'portal',
         );
-        
+
         // Prevent an infinite loop, put a fake authtoken in here.
         $this->authToken = 'LOGGING_IN';
 
@@ -237,7 +244,7 @@ class RestTestPortalBase extends RestTestBase {
         $this->authToken = $reply['reply']['access_token'];
         $this->refreshToken = $reply['reply']['refresh_token'];
     }
-    
+
     // Copied from parser.portalconfig.php, when that gets merged we should probably just abuse that function.
     protected function _getPortalACLRole()
     {
@@ -263,7 +270,7 @@ class RestTestPortalBase extends RestTestBase {
                     }
                 }
             }
-            
+
             if (in_array($moduleName, $allowedModules)) {
                 $role->setAction($role->id, $actions['module']['access']['id'], ACL_ALLOW_ENABLED);
                 $role->setAction($role->id, $actions['module']['admin']['id'], ACL_ALLOW_ALL);
@@ -287,7 +294,7 @@ class RestTestPortalBase extends RestTestBase {
                     $role->setAction($role->id, $action['id'], $aclAllow);
                 }
             }
-            
+
         }
         return $role;
     }

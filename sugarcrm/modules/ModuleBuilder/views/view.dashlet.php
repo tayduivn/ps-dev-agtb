@@ -36,7 +36,7 @@ require_once 'modules/ModuleBuilder/parsers/constants.php' ;
 
 class ViewDashlet extends ViewListView
 {
-    function __construct()
+    public function __construct()
     {
         $this->editModule = $_REQUEST [ 'view_module' ] ;
         $this->editLayout = $_REQUEST [ 'view' ] ;

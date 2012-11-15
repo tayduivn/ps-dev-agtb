@@ -29,6 +29,8 @@ if(!defined('sugarEntry'))define('sugarEntry', true);
 
 require_once('soap/SoapHelperFunctions.php');
 require_once 'modules/ModuleBuilder/parsers/MetaDataFiles.php';
+require_once 'include/SugarFields/SugarFieldHandler.php';
+
 /**
  * This class is for access metadata for all sugarcrm modules in a read only
  * state.  This means that you can not modifiy any of the metadata using this
@@ -42,6 +44,13 @@ require_once 'modules/ModuleBuilder/parsers/MetaDataFiles.php';
  *
  */
 class MetaDataManager {
+    /**
+     * SugarFieldHandler, to assist with cleansing default sugar field values
+     * 
+     * @var SugarFieldHandler
+     */
+    protected $sfh;
+    
     /**
      * The user bean for the logged in user
      *
@@ -84,8 +93,8 @@ class MetaDataManager {
         $moduledirs = array();
 
         // Start with SugarObjects :: basic
-        $basic = 'include/SugarObjects/templates/basic/clients/' . $this->platforms[0] . '/' . $viewdefType . 's/';
-        if (is_dir($basic)) {
+        $basic = "include/SugarObjects/templates/basic/clients/{$this->platforms[0]}/{$viewdefType}s";
+        if (SugarAutoLoader::fileExists($basic)) {
             $result = $this->getSugarClientFiles($viewdefType, 'include/SugarObjects/templates/basic/', "<module_name>");
             foreach ($result as $name => $fileArray) {
                 $data[$name] = $fileArray;
@@ -94,7 +103,7 @@ class MetaDataManager {
 
         // Now get the SugarObjects :: $moduleType files
         $moduleType = MetaDataFiles::getSugarObjectFileDir($moduleName, $this->platforms[0], $viewdefType);
-        if (is_dir($moduleType)) {
+        if (SugarAutoLoader::fileExists($moduleType)) {
             $result = $this->getSugarClientFiles($viewdefType, $moduleType, "<module_name>");
             foreach ($result as $name => $fileArray) {
                 $data[$name] = $fileArray;
@@ -214,12 +223,12 @@ class MetaDataManager {
         $data['ftsEnabled'] = SugarSearchEngineMetadataHelper::isModuleFtsEnabled($moduleName);
         //END SUGARCRM flav=pro ONLY
 
-        //BEGIN SUGARCRM flav=pro ONLY
         $seed = BeanFactory::newBean($moduleName);
+
+        //BEGIN SUGARCRM flav=pro ONLY
         if ($seed !== false) {
             $favoritesEnabled = ($seed->isFavoritesEnabled() !== false) ? true : false;
             $data['favoritesEnabled'] = $favoritesEnabled;
-
         }
         //END SUGARCRM flav=pro ONLY
 
@@ -292,10 +301,16 @@ class MetaDataManager {
 
             return $data;
         }
+        
+
+        // Bug 56505 - multiselect fields default value wrapped in '^' character
+        if (!empty($data['fields']) && is_array($data['fields']))
+            $data['fields'] = $this->normalizeFielddefs($data['fields']);
+        
         if (!isset($data['relationships'])) {
             $data['relationships'] = array();
         }
-        
+
         // loop over the fields to find if they can be sortable
         // get the indexes on the module and the first field of each index
         $indexes = array();
@@ -308,16 +323,23 @@ class MetaDataManager {
             }
         }
 
-        if(!empty($indexes)) {
-            // if the field is indexed set sortable to true
+        // If sortable isn't already set THEN
+        //      Set it sortable to TRUE, if the field is indexed.
+        //      Set sortable to FALSE, otherwise. (Bug56943, Bug57644)
+        $isIndexed = !empty($indexes);
+        if (!empty($data['fields']) && is_array($data['fields']))
+        {
             foreach($data['fields'] AS $field_name => $info) {
-                $data['fields'][$field_name]['sortable'] = false;
-                if(isset($indexes[$field_name])) {
-                    $data['fields'][$field_name]['sortable'] = true;
+                if(!isset($data['fields'][$field_name]['sortable'])){
+                    $data['fields'][$field_name]['sortable'] = false;
+                    if($isIndexed && isset($indexes[$field_name])) {
+                        $data['fields'][$field_name]['sortable'] = true;
+                    }
                 }
             }
         }
-        
+
+
         return $data;
     }
 
@@ -463,10 +485,8 @@ class MetaDataManager {
         $dirs = array();
         foreach ( $this->platforms as $platform ) {
             $basedir  = "{$modulePath}clients/{$platform}/{$path}/";
-            $custdir  = "custom/$basedir";
-            $basedirs = glob($basedir."*", GLOB_ONLYDIR);
-            $custdirs = is_dir($custdir) ? glob($custdir . "*", GLOB_ONLYDIR) : array();
-            $alldirs  = array_merge($basedirs, $custdirs);
+            // get all dirs there and in custom
+            $alldirs = SugarAutoLoader::getFilesCustom($basedir, true);
 
             foreach ($alldirs as $dir) {
                 // To prevent doing the work twice, let's sort this out by basename
@@ -500,14 +520,11 @@ class MetaDataManager {
             $meta = array();
             foreach ( $this->platforms as $platform ) {
                 $dir = "{$modulePath}clients/$platform/$typePath/$dirname/";
-                $controller = $dir . "$dirname.js";
+                $controller = SugarAutoLoader::existingCustomOne("{$dir}{$dirname}.js");
                 if (empty($meta)) {
                     $meta = $this->fetchMetadataFromDirs(array($dir), $module);
                 }
-                if ( file_exists('custom/'.$controller) ) {
-                    $controller = 'custom/'.$controller;
-                }
-                if ( file_exists($controller) ) {
+                if ( $controller ) {
                     $fileData['controller'] = file_get_contents($controller);
                     // We found a controller, let's get out of here!
                     break;
@@ -571,14 +588,14 @@ class MetaDataManager {
      */
     protected function fetchMetadataFromDir($dir, $module = "") {
         $meta = array();
-        if (is_dir($dir)) {
+        if (SugarAutoLoader::fileExists($dir)) {
             // Get the client, type amd name for this particular directory
             preg_match("#clients/([^/]*)/([^/]*)/([^/]*)/#", $dir, $m);
             $platform = $m[1];
             $type = substr_replace($m[2], '', -1); // Pluck the 's' from the type
             $filename = $m[3];
             $file = rtrim($dir, '/') . '/' . $filename . '.php';
-            if (file_exists($file)) {
+            if (SugarAutoLoader::fileExists($file)) {
                 // Changed from require_once to require so we can actually get
                 // these on multiple requests for them
                 require $file;
@@ -615,25 +632,10 @@ class MetaDataManager {
         $templates = array();
 
         foreach ( $searchDirs as $searchDir ) {
-            $searchDir = rtrim($searchDir, '/') . '/'; // Clean up ending path separators
-            if ( is_dir($searchDir) ) {
-                $stdTemplates = glob($searchDir."*".$extension);
-                if ( is_array($stdTemplates) ) {
-                    foreach ( $stdTemplates as $templateFile ) {
-                        $templateName = basename($templateFile, $extension);
-                        $templates[$templateName] = file_get_contents($templateFile);
-                    }
-                }
-            }
-            // Do the custom directory last so it will override anything in the core product
-            if ( is_dir('custom/'.$searchDir) ) {
-                $cstmTemplates = glob('custom/'.$searchDir."*".$extension);
-                if ( is_array($cstmTemplates) ) {
-                    foreach ( $cstmTemplates as $templateFile ) {
-                        $templateName = basename($templateFile, $extension);
-                        $templates[$templateName] = file_get_contents($templateFile);
-                    }
-                }
+            foreach(SugarAutoLoader::getFilesCustom($searchDir, false, $extension) as $templateFile) {
+
+                $templateName = basename($templateFile, $extension);
+                $templates[$templateName] = file_get_contents($templateFile);
             }
         }
         return $templates;
@@ -648,7 +650,7 @@ class MetaDataManager {
         $backwardsPlatforms = array_reverse($this->platforms);
         $templateDirs = array();
         foreach ( $backwardsPlatforms as $platform ) {
-            $moreTemplates = glob("clients/${platform}/views/*",GLOB_ONLYDIR);
+            $moreTemplates = SugarAutoLoader::getFilesCustom("clients/${platform}/views/", true);
             $templateDirs = array_merge($templateDirs,$moreTemplates);
         }
         $templates = $this->fetchTemplates($templateDirs);
@@ -701,15 +703,13 @@ class MetaDataManager {
             $pb = new SugarPortalBrowser();
             $pb->loadModules();
             $moduleList = array_keys($pb->modules);
-            
+
             // Bug 56911 - Notes metadata is needed for portal
             $moduleList[] = "Notes";
         } else if ( $platform == 'mobile' ) {
             // replicate the essential part of the behavior of the private loadMapping() method in SugarController
-            foreach ( array ( '','custom/') as $prefix) {
-                if(file_exists($prefix.'include/MVC/Controller/wireless_module_registry.php')){
-                    require($prefix.'include/MVC/Controller/wireless_module_registry.php');
-                }
+            foreach(SugarAutoLoader::existingCustom('include/MVC/Controller/wireless_module_registry.php') as $file) {
+                require $file;
             }
 
             // $wireless_module_registry is defined in the file loaded above
@@ -733,22 +733,59 @@ class MetaDataManager {
         return $moduleList;
     }
 
-    public static function getPlatformList() {
+    public static function getPlatformList()
+    {
         $platforms = array();
-        foreach(array("clients", "custom/clients") as $path)
-        {
-            if (is_dir($path)) {
-                $dirs = scandir($path);
-                foreach($dirs as $dir) {
-                    if (!empty($dir) && $dir[0] != "." && $dir[0] != "_" && is_dir("$path/$dir"))
-                    {
-                        $platforms[$dir] = true;
-                    }
-                }
+        // remove ones with _
+        foreach(SugarAutoLoader::getFilesCustom("clients", true) as $dir) {
+            $dir = basename($dir);
+            if($dir[0] == '_') {
+                continue;
             }
+            $platforms[$dir] = true;
         }
 
         return array_keys($platforms);
+    }
+    
+    /**
+     * Cleans field def default values before returning them as a member of the 
+     * metadata response payload
+     * 
+     * Bug 56505
+     * Cleans default value of fields to strip out metacharacters used by the app.
+     * Used initially for cleaning default multienum values.
+     * 
+     * @param array $fielddefs
+     * @return array
+     */
+    protected function normalizeFielddefs(Array $fielddefs) {
+        $this->getSugarFieldHandler();
+        
+        foreach ($fielddefs as $name => $def) {
+            if (isset($def['type'])) {
+                $type = !empty($def['custom_type']) ? $def['custom_type'] : $def['type'];
+                
+                $field = $this->sfh->getSugarField($type);
+                
+                $fielddefs[$name] = $field->getNormalizedDefs($def);
+            }
+        }
+        
+        return $fielddefs;
+    }
+    
+    /**
+     * Gets the SugarFieldHandler object
+     * 
+     * @return SugarFieldHandler The SugarFieldHandler
+     */
+    protected function getSugarFieldHandler() {
+        if (!$this->sfh instanceof SugarFieldHandler) {
+            $this->sfh = new SugarFieldHandler;
+        }
+        
+        return $this->sfh;
     }
 
     /*

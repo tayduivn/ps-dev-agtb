@@ -35,7 +35,7 @@ require_once 'include/dir_inc.php';
 require_once 'include/EditView/SubpanelQuickCreate.php';
 
 class Bug49219Test extends Sugar_PHPUnit_Framework_TestCase  {
-	
+
 var $merge;
 
 function setUp() {
@@ -66,6 +66,7 @@ function testUpgradeMeetingsQuickCreate641() {
    require_once 'modules/UpgradeWizard/SugarMerge/QuickCreateMerge.php';
    $this->merge = new QuickCreateMerge();
    $this->merge->merge('Meetings', 'tests/modules/UpgradeWizard/SugarMerge/metadata_files/640/modules/Meetings/metadata/quickcreatedefs.php','modules/Meetings/metadata/quickcreatedefs.php','custom/modules/Meetings/metadata/quickcreatedefs.php');
+   SugarAutoLoader::buildCache();
    require('custom/modules/Meetings/metadata/quickcreatedefs.php');
    $this->assertArrayNotHasKey('headerTpl', $viewdefs['Meetings']['QuickCreate']['templateMeta']['form'], 'SugarMerge code does not remove headerTpl from quickcreatedefs.php');
    $this->assertArrayNotHasKey('footerTpl', $viewdefs['Meetings']['QuickCreate']['templateMeta']['form'], 'SugarMerge code does not remove footerTpl from quickcreatedefs.php');
@@ -85,6 +86,7 @@ function testSubpanelQuickCreate()
     require_once 'modules/UpgradeWizard/SugarMerge/QuickCreateMerge.php';
     $this->merge = new QuickCreateMerge();
     $this->merge->merge('Meetings', 'tests/modules/UpgradeWizard/SugarMerge/metadata_files/640/modules/Meetings/metadata/quickcreatedefs.php','modules/Meetings/metadata/quickcreatedefs.php','custom/modules/Meetings/metadata/quickcreatedefs.php');
+    SugarAutoLoader::buildCache();
     $quickCreate = new SubpanelQuickCreate('Meetings', 'QuickCreate', true);
     $this->assertEquals('include/EditView/header.tpl', $quickCreate->ev->defs['templateMeta']['form']['headerTpl'], 'SubpanelQuickCreate fails to pick up default headerTpl attribute');
     $this->assertEquals('include/EditView/footer.tpl', $quickCreate->ev->defs['templateMeta']['form']['footerTpl'], 'SubpanelQuickCreate fails to pick up default footerTpl attribute');

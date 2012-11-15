@@ -72,7 +72,6 @@ class ConfigModuleApi extends ModuleApi {
             return$adminBean->getConfigForModule($args['module'], $platform);
         }
         return;
-
     }
 
     /**
@@ -82,7 +81,6 @@ class ConfigModuleApi extends ModuleApi {
      */
     public function configSave($api, $args) {
         $this->requireArgs($args,array('module'));
-        $admin = BeanFactory::getBean('Administration');
 
         $module = $args['module'];
         $platform = (isset($args['platform']) && !empty($args['platform']))?$args['platform']:'base';
@@ -96,6 +94,8 @@ class ConfigModuleApi extends ModuleApi {
         if(!$this->hasAccess($module)) {
             throw new SugarApiExceptionNotAuthorized("Current User not authorized to change ".$module." configuration settings");
         }
+
+        $admin = BeanFactory::getBean('Administration');
 
         foreach ($args as $name => $value) {
             if(is_array($value)) {
@@ -111,7 +111,7 @@ class ConfigModuleApi extends ModuleApi {
 
     public function hasAccess($module) {
         global $current_user;
-        return $current_user->isAdminForModule($module) ? true : false;
+        return $current_user->isAdminForModule($module);
     }
 
 }

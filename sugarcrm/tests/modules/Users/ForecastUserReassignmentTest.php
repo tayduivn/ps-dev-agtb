@@ -37,7 +37,7 @@ require_once('modules/Forecasts/WorksheetSeedData.php');
  *
  * @ticket sfa-219
  */
-class ForecastUserReassignmentTest extends  Sugar_PHPUnit_Framework_TestCase
+class ForecastUserReassignmentTest extends  Sugar_PHPUnit_Framework_OutputTestCase
 {
     private $_users;
     private $_users_ids;
@@ -453,6 +453,12 @@ class ForecastUserReassignmentTest extends  Sugar_PHPUnit_Framework_TestCase
     public function testInactiveChildren()
     {
         global $current_user;
+        $db = DBManagerFactory::getInstance();
+        if ( !$db->supports('recursive_query') )
+        {
+            // @see SugarForecasting_ReportingUsers::getReportees()
+            $this->markTestSkipped('DBManager does not support recursive query');
+        }
 
         $this->_createOpportunityForUser('sarah', 10);
 
@@ -477,6 +483,12 @@ class ForecastUserReassignmentTest extends  Sugar_PHPUnit_Framework_TestCase
     public function testDeletedChildren()
     {
         global $current_user;
+        $db = DBManagerFactory::getInstance();
+        if ( !$db->supports('recursive_query') )
+        {
+            // @see SugarForecasting_ReportingUsers::getReportees()
+            $this->markTestSkipped('DBManager does not support recursive query');
+        }
 
         $this->_createOpportunityForUser('sarah', 10);
 
@@ -496,7 +508,7 @@ class ForecastUserReassignmentTest extends  Sugar_PHPUnit_Framework_TestCase
 
     /**
      * test worksheets after reassignment rep to rep
-     * @outputBuffering enabled
+     *
      * @group forecasts
      */
     public function testWorksheetRepToRep()
@@ -508,16 +520,22 @@ class ForecastUserReassignmentTest extends  Sugar_PHPUnit_Framework_TestCase
 
         require_once('include/SugarForecasting/Individual.php');
 
+        global $current_user;
+        $this->_users['sally']->is_admin = true;
+        $this->_users['chris']->is_admin = true;
+        $current_user = $this->_users['sally'];
         $api = new SugarForecasting_Individual( array('timeperiod_id' => $this->_timeperiod->id, 'user_id' => $this->_users['sally']->id) );
         $result = $api->process();
         $this->assertEquals(10, sizeof($result));
 
         $this->_doReassign('sally', 'chris');
 
+        $current_user = $this->_users['chris'];
         $api = new SugarForecasting_Individual( array('timeperiod_id' => $this->_timeperiod->id, 'user_id' => $this->_users['chris']->id) );
         $result = $api->process();
         $this->assertEquals(10, sizeof($result));
 
+        $current_user = $this->_users['sally'];
         $api = new SugarForecasting_Individual( array('timeperiod_id' => $this->_timeperiod->id, 'user_id' => $this->_users['sally']->id) );
         $result = $api->process();
         $this->assertEquals(0, sizeof($result));
@@ -531,6 +549,13 @@ class ForecastUserReassignmentTest extends  Sugar_PHPUnit_Framework_TestCase
      */
     public function testWorksheetManagerToManager()
     {
+        $db = DBManagerFactory::getInstance();
+        if ( !$db->supports('recursive_query') )
+        {
+            // @see SugarForecasting_Manager::process() -> loadUsers()
+            $this->markTestSkipped('DBManager does not support recursive query');
+        }
+
         $this->_createOpportunityForUser('sarah', 10);
         $this->_created_items = ForecastsSeedData::populateSeedData( array($this->_timeperiod->id => $this->_timeperiod) );
         $worksheets_ids = WorksheetSeedData::populateSeedData();

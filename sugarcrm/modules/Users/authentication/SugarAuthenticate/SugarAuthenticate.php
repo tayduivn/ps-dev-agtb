@@ -27,8 +27,6 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * by SugarCRM are Copyright (C) 2006 SugarCRM, Inc.; All Rights Reserved.
  */
 
- // $Id: SugarAuthenticate.php 56655 2010-05-24 20:08:32Z jmertic $
-
 /**
  * This file is used to control the authentication process.
  * It will call on the user authenticate and controll redirection
@@ -47,12 +45,7 @@ class SugarAuthenticate{
 	function SugarAuthenticate()
 	{
 	    // check in custom dir first, in case someone want's to override an auth controller
-		if (file_exists('custom/modules/Users/authentication/'.$this->authenticationDir.'/' . $this->userAuthenticateClass . '.php')) {
-            require_once('custom/modules/Users/authentication/'.$this->authenticationDir.'/' . $this->userAuthenticateClass . '.php');
-        }
-        elseif (file_exists('modules/Users/authentication/'.$this->authenticationDir.'/' . $this->userAuthenticateClass . '.php')) {
-            require_once('modules/Users/authentication/'.$this->authenticationDir.'/' . $this->userAuthenticateClass . '.php');
-        }
+	    SugarAutoLoader::requireWithCustom('modules/Users/authentication/'.$this->authenticationDir.'/' . $this->userAuthenticateClass . '.php');
 
         $this->userAuthenticate = new $this->userAuthenticateClass();
 	}

@@ -65,7 +65,7 @@ class SugarViewTest extends Sugar_PHPUnit_Framework_TestCase
         // backup custom file if it already exists
         if(file_exists('custom/modules/Contacts/metadata/listviewdefs.php')){
             copy('custom/modules/Contacts/metadata/listviewdefs.php', 'custom/modules/Contacts/metadata/listviewdefs.php.bak');
-            unlink('custom/modules/Contacts/metadata/listviewdefs.php');
+            SugarAutoLoader::unlink('custom/modules/Contacts/metadata/listviewdefs.php', false);
         }
         $this->_view->module = 'Contacts';
         $this->_view->type = 'list';
@@ -79,10 +79,10 @@ class SugarViewTest extends Sugar_PHPUnit_Framework_TestCase
         $customFile = 'custom/modules/Contacts/metadata/listviewdefs.php';
         if(!file_exists($customFile))
         {
-            sugar_file_put_contents($customFile, array());
+            SugarAutoLoader::touch($customFile, false);
             $customMetaDataFile = $this->_view->getMetaDataFile();
             $this->assertEquals($customFile, $customMetaDataFile, 'Did not load the correct custom metadata file');
-            unlink($customFile);
+            SugarAutoLoader::unlink($customFile, false);
         }
         // Restore custom file if we backed it up
         if(file_exists('custom/modules/Contacts/metadata/listviewdefs.php.bak')){

@@ -14,7 +14,6 @@
      * @param options
      */
     initialize: function (options) {
-        _.bindAll(this); // Don't want to worry about keeping track of "this"
         app.view.View.prototype.initialize.call(this, options);
 
         this.model = new Backbone.Model({
@@ -40,9 +39,9 @@
             quota_worst_amount : 0,
             quota_worst_percent : 0,
             quota_worst_above : 0,
-            show_projected_likely: options.context.forecasts.config.get('show_projected_likely'),
-            show_projected_best: options.context.forecasts.config.get('show_projected_best'),
-            show_projected_worst: options.context.forecasts.config.get('show_projected_worst'),
+            show_likely: options.context.forecasts.config.get('show_worksheet_likely'),
+            show_best: options.context.forecasts.config.get('show_worksheet_best'),
+            show_worst: options.context.forecasts.config.get('show_worksheet_worst'),
             pipeline : 0
         });
 
@@ -53,6 +52,14 @@
         this.bestTotal = 0;
         this.worstTotal = 0;
         this.updateProgress();
+    },
+
+    /**
+     * Clean up any left over bound data to our context
+     */
+    unbindData : function() {
+        if(this.context.forecasts) this.context.forecasts.off(null, null, this);
+        app.view.View.prototype.unbindData.call(this);
     },
 
     /**
@@ -68,11 +75,18 @@
         }
 
         if (this.context.forecasts) {
-            //update uer
+            //update user
             this.context.forecasts.on("change:selectedUser reset:selectedUser",
             function(context, selectedUser) {
                 this.updateProgressForSelectedUser(selectedUser);
                 this.updateProgress();
+            }, this);
+
+            //commits could have changed quotas or any other number being used in the projected panel, do a fresh pull
+            this.context.forecasts.on("change:commitForecastFlag", function(context, flag) {
+                if(flag) {
+                    this.updateProgress();
+                }
             }, this);
 
             //update timeperiod
@@ -252,13 +266,11 @@
 
         var method = self.shouldRollup ? "progressManager" : "progressRep";
 
-       var urlParams = {
+        var urlParams = {
             user_id: self.selectedUser.id,
             timeperiod_id : self.selectedTimePeriod.id
         };
-       var url = app.api.buildURL('Forecasts', method, '', urlParams);
-
-
+        var url = app.api.buildURL('Forecasts', method, '', urlParams);
         app.api.call('read', url, null, null, {
             success: function(data) {
                 if(self.shouldRollup) {

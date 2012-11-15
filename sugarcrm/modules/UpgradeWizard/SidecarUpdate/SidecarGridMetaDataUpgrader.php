@@ -25,7 +25,7 @@ class SidecarGridMetaDataUpgrader extends SidecarAbstractMetaDataUpgrader
      * of the metadata will come from the 6.6+ style metadata.
      */
     public function convertLegacyViewDefsToSidecar() {
-        $this->logUpgradeStatus('Converting ' . $this->client . ' list view defs for ' . $this->module);
+        $this->logUpgradeStatus('Converting ' . $this->client . ' ' . $this->viewtype . ' view defs for ' . $this->module);
         
         // Leave the original legacy viewdefs in tact
         $defs = $this->legacyViewdefs;
@@ -108,7 +108,8 @@ class SidecarGridMetaDataUpgrader extends SidecarAbstractMetaDataUpgrader
             } 
             
             // Fallback to the object type if there were no defs found
-            if (empty($newdefs)) {
+            // Bug 57216 - Upgrade wizard was dying on undeployed modules getType
+            if (empty($newdefs) && $this->deployed) {
                 require_once 'modules/ModuleBuilder/Module/StudioModuleFactory.php';
                 $sm = StudioModuleFactory::getStudioModule($this->module);
                 $moduleType = $sm->getType();

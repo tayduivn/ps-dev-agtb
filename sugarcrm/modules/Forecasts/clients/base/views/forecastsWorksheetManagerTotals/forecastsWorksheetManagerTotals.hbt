@@ -1,6 +1,6 @@
 <tr>
     <td>{{str "LBL_TOTAL" "Forecasts"}}</td>
-    <td>{{formatCurrency quota "-99"}}</td>
+    <td class="tright">{{formatCurrency quota "-99"}}</td>
 
     {{#if show_worksheet_likely}}
         <td class="tright">{{formatCurrency likely_case "-99"}}</td>

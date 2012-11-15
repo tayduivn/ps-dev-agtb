@@ -240,6 +240,8 @@ class SidecarGridLayoutMetaDataParser extends GridLayoutMetaDataParser {
         //$currentFields = $this->getFieldsFromLayout($panels);
 
         $canonicalPanels = array();
+        
+        $maxCols = $this->getMaxColumns();
 
         foreach ($panels as $pName => $panel) {
             $fields = array();
@@ -263,6 +265,26 @@ class SidecarGridLayoutMetaDataParser extends GridLayoutMetaDataParser {
 
                     // filler => ''
                     if ($this->isFiller($cell)) {
+                        // 58308 - Adjust displayColumns on the last field if it 
+                        // is set and we are an end column
+                        if ($maxCols - $offset == 1) {
+                            $lastRowIndex = count($fields) - 1;
+                            if (is_array($fields[$lastRowIndex]) && isset($fields[$lastRowIndex]['displayParams']['colspan'])) {
+                                $redux = $maxCols - $fields[$lastRowIndex]['displayParams']['colspan'];
+                                if ($redux > 0) {
+                                    $fields[$lastRowIndex]['displayParams']['colspan'] = $redux;
+                                } else {
+                                    // Remove the colspan altogether
+                                    unset($fields[$lastRowIndex]['displayParams']['colspan']);
+                                    
+                                    // If displayParams is empty now, get rid of it too
+                                    if (empty($fields[$lastRowIndex]['displayParams'])) {
+                                        unset($fields[$lastRowIndex]['displayParams']);
+                                    }
+                                }
+                            }
+                        }
+                        
                         $lastField = '';
                     }
                     else {

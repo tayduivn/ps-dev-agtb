@@ -20,13 +20,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
-
-if(file_exists('custom/include/Sugarpdf/sugarpdf_config.php')){
-    require_once('custom/include/Sugarpdf/sugarpdf_config.php');
-} else {
-    require_once('include/Sugarpdf/sugarpdf_config.php');
-}
-
+SugarAutoLoader::requireWithCustom('include/Sugarpdf/sugarpdf_config.php');
 require_once('include/tcpdf/tcpdf.php');
 require_once('include/Sugarpdf/SugarpdfHelper.php');
 

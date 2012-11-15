@@ -33,8 +33,8 @@ class Group extends User {
 	var $importable = false;
 
     
-	function Group() {
-		parent::User();
+	public function __construct() {
+		parent::__construct();
 	}
 
 	/** 

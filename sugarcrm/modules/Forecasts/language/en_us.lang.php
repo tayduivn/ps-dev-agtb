@@ -46,7 +46,7 @@ $mod_strings = array (
     'LBL_REPORTS_TO_USER_NAME' => 'Reports To',
 
     //forecast table
-    'LBL_FORECAST_ID' => 'ID',
+    'LBL_FORECAST_ID' => 'Forecast ID',
     'LBL_FORECAST_TIME_ID' => 'Time Period ID',
     'LBL_FORECAST_TYPE' => 'Forecast Type',
     'LBL_FORECAST_OPP_COUNT' => 'Opportunities',
@@ -191,7 +191,10 @@ $mod_strings = array (
     'LBL_LIKELY_CASE_VALUE' => 'Likely (Adjusted)',
     'LBL_WORST_CASE_VALUE' => 'Worst (Adjusted)',
     'LBL_CURRENCY' => 'Currency',
+    'LBL_CURRENCY_ID' => 'Currency ID',
     'LBL_CURRENCY_RATE' => 'Currency Rate',
+    'LBL_BASE_RATE' => 'Base Rate',
+
     'LBL_BEST_CASE_BASE_CURRENCY' => 'Best (Adjusted) base currency',
     'LBL_LIKELY_CASE_BASE_CURRENCY' => 'Likely (Adjusted) base currency',
     'LBL_WORST_CASE_BASE_CURRENCY' => 'Worst (Adjusted) base currency',
@@ -228,6 +231,9 @@ $mod_strings = array (
     'LBL_AMOUNT' => 'Amount',
     'LBL_DATE_CLOSED' => 'Expected Close',
     'LBL_PROBABILITY' => 'Probability',
+    'LBL_PRODUCT_ID' => 'Product ID',
+    'LBL_QUOTA_ID' => 'Quota ID',
+    'LBL_VERSION' => 'Version',
 
     //Labels for forecasting history log and endpoint
     'LBL_ERROR_NOT_MANAGER' => 'Error: user {0} does not have manager access to request forecasts for {1}',
@@ -244,6 +250,14 @@ $mod_strings = array (
     'LBL_COMMITTED_HISTORY_CHANGED' => 'Updated forecast worst, likely and best all stayed the same',
     'LBL_COMMITTED_THIS_MONTH' => 'This month on {0}',
     'LBL_COMMITTED_MONTHS_AGO' => '{0} months ago on {1}',
+    'LBL_COMMITTED_HISTORY_BEST_LIKELY_WORST_SETUP' => 'Setup forecast likely to {5}, best to {2} and worst to {8}',
+    'LBL_COMMITTED_HISTORY_BEST_LIKELY_SETUP' => 'Setup forecast likely to {5} and best to {2}',
+    'LBL_COMMITTED_HISTORY_LIKELY_WORST_SETUP' => 'Setup forecast likely to {2} and worst to {5}',
+    'LBL_COMMITTED_HISTORY_BEST_WORST_SETUP' => 'Setup forecast best to {2} and worst to {5}',
+    'LBL_COMMITTED_HISTORY_BEST_SETUP' => 'Setup forecast best to {2}',
+    'LBL_COMMITTED_HISTORY_LIKELY_SETUP' => 'Setup forecast likely to {2}',
+    'LBL_COMMITTED_HISTORY_WORST_SETUP' => 'Setup forecast worst to {2}',
+    'LBL_COMMITTED_HISTORY_SETUP' => 'Setup forecast likely, best and worst all stayed the same',
 
     //Labels for jsTree implementation
     'LBL_TREE_PARENT' => 'Parent',
@@ -258,7 +272,10 @@ $mod_strings = array (
     'LBL_TOTAL' => 'Total',
     'LBL_CLICKTOEDIT_INVALID' => 'Invalid',
     'LBL_WORKSHEET_SAVE_CONFIRM' => 'You have unsaved changes in your Worksheet. Press Ok to save these as a draft and continue, or Cancel to discard these changes continue.',
+    'LBL_WORKSHEET_COMMIT_CONFIRM' => 'You have saved changes that have not been committed in the rep view. The saved changes will not be visible in the Manager view until you commit.<br>Press OK to commit the changes and continue, or Cancel to not commit the changes and continue.',
+    'LBL_WORKSHEET_COMMIT_ALERT' => 'You have committed your Rep view, but not your Manager view; the team\'s forecast will not be committed until your Manager view is committed.',
     'LBL_WORKSHEET_SAVE_CONFIRM_UNLOAD' => 'You have unsaved changes in your Worksheet.',
+    'LBL_WORKSHEET_ID' => 'Worksheet ID',
 
     // Labels for Chart Options
     'LBL_DATA_SET' => 'Data Set:',
@@ -302,7 +319,6 @@ $mod_strings = array (
 
     // Actions Dropdown
     'LBL_ACTIONS' => 'Actions',
-    'LBL_EXPORT_PDF' => 'Export PDF',
     'LBL_EXPORT_CSV' => 'Export CSV',
     'LBL_CANCEL' => 'Cancel',
 
@@ -319,8 +335,8 @@ $mod_strings = array (
 
     // config panels strings
     // splash screens
-    'LBL_FORECASTS_CONFIG_TITLE' => 'Forecasts Configuration',
-    'LBL_FORECASTS_CONFIG_ADMIN_SPLASH_1' => 'Welcome to the forecasting setup. We\'ll guide you through step by step in setting up x,y and z so you\'ll be on your way in no time. Click next to get started.',
+    'LBL_FORECASTS_CONFIG_TITLE' => 'Forecasts Setting',
+    'LBL_FORECASTS_CONFIG_ADMIN_SPLASH_1' => 'Welcome to the Forecasts Setting!<p><p>The wizard will guide you through the setup step by step and default values are provided for each section so you\'ll be on your way in no time!',
     'LBL_FORECASTS_CONFIG_ADMIN_SPLASH_2' => 'You can also do manual setup by clicking ',
     'LNK_FORECASTS_CONFIG_ADMIN_SPLASH_HERE' => 'here.',
     'LBL_FORECASTS_CONFIG_USER_SPLASH' => 'Forecasting has not been configured yet.  Please contact your system administrator.',
@@ -332,6 +348,8 @@ $mod_strings = array (
     'LBL_FORECASTS_CONFIG_BREADCRUMB_VARIABLES' => 'Variables',
 
     // timeperiod config
+    //TODO-sfa remove this once the ability to map buckets when they get changed is implemented (SFA-215).
+    'LBL_FORECASTS_CONFIG_TIMEPERIOD_SETUP_NOTICE' => 'Please note that Time Period page will be read only after the first commit or save draft; for this reason the time period should be set up carefully.',
     'LBL_FORECASTS_CONFIG_TIMEPERIOD_DESC' => 'Configure the timeperiods users can forecast over.',
     'LBL_FORECASTS_CONFIG_TIMEPERIOD_TYPE' => 'Select the type of year your organization uses for accounting.',
     'LBL_FORECASTS_CONFIG_TIMEPERIOD' => 'Choose the time periods you want to forecast over:',
@@ -342,17 +360,20 @@ $mod_strings = array (
     'LBL_FORECASTS_CONFIG_TIMEPERIODS_BACKWARD' => 'Choose how many past time periods you want users to see:',
 
     // category config
+    //TODO-sfa remove this once the ability to map buckets when they get changed is implemented (SFA-215).
+    'LBL_FORECASTS_CONFIG_CATEGORY_SETUP_NOTICE' => 'Please note that Category page will be read only after the first commit or save draft; for this reason the Category should be set up carefully.',
     'LBL_FORECASTS_CONFIG_CATEGORIES' => 'Forecast Category Options:',
     'LBL_FORECASTS_CONFIG_CATEGORY_OPTIONS' => 'Select the way you would like to categorize opportunities.',
-    'LBL_FORECASTS_CONFIG_SHOW_2_CATEGORIES' => 'Two Categories: This option gives a user the ability to be included or omitted from a forecast.',
-    'LBL_FORECASTS_CONFIG_SHOW_3_CATEGORIES' => 'Three Categories: This option gives a user the ability to categorize their opportunities that are not included in the commit but are upside and have the potential of closing if everything goes well and opportunities that are to be omitted from the forecast.',
-    'LBL_FORECASTS_CONFIG_SHOW_N_CATEGORIES' => 'N Categories: This option gives a user the ability to categorize their opportunities to be committed into the forecast into a committed category, omitted category and any other categories that you setup.',
+    'LBL_FORECASTS_CONFIG_SHOW_BINARY_RANGES_DESCRIPTION' => 'This option gives a user the ability to be included or omitted from a forecast.',
+    'LBL_FORECASTS_CONFIG_SHOW_BUCKETS_RANGES_DESCRIPTION' => 'This option gives a user the ability to categorize their opportunities that are not included in the commit but are upside and have the potential of closing if everything goes well and opportunities that are to be omitted from the forecast.',
+    'LBL_FORECASTS_CONFIG_SHOW_CUSTOM_BUCKETS_CATEGORIES' => 'Custom Categories: This option gives a user the ability to categorize their opportunities to be committed into the forecast into a committed category, omitted category and any other categories that you setup.',
 
     // range config
-    'LBL_FORECASTS_CONFIG_WORKSHEET_RANGE' => 'Show these ranges on the worksheets',
-    'LBL_FORECASTS_CONFIG_WORKSHEET_RANGE_LIKELY' => 'Show Likely Case Column',
-    'LBL_FORECASTS_CONFIG_WORKSHEET_RANGE_BEST' => 'Show Best Case Column',
-    'LBL_FORECASTS_CONFIG_WORKSHEET_RANGE_WORST' => 'Show Worst Case Column',
+    'LBL_FORECASTS_CONFIG_WORKSHEET_RANGE' => 'Select the column you would like the user to fill out for their forecast for each opportunity.',
+    'LBL_FORECASTS_CONFIG_WORKSHEET_LIKELY_INFO' => 'Please note the Likely amount is tied to the amount shown in Opportunities; for this reason the Likely column cannot be hidden.',
+    'LBL_FORECASTS_CONFIG_WORKSHEET_RANGE_LIKELY' => 'Likely',
+    'LBL_FORECASTS_CONFIG_WORKSHEET_RANGE_BEST' => 'Best',
+    'LBL_FORECASTS_CONFIG_WORKSHEET_RANGE_WORST' => 'Worst',
     'LBL_FORECASTS_CONFIG_PROJECTED_RANGE' => 'Show projected ranges in the totals',
     'LBL_FORECASTS_CONFIG_PROJECTED_RANGE_LIKELY' => 'Show Likely Case Totals',
     'LBL_FORECASTS_CONFIG_PROJECTED_RANGE_BEST' => 'Show Best Case Totals',
@@ -364,4 +385,8 @@ $mod_strings = array (
     'LBL_FORECASTS_CONFIG_VARIABLES_CLOSED_LOST_STAGE' => 'Please select the Sales Stage that represent closed and lost opportunities:',
     'LBL_FORECASTS_CONFIG_VARIABLES_CLOSED_WON_STAGE' => 'Please select the Sales Stage that represent closed and won opportunities:',
     'LBL_FORECASTS_CONFIG_VARIABLES_FORMULA_DESC' => 'Therefore the pipeline formula will be:',
+
+    'LBL_FORECASTS_WIZARD_SUCCESS_TITLE' => 'Success:',
+    'LBL_FORECASTS_WIZARD_SUCCESS_MESSAGE' => 'You successfully set up your forecasting module. Please wait while the module loads.',
+    'LBL_FORECASTS_TABBED_CONFIG_SUCCESS_MESSAGE' => 'The setting has been saved. Please wait while the module reloads.'
 );
