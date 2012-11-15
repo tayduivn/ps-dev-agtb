@@ -630,17 +630,11 @@ class SubPanelDefinitions
 					continue;
 				}
 
-
-                //History and Activities are special subpanels that are not listed in the global module list,
-                $allModules = array_merge(array("History", "Activities"), $GLOBALS['moduleList'] );
 				//check permissions.
-                $exempt = array_key_exists ( $values_array [ 'module' ], $modules_exempt_from_availability_check ) ;
-				$ok = $exempt || (in_array($values_array['module'], $allModules) &&
-                    (!ACLController::moduleSupportsACL ( $values_array [ 'module' ] ) ||
-                     ACLController::checkAccess ( $values_array [ 'module' ], 'list', true ) )
-                ) ;
+				$exempt = array_key_exists ( $values_array [ 'module' ], $modules_exempt_from_availability_check ) ;
+				$ok = $exempt || ( (! ACLController::moduleSupportsACL ( $values_array [ 'module' ] ) || ACLController::checkAccess ( $values_array [ 'module' ], 'list', true ) ) ) ;
 
-				$GLOBALS['log']->debug("SubPanelDefinitions->get_available_tabs(): $key = " . ($exempt ? "exempt " : "not exempt " . ( $ok ? " ACL OK" : "" ) ) ) ;
+				$GLOBALS [ 'log' ]->debug ( "SubPanelDefinitions->get_available_tabs(): " . $key . "= " . ( $exempt ? "exempt " : "not exempt " .( $ok ? " ACL OK" : "" ) ) ) ;
 
 				if ( $ok )
 				{
@@ -817,13 +811,15 @@ class SubPanelDefinitions
 	 * retrieve hidden subpanels
 	 */
 	function get_hidden_subpanels(){
-
 		//create variable as static to minimize queries
 		static $hidden_subpanels = null;
 
-		// if the static value is not already cached, then retrieve it.
-		if(empty($hidden_subpanels) || self::$refreshHiddenSubpanels)
+		// if the static value is not already cached, or explicitly directed to, then retrieve it.
+		if($hidden_subpanels === null || self::$refreshHiddenSubpanels)
 		{
+            // Set hidden subpanels to an array. This allows an empty hidden 
+            // subpanel list to pass checks later. - rgonzalez
+            $hidden_subpanels = array();
 
 			//create Administration object and retrieve any settings for panels
 			$administration = new Administration();

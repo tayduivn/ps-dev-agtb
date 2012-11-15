@@ -91,6 +91,8 @@ class Bug52063Test extends Sugar_PHPUnit_Framework_TestCase
 
     public function setUp()
     {
+        $this->markTestIncomplete("Marking as incomplete as it can take long time to run");
+        return;
         $GLOBALS['app_list_strings'] = return_app_list_strings_language($GLOBALS['current_language']);
         $beanList = array();
         $beanFiles = array();
@@ -111,6 +113,8 @@ class Bug52063Test extends Sugar_PHPUnit_Framework_TestCase
 
     public function tearDown()
     {
+        $this->markTestIncomplete("Marking as incomplete as it can take long time to run");
+        return;
         $mbc = new ModuleBuilderController();
         $this->currencyFieldDef1['name'] = 'c1_c';
         $_REQUEST = $this->currencyFieldDef1;
@@ -136,6 +140,8 @@ class Bug52063Test extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testCurrencyIdDbType()
     {
+        $this->markTestIncomplete("Marking as incomplete as it can take long time to run");
+        return;
         $cType = '';
         $bean = BeanFactory::getBean($this->targetModule);
         if(!empty($bean))

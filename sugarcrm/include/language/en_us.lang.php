@@ -1791,6 +1791,7 @@ $app_strings = array (
   'LBL_TOUR_BACK' => 'Back',
   'LBL_TOUR_CLOSE' => 'Close',
   'LBL_TOUR_BTN_DONE' => 'Done',
+  'LBL_TOUR_BTN_DONE' => 'Done',
   'LBL_TOUR_TAKE_TOUR' => 'Take the tour',
   'LBL_TOUR_FULL_TOUR' => 'Full Tour',
   'LBL_TOUR_MODULE' => 'Tour this Page',

@@ -133,23 +133,11 @@ class RestThemeTest extends RestTestBase
         $this->_user->is_admin = 0;
         $this->_user->save();
         $GLOBALS['db']->commit();
-
-        $dir = sugar_cached('themes/clients/' . $args['platform'] . '/' . $args['themeName'] . '/');
-        $ffl = scandir($dir);
-        $files = array();
-        foreach ($ffl as $entry) {
-            if ($entry != '.' && $entry != '..') {
-                if (!is_dir($dir . '/' . $entry)) {
-                    $files[] = $dir . $entry;
-                }
-            }
-        }
-
         // TEST the boostrap.css file has been created
-        $this->assertTrue(file_exists($files[0]), "Created bootstrap file does not exist");
+        $this->assertTrue(file_exists(sugar_cached('themes/clients/' . $args['platform'] . '/' . $args['themeName'] . '/bootstrap.css')), "Created bootstrap file does not exist");
 
         // TEST the boostrap.css file is not empty
-        $this->assertTrue(filesize($files[0]) > 0, "Created file has no contents");
+        $this->assertTrue(filesize(sugar_cached('themes/clients/' . $args['platform'] . '/' . $args['themeName'] . '/bootstrap.css')) > 0, "Created file has no contents");
         $thisTheme = new SidecarTheme($args['platform'], $args['themeName']);
 
         // TEST we have updated the variables in variables.less
@@ -166,7 +154,7 @@ class RestThemeTest extends RestTestBase
         $this->assertEquals(
             // Some databases (*cough* ORACLE *cough*) are backslash escaping this value
             stripslashes(html_entity_decode($row['value'])),
-            '"' . $GLOBALS['sugar_config']['site_url'] .'/'. $files[0].'"',
+            '"' . $GLOBALS['sugar_config']['site_url'] . '/cache/themes/clients/' . $args['platform'] . '/' . $args['themeName'] . '/bootstrap.css"',
             "$row[value] does not match the expected value"
         );
     }
@@ -193,22 +181,11 @@ class RestThemeTest extends RestTestBase
         $this->_user->is_admin = 0;
         $this->_user->save();
         $GLOBALS['db']->commit();
-        $dir = sugar_cached('themes/clients/' . $args['platform'] . '/' . $args['themeName'] . '/');
-        $ffl = scandir($dir);
-        $files = array();
-        foreach ($ffl as $entry) {
-            if ($entry != '.' && $entry != '..') {
-                if (!is_dir($dir . '/' . $entry)) {
-                    $files[] = $dir . $entry;
-                }
-            }
-        }
-        $this->assertEquals(count($files), 1, "More than 1 css file created");
-            // TEST boostrap.css file has been created
-        $this->assertEquals(file_exists($files[0]), true, "Bootstrap file was not reset");
+        // TEST boostrap.css file has been created
+        $this->assertEquals(file_exists(sugar_cached('themes/clients/' . $args['platform'] . '/' . $args['themeName'] . '/bootstrap.css')), true, "Bootstrap file was not reset");
 
         // TEST boostrap.css file is not empty
-        $this->assertNotEmpty(file_get_contents($files[0]), "Bootstrap.css is empty");
+        $this->assertNotEmpty(file_get_contents(sugar_cached('themes/clients/' . $args['platform'] . '/' . $args['themeName'] . '/bootstrap.css')), "Bootstrap.css is empty");
 
         // TEST variables.less file is not empty
         $this->assertNotEmpty(file_get_contents('custom/themes/clients/' . $args['platform'] . '/' . $args['themeName'] . '/variables.less'),"Variables.less is not empty");
@@ -250,6 +227,39 @@ class RestThemeTest extends RestTestBase
         // TEST= the CSS contains the expected baseUrl
         $this->assertContains("../../../../../styleguide/assets", $css);
     }
+
+    
+    /**
+     * @group rest
+     */
+    public function testGetUserPreferredTheme()
+    {
+        $oldPreferredTheme = null;
+        $preferredTheme = 'MyTestPreferredTheme';
+
+        // Save preferred theme stored in session
+        if (isset($_SESSION['authenticated_user_theme'])) {
+            $oldPreferredTheme = $_SESSION['authenticated_user_theme'];
+        }
+        $_SESSION['authenticated_user_theme'] = $preferredTheme;
+
+        // Create a theme without defining a themeName
+        $theme = new SidecarTheme($this->platformTest, null);
+        $paths = $theme->getPaths();
+
+        // Reset session var
+        unset($_SESSION['authenticated_user_theme']);
+        if ($oldPreferredTheme) {
+            $_SESSION['authenticated_user_theme'] = $oldPreferredTheme;
+        }
+
+        // TEST the class has retrieve the user preferred theme
+        $this->assertEquals(
+            $paths['base'],
+            'styleguide/themes/clients/' . $this->platformTest . '/' . $preferredTheme . '/'
+        );
+    }
+
 
     private function rawurlencode($args) {
         $getString = '?';

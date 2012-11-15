@@ -123,6 +123,7 @@ class MetadataApi extends SugarApi {
             $this->platforms = array('base');
         }
 
+
         $data = array();
 
         $userHashKey = '_PUBLIC_';
@@ -144,11 +145,12 @@ class MetadataApi extends SugarApi {
             }
         }
 
+        $this->jssourceFilter = $this->getJSSourcePlatforms($args);
+
         //If we failed to load the metadata from cache, load it now the hard way.
         if (empty($data)) {
             $data = $this->loadMetadata($hashKey);
         }
-
         $data['jssource'] = $this->buildJSFileFromMD($data, $this->platforms[0]);
 
         //If we had to generate a new hash, create the etag with the new hash
@@ -180,13 +182,13 @@ class MetadataApi extends SugarApi {
             foreach($admin->settings AS $setting_name => $setting_value) {
                 if(stristr($setting_name, $prefix)) {
                     $key = str_replace($prefix, '', $setting_name);
-
+                    
                     // Empty array was getting decoded as '[]' as tertiary was falsy .. this fixes
                     $decoded = json_decode(html_entity_decode($setting_value));
                     $configs[$key] = $setting_value; // set to fallback in case
                     if (strcasecmp($setting_name, "null") == 0 || $decoded !== NULL) {
                         $configs[$key] = $decoded;
-                    }
+                    } 
                 }
             }
         }
@@ -197,7 +199,6 @@ class MetadataApi extends SugarApi {
             $app_strings = return_application_language($current_language);
             $app_list_strings = return_app_list_strings_language($current_language);
         }
-
 
         // Default the type filter to everything available to the public, no module info at this time
         $this->typeFilter = array('fields','app_strings','views', 'layouts', 'config', 'jssource');
@@ -228,27 +229,27 @@ class MetadataApi extends SugarApi {
         $app_list_strings = $mm->getAppListStrings();
         $app_list_strings_public = array();
         $app_list_strings_public['available_language_dom'] = $app_list_strings['available_language_dom'];
-
+        
         // Let clients fill in any gaps that may need to be filled in
         $app_list_strings_public = $this->fillInAppListStrings($app_list_strings_public, $app_list_strings);
 
         // Start collecting data
         $data = array();
 
-        $data['fields']  = $mm->getSugarClientFiles('field');
-        $data['views']   = $mm->getSugarClientFiles('view');
-        $data['layouts'] = $mm->getSugarLayouts();
-        $data['view_templates'] = $mm->getViewTemplates();
-        $data['app_strings'] = $mm->getAppStrings();
-        $data['app_list_strings'] = $app_list_strings_public;
-        $data['config'] = $this->getConfigs();
-        $data['jssource'] = $this->buildJSFileFromMD($data, $this->platforms[0]);
-        $data['modules'] = array(
-            "Login" => array("fields" => array())
-        );
-        $data["_hash"] = md5(serialize($data));
+        $this->jssourceFilter = $this->getJSSourcePlatforms($args);
 
-        $baseChunks = array('fields','app_strings','views', 'layouts', 'config', 'jssource');
+        $data['fields']  = $mm->getSugarClientFilesForPlatforms('field', $this->jssourceFilter);
+        $data['views']   = $mm->getSugarClientFilesForPlatforms('view', $this->jssourceFilter);
+        $data['layouts'] = $mm->getSugarClientFilesForPlatforms('layout', $this->jssourceFilter);
+        $data['view_templates']   = $mm->getViewTemplates();
+        $data['app_strings']      = $mm->getAppStrings();
+        $data['app_list_strings'] = $app_list_strings_public;
+        $data['modules'] = array(
+            "Login" => array("fields" => array()));
+        $data['config']           = $this->getConfigs();
+        $data['jssource']         = $this->buildJSFileFromMD($data, $this->platforms[0]);        
+        $data["_hash"] = md5(serialize($data));
+        $baseChunks = array('view_templates','fields','app_strings','views', 'layouts', 'config', 'jssource');
 
         return $this->filterResults($args, $data, $onlyHash, $baseChunks);
     }
@@ -290,32 +291,57 @@ class MetadataApi extends SugarApi {
         return $sugar_config['site_url'] . "/{$path}";
     }
 
+
     protected function buildJSForComponents(&$data) {
         $js = "";
-        foreach(array('fields', 'views', 'layouts') as $mdType){
+        $platforms = array_reverse($this->jssourceFilter);
+        
+        foreach(array('fields', 'views', 'layouts') as $mdType) {
+
             if (!empty($data[$mdType])){
+                $js  .= ",\n\t$mdType:{";
+                $plat = '';
 
-                $js .= ",\n\t$mdType:{";
-                $comp = '';
+                foreach ($platforms as $platform) {
+                    if (isset($data[$mdType][$platform])) {
+                        $plat .= ",\n\t\t\"$platform\":{";
+                        $comp = '';
 
-                foreach($data[$mdType] as $name => $component) {
-                    if (is_array($component) && !empty($component['controller']))
-                    {
-                        $controller = $component['controller'];
-                        // remove additional symbols in end of js content - it will be included in content
-                        $controller = trim(trim($controller), ",;");
-                        $comp .= ",\n\t\t\"$name\":{controller:$controller}";
-                        unset($data[$mdType][$name]['controller']);
-
+                        foreach($data[$mdType][$platform] as $name => $component) {
+                            if (is_array($component) && !empty($component['controller'])) {
+                                $controller = $component['controller'];
+                                // remove additional symbols in end of js content - it will be included in content
+                                $controller = trim(trim($controller), ",;");
+                                $controller = $this->insertHeaderComment($controller, $mdType, $name, $platform);
+                                $comp .= ",\n\t\t\"$name\":{controller:\n$controller}";
+                                unset($data[$mdType][$name]['controller']);
+                            }
+                        }
+                        //Chop of the first comma in $comp
+                        $plat .= substr($comp,1);
+                        $plat .= "\n\t}";
                     }
                 }
-                //Chop of the first comma in $comp
-                $js .= substr($comp,1);
+                //Chop of the first comma in $plat
+                $js .= substr($plat, 1);
                 $js .= "\n\t}";
             }
         }
         //Chop of the first comma in $js
         return substr($js,1);
+    }
+    
+    // Helper to insert header comments for controllers
+    private function insertHeaderComment($controller, $mdType, $name, $platform) {
+        $singularType = substr($mdType, 0, -1);
+        $needle = '({';
+        $headerComment = "\n\t// " . ucfirst($name) ." ". ucfirst($singularType) . " ($platform)";
+
+        // Find position "after" needle
+        $pos = (strpos($controller, $needle) + strlen($needle));
+
+        // Insert our comment and return ammended controller
+        return substr($controller, 0, $pos) . $headerComment . substr($controller, $pos);
     }
 
     protected function loadMetadata($hashKey) {
@@ -347,10 +373,9 @@ class MetadataApi extends SugarApi {
                             $data['full_module_list'][$fieldDef['module']] = $fieldDef['module'];
                         }
                     } elseif (isset($fieldDef['type']) && ($fieldDef['type'] == 'link')) {
-                        if ($bean->load_relationship($fieldDef['name'])){
-                            $otherSide = $bean->$fieldDef['name']->getRelatedModuleName();
-                            $data['full_module_list'][$otherSide] = $otherSide;
-                        }
+                        $bean->load_relationship($fieldDef['name']);
+                        $otherSide = $bean->$fieldDef['name']->getRelatedModuleName();
+                        $data['full_module_list'][$otherSide] = $otherSide;
                     }
                 }
             }
@@ -374,10 +399,9 @@ class MetadataApi extends SugarApi {
                 }
             }
         }
-        
-        $data['fields']  = $mm->getSugarClientFiles('field');
-        $data['views']   = $mm->getSugarClientFiles('view');
-        $data['layouts'] = $mm->getSugarClientFiles('layout');
+        $data['fields']  = $mm->getSugarClientFilesForPlatforms('field', $this->jssourceFilter);
+        $data['views']   = $mm->getSugarClientFilesForPlatforms('view', $this->jssourceFilter);
+        $data['layouts'] = $mm->getSugarClientFilesForPlatforms('layout', $this->jssourceFilter);
         $data['view_templates'] = $mm->getViewTemplates();
         $data['app_strings'] = $mm->getAppStrings();
         $data['app_list_strings'] = $mm->getAppListStrings();
@@ -575,7 +599,7 @@ class MetadataApi extends SugarApi {
 
     /**
      * Gets mod strings
-     *
+     * 
      * @param array $data The metadata array
      * @return array
      */
@@ -593,7 +617,7 @@ class MetadataApi extends SugarApi {
     /**
      * Gets currencies
      * @return array
-     */
+     */  
     public function getSystemCurrencies() {
         $currencies = array();
         require_once('modules/Currencies/ListCurrency.php');
@@ -619,7 +643,7 @@ class MetadataApi extends SugarApi {
     }
     /**
      * Cleans up the module list for any modules that should not be on it
-     *
+     * 
      * @param array $module_list The module list array
      * @return array
      */
@@ -636,7 +660,7 @@ class MetadataApi extends SugarApi {
                 }
             }
         }
-
+        
         return $module_list;
     }
 
@@ -661,5 +685,26 @@ class MetadataApi extends SugarApi {
 
         return $ret;
 
+    }
+
+    /**
+     * Reconciles which platforms jssource components will be built for. 
+     * @param array $args request args
+     * @return array
+     */
+    private function getJSSourcePlatforms($args) {
+        $arrJSSourcePlatforms = array();
+        // If no jssource_filter supplied, jssourceFilter starts with all platforms loaded (jssource
+        // components will be built for both their application's platform (e.g. portal) AND base.
+        // Clients should only set this filter if their widgets do NOT extendFrom base widgets.
+        if (!empty($args['jssource_filter']) ) {
+            $platforms = explode(",", $args['jssource_filter']);
+            if ($platforms != false) {
+                $arrJSSourcePlatforms = $platforms;
+            }
+        } else {
+            $arrJSSourcePlatforms = $this->platforms;
+        }
+        return $arrJSSourcePlatforms;
     }
 }

@@ -37,7 +37,7 @@ require_once 'modules/TimePeriods/TimePeriod.php';
 
 class SugarTestTimePeriodUtilities
 {
-    private static $_createdTimePeriods = array();
+    public static $_createdTimePeriods = array();
 
     private function __construct() {}
 
