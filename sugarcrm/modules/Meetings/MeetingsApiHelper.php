@@ -1,6 +1,6 @@
 <?php
-if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
-/*********************************************************************************
+if (!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
+/********************************************************************************
  *The contents of this file are subject to the SugarCRM Professional End User License Agreement
  *("License") which can be viewed at http://www.sugarcrm.com/EULA.
  *By installing or using this file, You have unconditionally agreed to the terms and conditions of the License, and You may
@@ -19,32 +19,44 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *to the License for the specific language governing these rights and limitations under the License.
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
-/*********************************************************************************
- * $Id: en_us.lang.php 55130 2010-03-08 20:46:39Z jmertic $
- * Description:  Defines the English language pack for the base application.
- * Portions created by SugarCRM are Copyright (C) SugarCRM, Inc.
- * All Rights Reserved.
- * Contributor(s): ______________________________________..
- ********************************************************************************/
 
-$mod_strings = array (
-  'LBL_MODULE_NAME' => 'Accounts',
-  'LBL_MODULE_NAME_SINGULAR' => 'Account',
-  'LBL_MODULE_TITLE' => 'Accounts: Home',
-  'LBL_SEARCH_FORM_TITLE' => 'Account Search',
-  'LBL_LIST_FORM_TITLE' => 'Account List',
-  'LBL_NEW_FORM_TITLE' => 'Create Account',
-  'LNK_NEW_CONTACT' => 'Create Contact',
-  'LNK_NEW_ACCOUNT' => 'Create Account',
-  'LNK_NEW_OPPORTUNITY' => 'Create Opportunity',
-  'LNK_NEW_CASE' => 'Create Case',
-  'LNK_NEW_NOTE' => 'Create Note or Attachment',
-  'LNK_NEW_CALL' => 'Log Call',
-  'LNK_NEW_EMAIL' => 'Archive Email',
-  'LNK_NEW_MEETING' => 'Schedule Meeting',
-  'LNK_NEW_TASK' => 'Create Task',
-  'ERR_DELETE_RECORD' => 'A record number must be specified to delete the account.',
-);
+require_once('data/SugarBeanApiHelper.php');
+
+class MeetingsApiHelper extends SugarBeanApiHelper
+{
+    /**
+     * This function adds the Meetings specific saves for leads, contacts, and users on a call also updates the vcal
+     * @param SugarBean $bean
+     * @param array $submittedData
+     * @param array $options
+     * @return array
+     */
+    public function populateFromApi(SugarBean $bean, array $submittedData, array $options = array())
+    {
+        $data = parent::populateFromApi($bean, $submittedData, $options);
+
+        if($bean->status != 'Held') {
+
+            $userInvitees[] = $bean->assigned_user_id;
+            // Call the Call module's save function to handle saving other fields besides
+            // the users and contacts relationships
+
+            $bean->update_vcal = false;    // Bug #49195 : don't update vcal b/s related users aren't saved yet, create vcal cache below
+
+            $bean->users_arr = $userInvitees;
+
+            $bean->save(true);
+
+            $bean->setUserInvitees($userInvitees);
 
 
-?>
+
+            vCal::cache_sugar_vcal(BeanFactory::getBean('Users', $bean->assigned_user_id));
+        }
+
+
+        return $data;
+    }
+
+
+}

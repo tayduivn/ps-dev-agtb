@@ -1,5 +1,4 @@
 <?php
-if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 /*********************************************************************************
  * The contents of this file are subject to the SugarCRM Professional End User
  * License Agreement ("License") which can be viewed at
@@ -23,17 +22,40 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * All Rights Reserved.
  ********************************************************************************/
 
-$mod_strings = array ( 
-	'LBL_MODULE_NAME'			=> 'Groups',
-	'LBL_MODULE_NAME_SINGULAR'		=> 'Group',
-	'LBL_GROUP_NAME'			=> 'Group Name:',
-	'LBL_DESCRIPTION'			=> 'Description:',
-	'LBL_TEAM'					=> 'Team:',
-	// ListView
-	'LBL_LIST_TITLE'			=> 'Groups',
-	// Links
-	'LNK_ALL_GROUPS'			=> 'All Groups',
-	'LNK_NEW_GROUP'				=> 'Create Group',
-	'LNK_CONVERT_USER'			=> 'Convert User to Group', 
-);
-?>
+require_once('tests/rest/RestTestBase.php');
+
+class RestBug54947Test extends RestTestBase {
+    public $createdFiles = array();
+
+    public function tearDown()
+    {
+        // Cleanup
+        foreach($this->createdFiles as $file)
+        {
+        	if (is_file($file))
+        		SugarAutoLoader::unlink($file, true);
+        }
+
+        parent::tearDown();
+    }
+    /**
+     * @group rest
+     */
+    public function testModuleNameSingular() {
+        $restReply = $this->_restCall('metadata?type_filter=mod_strings&platform=mobile');
+        foreach (SugarAutoLoader::existingCustom('include/MVC/Controller/wireless_module_registry.php') as $file) {
+            require $file;
+        }
+
+        // $wireless_module_registry is defined in the file loaded above
+        $enabledMobile = array_keys($wireless_module_registry);
+        
+        foreach($enabledMobile AS $module) {
+            if(isset($restReply['reply']['mod_strings'][$module])) {
+                $this->assertTrue(array_key_exists('LBL_MODULE_NAME_SINGULAR', $restReply['reply']['mod_strings'][$module]), "{$module} didn't have LBL_MODULE_NAME_SINGULAR it has: " . print_r($restReply['reply']['mod_strings'][$module], true));
+            }
+        }
+    }
+
+}
+

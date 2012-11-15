@@ -39,6 +39,9 @@ class SugarFieldFloat extends SugarFieldInt
     }
 
     public function apiFormatField(&$data, $bean, $args, $fieldName, $properties){
+        if ( $formattedField === '' || $formattedField === NULL ) {
+            $data[$fieldName] = NULL;
+        }
         $data[$fieldName] = (float)$bean->$fieldName;
     }
 

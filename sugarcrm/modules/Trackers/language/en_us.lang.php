@@ -61,6 +61,7 @@ $mod_strings = array (
 		  'LBL_ENABLE' => 'Enabled',
 		  'LBL_MODULE_NAME_TITLE' => 'Trackers',
 		  'LBL_MODULE_NAME' => 'Trackers',
+		  'LBL_MODULE_NAME_SINGULAR' => 'Tracker',
 		  'LBL_TRACKER_SETTINGS' => 'Tracker Settings',
 		  'LBL_TRACKER_QUERIES_DESC' => 'Tracker Queries',
 		  'LBL_TRACKER_QUERIES_HELP' => 'Track SQL statements when "Log slow queries" is enabled and the query execution time exceeds the "Slow query time threshold" value',

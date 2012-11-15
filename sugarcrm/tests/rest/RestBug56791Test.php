@@ -1,5 +1,4 @@
 <?php
-if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 /*********************************************************************************
  * The contents of this file are subject to the SugarCRM Professional End User
  * License Agreement ("License") which can be viewed at
@@ -22,18 +21,37 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.;
  * All Rights Reserved.
  ********************************************************************************/
+require_once('include/api/SugarApi.php');
+require_once('include/api/RestService.php');
+require_once('clients/base/api/UnifiedSearchApi.php');
 
-$mod_strings = array ( 
-	'LBL_MODULE_NAME'			=> 'Groups',
-	'LBL_MODULE_NAME_SINGULAR'		=> 'Group',
-	'LBL_GROUP_NAME'			=> 'Group Name:',
-	'LBL_DESCRIPTION'			=> 'Description:',
-	'LBL_TEAM'					=> 'Team:',
-	// ListView
-	'LBL_LIST_TITLE'			=> 'Groups',
-	// Links
-	'LNK_ALL_GROUPS'			=> 'All Groups',
-	'LNK_NEW_GROUP'				=> 'Create Group',
-	'LNK_CONVERT_USER'			=> 'Convert User to Group', 
-);
-?>
+class RestBug56791Test extends Sugar_PHPUnit_Framework_TestCase
+{
+    public function setUp()
+    {
+        parent::setUp();
+
+    }
+
+    public function tearDown()
+    {
+        parent::tearDown(); // This handles cleanup of created kbdocs
+    }
+
+    public function testEmptyQueryReturn()
+    {
+        $api = new RestService();
+        $args = array('q' => '', 'moduleList' => 'Accounts');
+        $options = array();
+
+        $usm = new UnifiedSearchApiMock();
+        $result = $usm->determineSugarSearchEngine($api, $args, $options);
+        $this->assertEquals('SugarSearchEngine', $result, 'Did not equal SugarSearchEngine, instead was: ' . $result);
+    }
+}
+
+class UnifiedSearchApiMock extends UnifiedSearchApi {
+    function determineSugarSearchEngine(ServiceBase $api, array $args, array $options) {
+        return parent::determineSugarSearchEngine($api, $args, $options);
+    }
+}

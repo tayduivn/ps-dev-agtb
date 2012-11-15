@@ -1,5 +1,4 @@
 <?php
-if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 /*********************************************************************************
  * The contents of this file are subject to the SugarCRM Professional End User
  * License Agreement ("License") which can be viewed at
@@ -23,17 +22,36 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * All Rights Reserved.
  ********************************************************************************/
 
-$mod_strings = array ( 
-	'LBL_MODULE_NAME'			=> 'Groups',
-	'LBL_MODULE_NAME_SINGULAR'		=> 'Group',
-	'LBL_GROUP_NAME'			=> 'Group Name:',
-	'LBL_DESCRIPTION'			=> 'Description:',
-	'LBL_TEAM'					=> 'Team:',
-	// ListView
-	'LBL_LIST_TITLE'			=> 'Groups',
-	// Links
-	'LNK_ALL_GROUPS'			=> 'All Groups',
-	'LNK_NEW_GROUP'				=> 'Create Group',
-	'LNK_CONVERT_USER'			=> 'Convert User to Group', 
-);
-?>
+require_once('tests/rest/RestTestBase.php');
+
+class RestMeetingHelperTest extends RestTestBase {
+
+    public function tearDown()
+    {
+        parent::tearDown();
+        $GLOBALS['db']->query("DELETE FROM meetings WHERE id = '{$this->meeting_id}'");
+    }
+
+    public function testMeeting() {
+
+        // create a meeting linked to yourself, a contact, and a lead, verify the meeting is linked to each and on your calendar
+        $meeting = array(
+            'name' => 'Test Meeting',
+            'duration' => 1,
+            'start_date' => date('Y-m-d'),
+            'assigned_user_id' => $GLOBALS['current_user']->id,
+        );
+
+        $restReply = $this->_restCall('Meetings/', json_encode($meeting), 'POST');
+
+        $this->assertTrue(isset($restReply['reply']['id']), 'Meeting was not created, reply was: ' . print_r($restReply['reply'], true));
+
+        $meeting_id = $restReply['reply']['id'];
+        $this->meeting_id = $meeting_id;
+
+        // verify the user has the meeting, which will validate on calendar
+        $restReplyUser = $this->_restCall("Users/{$GLOBALS['current_user']->id}/link/meetings");
+
+        $this->assertEquals($meeting_id, $restReplyUser['reply']['records'][0]['id'], "The Users meeting was incorrect");
+    }
+}

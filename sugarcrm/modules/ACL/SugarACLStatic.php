@@ -63,11 +63,6 @@ class SugarACLStatic extends SugarACLStrategy
         if($action == "field") {
             return $this->fieldACL($module, $context['action'], $context);
         }
-
-        // module admins are not bound by action ACLs but are bound by field ACLs
-        if($user && $user->isAdminForModule($module)) {
-            return true;
-        }
         //END SUGARCRM flav=pro ONLY
         if(!empty($context['bean'])) {
             return $this->beanACL($module, $action, $context);

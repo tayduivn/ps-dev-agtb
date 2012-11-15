@@ -30,6 +30,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 $mod_strings = array (
 	//module
 	'LBL_MODULE_NAME' => 'FAQ',
+	'LBL_MODULE_NAME_SINGULAR' => 'FAQ',
 	'LBL_MODULE_TITLE' => 'FAQ: Home',
 	'LBL_BACK_TO_TOP' => 'Back to top',
 	'LBL_SUCCESSFUL_QUERY' => 'Success',
