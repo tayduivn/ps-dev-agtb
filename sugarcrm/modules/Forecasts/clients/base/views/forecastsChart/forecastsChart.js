@@ -5,8 +5,8 @@
  * @extends View.View
  */
 ({
-    values:{},
-    url:app.api.buildURL('Forecasts/chart'),
+    values: new Backbone.Model(),
+    url:'rest/v10/Forecasts/chart',
 
     chart: null,
 
@@ -36,7 +36,7 @@
      * event handler to update which dataset is used.
      */
     changeDisplayOptions : function(evt) {
-        this.handleRenderOptions({dataset: this.handleOptionChange(evt)});
+        this.handleRenderOptions({dataset: this.handleOptionChange(evt)})
     },
 
     /**
@@ -77,7 +77,7 @@
         // find the checked options
         var chkOptions = this.$el.find("div." + divClass + " label.checked");
 
-        // parse the array to get the data-set attribute
+        // parse the array to get the data-set attributed
         var options = [];
         _.each(chkOptions, function(o) {
             options.push($(o).attr('data-set'));
@@ -118,7 +118,6 @@
             category : app.defaultSelections.category
         };
 
-
         this.handleRenderOptions(values);
     },
 
@@ -129,7 +128,7 @@
     },
 
     toggleRepOptionsVisibility : function() {
-        if(this.values.display_manager === true) {
+        if(this.values.get('display_manager') === true) {
             this.$el.find('div.groupByOptions').hide();
         } else {
             this.$el.find('div.groupByOptions').show();
@@ -137,17 +136,28 @@
     },
 
     /**
+     * Clean up any left over bound data to our context
+     */
+    unbindData : function() {
+        if(this.context.forecasts.worksheet) this.context.forecasts.worksheet.off(null, null, this);
+        if(this.context.forecasts.worksheetmanager) this.context.forecasts.worksheetmanager.off(null, null, this);
+        if(this.context.forecasts) this.context.forecasts.off(null, null, this);
+        if(this.values) this.values.off(null, null, this);
+        app.view.View.prototype.unbindData.call(this);
+    },
+
+    /**
      * Listen to changes in values in the context
      */
     bindDataChange:function () {
         var self = this;
-        this.context.forecasts.worksheetmanager.on('reset', function(){
+        this.context.forecasts.worksheetmanager.on('rendered', function(){
             if(self.commitUpdate && self.chartRendered) {
                 self.commitUpdate = false;
                 self.renderChart();
             }
         }, this);
-        this.context.forecasts.worksheet.on('reset', function() {
+        this.context.forecasts.worksheet.on('rendered', function() {
             if(self.commitUpdate && self.chartRendered) {
                 self.renderChart();
             }
@@ -168,56 +178,58 @@
             }
         }, this);
         this.context.forecasts.on('change:selectedUser', function (context, user) {
-            self.handleRenderOptions({user_id: user.id, display_manager : (user.showOpps === false && user.isManager === true)});
-            self.toggleRepOptionsVisibility();
+            if(!_.isEmpty(self.chart)) {
+                self.handleRenderOptions({user_id: user.id, display_manager : (user.showOpps === false && user.isManager === true)});
+                self.toggleRepOptionsVisibility();
+            }
         });
         this.context.forecasts.on('change:selectedTimePeriod', function (context, timePeriod) {
-            self.timeperiod_label = timePeriod.label;
-            self.handleRenderOptions({timeperiod_id: timePeriod.id});
+            if(!_.isEmpty(self.chart)) {
+                self.timeperiod_label = timePeriod.label;
+                self.handleRenderOptions({timeperiod_id: timePeriod.id});
+            }
         });
         this.context.forecasts.on('change:selectedGroupBy', function (context, groupBy) {
-            self.handleRenderOptions({group_by: groupBy});
+            if(!_.isEmpty(self.chart)) {
+                self.handleRenderOptions({group_by: groupBy});
+            }
         });
         this.context.forecasts.on('change:selectedCategory', function(context, value) {
-            self.handleRenderOptions({category: value});
+            if(!_.isEmpty(self.chart)) {
+                self.handleRenderOptions({category: value});
+            }
         });
         this.context.forecasts.on('change:hiddenSidebar', function(context, value){
             // set the value of the hiddenSidecar to we can stop the render if the sidebar is hidden
             self.stopRender = value;
             // if the sidebar is not hidden
-            if(value === false){
+            if(value == false){
                 // we need to force the render to happen again
+                self.renderChart();
+            }
+        });
+        // watch for the change event to fire.  if it fires make sure something actually changed in the array
+        this.values.on('change', function(context, value) {
+            if(!_.isEmpty(value.changes)) {
                 self.renderChart();
             }
         });
     },
 
+    /**
+     * Handle putting the optoins into the values array that is used to keep track of what changes
+     * so we only render when something changes.
+     * @param options
+     */
     handleRenderOptions:function (options) {
-        var self = this;
-        _.each(options, function (value, key) {
-            self.values[key] = value;
-        });
-
-        self.renderChart();
+        this.values.set(options);
     },
 
     /**
      * Initialize or update the chart
      */
     renderChart:function () {
-        this.chart = this._initializeChart();
-    },
-
-    /**
-     * Only update the json on the chart
-     */
-    updateChart: function() {
-        var self = this;
-        SUGAR.charts.update(self.chart, self.url, self.values, _.bind(function(chart){
-            SUGAR.charts.generateLegend(chart, chart.config.injectInto);
-            // update the chart title
-            self.$el.find('h4').html(self.chartTitle);
-        }, self));
+        this._initializeChart();
     },
 
     /**
@@ -235,7 +247,7 @@
         var returnDs = {};
         _.each(ds, function(value, key){
             if(cfg.get(cfg_key + key) == 1) {
-                returnDs[key] = value;
+                returnDs[key] = value
             }
         }, self);
         return returnDs;
@@ -262,7 +274,7 @@
             },
             chartConfig = {
                 "orientation":"vertical",
-                "barType": this.values.display_manager ? "grouped" : "stacked",
+                "barType": this.values.get('display_manager') ? "grouped" : "stacked",
                 "tip":"name",
                 "chartType":"barChart",
                 "imageExportType":"png",
@@ -293,8 +305,8 @@
             }
         );
 
-        if(this.values.display_manager === true) {
-            this.values.category = "include";
+        if(this.values.get('display_manager') === true) {
+            this.values.set({category: 'include'}, {silent: true});
         }
 
         // update the chart title
@@ -302,13 +314,13 @@
         var text = hb({'key' : "LBL_CHART_FORECAST_FOR", 'module' : 'Forecasts', 'args' : this.timeperiod_label});
         this.$el.find('h4').html(text);
 
-        var params = this.values || {};
+        var params = this.values.toJSON() || {};
         params.contentEl = 'chart';
         params.minColumnWidth = 120;
-        params.adjustLegendWidthByParent = true;
 
-        chart = new loadSugarChart(chartId, this.url, css, chartConfig, params);
+        chart = new loadSugarChart(chartId, this.url, css, chartConfig, params, _.bind(function(chart){
+            this.chart = chart;
+        }, this));
         this.chartRendered = true;
-        return chart.chartObject;
     }
 })

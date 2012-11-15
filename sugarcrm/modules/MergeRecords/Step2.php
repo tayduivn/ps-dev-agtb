@@ -49,7 +49,7 @@ global $theme;
 $current_module_strings = return_module_language($current_language, 'MergeRecords');
 
 
-$focus = new MergeRecord();
+$focus = BeanFactory::getBean('MergeRecord');
 $focus->load_merge_bean($_REQUEST['merge_module'], true, $_REQUEST['record']);
 
 $this->bean = $focus->merge_bean;
@@ -60,7 +60,7 @@ $params[] = $mod_strings['LBL_STEP2_FORM_TITLE'];
 $params[] = $focus->merge_bean->name;
 echo getClassicModuleTitle($focus->merge_bean->module_dir, $params, true);
 
-       $order_by_name = $focus->merge_module.'2_'.strtoupper($focus->merge_bean->object_name).'_ORDER_BY' ; 
+       $order_by_name = $focus->merge_module.'2_'.strtoupper($focus->merge_bean->object_name).'_ORDER_BY' ;
        $lvso = isset($_REQUEST['lvso'])?$_REQUEST['lvso']:"";
        $request_order_by_name = isset($_REQUEST[$order_by_name])?$_REQUEST[$order_by_name]:"";
 
@@ -86,43 +86,24 @@ $ListView->mergeduplicates = false;
 $ListView->export = false;
 $ListView->delete = false;
 $module = $_REQUEST['merge_module'];
-$metadataFile = null;
-$foundViewDefs = false;
-if(file_exists('custom/modules/' . $module. '/metadata/listviewdefs.php')){
-    $metadataFile = 'custom/modules/' . $module . '/metadata/listviewdefs.php';
-    $foundViewDefs = true;
-}else{
-    if(file_exists('custom/modules/'.$module.'/metadata/metafiles.php')){
-        require_once('custom/modules/'.$module.'/metadata/metafiles.php');
-        if(!empty($metafiles[$module]['listviewdefs'])){
-            $metadataFile = $metafiles[$module]['listviewdefs'];
-            $foundViewDefs = true;
-        }
-    }elseif(file_exists('modules/'.$module.'/metadata/metafiles.php')){
-        require_once('modules/'.$module.'/metadata/metafiles.php');
-        if(!empty($metafiles[$module]['listviewdefs'])){
-            $metadataFile = $metafiles[$module]['listviewdefs'];
-            $foundViewDefs = true;
-        }
-    }
+$metadataFile = SugarAutoLoader::loadWithMetafiles($module, 'listviewdefs');
+if($metadataFile) {
+    require $metadataFile;
 }
-if(!$foundViewDefs && file_exists('modules/'.$module.'/metadata/listviewdefs.php')){
-        $metadataFile = 'modules/'.$module.'/metadata/listviewdefs.php';
-}
-require_once($metadataFile);
+
 $displayColumns = array();
 if(!empty($_REQUEST['displayColumns'])) {
     foreach(explode('|', $_REQUEST['displayColumns']) as $num => $col) {
-        if(!empty($listViewDefs[$module][$col])) 
+        if(!empty($listViewDefs[$module][$col]))
             $displayColumns[$col] = $listViewDefs[$module][$col];
-    }    
+    }
 }
 else {
     foreach($listViewDefs[$module] as $col => $params) {
         if(!empty($params['default']) && $params['default'])
             $displayColumns[$col] = $params;
     }
-} 
+}
 $params = array('massupdate' => true, 'export' => false, 'handleMassupdate' => false );
 $ListView->displayColumns = $displayColumns;
 $ListView->lvd->listviewName = $focus->merge_module; //27633, this will make the $module to be merge_module instead of 'MergeRecords'. Then the key of  offset and orderby will be correct.
@@ -178,26 +159,26 @@ $form_top = <<<EOQ
                 if(typeof document.MassUpdate.massupdate != 'undefined') {
                    document.MassUpdate.massupdate.value = 'false';
                 }
-                
+
                 document.MassUpdate.return_module.value='';
                 document.MassUpdate.return_action.value='';
                 document.MassUpdate.submit();
-                
+
                 return !checks;
             }
 
             sugarListView.prototype.save_checks = function(offset, moduleString) {
                 checks = sugarListView.get_checks();
                 eval('document.MassUpdate.' + moduleString + '.value = offset');
-                
+
                 if(typeof document.MassUpdate.massupdate != 'undefined') {
                    document.MassUpdate.massupdate.value = 'false';
                 }
-                
+
                 document.MassUpdate.return_module.value='';
                 document.MassUpdate.return_action.value='';
                 document.MassUpdate.submit();
-                
+
                 return !checks;
             }
         </script>

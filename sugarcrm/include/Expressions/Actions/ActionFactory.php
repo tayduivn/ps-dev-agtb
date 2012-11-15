@@ -24,12 +24,14 @@ require_once("include/Expressions/Actions/AbstractAction.php");
  * SugarLogic action factory
  * @api
  */
-class ActionFactory {
+class ActionFactory
+{
 	static $exclude_files = array("ActionFactory.php", "AbstractAction.php");
 	static $action_directory = "include/Expressions/Actions";
 	static $loaded_actions = array();
 
-	static function loadFunctionList() {
+	static function loadFunctionList()
+	{
 	    $cachefile = sugar_cached("Expressions/actions_cache.php");
 		if (!is_file($cachefile))
 		{
@@ -41,7 +43,8 @@ class ActionFactory {
 		}
 	}
 
-	static function buildActionCache($silent = true) {
+	static function buildActionCache($silent = true)
+	{
 		if (!is_dir(ActionFactory::$action_directory))
             return false;
 
@@ -49,24 +52,17 @@ class ActionFactory {
         $entries = array();
         $actions = array();
 		$javascript = "";
-		foreach(array("", "custom/") as $prefix) {
-			if (!is_dir($prefix . ActionFactory::$action_directory)) continue;
-			$directory = opendir($prefix . ActionFactory::$action_directory);
-            if ( !$directory )  continue;
-			while( $entry = readdir($directory) )
-	        {
-	            if (strtolower(substr($entry, -4)) != ".php" || in_array($entry, ActionFactory::$exclude_files))
-	                continue;
+		foreach(SugarAutoLoader::getFilesCustom(ActionFactory::$action_directory) as $path) {
+		    $entry = basename($path);
+		    if (strtolower(substr($entry, -4)) != ".php" || in_array($entry, ActionFactory::$exclude_files))
+		    	continue;
+		    require_once($path);
 
-	            $path = $prefix . ActionFactory::$action_directory . "/" . $entry;
-	            require_once($path);
-
-				$className = substr($entry, 0, strlen($entry) - 4);
-	            $actionName = call_user_func(array($className, "getActionName"));
-	            $actions[$actionName] = array('class' => $className, 'file' => $path);
-				$javascript .= call_user_func(array($className, "getJavascriptClass"));
-				if (!$silent) echo "added action $actionName <br/>";
-	        }
+		    $className = substr($entry, 0, strlen($entry) - 4);
+		    $actionName = call_user_func(array($className, "getActionName"));
+		    $actions[$actionName] = array('class' => $className, 'file' => $path);
+		    $javascript .= call_user_func(array($className, "getJavascriptClass"));
+		    if (!$silent) echo "added action $actionName <br/>";
 		}
 
 		if (empty($actions)) return "";

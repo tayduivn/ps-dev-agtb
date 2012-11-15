@@ -41,9 +41,9 @@ class CampaignLog extends SugarBean {
     var $hits;
     var $more_information;
     var $marketing_id;
-    function CampaignLog() {
+    public function __construct() {
         global $sugar_config;
-        parent::SugarBean();
+        parent::__construct();
 
         //BEGIN SUGARCRM flav=pro ONLY
         $this->disable_row_level_security=true;

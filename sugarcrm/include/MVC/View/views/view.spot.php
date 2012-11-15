@@ -70,12 +70,7 @@ class ViewSpot extends ViewAjax
         $ss->assign('appListStrings', $GLOBALS['app_list_strings']);
         $ss->assign('queryEncoded', $query_encoded);
 
-        $template = 'include/SearchForm/tpls/SugarSpot.tpl';
-        if(file_exists('custom/include/SearchForm/tpls/SugarSpot.tpl'))
-        {
-            $template = 'custom/include/SearchForm/tpls/SugarSpot.tpl';
-        }
-        echo $ss->fetch($template);
+        echo $ss->fetch(SugarAutoLoader::existingCustomOne('include/SearchForm/tpls/SugarSpot.tpl'));
     }
 
 

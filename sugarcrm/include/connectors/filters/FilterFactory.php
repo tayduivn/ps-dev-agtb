@@ -27,15 +27,17 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * by SugarCRM are Copyright (C) 2004-2010 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
+require_once('include/connectors/ConnectorFactory.php');
 /**
  * Filter factory
  * @api
  */
-class FilterFactory{
-
+class FilterFactory
+{
 	static $filter_map = array();
 
-	public static function getInstance($source_name, $filter_name=''){
+	public static function getInstance($source_name, $filter_name='')
+	{
 		require_once('include/connectors/filters/default/filter.php');
 		$key = $source_name . $filter_name;
 		if(empty(self::$filter_map[$key])) {
@@ -44,22 +46,9 @@ class FilterFactory{
 			   $filter_name = $source_name;
 			}
 
-			//split the wrapper name to find the path to the file.
-			$dir = str_replace('_','/',$filter_name);
-			$parts = explode("/", $dir);
-			$file = $parts[count($parts)-1];
-
-			//check if this override wrapper file exists.
-		    require_once('include/connectors/ConnectorFactory.php');
-			if(file_exists("modules/Connectors/connectors/filters/{$dir}/{$file}.php") ||
-			   file_exists("custom/modules/Connectors/connectors/filters/{$dir}/{$file}.php")) {
-				ConnectorFactory::load($filter_name, 'filters');
-				try{
-					$filter_name .= '_filter';
-				}catch(Exception $ex){
-					return null;
-				}
-			}else{
+			if(ConnectorFactory::load($filter_name, 'filters')) {
+		        $filter_name .= '_filter';
+			} else {
 				//if there is no override wrapper, use the default.
 				$filter_name = 'default_filter';
 			}
@@ -71,6 +60,4 @@ class FilterFactory{
 		} //if
 		return self::$filter_map[$key];
 	}
-
 }
-?>

@@ -19,14 +19,6 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *to the License for the specific language governing these rights and limitations under the License.
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
-/*********************************************************************************
- * $Id: Relationship.php 53057 2009-12-08 01:36:37Z mitani $
- * Description:  TODO: To be written.
- * Portions created by SugarCRM are Copyright (C) SugarCRM, Inc.
- * All Rights Reserved.
- * Contributor(s): ______________________________________..
- ********************************************************************************/
-
 
 class Relationship extends SugarBean {
 
@@ -53,8 +45,8 @@ class Relationship extends SugarBean {
 
 	var $_self_referencing;
 
-	function Relationship() {
-		parent::SugarBean();
+	public function __construct() {
+		parent::__construct();
 	}
 
 	/*returns true if the relationship is self referencing. equality check is performed for both table and
@@ -216,7 +208,7 @@ class Relationship extends SugarBean {
 	public static function cache_file_name_only() {
 		return 'relationships.cache.php';
 	}
-	
+
 	public static function delete_cache() {
 		$filename=Relationship::cache_file_dir().'/'.Relationship::cache_file_name_only();
 		if (file_exists($filename)) {

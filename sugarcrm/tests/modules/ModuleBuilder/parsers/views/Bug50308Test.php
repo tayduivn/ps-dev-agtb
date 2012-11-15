@@ -64,7 +64,7 @@ class Bug50308Test extends Sugar_PHPUnit_Framework_TestCase {
     public function tearDown() {
 
         //remove custom file
-        unlink($this->customFilePath);
+        SugarAutoLoader::unlink($this->customFilePath, true);
         //recreate custom file using old data if it was collected
         if(!empty($this->originalPopupMeta)){
             $meta = "<?php\n \$popupMeta = array (\n";
@@ -73,7 +73,7 @@ class Bug50308Test extends Sugar_PHPUnit_Framework_TestCase {
             }
             $meta .=");\n";
 
-            sugar_file_put_contents($this->customFilePath, $meta);
+            SugarAutoLoader::put($this->customFilePath, $meta, true);
         }
 
         unset($this->customFilePath);
@@ -88,7 +88,7 @@ class Bug50308Test extends Sugar_PHPUnit_Framework_TestCase {
      * the tests assert that the custom elements are preserved by the parser
      */
     public function testUsingCustomPopUpElements() {
-        
+
 	//declare the vars global and then include the modules file to make sure they are available during testing
         global $moduleList, $beanList, $beanFiles;
         include('include/modules.php');
@@ -104,7 +104,7 @@ class Bug50308Test extends Sugar_PHPUnit_Framework_TestCase {
             }
             $meta .=");\n";
 
-        $writeResult = sugar_file_put_contents($this->customFilePath, $meta);
+        $writeResult = SugarAutoLoader::put($this->customFilePath, $meta);
         $this->assertGreaterThan(0,$writeResult, 'there was an error writing custom popup meta to file using this path: '.$this->customFilePath);
 
         //create new instance of popupmetadata parser

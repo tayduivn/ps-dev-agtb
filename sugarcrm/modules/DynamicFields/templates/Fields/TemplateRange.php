@@ -36,7 +36,7 @@ class TemplateRange extends TemplateText
 	 * Constructor for class.  This constructor ensures that TemplateRanage instances have the
 	 * enable_range_search vardef value.
 	 */
-	function __construct()
+	public function __construct()
 	{
 		$this->vardef_map['enable_range_search'] = 'enable_range_search';
 		$this->vardef_map['options'] = 'options';
@@ -61,16 +61,11 @@ class TemplateRange extends TemplateText
 			if(isset($_REQUEST['view_module']))
 			{
 				$module = $_REQUEST['view_module'];
-                if (file_exists('modules/'.$module.'/metadata/SearchFields.php')) 
-                {
-                	require('modules/'.$module.'/metadata/SearchFields.php');
-                }
-                
-			    if(file_exists('custom/modules/'.$module.'/metadata/SearchFields.php'))
-			    {
-                    require('custom/modules/'.$module.'/metadata/SearchFields.php');
-			    }                
-                
+				$file = SugarAutoLoader::loadWithMetafiles($module, 'SearchFields', 'searchfields');
+				if($file) {
+				    require $file;
+				}
+
                 $field_name = $this->get_field_name($module, $_REQUEST['name']);
 
                 if(isset($searchFields[$module]))
@@ -125,11 +120,11 @@ class TemplateRange extends TemplateText
                 if (file_exists('modules/'.$module.'/metadata/SearchFields.php')) {
                 	require('modules/'.$module.'/metadata/SearchFields.php');
                 }
-                
+
 			    if(file_exists('custom/modules/'.$module.'/metadata/SearchFields.php'))
 			    {
                     require('custom/modules/'.$module.'/metadata/SearchFields.php');
-			    }                
+			    }
 
                 $field_name = $this->get_field_name($module, $_REQUEST['name']);
 

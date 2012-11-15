@@ -32,6 +32,21 @@ class SugarForecasting_Chart_IndividualTest extends Sugar_PHPUnit_Framework_Test
      */
     protected static $user;
 
+    /*
+     * @var Timeperiod
+     */
+    protected static $timeperiod;
+
+    /**
+     * @var String
+     */
+    protected static $configTimeperiodType;
+
+    /**
+     * @var String
+     */
+    protected static $configTimeperiodLeafType;
+
     /**
      * @var Currency
      */
@@ -47,10 +62,23 @@ class SugarForecasting_Chart_IndividualTest extends Sugar_PHPUnit_Framework_Test
         SugarTestHelper::setup('mod_strings', array('Forecasts'));
         SugarTestHelper::setUp('current_user');
 
-        $timeperiod = SugarTestTimePeriodUtilities::createTimePeriod('2009-01-01', '2009-03-31');
-        self::$args['timeperiod_id'] = $timeperiod->id;
+        $admin = BeanFactory::getBean('Administration');
+        $config = $admin->getConfigForModule('Forecasts', 'base');
+        self::$configTimeperiodType = $config['timeperiod_interval'];
+        self::$configTimeperiodLeafType = $config['timeperiod_leaf_interval'];
+        //Set the timeperiod_leaf_interval to TimePeriod::QUARTER_TYPE for testing purposes
+        $admin->saveSetting('Forecasts', 'timeperiod_interval', TimePeriod::ANNUAL_TYPE, 'base');
+        $admin->saveSetting('Forecasts', 'timeperiod_leaf_interval', TimePeriod::QUARTER_TYPE, 'base');
 
-        SugarTestForecastUtilities::setTimePeriod($timeperiod);
+        self::$timeperiod = TimePeriod::getByType(TimePeriod::QUARTER_TYPE);
+        self::$timeperiod->start_date = '2009-01-01';
+        self::$timeperiod->end_date = '2009-03-31';
+        self::$timeperiod->save();
+
+        SugarTestTimePeriodUtilities::$_createdTimePeriods[] = self::$timeperiod;
+        self::$args['timeperiod_id'] = self::$timeperiod->id;
+
+        SugarTestForecastUtilities::setTimePeriod(self::$timeperiod);
 
         self::$currency = SugarTestCurrencyUtilities::createCurrency('Yen','¥','YEN',78.87);
 
@@ -58,7 +86,7 @@ class SugarForecasting_Chart_IndividualTest extends Sugar_PHPUnit_Framework_Test
         $GLOBALS['current_user']->setPreference('currency', self::$currency->id);
 
         self::$user = SugarTestForecastUtilities::createForecastUser(array(
-            'timeperiod_id' => $timeperiod->id,
+            'timeperiod_id' => self::$timeperiod->id,
             'currency_id' => self::$currency->id
         ));
         self::$args['user_id'] = self::$user['user']->id;
@@ -73,6 +101,9 @@ class SugarForecasting_Chart_IndividualTest extends Sugar_PHPUnit_Framework_Test
 
     public static function tearDownAfterClass()
     {
+        $admin = BeanFactory::getBean('Administration');
+        $admin->saveSetting('Forecasts', 'timeperiod_interval', self::$configTimeperiodType, 'base');
+        $admin->saveSetting('Forecasts', 'timeperiod_leaf_interval', self::$configTimeperiodLeafType, 'base');
         SugarTestTimePeriodUtilities::removeAllCreatedTimePeriods();
         SugarTestForecastUtilities::cleanUpCreatedForecastUsers();
         SugarTestCurrencyUtilities::removeAllCreatedCurrencies();
@@ -207,6 +238,7 @@ class SugarForecasting_Chart_IndividualTest extends Sugar_PHPUnit_Framework_Test
      * @param integer $chart_position
      * @group forecasts
      * @group forecastschart
+     * @outputBuffering disabled
      */
     public function testChartParetoLineLabelContainsBaseCurrencySymbol($dataset, $chart_position)
     {
@@ -216,7 +248,6 @@ class SugarForecasting_Chart_IndividualTest extends Sugar_PHPUnit_Framework_Test
         $data = $obj->process();
 
         $base_currency = SugarCurrency::getBaseCurrency();
-
         $this->assertStringStartsWith($base_currency->symbol, $data['values'][$chart_position]['goalmarkervaluelabel'][1]);
     }
 

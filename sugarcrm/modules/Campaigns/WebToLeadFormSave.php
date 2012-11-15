@@ -19,17 +19,8 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *to the License for the specific language governing these rights and limitations under the License.
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
-/*********************************************************************************
- * $Id: WebToLeadFormSave.php 17399 2006-10-31 19:18:15 +0000 (Tue, 23 Nov 2006) Vineet $
- * Description:  TODO: To be written.
- * Portions created by SugarCRM are Copyright (C) SugarCRM, Inc.
- * All Rights Reserved.
- * Contributor(s): ______________________________________..
- ********************************************************************************/
 require_once('include/formbase.php');
 require_once('include/SugarTinyMCE.php');
-
-
 
 global $mod_strings;
 global $app_strings;

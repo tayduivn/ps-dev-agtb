@@ -104,16 +104,8 @@ class ViewFts extends SugarView
         $this->ss->assign('queryEncoded', $query_encoded);
         $this->ss->assign('resultSet', $rs);
         $this->ss->assign('APP_LIST', $GLOBALS['app_list_strings']);
-        $template = "include/MVC/View/tpls/{$this->templateName}";
-        $rsTemplate = "include/MVC/View/tpls/{$this->rsTemplateName}";
-        if(file_exists("custom/$template"))
-        {
-            $template = "custom/$template";
-        }
-        if(file_exists("custom/$rsTemplate"))
-        {
-            $rsTemplate = "custom/$rsTemplate";
-        }
+        $template = SugarAutoLoader::existingCustomOne("include/MVC/View/tpls/{$this->templateName}");
+        $rsTemplate = SugarAutoLoader::existingCustomOne("include/MVC/View/tpls/{$this->rsTemplateName}");
         $this->ss->assign('rsTemplate', $rsTemplate);
 
         if( $this->fullView )

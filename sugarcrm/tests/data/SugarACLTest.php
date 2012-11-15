@@ -20,9 +20,10 @@ class SugarACLTest extends PHPUnit_Framework_SugarBeanRelated_TestCase
     {
         $this->getMock('SugarACLDCE');
         return array(
-            array(1, array('SugarACLStatic'), array()), //nothing
+            array(1, array('SugarACLStatic'), array('SugarACLStatic' => true)), //ACL
             array(0, array(), array('SugarACLStatic' => false)),
-            array(2, array('SugarACLStatic', 'SugarACLDCE'), array('SugarACLDCE' => true))
+            array(1, array('SugarACLDCE'), array('SugarACLDCE' => true)),
+            array(0, array(), array()), //nothing
         );
     }
 
@@ -33,6 +34,16 @@ class SugarACLTest extends PHPUnit_Framework_SugarBeanRelated_TestCase
         {
             $this->bean = $this->getTestMock();
         }
+        SugarTestHelper::setUp('beanList');
+        SugarTestHelper::setUp('beanFiles');
+        $GLOBALS['beanList']['test'] = 'test';
+    }
+
+    public function tearDown()
+    {
+        SugarTestHelper::tearDown();
+        parent::tearDown();
+        $GLOBALS['dictionary'][$this->bean->object_name]['acls'] = array();
     }
 
     public function getTestMock()
@@ -55,7 +66,6 @@ class SugarACLTest extends PHPUnit_Framework_SugarBeanRelated_TestCase
      */
     public function testLoadACLs($count, $classes, $config)
     {
-
         $GLOBALS['dictionary'][$this->bean->object_name]['acls'] = $config;
         SugarACL::resetACLs();
         $acls = SugarACL::loadACLs($this->bean->object_name, array("bean" => $this->bean));

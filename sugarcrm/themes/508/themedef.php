@@ -30,7 +30,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 $themedef = array(
     'name'  => "Accessibility",
     'description' => "508 Compliant Theme",
-	'parentTheme' => 'Sugar',
+	'parentTheme' => 'RacerX',
     'version' => array(
         'regex_matches' => array('[6|7]\.*.*'),
         ),

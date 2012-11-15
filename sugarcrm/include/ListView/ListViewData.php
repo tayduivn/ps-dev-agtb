@@ -233,7 +233,7 @@ class ListViewData {
 	function getListViewData($seed, $where, $offset=-1, $limit = -1, $filter_fields=array(),$params=array(),$id_field = 'id',$singleSelect=true) {
         global $current_user;
         SugarVCR::erase($seed->module_dir);
-        $this->seed =& $seed;
+        $this->seed = $seed;
         $totalCounted = empty($GLOBALS['sugar_config']['disable_count_query']);
         $_SESSION['MAILMERGE_MODULE_FROM_LISTVIEW'] = $seed->module_dir;
         if(empty($_REQUEST['action']) || $_REQUEST['action'] != 'Popup'){
@@ -427,6 +427,7 @@ class ListViewData {
 			$pageData = array();
 
 			reset($rows);
+            $additionalDetailsFile = SugarAutoLoader::existingCustomOne('modules/' . $seed->module_dir . '/metadata/additionalDetails.php');
 			while($row = current($rows)){
 
                 $temp = clone $seed;
@@ -434,9 +435,6 @@ class ListViewData {
 
 			    $temp->setupCustomFields($temp->module_dir);
 				$temp->loadFromRow($row);
-				if (empty($this->seed->assigned_user_id) && !empty($temp->assigned_user_id)) {
-				    $this->seed->assigned_user_id = $temp->assigned_user_id;
-				}
 				if($idIndex[$row[$id_field]][0] == $dataIndex){
 				    $pageData['tag'][$dataIndex] = $temp->listviewACLHelper();
 				}else{
@@ -458,7 +456,7 @@ class ListViewData {
                 $tempACL['DetailView'] = $temp->ACLAccess('DetailView');
 
                 $pageData['rowAccess'][$dataIndex] = array('view' => $tempACL['DetailView'], 'edit' => $tempACL['EditView']);
-                $additionalDetailsAllow = $this->additionalDetails && $tempACL['DetailView'] && (file_exists('modules/' . $temp->module_dir . '/metadata/additionalDetails.php') || file_exists('custom/modules/' . $temp->module_dir . '/metadata/additionalDetails.php'));
+                $additionalDetailsAllow = $this->additionalDetails && $tempACL['DetailView'] && !empty($additionalDetailsFile);
 			    //if($additionalDetailsAllow) $pageData['additionalDetails'] = array();
 			    $additionalDetailsEdit = $tempACL['EditView'];
 				if($additionalDetailsAllow) {
@@ -466,11 +464,7 @@ class ListViewData {
 					   $ar = $this->getAdditionalDetailsAjax($data[$dataIndex]['ID']);
                     }
                     else {
-                        $additionalDetailsFile = 'modules/' . $this->seed->module_dir . '/metadata/additionalDetails.php';
-                        if(file_exists('custom/modules/' . $this->seed->module_dir . '/metadata/additionalDetails.php')){
-                        	$additionalDetailsFile = 'custom/modules/' . $this->seed->module_dir . '/metadata/additionalDetails.php';
-                        }
-                        require_once($additionalDetailsFile);
+                        require_once $additionalDetailsFile;
                         $ar = $this->getAdditionalDetails($data[$dataIndex],
                                     (empty($this->additionalDetailsFunction) ? 'additionalDetails' : $this->additionalDetailsFunction) . $this->seed->object_name,
                                     $additionalDetailsEdit);

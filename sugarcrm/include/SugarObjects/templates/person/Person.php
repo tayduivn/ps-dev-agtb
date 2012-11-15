@@ -36,9 +36,9 @@ class Person extends Basic
      */
     var $createLocaleFormattedName = true;
 
-	public function Person()
+	public function __construct()
 	{
-		parent::Basic();
+		parent::__construct();
 		$this->emailAddress = new SugarEmailAddress();
 	}
 

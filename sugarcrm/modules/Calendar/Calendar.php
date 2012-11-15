@@ -74,7 +74,7 @@ class Calendar {
 	 * @param string $view 
 	 * @param array $time_arr 
 	 */	
-	function __construct($view = "day", $time_arr = array()){
+	public function __construct($view = "day", $time_arr = array()){
 		global $current_user, $timedate;	
 		
 		$this->view = $view;		

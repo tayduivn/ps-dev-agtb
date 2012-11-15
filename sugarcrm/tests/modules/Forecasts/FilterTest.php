@@ -54,7 +54,7 @@ class FilterTest extends Sugar_PHPUnit_Framework_TestCase
      * testMultipleFilters
      *
      * @group SugarParser
-     * @group Forecasts
+     * @group forecasts
      */
     public function testMultipleFilters()
     {

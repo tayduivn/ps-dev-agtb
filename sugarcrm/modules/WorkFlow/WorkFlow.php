@@ -26,15 +26,6 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * governing these rights and limitations under the License.  Portions created
  * by SugarCRM are Copyright (C) 2004-2007 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
-/*********************************************************************************
- * $Id: WorkFlow.php 55603 2010-03-26 16:11:36Z roger $
- * Description:
- ********************************************************************************/
-
-
-
-
-
 
 require_once('include/workflow/workflow_utils.php');
 require_once('include/workflow/time_utils.php');
@@ -42,8 +33,11 @@ require_once('include/workflow/alert_utils.php');
 require_once('include/workflow/glue.php');
 
 
-// WorkFlow is used to store the workflow objects.
-class WorkFlow extends SugarBean {
+/**
+ *  WorkFlow is used to store the workflow objects.
+ */
+class WorkFlow extends SugarBean
+{
 	var $field_name_map;
 	// Stored fields
 	var $id;
@@ -133,30 +127,22 @@ class WorkFlow extends SugarBean {
     // Flag whether
     var $check_controller = true;
 
-	function WorkFlow() {
-		parent::SugarBean();
+	public function __construct() {
+		parent::__construct();
 
 		$this->disable_row_level_security =false;
-
 	}
 
 
 
 	function get_summary_text()
 	{
-		return "$this->name";
+		return $this->name;
 	}
 
-
-
-
-	/** Returns a list of the associated product_templates
-	 * Portions created by SugarCRM are Copyright (C) SugarCRM, Inc..
-	 * All Rights Reserved.
-	 * Contributor(s): ______________________________________..
-	*/
-
-
+	/**
+	 * Returns a list of the associated product_templates
+	 */
         function create_export_query(&$order_by, &$where)
         {
         $custom_join = $this->custom_fields->getJOIN(true, true,$where);
@@ -382,39 +368,19 @@ function filter_base_modules(){
 	}
 
 
-	function get_column_select($drop_down_module=""){
+	function get_column_select($drop_down_module="")
+	{
+    	$this->column_options = array();
+    	if(!empty($drop_down_module)){
+    		$column_module = $drop_down_module;
+    	} else {
+    		$column_module = $this->base_module;
+    	}
 
-	global $beanList;
-	$this->column_options = array();
-	if(!empty($drop_down_module)){
-		$column_module = $drop_down_module;
-	} else {
-		$column_module = $this->base_module;
-	}
-
-	//Get dictionary data for base bean and all connected beans
-
-	//Get dictionary and focus data for base bean
-		$vardef_name = $beanList[$column_module];
-
-		if(!file_exists('modules/'. $column_module . '/vardefs.php')){
-			return;
-		}
-
-		include_once('modules/'. $column_module . '/'.$vardef_name.'.php');
-		$temp_focus = new $vardef_name();
-		$this->add_to_column_select($temp_focus, $column_module);
-
-
-	//Loop through existing columns for connecting beans
-
-
-
-	//end loop
-
-	return $this->column_options;
-
-	//end function get_column_select
+    	//Get dictionary data for base bean and all connected beans
+    	$temp_focus = BeanFactory::newBean($column_module);
+    	$this->add_to_column_select($temp_focus, $column_module);
+    	return $this->column_options;
 	}
 
 
@@ -461,27 +427,9 @@ function filter_base_modules(){
 	}
 
 
-	function get_module_info($module_name){
-
-		//expand this function to return other types of module information based on the name
-
-		global $beanList;
-		global $dictionary;
-
-		//Get dictionary and focus data for module
-		$vardef_name = $beanList[$module_name];
-
-		if(!file_exists('modules/'. $module_name . '/'.$vardef_name.'.php')){
-			return;
-		}
-
-		include_once('modules/'. $module_name . '/'.$vardef_name.'.php');
-
-		$module_bean = new $vardef_name();
-
-		return $module_bean;
-
-	//end function get_module_table
+	function get_module_info($module_name)
+	{
+        return BeanFactory::newBean($module_name);
 	}
 
 	function get_field_table($module, $field){
@@ -522,7 +470,7 @@ function filter_base_modules(){
 
 		global $dictionary;
 
-		if(!file_exists('modules/'. $focus->module_dir . '/'.$focus->object_name.'.php')){
+		if(!SugarAutoLoader::fileExists('modules/'. $focus->module_dir . '/'.$focus->object_name.'.php')){
 			return $field;
 		}
 
@@ -1466,5 +1414,3 @@ function getActiveWorkFlowCount() {
 }
 //end class
 }
-
-?>

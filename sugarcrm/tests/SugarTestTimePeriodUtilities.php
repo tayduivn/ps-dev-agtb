@@ -37,7 +37,7 @@ require_once 'modules/TimePeriods/TimePeriod.php';
 
 class SugarTestTimePeriodUtilities
 {
-    private static $_createdTimePeriods = array();
+    public static $_createdTimePeriods = array();
 
     private function __construct() {}
 
@@ -93,19 +93,18 @@ class SugarTestTimePeriodUtilities
     /*
      * magic tardis function
      */
-    public static function createITimePeriod ($time_period_type, $is_fiscal=false){
+    public static function createITimePeriod ($type, $is_fiscal=false){
 
         global $timedate;
         $timedate = TimeDate::getInstance();
         $time = mt_rand();
-        $name = 'Sugar'.$time_period_type.'TimePeriod' . $time;
+        $name = 'Sugar'.$type.'TimePeriod' . $time;
         $start_date = self::getRandDate();
-        $timeperiod = BeanFactory::newBean($time_period_type."TimePeriods");
+        $timeperiod = TimePeriod::getByType($type);
         $timeperiod->is_fiscal = $is_fiscal;
         $timeperiod->setStartDate($timedate->asDbDate($start_date));
 
         $timeperiod->name = $name;
-        $timeperiod->is_leaf = 0;
         $timeperiod->save();
         self::$_createdTimePeriods[] = $timeperiod;
         return $timeperiod;
@@ -133,13 +132,6 @@ class SugarTestTimePeriodUtilities
         return $rand_date;
     }
 
-    public static function addTimePeriod($timeperiod=NULL) {
-        if(is_null($timeperiod)) {
-            return;
-        }
-        self::$_createdTimePeriods[] = $timeperiod;
-    }
-
     /**
      * @static
      * This is a static function to remove all created test TimePeriod instance
@@ -165,5 +157,16 @@ class SugarTestTimePeriodUtilities
             $timeperiod_ids[] = $tp->id;
         }
         return $timeperiod_ids;
+    }
+
+    /**
+     * @static
+     * This is a static function to set all created TimePeriod instances
+     *
+     * @param $timePeriods Array of TimePeriod instances
+     */
+    public static function setCreatedTimePeriods($timePeriods=array())
+    {
+        self::$_createdTimePeriods = $timePeriods;
     }
 }

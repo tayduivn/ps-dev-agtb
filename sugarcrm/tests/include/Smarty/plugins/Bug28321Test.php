@@ -102,6 +102,9 @@ class Bug28321Test extends Sugar_PHPUnit_Framework_TestCase
 		//now if customCodeRenderField is not set then process as normal
 		unset($params['var']['customCodeRenderField']);
 		unset($params['colData']['field']['customCodeRenderField']);
+		if(!isset($GLOBALS['app_strings'])) {
+            $GLOBALS['app_strings'] = return_application_language($GLOBALS['current_language']);
+		}
 		$output = smarty_function_sugar_evalcolumn($params, $ss);
 
 		$this->assertGreaterThan(65, strlen($output),'Connectors should not be processed when customCode is set to customCodeRenderField');

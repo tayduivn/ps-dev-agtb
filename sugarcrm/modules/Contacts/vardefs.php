@@ -175,7 +175,12 @@ array (
 			'type' => 'varchar',
 			'len' => '255',
 			'group'=>'portal',
-			'comment' => 'Name as it appears in the portal'
+			'comment' => 'Name as it appears in the portal',
+            'studio' => array(
+                'portaleditview' => false,
+                'portaldetailview' => false,
+                'portallistview' => false,
+            ),
 		),
 	'portal_active' =>
 		array (

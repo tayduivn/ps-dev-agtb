@@ -53,12 +53,13 @@ describe("The forecasts committed view", function () {
         view.render = function() {};
         view.context = {
         	forecasts: {
-        		set: function(){}
+        		set: function(){},
+                trigger: function(){}
         	}	
         };
         
-        forecastsSetStub = sinon.stub(view.context.forecasts, "set", function(){});
-        sinon.spy(view.context.forecasts.set);
+        forecastsSetStub = sinon.stub(view.context.forecasts, "trigger", function(){});
+        sinon.spy(view.context.forecasts.trigger);
         stubs.push(forecastsSetStub);
         
         context = app.context.getContext({
@@ -89,20 +90,20 @@ describe("The forecasts committed view", function () {
         delete view.selectedUser;
         delete view.totals;
         delete view.context;
-        delete view._collection.models;
+        delete view.collection.models;
     });
 
 
     describe("test arrow directions for sales rep", function () {
 
         beforeEach(function() {
-            var model1 = new Backbone.Model({date_entered:"2012-12-05T11:14:25-04:00", best_case : 100, likely_case : 90, base_rate : 1 });
-            var model2 = new Backbone.Model({date_entered:"2012-10-05T11:14:25-04:00", best_case : 110, likely_case : 100, base_rate : 1 });
-            var model3 = new Backbone.Model({date_entered:"2012-11-05T11:14:25-04:00", best_case : 120, likely_case : 110, base_rate : 1 });
-            view._collection = new Backbone.Collection([model1, model2, model3]);
+            var model1 = new Backbone.Model({date_entered:"2012-12-05T11:14:25-04:00", best_case : 100, likely_case : 90, worst_case : 80, base_rate : 1 });
+            var model2 = new Backbone.Model({date_entered:"2012-10-05T11:14:25-04:00", best_case : 110, likely_case : 100, worst_case : 90, base_rate : 1 });
+            var model3 = new Backbone.Model({date_entered:"2012-11-05T11:14:25-04:00", best_case : 120, likely_case : 110, worst_case : 100, base_rate : 1 });
+            view.collection = new Backbone.Collection([model1, model2, model3]);
         });
 
-        it("should show up for both", function () {
+        it("should show up for best, worst and likely", function () {
 
             totals = {
                 'amount': 500,
@@ -118,10 +119,11 @@ describe("The forecasts committed view", function () {
 
             expect(view.bestCaseCls).toContain('icon-arrow-up');
             expect(view.likelyCaseCls).toContain('icon-arrow-up');
-            expect(view.context.forecasts.set).toHaveBeenCalled();
+			expect(view.worstCaseCls).toContain('icon-arrow-up');
+            expect(view.context.forecasts.trigger).toHaveBeenCalled();
         });
 
-        it("should show down for both", function () {
+        it("should show down for  best, worst and likely", function () {
 
             totals = {
                 'best_case':1,
@@ -136,20 +138,21 @@ describe("The forecasts committed view", function () {
 
             expect(view.bestCaseCls).toContain('icon-arrow-down');
             expect(view.likelyCaseCls).toContain('icon-arrow-down');
-            expect(view.context.forecasts.set).toHaveBeenCalled();
+			expect(view.worstCaseCls).toContain('icon-arrow-down');
+            expect(view.context.forecasts.trigger).toHaveBeenCalled();
         });
     });
 
     describe("test arrow directions for manager", function () {
 
         beforeEach(function() {
-            var model1 = new Backbone.Model({date_entered:"2012-12-05T11:14:25-04:00", best_case : 100, likely_case : 90, base_rate : 1 });
-            var model2 = new Backbone.Model({date_entered:"2012-10-05T11:14:25-04:00", best_case : 110, likely_case : 100, base_rate : 1 });
-            var model3 = new Backbone.Model({date_entered:"2012-11-05T11:14:25-04:00", best_case : 120, likely_case : 110, base_rate : 1 });
-            view._collection = new Backbone.Collection([model1, model2, model3]);
+            var model1 = new Backbone.Model({date_entered:"2012-12-05T11:14:25-04:00", best_case : 100, likely_case : 90, worst_case : 80, base_rate : 1 });
+            var model2 = new Backbone.Model({date_entered:"2012-10-05T11:14:25-04:00", best_case : 110, likely_case : 100, worst_case : 90, base_rate : 1 });
+            var model3 = new Backbone.Model({date_entered:"2012-11-05T11:14:25-04:00", best_case : 120, likely_case : 110, worst_case : 100, base_rate : 1 });
+            view.collection = new Backbone.Collection([model1, model2, model3]);
         });
 
-        it("should show up for both", function () {
+        it("should show up for  best, worst and likely", function () {
 
             totals = {
                 'amount': 500,
@@ -165,10 +168,11 @@ describe("The forecasts committed view", function () {
 
             expect(view.bestCaseCls).toContain('icon-arrow-up');
             expect(view.likelyCaseCls).toContain('icon-arrow-up');
-            expect(view.context.forecasts.set).toHaveBeenCalled();
+			expect(view.worstCaseCls).toContain('icon-arrow-up');
+            expect(view.context.forecasts.trigger).toHaveBeenCalled();
         });
 
-        it("should show down for both", function () {
+        it("should show down for  best, worst and likely", function () {
 
             totals = {
                 'best_case':1,
@@ -183,7 +187,8 @@ describe("The forecasts committed view", function () {
 
             expect(view.bestCaseCls).toContain('icon-arrow-down');
             expect(view.likelyCaseCls).toContain('icon-arrow-down');
-            expect(view.context.forecasts.set).toHaveBeenCalled();
+			expect(view.worstCaseCls).toContain('icon-arrow-down');
+            expect(view.context.forecasts.trigger).toHaveBeenCalled();
         });
     });
 
@@ -207,7 +212,7 @@ describe("The forecasts committed view", function () {
             };
 
             //Simulate the view having no models in the collection
-            view._collection.models = [];
+            view.collection.models = [];
 
             //Simulate empty totals (no previous commit history)
             view.totals = {
@@ -234,10 +239,12 @@ describe("The forecasts committed view", function () {
                 expect(view.likelyCaseCls).toContain("icon-arrow-up font-green");
                 expect(view.bestCase).toEqual(1100);
                 expect(view.bestCaseCls).toContain("icon-arrow-up font-green");
+                expect(view.worstCase).toEqual(900);
+                expect(view.worstCaseCls).toContain("icon-arrow-up font-green");
                 expect(view.totals.amount).toEqual(1000);
                 expect(view.totals.best_case).toEqual(1100);
                 expect(view.totals.worst_case).toEqual(900);
-                expect(view.context.forecasts.set).toHaveBeenCalled();
+                expect(view.context.forecasts.trigger).toHaveBeenCalled();
             });
         });
     });
@@ -263,7 +270,7 @@ describe("The forecasts committed view", function () {
              };
 
              //Simulate the view having one model in the collection
-             view._collection.models = [new Backbone.Model({
+             view.collection.models = [new Backbone.Model({
                  likely_case : 900,
                  best_case: 1000,
                  worst_case: 800
@@ -294,6 +301,8 @@ describe("The forecasts committed view", function () {
                  expect(view.likelyCaseCls).toContain("icon-arrow-up font-green");
                  expect(view.bestCase).toEqual(1100);
                  expect(view.bestCaseCls).toContain("icon-arrow-up font-green");
+                 expect(view.worstCase).toEqual(900);
+                 expect(view.worstCaseCls).toContain("icon-arrow-up font-green");
                  expect(view.totals.amount).toEqual(1000);
                  expect(view.totals.best_case).toEqual(1100);
                  expect(view.totals.worst_case).toEqual(900);
@@ -321,7 +330,7 @@ describe("The forecasts committed view", function () {
             };
 
             //Simulate the view having one model in the collection
-            view._collection.models = [new Backbone.Model({
+            view.collection.models = [new Backbone.Model({
                 likely_case : 900,
                 best_case: 1000,
                 worst_case: 800

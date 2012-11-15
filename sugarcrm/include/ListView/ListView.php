@@ -1616,14 +1616,9 @@ $close_inline_img = SugarThemeRegistry::current()->getImage('close_inline', 'bor
             {
     //AED -- some modules do not have their additionalDetails.php established. Add a check to ensure require_once does not fail
     // Bug #2786
-                if($this->_additionalDetails && $aItem->ACLAccess('DetailView') && (file_exists('modules/' . $aItem->module_dir . '/metadata/additionalDetails.php') || file_exists('custom/modules/' . $aItem->module_dir . '/metadata/additionalDetails.php'))) {
-
-                    $additionalDetailsFile = 'modules/' . $aItem->module_dir . '/metadata/additionalDetails.php';
-                    if(file_exists('custom/modules/' . $aItem->module_dir . '/metadata/additionalDetails.php')){
-                        $additionalDetailsFile = 'custom/modules/' . $aItem->module_dir . '/metadata/additionalDetails.php';
-                    }
-
-                    require_once($additionalDetailsFile);
+                $additionalDetailsFile = SugarAutoLoader::existingCustomOne('modules/' . $aItem->module_dir . '/metadata/additionalDetails.php');
+                if($this->_additionalDetails && $aItem->ACLAccess('DetailView') && !empty($additionalDetailsFile)) {
+                    require_once $additionalDetailsFile;
                     $ad_function = (empty($this->additionalDetailsFunction) ? 'additionalDetails' : $this->additionalDetailsFunction) . $aItem->object_name;
                     $results = $ad_function($fields);
                     $results['string'] = str_replace(array("&#039", "'"), '\&#039', $results['string']); // no xss!

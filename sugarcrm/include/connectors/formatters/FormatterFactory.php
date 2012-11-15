@@ -20,6 +20,8 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *to the License for the specific language governing these rights and limitations under the License.
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
+
+require_once('include/connectors/ConnectorFactory.php');
 /**
  * Formatter factory
  * @api
@@ -48,22 +50,13 @@ class FormatterFactory {
 			   $formatter_name = $source_name;
 			}
 
-			//split the wrapper name to find the path to the file.
 			$dir = str_replace('_','/',$formatter_name);
 			$parts = explode("/", $dir);
-			$file = $parts[count($parts)-1];
+			$file = array_pop($parts);
 
-			//check if this override wrapper file exists.
-		    require_once('include/connectors/ConnectorFactory.php');
-			if(file_exists("modules/Connectors/connectors/formatters/{$dir}/{$file}.php") ||
-			   file_exists("custom/modules/Connectors/connectors/formatters/{$dir}/{$file}.php")) {
-				ConnectorFactory::load($formatter_name, 'formatters');
-				try{
-					$formatter_name .= '_formatter';
-				}catch(Exception $ex){
-					return null;
-				}
-			}else{
+			if(ConnectorFactory::load($formatter_name, 'formatters')) {
+				$formatter_name .= '_formatter';
+			} else {
 				//if there is no override wrapper, use the default.
 				$formatter_name = 'default_formatter';
 			}
@@ -71,10 +64,10 @@ class FormatterFactory {
 			$component = ConnectorFactory::getInstance($source_name);
 			$formatter = new $formatter_name();
 			$formatter->setComponent($component);
-			if(file_exists("custom/modules/Connectors/connectors/formatters/{$dir}/tpls/{$file}.tpl")){
-				$formatter->setTplFileName("custom/modules/Connectors/connectors/formatters/{$dir}/tpls/{$file}.tpl");
-			} else if("modules/Connectors/connectors/formatters/{$dir}/tpls/{$file}.tpl") {
-				$formatter->setTplFileName("modules/Connectors/connectors/formatters/{$dir}/tpls/{$file}.tpl");
+
+			$tpl = SugarAutoLoader::existingCustomOne("modules/Connectors/connectors/formatters/{$dir}/tpls/{$file}.tpl");
+			if(!empty($tpl)) {
+			    $formatter->setTplFileName($tpl);
 			}
 			self::$formatter_map[$key] = $formatter;
 		} //if

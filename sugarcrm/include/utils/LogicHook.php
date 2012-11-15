@@ -57,7 +57,7 @@ class LogicHook{
 	 *
 	 * @return unknown
 	 */
-	function initialize(){
+	static function initialize(){
 		if(empty($GLOBALS['logic_hook']))
 			$GLOBALS['logic_hook'] = new LogicHook();
 		return $GLOBALS['logic_hook'];
@@ -105,9 +105,10 @@ class LogicHook{
 
 	protected static $hooks = array();
 
-        static public function refreshHooks() {
-            self::$hooks = array();
-        }
+    static public function refreshHooks()
+    {
+        self::$hooks = array();
+    }
 
 	public function loadHooks($module_dir)
 	{
@@ -117,20 +118,14 @@ class LogicHook{
 	    } else {
 	        $custom = "custom/modules";
 	    }
-		if(file_exists("$custom/logic_hooks.php")){
+	    foreach(SugarAutoLoader::existing(
+		    "$custom/logic_hooks.php",
+	        SugarAutoLoader::loadExtension("logichooks", empty($module_dir)?"application":$module_dir)
+	    ) as $file) {
             if(isset($GLOBALS['log'])){
-	    	    $GLOBALS['log']->debug('Including module specific hook file for '.$custom);
+	    	    $GLOBALS['log']->debug('Including hook file: '.$file);
             }
-		    include("$custom/logic_hooks.php");
-		}
-		if(empty($module_dir)) {
-		    $custom = "custom/application";
-		}
-		if(file_exists("$custom/Ext/LogicHooks/logichooks.ext.php")) {
-            if(isset($GLOBALS['log'])){
-			    $GLOBALS['log']->debug('Including Ext hook file for '.$custom);
-            }
-			include("$custom/Ext/LogicHooks/logichooks.ext.php");
+		    include $file;
 		}
 		return $hook_array;
 	}

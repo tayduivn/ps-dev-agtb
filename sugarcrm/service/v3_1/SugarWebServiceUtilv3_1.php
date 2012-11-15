@@ -96,10 +96,8 @@ class SugarWebServiceUtilv3_1 extends SugarWebServiceUtilv3
      */
     function get_visible_mobile_modules($availModules)
     {
-        foreach ( array ( '','custom/') as $prefix)
-        {
-        	if(file_exists($prefix.'include/MVC/Controller/wireless_module_registry.php'))
-        		require $prefix.'include/MVC/Controller/wireless_module_registry.php' ;
+        foreach(SugarAutoLoader::existingCustom('include/MVC/Controller/wireless_module_registry.php') as $file) {
+            require $file;
         }
         return $this->getModulesFromList($wireless_module_registry, $availModules);
     }
@@ -143,16 +141,10 @@ class SugarWebServiceUtilv3_1 extends SugarWebServiceUtilv3
         $manager->loadVardef( $moduleName , $beanName ) ;
 
         // obtain the field definitions used by generateSearchWhere (duplicate code in view.list.php)
-        if(file_exists('custom/modules/'.$moduleName.'/metadata/metafiles.php')){
-            require('custom/modules/'.$moduleName.'/metadata/metafiles.php');
-        }elseif(file_exists('modules/'.$moduleName.'/metadata/metafiles.php')){
-            require('modules/'.$moduleName.'/metadata/metafiles.php');
+        $defs = SugarAutoLoader::loadWithMetafiles($moduleName, 'SearchFields', 'searchfields');
+        if($defs) {
+            require $defs;
         }
-
-        if(!empty($metafiles[$moduleName]['searchfields']))
-            require $metafiles[$moduleName]['searchfields'] ;
-        elseif(file_exists("modules/{$moduleName}/metadata/SearchFields.php"))
-            require "modules/{$moduleName}/metadata/SearchFields.php" ;
 
         $fields = array();
         foreach ( $dictionary [ $beanName ][ 'fields' ] as $field => $def )

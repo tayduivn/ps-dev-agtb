@@ -40,10 +40,16 @@
             // Get the corresponding detail view meta for said module
             this.meta = app.metadata.getView(this.model.module, 'detail') || {};
 
+            //Store copy of fields so we don't update it by ref
+            var oFields = this.meta.panels[0].fields;
+
             // Clip meta panel fields to first N number of fields per the spec
             this.meta.panels[0].fields = _.first(this.meta.panels[0].fields, fieldsToDisplay);
 
             app.view.View.prototype._render.call(this);
+
+            // restore copy of fields
+            this.meta.panels[0].fields = oFields;
         }
     },
     closePreview: function() {
