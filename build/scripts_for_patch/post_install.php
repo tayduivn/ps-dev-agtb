@@ -1079,11 +1079,13 @@ function process_email_address_relationships()
 }
 
 /**
- * Alters email_address relationship tables from the old uuid to the new uuid, optionally
- * using a timestamp parameter as a threshold
+ * Alters email_address relationship tables from the old uuid to the new uuid for 'email_addr_bean_rel' table.  This is relationship
+ * linking the email address and the person bean user/lead/contact.
+ * This script optionally updates the 'emails_email_addr_rel' using the $time_changed parameter as a flag.  This is the relationship
+ * linking the email messages to the email address.
  * @param $old_uuid - this id is to be changed
  * @param $new_uuid - change to this id
- * @param null $time_changed (if this parameter is set, only change relationships after this timestamp)
+ * @param null $time_changed (if this parameter is not set, run the query that updates 'emails_email_addr_rel' relationship table)
  */
 function fix_email_address_relationships($old_uuid, $new_uuid, $time_changed=null)
 {
