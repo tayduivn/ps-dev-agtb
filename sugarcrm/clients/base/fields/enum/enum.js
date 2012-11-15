@@ -31,8 +31,11 @@
             }
         }
 
-        // The styleguide requirements indicate that the search bar only shows up for fields with 5 or more values
-        chosenOptions.disable_search_threshold = 5;
+        /*
+         The forecasts module requirements indicate that the search bar only shows up for fields with 5 or more values,
+         this adds the ability to specify that threshold in metadata.
+          */
+        chosenOptions.disable_search_threshold = this.def.searchBarThreshold?this.def.searchBarThreshold:0;
 
         app.view.Field.prototype._render.call(this);
 
