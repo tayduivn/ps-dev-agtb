@@ -37,7 +37,7 @@
                                 <span>
                                     {{#unless ../../this.labelsOnTop}}
                                         {{#if ../../../this.labels}}
-                                            <div class="span{{../this.labelSpan}} tright record-label" >{{str ../this.label ../../../../../../this.model.module}}</div>
+                                            <label class="span{{../this.labelSpan}} tright record-label" >{{str ../this.label ../../../../../../this.model.module}}</label>
                                         {{/if}}
                                     {{/unless}}
                                     <div class="span{{this.span}} record-cell{{#if cell_css}} {{cell_css}}{{/if}}" data-type="{{type}}" data-name="{{name}}">
@@ -49,10 +49,12 @@
                                                 {{field ../../../../../this}}
                                             </span>
                                         {{/if}}
-                                        {{#unless noedit}}
-                                            <span class="record-edit-link-wrapper" data-name="{{../name}}">
-                                                <a class="record-edit-link icon-pencil" data-type="{{../type}}" data-name="{{../name}}"></a>
-                                            </span>
+                                        {{#unless ../../../../../createMode}}
+                                            {{#unless noedit}}
+                                                <span class="record-edit-link-wrapper" data-name="{{../name}}">
+                                                    <a class="record-edit-link icon-pencil" data-type="{{../type}}" data-name="{{../name}}"></a>
+                                                </span>
+                                            {{/unless}}
                                         {{/unless}}
                                     </div>
                                 </span>
