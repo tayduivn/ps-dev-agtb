@@ -347,7 +347,7 @@ class MetaDataManager {
 
         $outputAcl = array('fields'=>array());
         if ( is_admin($userObject) || !SugarACL::moduleSupportsACL($module) ) {
-            foreach ( array('admin','developer','access','view','list','edit','delete','import','export','massupdate') as $action ) {
+            foreach ( array('access','view','list','edit','delete','import','export','massupdate') as $action ) {
                 $outputAcl[$action] = 'yes';
             }
         } else if ( isset($acls[$module]['module']) ) {
