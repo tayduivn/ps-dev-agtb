@@ -80,14 +80,8 @@
         //show first panel
         firstModule = _.first(this.meta.modules).module;
         this.context.currentStep = this.context.steps.search(firstModule);
-        this.showPanel(firstModule);
+        this.context.trigger('lead:convert:' + firstModule + ':show');
 
-    },
-
-    showPanel: function (moduleName) {
-        var panelBody = '#collapse' + moduleName;
-        this.$(panelBody).collapse('show');
-        this.context.trigger('lead:convert:' + moduleName + ':show');
     },
 
     handlePanelHeaderClick: function(event) {
@@ -102,7 +96,7 @@
             currentModule = this.context.currentStep.key,
             callback = function() {
                 self.context.trigger('lead:convert:' + currentModule + ':hide');
-                self.showPanel(nextModule);
+                self.context.trigger('lead:convert:' + nextModule + ':show');
             };
 
         //todo: check if create view is visible and dirty - don't run if not dirty
@@ -121,7 +115,6 @@
             //validation or has selected element
             //Add logic to process current step and if complete move to next one
             //check whether or not can continue depending on dependent modules
-            _.bind(this.updateCompletedPanelHeader, this)
         ], function(error) {
             if (error) {
                 console.log("Saving failed.");
@@ -131,16 +124,6 @@
                 callback();
             }
         });
-    },
-
-    updateCompletedPanelHeader: function(callback) {
-        if (!_.isUndefined(this.context.currentStep)) {
-            var currentModule = this.context.currentStep.key,
-                completedView = this._getPanelByModuleName(currentModule);
-
-            completedView.updatePanelHeader();
-        }
-        callback(false);
     },
 
     setNextStep: function(nextModule) {

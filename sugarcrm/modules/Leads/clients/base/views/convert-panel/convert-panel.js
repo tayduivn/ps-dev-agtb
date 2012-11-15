@@ -95,10 +95,17 @@
     },
 
     handleShow: function() {
+        this.showBody();
         this.showSubViewToggle();
     },
 
+    showBody: function () {
+        var panelBody = '#collapse' + this.meta.module;
+        this.$(panelBody).collapse('show');
+    },
+
     handleHide: function() {
+        this.updatePanelHeader();
         this.hideSubViewToggle();
     },
 
