@@ -49,8 +49,7 @@ describe("The forecastsConfigTimeperiods view", function(){
 
     describe("timeperiod selects setup method", function() {
         beforeEach(function() {
-            testMonthMethodStub = sinon.stub(view, "_setUpTimeperiodStartMonthBind", function() {return field;});
-            testDayMethodStub = sinon.stub(view, "_setUpTimeperiodStartDayBind", function() {return field;});
+            testStartDatePickerMethodStub = sinon.stub(view, "_setUpTimeperiodPicker", function() {return field;});
             testIntervalMethodStub = sinon.stub(view, "_setUpTimeperiodIntervalBind", function() {return field;});
             testShowFWBWMethodStub = sinon.stub(view, "_setUpTimeperiodShowField", function() {return field;});
             field = {
@@ -64,9 +63,9 @@ describe("The forecastsConfigTimeperiods view", function(){
 
         afterEach(function() {
             delete view.model;
-            testMonthMethodStub.restore();
-            testDayMethodStub.restore();
+            testStartDatePickerMethodStub.restore();
             testIntervalMethodStub.restore();
+            testShowFWBWMethodStub.restore();
             delete field;
         });
 
@@ -85,18 +84,11 @@ describe("The forecastsConfigTimeperiods view", function(){
             expect(testShowFWBWMethodStub).toHaveBeenCalledWith(field);
         });
 
-        it("should set up month field", function() {
-            field.name = "timeperiod_start_month";
+        it("should set up timeperiod start date picker", function() {
+            field.name = "timeperiod_start_picker";
             view._renderField(field);
             expect(_renderFieldStub).toHaveBeenCalledWith(field);
-            expect(testMonthMethodStub).toHaveBeenCalledWith(field);
-        });
-
-        it("should set up day field", function() {
-            field.name = "timeperiod_start_day";
-            view._renderField(field);
-            expect(_renderFieldStub).toHaveBeenCalledWith(field);
-            expect(testDayMethodStub).toHaveBeenCalledWith(field);
+            expect(testStartDatePickerMethodStub).toHaveBeenCalledWith(field);
         });
 
         //BEGIN SUGARCRM flav=pro ONLY
@@ -112,8 +104,7 @@ describe("The forecastsConfigTimeperiods view", function(){
             field.name = "timeperiod_config_other";
             view._renderField(field);
             expect(_renderFieldStub).toHaveBeenCalledWith(field);
-            expect(testMonthMethodStub).not.toHaveBeenCalled();
-            expect(testDayMethodStub).not.toHaveBeenCalled();
+            expect(testStartDatePickerMethodStub).not.toHaveBeenCalled();
             //BEGIN SUGARCRM flav=pro ONLY
                 expect(testIntervalMethodStub).not.toHaveBeenCalled();
             //END SUGARCRM flav=pro ONLY
