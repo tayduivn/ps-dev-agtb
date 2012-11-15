@@ -1,5 +1,6 @@
 ({
     editMode: false,
+    createMode: false,
 
     events: {
         'click .record-edit': 'editClicked',
@@ -23,6 +24,8 @@
 
         app.view.View.prototype.initialize.call(this, options);
 
+        this.createMode = this.context.get("create") ? true : false;
+
         // Set the save button to show if the model has been edited.
         this.model.on("change", function() {
             if (this.editMode || this.editAllMode) {
@@ -31,7 +34,7 @@
             }
         }, this);
 
-        if (this.context.get("create") === true) {
+        if (this.createMode) {
             this.model.isNotEmpty = true;
         }
     },
@@ -101,7 +104,7 @@
     checkAclForButtons: function() {
         if (this.context.get("model").module === "Users") {
             this.hasAccess = (app.user.get("id") == this.context.get("model").id);
-        } else if (this.context.get("create") === true) {
+        } else if (this.createMode) {
             this.hasAccess = true;
         } else {
             this.hasAccess = app.acl.hasAccessToModel("edit", this.model);
@@ -250,7 +253,7 @@
         this.editAllMode = false;
         this.model.save({}, {
             success: function() {
-                if (self.context.get("create") === true) {
+                if (self.createMode) {
                     app.navigate(self.context, self.model);
                 } else {
                     self.render();
