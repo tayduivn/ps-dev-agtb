@@ -66,7 +66,7 @@ class SugarEmailAddress extends SugarBean
                         $primaryE = (isset($emailAddr['primary_address']) && $emailAddr['primary_address'] == "1") ? true : false;
                         $this->addAddress($address, $primaryE, false, $invalidE, $optO);
                     }
-                } else if (!isset($bean->email)) {
+                } else if (empty($bean->email)) {
                     // Special case if not bean->email - removing results in legacy breakage, broken tests, and general sadness. 
                     for ($i = 1; $i <= 10; $i++) {
                         $email = 'email' . $i;
