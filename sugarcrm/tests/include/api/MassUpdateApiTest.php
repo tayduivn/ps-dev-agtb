@@ -61,8 +61,6 @@ class MassUpdateApiTest extends Sugar_PHPUnit_Framework_TestCase
 
         $job = new MassUpdateJob();
         $job->run($schedulerJob, $schedulerJob->data);
-        $schedulerJob->retrieve($id);
-        $job->run($schedulerJob, $schedulerJob->data);
 
         return true;
     }
