@@ -1,4 +1,9 @@
 describe("Portal User extensions", function () {
+
+    beforeEach(function () {
+        SUGAR.App.metadata.set(fixtures.metadata, false, true);
+    });
+
     describe("app.user.addSalutationToFullName", function () {
         it("should patch Contact response data by adding salutation to full name", function () {
             var app = SUGAR.App;
@@ -35,4 +40,9 @@ describe("Portal User extensions", function () {
 
         });
     });
+
+    afterEach(function() {
+        SUGAR.App.metadata.reset();
+    });
+
 });

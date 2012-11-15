@@ -186,7 +186,7 @@ SUGAR.tour = function() {
         init: function(params) {
             var modals = params.modals;
 
-            tourModal = $('<div id="'+params.id+'" class="modal tour"></div>').modal({backdrop: false}).draggable({handle: ".modal-header"});
+            tourModal = $('<div id="'+params.id+'" class="modal '+params.className+' tour"></div>').modal({backdrop: false}).draggable({handle: ".modal-header"});
 
             var tourIdSel = "#"+params.id;
 
@@ -208,14 +208,6 @@ SUGAR.tour = function() {
                         $(tourIdSel+'End').css("display","block");
                         centerModal();
                     });
-                    $(tourIdSel+' a.close').on("click",function(e){
-                        tourModal.modal("hide");
-                        $(tourIdSel+'Start').css("display","block");
-                        $(tourIdSel+'End').css("display","none");
-                        centerModal();
-                        SUGAR.tour.saveUserPref(params.prefUrl);
-                        params.onTourFinish();
-                    });
                     $(tourIdSel+'End a.btn.btn-primary').on("click",function(e){
                         tourModal.modal("hide");
                         $(tourIdSel+'Start').css("display","block");
@@ -225,11 +217,15 @@ SUGAR.tour = function() {
                         params.onTourFinish();
                     });
                     $(tourIdSel+'End a.btn').not('.btn-primary').on("click",function(e){
-                        $(tourIdSel+'End').css("display","none");
+                        tourModal.modal("hide");
                         var lastModal = modals.length-1;
                         modalArray[lastModal].modal('show');
                         $(modals[lastModal].target).popoverext('show');
                         centerModal();
+                    });
+
+                    $('div.modal.'+params.className+'.tour a.close').live("click",function(e){
+                        closeTour();
                     });
 
                     centerModal();
@@ -308,12 +304,25 @@ SUGAR.tour = function() {
                     $(window).resize(function() {
                         centerModal();
                     });
+
+
+
                     function centerModal() {
                         $(".tour").each(function(){
                             $(this).css("left",$(window).width()/2 - $(this).width()/2);
                             $(this).css("margin-top",-$(this).height()/2);
                         });
 
+                    }
+
+                    function closeTour() {
+                        tourModal.modal("hide");
+                        $(tourIdSel+'Start').css("display","block");
+                        $(tourIdSel+'End').css("display","none");
+                        centerModal();
+                        SUGAR.tour.saveUserPref(params.prefUrl);
+                        $('.popover').blur();
+                        params.onTourFinish();
                     }
 
                     function nextModal (i) {
@@ -330,7 +339,6 @@ SUGAR.tour = function() {
                             $(modals[i].target).popoverext('hide');
                             modalArray[i].modal('hide');
                             tourModal.modal("show");
-                            $(tourIdSel+'End').css("display","block");
                             centerModal();
                         }
 
@@ -348,6 +356,8 @@ SUGAR.tour = function() {
                     function skipTour (i) {
                         $(modals[i].target).popoverext('hide');
                         modalArray[i].modal('hide');
+                        $(tourIdSel+'End').css("display","block");
+                        $(tourIdSel+'Start').css("display","none");
                         tourModal.modal("show");
                         centerModal();
                     }
@@ -384,6 +394,8 @@ SUGAR.tour = function() {
 
                         return content.html();
                     }
+
+
 
 
 
@@ -485,19 +497,15 @@ function replaceAll(text, src, rep) {
 	return text;
 }
 
-/**
- * Adds form for validation if it doesn't already exist already
- * @param {string} formname Name of form
- */
 function addForm(formname) {
-    if(typeof validate[formname] == 'undefined'){
-	    validate[formname] = new Array();
-    }
+	validate[formname] = new Array();
 }
 
 function addToValidate(formname, name, type, required, msg) {
-	addForm(formname);
-	validate[formname].push([name, type,required, msg]);
+	if(typeof validate[formname] == 'undefined') {
+		addForm(formname);
+	}
+	validate[formname][validate[formname].length] = new Array(name, type,required, msg);
 }
 
 // Bug #47961 Callback validator definition
@@ -913,24 +921,10 @@ function check_form(formname) {
 	return validate_form(formname, '');
 }
 
-/**
- * Adds error style to a form input field with the given message
- *
- * @param {string} formname Name of form being used
- * @param {string} input Name of field having error style applied
- * @param {string} txt Error message text
- * @param {boolean} flash Perform flash animation
- * @param {boolean} sticky Make error style stay unless explicitly removed
- */
-function add_error_style(formname, input, txt, flash, sticky) {
+function add_error_style(formname, input, txt, flash) {
     var raiseFlag = false;
 	if (typeof flash == "undefined")
 		flash = true;
-    if (typeof sticky !== "boolean"){
-        sticky = false;
-    } else if(sticky) {
-        flash = false; // If sticky, we can't allow message to flash
-    }
 	try {
 	inputHandle = typeof input == "object" ? input : document.forms[formname][input];
 	style = get_current_bgcolor(inputHandle);
@@ -964,16 +958,11 @@ function add_error_style(formname, input, txt, flash, sticky) {
         else {
             inputHandle.parentNode.appendChild(errorTextNode);
         }
-        //inputsWithErrors array is used when flashing and removing old messages.
-        // We won't track sticky messages.
-        if(!sticky){
-            if (flash)
-                inputHandle.style.backgroundColor = "#FF0000";
-            inputsWithErrors.push(inputHandle);
-        }
-
+        if (flash)
+        	inputHandle.style.backgroundColor = "#FF0000";
+        inputsWithErrors.push(inputHandle);
 	}
-    if (flash && !sticky)
+    if (flash)
     {
 		// We only need to setup the flashy-flashy on the first entry, it loops through all fields automatically
 	    if ( inputsWithErrors.length == 1 ) {
@@ -1104,7 +1093,6 @@ function isFieldHidden(field)
 }
 //END SUGARCRM flav=pro ONLY
 function validate_form(formname, startsWith){
-
     requiredTxt = SUGAR.language.get('app_strings', 'ERR_MISSING_REQUIRED_FIELDS');
     invalidTxt = SUGAR.language.get('app_strings', 'ERR_INVALID_VALUE');
 
