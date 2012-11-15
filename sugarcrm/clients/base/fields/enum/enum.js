@@ -30,6 +30,10 @@
                 this.hasBlank = true;
             }
         }
+
+        // The styleguide requirements indicate that the search bar only shows up for fields with 5 or more values
+        chosenOptions.disable_search_threshold = 5;
+
         app.view.Field.prototype._render.call(this);
 
         this.$(this.fieldTag).chosen(chosenOptions);
