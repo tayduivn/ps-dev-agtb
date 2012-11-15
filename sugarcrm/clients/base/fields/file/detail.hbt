@@ -1,5 +1,5 @@
 <ul>
-{{#each attachments}}
+{{#each value}}
     <li><a class="file" href="javascript:void(0)" data-url="{{url}}">{{name}}</a></li>
 {{/each}}
 </ul>
