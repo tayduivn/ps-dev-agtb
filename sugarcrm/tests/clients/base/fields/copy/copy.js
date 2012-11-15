@@ -39,7 +39,7 @@ describe('copy field', function() {
             field = SugarTest.createField('base', 'copy_from_master', 'copy', 'edit', fieldDef);
             sinon.stub(field, '_loadTemplate', function() {
                 this.template = function() {
-                    return '<input type="checkbox" />';
+                    return '{{#if def.sync}}<label><input type="checkbox"{{#if value}} checked{{/if}}/>{{label}}</label>{{else}}<button type="button" class="btn">{{label}}</button>{{/if}}';
                 };
             });
         });
@@ -183,8 +183,7 @@ describe('copy field', function() {
                 expect(field.model.get(target)).toEqual(prev.get(target));
             });
 
-            field.$('input[type=checkbox]').attr('checked', true).trigger('click');
-
+            field.$('button').trigger('click');
             var value = 'Edited float value to sync with `address_street` and `name` fields';
             field.model.set('float', value);
             expect(field.model.get('float')).toEqual(value);
