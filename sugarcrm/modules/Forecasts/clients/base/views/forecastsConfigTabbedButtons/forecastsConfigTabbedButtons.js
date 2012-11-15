@@ -86,6 +86,7 @@
     },
 
     breadcrumb:function (evt) {
+        evt.preventDefault();
         // we need to know how many panels there are
         if (!_.isNumber(this.totalPanels)) {
             this.panels = this.$el.parent().find('div.modal-content');
