@@ -1,6 +1,5 @@
 ({
-        extendsFrom: app.view.AlertView,
-
+        extendsFrom: 'AlertView',
         className: '', //override default class
 
         events:{
