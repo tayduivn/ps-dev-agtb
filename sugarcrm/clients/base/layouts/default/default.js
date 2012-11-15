@@ -13,6 +13,13 @@
         this.processDef();
 
         this.context.on("togglePreview", function(model) { this.showPreview(); }, this);
+        this.context.on("toggleSidebar", this.toggleSide, this);
+    },
+
+    toggleSide: function() {
+        this.$('.main-pane').toggleClass('span12');
+        this.$('.main-pane').toggleClass('span8');
+        this.$('.side').toggle();
     },
 
     processDef: function() {
