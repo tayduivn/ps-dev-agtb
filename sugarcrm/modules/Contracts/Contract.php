@@ -96,8 +96,8 @@ class Contract extends SugarBean {
 	// This is used to retrieve related fields from form posts.
 	var $additional_column_fields = array ('revision');
 
+	var $importable = true;
 	
-
 	var $new_schema = true;
 	var $module_dir = 'Contracts';
 
