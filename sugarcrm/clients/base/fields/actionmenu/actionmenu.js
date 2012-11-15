@@ -7,8 +7,8 @@
     actionDropDownTag: ".dropdown-toggle",
     fieldTag: "input[name=check]",
     initialize: function(options) {
-        app.view.Field.prototype.initialize.call(this, options),
-            massCollection = this.context.get('mass_collection');
+        app.view.Field.prototype.initialize.call(this, options);
+        var massCollection = this.context.get('mass_collection');
         if(!massCollection) {
             var MassCollection = app.BeanCollection.extend({
                     reset: function() {
