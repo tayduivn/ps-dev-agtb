@@ -78,7 +78,7 @@ class SmtpMailer extends BaseMailer
                 "From"     => $this->headers->getFrom()
             );
             $message .= "--- Mail Headers ---\n".print_r($headers,true);
-            $GLOBALS["log"]->info($message);
+            $GLOBALS["log"]->debug($message);
             /*--- Debug Only ----------------------------------------------------*/
 
         } catch (Exception $e) {
