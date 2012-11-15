@@ -40,4 +40,8 @@ class MetadataMobileApi extends MetadataApi {
                array_keys($wireless_module_registry) :
                array();
     }
+
+    protected function getDisplayModules($moduleList){
+        return $moduleList;
+    }
 }

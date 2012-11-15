@@ -80,16 +80,19 @@ class SugarACL
         if(!isset(self::$acls[$module])) {
             self::$acls[$module] = array();
 
-            $bean = self::loadBean($module, $context);
-
-            // Be sure we got a SugarBean:
-            // Some modules do not extend SugarBean (ie DynamicFields)
-            // TODO: see how we can support ACLs for those too
-            if(! $bean instanceof SugarBean) {
-                return array();
+            $name = BeanFactory::getObjectName($module);
+            if(!isset($GLOBALS['dictionary'][$name])) {
+                if(empty($name) || empty($GLOBALS['beanList'][$module]) || empty($GLOBALS['beanFiles'][$GLOBALS['beanList'][$module]])) {
+                    // try to weed out non-bean modules - these can't have ACLs as they don't have vardefs to keep them
+                    $GLOBALS['log']->debug("Non-bean $module - no ACL for you!");
+                    return array();
+                }
+                VardefManager::loadVardef($module, $name);
             }
+            $acl_list = isset($GLOBALS['dictionary'][$name]['acls'])?$GLOBALS['dictionary'][$name]['acls']:array();
+            $acl_list = array_merge($acl_list, SugarBean::getDefaultACL());
 
-            $acl_list = $bean->defaultACLs();
+             $GLOBALS['log']->debug("ACLS for $module: ".var_export($acl_list, true));
 
             foreach($acl_list as $klass => $args) {
                 if($args === false) continue;
@@ -197,8 +200,14 @@ class SugarACL
         if(empty($list)) {
             return $list;
         }
+        //BEGIN SUGARCRM flav=free ONLY
+        if(class_exists('BoxOfficeClient')){
+        	$boc = BoxOfficeClient::getInstance();
+        	$modules = $boc->filterModules();
+        }
+        //END SUGARCRM flav=free ONLY
         foreach($list as $key => $module) {
-            if(self::checkAccess($use_value?$module:$key, $action)) {
+            if(self::checkAccess($use_value?$module:$key, $action, array("owner_override" => true))) {
                 $result[$key] = $module;
             }
         }

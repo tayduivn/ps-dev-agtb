@@ -33,7 +33,6 @@ $mod_strings = array (
 	'LBL_ACCEPT_THIS'=>'Accept?',
 	'LBL_ADD_BUTTON'=> 'Add',
 	'LBL_ADD_INVITEE' => 'Add Invitees',
-	'LBL_ADD_PARENT_INVITEE' => 'Add Related person to invitees',
 	'LBL_COLON' => ':',
 	'LBL_CONTACT_NAME' => 'Contact:',
 	'LBL_CONTACTS_SUBPANEL_TITLE' => 'Contacts',
@@ -183,5 +182,6 @@ $mod_strings = array (
     
     'LBL_SYNCED_RECURRING_MSG' => 'This meeting originated in another system and was synced to Sugar. To make changes, go to the original meeting within the other system. Changes made in the other system can be synced to this record.',
     'LBL_RELATED_TO' => 'Related to:',
+    'LBL_CREATE_MODULE' => 'Schedule Meeting',
 );
 ?>

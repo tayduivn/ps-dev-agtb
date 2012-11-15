@@ -179,14 +179,18 @@ abstract class CurrencyRateUpdateAbstract
      */
     protected function updateRate($table, $column, $currencyId)
     {
+        // get the conversion rate
+        $rate = $this->db->getOne(sprintf("SELECT conversion_rate FROM currencies WHERE id = '%s'", $currencyId));
+
         // setup SQL statement
-        $query = sprintf("UPDATE currencies c, %s t SET t.%s = c.conversion_rate WHERE c.id = '%s' and c.id = t.currency_id",
+        $query = sprintf("UPDATE %s t SET t.%s = %d WHERE t.currency_id = '%s'",
             $table,
             $column,
+            $rate,
             $currencyId
         );
         // execute
-        return $this->db->query($query, true, string_format($GLOBALS['app_strings']['ERR_DB_QUERY'],array('CurrencyRateUpdate',$query)));
+        return $this->db->query($query, true,string_format($GLOBALS['app_strings']['ERR_DB_QUERY'],array('CurrencyRateUpdate',$query)));
     }
 
     /**

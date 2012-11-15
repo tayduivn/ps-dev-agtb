@@ -28,6 +28,9 @@ $dictionary['Note'] = array(
     //END SUGARCRM flav=following ONLY
 
     'table' => 'notes',
+    // TODO: Figure out a way to selectively disable the activity stream for
+    // posts -- useful when adding attachments to the activity stream.
+    'activity_enabled'=>false,
 	'unified_search' => true, 'full_text_search' => true, 'unified_search_default_enabled' => true,
 
 	'comment' => 'Notes and Attachments'

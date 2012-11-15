@@ -19,6 +19,8 @@ class SugarFieldBase {
     public $error;
     var $ss; // Sugar Smarty Object
     var $hasButton = false;
+    protected static $base = array();
+
     function SugarFieldBase($type) {
     	$this->type = $type;
         $this->ss = new Sugar_Smarty();
@@ -39,7 +41,25 @@ class SugarFieldBase {
         if(!empty($this->image)){
             $additional .= ' <img ' . $this->image . '>';
         }
-    	return $this->ss->fetchCustom($path) . $additional;
+    	return $this->ss->fetch($path) . $additional;
+    }
+
+    /**
+     * Get base view - cache it since base view is the same for all fields
+     * @param string $view
+     * @return string Base view filename
+     */
+    protected function getBase($view)
+    {
+        if(!isset(self::$base[$view])) {
+            if(!empty($GLOBALS['current_language'])) {
+            	self::$base[$view] = SugarAutoLoader::existingCustomOne("include/SugarFields/Fields/Base/{$GLOBALS['current_language']}.$view.tpl");
+            }
+            if(empty(self::$base[$view])) {
+            	self::$base[$view] = SugarAutoLoader::existingCustomOne("include/SugarFields/Fields/Base/$view.tpl");
+            }
+        }
+        return self::$base[$view];
     }
 
     function findTemplate($view){
@@ -54,10 +74,11 @@ class SugarFieldBase {
         while ( $lastClass = get_parent_class($lastClass) ) {
             $classList[] = str_replace('SugarField','',$lastClass);
         }
+        array_pop($classList); // remove this class - $base handles that
 
         $tplName = '';
+        global $current_language;
         foreach ( $classList as $className ) {
-            global $current_language;
             if(isset($current_language)) {
                 $tplName = SugarAutoLoader::existingCustomOne('include/SugarFields/Fields/'. $className .'/'. $current_language . '.' . $view .'.tpl');
                 if ($tplName) {
@@ -68,6 +89,9 @@ class SugarFieldBase {
             if ($tplName) {
                 break;
             }
+        }
+        if(empty($tplName)) {
+            $tplName = $this->getBase($view);
         }
 
         $tplCache[$this->type][$view] = $tplName;
@@ -607,11 +631,27 @@ class SugarFieldBase {
     /**
      * Gets normalized values for defs. Used by the MetaDataManager at first for
      * API responses, but can be used througout the app.
-     * 
+     *
      * @param array $vardef
-     * @return array A transformed vardef with normalizations applied   
+     * @return array A transformed vardef with normalizations applied
      */
     public function getNormalizedDefs($vardef) {
+        // Bug 57802 - REST API Metadata: vardef len property must be number, not string
+        // Some vardefs set len and size as strings. Custom fields do the same
+        // so clean that up here before the metadata is returned.
+        if (isset($vardef['len'])) {
+            $vardef['len'] = $this->normalizeNumeric($vardef['len']);
+        }
+        
+        if (isset($vardef['size'])) {
+            $vardef['size'] = $this->normalizeNumeric($vardef['size']);
+        }
+        
+        // Bug 57890 - Required values should be boolean
+        if (isset($vardef['required'])) {
+            $vardef['required'] = $this->normalizeBoolean($vardef['required']);
+        }
+
         // Handle normalizations that need to be applied
         if (isset($vardef['default'])) {
             $vardef['default'] = $this->normalizeDefaultValue($vardef['default']);
@@ -619,15 +659,56 @@ class SugarFieldBase {
         
         return $vardef;
     }
-    
+
     /**
      * Normalizes a default value
-     * 
+     *
      * @param mixed $value The value to normalize
      * @return string
      */
     public function normalizeDefaultValue($value) {
         return $value;
     }
+
+    /**
+     * Normalizes numeric def values. For non numeric values, returns null
+     * 
+     * @param mixed $value
+     * @return int|null
+     */
+    public function normalizeNumeric($value) {
+        if (is_numeric($value)) {
+            return intval($value);
+        } 
+        
+        return null;
+    }
+    
+    public function normalizeBoolean($value) {
+        // If the value is already boolean, send it back
+        if ($value === true || $value === false) {
+            return $value;
+        }
+        
+        // Check against known values of booleans
+        $bools = array(
+            0 => false,
+            '0' => false,
+            'no' => false,
+            'off' => false,
+            'false' => false,
+            1 => true,
+            '1' => true,
+            'yes' => true,
+            'on' => true,
+            'true' => true,
+        );
+        
+        if (isset($bools[$value])) {
+            return $bools[$value];
+        }
+        
+        // Just send it back
+        return $value;
+    }
 }
-?>

@@ -73,7 +73,6 @@ $mod_strings = array (
     'LNK_NEW_APPOINTMENT' => 'Create Appointment',
 	'LBL_SCHEDULING_FORM_TITLE' => 'Scheduling',
     'LBL_ADD_INVITEE' => 'Add Invitees',
-	'LBL_ADD_PARENT_INVITEE' => 'Add Related person to invitees',
     'LBL_NAME' => 'Name',
     'LBL_FIRST_NAME' => 'First Name',
     'LBL_LAST_NAME' => 'Last Name',
@@ -155,6 +154,7 @@ $mod_strings = array (
     'LBL_RECURRENCE' => 'Recurrence',
     'LBL_SYNCED_RECURRING_MSG' => 'This call originated in another system and was synced to Sugar. To make changes, go to the original call within the other system. Changes made in the other system can be synced to this record.',
     'LBL_RELATED_TO' => 'Related to:',
+    'LBL_CREATE_MODULE' => 'Log Call',
 );
 
 

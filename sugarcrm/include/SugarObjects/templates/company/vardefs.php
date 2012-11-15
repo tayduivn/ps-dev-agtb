@@ -37,7 +37,38 @@ $vardefs= array (
     'merge_filter' => 'selected',  //field will be enabled for merge and will be a part of the default search criteria..other valid values for this property are enabled and disabled, default value is disabled.
                             //property value is case insensitive.
   ),
-   
+    'linkedin' =>
+    array (
+        'name' => 'linkedin',
+        'vname' => 'LBL_LINKEDIN',
+        'type' => 'varchar',
+        'len' => '100',
+        'comment' => 'The linkedin name of the company'
+    ),
+    'facebook' =>
+    array (
+        'name' => 'facebook',
+        'vname' => 'LBL_FACEBOOK',
+        'type' => 'varchar',
+        'len' => '100',
+        'comment' => 'The facebook name of the company'
+    ),
+    'twitter' =>
+    array (
+        'name' => 'twitter',
+        'vname' => 'LBL_TWITTER',
+        'type' => 'varchar',
+        'len' => '100',
+        'comment' => 'The twitter name of the company'
+    ),
+    'googleplus' =>
+    array (
+        'name' => 'googleplus',
+        'vname' => 'LBL_GOOGLEPLUS',
+        'type' => 'varchar',
+        'len' => '100',
+        'comment' => 'The Google Plus name of the company'
+    ),
    strtolower($object_name).'_type' => 
   array (
     'name' => strtolower($object_name).'_type',
@@ -167,7 +198,7 @@ $vardefs= array (
     'type' => 'phone',
     'dbType' => 'varchar',
     'len' => 100,
-    'audited'=>true,
+    'audited'=>true,         
     'unified_search' => true,  
     'full_text_search' => array('boost' => 1),
     'comment' => 'The office phone number',

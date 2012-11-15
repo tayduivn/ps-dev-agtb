@@ -19,12 +19,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *to the License for the specific language governing these rights and limitations under the License.
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
-/*********************************************************************************
- * $Id: upload_file.php 55278 2010-03-15 13:45:13Z jmertic $
- * Description:
- ********************************************************************************/
 require_once('include/externalAPI/ExternalAPIFactory.php');
-
 /**
  * @api
  * Manage uploaded files
@@ -554,6 +549,16 @@ class UploadStream
 {
     const STREAM_NAME = "upload";
     protected static $upload_dir;
+    public static $wrapper_class = __CLASS__;
+    protected static $instance;
+
+    /**
+     * Empty parent ctor
+     */
+    public function __construct()
+    {
+
+    }
 
     /**
      * Method checks Suhosin restrictions to use streams in php
@@ -655,7 +660,23 @@ class UploadStream
      */
     public function register()
     {
-        stream_register_wrapper(self::STREAM_NAME, __CLASS__);
+        if(isset($GLOBALS['sugar_config']['upload_wrapper_class'])) {
+            // FIXME: after file loading patch is merged, make it use autoloader API
+            if(file_exists("custom/include/{$GLOBALS['sugar_config']['upload_wrapper_class']}.php")) {
+                require_once "custom/include/{$GLOBALS['sugar_config']['upload_wrapper_class']}.php";
+            } else if(file_exists("include/{$GLOBALS['sugar_config']['upload_wrapper_class']}.php")) {
+                require_once "include/{$GLOBALS['sugar_config']['upload_wrapper_class']}.php";
+            }
+            if(class_exists($GLOBALS['sugar_config']['upload_wrapper_class'])) {
+                self::$wrapper_class = $GLOBALS['sugar_config']['upload_wrapper_class'];
+            } else {
+                self::$wrapper_class = __CLASS__;
+            }
+        } else {
+            self::$wrapper_class = __CLASS__;
+        }
+        stream_register_wrapper(self::STREAM_NAME, self::$wrapper_class);
+        self::$instance = new self::$wrapper_class();
     }
 
     /**
@@ -664,6 +685,53 @@ class UploadStream
      * @return string FS path
      */
     public static function path($path)
+    {
+        return self::$instance->getFSPath($path);
+    }
+
+    /**
+     * Ensure upload subdir exists
+     * @param string $path Upload stream path (with upload://)
+     * @return boolean
+     */
+    public static function ensureDir($path)
+    {
+        if(!self::$instance->checkDir($path)) {
+            return self::$instance->createDir($path);
+        }
+        return true;
+    }
+
+    /**
+     * Move uploaded file to the path
+     * @param string $upload Uploaded file
+     * @param string $path Target dir
+     */
+    public static function move_uploaded_file($upload, $path)
+    {
+    	if(move_uploaded_file($upload, self::path($path))) {
+    	    return self::$instance->registerFile($path);
+    	}
+    	return false;
+    }
+
+    /**
+     * Register new file added to uploads by external means
+     * @param string $path
+     * @return boolean
+     */
+    public function registerFile($path)
+    {
+        return true;
+    }
+
+    /**
+     * Get real FS path of the upload stream file
+     * Non-static version for overrides
+     * @param string $path Upload stream path (with upload://)
+     * @return string FS path
+     */
+    public function getFSPath($path)
     {
     	$path = substr($path, strlen(self::STREAM_NAME)+3); // cut off upload://
     	$path = str_replace("\\", "/", $path); // canonicalize path
@@ -675,19 +743,25 @@ class UploadStream
     }
 
     /**
-     * Ensure upload subdir exists
-     * @param string $path Upload stream path (with upload://)
-     * @param bool $writable
+     * Create directory within uploads
+     * @param string $path
      * @return boolean
      */
-    public static function ensureDir($path, $writable = true)
+    public function createDir($path)
     {
-        $path = self::path($path);
-        if(!is_dir($path)) {
-           return sugar_mkdir($path, 0755, true);
-        }
-        return true;
+        return sugar_mkdir($this->getFSPath($path), 0755, true);
     }
+
+    /**
+     * Check if uploads directory exists
+     * @param string $path
+     * @return boolean
+     */
+    public function checkDir($path)
+    {
+        return is_dir($this->getFSPath($path));
+    }
+
 
     public function dir_closedir()
     {
@@ -696,7 +770,7 @@ class UploadStream
 
     public function dir_opendir ($path, $options )
     {
-        $this->dirp = opendir(self::path($path));
+        $this->dirp = opendir($this->getFSPath($path));
         return !empty($this->dirp);
     }
 
@@ -712,17 +786,17 @@ class UploadStream
 
     public function mkdir($path, $mode, $options)
     {
-        return mkdir(self::path($path), $mode, ($options&STREAM_MKDIR_RECURSIVE) != 0);
+        return mkdir($this->getFSPath($path), $mode, ($options&STREAM_MKDIR_RECURSIVE) != 0);
     }
 
     public function rename($path_from, $path_to)
     {
-        return rename(self::path($path_from), self::path($path_to));
+        return rename($this->getFSPath($path_from), $this->getFSPath($path_to));
     }
 
     public function rmdir($path, $options)
     {
-        return rmdir(self::path($path));
+        return rmdir($this->getFSPath($path));
     }
 
     public function stream_cast ($cast_as)
@@ -752,7 +826,7 @@ class UploadStream
 
     public function stream_open($path, $mode)
     {
-        $fullpath = self::path($path);
+        $fullpath = $this->getFSPath($path);
         if(empty($fullpath)) return false;
         if($mode == 'r') {
             $this->fp = fopen($fullpath, $mode);
@@ -798,18 +872,14 @@ class UploadStream
 
     public function unlink($path)
     {
-        unlink(self::path($path));
+        unlink($this->getFSPath($path));
         return true;
     }
 
     public function url_stat($path, $flags)
     {
-        return @stat(self::path($path));
+        return @stat($this->getFSPath($path));
     }
 
-    public static function move_uploaded_file($upload, $path)
-    {
-        return move_uploaded_file($upload, self::path($path));
-    }
 }
 

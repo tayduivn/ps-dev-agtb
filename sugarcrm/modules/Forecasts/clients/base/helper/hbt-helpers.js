@@ -16,7 +16,7 @@
    });
 
    /**
-    * Formats given number for display as a percentage. Rounds to 2 decimal places. Includes percentage sign.
+    * Formats given number for display as a percentage. Rounds to 2 decimnal places. Includes percentage sign.
     * @method formatNumber
     * @throws {Error} if given number is greater than 1
     * @param {number} The number to format.

@@ -72,6 +72,7 @@ class OpportunityTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertEquals($opp->$case, $opp->amount);
     }
 
+
     /**
      * @dataProvider dataProviderCaseFieldEqualsAmountWhenCaseFieldEmpty
      */

@@ -31,9 +31,9 @@ $themedef = array(
     'name'  => "Right to Left",
     'description' => "A Right to Left Theme",
     'directionality' => 'rtl',
-    'parentTheme' => 'Sugar',
+    'parentTheme' => 'RacerX',
     'version' => array(
-        'regex_matches' => array('6\.*.*'),
+        'regex_matches' => array('[6|7]\.*.*'),
         ),
     'group_tabs' => true,
     );

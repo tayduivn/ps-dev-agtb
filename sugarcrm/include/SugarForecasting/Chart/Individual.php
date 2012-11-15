@@ -59,6 +59,14 @@ class SugarForecasting_Chart_Individual extends SugarForecasting_Chart_AbstractC
      */
     protected $values = array();
 
+
+    /**
+     * The timeperiod instance used in the data processing
+     *
+     * @var TimePeriodInterface instance
+     */
+    protected $timePeriod;
+
     /**
      * Constructor
      *
@@ -201,7 +209,8 @@ class SugarForecasting_Chart_Individual extends SugarForecasting_Chart_AbstractC
         foreach ($this->dataArray as $data) {
 
             // figure out where we need to put this in the array
-            $month_value_key = date('m-Y', strtotime($data['date_closed']));
+            $chart_value_key = $this->timePeriod->getChartLabelsKey($data['date_closed']);
+            //date($this->timePeriod->chart_label_format, strtotime($data['date_closed']));
 
             // figure out where this needs to be put in the values array
             $value_key = 0;
@@ -235,8 +244,8 @@ class SugarForecasting_Chart_Individual extends SugarForecasting_Chart_AbstractC
             $dataset_value = (isset($data[$dataset_key])) ? SugarCurrency::convertAmountToBase($data[$dataset_key], $data['currency_id']) : 0;
 
             // put the values in to their proper locations and add to any that are already there
-            $this->values[$month_value_key]['values'][$value_key] += number_format($dataset_value, 2, '.', '');
-            $this->values[$month_value_key]['gvalue'] += number_format($dataset_value, 2, '.', '');
+            $this->values[$chart_value_key]['values'][$value_key] += number_format($dataset_value, 2, '.', '');
+            $this->values[$chart_value_key]['gvalue'] += number_format($dataset_value, 2, '.', '');
 
         }
 
@@ -315,16 +324,14 @@ class SugarForecasting_Chart_Individual extends SugarForecasting_Chart_AbstractC
      */
     protected function convertTimeperiodToChartValues()
     {
+        $admin = BeanFactory::getBean('Administration');
+        $config = $admin->getConfigForModule('Forecasts', 'base');
+        $type = $config['timeperiod_leaf_interval'];
+
         /* @var $timeperiod TimePeriod */
-        $timeperiod = BeanFactory::getBean('TimePeriods', $this->getArg('timeperiod_id'));
-
-        $months = array();
-
-        $start = strtotime($timeperiod->start_date);
-        $end = strtotime($timeperiod->end_date);
+        $this->timePeriod = TimePeriod::getByType($type, $this->getArg('timeperiod_id'));
 
         $num_of_items = count($this->group_by_labels);
-
         $empty_array = $this->defaultValueArray;
         $empty_array['values'] = array_pad(array(), $num_of_items, 0);
         $empty_array['valuelabels'] = array_pad(array(), $num_of_items, "0");
@@ -332,14 +339,7 @@ class SugarForecasting_Chart_Individual extends SugarForecasting_Chart_AbstractC
         $empty_array['goalmarkervalue'] = array(0, 0);
         $empty_array['goalmarkervaluelabel'] = array("0", "0");
 
-        while ($start < $end) {
-            $val = $empty_array;
-            $val['label'] = date('F Y', $start);
-            $months[date('m-Y', $start)] = $val;
-            $start = strtotime("+1 month", $start);
-        }
-
-        $this->values = $months;
+        $this->values = $this->timePeriod->getChartLabels($empty_array);
     }
 
 }

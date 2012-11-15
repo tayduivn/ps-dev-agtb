@@ -2,6 +2,7 @@
 /*********************************************************************************
  * The contents of this file are subject to
  * *******************************************************************************/
+
 require_once('include/MVC/View/SidecarView.php');
 
 class ViewSidecar extends SidecarView
@@ -9,7 +10,7 @@ class ViewSidecar extends SidecarView
     /**
      * Constructor
      *
-     * @see SugarView::SugarView()
+     * @see SidecarView::SidecarView()
      */
  	public function __construct($bean = null, $view_object_map = array())
  	{
@@ -19,7 +20,7 @@ class ViewSidecar extends SidecarView
         $this->options['show_javascript'] = false;
         $this->options['show_subpanels'] = false;
         $this->options['show_search'] = false;
- 		parent::SidecarView($bean = null, $view_object_map = array());
+ 		parent::__construct($bean = null, $view_object_map = array());
  	}
 
 }

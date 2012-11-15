@@ -29,6 +29,7 @@ class Bug43468Test extends Sugar_PHPUnit_Framework_TestCase
 {
     public function setUp()
     {
+        SugarTestHelper::setUp('app_list_strings');
 		$GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
 		$GLOBALS['current_user']->setPreference('datef', "Y/m/d");
 		$GLOBALS['app_strings'] = return_application_language($GLOBALS['current_language']);
@@ -39,6 +40,7 @@ class Bug43468Test extends Sugar_PHPUnit_Framework_TestCase
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
         unset($GLOBALS['current_user']);
         unset($GLOBALS['app_strings']);
+        SugarTestHelper::tearDown();
     }
     
     public function testGetMassUpdateForm()

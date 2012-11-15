@@ -2367,6 +2367,91 @@ private function dir_file_count($path){
         sugar_die("Unknown method ModuleInstaller::$name called");
     }
 
+
+//BEGIN SUGARCRM flav=ent ONLY
+    /**
+     * handles portal config creation
+     */
+    public static function handlePortalConfig()
+    {
+        if (!isset($sugar_config)) {
+            global $sugar_config;
+        }
+
+        $portalConfig = array(
+            'appId' => 'SupportPortal',
+            'appStatus' => 'offline',
+            'env' => 'dev',
+            'platform' => 'portal',
+            'additionalComponents' => array(
+                'header' => array(
+                    'target' => '#header',
+                    'layout' => 'header'
+                ),
+                'footer' => array(
+                    'target' => '#footer',
+                    'layout' => 'footer'
+                ),
+                'tourguide' => array(
+                    'target' => '#tourguide'
+                )
+            ),
+            'alertsEl' => '#alerts',
+            'alertAutoCloseDelay' => 9000,
+            'serverUrl' => $sugar_config['site_url'] . '/rest/v10',
+            'siteUrl' => $sugar_config['site_url'],
+            'unsecureRoutes' => array('signup', 'error'),
+            'loadCss' => 'url',
+            'themeName' => 'default',
+            'clientID' => 'support_portal',
+            'maxSearchQueryResult'=>'5'
+        );
+        $filePath = 'portal2/config.js';
+        self::writeJSConfig($portalConfig,$filePath);
+
+    }
+//END SUGARCRM flav=ent ONLY
+    public static function handleBaseConfig() {
+        $filePath = 'config.js';
+        if (!isset($sugar_config)) {
+            global $sugar_config;
+        }
+
+        $sidecarConfig = array(
+            'appId' => 'SugarCRM',
+            'env' => 'dev',
+            'platform' => 'base',
+            'additionalComponents' => array(
+                'header' => array(
+                    'target' => '#header',
+                    'layout' => 'header'
+                ),
+                'footer' => array(
+                    'target' => '#footer',
+                    'layout' => 'footer'
+                ),
+                'tourguide' => array(
+                    'target' => '#tourguide'
+                )
+            ),
+            'alertsEl' => '#alerts',
+            'alertAutoCloseDelay' => 9000,
+            'serverUrl' => $sugar_config['site_url'].'/rest/v10',
+            'siteUrl' => $sugar_config['site_url'],
+            'unsecureRoutes' => array('login', 'error'),
+            'loadCss' => 'url',
+            'themeName' => 'default',
+            'clientID' => 'sugar'
+        );
+        self::writeJSConfig($sidecarConfig,$filePath);
+    }
+
+    public static function writeJSConfig($config, $path) {
+        $configString = json_encode($config);
+        $JSConfig = '(function(app) {app.augment("config", ' . $configString . ', false);})(SUGAR.App);';
+        sugar_file_put_contents($path, $JSConfig);
+    }
+
 }
 
     function UpdateSystemTabs($action, $installed_modules){

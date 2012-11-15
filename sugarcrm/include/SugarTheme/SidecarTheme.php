@@ -47,12 +47,33 @@ class SidecarTheme
     private $paths;
     private $bootstrapCssName = 'bootstrap.css';
 
-    function __construct($client = 'base', $themeName = 'default')
+    function __construct($client = 'base', $themeName = null)
     {
         $this->myClient = $client;
-        $this->myTheme = $themeName;
 
+        // Get user theme if the themeName isn't defined
+        if (!$themeName || $themeName == '') {
+            $themeName = $this->getUserTheme();
+        }
+        $this->myTheme = $themeName;
         $this->paths = $this->makePaths($client, $themeName);
+    }
+
+    /**
+     * Get the user preferred theme
+     *      * @return string themeName
+     */
+    private function getUserTheme() {
+        if(isset($_COOKIE['sugar_user_theme']) && $_COOKIE['sugar_user_theme'] != '') {
+            return $_COOKIE['sugar_user_theme'];
+        }
+        else if(isset($_SESSION['authenticated_user_theme']) && $_SESSION['authenticated_user_theme'] != '')	{
+            return $_SESSION['authenticated_user_theme'];
+        }
+        else {
+            global $sugar_config;
+            return $sugar_config['default_theme'];
+        }
     }
 
     /**
@@ -63,8 +84,12 @@ class SidecarTheme
      */
     public function getCSSURL()
     {
-        $cacheCSS = $this->paths['css'];
 
+        $hashKey = $this->paths['hashKey'];
+        //First check if the hash is cached so we don't have to load the metadata manually to calculate it
+        $hash = sugar_cache_retrieve($hashKey);
+        //If it was, check if the client has the same version cached
+        $cacheCSS = $this->paths['cache'].$hash.".css";
         // Check if file exists on the system
         // otherwise we have to generate the corresponding bootstrap.css with custom theme, default theme and base theme
         if (!file_exists($cacheCSS)) {
@@ -73,14 +98,13 @@ class SidecarTheme
             $baseThemeVars = $this->paths['base'] . 'variables.less';
             if ( SugarAutoLoader::fileExists($customThemeVars) || SugarAutoLoader::fileExists($baseThemeVars) ) {
                 $this->compileTheme();
+                $cacheCSS = $this->paths['cache'].$hash.".css";
             }
             else {
                 // Otherwise we compile the default theme if it exists
                 $clientDefaultTheme = new SidecarTheme($this->myClient, 'default');
-                $cacheCSS = $clientDefaultTheme->paths['css'];
-                if (!file_exists($cacheCSS)) {
-                    $clientDefaultTheme->compileTheme();
-                }
+                $hash = $clientDefaultTheme->compileTheme();
+                $cacheCSS = $this->paths['cache'].$hash.".css";
             }
         }
         return $cacheCSS;
@@ -103,6 +127,7 @@ class SidecarTheme
             'custom' => 'custom/themes/clients/' . $client . '/' . $themeName . '/',
             'cache'  =>  sugar_cached('themes/clients/' . $client . '/' . $themeName . '/'),
             'css'    =>  sugar_cached('themes/clients/' . $client . '/' . $themeName . '/' . $this->bootstrapCssName),
+            'hashKey' => "theme:". $client . ':' . $themeName . ':' . $this->bootstrapCssName,
         );
     }
 
@@ -154,7 +179,12 @@ class SidecarTheme
 
         // Write bootstrap.css on the file system
         sugar_mkdir($this->paths['cache'], null, true);
-        sugar_file_put_contents($this->paths['css'], $myCss);
+
+        $hash = md5($myCss);
+        sugar_file_put_contents($this->paths['cache'].$hash.".css", $myCss);
+        //Cache the hash in sugar_cache so we don't have to hit the filesystem for etag comparisons
+        sugar_cache_put($this->paths['hashKey'], $hash);
+        return $hash;
     }
 
     /**
@@ -176,7 +206,9 @@ class SidecarTheme
         }
         //Relative path from /cache/themes/clients/PLATFORM/THEMENAME/bootstrap.css
         //              to   /styleguide/assets/
-        $variables['baseUrl'] = '"../../../../../styleguide/assets"';
+        if (!isset($variables['baseUrl'])) {
+            $variables['baseUrl'] = '"../../../../../styleguide/assets"';
+        }
 
         try {
             $css = $less->parse($variables);
@@ -224,6 +256,8 @@ class SidecarTheme
 
         if ($variablesLess) {
             if (!$split) {
+                // Parses the mixins defs     @varName:      mixinName;
+                $output = array_merge($output, $this->parseLessVars("/@([^:|@]+):(\s+)([^\#|@|\(|\"]*?);/", $variablesLess));
                 // Parses the hex colors     @varName:      #aaaaaa;
                 $output = array_merge($output, $this->parseLessVars("/@([^:|@]+):(\s+)(\#.*?);/", $variablesLess));
                 // Parses the rgba colors     @varName:      rgba(0,0,0,0);
@@ -233,6 +267,9 @@ class SidecarTheme
                 // Parses the backgrounds     @varNamePath:      "./path/to/img.jpg";
                 $output = array_merge($output, $this->parseLessVars("/@([^:|@]+Path):(\s+)(\".*?\");/", $variablesLess));
             } else {
+                // Parses the mixins defs     @varName:      mixinName;
+                $output['mixins'] = $this->parseLessVars("/@([^:|@]+):(\s+)([^\#|@|\(|\"]*?);/", $variablesLess, true);
+                // Parses the hex colors     @varName:      #aaaaaa;
                 $output['hex'] = $this->parseLessVars("/@([^:|@]+):(\s+)(\#.*?);/", $variablesLess, true);
                 // Parses the rgba colors     @varName:      rgba(0,0,0,0);
                 $output['rgba'] = $this->parseLessVars("/@([^:|@]+):(\s+)(rgba\(.*?\));/", $variablesLess, true);

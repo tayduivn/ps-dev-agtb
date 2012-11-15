@@ -4781,14 +4781,16 @@ function addPdfManagerTemplate() {
 
 /**
  *
- * This function creats job queue for old opportunities to be upgraded w/ commit_stage, date_closed_timestamp,
- * best/worst cases, related product for forecasting
+ * This function creates a job for to run the SugarJobUpdateOpportunities class
+ *
  */
 function updateOpportunitiesForForecasting()
 {
     global $current_user;
+    $timedate = TimeDate::getInstance();
     //Create an entry in the job queue to run UpdateOppsJob which handles updating all opportunities
-    $job = BeanFactory::getBean('SchedulersJobs');;
+    $job = BeanFactory::getBean('SchedulersJobs');
+    $job->execute_time = $timedate->nowDb();
     $job->name = "Update Old Opportunities";
     $job->status = SchedulersJob::JOB_STATUS_QUEUED;
     $job->target = "class::SugarJobUpdateOpportunities";

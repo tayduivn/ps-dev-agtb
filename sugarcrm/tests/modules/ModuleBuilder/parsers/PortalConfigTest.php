@@ -36,19 +36,18 @@ class PortalConfigParserTest extends Sugar_PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        //echo "Setup";
+        SugarTestHelper::setUp('mod_strings', array('ModuleBuilder'));
     }
 
     public function tearDown()
     {
-        //echo "TearDown";
         if (isset($this->user->id)) {
             $GLOBALS['db']->query("DELETE FROM users WHERE id = '{$this->user->id}'");
             if ($GLOBALS['db']->tableExists('users_cstm')) {
                 $GLOBALS['db']->query("DELETE FROM users_cstm WHERE id_c = '{$this->user->id}'");
             }
         }
-        //unset($_SESSION['ACL']);
+        SugarTestHelper::tearDown();
     }
 
     public function test_PortalConfigParserHandleSaveConfig()

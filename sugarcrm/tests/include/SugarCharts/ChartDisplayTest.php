@@ -70,6 +70,7 @@ class ChartDisplayTest extends Sugar_PHPUnit_Framework_TestCase
     {
         SugarTestAccountUtilities::removeAllCreatedAccounts();
         parent::tearDownAfterClass();
+        SugarTestHelper::tearDown();
     }
 
     public function setUp()

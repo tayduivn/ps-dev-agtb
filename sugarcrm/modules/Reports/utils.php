@@ -1,5 +1,6 @@
 <?php
-if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
+if (!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
+
 /*********************************************************************************
  * The contents of this file are subject to the SugarCRM Master Subscription
  * Agreement ("License") which can be viewed at
@@ -27,49 +28,62 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * by SugarCRM are Copyright (C) 2004-2011 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
-/**
- * Notify report owner of invalid report definition
- *
- * @param SavedReport $saved_report
- * @param int $report_id
- * @param Report $report
- */
-function notify_of_invalid_report($saved_report, $report_id, $report)
+require_once "modules/Mailer/MailerFactory.php"; // imports all of the Mailer classes that are needed
+
+class ReportsUtilities
 {
-    $report_owner = new User;
-    $report_owner->retrieve($saved_report->assigned_user_id);
+    private $user;
+    private $language;
 
-    $emails = array($report_owner->email1, $report_owner->email2);
-    $emails = array_filter($emails);
+    public function __construct() {
+        global $current_user,
+               $current_language;
 
-    // report owner has no email address
-    if (0 == count($emails))
-    {
-        return;
+        $this->user     = $current_user;
+        $this->language = $current_language;
     }
 
-    $emailObj = new Email();
-    $defaults = $emailObj->getSystemDefaultEmail();
+    /**
+     * Notify the report owner of an invalid report definition.
+     *
+     * @param User   $recipient required
+     * @param string $message   required
+     * @throws MailerException Allows exceptions to bubble up for the caller to report if desired.
+     */
+    public function sendNotificationOfInvalidReport($recipient, $message) {
+        $mailer = MailerFactory::getMailerForUser($this->user);
 
-    require_once('include/SugarPHPMailer.php');
-    $mailer = new SugarPHPMailer();
-    $mailer->setMailerForSystem();
-    $mailer->From = $defaults['email'];
-    $mailer->FromName = $defaults['name'];
+        // set the subject of the email
+        $mod_strings = return_module_language($this->language, "Reports");
+        $mailer->setSubject($mod_strings["ERR_REPORT_INVALID_SUBJECT"]);
 
-    // retrieve first non-empty email address
-    $email = array_shift($emails);
-    $mailer->AddAddress($email);
+        // set the body of the email...
 
-    global $current_language;
-    $mod_strings = return_module_language($current_language, 'Reports');
-    $mailer->Subject = $mod_strings['ERR_REPORT_INVALID_SUBJECT'];
+        // the compared strings will be the same if strip_tags had no affect
+        // if the compared strings are equal, then it's a text-only message
+        $textOnly = (strcmp($message, strip_tags($message)) == 0);
 
-    $invalid_fields = $report->get_invalid_fields();
-    $mailer->Body = string_format($mod_strings['ERR_REPORT_INVALID'], array(
-        $report_id, implode(', ', $invalid_fields)
-    ));
+        if ($textOnly) {
+            $mailer->setTextBody($message);
+        } else {
+            $textBody = strip_tags(br2nl($message)); // need to create the plain-text part
+            $mailer->setTextBody($textBody);
+            $mailer->setHtmlBody($message);
+        }
 
-    $mailer->prepForOutbound();
-    $mailer->Send();
+        // add the recipient...
+
+        // first get all email addresses known for this recipient
+        $recipientEmailAddresses = array($recipient->email1, $recipient->email2);
+        $recipientEmailAddresses = array_filter($recipientEmailAddresses);
+
+        // then retrieve first non-empty email address
+        $recipientEmailAddress = array_shift($recipientEmailAddresses);
+
+        // a MailerException is raised if $email is invalid, which prevents the call to send below
+        $mailer->addRecipientsTo(new EmailIdentity($recipientEmailAddress));
+
+        // send the email
+        $mailer->send();
+    }
 }

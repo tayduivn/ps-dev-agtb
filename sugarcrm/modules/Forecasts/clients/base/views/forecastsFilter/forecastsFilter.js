@@ -40,6 +40,14 @@
     },
 
     /**
+     * Clean up any left over bound data to our context
+     */
+    unbindData : function() {
+        if(this.context.forecasts) this.context.forecasts.off(null, null, this);
+        app.view.View.prototype.unbindData.call(this);
+    },
+
+    /**
      * Watch for the selectedUser Change
      */
     bindDataChange:function () {
@@ -51,11 +59,6 @@
                 self.selectedUser = user;
                 this.toggleCategoryFieldVisibility();
             }, this);
-            if (this.context.forecasts.config) {
-                this.context.forecasts.config.on("change", function (context) {
-                    this.render();
-                }, this);
-            }
         }
     },
 

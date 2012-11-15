@@ -31,30 +31,32 @@
 <html>
     <head>
         <meta http-equiv="X-UA-Compatible" content="IE=8, IE=9, IE=10" >
-        <link rel="stylesheet" href="sidecar/lib/chosen/chosen.css"/>
 
         <!-- App Scripts -->
         <script src='sidecar/minified/sidecar.min.js'></script>
+        <script src='{$sugarSidecarPath}'></script>
         <!-- <script src='sidecar/minified/sugar.min.js'></script> -->
         <script src='{$configFile}'></script>
+        <script src="include/javascript/jquery/bootstrap-wysihtml5/wysihtml5-0.3.0.min.js"></script>
+        <script src="include/javascript/jquery/bootstrap-wysihtml5/bootstrap-wysihtml5.js"></script>
 
         <!-- CSS -->
         <link rel="stylesheet" href="sidecar/lib/chosen/chosen.css"/>
-        <link rel="stylesheet" href="include/javascript/twitterbootstrap/css/bootstrap.css"/>
+        <link rel="stylesheet" href="styleguide/styleguide/css/bootstrap.css"/>
         <link rel="stylesheet" href="sidecar/lib/jquery-ui/css/smoothness/jquery-ui-1.8.18.custom.css"/>
-        <link href="http://fonts.googleapis.com/css?family=Open+Sans:300,400,600" rel="stylesheet" type="text/css">
+        <link rel="stylesheet" href="include/javascript/jquery/bootstrap-wysihtml5/bootstrap-wysihtml5.css"/>
     </head>
     <body>
     	<div id="sugarcrm">
 			<div id="sidecar">
-                <div id="alert" class="alert-top"></div>
+                <div id="alerts" class="alert-top"></div>
                 <div id="header"></div>
                 <div id="content">
                     <div class="container welcome">
                         <div class="row">
                             <div class="span4 offset4 thumbnail">
                                 <div class="modal-header tcenter">
-                                    <img src="include/javascript/twitterbootstrap/img/throbber.gif"></img>
+                                    <img src="include/javascript/twitterbootstrap/img/throbber.gif" />
                                 </div>
                                 <div class="modal-footer">
                                     Loading...
@@ -64,12 +66,38 @@
                     </div>
                 </div>
                 <div id="footer"></div>
+                <div id="tourguide"></div>
 			</div>
 		</div>
         {literal}
 		<script language="javascript">
-			var syncResult, view, layout, html;
-			var App = SUGAR.App.init({
+			var syncResult, view, layout, html, App;
+
+            (function(app) {
+                app.events.on("app:init", function() {
+                    function recordHandler(module, id, action) {
+                        var opts = {
+                            module: module,
+                            layout: "record",
+                            action: (action || "detail")
+                        };
+
+                        if (id !== "create") {
+                            _.extend(opts, {modelId: id});
+                        } else {
+                            _.extend(opts, {create: true});
+                            opts.layout = "newrecord";
+                        }
+
+                        app.controller.loadView(opts);
+                    }
+
+                    // Hack to overload the routes currently
+                    app.router.route(":module/:id", "record", recordHandler);
+                });
+            })(SUGAR.App);
+
+            App = SUGAR.App.init({
                 el: "#sidecar",
                 callback: function(app){
                     app.start();

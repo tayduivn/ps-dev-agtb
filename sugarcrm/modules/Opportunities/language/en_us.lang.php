@@ -99,6 +99,7 @@ $mod_strings = array (
   'MSG_DUPLICATE' => 'The opportunity record you are about to create might be a duplicate of a opportunity record that already exists. Opportunity records containing similar names are listed below.<br>Click Save to continue creating this new opportunity, or click Cancel to return to the module without creating the opportunity.',
   'LBL_NEW_FORM_TITLE' => 'Create Opportunity',
   'LNK_NEW_OPPORTUNITY' => 'Create Opportunity',
+  'LNK_CREATE' => 'Create Deal',
   'LNK_OPPORTUNITY_LIST' => 'View Opportunities',
   'ERR_DELETE_RECORD' => 'A record number must be specified to delete the opportunity.',
   'LBL_TOP_OPPORTUNITIES' => 'My Top Open Opportunities',
@@ -146,7 +147,7 @@ $mod_strings = array (
 
   // SNIP
   'LBL_CONTACT_HISTORY_SUBPANEL_TITLE' => 'Related Contacts\' Emails',
-
+  'LBL_FILENAME' => 'Attachment',  
   'LBL_PRIMARY_QUOTE_ID' => 'Primary Quote',
 
   //BEGIN SUGARCRM flav=pro ONLY
@@ -175,6 +176,7 @@ $mod_strings = array (
   //BEGIN SUGARCRM flav=ent ONLY
   'LBL_PRODUCT_LINES_SUBPANEL_TITLE' => 'Product Line Items',
   //END SUGARCRM flav=ent ONLY
+    
 );
 
 ?>

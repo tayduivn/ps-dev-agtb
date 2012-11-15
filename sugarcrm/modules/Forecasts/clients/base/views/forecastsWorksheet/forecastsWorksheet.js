@@ -4,6 +4,29 @@
  * @class View.Views.WorksheetView
  * @alias SUGAR.App.layout.WorksheetView
  * @extends View.View
+ *
+ *
+ * Events Triggered
+ *
+ * forecasts:forecastcommitbuttons:triggerCommit
+ *      on: context.forecasts
+ *      by: safeFetch()
+ *      when: user clicks ok on confirm dialog that they want to commit data
+ *
+ * forecasts:worksheet:rendered
+ *      on: context.forecasts
+ *      by: _render
+ *      when: the worksheet is done rendering
+ *
+ * forecasts:worksheet:filtered
+ *      on: context.forecasts
+ *      by: updateWorksheetBySelectedCategory()
+ *      when: dataTable is finished filtering itself
+ *
+ * forecasts:worksheet:filtered
+ *      on: context.forecasts
+ *      by: updateWorksheetBySelectedCategory()
+ *      when: dataTable is finished filtering itself and has destroyed and redrawn itself
  */
 ({
 
@@ -33,12 +56,12 @@
         var self = this;
         
         self.gTableDefs = {
-					            "bAutoWidth": false,
-					            "aoColumnDefs": self.columnDefs,
-					            "aaSorting": self.aaSorting,
-					            "bInfo":false,
-					            "bPaginate":false
-					      };
+                                "bAutoWidth": false,
+                                "aoColumnDefs": self.columnDefs,
+                                "aaSorting": self.aaSorting,
+                                "bInfo":false,
+                                "bPaginate":false
+                          };
         
         this.viewModule = app.viewModule;
 
@@ -49,7 +72,7 @@
         this._collection = this.context.forecasts.worksheet;
 
         //set up base selected user
-    	this.selectedUser = {id: app.user.get('id'), "isManager":app.user.get('isManager'), "showOpps": false};
+        this.selectedUser = {id: app.user.get('id'), "isManager":app.user.get('isManager'), "showOpps": false};
 
         // INIT tree with logged-in user       
         this.timePeriod = app.defaultSelections.timeperiod_id.id;
@@ -61,12 +84,8 @@
      *
      * @return {String}
      */
-    createURL:function(type) {
-        if(_.isUndefined(type)){
-        	type = "normal";
-        }
-        
-    	var url = this.url;
+    createURL:function() {
+        var url = this.url;
         var args = {};
         if(this.timePeriod) {
            args['timeperiod_id'] = this.timePeriod;
@@ -77,13 +96,7 @@
            args['user_id'] = this.selectedUser.id;
         }
         
-        if(type == "mgrCheck"){
-        	url = app.api.buildURL('Forecasts/committed/mgrNeedsCommitted', '', '', args);
-        }
-        else{
-        	url = app.api.buildURL('ForecastWorksheets', '', '', args);
-        }
-        
+        url = app.api.buildURL('ForecastWorksheets', '', '', args);
         return url;
     },
         
@@ -95,24 +108,24 @@
      * @private
      */
     _setUpCommitStage: function (field) {
-    	var forecastCategories = this.context.forecasts.config.get("forecast_categories");
-    	var self = this;
-    	    	
-    	//show_binary, show_buckets, show_n_buckets
-    	if(forecastCategories == "show_binary"){
+        var forecastCategories = this.context.forecasts.config.get("forecast_categories");
+        var self = this;
+                
+        //show_binary, show_buckets, show_n_buckets
+        if(forecastCategories == "show_binary"){
             field.type = "bool";
-    		field.format = function(value){
-    			return value == "include";
-    		};
-    		field.unformat = function(value){
-    			return this.$el.find(".checkbox").prop('checked') ? "include" : "exclude";
-    		};
-    	}
-    	else{
-    		field.type = "enum";
-    		field.def.options = this.context.forecasts.config.get("buckets_dom") || 'commit_stage_dom';
-    	}  	
-    	
+            field.format = function(value){
+                return value == "include";
+            };
+            field.unformat = function(value){
+                return this.$el.find(".checkbox").prop('checked') ? "include" : "exclude";
+            };
+        }
+        else{
+            field.type = "enum";
+            field.def.options = this.context.forecasts.config.get("buckets_dom") || 'commit_stage_dom';
+        }      
+        
         return field;
     },
 
@@ -144,6 +157,16 @@
         if (this.isEditableWorksheet === true && field.name == "commit_stage") {
             new app.view.BucketGridEnum(field, this, "ForecastWorksheets");
         }
+    },
+
+    /**
+     * Clean up any left over bound data to our context
+     */
+    unbindData : function() {
+        if(this._collection) this._collection.off(null, null, this);
+        if(this.context.forecasts) this.context.forecasts.off(null, null, this);
+        if(this.context.forecasts.worksheet) this.context.forecasts.worksheet.off(null, null, this);
+        app.view.View.prototype.unbindData.call(this);
     },
 
     /**
@@ -179,43 +202,44 @@
                     this.updateWorksheetBySelectedCategory(category);
                 },this);
             this.context.forecasts.worksheet.on("change", function() {
-            	this.calculateTotals();
+                this.calculateTotals();
             }, this);
             this.context.forecasts.on("change:reloadWorksheetFlag", function(){
-            	if(this.context.forecasts.get('reloadWorksheetFlag') && this.showMe()){
-            		var model = this.context.forecasts.worksheet;
-            		model.url = this.createURL();
-            		this.safeFetch(true);
-            		this.context.forecasts.set({reloadWorksheetFlag: false});
-            	}
+                if(this.context.forecasts.get('reloadWorksheetFlag') && this.showMe()){
+                    var model = this.context.forecasts.worksheet;
+                    model.url = this.createURL();
+                    this.safeFetch(true);
+                    this.context.forecasts.set({reloadWorksheetFlag: false});
+                }
             }, this);
             this.context.forecasts.on("change:checkDirtyWorksheetFlag", function(){
-            	if(this.context.forecasts.get('checkDirtyWorksheetFlag') && !this.showMe()){
-            		var model = this.context.forecasts.worksheet;
-            		model.url = this.createURL();
-            		this.safeFetch(false);
-            		this.context.forecasts.set({checkDirtyWorksheetFlag: false});
-            	}
+                if(this.context.forecasts.get('checkDirtyWorksheetFlag') && !this.showMe()){
+                    var model = this.context.forecasts.worksheet;
+                    model.url = this.createURL();
+                    this.safeFetch(false);
+                    this.context.forecasts.set({checkDirtyWorksheetFlag: false});
+                }
 
             }, this);
             this.context.forecasts.on("forecasts:committed:saved", function(){
-            	if(this.needsReloaded){
-            		var model = this.context.forecasts.worksheet;
-            		model.url = this.createURL();
-            		this.safeFetch();
-            		this.needsReloaded = false;
-            	}
-            	
+                if(this.needsReloaded){
+                    var model = this.context.forecasts.worksheet;
+                    model.url = this.createURL();
+                    this.safeFetch();
+                    this.needsReloaded = false;
+                }
+                this.mgrNeedsCommitted = true;
+                
             }, this);
             
             this.context.forecasts.on("forecasts:commitButtons:enabled", function(){
-            	if(_.isEqual(app.user.get('id'), self.selectedUser.id)){
-            		self.commitButtonEnabled = true;
-            	}
+                if(_.isEqual(app.user.get('id'), self.selectedUser.id)){
+                    self.commitButtonEnabled = true;
+                }
             },this);
             
             this.context.forecasts.on("forecasts:commitButtons:disabled", function(){
-            	self.commitButtonEnabled = false;
+                self.commitButtonEnabled = false;
             },this);
 
             /*
@@ -245,25 +269,25 @@
 
             var worksheet = this;
             $(window).bind("beforeunload",function(){
-            	//if the record is dirty, warn the user.
+                //if the record is dirty, warn the user.
                 if(worksheet._collection.isDirty){
-                	return app.lang.get("LBL_WORKSHEET_SAVE_CONFIRM_UNLOAD", "Forecasts");
+                    return app.lang.get("LBL_WORKSHEET_SAVE_CONFIRM_UNLOAD", "Forecasts");
                 }
                 //special manager cases for messages
                 else if(self.selectedUser.isManager){
-            		/*
-            		 * If the manager has a draft version saved, but hasn't committed that yet, they need to be shown a dialog that 
-            		 * lets them know, and gives them the option of committing before the page reloads. This happens if the commit button
-            		 * is enabled and they are on the rep worksheet.
-            		 */
-            		if((self.context.forecasts.get("currentWorksheet") == "worksheet") && self.commitButtonEnabled){
-            			var msg = app.lang.get("LBL_WORKSHEET_COMMIT_CONFIRM", "Forecasts").split("<br>");
-            			//show dialog
-            			return msg[0];			           				
-            		}
-            		else if(self.mgrNeedsCommitted){
-            			return app.lang.get("LBL_WORKSHEET_COMMIT_ALERT", "Forecasts");
-            		}
+                    /*
+                     * If the manager has a draft version saved, but hasn't committed that yet, they need to be shown a dialog that 
+                     * lets them know, and gives them the option of committing before the page reloads. This happens if the commit button
+                     * is enabled and they are on the rep worksheet.
+                     */
+                    if((self.context.forecasts.get("currentWorksheet") == "worksheet") && self.commitButtonEnabled){
+                        var msg = app.lang.get("LBL_WORKSHEET_COMMIT_CONFIRM", "Forecasts").split("<br>");
+                        //show dialog
+                        return msg[0];                                       
+                    }
+                    else if(self.mgrNeedsCommitted){
+                        return app.lang.get("LBL_WORKSHEET_COMMIT_ALERT", "Forecasts");
+                    }
                 }
             });
         }
@@ -307,94 +331,94 @@
      * @param fetch {boolean} Tells the function to go ahead and fetch if true, or runs dirty checks (saving) w/o fetching if false 
      */
     safeFetch: function(fetch){
-    	
+        
         if(_.isUndefined(fetch))
         {
             fetch = true;
         }
-    	var collection = this._collection; 
-    	var self = this;
-    	
-    	/*
-    	 * First we need to see if the collection is dirty. This is marked if any of the models 
-    	 * is marked as dirty. This will show the "unsaved changes" dialog
-    	 */
-    	if(collection.isDirty){
-    		//unsaved changes, ask if you want to save.
-    		if(confirm(app.lang.get("LBL_WORKSHEET_SAVE_CONFIRM", "Forecasts"))){
-    			var modelCount = 0;
-    			var saveCount = 0;
-    			_.each(collection.models, function(model, index){
-					var isDirty = model.get("isDirty");
-					if(_.isBoolean(isDirty) && isDirty){
-						modelCount++;
-        				model.set({draft: 1}, {silent:true});
-        				model.save({}, {success:function(){
-        					saveCount++;
-        					if(saveCount === modelCount){
-        						collection.isDirty = false;
-        						collection.fetch();
-        					}
-        				}});
-        				model.set({isDirty: false}, {silent:true});
-        			}  
-				});    					
-		}
-    		//user clicked cancel, ignore and fetch if fetch is enabled
-    		else{
-    			
-    			collection.isDirty = false;
-    			self.context.forecasts.set({reloadCommitButton: true});
-    			if(fetch){
-    				collection.fetch();
-    			}
-    		}
-    	}
-    	/*
-    	 * Next, we need to check to see if the user is a manager.  They have their own requirements and dialogs (those described below)
-    	 */
-    	else if(self.selectedUser.isManager){
-    		/*
-    		 * If the manager has a draft version saved, but hasn't committed that yet, they need to be shown a dialog that 
-    		 * lets them know, and gives them the option of committing before the page reloads. This happens if the commit button
-    		 * is enabled and they are on the rep worksheet.
-    		 */
-    		if((self.context.forecasts.get("currentWorksheet") == "worksheet") && self.commitButtonEnabled){
-    			var msg = app.lang.get("LBL_WORKSHEET_COMMIT_CONFIRM", "Forecasts").split("<br>");
-    			//show dialog
-    			if(confirm(msg[0] + "\n\n" + msg[1])){
-    				self.needsReloaded = true;
-    				self.context.forecasts.trigger("forecasts:forecastcommitbuttons:triggerCommit");
-    			}
-    			//canceled, continue fetching
-    			else{
-    				if(fetch){
-        				collection.fetch();
-        			}
-    			}
-    				
-    		}
-    		else if(self.mgrNeedsCommitted){
-    			alert(app.lang.get("LBL_WORKSHEET_COMMIT_ALERT", "Forecasts"));
-    			self.mgrNeedsCommitted = false;
-    			if(fetch){
-    				collection.fetch();
-    			}
-    			
-    		}
-    		//No popups needed, fetch like normal
-    		else{
-        		if(fetch){
-    				collection.fetch();
-    			}
-    		}
-    	}
-    	//default case, fetch like normal
-    	else{	
-    		if(fetch){
-				collection.fetch();
-			}	
-    	}    	
+        var collection = this._collection; 
+        var self = this;
+        
+        /*
+         * First we need to see if the collection is dirty. This is marked if any of the models 
+         * is marked as dirty. This will show the "unsaved changes" dialog
+         */
+        if(collection.isDirty){
+            //unsaved changes, ask if you want to save.
+            if(confirm(app.lang.get("LBL_WORKSHEET_SAVE_CONFIRM", "Forecasts"))){
+                var modelCount = 0;
+                var saveCount = 0;
+                _.each(collection.models, function(model, index){
+                    var isDirty = model.get("isDirty");
+                    if(_.isBoolean(isDirty) && isDirty){
+                        modelCount++;
+                        model.set({draft: 1}, {silent:true});
+                        model.save({}, {success:function(){
+                            saveCount++;
+                            if(saveCount === modelCount){
+                                collection.isDirty = false;
+                                collection.fetch();
+                            }
+                        }});
+                        model.set({isDirty: false}, {silent:true});
+                    }  
+                });                        
+        }
+            //user clicked cancel, ignore and fetch if fetch is enabled
+            else{
+                
+                collection.isDirty = false;
+                self.context.forecasts.set({reloadCommitButton: true});
+                if(fetch){
+                    collection.fetch();
+                }
+            }
+        }
+        /*
+         * Next, we need to check to see if the user is a manager.  They have their own requirements and dialogs (those described below)
+         */
+        else if(self.selectedUser.isManager){
+            /*
+             * If the manager has a draft version saved, but hasn't committed that yet, they need to be shown a dialog that 
+             * lets them know, and gives them the option of committing before the page reloads. This happens if the commit button
+             * is enabled and they are on the rep worksheet.
+             */
+            if((self.context.forecasts.get("currentWorksheet") == "worksheet") && self.commitButtonEnabled){
+                var msg = app.lang.get("LBL_WORKSHEET_COMMIT_CONFIRM", "Forecasts").split("<br>");
+                //show dialog
+                if(confirm(msg[0] + "\n\n" + msg[1])){
+                    self.needsReloaded = true;
+                    self.context.forecasts.trigger("forecasts:forecastcommitbuttons:triggerCommit");
+                }
+                //canceled, continue fetching
+                else{
+                    if(fetch){
+                        collection.fetch();
+                    }
+                }
+                    
+            }
+            else if(self.mgrNeedsCommitted){
+                alert(app.lang.get("LBL_WORKSHEET_COMMIT_ALERT", "Forecasts"));
+                self.mgrNeedsCommitted = false;
+                if(fetch){
+                    collection.fetch();
+                }
+                
+            }
+            //No popups needed, fetch like normal
+            else{
+                if(fetch){
+                    collection.fetch();
+                }
+            }
+        }
+        //default case, fetch like normal
+        else{    
+            if(fetch){
+                collection.fetch();
+            }    
+        }        
     },
 
     /**
@@ -426,7 +450,7 @@
         var columnKeys = {};
 
         if(!this.showMe()){
-        	return false;
+            return false;
         }
         $("#view-sales-rep").addClass('show').removeClass('hide');
         $("#view-manager").addClass('hide').removeClass('show');
@@ -436,13 +460,11 @@
          * than the manager sheet.
          */
         if(this.selectedUser.isManager && (app.user.get('id') === this.selectedUser.id ) ){
-	        app.api.call("read", this.createURL("mgrCheck"), {}, {success:function(data){
-				self.mgrNeedsCommitted = data["needsCommitted"];
-			}});
+            self.mgrNeedsCommitted = false;
         }          
         
         this.context.forecasts.set({checkDirtyWorksheetFlag: true, 
-        							currentWorksheet: "worksheet"});
+                                    currentWorksheet: "worksheet"});
         this.isEditableWorksheet = this.isMyWorksheet();
         this._setForecastColumn(this.meta.panels[0].fields);
 
@@ -559,7 +581,7 @@
         this.$el.find('td:has(span>input[type=checkbox])').addClass('center');
                 
         // Trigger event letting other components know worksheet finished rendering
-        self.context.forecasts.trigger("forecasts:worksheet:render");
+        self.context.forecasts.trigger("forecasts:worksheet:rendered");
 
         return this;
     },
@@ -580,14 +602,14 @@
      * @return {Boolean} this.show
      */
     showMe: function(){
-    	var selectedUser = this.selectedUser;
-    	this.show = false;
+        var selectedUser = this.selectedUser;
+        this.show = false;
 
-    	if(selectedUser.showOpps || !selectedUser.isManager){
-    		this.show = true;
-    	}
+        if(selectedUser.showOpps || !selectedUser.isManager){
+            this.show = true;
+        }
 
-    	return this.show;
+        return this.show;
     },
 
     /**
@@ -611,7 +633,7 @@
 
         if(!this.showMe()){
             // if we don't show this worksheet set it all to zero
-        	this.context.forecasts.set({
+            this.context.forecasts.set({
                 updatedTotals : {
                     'amount' : includedAmount,
                     'best_case' : includedBest,
@@ -696,7 +718,7 @@
     updateWorksheetBySelectedUser:function (selectedUser) {
         this.selectedUser = selectedUser;
         if(this.selectedUser && !this.selectedUser){
-        	return false;
+            return false;
         }
         this._collection.url = this.createURL();
         this.safeFetch(true);
@@ -736,7 +758,7 @@
                         selectVal = editable ? rowCategory.find("select").attr("value") : rowCategory.text().trim().toLowerCase();
                     }
 
-                    self.context.forecasts.trigger('forecasts:worksheet:render');
+                    self.context.forecasts.trigger('forecasts:worksheet:filtered');
 
                     return (_.contains(params, selectVal));
 
@@ -744,12 +766,12 @@
             );
         }
         if(!_.isUndefined(this.gTable.fnDestroy)){
-	        this.gTable.fnDestroy();
-	        this.gTable = this.$('.worksheetTable').dataTable(self.gTableDefs);
-	        // fix the style on the rows that contain a checkbox
-	        this.$el.find('td:has(span>input[type=checkbox])').addClass('center');
-            this.context.forecasts.trigger('forecasts:worksheet:render');
-    	}
+            this.gTable.fnDestroy();
+            this.gTable = this.$('.worksheetTable').dataTable(self.gTableDefs);
+            // fix the style on the rows that contain a checkbox
+            this.$el.find('td:has(span>input[type=checkbox])').addClass('center');
+            this.context.forecasts.trigger('forecasts:worksheet:filtered');
+        }
     },
 
     /**
@@ -760,7 +782,7 @@
     updateWorksheetBySelectedTimePeriod:function (params) {
         this.timePeriod = params.id;
         if(!this.showMe()){
-        	return false;
+            return false;
         }
         this._collection.url = this.createURL();
         this.safeFetch(true);

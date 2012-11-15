@@ -25,6 +25,7 @@ describe("Relate field", function() {
         this.field.model = new Backbone.Model({account_id: "1234", account_name: "bob"});
     });
 
+
     afterEach(function() {
         app.cache.cutAll();
         app.view.reset();

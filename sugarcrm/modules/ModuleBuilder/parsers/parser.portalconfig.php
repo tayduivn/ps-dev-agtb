@@ -96,7 +96,7 @@ class ParserModifyPortalConfig extends ModuleBuilderParser
         $GLOBALS['log']->fatal("Updating portal config");
         foreach ($portalConfig as $fieldKey => $fieldValue) {
 
-            if(!$GLOBALS ['system_config']->saveSetting('portal', $fieldKey, json_encode($fieldValue))){
+            if(!$GLOBALS ['system_config']->saveSetting('portal', $fieldKey, json_encode($fieldValue), 'support')){
                 $GLOBALS['log']->fatal("Error saving portal config var $fieldKey, orig: $fieldValue , json:".json_encode($fieldValue));
             }
 

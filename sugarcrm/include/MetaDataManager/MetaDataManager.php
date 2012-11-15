@@ -127,6 +127,10 @@ class MetaDataManager {
     {
         require_once('include/SubPanel/SubPanelDefinitions.php');
         $parent_bean = BeanFactory::getBean($moduleName);
+        //Hack to allow the SubPanelDefinitions class to check the correct module dir
+        if (!$parent_bean){
+            $parent_bean = (object) array('module_dir' => $moduleName);
+        }
 
         $spd = new SubPanelDefinitions($parent_bean);
         $layout_defs = $spd->layout_defs;
@@ -208,7 +212,7 @@ class MetaDataManager {
         //END SUGARCRM flav=pro ONLY
         $vardefs = $this->getVarDef($moduleName);
 
-        $data['fields'] = $vardefs['fields'];
+        $data['fields'] = isset($vardefs['fields']) ? $vardefs['fields'] : array();
         $data['views'] = $this->getModuleViews($moduleName);
         $data['layouts'] = $this->getModuleLayouts($moduleName);
         $data['fieldTemplates'] = $this->getModuleFields($moduleName);
@@ -222,8 +226,10 @@ class MetaDataManager {
         $seed = BeanFactory::newBean($moduleName);
 
         //BEGIN SUGARCRM flav=pro ONLY
-        $favoritesEnabled = ($seed->isFavoritesEnabled() !== false) ? true : false;
-        $data['favoritesEnabled'] = $favoritesEnabled;
+        if ($seed !== false) {
+            $favoritesEnabled = ($seed->isFavoritesEnabled() !== false) ? true : false;
+            $data['favoritesEnabled'] = $favoritesEnabled;
+        }
         //END SUGARCRM flav=pro ONLY
 
         $data["_hash"] = md5(serialize($data));
@@ -271,25 +277,36 @@ class MetaDataManager {
      * @param $moduleName The name of the module to collect vardef information about.
      * @return array The vardef's $dictonary array.
      */
-    public function getVarDef($moduleName) {
+    public function getVarDef($moduleName)
 
+    {
         require_once("data/BeanFactory.php");
         $obj = BeanFactory::getObjectName($moduleName);
 
-        require_once("include/SugarObjects/VardefManager.php");
-        global $dictionary;
-        VardefManager::loadVardef($moduleName, $obj);
-        if ( isset($dictionary[$obj]) ) {
-            $data = $dictionary[$obj];
+        $data = false;
+        if ($obj) {
+            require_once("include/SugarObjects/VardefManager.php");
+            global $dictionary;
+            VardefManager::loadVardef($moduleName, $obj);
+            if (isset($dictionary[$obj])) {
+                $data = $dictionary[$obj];
+            }
+
+            // vardefs are missing something, for consistancy let's populate some arrays
+            if (!isset($data['fields'])) {
+                $data['fields'] = array();
+            }
+            if (!isset($data['relationships'])) {
+                $data['relationships'] = array();
+            }
+
+            return $data;
         }
 
-        // vardefs are missing something, for consistancy let's populate some arrays
-        if (!isset($data['fields']) ) {
-            $data['fields'] = array();
-        }
-        
+
         // Bug 56505 - multiselect fields default value wrapped in '^' character
-        $data['fields'] = $this->normalizeFielddefs($data['fields']);
+        if (!empty($data['fields']) && is_array($data['fields']))
+            $data['fields'] = $this->normalizeFielddefs($data['fields']);
         
         if (!isset($data['relationships'])) {
             $data['relationships'] = array();
@@ -311,14 +328,18 @@ class MetaDataManager {
         //      Set it sortable to TRUE, if the field is indexed.
         //      Set sortable to FALSE, otherwise. (Bug56943, Bug57644)
         $isIndexed = !empty($indexes);
-        foreach($data['fields'] AS $field_name => $info) {
-            if(!isset($data['fields'][$field_name]['sortable'])){
-                $data['fields'][$field_name]['sortable'] = false;
-                if($isIndexed && isset($indexes[$field_name])) {
-                    $data['fields'][$field_name]['sortable'] = true;
+        if (!empty($data['fields']) && is_array($data['fields']))
+        {
+            foreach($data['fields'] AS $field_name => $info) {
+                if(!isset($data['fields'][$field_name]['sortable'])){
+                    $data['fields'][$field_name]['sortable'] = false;
+                    if($isIndexed && isset($indexes[$field_name])) {
+                        $data['fields'][$field_name]['sortable'] = true;
+                    }
                 }
             }
         }
+
 
         return $data;
     }
@@ -459,6 +480,7 @@ class MetaDataManager {
      *
      * @param string $path The directory within a platform
      * @param bool $full Whether to return full paths or dirnames only
+     * @param string $modulePath path to module 
      * @return array
      */
     public function getSugarClientFileDirs($path, $full = false, $modulePath = "") {
@@ -541,6 +563,74 @@ class MetaDataManager {
         }
 
         $result['_hash'] = md5(serialize($result));
+        return $result;
+    }
+
+    /**
+     * Gets client files of type $type (view, layout, field) for all platforms 
+     * specified. Resulting array will be delineated by platform.
+     *
+     * @param string $type The type of files to get
+     * @param array $platforms Which platforms to get client files for.
+     * @return array
+     */
+    public function getSugarClientFilesForPlatforms($type, $platforms = array())
+    {
+        $result = array();
+
+        // If not called with $platforms will default to all platforms.
+        $platforms = (!empty($platforms) && count($platforms)) ? $platforms : $this->platforms;
+
+        // Platforms we'll push our loaded components on to.
+        $desiredPlatforms = array();
+        $typePath = $type . 's';
+
+        // Retrieves base directory names for all possible widgets
+        $allSugarFiles = $this->getSugarClientFileDirs($typePath, false, '');
+
+        foreach ( $allSugarFiles as $dirname) {
+            // reset $fileData
+            $fileData = array();
+            $meta = array();
+            $tplDir = array();
+            
+            foreach ( $platforms as $platform ) {
+                $dir = "clients/$platform/$typePath/$dirname/";
+                $controller = SugarAutoLoader::existingCustomOne("{$dir}{$dirname}.js");
+                if (empty($meta)) {
+                    $meta = $this->fetchMetadataFromDirs(array($dir), '');
+                }
+                if ( $controller ) {
+                    $fileData[$platform][$dirname]['controller'] = file_get_contents($controller);
+                }
+                // Now get templates
+                $tplDir[0] = "clients/$platform/$typePath/$dirname/";
+                $templates = $this->fetchTemplates($tplDir);
+                if (count($templates)) {
+                    $fileData[$platform][$dirname]['templates'] = $templates;
+                }
+                // Add the meta
+                if ($meta) {
+                   $fileData[$platform][$dirname]['meta'] = array_shift($meta); // Get the first member
+                }
+                // Remove empty fileData members. There's a chance of course we haven't 
+                // found anything and $fileData[$platform] my be unset
+                if (isset($fileData[$platform])) {
+                    foreach ($fileData[$platform] as $k => $v) {
+                        if (empty($v)) {
+                            unset($fileData[$platform][$k]);
+                        }
+                    }
+                }
+            }
+
+            foreach ($fileData as $pf => $pfData) {
+                $desiredPlatforms[$pf][$dirname] = $pfData[$dirname];
+            }
+        }
+        $result = $desiredPlatforms;
+        $result['_hash'] = md5(serialize($result));
+
         return $result;
     }
 
@@ -644,7 +734,15 @@ class MetaDataManager {
      * @return array The module strings for the current language
      */
     public function getModuleStrings( $moduleName ) {
-        return return_module_language($GLOBALS['current_language'],$moduleName);
+        // Bug 58174 - Escaped labels are sent to the client escaped
+        $strings = return_module_language($GLOBALS['current_language'],$moduleName);
+        if (is_array($strings)) {
+            foreach ($strings as $k => $v) {
+                $strings[$k] = $this->decodeStrings($v);
+            }
+        }
+        
+        return $strings;
     }
 
     /**
@@ -696,7 +794,11 @@ class MetaDataManager {
             $moduleList = array_keys($wireless_module_registry);
         } else {
             // Loading a standard module list
-            $moduleList = array_keys($GLOBALS['app_list_strings']['moduleList']);
+            require_once("modules/MySettings/TabController.php");
+            $controller = new TabController();
+            $moduleList = array_keys($controller->get_user_tabs($this->user));
+            $moduleList[] = 'ActivityStream';
+            $moduleList[] = 'Users';
         }
 
         $oldModuleList = $moduleList;
@@ -762,5 +864,45 @@ class MetaDataManager {
         }
         
         return $this->sfh;
+    }
+
+
+     /*
+     * Factory for layouts.
+     *
+     * @param string $name - Name of the layout.
+     * @param array $args Arguments passed in to the constructor.
+     * @return class The instantiated version of the layout.
+     */
+    public static function getLayout($name, array $args = array()) {
+        $cstmName = 'Custom'.$name;
+        $class = false;
+        if(class_exists($cstmName)) {
+            $class = new $cstmName($args);
+        } elseif (class_exists($name)) {
+            $class = new $name($args);
+        }
+        return $class;
+    }
+
+    /**
+     * Recursive decoder that handles decoding of HTML entities in metadata strings
+     * before returning them to a client
+     * 
+     * @param mixed $source
+     * @return array|string
+     */
+    protected function decodeStrings($source) {
+        if (is_string($source)) {
+            return html_entity_decode($source, ENT_QUOTES, 'UTF-8');
+        } else {
+            if (is_array($source)) {
+                foreach ($source as $k => $v) {
+                    $source[$k] = $this->decodeStrings($v);
+                }
+            }
+            
+            return $source;
+        }
     }
 }

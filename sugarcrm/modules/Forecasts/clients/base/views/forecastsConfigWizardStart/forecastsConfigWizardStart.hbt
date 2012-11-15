@@ -1,3 +1,4 @@
 <div class="modal-content modal-wizard-start show">
-    <p>{{str "LBL_FORECASTS_CONFIG_ADMIN_SPLASH_1" "Forecasts"}}</p>
+    <h3>{{str "LBL_FORECASTS_CONFIG_ADMIN_SPLASH_1" "Forecasts"}}</h3>
+    <p>{{str "LBL_FORECASTS_CONFIG_ADMIN_SPLASH_2" "Forecasts"}}</p>
 </div>

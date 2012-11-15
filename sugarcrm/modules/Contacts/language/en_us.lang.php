@@ -172,6 +172,7 @@ $mod_strings = array (
     'LBL_TEAM_ID' => 'Team ID:',
     //END SUGARCRM flav=pro ONLY
     'LBL_TITLE' => 'Title:',
+    'LNK_CREATE' => 'Create Person',
     'LNK_CONTACT_LIST' => 'View Contacts',
     'LNK_IMPORT_VCARD' => 'Create Contact From vCard',
     'LNK_NEW_ACCOUNT' => 'Create Account',
@@ -255,6 +256,7 @@ $mod_strings = array (
     'LBL_EXPORT_PHONE_MOBILE' => 'Mobile Phone',
     // SNIP
     'LBL_CONTACT_HISTORY_SUBPANEL_TITLE' => 'Related Contacts\' Emails',
-    'LBL_USER_SYNC' => 'User Sync'
+    'LBL_USER_SYNC' => 'User Sync',
+    'LBL_FILENAME' => 'Attachment',
 )
 ?>

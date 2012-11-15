@@ -51,10 +51,10 @@
         var self = this;
         var collection = app.data.createBeanCollection(this.def.module);
         collection.fetch({
-            params: {basicSearch:event.target.value},  // TODO update this to filtering API
+            params: {q:event.target.value},  // TODO update this to filtering API
             success: function(data) {
                 if (data.models.length > 0) {
-                    self.options = data.models;
+                    self.selectOptions = data.models;
                     var options = self.optionsTemplateC(self);
                     self.$('select').html(options);
                     self.$('select').trigger("liszt:updated");

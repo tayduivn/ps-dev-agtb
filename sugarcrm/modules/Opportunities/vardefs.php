@@ -20,7 +20,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
-$dictionary['Opportunity'] = array('table' => 'opportunities','audited'=>true, 'unified_search' => true, 'full_text_search' => true, 'unified_search_default_enabled' => true, 'duplicate_merge'=>true,
+$dictionary['Opportunity'] = array('table' => 'opportunities','audited'=>true, 'activity_enabled'=>true,'unified_search' => true, 'full_text_search' => true, 'unified_search_default_enabled' => true, 'duplicate_merge'=>true,
 		'comment' => 'An opportunity is the target of selling activities',
 		'fields' => array (
   'name' =>
@@ -281,13 +281,6 @@ $dictionary['Opportunity'] = array('table' => 'opportunities','audited'=>true, '
     'type' => 'currency',
     'len' => '26,6',
     'validation' => array('type' => 'range', 'min' => 0)
-  ),
-  'primary_quote_id' =>
-  array (
-    'name' => 'primary_quote_id',
-    'type' => 'id',
-    'vname' => 'LBL_PRIMARY_QUOTE_ID',
-    'comment' => 'The primary quote this opportunity is associated with'
   ),
   'commit_stage' =>
   array (

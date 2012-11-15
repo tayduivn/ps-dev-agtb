@@ -74,6 +74,7 @@ $app_list_strings = array (
     'Manufacturers' => 'Manufacturers',
     //END SUGARCRM flav=pro ONLY
     'Activities' => 'Activities',
+    'ActivityStream' => 'Activity Stream',
   //BEGIN SUGARCRM flav!=sales ONLY
     'Bugs' => 'Bug Tracker',
     'Feeds' => 'RSS',
@@ -171,6 +172,7 @@ $app_list_strings = array (
     'Teams' => 'Team',
     //END SUGARCRM flav=pro ONLY
     'Activities' => 'Activity',
+    'ActivityStream' => 'Activity Stream',
   //BEGIN SUGARCRM flav!=sales ONLY
     'Bugs' => 'Bug',
     'KBDocuments' => 'KBDocument',
@@ -1790,7 +1792,13 @@ $app_strings = array (
   'LBL_TOUR_SKIP' => 'Skip',
   'LBL_TOUR_BACK' => 'Back',
   'LBL_TOUR_CLOSE' => 'Close',
+  'LBL_TOUR_BTN_DONE' => 'Done',
+  'LBL_TOUR_BTN_DONE' => 'Done',
   'LBL_TOUR_TAKE_TOUR' => 'Take the tour',
+  'LBL_TOUR_FULL_TOUR' => 'Full Tour',
+  'LBL_TOUR_MODULE' => 'Tour this Page',
+  'LBL_TOUR_END_TOUR' => 'End Tour',
+  'LBL_TOUR_OVERVIEW' => 'Page Overview',
   'LBL_MY_AREA_LINKS' => 'My area links: ' /*for 508 compliance fix*/,
   'LBL_GETTINGAIR' => 'Getting Air' /*for 508 compliance fix*/,
   'LBL_WELCOMEBAR' => 'Welcome' /*for 508 compliance fix*/,
@@ -1828,6 +1836,7 @@ $app_strings = array (
     'LBL_POWERED_BY_SUGARCRM' => "Powered by SugarCRM",
     'LBL_PRINT' => "Print",
     'LBL_HELP' => "Help",
+    'LBL_TOUR' => "Tour",
     'LBL_ID_FF_SELECT' => "Select",
     'DEFAULT'                              => 'Basic',
     'LBL_SORT'                              => 'Sort',
@@ -2219,7 +2228,8 @@ $app_strings = array (
     'LBL_EMAIL_SETTINGS_REQUIRE_REFRESH'    => 'Select the number of emails per page in the Inbox. This setting might require a page refresh in order to take effect.',
     'LBL_EMAIL_SETTINGS_RETRIEVING_ACCOUNT' => 'Retrieving Mail Account',
     'LBL_EMAIL_SETTINGS_RULES'              => 'Rules',
-    'LBL_EMAIL_SETTINGS_SAVED'              => 'The settings have been saved.\n\nYou must reload the page for the new settings to take effect.',
+    'LBL_EMAIL_SETTINGS_SAVED'              => 'The settings have been saved.',
+    'LBL_EMAIL_SETTINGS_MUST_RELOAD'        => 'You must reload the page for the new settings to take effect.',
     'LBL_EMAIL_SETTINGS_SEND_EMAIL_AS'      => 'Send Plain Text Emails Only',
     'LBL_EMAIL_SETTINGS_SHOW_IN_FOLDERS'    => 'Active',
     'LBL_EMAIL_SETTINGS_SHOW_NUM_IN_LIST'   => 'Emails per Page',
@@ -2494,6 +2504,7 @@ $app_strings = array (
     'LBL_FILTER_MENU_BY' => 'Filter Menu By',
     'LBL_VCARD' => 'vCard',
     'LBL_EMPTY_VCARD' => 'Please select a vCard file',
+    'LBL_IMAGE' => 'Image',
     'LBL_IMPORT_VCARD' => 'Import vCard:',
     'LBL_IMPORT_VCARD_BUTTON_KEY' => 'I',
     'LBL_IMPORT_VCARD_BUTTON_LABEL' => 'Import vCard',
@@ -2560,6 +2571,10 @@ $app_strings = array (
     'LBL_LISTVIEW_OPTION_ENTIRE' => 'Select All',
     'LBL_LISTVIEW_OPTION_SELECTED' => 'Selected Records',
     'LBL_LISTVIEW_SELECTED_OBJECTS' => 'Selected: ',
+    'LBL_LISTVIEW_SELECTED_NUM' => 'You have selected {num} records in this view.',
+    'LBL_LISTVIEW_SELECTED_ALL' => 'You have selected all records in this view.',
+    'LBL_LISTVIEW_RECORDS' => ' records in the result set.',
+    'LBL_LISTVIEW_CLEAR_ALL' => 'Clear All selections.',
 
     'LBL_LOCALE_NAME_EXAMPLE_FIRST' => 'David',
     'LBL_LOCALE_NAME_EXAMPLE_LAST' => 'Livingstone',
@@ -2626,10 +2641,8 @@ $app_strings = array (
 
     //BEGIN SUGARCRM flav=pro || flav!=sales ONLY
     'LBL_PRODUCT_BUNDLES'=>'Product Bundles',
-    'LBL_PRODUCT_BUNDLES'=>'Product Bundles',
     'LBL_PRODUCTS'=>'Products',
     'LBL_PROJECT_TASKS'=>'Project Tasks',
-    'LBL_PROJECTS'=>'Projects',
     'LBL_PROJECTS'=>'Projects',
     'LBL_QUOTE_TO_OPPORTUNITY_KEY' => 'O',
     'LBL_QUOTE_TO_OPPORTUNITY_LABEL' => 'Create Opportunity from Quote',
@@ -2637,6 +2650,13 @@ $app_strings = array (
     'LBL_QUOTES_SHIP_TO'=>'Quotes Ship to',
     'LBL_QUOTES'=>'Quotes',
     //END SUGARCRM flav=pro || flav!=sales ONLY
+
+    // Strings for Reminder Widget
+    'LBL_REMINDERS' => 'Reminders',
+    'LBL_REMINDERS_OVERDUE' => 'Overdue',
+    'LBL_REMINDERS_UPCOMING' => 'Upcoming',
+    'LBL_REMINDERS_NONE_FOUND' => 'No reminders found.',
+    'LBL_REMINDERS_FINISHED' => 'Finished!',
 
     'LBL_RELATED' => 'Related',
     'LBL_RELATED_INFORMATION' => 'Related Information',
@@ -2761,7 +2781,25 @@ $app_strings = array (
     'LBL_SUGAR_COPYRIGHT_SUB' => '&copy; 2004-2012 <a href="http://www.sugarcrm.com" target="_blank" class="copyRightLink">SugarCRM Inc.</a> All Rights Reserved.<br />SugarCRM is a trademark of SugarCRM, Inc. All other company and product names may be trademarks of the respective companies with which they are associated.',
 
 
-    'LBL_SYNC' => 'Sync',
+    // LOGIN PAGE STRINGS
+    'LBL_LOGIN_BUTTON_KEY' => 'L',
+    'LBL_LOGIN_BUTTON_LABEL' => 'Log In',
+    'LBL_LOGIN_BUTTON_TITLE' => 'Log In',
+    'LBL_LOGIN_WELCOME_TO' => 'Welcome to',
+    'LBL_LOGIN_OPTIONS' => 'Options',
+    'LBL_LOGIN_FORGOT_PASSWORD' => 'Forgot Password?',
+    'LBL_LOGIN_SUBMIT' => 'Submit',
+    'LBL_LOGIN_ATTEMPTS_OVERRUN' => 'Too many failed login attempts.',
+    'LBL_LOGIN_LOGIN_TIME_ALLOWED' => 'You can try logging in again in ',
+    'LBL_LOGIN_LOGIN_TIME_DAYS' => 'days.',
+    'LBL_LOGIN_LOGIN_TIME_HOURS' => 'h.',
+    'LBL_LOGIN_LOGIN_TIME_MINUTES' => 'min.',
+    'LBL_LOGIN_LOGIN_TIME_SECONDS' => 'sec.',
+    'LBL_LOGIN_ADMIN_CALL' => 'Please contact the system administrator.',
+    'LBL_LOGIN_USERNAME' => 'Username',
+    'LBL_LOGIN_PASSWORD' => 'Password',
+    // END LOGIN PAGE STRINGS
+
     'LBL_SYNC' => 'Sync',
     'LBL_TABGROUP_ALL' => 'All',
     'LBL_TABGROUP_ACTIVITIES' => 'Activities',
@@ -3302,6 +3340,7 @@ $app_strings = array (
     'LBL_START_BUTTON_TITLE' => 'Start',
     'LBL_FINISH_BUTTON_LABEL' => 'Finish',
     'LBL_FINISH_BUTTON_TITLE' => 'Finish',
+    'LBL_CONFIRM_BUTTON_LABEL' => 'Confirm',
     'LBL_FIRST_INPUT_EDIT_VIEW_KEY' => '7',
     'LBL_ADV_SEARCH_LNK_KEY' => '8',
     'LBL_FIRST_INPUT_SEARCH_KEY' => '9',
@@ -3328,6 +3367,7 @@ $app_strings = array (
     'LBL_TIME_AGO_DAYS' => '{{this}} days ago',
     'LBL_TIME_AGO_YEAR' => 'over a year ago',
     'LBL_TIME_RELATIVE' => 'Posted {{relativetime}} on {{date}} at {{time}}',
+    'LBL_LAST_TOUCHED' => 'Last touched {{relativetime}} on {{date}} at {{time}}',
     'LBL_LISTVIEW_NO_RECORDS' => 'No records were found at this time.',
     'LBL_DETAILVIEW_NO_RECORDS' => 'This record could not be rendered at this time.',
     'LBL_REFINE_LIST' => 'Refine list',
@@ -3351,16 +3391,41 @@ $app_strings = array (
     'BorderColor' => 'Border Color',
     'NavigationBar' => 'Navigation Bar',
     'PrimaryButton' => 'Primary Button',
-
+    
+  	//BEGIN SUGARCRM flav=PRO ONLY
+    //in app tour
+    'LBL_TOUR_PDF_MANAGER' => 'New PDF Manager',
+    'LBL_TOUR_PDF_MANAGER_DESCRIPTION' => '<div style="float: left;"><div class="well" style="float: left; width: 157px; margin-right: 20px;"><img src="themes/default/images/pt-pdf-manager.png" width="157" height="167"><div class="caption">PDF Manager link in Admin</div></div><div style="float: left; width: 400px;"><ul><li class="icon-ok">Admin users can modify predefined Quote and Invoice Templates</li><li class="icon-ok">Admin users can add new templates for standard or custom modules utilizing a flexible HTML editor</li><li class="icon-ok">The new PDF Manager enables companies to create custom, personalized PDF documents by merging data from any record in any module</li></ul><p>Click on Admin under Profile menu to find a link to the PDF Manager under the System settings</p><i class="icon-arrow-left icon-lg" style="float: right; position: relative; right: 444px; top: -92px;"></i></div></div><div class="clear"></div>',
+    'LBL_TOUR_MEETINGS_CALLS' => 'Meetings and Calls',
+    'LBL_TOUR_MEETINGS_CALLS_DESCRIPTION' => '<ul><li class="icon-ok">Recurring Meetings and Calls can now be scheduled from the detail view</li><li class="icon-ok">Invitees for Meetings or Calls can now be selected by searching for contacts associated with accounts</li></ul>',
+    'LBL_TOUR_NOTIFICATIONS' => 'Notifications',
+    'LBL_TOUR_NOTIFICATIONS_DESCRIPTION' => '<div style="float: left;"><div class="well" style="float: left; width: 317px; margin-right: 20px;"><img src="themes/default/images/pt-notifications.png" width="317" height="212"><div class="caption">Notifications</div></div><div style="float: left; width: 400px;"><ul><li class="icon-ok">Administrators now receive a notification when the full text search indexing is completed</li></ul></div></div><div class="clear"></div>',
+    'LBL_TOUR_SPELL_CHECK' => 'Spell Check',
+    'LBL_TOUR_SPELL_CHECK_DESCRIPTION' => '<div style="float: left;"><div class="well" style="float: left; width: 112px; margin-right: 20px;"><img src="themes/default/images/pt-spell-check.png" width="112" height="212"><div class="caption">Spell check menu</div></div><div style="float: left; width: 400px;"><ul><li class="icon-ok">Spell checking is now available when composing emails,  editing PDF Manager templates, and when editing email templates in the Emails, Campaigns and Workflow modules.</li></ul></div></div><div class="clear"></div>',
+    'LBL_TOUR_IE8' => 'Internet Explorer 8',
+    'LBL_TOUR_IE8_DESCRIPTION' => '<ul><li class="icon-ok">Internet Explorer 8 web browser is no longer supported</li></ul>',
+    'LBL_TOUR_WELCOME' => 'What\'s New in Sugar',
+    'LBL_TOUR_WATCH' => 'Watch What\'s New in Sugar',
+    'LBL_TOUR_FEATURES' => '<ul style=""><li class="icon-ok">Apply custom PDF templates to all modules</li><li class="icon-ok">Create recurring Meetings and Calls from detail view</li><li class="icon-ok">Search for invitees by account when scheduling Meetings and Calls</li><li class="icon-ok">Administrators are notified when Global Search indexing completes</li><li class="icon-ok">Spell Check is available in TinyMCE Editor</li><li class="icon-ok">IE 8 is no longer supported</li></ul>',
+    'LBL_TOUR_VISIT' => 'For more information please visit our application',
+    'LBL_TOUR_DONE' => 'You\'re Done!',
+    'LBL_TOUR_REFERENCE_1' => 'You can always reference our',
+    'LBL_TOUR_REFERENCE_2' => 'through the "Support" link under the profile menu.',
+    'LNK_TOUR_DOCUMENTATION' => 'documentation',
+    'LBL_TOUR_CALENDAR_URL_1' => 'Do you share your SugarCRM calendar with 3rd party applications, such as Microsoft Outlook or Exchange? If so, you have a new URL. This new, more secure URL includes a personal key which will prevent unauthorized publishing of your calendar.',
+    'LBL_TOUR_CALENDAR_URL_2' => 'Retrieve your new shared calendar URL.',
+    //END SUGARCRM flav=PRO ONLY
+    
     //begin portal
     //BEGIN SUGARCRM flav=ent ONLY
     // for nomad mobile
+    'LBL_OPTIONAL' => 'Optional',
     'LBL_RELATED_MODULE' => 'Related {{this}}',
     'LBL_RELATED_MODULE_PLURAL' => 'Related {{this}}',
     'LBL_CREATE_MODULE' => 'Create {{this}}',
     'LBL_EDIT' => 'Edit {{this}}',
     'LBL_ASSOC' => 'Associate {{this}}',
-    'LBL_ASSIGN' => 'Assign {{this}}',
+    'LBL_ASSIGN' => 'Select {{this}}',
     'LBL_EDIT_RELATED' => 'Edit Related {{this}}',
     'LBL_CREATE_RELATED' => 'Create Related {{this}}',
     'LBL_ASSOC_EXISTING' => 'Associate Existing {{this}}',
@@ -3380,6 +3445,7 @@ $app_strings = array (
     'LBL_CREATE_RELATED_RECORD' => 'Create Related Record',
     'LBL_ASSOC_RELATED_RECORD' => 'Associate Existing Record',
     'LBL_CHOOSE_LINK' => 'Choose Link Type',
+    'LBL_CHOOSE_PARENT_TYPE' => 'Choose Parent Type',
     'LBL_HOME' => 'Home',
     'ERR_NO_DOCS' => 'No Documents Available',
     'ERR_NO_RECORDS_SELECTED' => 'You haven\'t selected any records.',
@@ -3389,6 +3455,12 @@ $app_strings = array (
     'LBL_LEGAL' => 'Legal',
     'LBL_UPCOMING' => 'Upcoming',
     'LBL_RECENTLY_UPDATED' => 'Recent',
+    'LBL_NOTES_SUBPANEL_TITLE' => 'Notes',
+    'LBL_MEETINGS_SUBPANEL_TITLE' => 'Meetings',
+    'LBL_TASKS_SUBPANEL_TITLE' => 'Tasks',
+    'LBL_CALLS_SUBPANEL_TITLE' => 'Calls',
+    'LBL_EMAILS_SUBPANEL_TITLE' => 'Emails',
+    'LNK_SETTINGS' => 'Settings',
 
     //BEGIN SUGARCRM flav=pro ONLY
     // for nomad mobile
@@ -3396,6 +3468,8 @@ $app_strings = array (
     'LBL_MOBILE_SHOW_MORE_TOP' => 'Show more...',
     'LBL_MOBILE_NO_RECORDS' => 'No records found',
     'LBL_MOBILE_SEARCH_TEAMS' => 'Search Teams',
+    'LBL_MOBILE_SELECT_TEAMS' => 'Select Teams',
+    'LBL_MOBILE_WAIT' => 'Please wait...',
     'LBL_MOBILE_LOGING_OUT' => 'Please wait while logging out...',
     'LBL_MOBILE_RELOGIN_BUTTON' => 'Re-login',
     'LBL_MOBILE_META_SYNC_FAILED' => 'Unable to sync with server. Retry?',
@@ -3417,14 +3491,20 @@ $app_strings = array (
     'LBL_MOBILE_CHOOSE_LOCATION' => 'Choose location',
     'LBL_MOBILE_NO_ACTIONS_AVAILABLE' => 'No Actions Available',
     'ERR_MOBILE_NOT_AUTHORIZED' => 'Access not authorized.',
-    'ERR_MOBILE_INVALID_CREDS' => 'Invalid username or password',
-    'ERR_MOBILE_SESSION_EXPIRED' => 'Your session has been expired',
-    'ERR_MOBILE_NOT_FOUND' => 'Resource not found',
-    'ERR_MOBILE_TIMEOUT' => 'Request timeout',
-    'ERR_MOBILE_CONNECTION_FAILED' => 'Can\'t reach the server',
+    'ERR_MOBILE_INVALID_CREDS' => 'Invalid username or password.',
+    'ERR_MOBILE_SESSION_EXPIRED' => 'Your session expired.',
+    'ERR_MOBILE_NOT_FOUND' => 'Resource not found.',
+    'ERR_MOBILE_TIMEOUT' => 'Request timeout.',
+    'ERR_MOBILE_CONNECTION_FAILED' => 'Can\'t reach the server.',
+    'ERR_MOBILE_NOT_FOUND_LOGIN' => 'Server not found at the given URL.',
+    'ERR_MOBILE_TIMEOUT_LOGIN' => 'Server is not responding at the given URL.',
+    'ERR_MOBILE_CONNECTION_FAILED_LOGIN' => 'Server unavailable at the given URL.',
+    'ERR_MOBILE_INTERNET_UNAVAILABLE' => 'Internet connection unavailable.',
     'ERR_MOBILE_INTERNAL' => 'Internal error ({{code}}). Please try again later.',
     'ERR_MOBILE_VALIDATION' => 'Record is invalid',
     'ERR_MOBILE_EMAIL' => 'Error. Invalid Email Address.',
+    'LBL_MOBILE_FILE_NOT_SUPPORTED' => 'This document type is unsupported.',
+    'LBL_MOBILE_GENERIC_NATIVE_ERROR' => 'An unexpected error has occurred.',
 
     //END SUGARCRM flav=pro ONLY
 
@@ -3449,8 +3529,9 @@ $app_strings = array (
     'LBL_PORTAL_LOGIN_PASSWORD' => 'Password',
     'LBL_PORTAL_LOADING' => 'Loading',
     'LBL_PORTAL_SAVING' => 'Saving',
-    'LBL_PORTAL_PAGE_NOT_AVAIL' => 'Page Not Available', 
+    'LBL_PORTAL_PAGE_NOT_AVAIL' => 'Page Not Available',
     'LBL_PORTAL_NOT_ENABLED_MSG' => "We're Sorry, but this feature is not available at this time.",
+    'LBL_PORTAL_SEARCH_RESULTS_TITLE' => 'Show search results for "{query}"',
 
     //for portal system tour
     'LBL_PORTAL_TOUR_SCREEN1_TITLE' => 'Welcome to Portal Tour',
@@ -3497,10 +3578,12 @@ $app_strings = array (
     'LBL_CONTACT_EDIT_PASSWORD_LNK_TEXT' => 'Change Password',
     'LBL_PORTAL_PASSWORDS_MUST_MATCH' => 'The passwords must match.',
     'LBL_PORTAL_PASSWORD_UPDATE_FAILED' => 'Update password failed. Please try again or contact technical support.',
-    'LBL_PORTAL_PASSWORD_VERIFICATION_FAILED' => 'Password entered does not match that in our system.', 
+    'LBL_PORTAL_PASSWORD_VERIFICATION_FAILED' => 'Password entered does not match that in our system.',
     'LBL_PORTAL_PASSWORD_SUCCESS_CHANGED' => 'Your password has been successfully updated.',
     //end portal
     //END SUGARCRM flav=ent ONLY
+
+    'LBL_PREFERRED_LANGUAGE' => 'Language Preference:',
 
     //sidecar errors
     'ERR_HTTP_DEFAULT_TYPE' => 'Unknown',
@@ -3527,6 +3610,12 @@ $app_strings = array (
     'LBL_SYNCED_RECURRING_MSG' => 'You cannot edit this record because it was synced from an external client.',
     'LBL_EXISTING' => 'Existing',
     'LBL_PANEL_DEFAULT' => 'Default',
+
+    //quickcreate modal dialog
+    'LBL_IGNORE_DUPLICATE_AND_SAVE' => 'Ignore Duplicate and Save',
+    'LBL_SAVE_AND_CREATE_ANOTHER' => 'Save and Create Another',
+    'LBL_SAVE_AND_VIEW' => 'Save and View',
+    'LBL_RESTORE' => 'Reset to Original',
 );
 
 
@@ -4381,9 +4470,10 @@ $app_list_strings['forecasts_config_category_options_dom'] = array(
     'show_binary' => 'Two Categories',
     'show_buckets' => 'Three Categories',
 //END SUGARCRM flav=pro ONLY
-//BEGIN SUGARCRM flav=ent ONLY
-    'show_n_buckets' => 'Custom Categories',
-//END SUGARCRM flav=ent ONLY
+//BEGIN SUGARCRM flav=int ONLY
+//TODO-sfa Tag this as 'ent' when custom buckets are implemented (SFA-295)
+    'show_custom_buckets' => 'Custom Categories',
+//END SUGARCRM flav=int ONLY
 //BEGIN SUGARCRM flav=pro ONLY
 );
 $app_list_strings['forecasts_timeperiod_types_dom'] = array(
@@ -4415,4 +4505,13 @@ $app_list_strings ['pdfmanager_yes_no_list'] = array (
     'no' => 'No',
 );
 //END SUGARCRM flav=pro ONLY
+
+//BEGIN SUGARCRM flav=free ONLY
+$app_list_strings['sales_stage_dom'] = array(
+    'Prospecting'=>'New',
+    'Qualification'=>'Engaged',
+    'Closed Won'=>'Won',
+    'Closed Lost'=>'Lost',
+);
+//END SUGARCRM flav=free ONLY
 ?>

@@ -35,6 +35,14 @@
     },
 
     /**
+     * Clean up any left over bound data to our context
+     */
+    unbindData : function() {
+        if(this.context.forecasts) this.context.forecasts.off(null, null, this);
+        app.view.View.prototype.unbindData.call(this);
+    },
+
+    /**
      * Handles if data changes on the context.forecasts.tree model (and when tree first initializes)
      * Tree is not handled like other components on Forecasts as it uses a 3rdParty lib (jstree)
      * to handle it's data model. The event handler is added here only because bindDataChange is
@@ -115,7 +123,9 @@
 
             //Scan for the nodes with the data attribute.  These are the nodes we are interested in
             if (entry.data) {
-                data[index].data = replaceHTMLChars(entry.data);
+                data[index].data = (function(value) {
+                    return value.replace(/&amp;/gi,'&').replace(/&lt;/gi,'<').replace(/&gt;/gi,'>').replace(/&#039;/gi,'\'').replace(/&quot;/gi,'"');
+                })(entry.data);
 
                 if (entry.children) {
                     //For each children found (if any) then call _recursiveReplaceHTMLChars again.  Notice setting

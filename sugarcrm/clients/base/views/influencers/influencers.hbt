@@ -1,0 +1,25 @@
+<div class="block padded thumbnail widget">
+    <div class="influencers-widget">
+        <h4 data-tour="tour-influencers">Influencers</h4>
+        <div class="influencers-wrapper">
+            <ul class="influencers-list">
+                {{#if this.collections.length}}
+                    {{#each this.collections}}
+                        <li class="influencers-item">
+                            <a href="#Users/{{this.id}}" class="avatar avatar42 pull-left">
+                                <img src="{{this.picture_url}}" alt="{{this.full_name}}">
+                            </a>
+                            <a href="#Users/{{this.id}}">{{this.full_name}}</a>
+                            <br>
+                            <span class="influencers-stat">{{this.calls}} {{#eq this.calls "1"}}{{str "LBL_CALL"}}{{else}}{{str "LBL_CALLS"}}{{/eq}}</span>
+                            <span class="influencers-stat">0 {{str "LBL_EMAILS"}}</span>
+                            <span class="influencers-stat">{{this.meetings}} {{#eq this.meetings "1"}}{{str "LBL_MEETING"}}{{else}}{{str "LBL_MEETINGS"}}{{/eq}}</span>
+                        </li>
+                    {{/each}}
+                {{else}}
+                    <li class="influencers-item"><em>No influencers found.</em></li>
+                {{/if}}
+            </ul>
+        </div>
+    </div>
+</div>

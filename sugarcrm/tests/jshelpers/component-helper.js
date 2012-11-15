@@ -2,6 +2,11 @@
     var app = SUGAR.App;
     test.loadComponent = function(client, type, name) {
         SugarTest.loadFile("../clients/" + client + "/" + type + "s/" + name + "/", name, "js", function(data) {
+            try {
+                data = eval("[" + data + "][0]");
+            } catch (e) {
+                app.logger.error("Failed to eval view controller for " + name + ": " + e + ":\n" + data);
+            }
             app.view.declareComponent(type, name, null, data, null, true);
         });
     };

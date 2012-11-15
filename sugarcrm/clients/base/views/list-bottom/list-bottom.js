@@ -7,15 +7,10 @@
  */
     // We listen to event and keep track if search filter is toggled open/close
     filterOpened: false,
-
     events: {
-        'click [name=show_more_button]': 'showMoreRecords',
-        'click .search': 'showSearch'
+        'click [name=show_more_button]': 'showMoreRecords'
     },
     _renderHtml: function() {
-        if (app.acl.hasAccess('create', this.module)) {
-            this.context.set('isCreateEnabled', true);
-        }
 
         // Dashboard layout injects shared context with limit: 5. 
         // Otherwise, we don't set so fetches will use max query in config.
@@ -28,34 +23,46 @@
         // normal show more for list view.
         this.layout.off("list:filter:toggled", null, this);
         this.layout.on("list:filter:toggled", this.filterToggled, this);
-    },        
+    },
     filterToggled: function(isOpened) {
-        this.filterOpened = isOpened;
+        this.context.set('filterOpened', isOpened);
     },
     showMoreRecords: function(evt) {
         var self = this, options;
-        app.alert.show('show_more_records', {level:'process', title:app.lang.getAppString('LBL_PORTAL_LOADING')});
+        // Mark current models as old, in order to animate the new one
+        _.each(this.collection.models, function(model) {
+            model.old = true;
+        });
         
+        // Display loading message
+        app.alert.show('show_more_records_' + self.cid, {level:'process', title:app.lang.getAppString('LBL_PORTAL_LOADING')});
+        
+        // save current screen position
+        var screenPosition = $('html').offset().top;
 
         // If in "search mode" (the search filter is toggled open) set q:term param
-        options = self.filterOpened ? self.getSearchOptions() : {};
+        options = this.context.get('filterOpened') ? self.getSearchOptions() : {};
 
         // Indicates records will be added to those already loaded in to view
         options.add = true;
             
         options.success = function() {
-            app.alert.dismiss('show_more_records');
+            // Hide loading message
+            app.alert.dismiss('show_more_records_' + self.cid);
             self.layout.trigger("list:paginate:success");
             self.render();
-            window.scrollTo(0, document.body.scrollHeight);
+            // retrieve old screen position
+            window.scrollTo(0, -1*screenPosition);
+
+            // Animation for new records
+            self.layout.$('tr.new').animate({
+                opacity:1
+            }, 500, function () {
+                $(this).removeAttr('style class');
+            });
         };
         options.limit = this.limit;
         this.collection.paginate(options);
-    },
-    showSearch: function() {
-        // Toggle on search filter and off the pagination buttons
-        this.$('.search').toggleClass('active');
-        this.layout.trigger("list:search:toggle");
     },
     getSearchOptions: function() {
         var collection, options, previousTerms, term = '';

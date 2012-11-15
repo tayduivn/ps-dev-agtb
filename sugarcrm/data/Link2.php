@@ -556,13 +556,16 @@ class Link2 {
             if(empty($key->id) || empty($this->focus->id))
                 return false;
 
-            if ($this->getSide() == REL_LHS) {
-                $success = $this->relationship->add($this->focus, $key, $additional_values);
-            }
-            else {
-                $success = $this->relationship->add($key, $this->focus, $additional_values);
-            }
-
+            $lhs = $this->getSide() == REL_LHS ? $this->focus : $key;
+            $rhs = $this->getSide() == REL_LHS ? $key : $this->focus;  
+            // create activity if enabled
+            if ($lhs->isActivityEnabled() && !$this->relationship->relationship_exists($lhs, $rhs)) {
+                $activity = new ActivityStream();
+                $activity->addRelate($lhs, $rhs);
+            }   
+            
+            $success = $this->relationship->add($lhs, $rhs, $additional_values);
+            
             if($success == false) {
                 $failures[] = $key->id;
             }

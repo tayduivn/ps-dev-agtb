@@ -37,8 +37,7 @@ $viewdefs ['Contacts']['portal']['view']['detail'] =
                 'type' => 'button',
                 'label' => 'LBL_EDIT_BUTTON_LABEL',
                 'value' => 'edit',
-                'class' => 'edit-profile',
-                'css_class' => 'btn-primary',
+                'css_class' => 'btn-primary edit-profile',
                 'events' =>
                 array(
                     'click' => 'function(e){ this.app.router.navigate("profile/edit", {trigger:true});}'

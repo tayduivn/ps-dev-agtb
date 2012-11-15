@@ -33,6 +33,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 include_once('include/workflow/workflow_utils.php');
 include_once('include/workflow/field_utils.php');
 include_once('include/utils/expression_utils.php');
+require_once "modules/Mailer/MailerFactory.php"; // imports all of the Mailer classes that are needed
 
 function process_workflow_alerts(& $target_module, $alert_user_array, $alert_shell_array, $check_for_bridge=false){
 
@@ -329,8 +330,12 @@ function get_user_alert_details(& $focus, $user_meta_array, & $address_array){
 	}
 
 
-	function create_alert_email($notify_user)
-	{
+/**
+ * @deprecated 7.0
+ * @param $notify_user
+ * @return mixed
+ */
+function create_alert_email($notify_user) {
 		global $sugar_version, $sugar_config, $app_list_strings, $current_user;
 
 		if (empty($_SESSION['authenticated_user_language'])) {
@@ -372,110 +377,93 @@ function get_user_alert_details(& $focus, $user_meta_array, & $address_array){
 	}
 
 
-function send_workflow_alert(& $focus, $address_array, $alert_msg, & $admin, $alert_shell_array, $check_for_bridge=false){
-	require_once("include/SugarPHPMailer.php");
-    $mail_object = new SugarPHPMailer;
+function send_workflow_alert(&$focus, $address_array, $alert_msg, &$admin, $alert_shell_array, $check_for_bridge = false) {
+    $invitePerson = false;
 
-	global $locale;
-    $OBCharset = $locale->getPrecedentPreference('default_email_charset');
-	$invite_person = false;
+    $users    = array();
+    $contacts = array();
 
-	//Handle inviting users/contacts to meetings/calls
-	if($focus->module_dir == "Calls" || $focus->module_dir == "Meetings" ){
+    // Handle inviting users/contacts to meetings/calls
+    if ($focus->module_dir == "Calls" || $focus->module_dir == "Meetings") {
+        if ($check_for_bridge == true && !empty($focus->bridge_object)) {
+            // we are inviting people
+            $invitePerson = true;
+        }
+    }
 
-		if($check_for_bridge==true && !empty($focus->bridge_object)){
+    if ($alert_shell_array['source_type'] == "System Default") {
+        get_invite_email($focus, $admin, $address_array, $invitePerson, $alert_msg, $alert_shell_array);
+    } elseif ($alert_shell_array['source_type'] == "Custom Template" && $invitePerson == true) {
+        // you are using a custom template and this is a meeting/call child invite
+        get_invite_email($focus, $admin, $address_array, $invitePerson, $alert_msg, $alert_shell_array);
+    } else {
+        $mailTransmissionProtocol = "unknown";
 
-			$invite_person = true;
-			$users_arr = array();
-			$contacts_arr = array();
-		//end if we are inviting people
-		}
-	//end if calls or meetings
-	}
+        try {
+            $mailer                   = MailerFactory::getMailerForUser($GLOBALS["current_user"]);
+            $mailTransmissionProtocol = $mailer->getMailTransmissionProtocol();
 
+            foreach ($address_array['to'] as $userInfo) {
+                $mailer->addRecipientsTo(new EmailIdentity($userInfo['address'], $userInfo['name']));
 
-	//Use system defaults the go here
+                if ($invitePerson == true) {
+                    populate_usr_con_arrays($userInfo, $users, $contacts);
+                }
+            }
 
-	if($alert_shell_array['source_type']=="System Default"){
+            foreach ($address_array['cc'] as $userInfo) {
+                $mailer->addRecipientsCc(new EmailIdentity($userInfo['address'], $userInfo['name']));
 
-		get_invite_email($focus, $admin, $address_array, $invite_person, $alert_msg, $alert_shell_array);
+                if ($invitePerson == true) {
+                    populate_usr_con_arrays($userInfo, $users, $contacts);
+                }
+            }
 
-	//end if system default
-	} elseif($alert_shell_array['source_type']=="Custom Template" && $invite_person==true){
-	//If you are using a custom template and this is a meeting/call child invite go here too
+            foreach ($address_array['bcc'] as $userInfo) {
+                $mailer->addRecipientsBcc(new EmailIdentity($userInfo['address'], $userInfo['name']));
 
-		get_invite_email($focus, $admin, $address_array, $invite_person, $alert_msg, $alert_shell_array);
+                if ($invitePerson == true) {
+                    populate_usr_con_arrays($userInfo, $users, $contacts);
+                }
+            }
 
-	} else {
-	        $mail_objects = array();
-			foreach($address_array['to'] as $key => $user_info_array)
-			{
-			    $mail_object->AddAddress($user_info_array['address'],$locale->translateCharsetMIME(trim($user_info_array['name']), 'UTF-8', $OBCharset));
-			    if($invite_person == true) 
-			    {
-			    	populate_usr_con_arrays($user_info_array, $users_arr, $contacts_arr);
-			    }
+            if ($invitePerson == true) {
+                // Handle inviting users/contacts to meetings/calls
+                if (!empty($address_array['invite_only'])) {
+                    foreach ($address_array['invite_only'] as $userInfo) {
+                        populate_usr_con_arrays($userInfo, $users, $contacts);
+                    }
+                }
 
-			}
+                // use the user_arr & contact_arr to add these people to the meeting
+                $focus->users_arr    = $users;
+                $focus->contacts_arr = $contacts;
 
-			foreach($address_array['cc'] as $key => $user_info_array){
-				$mail_object->AddCC($user_info_array['address'],$locale->translateCharsetMIME(trim($user_info_array['name']), 'UTF-8', $OBCharset));
-				if($invite_person == true)
-				{
-					populate_usr_con_arrays($user_info_array, $users_arr, $contacts_arr);
-				}
-			}
+                invite_people($focus);
+            }
 
-			foreach($address_array['bcc'] as $key => $user_info_array){
-				$mail_object->AddBCC($user_info_array['address'],$locale->translateCharsetMIME(trim($user_info_array['name']), 'UTF-8', $OBCharset));
-				if($invite_person == true) 
-				{
-					populate_usr_con_arrays($user_info_array, $users_arr, $contacts_arr);
-				}
-			}
+            // add the message content to the mailer
+            // return: true=encountered an error; false=no errors
+            $error = create_email_body($focus, $mailer, $admin, $alert_msg, $alert_shell_array);
 
+            if ($error) {
+                throw new MailerException("Failed to add message content", MailerException::InvalidMessageBody);
+            }
 
-			if($invite_person == true){
-				//Handle inviting users/contacts to meetings/calls
-				if(!empty($address_array['invite_only'])){
-					foreach($address_array['invite_only'] as $key => $user_info_array){
-						populate_usr_con_arrays($user_info_array, $users_arr, $contacts_arr);
-					}
-				}
-
-				//use the user_arr & contact_arr to add these people to the meeting
-				$focus->users_arr = $users_arr;
-				$focus->contacts_arr = $contacts_arr;
-
-
-				invite_people($focus);
-
-			}
-
-			//fill in the mail object with all the administrative settings and configurations
-			setup_mail_object($mail_object, $admin);
-			$error = create_email_body($focus, $mail_object, $admin, $alert_msg, $alert_shell_array);
-            $mail_object->prepForOutbound();
-            
-			if($error == false)
-			{
-				if(!$mail_object->Send()) 
-				{
-					$GLOBALS['log']->warn("Notifications: error sending e-mail (method: {$mail_object->Mailer}), (error: {$mail_object->ErrorInfo})");
-				}
-				//end if error is false
-			}
-
-	//end if else use system defaults or not
-	}
-
-//end function send_workflow_alert
+            $mailer->send();
+        } catch (MailerException $me) {
+            $message = $me->getMessage();
+            $GLOBALS["log"]->warn("Notifications: error sending e-mail (method: {$mailTransmissionProtocol}), (error: {$message})");
+        }
+    }
 }
 
-
-function setup_mail_object(& $mail_object, & $admin){
-	global $sugar_version, $sugar_config, $app_list_strings, $current_user;
-
+/**
+ * @deprecated 7.0
+ * @param $mail_object
+ * @param $admin
+ */
+function setup_mail_object(&$mail_object, &$admin) {
 	if ($admin->settings['mail_sendtype'] == "SMTP") {
 		$mail_object->Mailer = "smtp";
 		$mail_object->Host = $admin->settings['mail_smtpserver'];
@@ -501,38 +489,45 @@ function setup_mail_object(& $mail_object, & $admin){
 		}
 	//end if sendtype is SMTP
 	} else {
-        $mail_object->Mailer = 'sendmail';                
+        $mail_object->Mailer = 'sendmail';
     }
 
 	$mail_object->From = $admin->settings['notify_fromaddress'];
 	$mail_object->FromName = (empty($admin->settings['notify_fromname'])) ? "" : $admin->settings['notify_fromname'];
-
-//end function setup_mail_object
 }
 
 
-function create_email_body(& $focus, & $mail_object, & $admin, $alert_msg, $alert_shell_array, $notify_user_id=""){
-	global $current_language;
-	$mod_strings = return_module_language($current_language, 'WorkFlow');
-	if($alert_shell_array['source_type']=="Custom Template"){
-		//use custom template
-		$error = fill_mail_object($mail_object, $focus, $alert_msg, "body_html", $notify_user_id);
-		return $error;
-	//use custom template
-	}
-	if($alert_shell_array['source_type']=="Normal Message"){
-		//use standard message
-		$mail_object->Body = from_html(trim($alert_msg));
-		$mail_object->AltBody = from_html(trim($alert_msg));
-		$mail_object->Subject = from_html(($mod_strings['LBL_ALERT_SUBJECT']));
-		return false;
-	//end if else use custom
-	}
+function create_email_body(&$focus, &$mail_object, &$admin, $alert_msg, $alert_shell_array, $notify_user_id = "") {
+    global $current_language;
+    $modStrings = return_module_language($current_language, 'WorkFlow');
 
+    if ($alert_shell_array['source_type'] == "Custom Template") {
+        // use custom template
+        $error = fill_mail_object($mail_object, $focus, $alert_msg, "body_html", $notify_user_id);
+        return $error;
+    }
 
-	return false;
+    if ($alert_shell_array['source_type'] == "Normal Message") {
+        //use standard message
+        $body = trim($alert_msg);
 
-//end function create_email_body
+        // the compared strings will be the same if strip_tags had no affect
+        // if the compared strings are equal, then it's a text-only message
+        $textOnly = (strcmp($body, strip_tags($body)) == 0);
+
+        if ($textOnly) {
+            $mail_object->setTextBody($body);
+        } else {
+            $textBody = strip_tags(br2nl($body)); // need to create the plain-text part
+            $mail_object->setTextBody($textBody);
+            $mail_object->setHtmlBody($body);
+        }
+
+        $mail_object->setSubject($modStrings['LBL_ALERT_SUBJECT']);
+        return false;
+    }
+
+    return false; // false=no errors
 }
 
 function get_related_array(& $focus, & $user_meta_array, & $address_array){
@@ -640,46 +635,48 @@ function compile_rel_user_info($target_object, $user_meta_array, &$address_array
 
 /////////////////////////////////////////Parsing Custom Templates//////////
 
-function fill_mail_object(& $mail_object, & $focus, $template_id, $source_field, $notify_user_id=""){
+function fill_mail_object(&$mail_object, &$focus, $template_id, $source_field, $notify_user_id = "") {
+    $template                             = new EmailTemplate();
+    $template->disable_row_level_security = true;
 
+    if (isset($template_id) && $template_id != "") {
+        $template->retrieve($template_id);
+    }
 
+    if ($template->id = "") {
+        return true; // true=encountered an error
+    }
 
-	$template_object = new EmailTemplate();
-	$template_object->disable_row_level_security = true;
+    // override the From email header if the template provides the necessary values
+    if ($template->from_address != "" || $template->from_name != "") {
+        $from      = $mail_object->getHeader(EmailHeaders::From);
+        $fromEmail = $from->getEmail();
+        $fromName  = $from->getName();
 
-	if(isset($template_id) && $template_id!="") {
- 	  $template_object->retrieve($template_id);
-	}
+        // retain the email address of the From header if the template doesn't provide one
+        if ($template->from_address != "") {
+            $fromEmail = $template->from_address;
+        }
 
-	if($template_object->id=""){
-		return true;
+        // retain the name of the From header if the template doesn't provide one
+        if ($template->from_name != "") {
+            $fromName = $template->from_name;
+        }
 
-	}
+        $mail_object->setHeader(EmailHeaders::From, new EmailIdentity($fromEmail, $fromName));
+    }
 
-	if($template_object->from_name != ''){
-		$mail_object->FromName = $template_object->from_name;
-	}
+    if (!empty($template->body)) {
+        $mail_object->setTextBody(trim(parse_alert_template($focus, $template->body, $notify_user_id)));
+    }
 
-	if($template_object->from_address != ''){
-		$mail_object->From = $template_object->from_address;
-	}
+    if (!empty($template->body_html)) {
+        $mail_object->setHtmlBody(parse_alert_template($focus, $template->body_html, $notify_user_id));
+    }
 
-	 if ( empty($template_object->body)){
-		$template_object->body = strip_tags(from_html($template_object->body_html));
- 	}
- 	if(!empty($template_object->body_html)){
-		$mail_object->IsHTML(true);
-		$mail_object->Body = from_html(parse_alert_template($focus, $template_object->body_html, $notify_user_id), true);
-		$mail_object->AltBody = from_html(trim(parse_alert_template($focus, $template_object->body, $notify_user_id)));
- 	}
- 	else{
- 		$mail_object->AltBody = from_html(trim(parse_alert_template($focus, $template_object->body, $notify_user_id)));
- 	}
- 	$mail_object->Subject = from_html(parse_alert_template($focus, $template_object->subject, $notify_user_id));
+    $mail_object->setSubject(parse_alert_template($focus, $template->subject, $notify_user_id));
 
-		return false;
-
-//end function fill_mail_object;
+    return false; // false=no errors
 }
 
 function parse_alert_template($focus, $target_body, $notify_user_id=""){
@@ -978,159 +975,216 @@ function populate_usr_con_arrays($user_info_array, & $users_arr, & $contacts_arr
 }
 
 
-function get_invite_email($focus, $admin, $address_array, $invite_person, $alert_msg, $alert_shell_array){
-	require_once("include/SugarPHPMailer.php");
-    global $locale;
-    $OBCharset = $locale->getPrecedentPreference('default_email_charset');
+function get_invite_email($focus, $admin, $address_array, $invite_person, $alert_msg, $alert_shell_array) {
+    $type = "Custom";
 
-	if($alert_shell_array['source_type']=="System Default"){
-		$type = "Default";
-	} else {
-		$type = "Custom";
-	}
+    if ($alert_shell_array['source_type'] == "System Default") {
+        $type = "Default";
+    }
 
+    $users    = array();
+    $contacts = array();
 
-		$users_arr = array();
-		$contacts_arr = array();
+    $mailTransmissionProtocol = "unknown";
 
-	//TO: Addresses
-	foreach($address_array['to'] as $key => $user_info_array){
-		$mail_object = new SugarPHPMailer;
-		$mail_object->AddAddress($user_info_array['address'],$locale->translateCharsetMIME(trim($user_info_array['name']), 'UTF-8', $OBCharset));
-		$possible_invitee = populate_usr_con_arrays($user_info_array, $users_arr, $contacts_arr);
+    try {
+        $mailer                   = MailerFactory::getMailerForUser($GLOBALS["current_user"]);
+        $mailTransmissionProtocol = $mailer->getMailTransmissionProtocol();
 
-		if($possible_invitee==true){
-			setup_mail_object($mail_object, $admin);
-			$user_info_array['notify_user']->new_assigned_user_name = $user_info_array['notify_user']->first_name.' '.$user_info_array['notify_user']->last_name;
+        //TO: Addresses
+        foreach ($address_array['to'] as $userInfo) {
+            try {
+                // reuse the mailer, but process one send per recipient
+                $mailer->clearRecipients();
+                $mailer->addRecipientsTo(new EmailIdentity($userInfo['address'], $userInfo['name']));
 
-			if($type=="Default"){
-				$error = get_system_default_body($mail_object, $focus, $user_info_array['notify_user']);
-			} else {
-				$error = create_email_body($focus, $mail_object, $admin, $alert_msg, $alert_shell_array, $user_info_array['notify_user']->id);
-			}
+                $possibleInvitee = populate_usr_con_arrays($userInfo, $users, $contacts);
 
-			send_mail_object($mail_object, $error);
-		//end if possible invitees
-		}
-	//end foreach loop
-	}
+                if ($possibleInvitee == true) {
+                    $userInfo['notify_user']->new_assigned_user_name =
+                        "{$userInfo['notify_user']->first_name} {$userInfo['notify_user']->last_name}";
 
-	//CC: Addresses
-	foreach($address_array['cc'] as $key => $user_info_array){
-		$mail_object = new SugarPHPMailer;
-		$mail_object->AddCC($user_info_array['address'],$locale->translateCharsetMIME(trim($user_info_array['name']), 'UTF-8', $OBCharset));
+                    $error = false; // true=encountered an error; false=no errors
 
-		$possible_invitee = populate_usr_con_arrays($user_info_array, $users_arr, $contacts_arr);
+                    if ($type == "Default") {
+                        $error = get_system_default_body($mailer, $focus, $userInfo['notify_user']);
+                    } else {
+                        $error = create_email_body(
+                            $focus,
+                            $mailer,
+                            $admin,
+                            $alert_msg,
+                            $alert_shell_array,
+                            $userInfo['notify_user']->id
+                        );
+                    }
 
-		if($possible_invitee==true){
-			setup_mail_object($mail_object, $admin);
-			$user_info_array['notify_user']->new_assigned_user_name = $user_info_array['notify_user']->first_name.' '.$user_info_array['notify_user']->last_name;
-			if($type=="Default"){
-				$error = get_system_default_body($mail_object, $focus, $user_info_array['notify_user']);
-			} else {
-				$error = create_email_body($focus, $mail_object, $admin, $alert_msg, $alert_shell_array, $user_info_array['notify_user']->id);
-			}
+                    if ($error) {
+                        throw new MailerException("Failed to add message content", MailerException::InvalidMessageBody);
+                    }
 
-			send_mail_object($mail_object, $error);
-		//end if possible invitee
-		}
-	}
+                    $mailer->send();
+                }
+            } catch (MailerException $me) {
+                $message = $me->getMessage();
+                $GLOBALS["log"]->warn("Notifications: error sending e-mail (method: {$mailTransmissionProtocol}), (error: {$message})");
+            }
+        }
 
-	//BCC: Addresses
-	foreach($address_array['bcc'] as $key => $user_info_array){
-		$mail_object = new SugarPHPMailer;
-		$mail_object->AddBCC($user_info_array['address'], $locale->translateCharsetMIME(trim($user_info_array['name']), 'UTF-8', $OBCharset));
+        //CC: Addresses
+        foreach ($address_array['cc'] as $userInfo) {
+            try {
+                // reuse the mailer, but process one send per recipient
+                $mailer->clearRecipients();
+                $mailer->addRecipientsCc(new EmailIdentity($userInfo['address'], $userInfo['name']));
 
-		$possible_invitee = populate_usr_con_arrays($user_info_array, $users_arr, $contacts_arr);
+                $possibleInvitee = populate_usr_con_arrays($userInfo, $users, $contacts);
 
-		if($possible_invitee==true){
-		setup_mail_object($mail_object, $admin);
-		$user_info_array['notify_user']->new_assigned_user_name = $user_info_array['notify_user']->first_name.' '.$user_info_array['notify_user']->last_name;
-			if($type=="Default"){
-				$error = get_system_default_body($mail_object, $focus, $user_info_array['notify_user']);
-			} else {
-				$error = create_email_body($focus, $mail_object, $admin, $alert_msg, $alert_shell_array, $user_info_array['notify_user']->id);
-			}
+                if ($possibleInvitee == true) {
+                    $userInfo['notify_user']->new_assigned_user_name =
+                        "{$userInfo['notify_user']->first_name} {$userInfo['notify_user']->last_name}";
 
-			send_mail_object($mail_object, $error);
-		//end if possible invitee
-		}
-	//end foreach loop
-	}
+                    $error = false; // true=encountered an error; false=no errors
 
+                    if ($type == "Default") {
+                        $error = get_system_default_body($mailer, $focus, $userInfo['notify_user']);
+                    } else {
+                        $error = create_email_body(
+                            $focus,
+                            $mailer,
+                            $admin,
+                            $alert_msg,
+                            $alert_shell_array,
+                            $userInfo['notify_user']->id
+                        );
+                    }
 
-	if($invite_person == true){
-		//Handle inviting users/contacts to meetings/calls
-		if(!empty($address_array['invite_only'])){
-			foreach($address_array['invite_only'] as $key => $user_info_array){
-				populate_usr_con_arrays($user_info_array, $users_arr, $contacts_arr);
-			}
-		}
+                    if ($error) {
+                        throw new MailerException("Failed to add message content", MailerException::InvalidMessageBody);
+                    }
 
-		//use the user_arr & contact_arr to add these people to the meeting
-		$focus->users_arr = $users_arr;
-		$focus->contacts_arr = $contacts_arr;
+                    $mailer->send();
+                }
+            } catch (MailerException $me) {
+                $message = $me->getMessage();
+                $GLOBALS["log"]->warn("Notifications: error sending e-mail (method: {$mailTransmissionProtocol}), (error: {$message})");
+            }
+        }
 
+        //BCC: Addresses
+        foreach ($address_array['bcc'] as $userInfo) {
+            try {
+                // reuse the mailer, but process one send per recipient
+                $mailer->clearRecipients();
+                $mailer->addRecipientsBcc(new EmailIdentity($userInfo['address'], $userInfo['name']));
 
-			invite_people($focus);
+                $possibleInvitee = populate_usr_con_arrays($userInfo, $users, $contacts);
 
-	}
+                if ($possibleInvitee == true) {
+                    $userInfo['notify_user']->new_assigned_user_name =
+                        "{$userInfo['notify_user']->first_name} {$userInfo['notify_user']->last_name}";
 
-//end function get_system_default_email
+                    $error = false; // true=encountered an error; false=no errors
+
+                    if ($type == "Default") {
+                        $error = get_system_default_body($mailer, $focus, $userInfo['notify_user']);
+                    } else {
+                        $error = create_email_body(
+                            $focus,
+                            $mailer,
+                            $admin,
+                            $alert_msg,
+                            $alert_shell_array,
+                            $userInfo['notify_user']->id
+                        );
+                    }
+
+                    if ($error) {
+                        throw new MailerException("Failed to add message content", MailerException::InvalidMessageBody);
+                    }
+
+                    $mailer->send();
+                }
+            } catch (MailerException $me) {
+                $message = $me->getMessage();
+                $GLOBALS["log"]->warn("Notifications: error sending e-mail (method: {$mailTransmissionProtocol}), (error: {$message})");
+            }
+        }
+    } catch (MailerException $me) {
+        $message = $me->getMessage();
+        $GLOBALS["log"]->warn("Notifications: error sending e-mail (method: {$mailTransmissionProtocol}), (error: {$message})");
+    }
+
+    if ($invite_person == true) {
+        //Handle inviting users/contacts to meetings/calls
+        if (!empty($address_array['invite_only'])) {
+            foreach ($address_array['invite_only'] as $userInfo) {
+                populate_usr_con_arrays($userInfo, $users, $contacts);
+            }
+        }
+
+        //use the user_arr & contact_arr to add these people to the meeting
+        $focus->users_arr    = $users;
+        $focus->contacts_arr = $contacts;
+
+        invite_people($focus);
+    }
 }
 
+function get_system_default_body(&$mail_object, $focus, &$notify_user) {
+    global $sugar_version, $sugar_config, $current_user;
 
+    $currentLanguage = $_SESSION['authenticated_user_language'];
 
+    if (empty($_SESSION['authenticated_user_language'])) {
+        $currentLanguage = $sugar_config['default_language'];
+    }
 
-function get_system_default_body(&$mail_object, $focus, & $notify_user){
+    $xtpl = new XTemplate("include/language/{$currentLanguage}.notify_template.html");
 
-		global $sugar_version, $sugar_config, $app_list_strings, $current_user;
+    $templateName = $focus->object_name;
 
-		if (empty($_SESSION['authenticated_user_language'])) {
-			$current_language = $sugar_config['default_language'];
-		}
-		else {
-			$current_language = $_SESSION['authenticated_user_language'];
-		}
+    $focus->current_notify_user = $notify_user;
 
+    if (in_array('set_notification_body', get_class_methods($focus))) {
+        $xtpl = $focus->set_notification_body($xtpl, $focus);
+    } else {
+        $xtpl->assign("OBJECT", $focus->object_name);
+        $templateName = "Default";
+    }
 
-		$xtpl = new XTemplate("include/language/{$current_language}.notify_template.html");
+    $xtpl->assign("ASSIGNED_USER", $focus->new_assigned_user_name);
+    $xtpl->assign("ASSIGNER", $current_user->user_name);
+    $xtpl->assign("URL", "{$sugar_config['site_url']}/index.php?module={$focus->module_dir}&action=DetailView&record={$focus->id}");
+    $xtpl->assign("SUGAR", "Sugar v{$sugar_version}");
+    $xtpl->parse($templateName);
+    $xtpl->parse("{$templateName}_Subject");
 
-		$template_name = $focus->object_name;
+    $subject = $xtpl->text("{$templateName}_Subject");
+    $mail_object->setSubject($subject);
 
-		$focus->current_notify_user = $notify_user;
+    $body = trim($xtpl->text($templateName));
 
-		if (in_array('set_notification_body', get_class_methods($focus)))
-		{
-			$xtpl = $focus->set_notification_body($xtpl, $focus);
-		}
-		else
-		{
-			$xtpl->assign("OBJECT", $focus->object_name);
-			$template_name = "Default";
-		}
+    // the compared strings will be the same if strip_tags had no affect
+    // if the compared strings are equal, then it's a text-only message
+    $textOnly = (strcmp($body, strip_tags($body)) == 0);
 
-		$xtpl->assign("ASSIGNED_USER", $focus->new_assigned_user_name);
-		$xtpl->assign("ASSIGNER", $current_user->user_name);
-		$xtpl->assign("URL", "{$sugar_config['site_url']}/index.php?module={$focus->module_dir}&action=DetailView&record={$focus->id}");
-		$xtpl->assign("SUGAR", "Sugar v{$sugar_version}");
-		$xtpl->parse($template_name);
-		$xtpl->parse($template_name . "_Subject");
+    if ($textOnly) {
+        $mail_object->setTextBody($body);
+    } else {
+        $textBody = strip_tags(br2nl($body)); // need to create the plain-text part
+        $mail_object->setTextBody($textBody);
+        $mail_object->setHtmlBody($body);
+    }
 
-		$mail_text_array['body'] = from_html(trim($xtpl->text($template_name)));
-		$mail_text_array['subject'] = from_html($xtpl->text($template_name . "_Subject"));
-
-		$mail_object->Body = $mail_text_array['body'];
-		$mail_object->Subject =  $mail_text_array['subject'];
-
-
-		return false;
-
-//end function get_system_default_body
+    return false; // false=no errors
 }
 
-
-
+/**
+ * @deprecated 7.0
+ * @param $mail_object
+ * @param $error
+ */
 function send_mail_object(&$mail_object, $error){
 
 			if($error == false){

@@ -37,6 +37,102 @@
  */
 
        $js_groupings = array(
+            $summer_js = array(
+                "sidecar/lib/jquery/jquery.min.js" => "summer/summer.min.js",
+                "sidecar/lib/jquery/jquery.iframe.transport.js" => "summer/summer.min.js",
+                "sidecar/lib/jquery-ui/js/jquery-ui-1.8.18.custom.min.js" => "summer/summer.min.js",
+                "sidecar/lib/backbone/underscore.js" => "summer/summer.min.js",
+                "sidecar/lib/backbone/backbone.js" => "summer/summer.min.js",
+                "sidecar/lib/handlebars/handlebars-1.0.rc.1.js" => "summer/summer.min.js",
+                "sidecar/lib/stash/stash.js" => "summer/summer.min.js",
+                "sidecar/lib/async/async.js" => "summer/summer.min.js",
+                "sidecar/lib/chosen/chosen.jquery.js" => "summer/summer.min.js",
+                "sidecar/lib/sugar/sugar.searchahead.js" => "summer/summer.min.js",
+                "sidecar/lib/sugar/sugar.timeago.js" => "summer/summer.min.js",
+                "summer/lib/jquery/jquery.fancybox-1.3.4.js" => "summer/summer.min.js",
+                "summer/lib/Crypto/Crypto.js" => "summer/summer.min.js",
+                "summer/lib/TimelineJS/js/storyjs-embed.js" => "summer/summer.min.js",
+                "summer/lib/fullcalendar/fullcalendar.js" => "summer/summer.min.js",
+                "sidecar/lib/sugarapi/sugarapi.js" => "summer/summer.min.js",
+                "sidecar/src/app.js" => "summer/summer.min.js",
+                "sidecar/src/utils/date.js" => "summer/summer.min.js",
+                "sidecar/src/utils/utils.js" => "summer/summer.min.js",
+                "sidecar/src/utils/currency.js" => "summer/summer.min.js",
+                "sidecar/src/core/cache.js" => "summer/summer.min.js",
+                "sidecar/src/core/events.js" => "summer/summer.min.js",
+                "sidecar/src/core/error.js" => "summer/summer.min.js",
+                "summer/error.js" => "summer/summer.min.js",
+                "summer/sugarAuthStore.js" => "summer/summer.min.js",
+                "sidecar/src/view/template.js" => "summer/summer.min.js",
+                "sidecar/src/core/context.js" => "summer/summer.min.js",
+                "sidecar/src/core/controller.js" => "summer/summer.min.js",
+                "sidecar/src/core/router.js" => "summer/summer.min.js",
+                "sidecar/src/core/language.js" => "summer/summer.min.js",
+                "sidecar/src/core/metadata-manager.js" => "summer/summer.min.js",
+                "sidecar/src/core/acl.js" => "summer/summer.min.js",
+                "sidecar/src/core/user.js" => "summer/summer.min.js",
+                "summer/user.js" => "summer/summer.min.js",
+                "summer/analytics.js" => "summer/summer.min.js",
+                "sidecar/src/utils/logger.js" => "summer/summer.min.js",
+                "summer/config.js" => "summer/summer.min.js",
+                "sidecar/src/data/bean.js" => "summer/summer.min.js",
+                "sidecar/src/data/bean-collection.js" => "summer/summer.min.js",
+                "sidecar/src/data/data-manager.js" => "summer/summer.min.js",
+                "sidecar/src/data/validation.js" => "summer/summer.min.js",
+                "sidecar/src/view/hbt-helpers.js" => "summer/summer.min.js",
+                "sidecar/src/view/view-manager.js" => "summer/summer.min.js",
+                "sidecar/src/view/component.js" => "summer/summer.min.js",
+                "sidecar/src/view/view.js" => "summer/summer.min.js",
+                "sidecar/src/view/field.js" => "summer/summer.min.js",
+                "sidecar/src/view/layout.js" => "summer/summer.min.js",
+                "sidecar/src/view/alert.js" => "summer/summer.min.js",
+                "summer/summer.js" => "summer/summer.min.js",
+                "styleguide/assets/js/bootstrap-transition.js" => "summer/summer.min.js",
+                "styleguide/assets/js/bootstrap-collapse.js" => "summer/summer.min.js",
+                "styleguide/assets/js/bootstrap-scrollspy.js" => "summer/summer.min.js",
+                "styleguide/assets/js/bootstrap-tab.js" => "summer/summer.min.js",
+                "styleguide/assets/js/bootstrap-typeahead.js" => "summer/summer.min.js",
+                "summer/lib/twitterbootstrap/js/jquery.dataTables.js" => "summer/summer.min.js",
+                "summer/lib/twitterbootstrap/js/wicked.js" => "summer/summer.min.js",
+                "styleguide/styleguide/js/jquery.jeditable.js" => "summer/summer.min.js",
+                "summer/lib/twitterbootstrap/js/editable.js" => "summer/summer.min.js",
+                "styleguide/assets/js/bootstrap-button.js" => "summer/summer.min.js",
+                "styleguide/assets/js/bootstrap-tooltip.js" => "summer/summer.min.js",
+                "styleguide/assets/js/bootstrap-popover.js" => "summer/summer.min.js",
+                "styleguide/assets/js/bootstrap-dropdown.js" => "summer/summer.min.js",
+                "styleguide/assets/js/bootstrap-modal.js" => "summer/summer.min.js",
+                "styleguide/assets/js/bootstrap-alert.js" => "summer/summer.min.js",
+                "summer/summer-ui.js" => "summer/summer.min.js",
+                "styleguide/styleguide/js/nvd3/lib/d3.v2.js" => "summer/summer.min.js",
+                // To add more models to NV D3, run the makefile in styleguide.
+                "styleguide/styleguide/js/nvd3/nv.d3.min.js" => "summer/summer.min.js",
+                "modules/Forecasts/clients/base/lib/ForecastsUtils.js" => "summer/summer.min.js",
+                "modules/Forecasts/clients/base/lib/BucketGridEnum.js" => "summer/summer.min.js",
+                "modules/Forecasts/clients/base/lib/ClickToEdit.js" => "summer/summer.min.js",
+                "modules/Forecasts/clients/base/helper/hbt-helpers.js" => "summer/summer.min.js",
+                "include/javascript/twitterbootstrap/js/sugarCharts.js" => "summer/summer.min.js",
+                "include/javascript/jquery/jquery.jstree.js" => "summer/summer.min.js",
+            ),
+
+            $summer_css = array(
+                "sidecar/lib/chosen/chosen.css" => "summer/summer.min.css",
+                "summer/lib/fullcalendar/fullcalendar.css" => "summer/summer.min.css",
+                "sidecar/lib/jquery-ui/css/smoothness/jquery-ui-1.8.18.custom.css" => "summer/summer.min.css",
+                "styleguide/styleguide/css/nv.d3.css" => "summer/summer.min.css",
+                "summer/lib/TimelineJS/css/timeline.css" => "summer/summer.min.css",
+            ),
+
+            $summer_splash_js = array(
+                "sidecar/lib/jquery/jquery.min.js" => "summer/summer-splash.min.js",
+                "summer/splash/login.js" => "summer/summer-splash.min.js",
+            ),
+
+            $summer_splash_css = array(
+                "sidecar/lib/chosen/chosen.css" => "summer/summer-splash.min.css",
+                "summer/lib/twitterbootstrap/css/bootstrap.css" => "summer/summer-splash.min.css",
+                "sidecar/lib/jquery-ui/css/smoothness/jquery-ui-1.8.18.custom.css" => "summer/summer-splash.min.css",
+            ),
+
            $sugar_grp1 = array(
                 //scripts loaded on first page
                 'include/javascript/sugar_3.js'         => 'include/javascript/sugar_grp1.js',
@@ -47,6 +143,7 @@
                 'include/javascript/quickCompose.js'    => 'include/javascript/sugar_grp1.js',
                 'include/javascript/yui/build/yuiloader/yuiloader-min.js' => 'include/javascript/sugar_grp1.js',
                 //HTML decode
+                'include/javascript/phpjs/license.js' => 'include/javascript/sugar_grp1.js',
                 'include/javascript/phpjs/get_html_translation_table.js' => 'include/javascript/sugar_grp1.js',
                 'include/javascript/phpjs/html_entity_decode.js' => 'include/javascript/sugar_grp1.js',
                 'include/javascript/phpjs/htmlentities.js' => 'include/javascript/sugar_grp1.js',
@@ -78,9 +175,8 @@
             'include/javascript/jquery/jquery.jeditable.js'              => 'include/javascript/sugar_grp1_jquery.js',
             'include/javascript/jquery/jquery.chosen.min.js'             => 'include/javascript/sugar_grp1_jquery.js',
             'include/javascript/jquery/jquery.jstree.js'              	 => 'include/javascript/sugar_grp1_jquery.js',
-            'include/javascript/jquery/jquery.nouislider.js'          	 => 'include/javascript/sugar_grp1_jquery.js',
-
-
+            'include/javascript/jquery/jquery.popoverext.js'              => 'include/javascript/sugar_grp1_jquery.js',
+            'include/javascript/jquery/jquery.effects.custombounce.js'              => 'include/javascript/sugar_grp1_jquery.js',
 			),
            $sugar_field_grp = array(
                'include/SugarFields/Fields/Collection/SugarFieldCollection.js' => 'include/javascript/sugar_field_grp.js',
@@ -147,9 +243,9 @@
 			),
 
             $sugar_grp_yui2 = array(
-            //YUI combination 2
-            'include/javascript/yui/build/dragdrop/dragdrop-min.js'    => 'include/javascript/sugar_grp_yui2.js',
-            'include/javascript/yui/build/container/container-min.js'  => 'include/javascript/sugar_grp_yui2.js',
+               //YUI combination 2
+               'include/javascript/yui/build/dragdrop/dragdrop-min.js'    => 'include/javascript/sugar_grp_yui2.js',
+               'include/javascript/yui/build/container/container-min.js'  => 'include/javascript/sugar_grp_yui2.js',
             ),
 
             //Grouping for emails module.
@@ -195,6 +291,21 @@
                 'include/javascript/jsclass_async.js'   => 'include/javascript/sugar_grp_jsolait.js',
                 'modules/Meetings/jsclass_scheduler.js'   => 'include/javascript/sugar_grp_jsolait.js',
             ),
+
+           $sugar_grp_sidecar = array(
+               'include/javascript/phpjs/base64_encode.js' => 'include/javascript/sugar_sidecar.min.js',
+               'sidecar/lib/jquery/jquery.placeholder.min.js'         => 'include/javascript/sugar_sidecar.min.js',
+               'styleguide/assets/js/bootstrap-button.js'  => 'include/javascript/sugar_sidecar.min.js',
+               'styleguide/assets/js/bootstrap-tooltip.js' => 'include/javascript/sugar_sidecar.min.js',
+               'styleguide/assets/js/bootstrap-dropdown.js'=> 'include/javascript/sugar_sidecar.min.js',
+               'styleguide/assets/js/bootstrap-popover.js' => 'include/javascript/sugar_sidecar.min.js',
+               'styleguide/assets/js/bootstrap-modal.js'   => 'include/javascript/sugar_sidecar.min.js',
+               'styleguide/assets/js/bootstrap-alert.js'   => 'include/javascript/sugar_sidecar.min.js',
+               'portal2/error.js'               => 'include/javascript/sugar_sidecar.min.js',
+               'portal2/views/alert-view.js'    => 'include/javascript/sugar_sidecar.min.js',
+               'include/javascript/jquery/jquery.popoverext.js'           => 'include/javascript/sugar_sidecar.min.js',
+               'include/javascript/jquery/jquery.effects.custombounce.js'           => 'include/javascript/sugar_sidecar.min.js',
+           ),
            //BEGIN SUGARCRM flav=ent ONLY
             $sugar_grp_portal2 = array(
                 'sidecar/lib/jquery/jquery.placeholder.min.js'         => 'portal2/portal.min.js',
@@ -231,7 +342,6 @@
     $sidecar_forecasts['modules/Forecasts/clients/base/lib/ClickToEdit.js'] = $cached_file;
     $sidecar_forecasts['modules/Forecasts/clients/base/lib/BucketGridEnum.js'] = $cached_file;
     $sidecar_forecasts['modules/Forecasts/clients/base/lib/ForecastsUtils.js'] = $cached_file;
-    $sidecar_forecasts['modules/Forecasts/clients/base/views/alert-view/alert-view.js'] = $cached_file;
     $sidecar_forecasts['modules/Forecasts/tpls/SidecarView.js'] = $cached_file;
     $sidecar_forecasts['include/javascript/twitterbootstrap/js/bootstrap-tooltip.js'] = $cached_file;
     $sidecar_forecasts['include/javascript/twitterbootstrap/js/bootstrap-popover.js'] = $cached_file;

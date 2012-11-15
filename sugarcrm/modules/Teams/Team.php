@@ -499,7 +499,10 @@ class Team extends SugarBean
  		if($result)
 		{
         	$GLOBALS['log']->debug("Found existing team membership.  $user_id is a member of $this->id");
-            $this->load_relationship('users');
+            if (!$this->load_relationship('users')){
+                $GLOBALS['log']->error("Unable to load users relationship in Teams");
+                return false;
+            }
 
     		//if the user does not have implicit access, then we do not
     		//care what the explicit access is, delete the memnbership

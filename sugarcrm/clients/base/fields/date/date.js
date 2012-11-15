@@ -31,7 +31,7 @@
             usersDateFormatPreference = app.user.get('datepref');
 
         // If there is a default 'string' value like "yesterday", format it as a date
-        if(this.model.isNew() && !value && this.def.display_default) {
+        if(this.model.isNew() && !value && this.def.display_default && this.view.name === 'edit') {
             value = app.date.parseDisplayDefault(this.def.display_default);
             parts = value.match(/(\d+)/g);
             jsDate = new Date(parts[0], parts[1]-1, parts[2]); //months are 0-based
@@ -43,8 +43,10 @@
             // e.g. new Date("2011-10-10" ) // in my version of chrome browser returns
             // Sun Oct 09 2011 17:00:00 GMT-0700 (PDT)
             parts = value.match(/(\d+)/g);
-            jsDate = new Date(parts[0], parts[1]-1, parts[2]); //months are 0-based
-            value  = app.date.format(jsDate, usersDateFormatPreference);
+            if ( parts ) {
+                jsDate = new Date(parts[0], parts[1]-1, parts[2]); //months are 0-based
+                value  = app.date.format(jsDate, usersDateFormatPreference);
+            }
         }
 
         jsDate = app.date.parse(value);

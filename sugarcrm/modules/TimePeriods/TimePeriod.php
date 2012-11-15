@@ -58,7 +58,7 @@ class TimePeriod extends SugarBean {
 	var $module_dir = 'TimePeriods';
     var $type;
     var $leaf_period_type;
-    var $leaf_periods = 4;
+    var $leaf_periods;
     var $periods_in_year;
     var $leaf_name_template;
     var $name_template;
@@ -154,7 +154,7 @@ class TimePeriod extends SugarBean {
 		  $query ="SELECT name from timeperiods where id = '$this->parent_id' and deleted = 0";
 		  $result =$this->db->query($query, true, "Error filling in additional detail fields") ;
 		  $row = $this->db->fetchByAssoc($result);
-		  $GLOBALS['log']->debug("additional detail query results: $row");
+		  $GLOBALS['log']->debug("additional detail query results: ".print_r($row, true));
 
 		  
 		  if($row != null) {
@@ -810,6 +810,29 @@ class TimePeriod extends SugarBean {
         return $count;
     }
 
+
+    /**
+     * Returns the formatted chart label data for the timeperiod
+     *
+     * @param $chartData Array of chart data values
+     * @return formatted Array of chart data values where the labels are broken down by the timeperiod's increments
+     */
+    public function getChartLabels($chartData) {
+        return $chartData;
+    }
+
+
+    /**
+     * Returns the key for the chart label data for the date closed value
+     *
+     * @param String The date_closed value in db date format
+     * @return String value of the key to use to map to the chart labels
+     */
+    public function getChartLabelsKey($dateClosed) {
+        return $dateClosed;
+    }
+
+
     /**
      * Returns the TimePeriod bean instance for the given time period id
      *
@@ -891,6 +914,7 @@ class TimePeriod extends SugarBean {
         }
         return BeanFactory::getBean("{$type}TimePeriods", $id);
     }
+
 }
 
 function get_timeperiods_dom()

@@ -20,7 +20,7 @@
  ********************************************************************************/
 $config = array();
 $config['license']['search'] = array('contents of this file are subject to', 'SugarCRM" logo. If the display of the logo');
-$config['excludeFileTypes'] = array('.png'=>1, '.gif'=> 1, '.jpg'=>1, '.swf'=>1, 'README'=>1, '.eot' => 1, '.ttf' => 1, '.svg' => 1, '.svgz' => 1, '.woff' => 1);
+$config['excludeFileTypes'] = array('.png'=>1, '.gif'=> 1, '.jpg'=>1, '.swf'=>1, 'README'=>1, '.eot' => 1, '.ttf' => 1, '.svg' => 1, '.svgz' => 1, '.woff' => 1, 'phar'=>1);
 $config['excludeFiles'] = array('sugarportal/jscalendar/lang/calendar-hr.js'=>1);
 $config['skipBuilds'] = array('spotactions'=>1, 'richtext'=>1, 'sugarmdle'=>1, 'following'=>1,'inlineedit'=>1, 'notifications'=>1,'sugarsurvey'=>1, 'int'=>1,'internal'=>1 );
 $config['skipDirs'] = array('.AppleDouble'=>1,'Bitrock'=>1,'webpi'=>1, 'rome'=>1, 'scripts'=>1, 'aps'=>1, 'translations'=>1 );
@@ -49,10 +49,10 @@ $config['builds']['ult']['lic'] = array('sub');
 $config['builds']['dev']['flav'] = array('een','ent','pro','dev','ult','corp');
 $config['builds']['dev']['lic'] = array('sub');
 
-$config['builds']['dce']['flav'] = array('ent'=>1, 'pro'=>1);
-$config['builds']['dce']['lic'] = array('sub');
+$config['builds']['free']['flav'] = array('pro','corp','ent','ult');
+$config['builds']['free']['lic'] = array('sub');
 
-$config['product']= array("com","dce","dev","eng","exp","pro");
+$config['product']= array("com","dce","dev","eng","exp","pro", "free");
 $config['replace'] = array('$Id:','$Log:','$Header$', '$Id$');
 
 //Controls whether or not to include the original line numbering (i.e. commented lines appear as newlines)

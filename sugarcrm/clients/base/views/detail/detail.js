@@ -42,14 +42,7 @@
     bindDataChange: function() {
         if (this.model) {
             this.model.on("change", function() {
-                if (this.context.get('subnavModel')) {
-                    this.context.get('subnavModel').set({
-                        'title': this.model.get('name'),
-                        'meta': this.meta
-                    });
-                    this.model.isNotEmpty = true;
-                    this.render();
-                }
+                this.render();
             }, this);
         }
     }

@@ -63,8 +63,7 @@ class RestMetadataModuleListMobileTest extends RestTestBase {
         // $wireless_module_registry is defined in the file loaded above
         $enabledMobile = array_keys($wireless_module_registry);
 
-
-        $this->assertTrue(isset($restReply['reply']['module_list']['_hash']),'There is no mobile module list');
+        $this->assertTrue(isset($restReply['reply']['module_list']),'There is no mobile module list');
         $restModules = $restReply['reply']['module_list'];
         unset($restModules['_hash']);
         foreach ( $enabledMobile as $module ) {

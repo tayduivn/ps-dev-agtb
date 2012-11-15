@@ -89,6 +89,45 @@ describe("Forecasts Commit Buttons Component", function(){
             expect(view.showConfigButton).toBeFalsy();
         });
     });
+    
+    describe("test triggerExport", function(){
+        var confirmStub;
+        var runExportStub;
+        
+        beforeEach(function(){
+            view.$el = {
+                    find: function(){
+                        return {
+                            hasClass:function(){
+                                return false;
+                            }
+                        }
+                    }
+            };
+            view.context = {
+                    forecasts: {
+                        get: function(){return "worksheet"}
+                    }
+            };
+            
+            confirmStub = sinon.stub(window, 'confirm', function(){return true});
+            runExportStub = sinon.stub(view, 'runExport', function(){});            
+        });
+        
+        afterEach(function(){
+            confirmStub.restore();
+            runExportStub.restore();
+            view.$el = {};
+            view.context = {};
+        });
+        
+        it("should have triggered confirm box, ok, and export", function(){
+            view.triggerExport();
+            expect(window.confirm).toHaveBeenCalled();
+            expect(view.runExport).toHaveBeenCalled();
+        });
+    });
+    
     describe("Forecasts commitButtons bindings ", function(){
     	beforeEach(function(){
     		view.context = {

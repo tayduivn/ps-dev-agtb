@@ -2884,10 +2884,10 @@ protected function checkQuery($sql, $object_name = false)
      * @param SugarBean $bean Sugarbean instance that was changed
      * @return array
      */
-	public function getDataChanges(SugarBean &$bean)
+	public function getDataChanges(SugarBean &$bean, $for = 'audit')
 	{
 		$changed_values=array();
-		$audit_fields=$bean->getAuditEnabledFieldDefinitions();
+		$fields= $for == 'audit' ? $bean->getAuditEnabledFieldDefinitions() : $bean->getActivityEnabledFieldDefinitions();
 
         $fetched_row = array();
         if (is_array($bean->fetched_row))
@@ -2895,8 +2895,8 @@ protected function checkQuery($sql, $object_name = false)
             $fetched_row = array_merge($bean->fetched_row, $bean->fetched_rel_row);
         }
 
-		if ($fetched_row && is_array($audit_fields) and count($audit_fields) > 0) {
-			foreach ($audit_fields as $field=>$properties) {
+		if ($fetched_row && is_array($fields) and count($fields) > 0) {
+			foreach ($fields as $field=>$properties) {
 				if (array_key_exists($field, $fetched_row)) {
 					$before_value = $fetched_row[$field];
 					$after_value=$bean->$field;

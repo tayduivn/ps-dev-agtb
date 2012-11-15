@@ -81,4 +81,8 @@ $mod_strings = array(
 'LBL_EDIT_BUTTON' => 'Edit',
 'LBL_REMOVE' => 'Remove',
 
+'LBL_LINKEDIN'=>'Linkedin Member Account',
+'LBL_FACEBOOK' => 'Facebook Account',
+'LBL_TWITTER' => 'Twitter Account',
+'LBL_GOOGLEPLUS' => 'Google Plus ID',
 );
