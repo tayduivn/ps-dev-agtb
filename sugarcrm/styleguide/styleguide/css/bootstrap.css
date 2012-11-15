@@ -5965,11 +5965,6 @@ header .subnav {
     margin:0 auto;
     padding:0 1px;
   }
-  .subnav .nav > li:first-child > a, .subnav .nav > li:first-child > a:hover {
-    -webkit-border-radius:0px;
-    -moz-border-radius:0px;
-    border-radius:0px;
-  }
 }
 .quick-links {
   min-height:30px;

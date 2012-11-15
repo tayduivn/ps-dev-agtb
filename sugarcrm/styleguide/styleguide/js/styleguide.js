@@ -26,6 +26,11 @@
     // make code pretty (styleguide only)
     window.prettyPrint && prettyPrint();
 
+    $('section [href^=#]')
+      .click(function(e) {
+        e.preventDefault();
+      });
+
     // add tipsies to grid for scaffolding (styleguide only)
     if ($('#grid-system').length) {
       $('#grid-system').tooltip({
