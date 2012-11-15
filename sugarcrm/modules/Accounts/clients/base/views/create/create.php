@@ -49,13 +49,19 @@ $viewdefs['Accounts']['base']['view']['create'] = array(
     ),
     'panels' => array(
         array(
+            'name' => 'panel_header',
+            'header' => true,
+            'fields' => array(
+                'name',
+            )
+        ),
+        array(
             'name' => 'panel_body',
             'columns' => 2,
             'labels' => false,
             'labelsOnTop' => true,
             'placeholders' => true,
             'fields' => array(
-                'name',
                 'assigned_user_name',
                 'billing_address_street',
                 'industry',
