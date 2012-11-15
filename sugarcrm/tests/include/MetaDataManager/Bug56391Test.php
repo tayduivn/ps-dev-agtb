@@ -25,7 +25,7 @@
 require_once 'include/MetaDataManager/MetaDataManager.php';
 
 /**
- * Bug 56505 - Incorrect format for property "default" in multiselect field's vardef
+ * Bug 56391 - ACL's used in the MetadataManager were the static ones.  Have switched to use the SugarACL methods
  */
 class Bug56391Test extends Sugar_PHPUnit_Framework_TestCase
 {
