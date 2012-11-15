@@ -10,6 +10,7 @@
      * Initializes the copy field component.
      *
      * Initializes the initialValues and fields properties.
+     * Enables sync by default.
      *
      * @param {Object} options
      *
@@ -20,6 +21,10 @@
         app.view.Field.prototype.initialize.call(this, options);
         this._initialValues = {};
         this._fields = {};
+
+        if (_.isUndefined(this.def.sync)) {
+            this.def.sync = true;
+        }
     },
 
     /**
@@ -36,18 +41,18 @@
      */
     toggle: function(evt) {
 
-        var mapping = this.def.mapping;
-
         if (!$(evt.currentTarget).is(':checked')) {
+            this.syncCopy(false);
             this.restore();
             return;
         }
 
-        _.each(mapping, function(target, source) {
+        _.each(this.def.mapping, function(target, source) {
             this.copy(source, target);
         }, this);
-    },
 
+        this.syncCopy(true);
+    },
     /**
      * Copies the source field value to the target field.
      *
@@ -88,6 +93,50 @@
         }, this);
 
         this._initialValues = {};
+    },
+
+
+    /**
+     * Enables or disables the sync copy only if the field has the `sync`
+     * definition to set to TRUE.
+     *
+     * @param {Boolean} enable
+     *   TRUE to keep the mapping fields in sync, FALSE otherwise.
+     */
+    syncCopy: function(enable) {
+
+        if (!this.def.sync) {
+            return;
+        }
+
+        if (!enable) {
+            this.model.off(null, this.copyChanged);
+            return;
+        }
+
+        var events = _.map(_.keys(this.def.mapping), function (field) {
+            return 'change:' + field;
+        });
+        this.model.on(events.join(' '), this.copyChanged, this);
+    },
+
+    /**
+     * Callback for the syncCopy binding.
+     *
+     * @param {Backbone.Model} model
+     *   The model that was changed.
+     * @param {*} value
+     *   The value of the field that was changed.
+     * @param {Object} args
+     *   An object with the list of the fields that changed.
+     */
+    copyChanged: function(model, value, args) {
+
+        _.each(args.changes, function(hasChanged, field) {
+            // console.log(field);
+            // console.log(mapping[field]);
+            model.set(this.def.mapping[field], model.get(field));
+        }, this);
     },
 
     /**

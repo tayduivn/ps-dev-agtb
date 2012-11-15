@@ -142,5 +142,59 @@ describe('copy field', function() {
 
             expect(field.model.get('name')).toEqual(name);
         });
+
+        it('should have sync enabled by default', function() {
+            expect(field.def.sync).toBeTruthy();
+        });
+
+        it('should be able to keep values in sync', function() {
+
+            var prev = model.clone();
+
+            field.model = model;
+            field.render();
+            field._renderHtml();
+
+            _.each(field.def.mapping, function(target, source) {
+                expect(field.model.get(target)).toEqual(prev.get(target));
+            });
+
+            field.$('input[type=checkbox]').attr('checked', true).trigger('click');
+
+            var value = 'Edited float value to sync with `address_street` and `name` fields';
+            field.model.set('float', value);
+            expect(field.model.get('float')).toEqual(value);
+            expect(field.model.get('address_street')).toEqual(value);
+            expect(field.model.get('name')).toEqual(value);
+        });
+
+        it('should be able to copy values without keep it in sync', function() {
+
+            var prev = model.clone();
+
+            field.def.sync = false;
+            expect(field.def.sync).toBeFalsy();
+
+            field.model = model;
+            field.render();
+            field._renderHtml();
+
+            _.each(field.def.mapping, function(target, source) {
+                expect(field.model.get(target)).toEqual(prev.get(target));
+            });
+
+            field.$('input[type=checkbox]').attr('checked', true).trigger('click');
+
+            var value = 'Edited float value to sync with `address_street` and `name` fields';
+            field.model.set('float', value);
+            expect(field.model.get('float')).toEqual(value);
+
+            _.each(field.def.mapping, function(target, source) {
+                if (target === 'float') {
+                    return;
+                }
+                expect(field.model.get(target)).toEqual(prev.get(source));
+            });
+        });
     });
 });
