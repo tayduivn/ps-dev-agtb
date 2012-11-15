@@ -36,18 +36,47 @@ $viewdefs['Accounts']['base']['view']['create'] = array(
             'name'    => 'cancel_button',
             'type'    => 'button',
             'label'   => 'LBL_CANCEL_BUTTON_LABEL',
-            'value'   => 'cancel',
             'css_class' => 'btn-invisible btn-link',
+        ),
+        array(
+            'name'    => 'restore_button',
+            'type'    => 'button',
+            'label'   => 'LBL_RESTORE',
+            'css_class' => 'hide btn-invisible btn-link',
+        ),
+        array(
+            'name'    => 'save_create_button',
+            'type'    => 'button',
+            'label'   => 'LBL_SAVE_AND_CREATE_ANOTHER',
+            'css_class' => 'hide btn-invisible btn-link',
+        ),
+        array(
+            'name'    => 'save_view_button',
+            'type'    => 'button',
+            'label'   => 'LBL_SAVE_AND_VIEW',
+            'css_class' => 'hide btn-invisible btn-link',
         ),
         array(
             'name'    => 'save_button',
             'type'    => 'button',
             'label'   => 'LBL_SAVE_BUTTON_LABEL',
-            'value'   => 'save',
             'css_class' => 'disabled',
         ),
     ),
     'panels' => array(
+        array(
+            'name' => 'panel_header',
+            'placeholders' => true,
+            'header' => true,
+            'labels' => false,
+            'fields' => array(
+                array(
+                    'name' => 'name',
+                    'label' => '',
+                    'placeholder' => 'LBL_NAME'
+                ),
+            )
+        ),
         array(
             'name' => 'panel_body',
             'columns' => 2,
@@ -55,7 +84,6 @@ $viewdefs['Accounts']['base']['view']['create'] = array(
             'labelsOnTop' => true,
             'placeholders' => true,
             'fields' => array(
-                'name',
                 'assigned_user_name',
                 'billing_address_street',
                 'industry',
