@@ -1,12 +1,11 @@
-    <div class="accordion-heading">
-        <a class="accordion-toggle" data-id="collapse{{this.meta.module}}" data-toggle="collapse" data-parent="#convert-accordion" data-target="#collapse{{this.meta.module}}" style="display:inline-block">
-            <span class="module-number">{{this.meta.moduleNumber}}.</span>
-            <span class="title"></span>
-            {{#unless this.meta.required}}
-            <span class="optional">(optional)</span>
-            {{/unless}}
-            <span class="sub-title"></span>
-        </a>
+    <!--evil style tags are just there temporarily until proper styling can be put in place-->
+    <div class="accordion-heading" data-module="{{this.meta.module}}" style="cursor:pointer">
+        <span class="module-number">{{this.meta.moduleNumber}}.</span>
+        <span class="title"></span>
+        {{#unless this.meta.required}}
+        <span class="optional">(optional)</span>
+        {{/unless}}
+        <span class="sub-title"></span>
         <span class="subview-toggle">
             <a class="toggle-subview show-record pull-right" href="javascript:void(0)" style="display:inline-block">Ignore duplicates and create new</a>
             <a class="toggle-subview show-duplicate pull-right" href="javascript:void(0)" style="display:none">Back to duplicates</a>

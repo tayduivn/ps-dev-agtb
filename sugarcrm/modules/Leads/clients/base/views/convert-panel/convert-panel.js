@@ -95,6 +95,7 @@
         } else if (this.$(event.target).hasClass('show-record')) {
             this.toggleSubViews('record');
         }
+        event.stopPropagation();
     },
 
     selectDuplicate: function(e) {

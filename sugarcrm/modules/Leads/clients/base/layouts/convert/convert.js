@@ -1,17 +1,17 @@
 ({
     events:{
-        'click [name=convert_continue_button]':'processContinue'
+        'click [name=convert_continue_button]':'processContinue', //TODO: remove this if we don't do the continue button
+        'click .accordion-heading': 'handlePanelHeaderClick'
     },
 
     initialize:function (options) {
-        var self = this;
-
         _.bindAll(this);
         app.view.Layout.prototype.initialize.call(this, options);
 
         //create parent convert model to hold all sub-models
         this.context.convertModel = this.createConvertModel(this.context.get('modelId'));
 
+        //TODO: remove this if we don't do the continue button
         //set up the convert steps to control continue flow
         this.context.steps = this.buildConvertStepsList(this.meta.modules);
 
@@ -71,31 +71,17 @@
     },
 
     render: function () {
-        var self = this;
+        var firstModule;
         app.view.Layout.prototype.render.call(this);
-        //run validation before showing next panel
-        this.$('.accordion').on('show', function (e) {
-            self.initiateContinue(e);
-        });
 
         $(".collapse").collapse({toggle:false, parent:'#convert-accordion'});
         this.context.trigger("lead:convert:populate", this.model);
-        //this.initiateAccordion(this.meta.modules);
-        this.showPanel(_.first(this.meta.modules).module);
-    },
 
-    /**
-     * Collapse all accordion panels initially
-     */
-    initiateAccordion:function (moduleMetadata) {
-        var self = this;
+        //show first panel
+        firstModule = _.first(this.meta.modules).module;
+        this.context.currentStep = this.context.steps.search(firstModule);
+        this.showPanel(firstModule);
 
-        _.each(moduleMetadata, function (element, index, list) {
-            var accordionBody = '#collapse' + element.module;
-            self.$(accordionBody).collapse({
-                parent:'#convert-accordion'
-            });
-        });
     },
 
     showPanel: function (moduleName) {
@@ -103,13 +89,30 @@
         this.$(panelBody).collapse('show');
     },
 
-    /**
-     * Check for possible duplicates before creating a new record
-     * @param callback
-     */
-    initiateContinue:function (evt) {
+    handlePanelHeaderClick: function(event) {
+        var panelHeader = this.$(event.target).closest('.accordion-heading'),
+            nextModule = panelHeader.attr('data-module');
+
+        this.initiateShow(nextModule);
+    },
+
+    initiateShow: function(nextModule) {
         var self = this,
-            nextModule = evt.target.dataset.module;
+            callback = function() {
+                self.showPanel(nextModule);
+            };
+
+        //todo: check if create view is visible and dirty - don't run if not dirty
+        if (nextModule != this.context.currentStep.key) {
+            this.runValidation(nextModule, callback);
+        }
+    },
+
+    /**
+     * Run validation before calling back to show the panel body
+     */
+    runValidation:function (nextModule, callback) {
+        var self = this;
 
         async.waterfall([
             //validation or has selected element
@@ -121,23 +124,10 @@
                 console.log("Saving failed.");
                 //TODO: handle error
             } else {
-                this.setNextStepFall(nextModule);
+                self.setNextStep(nextModule);
+                callback();
             }
         });
-    },
-
-    processContinue:function () {
-        var currentStep = this.context.currentStep;
-
-        if (!_.isEmpty(currentStep.next)) {
-            this.showPanel(currentStep.next.key);
-        }
-    },
-
-    setNextStepFall: function(nextModule) {
-        var moduleMeta;
-        this.context.currentStep = this.context.steps.search(nextModule);
-        moduleMeta = this._getModuleMeta(nextModule);
     },
 
     updateCompletedPanelHeader: function(callback) {
@@ -147,7 +137,13 @@
 
             completedView.updatePanelHeader();
         }
-        callback(true);
+        callback(false);
+    },
+
+    setNextStep: function(nextModule) {
+        var moduleMeta;
+        this.context.currentStep = this.context.steps.search(nextModule);
+        moduleMeta = this._getModuleMeta(nextModule);
     },
 
     _getModuleMeta: function(nextModule) {
@@ -180,6 +176,15 @@
                 self.displayResults(data);
             }
         });
+    },
+
+    //TODO: remove this if we don't do the continue button
+    processContinue:function () {
+        var currentStep = this.context.currentStep;
+
+        if (!_.isEmpty(currentStep.next)) {
+            this.initiateShow(currentStep.next.key);
+        }
     },
 
     //TODO: remove this if we don't do the continue button
