@@ -94,6 +94,12 @@
 
                     // Hack to overload the routes currently
                     app.router.route(":module/:id", "record", recordHandler);
+                    app.router.route(":module", "list", function(module) {
+                        app.controller.loadView({
+                            module: module,
+                            layout: "records"
+                        });
+                    });
                 });
             })(SUGAR.App);
 
