@@ -106,7 +106,7 @@
                     this.model.fetch({
                         success: function(model) {
                             self.model.set("_module", targetModule);
-                            self.togglePreview(model, self.collection);
+                            self.context.trigger("togglePreview", model, self.collection);
                             self.switching = false;
                         }
                     });
