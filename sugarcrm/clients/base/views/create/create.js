@@ -1,14 +1,6 @@
 ({
     extendsFrom: 'RecordView',
 
-    events: {
-        'click [name=save_button]': 'save',
-        'click [name=cancel_button]': 'cancel',
-        'click [name=save_create_button]': 'saveAndCreate',
-        'click [name=save_view_button]': 'saveAndView',
-        'click [name=restore_button]': 'restoreModel'
-    },
-
     // button states
     STATE: {
         CREATE: 'create',
@@ -22,6 +14,14 @@
      * for the current layout.
      */
     initialize: function(options) {
+        _.extend(this.events, {
+            'click [name=save_button]': 'save',
+            'click [name=cancel_button]': 'cancel',
+            'click [name=save_create_button]': 'saveAndCreate',
+            'click [name=save_view_button]': 'saveAndView',
+            'click [name=restore_button]': 'restoreModel'
+        });
+
         app.view.views.RecordView.prototype.initialize.call(this, options);
     },
 
