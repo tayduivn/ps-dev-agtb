@@ -79,9 +79,8 @@
 
         //show first panel
         firstModule = _.first(this.meta.modules).module;
-        this.context.currentStep = this.context.steps.search(firstModule);
-        this.context.trigger('lead:convert:' + firstModule + ':show');
-
+        this.context.currentStep = { key: '', next: firstModule};
+        this.initiateShow(firstModule);
     },
 
     handlePanelHeaderClick: function(event) {
@@ -115,6 +114,7 @@
             //validation or has selected element
             //Add logic to process current step and if complete move to next one
             //check whether or not can continue depending on dependent modules
+            _.bind(this.enableFinishButton, this)
         ], function(error) {
             if (error) {
                 console.log("Saving failed.");
@@ -124,6 +124,23 @@
                 callback();
             }
         });
+    },
+
+    enableFinishButton: function(callback) {
+        var self=this,
+            showFinish = _.all(this.meta.modules, function(module){
+                            if (_.isBoolean(module.required) && module.required) {
+                                var convertPanel = self._getPanelByModuleName(module.module);
+                                if (!convertPanel.isComplete()) {
+                                    return false;
+                                }
+                            }
+                            return true;
+                        });
+        if(showFinish) {
+            $('[name=save_button]').removeClass('disabled');
+        }
+        callback(false);
     },
 
     setNextStep: function(nextModule) {

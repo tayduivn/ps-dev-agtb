@@ -19,7 +19,8 @@
             duplicateCount: 0,
             selectedId: null,
             selectedName: '',
-            isComplete: false
+            isComplete: false,
+            isDirty: false
         };
     },
 
@@ -216,5 +217,9 @@
     updateDuplicateMessage: function(view) {
         var $foundDuplicatePlaceholder = this.$('.accordion-group[data-module=' + view.module + ']').find('.found-duplicate');
         $foundDuplicatePlaceholder.text(view.collection.length + ' duplicates found'); //todo translate
+    },
+
+    isComplete: function() {
+       return (this.currentState.isComplete || this.currentState.isDirty);
     }
 })
