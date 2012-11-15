@@ -145,9 +145,20 @@ class MysqliManager extends MysqlManager
 
 		if($keepResult)
 			$this->lastResult = $result;
-		$this->checkError($msg.' Query Failed: ' . $sql, $dieOnError);
 
-		return $result;
+        if (mysqli_errno($this->database) == 2006 && $this->retryCount < 1) {
+            $GLOBALS['log']->fatal('mysqli has gone away, retrying');
+            $this->retryCount++;
+            $this->disconnect();
+            $this->connect();
+            return $this->query($sql, $dieOnError, $msg, $suppress, $keepResult);
+        } else {
+            $this->retryCount = 0;
+        }
+
+        $this->checkError($msg.' Query Failed: ' . $sql, $dieOnError);
+
+        return $result;
 	}
 
 	/**
