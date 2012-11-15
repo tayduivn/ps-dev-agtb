@@ -84,10 +84,22 @@ class SummerApi extends SugarApi {
 
     public function invite($api, $args)
     {
+        global $app_strings;
+
         if(!isset($args['email'])) {
             throw new SugarApiExceptionMissingParameter('Email is missing.');
         }
-        return $this->box->invite($args['email']);
+        else {
+            // check if email is valid
+            $emailBean = new SugarEmailAddress();
+            $valid = preg_match($emailBean->regex, $args['email']);
+            if( $valid ) {
+                return $this->box->invite($args['email']);
+            }
+            else {
+                throw new SugarApiExceptionInvalidParameter(ucfirst($app_strings['ERR_INVALID_EMAIL_ADDRESS']));
+            }
+        }
     }
 
     public function logout($api, $args)

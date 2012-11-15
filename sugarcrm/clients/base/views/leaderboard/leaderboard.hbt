@@ -1,5 +1,5 @@
 {{#if results}}
-<div class="block thumbnail padded">
+<div class="block thumbnail">
   <h4>{{results.properties.title}}</h4>
   <div id="{{guid}}"><svg></svg></div>
 </div>
