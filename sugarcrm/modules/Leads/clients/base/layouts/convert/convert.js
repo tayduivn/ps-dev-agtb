@@ -119,7 +119,7 @@
             //validation or has selected element
             //Add logic to process current step and if complete move to next one
             //check whether or not can continue depending on dependent modules
-            _.bind(this.enableFinishButtonFall, this)
+            _.bind(this.checkDependentModulesFall, this, nextModule)
         ], function(error) {
             if (error) {
                 console.log("Saving failed.");
@@ -131,9 +131,20 @@
         });
     },
 
-    enableFinishButtonFall: function(callback) {
-        this.enableFinishButton();
-        callback(false);
+    checkDependentModulesFall: function(nextModule, callback) {
+        var showModule,
+            self = this,
+            moduleMeta = this._getModuleMeta(nextModule);
+
+        showModule = _.all(moduleMeta.dependentModules, function(moduleName) {
+            var convertPanel = self._getPanelByModuleName(moduleName);
+            if (!convertPanel.isComplete()) {
+                return false;
+            }
+            return true;
+        });
+
+        callback(!showModule);
     },
 
     enableFinishButton: function() {
@@ -169,11 +180,9 @@
     },
 
     _getModuleMeta: function(nextModule) {
-        _.find(this.meta.module, function(moduleMeta){
+       return _.find(this.meta.modules, function(moduleMeta){
             return moduleMeta.module === nextModule;
         })
-
-        return {};
     },
 
     //todo: fix to not access this._components directly
