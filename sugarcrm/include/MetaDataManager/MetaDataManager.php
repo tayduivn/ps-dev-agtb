@@ -387,7 +387,7 @@ class MetaDataManager {
                             $outputAcl['fields'][$field]['create'] = 'no';
                             break;
                         case ACL_OWNER_READ_WRITE:
-                            $outputAcl['fiels'][$field]['read'] = 'owner';
+                            $outputAcl['fields'][$field]['read'] = 'owner';
                             $outputAcl['fields'][$field]['write'] = 'owner';
                             $outputAcl['fields'][$field]['create'] = 'owner';
                             break;
