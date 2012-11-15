@@ -33,4 +33,11 @@ class MailerException extends Exception
     const InvalidMessageBody            = 8;
     const InvalidAttachment             = 9;
     const InvalidMailer                 = 10;
+
+    public function getLogMessage() {
+        return "MailerException - @(" . basename($this->getFile()) . ":" .  $this->getLine() . " [" . $this->getCode() . "]" . ") - " . $this->getMessage();
+    }
+    public function getTraceMessage() {
+        return "MailerException: (Trace)\n" . $this->getTraceAsString();
+    }
 }
