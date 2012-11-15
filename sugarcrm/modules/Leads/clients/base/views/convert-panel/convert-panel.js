@@ -1,7 +1,7 @@
 ({
     events:{
         'click .toggle-subview':'handleToggleClick',
-        'click [name=pick]': 'selectDuplicate'
+        'click .pick': 'selectDuplicate'
     },
 
     initialize:function (options) {
@@ -119,7 +119,7 @@
         var newTitle;
 
         if (this.currentState.isComplete) {
-            newTitle = '<i class="icon-ok-sign"></i> ' + this.meta.moduleSingular + ' Associated:';
+            newTitle = '<i class="icon-ok-sign icon-added"></i> ' + this.meta.moduleSingular + ' Associated:';
             if (!this.meta.required) {
                 this.$('.optional').hide();
             }
