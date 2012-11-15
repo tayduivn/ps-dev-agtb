@@ -20,6 +20,7 @@
 
         //listen for convert button click
         this.context.on("lead:convert", this.processConvert, this);
+        this.context.requiredComplete = false;
     },
 
     /**
@@ -79,8 +80,9 @@
 
         //show first panel
         firstModule = _.first(this.meta.modules).module;
-        this.context.currentStep = { key: '', next: firstModule};
-        this.initiateShow(firstModule);
+        this.context.currentStep = this.context.steps.search(firstModule);
+        this.context.trigger('lead:convert:' + firstModule + ':show');
+        this.enableFinishButton();
     },
 
     handlePanelHeaderClick: function(event) {
@@ -114,7 +116,7 @@
             //validation or has selected element
             //Add logic to process current step and if complete move to next one
             //check whether or not can continue depending on dependent modules
-            _.bind(this.enableFinishButton, this)
+            _.bind(this.enableFinishButtonFall, this)
         ], function(error) {
             if (error) {
                 console.log("Saving failed.");
@@ -126,21 +128,33 @@
         });
     },
 
-    enableFinishButton: function(callback) {
-        var self=this,
-            showFinish = _.all(this.meta.modules, function(module){
-                            if (_.isBoolean(module.required) && module.required) {
-                                var convertPanel = self._getPanelByModuleName(module.module);
-                                if (!convertPanel.isComplete()) {
-                                    return false;
-                                }
-                            }
-                            return true;
-                        });
+    enableFinishButtonFall: function(callback) {
+        this.enableFinishButton();
+        callback(false);
+    },
+
+    enableFinishButton: function() {
+        var showFinish,
+            self = this;
+
+        if (_.isBoolean(this.context.requiredComplete) && this.context.requiredComplete) {
+            return;
+        }
+
+        showFinish = _.all(this.meta.modules, function(module){
+            if (_.isBoolean(module.required) && module.required) {
+                var convertPanel = self._getPanelByModuleName(module.module);
+                if (!convertPanel.isComplete()) {
+                    return false;
+                }
+            }
+            return true;
+        });
+
         if(showFinish) {
+            this.context.requiredComplete = true;
             $('[name=save_button]').removeClass('disabled');
         }
-        callback(false);
     },
 
     setNextStep: function(nextModule) {
