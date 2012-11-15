@@ -50,20 +50,44 @@ class SmtpMailer extends BaseMailer
     public function send() {
         $mailer = $this->generateMailer(); // get a fresh PHPMailer object
 
-        $this->transferConfigurations($mailer); // transfer the configurations to set up the PHPMailer object before
-                                                // attempting to send with it
-        $this->connectToHost($mailer);          // connect to the SMTP server
-        $this->transferHeaders($mailer);        // transfer the email headers to PHPMailer
-        $this->transferRecipients($mailer);     // transfer the recipients to PHPMailer
-        $this->transferBody($mailer);           // transfer the message to PHPMailer
-        $this->transferAttachments($mailer);    // transfer the attachments to PHPMailer
+        try {
+
+            $this->transferConfigurations($mailer); // transfer the configurations to set up the PHPMailer object before
+                                                    // attempting to send with it
+            $this->connectToHost($mailer);          // connect to the SMTP server
+            $this->transferHeaders($mailer);        // transfer the email headers to PHPMailer
+            $this->transferRecipients($mailer);     // transfer the recipients to PHPMailer
+            $this->transferBody($mailer);           // transfer the message to PHPMailer
+            $this->transferAttachments($mailer);    // transfer the attachments to PHPMailer
+        } catch(MailerException $me) {
+            $GLOBALS["log"]->error($me->getLogMessage());
+            $GLOBALS["log"]->info($me->getTraceMessage());
+            $GLOBALS["log"]->info(print_r($this->config->toArray(),true));
+            throw($me);
+        }
 
         try {
             // send the email with PHPMailer
             $mailer->Send();
+
+            /*--- Debug Only ----------------------------------------------------*/
+            $message = "MAIL SENT:\n";
+            $message .= "--- Mail Config ---\n".print_r($this->config->toArray(),true);
+            $headers = array(
+                "Subject"  => $this->headers->getSubject(),
+                "From"     => $this->headers->getFrom()
+            );
+            $message .= "--- Mail Headers ---\n".print_r($headers,true);
+            $GLOBALS["log"]->info($message);
+            /*--- Debug Only ----------------------------------------------------*/
+
         } catch (Exception $e) {
             // eat the phpmailerException but use it's message to provide context for the failure
-            throw new MailerException("Failed to send the email: " . $e->getMessage(), MailerException::FailedToSend);
+            $me = new MailerException("Failed to send the email: " . $e->getMessage(), MailerException::FailedToSend);
+            $GLOBALS["log"]->error($me->getLogMessage());
+            $GLOBALS["log"]->info($me->getTraceMessage());
+            $GLOBALS["log"]->info(print_r($this->config->toArray(),true));
+            throw($me);
         }
     }
 
