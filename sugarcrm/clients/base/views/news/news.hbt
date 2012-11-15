@@ -1,4 +1,4 @@
-<div class="block padded thumbnail widget">
+<div class="block thumbnail widget">
     <div class="news-widget">
         <h4 data-tour="tour-{{module}}-news">News</h4>
         {{#each responseData.results}}

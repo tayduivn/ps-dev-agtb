@@ -2649,6 +2649,19 @@ $app_strings = array (
     'LBL_QUOTES'=>'Quotes',
     //END SUGARCRM flav=pro || flav!=sales ONLY
 
+    // Strings for Instance Picker Widget
+    'LBL_INVITE' => 'Invite',
+    'LBL_INSTANCES' => 'Instances',
+    'LBL_YOUR_INSTANCES' => 'Your Instances',
+    'LBL_INSTANCE_USERS' => 'Instance Users',
+    'LBL_SWITCH_INSTANCE' => 'Switch to this instance',
+    'LBL_LAST_LOGIN' => 'last login',
+    'LBL_ENTER_EMAIL' => 'Enter invitee email...',
+    'LBL_INSTANCE_IN_USE' => 'Instance In Use',
+    'LBL_INSTANCE_ACTIVE' => 'You are already using this instance!',
+    'LBL_INSTANCE_INVITE_SENT' => 'Invite sent to',
+    'LBL_INSTANCE_SWITCH_FAILED' => 'Failed to switch instances',
+
     // Strings for Reminder Widget
     'LBL_REMINDERS' => 'Reminders',
     'LBL_REMINDERS_OVERDUE' => 'Overdue',

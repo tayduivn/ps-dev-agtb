@@ -2,7 +2,8 @@
     events: {
         'click [rel=tooltip]': 'fixTooltip',
         'click .search': 'showSearch',
-        'click .relate': 'showCreate'
+        'click .relate': 'showCreate',
+        'click .drawerTrig': 'toggleSidebar'
     },
 
     _renderHtml: function() {
@@ -37,5 +38,13 @@
 
     relate: function() {
 
+    },
+
+    toggleSidebar: function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        this.$('i').toggleClass('icon-chevron-left').toggleClass('icon-chevron-right');
+        $('.side').toggleClass('hide');
+        $('.main-pane').toggleClass('span8').toggleClass('span12');
     }
 })
