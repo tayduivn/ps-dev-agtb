@@ -33,6 +33,7 @@ class SugarAutoLoader
         'SugarSearchEngineFullIndexer'=>'include/SugarSearchEngine/SugarSearchEngineFullIndexer.php',
         'SugarSearchEngineSyncIndexer'=>'include/SugarSearchEngine/SugarSearchEngineSyncIndexer.php',
         'SugarCurrency'=>'include/SugarCurrency/SugarCurrency.php',
+        'MassUpdateJob'=>'include/MassUpdateJob.php',
 	);
 
     /**

@@ -143,7 +143,7 @@ eoq;
 	  * @param displayname Name to display in the popup window
       * @param varname name of the variable
 	  */
-	function handleMassUpdate(){
+        function handleMassUpdate($fetch_only = false, $update_blank=false){
 
 		require_once('include/formbase.php');
 		global $current_user, $db, $disable_date_format, $timedate;
@@ -154,10 +154,12 @@ eoq;
 					unset($_POST[$post]);
 				}
 			}elseif(strlen($value) == 0){
+                            if (!$update_blank) {
 				if( isset($this->sugarbean->field_defs[$post]) && $this->sugarbean->field_defs[$post]['type'] == 'radioenum' && isset($_POST[$post]) ){
 				  $_POST[$post] = '';
 				}else{
 				  unset($_POST[$post]);
+                                }
 			    }
             }
 
@@ -214,6 +216,10 @@ eoq;
 			}
 			$_POST['mass'] = $new_arr;
 		}
+
+                if ($fetch_only) {
+                    return;
+                }
 
 		if(isset($_POST['mass']) && is_array($_POST['mass'])  && $_REQUEST['massupdate'] == 'true'){
 			$count = 0;
@@ -1314,17 +1320,20 @@ EOQ;
 
     protected function getSearchDefs($module, $metafiles = array())
     {
-        if (file_exists('custom/modules/'.$module.'/metadata/searchdefs.php'))
-        {
-            require_once('custom/modules/'.$module.'/metadata/searchdefs.php');
-        }
-        elseif (!empty($metafiles[$module]['searchdefs']))
-        {
-            require_once($metafiles[$module]['searchdefs']);
-        }
-        elseif (file_exists('modules/'.$module.'/metadata/searchdefs.php'))
-        {
-            require_once('modules/'.$module.'/metadata/searchdefs.php');
+        if (empty($searchdefs)) {
+            // use require instead of require_once so the second call will not return empty array
+            if (file_exists('custom/modules/'.$module.'/metadata/searchdefs.php'))
+            {
+                require('custom/modules/'.$module.'/metadata/searchdefs.php');
+            }
+            elseif (!empty($metafiles[$module]['searchdefs']))
+            {
+                require($metafiles[$module]['searchdefs']);
+            }
+            elseif (file_exists('modules/'.$module.'/metadata/searchdefs.php'))
+            {
+                require('modules/'.$module.'/metadata/searchdefs.php');
+            }
         }
 
         return isset($searchdefs) ? $searchdefs : array();
@@ -1332,17 +1341,22 @@ EOQ;
 
     protected function getSearchFields($module, $metafiles = array())
     {
-        if (file_exists('custom/modules/' . $module . '/metadata/SearchFields.php'))
-        {
-            require_once('custom/modules/' . $module . '/metadata/SearchFields.php');
-        }
-        elseif(!empty($metafiles[$module]['searchfields']))
-        {
-            require_once($metafiles[$module]['searchfields']);
-        }
-        elseif(file_exists('modules/'.$module.'/metadata/SearchFields.php'))
-        {
-            require_once('modules/'.$module.'/metadata/SearchFields.php');
+        // use require instead of require_once so the second call will not return empty array
+        if (empty($searchFields)) {
+            if (file_exists('custom/modules/' . $module . '/metadata/SearchFields.php'))
+            {
+                require('custom/modules/' . $module . '/metadata/SearchFields.php');
+            }
+            elseif(!empty($metafiles[$module]['searchfields']))
+            {
+                require($metafiles[$module]['searchfields']);
+            }
+            elseif(file_exists('modules/'.$module.'/metadata/SearchFields.php'))
+            {
+                if (!isset($searchFields)) {
+                    require('modules/'.$module.'/metadata/SearchFields.php');
+                }
+            }
         }
 
         return isset($searchFields) ? $searchFields : array();
