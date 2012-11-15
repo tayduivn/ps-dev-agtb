@@ -1,8 +1,8 @@
 {{#if isAuthenticated}}
     <div class="btn-group reminders-widget dropup {{#if open}}open{{/if}}" data-tour="tour-reminders">
-        <button title="Reminders" class="btn btn-invisible dropdown-toggle reminders" data-toggle="dropdown">
+        <a title="Reminders" class="btn btn-invisible dropdown-toggle reminders" data-toggle="dropdown">
             <i class="icon-calendar"></i> {{str "LBL_REMINDERS"}} <b class="caret"></b>
-        </button>
+        </a>
 
         <div class="tabbable dropdown-menu reminders-container">
             <ul class="nav nav-pills reminders-pillbox">

@@ -1,74 +1,97 @@
 ({
     events: {
-        'click #instance': 'instanceMenu',
-        'click #invite': 'invite',
-        'click #instancesContainer': 'ignore'
+        'click .invite-button': 'invite',
+        'click .instances-container': 'persistMenu',
+        'click .instance': 'selectInstance',
+        'mouseenter .instance': 'showTooltip',
+        'mouseleave .instance': 'hideTooltip'
     },
     tagName: "span",
     initialize: function(options){
-        app.events.on("app:sync:complete", this.render, this);
+        var self = this;
         app.events.on("app:login:success", this.render, this);
         app.events.on("app:logout", this.render, this);
         app.view.View.prototype.initialize.call(this, options);
+        app.events.on("app:sync:complete", function() {
+            self.getData();
+        }, this);
     },
-    _renderHtml: function(){
+    _renderHtml: function() {
         this.isAuthenticated = app.api.isAuthenticated();
         app.view.View.prototype._renderHtml.call(this);
     },
-    instanceMenu: function(e) {
-        var self=this;
-        App.api.call('GET', '../rest/v10/summer/office', null, {
+    getData: function() {
+        var self = this;
+            this.currInstanceID = app.user.get('instance_id');
+        app.api.call('read', app.api.buildURL('summer/office'), null, {
             success: function(o) {
-                //console.log(o);
-                $("#instanceList").html("");
-                $("#instanceList")
-                for(i=0; i<o.instances.length; i++) {
-                    $("#instanceList").append("<li><a class=\"instance\" data-id=\""+o.instances[i].id+"\" href=\"#\" rel=\"tooltip\" title=\"Switch to this instance\">"+o.instances[i].name+"</a></li>");
-                }
-                $(".instance").click(self.selectInstance);
-                $("#usersList").html("");
-                $("#usersList")
-                for(i=0; i<o.users.length; i++) {
-                    $("#usersList").append("<li>"+o.users[i].first_name+" "+o.users[i].last_name+", last login: " + o.users[i].login_time+"</li>");
-                }
+                self.collections = o;
+                self.render();
             }
         });
     },
-    invite: function(e) {
-        email = $("#inviteemail").val();
-        if(!email) {
+    invite: function() {
+        var self = this,
+            emailAddr = this.$(".invitee-input").val();
+
+        // TODO: Don't allow sending invites to yourself or already-invited users (possibly do this in the API instead)
+        if( !emailAddr ) {
             return;
         }
-        var self = this;
-        App.api.call('create', '../rest/v10/summer/invite', {email: email}, {
-            success: function(o) {
-                $("#inviteemail").val('');
-                app.alert.show('invited', {level: 'info', title:'Invited', messages: 'Invite sent to '+email, autoClose: true});
+        app.api.call('create', app.api.buildURL('summer/invite'), {email: emailAddr}, {
+            success: function() {
+                self.$(".invitee-input").val('');
+                app.alert.show('invited',
+                    {level: 'info', title:'Invited',
+                        messages: app.lang.getAppString('LBL_INSTANCE_INVITE_SENT') + ':' + emailAddr, autoClose: true});
+            },
+            error: function(o) {
+                app.alert.show('invalid_parameter',
+                    {level: 'error', title: app.lang.getAppString('LBL_EMAIL_INVALID'),
+                        messages: o.message, autoClose: true});
             }
         });
     },
     selectInstance: function(e) {
-        var id = $(this).data('id');
-        var curr_id = app.user.get('instance_id');
-        if(id == curr_id) {
-            app.alert.show('already_there', {level: 'info', title:'You\'re here', messages: 'You are already using this instance', autoClose: true});
+        // toString since app.user.get('instance_id') returns a string
+        var id = this.$(e.currentTarget).data('id').toString();
+
+        if( id === this.currInstanceID ) {
+            app.alert.show('already_there',
+                {level: 'info', title: app.lang.getAppString('LBL_INSTANCE_IN_USE'),
+                    messages: app.lang.getAppString('LBL_INSTANCE_ACTIVE'), autoClose: true});
             return;
         }
-        App.api.call('create', '../rest/v10/summer/logout', null, {
-            success: function(o) {
-                $.getJSON('splash/rest/instances/' + id, null, function(o) {
-                    if(o.error) {
-                        app.alert.show('switch_failed', {level: 'error', title:'Failed', messages: 'Failed to switch instances: '+o.error, autoClose: false});
-                        return;
-                    }
-                    if(o.url) {
-                        window.location.href = o.url;
+        app.api.call('create', app.api.buildURL('summer/logout'), null, {
+            success: function() {
+                app.api.call('read', 'splash/rest/instances/' + id, null, {
+                    success: function(o) {
+                        if( o.error ) {
+                            app.alert.show('switch_failed',
+                                {level: 'error', title:'Failed',
+                                    messages: app.lang.getAppString('LBL_INSTANCE_SWITCH_FAILED') + ':' + o.error, autoClose: false});
+                            return;
+                        }
+                        if( o.url ) {
+                            window.location.href = o.url;
+                        }
                     }
                 });
             }
         });
     },
-    ignore: function(e) {
+    persistMenu: function(e) {
+        // This will prevent the dropup menu from closing when clicking anywhere on it
         e.stopPropagation();
+    },
+    showTooltip: function(e) {
+        this.$(e.currentTarget).tooltip("show");
+        //TODO: Update this when z-indexes are fixed in styleguide
+        if( $(".tooltip").css("z-index") < 1030) {
+            $(".tooltip").css("z-index", 1030);
+        }
+    },
+    hideTooltip: function(e) {
+        this.$(e.currentTarget).tooltip("hide");
     }
 })

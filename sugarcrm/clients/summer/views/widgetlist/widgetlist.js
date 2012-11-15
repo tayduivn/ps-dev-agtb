@@ -29,7 +29,7 @@
 
             this.targetBean = app.data.createBean(this.targetModule, {id: this.targetId});
 
-        }
+        };
 
         /**
          * Define alert views after sharing
@@ -73,12 +73,13 @@
 
                     $('#undo-link').css('cursor', 'pointer');
                     $('#undo-link').on('click', function (event) {
-
+                        var unlinkUrl = app.api.buildURL(targetModule + '/' + targetId + '/link/' + draggableModule.toLowerCase() + '/' + draggableId);
                         //TODO unlink relationship, new api might eventually implemented (see sugarapi.js)
-                        app.api.call('delete', '../rest/v10/' + targetModule + '/' + targetId + '/link/' + draggableModule.toLowerCase() + '/' + draggableId , null, null, null);
+                        app.api.call('delete', unlinkUrl, null, null, null);
 
                         if (newNoteId) {
-                            app.api.call('delete', '../rest/v10/Notes/' + newNoteId, null, null, null);
+                            var newNoteUrl = app.api.buildURL('Notes/' + newNoteId);
+                            app.api.call('delete', newNoteUrl, null, null, null);
                             shareManager.removeNewFileView();
                         }
                         $('.close').click();
@@ -101,7 +102,7 @@
                     autoClose: true
                 });
             }
-        }
+        };
 
         /**
          * create link relationship between the current bean and another bean
@@ -220,7 +221,7 @@
                 }
             });
             return !self.quitFlag;
-        }
+        };
 
 
         _.bindAll(this);
@@ -367,10 +368,10 @@
                 //TODO modal form pop up asking to send email to contact
                 self.$('#attachPopUp3').attr("style", "").modal("show");
 
-                var successTitle = '<p style="font-size: 16px; text-align: center;">You have shared with' + $(targetRow).text() + '.  <a id="undo-link"><strong>Undo</strong></a></p>'
+                var successTitle = '<p style="font-size: 16px; text-align: center;">You have shared with' + $(targetRow).text() + '.  <a id="undo-link"><strong>Undo</strong></a></p>';
                 shareManager.alertViews.shareSuccess(shareManager, successTitle, '', null,
                     {undo: true, draggableModule: draggableModule, draggableId: draggableId, targetModule: shareManager.targetModule, targetId: shareManager.targetId});
-            }
+            };
             shareManager.linkModels(draggableModule, draggableId, callbacks);
 
          // a file from local desktop
@@ -384,10 +385,10 @@
 
                     //TODO modal form pop up to send email to user here
 
-                    var successTitle = '<p style="font-size: 16px; text-align: center;">You have shared with' + $(targetRow).text() + '.  <a id="undo-link"><strong>Undo</strong></a></p>'
+                    var successTitle = '<p style="font-size: 16px; text-align: center;">You have shared with' + $(targetRow).text() + '.  <a id="undo-link"><strong>Undo</strong></a></p>';
                     shareManager.alertViews.shareSuccess(shareManager, successTitle, '', newNoteId,
                         {undo: true, draggableModule: 'Notes', draggableId: newNoteId, targetModule: shareManager.targetModule, targetId: shareManager.targetId});
-                }
+                };
                 // the first manager is to link target (eg. contact) with a note+attachment
                 if (shareManager.isValidFile(file) && shareManager.uploadFileToNote(newNoteId, file) && shareManager.linkModels('Notes', newNoteId, callbacks)) {
 
