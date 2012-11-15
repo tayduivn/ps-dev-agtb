@@ -356,7 +356,6 @@ class MetaDataManager {
             // Bug56391 - Use the SugarACL class to determine access to different actions within the module
             foreach ( array('access','view','list','edit','delete','import','export','massupdate') as $action ) {
                 $outputAcl[$action] = (SugarACL::checkAccess($module, $action, array('user' => $userObject))) ? 'yes' : 'no';
-                $outputAcl[$action] = ($moduleAcl[$action]['aclaccess'] == ACL_ALLOW_OWNER) ? 'owner' : $outputAcl[$action];
             }
 
             // Only loop through the fields if we have a reason to, admins give full access on everything, no access gives no access to anything
@@ -370,10 +369,10 @@ class MetaDataManager {
                 //BEGIN SUGARCRM flav=pro ONLY
                 $fieldsAcl = $aclField->loadUserFields($module,$obj,$userId,true);
                 //END SUGARCRM flav=pro ONLY
+                // get the field names
+                SugarACL::listFilter($module, $fieldsAcl, array('user' => $userObject), array('add_acl' => true));
                 foreach ( $fieldsAcl as $field => $fieldAcl ) {
-                    // check field level ACL's from SugarACL
-                    $sugarFieldAcl = SugarACL::getFieldAccess($module, $field, array('user' => $userObject));
-                    switch ( $sugaFieldAcl ) {
+                    switch ( $fieldAcl['acl'] ) {
                         case ACL_READ_WRITE:
                             // Default, don't need to send anything down
                             break;
@@ -388,7 +387,7 @@ class MetaDataManager {
                             $outputAcl['fields'][$field]['create'] = 'no';
                             break;
                         case ACL_OWNER_READ_WRITE:
-                            $outputAcl['fields'][$field]['read'] = 'owner';
+                            $outputAcl['fiels'][$field]['read'] = 'owner';
                             $outputAcl['fields'][$field]['write'] = 'owner';
                             $outputAcl['fields'][$field]['create'] = 'owner';
                             break;
