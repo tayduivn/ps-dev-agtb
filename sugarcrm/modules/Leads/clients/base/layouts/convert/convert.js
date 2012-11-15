@@ -87,6 +87,7 @@
     showPanel: function (moduleName) {
         var panelBody = '#collapse' + moduleName;
         this.$(panelBody).collapse('show');
+        this.context.trigger('lead:convert:' + moduleName + ':show');
     },
 
     handlePanelHeaderClick: function(event) {
@@ -98,7 +99,9 @@
 
     initiateShow: function(nextModule) {
         var self = this,
+            currentModule = this.context.currentStep.key,
             callback = function() {
+                self.context.trigger('lead:convert:' + currentModule + ':hide');
                 self.showPanel(nextModule);
             };
 

@@ -6,8 +6,8 @@
         <span class="optional">(optional)</span>
         {{/unless}}
         <span class="sub-title"></span>
-        <span class="subview-toggle">
-            <a class="toggle-subview show-record pull-right" href="javascript:void(0)" style="display:inline-block">Ignore duplicates and create new</a>
+        <span class="subview-toggle" style="display:none">
+            <a class="toggle-subview show-record pull-right" href="javascript:void(0)">Ignore duplicates and create new</a>
             <a class="toggle-subview show-duplicate pull-right" href="javascript:void(0)" style="display:none">Back to duplicates</a>
         </span>
     </div>

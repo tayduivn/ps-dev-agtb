@@ -1,4 +1,7 @@
 ({
+    DUPLICATE_VIEW: 'duplicate',
+    RECORD_VIEW: 'record',
+
     events:{
         'click .toggle-subview':'handleToggleClick',
         'click .pick': 'selectDuplicate'
@@ -8,9 +11,11 @@
         app.view.View.prototype.initialize.call(this, options);
         _.bindAll(this);
         this.context.on("lead:convert:populate", this.populateRecordsFromLeads, this);
+        this.context.on("lead:convert:"+this.meta.module+":show", this.handleShow, this);
+        this.context.on("lead:convert:"+this.meta.module+":hide", this.handleHide, this);
 
         this.currentState = {
-            activeView: 'duplicate',
+            activeView: this.DUPLICATE_VIEW,
             duplicateCount: 0,
             selectedId: null,
             selectedName: '',
@@ -40,7 +45,7 @@
                 self.updatePanelSubTitle();
                 self.updateDuplicateMessage(self.duplicateView);
                 if (self.duplicateView.collection.length == 0) {
-                    self.toggleSubViews('record');
+                    self.toggleSubViews(this.RECORD_VIEW);
                 }
             }, self);
             self.duplicateView.loadData();
@@ -56,7 +61,7 @@
                 'context':{'module':moduleMeta.module}
         };
 
-        this.duplicateView = this.insertViewInPanel(moduleMeta, 'duplicate', def);
+        this.duplicateView = this.insertViewInPanel(moduleMeta, this.DUPLICATE_VIEW, def);
     },
 
     insertRecordViewInPanel: function(moduleMeta) {
@@ -65,7 +70,7 @@
             'context':{'module':moduleMeta.module}
         };
 
-        this.recordView = this.insertViewInPanel(moduleMeta, 'record', def);
+        this.recordView = this.insertViewInPanel(moduleMeta, this.RECORD_VIEW, def);
     },
 
     insertViewInPanel:function (moduleMeta, contentType, def) {
@@ -89,11 +94,19 @@
         return view;
     },
 
+    handleShow: function() {
+        this.showSubViewToggle();
+    },
+
+    handleHide: function() {
+        this.hideSubViewToggle();
+    },
+
     handleToggleClick: function(event) {
         if (this.$(event.target).hasClass('show-duplicate')) {
-            this.toggleSubViews('duplicate');
+            this.toggleSubViews(this.DUPLICATE_VIEW);
         } else if (this.$(event.target).hasClass('show-record')) {
-            this.toggleSubViews('record');
+            this.toggleSubViews(this.RECORD_VIEW);
         }
         event.stopPropagation();
     },
@@ -138,17 +151,25 @@
         
         if (this.currentState.isComplete) {
             newSubTitle = this.currentState.selectedName;
-        } else if (this.currentState.activeView === 'duplicate') {
+        } else if (this.currentState.activeView === this.DUPLICATE_VIEW) {
             if (this.currentState.duplicateCount > 0) {
                 newSubTitle = '> ' + this.currentState.duplicateCount + ' duplicates found';
             }
-        } else if (this.currentState.activeView === 'record') {
+        } else if (this.currentState.activeView === this.RECORD_VIEW) {
             newSubTitle = '> Create New ' + this.meta.moduleSingular;
         } else {
             return;
         }
         
         this.$('.sub-title').html(newSubTitle);
+    },
+
+    hideSubViewToggle: function() {
+        this.$('.subview-toggle').hide();
+    },
+
+    showSubViewToggle: function() {
+        this.$('.subview-toggle').show();
     },
 
     populateRecordsFromLeads:function (leadModel) {
@@ -163,8 +184,8 @@
     },
 
     toggleSubViews: function(viewToShow) {
-        this.toggleDuplicateView(viewToShow === 'duplicate');
-        this.toggleRecordView(viewToShow === 'record');
+        this.toggleDuplicateView(viewToShow === this.DUPLICATE_VIEW);
+        this.toggleRecordView(viewToShow === this.RECORD_VIEW);
     },
     
     toggleDuplicateView: function(showView, showLink) {
@@ -172,7 +193,7 @@
         this.duplicateView.$el.parent().toggle(showView);
         this.$('.show-record').toggle(showLink);
         if (showView) {
-            this.currentState.activeView = 'duplicate';
+            this.currentState.activeView = this.DUPLICATE_VIEW;
         }
     },
 
@@ -181,7 +202,7 @@
         this.recordView.$el.parent().toggle(showView);
         this.$('.show-duplicate').toggle(showLink);
         if (showView) {
-            this.currentState.activeView = 'record';
+            this.currentState.activeView = this.RECORD_VIEW;
         }
     },
 
