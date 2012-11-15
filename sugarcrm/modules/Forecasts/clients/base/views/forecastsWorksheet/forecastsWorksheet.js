@@ -150,7 +150,7 @@
         }
         app.view.View.prototype._renderField.call(this, field);
 
-        if (this.isEditableWorksheet === true && field.viewName !="edit" && field.def.clickToEdit === true) {
+        if (this.isEditableWorksheet === true && field.viewName !="edit" && field.def.clickToEdit === true && field.model.get('sales_stage') != 'Closed Lost' && field.model.get('sales_stage') != 'Closed Won') {
             new app.view.ClickToEditField(field, this);
         }
 
