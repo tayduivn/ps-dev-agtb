@@ -3,13 +3,15 @@
         'keyup .chzn-search input': 'throttleSearch'
     },
     allow_single_deselect: true,
-    minChars: 1,
+    minChars: 3,
+    _previousTerm: null,
     /**
      * Initializes field and binds all function calls to this
      * @param {Object} options
      */
     initialize: function(options) {
         _.bindAll(this);
+        this.minChars = options.def.minChars || this.minChars;
         app.view.Field.prototype.initialize.call(this, options);
         this.optionsTemplateC = app.template.getField(this.type, "options");
     },
@@ -19,7 +21,7 @@
     _render: function() {
         var self = this;
         var result = app.view.Field.prototype._render.call(this);
-        if(this.action == 'edit') {
+        if(this.tplName === 'edit') {
             this.$(".chzn-select").not(".chzn-done").chosen({
                 allow_single_deselect: self.allow_single_deselect,
                 no_results_text: app.lang.get("LBL_SEARCH_FOR")
@@ -36,15 +38,29 @@
                     } else {
                         self.setValue({id: id, value: value});
                     }
-                }).on("liszt:updated", function() {
-                    self.setValue({id: '', value: ''});
+                }).on("liszt:updated", function(evt) {
+                    var selected = $(evt.currentTarget).find(':selected'),
+                        value = selected.text(),
+                        id = selected.val();
+
+                    self.setValue({id: id, value: value});
                 });
         }
         return result;
     },
+    bindDataChange: function() {
+        if (this.model) {
+            var self = this;
+            this.model.on("change:" + this.name, function() {
+                if(self.tplName !== 'edit') {
+                    self.render();
+                }
+            }, this);
+        }
+    },
     setValue: function(model) {
-        this.model.set(this.def.id_name, model.id, {silent: true});
-        this.model.set(this.def.name, model.value, {silent: true});
+        this.model.set(this.def.id_name, model.id);
+        this.model.set(this.def.name, model.value);
     },
     /**
      * Throttles search ajax
@@ -57,7 +73,15 @@
             this.search(term);
         };
     },
-    onSearchSuccess: function() {},
+    onSearchSuccess: function(data) {
+        var self = this,
+            chosen_select = this.$(".chzn-select").not(":disabled");
+        chosen_select.children().not(":first").remove();
+        self.selectOptions = data.models;
+        var options = self.optionsTemplateC(self);
+        chosen_select.append(options);
+        chosen_select.trigger("liszt:updated");
+    },
     /**
      * Searches for related field
      * @param event
@@ -73,14 +97,6 @@
         if(!_.isUndefined(term) && term) {
             params.q = term;
         }
-        var _success = function(data) {
-            chosen_select.children().not(":first").remove();
-            self.selectOptions = data.models;
-            var options = self.optionsTemplateC(self);
-            chosen_select.append(options);
-            chosen_select.trigger("liszt:updated");
-            self.$(".chzn-search input").val(term);
-        };
 
         if(term.length >= this.minChars) {
             chosen_select.children().not(":first").not(":selected").remove();
@@ -93,8 +109,14 @@
 
             self.search_collection = app.data.createBeanCollection(searchModule);
             self.search_collection.fetch({
+                context: self,
                 params: params,
-                success: _success,
+                success: function(data) {
+                    self.onSearchSuccess.call(self, data);
+                },
+                complete: function() {
+                    self.$(".chzn-search input").val(term);
+                },
                 error: function() {
                     app.logger.error("Unable to fetch the bean collection.");
                     chosen_select.children().not(":first").remove();
