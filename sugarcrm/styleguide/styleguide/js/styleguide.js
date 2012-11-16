@@ -59,8 +59,10 @@
       $bod.css( 'padding-top', ( fixSubNav ? $nav.outerHeight()+bodPad : bodPad ) );
     }
 
-    $(".chzn-select").chosen({ disable_search_threshold: 5 });
-    $(".chzn-select-deselect").chosen({allow_single_deselect:true});
+    if ($(".chzn-select").length) {
+      $(".chzn-select").chosen({ disable_search_threshold: 5 });
+      $(".chzn-select-deselect").chosen({allow_single_deselect:true});
+    }
 
   });
 
