@@ -1,6 +1,5 @@
 <?php
 if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
-
 /**
  * LICENSE: The contents of this file are subject to the SugarCRM Professional
  * End User License Agreement ("License") which can be viewed at
@@ -28,12 +27,15 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * by SugarCRM are Copyright (C) 2006 SugarCRM, Inc.; All Rights Reserved.
  */
 
-$viewdefs['Leads']['base']['view']['list'] = array(
-    'panels' => array(
+
+$viewdefs['Contacts']['base']['view']['list'] = array(
+    'panels' =>
+    array(
+        0 =>
         array(
-            'name' => 'panel_header',
             'label' => 'LBL_PANEL_1',
-            'fields' => array(
+            'fields' =>
+            array(
                 array(
                     'type' => 'fieldset',
                     'fields' => array(
@@ -71,52 +73,29 @@ $viewdefs['Leads']['base']['view']['list'] = array(
                     'value' => false,
                     'sortable' => false,
                 ),
-                array (
+                array(
                     'name' => 'name',
-                    'width' => '10%',
-                    'label' => 'LBL_LIST_NAME',
+                    'width' =>  49,
                     'link' => true,
-                    'orderBy' => 'last_name',
-                    'default' => true,
-                ),
-                array (
-                    'name' => 'status',
-                    'width' => '7%',
-                    'label' => 'LBL_LIST_STATUS',
-                    'default' => true,
-                ),
-                array (
-                    'name' => 'account_name',
-                    'width' => '15%',
                     'label' => 'LBL_LIST_ACCOUNT_NAME',
-                    'default' => true,
+                    'enabled' => true,
+                    'default' => true
                 ),
+                'title',
+                'account_name',
+                'email1',
+                'phone_work',
                 array (
-                    'name'  => 'phone_work',
-                    'width' => '15%',
-                    'label' => 'LBL_LIST_PHONE',
-                    'default' => true,
-                ),
-                array (
-                    'name'     => 'email1',
-                    'width' => '16%',
-                    'label' => 'LBL_LIST_EMAIL_ADDRESS',
-                    'sortable' => false,
-                    'default' => true,
-                ),
-                array (
-                    'name'  => 'assigned_user_name',
-                    'width' => '5%',
-                    'label' => 'LBL_LIST_ASSIGNED_USER',
-                    'default' => true,
-                ),
-                array (
-                    'name'  => 'date_entered',
+                    'name' => 'assigned_user_name',
                     'width' => '10%',
-                    'label' => 'LBL_DATE_ENTERED',
+                    'label' => 'LBL_LIST_ASSIGNED_USER',
+                    'id' => 'ASSIGNED_USER_ID',
                     'default' => true,
                 ),
+                'date_entered',
+
             ),
         ),
     ),
 );
+
