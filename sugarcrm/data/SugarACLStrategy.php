@@ -121,8 +121,8 @@ abstract class SugarACLStrategy
             if(!$this->checkAccess($module, 'access', $context)) {
         	    foreach($access_list as $action => $value) {
         		    $access[$action] = false;
-        		    return $access;
         	    }
+        		return $access;
             }
             // no need to check it second time
             unset($access_list['access']);

@@ -72,19 +72,33 @@ $viewdefs['Forecasts']['base']['view']['forecastsConfigTimeperiods'] = array(
                 ),
                 array(
                     'name' => 'timeperiod_shown_forward',
-                    'type' => 'int',
+                    'type' => 'enum',
+                    'options' => array (
+                        '1' => 1,
+                        '2' => 2,
+                        '3' => 3,
+                        '4' => 4,
+                        '5' => 5
+                    ),
                     'label' => 'LBL_FORECASTS_CONFIG_TIMEPERIODS_FORWARD',
                     'default' => false,
                     'enabled' => true,
-                    'view' => 'edit'
+                    'view' => 'forecastsTimeperiod'
                 ),
                 array(
                     'name' => 'timeperiod_shown_backward',
-                    'type' => 'int',
+                    'type' => 'enum',
+                    'options' => array (
+                        '1' => 1,
+                        '2' => 2,
+                        '3' => 3,
+                        '4' => 4,
+                        '5' => 5
+                    ),
                     'label' => 'LBL_FORECASTS_CONFIG_TIMEPERIODS_BACKWARD',
                     'default' => false,
                     'enabled' => true,
-                    'view' => 'edit'
+                    'view' => 'forecastsTimeperiod'
                 ),
             ),
         ),

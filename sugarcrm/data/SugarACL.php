@@ -323,7 +323,7 @@ class SugarACL
         }
         $access = $access_list;
         foreach(self::$acls[$module] as $acl) {
-            $acl_access = $acl->getUserAccess($module, $access_list);
+            $acl_access = $acl->getUserAccess($module, $access_list, $context);
             foreach($acl_access as $name => $value) {
                 if($value == false) {
                     $access[$name] = false;

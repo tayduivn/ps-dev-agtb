@@ -232,7 +232,7 @@ class SugarACLStatic extends SugarACLStrategy
             return $access_list;
         }
         $is_owner = !(isset($context['owner_override']) && $context['owner_override'] == false);
-        $actions = ACLAction::getUserActions($user_id, false, $module, 'module', $is_owner);
+        $actions = ACLAction::getUserActions($user_id, false, $module, 'module');
         if(empty($actions)) {
             return $access_list;
         }
@@ -243,14 +243,14 @@ class SugarACLStatic extends SugarACLStrategy
         	if(!ACLAction::userHasAccess($user_id, $module, 'access', 'module', true)) {
         		foreach($access_list as $action => $value) {
         			$access[$action] = false;
-        			return $access;
         		}
+        		return $access;
         	}
         	// no need to check it second time
         	unset($access_list['access']);
         }
         foreach($access_list as $action => $value) {
-        	if(!ACLAction::hasAccess($is_owner, $actions[$action]['aclaccess'])) {
+        	if(isset($actions[$action]['aclaccess']) && !ACLAction::hasAccess($is_owner, $actions[$action]['aclaccess'])) {
         		$access[$action] = false;
         	}
         }
