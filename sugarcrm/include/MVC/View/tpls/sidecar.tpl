@@ -85,7 +85,7 @@
                             _.extend(opts, {modelId: id});
                         } else {
                             _.extend(opts, {create: true});
-                            opts.layout = "newrecord";
+                            opts.layout = "create";
                         }
 
                         app.controller.loadView(opts);
@@ -93,6 +93,12 @@
 
                     // Hack to overload the routes currently
                     app.router.route(":module/:id", "record", recordHandler);
+                    app.router.route(":module", "list", function(module) {
+                        app.controller.loadView({
+                            module: module,
+                            layout: "records"
+                        });
+                    });
                 });
             })(SUGAR.App);
 

@@ -85,6 +85,17 @@ abstract class BaseMailer implements IMailer
     }
 
     /**
+     * Returns the configuration passed into the constructor
+     *
+     * @access public
+     * @return OutboundEmailConfiguration $config
+     */
+    public function getConfig() {
+        return $this->config;
+    }
+
+
+    /**
      * Replaces the existing email headers with the headers passed in as a parameter.
      *
      * @access public

@@ -19,6 +19,7 @@
         this.fallbackFieldTemplate = 'list-header';
     },
     _renderHtml:function () {
+        var self = this;
         app.view.View.prototype._renderHtml.call(this);
         // off prevents multiple bindings for each render
         this.layout.off("list:search:fire", null, this);
@@ -31,6 +32,16 @@
         this.layout.on("list:alert:show", this.showAlert, this);
         this.layout.off("list:alert:hide", null, this);
         this.layout.on("list:alert:hide", this.hideAlert, this);
+        this.layout.off("list:sort:fire", null, this);
+        this.layout.on("list:sort:fire", function(collection) {
+            if( _.isUndefined(self.context._callbacks) ) {
+                // Sorting on a related module, need the parent context instead
+                self.context.parent.trigger("preview:collection:change", collection);
+            }
+            else {
+                self.context.trigger("preview:collection:change", collection);
+            }
+        }, this);
 
         // Dashboard layout injects shared context with limit: 5. 
         // Otherwise, we don't set so fetches will use max query in config.
@@ -123,6 +134,7 @@
         // amount. Also, add true will make it append to already loaded records.
         options.limit = self.limit || null;
         options.success = function () {
+            self.layout.trigger("list:sort:fire", collection, self);
             self.render();
         };
         if (this.context.get('link')) {
@@ -156,7 +168,7 @@
         return options;
     },
     previewRecord: function(e) {
-         var self = this,
+        var self = this,
             el = this.$(e.currentTarget),
             data = el.data(),
             module = data.module,
@@ -168,13 +180,11 @@
             success: function(model) {
                 model.set("_module", module);
 
-                if( _.isUndefined(self.context._callbacks) || !_.isUndefined(self.context.parent) ) {
-                    // Clicking preview on a related module, need the
-                    // parent context instead
+                if( _.isUndefined(self.context._callbacks) ) {
+                    // Clicking preview on a related module, need the parent context instead
                     self.context.parent.trigger("togglePreview", model, self.collection);
                 }
                 else {
-
                     self.context.trigger("togglePreview", model, self.collection);
                 }
             }

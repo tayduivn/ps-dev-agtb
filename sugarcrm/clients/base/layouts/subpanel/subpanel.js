@@ -14,6 +14,9 @@
 
     renderHtml: function() {
         this.$el.html(this.template(this));
+        if (this.options.context.has("modelId")) {
+            this.$(".tabbable").toggleClass("hide");
+        }
     },
 
     toggleView: function(e) {
