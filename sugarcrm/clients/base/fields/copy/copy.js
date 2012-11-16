@@ -6,6 +6,7 @@
 
     _initialValues: null,
     _fields: null,
+    _inSync: false,
 
     /**
      * Initializes the copy field component.
@@ -43,7 +44,19 @@
      */
     toggle: function(evt) {
 
-        if (!$(evt.currentTarget).is(':checked')) {
+        this.sync($(evt.currentTarget).is(':checked'));
+    },
+
+    sync: function(enable) {
+
+        enable = _.isUndefined(enable) || enable;
+
+        if (this._inSync === enable) {
+            return;
+        }
+        this._inSync = enable;
+
+        if (!enable) {
             this.syncCopy(false);
             this.restore();
             return;
@@ -182,6 +195,20 @@
      * @return {Boolean}
      */
     format: function(value) {
-        return !!value;
+        if (_.isNull(value)) {
+            // TODO this should change to the value once we get it from the model
+            return this._inSync;
+        }
+        return value;
+    },
+
+    bindDataChange: function() {
+        // TODO this field should be saved on the DB so we don't have this hack
+        if (this.model && this.def.sync) {
+            var inSync = _.all(this.def.mapping, function(target, source) {
+                return this.model.get(source) === this.model.get(target);
+            }, this);
+            this.sync(inSync);
+        }
     }
 })
