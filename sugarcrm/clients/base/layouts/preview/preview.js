@@ -1,6 +1,7 @@
 ({
     events: {
-        'click [data-direction]': 'triggerPagination'
+        'click [data-direction]': 'triggerPagination',
+        'click .closeSubdetail': 'triggerClose'
     },
 
     initialize: function(opts) {
@@ -17,5 +18,9 @@
 
     triggerPagination: function(e) {
         this.trigger("preview:pagination:fire", this.$(e.currentTarget).data());
+    },
+
+    triggerClose: function() {
+        this.context.trigger("preview:close:fire");
     }
 })

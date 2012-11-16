@@ -429,7 +429,7 @@
                 .addClass(pointRightClass);
         }
 
-        //TODO: toggle panes
+        this.context.trigger("toggleSidebar");
     },
 
     /**
