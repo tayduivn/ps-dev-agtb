@@ -622,7 +622,7 @@ class MetaDataFiles
         }
     }
 
-    public static function buildModuleClientCache( $platforms, $type, $modules = array() )
+    public static function buildModuleClientCache( $platform, $type, $modules = array() )
     {
         if ( is_string($modules) ) {
             // They just want one module
@@ -632,46 +632,41 @@ class MetaDataFiles
             $modules = array_keys($GLOBALS['app_list_strings']['moduleList']);
         }
         foreach ( $modules as $module ) {
-            $fileList = self::getClientFiles($platforms, $type, $module);
+            $fileList = self::getClientFiles($platform, $type, $module);
             
             $moduleResults = self::getClientFileContents($fileList, $type, $module);
 
-            $basePath = sugar_cached('modules/'.$module.'/clients/'.$platforms[0]);
+            $basePath = sugar_cached('modules/'.$module.'/clients/'.$platform);
             sugar_mkdir($basePath,null,true);
             
-            $output = "<?php\n\$viewdefs['".$module."']['".$platforms[0]."']['".$type."'] = ".var_export($moduleResults,true).";\n\n";
+            $output = "<?php\n\$clientCache['".$module."']['".$type."']['".$platform."'] = ".var_export($moduleResults,true).";\n\n";
             sugar_file_put_contents($basePath.'/'.$type.'.php',$output);
         }
     }
 
-    public static function getClientFiles( $platforms, $type, $module = '' ) {
+    public static function getClientFiles( $platform, $type, $module = '' ) {
         $checkPaths = array();
 
         // First, build a list of paths to check
         if ( $module == '' ) {
-            foreach ( $platforms as $platform ) {
-                // These are sorted in order of priority.
-                // No templates for the non-module stuff
-                $checkPaths['custom/clients/'.$platform.'/'.$type.'s'] = array('platform'=>$platform,'template'=>false);
-                $checkPaths['clients/'.$platform.'/'.$type.'s'] = array('platform'=>$platform,'template'=>false);
-            }
-            
+            // These are sorted in order of priority.
+            // No templates for the non-module stuff
+            $checkPaths['custom/clients/'.$platform.'/'.$type.'s'] = array('platform'=>$platform,'template'=>false);
+            $checkPaths['clients/'.$platform.'/'.$type.'s'] = array('platform'=>$platform,'template'=>false);
         } else {
-            foreach ( $platforms as $platform ) {
-                // These are sorted in order of priority.
-                // The template flag is if that file needs to be "built" by the metadata loader so it
-                // is no longer a template file, but a real file.
-                $checkPaths['custom/modules/'.$module.'/clients/'.$platform.'/'.$type.'s'] = array('platform'=>$platform,'template'=>false);
-                $checkPaths['modules/'.$module.'/clients/'.$platform.'/'.$type.'s'] = array('platform'=>$platform,'template'=>false);
-                $baseTemplateDir = 'include/SugarObjects/templates/basic/clients/'.$platform.'/'.$type.'s';
-                $nonBaseTemplateDir = self::getSugarObjectFileDir($module, $platform, $type);
-                if (!empty($nonBaseTemplateDir) && $nonBaseTemplateDir != $baseTemplateDir ) {
-                    $checkPaths['custom/'.$nonBaseTemplateDir] = array('platform'=>$platform,'template'=>true);
-                    $checkPaths[$nonBaseTemplateDir] = array('platform'=>$platform, 'template'=>true);
-                }
-                $checkPaths['custom/'.$baseTemplateDir] = array('platform'=>$platform,'template'=>true);
-                $checkPaths[$baseTemplateDir] = array('platform'=>$platform,'template'=>true);
+            // These are sorted in order of priority.
+            // The template flag is if that file needs to be "built" by the metadata loader so it
+            // is no longer a template file, but a real file.
+            $checkPaths['custom/modules/'.$module.'/clients/'.$platform.'/'.$type.'s'] = array('platform'=>$platform,'template'=>false);
+            $checkPaths['modules/'.$module.'/clients/'.$platform.'/'.$type.'s'] = array('platform'=>$platform,'template'=>false);
+            $baseTemplateDir = 'include/SugarObjects/templates/basic/clients/'.$platform.'/'.$type.'s';
+            $nonBaseTemplateDir = self::getSugarObjectFileDir($module, $platform, $type);
+            if (!empty($nonBaseTemplateDir) && $nonBaseTemplateDir != $baseTemplateDir ) {
+                $checkPaths['custom/'.$nonBaseTemplateDir] = array('platform'=>$platform,'template'=>true);
+                $checkPaths[$nonBaseTemplateDir] = array('platform'=>$platform, 'template'=>true);
             }
+            $checkPaths['custom/'.$baseTemplateDir] = array('platform'=>$platform,'template'=>true);
+            $checkPaths[$baseTemplateDir] = array('platform'=>$platform,'template'=>true);
         }
 
         // Second, get a list of files in those directories, sorted by "relevance"

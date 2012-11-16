@@ -217,4 +217,43 @@ class SugarACLStatic extends SugarACLStrategy
         }
         return parent::getFieldListAccess($module, $field_list, $context);
     }
+
+    /**
+     * Get user access for the list of actions
+     * @param string $module
+     * @param array $access_list List of actions
+     * @returns array - List of access levels. Access levels not returned are assumed to be "all allowed".
+     */
+    public function getUserAccess($module, $access_list, $context)
+    {
+        $user_id = $this->getUserID($context);
+        if(is_admin($GLOBALS['current_user']) || empty($user_id)) {
+            // no user or admin - do nothing
+            return $access_list;
+        }
+        $is_owner = !(isset($context['owner_override']) && $context['owner_override'] == false);
+        $actions = ACLAction::getUserActions($user_id, false, $module, 'module');
+        if(empty($actions)) {
+            return $access_list;
+        }
+        // default implementation, specific ACLs can override
+        $access = $access_list;
+        // check 'access' first - if it's false all others will be false
+        if(isset($access_list['access'])) {
+        	if(!ACLAction::userHasAccess($user_id, $module, 'access', 'module', true)) {
+        		foreach($access_list as $action => $value) {
+        			$access[$action] = false;
+        		}
+        		return $access;
+        	}
+        	// no need to check it second time
+        	unset($access_list['access']);
+        }
+        foreach($access_list as $action => $value) {
+        	if(isset($actions[$action]['aclaccess']) && !ACLAction::hasAccess($is_owner, $actions[$action]['aclaccess'])) {
+        		$access[$action] = false;
+        	}
+        }
+        return $access;
+    }
 }

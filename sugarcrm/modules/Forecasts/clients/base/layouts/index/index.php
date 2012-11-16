@@ -29,18 +29,6 @@ $viewdefs['Forecasts']['base']['layout']['index'] = array(
             'view' => 'forecastsWorksheetManagerTotals'
         ),
         array(
-            'layout' => array(
-                'type' => 'modal',
-                'showEvent' => 'modal:forecastsWizardConfig:open',
-            ),
-        ),
-        array(
-            'layout' => array(
-                'type' => 'modal',
-                'showEvent' => 'modal:forecastsTabbedConfig:open',
-            ),
-        ),
-        array(
             'view' => 'forecastsTitle',
         ),
         array(
