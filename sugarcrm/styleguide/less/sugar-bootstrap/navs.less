@@ -1,4 +1,36 @@
 /*sugar mods*/
+//full width tabs in interactions block
+.tabs-full {
+  .nav-tabs {
+    margin-bottom: 0px;
+    border: none;
+    > li {
+      margin: 0;
+      text-align: center;
+      width: 33.33%;
+      > a {
+        background-color: @tableBackgroundAccent;
+        border: 1px solid darken(@tableBackgroundAccent,5%);
+        font-size: 14px;
+        margin:0;
+        .border-radius(0);
+        span {
+          font-size: 18px;
+          display: block;
+        }
+      }
+      &.active {
+        > a {
+          background-color: @white;
+          border-bottom: none;
+        }
+      }
+    }
+  }
+  .listed li {
+    padding: 12px;
+  }
+}
 
 //These changes are an override of bootstrap native colors
 .related-tabs.nav-tabs {
@@ -84,6 +116,7 @@
 .tabs-right > .nav-tabs .active > a:hover {
   border-color: @grayLight @grayLight @grayLight transparent;
 }
+
 
 //These changes are from the initial bs commit but have changed in new bs
 .nav-list {

@@ -74,10 +74,22 @@ header .subnav {
   z-index: 1000;
   background: @grayLighter;
   border-bottom: 1px solid darken(@grayLighter,5%);
+
   h1 {
     float: left;
     margin-top: 12px;
     margin-left: 20px;
+  }
+
+  img {
+    width: 40px;
+    height: 40px;
+    vertical-align: middle;
+    margin-right: 12px;
+  }
+
+  [class^="icon-"] {
+    font-size: 20px;
   }
 
   .dropdown-toggle {
@@ -94,6 +106,9 @@ header .subnav {
 
   .btn-toolbar {
     margin-top: 15px;
+    .btn-group {
+      vertical-align: middle;
+    }
   }
 
   .avatar {

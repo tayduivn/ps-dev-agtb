@@ -313,7 +313,7 @@ svg .title { font:bold 14px Arial; }
 .stage_closedwon { fill:#369a00; }
 .stage_prospecting { fill:#ce6815; }
 .stage_closedlost { fill:#cf1516; }
-.stage_qualification { fill:#1265b7; }
+.stage_qualification { fill:#0e98d5; }
 body.full-screen {
   overflow-y:scroll;
   padding:20px;

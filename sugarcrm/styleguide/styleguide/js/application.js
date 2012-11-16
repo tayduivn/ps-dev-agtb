@@ -51,7 +51,7 @@
     // keybinding
     $(document).keyup( function (e){
         if(e.keyCode === 27) {
-          $(".alert-top").remove();
+          $(".alert-top .timeten").remove();
         }
     });
 
@@ -393,4 +393,25 @@
     loadPartials(page.templates);
   }
 
+  // create record view
+  $('body').on( 'change', 'form', function(){ invokeSaveButtons(); });
+  $('body').on( 'click', '.form-change-actions .btn.save', function(e){
+    e.preventDefault();
+    e.stopPropagation();
+    throwMessage('<strong>Success!</strong> You successfully created the lead "Tameka Dammann"', 'success', true)
+  });
+
 }(window.jQuery);
+
+function throwMessage(data,status,temp) {
+  var msg = '<div class="alert alert-'+status+' alert-block'+(temp?' timeten':'')+'">' +
+    data +
+    '<a class="close" data-dismiss="alert">×</a>' +
+    '</div>';
+  $('#alert').append(msg);
+  setTimeout( function (){$('.timeten').fadeOut().remove();}, 9000);
+}
+
+function invokeSaveButtons(){
+    $('.form-change-actions .btn').show();
+}

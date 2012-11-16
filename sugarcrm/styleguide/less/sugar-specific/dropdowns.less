@@ -1,5 +1,5 @@
 .dropdown-menu.carettop {
-    .caret-top(10px,9px,auto,auto);
+  .caret-top(10px,9px,auto,auto);
 }
 
 .dropdown-menu.left {
@@ -11,12 +11,23 @@
 }
 
 .dropdown-menu {
-    li {
-        border: 0px none;
-    }
-
+  top: 34px;
+  li {
+    border: 0px none;
+  }
 }
 
+.thumbnail {
+  .btn-toolbar.pull-right {
+    margin: 3px;
+  }
+  .btn-toolbar .btn {
+    padding: 6px 8px 1px;
+    span {
+      display: inline-block;
+    }
+  }
+}
 
 // Hover state
 // -----------
@@ -28,7 +39,9 @@
 .dropdown-menu .active > span > a:hover {
   color: @dropdownLinkColorHover;
   text-decoration: none;
-  background-color: @dropdownLinkBackgroundHover;
+  //this causes sharp corners on dropdown-menu
+  //background-color: @dropdownLinkBackgroundHover;
+  background-color: transparent;
 }
 
 
