@@ -320,8 +320,10 @@
     toggleField: function(field, cell, close) {
         cell.toggleClass('edit-mode');
 
-        field.options.viewName = ((!field.options.viewName || field.options.viewName == "detail") && !close)
-            ? "edit" : field.options.viewName = "detail";
+        var viewName = ((!field.options.viewName || field.options.viewName == "detail") && !close)
+            ? "edit" : "detail";
+
+        field.setView(viewName);
 
         field.render();
 
