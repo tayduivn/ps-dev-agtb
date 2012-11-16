@@ -101,11 +101,11 @@
             callback = function() {
                 self.context.trigger('lead:convert:' + currentModule + ':hide');
                 self.context.trigger('lead:convert:' + nextModule + ':show');
+                self.setNextStep(nextModule);
             };
 
-        //todo: check if create view is visible and dirty - don't run if not dirty
         if (nextModule != this.context.currentStep.key) {
-            this.runValidation(nextModule, callback);
+            self.context.trigger('lead:convert:' + currentModule + ':validate', callback);
         }
     },
 
@@ -113,8 +113,6 @@
      * Run validation before calling back to show the panel body
      */
     runValidation:function (nextModule, callback) {
-        var self = this;
-
         async.waterfall([
             //validation or has selected element
             //Add logic to process current step and if complete move to next one
@@ -122,10 +120,9 @@
             _.bind(this.checkDependentModulesFall, this, nextModule)
         ], function(error) {
             if (error) {
-                console.log("Saving failed.");
                 //TODO: handle error
+                console.log("Saving failed.");
             } else {
-                self.setNextStep(nextModule);
                 callback();
             }
         });

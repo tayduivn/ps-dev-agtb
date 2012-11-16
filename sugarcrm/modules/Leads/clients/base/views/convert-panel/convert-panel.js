@@ -13,6 +13,7 @@
         this.context.on("lead:convert:populate", this.populateRecordsFromLeads, this);
         this.context.on("lead:convert:"+this.meta.module+":show", this.handleShow, this);
         this.context.on("lead:convert:"+this.meta.module+":hide", this.handleHide, this);
+        this.context.on("lead:convert:"+this.meta.module+":validate", this.runValidation, this);
 
         this.currentState = {
             activeView: this.DUPLICATE_VIEW,
@@ -193,6 +194,7 @@
     toggleSubViews: function(viewToShow) {
         this.toggleDuplicateView(viewToShow === this.DUPLICATE_VIEW);
         this.toggleRecordView(viewToShow === this.RECORD_VIEW);
+        this.updatePanelHeader();
     },
     
     toggleDuplicateView: function(show) {
@@ -228,6 +230,21 @@
     setDirty: function(isDirty) {
         this.currentState.isDirty = isDirty;
         this.context.trigger("lead:convert:panel:update");
+    },
+
+    runValidation: function(callback) {
+        //dirty record views need validation - other scenarios do not
+        if (this.currentState.activeView === this.RECORD_VIEW && this.currentState.isDirty) {
+            //todo: implement validation - this is a placeholder
+            var model = this.recordView.model;
+            if (model.get('name') === 'fail' || model.get('first_name') === 'fail') {
+                app.alert.show('failed_validation', {level:'error', title: 'Failed Validation', messages: 'Failed Validation', autoClose: true});
+            } else {
+                callback();
+            }
+        } else {
+            callback();
+        }
     },
 
     isComplete: function() {
