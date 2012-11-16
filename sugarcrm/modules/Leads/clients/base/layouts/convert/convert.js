@@ -1,7 +1,7 @@
 ({
     events:{
         'click [name=convert_continue_button]':'processContinue', //TODO: remove this if we don't do the continue button
-        'click .accordion-heading': 'handlePanelHeaderClick'
+        'click .accordion-heading.enabled': 'handlePanelHeaderClick'
     },
 
     initialize:function (options) {
@@ -85,7 +85,7 @@
         firstModule = _.first(this.meta.modules).module;
         this.context.currentStep = this.context.steps.search(firstModule);
         this.context.trigger('lead:convert:' + firstModule + ':show');
-        this.enableFinishButton();
+        this.checkRequired();
     },
 
     handlePanelHeaderClick: function(event) {
@@ -117,7 +117,6 @@
             //validation or has selected element
             //Add logic to process current step and if complete move to next one
             //check whether or not can continue depending on dependent modules
-            _.bind(this.checkDependentModulesFall, this, nextModule)
         ], function(error) {
             if (error) {
                 //TODO: handle error
@@ -128,23 +127,42 @@
         });
     },
 
-    checkDependentModulesFall: function(nextModule, callback) {
-        var showModule,
-            self = this,
-            moduleMeta = this._getModuleMeta(nextModule);
+    checkDependentModules: function() {
+        var self = this,
+            modulesMeta = this.meta.modules;
 
-        showModule = _.all(moduleMeta.dependentModules, function(moduleName) {
-            var convertPanel = self._getPanelByModuleName(moduleName);
+        _.each(modulesMeta, function (moduleMeta, index, list) {
+            if(!_.isUndefined(moduleMeta.dependentModules)) {
+                if (self.isDependentModulesComplete(moduleMeta.module)) {
+                    self.context.trigger("lead:convert:" + moduleMeta.module + ":enable");
+                }
+            }
+        });
+    },
+
+    isDependentModulesComplete: function(moduleMeta) {
+        var isComplete,
+            self = this;
+
+        isComplete =  _.all(moduleMeta.dependentModules, function(moduleName) {
+            var convertPanel,
+                meta = self._getModuleMeta(moduleName);
+
+            if (!meta.required) {
+                return true;
+            }
+
+            convertPanel = self._getPanelByModuleName(moduleName);
             if (!convertPanel.isComplete()) {
                 return false;
             }
             return true;
         });
 
-        callback(!showModule);
+        return isComplete;
     },
 
-    enableFinishButton: function() {
+    checkRequired: function() {
         var showFinish,
             self = this;
 
@@ -164,12 +182,17 @@
 
         if(showFinish) {
             this.context.requiredComplete = true;
-            $('[name=save_button]').removeClass('disabled');
+            this.context.trigger('lead:convert:enable:finish');
         }
     },
 
+    enableFinishButton: function() {
+        $('[name=save_button]').removeClass('disabled');
+    },
+
     handlePanelUpdate: function() {
-        this.enableFinishButton();
+        this.checkDependentModules();
+        this.checkRequired();
     },
 
     setNextStep: function(nextModule) {

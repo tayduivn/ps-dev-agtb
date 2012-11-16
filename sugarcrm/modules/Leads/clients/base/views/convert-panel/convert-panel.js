@@ -14,7 +14,7 @@
         this.context.on("lead:convert:"+this.meta.module+":show", this.handleShow, this);
         this.context.on("lead:convert:"+this.meta.module+":hide", this.handleHide, this);
         this.context.on("lead:convert:"+this.meta.module+":validate", this.runValidation, this);
-
+        this.context.on("lead:convert:"+this.meta.module+":enable", this.handleEnablePanel, this);
         this.currentState = {
             activeView: this.DUPLICATE_VIEW,
             duplicateCount: 0,
@@ -110,6 +110,10 @@
         this.hideSubViewToggle();
     },
 
+    handleEnablePanel: function() {
+        this.$('.accordion-heading').removeClass('disabled').addClass('enabled');
+    },
+
     handleToggleClick: function(event) {
         if (this.$(event.target).hasClass('show-duplicate')) {
             this.toggleSubViews(this.DUPLICATE_VIEW);
@@ -182,8 +186,6 @@
 
     populateRecordsFromLeads:function (leadModel) {
         var self = this;
-
-        //field mappings: copy over data according to the metadata field mapping
         _.each(self.meta.fieldMapping, function (sourceField, targetField) {
             if (leadModel.has(sourceField)) {
                 self.recordView.model.set(targetField, leadModel.get(sourceField));
