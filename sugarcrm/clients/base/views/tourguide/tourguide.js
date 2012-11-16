@@ -185,7 +185,7 @@
     },
     getData: function() {
         var self = this;
-        return $.getJSON("../clients/base/views/tourguide/data.json", null, function(tourData) {
+        return $.getJSON(app.config.siteUrl + "clients/base/views/tourguide/data.json", null, function(tourData) {
                 if( tourData.error ) {
                     app.alert.show('retrieve_failed', {level: 'error', title:'Tour Failed', messages: 'Failed to retrieve ' +
                         'tour data: '+ tourData.error, autoClose: false});
@@ -235,8 +235,8 @@
         var viewportHeight = $(window).height(),
             elTop = $targetEl.offset().top,
             elHeight = $targetEl.height(),
-            headerHeight = $(".navbar").height() + 3,
-            footerHeight = $("footer").height(),
+            headerHeight = ($(".navbar").height() + 3) || 48,
+            footerHeight = $("footer").height() || 44,
 
             // the header and footer cover elements on the page so we account for this
             buffer = 55,
