@@ -33,6 +33,11 @@
             field.options.def.view = 'detail';
         }
         app.view.View.prototype._renderField.call(this, field);
+
+        // format the datepicker used to set the timeperiod start month and day to not show the year
+        if (field.name == 'timeperiod_start_picker') {
+            field.$('.datepicker').datepicker("option", "dateFormat", "mm-dd");
+        }
     },
 
     /**
