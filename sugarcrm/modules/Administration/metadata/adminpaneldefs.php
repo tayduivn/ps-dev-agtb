@@ -253,11 +253,11 @@ $admin_group_header[]= array('LBL_BUG_TITLE','',false,$admin_option_defs, 'LBL_B
 //END SUGARCRM flav!=sales ONLY
 //BEGIN SUGARCRM flav=pro ONLY
 //Forecasting
-/*
+
 $admin_option_defs=array();
-$admin_option_defs['Forecasts']['timeperiod_management']= array('TimePeriods','LBL_MANAGE_TIMEPERIODS_TITLE','LBL_MANAGE_TIMEPERIODS','./index.php?module=TimePeriods&action=ListView');
+$admin_option_defs['Forecasts']['forecast_setup']= array('ForecastReports','LBL_MANAGE_FORECASTS_TITLE','LBL_MANAGE_FORECASTS','./index.php?module=Forecasts&action=index#config');
 $admin_group_header[]= array('LBL_FORECAST_TITLE','',false,$admin_option_defs, 'LBL_FORECAST_DESC');
-*/
+
 
 //Contracts
 $admin_option_defs=array();

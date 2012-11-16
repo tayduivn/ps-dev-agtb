@@ -465,6 +465,7 @@ class MetaDataManager {
      *
      * @param string $path The directory within a platform
      * @param bool $full Whether to return full paths or dirnames only
+     * @param string $modulePath path to module 
      * @return array
      */
     public function getSugarClientFileDirs($path, $full = false, $modulePath = "") {
@@ -547,6 +548,74 @@ class MetaDataManager {
         }
 
         $result['_hash'] = md5(serialize($result));
+        return $result;
+    }
+
+    /**
+     * Gets client files of type $type (view, layout, field) for all platforms 
+     * specified. Resulting array will be delineated by platform.
+     *
+     * @param string $type The type of files to get
+     * @param array $platforms Which platforms to get client files for.
+     * @return array
+     */
+    public function getSugarClientFilesForPlatforms($type, $platforms = array())
+    {
+        $result = array();
+
+        // If not called with $platforms will default to all platforms.
+        $platforms = (!empty($platforms) && count($platforms)) ? $platforms : $this->platforms;
+
+        // Platforms we'll push our loaded components on to.
+        $desiredPlatforms = array();
+        $typePath = $type . 's';
+
+        // Retrieves base directory names for all possible widgets
+        $allSugarFiles = $this->getSugarClientFileDirs($typePath, false, '');
+
+        foreach ( $allSugarFiles as $dirname) {
+            // reset $fileData
+            $fileData = array();
+            $meta = array();
+            $tplDir = array();
+            
+            foreach ( $platforms as $platform ) {
+                $dir = "clients/$platform/$typePath/$dirname/";
+                $controller = SugarAutoLoader::existingCustomOne("{$dir}{$dirname}.js");
+                if (empty($meta)) {
+                    $meta = $this->fetchMetadataFromDirs(array($dir), '');
+                }
+                if ( $controller ) {
+                    $fileData[$platform][$dirname]['controller'] = file_get_contents($controller);
+                }
+                // Now get templates
+                $tplDir[0] = "clients/$platform/$typePath/$dirname/";
+                $templates = $this->fetchTemplates($tplDir);
+                if (count($templates)) {
+                    $fileData[$platform][$dirname]['templates'] = $templates;
+                }
+                // Add the meta
+                if ($meta) {
+                   $fileData[$platform][$dirname]['meta'] = array_shift($meta); // Get the first member
+                }
+                // Remove empty fileData members. There's a chance of course we haven't 
+                // found anything and $fileData[$platform] my be unset
+                if (isset($fileData[$platform])) {
+                    foreach ($fileData[$platform] as $k => $v) {
+                        if (empty($v)) {
+                            unset($fileData[$platform][$k]);
+                        }
+                    }
+                }
+            }
+
+            foreach ($fileData as $pf => $pfData) {
+                $desiredPlatforms[$pf][$dirname] = $pfData[$dirname];
+            }
+        }
+        $result = $desiredPlatforms;
+        $result['_hash'] = md5(serialize($result));
+
         return $result;
     }
 
