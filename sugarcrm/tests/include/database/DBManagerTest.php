@@ -2785,10 +2785,22 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
                 'type' => 'id',
                 'required'=>true,
             ),
-            'desc' => array (
-                'name' => 'desc',
+            'col1' => array (
+                'name' => 'col1',
                 'type' => 'varchar',
                 'len' => '100',
+            ),
+            'col2' => array (
+                'name' => 'col2',
+                'type' => 'varchar',
+                'len' => '100',
+            ),
+        );
+        $indexes = array(
+            array(
+                'name'   => 'idx_'. $tableName .'_id',
+                'type'   => 'primary',
+                'fields' => array('id'),
             ),
         );
         if($this->_db->tableExists($tableName)) {
@@ -2797,8 +2809,8 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
         $this->_db->createTableParams($tableName, $params, $indexes);
 
         echo "Preparing stmt\n";
-        $data = array(1,"test data");
-        $sql = "INSERT INTO testPreparedStatement(id) VALUES(?int, ?varchar)";
+        $data = array(1, "col1 data", "col2 data");
+        $sql = "INSERT INTO testPreparedStatement(id,col1,col2) VALUES(?int, ?, ?varchar)";
         $ps = $this->_db->prepareStatement($sql, $data);
 
         echo "Executing stmt\n";

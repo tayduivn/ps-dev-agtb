@@ -1834,4 +1834,8 @@ EOQ;
       	return "'$guidStart-' || HEX(generate_unique())";
     }
 
+    public function prepareStatement($sql, array $data)
+    {
+        return new MysqliPreparedStatement($this, $sql, $data);
+    }
 }

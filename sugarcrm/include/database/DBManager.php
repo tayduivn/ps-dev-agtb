@@ -2152,14 +2152,7 @@ protected function checkQuery($sql, $object_name = false)
 
 
 
-    public function prepareStatement($sql, array $data){
-
-        $ps = new PreparedStatement($this->database, $sql, $data);
-        return $ps;
-
-    }
-
-
+    abstract public function prepareStatement($sql, array $data);
 
 
 /********************** SQL FUNCTIONS ****************************/

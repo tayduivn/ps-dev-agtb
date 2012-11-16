@@ -20,7 +20,6 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 ********************************************************************************/
 
 require_once('include/database/DBManager.php');
-require_once('include/database/PreparedStatement.php');
 
 /**
  * Database driver factory
@@ -83,7 +82,6 @@ class DBManagerFactory
             $my_db_manager = $config['db_manager_class'];
         } else {
             SugarAutoLoader::requireWithCustom("include/database/{$my_db_manager}.php");
-            SugarAutoLoader::requireWithCustom("include/database/{$my_db_manager}PreparedStatement.php");
         }
 
         if(class_exists($my_db_manager)) {

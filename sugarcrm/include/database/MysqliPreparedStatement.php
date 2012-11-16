@@ -37,6 +37,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *
  * The meta interface has the following functions:
  */
+require_once 'include/database/PreparedStatement.php';
 
 class MysqliPreparedStatement extends PreparedStatement
 {
@@ -46,6 +47,45 @@ class MysqliPreparedStatement extends PreparedStatement
      * @var array
      */
     protected $bound_vars = array();
+
+    public $ps_type_map = array(
+        'int'      => 'i',
+        'double'   => 'd',
+        'float'    => 'd',
+        'uint'     => 'i',
+        'ulong'    => 'i',
+        'long'     => 'd',
+        'short'    => 'i',
+        'varchar'  => 's',
+        'text'     => 'b',
+        'longtext' => 'b',
+        'date'     => 'd',
+        'enum'     => 's',
+        'relate'   => 's',
+        'multienum'=> 's',
+        'html'     => 's',
+        'longhtml' => 's',
+        'datetime' => 's',
+        'datetimecombo' => 's',
+        'time'     => 'i',
+        'bool'     => 'i',
+        'tinyint'  => 'i',
+        'char'     => 's',
+        'blob'     => 'b',
+        'longblob' => 'b',
+        'currency' => 's',
+        'decimal'  => 'd',
+        'decimal2' => 'd',
+        'id'       => 's',
+        'url'      => 's',
+        'encrypt'  => 's',
+        'file'     => 's',
+        'decimal_tpl' => 's',
+
+    );
+
+
+
   /**
    * Tracks slow queries in the tracker database table
    *
@@ -57,17 +97,26 @@ class MysqliPreparedStatement extends PreparedStatement
    */
   public function preparePreparedStatement($sqlText, array $data, array $fieldDefs = array() ){
 
+      echo "preparePreparedStatement: entry  sqlText: >$sqlText <  data:\n" ;
+      var_dump($data);
+
       if (!($this->stmt = $this->dblink->prepare($sqlText))) {
+          echo "preparePreparedStatement: Prepare Failed! \n";
           return "Prepare failed: (" . $this->dblink->errno . ") " . $this->dblink->error;
       }
       $num_args = $this->stmt->param_count;
+      echo "preparePreparedStatement: num_args from prepare: $num_args \n";
       $this->bound_vars = $bound = array_fill(0, $num_args, null);
       $types = "";
       for($i=0; $i<$num_args;$i++) {
-          $types .= $this->paramTypes[$i];
+          $types .= $this->ps_type_map[ $fieldDefs[$i] ];
           $bound[$i] =& $this->bound_vars[$i];
       }
+      echo "types: >$types<\n";
       array_unshift($bound, $types);
+
+      echo "Binding the data: types then vars\n";
+      var_dump($bound);
       // Pre-bind the internal data array to    $this->bound_vars
       call_user_func_array(array($this->stmt, "bind_param"), $bound);
 
@@ -79,11 +128,23 @@ class MysqliPreparedStatement extends PreparedStatement
 
    public function executePreparedStatement($data){
 
+      echo "--------------------------------------------------\n";
+      echo "executePreparedStatement: entry    data:\n";
+      var_dump($data);
+
+      if ($this->stmt->param_count != count($data) )
+          return "incorrect number of elements. Expected " . $this->stmt->param_count . " but got " . count($data);
+
+      // transfer the data from the input array to the bound array
+      for($i=0; $i<count($data);$i++) {
+         $this->bound_vars[$i] = $data[$i];
+      }
+
       if (!($res = $this->stmt->execute())) {
           return "Execute Prepared Statement failed: (" . $dblink->errno . ") " . $dblink->error;
       }
 
-      return $stmt;
+      return $this->stmt;
    }
 
 }

@@ -73,63 +73,96 @@ abstract class PreparedStatement{
     /**
      * Create Prepared Statement object from sql in the form of "INSERT INTO testPreparedStatement(id) VALUES(?int, ?varchar)"
      */
-    public function __construct($DBM, $sqlText, array $data, array $fieldDefs = array() ){
+    public function __construct($DBM, $sql, array $data, array $fieldDefs = array() ){
         $this->timedate = TimeDate::getInstance();
         $this->log = $GLOBALS['log'];
         $this->dblink = $DBM->getDatabase();
 
-        if (isEmpty($DBM))    {
-          return "ERROR Database object missing";
+echo "=========================================\n";
+echo "Prepared Statement: sqlText: $sql\n";
+echo "\nData\n";
+        var_dump($data);
+echo "\nFieldDefs\n";
+        var_dump($fieldDefs);
+echo "\n";
+
+        if (empty($DBM))    {
+          $msg = "ERROR Database object missing";
+          echo "$msg\n";
+          return $msg;
         }
 
-        if (isEmpty($sqlText))    {
-            return "ERROR Prepared SQL text is missing";
+        if (empty($sql))    {
+            $msg = "ERROR Prepared SQL text is missing";
+            echo "$msg\n";
+            return $msg;
         }
 
-        if (isEmpty($fieldDefs) || !is_array($fieldDefs))    {
-            return "ERROR field definitions are missing";
-        }
+        //if (empty($fieldDefs) || !is_array($fieldDefs))    {
+        //    return "ERROR field definitions are missing";
+        //}
 
-        $sqlText = $sql;
+
+        $this->sqlText = $sql;
 
         // Build fieldDefs array and replace ?SugarDataType placeholders with a single ?placeholder
-        $fieldDefNo = 0;
         $cleanedSql = "";
         $nextParam = strpos( $sql, "?" );
-        if ($nextParam = 0 )
+echo "initial nextParam is at $nextParam\n";
+        if ($nextParam == 0 )
             $cleanedSql = $sql;
-        else {
+        else {     // parse the sql string looking for params
            while ($nextParam > 0 ) {
-              $cleanedSql .= substr( $sql, 0, $nextParam -1);
-              $sql = substr( $sql, $nextParam );   // strip leading chars
+              echo "Processing a param\n" ;
+              $cleanedSql .= substr( $sql, 0, $nextParam + 1);  // we want the ?
+              echo "cleanedSql: $cleanedSql\n";
+
+              $sql = substr( $sql, $nextParam + 1);   // strip leading chars
+              echo "remaining sql for sugarDataType is: $sql\n";
+
               // scan for termination of SugarDataType
                $sugarDataType = "";
-              for ($i=0; $i < strlen($sql) && in_array(array(",",")", " "), substr($sql, $i, 1) ); $i++){
+              for ($i=0; ($i < strlen($sql)) and (strpos(",) ", substr($sql, $i, 1)) === false); $i++){
+                 echo "testing >" . substr($sql, $i, 1) . "< Result was " . strpos(",) ", substr($sql, $i, 1)) . "\n";
+//                 if ( (strpos(",) ", substr($sql, $i, 1)) == false ))
+                 if (strpos(",) ", substr($sql, $i, 1)) == false) {
                  $sugarDataType .=  substr($sql, $i, 1);
               }
+              }
+              echo "i is $i  sugarDataType is $sugarDataType \n";
               // insert the fieldDef
-              if ( $i == 0 ) //no type, default to varchar
+               echo "sugarDataType:\n";
+               var_dump($sugarDataType);
+              if ( $sugarDataType === "" ) //no type, default to varchar
                   $fieldDefs[] = "varchar";
               else
-                  $fieldDefs[] = substr($sql, 0, $i-1);
+                  $fieldDefs[] = $sugarDataType;
               $sql = substr($sql, $i); // strip off the SugarDataType
+              echo "remaining sql is: $sql\n";
               $nextParam = strpos( $sql, "?" ); // look for another param
+              echo "another nextParam is at $nextParam\n";
+
 
            }
         }
+
+        // add the remaining sql
+        $cleanedSql .= $sql;
+
         echo "finished building fieldDefs\n";
         var_dump($fieldDefs);
-        echo "sql: $cleanedSql \n";
+        echo "cleaned sql: $cleanedSql \n";
 
-        //Prepare the statement in the database
-        $preparedStatementHndl = $this->preparePreparedStatement($DBM, $sqlText, $data, $fieldDefs );
-        if (isEmpty($preparedStatementHndl))
+        echo "Preparing the statement...\n";
+        //Prepare the statement in the database                  $DBM
+        $preparedStatementHndl = $this->preparePreparedStatement($cleanedSql, $data, $fieldDefs );
+        if (empty($preparedStatementHndl))
             return "preparing statement failed";
     }
 
     public function executeStatement(array $data){
-    //-> executePreparedStatement($statementHandle, array $colDefs, array $data);
 
+        $this->executePreparedStatement($data);
 
     }
 

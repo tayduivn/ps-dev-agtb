@@ -1816,4 +1816,9 @@ EOQ;
         $guidStart = create_guid_section(3);
       	return "'$guidStart-' || sys_guid()";
     }
+
+    public function prepareStatement($sql, array $data)
+    {
+        return new MysqliPreparedStatement($this, $sql, $data);
+    }
 }
