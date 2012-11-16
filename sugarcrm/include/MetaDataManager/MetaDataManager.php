@@ -131,7 +131,7 @@ class MetaDataManager {
      * @return Array A hash of all of the view data.
      */
     public function getModuleViews($moduleName) {
-        return $this->getClientFiles('view',$moduleName);
+        return $this->getModuleClientData('view',$moduleName);
     }
 
     /**
@@ -142,7 +142,7 @@ class MetaDataManager {
      * @return Array A hash of all of the view data.
      */
     public function getModuleLayouts($moduleName) {
-        return $this->getClientFiles('layout', $moduleName);
+        return $this->getModuleClientData('layout', $moduleName);
     }
 
     /**
@@ -153,7 +153,7 @@ class MetaDataManager {
      * @return Array A hash of all of the view data.
      */
     public function getModuleFields($moduleName) {
-        return $this->getClientFiles('field', $moduleName);
+        return $this->getModuleClientData('field', $moduleName);
     }
 
     /**
@@ -393,7 +393,7 @@ class MetaDataManager {
      */
     public function getSugarFields()
     {
-        return $this->getClientFiles('field');
+        return $this->getSystemClientData('field');
     }
 
     /**
@@ -403,7 +403,7 @@ class MetaDataManager {
      */
     public function getSugarViews()
     {
-        return $this->getClientFiles('view');
+        return $this->getSystemClientData('view');
     }
 
     /**
@@ -414,7 +414,7 @@ class MetaDataManager {
      */
     public function getSugarLayouts()
     {
-        return $this->getClientFiles('layout');
+        return $this->getSystemClientData('layout');
     }
 
     /**
@@ -424,147 +424,30 @@ class MetaDataManager {
      * @param string $module Module name (leave blank to get the system wide files)
      * @return array
      */
-    public function getClientFiles($type, $module='')
+    public function getSystemClientData($type)
     {
 
         // This is a semi-complicated multi-step process, so we're going to try and make this as easy as possible.
+        // This should get us a list of the client files for the system
+        $fileList = MetaDataFiles::getClientFiles($this->platforms, $type);
         
-        // First, build a list of paths to check
-        $checkPaths = array();
-        if ( $module == '' ) {
-            foreach ( $this->platforms as $platform ) {
-                // These are sorted in order of priority.
-                // No templates for the non-module stuff
-                $checkPaths['custom/clients/'.$platform.'/'.$type.'s'] = array('platform'=>$platform,'template'=>false);
-                $checkPaths['clients/'.$platform.'/'.$type.'s'] = array('platform'=>$platform,'template'=>false);
-            }
-            
-        } else {
-            foreach ( $this->platforms as $platform ) {
-                // These are sorted in order of priority.
-                // The template flag is if that file needs to be "built" by the metadata loader so it
-                // is no longer a template file, but a real file.
-                $checkPaths['custom/modules/'.$module.'/clients/'.$platform.'/'.$type.'s'] = array('platform'=>$platform,'template'=>false);
-                $checkPaths['modules/'.$module.'/clients/'.$platform.'/'.$type.'s'] = array('platform'=>$platform,'template'=>false);
-                $baseTemplateDir = 'include/SugarObjects/templates/basic/clients/'.$platform.'/'.$type.'s';
-                $nonBaseTemplateDir = MetaDataFiles::getSugarObjectFileDir($module, $platform, $type);
-                if (!empty($nonBaseTemplateDir) && $nonBaseTemplateDir != $baseTemplateDir ) {
-                    $checkPaths['custom/'.$nonBaseTemplateDir] = array('platform'=>$platform,'template'=>true);
-                    $checkPaths[$nonBaseTemplateDir] = array('platform'=>$platform, 'template'=>true);
-                }
-                $checkPaths['custom/'.$baseTemplateDir] = array('platform'=>$platform,'template'=>true);
-                $checkPaths[$baseTemplateDir] = array('platform'=>$platform,'template'=>true);
-            }
-        }
+        // And this should get us the contents of those files, properly sorted and everything.
+        $results = MetaDataFiles::getClientFileContents($fileList, $type);
 
-        // Second, get a list of files in those directories, sorted by "relevance"
-        $fileList = array();
-        $templateFiles = array();
-        foreach ( $checkPaths as $path => $pathInfo ) {
-            // Looks at /modules/Accounts/clients/base/views/*
-            // So should pull up "record","list","preview"
-            $dirsInPath = SugarAutoLoader::getDirFiles($path,true);
-            foreach ( $dirsInPath as $fullSubPath ) {
-                $subPath = basename($fullSubPath);
-                // This should find the files in each view/layout
-                // So it should pull up list.js, list.php, list.hbt
-                $filesInDir = SugarAutoLoader::getDirFiles($fullSubPath,false);
-                foreach ( $filesInDir as $fullFile ) {
-                    $file = basename($fullFile);
-                    $fileIndex = $subPath.'/'.$file;
-                    if ( !isset($fileList[$fileIndex]) ) {
-                        $fileList[$fileIndex] = array('path'=>$fullFile, 'file'=>$file, 'subPath'=>$subPath, 'platform'=>$pathInfo['platform']);
-                        if ( $pathInfo['template'] && (substr($file,-4)=='.php') ) {
-                            $templateFiles[] = $fileIndex;
-                        }
-                    }
-                }
-            }
-        }
-
-        // Third, if there are any files in that list that are from template objects build out the final files
-        // Third-and-a-half, load those final files instead of the template object ones.
-        if ( !empty($templateFiles) ) {
-            // We have templates to build
-            foreach ( $templateFiles as $fileIndex ) {
-                $fileInfo = $fileList[$fileIndex];
-                // Unset the entry in filelist so it is only loaded if we successfully generate a new template
-                unset($fileList[$fileIndex]);
-                $viewdefs = array();
-                require $fileInfo['path'];
-                $bean = BeanFactory::getBean($module);
-                if ( !is_a($bean,'SugarBean') ) {
-                    continue;
-                }
-                // Figure out the filename to store this in
-                $pathParts = explode('/',$fileInfo['path']);
-                while ( $pathParts[0] != 'clients' ) {
-                    // Keep stripping off array elements until we hit the clients directory
-                    array_shift($pathParts);
-                    if ( count($pathParts) == 0 ) {
-                        break;
-                    }
-                }
-                if ( count($pathParts) != 0 ) {
-                    // We found the directory
-                    array_unshift($pathParts,'custom','modules',$module);
-                    $outputPath = implode('/',$pathParts);
-                    // Remove the filename off of the path
-                    array_pop($pathParts);
-                    $outputDir = implode('/',$pathParts);
-
-                    $viewdefs = MetaDataFiles::getModuleMetaDataDefsWithReplacements($bean, $viewdefs);
-                    if ( ! isset($viewdefs[$module][$fileInfo['platform']][$type][$fileInfo['subPath']]) ) {
-                        $GLOBALS['log']->error('Could not generate a metadata file for module '.$module.', platform: '.$fileInfo['platform'].', type: '.$type);
-                        continue;
-                    }
-                    $output = "<?php\n".'$viewdefs["'.$module.'"]["'.$fileInfo['platform'].'"]["'.$type.'"]["'.$fileInfo['subPath'].'"] = '.var_export_helper($viewdefs[$module][$fileInfo['platform']][$type][$fileInfo['subPath']]).";\n";
-                    if ( SugarAutoLoader::ensureDir($outputDir) ) {
-                        SugarAutoLoader::put($outputPath, $output);
-                        $fileInfo['path'] = $outputPath;
-                        $fileList[$fileIndex] = $fileInfo;
-                    } else {
-                        // Can't write a new file, just throw away this item.
-                        $GLOBALS['log']->error('Could not write a new metadata entry to '.$outputPath.' cannot load this piece of metadata');
-                    }
-                }
-            }
-        }
-        
-        // Forth, actually load up those files and return them in an array
-        $results = array();
-        foreach ( $fileList as $fileIndex => $fileInfo ) {
-            $extension = substr($fileInfo['path'],-3);
-            switch ( $extension ) {
-                case '.js':
-                    $results[$fileInfo['subPath']]['controller'] = file_get_contents($fileInfo['path']);
-                    break;
-                case 'hbt':
-                    $layoutName = substr($fileInfo['file'],0,-4);
-                    $results[$fileInfo['subPath']]['templates'][$layoutName] = file_get_contents($fileInfo['path']);
-                    // $results[$fileInfo['subPath']]['template'] = file_get_contents($fileInfo['path']);
-                    break;
-                case 'php':
-                    $viewdefs = array();
-                    require $fileInfo['path'];
-                    if ( empty($module) ) {
-                        if ( !isset($viewdefs[$fileInfo['platform']][$type][$fileInfo['subPath']]) ) {
-                            $GLOBALS['log']->error('No viewdefs for type: '.$type.' viewdefs @ '.$fileInfo['path']);
-                        } else {
-                            $results[$fileInfo['subPath']]['meta'] = $viewdefs[$fileInfo['platform']][$type][$fileInfo['subPath']];
-                        }
-                    } else {
-                        if ( !isset($viewdefs[$module][$fileInfo['platform']][$type][$fileInfo['subPath']]) ) {
-                            $GLOBALS['log']->error('No viewdefs for module: '.$module.' viewdefs @ '.$fileInfo['path']);
-                        } else {
-                            $results[$fileInfo['subPath']]['meta'] = $viewdefs[$module][$fileInfo['platform']][$type][$fileInfo['subPath']];
-                        }
-                    }
-                    break;
-            }
-        }
-        $results['_hash'] = md5(serialize($results));
         return $results;
+    }
+
+    public function getModuleClientData($type, $module)
+    {
+        $cacheFile = sugar_cached('modules/'.$module.'/clients/'.$this->platforms[0].'/'.$type.'.php');
+        if ( !file_exists($cacheFile) ) {
+            MetaDataFiles::buildModuleClientCache( $this->platforms, $type, $module );
+        }
+        $viewdefs = array();
+        $viewdefs[$module][$this->platforms[0]][$type] = array();
+        require $cacheFile;
+        
+        return $viewdefs[$module][$this->platforms[0]][$type];
     }
 
     /**
@@ -729,21 +612,24 @@ class MetaDataManager {
     /**
      * Clears the API metadata cache of all cache files
      * 
+     * @param bool $deleteModuleClientCache Should we also delete the client file cache of the modules
      * @static
      */
-    public static function clearAPICache(){
+    public static function clearAPICache( $deleteModuleClientCache = true ){
+        if ( $deleteModuleClientCache ) {
+            // Delete this first so there is no race condition between deleting a metadata cache
+            // and the module client cache being stale.
+            MetaDataFiles::clearModuleClientCache();
+        }
+
         $metadataFiles = glob(sugar_cached('api/metadata/').'*');
         if ( is_array($metadataFiles) ) {
             foreach ( $metadataFiles as $metadataFile ) {
                 // This removes the file and the reference from the map. This does
                 // NOT save the file map since that would be expensive in a loop
                 // of many deletes.
-                SugarAutoLoader::unlink($metadataFile);
+                unlink($metadataFile);
             }
-            
-            // This saves the map. Once. Instead of a bunch of times in the loop
-            // above.
-            SugarAutoLoader::saveMap();
         }
     }
 }

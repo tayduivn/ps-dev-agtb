@@ -46,6 +46,7 @@ class RestMetadataViewDefsTest extends RestTestBase {
                 SugarAutoLoader::delFromMap($dirname);
             }
         }
+        SugarAutoLoader::saveMap();
 
         parent::tearDown();
     }
@@ -68,6 +69,7 @@ class RestMetadataViewDefsTest extends RestTestBase {
      * @group rest
      */
     public function testDefaultPortalViewMetaData() {
+        $this->_clearMetadataCache();
         $restReply = $this->_restCall('metadata?type_filter=modules&module_filter=Cases&platform=portal');
         $this->assertTrue(empty($restReply['reply']['modules']['Cases']['views']['ghostrider']), "Test file found unexpectedly");
     }
@@ -78,7 +80,9 @@ class RestMetadataViewDefsTest extends RestTestBase {
     public function testAdditionalPortalLayoutMetaData() {
         SugarAutoLoader::ensureDir(dirname($this->testMetaDataFiles['contacts']));
         SugarAutoLoader::put($this->testMetaDataFiles['contacts'], "<?php\n\$viewdefs['Contacts']['portal']['layout']['banana'] = array('yummy' => 'Banana Split');", true);
+        SugarAutoLoader::saveMap();
 
+        $this->_clearMetadataCache();
         $restReply = $this->_restCall('metadata?type_filter=modules&module_filter=Contacts&platform=portal');
         $this->assertEquals('Banana Split',$restReply['reply']['modules']['Contacts']['layouts']['banana']['meta']['yummy'], "Failed to retrieve all layout metadata");
     }
@@ -89,9 +93,12 @@ class RestMetadataViewDefsTest extends RestTestBase {
     public function testAdditionalPortalViewMetaData() {
         SugarAutoLoader::ensureDir(dirname($this->testMetaDataFiles['cases']));
         SugarAutoLoader::put($this->testMetaDataFiles['cases'], "<?php\n\$viewdefs['Cases']['portal']['view']['ghostrider'] = array('pattern' => 'Full');", true);
+        SugarAutoLoader::saveMap();
 
+        $this->_clearMetadataCache();
         $restReply = $this->_restCall('metadata?type_filter=modules&module_filter=Cases&platform=portal');
         $this->assertEquals('Full',$restReply['reply']['modules']['Cases']['views']['ghostrider']['meta']['pattern'], "Failed to retrieve all view metadata");
+
     }
     //END SUGARCRM flav=ent ONLY
 
