@@ -97,7 +97,7 @@ describe("Base.Layout.Modal", function() {
 
 
     it("should create dynamic components at the event trigger time", function(){
-        var expectedLayout = 'popup-list',
+        var expectedLayout = 'list',
             options = {
                 'showEvent' : 'app:layout:modal:open'
             },
@@ -109,12 +109,10 @@ describe("Base.Layout.Modal", function() {
             meta : options,
             layout: parent
         });
-        var comp = {},
-            def = {};
-        layout._placeComponent(comp, def);
+
         //Add one layout component
         parent.trigger('app:layout:modal:open', {
-            components: [ {layout: expectedLayout} ],
+            components: [ {view: expectedLayout} ],
             context: { module: expectedModule }
         });
         var actualLayout = layout._components[layout._components.length-1].options.name,
@@ -128,7 +126,7 @@ describe("Base.Layout.Modal", function() {
 
         //Add two components
         var previousLayout = expectedLayout,
-            expectedComponent = [ {layout: 'test-list'}, {view: 'test'} ];
+            expectedComponent = [ {view: 'test-list'}, {view: 'test'} ];
         parent.trigger('app:layout:modal:open', {
             components: expectedComponent,
             context: { module: expectedModule }
