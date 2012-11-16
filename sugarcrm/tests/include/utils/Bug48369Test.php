@@ -53,7 +53,7 @@ class SugarWidgetFieldCustomName extends SugarWidgetFieldName
 }
 EOQ;
 
-        SugarAutoLoader::addToMap('custom/include/generic/SugarWidgets/SugarWidgetFieldcustomname.php', false);
+        SugarAutoLoader::addToMap('custom/include/generic/SugarWidgets/SugarWidgetFieldcustomname.php', true);
         file_put_contents('custom/include/generic/SugarWidgets/SugarWidgetFieldcustomname.php', $contents);
     }
 
