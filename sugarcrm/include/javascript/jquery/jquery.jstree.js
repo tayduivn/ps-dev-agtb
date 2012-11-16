@@ -1423,13 +1423,13 @@
 	$.jstree.plugin("themes", {
 		__init : function () { 
 			this.get_container()
-                // REMOVED so jsTree does not try to load its own CSS over our styleguide css
-                //.bind("init.jstree", $.proxy(function () {
-                //		var s = this._get_settings().themes;
-                //		this.data.themes.dots = s.dots;
-                //		this.data.themes.icons = s.icons;
-                //		this.set_theme(s.theme, s.url);
-                //	}, this))
+                .bind("init.jstree", $.proxy(function () {
+                		var s = this._get_settings().themes;
+                		this.data.themes.dots = s.dots;
+                		this.data.themes.icons = s.icons;
+                        // REMOVED so jsTree does not try to load its own CSS over our styleguide css
+                		//this.set_theme(s.theme, s.url);
+                	}, this))
 				.bind("loaded.jstree", $.proxy(function () {
 						// bound here too, as simple HTML tree's won't honor dots & icons otherwise
 						if(!this.data.themes.dots) { this.hide_dots(); }

@@ -178,7 +178,7 @@ describe("The forecastsConfigCategories view", function(){
 
     describe("the forecast_category radios", function() {
         beforeEach(function() {
-            testStub = sinon.stub(app.view.View.prototype, "_renderHtml");
+            testStub = sinon.stub(app.view.View.prototype, "_render");
             addHandlerStub = sinon.stub(view, "_addForecastCategorySelectionHandler");
         });
 
@@ -188,7 +188,7 @@ describe("The forecastsConfigCategories view", function(){
         });
 
         it("should have a handler to do the necessary actions when a bucket type is selected", function() {
-            view._renderHtml({}, {});
+            view._render();
             expect(testStub).toHaveBeenCalled();
             expect(addHandlerStub).toHaveBeenCalled();
         });

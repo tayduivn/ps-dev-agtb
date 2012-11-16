@@ -47,7 +47,7 @@ class TemplateImage extends TemplateText{
 		return $def;	
 	}
 	
-	function __construct()
+	public function __construct()
 	{
 		$this->vardef_map['border'] = 'ext1';
 		$this->vardef_map['width'] = 'ext2';

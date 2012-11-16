@@ -1,3 +1,14 @@
+/**
+ * Events Triggered
+ *
+ * forecasts:commitButtons:disabled
+ *      on: context.forecasts
+ *      by: change:selectedUser, change:selectedTimePeriod
+ *
+ * modal:forecastsTabbedConfig:open - to cause modal.js to pop up
+ *      on: layout
+ *      by: triggerConfigModal()
+ */
 ({
 
     /**
@@ -22,12 +33,24 @@
         "click a[id=commit_forecast]" : "triggerCommit",
         "click a[id=save_draft]" : "triggerSaveDraft",
         "click a[name=forecastSettings]" : "triggerConfigModal",
-        "click a.drawerTrig" : "triggerRightColumnVisibility"
+        "click a.drawerTrig" : "triggerRightColumnVisibility",
+        "click a[id=export]" : "triggerExport",
+        "click a[id=print]" : "triggerPrint"
     },
 
     initialize: function (options) {
         app.view.View.prototype.initialize.call(this, options);
         this.showConfigButton = (app.user.getAcls()['Forecasts'].admin == "yes");
+    },
+
+    /**
+     * Clean up any left over bound data to our context
+     */
+    unbindData : function() {
+        if(this.context.forecasts.worksheet) this.context.forecasts.worksheet.off(null, null, this);
+        if(this.context.forecasts.worksheetmanager) this.context.forecasts.worksheetmanager.off(null, null, this);
+        if(this.context.forecasts) this.context.forecasts.off(null, null, this);
+        app.view.View.prototype.unbindData.call(this);
     },
 
     /**
@@ -43,13 +66,21 @@
                 if(self.showCommitButton != oldShowButtons) {
                     self._render();
                 }
-            });
-            this.context.forecasts.on("change:commitButtonEnabled", this.commitButtonStateChangeHandler, self);
+            });           
             this.context.forecasts.on("change:reloadCommitButton", function(){
             	self._render();
             }, self);
             this.context.forecasts.worksheet.on("change", this.showSaveButton, self);
             this.context.forecasts.worksheetmanager.on("change", this.showSaveButton, self);
+            this.context.forecasts.on("forecasts:forecastcommitbuttons:triggerCommit", this.triggerCommit, self);
+            this.context.forecasts.on("change:selectedUser", function(){
+            	this.context.forecasts.trigger("forecasts:commitButtons:disabled");
+            }, this);
+            this.context.forecasts.on("change:selectedTimePeriod", function(){
+            	this.context.forecasts.trigger("forecasts:commitButtons:disabled");
+            }, this);
+            this.context.forecasts.on("forecasts:commitButtons:enabled", this.enableCommitButton, this);
+            this.context.forecasts.on("forecasts:commitButtons:disabled", this.disableCommitButton, this);
         }
     },
 
@@ -77,8 +108,8 @@
     	
 		_.each(worksheet.models, function(model, index){
 			var isDirty = model.get("isDirty");
-			if(typeof(isDirty) == "boolean" && isDirty ){
-				self.context.forecasts.set({commitButtonEnabled: true});
+			if(_.isBoolean(isDirty) && isDirty){
+				self.enableCommitButton();
 				self.$el.find('a[id=save_draft]').removeClass('disabled');
 				//if something in the worksheet is dirty, we need to flag the entire worksheet as dirty.
 				worksheet.isDirty = true;
@@ -86,20 +117,26 @@
 		});
     	
     },
-
+    
     /**
-     * Event Handler for when the context commitButtonEnabled variable changes
-     * @param context
-     * @param commitButtonEnabled boolean value for the changed commitButtonEnabled from the context
+     * Event handler to disable/reset the commit/save button
      */
-    commitButtonStateChangeHandler: function(context, commitButtonEnabled){
+    disableCommitButton: function(){
     	var commitbtn =  this.$el.find('#commit_forecast');
-    	if(commitButtonEnabled){
-    		commitbtn.removeClass("disabled");
-    	}
-    	else{
-    		commitbtn.addClass("disabled");
-    	}
+    	var savebtn = this.$el.find('#save_draft');
+    	commitbtn.addClass("disabled");
+    	savebtn.addClass("disabled");
+    	
+    	this.commitButtonEnabled = true;
+    },
+    
+    /**
+     * Event handler to disable/reset the commit button
+     */
+    enableCommitButton: function(){
+    	var commitbtn =  this.$el.find('#commit_forecast');
+    	commitbtn.removeClass("disabled");
+    	this.commitButtonEnabled = false;
     },
 
     /**
@@ -107,36 +144,38 @@
      * as long as commit button is not disabled
      */
     triggerCommit: function() {
-    	var commitbtn =  this.$el.find('#commit_forecast');
-    	var savebtn = this.$el.find('#save_draft');
-    	var worksheet = this.context.forecasts[this.context.forecasts.get("currentWorksheet")];
-    	var self = this;
-    	var modelCount = 0;
-		var saveCount = 0;
+    	var commitbtn =  this.$el.find('#commit_forecast'),
+    	savebtn = this.$el.find('#save_draft'),
+    	worksheet = this.context.forecasts[this.context.forecasts.get("currentWorksheet")],
+    	self = this,
+    	saveCount = 0;
         if(!commitbtn.hasClass("disabled")){
-    		var models = worksheet.models;
-    		_.each(models, function(model, index){
-    			var isDirty = model.get("isDirty");
-    			if(model.get("version") == 0 || (typeof(isDirty) == "boolean" && isDirty)){
-    				var values = {};
-    				modelCount++;
-                    values["draft"] = 0;
-                    values["isDirty"] = false;
-                    values["timeperiod_id"] = self.context.forecasts.get("selectedTimePeriod").id;
-        			values["current_user"] = app.user.get('id');
-        			model.set(values, {silent:true});
-    				model.url = worksheet.url.split("?")[0] + "/" + model.get("id");
-    				model.save({}, {success:function(){
-    					saveCount++;
-    					if(saveCount === modelCount){
-    						self.context.forecasts.set({reloadWorksheetFlag: true});
-    					}
-    				}});
-    				worksheet.isDirty = false;
-    			}    			    				
-    		});
-    		
-    		savebtn.addClass("disabled");
+            var models = _.filter(worksheet.models, function(model, index) {
+                return (model.get("version") == 0 || (_.isBoolean(model.get("isDirty")) && model.get("isDirty")));
+            }, this);
+            //commit each model that needs saved
+            _.each(models, function(model, index){
+            //set properties on model to aid in save
+                model.set({
+                    "draft" : 0,
+                    "isDirty" : false,
+                    "timeperiod_id" : self.context.forecasts.get("selectedTimePeriod").id,
+                    "current_user" : app.user.get('id')
+                }, {silent:true});
+                //set what url  is used for save
+                model.url = worksheet.url.split("?")[0] + "/" + model.get("id");
+                model.save({}, {success: function() {
+                    saveCount++;
+                    //if this is the last save and this is the manager worksheet, flag the worksheet to reload
+                    if(models.length === saveCount && self.context.forecasts.get("currentWorksheet") == "worksheetmanager") {
+                        self.context.forecasts.set({reloadWorksheetFlag: true});
+                    }
+                }});
+                //this worksheet is clean
+                worksheet.isDirty = false;
+            });
+
+            savebtn.addClass("disabled");
     		self.context.forecasts.set({commitForecastFlag: true});
     	}        
     },
@@ -147,13 +186,33 @@
     triggerConfigModal: function() {
         var params = {
             title: app.lang.get("LBL_FORECASTS_CONFIG_TITLE", "Forecasts"),
-            components: [{layout:"forecastsTabbedConfig"}],
-            span: 10
+            components: [{layout:"tabbedConfig"}],
+            span: 10,
+            before: {
+                hide: function() {
+                    // Check to see if we're closing modal via cancel button
+                    // We have no event passed here to get which button was clicked
+                    if(this.context.forecasts.get('saveClicked')) {
+                        // display a success message
+                        app.alert.show('success', {
+                            level: 'success',
+                            closeable: false,
+                            autoClose: true,
+                            title : app.lang.get("LBL_FORECASTS_WIZARD_SUCCESS_TITLE", "Forecasts") + ":",
+                            messages: [app.lang.get("LBL_FORECASTS_TABBED_CONFIG_SUCCESS_MESSAGE", "Forecasts")]
+                        });
+                        // call tell the metadata to sync to get the updated config's and refresh the layout
+                        app.sync();
+                    } else {
+                        // reset without a change event in case they click settings again
+                        // before refreshing the page
+                        this.context.forecasts.set({ saveClicked : false }, {silent:true});
+                    }
+                }
+            }
         };
-        var callback = function(){};
-
         if(app.user.getAcls()['Forecasts'].admin == "yes") {
-            this.layout.trigger("modal:forecastsTabbedConfig:open", params, callback);
+            this.layout.trigger("modal:forecastsTabbedConfig:open", params);
         }
     },
 
@@ -161,7 +220,6 @@
      * Handles Save Draft button being clicked
      */
     triggerSaveDraft: function() {
-        //todo: implement save draft functionality, or trigger flag on context if save is handled elsewhere
     	var savebtn = this.$el.find('#save_draft');
     	if(!savebtn.hasClass("disabled")){
     		var worksheet = this.context.forecasts[this.context.forecasts.get("currentWorksheet")];
@@ -170,22 +228,17 @@
     		var saveCount = 0;
     		_.each(worksheet.models, function(model, index){
     			var isDirty = model.get("isDirty");
-    			if(typeof(isDirty) == "boolean" && isDirty ){
+    			if(_.isBoolean(isDirty) && isDirty){
     				modelCount++;
     				model.set({draft: 1}, {silent:true});
-    				model.save({}, {success:function(){
-    					saveCount++;
-    					if(saveCount === modelCount){
-    						self.context.forecasts.set({reloadWorksheetFlag: true});
-    					}
-    				}});
+    				model.save();
     				model.set({isDirty: false}, {silent:true});
     				worksheet.isDirty = false;
     			}    			    				
     		});
-    		
-    		savebtn.addClass("disabled");
-    		this.context.forecasts.set({commitButtonEnabled: true});
+
+            savebtn.addClass("disabled");
+    		this.enableCommitButton();
     	}
     	
     },
@@ -212,6 +265,55 @@
 
         // toggle the "event" to make the chart stop rendering if the sidebar is hidden
         this.context.forecasts.set({hiddenSidebar: el.find('i').hasClass('icon-chevron-left')});
+    },
+
+    /**
+     * Trigger the export to send csv data
+     * @param evt
+     */
+    triggerExport : function(evt) {
+        var savebtn = this.$el.find('#save_draft');
+        var url = 'index.php?module=Forecasts&action=';
+        url += (this.context.forecasts.get("currentWorksheet") == 'worksheetmanager') ?  'ExportManagerWorksheet' : 'ExportWorksheet';
+        url += '&user_id=' + this.context.forecasts.get('selectedUser').id;
+        url += '&timeperiod_id=' + $("#timeperiod").val();
+        
+        if(!savebtn.hasClass("disabled")){
+            if(confirm(app.lang.get("LBL_WORKSHEET_EXPORT_CONFIRM", "Forecasts"))){
+                this.runExport(url);
+            }
+        }
+        else{
+            this.runExport(url);
+        }
+    },
+    
+    /**
+     * runExport
+     * triggers the browser to download the exported file
+     * @param url URL to the file to download
+     */
+    runExport: function(url){
+        var dlFrame = $("#forecastsDlFrame");
+        //check to see if we got something back
+        if(dlFrame.length == 0)
+        {
+            //if not, create an element
+            dlFrame = $("<iframe>");
+            dlFrame.attr("id", "forecastsDlFrame");
+            dlFrame.css("display", "none");
+            $("body").append(dlFrame);
+        }
+        dlFrame.attr("src", url);
+    },
+
+    /**
+     * Trigger print by calling window.print()
+     *
+     * @param evt
+     */
+    triggerPrint : function(evt) {
+        window.print();
     }
 
 })

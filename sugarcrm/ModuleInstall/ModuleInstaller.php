@@ -56,7 +56,7 @@ class ModuleInstaller{
 	function ModuleInstaller(){
 		$this->ms = new ModuleScanner();
 		$this->modules = get_module_dir_list();
-		$this->db = & DBManagerFactory::getInstance();
+		$this->db = DBManagerFactory::getInstance();
         include("ModuleInstall/extensions.php");
         $this->extensions = $extensions;
 	}
@@ -106,6 +106,7 @@ class ModuleInstaller{
             'enable_manifest_logichooks',
 			'post_execute',
 			'reset_opcodes',
+		    'reset_file_cache',
 		);
 
 		$total_steps += count($tasks);
@@ -1623,8 +1624,18 @@ class ModuleInstaller{
 		$this->rebuild_dashletcontainers();
 		$this->rebuild_relationships();
 		$this->rebuild_tabledictionary();
-        $this->reset_opcodes();
+		$this->reset_opcodes();
 		sugar_cache_reset();
+		$this->reset_file_cache();
+	}
+
+	function reset_file_cache()
+	{
+	    // check for upgrades
+        if(is_callable(array('SugarAutoLoader', 'buildCache'))) {
+    	    // rebuild cache after all changes
+	        SugarAutoLoader::buildCache();
+        }
 	}
 
 	/*
@@ -1770,7 +1781,7 @@ class ModuleInstaller{
 					if(is_subclass_of($mod, 'SugarBean')  && $mod->disable_vardefs == false ){
 						$GLOBALS['log']->debug( "Creating Tables Bean : $bean");
 						$mod->create_tables();
-						SugarBean::createRelationshipMeta($mod->getObjectName(), $mod->db,$mod->table_name,'',$mod->module_dir);    
+						SugarBean::createRelationshipMeta($mod->getObjectName(), $mod->db,$mod->table_name,'',$mod->module_dir);
 					}
 				}else{
 					$GLOBALS['log']->debug( "File Does Not Exist:" . $beanFiles[$class] );
@@ -2031,6 +2042,7 @@ private function dir_file_count($path){
                                 'enable_global_search',
 		                        'enable_manifest_logichooks',
 								'reset_opcodes',
+		                        'reset_file_cache',
 		);
 		$total_steps += count($tasks);
 		if(file_exists($this->base_dir . '/manifest.php')){
@@ -2101,7 +2113,8 @@ private function dir_file_count($path){
                             'disable_global_search',
 							'disable_manifest_logichooks',
 							'reset_opcodes',
-							);
+		                    'reset_file_cache',
+		            );
 		$total_steps += count($tasks); //now the real number of steps
 		if(file_exists($this->base_dir . '/manifest.php')){
 				if(!$this->silent){

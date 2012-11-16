@@ -56,12 +56,11 @@ class SAMLAuthenticateUser extends SugarAuthenticateUser{
 
 
 		if(empty($_POST['SAMLResponse']))return parent::authenticateUser($name, $password);
-		
+
 		$GLOBALS['log']->debug('have saml data.'); // JMH
 		// Look for custom versions of settings.php if it exists
-
-		require_once('modules/Users/authentication/SAMLAuthenticate/lib/onelogin/saml.php');
-        require(get_custom_file_if_exists('modules/Users/authentication/SAMLAuthenticate/settings.php'));
+		require('modules/Users/authentication/SAMLAuthenticate/lib/onelogin/saml.php');
+        SugarAutoLoader::requireWithCustom('modules/Users/authentication/SAMLAuthenticate/settings.php');
 
         $samlresponse = new SamlResponse($settings, $_POST['SAMLResponse']);
 
@@ -103,8 +102,8 @@ class SAMLAuthenticateUser extends SugarAuthenticateUser{
 		}
 		return '';
 	}
-	
-	
+
+
 	/**
 	* Updates the custom fields listed in settings->saml_settings['update'] in our
 	* db records with the data from the xml in the saml assertion. Every field
@@ -135,9 +134,9 @@ class SAMLAuthenticateUser extends SugarAuthenticateUser{
 		$xmlDoc = $samlresponse->xml;
 		$xpath = new DOMXpath($xmlDoc);
 		$GLOBALS['log']->debug("Created xpath object."); // JMH
-		
+
 		$customFieldUpdated = false;
-		
+
 		foreach ($customFields as $field)
 		{
 			$GLOBALS['log']->debug("Top of fields loop with $field."); // JMH
@@ -163,10 +162,10 @@ class SAMLAuthenticateUser extends SugarAuthenticateUser{
 				$GLOBALS['log']->debug("$field no nodes match this xpath: " . $settings->saml_settings['update'][$field]); // JMH
 				continue;
 			}
-			
+
 			$xmlValue = $xmlNodes->item(0)->nodeValue;
 			$GLOBALS['log']->debug("$field xpath returned $xmlValue"); // JMH
-			
+
 			if ($customFieldValue != $xmlValue)
 			{
 				// need to update our user record.
@@ -175,19 +174,19 @@ class SAMLAuthenticateUser extends SugarAuthenticateUser{
 				$GLOBALS['log']->debug("db is out of date. setting {$field} to {$xmlValue}"); // JMH
 			}
 		}
-		
+
 		if ($customFieldUpdated)
 		{
 			$GLOBALS['log']->debug("updateCustomFields calling user->save() and returning 0"); // JMH
 			$user->save();
 			return 1;
 		}
-		
+
 		$GLOBALS['log']->debug("updateCustomFields found no fields to update. Returning -1"); // JMH
 		return -1;
 	}
-	
-	
+
+
 	/**
 	* Determines if there are custom fields to add to our select statement, and
 	* returns a comma prepended, comma-delimited list of those custom fields.
@@ -195,7 +194,7 @@ class SAMLAuthenticateUser extends SugarAuthenticateUser{
 	* @param SamlResponse $samlresponse
 	* @param SamlSettings $settings
 	* @return String $additionalFields = either empty, or ", field1[, field2, fieldn]"
-	* 
+	*
 	* Contributed by Mike Andersen, SugarCRM.
 	**/
 	function getAdditionalFieldsToSelect($samlresponse, $settings)
@@ -206,11 +205,11 @@ class SAMLAuthenticateUser extends SugarAuthenticateUser{
 		}
 		return '';
 	}
-	
-	
+
+
 	/**
 	* Returns an array of custom field names. These names are the keys in the
-	* 'update' hash in $settings->saml_settings hash. 
+	* 'update' hash in $settings->saml_settings hash.
 	* See modules/Users/authentication/SAMLAuthenticate/settings.php for details.
 	*
 	* @param SamlSettings $settings
@@ -231,8 +230,8 @@ class SAMLAuthenticateUser extends SugarAuthenticateUser{
 			return $empty;
 		}
 	}
-		
-	
+
+
 
 	/**
 	 * Creates a user with the given User Name and returns the id of that new user
@@ -255,12 +254,12 @@ class SAMLAuthenticateUser extends SugarAuthenticateUser{
 		$user->is_admin = 0;
 		$user->external_auth_only = 1;
 		$user->system_generated_password = 0;
-		
-		// Loop through the create custom fields and update their values in the 
+
+		// Loop through the create custom fields and update their values in the
 		// user object from the xml SAML response.
 		$customFields = $this->getCustomFields($settings, 'create');
   	$GLOBALS['log']->debug("number of custom fields: " . count($customFields));
-		foreach ($customFields as $field) 
+		foreach ($customFields as $field)
 		{
 			$GLOBALS['log']->debug("xpath for $field is " . $settings->saml_settings['create'][$field]);
 			$xmlNodes = $xpath->query($settings->saml_settings['create'][$field]);
@@ -276,17 +275,17 @@ class SAMLAuthenticateUser extends SugarAuthenticateUser{
 				$GLOBALS['log']->debug("No nodes match this xpath: " . $settings->saml_settings['create'][$field]);
 				continue;
 			}
-			
+
 			if ($field == 'id')
 			{
 				$user->new_with_id = true;
 			}
-			
+
 			$xmlValue = $xmlNodes->item(0)->nodeValue;
 			$GLOBALS['log']->debug("Setting $field to $xmlValue");
 			$user->$field = $xmlValue;
 		}
-		
+
   	$GLOBALS['log']->debug("finished loop - saving.");
 		$user->save();
   	$GLOBALS['log']->debug("New user id is " . $user->id);

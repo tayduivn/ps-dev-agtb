@@ -1,4 +1,5 @@
 <?php
+if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 /*********************************************************************************
  * The contents of this file are subject to the SugarCRM Enterprise End User
  * License Agreement ("License") which can be viewed at
@@ -26,13 +27,12 @@
  * by SugarCRM are Copyright (C) 2004-2006 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 require_once('include/MVC/View/views/view.popup.php');
-class ReportsViewPopup extends ViewPopup{
+class ReportsViewPopup extends ViewPopup
+{
 	var $type ='list';
-	function ViewPopup(){
-		parent::SugarView();
-	}
 
-	function display(){
+	function display()
+	{
 		global $popupMeta, $mod_strings;
 
         if(($this->bean instanceOf SugarBean) && !$this->bean->ACLAccess('list')){
@@ -40,44 +40,25 @@ class ReportsViewPopup extends ViewPopup{
             sugar_cleanup(true);
         }
 
-		if(isset($_REQUEST['metadata']) && strpos($_REQUEST['metadata'], "..") !== false)
-			die("Directory navigation attack denied.");
-		if(!empty($_REQUEST['metadata']) && $_REQUEST['metadata'] != 'undefined' && file_exists('modules/' . $this->module . '/metadata/' . $_REQUEST['metadata'] . '.php')) // if custom metadata is requested
-			require_once('modules/' . $this->module . '/metadata/' . $_REQUEST['metadata'] . '.php');
-		elseif(file_exists('custom/modules/' . $this->module . '/metadata/popupdefs.php'))
-	    	require_once('custom/modules/' . $this->module . '/metadata/popupdefs.php');
-	    elseif(file_exists('modules/' . $this->module . '/metadata/popupdefs.php'))
-	    	require_once('modules/' . $this->module . '/metadata/popupdefs.php');
-
-	    if(!empty($popupMeta) && !empty($popupMeta['listviewdefs'])){
-	    	if(is_array($popupMeta['listviewdefs'])){
-	    		//if we have an array, then we are not going to include a file, but rather the
-	    		//listviewdefs will be defined directly in the popupdefs file
-	    		$listViewDefs[$this->module] = $popupMeta['listviewdefs'];
-	    	}else{
-	    		//otherwise include the file
-	    		require_once($popupMeta['listviewdefs']);
-	    	}
-	    }elseif(file_exists('custom/modules/' . $this->module . '/metadata/listviewdefs.php')){
-			require_once('custom/modules/' . $this->module . '/metadata/listviewdefs.php');
-		}elseif(file_exists('modules/' . $this->module . '/metadata/listviewdefs.php')){
-			require_once('modules/' . $this->module . '/metadata/listviewdefs.php');
+		if(isset($_REQUEST['metadata']) && strpos($_REQUEST['metadata'], "..") !== false) {
+		    ACLController::displayNoAccess();
+		    sugar_cleanup(true);
 		}
 
-		//check for searchdefs as well
-		if(empty($searchdefs) && file_exists('custom/modules/'.$this->module.'/metadata/searchdefs.php')){
-			require_once('custom/modules/'.$this->module.'/metadata/searchdefs.php');
-		}elseif(!empty($popupMeta) && !empty($popupMeta['searchdefs'])){
-	    	if(is_array($popupMeta['searchdefs'])){
-	    		//if we have an array, then we are not going to include a file, but rather the
-	    		//searchdefs will be defined directly in the popupdefs file
-	    		$searchdefs[$this->module]['layout']['advanced_search'] = $popupMeta['searchdefs'];
-	    	}else{
-	    		//otherwise include the file
-	    		require_once($popupMeta['searchdefs']);
-	    	}
-	    }else if(empty($searchdefs) && file_exists('modules/'.$this->module.'/metadata/searchdefs.php')){
-	    	require_once('modules/'.$this->module.'/metadata/searchdefs.php');
+		$popupMeta = SugarAutoLoader::loadPopupMeta($this->module, isset($_REQUEST['metadata'])?$_REQUEST['metadata']:null);
+
+		$defs = $this->loadWithPopup('listviewdefs');
+		if(is_array($defs)) {
+		    $listViewDefs[$this->module] = $defs;
+		} elseif(!empty($defs)) {
+		    require $defs;
+		}
+
+		$defs = $this->loadWithPopup('searchdefs');
+		if(is_array($defs)) {
+			$searchdefs[$this->module]['layout']['advanced_search'] = $defs;
+		} elseif(!empty($defs)) {
+			require $defs;
 		}
 
         if(!empty($this->bean) && isset($_REQUEST[$this->module.'2_'.strtoupper($this->bean->object_name).'_offset'])) {//if you click the pagination button, it will populate the search criteria here
@@ -92,10 +73,10 @@ class ReportsViewPopup extends ViewPopup{
             }
         }
 
-		if(file_exists('modules/' . $this->module . '/Popup_picker.php')){
-			require_once('modules/' . $this->module . '/Popup_picker.php');
-		}else{
-			require_once('include/Popups/Popup_picker.php');
+		foreach(SugarAutoLoader::existing('modules/' . $this->module . '/Popup_picker.php',
+		    'include/Popups/Popup_picker.php') as $file) {
+		    require_once $file;
+		    break;
 		}
 
 		$popup = new Popup_Picker();
@@ -103,4 +84,3 @@ class ReportsViewPopup extends ViewPopup{
 		echo $popup->process_page();
 	}
 }
-?>

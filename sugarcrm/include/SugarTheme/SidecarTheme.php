@@ -47,12 +47,33 @@ class SidecarTheme
     private $paths;
     private $bootstrapCssName = 'bootstrap.css';
 
-    function __construct($client = 'base', $themeName = 'default')
+    function __construct($client = 'base', $themeName = null)
     {
         $this->myClient = $client;
-        $this->myTheme = $themeName;
 
+        // Get user theme if the themeName isn't defined
+        if (!$themeName || $themeName == '') {
+            $themeName = $this->getUserTheme();
+        }
+        $this->myTheme = $themeName;
         $this->paths = $this->makePaths($client, $themeName);
+    }
+
+    /**
+     * Get the user preferred theme
+     *      * @return string themeName
+     */
+    private function getUserTheme() {
+        if(isset($_COOKIE['sugar_user_theme']) && $_COOKIE['sugar_user_theme'] != '') {
+            return $_COOKIE['sugar_user_theme'];
+        }
+        else if(isset($_SESSION['authenticated_user_theme']) && $_SESSION['authenticated_user_theme'] != '')	{
+            return $_SESSION['authenticated_user_theme'];
+        }
+        else {
+            global $sugar_config;
+            return $sugar_config['default_theme'];
+        }
     }
 
     /**
@@ -75,10 +96,11 @@ class SidecarTheme
             // We compile it if a we have the custom theme in the file system in /custom/themes or /themes
             $customThemeVars = $this->paths['custom'] . 'variables.less';
             $baseThemeVars = $this->paths['base'] . 'variables.less';
-            if ( file_exists($customThemeVars) || file_exists($baseThemeVars) ) {
-                 $hash = $this->compileTheme();
+            if ( SugarAutoLoader::fileExists($customThemeVars) || SugarAutoLoader::fileExists($baseThemeVars) ) {
+                $this->compileTheme();
                 $cacheCSS = $this->paths['cache'].$hash.".css";
-            } else {
+            }
+            else {
                 // Otherwise we compile the default theme if it exists
                 $clientDefaultTheme = new SidecarTheme($this->myClient, 'default');
                 $hash = $clientDefaultTheme->compileTheme();
@@ -184,7 +206,9 @@ class SidecarTheme
         }
         //Relative path from /cache/themes/clients/PLATFORM/THEMENAME/bootstrap.css
         //              to   /styleguide/assets/
-        $variables['baseUrl'] = '"../../../../../styleguide/assets"';
+        if (!isset($variables['baseUrl'])) {
+            $variables['baseUrl'] = '"../../../../../styleguide/assets"';
+        }
 
         try {
             $css = $less->parse($variables);
@@ -232,6 +256,8 @@ class SidecarTheme
 
         if ($variablesLess) {
             if (!$split) {
+                // Parses the mixins defs     @varName:      mixinName;
+                $output = array_merge($output, $this->parseLessVars("/@([^:|@]+):(\s+)([^\#|@|\(|\"]*?);/", $variablesLess));
                 // Parses the hex colors     @varName:      #aaaaaa;
                 $output = array_merge($output, $this->parseLessVars("/@([^:|@]+):(\s+)(\#.*?);/", $variablesLess));
                 // Parses the rgba colors     @varName:      rgba(0,0,0,0);
@@ -241,6 +267,9 @@ class SidecarTheme
                 // Parses the backgrounds     @varNamePath:      "./path/to/img.jpg";
                 $output = array_merge($output, $this->parseLessVars("/@([^:|@]+Path):(\s+)(\".*?\");/", $variablesLess));
             } else {
+                // Parses the mixins defs     @varName:      mixinName;
+                $output['mixins'] = $this->parseLessVars("/@([^:|@]+):(\s+)([^\#|@|\(|\"]*?);/", $variablesLess, true);
+                // Parses the hex colors     @varName:      #aaaaaa;
                 $output['hex'] = $this->parseLessVars("/@([^:|@]+):(\s+)(\#.*?);/", $variablesLess, true);
                 // Parses the rgba colors     @varName:      rgba(0,0,0,0);
                 $output['rgba'] = $this->parseLessVars("/@([^:|@]+):(\s+)(rgba\(.*?\));/", $variablesLess, true);

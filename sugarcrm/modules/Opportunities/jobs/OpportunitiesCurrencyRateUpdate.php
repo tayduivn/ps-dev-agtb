@@ -59,19 +59,24 @@ class OpportunitiesCurrencyRateUpdate extends CurrencyRateUpdateAbstract
      */
     public function doCustomUpdateRate($table, $column, $currencyId)
     {
+        // get the conversion rate
+        $rate = $this->db->getOne(sprintf("SELECT conversion_rate FROM currencies WHERE id = '%s'", $currencyId));
+
         $stages = $this->getClosedStages();
 
         // setup SQL statement
-        $query = sprintf("UPDATE currencies c, %s t SET t.%s = c.conversion_rate
-        WHERE t.sales_stage NOT IN ('%s')
-        AND c.id = '%s' and c.id = t.currency_id",
+        $query = sprintf("UPDATE %s SET %s = %d
+        WHERE sales_stage NOT IN ('%s')
+        AND currency_id = '%s'",
             $table,
             $column,
+            $rate,
             implode("','",$stages),
             $currencyId
         );
         // execute
-        $this->db->query($query, true, string_format($GLOBALS['app_strings']['ERR_DB_QUERY'],array('OpportunitiesCurrencyRateUpdate',$query)));
+        $this->db->query($query, true,
+string_format($GLOBALS['app_strings']['ERR_DB_QUERY'],array('OpportunitiesCurrencyRateUpdate',$query)));
         return true;
     }
 

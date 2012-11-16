@@ -56,17 +56,19 @@ class TestCustomAction extends AbstractAction{
 }
 EOQ;
         if (!is_dir("custom/" . ActionFactory::$action_directory)) {
-            sugar_mkdir("custom/" . ActionFactory::$action_directory, null, true);
+            SugarAutoLoader::ensureDir("custom/" . ActionFactory::$action_directory);
             $this->removeCustomDir = true;
         }
-        file_put_contents("custom/" . ActionFactory::$action_directory . "/testCustomAction.php", $actionContent);
+        SugarAutoLoader::put("custom/" . ActionFactory::$action_directory . "/testCustomAction.php", $actionContent);
     }
 
     protected function removeCustomAction()
     {
-        unlink("custom/" . ActionFactory::$action_directory . "/testCustomAction.php");
-        if ($this->removeCustomDir)
+        SugarAutoLoader::unlink("custom/" . ActionFactory::$action_directory . "/testCustomAction.php");
+        if ($this->removeCustomDir) {
             rmdir("custom/" . ActionFactory::$action_directory);
+            SugarAutoLoader::delFromMap("custom/" . ActionFactory::$action_directory);
+        }
     }
 
     public function testGetNewAction()

@@ -21,10 +21,6 @@
     {{/each}}
     </tbody>
     <tfoot id="summary">
-    <tr id="included_totals">
-    </tr>
-    <tr id="overall_totals" class="overall">
-    </tr>
     </tfoot>
 </table>
 {{/each}}

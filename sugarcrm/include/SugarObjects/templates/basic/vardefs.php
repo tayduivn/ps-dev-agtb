@@ -67,6 +67,9 @@ $vardefs = array(
 	    'comment' => 'Date record created',
 	    'enable_range_search' => true,
 	  	'options' => 'date_range_search_dom',
+	    'studio' => array(
+	        'portaleditview' => false, // Bug58408 - hide from Portal edit layout
+	    ),
 	  ),
 	  'date_modified' =>
 	  array (
@@ -76,6 +79,9 @@ $vardefs = array(
 	    'group'=>'modified_by_name',
 	    'comment' => 'Date record last modified',
 	    'enable_range_search' => true,
+	      'studio' => array(
+	          'portaleditview' => false, // Bug58408 - hide from Portal edit layout
+	    ),
 	    'options' => 'date_range_search_dom',
 	  ),
 		'modified_user_id' =>

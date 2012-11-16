@@ -14,6 +14,7 @@
         app.view.View.prototype.initialize.call(this, options);
         this.meta.type = 'edit'; // will use edit sugar fields
         this.template = app.template.get("edit");
+        this.fallbackFieldTemplate = "edit";
         this.context.off("subnav:save", null, this);
         this.context.on("subnav:save", this.saveModel, this);
     },
@@ -24,9 +25,10 @@
             currentUserAttributes = {id: app.user.get('id')}; 
             self.loadCurrentUser(currentUserAttributes, function(data) {
                 if(data) {
+                    app.user.addSalutationToFullName(data);
                     self.setModelAndContext(data);
                     app.view.View.prototype.render.call(self);
-                    self.$('a.password').text(app.lang.get('LBL_CONTACT_EDIT_PASSWORD_LNK_TEXT'))
+                    self.$('a.password').text(app.lang.get('LBL_CONTACT_EDIT_PASSWORD_LNK_TEXT'));
                     self.renderSubnav(data);
                 } 
             });
@@ -54,7 +56,15 @@
         if (self.context.get('subnavModel')) {
             fullName = data.name ? data.full_name : data.first_name +' '+data.last_name;
             self.context.get('subnavModel').set({
-                'title': fullName
+                'title': fullName,
+                'meta': self.meta
+            });
+            
+            // Bypass subnav click handler
+            $('.subnav').find('[name=save_button]').on('click', function(e) {
+                e.stopPropagation();
+                e.preventDefault();
+                self.saveModel();
             });
         }
     },
@@ -77,12 +87,16 @@
         options = {
             success: function() {
                 app.alert.dismiss('save_profile_edit_view');
+                self.checkFileFieldsAndProcessUpload(self.model, {
+                    success: function () {
 
-                var langKey = self.model.get('preferred_language');
-                if (langKey && langKey != app.lang.getLanguage())
-                    app.lang.setLanguage(langKey,{},{noUserUpdate: true});
+                        var langKey = self.model.get('preferred_language');
+                        if (langKey && langKey != app.lang.getLanguage())
+                            app.lang.setLanguage(langKey,{},{noUserUpdate: true});
 
-                app.router.navigate('profile', {trigger: true});
+                        app.router.navigate('profile', {trigger: true});
+                    }
+                });
             },
             error: function(error) {
                 app.alert.dismiss('save_profile_edit_view');

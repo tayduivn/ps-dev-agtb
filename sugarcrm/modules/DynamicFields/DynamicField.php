@@ -28,7 +28,7 @@ class DynamicField {
     var $use_existing_labels = false; // this value is set to true by install_custom_fields() in ModuleInstaller.php; everything else expects it to be false
     var $base_path = "";
 
-    function DynamicField($module = '') {
+    public function __construct($module = '') {
         $this->module = (! empty ( $module )) ? $module :( (isset($_REQUEST['module']) && ! empty($_REQUEST['module'])) ? $_REQUEST ['module'] : '');
         $this->base_path = "custom/Extension/modules/{$this->module}/Ext/Vardefs";
     }
@@ -343,12 +343,9 @@ class DynamicField {
                 $name = $field['name'];
                 if (empty($this->bean->$name)) { //Don't load the relationship twice
                     $id_name = $field['id_name'];
-                    if(isset($beanList[ $related_module])){
-                        $class = $beanList[$related_module];
-
-                        if(file_exists($beanFiles[$class]) && isset($this->bean->$name)){
-                            require_once($beanFiles[$class]);
-                            $mod = new $class();
+                    if(isset($beanList[ $related_module]) && isset($this->bean->$name)){
+                        $mod = BeanFactory::newBean($related_module);
+                        if(!empty($mod)) {
                             $mod->relDepth = $this->bean->relDepth + 1;
                             $mod->retrieve($this->bean->$id_name);
                             $this->bean->$name = $mod->name;

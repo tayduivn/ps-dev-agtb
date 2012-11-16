@@ -343,9 +343,6 @@ class RestService extends ServiceBase {
         if ( isset($_SERVER['HTTP_OAUTH_TOKEN']) ) {
             // Passing a session id claiming to be an oauth token
             $this->sessionId = $_SERVER['HTTP_OAUTH_TOKEN'];
-
-            $oauthServer = SugarOAuth2Server::getOAuth2Server();
-            $oauthServer->verifyAccessToken($this->sessionId);
         } else if ( isset($_POST['oauth_token']) ) {
             $this->sessionId = $_POST['oauth_token'];
 
@@ -359,6 +356,8 @@ class RestService extends ServiceBase {
         }
 
         if ( !empty($this->sessionId) ) {
+            $oauthServer = SugarOAuth2Server::getOAuth2Server();
+            $oauthServer->verifyAccessToken($this->sessionId);
             if ( isset($_SESSION['authenticated_user_id']) ) {
                 $valid = true;
                 $GLOBALS['current_user'] = BeanFactory::getBean('Users',$_SESSION['authenticated_user_id']);
@@ -503,17 +502,25 @@ class RestService extends ServiceBase {
 	 * @param string $etag ETag to use for this content.
 	 */
 	protected function generateETagHeader($etag){
-		header("cache-control:");
-		header('Expires: ');
-		header("ETag: " . $etag);
-		header("Pragma:");
-		if(isset($_SERVER["HTTP_IF_NONE_MATCH"])){
-			if($etag == $_SERVER["HTTP_IF_NONE_MATCH"]){
-				ob_clean();
-				header("Status: 304 Not Modified");
-				header("HTTP/1.0 304 Not Modified");
-				die();
-			}
-		}
+		// Bug 57839 - REST non-GET API must set no-cache headers in response
+        if ($_SERVER['REQUEST_METHOD'] == 'GET') {
+            header("cache-control:");
+            header('Expires: ');
+            header("ETag: " . $etag);
+            header("Pragma:");
+            if(isset($_SERVER["HTTP_IF_NONE_MATCH"])){
+                if($etag == $_SERVER["HTTP_IF_NONE_MATCH"]){
+                    ob_clean();
+                    header("Status: 304 Not Modified");
+                    header("HTTP/1.0 304 Not Modified");
+                    die();
+                }
+            }
+        } else {
+            // Force clients to not cache the request
+            header('Cache-Control: no-cache, must-revalidate');
+            header('Pragma: no-cache');
+            header('Expires: Sat, 26 Jul 1997 05:00:00 GMT');
+        }
 	}
 }

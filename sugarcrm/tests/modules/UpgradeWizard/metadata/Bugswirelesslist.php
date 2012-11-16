@@ -34,6 +34,7 @@ $object_name = '<object_name>';
 
 $listViewDefs[$module_name] = array(
 	'BUG_NUMBER' => array(
+        'name' => 'Garbage', // Test this is removed bug 57414
 		'width' => '5',
 		'label' => 'LBL_NUMBER',
 		'link' => true,
@@ -62,8 +63,7 @@ $listViewDefs[$module_name] = array(
 	'ASSIGNED_USER_NAME' => array(
 		'width' => '9',
 		'label' => 'LBL_ASSIGNED_USER',
-        'default' => false,
-        'enabled' => true),
+        'default' => false), // Test default false, enabled true bug 57414
 
 );
 ?>

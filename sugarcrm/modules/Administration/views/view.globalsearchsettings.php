@@ -101,12 +101,7 @@ class AdministrationViewGlobalsearchsettings extends SugarView
         $sugar_smarty->assign('justRequestedAScheduledIndex', $justRequestedAScheduledIndex);
         //End FTS
         //END SUGARCRM flav=pro ONLY
-        $tpl = 'modules/Administration/templates/GlobalSearchSettings.tpl';
-        if(file_exists('custom/' . $tpl))
-        {
-           $tpl = 'custom/' . $tpl;
-        }
-        echo $sugar_smarty->fetch($tpl);
+        echo $sugar_smarty->fetch(SugarAutoLoader::existingCustomOne('modules/Administration/templates/GlobalSearchSettings.tpl'));
 
     }
 

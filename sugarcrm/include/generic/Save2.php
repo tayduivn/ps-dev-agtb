@@ -114,31 +114,16 @@ else {
  		$where_clauses = '';
  		require_once('include/SearchForm/SearchForm2.php');
 
- 		if(file_exists('custom/modules/'.$module.'/metadata/metafiles.php')){
-            require('custom/modules/'.$module.'/metadata/metafiles.php');
-        }elseif(file_exists('modules/'.$module.'/metadata/metafiles.php')){
-            require('modules/'.$module.'/metadata/metafiles.php');
-        }
+ 		$searchdefs_file = SugarAutoLoader::loadWithMetafiles($module, 'searchdefs');
+ 		if($searchdefs_file) {
+ 			require $searchdefs_file;
+ 		}
 
-        if (file_exists('custom/modules/'.$module.'/metadata/searchdefs.php'))
-        {
-        	require_once('custom/modules/'.$module.'/metadata/searchdefs.php');
-        }
-        elseif (!empty($metafiles[$module]['searchdefs']))
-        {
-        	require_once($metafiles[$module]['searchdefs']);
-        }
-        elseif (file_exists('modules/'.$module.'/metadata/searchdefs.php'))
-        {
-        	require_once('modules/'.$module.'/metadata/searchdefs.php');
-        }
+ 		$searchfields_file = SugarAutoLoader::loadWithMetafiles($module, 'SearchFields', 'searchfields');
+ 		if($searchfields_file) {
+ 			require $searchfields_file;
+ 		}
 
-        if(!empty($metafiles[$module]['searchfields'])){
-        	require_once($metafiles[$module]['searchfields']);
-        }
-        elseif(file_exists('modules/'.$module.'/metadata/SearchFields.php')){
-        	require_once('modules/'.$module.'/metadata/SearchFields.php');
-        }
         if(!empty($searchdefs) && !empty($searchFields)) {
         	$searchForm = new SearchForm($seed, $module);
 	        $searchForm->setup($searchdefs, $searchFields, 'SearchFormGeneric.tpl');

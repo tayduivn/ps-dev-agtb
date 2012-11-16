@@ -25,7 +25,7 @@ class ViewExecFunction extends ViewAjax
 {
     var $vars = array("tmodule", "id", "params", "function");
 
-    function __construct()
+    public function __construct()
     {
         parent::ViewAjax();
         foreach($this->vars as $var)

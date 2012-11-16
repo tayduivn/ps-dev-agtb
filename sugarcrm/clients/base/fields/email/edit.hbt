@@ -1,4 +1,3 @@
-         <div class="existing">
             {{#each value}}
             <div class="control-group email" data-emailaddress="{{email_address}}">
                <div class="span6">
@@ -20,7 +19,6 @@
                </div>
             </div>
             {{/each}}
-         </div>
          <div class="control-group email">
             <div class="span6 pull-left">
                   <div class="input-append widget">
@@ -34,7 +32,4 @@
                   <a href="javascript:void(0)" class="btn addEmail" rel="tooltip" data-original-title="Add email"><i class="icon-plus"></i></a>
                </div>
             </div>
-         </div>
-         <div class="help-group control-group">
-            <p class="help-block"></p>
          </div>

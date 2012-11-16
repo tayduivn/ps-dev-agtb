@@ -360,15 +360,13 @@ class DependencyManager
         else {
         */
         $dependencies = array($module => array());
-        $location = "modules/$module/metadata/dependencydefs.php";
-        foreach (array(
-                     $location,
-                     "custom/{$location}",
-                     "custom/modules/{$module}/Ext/Dependencies/deps.ext.php") as $loc)
+        foreach (SugarAutoLoader::existingCustom("modules/$module/metadata/dependencydefs.php") as $loc)
         {
-            if (is_file($loc)) {
-                include $loc;
-            }
+            require $loc;
+        }
+        $defs = SugarAutoLoader::loadExtension("dependencies", $module);
+        if($defs) {
+            require $defs;
         }
         /*  //More disabled cache code
             $out = "<?php\n // created: " . date('Y-m-d H:i:s') . "\n"

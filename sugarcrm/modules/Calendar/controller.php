@@ -1,25 +1,25 @@
 <?php
 if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 /*********************************************************************************
- *The contents of this file are subject to the SugarCRM Professional End User License Agreement 
- *("License") which can be viewed at http://www.sugarcrm.com/EULA.  
- *By installing or using this file, You have unconditionally agreed to the terms and conditions of the License, and You may 
- *not use this file except in compliance with the License. Under the terms of the license, You 
- *shall not, among other things: 1) sublicense, resell, rent, lease, redistribute, assign or 
- *otherwise transfer Your rights to the Software, and 2) use the Software for timesharing or 
- *service bureau purposes such as hosting the Software for commercial gain and/or for the benefit 
- *of a third party.  Use of the Software may be subject to applicable fees and any use of the 
- *Software without first paying applicable fees is strictly prohibited.  You do not have the 
- *right to remove SugarCRM copyrights from the source code or user interface. 
+ *The contents of this file are subject to the SugarCRM Professional End User License Agreement
+ *("License") which can be viewed at http://www.sugarcrm.com/EULA.
+ *By installing or using this file, You have unconditionally agreed to the terms and conditions of the License, and You may
+ *not use this file except in compliance with the License. Under the terms of the license, You
+ *shall not, among other things: 1) sublicense, resell, rent, lease, redistribute, assign or
+ *otherwise transfer Your rights to the Software, and 2) use the Software for timesharing or
+ *service bureau purposes such as hosting the Software for commercial gain and/or for the benefit
+ *of a third party.  Use of the Software may be subject to applicable fees and any use of the
+ *Software without first paying applicable fees is strictly prohibited.  You do not have the
+ *right to remove SugarCRM copyrights from the source code or user interface.
  * All copies of the Covered Code must include on each user interface screen:
- * (i) the "Powered by SugarCRM" logo and 
- * (ii) the SugarCRM copyright notice 
+ * (i) the "Powered by SugarCRM" logo and
+ * (ii) the SugarCRM copyright notice
  * in the same form as they appear in the distribution.  See full license for requirements.
- *Your Warranty, Limitations of liability and Indemnity are expressly stated in the License.  Please refer 
+ *Your Warranty, Limitations of liability and Indemnity are expressly stated in the License.  Please refer
  *to the License for the specific language governing these rights and limitations under the License.
- *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.  
+ *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
- 
+
 require_once("modules/Calendar/CalendarUtils.php");
 
 class CalendarController extends SugarController
@@ -27,7 +27,7 @@ class CalendarController extends SugarController
 
     /**
      * Bean that is being handled by the Calendar's current action.
-     * @var SugarBean $currentBean 
+     * @var SugarBean $currentBean
      */
     protected $currentBean = null;
 
@@ -36,31 +36,31 @@ class CalendarController extends SugarController
      * Action SaveActivity
      */
     protected function action_saveactivity()
-    {    
-        $this->view = 'json';        
-        
+    {
+        $this->view = 'json';
+
         if (!$this->retrieveCurrentBean('Save')) {
             return;
         }
-        
+
         $module = $this->currentBean->module_dir;
         $bean = $this->currentBean;
         
         $path = "modules/{$bean->module_dir}/{$bean->object_name}FormBase.php";
-        if (!file_exists($path)) {
+        if (!SugarAutoLoader::fileExists($path)) {
             $GLOBALS['log']->fatal("File {$bean->object_name}FormBase.php doesn't exist");
             sugar_cleanup(true);
         }
-               
+
         require_once($path);
-        
+
         $FBObjectName = "{$bean->object_name}FormBase";
-        
+
         if (!class_exists($FBObjectName)) {
             $GLOBALS['log']->fatal("Class {$bean->object_name}FormBase doesn't exist");
             sugar_cleanup(true);
         }
-        
+
         $formBase = new $FBObjectName();
         
         $isRecurring = false;
@@ -85,7 +85,7 @@ class CalendarController extends SugarController
             if ($isRecurring) {
                 $jsonData = array_merge($jsonData, array('repeat' => $formBase->getRecurringCreated()));
             }
-            
+
             if (!empty($_REQUEST['edit_all_recurrences'])) {
                 $jsonData['edit_all_recurrences'] = 'true';
             }
@@ -97,27 +97,27 @@ class CalendarController extends SugarController
 
         $this->view_object_map['jsonData'] = $jsonData;
     }
-    
-    
+
+
     /**
      * Action QuickEdit
      */
     protected function action_quickedit()
     {
         $this->view = 'quickedit';
-        
+
         if (!$this->retrieveCurrentBean('Detail')) {
             return;
         }
 
         $this->view_object_map['currentModule'] = $this->currentBean->module_dir;
-        $this->view_object_map['currentBean'] = $this->currentBean;    
+        $this->view_object_map['currentBean'] = $this->currentBean;
 
         $editAllRecurrences = isset($_REQUEST['edit_all_recurrences']) ? $_REQUEST['edit_all_recurrences'] : false;
         $dateStart = isset($_REQUEST['date_start']) ? $_REQUEST['date_start'] : false;
         $this->view_object_map['repeatData'] = CalendarUtils::getRepeatData($this->currentBean, $editAllRecurrences, $dateStart);
     }
-    
+
     /**
      * Action Reschedule
      * Used for drag & drop
@@ -125,15 +125,15 @@ class CalendarController extends SugarController
     protected function action_reschedule()
     {
         $this->view = 'json';
-        
+
         $commit = true;
-        
+
         if (!$this->retrieveCurrentBean('Save')) {
             return;
-        }        
-        
+        }
+
         $_REQUEST['parent_name'] = $this->currentBean->parent_name;
-        
+
         $dateField = "date_start";
         if ($this->currentBean->module_dir == "Tasks") {
             $dateField = "date_due";
@@ -145,18 +145,18 @@ class CalendarController extends SugarController
             $_REQUEST['datetime'] = $date . " " . $time;
         }
         $_POST[$dateField] = $_REQUEST['datetime'];
-        
+
         if ($this->currentBean->module_dir == "Tasks" && !empty($this->currentBean->date_start)) {
             if ($GLOBALS['timedate']->fromUser($_POST['date_due'])->ts < $GLOBALS['timedate']->fromUser($this->currentBean->date_start)->ts) {
                 $this->view_object_map['jsonData'] = array(
                     'access' => 'no',
                     'errorMessage' => $GLOBALS['mod_strings']['LBL_DATE_END_ERROR'],
                 );
-                $commit = false; 
-            }   
+                $commit = false;
+            }
         }
-        
-        if ($commit) {            
+
+        if ($commit) {
             require_once('include/formbase.php');
             $this->currentBean = populateFromPost("", $this->currentBean);                
             $this->currentBean->save();        
@@ -165,22 +165,22 @@ class CalendarController extends SugarController
             $this->view_object_map['jsonData'] = CalendarUtils::getBeanDataArray($this->currentBean);
         }    
     }
-    
+
     /**
      * Action Remove
      */
     protected function action_remove()
     {
-        $this->view = 'json';        
-        
+        $this->view = 'json';
+
         if (!$this->retrieveCurrentBean('Delete')) {
             return;
         }
-                
+
         if ($this->currentBean->module_dir == "Meetings" || $this->currentBean->module_dir == "Calls") {
             if (!empty($_REQUEST['remove_all_recurrences']) && $_REQUEST['remove_all_recurrences']) {
                 CalendarUtils::markRepeatDeleted($this->currentBean);
-            }         
+            }
         }
 
         $this->currentBean->mark_deleted($_REQUEST['record']);
@@ -188,86 +188,86 @@ class CalendarController extends SugarController
         $this->view_object_map['jsonData'] = array(
             'access' => 'yes',
         );
-    
+
     }
-    
+
     /**
      * Action Resize
      * Used for drag & drop resizing
      */
     protected function action_resize()
     {
-        $this->view = 'json';        
-        
+        $this->view = 'json';
+
         if (!$this->retrieveCurrentBean('Save')) {
             return;
         }
-        
+
         require_once('include/formbase.php');
         $this->currentBean = populateFromPost("", $this->currentBean);
         $this->currentBean->save();
-        
+
         $this->view_object_map['jsonData'] = array(
             'access' => 'yes',
         );
     }
-    
-    
+
+
     /**
      * Retrieves current activity bean and checks access to action
-     * 
+     *
      * @param string $actionToCheck
      * @return bool Result of check
      */
     protected function retrieveCurrentBean($actionToCheck = false)
-    {    
-        $module = $_REQUEST['current_module'];        
+    {
+        $module = $_REQUEST['current_module'];
         $record = null;
         if (!empty($_REQUEST['record'])) {
             $record = $_REQUEST['record'];
         }
-        
-        require_once("data/BeanFactory.php");        
-        $this->currentBean = BeanFactory::getBean($module, $record);        
 
-        if (!empty($actionToCheck)) {    
+        require_once("data/BeanFactory.php");
+        $this->currentBean = BeanFactory::getBean($module, $record);
+
+        if (!empty($actionToCheck)) {
             if (!$this->currentBean->ACLAccess($actionToCheck)) {
                 $this->view = 'json';
                 $jsonData = array(
                     'access' => 'no',
                 );
                 $this->view_object_map['jsonData'] = $jsonData;
-                return false;    
+                return false;
             }
         }
-        
+
         return true;
     }
-    
+
     protected function action_getActivities()
     {
         $this->view = 'json';
-        
+
         if(!ACLController::checkAccess('Calendar', 'list', true)){
             ACLController::displayNoAccess(true);
         }
-    
+
         require_once('modules/Calendar/Calendar.php');
         $cal = new Calendar($_REQUEST['view']);
-        
+
         if (in_array($cal->view, array('day', 'week', 'month'))){
-            $cal->add_activities($GLOBALS['current_user']);    
-       
+            $cal->add_activities($GLOBALS['current_user']);
+
         } else if ($cal->view == 'shared') {
             $cal->init_shared();
-            $sharedUser = new User();    
+            $sharedUser = new User();
             foreach ($cal->shared_ids as $member) {
                 $sharedUser->retrieve($member);
                 $cal->add_activities($sharedUser);
             }
         }
         $cal->load_activities();
-        $this->view_object_map['jsonData'] = $cal->items;   
+        $this->view_object_map['jsonData'] = $cal->items;
     }
 
 }

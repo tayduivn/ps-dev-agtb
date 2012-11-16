@@ -1261,11 +1261,12 @@ EOQ;
 	    }
 	}
 
-    function generateSearchWhere($module, $query) {//this function is similar with function prepareSearchForm() in view.list.php
+    function generateSearchWhere($module, $query)
+    {//this function is similar with function prepareSearchForm() in view.list.php
         $seed = loadBean($module);
         $this->use_old_search = true;
-        if(file_exists('modules/'.$module.'/SearchForm.html')){
-            if(file_exists('modules/' . $module . '/metadata/SearchFields.php')) {
+        if(SugarAutoLoader::existing('modules/'.$module.'/SearchForm.html')){
+            if(SugarAutoLoader::existing('modules/' . $module . '/metadata/SearchFields.php')) {
                 require_once('include/SearchForm/SearchForm.php');
                 $searchForm = new SearchForm($module, $seed);
             }
@@ -1287,12 +1288,6 @@ EOQ;
         else{
             $this->use_old_search = false;
             require_once('include/SearchForm/SearchForm2.php');
-
-            if(file_exists('custom/modules/'.$module.'/metadata/metafiles.php')){
-                require('custom/modules/'.$module.'/metadata/metafiles.php');
-            }elseif(file_exists('modules/'.$module.'/metadata/metafiles.php')){
-                require('modules/'.$module.'/metadata/metafiles.php');
-            }
 
             $searchFields = $this->getSearchFields($module);
             $searchdefs = $this->getSearchDefs($module);
@@ -1318,46 +1313,22 @@ EOQ;
         }
     }
 
-    protected function getSearchDefs($module, $metafiles = array())
+    protected function getSearchDefs($module)
     {
-        if (empty($searchdefs)) {
-            // use require instead of require_once so the second call will not return empty array
-            if (file_exists('custom/modules/'.$module.'/metadata/searchdefs.php'))
-            {
-                require('custom/modules/'.$module.'/metadata/searchdefs.php');
-            }
-            elseif (!empty($metafiles[$module]['searchdefs']))
-            {
-                require($metafiles[$module]['searchdefs']);
-            }
-            elseif (file_exists('modules/'.$module.'/metadata/searchdefs.php'))
-            {
-                require('modules/'.$module.'/metadata/searchdefs.php');
-            }
-        }
+     	$searchdefs_file = SugarAutoLoader::loadWithMetafiles($module, 'searchdefs');
+ 		if($searchdefs_file) {
+ 			require $searchdefs_file;
+ 		}
 
         return isset($searchdefs) ? $searchdefs : array();
     }
 
-    protected function getSearchFields($module, $metafiles = array())
+    protected function getSearchFields($module)
     {
-        // use require instead of require_once so the second call will not return empty array
-        if (empty($searchFields)) {
-            if (file_exists('custom/modules/' . $module . '/metadata/SearchFields.php'))
-            {
-                require('custom/modules/' . $module . '/metadata/SearchFields.php');
-            }
-            elseif(!empty($metafiles[$module]['searchfields']))
-            {
-                require($metafiles[$module]['searchfields']);
-            }
-            elseif(file_exists('modules/'.$module.'/metadata/SearchFields.php'))
-            {
-                if (!isset($searchFields)) {
-                    require('modules/'.$module.'/metadata/SearchFields.php');
-                }
-            }
-        }
+     	$searchfields_file = SugarAutoLoader::loadWithMetafiles($module, 'SearchFields', 'searchfields');
+ 		if($searchfields_file) {
+ 			require $searchfields_file;
+ 		}
 
         return isset($searchFields) ? $searchFields : array();
     }

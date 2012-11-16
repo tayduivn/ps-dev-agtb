@@ -81,7 +81,7 @@ class SugarForecasting_Chart_Manager extends SugarForecasting_Chart_AbstractChar
         $opp_strings = return_module_language($current_language, 'Opportunities');
 
         // get the quota from the data
-        $quota = $this->getQuotaTotalFromData();
+        $quota = $this->getRollupQuota();
 
         // sort the data so it's in the correct order
         usort($this->dataArray, array($this, 'sortChartColumns'));
@@ -95,6 +95,7 @@ class SugarForecasting_Chart_Manager extends SugarForecasting_Chart_AbstractChar
         foreach ($this->dataArray as $data) {
             $val = $this->defaultValueArray;
 
+            $val['chart_id'] = md5($data['id']);
             $val['label'] = html_entity_decode($data['label'], ENT_QUOTES);
             $val['goalmarkervaluelabel'][] = SugarCurrency::formatAmountUserLocale($quota, $currency_id);
             $val['goalmarkervalue'][] = number_format($quota, 2, '.', '');
@@ -183,7 +184,7 @@ class SugarForecasting_Chart_Manager extends SugarForecasting_Chart_AbstractChar
     /**
      * Get the quota from the sum of all the rows in the dataset
      *
-     * @return int
+     * @return float
      */
     protected function getQuotaTotalFromData()
     {
@@ -194,6 +195,31 @@ class SugarForecasting_Chart_Manager extends SugarForecasting_Chart_AbstractChar
         }
 
         return $quota;
+    }
+
+    /**
+     * Get the roll up quota for a manager from the quota table.  If one doesn't exist it
+     * will call @see getQuotaTotalFromData to return the quota total from the worksheet dataset
+     *
+     * @return float
+     */
+    protected function getRollupQuota()
+    {
+        //get the quota data for user
+        /* @var $quota Quota */
+        $quota = BeanFactory::getBean('Quotas');
+
+        //grab user that is the target of this call to check if it is the top level manager
+        $targetedUser = BeanFactory::getBean("Users", $this->getArg('user_id'));
+
+        if(!empty($targetedUser->reports_to_id)) {
+            $quotaData = $quota->getRollupQuota($this->getArg('timeperiod_id'), $this->getArg('user_id'), true);
+            return SugarCurrency::convertAmountToBase($quotaData["amount"], $quotaData['currency_id']);
+        }
+        // get the quota from the loaded data for a manager that has no manager
+        return $this->getQuotaTotalFromData();
+
+
     }
 
     /**

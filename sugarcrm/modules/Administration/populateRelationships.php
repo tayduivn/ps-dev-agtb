@@ -42,8 +42,8 @@ $selectedTable = $json->decode(html_entity_decode($_REQUEST['selectedTable']));
 
 function traceTableRelations($table_name){
 	include ('include/modules.php') ;
-	
-	
+
+
 	global $current_user, $beanFiles;
 	global $dictionary;
 
@@ -75,9 +75,9 @@ function traceTableRelations($table_name){
 	    $dictionary = array ( ) ;
 	    require ('modules/TableDictionary.php') ;
 	    //for module installer incase we alredy loaded the table dictionary
-	    if (file_exists ( 'custom/application/Ext/TableDictionary/tabledictionary.ext.php' ))
-	    {
-	        include ('custom/application/Ext/TableDictionary/tabledictionary.ext.php') ;
+	    $ext = SugarAutoLoader::loadExtension('tabledictionary');
+	    if($ext) {
+	        include $ext;
 	    }
 	    $rel_dictionary = $dictionary ;
 	    foreach ( $rel_dictionary as $rel_name => $rel_data )

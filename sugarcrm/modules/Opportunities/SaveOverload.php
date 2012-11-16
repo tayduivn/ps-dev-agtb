@@ -23,7 +23,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 /**
  * @param Opportunity $focus        The Current Opportunity we are working with
  */
-function perform_save(&$focus){
+function perform_save($focus){
     //BEGIN SUGARCRM flav=pro ONLY
     global $app_list_strings, $timedate, $current_language;
     $app_list_strings = return_app_list_strings_language($current_language);

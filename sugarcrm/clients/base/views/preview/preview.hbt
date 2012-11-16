@@ -1,23 +1,12 @@
-<div class="row-fluid">
-    <div class="span5 tab-content">
-        {{#each meta.panels}}
-        <div class="tab-pane active">
-            <div class="block">
-                <div class="card2">
-                    <a href="javascript:void(0)" data-toggle="tab" class="actions closeSubdetail"><i class="icon-remove"></i></a>
-                    <h4>{{str "LBL_MODULE_NAME" ../model.attributes._module}}: {{../model.attributes.name}}</h4>
-                    {{#each fields}}
-                    <div class="row-fluid">
-                        <div class="span2">{{str  this.label ../../this.model.module}}</div>
-                        <div class="span10" name="{{this.name}}">
-                            {{field ../../this}}
-                        </div>
-                    </div>
-                    {{/each}}
-                </div>
-            </div>
+<div class="card2">
+{{#each meta.panels}}
+{{#each fields}}
+    <div class="row-fluid">
+        <div class="span4">{{str  this.label ../../this.model.module}}</div>
+        <div class="span8" name="{{this.name}}">
+            {{field ../../this}}
         </div>
-        {{/each}}
     </div>
+{{/each}}
+{{/each}}
 </div>
-

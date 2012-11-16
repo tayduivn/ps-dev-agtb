@@ -105,12 +105,12 @@ class DataSet_Layout extends SugarBean {
         );
 
 
-    function DataSet_Layout() {
+    public function __construct() {
         global $dictionary;
         if(isset($this->module_dir) && isset($this->object_name) && !isset($dictionary[$this->object_name])){
             require('metadata/dataset_layoutsMetaData.php');
         }
-        parent::SugarBean();
+        parent::__construct();
 
         $this->disable_row_level_security =true;
 

@@ -26,15 +26,25 @@ require_once 'include/DashletContainer/DCFactory.php';
 
 class DCFactoryTest extends Sugar_PHPUnit_Framework_TestCase
 {
-    public function testCanLoadContainerClass() 
+    protected $delete;
+
+    public function testCanLoadContainerClass()
     {
         $this->assertEquals(
             get_class(DCFactory::getContainer(null,'DCMenu')),
             'DCMenu'
             );
     }
-    
-    public function testCanLoadCustomContainerClass() 
+
+    public function tearDown()
+    {
+        if($this->delete) {
+            SugarAutoLoader::unlink($this->delete);
+            $this->delete = null;
+        }
+    }
+
+    public function testCanLoadCustomContainerClass()
     {
         $fileContents = <<<EOPHP
 <?php
@@ -44,19 +54,20 @@ require_once('include/DashletContainer/Containers/DCMenu.php');
 class CustomDCMenu extends DCMenu {}
 EOPHP;
         sugar_mkdir('custom/include/DashletContainer/Containers',null,true);
+        $this->delete = 'custom/include/DashletContainer/Containers/DCMenu.php';
         sugar_file_put_contents(
             'custom/include/DashletContainer/Containers/DCMenu.php',
             $fileContents);
-
+        SugarAutoLoader::addToMap('custom/include/DashletContainer/Containers/DCMenu.php', false);
         $this->assertEquals(
             get_class(DCFactory::getContainer(null,'DCMenu')),
             'CustomDCMenu'
             );
-        
-        unlink('custom/include/DashletContainer/Containers/DCMenu.php');
+
+
     }
-    
-    public function testDoNotLoadInvalidContainerClass() 
+
+    public function testDoNotLoadInvalidContainerClass()
     {
         $this->assertFalse(DCFactory::getContainer(null,'SomeOtherDCMenu'));
     }

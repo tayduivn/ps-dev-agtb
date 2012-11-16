@@ -1,37 +1,27 @@
 describe("Base.Layout.Modal", function() {
-    var app, view, context, ModalLayout, layout;
+    var app, view, context, layout, parent, actual;
 
     beforeEach(function() {
         app = SugarTest.app;
         context = app.context.getContext();
-        if (!app.view.layouts.ModalLayout)
-        {
-            $.ajax("../clients/base/layouts/modal/modal.js", {
-                async : false,
-                success : function(o) {
-                    ModalLayout = app.view.declareComponent("layout", "modal", null, o, null, true);
+        actual = null;
+        SugarTest.loadComponent("base", "layout", "modal");
+        SugarTest.loadComponent("base", "view", "modal-header");
+        SugarTest.loadComponent("base", "view", "modal-confirm");
+        parent = (function(){
+            return {
+                caller : {},
+                on : function(event, caller) {
+                    actual = event;
+                    this.caller[event] = caller;
+                },
+                trigger : function(event, options) {
+                    this.caller[event].call(this, options);
                 }
-            });
-        }
-
-        if (!app.view.views.ModalHeaderView)
-        {
-            $.ajax("../clients/base/views/modal-header/modal-header.js", {
-                async : false,
-                success : function(o) {
-                    app.view.declareComponent("view", "modal-header", null, o, null, true);
-                }
-            });
-        }
-
-        if (!app.view.views.ModalConfirmView)
-        {
-            $.ajax("../clients/base/views/modal-confirm/modal-confirm.js", {
-                async : false,
-                success : function(o) {
-                    app.view.declareComponent("view", "modal-confirm", null, o, null, true);
-                }
-            });
+            };
+        })();
+        if (!$.fn.modal) {
+            $.fn.modal = function(options) {};
         }
     });
 
@@ -39,73 +29,62 @@ describe("Base.Layout.Modal", function() {
         app.cache.cutAll();
         app.view.reset();
         delete Handlebars.templates;
+        $.fn.modal = null;
         layout.context = null;
         layout = null;
+        parent = null;
+        actual = null;
     });
 
     it("should delegate triggers at contruction time", function(){
-        var definedTriggerName = 'app:layout:modal:open1',
-            calledEventName = '',
+        var expected = 'app:layout:modal:open1',
             options = {
-                'meta' : {
-                    'showEvent' : definedTriggerName
-                },
-                'context' : context,
-                'layout' : {
-                    on: function(event) {
-                        calledEventName = event;
-                        sinon.stub();
-                    }
-                }
+                'showEvent' : expected
             };
-        //sinon.spy(options.layout, "on");
-        sinon.spy(context, "on");
-        sinon.spy(options.layout, "on");
-        layout = new ModalLayout(options);
-        expect(calledEventName).toEqual(definedTriggerName);
-        expect(options.layout.on).toHaveBeenCalledOnce();
-        expect(options.layout.on.calledWith(calledEventName)).toBe(true);
+        sinon.spy(parent, "on");
+        layout = app.view.createLayout({
+            name : "modal",
+            context : context,
+            module : null,
+            meta : options,
+            layout: parent
+        });
+        expect(actual).toEqual(expected);
+        expect(parent.on).toHaveBeenCalledOnce();
+        expect(parent.on.calledWith(actual)).toBe(true);
     });
 
     it("should delegate multiple trigger names for showevent", function(){
-        var definedTriggerName = ['editpopup', 'detailpopup'],
-            calledEventName = '',
+        var expected = ['editpopup', 'detailpopup'],
             options = {
-                'meta' : {
-                    'showEvent' : definedTriggerName
-                },
-                'context' : context,
-                'layout' : {
-                    on: function(event) {
-                        calledEventName = event;
-                        sinon.stub();
-                    }
-                }
+                'showEvent' : expected
             };
 
-        sinon.spy(options.layout, "on");
-        layout = new ModalLayout(options);
-        expect(options.layout.on.calledWith('editpopup')).toBe(true);
-        expect(options.layout.on.calledWith('detailpopup')).toBe(true);
+        sinon.spy(parent, "on");
+        layout = app.view.createLayout({
+            name : "modal",
+            context : context,
+            module : null,
+            meta : options,
+            layout: parent
+        });
+        expect(parent.on.calledWith('editpopup')).toBe(true);
+        expect(parent.on.calledWith('detailpopup')).toBe(true);
 
     });
 
     it("should build proper modal dom elements", function(){
-        var definedTriggerName = 'app:layout:modal:open',
-            calledEventName = '',
+        var expected = 'app:layout:modal:open',
             options = {
-                'meta' : {
-                    'showEvent' : definedTriggerName
-                },
-                'context' : context,
-                'layout' : {
-                    on: function(event) {
-                        calledEventName = event;
-                        sinon.stub();
-                    }
-                }
+                'showEvent' : expected
             };
-        layout = new ModalLayout(options);
+        layout = app.view.createLayout({
+            name : "modal",
+            context : context,
+            module : null,
+            meta : options,
+            layout: parent
+        });
         expect(layout.$(".modal").length).toEqual(1);
         expect(layout.$(".modal-body").length).toEqual(0);
         var comp = {
@@ -117,140 +96,133 @@ describe("Base.Layout.Modal", function() {
     });
 
 
-    it("should bind modal-body container", function(){
-        var definedTriggerName = 'app:layout:modal:open',
-            calledEventName = '',
-            calledCaller = null,
+    it("should create dynamic components at the event trigger time", function(){
+        var expectedLayout = 'list',
             options = {
-                'meta' : {
-                    'showEvent' : definedTriggerName
-                },
-                'context' : context,
-                'layout' : {
-                    on: function(event, caller) {
-                        calledEventName = event;
-                        calledCaller = caller;
-                    }
-                }
+                'showEvent' : 'app:layout:modal:open'
             },
-            calledModule = 'Accounts';
-        layout = new ModalLayout(options);
-        var comp = {},
-            def = {};
-        layout._placeComponent(comp, def);
-        //Add one layout component
-        calledCaller.call(layout, {
-            components: [ {layout: 'popup-list'} ],
-            context: { module: calledModule }
+            expectedModule = 'Accounts';
+        layout = app.view.createLayout({
+            name : "modal",
+            context : context,
+            module : null,
+            meta : options,
+            layout: parent
         });
 
+        //Add one layout component
+        parent.trigger('app:layout:modal:open', {
+            components: [ {view: expectedLayout} ],
+            context: { module: expectedModule }
+        });
+        var actualLayout = layout._components[layout._components.length-1].options.name,
+            actualModule = layout._components[layout._initComponentSize].module;
         expect(layout._components.length).toEqual(layout._initComponentSize + 1);
-        expect(layout._components[layout._initComponentSize].module).toEqual(calledModule);
+        expect(actualLayout).toEqual(expectedLayout);
+        expect(actualModule).toEqual(expectedModule);
         expect(_.has(layout.context._callbacks, 'modal:callback')).toBe(true);
         expect(_.has(layout.context._callbacks, 'modal:close')).toBe(true);
         expect(_.has(layout.context._callbacks, 'modal:undefined')).toBe(false);
 
         //Add two components
-        calledCaller.call(layout, {
-            components: [ {layout: 'test-list'}, {view: 'test'} ],
-            context: { module: calledModule }
+        var previousLayout = expectedLayout,
+            expectedComponent = [ {view: 'test-list'}, {view: 'test'} ];
+        parent.trigger('app:layout:modal:open', {
+            components: expectedComponent,
+            context: { module: expectedModule }
         });
         //it should clean out the previous components and append only new components
-        expect(_.find(layout._components, function(component) {
-            return (component.options.name == 'popup-list');
-        })).toBeFalsy();
-        expect(layout._components.length).toEqual(layout._initComponentSize + 2);
+        var expected = undefined, //empty
+            actual = _.find(layout._components, function(component) {
+                return (component.options.name == previousLayout);
+            }),
+            actualComponent = layout.getBodyComponents();
+        expect(actual).toBe(expected);
+        expect(actualComponent.length).toEqual(expectedComponent.length);
     });
 
     it("should create a simple modal dialog", function(){
-        var definedTriggerName = 'app:layout:modal:open',
-            calledEventName = '',
-            calledCaller = null,
-            options = {
-                'meta' : {
-                    'showEvent' : definedTriggerName
-                },
-                'context' : context,
-                'layout' : {
-                    on: function(event, caller) {
-                        calledEventName = event;
-                        calledCaller = caller;
-                    }
-                }
+        var options = {
+                'showEvent' : 'app:layout:modal:open'
             },
-            message = 'blahblah',
-            title = 'poo title';
-        layout = new ModalLayout(options);
-        var comp = {},
-            def = {};
-        calledCaller.call(layout, {
-            title: title,
-            message: message
+            expectedMessage = 'blah',
+            expectedTitle = 'foo boo',
+            confirmDialog = {
+                'message' : expectedMessage,
+                'title' : expectedTitle
+            };
+        layout = app.view.createLayout({
+            name : "modal",
+            context : context,
+            module : null,
+            meta : options,
+            layout: parent
         });
-
-        expect(layout.getComponent("modal-header").title).toEqual(title);
-        expect(_.first(layout.getBodyComponents()).message).toEqual(message);
-        expect(_.first(layout.getBodyComponents()).name).toEqual("modal-confirm");
+        parent.trigger('app:layout:modal:open', confirmDialog);
+        var actualTitle = layout.getComponent("modal-header").title,
+            actualMessage = _.first(layout.getBodyComponents()).message,
+            expectedModalName = "modal-confirm",
+            actualModalName = _.first(layout.getBodyComponents()).name;
+        expect(actualTitle).toEqual(expectedTitle);
+        expect(actualMessage).toEqual(expectedMessage);
+        expect(actualModalName).toEqual(expectedModalName);
     });
 
-    it("should adjust the modal span size", function() {
-        var definedTriggerName = 'app:layout:modal:open',
-            options = {
-                'meta' : {
-                    'showEvent' : definedTriggerName,
-                    'components' : [ { view: 'blah' }]
-                },
-                'context' : context,
-                'layout' : {
-                    on: function(event, caller) {
-                    }
-                }
+    it("should adjust the modal width size", function() {
+        var options = {
+                'showEvent' : 'app:layout:modal:open'
+            },
+            confirmDialog = {
+                'message' : 'blah',
+                'title' : 'foo boo'
             };
-        layout = new ModalLayout(options);
-        layout.show({span: 4});
+        layout = app.view.createLayout({
+            name : "modal",
+            context : context,
+            module : null,
+            meta : options,
+            layout: parent
+        });
+        layout.show(_.extend({width: 4}, confirmDialog));
+        expect(layout.$(".modal").width()).toBe(4);
 
-        expect(layout.$(".modal").hasClass("span4")).toBe(true);
+        layout.show(_.extend({width: 5}, confirmDialog));
+        expect(layout.$(".modal").width()).toBe(5);
+        expect(layout.$(".modal").width()).not.toBe(4);
 
-        layout.show({span: 5});
-        expect(layout.$(".modal").hasClass("span4")).toBe(false);
-        expect(layout.$(".modal").hasClass("span5")).toBe(true);
-
-        layout.show();
-        expect(layout.$(".modal").hasClass("span4")).toBe(false);
-        expect(layout.$(".modal").hasClass("span5")).toBe(false);
+        layout.show(_.extend({}, confirmDialog));
+        expect(layout.$(".modal").width()).not.toBe(5);
+        expect(layout.$(".modal").width()).not.toBe(4);
     });
 
 
     it("should invoke before/after while modal is showing and hiding", function() {
-        var definedTriggerName = 'app:layout:modal:open',
-            options = {
-                'meta' : {
-                    'showEvent' : definedTriggerName,
-                    'components' : [ { view: 'blah' }]
-                },
-                'context' : context,
-                'layout' : {
-                    on: function(event, caller) {
-                    }
-                }
+        var options = {
+                'showEvent' : 'app:layout:modal:open',
+                'components' : [ { view: 'blah' }]
             };
-        layout = new ModalLayout(options),
-            showOptions = {'blah' : 'yeahhh'};
-        sinon.spy(layout, "_beforeShow");
-        sinon.spy(layout, "_afterShow");
-        sinon.spy(layout, "_beforeHide");
-        sinon.spy(layout, "_afterHide");
+        layout = app.view.createLayout({
+            name : "modal",
+            context : context,
+            module : null,
+            meta : options,
+            layout: parent
+        });
+        layout.triggerBefore = function(event) {
+            sinon.stub();
+        };
+
+        layout.trigger = function(event) {
+            sinon.stub();
+        };
+        var showOptions = {'blah' : 'yeahhh'};
+        sinon.spy(layout, "triggerBefore");
+        sinon.spy(layout, "trigger");
 
         layout.show({options: showOptions});
-        expect(layout._beforeShow).toHaveBeenCalledOnce();
-        expect(layout._beforeShow.calledWith(showOptions)).toBe(true);
-        expect(layout._afterShow).toHaveBeenCalledOnce();
-        expect(layout._afterShow.calledWith(showOptions)).toBe(true);
-        expect(layout._beforeHide).not.toHaveBeenCalledOnce();
-        expect(layout._afterHide).not.toHaveBeenCalledOnce();
+        expect(layout.triggerBefore.calledWith('show')).toBe(true);
+        expect(layout.triggerBefore.calledWith('hide')).toBe(false);
         layout.hide();
-        expect(layout._beforeHide).toHaveBeenCalledOnce();
-        expect(layout._afterHide).toHaveBeenCalledOnce();
-
+        expect(layout.triggerBefore.calledWith('hide')).toBe(true);
     });
 });

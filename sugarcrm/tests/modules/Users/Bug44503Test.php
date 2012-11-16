@@ -53,13 +53,16 @@ require_once 'modules/Users/authentication/SugarAuthenticate/SugarAuthenticateUs
 class {$this->authclassname}User extends SugarAuthenticateUser {
 }"
             );
-
+        SugarAutoLoader::addToMap("custom/modules/Users/authentication/{$this->authclassname}/{$this->authclassname}.php", false);
+        SugarAutoLoader::addToMap("custom/modules/Users/authentication/{$this->authclassname}/{$this->authclassname}User.php", false);
 	}
 
 	public function tearDown()
 	{
-	    if ( !is_null($this->authclassname) && is_dir("custom/modules/Users/authentication/{$this->authclassname}/") )
+	    if ( !is_null($this->authclassname) && is_dir("custom/modules/Users/authentication/{$this->authclassname}/") ) {
 	        rmdir_recursive("custom/modules/Users/authentication/{$this->authclassname}/");
+	        SugarAutoLoader::delFromMap("custom/modules/Users/authentication/{$this->authclassname}", false);
+	    }
 	}
 
 	public function testLoadingCustomAuthClassFromAuthenicationController()

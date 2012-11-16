@@ -45,12 +45,13 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
         $this->_indexName = strtolower($GLOBALS['sugar_config']['unique_key']);
 
         //Elastica client uses own auto-load schema similar to ZF.
-        spl_autoload_register(array($this, 'loader'));
+        SugarAutoLoader::addPrefixDirectory('Elastica', 'include/SugarSearchEngine/Elastic/');
         if (empty($this->_config['timeout']))
         {
             $this->_config['timeout'] = 15;
         }
         $this->_client = new Elastica_Client($this->_config);
+        parent::__construct();
     }
 
     /**
@@ -100,7 +101,7 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
         }
         else
         {
-            $GLOBALS['log']->info("Adding bean to doc list with id: {$bean->id}");
+            $this->logger->info("Adding bean to doc list with id: {$bean->id}");
 
             //Create and store our document index which will be bulk inserted later, do not store beans as they are heavy.
             $this->_documents[] = $this->createIndexDocument($bean);
@@ -216,7 +217,7 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
      */
     protected function indexSingleBean($bean)
     {
-        $GLOBALS['log']->info("Preforming single bean index");
+        $this->logger->info("Preforming single bean index");
         try
         {
             $index = new Elastica_Index($this->_client, $this->_indexName);
@@ -227,7 +228,7 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
         }
         catch(Exception $e)
         {
-            $GLOBALS['log']->fatal("Unable to index bean with error: {$e->getMessage()}");
+            $this->reportException("Unable to index bean", $e);
             if ($this->checkException($e))
             {
                 $recordsToBeQueued = $this->getRecordsFromDocs(array($doc));
@@ -252,14 +253,14 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
 
         try
         {
-            $GLOBALS['log']->info("Going to delete {$bean->id}");
+            $this->logger->info("Going to delete {$bean->id}");
             $index = new Elastica_Index($this->_client, $this->_indexName);
             $type = new Elastica_Type($index, $this->getIndexType($bean));
             $type->deleteById($bean->id);
         }
         catch(Exception $e)
         {
-            $GLOBALS['log']->fatal("Unable to delete index: {$e->getMessage()}");
+            $this->reportException("Unable to delete index", $e);
             $this->checkException($e);
         }
     }
@@ -305,7 +306,7 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
         }
         catch(Exception $e)
         {
-            $GLOBALS['log']->fatal("Error performing bulk update operation: {$e->getMessage()}");
+            $this->reportException("Error performing bulk update operation", $e);
             if ($this->checkException($e))
             {
                 $recordsToBeQueued = $this->getRecordsFromDocs($batchedDocs);
@@ -357,7 +358,7 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
         }
         catch(Exception $e)
         {
-            $GLOBALS['log']->fatal("Unable to get server status with error: {$e->getMessage()}");
+            $this->reportException("Unable to get server status", $e);
             $displayText = $e->getMessage();
         }
         //Reset previous timeout value.
@@ -720,7 +721,7 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
         }
         $queryString = sql_like_string($queryString, self::WILDCARD_CHAR, self::WILDCARD_CHAR, $appendWildcard);
 
-        $GLOBALS['log']->info("Going to search with query $queryString");
+        $this->logger->info("Going to search with query $queryString");
         $results = null;
         try
         {
@@ -826,7 +827,7 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
         }
         catch(Exception $e)
         {
-            $GLOBALS['log']->fatal("Unable to perform search with error: {$e->getMessage()}");
+            $this->reportException("Unable to perform search", $e);
             $this->checkException($e);
             return null;
         }
@@ -843,23 +844,6 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
     protected function cleanTeamSetID($teamSetID)
     {
         return str_replace("-", "", strtolower($teamSetID));
-    }
-
-    /**
-     * This function loads the desired file/class from Elastic directory.
-     *
-     * @param $teamSetID
-     * @return mixed
-     */
-    protected function loader($className)
-    {
-        // FIXME: convert to use autoloader
-        $fileName = str_replace('_', '/', $className);
-        $path = 'include/SugarSearchEngine/Elastic/' . $fileName . '.php';
-        if( file_exists($path) )
-            require_once($path);
-        else
-            return FALSE;
     }
 
     /**
@@ -888,7 +872,7 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
         }
         catch(Exception $e)
         {
-            $GLOBALS['log']->error("Unable to create index with error: {$e->getMessage()}");
+            $this->reportException("Unable to create index", $e);
             $this->checkException($e);
         }
 

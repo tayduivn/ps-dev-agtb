@@ -47,11 +47,7 @@ $GLOBALS['log']->debug('--------------------------------------------> at cron.ph
 $cron_driver = !empty($sugar_config['cron_class'])?$sugar_config['cron_class']:'SugarCronJobs';
 $GLOBALS['log']->debug("Using $cron_driver as CRON driver");
 
-if(file_exists("custom/include/SugarQueue/$cron_driver.php")) {
-   require_once "custom/include/SugarQueue/$cron_driver.php";
-} else {
-   require_once "include/SugarQueue/$cron_driver.php";
-}
+SugarAutoLoader::requireWithCustom("include/SugarQueue/$cron_driver.php");
 
 $jobq = new $cron_driver();
 $jobq->runCycle();

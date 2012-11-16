@@ -19,13 +19,6 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *to the License for the specific language governing these rights and limitations under the License.
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
-/*********************************************************************************
- * $Id: Layouts.php 45763 2009-04-01 19:16:18Z majed $
- * Description:  TODO: To be written.
- * Portions created by SugarCRM are Copyright (C) SugarCRM, Inc.
- * All Rights Reserved.
- * Contributor(s): ______________________________________..
- ********************************************************************************/
 
 global $mod_strings;
 
@@ -37,10 +30,10 @@ global $mod_strings;
 global $layouts;
 $layouts = array();
 
-if (file_exists('custom/modules/Quotes/sugarpdf/sugarpdf.standard.php')) {
+if (SugarAutoLoader::fileExists('custom/modules/Quotes/sugarpdf/sugarpdf.standard.php')) {
     $layouts['Standard'] = 'custom/modules/Quotes/sugarpdf/sugarpdf.standard.php';
 }
-if (file_exists('custom/modules/Quotes/sugarpdf/sugarpdf.invoice.php')) {
+if (SugarAutoLoader::fileExists('custom/modules/Quotes/sugarpdf/sugarpdf.invoice.php')) {
 	$layouts['Invoice'] = 'custom/modules/Quotes/sugarpdf/sugarpdf.invoice.php';
 }
 
@@ -55,7 +48,7 @@ function get_layouts() {
     $list = array();
     if(isset($layouts)) {
 	   foreach($layouts as $key=>$value) {
-                   if(array_key_exists($key, $app_list_strings['layouts_dom'])){ //bug 49954 
+                   if(array_key_exists($key, $app_list_strings['layouts_dom'])){ //bug 49954
 		   $list[$key] = $app_list_strings['layouts_dom'][$key];
 		}
 	  }
@@ -70,7 +63,7 @@ function get_layouts() {
 function print_layout($layout) {
 	global $mod_strings;
 	global $layouts;
-	
+
     if(!isset($layouts[$layout])) {
 		$GLOBALS['log']->fatal("quote layout is not registered in modules/Quotes/Layouts.php");
 		sugar_die ("quote layout is not registered in modules/Quotes/Layouts.php");
@@ -83,11 +76,8 @@ function print_layout($layout) {
 }
 
 
-if(file_exists('modules/Quotes/Layouts.override.php')) {
-	include_once('modules/Quotes/Layouts.override.php');
-}
-if(file_exists('custom/modules/Quotes/Layouts.php')) {
-	include_once('custom/modules/Quotes/Layouts.php');
+foreach(SugarAutoLoader::existing('modules/Quotes/Layouts.override.php', 'custom/modules/Quotes/Layouts.php') as $file) {
+    include_once $file;
 }
 
 if(isset($_REQUEST['email_action']) && $_REQUEST['email_action']=="EmailLayout") {

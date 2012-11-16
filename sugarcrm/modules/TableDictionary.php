@@ -146,7 +146,7 @@ include("metadata/forecast_treeMetaData.php");
 include("metadata/oauth_nonce.php");
 include("metadata/massupdate_queueMetaData.php");
 
-if(file_exists('custom/application/Ext/TableDictionary/tabledictionary.ext.php')){
-	include('custom/application/Ext/TableDictionary/tabledictionary.ext.php');
+$defs = SugarAutoLoader::loadExtension('tabledictionary');
+if($defs) {
+    require $defs;
 }
-?>
