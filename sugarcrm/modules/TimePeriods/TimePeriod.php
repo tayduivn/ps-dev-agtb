@@ -154,7 +154,7 @@ class TimePeriod extends SugarBean {
 		  $query ="SELECT name from timeperiods where id = '$this->parent_id' and deleted = 0";
 		  $result =$this->db->query($query, true, "Error filling in additional detail fields") ;
 		  $row = $this->db->fetchByAssoc($result);
-		  $GLOBALS['log']->debug("additional detail query results: $row");
+		  $GLOBALS['log']->debug("additional detail query results: ".print_r($row, true));
 
 		  
 		  if($row != null) {

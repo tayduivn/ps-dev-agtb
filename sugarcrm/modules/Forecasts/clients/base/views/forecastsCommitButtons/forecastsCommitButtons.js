@@ -32,7 +32,6 @@
     events: {
         "click a[id=commit_forecast]" : "triggerCommit",
         "click a[id=save_draft]" : "triggerSaveDraft",
-        "click a[name=forecastSettings]" : "triggerConfigModal",
         "click a.drawerTrig" : "triggerRightColumnVisibility",
         "click a[id=export]" : "triggerExport",
         "click a[id=print]" : "triggerPrint"
@@ -166,54 +165,22 @@
                 model.url = worksheet.url.split("?")[0] + "/" + model.get("id");
                 model.save({}, {success: function() {
                     saveCount++;
-                    //if this is the last save and this is the manager worksheet, flag the worksheet to reload
-                    if(models.length === saveCount && self.context.forecasts.get("currentWorksheet") == "worksheetmanager") {
-                        self.context.forecasts.set({reloadWorksheetFlag: true});
+                    //if this is the last save, go ahead and trigger the commit (which will reload things)
+                    if(models.length === saveCount) {
+                        self.context.forecasts.set({commitForecastFlag: true});
                     }
                 }});
                 //this worksheet is clean
                 worksheet.isDirty = false;
             });
+            
+            //we didn't have anything to save (and wait to finish), so go ahead and trigger the commit
+            if(models.length == 0){
+                self.context.forecasts.set({commitForecastFlag: true});
+            }
 
             savebtn.addClass("disabled");
-    		self.context.forecasts.set({commitForecastFlag: true});
     	}        
-    },
-
-    /**
-     * Triggers the event expected by the modal layout to show the config panels
-     */
-    triggerConfigModal: function() {
-        var params = {
-            title: app.lang.get("LBL_FORECASTS_CONFIG_TITLE", "Forecasts"),
-            components: [{layout:"tabbedConfig"}],
-            span: 10,
-            before: {
-                hide: function() {
-                    // Check to see if we're closing modal via cancel button
-                    // We have no event passed here to get which button was clicked
-                    if(this.context.forecasts.get('saveClicked')) {
-                        // display a success message
-                        app.alert.show('success', {
-                            level: 'success',
-                            closeable: false,
-                            autoClose: true,
-                            title : app.lang.get("LBL_FORECASTS_WIZARD_SUCCESS_TITLE", "Forecasts") + ":",
-                            messages: [app.lang.get("LBL_FORECASTS_TABBED_CONFIG_SUCCESS_MESSAGE", "Forecasts")]
-                        });
-                        // call tell the metadata to sync to get the updated config's and refresh the layout
-                        app.sync();
-                    } else {
-                        // reset without a change event in case they click settings again
-                        // before refreshing the page
-                        this.context.forecasts.set({ saveClicked : false }, {silent:true});
-                    }
-                }
-            }
-        };
-        if(app.user.getAcls()['Forecasts'].admin == "yes") {
-            this.layout.trigger("modal:forecastsTabbedConfig:open", params);
-        }
     },
 
     /**

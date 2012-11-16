@@ -141,11 +141,7 @@ describe("The forecastCommitted view", function(){
         //bindDataChange redefines this.collection to be context.forecasts.committed
         it("collection.on should have been called with 'reset change'", function(){
             expect(view.collection.on).toHaveBeenCalledWith("reset change");
-        });
-        
-        it("context.forecasts.on should have been called with forecasts:committed:saved", function(){
-            expect(view.context.forecasts.on).toHaveBeenCalledWith("forecasts:committed:saved");
-        });
+        });               
     });
     
     describe("Forecasts Commit Log Reset (resetCommittedLog)", function(){
