@@ -43,6 +43,12 @@
         this.breadCrumbLabels = this.layout.getBreadCrumbLabels();
     },
 
+    _renderHtml : function(ctx, options) {
+        app.view.View.prototype._renderHtml.call(this, ctx, options);
+
+        this.$el.parents('div.modal-body').addClass('with-tab-nav');
+    },
+
     bindDataChange: function() {
         var self = this;
         this.model.on('change', function(){
