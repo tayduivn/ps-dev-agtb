@@ -51,7 +51,8 @@ class Bug56391Test extends Sugar_PHPUnit_Framework_TestCase
         // because the user is not an admin the user should only have view and list access
 
         $expected_result = array(
-                                    'access' => 'no',
+                                    'access' => 'yes',
+                                    'create' => 'no',
                                     'view' => 'yes',
                                     'list' => 'yes',
                                     'edit' => 'no',

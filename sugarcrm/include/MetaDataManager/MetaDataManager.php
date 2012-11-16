@@ -352,10 +352,11 @@ class MetaDataManager {
             }
         } else if ( isset($acls[$module]['module']) ) {
             $moduleAcl = $acls[$module]['module'];
-
+            $moduleAcls = SugarACL::getUserAccess($module, array(), array('user' => $userObject));
+            
             // Bug56391 - Use the SugarACL class to determine access to different actions within the module
-            foreach ( array('access','view','list','edit','delete','import','export','massupdate') as $action ) {
-                $outputAcl[$action] = (SugarACL::checkAccess($module, $action, array('user' => $userObject))) ? 'yes' : 'no';
+            foreach(SugarACL::$all_access AS $action => $bool) {
+                $outputAcl[$action] = ($moduleAcls[$action] == true || !isset($moduleAcls[$action])) ? 'yes' : 'no';
             }
 
             // Only loop through the fields if we have a reason to, admins give full access on everything, no access gives no access to anything
