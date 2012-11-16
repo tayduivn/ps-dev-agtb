@@ -48,7 +48,7 @@ class Bug42475TestBean extends SugarBean
     function Bug42475TestBean() {
         $this->module_dir = 'Accounts';
         $this->object_name = 'Account';
-        parent::SugarBean();
+        parent::__construct();
         
         // Fake a fetched row
         $this->fetched_row = array('test_field'=>257.8300000001);

@@ -111,7 +111,14 @@ function write_array_to_file( $the_name, $the_array, $the_file, $mode="w", $head
                     var_export_helper( $the_array ) .
                     ";";
 
-    return sugar_file_put_contents($the_file, $the_string, LOCK_EX) !== false;
+    if(sugar_file_put_contents($the_file, $the_string, LOCK_EX) !== false) {
+        if(substr($the_file, 0, 7) === 'custom/') {
+            // record custom writes to file map
+            SugarAutoLoader::addToMap($the_file);
+        }
+        return true;
+    }
+    return false;
 }
 
 function write_encoded_file( $soap_result, $write_to_dir, $write_to_file="" )
@@ -296,13 +303,17 @@ function readfile_chunked($filename,$retbytes=true)
 function sugar_rename( $old_filename, $new_filename){
 	if (empty($old_filename) || empty($new_filename)) return false;
 	$success = false;
-	if(file_exists($new_filename)) {
-    	unlink($new_filename);
+	if(SugarAutoLoader::fileExists($new_filename)) {
+    	SugarAutoLoader::unlink($new_filename);
     	$success = rename($old_filename, $new_filename);
 	}
 	else {
 		$success = rename($old_filename, $new_filename);
 	}
+    
+    if ($success) {
+        SugarAutoLoader::addToMap($new_filename);
+    }
 
 	return $success;
 }

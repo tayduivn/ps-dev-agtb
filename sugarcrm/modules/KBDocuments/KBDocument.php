@@ -84,8 +84,8 @@ class KBDocument extends SugarBean {
 		'lead_id' => 'leads'
 	 );
 
-	function KBDocument() {
-		parent :: SugarBean();
+	public function __construct() {
+		parent::__construct();
 		$this->setupCustomFields('KBDocuments'); //parameter is module name
 	}
 
@@ -301,12 +301,29 @@ class KBDocument extends SugarBean {
         $ret_array['from'] .= " sugarfavorites sfav ON sfav.module ='{$this->module_dir}' AND sfav.record_id={$this->table_name}.id AND sfav.created_by='{$GLOBALS['current_user']->id}' AND sfav.deleted=0 ";
         }
         //END SUGARCRM flav=pro ONLY
+        // Bug 57679 - All KBDocs coming back, even deleted ones
+        $where_deleted = '';
+        if($show_deleted == 0)
+        {
+            $where_deleted = "$this->table_name.deleted=0";
+        }else if($show_deleted == 1)
+        {
+            $where_deleted = "$this->table_name.deleted=1";
+        }
+        
         if(!empty($where) && trim($where) != '') {
+            // Add in the deleted
+            if (!empty($where_deleted)) {
+                $where .= ' AND ' . $where_deleted;
+            }
+            
             // Strip leading AND or OR for bug 48173
             $ret_array['where'] = ' WHERE '. preg_replace('#^\s*(AND|OR)\s+#i', '', $where);
         } else {
-            $ret_array['where'] = '';
+            // Handle deleted
+            $ret_array['where'] = empty($where_deleted) ? '' : ' WHERE ' . $where_deleted;
         }
+        
         //if order by just has asc or des
         $temp_order = trim($order_by);
         $temp_order = strtolower($temp_order);

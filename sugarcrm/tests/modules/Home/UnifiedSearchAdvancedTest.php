@@ -21,7 +21,7 @@
  * Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.;
  * All Rights Reserved.
  ********************************************************************************/
- 
+
 require_once 'modules/Home/UnifiedSearchAdvanced.php';
 require_once 'modules/Contacts/Contact.php';
 require_once 'include/utils/layout_utils.php';
@@ -59,9 +59,10 @@ class UnifiedSearchAdvancedTest extends Sugar_PHPUnit_Framework_OutputTestCase
         	$this->_hasUnifiedSearchModulesDisplay = true;
         	copy('custom/modules/unified_search_modules_display.php', 'custom/modules/unified_search_modules_display.php.bak');
         	unlink('custom/modules/unified_search_modules_display.php');
+        	SugarAutoLoader::delFromMap('custom/modules/unified_search_modules_display.php', false);
         }
 
-        
+
 	}
 
 	public function tearDown()
@@ -82,7 +83,7 @@ class UnifiedSearchAdvancedTest extends Sugar_PHPUnit_Framework_OutputTestCase
         	copy('custom/modules/unified_search_modules_display.php.bak', 'custom/modules/unified_search_modules_display.php');
         	unlink('custom/modules/unified_search_modules_display.php.bak');
         } else {
-        	unlink('custom/modules/unified_search_modules_display.php');
+        	SugarAutoLoader::unlink('custom/modules/unified_search_modules_display.php');
         }
 
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
@@ -141,7 +142,7 @@ class UnifiedSearchAdvancedTest extends Sugar_PHPUnit_Framework_OutputTestCase
 
         $current_user->setPreference('globalSearch', array('Accounts', 'Contacts'), 0, 'search');
         $current_user->savePreferencesToDB();
-        
+
     	$_REQUEST = array();
 		$_REQUEST['query_string'] = $this->_contact->first_name.' '.$this->_contact->last_name;
     	$_REQUEST['module'] = 'Home';

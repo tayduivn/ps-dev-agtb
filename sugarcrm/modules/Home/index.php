@@ -35,7 +35,6 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 global $current_user, $sugar_version, $sugar_config, $beanFiles;
 
-
 require_once('include/MySugar/MySugar.php');
 
 // build dashlet cache file if not found
@@ -47,7 +46,9 @@ if(!is_file($cachefile = sugar_cached('dashlets/dashlets.php'))) {
 }
 require_once $cachefile;
 
-require('modules/Home/dashlets.php');
+foreach(SugarAutoLoader::existingCustom('modules/Home/dashlets.php') as $file) {
+    include $file;
+}
 
 $pages = $current_user->getPreference('pages', 'Home');
 $dashlets = $current_user->getPreference('dashlets', 'Home');
@@ -660,11 +661,7 @@ if((empty($viewed_tour) || $viewed_tour == 'false') && $theme != "Sugar5") {
     $sugar_smarty->assign('view_tour', true);
 }
 //END SUGARCRM flav=pro ONLY
-if (file_exists("custom/include/MySugar/tpls/MySugar.tpl")) {
-	echo $sugar_smarty->fetch('custom/include/MySugar/tpls/MySugar.tpl');
-} else {
-	echo $sugar_smarty->fetch('include/MySugar/tpls/MySugar.tpl');
-}
+echo $sugar_smarty->fetchCustom('include/MySugar/tpls/MySugar.tpl');
 
 //init the quickEdit listeners after the dashlets have loaded on home page the first time
 echo"<script>if(typeof(qe_init) != 'undefined'){qe_init();}</script>";

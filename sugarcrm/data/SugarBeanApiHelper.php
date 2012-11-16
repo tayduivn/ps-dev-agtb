@@ -52,16 +52,17 @@ class SugarBeanApiHelper
 
         $data = array();
         foreach ( $bean->field_defs as $fieldName => $properties ) {
+            // Prune fields before ACL check because it can be expensive (Bug58133)
+            if ( !empty($fieldList) && !in_array($fieldName,$fieldList) ) {
+                // They want to skip this field
+                continue;
+            }
             //BEGIN SUGARCRM flav=pro ONLY
             if ( !$bean->ACLFieldAccess($fieldName,'read') ) { 
                 // No read access to this field, skip it.
                 continue;
             }
             //END SUGARCRM flav=pro ONLY
-            if ( !empty($fieldList) && !in_array($fieldName,$fieldList) ) {
-                // They want to skip this field
-                continue;
-            }
             
             $type = !empty($properties['custom_type']) ? $properties['custom_type'] : $properties['type'];
             if ( $type == 'link' ) {
@@ -151,6 +152,11 @@ class SugarBeanApiHelper
             }
         }
 
+        if(isset($bean->field_defs['parent_type']) && isset($bean->field_defs['parent_id']) && empty($bean->parent_type) && empty($bean->parent_id) && isset($submittedData['link_name']) && isset($submittedData['remote_id'])) {
+            $bean->parent_type = $bean->$submittedData['link_name']->getRelatedModuleName();
+            $bean->parent_id = $submittedData['remote_id'];
+        }
+
         return true;
-    } 
+    }
 }

@@ -65,6 +65,7 @@ class QueryColumn extends QueryBuilder {
 	var $table_name = "query_columns";
 	var $module_dir = "QueryBuilder";
 	var $object_name = "QueryColumn";
+    var $module_name = 'QueryColumn';
 	
 	var $new_schema = true;
 
@@ -103,7 +104,7 @@ class QueryColumn extends QueryBuilder {
 	
 	
 	function QueryColumn() {
-		parent::SugarBean();
+		parent::__construct();
 
 		$this->disable_row_level_security =true;
 

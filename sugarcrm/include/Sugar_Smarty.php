@@ -39,6 +39,7 @@ if(!defined('SUGAR_SMARTY_DIR'))
  */
 class Sugar_Smarty extends Smarty
 {
+    protected static $_plugins_dir;
 	function Sugar_Smarty()
 	{
 		if(!file_exists(SUGAR_SMARTY_DIR))mkdir_recursive(SUGAR_SMARTY_DIR, true);
@@ -52,17 +53,45 @@ class Sugar_Smarty extends Smarty
 		$this->cache_dir = SUGAR_SMARTY_DIR . 'cache';
 		$this->request_use_auto_globals = true; // to disable Smarty from using long arrays
 
-		if(file_exists('custom/include/Smarty/plugins'))
-        {
-			$plugins_dir[] = 'custom/include/Smarty/plugins';
+        if(empty(self::$_plugins_dir)) {
+            self::$_plugins_dir = array();
+            if(SugarAutoLoader::fileExists('custom/include/Smarty/plugins'))
+            {
+                self::$_plugins_dir[] = 'custom/include/Smarty/plugins';
+            }
+            self::$_plugins_dir[] = 'include/Smarty/plugins';
         }
-		$plugins_dir[] = 'include/Smarty/plugins';
-		$this->plugins_dir = $plugins_dir;
+        $this->plugins_dir = self::$_plugins_dir;
 
 		//BEGIN SUGARCRM flav=int ONLY
 		$this->clear_all_cache(); // removes pre-compiled template files for debugging
 		//END SUGARCRM flav=int ONLY
 		$this->assign("VERSION_MARK", getVersionedPath(''));
+	}
+
+	/**
+	 * Fetch template or custom double
+	 * @see Smarty::fetch()
+     * @param string $resource_name
+     * @param string $cache_id
+     * @param string $compile_id
+     * @param boolean $display
+	 */
+	public function fetchCustom($resource_name, $cache_id = null, $compile_id = null, $display = false)
+	{
+	    return $this->fetch(SugarAutoLoader::existingCustomOne($resource_name), $cache_id, $compile_id, $display);
+	}
+
+	/**
+	 * Display template or custom double
+	 * @see Smarty::display()
+     * @param string $resource_name
+     * @param string $cache_id
+     * @param string $compile_id
+	 */
+	function displayCustom($resource_name, $cache_id = null, $compile_id = null)
+	{
+	    return $this->display(SugarAutoLoader::existingCustomOne($resource_name), $cache_id, $compile_id);
 	}
 
 	/**
@@ -76,7 +105,7 @@ class Sugar_Smarty extends Smarty
         if(file_exists($resource)) {
             return parent::_unlink($resource, $exp_time);
         }
-        
+
         // file wasn't found, so it must be gone.
         return true;
     }

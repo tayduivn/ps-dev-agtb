@@ -35,14 +35,14 @@ class Bug44836Test extends Sugar_PHPUnit_Framework_OutputTestCase
         SugarTestHelper::setUp('current_user', array(true, 1));
 	    $GLOBALS['current_user']->setPreference('timezone', "America/Los_Angeles");
 	    $GLOBALS['current_user']->setPreference('datef', "m/d/Y");
-		$GLOBALS['current_user']->setPreference('timef', "h.iA");	    		
+		$GLOBALS['current_user']->setPreference('timef', "h.iA");
 	}
-	
+
 	public function tearDown()
 	{
         SugarTestHelper::tearDown();
 	}
-	
+
 	public function testContractsSubpanelQuickCreate()
 	{
         $_REQUEST['action'] = 'QuickCreate';
@@ -50,5 +50,5 @@ class Bug44836Test extends Sugar_PHPUnit_Framework_OutputTestCase
 		 $subpanelQuickCreate = new SubpanelQuickCreate('Contracts', 'QuickCreate');
 		 $this->expectOutputRegex('/check_form\s*?\(\s*?\'form_SubpanelQuickCreate_Contracts\'\s*?\)/');
 	}
-	
+
 }

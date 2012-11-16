@@ -21,7 +21,7 @@
 
 describe("The forecasts worksheet totals calculation test", function(){
 
-    var app, view, context;
+    var app, view, context, formatWithRateStub;
 
     beforeEach(function() {
         SugarTest.seedMetadata(true);
@@ -38,6 +38,13 @@ describe("The forecasts worksheet totals calculation test", function(){
         view.includedModel = new Backbone.Model();
         view.overallModel = new Backbone.Model();
 
+        formatWithRateStub = sinon.stub(app.currency, "convertWithRate", function(amount, rate) {
+            return Math.round(parseFloat(amount / rate) * Math.pow(10, 2)) / Math.pow(10, 2);
+        });
+    });
+
+    afterEach(function() {
+        formatWithRateStub.restore();
     });
 
     /*
@@ -147,7 +154,8 @@ describe("The forecasts worksheet totals calculation test", function(){
                             expect(updatedTotals.lost_count).toEqual(1);
                             expect(updatedTotals.lost_amount).toEqual(100);
                             expect(updatedTotals.total_opp_count).toEqual(5);
-                        }
+                        },
+                    unset : function(test) {}
                 }
             };
             view.context.forecasts.config = new (Backbone.Model.extend({
@@ -175,7 +183,8 @@ describe("The forecasts worksheet totals calculation test", function(){
                             expect(updatedTotals.lost_amount).toEqual(100);
                             expect(updatedTotals.included_opp_count).toEqual(1);
                             expect(updatedTotals.total_opp_count).toEqual(5);
-                        }
+                        },
+                    unset : function(test) {}
                 }
             };
             view.context.forecasts.config = new (Backbone.Model.extend({
@@ -205,7 +214,8 @@ describe("The forecasts worksheet totals calculation test", function(){
                             expect(updatedTotals.lost_amount).toEqual(200);
                             expect(updatedTotals.included_opp_count).toEqual(1);
                             expect(updatedTotals.total_opp_count).toEqual(5);
-                        }
+                        },
+                    unset : function(test) {}
                 }
             };
             view.context.forecasts.config = new (Backbone.Model.extend({

@@ -27,7 +27,6 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * by SugarCRM are Copyright (C) 2004-2007 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 /*********************************************************************************
- * $Id: view.step3.php 31561 2008-02-04 18:41:10Z jmertic $
  * Description: view handler for step 3 of the import process
  * Portions created by SugarCRM are Copyright (C) SugarCRM, Inc.
  * All Rights Reserved.
@@ -40,6 +39,9 @@ require_once('modules/Import/ImportDuplicateCheck.php');
 
 require_once('include/upload_file.php');
 
+/**
+ * Description: view handler for step 3 of the import process
+ */
 class ImportViewStep3 extends ImportView
 {
 
@@ -103,7 +105,7 @@ class ImportViewStep3 extends ImportView
         }
 
         $delimiter = $this->getRequestDelimiter();
-        
+
         $this->ss->assign("CUSTOM_DELIMITER", $delimiter);
         $this->ss->assign("CUSTOM_ENCLOSURE", ( !empty($_REQUEST['custom_enclosure']) ? $_REQUEST['custom_enclosure'] : "" ));
 
@@ -442,20 +444,15 @@ class ImportViewStep3 extends ImportView
        $name = 'ImportMap' . $source;
        $customName = 'ImportMapCustom' . $source;
 
-       if (file_exists("custom/modules/Import/maps/{$customName}.php"))
-       {
-           require_once("custom/modules/Import/maps/{$customName}.php");
+       if (SugarAutoLoader::requireWithCustom("modules/Import/maps/{$customName}.php") ) {
            return $customName;
-       } else if (file_exists("custom/modules/Import/maps/{$name}.php")) {
-           require_once("custom/modules/Import/maps/{$name}.php");
-       } else if (file_exists("modules/Import/maps/{$name}.php")) {
-           require_once("modules/Import/maps/{$name}.php");
-       } else if (file_exists('custom/modules/Import/maps/ImportMapOther.php')) {
-           require_once('custom/modules/Import/maps/ImportMapOther.php');
-           return 'ImportMapOther';
+       }
+       if(SugarAutoLoader::requireWithCustom("modules/Import/maps/{$name}.php") ) {
+           return $name;
        }
 
-       return $name;
+       SugarAutoLoader::requireWithCustom("modules/Import/maps/ImportMapOther.php");
+       return 'ImportMapOther';
     }
 
 
@@ -471,7 +468,7 @@ class ImportViewStep3 extends ImportView
             case '\t':
                 $delimiter = "\t";
                 break;
-        }       
+        }
         return $delimiter;
     }
 

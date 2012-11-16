@@ -54,6 +54,11 @@ class ForecastsWorksheetsApiTest extends RestTestBase
      */
     protected $repData;
 
+    /**
+     * @var Administration
+     */
+    protected static $admin;
+
     public static function setUpBeforeClass()
     {
         SugarTestHelper::setUp("app_strings");
@@ -61,6 +66,8 @@ class ForecastsWorksheetsApiTest extends RestTestBase
         SugarTestHelper::setUp("beanFiles");
         SugarTestHelper::setUp("beanList");
         parent::setUpBeforeClass();
+        // get current settings
+        self::$admin = BeanFactory::getBean('Administration');
     }
 
     public function setUp()
@@ -117,6 +124,10 @@ class ForecastsWorksheetsApiTest extends RestTestBase
             "timeperiod_id" => $this->timeperiod->id
         );
 
+        //Reset all columns to be shown
+        self::$admin->saveSetting('Forecasts', 'show_worksheet_likely', 1, 'base');
+        self::$admin->saveSetting('Forecasts', 'show_worksheet_best', 1, 'base');
+        self::$admin->saveSetting('Forecasts', 'show_worksheet_worst', 1, 'base');
     }
 
     public function tearDown()
@@ -217,7 +228,6 @@ class ForecastsWorksheetsApiTest extends RestTestBase
 
     }
 
-   
 
     /**
      * @group forecastapi

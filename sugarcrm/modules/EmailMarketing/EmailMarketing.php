@@ -48,9 +48,9 @@ class EmailMarketing extends SugarBean
 
 	var $new_schema = true;
 
-	function EmailMarketing()
+	public function __construct()
 	{
-		parent::SugarBean();
+		parent::__construct();
 
 //BEGIN SUGARCRM flav=pro ONLY
 		$this->disable_row_level_security=true;

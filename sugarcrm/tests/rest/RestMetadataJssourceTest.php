@@ -47,6 +47,7 @@ class RestMetadataJssourceTest extends RestTestBase {
         $this->assertTrue(isset($restReply['reply']['jssource']), "Jssource is missing");
         
     }
+    //END SUGARCRM flav=ent ONLY
 
     /**
      * @group rest

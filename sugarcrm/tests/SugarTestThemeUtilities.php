@@ -21,7 +21,7 @@
  * Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.;
  * All Rights Reserved.
  ********************************************************************************/
- 
+
 require_once 'include/SugarTheme/SugarTheme.php';
 require_once 'include/dir_inc.php';
 
@@ -58,6 +58,7 @@ class SugarTestThemeUtilities
 
         self::$_createdThemes[] = $themename;
 
+        SugarAutoLoader::buildCache();
         SugarThemeRegistry::buildRegistry();
 
         return $themename;
@@ -90,6 +91,7 @@ class SugarTestThemeUtilities
 
         self::$_createdThemes[] = $themename;
 
+        SugarAutoLoader::buildCache();
         SugarThemeRegistry::buildRegistry();
 
         return $themename;
@@ -122,6 +124,7 @@ class SugarTestThemeUtilities
 
         self::$_createdThemes[] = $themename;
 
+        SugarAutoLoader::buildCache();
         SugarThemeRegistry::buildRegistry();
 
         return $themename;
@@ -153,27 +156,28 @@ class SugarTestThemeUtilities
 
         self::$_createdThemes[] = $themename;
 
+        SugarAutoLoader::buildCache();
         SugarThemeRegistry::buildRegistry();
 
         return $themename;
     }
-    
-    public static function createAnonymousRTLTheme() 
+
+    public static function createAnonymousRTLTheme()
     {
         $themename = 'TestTheme'.mt_rand();
-        
+
         sugar_mkdir("themes/$themename/images",null,true);
         sugar_mkdir("themes/$themename/css",null,true);
         sugar_mkdir("themes/$themename/js",null,true);
         sugar_mkdir("themes/$themename/tpls",null,true);
-        
+
         sugar_file_put_contents("themes/$themename/css/style.css","h2 { display: inline; }");
         sugar_file_put_contents("themes/$themename/css/yui.css",".yui { display: inline; }");
         sugar_file_put_contents("themes/$themename/js/style.js",'var dog = "cat";');
         sugar_touch("themes/$themename/images/Accounts.gif");
         sugar_touch("themes/$themename/images/fonts.big.icon.gif");
         sugar_touch("themes/$themename/tpls/header.tpl");
-        
+
         $themedef = "<?php\n";
         $themedef .= "\$themedef = array(\n";
         $themedef .= "'name'  => '$themename',";
@@ -183,11 +187,12 @@ class SugarTestThemeUtilities
         $themedef .= "'version' => array('regex_matches' => array('.*')),";
         $themedef .= ");";
         sugar_file_put_contents("themes/$themename/themedef.php",$themedef);
-        
+
         self::$_createdThemes[] = $themename;
-        
-        SugarThemeRegistry::buildRegistry();        
-        
+
+        SugarAutoLoader::buildCache();
+        SugarThemeRegistry::buildRegistry();
+
         return $themename;
     }
 
@@ -202,6 +207,7 @@ class SugarTestThemeUtilities
                 rmdir_recursive(sugar_cached('themes/').$name);
         }
 
+        SugarAutoLoader::buildCache();
         SugarThemeRegistry::buildRegistry();
     }
 

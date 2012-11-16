@@ -25,7 +25,7 @@ require_once 'include/dir_inc.php';
 require_once('modules/UpgradeWizard/UpgradeRemoval.php');
 
 class Bug49955Test extends Sugar_PHPUnit_Framework_TestCase  {
-	
+
 var $merge;
 
 function setUp() {
@@ -53,22 +53,22 @@ function tearDown() {
 
    if(file_exists('modules/DocumentRevisions/EditView.html'))
    {
-       unlink('modules/DocumentRevisions/EditView.html');
+       SugarAutoLoader::unlink('modules/DocumentRevisions/EditView.html');
    }
 
    if(file_exists('modules/DocumentRevisions/DetailView.html'))
    {
-       unlink('modules/DocumentRevisions/DetailView.html');
+       SugarAutoLoader::unlink('modules/DocumentRevisions/DetailView.html');
    }
 
    if(file_exists('modules/DocumentRevisions/EditView.php'))
    {
-       unlink('modules/DocumentRevisions/EditView.php');
+       SugarAutoLoader::unlink('modules/DocumentRevisions/EditView.php');
    }
 
    if(file_exists('modules/DocumentRevisions/DetailView.php'))
    {
-       unlink('modules/DocumentRevisions/DetailView.php');
+       SugarAutoLoader::unlink('modules/DocumentRevisions/DetailView.php');
    }
 }
 
@@ -89,7 +89,7 @@ function test_filename_convert_merge() {
                } else {
                    $fieldName = $col;
                }
-               
+
                if ( $fieldName == 'filename' ) {
                    $fileField = $col;
                    break;

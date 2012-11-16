@@ -381,4 +381,24 @@ class OutboundEmailConfiguration
     public function getReplyTo() {
         return $this->replyTo;
     }
+
+    /**
+     * @access public
+     * @return array
+     */
+    public function toArray() {
+        return array(
+            "userId"      => $this->getUserId(),
+            "configId"    => $this->getConfigId(),
+            "configName"  => $this->getConfigName(),
+            "configType"  => $this->getConfigType(),
+            "inboxId"     => $this->getInboxId(),
+            "mode"        => $this->getMode(),
+            "personal"    => $this->getPersonal(),
+            "displayName" => $this->getDisplayName(),
+            "from"        => $this->getFrom(),
+            "replyTo"     => $this->getReplyTo(),
+            "hostname"    => $this->getHostname()
+        );
+    }
 }

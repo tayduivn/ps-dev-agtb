@@ -12,14 +12,16 @@
          * @return {Object}
          */
         createHistoryLog: function(oldestModel, newestModel) {
+            var is_first_commit = false;
+
             if(_.isEmpty(oldestModel)) {
                 oldestModel = new Backbone.Model({
                     best_case : 0,
                     likely_case: 0,
                     worst_case: 0,
                     date_entered: ''
-
                 })
+                is_first_commit = true;
             }
             var best_difference = newestModel.get('best_case') - oldestModel.get('best_case'),
                 best_changed = best_difference != 0,
@@ -56,7 +58,7 @@
             }
 
             //get label that will be used for the history changes
-            text = this.getCommittedHistoryLabel(best_changed, likely_changed, worst_changed);
+            text = this.getCommittedHistoryLabel(best_changed, likely_changed, worst_changed, is_first_commit);
 
             //Compile the language string for the log
             var hb = Handlebars.compile("{{str_format key module args}}"),
@@ -110,16 +112,17 @@
          * @param best_changed {bool}
          * @param likely_changed {bool}
          * @param worst_changed {bool}
+         * @param is_first_commit {bool}
          * @return {String}
          */
-        getCommittedHistoryLabel: function(best_changed, likely_changed, worst_changed) {
+        getCommittedHistoryLabel: function(best_changed, likely_changed, worst_changed, is_first_commit) {
             var labelText = "LBL_COMMITTED_HISTORY";
 
             labelText += best_changed ? "_BEST" : "";
             labelText += likely_changed ? "_LIKELY" : "";
             labelText += worst_changed ? "_WORST" : "";
 
-            return labelText + "_CHANGED";
+            return labelText + (!is_first_commit ? "_CHANGED" : "_SETUP");
         },
 
         /**

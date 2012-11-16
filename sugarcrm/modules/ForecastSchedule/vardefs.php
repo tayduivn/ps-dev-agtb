@@ -109,7 +109,7 @@ $dictionary['ForecastSchedule'] = array('table' => 'forecast_schedule',
     'reportable'=>false,
     'comment' => 'Record deletion indicator',
   ),
-
+//BEGIN SUGARCRM flav=int ONLY
     'currency_id' =>
     array (
         'name' => 'currency_id',
@@ -125,57 +125,57 @@ $dictionary['ForecastSchedule'] = array('table' => 'forecast_schedule',
         'required' => true,
     ),
 
-        /*
-        * expected_base_case is used to store the value of the user's expected best case
-        */
-  'expected_best_case' =>
-   array (
-       'name' => 'expected_best_case',
-       'vname' => 'LBL_EXPECTED_BEST_CASE',
-       'dbType' => 'decimal',
-       'type' => 'currency',
-       'len' => '26,6',
-   ),
-
-  /*
-   * expected_likely_case is used to store the value of the user's expected likely case
-   */
-   'expected_likely_case' =>
-   array(
-       'name' => 'expected_likely_case',
-       'vname' => 'LBL_EXPECTED_LIKELY_CASE',
-       'dbType' => 'decimal',
-       'type' => 'currency',
-       'len' => '26,6',
-   ),
-
-  /*
-   * expected_worst_case is used to store the value of the user's expected worst case
-   */
-   'expected_worst_case' =>
-   array(
-       'name' => 'expected_worst_case',
-       'vname' => 'LBL_EXPECTED_WORST_CASE',
-       'dbType' => 'decimal',
-       'type' => 'currency',
-       'len' => '26,6',
-   ),
-
-  /*
-   * expected_amount is used to store the value of the user's expected amount
-   */
-   'expected_amount' =>
-   array(
-       'name' => 'expected_amount',
-       'vname' => 'LBL_EXPECTED_AMOUNT',
-       'dbType' => 'decimal',
-       'type' => 'currency',
-       'len' => '26,6',
-   ),
+    /*
+    * expected_base_case is used to store the value of the user's expected best case
+    */
+    'expected_best_case' =>
+    array (
+        'name' => 'expected_best_case',
+        'vname' => 'LBL_EXPECTED_BEST_CASE',
+        'dbType' => 'decimal',
+        'type' => 'currency',
+        'len' => '26,6',
+    ),
 
     /*
-     * expected_commit_stage is used to specify forecast commit category (Include, Likely, Omit etc.)
-     */
+    * expected_likely_case is used to store the value of the user's expected likely case
+    */
+    'expected_likely_case' =>
+    array(
+        'name' => 'expected_likely_case',
+        'vname' => 'LBL_EXPECTED_LIKELY_CASE',
+        'dbType' => 'decimal',
+        'type' => 'currency',
+        'len' => '26,6',
+    ),
+
+    /*
+    * expected_worst_case is used to store the value of the user's expected worst case
+    */
+    'expected_worst_case' =>
+    array(
+        'name' => 'expected_worst_case',
+        'vname' => 'LBL_EXPECTED_WORST_CASE',
+        'dbType' => 'decimal',
+        'type' => 'currency',
+        'len' => '26,6',
+    ),
+
+    /*
+    * expected_amount is used to store the value of the user's expected amount
+    */
+    'expected_amount' =>
+    array(
+        'name' => 'expected_amount',
+        'vname' => 'LBL_EXPECTED_AMOUNT',
+        'dbType' => 'decimal',
+        'type' => 'currency',
+        'len' => '26,6',
+    ),
+
+    /*
+    * expected_commit_stage is used to specify forecast commit category (Include, Likely, Omit etc.)
+    */
     'expected_commit_stage' =>
     array (
         'name' => 'expected_commit_stage',
@@ -184,7 +184,7 @@ $dictionary['ForecastSchedule'] = array('table' => 'forecast_schedule',
         'options' => 'commit_stage_dom',
         'len' => '20',
     ),
-
+//END SUGARCRM flav=int ONLY
  )
 , 'indices' => array (
        array('name' =>'forecastschedulepk', 'type' =>'primary', 'fields'=>array('id'))

@@ -28,8 +28,6 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  ********************************************************************************/
 require_once('modules/Trackers/monitor/Monitor.php');
 
-
-
 class TrackerManager {
 
 private static $instance;
@@ -57,7 +55,7 @@ private function TrackerManager() {
  */
 private function setup() {
 	if(!empty($this->metadata) && empty($GLOBALS['installing'])) {
-        
+
 		$admin = new Administration();
 		$admin->retrieveSettings('tracker');
 		foreach($this->metadata as $key=>$entry) {
@@ -67,14 +65,14 @@ private function setup() {
 		   	  }
 		   }
 		}
-	}   	
+	}
 }
 
 public function setMonitorId($id) {
     self::$monitor_id = $id;
     foreach($this->monitors as $monitor) {
-       $monitor->monitor_id = self::$monitor_id;	
-    }	
+       $monitor->monitor_id = self::$monitor_id;
+    }
 }
 
 /**
@@ -89,13 +87,13 @@ public function getMonitorId() {
 /**
  * getInstance
  * Singleton method to return static instance of TrackerManager
- * @returns static TrackerManager instance 
+ * @returns static TrackerManager instance
  */
-static function getInstance(){	
+static function getInstance(){
     if (!isset(self::$instance)) {
         self::$instance = new TrackerManager();
 		//Set global variable for tracker monitor instances that are disabled
-        self::$instance->setup();  
+        self::$instance->setup();
     } // if
     return self::$instance;
 }
@@ -110,17 +108,17 @@ public function getMonitor($name) {
 	//don't waste our time on disabled monitors
 	if($name!='tracker_sessions' && !empty($this->disabledMonitors[$name]))return false;
 	if(isset($this->monitors[$name])) {
-	   return $this->monitors[$name];	
+	   return $this->monitors[$name];
 	}
-	
+
 	if(isset($this->metadata) && isset($this->metadata[$name])) {
-       
-	  
+
+
        try {
 	       $instance = $this->_getMonitor($this->metadata[$name]['name'], //name
 	       						   self::$monitor_id, //monitor_id
 	                               $this->metadata[$name]['metadata'],
-	                               $this->metadata[$name]['store'] //store 
+	                               $this->metadata[$name]['store'] //store
 	                               );
 	       $this->monitors[$name] = $instance;
 	       return $this->monitors[$name];
@@ -136,28 +134,20 @@ public function getMonitor($name) {
        $GLOBALS['log']->error($GLOBALS['app_strings']['ERR_MONITOR_NOT_CONFIGURED'] . "($name)");
        require_once('modules/Trackers/monitor/BlankMonitor.php');
        $this->monitors[$name] = new BlankMonitor();
-       return $this->monitors[$name];    
+       return $this->monitors[$name];
     }
 }
 
-private function _getMonitor($name='', $monitorId='', $metadata='', $store=''){
+private function _getMonitor($name='', $monitorId='', $metadata='', $store='')
+{
 	$class = strtolower($name.'_monitor');
 	$monitor = null;
-	if(file_exists('custom/modules/Trackers/monitor/'.$class.'.php')){		
-		require_once('custom/modules/Trackers/monitor/'.$class.'.php');
-		if(class_exists($class)){				
-			$monitor = new $class($name, $monitorId, $metadata, $store);
-		}
-	}elseif(file_exists('modules/Trackers/monitor/'.$class.'.php')){		
-		require_once('modules/Trackers/monitor/'.$class.'.php');
-		if(class_exists($class)){
-			$monitor = new $class($name, $monitorId, $metadata, $store);
-		}
-	}else{
+	if(SugarAutoLoader::requireWithCustom('modules/Trackers/monitor/'.$class.'.php') && class_exists($class)) {
+	    $monitor = new $class($name, $monitorId, $metadata, $store);
+	} else {
 		$monitor = new Monitor($name, $monitorId, $metadata, $store);
 	}
-	
-	
+
 	$monitor->setEnabled(empty($this->disabledMonitors[$monitor->name]));
 	return $monitor;
 }
@@ -174,7 +164,7 @@ public function save() {
         unset($this->monitors['tracker_sessions']);
     }
 
-    if(!$this->isPaused()){    	
+    if(!$this->isPaused()){
 		foreach($this->monitors as $monitor) {
 			if(array_key_exists('Trackable', class_implements($monitor))) {
 			   $monitor->save();
@@ -189,13 +179,13 @@ public function save() {
  * If ignoreDisabled is set the ignore the fact of this monitor being disabled
  */
 public function saveMonitor($monitor, $flush=true, $ignoreDisabled = false) {
-	
+
 	if(!$this->isPaused() && !empty($monitor)){
-		
-		if((empty($this->disabledMonitors[$monitor->name]) || $ignoreDisabled) && array_key_exists('Trackable', class_implements($monitor))) {	
-			   
+
+		if((empty($this->disabledMonitors[$monitor->name]) || $ignoreDisabled) && array_key_exists('Trackable', class_implements($monitor))) {
+
 		   $monitor->save($flush);
-		   
+
 		   if($flush) {
 			   $monitor->clear();
 			   unset($this->monitors[strtolower($monitor->name)]);
@@ -241,7 +231,7 @@ public function unPause(){
  * isPaused
  * This function returns the current value of the private paused variable.
  * The result indicates whether or not the TrackerManager is paused.
- * 
+ *
  * @return boolean value indicating whether or not TrackerManager instance is paused.
  */
 public function isPaused() {
@@ -252,7 +242,7 @@ public function isPaused() {
  * getDisabledMonitors
  * Returns an Array of Monitor's name(s) that hhave been set to disabled in the
  * Administration section.
- * 
+ *
  * @return Array of disabled Monitor's name(s) that hhave been set to disabled in the
  * Administration section.
  */
@@ -272,7 +262,7 @@ public function setDisabledMonitors($disabledMonitors) {
 /**
  * unsetMonitors
  * Function to unset all Monitors loaded for a TrackerManager instance
- * 
+ *
  */
 public function unsetMonitors() {
 	$mons = $this->monitors;

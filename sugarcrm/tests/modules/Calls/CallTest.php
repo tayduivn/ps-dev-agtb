@@ -55,6 +55,7 @@ class CallTest extends Sugar_PHPUnit_Framework_TestCase
          $this->callid = $call->id = create_guid();
          $call->new_with_id = 1;
          $call->status = 'Test';
+         $call->date_start = TimeDate::getInstance()->getNow()->asDb();
          $call->save();
          // then retrieve
          $call = new Call();
@@ -70,6 +71,7 @@ class CallTest extends Sugar_PHPUnit_Framework_TestCase
          $call = new Call();
          $this->callid = $call->id = create_guid();
          $call->new_with_id = 1;
+         $call->date_start = TimeDate::getInstance()->getNow()->asDb();
          $call->save();
          // then retrieve
          $call = new Call();
@@ -91,6 +93,7 @@ class CallTest extends Sugar_PHPUnit_Framework_TestCase
          $call = new Call();
          $this->callid = $call->id = create_guid();
          $call->new_with_id = 1;
+         $call->date_start = TimeDate::getInstance()->getNow()->asDb();
          $call->save();
          // then retrieve
          $call = new Call();
@@ -114,6 +117,7 @@ class CallTest extends Sugar_PHPUnit_Framework_TestCase
          $call = new Call();
          $this->callid = $call->id = create_guid();
          $call->new_with_id = 1;
+         $call->date_start = TimeDate::getInstance()->getNow()->asDb();
          $call->save();
          // then retrieve
          $call = new Call();

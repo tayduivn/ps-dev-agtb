@@ -39,6 +39,7 @@ if(!empty($config['cleanCache'])){
         $rome->remove($rome->getBuildDir() ."/$build/sugarcrm/cache/api");
         $rome->remove($rome->getBuildDir() ."/$build/sugarcrm/cache/javascript");
         $rome->remove($rome->getBuildDir() ."/$build/sugarcrm/cache/include/api");
+        $rome->remove($rome->getBuildDir() ."/$build/sugarcrm/cache/file_map.php");
         $rome->remove($rome->getBuildDir() ."/$build/sugarcrm/cache/include/javascript/sugar_grp1.js");
         $rome->remove($rome->getBuildDir() ."/$build/sugarcrm/cache/include/javascript/sugar_grp1_yui.js");
     }

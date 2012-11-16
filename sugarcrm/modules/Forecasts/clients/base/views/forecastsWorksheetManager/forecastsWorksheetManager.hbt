@@ -4,7 +4,7 @@
     <tr>
         {{#each fields}}
         {{#if enabled}}
-        <th>{{str label ../../../viewModule}}</th>
+        <th class="header-{{name}}">{{str label ../../../viewModule}}</th>
         {{/if}}
         {{/each}}
     </tr>

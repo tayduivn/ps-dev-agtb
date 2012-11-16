@@ -63,6 +63,9 @@ $job_strings = array (
     13 => 'performFullFTSIndex',
     //END SUGARCRM flav=pro ONLY
     14 => 'cleanJobQueue',
+    //BEGIN SUGARCRM flav=pro ONLY
+    15 => 'checkTimePeriods',
+    //END SUGARCRM flav=pro ONLY
 	//BEGIN SUGARCRM flav=int ONLY
 	999 => 'testEmail',
     //END SUGARCRM flav=int ONLY
@@ -580,12 +583,11 @@ function cleanJobQueue($job)
     return true;
 }
 
-if (file_exists('custom/modules/Schedulers/_AddJobsHere.php')) {
+if (SugarAutoLoader::existing('custom/modules/Schedulers/_AddJobsHere.php')) {
 	require('custom/modules/Schedulers/_AddJobsHere.php');
 }
 
-if (file_exists('custom/modules/Schedulers/Ext/ScheduledTasks/scheduledtasks.ext.php'))
-{
-	require('custom/modules/Schedulers/Ext/ScheduledTasks/scheduledtasks.ext.php');
+$extfile = SugarAutoLoader::loadExtension('schedulers');
+if($extfile) {
+    require $extfile;
 }
-?>

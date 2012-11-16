@@ -25,132 +25,85 @@
 require_once('tests/rest/RestTestBase.php');
 
 class RestUserAclTest extends RestTestBase {
-    public function setUp()
-    {
-        parent::setUp();
-    }
-    
+
     public function tearDown()
     {
-        global $db;
-
-        if ( !empty($this->aclRole) ) {
-            $db->query("DELETE FROM acl_roles_actions WHERE role_id = '{$this->aclRole->id}'");
-            $db->query("DELETE FROM acl_roles_users WHERE role_id = '{$this->aclRole->id}'");
-            $db->query("DELETE FROM acl_fields WHERE role_id = '{$this->aclRole->id}'");
-            $db->query("DELETE FROM acl_roles WHERE id = '{$this->aclRole->id}'");
-            $db->commit();
-        }
-        
-        parent::tearDown();
+        $GLOBALS['db']->query("DELETE FROM users WHERE id = '{$this->new_user_id}'");
+        $GLOBALS['db']->query("DELETE FROM users WHERE id = '{$this->admin_user_id}'");
+        $GLOBALS['db']->query("DELETE FROM users WHERE id = '{$this->deleted_user_id}'");
     }
 
     /**
      * @group rest
      */
-    public function testUserAclBasic() {
-        $restReply = $this->_restCall("me");
-        $this->assertTrue(isset($restReply['reply']['current_user']['acl']['Accounts']['_hash']),'Accounts module is missing.');
+    public function testAcls() {
+        $restReply = $this->_restCall("Users/",
+            json_encode(array('first_name'=>'UNIT TEST', 'last_name' => '- AFTER')),
+            'POST');
+
+        $this->assertTrue(!isset($restReply['reply']['id']),
+            "An user was created");
+
+        $this->assertEquals($restReply['reply']['error'], 'not_authorized',
+            "An user was created");
+
+        $restReply = $this->_restCall("/me", json_encode(array('first_name' => 'Awesome')), 'PUT');
+
+        $this->assertEquals($restReply['reply']['current_user']['full_name'], 'Awesome ' . $GLOBALS['current_user']->last_name, 'Did not change my first name');
+
+        // test create user with admin
+        $old_user = $GLOBALS['current_user'];
+        $user = new User();
+        $user->user_name = 'captain';
+        $user->user_hash = $user->getPasswordHash('awesome');
+        $user->is_admin = 1;
+        $user->first_name = 'captain';
+        $user->last_name = 'awesome';
+        $user->save();
+
+        $this->_restLogin($user->user_name, 'awesome');
+
+        $restReply = $this->_restCall("Users/",
+            json_encode(array('first_name'=>'UNIT TEST', 'last_name' => '- AFTER', 'is_admin' => true)),
+            'POST');
+
+        $this->assertTrue(isset($restReply['reply']['id']),
+            "An user was not created");
+
+        $this->assertEquals($restReply['reply']['is_admin'], 1, "Is admin was not set");
+
+        $this->new_user_id = $restReply['reply']['id'];
+
+        $restReply = $this->_restCall("Users/{$this->new_user_id}", array(), "DELETE");
+
+        $this->assertTrue(isset($restReply['reply']['id']),
+            "An user was not deleted");
+
+        $this->deleted_user_id = $this->new_user_id;
+
+        $restReply = $this->_restCall("Users/",
+            json_encode(array('first_name'=>'UNIT TEST', 'last_name' => '- AFTER', 'is_admin' => true)),
+            'POST');
+
+        $this->assertTrue(isset($restReply['reply']['id']),
+            "An user was not created");
+
+        $this->new_user_id = $restReply['reply']['id'];
+
+        $this->admin_user_id = $user->id;
+        // test is_admin set with original user
+        $this->_restLogin();
+
+        $restReply = $this->_restCall("Users/{$this->new_user_id}", json_encode(array("is_admin" => false)), "PUT");
+
+        $this->assertEquals($restReply['reply']['error'], 'not_authorized',
+            "An user was created");
+
+        // test delete with original user
+        $restReply = $this->_restCall("Users/{$this->new_user_id}", array(), "DELETE");
+
+        $this->assertEquals($restReply['reply']['error'], 'not_authorized',
+            "An user was created");
     }
 
-    /**
-     * @group rest
-     */
-    public function testUserAclMultiUser() {
-        $restReply = $this->_restCall("me");
-        $this->assertTrue(isset($restReply['reply']['current_user']['acl']['Accounts']['_hash']),'Accounts module is missing in the first run');
-        $oldMd5 = md5(serialize($restReply['reply']['current_user']['acl']));
-        
-        // Remove users and then create a brand new user w/brand new auth token, etc.
-        SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
-        $this->commit();
-        $GLOBALS['current_user'] = $this->_user = SugarTestUserUtilities::createAnonymousUser();
-        // Mark a user as an admin so that the ACL's change
-        $this->_user->is_admin = true;
-        $this->_user->save();
-        unset($this->authToken);
-        $this->commit();
-        // Login to re-establish required $this->authToken, etc.
-        $this->_restLogin($this->_user->user_name,$this->_user->user_name);
-
-        // Call end point and ensure that the md5's are different between old/new user's acls
-        $restReply = $this->_restCall("me");
-        $this->assertTrue(isset($restReply['reply']['current_user']['acl']['Accounts']['_hash']),'Accounts module is missing in the second run');
-        $newMd5 = md5(serialize($restReply['reply']['current_user']['acl']));
-        $this->assertNotEquals($oldMd5,$newMd5,"The md5's of the old and new ACL's are the same.");
-        $this->assertEquals('yes',$restReply['reply']['current_user']['acl']['Accounts']['admin'],"User is an admin, but doesn't have admin ACL access.");
-    }
-
-    //BEGIN SUGARCRM flav=pro ONLY
-    /**
-     * @group rest
-     */
-    public function testUserAclField() {
-        $this->aclRole = new ACLRole();
-        $this->aclRole->name = "Unit Test";
-        $this->aclRole->save();
-        $this->commit(); //We'll be commiting to DB between each step below
-
-        // Test ACL_ALLOW_NONE rule is working properly
-        $this->aclRole->set_relationship('acl_roles_users', array('role_id'=>$this->aclRole->id ,'user_id'=> $this->_user->id), false);
-        $this->commit();
-        $this->aclField = new ACLField();
-        $this->aclField->setAccessControl('Accounts', $this->aclRole->id, 'website', ACL_ALLOW_NONE);
-        $this->commit();
-        $this->aclField->loadUserFields('Accounts', 'Account', $this->_user->id, true );
-        $this->commit();
-        // Need to re-login so it fetches a new set of ACL's
-        $this->_restLogin($this->_user->user_name,$this->_user->user_name);
-        $restReply = $this->_restCall("me");
-        $this->assertTrue(isset($restReply['reply']['current_user']['acl']['Accounts']['_hash']),'Accounts module is missing.');
-        $this->assertEquals('no',$restReply['reply']['current_user']['acl']['Accounts']['fields']['website']['read']);
-        $this->assertEquals('no',$restReply['reply']['current_user']['acl']['Accounts']['fields']['website']['write']);
-
-        // Test ACL_OWNER_READ_WRITE rule is working properly
-        $this->aclField->setAccessControl('Accounts', $this->aclRole->id, 'website', ACL_OWNER_READ_WRITE);
-        $this->commit();
-        $this->aclField->loadUserFields('Accounts', 'Account', $this->_user->id, true );
-        $this->commit();
-        $this->_restLogin($this->_user->user_name,$this->_user->user_name);
-        $restReply = $this->_restCall("me");
-        $this->assertTrue(isset($restReply['reply']['current_user']['acl']['Accounts']['_hash']),'Accounts module is missing.');
-        $this->assertEquals('owner',$restReply['reply']['current_user']['acl']['Accounts']['fields']['website']['read']);
-        $this->assertEquals('owner',$restReply['reply']['current_user']['acl']['Accounts']['fields']['website']['write']);
-    }
-
-    //END SUGARCRM flav=pro ONLY
- 
-    /**
-     * @group rest
-     */
-    public function testUserAclModule() {
-        $this->aclRole = new ACLRole();
-        $this->aclRole->name = "Unit Test";
-        $this->aclRole->save();
-        $this->commit(); //We'll be commiting to DB between each step below
-
-        // Test set action to ACL_ALLOW_OWNER for a particular module results in reflected acls for our user 
-        $this->aclRole->set_relationship('acl_roles_users', array('role_id'=>$this->aclRole->id ,'user_id'=> $this->_user->id), false);
-        $this->commit(); 
-        // Find action id for Accounts edit
-        $ret = $GLOBALS['db']->query("SELECT id FROM acl_actions WHERE category = 'Cases' AND name = 'edit'",true);
-        $row = $GLOBALS['db']->fetchByAssoc($ret);
-        $this->aclRole->setAction($this->aclRole->id,$row['id'],ACL_ALLOW_OWNER);
-        $this->commit();
-
-        // Directly access the user acls and ensure that user can edit on Cases as we've allowed owner edit perms.
-        $ownerCanEditCases = (ACLAction::getUserAccessLevel($this->_user->id, 'Cases', 'edit') == ACL_ALLOW_OWNER );
-        $this->assertTrue($ownerCanEditCases, 'User/Owner should have edit on Cases');
-
-        // Verify proper perms via API endpoint .. re-login so it fetches a new set of ACL's
-        $this->_restLogin($this->_user->user_name,$this->_user->user_name);
-        $restReply = $this->_restCall("me");
-        $this->assertTrue(isset($restReply['reply']['current_user']['acl']['Cases']['_hash']),'Cases module is missing.');
-        $this->assertEquals('owner',$restReply['reply']['current_user']['acl']['Cases']['edit']);
-    }   
-
-    private function commit() {
-        $GLOBALS['db']->commit(); 
-    }
-    
 }

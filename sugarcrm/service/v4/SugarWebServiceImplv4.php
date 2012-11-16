@@ -514,10 +514,7 @@ class SugarWebServiceImplv4 extends SugarWebServiceImplv3_1 {
     				if(count($select_fields) > 0)
     				    $filterFields = $select_fields;
     				else {
-    				    if(file_exists('custom/modules/'.$seed->module_dir.'/metadata/listviewdefs.php'))
-    					   require_once('custom/modules/'.$seed->module_dir.'/metadata/listviewdefs.php');
-        				else
-        					require_once('modules/'.$seed->module_dir.'/metadata/listviewdefs.php');
+    				    require SugarAutoLoader::loadWithMetafiles($seed->module_dir, 'listviewdefs');
 
         				$filterFields = array();
         				foreach($listViewDefs[$seed->module_dir] as $colName => $param) {

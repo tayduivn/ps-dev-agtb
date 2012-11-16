@@ -390,7 +390,7 @@ float: left;
 #close_spot_search { left:50px;}
 #glblSearchBtn {
 float: left;
- left: 10px;
+ left: 5px;
 }
 #dcmenuSugarCube {
 float: left;
@@ -412,13 +412,10 @@ float: right;
 
 #sugar_spot_search {
     direction: rtl;
-    padding:1px 5px 0px 40px;
 }
+
 #glblSearchBtn .searchicon {
     left:2px;
-}
-#glblSearchBtn {
-    left: 17px;
 }
 
 #notificationsDivider {
@@ -489,8 +486,6 @@ direction: rtl;
 #footer #partner {
     border-left: 1px solid #CCCCCC;
     float: left;
-    margin-left: 25px;
-    margin-right: 0px;
     border-right: 0;
 }
 
@@ -522,4 +517,29 @@ ul.clickMenu li ul.subnav, ul.clickMenu ul.subnav-sub, ul.SugarActionMenuIESub {
 }
 #moduleList .ltr .MMLastViewed, #moduleList .ltr .MMFavorites {
     display:none;
+}
+
+#footer #help {
+    border-left: 1px solid #CCCCCC;
+    border-right: 0px none;
+    float: left;
+}
+
+#footer #buffer {
+    float: left;
+}
+
+#footer .copyright {
+    float: right;
+}
+
+#footer #productTour {
+    float: left;
+    border-right: 1px solid #CCCCCC;
+    border-left: 0px none;
+}
+
+#pageContainer > div > table td:first-child {
+    padding-left: 20px;
+    padding-right: 0px;
 }

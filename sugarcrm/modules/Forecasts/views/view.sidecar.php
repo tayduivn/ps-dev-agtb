@@ -28,10 +28,11 @@
 
 require_once('modules/Forecasts/clients/base/api/ForecastsFiltersApi.php');
 require_once('modules/Forecasts/clients/base/api/ForecastsChartApi.php');
+require_once("include/SugarTheme/SidecarTheme.php");
 
 class ForecastsViewSidecar extends SidecarView
 {
-    function __construct($bean = null, $view_object_map = array())
+    public function __construct($bean = null, $view_object_map = array())
     {
         $this->options['show_footer'] = false;
         $this->options['show_subpanels'] = false;
@@ -44,51 +45,57 @@ class ForecastsViewSidecar extends SidecarView
      * Override the display method to set Forecasts specific variables and use a custom layout template
      *
      */
-    function display()
+    public function display()
     {
-        global $current_user, $sugar_config;
-        $forecastInitData = $this->forecastsInitialization();
+        //Load sidecar theme css
+        $theme = new SidecarTheme();
+        $this->ss->assign("css_url", getVersionedPath($theme->getCSSURL()));
+
+        $module = $this->module;
+        $displayTemplate = get_custom_file_if_exists("modules/Forecasts/tpls/SidecarView.tpl");
 
         // begin initializing all default params
-        $this->ss->assign("initData" , json_encode($forecastInitData));
         $this->ss->assign("token", session_id());
-        $this->ss->assign("module", $this->module);
-        $this->ss->display(get_custom_file_if_exists("modules/Forecasts/tpls/SidecarView.tpl"));
+        $this->ss->assign("module", $module);
+        $this->ss->display($displayTemplate);
     }
 
     /**
      * Returns an Array of initial default data settings for Forecasts module
      *
+     * @param bool $returnOnlyUserData skip all the other initial data?
      * @return array Array of initial default data for Forecasts module
      */
-    function forecastsInitialization() {
+    public function forecastsInitialization($returnOnlyUserData=false) {
         global $current_user, $app_list_strings;
 
         $returnInitData = array();
+
+        return $returnInitData;
+
         $defaultSelections = array();
 
         require_once('modules/Forecasts/clients/base/api/ForecastsCurrentUserApi.php');
         $forecastsCurrentUserApi = new ForecastsCurrentUserApi();
         $data = $forecastsCurrentUserApi->retrieveCurrentUser($forecastsCurrentUserApi,array());
         $selectedUser = $data["current_user"];
-
         $returnInitData["initData"]["selectedUser"] = $selectedUser;
         $defaultSelections["selectedUser"] = $selectedUser;
 
-        $forecasts_timeframes_dom = TimePeriod::get_not_fiscal_timeperiods_dom();
-        // TODO:  These should probably get moved in with the config/admin settings, or by themselves since this file will probably going away.
-        $id = TimePeriod::getCurrentId();
-        $defaultSelections["timeperiod_id"]["id"] = $id;
-        $defaultSelections["timeperiod_id"]["label"] = $forecasts_timeframes_dom[$id];
+        if(!$returnOnlyUserData) {
+            $forecasts_timeframes_dom = TimePeriod::get_not_fiscal_timeperiods_dom();
+            // TODO:  These should probably get moved in with the config/admin settings, or by themselves since this file will probably going away.
+            $id = TimePeriod::getCurrentId();
+            $defaultSelections["timeperiod_id"]["id"] = $id ? $id : '';
+            $defaultSelections["timeperiod_id"]["label"] = $id ? $forecasts_timeframes_dom[$id] : '';
 
-        // INVESTIGATE:  these need to be more dynamic and deal with potential customizations based on how filters are built in admin and/or studio
-        $admin = BeanFactory::getBean("Administration");
-        $forecastsSettings = $admin->getConfigForModule("Forecasts", "base");
-
-        $defaultSelections["category"] = array("include");
-        $defaultSelections["group_by"] = 'forecast';
-        $defaultSelections["dataset"] = 'likely';
-
+            // INVESTIGATE:  these need to be more dynamic and deal with potential customizations based on how filters are built in admin and/or studio
+            $admin = BeanFactory::getBean("Administration");
+            $forecastsSettings = $admin->getConfigForModule("Forecasts", "base");
+            $defaultSelections["category"] = array("include");
+            $defaultSelections["group_by"] = 'forecast';
+            $defaultSelections["dataset"] = 'likely';
+        }
         // push in defaultSelections
         $returnInitData["defaultSelections"] = $defaultSelections;
 
@@ -107,12 +114,12 @@ class ForecastsViewSidecar extends SidecarView
             'platform' => 'base',
             'additionalComponents' => array(
                 'alert' => array(
-                    'target' => '#alert'
+                    'target' => '#alerts'
                 )
             ),
             'serverUrl' => $sugar_config['site_url'].'/rest/v10',
             'siteUrl' => $sugar_config['site_url'],
-            'loadCss' => 'url',
+            'loadCss' => false,
             'unsecureRoutes' => array('login', 'error'),
             'clientID' => 'sugar',
             'authStore'  => 'sugarAuthStore',
@@ -142,15 +149,26 @@ class ForecastsViewSidecar extends SidecarView
          */
         if ( !inDeveloperMode() )
         {
+            if ( file_exists('sidecar/src/include-manifest.php') )
+            {
+               require_once('sidecar/src/include-manifest.php');
+               if ( !empty($buildFiles) )
+               {
+                   $buildFiles = array_diff($buildFiles['sidecar'], array('lib/jquery/jquery.min.js'));
+                   foreach ( $buildFiles as $_file )
+                   {
+                       echo getVersionedScript('sidecar/'.$_file) . "\n";
+                   }
+               }
+            }
+
             if  ( !is_file(sugar_cached("include/javascript/sidecar_forecasts.js")) ) {
                 $_REQUEST['root_directory'] = ".";
                 require_once("jssource/minify_utils.php");
                 ConcatenateFiles(".");
             }
-            echo getVersionedScript('cache/include/javascript/sidecar_forecasts.js');
-        }
-        else
-        {
+            echo getVersionedScript('cache/include/javascript/sidecar_forecasts.js') . "\n";
+        } else {
             require_once('jssource/JSGroupings.php');
             if ( !empty($sidecar_forecasts) && is_array($sidecar_forecasts) )
             {
