@@ -165,17 +165,21 @@
                 model.url = worksheet.url.split("?")[0] + "/" + model.get("id");
                 model.save({}, {success: function() {
                     saveCount++;
-                    //if this is the last save and this is the manager worksheet, flag the worksheet to reload
-                    if(models.length === saveCount && self.context.forecasts.get("currentWorksheet") == "worksheetmanager") {
-                        self.context.forecasts.set({reloadWorksheetFlag: true});
+                    //if this is the last save, go ahead and trigger the commit (which will reload things)
+                    if(models.length === saveCount) {
+                        self.context.forecasts.set({commitForecastFlag: true});
                     }
                 }});
                 //this worksheet is clean
                 worksheet.isDirty = false;
             });
+            
+            //we didn't have anything to save (and wait to finish), so go ahead and trigger the commit
+            if(models.length == 0){
+                self.context.forecasts.set({commitForecastFlag: true});
+            }
 
             savebtn.addClass("disabled");
-    		self.context.forecasts.set({commitForecastFlag: true});
     	}        
     },
 

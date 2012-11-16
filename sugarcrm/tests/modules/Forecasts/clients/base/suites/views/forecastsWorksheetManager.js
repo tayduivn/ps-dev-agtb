@@ -228,10 +228,6 @@ describe("The forecasts manager worksheet", function(){
     		expect(view.context.forecasts.worksheetmanager.on).toHaveBeenCalledWith("change");
     	});
     	
-    	it("forecasts.on should have been called with reloadWorksheetFlag", function(){
-    		expect(view.context.forecasts.on).toHaveBeenCalledWith("change:reloadWorksheetFlag");
-    	});
-    	
     	it("forecasts.on should have been called with checkDirtyWorksheetFlag", function(){
     		expect(view.context.forecasts.on).toHaveBeenCalledWith("change:checkDirtyWorksheetFlag");
     	});
