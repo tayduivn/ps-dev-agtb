@@ -8935,3 +8935,9 @@ a.recommended-experts-link:hover { text-decoration:none; }
 .opportunities-treemap svg .grandparent rect { fill:#ffffff; }
 .opportunities-treemap svg .children rect.parent, .opportunities-treemap svg .grandparent rect { cursor:pointer; }
 .opportunities-treemap svg rect.parent { pointer-events:all; }
+.list-top .relate-bar { padding:8px; }
+td.preview-list-cell { text-align:center; }
+a.preview-list-item:hover {
+  text-decoration:none;
+  cursor:pointer;
+}
