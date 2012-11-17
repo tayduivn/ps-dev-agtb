@@ -169,7 +169,13 @@
             } else if (this.nodeName == "SPAN") {
                 var el = $(this);
                 var data = el.data();
-                contents += '@[' + data.module + ':' + data.id + ']';
+
+                // Check if the span is a tag, else append el text to the post's content
+                if( data.module && data.id ) {
+                    contents += '@[' + data.module + ':' + data.id + ']';
+                } else {
+                    contents += el.text();
+                }
             }
         }).html();
         return contents.replace(/&nbsp;/gi, ' ');
