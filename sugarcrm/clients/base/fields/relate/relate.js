@@ -5,6 +5,7 @@
     allow_single_deselect: true,
     minChars: 3,
     _previousTerm: null,
+    fieldTag: 'select.chzn-select',
     /**
      * Initializes field and binds all function calls to this
      * @param {Object} options
@@ -22,7 +23,7 @@
         var self = this;
         var result = app.view.Field.prototype._render.call(this);
         if(this.tplName === 'edit') {
-            this.$(".chzn-select").not(".chzn-done").chosen({
+            this.$(this.fieldTag).not(".chzn-done").chosen({
                 allow_single_deselect: self.allow_single_deselect,
                 no_results_text: app.lang.get("LBL_SEARCH_FOR")
             }).change(function(evt){
@@ -75,12 +76,15 @@
     },
     onSearchSuccess: function(data) {
         var self = this,
-            chosen_select = this.$(".chzn-select").not(":disabled");
+            chosen_select = this.$(this.fieldTag).not(":disabled");
         chosen_select.children().not(":first").remove();
         self.selectOptions = data.models;
         var options = self.optionsTemplateC(self);
         chosen_select.append(options);
         chosen_select.trigger("liszt:updated");
+    },
+    getSearchModule: function() {
+        return this.def.module;
     },
     /**
      * Searches for related field
@@ -88,8 +92,8 @@
      */
     search: _.debounce(function(term) {
         var self = this,
-            searchModule = this.def.module,
-            chosen_select = this.$(".chzn-select").not(":disabled"),
+            searchModule = this.getSearchModule(),
+            chosen_select = this.$(this.fieldTag).not(":disabled"),
             params = {
                 limit: 3
             };
