@@ -14,12 +14,28 @@
         app.view.Field.prototype.initialize.call(this, options);
     },
     _render:function(value) {
-        var self = this;
+        var self = this; 
         app.view.Field.prototype._render.call(self);
         $(function() {
+            // Changing in 6.7 - won't use jqueryui datepicker (bootstrap datepicker instead)
+            // If we don't set the date format for jquery ui, it may default to a different 
+            // format then what our user dateprefs are. This results in confusing the date.parse
+            // function which will return false and all bets are off. Solution is to set format
+            // so they are consistent in the first place. Again, though, this all goes away in 6.7
+            var sugar2jQueryUIMap, normalizedDateFormat;
+            sugar2jQueryUIMap = {
+                'd': 'dd', // 2 digit
+                'm': 'mm', // 2 digit
+                'y': 'y',  // 2 digit
+                'Y': 'yy'  // 4 digit
+            };
+            normalizedDateFormat = app.user.get('datepref').replace(/[yYmd]/g, function(s) {
+                return sugar2jQueryUIMap[s];
+            });
             if(self.view.name === 'edit') {
                 $(".datepicker").datepicker({
                     showOn: "button",
+                    dateFormat: normalizedDateFormat,
                     buttonImage: app.config.siteUrl + "/sidecar/lib/jquery-ui/css/smoothness/images/calendar.gif",
                     buttonImageOnly: true
                 });
@@ -44,7 +60,7 @@
         usersTimeFormatPreference = myUser.get('timepref');
 
         // If there is a default 'string' value like "yesterday", format it as a date
-        if(this.model.isNew() && !value && this.def.display_default) {
+        if(this.model.isNew() && !value && this.def.display_default && this.view.name === 'edit') {
             value  = app.date.parseDisplayDefault(this.def.display_default);
             jsDate = app.date.dateFromDisplayDefaultString(value);
             this.model.set(this.name, jsDate.toISOString(), {silent: true}); 

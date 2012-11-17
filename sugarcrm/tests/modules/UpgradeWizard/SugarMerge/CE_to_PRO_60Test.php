@@ -31,29 +31,29 @@ var $has_dir;
 var $modules;
 
 function setUp() {
-   
+
    $this->modules = array('Contacts');
    $this->has_dir = array();
-   
+
    foreach($this->modules as $module) {
 	   if(!file_exists("custom/modules/{$module}/metadata")){
 		  mkdir_recursive("custom/modules/{$module}/metadata", true);
 	   }
-	   
+
 	   if(file_exists("custom/modules/{$module}")) {
 	   	  $this->has_dir[$module] = true;
 	   }
-	   
+
 	   $files = array('editviewdefs', 'detailviewdefs', 'listviewdefs');
 	   foreach($files as $file) {
 	   	   if(file_exists("custom/modules/{$module}/metadata/{$file}")) {
 		   	  copy("custom/modules/{$module}/metadata/{$file}.php", "custom/modules/{$module}/metadata/{$file}.php.bak");
 		   }
-		   
+
 		   if(file_exists("custom/modules/{$module}/metadata/{$file}.php.suback.php")) {
 		      copy("custom/modules/{$module}/metadata/{$file}.php.suback.php", "custom/modules/{$module}/metadata/{$file}.php.suback.bak");
 		   }
-		   
+
 		   if(file_exists("tests/modules/UpgradeWizard/SugarMerge/ce_metadata_files/custom/modules/{$module}/metadata/{$file}.php")) {
 		   	  copy("tests/modules/UpgradeWizard/SugarMerge/ce_metadata_files/custom/modules/{$module}/metadata/{$file}.php", "custom/modules/{$module}/metadata/{$file}.php");
 		   }
@@ -67,6 +67,7 @@ function tearDown() {
    foreach($this->modules as $module) {
 	   if(!$this->has_dir[$module]) {
 	   	  rmdir_recursive("custom/modules/{$module}");
+	   	  SugarAutoLoader::delFromMap("custom/modules/{$module}");
 	   }  else {
 	   	   $files = array('editviewdefs', 'detailviewdefs', 'listviewdefs');
 		   foreach($files as $file) {
@@ -74,30 +75,30 @@ function tearDown() {
 		      	 copy("custom/modules/{$module}/metadata/{$file}.php.bak", "custom/modules/{$module}/metadata/{$file}.php");
 	             unlink("custom/modules/{$module}/metadata/{$file}.php.bak");
 		      } else if(file_exists("custom/modules/{$module}/metadata/{$file}.php")) {
-		      	 unlink("custom/modules/{$module}/metadata/{$file}.php");
+		      	 SugarAutoLoader::unlink("custom/modules/{$module}/metadata/{$file}.php");
 		      }
-		      
+
 		   	  if(file_exists("custom/modules/{$module}/metadata/{$module}.php.suback.bak")) {
 		      	 copy("custom/modules/{$module}/metadata/{$file}.php.suback.bak", "custom/modules/{$module}/metadata/{$file}.php.suback.php");
 	             unlink("custom/modules/{$module}/metadata/{$file}.php.suback.bak");
 		      } else if(file_exists("custom/modules/{$module}/metadata/{$file}.php.suback.php")) {
 		      	 unlink("custom/modules/{$module}/metadata/{$file}.php.suback.php");
-		      }  
+		      }
 		   }
 	   }
    } //foreach
 }
 
 
-function test_contacts_detailview_merge() {		
+function test_contacts_detailview_merge() {
    require_once 'modules/UpgradeWizard/SugarMerge/DetailViewMerge.php';
-   $this->merge = new DetailViewMerge();	
+   $this->merge = new DetailViewMerge();
    $this->merge->merge('Contacts', 'tests/modules/UpgradeWizard/SugarMerge/ce_metadata_files/600/modules/Contacts/metadata/detailviewdefs.php', 'modules/Contacts/metadata/detailviewdefs.php', 'custom/modules/Contacts/metadata/detailviewdefs.php');
    $this->assertTrue(file_exists('custom/modules/Contacts/metadata/detailviewdefs.php.suback.php'));
    require('custom/modules/Contacts/metadata/detailviewdefs.php');
    $fields = array();
    $panels = array();
-   
+
    //echo var_export($viewdefs['Contacts']['DetailView']['panels'], true);
    $columns_sanitized = true;
    foreach($viewdefs['Contacts']['DetailView']['panels'] as $panel_key=>$panel) {
@@ -106,11 +107,11 @@ function test_contacts_detailview_merge() {
    	  	 $new_row = true;
    	  	 foreach($row as $col_key=>$col) {
    	  	 	if($new_row && $col_key != 0) {
-   	  	 	   $columns_sanitized = false;   
+   	  	 	   $columns_sanitized = false;
    	  	 	}
-   	  	 	
+
    	  	 	$new_row = false;
-   	  	 	
+
    	  	 	$id = is_array($col) && isset($col['name']) ? $col['name'] : $col;
    	  	 	if(!empty($id) && !is_array($id)) {
    	  	 	   $fields[$id] = $col;
@@ -118,20 +119,20 @@ function test_contacts_detailview_merge() {
    	  	 }
    	  }
    }
-   
+
    //echo var_export($viewdefs['Contacts']['DetailView']['panels'], true);
-   
+
    $this->assertTrue(count($panels) == 4, "Assert that there are 4 panels matching the custom Contacts DetailView layout");
    $this->assertTrue(isset($panels['LBL_PANEL_ASSIGNMENT']), "Assert that 'LBL_PANEL_ASSIGNMENT' panel id is present");
    $this->assertTrue(isset($panels['LBL_PANEL_ADVANCED']), "Assert that 'LBL_PANEL_ADVANCED' panel id is present");
    $this->assertTrue(isset($panels['lbl_detailview_panel1']), "Assert that 'lbl_detailview_panel1' panel id is present");
    $this->assertTrue(isset($panels['lbl_contact_information']), "Assert that 'lbl_contact_information' panel id is present");
-   
-   $this->assertTrue(isset($fields['team_name']), 'Assert that team_name field is added');  
-   
+
+   $this->assertTrue(isset($fields['team_name']), 'Assert that team_name field is added');
+
    $found_test_c = false;
    $found_test2_c = false;
-   
+
    foreach($viewdefs['Contacts']['DetailView']['panels']['lbl_detailview_panel1'] as $row) {
       	foreach($row as $col_key=>$col) {
    	  	 	$id = is_array($col) && isset($col['name']) ? $col['name'] : $col;
@@ -141,23 +142,23 @@ function test_contacts_detailview_merge() {
                $found_test2_c = true;
             }
    	  	 }
-   }   
-   
+   }
+
    $this->assertTrue($found_test_c, 'Assert that test_c custom field is preserved');
    $this->assertTrue($found_test2_c, 'Assert that test2_c custom field is preserved');
 
 }
 
 
-function test_contacts_editview_merge() {		
+function test_contacts_editview_merge() {
    require_once 'modules/UpgradeWizard/SugarMerge/EditViewMerge.php';
-   $this->merge = new EditViewMerge();	
+   $this->merge = new EditViewMerge();
    $this->merge->merge('Contacts', 'tests/modules/UpgradeWizard/SugarMerge/ce_metadata_files/600/modules/Contacts/metadata/editviewdefs.php', 'modules/Contacts/metadata/editviewdefs.php', 'custom/modules/Contacts/metadata/editviewdefs.php');
    $this->assertTrue(file_exists('custom/modules/Contacts/metadata/editviewdefs.php.suback.php'));
    require('custom/modules/Contacts/metadata/editviewdefs.php');
    $fields = array();
    $panels = array();
-   
+
    //echo var_export($viewdefs['Contacts']['EditView']['panels'], true);
    $columns_sanitized = true;
    foreach($viewdefs['Contacts']['EditView']['panels'] as $panel_key=>$panel) {
@@ -166,11 +167,11 @@ function test_contacts_editview_merge() {
    	  	 $new_row = true;
    	  	 foreach($row as $col_key=>$col) {
    	  	 	if($new_row && $col_key != 0) {
-   	  	 	   $columns_sanitized = false;   
+   	  	 	   $columns_sanitized = false;
    	  	 	}
-   	  	 	
+
    	  	 	$new_row = false;
-   	  	 	
+
    	  	 	$id = is_array($col) && isset($col['name']) ? $col['name'] : $col;
    	  	 	if(!empty($id) && !is_array($id)) {
    	  	 	   $fields[$id] = $col;
@@ -178,21 +179,21 @@ function test_contacts_editview_merge() {
    	  	 }
    	  }
    }
-   
-   
+
+
    //echo var_export($viewdefs['Contacts']['EditView']['panels'], true);
-   
+
    //$this->assertTrue(count($panels) == 4, "Assert that there are 4 panels matching the custom Contacts EditView layout");
    $this->assertTrue(isset($panels['LBL_PANEL_ASSIGNMENT']), "Assert that 'LBL_PANEL_ASSIGNMENT' panel id is present");
    $this->assertTrue(isset($panels['LBL_PANEL_ADVANCED']), "Assert that 'LBL_PANEL_ADVANCED' panel id is present");
    $this->assertTrue(isset($panels['lbl_editview_panel1']), "Assert that 'lbl_editview_panel1' panel id is present");
    $this->assertTrue(isset($panels['lbl_contact_information']), "Assert that 'lbl_contact_information' panel id is present");
-   
-   $this->assertTrue(isset($fields['team_name']), 'Assert that team_name field is added');  
-   
+
+   $this->assertTrue(isset($fields['team_name']), 'Assert that team_name field is added');
+
    $found_test_c = false;
    $found_test2_c = false;
-   
+
    foreach($viewdefs['Contacts']['EditView']['panels']['lbl_editview_panel1'] as $row) {
       	foreach($row as $col_key=>$col) {
    	  	 	$id = is_array($col) && isset($col['name']) ? $col['name'] : $col;
@@ -202,8 +203,8 @@ function test_contacts_editview_merge() {
                $found_test2_c = true;
             }
    	  	 }
-   }   
-   
+   }
+
    $this->assertTrue($found_test_c, 'Assert that test_c custom field is preserved');
    $this->assertTrue($found_test2_c, 'Assert that test2_c custom field is preserved');
 
@@ -211,9 +212,9 @@ function test_contacts_editview_merge() {
 
 
 
-function test_contacts_listview_merge() {		
+function test_contacts_listview_merge() {
    require_once 'modules/UpgradeWizard/SugarMerge/ListViewMerge.php';
-   $this->merge = new ListViewMerge();	
+   $this->merge = new ListViewMerge();
    $this->merge->merge('Contacts', 'tests/modules/UpgradeWizard/SugarMerge/ce_metadata_files/600/modules/Contacts/metadata/listviewdefs.php', 'modules/Contacts/metadata/listviewdefs.php', 'custom/modules/Contacts/metadata/listviewdefs.php');
    $this->assertTrue(file_exists('custom/modules/Contacts/metadata/listviewdefs.php.suback.php'));
    require('custom/modules/Contacts/metadata/listviewdefs.php');
@@ -222,7 +223,7 @@ function test_contacts_listview_merge() {
    $this->assertTrue(isset($listViewDefs ['Contacts']['TEST2_C']), 'Assert that TEST2_C field is preserved');
    $this->assertTrue($listViewDefs ['Contacts']['TEST_C']['default'], 'Assert that TEST_C field is shown');
    $this->assertTrue($listViewDefs ['Contacts']['TEST2_C']['default'], 'Assert that TEST2_C field is shown');
-   
+
 }
 
 

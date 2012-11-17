@@ -33,87 +33,96 @@ require_once('modules/TimePeriods/TimePeriodInterface.php');
  */
 class MonthTimePeriod extends TimePeriod implements TimePeriodInterface {
 
-    /**
-     * constructor override
-     *
-     * @param null $start_date date string to set the start date of the month time period
-     * @param bool $is_fiscal flag to determine if the month should follow a fiscal pattern vs calendar
-     * @param int $week_count to be used in conjunction with is_fiscal, if fiscal month, then this is how many weeks to include
-     */
-    public function __construct($start_date = null, $is_fiscal = false, $week_count = 4) {
+    public function __construct() {
+        //Override module_name to distinguish bean for BeanFactory
+        $this->module_name = 'MonthTimePeriods';
+
         parent::__construct();
-        $timedate = TimeDate::getInstance();
 
-        //set defaults
-        $this->time_period_type = 'Month';
-        $this->is_fiscal = $is_fiscal;
-        $this->is_leaf = false;
-        $this->date_modifier = $this->is_fiscal ? '4 week' : '1 month';
+        //The time period type
+        $this->type = TimePeriod::MONTH_TYPE;
 
-        $this->setStartDate($start_date, $week_count);
+        //Fiscal is 52-week based, chronological is year based
+        $this->is_fiscal = false;
+
+        $this->is_fiscal_year = false;
+
+        //The number of periods in a year
+        $this->periods_in_year = 12;
+
+        //The next period modifier
+        $this->next_date_modifier = '1 month';
+
+        //The previous period modifier
+        $this->previous_date_modifier = '-1 month';
+
+        //The name template
+        $this->name_template = "%s %d";
+
+        //The chart label
+        $this->chart_label = "n/j";
+
+        //The chart data interval modifier
+        $this->chart_data_modifier = '+1 week';
     }
 
+
     /**
-     * sets the start date, based on a db formatted date string passed in.  If null is passed in, now is used.
-     * The end date is adjusted as well to hold to the contract of this being an quarter time period
+     * Returns the timeperiod name
      *
-     * @param null $startDate  db format date string to set the start date of the quarter time period
+     * @param $count int value of the time period count (not used in MonthTimePeriod class)
+     * @return string The formatted name of the timeperiod
      */
-    public function setStartDate($start_date = null, $week_count = 4) {
+    public function getTimePeriodName($count)
+    {
         $timedate = TimeDate::getInstance();
-        //check start_date, put it to now if it's not passed in
-        if(is_null($start_date)) {
-            $start_date = $timedate->getNow()->asDbDate();
+        return sprintf($this->name_template, $timedate->fromDbDate($this->start_date)->format('M'), $timedate->fromDbDate($this->start_date)->format('Y'));
+    }
+
+
+    /**
+     * Returns the formatted chart label data for the timeperiod
+     *
+     * @param $chartData Array of chart data values
+     * @return formatted Array of chart data values where the labels are broken down by the timeperiod's increments
+     */
+    public function getChartLabels($chartData) {
+        $weeks = array();
+
+        $start = strtotime($this->start_date);
+        $end = strtotime($this->end_date);
+        $count = 0;
+        while ($start < $end) {
+            //Find out how many days are left for this period
+            $remainingDays = (($end - $start) / 86400);
+
+            //Create the modifier for the timeperiod
+            $modifier = $remainingDays > 6 ? '+6 day' : '+' . ceil($remainingDays) . ' day';
+
+            $val = $chartData;
+            $val['label'] = date($this->chart_label, $start) . '-' . date($this->chart_label, strtotime($modifier, $start));
+
+            //We internally use $count to store the corresponding data set for the week in the given timeperiod.
+            //For a one month interval we will most likely get 4 weeks except for the case of non-leap year February
+            $weeks[$count++] = $val;
+            $start = strtotime($this->chart_data_modifier, $start);
         }
 
-        $end_date = $timedate->fromDbDate($start_date);
-
-        //set the start/end date
-        $this->start_date = $start_date;
-
-        if($this->is_fiscal) {
-            $end_date = $end_date->modify('+'.$week_count.' week');
-            $end_date = $end_date->modify('-1 day');
-        } else {
-            $end_date = $end_date->modify('+1 month');
-            $end_date = $end_date->modify('-1 day');
-        }
-        $this->end_date = $timedate->asDbDate($end_date);
-    }
-
-    /**
-     * creates a new MonthTimePeriod to start to use
-     *
-     * @param int $week_length denotes how many weeks should be included in month for a fiscal month
-     *
-     * @return MonthTimePeriod
-     */
-    public function createNextTimePeriod($week_length=4) {
-        $timedate = TimeDate::getInstance();
-        $nextEndDate = $timedate->fromDbDate($this->end_date);
-
-        $nextStartDate = $nextEndDate->modify('+1 day');
-        $nextStartDate = $timedate->asDbDate($nextStartDate);
-        $nextPeriod = BeanFactory::newBean($this->time_period_type."TimePeriods");
-        $nextPeriod->is_fiscal = $this->is_fiscal;
-        $nextPeriod->setStartDate($nextStartDate, $week_length);
-        $nextPeriod->is_leaf = $this->is_leaf;
-        $nextPeriod->save();
-
-        return $nextPeriod;
+        return $weeks;
     }
 
 
     /**
-     * build leaves for the timeperiod by creating the specified types of timeperiods
-     * currently the monthly time period doesn't allow these, so it will throw an exception right now
-     * this can be changed in the future to allow drillable periods if necessary
+     * Returns the key for the chart label data for the date closed value
      *
-     * @param string $timePeriodType
-     * @return mixed
+     * @param String The date_closed value in db date format
+     * @return String value of the key to use to map to the chart labels
      */
-    public function buildLeaves($timePeriodType) {
-        throw new Exception("This TimePeriod is a leaf only and not allowed to be a leaf");
-
+    public function getChartLabelsKey($dateClosed) {
+        $start = strtotime($this->start_date);
+        $closed = strtotime($dateClosed);
+        //We are calculating the difference in days between the $dateClosed parameter and the start_date for timeperiod
+        //then we divide by 7 (days in week) and use the floor value as the key
+        return floor((($closed - $start) / 86400) / 7);
     }
 }

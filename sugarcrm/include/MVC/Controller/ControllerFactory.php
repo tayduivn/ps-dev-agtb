@@ -1,8 +1,9 @@
 <?php
+if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 /*********************************************************************************
  * The contents of this file are subject to
  * *******************************************************************************/
-require_once('include/MVC/Controller/SugarController.php');
+require_once 'include/MVC/Controller/SugarController.php';
 /**
  * MVC Controller Factory
  * @api
@@ -14,38 +15,23 @@ class ControllerFactory
 	 *
 	 * @return an instance of SugarController
 	 */
-	function getController($module){
-		$class = ucfirst($module).'Controller';
-		$customClass = 'Custom' . $class;
-		if(file_exists('custom/modules/'.$module.'/controller.php')){
-			$customClass = 'Custom' . $class;
-			require_once('custom/modules/'.$module.'/controller.php');
-			if(class_exists($customClass)){
-				$controller = new $customClass();
-			}else if(class_exists($class)){
-				$controller = new $class();
-			}
-		}elseif(file_exists('modules/'.$module.'/controller.php')){
-			require_once('modules/'.$module.'/controller.php');
-			if(class_exists($customClass)){
-				$controller = new $customClass();
-			}else if(class_exists($class)){
-				$controller = new $class();
-			}
-		}else{
-			if(file_exists('custom/include/MVC/Controller/SugarController.php')){
-				require_once('custom/include/MVC/Controller/SugarController.php');
-			}
-			if(class_exists('CustomSugarController')){
-				$controller = new CustomSugarController();
-			}else{
-			$controller = new SugarController();
-			}
+	function getController($module)
+	{
+		if(SugarAutoLoader::requireWithCustom("modules/{$module}/controller.php")) {
+		    $class = SugarAutoLoader::customClass(ucfirst($module).'Controller');
+		} else {
+		    SugarAutoLoader::requireWithCustom('include/MVC/Controller/SugarController.php');
+		    $class = SugarAutoLoader::customClass('SugarController');
+		}
+		if(class_exists($class, false)) {
+			$controller = new $class();
+		}
+
+		if(empty($controller)) {
+		    $controller = new SugarController();
 		}
 		//setup the controller
 		$controller->setup($module);
 		return $controller;
 	}
-
 }
-?>

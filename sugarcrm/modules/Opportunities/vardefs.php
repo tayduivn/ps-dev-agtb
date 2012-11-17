@@ -282,13 +282,6 @@ $dictionary['Opportunity'] = array('table' => 'opportunities','audited'=>true, '
     'len' => '26,6',
     'validation' => array('type' => 'range', 'min' => 0)
   ),
-  'primary_quote_id' =>
-  array (
-    'name' => 'primary_quote_id',
-    'type' => 'id',
-    'vname' => 'LBL_PRIMARY_QUOTE_ID',
-    'comment' => 'The primary quote this opportunity is associated with'
-  ),
   'commit_stage' =>
   array (
     'name' => 'commit_stage',

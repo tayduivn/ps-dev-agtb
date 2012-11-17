@@ -71,9 +71,8 @@ class Currency extends SugarBean
      *
      * @access public
      */
-    function __construct()
-	{
-		parent::SugarBean();
+    public function __construct() {
+		parent::__construct();
 		global $app_strings, $current_user, $sugar_config, $locale;
 		$this->field_defs['hide'] = array('name'=>'hide', 'source'=>'non-db', 'type'=>'varchar','len'=>25);
 		$this->field_defs['unhide'] = array('name'=>'unhide', 'source'=>'non-db', 'type'=>'varchar','len'=>25);
@@ -317,7 +316,7 @@ class Currency extends SugarBean
  */
 class CurrencyWithISO extends Currency
 {
-    function __construct($ISO)
+    public function __construct($ISO)
     {
         parent::__construct();
         if(empty($ISO) || strlen($ISO) !== 3) {
@@ -340,7 +339,7 @@ class CurrencyWithISO extends Currency
  */
 class CurrencyWithID extends Currency
 {
-    function __construct($currency_id)
+    public function __construct($currency_id)
     {
         parent::__construct();
         if(empty($currency_id)) {

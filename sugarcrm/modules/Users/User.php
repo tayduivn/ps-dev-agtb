@@ -19,16 +19,9 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *to the License for the specific language governing these rights and limitations under the License.
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
-/*********************************************************************************
- * $Id: User.php 56851 2010-06-07 22:17:02Z jenny $
- * Description: TODO:  To be written.
- * Portions created by SugarCRM are Copyright (C) SugarCRM, Inc.
- * All Rights Reserved.
- * Contributor(s): ______________________________________..
- ********************************************************************************/
-
 require_once('include/SugarObjects/templates/person/Person.php');
 require_once "modules/Mailer/MailerFactory.php"; // imports all of the Mailer classes that are needed
+
 
 // User is used to store customer information.
 class User extends Person {
@@ -92,7 +85,10 @@ class User extends Person {
 	var $user_preferences;
 
 	var $importable = true;
-	var $_userPreferenceFocus;
+    /**
+     * @var UserPreference
+     */
+    var $_userPreferenceFocus;
 
 	var $encodeFields = Array ("first_name", "last_name", "description");
 
@@ -105,8 +101,8 @@ class User extends Person {
 
 	var $new_schema = true;
 
-	function User() {
-		parent::Person();
+	public function __construct() {
+		parent::__construct();
 		//BEGIN SUGARCRM flav=pro ONLY
 		$this->disable_row_level_security = true;
 		//END SUGARCRM flav=pro ONLY
@@ -1757,6 +1753,10 @@ EOQ;
      * @return bool
      */
     public function isDeveloperForAnyModule() {
+        if(empty($this->id)) {
+            // empty user is no developer
+            return false;
+        }
         if ($this->isAdmin()) {
             return true;
         }
@@ -1786,6 +1786,10 @@ EOQ;
      * @return bool
      */
     public function isDeveloperForModule($module) {
+        if(empty($this->id)) {
+            // empty user is no developer
+            return false;
+        }
         if ($this->isAdmin()) {
             return true;
         }
@@ -1818,6 +1822,10 @@ EOQ;
      * @return bool
      */
     public function isAdminForModule($module) {
+        if(empty($this->id)) {
+            // empty user is no admin
+            return false;
+        }
         if ($this->isAdmin()) {
             return true;
         }
@@ -2077,6 +2085,16 @@ EOQ;
             // set the HTML body... it will be null in the text-only case, but that's okay
             $mailer->setHtmlBody($htmlBody);
 
+            // make sure there is at least one message part (but only if the current user is an admin)...
+
+            // even though $htmlBody is already set, resetting it verifies that $mailer actually got it
+            $textBody = $mailer->getTextBody();
+            $htmlBody = $mailer->getHtmlBody();
+
+            if ($current_user->is_admin && !$mailer->hasMessagePart($textBody) && !$mailer->hasMessagePart($htmlBody)) {
+                throw new MailerException("No email body was provided", MailerException::InvalidMessageBody);
+            }
+
             // get the recipient's email address
             $itemail = $this->emailAddress->getPrimaryAddress($this);
 
@@ -2095,7 +2113,7 @@ EOQ;
                 $email->type             = 'archived';
                 $email->deleted          = '0';
                 $email->name             = $emailTemplate->subject;
-                $email->description      = $emailTemplate->body;
+                $email->description      = $textBody;
                 $email->description_html = $htmlBody;
                 $email->from_addr        = $mailer->getHeader(EmailHeaders::From)->getEmail();
                 $email->parent_type      = 'User';
@@ -2125,12 +2143,11 @@ EOQ;
 
                     break;
                 case MailerException::InvalidMessageBody:
-                    if ($current_user->is_admin) {
-                        // both the plain-text and HTML parts are empty, but this is the best error message for now
-                        $result['message'] = $app_strings['LBL_EMAIL_TEMPLATE_EDIT_PLAIN_TEXT'];
-                    } else {
-                        // status=failed to send, but no message is returned to non-admin users
-                    }
+                    // this exception will only be raised if the current user is an admin, so there is no need to
+                    // worry about catching it in a non-admin case and handling the error message accordingly
+
+                    // both the plain-text and HTML parts are empty, but this is the best error message for now
+                    $result['message'] = $app_strings['LBL_EMAIL_TEMPLATE_EDIT_PLAIN_TEXT'];
 
                     break;
                 default:
@@ -2207,7 +2224,7 @@ EOQ;
         return false;
     }
 
-    //BEGIN SUGARCRM flav=pro ONLY
+    //BEGIN SUGARCRM flav=int ONLY
     /**
      * This is a convenience function to get all the user ids that report to the invoking user instance
      *
@@ -2215,6 +2232,7 @@ EOQ;
      * @param $fromCache boolean value indicating whether or not to use the available cached values (true by default)
      *
      */
+    /*
     function get_reports_to_hierarchy($returnSelf=true, $fromCache=true)
     {
 

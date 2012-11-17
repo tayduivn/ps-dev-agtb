@@ -26,7 +26,7 @@ describe("The forecasts title view", function () {
     beforeEach(function () {
         app = SugarTest.app;
         viewController = SugarTest.loadFile("../modules/Forecasts/clients/base/views/forecastsTitle", "forecastsTitle", "js", function (d) {
-            return d;
+            return eval(d);
         });
         context = app.context.getContext({
             url:"someurl",

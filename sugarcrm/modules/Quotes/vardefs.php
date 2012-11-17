@@ -319,6 +319,15 @@ $dictionary['Quote'] = array('table' => 'quotes','audited'=>true, 'unified_searc
     'audited'=>true,
   	'enable_range_search' => true,
   	'options' => 'numeric_range_search_dom',
+//BEGIN SUGARCRM flav=pro ONLY
+    'studio' => array(
+        'wirelesseditview' => false,
+        'wirelessdetailview' => false,
+        'wirelesslistview' => false,
+        'wireless_basic_search' => false,
+        'wireless_advanced_search' => false,
+    ),
+//END SUGARCRM flav=pro ONLY
   ),
   'billing_address_street' =>
   array (

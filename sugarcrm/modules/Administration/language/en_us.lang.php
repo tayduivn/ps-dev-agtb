@@ -819,6 +819,8 @@ $mod_strings = array (
     //BEGIN SUGARCRM flav=pro ONLY
 	'LBL_WIRELESS_MODULES_ENABLE' => 'Mobile',
 	'LBL_WIRELESS_MODULES_ENABLE_DESC' => 'Select modules to appear in the browser-based mobile view and in the Sugar Mobile application',
+    'LBL_WIRELESS_LEGACY_ONLY' => '(Sugar Mobile Only)',
+    'LBL_WIRELESS_SUPPORTED_MODULES' => '* The following modules are available for SugarCRM Mobile: Accounts, Contacts, Leads, Opportunities, Meetings, Calls, Tasks, Notes, Reports, Cases, Quotes, Employees, Contracts, and custom modules. All modules apply for Sugar Mobile.',
     'LBL_WIRELESS_URL_HELP' => 'Click to configure Sugar Mobile Plus applications',
     //END SUGARCRM flav=pro ONLY
     //BEGIN SUGARCRM flav=int ONLY
@@ -1051,6 +1053,7 @@ $mod_strings = array (
 'ML_INVALID_EXT'=>'Invalid file extension ',
 'ML_ISSUES'=>'Issues',
 'ML_MANIFEST_ISSUE'=>'Issue with the manifest',
+'ML_CONFIG_OVERRIDE'=>'Config modification is not allowed',
 
 //BEGIN SUGARCRM flav=pro ONLY
 	'LBL_CONFIGURE_SHORTCUT_BAR' => 'Configure Navigation Bar Quick Create',

@@ -254,4 +254,21 @@ class OutboundSmtpEmailConfiguration extends OutboundEmailConfiguration
                 break;
         }
     }
+
+    /**
+     * @access public
+     * @return array
+     */
+    public function toArray() {
+        $fields = array(
+            "host"         => $this->getHost(),
+            "port"         => $this->getPort(),
+            "authenticate" => $this->isAuthenticationRequired(),
+            "securityProtocol" => $this->getSecurityProtocol(),
+            "username"     => $this->getUsername(),
+            "password"     => $this->getPassword(),
+        );
+        return array_merge(parent::toArray(), $fields);
+    }
+
 }

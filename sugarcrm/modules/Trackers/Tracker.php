@@ -59,7 +59,7 @@ class Tracker extends SugarBean
         "visible"
     );
 
-    function Tracker()
+    public function __construct()
     {
         global $dictionary;
         if(isset($this->module_dir) && isset($this->object_name) && !isset($GLOBALS['dictionary'][$this->object_name])){
@@ -67,7 +67,7 @@ class Tracker extends SugarBean
             if(defined('TEMPLATE_URL'))$path = SugarTemplateUtilities::getFilePath($path);
             require_once($path);
         }
-        parent::SugarBean();
+        parent::__construct();
     }
 
     /*
@@ -102,13 +102,8 @@ class Tracker extends SugarBean
 	               $breadCrumb->push($row);
 	        }
         }
-        $list = array();
-        // TODO: PHP 5.4.7 returns an incomplete class.
-        if(get_class($breadCrumb) == 'BreadCrumbStack') {
-            $list = $breadCrumb->getBreadCrumbList($modules);
-        } else {
-            $GLOBALS['log']->info('Tracker: $breadCrumb is not a BreadCrumbStack.');
-        }
+
+        $list = $breadCrumb->getBreadCrumbList($modules);
         $GLOBALS['log']->info("Tracker: retrieving ".count($list)." items");
         return $list;
     }
@@ -126,7 +121,8 @@ class Tracker extends SugarBean
         }
     }
 
-    function logPage(){
+    static function logPage()
+    {
         $time_on_last_page = 0;
         //no need to calculate it if it is a redirection page
         if(empty($GLOBALS['app']->headerDisplayed ))return;

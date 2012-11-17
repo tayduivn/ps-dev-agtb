@@ -101,8 +101,8 @@ class Contract extends SugarBean {
 	var $new_schema = true;
 	var $module_dir = 'Contracts';
 
-	function Contract() {
-		parent :: SugarBean();
+	public function __construct() {
+		parent::__construct();
 		$this->setupCustomFields('Contract'); //parameter is module name
 		//#14107 jchi 09/02/2008
 		//$this->disable_row_level_security = false;
@@ -131,7 +131,7 @@ class Contract extends SugarBean {
 		if(!empty($this->total_contract_value)){
 			$this->total_contract_value_usdollar = $currency->convertToDollar($this->total_contract_value);
 		}	
-        $return_id = parent :: save($check_notify);
+        $return_id = parent::save($check_notify);
         //BEGIN SUGARCRM flav=pro ONLY
         if(!empty($_SESSION["workflow_cron"]) && $_SESSION["workflow_cron"]=="Yes" && !empty($_SESSION["workflow_id_cron"]) && $_SESSION["workflow_id_cron"] == CONTRACT_BUILT_IN_WORKFLOW_ID) {
             $this->special_notification = false;

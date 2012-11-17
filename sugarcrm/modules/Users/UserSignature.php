@@ -19,16 +19,11 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *to the License for the specific language governing these rights and limitations under the License.
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
-/*********************************************************************************
- * $Id: UserSignature.php 56268 2010-05-05 16:49:49Z clee $
- * Description: TODO:  To be written.
- * Portions created by SugarCRM are Copyright (C) SugarCRM, Inc.
- * All Rights Reserved.
- * Contributor(s): ______________________________________..
- ********************************************************************************/
-
-// User is used to store customer information.
-class UserSignature extends SugarBean {
+/**
+ *  User is used to store customer information.
+ */
+class UserSignature extends SugarBean
+{
 	var $id;
 	var $date_entered;
 	var $date_modified;
@@ -40,23 +35,19 @@ class UserSignature extends SugarBean {
 	var $module_dir = 'Users';
 	var $object_name ='UserSignature';
 	var $disable_custom_fields = true;
+	//BEGIN SUGARCRM flav=pro ONLY
+	var $disable_row_level_security = true;
+	//END SUGARCRM flav=pro ONLY
 
-	function UserSignature() {
+	public function __construct()
+	{
 		//Ensure the vardefs get loaded.
 		global $dictionary;
-		if(file_exists('custom/metadata/users_signaturesMetaData.php')) {
-			require_once('custom/metadata/users_signaturesMetaData.php');
-		} else {
-			require_once('metadata/users_signaturesMetaData.php');
-		}
-		
-		//BEGIN SUGARCRM flav=pro ONLY
-		$this->disable_row_level_security=true;
-		//END SUGARCRM flav=pro ONLY
-		
-		parent::SugarBean();	
+		require_once SugarAutoLoader::existingCustomOne('metadata/users_signaturesMetaData.php');
+
+		parent::__construct();
 	}
-	
+
 	/**
 	 * returns the bean name - overrides SugarBean's
 	 */
@@ -95,4 +86,3 @@ class UserSignature extends SugarBean {
 	function fill_in_additional_detail_fields() {
 	}
 } // end class definition
-?>

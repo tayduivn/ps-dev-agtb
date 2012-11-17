@@ -40,6 +40,14 @@
     },
 
     /**
+     * Clean up any left over bound data to our context
+     */
+    unbindData : function() {
+        if(this.context.forecasts) this.context.forecasts.off(null, null, this);
+        app.view.View.prototype.unbindData.call(this);
+    },
+
+    /**
      * Watch for the selectedUser Change
      */
     bindDataChange:function () {
@@ -51,11 +59,6 @@
                 self.selectedUser = user;
                 this.toggleCategoryFieldVisibility();
             }, this);
-            if (this.context.forecasts.config) {
-                this.context.forecasts.config.on("change", function (context) {
-                    this.render();
-                }, this);
-            }
         }
     },
 
@@ -79,12 +82,14 @@
     _renderField:function (field) {
         if (field.name == 'category') {
             field.def.options = this.context.forecasts.config.get('buckets_dom') || 'show_binary_dom';
-            field.def.value = app.defaultSelections.category;
+            field.def.value = this.context.forecasts.has("selectedCategory") ? this.context.forecasts.get("selectedCategory") : app.defaultSelections.category;
             field = this._setUpCategoryField(field);
         }
         app.view.View.prototype._renderField.call(this, field);
 
-        field.$el.find('.chzn-container').css("width", "100%").append('<div class="indicator">Filter <span class="caret"></span></div>');
+        field.$el.find('.chzn-container').css("width", "100%");
+        field.$el.find('.chzn-choices').prepend('<legend class="chzn-select-legend">Filter <i class="icon-caret-down"></i></legend>');
+        field.$el.find('.chzn-results li').after("<span class='icon-ok' />");
 
         this.fields[field.name] = field;
     },

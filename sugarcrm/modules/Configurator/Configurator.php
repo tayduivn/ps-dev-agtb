@@ -232,8 +232,9 @@ class Configurator {
 	function saveCompanyLogo($path)
     {
     	$path = $this->checkTempImage($path);
-        mkdir_recursive('custom/'.SugarThemeRegistry::current()->getDefaultImagePath(), true);
-        copy($path,'custom/'. SugarThemeRegistry::current()->getDefaultImagePath(). '/company_logo.png');
+    	$logo = create_custom_directory(SugarThemeRegistry::current()->getDefaultImagePath(). '/company_logo.png');
+        copy($path, $logo);
+        SugarAutoLoader::addToMap($logo);
         sugar_cache_clear('company_logo_attributes');
         SugarThemeRegistry::clearAllCaches();
 	}

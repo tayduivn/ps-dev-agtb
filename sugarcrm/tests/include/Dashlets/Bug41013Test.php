@@ -38,13 +38,15 @@ class Bug41013Test extends Sugar_PHPUnit_Framework_TestCase
         sugar_mkdir("custom/modules/{$this->_moduleName}/metadata/",null,true);
         sugar_file_put_contents("custom/modules/{$this->_moduleName}/metadata/dashletviewdefs.php",
             '<?php $dashletData[\''.$this->_moduleName.'Dashlet\'][\'searchFields\'] = array(); $dashletData[\''.$this->_moduleName.'Dashlet\'][\'columns\'] = array(\'Foo\'); ?>');
-
+        SugarAutoLoader::addToMap("custom/modules/{$this->_moduleName}/metadata/dashletviewdefs.php", false);
     }
 
     public function tearDown()
     {
-        if ( is_dir("custom/modules/{$this->_moduleName}") )
+        if ( is_dir("custom/modules/{$this->_moduleName}") ) {
             rmdir_recursive("custom/modules/{$this->_moduleName}");
+            SugarAutoLoader::delFromMap("custom/modules/{$this->_moduleName}", false);
+        }
 
         unset($GLOBALS['dashletStrings']);
     }

@@ -39,6 +39,7 @@ describe("The forecastsConfigVariables view", function(){
         beforeEach(function() {
             testMethodStub = sinon.stub(view, "_setUpMultiselectField", function() {return field;});
             field = {
+                $el: $('<div class="testfield"></div>'),
                 def: {
                     multi: ''
                 }

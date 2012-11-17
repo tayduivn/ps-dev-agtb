@@ -32,6 +32,23 @@ class RestCurrentUserPortalTest extends RestTestPortalBase {
 
         parent::setUp();
 
+        // Disable the other portal users
+        $this->oldPortal = array();
+        $ret = $db->query("SELECT id FROM users WHERE portal_only = '1' AND deleted = '0'");
+        while ( $row = $db->fetchByAssoc($ret) ) {
+            $this->oldPortal[] = $row['id'];
+        }
+        $db->query("UPDATE users SET deleted = '1' WHERE portal_only = '1'");
+
+        $this->_user->portal_only = '1';
+        $this->_user->save();
+        $GLOBALS ['system_config']->saveSetting('supportPortal', 'RegCreatedBy', $this->_user->id);
+        // A little bit destructive, but necessary.
+        $db->query("DELETE FROM contacts WHERE portal_name = 'unittestportal'");
+
+        $this->accounts = array();
+        $this->contacts = array();
+
         $account = BeanFactory::newBean('Accounts');
         $account->name = "UNIT TEST PortalMe";
         $account->billing_address_postalcode = "90210";
@@ -54,6 +71,36 @@ class RestCurrentUserPortalTest extends RestTestPortalBase {
 
     public function tearDown()
     {
+        global $db;
+        // Re-enable the old portal users
+        $portalIds = "('".implode("','",$this->oldPortal)."')";
+        $db->query("UPDATE users SET deleted = '0' WHERE id IN {$portalIds}");
+
+        $accountIds = array();
+        foreach ( $this->accounts as $account ) {
+            $accountIds[] = $account->id;
+        }
+        $accountIds = "('".implode("','",$accountIds)."')";
+        $contactIds = array();
+        foreach ( $this->contacts as $contact ) {
+            $contactIds[] = $contact->id;
+        }
+        $contactIds = "('".implode("','",$contactIds)."')";
+
+        $GLOBALS['db']->query("DELETE FROM accounts WHERE id IN {$accountIds}");
+        if ($GLOBALS['db']->tableExists('accounts_cstm')) {
+            $GLOBALS['db']->query("DELETE FROM accounts_cstm WHERE id_c IN {$accountIds}");
+        }
+        $GLOBALS['db']->query("DELETE FROM contacts WHERE id IN {$contactIds}");
+        if ($GLOBALS['db']->tableExists('contacts_cstm')) {
+            $GLOBALS['db']->query("DELETE FROM contacts_cstm WHERE id_c IN {$contactIds}");
+        }
+        $GLOBALS['db']->query("DELETE FROM accounts_contacts WHERE contact_id IN {$contactIds}");
+
+        $GLOBALS ['system_config']->saveSetting('supportPortal', 'RegCreatedBy', '');
+        $GLOBALS ['system_config']->saveSetting('portal', 'on', 0);
+        $GLOBALS['db']->commit();
+
         parent::tearDown();
     }
 

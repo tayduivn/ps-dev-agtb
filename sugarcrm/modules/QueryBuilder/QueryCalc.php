@@ -74,6 +74,7 @@ class QueryCalc extends QueryBuilder {
 	var $table_name = "query_calcs";
 	var $module_dir = "QueryBuilder";
 	var $object_name = "QueryCalc";
+    var $module_name = 'QueryCalc';
 	
 	var $new_schema = true;
 
@@ -105,7 +106,7 @@ class QueryCalc extends QueryBuilder {
 	var $required_fields =  array("name"=>1);
 
 	function QueryCalc() {
-		parent::SugarBean();
+		parent::__construct();
 
 		$this->disable_row_level_security =true;
 

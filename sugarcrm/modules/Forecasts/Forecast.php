@@ -68,10 +68,10 @@ class Forecast extends SugarBean
 	var $module_dir = 'Forecasts';
 
 
-	function Forecast()
+	public function __construct()
 	{
 		global $current_user;
-		parent::SugarBean();
+		parent::__construct();
 		$this->setupCustomFields('Forecasts'); //parameter is module name
 		$this->disable_row_level_security = true;
 

@@ -17,14 +17,41 @@ class SidecarListMetaDataUpgrader extends SidecarAbstractMetaDataUpgrader
         foreach ($this->legacyViewdefs as $field => $def) {
             $defs = array();
             $defs['name'] = strtolower($field);
+            unset($def['name']); // Prevents old defs from overriding the new
+            
             // Bug 57414 - Available fields of mobile listview shown under 
             //             default fields list after upgrade
-            // For portal upgrades, enabled should be true by virtue of the filed being in the viewdefs
-            // For mobile upgrades, enabled is true if it was not set before or if it was true before
-            // For both platforms, default is true if it was not set before, or
-            // if it was set to true
-            $defs['default'] = !isset($def['default']) || AbstractMetaDataParser::isTruthy($def['default']);
-            $defs['enabled'] = $this->client == 'portal' || !isset($def['enabled']) || AbstractMetaDataParser::isTruthy($def['enabled']);
+            // For portal upgrades:
+            //  - Default should be true by virtue of the field being in the viewdefs
+            // For mobile upgrades: 
+            //  - Default is true if default was set truthy before
+            // For both platforms:
+            //  - enabled is true if it was not set before, or if it was set to true
+            if ($this->client == 'portal') {
+                $defs['default'] = true;
+            } else {
+                if (isset($def['default'])) {
+                    // If it was set in the mobile metadata, use that (bool) value
+                    $defs['default'] = AbstractMetaDataParser::isTruthy($def['default']);
+                    unset($def['default']); // remove to prevent overriding in merge
+                } else {
+                    // Was not set, so it is not default. This allows a field to
+                    // be available without being default
+                    $defs['default'] = false;
+                }
+            }
+            
+            // Enabled is almost always true by virtue of this field being in the defs
+            if (!isset($def['enabled'])) {
+                $defs['enabled'] = true;
+            } else {
+                // This will more than likely never run, but you never know
+                // If somehow the field was marked enabled in a non truthy way...
+                $defs['enabled'] = AbstractMetaDataParser::isTruthy($def['enabled']);
+                unset($def['enabled']); // unsetting to prevent clash in merge
+            }
+            
+            // Merge the rest of the defs
             $defs = array_merge($defs, $def);
             
             $newdefs[] = $defs;

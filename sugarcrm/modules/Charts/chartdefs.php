@@ -1,5 +1,5 @@
 <?php
-if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point'); 
+if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 /*********************************************************************************
  *The contents of this file are subject to the SugarCRM Professional End User License Agreement
  *("License") which can be viewed at http://www.sugarcrm.com/EULA.
@@ -29,7 +29,7 @@ $chartDefs = array(
 				'chartUnits' => 'Opportunity Size in $1K',
 				'chartType' => 'funnel chart 3D',
 				'groupBy' => array( 'sales_stage', 'user_name', ),
-				'base_url'=> 
+				'base_url'=>
 					array( 	'module' => 'Opportunities',
 							'action' => 'index',
 							'query' => 'true',
@@ -44,14 +44,14 @@ $chartDefs = array(
 				'label' => 'Pipeline by Sales Stage',
 				'chartUnits' => 'Opportunity Size in $1K',
 				'chartType' => 'horizontal group by chart',
-				'groupBy' => array( 'sales_stage', 'user_name' ), 
-				'base_url'=> 
+				'groupBy' => array( 'sales_stage', 'user_name' ),
+				'base_url'=>
 					array( 	'module' => 'Opportunities',
 							'action' => 'index',
 							'query' => 'true',
 							'searchFormTab' => 'advanced_search',
 						 ),
-				'url_params' => array( 'assigned_user_id', 'sales_stage', 'date_start', 'date_closed' ),				
+				'url_params' => array( 'assigned_user_id', 'sales_stage', 'date_start', 'date_closed' ),
 			),
 	'lead_source_by_outcome'=>
 		array(	'type' => 'code',
@@ -60,37 +60,37 @@ $chartDefs = array(
 				'chartUnits' => '',
 				'chartType' => 'horizontal group by chart',
 				'groupBy' => array( 'lead_source', 'sales_stage' ),
-				'base_url'=> 
+				'base_url'=>
 					array( 	'module' => 'Opportunities',
 							'action' => 'index',
 							'query' => 'true',
 							'searchFormTab' => 'advanced_search',
 						 ),
-				'url_params' => array( 'lead_source', 'sales_stage', 'date_start', 'date_closed' ),				
+				'url_params' => array( 'lead_source', 'sales_stage', 'date_start', 'date_closed' ),
 			 ),
 	'outcome_by_month'=>
 		array(	'type' => 'code',
 				'id' => 'Chart_outcome_by_month',
 				'label' => 'Outcome by Month',
-				'chartUnits' => 'Opportunity Size in $1K',				
+				'chartUnits' => 'Opportunity Size in $1K',
 				'chartType' => 'stacked group by chart',
 				'groupBy' => array( 'm', 'sales_stage', ),
-				'base_url'=> 
+				'base_url'=>
 					array( 	'module' => 'Opportunities',
 							'action' => 'index',
 							'query' => 'true',
 							'searchFormTab' => 'advanced_search',
 						 ),
-				'url_params' => array( 'sales_stage', 'date_closed' ),								
+				'url_params' => array( 'sales_stage', 'date_closed' ),
 			 ),
 	'pipeline_by_lead_source'=>
 		array(	'type' => 'code',
 				'id' => 'Chart_pipeline_by_lead_source',
 				'label' => 'Pipeline By Lead Source',
-				'chartUnits' => 'Opportunity Size in $1K',				
+				'chartUnits' => 'Opportunity Size in $1K',
 				'chartType' => 'pie chart',
 				'groupBy' => array( 'lead_source', ),
-				'base_url'=> 
+				'base_url'=>
 					array( 	'module' => 'Opportunities',
 							'action' => 'index',
 							'query' => 'true',
@@ -99,15 +99,15 @@ $chartDefs = array(
 				'url_params' => array( 'lead_source', ),
 			 ),
 	//BEGIN SUGARCRM flav=pro ONLY
-	'opportunities_this_quarter' => 
+	'opportunities_this_quarter' =>
 		array( 	'type' => 'code',
 				'id' => 'opportunities_this_quarter',
 				'label' => 'Opportunities this Quarter',
 				'chartType' => 'gauge chart',
-				'chartUnits' => 'Number of Opportunities',				
+				'chartUnits' => 'Number of Opportunities',
 				'groupBy' => array( ),
 				'gaugeTarget' => 200,
-				'base_url'=> 
+				'base_url'=>
 					array( 	'module' => 'Opportunities',
 							'action' => 'index',
 							'query' => 'true',
@@ -115,21 +115,21 @@ $chartDefs = array(
 						 ),
 		),
 	//END SUGARCRM flav=pro ONLY
-	
+
 	'my_modules_used_last_30_days' =>
 		array( 	'type' => 'code',
 				'id' => 'my_modules_used_last_30_days',
 				'label' => 'My Modules Used (Last 30 Days)',
 				'chartType' => 'horizontal bar chart',
-				'chartUnits' => 'Access Count',				
+				'chartUnits' => 'Access Count',
 				'groupBy' => array( 'module_name'),
-				'base_url'=> 
+				'base_url'=>
 					array( 	'module' => 'Trackers',
 							'action' => 'index',
 							'query' => 'true',
 							'searchFormTab' => 'advanced_search',
 						 ),
-				
+
 		),
 
     //BEGIN SUGARCRM flav=pro ONLY
@@ -138,9 +138,9 @@ $chartDefs = array(
 				'id' => 'my_team_modules_used_last_30_days',
 				'label' => 'Modules Used By My Direct Reports (Last 30 Days)',
 				'chartType' => 'horizontal group by chart',
-				'chartUnits' => 'Access Count',				
+				'chartUnits' => 'Access Count',
 				'groupBy' => array('user_name', 'module_name'),
-				'base_url'=> 
+				'base_url'=>
 					array( 	'module' => 'Trackers',
 							'action' => 'index',
 							'query' => 'true',
@@ -150,7 +150,6 @@ $chartDefs = array(
 	//END SUGARCRM flav=pro ONLY
 );
 
-if(file_exists('custom/Charts/chartDefs.ext.php')){
-	include_once('custom/Charts/chartDefs.ext.php');	
+if(SugarAutoLoader::existing('custom/Charts/chartDefs.ext.php')) {
+	include_once('custom/Charts/chartDefs.ext.php');
 }
-?>

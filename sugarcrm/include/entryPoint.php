@@ -20,13 +20,6 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *Portions created by SugarCRM are Copyright (C) 2006 SugarCRM, Inc.; All Rights
  *Reserved.
  ********************************************************************************/
-/*********************************************************************************
- * $Id: entryPoint.php 56650 2010-05-24 18:53:17Z jenny $
- * Description:
- * Portions created by SugarCRM are Copyright (C) SugarCRM, Inc. All Rights
- * Reserved. Contributor(s): ______________________________________..
- * *******************************************************************************/
-
 /**
  * Known Entry Points as of 4.5
  * acceptDecline.php
@@ -138,6 +131,16 @@ clean_incoming_data();
 setPhpIniSettings();
 
 require_once('sugar_version.php'); // provides $sugar_version, $sugar_db_version, $sugar_flavor
+
+require_once('include/utils/sugar_file_utils.php');
+require_once('include/utils/autoloader.php');
+SugarAutoLoader::init();
+//check to see if custom utils exist and load them too
+// not doing it in utils since autoloader is not loaded there yet
+foreach(SugarAutoLoader::existing('include/custom_utils.php', SugarAutoLoader::loadExtension('utils')) as $file) {
+	require_once $file;
+}
+
 require_once('include/database/DBManagerFactory.php');
 require_once('include/dir_inc.php');
 
@@ -146,12 +149,10 @@ require_once('include/javascript/jsAlerts.php');
 require_once('include/TimeDate.php');
 require_once('include/modules.php'); // provides $moduleList, $beanList, $beanFiles, $modInvisList, $adminOnlyList, $modInvisListActivities
 
-require('include/utils/autoloader.php');
-spl_autoload_register(array('SugarAutoLoader', 'autoload'));
 require_once('data/SugarBean.php');
 require_once('include/utils/mvc_utils.php');
-require('include/SugarObjects/LanguageManager.php');
-require('include/SugarObjects/VardefManager.php');
+require_once('include/SugarObjects/LanguageManager.php');
+require_once('include/SugarObjects/VardefManager.php');
 
 require('modules/DynamicFields/templates/Fields/TemplateText.php');
 

@@ -2484,13 +2484,13 @@ Extras.Classes.Tips = new Class({
   initializePost: function() {
     //add DOM tooltip
     if(document.body) {
-      var tip = $('tiptip_holder') || document.createElement('div');
+      var tip = $('#tiptip_holder') || document.createElement('div');
       tip.id = 'tiptip_holder';
       tip.className = 'tip_bottom';
 
-       var tip_content = $('tiptip_content') || document.createElement('div'),
-           tip_arrow = $('tiptip_arrow') || document.createElement('div'),
-           tip_arrow_inner = $('tip_arrow_inner') || document.createElement('div');
+       var tip_content = $('#tiptip_content') || document.createElement('div'),
+           tip_arrow = $('#tiptip_arrow') || document.createElement('div'),
+           tip_arrow_inner = $('#tiptip_arrow_inner') || document.createElement('div');
        tip_arrow.setAttribute("style","margin-left:5px; margin-top: -12px;");
        tip_content.id = "tiptip_content";
        tip_arrow_inner.id = "tiptip_arrow_inner";
@@ -2571,12 +2571,17 @@ Extras.Classes.Tips = new Class({
       'width': tip.offsetWidth,
       'height': tip.offsetHeight  
     };
-    //set tooltip position
     var x = cont.offsetX, y = cont.offsetY;
-    style.top = ((pos.y + y + obj.height > win.height)?  
-        (pos.y - obj.height - y) : pos.y + y) + 'px';
-    style.left = ((pos.x + obj.width + x > win.width)? 
-        (pos.x - obj.width - x) : pos.x + x) + 'px';
+      style.top = ((pos.y + y + obj.height > win.height)?
+          (pos.y - obj.height - y) : pos.y + y) + 'px';
+    // UIUX-138
+      if(pos.x + obj.width + x > win.width) {
+          style.left = (pos.x - obj.width - x) + 'px';
+          tip.className = "tip_bottom right"
+      } else {
+          style.left = (pos.x + x) +'px';
+          tip.className = "tip_bottom"
+      }
   },
   
   hide: function(triggerCallback) {
@@ -10707,7 +10712,7 @@ $jit.LineChart = new Class({
       var acumLeft = 0, acumRight = 0;
       var lastNode = (l-1 == i) ? true : false; 
       ch.push({
-        'id': prefix + val.label,
+        'id': prefix + (val.chart_id || val.label),
         'name': val.label,
         'data': {
           'value': valArray,
@@ -11421,7 +11426,7 @@ $jit.AreaChart = new Class({
       var valArray = $.zip(valLeft, valRight);
       var acumLeft = 0, acumRight = 0;
       ch.push({
-        'id': prefix + val.label,
+        'id': prefix + (val.chart_id || val.label),
         'name': val.label,
         'data': {
           'value': valArray,
@@ -13680,7 +13685,7 @@ $jit.BarChart = new Class({
 
 
       ch.push({
-        'id': prefix + val.label,
+        'id': prefix + (val.chart_id || val.label),
         'name': val.label,
         
         'data': {
@@ -14741,7 +14746,7 @@ $jit.FunnelChart = new Class({
     percentageArray.reverse();
     
       ch.push({
-        'id': prefix + val.label,
+        'id': prefix + (val.chart_id || val.label),
         'name': val.label,
         
         'data': {
@@ -16594,7 +16599,7 @@ $jit.PieChart = new Class({
       
  
       ch.push({
-        'id': prefix + val.label,
+        'id': prefix + (val.chart_id || val.label),
         'name': val.label,
         'data': {
           'value': valArray,
@@ -17464,7 +17469,7 @@ $jit.GaugeChart = new Class({
 		  var valuelabelsArray = $.splat(val.valuelabels);
 
 		  ch.push({
-			'id': prefix + val.label,
+			'id': prefix + (val.chart_id || val.label),
 			'name': val.label,
 			'data': {
 			  'value': valArray,

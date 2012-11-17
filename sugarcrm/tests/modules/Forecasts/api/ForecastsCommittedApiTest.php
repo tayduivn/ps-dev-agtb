@@ -181,5 +181,5 @@ class ForecastsCommittedApiTest extends RestTestBase
         $this->_user = $tempUser;
         $GLOBALS["current_user"] = $tempUser;
         $this->authToken = "";
-    }
+    }    
 }

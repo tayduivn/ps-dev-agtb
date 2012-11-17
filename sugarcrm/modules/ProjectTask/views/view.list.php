@@ -31,41 +31,16 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 require_once('include/MVC/View/views/view.list.php');
 
-class ProjectTaskViewList extends ViewList{
- 	function ProjectTaskViewList(){
- 		parent::ViewList();
-
- 	}
-
- 	function display(){
+class ProjectTaskViewList extends ViewList
+{
+ 	function display()
+ 	{
  		if(!$this->bean->ACLAccess('list')){
  			ACLController::displayNoAccess();
  			return;
  		}
         $module = $GLOBALS['module'];
- 	    $metadataFile = null;
-        $foundViewDefs = false;
-        if(file_exists('custom/modules/' . $module. '/metadata/listviewdefs.php')){
-            $metadataFile = 'custom/modules/' . $module . '/metadata/listviewdefs.php';
-            $foundViewDefs = true;
-        }else{
-            if(file_exists('custom/modules/'.$module.'/metadata/metafiles.php')){
-                require_once('custom/modules/'.$module.'/metadata/metafiles.php');
-                if(!empty($metafiles[$module]['listviewdefs'])){
-                    $metadataFile = $metafiles[$module]['listviewdefs'];
-                    $foundViewDefs = true;
-                }
-            }elseif(file_exists('modules/'.$module.'/metadata/metafiles.php')){
-                require_once('modules/'.$module.'/metadata/metafiles.php');
-                if(!empty($metafiles[$module]['listviewdefs'])){
-                    $metadataFile = $metafiles[$module]['listviewdefs'];
-                    $foundViewDefs = true;
-                }
-            }
-        }
-        if(!$foundViewDefs && file_exists('modules/'.$module.'/metadata/listviewdefs.php')){
-                $metadataFile = 'modules/'.$module.'/metadata/listviewdefs.php';
-        }
+ 	    $metadataFile = SugarAutoLoader::loadWithMetafiles($module, 'listviewdefs');
         require_once($metadataFile);
 
 		//BEGIN SUGARCRM flav=pro ONLY
@@ -162,33 +137,20 @@ class ProjectTaskViewList extends ViewList{
 		}
 
 		$use_old_search = true;
-		if(file_exists('modules/'.$this->module.'/SearchForm.html')){
+		if(SugarAutoLoader::existing('modules/'.$this->module.'/SearchForm.html')){
 			require_once('include/SearchForm/SearchForm.php');
 			$searchForm = new SearchForm($this->module, $this->seed);
 		}else{
 			$use_old_search = false;
 			require_once('include/SearchForm/SearchForm2.php');
-
-
-			if (file_exists('custom/modules/'.$this->module.'/metadata/searchdefs.php'))
-			{
-			    require_once('custom/modules/'.$this->module.'/metadata/searchdefs.php');
-			}
-			elseif (!empty($metafiles[$this->module]['searchdefs']))
-			{
-				require_once($metafiles[$this->module]['searchdefs']);
-			}
-			elseif (file_exists('modules/'.$this->module.'/metadata/searchdefs.php'))
-			{
-			    require_once('modules/'.$this->module.'/metadata/searchdefs.php');
-			}
-
-
-			if(!empty($metafiles[$this->module]['searchfields']))
-				require_once($metafiles[$this->module]['searchfields']);
-			elseif(file_exists('modules/'.$this->module.'/metadata/SearchFields.php'))
-				require_once('modules/'.$this->module.'/metadata/SearchFields.php');
-
+            $defs = SugarAutoLoader::loadWithMetafiles($this->module, 'searchdefs');
+            if($defs) {
+                require $defs;
+            }
+            $defs = SugarAutoLoader::loadWithMetafiles($this->module, 'SearchFields', 'searchfields');
+            if($defs) {
+            	require $defs;
+            }
 
 			$searchForm = new SearchForm($this->seed, $this->module, $this->action);
 			$searchForm->setup($searchdefs, $searchFields, 'SearchFormGeneric.tpl', $view, $listViewDefs);

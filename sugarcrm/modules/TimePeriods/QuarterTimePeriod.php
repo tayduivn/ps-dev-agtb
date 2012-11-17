@@ -35,82 +35,94 @@ require_once('modules/TimePeriods/TimePeriodInterface.php');
  */
 class QuarterTimePeriod extends TimePeriod implements TimePeriodInterface {
 
-    /**
-     * constructor override
-     *
-     * @param null $start_date date string to set the start date of the quarter time period
-     */
-    public function __construct($start_date = null) {
+    public function __construct() {
+        //Override module_name to distinguish bean for BeanFactory
+        $this->module_name = 'QuarterTimePeriods';
+
         parent::__construct();
-        $timedate = TimeDate::getInstance();
 
-        //set defaults
-        $this->time_period_type = 'Quarter';
+        //The time period type
+        $this->type = TimePeriod::QUARTER_TYPE;
+
+        //The leaf period type
+        $this->leaf_period_type = TimePeriod::MONTH_TYPE;
+
+        //The number of leaf periods
+        $this->leaf_periods = 3;
+
+        //The number of periods in a year
+        $this->periods_in_year = 4;
+
+        //Fiscal is 52-week based, chronological is year based
         $this->is_fiscal = false;
-        $this->is_leaf = false;
-        $this->date_modifier = '3 month';
 
-        $this->setStartDate($start_date);
+        $this->is_fiscal_year = false;
+
+        //The next period modifier
+        $this->next_date_modifier = '3 month';
+
+        //The previous period modifier
+        $this->previous_date_modifier = '-3 month';
+
+        //The name template
+        $this->name_template = "Q%d %d";
+
+        //The leaf name template
+        $this->leaf_name_template = "%s %d";
+
+        //The chart label
+        $this->chart_label = "F Y";
+
+        //The date formatting key for chart labels
+        $this->chart_data_key = "m-Y";
+
+        //The chart data interval modifier
+        $this->chart_data_modifier = '+1 month';
     }
 
     /**
-     * override parent function so to add a name for the quarter time period.  This can
+     * Returns the timeperiod name
      *
-     * @param null $start_date  db format date string to set the start date of the annual time period
+     * @param $count int value of the time period count (not used in MonthTimePeriod class)
+     * @return string The formatted name of the timeperiod
      */
-    public function setStartDate($start_date = null) {
-        parent::setStartDate($start_date);
-
-        if(empty($this->name)) {
-            $this->name = "Quarter";
-        }
-    }
-
-    /**
-     * build leaves for the timeperiod by creating the specified types of timeperiods
-     *
-     * @param string $timePeriodType ignored for now as current requirements only allow monthly for quarters.  Left in place in case it is used in the future for weeks/fortnights/etc
-     * @return mixed
-     */
-    public function buildLeaves($timePeriodType) {
-        if($this->hasLeaves()) {
-            throw new Exception("This TimePeriod already has leaves");
-        }
-
-        if($this->is_leaf) {
-            throw new Exception("Leaf Time Periods cannot have leaves");
-        }
-
+    public function getTimePeriodName($count)
+    {
         $timedate = TimeDate::getInstance();
-        $this->load_relationship('related_timeperiods');
+        return sprintf($this->name_template, $count, $timedate->fromDbDate($this->start_date)->format('Y'));
+    }
 
-        switch($timePeriodType) {
-            case "Month";
-                $n = 3;
-                $leafPeriod = BeanFactory::newBean("MonthTimePeriods");
-                $leafPeriod->is_fiscal = $this->is_fiscal;
-                $nameStart = $this->is_fiscal ? "Fiscal" : "";
-                break;
-            default;
-                $n = 3;
-                $leafPeriod = BeanFactory::newBean("MonthTimePeriods");
-                $leafPeriod->is_fiscal = $this->is_fiscal;
-                $nameStart = $this->is_fiscal ? "Fiscal" : "";
-                break;
-        }
-        $leafPeriod->setStartDate($this->start_date);
-        $leafPeriod->is_leaf = true;
-        $leafDate = $timedate->fromDbDate($leafPeriod->start_date);
-        $leafPeriod->name = $nameStart.$leafDate->format("F");
-        $leafPeriod->save();
-        $this->related_timeperiods->add($leafPeriod->id);
 
-        //loop the count to create the next n leaves to fill out the relationship
-        for($i = 1; $i < $n; $i++) {
-            $leafPeriod = $leafPeriod->createNextTimePeriod();
-            $leafDate = $timedate->fromDbDate($leafPeriod->start_date);
-            $leafPeriod->name = $nameStart.$leafDate->format("F");
-            $this->related_timeperiods->add($leafPeriod->id);
+    /**
+     * Returns the formatted chart label data for the timeperiod
+     *
+     * @param $chartData Array of chart data values
+     * @return formatted Array of chart data values where the labels are broken down by the timeperiod's increments
+     */
+    public function getChartLabels($chartData) {
+        $months = array();
+
+        $start = strtotime($this->start_date);
+        $end = strtotime($this->end_date);
+
+        while ($start < $end) {
+            $val = $chartData;
+            $val['label'] = date($this->chart_label, $start);
+            $months[date($this->chart_data_key, $start)] = $val;
+            $start = strtotime($this->chart_data_modifier, $start);
         }
+
+        return $months;
+    }
+
+
+    /**
+     * Returns the key for the chart label data for the date closed value
+     *
+     * @param String The date_closed value in db date format
+     * @return String value of the key to use to map to the chart labels
+     */
+    public function getChartLabelsKey($dateClosed) {
+        return date($this->chart_data_key, strtotime($dateClosed));
     }
 }

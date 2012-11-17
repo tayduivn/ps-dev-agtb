@@ -40,6 +40,7 @@ class Bug43653Test extends Sugar_PHPUnit_Framework_OutputTestCase
 		{
 			copy('custom/modules/unified_search_modules_display.php', 'custom/modules/unified_search_modules_display.php.bak');
 			unlink('custom/modules/unified_search_modules_display.php');
+			SugarAutoLoader::delFromMap('custom/modules/unified_search_modules_display.php', false);
 		}
     }
 
@@ -58,6 +59,7 @@ class Bug43653Test extends Sugar_PHPUnit_Framework_OutputTestCase
 		{
 			copy('custom/modules/unified_search_modules_display.php.bak', 'custom/modules/unified_search_modules_display.php');
 			unlink('custom/modules/unified_search_modules_display.php.bak');
+			SugarAutoLoader::addToMap('custom/modules/unified_search_modules_display.php', false);
 		}
 
 		SugarTestTaskUtilities::removeAllCreatedTasks();

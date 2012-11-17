@@ -668,7 +668,8 @@ if( count( $bottle ) > 0 ){
 }
 installerHook('post_installModules');
 
-
+// rebuild cache after all is said and done
+SugarAutoLoader::buildCache();
 
 $out =<<<EOQ
 <br><p><b>{$mod_strings['LBL_PERFORM_OUTRO_1']} {$setup_sugar_version} {$mod_strings['LBL_PERFORM_OUTRO_2']}</b></p>

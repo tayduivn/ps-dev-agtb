@@ -96,7 +96,7 @@ class RestRelateRecordTest extends RestTestBase {
             $opp = new Opportunity();
             $opp->name = "UNIT TEST ".($i+1)." - ".create_guid();
             $opp->amount = (10000*$i)+500;
-            $opp->date_closed = '2014-12-'.($i+1);
+            $opp->date_closed = sprintf('2014-12-%02d', ($i+1));
             $opp->sales_stage = $GLOBALS['app_list_strings']['sales_stage_dom']['Qualification'];
             $opp->save();
             $this->opps[] = $opp;
@@ -154,7 +154,7 @@ class RestRelateRecordTest extends RestTestBase {
             $opp = new Opportunity();
             $opp->name = "UNIT TEST ".($i+1)." - ".create_guid();
             $opp->amount = (10000*$i)+500;
-            $opp->date_closed = '2014-12-'.($i+1);
+            $opp->date_closed = sprintf('2014-12-%02d', ($i+1));
             $opp->sales_stage = $GLOBALS['app_list_strings']['sales_stage_dom']['Qualification'];
             $opp->save();
             $this->opps[] = $opp;
@@ -179,7 +179,7 @@ class RestRelateRecordTest extends RestTestBase {
             $opp = new Opportunity();
             $opp->name = "UNIT TEST ".($i+1)." - ".create_guid();
             $opp->amount = (10000*$i)+500;
-            $opp->date_closed = '2014-12-'.($i+1);
+            $opp->date_closed = sprintf('2014-12-%02d', ($i+1));
             $opp->sales_stage = $GLOBALS['app_list_strings']['sales_stage_dom']['Qualification'];
             $opp->save();
             $this->opps[] = $opp;
@@ -220,7 +220,7 @@ class RestRelateRecordTest extends RestTestBase {
             $opp = new Opportunity();
             $opp->name = "UNIT TEST ".($i+1)." - ".create_guid();
             $opp->amount = (10000*$i)+500;
-            $opp->date_closed = '2014-12-'.($i+1);
+            $opp->date_closed = sprintf('2014-12-%02d', ($i+1));
             $opp->sales_stage = $GLOBALS['app_list_strings']['sales_stage_dom']['Qualification'];
             $opp->save();
             $this->opps[] = $opp;
@@ -260,7 +260,7 @@ class RestRelateRecordTest extends RestTestBase {
             $opp = new Opportunity();
             $opp->name = "UNIT TEST ".($i+1)." - ".create_guid();
             $opp->amount = (10000*$i)+500;
-            $opp->date_closed = '2014-12-'.($i+1);
+            $opp->date_closed = sprintf('2014-12-%02d', ($i+1));
             $opp->sales_stage = $GLOBALS['app_list_strings']['sales_stage_dom']['Qualification'];
             $opp->save();
             $this->opps[] = $opp;
@@ -317,7 +317,7 @@ class RestRelateRecordTest extends RestTestBase {
             $opp = new Opportunity();
             $opp->name = "UNIT TEST ".($i+1)." - ".create_guid();
             $opp->amount = (10000*$i)+500;
-            $opp->date_closed = '2014-12-'.($i+1);
+            $opp->date_closed = sprintf('2014-12-%02d', ($i+1));
             $opp->sales_stage = $GLOBALS['app_list_strings']['sales_stage_dom']['Qualification'];
             $opp->save();
             $this->opps[] = $opp;
@@ -377,7 +377,7 @@ class RestRelateRecordTest extends RestTestBase {
             $opp = new Opportunity();
             $opp->name = "UNIT TEST ".($i+1)." - ".create_guid();
             $opp->amount = (10000*$i)+500;
-            $opp->date_closed = '2014-12-'.($i+1);
+            $opp->date_closed = sprintf('2014-12-%02d', ($i+1));
             $opp->sales_stage = $GLOBALS['app_list_strings']['sales_stage_dom']['Qualification'];
             $opp->save();
             $this->opps[] = $opp;
@@ -428,7 +428,7 @@ class RestRelateRecordTest extends RestTestBase {
             $opp = new Opportunity();
             $opp->name = "UNIT TEST ".($i+1)." - ".create_guid();
             $opp->amount = (10000*$i)+500;
-            $opp->date_closed = '2014-12-'.($i+1);
+            $opp->date_closed = sprintf('2014-12-%02d', ($i+1));
             $opp->sales_stage = $GLOBALS['app_list_strings']['sales_stage_dom']['Qualification'];
             $opp->save();
             $this->opps[] = $opp;
@@ -474,6 +474,28 @@ class RestRelateRecordTest extends RestTestBase {
         $row = $db->fetchByAssoc($ret);
         $this->assertEquals('0',$row['link_count'],"The second link was never deleted");
 
+
+    }
+
+    public function testCreateWithModuleWithParentType() {
+        $call = new Call();
+        $call->name = "UNIT 1";
+        $call->save();
+
+        $this->calls[] = $call;
+
+        $post = array(
+                'embed_flag'        => 0,
+                'deleted'           => 0,
+                'name'              => 'Test Note',
+                'description'       => 'This is a test note',
+                'assigned_user_id'  => 1,
+            );
+
+        $restReply = $this->_restCall("Calls/{$call->id}/link/notes", $post, 'POST');
+        
+        $this->assertEquals($restReply['reply']['related_record']['parent_id'], $call->id, "Call ID was not the parent id of the note.");
+        $this->assertEquals($restReply['reply']['related_record']['parent_type'], 'Calls', "Call Module was not the parent type of the note.");
 
     }
 

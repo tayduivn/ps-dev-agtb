@@ -94,8 +94,8 @@ class Prospect extends Person {
 	var $additional_column_fields = Array('assigned_user_name');
 
 
-	function Prospect() {
-		parent::Person();
+	public function __construct() {
+		parent::__construct();
 		//BEGIN SUGARCRM flav=pro ONLY
 		global $current_user;
 		if(!empty($current_user)) {

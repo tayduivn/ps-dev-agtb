@@ -38,7 +38,7 @@ class TemplatePhone extends TemplateText{
      * Constructor for TemplatePhone class. This constructor ensures that TemplatePhone instances have the
      * validate_usa_format vardef value.
      */
-    function __construct()
+    public function __construct()
 	{
 		//BEGIN SUGARCRM flav=int ONLY
 		$this->vardef_map['validate_usa_format'] = 'validate_usa_format';
