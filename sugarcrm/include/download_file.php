@@ -90,15 +90,15 @@ class DownloadFile {
                     @ob_end_flush();
                 } else {
                     // @TODO Localize this exception message
-                    throw new Exception('File information could not be retrieved for this record', 'FILE_DOWNLOAD_INCORRECT_DEF_TYPE');
+                    throw new Exception('File information could not be retrieved for this record');
                 }
             } else {
                 // @TODO Localize this exception message
-                throw new Exception('Missing file information in the SugarBean', 'FILE_DOWNLOAD_EMPTY_FIELD');
+                throw new Exception('Missing file information in the SugarBean');
             }
         } else {
             // @TODO Localize this exception message
-            throw new Exception('Missing field definitions for ' . $field, 'FILE_DOWNLOAD_MISSING_FIELD_DEF');
+            throw new Exception('Missing field definitions for ' . $field);
         }
     }
 
