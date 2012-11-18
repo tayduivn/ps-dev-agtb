@@ -131,9 +131,13 @@ class SugarForecasting_Manager extends SugarForecasting_AbstractForecast impleme
 
         $data = array();
 
+        // use to_html when call DBManager::fetchByAssoc if encode_to_html isn't defined or not equal false
+        // @see Bug #58397 : Comma in opportunity name is exported as #039;
+        $encode_to_html = !isset($this->args['encode_to_html']) || $this->args['encode_to_html'] != false;
+
         foreach($reportees as $reportee_id=>$reportee_username) {
             /** @var $reportee User */
-            $reportee = BeanFactory::getBean('Users', $reportee_id);
+            $reportee = BeanFactory::getBean('Users', $reportee_id, array('encode' => $encode_to_html));
             $default_data = $this->defaultData;
             $default_data['id'] = $reportee_id;
 
