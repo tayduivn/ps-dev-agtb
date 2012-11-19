@@ -166,8 +166,7 @@
             if (this.currentState.activeView === this.DUPLICATE_VIEW) {
                 newSubTitle = this.currentState.selectedName;
             } else {
-                //todo: how to best grab the "name" regardless of person vs. thing module
-                newSubTitle = this.recordView.model.get('name');
+                newSubTitle = this.getDisplayName(this.recordView.model);
             }
 
         } else if (this.currentState.activeView === this.DUPLICATE_VIEW) {
@@ -181,6 +180,22 @@
         }
 
         this.$('.sub-title').html(newSubTitle);
+    },
+
+    getDisplayName: function(model) {
+        var moduleFields = app.metadata.getModule(this.meta.module).fields,
+            displayName = '';
+
+        if (moduleFields.name && moduleFields.name.fields) {
+            _.each(moduleFields.name.fields, function(field) {
+                if (model.has(field)) {
+                    displayName += model.get(field) + ' ';
+                }
+            });
+        } else if (moduleFields.name) {
+            displayName = model.get('name');
+        }
+        return displayName;
     },
 
     hideSubViewToggle: function() {
