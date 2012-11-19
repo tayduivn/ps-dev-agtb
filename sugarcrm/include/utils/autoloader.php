@@ -40,8 +40,9 @@ class SugarAutoLoader
         'CustomSugarView' => 'custom/include/MVC/View/SugarView.php',
 	    'Sugar_Smarty' => 'include/Sugar_Smarty.php',
         'SugarSearchEngineFullIndexer'=>'include/SugarSearchEngine/SugarSearchEngineFullIndexer.php',
-                'SugarSearchEngineSyncIndexer'=>'include/SugarSearchEngine/SugarSearchEngineSyncIndexer.php',
-                'SugarCurrency'=>'include/SugarCurrency/SugarCurrency.php',
+        'SugarSearchEngineSyncIndexer'=>'include/SugarSearchEngine/SugarSearchEngineSyncIndexer.php',
+        'SugarCurrency'=>'include/SugarCurrency/SugarCurrency.php',
+        'MassUpdateJob'=>'include/MassUpdateJob.php',
 	);
 
 	/**
