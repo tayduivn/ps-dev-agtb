@@ -44,8 +44,7 @@
         if (moduleMeta.duplicateCheck) {
             self.duplicateView.collection.on("reset", function(){
                 self.currentState.duplicateCount = self.duplicateView.collection.length;
-                self.updatePanelSubTitle();
-                self.updateDuplicateMessage(self.duplicateView);
+                self.updatePanelHeader();
                 if (self.duplicateView.collection.length === 0) {
                     self.toggleSubViews(this.RECORD_VIEW);
                 }
@@ -160,7 +159,7 @@
     //todo: translations
     updatePanelSubTitle: function() {
         var newSubTitle;
-        
+
         if (this.currentState.isComplete) {
             newSubTitle = this.currentState.selectedName;
         } else if (this.currentState.activeView === this.DUPLICATE_VIEW) {
@@ -172,7 +171,7 @@
         } else {
             return;
         }
-        
+
         this.$('.sub-title').html(newSubTitle);
     },
 
@@ -198,7 +197,7 @@
         this.toggleRecordView(viewToShow === this.RECORD_VIEW);
         this.updatePanelHeader();
     },
-    
+
     toggleDuplicateView: function(show) {
         this.duplicateView.$el.parent().toggle(show);
         this.$('.show-record').toggle(show);
@@ -217,11 +216,6 @@
             this.currentState.activeView = this.RECORD_VIEW;
         }
         this.setDirty(true);
-    },
-
-    updateDuplicateMessage: function(view) {
-        var $foundDuplicatePlaceholder = this.$('.accordion-group[data-module=' + view.module + ']').find('.found-duplicate');
-        $foundDuplicatePlaceholder.text(view.collection.length + ' duplicates found'); //todo translate
     },
 
     markCompleted: function() {
