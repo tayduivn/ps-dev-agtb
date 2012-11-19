@@ -22,10 +22,11 @@
     _render:function() {
         if(this.name == 'name') {
             var route = this.def.route;
-            this.record_id = this.model.get(route.recordID);
-            this.module = route.module;
-            this.action = route.action;
-            this.linkText = this.model.get(this.name);
+            this.recordLink = {
+                    record_id: this.model.get(route.recordID),
+                    module: route.module,
+                    action: route.action,
+                    linkText: this.model.get(this.name)};
             // setting the viewName allows us to explicitly set the template to use
             this.options.viewName = 'recordLink';
         }
