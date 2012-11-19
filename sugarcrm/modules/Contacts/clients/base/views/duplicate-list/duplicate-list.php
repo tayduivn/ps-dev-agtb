@@ -27,36 +27,28 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * governing these rights and limitations under the License.  Portions created
  * by SugarCRM are Copyright (C) 2006 SugarCRM, Inc.; All Rights Reserved.
  */
-$viewdefs['Accounts']['base']['view']['list-singleselect'] = array(
+$viewdefs['Contacts']['base']['view']['duplicate-list'] = array(
     'type' => 'list',
     'panels' => array(
         array(
             'label' => 'LBL_PANEL_1',
             'fields' => array(
                 array(
-                    'type' => 'singleselect',
-                    'sortable' => false,
-                    'value' => true,
+                    'name' => 'name',
+                    'label' => 'LBL_NAME',
+                    'default' => true,
+                    'enabled' => true,
+                    'link' => true,
                 ),
-                'name',
-                'phone_office',
-                'email1',
-//                array(
-//                    'name' => 'name',
-//                    'label' => 'LBL_NAME',
-//                    'default' => true,
-//                    'enabled' => true,
-//                    'link' => true,
-//                ),
-//                array(
-//                    'name'  => 'phone_office',
-//                    'label' => 'LBL_LIST_PHONE',
-//                ),
-//                array(
-//                    'name'     => 'email1',
-//                    'label'    => 'LBL_LIST_EMAIL_ADDRESS',
-//                    'sortable' => false,
-//                ),
+                array(
+                    'name'  => 'phone_work',
+                    'label' => 'LBL_LIST_PHONE',
+                ),
+                array(
+                    'name'     => 'email1',
+                    'label'    => 'LBL_LIST_EMAIL_ADDRESS',
+                    'sortable' => false,
+                ),
             ),
         ),
     ),

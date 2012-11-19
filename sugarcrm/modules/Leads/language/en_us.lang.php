@@ -67,6 +67,7 @@ $mod_strings = array (
     'LBL_CONTACT_OPP_FORM_TITLE' => 'Lead-Opportunity:',
     'LBL_CONTACT_ROLE' => 'Role:',
     'LBL_CONTACT' => 'Lead:',
+    'LBL_CONVERT_BUTTON_LABEL' => 'Convert',
     'LBL_CONVERTED_ACCOUNT'=>'Converted Account:',
     'LBL_CONVERTED_CONTACT' => 'Converted Contact:',
     'LBL_CONVERTED_OPP'=>'Converted Opportunity:',

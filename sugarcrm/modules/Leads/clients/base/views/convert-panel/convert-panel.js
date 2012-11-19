@@ -3,8 +3,7 @@
     RECORD_VIEW: 'record',
 
     events:{
-        'click .toggle-subview':'handleToggleClick',
-        'click .pick': 'selectDuplicate'
+        'click .toggle-subview':'handleToggleClick'
     },
 
     initialize:function (options) {
@@ -57,12 +56,14 @@
     },
 
     insertDuplicateViewInPanel: function(moduleMeta) {
-        var def = {
-                'view':'list-singleselect',
+        var self = this,
+            def = {
+                'view':'duplicate-list',
                 'context':{'module':moduleMeta.module}
         };
 
         this.duplicateView = this.insertViewInPanel(moduleMeta, this.DUPLICATE_VIEW, def);
+        this.duplicateView.context.on('change:selection_model', this.selectDuplicate, self);
     },
 
     insertRecordViewInPanel: function(moduleMeta) {
@@ -124,12 +125,9 @@
     },
 
     selectDuplicate: function(e) {
-        var $selectedRadio = this.$(e.target),
-            recordId = $selectedRadio.val(),
-            selectedModel;
+       var selectedModel = e.changed.selection_model;
 
-        this.currentState.selectedId = recordId;
-        selectedModel = this.duplicateView.collection.get(recordId);
+        this.currentState.selectedId = selectedModel.get('id');
         this.currentState.selectedName = selectedModel.get('name');
         this.markCompleted();
     },
