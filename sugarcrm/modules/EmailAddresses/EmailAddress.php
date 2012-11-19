@@ -19,7 +19,11 @@ class EmailAddress extends SugarEmailAddress
 {
 	var $disable_row_level_security = true;
 
-	function EmailAddress() 
+	public function EmailAddress() {
+        $this->__construct();
+    }
+
+    public function __construct()
 	{
 		parent::SugarEmailAddress();	
 	}

@@ -106,6 +106,17 @@ class Opportunity extends SugarBean
 		//END SUGARCRM flav=pro ONLY
 	);
 
+    /**
+     * This is a depreciated method, please start using __construct() as this method will be removed in a future version
+     *
+     * @see __construct
+     * @depreciated
+     */
+    public function Opportunity()
+    {
+        $this->__construct();
+    }
+
 
 	public function __construct()
 	{
