@@ -154,7 +154,7 @@ class MassUpdateJob
                     $mass->setSugarBean($bean);
 
                     // to generate the where clause for search
-                    if(isset($data['entire']) && empty($data['mass'])) {
+                    if(empty($data['mass'])) {
                         $mass->generateSearchWhere($data['module'], base64_encode(serialize($data['current_query_by_page'])));
                     }
 

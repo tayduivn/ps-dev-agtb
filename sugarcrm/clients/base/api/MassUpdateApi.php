@@ -111,7 +111,6 @@ class MassUpdateApi extends SugarApi {
         if (!empty($mu_params['entire']) || ($uidCount>$asyncThreshold))
         {
             // create a job queue consumer for this
-            require_once('include/MassUpdateJob.php');
             $massUpdateJob = new MassUpdateJob();
             $this->jobId = $massUpdateJob->createJobQueueConsumer($mu_params);
 
