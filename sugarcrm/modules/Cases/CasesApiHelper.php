@@ -60,9 +60,7 @@ class CasesApiHelper extends SugarBeanApiHelper
         // not a support portal user
         else
         {
-            if(empty($bean->assigned_user_id)) {
-                $bean->assigned_user_id = $_SESSION['authenticated_user_id'];
-            }
+            $bean->assigned_user_id = $_SESSION['authenticated_user_id'];
         }
         return $data;
     }

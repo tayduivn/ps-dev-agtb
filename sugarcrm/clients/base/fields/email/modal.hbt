@@ -27,6 +27,6 @@
  ********************************************************************************/
 }}
 
-    <input type="text" class="center textField" value="{{value}}" placeholder="{{label}}">
+        <input type="text" class="center textField" value="{{value}}" placeholder="{{label}}">
     <p class="help-block">
     </p>

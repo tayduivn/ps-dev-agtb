@@ -43,8 +43,6 @@ class RestCurrentUserTest extends RestTestBase {
         $this->assertNotEmpty($restReply['reply']['current_user']['id']);
         $this->assertNotEmpty($restReply['reply']['current_user']['currency_id']);
         $this->assertNotEmpty($restReply['reply']['current_user']['decimal_precision']);
-        $this->assertNotEmpty($restReply['reply']['current_user']['primary_team_id']);
-        $this->assertNotEmpty($restReply['reply']['current_user']['primary_team_name']);
     }
 
     /**
