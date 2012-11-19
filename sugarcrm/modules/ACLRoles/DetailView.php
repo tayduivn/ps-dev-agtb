@@ -47,7 +47,7 @@ $hidden_categories = array(
 //BEGIN SUGARCRM flav!=sales ONLY
 "KBDocuments", "Campaigns","Forecasts","ForecastSchedule",
 //END SUGARCRM flav!=sales ONLY
-"Emails","EmailTemplates","EmailMarketing","Reports");
+"Emails","EmailTemplates","EmailMarketing","Reports","PdfManager");
 foreach($hidden_categories as $v){
 	if (isset($categories2[$v])) {
 	   unset($categories2[$v]);

@@ -64,6 +64,8 @@ class ForecastsController extends SugarController
         $args = array();
         $args['timeperiod_id'] = isset($_REQUEST['timeperiod_id']) ? $_REQUEST['timeperiod_id'] : TimePeriod::getCurrentId();
         $args['user_id'] = isset($_REQUEST['user_id']) ? $_REQUEST['user_id'] : $current_user->id;
+        // don't allow encoding to html for data used in export
+        $args['encode_to_html'] = false;
 
         // base file and class name
         $file = 'include/SugarForecasting/Export/Manager.php';
@@ -103,6 +105,8 @@ class ForecastsController extends SugarController
         $args = array();
         $args['timeperiod_id'] = isset($_REQUEST['timeperiod_id']) ? $_REQUEST['timeperiod_id'] : TimePeriod::getCurrentId();
         $args['user_id'] = isset($_REQUEST['user_id']) ? $_REQUEST['user_id'] : $current_user->id;
+        // don't allow encoding to html for data used in export
+        $args['encode_to_html'] = false;
 
         // base file and class name
         $file = 'include/SugarForecasting/Export/Individual.php';

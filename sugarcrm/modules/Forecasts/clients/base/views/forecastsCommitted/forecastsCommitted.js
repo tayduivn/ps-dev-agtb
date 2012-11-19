@@ -231,7 +231,6 @@
         }
 
         if(!_.isEqual(self.totals, totals)) {
-
             var best = {};
             var likely = {};
             var worst = {};
@@ -321,6 +320,8 @@
     commitForecast: function() {
         var self = this;
         var worksheetData = {};
+        worksheetData["new"] = {};
+        worksheetData["current"] = {};
         
         var currentWorksheet = self.context.forecasts.get("currentWorksheet");
         

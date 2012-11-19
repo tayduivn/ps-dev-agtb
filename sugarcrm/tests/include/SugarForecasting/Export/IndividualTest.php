@@ -193,4 +193,28 @@ class SugarForecasting_Export_IndividualTest extends Sugar_PHPUnit_Framework_Tes
 
         $this->assertRegExp("/\_rep\_forecast.csv$/", $obj->getFilename());
     }
+
+    /**
+     * This is a function to test the bug 58397
+     * @group export
+     * @group forecasts
+     */
+    public function testBug58397()
+    {
+        $opp = $this->reportee['opportunities'][0];
+        $opp->name = $opp->name."'";
+        $opp->save();
+
+        $args = array();
+        $args['timeperiod_id'] = $this->timeperiod->id;
+        $args['user_id'] = $this->repData['id'];
+        $args['encode_to_html'] = false;
+
+        $obj = new SugarForecasting_Export_Individual($args);
+        $content = $obj->process();
+
+        $this->assertNotEmpty($content, "content empty. Rep data should have returned csv file contents.");
+        $this->assertNotContains('#039', $content);
+        $this->assertContains("'", $content);
+    }
 }

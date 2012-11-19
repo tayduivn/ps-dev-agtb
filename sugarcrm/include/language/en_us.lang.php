@@ -3353,7 +3353,7 @@ $app_strings = array (
     'BorderColor' => 'Border Color',
     'NavigationBar' => 'Navigation Bar',
     'PrimaryButton' => 'Primary Button',
-    
+
   	//BEGIN SUGARCRM flav=PRO ONLY
     //in app tour
     'LBL_TOUR_PDF_MANAGER' => 'New PDF Manager',
@@ -3377,7 +3377,7 @@ $app_strings = array (
     'LBL_TOUR_CALENDAR_URL_1' => 'Do you share your SugarCRM calendar with 3rd party applications, such as Microsoft Outlook or Exchange? If so, you have a new URL. This new, more secure URL includes a personal key which will prevent unauthorized publishing of your calendar.',
     'LBL_TOUR_CALENDAR_URL_2' => 'Retrieve your new shared calendar URL.',
     //END SUGARCRM flav=PRO ONLY
-    
+
     //begin portal
     //BEGIN SUGARCRM flav=ent ONLY
     // for nomad mobile
@@ -3491,7 +3491,7 @@ $app_strings = array (
     'LBL_PORTAL_LOGIN_PASSWORD' => 'Password',
     'LBL_PORTAL_LOADING' => 'Loading',
     'LBL_PORTAL_SAVING' => 'Saving',
-    'LBL_PORTAL_PAGE_NOT_AVAIL' => 'Page Not Available', 
+    'LBL_PORTAL_PAGE_NOT_AVAIL' => 'Page Not Available',
     'LBL_PORTAL_NOT_ENABLED_MSG' => "We're Sorry, but this feature is not available at this time.",
     'LBL_PORTAL_SEARCH_RESULTS_TITLE' => 'Show search results for "{query}"',
 
@@ -3540,7 +3540,7 @@ $app_strings = array (
     'LBL_CONTACT_EDIT_PASSWORD_LNK_TEXT' => 'Change Password',
     'LBL_PORTAL_PASSWORDS_MUST_MATCH' => 'The passwords must match.',
     'LBL_PORTAL_PASSWORD_UPDATE_FAILED' => 'Update password failed. Please try again or contact technical support.',
-    'LBL_PORTAL_PASSWORD_VERIFICATION_FAILED' => 'Password entered does not match that in our system.', 
+    'LBL_PORTAL_PASSWORD_VERIFICATION_FAILED' => 'Password entered does not match that in our system.',
     'LBL_PORTAL_PASSWORD_SUCCESS_CHANGED' => 'Your password has been successfully updated.',
     //end portal
     //END SUGARCRM flav=ent ONLY
@@ -4413,11 +4413,11 @@ $app_list_strings ['emailTemplates_type_list_no_workflow'] = array (
   );
 $app_strings ['documentation'] = array (
     'LBL_DOCS' => 'Documentation',
-    'ULT' => '02_Sugar_Ultimate',
-	'ENT' => '02_Sugar_Enterprise',
-	'CORP' => '03_Sugar_Corporate',
-	'PRO' => '04_Sugar_Professional',
-	'COM' => '05_Sugar_Community_Edition'
+    'ULT' => '01_Sugar_Ultimate',
+    'ENT' => '02_Sugar_Enterprise',
+    'CORP' => '03_Sugar_Corporate',
+    'PRO' => '04_Sugar_Professional',
+    'COM' => '05_Sugar_Community_Edition'
 );
 //BEGIN SUGARCRM flav=pro ONLY
 $app_list_strings['forecasts_config_category_options_dom'] = array(

@@ -123,6 +123,7 @@
     },
 
     breadcrumb:function (evt) {
+        evt.preventDefault();
         // ignore the click if the crumb is already active
         if ($(evt.target).parent().is(".active,.disabled") == false) {
             // get the index of the clicked crumb
