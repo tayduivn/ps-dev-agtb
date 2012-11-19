@@ -2,6 +2,10 @@
     DUPLICATE_VIEW: 'duplicate',
     RECORD_VIEW: 'record',
 
+    STATUS_INIT: 'init',
+    STATUS_DIRTY: 'dirty',
+    STATUS_COMPLETE: 'complete',
+
     events:{
         'click .toggle-subview':'handleToggleClick'
     },
@@ -18,9 +22,7 @@
             activeView: this.DUPLICATE_VIEW,
             duplicateCount: 0,
             selectedId: null,
-            selectedName: '',
-            isComplete: false,
-            isDirty: false
+            selectedName: ''
         };
     },
 
@@ -63,6 +65,7 @@
 
         this.duplicateView = this.insertViewInPanel(moduleMeta, this.DUPLICATE_VIEW, def);
         this.duplicateView.context.on('change:selection_model', this.selectDuplicate, self);
+        this.duplicateView.validationStatus = this.STATUS_INIT;
     },
 
     insertRecordViewInPanel: function(moduleMeta) {
@@ -72,6 +75,7 @@
         };
 
         this.recordView = this.insertViewInPanel(moduleMeta, this.RECORD_VIEW, def);
+        this.recordView.validationStatus = this.STATUS_DIRTY;
     },
 
     insertViewInPanel:function (moduleMeta, contentType, def) {
@@ -128,7 +132,7 @@
 
         this.currentState.selectedId = selectedModel.get('id');
         this.currentState.selectedName = selectedModel.get('name');
-        this.markCompleted();
+        this.setStatus(this.STATUS_DIRTY);
     },
 
     updatePanelHeader: function() {
@@ -140,7 +144,7 @@
     updatePanelTitle: function() {
         var newTitle;
 
-        if (this.currentState.isComplete) {
+        if (this.getStatus() === this.STATUS_COMPLETE) {
             newTitle = '<i class="icon-ok-sign icon-added"></i> ' + this.meta.moduleSingular + ' Associated:';
             if (!this.meta.required) {
                 this.$('.optional').hide();
@@ -158,8 +162,14 @@
     updatePanelSubTitle: function() {
         var newSubTitle;
 
-        if (this.currentState.isComplete) {
-            newSubTitle = this.currentState.selectedName;
+        if (this.getStatus() === this.STATUS_COMPLETE) {
+            if (this.currentState.activeView === this.DUPLICATE_VIEW) {
+                newSubTitle = this.currentState.selectedName;
+            } else {
+                //todo: how to best grab the "name" regardless of person vs. thing module
+                newSubTitle = this.recordView.model.get('name');
+            }
+
         } else if (this.currentState.activeView === this.DUPLICATE_VIEW) {
             if (this.currentState.duplicateCount > 0) {
                 newSubTitle = '> ' + this.currentState.duplicateCount + ' duplicates found';
@@ -194,6 +204,7 @@
         this.toggleDuplicateView(viewToShow === this.DUPLICATE_VIEW);
         this.toggleRecordView(viewToShow === this.RECORD_VIEW);
         this.updatePanelHeader();
+        this.context.trigger("lead:convert:panel:update");
     },
 
     toggleDuplicateView: function(show) {
@@ -202,7 +213,6 @@
         if (show) {
             this.currentState.activeView = this.DUPLICATE_VIEW;
         }
-        this.setDirty(false);
     },
 
     toggleRecordView: function(show) {
@@ -213,42 +223,59 @@
         if (show) {
             this.currentState.activeView = this.RECORD_VIEW;
         }
-        this.setDirty(true);
     },
 
-    markCompleted: function() {
-        this.currentState.isComplete = true;
-        this.context.trigger("lead:convert:panel:update");
-    },
-
-    setDirty: function(isDirty) {
-        this.currentState.isDirty = isDirty;
-        this.context.trigger("lead:convert:panel:update");
-    },
-
-    runValidation: function(callback) {
-        //dirty record views need validation - other scenarios do not
-        if (this.currentState.activeView === this.RECORD_VIEW && this.currentState.isDirty) {
+    runValidation: function(callback, force) {
+        var force = force || false;
+        if (this.currentState.activeView === this.DUPLICATE_VIEW) {
+            //mark completed if a value is selected
+            if (this.currentState.selectedId !== null) {
+                this.setStatus(this.STATUS_COMPLETE);
+                callback();
+            } else if (!this.meta.required || !force) {
+                callback();
+            } else {
+                //todo: better error
+                app.alert.show('failed_validation', {level:'error', title: 'Failed Validation', messages: 'Failed Validation', autoClose: true});
+            }
+        } else {
             //todo: implement validation - this is a placeholder
             var model = this.recordView.model;
             if (model.get('name') === 'fail' || model.get('first_name') === 'fail') {
+                //todo: better error
                 app.alert.show('failed_validation', {level:'error', title: 'Failed Validation', messages: 'Failed Validation', autoClose: true});
             } else {
+                this.setStatus(this.STATUS_COMPLETE);
                 callback();
             }
-        } else {
-            callback();
         }
     },
 
-    isComplete: function() {
-       return (this.currentState.isComplete || this.currentState.isDirty);
+    getStatus: function() {
+        if (this.currentState.activeView === this.DUPLICATE_VIEW) {
+            return this.duplicateView.validationStatus;
+        } else {
+            return this.recordView.validationStatus;
+        }
+    },
+
+    setStatus: function(status) {
+        if (this.currentState.activeView === this.DUPLICATE_VIEW) {
+            this.duplicateView.validationStatus = status;
+        } else {
+            this.recordView.validationStatus = status;
+        }
+        this.context.trigger("lead:convert:panel:update");
+    },
+
+    isDirtyOrComplete: function() {
+       return (this.getStatus() === this.STATUS_COMPLETE || this.getStatus() === this.STATUS_DIRTY);
     },
 
     getAssociatedModel: function() {
         var associatedModel;
 
-        if (!this.currentState.isComplete) {
+        if (!this.getStatus() === this.STATUS_COMPLETE) {
             return null;
         }
 
@@ -257,7 +284,7 @@
             associatedModel.set('id', this.currentState.selectedId);
             return associatedModel;
         } else {
-            return this.recordView;
+            return this.recordView.model;
         }
     }
 })

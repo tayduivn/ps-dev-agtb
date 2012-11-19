@@ -2,7 +2,7 @@
     events:{
         'click [name=convert_continue_button]':'processContinue', //TODO: remove this if we don't do the continue button
         'click .accordion-heading.enabled': 'handlePanelHeaderClick',
-        'click [name=lead_convert_finish_button].enabled': 'processConvert'
+        'click [name=lead_convert_finish_button].enabled': 'initiateFinish'
     },
 
     initialize:function (options) {
@@ -18,8 +18,6 @@
 
         //listen for panel status updates
         this.context.on("lead:convert:panel:update", this.handlePanelUpdate, this);
-
-        this.context.requiredComplete = false;
     },
 
     initializePanels: function(modulesMetadata) {
@@ -96,10 +94,10 @@
     },
 
     isDependentModulesComplete: function(moduleMeta) {
-        var isComplete,
+        var isDirtyOrComplete,
             self = this;
 
-        isComplete =  _.all(moduleMeta.dependentModules, function(moduleName) {
+        isDirtyOrComplete =  _.all(moduleMeta.dependentModules, function(moduleName) {
             var convertPanel,
                 meta = self._getModuleMeta(moduleName);
 
@@ -108,42 +106,39 @@
             }
 
             convertPanel = self._getPanelByModuleName(moduleName);
-            if (!convertPanel.isComplete()) {
+            if (!convertPanel.isDirtyOrComplete()) {
                 return false;
             }
             return true;
         });
 
-        return isComplete;
+        return isDirtyOrComplete;
     },
 
     checkRequired: function() {
         var showFinish,
             self = this;
 
-        if (_.isBoolean(this.context.requiredComplete) && this.context.requiredComplete) {
-            return;
-        }
-
         showFinish = _.all(this.meta.modules, function(module){
             if (_.isBoolean(module.required) && module.required) {
                 var convertPanel = self._getPanelByModuleName(module.module);
-                if (!convertPanel.isComplete()) {
+                if (!convertPanel.isDirtyOrComplete()) {
                     return false;
                 }
             }
             return true;
         });
 
-        if(showFinish) {
-            this.context.requiredComplete = true;
-            this.enableFinishButton();
+        if (showFinish) {
+            this.toggleFinishButton(true);
+        } else {
+            this.toggleFinishButton(false);
         }
     },
 
-    enableFinishButton: function() {
-        $('[name=lead_convert_finish_button]').removeClass('disabled');
-        $('[name=lead_convert_finish_button]').addClass('enabled');
+    toggleFinishButton: function(enable) {
+        $('[name=lead_convert_finish_button]').toggleClass('enabled', enable);
+        $('[name=lead_convert_finish_button]').toggleClass('disabled', !enable);
     },
 
     handlePanelUpdate: function() {
@@ -177,25 +172,26 @@
             sync:function (method, model, options) {
                 myURL = app.api.buildURL('Leads', 'convert', {id:id});
                 return app.api.call(method, myURL, model, options);
-            },
-
-            addSubModel:function (name, model) {
-                this.set(name, model);
             }
         });
 
         return new convertModel();
     },
 
+    initiateFinish: function() {
+        var currentModule = this.context.currentStep.key
+        //run validation - set force=true to make sure required panels are completed
+        this.context.trigger('lead:convert:' + currentModule + ':validate', this.processConvert, true);
+    },
+
     /**
      * Save the convert model and process the response
-     * TODO: make sure this works
      */
     processConvert:function () {
         var self = this,
             convertModel;
 
-        app.alert.show('save_edit_view', {level:'info', title:'Please Wait. Processing the conversion of the lead.'});
+        app.alert.show('processing_convert', {level: 'process', title: app.lang.getAppString('LBL_PORTAL_SAVING')});
 
         //create parent convert model to hold all sub-models
         convertModel = this.createConvertModel(this.context.get('modelId'));
@@ -204,12 +200,12 @@
         _.each(this.meta.modules, function (moduleMeta) {
             var convertPanel = self._getPanelByModuleName(moduleMeta.module),
                 associatedModel = convertPanel.getAssociatedModel();
-            convertModel.addSubModel(moduleMeta.module, associatedModel);
+            convertModel.set(moduleMeta.module, associatedModel);
         });
 
         convertModel.save(null, {
             success:function (data) {
-                app.alert.dismiss('save_edit_view');
+                app.alert.dismiss('processing_convert');
                 app.navigate(self.context, self.model, 'record');
                 //todo: display success message?
             }
