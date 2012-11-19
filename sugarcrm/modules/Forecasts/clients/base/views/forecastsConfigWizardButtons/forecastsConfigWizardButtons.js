@@ -78,9 +78,10 @@
             // make it so you can click save again.
             $(evt.target).addClass('disabled');
             var self = this;
-
-            this.model.set('is_setup', true);
-            this.model.set('show_forecasts_commit_warnings', true);
+            
+            this.model.set({"is_setup":true,
+                            "show_forecasts_commit_warnings": true
+                            });
             // push this model back to the main config model
             this.context.forecasts.config.set(this.model.toJSON());
             this.context.forecasts.config.save({}, {
