@@ -133,7 +133,7 @@
 
         _.each(modulesMeta, function (moduleMeta, index, list) {
             if(!_.isUndefined(moduleMeta.dependentModules)) {
-                if (self.isDependentModulesComplete(moduleMeta.module)) {
+                if (self.isDependentModulesComplete(moduleMeta)) {
                     self.context.trigger("lead:convert:" + moduleMeta.module + ":enable");
                 }
             }
@@ -182,7 +182,7 @@
 
         if(showFinish) {
             this.context.requiredComplete = true;
-            this.context.trigger('lead:convert:enable:finish');
+            this.enableFinishButton();
         }
     },
 
