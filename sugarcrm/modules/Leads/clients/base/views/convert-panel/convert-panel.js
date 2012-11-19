@@ -78,7 +78,7 @@
             context = self.context.getChildContext(def.context);
 
         context.prepare();
-        context.set('limit', 3);
+        context.set('limit', 3); //todo: set this to 10? once we have style that will limit the rows displayed & make scrollable
 
         var view = app.view.createView({
             context:context,
@@ -88,7 +88,7 @@
             id:def.id
         });
 
-        this.$('#collapse' + moduleMeta.module).find('.' + contentType + 'View').append(view.el);
+        this.$('.' + contentType + 'View').append(view.el);
         view.render();
 
         return view;
