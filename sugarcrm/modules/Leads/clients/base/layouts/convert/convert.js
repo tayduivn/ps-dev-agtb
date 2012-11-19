@@ -1,15 +1,13 @@
 ({
     events:{
         'click [name=convert_continue_button]':'processContinue', //TODO: remove this if we don't do the continue button
-        'click .accordion-heading.enabled': 'handlePanelHeaderClick'
+        'click .accordion-heading.enabled': 'handlePanelHeaderClick',
+        'click [name=lead_convert_finish_button].enabled': 'processConvert'
     },
 
     initialize:function (options) {
         _.bindAll(this);
         app.view.Layout.prototype.initialize.call(this, options);
-
-        //create parent convert model to hold all sub-models
-        this.context.convertModel = this.createConvertModel(this.context.get('modelId'));
 
         //TODO: remove this if we don't do the continue button
         //set up the convert steps to control continue flow
@@ -21,32 +19,7 @@
         //listen for panel status updates
         this.context.on("lead:convert:panel:update", this.handlePanelUpdate, this);
 
-        //listen for convert button click
-        this.context.on("lead:convert", this.processConvert, this);
         this.context.requiredComplete = false;
-    },
-
-    /**
-     * Creates the parent model that holds all sub-models and logic for performing the convert action
-     * @return {*} instance of a backbone model.
-     */
-    createConvertModel:function (id) {
-        var convertModel = Backbone.Model.extend({
-            sync:function (method, model, options) {
-                myURL = app.api.buildURL('Leads', 'convert', {id:id});
-                return app.api.call(method, myURL, model, options);
-            },
-
-            addSubModel:function (name, model) {
-                this.set(name, model);
-            },
-
-            getSubModel:function (name) {
-                return this.get(name);
-            }
-        });
-
-        return new convertModel();
     },
 
     initializePanels: function(modulesMetadata) {
@@ -109,24 +82,6 @@
         }
     },
 
-    /**
-     * Run validation before calling back to show the panel body
-     */
-    runValidation:function (nextModule, callback) {
-        async.waterfall([
-            //validation or has selected element
-            //Add logic to process current step and if complete move to next one
-            //check whether or not can continue depending on dependent modules
-        ], function(error) {
-            if (error) {
-                //TODO: handle error
-                console.log("Saving failed.");
-            } else {
-                callback();
-            }
-        });
-    },
-
     checkDependentModules: function() {
         var self = this,
             modulesMeta = this.meta.modules;
@@ -187,7 +142,8 @@
     },
 
     enableFinishButton: function() {
-        $('[name=save_button]').removeClass('disabled');
+        $('[name=lead_convert_finish_button]').removeClass('disabled');
+        $('[name=lead_convert_finish_button]').addClass('enabled');
     },
 
     handlePanelUpdate: function() {
@@ -213,18 +169,49 @@
     },
 
     /**
+     * Creates the parent model that holds all sub-models and logic for performing the convert action
+     * @return {*} instance of a backbone model.
+     */
+    createConvertModel:function (id) {
+        var convertModel = Backbone.Model.extend({
+            sync:function (method, model, options) {
+                myURL = app.api.buildURL('Leads', 'convert', {id:id});
+                return app.api.call(method, myURL, model, options);
+            },
+
+            addSubModel:function (name, model) {
+                this.set(name, model);
+            }
+        });
+
+        return new convertModel();
+    },
+
+    /**
      * Save the convert model and process the response
      * TODO: make sure this works
      */
     processConvert:function () {
-        var self = this;
+        var self = this,
+            convertModel;
 
         app.alert.show('save_edit_view', {level:'info', title:'Please Wait. Processing the conversion of the lead.'});
-        this.context.convertModel.save(null, {
+
+        //create parent convert model to hold all sub-models
+        convertModel = this.createConvertModel(this.context.get('modelId'));
+
+        //grab the associated model for each module
+        _.each(this.meta.modules, function (moduleMeta) {
+            var convertPanel = self._getPanelByModuleName(moduleMeta.module),
+                associatedModel = convertPanel.getAssociatedModel();
+            convertModel.addSubModel(moduleMeta.module, associatedModel);
+        });
+
+        convertModel.save(null, {
             success:function (data) {
                 app.alert.dismiss('save_edit_view');
-                app.navigate(self.context, self.model, 'detail');
-                self.displayResults(data);
+                app.navigate(self.context, self.model, 'record');
+                //todo: display success message?
             }
         });
     },

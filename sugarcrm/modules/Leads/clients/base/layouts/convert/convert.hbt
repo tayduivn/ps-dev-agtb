@@ -6,7 +6,7 @@
         <div class="btn-group">
             <a class="btn" href="javascript:void(0)" name="cancel_button">Cancel</a>
             <!--<a class="btn btn-primary" href="javascript:void(0)" name="convert_continue_button">Continue</a>-->
-            <a class="btn btn-primary disabled" href="javascript:void(0)" name="save_button">Finish</a>
+            <a class="btn btn-primary disabled" href="javascript:void(0)" name="lead_convert_finish_button">Finish</a>
         </div>
     </div>
 </div>

@@ -243,5 +243,21 @@
 
     isComplete: function() {
        return (this.currentState.isComplete || this.currentState.isDirty);
+    },
+
+    getAssociatedModel: function() {
+        var associatedModel;
+
+        if (!this.currentState.isComplete) {
+            return null;
+        }
+
+        if (this.currentState.activeView === this.DUPLICATE_VIEW) {
+            associatedModel = new Backbone.Model();
+            associatedModel.set('id', this.currentState.selectedId);
+            return associatedModel;
+        } else {
+            return this.recordView;
+        }
     }
 })
