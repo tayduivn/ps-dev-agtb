@@ -150,7 +150,7 @@
         }
         app.view.View.prototype._renderField.call(this, field);
 
-        if (this.isEditableWorksheet === true && field.viewName !="edit" && field.def.clickToEdit === true && field.model.get('sales_stage') != 'Closed Lost' && field.model.get('sales_stage') != 'Closed Won') {
+        if (this.isEditableWorksheet === true && field.viewName !="edit" && field.def.clickToEdit === true && !_.contains(this.context.forecasts.config.get("sales_stage_won"), field.model.get('sales_stage')) && !_.contains(this.context.forecasts.config.get("sales_stage_lost"), field.model.get('sales_stage'))) {
             new app.view.ClickToEditField(field, this);
         }
 
