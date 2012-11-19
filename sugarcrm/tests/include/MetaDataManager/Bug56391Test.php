@@ -49,7 +49,7 @@ class Bug56391Test extends Sugar_PHPUnit_Framework_TestCase
     {
         $mm = new MetaDataManager($GLOBALS['current_user']);
         // because the user is not an admin the user should only have view and list access
-
+        unset($_SESSION['ACL']);
         $expected_result = array(
                                     'access' => 'yes',
                                     'create' => 'no',
@@ -80,7 +80,7 @@ class Bug56391Test extends Sugar_PHPUnit_Framework_TestCase
         // set current user as an admin
         $GLOBALS['current_user']->is_admin = 1;
         $GLOBALS['current_user']->save();
-        
+        unset($_SESSION['ACL']);
         $mm = new MetaDataManager($GLOBALS['current_user']);
         // because the user is not an admin the user should only have view and list access
 
@@ -115,7 +115,7 @@ class Bug56391Test extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testModuleAccess()
     {
-        $modules = array('Accounts', 'Contacts', 'Opportunities', 'Contracts', 'Products');
+        $modules = array('Accounts', 'Contacts', 'Contracts', 'Opportunities', 'Leads');
         // user can view, list, delete, and export
         $expected_result = array(
                                 'access' => 'yes',
@@ -136,13 +136,14 @@ class Bug56391Test extends Sugar_PHPUnit_Framework_TestCase
             $GLOBALS['current_user']->aclroles->add($role);
             $GLOBALS['current_user']->save();
         }
-        unset($_SESSION['acl']);
         $id = $GLOBALS['current_user']->id;
         $GLOBALS['current_user'] = BeanFactory::getBean('Users', $id);
         
 
+
         $mm = new MetaDataManager($GLOBALS['current_user']);
         foreach($modules AS $module) {
+            unset($_SESSION['ACL']);
             $acls = $mm->getAclForModule($module, $GLOBALS['current_user']->id);    
             unset($acls['_hash']);
             // not checking fields right now
@@ -195,9 +196,9 @@ class Bug56391Test extends Sugar_PHPUnit_Framework_TestCase
             $GLOBALS['current_user']->aclroles->add($role);
             $GLOBALS['current_user']->save();
         }
-        unset($_SESSION['acl']);        
         $id = $GLOBALS['current_user']->id;
         $GLOBALS['current_user'] = BeanFactory::getBean('Users', $id);
+        unset($_SESSION['ACL']);
         
 
         $mm = new MetaDataManager($GLOBALS['current_user']);
