@@ -34,14 +34,20 @@ class SugarForecasting_Filter_TimePeriodFilterTest extends Sugar_PHPUnit_Framewo
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('beanList');
         SugarTestHelper::setUp('current_user');
-
         $admin = BeanFactory::getBean('Administration');
-        self::$currentSettings = $admin->getConfigForModule('Forecasts', 'base');
+        $settings = $admin->getConfigForModule('Forecasts', 'base');
+
+        $settingsToRestore = array('timeperod_interval', 'timeperiod_leaf_interval', 'timeperiod_start_month', 'timeperiod_start_day', 'timeperiod_shown_forward', 'timeperiod_shown_backward');
+        foreach($settingsToRestore as $id) {
+            if(isset($settings[$id])) {
+                self::$currentSettings[$id] = $settings[$id];
+            }
+        }
     }
 
     public function setUp() {
         $db = DBManagerFactory::getInstance();
-        $db->query('UPDATE timeperiods set deleted = 1');
+        $db->query("UPDATE timeperiods set deleted = 1");
     }
 
     /**
@@ -57,49 +63,53 @@ class SugarForecasting_Filter_TimePeriodFilterTest extends Sugar_PHPUnit_Framewo
         $db = DBManagerFactory::getInstance();
         $db->query("DELETE FROM timeperiods WHERE deleted = 0");
         $db->query("UPDATE timeperiods SET deleted = 0");
+        TimePeriod::$currentId = array();
+    }
+
+    public function timePeriodFilterWithTimePeriodsProvider() {
+        return array(
+            array(TimePeriod::ANNUAL_TYPE, TimePeriod::QUARTER_TYPE, 1, 1, 1, 1, 12),
+            array(TimePeriod::ANNUAL_TYPE, TimePeriod::QUARTER_TYPE, 1, 1, 2, 2, 20),
+            array(TimePeriod::QUARTER_TYPE, TimePeriod::MONTH_TYPE, 1, 1, 1, 1, 9),
+            array(TimePeriod::QUARTER_TYPE, TimePeriod::MONTH_TYPE, 1, 1, 2, 2, 15),
+        );
     }
 
     /**
+     * This is a test to check that the SugarForecasting_Filter_TimePeriodFilter class returns the appropriate timeperiods based on the settings
+     * for the timeperiod type and the shown forward/backward settings.
      *
+     * @group forecasts
+     * @group timeperiods
+     * @dataProvider timePeriodFilterWithTimePeriodsProvider
      */
-    public function testTimePeriodFilterWithAnnualTimePeriods() {
+    public function testTimePeriodFilterWithTimePeriods($parentType, $leafType, $startMonth, $startDay, $shownForward, $shownBackward, $expectedLeaves) {
+
         $forecastConfigSettings = array (
-            array('name' => 'timeperiod_interval', 'value' => TimePeriod::ANNUAL_TYPE, 'platform' => 'base', 'category' => 'Forecasts'),
-            array('name' => 'timeperiod_leaf_interval', 'value' => TimePeriod::QUARTER_TYPE, 'platform' => 'base', 'category' => 'Forecasts'),
-            array('name' => 'timeperiod_start_month', 'value' => '1', 'platform' => 'base', 'category' => 'Forecasts'),
-            array('name' => 'timeperiod_start_day', 'value' => '1', 'platform' => 'base', 'category' => 'Forecasts'),
-            array('name' => 'timeperiod_shown_forward', 'value' => '1', 'platform' => 'base', 'category' => 'Forecasts'),
-            array('name' => 'timeperiod_shown_backward', 'value' => '1', 'platform' => 'base', 'category' => 'Forecasts')
+            'timeperiod_interval' => $parentType,
+            'timeperiod_leaf_interval' => $leafType,
+            'timeperiod_start_month' => $startMonth,
+            'timeperiod_start_day' => $startDay,
+            'timeperiod_shown_forward' => $shownForward,
+            'timeperiod_shown_backward' => $shownBackward
         );
+
         $this->updateForecastSettings($forecastConfigSettings);
-        $timePeriod = TimePeriod::getByType(TimePeriod::ANNUAL_TYPE);
-        $timePeriod->rebuildForecastingTimePeriods(array(), $forecastConfigSettings);
 
-        // base file and class name
-        $file = 'include/SugarForecasting/Filter/TimePeriodFilter.php';
-        $klass = 'SugarForecasting_TimePeriodFilter';
+        $admin = BeanFactory::getBean('Administration');
+        $settings =  $admin->getConfigForModule('Forecasts', 'base');
 
-        // check for a custom file exists
-        $include_file = get_custom_file_if_exists($file);
+        $timePeriod = TimePeriod::getByType($parentType);
+        $timePeriod->rebuildForecastingTimePeriods(array(), $settings);
 
-        // if a custom file exists then we need to rename the class name to be Custom_
-        if($include_file != $file) {
-            $klass = "Custom_" . $klass;
-        }
-
-        // include the class in since we don't have a auto loader
-        require_once($include_file);
-        // create the lass
-
-        /* @var $obj SugarForecasting_AbstractForecast */
-        $obj = new $klass($args);
-        return $obj->process();
+        $obj = new SugarForecasting_Filter_TimePeriodFilter(array());
+        $this->assertEquals($expectedLeaves, count($obj->process()));
     }
 
     private function updateForecastSettings($settings) {
         $admin = BeanFactory::getBean('Administration');
-        foreach($settings as $setting) {
-            $admin->saveSetting('Forecasts', $setting['id'], $setting['value'], 'base');
+        foreach($settings as $id=>$value) {
+            $admin->saveSetting('Forecasts', $id, $value, 'base');
         }
     }
 

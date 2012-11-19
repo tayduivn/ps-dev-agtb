@@ -63,7 +63,7 @@ class ForecastsFiltersApi extends ModuleApi
     {
         // base file and class name
         $file = 'include/SugarForecasting/Filter/TimePeriodFilter.php';
-        $klass = 'SugarForecasting_TimePeriodFilter';
+        $klass = 'SugarForecasting_Filter_TimePeriodFilter';
 
         // check for a custom file exists
         $include_file = get_custom_file_if_exists($file);

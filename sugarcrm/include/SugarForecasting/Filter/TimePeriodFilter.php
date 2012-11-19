@@ -27,7 +27,7 @@
  */
 
 require_once('include/SugarForecasting/AbstractForecast.php');
-class SugarForecasting_TimePeriodFilter extends SugarForecasting_AbstractForecast
+class SugarForecasting_Filter_TimePeriodFilter extends SugarForecasting_AbstractForecast
 {
 
     /**
@@ -43,6 +43,7 @@ class SugarForecasting_TimePeriodFilter extends SugarForecasting_AbstractForecas
         $forward = $settings['timeperiod_shown_forward'];
         $backward = $settings['timeperiod_shown_backward'];
         $type = $settings['timeperiod_interval'];
+
         $timePeriods = array();
 
         $current = TimePeriod::getCurrentTimePeriod($type);
