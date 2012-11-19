@@ -202,8 +202,8 @@ class SugarACLStatic extends SugarACLStrategy
 
     public function checkFieldList($module, $field_list, $action, $context)
     {
-        $user_id = $this->getUserID($context);
-        if(is_admin($GLOBALS['current_user']) || empty($user_id) || empty($_SESSION['ACL'][$user_id][$module]['fields'])) {
+        $user = $this->getCurrentUser($context);
+        if(empty($user) || empty($user->id) || is_admin($user) || empty($_SESSION['ACL'][$user->id][$module]['fields'])) {
             return array();
         }
         return parent::checkFieldList($module, $field_list, $action, $context);
@@ -211,8 +211,8 @@ class SugarACLStatic extends SugarACLStrategy
 
     public function getFieldListAccess($module, $field_list, $context)
     {
-        $user_id = $this->getUserID($context);
-        if(is_admin($GLOBALS['current_user']) || empty($user_id) || empty($_SESSION['ACL'][$user_id][$module]['fields'])) {
+        $user = $this->getCurrentUser($context);
+        if(empty($user) || empty($user->id) || is_admin($user) || empty($_SESSION['ACL'][$user->id][$module]['fields'])) {
         	return array();
         }
         return parent::getFieldListAccess($module, $field_list, $context);
@@ -226,13 +226,13 @@ class SugarACLStatic extends SugarACLStrategy
      */
     public function getUserAccess($module, $access_list, $context)
     {
-        $user_id = $this->getUserID($context);
-        if(is_admin($GLOBALS['current_user']) || empty($user_id)) {
+        $user = $this->getCurrentUser($context);
+        if(empty($user) || empty($user->id) || is_admin($user)) {
             // no user or admin - do nothing
             return $access_list;
         }
         $is_owner = !(isset($context['owner_override']) && $context['owner_override'] == false);
-        $actions = ACLAction::getUserActions($user_id, false, $module, 'module');
+        $actions = ACLAction::getUserActions($user->id, false, $module, 'module');
         if(empty($actions)) {
             return $access_list;
         }
@@ -240,7 +240,7 @@ class SugarACLStatic extends SugarACLStrategy
         $access = $access_list;
         // check 'access' first - if it's false all others will be false
         if(isset($access_list['access'])) {
-        	if(!ACLAction::userHasAccess($user_id, $module, 'access', 'module', true)) {
+        	if(!ACLAction::userHasAccess($user->id, $module, 'access', 'module', true)) {
         		foreach($access_list as $action => $value) {
         			$access[$action] = false;
         		}
