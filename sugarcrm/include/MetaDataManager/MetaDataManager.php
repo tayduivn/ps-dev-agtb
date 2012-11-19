@@ -337,11 +337,6 @@ class MetaDataManager {
      * @return array Array of ACL's, first the action ACL's (access, create, edit, delete) then an array of the field level acl's
      */
     public function getAclForModule($module,$userId) {
-        $aclAction = new ACLAction();
-        //BEGIN SUGARCRM flav=pro ONLY
-        $aclField = new ACLField();
-        //END SUGARCRM flav=pro ONLY
-        $acls = $aclAction->getUserActions($userId);
         $userObject = BeanFactory::getBean('Users',$userId);
         $obj = BeanFactory::getObjectName($module);
 
@@ -350,8 +345,7 @@ class MetaDataManager {
             foreach ( array('access','view','list','edit','delete','import','export','massupdate') as $action ) {
                 $outputAcl[$action] = 'yes';
             }
-        } else if ( isset($acls[$module]['module']) ) {
-            $moduleAcl = $acls[$module]['module'];
+        } else {
             $moduleAcls = SugarACL::getUserAccess($module, array(), array('user' => $userObject));
             
             // Bug56391 - Use the SugarACL class to determine access to different actions within the module
@@ -368,31 +362,23 @@ class MetaDataManager {
                 // Now time to dig through the fields
                 $fieldsAcl = array();
                 //BEGIN SUGARCRM flav=pro ONLY
-                $fieldsAcl = $aclField->loadUserFields($module,$obj,$userId,true);
+                $fieldsAcl = ACLField::getAvailableFields($module);
                 //END SUGARCRM flav=pro ONLY
                 // get the field names
                 SugarACL::listFilter($module, $fieldsAcl, array('user' => $userObject), array('add_acl' => true));
                 foreach ( $fieldsAcl as $field => $fieldAcl ) {
                     switch ( $fieldAcl['acl'] ) {
-                        case ACL_READ_WRITE:
+                        case 4:
                             // Default, don't need to send anything down
                             break;
-                        case ACL_READ_OWNER_WRITE:
-                            // $outputAcl['fields'][$field]['read'] = 'yes';
-                            $outputAcl['fields'][$field]['write'] = 'owner';
-                            $outputAcl['fields'][$field]['create'] = 'owner';
-                            break;
-                        case ACL_READ_ONLY:
-                            // $outputAcl['fields'][$field]['read'] = 'yes';
+                        case 1:
                             $outputAcl['fields'][$field]['write'] = 'no';
                             $outputAcl['fields'][$field]['create'] = 'no';
                             break;
-                        case ACL_OWNER_READ_WRITE:
-                            $outputAcl['fields'][$field]['read'] = 'owner';
-                            $outputAcl['fields'][$field]['write'] = 'owner';
-                            $outputAcl['fields'][$field]['create'] = 'owner';
+                        case 2:
+                            $outputAcl['fields'][$field]['read'] = 'no';
                             break;
-                        case ACL_ALLOW_NONE:
+                        case 0:
                         default:
                             $outputAcl['fields'][$field]['read'] = 'no';
                             $outputAcl['fields'][$field]['write'] = 'no';

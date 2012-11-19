@@ -136,6 +136,7 @@ class Bug56391Test extends Sugar_PHPUnit_Framework_TestCase
             $GLOBALS['current_user']->aclroles->add($role);
             $GLOBALS['current_user']->save();
         }
+        unset($_SESSION['acl']);
         $id = $GLOBALS['current_user']->id;
         $GLOBALS['current_user'] = BeanFactory::getBean('Users', $id);
         
@@ -194,6 +195,7 @@ class Bug56391Test extends Sugar_PHPUnit_Framework_TestCase
             $GLOBALS['current_user']->aclroles->add($role);
             $GLOBALS['current_user']->save();
         }
+        unset($_SESSION['acl']);        
         $id = $GLOBALS['current_user']->id;
         $GLOBALS['current_user'] = BeanFactory::getBean('Users', $id);
         
