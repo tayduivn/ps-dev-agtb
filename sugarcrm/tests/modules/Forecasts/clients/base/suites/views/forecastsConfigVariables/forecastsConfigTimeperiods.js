@@ -54,9 +54,15 @@ describe("The forecastsConfigTimeperiods view", function(){
             testIntervalMethodStub = sinon.stub(view, "_setUpTimeperiodIntervalBind", function() {return field;});
             field = {
             }
+            view.model = {
+                get: function(key) {
+                    return (key == 'is_setup')?false:key;
+                }
+            }
         });
 
         afterEach(function() {
+            delete view.model;
             testMonthMethodStub.restore();
             testDayMethodStub.restore();
             testIntervalMethodStub.restore();
@@ -101,12 +107,16 @@ describe("The forecastsConfigTimeperiods view", function(){
     describe("timeperiod date field setup", function() {
 
         beforeEach(function() {
-            testValue = 3;
+            testValue = 3;  //Simulate March as selected in the dropdown
             testIntervalValue = "Annual";
             testLeafIntervalValue = "Quarter";
             view.model = new Backbone.Model({
                 timeperiod_interval: '',
-                timeperiod_leaf_interval: ''
+                timeperiod_leaf_interval: '',
+                get: function(param) {
+                    return {};
+                },
+                set: function(key, value) {}
                 });
             monthField = {
                 model: {
@@ -133,12 +143,6 @@ describe("The forecastsConfigTimeperiods view", function(){
                 }
             }
             intervalField = {
-                model: {
-                    get: function(param) {
-                        return {};
-                    },
-                    set: function(key, value) {}
-                },
                 name: 'timeperiod_interval',
                 def: {
                     options: {}
@@ -147,6 +151,7 @@ describe("The forecastsConfigTimeperiods view", function(){
             monthField = view._setUpTimeperiodStartMonthBind(monthField);
             dayField = view._setUpTimeperiodStartDayBind(dayField);
             intervalField = view._setUpTimeperiodIntervalBind(intervalField);
+            intervalField.model = view.model;
 
         });
 
@@ -181,7 +186,7 @@ describe("The forecastsConfigTimeperiods view", function(){
         it("should change the number of days in the day selector when the user selects a month", function() {
             var options = monthField._buildDaysOptions(testValue);
 
-            //build expected string
+            //build expected string, based on month of March,
             var expectedOptions = '<option value=""></option>';
             for(var i = 1; i <= 31; i++) {
                 expectedOptions +='<option value="'+i+'">'+i+'</option>';

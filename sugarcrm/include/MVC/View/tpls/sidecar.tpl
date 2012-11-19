@@ -71,8 +71,33 @@
 		</div>
         {literal}
 		<script language="javascript">
-			var syncResult, view, layout, html;
-			var App = SUGAR.App.init({
+			var syncResult, view, layout, html, App;
+
+            (function(app) {
+                app.events.on("app:init", function() {
+                    function recordHandler(module, id, action) {
+                        var opts = {
+                            module: module,
+                            layout: "record",
+                            action: (action || "detail")
+                        };
+
+                        if (id !== "create") {
+                            _.extend(opts, {modelId: id});
+                        } else {
+                            _.extend(opts, {create: true});
+                            opts.layout = "newrecord";
+                        }
+
+                        app.controller.loadView(opts);
+                    }
+
+                    // Hack to overload the routes currently
+                    app.router.route(":module/:id", "record", recordHandler);
+                });
+            })(SUGAR.App);
+
+            App = SUGAR.App.init({
                 el: "#sidecar",
                 callback: function(app){
                     app.start();

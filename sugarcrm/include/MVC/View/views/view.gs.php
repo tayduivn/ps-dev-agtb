@@ -103,15 +103,7 @@ class ViewGS extends SugarWirelessView
 	   	$this->ss->assign('LBL_GS_HELP', $GLOBALS['app_strings']['LBL_GS_HELP']);
 
 	   	// display the detail view
-        $file = 'include/MVC/View/tpls/gsdetail.tpl';
-
-        if(file_exists('custom/'.$file))
-        {
-            $this->ss->display('custom/'.$file);
-        } else {
-		    $this->ss->display($file);
-        }
-
+        $this->ss->display(SugarAutoLoader::existingCustomOne('include/MVC/View/tpls/gsdetail.tpl'));
     }
 
     protected function setMatchedFields($fields)

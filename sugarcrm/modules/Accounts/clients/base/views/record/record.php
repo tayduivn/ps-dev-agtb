@@ -61,10 +61,6 @@ $viewdefs['Accounts']['base']['view']['record'] = array(
             'name' => 'panel_header',
             'header' => true,
             'fields' => array(
-                array(
-                    'name' => 'img',
-                    'noedit' => true,
-                ),
                 'name',
             )
         ),
@@ -75,28 +71,62 @@ $viewdefs['Accounts']['base']['view']['record'] = array(
             'labelsOnTop' => true,
             'placeholders' => true,
             'fields' => array(
+                'website',
+                array(
+                    "name" => "phone_office",
+                    "label" => "Work Phone"
+                ),
+                'email',
+                'phone_fax',
                 'assigned_user_name',
+            ),
+        ),
+        array(
+            'name' => 'panel_shipping',
+            'columns' => '2',
+            'labelsOnTop' => true,
+            'fields' => array(
                 'billing_address_street',
-                'industry',
+                'shipping_address_street',
                 array(
                     'name' => 'fieldset_address',
                     'type' => 'fieldset',
                     'label' => 'Billing Address',
                     'fields' => array('billing_address_city', 'billing_address_state', 'billing_address_postalcode')
                 ),
-                'website',
-                'billing_address_country',
-                'phone_office',
-                'email1'
-            ),
+                array(
+                    'name' => 'fieldset_shipping_address',
+                    'type' => 'fieldset',
+                    'label' => 'Shipping Address',
+                    'fields' => array('shipping_address_city', 'shipping_address_state', 'shipping_address_postalcode')
+                ),
+            )
         ),
         array(
             'name' => 'panel_hidden',
             'hide' => true,
+            'columns' => 2,
             'labelsOnTop' => true,
             'placeholders' => true,
             'fields' => array(
-                'twitter',
+                array(
+                    'name' => 'description',
+                    'span' => 12
+                ),
+                'account_type',
+                'industry',
+                'annual_revenue',
+                'employees',
+                'sic_code',
+                'ticker_symbol',
+                'member_of',
+                'ownership',
+                'campaign_name',
+                'rating',
+                'assigned_user_name',
+                'date_modified',
+                'teams',
+                'date_entered'
             )
         )
     ),

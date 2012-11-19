@@ -79,6 +79,7 @@ class CommonTest extends Sugar_PHPUnit_Framework_TestCase
 
         SugarTestForecastUtilities::createForecast($this->timeperiod, $this->rep);
 
+        // todo-sfa: Fix for 6.8
         //SugarTestForecastScheduleUtilities::createForecastSchedule($this->timeperiod, $this->rep);
     }
 
@@ -126,9 +127,13 @@ class CommonTest extends Sugar_PHPUnit_Framework_TestCase
      * check my_timeriods has current timeperiod for current user
      *
      * @group forecasts
+     *
+     * @skipped legacy method not to be used in 6.7 as forecast_schedules are out, possibly to be used in 6.8
      */
     public function testGetMyTimeperiods()
     {
+        $this->markTestSkipped('This test is skipped since we don\'t have forecastSchedule in 6.7');
+        // todo-sfa: Fix for 6.8
         self::$common_obj->current_user = $this->rep->id;
         self::$common_obj->get_my_timeperiods();
 

@@ -55,8 +55,8 @@ class EmailMan extends SugarBean{
     // This is used to retrieve related fields from form posts.
 	var $additional_column_fields = array();
 
-	function EmailMan() {
-		parent::SugarBean();
+	public function __construct() {
+		parent::__construct();
 		//BEGIN SUGARCRM flav=pro ONLY
 		$this->disable_row_level_security=true;
 		//END SUGARCRM flav=pro ONLY
@@ -817,6 +817,8 @@ class EmailMan extends SugarBean{
                     $mail->setHtmlBody(wordwrap($htmlBody, 900));
                 }
 
+                $mail->clearAttachments(); // need to clear the attachments because the mailer is reused for different emails
+
                 // cn: bug 4684, handle attachments in email templates.
                 if (!empty($this->notes_array)) {
                     foreach($this->notes_array as $note) {
@@ -855,6 +857,7 @@ class EmailMan extends SugarBean{
             } catch (MailerException $me) {
                 //log send error. save for next attempt after 24hrs. no campaign log entry will be created.
                 $this->set_as_sent($module->email1,false,null,null,'send error');
+                $GLOBALS['log']->error("Emailman::sendMail - Campaign Email Send Error:" . $me->getMessage());
             }
 		}else{
             $this->target_tracker_key=create_guid();
@@ -887,7 +890,6 @@ class EmailMan extends SugarBean{
 
 		$pattern='/[A-Z0-9\._%-]+@[A-Z0-9\.-]+\.[A-Za-z]{2,}$/i';
 		$ret=preg_match($pattern, $email_address);
-		echo $ret;
 		if ($ret===false or $ret==0) {
 			return false;
 		}

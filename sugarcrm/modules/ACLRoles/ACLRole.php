@@ -33,8 +33,8 @@ class ACLRole extends SugarBean{
 
     var $created_by;
 
-    function ACLRole(){
-        parent::SugarBean();
+    public function __construct(){
+        parent::__construct();
         //BEGIN SUGARCRM flav=pro ONLY
         $this->disable_row_level_security =true;
         //END SUGARCRM flav=pro ONLY

@@ -34,7 +34,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  ********************************************************************************/
 
 
-$focus = new MergeRecord();
+$focus = BeanFactory::getBean('MergeRecord');
 $focus->load_merge_bean($_REQUEST['merge_module'], true, $_REQUEST['record']);
 
 foreach($focus->merge_bean->column_fields as $field)

@@ -67,22 +67,32 @@ $viewdefs['ProspectLists']['base']['view']['record'] = array(
         array(
             'name' => 'panel_body',
             'label' => 'LBL_PANEL_2',
-            'columns' => 1,
+            'columns' => 2,
             'labels' => true,
-            'labelsOnTop' => false,
+            'labelsOnTop' => true,
             'placeholders' => true,
             'fields' => array(
-                'description',
-                array('name' => 'list_type', 'displayParams' => array('required' => true)),
                 array(
-                    'name' => 'domain_name',
-                    'type' => 'secondary',
-                    'primary' => array(
-                        'field' => 'list_type',
-                        'value' => 'exempt_domain',
-                    )
+                    'name' => 'description',
+                    'span' => 12,
                 ),
+                array(
+                    'name' => 'list_type',
+                    'displayParams' => array('required' => true),
+                    'span' => 12,
+                ),
+//                array(
+//                    'name' => 'domain_name',
+//                    'type' => 'secondary',
+//                    'primary' => array(
+//                        'field' => 'list_type',
+//                        'value' => 'exempt_domain',
+//                    )
+//                ),
                 'assigned_user_name',
+                'date_modified',
+                'terms', // This was defined in the PM spreadsheet, but isn't an existing field. Left here for posterity.
+                'date_created',
 
                 //BEGIN SUGARCRM flav=pro ONLY
                 array(

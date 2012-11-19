@@ -57,7 +57,7 @@ class SugarRestService extends SugarWebService{
 				break;
 		}
 		$classname = "SugarRest$type";
-		if(!file_exists('service/core/REST/' . $classname . '.php')) {
+		if(!SugarAutoLoader::fileExists('service/core/REST/' . $classname . '.php')) {
 			return 'SugarRest';
 		}
 		return $classname;

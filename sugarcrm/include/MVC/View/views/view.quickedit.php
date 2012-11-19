@@ -118,24 +118,15 @@ class ViewQuickedit extends ViewAjax
 
 		// locate the best viewdefs to use: 1. custom/module/quickcreatedefs.php 2. module/quickcreatedefs.php 3. custom/module/editviewdefs.php 4. module/editviewdefs.php
 		$base = 'modules/' . $module . '/metadata/';
-		$source = 'custom/' . $base . strtolower($view) . 'defs.php';
-		if (!file_exists( $source))
-		{
-			$source = $base . strtolower($view) . 'defs.php';
-			if (!file_exists($source))
-			{
-				//if our view does not exist default to EditView
-				$view = 'EditView';
-				$source = 'custom/' . $base . 'editviewdefs.php';
-				if (!file_exists($source))
-				{
-					$source = $base . 'editviewdefs.php';
-				}
-			}
+    	$source = SugarAutoLoader::existingCustomOne($base . strtolower($view) . 'defs.php');
+		if(!$source) {
+		    //if our view does not exist default to EditView
+		    $view = 'EditView';
+		    $source = SugarAutoLoader::loadWithMetafiles($module, "editviewdefs");
 		}
 
         // In some cases, the source file will not exist. In these cases, just navigate to the full form directly.
-        if(!file_exists($source)){
+        if(!$source){
             global $app_strings;
 
             //write out jscript that will get evaluated and redirect the browser window.
@@ -146,9 +137,7 @@ class ViewQuickedit extends ViewAjax
                 $no_defs_js = '<script>SUGAR.ajaxUI.loadContent("index.php?return_module='.$this->bean->module_dir.'&module=' . $this->bean->module_dir . '&action=ReportsWizard&record=' . $this->bean->id.'")</script>';
             }
             //if this is not reports and there are no edit view files then go to detail view
-            elseif(!file_exists('custom/' . $base . 'editviewdefs.php') && !file_exists($base . 'editviewdefs.php')
-            && !file_exists('custom/modules/' . $module .'/EditView.php') && !file_exists('modules/' . $module .'/EditView.php')
-            ){
+            elseif(!SugarAutoLoader::existingCustomOne(SugarAutoLoader::loadWithMetafiles($module, "editviewdefs"), 'modules/' . $module .'/EditView.php')){
                 $no_defs_js = '<script>SUGAR.ajaxUI.loadContent("index.php?return_module='.$this->bean->module_dir.'&module=' . $this->bean->module_dir . '&action=DetailView&record=' . $this->bean->id.'")</script>';
             }
 
@@ -175,14 +164,8 @@ class ViewQuickedit extends ViewAjax
         $this->ev->defs['templateMeta']['form']['hideAudit']=true;
 
         //use module level view if available
-        $editFileName = 'modules/'.$module.'/views/view.edit.php';
-        if(file_exists('custom/modules/'.$module.'/views/view.edit.php')) {
-            $editFileName = 'custom/modules/'.$module.'/views/view.edit.php';
-        }
-
         $defaultProcess = true;
-        if(file_exists($editFileName)) {
-           include($editFileName);
+        if(SugarAutoLoader::requireWithCustom('modules/'.$module.'/views/view.edit.php')) {
            $c = $module . 'ViewEdit';
 
            if(class_exists($c)) {
@@ -191,9 +174,10 @@ class ViewQuickedit extends ViewAjax
 	            	$defaultProcess = false;
 
                    //Check if we should use the module's QuickCreate.tpl file
-                   if($view->useModuleQuickCreateTemplate && file_exists('modules/'.$module.'/tpls/QuickCreate.tpl')) {
-                      $this->ev->defs['templateMeta']['form']['headerTpl'] = 'modules/'.$module.'/tpls/QuickCreate.tpl';
-                   }
+               	   if($view->useModuleQuickCreateTemplate &&
+	                	($qc_tpl = SugarAutoLoader::existingCustomOne('modules/'.$module.'/tpls/QuickCreate.tpl'))) {
+	            	   $this->ev->defs['templateMeta']['form']['headerTpl'] = $qc_tpl;
+	               }
 
                    $view->ev = & $this->ev;
                    $view->ss = & $this->ev->ss;

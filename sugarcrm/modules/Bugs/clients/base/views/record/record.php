@@ -61,43 +61,57 @@ $viewdefs['Bugs']['base']['view']['record'] = array(
             'name' => 'panel_header',
             'header' => true,
             'fields' => array(
-                array(
-                    'name' => 'img',
-                    'noedit' => true,
-                ),
+                array('name'=>'bug_number', 'noedit'=>true),
                 'name',
             )
         ),
         array(
             'name' => 'panel_body',
-            'label' => 'LBL_PANEL_2',
+            //'label' => 'LBL_PANEL_2',
             'columns' => 2,
             'labels' => false,
             'labelsOnTop' => true,
             'placeholders' => true,
             'fields' => array(
-                array('name'=>'bug_number', 'noedit'=>true),
                 'priority',
-                'type',
-                'source',
                 'status',
+                'type',
                 'product_category',
+                'source',
                 'resolution',
-                'found_in_release',
-                'fixed_in_release',
-                array ('name' => 'description', 'nl2br' => true,),
-                array ('name' => 'work_log', 'nl2br' => true,),
-//BEGIN SUGARCRM flav=ent ONLY
-                // hideIf is a legacy smarty thing .. seems that hideIf is mainly used for this specific check
-                // semantically meaning: "hide unless portal enabled" .. TODO: implement equivalent functionality in sidecar 
-                // perhaps create an hbt helper that can leverage app.cofig.on
-                array('name'=>'portal_viewable', 'label' => 'LBL_SHOW_IN_PORTAL', 'hideIf' => 'empty($PORTAL_ENABLED)'),
-//END SUGARCRM flav=ent ONLY
-                'assigned_user_name',
-//BEGIN SUGARCRM flav=pro ONLY
-                array('name'=>'team_name', 'displayParams'=>array('required'=>true)),
-//END SUGARCRM flav=pro ONLY
+
             ),
         ),
+        array(
+            'name' => 'panel_hidden',
+            'columns' => 2,
+            //'span'=>12,
+            'hide' => true,
+            'labelsOnTop' => true,
+            'placeholders' => true,
+            'fields' => array(
+                'found_in_release',
+                'fixed_in_release',
+                array ('name' => 'work_log', 'nl2br' => true,),
+                array('type' => 'html', 'default_value' => ''),
+                /***
+                * TODO: Did we want this? In the biz card it looked like we didn't have this
+                */
+                // array('name'=>'portal_viewable', 'label' => 'LBL_SHOW_IN_PORTAL', 'hideIf' => 'empty($PORTAL_ENABLED)'),
+
+                //BEGIN SUGARCRM flav=ent ONLY
+                'assigned_user_name',
+                //END SUGARCRM flav=ent ONLY
+
+                //BEGIN SUGARCRM flav=pro ONLY
+                // hideIf is a legacy smarty thing .. seems that hideIf is mainly used for this specific check
+                // semantically meaning: "hide unless portal enabled" .. TODO: implement equivalent functionality in sidecar
+                // perhaps create an hbt helper that can leverage app.cofig.on
+                array('name'=>'team_name', 'displayParams'=>array('required'=>true)),
+                //END SUGARCRM flav=pro ONLY
+                array ('name' => 'description', 'nl2br' => true,),
+                array('type' => 'html', 'default_value' => ''),
+            )
+        )
     ),
 );

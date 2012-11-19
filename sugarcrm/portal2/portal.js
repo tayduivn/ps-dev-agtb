@@ -272,4 +272,69 @@
         app.router.route("signup", "signup", _rrh.signup);
     });
 
+    /**
+     * Checks if there are `file` type fields in the view. If yes, process upload of the files
+     *
+     * @param {Object} model Model
+     * @param {callbacks} callbacks(optional) success and error callbacks
+     */
+    // TODO: This piece of code may move in the core files
+    app.view.View.prototype.checkFileFieldsAndProcessUpload = function(model, callbacks) {
+        var file, $file, $files, filesToUpload, fileField, successFn, errorFn;
+
+        callbacks = callbacks || {};
+
+        // Check if there are attachments
+        $files = _.filter($(":file"), function(file) {
+            var $file = $(file);
+            return ($file.val() && $file.attr("name") && $file.attr("name") !== "") ? $file.val() !== "" : false;
+        });
+
+        filesToUpload = $files.length;
+
+        successFn = function() {
+            filesToUpload--; 
+            if (filesToUpload===0) {
+                app.alert.dismiss('upload'); 
+                if (callbacks.success) callbacks.success();
+            }
+        };
+
+        errorFn = function(error) {
+            var errors = {};
+            
+            // Set model to new by removing it's id attribute. Note that in our initial attempt
+            // to upload file(s) we set delete_if_fails true so server has marked record deleted: 1
+            // Since we may have only create privs (e.g. we can't edit/delete Notes), we'll start anew.  
+            model.unset('id', {silent: true});
+
+            // All or nothing .. if uploading 1..* attachments, if any one fails the whole atomic
+            // operation has failed; so we really want to trigger error and possibly and start over.
+            filesToUpload = 0;
+            app.alert.dismiss('upload');
+            errors[error.responseText] = {};
+            model.trigger('error:validation:' + this.field, errors);
+            model.trigger('error:validation');
+        };
+
+        // Process attachment uploads
+        if (filesToUpload > 0) {
+            app.alert.show('upload', {level: 'process', title: 'LBL_UPLOADING', autoclose: false});
+
+            // Field by field
+            for (file in $files) {
+                $file = $($files[file]);
+                fileField = $file.attr("name");
+
+                model.uploadFile(fileField, $file, {
+                    field: fileField,
+                    success: successFn,
+                    error: errorFn
+                });
+            }
+        } else {
+            if (callbacks.success) callbacks.success();
+        }
+    };
+
 })(SUGAR.App);

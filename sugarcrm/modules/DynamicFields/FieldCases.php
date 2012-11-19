@@ -108,21 +108,9 @@ function get_widget($type)
             case 'image':
                         $local_temp = new TemplateImage(); break;
 			default:
-						$file = false;
-						if(file_exists('custom/modules/DynamicFields/templates/Fields/Template'. ucfirst($type) . '.php')){
-							$file  =	'custom/modules/DynamicFields/templates/Fields/Template'. ucfirst($type) . '.php';
-						}else if(file_exists('modules/DynamicFields/templates/Fields/Template'. ucfirst($type) . '.php')){
-							$file  =	'modules/DynamicFields/templates/Fields/Template'. ucfirst($type) . '.php';
-						}
-						if(!empty($file)){
-							require_once($file);
-							$class  = 'Template' . ucfirst($type) ;
-							$customClass = 'Custom' . $class;
-							if(class_exists($customClass)){
-								$local_temp = new $customClass();
-							}else{
-								$local_temp = new $class();
-							}
+						if(SugarAutoLoader::requireWithCustom('modules/DynamicFields/templates/Fields/Template'. ucfirst($type) . '.php')) {
+							$class  = SugarAutoLoader::customClass('Template' . ucfirst($type));
+							$local_temp = new $class();
 							break;
 						}else{
 							$local_temp = new TemplateText(); break;
@@ -131,4 +119,3 @@ function get_widget($type)
 
 	return $local_temp;
 }
-?>

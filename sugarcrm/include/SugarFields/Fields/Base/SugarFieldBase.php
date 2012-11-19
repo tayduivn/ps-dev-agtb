@@ -19,11 +19,15 @@ class SugarFieldBase {
     public $error;
     var $ss; // Sugar Smarty Object
     var $hasButton = false;
+    protected static $base = array();
+
     function SugarFieldBase($type) {
     	$this->type = $type;
         $this->ss = new Sugar_Smarty();
     }
-    function fetch($path){
+
+    function fetch($path)
+    {
     	$additional = '';
     	if(!$this->hasButton && !empty($this->button)){
     		$additional .= '<input type="button" class="button" ' . $this->button . '>';
@@ -40,6 +44,24 @@ class SugarFieldBase {
     	return $this->ss->fetch($path) . $additional;
     }
 
+    /**
+     * Get base view - cache it since base view is the same for all fields
+     * @param string $view
+     * @return string Base view filename
+     */
+    protected function getBase($view)
+    {
+        if(!isset(self::$base[$view])) {
+            if(!empty($GLOBALS['current_language'])) {
+            	self::$base[$view] = SugarAutoLoader::existingCustomOne("include/SugarFields/Fields/Base/{$GLOBALS['current_language']}.$view.tpl");
+            }
+            if(empty(self::$base[$view])) {
+            	self::$base[$view] = SugarAutoLoader::existingCustomOne("include/SugarFields/Fields/Base/$view.tpl");
+            }
+        }
+        return self::$base[$view];
+    }
+
     function findTemplate($view){
         static $tplCache = array();
 
@@ -52,28 +74,24 @@ class SugarFieldBase {
         while ( $lastClass = get_parent_class($lastClass) ) {
             $classList[] = str_replace('SugarField','',$lastClass);
         }
+        array_pop($classList); // remove this class - $base handles that
 
         $tplName = '';
+        global $current_language;
         foreach ( $classList as $className ) {
-            global $current_language;
             if(isset($current_language)) {
-                $tplName = 'include/SugarFields/Fields/'. $className .'/'. $current_language . '.' . $view .'.tpl';
-                if ( file_exists('custom/'.$tplName) ) {
-                    $tplName = 'custom/'.$tplName;
-                    break;
-                }
-                if ( file_exists($tplName) ) {
+                $tplName = SugarAutoLoader::existingCustomOne('include/SugarFields/Fields/'. $className .'/'. $current_language . '.' . $view .'.tpl');
+                if ($tplName) {
                     break;
                 }
             }
-            $tplName = 'include/SugarFields/Fields/'. $className .'/'. $view .'.tpl';
-            if ( file_exists('custom/'.$tplName) ) {
-                $tplName = 'custom/'.$tplName;
+            $tplName = SugarAutoLoader::existingCustomOne('include/SugarFields/Fields/'. $className .'/'. $view .'.tpl');
+            if ($tplName) {
                 break;
             }
-            if ( file_exists($tplName) ) {
-                break;
-            }
+        }
+        if(empty($tplName)) {
+            $tplName = $this->getBase($view);
         }
 
         $tplCache[$this->type][$view] = $tplName;
@@ -88,7 +106,7 @@ class SugarFieldBase {
 
     /**
      * Formats a field for the Sugar API
-     * 
+     *
      * @param array     $data
      * @param SugarBean $bean
      * @param array     $args
@@ -125,7 +143,7 @@ class SugarFieldBase {
 
     function getListViewSmarty($parentFieldArray, $vardef, $displayParams, $col) {
         $tabindex = 1;
-        //fixing bug #46666: don't need to format enum and radioenum fields 
+        //fixing bug #46666: don't need to format enum and radioenum fields
         //because they are already formated in SugarBean.php in the function get_list_view_array() as fix of bug #21672
         if ($this->type != 'Enum' && $this->type != 'Radioenum')
         {
@@ -135,7 +153,7 @@ class SugarFieldBase {
         {
         	$vardef['name'] = strtoupper($vardef['name']);
         }
-        
+
     	$this->setup($parentFieldArray, $vardef, $displayParams, $tabindex, false);
 
         $this->ss->left_delimiter = '{';
@@ -182,7 +200,7 @@ class SugarFieldBase {
 	// If readonly is set in displayParams, the vardef will be displayed as in DetailView.
 	if (isset($displayParams['readonly']) && $displayParams['readonly']) {
 		return $this->getSmartyView($parentFieldArray, $vardef, $displayParams, $tabindex, 'DetailView');
-	}	
+	}
 	// ~ jpereira@dri - #Bug49513 - Readonly type not working as expected
        return $this->getSmartyView($parentFieldArray, $vardef, $displayParams, $tabindex, 'EditView');
     }
@@ -551,6 +569,21 @@ class SugarFieldBase {
         return $value;
     }
 
+
+    /**
+     * Handles export field sanitizing for field type
+     *
+     * @param $value string value to be sanitized
+     * @param $vardef array representing the vardef definition
+     * @param $focus SugarBean object
+     *
+     * @return string sanitized value
+     */
+    public function exportSanitize($value, $vardef, $focus)
+    {
+        return $value;
+    }
+
     /**
      * isRangeSearchView
      * This method helps determine whether or not to display the range search view code for the sugar field
@@ -595,5 +628,87 @@ class SugarFieldBase {
         return $parentFieldArray;
     }
 
+    /**
+     * Gets normalized values for defs. Used by the MetaDataManager at first for
+     * API responses, but can be used througout the app.
+     *
+     * @param array $vardef
+     * @return array A transformed vardef with normalizations applied
+     */
+    public function getNormalizedDefs($vardef) {
+        // Bug 57802 - REST API Metadata: vardef len property must be number, not string
+        // Some vardefs set len and size as strings. Custom fields do the same
+        // so clean that up here before the metadata is returned.
+        if (isset($vardef['len'])) {
+            $vardef['len'] = $this->normalizeNumeric($vardef['len']);
+        }
+        
+        if (isset($vardef['size'])) {
+            $vardef['size'] = $this->normalizeNumeric($vardef['size']);
+        }
+        
+        // Bug 57890 - Required values should be boolean
+        if (isset($vardef['required'])) {
+            $vardef['required'] = $this->normalizeBoolean($vardef['required']);
+        }
+
+        // Handle normalizations that need to be applied
+        if (isset($vardef['default'])) {
+            $vardef['default'] = $this->normalizeDefaultValue($vardef['default']);
+        }
+        
+        return $vardef;
+    }
+
+    /**
+     * Normalizes a default value
+     *
+     * @param mixed $value The value to normalize
+     * @return string
+     */
+    public function normalizeDefaultValue($value) {
+        return $value;
+    }
+
+    /**
+     * Normalizes numeric def values. For non numeric values, returns null
+     * 
+     * @param mixed $value
+     * @return int|null
+     */
+    public function normalizeNumeric($value) {
+        if (is_numeric($value)) {
+            return intval($value);
+        } 
+        
+        return null;
+    }
+    
+    public function normalizeBoolean($value) {
+        // If the value is already boolean, send it back
+        if ($value === true || $value === false) {
+            return $value;
+        }
+        
+        // Check against known values of booleans
+        $bools = array(
+            0 => false,
+            '0' => false,
+            'no' => false,
+            'off' => false,
+            'false' => false,
+            1 => true,
+            '1' => true,
+            'yes' => true,
+            'on' => true,
+            'true' => true,
+        );
+        
+        if (isset($bools[$value])) {
+            return $bools[$value];
+        }
+        
+        // Just send it back
+        return $value;
+    }
 }
-?>

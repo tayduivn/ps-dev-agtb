@@ -26,7 +26,6 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * governing these rights and limitations under the License.  Portions created
  * by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  *
- * $Id: SaveSubpanelLayout.php 14889 2006-07-21 23:11:17 +0000 (Fri, 21 Jul 2006) jbenterou $
  * Description:  Saves the layout of the homepage
  * Portions created by SugarCRM are Copyright (C) SugarCRM, Inc.
  * All Rights Reserved.
@@ -68,18 +67,14 @@ foreach ($sm as $mod_dir_name => $links)
 
 // Specify the sitemap template to use; allow developers to override this with a custom one to add/remove modules
 // from the list
-$tpl = 'modules/Home/sitemap.tpl';
-if ( sugar_is_file('custom/modules/Home/sitemap.tpl') ) {
-    $tpl = 'custom/modules/Home/sitemap.tpl';
-}
-echo $sm_smarty->fetch($tpl);
+echo $sm_smarty->fetchCustom('modules/Home/sitemap.tpl');
 
 function sm_build_array()
 {
     //if the sitemap array is already stored, then pass it back
     if (isset($_SESSION['SM_ARRAY']) && !empty($_SESSION['SM_ARRAY'])){
-        return $_SESSION['SM_ARRAY'];   
-    }   
+        return $_SESSION['SM_ARRAY'];
+    }
 
 
     include("include/modules.php");
@@ -121,7 +116,7 @@ function sm_build_array()
         }
         else
         {
-		    if (file_exists('modules/'.$val.'/Menu.php'))
+		    if (SugarAutoLoader::fileExists('modules/'.$val.'/Menu.php'))
 		    {
                 $mod_strings = return_module_language($current_language, $val);
                 $module_menu = array();
@@ -143,6 +138,6 @@ function sm_build_array()
 	//reset the modstrings to current module
 	$mod_strings = $orig_modstrings ;
     //store master array into session variable
-    $_SESSION['SM_ARRAY'] = $mstr_array; 
+    $_SESSION['SM_ARRAY'] = $mstr_array;
 	return $mstr_array;
 }

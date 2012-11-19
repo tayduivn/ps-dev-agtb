@@ -133,6 +133,6 @@ class BeanMockTestObjectName extends SugarBean
     var $table_name = "my_table";
 
     function BeanMockTestObjectName() {
-		parent::SugarBean();
+		parent::__construct();
 	}
 }

@@ -50,20 +50,44 @@ class SmtpMailer extends BaseMailer
     public function send() {
         $mailer = $this->generateMailer(); // get a fresh PHPMailer object
 
-        $this->transferConfigurations($mailer); // transfer the configurations to set up the PHPMailer object before
-                                                // attempting to send with it
-        $this->connectToHost($mailer);          // connect to the SMTP server
-        $this->transferHeaders($mailer);        // transfer the email headers to PHPMailer
-        $this->transferRecipients($mailer);     // transfer the recipients to PHPMailer
-        $this->transferBody($mailer);           // transfer the message to PHPMailer
-        $this->transferAttachments($mailer);    // transfer the attachments to PHPMailer
+        try {
+
+            $this->transferConfigurations($mailer); // transfer the configurations to set up the PHPMailer object before
+                                                    // attempting to send with it
+            $this->connectToHost($mailer);          // connect to the SMTP server
+            $this->transferHeaders($mailer);        // transfer the email headers to PHPMailer
+            $this->transferRecipients($mailer);     // transfer the recipients to PHPMailer
+            $this->transferBody($mailer);           // transfer the message to PHPMailer
+            $this->transferAttachments($mailer);    // transfer the attachments to PHPMailer
+        } catch(MailerException $me) {
+            $GLOBALS["log"]->error($me->getLogMessage());
+            $GLOBALS["log"]->info($me->getTraceMessage());
+            $GLOBALS["log"]->info(print_r($this->config->toArray(),true));
+            throw($me);
+        }
 
         try {
             // send the email with PHPMailer
             $mailer->Send();
+
+            /*--- Debug Only ----------------------------------------------------*/
+            $message = "MAIL SENT:\n";
+            $message .= "--- Mail Config ---\n".print_r($this->config->toArray(),true);
+            $headers = array(
+                "Subject"  => $this->headers->getSubject(),
+                "From"     => $this->headers->getFrom()
+            );
+            $message .= "--- Mail Headers ---\n".print_r($headers,true);
+            $GLOBALS["log"]->debug($message);
+            /*--- Debug Only ----------------------------------------------------*/
+
         } catch (Exception $e) {
             // eat the phpmailerException but use it's message to provide context for the failure
-            throw new MailerException("Failed to send the email: " . $e->getMessage(), MailerException::FailedToSend);
+            $me = new MailerException("Failed to send the email: " . $e->getMessage(), MailerException::FailedToSend);
+            $GLOBALS["log"]->error($me->getLogMessage());
+            $GLOBALS["log"]->info($me->getTraceMessage());
+            $GLOBALS["log"]->info(print_r($this->config->toArray(),true));
+            throw($me);
         }
     }
 
@@ -318,9 +342,12 @@ class SmtpMailer extends BaseMailer
      *
      * @access protected
      * @param PHPMailer $mailer
-     * @throws MailerException
      */
     protected function transferBody(PHPMailer &$mailer) {
+        // just to be safe, let's clear the bodies from PHPMailer
+        $mailer->Body    = "";
+        $mailer->AltBody = "";
+
         // this is a hack to make sure that from_html is called on each message part prior to any future code that
         // needs HTML entities converted to real HTML characters
         $textBody = from_html($this->textBody);
@@ -329,11 +356,7 @@ class SmtpMailer extends BaseMailer
         $hasText = $this->hasMessagePart($textBody); // is there a plain-text part?
         $hasHtml = $this->hasMessagePart($htmlBody); // is there an HTML part?
 
-        // make sure there is at least one message part
-        if (!$hasText && !$hasHtml) {
-            throw new MailerException("No email body was provided", MailerException::InvalidMessageBody);
-        }
-
+        // perform some preparations on the plain-text part, if one exists
         if ($hasText) {
             // perform character set translations on the plain-text body
             $textBody = $this->prepareTextBody($this->textBody);
@@ -357,6 +380,7 @@ class SmtpMailer extends BaseMailer
             }
         }
 
+        // add the HTML part to PHPMailer, if one exists
         if ($hasHtml) {
             // perform character set translations HTML body
             $htmlBody = $this->prepareHtmlBody($htmlBody);
@@ -367,6 +391,7 @@ class SmtpMailer extends BaseMailer
             $mailer->Body     = $htmlBody;        // the HTML part is the primary message body
         }
 
+        // add the plain-text part to the appropriate PHPMailer body
         if ($hasText && $hasHtml) {
             // it's a multi-part email with both the plain-text and HTML parts
             $mailer->AltBody = $textBody; // the plain-text part is the alternate message body
@@ -374,7 +399,7 @@ class SmtpMailer extends BaseMailer
             // there is only a plain-text part so set up PHPMailer appropriately for sending a text-only email
             $mailer->Body = $textBody; // the plain-text part is the primary message body
         } else {
-            // you should never actually send an email without a plain-text part, but we'll allow it (for now)
+            // you should never actually send an HTML email without a plain-text part, but we'll allow it (for now)
         }
     }
 

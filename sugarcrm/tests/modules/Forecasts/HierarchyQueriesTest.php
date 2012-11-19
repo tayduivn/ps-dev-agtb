@@ -161,6 +161,11 @@ class HierarchyQueriesTest extends Sugar_PHPUnit_Framework_TestCase
     {
         global $current_user;
         $db = DBManagerFactory::getInstance();
+        if ( !$db->supports('recursive_query') )
+        {
+            $this->markTestSkipped('DBManager does not support recursive query');
+        }
+
         $sql = $db->getRecursiveSelectSQL('users', 'id', 'reports_to_id', 'id, user_name, reports_to_id', false, "status = 'Active' and user_name like 'employee%'");
         $result = $db->query($sql);
         while ($row = $db->fetchByAssoc($result)) {

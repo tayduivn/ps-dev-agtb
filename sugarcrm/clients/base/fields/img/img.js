@@ -33,7 +33,7 @@
         $.ajax({
             type: "GET",
             beforeSend: function(xhr) {
-                var base64 = Crypto.util.bytesToBase64(Crypto.charenc.Binary.stringToBytes(user + ":" + pwd));
+                var base64 = base64_encode(user + ":" + pwd);
                 xhr.setRequestHeader("Authorization", "Basic " + base64);
             },
             url: "https://api.datamarket.azure.com/Data.ashx/Bing/Search/v1/Image?Query=%27" + name + "%27&$top=15&$format=json",

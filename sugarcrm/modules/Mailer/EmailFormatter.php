@@ -107,7 +107,7 @@ class EmailFormatter
         // replace any embeded images using the secure entryPoint for src url
         $converted = $this->convertInlineImageToEmbeddedImage(
             $body,
-            "(?:{$siteUrl})?index.php[?]entryPoint=download&(?:amp;)?[^\"]+?id=",
+            "(?:{$siteUrl})?/?index.php[?]entryPoint=download&(?:amp;)?[^\"]+?id=",
             "upload://",
             true
         );

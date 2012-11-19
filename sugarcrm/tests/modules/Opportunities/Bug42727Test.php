@@ -46,6 +46,7 @@ class Bug42727Test extends Sugar_PHPUnit_Framework_TestCase
         SugarTestHelper::setUp('beanList');
         SugarTestHelper::setUp('current_user');
         $this->_opportunity = new MockOpportunity();
+        $this->_opportunity->date_closed = TimeDate::getInstance()->getNow()->asDbDate();
     }
 
     public function tearDown()

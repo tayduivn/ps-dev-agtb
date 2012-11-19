@@ -1,3 +1,16 @@
+/**
+ * Events Triggered
+ *
+ * modal:close
+ *      on: layout.context
+ *      by: close()
+ *      when: the user closes the modal
+ *
+ * modal:close
+ *      on: layout.context
+ *      by: save()
+ *      when: the new config model has saved successfully
+ */
 ({
     /**
      * The Current Active Panel Index
@@ -44,9 +57,6 @@
      * @param evt
      */
     close:function (evt) {
-        if(this.model.hasChanged()) {
-            this.model.set(this.model.previousAttributes());
-        }
         this.layout.context.trigger("modal:close");
     },
 
@@ -57,8 +67,21 @@
     save:function (evt) {
         // If button is disabled, do nothing
         if(!$(evt.target).hasClass('disabled')) {
-            this.model.save();
-            this.layout.context.trigger("modal:close");
+            var self = this;
+
+            // push this model back to the main config model
+            this.context.forecasts.config.set(this.model.toJSON());
+
+            // set the saveClicked flag without dispatching change events separate from
+            // the set event below, this is silent
+            this.context.forecasts.set({ saveClicked : true }, {silent:true});
+
+            this.context.forecasts.config.save({}, {
+                success: function() {
+                    // only trigger modal close after save api call has returned
+                    self.layout.context.trigger("modal:close");
+                }
+            });
         }
     },
 
@@ -72,14 +95,8 @@
         }
         // ignore the click if the crumb is already active
         if ($(evt.target).parent().is(".active,.disabled") == false) {
-            // figure out which crumb was checked
-            var clickedCrumb = 0;
-            _.each(this.navTabs, function (tab, index) {
-                // figure out which tab has the a that was clicked
-                if ($(tab).has(evt.toElement).length) {
-                    clickedCrumb = index;
-                }
-            });
+            // get the index of the clicked crumb
+            var clickedCrumb = $(evt.target).data('index');
 
             if (clickedCrumb != this.activePanel) {
                 this.switchPanel(clickedCrumb);

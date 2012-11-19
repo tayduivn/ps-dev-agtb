@@ -3,41 +3,7 @@
 ///////////////////////////////////////////////////////////////////////////////
 ////	STANDARD REQUIRED SUGAR INCLUDES AND PRESETS
 if(!defined('sugarEntry')) define('sugarEntry', true);
-//require_once('modules/UpgradeWizard/dbSchema_utils.php');
 	// only run from command line
-
-/*SUGAR.util.evalScript(r.responseText);
-            if (document.getElementById('select_column'))
-				{
-				    var replace=document.getElementById('select_column');
-
-				    if (replace)
-				    {
-				        if (replace.childNodes[0])
-				        {alert(r.responseText);
-				            SUGAR.util.evalScript(replace.childNodes[0].nodeValue=r.responseText);
-				        }
-				        else if (replace.value)
-				        {
-				            SUGAR.util.evalScript(replace.value=r.responseText);
-				        }
-				        else //if (replace.innerHTML)
-				        {
-
-				            SUGAR.util.evalScript(replace.innerHTML=r.responseText);
-				        }
-				    }
-
-				}
-				<div id='tabColumns' name='tabColumns'>
-			       <table>
-				       <tr>
-					   		<span sugar='slot9b'>&nbsp;<select tabindex='1' name='column_name' id='column_id'></select>
-	   						</span sugar='slot'>
-			           </tr>
-			       </table>
-			    </div>
-			*/
 
 require_once('include/JSON.php');
 
@@ -325,11 +291,11 @@ function checkColumnKeysIndices($relationship,$table,$rel_key,&$col_data_type,&$
 
 function checkSchema($execute=false,$return=false){
 
-	
+
 	global $current_user, $beanFiles;
 	global $dictionary;
 	set_time_limit(3600);
-	
+
 	$db = &DBManagerFactory::getInstance();
 	foreach( $beanFiles as $bean => $file ){
     	require_once( $file );
@@ -742,8 +708,8 @@ function checkIndexExists($table_name,$column_name){
 
 function getTablesWithRelations(){
 	include ('include/modules.php') ;
-	
-	
+
+
 	global $current_user, $beanFiles;
 	global $dictionary;
 

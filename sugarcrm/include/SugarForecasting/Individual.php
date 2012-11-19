@@ -39,6 +39,7 @@ class SugarForecasting_Individual extends SugarForecasting_AbstractForecast impl
     /**
      * Run all the tasks we need to process get the data back
      *
+     * @param $execute boolean indicating whether or not to execute the query and return the results; defaults to true
      * @return array|string
      */
     public function process()
@@ -80,12 +81,12 @@ class SugarForecasting_Individual extends SugarForecasting_AbstractForecast impl
         	   	"inner join opportunities o " .
         	   		"on p.opportunity_id = o.id " .
         	   	"left join worksheet w " .
-        	   	"on p.id = w.related_id "; 
+        	   	"on p.id = w.related_id ";
 
         if ($this->getArg('user_id') != $current_user->id) {
         	   $sql .= "and w.version = 1 ";
         }
-        
+
 		$sql .= "where p.deleted = 0 " .
 				"and o.deleted = 0 ";
         $result = $db->query($sql);
@@ -139,6 +140,16 @@ class SugarForecasting_Individual extends SugarForecasting_AbstractForecast impl
 
 
     /**
+     * getQuery
+     *
+     * This is a helper function to allow for the query function to be used in ForecastWorksheet->create_export_query
+     */
+    public function getQuery()
+    {
+        return $this->query;
+    }
+
+    /**
      * Save the Individual Worksheet
      *
      * @return mixed
@@ -177,6 +188,15 @@ class SugarForecasting_Individual extends SugarForecasting_AbstractForecast impl
                $field->save($seed, $this->args, $fieldName, $properties);
             }
         }
+
+        //TODO-sfa remove this once the ability to map buckets when they get changed is implemented (SFA-215).
+        $admin = BeanFactory::getBean('Administration');
+        $settings = $admin->getConfigForModule('Forecasts');
+        if (!isset($settings['has_commits']) || !$settings['has_commits']) {
+            $admin->saveSetting('Forecasts', 'has_commits', true, 'base');
+        }
+
+
 		$seed->setWorksheetArgs($this->args);
         $seed->save();
         return $seed->id;

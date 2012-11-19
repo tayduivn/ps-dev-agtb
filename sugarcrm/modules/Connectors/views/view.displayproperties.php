@@ -66,17 +66,16 @@ class ViewDisplayProperties extends ViewList
     	$count = 0;
    		global $current_user;
 		$access = $current_user->getDeveloperModules();
-	    $d = dir('modules');
-		while($e = $d->read()){
-			if(substr($e, 0, 1) == '.' || !is_dir('modules/' . $e))continue;
-			if(empty($enabled_modules[$e]) && file_exists('modules/' . $e . '/metadata/studio.php') && file_exists('modules/' . $e . '/metadata/detailviewdefs.php') && isset($GLOBALS [ 'beanList' ][$e]) && (in_array($e, $access) || is_admin($current_user))) // installed modules must also exist in the beanList
-			{
-				$disabled_modules[$e] = isset($GLOBALS['app_list_strings']['moduleList'][$e]) ? $GLOBALS['app_list_strings']['moduleList'][$e] : $e;
-			}
+		foreach(SugarAutoLoader::getDirFiles("modules", true) as $e) {
+		    if(empty($enabled_modules[$e]) && SugarAutoLoader::fileExists('modules/' . $e . '/metadata/studio.php')
+		        && SugarAutoLoader::fileExists('modules/' . $e . '/metadata/detailviewdefs.php')
+		        && isset($GLOBALS['beanList'][$e]) && (in_array($e, $access) || is_admin($current_user))) // installed modules must also exist in the beanList
+		    {
+		    	$disabled_modules[$e] = isset($GLOBALS['app_list_strings']['moduleList'][$e]) ? $GLOBALS['app_list_strings']['moduleList'][$e] : $e;
+		    }
 		}
-
         $s = SourceFactory::getSource($source);
-        
+
         // Not all sources can be connected to all modules
         $enabled_modules = $s->filterAllowedModules($enabled_modules);
         $disabled_modules = $s->filterAllowedModules($disabled_modules);
