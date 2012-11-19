@@ -303,6 +303,8 @@ class SugarBean
     /**
      * This method has been moved into the __construct() method to follow php standards
      *
+     * Please start using __construct() as this method will be removed in a future version
+     *
      * @see __construct()
      * @deprecated
      */
