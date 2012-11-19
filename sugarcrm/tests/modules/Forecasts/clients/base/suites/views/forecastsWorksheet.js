@@ -39,12 +39,18 @@ describe("The forecasts worksheet", function(){
     describe("clickToEdit field", function() {
 
         beforeEach(function() {
+            var testValue = 'testValue';
             _renderClickToEditStub = sinon.stub(app.view, "ClickToEditField");
             _renderFieldStub = sinon.stub(app.view.View.prototype, "_renderField");
             field = {
                 viewName:'worksheet',
                 def:{
                     clickToEdit:true
+                },
+                model : {
+                    get : function(param) {
+                        return [testValue];
+                    }
                 }
             };
         });
