@@ -58,11 +58,10 @@
         });
 
         app.router.route("Forecasts", "forecasts", function() {
-            console.log("LOADING FOARCASATUASADKJASFLAKSJF", app.viewModule);
             app.viewModule = "Forecasts";
             app.controller.loadView({
                 module: app.viewModule,
-                layout: app.viewModule.toLowerCase()
+                layout: "index"
             });
         });
 
