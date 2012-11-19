@@ -266,14 +266,14 @@ eoq;
     function handleAttachments($notes) {
         global $sugar_config;
 
-        //replace references to cache/images with cid tag
-        $this->Body = preg_replace(';=\s*"'.preg_quote(sugar_cached('images/'), ';').';','="cid:',$this->Body);
+		// cn: bug 4864 - reusing same SugarPHPMailer class, need to clear attachments
+		$this->ClearAttachments();
 
         if (empty($notes)) {
             return;
         }
-        // cn: bug 4864 - reusing same SugarPHPMailer class, need to clear attachments
-        $this->ClearAttachments();
+		//replace references to cache/images with cid tag
+        $this->Body = preg_replace(';=\s*"'.preg_quote(sugar_cached('images/'), ';').';','="cid:',$this->Body);
 
         $this->replaceImageByRegex("(?:{$sugar_config['site_url']})?/?cache/images/", sugar_cached("images/"));
 
