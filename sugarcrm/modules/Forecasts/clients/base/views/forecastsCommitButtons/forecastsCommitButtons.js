@@ -4,6 +4,10 @@
  * forecasts:commitButtons:disabled
  *      on: context.forecasts
  *      by: change:selectedUser, change:selectedTimePeriod
+ * 
+ * forecasts:commitButtons:saved
+ *      on: context.forecasts
+ *      by: triggerSaveDraft()
  *
  * modal:forecastsTabbedConfig:open - to cause modal.js to pop up
  *      on: layout
@@ -32,7 +36,6 @@
     events: {
         "click a[id=commit_forecast]" : "triggerCommit",
         "click a[id=save_draft]" : "triggerSaveDraft",
-        "click a[name=forecastSettings]" : "triggerConfigModal",
         "click a.drawerTrig" : "triggerRightColumnVisibility",
         "click a[id=export]" : "triggerExport",
         "click a[id=print]" : "triggerPrint"
@@ -144,75 +147,65 @@
      * as long as commit button is not disabled
      */
     triggerCommit: function() {
-    	var commitbtn =  this.$el.find('#commit_forecast'),
-    	savebtn = this.$el.find('#save_draft'),
-    	worksheet = this.context.forecasts[this.context.forecasts.get("currentWorksheet")],
-    	self = this,
-    	saveCount = 0;
+    	var commitbtn =  this.$el.find('#commit_forecast');
+    	var savebtn = this.$el.find('#save_draft');
+    	var	self = this;
+    	var saved = 0;
+    	
         if(!commitbtn.hasClass("disabled")){
-            var models = _.filter(worksheet.models, function(model, index) {
-                return (model.get("version") == 0 || (_.isBoolean(model.get("isDirty")) && model.get("isDirty")));
-            }, this);
-            //commit each model that needs saved
-            _.each(models, function(model, index){
-            //set properties on model to aid in save
-                model.set({
-                    "draft" : 0,
-                    "isDirty" : false,
-                    "timeperiod_id" : self.context.forecasts.get("selectedTimePeriod").id,
-                    "current_user" : app.user.get('id')
-                }, {silent:true});
-                //set what url  is used for save
-                model.url = worksheet.url.split("?")[0] + "/" + model.get("id");
-                model.save({}, {success: function() {
-                    saveCount++;
-                    //if this is the last save and this is the manager worksheet, flag the worksheet to reload
-                    if(models.length === saveCount && self.context.forecasts.get("currentWorksheet") == "worksheetmanager") {
-                        self.context.forecasts.set({reloadWorksheetFlag: true});
-                    }
-                }});
-                //this worksheet is clean
-                worksheet.isDirty = false;
+            saved = self.saveDirtyWorksheets(function(){
+                self.context.forecasts.set({commitForecastFlag: true});
             });
-
+            
+            //we didn't have anything to save (and wait to finish), so go ahead and trigger the commit
+            if(saved.length == 0){
+                self.context.forecasts.set({commitForecastFlag: true});
+            }
             savebtn.addClass("disabled");
-    		self.context.forecasts.set({commitForecastFlag: true});
     	}        
     },
-
+    
     /**
-     * Triggers the event expected by the modal layout to show the config panels
+     * saveDirtyWorksheets
+     * utility function to save dirty worksheets
+     * @param fcn callback
+     * @return integer Number of items saved
      */
-    triggerConfigModal: function() {
-        var params = {
-            title: app.lang.get("LBL_FORECASTS_CONFIG_TITLE", "Forecasts"),
-            components: [{layout:"tabbedConfig"}],
-            span: 10,
-            before: {
-                hide: function() {
-                    // Check to see if we're closing modal via cancel button
-                    // We have no event passed here to get which button was clicked
-                    if(this.context.forecasts.get('saveClicked')) {
-                        // display a success message
-                        app.alert.show('success', {
-                            level: 'success',
-                            closeable: false,
-                            title : app.lang.get("LBL_FORECASTS_WIZARD_SUCCESS_TITLE", "Forecasts") + ":",
-                            messages: [app.lang.get("LBL_FORECASTS_TABBED_CONFIG_SUCCESS_MESSAGE", "Forecasts")]
-                        });
-                        // call tell the metadata to sync to get the updated config's and refresh the layout
-                        app.sync();
-                    } else {
-                        // reset without a change event in case they click settings again
-                        // before refreshing the page
-                        this.context.forecasts.set({ saveClicked : false }, {silent:true});
-                    }
+    saveDirtyWorksheets: function(fcn){
+        var worksheet = this.context.forecasts[this.context.forecasts.get("currentWorksheet")];
+        var self = this;
+        var saveCount = 0;
+        var models = _.filter(worksheet.models, function(model, index) {
+            return (model.get("version") == 0 || (_.isBoolean(model.get("isDirty")) && model.get("isDirty")));
+        }, this);
+        
+        //commit each model that needs saved
+        _.each(models, function(model, index){
+           //set properties on model to aid in save
+            model.set({
+                "draft" : 0,
+                "isDirty" : false,
+                "timeperiod_id" : self.context.forecasts.get("selectedTimePeriod").id,
+                "current_user" : app.user.get('id')
+            }, {silent:true});
+            
+            //set what url  is used for save
+            model.url = worksheet.url.split("?")[0] + "/" + model.get("id");
+            model.save({}, {success: function() {
+                saveCount++;
+                //if this is the last save, go ahead and trigger the callback;
+                if(models.length === saveCount) {
+                   if(_.isFunction(fcn)){
+                       fcn();   
+                   }                    
+                   self.context.forecasts.trigger("forecasts:commitButtons:saved");
                 }
-            }
-        };
-        if(app.user.getAcls()['Forecasts'].admin == "yes") {
-            this.layout.trigger("modal:forecastsTabbedConfig:open", params);
-        }
+            }});
+            //this worksheet is clean
+            worksheet.isDirty = false;
+        });
+        
+        return models.length;
     },
 
     /**
@@ -220,22 +213,10 @@
      */
     triggerSaveDraft: function() {
     	var savebtn = this.$el.find('#save_draft');
+    	var self = this;
+    	var saved = 0;
     	if(!savebtn.hasClass("disabled")){
-    		var worksheet = this.context.forecasts[this.context.forecasts.get("currentWorksheet")];
-    		var self = this;
-    		var modelCount = 0;
-    		var saveCount = 0;
-    		_.each(worksheet.models, function(model, index){
-    			var isDirty = model.get("isDirty");
-    			if(_.isBoolean(isDirty) && isDirty){
-    				modelCount++;
-    				model.set({draft: 1}, {silent:true});
-    				model.save();
-    				model.set({isDirty: false}, {silent:true});
-    				worksheet.isDirty = false;
-    			}    			    				
-    		});
-
+    	    saved = self.saveDirtyWorksheets();    				
             savebtn.addClass("disabled");
     		this.enableCommitButton();
     	}
@@ -271,20 +252,37 @@
      * @param evt
      */
     triggerExport : function(evt) {
+        var savebtn = this.$el.find('#save_draft');
         var url = 'index.php?module=Forecasts&action=';
         url += (this.context.forecasts.get("currentWorksheet") == 'worksheetmanager') ?  'ExportManagerWorksheet' : 'ExportWorksheet';
         url += '&user_id=' + this.context.forecasts.get('selectedUser').id;
         url += '&timeperiod_id=' + $("#timeperiod").val();
         
+        if(!savebtn.hasClass("disabled")){
+            if(confirm(app.lang.get("LBL_WORKSHEET_EXPORT_CONFIRM", "Forecasts"))){
+                this.runExport(url);
+            }
+        }
+        else{
+            this.runExport(url);
+        }
+    },
+    
+    /**
+     * runExport
+     * triggers the browser to download the exported file
+     * @param url URL to the file to download
+     */
+    runExport: function(url){
         var dlFrame = $("#forecastsDlFrame");
         //check to see if we got something back
         if(dlFrame.length == 0)
         {
-        	//if not, create an element
-        	dlFrame = $("<iframe>");
-        	dlFrame.attr("id", "forecastsDlFrame");
-        	dlFrame.css("display", "none");
-        	$("body").append(dlFrame);
+            //if not, create an element
+            dlFrame = $("<iframe>");
+            dlFrame.attr("id", "forecastsDlFrame");
+            dlFrame.css("display", "none");
+            $("body").append(dlFrame);
         }
         dlFrame.attr("src", url);
     },

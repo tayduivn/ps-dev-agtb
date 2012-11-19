@@ -53,8 +53,8 @@ class SugarWidgetFieldCustomName extends SugarWidgetFieldName
 }
 EOQ;
 
+        SugarAutoLoader::addToMap('custom/include/generic/SugarWidgets/SugarWidgetFieldcustomname.php', true);
         file_put_contents('custom/include/generic/SugarWidgets/SugarWidgetFieldcustomname.php', $contents);
-        SugarAutoLoader::addToMap('custom/include/generic/SugarWidgets/SugarWidgetFieldcustomname.php', false);
     }
 
     public function tearDown()
@@ -68,6 +68,9 @@ EOQ;
         }
     }
 
+    /**
+     * @outputBuffering disabled
+     */
     public function testCustomSugarWidgetFilesLoaded()
     {
         require_once('include/generic/SugarWidgets/SugarWidgetReportField.php');

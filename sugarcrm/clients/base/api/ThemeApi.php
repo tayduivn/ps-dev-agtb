@@ -108,7 +108,7 @@ class ThemeApi extends SugarApi
     {
         // Validating arguments
         $platform = isset($args['platform']) ? $args['platform'] : 'base';
-        $themeName = isset($args['themeName']) ? $args['themeName'] : 'default';
+        $themeName = isset($args['themeName']) ? $args['themeName'] : null;
 
         $theme = new SidecarTheme($platform, $themeName);
         $paths = $theme->getPaths();
@@ -136,7 +136,7 @@ class ThemeApi extends SugarApi
 
         // Validating arguments
         $platform = isset($args['platform']) ? $args['platform'] : 'base';
-        $themeName = isset($args['themeName']) ? $args['themeName'] : 'default';
+        $themeName = isset($args['themeName']) ? $args['themeName'] : null;
 
         $theme = new SidecarTheme($platform, $themeName);
 

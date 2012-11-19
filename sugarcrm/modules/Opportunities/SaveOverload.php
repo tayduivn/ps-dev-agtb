@@ -68,6 +68,14 @@ function perform_save($focus){
         $focus->worst_case = $focus->amount;
     }
 
+    // if sales stage was set to Closed Won set best and worst cases to amount
+    $wonStages = $settings['sales_stage_won'];
+    if (in_array($focus->sales_stage, $wonStages))
+    {
+        $focus->best_case = $focus->amount;
+        $focus->worst_case = $focus->amount;
+    }
+
     // Bug49495: amount may be a calculated field
     $focus->updateCalculatedFields();
     //END SUGARCRM flav=pro ONLY

@@ -274,7 +274,8 @@ $dictionary['Opportunity'] = array('table' => 'opportunities','audited'=>true, '
     'dbType' => 'currency',
     'type' => 'currency',
     'len' => '26,6',
-    'validation' => array('type' => 'range', 'min' => 0)
+    'validation' => array('type' => 'range', 'min' => 0),
+    'audited'=>true,
   ),
   'worst_case' =>
   array (
@@ -283,14 +284,8 @@ $dictionary['Opportunity'] = array('table' => 'opportunities','audited'=>true, '
     'dbType' => 'currency',
     'type' => 'currency',
     'len' => '26,6',
-    'validation' => array('type' => 'range', 'min' => 0)
-  ),
-  'primary_quote_id' =>
-  array (
-    'name' => 'primary_quote_id',
-    'type' => 'id',
-    'vname' => 'LBL_PRIMARY_QUOTE_ID',
-    'comment' => 'The primary quote this opportunity is associated with'
+    'validation' => array('type' => 'range', 'min' => 0),
+    'audited'=>true,
   ),
   'commit_stage' =>
   array (

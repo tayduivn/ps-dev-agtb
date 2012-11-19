@@ -21,6 +21,7 @@ if (!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  *********************************************************************************/
 require_once 'modules/ModuleBuilder/parsers/views/ListLayoutMetaDataParser.php';
+require_once 'include/MetaDataManager/MetaDataManager.php';
 
 class SidecarListLayoutMetaDataParser extends ListLayoutMetaDataParser {
     /**
@@ -32,7 +33,7 @@ class SidecarListLayoutMetaDataParser extends ListLayoutMetaDataParser {
      */
     protected $invalidTypes = array(
         //BEGIN SUGARCRM flav=ent ONLY
-        'portal' => array('iframe', 'encrypt', 'html',),
+        'portal' => array('iframe', 'encrypt', 'html','currency', 'currency_id'),
         //END SUGARCRM flav=ent ONLY
     );
             
@@ -413,5 +414,15 @@ class SidecarListLayoutMetaDataParser extends ListLayoutMetaDataParser {
         }
         
         return $return;
+    }
+
+    /**
+     * Clears mobile and portal metadata caches that have been created by the API
+     * to allow immediate rendering of changes at the client
+     */
+    protected function _clearCaches() {
+        if ($this->implementation->isDeployed()) {
+            MetaDataManager::clearAPICache();
+        }
     }
 }

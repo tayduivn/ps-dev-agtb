@@ -618,30 +618,6 @@ array (
     'bean_name'=>'Opportunity',
     'vname'=>'LBL_OPPORTUNITIES',
   ),
-'best_case' =>
-array (
-    'name' => 'best_case',
-    'vname' => 'LBL_BEST_CASE',
-    'dbType' => 'decimal',
-    'type' => 'currency',
-    'len' => '26,6',
-),
-'likely_case' =>
-array (
-    'name' => 'likely_case',
-    'vname' => 'LBL_LIKELY_CASE',
-    'dbType' => 'decimal',
-    'type' => 'currency',
-    'len' => '26,6',
-),
-'worst_case' =>
-array (
-    'name' => 'worst_case',
-    'vname' => 'LBL_WORST_CASE',
-    'dbType' => 'decimal',
-    'type' => 'currency',
-    'len' => '26,6',
-),
 //END SUGARCRM flav=pro ONLY
   'type_name' =>
   array (

@@ -509,7 +509,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 //BEGIN ENCODE
 function get_hoovers_api_key() {
  	//BEGIN SUGARCRM flav!=int ONLY
- 	return 'cGF4Yjk0OHRkeGV2YWVmM2NlZzdrMnBj';
+ 	return 'dGd0YzN0ajk0OGVoN3d2YnRic3p0djdo';
  	//END SUGARCRM flav!=int ONLY
 
 	//BEGIN SUGARCRM flav=int ONLY

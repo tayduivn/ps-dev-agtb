@@ -91,7 +91,11 @@ class SugarForecasting_Individual extends SugarForecasting_AbstractForecast impl
 				"and o.deleted = 0 ";
         $result = $db->query($sql);
 
-        while (($row = $db->fetchByAssoc($result)) != null) {
+        // use to_html when call DBManager::fetchByAssoc if encode_to_html isn't defined or not equal false
+        // @see Bug #58397 : Comma in opportunity name is exported as #039;
+        $encode_to_html = !isset($this->args['encode_to_html']) || $this->args['encode_to_html'] != false;
+
+        while (($row = $db->fetchByAssoc($result, $encode_to_html)) != null) {
         	
         	/* if we are a manager looking at a reportee worksheet and they haven't committed anything yet 
         	 * (no worksheet row), we don't want to add this row to the output.

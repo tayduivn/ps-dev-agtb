@@ -362,11 +362,7 @@ describe("The forecasts worksheet", function(){
          */
     	xit("forecasts.on should have been called with expectedOpportunities", function(){
     		expect(view.context.forecasts.on).toHaveBeenCalledWith("change:expectedOpportunities");
-    	});
-    	
-    	it("forecasts.on should have been called with reloadWorksheetFlag", function(){
-    		expect(view.context.forecasts.on).toHaveBeenCalledWith("change:reloadWorksheetFlag");
-    	});
+    	});  	
     	
     	it("forecasts.on should have been called with checkDirtyWorksheetFlag", function(){
     		expect(view.context.forecasts.on).toHaveBeenCalledWith("change:checkDirtyWorksheetFlag");

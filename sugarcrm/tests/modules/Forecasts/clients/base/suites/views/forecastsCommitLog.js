@@ -112,4 +112,83 @@ describe("The forecastCommitted view", function(){
             });
         })
     });
+    
+    describe("Forecasts Commit Log Bindings ", function(){
+        beforeEach(function(){
+            view.context = {
+                forecasts:{
+                    on: function(event, fcn){},
+                    committed:{
+                        on:  function(event, fcn){}
+                    }
+                }
+            };
+                      
+            sinon.spy(view.context.forecasts.committed, "on");
+            sinon.spy(view.context.forecasts, "on");
+            view.bindDataChange();
+        });
+        
+        afterEach(function(){
+            view.context.forecasts.committed.on.restore();
+            view.context.forecasts.on.restore();
+            delete view.context;
+            delete view.collection;
+            view.context = {};
+            view.collection = {};
+        });
+        
+        //bindDataChange redefines this.collection to be context.forecasts.committed
+        it("collection.on should have been called with 'reset change'", function(){
+            expect(view.collection.on).toHaveBeenCalledWith("reset change");
+        });               
+    });
+    
+    describe("Forecasts Commit Log Reset (resetCommittedLog)", function(){
+        beforeEach(function(){
+            view.context = {
+                forecasts:{
+                    on: function(event, fcn){},
+                    committed:{
+                        on:  function(event, fcn){}
+                    }
+                }
+            };
+            
+            view.buildForecastsCommitted();
+        });
+        
+        afterEach(function(){
+            delete view.context;
+            delete view.collection;
+            view.context = {};
+            view.collection = {};
+        });
+        
+        it("bestCase should equal ''", function(){
+            expect(view.bestCase).toEqual("");
+        });
+        it("likelyCase should equal ''", function(){
+            expect(view.likelyCase).toEqual("");
+        });
+        it("worstCase should equal ''", function(){
+            expect(view.worstCase).toEqual("");
+        });
+        it("previousBestCase should equal ''", function(){
+            expect(view.previousBestCase).toEqual("");
+        });
+        it("previousLikelyCase should equal ''", function(){
+            expect(view.previousLikelyCase).toEqual("");
+        });
+        it("previousWorstCase should equal ''", function(){
+            expect(view.previousWorstCase).toEqual("");
+        });
+        it("showHistoryLog should equal ''", function(){
+            expect(view.showHistoryLog).toBeFalsy();
+        });
+        it("previousDateEntered should equal ''", function(){
+            expect(view.previousDateEntered).toEqual("");
+        });
+    });
+    
 });

@@ -465,6 +465,7 @@ class MetaDataManager {
      *
      * @param string $path The directory within a platform
      * @param bool $full Whether to return full paths or dirnames only
+     * @param string $modulePath path to module 
      * @return array
      */
     public function getSugarClientFileDirs($path, $full = false, $modulePath = "") {
@@ -547,6 +548,74 @@ class MetaDataManager {
         }
 
         $result['_hash'] = md5(serialize($result));
+        return $result;
+    }
+
+    /**
+     * Gets client files of type $type (view, layout, field) for all platforms 
+     * specified. Resulting array will be delineated by platform.
+     *
+     * @param string $type The type of files to get
+     * @param array $platforms Which platforms to get client files for.
+     * @return array
+     */
+    public function getSugarClientFilesForPlatforms($type, $platforms = array())
+    {
+        $result = array();
+
+        // If not called with $platforms will default to all platforms.
+        $platforms = (!empty($platforms) && count($platforms)) ? $platforms : $this->platforms;
+
+        // Platforms we'll push our loaded components on to.
+        $desiredPlatforms = array();
+        $typePath = $type . 's';
+
+        // Retrieves base directory names for all possible widgets
+        $allSugarFiles = $this->getSugarClientFileDirs($typePath, false, '');
+
+        foreach ( $allSugarFiles as $dirname) {
+            // reset $fileData
+            $fileData = array();
+            $meta = array();
+            $tplDir = array();
+            
+            foreach ( $platforms as $platform ) {
+                $dir = "clients/$platform/$typePath/$dirname/";
+                $controller = SugarAutoLoader::existingCustomOne("{$dir}{$dirname}.js");
+                if (empty($meta)) {
+                    $meta = $this->fetchMetadataFromDirs(array($dir), '');
+                }
+                if ( $controller ) {
+                    $fileData[$platform][$dirname]['controller'] = file_get_contents($controller);
+                }
+                // Now get templates
+                $tplDir[0] = "clients/$platform/$typePath/$dirname/";
+                $templates = $this->fetchTemplates($tplDir);
+                if (count($templates)) {
+                    $fileData[$platform][$dirname]['templates'] = $templates;
+                }
+                // Add the meta
+                if ($meta) {
+                   $fileData[$platform][$dirname]['meta'] = array_shift($meta); // Get the first member
+                }
+                // Remove empty fileData members. There's a chance of course we haven't 
+                // found anything and $fileData[$platform] my be unset
+                if (isset($fileData[$platform])) {
+                    foreach ($fileData[$platform] as $k => $v) {
+                        if (empty($v)) {
+                            unset($fileData[$platform][$k]);
+                        }
+                    }
+                }
+            }
+
+            foreach ($fileData as $pf => $pfData) {
+                $desiredPlatforms[$pf][$dirname] = $pfData[$dirname];
+            }
+        }
+        $result = $desiredPlatforms;
+        $result['_hash'] = md5(serialize($result));
+
         return $result;
     }
 
@@ -650,7 +719,15 @@ class MetaDataManager {
      * @return array The module strings for the current language
      */
     public function getModuleStrings( $moduleName ) {
-        return return_module_language($GLOBALS['current_language'],$moduleName);
+        // Bug 58174 - Escaped labels are sent to the client escaped
+        $strings = return_module_language($GLOBALS['current_language'],$moduleName);
+        if (is_array($strings)) {
+            foreach ($strings as $k => $v) {
+                $strings[$k] = $this->decodeStrings($v);
+            }
+        }
+        
+        return $strings;
     }
 
     /**
@@ -772,5 +849,47 @@ class MetaDataManager {
         }
         
         return $this->sfh;
+    }
+
+    /**
+     * Recursive decoder that handles decoding of HTML entities in metadata strings
+     * before returning them to a client
+     * 
+     * @param mixed $source
+     * @return array|string
+     */
+    protected function decodeStrings($source) {
+        if (is_string($source)) {
+            return html_entity_decode($source, ENT_QUOTES, 'UTF-8');
+        } else {
+            if (is_array($source)) {
+                foreach ($source as $k => $v) {
+                    $source[$k] = $this->decodeStrings($v);
+                }
+            }
+            
+            return $source;
+        }
+    }
+    
+    /**
+     * Clears the API metadata cache of all cache files
+     * 
+     * @static
+     */
+    public static function clearAPICache(){
+        $metadataFiles = glob(sugar_cached('api/metadata/').'*');
+        if ( is_array($metadataFiles) ) {
+            foreach ( $metadataFiles as $metadataFile ) {
+                // This removes the file and the reference from the map. This does
+                // NOT save the file map since that would be expensive in a loop
+                // of many deletes.
+                SugarAutoLoader::unlink($metadataFile);
+            }
+            
+            // This saves the map. Once. Instead of a bunch of times in the loop
+            // above.
+            SugarAutoLoader::saveMap();
+        }
     }
 }
