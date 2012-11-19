@@ -19,13 +19,6 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *to the License for the specific language governing these rights and limitations under the License.
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
-/*********************************************************************************
- * $Header$
- * Description:  TODO: To be written.
- * Portions created by SugarCRM are Copyright (C) SugarCRM, Inc.
- * All Rights Reserved.
- * Contributor(s): ______________________________________..
- ********************************************************************************/
 require_once('modules/Mailer/lib/phpmailer/class.phpmailer.php');
 require_once('include/OutboundEmail/OutboundEmail.php');
 
@@ -274,7 +267,7 @@ eoq;
         global $sugar_config;
 
         //replace references to cache/images with cid tag
-        $this->Body = str_replace(sugar_cached('images/'),'cid:',$this->Body);
+        $this->Body = preg_replace(';=\s*"'.preg_quote(sugar_cached('images/'), ';').';','="cid:',$this->Body);
 
         if (empty($notes)) {
             return;

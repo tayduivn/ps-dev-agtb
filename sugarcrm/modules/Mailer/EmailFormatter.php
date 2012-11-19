@@ -93,7 +93,10 @@ class EmailFormatter
         }
 
         // replace references to cache/images with cid tag
-        $body = str_replace(sugar_cached("images/"), "cid:", $body);
+        $body        = str_replace(sugar_cached("images/"), "cid:", $body);
+        $pattern     = ";=\s*\"" . preg_quote(sugar_cached("images/"), ";") . ";";
+        $replacement = "=\"cid:";
+        $body        = preg_replace($pattern, $replacement, $body);
 
         // replace any embeded images using cache/images for src url
         $converted = $this->convertInlineImageToEmbeddedImage(
