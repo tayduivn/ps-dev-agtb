@@ -24,6 +24,12 @@ require_once("clients/base/api/ListApi.php");
 class ActivityStreamApi extends ListApi {
     public function registerApiRest() {
         return array(
+            'getTaggableBeans' => array(
+                'reqType' => 'GET',
+                'path' => array('ActivityStreamTags'),
+                'pathVars' => array(''),
+                'method' => 'getTags',
+            ),
             'getBeanActivities' => array(
                 'reqType' => 'GET',
                 'path' => array('ActivityStream', '<module>','?'),
@@ -67,6 +73,59 @@ class ActivityStreamApi extends ListApi {
                     'method' => 'deleteRecord',
             ),
         );
+    }
+
+    public function getTags($api, $args) {
+        $data = array();
+        // Users
+        $seed = BeanFactory::getBean("Users");
+        $result = $seed->get_full_list();
+        foreach($result as $bean) {
+            if(!empty($bean->first_name)) {
+                $data[] = array(
+                    'module' => $bean->module_name,
+                    'name' => $bean->name,
+                    'id' => $bean->id,
+                );
+            }
+        }
+
+        // Contacts
+        $seed = BeanFactory::getBean("Contacts");
+        $result = $seed->get_full_list();
+        foreach($result as $bean) {
+            if(!empty($bean->first_name)) {
+                $data[] = array(
+                    'module' => $bean->module_name,
+                    'name' => $bean->name,
+                    'id' => $bean->id,
+                );
+            }
+        }
+
+        // Opportunities
+        $seed = BeanFactory::getBean("Opportunities");
+        $result = $seed->get_full_list();
+        foreach($result as $bean) {
+            $data[] = array(
+                'module' => $bean->module_name,
+                'name' => $bean->name,
+                'id' => $bean->id,
+            );
+        }
+
+        // Accounts
+        $seed = BeanFactory::getBean("Accounts");
+        $result = $seed->get_full_list();
+        foreach($result as $bean) {
+            $data[] = array(
+                'module' => $bean->module_name,
+                'name' => $bean->name,
+                'id' => $bean->id,
+            );
+        }
+
+        return $data;
     }
 
     public function getActivities($api, $args) {
@@ -120,13 +179,13 @@ class ActivityStreamApi extends ListApi {
         // For related tabs
         if(!empty($args['link'])) {
             $options['link'] = $args['link'];
-        } 
+        }
         if(!empty($args['parent_module'])) {
             $options['parent_module'] = $args['parent_module'];
-        }  
+        }
         if(!empty($args['parent_id'])) {
             $options['parent_id'] = $args['parent_id'];
-        }   
+        }
         return $options;
     }
 }

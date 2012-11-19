@@ -119,7 +119,7 @@ if(!empty($_REQUEST['demo'])){
             app.forecasts.initForecast();
 
             if(!_.has(app, 'entityList')) {
-                var url = app.api.buildURL("CustomReport/EntityList");
+                var url = app.api.buildURL("ActivityStreamTags");
                 app.entityList = [];
                 // Fetch taggable entities.
                 app.api.call('GET', url, null, {success: function(o) {
