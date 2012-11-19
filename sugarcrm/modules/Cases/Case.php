@@ -84,7 +84,7 @@ class aCase extends Basic {
 	function aCase() {
 		parent::SugarBean();
 		global $sugar_config;
-		if(!$sugar_config['require_accounts']){
+		if(empty($sugar_config['require_accounts'])){
 			unset($this->required_fields['account_name']);
 		}
 

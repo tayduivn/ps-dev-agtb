@@ -1,3 +1,31 @@
+{{!
+/*********************************************************************************
+ * The contents of this file are subject to the SugarCRM Master Subscription
+ * Agreement (""License"") which can be viewed at
+ * http://www.sugarcrm.com/crm/master-subscription-agreement
+ * By installing or using this file, You have unconditionally agreed to the
+ * terms and conditions of the License, and You may not use this file except in
+ * compliance with the License.  Under the terms of the license, You shall not,
+ * among other things: 1) sublicense, resell, rent, lease, redistribute, assign
+ * or otherwise transfer Your rights to the Software, and 2) use the Software
+ * for timesharing or service bureau purposes such as hosting the Software for
+ * commercial gain and/or for the benefit of a third party.  Use of the Software
+ * may be subject to applicable fees and any use of the Software without first
+ * paying applicable fees is strictly prohibited.  You do not have the right to
+ * remove SugarCRM copyrights from the source code or user interface.
+ *
+ * All copies of the Covered Code must include on each user interface screen:
+ *  (i) the ""Powered by SugarCRM"" logo and
+ *  (ii) the SugarCRM copyright notice
+ * in the same form as they appear in the distribution.  See full license for
+ * requirements.
+ *
+ * Your Warranty, Limitations of liability and Indemnity are expressly stated
+ * in the License.  Please refer to the License for the specific language
+ * governing these rights and limitations under the License.  Portions created
+ * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
+ ********************************************************************************/
+}}
 <footer>
     <div class="row-fluid">
         <div class="span3"><a href="" class="logo"{{#if logoURL}} style="background: url({{logoURL}}) 50% 50% no-repeat; "{{/if}}>SugarCRM</a></div>
@@ -5,7 +33,7 @@
             <div class="btn-toolbar pull-right">
                 {{#if isAuthenticated}}
                 <div class="btn-group">
-                    <a title="{{str "LBL_TOUR"}}" class="btn" id="tour"><i class="icon-road"></i> {{str "LNK_TOUR"}}</a>
+                    <a title="{{str "LBL_TOUR"}}" class="btn" id="tour" href="javascript: void(0);"><i class="icon-road"></i> {{str "LNK_TOUR"}}</a>
                 </div>
                 <div class="btn-group">
                     <a id="print" class="btn"><i class="icon-print"></i> {{str "LBL_PRINT"}}</a>
@@ -32,93 +60,88 @@
     </div>
 </footer>
 
-
 <!-- Tour Guide -->
-<div class="modal hide" id="systemTour">
+<div class="modal hide tour" id="systemTour">
 <div class="screen" id="screen1">
       <div class="modal-header">
         <a class="close" data-dismiss="modal"><i class="icon-remove"></i></a>
-        <h3>{{str "LBL_PORTAL_TOUR_WELCOME_TITLE"}}</h3>
+        <h3>{{str "LBL_PORTAL_TOUR_SCREEN1_TITLE"}}</h3>
       </div>
       <div class="modal-body">
-
-			    <ul class="features">
-
-                    <li><i class="icon-ok"></i>{{str "LBL_PORTAL_TOUR_FEATURES_1"}}</li>
-                    <li><i class="icon-ok"></i>{{str "LBL_PORTAL_TOUR_FEATURES_2"}}</li>
-                    <li><i class="icon-ok"></i>{{str "LBL_PORTAL_TOUR_FEATURES_3"}}</li>
-                    <li><i class="icon-ok"></i>{{str "LBL_PORTAL_TOUR_FEATURES_4"}}</li>
-                </ul>
-                <p>
-                {{str "LBL_PORTAL_TOUR_MORE_INFO_1"}}
-                </p>
-                <p>
-                {{str "LBL_PORTAL_TOUR_MORE_INFO_2"}}
-                </p>
-
-
+       <p>{{{str "LBL_PORTAL_TOUR_SCREEN1_BODY"}}}</p>
       </div>
-
-
-
           <div class="modal-footer">
-          <a href="#" class="btn btn-primary next">{{str "LBL_PORTAL_TOUR_TAKE_TOUR_LNK"}}</a>
-          <a href="#" class="btn btn-invisible skip">{{str "LBL_PORTAL_TOUR_SKIP_LNK"}}</a>
+          <a href="javascript: void(0);" class="btn btn-primary next">{{str "LBL_PORTAL_TOUR_TAKE_TOUR_LNK"}}</a>
+          <a href="javascript: void(0);" class="btn btn-invisible skip">{{str "LBL_PORTAL_TOUR_SKIP_LNK"}}</a>
           </div>
   </div>
   <div class="screen hide" id="screen2">
       <div class="modal-header">
         <a class="close" data-dismiss="modal"><i class="icon-remove"></i></a>
-        <h3>{{str "LBL_PORTAL_TOUR_CASES_TITLE"}}</h3>
+        <h3>{{str "LBL_PORTAL_TOUR_SCREEN2_TITLE"}}</h3>
       </div>
       <div class="modal-body">
-        <p>{{str "LBL_PORTAL_TOUR_CASES_BODY"}}</p>
+        <p>{{{str "LBL_PORTAL_TOUR_SCREEN2_BODY"}}}</p>
       </div>
         <div class="modal-footer">
-        <a href="#" class="btn btn-primary back">{{str "LBL_PORTAL_TOUR_BACK_LNK"}}</a>
-        <a href="#" class="btn btn-primary next">{{str "LBL_PORTAL_TOUR_NEXT_LNK"}} <i class="icon-play icon-xsm"></i></a>
-        <a href="#" class="btn btn-invisible skip">{{str "LBL_PORTAL_TOUR_SKIP_LNK"}}</a>
+        <a href="javascript: void(0);" class="btn btn-primary back">{{str "LBL_PORTAL_TOUR_BACK_LNK"}}</a>
+        <a href="javascript: void(0);" class="btn btn-primary next">{{str "LBL_PORTAL_TOUR_NEXT_LNK"}} <i class="icon-play icon-xsm"></i></a>
+        <a href="javascript: void(0);" class="btn btn-invisible skip">{{str "LBL_PORTAL_TOUR_SKIP_LNK"}}</a>
         </div>
   </div>
   <div class="screen hide" id="screen3">
       <div class="modal-header">
         <a class="close" data-dismiss="modal"><i class="icon-remove"></i></a>
-        <h3>{{str "LBL_PORTAL_TOUR_SEARCH_TITLE"}}</h3>
+        <h3>{{str "LBL_PORTAL_TOUR_SCREEN3_TITLE"}}</h3>
       </div>
       <div class="modal-body">
-        <p>{{str "LBL_PORTAL_TOUR_SEARCH_BODY"}}</p>
+        <p>{{{str "LBL_PORTAL_TOUR_SCREEN3_BODY"}}}</p>
       </div>
       <div class="modal-footer">
-        <a href="#" class="btn btn-primary back">{{str "LBL_PORTAL_TOUR_BACK_LNK"}}</a>
-        <a href="#" class="btn btn-primary next">{{str "LBL_PORTAL_TOUR_NEXT_LNK"}} <i class="icon-play icon-xsm"></i></a>
-        <a href="#" class="btn btn-invisible skip">{{str "LBL_PORTAL_TOUR_SKIP_LNK"}}</a>
+        <a href="javascript: void(0);" class="btn btn-primary back">{{str "LBL_PORTAL_TOUR_BACK_LNK"}}</a>
+        <a href="javascript: void(0);" class="btn btn-primary next">{{str "LBL_PORTAL_TOUR_NEXT_LNK"}} <i class="icon-play icon-xsm"></i></a>
+        <a href="javascript: void(0);" class="btn btn-invisible skip">{{str "LBL_PORTAL_TOUR_SKIP_LNK"}}</a>
       </div>
   </div>
   <div class="screen hide" id="screen4">
       <div class="modal-header">
         <a class="close" data-dismiss="modal"><i class="icon-remove"></i></a>
-        <h3>{{str "LBL_PORTAL_TOUR_QUICK_TITLE"}}</h3>
+        <h3>{{str "LBL_PORTAL_TOUR_SCREEN4_TITLE"}}</h3>
       </div>
       <div class="modal-body">
-        <p>{{str "LBL_PORTAL_TOUR_QUICK_BODY"}}</p>
+        <p>{{{str "LBL_PORTAL_TOUR_SCREEN4_BODY"}}}</p>
       </div>
       <div class="modal-footer">
-        <a href="#" class="btn btn-primary back">{{str "LBL_PORTAL_TOUR_BACK_LNK"}}</a>
-        <a href="#" class="btn btn-primary next">{{str "LBL_PORTAL_TOUR_NEXT_LNK"}} <i class="icon-play icon-xsm"></i></a>
-        <a href="#" class="btn btn-invisible skip">{{str "LBL_PORTAL_TOUR_SKIP_LNK"}}</a>
+        <a href="javascript: void(0);" class="btn btn-primary back">{{str "LBL_PORTAL_TOUR_BACK_LNK"}}</a>
+        <a href="javascript: void(0);" class="btn btn-primary next">{{str "LBL_PORTAL_TOUR_NEXT_LNK"}} <i class="icon-play icon-xsm"></i></a>
+        <a href="javascript: void(0);" class="btn btn-invisible skip">{{str "LBL_PORTAL_TOUR_SKIP_LNK"}}</a>
       </div>
   </div>
-  <div class="screen hide" id="screen5">
+    <div class="screen hide" id="screen5">
+        <div class="modal-header">
+          <a class="close" data-dismiss="modal"><i class="icon-remove"></i></a>
+          <h3>{{str "LBL_PORTAL_TOUR_SCREEN5_TITLE"}}</h3>
+        </div>
+        <div class="modal-body">
+          <p>{{{str "LBL_PORTAL_TOUR_SCREEN5_BODY"}}}</p>
+        </div>
+        <div class="modal-footer">
+          <a href="javascript: void(0);" class="btn btn-primary back">{{str "LBL_PORTAL_TOUR_BACK_LNK"}}</a>
+          <a href="javascript: void(0);" class="btn btn-primary next">{{str "LBL_PORTAL_TOUR_NEXT_LNK"}} <i class="icon-play icon-xsm"></i></a>
+          <a href="javascript: void(0);" class="btn btn-invisible skip">{{str "LBL_PORTAL_TOUR_SKIP_LNK"}}</a>
+        </div>
+    </div>
+  <div class="screen hide" id="screen6">
       <div class="modal-header">
         <a class="close" data-dismiss="modal"><i class="icon-remove"></i></a>
-        <h3><i class="icon-ok"></i> {{str "LBL_PORTAL_TOUR_DONE_TITLE"}}</h3>
+        <h3><i class="icon-ok"></i> {{str "LBL_PORTAL_TOUR_SCREEN6_TITLE"}}</h3>
       </div>
       <div class="modal-body">
-        <p>{{str "LBL_PORTAL_TOUR_DONE_BODY"}}</p>
+        <p>{{{str "LBL_PORTAL_TOUR_SCREEN6_BODY"}}}</p>
       </div>
       <div class="modal-footer">
-        <a href="#" class="btn btn-primary back">{{str "LBL_PORTAL_TOUR_BACK_LNK"}}</a>
-        <a href="#" class="btn btn-primary done">{{str "LBL_PORTAL_TOUR_DONE_LNK"}}</a>
+        <a href="javascript: void(0);" class="btn btn-primary back">{{str "LBL_PORTAL_TOUR_BACK_LNK"}}</a>
+        <a href="javascript: void(0);" class="btn btn-primary done">{{str "LBL_PORTAL_TOUR_DONE_LNK"}}</a>
       </div>
   </div>
 </div>

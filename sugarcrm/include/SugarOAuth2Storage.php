@@ -73,13 +73,13 @@ class SugarOAuth2Storage implements IOAuth2GrantUser, IOAuth2RefreshTokens {
             return $this->portalApiUser;
         }
 
-        $portalApiUser = BeanFactory::newBean('Users');
-
         // Find the Portal API user
-        // FIXME: What to do if they have more than one portal user?
-        $portalApiUser = $portalApiUser->retrieve_by_string_fields(array('portal_only'=>'1','status'=>'Active'));
-        
-        if ($portalApiUser != null) {
+        $admin = new Administration();
+        $admin->retrieveSettings(false, true);
+        if (isset($admin->settings['supportPortal_RegCreatedBy'])) {
+            $portalApiUser = BeanFactory::getBean('Users', $admin->settings['supportPortal_RegCreatedBy']);
+        }
+        if (!empty($portalApiUser->id)) {
             $this->portalApiUser = $portalApiUser;
             return $this->portalApiUser;
         } else {
@@ -433,9 +433,13 @@ class SugarOAuth2Storage implements IOAuth2GrantUser, IOAuth2RefreshTokens {
             //BEGIN SUGARCRM flav=pro ONLY
             $contact->disable_row_level_security = true;
             //END SUGARCRM flav=pro ONLY
-            $contact = $contact->retrieve_by_string_fields(array('portal_name'=>$username,  'portal_active'=>'1', 'deleted'=>0) );
+            $contact = $contact->retrieve_by_string_fields(array('portal_name'=>$username, 'deleted'=>0) );
             if ( !empty($contact) && !User::checkPassword($password, $contact->portal_password) ) {
                 $contact = null;
+            }
+            //Do Portal active check AFTER password check to prevent malicious discovery of portal user ids
+            if( !empty($contact) && $contact->getFieldValue('portal_active') == 0){
+                throw new SugarApiExceptionPortalUserInactive();
             }
             if ( !empty($contact) ) {
                 //BEGIN SUGARCRM flav=pro ONLY

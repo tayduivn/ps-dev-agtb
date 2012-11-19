@@ -294,6 +294,12 @@ function smarty_function_sugar_button($params, &$smarty)
    $type = $params['id'];
    $location = (empty($params['location'])) ? "" : "_".$params['location'];
 
+    if (isset($GLOBALS['sugar_config']['enable_action_menu']) && $GLOBALS['sugar_config']['enable_action_menu']===false) {
+        $enable_action_menu = false;
+    } else {
+        $enable_action_menu = true;
+    }
+
    if(!is_array($type)) {
    	  $module = $params['module'];
    	  $view = $params['view'];
@@ -441,41 +447,76 @@ function smarty_function_sugar_button($params, &$smarty)
                 $output = '';
                 if (!empty($pdfManagerList) || !empty($tplLayouts)) {
                     if(SugarThemeRegistry::current()->name != "Classic") {
+                        if ($enable_action_menu)
                         $output = '
                             <input id="pdfview_button" value="' . translate('LBL_PDF_VIEW') . '" type="button" class="button"  />';
                             $pdfItems = array();
                             if (!empty($pdfManagerList)) {
                             foreach($pdfManagerList as $pdfTemplate){
-                                $urlParams = array(
-                                    'module' => $module,                                    
-                                    'record' => $record,
-                                    'action' => 'sugarpdf',
-                                    'sugarpdf' => 'pdfmanager',
-                                    'pdf_template_id' => $pdfTemplate->id,
-                                    
-                                );
-                                $pdfItems[] = array(    'html'  =>  '<a id="'.$pdfTemplate->name.'_pdfview" href="index.php?' . http_build_query($urlParams, '', '&') . '">' . $pdfTemplate->name . '</a>',
-                                                        'items' => array(),
-                                                    );
+                                if (!$enable_action_menu) {
+                                    $urlParams[] = array(
+                                        'module' => $module,
+                                        'record' => $record,
+                                        'action' => 'sugarpdf',
+                                        'sugarpdf' => 'pdfmanager',
+                                        'pdf_template_id' => $pdfTemplate->id,
+                                        'name' => $pdfTemplate->name,
+                                    );
+                                } else {
+                                    $urlParams = array(
+                                        'module' => $module,
+                                        'record' => $record,
+                                        'action' => 'sugarpdf',
+                                        'sugarpdf' => 'pdfmanager',
+                                        'pdf_template_id' => $pdfTemplate->id,
+
+                                    );
+                                    $pdfItems[] = array(    'html'  =>  '<a id="'.$pdfTemplate->name.'_pdfview" href="index.php?' . http_build_query($urlParams, '', '&') . '">' . $pdfTemplate->name . '</a>',
+                                                            'items' => array(),
+                                                        );
+                                }
                             }
                             }
                             //quote legacy templates
                             if($module == "Quotes") {
                                 foreach($tplLayouts as $sugarpdf=>$path) {
-                                    $urlParams = array(
-                                        'module' => $module,                                    
-                                        'record' => $record,
-                                        'action' => 'sugarpdf',
-                                        'sugarpdf' => $sugarpdf,
-                                        'email_action' => '',
-                                        
-                                    );
-                                    $pdfItems[] = array(    'html'  =>  '<a href="index.php?' . http_build_query($urlParams, '', '&') . '">' . $GLOBALS['app_strings']['LBL_EXISTING'].'_'.$path . '</a>',
-                                                            'items' => array(),
-                                                        );
+                                    if (!$enable_action_menu) {
+                                        $urlParams[] = array(
+                                            'module' => $module,
+                                            'record' => $record,
+                                            'action' => 'sugarpdf',
+                                            'sugarpdf' => $sugarpdf,
+                                            'email_action' => '',
+                                            'name' => $path,
+                                        );
+                                    } else {
+                                        $urlParams = array(
+                                            'module' => $module,
+                                            'record' => $record,
+                                            'action' => 'sugarpdf',
+                                            'sugarpdf' => $sugarpdf,
+                                            'email_action' => '',
+
+                                        );
+                                        $pdfItems[] = array(    'html'  =>  '<a href="index.php?' . http_build_query($urlParams, '', '&') . '">' . $GLOBALS['app_strings']['LBL_EXISTING'].'_'.$path . '</a>',
+                                                                'items' => array(),
+                                                            );
+                                    }
                                 }
                             }
                             
+                        if (!$enable_action_menu) {
+                            foreach ($urlParams as $tplButton) {
+                                if (isset($tplButton['pdf_template_id'])) {
+                                    $parentLocation = 'index.php?module='.$module.'&record='.$tplButton['record'].'&action='.$tplButton['action'].'&sugarpdf='.$tplButton['sugarpdf'].'&pdf_template_id='.$tplButton['pdf_template_id'];
+                                    $output .= '<input class="button" type="button" value="'.translate('LBL_PDF_VIEW').'-'.$tplButton['name'].'" id="'.$tplButton['name'].'_pdfview" onclick="parent.location=\''.$parentLocation.'\'">';
+                                } else {
+                                    // legacy templates
+                                    $parentLocation = 'index.php?module='.$module.'&record='.$tplButton['record'].'&action='.$tplButton['action'].'&sugarpdf='.$tplButton['sugarpdf'].'&email_action='.$tplButton['email_action'];
+                                    $output .= '<input class="button" type="button" value="'.translate('LBL_PDF_VIEW').'-'.$GLOBALS['app_strings']['LBL_EXISTING'].'_'.$tplButton['name'].'" id="'.$tplButton['name'].'_pdfview" onclick="parent.location=\''.$parentLocation.'\'">';
+                                }
+                            }
+                        } else {
                             require_once('include/Smarty/plugins/function.sugar_menu.php');
                             $output .= smarty_function_sugar_menu(array(    'id'                    => "pdfview_action_menu",
                                                                             'items'                 => $pdfItems,
@@ -484,6 +525,7 @@ function smarty_function_sugar_button($params, &$smarty)
                                                                             'submenuHtmlOptions'    => array(),
                                                                         )
                                                                     , $smarty);
+                        }
                     } else {
                         $output = '
                             <script type="text/javascript">
@@ -558,44 +600,78 @@ function smarty_function_sugar_button($params, &$smarty)
                     
                     if (!empty($pdfManagerList) || !empty($tplLayouts)) {
                     if(SugarThemeRegistry::current()->name != "Classic") {
+                        if ($enable_action_menu)
                         $output = '
                             <input id="pdfemail_button" value="' . translate('LBL_PDF_EMAIL') . '" type="button" class="button"  />';
                             $pdfItems = array();
                                 if (!empty($pdfManagerList)) {
                             foreach($pdfManagerList as $pdfTemplate){
-                                $urlParams = array(
-                                    'module' => $module,                                    
-                                    'record' => $record,
-                                    'action' => 'sugarpdf',
-                                    'sugarpdf' => 'pdfmanager',
-                                    'pdf_template_id' => $pdfTemplate->id,
-                                    'to_email' => "1",
-                                    
-                                );
-                                
-                                $pdfItems[] = array(    'html'  =>  '<a id="'.$pdfTemplate->name.'_pdfemail" href="index.php?' . http_build_query($urlParams, '', '&') . '">' . $pdfTemplate->name . '</a>',
-                                                        'items' => array(),
-                                                    );
+                                if (!$enable_action_menu) {
+                                    $urlParams[] = array(
+                                        'module' => $module,
+                                        'record' => $record,
+                                        'action' => 'sugarpdf',
+                                        'sugarpdf' => 'pdfmanager',
+                                        'pdf_template_id' => $pdfTemplate->id,
+                                        'to_email' => "1",
+                                        'name' => $pdfTemplate->name,
+                                    );
+                                } else {
+                                    $urlParams = array(
+                                        'module' => $module,
+                                        'record' => $record,
+                                        'action' => 'sugarpdf',
+                                        'sugarpdf' => 'pdfmanager',
+                                        'pdf_template_id' => $pdfTemplate->id,
+                                        'to_email' => "1",
+                                    );
+
+                                    $pdfItems[] = array(    'html'  =>  '<a id="'.$pdfTemplate->name.'_pdfemail" href="index.php?' . http_build_query($urlParams, '', '&') . '">' . $pdfTemplate->name . '</a>',
+                                                            'items' => array(),
+                                                        );
+                                }
                             }
                                 }
                                 
                                 //quote legacy templates
                                 if($module == "Quotes") {
                                     foreach($tplLayouts as $sugarpdf=>$path) {
-                                        $urlParams = array(
-                                            'module' => $module,                                    
-                                            'record' => $record,
-                                            'action' => 'sugarpdf',
-                                            'sugarpdf' => $sugarpdf,
-                                            'email_action' => 'EmailLayout',
-                                            
-                                        );
-                                        $pdfItems[] = array(    'html'  =>  '<a href="index.php?' . http_build_query($urlParams, '', '&') . '">' . $GLOBALS['app_strings']['LBL_EXISTING'].'_'.$path . '</a>',
-                                                                'items' => array(),
-                                                            );
+                                        if (!$enable_action_menu) {
+                                            $urlParams[] = array(
+                                                'module' => $module,
+                                                'record' => $record,
+                                                'action' => 'sugarpdf',
+                                                'sugarpdf' => $sugarpdf,
+                                                'email_action' => 'EmailLayout',
+                                                'name' => $path,
+                                            );
+                                        } else {
+                                            $urlParams = array(
+                                                'module' => $module,
+                                                'record' => $record,
+                                                'action' => 'sugarpdf',
+                                                'sugarpdf' => $sugarpdf,
+                                                'email_action' => 'EmailLayout',
+                                            );
+                                            $pdfItems[] = array(    'html'  =>  '<a href="index.php?' . http_build_query($urlParams, '', '&') . '">' . $GLOBALS['app_strings']['LBL_EXISTING'].'_'.$path . '</a>',
+                                                                    'items' => array(),
+                                                                );
+                                        }
                                     }
                                 }
                                 
+                        if (!$enable_action_menu) {
+                            foreach ($urlParams as $tplButton) {
+                                if (isset($tplButton['pdf_template_id'])) {
+                                    $parentLocation = 'index.php?module='.$module.'&record='.$tplButton['record'].'&action='.$tplButton['action'].'&sugarpdf='.$tplButton['sugarpdf'].'&pdf_template_id='.$tplButton['pdf_template_id'].'&to_email='.$tplButton['to_email'];
+                                    $output .= '<input class="button" type="button" value="'.translate('LBL_PDF_EMAIL').'-'.$tplButton['name'].'" id="'.$tplButton['name'].'_pdfemail" onclick="parent.location=\''.$parentLocation.'\'">';
+                                } else {
+                                    // legacy templates
+                                    $parentLocation = 'index.php?module='.$module.'&record='.$tplButton['record'].'&action='.$tplButton['action'].'&sugarpdf='.$tplButton['sugarpdf'].'&email_action='.$tplButton['email_action'];
+                                    $output .= '<input class="button" type="button" value="'.translate('LBL_PDF_EMAIL').'-'.$GLOBALS['app_strings']['LBL_EXISTING'].'_'.$tplButton['name'].'" id="'.$tplButton['name'].'_pdfemail" onclick="parent.location=\''.$parentLocation.'\'">';
+                                }
+                            }
+                        } else {
                             require_once('include/Smarty/plugins/function.sugar_menu.php');
                             $output .= smarty_function_sugar_menu(array(    'id'                    => "pdfview_action_menu",
                                                                             'items'                 => $pdfItems,
@@ -604,7 +680,7 @@ function smarty_function_sugar_button($params, &$smarty)
                                                                             'submenuHtmlOptions'    => array(),
                                                                         )
                                                                     , $smarty);
-                        
+                        }
                     } else {
                         $output = '
                             <script language="javascript">

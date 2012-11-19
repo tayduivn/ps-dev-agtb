@@ -32,6 +32,7 @@
     backupStaticAttributes="false">
     <testsuites>
             <testsuite>
+                <directory>rest</directory>
                 <directory>build</directory>
                 <directory>data</directory>
                 <directory>include</directory>
@@ -39,21 +40,10 @@
                 <directory>jssource</directory>
                 <directory>modules</directory>
                 <directory>ModuleInstall</directory>
-                <directory>rest</directory>
                 <directory>service</directory>
                 <directory>tests</directory>
             </testsuite>
     </testsuites>
-    <testsuite name="All Sugar Tests">
-        <directory>./tests/data</directory>
-        <directory>./tests/include</directory>
-        <directory>./tests/jssource</directory>
-        <directory>./tests/modules</directory>
-        <directory>./tests/ModuleInstall</directory>
-        <directory>./tests/rest</directory>
-        <directory>./tests/service</directory>
-        <directory>./tests/tests</directory>
-    </testsuite>
     <filter>
         <blacklist>
             <directory suffix=".php">./cache</directory>

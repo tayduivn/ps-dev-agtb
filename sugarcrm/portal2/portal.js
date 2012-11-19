@@ -1,3 +1,29 @@
+/*********************************************************************************
+ * The contents of this file are subject to the SugarCRM Master Subscription
+ * Agreement (""License"") which can be viewed at
+ * http://www.sugarcrm.com/crm/master-subscription-agreement
+ * By installing or using this file, You have unconditionally agreed to the
+ * terms and conditions of the License, and You may not use this file except in
+ * compliance with the License.  Under the terms of the license, You shall not,
+ * among other things: 1) sublicense, resell, rent, lease, redistribute, assign
+ * or otherwise transfer Your rights to the Software, and 2) use the Software
+ * for timesharing or service bureau purposes such as hosting the Software for
+ * commercial gain and/or for the benefit of a third party.  Use of the Software
+ * may be subject to applicable fees and any use of the Software without first
+ * paying applicable fees is strictly prohibited.  You do not have the right to
+ * remove SugarCRM copyrights from the source code or user interface.
+ *
+ * All copies of the Covered Code must include on each user interface screen:
+ *  (i) the ""Powered by SugarCRM"" logo and
+ *  (ii) the SugarCRM copyright notice
+ * in the same form as they appear in the distribution.  See full license for
+ * requirements.
+ *
+ * Your Warranty, Limitations of liability and Indemnity are expressly stated
+ * in the License.  Please refer to the License for the specific language
+ * governing these rights and limitations under the License.  Portions created
+ * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
+ ********************************************************************************/
 (function(app) {
 
     // Add custom events here for now
@@ -44,6 +70,25 @@
             });
         });
     });
+
+    // bug57318: Mulitple alert warning when multiple views get render denied on same page.
+    var oHandleRenderError = app.error.handleRenderError;
+    app.error.handleRenderError = function(component, method, additionalInfo) {
+        function handlePortalRenderDenied(c) {
+            var title, message;
+            title = app.lang.getAppString('ERR_NO_VIEW_ACCESS_TITLE');
+            message = app.utils.formatString(app.lang.getAppString('ERR_NO_VIEW_ACCESS_MSG'),[c.module]);
+            // TODO: We can later create some special case handlers if we DO wish to alert warn,
+            // but since we have recursive views that's usually going to be overbearing.
+            app.logger.warn(title + ":\n" + message);
+        }
+        // Only hijack view_render_denied error case, otherwise, delegate all else to sidecar handler
+        if(method === 'view_render_denied') {
+            handlePortalRenderDenied(component);
+        } else {
+            oHandleRenderError(component, method, additionalInfo);
+        }
+    };
 
     var oRoutingBefore = app.routing.before;
     app.routing.before = function(route, args) {
@@ -261,47 +306,59 @@
      */
     // TODO: This piece of code may move in the core files
     app.view.View.prototype.checkFileFieldsAndProcessUpload = function(model, callbacks) {
+        var file, $file, $files, filesToUpload, fileField, successFn, errorFn;
 
         callbacks = callbacks || {};
 
-        //check if there are attachments
-        var $files = _.filter($(":file"), function(file) {
+        // Check if there are attachments
+        $files = _.filter($(":file"), function(file) {
             var $file = $(file);
             return ($file.val() && $file.attr("name") && $file.attr("name") !== "") ? $file.val() !== "" : false;
         });
-        var filesToUpload = $files.length;
 
-        //process attachment uploads
+        filesToUpload = $files.length;
+
+        successFn = function() {
+            filesToUpload--; 
+            if (filesToUpload===0) {
+                app.alert.dismiss('upload'); 
+                if (callbacks.success) callbacks.success();
+            }
+        };
+
+        errorFn = function(error) {
+            var errors = {};
+            
+            // Set model to new by removing it's id attribute. Note that in our initial attempt
+            // to upload file(s) we set delete_if_fails true so server has marked record deleted: 1
+            // Since we may have only create privs (e.g. we can't edit/delete Notes), we'll start anew.  
+            model.unset('id', {silent: true});
+
+            // All or nothing .. if uploading 1..* attachments, if any one fails the whole atomic
+            // operation has failed; so we really want to trigger error and possibly and start over.
+            filesToUpload = 0;
+            app.alert.dismiss('upload');
+            errors[error.responseText] = {};
+            model.trigger('error:validation:' + this.field, errors);
+            model.trigger('error:validation');
+        };
+
+        // Process attachment uploads
         if (filesToUpload > 0) {
             app.alert.show('upload', {level: 'process', title: 'LBL_UPLOADING', autoclose: false});
 
-            //field by field
-            for (var file in $files) {
-                var $file = $($files[file]),
-                    fileField = $file.attr("name");
+            // Field by field
+            for (file in $files) {
+                $file = $($files[file]);
+                fileField = $file.attr("name");
+
                 model.uploadFile(fileField, $file, {
                     field: fileField,
-                    success: function() {
-                        filesToUpload--;
-                        if (filesToUpload===0) {
-                            app.alert.dismiss('upload');
-                            if (callbacks.success) callbacks.success();
-                        }
-                    },
-                    error: function(error) {
-                        filesToUpload--;
-                        if (filesToUpload===0) {
-                            app.alert.dismiss('upload');
-                        }
-                        var errors = {};
-                        errors[error.responseText] = {};
-                        model.trigger('error:validation:' + this.field, errors);
-                        model.trigger('error:validation');
-                    }
+                    success: successFn,
+                    error: errorFn
                 });
             }
-        }
-        else {
+        } else {
             if (callbacks.success) callbacks.success();
         }
     };

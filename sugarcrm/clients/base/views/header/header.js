@@ -1,3 +1,29 @@
+/*********************************************************************************
+ * The contents of this file are subject to the SugarCRM Master Subscription
+ * Agreement (""License"") which can be viewed at
+ * http://www.sugarcrm.com/crm/master-subscription-agreement
+ * By installing or using this file, You have unconditionally agreed to the
+ * terms and conditions of the License, and You may not use this file except in
+ * compliance with the License.  Under the terms of the license, You shall not,
+ * among other things: 1) sublicense, resell, rent, lease, redistribute, assign
+ * or otherwise transfer Your rights to the Software, and 2) use the Software
+ * for timesharing or service bureau purposes such as hosting the Software for
+ * commercial gain and/or for the benefit of a third party.  Use of the Software
+ * may be subject to applicable fees and any use of the Software without first
+ * paying applicable fees is strictly prohibited.  You do not have the right to
+ * remove SugarCRM copyrights from the source code or user interface.
+ *
+ * All copies of the Covered Code must include on each user interface screen:
+ *  (i) the ""Powered by SugarCRM"" logo and
+ *  (ii) the SugarCRM copyright notice
+ * in the same form as they appear in the distribution.  See full license for
+ * requirements.
+ *
+ * Your Warranty, Limitations of liability and Indemnity are expressly stated
+ * in the License.  Please refer to the License for the specific language
+ * governing these rights and limitations under the License.  Portions created
+ * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
+ ********************************************************************************/
 ({
 
 /**
@@ -10,7 +36,7 @@
         'click #module_list li a': 'onModuleTabClicked',
         'click #createList li a': 'onCreateClicked',
         'click .typeahead a': 'clearSearch',
-        'click .navbar-search span.add-on': 'gotoFullSearchResultsPage'
+        'click .navbar-search .btn': 'gotoFullSearchResultsPage'
     },
 
     /**
@@ -23,14 +49,17 @@
     _renderHtml: function() {
         var self = this,
             menuTemplate;
+
         if (!app.api.isAuthenticated() || app.config.appStatus == 'offline') return;
 
         self.setModuleInfo();
         self.setCreateTasksList();
         self.setCurrentUserName();
         app.view.View.prototype._renderHtml.call(self);
+
         // Search ahead drop down menu stuff
         menuTemplate = app.template.getView('dropdown-menu');
+
         this.$('.search-query').searchahead({
             request:  self.fireSearchRequest,
             compiler: menuTemplate,
@@ -61,8 +90,10 @@
      */
     fireSearchRequest: function (term) {
         var plugin = this, mlist, params;
+
         mlist = app.metadata.getModuleNames(true).join(','); // visible
         params = {q: term, fields: 'name, id', module_list: mlist, max_num: app.config.maxSearchQueryResult};
+
         app.api.search(params, {
             success:function(data) {
                 data.module_list = app.metadata.getModuleNames(true,"create");
@@ -84,10 +115,15 @@
         // application requirements so I'd rather do here than change plugin.
         evt.preventDefault();
         evt.stopPropagation();
+
         // URI encode search query string so that it can be safely
         // decoded by search handler (bug55572)
         term = encodeURIComponent(this.$('.search-query').val());
+
         if(term && term.length) {
+            // Bug 57853 Shouldn't show the search result pop up window after click the global search button.
+            // This prevents anymore dropdowns (note we re-init if/when _renderHtml gets called again)
+            this.$('.search-query').searchahead('disable', 1000);
             app.router.navigate('#search/'+term, {trigger: true});
         }
     },
@@ -139,7 +175,7 @@
         var self = this;
         this.createListLabels = [];
         this.currentModule = this.module;
-        this.module_list = app.metadata.getModuleNames(true);
+        this.module_list = app.metadata.getModuleNames(true, 'list');
         this.creatableModuleList = app.metadata.getModuleNames(true,"create");
     },
 

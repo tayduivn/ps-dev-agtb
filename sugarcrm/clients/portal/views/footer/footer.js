@@ -1,3 +1,29 @@
+/*********************************************************************************
+ * The contents of this file are subject to the SugarCRM Master Subscription
+ * Agreement (""License"") which can be viewed at
+ * http://www.sugarcrm.com/crm/master-subscription-agreement
+ * By installing or using this file, You have unconditionally agreed to the
+ * terms and conditions of the License, and You may not use this file except in
+ * compliance with the License.  Under the terms of the license, You shall not,
+ * among other things: 1) sublicense, resell, rent, lease, redistribute, assign
+ * or otherwise transfer Your rights to the Software, and 2) use the Software
+ * for timesharing or service bureau purposes such as hosting the Software for
+ * commercial gain and/or for the benefit of a third party.  Use of the Software
+ * may be subject to applicable fees and any use of the Software without first
+ * paying applicable fees is strictly prohibited.  You do not have the right to
+ * remove SugarCRM copyrights from the source code or user interface.
+ *
+ * All copies of the Covered Code must include on each user interface screen:
+ *  (i) the ""Powered by SugarCRM"" logo and
+ *  (ii) the SugarCRM copyright notice
+ * in the same form as they appear in the distribution.  See full license for
+ * requirements.
+ *
+ * Your Warranty, Limitations of liability and Indemnity are expressly stated
+ * in the License.  Please refer to the License for the specific language
+ * governing these rights and limitations under the License.  Portions created
+ * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
+ ********************************************************************************/
 ({
     events: {
         'click #tour': 'systemTour',
@@ -33,27 +59,30 @@
         app.view.View.prototype._renderHtml.call(this);
     },
     systemTour: function() {
+        console.log(this.$('.shown').length)
+        if(this.$('.shown').length > 0){
+            $('#systemTour').modal("show");
+        }  else {
 
         //set up bouncing arrows
         var arrows=new Array();
         arrows[0] = {
-            target: "#module_list li.Cases",
+            target: "#module_list li.Home",
             placement: "bottom"
         };
         arrows[1] = {
+            target: "footer",
+            placement: "top"
+        };
+        arrows[2] = {
             target: "input.search-query",
             placement: "bottom"
         };
-        arrows[2] = {
-            target: "#createList",
-            placement: "bottom right",
-            leftOffset: 40,
-            topOffset: -10
-        };
         arrows[3] = {
-            target: "#tour",
-            placement: "top"
+            target: "#userList",
+            placement: "bottom"
         };
+
 
         var numArrows = arrows.length;
 
@@ -120,12 +149,24 @@
         //show modal
         centerModal();
         this.$('#systemTour').modal({"backdrop":"static"});
-        this.$('#systemTour').modal('show');
-        $('div.modal-backdrop').css('opacity',0.2);
+        this.$('#systemTour').modal('show').addClass("shown");
         //wire up buttons in modal
+        this.$("#systemTour a.close").click(function() {
+            $('#systemTour').modal('hide');
+            $('#systemTour .screen').each(function(){
+               $(this).addClass("hide");
+            });
+            $('#systemTour #screen1').removeClass("hide");
+            centerModal();
+        });
         this.$("#systemTour .screen .done").click(function() {
             $('#systemTour').modal('hide');
+            $('#systemTour #screen1').removeClass("hide");
+            var totalScreens = $("#systemTour .screen").length,
+                lastScreenId = "#screen" +totalScreens;
+            $(lastScreenId).toggleClass('hide');
             $(arrows[numArrows-1].target).popoverext('hide');
+            centerModal();
         });
 
         this.$("#systemTour .screen .next").each(function(index){
@@ -141,9 +182,7 @@
                         $(arrows[index].target).popoverext('show');
 //                    }
 
-                    if(index == 0) {
                         centerModal();
-                    }
                 });
         });
 
@@ -158,9 +197,7 @@
                         $(arrows[index-1].target).popoverext('show');
                     }
                     $(arrows[index].target).popoverext('hide');
-                    if(index == 0) {
                         centerModal();
-                    }
                 });
 
 
@@ -175,11 +212,12 @@
             $(this).click(function() {
                 $('#systemTour '+screenId).toggleClass("hide");
                 $('#systemTour '+lastScreenId).toggleClass("hide");
-                $(arrows[numArrows-1].target).popoverext('show');
+//                $(arrows[numArrows-1].target).popoverext('show');
                 centerModal()
             });
 
         });
+        }
 
 
 

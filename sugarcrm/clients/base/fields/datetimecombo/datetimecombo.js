@@ -1,3 +1,29 @@
+/*********************************************************************************
+ * The contents of this file are subject to the SugarCRM Master Subscription
+ * Agreement (""License"") which can be viewed at
+ * http://www.sugarcrm.com/crm/master-subscription-agreement
+ * By installing or using this file, You have unconditionally agreed to the
+ * terms and conditions of the License, and You may not use this file except in
+ * compliance with the License.  Under the terms of the license, You shall not,
+ * among other things: 1) sublicense, resell, rent, lease, redistribute, assign
+ * or otherwise transfer Your rights to the Software, and 2) use the Software
+ * for timesharing or service bureau purposes such as hosting the Software for
+ * commercial gain and/or for the benefit of a third party.  Use of the Software
+ * may be subject to applicable fees and any use of the Software without first
+ * paying applicable fees is strictly prohibited.  You do not have the right to
+ * remove SugarCRM copyrights from the source code or user interface.
+ *
+ * All copies of the Covered Code must include on each user interface screen:
+ *  (i) the ""Powered by SugarCRM"" logo and
+ *  (ii) the SugarCRM copyright notice
+ * in the same form as they appear in the distribution.  See full license for
+ * requirements.
+ *
+ * Your Warranty, Limitations of liability and Indemnity are expressly stated
+ * in the License.  Please refer to the License for the specific language
+ * governing these rights and limitations under the License.  Portions created
+ * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
+ ********************************************************************************/
 ({
     // datetimecombo
     initialize: function(options) {
@@ -9,17 +35,33 @@
         // Determines if we're using 12 or 24 hour clock conventions
         userTimePrefs = app.user.get('timepref');
         // h specifies 12 hour format (TODO: refactor date.js to support g/G options and add here)
-        this.showAmPm = userTimePrefs.match(/h/)!==null ? true : false; // TODO: date.js doesn't yet support g/G options 
+        this.showAmPm = userTimePrefs.match(/[aA]$/)==null ? true : false; // TODO: date.js doesn't yet support g/G options
         this.timeOptions.hours = this.getHours();
         this.app.view.Field.prototype.initialize.call(this, options);
     },
     _render:function(value) {
-        var self = this;
+        var self = this; 
         app.view.Field.prototype._render.call(self);
         $(function() {
+            // Changing in 6.7 - won't use jqueryui datepicker (bootstrap datepicker instead)
+            // If we don't set the date format for jquery ui, it may default to a different 
+            // format then what our user dateprefs are. This results in confusing the date.parse
+            // function which will return false and all bets are off. Solution is to set format
+            // so they are consistent in the first place. Again, though, this all goes away in 6.7
+            var sugar2jQueryUIMap, normalizedDateFormat;
+            sugar2jQueryUIMap = {
+                'd': 'dd', // 2 digit
+                'm': 'mm', // 2 digit
+                'y': 'y',  // 2 digit
+                'Y': 'yy', // 4 digit
+            };
+            normalizedDateFormat = app.user.get('datepref').replace(/[yYmd]/g, function(s) {
+                return sugar2jQueryUIMap[s];
+            });
             if(self.view.name === 'edit') {
                 $(".datepicker").datepicker({
                     showOn: "button",
+                    dateFormat: normalizedDateFormat,
                     buttonImage: app.config.siteUrl + "/sidecar/lib/jquery-ui/css/smoothness/images/calendar.gif",
                     buttonImageOnly: true
                 });
@@ -44,7 +86,7 @@
         usersTimeFormatPreference = myUser.get('timepref');
 
         // If there is a default 'string' value like "yesterday", format it as a date
-        if(!value && this.def.display_default) {
+        if(!value && this.def.display_default && this.view.name === 'edit') {
             value  = app.date.parseDisplayDefault(this.def.display_default);
             jsDate = app.date.dateFromDisplayDefaultString(value);
             this.model.set(this.name, jsDate.toISOString(), {silent: true}); 

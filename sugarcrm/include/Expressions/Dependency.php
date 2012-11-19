@@ -158,7 +158,7 @@ class Dependency
 		} catch (Exception $e)
 		{
 			$GLOBALS['log']->fatal($e->getMessage());
-			$GLOBALS['log']->fatal("Trigger was : {$this->trigger->conditionFunction}");
+			$GLOBALS['log']->debug("Trigger was : {$this->trigger->conditionFunction}");
 		}
 	}
 
@@ -180,8 +180,8 @@ class Dependency
 		} catch (Exception $e)
         {
             $GLOBALS['log']->fatal($e->getMessage());
-            $GLOBALS['log']->fatal("Trigger was : {$this->trigger->conditionFunction}");
-            $GLOBALS['log']->fatal("Target was : " . print_r($action, true));
+            $GLOBALS['log']->debug("Trigger was : {$this->trigger->conditionFunction}");
+            $GLOBALS['log']->debug("Target was : " . print_r($action, true));
 
         }
 	}

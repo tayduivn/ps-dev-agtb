@@ -51,6 +51,8 @@ class RestLoginTest extends RestTestBase
                 $GLOBALS['db']->query("DELETE FROM users_cstm WHERE id_c = '".$this->apiuser->id."'");
             }
         }
+        $GLOBALS ['system_config']->saveSetting('supportPortal', 'RegCreatedBy', '');
+        $GLOBALS ['system_config']->saveSetting('portal', 'on', 0);
         $GLOBALS['db']->commit();
     }
 
@@ -217,7 +219,8 @@ class RestLoginTest extends RestTestBase
         $this->contact->portal_active = '1';
         $this->contact->portal_password = User::getPasswordHash("unittest");
         $this->contact->save();
-
+        $GLOBALS ['system_config']->saveSetting('supportPortal', 'RegCreatedBy', $this->apiuser->id);
+        $GLOBALS ['system_config']->saveSetting('portal', 'on', 1);
         $GLOBALS['db']->commit();
         
         $args = array(

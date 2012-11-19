@@ -1074,6 +1074,7 @@ $mod_strings = array (
 'ML_INVALID_EXT'=>'Invalid file extension ',
 'ML_ISSUES'=>'Issues',
 'ML_MANIFEST_ISSUE'=>'Issue with the manifest',
+'ML_CONFIG_OVERRIDE'=>'Config modification is not allowed',
 
 //BEGIN SUGARCRM flav=pro ONLY
 	'LBL_CONFIGURE_SHORTCUT_BAR' => 'Configure Navigation Bar Quick Create',

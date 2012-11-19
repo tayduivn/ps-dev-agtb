@@ -10,6 +10,7 @@ class HomeViewTour extends SugarView
     {
         global $sugar_flavor;
         global $current_user;
+        global $app_strings;
         $mod_strings = return_module_language($GLOBALS['current_language'], 'Home');
         $this->ss->assign('mod', $mod_strings);
         $this->ss->assign("sugarFlavor",$sugar_flavor);
@@ -21,9 +22,9 @@ class HomeViewTour extends SugarView
        if($upgrade)
        {
             //create the url with the user id and scrolltocal flag.  This will be passed into language string
-            $urlForString = $mod_strings['LBL_TOUR_CALENDAR_URL_1'];
+            $urlForString = $app_strings['LBL_TOUR_CALENDAR_URL_1'];
             $urlForString .= '<br><a href="index.php?module=Users&action=EditView&record='.$current_user->id.'&scrollToCal=true" target="_blank">';
-            $urlForString .= $mod_strings['LBL_TOUR_CALENDAR_URL_2'].'</a>';
+            $urlForString .= $app_strings['LBL_TOUR_CALENDAR_URL_2'].'</a>';
             $this->ss->assign('view_calendar_url', $urlForString );
        }
        $this->ss->display('modules/Home/tour.tpl');
