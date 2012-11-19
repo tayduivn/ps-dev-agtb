@@ -325,9 +325,6 @@ eoq;
 		// cn: bug 4864 - reusing same SugarPHPMailer class, need to clear attachments
 		$this->ClearAttachments();
 
-		if (empty($notes)) {
-				return;
-		}
 		//replace references to cache/images with cid tag
         $this->Body = preg_replace(';=\s*"'.preg_quote(sugar_cached('images/'), ';').';','="cid:',$this->Body);
 
@@ -336,6 +333,9 @@ eoq;
 		//Replace any embeded images using the secure entryPoint for src url.
 		$this->replaceImageByRegex("(?:{$sugar_config['site_url']})?index.php[?]entryPoint=download&(?:amp;)?[^\"]+?id=", "upload://", true);
 
+		if (empty($notes)) {
+				return;
+		}
 		//Handle regular attachments.
 		foreach($notes as $note) {
 				$mime_type = 'text/plain';
