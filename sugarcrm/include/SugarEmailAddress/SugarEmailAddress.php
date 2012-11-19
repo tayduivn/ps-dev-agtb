@@ -30,6 +30,8 @@ class SugarEmailAddress extends SugarBean {
     var $view = '';
     private $stateBeforeWorkflow;
 
+    public $email_address;
+
     static $count = 0;
 
     /**
