@@ -76,55 +76,30 @@ class ActivityStreamApi extends ListApi {
     }
 
     public function getTags($api, $args) {
+        // The values represent which field to check in order to make sure
+        // that the bean is valid.
+        $beans = array(
+            "Users" => "first_name",
+            "Contacts" => "first_name",
+            "Opportunities" => "name",
+            "Accounts" => "name"
+        );
         $data = array();
-        // Users
-        $seed = BeanFactory::getBean("Users");
-        $result = $seed->get_full_list();
-        foreach($result as $bean) {
-            if(!empty($bean->first_name)) {
-                $data[] = array(
-                    'module' => $bean->module_name,
-                    'name' => $bean->name,
-                    'id' => $bean->id,
-                );
+
+        // TODO: Make this non-n^2 somehow.
+        foreach($beans as $bean => $check) {
+            $seed = BeanFactory::getBean($bean);
+            $full_list = $seed->get_full_list();
+            foreach($full_list as $result) {
+                if(!empty($result->$check)) {
+                    $data[] = array(
+                        'module' => $bean,
+                        'name' => $result->name,
+                        'id' => $result->id,
+                    );
+                }
             }
         }
-
-        // Contacts
-        $seed = BeanFactory::getBean("Contacts");
-        $result = $seed->get_full_list();
-        foreach($result as $bean) {
-            if(!empty($bean->first_name)) {
-                $data[] = array(
-                    'module' => $bean->module_name,
-                    'name' => $bean->name,
-                    'id' => $bean->id,
-                );
-            }
-        }
-
-        // Opportunities
-        $seed = BeanFactory::getBean("Opportunities");
-        $result = $seed->get_full_list();
-        foreach($result as $bean) {
-            $data[] = array(
-                'module' => $bean->module_name,
-                'name' => $bean->name,
-                'id' => $bean->id,
-            );
-        }
-
-        // Accounts
-        $seed = BeanFactory::getBean("Accounts");
-        $result = $seed->get_full_list();
-        foreach($result as $bean) {
-            $data[] = array(
-                'module' => $bean->module_name,
-                'name' => $bean->name,
-                'id' => $bean->id,
-            );
-        }
-
         return $data;
     }
 
