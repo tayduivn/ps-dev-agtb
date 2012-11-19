@@ -158,7 +158,7 @@
             });
             
             //we didn't have anything to save (and wait to finish), so go ahead and trigger the commit
-            if(saved.length == 0){
+            if(saved == 0){
                 self.context.forecasts.set({commitForecastFlag: true});
             }
             savebtn.addClass("disabled");
