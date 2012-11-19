@@ -77,7 +77,7 @@
             <td colspan='1' nowrap>
                 {$mod.LBL_PORTAL_DEFAULT_ASSIGN_USER}:
             </td>
-            <td colspan='1' nowrap>
+            <td colspan='1' nowrap class="defaultUser">
                 <select data-placeholder="{$mod.LBL_USER_SELECT}" class="chzn-select portalProperty portalField" id='defaultUser' name='defaultUser' >
                 {foreach from=$userList item=user key=userId}
                     <option value="{$userId}" {if $userId == $defaultUser}selected{/if}>{$user}</option>
@@ -115,8 +115,8 @@
 
 <script language='javascript'>
     $('.chzn-select').chosen({allow_single_deselect: true});
-    addToValidate(0, "maxQueryResult", "int", true,{/literal}"{$mod.LBL_PORTAL_LIST_NUMBER}"{literal});
-    addToValidate(0, "fieldsToDisplay", "int", true,{/literal}"{$mod.LBL_PORTAL_DETAIL_NUMBER}"{literal});
+    addToValidateRange(0, "maxQueryResult", "int", true,{/literal}"{$mod.LBL_PORTAL_LIST_NUMBER}"{literal},1,100);
+    addToValidateRange(0, "fieldsToDisplay", "int", true,{/literal}"{$mod.LBL_PORTAL_LIST_NUMBER}"{literal},1,100);
     $('#gobutton').click(function(event){
         var field;
         var fields = $('.portalField');

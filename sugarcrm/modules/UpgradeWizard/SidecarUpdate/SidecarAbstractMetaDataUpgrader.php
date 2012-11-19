@@ -1,4 +1,30 @@
 <?php
+/*********************************************************************************
+ * The contents of this file are subject to the SugarCRM Master Subscription
+ * Agreement ("License") which can be viewed at
+ * http://www.sugarcrm.com/crm/master-subscription-agreement
+ * By installing or using this file, You have unconditionally agreed to the
+ * terms and conditions of the License, and You may not use this file except in
+ * compliance with the License.  Under the terms of the license, You shall not,
+ * among other things: 1) sublicense, resell, rent, lease, redistribute, assign
+ * or otherwise transfer Your rights to the Software, and 2) use the Software
+ * for timesharing or service bureau purposes such as hosting the Software for
+ * commercial gain and/or for the benefit of a third party.  Use of the Software
+ * may be subject to applicable fees and any use of the Software without first
+ * paying applicable fees is strictly prohibited.  You do not have the right to
+ * remove SugarCRM copyrights from the source code or user interface.
+ *
+ * All copies of the Covered Code must include on each user interface screen:
+ *  (i) the "Powered by SugarCRM" logo and
+ *  (ii) the SugarCRM copyright notice
+ * in the same form as they appear in the distribution.  See full license for
+ * requirements.
+ *
+ * Your Warranty, Limitations of liability and Indemnity are expressly stated
+ * in the License.  Please refer to the License for the specific language
+ * governing these rights and limitations under the License.  Portions created
+ * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
+ ********************************************************************************/
 //FILE SUGARCRM flav=pro ONLY
 // Get the meta data files handler for the new setup
 require_once 'modules/ModuleBuilder/parsers/MetaDataFiles.php';
@@ -191,9 +217,11 @@ abstract class SidecarAbstractMetaDataUpgrader
      */
     public function upgrade() {
         // Get our legacy view defs
+        $this->logUpgradeStatus("setting {$this->client} {$this->type} legacy viewdefs for {$this->module}");
         $this->setLegacyViewdefs();
         
         // Convert them
+        $this->logUpgradeStatus("converting {$this->client} {$this->type} legacy viewdefs for {$this->module} to 6.6.0 format");
         $this->convertLegacyViewDefsToSidecar();
         
         // Save the new file and report it
@@ -213,6 +241,7 @@ abstract class SidecarAbstractMetaDataUpgrader
         $content = $this->getNewFileContents();
         
         // Make the new file
+        $this->logUpgradeStatus("Saving new {$this->client} {$this->type} viewdefs for {$this->module}");
         return $this->save($newname, $content);
         //return true;
     }
@@ -223,6 +252,7 @@ abstract class SidecarAbstractMetaDataUpgrader
     public function setLegacyViewdefs() {
         // This check is probably not necessary, but seems like it is a good idea anyway
         if (file_exists($this->fullpath)) {
+            $this->logUpgradeStatus("legacy file being read: {$this->fullpath}");
             require_once $this->fullpath;
             
             // There is an odd case where custom modules are pathed without the
@@ -312,6 +342,15 @@ abstract class SidecarAbstractMetaDataUpgrader
      * @return string
      */
     public function getNormalizedModuleName() {
-        return isset($this->modulename) ? $this->modulename : $this->module;
+        return isset($this->modulename) && !in_array($this->modulename, MetaDataFiles::getModuleNamePlaceholders()) ? $this->modulename : $this->module;
+    }
+
+    /**
+     * Sets a message into the upgrade log
+     * 
+     * @param $message
+     */
+    protected function logUpgradeStatus($message) {
+        $this->upgrader->logUpgradeStatus($message);
     }
 }

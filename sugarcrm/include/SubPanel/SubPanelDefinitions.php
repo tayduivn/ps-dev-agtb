@@ -172,7 +172,8 @@ class aSubPanel
 	//return the definition of buttons. looks for buttons in 2 locations.
 	function get_buttons ()
 	{
-		$buttons = array ( ) ;
+		global $sugar_config;
+        
 		if (isset ( $this->_instance_properties [ 'top_buttons' ] ))
 		{
 			//this will happen only in the case of sub-panels with multiple sources(activities).
@@ -190,7 +191,16 @@ class aSubPanel
 		{
 			global $modListHeader ;
 			global $modules_exempt_from_availability_check ;
-			if (isset ( $modListHeader ) && (! (array_key_exists ( 'Emails', $modListHeader ) or array_key_exists ( 'Emails', $modules_exempt_from_availability_check ))))
+            
+            // Bug 58087 - Compose Email in activities sub panel for offline client
+            // Need to add logic to check for offline client since the Compose Email
+            // action was looking at the module list and Emails are in the exempt list.
+			if (
+                (isset($modListHeader) && (!(array_key_exists('Emails', $modListHeader) || array_key_exists('Emails', $modules_exempt_from_availability_check))))
+                ||
+                // Checks for offline client
+                (!empty($sugar_config['disc_client']) && !empty($sugar_config['oc_converted']))
+            )
 			{
 				foreach ( $buttons as $key => $button )
 				{
@@ -214,26 +224,19 @@ class aSubPanel
      * Load the Sub-Panel objects if it can from the metadata files.
      *
      * call this function for sub-panels that have unions.
+     * 
+     * @todo Decide whether to make all activities modules exempt from visibility
+     *       checking or not. As of 6.4.5, Notes was no longer exempt but the
+     *       other activities modules were which is causing causing rendering of
+     *       subpanels for these modules even when these modules should not be shown.
      *
      * @return bool         True by default if the subpanel was loaded.  Will return false if none in the collection are
      *                      allowed by the current user.
      */
 	function load_sub_subpanels ()
 	{
-
-		global $modListHeader ;
-		// added a check for security of tabs to see if an user has access to them
-		// this prevents passing an "unseen" tab to the query string and pulling up its contents
-		if (! isset ( $modListHeader ))
-		{
-			global $current_user ;
-			if (isset ( $current_user ))
-			{
-				$modListHeader = query_module_access_list ( $current_user ) ;
-			}
-		}
-
-        //by default all the activities modules are exempt, so hiding them won't affect their appearance unless the 'activity' subpanel itself is hidden.
+        //by default all the activities modules are exempt, so hiding them won't 
+        //affect their appearance unless the 'activity' subpanel itself is hidden.
         //add email to the list temporarily so it is not affected in activities subpanel
         global $modules_exempt_from_availability_check ;
         $modules_exempt_from_availability_check['Emails'] = 'Emails';
@@ -242,14 +245,29 @@ class aSubPanel
 
 		if (empty ( $this->sub_subpanels ))
 		{
+            // Bug 57699 - Notes subpanel missing from Calls module after upgrade
+            // Originally caused by the fix for Bug 49439
+            // Get the shown subpanel module list 
+            $subPanelDefinitions = new SubPanelDefinitions($this->parent_bean);
+            
+            // Bug 58089 - History sub panel doesn't show any record.
+            // Rather than check ALL subpanels, we only need to really check to
+            // see if the module(s) we are checking are not hidden.
+            $hiddenSubPanels = $subPanelDefinitions->get_hidden_subpanels();
+            
 			$panels = $this->get_inst_prop_value ( 'collection_list' ) ;
 			foreach ( $panels as $panel => $properties )
 			{
-				if (array_key_exists ( $properties [ 'module' ], $modListHeader ) or array_key_exists ( $properties [ 'module' ], $modules_exempt_from_availability_check ))
+                // Lowercase the collection module to check against the subpanel list
+                $lcModule = strtolower($properties['module']);
+                
+                // Add a check for module subpanel visibility. If hidden, but exempt, pass it
+                if ((is_array($hiddenSubPanels) && !in_array($lcModule, $hiddenSubPanels)) || isset($modules_exempt_from_availability_check[$properties['module']]))
 				{
 					$this->sub_subpanels [ $panel ] = new aSubPanel ( $panel, $properties, $this->parent_bean ) ;
 				}
 			}
+            
             // if it's empty just dump out as there is nothing to process.
             if(empty($this->sub_subpanels)) return false;
 			//Sync displayed list fields across the subpanels
@@ -544,6 +562,7 @@ class SubPanelDefinitions
 	var $_visible_tabs_array ;
 	var $panels ;
 	var $layout_defs ;
+    static $refreshHiddenSubpanels = false;
 
 	/**
 	 * Enter description here...
@@ -736,12 +755,18 @@ class SubPanelDefinitions
         // Append on the CampaignLog module, because that is where the subpanels point, not directly to Campaigns
         $modules_to_check['campaignlog'] = "CampaignLog";
 
-
-		$spd = '';
+        // Get hidden subpanels to make sure they are not included
+        $hidden = self::get_hidden_subpanels();
+        
+        $spd = '';
 		$spd_arr = array();
 		//iterate through modules and build subpanel array
 		foreach($modules_to_check as $mod_name){
-
+            // If the module is hidden from subpanels don't add it to this list
+            if (isset($hidden[strtolower($mod_name)])) {
+                    continue;
+            }
+            
 			//skip if module name is not in bean list, otherwise get the bean class name
 			if(!isset($beanList[$mod_name])) continue;
 			$class = $beanList[$mod_name];
@@ -784,20 +809,23 @@ class SubPanelDefinitions
 		$administration = new Administration();
 		$serialized = base64_encode(serialize($panels));
 		$administration->saveSetting('MySettings', 'hide_subpanels', $serialized);
+        // Allow the hidden subpanel cache to refresh
+        self::$refreshHiddenSubpanels = true;
 	}
 
 	/*
 	 * retrieve hidden subpanels
 	 */
 	function get_hidden_subpanels(){
-		global $moduleList;
-
 		//create variable as static to minimize queries
 		static $hidden_subpanels = null;
 
-		// if the static value is not already cached, then retrieve it.
-		if(empty($hidden_subpanels))
+		// if the static value is not already cached, or explicitly directed to, then retrieve it.
+		if($hidden_subpanels === null || self::$refreshHiddenSubpanels)
 		{
+            // Set hidden subpanels to an array. This allows an empty hidden 
+            // subpanel list to pass checks later. - rgonzalez
+            $hidden_subpanels = array();
 
 			//create Administration object and retrieve any settings for panels
 			$administration = new Administration();
@@ -821,7 +849,7 @@ class SubPanelDefinitions
 						$hidden_subpanels[] = $pref_hidden_panel;
 					}
 
-
+                    self::$refreshHiddenSubpanels = false;
 				}else{
 					//no settings found, return empty
 					return $hidden_subpanels;
@@ -836,6 +864,12 @@ class SubPanelDefinitions
 		return $hidden_subpanels;
 	}
 
-
+    /**
+     * Allows refresh of the hidden subpanels list from outside of this class
+     * 
+     * @param $bool
+     */
+    public static function setRefreshHiddenSubpanels($bool) {
+        self::$refreshHiddenSubpanels = (bool) $bool;
+    }
 }
-?>

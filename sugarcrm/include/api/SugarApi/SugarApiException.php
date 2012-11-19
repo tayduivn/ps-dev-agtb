@@ -146,6 +146,12 @@ class SugarApiExceptionNotAuthorized extends SugarApiException
     public $errorLabel = 'not_authorized';
     public $messageLabel = 'EXCEPTION_NOT_AUTHORIZED';
 }
+class SugarApiExceptionPortalUserInactive extends SugarApiException
+{
+    public $httpCode = 403;
+    public $errorLabel = 'inactive_portal_user';
+    public $messageLabel = 'EXCEPTION_INACTIVE_PORTAL_USER';
+}
 class SugarApiExceptionPortalNotConfigured extends SugarApiException
 {
     public $httpCode = 403;

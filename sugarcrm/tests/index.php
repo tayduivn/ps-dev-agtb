@@ -33,6 +33,9 @@ if (file_exists('../config.js')) {
     <script type="text/javascript" src='../sidecar/tests/fixtures/metadata.js'></script>
     <script type="text/javascript" src='../sidecar/tests/fixtures/language.js'></script>
 
+    <!-- Portal extensions -->
+    <script type="text/javascript" src='../portal2/user.js'></script>
+
     <!-- Begin test files -->
 <?php
 

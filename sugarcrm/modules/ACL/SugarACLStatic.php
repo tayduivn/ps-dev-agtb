@@ -63,22 +63,33 @@ class SugarACLStatic extends SugarACLStrategy
         if($action == "field") {
             return $this->fieldACL($module, $context['action'], $context);
         }
-
-        // module admins are not bound by action ACLs but are bound by field ACLs
-        if($user && $user->isAdminForModule($module)) {
-            return true;
-        }
         //END SUGARCRM flav=pro ONLY
         if(!empty($context['bean'])) {
             return $this->beanACL($module, $action, $context);
+        }
+
+        if(empty($action)) {
+            return true;
         }
 
         if($module == 'Trackers') {
             return ACLController::checkAccessInternal($module, $action, true, 'Tracker');
         }
 
+        // if we're editing and we do not have the bean, if owner is allowed then action is allowed
+        if(empty($context['bean']) && !empty(self::$edit_actions[$action]) && !isset($context['owner_override'])) {
+            $context['owner_override'] = true;
+        }
+
         return ACLController::checkAccessInternal($module, $action, !empty($context['owner_override']));
     }
+
+    static $edit_actions = array(
+        'popupeditview' => 1,
+        'editview' => 1,
+        'save' => 1,
+        'edit' => 1,
+    );
 
     static $action_translate = array(
         'listview' => 'list',

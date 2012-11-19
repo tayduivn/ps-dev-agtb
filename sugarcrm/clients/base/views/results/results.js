@@ -1,3 +1,29 @@
+/*********************************************************************************
+ * The contents of this file are subject to the SugarCRM Master Subscription
+ * Agreement (""License"") which can be viewed at
+ * http://www.sugarcrm.com/crm/master-subscription-agreement
+ * By installing or using this file, You have unconditionally agreed to the
+ * terms and conditions of the License, and You may not use this file except in
+ * compliance with the License.  Under the terms of the license, You shall not,
+ * among other things: 1) sublicense, resell, rent, lease, redistribute, assign
+ * or otherwise transfer Your rights to the Software, and 2) use the Software
+ * for timesharing or service bureau purposes such as hosting the Software for
+ * commercial gain and/or for the benefit of a third party.  Use of the Software
+ * may be subject to applicable fees and any use of the Software without first
+ * paying applicable fees is strictly prohibited.  You do not have the right to
+ * remove SugarCRM copyrights from the source code or user interface.
+ *
+ * All copies of the Covered Code must include on each user interface screen:
+ *  (i) the ""Powered by SugarCRM"" logo and
+ *  (ii) the SugarCRM copyright notice
+ * in the same form as they appear in the distribution.  See full license for
+ * requirements.
+ *
+ * Your Warranty, Limitations of liability and Indemnity are expressly stated
+ * in the License.  Please refer to the License for the specific language
+ * governing these rights and limitations under the License.  Portions created
+ * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
+ ********************************************************************************/
 ({
 
 /**
@@ -19,10 +45,7 @@
     events: {
         'click [name=name]': 'gotoDetail',
         'click .icon-eye-open': 'loadPreview',
-        'click span.label': 'sortByModuleName',
-        'hover span.label': 'addPointer',
-        'blur span.label': 'removePointer',
-        'click [name=show_more_button]': 'showMoreResults',
+        'click [name=show_more_button]': 'showMoreResults'
     },
     initialize: function(options) {
         this.options.meta = this._meta;
@@ -35,7 +58,11 @@
     _render: function() {
         var self = this;
         self.lastQuery = self.context.get('query');
+
         self.fireSearchRequest(function(collection) {
+            // Bug 57853: Will brute force dismiss search dropdown if still present.
+            $('.search-query').searchahead('hide');
+
             // Add the records to context's collection
             if(collection && collection.length) {
                 app.view.View.prototype._render.call(self);
@@ -52,7 +79,8 @@
     renderSubnav: function(overrideMessage) {
         if (this.context.get('subnavModel')) {
             this.context.get('subnavModel').set({
-                'title': overrideMessage || 'Show search results for "'+this.lastQuery+'"'
+                'title': overrideMessage
+                    || app.utils.formatString(app.lang.get('LBL_PORTAL_SEARCH_RESULTS_TITLE'),{'query' : this.lastQuery})
             });
         }
     },
@@ -112,23 +140,5 @@
 
         // Fire on parent layout .. works nicely for relatively simple page ;=) 
         this.layout.layout.trigger("search:preview", model);
-    },
-    /**
-     * Sorts by submodule name per spec.
-     */
-    sortByModuleName: function(evt) {
-        var li = this.$('li.search').get();
-        li.sort(function(a, b) {
-            a = this.$('span.label', a).text();
-            b = this.$('span.label', b).text();
-            return (a < b) ? -1 : ((a > b) ? 1 : 0);
-        });
-        this.$('ul.nav-tabs').append(li).show();
-    },
-    addPointer: function(evt) {
-        this.$(evt.currentTarget).css('cursor', 'pointer');
-    },
-    removePointer: function(evt) {
-        this.$(evt.currentTarget).css('cursor', 'none');
     }
 })

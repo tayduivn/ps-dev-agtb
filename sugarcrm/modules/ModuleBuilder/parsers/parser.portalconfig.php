@@ -49,10 +49,7 @@ class ParserModifyPortalConfig extends ModuleBuilderParser
         $portalConfig = array(
             'platform' => 'portal',
             'debugSugarApi' => true,
-            'logLevel' => array(
-                'name' => 'DEBUG',
-                'value' => 2
-            ),
+            'logLevel' => 'DEBUG',
             'logWriter' => 'ConsoleWriter',
             'logFormatter' => 'SimpleFormatter',
             'metadataTypes' => array(),
@@ -95,9 +92,12 @@ class ParserModifyPortalConfig extends ModuleBuilderParser
             $portalConfig['appStatus'] = 'offline';
             $portalConfig['on'] = 0;
         }
-
+        //TODO: Remove after we resolve issues with test associated to this
+        $GLOBALS['log']->fatal("Updating portal config");
         foreach ($portalConfig as $fieldKey => $fieldValue) {
-            $GLOBALS ['system_config']->saveSetting('portal', $fieldKey, json_encode($fieldValue));
+            if(!$GLOBALS ['system_config']->saveSetting('portal', $fieldKey, json_encode($fieldValue))){
+                $GLOBALS['log']->fatal("Error saving portal config var $fieldKey, orig: $fieldValue , json:".json_encode($fieldValue));
+            }
         }
 
         // Clear the Contacts file b/c portal flag affects rendering

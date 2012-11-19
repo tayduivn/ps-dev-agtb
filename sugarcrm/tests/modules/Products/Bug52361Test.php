@@ -74,6 +74,8 @@ class Bug52361Test extends Sugar_PHPUnit_Framework_OutputTestCase
 
     public function setUp()
     {
+        $this->markTestIncomplete("Marking as incomplete as it can take long time to run");
+        return;
         SugarTestHelper::setUp('dictionary');
         SugarTestHelper::setUp('moduleList');
         SugarTestHelper::setUp('beanList');
@@ -123,6 +125,8 @@ class Bug52361Test extends Sugar_PHPUnit_Framework_OutputTestCase
 
     public function tearDown()
     {
+        $this->markTestIncomplete("Marking as incomplete as it can take long time to run");
+        return;
         // Removing relation between products and users
         $this->relationships->delete($this->relationship->getName());
         $this->relationships->save();
@@ -167,6 +171,8 @@ class Bug52361Test extends Sugar_PHPUnit_Framework_OutputTestCase
      */
     public function testAccounts()
     {
+        $this->markTestIncomplete("Marking as incomplete as it can take long time to run");
+        return;
         global $currentModule;
          $currentModule = 'Accounts';
 
@@ -225,6 +231,8 @@ class Bug52361Test extends Sugar_PHPUnit_Framework_OutputTestCase
      */
     public function testContacts()
     {
+        $this->markTestIncomplete("Marking as incomplete as it can take long time to run");
+        return;
         global $currentModule;
         $currentModule = 'Contacts';
 

@@ -1,4 +1,5 @@
 <?php
+//FILE SUGARCRM flav=ent ONLY
 /*********************************************************************************
  * The contents of this file are subject to the SugarCRM Professional End User
  * License Agreement ("License") which can be viewed at
@@ -51,6 +52,7 @@ class RestTestPortalBase extends RestTestBase {
 
         $this->_user->portal_only = '1';
         $this->_user->save();
+        $GLOBALS ['system_config']->saveSetting('supportPortal', 'RegCreatedBy', $this->_user->id);
         $this->role = $this->_getPortalACLRole();
         if (!($this->_user->check_role_membership($this->role->name))) {
             $this->_user->load_relationship('aclroles');
@@ -185,10 +187,10 @@ class RestTestPortalBase extends RestTestBase {
                 $GLOBALS['db']->query("DELETE FROM kbdocuments_cstm WHERE id_c IN {$kbdocIds}");
             }
         }
-        
-        
-        
-        
+
+
+        $GLOBALS ['system_config']->saveSetting('supportPortal', 'RegCreatedBy', '');
+        $this->_restLogout();
         parent::tearDown();
     }
 
@@ -212,6 +214,21 @@ class RestTestPortalBase extends RestTestBase {
         }
         $this->authToken = $reply['reply']['access_token'];
         $this->refreshToken = $reply['reply']['refresh_token'];
+    }
+
+    protected function _restLogout()
+    {
+
+        if (!empty($this->authToken) && !empty($this->refreshToken)) {
+            $args = array(
+                'token' => $this->authToken,
+            );
+
+            $reply = $this->_restCall('oauth2/logout',json_encode($args));
+            if ( !isset($reply['reply']['success']) ) {
+                throw new Exception("Rest logout failed, message looked like: ".$reply['replyRaw']);
+            }
+        }
     }
     
     // Copied from parser.portalconfig.php, when that gets merged we should probably just abuse that function.

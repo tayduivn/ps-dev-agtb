@@ -1,5 +1,5 @@
 <?php
-//FILE SUGARCRM flav=pro ONLY
+//FILE SUGARCRM flav=ent ONLY
 /*********************************************************************************
  * The contents of this file are subject to the SugarCRM Professional End User
  * License Agreement ("License") which can be viewed at
@@ -77,6 +77,47 @@ class SugarOAuth2StorageTest extends RestTestPortalBase
         SugarTestHelper::tearDown();
 
         parent::tearDown();
+    }
+
+    /**
+     * @group bug57572
+     */
+    public function testPortalInactiveError(){
+        $contact1 = BeanFactory::newBean('Contacts');
+        $contact1->first_name = 'UNIT';
+        $contact1->last_name = 'UNIT1';
+        $contact1->portal_active = true;
+        $contact1->portal_name = "unittestportal1";
+        $contact1->portal_password = User::getPasswordHash("unittestportal1");
+        $contact1->save();
+        $this->contacts[] = $contact1;
+        $contact2 = BeanFactory::newBean('Contacts');
+        $contact2->first_name = 'portal';
+        $contact2->last_name = 'inactive';
+        $contact2->portal_active = false;
+        $contact2->portal_name = "unittestportal2";
+        $contact2->portal_password = User::getPasswordHash("unittestportal2");
+        $contact2->save();
+        $this->contacts[] = $contact2;
+
+        $storage = new SugarOAuth2Storage();
+        $ex = null;
+        try{
+            $storage->checkUserCredentials('support_portal','unittestportal1','unittestportal1');
+        } catch(SugarApiExceptionPortalUserInactive $e){
+            $ex = $e;
+        }
+        $this->assertTrue(empty($ex), "SugarApiExceptionPortalUserInactive SHOULD NOT have been thrown.");
+
+
+        $ex = null;
+        try{
+            $storage->checkUserCredentials('support_portal','unittestportal2','unittestportal2');
+        } catch(SugarApiExceptionPortalUserInactive $e){
+            $ex = $e;
+        }
+        $this->assertTrue(!empty($ex), "SugarApiExceptionPortalUserInactive SHOULD have been thrown.");
+
     }
 
     public function testTooManyUsers()

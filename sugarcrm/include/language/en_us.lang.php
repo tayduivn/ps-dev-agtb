@@ -1876,6 +1876,7 @@ $app_strings = array (
   'LBL_TOUR_SKIP' => 'Skip',
   'LBL_TOUR_BACK' => 'Back',
   'LBL_TOUR_CLOSE' => 'Close',
+  'LBL_TOUR_BTN_DONE' => 'Done',
   'LBL_TOUR_TAKE_TOUR' => 'Take the tour',
   'LBL_MY_AREA_LINKS' => 'My area links: ' /*for 508 compliance fix*/,
   'LBL_GETTINGAIR' => 'Getting Air' /*for 508 compliance fix*/,
@@ -1914,6 +1915,7 @@ $app_strings = array (
     'LBL_POWERED_BY_SUGARCRM' => "Powered by SugarCRM",
     'LBL_PRINT' => "Print",
     'LBL_HELP' => "Help",
+    'LBL_TOUR' => "Tour",
     'LBL_ID_FF_SELECT' => "Select",
     'DEFAULT'                              => 'Basic',
     'LBL_SORT'                              => 'Sort',
@@ -2305,7 +2307,8 @@ $app_strings = array (
     'LBL_EMAIL_SETTINGS_REQUIRE_REFRESH'    => 'Select the number of emails per page in the Inbox. This setting might require a page refresh in order to take effect.',
     'LBL_EMAIL_SETTINGS_RETRIEVING_ACCOUNT' => 'Retrieving Mail Account',
     'LBL_EMAIL_SETTINGS_RULES'              => 'Rules',
-    'LBL_EMAIL_SETTINGS_SAVED'              => 'The settings have been saved.\n\nYou must reload the page for the new settings to take effect.',
+    'LBL_EMAIL_SETTINGS_SAVED'              => 'The settings have been saved.',
+    'LBL_EMAIL_SETTINGS_MUST_RELOAD'        => 'You must reload the page for the new settings to take effect.',
     'LBL_EMAIL_SETTINGS_SEND_EMAIL_AS'      => 'Send Plain Text Emails Only',
     'LBL_EMAIL_SETTINGS_SHOW_IN_FOLDERS'    => 'Active',
     'LBL_EMAIL_SETTINGS_SHOW_NUM_IN_LIST'   => 'Emails per Page',
@@ -2453,6 +2456,7 @@ $app_strings = array (
     'EXCEPTION_FATAL_ERROR'             => 'Your request failed to complete.  A fatal error occurred.  Check logs for more details.',
     'EXCEPTION_NEED_LOGIN'              => 'You need to be logged in to perform this action.',
     'EXCEPTION_NOT_AUTHORIZED'          => 'You are not authorized to perform this action. Contact your administrator if you need access.',
+    'EXCEPTION_INACTIVE_PORTAL_USER'    => 'You cannot access Portal because your portal account is inactive. Please contact customer support if you need access.',
     'EXCEPTION_PORTAL_NOT_CONFIGURED'   => 'Portal is not configured properly.  Contact your Portal Administrator for assistance.',
     'EXCEPTION_NO_METHOD'               => 'Your request was not supported. Could not find the HTTP method of your request for this path.',
     'EXCEPTION_NOT_FOUND'               => 'Your requested resource was not found.  Could not find a handler for the path specified in the request.',
@@ -3508,6 +3512,38 @@ $app_strings = array (
     //END SUGARCRM flav=pro ONLY
 
     //for portal
+    //theme roller
+    'BorderColor' => 'Border Color',
+    'NavigationBar' => 'Navigation Bar',
+    'PrimaryButton' => 'Primary Button',
+
+  	//BEGIN SUGARCRM flav=PRO ONLY
+    //in app tour
+    'LBL_TOUR_PDF_MANAGER' => 'New PDF Manager',
+    'LBL_TOUR_PDF_MANAGER_DESCRIPTION' => '<div style="float: left;"><div class="well" style="float: left; width: 157px; margin-right: 20px;"><img src="themes/default/images/pt-pdf-manager.png" width="157" height="167"><div class="caption">PDF Manager link in Admin</div></div><div style="float: left; width: 400px;"><ul><li class="icon-ok">Admin users can modify predefined Quote and Invoice Templates</li><li class="icon-ok">Admin users can add new templates for standard or custom modules utilizing a flexible HTML editor</li><li class="icon-ok">The new PDF Manager enables companies to create custom, personalized PDF documents by merging data from any record in any module</li></ul><p>Click on Admin under Profile menu to find a link to the PDF Manager under the System settings</p><i class="icon-arrow-left icon-lg" style="float: right; position: relative; right: 444px; top: -92px;"></i></div></div><div class="clear"></div>',
+    'LBL_TOUR_MEETINGS_CALLS' => 'Meetings and Calls',
+    'LBL_TOUR_MEETINGS_CALLS_DESCRIPTION' => '<ul><li class="icon-ok">Recurring Meetings and Calls can now be scheduled from the detail view</li><li class="icon-ok">Invitees for Meetings or Calls can now be selected by searching for contacts associated with accounts</li></ul>',
+    'LBL_TOUR_NOTIFICATIONS' => 'Notifications',
+    'LBL_TOUR_NOTIFICATIONS_DESCRIPTION' => '<div style="float: left;"><div class="well" style="float: left; width: 317px; margin-right: 20px;"><img src="themes/default/images/pt-notifications.png" width="317" height="212"><div class="caption">Notifications</div></div><div style="float: left; width: 400px;"><ul><li class="icon-ok">Administrators now receive a notification when the full text search indexing is completed</li></ul></div></div><div class="clear"></div>',
+    'LBL_TOUR_SPELL_CHECK' => 'Spell Check',
+    'LBL_TOUR_SPELL_CHECK_DESCRIPTION' => '<div style="float: left;"><div class="well" style="float: left; width: 112px; margin-right: 20px;"><img src="themes/default/images/pt-spell-check.png" width="112" height="212"><div class="caption">Spell check menu</div></div><div style="float: left; width: 400px;"><ul><li class="icon-ok">Spell checking is now available when composing emails,  editing PDF Manager templates, and when editing email templates in the Emails, Campaigns and Workflow modules.</li></ul></div></div><div class="clear"></div>',
+    'LBL_TOUR_IE8' => 'Internet Explorer 8',
+    'LBL_TOUR_IE8_DESCRIPTION' => '<ul><li class="icon-ok">Internet Explorer 8 web browser is no longer supported</li></ul>',
+    'LBL_TOUR_WELCOME' => 'What\'s New in Sugar',
+    'LBL_TOUR_WATCH' => 'Watch What\'s New in Sugar',
+    'LBL_TOUR_FEATURES' => '<ul style=""><li class="icon-ok">Apply custom PDF templates to all modules</li><li class="icon-ok">Create recurring Meetings and Calls from detail view</li><li class="icon-ok">Search for invitees by account when scheduling Meetings and Calls</li><li class="icon-ok">Administrators are notified when Global Search indexing completes</li><li class="icon-ok">Spell Check is available in TinyMCE Editor</li><li class="icon-ok">IE 8 is no longer supported</li></ul>',
+    'LBL_TOUR_VISIT' => 'For more information please visit our application',
+    'LBL_TOUR_DONE' => 'You\'re Done!',
+    'LBL_TOUR_REFERENCE_1' => 'You can always reference our',
+    'LBL_TOUR_REFERENCE_2' => 'through the "Support" link under the profile menu.',
+    'LNK_TOUR_DOCUMENTATION' => 'documentation',
+    'LBL_TOUR_CALENDAR_URL_1' => 'Do you share your SugarCRM calendar with 3rd party applications, such as Microsoft Outlook or Exchange? If so, you have a new URL. This new, more secure URL includes a personal key which will prevent unauthorized publishing of your calendar.',
+    'LBL_TOUR_CALENDAR_URL_2' => 'Retrieve your new shared calendar URL.',
+    //END SUGARCRM flav=PRO ONLY
+
+    //begin portal
+    //BEGIN SUGARCRM flav=ent ONLY
+
     'LBL_PORTAL_SEARCH' => 'Search by Name, Number',
     'LBL_SIGNUP_BUTTON_LABEL' => 'Sign Up',
     'LBL_PORTAL_SIGNUP_PROCESS' => 'Registering',
@@ -3528,31 +3564,28 @@ $app_strings = array (
     'LBL_PORTAL_LOGIN_PASSWORD' => 'Password',
     'LBL_PORTAL_LOADING' => 'Loading',
     'LBL_PORTAL_SAVING' => 'Saving',
-    'LBL_PORTAL_PAGE_NOT_AVAIL' => 'Page Not Available', 
+    'LBL_PORTAL_PAGE_NOT_AVAIL' => 'Page Not Available',
     'LBL_PORTAL_NOT_ENABLED_MSG' => "We're Sorry, but this feature is not available at this time.",
+    'LBL_PORTAL_SEARCH_RESULTS_TITLE' => 'Show search results for "{query}"',
 
     //for portal system tour
-    'LBL_PORTAL_TOUR_WELCOME_TITLE' => 'Welcome to Portal',
-    'LBL_PORTAL_TOUR_WATCH_VIDEO' => 'Watch: What\'s new in Portal',
-    'LBL_PORTAL_TOUR_FEATURES_1' => 'Feature 1',
-    'LBL_PORTAL_TOUR_FEATURES_2' => 'Feature 2',
-    'LBL_PORTAL_TOUR_FEATURES_3' => 'Feature 3',
-    'LBL_PORTAL_TOUR_FEATURES_4' => 'Feature 4',
-    'LBL_PORTAL_TOUR_MORE_INFO_1' => 'And much more!',
-    'LBL_PORTAL_TOUR_MORE_INFO_2' => 'For a full list visit the What\'s New in Portal',
+    'LBL_PORTAL_TOUR_SCREEN1_TITLE' => 'Welcome to Portal Tour',
+    'LBL_PORTAL_TOUR_SCREEN1_BODY' => '<ul class="features"><li class="icon-ok">Faster and Interactive user experience</li><li class="icon-ok">Introducing internationalization</li><li class="icon-ok">Dashboard views to track new and updated Bugs, Cases and Knowledge Base articles</li><li class="icon-ok">Global Search</li><li class="icon-ok">Ability to change password</li></ul><p class="small">And much more!</p><p class="small">For a full list visit the <a href="javascript:void window.open(\'http://support.sugarcrm.com/02_Documentation/01_Sugar_Editions/\')">What\'s New in Portal</a>. </p>',
     'LBL_PORTAL_TOUR_TAKE_TOUR_LNK' => 'Take the tour',
     'LBL_PORTAL_TOUR_SKIP_LNK' => 'Skip',
     'LBL_PORTAL_TOUR_NEXT_LNK' => 'Next',
     'LBL_PORTAL_TOUR_BACK_LNK' => 'Back',
     'LBL_PORTAL_TOUR_DONE_LNK' => 'Done',
-    'LBL_PORTAL_TOUR_CASES_TITLE' => 'Cases',
-    'LBL_PORTAL_TOUR_CASES_BODY' => 'All your cases go here',
-    'LBL_PORTAL_TOUR_SEARCH_TITLE' => 'Search',
-    'LBL_PORTAL_TOUR_SEARCH_BODY' => 'Search keywords or case numbers',
-    'LBL_PORTAL_TOUR_QUICK_TITLE' => 'Quick Create',
-    'LBL_PORTAL_TOUR_QUICK_BODY' => 'You can perform all your quick actions here',
-    'LBL_PORTAL_TOUR_DONE_TITLE' => 'You\'re Done!',
-    'LBL_PORTAL_TOUR_DONE_BODY' => 'You can always retake the tour or read documentation for more information.',
+    'LBL_PORTAL_TOUR_SCREEN2_TITLE' => 'Dashboard',
+    'LBL_PORTAL_TOUR_SCREEN2_BODY' => '<p>The Dashboards represent your home page. It displays a quick synopsis of your company’s Cases, KB Articles, and Bugs.</p> <p>Click the Sugar cube icon on the top left corner of any Portal page to navigate back to the Dashboard.</p> <p>Each Dashboard shows the five last modified records per module. To view additional records, click on the module link.</p>',
+    'LBL_PORTAL_TOUR_SCREEN3_TITLE' => 'Footer',
+    'LBL_PORTAL_TOUR_SCREEN3_BODY' => '<p>Your footer bar can be used for the following: <ul class="features"><li class="icon-ok">Language: When you have selected your preferred language, all labels in the Portal will be translated. Note: Language can only be selected from footer during login.</li><li class="icon-ok">Tour: Familiarize yourself with the new Sugar Portal features.</li><li class="icon-ok">Print: Create a print out of the Sugar Portal page for your personal records.</li> <li class="icon-ok">Top: Navigate to the top of the Sugar Portal page you are in.</li></ul></p>',
+    'LBL_PORTAL_TOUR_SCREEN4_TITLE' => 'Search',
+    'LBL_PORTAL_TOUR_SCREEN4_BODY' => '<p>There are two types of search:</p><ul class="features"><li class="icon-ok">Global Search – located in the navigation bar. Here you can search for Cases, Bugs, and Knowledge Base Documents by their names and numbers.</li> <li class="icon-ok">Specific module Search – located in the top of the list view in each module. <br><img src="../themes/default/images/ppt-search.png" height="200" width="530" style="margin-top: 10px;"><i class="icon-arrow-left icon-lg" style="float: right; position: relative; right: 311px; top: -147px;"></i></li></ul>',
+    'LBL_PORTAL_TOUR_SCREEN5_TITLE' => 'Profile',
+    'LBL_PORTAL_TOUR_SCREEN5_BODY' => '<p>From the profile page you will, for instance, be able to change password, update email address, and change preferred language. </p>',
+    'LBL_PORTAL_TOUR_SCREEN6_TITLE' => 'You\'re Done!',
+    'LBL_PORTAL_TOUR_SCREEN6_BODY' => 'You can always retake the tour or read <a href="javascript:void window.open(\'http://support.sugarcrm.com/02_Documentation/01_Sugar_Editions/\')">documentation</a> for more information.',
 
     //for portal errors
     'LBL_PORTAL_INVALID_CREDS' => 'The username/password combination provided is incorrect, please try again.',
@@ -3580,8 +3613,10 @@ $app_strings = array (
     'LBL_CONTACT_EDIT_PASSWORD_LNK_TEXT' => 'Change Password',
     'LBL_PORTAL_PASSWORDS_MUST_MATCH' => 'The passwords must match.',
     'LBL_PORTAL_PASSWORD_UPDATE_FAILED' => 'Update password failed. Please try again or contact technical support.',
-    'LBL_PORTAL_PASSWORD_VERIFICATION_FAILED' => 'Password entered does not match that in our system.', 
+    'LBL_PORTAL_PASSWORD_VERIFICATION_FAILED' => 'Password entered does not match that in our system.',
     'LBL_PORTAL_PASSWORD_SUCCESS_CHANGED' => 'Your password has been successfully updated.',
+    //end portal
+    //END SUGARCRM flav=ent ONLY
 
     //sidecar errors
     'ERR_HTTP_DEFAULT_TYPE' => 'Unknown',
@@ -4450,11 +4485,11 @@ $app_list_strings ['emailTemplates_type_list_no_workflow'] = array (
   );
 $app_strings ['documentation'] = array (
     'LBL_DOCS' => 'Documentation',
-    'ULT' => '02_Sugar_Ultimate',
-	'ENT' => '02_Sugar_Enterprise',
-	'CORP' => '03_Sugar_Corporate',
-	'PRO' => '04_Sugar_Professional',
-	'COM' => '05_Sugar_Community_Edition'
+    'ULT' => '01_Sugar_Ultimate',
+    'ENT' => '02_Sugar_Enterprise',
+    'CORP' => '03_Sugar_Corporate',
+    'PRO' => '04_Sugar_Professional',
+    'COM' => '05_Sugar_Community_Edition'
 );
     //BEGIN SUGARCRM flav=pro ONLY
 	$app_list_strings ['pdfmanager_yes_no_list'] = array (

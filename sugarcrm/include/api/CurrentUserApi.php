@@ -71,7 +71,6 @@ class CurrentUserApi extends SugarApi {
     public function retrieveCurrentUser($api, $args) {
         global $current_user;
         global $locale;
-        
         $user_data = array(
             'timezone' => $current_user->getPreference('timezone'),
             'datepref' => $current_user->getPreference('datef'),

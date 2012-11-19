@@ -121,11 +121,11 @@ EOQ;
     }
 
     /**
-     * Bug 56717 
-     * 
+     * Bug 56717
+     *
      * When ModuleScanner is enabled, handle bars templates are invalidating published
      * package installation.
-     * 
+     *
      * @group bug56717
      */
     public function testBug56717ValidExtsAllowed() {
@@ -136,28 +136,59 @@ EOQ;
             'xml' => 'test.xml',
             'hbt' => 'test.hbt',
         );
-        
+
         // Disallowed file names
         $notAllowed = array(
             'docx' => 'test.docx',
             'java' => 'test.java',
             'phtm' => 'test.phtm',
         );
-        
+
         // Get our scanner
         $ms = new ModuleScanner();
-        
+
         // Test valid
         foreach ($allowed as $ext => $file) {
             $valid = $ms->isValidExtension($file);
             $this->assertTrue($valid, "The $ext extension should be valid on $file but the ModuleScanner is saying it is not");
         }
-        
+
         // Test not valid
         foreach ($notAllowed as $ext => $file) {
             $valid = $ms->isValidExtension($file);
             $this->assertFalse($valid, "The $ext extension should not be valid on $file but the ModuleScanner is saying it is");
         }
+    }
+
+    /**
+     * @group bug58072
+     */
+	public function testLockConfig()
+    {
+
+    	$fileModContents = <<<EOQ
+<?PHP
+	\$GLOBALS['sugar_config']['moduleInstaller']['test'] = true;
+    	\$manifest = array();
+    	\$installdefs = array();
+?>
+EOQ;
+		file_put_contents($this->fileLoc, $fileModContents);
+		$ms = new MockModuleScanner();
+		$ms->config['test'] = false;
+		$ms->lockConfig();
+		MSLoadManifest($this->fileLoc);
+		$errors = $ms->checkConfig($this->fileLoc);
+		$this->assertTrue(!empty($errors), "Not detected config change");
+		$this->assertFalse($ms->config['test'], "config was changed");
+    }
+}
+
+class MockModuleScanner extends  ModuleScanner
+{
+    public $config;
+    public function isPHPFile($contents) {
+        return parent::isPHPFile($contents);
     }
 }
 

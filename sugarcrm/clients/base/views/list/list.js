@@ -1,3 +1,29 @@
+/*********************************************************************************
+ * The contents of this file are subject to the SugarCRM Master Subscription
+ * Agreement (""License"") which can be viewed at
+ * http://www.sugarcrm.com/crm/master-subscription-agreement
+ * By installing or using this file, You have unconditionally agreed to the
+ * terms and conditions of the License, and You may not use this file except in
+ * compliance with the License.  Under the terms of the license, You shall not,
+ * among other things: 1) sublicense, resell, rent, lease, redistribute, assign
+ * or otherwise transfer Your rights to the Software, and 2) use the Software
+ * for timesharing or service bureau purposes such as hosting the Software for
+ * commercial gain and/or for the benefit of a third party.  Use of the Software
+ * may be subject to applicable fees and any use of the Software without first
+ * paying applicable fees is strictly prohibited.  You do not have the right to
+ * remove SugarCRM copyrights from the source code or user interface.
+ *
+ * All copies of the Covered Code must include on each user interface screen:
+ *  (i) the ""Powered by SugarCRM"" logo and
+ *  (ii) the SugarCRM copyright notice
+ * in the same form as they appear in the distribution.  See full license for
+ * requirements.
+ *
+ * Your Warranty, Limitations of liability and Indemnity are expressly stated
+ * in the License.  Please refer to the License for the specific language
+ * governing these rights and limitations under the License.  Portions created
+ * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
+ ********************************************************************************/
 ({
 
 /**
@@ -11,7 +37,31 @@
         'mouseenter tr': 'showActions',
         'mouseleave tr': 'hideActions'
     },
+    calculateRelativeWidths: function() {
+        var totalWidth = 0;
+        for (var p in this.meta.panels) {
+            for (var f in this.meta.panels[p].fields) {
+                var field = this.meta.panels[p].fields[f];
+                totalWidth += parseInt(field.width) || 10;
+            }
+            var adjustment = 100 / totalWidth;
+            //Adjust to make sure total is 100
+            for (var f in this.meta.panels[p].fields) {
+                var field = this.meta.panels[p].fields[f];
+                field.width = Math.floor((parseInt(field.width) || 10) * adjustment);
+            }
+        }
+    },
     _renderHtml: function() {
+        
+        //Calculate relative column widths.
+        this.calculateRelativeWidths();
+
+        //Set a flag true to the collection if there are new records (see list-bottom.js)
+        //in order to animate the new records
+        this.collection.newRecords = _.find(this.collection.models, function(model) {
+            return model.old === true;
+        })
         app.view.View.prototype._renderHtml.call(this);
         // off prevents multiple bindings for each render
         this.layout.off("list:search:fire", null, this);
@@ -100,7 +150,13 @@
         // If injected context with a limit (dashboard) then fetch only that 
         // amount. Also, add true will make it append to already loaded records.
         options.limit   = self.limit || null;
+
+        // Display loading message
+        app.alert.show('loading_' + self.cid, {level:'process', title:app.lang.getAppString('LBL_PORTAL_LOADING')});
+
         options.success = function() {
+            // Hide loading message
+            app.alert.dismiss('loading_' + self.cid);
             self.render();
         };
         
