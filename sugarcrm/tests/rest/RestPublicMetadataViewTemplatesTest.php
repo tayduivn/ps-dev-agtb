@@ -106,6 +106,8 @@ class RestPublicMetadataViewTemplatesTest extends RestTestBase {
         // Make sure we get it when we ask for portal
         SugarAutoLoader::put($filesToCheck['portal'][0],'PORTAL CODE', true);
         $this->_clearMetadataCache();
+        // To test public API's, we need to not login.
+        $this->authToken = 'LOGGING_IN';
         $restReply = $this->_restCall('metadata/public?type_filter=views&platform=portal');
         $this->assertEquals('PORTAL CODE',$restReply['reply']['views']['edit']['templates']['edit'],"Didn't get portal code when that was the direct option");
 

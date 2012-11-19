@@ -249,14 +249,14 @@ class MetadataApi extends SugarApi {
             if (!empty($compJS))
                 $js .= ",";
 
-            $js .= "\n\tmodules:{";
+            $js .= "\n\t\"modules\":{";
 
             $allModuleJS = '';
             foreach($data['modules'] as $module => $def)
             {
                 $moduleJS = $this->buildJSForComponents($data['modules'][$module]);
                 if(!empty($moduleJS)) {
-                    $allModuleJS .= ",\n\t\t$module:{{$moduleJS}}";
+                    $allModuleJS .= ",\n\t\t\"$module\":{{$moduleJS}}";
                 }
             }
             //Chop off the first comma in $allModuleJS
@@ -285,30 +285,41 @@ class MetadataApi extends SugarApi {
 
             if (!empty($data[$mdType])){
                 $js  .= ",\n\t$mdType:{";
-                $plat = '';
+                $comp = '';
 
-                foreach ($platforms as $platform) {
-                    if (isset($data[$mdType][$platform])) {
-                        $plat .= ",\n\t\t\"$platform\":{";
-                        $comp = '';
-
-                        foreach($data[$mdType][$platform] as $name => $component) {
-                            if (is_array($component) && !empty($component['controller'])) {
-                                $controller = $component['controller'];
-                                // remove additional symbols in end of js content - it will be included in content
-                                $controller = trim(trim($controller), ",;");
-                                $controller = $this->insertHeaderComment($controller, $mdType, $name, $platform);
-                                $comp .= ",\n\t\t\"$name\":{controller:\n$controller}";
-                                unset($data[$mdType][$name]['controller']);
-                            }
-                        }
-                        //Chop of the first comma in $comp
-                        $plat .= substr($comp,1);
-                        $plat .= "\n\t}";
+                foreach($data[$mdType] as $name => $component) {
+                    if ( !is_array($component) || !isset($component['controller']) ) {
+                        
+                        continue;
                     }
+                    $controllers = $component['controller'];
+                    $comp = ",\n\t\t\"$name\":{\n\t\t\t\"controller\":{\n";
+                    $plat = '';
+                    if (is_array($controllers) ) {
+                        foreach ($platforms as $platform) {
+                            if (!isset($controllers[$platform])) {
+                                continue;
+                            }
+                            $controller = $controllers[$platform];
+                            // remove additional symbols in end of js content - it will be included in content
+                            $controller = trim(trim($controller), ",;");
+                            // $controller = $this->insertHeaderComment($controller, $mdType, $name, $platform);
+                            
+                            $plat .= "\"$platform\":\n".$controller."\n,\n";
+                                
+                        }
+                    }
+                    //Chop off the last comma in $plat
+                    $plat = trim(trim($plat), ",");
+                    $plat .= "\n\t}";
+                    $comp .= $plat;
+
+                    unset($data[$mdType][$name]['controller']);
+                    
+                
                 }
-                //Chop of the first comma in $plat
-                $js .= substr($plat, 1);
+                //Chop of the first comma in $comp
+                $js .= substr($comp, 1);
                 $js .= "\n\t}";
             }
         }
@@ -386,6 +397,8 @@ class MetadataApi extends SugarApi {
                 }
             }
         }
+        $data['full_module_list']['_hash'] = md5(serialize($data['full_module_list']));
+        $data['module_list']['_hash'] = md5(serialize($data['module_list']));
 
         $data['fields']  = $mm->getSugarFields();
         $data['views']   = $mm->getSugarViews();
@@ -664,27 +677,6 @@ class MetadataApi extends SugarApi {
         }
 
         return $module_list;
-    }
-
-    /**
-     * Reconciles which platforms jssource components will be built for. 
-     * @param array $args request args
-     * @return array
-     */
-    private function getJSSourcePlatforms($args) {
-        $arrJSSourcePlatforms = array();
-        // If no jssource_filter supplied, jssourceFilter starts with all platforms loaded (jssource
-        // components will be built for both their application's platform (e.g. portal) AND base.
-        // Clients should only set this filter if their widgets do NOT extendFrom base widgets.
-        if (!empty($args['jssource_filter']) ) {
-            $platforms = explode(",", $args['jssource_filter']);
-            if ($platforms != false) {
-                $arrJSSourcePlatforms = $platforms;
-            }
-        } else {
-            $arrJSSourcePlatforms = $this->platforms;
-        }
-        return $arrJSSourcePlatforms;
     }
 
     //TODO: This function needs to be in /me as it is user defined

@@ -426,33 +426,19 @@ class MetaDataManager {
      */
     public function getSystemClientData($type)
     {
-        $results = array();
-
-        forearch ( $this->platforms as $platform ) {
-            // This is a semi-complicated multi-step process, so we're going to try and make this as easy as possible.
-            // This should get us a list of the client files for the system
-            $fileList = MetaDataFiles::getClientFiles($platform, $type);
-            
-            // And this should get us the contents of those files, properly sorted and everything.
-            $results[$platform] = MetaDataFiles::getClientFileContents($fileList, $type);
-        }
+        // This is a semi-complicated multi-step process, so we're going to try and make this as easy as possible.
+        // This should get us a list of the client files for the system
+        $fileList = MetaDataFiles::getClientFiles($this->platforms, $type);
+        
+        // And this should get us the contents of those files, properly sorted and everything.
+        $results = MetaDataFiles::getClientFileContents($fileList, $type);
 
         return $results;
     }
 
     public function getModuleClientData($type, $module)
     {
-        $clientCache = array();
-        foreach ( $this->platforms as $platform ) {
-            $cacheFile = sugar_cached('modules/'.$module.'/clients/'.$this->platform.'/'.$type.'.php');
-            if ( !file_exists($cacheFile) ) {
-                MetaDataFiles::buildModuleClientCache( $platform, $type, $module );
-            }
-            $clientCache[$module][$type][$platform] = array();
-            require $cacheFile;
-        }
-
-        return $clientCache[$module][$type];
+        return MetaDataFiles::getModuleClientCache($this->platforms, $type, $module);
     }
 
     /**
