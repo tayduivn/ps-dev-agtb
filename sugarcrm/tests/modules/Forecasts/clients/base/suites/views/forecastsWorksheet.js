@@ -21,7 +21,7 @@
 
 describe("The forecasts worksheet", function(){
 
-    var app, view, field, _renderClickToEditStub, _renderFieldStub, _setUpCommitStageSpy, testMethodStub;
+    var app, view, field, _renderClickToEditStub, _renderFieldStub, _setUpCommitStageSpy, testMethodStub, testValue;
 
     beforeEach(function() {
         app = SugarTest.app;
@@ -39,7 +39,7 @@ describe("The forecasts worksheet", function(){
     describe("clickToEdit field", function() {
 
         beforeEach(function() {
-            var testValue = 'testValue';
+            testValue = 'testValue';
             _renderClickToEditStub = sinon.stub(app.view, "ClickToEditField");
             _renderFieldStub = sinon.stub(app.view.View.prototype, "_renderField");
             field = {
