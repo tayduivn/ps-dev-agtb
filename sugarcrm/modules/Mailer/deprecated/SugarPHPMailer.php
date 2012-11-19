@@ -308,4 +308,39 @@ eoq;
             } // else
         }
     }
+
+	/**
+	 * overloads class.phpmailer's SetError() method so that we can log errors in sugarcrm.log
+	 *
+	 */
+	function SetError($msg) {
+		$GLOBALS['log']->fatal("SugarPHPMailer encountered an error: {$msg}");
+		parent::SetError($msg);
+	}
+
+	function SmtpConnect() {
+		$connection = parent::SmtpConnect();
+		if (!$connection) {
+			global $app_strings;
+			if(isset($this->oe) && $this->oe->type == "system") {
+				$this->SetError($app_strings['LBL_EMAIL_INVALID_SYSTEM_OUTBOUND']);
+			} else {
+				$this->SetError($app_strings['LBL_EMAIL_INVALID_PERSONAL_OUTBOUND']);
+			} // else
+		}
+		return $connection;
+	} // fn
+
+    /*
+     * overloads PHPMailer::PreSend() to allow for empty messages to go out.
+     */
+    protected function PreSend() {
+        //check to see if message body is empty
+        if(empty($this->Body)){
+            //PHPMailer will throw an error if the body is empty, so insert a blank space if body is empty
+            $this->Body = " ";
+        }
+        return parent::PreSend();
+    }
+
 } // end class definition
