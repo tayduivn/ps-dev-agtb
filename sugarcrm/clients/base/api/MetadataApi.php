@@ -335,7 +335,7 @@ class MetadataApi extends SugarApi {
     private function insertHeaderComment($controller, $mdType, $name, $platform) {
         $singularType = substr($mdType, 0, -1);
         $needle = '({';
-        $headerComment = "\n\t// " . ucfirst($name) ." ". ucfirst($singularType) . " ($platform)";
+        $headerComment = "\n\t// " . ucfirst($name) ." ". ucfirst($singularType) . " ($platform) \n";
 
         // Find position "after" needle
         $pos = (strpos($controller, $needle) + strlen($needle));

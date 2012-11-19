@@ -21,10 +21,6 @@ if ( !defined('sugarEntry') || !sugarEntry ) {
  *to the License for the specific language governing these rights and limitations under the License.
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
-/*********************************************************************************
- * $Id: Opportunity.php 54706 2010-02-22 19:09:36Z dwheeler $
- * Description:
- ********************************************************************************/
 
 // Opportunity is used to store customer information.
 class Opportunity extends SugarBean
@@ -106,12 +102,24 @@ class Opportunity extends SugarBean
 		//END SUGARCRM flav=pro ONLY
 	);
 
+    /**
+     * This is a depreciated method, please start using __construct() as this method will be removed in a future version
+     *
+     * @see __construct
+     * @depreciated
+     */
+    public function Opportunity()
+    {
+        $this->__construct();
+    }
+
 
 	public function __construct()
 	{
 		parent::__construct();
 		global $sugar_config;
-		if ( !$sugar_config['require_accounts'] ) {
+
+		if(empty($sugar_config['require_accounts'])){
 			unset($this->required_fields['account_name']);
 		}
 		//BEGIN SUGARCRM flav=pro ONLY
@@ -458,7 +466,7 @@ class Opportunity extends SugarBean
 		// Bug 38529 & 40938 - exclude currency_id
 		parent::save_relationship_changes($is_update, array('currency_id'));
 
-		if ( !empty($this->contact_id) ) {
+		if (!empty($this->contact_id)) {
 			$this->set_opportunity_contact_relationship($this->contact_id);
 		}
 	}

@@ -501,7 +501,7 @@ SUGAR.append(SUGAR.themes, {
     },
     showFooter: function(el){
         $(el).attr("title","Hide");
-        $(el).animate({bottom:'5px'},200);
+        $(el).animate({bottom:'11px'},200);
         $("#arrow").tipTip({maxWidth: "auto", edgeOffset: 10});
     },
     searchResults: function () {

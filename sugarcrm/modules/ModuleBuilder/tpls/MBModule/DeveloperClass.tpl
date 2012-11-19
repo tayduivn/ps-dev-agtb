@@ -30,9 +30,19 @@
  */
 require_once('modules/{{$class.name}}/{{$class.name}}_sugar.php');
 class {{$class.name}} extends {{$class.name}}_sugar {
-	
-	function {{$class.name}}(){	
-		parent::{{$class.name}}_sugar();
+
+	/**
+	 * This is a depreciated method, please start using __construct() as this method will be removed in a future version
+     *
+     * @see __construct
+     * @depreciated
+	 */
+	function {{$class.name}}(){
+		$this->__construct();
+	}
+
+	public function __construct(){
+		parent::__construct();
 	}
 	
 }
