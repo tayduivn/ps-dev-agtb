@@ -326,7 +326,7 @@
         var viewName = ((!field.options.viewName || field.options.viewName == "detail") && !close)
             ? "edit" : "detail";
 
-        field.setView(viewName);
+        field.setViewName(viewName);
 
         field.render();
 
