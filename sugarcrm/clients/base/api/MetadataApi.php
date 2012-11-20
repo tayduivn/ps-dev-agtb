@@ -399,6 +399,10 @@ class MetadataApi extends SugarApi {
                 }
             }
         }
+
+        // always add back in employees
+        $data['module_list']['Employees'] = 'Employees';
+
         $data['fields']  = $mm->getSugarClientFilesForPlatforms('field', $this->jssourceFilter);
         $data['views']   = $mm->getSugarClientFilesForPlatforms('view', $this->jssourceFilter);
         $data['layouts'] = $mm->getSugarClientFilesForPlatforms('layout', $this->jssourceFilter);
