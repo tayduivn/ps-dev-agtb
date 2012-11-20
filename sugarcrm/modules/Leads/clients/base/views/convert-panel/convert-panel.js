@@ -254,12 +254,10 @@
                 app.alert.show('failed_validation', {level:'error', title: 'Failed Validation', messages: 'Failed Validation', autoClose: true});
             }
         } else {
-            //todo: implement validation - this is a placeholder
-            var model = this.recordView.model;
-            if (model.get('name') === 'fail' || model.get('first_name') === 'fail') {
-                //todo: better error
-                app.alert.show('failed_validation', {level:'error', title: 'Failed Validation', messages: 'Failed Validation', autoClose: true});
-            } else {
+            var view = this.recordView,
+                model = view.model;
+
+            if (model.isValid(view.getFields(view.module))) {
                 this.setStatus(this.STATUS_COMPLETE);
                 callback();
             }
