@@ -283,11 +283,11 @@ class TimePeriod extends SugarBean {
     {
         $leaves = array();
         $db = DBManagerFactory::getInstance();
-        $query = "select id, type from timeperiods WHERE parent_id = '{$this->id}' AND parent_id IS NOT NULL AND deleted = 0 order by start_date_timestamp AND type = '{$this->type}'";
+        $query = "SELECT id, type FROM timeperiods WHERE parent_id = '{$this->id}' AND deleted = 0 ORDER BY start_date_timestamp ASC";
         $result = $db->query($query);
         while($row = $db->fetchByAssoc($result))
         {
-            array_push($leaves, BeanFactory::getBean($row['type']."TimePeriods", $row['id']));
+            $leaves[] = TimePeriod::getByType($row['type'], $row['id']);
         }
         return $leaves;
     }
@@ -403,6 +403,7 @@ class TimePeriod extends SugarBean {
 
     /**
      * get_timeperiods_dom
+     *
      * @static
      * @return array
      */
@@ -453,66 +454,44 @@ class TimePeriod extends SugarBean {
      */
     public function getNextTimePeriod() {
         $timedate = TimeDate::getInstance();
-
-        $query = "select id, type from timeperiods where ";
-        $query .= " type = " . $this->db->quoted($this->type);
-        $query .= " AND deleted = 0";
-
         $queryDate = $timedate->fromDbDate($this->end_date);
         $queryDate = $queryDate->modify('+1 day');
-        $queryDate = $this->db->convert($this->db->quoted($queryDate->asDbDate()), 'date');
-
-        $query .= " AND start_date = {$queryDate}";
+        $query = sprintf("SELECT id FROM timeperiods WHERE type = %s AND start_date = %s AND DELETED = 0 ",
+            $this->db->quoted($this->type),
+            $this->db->convert($this->db->quoted($queryDate->asDbDate()), 'date'));
 
         $result = $this->db->query($query);
         $row = $this->db->fetchByAssoc($result);
 
-        if($row == null) {
-            return null;
-        }
-
-        $nextTimePeriod = BeanFactory::getBean($row['type'].'TimePeriods');
-        $nextTimePeriod->retrieve($row['id']);
-        return $nextTimePeriod;
+        return ($row != null) ? TimePeriod::getByType($this->type, $row['id']) : null;
     }
 
 
     /**
      * Grabs the time period previous of this one and returns it.  If none is found, it returns null
      *
-     * @return null|SugarBean
+     * @return null|TimePeriod instance
      */
     public function getPreviousTimePeriod() {
         $timedate = TimeDate::getInstance();
-
-        $query = "select id, type from timeperiods where ";
-        $query .= " type = " . $this->db->quoted($this->type);
-        $query .= " AND deleted = 0";
-
         $queryDate = $timedate->fromDbDate($this->start_date);
         $queryDate = $queryDate->modify('-1 day');
-        $queryDate = $this->db->convert($this->db->quoted($queryDate->asDbDate()), 'date');
-
-        $query .= " AND end_date = {$queryDate}";
+        $query = sprintf("SELECT id FROM timeperiods WHERE type = %s AND end_date = %s AND DELETED = 0 ",
+            $this->db->quoted($this->type),
+            $this->db->convert($this->db->quoted($queryDate->asDbDate()), 'date'));
 
         $result = $this->db->query($query);
         $row = $this->db->fetchByAssoc($result);
 
-        if($row == null)
-        {
-           return null;
-        }
-
-        $previousTimePeriod = BeanFactory::getBean($row['type'].'TimePeriods');
-        $previousTimePeriod->retrieve($row['id']);
-        return $previousTimePeriod;
+        return ($row != null) ? TimePeriod::getByType($this->type, $row['id']) : null;
     }
 
     /**
-     * Examines the config values and rebuilds the time periods based on the new settings
+     * Examines the config values and rebuilds the time periods based on the settings
+     * from the config table.  The settings are retrieved from the Administration bean.
      *
-     * @param $priorSettings Array of the previous timeperiod admin settings
-     * @param $currentSettings Array of the current timeperiod admin settings
+     * @param $priorSettings Array of the previous forecast settings
+     * @param $currentSettings Array of the current forecast settings
      *
      * @return void
      */
@@ -526,15 +505,13 @@ class TimePeriod extends SugarBean {
 
        $isUpgrade = !empty($currentSettings['is_upgrade']);
 
-       $existingTimePeriods = TimePeriod::get_timeperiods_dom();
-
        //If this is not an upgrade or if there are no existing time periods, we can build the timeperiods
-       if(!$isUpgrade || empty($existingTimePeriods))
+       if(!$isUpgrade)
        {
-           //set the target date
+           //set the target date based on the current year and the selected start month and day
            $targetStartDate = $timedate->getNow()->setDate($currentDate->format("Y"), $currentSettings["timeperiod_start_month"], $currentSettings["timeperiod_start_day"]);
 
-           //if the target date is after the current year then set the year to be one back
+           //if the target start date is in the future then set the year to be back one year
            if($currentDate < $targetStartDate)
            {
                $targetStartDate->modify($this->previous_date_modifier);
@@ -544,12 +521,27 @@ class TimePeriod extends SugarBean {
            $this->type = $currentSettings['timeperiod_interval']; // TimePeriod::Annual by default
            $this->leaf_period_type = $currentSettings['timeperiod_leaf_interval']; // TimePeriod::Quarter by default
 
-           $this->setStartDate($targetStartDate->asDbDate());
-
            //Now check if we need to add more timeperiods
            //If we are coming from an upgrade, we do not create any backward timeperiods
            $shownBackwardDifference = $this->getShownDifference($priorSettings, $currentSettings, 'timeperiod_shown_backward');
            $shownForwardDifference = $this->getShownDifference($priorSettings, $currentSettings, 'timeperiod_shown_forward');
+
+           //If there were no existing timeperiods we go back one year and create an extra set (for the current timeperiod set)
+           $latestTimeperiod = TimePeriod::getLatest($this->type);
+
+           if(empty($latestTimeperiod)) {
+               //now we keep incrementing the targetStartDate until we reach the currentDate
+               if($targetStartDate < $currentDate) {
+                   $leafPeriod = TimePeriod::getByType($this->leaf_period_type);
+                   while($targetStartDate < $currentDate) {
+                       $targetStartDate->modify($leafPeriod->next_date_modifier);
+                   }
+               }
+               $targetStartDate->modify($this->previous_date_modifier);
+               $this->setStartDate($targetStartDate->asDbDate());
+               $shownForwardDifference++;
+           }
+
            $this->buildLeaves($shownBackwardDifference, $shownForwardDifference);
        } else {
            //In the case of upgrades we take the following steps:
