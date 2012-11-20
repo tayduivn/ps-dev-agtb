@@ -2,7 +2,7 @@
  * View that displays header for current app
  * @class View.Views.WorksheetView
  * @alias SUGAR.App.layout.WorksheetView
- * @extends View.Viewjust
+ * @extends View.View
  *
  *
  * Events Triggered
