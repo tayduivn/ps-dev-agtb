@@ -7,7 +7,7 @@
       <div class="inputactions span10">
         <a href=""><i class="icon-tag"></i></a>
         <a href=""><i class="icon-paper-clip"></i></a>
-        <input type="submit" class="pull-right btn btn-primary addPost" />
+        <input type="submit" class="pull-right btn btn-primary addPost" value="Submit" />
         <span class="pull-right"><a href="" class="btn btn-invisible btn-link">Send to Everyone</a></span>
       </div>
   </div>
@@ -164,12 +164,12 @@
             {{/each}}
          {{/if}}
              <li class="activitystream-comment {{#eq attributes.comments.length "0"}}hide{{/eq}}">
-                <div class="control-group form-horizontal">
-                <a href="#Users/{{../../user_id}}" class="pull-left avatar">
-                    <img src="{{../../picture_url}}" class="avatar" alt="{{../../full_name}}">
-                </a>
-                <div contenteditable="true" class="sayit activitystream-comment-box" dropzone="copy"></div>
-                <input type="submit" data-id="{{attributes.id}}" class="btn btn-primary postReply" value="Reply">
+                <div class="control-group form-horizontal clearfix">
+                    <a href="#Users/{{../../user_id}}" class="pull-left avatar">
+                        <img src="{{../../picture_url}}" class="avatar pull-left" alt="{{../../full_name}}">
+                    </a>
+                    <div contenteditable="true" class="sayit activitystream-comment-box" dropzone="copy"></div>
+                    <input type="submit" data-id="{{attributes.id}}" class="btn btn-primary postReply pull-left" value="Reply">
                 </div>
              </li>
          </ul>
