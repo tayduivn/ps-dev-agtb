@@ -40,7 +40,6 @@
      * Change the behavior of buttons depending on the state that they should be in
      */
     setLeadButtonStates: function() {
-        debugger;
         var convertButton = this.$('.lead-convert'),
             convertedState = this.model.get('converted') == '1' ? true : false;
 
