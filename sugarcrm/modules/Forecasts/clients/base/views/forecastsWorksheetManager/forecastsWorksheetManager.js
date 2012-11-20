@@ -146,16 +146,7 @@
             		this.safeFetch();
             	}
             }, this);
-            this.context.forecasts.on("change:checkDirtyWorksheetFlag", function(){
-            	if(this.context.forecasts.get('checkDirtyWorksheetFlag') && !this.showMe()){
-            		var model = this.context.forecasts.worksheetmanager;
-            		model.url = this.createURL();
-            		this.safeFetch(false);
-            		this.context.forecasts.set({checkDirtyWorksheetFlag: false});
-            	}
-
-            }, this);
-
+            
             /*
              * // TODO: tagged for 6.8 see SFA-253 for details
             this.context.forecasts.config.on('change:show_worksheet_likely', function(context, value) {
@@ -291,7 +282,6 @@
         }
         $("#view-sales-rep").addClass('hide').removeClass('show');
         $("#view-manager").addClass('show').removeClass('hide');
-        this.context.forecasts.set({checkDirtyWorksheetFlag: true});
         this.context.forecasts.set({currentWorksheet: "worksheetmanager"});
         
         app.view.View.prototype._render.call(this);
