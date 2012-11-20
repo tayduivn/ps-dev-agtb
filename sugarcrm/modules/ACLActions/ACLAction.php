@@ -31,6 +31,19 @@ class ACLAction  extends SugarBean
     var $table_name = 'acl_actions';
     var $new_schema = true;
     var $disable_custom_fields = true;
+
+
+    /**
+     * This is a depreciated method, please start using __construct() as this method will be removed in a future version
+     *
+     * @see __construct
+     * @depreciated
+     */
+    public function ACLAction()
+    {
+        $this->__construct();
+    }
+
     public function __construct(){
         parent::__construct();
         //BEGIN SUGARCRM flav=pro ONLY
