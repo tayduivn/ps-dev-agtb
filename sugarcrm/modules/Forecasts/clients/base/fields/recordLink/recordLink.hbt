@@ -1,1 +1,1 @@
-<a href="index.php?module={{module}}&action={{action}}&record={{record_id}}" title="{{{linkText}}}">{{{linkText}}}</a>
+<a href="index.php?module={{recordLink.module}}&action={{recordLink.action}}&record={{recordLink.record_id}}" title="{{{recordLink.linkText}}}">{{{recordLink.linkText}}}</a>

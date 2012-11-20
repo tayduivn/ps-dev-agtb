@@ -1385,20 +1385,25 @@ background-image:url(../../../../index.php?entryPoint=getImage&imageName=form-bu
     background-color: transparent !important;
     background-position: 0 0 !important;
     border: 0 none !important;
-    bottom: 5px;
+    bottom: 11px;
 }
 #footer 
 {
 
-    border-top:1px solid #ccc;
-    background: rgb(255,255,255); /* Old browsers */
-    background: -moz-linear-gradient(top,  rgba(255,255,255,1) 0%, rgba(246,246,246,1) 47%, rgba(237,237,237,1) 100%); /* FF3.6+ */
-    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,rgba(255,255,255,1)), color-stop(47%,rgba(246,246,246,1)), color-stop(100%,rgba(237,237,237,1))); /* Chrome,Safari4+ */
-    background: -webkit-linear-gradient(top,  rgba(255,255,255,1) 0%,rgba(246,246,246,1) 47%,rgba(237,237,237,1) 100%); /* Chrome10+,Safari5.1+ */
-    background: -o-linear-gradient(top,  rgba(255,255,255,1) 0%,rgba(246,246,246,1) 47%,rgba(237,237,237,1) 100%); /* Opera 11.10+ */
-    background: -ms-linear-gradient(top,  rgba(255,255,255,1) 0%,rgba(246,246,246,1) 47%,rgba(237,237,237,1) 100%); /* IE10+ */
-    background: linear-gradient(top,  rgba(255,255,255,1) 0%,rgba(246,246,246,1) 47%,rgba(237,237,237,1) 100%); /* W3C */
-    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ffffff', endColorstr='#ededed',GradientType=0 ); /* IE6-9 */
+    min-height:44px;
+    border-top:1px solid #e1e1e1;
+    background-color:#f7f7f7;
+    background-image:-moz-linear-gradient(top,#ffffff,#ebebeb);
+    background-image:-ms-linear-gradient(top,#ffffff,#ebebeb);
+    background-image:-webkit-gradient(linear,0 0,0 100%,from(#ffffff),to(#ebebeb));
+    background-image:-webkit-linear-gradient(top,#ffffff,#ebebeb);
+    background-image:-o-linear-gradient(top,#ffffff,#ebebeb);
+    background-image:linear-gradient(top,#ffffff,#ebebeb);
+    background-repeat:repeat-x;
+    filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffffff', endColorstr='#ebebeb', GradientType=0);
+    -webkit-box-shadow:0 1px 0 #ffffff;
+    -moz-box-shadow:0 1px 0 #ffffff;
+    box-shadow:0 1px 0 #ffffff;
     position:fixed;
     bottom:0;
     width:100%;
@@ -1428,7 +1433,7 @@ background-image:url(../../../../index.php?entryPoint=getImage&imageName=form-bu
 }
 
 #footer img.logo {
-    margin: 7px 10px;
+    margin: 14px 10px;
     max-width:450px;
     max-height:17px;
     
@@ -1442,16 +1447,16 @@ background-image:url(../../../../index.php?entryPoint=getImage&imageName=form-bu
 
 #footer #help {
     float: right;
-    border-right: 1px solid #CCC;
     height: 31px;
 }
 
 #footer #help a, #footer #productTour a {
-    color: #444;
+    color: #58595B;
     text-decoration: none;
     font-size: 12px;
     float: left;
-    padding: 0px 10px 0px;
+    padding: 8px 10px 0px;
+    opacity: .8;
 }
 
 
@@ -1477,7 +1482,6 @@ background-image:url(../../../../index.php?entryPoint=getImage&imageName=form-bu
 }
 #footer #partner {
     float:right;
-    border-right: 1px solid #CCCCCC;
     height: 31px;
 }
 
@@ -1491,13 +1495,12 @@ background-image:url(../../../../index.php?entryPoint=getImage&imageName=form-bu
     color: #A0A0A0;
     text-decoration: none;
     font-size: 11px;
-    padding-top: 10px;
-    display: block;
+    padding-top: 16px;
+    display: inline-block;
 }
 
 #footer #productTour {
     float: right;
-    border-left: 1px solid #CCCCCC;
     height: 31px;
 }
 
