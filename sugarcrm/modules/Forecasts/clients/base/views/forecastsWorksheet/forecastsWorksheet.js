@@ -44,6 +44,7 @@
     columnDefs : [],    
     mgrNeedsCommitted : false,
     commitButtonEnabled : false,
+    // boolean to denote that a fetch is currently in progress
     fetchInProgress : false,
     
     /**
@@ -341,24 +342,8 @@
         if(collection.isDirty){
             //unsaved changes, ask if you want to save.
             if(confirm(app.lang.get("LBL_WORKSHEET_SAVE_CONFIRM", "Forecasts"))){
-                var modelCount = 0;
-                var saveCount = 0;
-                _.each(collection.models, function(model, index){
-                    var isDirty = model.get("isDirty");
-                    if(_.isBoolean(isDirty) && isDirty){
-                        modelCount++;
-                        model.set({draft: 1}, {silent:true});
-                        model.save({}, {success:function(){
-                            saveCount++;
-                            if(saveCount === modelCount){
-                                collection.isDirty = false;
-                                collection.fetch();
-                            }
-                        }});
-                        model.set({isDirty: false}, {silent:true});
-                    }  
-                });                        
-        }
+                self.context.forecasts.trigger("forecasts:forecastcommitbuttons:triggerSaveDraft");
+            }
             //user clicked cancel, ignore and fetch if fetch is enabled
             else{
                 
