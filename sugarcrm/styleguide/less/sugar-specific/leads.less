@@ -54,3 +54,27 @@
     background-color: darken(@warningBackground, 5%);
   }
 }
+
+// ACCORDION
+// ---------
+.layout_Leads .accordion-heading {
+  background-color:@grayLighter;
+  border-bottom: 0;
+  cursor: pointer;
+}
+
+.layout_Leads .accordion-heading.disabled{
+  color: @grayLight;
+}
+
+.layout_Leads .accordion-heading .in {
+  background-color:@white;
+}
+
+.layout_Leads .accordion-heading.enabled .module-number {
+  font-weight: bold;
+}
+
+.layout_Leads .accordion-heading.enabled .title {
+  font-weight: bold;
+}
