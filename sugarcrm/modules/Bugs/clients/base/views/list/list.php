@@ -29,7 +29,7 @@ if (!defined('sugarEntry') || !sugarEntry) {
  * Contributor(s): ______________________________________..
  ********************************************************************************/
 
-$viewdefs['Accounts']['base']['view']['list'] = array(
+$viewdefs['Bugs']['base']['view']['list'] = array(
     'panels' => array(
         array(
             'name' => 'panel_header',
@@ -72,57 +72,16 @@ $viewdefs['Accounts']['base']['view']['list'] = array(
                     'value' => false,
                     'sortable' => false,
                 ),
-                array(
-                    'name' => 'name',
-                    'width' =>  49,
-                    'link' => true,
-                    'label' => 'LBL_LIST_ACCOUNT_NAME',
-                    'enabled' => true,
-                    'default' => true
-                ),
-                array(
-                    'name' => 'billing_address_city',
-                    'width' =>  13,
-                    'label' => 'LBL_LIST_CITY',
-                    'enabled' => true,
-                    'default' => true
-                ),
-                array(
-                    'name' => 'billing_address_country',
-                    'width' =>  13,
-                    'label' => 'LBL_BILLING_ADDRESS_COUNTRY',
-                    'enabled' => true,
-                    'default' => true
-                ),
-                array (
-                    'name' => 'phone_office',
-                    'width' => '10%',
-                    'label' => 'LBL_LIST_PHONE',
-                    'default' => true,
-                ),
-                array (
-                    'name' => 'assigned_user_name',
-                    'width' => '10%',
-                    'label' => 'LBL_LIST_ASSIGNED_USER',
-                    'id' => 'ASSIGNED_USER_ID',
-                    'default' => true,
-                ),
-                array(
-                    'name' => 'email1',
-                    'width' => '15%',
-                    'label' => 'LBL_EMAIL_ADDRESS',
-                    'sortable' => false,
-                    'link' => true,
-                    'default' => true
-                ),
-                array (
-                    'name' => 'date_entered',
-                    'type' => 'datetime',
-                    'label' => 'LBL_DATE_ENTERED',
-                    'enabled' => true,
-                    'width' => 13,
-                    'default' => true,
-                ),
+               'bug_number',
+                'name',
+                'status',
+                'type',
+                'priority',
+                'release_name',
+                'fixed_in_release_name',
+                'resolution',
+                'team_name',
+                'assigned_user_name',
             ),
 
         ),
