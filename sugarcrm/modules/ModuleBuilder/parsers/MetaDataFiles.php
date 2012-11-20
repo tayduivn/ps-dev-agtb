@@ -642,7 +642,7 @@ class MetaDataFiles
                 $type = '*';
             }
             // Delete client cache files of all types
-            foreach ( glob(sugar_cached('modules/'.$module.'/clients/*/*.php')) as $cacheFile ) {
+            foreach ( glob(sugar_cached('modules/'.$module.'/clients/*/'.$type.'.php')) as $cacheFile ) {
                 unlink($cacheFile);
             }
         }
