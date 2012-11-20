@@ -166,8 +166,7 @@ $dictionary['Contract'] = array(
 			'function'=>array('name'=>'getCurrencyDropDown', 'returns'=>'html'),
 	    	'required'=>false,
 	    	'reportable'=>false,
-            'comment' => 'The currency in use for the contract',
-            'references' => 'Currencies',
+	    	'comment' => 'The currency in use for the contract'
 	  	),
 
         'currency_name' => array (
@@ -178,7 +177,6 @@ $dictionary['Contract'] = array(
             'source' => 'non-db',
             'studio' => 'false',
             'comment' => 'Currency name used for Meta-data framework',
-            'references' => 'Currencies',
         ),
 
 		'total_contract_value' => array (
@@ -276,8 +274,7 @@ $dictionary['Contract'] = array(
 			'function' => 'getContractTypesDropDown',
 		    'merge_filter' => 'enabled',
 		    'duplicate_merge' => 'disabled',
-            'comment' => 'The dropdown options for Contract types',
-            'references' => 'ContractTypes',
+		    'comment' => 'The dropdown options for Contract types',
 		),
 		'contracts_documents' =>	array (
 			'name' => 'contracts_documents',

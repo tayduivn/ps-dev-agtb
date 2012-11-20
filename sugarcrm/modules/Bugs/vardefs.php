@@ -47,7 +47,6 @@ $dictionary['Bug'] = array('table' => 'bugs',    'audited'=>true, 'comment' => '
           //END SUGARCRM flav=ent ONLY
     ), // tyoung bug 16442 - don't show in studio fields list
     'massupdate' => true,
-    'references' => 'Releases',
   	),
 'release_name'=>
   array (
@@ -114,8 +113,7 @@ $dictionary['Bug'] = array('table' => 'bugs',    'audited'=>true, 'comment' => '
           //END SUGARCRM flav=ent ONLY
       ), // tyoung bug 16442 - don't show in studio fields list
 
-      'massupdate' => true,
-      'references' => 'Releases',
+  	'massupdate' => true,
   	),
    'fixed_in_release_name'=>
   array (

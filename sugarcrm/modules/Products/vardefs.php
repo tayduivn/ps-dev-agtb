@@ -73,8 +73,7 @@ $dictionary['Product'] = array('table' => 'products','audited'=>true,
     'required'=>false,
     'reportable'=>false,
     'function'=>array('name'=>'getProductTypes', 'returns'=>'html', 'include'=>'modules/ProductTemplates/ProductTemplate.php'),
-    'comment' => 'Product type (ex: hardware, software)',
-    'references' => 'ProductTypes',
+    'comment' => 'Product type (ex: hardware, software)'
   ),
   'quote_id' =>
   array (
@@ -101,8 +100,7 @@ $dictionary['Product'] = array('table' => 'products','audited'=>true,
     'required'=>false,
     'reportable'=>false,
     'function'=>array('name'=>'getManufacturers', 'returns'=>'html', 'include'=>'modules/ProductTemplates/ProductTemplate.php'),
-    'comment' => 'Manufacturer of product',
-    'references' => 'Manufacturers',
+    'comment' => 'Manufacturer of product'
   ),
   'category_id' =>
   array (
@@ -113,8 +111,7 @@ $dictionary['Product'] = array('table' => 'products','audited'=>true,
     'required'=>false,
     'reportable'=>true,
     'function'=>array('name'=>'getCategories', 'returns'=>'html', 'include'=>'modules/ProductTemplates/ProductTemplate.php'),
-    'comment' => 'Product category',
-    'references' => 'ProductCategories',
+    'comment' => 'Product category'
   ),
   'category_name' =>
         array (
@@ -281,8 +278,7 @@ $dictionary['Product'] = array('table' => 'products','audited'=>true,
 	'function'=>array('name'=>'getCurrencyDropDown', 'returns'=>'html'),
     'required'=>false,
     'reportable'=>false,
-    'comment' => 'Currency of the product',
-    'references' => 'Currencies',
+    'comment' => 'Currency of the product'
   ),
   'base_rate' =>
   array (
@@ -376,8 +372,7 @@ $dictionary['Product'] = array('table' => 'products','audited'=>true,
     'type' => 'varchar',
     'len' => 100,
     'function'=>array('name'=>'getSupportTerms', 'returns'=>'html', 'include'=>'modules/ProductTemplates/ProductTemplate.php'),
-    'comment' => 'Term (length) of support contract',
-    'references' => 'ProductTemplates',
+    'comment' => 'Term (length) of support contract'
   ),
   'date_support_expires' =>
   array (

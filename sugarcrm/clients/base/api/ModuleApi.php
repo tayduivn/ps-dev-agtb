@@ -74,7 +74,55 @@ class ModuleApi extends SugarApi {
                 'shortHelp' => 'This method unsets a record of the specified type as a favorite',
                 'longHelp' => 'include/api/help/module_favorite_help.html',
             ),
+            'enum' => array(
+                'reqType' => 'GET',
+                'path' => array('<module>','enum','?'),
+                'pathVars' => array('module', 'enum', 'field'),
+                'method' => 'getEnumValues',
+                'shortHelp' => 'This method returns enum values for a specified field',
+            ),
         );
+    }
+
+    /**
+     * This method returns the dropdown options of a given field
+     * @param array $api 
+     * @param array $args 
+     * @return array
+     */
+    public function getEnumValues($api, $args) {
+        $this->requireArgs($args, array('module','field'));
+
+        $bean = BeanFactory::newBean($args['module']);
+
+        $vardef = $bean->field_defs[$args['field']];
+
+        if(empty($vardef)) {
+           throw new SugarApiExceptionNotFound('field not found');
+        }
+        if(isset($vardef['function'])) {
+            if ( isset($vardef['function']['returns']) && $vardef['function']['returns'] == 'html' ) {
+                throw new SugarApiExceptionError('html dropdowns are not supported');
+            }
+
+            $funcName = $vardef['function'];
+            $includeFile = '';
+            if ( isset($vardef['function_include']) ) {
+                $includeFile = $vardef['function']['include'];
+            }
+
+            if(!empty($includeFile)) {
+                require_once($includeFile);
+            }
+
+            return $funcName();
+        }
+        else {
+            if(!isset($GLOBALS['app_list_strings'][$vardef['options']])) {
+                throw new SugarApiExceptionNotFound('options not found');
+            }
+            return $GLOBALS['app_list_strings'][$vardef['options']];
+        }
     }
 
     public function createRecord($api, $args) {
