@@ -37,7 +37,7 @@ class SugarFieldInt extends SugarFieldBase
     }
 
     public function apiFormatField(&$data, $bean, $args, $fieldName, $properties){
-        if ( $formattedField === '' || $formattedField === NULL ) {
+        if ( !isset($bean->$fieldName) || $bean->$fieldName === '' || $bean->$fieldName === NULL ) {
             return $data[$fieldName] = NULL;
         }
         $data[$fieldName] = (int)$bean->$fieldName;
