@@ -44,6 +44,7 @@
     columnDefs : [],    
     mgrNeedsCommitted : false,
     commitButtonEnabled : false,
+    fetchInProgress : false,
     
     /**
      * Initialize the View
@@ -320,6 +321,12 @@
      * @param fetch {boolean} Tells the function to go ahead and fetch if true, or runs dirty checks (saving) w/o fetching if false 
      */
     safeFetch: function(fetch){
+        //fetch currently already in progress, no need to duplicate
+        if(this.fetchInProgress) {
+            return;
+        }
+        //mark that a fetch is in process so no duplicate fetches begin
+        this.fetchInProgress = true;
         if(_.isUndefined(fetch))
         {
             fetch = true;
@@ -405,7 +412,9 @@
             if(fetch){
                 collection.fetch();
             }    
-        }        
+        }
+        //mark that the fetch is over
+        this.fetchInProgress = false;
     },
 
     /**
