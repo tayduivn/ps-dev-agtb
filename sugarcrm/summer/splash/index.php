@@ -1,6 +1,8 @@
 <?php
 chdir('../..');
 define('sugarEntry', true);
+require_once('include/utils/autoloader.php');
+SugarAutoLoader::init();
 require_once('summer/splash/BoxOfficeClient.php');
 $settings = array();
 if (!empty($_REQUEST['do'])) {
@@ -51,55 +53,40 @@ if(!empty($_SESSION['gauth_data'])){
         }
     }
     ?>
-    <style>
-        body {
-            -webkit-background-size: cover;
-            -moz-background-size: cover;
-            -o-background-size: cover;
-            background-size: cover;
-        }
-
-    </style>
-
 </head>
 <body>
 
-<div class='span9 pull-left' style='position:relative;top:250px'>
-    <span style='font-size:60px;color:white;'>CRM for Everyone</span>
+<div class='span9 pull-left' id="desc_block">
+    <span id="cfe">CRM for Everyone</span>
 
-    <div style='font-size:14px;color:whitesmoke;' class='span5'>
+    <div id="wih" class='span5'>
         Work is hard. CRM shouldn't make it harder!
     </div>
-    <div id="catchphrase" style='text-align:center;clear:both;font-size:24px;color:white;position:relative;top:50px'>
-
-    </div>
+    <div id="catchphrase"></div>
 </div>
 
-<div class=" pull-right" style='margin-right: 50px'>
-
-</div>
-
-<div class="span6 pull-right" style='clear:right;position:relative;top:200px'>
-
+<div class="span6 pull-right" id="login_block">
     <div class='well span3'>
         <div id='notices'>
         </div>
-        <h4>Welcome <span class="username"> </span></h4>
+        <h4>Welcome<span class="username"></span>!</h4>
         <form class='form' id="login">
             <input type="text" name='email' class="span3" placeholder="Email Address">
             <input type="password" name='password' class="span3" placeholder="Password">
 
             <div class="pull-right">
-                <button type="submit" name='login' class="span3 btn btn-success" style='margin-bottom: 5px'>Login
+                <button type="submit" name='login' class="span3 btn btn-success">Login
                 </button>
-                <button type='button' id="register_btn" name='register' class="span3 btn btn-primary"
-                        style='margin-bottom: 5px'>Register
+                <button type='button' id="register_btn" name='register' class="span3 btn btn-primary">
+                    Register
                 </button>
-                <div class='span3' style="text-align: center"><a id='reset_lnk' href="#">Can't Login?</a></div>
-                <button type="button" id="google_login" name="google" class="span3 btn " style="margin-bottom: 5px">Login with Google <i class='icon-google-plus'></i></button>
+                <div class='span3'><a id='reset_lnk' href="#">Can't Login?</a></div>
+                <button type="button" id="google_login" name="google" class="span3 btn">
+                    Login with Google <i class='icon-google-plus'></i>
+                </button>
             </div>
         </form>
-        <form class='form' id="register" style='display:none'>
+        <form class='form' id="register">
             <h4>Register</h4>
             <label>First Name</label>
             <input type="text" name='first_name' class="span3" placeholder="First Name">
@@ -117,35 +104,35 @@ if(!empty($_SESSION['gauth_data'])){
             <div class="pull-right">
 
 
-                <button type="submit" name='register' class="span3 btn btn-success" style='margin-bottom: 5px'>
+                <button type="submit" name='register' class="span3 btn btn-success">
                     Register
                 </button>
-                <button type='button' id='cancel_register_btn' name='cancel' class="span3 btn"
-                        style='margin-bottom: 5px'>Cancel
+                <button type='button' id='cancel_register_btn' name='cancel' class="span3 btn">
+                    Cancel
                 </button>
 
             </div>
         </form>
-        <div class='form' id="instances" style='display:none'>
+        <div class='form' id="instances">
             <h4>Select your desired CRM</h4>
             <ul id="instancelist" class="nav nav-tabs nav-stacked">
             </ul>
-            <div class='span3' style="text-align: center"><a id='instances_refresh' href="#">Refresh</a></div>
+            <div class='span3'><a id='instances_refresh' href="#">Refresh</a></div>
         </div>
-        <form class='form' id="reset" style='display:none'>
+        <form class='form' id="reset">
             <h4>Reset Your Password</h4>
             <input type="text" name='email' class="span3" placeholder="Email Address">
 
             <div class="pull-right">
-                <button type="submit" name='reset' class="span3 btn btn-success" style='margin-bottom: 5px'>
+                <button type="submit" name='reset' class="span3 btn btn-success">
                     Reset Password
                 </button>
-                <button type='button' id='cancel_reset_btn' name='cancel' class="span3 btn" style='margin-bottom: 5px'>
+                <button type='button' id='cancel_reset_btn' name='cancel' class="span3 btn">
                     Cancel
                 </button>
             </div>
         </form>
-        <form class='form' id="resetpass" style='display:none'>
+        <form class='form' id="resetpass">
             <h4>Reset Your Password</h4>
             <label>Password</label>
             <input type="text" name='password' class="span3" placeholder="Password">
@@ -155,19 +142,15 @@ if(!empty($_SESSION['gauth_data'])){
             <input type="hidden" name='guid' class="span3" value='<?php echo @$_REQUEST['guid'] ?>'>
 
             <div class="pull-right">
-                <button type="submit" name='reset' class="span3 btn btn-success" style='margin-bottom: 5px'>
+                <button type="submit" name='reset' class="span3 btn btn-success">
                     Reset Password
                 </button>
-                <button type='button' id='cancel_resetpass_btn' name='cancel' class="span3 btn"
-                        style='margin-bottom: 5px'>
+                <button type='button' id='cancel_resetpass_btn' name='cancel' class="span3 btn">
                     Cancel
                 </button>
             </div>
         </form>
     </div>
-
-
-</div>
 </div>
 <?php
     $min_file = 'summer/summer-splash.min.js';

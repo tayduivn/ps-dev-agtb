@@ -131,6 +131,7 @@
                 "sidecar/lib/chosen/chosen.css" => "summer/summer-splash.min.css",
                 "summer/lib/twitterbootstrap/css/bootstrap.css" => "summer/summer-splash.min.css",
                 "sidecar/lib/jquery-ui/css/smoothness/jquery-ui-1.8.18.custom.css" => "summer/summer-splash.min.css",
+                "summer/splash/static/css/splash.css" => "summer/summer-splash.min.css",
             ),
 
            $sugar_grp1 = array(
