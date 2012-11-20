@@ -50,7 +50,18 @@ class RestEnumTest extends RestTestBase {
             $GLOBALS['db']->query("DELETE FROM contract_types WHERE id='{$id}'");
         }
     }
+    /**
+     * @group rest
+     */
+    public function testHtmlDropDown() {
+        $restReply = $this->_restCall('Products/enum/type_id');
+        $this->assertEquals('fatal_error',$restReply['reply']['error'], "Did not return a fatal error");
+        $this->assertEquals('html dropdowns are not supported', $restReply['reply']['error_message'], "Did not return the correct error message");
+    }
 
+    /**
+     * @group rest
+     */
     public function testStandardDropDown() {
         $restReply = $this->_restCall('Products/enum/commit_stage');
         $this->assertTrue(!empty($restReply['reply']), "Commit Stage came back empty");

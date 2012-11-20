@@ -100,6 +100,13 @@ class ModuleApi extends SugarApi {
         if(empty($vardef)) {
            throw new SugarApiExceptionNotFound('field not found');
         }
+        
+        $api->setHeader('Cache-Control', 'max-age=3600, private');
+
+        if(isset($vardef['cache_setting'])) {
+            $api->setHeader('Cache-Control', "max-age={$vardef['cache_setting']}, private");
+        }
+    
         if(isset($vardef['function'])) {
             if ( isset($vardef['function']['returns']) && $vardef['function']['returns'] == 'html' ) {
                 throw new SugarApiExceptionError('html dropdowns are not supported');
