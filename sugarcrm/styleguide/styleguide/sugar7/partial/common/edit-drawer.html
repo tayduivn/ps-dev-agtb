@@ -1,0 +1,16 @@
+<div class="edit-backdrop"></div>
+<div class="edit-drawer">
+  <a href="#" title="Collapse list pane" class="btn edit-expand"><i class="icon-chevron-down"></i></a>
+</div>
+
+<script>
+$(document).ready(function() {
+  // expand edit row
+  $('body').on('click', '.edit-expand', function (e) {
+    $(this).find('i').toggleClass('icon-chevron-up').toggleClass('icon-chevron-down');
+    $('.module-edit').toggleClass('expand');
+    $('.module-view').toggleClass('collapse');
+    e.preventDefault();
+  });
+});
+</script>

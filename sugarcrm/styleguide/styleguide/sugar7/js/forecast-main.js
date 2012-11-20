@@ -24,48 +24,6 @@ function invokeSaveButtons(){
 
 $(document).ready(function() {
 
-    //http://jsfiddle.net/vNqTF/
-    $(window).resize(  (function(){
-        // Closure to initialize everything...
-        // Clone all links in the menu and add them to the "more" tab
-        $("#navMenu").find("li.menu-item").each(function(index){
-            $(this).clone().removeClass('active').insertBefore('#moreLinks > li.divider');
-        });
-        // Get links in menu and in "more" tab, calculate total width of links
-        var menuLinks = (function(){
-                var links = $("#navMenu > li.menu-item");
-                links.each(function(){
-                    // Pre-calculate link widths to make checkWidth function more efficient
-                    $(this).data("linkWidth", $(this).outerWidth(true));
-                });
-                return links;
-            })()
-          , moreLinks = $("#moreLinks > li.menu-item")
-          , linksWidth = $("#navMenu").children().get().reduce(function(a,b){ return a + $(b).outerWidth(true); }, 0)
-          , moreWidth = $("#more").outerWidth(true) + $('#navMenu > li:first-child').outerWidth(true) + $('#navMenu > li:first-child').offset().left
-            // Function that actually checks which links to display/hide
-          , checkWidth = function(){
-              var menuWidth = $('#navForms').position().left - $("#searchForm").outerWidth(true) - 10
-                  , w = moreWidth;
-              menuLinks.each(function(index){
-                  // Sum up link widths and compare to menu width
-                  w += $(this).data("linkWidth");
-                  if (w > menuWidth) {
-                      // Links already too wide, hide all remaining links
-                      menuLinks.slice(index).hide();
-                      moreLinks.slice(index).show();
-                      return false;
-                  }
-                  moreLinks.eq(index).hide();
-                  $(this).show();
-              });
-          };
-        // Adjust menu to initial conditions (will hide links in "more" tab if window wide enough at beginning)
-        checkWidth();
-        // Return the actual function from the closure that will be executed when window is resized
-        return checkWidth;
-    }()) );
-
     // using chosen plugin for multi select as a single select, due to styling needed from multiselect.
     // https://sugarcrm.atlassian.net/browse/UIUX-117
     $("#sales_stage_filter_chzn .chzn-results > li").bind('click',function(){
@@ -91,6 +49,21 @@ $(document).ready(function() {
     $('form.editable input').live('change',function(){
         invokeSaveButtons();
     });
+
+
+    // toggle drawer hide - forecast
+    $('.drawer').toggle(
+      function () {
+        $(this).next('.extend').removeClass('hide');
+        $(this).find('.toggle').html('<i class="icon-caret-up"></i>');
+        return false;
+      },
+      function () {
+        $(this).next('.extend').addClass('hide');
+        $(this).find('.toggle').html('<i class="icon-caret-down"></i>');
+        return false;
+      }
+    );
 
     //$('#date_filter').ready(function(){
     $.fn.dataTableExt.afnFiltering.push(

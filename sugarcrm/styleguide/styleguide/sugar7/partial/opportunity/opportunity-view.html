@@ -1,0 +1,38 @@
+<div class="row-fluid bcard1">
+  <div class="span6">
+    <label>Account:</label>
+    <span class="dblclick">Plato's LED MFT</span>
+
+    <label>Amount:</label>
+    <span class="dblclick">$300,000 (USD)</span>
+
+    <label>Stage:</label>
+    <span class="dblclick">Prospecting</span>
+  </div>
+  <div class="span6">
+
+    <label>Probability:</label>
+    <span class="dblclick">30%</span>
+    <label>Close Date:</label>
+    <span class="dblclick">06/06/2012</span>
+  </div>
+</div>
+
+
+<script>
+  page.record = {'title':'Plato&squo;s LED MFT'};
+
+  loadPartials([
+    {"file":"opportunity/opportunity-view-header","target":"#view .headerpane","method":"replace"},
+    {"file":"common/activity-tabs","target":"#view .record","method":"append"},
+    {"file":"common/search-filter","target":"#view .record","method":"append"},
+    {"file":"common/omnibar","target":"#view .main-content","method":"replace"},
+    {"file":"opportunity/opportunity-activitystream","target":"#view .main-content","method":"replace"}
+  ]);
+
+  $(document).ready(function() {
+    $('body').addClass('view');
+    $('.chzn-select').chosen({ disable_search_threshold: 5 });
+    $('.chzn-select-deselect').chosen({allow_single_deselect:true});
+  });
+</script>

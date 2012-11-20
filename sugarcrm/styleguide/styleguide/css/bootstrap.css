@@ -5320,31 +5320,31 @@ footer {
   bottom:44px;
   position:absolute;
 }
-#content .container-fluid .row-fluid.record-edit {
+#content .container-fluid .row-fluid.module-edit {
   position:absolute;
   height:0%;
   top:0px;
   bottom:0%;
   display:none;
 }
-#content .container-fluid .row-fluid.record-list {
+#content .container-fluid .row-fluid.module-view {
   position:absolute;
   height:100%;
   top:0px;
   bottom:0px;
   overflow:hidden;
 }
-.edit #content .container-fluid .row-fluid.record-edit {
+.edit #content .container-fluid .row-fluid.module-edit {
   height:50%;
   bottom:50%;
   display:block;
 }
-.edit #content .container-fluid .row-fluid.record-edit .main-pane .headerpane {
+.edit #content .container-fluid .row-fluid.module-edit .main-pane .headerpane {
   position:absolute;
   left:0px;
   right:1px;
 }
-.edit #content .container-fluid .row-fluid.record-edit .main-pane .main-content {
+.edit #content .container-fluid .row-fluid.module-edit .main-pane .record {
   position:absolute;
   left:0px;
   right:0px;
@@ -5352,19 +5352,36 @@ footer {
   bottom:0px;
   overflow:auto;
 }
-.edit #content .container-fluid .row-fluid.record-list {
+.edit #content .container-fluid .row-fluid.module-view {
   height:50%;
   top:50%;
 }
-.edit #content .container-fluid .row-fluid.record-edit.expand {
+.edit #content .container-fluid .row-fluid.module-edit.expand {
   height:auto;
   bottom:60px;
 }
-.edit #content .container-fluid .row-fluid.record-list.collapse {
+.edit #content .container-fluid .row-fluid.module-view.collapse {
   height:62px;
   top:auto;
 }
-.padded { padding:20px; }
+.row-fluid .main-pane, .row-fluid .side.sidebar-content {
+  position:absolute;
+  overflow-y:auto;
+  overflow-x:hidden;
+  top:0px;
+  bottom:0px;
+}
+.row-fluid .main-pane.span8 {
+  width:66%;
+  margin-left:0px;
+}
+.row-fluid .side.sidebar-content.span4 {
+  right:1px;
+  margin:0;
+  width:34%;
+  background-image:url('../../assets/img/texture/furley_bg.png');
+}
+.row-fluid .side.sidebar-content.hide { display:none; }
 .black { background-color:#000000; }
 .grayDarker { background-color:#313130; }
 .grayDark { background-color:#343433; }
@@ -5410,8 +5427,16 @@ h1 {
   width:96% !important;
   margin:0 2% !important;
 }
-#activitystream-calendar { margin:0 10px; }
 #moduleActivity .row { padding:10px; }
+#moduleActivity .avatar {
+  margin:0;
+  padding:0;
+}
+.module-activity .tabbable { padding-left:16px; }
+.module-activity .tabbable li a { background-color:#cdcccb; }
+.module-activity .tabbable li.active a { background-color:#f5f5f5; }
+.module-activity .nav-tabs { margin-bottom:0; }
+#activitystream-calendar { margin:0 10px; }
 div.sayit.activitystream-comment-box {
   margin:0 10px !important;
   padding:5px 8px !important;
@@ -5446,7 +5471,6 @@ div.sayit.activitystream-comment-box {
 .activitystream-pending-attachment img { margin-top:4px; }
 .commented .control-group { margin-bottom:0; }
 .block.tabs-left .nav-tabs li { padding:0 0 0 20px; }
-.omnibar.row { margin:0; }
 ul.unstyled, ol.unstyled { margin:0 !important; }
 article {
   position:relative;
@@ -5599,6 +5623,7 @@ table.table.dataTable td.details .extend, .filtered.extend, .mu.extend {
   filter:alpha(opacity=75);
 }
 .btn-small .caret { margin-top:3px; }
+.btn.previous-row, .btn.next-row { padding:5px 10px 3px; }
 table tbody tr:last-child td:last-child, table tbody tr:last-child td:first-child, table tfoot tr:last-child td:last-child, table tfoot tr:last-child td:first-child {
   -webkit-border-radius:0 0 4px 4px;
   -moz-border-radius:0 0 4px 4px;
@@ -5902,6 +5927,9 @@ header .subnav {
   font-size:20px !important;
   font-weight:500;
   margin-top:-5px;
+  text-overflow:ellipsis;
+  overflow:hidden;
+  white-space:nowrap;
 }
 .subnav .btn-toolbar.pull-right { margin:9px 20px 0 0; }
 .subnav .btn-toolbar.pull-left { margin:9px 0 0 0; }
@@ -5937,27 +5965,36 @@ header .subnav {
   border-bottom:1px solid #e8e8e8;
 }
 #contentflex #headerbar h1, .headerpane h1 {
-  float:left;
-  margin-top:12px;
+  float:none;
+  margin-top:0;
+  padding-top:12px;
   margin-left:20px;
+  text-overflow:ellipsis;
+  overflow:hidden;
+  white-space:nowrap;
 }
-#contentflex #headerbar img, .headerpane img {
-  width:40px;
-  height:40px;
-  vertical-align:middle;
-  margin-right:12px;
-}
-#contentflex #headerbar [class^="icon-"], .headerpane [class^="icon-"] { font-size:20px; }
 #contentflex #headerbar .dropdown-toggle, .headerpane .dropdown-toggle {
   -webkit-box-shadow:none;
   -moz-box-shadow:none;
   box-shadow:none;
 }
 #contentflex #headerbar .span12, .headerpane .span12 { margin-left:0px; }
-#contentflex #headerbar .drawerTrig, .headerpane .drawerTrig { margin-right:10px; }
+#contentflex #headerbar .drawerTrig, .headerpane .drawerTrig {
+  margin-right:10px;
+  padding:4px 10px 1px;
+}
+#contentflex #headerbar .drawerTrig [class^="icon-"], .headerpane .drawerTrig [class^="icon-"] { font-size:20px; }
 #contentflex #headerbar .btn-toolbar, .headerpane .btn-toolbar { margin-top:15px; }
 #contentflex #headerbar .btn-toolbar .btn-group, .headerpane .btn-toolbar .btn-group { vertical-align:middle; }
-#contentflex #headerbar .avatar, .headerpane .avatar { margin:10px -5px 0 20px; }
+#contentflex #headerbar .avatar, .headerpane .avatar {
+  margin:10px 2px 0 20px;
+  float:left;
+}
+#contentflex #headerbar .avatar img, .headerpane .avatar img {
+  width:42px;
+  height:42px;
+  vertical-align:middle;
+}
 .subnav-fixed {
   position:fixed;
   top:48px;
@@ -6238,23 +6275,24 @@ img.pull-left { margin:0 8px 8px 0; }
   padding:15px 0 10px 20px;
   border-bottom:1px solid #e8e8e8;
 }
+.omnibar.row { margin:0; }
 .omnibar .sayit {
   padding:6px 8px;
   position:relative;
   z-index:1;
   border:dashed 1px #cdcccb;
-  min-height:42px !important;
-  margin-left:0px !important;
+  min-height:30px !important;
+  margin:0 20px 0 56px;
   color:#58595b;
 }
-.omnibar:focused .sayit {
+.omnibar :focused .sayit {
   border:solid 1px #cdcccb;
   color:#58595b;
 }
 .omnibar .inputactions {
   background:#f5f5f5;
   padding:8px;
-  margin:0;
+  margin:0 20px 0 56px;
   z-index:0;
   position:relative;
   -webkit-border-radius:0 0 3px 3px;
@@ -6392,6 +6430,7 @@ hr.soften {
   background-image:-o-linear-gradient(left,rgba(0,0,0,0),rgba(0,0,0,0.1),rgba(0,0,0,0));
   border:0;
 }
+.padded { padding:20px; }
 [class^="icon-"] {
   font-size:14px;
   -webkit-font-smoothing:antialiased;
@@ -6445,10 +6484,6 @@ h1 span { margin-left:5px; }
   -webkit-box-shadow:inset -2px 0 2px #000000, 0 -1px 0 #000000;
   -moz-box-shadow:inset -2px 0 2px #000000, 0 -1px 0 #000000;
   box-shadow:inset -2px 0 2px #000000, 0 -1px 0 #000000;
-}
-#moduleActivity .avatar {
-  margin:0;
-  padding:0;
 }
 .icon-updated { color:#25b2f1; }
 .icon-added { color:#3fb300; }
@@ -6845,24 +6880,6 @@ h1 input[type="text"] {
   margin-right:15px;
   line-height:4px;
 }
-.row-fluid .main-pane, .row-fluid .side.sidebar-content {
-  position:absolute;
-  overflow-y:auto;
-  overflow-x:hidden;
-  top:0px;
-  bottom:0px;
-}
-.row-fluid .main-pane.span8 {
-  width:66%;
-  margin-left:0px;
-}
-.row-fluid .side.sidebar-content.span4 {
-  right:1px;
-  margin:0;
-  width:34%;
-  background-image:url('../../assets/img/texture/furley_bg.png');
-}
-.row-fluid .side.sidebar-content.hide { display:none; }
 .side {
   border-left:2px solid #cdcccb;
   -webkit-box-shadow:inset 4px 0px 16px -4px rgba(0, 0, 0, .2);
@@ -6897,6 +6914,7 @@ h1 input[type="text"] {
   -moz-border-radius:0;
   border-radius:0;
 }
+.side .thumbnail { padding-bottom:8px; }
 .side .thumbnail .unstyled li .progress, .side .thumbnail .unstyled li .progress .bar { height:12px; }
 .side .thumbnail .unstyled { margin:5px; }
 .side .thumbnail .unstyled li { margin:10px; }
@@ -7082,7 +7100,7 @@ h1 input[type="text"] {
 .avatar42 img {
   height:42px;
   width:42px;
-  margin-right:10px;
+  margin-right:14px;
 }
 .pull-left .avatar { margin-right:10px; }
 .navbar .avatar {
@@ -7189,7 +7207,7 @@ input[disabled], select[disabled], textarea[disabled], input[readonly], select[r
   border-bottom:1px solid #e8e8e8;
   margin-bottom:10px;
 }
-.block.tabs-left .nav-tabs p { margin:0 80px 20px 55px; }
+.block.tabs-left .nav-tabs p { margin:0 95px 20px 55px; }
 .block.tabs-left .nav-tabs li li .avatar img { margin:3px 0 0; }
 .block.tabs-left .nav-tabs li li {
   margin:0;

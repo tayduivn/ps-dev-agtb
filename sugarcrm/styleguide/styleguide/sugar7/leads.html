@@ -8,12 +8,14 @@
         "title": "Leads"
       , "description": ""
       , "templates": [
-          {"file":"head","target":"head","method":"append"}
-        , {"file":"navbar-master","target":"#header","method":"append"}
-        , {"file":"footer-master","target":"#footer","method":"append"}
-        , {"file":"lead-header","target":"#record","method":"append"}
-        , {"file":"edit-drawer","target":".record-list","method":"append"}
-        , {"file":"interactions-preview","target":"#overview","method":"append"}
+          {"file":"common/head","target":"head","method":"append"}
+        , {"file":"common/navbar","target":"#header","method":"append"}
+        , {"file":"common/header","target":"#view .headerpane","method":"replace"}
+        , {"file":"common/footer-master","target":"#footer","method":"append"}
+        , {"file":"common/edit-drawer","target":".module-view","method":"append"}
+        , {"file":"common/search-filter","target":"#view .record","method":"replace"}
+        , {"file":"lead/lead-table","target":"#view .main-content","method":"append"}
+        , {"file":"preview/interactions-preview","target":"#overview","method":"append"}
       ]
     };
   </script>
@@ -21,307 +23,48 @@
 <body>
   <div id="sugarcrm">
     <div id="sidecar">
-      <div id="alert" class="alert-top"></div>
+      <div id="alerts" class="alert-top"></div>
       <div id="header"></div>
       <div id="content">
         <div class="layout_Leads container-fluid">
-          <div class="row-fluid record-edit">
+          <div class="row-fluid module-edit">
+
             <div class="main-pane span8" id="edit">
+              <div class="headerpane"></div>
+              <div class="record"></div>
+              <div class="main-content"></div>
             </div>
+
             <div class="side sidebar-content span4">
               <div class="side-pane active" id="overview-edit"></div>
               <div class="preview-pane" id="preview-edit"></div>
             </div>
+
           </div>
-          <div class="row-fluid record-list">
+
+          <div class="row-fluid module-view">
+
             <div class="main-pane span8" id="view">
-              <div class="record-view" id="record">
-              </div>
-              <div class="main-content" id="list">
-                <form class="form-search" action="">
-                  <div class="row-fluid">
-                    <div class="span9 myfilter">
-                      <input value="" placeholder="Search Leads..." class="span12">
-                      <div class="actions btn-group dropdown">
-                        <a href="" data-toggle="dropdown" class="dropdown-toggle btn btn-invisible">Filter &nbsp;<i class="icon-caret-down"></i></a>
-                        <ul class="dropdown-menu carettop">
-                          <li><a href="#myLead">My Leads</a></li>
-                          <li class="primary"><a href="#createFilter" class="newfilter">+ Create a filter</a></li>
-                        </ul>
-                      </div>
-                    </div>
-                    <div class="span3">
-                      <div class="pull-right">
-                        <a href="" class="btn btn-invisible"><i class="icon-th-list"></i></a>
-                        <a href="" class="btn btn-invisible"><i class="icon-time"></i></a>
-                        <a href="" class="btn btn-invisible"><i class="icon-calendar"></i></a>
-                        <a href="" class="btn btn-invisible active"><i class="icon-table"></i></a>
-                      </div>
-                    </div>
-                  </div>
-                  <div class="filtered extend results hide">
-                    <article class="filtered-header">
-                      <input placeholder="Select a name...">
-                      <div class="pull-right dropdown">
-                        <a href="" class="btn">Save</a><a href="" class="btn btn-invisible"><i class="icon-remove"></i></a>
-                      </div>
-                    </article>
-                    <article class="filtered-body">
-                      <select class="chzn-select buildit">
-                        <option>Name</option>
-                        <option>Sales Stage</option>
-                      </select>
-                      <select class="chzn-select">
-                        <option>matches</option>
-                      </select>
-                      <input placeholder="Select a name...">
-                      <a href="" class="btn btn-invisible pull-right addme"><i class="icon-plus"></i></a>
-                    </article>
-                  </div>
-                  <div class="mu extend results hide">
-                    <article class="filtered-header">
-                      <strong>Mass Update</strong>
-                      <div class="btn-group pull-right dropdown">
-                        <a href="" class="btn">update</a>
-                      </div>
-                    </article>
-                    <article class="filtered-body">
-                      <select class="chzn-select buildit">
-                        <option>Name</option>
-                        <option>Sales Stage</option>
-                      </select>
-                      <select class="chzn-select">
-                        <option>matches</option>
-                      </select>
-                      <input placeholder="Select a name...">
-                      <a href="" class="btn btn-invisible pull-right addme"><i class="icon-plus"></i></a>
-                    </article>
-                  </div>
-                </form>
-                <table class="table datatable table-striped">
-                  <thead>
-                    <tr>
-                      <th class="nosort">
-                        <div class="btn-group">
-                          <b class="btn"><input type="checkbox" class="toggle-all"></b>
-                          <a class="btn dropdown-toggle" data-toggle="dropdown" href="#"> <span class="caret"></span></a>
-                          <ul class="dropdown-menu">
-                            <li><a href="#">Email</a></li>
-                            <li><a href="#" class="tmu">Mass Update</a></li>
-                            <li><a href="#">Merge</a></li>
-                            <li><a href="#">Export</a></li>
-                          </ul>
-                        </div>
-                      </th>
-                      <th>Name</th>
-                      <th>City</th>
-                      <th>Country</th>
-                      <th>Phone</th>
-                      <th>Email</th>
-                      <th class="nosort morecol">
-                        <a href="" data-toggle="dropdown" class="dropdown-toggle">. . .</a>
-                        <ul class="dropdown-menu left carettop">
-                          <li><a href="#myLead">Column1</a></li>
-                          <li><a href="#myContacts">Column2</a></li>
-                          <li><a href="#myOpportunities">Column3</a></li>
-                        </ul>
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody id="listed">
-                    <tr>
-                      <td><input type="checkbox"> <span><i class="icon-favorite"></i></span></td>
-                      <td><a href="partial/lead-view.html" data-toggle="tab" data-target="#record" data-mode="view">Plato's LED MFT</a></td>
-                      <td><span class="dblclick">Cupertino</span></td>
-                      <td><span class="dblclick">USA</span></td>
-                      <td><span class="dblclick">(408) 555-5271</span></td>
-                      <td><a href="mailto:sales@perkins.com">sales@perkins.com</a></td>
-                      <td>
-                        <span class="hide actions dropdown pull-right btn-group">
-                          <a class="btn" href="partial/lead-preview.html" rel="tooltip" data-toggle="tab" data-target="#preview" data-mode="preview" data-original-title="Preview"><i class="icon-eye-open"></i></a>
-                          <a class="btn dropdown-toggle" data-toggle="dropdown" href="#"><span class="icon-caret-down"></span></a>
-                          <ul class="dropdown-menu">
-                            <li><a href="#"><i class="icon-pencil"></i> Edit</a></li>
-                            <li><a href="#"><i class="icon-trash"></i> Delete</a></li>
-                          </ul>
-                        </span>
-                      </td>
-                    </tr>
-                    <tr>
-                      <td><input type="checkbox"> <span><i class="icon-favorite"></i></span></td>
-                      <td><a href="partial/lead-view.html" data-toggle="tab" data-target="#record" data-mode="view">Plato's LED MFT</a></td>
-                      <td><span class="dblclick">Cupertino</span></td>
-                      <td><span class="dblclick">USA</span></td>
-                      <td><span class="dblclick">(408) 555-5271</span></td>
-                      <td><a href="mailto:sales@perkins.com">sales@perkins.com</a></td>
-                      <td>
-                        <span class="hide actions dropdown pull-right btn-group">
-                          <a class="btn" href="partial/lead-preview.html" rel="tooltip" data-toggle="tab" data-target="#preview" data-mode="preview" data-original-title="Preview"><i class="icon-eye-open"></i></a>
-                          <a class="btn dropdown-toggle" data-toggle="dropdown" href="#"><span class="icon-caret-down"></span></a>
-                          <ul class="dropdown-menu">
-                            <li><a href="#"><i class="icon-pencil"></i> Edit</a></li>
-                            <li><a href="#"><i class="icon-trash"></i> Delete</a></li>
-                          </ul>
-                        </span>
-                      </td>
-                    </tr>
-                    <tr>
-                      <td><input type="checkbox"> <span><i class="icon-favorite"></i></span></td>
-                      <td><a href="partial/lead-view.html" data-toggle="tab" data-target="#record" data-mode="view">Plato's LED MFT</a></td>
-                      <td><span class="dblclick">Cupertino</span></td>
-                      <td><span class="dblclick">USA</span></td>
-                      <td><span class="dblclick">(408) 555-5271</span></td>
-                      <td><a href="mailto:sales@perkins.com">sales@perkins.com</a></td>
-                      <td>
-                        <span class="hide actions dropdown pull-right btn-group">
-                          <a class="btn" href="partial/lead-preview.html" rel="tooltip" data-toggle="tab" data-target="#preview" data-mode="preview" data-original-title="Preview"><i class="icon-eye-open"></i></a>
-                          <a class="btn dropdown-toggle" data-toggle="dropdown" href="#"><span class="icon-caret-down"></span></a>
-                          <ul class="dropdown-menu">
-                            <li><a href="#"><i class="icon-pencil"></i> Edit</a></li>
-                            <li><a href="#"><i class="icon-trash"></i> Delete</a></li>
-                          </ul>
-                        </span>
-                      </td>
-                    </tr>
-                    <tr>
-                      <td><input type="checkbox"> <span><i class="icon-favorite"></i></span></td>
-                      <td><a href="partial/lead-view.html" data-toggle="tab" data-target="#record" data-mode="view">Plato's LED MFT</a></td>
-                      <td><span class="dblclick">Cupertino</span></td>
-                      <td><span class="dblclick">USA</span></td>
-                      <td><span class="dblclick">(408) 555-5271</span></td>
-                      <td><a href="mailto:sales@perkins.com">sales@perkins.com</a></td>
-                      <td>
-                        <span class="hide actions dropdown pull-right btn-group">
-                          <a class="btn" href="partial/lead-preview.html" rel="tooltip" data-toggle="tab" data-target="#preview" data-mode="preview" data-original-title="Preview"><i class="icon-eye-open"></i></a>
-                          <a class="btn dropdown-toggle" data-toggle="dropdown" href="#"><span class="icon-caret-down"></span></a>
-                          <ul class="dropdown-menu">
-                            <li><a href="#"><i class="icon-pencil"></i> Edit</a></li>
-                            <li><a href="#"><i class="icon-trash"></i> Delete</a></li>
-                          </ul>
-                        </span>
-                      </td>
-                    </tr>
-                    <tr>
-                      <td><input type="checkbox"> <span><i class="icon-favorite"></i></span></td>
-                      <td><a href="partial/lead-view.html" data-toggle="tab" data-target="#record" data-mode="view">Plato's LED MFT</a></td>
-                      <td><span class="dblclick">San Francisco</span></td>
-                      <td><span class="dblclick">USA</span></td>
-                      <td><span class="dblclick">	(202) 312-5472</span></td>
-                      <td><a href="mailto:sales.support.im@example.com">sales.support.im@example.com</a></td>
-                      <td>
-                        <span class="hide actions dropdown pull-right btn-group">
-                          <a class="btn" href="partial/lead-preview.html" rel="tooltip" data-toggle="tab" data-target="#preview" data-mode="preview" data-original-title="Preview"><i class="icon-eye-open"></i></a>
-                          <a class="btn dropdown-toggle" data-toggle="dropdown" href="#"><span class="icon-caret-down"></span></a>
-                          <ul class="dropdown-menu">
-                            <li><a href="#"><i class="icon-pencil"></i> Edit</a></li>
-                            <li><a href="#"><i class="icon-trash"></i> Delete</a></li>
-                          </ul>
-                        </span>
-                      </td>
-                    </tr>
-                    <tr>
-                      <td><input type="checkbox"> <span><i class="icon-favorite"></i></span></td>
-                      <td><a href="partial/lead-view.html" data-toggle="tab" data-target="#record" data-mode="view">Plato's LED MFT</a></td>
-                      <td><span class="dblclick">Cupertino</span></td>
-                      <td><span class="dblclick">USA</span></td>
-                      <td><span class="dblclick">(408) 555-5271</span></td>
-                      <td><a href="mailto:sales@perkins.com">sales@perkins.com</a></td>
-                      <td>
-                        <span class="hide actions dropdown pull-right btn-group">
-                          <a class="btn" href="partial/lead-preview.html" rel="tooltip" data-toggle="tab" data-target="#preview" data-mode="preview" data-original-title="Preview"><i class="icon-eye-open"></i></a>
-                          <a class="btn dropdown-toggle" data-toggle="dropdown" href="#"><span class="icon-caret-down"></span></a>
-                          <ul class="dropdown-menu">
-                            <li><a href="#"><i class="icon-pencil"></i> Edit</a></li>
-                            <li><a href="#"><i class="icon-trash"></i> Delete</a></li>
-                          </ul>
-                        </span>
-                      </td>
-                    </tr>
-                    <tr>
-                      <td><input type="checkbox"> <span><i class="icon-favorite"></i></span></td>
-                      <td><a href="partial/lead-view.html" data-toggle="tab" data-target="#record" data-mode="view">Plato's LED MFT</a></td>
-                      <td><span class="dblclick">Cupertino</span></td>
-                      <td><span class="dblclick">USA</span></td>
-                      <td><span class="dblclick">(408) 555-5271</span></td>
-                      <td><a href="mailto:sales@perkins.com">sales@perkins.com</a></td>
-                      <td>
-                        <span class="hide actions dropdown pull-right btn-group">
-                          <a class="btn" href="partial/lead-preview.html" rel="tooltip" data-toggle="tab" data-target="#preview" data-mode="preview" data-original-title="Preview"><i class="icon-eye-open"></i></a>
-                          <a class="btn dropdown-toggle" data-toggle="dropdown" href="#"><span class="icon-caret-down"></span></a>
-                          <ul class="dropdown-menu">
-                            <li><a href="#"><i class="icon-pencil"></i> Edit</a></li>
-                            <li><a href="#"><i class="icon-trash"></i> Delete</a></li>
-                          </ul>
-                        </span>
-                      </td>
-                    </tr>
-                    <tr>
-                      <td><input type="checkbox"> <span><i class="icon-favorite"></i></span></td>
-                      <td><a href="partial/lead-view.html" data-toggle="tab" data-target="#record" data-mode="view">Plato's LED MFT</a></td>
-                      <td><span class="dblclick">Cupertino</span></td>
-                      <td><span class="dblclick">USA</span></td>
-                      <td><span class="dblclick">(408) 555-5271</span></td>
-                      <td><a href="mailto:sales@perkins.com">sales@perkins.com</a></td>
-                      <td>
-                        <span class="hide actions dropdown pull-right btn-group">
-                          <a class="btn" href="partial/lead-preview.html" rel="tooltip" data-toggle="tab" data-target="#preview" data-mode="preview" data-original-title="Preview"><i class="icon-eye-open"></i></a>
-                          <a class="btn dropdown-toggle" data-toggle="dropdown" href="#"><span class="icon-caret-down"></span></a>
-                          <ul class="dropdown-menu">
-                            <li><a href="#"><i class="icon-pencil"></i> Edit</a></li>
-                            <li><a href="#"><i class="icon-trash"></i> Delete</a></li>
-                          </ul>
-                        </span>
-                      </td>
-                    </tr>
-                    <tr>
-                      <td><input type="checkbox"> <span><i class="icon-favorite"></i></span></td>
-                      <td><a href="partial/lead-view.html" data-toggle="tab" data-target="#record" data-mode="view">Plato's LED MFT</a></td>
-                      <td><span class="dblclick">Cupertino</span></td>
-                      <td><span class="dblclick">USA</span></td>
-                      <td><span class="dblclick">(408) 555-5271</span></td>
-                      <td><a href="mailto:sales@perkins.com">sales@perkins.com</a></td>
-                      <td>
-                        <span class="hide actions dropdown pull-right btn-group">
-                          <a class="btn" href="partial/lead-preview.html" rel="tooltip" data-toggle="tab" data-target="#preview" data-mode="preview" data-original-title="Preview"><i class="icon-eye-open"></i></a>
-                          <a class="btn dropdown-toggle" data-toggle="dropdown" href="#"><span class="icon-caret-down"></span></a>
-                          <ul class="dropdown-menu">
-                            <li><a href="#"><i class="icon-pencil"></i> Edit</a></li>
-                            <li><a href="#"><i class="icon-trash"></i> Delete</a></li>
-                          </ul>
-                        </span>
-                      </td>
-                    </tr>
-                    <tr>
-                      <td><input type="checkbox"> <span><i class="icon-favorite"></i></span></td>
-                      <td><a href="partial/lead-view.html" data-toggle="tab" data-target="#record" data-mode="view">Plato's LED MFT</a></td>
-                      <td><span class="dblclick">San Francisco</span></td>
-                      <td><span class="dblclick">USA</span></td>
-                      <td><span class="dblclick">	(202) 312-5472</span></td>
-                      <td><a href="mailto:sales.support.im@example.com">sales.support.im@example.com</a></td>
-                      <td>
-                        <span class="hide actions dropdown pull-right btn-group">
-                          <a class="btn" href="partial/lead-preview.html" rel="tooltip" data-toggle="tab" data-target="#preview" data-mode="preview" data-original-title="Preview"><i class="icon-eye-open"></i></a>
-                          <a class="btn dropdown-toggle" data-toggle="dropdown" href="#"><span class="icon-caret-down"></span></a>
-                          <ul class="dropdown-menu">
-                            <li><a href="#"><i class="icon-pencil"></i> Edit</a></li>
-                            <li><a href="#"><i class="icon-trash"></i> Delete</a></li>
-                          </ul>
-                        </span>
-                      </td>
-                    </tr>
-                  </tbody>
-                </table>
+              <div class="layout_Leads">
                 <div>
-                    <a href="javascript:void(0)" name="show_more_button" class="loading wide">More Leads...</a>
+                  <div data-tour="tour-Leads-businesscard">
+                    <div class="headerpane"></div>
+                    <div class="record"></div>
+                  </div>
+                </div>
+                <div class="layout_Leads">
+                  <div class="main-content"></div>
                 </div>
               </div>
             </div>
+
             <div class="side sidebar-content span4">
-              <div class="side-pane active" id="overview">
-              </div>
+              <div class="side-pane active" id="overview"></div>
               <div class="preview-pane" id="preview"></div>
             </div>
+
           </div>
+
         </div>
       </div>
       <div id="footer"></div>
