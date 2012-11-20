@@ -140,27 +140,35 @@
         this.updatePanelSubTitle();
     },
 
-    //todo: translations
     updatePanelTitle: function() {
         var newTitle;
 
         if (this.getStatus() === this.STATUS_COMPLETE) {
-            newTitle = '<i class="icon-ok-sign icon-added"></i> ' + this.meta.moduleSingular + ' Associated:';
+            this.$('.completed').show();
+            newTitle = app.lang.get(
+                'LBL_CONVERT_MODULE_ASSOCIATED',
+                this.module,
+                {'moduleName': this.meta.moduleSingular}
+            );
             if (!this.meta.required) {
                 this.$('.optional').hide();
             }
         } else {
-            newTitle = 'Associate ' + this.meta.moduleSingular;
+            this.$('.completed').hide();
+            newTitle = app.lang.get(
+                'LBL_CONVERT_ASSOCIATE_MODULE',
+                this.module,
+                {'moduleName': this.meta.moduleSingular}
+            );
             if (!this.meta.required) {
                 this.$('.optional').show();
             }
         }
-        this.$('.title').html(newTitle);
+        this.$('.title').text(newTitle);
     },
 
-    //todo: translations
     updatePanelSubTitle: function() {
-        var newSubTitle;
+        var newSubTitle, translatedString;
 
         if (this.getStatus() === this.STATUS_COMPLETE) {
             if (this.currentState.activeView === this.DUPLICATE_VIEW) {
@@ -171,15 +179,25 @@
 
         } else if (this.currentState.activeView === this.DUPLICATE_VIEW) {
             if (this.currentState.duplicateCount > 0) {
-                newSubTitle = '> ' + this.currentState.duplicateCount + ' duplicates found';
+                translatedString = app.lang.get(
+                    'LBL_CONVERT_DUPLICATES_FOUND',
+                    this.module,
+                    {'duplicateCount': this.currentState.duplicateCount}
+                );
+                newSubTitle = '> ' + translatedString;
             }
         } else if (this.currentState.activeView === this.RECORD_VIEW) {
-            newSubTitle = '> Create New ' + this.meta.moduleSingular;
+            translatedString = app.lang.get(
+                'LBL_CONVERT_CREATE_NEW',
+                this.module,
+                {'moduleName': this.meta.moduleSingular}
+            );
+            newSubTitle = '> ' + translatedString;
         } else {
             return;
         }
 
-        this.$('.sub-title').html(newSubTitle);
+        this.$('.sub-title').text(newSubTitle);
     },
 
     getDisplayName: function(model) {
