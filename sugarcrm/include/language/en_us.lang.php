@@ -2649,6 +2649,19 @@ $app_strings = array (
     'LBL_QUOTES'=>'Quotes',
     //END SUGARCRM flav=pro || flav!=sales ONLY
 
+    // Strings for Instance Picker Widget
+    'LBL_INVITE' => 'Invite',
+    'LBL_INSTANCES' => 'Instances',
+    'LBL_YOUR_INSTANCES' => 'Your Instances',
+    'LBL_INSTANCE_USERS' => 'Instance Users',
+    'LBL_SWITCH_INSTANCE' => 'Switch to this instance',
+    'LBL_LAST_LOGIN' => 'last login',
+    'LBL_ENTER_EMAIL' => 'Enter invitee email...',
+    'LBL_INSTANCE_IN_USE' => 'Instance In Use',
+    'LBL_INSTANCE_ACTIVE' => 'You are already using this instance!',
+    'LBL_INSTANCE_INVITE_SENT' => 'Invite sent to',
+    'LBL_INSTANCE_SWITCH_FAILED' => 'Failed to switch instances',
+
     // Strings for Reminder Widget
     'LBL_REMINDERS' => 'Reminders',
     'LBL_REMINDERS_OVERDUE' => 'Overdue',
@@ -2932,6 +2945,9 @@ $app_strings = array (
     'LBL_MERGE_DUPLICATES'  => 'Merge',
     'LBL_SAVED_SEARCH_SHORTCUT' => 'Saved Searches',
     'LBL_SEARCH_POPULATE_ONLY'=> 'Perform a search using the search form above',
+    'LBL_SEARCH_NO_RESULTS' => 'No results found for ',
+    'LBL_SEARCH_FOR' => 'Search for ',
+    'LBL_SEARCH_FOR_MORE' => 'Search for more...',
     'LBL_DETAILVIEW'=>'Detail View',
     'LBL_LISTVIEW'=>'List View',
     'LBL_EDITVIEW'=>'Edit View',
@@ -3611,8 +3627,8 @@ $app_strings = array (
 
     //quickcreate modal dialog
     'LBL_IGNORE_DUPLICATE_AND_SAVE' => 'Ignore Duplicate and Save',
-    'LBL_SAVE_AND_CREATE_ANOTHER' => 'Save and Create Another',
-    'LBL_SAVE_AND_VIEW' => 'Save and View',
+    'LBL_SAVE_AND_CREATE_ANOTHER' => 'Save and create new',
+    'LBL_SAVE_AND_VIEW' => 'Save and view',
     'LBL_RESTORE' => 'Reset to Original',
 );
 

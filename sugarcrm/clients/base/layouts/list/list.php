@@ -1,10 +1,7 @@
 <?php
 
-$layout = MetaDataManager::getLayout('SideBarLayout');
-$layout->push('main', array('view'=>'headerpane'));
-$layout->push('main', array('view'=>'list-top'));
-$layout->push('main', array('view'=>'filter'));
-$layout->push('main', array('view'=>'list'));
-$layout->push('main', array('view'=>'list-bottom'));
-$layout->push('side', array('layout'=>'list-sidebar'));
+$layout = MetaDataManager::getLayout('GenericLayout', array('type' => 'list'));
+$layout->push(array('view'=>'headerpane'));
+$layout->push(array('layout'=>'subpanel'));
+$layout->push(array('view'=>'list-bottom'));
 $viewdefs['base']['layout']['list'] = $layout->getLayout();
