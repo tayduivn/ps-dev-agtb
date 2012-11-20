@@ -24,6 +24,12 @@ require_once("clients/base/api/ListApi.php");
 class ActivityStreamApi extends ListApi {
     public function registerApiRest() {
         return array(
+            'getTaggableBeans' => array(
+                'reqType' => 'GET',
+                'path' => array('ActivityStreamTags'),
+                'pathVars' => array(''),
+                'method' => 'getTags',
+            ),
             'getBeanActivities' => array(
                 'reqType' => 'GET',
                 'path' => array('ActivityStream', '<module>','?'),
@@ -67,6 +73,34 @@ class ActivityStreamApi extends ListApi {
                     'method' => 'deleteRecord',
             ),
         );
+    }
+
+    public function getTags($api, $args) {
+        // The values represent which field to check in order to make sure
+        // that the bean is valid.
+        $beans = array(
+            "Users" => "first_name",
+            "Contacts" => "first_name",
+            "Opportunities" => "name",
+            "Accounts" => "name"
+        );
+        $data = array();
+
+        // TODO: Make this non-n^2 somehow.
+        foreach($beans as $bean => $check) {
+            $seed = BeanFactory::getBean($bean);
+            $full_list = $seed->get_full_list();
+            foreach($full_list as $result) {
+                if(!empty($result->$check)) {
+                    $data[] = array(
+                        'module' => $bean,
+                        'name' => $result->name,
+                        'id' => $result->id,
+                    );
+                }
+            }
+        }
+        return $data;
     }
 
     public function getActivities($api, $args) {
@@ -120,13 +154,13 @@ class ActivityStreamApi extends ListApi {
         // For related tabs
         if(!empty($args['link'])) {
             $options['link'] = $args['link'];
-        } 
+        }
         if(!empty($args['parent_module'])) {
             $options['parent_module'] = $args['parent_module'];
-        }  
+        }
         if(!empty($args['parent_id'])) {
             $options['parent_id'] = $args['parent_id'];
-        }   
+        }
         return $options;
     }
 }

@@ -1,13 +1,13 @@
 <?php
+if (!defined('sugarEntry')) {
+    chdir('..');
+    define('sugarEntry', true);
+}
 if (empty($session_id)) {
     session_start();
 }
 if (!empty($_REQUEST['token'])) {
-    chdir('..');
-    if (!defined('sugarEntry')) {
-        define('sugarEntry', true);
-    }
-    include 'include/entryPoint.php';
+    require_once 'include/entryPoint.php';
     require_once 'summer/splash/BoxOfficeClient.php';
     $box = BoxOfficeClient::getInstance();
     $box->createSession();
@@ -23,12 +23,8 @@ if (empty($_SESSION['authenticated_user_id'])) {
     die();
 }
 if(!empty($_REQUEST['demo'])){
-    if (!defined('sugarEntry')) {
-        define('sugarEntry', true);
-    }
-    chdir('..');
-    include 'include/entryPoint.php';
-    include 'summer/demo.php';
+    require_once 'include/entryPoint.php';
+    require 'summer/demo.php';
     chdir('summer');
     header("Location: index.php");
 }
@@ -40,10 +36,11 @@ if(!empty($_REQUEST['demo'])){
     <meta http-equiv="x-ua-compatible" content="IE=8">
     <?php
     $min_file = 'summer/summer.min.css';
-    if(file_exists("../cache/".$min_file)) {
+    if(file_exists("cache/".$min_file)) {
         echo "<link rel=\"stylesheet\" type=\"text/css\" href=\"../cache/$min_file\" />\n";
     } else {
-        require_once('../jssource/JSGroupings.php');
+        require_once 'include/entryPoint.php';
+        require_once 'jssource/JSGroupings.php';
         foreach($js_groupings as $group) {
             foreach($group as $file => $min) {
                 if($min == $min_file) {
@@ -68,10 +65,11 @@ if(!empty($_REQUEST['demo'])){
 
 <?php
     $min_file = 'summer/summer.min.js';
-    if(file_exists("../cache/".$min_file)) {
+    if(file_exists("cache/".$min_file)) {
         echo "<script src=\"../cache/$min_file\"></script>\n";
     } else {
-        require_once('../jssource/JSGroupings.php');
+        require_once 'include/entryPoint.php';
+        require_once 'jssource/JSGroupings.php';
         foreach($js_groupings as $group) {
             foreach($group as $file => $min) {
                 if($min == $min_file) {
@@ -121,7 +119,7 @@ if(!empty($_REQUEST['demo'])){
             app.forecasts.initForecast();
 
             if(!_.has(app, 'entityList')) {
-                var url = app.api.buildURL("CustomReport/EntityList");
+                var url = app.api.buildURL("ActivityStreamTags");
                 app.entityList = [];
                 // Fetch taggable entities.
                 app.api.call('GET', url, null, {success: function(o) {
