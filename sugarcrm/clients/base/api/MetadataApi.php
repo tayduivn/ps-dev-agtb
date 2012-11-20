@@ -304,7 +304,7 @@ class MetadataApi extends SugarApi {
                             $controller = $this->insertHeaderComment($controller, $mdType, $name, $platform);
                             
                             if ( !isset($platControllers[$platform]) ) { $platControllers[$platform] = array(); }
-                            $platControllers[$platform][] = "\"$name\": ".$controller;
+                            $platControllers[$platform][] = "\"$name\": {\"controller\": ".$controller." }";
                                 
                         }
                     }
