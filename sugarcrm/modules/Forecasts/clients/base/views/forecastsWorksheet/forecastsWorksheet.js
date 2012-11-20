@@ -13,6 +13,11 @@
  *      by: safeFetch()
  *      when: user clicks ok on confirm dialog that they want to commit data
  *
+ * forecasts:forecastcommitbuttons:triggerSaveDraft
+ *      on: context.forecasts
+ *      by: safeFetch()
+ *      when: user performs an action that causes a check to be made against dirty data
+ *
  * forecasts:worksheet:rendered
  *      on: context.forecasts
  *      by: _render
@@ -44,6 +49,8 @@
     columnDefs : [],    
     mgrNeedsCommitted : false,
     commitButtonEnabled : false,
+    // boolean to denote that a fetch is currently in progress
+    fetchInProgress : false,
     
     /**
      * Initialize the View
@@ -320,6 +327,12 @@
      * @param fetch {boolean} Tells the function to go ahead and fetch if true, or runs dirty checks (saving) w/o fetching if false 
      */
     safeFetch: function(fetch){
+        //fetch currently already in progress, no need to duplicate
+        if(this.fetchInProgress) {
+            return;
+        }
+        //mark that a fetch is in process so no duplicate fetches begin
+        this.fetchInProgress = true;
         if(_.isUndefined(fetch))
         {
             fetch = true;
@@ -334,24 +347,8 @@
         if(collection.isDirty){
             //unsaved changes, ask if you want to save.
             if(confirm(app.lang.get("LBL_WORKSHEET_SAVE_CONFIRM", "Forecasts"))){
-                var modelCount = 0;
-                var saveCount = 0;
-                _.each(collection.models, function(model, index){
-                    var isDirty = model.get("isDirty");
-                    if(_.isBoolean(isDirty) && isDirty){
-                        modelCount++;
-                        model.set({draft: 1}, {silent:true});
-                        model.save({}, {success:function(){
-                            saveCount++;
-                            if(saveCount === modelCount){
-                                collection.isDirty = false;
-                                collection.fetch();
-                            }
-                        }});
-                        model.set({isDirty: false}, {silent:true});
-                    }  
-                });                        
-        }
+                self.context.forecasts.trigger("forecasts:forecastcommitbuttons:triggerSaveDraft");
+            }
             //user clicked cancel, ignore and fetch if fetch is enabled
             else{
                 
@@ -405,7 +402,9 @@
             if(fetch){
                 collection.fetch();
             }    
-        }        
+        }
+        //mark that the fetch is over
+        this.fetchInProgress = false;
     },
 
     /**

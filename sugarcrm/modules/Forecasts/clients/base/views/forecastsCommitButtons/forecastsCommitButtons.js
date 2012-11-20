@@ -76,6 +76,7 @@
             this.context.forecasts.worksheet.on("change", this.showSaveButton, self);
             this.context.forecasts.worksheetmanager.on("change", this.showSaveButton, self);
             this.context.forecasts.on("forecasts:forecastcommitbuttons:triggerCommit", this.triggerCommit, self);
+            this.context.forecasts.on("forecasts:forecastcommitbuttons:triggerSaveDraft", this.triggerSaveDraft, self);
             this.context.forecasts.on("change:selectedUser", function(){
             	this.context.forecasts.trigger("forecasts:commitButtons:disabled");
             }, this);
