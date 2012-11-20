@@ -81,10 +81,21 @@ class aCase extends Basic {
 									'meeting_id'=>'meetings', 'call_id'=>'calls', 'email_id'=>'emails',
 									);
 
+    /**
+     * This is a depreciated method, please start using __construct() as this method will be removed in a future version
+     *
+     * @see __construct
+     * @depreciated
+     */
+    public function aCase()
+    {
+        $this->__construct();
+    }
+
 	public function __construct() {
 		parent::__construct();
 		global $sugar_config;
-		if(!$sugar_config['require_accounts']){
+		if(empty($sugar_config['require_accounts'])){
 			unset($this->required_fields['account_name']);
 		}
 

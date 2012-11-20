@@ -26,13 +26,6 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * governing these rights and limitations under the License.  Portions created
  * by SugarCRM are Copyright(C) 2004-2005 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
-/*********************************************************************************
- * $Id: Currency.php 56344 2010-05-10 21:18:57Z jenny $
- ********************************************************************************/
-
-
-
-
 /**
  * Currency
  *
@@ -64,6 +57,17 @@ class Currency extends SugarBean
 	var $new_schema = true;
 
 	var $disable_num_format = true;
+
+    /**
+     * This is a depreciated method, please start using __construct() as this method will be removed in a future version
+     *
+     * @see __construct
+     * @depreciated
+     */
+    public function Currency()
+    {
+        $this->__construct();
+    }
 
 
     /**
@@ -119,7 +123,7 @@ class Currency extends SugarBean
      */
 	function getDefaultCurrencyName(){
 		global $sugar_config;
-		return $sugar_config['default_currency_name'];
+		return isset($sugar_config['default_currency_name'])?$sugar_config['default_currency_name']:'';
 	}
 
     /**
@@ -131,7 +135,7 @@ class Currency extends SugarBean
      */
 	function getDefaultCurrencySymbol(){
 		global $sugar_config;
-		return $sugar_config['default_currency_symbol'];
+		return isset($sugar_config['default_currency_symbol'])?$sugar_config['default_currency_symbol']:'';
 	}
 
     /**
@@ -143,7 +147,7 @@ class Currency extends SugarBean
      */
 	function getDefaultISO4217(){
 		global $sugar_config;
-		return $sugar_config['default_currency_iso4217'];
+		return isset($sugar_config['default_currency_iso4217'])?$sugar_config['default_currency_iso4217']:'';
 	}
 
     /**

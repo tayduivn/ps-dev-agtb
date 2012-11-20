@@ -222,8 +222,8 @@
      * @param totals
      */
     updateTotals : function (totals) {
-        var self = this;    
-        
+        var self = this;  
+         
         // these fields don't matter when it comes to tracking these values so just 0 them out.
         // we don't care about this field
         if(!_.isUndefined(totals.quota)) {
@@ -231,7 +231,6 @@
         }
 
         if(!_.isEqual(self.totals, totals)) {
-
             var best = {};
             var likely = {};
             var worst = {};
@@ -321,6 +320,8 @@
     commitForecast: function() {
         var self = this;
         var worksheetData = {};
+        worksheetData["new"] = {};
+        worksheetData["current"] = {};
         
         var currentWorksheet = self.context.forecasts.get("currentWorksheet");
         

@@ -336,7 +336,7 @@ class MetadataApi extends SugarApi {
     private function insertHeaderComment($controller, $mdType, $name, $platform) {
         $singularType = substr($mdType, 0, -1);
         $needle = '({';
-        $headerComment = "\n\t// " . ucfirst($name) ." ". ucfirst($singularType) . " ($platform)";
+        $headerComment = "\n\t// " . ucfirst($name) ." ". ucfirst($singularType) . " ($platform) \n";
 
         // Find position "after" needle
         $pos = (strpos($controller, $needle) + strlen($needle));
@@ -402,6 +402,9 @@ class MetadataApi extends SugarApi {
                 }
             }
         }
+        // always add back in employees
+        $data['module_list']['Employees'] = 'Employees';
+
         $data['full_module_list']['_hash'] = md5(serialize($data['full_module_list']));
         $data['module_list']['_hash'] = md5(serialize($data['module_list']));
 

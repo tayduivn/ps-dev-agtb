@@ -33,11 +33,19 @@ class SugarEmailAddress extends SugarBean
 
     static $count = 0;
 
+
     /**
-     * Sole constructor
+     * This is a depreciated method, please start using __construct() as this method will be removed in a future version
+     *
+     * @see __construct
+     * @depreciated
      */
-    function SugarEmailAddress()
+    public function SugarEmailAddress()
     {
+        $this->__construct();
+    }
+
+    public function __construct() {
         parent::__construct();
         $this->index = self::$count;
         self::$count++;
@@ -66,7 +74,7 @@ class SugarEmailAddress extends SugarBean
                         $primaryE = (isset($emailAddr['primary_address']) && $emailAddr['primary_address'] == "1") ? true : false;
                         $this->addAddress($address, $primaryE, false, $invalidE, $optO);
                     }
-                } else if (!isset($bean->email)) {
+                } else if (empty($bean->email)) {
                     // Special case if not bean->email - removing results in legacy breakage, broken tests, and general sadness. 
                     for ($i = 1; $i <= 10; $i++) {
                         $email = 'email' . $i;

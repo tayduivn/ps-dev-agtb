@@ -41,11 +41,10 @@
     isExpandableRows:'',
     isEditableWorksheet:false,
     _collection:{},
-    columnDefs : [],
-    needsRelaoded : false,
+    columnDefs : [],    
     mgrNeedsCommitted : false,
     commitButtonEnabled : false,
-
+    
     /**
      * Initialize the View
      *
@@ -150,7 +149,7 @@
         }
         app.view.View.prototype._renderField.call(this, field);
 
-        if (this.isEditableWorksheet === true && field.viewName !="edit" && field.def.clickToEdit === true) {
+        if (this.isEditableWorksheet === true && field.viewName !="edit" && field.def.clickToEdit === true && !_.contains(this.context.forecasts.config.get("sales_stage_won"), field.model.get('sales_stage')) && !_.contains(this.context.forecasts.config.get("sales_stage_lost"), field.model.get('sales_stage'))) {
             new app.view.ClickToEditField(field, this);
         }
 
@@ -176,7 +175,7 @@
     bindDataChange: function(params) {
         var self = this;
         if (this._collection) {
-            this._collection.on("reset", function() { self.calculateTotals(), self.render(); }, this);
+            this._collection.on("reset", function() {self.render(); }, this);
             this._collection.on("change", function() {
                 _.each(this._collection.models, function(element){
                     if(element.hasChanged("commit_stage")) {
@@ -204,14 +203,6 @@
             this.context.forecasts.worksheet.on("change", function() {
                 this.calculateTotals();
             }, this);
-            this.context.forecasts.on("change:reloadWorksheetFlag", function(){
-                if(this.context.forecasts.get('reloadWorksheetFlag') && this.showMe()){
-                    var model = this.context.forecasts.worksheet;
-                    model.url = this.createURL();
-                    this.safeFetch(true);
-                    this.context.forecasts.set({reloadWorksheetFlag: false});
-                }
-            }, this);
             this.context.forecasts.on("change:checkDirtyWorksheetFlag", function(){
                 if(this.context.forecasts.get('checkDirtyWorksheetFlag') && !this.showMe()){
                     var model = this.context.forecasts.worksheet;
@@ -222,14 +213,12 @@
 
             }, this);
             this.context.forecasts.on("forecasts:committed:saved", function(){
-                if(this.needsReloaded){
+                if(this.showMe()){
                     var model = this.context.forecasts.worksheet;
                     model.url = this.createURL();
-                    this.safeFetch();
-                    this.needsReloaded = false;
-                }
-                this.mgrNeedsCommitted = true;
-                
+                    this.safeFetch();                   
+                    this.mgrNeedsCommitted = true;
+                }                
             }, this);
             
             this.context.forecasts.on("forecasts:commitButtons:enabled", function(){
@@ -274,13 +263,13 @@
                     return app.lang.get("LBL_WORKSHEET_SAVE_CONFIRM_UNLOAD", "Forecasts");
                 }
                 //special manager cases for messages
-                else if(self.selectedUser.isManager){
+                else if((self.context.forecasts.get("currentWorksheet") == "worksheet") && self.selectedUser.isManager && self.context.forecasts.config.get("show_forecasts_commit_warnings")){
                     /*
                      * If the manager has a draft version saved, but hasn't committed that yet, they need to be shown a dialog that 
                      * lets them know, and gives them the option of committing before the page reloads. This happens if the commit button
                      * is enabled and they are on the rep worksheet.
                      */
-                    if((self.context.forecasts.get("currentWorksheet") == "worksheet") && self.commitButtonEnabled){
+                    if(self.commitButtonEnabled ){
                         var msg = app.lang.get("LBL_WORKSHEET_COMMIT_CONFIRM", "Forecasts").split("<br>");
                         //show dialog
                         return msg[0];                                       
@@ -331,7 +320,6 @@
      * @param fetch {boolean} Tells the function to go ahead and fetch if true, or runs dirty checks (saving) w/o fetching if false 
      */
     safeFetch: function(fetch){
-        
         if(_.isUndefined(fetch))
         {
             fetch = true;
@@ -377,17 +365,16 @@
         /*
          * Next, we need to check to see if the user is a manager.  They have their own requirements and dialogs (those described below)
          */
-        else if(self.selectedUser.isManager){
+        else if(self.selectedUser.isManager && (self.context.forecasts.get("currentWorksheet") == "worksheet") && self.context.forecasts.config.get("show_forecasts_commit_warnings")){
             /*
              * If the manager has a draft version saved, but hasn't committed that yet, they need to be shown a dialog that 
              * lets them know, and gives them the option of committing before the page reloads. This happens if the commit button
              * is enabled and they are on the rep worksheet.
              */
-            if((self.context.forecasts.get("currentWorksheet") == "worksheet") && self.commitButtonEnabled){
+            if(self.commitButtonEnabled){
                 var msg = app.lang.get("LBL_WORKSHEET_COMMIT_CONFIRM", "Forecasts").split("<br>");
                 //show dialog
                 if(confirm(msg[0] + "\n\n" + msg[1])){
-                    self.needsReloaded = true;
                     self.context.forecasts.trigger("forecasts:forecastcommitbuttons:triggerCommit");
                 }
                 //canceled, continue fetching
@@ -453,15 +440,7 @@
             return false;
         }
         $("#view-sales-rep").addClass('show').removeClass('hide');
-        $("#view-manager").addClass('hide').removeClass('show');
-        
-        /*
-         * if the user is a manager, we need to go find out if this worksheet's committed date is newer
-         * than the manager sheet.
-         */
-        if(this.selectedUser.isManager && (app.user.get('id') === this.selectedUser.id ) ){
-            self.mgrNeedsCommitted = false;
-        }          
+        $("#view-manager").addClass('hide').removeClass('show');           
         
         this.context.forecasts.set({checkDirtyWorksheetFlag: true, 
                                     currentWorksheet: "worksheet"});
@@ -705,7 +684,7 @@
             'included_opp_count' : includedCount,
             'total_opp_count' : self._collection.models.length
         };
-
+       
         this.context.forecasts.unset("updatedTotals", {silent: true});
         this.context.forecasts.set("updatedTotals", totals);
     },
@@ -716,12 +695,15 @@
      * @param params is always a context
      */
     updateWorksheetBySelectedUser:function (selectedUser) {
+        //do a dirty check before fetching. Safe fetch uses selected user for some of its checks, so we need to check
+        //things before this.selectedUser is replaced.
+        this.safeFetch(false);        
         this.selectedUser = selectedUser;
         if(this.selectedUser && !this.selectedUser){
             return false;
         }
         this._collection.url = this.createURL();
-        this.safeFetch(true);
+        this._collection.fetch();
     },
 
     /**

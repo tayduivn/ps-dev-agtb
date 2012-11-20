@@ -1,1 +1,1 @@
-<h1>{{str_format "LBL_FORECAST_TITLE" "Forecasts" fullName}}</h1>
+<h1>{{fullName}}</h1>

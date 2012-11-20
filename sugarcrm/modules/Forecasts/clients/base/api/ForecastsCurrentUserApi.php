@@ -86,11 +86,19 @@ class ForecastsCurrentUserApi extends CurrentUserApi {
         $returnInitData["initData"]["selectedUser"] = $selectedUser;
         $defaultSelections["selectedUser"] = $selectedUser;
 
-        $forecasts_timeframes_dom = TimePeriod::get_not_fiscal_timeperiods_dom();
         // TODO:  These should probably get moved in with the config/admin settings, or by themselves since this file will probably going away.
         $id = TimePeriod::getCurrentId();
-        $defaultSelections["timeperiod_id"]["id"] = (!empty($id)) ? $id : "";
-        $defaultSelections["timeperiod_id"]["label"] = (isset($forecasts_timeframes_dom[$id])) ? $forecasts_timeframes_dom[$id] : "";
+        if(!empty($id)) {
+            $timePeriod = new TimePeriod();
+            $timePeriod->retrieve($id);
+            $defaultSelections["timeperiod_id"] = array(
+                'id' => $id,
+                'label' => $timePeriod->name
+            );
+        } else {
+            $defaultSelections["timeperiod_id"]["id"] = '';
+            $defaultSelections["timeperiod_id"]["label"] = '';
+        }
 
         // INVESTIGATE:  these need to be more dynamic and deal with potential customizations based on how filters are built in admin and/or studio
         $admin = BeanFactory::getBean("Administration");

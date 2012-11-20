@@ -71,13 +71,13 @@
         if(this.context) {
             this.showFieldAlert = false;
             this.uid = this.model.get('user_id');
-
+            
             var fieldDate;
 
             if(this.model.get('date_modified')) {
                fieldDate = new Date(this.model.get('date_modified'));
             }
-
+            
             if(!_.isEmpty(this.context.forecasts.committed.models)) {
                 var lastCommittedDate = new Date(_.first(this.context.forecasts.committed.models).get('date_modified'));
 
@@ -85,7 +85,7 @@
                 if (_.isDate(fieldDate) && _.isDate(lastCommittedDate)) {
                     this.showFieldAlert = (fieldDate.getTime() > lastCommittedDate.getTime());
                 }
-            } else if(this.uid != app.user.get('id') && _.isDate(fieldDate)) {
+            } else if(_.isDate(fieldDate)) {
                 this.showFieldAlert = true;
             }
 

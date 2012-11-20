@@ -131,15 +131,12 @@
             this.context.forecasts.worksheetmanager.on("change", function() {
             	this.calculateTotals();
             }, this);
-            this.context.forecasts.on("change:reloadWorksheetFlag", function(){
-
-            	if(this.context.forecasts.get('reloadWorksheetFlag') && this.showMe()){
+            this.context.forecasts.on("forecasts:committed:saved", function(){
+            	if(this.showMe()){
             		var model = this.context.forecasts.worksheetmanager;
             		model.url = this.createURL();
             		this.safeFetch();
-            		this.context.forecasts.set({reloadWorksheetFlag: false});
             	}
-
             }, this);
             this.context.forecasts.on("change:checkDirtyWorksheetFlag", function(){
             	if(this.context.forecasts.get('checkDirtyWorksheetFlag') && !this.showMe()){
@@ -396,7 +393,8 @@
     fetchUserCommitHistory: function(event, nTr) {
         var options = {
             timeperiod_id : this.timePeriod,
-            user_id : $(event.target).attr('data-uid')
+            user_id : $(event.target).attr('data-uid'),
+            forecast_type : 'direct'
         };
 
         var dataCommitDate = $(event.target).attr('data-commitdate');
