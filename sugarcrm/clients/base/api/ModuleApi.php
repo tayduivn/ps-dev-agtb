@@ -163,21 +163,6 @@ class ModuleApi extends SugarApi {
         return $data;
     }
 
-    public function setFavorite($api, $args) {
-        $this->requireArgs($args, array('module', 'record'));
-        $this->toggleFavorites($args['module'], $args['record'], true);
-        $bean = $this->loadBean($api, $args, 'view');
-        $data = $this->formatBean($api, $args, $bean);
-        return $data;
-    }
-    public function unsetFavorite($api, $args) {
-        $this->requireArgs($args, array('module', 'record'));
-        $this->toggleFavorites($args['module'], $args['record'], false);
-        $bean = $this->loadBean($api, $args, 'view');
-        $data = $this->formatBean($api, $args, $bean);
-        return $data;
-    }
-
     public function updateRecord($api, $args) {
         $this->requireArgs($args,array('module','record'));
 

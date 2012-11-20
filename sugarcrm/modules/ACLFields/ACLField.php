@@ -33,7 +33,18 @@ class ACLField  extends ACLAction
     var $disable_custom_fields = true;
     var $new_schema = true;
 
-    function ACLField(){
+    /**
+     * This is a depreciated method, please start using __construct() as this method will be removed in a future version
+     *
+     * @see __construct
+     * @depreciated
+     */
+    public function ACLField()
+    {
+        $this->__construct();
+    }
+
+    public function __construct(){
         parent::__construct();
         //BEGIN SUGARCRM flav=pro ONLY
         $this->disable_row_level_security =true;

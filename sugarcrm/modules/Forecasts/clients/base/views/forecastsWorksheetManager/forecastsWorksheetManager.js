@@ -393,7 +393,8 @@
     fetchUserCommitHistory: function(event, nTr) {
         var options = {
             timeperiod_id : this.timePeriod,
-            user_id : $(event.target).attr('data-uid')
+            user_id : $(event.target).attr('data-uid'),
+            forecast_type : 'direct'
         };
 
         var dataCommitDate = $(event.target).attr('data-commitdate');

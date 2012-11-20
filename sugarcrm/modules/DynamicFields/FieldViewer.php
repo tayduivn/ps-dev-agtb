@@ -26,7 +26,10 @@
  * by SugarCRM are Copyright (C) 2004-2006 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 class FieldViewer{
-	function FieldViewer(){
+	public function FieldViewer(){
+        $this->__construct();
+    }
+    public function __construct() {
 		$this->ss = new Sugar_Smarty();
 	}
 	function getLayout($vardef){

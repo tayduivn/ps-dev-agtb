@@ -1,5 +1,4 @@
 <?php
-if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 /*********************************************************************************
  * The contents of this file are subject to the SugarCRM Professional End User
  * License Agreement ("License") which can be viewed at
@@ -23,54 +22,22 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * All Rights Reserved.
  ********************************************************************************/
 
+require_once('tests/rest/RestTestBase.php');
 
-
-class Group extends User {
-	// User attribute overrides
-	var $status			= 'Group';
-	var $password		= ''; // to disallow logins
-	var $default_team;
-	var $importable = false;
-
+/**
+ * Bug 58563 - module_list does not return Employees
+ */
+class RestBug58563Test extends RestTestBase
+{
 
     /**
-     * This is a depreciated method, please start using __construct() as this method will be removed in a future version
-     *
-     * @see __construct
-     * @depreciated
+     * Tests that multiselect default values are returned clean in the fields list
+     * from the metadata manager
+     * 
+     * @group Bug56505
      */
-    public function Group()
-    {
-        $this->__construct();
+    public function testEmployeeInModuleList() {
+        $restReply = $this->_restCall('metadata?type_filter=module_list');
+        $this->assertTrue(isset($restReply['reply']['module_list']['Employees']), 'Employees not returned in the module list.');
     }
-
-	public function __construct() {
-		parent::__construct();
-	}
-
-	/** 
-	 * overrides SugarBean method
-	 */
-	function mark_deleted($id) {
-		SugarBean::mark_deleted($id);
-	}
-
-	function create_export_query($order_by, $where)
-	{
-		$query = "SELECT users.*";
-		$query .= " FROM users ";
-		$where_auto = " users.deleted = 0";
-		if($where != "")
-			$query .= " WHERE $where AND " . $where_auto;
-		else
-			$query .= " WHERE " . $where_auto;
-		if($order_by != "")
-			$query .= " ORDER BY $order_by";
-		else
-			$query .= " ORDER BY users.user_name";
-		return $query;
-	}
-	
-} // end class def 
-
-?>
+}

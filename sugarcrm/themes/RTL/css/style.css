@@ -271,8 +271,8 @@ ul.megamenu .megacolumn,
 }
 ul.megamenu .megawrapper ul li.groupLabel,
 #moduleList .sf-menu ul .megawrapper ul li.groupLabel {
-	padding-left: 0px;
-	padding-right: 10px;
+	padding-left: 10px;
+	padding-right: 0px;
     display:block;
     float:right;
 }
