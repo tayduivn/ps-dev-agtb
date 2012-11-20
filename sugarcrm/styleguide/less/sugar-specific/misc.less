@@ -120,32 +120,35 @@ img.pull-left {
 .omnibar {
   padding: 15px 0 10px 20px;
   border-bottom: 1px solid darken(@grayLighter, 5%);
-}
-.omnibar .sayit  {
-  padding: 6px 8px; position: relative; z-index: 1;
-  border: dashed 1px @grayLight;
-  min-height: 42px !important;
-  margin-left: 0px !important;
-  color: @gray;
-}
-.omnibar:focused .sayit {
-  border: solid 1px @grayLight;
-  color: @gray;
-}
-.omnibar .inputactions {
-  background: @grayLighter;
-  padding: 8px;
-  margin: 0;
-  z-index: 0;
-  position: relative;
-  .border-radius(0 0 3px 3px);
-}
-.omnibar .inputactions a i {
-  color: @gray;
-  padding: 8px;
-  font-size: 18px;
-  line-height: 8px;
-  margin: 0 8px;
+  &.row {
+    margin: 0;
+  }
+  .sayit  {
+    padding: 6px 8px; position: relative; z-index: 1;
+    border: dashed 1px @grayLight;
+    min-height: 30px !important;
+    margin: 0 20px 0 56px;
+    color: @gray;
+  }
+  :focused .sayit {
+    border: solid 1px @grayLight;
+    color: @gray;
+  }
+  .inputactions {
+    background: @grayLighter;
+    padding: 8px;
+    margin: 0 20px 0 56px;
+    z-index: 0;
+    position: relative;
+    .border-radius(0 0 3px 3px);
+  }
+  .inputactions a i {
+    color: @gray;
+    padding: 8px;
+    font-size: 18px;
+    line-height: 8px;
+    margin: 0 8px;
+  }
 }
 
 .block .tab-content {
@@ -310,4 +313,8 @@ hr.soften {
   background-image:     -ms-linear-gradient(left, rgba(0,0,0,0), rgba(0,0,0,.1), rgba(0,0,0,0));
   background-image:      -o-linear-gradient(left, rgba(0,0,0,0), rgba(0,0,0,.1), rgba(0,0,0,0));
   border: 0;
+}
+
+.padded {
+  padding: 20px;
 }
