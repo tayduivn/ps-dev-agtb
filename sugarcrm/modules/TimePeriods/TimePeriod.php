@@ -59,6 +59,7 @@ class TimePeriod extends SugarBean {
     var $type;
     var $leaf_period_type;
     var $leaf_periods;
+    var $leaf_cycle;
     var $periods_in_year;
     var $leaf_name_template;
     var $name_template;
@@ -532,9 +533,8 @@ class TimePeriod extends SugarBean {
            if(empty($latestTimeperiod)) {
                //now we keep incrementing the targetStartDate until we reach the currentDate
                if($targetStartDate < $currentDate) {
-                   $leafPeriod = TimePeriod::getByType($this->leaf_period_type);
                    while($targetStartDate < $currentDate) {
-                       $targetStartDate->modify($leafPeriod->next_date_modifier);
+                       $targetStartDate->modify($this->next_date_modifier);
                    }
                }
                $targetStartDate->modify($this->previous_date_modifier);
