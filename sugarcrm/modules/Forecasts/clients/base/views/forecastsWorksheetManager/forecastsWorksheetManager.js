@@ -16,6 +16,12 @@
  *      on: context.forecasts
  *      by: _render()
  *      when: done rendering
+ *
+ * forecasts:forecastcommitbuttons:triggerSaveDraft
+ *      on: context.forecasts
+ *      by: safeFetch()
+ *      when: user performs an action that causes a check to be made against dirty data
+ *
  */
 ({
     url: 'rest/v10/ForecastManagerWorksheets',

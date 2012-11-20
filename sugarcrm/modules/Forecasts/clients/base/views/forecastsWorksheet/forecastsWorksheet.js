@@ -13,6 +13,11 @@
  *      by: safeFetch()
  *      when: user clicks ok on confirm dialog that they want to commit data
  *
+ * forecasts:forecastcommitbuttons:triggerSaveDraft
+ *      on: context.forecasts
+ *      by: safeFetch()
+ *      when: user performs an action that causes a check to be made against dirty data
+ *
  * forecasts:worksheet:rendered
  *      on: context.forecasts
  *      by: _render
