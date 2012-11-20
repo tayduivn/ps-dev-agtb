@@ -490,11 +490,11 @@ class RestService extends ServiceBase {
 
     /**
      * Send the response headers
-     * @return bool true
+     * @return bool
      */
-    protected function sendHeaders() {
+    public function sendHeaders() {
         if(headers_sent()) {
-            return true;
+            return false;
         }
         foreach($this->response_headers AS $header => $info) {
             header("{$header}: {$info}");
