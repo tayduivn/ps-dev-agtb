@@ -4,10 +4,14 @@ body {
   -o-background-size: cover;
   background-size: cover;
 }
+body .btn-success,
+body .btn-primary {
+  text-shadow: 0.1em 0.1em #333;
+}
 body .pull-right .btn {
   margin-bottom: 5px;
 }
-body .form .span3 {
+body .form div.span3 {
   text-align: center;
 }
 body #register,
@@ -32,12 +36,13 @@ body #login_block {
 body #desc_block {
   position: relative;
   top: 250px;
+  text-shadow: 0.1em 0.1em #333;
 }
 body #desc_block #cfe {
   font-size: 60px;
   color: white;
 }
 body #desc_block #wih {
-  font-size: 14px;
+  font-size: 16px;
   color: whitesmoke;
 }
