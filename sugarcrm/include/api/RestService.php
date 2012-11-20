@@ -28,6 +28,7 @@ class RestService extends ServiceBase {
 
     public $sessionId;
     public $user;
+    public $platform = 'base';
 
     /**
      * The leading portion of the URI for building request URIs with in the API
@@ -47,22 +48,21 @@ class RestService extends ServiceBase {
             $isLoggedIn = $this->authenticateUser();
 
             // Figure out the platform
-            $platform = 'base';
             if ( $isLoggedIn ) {
                 if ( isset($_SESSION['platform']) ) {
-                    $platform = $_SESSION['platform'];
+                    $this->platform = $_SESSION['platform'];
                 }
             } else {
                 // Since we don't have a session we have to allow the user to specify their platform
                 // However, since the results from the same URL will be different with
                 // no variation in the oauth_token header we need to only take it as a GET request.
                 if ( !empty($_GET['platform']) ) {
-                    $platform = $_GET['platform'];
+                    $this->platform = basename($_GET['platform']);
                 }
             }
 
 
-            $route = $this->findRoute($path,$version,$_SERVER['REQUEST_METHOD'],$platform);
+            $route = $this->findRoute($path,$version,$_SERVER['REQUEST_METHOD'],$this->platform);
 
             if ( $route == false ) {
                 throw new SugarApiExceptionNoMethod('Could not find any route that accepted a path like: '.$rawPath);
