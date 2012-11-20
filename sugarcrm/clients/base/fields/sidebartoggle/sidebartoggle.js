@@ -20,6 +20,6 @@
                 .addClass(pointRightClass);
         }
 
-        this.context.trigger('layout:sidebar:toggle');
+        this.context.trigger('toggleSidebar');
     }
 })

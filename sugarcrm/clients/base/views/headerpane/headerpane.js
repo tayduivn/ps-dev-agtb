@@ -18,6 +18,6 @@
     },
 
     create: function() {
-        //TODO: implement create flow
+        app.navigate(this.context, undefined, 'create');
     }
 })
