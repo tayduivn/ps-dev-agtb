@@ -281,20 +281,18 @@ class MetadataApi extends SugarApi {
         $js = "";
         $platforms = array_reverse($this->platforms);
         
+        $typeData = array();
         foreach(array('fields', 'views', 'layouts') as $mdType) {
 
             if (!empty($data[$mdType])){
-                $js  .= ",\n\t$mdType:{";
-                $comp = '';
+                $platControllers = array();
 
                 foreach($data[$mdType] as $name => $component) {
                     if ( !is_array($component) || !isset($component['controller']) ) {
-                        
                         continue;
                     }
                     $controllers = $component['controller'];
-                    $comp = ",\n\t\t\"$name\":{\n\t\t\t\"controller\":{\n";
-                    $plat = '';
+
                     if (is_array($controllers) ) {
                         foreach ($platforms as $platform) {
                             if (!isset($controllers[$platform])) {
@@ -303,28 +301,35 @@ class MetadataApi extends SugarApi {
                             $controller = $controllers[$platform];
                             // remove additional symbols in end of js content - it will be included in content
                             $controller = trim(trim($controller), ",;");
-                            // $controller = $this->insertHeaderComment($controller, $mdType, $name, $platform);
+                            $controller = $this->insertHeaderComment($controller, $mdType, $name, $platform);
                             
-                            $plat .= "\"$platform\":\n".$controller."\n,\n";
+                            if ( !isset($platControllers[$platform]) ) { $platControllers[$platform] = array(); }
+                            $platControllers[$platform][] = "\"$name\": ".$controller;
                                 
                         }
                     }
-                    //Chop off the last comma in $plat
-                    $plat = trim(trim($plat), ",");
-                    $plat .= "\n\t}";
-                    $comp .= $plat;
-
                     unset($data[$mdType][$name]['controller']);
-                    
-                
                 }
-                //Chop of the first comma in $comp
-                $js .= substr($comp, 1);
-                $js .= "\n\t}";
+                
+
+                // We should have all of the controllers for this type, split up by platform
+                $thisTypeStr = "\"$mdType\": {\n";
+
+                foreach ( $platforms as $platform ) {
+                    if ( isset($platControllers[$platform]) ) {
+                        $thisTypeStr .= "\"$platform\": {\n".implode(",\n",$platControllers[$platform])."\n},\n";
+                    }
+                }
+
+                $thisTypeStr = trim($thisTypeStr,"\n,")."}\n";
+                $typeData[] = $thisTypeStr;
             }
         }
-        //Chop of the first comma in $js
-        return substr($js,1);
+
+        $js = implode(",\n",$typeData)."\n";
+        
+        return $js;
+        
     }
     
     // Helper to insert header comments for controllers
