@@ -492,6 +492,9 @@ class RestService extends ServiceBase {
      * @return bool true
      */
     protected function sendHeaders() {
+        if(headers_sent()) {
+            return true;
+        }
         foreach($this->response_headers AS $header => $info) {
             header("{$header}: {$info}");
         }
@@ -574,6 +577,14 @@ class RestService extends ServiceBase {
 	 * @param string $etag ETag to use for this content.
 	 */
 	protected function generateETagHeader($etag){
+        if(isset($_SERVER["HTTP_IF_NONE_MATCH"])){
+            if($etag == $_SERVER["HTTP_IF_NONE_MATCH"]){
+                ob_clean();
+                header("Status: 304 Not Modified");
+                header("HTTP/1.0 304 Not Modified");
+                die();
+            }
+        }
         $this->setHeader('ETag', $etag);
 	}
 }

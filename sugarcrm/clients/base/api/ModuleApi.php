@@ -80,6 +80,7 @@ class ModuleApi extends SugarApi {
                 'pathVars' => array('module', 'enum', 'field'),
                 'method' => 'getEnumValues',
                 'shortHelp' => 'This method returns enum values for a specified field',
+                'longHelp' => 'include/api/help/module_enum_help.html',
             ),
         );
     }
@@ -95,11 +96,11 @@ class ModuleApi extends SugarApi {
 
         $bean = BeanFactory::newBean($args['module']);
 
-        $vardef = $bean->field_defs[$args['field']];
-
-        if(empty($vardef)) {
+        if(!isset($bean->field_defs[$args['field']])) {
            throw new SugarApiExceptionNotFound('field not found');
         }
+
+        $vardef = $bean->field_defs[$args['field']];
         
         $api->setHeader('Cache-Control', 'max-age=3600, private');
 

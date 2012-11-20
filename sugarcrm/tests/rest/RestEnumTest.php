@@ -25,14 +25,24 @@
 require_once('tests/rest/RestTestBase.php');
 
 class RestEnumTest extends RestTestBase {
+    public function tearDown() {
+        if(isset($this->contract_types)) {
+            foreach($this->contract_types AS $id => $name) {
+                $GLOBALS['db']->query("DELETE FROM contract_types WHERE id='{$id}'");                
+            }
+        }
+        
+        parent::tearDown();
+    }
     /**
      * @group rest
      */
     public function testFunctionBasedDropDown() {
-        $contract_types = array(
+            $contract_types = array(
                 create_guid() => 'Unit Test 1',
                 create_guid() => 'Unit Test 2',
             );
+            $this->contract_types = $contract_types;
         foreach($contract_types AS $id => $name) {
             $ct = BeanFactory::newBean('ContractTypes');
             $ct->new_with_id = true;
@@ -45,10 +55,6 @@ class RestEnumTest extends RestTestBase {
         $contract_types['']='';
 
         $this->assertEquals($contract_types, $restReply['reply']);
-
-        foreach($contract_types AS $id => $name) {
-            $GLOBALS['db']->query("DELETE FROM contract_types WHERE id='{$id}'");
-        }
     }
     /**
      * @group rest
