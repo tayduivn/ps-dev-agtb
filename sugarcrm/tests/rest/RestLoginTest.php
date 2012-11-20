@@ -84,6 +84,37 @@ class RestLoginTest extends RestTestBase
     /**
      * @group rest
      */
+    public function testRestOauthViaGet()
+    {
+        $args = array(
+            'grant_type' => 'password',
+            'username' => $this->_user->user_name,
+            'password' => $this->_user->user_name,
+            'client_id' => 'sugar',
+            'client_secret' => '',
+            'platform' => 'base',
+        );
+
+        $reply = $this->_restCall('oauth2/token',json_encode($args));
+        $this->assertNotEmpty($reply['reply']['access_token']);
+        $this->assertNotEmpty($reply['reply']['refresh_token']);
+        $this->assertNotEquals($reply['reply']['access_token'],$reply['reply']['refresh_token']);
+        $this->assertEquals('bearer',$reply['reply']['token_type']);
+        
+        $this->authToken = $reply['reply']['access_token'];
+        $replyPing = $this->_restCall('ping');
+        $this->assertEquals('pong',$replyPing['reply']);
+
+        $this->authToken = 'LOGGING_IN';
+        $replyPing2 = $this->_restCall('ping?oauth_token='.$reply['reply']['access_token']);
+        $this->assertEquals('pong',$replyPing2['reply']);
+
+    }
+
+
+    /**
+     * @group rest
+     */
     public function testRestLoginUserAutocreateKey()
     {
         $GLOBALS['db']->query("DELETE FROM oauth_consumer WHERE c_key = 'sugar'");
@@ -226,6 +257,17 @@ class RestLoginTest extends RestTestBase
         $this->contact->save();
         $GLOBALS ['system_config']->saveSetting('supportPortal', 'RegCreatedBy', $this->apiuser->id);
         $GLOBALS ['system_config']->saveSetting('portal', 'on', 1);
+
+        $consumer = BeanFactory::newBean('OAuthKeys');
+        $consumer->id = 'UNIT-TEST-portallogin';
+        $consumer->new_with_id = true;
+        $consumer->c_key = 'support_portal';
+        $consumer->c_secret = '';
+        $consumer->oauth_type = 'oauth2';
+        $consumer->client_type = 'support_portal';
+        $consumer->save();
+
+
         $GLOBALS['db']->commit();
         
         $args = array(
@@ -234,6 +276,7 @@ class RestLoginTest extends RestTestBase
             'password' => 'unittest',
             'client_id' => 'support_portal',
             'client_secret' => '',
+            'platform' => 'portal',
         );
         
         $reply = $this->_restCall('oauth2/token',json_encode($args));
@@ -255,6 +298,7 @@ class RestLoginTest extends RestTestBase
             'refresh_token' => $refreshToken,
             'client_id' => 'support_portal',
             'client_secret' => '',
+            'platform' => 'portal',
         );
         
         // Prevents _restCall from automatically logging in
@@ -331,4 +375,6 @@ class RestLoginTest extends RestTestBase
         $this->assertNotEmpty($reply['reply']['error']);
         $this->assertEquals('need_login',$reply['reply']['error']);
     }
+
+
 }
