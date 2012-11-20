@@ -477,27 +477,5 @@ class RestRelateRecordTest extends RestTestBase {
 
     }
 
-    public function testCreateWithModuleWithParentType() {
-        $call = new Call();
-        $call->name = "UNIT 1";
-        $call->save();
-
-        $this->calls[] = $call;
-
-        $post = array(
-                'embed_flag'        => 0,
-                'deleted'           => 0,
-                'name'              => 'Test Note',
-                'description'       => 'This is a test note',
-                'assigned_user_id'  => 1,
-            );
-
-        $restReply = $this->_restCall("Calls/{$call->id}/link/notes", $post, 'POST');
-        
-        $this->assertEquals($restReply['reply']['related_record']['parent_id'], $call->id, "Call ID was not the parent id of the note.");
-        $this->assertEquals($restReply['reply']['related_record']['parent_type'], 'Calls', "Call Module was not the parent type of the note.");
-
-    }
-
     
 }
