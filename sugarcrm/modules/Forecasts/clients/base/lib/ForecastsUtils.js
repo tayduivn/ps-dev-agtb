@@ -9,9 +9,10 @@
          *
          * @param oldestModel {BackboneModel} the oldest model by date_entered
          * @param newestModel {BackboneModel} the most recent model by date_entered
+         * @param config {BackboneModel} the config settings from the app
          * @return {Object}
          */
-        createHistoryLog: function(oldestModel, newestModel) {
+        createHistoryLog: function(oldestModel, newestModel, config) {
             var is_first_commit = false;
 
             if(_.isEmpty(oldestModel)) {
@@ -23,46 +24,85 @@
                 })
                 is_first_commit = true;
             }
-            var best_difference = newestModel.get('best_case') - oldestModel.get('best_case'),
-                best_changed = best_difference != 0,
-                best_direction = best_difference > 0 ? 'LBL_UP' : (best_difference < 0 ? 'LBL_DOWN' : ''),
-                likely_difference = newestModel.get('likely_case') - oldestModel.get('likely_case'),
-                likely_changed = likely_difference != 0,
-                likely_direction = likely_difference > 0 ? 'LBL_UP' : (likely_difference < 0 ? 'LBL_DOWN' : ''),
-                worst_difference = newestModel.get('worst_case') - oldestModel.get('worst_case'),
-                worst_changed = worst_difference != 0,
-                worst_direction = worst_difference > 0 ? 'LBL_UP' : (worst_difference < 0 ? 'LBL_DOWN' : ''),
+            var best_difference = this.getDifference(oldestModel, newestModel, 'best_case'),
+                best_direction = this.getDirection(best_difference),
+                likely_difference = this.getDifference(oldestModel, newestModel, 'likely_case'),
+                likely_direction = this.getDirection(likely_difference),
+                worst_difference = this.getDifference(oldestModel, newestModel, 'worst_case'),
+                worst_direction = this.getDirection(worst_difference),
                 args = [],
                 text = 'LBL_COMMITTED_HISTORY_NONE_CHANGED',
                 best_arrow = this.getArrowDirectionSpan(best_direction),
                 likely_arrow = this.getArrowDirectionSpan(likely_direction),
-                worst_arrow = this.getArrowDirectionSpan(worst_direction);
+                worst_arrow = this.getArrowDirectionSpan(worst_direction),
+                num_shown = 0,
+                hb = Handlebars.compile("{{str_format key module args}}"),
+                lang_string_key = '',
+                final_args = [],
+                labels = [],
+                setup_or_updated_lang_key = (is_first_commit) ? '_SETUP' : '_UPDATED',
+                likely_args = {
+                    changed : likely_difference != 0,
+                    show : config.get("show_worksheet_likely")
+                },
+                best_args = {
+                    changed : best_difference != 0,
+                    show : config.get("show_worksheet_best")
+                },
+                worst_args = {
+                    changed : worst_difference != 0,
+                    show : config.get("show_worksheet_worst")
+                };
+
+            // increment num_shown for each variable that is true
+            likely_args.show ? num_shown++ : '';
+            best_args.show ? num_shown++ : '';
+            worst_args.show ? num_shown++ : '';
+
+            // set the key for the lang string
+            lang_string_key = 'LBL_COMMITTED_HISTORY_' + num_shown + '_SHOWN';
 
             //determine what changed and add parts to the array for displaying the changes
-            if(best_changed) {
-                args.push(App.lang.get(best_direction, 'Forecasts') + best_arrow);
-                args.push(app.currency.formatAmountLocale(Math.abs(best_difference)));
-                args.push(app.currency.formatAmountLocale(newestModel.get('best_case')));
-            }
-
-            if(likely_changed) {
+            if(likely_args.changed && likely_args.show) {
+                args = [];
                 args.push(App.lang.get(likely_direction, 'Forecasts') + likely_arrow);
                 args.push(app.currency.formatAmountLocale(Math.abs(likely_difference)));
                 args.push(app.currency.formatAmountLocale(newestModel.get('likely_case')));
+                final_args.push(args);
+            } else if(likely_args.show) {
+                // push an empty array for args
+                final_args.push([]);
             }
 
-            if(worst_changed) {
+            if(best_args.changed && best_args.show) {
+                args = [];
+                args.push(App.lang.get(best_direction, 'Forecasts') + best_arrow);
+                args.push(app.currency.formatAmountLocale(Math.abs(best_difference)));
+                args.push(app.currency.formatAmountLocale(newestModel.get('best_case')));
+                final_args.push(args);
+            } else if(best_args.show) {
+                // push an empty array for args
+                final_args.push([]);
+            }
+
+            if(worst_args.changed && worst_args.show) {
+                args = [];
                 args.push(App.lang.get(worst_direction, 'Forecasts') + worst_arrow);
                 args.push(app.currency.formatAmountLocale(Math.abs(worst_difference)));
                 args.push(app.currency.formatAmountLocale(newestModel.get('worst_case')));
+                final_args.push(args);
+            } else if(worst_args.show) {
+                // push an empty array for args
+                final_args.push([]);
             }
 
-            //get label that will be used for the history changes
-            text = this.getCommittedHistoryLabel(best_changed, likely_changed, worst_changed, is_first_commit);
+            // get the final args to go into the main text
+            labels = this.getCommittedHistoryLabel(best_args, likely_args, worst_args, is_first_commit);
+
+            final_args = this.parseArgsAndLabels(final_args, labels);
 
             //Compile the language string for the log
-            var hb = Handlebars.compile("{{str_format key module args}}"),
-                text = hb({'key' : text, 'module' : 'Forecasts', 'args' : args});
+            var text = hb({'key' : lang_string_key, 'module' : 'Forecasts', 'args' : final_args});
 
             // Check for first time run -- no date_entered for oldestModel
             var oldestDateEntered = oldestModel.get('date_entered');
@@ -91,7 +131,7 @@
             }
 
             // need to tell Handelbars not to escape the string when it renders it, since there might be
-            // html in the string
+            // html in the string, args returned for testing purposes
             return {'text' : new Handlebars.SafeString(text), 'text2' : new Handlebars.SafeString(text2)};
         },
 
@@ -107,21 +147,106 @@
          },
 
         /**
-         * builds the string to look up for the history label based on what has changed in the model
-         * @param best_changed {bool}
-         * @param likely_changed {bool}
-         * @param worst_changed {bool}
+         * builds the args to look up for the history label based on what has changed in the model
+         * @param best_changed {Object}
+         * @param likely_changed {Object}
+         * @param worst_changed {Object}
          * @param is_first_commit {bool}
-         * @return {String}
+         * @return {Array}
          */
-        getCommittedHistoryLabel: function(best_changed, likely_changed, worst_changed, is_first_commit) {
-            var labelText = "LBL_COMMITTED_HISTORY";
+        getCommittedHistoryLabel: function(best, likely, worst, is_first_commit) {
+            var args = [];
 
-            labelText += best_changed ? "_BEST" : "";
-            labelText += likely_changed ? "_LIKELY" : "";
-            labelText += worst_changed ? "_WORST" : "";
+            // Handle if this is the first commit
+            if(is_first_commit) {
+                args.push('LBL_COMMITTED_HISTORY_SETUP_FORECAST');
+            } else {
+                args.push('LBL_COMMITTED_HISTORY_UPDATED_FORECAST');
+            }
 
-            return labelText + (!is_first_commit ? "_CHANGED" : "_SETUP");
+            // Handle Likely
+            if(likely.show) {
+                if(likely.changed) {
+                    args.push('LBL_COMMITTED_HISTORY_LIKELY_CHANGED');
+                } else {
+                    args.push('LBL_COMMITTED_HISTORY_LIKELY_SAME');
+                }
+            }
+
+            // Handle Best
+            if(best.show) {
+                if(best.changed) {
+                    args.push('LBL_COMMITTED_HISTORY_BEST_CHANGED');
+                } else {
+                    args.push('LBL_COMMITTED_HISTORY_BEST_SAME');
+                }
+            }
+
+            // Handle Worst
+            if(worst.show) {
+                if(worst.changed) {
+                    args.push('LBL_COMMITTED_HISTORY_WORST_CHANGED');
+                } else {
+                    args.push('LBL_COMMITTED_HISTORY_WORST_SAME');
+                }
+            }
+
+            return args;
+        },
+
+        /**
+         * Parses through labels array and adds the proper args in to the string
+         *
+         * @param argsArray {Array} of args (direction arrow html, amount difference and the new amount)
+         * @param labels {Array} of lang key labels to use
+         * @return {Array}
+         */
+        parseArgsAndLabels : function(argsArray, labels) {
+            var retArgs = [],
+                ct = 0,
+                hb = Handlebars.compile("{{str_format key module args}}");
+
+            // labels should have one more item in its array than argsArray
+            // because of the SETUP or UPDATED label which has no args
+            if((argsArray.length + 1) != labels.length)  {
+                // SOMETHING CRAAAAZY HAPPENED!
+                app.logger.error('ForecastsUtils.parseArgsAndLabels() :: argsArray and labels params are not the same length ');
+                return null;
+            }
+
+            _.each(labels, function(label) {
+                if(ct == 0) {
+                    // SETUP or UPDATED labels do not have args
+                    retArgs.push(hb({'key' : label, 'module' : 'Forecasts', 'args' : []}));
+                } else {
+                    retArgs.push(hb({'key' : label, 'module' : 'Forecasts', 'args' : argsArray[ct-1]}));
+                }
+                ct++;
+            });
+
+            return retArgs;
+        },
+
+        /**
+         * Returns the difference between the newest model and the oldest
+         *
+         * @param oldModel {Backbone.Model}
+         * @param newModel {Backbone.Model}
+         * @param attr {String} the attribute key to get from the models
+         * @return {*}
+         */
+        getDifference : function(oldModel, newModel, attr) {
+            return newModel.get(attr) - oldModel.get(attr);
+        },
+
+        /**
+         * Returns the proper direction label to use
+         *
+         * @param difference the amount of difference between newest and oldest models
+         * @return {String} LBL_UP, LBL_DOWN, or ''
+         */
+        getDirection : function(difference) {
+            return difference > 0 ? 'LBL_UP' : (difference < 0 ? 'LBL_DOWN' : '');
         },
 
         /**
