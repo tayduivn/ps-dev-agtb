@@ -61,8 +61,8 @@ class CurrentUserSummerApi extends CurrentUserApi {
 
         $box = BoxOfficeClient::getInstance();
         $inst = $box->getCurrentInstance();
-        $data['instance_name'] = $inst['name'];
-        $data['instance_id'] = $inst['id'];
+        $data['current_user']['instance_name'] = $inst['name'];
+        $data['current_user']['instance_id'] = $inst['id'];
 
         $tour_pref = $current_user->getPreference('show_tour');
 
