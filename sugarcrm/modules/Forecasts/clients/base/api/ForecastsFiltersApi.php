@@ -61,7 +61,25 @@ class ForecastsFiltersApi extends ModuleApi
      */
     public function timeperiod($api, $args)
     {
-        return TimePeriod::get_not_fiscal_timeperiods_dom();
+        // base file and class name
+        $file = 'include/SugarForecasting/Filter/TimePeriodFilter.php';
+        $klass = 'SugarForecasting_Filter_TimePeriodFilter';
+
+        // check for a custom file exists
+        $include_file = get_custom_file_if_exists($file);
+
+        // if a custom file exists then we need to rename the class name to be Custom_
+        if($include_file != $file) {
+            $klass = "Custom_" . $klass;
+        }
+
+        // include the class in since we don't have a auto loader
+        require_once($include_file);
+        // create the lass
+
+        /* @var $obj SugarForecasting_AbstractForecast */
+        $obj = new $klass($args);
+        return $obj->process();
     }
 
     public function getReportees($api, $args)
