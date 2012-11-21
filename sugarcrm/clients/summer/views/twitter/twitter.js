@@ -35,7 +35,7 @@
                     // Search for links and turn them into hrefs
                     for (j = 0; j < tokenText.length; j++) {
                         if (tokenText[j].charAt(0) == 'h' && tokenText[j].charAt(1) == 't') {
-                            tokenText[j] = "<a class='googledoc-fancybox' href=" + '"' + tokenText[j] + '"' + "target='_blank'>" + tokenText[j] + "</a>";
+                            tokenText[j] = "<a href=" + '"' + tokenText[j] + '"' + "target='_blank'>" + tokenText[j] + "</a>";
                         }
                     }
 

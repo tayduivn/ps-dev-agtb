@@ -49,7 +49,6 @@
                 "sidecar/lib/chosen/chosen.jquery.js" => "summer/summer.min.js",
                 "sidecar/lib/sugar/sugar.searchahead.js" => "summer/summer.min.js",
                 "sidecar/lib/sugar/sugar.timeago.js" => "summer/summer.min.js",
-                "summer/lib/jquery/jquery.fancybox-1.3.4.js" => "summer/summer.min.js",
                 "summer/lib/TimelineJS/js/storyjs-embed.js" => "summer/summer.min.js",
                 "summer/lib/fullcalendar/fullcalendar.js" => "summer/summer.min.js",
                 "sidecar/lib/sugarapi/sugarapi.js" => "summer/summer.min.js",

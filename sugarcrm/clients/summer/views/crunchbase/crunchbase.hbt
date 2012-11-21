@@ -6,7 +6,7 @@
         {{/if}}
 
         {{{overview}}}
-        <p>View <a class="googledoc-fancybox" href="http://www.crunchbase.com/company/{{name}}" title="{{name}} on CrunchBase">{{name}} on Crunchbase</a></p>
+        <p>View <a href="http://www.crunchbase.com/company/{{name}}" title="{{name}} on CrunchBase">{{name}} on Crunchbase</a></p>
         <div class="clear"></div>
     </div>
 </div>

@@ -432,11 +432,6 @@
         // If we're typing text.
         if (event.keyCode > 47) {
             this._getEntities(event);
-        } else {
-            // Fixes issue where a random font tag appears. ABE-128.
-            if (currentTarget.text().length === 0) {
-                currentTarget.html('');
-            }
         }
     },
 
@@ -463,6 +458,11 @@
         tag.data("id", data.id).data("module", data.module).data("name", data.name);
         var substring = body.html().substring(0, lastIndex);
         $(body).html(substring).append(tag).append("&nbsp;");
+
+        if($(body).children().length == 1) {
+            // Fixes issue where a random font tag appears. ABE-128.
+            $(body).prepend("&nbsp;");
+        }
 
         // Since the data is stored as an object, it's not preserved when we add the tag.
         // For this reason, we need to add it again.
