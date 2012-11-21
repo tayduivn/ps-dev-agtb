@@ -210,15 +210,6 @@
             this.context.forecasts.worksheet.on("change", function() {
                 this.calculateTotals();
             }, this);
-            this.context.forecasts.on("change:checkDirtyWorksheetFlag", function(){
-                if(this.context.forecasts.get('checkDirtyWorksheetFlag') && !this.showMe()){
-                    var model = this.context.forecasts.worksheet;
-                    model.url = this.createURL();
-                    this.safeFetch(false);
-                    this.context.forecasts.set({checkDirtyWorksheetFlag: false});
-                }
-
-            }, this);
             this.context.forecasts.on("forecasts:committed:saved", function(){
                 if(this.showMe()){
                     var model = this.context.forecasts.worksheet;
@@ -441,8 +432,7 @@
         $("#view-sales-rep").addClass('show').removeClass('hide');
         $("#view-manager").addClass('hide').removeClass('show');           
         
-        this.context.forecasts.set({checkDirtyWorksheetFlag: true, 
-                                    currentWorksheet: "worksheet"});
+        this.context.forecasts.set({currentWorksheet: "worksheet"});
         this.isEditableWorksheet = this.isMyWorksheet();
         this._setForecastColumn(this.meta.panels[0].fields);
 
