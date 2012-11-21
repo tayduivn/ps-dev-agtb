@@ -123,6 +123,7 @@ describe("Record View", function() {
             sinonSandbox.stub(SugarTest.app.acl, 'hasAccessToModel', function() {
                 return false;
             });
+            sinonSandbox.stub(SugarTest.app.error, 'handleRenderError', $.noop());
 
             view.render();
             view.model.set({
