@@ -329,14 +329,11 @@
         	var worksheetDataCurrent = [];
         	var worksheetDataNew = [];
         	_.each(self.context.forecasts[currentWorksheet].models, function(item){
-        		//if isDirty is defined this has been saved from the worksheet save so we can skip it here 
-        		if(_.isUndefined(item.get("isDirty"))){
-        			if(_.isEmpty(item.get("worksheet_id"))){
-            			worksheetDataNew.push(item.attributes);
-            		}
-            		else{
-            			worksheetDataCurrent.push(item.attributes);
-            		}
+    			if(_.isEmpty(item.get("worksheet_id"))){
+        			worksheetDataNew.push(item.attributes);
+        		}
+        		else{
+        			worksheetDataCurrent.push(item.attributes);
         		}        		
         	});
         	worksheetData = {"current": worksheetDataCurrent, "new": worksheetDataNew};

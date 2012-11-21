@@ -60,6 +60,7 @@ class SugarForecasting_Individual extends SugarForecasting_AbstractForecast impl
         	   		"p.base_rate, " .
         	   		"p.assigned_user_id, " .
         	   		"p.id product_id, " .
+                    "p.date_modified, " .
         	   		"w.id worksheet_id, " .
         	   		"w.user_id w_user_id, " .
         	   		"w.best_case w_best_case, " .
@@ -71,7 +72,8 @@ class SugarForecasting_Individual extends SugarForecasting_AbstractForecast impl
         	   		"w.commit_stage w_commit_stage, " .
         	   		"w.op_probability w_probability, " .
         	   		"w.currency_id w_currency_id, " .
-        	   		"w.base_rate w_base_rate " .
+        	   		"w.base_rate w_base_rate, " .
+                    "w.date_modified w_date_modified " .
         	   	"from products p " .
         	   	"inner join timeperiods t " .
         	   		"on t.id = '" . $this->getArg('timeperiod_id') . "' " .
@@ -118,6 +120,8 @@ class SugarForecasting_Individual extends SugarForecasting_AbstractForecast impl
             $data["base_rate"] = $row["base_rate"];
             $data["version"] = 1;
             $data["worksheet_id"] = $row["worksheet_id"];
+            $data["date_modified"] = $this->convertDateTimeToISO($row["date_modified"]);
+            $data["w_date_modified"] = $this->convertDateTimeToISO($row["w_date_modified"]);
 
             if (isset($row["worksheet_id"]) && $this->getArg("user_id") != $current_user->id) {
             	//use the worksheet data if it exists

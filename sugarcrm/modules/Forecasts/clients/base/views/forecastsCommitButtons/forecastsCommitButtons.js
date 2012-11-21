@@ -113,7 +113,8 @@
      */
     showSaveButton: function(){
     	var self = this,
-    	    worksheet = this.context.forecasts[this.context.forecasts.get("currentWorksheet")];    	    
+    	    worksheet = this.context.forecasts[this.context.forecasts.get("currentWorksheet")],    	    
+    	    savebtn = this.$el.find('#save_draft');
     	
 		_.each(worksheet.models, function(model, index){
 			var isDirty = model.get("isDirty");
@@ -125,6 +126,7 @@
 		
 		//if the sheet is dirty, trigger the event for the app to show the commit buttons.
 		if(worksheet.isDirty){
+		    savebtn.removeClass("disabled");
 		    this.context.forecasts.trigger("forecasts:commitButtons:enabled");
 		}		
     },
