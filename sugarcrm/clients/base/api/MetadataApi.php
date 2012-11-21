@@ -254,7 +254,7 @@ class MetadataApi extends SugarApi {
             $allModuleJS = '';
             foreach($data['modules'] as $module => $def)
             {
-                $moduleJS = $this->buildJSForComponents($data['modules'][$module]);
+                $moduleJS = $this->buildJSForComponents($def,true);
                 if(!empty($moduleJS)) {
                     $allModuleJS .= ",\n\t\t\"$module\":{{$moduleJS}}";
                 }
@@ -277,12 +277,19 @@ class MetadataApi extends SugarApi {
     }
 
 
-    protected function buildJSForComponents(&$data) {
+    protected function buildJSForComponents(&$data, $isModule = false) {
         $js = "";
         $platforms = array_reverse($this->platforms);
         
         $typeData = array();
-        foreach(array('fields', 'views', 'layouts') as $mdType) {
+        
+        if ( $isModule ) {
+            $types = array('fieldTemplates', 'views', 'layouts'); 
+        } else {
+            $types = array('fields', 'views', 'layouts'); 
+        }
+
+        foreach($types as $mdType) {
 
             if (!empty($data[$mdType])){
                 $platControllers = array();
