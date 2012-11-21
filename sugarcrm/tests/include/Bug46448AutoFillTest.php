@@ -45,6 +45,8 @@ class Bug46448AutoFillTest extends Sugar_PHPUnit_Framework_TestCase
 
     public function setUp()
     {
+        SugarTestHelper::setUp('beanFiles');
+        SugarTestHelper::setUp('beanList');
         require_once 'include/formbase.php';
         SugarTestHelper::setUp('current_user', array(true));
         $user = $GLOBALS['current_user'];
