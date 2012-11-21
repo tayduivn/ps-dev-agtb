@@ -1,7 +1,6 @@
 <?php
 
-$layout = MetaDataManager::getLayout('GenericLayout', array('type' => 'list'));
-$layout->push(array('view'=>'list-top'));
-$layout->push(array('layout'=>'subpanel'));
-$layout->push(array('view'=>'list-bottom'));
+$layout = MetaDataManager::getLayout("FilterPanelLayout", array("override" => true));
+$layout->setTab(array("name" => "List", "view" => "list", "default" => true, "toggles" => array("list")));
+$layout->setDefaultTab("List");
 $viewdefs['base']['layout']['list'] = $layout->getLayout();

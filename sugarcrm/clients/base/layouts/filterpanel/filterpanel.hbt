@@ -1,5 +1,9 @@
 <div class="tabbable hide">
-    <ul class="nav nav-tabs related-tabs"></ul>
+    <ul class="nav nav-tabs related-tabs">
+        {{#each tabs}}
+        <li><a href="#">{{name}}</a></li>
+        {{/each}}
+    </ul>
     <div class="tab-content"></div>
 </div>
 <form class="form-search" action="">
