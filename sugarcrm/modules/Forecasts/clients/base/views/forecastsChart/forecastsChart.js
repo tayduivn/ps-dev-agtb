@@ -6,7 +6,7 @@
  */
 ({
     values: new Backbone.Model(),
-    url:'rest/v10/Forecasts/chart',
+    url: app.api.buildURL('Forecasts/chart'),
 
     chart: null,
 
