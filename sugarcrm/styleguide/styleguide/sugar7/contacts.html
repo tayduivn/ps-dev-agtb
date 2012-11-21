@@ -13,9 +13,10 @@
         , {"file":"common/header","target":"#view .headerpane","method":"replace"}
         , {"file":"common/footer-master","target":"#footer","method":"append"}
         , {"file":"common/edit-drawer","target":".module-view","method":"append"}
-        , {"file":"common/search-filter","target":"#view .record","method":"replace"}
-        , {"file":"contact/contact-table","target":"#view .main-content","method":"append"}
-        , {"file":"preview/stats-preview","target":"#overview","method":"append"}
+
+        , {"file":"common/search-filter","target":"#view .search-filter","method":"replace"}
+        , {"file":"contact/contact-table","target":"#view .main-content","method":"replace"}
+        , {"file":"preview/stats-preview","target":"#overview","method":"replace"}
       ]
     };
   </script>
@@ -23,14 +24,14 @@
 <body>
   <div id="sugarcrm">
     <div id="sidecar">
-      <div id="alert" class="alert-top"></div>
+      <div id="alerts" class="alert-top"></div>
       <div id="header"></div>
       <div id="content">
-        <div class="layout_Leads container-fluid">
+        <div class="layout_Contacts container-fluid">
           <div class="row-fluid module-edit">
 
             <div class="main-pane span8" id="edit">
-              <div class="headerpane"></div>
+              <div class="headerpane ellipsis"></div>
               <div class="record"></div>
               <div class="main-content"></div>
             </div>
@@ -45,9 +46,20 @@
           <div class="row-fluid module-view">
 
             <div class="main-pane span8" id="view">
-              <div class="headerpane"></div>
-              <div class="record"></div>
-              <div class="main-content"></div>
+              <div class="layout_Contacts">
+                <div>
+                  <div data-tour="tour-Contacts-businesscard">
+                    <div class="headerpane ellipsis"></div>
+                    <div class="record"></div>
+                    <div class="moreless"></div>
+                  </div>
+                </div>
+                <div class="layout_Contacts">
+                  <div class="related-tabs"></div>
+                  <div class="search-filter"></div>
+                  <div class="main-content"></div>
+                </div>
+              </div>
             </div>
 
             <div class="side sidebar-content span4">

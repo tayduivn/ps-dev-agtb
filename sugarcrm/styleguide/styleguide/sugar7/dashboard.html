@@ -14,8 +14,8 @@
         , {"file":"common/header","target":"#view .headerpane","method":"append"}
         , {"file":"common/footer-master","target":"#footer","method":"append"}
 
-        , {"file":"common/search-filter","target":"#view .main-content","method":"replace"}
-        , {"file":"common/omnibar","target":"#view .main-content","method":"append"}
+        , {"file":"common/search-filter","target":"#view .search-filter","method":"replace"}
+        , {"file":"common/omnibar","target":"#view .main-content","method":"replace"}
         , {"file":"dashboard/dashboard-activitystream","target":"#view .main-content","method":"append"}
         , {"file":"chart/chart-events","target":"#overview","method":"append"}
       ]
@@ -25,7 +25,7 @@
 <body>
   <div id="sugarcrm">
     <div id="sidecar">
-      <div id="alert" class="alert-top"></div>
+      <div id="alerts" class="alert-top"></div>
       <div id="header"></div>
       <div id="content">
         <div class="layout_Dashboard container-fluid">
@@ -33,9 +33,20 @@
           <div class="row-fluid module-view">
 
             <div class="main-pane span8" id="view">
-              <div class="headerpane"></div>
-              <div class="record"></div>
-              <div class="main-content"></div>
+              <div class="layout_Dashboard">
+                <div>
+                  <div data-tour="tour-Leads-businesscard">
+                    <div class="headerpane ellipsis"></div>
+                    <div class="record"></div>
+                    <div class="moreless"></div>
+                  </div>
+                </div>
+                <div class="layout_Dashboard">
+                  <div class="related-tabs"></div>
+                  <div class="search-filter"></div>
+                  <div class="main-content"></div>
+                </div>
+              </div>
             </div>
 
             <div class="side sidebar-content span4">

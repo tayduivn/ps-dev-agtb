@@ -13,9 +13,10 @@
         , {"file":"common/header","target":"#view .headerpane","method":"replace"}
         , {"file":"common/footer-master","target":"#footer","method":"append"}
         , {"file":"common/edit-drawer","target":".module-view","method":"append"}
-        , {"file":"common/search-filter","target":"#view .record","method":"replace"}
-        , {"file":"lead/lead-table","target":"#view .main-content","method":"append"}
-        , {"file":"preview/interactions-preview","target":"#overview","method":"append"}
+
+        , {"file":"common/search-filter","target":"#view .search-filter","method":"replace"}
+        , {"file":"lead/lead-table","target":"#view .main-content","method":"replace"}
+        , {"file":"preview/interactions-preview","target":"#overview","method":"replace"}
       ]
     };
   </script>
@@ -30,7 +31,7 @@
           <div class="row-fluid module-edit">
 
             <div class="main-pane span8" id="edit">
-              <div class="headerpane"></div>
+              <div class="headerpane ellipsis"></div>
               <div class="record"></div>
               <div class="main-content"></div>
             </div>
@@ -48,11 +49,14 @@
               <div class="layout_Leads">
                 <div>
                   <div data-tour="tour-Leads-businesscard">
-                    <div class="headerpane"></div>
+                    <div class="headerpane ellipsis"></div>
                     <div class="record"></div>
+                    <div class="moreless"></div>
                   </div>
                 </div>
                 <div class="layout_Leads">
+                  <div class="related-tabs"></div>
+                  <div class="search-filter"></div>
                   <div class="main-content"></div>
                 </div>
               </div>
