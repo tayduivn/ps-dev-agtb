@@ -189,7 +189,8 @@
      */
     processConvert:function () {
         var self = this,
-            convertModel;
+            convertModel,
+            models = {};
 
         app.alert.show('processing_convert', {level: 'process', title: app.lang.getAppString('LBL_PORTAL_SAVING')});
 
@@ -200,8 +201,9 @@
         _.each(this.meta.modules, function (moduleMeta) {
             var convertPanel = self._getPanelByModuleName(moduleMeta.module),
                 associatedModel = convertPanel.getAssociatedModel();
-            convertModel.set(moduleMeta.module, associatedModel);
+            models[moduleMeta.module] = associatedModel;
         });
+        convertModel.set('modules', models);
 
         convertModel.save(null, {
             success:function (data) {
