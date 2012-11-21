@@ -9,8 +9,7 @@
         'click .record-cancel': 'cancelClicked',
         'click .record-delete': 'deleteClicked',
         'click .more': 'toggleMoreLess',
-        'click .less': 'toggleMoreLess',
-        'click .drawerTrig': 'toggleSidePanel'
+        'click .less': 'toggleMoreLess'
     },
 
     // button states
@@ -411,27 +410,6 @@
                 $buttons.del.toggleClass('hide', true);
                 break;
         }
-    },
-
-    /**
-     * Hide / show the side panel
-     */
-    toggleSidePanel: function() {
-        var chevron = this.$('.drawerTrig span'),
-            pointRightClass = 'icon-chevron-right',
-            pointLeftClass = 'icon-chevron-left';
-
-        if (chevron.hasClass(pointRightClass)) {
-            chevron
-                .removeClass(pointRightClass)
-                .addClass(pointLeftClass);
-        } else {
-            chevron
-                .removeClass(pointLeftClass)
-                .addClass(pointRightClass);
-        }
-
-        this.context.trigger("toggleSidebar");
     },
 
     /**
