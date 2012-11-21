@@ -29,7 +29,7 @@ if (!defined('sugarEntry') || !sugarEntry) {
  * Contributor(s): ______________________________________..
  ********************************************************************************/
 
-$viewdefs['Accounts']['base']['view']['list'] = array(
+$viewdefs['Notes']['base']['view']['list'] = array(
     'panels' => array(
         array(
             'name' => 'panel_header',
@@ -72,56 +72,66 @@ $viewdefs['Accounts']['base']['view']['list'] = array(
                     'value' => false,
                     'sortable' => false,
                 ),
-                array(
+                array (
                     'name' => 'name',
-                    'width' =>  49,
+                    'width' => '40%',
+                    'label' => 'LBL_LIST_SUBJECT',
                     'link' => true,
-                    'label' => 'LBL_LIST_ACCOUNT_NAME',
-                    'enabled' => true,
-                    'default' => true
-                ),
-                array(
-                    'name' => 'billing_address_city',
-                    'width' =>  13,
-                    'label' => 'LBL_LIST_CITY',
-                    'enabled' => true,
-                    'default' => true
-                ),
-                array(
-                    'name' => 'billing_address_country',
-                    'width' =>  13,
-                    'label' => 'LBL_BILLING_ADDRESS_COUNTRY',
-                    'enabled' => true,
-                    'default' => true
-                ),
-                array (
-                    'name' => 'phone_office',
-                    'width' => '10%',
-                    'label' => 'LBL_LIST_PHONE',
                     'default' => true,
                 ),
                 array (
-                    'name' => 'assigned_user_name',
-                    'width' => '10%',
-                    'label' => 'LBL_LIST_ASSIGNED_USER',
-                    'id' => 'ASSIGNED_USER_ID',
+                    'name' => 'contact_name',
+                    'width' => '20%',
+                    'label' => 'LBL_LIST_CONTACT',
+                    'link' => true,
+                    'id' => 'CONTACT_ID',
+                    'module' => 'Contacts',
                     'default' => true,
+                    'ACLTag' => 'CONTACT',
+                    'related_fields' =>
+                    array (
+                        0 => 'contact_id',
+                    ),
                 ),
-                array(
-                    'name' => 'email1',
-                    'width' => '15%',
-                    'label' => 'LBL_EMAIL_ADDRESS',
+                array (
+                    'name' => 'parent_name',
+                    'width' => '20%',
+                    'label' => 'LBL_LIST_RELATED_TO',
+                    'dynamic_module' => 'PARENT_TYPE',
+                    'id' => 'PARENT_ID',
+                    'link' => true,
+                    'default' => true,
                     'sortable' => false,
-                    'link' => true,
-                    'default' => true
+                    'ACLTag' => 'PARENT',
+                    'related_fields' =>
+                    array (
+                        0 => 'parent_id',
+                        1 => 'parent_type',
+                    ),
                 ),
                 array (
-                    'name' => 'date_entered',
-                    'type' => 'datetime',
-                    'label' => 'LBL_DATE_ENTERED',
-                    'enabled' => true,
-                    'width' => 13,
+                    'name' => 'filename',
+                    'width' => '20%',
+                    'label' => 'LBL_LIST_FILENAME',
                     'default' => true,
+                    'type' => 'file',
+                    'related_fields' =>
+                    array (
+                        0 => 'file_url',
+                        1 => 'id',
+                    ),
+                    'displayParams' =>
+                    array(
+                        'module' => 'Notes',
+                    ),
+                ),
+                array (
+                    'name' => 'created_by_name',
+                    'type' => 'relate',
+                    'label' => 'LBL_CREATED_BY',
+                    'width' => '10%',
+                    'default' => true,
+                    'related_fields' =>  array ( 'created_by' ),
                 ),
             ),
 

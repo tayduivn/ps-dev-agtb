@@ -1,7 +1,7 @@
-        <select data-placeholder="{{str "LBL_MODULE_NAME" def.module}}" name="{{name}}" class="relateEdit" {{#if multi}} multiple {{/if}}>
-            <option value="{{this.value}}" selected>{{this.value}}</option>
-            {{#eachOptions selectOptions}}
-                <option value="{{getFieldValue this ../this.def.rname ""}}" id="{{getFieldValue this "id" ""}}">{{getFieldValue this ../this.def.rname ""}}</option>
-            {{/eachOptions}}
+        <select data-placeholder="{{str "LBL_MODULE_NAME" def.module}}" name="{{name}}" class="chzn-select" {{#if multi}}multiple {{/if}}>
+            <option value=""></option>
+            {{#if value}}
+            <option value="{{getFieldValue model this.def.id_name}}" selected>{{value}}</option>
+            {{/if}}
+            <option data-searchmore="true" value="{{str "LBL_SEARCH_FOR_MORE"}}" class="more">{{str "LBL_SEARCH_FOR_MORE"}}</option>
         </select>
-        <p class="help-block"></p>

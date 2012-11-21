@@ -1,6 +1,6 @@
-describe("Relate field", function() {
+describe("Base.Field.Relate", function() {
 
-    var app;
+    var app, field;
 
     beforeEach(function() {
         app = SugarTest.app;
@@ -21,8 +21,8 @@ describe("Relate field", function() {
             "comment": "The name of the account represented by the account_id field",
             "required": true, "importable": "required"
         };
-        this.field = SugarTest.createField("base","account_name", "iframe", "detail", fieldDef);
-        this.field.model = new Backbone.Model({account_id: "1234", account_name: "bob"});
+        field = SugarTest.createField("base","account_name", "relate", "edit", fieldDef);
+        field.model = new Backbone.Model({account_id: "1234", account_name: "bob"});
     });
 
 
@@ -30,13 +30,18 @@ describe("Relate field", function() {
         app.cache.cutAll();
         app.view.reset();
         delete Handlebars.templates;
-        this.field.model = null;
-        this.field = null;
+        field.model = null;
+        field = null;
     });
 
-    describe("relate", function() {
-        xit("should have options template", function() {
-            expect(this.field.optionsTemplateC).toEqual(Handlebars.templates["f.relate.options"]);
-        });
+    it("should set value correctly", function() {
+        var expected_id = '0987',
+            expected_name = 'blahblah';
+
+        field.setValue({id: expected_id, value: expected_name});
+        var actual_id = field.model.get(field.def.id_name),
+            actual_name = field.model.get(field.def.name);
+        expect(actual_id).toEqual(expected_id);
+        expect(actual_name).toEqual(expected_name);
     });
 });
