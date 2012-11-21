@@ -132,4 +132,69 @@ describe('currency field', function() {
             getCurrencyField.restore();
         });
     });
+
+    describe('detail view', function() {
+        var field;
+
+        beforeEach(function() {
+            field = SugarTest.createField('base', 'amount', 'currency', 'detail', {
+                related_fields: ['currency_id', 'base_rate'],
+                currency_field: 'currency_id',
+                base_rate_field: 'base_rate'
+            });
+            field.model = model;
+
+        });
+
+        afterEach(function() {
+            field = null;
+        });
+
+        it('should make use of app.utils to format the value', function() {
+
+            var formatAmountLocale = sinon.spy(app.currency, 'formatAmountLocale');
+
+            field.format(123456789.98);
+            expect(formatAmountLocale.calledOnce).toBeTruthy();
+
+            formatAmountLocale.restore();
+        });
+
+        it('should be able to convert to base currency when formatting the value', function() {
+
+            var convertWithRate = sinon.spy(app.currency, 'convertWithRate');
+
+            field.def.convertToBase = true;
+            field.format(123456789.98);
+            expect(convertWithRate.calledOnce).toBeTruthy();
+
+            convertWithRate.restore();
+        });
+
+        it('should make use of app.utils to unformat the value', function() {
+
+            var unformatAmountLocale = sinon.spy(app.currency, 'unformatAmountLocale');
+
+            field.unformat('123456789.98');
+            expect(unformatAmountLocale.calledOnce).toBeTruthy();
+
+            unformatAmountLocale.restore();
+        });
+
+        it("should show transactional amount on render", function() {
+
+            model = app.data.createBean(moduleName, {
+                amount: 123456789.12,
+                currency_id: '12a29c87-a685-dbd1-497f-50abfe93aae6',
+                base_rate: 0.9
+            });
+            field.model = model;
+
+            field.def.convertToBase = true;
+            field.def.showTransactionalAmount = true;
+            field.render();
+            expect(field.transactionValue).toEqual('$123,456,789.12');
+
+        });
+    });
 });
