@@ -6,6 +6,11 @@
     </div>
     <div class="recommended-experts-list">
         {{#if this.collection.length}}
+        {{#eq this.collection.length "1"}}
+        <em class="recommended-experts-result-text">1 expert found with the "{{this.jobTitle}}" job title:</em>
+        {{else}}
+        <em class="recommended-experts-result-text">{{this.collection.length}} experts found with the "{{this.jobTitle}}" job title:</em>
+        {{/eq}}
         {{#each this.collection.models}}
         <article class="{{this.attributes.guid}}">
             <a class="recommended-experts-link" href="#Users/{{this.attributes.id}}">
@@ -25,7 +30,9 @@
         </article>
         {{/each}}
         {{else}}
-        <em>No experts found.</em>
+            {{#if jobTitle}}
+                <em>No experts found with the "{{this.jobTitle}}" job title.</em>
+            {{/if}}
         {{/if}}
     </div>
 </div>
