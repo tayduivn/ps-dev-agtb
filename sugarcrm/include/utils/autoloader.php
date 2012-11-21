@@ -571,6 +571,9 @@ class SugarAutoLoader
      */
     public static function getDirFiles($dir, $get_dirs = false, $extension = null)
     {
+        if(empty(self::$filemap)) {
+            self::init();
+        }
         if(DIRECTORY_SEPARATOR != '/') {
             $filename = str_replace(DIRECTORY_SEPARATOR, "/", $filename);
         }

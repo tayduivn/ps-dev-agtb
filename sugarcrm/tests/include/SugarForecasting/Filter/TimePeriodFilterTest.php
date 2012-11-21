@@ -70,8 +70,10 @@ class SugarForecasting_Filter_TimePeriodFilterTest extends Sugar_PHPUnit_Framewo
         return array(
             array(TimePeriod::ANNUAL_TYPE, TimePeriod::QUARTER_TYPE, 1, 1, 1, 1, 12),
             array(TimePeriod::ANNUAL_TYPE, TimePeriod::QUARTER_TYPE, 1, 1, 2, 2, 20),
+            array(TimePeriod::ANNUAL_TYPE, TimePeriod::QUARTER_TYPE, 2, 1, 1, 1, 12),
             array(TimePeriod::QUARTER_TYPE, TimePeriod::MONTH_TYPE, 1, 1, 1, 1, 9),
             array(TimePeriod::QUARTER_TYPE, TimePeriod::MONTH_TYPE, 1, 1, 2, 2, 15),
+            array(TimePeriod::QUARTER_TYPE, TimePeriod::MONTH_TYPE, 2, 1, 2, 2, 15),
         );
     }
 
@@ -104,6 +106,18 @@ class SugarForecasting_Filter_TimePeriodFilterTest extends Sugar_PHPUnit_Framewo
 
         $obj = new SugarForecasting_Filter_TimePeriodFilter(array());
         $this->assertEquals($expectedLeaves, count($obj->process()));
+
+        //Now assert that the leaf_cycle is 1 according to the specified start month
+        $timedate = TimeDate::getInstance();
+        $timePeriodToCheck = TimePeriod::getEarliest($leafType);
+
+        while($timePeriodToCheck != null) {
+            if($timedate->fromDbDate($timePeriodToCheck->start_date)->format('n') == $startMonth) {
+                $this->assertEquals(1, $timePeriodToCheck->leaf_cycle);
+            }
+            $timePeriodToCheck = $timePeriodToCheck->getNextTimePeriod();
+        }
+
     }
 
     private function updateForecastSettings($settings) {

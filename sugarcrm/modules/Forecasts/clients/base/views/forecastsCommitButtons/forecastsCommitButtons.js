@@ -29,6 +29,11 @@
      * Used to determine whether the config setting cog button is displayed
      */
     showConfigButton: false,
+    
+    /**
+     * Used to know which version to save, draft or live
+     */
+    draft: 0,
             
     /**
      * Adds event listener to elements
@@ -76,6 +81,7 @@
             this.context.forecasts.worksheet.on("change", this.showSaveButton, self);
             this.context.forecasts.worksheetmanager.on("change", this.showSaveButton, self);
             this.context.forecasts.on("forecasts:forecastcommitbuttons:triggerCommit", this.triggerCommit, self);
+            this.context.forecasts.on("forecasts:forecastcommitbuttons:triggerSaveDraft", this.triggerSaveDraft, self);
             this.context.forecasts.on("change:selectedUser", function(){
             	this.context.forecasts.trigger("forecasts:commitButtons:disabled");
             }, this);
@@ -147,10 +153,11 @@
      * as long as commit button is not disabled
      */
     triggerCommit: function() {
-    	var commitbtn =  this.$el.find('#commit_forecast');
-    	var savebtn = this.$el.find('#save_draft');
-    	var	self = this;
-    	var saved = 0;
+    	var commitbtn =  this.$el.find('#commit_forecast'),
+    	    savebtn = this.$el.find('#save_draft'),
+    	    self = this,
+    	    saved = 0;
+    	self.draft = 0;
     	
         if(!commitbtn.hasClass("disabled")){
             saved = self.saveDirtyWorksheets(function(){
@@ -172,18 +179,18 @@
      * @return integer Number of items saved
      */
     saveDirtyWorksheets: function(fcn){
-        var worksheet = this.context.forecasts[this.context.forecasts.get("currentWorksheet")];
-        var self = this;
-        var saveCount = 0;
-        var models = _.filter(worksheet.models, function(model, index) {
-            return (model.get("version") == 0 || (_.isBoolean(model.get("isDirty")) && model.get("isDirty")));
-        }, this);
-        
+        var worksheet = this.context.forecasts[this.context.forecasts.get("currentWorksheet")],
+            self = this,
+            saveCount = 0,
+            models = _.filter(worksheet.models, function(model, index) {
+                return (model.get("version") == 0 || (_.isBoolean(model.get("isDirty")) && model.get("isDirty")));
+            }, this);
+               
         //commit each model that needs saved
         _.each(models, function(model, index){
            //set properties on model to aid in save
             model.set({
-                "draft" : 0,
+                "draft" : self.draft,
                 "isDirty" : false,
                 "timeperiod_id" : self.context.forecasts.get("selectedTimePeriod").id,
                 "current_user" : app.user.get('id')
@@ -212,9 +219,11 @@
      * Handles Save Draft button being clicked
      */
     triggerSaveDraft: function() {
-    	var savebtn = this.$el.find('#save_draft');
-    	var self = this;
-    	var saved = 0;
+    	var savebtn = this.$el.find('#save_draft'),
+    	    self = this,
+    	    saved = 0;
+    	self.draft = 1;
+    	
     	if(!savebtn.hasClass("disabled")){
     	    saved = self.saveDirtyWorksheets();    				
             savebtn.addClass("disabled");
