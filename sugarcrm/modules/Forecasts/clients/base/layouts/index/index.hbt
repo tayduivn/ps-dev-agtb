@@ -1,7 +1,6 @@
-<div id="alerts" class="alert-top"></div>
-<div class="container-fluid" id="contentflex">
+<div class="container-fluid">
     <div class="row-fluid">
-        <div class="span8">
+        <div class="main-pane span8">
             <div id="headerbar">
                 <div class="view-forecastsTitle"></div>
                 <div class="view-forecastsTree"></div>
@@ -17,8 +16,8 @@
                 </div>
             </div>
         </div>
-        <div class="span4 tab-content" id="folded">
-            <div class="tab-pane active" id="overview">
+        <div class="side sidebar-content span4">
+            <div class="side-pane active" id="overview">
                 <div class="thumbnail viz">
                     <div class="view-forecastsChart"></div>
                 </div>

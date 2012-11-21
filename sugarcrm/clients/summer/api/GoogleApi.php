@@ -71,8 +71,9 @@ class GoogleAPI extends SugarApi
 
     public function contacts($api, $args)
     {
-        list($myfirst, $mydomain) = explode('@', $GLOBALS['current_user']->email1);
-        return array("contacts" => $this->findContacts($mydomain));
+        global $current_user;
+        $parts = $this->getEmailParts($current_user);
+        return array("contacts" => $this->findContacts($parts[1]));
     }
 
     protected function findContacts($excludeDomain = '', $limit = 5, $maxDepth = 200)
@@ -155,9 +156,24 @@ class GoogleAPI extends SugarApi
 
     public function recommend($api, $args)
     {
-        list($myfirst, $mydomain) = explode('@', $GLOBALS['current_user']->email1);
+        global $current_user;
+        list($myfirst, $mydomain) = $this->getEmailParts($current_user);
         $contacts = array();
-        if($mydomain != 'gmail.com')$contacts = $this->findContacts('', $mydomain);
+        if($mydomain && $mydomain != 'gmail.com') {
+            $contacts = $this->findContacts('', $mydomain);
+        }
         return array("invites" => $contacts);
+    }
+
+    protected function getEmailParts($current_user) {
+        $email = $current_user->email1;
+        if(strpos($email, '@') === FALSE) {
+            if(strpos($current_user->user_name, '@') !== FALSE) {
+                $email = $current_user->user_name;
+            } else {
+                return array(FALSE, FALSE);
+            }
+        }
+        return explode('@', $email);
     }
 }
