@@ -52,7 +52,7 @@ ul.reminders-pillbox {
     border-top: none;
 }
 
-.block.padded ul.reminders-pillbox li.reminders-pills {
+.block ul.reminders-pillbox li.reminders-pills {
     padding: 0;
 }
 
@@ -151,9 +151,18 @@ ul.reminders-pillbox {
 }
 
 /* Styles for record view */
-.reminders-list-view {
-    margin-bottom: 15px;
+.block.thumbnail.reminders-record-container {
+    padding: 0;
 }
+
+.block ul li.reminders-list-item {
+    border: none;
+}
+
+.block ul li.reminders-divider {
+    padding: 0;
+}
+
 .reminders-divider {
     height: 1px;
     margin: 8px 1px;
@@ -161,12 +170,13 @@ ul.reminders-pillbox {
     list-style: none;
     border-bottom: 1px solid @grayLighter;
 }
-.block.padded ul.reminders-pillbox.header {
+.block ul.reminders-pillbox.header {
     float: right;
     padding: 10px 0 0 0;
 }
 .tab-content.reminders-content {
     overflow: visible;
+    padding: 24px 0 10px 0;
 }
 
 input[type="checkbox"].reminders-related {
