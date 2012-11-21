@@ -68,6 +68,7 @@ header .subnav {
   margin-top: 20px;
 }
 
+//This is the existing headerbar
 #contentflex #headerbar,
 .headerpane {
   height: 60px;
@@ -113,6 +114,64 @@ header .subnav {
 
   .avatar {
     margin: 10px -5px 0 20px;
+  }
+}
+
+//This is the new headerpane with ellipsis
+//Requires that H1 be below button group and avatar
+.headerpane.ellipsis {
+  height: 60px;
+  z-index: 1000;
+  background: @grayLighter;
+  border-bottom: 1px solid darken(@grayLighter,5%);
+
+  h1 {
+    float: none;
+    margin-top: 0;
+    padding-top: 12px;
+    margin-left: 20px;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+  }
+
+  .dropdown-toggle {
+    .box-shadow(none);
+  }
+
+  .span12 {
+    margin-left: 0px;
+  }
+
+  .fav-star {
+    padding: 4px 5px 1px;
+    margin-right: 5px;
+  }
+
+  .drawerTrig {
+    padding: 4px 10px 1px;
+    margin-right: 5px;
+    [class^="icon-"] {
+      font-size: 20px;
+    }
+  }
+
+  .btn-toolbar {
+    margin-top: 15px;
+    .btn-group {
+      vertical-align: middle;
+    }
+  }
+
+  .avatar {
+    margin: 10px 0 0 20px;
+    float: left;
+    img {
+      width: 42px;
+      height: 42px;
+      vertical-align: middle;
+      //margin: -2px 12px 0;
+    }
   }
 }
 
