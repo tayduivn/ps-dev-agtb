@@ -124,6 +124,7 @@
 
         if (showElement.children().length == 0) {
             // add the things here...
+            view.fieldRanges[this.value] = {};
             showElement.append('<p>' + app.lang.get('LBL_FORECASTS_CONFIG_' + this.value.toUpperCase() + '_RANGES_DESCRIPTION', 'Forecasts') + '</p>');
             _.each(app.lang.getAppListStrings(bucket_dom), function(label, key) {
                 var rangeField,
@@ -167,7 +168,7 @@
 
                 // now give the view a way to get at this field's model, so it can be used to set the value on the
                 // real model.
-                view.fieldRanges[key] = rangeField;
+                view.fieldRanges[this.category][key] = rangeField;
 
                 // this gives the field a way to save to the view's real model.  It's wrapped in a closure to allow us to
                 // ensure we have everything when switching contexts from this handler back to the view.
@@ -178,6 +179,9 @@
                 }(this.category, key, this.view);
 
             }, {view: view, showElement:showElement, category: this.value});
+
+            // use call to set context back to the view for connecting the sliders
+            view.connectSliders.call(view, this.value, view.fieldRanges);
         }
 
         if (hideElement) {
@@ -186,9 +190,6 @@
         if (showElement){
             showElement.toggleClass('hide', false);
         }
-
-        // use call to set context back to the view for connecting the sliders
-        view.connectSliders.call(view, this.value, view.fieldRanges);
 
         // set the forecast category and associated dropdown dom on the model
         view.model.set(this.name, this.value);
@@ -217,46 +218,47 @@
      * selection handler when the user selects a category type.
      */
     connectSliders: function(category, sliders) {
+        var categorySliders = sliders[category];
         if(category == 'show_binary') {
-            sliders.include.sliderChangeDelegate = function (value) {
+            categorySliders.include.sliderChangeDelegate = function (value) {
                 // lock the upper handle to 100, as per UI/UX requirements to show a dual slider
-                sliders.include.$el.find(sliders.include.fieldTag).noUiSlider('move', {handle: 'upper', to: sliders.include.def.maxRange});
+                categorySliders.include.$el.find(categorySliders.include.fieldTag).noUiSlider('move', {handle: 'upper', to: categorySliders.include.def.maxRange});
 
-                sliders.exclude.$el.find(sliders.exclude.fieldTag).noUiSlider('move', {handle: 'upper', to: value.min-1});
+                categorySliders.exclude.$el.find(categorySliders.exclude.fieldTag).noUiSlider('move', {handle: 'upper', to: value.min-1});
             };
-            sliders.exclude.sliderChangeDelegate = function (value) {
+            categorySliders.exclude.sliderChangeDelegate = function (value) {
                 // lock the lower handle to 0, as per UI/UX requirements to show a dual slider
-                sliders.exclude.$el.find(sliders.include.fieldTag).noUiSlider('move', {handle: 'lower', to: sliders.exclude.def.minRange});
+                categorySliders.exclude.$el.find(categorySliders.include.fieldTag).noUiSlider('move', {handle: 'lower', to: categorySliders.exclude.def.minRange});
 
-                sliders.include.$el.find(sliders.include.fieldTag).noUiSlider('move', {handle: 'lower', to: value.max+1});
+                categorySliders.include.$el.find(categorySliders.include.fieldTag).noUiSlider('move', {handle: 'lower', to: value.max+1});
             }
         } else if (category == 'show_buckets') {
-            sliders.include.sliderChangeDelegate = function (value) {
+            categorySliders.include.sliderChangeDelegate = function (value) {
                 // lock the upper handle to 100, as per UI/UX requirements to show a dual slider
-                sliders.include.$el.find(sliders.include.fieldTag).noUiSlider('move', {handle: 'upper', to: sliders.include.def.maxRange});
+                categorySliders.include.$el.find(categorySliders.include.fieldTag).noUiSlider('move', {handle: 'upper', to: categorySliders.include.def.maxRange});
 
-                sliders.upside.$el.find(sliders.upside.fieldTag).noUiSlider('move', {handle: 'upper', to: value.min-1});
-                if(value.min <= sliders.upside.$el.find(sliders.upside.fieldTag).noUiSlider('value')[0] + 1) {
-                    sliders.upside.$el.find(sliders.upside.fieldTag).noUiSlider('move', {handle: 'lower', to: value.min-2});
+                categorySliders.upside.$el.find(categorySliders.upside.fieldTag).noUiSlider('move', {handle: 'upper', to: value.min-1});
+                if(value.min <= categorySliders.upside.$el.find(categorySliders.upside.fieldTag).noUiSlider('value')[0] + 1) {
+                    categorySliders.upside.$el.find(categorySliders.upside.fieldTag).noUiSlider('move', {handle: 'lower', to: value.min-2});
                 }
-                if(value.min <= sliders.exclude.$el.find(sliders.exclude.fieldTag).noUiSlider('value')[1] + 2) {
-                    sliders.exclude.$el.find(sliders.exclude.fieldTag).noUiSlider('move', {handle: 'upper', to: value.min-3});
+                if(value.min <= categorySliders.exclude.$el.find(categorySliders.exclude.fieldTag).noUiSlider('value')[1] + 2) {
+                    categorySliders.exclude.$el.find(categorySliders.exclude.fieldTag).noUiSlider('move', {handle: 'upper', to: value.min-3});
                 }
             };
-            sliders.upside.sliderChangeDelegate = function (value) {
-                sliders.include.$el.find(sliders.include.fieldTag).noUiSlider('move', {handle: 'lower', to: value.max+1});
-                sliders.exclude.$el.find(sliders.exclude.fieldTag).noUiSlider('move', {handle: 'upper', to: value.min-1});
+            categorySliders.upside.sliderChangeDelegate = function (value) {
+                categorySliders.include.$el.find(categorySliders.include.fieldTag).noUiSlider('move', {handle: 'lower', to: value.max+1});
+                categorySliders.exclude.$el.find(categorySliders.exclude.fieldTag).noUiSlider('move', {handle: 'upper', to: value.min-1});
             };
-            sliders.exclude.sliderChangeDelegate = function (value) {
+            categorySliders.exclude.sliderChangeDelegate = function (value) {
                 // lock the lower handle to 0, as per UI/UX requirements to show a dual slider
-                sliders.exclude.$el.find(sliders.include.fieldTag).noUiSlider('move', {handle: 'lower', to: sliders.exclude.def.minRange});
+                categorySliders.exclude.$el.find(categorySliders.include.fieldTag).noUiSlider('move', {handle: 'lower', to: categorySliders.exclude.def.minRange});
 
-                sliders.upside.$el.find(sliders.upside.fieldTag).noUiSlider('move', {handle: 'lower', to: value.max+1});
-                if(value.max >= sliders.upside.$el.find(sliders.upside.fieldTag).noUiSlider('value')[1] - 1) {
-                    sliders.upside.$el.find(sliders.upside.fieldTag).noUiSlider('move', {handle: 'upper', to: value.max+2});
+                categorySliders.upside.$el.find(categorySliders.upside.fieldTag).noUiSlider('move', {handle: 'lower', to: value.max+1});
+                if(value.max >= categorySliders.upside.$el.find(categorySliders.upside.fieldTag).noUiSlider('value')[1] - 1) {
+                    categorySliders.upside.$el.find(categorySliders.upside.fieldTag).noUiSlider('move', {handle: 'upper', to: value.max+2});
                 }
-                if(value.max >= sliders.include.$el.find(sliders.include.fieldTag).noUiSlider('value')[0] - 2) {
-                    sliders.include.$el.find(sliders.include.fieldTag).noUiSlider('move', {handle: 'lower', to: value.max+3});
+                if(value.max >= categorySliders.include.$el.find(categorySliders.include.fieldTag).noUiSlider('value')[0] - 2) {
+                    categorySliders.include.$el.find(categorySliders.include.fieldTag).noUiSlider('move', {handle: 'lower', to: value.max+3});
                 }
             }
         }
