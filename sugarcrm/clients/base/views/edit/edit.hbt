@@ -34,6 +34,7 @@
             <div class="span2">{{str  this.label ../../this.model.module}}</div>
             <div class="span10">
             {{field ../../this}}
+            <p class="help-block"></p>
             </div>
         </div>
         {{/each}}
