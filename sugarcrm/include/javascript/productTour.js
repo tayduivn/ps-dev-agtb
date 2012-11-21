@@ -55,6 +55,6 @@ modals[4] = {
 modals[5] = {
     title: SUGAR.language.get('app_strings', 'LBL_TOUR_SCREEN_6_TITLE'),
     content: SUGAR.language.get('app_strings', 'LBL_TOUR_SCREEN_6_DESCRIPTION'),
-    screenShotUrl: 'themes/default/images/pt-screen5-full.png'
+    screenShotUrl: 'themes/default/images/pt-screen6-full.png'
 };
 
