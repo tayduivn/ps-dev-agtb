@@ -294,54 +294,24 @@ class MetaDataManager {
      * @return array Array of ACL's, first the action ACL's (access, create, edit, delete) then an array of the field level acl's
      */
     public function getAclForModule($module,$userId) {
-        $aclAction = new ACLAction();
-        //BEGIN SUGARCRM flav=pro ONLY
-        $aclField = new ACLField();
-        //END SUGARCRM flav=pro ONLY
-        $acls = $aclAction->getUserActions($userId);
         $userObject = BeanFactory::getBean('Users',$userId);
         $obj = BeanFactory::getObjectName($module);
 
         $outputAcl = array('fields'=>array());
-        if ( is_admin($userObject) ) {
-            foreach ( array('admin','developer','access','view','list','edit','delete','import','export','massupdate') as $action ) {
+        if ( is_admin($userObject) || !SugarACL::moduleSupportsACL($module) ) {
+            foreach ( array('access','view','list','edit','delete','import','export','massupdate') as $action ) {
                 $outputAcl[$action] = 'yes';
             }
-        } else if ( isset($acls[$module]['module']) ) {
-            $moduleAcl = $acls[$module]['module'];
-
-            if ( isset($moduleAcl['admin']) && isset($moduleAcl['admin']['aclaccess']) && (($moduleAcl['admin']['aclaccess'] == ACL_ALLOW_ADMIN) || ($moduleAcl['admin']['aclaccess'] == ACL_ALLOW_ADMIN_DEV)) ) {
-                $outputAcl['admin'] = 'yes';
-                $isAdmin = true;
-            } else {
-                $outputAcl['admin'] = 'no';
-                $isAdmin = false;
-            }
-
-            if ( isset($moduleAcl['admin']) && isset($moduleAcl['admin']['aclaccess']) && (($moduleAcl['admin']['aclaccess'] == ACL_ALLOW_DEV) || ($moduleAcl['admin']['aclaccess'] == ACL_ALLOW_ADMIN_DEV)) ) {
-                $outputAcl['developer'] = 'yes';
-            } else {
-                $outputAcl['developer'] = 'no';
-            }
-
-            if ( ($moduleAcl['access']['aclaccess'] == ACL_ALLOW_ENABLED) || $isAdmin ) {
-                $outputAcl['access'] = 'yes';
-            } else {
-                $outputAcl['access'] = 'no';
+        } else {
+            $moduleAcls = SugarACL::getUserAccess($module, array(), array('user' => $userObject));
+            
+            // Bug56391 - Use the SugarACL class to determine access to different actions within the module
+            foreach(SugarACL::$all_access AS $action => $bool) {
+                $outputAcl[$action] = ($moduleAcls[$action] == true || !isset($moduleAcls[$action])) ? 'yes' : 'no';
             }
 
             // Only loop through the fields if we have a reason to, admins give full access on everything, no access gives no access to anything
-            if ( $outputAcl['access'] == 'yes' && $outputAcl['developer'] == 'no' ) {
-
-                foreach ( array('view','list','edit','delete','import','export','massupdate') as $action ) {
-                    if ( $moduleAcl[$action]['aclaccess'] == ACL_ALLOW_ALL ) {
-                        $outputAcl[$action] = 'yes';
-                    } else if ( $moduleAcl[$action]['aclaccess'] == ACL_ALLOW_OWNER ) {
-                        $outputAcl[$action] = 'owner';
-                    } else {
-                        $outputAcl[$action] = 'no';
-                    }
-                }
+            if ( $outputAcl['access'] == 'yes') {
 
                 // Currently create just uses the edit permission, but there is probably a need for a separate permission for create
                 $outputAcl['create'] = $outputAcl['edit'];
@@ -349,29 +319,23 @@ class MetaDataManager {
                 // Now time to dig through the fields
                 $fieldsAcl = array();
                 //BEGIN SUGARCRM flav=pro ONLY
-                $fieldsAcl = $aclField->loadUserFields($module,$obj,$userId,true);
+                $fieldsAcl = ACLField::getAvailableFields($module);
                 //END SUGARCRM flav=pro ONLY
+                // get the field names
+                SugarACL::listFilter($module, $fieldsAcl, array('user' => $userObject), array('add_acl' => true));
                 foreach ( $fieldsAcl as $field => $fieldAcl ) {
-                    switch ( $fieldAcl ) {
-                        case ACL_READ_WRITE:
+                    switch ( $fieldAcl['acl'] ) {
+                        case 4:
                             // Default, don't need to send anything down
                             break;
-                        case ACL_READ_OWNER_WRITE:
-                            // $outputAcl['fields'][$field]['read'] = 'yes';
-                            $outputAcl['fields'][$field]['write'] = 'owner';
-                            $outputAcl['fields'][$field]['create'] = 'owner';
-                            break;
-                        case ACL_READ_ONLY:
-                            // $outputAcl['fields'][$field]['read'] = 'yes';
+                        case 1:
                             $outputAcl['fields'][$field]['write'] = 'no';
                             $outputAcl['fields'][$field]['create'] = 'no';
                             break;
-                        case ACL_OWNER_READ_WRITE:
-                            $outputAcl['fields'][$field]['read'] = 'owner';
-                            $outputAcl['fields'][$field]['write'] = 'owner';
-                            $outputAcl['fields'][$field]['create'] = 'owner';
+                        case 2:
+                            $outputAcl['fields'][$field]['read'] = 'no';
                             break;
-                        case ACL_ALLOW_NONE:
+                        case 0:
                         default:
                             $outputAcl['fields'][$field]['read'] = 'no';
                             $outputAcl['fields'][$field]['write'] = 'no';
@@ -379,7 +343,6 @@ class MetaDataManager {
                             break;
                     }
                 }
-
             }
         }
         $outputAcl['_hash'] = md5(serialize($outputAcl));
