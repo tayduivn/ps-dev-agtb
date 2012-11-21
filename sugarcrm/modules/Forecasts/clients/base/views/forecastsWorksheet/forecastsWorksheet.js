@@ -551,6 +551,16 @@
         // Trigger event letting other components know worksheet finished rendering
         self.context.forecasts.trigger("forecasts:worksheet:rendered");
 
+        //Check to see if any worksheet entries are older than the source data.  If so, that means that the
+        //last commit is older, and that we need to enable the commit buttons
+        _.each(this._collection.models, function(model, index){
+            if(!_.isEmpty(model.get("w_date_modified")) && (new Date(model.get("w_date_modified")) < new Date(model.get("date_modified")))) {
+                enableCommit = true;
+            }
+        });
+        if (enableCommit) {
+            self.context.forecasts.trigger("forecasts:commitButtons:enabled");
+        }
         return this;
     },
 

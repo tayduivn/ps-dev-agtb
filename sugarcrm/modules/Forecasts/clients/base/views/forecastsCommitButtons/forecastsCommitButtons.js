@@ -112,19 +112,23 @@
      * 
      */
     showSaveButton: function(){
-    	var self = this;
-    	var worksheet = this.context.forecasts[this.context.forecasts.get("currentWorksheet")];
+    	var self = this,
+    	    worksheet = this.context.forecasts[this.context.forecasts.get("currentWorksheet")],    	    
+    	    savebtn = this.$el.find('#save_draft');
     	
 		_.each(worksheet.models, function(model, index){
 			var isDirty = model.get("isDirty");
 			if(_.isBoolean(isDirty) && isDirty){
-				self.enableCommitButton();
-				self.$el.find('a[id=save_draft]').removeClass('disabled');
 				//if something in the worksheet is dirty, we need to flag the entire worksheet as dirty.
 				worksheet.isDirty = true;
 			}
 		});
-    	
+		
+		//if the sheet is dirty, trigger the event for the app to show the commit buttons.
+		if(worksheet.isDirty){
+		    savebtn.removeClass("disabled");
+		    this.context.forecasts.trigger("forecasts:commitButtons:enabled");
+		}		
     },
     
     /**

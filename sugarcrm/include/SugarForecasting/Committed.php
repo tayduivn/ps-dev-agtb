@@ -161,7 +161,9 @@ class SugarForecasting_Committed extends SugarForecasting_AbstractForecast imple
                                                "from products p " .
                                                "where p.id = related_id" .
                                              "), " .
-                           "version = 1 " .
+                           "version = 1, " .
+                           "date_modified = '" . $GLOBALS["timedate"]->nowDb() . "', " .
+                           "modified_user_id = '" . $current_user->id . "' " .
                    "where exists (" .
                                    "select * " .
                                    "from products p " .
