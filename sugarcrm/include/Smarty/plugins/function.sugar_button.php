@@ -506,15 +506,22 @@ function smarty_function_sugar_button($params, &$smarty)
                             }
                             
                         if (!$enable_action_menu) {
-                            foreach ($urlParams as $tplButton) {
-                                if (isset($tplButton['pdf_template_id'])) {
-                                    $parentLocation = 'index.php?module='.$module.'&record='.$tplButton['record'].'&action='.$tplButton['action'].'&sugarpdf='.$tplButton['sugarpdf'].'&pdf_template_id='.$tplButton['pdf_template_id'];
-                                    $output .= '<input class="button" type="button" value="'.translate('LBL_PDF_VIEW').'-'.$tplButton['name'].'" id="'.$tplButton['name'].'_pdfview" onclick="parent.location=\''.$parentLocation.'\'">';
-                                } else {
-                                    // legacy templates
-                                    $parentLocation = 'index.php?module='.$module.'&record='.$tplButton['record'].'&action='.$tplButton['action'].'&sugarpdf='.$tplButton['sugarpdf'].'&email_action='.$tplButton['email_action'];
-                                    $output .= '<input class="button" type="button" value="'.translate('LBL_PDF_VIEW').'-'.$GLOBALS['app_strings']['LBL_EXISTING'].'_'.$tplButton['name'].'" id="'.$tplButton['name'].'_pdfview" onclick="parent.location=\''.$parentLocation.'\'">';
+                            if (!empty($urlParams)) {
+                                $output .= '<ul class="clickMenu fancymenu">';
+                                $output .= '<li class="sugar_action_button">';
+                                $output .= '<a>'.translate('LBL_PDF_VIEW').'</a>';
+                                $output .= '<ul class="subnav" style="display: none;">';
+                                foreach ($urlParams as $tplButton) {
+                                    if (isset($tplButton['pdf_template_id'])) {
+                                        $parentLocation = 'index.php?module='.$module.'&record='.$tplButton['record'].'&action='.$tplButton['action'].'&sugarpdf='.$tplButton['sugarpdf'].'&pdf_template_id='.$tplButton['pdf_template_id'];
+                                        $output .= '<li><a id="'.$tplButton['name'].'_pdfview" '. 'href="'.$parentLocation.'">'.$tplButton['name'].'</a></li>';
+                                    } else {
+                                        // legacy templates
+                                        $parentLocation = 'index.php?module='.$module.'&record='.$tplButton['record'].'&action='.$tplButton['action'].'&sugarpdf='.$tplButton['sugarpdf'].'&email_action='.$tplButton['email_action'];
+                                        $output .= '<li><a id="'.$tplButton['name'].'_pdfview" '. 'href="'.$parentLocation.'">'.$GLOBALS['app_strings']['LBL_EXISTING'].'_'.$tplButton['name'].'</a></li>';
+                                    }
                                 }
+                                $output .= '</ul><span class="ab"></span></li></ul>';
                             }
                         } else {
                             require_once('include/Smarty/plugins/function.sugar_menu.php');
@@ -661,15 +668,22 @@ function smarty_function_sugar_button($params, &$smarty)
                                 }
                                 
                         if (!$enable_action_menu) {
-                            foreach ($urlParams as $tplButton) {
-                                if (isset($tplButton['pdf_template_id'])) {
-                                    $parentLocation = 'index.php?module='.$module.'&record='.$tplButton['record'].'&action='.$tplButton['action'].'&sugarpdf='.$tplButton['sugarpdf'].'&pdf_template_id='.$tplButton['pdf_template_id'].'&to_email='.$tplButton['to_email'];
-                                    $output .= '<input class="button" type="button" value="'.translate('LBL_PDF_EMAIL').'-'.$tplButton['name'].'" id="'.$tplButton['name'].'_pdfemail" onclick="parent.location=\''.$parentLocation.'\'">';
-                                } else {
-                                    // legacy templates
-                                    $parentLocation = 'index.php?module='.$module.'&record='.$tplButton['record'].'&action='.$tplButton['action'].'&sugarpdf='.$tplButton['sugarpdf'].'&email_action='.$tplButton['email_action'];
-                                    $output .= '<input class="button" type="button" value="'.translate('LBL_PDF_EMAIL').'-'.$GLOBALS['app_strings']['LBL_EXISTING'].'_'.$tplButton['name'].'" id="'.$tplButton['name'].'_pdfemail" onclick="parent.location=\''.$parentLocation.'\'">';
+                            if (!empty($urlParams)) {
+                                $output .= '<ul class="clickMenu fancymenu">';
+                                $output .= '<li class="sugar_action_button">';
+                                $output .= '<a>'.translate('LBL_PDF_EMAIL').'</a>';
+                                $output .= '<ul class="subnav" style="display: none;">';
+                                foreach ($urlParams as $tplButton) {
+                                    if (isset($tplButton['pdf_template_id'])) {
+                                        $parentLocation = 'index.php?module='.$module.'&record='.$tplButton['record'].'&action='.$tplButton['action'].'&sugarpdf='.$tplButton['sugarpdf'].'&pdf_template_id='.$tplButton['pdf_template_id'].'&to_email='.$tplButton['to_email'];
+                                        $output .= '<li><a id="'.$tplButton['name'].'_pdfemail" '. 'href="'.$parentLocation.'">'.$tplButton['name'].'</a></li>';
+                                    } else {
+                                        // legacy templates
+                                        $parentLocation = 'index.php?module='.$module.'&record='.$tplButton['record'].'&action='.$tplButton['action'].'&sugarpdf='.$tplButton['sugarpdf'].'&email_action='.$tplButton['email_action'];
+                                        $output .= '<li><a id="'.$tplButton['name'].'_pdfemail" '. 'href="'.$parentLocation.'">'.$GLOBALS['app_strings']['LBL_EXISTING'].'_'.$tplButton['name'].'</a></li>';
+                                    }
                                 }
+                                $output .= '</ul><span class="ab"></span></li></ul>';
                             }
                         } else {
                             require_once('include/Smarty/plugins/function.sugar_menu.php');
