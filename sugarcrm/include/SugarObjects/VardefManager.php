@@ -558,12 +558,7 @@ class VardefManager{
      * @param bool   $refresh whether or not we wish to refresh the cache file.
      */
     static function loadVardef($module, $object, $refresh=false, $params = array()){
-        //here check if the cache file exists, if it does then load it, if it doesn't
-        //then call refreshVardef
-        //if either our session or the system is set to developerMode then refresh is set to true
-        if(inDeveloperMode() || !empty($_SESSION['developerMode'])){
-            $refresh = true;
-        }
+
         // Retrieve the vardefs from cache.
         $key = "VardefManager.$module.$object";
 
