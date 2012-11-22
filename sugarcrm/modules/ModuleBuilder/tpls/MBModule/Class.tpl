@@ -60,7 +60,7 @@ class {{$class.name}}_sugar extends {{$class.extends}} {
      * @depreciated
 	 */
 	function {{$class.name}}_sugar(){
-		$this->__construct()
+		$this->__construct();
 	}
 
 	public function __construct(){
