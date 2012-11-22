@@ -219,6 +219,18 @@ class SugarACLStatic extends SugarACLStrategy
     }
 
     /**
+     * For some mysterious reasons Tracker ACLs are "special" and do not follow the rules.
+     * @var array
+     */
+    protected static $non_module_acls = array(
+        'Trackers' => 'Tracker',
+        'TrackerQueries' => 'TrackerQuery',
+        'TrackerPerfs' => 'TrackerPerf',
+        'TrackerSessions' => 'TrackerSession',
+
+    );
+
+    /**
      * Get user access for the list of actions
      * @param string $module
      * @param array $access_list List of actions
@@ -232,7 +244,12 @@ class SugarACLStatic extends SugarACLStrategy
             return $access_list;
         }
         $is_owner = !(isset($context['owner_override']) && $context['owner_override'] == false);
-        $actions = ACLAction::getUserActions($user->id, false, $module, 'module');
+        if(isset(self::$non_module_acls[$module])) {
+            $level = self::$non_module_acls[$module];
+        } else {
+            $level = 'module';
+        }
+        $actions = ACLAction::getUserActions($user->id, false, $module, $level);
         if(empty($actions)) {
             return $access_list;
         }
@@ -240,7 +257,7 @@ class SugarACLStatic extends SugarACLStrategy
         $access = $access_list;
         // check 'access' first - if it's false all others will be false
         if(isset($access_list['access'])) {
-        	if(!ACLAction::userHasAccess($user->id, $module, 'access', 'module', true)) {
+        	if(!ACLAction::userHasAccess($user->id, $module, 'access', $level, true)) {
         		foreach($access_list as $action => $value) {
         			$access[$action] = false;
         		}
