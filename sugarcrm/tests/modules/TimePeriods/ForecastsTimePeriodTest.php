@@ -281,23 +281,23 @@ class ForecastsTimePeriodTest extends Sugar_PHPUnit_Framework_TestCase
     public function getTimePeriodNameProvider()
     {
         return array(
-            array(TimePeriod::ANNUAL_TYPE, '2012-01-01', 1, 'Year 2012'),
-            array(TimePeriod::QUARTER_TYPE, '2012-01-01', 1, 'Q1 2012'),
-            array(TimePeriod::QUARTER_TYPE, '2012-04-01', 2, 'Q2 2012'),
-            array(TimePeriod::QUARTER_TYPE, '2012-07-01', 3, 'Q3 2012'),
-            array(TimePeriod::QUARTER_TYPE, '2012-10-01', 4, 'Q4 2012'),
-            array(TimePeriod::MONTH_TYPE, '2012-01-01', 1, 'Jan 2012'),
-            array(TimePeriod::MONTH_TYPE, '2012-02-01', 2, 'Feb 2012'),
-            array(TimePeriod::MONTH_TYPE, '2012-03-01', 3, 'Mar 2012'),
-            array(TimePeriod::MONTH_TYPE, '2012-04-01', 4, 'Apr 2012'),
-            array(TimePeriod::MONTH_TYPE, '2012-05-01', 5, 'May 2012'),
-            array(TimePeriod::MONTH_TYPE, '2012-06-01', 6, 'Jun 2012'),
-            array(TimePeriod::MONTH_TYPE, '2012-07-01', 7, 'Jul 2012'),
-            array(TimePeriod::MONTH_TYPE, '2012-08-01', 8, 'Aug 2012'),
-            array(TimePeriod::MONTH_TYPE, '2012-09-01', 9, 'Sep 2012'),
-            array(TimePeriod::MONTH_TYPE, '2012-10-01', 10, 'Oct 2012'),
-            array(TimePeriod::MONTH_TYPE, '2012-11-01', 11, 'Nov 2012'),
-            array(TimePeriod::MONTH_TYPE, '2012-12-01', 12, 'Dec 2012')
+            array(TimePeriod::ANNUAL_TYPE, '2012-07-01', 2012, 1, 'Year 2012'),
+            array(TimePeriod::QUARTER_TYPE, '2012-07-01', 2012, 1, 'Q1 2012'),
+            array(TimePeriod::QUARTER_TYPE, '2012-10-01', 2012, 2, 'Q2 2012'),
+            array(TimePeriod::QUARTER_TYPE, '2012-01-01', 2012, 3, 'Q3 2012'),
+            array(TimePeriod::QUARTER_TYPE, '2012-04-01', 2012, 4, 'Q4 2012'),
+            array(TimePeriod::MONTH_TYPE, '2012-07-01', 2012, 1, 'Jul 2012'),
+            array(TimePeriod::MONTH_TYPE, '2012-08-01', 2012, 2, 'Aug 2012'),
+            array(TimePeriod::MONTH_TYPE, '2012-09-01', 2012, 3, 'Sep 2012'),
+            array(TimePeriod::MONTH_TYPE, '2012-10-01', 2012, 4, 'Oct 2012'),
+            array(TimePeriod::MONTH_TYPE, '2012-11-01', 2012, 5, 'Nov 2012'),
+            array(TimePeriod::MONTH_TYPE, '2012-12-01', 2012, 6, 'Dec 2012'),
+            array(TimePeriod::MONTH_TYPE, '2012-01-01', 2012, 7, 'Jan 2012'),
+            array(TimePeriod::MONTH_TYPE, '2012-02-01', 2012, 8, 'Feb 2012'),
+            array(TimePeriod::MONTH_TYPE, '2012-03-01', 2012, 9, 'Mar 2012'),
+            array(TimePeriod::MONTH_TYPE, '2012-04-01', 2012, 10, 'Apr 2012'),
+            array(TimePeriod::MONTH_TYPE, '2012-05-01', 2012, 11, 'May 2012'),
+            array(TimePeriod::MONTH_TYPE, '2012-06-01', 2012, 12, 'Jun 2012')
         );
     }
 
@@ -310,11 +310,11 @@ class ForecastsTimePeriodTest extends Sugar_PHPUnit_Framework_TestCase
      * @group timeperiods
      * @dataProvider getTimePeriodNameProvider
      */
-    public function testGetTimePeriodName($type, $startDate, $count, $expectedName)
+    public function testGetTimePeriodName($type, $startDate, $year, $count, $expectedName)
     {
         $timePeriod = TimePeriod::getByType($type);
         $timePeriod->setStartDate($startDate);
-        $this->assertEquals($expectedName, $timePeriod->getTimePeriodName($count));
+        $this->assertEquals($expectedName, $timePeriod->getTimePeriodName($count, $year));
     }
 
 

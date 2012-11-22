@@ -81,7 +81,7 @@ class TimePeriod extends SugarBean {
      * This is a depreciated method, please start using __construct() as this method will be removed in a future version
      *
      * @see __construct
-     * @depreciated
+     * @deprecated
      */
     public function TimePeriod()
     {
@@ -654,10 +654,11 @@ class TimePeriod extends SugarBean {
             $timePeriod = TimePeriod::getByType($this->type);
             $timePeriod->setStartDate($startDate);
             $remainder = $i % $this->periods_in_year;
+            $year = $timedate->fromDbDate($startDate)->format('Y');
             if($direction == 'forward') {
-                $timePeriod->name = $timePeriod->getTimePeriodName($remainder == 0 ? 1 : $remainder + 1);
+                $timePeriod->name = $timePeriod->getTimePeriodName($remainder == 0 ? 1 : $remainder + 1, $year);
             } else {
-                $timePeriod->name = $timePeriod->getTimePeriodName($this->periods_in_year - $remainder);
+                $timePeriod->name = $timePeriod->getTimePeriodName($this->periods_in_year - $remainder, $year);
             }
             $timePeriod->save();
 
@@ -667,7 +668,7 @@ class TimePeriod extends SugarBean {
             {
                 $leafPeriod = TimePeriod::getByType($this->leaf_period_type);
                 $leafPeriod->setStartDate($leafStartDate);
-                $leafPeriod->name = $leafPeriod->getTimePeriodName($x);
+                $leafPeriod->name = $leafPeriod->getTimePeriodName($x, $year);
                 $leafPeriod->parent_id = $timePeriod->id;
                 $leafPeriod->leaf_cycle = $x;
                 $leafPeriod->save();

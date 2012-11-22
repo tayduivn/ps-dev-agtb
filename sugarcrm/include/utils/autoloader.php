@@ -668,10 +668,11 @@ class SugarAutoLoader
                 return;
             }
         }
-
 	    if(DIRECTORY_SEPARATOR != '/') {
             $filename = str_replace(DIRECTORY_SEPARATOR, "/", $filename);
         }
+        self::$memmap[$filename] = 1;
+
         $parts = explode('/', $filename);
 	    $filename = array_pop($parts);
 	    $data =& self::$filemap;
@@ -689,7 +690,6 @@ class SugarAutoLoader
 	    if($save) {
 	        write_array_to_file("existing_files", self::$filemap, sugar_cached(self::CACHE_FILE));
 	    }
-	    self::$memmap[$filename] = 1;
 	}
 
 	/**
