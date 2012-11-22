@@ -22,6 +22,8 @@
  * All Rights Reserved.
  ********************************************************************************/
 
+require_once 'modules/ModuleBuilder/parsers/MetaDataFiles.php';
+
 abstract class RestTestBase extends Sugar_PHPUnit_Framework_TestCase
 {
     protected $authToken;
@@ -240,6 +242,8 @@ abstract class RestTestBase extends Sugar_PHPUnit_Framework_TestCase
 
     protected function _clearMetadataCache()
     {
+        MetaDataFiles::clearModuleClientCache();
+        
         $metadataFiles = glob(sugar_cached('api/metadata/').'*');
         if ( is_array($metadataFiles) ) {
             foreach ( $metadataFiles as $metadataFile ) {

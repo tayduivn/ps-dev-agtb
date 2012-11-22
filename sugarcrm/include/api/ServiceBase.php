@@ -24,6 +24,9 @@ require_once('include/api/SugarApiException.php');
 require_once('include/api/SugarApi.php');
 
 abstract class ServiceBase {
+    public $user;
+    public $platform = 'base';
+
     abstract public function execute();
     abstract protected function handleException(Exception $exception);
 

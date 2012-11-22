@@ -127,6 +127,15 @@ class CurrentUserApi extends SugarApi {
         
         // Get the basics
         $user_data = $this->getBasicUserInfo();
+        if ( !isset($user_data['datepref']) ) {
+            $user_data['datepref'] = $GLOBALS['sugar_config']['datef'];
+        }
+        if ( !isset($user_data['timepref']) ) {
+            $user_data['timepref'] = $GLOBALS['sugar_config']['default_time_format'];
+        }
+        if ( !isset($user_data['timezone']) ) {
+            $user_data['timezone'] = 'GMT';
+        }
         
         if ( isset($args['platform']) ) {
             $platform = array(basename($args['platform']),'base');

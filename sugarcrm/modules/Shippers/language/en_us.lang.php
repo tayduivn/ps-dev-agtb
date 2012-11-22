@@ -29,6 +29,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 $mod_strings = array (
   'LBL_MODULE_NAME' => 'Shippers',
+  'LBL_MODULE_NAME_SINGULAR' => 'Shipper',
   'LBL_MODULE_TITLE' => 'Shipping Provider: Home',
   'LBL_SEARCH_FORM_TITLE' => 'Shipping Provider Search',
   'LBL_LIST_FORM_TITLE' => 'Shipping Provider List',

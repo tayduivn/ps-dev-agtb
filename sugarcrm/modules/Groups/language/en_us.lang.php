@@ -25,6 +25,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 $mod_strings = array ( 
 	'LBL_MODULE_NAME'			=> 'Groups',
+	'LBL_MODULE_NAME_SINGULAR'		=> 'Group',
 	'LBL_GROUP_NAME'			=> 'Group Name:',
 	'LBL_DESCRIPTION'			=> 'Description:',
 	'LBL_TEAM'					=> 'Team:',
