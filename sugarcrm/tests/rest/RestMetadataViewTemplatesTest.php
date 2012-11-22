@@ -30,6 +30,14 @@ class RestMetadataViewTemplatesTest extends RestTestBase {
         parent::setUp();
 
         $this->oldFiles = array();
+
+//BEGIN SUGARCRM flav=pro ONLY
+        $this->_restLogin('','','mobile');
+        $this->mobileAuthToken = $this->authToken;
+//END SUGARCRM flav=pro ONLY
+        $this->_restLogin('','','base');
+        $this->baseAuthToken = $this->authToken;
+
     }
     /**
      * @group rest
@@ -52,9 +60,9 @@ class RestMetadataViewTemplatesTest extends RestTestBase {
      * @group rest
      */
     public function testMetadataViewTemplates() {
-        $restReply = $this->_restCall('metadata?type_filter=view_templates');
+        $restReply = $this->_restCall('metadata?type_filter=views');
 
-        $this->assertTrue(isset($restReply['reply']['view_templates']['_hash']),'ViewTemplate hash is missing.');
+        $this->assertTrue(isset($restReply['reply']['views']['_hash']),'Views hash is missing.');
     }
     /**
      * @group rest
@@ -65,12 +73,12 @@ class RestMetadataViewTemplatesTest extends RestTestBase {
                 'clients/base/views/edit/edit.hbt',
                 'custom/clients/base/views/edit/edit.hbt',
             ),
-            //BEGIN SUGARCRM flav=ent ONLY
-            'portal' => array(
-                'clients/portal/views/edit/edit.hbt',
-                'custom/clients/portal/views/edit/edit.hbt',
+            //BEGIN SUGARCRM flav=pro ONLY
+            'mobile' => array(
+                'clients/mobile/views/edit/edit.hbt',
+                'custom/clients/mobile/views/edit/edit.hbt',
             ),
-            //END SUGARCRM flav=ent ONLY
+            //END SUGARCRM flav=pro ONLY
         );
 
         foreach ( $filesToCheck as $client => $files) {
@@ -89,9 +97,9 @@ class RestMetadataViewTemplatesTest extends RestTestBase {
                 'custom/clients/base/views/edit',
             ),
             //BEGIN SUGARCRM flav=ent ONLY
-            'portal' => array(
-                'clients/portal/views/edit',
-                'custom/clients/portal/views/edit',
+            'mobile' => array(
+                'clients/mobile/views/edit',
+                'custom/clients/mobile/views/edit',
             ),
             //END SUGARCRM flav=ent ONLY
         );
@@ -102,19 +110,20 @@ class RestMetadataViewTemplatesTest extends RestTestBase {
             }
         }
 
-        //BEGIN SUGARCRM flav=ent ONLY
-        // Make sure we get it when we ask for portal
-        SugarAutoLoader::put($filesToCheck['portal'][0],'PORTAL CODE', true);
+        //BEGIN SUGARCRM flav=pro ONLY
+        // Make sure we get it when we ask for mobile
+        SugarAutoLoader::put($filesToCheck['mobile'][0],'MOBILE CODE', true);
         $this->_clearMetadataCache();
-        $restReply = $this->_restCall('metadata/?type_filter=view_templates&platform=portal');
-        $this->assertEquals('PORTAL CODE',$restReply['reply']['view_templates']['edit'],"Didn't get portal code when that was the direct option");
+        $this->authToken = $this->mobileAuthToken;
+        $restReply = $this->_restCall('metadata/?type_filter=views');
+        $this->assertEquals('MOBILE CODE',$restReply['reply']['views']['edit']['templates']['edit'],"Didn't get mobile code when that was the direct option");
 
 
-        // Make sure we get it when we ask for portal, even though there is base code there
+        // Make sure we get it when we ask for mobile, even though there is base code there
         SugarAutoLoader::put($filesToCheck['base'][0],'BASE CODE', true);
         $this->_clearMetadataCache();
-        $restReply = $this->_restCall('metadata/?type_filter=view_templates&platform=portal');
-        $this->assertEquals('PORTAL CODE',$restReply['reply']['view_templates']['edit'],"Didn't get portal code when base code was there.");
+        $restReply = $this->_restCall('metadata/?type_filter=views');
+        $this->assertEquals('MOBILE CODE',$restReply['reply']['views']['edit']['templates']['edit'],"Didn't get mobile code when base code was there.");
         //END SUGARCRM flav=ent ONLY
 
         // Make sure we get the base code when we ask for it.
@@ -122,29 +131,32 @@ class RestMetadataViewTemplatesTest extends RestTestBase {
         SugarAutoLoader::put($filesToCheck['base'][0],'BASE CODE', true);
         $this->_clearMetadataCache();
         //END SUGARCRM flav=com ONLY
-        $restReply = $this->_restCall('metadata/?type_filter=view_templates&platform=base');
-        $this->assertEquals('BASE CODE',$restReply['reply']['view_templates']['edit'],"Didn't get base code when it was the direct option");
+        $this->authToken = $this->baseAuthToken;
+        $restReply = $this->_restCall('metadata/?type_filter=views');
+        $this->assertEquals('BASE CODE',$restReply['reply']['views']['edit']['templates']['edit'],"Didn't get base code when it was the direct option");
 
         //BEGIN SUGARCRM flav=ent ONLY
-        // Delete the portal template and make sure it falls back to base
-        SugarAutoLoader::unlink($filesToCheck['portal'][0], true);
+        // Delete the mobile template and make sure it falls back to base
+        SugarAutoLoader::unlink($filesToCheck['mobile'][0], true);
         $this->_clearMetadataCache();
-        $restReply = $this->_restCall('metadata/?type_filter=view_templates&platform=portal');
-        $this->assertEquals('BASE CODE',$restReply['reply']['view_templates']['edit'],"Didn't fall back to base code when portal code wasn't there.");
+        $this->authToken = $this->mobileAuthToken;
+        $restReply = $this->_restCall('metadata/?type_filter=views');
+        $this->assertEquals('BASE CODE',$restReply['reply']['views']['edit']['templates']['edit'],"Didn't fall back to base code when mobile code wasn't there.");
 
 
-        // Make sure the portal code is loaded before the non-custom base code
-        SugarAutoLoader::put($filesToCheck['portal'][1],'CUSTOM PORTAL CODE', true);
+        // Make sure the mobile code is loaded before the non-custom base code
+        SugarAutoLoader::put($filesToCheck['mobile'][1],'CUSTOM MOBILE CODE', true);
         $this->_clearMetadataCache();
-        $restReply = $this->_restCall('metadata/?type_filter=view_templates&platform=portal');
-        $this->assertEquals('CUSTOM PORTAL CODE',$restReply['reply']['view_templates']['edit'],"Didn't use the custom portal code.");
+        $restReply = $this->_restCall('metadata/?type_filter=views');
+        $this->assertEquals('CUSTOM MOBILE CODE',$restReply['reply']['views']['edit']['templates']['edit'],"Didn't use the custom mobile code.");
         //END SUGARCRM flav=ent ONLY
 
         // Make sure custom base code works
         SugarAutoLoader::put($filesToCheck['base'][1],'CUSTOM BASE CODE', true);
         $this->_clearMetadataCache();
-        $restReply = $this->_restCall('metadata/?type_filter=view_templates');
-        $this->assertEquals('CUSTOM BASE CODE',$restReply['reply']['view_templates']['edit'],"Didn't use the custom base code.");
+        $this->authToken = $this->baseAuthToken;
+        $restReply = $this->_restCall('metadata/?type_filter=views');
+        $this->assertEquals('CUSTOM BASE CODE',$restReply['reply']['views']['edit']['templates']['edit'],"Didn't use the custom base code.");
 
     }
 }

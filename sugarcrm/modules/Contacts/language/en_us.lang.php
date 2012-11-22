@@ -127,6 +127,7 @@ $mod_strings = array (
     'LBL_MOBILE_PHONE' => 'Mobile:',
     'LBL_MODIFIED' => 'Modified By:',
     'LBL_MODULE_NAME' => 'Contacts',
+    'LBL_MODULE_NAME_SINGULAR' => 'Contact',
     'LBL_MODULE_TITLE' => 'Contacts: Home',
     'LBL_NAME' => 'Name:',
     'LBL_NEW_FORM_TITLE' => 'New Contact',

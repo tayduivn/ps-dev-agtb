@@ -62,6 +62,7 @@ $mod_strings = array (
     'LBL_MODIFY_SEARCH_DESC' => 'Select the connector fields to use to search for data for each module.',
     'LBL_MODIFY_SEARCH_PAGE_TITLE' => 'Connector Settings: Manage Connector Search',
 	'LBL_MODULE_NAME' => 'Connectors',
+	'LBL_MODULE_NAME_SINGULAR' => 'Connector',
     'LBL_NO_PROPERTIES' => 'There are no configurable properties for this connector.',
     'LBL_PARENT_DUNS' => 'Parent DUNS',
     'LBL_PREVIOUS' => '< Back',

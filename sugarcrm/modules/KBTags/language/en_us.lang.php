@@ -30,6 +30,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 $mod_strings = array (
 	//module
 	'LBL_MODULE_NAME' => 'Article Tags',
+	'LBL_MODULE_NAME_SINGULAR' => 'Article Tag',
 	'LBL_MODULE_TITLE' => 'Article Tags',
 	'LNK_NEW_TAG' => 'Create Article Tag',
 	'LNK_KBTAG_LIST'=> 'Article Tag List',

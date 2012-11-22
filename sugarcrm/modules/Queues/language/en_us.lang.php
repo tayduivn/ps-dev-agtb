@@ -25,6 +25,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 //FILE SUGARCRM flav=int ONLY
 $mod_strings = array (	'LBL_DETAIL'				=> 'Details',
 						'LBL_MODULE_NAME'			=> 'Queues',
+						'LBL_MODULE_NAME_SINGULAR'		=> 'Queue',
 						'LBL_NAME'					=> 'Queue Name:',
 						'LBL_STATUS'				=> 'Status:',
 						'LBL_PARENTS'				=> 'Parent Queues',
