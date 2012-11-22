@@ -237,4 +237,24 @@ class DateExpressionTest extends Sugar_PHPUnit_Framework_TestCase
 	    $this->assertEquals($timedate->asUser($timedate->getNow(true)->get("+3 days")), $timedate->asUser($result));
 	}
 
+    /**
+     * Test Format of DateTime Field
+     * @group bug57900
+     */
+    public function testUserDefinedDateTimeVar()
+    {
+        $opp = new Opportunity();
+        $timedate = TimeDate::getInstance();
+        $opp->date_entered = $timedate->asUser($timedate->getNow());
+        $expr = '$date_entered';
+        try {
+            $result = Parser::evaluate($expr, $opp)->evaluate();
+            $this->assertInstanceOf("DateTime",$result,'Evaluation did not return a DateTime object');
+            $this->assertEquals($timedate->asUser($timedate->getNow(true)), $timedate->asUser($result), 'The time is not what expected');
+        }
+        catch (Exception $e)
+        {
+            $this->fail('Failed to evaluate user datetime - threw exception');
+        }
+    }
 }
