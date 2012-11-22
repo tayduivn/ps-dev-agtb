@@ -220,24 +220,14 @@
      * selection handler when the user selects a category type.
      */
     connectSliders: function(category, sliders) {
-        var categorySliders = sliders[category],
-            excludeRange = {
-                min: 0,
-                max: 100
-            },
-            settingName = category + '_ranges',
-            setting = this.model.get(settingName);
+        var categorySliders = sliders[category];
 
         if(category == 'show_binary') {
             categorySliders.include.sliderChangeDelegate = function (value) {
                 // lock the upper handle to 100, as per UI/UX requirements to show a dual slider
                 categorySliders.include.$el.find(categorySliders.include.fieldTag).noUiSlider('move', {handle: 'upper', to: categorySliders.include.def.maxRange});
                 // set the excluded range based on the lower value of the include range
-                excludeRange.max = value.min - 1;
-                excludeRange.min = categorySliders.include.def.minRange;
-                setting.exclude = excludeRange;
-                this.model.set(settingName, setting);
-
+                this.view.setExcludeValueForLastSlider(value, category, categorySliders.include);
             };
         } else if (category == 'show_buckets') {
             categorySliders.include.sliderChangeDelegate = function (value) {
@@ -252,11 +242,22 @@
             categorySliders.upside.sliderChangeDelegate = function (value) {
                 categorySliders.include.$el.find(categorySliders.include.fieldTag).noUiSlider('move', {handle: 'lower', to: value.max+1});
                 // set the excluded range based on the lower value of the upside range
-                excludeRange.max = value.min - 1;
-                excludeRange.min = categorySliders.upside.def.minRange;
-                setting.exclude = excludeRange;
-                this.model.set(settingName, setting);
+                this.view.setExcludeValueForLastSlider(value, category, categorySliders.upside);
             };
         }
+    },
+
+    setExcludeValueForLastSlider: function(value, category, slider) {
+        var excludeRange = {
+            min: 0,
+            max: 100
+        },
+        settingName = category + '_ranges',
+        setting = this.model.get(settingName);
+
+        excludeRange.max = value.min - 1;
+        excludeRange.min = slider.def.minRange;
+        setting.exclude = excludeRange;
+        this.model.set(settingName, setting);
     }
 })
