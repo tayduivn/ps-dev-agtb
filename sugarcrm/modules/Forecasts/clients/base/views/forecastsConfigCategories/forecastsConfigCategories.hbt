@@ -11,6 +11,7 @@
             </p>
 
             <div id="{{{key}}}_ranges" class="options {{#notEq key ../value}}hide{{/notEq}}"></div>
+
         </fieldset>
 
         {{/eachOptions}}
