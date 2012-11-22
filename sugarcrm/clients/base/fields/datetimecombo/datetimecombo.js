@@ -40,6 +40,8 @@
     // used by hbt template (note we inherit dateValue from basedate)
     timeValue: '', 
 
+    serverTimeFormat: 'H:i:s',
+
     /**
      * Renders widget, sets up date and time pickers, etc.
      * @param  {String} value  
@@ -108,8 +110,8 @@
     unformat:function(value) {
         var jsDate;
         if (value) {
-            jsDate = app.date.parse(value);
-
+            // The are unformatting a value that's like "Y-m-d H:i:s" and preparing push to server
+            jsDate = app.date.parse(value, this.serverDateFormat + ' ' + this.serverTimeFormat);
             if (jsDate) {
                 return this._setServerDateString(jsDate);
             } else {
