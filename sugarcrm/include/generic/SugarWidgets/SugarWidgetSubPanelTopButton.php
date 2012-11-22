@@ -270,6 +270,14 @@ class SugarWidgetSubPanelTopButton extends SugarWidget
 			return $temp;
 		}
 
+        /**
+         * if module is hidden or subpanel for the module is hidden - doesn't show quick create button
+         */
+        if ( SugarWidget::isModuleHidden( !empty($this->module) ? $this->module : $defines['module'] ) )
+        {
+            return '';
+        }
+
 		global $app_strings;
 
         if ( isset($_REQUEST['layout_def_key']) && $_REQUEST['layout_def_key'] == 'UserEAPM' ) {
