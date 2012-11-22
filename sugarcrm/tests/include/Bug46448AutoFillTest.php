@@ -129,7 +129,7 @@ class Bug46448AutoFillTest extends Sugar_PHPUnit_Framework_TestCase
         }
 
         $id = create_guid();
-        $insQR = "INSERT into acl_roles_users(id,user_id,role_id, date_modified) values('" . $id . "','" . $userId . "','" . $aclRoleId . "', now())";
+        $insQR = "INSERT into acl_roles_users(id,user_id,role_id, date_modified) values('" . $id . "','" . $userId . "','" . $aclRoleId . "', " . $GLOBALS['db']->convert("'" . $GLOBALS['timedate']->nowDb() . "'", 'datetime') . ")";
         $GLOBALS['db']->query($insQR);
         $this->aclRoles2Users[] = $id;
 
