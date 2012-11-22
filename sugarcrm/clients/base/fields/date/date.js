@@ -205,15 +205,23 @@
     /**
      * Set the date string for REST Api. If stripT
      * @param {Date} The date we want formatted
+     * @param {Boolean} Forces the format to just have yyyy-mm-dd 
      * @return {String} API ready date string 
      */
-    _setServerDateString: function(jsDate) {
+    _setServerDateString: function(jsDate, forceToDate) {
         var h, m, d;
 
         /**
          * If we don't want the timezone info we get something like: 2012-12-31T01:30:00 
          * which the server will honor. With timezone will be like: "2012-12-31T01:30:00.814Z"
          */
+
+        d = app.date.format(jsDate, this.serverDateFormat);
+
+        // Server wants this to be in yyyy-mm-dd format (TimeDate.php fromIsoDate wants it this way)
+        if (forceToDate) {
+            return d; 
+        }
         if (this.stripIsoTZ) {
             d = app.date.format(jsDate, this.serverDateFormat);
             h = this._forceTwoDigits(jsDate.getHours().toString());
@@ -232,12 +240,12 @@
      * Per FDD: When the Datetime field required, default value should be SYSDATE and all zeros for Time
      * @return {Date} date created representing today at midnight
      */
-    _setDateNow: function() {
+    _setDateNow: function(forceToDate) {
         // Per FDD: When Datetime field required, default value is SYSDATE, all zeros for Time
         var jsDate = new Date();
 
         jsDate.setHours(0, 0, 0, 0);
-        this.model.set(this.name, this._setServerDateString(jsDate), {silent: true}); 
+        this.model.set(this.name, this._setServerDateString(jsDate, forceToDate), {silent: true}); 
         return jsDate;
     },
     /**
@@ -408,7 +416,7 @@
             jsDate = app.date.parseDisplayDefault(this.def.display_default);
             this.model.set(this.name, app.date.format(jsDate, this.serverDateFormat));
         } else if (this.def.required) {
-            return this._setDateNow();
+            return this._setDateNow(true);
         } else {
             return null;  
         }

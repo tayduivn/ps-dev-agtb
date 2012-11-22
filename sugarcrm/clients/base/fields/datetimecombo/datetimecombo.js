@@ -67,7 +67,6 @@
      */
     format:function(value) {
         var jsDate, output, myUser = app.user, d, parts, before24Hours;
-
         if (this.stripIsoTZ) {
             value = app.date.stripIsoTimeDelimterAndTZ(value);
         }
@@ -88,7 +87,7 @@
         // Save the 24 hour based hours in case we're using ampm to determine if am or pm later 
         before24Hours = jsDate.getHours();
         value  = app.date.format(jsDate, this.usersDatePrefs)+' '+app.date.format(jsDate, this.userTimePrefs);
-        jsDate = app.date.parse(value);
+
         // round time to the nearest 15th if this is a edit which is consitent with rest of app
         if (this.view.name === 'edit') {
             jsDate = app.date.roundTime(jsDate);
@@ -97,23 +96,8 @@
         value = {
             date: app.date.format(jsDate, this.usersDatePrefs),
             time: app.date.format(jsDate, this.userTimePrefs),
-            hours: app.date.format(jsDate, (this.showAmPm ? 'h' : 'H')),
-            minutes: app.date.format(jsDate, 'i'),
-            seconds: app.date.format(jsDate, 's'),
             amPm: this.showAmPm ? (before24Hours < 12 ? 'am' : 'pm') : ''
         };
-
-        // 0am must be shown as 12am if we're on a 12 hour based time format
-        if (value.time.toLowerCase().indexOf('am') !== -1 && value.hours == 0) {
-
-            // Now for 00 to 12 since we want 12am
-            value.hours = '12';
-            d = new Date();
-            d.setHours(12); 
-            value.time = '12' + value.time.substr(2);
-            d.setMinutes(value.minutes); 
-            this.model.set(this.name, this._buildUnformatted(value.date, '00', value.minutes), {silent: true});
-        }
         this.timeValue = value['time'];
         this.dateValue = value['date'];
         this.$(".datepicker").datepicker('update', this.dateValue);

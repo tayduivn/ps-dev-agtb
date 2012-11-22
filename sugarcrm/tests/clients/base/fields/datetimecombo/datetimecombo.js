@@ -110,7 +110,6 @@ describe("datetimecombo field", function() {
             expect(field.format(unformatedValue).date).toEqual(
                 month +'/'+ day +'/'+ year);
             expect(field.format(unformatedValue).time).toEqual(hours + ':00');
-            expect(field.format(unformatedValue).seconds).toEqual('00');
         });
         it("should format value for display_default", function() {
             var today = new Date(), 
@@ -127,9 +126,6 @@ describe("datetimecombo field", function() {
             // Expectations on value object returned
             expect(stub).toHaveBeenCalled();
             expect(actual.amPm).toEqual('pm');
-            expect(actual.hours).toEqual('06');
-            expect(actual.minutes).toEqual('00');
-            expect(actual.seconds).toEqual('00');
             expect(actual['time']).toEqual('18:00');
             // Test the date part
             parts = actual.date.split('/');
@@ -156,9 +152,6 @@ describe("datetimecombo field", function() {
             // Expectations on value object returned
             expect(stub).toHaveBeenCalled();
             expect(actual.amPm).toEqual('am');
-            expect(actual.hours).toEqual('00');
-            expect(actual.minutes).toEqual('00');
-            expect(actual.seconds).toEqual('00');
             expect(actual['time']).toEqual('00:00');
             // Test the date part
             parts = actual.date.split('/');
@@ -188,7 +181,6 @@ describe("datetimecombo field", function() {
             // start to apply time zone preferences would we run into issues.
             unformatedValue = jsDate.toISOString();
             expect(field.format(unformatedValue).time).not.toEqual('00:00');
-            expect(field.format(unformatedValue).hours).toEqual('12');
         });
         it("should NOT convert 00am to 12am if on 24 hour time format", function() {
             var jsDate, unformatedValue;
