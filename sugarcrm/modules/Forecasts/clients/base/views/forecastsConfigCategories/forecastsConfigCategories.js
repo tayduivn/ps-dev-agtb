@@ -247,6 +247,12 @@
         }
     },
 
+    /**
+     * Provides a way for the last of the slider fields in the view, to set the value for the exclude range.
+     * @param value the range value of the slider
+     * @param category the selected config category
+     * @param slider the slider
+     */
     setExcludeValueForLastSlider: function(value, category, slider) {
         var excludeRange = {
             min: 0,
