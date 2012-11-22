@@ -58,11 +58,6 @@ describe("datetimecombo field", function() {
             expect(field.timeValue).toEqual(expectedValValue);
         });
 
-        it("should _stripIsoTZ if stripIsoTZ set true",function() {
-            expect(field._stripIsoTimeDelimterAndTZ("2012-11-06T20:00:06.651Z")).toEqual("2012-11-06 20:00:06");
-            expect(field._stripIsoTimeDelimterAndTZ('2012-11-07T04:28:52+00:00')).toEqual("2012-11-07 04:28:52");
-        });
-
         it("should unformat to iso 8601 compatible date string", function() {
             var yr='1999', m='01', d='23', actual;
             actual = field.unformat(yr+'-'+m+'-'+d);

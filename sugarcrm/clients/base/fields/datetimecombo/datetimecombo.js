@@ -61,20 +61,6 @@
     },
 
     /**
-     * Strips out the 'T' and, either the 'Z' or +00:00 by, essentially, taking just the first 19 characters
-     * @param  {String} value The value 
-     * @return {String} stripped value 
-     */
-    _stripIsoTimeDelimterAndTZ: function(value) {
-        if(!_.isUndefined(value) && value) {
-            // Since s.replace('T', ' ').replace('Z','') assumes we have Z it's better to do:
-            // str.replace('T', ' ').substr(0, 19) ... which works for both of following formats:
-            // '2012-11-07T04:28:52+00:00'.replace('T', ' ').substr(0, 19)
-            // "2012-11-06 20:00:06.651Z".replace('T', ' ').substring(0, 19)
-            return value.replace("T", " ").substr(0, 19);
-        }
-    },
-    /**
      * Formats value
      * @param  {String} value The value
      * @return {String} formatted value
@@ -83,7 +69,7 @@
         var jsDate, output, myUser = app.user, d, parts, before24Hours;
 
         if (this.stripIsoTZ) {
-            value = this._stripIsoTimeDelimterAndTZ(value);
+            value = app.date.stripIsoTimeDelimterAndTZ(value);
         }
 
         if (this._isNewEditViewWithNoValue(value)) {
