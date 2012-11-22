@@ -284,7 +284,7 @@
                         container.append("<div>No preview available</div>");
                     }
 
-                    self.$(event.currentTarget).after(container);
+                    container.appendTo(self.$(event.currentTarget).parent());
                 };
             })(file);
 
