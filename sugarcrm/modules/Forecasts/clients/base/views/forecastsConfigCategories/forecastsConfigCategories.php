@@ -73,16 +73,6 @@ $viewdefs['Forecasts']['base']['view']['forecastsConfigCategories'] = array(
                             'enabled' => true,
                         ),
 //END SUGARCRM flav=int ONLY
-//                        array(
-//                            'name' => 'exclude',
-//                            'type' => 'range',
-//                            'view' => 'edit',
-//                            'sliderType' => 'connected',
-//                            'minRange' => 0,
-//                            'maxRange' => 100,
-//                            'default' => true,
-//                            'enabled' => true,
-//                        ),
                     ),
                 ),
                 array(
