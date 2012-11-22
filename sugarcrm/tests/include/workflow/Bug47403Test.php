@@ -33,11 +33,10 @@ class Bug47403Test extends Sugar_PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        require('include/modules.php');
-        $GLOBALS['beanList'] = $beanList;
-        $GLOBALS['beanFiles'] = $beanFiles;
+        SugarTestHelper::setUp('beanFiles');
+        SugarTestHelper::setUp('beanList');
+        SugarTestHelper::setUp('current_user');
 
-        $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
         $this->_focus = SugarTestAccountUtilities::createAccount();
 
         $this->_focus->field_defs['assigned_user_id']['type'] = 'relate';
@@ -57,10 +56,7 @@ class Bug47403Test extends Sugar_PHPUnit_Framework_TestCase
     {
         unset($this->_actionArray);
         SugarTestAccountUtilities::removeAllCreatedAccounts();
-        unset($GLOBALS['current_user']);
-        SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
-        unset($GLOBALS['beanFiles']);
-        unset($GLOBALS['beanList']);
+        SugarTestHelper::tearDown();
     }
 
     public function testWorkflowCanSetNonRequiredFieldToEmpty() {

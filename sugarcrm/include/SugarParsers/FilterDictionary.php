@@ -70,42 +70,21 @@ class FilterDictionary
 
     protected function buildAllDictionaries()
     {
-        $globPaths = array(array('glob' => 'include/SugarParsers/Filter/*.php', 'custom' => false),
-            array('glob' => 'custom/include/SugarParsers/Filter/*.php', 'custom' => true),
-        );
-
-        $filterRegistry = array();
-
-        foreach ($globPaths as $path) {
-            $files = glob($path['glob'], GLOB_NOSORT);
-
-            if (!is_array($files)) {
-                // No matched files, skip to the next glob
-                continue;
-            }
-            foreach ($files as $file) {
-                // Strip off the directory, then the .php from the end
-                $fileClass = "";
-                if($path['custom'] === true) {
-                    $fileClass = "Custom_";
-                }
-                $fileClass .= 'SugarParsers_Filter_' . substr(basename($file), 0, -4);
-
-                require_once($file);
-                if (!(class_exists($fileClass)
+        foreach(SugarAutoLoader::getFilesCustom('include/SugarParsers/Filter', false, "php") as $file) {
+            require_once $file;
+            $fileClass = SugarAutoLoader::customClass('SugarParsers_Filter_' . substr(basename($file), 0, -4));
+            if (!(class_exists($fileClass)
                     && is_subclass_of($fileClass, 'SugarParsers_Filter_AbstractFilter'))
                 ) {
                     // Either the class doesn't exist, or it's not a subclass of SugarApi, regardless, we move on
                     continue;
-                }
+            }
+            /* @var $obj SugarParsers_Filter_AbstractFilter */
+            $obj = new $fileClass();
+            $variables = $obj->getVariables();
 
-                /* @var $obj SugarParsers_Filter_AbstractFilter */
-                $obj = new $fileClass();
-                $variables = $obj->getVariables();
-
-                foreach($variables as $var) {
-                    $filterRegistry[$var] = array('class' => $fileClass, 'file' => $file);
-                }
+            foreach($variables as $var) {
+            	$filterRegistry[$var] = array('class' => $fileClass, 'file' => $file);
             }
         }
 

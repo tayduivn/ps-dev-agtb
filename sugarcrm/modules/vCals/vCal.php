@@ -50,7 +50,7 @@ class vCal extends SugarBean {
      * This is a depreciated method, please start using __construct() as this method will be removed in a future version
      *
      * @see __construct
-     * @depreciated
+     * @deprecated
      */
     public function vCal()
     {

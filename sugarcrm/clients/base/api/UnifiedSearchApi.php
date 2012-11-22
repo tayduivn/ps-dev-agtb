@@ -285,6 +285,11 @@ class UnifiedSearchApi extends SugarApi {
             return 'SugarSearchEngine';
         }
 
+        // if the query is empty no reason to pass through FTS they want a normal list view.
+        if(empty($args['q'])) {
+            return 'SugarSearchEngine';
+        }
+
         $fts = SugarSearchEngineFactory::getFTSEngineNameFromConfig();
         //everything is groovy for FTS, get the FTS Engine Name from the conig
         if(!empty($fts)) {

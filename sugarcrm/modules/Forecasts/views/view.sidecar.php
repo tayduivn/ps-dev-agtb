@@ -52,7 +52,7 @@ class ForecastsViewSidecar extends SidecarView
         $this->ss->assign("css_url", getVersionedPath($theme->getCSSURL()));
 
         $module = $this->module;
-        $displayTemplate = get_custom_file_if_exists("modules/Forecasts/tpls/SidecarView.tpl");
+        $displayTemplate = SugarAutoLoader::existingCustomOne("modules/Forecasts/tpls/SidecarView.tpl");
 
         // begin initializing all default params
         $this->ss->assign("token", session_id());
@@ -149,9 +149,8 @@ class ForecastsViewSidecar extends SidecarView
          */
         if ( !inDeveloperMode() )
         {
-            if ( file_exists('sidecar/src/include-manifest.php') )
+            if ( SugarAutoLoader::load('sidecar/src/include-manifest.php') )
             {
-               require_once('sidecar/src/include-manifest.php');
                if ( !empty($buildFiles) )
                {
                    $buildFiles = array_diff($buildFiles['sidecar'], array('lib/jquery/jquery.min.js'));

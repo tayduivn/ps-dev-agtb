@@ -36,6 +36,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 $mod_strings = array (
   'LBL_MODULE_NAME' => 'Alerts',
+  'LBL_MODULE_NAME_SINGULAR' => 'Alert',
   'LBL_MODULE_TITLE' => 'Alerts: Home',
   'LBL_MODULE_SECTION_TITLE' => 'These operations will be performed',
   'LBL_SEARCH_FORM_TITLE' => 'Workflow Alert Search',
@@ -90,6 +91,7 @@ $mod_strings = array (
 	'LBL_NEW_BUTTON_KEY_ACTION' => 'C',
 	'LBL_NEW_BUTTON_TITLE_ACTION' => 'Create Action',
 	'LBL_MODULE_NAME_COMBO' => 'Alerts',
+	'LBL_MODULE_NAME_SINGULAR_COMBO' => 'Alert',
 	
  	'LNK_ALERT_TEMPLATES' => 'Alert Templates',
 	'LNK_PROCESS_VIEW' => 'Workflow Execution Order',

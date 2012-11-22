@@ -57,6 +57,7 @@ class WorkFlowTest extends Sugar_PHPUnit_Framework_TestCase
              if(file_exists($test_file))
              {
            		copy($test_file, $target_file);
+                SugarAutoLoader::addToMap($target_file, false);
              }
         }
 
@@ -66,6 +67,7 @@ class WorkFlowTest extends Sugar_PHPUnit_Framework_TestCase
         	copy('custom/modules/Accounts/logic_hooks.php', 'custom/modules/Accounts/logic_hooks.php.bak');
         }
         copy('tests/include/workflow/testfiles/logic_hooks.php', 'custom/modules/Accounts/logic_hooks.php');
+        SugarAutoLoader::addToMap('custom/modules/Accounts/logic_hooks.php', false);
         LogicHook::refreshHooks();
     }
 
@@ -102,11 +104,12 @@ class WorkFlowTest extends Sugar_PHPUnit_Framework_TestCase
           	   		copy($target_file . '.bak', $target_file);
           	   		unlink($target_file . '.bak');
           	   } else {
-          	       unlink($target_file);
+          	       SugarAutoLoader::unlink($target_file, false);
           	   }
            }
         } else {
            rmdir_recursive('custom/modules/Accounts/workflow');
+           SugarAutoLoader::delFromMap('custom/modules/Accounts/workflow', false);
         }
 
         if(self::$has_logic_hooks_file)
@@ -114,8 +117,9 @@ class WorkFlowTest extends Sugar_PHPUnit_Framework_TestCase
         	copy('custom/modules/Accounts/logic_hooks.php.bak', 'custom/modules/Accounts/logic_hooks.php');
         	unlink('custom/modules/Accounts/logic_hooks.php.bak');
         } else {
-            unlink('custom/modules/Accounts/logic_hooks.php');
+            SugarAutoLoader::unlink('custom/modules/Accounts/logic_hooks.php', false);
         }
+        SugarAutoLoader::saveMap();
     }
 
 	public function testCreate_new_list_query()

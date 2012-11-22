@@ -28,8 +28,6 @@ class RestMetadataSugarLayoutsTest extends RestTestBase {
     protected $_testPaths = array(
         'wiggle' => 'clients/base/layouts/wiggle/wiggle.php',
         'woggle' => 'custom/clients/base/layouts/woggle/woggle.php',
-        'bizzle' => 'clients/portal/layouts/bizzle/bizzle.php',
-        'bozzle' => 'custom/clients/portal/layouts/bozzle/bozzle.php',
         'pizzle' => 'clients/mobile/layouts/dizzle/dazzle.php', // Tests improperly named metadata files
         'pozzle' => 'custom/clients/mobile/layouts/pozzle/pozzle.php',
     );
@@ -57,6 +55,13 @@ class RestMetadataSugarLayoutsTest extends RestTestBase {
             SugarAutoLoader::put($file, $contents);
         }
         SugarAutoLoader::saveMap();
+
+//BEGIN SUGARCRM flav=pro ONLY
+        $this->_restLogin('','','mobile');
+        $this->mobileAuthToken = $this->authToken;
+//END SUGARCRM flav=pro ONLY
+        $this->_restLogin('','','base');
+        $this->baseAuthToken = $this->authToken;
     }
 
     public function tearDown()
@@ -79,7 +84,7 @@ class RestMetadataSugarLayoutsTest extends RestTestBase {
         $reply = $this->_restCall('metadata');
         $this->assertNotEmpty($reply['reply']['layouts'], 'Layouts return data is missing');
         $this->assertTrue(isset($reply['reply']['layouts']['_hash']), 'Layout hash is missing.');
-        $this->assertArrayHasKey('wiggle', $reply['reply']['layouts']['base'], 'Test result not found');
+        $this->assertArrayHasKey('wiggle', $reply['reply']['layouts'], 'Test result not found');
     }
     /**
      * @group rest
@@ -88,46 +93,30 @@ class RestMetadataSugarLayoutsTest extends RestTestBase {
         $reply = $this->_restCall('metadata?type_filter=layouts');
         $this->assertNotEmpty($reply['reply']['layouts'], 'Layouts return data is missing');
         $this->assertTrue(isset($reply['reply']['layouts']['_hash']), 'Layout hash is missing.');
-        $this->assertArrayHasKey('woggle', $reply['reply']['layouts']['base'], 'Test result not found');
+        $this->assertArrayHasKey('woggle', $reply['reply']['layouts'], 'Test result not found');
     }
     //BEGIN SUGARCRM flav=pro ONLY
     /**
      * @group rest
      */
-    public function testPortalLayoutRequestAll() {
-        $reply = $this->_restCall('metadata?platform=portal');
-        $this->assertNotEmpty($reply['reply']['layouts'], 'Layouts return data is missing');
-        $this->assertTrue(isset($reply['reply']['layouts']['_hash']), 'Layout hash is missing.');
-        $this->assertArrayHasKey('bizzle', $reply['reply']['layouts']['portal'], 'Test result not found');
-    }
-    /**
-     * @group rest
-     */
-    public function testPortalLayoutRequestLayoutsOnly() {
-        $reply = $this->_restCall('metadata?type_filter=layouts&platform=portal');
-        $this->assertNotEmpty($reply['reply']['layouts'], 'Layouts return data is missing');
-        $this->assertTrue(isset($reply['reply']['layouts']['_hash']), 'Layout hash is missing.');
-        $this->assertArrayHasKey('bozzle', $reply['reply']['layouts']['portal'], 'Test result not found');
-    }
-    /**
-     * @group rest
-     */
     public function testMobileLayoutRequestAll() {
-        $reply = $this->_restCall('metadata?platform=mobile');
+        $this->authToken = $this->mobileAuthToken;
+        $reply = $this->_restCall('metadata');
         $this->assertNotEmpty($reply['reply']['layouts'], 'Layouts return data is missing');
         $this->assertTrue(isset($reply['reply']['layouts']['_hash']), 'Layout hash is missing.');
-        $this->assertArrayHasKey('pozzle', $reply['reply']['layouts']['mobile'], 'Test result not found');
+        $this->assertArrayHasKey('pozzle', $reply['reply']['layouts'], 'Test result not found');
     }
     /**
      * @group rest
      */
     public function testMobileLayoutRequestLayoutsOnly() {
-        $reply = $this->_restCall('metadata?type_filter=layouts&platform=mobile');
+        $this->authToken = $this->mobileAuthToken;
+        $reply = $this->_restCall('metadata?type_filter=layouts');
         $this->assertNotEmpty($reply['reply']['layouts'], 'Layouts return data is missing');
         $this->assertTrue(isset($reply['reply']['layouts']['_hash']), 'Layout hash is missing.');
-        $this->assertTrue(!isset($reply['reply']['layouts']['base']['dizzle']), 'Incorrectly picked up metadata that should not have been read');
-        $this->assertArrayHasKey('wiggle', $reply['reply']['layouts']['base'], 'BASE metadata not picked up');
-        $this->assertNotEmpty($reply['reply']['layouts']['base']['wiggle']['meta']['test'], 'Test result data not returned');
+        $this->assertTrue(!isset($reply['reply']['layouts']['dizzle']), 'Incorrectly picked up metadata that should not have been read');
+        $this->assertArrayHasKey('wiggle', $reply['reply']['layouts'], 'BASE metadata not picked up');
+        $this->assertNotEmpty($reply['reply']['layouts']['wiggle']['meta']['test'], 'Test result data not returned');
     }
     //END SUGARCRM flav=pro ONLY
 }

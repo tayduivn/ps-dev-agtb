@@ -210,15 +210,6 @@
             this.context.forecasts.worksheet.on("change", function() {
                 this.calculateTotals();
             }, this);
-            this.context.forecasts.on("change:checkDirtyWorksheetFlag", function(){
-                if(this.context.forecasts.get('checkDirtyWorksheetFlag') && !this.showMe()){
-                    var model = this.context.forecasts.worksheet;
-                    model.url = this.createURL();
-                    this.safeFetch(false);
-                    this.context.forecasts.set({checkDirtyWorksheetFlag: false});
-                }
-
-            }, this);
             this.context.forecasts.on("forecasts:committed:saved", function(){
                 if(this.showMe()){
                     var model = this.context.forecasts.worksheet;
@@ -441,8 +432,7 @@
         $("#view-sales-rep").addClass('show').removeClass('hide');
         $("#view-manager").addClass('hide').removeClass('show');           
         
-        this.context.forecasts.set({checkDirtyWorksheetFlag: true, 
-                                    currentWorksheet: "worksheet"});
+        this.context.forecasts.set({currentWorksheet: "worksheet"});
         this.isEditableWorksheet = this.isMyWorksheet();
         this._setForecastColumn(this.meta.panels[0].fields);
 
@@ -561,6 +551,16 @@
         // Trigger event letting other components know worksheet finished rendering
         self.context.forecasts.trigger("forecasts:worksheet:rendered");
 
+        //Check to see if any worksheet entries are older than the source data.  If so, that means that the
+        //last commit is older, and that we need to enable the commit buttons
+        _.each(this._collection.models, function(model, index){
+            if(!_.isEmpty(model.get("w_date_modified")) && (new Date(model.get("w_date_modified")) < new Date(model.get("date_modified")))) {
+                enableCommit = true;
+            }
+        });
+        if (enableCommit) {
+            self.context.forecasts.trigger("forecasts:commitButtons:enabled");
+        }
         return this;
     },
 
