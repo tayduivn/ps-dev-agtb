@@ -352,7 +352,7 @@ class Opportunity extends SugarBean
 		if ( !empty($idequals) ) {
 			$query  = "select amount, id from opportunities where (" . $idequals . ") and deleted=0 and opportunities.sales_stage <> 'Closed Won' AND opportunities.sales_stage <> 'Closed Lost';";
 			$result = $this->db->query($query);
-			
+
 			while ( $row = $this->db->fetchByAssoc($result) ) {
                 $query = sprintf("update opportunities set currency_id='%s',
                     amount_usdollar='%s',
@@ -444,8 +444,7 @@ class Opportunity extends SugarBean
 			}
 		}
 
-		require_once(get_custom_file_if_exists('modules/Opportunities/SaveOverload.php'));
-
+		SugarAutoLoader::requireWithCustom('modules/Opportunities/SaveOverload.php');
 		perform_save($this);
 
 		return parent::save($check_notify);
