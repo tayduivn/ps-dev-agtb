@@ -46,11 +46,11 @@ require_once 'include/SugarFields/SugarFieldHandler.php';
 class MetaDataManager {
     /**
      * SugarFieldHandler, to assist with cleansing default sugar field values
-     * 
+     *
      * @var SugarFieldHandler
      */
     protected $sfh;
-    
+
     /**
      * The user bean for the logged in user
      *
@@ -250,10 +250,10 @@ class MetaDataManager {
         if (!isset($data['fields']) ) {
             $data['fields'] = array();
         }
-        
+
         // Bug 56505 - multiselect fields default value wrapped in '^' character
         $data['fields'] = $this->normalizeFielddefs($data['fields']);
-        
+
         if (!isset($data['relationships'])) {
             $data['relationships'] = array();
         }
@@ -304,7 +304,7 @@ class MetaDataManager {
             }
         } else {
             $moduleAcls = SugarACL::getUserAccess($module, array(), array('user' => $userObject));
-            
+
             // Bug56391 - Use the SugarACL class to determine access to different actions within the module
             foreach(SugarACL::$all_access AS $action => $bool) {
                 $outputAcl[$action] = ($moduleAcls[$action] == true || !isset($moduleAcls[$action])) ? 'yes' : 'no';
@@ -325,17 +325,17 @@ class MetaDataManager {
                 SugarACL::listFilter($module, $fieldsAcl, array('user' => $userObject), array('add_acl' => true));
                 foreach ( $fieldsAcl as $field => $fieldAcl ) {
                     switch ( $fieldAcl['acl'] ) {
-                        case 4:
+                        case SugarACL::ACL_READ_WRITE:
                             // Default, don't need to send anything down
                             break;
-                        case 1:
+                        case SugarACL::ACL_READ_ONLY:
                             $outputAcl['fields'][$field]['write'] = 'no';
                             $outputAcl['fields'][$field]['create'] = 'no';
                             break;
                         case 2:
                             $outputAcl['fields'][$field]['read'] = 'no';
                             break;
-                        case 0:
+                        case SugarACL::ACL_NO_ACCESS:
                         default:
                             $outputAcl['fields'][$field]['read'] = 'no';
                             $outputAcl['fields'][$field]['write'] = 'no';
@@ -392,7 +392,7 @@ class MetaDataManager {
         // This is a semi-complicated multi-step process, so we're going to try and make this as easy as possible.
         // This should get us a list of the client files for the system
         $fileList = MetaDataFiles::getClientFiles($this->platforms, $type);
-        
+
         // And this should get us the contents of those files, properly sorted and everything.
         $results = MetaDataFiles::getClientFileContents($fileList, $type);
 
@@ -417,7 +417,7 @@ class MetaDataManager {
                 $strings[$k] = $this->decodeStrings($v);
             }
         }
-        
+
         return $strings;
     }
 
@@ -501,51 +501,51 @@ class MetaDataManager {
 
         return array_keys($platforms);
     }
-    
+
     /**
-     * Cleans field def default values before returning them as a member of the 
+     * Cleans field def default values before returning them as a member of the
      * metadata response payload
-     * 
+     *
      * Bug 56505
      * Cleans default value of fields to strip out metacharacters used by the app.
      * Used initially for cleaning default multienum values.
-     * 
+     *
      * @param array $fielddefs
      * @return array
      */
     protected function normalizeFielddefs(Array $fielddefs) {
         $this->getSugarFieldHandler();
-        
+
         foreach ($fielddefs as $name => $def) {
             if (isset($def['type'])) {
                 $type = !empty($def['custom_type']) ? $def['custom_type'] : $def['type'];
-                
+
                 $field = $this->sfh->getSugarField($type);
-                
+
                 $fielddefs[$name] = $field->getNormalizedDefs($def);
             }
         }
-        
+
         return $fielddefs;
     }
-    
+
     /**
      * Gets the SugarFieldHandler object
-     * 
+     *
      * @return SugarFieldHandler The SugarFieldHandler
      */
     protected function getSugarFieldHandler() {
         if (!$this->sfh instanceof SugarFieldHandler) {
             $this->sfh = new SugarFieldHandler;
         }
-        
+
         return $this->sfh;
     }
 
     /**
      * Recursive decoder that handles decoding of HTML entities in metadata strings
      * before returning them to a client
-     * 
+     *
      * @param mixed $source
      * @return array|string
      */
@@ -558,14 +558,14 @@ class MetaDataManager {
                     $source[$k] = $this->decodeStrings($v);
                 }
             }
-            
+
             return $source;
         }
     }
-    
+
     /**
      * Clears the API metadata cache of all cache files
-     * 
+     *
      * @param bool $deleteModuleClientCache Should we also delete the client file cache of the modules
      * @static
      */
