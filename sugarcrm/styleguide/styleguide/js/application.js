@@ -270,6 +270,6 @@ function throwMessage(data,status,temp) {
     data +
     '<a class="close" data-dismiss="alert">×</a>' +
     '</div>';
-  $('#alert').append(msg);
+  $('#alerts').append(msg);
   setTimeout( function (){$('.timeten').fadeOut().remove();}, 3000);
 }
