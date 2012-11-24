@@ -120,8 +120,8 @@ class SugarForecasting_Individual extends SugarForecasting_AbstractForecast impl
             $data["base_rate"] = $row["base_rate"];
             $data["version"] = 1;
             $data["worksheet_id"] = $row["worksheet_id"];
-            $data["date_modified"] = $this->convertDateTimeToISO($row["date_modified"]);
-            $data["w_date_modified"] = $this->convertDateTimeToISO($row["w_date_modified"]);
+            $data["date_modified"] = $this->convertDateTimeToISO($db->fromConvert($row["date_modified"], 'datetime'));
+            $data["w_date_modified"] = $this->convertDateTimeToISO($db->fromConvert($row["w_date_modified"], 'datetime'));
 
             if (isset($row["worksheet_id"]) && $this->getArg("user_id") != $current_user->id) {
                 //use the worksheet data if it exists
