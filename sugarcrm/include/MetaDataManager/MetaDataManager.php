@@ -310,6 +310,9 @@ class MetaDataManager {
                 $outputAcl[$action] = ($moduleAcls[$action] == true || !isset($moduleAcls[$action])) ? 'yes' : 'no';
             }
 
+            // is the user an admin user for the module
+            $outputAcl['admin'] = ($userObject->isAdminForModule($module)) ? 'yes' : 'no';
+
             // Only loop through the fields if we have a reason to, admins give full access on everything, no access gives no access to anything
             if ( $outputAcl['access'] == 'yes') {
 
