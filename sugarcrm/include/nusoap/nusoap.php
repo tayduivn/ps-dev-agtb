@@ -3,7 +3,7 @@
 /*
 Modification information for LGPL compliance
 
-commit af784931b8ab2263776badac5ac3fc4776c9cd61
+commit 70759790576f88f2b0480b50d35c95c84b9e6879
 Author: Stanislav Malyshev <smalyshev@gmail.com>
 Date:   Thu Feb 17 18:09:12 2011 -0800
 
@@ -3421,9 +3421,9 @@ class soap_transport_http extends nusoap_base {
 
 		// open socket
 		if($connection_timeout > 0){
-			$this->fp = @fsockopen( $host, $this->port, $this->errno, $this->error_str, $connection_timeout);
+			$this->fp = @fsockopen( $host, $port, $this->errno, $this->error_str, $connection_timeout);
 		} else {
-			$this->fp = @fsockopen( $host, $this->port, $this->errno, $this->error_str);
+			$this->fp = @fsockopen( $host, $port, $this->errno, $this->error_str);
 		}
 
 		// test pointer
