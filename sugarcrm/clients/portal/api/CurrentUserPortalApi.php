@@ -119,7 +119,6 @@ class CurrentUserPortalApi extends CurrentUserApi {
     protected function verifyACLs(Array $acls) {
         $acls['admin'] = 'no';
         $acls['developer'] = 'no';
-        $acls['edit'] = 'no';
         $acls['delete'] = 'no';
         $acls['import'] = 'no';
         $acls['export'] = 'no';
@@ -143,6 +142,10 @@ class CurrentUserPortalApi extends CurrentUserApi {
             // This user has no accounts, modify their ACL's so that they match up with enforcement
             $acls['Accounts']['access'] = 'no';
             $acls['Cases']['access'] = 'no';
+        }
+        foreach ($acls as $modName => $modAcls) {
+            if ($modName === 'Contacts') continue;
+            $acls[$modName]['edit'] = 'no';
         }
         
         return $acls;
