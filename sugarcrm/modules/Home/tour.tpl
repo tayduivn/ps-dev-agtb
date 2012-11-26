@@ -59,7 +59,7 @@
 <div id="tourEnd" style="display: none;">
     <div class="modal-header">
     <a class="close" data-dismiss="modal">×</a>
-    <h3><i class="icon-ok icon-md"></i> {$APP.LBL_TOUR_DONE}</h3>
+    <h3>{$APP.LBL_TOUR_DONE}</h3>
     </div>
     
 	<div class="modal-body">
@@ -68,11 +68,11 @@
 			<p>
 			{$APP.LBL_TOUR_REFERENCE_1} <a href="javascript:void window.open('http://support.sugarcrm.com/02_Documentation/01_Sugar_Editions/{$APP.documentation.$sugarFlavor}')">{$APP.LNK_TOUR_DOCUMENTATION}</a> {$APP.LBL_TOUR_REFERENCE_2}
 <br>
-				<i class="icon-arrow-right icon-lg" style="float: right; position: relative; right: -72px; top: -52px;"></i>
+				<i class="icon-arrow-right icon-lg" style="float: right; position: relative; right: -72px; top: -34px;"></i>
 			</p>
 			</div>
 			<div style="float: left">
-				<img src="themes/default/images/pt-profile-link.png" width="168" height="247">
+				<img src="themes/default/images/pt-profile-link.png" width="168" height="223">
 			</div>
 		</div>
 	</div>

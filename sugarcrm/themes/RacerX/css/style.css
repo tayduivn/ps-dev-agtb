@@ -8859,6 +8859,7 @@ h3.popover-title {
 .tour li {
     line-height: 18px;
     margin-bottom: 10px;
+    text-align: left;
 }
 #tour ul.unstyled,
 #tour ol.unstyled {
@@ -8919,7 +8920,7 @@ i.icon-arrow-up:before {
     height: 400px;
 }
 
-.modal.tour.screenshot .modal-body .thumb {
+.modal.tour .modal-body .thumb {
     cursor: pointer;
 }
 
