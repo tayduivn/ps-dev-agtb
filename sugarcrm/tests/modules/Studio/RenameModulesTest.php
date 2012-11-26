@@ -114,6 +114,7 @@ class RenameModulesTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertEquals('View Companies', $accountStrings['LNK_ACCOUNT_LIST'], "Rename module failed for modules modStrings.");
         $this->assertEquals('Import Companies', $accountStrings['LNK_IMPORT_ACCOUNTS'], "Rename module failed for modules modStrings.");
         $this->assertEquals('Company Search', $accountStrings['LBL_SEARCH_FORM_TITLE'], "Rename module failed for modules modStrings.");
+        $this->assertEquals('Company', $accountStrings['LBL_MODULE_NAME_SINGULAR'], "Rename module failed for modules modstrings.");
 
         //Test related link renames
         $contactStrings = return_module_language('en_us','Contacts', TRUE);

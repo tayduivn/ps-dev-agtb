@@ -355,7 +355,9 @@ class SugarBean
                 display_notice('<b>missing object_name for ' . $this->object_name . '</b>');
             }
             //END SUGARCRM flav=int ONLY
-            VardefManager::loadVardef($this->module_dir, $this->object_name, false, array("bean" => $this));
+
+            $refresh = inDeveloperMode() || !empty($_SESSION['developerMode']);
+            VardefManager::loadVardef($this->module_dir, $this->object_name, $refresh, array("bean" => $this));
 
             // build $this->column_fields from the field_defs if they exist
             if (!empty($dictionary[$this->object_name]['fields'])) {

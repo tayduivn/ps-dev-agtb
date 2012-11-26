@@ -22,6 +22,7 @@ if (!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *********************************************************************************/
 require_once 'modules/ModuleBuilder/parsers/views/GridLayoutMetaDataParser.php';
 require_once 'modules/ModuleBuilder/parsers/constants.php';
+require_once 'include/MetaDataManager/MetaDataManager.php';
 
 class SidecarGridLayoutMetaDataParser extends GridLayoutMetaDataParser {
     /**
@@ -457,5 +458,16 @@ class SidecarGridLayoutMetaDataParser extends GridLayoutMetaDataParser {
         }
         
         return $result;
+    }
+
+    /**
+     * Clears mobile and portal metadata caches that have been created by the API
+     * to allow immediate rendering of changes at the client
+     */
+    protected function _clearCaches() {
+        if ($this->implementation->isDeployed()) {
+            MetaDataFiles::clearModuleClientCache($this->_moduleName,'view');
+            MetaDataManager::clearAPICache(false);
+        }
     }
 }

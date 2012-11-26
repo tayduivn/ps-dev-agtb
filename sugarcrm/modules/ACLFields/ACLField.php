@@ -37,7 +37,7 @@ class ACLField  extends ACLAction
      * This is a depreciated method, please start using __construct() as this method will be removed in a future version
      *
      * @see __construct
-     * @depreciated
+     * @deprecated
      */
     public function ACLField()
     {
@@ -67,7 +67,7 @@ class ACLField  extends ACLAction
                 $class = $GLOBALS['beanList'][$module];
                 require_once($GLOBALS['beanFiles'][$class]);
                 $mod = new $class();
-                if(!$mod->acl_fields)return array();
+                if(empty($mod->acl_fields))return array();
                 $fieldDefs = $mod->field_defs;
             }else{
                 $fieldDefs = $GLOBALS['dictionary'][$object]['fields'];

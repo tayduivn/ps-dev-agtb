@@ -65,8 +65,8 @@ class SugarForecasting_Committed extends SugarForecasting_AbstractForecast imple
 
         $forecasts = array();
         while (($row = $db->fetchByAssoc($results))) {
-            $row['date_entered'] = $this->convertDateTimeToISO($row['date_entered']);
-            $row['date_modified'] = $this->convertDateTimeToISO($row['date_modified']);
+            $row['date_entered'] = $this->convertDateTimeToISO($db->fromConvert($row['date_entered'],'datetime'));
+            $row['date_modified'] = $this->convertDateTimeToISO($db->fromConvert($row['date_modified'],'datetime'));
             $forecasts[] = $row;
         }
 
@@ -161,7 +161,9 @@ class SugarForecasting_Committed extends SugarForecasting_AbstractForecast imple
                                                "from products p " .
                                                "where p.id = related_id" .
                                              "), " .
-                           "version = 1 " .
+                           "version = 1, " .
+                           "date_modified = '" . $GLOBALS["timedate"]->nowDb() . "', " .
+                           "modified_user_id = '" . $current_user->id . "' " .
                    "where exists (" .
                                    "select * " .
                                    "from products p " .
@@ -179,9 +181,8 @@ class SugarForecasting_Committed extends SugarForecasting_AbstractForecast imple
             $admin->saveSetting('Forecasts', 'has_commits', true, 'base');
         }
 
-        $timedate = TimeDate::getInstance();
-        $forecast->date_entered = $this->convertDateTimeToISO($forecast->date_entered);
-        $forecast->date_modified = $this->convertDateTimeToISO($forecast->date_modified);
+        $forecast->date_entered = $this->convertDateTimeToISO($db->fromConvert($forecast->date_entered, 'datetime'));
+        $forecast->date_modified = $this->convertDateTimeToISO($db->fromConvert($forecast->date_modified, 'datetime'));
 
         return $forecast->toArray(true);
     }

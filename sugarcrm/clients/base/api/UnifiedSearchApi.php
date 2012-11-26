@@ -57,7 +57,7 @@ class UnifiedSearchApi extends SugarApi {
         $options = array();
 
         $options['query'] = '';
-        if ( isset($args['q']) ) {
+        if ( !empty($args['q']) ) {
             $options['query'] = trim($args['q']);
         }
 
@@ -282,6 +282,11 @@ class UnifiedSearchApi extends SugarApi {
          * Currently we cannot do an order by in FTS.  Thus any ordering must be done using the Spot Search
          */
         if(isset($options['orderBySetByApi']) && $options['orderBySetByApi'] == true) {
+            return 'SugarSearchEngine';
+        }
+
+        // if the query is empty no reason to pass through FTS they want a normal list view.
+        if(empty($args['q'])) {
             return 'SugarSearchEngine';
         }
 

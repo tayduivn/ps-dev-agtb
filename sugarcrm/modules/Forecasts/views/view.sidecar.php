@@ -52,7 +52,7 @@ class ForecastsViewSidecar extends SidecarView
         $this->ss->assign("css_url", getVersionedPath($theme->getCSSURL()));
 
         $module = $this->module;
-        $displayTemplate = get_custom_file_if_exists("modules/Forecasts/tpls/SidecarView.tpl");
+        $displayTemplate = SugarAutoLoader::existingCustomOne("modules/Forecasts/tpls/SidecarView.tpl");
 
         // begin initializing all default params
         $this->ss->assign("token", session_id());
@@ -149,32 +149,38 @@ class ForecastsViewSidecar extends SidecarView
          */
         if ( !inDeveloperMode() )
         {
-            if ( file_exists('sidecar/src/include-manifest.php') )
-            {
-               require_once('sidecar/src/include-manifest.php');
-               if ( !empty($buildFiles) )
-               {
-                   $buildFiles = array_diff($buildFiles['sidecar'], array('lib/jquery/jquery.min.js'));
-                   foreach ( $buildFiles as $_file )
-                   {
-                       echo getVersionedScript('sidecar/'.$_file) . "\n";
-                   }
-               }
-            }
-
+            echo "<script type='text/javascript' src='sidecar/minified/sidecar.min.js'></script>\n";
+            echo "<script type='text/javascript' src='include/javascript/jquery/jquery.dataTables.min.js'></script>\n";
+            echo "<script type='text/javascript' src='include/javascript/jquery/jquery.jeditable.js'></script>\n";
+            echo "<script type='text/javascript'>jQuery.noConflict();</script>\n";
             if  ( !is_file(sugar_cached("include/javascript/sidecar_forecasts.js")) ) {
                 $_REQUEST['root_directory'] = ".";
                 require_once("jssource/minify_utils.php");
                 ConcatenateFiles(".");
             }
             echo getVersionedScript('cache/include/javascript/sidecar_forecasts.js') . "\n";
+
         } else {
+
+            require('sidecar/src/include-manifest.php');
+            if (!empty($buildFiles['sidecar']))
+            {
+               foreach ( $buildFiles['sidecar'] as $file)
+               {
+                   echo "<script type='text/javascript' src='sidecar/{$file}'></script>\n";
+               }
+            }
+
+            echo "<script type='text/javascript' src='include/javascript/jquery/jquery.dataTables.min.js'></script>\n";
+            echo "<script type='text/javascript' src='include/javascript/jquery/jquery.jeditable.js'></script>\n";
+            echo "<script type='text/javascript'>jQuery.noConflict();</script>\n";
+
             require_once('jssource/JSGroupings.php');
             if ( !empty($sidecar_forecasts) && is_array($sidecar_forecasts) )
             {
                 foreach ( $sidecar_forecasts as $_file => $dist )
                 {
-                    echo "<script src='".$_file."'></script>";
+                    echo "<script src='".$_file."'></script>\n";
                 }
             }
         }

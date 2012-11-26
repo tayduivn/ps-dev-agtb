@@ -71,12 +71,13 @@ class MonthTimePeriod extends TimePeriod implements TimePeriodInterface {
      * Returns the timeperiod name
      *
      * @param $count int value of the time period count (not used in MonthTimePeriod class)
+     * @param $year int value of the year this is currently for
      * @return string The formatted name of the timeperiod
      */
-    public function getTimePeriodName($count)
+    public function getTimePeriodName($count, $year)
     {
         $timedate = TimeDate::getInstance();
-        return sprintf($this->name_template, $timedate->fromDbDate($this->start_date)->format('M'), $timedate->fromDbDate($this->start_date)->format('Y'));
+        return sprintf($this->name_template, $timedate->fromDbDate($this->start_date)->format('M'), $year);
     }
 
 

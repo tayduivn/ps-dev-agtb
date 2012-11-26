@@ -24,53 +24,36 @@
 
 require_once('tests/rest/RestTestBase.php');
 
-class RestZeroSpotSearchTest extends RestTestBase {
-    public function setUp()
-    {
-        parent::setUp();
-    }
-    
+class RestCallHelperTest extends RestTestBase {
+
     public function tearDown()
     {
-        if ( isset($this->account_id) ) {
-            foreach($this->account_id AS $account_id) {
-                $GLOBALS['db']->query("DELETE FROM accounts WHERE id = '{$account_id}'");
-                if($GLOBALS['db']->tableExists('accounts_cstm')) {
-                    $GLOBALS['db']->query("DELETE FROM accounts_cstm WHERE id = '{$account_id}'");
-                }
-            }
-            $GLOBALS['db']->commit();
-        }
         parent::tearDown();
+        $GLOBALS['db']->query("DELETE FROM calls WHERE id = '{$this->call_id}'");
     }
 
-    public function testZeroSpotSearch() {
-        $restReply = $this->_restCall("Accounts/",
-                                      json_encode(array('name'=>'0 - UNIT TEST - AFTER &nbsp;')),
-                                      'POST');
+    public function testcall() {
 
-        $this->account_id[] = $restReply['reply']['id'];
+        // create a call linked to yourself, a contact, and a lead, verify the call is linked to each and on your calendar
+        $call = array(
+            'name' => 'Test call',
+            'duration' => 1,
+            'start_date' => date('Y-m-d'),
+            'assigned_user_id' => $GLOBALS['current_user']->id,
+        );
 
-        $this->assertTrue(isset($restReply['reply']['id']),
-                          "An account was not created (or if it was, the ID was not returned)");
+        $restReply = $this->_restCall('Calls/', json_encode($call), 'POST');
+
+        $this->assertTrue(isset($restReply['reply']['id']), 'call was not created, reply was: ' . print_r($restReply['reply'], true));
+
+        $call_id = $restReply['reply']['id'];
+        $this->call_id = $call_id;
+
+        // verify the user has the meeting, which will validate on calendar
+        $restReplyUser = $this->_restCall("Users/{$GLOBALS['current_user']->id}/link/calls");
+
+        $this->assertEquals($call_id, $restReplyUser['reply']['records'][0]['id'], "The Users call was incorrect");
 
 
-        $restReply = $this->_restCall("Accounts/",
-                                      json_encode(array('name'=>'1 - UNIT TEST - AFTER &nbsp;')),
-                                      'POST');
-
-        $this->assertTrue(isset($restReply['reply']['id']),
-                          "An account was not created (or if it was, the ID was not returned)");
-
-
-        $this->account_id[] = $restReply['reply']['id'];
-
-        $restReply = $this->_restCall("Accounts/?q=0");
-
-        $this->assertEquals($this->account_id[0], $restReply['reply']['records'][0]['id'], "The record returned does not match the 0 record");
-
-        $this->assertEquals(count($restReply['reply']['records']), 1, "Should only return the 0 record");
-        
     }
-
 }
