@@ -55,6 +55,7 @@
                 "sidecar/src/app.js" => "summer/summer.min.js",
                 "sidecar/src/utils/date.js" => "summer/summer.min.js",
                 "sidecar/src/utils/utils.js" => "summer/summer.min.js",
+                "sidecar/src/utils/math.js" => "summer/summer.min.js",
                 "sidecar/src/utils/currency.js" => "summer/summer.min.js",
                 "sidecar/src/core/cache.js" => "summer/summer.min.js",
                 "sidecar/src/core/events.js" => "summer/summer.min.js",
@@ -353,6 +354,12 @@
     /**
      * Check for custom additions to this code
      */
+
+    if(!class_exists('SugarAutoLoader')) {
+        // This block is required because this file could be called from a non-entrypoint (such as jssource/minify.php).
+        require_once('include/utils/autoloader.php');
+        SugarAutoLoader::init();
+    }
 
     foreach(SugarAutoLoader::existing("custom/jssource/JSGroupings.php", SugarAutoLoader::loadExtension("jsgroupings")) as $file) {
         require $file;
