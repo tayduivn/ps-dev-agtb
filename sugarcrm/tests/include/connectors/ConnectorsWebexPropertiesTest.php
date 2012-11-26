@@ -28,6 +28,7 @@ require_once('include/connectors/ConnectorsTestCase.php');
 class ConnectorsWebexPropertiesTest extends Sugar_Connectors_TestCase {
 
 	function setUp() {
+        SugarTestHelper::setUp('app_list_strings');
         parent::setUp();
     	if(file_exists('custom/modules/Connectors/connectors/sources/ext/eapm/webex/config.php')) {
     	   mkdir_recursive('custom/modules/Connectors/backup/connectors/sources/ext/eapm/webex');
@@ -43,6 +44,7 @@ class ConnectorsWebexPropertiesTest extends Sugar_Connectors_TestCase {
     	   copy_recursive('custom/modules/Connectors/backup/connectors/sources/ext/eapm/webex', 'custom/modules/Connectors/connectors/sources/ext/eapm/webex');
            ConnectorsTestUtility::rmdirr('custom/modules/Connectors/backup/connectors/sources/ext/eapm/webex');
         }
+        SugarTestHelper::tearDown();
     }
 
     function testWebexProperty() {
