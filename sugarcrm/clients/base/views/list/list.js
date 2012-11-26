@@ -15,6 +15,18 @@
         'mouseleave tr':'hideActions'
     },
     initialize: function(options) {
+        if(!_.isUndefined(options.meta.selection) && !_.isUndefined(options.meta.selection.type)) {
+            switch (options.meta.selection.type) {
+                case "single":
+                    options.meta = this.addSingleSelectionAction(options.meta, options.module);
+                    break;
+                case "multi":
+                    options.meta = this.addMultiSelectionAction(options.meta);
+                    break;
+                default:
+                    break;
+            }
+        }
         app.view.View.prototype.initialize.call(this, options);
         this.fallbackFieldTemplate = 'list-header';
     },
@@ -64,7 +76,7 @@
                 q:term
             },
             fields:this.collection.fields || {}
-        }
+        };
         //TODO: This should be handled automagically by the collection by checking its own tie to the context
         if (this.context.get('link')) {
             options.relate = true;
@@ -190,6 +202,41 @@
             }
         });
     },
+    addSingleSelectionAction: function(meta, module) {
+        meta = $.extend(true, {}, meta);
+        _.each(meta.panels, function(panel){
+            var singleSelect = [{
+                'type' : 'selection',
+                'name' : module + '_select',
+                'sortable' : false,
+                'label' : app.lang.get('LBL_LINK_SELECT')
+            }];
+
+            panel.fields = singleSelect.concat(panel.fields);
+        });
+
+        return meta;
+    },
+    addMultiSelectionAction: function(meta) {
+        meta = $.extend(true, {}, meta);
+        _.each(meta.panels, function(panel){
+            var multiSelect = [{
+                'type' : 'fieldset',
+                'fields' : [{
+                    'type' : 'actionmenu',
+                    'buttons' : []
+                }],
+                'value' : false,
+                'sortable' : false
+            }];
+            if (!_.isUndefined(meta.selection.actions)) {
+                multiSelect[0].fields[0].buttons = meta.selection.actions;
+            }
+            panel.fields = multiSelect.concat(panel.fields);
+        });
+
+        return meta;
+    },
     showTooltip: function(e) {
         this.$(e.currentTarget).tooltip("show");
     },
@@ -208,4 +255,3 @@
         }
     }
 })
-

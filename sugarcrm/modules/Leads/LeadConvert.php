@@ -3,7 +3,7 @@
 class LeadConvert
 {
     const STATUS_CONVERTED = 'Converted';
-    protected $fileName = "modules/Leads/metadata/base/layouts/convert.php";
+    protected $fileName = "modules/Leads/clients/base/layouts/convert/convert.php";
     protected $modules;
     protected $lead;
     protected $contact;
@@ -31,7 +31,11 @@ class LeadConvert
      */
     public function getAvailableModules()
     {
-        return $this->defs;
+        $modules = array();
+        foreach ($this->defs as $moduleDef) {
+            $modules[] = $moduleDef['module'];
+        }
+        return $modules;
     }
 
     /**
@@ -44,23 +48,24 @@ class LeadConvert
         $this->modules = $modules;
         $this->contact = $this->modules['Contacts'];
 
-        foreach ($this->defs as $module => $vdef) {
-            if (!isset($this->modules[$module])) {
+        foreach ($this->defs as $moduleDef) {
+            $moduleName = $moduleDef['module'];
+            if (!isset($this->modules[$moduleName])) {
                 continue;
             }
 
-            if ($module != "Contacts" && $this->contact !=null && $this->contact instanceof Contact) {
+            if ($moduleName != "Contacts" && $this->contact !=null && $this->contact instanceof Contact) {
                 //$this->copyAddressFields($this->modules[$module], $this->modules['Contacts']);
-                $this->setRelationshipsForModulesToContacts($module);
+                $this->setRelationshipsForModulesToContacts($moduleDef);
             }
 
-            if ($this->modules[$module]->object_name == 'Opportunity' && empty($this->modules[$module]->account_id)) {
-                $this->updateOpportunityWithAccountInformation($module);
+            if ($this->modules[$moduleName]->object_name == 'Opportunity' && empty($this->modules[$moduleName]->account_id)) {
+                $this->updateOpportunityWithAccountInformation($moduleDef);
             }
-            $this->setAssignedForModulesToLeads($module);
-            $this->setRelationshipForModulesToLeads($module);
+            $this->setAssignedForModulesToLeads($moduleDef);
+            $this->setRelationshipForModulesToLeads($moduleDef);
 
-            $this->modules[$module]->save();
+            $this->modules[$moduleName]->save();
         }
 
         if($this->contact != null && $this->contact instanceof Contact) {
@@ -88,44 +93,47 @@ class LeadConvert
         return $this->modules;
     }
 
-    public function updateOpportunityWithAccountInformation($module) {
+    public function updateOpportunityWithAccountInformation($moduleDef) {
+        $moduleName = $moduleDef['module'];
         if (isset($this->modules['Accounts'])) {
-            $this->modules[$module]->account_id = $this->modules['Accounts']->id;
-            $this->modules[$module]->account_name = $this->modules['Accounts']->name;
+            $this->modules[$moduleName]->account_id = $this->modules['Accounts']->id;
+            $this->modules[$moduleName]->account_name = $this->modules['Accounts']->name;
         }
     }
     /**
      * Sets the relationships for modules to the Contacts module
      * @return null
      */
-    public function setRelationshipsForModulesToContacts($module)
+    public function setRelationshipsForModulesToContacts($moduleDef)
     {
+        $moduleName = $moduleDef['module'];
         $contactRel = "";
+        $relate = "";
 
-        $relate = $this->defs[$module]['contactRelateField'];
-        if (!empty($relate)) {
+        if (isset($moduleDef['contactRelateField']) && !empty($moduleDef['contactRelateField'])) {
+            $relate = $moduleDef['contactRelateField'];
             $fieldDef = $this->contact->field_defs[$relate];
             if (!empty($fieldDef['id_name'])) {
-                $this->contact->$fieldDef['id_name'] = $this->modules[$module]->id;
+                $this->contact->$fieldDef['id_name'] = $this->modules[$moduleName]->id;
                 if ($fieldDef['id_name'] != $relate) {
                     $rname = isset($fieldDef['rname']) ? $fieldDef['rname'] : "";
-                    if (!empty($rname) && isset($this->modules[$module]->$rname))
-                        $this->contact->$relate = $this->modules[$module]->$rname;
+                    if (!empty($rname) && isset($this->modules[$moduleName]->$rname))
+                        $this->contact->$relate = $this->modules[$moduleName]->$rname;
                     else
-                        $this->contact->$relate = $this->modules[$module]->name;
+                        $this->contact->$relate = $this->modules[$moduleName]->name;
                 }
             }
         }
         else {
-            $contactRel = $this->findRelationship($this->contact, $this->modules[$module]);
+            $contactRel = $this->findRelationship($this->contact, $this->modules[$moduleName]);
             if (!empty($contactRel)) {
                 $this->contact->load_relationship($contactRel);
                 $relObject = $this->contact->$contactRel->getRelationshipObject();
                 if ($relObject->relationship_type == "one-to-many" && $this->contact->$contactRel->_get_bean_position()) {
                     $id_field = $relObject->rhs_key;
-                    $this->modules[$module]->$id_field = $this->contact->id;
+                    $this->modules[$moduleName]->$id_field = $this->contact->id;
                 } else {
-                    $this->contact->$contactRel->add($this->modules[$module]);
+                    $this->contact->$contactRel->add($this->modules[$moduleName]);
                 }
             }
         }
@@ -135,17 +143,18 @@ class LeadConvert
      * Sets the assigned team and user based on the leads module
      * @return null
      */
-    protected function setAssignedForModulesToLeads($module)
+    protected function setAssignedForModulesToLeads($moduleDef)
     {
+        $moduleName = $moduleDef['module'];
         if (!empty($this->lead)) {
             //BEGIN SUGARCRM flav=pro ONLY
-            if (empty($this->modules[$module]->team_name)) {
-                $this->modules[$module]->team_id = $this->lead->team_id;
-                $this->modules[$module]->team_set_id = $this->lead->team_set_id;
+            if (empty($this->modules[$moduleName]->team_name)) {
+                $this->modules[$moduleName]->team_id = $this->lead->team_id;
+                $this->modules[$moduleName]->team_set_id = $this->lead->team_set_id;
             }
             //END SUGARCRM flav=pro ONLY
-            if (empty($this->modules[$module]->assigned_user_id)) {
-                $this->modules[$module]->assigned_user_id = $this->lead->assigned_user_id;
+            if (empty($this->modules[$moduleName]->assigned_user_id)) {
+                $this->modules[$moduleName]->assigned_user_id = $this->lead->assigned_user_id;
             }
         }
     }
@@ -154,8 +163,9 @@ class LeadConvert
      * Sets the relationships for modules to the Lead module
      * @return null
      */
-    public function setRelationshipForModulesToLeads($moduleName)
+    public function setRelationshipForModulesToLeads($moduleDef)
     {
+        $moduleName = $moduleDef['module'];
         if (!empty($this->lead)) {
             $leadsRel = $this->findRelationship($this->modules[$moduleName], $this->lead);
             if (!empty($leadsRel)) {
@@ -195,14 +205,11 @@ class LeadConvert
      */
     protected function getVarDefs()
     {
-        $medataDataFile = $this->fileName;
-        if (file_exists("custom/$this->fileName")) {
-            $medataDataFile = "custom/$this->fileName";
-        }
-
         $viewdefs = array();
-        include($medataDataFile);
-        return $viewdefs['Leads']['base']['layout']['convert'];
+        $metaDataFile = SugarAutoLoader::existingCustomOne($this->fileName);
+        include($metaDataFile);
+        return $viewdefs['Leads']['base']['layout']['convert']['modules'];
+
     }
 
     /**
@@ -212,6 +219,8 @@ class LeadConvert
     public function findRelationship($from, $to)
     {
         $dictionary = $this->getMetaTableDictionary();
+var_dump($from);
+        die;
         foreach ($from->field_defs as $field => $def) {
             if (isset($def['type']) && $def['type'] == "link" && isset($def['relationship'])) {
                 $rel_name = $def['relationship'];

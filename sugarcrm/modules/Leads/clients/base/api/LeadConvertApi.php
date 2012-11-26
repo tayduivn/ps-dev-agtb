@@ -52,10 +52,8 @@ class LeadConvertApi extends ModuleApi {
      */
     public function convertLead($api, $args)
     {
-       $GLOBALS['log']->debug("vardef called: " . var_export($this->defs, true));
-       $GLOBALS['log']->debug("convertLead called: " . var_export($args, true));
-
         //This is just till the opp form is created
+        //TODO:  Remove the following lines
         if (isset($args['modules']['Opportunities'])) {
             $args['modules']['Opportunities']['curreny_id']='-99';
             $args['modules']['Opportunities']['amount']='50000';
@@ -63,11 +61,11 @@ class LeadConvertApi extends ModuleApi {
         }
 
         $leadConvert = new LeadConvert($args['leadId']);
-        $modules = $this->loadModules($api, array_keys($leadConvert->getAvailableModules()), $args['modules']);
+        $modules = $this->loadModules($api, $leadConvert->getAvailableModules(), $args['modules']);
         $modules = $leadConvert->convertLead($modules);
 
         return array (
-            'modules' => $modules
+            'modules' => $this->formatBeans($api, $args, $modules)
         );
     }
 
@@ -80,7 +78,7 @@ class LeadConvertApi extends ModuleApi {
      * @return SugarBean The loaded bean
      */
     protected function loadModule($api, $module, $data) {
-        if ($data['id']) {
+        if (isset($data['id'])) {
             $moduleDef = array (
                 'module' => $module,
                 'record' => $data['id']

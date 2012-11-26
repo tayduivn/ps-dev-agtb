@@ -1,5 +1,4 @@
 <?php
-//FILE SUGARCRM flav=pro || flav=sales ONLY
 if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 /**
  * LICENSE: The contents of this file are subject to the SugarCRM Professional
@@ -27,29 +26,9 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * governing these rights and limitations under the License.  Portions created
  * by SugarCRM are Copyright (C) 2006 SugarCRM, Inc.; All Rights Reserved.
  */
-$viewdefs['Contacts']['base']['view']['duplicate-list'] = array(
+$viewdefs['base']['view']['duplicate-list'] = array(
     'type' => 'list',
-    'panels' => array(
-        array(
-            'label' => 'LBL_PANEL_1',
-            'fields' => array(
-                array(
-                    'name' => 'name',
-                    'label' => 'LBL_NAME',
-                    'default' => true,
-                    'enabled' => true,
-                    'link' => true,
-                ),
-                array(
-                    'name'  => 'phone_work',
-                    'label' => 'LBL_LIST_PHONE',
-                ),
-                array(
-                    'name'     => 'email1',
-                    'label'    => 'LBL_LIST_EMAIL_ADDRESS',
-                    'sortable' => false,
-                ),
-            ),
-        ),
-    ),
+    'selection' => array(
+        'type' => 'single'
+    )
 );
