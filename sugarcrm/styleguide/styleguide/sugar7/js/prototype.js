@@ -2,13 +2,14 @@
   function loadPartial(template) {
     if (!ich[template]) {
       jQuery.ajax({
-        url: 'partial/'+ template + '.html',
-        dataType:"text",
+        url: template,
+        dataType: 'html',
+        cache: 'false',
         async: false,
         success: function(data) {
-            if(data !== undefined){
-              ich.addTemplate(template,data);
-            }
+          if(data !== undefined){
+            ich.addTemplate(template,data);
+          }
         }
       });
     }
@@ -25,8 +26,9 @@
     jQuery.each(
       templates,
       function(i,t){
-        loadPartial(t.file);
-        var partial = ich[t.file];
+        var source = 'partial/'+ t.file + '.html';
+        loadPartial(source);
+        var partial = ich[source];
         if (t.method==='prepend') {
           $(t.target).prepend(partial(page));
         } else if (t.method==='append') {
@@ -49,7 +51,7 @@
 
     if ( mode != undefined )
     {
-      if ( mode !== 'edit' ) {
+      if ( mode !== 'edit' && mode !== 'preview' ) {
         $('#edit .record').empty();
       }
       if ( mode !== 'preview' ) {
@@ -61,8 +63,6 @@
 
     if ( source.indexOf('partial') === 0 )
     {
-      source = source.replace('partial/','').replace('.html','');
-
       loadPartial(source);
 
       var partial = ich[source];
