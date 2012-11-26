@@ -1,0 +1,53 @@
+.drawer {
+  height: 50%;
+  width: 100%;
+  overflow-y: auto;
+  position: absolute;
+  top: 0px
+}
+
+/* Modal cover for drawer layouts */
+.drawer-backdrop {
+  z-index: 1010;
+  background-color: white;
+  opacity: .5;
+  display: none;
+  border-top: 4px solid #8B8C8E;
+}
+
+.drawer-squeezed {
+  position: absolute;
+  height: 50%;
+  top: 50%;
+  width: 100%;
+  bottom: 0px;
+}
+
+/* Expand/collapse tab below the drawer layout */
+.drawer-tab {
+  display : none;
+}
+
+.drawer-tab .btn {
+  left: 50%;
+  position: absolute;
+  z-index: 1011;
+  margin-left: -50px;
+  width: 20px;
+  height: 15px;
+  top: 3px;
+  .border-radius(0 0 4px 4px);
+}
+
+.drawer.expand {
+  height: auto;
+  bottom: 60px;
+}
+.drawer-squeezed.collapse {
+  height: 62px;
+  top: auto;
+}
+
+.drawer-backdrop.drawer-squeezed.collapse {
+  height: 59px;
+}
