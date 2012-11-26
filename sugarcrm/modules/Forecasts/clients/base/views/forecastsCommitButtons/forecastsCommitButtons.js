@@ -190,11 +190,6 @@
             models = _.filter(worksheet.models, function(model, index) {
                 return (model.get("version") == 0 || (_.isBoolean(model.get("isDirty")) && model.get("isDirty")));
             }, this);
-        
-        //default suppressSaveTrigger
-        if(_.isUndefined(suppressSaveTrigger)){
-            supressSaveTrigger = false;
-        }
                
         //commit each model that needs saved
         _.each(models, function(model, index){
@@ -215,7 +210,7 @@
                    if(_.isFunction(fcn)){
                        fcn();   
                    }
-                   if(!suppressSaveTrigger){
+                   if(suppressSaveTrigger != true){
                        self.context.forecasts.trigger("forecasts:commitButtons:saved");
                    }
                 }
