@@ -1,29 +1,27 @@
-<div class="container-fluid">
-    <div class="row-fluid">
-        <div class="main-pane span8">
-            <div id="headerbar">
-                <div class="view-forecastsTitle"></div>
-                <div class="view-forecastsTree"></div>
-                <div class="view-forecastsCommitButtons"></div>
+<div class="row-fluid">
+    <div class="main-pane span8">
+        <div id="headerbar" class="headerpane">
+            <div class="view-forecastsTitle"></div>
+            <div class="view-forecastsTree"></div>
+            <div class="view-forecastsCommitButtons"></div>
+        </div>
+        <div class="view-info"></div>
+        <div>
+            <div id="view-sales-rep" class="hide">
+                <div class="view-forecastsWorksheet"></div>
             </div>
-            <div class="view-info"></div>
-            <div>
-                <div id="view-sales-rep" class="hide">
-                    <div class="view-forecastsWorksheet"></div>
-                </div>
-                <div id="view-manager" class="hide">
-                    <div class="view-forecastsWorksheetManager"></div>
-                </div>
+            <div id="view-manager" class="hide">
+                <div class="view-forecastsWorksheetManager"></div>
             </div>
         </div>
-        <div class="side sidebar-content span4">
-            <div class="side-pane active" id="overview">
-                <div class="thumbnail viz">
-                    <div class="view-forecastsChart"></div>
-                </div>
-                <div class="clearfix"></div>
-                <div class="view-forecastsProgress"></div>
+    </div>
+    <div class="side sidebar-content span4">
+        <div class="side-pane active" id="overview">
+            <div class="thumbnail viz">
+                <div class="view-forecastsChart"></div>
             </div>
+            <div class="clearfix"></div>
+            <div class="view-forecastsProgress"></div>
         </div>
     </div>
 </div>
