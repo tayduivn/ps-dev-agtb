@@ -91,19 +91,17 @@
         // finds all radiobuttons with this name
         var elements = this.$el.find(':radio[name="' + this.forecast_categories_field.name + '"]');
 
-        // apply change handler to all elements
-        elements.change({
-            view:this
-        }, this.selectionHandler);
-
         // of the elements find the one that is checked
         _.each(elements, function(el) {
+            $(el).change({
+                view:this
+            }, this.selectionHandler);
             if($(el).prop('checked')) {
                 // manually trigger the handler on the checked element so that it will render
                 // for the default/previously set value
                 $(el).triggerHandler("change");
             }
-        });
+        }, this);
     },
 
     selectionHandler: function(event) {
