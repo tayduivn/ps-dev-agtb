@@ -140,7 +140,7 @@
          */
         gatherLangArgsByString : function(dir, arrow, diff, model, attrStr) {
             var args = [];
-            args.push(App.lang.get(dir, 'Forecasts') + arrow);
+            args.push(app.lang.get(dir, 'Forecasts') + arrow);
             args.push(app.currency.formatAmountLocale(Math.abs(diff)));
             args.push(app.currency.formatAmountLocale(model.get(attrStr)));
             return args;

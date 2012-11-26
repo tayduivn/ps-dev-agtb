@@ -320,4 +320,38 @@ describe("Forecasts Utils", function(){
             expect(result).toEqual('');
         });
     });
+
+    describe("test gatherLangArgsByParams function", function() {
+        var dir = '',
+            arrow = '',
+            diff = 0,
+            model = {},
+            attrStr = '';
+
+        beforeEach(function() {
+            dir = 'LBL_UP';
+            arrow = '&nbsp;<span class="icon-arrow-up font-green"></span>';
+            diff = 1000;
+            model = new (Backbone.Model.extend({
+                defaults : {
+                    likely_case : 250,
+                    best_case : 500,
+                    worst_case : 100
+                }
+            }));
+            attrStr = 'likely_case';
+        });
+
+        it("should return an array of three args", function() {
+            var testArgs = app.forecasts.utils.gatherLangArgsByParams(dir, arrow, diff, model, attrStr);
+            console.log(testArgs);
+            expect(testArgs.length).toEqual(3);
+        });
+
+        it("first arg should return the proper HTML", function() {
+            var expectedHTML = 'LBL_UP&nbsp;<span class="icon-arrow-up font-green"></span>',
+                testArgs = app.forecasts.utils.gatherLangArgsByParams(dir, arrow, diff, model, attrStr);
+            expect(testArgs[0]).toEqual(expectedHTML);
+        });
+    });
 });
