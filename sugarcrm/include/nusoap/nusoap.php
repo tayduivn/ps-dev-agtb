@@ -3,6 +3,12 @@
 /*
 Modification information for LGPL compliance
 
+commit 76702f8945b5e4076d406d8e3388c23d7959a2e3
+Author: Stanislav Malyshev <smalyshev@gmail.com>
+Date:   Mon Nov 26 15:35:58 2012 -0800
+
+    bug #50736 - fix proxy with different port
+
 commit 70759790576f88f2b0480b50d35c95c84b9e6879
 Author: Stanislav Malyshev <smalyshev@gmail.com>
 Date:   Thu Feb 17 18:09:12 2011 -0800
