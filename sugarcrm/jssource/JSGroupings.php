@@ -55,6 +55,7 @@
                 "sidecar/src/app.js" => "summer/summer.min.js",
                 "sidecar/src/utils/date.js" => "summer/summer.min.js",
                 "sidecar/src/utils/utils.js" => "summer/summer.min.js",
+                "sidecar/src/utils/math.js" => "summer/summer.min.js",
                 "sidecar/src/utils/currency.js" => "summer/summer.min.js",
                 "sidecar/src/core/cache.js" => "summer/summer.min.js",
                 "sidecar/src/core/events.js" => "summer/summer.min.js",
