@@ -1,1 +1,1 @@
-{{value.0.name}}
+<a href="#{{this.def.module}}/{{getFieldValue this.model this.def.id_name}}">{{value}}</a>
