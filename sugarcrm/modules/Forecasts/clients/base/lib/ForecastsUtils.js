@@ -64,33 +64,27 @@
 
             //determine what changed and add parts to the array for displaying the changes
             if(likely_args.changed && likely_args.show) {
-                args = [];
-                args.push(App.lang.get(likely_direction, 'Forecasts') + likely_arrow);
-                args.push(app.currency.formatAmountLocale(Math.abs(likely_difference)));
-                args.push(app.currency.formatAmountLocale(newestModel.get('likely_case')));
-                final_args.push(args);
+                final_args.push(
+                    this.gatherLangArgsByParams(likely_direction, likely_arrow, likely_difference, newestModel, 'likely_case')
+                );
             } else if(likely_args.show) {
                 // push an empty array for args
                 final_args.push([]);
             }
 
             if(best_args.changed && best_args.show) {
-                args = [];
-                args.push(App.lang.get(best_direction, 'Forecasts') + best_arrow);
-                args.push(app.currency.formatAmountLocale(Math.abs(best_difference)));
-                args.push(app.currency.formatAmountLocale(newestModel.get('best_case')));
-                final_args.push(args);
+                final_args.push(
+                    this.gatherLangArgsByParams(best_direction, best_arrow, best_difference, newestModel, 'best_case')
+                );
             } else if(best_args.show) {
                 // push an empty array for args
                 final_args.push([]);
             }
 
             if(worst_args.changed && worst_args.show) {
-                args = [];
-                args.push(App.lang.get(worst_direction, 'Forecasts') + worst_arrow);
-                args.push(app.currency.formatAmountLocale(Math.abs(worst_difference)));
-                args.push(app.currency.formatAmountLocale(newestModel.get('worst_case')));
-                final_args.push(args);
+                final_args.push(
+                    this.gatherLangArgsByParams(worst_direction, worst_arrow, worst_difference, newestModel, 'worst_case')
+                );
             } else if(worst_args.show) {
                 // push an empty array for args
                 final_args.push([]);
@@ -133,6 +127,23 @@
             // need to tell Handelbars not to escape the string when it renders it, since there might be
             // html in the string, args returned for testing purposes
             return {'text' : new Handlebars.SafeString(text), 'text2' : new Handlebars.SafeString(text2)};
+        },
+
+        /**
+         * Returns an array of three args for the html for the arrow, the difference (amount changed), and the new value
+         *
+         * @param dir {String} direction of the arrow, LBL_UP/LBL_DOWN
+         * @param arrow {String} HTML for the arrow string
+         * @param diff {Number} difference between the new model and old model
+         * @param model {Backbone.Model} the newestModel being used so we can get the current caseStr
+         * @param caseStr {String} the attr string to get from the newest model
+         */
+        gatherLangArgsByString : function(dir, arrow, diff, model, attrStr) {
+            var args = [];
+            args.push(App.lang.get(dir, 'Forecasts') + arrow);
+            args.push(app.currency.formatAmountLocale(Math.abs(diff)));
+            args.push(app.currency.formatAmountLocale(model.get(attrStr)));
+            return args;
         },
 
         /**
@@ -203,7 +214,6 @@
          */
         parseArgsAndLabels : function(argsArray, labels) {
             var retArgs = [],
-                ct = 0,
                 hb = Handlebars.compile("{{str_format key module args}}");
 
             // labels should have one more item in its array than argsArray
@@ -214,14 +224,15 @@
                 return null;
             }
 
-            _.each(labels, function(label) {
-                if(ct == 0) {
-                    // SETUP or UPDATED labels do not have args
-                    retArgs.push(hb({'key' : label, 'module' : 'Forecasts', 'args' : []}));
-                } else {
-                    retArgs.push(hb({'key' : label, 'module' : 'Forecasts', 'args' : argsArray[ct-1]}));
-                }
-                ct++;
+            // get the first argument off the label array
+            retArgs.push(hb({'key' : _.first(labels), 'module' : 'Forecasts', 'args' : []}));
+
+            // get the other values, with out the first value
+            labels = _.last(labels, labels.length-1);
+
+            // loop though all the other values
+            _.each(labels, function(label, index) {
+                retArgs.push(hb({'key' : label, 'module' : 'Forecasts', 'args' : argsArray[index]}))
             });
 
             return retArgs;
