@@ -207,12 +207,6 @@ SUGAR.append(SUGAR.themes, {
             ignoreClass: 'megawrapper',
             rtl: isRTL,
 			onBeforeShow: function() {
-                //bug 56797 prevent the menu from rendering and persisting on a page load
-                if ($('#moduleTab_AllHome').length != 0 && SUGAR.ajaxUI.first_load == true)
-                 {
-                   $('#moduleTab_AllHome').mouseout();
-                   SUGAR.ajaxUI.first_load = false;
-                 }
 				if($(this).hasClass("megamenu") && $(this).prev().hasClass('more') != true) {
                     var extraMenu = "#moduleTabExtraMenu"+sugar_theme_gm_current;
 					var moduleName = $(this).prev().attr("module");
@@ -330,6 +324,13 @@ SUGAR.append(SUGAR.themes, {
 				}
 			},
 			onShow: function() {
+				// WebKit hack for reappearing menu when using ajaxui
+				// If it's a page reload and the 'Home' menu is recognized as hovered over, don't show it
+				if (SUGAR.ajaxUI.menuFix && $("#moduleTab_AllHome").is(":hover"))
+				{
+					$('ul.sf-menu:visible li').hideSuperfishUl();
+				}
+				SUGAR.ajaxUI.menuFix = false;
 			}
 		});
     },
