@@ -120,26 +120,6 @@
       $('.btngroup .btn').button();
     }
 
-    if ($('table.datatable').length !== 0) {
-      $('table.datatable').dataTable({
-        "bPaginate": false,
-        "bFilter": true,
-        "bInfo": false,
-        "bAutoWidth": false
-      });
-    }
-
-    if ($('.chzn-select').length !== 0) {
-      // Select widget
-      $(".chzn-select").chosen({ disable_search_threshold: 5 });
-      $(".chzn-select-deselect").chosen({allow_single_deselect:true});
-    }
-
-    if ($('#moduleActivity .form-search select').length !== 0) {
-      $('#moduleActivity .form-search select').chosen();
-      //$('#moduleActivity .form-search input').quicksearch('ul.results li');
-    }
-
     //popover
     $("[rel=popover]").popover();
     $("[rel=popoverTop]").popover({placement: "top"});
@@ -214,15 +194,15 @@
           //this_container.append('<span class="file-upload-status">'+value+'</span>');
           $('<span class="file-upload-status '+opts+' ">'+value+'</span>').insertAfter(this_container);
         }
-      }, 
+      },
       onUploadFocus = function () {
         $(this).parent().addClass('focus');
       },
       onUploadBlur = function () {
         $(this).parent().addClass('focus');
       };
-    
-    $('.upload-field-custom input[type=file]').each(function() {     
+
+    $('.upload-field-custom input[type=file]').each(function() {
       // Bind events
       $(this)
         .bind('focus',onUploadFocus)
@@ -231,21 +211,17 @@
 
       // Get label width so we can make button fluid, 12px default left/right padding
       var lbl_width = $(this).parent().find('span strong').width() + 24;
-      console.log(lbl_width);
+      //console.log(lbl_width);
       $(this)
         .parent().find('span').css('width',lbl_width)
         .closest('.upload-field-custom').css('width',lbl_width);
 
-      // Set current state 
-      onUploadChange.call(this);      
+      // Set current state
+      onUploadChange.call(this);
 
       // Minimizes the text input part in IE
       $(this).css('width','0');
     });
-
-
-
-
 
     $('#photoimg').live('change', function() {
       $("#preview1").html('');
@@ -255,11 +231,29 @@
       }).submit();
     });
 
-
     $('.preview.avatar').click(function(e){
         $(this).closest('.span10').find('label.file-upload span strong').trigger('click');
-    })
+    });
 
+    if ($('table.datatable').length !== 0) {
+      $('table.datatable').dataTable({
+        "bPaginate": false,
+        "bFilter": true,
+        "bInfo": false,
+        "bAutoWidth": false
+      });
+    }
+
+    // Select widget
+    if ($('.chzn-select').length !== 0) {
+      $(".chzn-select").chosen({ disable_search_threshold: 5 });
+      $(".chzn-select-deselect").chosen({allow_single_deselect:true});
+    }
+
+    if ($('#moduleActivity .form-search select').length !== 0) {
+      $('#moduleActivity .form-search select').chosen();
+      //$('#moduleActivity .form-search input').quicksearch('ul.results li');
+    }
 
 
   });
