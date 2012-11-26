@@ -347,11 +347,22 @@ describe("Forecasts Utils", function(){
             console.log(testArgs);
             expect(testArgs.length).toEqual(3);
         });
+    });
 
-        it("first arg should return the proper HTML", function() {
-            var expectedHTML = 'LBL_UP&nbsp;<span class="icon-arrow-up font-green"></span>',
-                testArgs = app.forecasts.utils.gatherLangArgsByParams(dir, arrow, diff, model, attrStr);
-            expect(testArgs[0]).toEqual(expectedHTML);
+    describe("Should return a span for the arrow dependent on direction passed", function() {
+        it("should return a span indicating an arrow up", function() {
+            arrowText = app.forecasts.utils.getArrowDirectionSpan("LBL_UP");
+            expect(arrowText).toEqual('&nbsp;<span class="icon-arrow-up font-green"></span>');
+        });
+
+        it("should return a span indicating an arrow down", function() {
+            arrowText = app.forecasts.utils.getArrowDirectionSpan("LBL_DOWN");
+            expect(arrowText).toEqual('&nbsp;<span class="icon-arrow-down font-red"></span>');
+        });
+
+        it("should return a span indicating no change", function() {
+            arrowText = app.forecasts.utils.getArrowDirectionSpan("");
+            expect(arrowText).toEqual('');
         });
     });
 });
