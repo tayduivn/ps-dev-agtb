@@ -45,6 +45,17 @@ class Relationship extends SugarBean {
 
 	var $_self_referencing;
 
+    /**
+     * This is a depreciated method, please start using __construct() as this method will be removed in a future version
+     *
+     * @see __construct
+     * @deprecated
+     */
+    public function Relationship()
+    {
+        $this->__construct();
+    }
+
 	public function __construct() {
 		parent::__construct();
 	}

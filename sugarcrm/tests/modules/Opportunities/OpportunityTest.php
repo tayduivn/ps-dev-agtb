@@ -268,5 +268,25 @@ class OpportunityTest extends Sugar_PHPUnit_Framework_TestCase
         $product->retrieve_by_string_fields(array('opportunity_id' => $opp->id));
         $this->assertEquals($opp->currency_id, $product->currency_id, 'The opportunity and product currency_id values differ');
     }
+
+    /*
+     * This method tests that best/worst cases will be set to opp amount when sales stage is changed to Closed Won
+     * @group forecasts
+     */
+    public function testCaseFieldsEqualsAmountWhenSalesStageEqualsClosedWon()
+    {
+        $opp = SugarTestOpportunityUtilities::createOpportunity();
+        $opp->best_case = $opp->amount * 2;
+        $opp->worst_case = $opp->amount / 2;
+        $opp->save();
+
+        $this->assertNotEquals($opp->best_case, $opp->amount);
+        $this->assertNotEquals($opp->worst_case, $opp->amount);
+        $opp->sales_stage = 'Closed Won';
+        $opp->save();
+
+        $this->assertEquals($opp->best_case, $opp->amount);
+        $this->assertEquals($opp->worst_case, $opp->amount);
+    }
     //END SUGARCRM flav=pro ONLY
 }

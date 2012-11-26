@@ -668,6 +668,7 @@ $mod_strings = array(
 //PACKAGE AND MODULE BUILDER
 'LBL_PACKAGE_NAME'=>'Package Name:',
 'LBL_MODULE_NAME'=>'Module Name:',
+'LBL_MODULE_NAME_SINGULAR' => 'Singular Module Name:',
 'LBL_AUTHOR'=>'Author:',
 'LBL_DESCRIPTION'=>'Description:',
 'LBL_KEY'=>'Key:',

@@ -126,6 +126,17 @@ class Product extends SugarBean {
 								 'weight',  'support_name', 'support_term',
 								 'support_description', 'support_contact');
 
+    /**
+     * This is a depreciated method, please start using __construct() as this method will be removed in a future version
+     *
+     * @see __construct
+     * @deprecated
+     */
+    public function Product()
+    {
+        $this->__construct();
+    }
+
 	public function __construct() {
 
 		parent::__construct();

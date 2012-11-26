@@ -155,6 +155,7 @@ class GridLayoutMetaDataParser extends AbstractMetaDataParser implements MetaDat
         $viewdefs = $this->_viewdefs ;
         $viewdefs [ 'panels' ] = $this->_convertToCanonicalForm ( $this->_viewdefs [ 'panels' ] , $this->_fielddefs ) ;
         $this->implementation->deploy(MetaDataFiles::mapPathToArray(MetaDataFiles::getViewDefVar($this->_view),$viewdefs));
+        $this->_clearCaches();
     }
 
     /*

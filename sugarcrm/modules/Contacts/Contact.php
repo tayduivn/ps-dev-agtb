@@ -143,6 +143,18 @@ class Contact extends Person {
 								'meeting_id'=>'meetings','note_id'=>'notes','task_id'=>'tasks', 'opportunity_id'=>'opportunities', 'contacts_users_id' => 'user_sync'
 								);
 
+
+    /**
+     * This is a depreciated method, please start using __construct() as this method will be removed in a future version
+     *
+     * @see __construct
+     * @deprecated
+     */
+    public function Contact()
+    {
+        $this->__construct();
+    }
+
 	public function __construct() {
 		parent::__construct();
 	}

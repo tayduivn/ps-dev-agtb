@@ -55,6 +55,17 @@ class SugarFeed extends Basic {
 		var $assigned_user_name;
 		var $assigned_user_link;
 
+    /**
+     * This is a depreciated method, please start using __construct() as this method will be removed in a future version
+     *
+     * @see __construct
+     * @deprecated
+     */
+    public function SugarFeed()
+    {
+        $this->__construct();
+    }
+
 	public function __construct(){
 		parent::__construct();
 	}

@@ -196,7 +196,8 @@ $app_list_strings = array (
     'EAPM' => 'External Account',
 //END SUGARCRM flav=pro ONLY
     'Users' => 'User',
-  'SugarFavorites'=>'SugarFavorites'
+  'SugarFavorites'=>'SugarFavorites',
+   'Employees' => 'Employee',
 
         ),
 
@@ -3468,10 +3469,10 @@ $app_strings = array (
     'ERR_MOBILE_EMAIL' => 'Error. Invalid Email Address.',
     'LBL_MOBILE_FILE_NOT_SUPPORTED' => 'This document type is unsupported.',
     'LBL_MOBILE_GENERIC_NATIVE_ERROR' => 'An unexpected error has occurred.',
-
     //END SUGARCRM flav=pro ONLY
 
     //for portal
+
     'LBL_PORTAL_SEARCH' => 'Search by Name, Number',
     'LBL_SIGNUP_BUTTON_LABEL' => 'Sign Up',
     'LBL_PORTAL_SIGNUP_PROCESS' => 'Registering',

@@ -36,6 +36,17 @@ class CalendarActivity {
 	var $start_time;
 	var $end_time;
 
+    /**
+     * This is a depreciated method, please start using __construct() as this method will be removed in a future version
+     *
+     * @see __construct
+     * @deprecated
+     */
+    public function CalendarActivity($args)
+    {
+        $this->__construct($args);
+    }
+
 	public function __construct($args){
 		// if we've passed in an array, then this is a free/busy slot
 		// and does not have a sugarbean associated to it

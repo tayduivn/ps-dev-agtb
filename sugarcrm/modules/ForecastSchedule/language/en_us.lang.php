@@ -31,6 +31,7 @@ $mod_strings = array (
 
   //module strings.
   'LBL_MODULE_NAME' => 'Forecasts',
+  'LBL_MODULE_NAME_SINGULAR' => 'Forecast',
   'LNK_NEW_OPPORTUNITY' => 'Create Opportunity',
   'LBL_MODULE_TITLE' => 'Forecasts',
   'LBL_LIST_FORM_TITLE' => 'Committed Forecasts',

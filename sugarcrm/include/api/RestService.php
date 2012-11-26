@@ -28,12 +28,26 @@ class RestService extends ServiceBase {
 
     public $sessionId;
     public $user;
+    /**
+     * The request headers
+     * @var array
+     */
+    
+    public $request_headers = array();
+    
+    public $platform = 'base';
 
     /**
      * The leading portion of the URI for building request URIs with in the API
      * @var
      */
     protected $resourceURIBase;
+    
+    /**
+     * The response headers that will be sent
+     * @var array
+     */
+    protected $response_headers = array();
 
     /**
      * This function executes the current request and outputs the response directly.
@@ -41,28 +55,29 @@ class RestService extends ServiceBase {
     public function execute() {
         try {
             $rawPath = $this->getRawPath();
+            
+            $this->getRequestHeaders();
 
             list($version,$path) = $this->parsePath($rawPath);
 
             $isLoggedIn = $this->authenticateUser();
 
             // Figure out the platform
-            $platform = 'base';
             if ( $isLoggedIn ) {
                 if ( isset($_SESSION['platform']) ) {
-                    $platform = $_SESSION['platform'];
+                    $this->platform = $_SESSION['platform'];
                 }
             } else {
                 // Since we don't have a session we have to allow the user to specify their platform
                 // However, since the results from the same URL will be different with
                 // no variation in the oauth_token header we need to only take it as a GET request.
                 if ( !empty($_GET['platform']) ) {
-                    $platform = $_GET['platform'];
+                    $this->platform = basename($_GET['platform']);
                 }
             }
 
 
-            $route = $this->findRoute($path,$version,$_SERVER['REQUEST_METHOD'],$platform);
+            $route = $this->findRoute($path,$version,$_SERVER['REQUEST_METHOD'],$this->platform);
 
             if ( $route == false ) {
                 throw new SugarApiExceptionNoMethod('Could not find any route that accepted a path like: '.$rawPath);
@@ -154,6 +169,23 @@ class RestService extends ServiceBase {
         } catch ( Exception $e ) {
             $this->handleException($e);
         }
+    }
+
+    /**
+     * Set the Request headers in an array
+     * @return bool
+     */
+    public function getRequestHeaders() {
+        $headers = array();
+        foreach($_SERVER as $key => $value) {
+            if (substr($key, 0, 5) <> 'HTTP_') {
+                continue;
+            }
+            $header = str_replace('HTTP_', '', $key);
+            $headers[$header] = $value;
+        }
+        $this->request_headers = $headers;
+        return true;
     }
 
     /**
@@ -403,19 +435,19 @@ class RestService extends ServiceBase {
     }
 
     /**
-     * Sends the proper Content-Type header for the response based on either a
+     * Sets the proper Content-Type header for the response based on either a
      * 'format' request arg or an Accept header.
      *
      * @TODO Handle Accept header parsing to determine content type
      * @access protected
      * @param array $args The request arguments
      */
-    protected function sendContentTypeHeader($args) {
+    protected function setContentTypeHeader($args) {
         if (isset($args['format']) && $args['format'] == 'sugar-html-json') {
-            header('Content-Type: text/html');
+            $this->setHeader('Content-Type', 'text/html');
         } else {
             // @TODO: Handle other response types here
-            header('Content-Type: application/json');
+            $this->setHeader('Content-Type', 'application/json');
         }
     }
 
@@ -436,6 +468,50 @@ class RestService extends ServiceBase {
         echo $response;
     }
 
+    /**
+     * Set a response header
+     * @param string $header 
+     * @param string $info 
+     * @return bool
+     */
+    public function setHeader($header, $info) {
+        $this->response_headers[$header] = $info;
+        return true;
+    }
+
+    /**
+     * Check if the response headers have a header set
+     * @param string $header 
+     * @return bool
+     */
+    public function hasHeader($header) {
+        return array_key_exists($header, $this->response_headers);
+    }
+
+    /**
+     * Send the response headers
+     * @return bool
+     */
+    public function sendHeaders() {
+        if(headers_sent()) {
+            return false;
+        }
+        foreach($this->response_headers AS $header => $info) {
+            header("{$header}: {$info}");
+        }
+        return true;
+    }
+
+    /**
+     * Set Post Headers
+     * @return bool
+     */
+    protected function setPostHeaders() {
+        $this->setHeader('Cache-Control', 'no-cache, must-revalidate');
+        $this->setHeader('Pragma', 'no-cache');
+        $this->setHeader('Expires', 'Sat, 26 Jul 1997 05:00:00 GMT');
+        return true;
+    }
     /**
      * Sets the leading portion of any request URI for this API instance
      *
@@ -477,12 +553,18 @@ class RestService extends ServiceBase {
     protected function respond($output, $route, $args) {
         // TODO: gzip, and possibly XML based output
         if (!empty($route['rawReply'])) {
-        	$this->generateETagHeader(md5($output));
+            if ($_SERVER['REQUEST_METHOD'] == 'GET') {
+        	   $this->generateETagHeader(md5($output));
+            }
+            elseif($_SERVER['REQUEST_METHOD'] == 'POST') {
+                $this->setPostHeaders();
+            }
+            $this->sendHeaders();
             echo $output;
         } else {
             // Handle content type header sending
-            $this->sendContentTypeHeader($args);
-
+            $this->setContentTypeHeader($args);
+            $this->sendHeaders();
             // Send the content
             $this->sendContent($output, $args);
         }
@@ -496,25 +578,14 @@ class RestService extends ServiceBase {
 	 * @param string $etag ETag to use for this content.
 	 */
 	protected function generateETagHeader($etag){
-		// Bug 57839 - REST non-GET API must set no-cache headers in response
-        if ($_SERVER['REQUEST_METHOD'] == 'GET') {
-            header("cache-control:");
-            header('Expires: ');
-            header("ETag: " . $etag);
-            header("Pragma:");
-            if(isset($_SERVER["HTTP_IF_NONE_MATCH"])){
-                if($etag == $_SERVER["HTTP_IF_NONE_MATCH"]){
-                    ob_clean();
-                    header("Status: 304 Not Modified");
-                    header("HTTP/1.0 304 Not Modified");
-                    die();
-                }
+        if(isset($_SERVER["HTTP_IF_NONE_MATCH"])){
+            if($etag == $_SERVER["HTTP_IF_NONE_MATCH"]){
+                ob_clean();
+                header("Status: 304 Not Modified");
+                header("HTTP/1.0 304 Not Modified");
+                die();
             }
-        } else {
-            // Force clients to not cache the request
-            header('Cache-Control: no-cache, must-revalidate');
-            header('Pragma: no-cache');
-            header('Expires: Sat, 26 Jul 1997 05:00:00 GMT');
         }
+        $this->setHeader('ETag', $etag);
 	}
 }

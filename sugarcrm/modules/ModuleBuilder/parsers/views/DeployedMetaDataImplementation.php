@@ -46,6 +46,8 @@ class DeployedMetaDataImplementation extends AbstractMetaDataImplementation impl
 	 */
 	function __construct ($view , $moduleName, $client = '')
 	{
+        // Set the deployed state to true
+        $this->_deployed = true;
 
 		// BEGIN ASSERTIONS
 		if (! isset ( $GLOBALS [ 'beanList' ] [ $moduleName ] ))

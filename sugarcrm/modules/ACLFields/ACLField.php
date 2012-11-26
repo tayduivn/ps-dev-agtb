@@ -33,7 +33,18 @@ class ACLField  extends ACLAction
     var $disable_custom_fields = true;
     var $new_schema = true;
 
-    function ACLField(){
+    /**
+     * This is a depreciated method, please start using __construct() as this method will be removed in a future version
+     *
+     * @see __construct
+     * @deprecated
+     */
+    public function ACLField()
+    {
+        $this->__construct();
+    }
+
+    public function __construct(){
         parent::__construct();
         //BEGIN SUGARCRM flav=pro ONLY
         $this->disable_row_level_security =true;
@@ -56,7 +67,7 @@ class ACLField  extends ACLAction
                 $class = $GLOBALS['beanList'][$module];
                 require_once($GLOBALS['beanFiles'][$class]);
                 $mod = new $class();
-                if(!$mod->acl_fields)return array();
+                if(empty($mod->acl_fields))return array();
                 $fieldDefs = $mod->field_defs;
             }else{
                 $fieldDefs = $GLOBALS['dictionary'][$object]['fields'];

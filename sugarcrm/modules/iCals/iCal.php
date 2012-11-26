@@ -51,6 +51,17 @@ class iCal extends vCal {
     const UTC_FORMAT = 'Ymd\THi00\Z';
 
     /**
+     * This is a depreciated method, please start using __construct() as this method will be removed in a future version
+     *
+     * @see __construct
+     * @deprecated
+     */
+    public function iCal()
+    {
+        $this->__construct();
+    }
+
+    /**
     * Constructor for the iCal class.
     */
     public function __construct()

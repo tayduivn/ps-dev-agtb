@@ -1,5 +1,5 @@
 <?php
-//FILE SUGARCRM flav=pro || flav=ent ONLY
+//FILE SUGARCRM flav=ent ONLY
 /*********************************************************************************
  * The contents of this file are subject to the SugarCRM Professional End User
  * License Agreement ("License") which can be viewed at
@@ -23,9 +23,9 @@
  * All Rights Reserved.
  ********************************************************************************/
 
-require_once('tests/rest/RestTestBase.php');
+require_once('tests/rest/RestTestPortalBase.php');
 
-class RestMetadataViewDefsTest extends RestTestBase {
+class RestMetadataViewDefsTest extends RestTestPortalBase {
     public $testMetaDataFiles = array(
         //BEGIN SUGARCRM flav=ent ONLY
         'contacts' => 'custom/modules/Contacts/clients/portal/layouts/banana/banana.php',
@@ -46,6 +46,7 @@ class RestMetadataViewDefsTest extends RestTestBase {
                 SugarAutoLoader::delFromMap($dirname);
             }
         }
+        SugarAutoLoader::saveMap();
 
         parent::tearDown();
     }
@@ -55,7 +56,7 @@ class RestMetadataViewDefsTest extends RestTestBase {
      * @group rest
      */
     public function testDefaultPortalLayoutMetaData() {
-        $restReply = $this->_restCall('metadata?type_filter=modules&module_filter=Contacts&platform=portal');
+        $restReply = $this->_restCall('metadata?type_filter=modules&module_filter=Contacts');
         // Hash should always be set
         $this->assertTrue(isset($restReply['reply']['modules']['Contacts']['layouts']['_hash']), "Portal layouts missing hash empty");
         unset($restReply['reply']['modules']['Contacts']['layouts']['_hash']);
@@ -68,7 +69,8 @@ class RestMetadataViewDefsTest extends RestTestBase {
      * @group rest
      */
     public function testDefaultPortalViewMetaData() {
-        $restReply = $this->_restCall('metadata?type_filter=modules&module_filter=Cases&platform=portal');
+        $this->_clearMetadataCache();
+        $restReply = $this->_restCall('metadata?type_filter=modules&module_filter=Cases');
         $this->assertTrue(empty($restReply['reply']['modules']['Cases']['views']['ghostrider']), "Test file found unexpectedly");
     }
 
@@ -78,8 +80,10 @@ class RestMetadataViewDefsTest extends RestTestBase {
     public function testAdditionalPortalLayoutMetaData() {
         SugarAutoLoader::ensureDir(dirname($this->testMetaDataFiles['contacts']));
         SugarAutoLoader::put($this->testMetaDataFiles['contacts'], "<?php\n\$viewdefs['Contacts']['portal']['layout']['banana'] = array('yummy' => 'Banana Split');", true);
+        SugarAutoLoader::saveMap();
 
-        $restReply = $this->_restCall('metadata?type_filter=modules&module_filter=Contacts&platform=portal');
+        $this->_clearMetadataCache();
+        $restReply = $this->_restCall('metadata?type_filter=modules&module_filter=Contacts');
         $this->assertEquals('Banana Split',$restReply['reply']['modules']['Contacts']['layouts']['banana']['meta']['yummy'], "Failed to retrieve all layout metadata");
     }
 
@@ -89,21 +93,13 @@ class RestMetadataViewDefsTest extends RestTestBase {
     public function testAdditionalPortalViewMetaData() {
         SugarAutoLoader::ensureDir(dirname($this->testMetaDataFiles['cases']));
         SugarAutoLoader::put($this->testMetaDataFiles['cases'], "<?php\n\$viewdefs['Cases']['portal']['view']['ghostrider'] = array('pattern' => 'Full');", true);
+        SugarAutoLoader::saveMap();
 
-        $restReply = $this->_restCall('metadata?type_filter=modules&module_filter=Cases&platform=portal');
+        $this->_clearMetadataCache();
+        $restReply = $this->_restCall('metadata?type_filter=modules&module_filter=Cases');
         $this->assertEquals('Full',$restReply['reply']['modules']['Cases']['views']['ghostrider']['meta']['pattern'], "Failed to retrieve all view metadata");
+
     }
     //END SUGARCRM flav=ent ONLY
 
-    /**
-     * Test addresses a case related to the metadata location move that caused
-     * metadatamanager to not roll up to sugar objects properly
-     *
-     * @group rest
-     */
-    public function testMobileMetaDataRollsUp()
-    {
-        $reply = $this->_restCall('metadata?typeFilter=modules&moduleFilter=Contacts&platform=mobile');
-        $this->assertNotEmpty($reply['reply']['modules']['Contacts']['views']['list']['meta'], 'Contacts list view metadata was not fetched from SugarObjects');
-    }
 }

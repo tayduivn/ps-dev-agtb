@@ -276,6 +276,7 @@ $mod_strings = array (
 	'LBL_CREATED_BY_NAME' => 'Created By', //bug 48978
     'LBL_MODIFIED_BY_ID'               =>'Modified By ID',
     'LBL_MODULE_NAME'					=> 'Users',
+    'LBL_MODULE_NAME_SINGULAR'				=> 'User',
 	'LBL_MODULE_TITLE'					=> 'Users: Home',
     'LBL_NAME'							=> 'Full Name',
     'LBL_SIGNATURE_NAME'                                        =>  'Name',

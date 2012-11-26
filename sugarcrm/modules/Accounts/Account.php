@@ -134,6 +134,17 @@ class Account extends Company {
     var $push_billing;
     var $push_shipping;
 
+    /**
+     * This is a depreciated method, please start using __construct() as this method will be removed in a future version
+     *
+     * @see __construct
+     * @deprecated
+     */
+    public function Account()
+    {
+        $this->__construct();
+    }
+
 	public function __construct() {
         parent::__construct();
 

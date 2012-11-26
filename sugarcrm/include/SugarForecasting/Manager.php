@@ -315,12 +315,11 @@ class SugarForecasting_Manager extends SugarForecasting_AbstractForecast impleme
         {
             // if the reportee is the manager, we need to get the roll up amount instead of the direct amount
             $forecast_type = (User::isManager($id) && $id != $args['user_id']) ? 'ROLLUP' : 'DIRECT';
-            $forecast_query = "SELECT id, best_case, likely_case, worst_case, date_modified, currency_id, base_rate
-                                FROM forecasts
-                                WHERE timeperiod_id = '" . $args['timeperiod_id'] . "'
-                                    AND forecast_type = '" . $forecast_type . "'
-                                    AND user_id = '" . $id .  "'
-                                    AND deleted = 0 ORDER BY date_modified DESC";
+            $forecast_query = sprintf("SELECT id, best_case, likely_case, worst_case, date_modified, currency_id, base_rate FROM forecasts WHERE timeperiod_id = '%s' AND forecast_type = '%s' AND user_id = '%s' AND deleted = 0 ORDER BY date_modified DESC",
+                                    $args['timeperiod_id'],
+                                    $forecast_type,
+                                    $id);
+
             $result = $db->limitQuery($forecast_query, 0, 1);
 
             while($row=$db->fetchByAssoc($result)) {

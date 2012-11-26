@@ -46,6 +46,7 @@ $mod_strings = array (
     'LBL_LEAD_SOURCE_OTHER' => 'Other',
     'LBL_LEAD_SOURCES' => 'Lead Sources:',
     'LBL_MODULE_NAME' => 'Dashboard',
+    'LBL_MODULE_NAME_SINGULAR'	=> 'Dashboard',
     'LBL_MODULE_TITLE' => 'Dashboard: Home',
     'LBL_MONTH_BY_OUTCOME_DESC' => 'Shows cumulative opportunity amounts by month by outcome for selected users where the expected closed date is within the specified date range.  Outcome is based on whether the sales stage is Closed Won, Closed Lost, or any other value.',
     'LBL_NUMBER_OF_OPPS' => 'Number of Opportunities',

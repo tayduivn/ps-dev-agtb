@@ -627,4 +627,174 @@ class MetaDataFiles
 
         return isset($map[$client][$view]) ? $map[$client][$view] : $view;
     }
+
+    public static function clearModuleClientCache( $modules = array(), $type = '' )
+    {
+        if ( is_string($modules) ) {
+            // They just want one module
+            $modules = array($modules);
+        } else if ( count($modules) == 0 ) {
+            // They want all of the modules
+            $modules = array_keys($GLOBALS['app_list_strings']['moduleList']);
+        }
+        foreach ( $modules as $module ) {
+            if ( empty($type) ) {
+                $type = '*';
+            }
+            // Delete client cache files of all types
+            foreach ( glob(sugar_cached('modules/'.$module.'/clients/*/'.$type.'.php')) as $cacheFile ) {
+                unlink($cacheFile);
+            }
+        }
+    }
+
+    public static function getModuleClientCache( $platforms, $type, $module )
+    {
+        $clientCache = array();
+        $cacheFile = sugar_cached('modules/'.$module.'/clients/'.$platforms[0].'/'.$type.'.php');
+        if ( !file_exists($cacheFile) ) {
+            self::buildModuleClientCache( $platforms, $type, $module );
+        }
+        $clientCache[$module][$platforms[0]][$type] = array();
+        require $cacheFile;
+
+        return $clientCache[$module][$platforms[0]][$type];
+    }
+
+    public static function buildModuleClientCache( $platforms, $type, $modules = array() )
+    {
+        if ( is_string($modules) ) {
+            // They just want one module
+            $modules = array($modules);
+        } else if ( count($modules) == 0 ) {
+            // They want all of the modules
+            $modules = array_keys($GLOBALS['app_list_strings']['moduleList']);
+        }
+        foreach ( $modules as $module ) {
+            
+            $fileList = self::getClientFiles($platforms, $type, $module);
+            
+            $moduleResults = self::getClientFileContents($fileList, $type, $module);
+
+            $basePath = sugar_cached('modules/'.$module.'/clients/'.$platforms[0]);
+            sugar_mkdir($basePath,null,true);
+            
+            $output = "<?php\n\$clientCache['".$module."']['".$platforms[0]."']['".$type."'] = ".var_export($moduleResults,true).";\n\n";
+            sugar_file_put_contents($basePath.'/'.$type.'.php',$output);
+        }
+    }
+
+    public static function getClientFiles( $platforms, $type, $module = '' ) {
+        $checkPaths = array();
+
+        // First, build a list of paths to check
+        if ( $module == '' ) {
+            foreach ( $platforms as $platform ) {
+                // These are sorted in order of priority.
+                // No templates for the non-module stuff
+                $checkPaths['custom/clients/'.$platform.'/'.$type.'s'] = array('platform'=>$platform,'template'=>false);
+                $checkPaths['clients/'.$platform.'/'.$type.'s'] = array('platform'=>$platform,'template'=>false);
+            }
+        } else {
+            foreach ( $platforms as $platform ) {
+                // These are sorted in order of priority.
+                // The template flag is if that file needs to be "built" by the metadata loader so it
+                // is no longer a template file, but a real file.
+                $checkPaths['custom/modules/'.$module.'/clients/'.$platform.'/'.$type.'s'] = array('platform'=>$platform,'template'=>false);
+                $checkPaths['modules/'.$module.'/clients/'.$platform.'/'.$type.'s'] = array('platform'=>$platform,'template'=>false);
+                $baseTemplateDir = 'include/SugarObjects/templates/basic/clients/'.$platform.'/'.$type.'s';
+                $nonBaseTemplateDir = self::getSugarObjectFileDir($module, $platform, $type);
+                if (!empty($nonBaseTemplateDir) && $nonBaseTemplateDir != $baseTemplateDir ) {
+                    $checkPaths['custom/'.$nonBaseTemplateDir] = array('platform'=>$platform,'template'=>true);
+                    $checkPaths[$nonBaseTemplateDir] = array('platform'=>$platform, 'template'=>true);
+                }
+                $checkPaths['custom/'.$baseTemplateDir] = array('platform'=>$platform,'template'=>true);
+                $checkPaths[$baseTemplateDir] = array('platform'=>$platform,'template'=>true);
+            }
+        }
+
+        // Second, get a list of files in those directories, sorted by "relevance"
+        $fileList = array();
+        foreach ( $checkPaths as $path => $pathInfo ) {
+            // Looks at /modules/Accounts/clients/base/views/*
+            // So should pull up "record","list","preview"
+            $dirsInPath = SugarAutoLoader::getDirFiles($path,true);
+            foreach ( $dirsInPath as $fullSubPath ) {
+                $subPath = basename($fullSubPath);
+                // This should find the files in each view/layout
+                // So it should pull up list.js, list.php, list.hbt
+                $filesInDir = SugarAutoLoader::getDirFiles($fullSubPath,false);
+                foreach ( $filesInDir as $fullFile ) {
+                    $file = basename($fullFile);
+                    $fileIndex = $subPath.'/'.$file;
+                    if ( !isset($fileList[$fileIndex]) ) {
+                        $fileList[$fileIndex] = array('path'=>$fullFile, 'file'=>$file, 'subPath'=>$subPath, 'platform'=>$pathInfo['platform']);
+                        if ( $pathInfo['template'] && (substr($file,-4)=='.php') ) {
+                            $fileList[$fileIndex]['template'] = true;
+                        } else {
+                            $fileList[$fileIndex]['template'] = false;
+                        }
+                    }
+                }
+            }
+        }
+        
+        return $fileList;
+    }
+
+    public static function getClientFileContents( $fileList, $type, $module = '' )
+    {
+        $results = array();
+        
+        foreach ( $fileList as $fileIndex => $fileInfo ) {
+            if ( $fileInfo['template'] ) {
+                // This is a template file, not a real one.
+                require $fileInfo['path'];
+                $bean = BeanFactory::getBean($module);
+                if ( !is_a($bean,'SugarBean') ) {
+                    // I'm not sure what this is, but it's not something we can template
+                    continue;
+                }
+                $viewdefs = self::getModuleMetaDataDefsWithReplacements($bean, $viewdefs);
+                if ( ! isset($viewdefs[$module][$fileInfo['platform']][$type][$fileInfo['subPath']]) ) {
+                    $GLOBALS['log']->error('Could not generate a metadata file for module '.$module.', platform: '.$fileInfo['platform'].', type: '.$type);
+                    continue;
+                }
+                    
+                $results[$fileInfo['subPath']]['meta'] = $viewdefs[$module][$fileInfo['platform']][$type][$fileInfo['subPath']];
+            } else {
+                $extension = substr($fileInfo['path'],-3);
+                switch ( $extension ) {
+                    case '.js':
+                        $results[$fileInfo['subPath']]['controller'][$fileInfo['platform']] = file_get_contents($fileInfo['path']);
+                        break;
+                    case 'hbt':
+                        $layoutName = substr($fileInfo['file'],0,-4);
+                        $results[$fileInfo['subPath']]['templates'][$layoutName] = file_get_contents($fileInfo['path']);
+                        // $results[$fileInfo['subPath']]['template'] = file_get_contents($fileInfo['path']);
+                        break;
+                    case 'php':
+                        $viewdefs = array();
+                        require $fileInfo['path'];
+                        if ( empty($module) ) {
+                            if ( !isset($viewdefs[$fileInfo['platform']][$type][$fileInfo['subPath']]) ) {
+                                $GLOBALS['log']->error('No viewdefs for type: '.$type.' viewdefs @ '.$fileInfo['path']);
+                            } else {
+                                $results[$fileInfo['subPath']]['meta'] = $viewdefs[$fileInfo['platform']][$type][$fileInfo['subPath']];
+                            }
+                        } else {
+                            if ( !isset($viewdefs[$module][$fileInfo['platform']][$type][$fileInfo['subPath']]) ) {
+                                $GLOBALS['log']->error('No viewdefs for module: '.$module.' viewdefs @ '.$fileInfo['path']);
+                            } else {
+                                $results[$fileInfo['subPath']]['meta'] = $viewdefs[$module][$fileInfo['platform']][$type][$fileInfo['subPath']];
+                            }
+                        }
+                        break;
+                }
+            }
+        }
+
+        $results['_hash'] = md5(serialize($results));
+        return $results;
+    }
 }

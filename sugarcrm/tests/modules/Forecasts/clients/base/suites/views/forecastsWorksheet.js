@@ -21,7 +21,7 @@
 
 describe("The forecasts worksheet", function(){
 
-    var app, view, field, _renderClickToEditStub, _renderFieldStub, _setUpCommitStageSpy, testMethodStub;
+    var app, view, field, _renderClickToEditStub, _renderFieldStub, _setUpCommitStageSpy, testMethodStub, testValue;
 
     beforeEach(function() {
         app = SugarTest.app;
@@ -39,12 +39,18 @@ describe("The forecasts worksheet", function(){
     describe("clickToEdit field", function() {
 
         beforeEach(function() {
+            testValue = 'testValue';
             _renderClickToEditStub = sinon.stub(app.view, "ClickToEditField");
             _renderFieldStub = sinon.stub(app.view.View.prototype, "_renderField");
             field = {
                 viewName:'worksheet',
                 def:{
                     clickToEdit:true
+                },
+                model : {
+                    get : function(param) {
+                        return [testValue];
+                    }
                 }
             };
         });
@@ -364,10 +370,6 @@ describe("The forecasts worksheet", function(){
     		expect(view.context.forecasts.on).toHaveBeenCalledWith("change:expectedOpportunities");
     	});  	
     	
-    	it("forecasts.on should have been called with checkDirtyWorksheetFlag", function(){
-    		expect(view.context.forecasts.on).toHaveBeenCalledWith("change:checkDirtyWorksheetFlag");
-    	});
-
         // TODO: tagged for 6.8 see SFA-253 for details
     	xit("forecasts.config.on should have been called with show_worksheet_likely", function(){
     		expect(view.context.forecasts.config.on).toHaveBeenCalledWith("change:show_worksheet_likely");

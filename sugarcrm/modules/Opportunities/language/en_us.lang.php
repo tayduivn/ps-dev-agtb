@@ -29,6 +29,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 $mod_strings = array (
   'LBL_MODULE_NAME' => 'Opportunities',
+  'LBL_MODULE_NAME_SINGULAR' => 'Opportunity',
   'LBL_MODULE_TITLE' => 'Opportunities: Home',
   'LBL_SEARCH_FORM_TITLE' => 'Opportunity Search',
   'LBL_VIEW_FORM_TITLE' => 'Opportunity View',

@@ -281,23 +281,23 @@ class ForecastsTimePeriodTest extends Sugar_PHPUnit_Framework_TestCase
     public function getTimePeriodNameProvider()
     {
         return array(
-            array(TimePeriod::ANNUAL_TYPE, '2012-01-01', 1, 'Year 2012'),
-            array(TimePeriod::QUARTER_TYPE, '2012-01-01', 1, 'Q1 2012'),
-            array(TimePeriod::QUARTER_TYPE, '2012-04-01', 2, 'Q2 2012'),
-            array(TimePeriod::QUARTER_TYPE, '2012-07-01', 3, 'Q3 2012'),
-            array(TimePeriod::QUARTER_TYPE, '2012-10-01', 4, 'Q4 2012'),
-            array(TimePeriod::MONTH_TYPE, '2012-01-01', 1, 'Jan 2012'),
-            array(TimePeriod::MONTH_TYPE, '2012-02-01', 2, 'Feb 2012'),
-            array(TimePeriod::MONTH_TYPE, '2012-03-01', 3, 'Mar 2012'),
-            array(TimePeriod::MONTH_TYPE, '2012-04-01', 4, 'Apr 2012'),
-            array(TimePeriod::MONTH_TYPE, '2012-05-01', 5, 'May 2012'),
-            array(TimePeriod::MONTH_TYPE, '2012-06-01', 6, 'Jun 2012'),
-            array(TimePeriod::MONTH_TYPE, '2012-07-01', 7, 'Jul 2012'),
-            array(TimePeriod::MONTH_TYPE, '2012-08-01', 8, 'Aug 2012'),
-            array(TimePeriod::MONTH_TYPE, '2012-09-01', 9, 'Sep 2012'),
-            array(TimePeriod::MONTH_TYPE, '2012-10-01', 10, 'Oct 2012'),
-            array(TimePeriod::MONTH_TYPE, '2012-11-01', 11, 'Nov 2012'),
-            array(TimePeriod::MONTH_TYPE, '2012-12-01', 12, 'Dec 2012')
+            array(TimePeriod::ANNUAL_TYPE, '2012-07-01', 2012, 1, 'Year 2012'),
+            array(TimePeriod::QUARTER_TYPE, '2012-07-01', 2012, 1, 'Q1 2012'),
+            array(TimePeriod::QUARTER_TYPE, '2012-10-01', 2012, 2, 'Q2 2012'),
+            array(TimePeriod::QUARTER_TYPE, '2012-01-01', 2012, 3, 'Q3 2012'),
+            array(TimePeriod::QUARTER_TYPE, '2012-04-01', 2012, 4, 'Q4 2012'),
+            array(TimePeriod::MONTH_TYPE, '2012-07-01', 2012, 1, 'Jul 2012'),
+            array(TimePeriod::MONTH_TYPE, '2012-08-01', 2012, 2, 'Aug 2012'),
+            array(TimePeriod::MONTH_TYPE, '2012-09-01', 2012, 3, 'Sep 2012'),
+            array(TimePeriod::MONTH_TYPE, '2012-10-01', 2012, 4, 'Oct 2012'),
+            array(TimePeriod::MONTH_TYPE, '2012-11-01', 2012, 5, 'Nov 2012'),
+            array(TimePeriod::MONTH_TYPE, '2012-12-01', 2012, 6, 'Dec 2012'),
+            array(TimePeriod::MONTH_TYPE, '2012-01-01', 2012, 7, 'Jan 2012'),
+            array(TimePeriod::MONTH_TYPE, '2012-02-01', 2012, 8, 'Feb 2012'),
+            array(TimePeriod::MONTH_TYPE, '2012-03-01', 2012, 9, 'Mar 2012'),
+            array(TimePeriod::MONTH_TYPE, '2012-04-01', 2012, 10, 'Apr 2012'),
+            array(TimePeriod::MONTH_TYPE, '2012-05-01', 2012, 11, 'May 2012'),
+            array(TimePeriod::MONTH_TYPE, '2012-06-01', 2012, 12, 'Jun 2012')
         );
     }
 
@@ -310,11 +310,11 @@ class ForecastsTimePeriodTest extends Sugar_PHPUnit_Framework_TestCase
      * @group timeperiods
      * @dataProvider getTimePeriodNameProvider
      */
-    public function testGetTimePeriodName($type, $startDate, $count, $expectedName)
+    public function testGetTimePeriodName($type, $startDate, $year, $count, $expectedName)
     {
         $timePeriod = TimePeriod::getByType($type);
         $timePeriod->setStartDate($startDate);
-        $this->assertEquals($expectedName, $timePeriod->getTimePeriodName($count));
+        $this->assertEquals($expectedName, $timePeriod->getTimePeriodName($count, $year));
     }
 
 
@@ -384,6 +384,7 @@ class ForecastsTimePeriodTest extends Sugar_PHPUnit_Framework_TestCase
      * buildTimePeriodsProvider
      *
      * This is the data provider for the the testBuildTimePeriodsProvider function
+     *
      * The arguments are as follows
      * 1) The is_upgrade setting to use in simulating the call to rebuildForecastingTimePeriods
      * 2) The prior timeperiod_shown_backward argument
@@ -406,6 +407,7 @@ class ForecastsTimePeriodTest extends Sugar_PHPUnit_Framework_TestCase
         (
             //Going from 2 to 4 creates 2 additional annual timeperiods backwards (2 annual, 8 quarters)
             array(0, 2, 4, TimePeriod::ANNUAL_TYPE, TimePeriod::QUARTER_TYPE, 1, 1, '-2 year', 2, 8, 'backward'),
+
             array(0, 2, 4, TimePeriod::ANNUAL_TYPE, TimePeriod::QUARTER_TYPE, 7, 1, '-2 year', 2, 8, 'backward'),
 
             //Going from 4 to 6 creates 2 annual timeperiods backwards (2 annual, 8 quarters)
@@ -473,6 +475,8 @@ class ForecastsTimePeriodTest extends Sugar_PHPUnit_Framework_TestCase
             $expectedLeafMonth = 1,
             $expectedLeafDay = 1
     ) {
+        $timedate = TimeDate::getInstance();
+
         $admin = BeanFactory::newBean('Administration');
 
         $priorForecastSettings = $admin->getConfigForModule('Forecasts', 'base');
@@ -507,7 +511,6 @@ class ForecastsTimePeriodTest extends Sugar_PHPUnit_Framework_TestCase
 
         $timePeriod = TimePeriod::getByType($parentType);
         $timePeriod->rebuildForecastingTimePeriods($priorForecastSettings, $currentForecastSettings);
-        $timedate = TimeDate::getInstance();
 
         $expectedDate = $timedate->getNow()->setDate($timedate->fromDbDate($expectedSeed->start_date)->modify($dateModifier)->format('Y'), $expectedMonth, $expectedDay);
 
@@ -517,6 +520,7 @@ class ForecastsTimePeriodTest extends Sugar_PHPUnit_Framework_TestCase
         }
 
         $tp = $direction == 'backward' ? TimePeriod::getEarliest($parentType) : TimePeriod::getLatest($parentType);
+
 
         $this->assertEquals($expectedDate->asDbDate(), $tp->start_date, "Failed creating {$expectedParents} new {$direction} timeperiods");
 
@@ -582,7 +586,6 @@ class ForecastsTimePeriodTest extends Sugar_PHPUnit_Framework_TestCase
 
     /**
      * This is a test to see how the TimePeriod code handles specifying corner cases like a leap year as the starting forecasting date
-     * It turns out that specifying the leap year will only result in PHP creating the starting timeperiod on March 1.
      *
      * @group timeperiods
      * @group forecasts
@@ -595,19 +598,24 @@ class ForecastsTimePeriodTest extends Sugar_PHPUnit_Framework_TestCase
         $settings['timeperiod_start_day'] = 29;
         $settings['timeperiod_interval'] = TimePeriod::ANNUAL_TYPE;
         $settings['timeperiod_leaf_interval'] = TimePeriod::QUARTER_TYPE;
-        $settings['timeperiod_shown_backward'] = 2;
-        $settings['timeperiod_shown_forward'] = 2;
+        $settings['timeperiod_shown_backward'] = 4;
+        $settings['timeperiod_shown_forward'] = 4;
 
         $timePeriod = TimePeriod::getByType(TimePeriod::ANNUAL_TYPE);
         $timePeriod->setStartDate('2012-02-29');
         $timePeriod->rebuildForecastingTimePeriods(array(), $settings);
 
-        $timePeriods = TimePeriod::get_fiscal_year_dom();
+        $timePeriods = TimePeriod::get_not_fiscal_timeperiods_dom();
 
+        //We are basically asserting that for 8 years of timeperiods created, we should have two leaf timeperiods
+        $leapYearFoundCount = 0;
         foreach($timePeriods as $id=>$name) {
-            $timePeriod = TimePeriod::getByType(TimePeriod::ANNUAL_TYPE, $id);
-            $this->assertRegExp('/\d{4}\-03-01/', $timePeriod->start_date, "Failed asserting that parent timeperiods were created on March 1st");
+            $timePeriod = TimePeriod::getByType(TimePeriod::QUARTER_TYPE, $id);
+            if(preg_match('/\d{4}\-02-29/', $timePeriod->start_date)) {
+                $leapYearFoundCount++;
+            }
         }
+        $this->assertTrue($leapYearFoundCount >= 2, "Failed to find at least 2 leap year leaf timeperiods for 8 years of timeperiods");
     }
 
 

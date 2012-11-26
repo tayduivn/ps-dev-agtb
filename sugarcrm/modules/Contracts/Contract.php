@@ -101,6 +101,17 @@ class Contract extends SugarBean {
 	var $new_schema = true;
 	var $module_dir = 'Contracts';
 
+    /**
+     * This is a depreciated method, please start using __construct() as this method will be removed in a future version
+     *
+     * @see __construct
+     * @deprecated
+     */
+    public function Contracts()
+    {
+        $this->__construct();
+    }
+
 	public function __construct() {
 		parent::__construct();
 		$this->setupCustomFields('Contract'); //parameter is module name

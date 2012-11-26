@@ -126,6 +126,8 @@ class ForecastsDefaults
             'show_projected_best' => 1,
             // whether or not to show the worst total in the forecasts projected view
             'show_projected_worst' => 0,
+            // whether or not to show the commit warnings
+            'show_forecasts_commit_warnings' => 1
         );
     }
 

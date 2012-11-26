@@ -26,16 +26,9 @@
  * governing these rights and limitations under the License.  Portions created
  * by SugarCRM are Copyright (C) 2004-2011 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
-
-
-
-
 require_once "modules/ProjectTask/ProjectTask.php";
 require_once "modules/Project/Project.php";
 
-/**
- * Created: Desc 16, 2011
- */
 class Bug49310Test extends Sugar_PHPUnit_Framework_TestCase
 {
 	public $project;
@@ -56,15 +49,9 @@ class Bug49310Test extends Sugar_PHPUnit_Framework_TestCase
 	public function setUp()
 	{
 
-        $beanList = array();
-        $beanFiles = array();
-        require('include/modules.php');
-        $GLOBALS['beanList'] = $beanList;
-        $GLOBALS['beanFiles'] = $beanFiles;
-
-
-        $this->_user = SugarTestUserUtilities::createAnonymousUser();
-		$GLOBALS['current_user'] = $this->_user;
+        SugarTestHelper::setUp('beanFiles');
+        SugarTestHelper::setUp('beanList');
+        SugarTestHelper::setUp('current_user');
 		$this->project = SugarTestProjectUtilities::createProject();
 		$projectId = $this->project->id;
 
@@ -127,13 +114,9 @@ class Bug49310Test extends Sugar_PHPUnit_Framework_TestCase
 	{
 		SugarTestProjectUtilities::removeAllCreatedProjects();
 		SugarTestProjectTaskUtilities::removeAllCreatedProjectTasks();
-        SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
 		unset($this->project);
 		unset($this->projectTasks);
         unset($this->_user);
-		unset($GLOBALS['current_user']);
-        unset($GLOBALS['beanList']);
-        unset($GLOBALS['beanFiles']);
 	}
 
 	public function testResourceName()

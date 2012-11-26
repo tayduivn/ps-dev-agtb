@@ -271,7 +271,8 @@ $dictionary['Opportunity'] = array('table' => 'opportunities','audited'=>true, '
     'dbType' => 'currency',
     'type' => 'currency',
     'len' => '26,6',
-    'validation' => array('type' => 'range', 'min' => 0)
+    'validation' => array('type' => 'range', 'min' => 0),
+    'audited'=>true,
   ),
   'worst_case' =>
   array (
@@ -280,7 +281,8 @@ $dictionary['Opportunity'] = array('table' => 'opportunities','audited'=>true, '
     'dbType' => 'currency',
     'type' => 'currency',
     'len' => '26,6',
-    'validation' => array('type' => 'range', 'min' => 0)
+    'validation' => array('type' => 'range', 'min' => 0),
+    'audited'=>true,
   ),
   'commit_stage' =>
   array (

@@ -28,10 +28,19 @@ class EmailUI {
 								   JOIN emails_text on emails.id = emails_text.email_id
                                    WHERE (type = '::TYPE::' OR status = '::STATUS::') AND assigned_user_id = '::USER_ID::' AND emails.deleted = '0'";
 
-	/**
-	 * Sole constructor
-	 */
-	function EmailUI() {
+
+    /**
+     * This is a depreciated method, please start using __construct() as this method will be removed in a future version
+     *
+     * @see __construct
+     * @deprecated
+     */
+    public function EmailUI()
+    {
+        $this->__construct();
+    }
+
+	public function __construct() {
 		global $sugar_config;
 		global $current_user;
 

@@ -52,6 +52,51 @@ class RestCurrentUserTest extends RestTestBase {
     /**
      * @group rest
      */
+    public function testRetrieveDefaults()  {
+        global $current_user,$sugar_config;
+        $real_current_user = $current_user;
+        // The reset preferences call will fail because it's trying to mess with a session
+        // unless the "current user" isn't the user we are changing the preferences on.
+        $current_user = new User();
+        $current_user->id = 'NOT-THE-REAL-THING';
+        $real_current_user->resetPreferences();
+        $current_user = $real_current_user;
+
+        $restReply = $this->_restCall('me');
+        $this->assertEquals($sugar_config['datef'],$restReply['reply']['current_user']['datepref'],"trd: Date pref is not the default");
+        $this->assertEquals($sugar_config['default_time_format'],$restReply['reply']['current_user']['timepref'],"trd: Time pref is not the default");
+
+        $current_user->setPreference('datef','m/d/Y');
+        $current_user->setPreference('timef','H:i a');
+        $current_user->savePreferencesToDB();
+        
+        // Need to logout and log back in, preferences are cached in the session.
+        $this->_restLogin();
+        $restReply = $this->_restCall('me');
+        $this->assertEquals('m/d/Y',$restReply['reply']['current_user']['datepref'],"trd: Date pref is not the configured value");
+        $this->assertEquals('H:i a',$restReply['reply']['current_user']['timepref'],"trd: Time pref is not the configured value");
+    }
+    
+    /**
+     * @group rest
+     */
+    public function testAclUsers() {
+      $restReply = $this->_restCall("me");
+      // verify the user is not the admin of the users module
+      $userAcl = $restReply['reply']['current_user']['acl']['Users'];
+      $this->assertEquals('no', $userAcl['admin'], "This user is the admin and should not be");
+      // log in as an admin
+      $GLOBALS['current_user']->is_admin = 1;
+      $GLOBALS['current_user']->save();
+      $restReply = $this->_restCall("me");
+      // verify the user is the admin of the users module
+      $userAcl = $restReply['reply']['current_user']['acl']['Users'];
+      $this->assertEquals('yes', $userAcl['admin'], "This user is not the admin and they should be");
+    } 
+
+    /**
+     * @group rest
+     */
     public function testUpdate() {
         $restReply = $this->_restCall("me", json_encode(array('first_name' => 'UNIT TEST - AFTER')), "PUT");
         $this->assertNotEquals(stripos($restReply['reply']['current_user']['full_name'], 'UNIT TEST - AFTER'), false);

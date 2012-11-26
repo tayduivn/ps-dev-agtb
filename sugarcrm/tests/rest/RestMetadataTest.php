@@ -48,7 +48,7 @@ class RestMetadataTest extends RestTestBase {
         $this->assertTrue(isset($restReply['reply']['modules']),'Modules are missing.');
 
         $this->assertTrue(isset($restReply['reply']['fields']),'SugarFields are missing.');
-        $this->assertTrue(isset($restReply['reply']['view_templates']),'ViewTemplates are missing.');
+        $this->assertTrue(isset($restReply['reply']['views']),'Views are missing.');
         $this->assertTrue(isset($restReply['reply']['currencies']),'Currencies are missing.');
         $this->assertTrue(isset($restReply['reply']['jssource']),'JSSource is missing.');
 
@@ -63,7 +63,7 @@ class RestMetadataTest extends RestTestBase {
         $this->assertTrue(isset($restReply['reply']['_hash']),'Primary hash is missing.');
         $this->assertTrue(isset($restReply['reply']['config']), 'Portal Configs are missing.');
         $this->assertTrue(isset($restReply['reply']['fields']),'SugarFields are missing.');
-        $this->assertTrue(isset($restReply['reply']['view_templates']),'ViewTemplates are missing.');
+        $this->assertTrue(isset($restReply['reply']['views']),'Views are missing.');
         $this->assertTrue(isset($restReply['reply']['jssource']),'JSSource is missing.');
     }
 

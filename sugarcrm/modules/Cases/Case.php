@@ -81,6 +81,17 @@ class aCase extends Basic {
 									'meeting_id'=>'meetings', 'call_id'=>'calls', 'email_id'=>'emails',
 									);
 
+    /**
+     * This is a depreciated method, please start using __construct() as this method will be removed in a future version
+     *
+     * @see __construct
+     * @deprecated
+     */
+    public function aCase()
+    {
+        $this->__construct();
+    }
+
 	public function __construct() {
 		parent::__construct();
 		global $sugar_config;

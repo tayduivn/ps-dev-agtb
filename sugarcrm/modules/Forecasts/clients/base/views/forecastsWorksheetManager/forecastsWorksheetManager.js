@@ -16,6 +16,12 @@
  *      on: context.forecasts
  *      by: _render()
  *      when: done rendering
+ *
+ * forecasts:forecastcommitbuttons:triggerSaveDraft
+ *      on: context.forecasts
+ *      by: safeFetch()
+ *      when: user performs an action that causes a check to be made against dirty data
+ *
  */
 ({
     url: 'rest/v10/ForecastManagerWorksheets',
@@ -26,6 +32,8 @@
     // boolean for enabled expandable row behavior
     isExpandableRows:'',
     _collection:{},
+    // boolean to denote that a fetch is currently in progress
+    fetchInProgress :  false,
 
 
     /**
@@ -138,16 +146,7 @@
             		this.safeFetch();
             	}
             }, this);
-            this.context.forecasts.on("change:checkDirtyWorksheetFlag", function(){
-            	if(this.context.forecasts.get('checkDirtyWorksheetFlag') && !this.showMe()){
-            		var model = this.context.forecasts.worksheetmanager;
-            		model.url = this.createURL();
-            		this.safeFetch(false);
-            		this.context.forecasts.set({checkDirtyWorksheetFlag: false});
-            	}
-
-            }, this);
-
+            
             /*
              * // TODO: tagged for 6.8 see SFA-253 for details
             this.context.forecasts.config.on('change:show_worksheet_likely', function(context, value) {
@@ -219,7 +218,12 @@
      * @param fetch {boolean} Tells the function to go ahead and fetch if true, or runs dirty checks (saving) w/o fetching if false 
      */
     safeFetch: function(fetch){
-
+        //fetch currently already in progress, no need to duplicate
+        if(this.fetchInProgress) {
+            return;
+        }
+        //mark that a fetch is in process so no duplicate fetches begin
+        this.fetchInProgress = true;
         if(typeof fetch == 'undefined')
         {
             fetch = true;
@@ -229,26 +233,9 @@
     	if(collection.isDirty){
     		//unsaved changes, ask if you want to save.
     		if(confirm(app.lang.get("LBL_WORKSHEET_SAVE_CONFIRM", "Forecasts"))){
-    			var modelCount = 0;
-    			var saveCount = 0;
-    			_.each(collection.models, function(model, index){
-					var isDirty = model.get("isDirty");
-					if(_.isBoolean(isDirty) && isDirty ){
-						modelCount++;
-        				model.set({draft: 1}, {silent:true});
-        				model.save({}, {success:function(){
-        					saveCount++;
-        					if(saveCount === modelCount){
-        						collection.isDirty = false;
-        						collection.fetch();
-        					}
-        				}});
-        				model.set({isDirty: false}, {silent:true});
-        			}  
-				});
-
-		}
-    		else{
+                self.context.forecasts.trigger("forecasts:forecastcommitbuttons:triggerSaveDraft");
+		    }
+    		else {
     			//ignore, fetch still
     			collection.isDirty = false;
     			self.context.forecasts.set({reloadCommitButton: true});
@@ -265,6 +252,7 @@
     		}
     		
     	}
+        this.fetchInProgress = false;
     },
 
     /**
@@ -294,7 +282,6 @@
         }
         $("#view-sales-rep").addClass('hide').removeClass('show');
         $("#view-manager").addClass('show').removeClass('hide');
-        this.context.forecasts.set({checkDirtyWorksheetFlag: true});
         this.context.forecasts.set({currentWorksheet: "worksheetmanager"});
         
         app.view.View.prototype._render.call(this);
@@ -393,7 +380,8 @@
     fetchUserCommitHistory: function(event, nTr) {
         var options = {
             timeperiod_id : this.timePeriod,
-            user_id : $(event.target).attr('data-uid')
+            user_id : $(event.target).attr('data-uid'),
+            forecast_type : 'direct'
         };
 
         var dataCommitDate = $(event.target).attr('data-commitdate');

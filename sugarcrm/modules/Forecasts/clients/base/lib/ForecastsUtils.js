@@ -67,27 +67,26 @@
             // Check for first time run -- no date_entered for oldestModel
             var oldestDateEntered = oldestModel.get('date_entered');
 
-            // This will always have a value
+            // This will always have a value and Format the date according to the user date and time preferences
             var newestModelDate = new Date(Date.parse(newestModel.get('date_entered'))),
-                text2 = '';
+                text2 = '',
+                newestModelDisplayDate = app.date.format(newestModelDate, app.user.get('datepref') + ' ' + app.user.get('timepref'));
 
             if(!_.isEmpty(oldestDateEntered)) {
                 var oldestModelDate = new Date(Date.parse(oldestDateEntered)),
                     yearDiff = oldestModelDate.getYear() - newestModelDate.getYear(),
                     monthsDiff = oldestModelDate.getMonth() - newestModelDate.getMonth();
 
-                //Format the date according to the user date and time preferences
-                newestModelDate = app.date.format(newestModelDate, app.user.get('datepref') + ' ' + app.user.get('timepref'));
                 if(yearDiff == 0 && monthsDiff < 2)
                 {
-                    args = [newestModelDate];
+                    args = [newestModelDisplayDate];
                     text2 = hb({'key' : 'LBL_COMMITTED_THIS_MONTH', 'module' : 'Forecasts', 'args' : args});
                 } else {
-                    args = [monthsDiff, newestModelDate];
+                    args = [monthsDiff, newestModelDisplayDate];
                     text2 = hb({'key' : 'LBL_COMMITTED_MONTHS_AGO', 'module' : 'Forecasts', 'args' : args});
                 }
             } else {
-                args = [newestModelDate];
+                args = [newestModelDisplayDate];
                 text2 = hb({'key' : 'LBL_COMMITTED_THIS_MONTH', 'module' : 'Forecasts', 'args' : args});
             }
 

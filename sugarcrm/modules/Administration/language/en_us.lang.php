@@ -511,6 +511,7 @@ $mod_strings = array (
     'LBL_MODULE_LOADER_TITLE' => 'Module Loader',
     'LBL_MODULE_LOADER' => 'Add or remove Sugar modules, themes, language packs and other extensions',
     'LBL_MODULE_NAME' => 'Administration',
+    'LBL_MODULE_NAME_SINGULAR' => 'Administration',
     'LBL_MODULE_TITLE' => 'Administration: Home',
     'LBL_MODULES_TO_DOWNLOAD'    => 'Modules to Download (drag and drop here)',
     'LBL_NEVER'=>'Never',

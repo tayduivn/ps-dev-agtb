@@ -35,6 +35,7 @@ $viewdefs['Forecasts']['base']['view']['forecastsConfigTimeperiods'] = array(
                     'type' => 'enum',
                     'label' => 'LBL_FORECASTS_CONFIG_TIMEPERIOD_TYPE',
                     'options' => 'forecasts_timeperiod_types_dom',
+                    'searchBarThreshold' => 5,
                     'default' => false,
                     'enabled' => true,
                     'view' => 'forecastsTimeperiod'
@@ -44,6 +45,7 @@ $viewdefs['Forecasts']['base']['view']['forecastsConfigTimeperiods'] = array(
                     'name' => 'timeperiod_interval',
                     'type' => 'enum',
                     'options' => 'forecasts_timeperiod_options_dom',
+                    'searchBarThreshold' => 5,
                     'label' => 'LBL_FORECASTS_CONFIG_TIMEPERIOD',
                     'default' => false,
                     'enabled' => true,
@@ -53,6 +55,7 @@ $viewdefs['Forecasts']['base']['view']['forecastsConfigTimeperiods'] = array(
                     'name' => 'timeperiod_start_month',
                     'type' => 'enum',
                     'options' => 'forecasts_timeperiod_month_options_dom',
+                    'searchBarThreshold' => 5,
                     'label' => 'LBL_FORECASTS_CONFIG_START_MONTH',
                     'default' => false,
                     'enabled' => true,
@@ -66,6 +69,7 @@ $viewdefs['Forecasts']['base']['view']['forecastsConfigTimeperiods'] = array(
                     is missing here), since the dropdown shown to the user depends on a config setting
                     */
                     'label' => 'LBL_FORECASTS_CONFIG_START_DAY',
+                    'searchBarThreshold' => 5,
                     'default' => false,
                     'enabled' => true,
                     'view' => 'forecastsTimeperiod'
@@ -80,6 +84,7 @@ $viewdefs['Forecasts']['base']['view']['forecastsConfigTimeperiods'] = array(
                         '4' => 4,
                         '5' => 5
                     ),
+                    'searchBarThreshold' => 5,
                     'label' => 'LBL_FORECASTS_CONFIG_TIMEPERIODS_FORWARD',
                     'default' => false,
                     'enabled' => true,
@@ -95,6 +100,7 @@ $viewdefs['Forecasts']['base']['view']['forecastsConfigTimeperiods'] = array(
                         '4' => 4,
                         '5' => 5
                     ),
+                    'searchBarThreshold' => 5,
                     'label' => 'LBL_FORECASTS_CONFIG_TIMEPERIODS_BACKWARD',
                     'default' => false,
                     'enabled' => true,

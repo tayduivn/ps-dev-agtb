@@ -122,6 +122,7 @@ class ListLayoutMetaDataParser extends AbstractMetaDataParser implements MetaDat
             $this->_populateFromRequest();
         }
         $this->implementation->deploy($this->_viewdefs); // force the field names back to upper case so the list view will work correctly
+        $this->_clearCaches();
     }
 
     function getLayout ()

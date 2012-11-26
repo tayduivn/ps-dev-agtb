@@ -31,6 +31,7 @@ $mod_strings = array (
 
     //module strings.
     'LBL_MODULE_NAME' => 'Forecasts',
+    'LBL_MODULE_NAME_SINGULAR' => 'Forecast',
     'LNK_NEW_OPPORTUNITY' => 'Create Opportunity',
     'LBL_MODULE_TITLE' => 'Forecasts',
     'LBL_LIST_FORM_TITLE' => 'Committed Forecasts',
@@ -369,6 +370,7 @@ $mod_strings = array (
     'LBL_FORECASTS_CONFIG_SHOW_BINARY_RANGES_DESCRIPTION' => 'This option gives a user the ability to be included or excluded from a forecast.',
     'LBL_FORECASTS_CONFIG_SHOW_BUCKETS_RANGES_DESCRIPTION' => 'This option gives a user the ability to categorize their opportunities that are not included in the commit but are upside and have the potential of closing if everything goes well and opportunities that are to be excluded from the forecast.',
     'LBL_FORECASTS_CONFIG_SHOW_CUSTOM_BUCKETS_CATEGORIES' => 'Custom Categories: This option gives a user the ability to categorize their opportunities to be committed into the forecast into a committed category, excluded category and any other categories that you setup.',
+    'LBL_FORECASTS_CONFIG_CATEGORY_EXCLUDE_INFO' => 'The Exclude Range is from 0% to the minimum of the previous category by default.',
 
     // range config
     'LBL_FORECASTS_CONFIG_WORKSHEET_RANGE' => 'Select the column you would like the user to fill out for their forecast for each opportunity.',

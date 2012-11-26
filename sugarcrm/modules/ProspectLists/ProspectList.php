@@ -74,7 +74,18 @@ class ProspectList extends SugarBean {
 	);
 
     var $entry_count;
-    
+
+    /**
+     * This is a depreciated method, please start using __construct() as this method will be removed in a future version
+     *
+     * @see __construct
+     * @deprecated
+     */
+    public function ProspectList()
+    {
+        $this->__construct();
+    }
+
 	public function __construct() {
 		global $sugar_config;
 		parent::__construct();

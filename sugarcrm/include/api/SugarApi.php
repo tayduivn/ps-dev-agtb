@@ -178,10 +178,7 @@ abstract class SugarApi {
 
     protected function toggleFavorites($module, $record, $favorite)
     {
-        if($favorite == "false" || $favorite == "0") {
-            $favorite = false;
-        }
-
+        
         $favorite = (bool) $favorite;
 
         $fav_id = SugarFavorites::generateGUID($module,$record);

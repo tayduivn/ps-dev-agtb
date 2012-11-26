@@ -76,6 +76,17 @@ class Note extends SugarBean {
 	var $additional_column_fields = Array('contact_name', 'contact_phone', 'contact_email', 'parent_name','first_name','last_name');
 
 
+    /**
+     * This is a depreciated method, please start using __construct() as this method will be removed in a future version
+     *
+     * @see __construct
+     * @deprecated
+     */
+    public function Note()
+    {
+        $this->__construct();
+    }
+
 
 	public function __construct() {
 		parent::__construct();

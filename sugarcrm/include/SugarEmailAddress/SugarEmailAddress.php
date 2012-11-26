@@ -33,11 +33,19 @@ class SugarEmailAddress extends SugarBean
 
     static $count = 0;
 
+
     /**
-     * Sole constructor
+     * This is a depreciated method, please start using __construct() as this method will be removed in a future version
+     *
+     * @see __construct
+     * @deprecated
      */
-    function SugarEmailAddress()
+    public function SugarEmailAddress()
     {
+        $this->__construct();
+    }
+
+    public function __construct() {
         parent::__construct();
         $this->index = self::$count;
         self::$count++;

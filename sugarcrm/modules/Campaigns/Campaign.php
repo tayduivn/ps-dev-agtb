@@ -77,6 +77,24 @@ class Campaign extends SugarBean {
 
 	var $new_schema = true;
 
+
+    /**
+     * This is a depreciated method, please start using __construct() as this method will be removed in a future version
+     *
+     * @see __construct
+     * @deprecated
+     */
+    public function Campaign()
+    {
+        $this->__construct();
+    }
+
+    public function __construct()
+    {
+        parent::__construct();
+    }
+
+
 	function list_view_parse_additional_sections(&$listTmpl) {
 		global $locale;
 

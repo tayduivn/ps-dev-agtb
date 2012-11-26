@@ -74,7 +74,63 @@ class ModuleApi extends SugarApi {
                 'shortHelp' => 'This method unsets a record of the specified type as a favorite',
                 'longHelp' => 'include/api/help/module_favorite_help.html',
             ),
+            'enum' => array(
+                'reqType' => 'GET',
+                'path' => array('<module>','enum','?'),
+                'pathVars' => array('module', 'enum', 'field'),
+                'method' => 'getEnumValues',
+                'shortHelp' => 'This method returns enum values for a specified field',
+                'longHelp' => 'include/api/help/module_enum_help.html',
+            ),
         );
+    }
+
+    /**
+     * This method returns the dropdown options of a given field
+     * @param array $api 
+     * @param array $args 
+     * @return array
+     */
+    public function getEnumValues($api, $args) {
+        $this->requireArgs($args, array('module','field'));
+
+        $bean = BeanFactory::newBean($args['module']);
+
+        if(!isset($bean->field_defs[$args['field']])) {
+           throw new SugarApiExceptionNotFound('field not found');
+        }
+
+        $vardef = $bean->field_defs[$args['field']];
+        
+        $api->setHeader('Cache-Control', 'max-age=3600, private');
+
+        if(isset($vardef['cache_setting'])) {
+            $api->setHeader('Cache-Control', "max-age={$vardef['cache_setting']}, private");
+        }
+    
+        if(isset($vardef['function'])) {
+            if ( isset($vardef['function']['returns']) && $vardef['function']['returns'] == 'html' ) {
+                throw new SugarApiExceptionError('html dropdowns are not supported');
+            }
+
+            $funcName = $vardef['function'];
+            $includeFile = '';
+            if ( isset($vardef['function_include']) ) {
+                $includeFile = $vardef['function']['include'];
+            }
+
+            if(!empty($includeFile)) {
+                require_once($includeFile);
+            }
+
+            return $funcName();
+        }
+        else {
+            if(!isset($GLOBALS['app_list_strings'][$vardef['options']])) {
+                throw new SugarApiExceptionNotFound('options not found');
+            }
+            return $GLOBALS['app_list_strings'][$vardef['options']];
+        }
     }
 
     public function createRecord($api, $args) {
@@ -105,21 +161,6 @@ class ModuleApi extends SugarApi {
 
         $data = $this->formatBean($api, $args, $bean);
 
-        return $data;
-    }
-
-    public function setFavorite($api, $args) {
-        $this->requireArgs($args, array('module', 'record'));
-        $this->toggleFavorites($args['module'], $args['record'], true);
-        $bean = $this->loadBean($api, $args, 'view');
-        $data = $this->formatBean($api, $args, $bean);
-        return $data;
-    }
-    public function unsetFavorite($api, $args) {
-        $this->requireArgs($args, array('module', 'record'));
-        $this->toggleFavorites($args['module'], $args['record'], false);
-        $bean = $this->loadBean($api, $args, 'view');
-        $data = $this->formatBean($api, $args, $bean);
         return $data;
     }
 

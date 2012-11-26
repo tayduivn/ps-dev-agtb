@@ -70,7 +70,21 @@ class ContactOpportunityRelationship extends SugarBean {
       , 'date_modified'=>array ('name' => 'date_modified','type' => 'datetime')
       , 'deleted'=>array('name' =>'deleted', 'type' =>'bool', 'len'=>'1', 'default'=>'0', 'required'=>true)
       );
-	function ContactOpportunityRelationship() {
+
+
+    /**
+     * This is a depreciated method, please start using __construct() as this method will be removed in a future version
+     *
+     * @see __construct
+     * @deprecated
+     */
+    public function ContactOpportunityRelationship()
+    {
+        $this->__construct();
+    }
+
+
+	public function __construct() {
 		$this->db = DBManagerFactory::getInstance();
         $this->dbManager = DBManagerFactory::getInstance();
 

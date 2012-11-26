@@ -100,6 +100,17 @@ class WorkFlowAlertShell extends SugarBean {
 	// This is the list of fields that are required
 	var $required_fields =  array("name"=>1, 'alert_type'=>1);
 
+    /**
+     * This is a depreciated method, please start using __construct() as this method will be removed in a future version
+     *
+     * @see __construct
+     * @deprecated
+     */
+    public function WorkFlowAlertShell()
+    {
+        $this->__construct();
+    }
+
 	public function __construct() {
 		parent::__construct();
 

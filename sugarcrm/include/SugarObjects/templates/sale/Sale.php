@@ -31,6 +31,16 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  require_once('include/SugarObjects/templates/basic/Basic.php');
  class Sale extends Basic{
 
+    /**
+     * This is a depreciated method, please start using __construct() as this method will be removed in a future version
+     *
+     * @see __construct
+     * @deprecated
+     */
+    public function Sale()
+    {
+        $this->__construct();
+    }
  	public function __construct(){
  		parent::__construct();
 
@@ -86,4 +96,3 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 		return parent::save($check_notify);
  	}
  }
-?>

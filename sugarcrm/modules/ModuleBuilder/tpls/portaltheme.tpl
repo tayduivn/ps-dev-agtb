@@ -112,17 +112,20 @@ App.api.isAuthenticated = function () {
 
 // Disabling the app sync complete event which starts sidecars competing router
 App.events.off("app:sync:complete");
-
 //force app sync and load the appropriate view on success
-App.sync(function (data) {
-            //TODO the module probably shouldnt be cases
-            App.controller.loadView({
-                module:'Cases',
-                layout:'themeroller',
-                create: true
-            });
-        }, function (data) {
-            console.log("app sync error");
+App.sync(
+        {
+            callback:function (data) {
+                //TODO the module probably shouldnt be cases
+                App.controller.loadView({
+                    module:'Cases',
+                    layout:'themeroller',
+                    create:true
+                });
+            },
+            err:function (data) {
+                console.log("app sync error");
+            }
         }
 );
 

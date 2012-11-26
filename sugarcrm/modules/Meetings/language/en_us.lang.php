@@ -76,6 +76,7 @@ $mod_strings = array (
 	'LBL_MINSS_ABBREV' => 'm',
 	'LBL_MODIFIED_BY'=>'Modified by',
 	'LBL_MODULE_NAME' => 'Meetings',
+	'LBL_MODULE_NAME_SINGULAR' => 'Meeting',
 	'LBL_MODULE_TITLE' => 'Meetings: Home',
 	'LBL_NAME' => 'Name',
 	'LBL_NEW_FORM_TITLE' => 'Create Appointment',

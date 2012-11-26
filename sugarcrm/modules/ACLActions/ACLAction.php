@@ -31,6 +31,19 @@ class ACLAction  extends SugarBean
     var $table_name = 'acl_actions';
     var $new_schema = true;
     var $disable_custom_fields = true;
+
+
+    /**
+     * This is a depreciated method, please start using __construct() as this method will be removed in a future version
+     *
+     * @see __construct
+     * @deprecated
+     */
+    public function ACLAction()
+    {
+        $this->__construct();
+    }
+
     public function __construct(){
         parent::__construct();
         //BEGIN SUGARCRM flav=pro ONLY
@@ -221,7 +234,9 @@ class ACLAction  extends SugarBean
                         if(empty($type)){
                             return $_SESSION['ACL'][$user_id][$category];
                         }
-                        return $_SESSION['ACL'][$user_id][$category][$type];
+                        if(isset($_SESSION['ACL'][$user_id][$category][$type])) {
+                            return $_SESSION['ACL'][$user_id][$category][$type];
+                        }
                     }else if(!empty($type) && isset($_SESSION['ACL'][$user_id][$category][$type][$action])){
                         return $_SESSION['ACL'][$user_id][$category][$type][$action];
                     }
@@ -286,13 +301,26 @@ class ACLAction  extends SugarBean
         }else{
             if(empty($action) && !empty($category)){
                 if(!empty($type)){
-                    $_SESSION['ACL'][$user_id][$category][$type] = $selected_actions[$category][$type];}
-                $_SESSION['ACL'][$user_id][$category] = $selected_actions[$category];
+                    if(isset($selected_actions[$category][$type])) {
+                        $_SESSION['ACL'][$user_id][$category][$type] = $selected_actions[$category][$type];
+                    } else {
+                        $_SESSION['ACL'][$user_id][$category][$type] = array();
+                    }
+                }
+                if(isset($selected_actions[$category])) {
+                    $_SESSION['ACL'][$user_id][$category] = $selected_actions[$category];
+                } else {
+                    $_SESSION['ACL'][$user_id][$category] = array();
+                }
             }else{
                 if(!empty($action) && !empty($category) && !empty($type)){
-                $_SESSION['ACL'][$user_id][$category][$type][$action] = $selected_actions[$category][$action];
+                    if(isset($selected_actions[$category][$action])) {
+                        $_SESSION['ACL'][$user_id][$category][$type][$action] = $selected_actions[$category][$action];
+                    } else {
+                        $_SESSION['ACL'][$user_id][$category][$type][$action] = array();
+                    }
 
-            }
+                }
             }
         }
         return $selected_actions;
@@ -372,7 +400,7 @@ class ACLAction  extends SugarBean
             {
                 // If you have admin access for a module, all ACL's are allowed
                 return $_SESSION['ACL'][$user_id][$category][$type]['admin']['aclaccess'];
-            }            
+            }
             return  $_SESSION['ACL'][$user_id][$category][$type][$action]['aclaccess'];
         }
     }
