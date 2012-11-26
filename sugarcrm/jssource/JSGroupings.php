@@ -355,6 +355,12 @@
      * Check for custom additions to this code
      */
 
+    if(!class_exists('SugarAutoLoader')) {
+        // This block is required because this file could be called from a non-entrypoint (such as jssource/minify.php).
+        require_once('include/utils/autoloader.php');
+        SugarAutoLoader::init();
+    }
+
     foreach(SugarAutoLoader::existing("custom/jssource/JSGroupings.php", SugarAutoLoader::loadExtension("jsgroupings")) as $file) {
         require $file;
     }
