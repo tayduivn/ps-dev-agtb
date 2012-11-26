@@ -47,6 +47,7 @@ $mod_strings = array (
   'LBL_TEAM_ID' => 'Team Id',
   'LBL_LIST_FORM_TITLE' => 'External Account List',
   'LBL_MODULE_NAME' => 'External Account',
+  'LBL_MODULE_NAME_SINGULAR' => 'External Account',
   'LBL_MODULE_TITLE' => 'External Accounts',
   'LBL_HOMEPAGE_TITLE' => 'My External Accounts',
   'LNK_NEW_RECORD' => 'Create External Account',

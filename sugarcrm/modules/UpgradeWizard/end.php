@@ -339,6 +339,7 @@ logThis('Cleaning up the session.  Goodbye.');
 unlinkUWTempFiles();
 logThis('Cleaning up the session.  Goodbye.');
 resetUwSession();
+SugarAutoLoader::buildCache();
 // flag to say upgrade has completed
 $_SESSION['upgrade_complete'] = true;
 

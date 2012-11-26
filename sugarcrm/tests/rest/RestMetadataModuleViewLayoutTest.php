@@ -31,6 +31,14 @@ class RestMetadataModuleViewLayoutTest extends RestTestBase {
         parent::setUp();
 
         $this->oldFiles = array();
+
+//BEGIN SUGARCRM flav=pro ONLY
+        $this->_restLogin('','','mobile');
+        $this->mobileAuthToken = $this->authToken;
+//END SUGARCRM flav=pro ONLY
+        $this->_restLogin('','','base');
+        $this->baseAuthToken = $this->authToken;
+
     }
 
     public function tearDown()
@@ -53,7 +61,8 @@ class RestMetadataModuleViewLayoutTest extends RestTestBase {
      */
     public function testMetadataSugarFields() {
         $this->_clearMetadataCache();
-        $restReply = $this->_restCall('metadata?type_filter=modules&platform=portal');
+        $this->authToken = $this->mobileAuthToken;
+        $restReply = $this->_restCall('metadata?type_filter=modules');
 
         $this->assertTrue(isset($restReply['reply']['modules']['Cases']['views']),'No views for the cases module');
     }
@@ -62,8 +71,8 @@ class RestMetadataModuleViewLayoutTest extends RestTestBase {
      * @group rest
      */
     public function testMetadataModuleLayout() {
-        $filesToCheck = array('modules/Cases/clients/portal/layouts/edit/edit.php',
-                              'custom/modules/Cases/clients/portal/layouts/edit/edit.php',
+        $filesToCheck = array('modules/Cases/clients/mobile/layouts/edit/edit.php',
+                              'custom/modules/Cases/clients/mobile/layouts/edit/edit.php',
         );
 
         foreach ( $filesToCheck as $filename ) {
@@ -74,31 +83,32 @@ class RestMetadataModuleViewLayoutTest extends RestTestBase {
             }
         }
 
-        $dirsToMake = array('modules/Cases/clients/portal/layouts/edit',
-                            'custom/modules/Cases/clients/portal/layouts/edit',
+        $dirsToMake = array('modules/Cases/clients/mobile/layouts/edit',
+                            'custom/modules/Cases/clients/mobile/layouts/edit',
         );
 
         foreach ($dirsToMake as $dir ) {
             SugarAutoLoader::ensureDir($dir);
         }
 
-        // Make sure we get it when we ask for portal
-        SugarAutoLoader::put($filesToCheck[0],'<'."?php\n\$viewdefs['Cases']['portal']['layout']['edit'] = array('unit_test'=>'Standard Dir');\n", true);
+        // Make sure we get it when we ask for mobile
+        SugarAutoLoader::put($filesToCheck[0],'<'."?php\n\$viewdefs['Cases']['mobile']['layout']['edit'] = array('unit_test'=>'Standard Dir');\n", true);
         $this->_clearMetadataCache();
-        $restReply = $this->_restCall('metadata/?type_filter=modules&module_filter=Cases&platform=portal');
-        $this->assertEquals('Standard Dir',$restReply['reply']['modules']['Cases']['layouts']['edit']['meta']['unit_test'],"Didn't get the portal layout");
+        $this->authToken = $this->mobileAuthToken;
+        $restReply = $this->_restCall('metadata/?type_filter=modules&module_filter=Cases');
+        $this->assertEquals('Standard Dir',$restReply['reply']['modules']['Cases']['layouts']['edit']['meta']['unit_test'],"Didn't get the mobile layout");
 
         // Make sure we get the custom file
-        SugarAutoLoader::put($filesToCheck[1],'<'."?php\n\$viewdefs['Cases']['portal']['layout']['edit'] = array('unit_test'=>'Custom Dir');\n", true);
+        SugarAutoLoader::put($filesToCheck[1],'<'."?php\n\$viewdefs['Cases']['mobile']['layout']['edit'] = array('unit_test'=>'Custom Dir');\n", true);
         $this->_clearMetadataCache();
-        $restReply = $this->_restCall('metadata/?type_filter=modules&module_filter=Cases&platform=portal');
-        $this->assertEquals('Custom Dir',$restReply['reply']['modules']['Cases']['layouts']['edit']['meta']['unit_test'],"Didn't get the custom portal layout");
+        $restReply = $this->_restCall('metadata/?type_filter=modules&module_filter=Cases');
+        $this->assertEquals('Custom Dir',$restReply['reply']['modules']['Cases']['layouts']['edit']['meta']['unit_test'],"Didn't get the custom mobile layout");
 
         // Make sure it flops back to the standard file
         SugarAutoLoader::unlink($filesToCheck[1], true);
         $this->_clearMetadataCache();
-        $restReply = $this->_restCall('metadata/?type_filter=modules&module_filter=Cases&platform=portal');
-        $this->assertEquals('Standard Dir',$restReply['reply']['modules']['Cases']['layouts']['edit']['meta']['unit_test'],"Didn't get the portal layout");
+        $restReply = $this->_restCall('metadata/?type_filter=modules&module_filter=Cases');
+        $this->assertEquals('Standard Dir',$restReply['reply']['modules']['Cases']['layouts']['edit']['meta']['unit_test'],"Didn't get the mobile layout");
     }
 
     /**
@@ -107,7 +117,8 @@ class RestMetadataModuleViewLayoutTest extends RestTestBase {
     public function testMetadataSubPanels()
     {
         $this->_clearMetadataCache();
-        $restReply = $this->_restCall('metadata?type_filter=modules&platform=portal');
+        $this->authToken = $this->mobileAuthToken;
+        $restReply = $this->_restCall('metadata?type_filter=modules');
         $this->assertTrue(isset($restReply['reply']['modules']['Cases']['subpanels']),'No subpanels for the cases module');
     }
 
@@ -117,7 +128,8 @@ class RestMetadataModuleViewLayoutTest extends RestTestBase {
     public function testMetadataFTS()
     {
         $this->_clearMetadataCache();
-        $restReply = $this->_restCall('metadata?typeFilter=modules&platform=portal');
+        $this->authToken = $this->mobileAuthToken;
+        $restReply = $this->_restCall('metadata?typeFilter=modules');
         $this->assertTrue(isset($restReply['reply']['modules']['Cases']['ftsEnabled']),'No ftsEnabled for the cases module');
     }
 
@@ -127,7 +139,8 @@ class RestMetadataModuleViewLayoutTest extends RestTestBase {
     public function testMetadataFavorites()
     {
         $this->_clearMetadataCache();
-        $restReply = $this->_restCall('metadata?typeFilter=modules&platform=portal');
+        $this->authToken = $this->mobileAuthToken;
+        $restReply = $this->_restCall('metadata?typeFilter=modules');
         $this->assertTrue(isset($restReply['reply']['modules']['Cases']['favoritesEnabled']),'No favoritesEnabled for the cases module');
     }
 
@@ -135,8 +148,8 @@ class RestMetadataModuleViewLayoutTest extends RestTestBase {
     * @group rest
     */
     public function testMetadataModuleViews() {
-        $filesToCheck = array('modules/Cases/clients/portal/views/edit/edit.php',
-                              'custom/modules/Cases/clients/portal/views/edit/edit.php',
+        $filesToCheck = array('modules/Cases/clients/mobile/views/edit/edit.php',
+                              'custom/modules/Cases/clients/mobile/views/edit/edit.php',
         );
 
         foreach ( $filesToCheck as $filename ) {
@@ -147,30 +160,44 @@ class RestMetadataModuleViewLayoutTest extends RestTestBase {
             }
         }
 
-        $dirsToMake = array('modules/Cases/clients/portal/views/edit',
-                            'custom/modules/Cases/clients/portal/views/edit',
+        $dirsToMake = array('modules/Cases/clients/mobile/views/edit',
+                            'custom/modules/Cases/clients/mobile/views/edit',
         );
 
         foreach ($dirsToMake as $dir ) {
             SugarAutoLoader::ensureDir($dir);
         }
 
-        // Make sure we get it when we ask for portal
-        SugarAutoLoader::put($filesToCheck[0],'<'."?php\n\$viewdefs['Cases']['portal']['view']['edit'] = array('unit_test'=>'Standard Dir');\n", true);
+        // Make sure we get it when we ask for mobile
+        SugarAutoLoader::put($filesToCheck[0],'<'."?php\n\$viewdefs['Cases']['mobile']['view']['edit'] = array('unit_test'=>'Standard Dir');\n", true);
         $this->_clearMetadataCache();
-        $restReply = $this->_restCall('metadata/?type_filter=modules&module_filter=Cases&platform=portal');
-        $this->assertEquals('Standard Dir',$restReply['reply']['modules']['Cases']['views']['edit']['meta']['unit_test'],"Didn't get the portal view");
+        $this->authToken = $this->mobileAuthToken;
+        $restReply = $this->_restCall('metadata/?type_filter=modules&module_filter=Cases');
+        $this->assertEquals('Standard Dir',$restReply['reply']['modules']['Cases']['views']['edit']['meta']['unit_test'],"Didn't get the mobile view");
 
         // Make sure we get the custom file
-        SugarAutoLoader::put($filesToCheck[1],'<'."?php\n\$viewdefs['Cases']['portal']['view']['edit'] = array('unit_test'=>'Custom Dir');\n", true);
+        SugarAutoLoader::put($filesToCheck[1],'<'."?php\n\$viewdefs['Cases']['mobile']['view']['edit'] = array('unit_test'=>'Custom Dir');\n", true);
         $this->_clearMetadataCache();
-        $restReply = $this->_restCall('metadata/?type_filter=modules&module_filter=Cases&platform=portal');
-        $this->assertEquals('Custom Dir',$restReply['reply']['modules']['Cases']['views']['edit']['meta']['unit_test'],"Didn't get the custom portal view");
+        $restReply = $this->_restCall('metadata/?type_filter=modules&module_filter=Cases');
+        $this->assertEquals('Custom Dir',$restReply['reply']['modules']['Cases']['views']['edit']['meta']['unit_test'],"Didn't get the custom mobile view");
 
         // Make sure it flops back to the standard file
         SugarAutoLoader::unlink($filesToCheck[1], true);
         $this->_clearMetadataCache();
-        $restReply = $this->_restCall('metadata/?type_filter=modules&module_filter=Cases&platform=portal');
-        $this->assertEquals('Standard Dir',$restReply['reply']['modules']['Cases']['views']['edit']['meta']['unit_test'],"Didn't get the portal view");
+        $restReply = $this->_restCall('metadata/?type_filter=modules&module_filter=Cases');
+        $this->assertEquals('Standard Dir',$restReply['reply']['modules']['Cases']['views']['edit']['meta']['unit_test'],"Didn't get the mobile view");
+    }
+
+    /**
+     * Test addresses a case related to the metadata location move that caused
+     * metadatamanager to not roll up to sugar objects properly
+     *
+     * @group rest
+     */
+    public function testMobileMetaDataRollsUp()
+    {
+        $this->authToken = $this->mobileAuthToken;
+        $reply = $this->_restCall('metadata?typeFilter=modules&moduleFilter=Contacts');
+        $this->assertNotEmpty($reply['reply']['modules']['Contacts']['views']['list']['meta'], 'Contacts list view metadata was not fetched from SugarObjects');
     }
 }

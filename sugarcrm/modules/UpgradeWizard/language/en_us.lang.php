@@ -281,6 +281,7 @@ $mod_strings = array(
 	'LBL_CURRENT_PHP_VERSION' => '(Your current php version is ',
 	'LBL_RECOMMENDED_PHP_VERSION' => '. Recommended php version is 5.2.1 or above)',
 	'LBL_MODULE_NAME' => 'UpgradeWizard',
+	'LBL_MODULE_NAME_SINGULAR' => 'UpgradeWizard',
 	'LBL_UPLOAD_SUCCESS' => 'Upgrade package successfully uploaded. Click Next to perform a final check.',
 	'LBL_UW_TITLE_LAYOUTS' => 'Confirm Layouts',
 	'LBL_LAYOUT_MODULE_TITLE' => 'Layouts',

@@ -38,6 +38,7 @@ $mod_strings = array (
   'LBL_MODIFIED_USER' => 'Modified by User',
   'LBL_LIST_FORM_TITLE' => 'Templates List',
   'LBL_MODULE_NAME' => 'Templates',
+  'LBL_MODULE_NAME_SINGULAR' => 'Template',
   'LBL_MODULE_TITLE' => 'Templates',
   'LNK_NEW_RECORD' => 'Create Templates',
   'LNK_LIST' => 'Templates',

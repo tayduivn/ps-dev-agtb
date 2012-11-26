@@ -13,6 +13,11 @@
  *      by: safeFetch()
  *      when: user clicks ok on confirm dialog that they want to commit data
  *
+ * forecasts:forecastcommitbuttons:triggerSaveDraft
+ *      on: context.forecasts
+ *      by: safeFetch()
+ *      when: user performs an action that causes a check to be made against dirty data
+ *
  * forecasts:worksheet:rendered
  *      on: context.forecasts
  *      by: _render
@@ -44,6 +49,8 @@
     columnDefs : [],    
     mgrNeedsCommitted : false,
     commitButtonEnabled : false,
+    // boolean to denote that a fetch is currently in progress
+    fetchInProgress : false,
     
     /**
      * Initialize the View
@@ -203,15 +210,6 @@
             this.context.forecasts.worksheet.on("change", function() {
                 this.calculateTotals();
             }, this);
-            this.context.forecasts.on("change:checkDirtyWorksheetFlag", function(){
-                if(this.context.forecasts.get('checkDirtyWorksheetFlag') && !this.showMe()){
-                    var model = this.context.forecasts.worksheet;
-                    model.url = this.createURL();
-                    this.safeFetch(false);
-                    this.context.forecasts.set({checkDirtyWorksheetFlag: false});
-                }
-
-            }, this);
             this.context.forecasts.on("forecasts:committed:saved", function(){
                 if(this.showMe()){
                     var model = this.context.forecasts.worksheet;
@@ -320,6 +318,12 @@
      * @param fetch {boolean} Tells the function to go ahead and fetch if true, or runs dirty checks (saving) w/o fetching if false 
      */
     safeFetch: function(fetch){
+        //fetch currently already in progress, no need to duplicate
+        if(this.fetchInProgress) {
+            return;
+        }
+        //mark that a fetch is in process so no duplicate fetches begin
+        this.fetchInProgress = true;
         if(_.isUndefined(fetch))
         {
             fetch = true;
@@ -334,24 +338,8 @@
         if(collection.isDirty){
             //unsaved changes, ask if you want to save.
             if(confirm(app.lang.get("LBL_WORKSHEET_SAVE_CONFIRM", "Forecasts"))){
-                var modelCount = 0;
-                var saveCount = 0;
-                _.each(collection.models, function(model, index){
-                    var isDirty = model.get("isDirty");
-                    if(_.isBoolean(isDirty) && isDirty){
-                        modelCount++;
-                        model.set({draft: 1}, {silent:true});
-                        model.save({}, {success:function(){
-                            saveCount++;
-                            if(saveCount === modelCount){
-                                collection.isDirty = false;
-                                collection.fetch();
-                            }
-                        }});
-                        model.set({isDirty: false}, {silent:true});
-                    }  
-                });                        
-        }
+                self.context.forecasts.trigger("forecasts:forecastcommitbuttons:triggerSaveDraft");
+            }
             //user clicked cancel, ignore and fetch if fetch is enabled
             else{
                 
@@ -405,7 +393,9 @@
             if(fetch){
                 collection.fetch();
             }    
-        }        
+        }
+        //mark that the fetch is over
+        this.fetchInProgress = false;
     },
 
     /**
@@ -442,8 +432,7 @@
         $("#view-sales-rep").addClass('show').removeClass('hide');
         $("#view-manager").addClass('hide').removeClass('show');           
         
-        this.context.forecasts.set({checkDirtyWorksheetFlag: true, 
-                                    currentWorksheet: "worksheet"});
+        this.context.forecasts.set({currentWorksheet: "worksheet"});
         this.isEditableWorksheet = this.isMyWorksheet();
         this._setForecastColumn(this.meta.panels[0].fields);
 
@@ -562,6 +551,16 @@
         // Trigger event letting other components know worksheet finished rendering
         self.context.forecasts.trigger("forecasts:worksheet:rendered");
 
+        //Check to see if any worksheet entries are older than the source data.  If so, that means that the
+        //last commit is older, and that we need to enable the commit buttons
+        _.each(this._collection.models, function(model, index){
+            if(!_.isEmpty(model.get("w_date_modified")) && (new Date(model.get("w_date_modified")) < new Date(model.get("date_modified")))) {
+                enableCommit = true;
+            }
+        });
+        if (enableCommit) {
+            self.context.forecasts.trigger("forecasts:commitButtons:enabled");
+        }
         return this;
     },
 

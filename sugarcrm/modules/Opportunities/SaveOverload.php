@@ -31,7 +31,6 @@ function perform_save($focus){
     /* @var $admin Administration */
     $admin = BeanFactory::getBean('Administration');
     $settings = $admin->getConfigForModule('Forecasts');
-
     //Determine the default commit_stage based on the probability
     if ($settings['is_setup'] && empty($focus->commit_stage) && $focus->probability !== '')
     {
@@ -70,7 +69,7 @@ function perform_save($focus){
 
     // if sales stage was set to Closed Won set best and worst cases to amount
     $wonStages = $settings['sales_stage_won'];
-    if (in_array($focus->sales_stage, $wonStages))
+    if (!empty($focus->sales_stage) && in_array($focus->sales_stage, $wonStages))
     {
         $focus->best_case = $focus->amount;
         $focus->worst_case = $focus->amount;
