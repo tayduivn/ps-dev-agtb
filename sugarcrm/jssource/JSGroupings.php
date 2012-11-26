@@ -35,11 +35,38 @@
  * add a '.' after the .js in order to make the element key unique.  Make sure you pare the extension out
  *
  */
+        if(!function_exists('getSubgroupForTarget'))
+        {
+            /**
+             * Helper to allow for getting sub groups of combinations of includes that are likely to be required by
+             * many clients (so that we don't end up with duplication from client to client).
+             * @param  string $subGroup The sub-group
+             * @param  string $target The target file to point to e.g. '<app>/<app>.min.js',
+             * @return array array of key vals where the keys are source files and values are the $target passed in. 
+             */
+            function getSubgroupForTarget ($subGroup, $target) {
 
-// subgroups.php gives us getSubgroupForTarget function to use for sub-grouped includes that would otherwise cause duplication.
-require_once('jssource/subgroups.php');
+                // Add more sub-groups as needed here if client include duplication in $js_groupings
+                switch ($subGroup) {
+                    case 'bootstrap':
+                            return array(
+                                'styleguide/assets/js/bootstrap-button.js'  => $target,
+                                'styleguide/assets/js/bootstrap-tooltip.js' => $target,
+                                'styleguide/assets/js/bootstrap-dropdown.js'=> $target,
+                                'styleguide/assets/js/bootstrap-popover.js' => $target,
+                                'styleguide/assets/js/bootstrap-modal.js'   => $target,
+                                'styleguide/assets/js/bootstrap-alert.js'   => $target,
+                                'styleguide/assets/js/bootstrap-datepicker.js' => $target,
+                                'styleguide/assets/js/bootstrapx-clickover.js' => $target,
+                            );
+                        break;
+                    default:
+                        break;
+                }
+            }
+        }
 
-       $js_groupings = array(
+        $js_groupings = array(
            $sugar_grp1 = array(
                 //scripts loaded on first page
                 'include/javascript/sugar_3.js'         => 'include/javascript/sugar_grp1.js',
@@ -242,3 +269,4 @@ require_once('jssource/subgroups.php');
     foreach(SugarAutoLoader::existing("custom/jssource/JSGroupings.php", SugarAutoLoader::loadExtension("jsgroupings")) as $file) {
         require $file;
     }
+
