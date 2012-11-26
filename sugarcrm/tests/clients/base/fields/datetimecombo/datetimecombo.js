@@ -136,32 +136,6 @@ describe("datetimecombo field", function() {
             stub.restore();
             field.view.name = originalType;
         });
-
-        it("should format value for required", function() {
-            var today = new Date(), 
-                actual, stub, parts,
-                originalType = field.view.name;
-
-            stub = sinon.stub(field.model, 'set');
-            field.view.name = 'edit';
-            field.def.required = true;
-
-            // If no value or display_default it checks for def.required
-            actual = field.format(null);
-
-            // Expectations on value object returned
-            expect(stub).toHaveBeenCalled();
-            expect(actual.amPm).toEqual('am');
-            expect(actual['time']).toEqual('00:00');
-            // Test the date part
-            parts = actual.date.split('/');
-            expect(parseInt(parts[0], 10)).toEqual(today.getMonth()+1);
-            expect(parseInt(parts[1], 10)).toEqual(today.getDate());
-            expect(parseInt(parts[2], 10)).toEqual(today.getFullYear());
-
-            stub.restore();
-            field.view.name = originalType;
-        });
         it("should return value from format if NOT edit view and no value", function() {
             var originalType = field.view.name;
             field.view.name = 'not_edit';

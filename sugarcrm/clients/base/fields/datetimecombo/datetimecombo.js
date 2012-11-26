@@ -268,8 +268,6 @@
         if (this.def.display_default) {
             jsDate = app.date.parseDisplayDefault(this.def.display_default);
             this.model.set(this.name, this._setServerDateString(jsDate), {silent: true}); 
-        } else if (this.def.required) {
-            return this._setDateNow();
         } else {
             return null;  
         }

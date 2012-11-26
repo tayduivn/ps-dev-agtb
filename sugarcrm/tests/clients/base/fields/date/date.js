@@ -59,26 +59,6 @@ describe("date field", function() {
             field.view.name = originalType;
         });
 
-        it("should format value for required", function() {
-            var today = new Date(), 
-                actual, stub, parts,
-                originalType = field.view.name;
-
-            stub = sinon.stub(field.model, 'set');
-            field.view.name = 'edit';
-
-            field.def.required = true;
-            actual = field.format(null);
-            parts = actual.split('/');
-            expect(parseInt(parts[0], 10)).toEqual( (today.getMonth()+1) );
-            expect(parseInt(parts[1], 10)).toEqual( (today.getDate()) );
-            expect(parseInt(parts[2], 10)).toEqual( (today.getFullYear()) );
-            expect(stub).toHaveBeenCalled();
-
-            stub.restore();
-            field.view.name = originalType;
-        });
-
         it("should return value from format if NOT edit view and no value", function() {
             var originalType = field.view.name;
             field.view.name = 'not_edit';

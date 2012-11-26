@@ -235,19 +235,6 @@
         }
         return jsDate;
     },
-
-    /**
-     * Per FDD: When the Datetime field required, default value should be SYSDATE and all zeros for Time
-     * @return {Date} date created representing today at midnight
-     */
-    _setDateNow: function(forceToDate) {
-        // Per FDD: When Datetime field required, default value is SYSDATE, all zeros for Time
-        var jsDate = new Date();
-
-        jsDate.setHours(0, 0, 0, 0);
-        this.model.set(this.name, this._setServerDateString(jsDate, forceToDate), {silent: true}); 
-        return jsDate;
-    },
     /**
      * Checks if dateStringToCheck is falsy..if so, returns today's date as string formatted by
      * user's prefs. Otherwise, just returns dateStringToCheck.
@@ -415,8 +402,6 @@
         if (this.def.display_default) {
             jsDate = app.date.parseDisplayDefault(this.def.display_default);
             this.model.set(this.name, app.date.format(jsDate, this.serverDateFormat));
-        } else if (this.def.required) {
-            return this._setDateNow(true);
         } else {
             return null;  
         }
