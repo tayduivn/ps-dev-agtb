@@ -166,7 +166,7 @@
         if(!commitbtn.hasClass("disabled")){
             saved = self.saveDirtyWorksheets(function(){
                 self.context.forecasts.set({commitForecastFlag: true});
-            });
+            }, true);
             
             //we didn't have anything to save (and wait to finish), so go ahead and trigger the commit
             if(saved == 0){
@@ -180,15 +180,21 @@
      * saveDirtyWorksheets
      * utility function to save dirty worksheets
      * @param fcn callback
+     * @param boolean Boolean to suppress the forecasts:commitButtons:saved event from triggering
      * @return integer Number of items saved
      */
-    saveDirtyWorksheets: function(fcn){
+    saveDirtyWorksheets: function(fcn, suppressSaveTrigger){
         var worksheet = this.context.forecasts[this.context.forecasts.get("currentWorksheet")],
             self = this,
             saveCount = 0,
             models = _.filter(worksheet.models, function(model, index) {
                 return (model.get("version") == 0 || (_.isBoolean(model.get("isDirty")) && model.get("isDirty")));
             }, this);
+        
+        //default suppressSaveTrigger
+        if(_.isUndefined(suppressSaveTrigger)){
+            supressSaveTrigger = false;
+        }
                
         //commit each model that needs saved
         _.each(models, function(model, index){
@@ -208,8 +214,10 @@
                 if(models.length === saveCount) {
                    if(_.isFunction(fcn)){
                        fcn();   
-                   }                    
-                   self.context.forecasts.trigger("forecasts:commitButtons:saved");
+                   }
+                   if(!suppressSaveTrigger){
+                       self.context.forecasts.trigger("forecasts:commitButtons:saved");
+                   }
                 }
             }});
             //this worksheet is clean
