@@ -1,6 +1,5 @@
 <?php
 if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
-
 /**
  * LICENSE: The contents of this file are subject to the SugarCRM Professional
  * End User License Agreement ("License") which can be viewed at
@@ -28,12 +27,15 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * by SugarCRM are Copyright (C) 2006 SugarCRM, Inc.; All Rights Reserved.
  */
 
-$viewdefs['Leads']['base']['view']['list'] = array(
-    'panels' => array(
+
+$viewdefs['Tasks']['base']['view']['list'] = array(
+    'panels' =>
+    array(
+        0 =>
         array(
-            'name' => 'panel_header',
             'label' => 'LBL_PANEL_1',
-            'fields' => array(
+            'fields' =>
+            array(
                 array(
                     'type' => 'fieldset',
                     'fields' => array(
@@ -71,51 +73,87 @@ $viewdefs['Leads']['base']['view']['list'] = array(
                     'value' => false,
                     'sortable' => false,
                 ),
-                array (
-                    'name' => 'name',
-                    'width' => '10%',
-                    'label' => 'LBL_LIST_NAME',
+                array(
+                    'name' => 'set_complete',
+                    'width' => '1',
+                    'label' => 'LBL_LIST_CLOSE',
                     'link' => true,
-                    'orderBy' => 'last_name',
-                    'default' => true,
-                ),
-                array (
-                    'name' => 'status',
-                    'width' => '7%',
-                    'label' => 'LBL_LIST_STATUS',
-                    'default' => true,
-                ),
-                array (
-                    'name' => 'account_name',
-                    'width' => '15%',
-                    'label' => 'LBL_LIST_ACCOUNT_NAME',
-                    'default' => true,
-                ),
-                array (
-                    'name'  => 'phone_work',
-                    'width' => '15%',
-                    'label' => 'LBL_LIST_PHONE',
-                    'default' => true,
-                ),
-                array (
-                    'name'     => 'email1',
-                    'width' => '16%',
-                    'label' => 'LBL_LIST_EMAIL_ADDRESS',
                     'sortable' => false,
                     'default' => true,
+                    'related_fields' => array('status')),
+                array(
+                    'name' => 'name',
+                    'width' =>  40,
+                    'link' => true,
+                    'label' => 'LBL_LIST_SUBJECT',
+                    'default' => true
                 ),
-                array (
-                    'name'  => 'assigned_user_name',
-                    'width' => '5%',
-                    'label' => 'LBL_LIST_ASSIGNED_USER',
+                array(
+                    'name' => 'contact_name',
+                    'width' => '20', 
+                    'label' => 'LBL_LIST_CONTACT', 
+                    'link' => true,
+                    'id' => 'CONTACT_ID',
+                    'module' => 'Contacts',
                     'default' => true,
-                ),
+                    'ACLTag' => 'CONTACT',
+                    'related_fields' => array('contact_id')), 
+                array(
+                    'name' => 'parent_name',
+                    'width'   => '20', 
+                    'label'   => 'LBL_LIST_RELATED_TO',
+                    'dynamic_module' => 'PARENT_TYPE',
+                    'id' => 'PARENT_ID',
+                    'link' => true, 
+                    'default' => true,
+                    'sortable' => false,        
+                    'ACLTag' => 'PARENT',
+                    'related_fields' => array('parent_id', 'parent_type')), 
+                array(
+                    'name' => 'date_due',
+                    'width' => '15', 
+                    'label' => 'LBL_LIST_DUE_DATE', 
+                    'link' => false,
+                    'default' => true),
+                array(
+                    'name' => 'time_due',
+                    'width' => '15', 
+                    'label' => 'LBL_LIST_DUE_TIME', 
+                    'sortable' => false, 
+                    'link' => false,
+                    'default' => true),   
+                //BEGIN SUGARCRM flav=pro ONLY
+                array(
+                    'name' => 'team_name',
+                    'width' => '2', 
+                    'label' => 'LBL_LIST_TEAM',
+                    'default' => false),        
+                //END SUGARCRM flav=pro ONLY
+                
+                array(
+                    'name' => 'assigned_user_name',
+                    'width' => '2', 
+                    'label' => 'LBL_LIST_ASSIGNED_TO_NAME',
+                    'module' => 'Employees',
+                    'id' => 'ASSIGNED_USER_ID',
+                    'default' => true),
+                array(
+                    'name' => 'date_start',
+                    'width' => '5', 
+                    'label' => 'LBL_LIST_START_DATE', 
+                    'link' => false,
+                    'default' => false),  
+                array(
+                    'name' => 'status',
+                    'width' => '10', 
+                    'label' => 'LBL_LIST_STATUS', 
+                    'link' => false,
+                    'default' => false),
                 array (
-                    'name'  => 'date_entered',
-                    'width' => '10%',
+                    'name' => 'date_entered',
+                    'width' => '10',
                     'label' => 'LBL_DATE_ENTERED',
-                    'default' => true,
-                ),
+                    'default' => true),            
             ),
         ),
     ),
