@@ -92,7 +92,8 @@ class iCal extends vCal {
     protected function getUtcTime($ts)
     {
         global $timedate, $sugar_version;
-        if (substr($sugar_version, 0, 1) > 5) {
+        if (version_compare($sugar_version, '6', '>='))
+        {
             $timestamp = ($ts+(date('Z')-$timedate->adjustmentForUserTimeZone()*60));
         } else {
             $timestamp = ($ts);
@@ -494,5 +495,3 @@ class iCal extends vCal {
     }
 
 }
-
-?>
