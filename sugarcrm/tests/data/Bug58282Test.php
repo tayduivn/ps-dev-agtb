@@ -33,7 +33,7 @@ require_once 'include/Expressions/Expression/Parser/Parser.php';
 class Bug58282Test extends Sugar_PHPUnit_Framework_TestCase
 {
     private static $custom_field_def = array(
-        'formula'     => 'related($accounts,"name")',
+        'formula'     => 'strToUpper(related($accounts,"name"))',
         'name'        => 'custom_58282',
         'type'        => 'text',
         'label'       => 'LBL_CUSTOM_FIELD',
