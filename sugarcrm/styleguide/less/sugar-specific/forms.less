@@ -57,6 +57,7 @@ h1 input[type="text"] {
     }
   }
 
+  &.select,
   &.textarea {
     .add-on {
       position:absolute;
@@ -115,7 +116,12 @@ h1 input[type="text"] {
   .upload-field-custom.btn.avatar {
     border-color:@errorText;
   }
-
+  .chzn-search {
+    border: 1px solid @errorText;
+    border-top: 0;
+    margin-left: -1px;
+    margin-right: -1px;
+  }
   .chzn-container-single > a > div > b {
     margin-left: -18px;
   }
@@ -146,6 +152,17 @@ h1 input[type="text"] {
       display:inline-block;
       float:none;
     }
+  }
+}
+
+// fluid width input fields - fixes overflow of row-fluid spans
+.controls[class*="span"] {
+  input[type="text"].inherit-width,
+  textarea.inherit-width,
+  select.inherit-width {
+    width: 100%;
+    min-height: 28px;
+    .box-sizing(border-box);
   }
 }
 

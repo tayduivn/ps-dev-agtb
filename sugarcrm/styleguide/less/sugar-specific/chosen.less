@@ -1,6 +1,9 @@
 .chzn-container {
   margin-top: -1px;
+  //min-height: 26px;
   .chzn-drop {
+    white-space: nowrap;
+    //border: 1px solid @grayLight;
     &.carettop {
       .caret-top(auto,auto,10px,9px);
       border: 1px solid @grayLight;
@@ -9,6 +12,11 @@
   &.chzn-container-multi {
     height:28px;
     .chzn-choices {
+      border: 1px solid @grayLight;
+      .border-radius(4px);
+      @shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+      .box-shadow(@shadow);
+      background-image: none;
       .search-field {
         float: none !important;
         height: 28px;
@@ -23,8 +31,14 @@
     }
   }
   &.chzn-container-single .chzn-single {
+    //#gradient > .vertical(@white, darken(@grayLighter, 4%));
+    //.border-radius(4px);
+    height: 26px;
     span {
       margin-right: 34px;
+    }
+    .chzn-search {
+      padding: 3px 6px;
     }
     abbr {
       right: 20px;
@@ -41,11 +55,14 @@
       border-bottom: 1px solid darken(@grayLighter, 5%);
     }
   }
+  .chzn-results-scroll {
+    //width: 100%; /* This should by dynamic with js */
+  }
 }
 
 .chzn-container-active .chzn-single-with-drop {
   background: @grayLighter;
-  border: 1px solid @grayLight;
+  //border: 1px solid @grayLight;
 }
 
 .chzn-search {

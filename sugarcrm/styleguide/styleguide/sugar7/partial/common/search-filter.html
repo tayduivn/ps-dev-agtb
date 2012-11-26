@@ -1,128 +1,185 @@
+<!-- synced dom with sidecar on 11/21/2112 -->
 <form class="form-search" action="">
-
-  <div class="row-fluid">
-    <div class="span9 myfilter">
-      <input value="" placeholder="Search {{title}}..." class="span12">
-      <div class="actions btn-group dropdown">
-        <a href="" data-toggle="dropdown" class="dropdown-toggle btn btn-invisible">Filter &nbsp;<i class="icon-caret-down"></i></a>
-        <ul class="dropdown-menu carettop">
-          <li><a href="#myAccount">My accounts</a></li>
-          <li><a href="#myContacts">My contacts</a></li>
-          <li><a href="#myOpportunities">My opportunities</a></li>
-          <li class="primary"><a href="#createFilter" class="newfilter">+ Create a filter</a></li>
-        </ul>
-      </div>
+<!--     <div class="row-fluid">
+        <div class="control-group filter">
+            <div class="controls">
+                <div class="filter forecast">
+                    <select id="search_filter" class="chzn-select forecast" multiple data-placeholder="Filter...">
+                      <option value="Committed" selected="selected">My accounts</option>
+                      <option value="Upside">My contacts</option>
+                      <option value="Downside">My opportunities</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+        <div class="toolbar-btns span3">
+            <div class="pull-right">
+                <a href="partial/{{module}}/{{module}}-activitystream.html" class="btn btn-invisible" data-view="activitystream" data-toggle="tab" data-target="#view .main-content" data-mode="view"><i class="icon-th-list"></i></a>
+                <a href="#" class="btn btn-invisible" data-view="timeline"><i class="icon-time"></i></a>
+                <a href="#" class="btn btn-invisible" data-view="calendar"><i class="icon-calendar"></i></a>
+                <a href="partial/{{module}}/{{module}}-table.html" data-view="list" class="btn btn-invisible" data-toggle="tab" data-target="#view .main-content" data-mode="view"><i class="icon-table"></i></a>
+            </div>
+        </div>
     </div>
-    <div class="span3">
-      <div class="pull-right">
-
-        <a href="partial/{{module}}/{{module}}-activitystream.html" data-toggle="tab" data-target="#view .main-content" data-mode="view" class="btn btn-invisible"><i class="icon-th-list"></i></a>
-        <a href="#" class="btn btn-invisible"><i class="icon-time"></i></a>
-        <a href="#" class="btn btn-invisible"><i class="icon-calendar"></i></a>
-        <a href="partial/{{module}}/{{module}}-table.html" data-toggle="tab" data-target="#view .main-content" data-mode="view" class="btn btn-invisible"><i class="icon-table"></i></a>
-      </div>
+ -->
+    <div class="row-fluid">
+        <div class="myfilter span9">
+            <input value="" placeholder="Save filter as..." class="span12">
+            <div class="actions btn-group dropdown">
+                <a href="" data-toggle="dropdown" class="dropdown-toggle btn btn-invisible">Filter &nbsp;<i class="icon-caret-down"></i></a>
+                <ul class="dropdown-menu carettop">
+                    <li>
+                        <a href="#myAccount">My accounts</a>
+                    </li>
+                    <li>
+                        <a href="#myContacts">My contacts</a>
+                    </li>
+                    <li>
+                        <a href="#myOpportunities">My opportunities</a>
+                    </li>
+                    <li class="primary">
+                        <a href="#createFilter" class="newfilter">+ Create a filter</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <div class="toolbar-btns span3">
+            <div class="pull-right">
+                <a href="partial/{{module}}/{{module}}-activitystream.html" class="btn btn-invisible" data-view="activitystream" data-toggle="tab" data-target="#view .main-content" data-mode="view"><i class="icon-th-list"></i></a>
+                <a href="#" class="btn btn-invisible" data-view="timeline"><i class="icon-time"></i></a>
+                <a href="#" class="btn btn-invisible" data-view="calendar"><i class="icon-calendar"></i></a>
+                <a href="partial/{{module}}/{{module}}-table.html" data-view="list" class="btn btn-invisible" data-toggle="tab" data-target="#view .main-content" data-mode="view"><i class="icon-table"></i></a>
+            </div>
+        </div>
     </div>
-  </div>
-
-  <div class="filtered extend results hide">
-    <article class="filtered-header">
-      <input placeholder="Enter new filter name...">
-      <div class="pull-right dropdown">
-        <a href="" class="btn">Save</a><a href="" class="btn btn-invisible"><i class="icon-remove"></i></a>
-      </div>
-    </article>
-    <article class="filtered-body">
-      <select class="chzn-select buildit">
-        <option>Name</option>
-        <option>Sales Stage</option>
-      </select>
-      <select class="chzn-select">
-        <option>matches</option>
-      </select>
-      <input placeholder="Select a name...">
-      <a href="" class="btn btn-invisible pull-right addme"><i class="icon-plus"></i></a>
-    </article>
-  </div>
-
-  <div class="mu extend results hide">
-    <article class="filtered-header">
-      <strong>Mass Update</strong>
-      <div class="btn-group pull-right dropdown">
-        <a href="" class="btn">update</a>
-      </div>
-    </article>
-    <article class="filtered-body">
-      <select class="chzn-select buildit">
-        <option>Name</option>
-        <option>Sales Stage</option>
-      </select>
-      <select class="chzn-select">
-        <option>matches</option>
-      </select>
-      <input placeholder="Select a name...">
-      <a href="" class="btn btn-invisible pull-right addme"><i class="icon-plus"></i></a>
-    </article>
-  </div>
+    <div class="filtered extend hide">
+        <article class="filtered-header">
+            <input placeholder="Enter new filter name...">
+            <div class="pull-right dropdown">
+                <a href="#" class="btn btn-primary">Save</a>
+                <a href="#" class="btn btn-invisible"><i class="icon-remove"></i></a>
+            </div>
+        </article>
+    </div>
+    <div class="mu extend hide">
+        <article class="filtered-header">
+            <strong>
+                Mass Update
+            </strong>
+            <div class="btn-group pull-right dropdown">
+                <a href="" class="btn">update</a>
+            </div>
+        </article>
+        <article class="filtered-body">
+            <select class="chzn-select buildit">
+                <option>
+                    Name
+                </option>
+                <option>
+                    Sales Stage
+                </option>
+            </select>
+            <select class="chzn-select">
+                <option>
+                    matches
+                </option>
+            </select>
+            <input placeholder="Select a name...">
+            <a href="" class="btn btn-invisible pull-right addme"><i class="icon-plus"></i></a>
+        </article>
+    </div>
 </form>
 
 <script>
   $(document).ready(function() {
-    // toggle more hide
-    $('.newfilter').toggle(
-      function () {
-        $(this).parent().parent().parent().parent().parent().parent().find('.filtered').removeClass('hide');
-        $(this).dropdown('toggle');
-      },
-      function () {
-        $(this).parent().parent().parent().parent().find('.filtered').addClass('hide');
-    });
+      // toggle more hide of create filter form
+      $('.newfilter').toggle(
+        function() {
+            $(this).parents('.form-search').find('.filtered').removeClass('hide');
+            $(this).dropdown('toggle');
+        },
+        function() {
+            $(this).parents('.form-search').find('.filtered').addClass('hide');
+        }
+      );
 
-    // toggle module search (needs tap logic for mobile)
-    $('body').on('click', '.addit', function () {
-      $(this).toggleClass('active');
-      $(this).parent().parent().parent().find('.form-addit').toggleClass('hide');
-      return false;
-    });
-
-    $('body').on('click', '.addme',
-      function () {
-        $(this).after('<a href="" class="removeme pull-right"><i class="btn btn-invisible icon-minus"></i></a>');
-        $('.removeme').on('click',
-          function () {
-            $(this).parent('.filtered-body').remove();
-            return false;
-        });
-        $(this).parent().after('<article class="filtered-body"><select class="chzn-select chzn-done" id="selNXK" style="display: none; "><option>matches</option></select><div id="selNXK_chzn" class="chzn-container chzn-container-single" style="width: 220px; "><a href="javascript:void(0)" class="chzn-single"><span>matches</span><div><b></b></div></a><div class="chzn-drop" style="left: -9000px; width: 218px; top: 0px; "><div class="chzn-search" style=""><input type="text" autocomplete="off" style="width: 183px; "></div><ul class="chzn-results"><li id="selNXK_chzn_o_0" class="active-result result-selected" style="">matches</li></ul></div></div><input placeholder="Select a name..."><a href="" class="btn btn-invisible pull-right addme"><i class="icon-plus"></i></a></article>');
-        $('.addme').on('click',
-          function () {
-            $(this).after('<a href="" class="removeme pull-right"><i class="btn btn-invisible icon-minus"></i></a>');
-            $('.removeme').on('click',
-              function () {
-                $(this).parent('.filtered-body').remove();
-                return false;
-            });
-            $(this).parent().after('<article class="filtered-body"><select class="chzn-select chzn-done" id="selNXK" style="display: none; "><option>matches</option></select><div id="selNXK_chzn" class="chzn-container chzn-container-single" style="width: 220px; "><a href="javascript:void(0)" class="chzn-single"><span>matches</span><div><b></b></div></a><div class="chzn-drop" style="left: -9000px; width: 218px; top: 0px; "><div class="chzn-search" style=""><input type="text" autocomplete="off" style="width: 183px; "></div><ul class="chzn-results"><li id="selNXK_chzn_o_0" class="active-result result-selected" style="">matches</li></ul></div></div><input placeholder="Select a name..."><a href="" class="btn btn-invisible pull-right addme"><i class="icon-plus"></i></a></article>');
-            return false;
-        });
-        return false;
-    });
-
-    $('body').on('click', '.search', function () {
-      $(this).toggleClass('active');
-      // $(this).parent().parent().parent().find('.dataTables_filter').toggle( function () {
-      //   $(this).find('input').focus();
-      // });
-      $(this).parent().parent().parent().find('.form-search').toggle( function () {
-        $(this).find('input').focus();
+      // toggle module search (needs tap logic for mobile)
+      $('body').on('click', '.addit', function() {
+          $(this).toggleClass('active');
+          $(this).parent().parent().parent().find('.form-addit').toggleClass('hide');
+          return false;
       });
-      $(this).parent().parent().parent().find('.form-search').toggleClass('hide');
-      return false;
-    });
 
-    // table - mass update
-    $('body').on('click', '.tmu', function () {
-        $('.mu').show();
-        return false;
-    });
+      $('body').on('click', '.addme', function(e) {
+          $(this).after('<a href="#" class="removeme btn btn-invisible"><i class="icon-minus"></i></a>');
+          loadContent('partial/common/search-filter-row.html', '.filtered', undefined, 'append');
+          e.preventDefault();
+      });
+
+      $('.filtered').on('click', '.removeme', function(e) {
+          $(this).parents('.filtered-body').remove();
+          e.preventDefault();
+      });
+
+      $('body').on('click', '.search', function() {
+          $(this).toggleClass('active');
+          // $(this).parent().parent().parent().find('.dataTables_filter').toggle( function () {
+          //   $(this).find('input').focus();
+          // });
+          $(this).parent().parent().parent().find('.form-search').toggle(function() {
+              $(this).find('input').focus();
+          });
+          $(this).parent().parent().parent().find('.form-search').toggleClass('hide');
+          return false;
+      });
+
+      // table - mass update
+      $('body').on('click', '.tmu', function() {
+          $('.mu').show();
+          return false;
+      });
+
+      loadContent('partial/common/search-filter-row.html', '.filtered', undefined, 'append');
+
+
+      $("#search_filter_chzn .chzn-results > li").bind('click',function(){
+        var li_active = $("ul.chzn-choices").find('.search-choice').first().attr('id'),
+            li_orig = li_active.replace("_chzn_c_","_chzn_o_");
+
+        // if not active filter "pills" exist, do not remove pill from dom
+        if($("ul.chzn-choices").find('.search-choice').length > 1) {
+          $("ul.chzn-choices").find('.search-choice').first().remove();
+        }
+
+        $("#"+li_orig).removeClass("result-selected").addClass("active-result");
+        if($('.chzn-container').hasClass('chzn-container-active') === true ) {
+          $('.chzn-container').removeClass('chzn-container-active');
+        }
+      });
+
+      var chzn_legend = '<legend class="chzn-select-legend">Filter <i class="icon-caret-down"></i></legend>';
+      $('#search_filter_chzn .chzn-choices').prepend(chzn_legend);
+
+      $('.chzn-results').find('li').after("<span class='icon-ok' />");
+
+      $('form.editable input').live('change',function(){
+          invokeSaveButtons();
+      });
+
+
+      $("#search_filter").chosen();
+
+      // Select widget
+      // if ($('.chzn-select').length !== 0) {
+      //   $('.chzn-select').chosen({ disable_search_threshold: 5, fullWidth: true });
+      //   $(".chzn-select-deselect").chosen({allow_single_deselect:true});
+      // }
+
+      // if ($('.form-search select').length !== 0) {
+      //   $('.form-search select').chosen();
+      //   //$('#moduleActivity .form-search input').quicksearch('ul.results li');
+      // }
+
   });
+
 </script>

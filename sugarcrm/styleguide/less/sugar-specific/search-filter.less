@@ -1,0 +1,133 @@
+
+// search filter widget
+.form-search {
+  position: relative;
+  margin: -1px 1px 0 0;
+  padding: 5px;
+  border-top: 1px solid darken(@grayLighter, 5%);
+  background: @grayLighter;
+  border-bottom: 1px solid darken(@grayLighter, 5%);
+  z-index: 1000;\
+
+  input {
+    margin: 0;
+    padding: 4px 8px;
+    border: 1px solid @grayLight;
+  }
+
+  .actions {
+    position: absolute;
+  }
+
+  .extend {
+    background: darken(@grayLighter, 5%);
+    margin: 5px -5px -5px;
+    text-align: left;
+
+    article:nth-child(even),
+    article:nth-child(odd) {
+      background-color: transparent;
+      border-top: 1px solid @grayLighter;
+      border-bottom: 1px solid @grayLight;
+      padding: 8px 8px 6px 20px;
+    }
+
+    article.filtered-header {
+      padding: 9px 4px 11px 20px;
+      .box-shadow(~"inset 0px 4px 8px -4px rgba(0, 0, 0, 0.5)");
+      input {
+        margin-top: 2px;
+      }
+    }
+  }
+
+  .mu.extend {
+    margin-top:-1px;
+    .fieldPlaceHolder {
+      margin-left:4px;
+    }
+  }
+
+  .filter-value {
+    padding-right: 60px;
+    position: relative;
+    input {
+      width: 100%;
+      .box-sizing(border-box);
+    }
+  }
+  .addme,
+  .removeme {
+    position: absolute;
+    top: 0;
+    padding: 3px 6px 1px;
+  }
+  .addme {
+    right: 0;
+  }
+  .removeme {
+    right: 30px;
+  }
+  .myfilter {
+    position: relative;
+  }
+}
+
+
+#search_filter_chzn {
+  width: 100% !important;
+  margin-bottom: 4px;
+  .search-choice {
+    border-radius: 10px !important;
+    -webkit-border-radius: 10px !important;
+    border: none !important;
+  }
+  .search-choice {
+    background: #E4E4E4;
+    margin-top: 4px;
+    &>a {
+      height: 12px;
+      width: 12px;
+      .border-radius(6px);
+      background-color: #908f8e;
+      background-image: url('@{baseUrl}/img/chosen-sprite-invert.png');
+    }
+  }
+  .chzn-results {
+    .icon-ok {
+      position: absolute;
+      margin-top: -22px;
+      margin-left: 2px;
+      z-index: 1;
+    }
+    &> li {
+      position: relative;
+      text-indent: 22px;
+      z-index: 1;
+      &.active-result {
+        z-index: 2;
+      }
+      &:not(:hover) {
+        background: @white;
+        color: @black;
+      }
+    }
+  }
+}
+
+.filter {
+  position: relative;
+  .chzn-container-multi .chzn-drop .result-selected {
+    display: block;
+    font-weight: bold;
+/*    &:before { //content:"â\00a0\00a0\00a0";
+    //content:"\f00c\00a0\00a0\00a0";
+    }*/
+  }
+  &.forecast {
+    .chzn-container-active .chzn-drop {
+      right: 0px !important;
+      left: auto !important;
+    }
+  }
+}
