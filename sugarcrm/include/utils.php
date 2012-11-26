@@ -4670,7 +4670,7 @@ function getTeamSetNameJoin($table_name){
 
 function inDeveloperMode()
 {
-    return isset($GLOBALS['sugar_config']['developerMode']) && $GLOBALS['sugar_config']['developerMode'];
+    return !empty($GLOBALS['sugar_config']['developerMode']);
 }
 
 /**
