@@ -35,8 +35,8 @@
     </div>
     
 	<div class="modal-body">
-
-			<div style="width: 550px;" >
+        <div style="float: left;">
+            <div style="float: left; width: 300px;">
 				{$APP.LBL_TOUR_FEATURES}
 				<p>{$APP.LBL_TOUR_VISIT} <a href="javascript:void window.open('http://support.sugarcrm.com/02_Documentation/01_Sugar_Editions/{$APP.documentation.$sugarFlavor}')">{$APP.LNK_TOUR_DOCUMENTATION}</a>.</p>
 
@@ -46,10 +46,11 @@
                 </div>
                 {/if}
 
-			</div>
-	</div>
-    <div class="clear"></div>
-    
+            </div>
+            <div class="well" style="float: left; width: 220px; margin-left: 20px;"><img src="themes/default/images/pt-screen0-thumb.png" width="220" id="thumbnail_0" class="thumb"></div>
+        </div>
+        </div>
+        <div class="clear"></div>
     <div class="modal-footer">
     <a href="#" class="btn btn-primary">{$APP.LBL_TOUR_TAKE_TOUR}</a>
     <a href="#" class="btn btn-invisible">{$APP.LBL_TOUR_SKIP}</a>
@@ -63,7 +64,7 @@
     
 	<div class="modal-body">
 		<div style="float: left;"> 
-			<div style="float: left; width: 290px; margin-right: 40px;">
+			<div style="float: left; width: 360px; margin-right: 40px;">
 			<p>
 			{$APP.LBL_TOUR_REFERENCE_1} <a href="javascript:void window.open('http://support.sugarcrm.com/02_Documentation/01_Sugar_Editions/{$APP.documentation.$sugarFlavor}')">{$APP.LNK_TOUR_DOCUMENTATION}</a> {$APP.LBL_TOUR_REFERENCE_2}
 <br>
@@ -83,3 +84,13 @@
 
     </div>
 </div>
+
+<script type="text/javascript">
+    {literal}
+    $('#thumbnail_0').live("click", function(){
+        $("#tour_screenshot .modal-header h3").html("{/literal}{$APP.LBL_TOUR_WELCOME}{literal}");
+        $("#tour_screenshot .modal-body").html("<img src='themes/default/images/pt-screen0-full.png' width='600'>");
+        $("#tour_screenshot").modal("show");
+    });
+    {/literal}
+</script>
