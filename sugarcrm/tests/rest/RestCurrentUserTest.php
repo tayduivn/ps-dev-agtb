@@ -46,6 +46,7 @@ class RestCurrentUserTest extends RestTestBase {
         //BEGIN SUGARCRM flav=pro ONLY
         $this->assertNotEmpty($restReply['reply']['current_user']['primary_team_id']);
         $this->assertNotEmpty($restReply['reply']['current_user']['primary_team_name']);
+        $this->assertNotEmpty($restReply['reply']['current_user']['default_teams']);
         //END SUGARCRM flav=pro ONLY
     }
 
