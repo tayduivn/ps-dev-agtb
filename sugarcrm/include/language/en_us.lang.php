@@ -2386,8 +2386,8 @@ $app_strings = array (
 
     //Forecast specific error messages
     'ERR_TIMEPERIOD_UNDEFINED_FOR_DATE' => 'Error Timeperiod undefined for date {0}',
-    'ERR_TIMEPERIOD_ALREADY_HAS_LEAVES' => 'This TimePeriod already has leaves',
-    'ERR_TIMEPERIOD_ALREADY_LEAF' => 'Leaf Time Periods cannot have leaves',
+    'ERR_TIMEPERIOD_ALREADY_HAS_LEAVES' => 'This TimePeriod already has sub-periods',
+    'ERR_TIMEPERIOD_ALREADY_LEAF' => 'Sub Time Periods cannot have sub-periods',
     'ERR_TIMEPERIOD_TYPE_DOES_NOT_EXIST' => 'Unable to retrieve any timeperiods of type: {0}',
     'LBL_CURRENT_TIMEPERIOD' => 'Current Time Period',
     'LBL_PREVIOUS_TIMEPERIOD' => 'Previous Time Period',
@@ -4436,8 +4436,8 @@ $app_list_strings['forecasts_timeperiod_types_dom'] = array(
     'chronological' => 'Date Based Year',
 );
 $app_list_strings['forecasts_timeperiod_options_dom'] = array(
-    'Annual' => 'Yearly (Quarterly leaf periods)',
-    'Quarter' => 'Quarterly (Monthly leaf periods)',
+    'Annual' => 'Yearly (Quarterly sub-periods)',
+    'Quarter' => 'Quarterly (Monthly sub-periods)',
 );
 
 $app_list_strings['forecasts_timeperiod_month_options_dom'] = array(
