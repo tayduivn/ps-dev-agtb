@@ -231,7 +231,6 @@ $mod_strings = array (
     'LBL_SALES_STAGE' => 'Stage',
     'LBL_AMOUNT' => 'Amount',
     'LBL_DATE_CLOSED' => 'Expected Close',
-    'LBL_PROBABILITY' => 'Probability',
     'LBL_PRODUCT_ID' => 'Product ID',
     'LBL_QUOTA_ID' => 'Quota ID',
     'LBL_VERSION' => 'Version',
@@ -259,7 +258,6 @@ $mod_strings = array (
 
     //Labels for jsTree implementation
     'LBL_TREE_PARENT' => 'Parent',
-    'LBL_TREE_TEAMS' => 'Teams',
 
     'LBL_MY_OPPORTUNITIES' => 'Opportunities ({0})',
 
@@ -282,13 +280,8 @@ $mod_strings = array (
     'LBL_CHART_OPTIONS' => 'Chart Options',
     'LBL_CHART_AMOUNT' => 'Amount',
     'LBL_CHART_TYPE' => 'Type',
-    'LBL_CHART_OPTION_LIKELY' => 'Likely',
-    'LBL_CHART_OPTION_BEST' => 'Best',
-    'LBL_CHART_OPTION_WORST' => 'Worst',
 
     // Labels for Data Filters
-    'LBL_FORECAST_PERIOD' => 'Forecast Period:',
-    'LBL_FORECAST_CATEGORY' => 'Forecast Category:',
     'LBL_FILTERS' => 'Filters',
 
     // Labels for toggle buttons
@@ -323,11 +316,9 @@ $mod_strings = array (
 
     'LBL_CHART_FORECAST_FOR' => 'Forecast for {0}',
     'LBL_FORECAST_TITLE' => 'Forecast: {0}',
-
     'LBL_CHART_INCLUDED' => 'Included',
     'LBL_CHART_NOT_INCLUDED' => 'Not Included',
     'LBL_CHART_ADJUSTED' => ' (Adjusted)',
-
     'LBL_SAVE_DRAFT' => 'Save Draft',
     'LBL_CHANGES_BY' => 'Changes by {0}',
     'LBL_FORECAST_SETTINGS' => 'Settings',

@@ -290,11 +290,10 @@ class MetaDataManager {
      * Gets the ACL's for the module, will also expand them so the client side of the ACL's don't have to do as many checks.
      *
      * @param string $module The module we want to fetch the ACL for
-     * @param string $userId The user id for the ACL's we are retrieving.
+     * @param object $userObject The user object for the ACL's we are retrieving.
      * @return array Array of ACL's, first the action ACL's (access, create, edit, delete) then an array of the field level acl's
      */
-    public function getAclForModule($module,$userId) {
-        $userObject = BeanFactory::getBean('Users',$userId);
+    public function getAclForModule($module,$userObject) {
         $obj = BeanFactory::getObjectName($module);
 
         $outputAcl = array('fields'=>array());
@@ -309,6 +308,9 @@ class MetaDataManager {
             foreach(SugarACL::$all_access AS $action => $bool) {
                 $outputAcl[$action] = ($moduleAcls[$action] == true || !isset($moduleAcls[$action])) ? 'yes' : 'no';
             }
+
+            // is the user an admin user for the module
+            $outputAcl['admin'] = ($userObject->isAdminForModule($module)) ? 'yes' : 'no';
 
             // Only loop through the fields if we have a reason to, admins give full access on everything, no access gives no access to anything
             if ( $outputAcl['access'] == 'yes') {

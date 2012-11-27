@@ -974,7 +974,7 @@ else
      require_once("include/SugarCharts/ChartDisplay.php");
      $chartDisplay = new ChartDisplay();
      $chartDisplay->setReporter($reporter);
-     echo $chartDisplay->legacyDisplay(null, false);
+     echo "<div align='center'>".$chartDisplay->legacyDisplay(null, false)."</div>";
 	 echo "</div>";
 	} // if
 

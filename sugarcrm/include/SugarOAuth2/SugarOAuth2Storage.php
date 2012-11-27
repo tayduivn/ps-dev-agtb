@@ -101,18 +101,6 @@ class SugarOAuth2Storage implements IOAuth2GrantUser, IOAuth2RefreshTokens, Suga
      */
     public function canStartSession() {
         return $this->getPlatformStore()->canStartSession();
-        // Find the Portal API user
-        $admin = new Administration();
-        $admin->retrieveSettings(false, true);
-        if (isset($admin->settings['supportPortal_RegCreatedBy'])) {
-            $portalApiUser = BeanFactory::getBean('Users', $admin->settings['supportPortal_RegCreatedBy']);
-        }
-        if (!empty($portalApiUser->id)) {
-            $this->portalApiUser = $portalApiUser;
-            return $this->portalApiUser;
-        } else {
-            return null;
-        }
     }
 
     /**

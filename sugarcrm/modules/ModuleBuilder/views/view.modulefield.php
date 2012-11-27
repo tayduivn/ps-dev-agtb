@@ -36,7 +36,7 @@ class ViewModulefield extends SugarView
 	protected function _getModuleTitleParams($browserTitle = false)
 	{
 	    global $mod_strings;
-	    
+
     	return array(
     	   translate('LBL_MODULE_NAME','Administration'),
     	   ModuleBuilderController::getModuleTitle(),
@@ -141,8 +141,11 @@ class ViewModulefield extends SugarView
 
             VardefManager::loadVardef($moduleName, $objectName,true);
             global $dictionary;
+            if(empty($module->mbvardefs)) {
+                $module->mbvardefs = new stdClass();
+            }
             $module->mbvardefs->vardefs =  $dictionary[$objectName];
-			
+
             $module->name = $moduleName;
             if(!$ac){
                 $ac = new AjaxCompose();
@@ -151,7 +154,7 @@ class ViewModulefield extends SugarView
             if($isClone){
                 unset($vardef['name']);
             }
-          
+
             if(empty($vardef['name'])){
                 if(!empty($_REQUEST['type']))
                     $vardef['type'] = $_REQUEST['type'];
@@ -165,7 +168,7 @@ class ViewModulefield extends SugarView
             if($isClone && isset($vardef['type']) && $vardef['type'] == 'datetime'){
             	$vardef['type'] = 'datetimecombo';
             }
-            
+
 			require_once ('modules/DynamicFields/FieldCases.php') ;
             $tf = get_widget ( empty($vardef [ 'type' ]) ?  "" : $vardef [ 'type' ]) ;
             $tf->module = $module;
@@ -173,8 +176,8 @@ class ViewModulefield extends SugarView
 			$vardef = array_merge($vardef, $tf->get_field_def());
 
             //          $GLOBALS['log']->debug('vardefs after loading = '.print_r($vardef,true));
-           
-            
+
+
             //Check if autoincrement fields are allowed
             $allowAutoInc = true;
             $enumFields = array();
@@ -186,13 +189,13 @@ class ViewModulefield extends SugarView
             	}
                 if (!empty($def['type']) && $def['type'] == "enum" && $field != $vardef['name'])
                 {
-                    if(!empty($def['studio']) && $def['studio'] == "false") continue; //bug51866 
+                    if(!empty($def['studio']) && $def['studio'] == "false") continue; //bug51866
                     $enumFields[$field] = translate($def['vname'], $moduleName);
                     if (substr($enumFields[$field], -1) == ":")
                         $enumFields[$field] = substr($enumFields[$field], 0, strlen($enumFields[$field]) - 1);
                 }
             }
-            $fv->ss->assign( 'allowAutoInc', $allowAutoInc);   
+            $fv->ss->assign( 'allowAutoInc', $allowAutoInc);
 
             $GLOBALS['log']->warn('view.modulefield: hidelevel '.$fv->ss->get_template_vars('hideLevel')." ".print_r($vardef,true));
             if(!empty($vardef['vname'])){
@@ -239,8 +242,8 @@ class ViewModulefield extends SugarView
             $tf->module = $module;
             $tf->populateFromRow($vardef);
             $vardef = array_merge($vardef, $tf->get_field_def());
-			
-			
+
+
 
             $fv->ss->assign('module', $module);
             $fv->ss->assign('package', $package);
@@ -284,7 +287,7 @@ class ViewModulefield extends SugarView
 	        	$vardef[$toEscape] = htmlentities($vardef[$toEscape], ENT_QUOTES, 'UTF-8');
 	        }
 		}
-		
+
         if((!empty($vardef['studio']) && is_array($vardef['studio']) && !empty($vardef['studio']['no_duplicate']) && $vardef['studio']['no_duplicate'] == true)
            || (strcmp($field_name, "name") == 0) || (isset($vardef['type']) && $vardef['type'] == 'name')) // bug #35767, do not allow cloning of name field
             {
@@ -328,15 +331,15 @@ class ViewModulefield extends SugarView
         	{
         		$triggers [] = $field [ 'name' ] ;
         	}
-        	
+
         	if (!isset($field['source']) || $field['source'] != 'non-db') {
         		if(preg_match('/^(.*?)(_c)?$/', $field['name'], $matches))
         		{
-        			$existing_field_names [] = strtoupper($matches[1]);	
+        			$existing_field_names [] = strtoupper($matches[1]);
         		}
         	}
         }
-        
+
         $fv->ss->assign('triggers',$triggers);
         $fv->ss->assign('existing_field_names', $json->encode($existing_field_names));
         $fv->ss->assign('mod_strings',$GLOBALS['mod_strings']);
