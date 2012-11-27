@@ -81,7 +81,6 @@ var $useForSubpanel = true;
         if(isset($_REQUEST['isDuplicate']) && $_REQUEST['isDuplicate'] == 'true') {
             $this->ss->assign('RETURN_MODULE', $_REQUEST['return_module']);
             $this->ss->assign('RETURN_ACTION', $_REQUEST['return_action']);
-            $this->ss->assign('RETURN_ID', $_REQUEST['record']);
             $this->bean->id = "";
             $this->bean->user_name = "";
             $this->ss->assign('ID','');
