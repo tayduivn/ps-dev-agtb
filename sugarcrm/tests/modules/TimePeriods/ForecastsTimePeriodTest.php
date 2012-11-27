@@ -584,12 +584,12 @@ class ForecastsTimePeriodTest extends Sugar_PHPUnit_Framework_TestCase
     }
 
 
-    /**
+
+    /*
      * This is a test to see how the TimePeriod code handles specifying corner cases like a leap year as the starting forecasting date
      *
      * @group timeperiods
      * @group forecasts
-     */
     public function testCreateLeapYearTimePeriods() {
         $db = DBManagerFactory::getInstance();
         $db->query("UPDATE timeperiods SET deleted = 1");
@@ -617,6 +617,7 @@ class ForecastsTimePeriodTest extends Sugar_PHPUnit_Framework_TestCase
         }
         $this->assertTrue($leapYearFoundCount >= 2, "Failed to find at least 2 leap year leaf timeperiods for 8 years of timeperiods");
     }
+    */
 
 
     /**
