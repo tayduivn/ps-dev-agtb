@@ -27,6 +27,7 @@
  * by SugarCRM are Copyright (C) 2004-2006 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 *}
+
 {assign var=id_filter_chars value="/[^A-Za-z0-9-_]/"} {* regex for keeping troublesome chars out of our id. *}
 <script type="text/javascript" src="{sugar_getjspath file='cache/include/javascript/sugar_grp1_jquery.js'}"></script>
 <!-- Below Div must exist in order for IE7/8 to read the inline style declaration. Line should be removed for IE9+ -->
