@@ -209,7 +209,7 @@
                 'type' : 'selection',
                 'name' : module + '_select',
                 'sortable' : false,
-                'label' : app.lang.get('LBL_LINK_SELECT')
+                'label' : meta.selection.label || ''
             }];
 
             panel.fields = singleSelect.concat(panel.fields);
