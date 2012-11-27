@@ -1,5 +1,9 @@
 <?php
-
+/**
+ * Creates a layout for views that include the filter panel.
+ *
+ * This view is used mostly on list views for items.
+ */
 class FilterPanelLayout
 {
     protected $defaultTab = array("name" => "Activity Stream", "toggles" => array("activitystream", "timeline", "calendar"));
@@ -10,6 +14,11 @@ class FilterPanelLayout
     protected $layout;
     protected $baseLayout;
 
+    /**
+     * Constructor for FilterPanel Layout
+     * @param array $opts Takes an array of options. Set the 'override' key to
+     * whichever tab you want to focus on by default.
+     */
     public function __construct($opts = array())
     {
         $this->layout = MetaDataManager::getLayout('GenericLayout', array('name' => 'filterpanel', 'type' => 'filterpanel'));
@@ -35,9 +44,6 @@ class FilterPanelLayout
         $this->layout->set("defaultToggle", $toggle);
     }
 
-    /**
-     * @param {Array} $tab ['name' => 'TAB_NAME', 'toggles' => array('activitystream', 'list')]
-     */
     public function setTab($tab)
     {
         if (!isset($tab["toggles"])) {
@@ -58,6 +64,10 @@ class FilterPanelLayout
         }
     }
 
+    /**
+     * Returns metadata that renders the componennts for the Filter layout.
+     * @return array
+     */
     public function getLayout()
     {
         $this->extractToggles();

@@ -6,6 +6,10 @@ class SideBarLayout
     protected $layout;
     protected $baseLayout;
 
+    /**
+     * Constructs a two-pane layout (typically one with content, and one with
+     * widgets).
+     */
     public function __construct()
     {
         $this->layout = MetaDataManager::getLayout('GenericLayout', array('name' => 'sidebar', 'type' => 'default'));
