@@ -36,8 +36,8 @@
         this.buttons.initialize(this);
     },
 
-    _renderHtml: function() {
-        app.view.views.RecordView.prototype._renderHtml.call(this);
+    render: function() {
+        app.view.views.RecordView.prototype.render.call(this);
         this.buttons.setButtonAsCreate();
         this.showDuplicates();
 
