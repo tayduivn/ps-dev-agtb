@@ -1,43 +1,45 @@
 <?php
 
-class SideBarLayout {
-
-    protected $mainPane;
-    protected $sidePane;
-    protected $previewPane;
+class SideBarLayout
+{
     protected $containers = array();
     protected $layout;
     protected $baseLayout;
 
-    public function __construct() {
+    public function __construct()
+    {
         $this->layout = MetaDataManager::getLayout('GenericLayout', array('name' => 'sidebar', 'type' => 'default'));
         $this->baseLayout = MetaDataManager::getLayout('GenericLayout', array('name' => 'base'));;
 
-        $this->mainPane = $this->containers['main'] = MetaDataManager::getLayout('GenericLayout', array('name' => 'main-pane'));
-        $this->sidePane = $this->containers['side'] = MetaDataManager::getLayout('GenericLayout', array('name' => 'side-pane'));
-        $this->previewPane = $this->containers['preview'] = MetaDataManager::getLayout('GenericLayout', array('name' => 'preview-pane'));
+        $this->containers['main'] = MetaDataManager::getLayout('GenericLayout', array('name' => 'main-pane'));
+        $this->containers['side'] = MetaDataManager::getLayout('GenericLayout', array('name' => 'side-pane'));
+        $this->containers['preview'] = MetaDataManager::getLayout('GenericLayout', array('name' => 'preview-pane'));
 
-        $this->mainPane->set("span", 8);
-        $this->sidePane->set("span", 4);
-        $this->previewPane->set("span", 4);
+        $this->setSectionSpan('main', 8);
+        $this->setSectionSpan('side', 4);
+        $this->setSectionSpan('preview', 8);
     }
 
-    public function push($section, $component) {
+    public function push($section, $component)
+    {
         if (isset($this->containers[$section])) {
             $this->containers[$section]->push($component);
         }
     }
 
-    public function setSectionSpan($section, $span) {
+    public function setSectionSpan($section, $span)
+    {
         $this->containers[$section]->set("span", $span);
     }
 
-    public function getLayout() {
-        $this->layout->push(array("layout" => $this->mainPane->getLayout()));
-        $this->layout->push(array("layout" => $this->sidePane->getLayout()));
-        $this->layout->push(array("layout" => $this->previewPane->getLayout()));
+    public function getLayout()
+    {
+        foreach ($this->containers as $container) {
+            $this->layout->push(array("layout" => $container->getLayout()));
+        }
 
         $this->baseLayout->push($this->layout->getLayout(true));
+
         return $this->baseLayout->getLayout();
     }
 }
