@@ -138,7 +138,7 @@
          * @param model {Backbone.Model} the newestModel being used so we can get the current caseStr
          * @param caseStr {String} the attr string to get from the newest model
          */
-        gatherLangArgsByString : function(dir, arrow, diff, model, attrStr) {
+        gatherLangArgsByParams : function(dir, arrow, diff, model, attrStr) {
             var args = [];
             args.push(app.lang.get(dir, 'Forecasts') + arrow);
             args.push(app.currency.formatAmountLocale(Math.abs(diff)));
