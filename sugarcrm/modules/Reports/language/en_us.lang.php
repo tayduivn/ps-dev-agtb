@@ -80,6 +80,7 @@ $mod_strings = array (
   'LBL_SAVE_AS' => 'Save As',
   'LBL_FILTERS' => 'Filters',
   'LBL_NO_CHART_DRAWN_MESSAGE' => 'Chart not able to be drawn because of insufficient data',
+  'LBL_CANNOT_DISPLAY_CHART_MESSAGE' => 'The chart cannot be displayed due to its configuration.',
   'LBL_RUNTIME_FILTERS' => 'Run-time Filters',
   'LBL_VIEWER_RUNTIME_HELP'=> 'Specify values for <b>Run-time Filters</b> and click the <b>Apply Filters</b> button to re-run the report.',
   'LBL_REPORT_RESULTS' => 'Results',

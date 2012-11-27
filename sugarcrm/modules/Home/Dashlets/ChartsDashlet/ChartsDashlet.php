@@ -126,6 +126,12 @@ class ChartsDashlet extends Dashlet {
 			$reporter->is_saved_report = true;
 			$reporter->saved_report_id = $chartReport->id;
 
+            // Bug #57213 : Reports with data series removed render charts inconsistently
+            if ( $reporter && !$reporter->has_summary_columns() )
+            {
+                return '';
+            }
+
             $chartDisplay = new ChartDisplay();
 
 			$xmlFile = $chartDisplay->get_cache_file_name($reporter);
