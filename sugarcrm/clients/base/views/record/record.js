@@ -9,8 +9,7 @@
         'click .record-cancel': 'cancelClicked',
         'click .record-delete': 'deleteClicked',
         'click .more': 'toggleMoreLess',
-        'click .less': 'toggleMoreLess',
-        'click .drawerTrig': 'toggleSidePanel'
+        'click .less': 'toggleMoreLess'
     },
 
     // button states
@@ -323,8 +322,10 @@
     toggleField: function(field, cell, close) {
         cell.toggleClass('edit-mode');
 
-        field.options.viewName = ((!field.options.viewName || field.options.viewName == "detail") && !close)
-            ? "edit" : field.options.viewName = "detail";
+        var viewName = ((!field.options.viewName || field.options.viewName == "detail") && !close)
+            ? "edit" : "detail";
+
+        field.setViewName(viewName);
 
         field.render();
 
@@ -409,27 +410,6 @@
                 $buttons.del.toggleClass('hide', true);
                 break;
         }
-    },
-
-    /**
-     * Hide / show the side panel
-     */
-    toggleSidePanel: function() {
-        var chevron = this.$('.drawerTrig span'),
-            pointRightClass = 'icon-chevron-right',
-            pointLeftClass = 'icon-chevron-left';
-
-        if (chevron.hasClass(pointRightClass)) {
-            chevron
-                .removeClass(pointRightClass)
-                .addClass(pointLeftClass);
-        } else {
-            chevron
-                .removeClass(pointLeftClass)
-                .addClass(pointRightClass);
-        }
-
-        this.context.trigger("toggleSidebar");
     },
 
     /**

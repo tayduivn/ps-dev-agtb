@@ -4,6 +4,16 @@
     },
 
     /**
+     * {@inheritdoc}
+     *
+     * The favorite is always a non editable field.
+     */
+    initialize: function(options) {
+        app.view.Field.prototype.initialize.call(this, options);
+        this.def.noedit = true;
+    },
+
+    /**
      * Check first if the module has favoritesEnabled before rendering it.
      *
      * @private
@@ -12,7 +22,7 @@
 
         if (!app.metadata.getModule(this.model.module).favoritesEnabled) {
             app.logger.error("Trying to use favorite field on a module that doesn't support it: '" + this.model.module + "'.");
-            return;
+            return null;
         }
         return app.view.Field.prototype._render.call(this);
     },

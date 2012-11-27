@@ -143,7 +143,7 @@ eoq;
 	  * @param displayname Name to display in the popup window
       * @param varname name of the variable
 	  */
-	function handleMassUpdate(){
+        function handleMassUpdate($fetch_only = false, $update_blank=false){
 
 		require_once('include/formbase.php');
 		global $current_user, $db, $disable_date_format, $timedate;
@@ -154,10 +154,12 @@ eoq;
 					unset($_POST[$post]);
 				}
 			}elseif(strlen($value) == 0){
+                            if (!$update_blank) {
 				if( isset($this->sugarbean->field_defs[$post]) && $this->sugarbean->field_defs[$post]['type'] == 'radioenum' && isset($_POST[$post]) ){
 				  $_POST[$post] = '';
 				}else{
 				  unset($_POST[$post]);
+                                }
 			    }
             }
 
@@ -214,6 +216,10 @@ eoq;
 			}
 			$_POST['mass'] = $new_arr;
 		}
+
+                if ($fetch_only) {
+                    return;
+                }
 
 		if(isset($_POST['mass']) && is_array($_POST['mass'])  && $_REQUEST['massupdate'] == 'true'){
 			$count = 0;
