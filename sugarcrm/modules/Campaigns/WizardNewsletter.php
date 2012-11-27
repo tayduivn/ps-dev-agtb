@@ -549,6 +549,7 @@ $ss->display(SugarAutoLoader::existingCustomOne('modules/Campaigns/tpls/WizardNe
 
 function create_common_wizard_steps()
 {
+    global $mod_strings;
     $steps = array();
     $steps[$mod_strings['LBL_NAVIGATION_MENU_GEN1']]          = SugarAutoLoader::existingCustomOne('modules/Campaigns/tpls/WizardCampaignHeader.tpl');
     $steps[$mod_strings['LBL_NAVIGATION_MENU_GEN2']]          = SugarAutoLoader::existingCustomOne('modules/Campaigns/tpls/WizardCampaignBudget.tpl');
