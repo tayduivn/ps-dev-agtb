@@ -1395,7 +1395,7 @@ class SugarBean
             if(isset($def['dbType']))
                 $type .= $def['dbType'];
 
-            if($def['type'] == 'html' || $def['type'] == 'longhtml') {
+            if($def['type'] == 'html') {
                 $this->$key = SugarCleaner::cleanHtml($this->$key, true);
             } elseif((strpos($type, 'char') !== false ||
                 strpos($type, 'text') !== false ||
