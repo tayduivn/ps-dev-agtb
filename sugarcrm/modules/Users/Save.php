@@ -507,7 +507,7 @@ if(isset($_REQUEST['return_module']) && $_REQUEST['return_module'] != "") $retur
 else $return_module = "Users";
 if(isset($_REQUEST['return_action']) && $_REQUEST['return_action'] != "") $return_action = $_REQUEST['return_action'];
 else $return_action = "DetailView";
-if(isset($_REQUEST['return_id']) && $_REQUEST['return_id'] != "") $return_id = $_REQUEST['return_id'];
+if(isset($_REQUEST['return_id']) && $_REQUEST['return_id'] != "" && (!isset($_REQUEST['isDuplicate']) || $_REQUEST['isDuplicate'] == "0")) $return_id = $_REQUEST['return_id'];
 
 $GLOBALS['log']->debug("Saved record with id of ".$return_id);
 
