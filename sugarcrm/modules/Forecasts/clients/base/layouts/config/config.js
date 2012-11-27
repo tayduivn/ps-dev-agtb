@@ -36,9 +36,9 @@
      */
     _render:function () {
         app.view.Layout.prototype._render.call(this);
-        this._showModal();
         // initialize the alerts again.
         app.alert.init();
+        this._showModal();
         return this;
     },
 
