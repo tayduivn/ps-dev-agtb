@@ -290,11 +290,10 @@ class MetaDataManager {
      * Gets the ACL's for the module, will also expand them so the client side of the ACL's don't have to do as many checks.
      *
      * @param string $module The module we want to fetch the ACL for
-     * @param string $userId The user id for the ACL's we are retrieving.
+     * @param object $userObject The user object for the ACL's we are retrieving.
      * @return array Array of ACL's, first the action ACL's (access, create, edit, delete) then an array of the field level acl's
      */
-    public function getAclForModule($module,$userId) {
-        $userObject = BeanFactory::getBean('Users',$userId);
+    public function getAclForModule($module,$userObject) {
         $obj = BeanFactory::getObjectName($module);
 
         $outputAcl = array('fields'=>array());

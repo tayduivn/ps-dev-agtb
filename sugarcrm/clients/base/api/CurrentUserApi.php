@@ -249,8 +249,9 @@ class CurrentUserApi extends SugarApi {
      * @return array
      */  
     public function getAcls($platform) {
+        // in this case we should always have current_user be the user
+        global $current_user;        
         $mm = $this->getMetadataManager($platform);
-        $current_user = $this->getUserBean();
         $fullModuleList = array_keys($GLOBALS['app_list_strings']['moduleList']);
         $acls = array();
         foreach ($fullModuleList as $modName) {
@@ -261,7 +262,7 @@ class CurrentUserApi extends SugarApi {
             }
 
 
-            $acls[$modName] = $mm->getAclForModule($modName,$current_user->id);
+            $acls[$modName] = $mm->getAclForModule($modName,$current_user);
             $acls[$modName] = $this->verifyACLs($acls[$modName]);
         }
         // Handle enforcement of acls for clients that override this (e.g. portal)
