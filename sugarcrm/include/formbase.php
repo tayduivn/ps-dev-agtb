@@ -129,9 +129,8 @@ function populateFromPostACL(SugarBean $focus)
 
     // set up a default bean as per bug 46448, without bringing EditView into the mix
     // bug 58730
-    if (!class_exists('BeanFactory')) {
-        require_once 'data/BeanFactory.php';
-    }
+    require_once 'data/BeanFactory.php';
+
     $defaultBean = BeanFactory::getBean($focus->module_name);
     $defaultBean->fill_in_additional_detail_fields();
     $defaultBean->assigned_user_id = $GLOBALS['current_user']->id;

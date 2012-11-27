@@ -31,7 +31,7 @@ class CreateDefaultTeamsTest extends Sugar_PHPUnit_Framework_TestCase
 {
     private $_user = null;
     private $_contact = null;
-    
+
     public function setUp() 
     {
         // in case these globals are deleted before the test is run
