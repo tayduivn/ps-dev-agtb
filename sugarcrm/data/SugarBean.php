@@ -1395,7 +1395,7 @@ class SugarBean
             if(isset($def['dbType']))
                 $type .= $def['dbType'];
 
-            if($def['type'] == 'html') {
+            if($def['type'] == 'html' || $def['type'] == 'longhtml') {
                 $this->$key = SugarCleaner::cleanHtml($this->$key, true);
             } elseif((strpos($type, 'char') !== false ||
                 strpos($type, 'text') !== false ||
@@ -6301,12 +6301,20 @@ class SugarBean
             return $result;
         }
 
-        /**  AbstractExpression $param */
-        foreach ($expr->getParameters() as $param) {
-            $result = array_merge(
-                $result,
-                $this->get_formula_related_fields($param, $linkName)
-            );
+        $params = $expr->getParameters();
+        if (is_array($params)) {
+            /** @var AbstractExpression $param */
+            foreach ($params as $param) {
+                $result = array_merge(
+                    $result,
+                    $this->get_formula_related_fields($param, $linkName)
+                );
+            }
+        } else if ($params instanceof AbstractExpression) {
+             $result = array_merge(
+                 $result,
+                 $this->get_formula_related_fields($params, $linkName)
+             );
         }
 
         return array_unique($result);
