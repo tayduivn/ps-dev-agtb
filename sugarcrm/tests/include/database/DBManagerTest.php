@@ -2831,12 +2831,14 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
         echo "=======================\n";
 
         $id = 3;
-        $this->_db->insertParams($tableName, $params, array('id' => $id, 'col1' => "col1 data for id $id", 'col2' => "col2 data for id $id"));
+        $data =  array('id' => $id, 'col1' => "col1 data for id $id", 'col2' => "col2 data for id $id");
+        $this->_db->insertParams($tableName, $params, $data, null, true, true);
         $result = $this->_db->query("SELECT * FROM $tableName WHERE ID = $id");
         $resultsCnt = 0;
         while(($row = $this->_db->fetchByAssoc($result)) != null)
             $resultsCnt++;
         $this->assertEquals($resultsCnt, 1, "Incorrect number or records. Found: $resultsCnt Expected: 1 row for ID: $id");
+
     }
 
 

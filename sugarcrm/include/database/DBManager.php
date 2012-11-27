@@ -680,8 +680,8 @@ protected function checkQuery($sql, $object_name = false)
         else {  //Prepared Statement
             $query = "INSERT INTO $table (".implode(",", array_keys($values)).") VALUES (";
             $delimiter = "";
-            foreach($values as $value) {
-                $query .= $delimiter . '?';
+            foreach($values as $valueKey => $value) {
+                $query .= $delimiter . '?'. $field_defs["$valueKey"]['type'];
                 $delimiter = ',';
             }
             $query .= ")";
@@ -692,7 +692,7 @@ protected function checkQuery($sql, $object_name = false)
             // Prepare and execute the statement
             echo "==> DBManager: Preparing stmt for query $query \n";
             var_dump($values);
-            $ps = $this->_db->prepareStatement($query, $values, $values);
+            $ps = $this->prepareStatement($query, $values);
 
             echo "==> DBManager: Executing stmt\n";
             $result = $ps->executeStatement($data);

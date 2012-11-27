@@ -99,6 +99,9 @@ class MysqliPreparedStatement extends PreparedStatement
 
       echo "preparePreparedStatement: entry  sqlText: >$sqlText <  data:\n" ;
       var_dump($data);
+      echo "fieldDefs:\n";
+      var_dump($fieldDefs);
+      echo "------\n\n";
 
       if (!($this->stmt = $this->dblink->prepare($sqlText))) {
           echo "preparePreparedStatement: Prepare Failed! \n";
@@ -109,7 +112,7 @@ class MysqliPreparedStatement extends PreparedStatement
       $this->bound_vars = $bound = array_fill(0, $num_args, null);
       $types = "";
       for($i=0; $i<$num_args;$i++) {
-          $types .= $this->ps_type_map[ $fieldDefs[$i] ];
+          $types .= $this->ps_type_map[ $fieldDefs[$i]["type"] ];
           $bound[$i] =& $this->bound_vars[$i];
       }
       echo "types: >$types<\n";
@@ -137,7 +140,7 @@ class MysqliPreparedStatement extends PreparedStatement
 
       // transfer the data from the input array to the bound array
       for($i=0; $i<count($data);$i++) {
-         $this->bound_vars[$i] = $data[$i];
+         $this->bound_vars[$i] = array_shift($data);
       }
 
       if (!($res = $this->stmt->execute())) {
