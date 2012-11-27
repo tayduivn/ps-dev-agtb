@@ -115,6 +115,11 @@ abstract class DBManager
 	 */
 	protected $preparedTokens = array();
 
+    /**
+     * default state for using Prepared Statements
+     */
+    public $usePreparedStatements = false;
+
 	/**
 	 * TimeDate instance
 	 * @var TimeDate
@@ -622,9 +627,13 @@ protected function checkQuery($sql, $object_name = false)
 	 * @param bool $execute Execute or return query?
      * @return bool query result
      */
-	public function insertParams($table, $field_defs, $data, $field_map = null, $execute = true)
+	public function insertParams($table, $field_defs, $data, $field_map = null, $execute = true, $usePrepared=false)
 	{
-		$values = array();
+
+        if ( isset($usePreparedStatements) AND ( $usePreparedStatements == true) )
+            $usePrepared = true;
+
+        $values = array();
 		foreach ($field_defs as $field => $fieldDef)
 		{
 			if (isset($fieldDef['source']) && $fieldDef['source'] != 'db')  continue;
@@ -661,10 +670,37 @@ protected function checkQuery($sql, $object_name = false)
 		if (empty($values))
 			return $execute?true:''; // no columns set
 
-		// get the entire sql
-		$query = "INSERT INTO $table (".implode(",", array_keys($values)).")
-					VALUES (".implode(",", $values).")";
-		return $execute?$this->query($query):$query;
+        if (!$usePrepared) {
+
+            // get the entire sql
+            $query = "INSERT INTO $table (".implode(",", array_keys($values)).")
+                        VALUES (".implode(",", $values).")";
+            return $execute?$this->query($query):$query;
+        }
+        else {  //Prepared Statement
+            $query = "INSERT INTO $table (".implode(",", array_keys($values)).") VALUES (";
+            $delimiter = "";
+            foreach($values as $value) {
+                $query .= $delimiter . '?';
+                $delimiter = ',';
+            }
+            $query .= ")";
+
+            if (!$execute)
+                return $query;
+
+            // Prepare and execute the statement
+            echo "==> DBManager: Preparing stmt for query $query \n";
+            var_dump($values);
+            $ps = $this->_db->prepareStatement($query, $values, $values);
+
+            echo "==> DBManager: Executing stmt\n";
+            $result = $ps->executeStatement($data);
+            echo "==> DBManager: result:\n";
+            var_dump($result);
+            return $result;
+        }
+
 	}
 
     /**
@@ -2152,7 +2188,7 @@ protected function checkQuery($sql, $object_name = false)
 
 
 
-    abstract public function prepareStatement($sql, array $data);
+    abstract public function prepareStatement($sql, array $data, array $fieldDefs = array() );
 
 
 /********************** SQL FUNCTIONS ****************************/

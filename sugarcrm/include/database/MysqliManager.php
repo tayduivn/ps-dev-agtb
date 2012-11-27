@@ -580,8 +580,8 @@ class MysqliManager extends MysqlManager
         return $sql;
     }
 
-    public function prepareStatement($sql, array $data)
+    public function prepareStatement($sql, array $data, array $fieldDefs = array() )
     {
-        return new MysqliPreparedStatement($this, $sql, $data);
+        return new MysqliPreparedStatement($this, $sql, $data, $fieldDefs );
     }
 }

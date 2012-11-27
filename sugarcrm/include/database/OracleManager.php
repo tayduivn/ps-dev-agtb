@@ -29,6 +29,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 ********************************************************************************/
 
 //FILE SUGARCRM flav=ent ONLY
+require_once 'include/database/OraclePreparedStatement.php';
 
 /**
  * Oracle driver
@@ -55,6 +56,7 @@ class OracleManager extends DBManager
         "auto_increment_sequence" => true,
         'limit_subquery' => true,
         "recursive_query" => true,
+        "prepared_statements" => true,
     );
 
     protected $maxNameLengths = array(
@@ -1817,8 +1819,8 @@ EOQ;
       	return "'$guidStart-' || sys_guid()";
     }
 
-    public function prepareStatement($sql, array $data)
+    public function prepareStatement($sql, array $data, array $fieldDefs = array() )
     {
-        return new MysqliPreparedStatement($this, $sql, $data);
+        return new OraclePreparedStatement($this, $sql, $data, $fieldDefs);
     }
 }

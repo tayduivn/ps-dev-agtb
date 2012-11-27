@@ -112,8 +112,9 @@ echo "initial nextParam is at $nextParam\n";
         if ($nextParam == 0 )
             $cleanedSql = $sql;
         else {     // parse the sql string looking for params
+           $row = 0;
            while ($nextParam > 0 ) {
-              echo "Processing a param\n" ;
+              echo "Processing a param. row=$row\n" ;
               $cleanedSql .= substr( $sql, 0, $nextParam + 1);  // we want the ?
               echo "cleanedSql: $cleanedSql\n";
 
@@ -134,13 +135,14 @@ echo "initial nextParam is at $nextParam\n";
                echo "sugarDataType:\n";
                var_dump($sugarDataType);
               if ( $sugarDataType === "" ) //no type, default to varchar
-                  $fieldDefs[] = "varchar";
+                  $fieldDefs[$row]['type'] = 'varchar';
               else
-                  $fieldDefs[] = $sugarDataType;
+                  $fieldDefs[$row]['type'] = $sugarDataType;
               $sql = substr($sql, $i); // strip off the SugarDataType
               echo "remaining sql is: $sql\n";
               $nextParam = strpos( $sql, "?" ); // look for another param
               echo "another nextParam is at $nextParam\n";
+              $row++;
 
 
            }

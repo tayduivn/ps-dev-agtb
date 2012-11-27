@@ -28,6 +28,7 @@
 ********************************************************************************/
 
 //FILE SUGARCRM flav=ent ONLY
+require_once 'include/database/IBMDB2PreparedStatement.php';
 
 /**
  * Note that we are only supporting LUW 9.7 and higher at this moment
@@ -105,6 +106,7 @@ class IBMDB2Manager  extends DBManager
 		"auto_increment_sequence" => true, // Opted to use DB2 sequences instead of identity columns because of the restriction of only 1 identity per table
         "limit_subquery" => false, // DB2 doesn't support OPTIMIZE FOR n ROWS in sub query
         "recursive_query" => true,
+        "prepared_statements" => true,
 	);
 
 	/**
@@ -1834,8 +1836,8 @@ EOQ;
       	return "'$guidStart-' || HEX(generate_unique())";
     }
 
-    public function prepareStatement($sql, array $data)
+    public function prepareStatement($sql, array $data, array $fieldDefs = array() )
     {
-        return new MysqliPreparedStatement($this, $sql, $data);
+        return new IBMDB2PreparedStatement($this, $sql, $data, $fieldDefs = array() );
     }
 }

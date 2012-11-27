@@ -2776,6 +2776,8 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
             $this->markTestSkipped('DBManager does not support prepared statements');
         }
 
+        $this->_db->usePreparedStatements = true;
+
         echo "-------------------------------------------\n";
         echo "Initializing testPreparedStatementsSmoketest\n";
         $tableName = "testPreparedStatement";
@@ -2808,15 +2810,33 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
         }
         $this->_db->createTableParams($tableName, $params, $indexes);
 
+        /*
         echo "Preparing stmt\n";
         $data = array(1, "col1 data", "col2 data");
         $sql = "INSERT INTO testPreparedStatement(id,col1,col2) VALUES(?int, ?, ?varchar)";
-        $ps = $this->_db->prepareStatement($sql, $data);
+        $fieldDefs = array( array( 'name' => 'id', ),
+                            array( 'name' => 'col1', ),
+                            array( 'name' => 'col2', ),
+                          );
+        $ps = $this->_db->prepareStatement($sql, $data, $fieldDefs);
 
         echo "Executing stmt\n";
         $result = $ps->executeStatement($data);
         echo "result:";
         var_dump($result);
+        */
+
+        echo "=======================\n";
+        echo "== insertParams Test ==\n";
+        echo "=======================\n";
+
+        $id = 3;
+        $this->_db->insertParams($tableName, $params, array('id' => $id, 'col1' => "col1 data for id $id", 'col2' => "col2 data for id $id"));
+        $result = $this->_db->query("SELECT * FROM $tableName WHERE ID = $id");
+        $resultsCnt = 0;
+        while(($row = $this->_db->fetchByAssoc($result)) != null)
+            $resultsCnt++;
+        $this->assertEquals($resultsCnt, 1, "Incorrect number or records. Found: $resultsCnt Expected: 1 row for ID: $id");
     }
 
 

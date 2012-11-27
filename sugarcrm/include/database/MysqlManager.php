@@ -1505,7 +1505,8 @@ class MysqlManager extends DBManager
 
 		return parent::_emptyValue($val, $type);
 	}
-    public function prepareStatement($sql, array $data)
+
+    public function prepareStatement($sql, array $data, array $fieldDefs = array() )
     {
         return new MysqliPreparedStatement($this, $sql, $data);
     }

@@ -73,6 +73,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 ********************************************************************************/
 
 include_once('include/database/MssqlManager.php');
+require_once 'include/database/SqlsrvPreparedStatement.php';
 
 /**
  * SQL Server (sqlsrv) manager
@@ -91,6 +92,7 @@ class SqlsrvManager extends MssqlManager
         'create_user' => true,
         "create_db" => true,
         "recursive_query" => true,
+        "prepared_statements" => true,
     );
 
     protected $type_map = array(
@@ -587,5 +589,10 @@ EOSQL;
     public function valid()
     {
         return function_exists("sqlsrv_connect");
+    }
+
+    public function prepareStatement($sql, array $data, array $fieldDefs = array() )
+    {
+        return new SqlsrvPreparedStatement($this, $sql, $data, $fieldDefs );
     }
 }
