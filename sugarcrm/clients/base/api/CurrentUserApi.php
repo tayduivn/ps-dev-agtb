@@ -262,7 +262,7 @@ class CurrentUserApi extends SugarApi {
             }
 
 
-            $acls[$modName] = $mm->getAclForModule($modName,$current_user->id);
+            $acls[$modName] = $mm->getAclForModule($modName,$current_user);
             $acls[$modName] = $this->verifyACLs($acls[$modName]);
         }
         // Handle enforcement of acls for clients that override this (e.g. portal)
