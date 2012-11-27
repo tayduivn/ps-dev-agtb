@@ -651,7 +651,7 @@ if(function_exists('initialize_session_vars')){
 if(!didThisStepRunBefore('preflight')){
 	set_upgrade_progress('preflight','in_progress');
 	//Quickcreatedefs on the basis of editviewdefs
-    if (version_compare($sugar_version, '5', '>=')))
+    if (version_compare($sugar_version, '5', '>='))
     {
         updateQuickCreateDefs();
     }
