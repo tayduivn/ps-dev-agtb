@@ -7,12 +7,50 @@
   border-top: 1px solid darken(@grayLighter, 5%);
   background: @grayLighter;
   border-bottom: 1px solid darken(@grayLighter, 5%);
-  z-index: 1000;\
+  z-index: 1000;
+
+  .control-group.filter {
+    position: relative;
+    margin-left: 15px;
+    margin-right: 150px;
+    .chzn-container {
+      .chzn-drop {
+        //padding: 10px;
+        border: 1px solid @grayLight;
+        .caret-top(auto,auto,12px,11px);
+      }
+      .chzn-single-with-drop div b {
+        background-position: 0px 0px;
+      }
+    }
+    .indicator {
+      cursor: pointer;
+    }
+
+    .chzn-container-multi .chzn-drop .result-selected {
+      display: block;
+      font-weight: bold;
+      /*&:before { //content:"â\00a0\00a0\00a0";
+      //content:"\f00c\00a0\00a0\00a0";
+      }*/
+    }
+    .search {
+      .chzn-container-active .chzn-drop {
+        right: 0px !important;
+        left: auto !important;
+      }
+    }
+  }
+
+  .toolbar-btns {
+    width: 150px;
+    position: absolute;
+    right: 3px;
+    top: 6px;
+  }
 
   input {
-    margin: 0;
     padding: 4px 8px;
-    border: 1px solid @grayLight;
   }
 
   .actions {
@@ -29,11 +67,11 @@
       background-color: transparent;
       border-top: 1px solid @grayLighter;
       border-bottom: 1px solid @grayLight;
-      padding: 8px 8px 6px 20px;
+      padding: 7px 8px 7px 20px;
     }
 
-    article.filtered-header {
-      padding: 9px 4px 11px 20px;
+    article.filter-header {
+      padding: 11px 4px 7px 20px;
       .box-shadow(~"inset 0px 4px 8px -4px rgba(0, 0, 0, 0.5)");
       input {
         margin-top: 2px;
@@ -51,25 +89,18 @@
   .filter-value {
     padding-right: 60px;
     position: relative;
-    input {
-      width: 100%;
-      .box-sizing(border-box);
-    }
   }
   .addme,
   .removeme {
     position: absolute;
     top: 0;
-    padding: 3px 6px 1px;
+    padding: 5px 6px 3px;
   }
   .addme {
     right: 0;
   }
   .removeme {
     right: 30px;
-  }
-  .myfilter {
-    position: relative;
   }
 }
 
@@ -78,12 +109,9 @@
   width: 100% !important;
   margin-bottom: 4px;
   .search-choice {
-    border-radius: 10px !important;
-    -webkit-border-radius: 10px !important;
+    .border-radius(10px);
     border: none !important;
-  }
-  .search-choice {
-    background: #E4E4E4;
+    background-color: #E4E4E4;
     margin-top: 4px;
     &>a {
       height: 12px;
@@ -92,18 +120,43 @@
       background-color: #908f8e;
       background-image: url('@{baseUrl}/img/chosen-sprite-invert.png');
     }
+    &.search-choice-option {
+      margin-top: 4px;
+      .border-radius(0);
+      background: none;
+      border: none !important;
+      padding: 3px;
+      .box-shadow(none);
+      &>span {
+        .border-radius(10px 0 0 10px);
+        background: @grayLight;
+        padding: 2px 5px;
+        margin-right: 2px;
+      }
+      &>a, &>span:last-child {
+        .border-radius(0 10px 10px 0);
+        padding: 2px 5px;
+      }
+      &>span:last-child {
+        background: @grayLighter;
+      }
+      &>a {
+        background: lighten(@blueLight,15%);
+      }
+    }
   }
   .chzn-results {
     .icon-ok {
       position: absolute;
-      margin-top: -22px;
-      margin-left: 2px;
+      margin-top: -27px;
+      margin-left: 6px;
       z-index: 1;
     }
     &> li {
       position: relative;
       text-indent: 22px;
       z-index: 1;
+      padding: 6px 8px;
       &.active-result {
         z-index: 2;
       }
@@ -113,21 +166,23 @@
       }
     }
   }
-}
-
-.filter {
-  position: relative;
-  .chzn-container-multi .chzn-drop .result-selected {
-    display: block;
-    font-weight: bold;
-/*    &:before { //content:"â\00a0\00a0\00a0";
-    //content:"\f00c\00a0\00a0\00a0";
-    }*/
-  }
-  &.forecast {
-    .chzn-container-active .chzn-drop {
-      right: 0px !important;
-      left: auto !important;
+  .chzn-select-legend {
+    .icon-plus {
+      margin-top: 3px;
+      line-height: 4px;
     }
   }
+  .filter-create {
+    position: absolute;
+    top: 0px;
+    padding-top: 2px;
+    right: 29px;
+    width: 28px;
+    font-size: 12px;
+    line-height: 2.2em;
+    color: #999;
+    cursor: pointer;
+    text-align: center;
+  }
 }
+
