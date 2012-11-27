@@ -2,6 +2,8 @@ var login = {
 
     startup:function (status) {
         var images = [
+            {url:'http://i.imgur.com/3qLwI.jpg', text:'It\'s like chestnuts roasting on an open fire.'},
+            {url:'http://i.imgur.com/Ew5oX.jpg', text:'It\'s like Jack Frost nipping at your nose.'},
             {url:'static/sunflower.jpg', text:'It\'s like a field of sunflowers.'},
             {url:'static/beach.jpg', text:'It\'s like a day at the beach.'},
             {url:'static/hotairballoon.jpg', text:'It\'s like a hot air balloon festival.'},

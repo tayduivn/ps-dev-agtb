@@ -752,7 +752,7 @@ class Phase3Demo
                     array(
                         'id' => 'seed_mubadala',
                         'name' => 'Mubadala',
-                        'phone_office' => '971 2 413 0000',
+                        'phone_office' => '+971 2 413 0000',
                         'website' => 'www.mubadala.ae',
                         'billing_address_street' => 'PO Box 45005',
                         'billing_address_city' => 'Abu Dhabi',
@@ -787,7 +787,7 @@ class Phase3Demo
                         'name' => '500 User Licenses',
                         'amount' => '50000',
                         'sales_stage' => 'Closed Lost',
-                        'probability' => 0
+                        'probability' => "0"
                     ),
                     array(
                         'id' => 'seed_mubadala_op2',
@@ -963,8 +963,8 @@ class Phase3Demo
                         'id' => 'seed_tshirts',
                         'name' => '200 T-Shirts',
                         'amount' => '1000',
-                        'sales_stage' => 'Close Lost',
-                        'probability' => 0
+                        'sales_stage' => 'Closed Lost',
+                        'probability' => "0"
                     )
 
                 )
@@ -1092,8 +1092,6 @@ class Phase3Demo
                     $obj->save();
                     $primary_account->contacts->add($obj);
                     $primary_contacts[] = $obj;
-
-
                 }
 
                 foreach ($data['Opportunities'] as $opp) {
