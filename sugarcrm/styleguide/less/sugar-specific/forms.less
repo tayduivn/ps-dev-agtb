@@ -155,6 +155,27 @@ h1 input[type="text"] {
   }
 }
 
+//54606: align `Email` label with its fields
+//896492a63d300e820c003aa8707c714ed1fb6e3b
+/*.control-group.email .btn-mini {
+  margin-right:0;
+  width:auto;
+  height:auto;
+}*/
+
+
+input[disabled],
+select[disabled],
+textarea[disabled],
+input[readonly],
+select[readonly],
+textarea[readonly] {
+  cursor: not-allowed;
+  border: 1px solid @inputBorder;
+  color: @placeholderText;
+}
+
+
 // fluid width input fields - fixes overflow of row-fluid spans
 .controls[class*="span"] {
   input[type="text"].inherit-width,
