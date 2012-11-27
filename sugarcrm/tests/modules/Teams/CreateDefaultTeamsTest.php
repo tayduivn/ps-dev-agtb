@@ -34,6 +34,10 @@ class CreateDefaultTeamsTest extends Sugar_PHPUnit_Framework_TestCase
     
     public function setUp() 
     {
+        // in case these globals are deleted before the test is run
+        SugarTestHelper::setUp('beanFiles');
+        SugarTestHelper::setUp('beanList');
+
 		$this->_user = SugarTestUserUtilities::createAnonymousUser();
 		$GLOBALS['current_user'] = $this->_user;
 		$GLOBALS['db']->query("DELETE FROM contacts WHERE first_name = 'Collin' AND last_name = 'Lee'");
