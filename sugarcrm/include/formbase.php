@@ -124,13 +124,16 @@ function populateFromPost($prefix, &$focus, $skipRetrieve=false) {
  */
 function populateFromPostACL(SugarBean $focus)
 {
-    require_once('include/EditView/EditView2.php');
     $insert = !isset($focus->id) || $focus->new_with_id;
     $isOwner = $focus->isOwner($GLOBALS['current_user']->id);
-    $EditView = new EditView();
-    $EditView->setup($focus->module_name);
-    $EditView->createFocus();
-    $defaultBean = $EditView->focus;
+
+    // set up a default bean as per bug 46448, without bringing EditView into the mix
+    // bug 58730
+    require_once 'data/BeanFactory.php';
+
+    $defaultBean = BeanFactory::getBean($focus->module_name);
+    $defaultBean->fill_in_additional_detail_fields();
+    $defaultBean->assigned_user_id = $GLOBALS['current_user']->id;
 
     foreach (array_keys($focus->field_defs) as $field) {
         $fieldAccess = ACLField::hasAccess($field, $focus->module_dir, $GLOBALS['current_user']->id, $isOwner);
