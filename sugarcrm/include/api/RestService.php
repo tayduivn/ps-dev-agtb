@@ -65,7 +65,7 @@ class RestService extends ServiceBase {
             list($version,$path) = $this->parsePath($rawPath);
 
             if($this->min_version > $version || $this->max_version < $version) {
-                throw new SugarApiExceptionIncorrectVersion('Please use the correct version');
+                throw new SugarApiExceptionIncorrectVersion("Please change your url to reflect version between {$this->min_version} and {$this->max_version}");
             }
 
             $isLoggedIn = $this->authenticateUser();
