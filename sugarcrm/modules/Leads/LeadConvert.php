@@ -219,8 +219,7 @@ class LeadConvert
     public function findRelationship($from, $to)
     {
         $dictionary = $this->getMetaTableDictionary();
-var_dump($from);
-        die;
+
         foreach ($from->field_defs as $field => $def) {
             if (isset($def['type']) && $def['type'] == "link" && isset($def['relationship'])) {
                 $rel_name = $def['relationship'];
