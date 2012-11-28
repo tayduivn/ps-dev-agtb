@@ -105,7 +105,6 @@ if(isset($_REQUEST['duplicateSave']) && isset($_REQUEST['relate_id'])){
 		$total_keys = array();
 	}
 	$product_bundels = array();
-    $last_pb_index = -1;
     $last_pb = null;
 	for($k = 0; $k < sizeof($total_keys); $k++){
 		$pb = new ProductBundle();
@@ -139,14 +138,7 @@ if(isset($_REQUEST['duplicateSave']) && isset($_REQUEST['relate_id'])){
 
 		$product_bundels[$total_keys[$k]] = $pb->save();
 		if(substr_count($total_keys[$k], 'group_') > 0){
-		    // Base new index on last saved bundle's index +1
-		    // or 0 if no bundles were saved
-		    if($last_pb_index == -1 && !empty($last_pb)) {
-		        $last_pb_index_row = $last_pb->get_index($focus->id);
-		        $last_pb_index = $last_pb_index_row[0]['bundle_index'];
-		    }
-		    $last_pb_index++;
-		    $pb->set_productbundle_quote_relationship($focus->id, $pb->id, $last_pb_index);
+            $pb->set_productbundle_quote_relationship($focus->id, $pb->id);
 		} else {
 		    $last_pb = $pb;
 		}
