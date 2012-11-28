@@ -1,5 +1,4 @@
 <?php
-//FILE SUGARCRM flav=pro ONLY
 /*********************************************************************************
  * The contents of this file are subject to the SugarCRM Professional End User
  * License Agreement ("License") which can be viewed at
@@ -23,33 +22,49 @@
  * All Rights Reserved.
  ********************************************************************************/
 
-require_once('modules/TimePeriods/TimePeriodsSeedData.php');
 
-class PopulateTimePeriodsSeedDataTest extends Sugar_PHPUnit_Framework_TestCase
+class AutoLoaderTests extends Sugar_PHPUnit_Framework_TestCase
 {
+    public function setUp()
+    {
+        parent::setUp();
+        $this->map = SugarAutoLoader::$filemap;
+    }
 
-private $createdTimePeriods;
+    public function tearDown()
+    {
+        SugarAutoLoader::$memmap = array();
+        SugarAutoLoader::$filemap = $this->map;
+        parent::tearDown();
+    }
 
-function setUp()
-{
-    $GLOBALS['db']->query("UPDATE timeperiods SET deleted = 1");
-}
+    public static function tearDownAfterClass()
+    {
+        SugarAutoLoader::buildCache();
+    }
 
-function tearDown()
-{
-    $GLOBALS['db']->query("DELETE FROM timeperiods WHERE deleted = 0");
-    $GLOBALS['db']->query("UPDATE timeperiods SET deleted = 0");
-}
+    public function testExists()
+    {
+        $this->assertTrue((bool)SugarAutoLoader::fileExists('config.php'));
+        $this->assertTrue((bool)SugarAutoLoader::fileExists('custom/index.html'));
+        $this->assertFalse(SugarAutoLoader::fileExists('config.php.dontexist'));
+        $this->assertFalse(SugarAutoLoader::fileExists('cache/file_map.php'));
+    }
 
-/**
- */
-function testPopulateSeedData()
-{
-    $this->createdTimePeriods = TimePeriodsSeedData::populateSeedData();
-    $this->assertEquals(20, count($this->createdTimePeriods));
-    $total = $GLOBALS['db']->getOne("SELECT count(id) as total FROM timeperiods WHERE deleted = 0");
-    $this->assertEquals(25, $total);
-}
+    public function testAddMap()
+    {
+        $this->assertFalse(SugarAutoLoader::fileExists('subdir/nosuchfile.php'));
+        SugarAutoLoader::addToMap("subdir/nosuchfile.php", false);
+        $this->assertTrue((bool)SugarAutoLoader::fileExists('subdir/nosuchfile.php'));
+        $this->assertTrue((bool)SugarAutoLoader::fileExists('subdir'));
+    }
 
-
+    public function testDelMap()
+    {
+        SugarAutoLoader::addToMap("subdir/nosuchfile.php", false);
+        $this->assertTrue((bool)SugarAutoLoader::fileExists('subdir/nosuchfile.php'));
+        SugarAutoLoader::delFromMap("subdir", false);
+        $this->assertFalse(SugarAutoLoader::fileExists('subdir/nosuchfile.php'));
+        $this->assertFalse((bool)SugarAutoLoader::fileExists('subdir'));
+    }
 }

@@ -703,7 +703,10 @@ class SugarAutoLoader
 	    if(DIRECTORY_SEPARATOR != '/') {
             $filename = str_replace(DIRECTORY_SEPARATOR, "/", $filename);
         }
-	    unset(self::$memmap[$filename]);
+        // we have to reset here since we could delete a directory
+        // and memmap is not hierarchical. It may be a performance hit
+        //
+	    self::$memmap = array();
         $parts = explode('/', $filename);
 	    $filename = array_pop($parts);
 	    $data =& self::$filemap;

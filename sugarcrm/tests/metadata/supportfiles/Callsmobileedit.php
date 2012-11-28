@@ -26,13 +26,13 @@
  * governing these rights and limitations under the License.  Portions created
  * by SugarCRM are Copyright (C) 2006 SugarCRM, Inc.; All Rights Reserved.
  */
-$viewdefs['Calls']['mobile']['view']['detail'] = array(
+$viewdefs['Calls']['mobile']['view']['edit'] = array(
 	'templateMeta' => array(
-                            'maxColumns' => '1', 
-                            'widths' => array(
-								array('label' => '10', 'field' => '30'), 
-                            ),                                  
-                           ),
+        'maxColumns' => '1', 
+        'widths' => array(
+            array('label' => '10', 'field' => '30'), 
+        ),                                  
+    ),
     'panels' => array(
         array(
             'label' => 'LBL_PANEL_DEFAULT',
@@ -50,7 +50,6 @@ $viewdefs['Calls']['mobile']['view']['detail'] = array(
                 array(
                     'name' => 'duration',
                     'type' => 'fieldset',
-                    'orientation' => 'horizontal',
                     'related_fields' => array('duration_hours', 'duration_minutes'),
                     'label' => "LBL_DURATION",
                     'fields' => array(
@@ -58,18 +57,9 @@ $viewdefs['Calls']['mobile']['view']['detail'] = array(
                             'name' => 'duration_hours',
                         ),
                         array(
-                            'type' => "label",
-                            'default' => "LBL_HOURS_ABBREV",
-                            'css_class' => "label_duration_hours hide",
-                        ),
-                        array(
                             'name' => 'duration_minutes',
-                        ),
-                        array(
-                            'type' => "label",
-                            'default' => "LBL_MINSS_ABBREV",
-                            'css_class' => "label_duration_minutes hide",
-
+                            'type' => 'enum',
+                            'options' => 'duration_intervals'
                         ),
                     ),
                 ),
