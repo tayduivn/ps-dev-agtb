@@ -19,13 +19,6 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *to the License for the specific language governing these rights and limitations under the License.
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
-/*********************************************************************************
- * $Header$
- * Description:  TODO: To be written.
- * Portions created by SugarCRM are Copyright (C) SugarCRM, Inc.
- * All Rights Reserved.
- * Contributor(s): ______________________________________..
- ********************************************************************************/
 require_once('modules/Mailer/lib/phpmailer/class.phpmailer.php');
 require_once('include/OutboundEmail/OutboundEmail.php');
 
@@ -273,14 +266,14 @@ eoq;
     function handleAttachments($notes) {
         global $sugar_config;
 
-        //replace references to cache/images with cid tag
-        $this->Body = str_replace(sugar_cached('images/'),'cid:',$this->Body);
+		// cn: bug 4864 - reusing same SugarPHPMailer class, need to clear attachments
+		$this->ClearAttachments();
 
         if (empty($notes)) {
             return;
         }
-        // cn: bug 4864 - reusing same SugarPHPMailer class, need to clear attachments
-        $this->ClearAttachments();
+		//replace references to cache/images with cid tag
+        $this->Body = preg_replace(';=\s*"'.preg_quote(sugar_cached('images/'), ';').';','="cid:',$this->Body);
 
         $this->replaceImageByRegex("(?:{$sugar_config['site_url']})?/?cache/images/", sugar_cached("images/"));
 
@@ -315,4 +308,39 @@ eoq;
             } // else
         }
     }
+
+	/**
+	 * overloads class.phpmailer's SetError() method so that we can log errors in sugarcrm.log
+	 *
+	 */
+	function SetError($msg) {
+		$GLOBALS['log']->fatal("SugarPHPMailer encountered an error: {$msg}");
+		parent::SetError($msg);
+	}
+
+	function SmtpConnect() {
+		$connection = parent::SmtpConnect();
+		if (!$connection) {
+			global $app_strings;
+			if(isset($this->oe) && $this->oe->type == "system") {
+				$this->SetError($app_strings['LBL_EMAIL_INVALID_SYSTEM_OUTBOUND']);
+			} else {
+				$this->SetError($app_strings['LBL_EMAIL_INVALID_PERSONAL_OUTBOUND']);
+			} // else
+		}
+		return $connection;
+	} // fn
+
+    /*
+     * overloads PHPMailer::PreSend() to allow for empty messages to go out.
+     */
+    protected function PreSend() {
+        //check to see if message body is empty
+        if(empty($this->Body)){
+            //PHPMailer will throw an error if the body is empty, so insert a blank space if body is empty
+            $this->Body = " ";
+        }
+        return parent::PreSend();
+    }
+
 } // end class definition

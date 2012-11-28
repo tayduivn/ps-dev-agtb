@@ -72,7 +72,6 @@ $viewdefs['Accounts']['base']['view']['list'] = array(
                     'enabled' => true,
                     'default' => true
                 ),
-                'account_type',
                 array(
                     'name' => 'billing_address_city',
                     'width' =>  13,

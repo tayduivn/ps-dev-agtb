@@ -29,40 +29,94 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  */
 
 $viewdefs['Leads']['base']['view']['list'] = array(
-	'panels' => array(
-		array(
-			'fields' => array(
-				array(
-					'name'    => 'name',
-					'label'   => 'LBL_LIST_NAME',
-					'orderBy' => 'last_name',
-				),
-				array(
-					'name'  => 'status',
-					'label' => 'LBL_LIST_STATUS',
-				),
-				array(
-					'name'  => 'account_name',
-					'label' => 'LBL_LIST_ACCOUNT_NAME',
-				),
-				array(
-					'name'  => 'phone_work',
-					'label' => 'LBL_LIST_PHONE',
-				),
-				array(
-					'name'     => 'email1',
-					'label'    => 'LBL_LIST_EMAIL_ADDRESS',
-					'sortable' => false,
-				),
-				array(
-					'name'  => 'assigned_user_name',
-					'label' => 'LBL_LIST_ASSIGNED_USER',
-				),
-				array (
-					'name'  => 'date_entered',
-					'label' => 'LBL_DATE_ENTERED',
-				),
-			),
-		),
-	),
+    'panels' => array(
+        array(
+            'name' => 'panel_header',
+            'label' => 'LBL_PANEL_1',
+            'fields' => array(
+                array(
+                    'type' => 'fieldset',
+                    'fields' => array(
+                        array(
+                            'type' => 'actionmenu',
+                            'buttons' => array(
+                                array(
+                                    'name' => 'edit_button',
+                                    'type' => 'button',
+                                    'label' => 'LBL_MASS_UPDATE',
+                                    'value' => 'edit',
+                                    'primary' => true,
+                                    'events' => array(
+                                        'click' => 'function(e){
+                                            this.view.layout.trigger("list:massupdate:fire");
+                                        }'
+                                    ),
+                                ),
+
+                                array(
+                                    'name' => 'delete_button',
+                                    'type' => 'button',
+                                    'label' => 'LBL_DELETE',
+                                    'value' => 'delete',
+                                    'primary' => true,
+                                    'events' => array(
+                                        'click' => 'function(e){
+                                            this.view.layout.trigger("list:massdelete:fire");
+                                        }'
+                                    ),
+                                ),
+                            ),
+                        ),
+                    ),
+                    'value' => false,
+                    'sortable' => false,
+                ),
+                array (
+                    'name' => 'name',
+                    'width' => '10%',
+                    'label' => 'LBL_LIST_NAME',
+                    'link' => true,
+                    'orderBy' => 'last_name',
+                    'default' => true,
+                ),
+                array (
+                    'name' => 'status',
+                    'width' => '7%',
+                    'label' => 'LBL_LIST_STATUS',
+                    'default' => true,
+                ),
+                array (
+                    'name' => 'account_name',
+                    'width' => '15%',
+                    'label' => 'LBL_LIST_ACCOUNT_NAME',
+                    'default' => true,
+                ),
+                array (
+                    'name'  => 'phone_work',
+                    'width' => '15%',
+                    'label' => 'LBL_LIST_PHONE',
+                    'default' => true,
+                ),
+                array (
+                    'name'     => 'email1',
+                    'width' => '16%',
+                    'label' => 'LBL_LIST_EMAIL_ADDRESS',
+                    'sortable' => false,
+                    'default' => true,
+                ),
+                array (
+                    'name'  => 'assigned_user_name',
+                    'width' => '5%',
+                    'label' => 'LBL_LIST_ASSIGNED_USER',
+                    'default' => true,
+                ),
+                array (
+                    'name'  => 'date_entered',
+                    'width' => '10%',
+                    'label' => 'LBL_DATE_ENTERED',
+                    'default' => true,
+                ),
+            ),
+        ),
+    ),
 );

@@ -1,0 +1,8 @@
+<div class="headerpane">
+    <h1>{{title}}</h1>
+    <div class="btn-toolbar pull-right dropdown">
+        {{#each meta.buttons}}
+            {{field ../this}}
+        {{/each}}
+    </div>
+</div>

@@ -28,7 +28,7 @@ describe('favorite field', function() {
 
         app = SugarTest.app;
         SugarTest.seedMetadata(true);
-        moduleName = 'Accounts'
+
         app.data.declareModel(moduleName, metadata);
 
         model = app.data.createBean(moduleName, {
