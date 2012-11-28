@@ -29,6 +29,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 $viewdefs['base']['view']['duplicate-list'] = array(
     'type' => 'list',
     'selection' => array(
-        'type' => 'single'
+        'type' => 'single',
+        'label' => 'LBL_LINK_SELECT'
     )
 );

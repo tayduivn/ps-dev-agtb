@@ -1,15 +1,14 @@
-    <!--evil style tags are just there temporarily until proper styling can be put in place-->
     <div class="accordion-heading {{#if this.meta.dependentModules}}disabled{{/if}}{{#unless this.meta.dependentModules}}enabled{{/unless}}" data-module="{{this.meta.module}}">
         <span class="module-number">{{this.meta.moduleNumber}}.</span>
-        <span class="completed" style="display:none"><i class="icon-ok-sign icon-added"></i> </span>
+        <span class="completed"><i class="icon-ok-sign icon-added"></i> </span>
         <span class="title"></span>
         {{#unless this.meta.required}}
         <span class="optional">{{str 'LBL_CONVERT_PANEL_OPTIONAL' module}}</span>
         {{/unless}}
         <span class="sub-title"></span>
-        <span class="subview-toggle" style="display:none">
+        <span class="subview-toggle">
             <a class="toggle-subview show-record pull-right" href="javascript:void(0)">{{str 'LBL_CONVERT_IGNORE_DUPLICATES' module}}</a>
-            <a class="toggle-subview show-duplicate pull-right" href="javascript:void(0)" style="display:none">{{str 'LBL_CONVERT_BACK_TO_DUPLICATES' module}}</a>
+            <a class="toggle-subview show-duplicate pull-right" href="javascript:void(0)" >{{str 'LBL_CONVERT_BACK_TO_DUPLICATES' module}}</a>
         </span>
     </div>
     <div id="collapse{{this.meta.module}}" data-module="{{this.meta.module}}" class="accordion-body collapse">

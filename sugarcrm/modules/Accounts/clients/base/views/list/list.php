@@ -30,35 +30,7 @@ if (!defined('sugarEntry') || !sugarEntry) {
  ********************************************************************************/
 
 $viewdefs['Accounts']['base']['view']['list'] = array(
-    'selection'=> array(
-        'type' => 'multi',
-        'actions'=> array(
-            array(
-                'name' => 'edit_button',
-                'type' => 'button',
-                'label' => 'LBL_MASS_UPDATE',
-                'value' => 'edit',
-                'primary' => true,
-                'events' => array(
-                    'click' => 'function(e){
-                                    this.view.layout.trigger("list:massupdate:fire");
-                                }'
-                ),
-            ),
-            array(
-                'name' => 'delete_button',
-                'type' => 'button',
-                'label' => 'LBL_DELETE',
-                'value' => 'delete',
-                'primary' => true,
-                'events' => array(
-                    'click' => 'function(e){
-                                    this.view.layout.trigger("list:massdelete:fire");
-                                }'
-                ),
-            ),
-        )
-    ),
+
     'panels' => array(
         array(
             'name' => 'panel_header',

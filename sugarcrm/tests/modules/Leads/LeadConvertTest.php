@@ -27,16 +27,19 @@ require_once('modules/Leads/LeadConvert.php');
 class LeadConvertTest  extends Sugar_PHPUnit_Framework_TestCase
 {
     private $lead;
+    private $leadId;
+    private $contactsDef;
+    private $accountsDef;
+    private $opportunitiesDef;
+    private $tasksDef;
+    private $modulesDef;
 
     public function setUp() {
-
-        parent::setup();
+        parent::setUp();
         $this->lead = SugarTestLeadUtilities::createLead();
         $this->leadId = $this->lead->id;
-var_dump($this->lead->id);
-        var_dump( $this->leadId );
 
-        $this->contactDef = array(
+        $this->contactsDef = array(
             'module' => 'Contacts',
             'required' => true,
             'duplicateCheck' => true,
@@ -71,7 +74,7 @@ var_dump($this->lead->id);
         );
 
         $this->modulesDef =array(
-            $this->contactDef,
+            $this->contactsDef,
             $this->accountsDef,
             $this->opportunitiesDef,
             $this->tasksDef
@@ -163,7 +166,11 @@ var_dump($this->lead->id);
      */
     public function testFindRelationship_ReturnsCorrectRelationKey()
     {
-        $leadConvert = $this->getMock('LeadConvert', array('getVarDefs'), array($this->leadId));
+        $leadConvert = $this->getMock('LeadConvert', array('getVarDefs'), array($this->
+                leadId));
+        $leadConvert->expects($this->once())
+            ->method('getVarDefs')
+            ->will($this->returnValue($this->modulesDef));
 
         $contact = SugarTestContactUtilities::createContact();
         $account = SugarTestAccountUtilities::createAccount();
@@ -192,7 +199,7 @@ var_dump($this->lead->id);
    }
 
     /**
-     * @group leadconvert3
+     * @group leadconvert
      */
     public function testSetRelationshipForModulesToLeads_OneToManyRelationship_RelationshipIsStoredOnlead()
     {
@@ -201,9 +208,9 @@ var_dump($this->lead->id);
         $account = SugarTestAccountUtilities::createAccount();
         $leadConvert->setModules(array('Accounts' => $account));
 
-        $this->assertNull($leadConvert->getLead()->account_id);
-
-        $leadConvert->setRelationshipForModulesToLeads($this->accountDef);
+        $lead = $leadConvert->getLead();
+        $this->assertNull($lead->account_id);
+        $leadConvert->setRelationshipForModulesToLeads($this->accountsDef);
 
         $lead = $leadConvert->getLead();
         $this->assertNotNull($lead->account_id);
@@ -219,6 +226,9 @@ var_dump($this->lead->id);
     public function testSetRelationshipForModulesToLeads_NotOneToManyRelationship_RelationshipIsAddedToModule_NotLead()
     {
         $leadConvert = $this->getMock('LeadConvert', array('getVarDefs'), array($this->leadId));
+        $leadConvert->expects($this->once())
+            ->method('getVarDefs')
+            ->will($this->returnValue($this->modulesDef));
 
         $meetingDef = array(
             'module' => 'Meetings',
@@ -262,7 +272,7 @@ var_dump($this->lead->id);
             'Contacts' => $contact));
         $leadConvert->setContact($contact);
 
-        $leadConvert->setRelationshipsForModulesToContacts($this->accountDef);
+        $leadConvert->setRelationshipsForModulesToContacts($this->accountsDef);
 
         $contact = $leadConvert->getContact();
 
@@ -389,27 +399,20 @@ var_dump($this->lead->id);
     }
 
     /**
-     * @group leadconvert34
+     * @group leadconvert
      */
     public function testConvertLead_NoContact_LeadIsConverted()
     {
-        var_dump('8888' . $this->lead->id);
-
-var_dump('lead id ->' . $this->leadId);
-        var_dump('8888' . $this->lead->id);
-
-
         $task = SugarTestTaskUtilities::createTask();
         $account = SugarTestAccountUtilities::createAccount();
         $opp = SugarTestOpportunityUtilities::createOpportunity();
-        var_dump('8888' . $this->lead->id);
+
         $modules = array(
             'Tasks' => $task,
             'Accounts' => $account,
             'Opportunities' => $opp
         );
 
-        var_dump('8888' . $this->lead->id);
         $leadConvert = $this->getMock('LeadConvert',
             array('getVarDefs','setRelationshipsForModulesToContacts', 'setAssignedForModulesToLeads', 'setRelationshipForModulesToLeads', 'addLogForContactInCampaign', 'updateOpportunityWithAccountInformation'), array($this->lead->id));
         $leadConvert->expects($this->once())
@@ -426,13 +429,10 @@ var_dump('lead id ->' . $this->leadId);
         $leadConvert->expects($this->once())
             ->method('updateOpportunityWithAccountInformation');
 
-        var_dump('8888' . $this->lead->id);
         $leadConvert->initialize($this->lead->id);
         $leadConvert->convertLead($modules);
 
-
         $lead = BeanFactory::getBean('Leads', $this->leadId);
-
         $this->assertEquals(LeadConvert::STATUS_CONVERTED, $lead->status, 'Lead status field was not changed properly.');
         $this->assertEquals(true, $lead->converted, 'Lead converted field not set properly');
         $this->assertEquals(true, $lead->in_workflow, 'Lead workflow field not set properly');
