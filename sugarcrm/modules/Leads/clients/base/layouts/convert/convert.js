@@ -27,7 +27,7 @@
         _.each(modulesMetadata, function (moduleMeta, index, list) {
             moduleMeta.moduleNumber = moduleNumber++;
             var view = app.view.createView({
-                context: this.context,
+                context: self.context,
                 name: 'convert-panel',
                 layout: self,
                 meta: moduleMeta
@@ -49,7 +49,7 @@
         var firstModule;
         app.view.Layout.prototype.render.call(this);
 
-        $(".collapse").collapse({toggle:false, parent:'#convert-accordion'});
+        this.$(".collapse").collapse({toggle:false, parent:'#convert-accordion'});
         this.context.trigger("lead:convert:populate", this.model);
 
         //show first panel
