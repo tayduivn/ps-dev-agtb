@@ -32,6 +32,49 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 // $Id: uw_utils.php 58174 2010-09-14 18:18:39Z kjing $
 
 /**
+ * Implodes some parts of version with specified delimiter, beta & rc parts are removed all time
+ *
+ * @example ('6.5.6') returns 656
+ * @example ('6.5.6beta2') returns 656
+ * @example ('6.5.6rc3') returns 656
+ * @example ('6.6.0.1') returns 6601
+ * @example ('6.5.6', 3, 'x') returns 65x
+ * @example ('6', 3, '', '.') returns 6.0.0
+ *
+ * @param string $version like 6, 6.2, 6.5.0beta1, 6.6.0rc1, 6.5.7 (separated by dot)
+ * @param int $size number of the first parts of version which are requested
+ * @param string $lastSymbol replace last part of version by some string
+ * @param string $delimiter delimiter for result
+ * @return string
+ */
+function implodeVersion($version, $size = 0, $lastSymbol = '', $delimiter = '')
+{
+    preg_match('/^\d+(\.\d+)*/', $version, $version);
+    if (empty($version))
+    {
+        return '';
+    }
+
+    $version = reset($version);
+    $version = explode('.', $version);
+
+    if ($size == 0)
+    {
+        $size = count($version);
+    }
+
+    $version = array_pad($version, $size, 0);
+    $version = array_slice($version, 0, $size);
+    if ($lastSymbol !== '')
+    {
+        array_pop($version);
+        array_push($version, $lastSymbol);
+    }
+
+    return implode($delimiter, $version);
+}
+
+/**
  * Helper function for upgrade - get path from upload:// name
  * @param string $path
  * return string
@@ -118,7 +161,9 @@ function commitCopyNewFiles($unzip_dir, $zip_from_dir, $path='') {
 	logThis('Starting file copy process...', $path);
 	global $sugar_version;
 	$backwardModules='';
-    if(substr($sugar_version,0,1) >= 5){
+
+    if (version_compare($sugar_version, '5', '>='))
+    {
     	$modules = getAllModules();
 			$backwardModules = array();
 			foreach($modules as $mod){
@@ -715,6 +760,9 @@ function upgradeUWFiles($file) {
     // users
     if(file_exists("$from_dir/modules/Users")) {
         $allFiles[] = findAllFiles("$from_dir/modules/Users", $allFiles);
+    }
+    if(file_exists("$from_dir/include/utils/autoloader.php")) {
+        $allFiles[] = "$from_dir/include/utils/autoloader.php";
     }
 
     upgradeUWFilesCopy($allFiles, $from_dir);
@@ -1412,9 +1460,10 @@ function preLicenseCheck() {
 	global $mod_strings;
 	global $sugar_version;
 
-	if(!isset($sugar_version) || empty($sugar_version)) {
-		require_once('./sugar_version.php');
-	}
+    if (empty($sugar_version))
+    {
+        require('sugar_version.php');
+    }
 
 if(!isset($_SESSION['unzip_dir']) || empty($_SESSION['unzip_dir'])) {
 		logThis('unzipping files in upgrade archive...');
@@ -1556,9 +1605,10 @@ function preflightCheck() {
 	global $mod_strings;
 	global $sugar_version;
 
-	if(!isset($sugar_version) || empty($sugar_version)) {
-		require_once('./sugar_version.php');
-	}
+    if (empty($sugar_version))
+    {
+        require('sugar_version.php');
+    }
 
 	unset($_SESSION['rebuild_relationships']);
 	unset($_SESSION['rebuild_extensions']);
@@ -2154,8 +2204,6 @@ function resetUwSession() {
 		unset($_SESSION['alterCustomTableQueries']);
 	if(isset($_SESSION['skip_zip_upload']))
 		unset($_SESSION['skip_zip_upload']);
-	if(isset($_SESSION['sugar_version_file']))
-		unset($_SESSION['sugar_version_file']);
 	if(isset($_SESSION['install_file']))
 		unset($_SESSION['install_file']);
 	if(isset($_SESSION['unzip_dir']))
@@ -4662,6 +4710,9 @@ function upgradeSugarCache($file)
 	if(file_exists("$from_dir/include/utils/sugar_file_utils.php")) {
 		$allFiles[] = "$from_dir/include/utils/sugar_file_utils.php";
 	}
+	if(file_exists("$from_dir/include/utils/autoloader.php")) {
+		$allFiles[] = "$from_dir/include/utils/autoloader.php";
+	}
 
 	foreach($allFiles as $k => $file) {
 		$destFile = str_replace($from_dir."/", "", $file);
@@ -4685,7 +4736,7 @@ function upgradeSugarCache($file)
  */
 function upgradeDisplayedTabsAndSubpanels($version)
 {
-	if($version < '620')
+	if(version_compare($version, '6.2.0', '<'))
 	{
 		logThis('start upgrading system displayed tabs and subpanels');
 	    require_once('modules/MySettings/TabController.php');
@@ -4746,26 +4797,26 @@ function unlinkUpgradeFiles($version)
        {
        		if(preg_match('/UpgradeRemoval(\d+)x\.php/', $script, $matches))
        		{
-       	   	   $checkVersion = $matches[1] + 1; //Increment by one to check everything equal or below the target version
        	   	   $upgradeClass = 'UpgradeRemoval' . $matches[1] . 'x';
        	   	   require_once($_SESSION['unzip_dir'].'/scripts/files_to_remove/' . $upgradeClass . '.php');
+               if (class_exists($upgradeClass) == false)
+               {
+                   continue;
+               }
 
-       	   	   //Check to make sure we should load and run this UpgradeRemoval instance
-       	   	   if($checkVersion <= $version && class_exists($upgradeClass))
-       	   	   {
-       	   	   	  $upgradeInstance = new $upgradeClass();
-       	   	   	  if($upgradeInstance instanceof UpgradeRemoval)
-       	   	   	  {
-       	   	   	  	  logThis('Running UpgradeRemoval instance ' . $upgradeClass);
-       	   	   	  	  logThis('Files will be backed up to custom/backup');
-	       	   	   	  $files = $upgradeInstance->getFilesToRemove($version);
-	       	   	   	  foreach($files as $file)
-	       	   	   	  {
-	       	   	   	  	 logThis($file);
-	       	   	   	  }
-	       	   	   	  $upgradeInstance->processFilesToRemove($files);
-       	   	   	  }
-       	   	   }
+                //Check to make sure we should load and run this UpgradeRemoval instance
+                $upgradeInstance = new $upgradeClass();
+                if ($upgradeInstance instanceof UpgradeRemoval && version_compare($upgradeInstance->version, $version, '<='))
+                {
+                    logThis('Running UpgradeRemoval instance ' . $upgradeClass);
+                    logThis('Files will be backed up to custom/backup');
+                    $files = $upgradeInstance->getFilesToRemove($version);
+                    foreach($files as $file)
+                    {
+                       logThis($file);
+                    }
+                    $upgradeInstance->processFilesToRemove($files);
+                }
        	    }
        }
     }

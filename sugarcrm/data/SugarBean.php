@@ -31,6 +31,9 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 require_once('modules/DynamicFields/DynamicField.php');
 require_once("data/Relationships/RelationshipFactory.php");
+//BEGIN SUGARCRM flav=pro ONLY
+require_once('include/Expressions/Expression/Parser/Parser.php');
+//END SUGARCRM flav=pro ONLY
 
 
 
@@ -433,7 +436,7 @@ class SugarBean
      * Before calling this function, check whether audit has been enabled for the table/module or not.
      * You would set the audit flag in the implemting module's vardef file.
      *
-     * @return an array of
+     * @return array
      * @see is_AuditEnabled
      *
      * Internal function, do not override.
@@ -1528,12 +1531,12 @@ class SugarBean
         //END SUGARCRM flav=pro ONLY
 
         //construct the SQL to create the audit record if auditing is enabled.
-        $dataChanges=array();
+        $auditDataChanges=array();
         if ($this->is_AuditEnabled()) {
             if ($isUpdate && !isset($this->fetched_row)) {
                 $GLOBALS['log']->debug('Auditing: Retrieve was not called, audit record will not be created.');
             } else {
-                $dataChanges=$this->db->getDataChanges($this);
+                $auditDataChanges=$this->db->getAuditDataChanges($this);
             }
         }
 
@@ -1545,9 +1548,9 @@ class SugarBean
             $this->db->insert($this);
         }
 
-        if (!empty($dataChanges) && is_array($dataChanges))
+        if (!empty($auditDataChanges) && is_array($auditDataChanges))
         {
-            foreach ($dataChanges as $change)
+            foreach ($auditDataChanges as $change)
             {
                 $this->db->save_audit_records($this,$change);
             }
@@ -1561,6 +1564,11 @@ class SugarBean
 
         if (empty($GLOBALS['resavingRelatedBeans'])){
             SugarRelationship::resaveRelatedBeans();
+        }
+
+        // populate fetched row with current bean values
+        foreach ($auditDataChanges as $change) {
+            $this->fetched_row[$change['field_name']] = $change['after'];
         }
 
         //BEGIN SUGARCRM flav=pro ONLY
@@ -1685,6 +1693,16 @@ class SugarBean
                             BeanFactory::getBean($this->fetched_row['parent_type'], $this->fetched_row['parent_id'])
                         );
                     }
+                }
+
+                $influencing_fields = $this->get_fields_influencing_linked_bean_calc_fields($lname);
+                $data_changes = $this->db->getDataChanges($this);
+                $changed_fields = array_keys($data_changes);
+
+                // if fields influencing calculated fields are not changed,
+                // skip resaving of related beans
+                if (!array_intersect($influencing_fields, $changed_fields)) {
+                    continue;
                 }
 
                 $beans = $this->$lname->getBeans();
@@ -6237,4 +6255,89 @@ class SugarBean
             && $field_def['type'] == 'relate'
             && isset($field_def['link']);
     }
+//BEGIN SUGARCRM flav=pro ONLY
+    /**
+     * Returns array of linked bean's calculated fields which use relation to
+     * the current bean in their formulas
+     *
+     * @param string $linkName Name of current bean's link
+     * @return array
+     */
+    protected function get_fields_influencing_linked_bean_calc_fields($linkName)
+    {
+        global $dictionary;
+
+        $result = array();
+
+        if (!$this->load_relationship($linkName)) {
+            return $result;
+        }
+
+        /** @var Link2 $link */
+        $link = $this->$linkName;
+        $relatedModuleName = $link->def['bean_name'];
+        $relatedLinkName   = $link->getRelatedModuleLinkName();
+
+        // iterate over related bean fields
+        foreach ($dictionary[$relatedModuleName]['fields'] as $def) {
+            if (!empty($def['formula'])) {
+                $expr = Parser::evaluate($def['formula'], $this);
+                $fields = $this->get_formula_related_fields($expr, $relatedLinkName);
+                $result = array_merge($result, $fields);
+            }
+        }
+
+        return array_unique($result);
+    }
+
+    /**
+     * Retrieve names of fields of the bean related by the given link included
+     * in expression
+     *
+     * @param AbstractExpression $expr Parsed formula expression or nested expression
+     * @param string $linkName Name of the link to filter "related" expressions by 
+     * @return array
+     */
+    protected function get_formula_related_fields(AbstractExpression $expr, $linkName)
+    {
+        $result = array();
+
+        if ($expr instanceof RelatedFieldExpression
+            || $expr instanceof MinRelatedExpression
+            || $expr instanceof MaxRelatedExpression
+            || $expr instanceof AverageRelatedExpression
+            || $expr instanceof SumRelatedExpression
+        ) {
+            /** @var AbstractExpression[] $params */
+            $params = $expr->getParameters();
+
+            // here we don't evaluate the first param since we need the field name
+            // but not it's value
+            if ($params[0] instanceof SugarFieldExpression
+                && $params[0]->varName == $linkName
+            ) {
+                $result[] = $params[1]->evaluate();
+            }
+            return $result;
+        }
+
+        $params = $expr->getParameters();
+        if (is_array($params)) {
+            /** @var AbstractExpression $param */
+            foreach ($params as $param) {
+                $result = array_merge(
+                    $result,
+                    $this->get_formula_related_fields($param, $linkName)
+                );
+            }
+        } else if ($params instanceof AbstractExpression) {
+             $result = array_merge(
+                 $result,
+                 $this->get_formula_related_fields($params, $linkName)
+             );
+        }
+
+        return array_unique($result);
+    }
+//END SUGARCRM flav=pro ONLY
 }

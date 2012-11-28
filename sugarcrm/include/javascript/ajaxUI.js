@@ -207,6 +207,17 @@ SUGAR.ajaxUI = {
 
     go : function(url)
     {
+
+        //bug 56797, set the first_load tab to be used in style.js
+        if(typeof(SUGAR.ajaxUI.first_load) == "undefined")
+         {
+             SUGAR.ajaxUI.first_load = true;
+         }
+         else
+         {
+             SUGAR.ajaxUI.first_load = false;
+         }
+
         if(YAHOO.lang.trim(url) != "")
         {
             var con = YAHOO.util.Connect, ui = SUGAR.ajaxUI;

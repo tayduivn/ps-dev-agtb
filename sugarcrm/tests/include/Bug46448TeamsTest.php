@@ -1,5 +1,5 @@
 <?php
-
+//FILE SUGARCRM flav=pro ONLY
 /*********************************************************************************
  * The contents of this file are subject to the SugarCRM Master Subscription
  * Agreement ("License") which can be viewed at
@@ -27,51 +27,20 @@
  * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
-class Bug33036Test extends Sugar_PHPUnit_Framework_TestCase
+
+class Bug46448TeamsTest extends Sugar_PHPUnit_Framework_TestCase
 {
-    private $obj;
-    
-    public static function setUpBeforeClass()
+
+    public function testTeams()
     {
-        $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
-	}
+        require_once('modules/Teams/TeamSetManager.php');
 
-	public static function tearDownAfterClass()
-	{
-	    SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
-        unset($GLOBALS['current_user']);
-	}
-
-	public function setUp()
-	{
-	    $this->obj = new Contact();
-	}
-
-	public function tearDown()
-	{
-        if (! empty($this->obj->id)) {
-            $this->obj->db->query("DELETE FROM contacts WHERE id = '" . $this->obj->id . "'");
-        }
-        unset($this->obj);
-	}
-
-    public function testAuditForRelatedFields() 
-    {
-        $test_account_name = 'test account name after';
-        
-        $account = SugarTestAccountUtilities::createAccount();
-        
-        $this->obj->field_defs['account_name']['audited'] = 1;
-        $this->obj->name = 'test';
-        $this->obj->account_id = $account->id;
-        $this->obj->save();
-        
-        $this->obj->retrieve();
-        $this->obj->account_name = $test_account_name;
-        $changes = $this->obj->db->getAuditDataChanges($this->obj);
-        
-        $this->assertEquals($changes['account_name']['after'], $test_account_name);
-        
-        SugarTestAccountUtilities::removeAllCreatedAccounts();
+        $this->assertEquals(
+            TeamSetManager::getCommaDelimitedTeams('', 1),
+            TeamSetManager::getCommaDelimitedTeams(1, 1)
+        );
     }
+
 }
+
+?>

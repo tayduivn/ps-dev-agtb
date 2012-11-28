@@ -54,7 +54,14 @@ class SugarFieldExpression extends GenericExpression
                 if(empty($this->context->$fieldName)) {
                     throw new Exception("attempt to get date from empty field: {$fieldName}");
                 }
-                $date = $timedate->fromDb($this->context->$fieldName);
+                // bug 57900 - we might have a user-formatted timedate here converted from SugarBean::retrieve()
+                if($timedate->check_matching_format($this->context->$fieldName,$timedate->get_date_time_format())) {
+                    $date = $timedate->fromUser($this->context->$fieldName);
+                }
+                else {
+                    $date = $timedate->fromDb($this->context->$fieldName);
+                }
+
                 if(empty($date)) {
                      throw new Exception("attempt to convert invalid value to date: {$this->context->$fieldName}");
                 }

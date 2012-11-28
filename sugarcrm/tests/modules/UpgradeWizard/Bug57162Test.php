@@ -1,5 +1,4 @@
 <?php
-//FILE SUGARCRM flav=pro ONLY
 /*********************************************************************************
  * The contents of this file are subject to the SugarCRM Master Subscription
  * Agreement ("License") which can be viewed at
@@ -24,57 +23,53 @@
  * Your Warranty, Limitations of liability and Indemnity are expressly stated
  * in the License.  Please refer to the License for the specific language
  * governing these rights and limitations under the License.  Portions created
- * by SugarCRM are Copyright (C) 2004-2011 SugarCRM, Inc.; All Rights Reserved.
+ * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
-require_once('include/SugarFields/Fields/Teamset/SugarFieldTeamset.php');
+require_once('modules/UpgradeWizard/uw_utils.php');
 
 /**
- * Bug #40003
- * Teams revert to self when Previewing a report
- * @ticket 40003
+ * Bug #57162
+ * Upgrader needs to handle 3-dots releases and double digit values
+ *
+ * @author mgusev@sugarcrm.com
+ * @ticked 57162
  */
-class Bug40003Test extends Sugar_PHPUnit_Framework_TestCase
+class Bug57162Test extends Sugar_PHPUnit_Framework_TestCase
 {
-    public function provider()
+    public function dataProvider()
     {
         return array(
-            array('Global', '1', 'Team_1', '123', '1'),
-            array('Global', '1', 'Team_2', '111', '0')
+            array('656', array('6.5.6')),
+            array('660', array('6.6.0beta1')),
+            array('640', array('6.4.0rc2')),
+            array('600', array('6', 3)),
+            array('6601', array('6.6.0.1')),
+            array('6601', array('6.6.0.1', 0)),
+            array('660', array('6.6.0.1', 3)),
+            array('660', array('6.6.0.1', 3, '')),
+            array('66x', array('6.6.0.1', 3, 'x')),
+            array('660x', array('6.6.0.1', 0, 'x')),
+            array('6.6.x', array('6.6.0.1', 3, 'x', '.')),
+            array('6-6-0-beta2', array('6.6.0.1', 0, 'beta2', '-')),
+            array('6601', array('6.6.0.1', 0, '', '')),
+            array('', array('test342lk')),
+            array('650', array('6.5.6' ,0, '0')),
+            array('60', array('6.5.6', 2, 0)),
         );
     }
 
-    public function setUp()
-    {
-        SugarTestHelper::setUp('beanFiles');
-        SugarTestHelper::setUp('beanList');
-        $_REQUEST['record'] = '';
-        $_REQUEST['module'] = 'Reports';
-        $this->fields = array('team_name' => array('name' => 'team_name'));
-        $this->sft = new SugarFieldTeamset('Teamset');
-    }
-    
-    public function tearDown()
-    {
-        $_REQUEST = array();
-        $_POST = array();
-        SugarTestHelper::tearDown();
-    }
-
     /**
-     * @dataProvider provider
-     * @group 40003
+     * Test asserts result of implodeVersion function
+     *
+     * @group 57162
+     * @dataProvider dataProvider
+     * @param string $expect version
+     * @param array $params for implodeVersion function
      */
-    public function testGetTeamsFromPostWhilePreview($global_name, $global_id, $other_team_name, $other_team_name_id, $primary_collection)
+    public function testImplodeVersion($expected, $params)
     {
-        $_POST['team_name_collection_0'] = $global_name;
-        $_POST['id_team_name_collection_0'] = $global_id;
-        $_POST['team_name_collection_1'] = $other_team_name;
-        $_POST['id_team_name_collection_1'] = $other_team_name_id;
-        $_POST['primary_team_name_collection'] = $primary_collection;
-        $this->sft->initClassicView($this->fields);
-        $this->assertEquals($this->sft->getPrimaryTeamIdFromRequest($this->sft->field_name, $_POST), 
-                            $this->sft->view->bean->team_set_id_values['primary']['id']);
+        $actual = call_user_func_array('implodeVersion', $params);
+        $this->assertEquals($expected, $actual, 'Result is incorrect');
     }
 }
-?>

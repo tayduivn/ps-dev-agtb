@@ -438,10 +438,10 @@ class ListViewData {
                 $editViewAccess = $temp->ACLAccess('EditView');
                 $pageData['rowAccess'][$dataIndex] = array('view' => $detailViewAccess, 'edit' => $editViewAccess);
                 $additionalDetailsAllow = $this->additionalDetails && $detailViewAccess && (file_exists(
-                    'modules/' . $temp->module_dir . '/metadata/additionalDetails.php'
-                ) || file_exists('custom/modules/' . $temp->module_dir . '/metadata/additionalDetails.php'));
-			    $additionalDetailsEdit = $editViewAccess;
-				if($additionalDetailsAllow) {
+                         'modules/' . $temp->module_dir . '/metadata/additionalDetails.php'
+                     ) || file_exists('custom/modules/' . $temp->module_dir . '/metadata/additionalDetails.php'));
+                $additionalDetailsEdit = $editViewAccess;
+                if($additionalDetailsAllow) {
                     if($this->additionalDetailsAjax) {
 					   $ar = $this->getAdditionalDetailsAjax($data[$dataIndex]['ID']);
                     }
