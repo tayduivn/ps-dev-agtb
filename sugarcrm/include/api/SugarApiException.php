@@ -134,6 +134,14 @@ class SugarApiExceptionError extends SugarApiException
     public $errorLabel = 'fatal_error';
     public $messageLabel = 'EXCEPTION_FATAL_ERROR';
 }
+
+class SugarApiExceptionIncorrectVersion extends SugarApiException
+{
+    public $httpCode = 301;
+    public $errorLabel = 'incorrect_version';
+    public $messageLabel = 'EXCEPTION_INCORRECT_VERSION';
+}
+
 class SugarApiExceptionNeedLogin extends SugarApiException 
 { 
     public $httpCode = 401; 
