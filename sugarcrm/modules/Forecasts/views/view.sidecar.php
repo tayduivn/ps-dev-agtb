@@ -157,7 +157,7 @@ class ForecastsViewSidecar extends SidecarView
             echo "<script type='text/javascript'>var systemJq = jQuery.noConflict(true);</script>\n";
             echo "<script type='text/javascript' src='sidecar/minified/sidecar.min.js'></script>\n";
             echo "<script type='text/javascript'>$.extend($.fn, systemJq.fn);</script>\n";
-                        
+                                   
             if  ( !is_file(sugar_cached("include/javascript/sidecar_forecasts.js")) ) {
                 $_REQUEST['root_directory'] = ".";
                 require_once("jssource/minify_utils.php");
@@ -182,10 +182,6 @@ class ForecastsViewSidecar extends SidecarView
                 }
                 echo "<script type='text/javascript'>$.extend($.fn, systemJq.fn);</script>\n";
             }
-
-            echo "<script type='text/javascript' src='include/javascript/jquery/jquery.dataTables.min.js'></script>\n";
-            echo "<script type='text/javascript' src='include/javascript/jquery/jquery.jeditable.js'></script>\n";
-            echo "<script type='text/javascript'>jQuery.noConflict();</script>\n";
 
             require_once('jssource/JSGroupings.php');
             if ( !empty($sidecar_forecasts) && is_array($sidecar_forecasts) )
