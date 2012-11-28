@@ -13,7 +13,7 @@
     initialize: function(options) {
         _.bindAll(this);
 
-        app.view.View.prototype.initialize.call(this, options);
+        app.view.views.RecordView.prototype.initialize.call(this, options);
     },
 
     render: function() {
