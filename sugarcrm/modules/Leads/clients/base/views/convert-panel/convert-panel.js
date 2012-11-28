@@ -284,9 +284,17 @@
 
     getStatus: function() {
         if (this.currentState.activeView === this.DUPLICATE_VIEW) {
-            return this.duplicateView.validationStatus;
+            if (this.duplicateView && this.duplicateView.validationStatus) {
+                return this.duplicateView.validationStatus;
+            } else {
+                return this.STATUS_INIT;
+            }
         } else {
-            return this.recordView.validationStatus;
+            if (this.recordView && this.recordView.validationStatus) {
+                return this.recordView.validationStatus;
+            } else {
+                return this.STATUS_DIRTY;
+            }
         }
     },
 
