@@ -30,7 +30,7 @@ abstract class RestTestBase extends Sugar_PHPUnit_Framework_TestCase
     protected $refreshToken;
     protected $_user;
     protected $consumerId = "sugar";
-    protected $version = '7';
+    protected $version = '10';
 
     public function setUp()
     {
