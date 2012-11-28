@@ -30,7 +30,6 @@ if (!defined('sugarEntry') || !sugarEntry) {
  ********************************************************************************/
 
 $viewdefs['Leads']['base']['view']['record'] = array(
-    'type' => 'record',
     'buttons' =>
     array(
         array(
