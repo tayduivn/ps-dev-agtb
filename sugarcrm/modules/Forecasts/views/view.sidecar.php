@@ -170,10 +170,17 @@ class ForecastsViewSidecar extends SidecarView
             require('sidecar/src/include-manifest.php');
             if (!empty($buildFiles['sidecar']))
             {
-               foreach ( $buildFiles['sidecar'] as $file)
-               {
-                   echo "<script type='text/javascript' src='sidecar/{$file}'></script>\n";
-               }
+                /*
+                 * This section saves off the system jQuery into a var so that the sidecar version can be loaded
+                 * into $.  Then, we extend all the plugins that were loaded in the system version to the sidecar
+                 * version so everything plays nice.
+                 */
+                echo "<script type='text/javascript'>var systemJq = jQuery.noConflict(true);</script>\n";
+                foreach ( $buildFiles['sidecar'] as $file)
+                {
+                    echo "<script type='text/javascript' src='sidecar/{$file}'></script>\n";
+                }
+                echo "<script type='text/javascript'>$.extend($.fn, systemJq.fn);</script>\n";
             }
 
             echo "<script type='text/javascript' src='include/javascript/jquery/jquery.dataTables.min.js'></script>\n";
