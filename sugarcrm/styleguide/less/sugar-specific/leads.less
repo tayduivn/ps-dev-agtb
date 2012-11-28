@@ -67,7 +67,7 @@
   color: @grayLight;
 }
 
-.layout_Leads .accordion-heading .in {
+.layout_Leads .accordion-heading.active {
   background-color:@white;
 }
 
@@ -77,4 +77,10 @@
 
 .layout_Leads .accordion-heading.enabled .title {
   font-weight: bold;
+}
+
+.layout_Leads .accordion-heading .completed,
+.layout_Leads .accordion-heading .subview-toggle,
+.layout_Leads .accordion-heading .toggle-subview.show-duplicate {
+  display:none;
 }
