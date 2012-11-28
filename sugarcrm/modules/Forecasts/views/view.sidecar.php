@@ -147,17 +147,16 @@ class ForecastsViewSidecar extends SidecarView
          * but it (sidecar.min.js) loads jquery library that is loaded and extended already in sugar_grp1_jquery.js -
          * so in this case we have errors on the page
          */
+        /*
+         * This section saves off the system jQuery into a var so that the sidecar version can be loaded
+         * into $.
+         */
+        echo "<script type='text/javascript'>var systemJq = jQuery.noConflict(true);</script>\n";
+        
         if ( !inDeveloperMode() )
-        {   
-            /*
-             * This section saves off the system jQuery into a var so that the sidecar version can be loaded
-             * into $.  Then, we extend all the plugins that were loaded in the system version to the sidecar
-             * version so everything plays nice.
-             */
-            echo "<script type='text/javascript'>var systemJq = jQuery.noConflict(true);</script>\n";
+        {             
             echo "<script type='text/javascript' src='sidecar/minified/sidecar.min.js'></script>\n";
-            echo "<script type='text/javascript'>$.extend($.fn, systemJq.fn);</script>\n";
-                                   
+                                               
             if  ( !is_file(sugar_cached("include/javascript/sidecar_forecasts.js")) ) {
                 $_REQUEST['root_directory'] = ".";
                 require_once("jssource/minify_utils.php");
@@ -166,21 +165,13 @@ class ForecastsViewSidecar extends SidecarView
             echo getVersionedScript('cache/include/javascript/sidecar_forecasts.js') . "\n";
 
         } else {
-
             require('sidecar/src/include-manifest.php');
             if (!empty($buildFiles['sidecar']))
-            {
-                /*
-                 * This section saves off the system jQuery into a var so that the sidecar version can be loaded
-                 * into $.  Then, we extend all the plugins that were loaded in the system version to the sidecar
-                 * version so everything plays nice.
-                 */
-                echo "<script type='text/javascript'>var systemJq = jQuery.noConflict(true);</script>\n";
+            {                
                 foreach ( $buildFiles['sidecar'] as $file)
                 {
                     echo "<script type='text/javascript' src='sidecar/{$file}'></script>\n";
-                }
-                echo "<script type='text/javascript'>$.extend($.fn, systemJq.fn);</script>\n";
+                }                
             }
 
             require_once('jssource/JSGroupings.php');
@@ -190,8 +181,23 @@ class ForecastsViewSidecar extends SidecarView
                 {
                     echo "<script src='".$_file."'></script>\n";
                 }
-            }
+            }            
         }
+        /*
+         * This section takes all the plugins initialized in the system jQuery and copies them into the
+         * sidecar jQuery, making everything right with the world.
+         */
+        echo "<script type='text/javascript'>" .
+                 "  var pluginList = {};" .
+                 "  for(item in $.fn){" .
+                 "      pluginList[item]=1;" .  
+                 "  }" .
+                 "  for(item in systemJq.fn){" .
+                 "      if(_.isUndefined(pluginList[item])){" .
+                 "          $.fn[item] = systemJq.fn[item];" .    
+                 "      }" .
+                 "  }" .
+                 "</script>\n";
     }
 
 }
