@@ -408,7 +408,7 @@
                     }
 
                     // create the history log
-                    outputLog = app.forecasts.utils.createHistoryLog(oldestModel,newestModel);
+                    outputLog = app.forecasts.utils.createHistoryLog(oldestModel,newestModel,this.context.forecasts.config);
                     // update the div that was created earlier and set the html to what was the commit log
                     $(nTr).next().children("td").children("div").html(this.commitLogTemplate(outputLog));
                 }

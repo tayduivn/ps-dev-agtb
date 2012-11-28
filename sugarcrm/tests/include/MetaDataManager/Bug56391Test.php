@@ -34,7 +34,7 @@ class Bug56391Test extends Sugar_PHPUnit_Framework_TestCase
         SugarTestHelper::setUp('current_user');
         SugarTestHelper::setUp('app_list_strings');
     }
-    
+
     public function tearDown()
     {
         SugarTestHelper::tearDown();
@@ -42,7 +42,7 @@ class Bug56391Test extends Sugar_PHPUnit_Framework_TestCase
 
     /**
      * Test Users Module
-     * 
+     *
      * @group Bug56391
      */
     public function testUsersModule()
@@ -52,6 +52,7 @@ class Bug56391Test extends Sugar_PHPUnit_Framework_TestCase
         unset($_SESSION['ACL']);
         $expected_result = array(
                                     'access' => 'yes',
+                                    'admin' => 'no',
                                     'create' => 'no',
                                     'view' => 'yes',
                                     'list' => 'yes',
@@ -65,14 +66,14 @@ class Bug56391Test extends Sugar_PHPUnit_Framework_TestCase
         unset($acls['_hash']);
         // not checking fields right now
         unset($acls['fields']);
-        
+
         $this->assertEquals($expected_result, $acls);
 
     }
 
     /**
      * Test Users Module as Admin
-     * 
+     *
      * @group Bug56391
      */
     public function testUsersAsAdminModule()
@@ -86,6 +87,7 @@ class Bug56391Test extends Sugar_PHPUnit_Framework_TestCase
 
         $expected_result = array(
                                     'access' => 'yes',
+                                    'admin' => 'yes',
                                     'view' => 'yes',
                                     'list' => 'yes',
                                     'edit' => 'yes',
@@ -98,7 +100,7 @@ class Bug56391Test extends Sugar_PHPUnit_Framework_TestCase
         unset($acls['_hash']);
         // not checking fields right now
         unset($acls['fields']);
-        
+
         $this->assertEquals($expected_result, $acls);
 
         // remove admin
@@ -108,9 +110,9 @@ class Bug56391Test extends Sugar_PHPUnit_Framework_TestCase
 
     /**
      * Test Module Access
-     * 
+     *
      * Set 5 modules to have specific actions and verify them
-     * 
+     *
      * @group Bug56391
      */
     public function testModuleAccess()
@@ -119,6 +121,7 @@ class Bug56391Test extends Sugar_PHPUnit_Framework_TestCase
         // user can view, list, delete, and export
         $expected_result = array(
                                 'access' => 'yes',
+                                'admin' => 'no',
                                 'create' => 'no',
                                 'view' => 'yes',
                                 'list' => 'yes',
@@ -138,7 +141,7 @@ class Bug56391Test extends Sugar_PHPUnit_Framework_TestCase
         }
         $id = $GLOBALS['current_user']->id;
         $GLOBALS['current_user'] = BeanFactory::getBean('Users', $id);
-        
+
 
 
         $mm = new MetaDataManager($GLOBALS['current_user']);
@@ -155,9 +158,9 @@ class Bug56391Test extends Sugar_PHPUnit_Framework_TestCase
 
     /**
      * Test Field Access
-     * 
+     *
      * Set a field on accounts to be not readable, writeable, or editable
-     * 
+     *
      * @group Bug56391
      */
     public function testFieldAccess()
@@ -174,6 +177,7 @@ class Bug56391Test extends Sugar_PHPUnit_Framework_TestCase
                                                 ),
                                         ),
                                 'access' => 'yes',
+                                'admin' => 'no',
                                 'create' => 'yes',
                                 'view' => 'yes',
                                 'list' => 'yes',
@@ -188,7 +192,7 @@ class Bug56391Test extends Sugar_PHPUnit_Framework_TestCase
 
         // set the website field as Read Only
         $aclField = new ACLField();
-        $aclField->setAccessControl('Accounts', $role->id, 'website', -99); 
+        $aclField->setAccessControl('Accounts', $role->id, 'website', -99);
         ACLField::loadUserFields('Accounts', 'Account', $GLOBALS['current_user']->id, true );
 
         if (!($GLOBALS['current_user']->check_role_membership($role->name))) {
@@ -199,7 +203,7 @@ class Bug56391Test extends Sugar_PHPUnit_Framework_TestCase
         $id = $GLOBALS['current_user']->id;
         $GLOBALS['current_user'] = BeanFactory::getBean('Users', $id);
         unset($_SESSION['ACL']);
-        
+
 
         $mm = new MetaDataManager($GLOBALS['current_user']);
         foreach($modules AS $module) {
@@ -242,7 +246,7 @@ class Bug56391Test extends Sugar_PHPUnit_Framework_TestCase
                         $aclAllow = ACL_ALLOW_NONE;
                         $save = 'None';
                     }
-                    
+
                     $role->setAction($role->id, $action['id'], $aclAllow);
                 }
             }

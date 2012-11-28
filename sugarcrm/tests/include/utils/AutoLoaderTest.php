@@ -22,28 +22,49 @@
  * All Rights Reserved.
  ********************************************************************************/
 
-require_once('tests/rest/RestTestBase.php');
 
-class RestLabelsTest extends RestTestBase
+class AutoLoaderTests extends Sugar_PHPUnit_Framework_TestCase
 {
-    /**
-     * @group rest
-     */
-    public function testLabels() {
-        $restReply = $this->_restCall('metadata?type_filter=mod_strings,app_strings');
-        $this->assertNotEmpty($restReply['reply']['app_strings']['LBL_ADD'],"Could not find the label for the add button (LBL_ADD), probably didn't get the app strings (/metadata)");
-        $this->assertNotEmpty($restReply['reply']['mod_strings']['Contacts']['LBL_ACCOUNT_NAME']);
+    public function setUp()
+    {
+        parent::setUp();
+        $this->map = SugarAutoLoader::$filemap;
     }
 
-    /**
-     * @group rest
-     */
-    public function testAppListLabels() {
-        $restReply = $this->_restCall('metadata?type_filter=app_list_strings');
-
-        $this->assertNotEmpty($restReply['reply']['app_list_strings']['checkbox_dom'],"Could not find the label for the checkbox dropdown, these don't look like app_list_strings to me (/metadata)");
-        $this->assertNotEmpty($restReply['reply']['app_list_strings']['available_language_dom'],"Could not find the list of available languages in appListStrings. (/metadata)");
-
+    public function tearDown()
+    {
+        SugarAutoLoader::$memmap = array();
+        SugarAutoLoader::$filemap = $this->map;
+        parent::tearDown();
     }
 
+    public static function tearDownAfterClass()
+    {
+        SugarAutoLoader::buildCache();
+    }
+
+    public function testExists()
+    {
+        $this->assertTrue((bool)SugarAutoLoader::fileExists('config.php'));
+        $this->assertTrue((bool)SugarAutoLoader::fileExists('custom/index.html'));
+        $this->assertFalse(SugarAutoLoader::fileExists('config.php.dontexist'));
+        $this->assertFalse(SugarAutoLoader::fileExists('cache/file_map.php'));
+    }
+
+    public function testAddMap()
+    {
+        $this->assertFalse(SugarAutoLoader::fileExists('subdir/nosuchfile.php'));
+        SugarAutoLoader::addToMap("subdir/nosuchfile.php", false);
+        $this->assertTrue((bool)SugarAutoLoader::fileExists('subdir/nosuchfile.php'));
+        $this->assertTrue((bool)SugarAutoLoader::fileExists('subdir'));
+    }
+
+    public function testDelMap()
+    {
+        SugarAutoLoader::addToMap("subdir/nosuchfile.php", false);
+        $this->assertTrue((bool)SugarAutoLoader::fileExists('subdir/nosuchfile.php'));
+        SugarAutoLoader::delFromMap("subdir", false);
+        $this->assertFalse(SugarAutoLoader::fileExists('subdir/nosuchfile.php'));
+        $this->assertFalse((bool)SugarAutoLoader::fileExists('subdir'));
+    }
 }

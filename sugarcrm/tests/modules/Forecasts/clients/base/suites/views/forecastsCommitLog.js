@@ -28,7 +28,11 @@ describe("The forecastCommitted view", function(){
         SugarTest.loadFile("../sidecar/src/utils", "currency", "js", function(d) { return eval(d); });
         SugarTest.loadFile("../sidecar/src/utils", "date", "js", function(d) { return eval(d); });
         SugarTest.loadFile("../modules/Forecasts/clients/base/lib", "ForecastsUtils", "js", function(d) { return eval(d); });
-
+        view.context = {};
+        view.context.forecasts = {};
+        view.context.forecasts.config = new (Backbone.Model.extend({
+            "defaults": fixtures.metadata.modules.Forecasts.config
+        }));
         view.render = function() {};
     });
 
