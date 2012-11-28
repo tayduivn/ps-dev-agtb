@@ -140,38 +140,8 @@
         } else {
             self._initComponentSize = self._components.length;
         }
-        _.each(components, function(def) {
-            def = _.extend(def, {bodyComponent: true});
-            var context = self.context,
-                module = self.context.get('module');
 
-            if(params.context) {
-                if(params.context.link) {
-                    context = self.context.getChildContext(params.context);
-                } else {
-                    context = app.context.getContext(params.context);
-                    context.parent = self.context;
-                }
-                context.prepare();
-                module = context.get("module");
-            }
-            if (def.view) {
-                self.addComponent(app.view.createView({
-                    context: context,
-                    name: def.view,
-                    message: def.message,
-                    module: module,
-                    layout: self
-                }), def);
-            }
-            else if(def.layout) {
-                self.addComponent(app.view.createLayout({
-                    name: def.layout,
-                    module: module,
-                    context: context
-                }), def);
-            }
-        });
+        this._addComponentsFromDef(components);
 
         self.context.off("modal:callback");
         self.context.on("modal:callback", function(model) {

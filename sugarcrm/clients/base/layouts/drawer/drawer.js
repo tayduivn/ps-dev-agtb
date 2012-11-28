@@ -17,7 +17,6 @@
         }
         app.view.Layout.prototype.initialize.call(this, options);
         this.$el.addClass("drawer");
-        console.log(showEvent);
         if (showEvent)
         {
             if(_.isArray(showEvent)) {
@@ -54,16 +53,13 @@
      * @private
      */
     _buildComponentsBeforeShow : function(params, callback) {
-        var self = this,
-            params = params || {},
-            buttons = params.buttons || [],
+        var params = params || {},
             message = params.message || '',
             components = (params.components || this.metaComponents || []),
             title = (params.title || this.meta.title) + '';
 
         //stops for empty component elements
         if(components.length == 0) {
-            debugger;
             app.logger.error("Unable to display modal dialog: no components or message");
             return false;
         }
@@ -76,15 +72,15 @@
 
 
         //if previous modal-body exists, remove it.
-        if(!_.isUndefined(self._initComponentSize)) {
-            for(var i = 0; i < self._components.length; i++) {
-                self._components[self._components.length - 1].$el.remove();
-                self.removeComponent(self._components.length - 1);
+        if(!_.isUndefined(this._initComponentSize)) {
+            for(var i = 0; i < this._components.length; i++) {
+                this._components[this._components.length - 1].$el.remove();
+                this.removeComponent(this._components.length - 1);
             }
         } else {
             //attach the el above all other content
             this.$el.insertBefore("#content>div>div:first");
-            self._initComponentSize = self._components.length;
+            this._initComponentSize = this._components.length;
         }
 
         this.backdrop = this.backdrop || $("<div class='drawer-squeezed drawer-backdrop'></div>").insertAfter(this.existingContent);
@@ -95,6 +91,7 @@
         this.expandTab.css("display","block");
 
         this.expandTab.off();
+        var self = this;
         this.expandTab.on('click', function () {
             $(this).find('i').toggleClass('icon-chevron-up').toggleClass('icon-chevron-down');
             self.$el.toggleClass('expand');
@@ -103,45 +100,15 @@
           return false;
         });
 
-        _.each(components, function(def) {
-            var context = self.context,
-                module = self.context.get('module');
+        this._addComponentsFromDef(components);
 
-            if(def.context) {
-                if(def.context.link) {
-                    context = self.context.getChildContext(def.context);
-                } else {
-                    context = app.context.getContext(def.context);
-                    context.parent = self.context;
-                }
-                context.prepare();
-                module = context.get("module");
-            }
-            if (def.view) {
-                self.addComponent(app.view.createView({
-                    context: context,
-                    name: def.view,
-                    message: def.message,
-                    module: module,
-                    layout: self
-                }), def);
-            }
-            else if(def.layout) {
-                self.addComponent(app.view.createLayout({
-                    name: def.layout,
-                    module: module,
-                    context: context
-                }), def);
-            }
-        });
-
-        self.context.off("drawer:callback");
-        self.context.on("drawer:callback", function(model) {
+        this.context.off("drawer:callback");
+        this.context.on("drawer:callback", function(model) {
             callback(model);
-            self.hide();
-        },self);
-        self.context.off("drawer:hide");
-        self.context.on("drawer:hide", self.hide, self);
+            this.hide();
+        },this);
+        this.context.off("drawer:hide");
+        this.context.on("drawer:hide", this.hide, this);
 
 
     },
@@ -160,7 +127,6 @@
             return false;
         this.loadData();
         this.render();
-        var options = params ? params.options || {} : {};
 
         //Clean out previous span css class
         this.$el.show();
@@ -172,11 +138,14 @@
     hide: function(event) {
         if (!this.triggerBefore("hide")) return false;
         this.$el.hide();
-        this.trigger("hide");
+        this.$el.removeClass('expand');
+        this.backdrop.removeClass('collapse');
+        this.existingContent.removeClass('collapse');
         this.visible = false;
         this.backdrop.css("display", "none");
         this.expandTab.css("display", "none");
         this.existingContent.removeClass("drawer-squeezed");
+        this.trigger("hide");
         return true;
     },
 

@@ -12,7 +12,6 @@ $layout->push(array(
             array(
                 'layout' => 'create',
                 'context' => array(
-                   "module" => 'Accounts',
                    'create' => true,
                 ),
             )
