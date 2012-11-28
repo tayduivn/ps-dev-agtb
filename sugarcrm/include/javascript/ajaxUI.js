@@ -208,16 +208,6 @@ SUGAR.ajaxUI = {
     go : function(url)
     {
 
-        //bug 56797, set the first_load tab to be used in style.js
-        if(typeof(SUGAR.ajaxUI.first_load) == "undefined")
-         {
-             SUGAR.ajaxUI.first_load = true;
-         }
-         else
-         {
-             SUGAR.ajaxUI.first_load = false;
-         }
-
         if(YAHOO.lang.trim(url) != "")
         {
             var con = YAHOO.util.Connect, ui = SUGAR.ajaxUI;
@@ -345,6 +335,9 @@ SUGAR.ajaxUI = {
     },
     firstLoad : function()
     {
+    	// WebKit menu hack, to be used in theme style.js when setting superfish
+        SUGAR.ajaxUI.menuFix = true;
+        
         //Setup Browser History
         var url = YAHOO.util.History.getBookmarkedState('ajaxUILoc');
         var aRegex = /action=([^&#]*)/.exec(window.location);
