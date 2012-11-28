@@ -409,11 +409,13 @@ class MetaDataManager {
     /**
      * The collector method for the module strings
      *
-     * @return array The module strings for the current language
+     * @param string $moduleName The name of the module
+     * @param string $language The language for the translations
+     * @return array The module strings for the requested language
      */
-    public function getModuleStrings( $moduleName ) {
+    public function getModuleStrings( $moduleName, $language = 'en_us' ) {
         // Bug 58174 - Escaped labels are sent to the client escaped
-        $strings = return_module_language($GLOBALS['current_language'],$moduleName);
+        $strings = return_module_language($language,$moduleName);
         if (is_array($strings)) {
             foreach ($strings as $k => $v) {
                 $strings[$k] = $this->decodeStrings($v);
@@ -425,24 +427,22 @@ class MetaDataManager {
 
     /**
      * The collector method for the app strings
-     *
-     * @return array The app strings for the current language, and a hash of the app strings
+     * 
+     * @param string $lang The language you wish to fetch the app strings for
+     * @return array The app strings for the requested language
      */
-    public function getAppStrings() {
-        $appStrings = $GLOBALS['app_strings'];
-        $appStrings['_hash'] = md5(serialize($appStrings));
-        return $appStrings;
+    public function getAppStrings($lang = 'en_us' ) {
+        return return_application_language($lang);
     }
 
     /**
      * The collector method for the app strings
      *
-     * @return array The app strings for the current language, and a hash of the app strings
+     * @param string $lang The language you wish to fetch the app list strings for
+     * @return array The app list strings for the requested language
      */
-    public function getAppListStrings() {
-        $appStrings = $GLOBALS['app_list_strings'];
-        $appStrings['_hash'] = md5(serialize($appStrings));
-        return $appStrings;
+    public function getAppListStrings($lang = 'en_us') {
+        return return_app_list_strings_language($lang);
     }
 
     /**
