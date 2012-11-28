@@ -151,6 +151,7 @@ class CurrentUserApi extends SugarApi {
         //BEGIN SUGARCRM flav=pro ONLY
         $user_data['primary_team_name'] = $current_user->team_name;
         $user_data['primary_team_id'] = $current_user->team_id;
+        $user_data['default_teams'] = $current_user->get_my_teams();
         //END SUGARCRM flav=pro ONLY
         if(isset($current_user->preferred_language)) {
             $user_data['preferred_language'] = $current_user->preferred_language;
@@ -248,8 +249,9 @@ class CurrentUserApi extends SugarApi {
      * @return array
      */  
     public function getAcls($platform) {
+        // in this case we should always have current_user be the user
+        global $current_user;        
         $mm = $this->getMetadataManager($platform);
-        $current_user = $this->getUserBean();
         $fullModuleList = array_keys($GLOBALS['app_list_strings']['moduleList']);
         $acls = array();
         foreach ($fullModuleList as $modName) {
@@ -260,7 +262,7 @@ class CurrentUserApi extends SugarApi {
             }
 
 
-            $acls[$modName] = $mm->getAclForModule($modName,$current_user->id);
+            $acls[$modName] = $mm->getAclForModule($modName,$current_user);
             $acls[$modName] = $this->verifyACLs($acls[$modName]);
         }
         // Handle enforcement of acls for clients that override this (e.g. portal)

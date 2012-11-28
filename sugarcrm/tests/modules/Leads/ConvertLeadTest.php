@@ -34,6 +34,20 @@ class ConvertLeadTest extends Sugar_PHPUnit_Framework_TestCase
         $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
         $GLOBALS['app_list_strings'] = return_app_list_strings_language($GLOBALS['current_language']);
     }
+
+    public static function setUpBeforeClass()
+    {
+        if(file_exists('custom/modules/Leads/metadata/editviewdefs.php')) {
+           rename('custom/modules/Leads/metadata/editviewdefs.php', 'custom/modules/Leads/metadata/editviewdefs.php.bak');
+        }
+    }
+
+    public static function tearDownAfterClass()
+    {
+        if(file_exists('custom/modules/Leads/metadata/editviewdefs.php.bak')) {
+            rename('custom/modules/Leads/metadata/editviewdefs.php.bak', 'custom/modules/Leads/metadata/editviewdefs.php');
+        }
+    }
     
     public function tearDown()
     {

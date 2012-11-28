@@ -153,7 +153,7 @@
         
         //This is fired when anything in the worksheets is saved.  We want to wait until this happens
         //before we go and grab new chart data.
-        this.context.forecasts.on("forecasts:commitButtons:saved", function(){
+        this.context.forecasts.on("forecasts:commitButtons:saved forecasts:committed:saved", function(){
             self.renderChart();
         });  
         

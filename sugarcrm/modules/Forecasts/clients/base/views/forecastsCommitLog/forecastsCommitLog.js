@@ -232,7 +232,7 @@
         var loopPreviousModel = '';
         var models = _.clone(self.collection.models).reverse();
         _.each(models, function (model) {
-            self.historyLog.push(app.forecasts.utils.createHistoryLog(loopPreviousModel, model));
+            self.historyLog.push(app.forecasts.utils.createHistoryLog(loopPreviousModel, model, self.context.forecasts.config));
             loopPreviousModel = model;           
         });
         

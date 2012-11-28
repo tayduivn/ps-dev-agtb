@@ -28,27 +28,33 @@
 var rtl = rtl == "undefined" ? false : rtl;
 var modals=new Array();
 modals[0] = {
-    target: "#globalLinksModule",
-    title: SUGAR.language.get('app_strings', 'LBL_TOUR_PDF_MANAGER'),
-    content: SUGAR.language.get('app_strings', 'LBL_TOUR_PDF_MANAGER_DESCRIPTION'),
-    placement: "bottom"
+    title: SUGAR.language.get('app_strings', 'LBL_TOUR_SCREEN_1_TITLE'),
+    content: SUGAR.language.get('app_strings', 'LBL_TOUR_SCREEN_1_DESCRIPTION'),
+    screenShotUrl: 'themes/default/images/pt-screen1-full.png'
 };
 modals[1] = {
-    title: SUGAR.language.get('app_strings', 'LBL_TOUR_MEETINGS_CALLS'),
-    content: SUGAR.language.get('app_strings', 'LBL_TOUR_MEETINGS_CALLS_DESCRIPTION')
+    title: SUGAR.language.get('app_strings', 'LBL_TOUR_SCREEN_2_TITLE'),
+    content: SUGAR.language.get('app_strings', 'LBL_TOUR_SCREEN_2_DESCRIPTION'),
+    screenShotUrl: 'themes/default/images/pt-screen2-full.png'
 };
 modals[2] = {
-    target: "#dcmenuSugarCube",
-    title: SUGAR.language.get('app_strings', 'LBL_TOUR_NOTIFICATIONS'),
-    content: SUGAR.language.get('app_strings', 'LBL_TOUR_NOTIFICATIONS_DESCRIPTION'),
-    placement: "bottom"
+    title: SUGAR.language.get('app_strings', 'LBL_TOUR_SCREEN_3_TITLE'),
+    content: SUGAR.language.get('app_strings', 'LBL_TOUR_SCREEN_3_DESCRIPTION'),
+    screenShotUrl: 'themes/default/images/pt-screen3-full.png'
 };
 modals[3] = {
-    title: SUGAR.language.get('app_strings', 'LBL_TOUR_SPELL_CHECK'),
-    content: SUGAR.language.get('app_strings', 'LBL_TOUR_SPELL_CHECK_DESCRIPTION')
+    title: SUGAR.language.get('app_strings', 'LBL_TOUR_SCREEN_4_TITLE'),
+    content: SUGAR.language.get('app_strings', 'LBL_TOUR_SCREEN_4_DESCRIPTION'),
+    screenShotUrl: 'themes/default/images/pt-screen4-full.png'
 };
 modals[4] = {
-    title: SUGAR.language.get('app_strings', 'LBL_TOUR_IE8'),
-    content: SUGAR.language.get('app_strings', 'LBL_TOUR_IE8_DESCRIPTION')
+    title: SUGAR.language.get('app_strings', 'LBL_TOUR_SCREEN_5_TITLE'),
+    content: SUGAR.language.get('app_strings', 'LBL_TOUR_SCREEN_5_DESCRIPTION'),
+    screenShotUrl: 'themes/default/images/pt-screen5-full.png'
+};
+modals[5] = {
+    title: SUGAR.language.get('app_strings', 'LBL_TOUR_SCREEN_6_TITLE'),
+    content: SUGAR.language.get('app_strings', 'LBL_TOUR_SCREEN_6_DESCRIPTION'),
+    screenShotUrl: 'themes/default/images/pt-screen6-full.png'
 };
 
