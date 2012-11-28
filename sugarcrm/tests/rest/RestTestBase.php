@@ -30,6 +30,7 @@ abstract class RestTestBase extends Sugar_PHPUnit_Framework_TestCase
     protected $refreshToken;
     protected $_user;
     protected $consumerId = "sugar";
+    protected $version = '10';
 
     public function setUp()
     {
@@ -87,7 +88,8 @@ abstract class RestTestBase extends Sugar_PHPUnit_Framework_TestCase
         // lying around in an open transaction.
         $GLOBALS['db']->commit();
 
-        $urlBase = $GLOBALS['sugar_config']['site_url'].'/api/rest.php/v6/';
+        $urlBase = $GLOBALS['sugar_config']['site_url'].'/api/rest.php/v' . $this->version . '/';
+        
         if ( empty($this->authToken) ) {
             $this->_restLogin();
         }
