@@ -61,7 +61,7 @@ class Bug56391Test extends Sugar_PHPUnit_Framework_TestCase
                                     'export' => 'no',
                                     'massupdate' => 'no',
                                 );
-        $acls = $mm->getAclForModule('Users', $GLOBALS['current_user']->id);
+        $acls = $mm->getAclForModule('Users', $GLOBALS['current_user']);
         unset($acls['_hash']);
         // not checking fields right now
         unset($acls['fields']);
@@ -94,7 +94,7 @@ class Bug56391Test extends Sugar_PHPUnit_Framework_TestCase
                                     'export' => 'yes',
                                     'massupdate' => 'yes',
                                 );
-        $acls = $mm->getAclForModule('Users', $GLOBALS['current_user']->id);
+        $acls = $mm->getAclForModule('Users', $GLOBALS['current_user']);
         unset($acls['_hash']);
         // not checking fields right now
         unset($acls['fields']);
@@ -144,7 +144,7 @@ class Bug56391Test extends Sugar_PHPUnit_Framework_TestCase
         $mm = new MetaDataManager($GLOBALS['current_user']);
         foreach($modules AS $module) {
             unset($_SESSION['ACL']);
-            $acls = $mm->getAclForModule($module, $GLOBALS['current_user']->id);    
+            $acls = $mm->getAclForModule($module, $GLOBALS['current_user']);
             unset($acls['_hash']);
             // not checking fields right now
             unset($acls['fields']);
@@ -203,7 +203,7 @@ class Bug56391Test extends Sugar_PHPUnit_Framework_TestCase
 
         $mm = new MetaDataManager($GLOBALS['current_user']);
         foreach($modules AS $module) {
-            $acls = $mm->getAclForModule($module, $GLOBALS['current_user']->id);
+            $acls = $mm->getAclForModule($module, $GLOBALS['current_user']);
             unset($acls['_hash']);
             $this->assertEquals($expected_result, $acls);
         }
