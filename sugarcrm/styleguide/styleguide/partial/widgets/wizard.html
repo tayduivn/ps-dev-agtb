@@ -148,30 +148,30 @@
 
 <script src="js/wizard.js"></script>
 <script type="text/javascript">
-    $("#launch_simple_wizard").on('click', function() {
+    $('#launch_simple_wizard').on('click', function() {
         wizard.init({
             id: 'wizardSimpleDemo',
-            modalUrl: "wizard.html",
+            modalUrl: 'partial/widgets/wizard-modal.html',
             className: 'setup',
-            headerText: "Simple Wizard Demo",
-            navMenu: new Array("Screen Two","Screen Screen Three","Screen Four")
+            headerText: 'Simple Wizard Demo',
+            navMenu: new Array('Screen Two','Screen Screen Three','Screen Four')
         });
     });
 
-    $("#launch_wizard").on('click', function() {
+    $('#launch_wizard').on('click', function() {
         wizard.init({
             id: 'wizardDemo',
-            modalUrl: "wizard.html",
+            modalUrl: 'partial/widgets/wizard-modal.html',
             className: 'setup',
-            headerText: "Custom Wizard Demo",
-            navMenu: new Array("Screen Two","Screen Screen Three","Screen Four"),
+            headerText: 'Custom Wizard Demo',
+            navMenu: new Array('Screen Two','Screen Screen Three','Screen Four'),
             'onWizardStart': function () {
-                $('#wizardDemo .start').live("click", function(){
-                    $("#wizardDemo .manual").css("display","none");
+                $('#wizardDemo .start').live('click', function(){
+                    $('#wizardDemo .manual').css('display','none');
                 });
             },
             defaults: {
-                startText: "Setup Wizard",
+                startText: 'Setup Wizard',
                 'footer': function () {
                     return '<div class="modal-footer">' +
                             '<a href="#" class="btn btn-invisible btn-link pull-left cancel">'+ this.cancelText+'</a>' +
