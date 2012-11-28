@@ -249,9 +249,170 @@ input[type=radio] {
 }
 
 .card2 {
-  .address > span[sfuuid] {
-    display:block;
-  }
+	.address > span[sfuuid] {
+		display:block;
+	}
+}
+
+
+/* Editable URLs */
+.urleditable-wrap {
+	height:30px;
+	a.btn-mini.urleditable:not(:hover) {
+	  background:transparent;
+	  border-color:transparent;
+	  -webkit-box-shadow:none;
+	  -moz-box-shadow:none;
+	  box-shadow:none;
+	}
+	.urleditable {
+		.icon-pencil {
+			visibility:hidden;
+		}
+	}
+	form {
+		display:inline;
+			input {
+			  width:210px;
+			}
+	}
+	.editable-trigger {
+		margin-right:6px;
+	}
+	&:hover .icon-pencil {
+		visibility:visible;
+	}
+	.urleditable-field {
+		&> a {
+			width:210px;
+			overflow:hidden;
+			display:inline-block;
+			text-overflow:ellipsis;
+		}
+		form input {
+			padding-top:0px;
+			top:2px;
+			left:1px;
+			height:20px;
+		}
+	}
+
+}
+
+
+.control-group.error {
+	.urleditable-wrap {
+		.editable-trigger > i,
+		.urleditable-field a {
+			color:@errorText !important;
+		}
+	}
+}
+
+.mu.extend .fieldPlaceHolder {
+margin-left:4px;
+}
+
+
+
+
+/* Customize look of upload button */
+.upload-field-custom {
+	overflow: hidden;
+	display: inline-block;
+	position: relative;
+	vertical-align: middle;
+	text-align: center;
+	height:18px !important;
+	padding-right: 0 !important;
+	padding-left: 0 !important;
+	input {
+		position: absolute;
+		top: 0;
+		left: 0;
+		margin: 0;
+		font-size: 70px;
+
+		/* Loses tab index in webkit if width is set to 0 */
+		opacity: 0;
+		filter: alpha(opacity=0);
+	}
+	/*
+	&.focus {
+	  outline: 2px solid yellow;
+	  }
+	*/
+
+	&:active strong {
+		color:#ffffff;
+	}
+
+	span {
+	  position: absolute;
+	  top: 0;
+	  left: 0;
+	  display: inline-block;
+
+	  /* Adjust button text vertical alignment */
+	  padding-top: .45em;
+
+	  &> strong {
+	  	white-space:nowrap;
+
+	  }
+	}
+
+	&,
+	& span {
+		width: 100px;
+	}
+}
+
+.file-upload-status {
+  padding:0 0 0 .5em;
+  position:relative;
+  top:2 px;
+}
+
+//headerpane record name edit
+h1 input[type="text"] {
+	font-size: 20px;
+	height: 28px;
+	margin: 0;
+}
+
+
+
+/* Inline avatar upload */
+.upload-field-custom.avatar {
+  position: absolute;
+  margin-top:35px;
+  margin-left:1px;
+  padding: 0;
+  height: 12px !important;
+  width:46px !important;
+  opacity:.85;
+  z-index:2;
+  background:@black;
+
+
+  border-top-left-radius: 0;
+  border-top-right-radius: 0;
+
+  -webkit-border-top-left-radius: 0;
+  -webkit-border-top-right-radius: 0;
+
+  -moz-border-radius-topright: 0;
+  -moz-border-radius-topleft: 0;
+
+}
+
+.upload-field-custom.avatar .file-upload span {
+  padding: 0;
+  font-size: 10px;
+  line-height: 10px;
+  color:#fff;
+  width:46px !important;
 }
 
 @media (max-width: 480px) {

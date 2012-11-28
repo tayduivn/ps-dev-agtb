@@ -7032,6 +7032,96 @@ input[disabled], select[disabled], textarea[disabled], input[readonly], select[r
 input[type=radio] { display:inline-block; }
 .btn-group > .btn.active { z-index:0; }
 .card2 .address > span[sfuuid] { display:block; }
+.urleditable-wrap { height:30px; }
+.urleditable-wrap a.btn-mini.urleditable:not(:hover) {
+  background:transparent;
+  border-color:transparent;
+  -webkit-box-shadow:none;
+  -moz-box-shadow:none;
+  box-shadow:none;
+}
+.urleditable-wrap .urleditable .icon-pencil { visibility:hidden; }
+.urleditable-wrap form { display:inline; }
+.urleditable-wrap form input { width:210px; }
+.urleditable-wrap .editable-trigger { margin-right:6px; }
+.urleditable-wrap:hover .icon-pencil { visibility:visible; }
+.urleditable-wrap .urleditable-field> a {
+  width:210px;
+  overflow:hidden;
+  display:inline-block;
+  text-overflow:ellipsis;
+}
+.urleditable-wrap .urleditable-field form input {
+  padding-top:0px;
+  top:2px;
+  left:1px;
+  height:20px;
+}
+.control-group.error .urleditable-wrap .editable-trigger > i, .control-group.error .urleditable-wrap .urleditable-field a { color:#b60000 !important; }
+.mu.extend .fieldPlaceHolder { margin-left:4px; }
+.upload-field-custom {
+  overflow:hidden;
+  display:inline-block;
+  position:relative;
+  vertical-align:middle;
+  text-align:center;
+  height:18px !important;
+  padding-right:0 !important;
+  padding-left:0 !important;
+}
+.upload-field-custom input {
+  position:absolute;
+  top:0;
+  left:0;
+  margin:0;
+  font-size:70px;
+  opacity:0;
+  filter:1;
+}
+.upload-field-custom:active strong { color:#ffffff; }
+.upload-field-custom span {
+  position:absolute;
+  top:0;
+  left:0;
+  display:inline-block;
+  padding-top:.45em;
+}
+.upload-field-custom span> strong { white-space:nowrap; }
+.upload-field-custom, .upload-field-custom span { width:100px; }
+.file-upload-status {
+  padding:0 0 0 .5em;
+  position:relative;
+  top:2 px;
+}
+h1 input[type="text"] {
+  font-size:20px;
+  height:28px;
+  margin:0;
+}
+.upload-field-custom.avatar {
+  position:absolute;
+  margin-top:35px;
+  margin-left:1px;
+  padding:0;
+  height:12px !important;
+  width:46px !important;
+  opacity:.85;
+  z-index:2;
+  background:#000000;
+  border-top-left-radius:0;
+  border-top-right-radius:0;
+  -webkit-border-top-left-radius:0;
+  -webkit-border-top-right-radius:0;
+  -moz-border-radius-topright:0;
+  -moz-border-radius-topleft:0;
+}
+.upload-field-custom.avatar .file-upload span {
+  padding:0;
+  font-size:10px;
+  line-height:10px;
+  color:#ffffff;
+  width:46px !important;
+}
 @media (max-width: 480px) {
   .row > .empty, .row-fluid > .empty { display:none !important; }
 }
