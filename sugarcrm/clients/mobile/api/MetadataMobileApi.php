@@ -24,20 +24,4 @@ require_once 'clients/base/api/MetadataApi.php';
 
 // An API to let the user in to the metadata
 class MetadataMobileApi extends MetadataApi {
-    /**
-     * Gets the list of modules for this client
-     *
-     * @return array
-     */
-    protected function getModules() {
-        // replicate the essential part of the behavior of the private loadMapping() method in SugarController
-        foreach(SugarAutoLoader::existingCustom('include/MVC/Controller/wireless_module_registry.php') as $file){
-                require $file;
-        }
-
-        // $wireless_module_registry is defined in the file loaded above
-        return isset($wireless_module_registry) && is_array($wireless_module_registry) ?
-               array_keys($wireless_module_registry) :
-               array();
-    }
 }

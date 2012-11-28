@@ -336,6 +336,7 @@ class CurrentUserApi extends SugarApi {
         $user_data['decimal_precision'] = $locale->getPrecision();
         $user_data['decimal_separator'] = $locale->getDecimalSeparator();
         $user_data['number_grouping_separator'] = $locale->getNumberGroupingSeparator();
+        $user_data['module_list'] = $this->getModuleList();
 
         return $user_data;
     }
@@ -492,5 +493,49 @@ class CurrentUserApi extends SugarApi {
         return $args['preference_name'];
     }
 
+    /**
+     * Gets display module list per user defined tabs
+     * @return array
+     */
+    public function getModuleList() {
+        $current_user = $this->getUserBean();
+        // Loading a standard module list
+        require_once("modules/MySettings/TabController.php");
+        $controller = new TabController();
+        $moduleList = $this->list2Array($controller->get_user_tabs($current_user));
+        // always add back in employees see Bug58563
+        if (!in_array('Employees',$moduleList['module_list'])) {
+            $moduleList[] = 'Employees';
+        }
+        return $moduleList;
+    }
+    /**
+     * Filters a list of modules against the display modules
+     * @param $moduleList
+     * @return array
+     */
+    protected function filterDisplayModules($moduleList)
+    {
+        $current_user = $this->getUserBean();
+        // Loading a standard module list
+        require_once("modules/MySettings/TabController.php");
+        $controller = new TabController();
+        $ret = array_intersect_key($controller->get_user_tabs($current_user), $moduleList);
+        return $this->list2Array($ret);
 
+    }
+
+    /**
+     * converts hash into flat array preserving order
+     * @param $ret
+     * @return array
+     */
+    public function list2Array($ret) {
+        $output = array();
+        foreach($ret as $mod => $lbl)
+        {
+            $output[] = $mod;
+        }
+        return $output;
+    }
 }
