@@ -196,6 +196,8 @@
         return true;
     },
     hide: function() {
+        if (!this.isVisible()) return false;
+
         if (!this.triggerBefore("hide", this)) return false;
         //restore back to the scroll position at the top
         var inspector_container = this.$(".inspector:first");
