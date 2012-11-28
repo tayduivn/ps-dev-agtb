@@ -100,6 +100,7 @@
     },
 
     handleShow: function() {
+        this.$('.accordion-heading').addClass('active');
         this.showBody();
         this.showSubViewToggle();
     },
@@ -110,6 +111,7 @@
     },
 
     handleHide: function() {
+        this.$('.accordion-heading').removeClass('active');
         this.updatePanelHeader();
         this.hideSubViewToggle();
     },
