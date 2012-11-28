@@ -47,10 +47,14 @@ class SugarFieldHandler
         $field = self::fixupFieldType($field);
         $field = ucfirst($field);
 
+        $GLOBALS['log']->fatal("THIS IS THE FIELD {$field}");
+
         if(!isset($sugarFieldObjects[$field])) {
+                    $GLOBALS['log']->fatal("include/SugarFields/Fields/{$field}/SugarField{$field}.php");
+
         	//check custom directory
         	$file = SugarAutoLoader::existingCustomOne("include/SugarFields/Fields/{$field}/SugarField{$field}.php");
-
+        $GLOBALS['log']->fatal(var_export($file, true));            
         	if($file) {
                 $type = $field;
         	} else {
