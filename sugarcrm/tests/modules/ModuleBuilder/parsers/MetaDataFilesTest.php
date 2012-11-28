@@ -76,6 +76,43 @@ class MetaDataFilesTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertEquals('FO RIZZLE (base)',$fileContents['fo']['templates']['rizzle'],"Did not correctly read in the contents of the rizzle template");
     }
 
+    public function testLoadingCustomFieldTemplate()
+    {
+        $this->createdDirs[] = 'clients/base/fields/fo';
+        SugarAutoLoader::ensureDir($this->createdDirs[0]);
+        $this->createdDirs[] = 'custom/clients/base/fields/fo';
+        SugarAutoLoader::ensureDir($this->createdDirs[1]);
+        
+        // These have to be in this order, to simulate how they return from getClientFiles
+        $this->createdFiles[] = 'custom/clients/base/fields/fo/rizzle.hbt';
+        SugarAutoLoader::put($this->createdFiles[0],'FO RIZZLE (custom)');
+        $this->createdFiles[] = 'custom/clients/base/fields/fo/drizzle.hbt';
+        SugarAutoLoader::put($this->createdFiles[1],'FO DRIZZLE (custom)');
+        $this->createdFiles[] = 'clients/base/fields/fo/rizzle.hbt';
+        SugarAutoLoader::put($this->createdFiles[2],'FO RIZZLE (base)');
+        $this->createdFiles[] = 'clients/base/fields/fo/fizzle.hbt';
+        SugarAutoLoader::put($this->createdFiles[3],'FO FIZZLE (base)');
+
+        $fileList = MetaDataFiles::getClientFiles(array('base'),'field');
+        
+        $myFileList = array();
+        foreach ( $this->createdFiles as $fileName ) {
+            $this->assertArrayHasKey($fileName,$fileList,"The file list should contain: ". $fileName);
+            $myFileList[$fileName] = $fileList[$fileName];
+        }
+
+        $fileContents = MetaDataFiles::getClientFileContents($myFileList,'field');
+
+        $this->assertArrayHasKey('fo',$fileContents,"Didn't find the fo section.");
+        $this->assertArrayHasKey('templates',$fileContents['fo'],"Didn't figure out that rizzle.hbt was a template");
+        $this->assertArrayHasKey('rizzle',$fileContents['fo']['templates'],"Didn't correctly put rizzle in the template section");
+        $this->assertArrayHasKey('fizzle',$fileContents['fo']['templates'],"Didn't correctly put fizzle in the template section");
+        $this->assertArrayHasKey('drizzle',$fileContents['fo']['templates'],"Didn't correctly put drizzle in the template section");
+        $this->assertEquals('FO RIZZLE (custom)',$fileContents['fo']['templates']['rizzle'],"Did not correctly read in the contents of the rizzle template");
+        $this->assertEquals('FO FIZZLE (base)',$fileContents['fo']['templates']['fizzle'],"Did not correctly read in the contents of the fizzle template");
+        $this->assertEquals('FO DRIZZLE (custom)',$fileContents['fo']['templates']['drizzle'],"Did not correctly read in the contents of the drizzle template");
+    }
+
     public function testLoadingFieldController()
     {
         $this->createdDirs[] = 'clients/base/fields/fo';
@@ -102,13 +139,11 @@ class MetaDataFilesTest extends Sugar_PHPUnit_Framework_TestCase
 
         $fileList = MetaDataFiles::getClientFiles(array('mobile','base'),'field');
 
-        $justMyFileList = array();
         foreach ( $this->createdFiles as $fileName) {
             $this->assertArrayHasKey($fileName,$fileList,"The file list should contain $fileName");
-            $justMyFileList[$fileName] = $fileList[$fileName];
         }
 
-        $fileContents = MetaDataFiles::getClientFileContents($justMyFileList,'field');
+        $fileContents = MetaDataFiles::getClientFileContents($fileList,'field');
 
         $this->assertArrayHasKey('fo',$fileContents,"Didn't find the fo section.");
         $this->assertArrayHasKey('templates',$fileContents['fo'],"Didn't figure out that rizzle.hbt was a template");
@@ -124,16 +159,12 @@ class MetaDataFilesTest extends Sugar_PHPUnit_Framework_TestCase
 
         $fileList = MetaDataFiles::getClientFiles(array('base'),'field');
 
-        $justMyFileList = array();
         $this->assertArrayHasKey($this->createdFiles[0],$fileList,"The file list should contain ".$this->createdFiles[0]);
         $this->assertArrayHasKey($this->createdFiles[1],$fileList,"The file list should contain ".$this->createdFiles[1]);
         $this->assertArrayNotHasKey($this->createdFiles[2],$fileList,"The file list should NOT contain ".$this->createdFiles[2]);
         $this->assertArrayNotHasKey($this->createdFiles[3],$fileList,"The file list should NOT contain ".$this->createdFiles[3]);
 
-        $justMyFileList[] = $fileList[$this->createdFiles[0]];
-        $justMyFileList[] = $fileList[$this->createdFiles[1]];
-
-        $fileContents = MetaDataFiles::getClientFileContents($justMyFileList,'field');
+        $fileContents = MetaDataFiles::getClientFileContents($fileList,'field');
 
         $this->assertArrayHasKey('fo',$fileContents,"Didn't find the fo section. 2");
         $this->assertArrayHasKey('templates',$fileContents['fo'],"Didn't figure out that rizzle.hbt was a template 2");
@@ -180,13 +211,11 @@ class MetaDataFilesTest extends Sugar_PHPUnit_Framework_TestCase
 
         $fileList = MetaDataFiles::getClientFiles(array('mobile','base'),'view','Accounts');
 
-        $justMyFileList = array();
         foreach ( $this->createdFiles as $fileName) {
             $this->assertArrayHasKey($fileName,$fileList,"The file list should contain $fileName");
-            $justMyFileList[$fileName] = $fileList[$fileName];
         }
 
-        $fileContents = MetaDataFiles::getClientFileContents($justMyFileList,'view','Accounts');
+        $fileContents = MetaDataFiles::getClientFileContents($fileList,'view','Accounts');
 
         $this->assertArrayHasKey('fo',$fileContents,"Didn't find the fo section.");
         $this->assertArrayHasKey('templates',$fileContents['fo'],"Didn't figure out that rizzle.hbt was a template");
@@ -206,7 +235,6 @@ class MetaDataFilesTest extends Sugar_PHPUnit_Framework_TestCase
 
         $fileList = MetaDataFiles::getClientFiles(array('base'),'view','Accounts');
 
-        $justMyFileList = array();
         $this->assertArrayHasKey($this->createdFiles[0],$fileList,"2 The file list should contain ".$this->createdFiles[0]);
         $this->assertArrayHasKey($this->createdFiles[1],$fileList,"2 The file list should contain ".$this->createdFiles[1]);
         $this->assertArrayHasKey($this->createdFiles[2],$fileList,"2 The file list should contain ".$this->createdFiles[2]);
@@ -214,11 +242,7 @@ class MetaDataFilesTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertArrayNotHasKey($this->createdFiles[4],$fileList,"2 The file list should NOT contain ".$this->createdFiles[4]);
         $this->assertArrayNotHasKey($this->createdFiles[5],$fileList,"2 The file list should NOT contain ".$this->createdFiles[5]);
 
-        $justMyFileList[] = $fileList[$this->createdFiles[0]];
-        $justMyFileList[] = $fileList[$this->createdFiles[1]];
-        $justMyFileList[] = $fileList[$this->createdFiles[2]];
-
-        $fileContents = MetaDataFiles::getClientFileContents($justMyFileList,'view','Accounts');
+        $fileContents = MetaDataFiles::getClientFileContents($fileList,'view','Accounts');
 
         $this->assertArrayHasKey('fo',$fileContents,"Didn't find the fo section. 2");
         $this->assertArrayHasKey('templates',$fileContents['fo'],"Didn't figure out that rizzle.hbt was a template 2");
