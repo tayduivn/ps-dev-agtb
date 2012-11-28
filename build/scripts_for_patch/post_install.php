@@ -1216,7 +1216,7 @@ function process_email_address_relationships()
             _logThis('No matching row for new email address '.$new_email_address.', creating one', $path);
             $new_uuid = create_guid();
             $noMatchQuery = "INSERT INTO email_addresses VALUES ('".$new_uuid."', '".$new_email_address."', '".$GLOBALS['db']->quote(strtoupper($new_email_address))."', '".
-                     $row['invalid_email']."', '".$row['opt_out']."', '".$time_changed."', '".$GLOBALS['db']->now()."', '0')";
+                     $row['invalid_email']."', '".$row['opt_out']."', '".$time_changed."', ".$GLOBALS['db']->now().", '0')";
             $GLOBALS['db']->query($noMatchQuery);
             _logThis("Added as $new_uuid, query was ".$noMatchQuery, $path);
         }
