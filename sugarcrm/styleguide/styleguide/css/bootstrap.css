@@ -7032,26 +7032,26 @@ input[disabled], select[disabled], textarea[disabled], input[readonly], select[r
 input[type=radio] { display:inline-block; }
 .btn-group > .btn.active { z-index:0; }
 .card2 .address > span[sfuuid] { display:block; }
-.urleditable-wrap { height:30px; }
-.urleditable-wrap a.btn-mini.urleditable:not(:hover) {
+.inline-editable-wrap { height:30px; }
+.inline-editable-wrap a.btn-mini.urleditable:not(:hover) {
   background:transparent;
   border-color:transparent;
   -webkit-box-shadow:none;
   -moz-box-shadow:none;
   box-shadow:none;
 }
-.urleditable-wrap .urleditable .icon-pencil { visibility:hidden; }
-.urleditable-wrap form { display:inline; }
-.urleditable-wrap form input { width:210px; }
-.urleditable-wrap .editable-trigger { margin-right:6px; }
-.urleditable-wrap:hover .icon-pencil { visibility:visible; }
-.urleditable-wrap .urleditable-field> a {
+.inline-editable-wrap .inline-editable .icon-pencil { visibility:hidden; }
+.inline-editable-wrap form { display:inline; }
+.inline-editable-wrap form input { width:210px; }
+.inline-editable-wrap .editable-trigger { margin-right:6px; }
+.inline-editable-wrap:hover .icon-pencil { visibility:visible; }
+.inline-editable-wrap .editable-field> a {
   width:210px;
   overflow:hidden;
   display:inline-block;
   text-overflow:ellipsis;
 }
-.urleditable-wrap .urleditable-field form input {
+.inline-editable-wrap .editable-field form input {
   padding-top:0px;
   top:2px;
   left:1px;
