@@ -726,7 +726,7 @@ class MetaDataFiles
                 $filesInDir = SugarAutoLoader::getDirFiles($fullSubPath,false);
                 foreach ( $filesInDir as $fullFile ) {
                     $file = basename($fullFile);
-                    $fileIndex = $subPath.'/'.$file;
+                    $fileIndex = $fullFile;
                     if ( !isset($fileList[$fileIndex]) ) {
                         $fileList[$fileIndex] = array('path'=>$fullFile, 'file'=>$file, 'subPath'=>$subPath, 'platform'=>$pathInfo['platform']);
                         if ( $pathInfo['template'] && (substr($file,-4)=='.php') ) {
