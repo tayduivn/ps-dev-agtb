@@ -1647,8 +1647,6 @@ class ModuleInstaller{
 		if(!$application){
 		$GLOBALS['log']->debug( get_class($this)."->merge_files() : merging module files in custom/Extension/modules/<module>/$path to custom/modules/<module>/$path$name");
 		foreach($this->modules as $module){
-				//$GLOBALS['log']->debug("Merging Files for: ".$module);
-				//$GLOBALS['log']->debug("Merging Files for path: ".$path);
 				$extension = "<?php \n //WARNING: The contents of this file are auto-generated\n";
 				$extpath = "modules/$module/$path";
 				$module_install  = 'custom/Extension/'.$extpath;
@@ -1684,9 +1682,11 @@ class ModuleInstaller{
 					$out = sugar_fopen("custom/$extpath/$name", 'w');
 					fwrite($out,$extension);
 					fclose($out);
+                    SugarAutoLoader::addToMap("custom/$extpath/$name");
 				}else{
-					if(file_exists("custom/$extpath/$name")){
+					if(file_exists("custom/$extpath/$name")) {
 						unlink("custom/$extpath/$name");
+                        SugarAutoLoader::delFromMap("custom/$extpath/$name");
 					}
 				}
 			}
@@ -1719,9 +1719,11 @@ class ModuleInstaller{
 						$out = sugar_fopen("custom/$extpath/$name", 'w');
 						fwrite($out,$extension);
 						fclose($out);
+                        SugarAutoLoader::addToMap("custom/$extpath/$name");
 					}else{
 					if(file_exists("custom/$extpath/$name")){
 						unlink("custom/$extpath/$name");
+                        SugarAutoLoader::delFromMap("custom/$extpath/$name");
 					}
 				}
 
