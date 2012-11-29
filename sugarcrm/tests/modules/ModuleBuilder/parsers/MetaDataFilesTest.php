@@ -58,7 +58,6 @@ class MetaDataFilesTest extends Sugar_PHPUnit_Framework_TestCase
 
     public function testLoadingFieldTemplate()
     {
-        $this->markTestIncomplete("This test does not properly ensure that the clients/base/fields/fo directory is created");
         $this->createdDirs[] = 'clients/base/fields/fo';
         SugarAutoLoader::ensureDir($this->createdDirs[0]);
         
@@ -79,7 +78,6 @@ class MetaDataFilesTest extends Sugar_PHPUnit_Framework_TestCase
 
     public function testLoadingCustomFieldTemplate()
     {
-        $this->markTestIncomplete("This test does not properly ensure that the clients/base/fields/fo directory is created");
         $this->createdDirs[] = 'clients/base/fields/fo';
         SugarAutoLoader::ensureDir($this->createdDirs[0]);
         $this->createdDirs[] = 'custom/clients/base/fields/fo';
@@ -117,7 +115,6 @@ class MetaDataFilesTest extends Sugar_PHPUnit_Framework_TestCase
 
     public function testLoadingFieldController()
     {
-        $this->markTestIncomplete("This test does not properly ensure that the clients/base/fields/fo directory is created");
         $this->createdDirs[] = 'clients/base/fields/fo';
         SugarAutoLoader::ensureDir($this->createdDirs[0]);
         $this->createdDirs[] = 'clients/mobile/fields/fo';
@@ -183,7 +180,6 @@ class MetaDataFilesTest extends Sugar_PHPUnit_Framework_TestCase
 
     public function testLoadingViewEverything()
     {
-        $this->markTestIncomplete("This test does not properly ensure that the clients/base/fields/fo directory is created");
         $this->createdDirs[] = 'modules/Accounts/clients/base/views/fo';
         SugarAutoLoader::ensureDir($this->createdDirs[0]);
         $this->createdDirs[] = 'modules/Accounts/clients/mobile/views/fo';
