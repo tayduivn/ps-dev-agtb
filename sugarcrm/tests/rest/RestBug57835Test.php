@@ -22,7 +22,7 @@
  * Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.;
  * All Rights Reserved.
  ********************************************************************************/
-require_once('tests/rest/RestTestBase.php');
+require_once('tests/rest/RestTestPortalBase.php');
 
 class RestBug57835Test extends RestTestPortalBase
 {
