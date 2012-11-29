@@ -137,8 +137,8 @@
     },
 
     toggleFinishButton: function(enable) {
-        $('[name=lead_convert_finish_button]').toggleClass('enabled', enable);
-        $('[name=lead_convert_finish_button]').toggleClass('disabled', !enable);
+        this.$('[name=lead_convert_finish_button]').toggleClass('enabled', enable);
+        this.$('[name=lead_convert_finish_button]').toggleClass('disabled', !enable);
     },
 
     handlePanelUpdate: function() {
