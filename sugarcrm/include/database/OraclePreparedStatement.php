@@ -38,6 +38,47 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *
  * The meta interface has the following functions:
  */
+
+
+
+ /* to summarize what we are trying to do in Oracle:
+
+    $stmt = oci_parse($conn,"INSERT INTO testPreparedStatement (id, col1, col2) VALUES(:p1, :p2, :p3)");
+    $bound = array();
+    oci_bind_by_name($stmt, ":p1", $bound[1], -1, $dataTypes[1]);
+    oci_bind_by_name($stmt, ":p2", $bound[2], -1, $dataTypes[2]);
+    oci_bind_by_name($stmt, ":p3", $bound[3], -1, $dataTypes[3]);
+    oci_execute($stmt);
+
+  The stages it goes through are:
+
+    DBManager.insertParams
+        Table:      testPreparedStatement
+        Field_defs: { ['id']   => { ['name'] => 'id',   ['type'] => 'id',      ['required']=>true },
+                    { ['col1'] => { ['name'] => 'col1', ['type'] => 'varchar', ['len'] => '100' },
+                    { ['col2'] => { ['name'] => 'col2', ['type'] => 'varchar', ['len'] => '100' },
+        Data:       { ['id'] => 3, ['col1'] => "col1 data for id 3", ['col2'] => "col2 data for id 3" }
+        Field_map:  null
+
+    PreparedStatement.__construct
+	SQL:   INSERT INTO testPreparedStatement (id,col1,col2) VALUES (?id,?varchar,?varchar)
+        Data:  { ["id"]=> "'3'", ["col1"]=> "'col1 data for id 3'", ["col2"]=> "'col2 data for id 3'" }
+
+    OraclePreparedStatement.preparePreparedStatement
+	SQL:   INSERT INTO testPreparedStatement (id,col1,col2) VALUES (?,?,?)
+        Data:  { ["id"]=> "'3'", ["col1"]=> "'col1 data for id 3'", ["col2"]=> "'col2 data for id 3'" }
+	Types: { [0]=> {["type"]=>"id"}, [1]=>{["type"]=>"varchar"}, [2]=>{["type"]=>"varchar"}
+
+        $stmt = oci_parse($conn,"INSERT INTO testPreparedStatement (id, col1, col2) VALUES(:p1, :p2, :p3)");
+        $bound = array();
+        oci_bind_by_name($stmt, ":p1", $bound[1], -1, $dataTypes[1]);
+        oci_bind_by_name($stmt, ":p2", $bound[2], -1, $dataTypes[2]);
+        oci_bind_by_name($stmt, ":p3", $bound[3], -1, $dataTypes[3]);
+
+        Data: $bound = { [1]=> "3", [2]=> "col1 data for id 3", [3]=> "col2 data for id 3" }
+        oci_execute($stmt);
+ */
+
 require_once 'include/database/PreparedStatement.php';
 
 class OraclePreparedStatement extends PreparedStatement
@@ -108,9 +149,9 @@ class OraclePreparedStatement extends PreparedStatement
 
       echo "\n\n---------------------------------------------\n";
 
-      echo "preparePreparedStatement: entry  sqlText: >$sql <  \ndata:\n" ;
+      echo "==> OraclePreparedStatement.preparePreparedStatement: entry  sqlText: >$sql <  \ndata:\n" ;
       var_dump($data);
-      echo "fileddefs:\n";
+      echo "OraclePreparedStatement.preparePreparedStatement: fileddefs:\n";
       var_dump($fieldDefs);
 
 
@@ -130,7 +171,7 @@ class OraclePreparedStatement extends PreparedStatement
              $cleanedSql = $sql;
          else {     // parse the sql string looking for params
              while ($nextParam > 0 ) {
-                 $name = $fieldDefs[$i]['name'];
+                 $name = "p$i"; // we don't always get fielddefs so we make up our own instead of using $fieldDefs[$i]['name'];
                  $type = $fieldDefs[$i]['type'];
                  $dataType = $this->ps_type_map["$type"];
                  echo "Processing param $i Name: $name   type:$type   dataType: $dataType\n" ;
@@ -171,6 +212,9 @@ class OraclePreparedStatement extends PreparedStatement
       $sqlText = $cleanedSql;
       echo "\n\n\npreparePreparedStatement: oci_parse call for oracle converted sqlText: >$sqlText <  \n" ;
 
+
+      // do the parse
+      echo "\n\n\nOraclePreparedStatment.preparePreparedStatement: oci_parse call for oracle converted sqlText: >$sqlText <  \n" ;
       if (!($this->stmt = oci_parse($this->dblink, $sqlText))) {
           echo "preparePreparedStatement: Prepare Failed! \n";
           return "Prepare failed: (" . $this->dblink->errno . ") " . $this->dblink->error;
@@ -178,14 +222,15 @@ class OraclePreparedStatement extends PreparedStatement
 
       // bind the array elements
       $num_args = count($data);
-      echo "preparePreparedStatement: num_args from data: $num_args \n";
-
+      echo "OraclePreparedStatment.preparePreparedStatement: binding $num_args arguments \n";
       $this->bound_vars = $bound = array_fill(0, $num_args, null);
       $types = "";
       for($i=0; $i<$num_args;$i++) {
           $bound[$i] =& $this->bound_vars[$i];
-          echo "binding $fields[$i], $bound[$i], Type: $dataTypes[$i] \n";
-          oci_bind_by_name($this->stmt, $fields[$i], $bound[$i], -1,$dataTypes[$i]);
+          $dataTypes[$i] = SQLT_CHR;
+          $fieldName = "bound[" . $i . "]";
+          echo "binding $fields[$i] to $fieldName, Type: $dataTypes[$i]  \n";
+          oci_bind_by_name($this->stmt, $fields[$i], $fieldName, $dataTypes[$i]);   // $bound[$i]
       }
 
       return $this;
@@ -197,12 +242,21 @@ class OraclePreparedStatement extends PreparedStatement
    public function executePreparedStatement($data){
 
       echo "--------------------------------------------------\n";
-      echo "executePreparedStatement: entry    data:\n";
+      echo "==> OraclePreparedStatment.executePreparedStatement: entry    data is:\n";
       var_dump($data);
 
       // transfer the data from the input array to the bound array
       for($i=0; $i<count($data);$i++) {
-         $this->bound_vars[$i] = $data[$i];
+
+	  //strip quotation marks
+          $dataElement = array_shift($data);
+          if (substr($dataElement, 0, 1) =="'" )
+	      $dataElement = substr($dataElement,1);
+	  $len = strlen($dataElement);
+	  if (substr($dataElement, $len-1, 1) =="'" )
+	      $dataElement = substr($dataElement,0, $len-1);
+
+          $this->bound_vars[$i] = $dataElement;
       }
 
 

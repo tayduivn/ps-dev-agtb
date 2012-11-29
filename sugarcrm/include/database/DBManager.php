@@ -630,6 +630,8 @@ protected function checkQuery($sql, $object_name = false)
 	public function insertParams($table, $field_defs, $data, $field_map = null, $execute = true, $usePrepared=false)
 	{
 
+ 	    //echo "==> DBManager.insertParams starting for table: $table  execute: $execute usePrepared: $usePrepared \n";
+
         if ( isset($usePreparedStatements) AND ( $usePreparedStatements == true) )
             $usePrepared = true;
 
@@ -678,6 +680,8 @@ protected function checkQuery($sql, $object_name = false)
             return $execute?$this->query($query):$query;
         }
         else {  //Prepared Statement
+            //echo "DBManager: insertParams: building prepared query\n";
+
             $query = "INSERT INTO $table (".implode(",", array_keys($values)).") VALUES (";
             $delimiter = "";
             foreach($values as $valueKey => $value) {

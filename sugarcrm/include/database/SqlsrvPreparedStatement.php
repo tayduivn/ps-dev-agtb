@@ -130,8 +130,23 @@ class SqlsrvPreparedStatement extends PreparedStatement
       echo "preparePreparedStatement: entry  sqlText: >$sqlText <  data:\n" ;
       var_dump($data);
 
-      if (!($this->stmt = sqlsrv_prepare($this->dblink, $sqlText, $data))) {
+	  $keylessData = array();
+
+	  //strip quotation marks
+	  foreach($data as &$dataElement) {
+	      if (substr($dataElement, 0, 1) =="'" )
+			  $dataElement = substr($dataElement,1);
+		  $len = strlen($dataElement);
+		  if (substr($dataElement, $len-1, 1) =="'" )
+			  $dataElement = substr($dataElement,0, $len-1);
+          $keylessData[] = $dataElement;
+	  }
+      echo "preparePreparedStatement: cleaned data:\n" ;
+      var_dump($keylessData);
+
+      if (!($this->stmt = sqlsrv_prepare($this->dblink, $sqlText, $keylessData))) {
           echo "preparePreparedStatement: Prepare Failed! \n";
+		  print_r( sqlsrv_errors() );
           return "Prepare failed: (" . $this->dblink->errno . ") " . $this->dblink->error;
       }
       /*

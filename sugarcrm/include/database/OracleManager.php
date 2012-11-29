@@ -458,11 +458,18 @@ class OracleManager extends DBManager
      * (non-PHPdoc)
      * @see DBManager::insertParams()
      */
-    public function insertParams($table, $field_defs, $data, $field_map = null, $execute = true)
+    public function insertParams($table, $field_defs, $data, $field_map = null, $execute = true, $usePrepared=false)
     {
-        $sql = parent::insertParams($table, $field_defs, $data, $field_map, false);
-        if(!$execute) return $sql;
-        return $this->AltlobExecute($table, $field_defs, $data, $sql);
+
+        if ( !$usePrepared ) {
+            $sql = parent::insertParams($table, $field_defs, $data, $field_map, false, $usePrepared);
+            if(!$execute) return $sql;
+            return $this->AltlobExecute($table, $field_defs, $data, $sql);
+        }
+        else {
+            $sql = parent::insertParams($table, $field_defs, $data, $field_map, $execute, $usePrepared);
+            return $sql;
+        }
     }
 
     /**

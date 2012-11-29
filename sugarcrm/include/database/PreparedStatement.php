@@ -79,7 +79,7 @@ abstract class PreparedStatement{
         $this->dblink = $DBM->getDatabase();
 
 echo "=========================================\n";
-echo "Prepared Statement: sqlText: $sql\n";
+echo "==> Prepared Statement.__construct: start. sqlText: $sql\n";
 echo "\nData\n";
         var_dump($data);
 echo "\nFieldDefs\n";
@@ -108,40 +108,40 @@ echo "\n";
         // Build fieldDefs array and replace ?SugarDataType placeholders with a single ?placeholder
         $cleanedSql = "";
         $nextParam = strpos( $sql, "?" );
-echo "initial nextParam is at $nextParam\n";
+//echo "initial nextParam is at $nextParam\n";
         if ($nextParam == 0 )
             $cleanedSql = $sql;
         else {     // parse the sql string looking for params
            $row = 0;
            while ($nextParam > 0 ) {
-              echo "Processing a param. row=$row\n" ;
+//              echo "Processing a param. row=$row\n" ;
               $cleanedSql .= substr( $sql, 0, $nextParam + 1);  // we want the ?
-              echo "cleanedSql: $cleanedSql\n";
+//              echo "cleanedSql: $cleanedSql\n";
 
               $sql = substr( $sql, $nextParam + 1);   // strip leading chars
-              echo "remaining sql for sugarDataType is: $sql\n";
+//              echo "remaining sql for sugarDataType is: $sql\n";
 
               // scan for termination of SugarDataType
                $sugarDataType = "";
               for ($i=0; ($i < strlen($sql)) and (strpos(",) ", substr($sql, $i, 1)) === false); $i++){
-                 echo "testing >" . substr($sql, $i, 1) . "< Result was " . strpos(",) ", substr($sql, $i, 1)) . "\n";
+//                 echo "testing >" . substr($sql, $i, 1) . "< Result was " . strpos(",) ", substr($sql, $i, 1)) . "\n";
 //                 if ( (strpos(",) ", substr($sql, $i, 1)) == false ))
                  if (strpos(",) ", substr($sql, $i, 1)) == false) {
                  $sugarDataType .=  substr($sql, $i, 1);
               }
               }
-              echo "i is $i  sugarDataType is $sugarDataType \n";
+//              echo "i is $i  sugarDataType is $sugarDataType \n";
               // insert the fieldDef
-               echo "sugarDataType:\n";
+//               echo "sugarDataType:\n";
                var_dump($sugarDataType);
               if ( $sugarDataType === "" ) //no type, default to varchar
                   $fieldDefs[$row]['type'] = 'varchar';
               else
                   $fieldDefs[$row]['type'] = $sugarDataType;
               $sql = substr($sql, $i); // strip off the SugarDataType
-              echo "remaining sql is: $sql\n";
+//              echo "remaining sql is: $sql\n";
               $nextParam = strpos( $sql, "?" ); // look for another param
-              echo "another nextParam is at $nextParam\n";
+//              echo "another nextParam is at $nextParam\n";
               $row++;
 
 
