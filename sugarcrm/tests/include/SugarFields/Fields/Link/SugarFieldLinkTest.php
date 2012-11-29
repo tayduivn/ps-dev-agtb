@@ -28,7 +28,7 @@ class SugarFieldLinkTest extends Sugar_PHPUnit_Framework_TestCase
 {
 	public function setUp()
     {
-        $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
+        SugarTestHelper::setUp('current_user');
         $this->note = BeanFactory::newBean('Notes');
         $this->note->field_defs['testurl_c']['gen'] = 1;
         $this->note->field_defs['testurl_c']['default'] = 'http://test/{assigned_user_id}';
