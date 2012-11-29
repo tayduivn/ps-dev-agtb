@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8">
+    <title>Org Chart</title>
+    <link href="../css/nv.d3.css" rel="stylesheet" type="text/css">
+    <script src="../js/nvd3/lib/d3.v2.js"></script>
+    <script src="../js/nvd3/nv.d3.js"></script>
+    <style type="text/css">
+body {
+  background: url(../img/texture-noise.png);
+  overflow: hidden;
+  font-size: 14px;
+  font-family: "Helvetica Neue", Helvetica;
+}
+#org {
+  border: 1px solid black;
+  position: absolute;
+  left: 20px;
+  right: 20px;
+  top: 20px;
+  bottom: 20px;
+}
+.nv-card circle {
+  cursor: pointer;
+  fill: #fff;
+  stroke: steelblue;
+  stroke-width: 1.5px;
+}
+.nv-card text {
+  stroke: steelblue;
+}
+path.link {
+  fill: none;
+  stroke: #ccc;
+  stroke-width: 1.5px;
+}
+
+    </style>
+  </head>
+  <body>
+<div id="org"></div>
+    <script type="text/javascript">
+
+var container = d3.select("#org").node(),
+    m = [40, 20, 20, 20],
+    w = container.offsetWidth,
+    h = container.offsetHeight,
+    r = 4.5,
+    root = {},
+    data = [root],
+    tree = d3.layout.tree().size([w, h]).separation(separation),
+    diagonal = d3.svg.diagonal(),
+    duration = 1000,
+    prop = function(d){ return d*h/500; };
+
+var vis = d3.select("#org").append("svg:svg")
+  .append("svg:g")
+    .attr("transform", "translate(" + 0 + "," + m[0] + ")");
+
+
+d3.json("../js/nvd3/data/tree_data.json", function(json) {
+  root = json;
+  root.x0 = w / 2;
+  root.y0 = 0;
+
+  function toggleAll(d) {
+    if (d.children) {
+      d.children.forEach(toggleAll);
+      toggle(d);
+    }
+  }
+
+  // Initialize the display to show a few nodes.
+  //root.children.forEach(toggleAll);
+  //toggle(root.children[1]);
+
+  update(root);
+});
+
+nv.utils.windowResize(function(){ root.x0 = container.offsetWidth/2; update(root)});
+
+function update(source) {
+
+
+  vis.attr("transform", "translate(" + 0 + "," + m[0] + ")");
+
+  // Compute the new tree layout.
+  var nodes = tree.size([container.offsetWidth,container.offsetHeight]).nodes(root).reverse();
+
+  nodes.forEach(function(d) { d.y = d.depth * 100; });
+
+  // Update the nodes…
+  var node = vis.selectAll("g.nv-card")
+      .data(nodes, nodeId);
+
+
+  // Enter any new nodes at the parent's previous position.
+  var nodeEnter = node.enter().append("svg:g")
+      .attr("class", "nv-card")
+      .attr("transform", function(d) {
+        return "translate(" + source.x0 + "," + source.y0 + ")";
+      })
+      .on("click", function(d) {
+        // console.log(d.x);
+        // console.log(d.x0);
+        // console.log(d.y);
+        // console.log(d.y0);
+        // console.log('======== ');
+        toggle(d); update(d);
+      });
+
+  nodeEnter
+    .append("image")
+      .attr('class', 'nv-cardAvatar')
+      .attr("xlink:href", "https://github.com/favicon.ico")
+      .attr("x", -50)
+      .attr("y", -22)
+      .attr("width", 16)
+      .attr("height", 16);
+
+  nodeEnter
+    .append('svg:text')
+      .attr('class', 'nv-cardName')
+      .attr('x', -28)
+      .attr('y', -18)
+      .attr('text-anchor', 'start')
+      .text('Henry Rogers')
+      .style('stroke', 'none')
+      .style('fill', 'black')
+      .style('fill-opacity', 1e-6)
+      .style('font-size', prop(0.6)+'em')
+    ;
+  nodeEnter
+    .append('svg:text')
+      .attr('class', 'nv-cardTitle')
+      .attr('x', -28)
+      .attr('y', -2)
+      .attr('text-anchor', 'start')
+      .text('UI Engineer')
+      .style('stroke', 'none')
+      .style('fill', 'black')
+      .style('fill-opacity', 1)
+      .style('font-size', prop(0.5)+'em')
+    ;
+
+
+
+  nodeEnter
+    .insert('path','.nv-cardAvatar')
+    .attr('class', 'nv-cardBox')
+    .attr("d", function(d) {
+      var bbox = nodeEnter.node().getBBox();
+      return nv.utils.roundedRectangle(
+        //-(bbox.width/2+prop(2)), -(bbox.height-prop(2)), bbox.width+prop(8), bbox.height+prop(5), prop(2)
+        -(55), -(34), 110, 44, 2
+      )
+    })
+    .style('fill-opacity', 1e-6)
+    .attr('fill', '#eeffff')
+    .attr('stroke','black')
+    .attr('stroke-width','2px')
+    .attr('opacity',0.8)
+  ;
+
+  nodeEnter.append("svg:circle")
+      .attr("r", 1e-6)
+      .style("fill", function(d) { return d._children ? "lightsteelblue" : "#fff"; });
+
+
+
+
+  //Transition nodes to their new position.
+  var nodeUpdate = node.transition()
+      .duration(duration)
+      .attr("transform", function(d) { return "translate(" + d.x + "," + d.y + ")"; });
+
+  nodeUpdate.select("circle")
+      .attr("r", r)
+      .style("fill", function(d) { return d._children ? "lightsteelblue" : "#fff"; })
+      .attr('transform', function(d) {
+        return 'translate(0,'+ ( r + 3 ) +')';
+      });
+  nodeUpdate.select("text")
+      .style("fill-opacity", 1);
+  nodeUpdate.select(".nv-cardBox")
+      .style("fill-opacity", 1);
+
+
+
+  // Transition exiting nodes to the parent's new position.
+  var nodeExit = node.exit().transition()
+      .duration(duration)
+      .attr("transform", function(d) { return "translate(" + source.x + "," + source.y + ")"; })
+      .remove();
+
+  nodeExit.select("circle")
+      .attr("r", 1e-6);
+
+  nodeExit.select("text")
+      .style("fill-opacity", 1e-6);
+
+
+  // Update the links
+  var link = vis.selectAll("path.link")
+      .data(tree.links(nodes), linkId);
+
+  // Enter any new links at the parent's previous position.
+  link.enter().insert("svg:path", "g")
+      .attr("class", "link")
+      .attr("d", function(d) {
+        var o = {x: source.x0, y: source.y0};
+        return diagonal({source: o, target: o});
+      });
+
+  // Transition links to their new position.
+  link.transition()
+      .duration(duration)
+      .attr("d", diagonal);
+
+  // Transition exiting nodes to the parent's new position.
+  link.exit().transition()
+      .duration(duration)
+      .attr("d", function(d) {
+        var o = {x: source.x, y: source.y};
+        return diagonal({source: o, target: o});
+      })
+      .remove();
+
+
+
+  // Stash the old positions for transition.
+  nodes.forEach(function(d) {
+    d.x0 = d.x;
+    d.y0 = d.y;
+  });
+}
+
+function separation(a, b) {
+  // console.log(a);
+  // console.log(b);
+  return a.parent == b.parent ? 5 : 5;
+}
+
+function linkId(d) {
+  return d.source.id + "-" + d.target.id;
+}
+
+function nodeId(d) {
+  return d.id;
+}
+
+function x(d) {
+  return d.x0 = d.x;
+}
+
+function y(d) {
+  return d.y0 = d.y;
+}
+
+// Toggle children.
+function toggle(d) {
+  if (d.children) {
+    d._children = d.children;
+    d.children = null;
+  } else {
+    d.children = d._children;
+    d._children = null;
+  }
+}
+
+    </script>
+  </body>
+</html>
+<!--
+    d3_layout_treeVisitAfter(root, function(node) {
+      if(size === undefined || size == null) {
+              node.x = (node.x - x0) * elementsize[0];
+              node.y = node.depth * elementsize[1];
+      }
+      else {
+              node.x = (node.x - x0) / (x1 - x0) * size[0];
+              node.y = node.depth / y1 * size[1];
+      }
+      delete node._tree;
+    });  -->
