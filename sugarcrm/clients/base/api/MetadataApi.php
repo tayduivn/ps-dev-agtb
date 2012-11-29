@@ -639,7 +639,7 @@ class MetadataApi extends SugarApi {
                 $stringData['mod_strings'] = $modStrings;
             }
             $stringData['_hash'] = md5(serialize($stringData));
-            $fileList[$language] = sugar_cached('api/metadata/lang/'.$language.'_'.$stringData['_hash'].'.js');
+            $fileList[$language] = sugar_cached('api/metadata/lang/'.$language.'_'.$stringData['_hash'].'.json');
             sugar_file_put_contents_atomic($fileList[$language],json_encode($stringData));
         }
         
