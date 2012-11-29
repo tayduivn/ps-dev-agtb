@@ -1,6 +1,11 @@
 <?php
-
-class FilterPanelLayout {
+/**
+ * Creates a layout for views that include the filter panel.
+ *
+ * This view is used mostly on list views for items.
+ */
+class FilterPanelLayout
+{
     protected $defaultTab = array("name" => "Activity Stream", "toggles" => array("activitystream", "timeline", "calendar"));
     protected $defaultToggle = "activitystream";
 
@@ -9,7 +14,13 @@ class FilterPanelLayout {
     protected $layout;
     protected $baseLayout;
 
-    public function __construct($opts = array()) {
+    /**
+     * Constructor for FilterPanel Layout
+     * @param array $opts Takes an array of options. Set the 'override' key to
+     * whichever tab you want to focus on by default.
+     */
+    public function __construct($opts = array())
+    {
         $this->layout = MetaDataManager::getLayout('GenericLayout', array('name' => 'filterpanel', 'type' => 'filterpanel'));
         $this->baseLayout = MetaDataManager::getLayout('GenericLayout', array('name' => 'base'));
 
@@ -19,7 +30,8 @@ class FilterPanelLayout {
         }
     }
 
-    public function setDefaultTab($tabName, $toggleName = null) {
+    public function setDefaultTab($tabName, $toggleName = null)
+    {
         $this->layout->set("defaultTab", $tabName);
 
         if ($toggleName) {
@@ -27,14 +39,13 @@ class FilterPanelLayout {
         }
     }
 
-    public function setDefaultToggle($toggle) {
+    public function setDefaultToggle($toggle)
+    {
         $this->layout->set("defaultToggle", $toggle);
     }
 
-    /**
-     * @param {Array} $tab ['name' => 'TAB_NAME', 'toggles' => array('activitystream', 'list')]
-     */
-    public function setTab($tab) {
+    public function setTab($tab)
+    {
         if (!isset($tab["toggles"])) {
             $tab["toggles"] = $this->defaultToggle;
         }
@@ -42,7 +53,8 @@ class FilterPanelLayout {
         $this->tabMeta[] = $tab;
     }
 
-    protected function extractToggles() {
+    protected function extractToggles()
+    {
         foreach ($this->tabMeta as $tab) {
             foreach ($tab["toggles"] as $toggle) {
                 if (!in_array($this->toggleMeta, $tab['toggles'])) {
@@ -52,7 +64,12 @@ class FilterPanelLayout {
         }
     }
 
-    public function getLayout() {
+    /**
+     * Returns metadata that renders the componennts for the Filter layout.
+     * @return array
+     */
+    public function getLayout()
+    {
         $this->extractToggles();
         $this->setDefaultTab($this->defaultTab);
 
@@ -64,6 +81,7 @@ class FilterPanelLayout {
         $this->layout->set("tabs", $this->tabMeta);
 
         $this->baseLayout->push($this->layout->getLayout(true));
+
         return $this->baseLayout->getLayout();
     }
 }

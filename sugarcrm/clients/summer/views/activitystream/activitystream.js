@@ -108,15 +108,25 @@
         event.preventDefault();
     },
 
-    showAddComment: function(event) {
-        var currentTarget = this.$(event.currentTarget);
+    /**
+     * Event handler for clicking comment button -- shows a post's comment box.
+     * @param  {Event} e
+     */
+    showAddComment: function(e) {
+        var currentTarget = this.$(e.currentTarget);
 
         currentTarget.closest('li').find('.activitystream-comment').toggle();
         currentTarget.closest('li').find('.activitystream-comment').find('.sayit').focus();
 
-        event.preventDefault();
+        e.preventDefault();
     },
 
+    /**
+     * Helper method for adding a post or a comment. Handles attachments too.
+     * @param {string} url         Endpoint for posting message
+     * @param {string} contents    Some type of message (may have HTML due to tags)
+     * @param {array}  attachments Attachments to save to the post.
+     */
     _addPostComment: function(url, contents, attachments) {
         var self = this,
             callback = _.after(1 + attachments.length, function() {
@@ -161,6 +171,11 @@
         }});
     },
 
+    /**
+     * Helper method to convert HTML from tags to a text-based format.
+     * @param  {string} postHTML
+     * @return {string}
+     */
     _processTags: function(postHTML) {
         var contents = '';
         $(postHTML).contents().each(function() {
@@ -181,6 +196,10 @@
         return contents.replace(/&nbsp;/gi, ' ');
     },
 
+    /**
+     * Creates a new comment on a post.
+     * @param {Event} event
+     */
     addComment: function(event) {
         var self = this,
             myPost = this.$(event.currentTarget).closest('li'),
@@ -193,6 +212,9 @@
         this._addPostComment(myPostUrl, myPostContents, attachments);
     },
 
+    /**
+     * Creates a new post.
+     */
     addPost: function() {
         var self = this,
             myPost = this.$(".activitystream-post"),
@@ -292,6 +314,10 @@
         }, this);
     },
 
+    /**
+     * Handles dragging an attachment off the page.
+     * @param  {Event} event
+     */
     saveAttachment: function(event) {
         // The following is only true for Chrome.
         if (event.dataTransfer && event.dataTransfer.constructor == Clipboard &&
@@ -499,6 +525,10 @@
         });
     },
 
+    /**
+     * Handler for previewing a record listed on the activity stream.
+     * @param  {Event} event
+     */
     previewRecord: function(event) {
         var self = this,
             el = this.$(event.currentTarget),
@@ -603,6 +633,9 @@
         return app.view.View.prototype._renderHtml.call(this);
     },
 
+    /**
+     * Data change event.
+     */
     bindDataChange: function() {
         if (this.model) {
             this.model.on("change", function() {

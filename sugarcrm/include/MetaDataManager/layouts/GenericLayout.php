@@ -1,9 +1,15 @@
 <?php
 
-class GenericLayout {
+class GenericLayout
+{
     public $layout = array("components" => array());
 
-    public function __construct($params) {
+    /**
+     * Constructs a generic layout which can be used to group views together.
+     * @param array $params
+     */
+    public function __construct($params)
+    {
         $defaults = array("name" => null, "type" => "simple");
         $args = array_merge($defaults, $params);
         $this->layout["type"] = $args['type'];
@@ -14,15 +20,34 @@ class GenericLayout {
         $this->set("span", 12);
     }
 
-    public function set($property, $value) {
+    /**
+     * A generic property setter for layouts.
+     * @param string $property
+     * @param mixed  $value
+     */
+    public function set($property, $value)
+    {
         $this->layout[$property] = $value;
     }
 
-    public function push($component) {
-            $this->layout["components"][] = $component;
+    /**
+     * Add a component to the layout.
+     * @param  array $component
+     * @return void
+     */
+    public function push($component)
+    {
+        $this->layout["components"][] = $component;
     }
 
-    public function getLayout($wrap = false) {
+    /**
+     * Return the metadata representation of the layout
+     * @param boolean $wrap Determines whether to wrap the layout within
+     * another layout
+     * @return array
+     */
+    public function getLayout($wrap = false)
+    {
         return ($wrap) ? array("layout" => $this->layout) : $this->layout;
     }
 }
