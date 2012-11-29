@@ -409,8 +409,8 @@
 
 </table>
 
-{if $logger_visible}
 <table  width="100%" border="0" cellspacing="1" cellpadding="0" class="edit view">
+{if $logger_visible}
 <tr>
 <th align="left" scope="row" colspan="6"><h4>{$MOD.LBL_LOGGER}</h4></th>
 </tr>
@@ -434,11 +434,11 @@
 		<td scope="row">{$MOD.LBL_LOGGER_MAX_LOGS} </td>
 		<td > <input name="logger_file_maxLogs" value="{$config.logger.file.maxLogs}"></td>
 	</tr>
+{/if}
 	<tr>
 	    <td><a href="index.php?module=Configurator&action=LogView" target="_blank">{$MOD.LBL_LOGVIEW}</a></td>
 	</tr>
 </table>
-{/if}
 
 {* //END SUGARCRM flav!=sales ONLY*}
 
