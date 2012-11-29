@@ -49,16 +49,47 @@
                 // Add more sub-groups as needed here if client include duplication in $js_groupings
                 switch ($subGroup) {
                     case 'bootstrap':
-                            return array(
-                                'styleguide/assets/js/bootstrap-button.js'  => $target,
-                                'styleguide/assets/js/bootstrap-tooltip.js' => $target,
-                                'styleguide/assets/js/bootstrap-dropdown.js'=>  $target,
-                                'styleguide/assets/js/bootstrap-popover.js' => $target,
-                                'styleguide/assets/js/bootstrap-modal.js'   => $target,
-                                'styleguide/assets/js/bootstrap-alert.js'   => $target,
-                                'styleguide/assets/js/bootstrap-datepicker.js' => $target,
-                                'styleguide/assets/js/bootstrapx-clickover.js' => $target,
-                            );
+                        return array(
+                            'styleguide/assets/js/bootstrap-button.js'  => $target,
+                            'styleguide/assets/js/bootstrap-tooltip.js' => $target,
+                            'styleguide/assets/js/bootstrap-dropdown.js'=>  $target,
+                            'styleguide/assets/js/bootstrap-popover.js' => $target,
+                            'styleguide/assets/js/bootstrap-modal.js'   => $target,
+                            'styleguide/assets/js/bootstrap-alert.js'   => $target,
+                            'styleguide/assets/js/bootstrap-datepicker.js' => $target,
+                            'styleguide/assets/js/bootstrapx-clickover.js' => $target,
+                        );
+                        break;
+                    case 'bootstrap_core':
+                        return array(
+                            'include/javascript/jquery/bootstrap/bootstrap.min.js' => $target,
+                        );
+                        break;
+                    case 'jquery_core':
+                        return array (
+                            'include/javascript/jquery/jquery-min.js'             =>    $target,
+                            'include/javascript/jquery/jquery-ui-min.js'          =>    $target,
+                            'include/javascript/jquery/jquery.json-2.3.js'        =>    $target,
+                        );
+                        break;
+                    case 'jquery_menus':
+                        return array(
+                            'include/javascript/jquery/jquery.hoverIntent.js'            =>   $target,
+                            'include/javascript/jquery/jquery.hoverscroll.js'            =>   $target,
+                            'include/javascript/jquery/jquery.hotkeys.js'                =>   $target,
+                            'include/javascript/jquery/jquery.superfish.js'              =>   $target,
+                            'include/javascript/jquery/jquery.tipTip.js'              	 =>   $target,
+                            'include/javascript/jquery/jquery.sugarMenu.js'              =>   $target,
+                            'include/javascript/jquery/jquery.highLight.js'              =>   $target,
+                            'include/javascript/jquery/jquery.showLoading.js'            =>   $target,
+                            'include/javascript/jquery/jquery.dataTables.min.js'         =>   $target,
+                            'include/javascript/jquery/jquery.dataTables.customSort.js'  =>   $target,
+                            'include/javascript/jquery/jquery.jeditable.js'              =>   $target,
+                            'include/javascript/jquery/jquery.chosen.min.js'             =>   $target,
+                            'include/javascript/jquery/jquery.jstree.js'              	 =>   $target,
+                            'include/javascript/jquery/jquery.popoverext.js'             =>   $target,
+                            'include/javascript/jquery/jquery.effects.custombounce.js'   =>   $target,
+                        );
                         break;
                     default:
                         break;
@@ -87,41 +118,19 @@
 	            //END SUGARCRM flav=pro ONLY
                'include/EditView/Panels.js'   => 'include/javascript/sugar_grp1.js',
             ),
-			//jquery libraries
-			$sugar_grp_jquery_core = array(
-			'include/javascript/jquery/jquery-min.js'             => 'include/javascript/sugar_grp1_jquery_core.js',
-			'include/javascript/jquery/jquery-ui-min.js'          => 'include/javascript/sugar_grp1_jquery_core.js',
-			'include/javascript/jquery/jquery.json-2.3.js'        => 'include/javascript/sugar_grp1_jquery_core.js',
-            ),
+			// solo jquery libraries
+			$sugar_grp_jquery_core = getSubgroupForTarget('jquery_core', 'include/javascript/sugar_grp1_jquery_core.js'),
 
             //bootstrap
-            $sugar_grp_bootstrap = array (
-            'include/javascript/jquery/bootstrap/bootstrap.min.js'              => 'include/javascript/sugar_grp1_bootstrap.js',
-            ),
+            $sugar_grp_bootstrap = getSubgroupForTarget('jquery_core', 'include/javascript/sugar_grp1_bootstrap.js'),
 
             //jquery for moddule menus
-            $sugar_grp_jquery_menus = array (
-            'include/javascript/jquery/jquery.hoverIntent.js'            => 'include/javascript/sugar_grp1_jquery_menus.js',
-            'include/javascript/jquery/jquery.hoverscroll.js'            => 'include/javascript/sugar_grp1_jquery_menus.js',
-            'include/javascript/jquery/jquery.hotkeys.js'                => 'include/javascript/sugar_grp1_jquery_menus.js',
-            'include/javascript/jquery/jquery.superfish.js'              => 'include/javascript/sugar_grp1_jquery_menus.js',
-            'include/javascript/jquery/jquery.tipTip.js'              	 => 'include/javascript/sugar_grp1_jquery_menus.js',
-            'include/javascript/jquery/jquery.sugarMenu.js'              => 'include/javascript/sugar_grp1_jquery_menus.js',
-            'include/javascript/jquery/jquery.highLight.js'              => 'include/javascript/sugar_grp1_jquery_menus.js',
-            'include/javascript/jquery/jquery.showLoading.js'            => 'include/javascript/sugar_grp1_jquery_menus.js',
-            'include/javascript/jquery/jquery.dataTables.min.js'         => 'include/javascript/sugar_grp1_jquery_menus.js',
-            'include/javascript/jquery/jquery.dataTables.customSort.js'  => 'include/javascript/sugar_grp1_jquery_menus.js',
-            'include/javascript/jquery/jquery.jeditable.js'              => 'include/javascript/sugar_grp1_jquery_menus.js',
-            'include/javascript/jquery/jquery.chosen.min.js'             => 'include/javascript/sugar_grp1_jquery_menus.js',
-            'include/javascript/jquery/jquery.jstree.js'              	 => 'include/javascript/sugar_grp1_jquery_menus.js',
-            'include/javascript/jquery/jquery.popoverext.js'             => 'include/javascript/sugar_grp1_jquery_menus.js',
-            'include/javascript/jquery/jquery.effects.custombounce.js'   => 'include/javascript/sugar_grp1_jquery_menus.js',
-			),
+            $sugar_grp_jquery_menus = getSubgroupForTarget('jquery_core', 'include/javascript/sugar_grp1_jquery_menus.js'),
 
-            $sugar_grp_jquery = array(
-                sugar_cached('include/javascript/sugar_grp1_jquery_core.js')    => 'include/javascript/sugar_grp1_jquery.js',
-                sugar_cached('include/javascript/sugar_grp1_bootstrap.js')      => 'include/javascript/sugar_grp1_jquery.js',
-                sugar_cached('include/javascript/sugar_grp1_jquery_menus.js')   => 'include/javascript/sugar_grp1_jquery.js',
+            //core app jquery libraries
+			$sugar_grp_jquery = array_merge(getSubgroupForTarget('jquery_core', 'include/javascript/sugar_grp1_jquery.js'),
+                getSubgroupForTarget('bootstrap_core', 'include/javascript/sugar_grp1_jquery.js'),
+                getSubgroupForTarget('jquery_menus', 'include/javascript/sugar_grp1_jquery.js')
             ),
 
            $sugar_field_grp = array(
