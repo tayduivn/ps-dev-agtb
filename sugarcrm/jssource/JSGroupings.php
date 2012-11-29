@@ -62,7 +62,8 @@
                         break;
                     case 'bootstrap_core':
                         return array(
-                            'include/javascript/jquery/bootstrap/bootstrap.min.js' => $target,
+                            'include/javascript/jquery/bootstrap/bootstrap.min.js'       =>   $target,
+                            'include/javascript/jquery/jquery.popoverext.js'             =>   $target,
                         );
                         break;
                     case 'jquery_core':
@@ -86,8 +87,7 @@
                             'include/javascript/jquery/jquery.dataTables.customSort.js'  =>   $target,
                             'include/javascript/jquery/jquery.jeditable.js'              =>   $target,
                             'include/javascript/jquery/jquery.chosen.min.js'             =>   $target,
-                            'include/javascript/jquery/jquery.jstree.js'              	 =>   $target,
-                            'include/javascript/jquery/jquery.popoverext.js'             =>   $target,
+                            'include/javascript/jquery/jquery.jstree.js'              	 =>   $target,                            
                             'include/javascript/jquery/jquery.effects.custombounce.js'   =>   $target,
                         );
                         break;
@@ -122,10 +122,10 @@
 			$sugar_grp_jquery_core = getSubgroupForTarget('jquery_core', 'include/javascript/sugar_grp1_jquery_core.js'),
 
             //bootstrap
-            $sugar_grp_bootstrap = getSubgroupForTarget('jquery_core', 'include/javascript/sugar_grp1_bootstrap.js'),
+            $sugar_grp_bootstrap = getSubgroupForTarget('bootstrap_core', 'include/javascript/sugar_grp1_bootstrap.js'),
 
             //jquery for moddule menus
-            $sugar_grp_jquery_menus = getSubgroupForTarget('jquery_core', 'include/javascript/sugar_grp1_jquery_menus.js'),
+            $sugar_grp_jquery_menus = getSubgroupForTarget('jquery_menus', 'include/javascript/sugar_grp1_jquery_menus.js'),
 
             //core app jquery libraries
 			$sugar_grp_jquery = array_merge(getSubgroupForTarget('jquery_core', 'include/javascript/sugar_grp1_jquery.js'),
