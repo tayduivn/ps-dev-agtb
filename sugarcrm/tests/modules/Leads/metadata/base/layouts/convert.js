@@ -27,7 +27,7 @@ describe("Convert Lead Layout", function(){
             }
         };
 
-        convertLayout = SugarTest.createModuleLayout('base', 'Leads', 'convert', convertMeta);
+        convertLayout = SugarTest.createLayout('base', 'Leads', 'convert', convertMeta, undefined, true);
     });
 
     describe("initialization", function() {
@@ -37,12 +37,15 @@ describe("Convert Lead Layout", function(){
         });
 
         it("should save convertModel when lead:convert event has been triggered", function() {
-            var syncSpy = sinon.spy(convertLayout.context.convertModel, 'sync');
+            var syncSpy = sinon.spy(convertLayout.context.convertModel, 'sync'),
+                showAlertStub = sinon.stub(SugarTest.app.alert, 'show', $.noop());
+
             convertLayout.context.trigger('lead:convert');
 
             expect(syncSpy.calledOnce).toBeTruthy();
 
             syncSpy.restore();
+            showAlertStub.restore();
         });
 
     });

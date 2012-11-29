@@ -5,11 +5,11 @@ describe("Create View", function() {
 
     beforeEach(function() {
         SugarTest.testMetadata.init();
-        SugarTest.loadViewHandlebarsTemplate('base', 'record');
-        SugarTest.loadFieldHandlebarsTemplate('base', 'button', 'edit');
+        SugarTest.loadHandlebarsTemplate('record', 'view', 'base');
+        SugarTest.loadHandlebarsTemplate('button', 'field', 'base', 'edit');
         SugarTest.loadComponent('base', 'view', 'record');
         SugarTest.loadComponent('base', 'view', viewName);
-        SugarTest.testMetadata.addModuleViewDefinition(moduleName, viewName, {
+        SugarTest.testMetadata.addViewDefinition(viewName, {
             "type":"record",
             "buttons":[
                 {
@@ -74,7 +74,7 @@ describe("Create View", function() {
                     ]
                 }
             ]
-        });
+        }, moduleName);
         SugarTest.testMetadata.set();
         SugarTest.app.data.declareModels();
 

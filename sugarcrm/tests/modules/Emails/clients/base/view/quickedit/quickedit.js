@@ -4,9 +4,12 @@ describe("Emails - clients/base/view/quickedit", function() {
     var app;
     var xhr;
     var requests;
+    var showAlertStub;
 
     beforeEach(function() {
-        view = SugarTest.createModuleView('base', 'Emails', 'quickedit');
+        showAlertStub = sinon.stub(SugarTest.app.alert, 'show', $.noop());
+
+        view = SugarTest.createView('base', 'Emails', 'quickedit', undefined, undefined, true);
         view.model = new Backbone.Model();
         view.collection = new Backbone.Collection(view.model);
         app = SUGAR.App;
@@ -29,6 +32,7 @@ describe("Emails - clients/base/view/quickedit", function() {
         view = null;
         xhr = null;
         requests = null;
+        showAlertStub.restore();
         delete Handlebars.templates;
     });
 

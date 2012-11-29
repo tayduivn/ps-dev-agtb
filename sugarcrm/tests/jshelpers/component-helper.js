@@ -1,47 +1,31 @@
 (function(test) {
     var app = SUGAR.App;
-    test.loadComponent = function(client, type, name) {
-        SugarTest.loadFile("../clients/" + client + "/" + type + "s/" + name, name, "js", function(data) {
-            try {
-                data = eval("[" + data + "][0]");
-            } catch (e) {
-                app.logger.error("Failed to eval view controller for " + name + ": " + e + ":\n" + data);
-            }
-            app.view.declareComponent(type, name, null, data, null, true);
-            if (type === 'view') {
-                test.testMetadata.addViewController(name, data);
-            } else if (type === 'field') {
-                test.testMetadata.addFieldController(name, data);
-            }
-        });
-    };
+    test.loadComponent = function(client, type, name, module) {
+        var path = "/clients/" + client + "/" + type + "s/" + name;
+        path = (module) ? "../modules/" + module + path : ".." + path;
 
-    test.loadModuleComponent = function(module, client, type, name) {
-        SugarTest.loadFile("../modules/" + module + "/clients/" + client + "/" + type + "s/" + name, name, "js", function(data) {
+        SugarTest.loadFile(path, name, "js", function(data) {
             try {
                 data = eval("[" + data + "][0]");
             } catch (e) {
                 app.logger.error("Failed to eval view controller for " + name + ": " + e + ":\n" + data);
             }
             app.view.declareComponent(type, name, module, data, null, true);
-            test.testMetadata.addViewController(name, data);
+            test.testMetadata.addController(name, type, data, module, client);
         });
     };
 
-    test.loadViewHandlebarsTemplate = function(client, name) {
-        SugarTest.loadFile("../clients/" + client + "/views/" + name, name, "hbt", function(data) {
-            test.testMetadata.addViewTemplate(name, data);
-        });
-    };
-
-    test.loadFieldHandlebarsTemplate = function(client, type, name) {
-        SugarTest.loadFile("../clients/" + client + "/fields/" + type, name, "hbt", function(data) {
-            test.testMetadata.addFieldTemplate(type, name, data);
+    test.loadHandlebarsTemplate = function(name, type, client, template, module) {
+        var templateName = template || name;
+        var path = "/clients/" + client + "/" + type + "s/" + name;
+        path = (module) ? "../modules/" + module + path : ".." + path;
+        SugarTest.loadFile(path, templateName, "hbt", function(data) {
+            test.testMetadata.addTemplate(name, type, data, templateName, module, client);
         });
     };
 
     test.createField = function(client, name, type, viewName, fieldDef, module) {
-        test.loadComponent(client, "field", type);
+        test.loadComponent(client, "field", type, module);
         var context = app.context.getContext();
         var view = new app.view.View({ name: viewName, context: context });
         var def = { name: name, type: type };
@@ -61,8 +45,12 @@
         });
     };
 
-    test.createView = function(client, module, viewName, meta, context) {
-        test.loadComponent(client, "view", viewName);
+    test.createView = function(client, module, viewName, meta, context, loadFromModule) {
+        if (loadFromModule) {
+            test.loadComponent(client, "view", viewName, module);
+        } else {
+            test.loadComponent(client, "view", viewName);
+        }
         if (!context) {
             context = app.context.getContext();
             context.set({
@@ -79,59 +67,23 @@
         });
     };
 
-    test.createLayout = function(client, module, layoutName, meta) {
-        test.loadComponent(client, "layout", layoutName);
-        var context = app.context.getContext(),
-            params = {
+    test.createLayout = function(client, module, layoutName, meta, context, loadFromModule) {
+        if (loadFromModule) {
+            test.loadComponent(client, "layout", layoutName, module);
+        } else {
+            test.loadComponent(client, "layout", layoutName);
+        }
+        if (!context) {
+            context = app.context.getContext();
+            context.set({
                 module: module,
                 layout: layoutName
-            };
-
-        context.set(params);
-        context.prepare();
+            });
+            context.prepare();
+        }
 
         return app.view.createLayout({
             name : layoutName,
-            context : context,
-            module : module,
-            meta : meta
-        });
-    };
-
-    test.createModuleLayout = function(client, module, layoutName, meta) {
-        test.loadModuleComponent(module, client, "layout", layoutName);
-        var context = app.context.getContext(),
-            params = {
-                module: module,
-                modelId: 'eab15fea-a4b5-c63d-8365-50353a164161',
-                layout: layoutName
-            };
-
-        context.set(params);
-        context.prepare();
-
-        return app.view.createLayout({
-            name : layoutName,
-            context : context,
-            module : module,
-            meta : meta
-        });
-    };
-
-    test.createModuleView = function(client, module, viewName, meta) {
-        test.loadModuleComponent(module, client, "view", viewName);
-        var context = app.context.getContext(),
-            params = {
-                module: module,
-                modelId: 'eab15fea-a4b5-c63d-8365-50353a164161',
-                layout: viewName
-            };
-
-        context.set(params);
-        context.prepare();
-
-        return app.view.createView({
-            name : viewName,
             context : context,
             module : module,
             meta : meta
@@ -143,63 +95,58 @@
 
         init: function() {
             this._data = $.extend(true, {}, fixtures.metadata);
+            this._data.layouts = this._data.layouts || {};
+            this._data.views = this._data.views || {};
+            this._data.fields = this._data.fields || {};
         },
 
-        addViewTemplate: function(name, template) {
+        addController: function(name, type, controller, module, platform) {
+            type = type + 's';
+            platform = platform || 'base';
             if (this.isInitialized()) {
-                this._data.views.base = this._data.views.base || {};
-                this._data.views.base[name] = this._data.views.base[name] || {};
-                this._data.views.base[name].templates = this._data.views.base[name].templates || {};
-                this._data.views.base[name].templates[name] = template;
+                if (module) {
+                    this._initModuleStructure(module, type, name);
+                    this._data.modules[module][type][name].controller = controller;
+                } else {
+                    this._data[type][platform][name] = this._data[type][platform][name] || {};
+                    this._data[type][platform][name].controller = controller;
+                }
             }
         },
 
-        addViewController: function(name, controller) {
+        addTemplate: function(name, type, template, templateName, module, platform) {
+            type = type + 's';
+            platform = platform || 'base';
             if (this.isInitialized()) {
-                this._data.views.base = this._data.views.base || {};
-                this._data.views.base[name] = this._data.views.base[name] || {};
-                this._data.views.base[name].controller = controller;
+                if (module) {
+                    this._initModuleStructure(module, type, name);
+                    this._data.modules[module][type][name].template = template;
+                } else {
+                    this._data[type][platform][name] = this._data[type][platform][name] || {};
+                    this._data[type][platform][name].templates = this._data[type][platform][name].templates || {};
+                    this._data[type][platform][name].templates[templateName] = template;
+                }
             }
         },
 
-        addViewDefinition: function(name, viewDef) {
+        addViewDefinition: function(name, viewDef, module, platform) {
+            var type = 'views';
+            platform = platform || 'base';
             if (this.isInitialized()) {
-                this._data.views = this._data.views || {};
-                this._data.views.base = this._data.views.base || {};
-                this._data.views.base[name] = this._data.views.base[name] || {};
-                this._data.views.base[name].meta = viewDef;
+                if (module) {
+                    this._initModuleStructure(module, type, name);
+                    this._data.modules[module][type][name].meta = viewDef;
+                } else {
+                    this._data[type][platform][name] = this._data[type][platform][name] || {};
+                    this._data[type][platform][name].meta = viewDef;
+                }
             }
         },
 
-        addModuleViewDefinition: function(module, name, viewDef) {
-            if (this.isInitialized()) {
-                this._data.modules[module].views = this._data.modules[module].views || {};
-                this._data.modules[module].views[name] = this._data.modules[module].views[name] || {};
-                this._data.modules[module].views[name].meta = viewDef;
-            }
-        },
-
-        addFieldTemplate: function(type, name, template) {
-            if (this.isInitialized()) {
-                this._data.fields.base =this._data.fields.base || {};
-                this._data.fields.base[type] = this._data.fields.base[type] || {};
-                this._data.fields.base[type].templates = this._data.fields.base[type].templates || {};
-                this._data.fields.base[type].templates[name] = template;
-            }
-        },
-
-        addFieldController: function(name, controller) {
-            if (this.isInitialized()) {
-                this._data.fields.base =this._data.fields.base || {};
-                this._data.fields.base[name] = this._data.fields.base[name] || {};
-                this._data.fields.base[name].controller = controller;
-            }
-        },
-
-        addModuleDefinition: function(module, moduleDef) {
-            if (this.isInitialized()) {
-                this._data.modules[module] = moduleDef;
-            }
+        _initModuleStructure: function(module, type, name) {
+            this._data.modules[module] = this._data.modules[module] || {};
+            this._data.modules[module][type] = this._data.modules[module][type] || {};
+            this._data.modules[module][type][name] = this._data.modules[module][type][name] || {};
         },
 
         set: function() {
@@ -207,13 +154,13 @@
                 _.each(this._data.modules, function(module) {
                     module._patched = false;
                 });
-                SugarTest.app.metadata.set(this._data, false, true);
+                SugarTest.app.metadata.set(this._data, true, true);
             }
         },
 
         revert: function() {
             if (this.isInitialized()) {
-                SugarTest.app.metadata.set(fixtures.metadata, false, true);
+                SugarTest.app.metadata.set(fixtures.metadata, true, true);
             }
         },
 
