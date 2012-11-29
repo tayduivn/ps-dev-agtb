@@ -375,11 +375,6 @@ class MetadataApi extends SugarApi {
         $data['views']   = $mm->getSugarViews();
         $data['layouts'] = $mm->getSugarLayouts();
         $data['labels'] = $this->getStringUrls($data,false);
-        /*
-        $data['app_strings'] = $mm->getAppStrings();
-        $data['app_list_strings'] = $mm->getAppListStrings();
-        $data['mod_strings'] = $this->getModStrings($data);
-        */
         $data['relationships'] = $mm->getRelationshipData();
         $hash = md5(serialize($data));
         $data["_hash"] = $hash;
@@ -495,7 +490,7 @@ class MetadataApi extends SugarApi {
     protected function setPlatformList(ServiceBase $api)
     {
         if ( $api->platform != 'base' ) {
-            $this->platforms = array($api->platform,'base');
+            $this->platforms = array(basename($api->platform),'base');
         } else {
             $this->platforms = array('base');
         }
@@ -585,23 +580,6 @@ class MetadataApi extends SugarApi {
                 }
             }
         }
-    }
-
-    /**
-     * Gets mod strings
-     *
-     * @param array $data The metadata array
-     * @return array
-     */
-    public function getModStrings($data) {
-        $mm = $this->getMetadataManager();
-        $modStrings = array();
-        foreach ($data['modules'] as $modName => $moduleDef) {
-            $modData = $mm->getModuleStrings($modName);
-            $modStrings[$modName] = $modData;
-            $modStrings[$modName]['_hash'] = md5(serialize($modStrings[$modName]));
-        }
-        return $modStrings;
     }
 
     /**
