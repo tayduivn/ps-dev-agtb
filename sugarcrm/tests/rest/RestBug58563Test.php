@@ -37,7 +37,7 @@ class RestBug58563Test extends RestTestBase
      * @group Bug56505
      */
     public function testEmployeeInModuleList() {
-        $restReply = $this->_restCall('metadata?type_filter=module_list');
-        $this->assertTrue(isset($restReply['reply']['module_list']['Employees']), 'Employees not returned in the module list.');
+        $restReply = $this->_restCall('me');
+        $this->assertTrue(in_array('Employees', $restReply['reply']['current_user']['module_list']), 'Employees not returned in the module list.');
     }
 }
