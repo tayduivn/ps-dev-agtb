@@ -588,4 +588,39 @@ class MetaDataManager {
             }
         }
     }
+    
+    /**
+     * Gets server information
+     * 
+     * @return array of ServerInfo
+     */
+    public function getServerInfo() {
+        global $sugar_flavor;
+        global $sugar_version;
+        global $timedate;
+
+        $data['flavor'] = $sugar_flavor;
+        $data['version'] = $sugar_version;
+        
+        //BEGIN SUGARCRM flav=pro ONLY
+        $fts_enabled = SugarSearchEngineFactory::getFTSEngineNameFromConfig();
+        if(!empty($fts_enabled) && $fts_enabled != 'SugarSearchEngine') {
+            $data['fts'] = array(
+                'enabled' =>  true,
+                'type'    =>  $fts_enabled,
+            );
+        } else {
+            $data['fts'] = array(
+                'enabled' =>  false,
+            );
+        }
+        //END SUGARCRM flav=pro ONLY
+
+        //Always return dates in ISO-8601
+        $date = new SugarDateTime();
+        $data['server_time'] = $timedate->asIso($date, $GLOBALS['current_user']);
+        $data['gmt_time'] = gmdate('Y-m-d\TH:i:s') . '+0000';
+
+        return $data;
+    }
 }

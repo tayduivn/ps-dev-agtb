@@ -81,7 +81,7 @@ class MetadataApi extends SugarApi {
 
     public function getAllMetadata(ServiceBase $api, array $args) {
         // Default the type filter to everything
-        $this->typeFilter = array('modules','full_module_list','fields', 'labels', 'module_list', 'views', 'layouts','relationships','currencies', 'jssource');
+        $this->typeFilter = array('modules','full_module_list','fields', 'labels', 'module_list', 'views', 'layouts','relationships','currencies', 'jssource', 'server_info');
         if ( !empty($args['type_filter']) ) {
             // Explode is fine here, we control the list of types
             $types = explode(",", $args['type_filter']);
@@ -143,7 +143,7 @@ class MetadataApi extends SugarApi {
             generateETagHeader($data['_hash']);
         }
 
-        $baseChunks = array('fields','labels','module_list', 'views', 'layouts', 'full_module_list','relationships', 'currencies', 'jssource');
+            $baseChunks = array('fields','labels','module_list', 'views', 'layouts', 'full_module_list','relationships', 'currencies', 'jssource', 'server_info');
         $perModuleChunks = array('modules');
 
         return $this->filterResults($args, $data, $onlyHash, $baseChunks, $perModuleChunks, $moduleFilter);
@@ -376,6 +376,7 @@ class MetadataApi extends SugarApi {
         $data['layouts'] = $mm->getSugarLayouts();
         $data['labels'] = $this->getStringUrls($data,false);
         $data['relationships'] = $mm->getRelationshipData();
+        $data['server_info'] = $mm->getServerInfo();
         $hash = md5(serialize($data));
         $data["_hash"] = $hash;
 

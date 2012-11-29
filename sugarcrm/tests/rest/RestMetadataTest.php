@@ -51,7 +51,8 @@ class RestMetadataTest extends RestTestBase {
         $this->assertTrue(isset($restReply['reply']['views']),'Views are missing.');
         $this->assertTrue(isset($restReply['reply']['currencies']),'Currencies are missing.');
         $this->assertTrue(isset($restReply['reply']['jssource']),'JSSource is missing.');
-
+        // SIDECAR-14 - Move server info into the metadata api
+        $this->assertTrue(isset($restReply['reply']['server_info']), 'ServerInfo is missing');
     }
 
     //BEGIN SUGARCRM flav=ent ONLY
@@ -65,6 +66,8 @@ class RestMetadataTest extends RestTestBase {
         $this->assertTrue(isset($restReply['reply']['fields']),'SugarFields are missing.');
         $this->assertTrue(isset($restReply['reply']['views']),'Views are missing.');
         $this->assertTrue(isset($restReply['reply']['jssource']),'JSSource is missing.');
+        // SIDECAR-14 - Move server info into the metadata api
+        $this->assertFalse(isset($restReply['reply']['server_info']), 'ServerInfo should not be in public metadata');
     }
 
     /**
