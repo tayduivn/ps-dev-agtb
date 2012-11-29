@@ -21,15 +21,11 @@
     _renderHtml: function() {
         if (!app.api.isAuthenticated() || app.config.appStatus == 'offline') return;
 
-        //TODO: sidecar needs a function to pull this list from user prefs
-        //The module list needs to be key:value pairs of module name and its translated label
         var self = this;
         this.module_list = {};
-        if (app.metadata.data.module_list) {
-            _.each(app.metadata.data.module_list, function(val, key) {
-                if (key !== '_hash') {
-                    self.module_list[key] = val;
-                }
+        if (app.metadata.getModuleNames(true, true)) {
+            _.each(app.metadata.getModuleNames(true, true), function(val, key) {
+                    self.module_list[val] = app.lang.get('LBL_MODULE_NAME',val);
             });
         }
 
