@@ -26,7 +26,7 @@
 require_once('tests/rest/RestTestBase.php');
 
 
-class RestBug55655Test extends RestTestBase
+class RestBug57392Test extends RestTestBase
 {
 
     public function setUp()
