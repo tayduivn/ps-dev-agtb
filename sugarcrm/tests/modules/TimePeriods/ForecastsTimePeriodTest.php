@@ -571,35 +571,45 @@ class ForecastsTimePeriodTest extends Sugar_PHPUnit_Framework_TestCase
      * @group timeperiods
      */
     public function testGetCurrentId() {
+        global $app_strings;
+        global $sugar_config;
         $timedate = TimeDate::getInstance();
         $queryDate = $timedate->getNow()->format('Y');
         $currentAnnualTimePeriod = TimePeriod::getCurrentTimePeriod(TimePeriod::ANNUAL_TYPE);
-        $expectedAnnualTimePeriodName = sprintf($currentAnnualTimePeriod->name_template, $queryDate);
+        $expectedAnnualTimePeriodName = string_format($app_strings['LBL_ANNUAL_TIMEPERIOD_FORMAT'], array($queryDate));
         $this->assertEquals($expectedAnnualTimePeriodName, $currentAnnualTimePeriod->name);
 
         $month = $timedate->getNow()->format('m');
+        $year = $timedate->getNow()->format('Y');
         $currentId = 1;
+        $startMonth = '01-01';
 
         switch($month) {
             case 4:
             case 5:
             case 6:
                 $currentId = 2;
+                $startMonth = '04-01';
                 break;
             case 7:
             case 8:
             case 9:
                 $currentId = 3;
+                $startMonth = '07-01';
                 break;
             case 10:
             case 11:
             case 12:
                 $currentId = 4;
+                $startMonth = '10-01';
                 break;
         }
 
+        $startMonth = $year . '-' . $startMonth;
         $currentQuarterTimePeriod = TimePeriod::getCurrentTimePeriod(TimePeriod::QUARTER_TYPE);
-        $expectedQuarterTimePeriodName = sprintf($currentQuarterTimePeriod->name_template, $currentId, $queryDate);
+        $start = $timedate->fromDbDate($startMonth)->format($sugar_config['datef']);
+        $end = $timedate->fromDbDate($startMonth)->modify($currentQuarterTimePeriod->next_date_modifier)->modify('-1 day')->format($sugar_config['datef']);
+        $expectedQuarterTimePeriodName = string_format($app_strings['LBL_QUARTER_TIMEPERIOD_FORMAT'], array($currentId, $start, $end));
         $this->assertEquals($expectedQuarterTimePeriodName, $currentQuarterTimePeriod->name);
 
         //Test without passing any arguments
