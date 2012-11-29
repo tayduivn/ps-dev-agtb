@@ -38,7 +38,6 @@ class SugarFieldLinkTest extends Sugar_PHPUnit_Framework_TestCase
 
     public function tearDown()
     {
-        SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
         SugarTestHelper::tearDown();
         unset($this->note->field_defs['testurl_c']);
         unset($this->note);
