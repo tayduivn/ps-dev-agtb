@@ -504,7 +504,7 @@ class CurrentUserApi extends SugarApi {
         $controller = new TabController();
         $moduleList = $this->list2Array($controller->get_user_tabs($current_user));
         // always add back in employees see Bug58563
-        if (!in_array('Employees',$moduleList['module_list'])) {
+        if (!in_array('Employees',$moduleList)) {
             $moduleList[] = 'Employees';
         }
         return $moduleList;
