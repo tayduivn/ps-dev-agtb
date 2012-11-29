@@ -1,3 +1,6 @@
+
+/*Upper pane*/
+/*from david*/
 .drawer {
   height: 50%;
   width: 100%;
@@ -5,16 +8,43 @@
   position: absolute;
   top: 0px
 }
+/*from styleguide*/
+/*hidden state*/
+#content .container-fluid .row-fluid.module-edit {
+  height: 0%;
+  bottom: 0%;
+  position: absolute;
+  top: 0px;
 
-/* Modal cover for drawer layouts */
-.drawer-backdrop {
-  z-index: 1010;
-  background-color: white;
-  opacity: .5;
   display: none;
-  border-top: 4px solid #8B8C8E;
+}
+/*shown state*/
+.edit #content .container-fluid .row-fluid.module-edit {
+  height: 50%;
+  bottom: 50%;
+  display: block;
+  .main-pane {
+    .headerpane {
+      position: absolute;
+      left: 0px;
+      right: 1px;
+    }
+    .record {
+      position: absolute;
+      left: 0px;
+      right: 0px;
+      top: 60px;
+      bottom: 0px;
+      overflow: auto;
+      margin: 0 0 16px 0;
+    }
+  }
 }
 
+
+
+/*Lower pane*/
+/*from david*/
 .drawer-squeezed {
   position: absolute;
   height: 50%;
@@ -22,8 +52,25 @@
   width: 100%;
   bottom: 0px;
 }
+/*from styleguide*/
+/*hidden state*/
+#content .container-fluid .row-fluid.module-view {
+  position: absolute;
+  height: 100%;
+  top: 0px;
+  bottom: 0px;
+  overflow: hidden;
+}
+/*shown state*/
+.edit #content .container-fluid .row-fluid.module-view {
+  height: 50%;
+  top: 50%;
+}
+
+
 
 /* Expand/collapse tab below the drawer layout */
+/*from david*/
 .drawer-tab {
   display : none;
 }
@@ -38,7 +85,27 @@
   top: 3px;
   .border-radius(0 0 4px 4px);
 }
+/*from styleguide*/
+.edit .edit-backdrop,
+.edit .edit-drawer .btn {
+  display: block;
+}
+.edit-drawer .btn {
+  left: 50%;
+  position: absolute;
+  z-index: 1011;
+  margin-left: -50px;
+  width: 20px;
+  height: 15px;
+  top: 3px;
+  display: none;
+  .border-radius(0 0 4px 4px);
+}
 
+
+
+/*full height drawer*/
+/*from david*/
 .drawer.expand {
   height: auto;
   bottom: 60px;
@@ -48,6 +115,41 @@
   top: auto;
 }
 
+/*from styleguide*/
+.edit #content .container-fluid .row-fluid.module-edit.expand {
+  height: auto;
+  bottom: 60px;
+}
+.edit #content .container-fluid .row-fluid.module-view.collapse {
+  height: 62px;
+  top: auto;
+}
+
+
+
+/* Modal cover for drawer layouts */
+/*from david*/
+.drawer-backdrop {
+  z-index: 1010;
+  background-color: white;
+  opacity: .5;
+  display: none;
+  border-top: 4px solid #8B8C8E;
+}
 .drawer-backdrop.drawer-squeezed.collapse {
   height: 59px;
 }
+/*from styleguide*/
+.edit-backdrop {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 1010;
+  background-color: #fff;
+  opacity: .5;
+  display: none;
+  border-top: 4px solid lighten(@gray,20%);
+}
+
