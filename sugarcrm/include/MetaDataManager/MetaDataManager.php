@@ -445,49 +445,6 @@ class MetaDataManager {
         return return_app_list_strings_language($lang);
     }
 
-    /**
-     * The method for getting the module list, can collect for base, portal and mobile
-     *
-     * @return array The list of modules that are supported by this platform
-     * @deprecated Functionality for this method moved into the MetadataApi class
-     */
-    public function getModuleList($platform = 'base') {
-        if ( $platform == 'portal' ) {
-            // Use SugarPortalBrowser to get the portal modules that would appear
-            // in Studio
-            require_once 'modules/ModuleBuilder/Module/SugarPortalBrowser.php';
-            $pb = new SugarPortalBrowser();
-            $pb->loadModules();
-            $moduleList = array_keys($pb->modules);
-
-            // Bug 56911 - Notes metadata is needed for portal
-            $moduleList[] = "Notes";
-        } else if ( $platform == 'mobile' ) {
-            // replicate the essential part of the behavior of the private loadMapping() method in SugarController
-            foreach(SugarAutoLoader::existingCustom('include/MVC/Controller/wireless_module_registry.php') as $file) {
-                require $file;
-            }
-
-            // $wireless_module_registry is defined in the file loaded above
-            $moduleList = array_keys($wireless_module_registry);
-        } else {
-            // Loading a standard module list
-            require_once("modules/MySettings/TabController.php");
-            $controller = new TabController();
-            $moduleList = array_keys($controller->get_user_tabs($this->user));
-            $moduleList[] = 'ActivityStream';
-            $moduleList[] = 'Users';
-        }
-
-        $oldModuleList = $moduleList;
-        $moduleList = array();
-        foreach ( $oldModuleList as $module ) {
-            $moduleList[$module] = $module;
-        }
-
-        $moduleList['_hash'] = md5(serialize($moduleList));
-        return $moduleList;
-    }
 
     public static function getPlatformList()
     {

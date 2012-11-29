@@ -1,4 +1,5 @@
-<?php 
+<?php
+//FILE SUGARCRM flav=ent ONLY
 /*********************************************************************************
  * The contents of this file are subject to the SugarCRM Professional End User
  * License Agreement ("License") which can be viewed at
@@ -21,36 +22,39 @@
  * Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.;
  * All Rights Reserved.
  ********************************************************************************/
- 
-require_once('include/SugarFields/Fields/Link/SugarFieldLink.php');
 
-class SugarFieldLinkTest extends Sugar_PHPUnit_Framework_TestCase
+require_once('tests/rest/RestTestBase.php');
+
+
+class RestBug57392Test extends RestTestBase
 {
-	public function setUp()
+
+    public function setUp()
     {
-        SugarTestHelper::setUp('current_user');
-        $this->note = BeanFactory::newBean('Notes');
-        $this->note->field_defs['testurl_c']['gen'] = 1;
-        $this->note->field_defs['testurl_c']['default'] = 'http://test/{assigned_user_id}';
-        $this->note->assigned_user_id = $GLOBALS['current_user']->id;
-        $this->note->fetched_row['assigned_user_id'] = $this->note->assigned_user_id;
-	}
+        parent::setUp();
+        // create a case assign it to admin
+        $case = BeanFactory::newBean('Cases');
+        $case->name = 'Test Case ' . create_guid();
+        $case->assigned_user_id = 1;
+        $case->save();
+        $this->case_id = $case->id;
+    }
 
     public function tearDown()
     {
-        SugarTestHelper::tearDown();
-        unset($this->note->field_defs['testurl_c']);
-        unset($this->note);
+        parent::tearDown();
+        $GLOBALS['db']->query("DELETE FROM cases WHERE id = '{$this->case_id}'");
     }
-    
-     /**
-     * @ticket 36744
+
+    /**
+     * @group rest
      */
-	public function testLinkField() {
-        require_once('include/SugarFields/SugarFieldHandler.php');
-        $sf = SugarFieldHandler::getSugarField('link');
-        $data = array();
-        $sf->apiFormatField($data, $this->note, array(), 'testurl_c',array());
-        $this->assertEquals('http://test/'.$GLOBALS['current_user']->id, $data['testurl_c']);
+    public function testUpdatingAssignedUser()
+    {
+        $restReply = $this->_restCall("Cases/{$this->case_id}");
+        $this->assertEquals(1, $restReply['reply']['assigned_user_id'], "The assigned user id was not 1 it was {$restReply['reply']['assigned_user_id']}");
+
+        $restReply = $this->_restCall("Cases/{$this->case_id}",json_encode(array('assigned_user_id' => $GLOBALS['current_user']->id)), 'PUT');
+        $this->assertEquals($GLOBALS['current_user']->id, $restReply['reply']['assigned_user_id'], "The assigned user id was not {$GLOBALS['current_user']->id} it was {$restReply['reply']['assigned_user_id']}");
     }
 }

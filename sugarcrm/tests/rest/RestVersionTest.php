@@ -1,4 +1,4 @@
-<?php 
+<?php
 /*********************************************************************************
  * The contents of this file are subject to the SugarCRM Professional End User
  * License Agreement ("License") which can be viewed at
@@ -21,36 +21,32 @@
  * Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.;
  * All Rights Reserved.
  ********************************************************************************/
- 
-require_once('include/SugarFields/Fields/Link/SugarFieldLink.php');
 
-class SugarFieldLinkTest extends Sugar_PHPUnit_Framework_TestCase
-{
-	public function setUp()
-    {
-        SugarTestHelper::setUp('current_user');
-        $this->note = BeanFactory::newBean('Notes');
-        $this->note->field_defs['testurl_c']['gen'] = 1;
-        $this->note->field_defs['testurl_c']['default'] = 'http://test/{assigned_user_id}';
-        $this->note->assigned_user_id = $GLOBALS['current_user']->id;
-        $this->note->fetched_row['assigned_user_id'] = $this->note->assigned_user_id;
-	}
+require_once('tests/rest/RestTestBase.php');
 
-    public function tearDown()
-    {
-        SugarTestHelper::tearDown();
-        unset($this->note->field_defs['testurl_c']);
-        unset($this->note);
-    }
-    
-     /**
-     * @ticket 36744
+class RestVersionTest extends RestTestBase {
+    /**
+     * @group rest
      */
-	public function testLinkField() {
-        require_once('include/SugarFields/SugarFieldHandler.php');
-        $sf = SugarFieldHandler::getSugarField('link');
-        $data = array();
-        $sf->apiFormatField($data, $this->note, array(), 'testurl_c',array());
-        $this->assertEquals('http://test/'.$GLOBALS['current_user']->id, $data['testurl_c']);
+    public function testVersion()
+    {
+        // verify a run will work
+        $restReply = $this->_restCall('Accounts');
+        $this->assertEquals($restReply['info']['http_code'], '200', "Incorrect HTTP Code, instead of 200 we receieved {$restReply['info']['http_code']}");
+        
+        // set the version lower than current
+        $this->version = 5;
+
+        $restReply = $this->_restCall('Accounts');
+        $this->assertEquals($restReply['info']['http_code'], '301', "Incorrect HTTP Code, instead of 301 we receieved {$restReply['info']['http_code']}");
+
+        // set the version higher than current
+        $this->version = 50;
+        $restReply = $this->_restCall('Accounts');
+        $this->assertEquals($restReply['info']['http_code'], '301', "Incorrect HTTP Code, instead of 301 we receieved {$restReply['info']['http_code']}");
+
     }
+
 }
+
+

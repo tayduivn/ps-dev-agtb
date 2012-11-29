@@ -28,6 +28,7 @@ require_once('modules/TimePeriods/TimePeriod.php');
 class ForecastsTimePeriodTest extends Sugar_PHPUnit_Framework_TestCase
 {
     private $preTestIds = array();
+    private static $configDateFormat;
 
     //These are the default forecast configuration settings we will use to test
     protected $forecastConfigSettings = array (
@@ -49,6 +50,7 @@ class ForecastsTimePeriodTest extends Sugar_PHPUnit_Framework_TestCase
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('beanList');
         SugarTestHelper::setUp('current_user');
+        self::$configDateFormat = $GLOBALS['sugar_config']['datef'];
     }
 
     /**
@@ -57,6 +59,7 @@ class ForecastsTimePeriodTest extends Sugar_PHPUnit_Framework_TestCase
     public static function tearDownAfterClass()
     {
         SugarTestHelper::tearDown();
+        $GLOBALS['sugar_config']['datef'] = self::$configDateFormat;
     }
 
     public function setUp()
@@ -281,23 +284,46 @@ class ForecastsTimePeriodTest extends Sugar_PHPUnit_Framework_TestCase
     public function getTimePeriodNameProvider()
     {
         return array(
-            array(TimePeriod::ANNUAL_TYPE, '2012-07-01', 2012, 1, 'Year 2012'),
-            array(TimePeriod::QUARTER_TYPE, '2012-07-01', 2012, 1, 'Q1 2012'),
-            array(TimePeriod::QUARTER_TYPE, '2012-10-01', 2012, 2, 'Q2 2012'),
-            array(TimePeriod::QUARTER_TYPE, '2012-01-01', 2012, 3, 'Q3 2012'),
-            array(TimePeriod::QUARTER_TYPE, '2012-04-01', 2012, 4, 'Q4 2012'),
-            array(TimePeriod::MONTH_TYPE, '2012-07-01', 2012, 1, 'Jul 2012'),
-            array(TimePeriod::MONTH_TYPE, '2012-08-01', 2012, 2, 'Aug 2012'),
-            array(TimePeriod::MONTH_TYPE, '2012-09-01', 2012, 3, 'Sep 2012'),
-            array(TimePeriod::MONTH_TYPE, '2012-10-01', 2012, 4, 'Oct 2012'),
-            array(TimePeriod::MONTH_TYPE, '2012-11-01', 2012, 5, 'Nov 2012'),
-            array(TimePeriod::MONTH_TYPE, '2012-12-01', 2012, 6, 'Dec 2012'),
-            array(TimePeriod::MONTH_TYPE, '2012-01-01', 2012, 7, 'Jan 2012'),
-            array(TimePeriod::MONTH_TYPE, '2012-02-01', 2012, 8, 'Feb 2012'),
-            array(TimePeriod::MONTH_TYPE, '2012-03-01', 2012, 9, 'Mar 2012'),
-            array(TimePeriod::MONTH_TYPE, '2012-04-01', 2012, 10, 'Apr 2012'),
-            array(TimePeriod::MONTH_TYPE, '2012-05-01', 2012, 11, 'May 2012'),
-            array(TimePeriod::MONTH_TYPE, '2012-06-01', 2012, 12, 'Jun 2012')
+            array('m/d/Y', TimePeriod::ANNUAL_TYPE, '2012-07-01', 1, 'Year 2012'),
+            array('m/d/Y', TimePeriod::ANNUAL_TYPE, '2012-12-31', 2, 'Year 2012'),
+            array('m/d/Y', TimePeriod::ANNUAL_TYPE, '2013-01-01', 1, 'Year 2013'),
+            array('m/d/Y', TimePeriod::QUARTER_TYPE, '2012-07-01', 1, 'Q1 (07/01/2012 - 09/30/2012)'),
+            array('m/d/Y', TimePeriod::QUARTER_TYPE, '2012-10-01', 2, 'Q2 (10/01/2012 - 12/31/2012)'),
+            array('m/d/Y', TimePeriod::QUARTER_TYPE, '2013-01-01', 3, 'Q3 (01/01/2013 - 03/31/2013)'),
+            array('m/d/Y', TimePeriod::QUARTER_TYPE, '2013-04-01', 4, 'Q4 (04/01/2013 - 06/30/2013)'),
+            array('m/d/Y', TimePeriod::MONTH_TYPE, '2012-07-01', 1, '07/01/2012 - 07/31/2012'),
+            array('m/d/Y', TimePeriod::MONTH_TYPE, '2012-08-01', 2, '08/01/2012 - 08/31/2012'),
+            array('m/d/Y', TimePeriod::MONTH_TYPE, '2012-09-01', 3, '09/01/2012 - 09/30/2012'),
+            array('m/d/Y', TimePeriod::MONTH_TYPE, '2012-10-01', 4, '10/01/2012 - 10/31/2012'),
+            array('m/d/Y', TimePeriod::MONTH_TYPE, '2012-11-01', 5, '11/01/2012 - 11/30/2012'),
+            array('m/d/Y', TimePeriod::MONTH_TYPE, '2012-12-01', 6, '12/01/2012 - 12/31/2012'),
+            array('m/d/Y', TimePeriod::MONTH_TYPE, '2012-01-01', 7, '01/01/2012 - 01/31/2012'),
+            array('m/d/Y', TimePeriod::MONTH_TYPE, '2012-02-01', 8, '02/01/2012 - 02/29/2012'),
+            array('m/d/Y', TimePeriod::MONTH_TYPE, '2012-03-01', 9, '03/01/2012 - 03/31/2012'),
+            array('m/d/Y', TimePeriod::MONTH_TYPE, '2012-04-01', 10, '04/01/2012 - 04/30/2012'),
+            array('m/d/Y', TimePeriod::MONTH_TYPE, '2012-05-01', 11, '05/01/2012 - 05/31/2012'),
+            array('m/d/Y', TimePeriod::MONTH_TYPE, '2012-06-01', 12, '06/01/2012 - 06/30/2012'),
+
+            //Test with a different date format
+            array('m.d.Y', TimePeriod::ANNUAL_TYPE, '2012-07-01', 1, 'Year 2012'),
+            array('m.d.Y', TimePeriod::ANNUAL_TYPE, '2012-12-31', 2, 'Year 2012'),
+            array('m.d.Y', TimePeriod::ANNUAL_TYPE, '2013-01-01', 1, 'Year 2013'),
+            array('m.d.Y', TimePeriod::QUARTER_TYPE, '2012-07-01', 1, 'Q1 (07.01.2012 - 09.30.2012)'),
+            array('m.d.Y', TimePeriod::QUARTER_TYPE, '2012-10-01', 2, 'Q2 (10.01.2012 - 12.31.2012)'),
+            array('m.d.Y', TimePeriod::QUARTER_TYPE, '2013-01-01', 3, 'Q3 (01.01.2013 - 03.31.2013)'),
+            array('m.d.Y', TimePeriod::QUARTER_TYPE, '2013-04-01', 4, 'Q4 (04.01.2013 - 06.30.2013)'),
+            array('m.d.Y', TimePeriod::MONTH_TYPE, '2012-07-01', 1, '07.01.2012 - 07.31.2012'),
+            array('m.d.Y', TimePeriod::MONTH_TYPE, '2012-08-01', 2, '08.01.2012 - 08.31.2012'),
+            array('m.d.Y', TimePeriod::MONTH_TYPE, '2012-09-01', 3, '09.01.2012 - 09.30.2012'),
+            array('m.d.Y', TimePeriod::MONTH_TYPE, '2012-10-01', 4, '10.01.2012 - 10.31.2012'),
+            array('m.d.Y', TimePeriod::MONTH_TYPE, '2012-11-01', 5, '11.01.2012 - 11.30.2012'),
+            array('m.d.Y', TimePeriod::MONTH_TYPE, '2012-12-01', 6, '12.01.2012 - 12.31.2012'),
+            array('m.d.Y', TimePeriod::MONTH_TYPE, '2012-01-01', 7, '01.01.2012 - 01.31.2012'),
+            array('m.d.Y', TimePeriod::MONTH_TYPE, '2012-02-01', 8, '02.01.2012 - 02.29.2012'),
+            array('m.d.Y', TimePeriod::MONTH_TYPE, '2012-03-01', 9, '03.01.2012 - 03.31.2012'),
+            array('m.d.Y', TimePeriod::MONTH_TYPE, '2012-04-01', 10, '04.01.2012 - 04.30.2012'),
+            array('m.d.Y', TimePeriod::MONTH_TYPE, '2012-05-01', 11, '05.01.2012 - 05.31.2012'),
+            array('m.d.Y', TimePeriod::MONTH_TYPE, '2012-06-01', 12, '06.01.2012 - 06.30.2012')
         );
     }
 
@@ -310,11 +336,12 @@ class ForecastsTimePeriodTest extends Sugar_PHPUnit_Framework_TestCase
      * @group timeperiods
      * @dataProvider getTimePeriodNameProvider
      */
-    public function testGetTimePeriodName($type, $startDate, $year, $count, $expectedName)
+    public function testGetTimePeriodName($datef, $type, $startDate, $count, $expectedName)
     {
+        $GLOBALS['sugar_config']['datef'] = $datef;
         $timePeriod = TimePeriod::getByType($type);
         $timePeriod->setStartDate($startDate);
-        $this->assertEquals($expectedName, $timePeriod->getTimePeriodName($count, $year));
+        $this->assertEquals($expectedName, $timePeriod->getTimePeriodName($count));
     }
 
 
@@ -544,35 +571,45 @@ class ForecastsTimePeriodTest extends Sugar_PHPUnit_Framework_TestCase
      * @group timeperiods
      */
     public function testGetCurrentId() {
+        global $app_strings;
+        global $sugar_config;
         $timedate = TimeDate::getInstance();
         $queryDate = $timedate->getNow()->format('Y');
         $currentAnnualTimePeriod = TimePeriod::getCurrentTimePeriod(TimePeriod::ANNUAL_TYPE);
-        $expectedAnnualTimePeriodName = sprintf($currentAnnualTimePeriod->name_template, $queryDate);
+        $expectedAnnualTimePeriodName = string_format($app_strings['LBL_ANNUAL_TIMEPERIOD_FORMAT'], array($queryDate));
         $this->assertEquals($expectedAnnualTimePeriodName, $currentAnnualTimePeriod->name);
 
         $month = $timedate->getNow()->format('m');
+        $year = $timedate->getNow()->format('Y');
         $currentId = 1;
+        $startMonth = '01-01';
 
         switch($month) {
             case 4:
             case 5:
             case 6:
                 $currentId = 2;
+                $startMonth = '04-01';
                 break;
             case 7:
             case 8:
             case 9:
                 $currentId = 3;
+                $startMonth = '07-01';
                 break;
             case 10:
             case 11:
             case 12:
                 $currentId = 4;
+                $startMonth = '10-01';
                 break;
         }
 
+        $startMonth = $year . '-' . $startMonth;
         $currentQuarterTimePeriod = TimePeriod::getCurrentTimePeriod(TimePeriod::QUARTER_TYPE);
-        $expectedQuarterTimePeriodName = sprintf($currentQuarterTimePeriod->name_template, $currentId, $queryDate);
+        $start = $timedate->fromDbDate($startMonth)->format($sugar_config['datef']);
+        $end = $timedate->fromDbDate($startMonth)->modify($currentQuarterTimePeriod->next_date_modifier)->modify('-1 day')->format($sugar_config['datef']);
+        $expectedQuarterTimePeriodName = string_format($app_strings['LBL_QUARTER_TIMEPERIOD_FORMAT'], array($currentId, $start, $end));
         $this->assertEquals($expectedQuarterTimePeriodName, $currentQuarterTimePeriod->name);
 
         //Test without passing any arguments
@@ -633,4 +670,5 @@ class ForecastsTimePeriodTest extends Sugar_PHPUnit_Framework_TestCase
 
         SugarTestTimePeriodUtilities::$_createdTimePeriods[] = $timePeriod;
     }
+
 }

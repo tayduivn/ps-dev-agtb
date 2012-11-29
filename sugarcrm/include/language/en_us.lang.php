@@ -3572,6 +3572,13 @@ $app_strings = array (
     'LBL_SYNCED_RECURRING_MSG' => 'You cannot edit this record because it was synced from an external client.',
     'LBL_EXISTING' => 'Existing',
     'LBL_PANEL_DEFAULT' => 'Default',
+
+    //BEGIN SUGARCRM flav=pro ONLY
+    //These are for the timeperiod name formats
+    'LBL_ANNUAL_TIMEPERIOD_FORMAT' => 'Year {0}',
+    'LBL_QUARTER_TIMEPERIOD_FORMAT' => 'Q{0} ({1} - {2})',
+    'LBL_MONTH_TIMEPERIOD_FORMAT' => '{0} - {1}',
+    //END SUGARCRM flav=pro ONLY
 );
 
 

@@ -20,42 +20,18 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
-require_once 'clients/base/api/MetadataApi.php';
+require_once 'clients/base/api/CurrentUserApi.php';
 
-// An API to let the user in to the metadata
-class MetadataPortalApi extends MetadataApi {
-    /**
-     * Gets configs
-     * 
-     * @return array
-     */
-    protected function getConfigs() {
-        $configs = array();
-        $admin = new Administration();
-        $admin->retrieveSettings();
-        foreach($admin->settings AS $setting_name => $setting_value) {
-            if(stristr($setting_name, 'portal_')) {
-                $key = str_replace('portal_', '', $setting_name);
-                $configs[$key] = json_decode(html_entity_decode($setting_value));
-            }
+class CurrentUserMobileApi extends CurrentUserApi {
+    public function getModuleList() {
+        // replicate the essential part of the behavior of the private loadMapping() method in SugarController
+        foreach(SugarAutoLoader::existingCustom('include/MVC/Controller/wireless_module_registry.php') as $file){
+            require $file;
         }
-        
-        return $configs;
+
+        // $wireless_module_registry is defined in the file loaded above
+        return isset($wireless_module_registry) && is_array($wireless_module_registry) ?
+            $this->list2Array($wireless_module_registry) :
+            array();
     }
-
-
-    /**
-     * Fills in additional app list strings data as needed by the client
-     * 
-     * @param array $public Public app list strings
-     * @param array $main Core app list strings
-     * @return array
-     */
-    protected function fillInAppListStrings(Array $public, Array $main) {
-        $public['countries_dom'] = $main['countries_dom'];
-        $public['state_dom'] = $main['state_dom'];
-        
-        return $public;
-    }
-
 }
