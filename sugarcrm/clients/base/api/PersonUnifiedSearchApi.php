@@ -22,15 +22,23 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 require_once('clients/base/api/UnifiedSearchApi.php');
 
-class UserUnifiedSearchApi extends UnifiedSearchApi {
+class PersonUnifiedSearchApi extends UnifiedSearchApi {
     public function registerApiRest() {
         return array(
-            'moduleSearch' => array(
+            'UserSearch' => array(
                 'reqType' => 'GET',
                 'path' => array('Users'),
                 'pathVars' => array('module_list'),
                 'method' => 'globalSearch',
-                'shortHelp' => 'Search records in this module',
+                'shortHelp' => 'Search User records',
+                'longHelp' => 'include/api/help/getListModule.html',
+            ),
+            'EmployeeSearch' => array(
+                'reqType' => 'GET',
+                'path' => array('Employees'),
+                'pathVars' => array('module_list'),
+                'method' => 'globalSearch',
+                'shortHelp' => 'Search Employee records',
                 'longHelp' => 'include/api/help/getListModule.html',
             ),
         );
@@ -46,15 +54,28 @@ class UserUnifiedSearchApi extends UnifiedSearchApi {
         // This is required to keep the loadFromRow() function in the bean from making our day harder than it already is.
         $GLOBALS['disable_date_format'] = true;
         $options = $this->parseSearchOptions($api,$args);
-        $options['custom_where'] = "users.status = 'Active'";
+        $options['custom_where'] = $this->getCustomWhereForModule($args['module_list']);
 
         $searchEngine = new SugarSpot();
         $options['resortResults'] = true;
         $recordSet = $this->globalSearchSpot($api,$args,$searchEngine,$options);
-        $sortByDateModified = true;
-
-
+        
         return $recordSet;
+    }
 
+    /**
+     * Gets the proper query where clause to use to prevent special user types from
+     * being returned in the result
+     * 
+     * @param string $module The name of the module we are looking for
+     * @return string
+     */
+    protected function getCustomWhereForModule($module) {
+        $prefix = '';
+        if ($module == 'Employees') {
+            $prefix = "users.employee_status = 'Active' AND ";
+        } 
+        
+        return $prefix . "users.status = 'Active'";
     }
 }
