@@ -51,15 +51,15 @@ class RestService extends ServiceBase {
 
     /**
      * The minimum version accepted
-     * @var
+     * @var integer
      */
-    protected $min_version = '10';
+    protected $min_version = 10;
 
     /**
      * The maximum version accepted
-     * @var
+     * @var integer
      */
-    protected $max_version = '10';
+    protected $max_version = 10;
 
     /**
      * This function executes the current request and outputs the response directly.
