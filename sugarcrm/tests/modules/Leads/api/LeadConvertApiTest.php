@@ -27,8 +27,6 @@ require_once('modules/Leads/LeadConvert.php');
 
 /***
  * Used to test Lead Convert in Leads Module endpoints from LeadConvertApi.php
- *
- * @group forecasts
  */
 class LeadConvertApiTest extends RestTestBase
 {
@@ -56,7 +54,7 @@ class LeadConvertApiTest extends RestTestBase
     }
 
     /**
-     * @group leadconvertapi
+     * @group api_lead_convert
      */
     public function testConvertLead_AllNewRecords_ConvertSuccessful(){
         $postData = array(
@@ -127,7 +125,7 @@ class LeadConvertApiTest extends RestTestBase
      }
 
     /**
-     * @group leadconvertapi
+     * @group api_lead_convert
      */
     public function testConvertLead_RecordsExists_ConvertSuccessful(){
 
@@ -162,7 +160,7 @@ class LeadConvertApiTest extends RestTestBase
     }
 
     /**
-     * @group leadconvertapi
+     * @group api_lead_convert
      */
     public function testConvertLead_LeadDoesNotExist_ConvertFailed(){
 
