@@ -41,6 +41,7 @@ class SugarFieldLinkTest extends Sugar_PHPUnit_Framework_TestCase
      * @ticket 36744
      */
 	public function testLinkField() {
+        $this->markTestIncomplete('This test is incorrectly written and seems to assume a custom field is already defined for the Notes module');
         $note = BeanFactory::newBean('Notes');
         $note->field_defs['testurl_c']['gen'] = 1;
         $note->field_defs['testurl_c']['default'] = 'http://test/{assigned_user_id}';
