@@ -4,6 +4,16 @@
     },
 
     /**
+     * {@inheritdoc}
+     *
+     * The vCard is always a non editable field.
+     */
+    initialize: function(options) {
+        app.view.Field.prototype.initialize.call(this, options);
+        this.def.noedit = true;
+    },
+
+    /**
      * Downloads the vCard from the Rest API.
      *
      * First we do an ajax call to the `ping` API. This will check if the token

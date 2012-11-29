@@ -1,9 +1,8 @@
-<?php
-if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
+{*
 /*********************************************************************************
- * The contents of this file are subject to the SugarCRM Professional End User
+ * The contents of this file are subject to the SugarCRM Enterprise End User
  * License Agreement ("License") which can be viewed at
- * http://www.sugarcrm.com/crm/products/sugar-professional-eula.html
+ * http://www.sugarcrm.com/crm/products/sugar-enterprise-eula.html
  * By installing or using this file, You have unconditionally agreed to the
  * terms and conditions of the License, and You may not use this file except in
  * compliance with the License.  Under the terms of the license, You shall not,
@@ -26,12 +25,21 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * governing these rights and limitations under the License.  Portions created
  * by SugarCRM are Copyright (C) 2004-2006 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
- 
-$themedef = array(
-    'name'  => "Racer X",
-    'description' => "Racer X",
-    'version' => array(
-        'regex_matches' => array('[6|7]\.*.*'),
-        ),
-    'group_tabs' => true,
-    );
+*}
+{if $AUTHENTICATED}
+{$DCSCRIPT}
+<div id='dcmenutop'></div>
+<div id='dcmenu' class='dcmenu dcmenuFloat navbar navbar-fixed-top'>
+<div id='ie8GradientFix'></div>
+    <div class="inner">
+  {include file="_headerModuleList.tpl" theme_template=true}
+    
+    {if $AUTHENTICATED}
+    {include file="_quickcreate.tpl" theme_template=true}
+    {include file="_globalLinks.tpl" theme_template=true}
+    {include file="_search.tpl" theme_template=true}
+
+	{/if}
+    </div>
+</div>
+{/if}
