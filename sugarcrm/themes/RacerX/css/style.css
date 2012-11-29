@@ -5943,7 +5943,7 @@ top:0px;
     display:block;
     position:relative;
     cursor:pointer;
-    height: 17px;
+    height: 16px;
     line-height: 19px;
     padding: 4px 10px;
     background-color: #1e1e1d;
@@ -6256,7 +6256,9 @@ margin-left:10px;
 }
 #sugar_spot_search {
 	width:235px;
+    height: 16px;
     padding: 4px 9px;
+    margin: 0px;
     font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
     font-size: 13px;
     font-weight: normal;

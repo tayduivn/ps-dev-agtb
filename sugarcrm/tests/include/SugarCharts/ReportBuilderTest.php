@@ -669,7 +669,7 @@ class ReportBuilderTest extends Sugar_PHPUnit_Framework_TestCase
             ),
             array(
                 'name' => 'best_case',
-                'label' => 'SUM: Best case',
+                'label' => 'SUM: Best Case',
                 'field_type' => 'currency',
                 'table_key' => 'self',
                 'group_function' => 'sum',
@@ -691,7 +691,7 @@ class ReportBuilderTest extends Sugar_PHPUnit_Framework_TestCase
 
         $expected = array(
             'name' => 'best_case',
-            'label' => 'SUM: Best case',
+            'label' => 'SUM: Best Case',
             'field_type' => 'currency',
             'table_key' => 'self',
             'group_function' => 'sum',
@@ -712,7 +712,7 @@ class ReportBuilderTest extends Sugar_PHPUnit_Framework_TestCase
 
         $summary = array(
             'name' => 'best_case',
-            'label' => 'SUM: Best case',
+            'label' => 'SUM: Best Case',
             'field_type' => 'currency',
             'table_key' => 'self',
             'group_function' => 'sum',
@@ -742,7 +742,7 @@ class ReportBuilderTest extends Sugar_PHPUnit_Framework_TestCase
 
         $remove = array(
             'name' => 'best_case',
-            'label' => 'SUM: Best case',
+            'label' => 'SUM: Best Case',
             'field_type' => 'currency',
             'table_key' => 'self',
             'group_function' => 'sum',

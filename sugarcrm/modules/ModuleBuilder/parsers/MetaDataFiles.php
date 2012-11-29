@@ -747,34 +747,42 @@ class MetaDataFiles
         $results = array();
         
         foreach ( $fileList as $fileIndex => $fileInfo ) {
-            if ( $fileInfo['template'] ) {
-                // This is a template file, not a real one.
-                require $fileInfo['path'];
-                $bean = BeanFactory::getBean($module);
-                if ( !is_a($bean,'SugarBean') ) {
-                    // I'm not sure what this is, but it's not something we can template
-                    continue;
-                }
-                $viewdefs = self::getModuleMetaDataDefsWithReplacements($bean, $viewdefs);
-                if ( ! isset($viewdefs[$module][$fileInfo['platform']][$type][$fileInfo['subPath']]) ) {
-                    $GLOBALS['log']->error('Could not generate a metadata file for module '.$module.', platform: '.$fileInfo['platform'].', type: '.$type);
-                    continue;
-                }
-                    
-                $results[$fileInfo['subPath']]['meta'] = $viewdefs[$module][$fileInfo['platform']][$type][$fileInfo['subPath']];
-            } else {
-                $extension = substr($fileInfo['path'],-3);
-                switch ( $extension ) {
-                    case '.js':
-                        $results[$fileInfo['subPath']]['controller'][$fileInfo['platform']] = file_get_contents($fileInfo['path']);
-                        break;
-                    case 'hbt':
-                        $layoutName = substr($fileInfo['file'],0,-4);
-                        $results[$fileInfo['subPath']]['templates'][$layoutName] = file_get_contents($fileInfo['path']);
-                        // $results[$fileInfo['subPath']]['template'] = file_get_contents($fileInfo['path']);
-                        break;
-                    case 'php':
-                        $viewdefs = array();
+            $extension = substr($fileInfo['path'],-3);
+            switch ( $extension ) {
+                case '.js':
+                    if ( isset($results[$fileInfo['subPath']]['controller'][$fileInfo['platform']]) ) {
+                        continue;
+                    }
+                    $results[$fileInfo['subPath']]['controller'][$fileInfo['platform']] = file_get_contents($fileInfo['path']);
+                    break;
+                case 'hbt':
+                    $layoutName = substr($fileInfo['file'],0,-4);
+                    if ( isset($results[$fileInfo['subPath']]['templates'][$layoutName]) ) {
+                        continue;
+                    }
+                    $results[$fileInfo['subPath']]['templates'][$layoutName] = file_get_contents($fileInfo['path']);
+                    break;
+                case 'php':
+                    $viewdefs = array();
+                    if ( isset($results[$fileInfo['subPath']]['meta']) ) {
+                        continue;
+                    }
+                    if ( $fileInfo['template'] ) {
+                        // This is a template file, not a real one.
+                        require $fileInfo['path'];
+                        $bean = BeanFactory::getBean($module);
+                        if ( !is_a($bean,'SugarBean') ) {
+                            // I'm not sure what this is, but it's not something we can template
+                            continue;
+                        }
+                        $viewdefs = self::getModuleMetaDataDefsWithReplacements($bean, $viewdefs);
+                        if ( ! isset($viewdefs[$module][$fileInfo['platform']][$type][$fileInfo['subPath']]) ) {
+                            $GLOBALS['log']->error('Could not generate a metadata file for module '.$module.', platform: '.$fileInfo['platform'].', type: '.$type);
+                            continue;
+                        }
+                        
+                        $results[$fileInfo['subPath']]['meta'] = $viewdefs[$module][$fileInfo['platform']][$type][$fileInfo['subPath']];
+                    } else {
                         require $fileInfo['path'];
                         if ( empty($module) ) {
                             if ( !isset($viewdefs[$fileInfo['platform']][$type][$fileInfo['subPath']]) ) {
@@ -790,7 +798,7 @@ class MetaDataFiles
                             }
                         }
                         break;
-                }
+                    }
             }
         }
 
