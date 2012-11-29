@@ -3339,6 +3339,7 @@ $app_strings = array (
     'UPLOAD_ERROR_TEXT_SIZEINFO' => 'ERROR: There was an error during upload. Error code: {0} - {1}. The upload_maxsize is {2} ',
     'UPLOAD_ERROR_HOME_TEXT'     => 'ERROR: There was an error during your upload, please contact an administrator for help.',
     'UPLOAD_MAXIMUM_EXCEEDED'    => 'Size of Upload ({0} bytes) Exceeded Allowed Maximum: {1} bytes',
+    'UPLOAD_REQUEST_ERROR'    => 'An error has occured. Please refresh your page and try again.',
 
 
     //508 used Access Keys
