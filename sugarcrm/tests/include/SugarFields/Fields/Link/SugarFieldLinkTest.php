@@ -28,29 +28,29 @@ class SugarFieldLinkTest extends Sugar_PHPUnit_Framework_TestCase
 {
 	public function setUp()
     {
-        $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
+        SugarTestHelper::setUp('current_user');
+        $this->note = BeanFactory::newBean('Notes');
+        $this->note->field_defs['testurl_c']['gen'] = 1;
+        $this->note->field_defs['testurl_c']['default'] = 'http://test/{assigned_user_id}';
+        $this->note->assigned_user_id = $GLOBALS['current_user']->id;
+        $this->note->fetched_row['assigned_user_id'] = $this->note->assigned_user_id;
 	}
 
     public function tearDown()
     {
-        SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
-        unset($GLOBALS['current_user']);
+        SugarTestHelper::tearDown();
+        unset($this->note->field_defs['testurl_c']);
+        unset($this->note);
     }
     
      /**
      * @ticket 36744
      */
 	public function testLinkField() {
-        $this->markTestIncomplete('This test is incorrectly written and seems to assume a custom field is already defined for the Notes module');
-        $note = BeanFactory::newBean('Notes');
-        $note->field_defs['testurl_c']['gen'] = 1;
-        $note->field_defs['testurl_c']['default'] = 'http://test/{assigned_user_id}';
-        $note->assigned_user_id = $GLOBALS['current_user']->id;
-        $note->fetched_row['assigned_user_id'] = $note->assigned_user_id;
         require_once('include/SugarFields/SugarFieldHandler.php');
         $sf = SugarFieldHandler::getSugarField('link');
         $data = array();
-        $sf->apiFormatField($data, $note, array(), 'testurl_c',array());
+        $sf->apiFormatField($data, $this->note, array(), 'testurl_c',array());
         $this->assertEquals('http://test/'.$GLOBALS['current_user']->id, $data['testurl_c']);
     }
 }
