@@ -38,6 +38,7 @@ class RestListTest extends RestTestBase {
         $this->cases = array();
         $this->bugs = array();
         $this->files = array();
+        $this->users = array();
         // set the FTS engine as down and make sure the config removes FTS
 
         //BEGIN SUGARCRM flav=pro ONLY
@@ -131,6 +132,15 @@ class RestListTest extends RestTestBase {
             if ($GLOBALS['db']->tableExists('bugs_cstm')) {
                 $GLOBALS['db']->query("DELETE FROM bugs_cstm WHERE id_c IN {$bugIds}");
             }
+        }
+
+        if(count($this->users)) {
+            foreach($this->users AS $id) {
+                $GLOBALS['db']->query("DELETE FROM users WHERE id = '{$id}'");
+                if ($GLOBALS['db']->tableExists('users_cstm')) {
+                    $GLOBALS['db']->query("DELETE FROM users_cstm WHERE id_c IN {$id}");
+                }                
+            }          
         }
 
         //BEGIN SUGARCRM flav=pro ONLY
@@ -370,6 +380,49 @@ class RestListTest extends RestTestBase {
 
     }
 
+    /**
+     * @group rest
+     */
+    public function testUserEmployeeActiveOnlySearch() {
+        for($x=0;$x<10;$x++) {
+            $user = BeanFactory::newBean('Users');
+            $user->first_name = 'Test';
+            $user->last_name = create_guid();
+            $user->status = 'Active';
+            $user->employee_status = 'Active';
+            $user->save();
+            $this->users[] = $user->id;
+        }
+
+        $restReply = $this->_restCall('Employees');
+        $this->assertEquals(11, count($restReply['reply']['records']), "Number of employees incorrect.  Should be 11 but is " . count($restReply['reply']['records']));
+
+        $restReply = $this->_restCall('Users');
+        $this->assertEquals(12, count($restReply['reply']['records']), "Number of users incorrect.  Should be 12 but is " . count($restReply['reply']['records']));
+
+        // set a user employee_status as terminated
+        $user = BeanFactory::getBean('Users', $this->users[0]);
+        $user->employee_status = 'Terminated';
+        $user->save();
+
+        $restReply = $this->_restCall('Employees');
+        $this->assertEquals(10, count($restReply['reply']['records']), "Number of employees incorrect.  Should be 10 but is " . count($restReply['reply']['records']));
+
+        $restReply = $this->_restCall('Users');
+        $this->assertEquals(12, count($restReply['reply']['records']), "Number of users incorrect.  Should be 12 but is " . count($restReply['reply']['records']));        
+
+        // set a users status as inactive
+        $user = BeanFactory::getBean('Users', $this->users[1]);
+        $user->status = 'Inactive';
+        $user->save();        
+
+        $restReply = $this->_restCall('Employees');
+        $this->assertEquals(9, count($restReply['reply']['records']), "Number of employees incorrect.  Should be 9 but is " . count($restReply['reply']['records']));
+
+        $restReply = $this->_restCall('Users');
+        $this->assertEquals(11, count($restReply['reply']['records']), "Number of users incorrect.  Should be 11 but is " . count($restReply['reply']['records']));
+
+    }
 
     /**
      * @group rest
