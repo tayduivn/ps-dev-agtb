@@ -49,9 +49,17 @@ class RestService extends ServiceBase {
      */
     protected $response_headers = array();
 
-    protected $min_version = '10';
+    /**
+     * The minimum version accepted
+     * @var integer
+     */
+    protected $min_version = 10;
 
-    protected $max_version = '10';
+    /**
+     * The maximum version accepted
+     * @var integer
+     */
+    protected $max_version = 10;
 
     /**
      * This function executes the current request and outputs the response directly.
