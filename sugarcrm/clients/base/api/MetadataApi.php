@@ -72,7 +72,11 @@ class MetadataApi extends SugarApi {
     }
 
     protected function getMetadataManager( $public = false ) {
-        return new MetaDataManager($this->user,$this->platforms, $public);
+        static $mm;
+        if ( !isset($mm) ) {
+            $mm = new MetaDataManager($this->user,$this->platforms, $public);
+        }
+        return $mm;
     }
 
     public function getAllMetadata(ServiceBase $api, array $args) {
@@ -153,25 +157,6 @@ class MetadataApi extends SugarApi {
         // Added an isset check for platform because with no platform set it was
         // erroring out. -- rgonzalez
         $this->setPlatformList($api);
-
-        //temporary replace 'forecasts' w/ 'base'
-        //as forecast settings store in db w/ prefix 'base_'
-        $category = $this->platforms[0] == 'forecasts' ? 'base' : $this->platforms[0];
-        $prefix = "{$category}_";
-        $admin = new Administration();
-        $admin->retrieveSettings($category, true);
-        foreach($admin->settings AS $setting_name => $setting_value) {
-            if(stristr($setting_name, $prefix)) {
-                $key = str_replace($prefix, '', $setting_name);
-                
-                // Empty array was getting decoded as '[]' as tertiary was falsy .. this fixes
-                $decoded = json_decode(html_entity_decode($setting_value));
-                $configs[$key] = $setting_value; // set to fallback in case
-                if (strcasecmp($setting_name, "null") == 0 || $decoded !== NULL) {
-                    $configs[$key] = $decoded;
-                }
-            }
-        }
 
         // Default the type filter to everything available to the public, no module info at this time
         $this->typeFilter = array('fields','labels','views', 'layouts', 'config', 'jssource');
@@ -663,6 +648,8 @@ class MetadataApi extends SugarApi {
             $urlList[$lang] = $this->getUrlForCacheFile($file);
         }
 
+        // We need the default language somewhere, how about here?
+        $urlList['default'] = $GLOBALS['sugar_config']['default_language'];
         $urlList['_hash'] = md5(serialize($urlList));
 
         return $urlList;
