@@ -52,7 +52,7 @@
                             return array(
                                 'styleguide/assets/js/bootstrap-button.js'  => $target,
                                 'styleguide/assets/js/bootstrap-tooltip.js' => $target,
-                                'styleguide/assets/js/bootstrap-dropdown.js'=> $target,
+                                'styleguide/assets/js/bootstrap-dropdown.js'=>  $target,
                                 'styleguide/assets/js/bootstrap-popover.js' => $target,
                                 'styleguide/assets/js/bootstrap-modal.js'   => $target,
                                 'styleguide/assets/js/bootstrap-alert.js'   => $target,
@@ -88,29 +88,42 @@
                'include/EditView/Panels.js'   => 'include/javascript/sugar_grp1.js',
             ),
 			//jquery libraries
-			$sugar_grp_jquery = array(
-			'include/javascript/jquery/jquery-min.js'              => 'include/javascript/sugar_grp1_jquery.js',
-			'include/javascript/jquery/jquery-ui-min.js'          => 'include/javascript/sugar_grp1_jquery.js',
-			'include/javascript/jquery/jquery.json-2.3.js'        => 'include/javascript/sugar_grp1_jquery.js',
-			//bootstrap
-            'include/javascript/jquery/bootstrap/bootstrap.min.js'              => 'include/javascript/sugar_grp1_jquery.js',
+			$sugar_grp_jquery_core = array(
+			'include/javascript/jquery/jquery-min.js'             => 'include/javascript/sugar_grp1_jquery_core.js',
+			'include/javascript/jquery/jquery-ui-min.js'          => 'include/javascript/sugar_grp1_jquery_core.js',
+			'include/javascript/jquery/jquery.json-2.3.js'        => 'include/javascript/sugar_grp1_jquery_core.js',
+            ),
+
+            //bootstrap
+            $sugar_grp_bootstrap = array (
+            'include/javascript/jquery/bootstrap/bootstrap.min.js'              => 'include/javascript/sugar_grp1_bootstrap.js',
+            ),
+
             //jquery for moddule menus
-            'include/javascript/jquery/jquery.hoverIntent.js'            => 'include/javascript/sugar_grp1_jquery.js',
-            'include/javascript/jquery/jquery.hoverscroll.js'            => 'include/javascript/sugar_grp1_jquery.js',
-            'include/javascript/jquery/jquery.hotkeys.js'                => 'include/javascript/sugar_grp1_jquery.js',
-            'include/javascript/jquery/jquery.superfish.js'              => 'include/javascript/sugar_grp1_jquery.js',
-            'include/javascript/jquery/jquery.tipTip.js'              	 => 'include/javascript/sugar_grp1_jquery.js',
-            'include/javascript/jquery/jquery.sugarMenu.js'              => 'include/javascript/sugar_grp1_jquery.js',
-            'include/javascript/jquery/jquery.highLight.js'              => 'include/javascript/sugar_grp1_jquery.js',
-            'include/javascript/jquery/jquery.showLoading.js'            => 'include/javascript/sugar_grp1_jquery.js',
-            'include/javascript/jquery/jquery.dataTables.min.js'         => 'include/javascript/sugar_grp1_jquery.js',
-            'include/javascript/jquery/jquery.dataTables.customSort.js'  => 'include/javascript/sugar_grp1_jquery.js',
-            'include/javascript/jquery/jquery.jeditable.js'              => 'include/javascript/sugar_grp1_jquery.js',
-            'include/javascript/jquery/jquery.chosen.min.js'             => 'include/javascript/sugar_grp1_jquery.js',
-            'include/javascript/jquery/jquery.jstree.js'              	 => 'include/javascript/sugar_grp1_jquery.js',
-            'include/javascript/jquery/jquery.popoverext.js'              => 'include/javascript/sugar_grp1_jquery.js',
-            'include/javascript/jquery/jquery.effects.custombounce.js'              => 'include/javascript/sugar_grp1_jquery.js',
+            $sugar_grp_jquery_menus = array (
+            'include/javascript/jquery/jquery.hoverIntent.js'            => 'include/javascript/sugar_grp1_jquery_menus.js',
+            'include/javascript/jquery/jquery.hoverscroll.js'            => 'include/javascript/sugar_grp1_jquery_menus.js',
+            'include/javascript/jquery/jquery.hotkeys.js'                => 'include/javascript/sugar_grp1_jquery_menus.js',
+            'include/javascript/jquery/jquery.superfish.js'              => 'include/javascript/sugar_grp1_jquery_menus.js',
+            'include/javascript/jquery/jquery.tipTip.js'              	 => 'include/javascript/sugar_grp1_jquery_menus.js',
+            'include/javascript/jquery/jquery.sugarMenu.js'              => 'include/javascript/sugar_grp1_jquery_menus.js',
+            'include/javascript/jquery/jquery.highLight.js'              => 'include/javascript/sugar_grp1_jquery_menus.js',
+            'include/javascript/jquery/jquery.showLoading.js'            => 'include/javascript/sugar_grp1_jquery_menus.js',
+            'include/javascript/jquery/jquery.dataTables.min.js'         => 'include/javascript/sugar_grp1_jquery_menus.js',
+            'include/javascript/jquery/jquery.dataTables.customSort.js'  => 'include/javascript/sugar_grp1_jquery_menus.js',
+            'include/javascript/jquery/jquery.jeditable.js'              => 'include/javascript/sugar_grp1_jquery_menus.js',
+            'include/javascript/jquery/jquery.chosen.min.js'             => 'include/javascript/sugar_grp1_jquery_menus.js',
+            'include/javascript/jquery/jquery.jstree.js'              	 => 'include/javascript/sugar_grp1_jquery_menus.js',
+            'include/javascript/jquery/jquery.popoverext.js'             => 'include/javascript/sugar_grp1_jquery_menus.js',
+            'include/javascript/jquery/jquery.effects.custombounce.js'   => 'include/javascript/sugar_grp1_jquery_menus.js',
 			),
+
+            $sugar_grp_jquery = array(
+                sugar_cached('include/javascript/sugar_grp1_jquery_core.js')    => 'include/javascript/sugar_grp1_jquery.js',
+                sugar_cached('include/javascript/sugar_grp1_bootstrap.js')      => 'include/javascript/sugar_grp1_jquery.js',
+                sugar_cached('include/javascript/sugar_grp1_jquery_menus.js')   => 'include/javascript/sugar_grp1_jquery.js',
+            ),
+
            $sugar_field_grp = array(
                'include/SugarFields/Fields/Collection/SugarFieldCollection.js' => 'include/javascript/sugar_field_grp.js',
                //BEGIN SUGARCRM flav=pro ONLY
@@ -248,6 +261,8 @@
     $cached_file = 'include/javascript/sidecar_forecasts.js';
 
     $sidecar_forecasts = array();
+    // Forecast and portal2 should include same styleguide bootstrap files
+    $sidecar_forecasts = array_merge($sidecar_forecasts, getSubgroupForTarget('bootstrap', $cached_file));
     $sidecar_forecasts['include/javascript/sugarAuthStore.js'] = $cached_file;
     $sidecar_forecasts['include/SugarCharts/Jit/js/Jit/jit.js'] = $cached_file;
     $sidecar_forecasts['include/SugarCharts/Jit/js/sugarCharts.js'] = $cached_file;
@@ -257,7 +272,7 @@
     $sidecar_forecasts['modules/Forecasts/clients/base/lib/ForecastsUtils.js'] = $cached_file;
     $sidecar_forecasts['modules/Forecasts/tpls/SidecarView.js'] = $cached_file;
     // Forecast and portal2 should include same styleguide bootstrap files
-    // $sidecar_forecasts = array_merge($sidecar_forecasts, getSubgroupForTarget('bootstrap', $cached_file));
+    $sidecar_forecasts = array_merge($sidecar_forecasts, getSubgroupForTarget('bootstrap', $cached_file));
     $sidecar_forecasts['include/javascript/jquery/jquery.nouislider.js'] = $cached_file;
 
     $js_groupings[] = $sidecar_forecasts;
