@@ -46,7 +46,9 @@ class LeadConvert
     public function convertLead($modules)
     {
         $this->modules = $modules;
-        $this->contact = $this->modules['Contacts'];
+        if (isset($this->modules['Contacts'])) {
+            $this->contact = $this->modules['Contacts'];
+        }
 
         foreach ($this->defs as $moduleDef) {
             $moduleName = $moduleDef['module'];
@@ -59,7 +61,7 @@ class LeadConvert
                 $this->setRelationshipsForModulesToContacts($moduleDef);
             }
 
-            if ($this->modules[$moduleName]->object_name == 'Opportunity' && empty($this->modules[$moduleName]->account_id)) {
+            if ($this->modules[$moduleName]->object_name == 'Opportunity' && !empty($this->modules[$moduleName]->account_id)) {
                 $this->updateOpportunityWithAccountInformation($moduleDef);
             }
             $this->setAssignedForModulesToLeads($moduleDef);
