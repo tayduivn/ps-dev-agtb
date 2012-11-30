@@ -50,9 +50,10 @@ class MetaDataFilesTest extends Sugar_PHPUnit_Framework_TestCase
             SugarAutoLoader::unlink($file);
         }
         foreach ( $this->createdDirs as $dir ) {
-            SugarAutoLoader::unlink($dir);
+            rmdir_recursive($dir);
+            SugarAutoLoader::delFromMap($dir, false);
         }
-        
+
         SugarAutoLoader::saveMap();
     }
 
@@ -61,12 +62,12 @@ class MetaDataFilesTest extends Sugar_PHPUnit_Framework_TestCase
         $this->markTestIncomplete("This test does not properly ensure that the clients/base/fields/fo directory is created");
         $this->createdDirs[] = 'clients/base/fields/fo';
         SugarAutoLoader::ensureDir($this->createdDirs[0]);
-        
+
         $this->createdFiles[] = 'clients/base/fields/fo/rizzle.hbt';
         SugarAutoLoader::put($this->createdFiles[0],'FO RIZZLE (base)');
 
         $fileList = MetaDataFiles::getClientFiles(array('base'),'field');
-        
+
         $this->assertArrayHasKey($this->createdFiles[0],$fileList,"The file list should contain fo rizzle.");
 
         $fileContents = MetaDataFiles::getClientFileContents(array('fo/rizzle.hbt'=>$fileList[$this->createdFiles[0]]),'field');
@@ -122,7 +123,7 @@ class MetaDataFilesTest extends Sugar_PHPUnit_Framework_TestCase
         SugarAutoLoader::ensureDir($this->createdDirs[0]);
         $this->createdDirs[] = 'clients/mobile/fields/fo';
         SugarAutoLoader::ensureDir($this->createdDirs[1]);
-        
+
         $this->createdFiles[] = 'clients/base/fields/fo/fo.js';
         $controllerContentsBase = 'console.log("fo"); // (base/controller)';
         SugarAutoLoader::put($this->createdFiles[0],$controllerContentsBase);
@@ -188,7 +189,7 @@ class MetaDataFilesTest extends Sugar_PHPUnit_Framework_TestCase
         SugarAutoLoader::ensureDir($this->createdDirs[0]);
         $this->createdDirs[] = 'modules/Accounts/clients/mobile/views/fo';
         SugarAutoLoader::ensureDir($this->createdDirs[1]);
-        
+
         $this->createdFiles[] = 'modules/Accounts/clients/base/views/fo/fo.js';
         $baseController = 'console.log("fo"); // (base/controller)';
         SugarAutoLoader::put($this->createdFiles[0],$baseController);
