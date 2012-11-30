@@ -199,7 +199,9 @@
         _.each(this.meta.modules, function (moduleMeta) {
             var convertPanel = self._getPanelByModuleName(moduleMeta.module),
                 associatedModel = convertPanel.getAssociatedModel();
-            models[moduleMeta.module] = associatedModel;
+            if (!_.isEmpty(associatedModel)) {
+                models[moduleMeta.module] = associatedModel;
+            }
         });
         convertModel.set('modules', models);
 

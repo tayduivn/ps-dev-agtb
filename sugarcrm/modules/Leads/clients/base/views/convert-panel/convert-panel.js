@@ -316,7 +316,7 @@
     getAssociatedModel: function() {
         var associatedModel;
 
-        if (!this.getStatus() === this.STATUS_COMPLETE) {
+        if (this.getStatus() !== this.STATUS_COMPLETE) {
             return null;
         }
 
