@@ -68,8 +68,7 @@ class RestTestPortalBase extends RestTestBase {
         $this->_user->portal_only = '1';
         $this->_user->save();
         
-        // Reset the support portal user id to the newly created user id
-        
+        // Reset the support portal user id to the newly created user id        
         $GLOBALS ['system_config']->saveSetting('supportPortal', 'RegCreatedBy', $this->_user->id);
         
         $this->role = $this->_getPortalACLRole();
