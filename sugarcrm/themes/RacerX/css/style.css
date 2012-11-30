@@ -5943,7 +5943,7 @@ top:0px;
     display:block;
     position:relative;
     cursor:pointer;
-    height: 17px;
+    height: 16px;
     line-height: 19px;
     padding: 4px 10px;
     background-color: #1e1e1d;
@@ -6256,7 +6256,9 @@ margin-left:10px;
 }
 #sugar_spot_search {
 	width:235px;
+    height: 16px;
     padding: 4px 9px;
+    margin: 0px;
     font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
     font-size: 13px;
     font-weight: normal;
@@ -8750,7 +8752,7 @@ li[class*=" icon-"].icon-large:before {
 
 /* tour specific */
 
-#tour h1, #tour h2, #tour h3, #tour h4, #tour h5, #tour h6 {
+#tour h1, #tour h2, #tour h3, #tour h4, #tour h5, #tour h6, .tour h3 {
     font-family: Arial, Verdana, Helvetica, sans-serif;
     color: #343433;
     font-weight: bold;
@@ -8758,7 +8760,7 @@ li[class*=" icon-"].icon-large:before {
     text-rendering: optimizelegibility;
 }
 
-#tour h3 {
+#tour h3,.tour h3 {
     font-size: 18px;
     line-height: 27px;
 }
@@ -8805,7 +8807,9 @@ li[class*=" icon-"].icon-large:before {
     float: left;
     margin-left: 0px;
 }
-.modal-body   {
+.tour .modal-body   {
+    width: 580px;
+    height: 196px;
     font-size: 16px;
     padding-bottom: 30px;
 }
@@ -8857,6 +8861,7 @@ h3.popover-title {
 .tour li {
     line-height: 18px;
     margin-bottom: 10px;
+    text-align: left;
 }
 #tour ul.unstyled,
 #tour ol.unstyled {
@@ -8908,6 +8913,18 @@ i.icon-arrow-up:before {
     background-position: 0px -109px;
 }
 
+.modal.tour.screenshot {
+    z-index: 1051;
+}
+
+.modal.tour.screenshot .modal-body {
+    width: 600px;
+    height: 400px;
+}
+
+.modal.tour .modal-body .thumb {
+    cursor: pointer;
+}
 
 
 .pointer.up.left {

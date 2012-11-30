@@ -290,11 +290,10 @@ class MetaDataManager {
      * Gets the ACL's for the module, will also expand them so the client side of the ACL's don't have to do as many checks.
      *
      * @param string $module The module we want to fetch the ACL for
-     * @param string $userId The user id for the ACL's we are retrieving.
+     * @param object $userObject The user object for the ACL's we are retrieving.
      * @return array Array of ACL's, first the action ACL's (access, create, edit, delete) then an array of the field level acl's
      */
-    public function getAclForModule($module,$userId) {
-        $userObject = BeanFactory::getBean('Users',$userId);
+    public function getAclForModule($module,$userObject) {
         $obj = BeanFactory::getObjectName($module);
 
         $outputAcl = array('fields'=>array());
@@ -309,6 +308,9 @@ class MetaDataManager {
             foreach(SugarACL::$all_access AS $action => $bool) {
                 $outputAcl[$action] = ($moduleAcls[$action] == true || !isset($moduleAcls[$action])) ? 'yes' : 'no';
             }
+
+            // is the user an admin user for the module
+            $outputAcl['admin'] = ($userObject->isAdminForModule($module)) ? 'yes' : 'no';
 
             // Only loop through the fields if we have a reason to, admins give full access on everything, no access gives no access to anything
             if ( $outputAcl['access'] == 'yes') {
@@ -443,49 +445,6 @@ class MetaDataManager {
         return $appStrings;
     }
 
-    /**
-     * The method for getting the module list, can collect for base, portal and mobile
-     *
-     * @return array The list of modules that are supported by this platform
-     * @deprecated Functionality for this method moved into the MetadataApi class
-     */
-    public function getModuleList($platform = 'base') {
-        if ( $platform == 'portal' ) {
-            // Use SugarPortalBrowser to get the portal modules that would appear
-            // in Studio
-            require_once 'modules/ModuleBuilder/Module/SugarPortalBrowser.php';
-            $pb = new SugarPortalBrowser();
-            $pb->loadModules();
-            $moduleList = array_keys($pb->modules);
-
-            // Bug 56911 - Notes metadata is needed for portal
-            $moduleList[] = "Notes";
-        } else if ( $platform == 'mobile' ) {
-            // replicate the essential part of the behavior of the private loadMapping() method in SugarController
-            foreach(SugarAutoLoader::existingCustom('include/MVC/Controller/wireless_module_registry.php') as $file) {
-                require $file;
-            }
-
-            // $wireless_module_registry is defined in the file loaded above
-            $moduleList = array_keys($wireless_module_registry);
-        } else {
-            // Loading a standard module list
-            require_once("modules/MySettings/TabController.php");
-            $controller = new TabController();
-            $moduleList = array_keys($controller->get_user_tabs($this->user));
-            $moduleList[] = 'ActivityStream';
-            $moduleList[] = 'Users';
-        }
-
-        $oldModuleList = $moduleList;
-        $moduleList = array();
-        foreach ( $oldModuleList as $module ) {
-            $moduleList[$module] = $module;
-        }
-
-        $moduleList['_hash'] = md5(serialize($moduleList));
-        return $moduleList;
-    }
 
     public static function getPlatformList()
     {

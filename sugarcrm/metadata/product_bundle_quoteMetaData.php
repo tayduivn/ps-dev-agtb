@@ -28,13 +28,14 @@ $dictionary['product_bundle_quote'] = array (
       , array('name' =>'deleted', 'type' =>'bool', 'len'=>'1', 'default'=>'0', 'required' => false,)
       , array('name' =>'bundle_id', 'type' =>'varchar', 'len'=>'36')
       , array('name' =>'quote_id', 'type' =>'varchar', 'len'=>'36')
-      , array('name' =>'bundle_index', 'type' =>'int', 'len'=>'11', 'default'=>'0', 'required' => true,)      
+      , array('name' =>'bundle_index', 'type' =>'int', 'len'=>'11', 'auto_increment' => true, 'required' => true,)
 	),
 	'indices' => array (
        array('name' =>'prod_bundl_quotepk', 'type' =>'primary', 'fields'=>array('id'))
       , array('name' =>'idx_pbq_bundle', 'type' =>'index', 'fields'=>array('bundle_id'))
       , array('name' =>'idx_pbq_quote', 'type' =>'index', 'fields'=>array('quote_id'))
       , array('name' =>'idx_pbq_bq', 'type'=>'alternate_key', 'fields'=>array('quote_id','bundle_id'))
+      , array('name' => 'bundle_index_idx', 'type'=>'index', 'fields'=>array('bundle_index'))
 	),
 
 	'relationships' => array ('product_bundle_quote' => array('lhs_module'=> 'ProductBundles', 'lhs_table'=> 'product_bundles', 'lhs_key' => 'id',

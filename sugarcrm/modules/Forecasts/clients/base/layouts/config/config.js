@@ -36,9 +36,9 @@
      */
     _render:function () {
         app.view.Layout.prototype._render.call(this);
-        this._showModal();
         // initialize the alerts again.
         app.alert.init();
+        this._showModal();
         return this;
     },
 
@@ -64,12 +64,12 @@
             };
             this.trigger("modal:forecastsConfig:open", params, callback);
         } else {
-            app.alert.show('no_access_error', {
+            var alert = app.alert.show('no_access_error', {
                     level:'error',
                     messages:app.lang.get("LBL_FORECASTS_CONFIG_USER_SPLASH", "Forecasts"),
                     title:app.lang.get("LBL_FORECASTS_CONFIG_TITLE", "Forecasts")}
             );
-            app.alert.get('no_access_error').getCloseSelector().on('click', function () {
+            alert.getCloseSelector().on('click', function () {
                 return self.checkSettingsAndRedirect();
             })
         }

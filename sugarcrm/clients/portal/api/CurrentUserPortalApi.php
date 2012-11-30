@@ -32,10 +32,9 @@ class CurrentUserPortalApi extends CurrentUserApi {
      */
     public function retrieveCurrentUser($api, $args) {
         global $current_user;
-        
+
         // Get the basics
         $user_data = $this->getBasicUserInfo();
-        
         // Fill in the portal specific stuff
         $contact = $this->getUserBean();
         $user_data['type'] = 'support_portal';
@@ -55,15 +54,6 @@ class CurrentUserPortalApi extends CurrentUserApi {
         }
         
         return array('current_user'=>$user_data);
-    }
-
-    /**
-     * Gets the user bean for the user of the api
-     * 
-     * @return Contact
-     */
-    protected function getUserBean() {
-        return BeanFactory::getBean('Contacts',$_SESSION['contact_id']);
     }
 
     /**
@@ -119,7 +109,6 @@ class CurrentUserPortalApi extends CurrentUserApi {
     protected function verifyACLs(Array $acls) {
         $acls['admin'] = 'no';
         $acls['developer'] = 'no';
-        $acls['edit'] = 'no';
         $acls['delete'] = 'no';
         $acls['import'] = 'no';
         $acls['export'] = 'no';
@@ -144,7 +133,21 @@ class CurrentUserPortalApi extends CurrentUserApi {
             $acls['Accounts']['access'] = 'no';
             $acls['Cases']['access'] = 'no';
         }
+        foreach ($acls as $modName => $modAcls) {
+            if ($modName === 'Contacts') continue;
+            $acls[$modName]['edit'] = 'no';
+        }
         
         return $acls;
+    }
+
+    public function getModuleList() {
+        // Use SugarPortalBrowser to get the portal modules that would appear
+        // in Studio
+        require_once 'modules/ModuleBuilder/Module/SugarPortalBrowser.php';
+        $pb = new SugarPortalBrowser();
+        $pb->loadModules();
+        $moduleList = $this->filterDisplayModules($pb->modules);
+        return $moduleList;
     }
 }

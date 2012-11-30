@@ -36,6 +36,41 @@ class MetaDataConverter {
      * @var MetaDataConverter 
      */
     protected static $converter = null;
+
+    /**
+     * Converts edit and detail view defs that contain fieldsets to a compatible
+     * defs that does not contain fieldsets. In essence, it splits up any fieldsets
+     * and moves them out of their grouping into individual fields within the panel.
+     * 
+     * This method assumes that the defs have already been converted to a legacy 
+     * format.
+     * 
+     * @param array $defs
+     * @return array
+     */
+    public static function fromGridFieldsets(array $defs) {
+        if (isset($defs['panels']) && is_array($defs['panels'])) {
+            $newpanels = array();
+            $offset = 0;
+            foreach ($defs['panels'] as $row) {
+                if (is_array($row[0]) && isset($row[0]['type']) && $row[0]['type'] == 'fieldset' && isset($row[0]['related_fields'])) {
+                    // Fieldset.... convert
+                    foreach ($row[0]['related_fields'] as $fName) {
+                        $newpanels[$offset] = array($fName);
+                        $offset++;
+                    }
+                } else {
+                    // do nothing
+                    $newpanels[$offset] = $row;
+                    $offset++;
+                }
+            }
+            
+            $defs['panels'] = $newpanels;
+        }
+        
+        return $defs;
+    }
     
     /**
      * Static entry point, will instantiate an object of itself to run the process.

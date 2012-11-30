@@ -24,7 +24,7 @@
  ********************************************************************************/
 require_once('tests/rest/RestTestBase.php');
 
-class RestBug57835Test extends RestTestBase
+class RestBug57835Test extends RestTestPortalBase
 {
     public function setUp()
     {
@@ -40,20 +40,13 @@ class RestBug57835Test extends RestTestBase
 
         $GLOBALS['db']->query("DELETE FROM oauth_consumer WHERE id LIKE 'UNIT%'");
         $GLOBALS['db']->query("DELETE FROM oauth_tokens WHERE consumer LIKE '_unit_%'");
-        if ( isset($this->contact->id) ) {
-            $GLOBALS['db']->query("DELETE FROM contacts WHERE id = '".$this->contact->id."'");
-            if ($GLOBALS['db']->tableExists('contacts_cstm')) {
-                $GLOBALS['db']->query("DELETE FROM contacts_cstm WHERE id_c = '".$this->contact->id."'");
-            }
-        }
-        if ( isset($this->apiuser->id) ) {
-            $GLOBALS['db']->query("DELETE FROM users WHERE id = '".$this->apiuser->id."'");
+
+        if ( isset($this->testapiuser->id) ) {
+            $GLOBALS['db']->query("DELETE FROM users WHERE id = '".$this->testapiuser->id."'");
             if ($GLOBALS['db']->tableExists('users_cstm')) {
-                $GLOBALS['db']->query("DELETE FROM users_cstm WHERE id_c = '".$this->apiuser->id."'");
+                $GLOBALS['db']->query("DELETE FROM users_cstm WHERE id_c = '".$this->testapiuser->id."'");
             }
         }
-        $GLOBALS ['system_config']->saveSetting('supportPortal', 'RegCreatedBy', '');
-        $GLOBALS ['system_config']->saveSetting('portal', 'on', 0);
         $GLOBALS['db']->commit();
     }
 
@@ -63,39 +56,27 @@ class RestBug57835Test extends RestTestBase
     public function testBug57835()
     {
         // Create a portal API user
-        $this->apiuser = BeanFactory::newBean('Users');
-        $this->apiuser->id = "UNIT-TEST-apiuser";
-        $this->apiuser->new_with_id = true;
-        $this->apiuser->first_name = "Portal";
-        $this->apiuser->last_name = "Apiuserson";
-        $this->apiuser->username = "_unittest_apiuser";
-        $this->apiuser->portal_only = true;
-        $this->apiuser->status = 'Active';
-        $this->apiuser->save();
-
-        // Create a contact to log in as
-        $this->contact = BeanFactory::newBean('Contacts');
-        $this->contact->id = "UNIT-TEST-littleunittest";
-        $this->contact->new_with_id = true;
-        $this->contact->first_name = "Little";
-        $this->contact->last_name = "Unittest";
-        $this->contact->description = "Little Unittest";
-        $this->contact->portal_name = "liltest@unit.com";
-        $this->contact->portal_active = '1';
-        $this->contact->portal_password = User::getPasswordHash("unittest");
-        $this->contact->save();
+        $this->testapiuser = BeanFactory::newBean('Users');
+        $this->testapiuser->id = "UNIT-TEST-apiuser";
+        $this->testapiuser->new_with_id = true;
+        $this->testapiuser->first_name = "Portal";
+        $this->testapiuser->last_name = "Apiuserson";
+        $this->testapiuser->username = "_unittest_apiuser";
+        $this->testapiuser->portal_only = true;
+        $this->testapiuser->status = 'Active';
+        $this->testapiuser->save();
+        // unset the default configsetting for the portal user
         $GLOBALS ['system_config']->saveSetting('supportPortal', 'RegCreatedBy', '');
-        $GLOBALS ['system_config']->saveSetting('portal', 'on', 1);
         $GLOBALS['db']->commit();
-        
+
         $args = array(
             'grant_type' => 'password',
-            'username' => $this->contact->portal_name,
+            'username' => 'unittestportal',
             'password' => 'unittest',
             'client_id' => 'support_portal',
             'client_secret' => '',
+            'platform' => 'portal',
         );
-        
         $reply = $this->_restCall('oauth2/token',json_encode($args));
         $this->assertEquals('portal_not_configured',$reply['reply']['error']);
                                                           

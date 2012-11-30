@@ -67,7 +67,7 @@ class RestBug57507Test extends RestTestBase
                                   json_encode(array('name' => 'Test call, empty int',
                                                     'duration_hours' => 1,
                                                     'duration_minutes' => 15,
-                                                    'date_start' => '2012-12-21T13:14:15',
+                                                    'date_start' => TimeDate::getInstance()->getNow()->asDb(),
                                                     'status' => 'Not Held',
                                                     'direction' => 'Incoming',
                                                     'repeat_count' => null,
@@ -87,7 +87,7 @@ class RestBug57507Test extends RestTestBase
         $call->name = 'Test call, empty int';
         $call->duration_hours = '1';
         $call->duration_minutes = 15;
-        $call->date_start = '2012-12-21T13:14:15';
+        $call->date_start = TimeDate::getInstance()->getNow()->asDb();
         $call->status = 'Not Held';
         $call->direction = 'Incoming';
         $call->repeat_count = null;

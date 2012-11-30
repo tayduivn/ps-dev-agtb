@@ -231,7 +231,6 @@ $mod_strings = array (
     'LBL_SALES_STAGE' => 'Stage',
     'LBL_AMOUNT' => 'Amount',
     'LBL_DATE_CLOSED' => 'Expected Close',
-    'LBL_PROBABILITY' => 'Probability',
     'LBL_PRODUCT_ID' => 'Product ID',
     'LBL_QUOTA_ID' => 'Quota ID',
     'LBL_VERSION' => 'Version',
@@ -241,28 +240,24 @@ $mod_strings = array (
     'LBL_UP' => 'up',
     'LBL_DOWN' => 'down',
     'LBL_PREVIOUS_COMMIT' => 'Latest Commit:',
-    'LBL_COMMITTED_HISTORY_BEST_LIKELY_WORST_CHANGED' => 'Updated forecast likely {3} {4} to {5}, best {0} {1} to {2} and worst {6} {7} to {8}',
-    'LBL_COMMITTED_HISTORY_BEST_LIKELY_CHANGED' => 'Updated forecast likely {3} {4} to {5}, best {0} {1} to {2} and worst stayed the same',
-    'LBL_COMMITTED_HISTORY_LIKELY_WORST_CHANGED' => 'Updated forecast likely {0} {1} to {2}, best stayed the same and worst {3} {4} to {5}',
-    'LBL_COMMITTED_HISTORY_BEST_WORST_CHANGED' => 'Updated forecast likely stayed the same, best {0} {1} to {2} and worst {3} {4} to {5}',
-    'LBL_COMMITTED_HISTORY_BEST_CHANGED' => 'Updated forecast likely stayed the same, best {0} {1} to {2} and worst stayed the same',
-    'LBL_COMMITTED_HISTORY_LIKELY_CHANGED' => 'Updated forecast likely {0} {1} to {2}, best and worst stayed the same',
-    'LBL_COMMITTED_HISTORY_WORST_CHANGED' => 'Updated forecast likely and best stayed the same and worst {0} {1} to {2}',
-    'LBL_COMMITTED_HISTORY_CHANGED' => 'Updated forecast worst, likely and best all stayed the same',
+
+    'LBL_COMMITTED_HISTORY_SETUP_FORECAST' => 'Setup forecast',
+    'LBL_COMMITTED_HISTORY_UPDATED_FORECAST' => 'Updated forecast',
+    'LBL_COMMITTED_HISTORY_1_SHOWN' => '{0} {1}',
+    'LBL_COMMITTED_HISTORY_2_SHOWN' => '{0} {1}, {2}',
+    'LBL_COMMITTED_HISTORY_3_SHOWN' => '{0} {1}, {2}, and {3}',
+    'LBL_COMMITTED_HISTORY_LIKELY_CHANGED' => 'likely {0} {1} to {2}',
+    'LBL_COMMITTED_HISTORY_BEST_CHANGED' => 'best {0} {1} to {2}',
+    'LBL_COMMITTED_HISTORY_WORST_CHANGED' => 'worst {0} {1} to {2}',
+    'LBL_COMMITTED_HISTORY_LIKELY_SAME' => 'likely stayed the same',
+    'LBL_COMMITTED_HISTORY_BEST_SAME' => 'best stayed the same',
+    'LBL_COMMITTED_HISTORY_WORST_SAME' => 'worst stayed the same',
+
     'LBL_COMMITTED_THIS_MONTH' => 'This month on {0}',
     'LBL_COMMITTED_MONTHS_AGO' => '{0} months ago on {1}',
-    'LBL_COMMITTED_HISTORY_BEST_LIKELY_WORST_SETUP' => 'Setup forecast likely to {5}, best to {2} and worst to {8}',
-    'LBL_COMMITTED_HISTORY_BEST_LIKELY_SETUP' => 'Setup forecast likely to {5} and best to {2}',
-    'LBL_COMMITTED_HISTORY_LIKELY_WORST_SETUP' => 'Setup forecast likely to {2} and worst to {5}',
-    'LBL_COMMITTED_HISTORY_BEST_WORST_SETUP' => 'Setup forecast best to {2} and worst to {5}',
-    'LBL_COMMITTED_HISTORY_BEST_SETUP' => 'Setup forecast best to {2}',
-    'LBL_COMMITTED_HISTORY_LIKELY_SETUP' => 'Setup forecast likely to {2}',
-    'LBL_COMMITTED_HISTORY_WORST_SETUP' => 'Setup forecast worst to {2}',
-    'LBL_COMMITTED_HISTORY_SETUP' => 'Setup forecast likely, best and worst all stayed the same',
 
     //Labels for jsTree implementation
     'LBL_TREE_PARENT' => 'Parent',
-    'LBL_TREE_TEAMS' => 'Teams',
 
     'LBL_MY_OPPORTUNITIES' => 'Opportunities ({0})',
 
@@ -285,13 +280,8 @@ $mod_strings = array (
     'LBL_CHART_OPTIONS' => 'Chart Options',
     'LBL_CHART_AMOUNT' => 'Amount',
     'LBL_CHART_TYPE' => 'Type',
-    'LBL_CHART_OPTION_LIKELY' => 'Likely',
-    'LBL_CHART_OPTION_BEST' => 'Best',
-    'LBL_CHART_OPTION_WORST' => 'Worst',
 
     // Labels for Data Filters
-    'LBL_FORECAST_PERIOD' => 'Forecast Period:',
-    'LBL_FORECAST_CATEGORY' => 'Forecast Category:',
     'LBL_FILTERS' => 'Filters',
 
     // Labels for toggle buttons
@@ -326,11 +316,9 @@ $mod_strings = array (
 
     'LBL_CHART_FORECAST_FOR' => 'Forecast for {0}',
     'LBL_FORECAST_TITLE' => 'Forecast: {0}',
-
     'LBL_CHART_INCLUDED' => 'Included',
     'LBL_CHART_NOT_INCLUDED' => 'Not Included',
     'LBL_CHART_ADJUSTED' => ' (Adjusted)',
-
     'LBL_SAVE_DRAFT' => 'Save Draft',
     'LBL_CHANGES_BY' => 'Changes by {0}',
     'LBL_FORECAST_SETTINGS' => 'Settings',
