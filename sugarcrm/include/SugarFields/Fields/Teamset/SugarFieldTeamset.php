@@ -508,6 +508,10 @@ class SugarFieldTeamset extends SugarFieldBase {
 	 * @param unknown_type $properties
 	 */
    public function save(&$bean, $params, $field, $properties, $prefix = ''){
+    	$save = false;
+        $value_name = $field . "_values";
+        
+        $team_ids = array();
         $teams = $this->getTeamsFromRequest($field, $params);
 		$team_ids = array_keys($teams);
 
@@ -515,7 +519,6 @@ class SugarFieldTeamset extends SugarFieldBase {
 	    //if the team id here is blank then let's not set it as the team_id on the bean
 	    if(!empty($primaryTeamId)){
         	$bean->team_id = $primaryTeamId;
-            $bean->default_team = $primaryTeamId;
 	    }
         
 		if(!empty($team_ids)){
