@@ -101,7 +101,10 @@ class RestBug57887Test extends RestTestBase
         
         parent::tearDown();
     }
-    
+
+    /**
+     * @group rest
+     */
     public function testCacheIsClearedAfterLayoutIsSaved()
     {
         // Login to set our auth token for the mobile platform
@@ -133,7 +136,7 @@ class RestBug57887Test extends RestTestBase
 
         // Confirm custom file is in the file map cache
         $exists = SugarAutoLoader::fileExists($this->_metadataFile);
-        $this->assertTrue($exists, "The custom file was nto found in the file map cache");
+        $this->assertTrue($exists, "The custom file was not found in the file map cache");
         
         // Make an API Metadata call to fetch newest
         $restReply = $this->_restCall('metadata?module_filter=Accounts&type_filter=modules&platform=mobile');

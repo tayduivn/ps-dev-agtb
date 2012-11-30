@@ -68,6 +68,7 @@ class RestBug58174Test extends RestTestBase
 
     /**
      * @group Bug58174
+     * @group rest
      */
     public function testHtmlEntitiesAreConvertedInMetaDataManager()
     {
@@ -92,6 +93,7 @@ class RestBug58174Test extends RestTestBase
 
     /**
      * @group Bug58174
+     * @group rest
      */
     public function testHtmlEntitiesAreConvertedInMetadataRequest()
     {
