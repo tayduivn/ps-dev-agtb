@@ -1,0 +1,7 @@
+{{#each selectOptions}}
+<option value="{{getFieldValue this "id"}}" {{#eq @index 0}}selected="selected"{{/eq}}>{{getFieldValue this "name"}}</option>
+{{/each}}
+{{#eq selectOptions.length 0}}
+<option data-empty="true">{{str "MSG_LIST_VIEW_NO_RESULTS_BASIC"}}</option>
+{{/eq}}
+<option data-searchmore="true" value="{{str "LBL_SEARCH_FOR_MORE"}}" class="more">{{str "LBL_SEARCH_FOR_MORE"}}</option>

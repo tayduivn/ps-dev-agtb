@@ -214,6 +214,7 @@
 
             panel.fields = singleSelect.concat(panel.fields);
         });
+
         return meta;
     },
     addMultiSelectionAction: function(meta) {
@@ -233,6 +234,7 @@
             }
             panel.fields = multiSelect.concat(panel.fields);
         });
+
         return meta;
     },
     showTooltip: function(e) {
