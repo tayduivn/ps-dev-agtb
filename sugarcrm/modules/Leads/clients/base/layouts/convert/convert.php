@@ -51,7 +51,7 @@ $viewdefs['Leads']['base']['layout']['convert'] = array(
         array(
             'module' => 'Opportunities',
             'required' => false,
-            'duplicateCheck' => true,
+            'duplicateCheck' => false,
             'fieldMapping' => array(
                 //opportunity field => lead field
                 'name' => 'opportunity_name',
