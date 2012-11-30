@@ -154,7 +154,7 @@ class CurrentUserApi extends SugarApi {
         $teams = $current_user->get_my_teams();
         $my_teams = array();
         foreach($teams AS $id => $name) {
-            $my_teams[] = array("id" => $id, "name" => $name, 'primary' => $primary);
+            $my_teams[] = array("id" => $id, "name" => $name,);
         }
         $user_data['my_teams'] = $my_teams;
 
