@@ -156,7 +156,6 @@
         })
     },
 
-    //todo: fix to not access this._components directly
     _getPanelByModuleName: function(moduleName) {
         return _.find(this._components, function(component) {
             return ((component.name === 'convert-panel') && (component.meta.module === moduleName));
