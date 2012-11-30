@@ -173,7 +173,7 @@
             };
         }
         dateValue  = this._getDatepickerValue();
-        model.set(fieldName, this._buildUnformatted(dateValue, hrsMins.hours, hrsMins.minutes), {silent: true});
+        model.set(fieldName, this._buildUnformatted(dateValue, hrsMins.hours, hrsMins.minutes));
     },
     _buildUnformatted: function(d, h, m) {
         var parsedDate = app.date.parse(d, this.usersDatePrefs);
