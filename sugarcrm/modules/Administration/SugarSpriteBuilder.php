@@ -364,11 +364,7 @@ class SugarSpriteBuilder
                 }
 
 				// save sprite image
-				// Unfortunately, in PHP before 5.4 imagepng can not save to streams, so we need to do a little trick here
-				$temp = tempnam($outputDir, "sprites");
-				imagepng($this->spriteImg, $temp, $this->pngCompression, $this->pngFilter);
-				copy($temp, "$outputDir/$spriteFileName");
-				unlink($temp);
+				imagepng($this->spriteImg, "$outputDir/$spriteFileName", $this->pngCompression, $this->pngFilter);
 				imagedestroy($this->spriteImg);
 
 				/* generate css & metadata */
