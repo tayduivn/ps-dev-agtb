@@ -61,6 +61,9 @@ class RestBug57507Test extends RestTestBase
         parent::tearDown();
     }
 
+    /**
+     * @group rest
+     */
     public function testEmptySaveInt()
     {
         $reply = $this->_restCall("Calls/",
@@ -80,7 +83,10 @@ class RestBug57507Test extends RestTestBase
         $this->assertTrue($call->repeat_count == '',"The repeat count has a value.");
         
     }
-    
+
+    /**
+     * @group rest
+     */
     public function testEmptyRetrieveInt()
     {
         $call = BeanFactory::newBean('Calls');
