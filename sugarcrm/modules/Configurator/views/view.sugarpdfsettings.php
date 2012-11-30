@@ -61,7 +61,9 @@ class ConfiguratorViewSugarpdfsettings extends SugarView
 	{
 	    global $mod_strings, $app_strings, $app_list_strings;
 
-	    SugarAutoLoader::requireWithCustom("modules/Configurator/metadata/SugarpdfSettingsdefs.php", true);
+	    foreach(SugarAutoLoader::existingCustom("modules/Configurator/metadata/SugarpdfSettingsdefs.php") as $file) {
+	        include $file;
+	    }
 
         if(!empty($_POST['save'])){
             // Save the logos
