@@ -57,6 +57,24 @@ class CurrentUserPortalApi extends CurrentUserApi {
     }
 
     /**
+     * Updates current portals info
+     *
+     * @param $api
+     * @param $args
+     * @return array
+     */
+    public function updateCurrentUser($api, $args) {
+        $bean = $this->getPortalContact();
+        // setting these for the loadBean
+        $args['module'] = $bean->module_name;
+        $args['record'] = $bean->id;
+
+        $id = $this->updateBean($bean, $api, $args);
+
+        return $this->retrieveCurrentUser($api, $args);
+    }
+
+    /**
      * Gets the current portal user's Contact bean.
      * When working with Portal this contains the interesting user info
      *
