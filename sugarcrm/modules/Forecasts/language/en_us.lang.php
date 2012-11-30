@@ -333,8 +333,8 @@ $mod_strings = array (
     'LBL_FORECASTS_CONFIG_USER_SPLASH' => 'Forecasting has not been configured yet.  Please contact your system administrator.',
 
     // Panel and BreadCrumb Labels
-    'LBL_FORECASTS_CONFIG_BREADCRUMB_CATEGORIES' => 'Categories',
-    'LBL_FORECASTS_CONFIG_BREADCRUMB_RANGE' => 'Ranges',
+    'LBL_FORECASTS_CONFIG_BREADCRUMB_CATEGORIES' => 'Ranges',
+    'LBL_FORECASTS_CONFIG_BREADCRUMB_RANGE' => 'Scenarios',
     'LBL_FORECASTS_CONFIG_BREADCRUMB_TIMEPERIODS' => 'Time Periods',
     'LBL_FORECASTS_CONFIG_BREADCRUMB_VARIABLES' => 'Variables',
 
@@ -352,15 +352,17 @@ $mod_strings = array (
 
     // category config
     //TODO-sfa remove this once the ability to map buckets when they get changed is implemented (SFA-215).
-    'LBL_FORECASTS_CONFIG_CATEGORY_SETUP_NOTICE' => 'Please note that Category page will be read only after the first commit or save draft; for this reason the Category should be set up carefully.',
-    'LBL_FORECASTS_CONFIG_CATEGORIES' => 'Forecast Category Options:',
+    //TODO-sfa refactors the code references for category to be ranges (SFA-337).
+    'LBL_FORECASTS_CONFIG_CATEGORY_SETUP_NOTICE' => 'Please note that Ranges page will be read only after the first commit or save draft; for this reason the Forecast Ranges should be set up carefully.',
+    'LBL_FORECASTS_CONFIG_CATEGORIES' => 'Forecast Range Options:',
     'LBL_FORECASTS_CONFIG_CATEGORY_OPTIONS' => 'Select the way you would like to categorize opportunities.',
     'LBL_FORECASTS_CONFIG_SHOW_BINARY_RANGES_DESCRIPTION' => 'This option gives a user the ability to be included or excluded from a forecast.',
     'LBL_FORECASTS_CONFIG_SHOW_BUCKETS_RANGES_DESCRIPTION' => 'This option gives a user the ability to categorize their opportunities that are not included in the commit but are upside and have the potential of closing if everything goes well and opportunities that are to be excluded from the forecast.',
-    'LBL_FORECASTS_CONFIG_SHOW_CUSTOM_BUCKETS_CATEGORIES' => 'Custom Categories: This option gives a user the ability to categorize their opportunities to be committed into the forecast into a committed category, excluded category and any other categories that you setup.',
-    'LBL_FORECASTS_CONFIG_CATEGORY_EXCLUDE_INFO' => 'The Exclude Range is from 0% to the minimum of the previous category by default.',
+    'LBL_FORECASTS_CONFIG_SHOW_CUSTOM_BUCKETS_CATEGORIES' => 'Custom Ranges: This option gives a user the ability to categorize their opportunities to be committed into the forecast into a committed range, excluded range and any others that you setup.',
+    'LBL_FORECASTS_CONFIG_CATEGORY_EXCLUDE_INFO' => 'The Exclude Range is from 0% to the minimum of the previous Forecast Range by default.',
 
     // range config
+    //TODO-sfa refactors the code references for ranges to be scenarios (SFA-337).
     'LBL_FORECASTS_CONFIG_WORKSHEET_RANGE' => 'Select the column you would like the user to fill out for their forecast for each opportunity.',
     'LBL_FORECASTS_CONFIG_WORKSHEET_LIKELY_INFO' => 'Please note the Likely amount is tied to the amount shown in Opportunities; for this reason the Likely column cannot be hidden.',
     'LBL_FORECASTS_CONFIG_WORKSHEET_RANGE_LIKELY' => 'Likely',
