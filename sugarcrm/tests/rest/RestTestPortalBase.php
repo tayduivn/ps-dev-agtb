@@ -41,7 +41,6 @@ class RestTestPortalBase extends RestTestBase {
 
     public function setUp()
     {
-        global $db;
         // Setup the original settings
         if (empty($GLOBALS['system_config']->settings)) {
             $GLOBALS['system_config']->retrieveSettings();
@@ -57,14 +56,7 @@ class RestTestPortalBase extends RestTestBase {
         
         parent::setUp();
 
-        // Disable the other portal users
-        $this->oldPortal = array();
-        $ret = $db->query("SELECT id FROM users WHERE portal_only = '1' AND deleted = '0'");
-        while ( $row = $db->fetchByAssoc($ret) ) {
-            $this->oldPortal[] = $row['id'];
-        }
-        $db->query("UPDATE users SET deleted = '1' WHERE portal_only = '1'");
-
+        // Make the current user a portal only user
         $this->_user->portal_only = '1';
         $this->_user->save();
         
@@ -79,7 +71,7 @@ class RestTestPortalBase extends RestTestBase {
         }
 
         // A little bit destructive, but necessary.
-        $db->query("DELETE FROM contacts WHERE portal_name = 'unittestportal'");
+        $GLOBALS['db']->query("DELETE FROM contacts WHERE portal_name = 'unittestportal'");
 
         // Create the portal contact
         $this->contact = BeanFactory::newBean('Contacts');
@@ -107,7 +99,7 @@ class RestTestPortalBase extends RestTestBase {
         $this->currentPortalBean->getByKey('support_portal', 'oauth2');
         $this->currentPortalBean->new_with_id = true;
 
-        $db->query("DELETE FROM ".$this->testConsumer->table_name." WHERE client_type = 'support_portal'");
+        $GLOBALS['db']->query("DELETE FROM ".$this->testConsumer->table_name." WHERE client_type = 'support_portal'");
 
         // Create a unit test login ID
         $this->testConsumer->id = 'UNIT-TEST-portallogin';
@@ -122,11 +114,6 @@ class RestTestPortalBase extends RestTestBase {
     }
     public function tearDown()
     {
-        global $db;
-        // Re-enable the old portal users
-        $portalIds = "('".implode("','",$this->oldPortal)."')";
-        $db->query("UPDATE users SET deleted = '0' WHERE id IN {$portalIds}");
-
         // Cleaning up after ourselves, but only if there is cleanup to do
         // Accounts clean up
         if (count($this->accounts)) {
@@ -227,7 +214,7 @@ class RestTestPortalBase extends RestTestBase {
         }
 
         // Delete test support_portal user
-        $db->query("DELETE FROM ".$this->testConsumer->table_name." WHERE client_type = 'support_portal'");
+        $GLOBALS['db']->query("DELETE FROM ".$this->testConsumer->table_name." WHERE client_type = 'support_portal'");
 
         // Add back original support_portal user
         if(!empty($this->currentPortalBean->id)) {
