@@ -25,14 +25,6 @@ require_once('include/api/SugarApi.php');
 
 // An API to let the user in to the metadata
 class MetadataApi extends SugarApi {
-    /**
-     * Added to allow use of the $user property without throwing errors in public
-     * cased where there is no user defined.
-     *
-     * @var User
-     */
-    protected $user = null;
-
     public function registerApiRest() {
         return array(
             'getAllMetadata' => array(
@@ -74,7 +66,7 @@ class MetadataApi extends SugarApi {
     protected function getMetadataManager( $public = false ) {
         static $mm;
         if ( !isset($mm) ) {
-            $mm = new MetaDataManager($this->user,$this->platforms, $public);
+            $mm = new MetaDataManager(null,$this->platforms, $public);
         }
         return $mm;
     }
@@ -111,41 +103,20 @@ class MetadataApi extends SugarApi {
 
         $this->setPlatformList($api);
 
-        $data = array();
 
-        $userHashKey = '_PUBLIC_';
-        if ( isset($GLOBALS['current_user']->id) ) {
-            $userHashKey = $GLOBALS['current_user']->id;
-        }
-        $hashKey = "metadata:" . implode(",", $this->platforms) . $userHashKey . ":hash";
-        //First check if the hash is cached so we don't have to load the metadata manually to calculate it
-        $hash = sugar_cache_retrieve($hashKey);
-        //If it was, check if the client has the same version cached
-        if (!empty($hash)) {
-            generateETagHeader($hash);
-            //If we got here without dying, the client doesn't have the metadata cached.
-            //First check if we have the metadata contents cached in a file
-            $cacheFile = sugar_cached("api/metadata/{$hash}.php");
-            if (file_exists($cacheFile)) {
-                //$data will be populated by the include
-                include($cacheFile);
-            }
-        }
+        $data = $this->getMetadataCache($this->platforms[0],false);
 
         //If we failed to load the metadata from cache, load it now the hard way.
         if (empty($data)) {
-            $data = $this->loadMetadata($hashKey);
-        }
-        $data['jssource'] = $this->buildJSFileFromMD($data, $this->platforms[0]);
-
-        //If we had to generate a new hash, create the etag with the new hash
-        if (empty($hash)) {
-            generateETagHeader($data['_hash']);
+            $data = $this->loadMetadata();
+            $this->putMetadataCache($data, $this->platforms[0], false);
         }
 
-            $baseChunks = array('fields','labels','module_list', 'views', 'layouts', 'full_module_list','relationships', 'currencies', 'jssource', 'server_info');
+        generateETagHeader($data['_hash']);
+
+        $baseChunks = array('fields','labels','module_list', 'views', 'layouts', 'full_module_list','relationships', 'currencies', 'jssource', 'server_info');
         $perModuleChunks = array('modules');
-
+        
         return $this->filterResults($args, $data, $onlyHash, $baseChunks, $perModuleChunks, $moduleFilter);
     }
 
@@ -175,22 +146,30 @@ class MetadataApi extends SugarApi {
             $onlyHash = true;
         }
 
-        // since this is a public metadata call pass true to the meta data manager to only get public/
-        $mm = $this->getMetadataManager( TRUE );
+        $data = $this->getMetadataCache($this->platforms[0],true);
+        
+        if ( empty($data) ) {
+            // since this is a public metadata call pass true to the meta data manager to only get public/
+            $mm = $this->getMetadataManager( TRUE );
+            
+            
+            // Start collecting data
+            $data = array();
+            
+            $data['fields']  = $mm->getSugarFields();
+            $data['views']   = $mm->getSugarViews();
+            $data['layouts'] = $mm->getSugarLayouts();
+            $data['labels'] = $this->getStringUrls($data,true);
+            $data['modules'] = array(
+                "Login" => array("fields" => array()));
+            $data['config']           = $this->getConfigs();
+            $data['jssource']         = $this->buildJSFileFromMD($data, $this->platforms[0]);        
+            $data["_hash"] = md5(serialize($data));
+            
+            $this->putMetadataCache($data, $this->platforms[0], TRUE);
 
-
-        // Start collecting data
-        $data = array();
-
-        $data['fields']  = $mm->getSugarFields();
-        $data['views']   = $mm->getSugarViews();
-        $data['layouts'] = $mm->getSugarLayouts();
-        $data['labels'] = $this->getStringUrls($data,true);
-        $data['modules'] = array(
-            "Login" => array("fields" => array()));
-        $data['config']           = $this->getConfigs();
-        $data['jssource']         = $this->buildJSFileFromMD($data, $this->platforms[0]);        
-        $data["_hash"] = md5(serialize($data));
+        }
+        generateETagHeader($data['_hash']);
 
         $baseChunks = array('fields','labels','views', 'layouts', 'config', 'jssource');
 
@@ -309,7 +288,7 @@ class MetadataApi extends SugarApi {
         return substr($controller, 0, $pos) . $headerComment . substr($controller, $pos);
     }
 
-    protected function loadMetadata($hashKey) {
+    protected function loadMetadata() {
         // Start collecting data
         $data = $this->_populateModules(array());
         $mm = $this->getMetadataManager();
@@ -360,17 +339,10 @@ class MetadataApi extends SugarApi {
         $data['layouts'] = $mm->getSugarLayouts();
         $data['labels'] = $this->getStringUrls($data,false);
         $data['relationships'] = $mm->getRelationshipData();
+        $data['jssource'] = $this->buildJSFileFromMD($data, $this->platforms[0]);
         $data['server_info'] = $mm->getServerInfo();
         $hash = md5(serialize($data));
         $data["_hash"] = $hash;
-
-        //Cache the result to the filesystem
-        $cacheFile = sugar_cached("api/metadata/{$hash}.php");
-        create_cache_directory("api/metadata/{$hash}.php");
-        write_array_to_file("data", $data, $cacheFile);
-
-        //Cache the hash in sugar_cache so we don't have to hit the filesystem for etag comparisons
-        sugar_cache_put($hashKey, $hash);
 
         return $data;
     }
@@ -649,25 +621,38 @@ class MetadataApi extends SugarApi {
         return $currencies;
     }
 
-    //TODO: This function needs to be in /me as it is user defined
-    protected function getDisplayModules($moduleList)
+    protected function putMetadataCache($data, $platform, $isPublic)
     {
-        global $app_list_strings;
-        $ret = $moduleList;
-        if (!empty($this->user))
-        {
-            // Loading a standard module list
-            require_once("modules/MySettings/TabController.php");
-            $controller = new TabController();
-            $ret = array_intersect_key($controller->get_user_tabs($this->user), $moduleList);
+        if ( $isPublic ) {
+            $type = 'public';
+        } else {
+            $type = 'private';
         }
-        $output = array();
-        foreach($ret as $mod => $lbl)
-        {
-            $output[] = $mod;
-        }
-        return $output;
-
+        $cacheFile = sugar_cached('api/metadata/metadata_'.$platform.'_'.$type.'.php');
+        create_cache_directory($cacheFile);
+        write_array_to_file('metadata', $data, $cacheFile);
     }
 
+    protected function getMetadataCache($platform, $isPublic)
+    {
+        if ( $isPublic ) {
+            $type = 'public';
+        } else {
+            $type = 'private';
+        }
+        $cacheFile = sugar_cached('api/metadata/metadata_'.$platform.'_'.$type.'.php');
+        if ( file_exists($cacheFile) ) {
+            require $cacheFile;
+            return $metadata;
+        } else {
+            return null;
+        }
+    }
+
+    public function clearMetadataCache()
+    {
+        $mm = $this->getMetadataManager();
+        $mm->clearAPICache();
+    }
+    
 }
