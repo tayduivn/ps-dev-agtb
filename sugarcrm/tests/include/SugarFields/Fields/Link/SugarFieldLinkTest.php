@@ -1,4 +1,4 @@
-<?php
+<?php 
 /*********************************************************************************
  * The contents of this file are subject to the SugarCRM Professional End User
  * License Agreement ("License") which can be viewed at
@@ -21,23 +21,36 @@
  * Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.;
  * All Rights Reserved.
  ********************************************************************************/
+ 
+require_once('include/SugarFields/Fields/Link/SugarFieldLink.php');
 
-require_once('tests/rest/RestTestBase.php');
-
-/**
- * Bug 58563 - module_list does not return Employees
- */
-class RestBug58563Test extends RestTestBase
+class SugarFieldLinkTest extends Sugar_PHPUnit_Framework_TestCase
 {
+	public function setUp()
+    {
+        SugarTestHelper::setUp('current_user');
+        $this->note = BeanFactory::newBean('Notes');
+        $this->note->field_defs['testurl_c']['gen'] = 1;
+        $this->note->field_defs['testurl_c']['default'] = 'http://test/{assigned_user_id}';
+        $this->note->assigned_user_id = $GLOBALS['current_user']->id;
+        $this->note->fetched_row['assigned_user_id'] = $this->note->assigned_user_id;
+	}
 
-    /**
-     * Tests that multiselect default values are returned clean in the fields list
-     * from the metadata manager
-     * 
-     * @group Bug56505
+    public function tearDown()
+    {
+        SugarTestHelper::tearDown();
+        unset($this->note->field_defs['testurl_c']);
+        unset($this->note);
+    }
+    
+     /**
+     * @ticket 36744
      */
-    public function testEmployeeInModuleList() {
-        $restReply = $this->_restCall('me');
-        $this->assertTrue(in_array('Employees', $restReply['reply']['current_user']['module_list']), 'Employees not returned in the module list.');
+	public function testLinkField() {
+        require_once('include/SugarFields/SugarFieldHandler.php');
+        $sf = SugarFieldHandler::getSugarField('link');
+        $data = array();
+        $sf->apiFormatField($data, $this->note, array(), 'testurl_c',array());
+        $this->assertEquals('http://test/'.$GLOBALS['current_user']->id, $data['testurl_c']);
     }
 }

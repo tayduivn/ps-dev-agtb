@@ -397,23 +397,7 @@ class MetadataApi extends SugarApi {
             }
         }
 
-        // remove the disabled modules from the module list
-        require_once("modules/MySettings/TabController.php");
-        $controller = new TabController();
-        $tabs = $controller->get_tabs_system();
-
-        if (isset($tabs[1])) {
-            foreach($data['module_list'] as $moduleKey => $moduleName){
-                if (in_array($moduleName,$tabs[1])) {
-                    unset($data['module_list'][$moduleKey]);
-                }
-            }
-        }
-        // always add back in employees
-        $data['module_list']['Employees'] = 'Employees';
-
         $data['full_module_list']['_hash'] = md5(serialize($data['full_module_list']));
-        $data['module_list']['_hash'] = md5(serialize($data['module_list']));
 
         $data['fields']  = $mm->getSugarFields();
         $data['views']   = $mm->getSugarViews();
@@ -581,12 +565,11 @@ class MetadataApi extends SugarApi {
 
     /**
      * Gets full module list and data for each module.
-     * Precondition: $data['module_list'] must already be populated.
      *
      * @param array $data load metadata array
      * @return array
      */
-    private function _populateModules($data) {
+    public function _populateModules($data) {
         $mm = $this->getMetadataManager();
         $data['full_module_list'] = $this->getModuleList();
         $data['modules'] = array();
@@ -595,8 +578,6 @@ class MetadataApi extends SugarApi {
             $data['modules'][$module] = $mm->getModuleData($module);
             $this->_relateFields($data, $module, $bean);
         }
-        $data['module_list'] = $this->getDisplayModules($data['full_module_list']);
-
         return $data;
     }
 
@@ -671,28 +652,6 @@ class MetadataApi extends SugarApi {
         }
         return $currencies;
     }
-    /**
-     * Cleans up the module list for any modules that should not be on it
-     *
-     * @param array $module_list The module list array
-     * @return array
-     */
-    protected function cleanUpModuleList($module_list) {
-        // remove the disabled modules from the module list
-        require_once("modules/MySettings/TabController.php");
-        $controller = new TabController();
-        $tabs = $controller->get_tabs_system();
-
-        if (isset($tabs[1])) {
-            foreach($module_list as $moduleKey => $moduleName){
-                if (in_array($moduleName,$tabs[1])) {
-                    unset($module_list[$moduleKey]);
-                }
-            }
-        }
-
-        return $module_list;
-    }
 
     //TODO: This function needs to be in /me as it is user defined
     protected function getDisplayModules($moduleList)
@@ -705,15 +664,13 @@ class MetadataApi extends SugarApi {
             require_once("modules/MySettings/TabController.php");
             $controller = new TabController();
             $ret = array_intersect_key($controller->get_user_tabs($this->user), $moduleList);
-            foreach($ret as $mod => $lbl)
-            {
-                if (!empty($app_list_strings['moduleList'][$mod])){
-                    $ret[$mod] = $app_list_strings['moduleList'][$mod];
-                }
-            }
         }
-
-        return $ret;
+        $output = array();
+        foreach($ret as $mod => $lbl)
+        {
+            $output[] = $mod;
+        }
+        return $output;
 
     }
 

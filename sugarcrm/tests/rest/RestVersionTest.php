@@ -24,20 +24,29 @@
 
 require_once('tests/rest/RestTestBase.php');
 
-/**
- * Bug 58563 - module_list does not return Employees
- */
-class RestBug58563Test extends RestTestBase
-{
-
+class RestVersionTest extends RestTestBase {
     /**
-     * Tests that multiselect default values are returned clean in the fields list
-     * from the metadata manager
-     * 
-     * @group Bug56505
+     * @group rest
      */
-    public function testEmployeeInModuleList() {
-        $restReply = $this->_restCall('me');
-        $this->assertTrue(in_array('Employees', $restReply['reply']['current_user']['module_list']), 'Employees not returned in the module list.');
+    public function testVersion()
+    {
+        // verify a run will work
+        $restReply = $this->_restCall('Accounts');
+        $this->assertEquals($restReply['info']['http_code'], '200', "Incorrect HTTP Code, instead of 200 we receieved {$restReply['info']['http_code']}");
+        
+        // set the version lower than current
+        $this->version = 5;
+
+        $restReply = $this->_restCall('Accounts');
+        $this->assertEquals($restReply['info']['http_code'], '301', "Incorrect HTTP Code, instead of 301 we receieved {$restReply['info']['http_code']}");
+
+        // set the version higher than current
+        $this->version = 50;
+        $restReply = $this->_restCall('Accounts');
+        $this->assertEquals($restReply['info']['http_code'], '301', "Incorrect HTTP Code, instead of 301 we receieved {$restReply['info']['http_code']}");
+
     }
+
 }
+
+

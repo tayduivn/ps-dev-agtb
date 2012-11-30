@@ -35,8 +35,69 @@
  * add a '.' after the .js in order to make the element key unique.  Make sure you pare the extension out
  *
  */
+        if(!function_exists('getSubgroupForTarget'))
+        {
+            /**
+             * Helper to allow for getting sub groups of combinations of includes that are likely to be required by
+             * many clients (so that we don't end up with duplication from client to client).
+             * @param  string $subGroup The sub-group
+             * @param  string $target The target file to point to e.g. '<app>/<app>.min.js',
+             * @return array array of key vals where the keys are source files and values are the $target passed in. 
+             */
+            function getSubgroupForTarget ($subGroup, $target) {
 
-       $js_groupings = array(
+                // Add more sub-groups as needed here if client include duplication in $js_groupings
+                switch ($subGroup) {
+                    case 'bootstrap':
+                        return array(
+                            'styleguide/assets/js/bootstrap-button.js'  => $target,
+                            'styleguide/assets/js/bootstrap-tooltip.js' => $target,
+                            'styleguide/assets/js/bootstrap-dropdown.js'=>  $target,
+                            'styleguide/assets/js/bootstrap-popover.js' => $target,
+                            'styleguide/assets/js/bootstrap-modal.js'   => $target,
+                            'styleguide/assets/js/bootstrap-alert.js'   => $target,
+                            'styleguide/assets/js/bootstrap-datepicker.js' => $target,
+                            'styleguide/assets/js/bootstrapx-clickover.js' => $target,
+                        );
+                        break;
+                    case 'bootstrap_core':
+                        return array(
+                            'include/javascript/jquery/bootstrap/bootstrap.min.js'       =>   $target,
+                            'include/javascript/jquery/jquery.popoverext.js'             =>   $target,
+                        );
+                        break;
+                    case 'jquery_core':
+                        return array (
+                            'include/javascript/jquery/jquery-min.js'             =>    $target,
+                            'include/javascript/jquery/jquery-ui-min.js'          =>    $target,
+                            'include/javascript/jquery/jquery.json-2.3.js'        =>    $target,
+                        );
+                        break;
+                    case 'jquery_menus':
+                        return array(
+                            'include/javascript/jquery/jquery.hoverIntent.js'            =>   $target,
+                            'include/javascript/jquery/jquery.hoverscroll.js'            =>   $target,
+                            'include/javascript/jquery/jquery.hotkeys.js'                =>   $target,
+                            'include/javascript/jquery/jquery.superfish.js'              =>   $target,
+                            'include/javascript/jquery/jquery.tipTip.js'              	 =>   $target,
+                            'include/javascript/jquery/jquery.sugarMenu.js'              =>   $target,
+                            'include/javascript/jquery/jquery.highLight.js'              =>   $target,
+                            'include/javascript/jquery/jquery.showLoading.js'            =>   $target,
+                            'include/javascript/jquery/jquery.dataTables.min.js'         =>   $target,
+                            'include/javascript/jquery/jquery.dataTables.customSort.js'  =>   $target,
+                            'include/javascript/jquery/jquery.jeditable.js'              =>   $target,
+                            'include/javascript/jquery/jquery.chosen.min.js'             =>   $target,
+                            'include/javascript/jquery/jquery.jstree.js'              	 =>   $target,                            
+                            'include/javascript/jquery/jquery.effects.custombounce.js'   =>   $target,
+                        );
+                        break;
+                    default:
+                        break;
+                }
+            }
+        }
+
+        $js_groupings = array(
            $sugar_grp1 = array(
                 //scripts loaded on first page
                 'include/javascript/sugar_3.js'         => 'include/javascript/sugar_grp1.js',
@@ -57,30 +118,21 @@
 	            //END SUGARCRM flav=pro ONLY
                'include/EditView/Panels.js'   => 'include/javascript/sugar_grp1.js',
             ),
-			//jquery libraries
-			$sugar_grp_jquery = array(
-			'include/javascript/jquery/jquery-min.js'              => 'include/javascript/sugar_grp1_jquery.js',
-			'include/javascript/jquery/jquery-ui-min.js'          => 'include/javascript/sugar_grp1_jquery.js',
-			'include/javascript/jquery/jquery.json-2.3.js'        => 'include/javascript/sugar_grp1_jquery.js',
-			//bootstrap
-            'include/javascript/jquery/bootstrap/bootstrap.min.js'              => 'include/javascript/sugar_grp1_jquery.js',
+			// solo jquery libraries
+			$sugar_grp_jquery_core = getSubgroupForTarget('jquery_core', 'include/javascript/sugar_grp1_jquery_core.js'),
+
+            //bootstrap
+            $sugar_grp_bootstrap = getSubgroupForTarget('bootstrap_core', 'include/javascript/sugar_grp1_bootstrap.js'),
+
             //jquery for moddule menus
-            'include/javascript/jquery/jquery.hoverIntent.js'            => 'include/javascript/sugar_grp1_jquery.js',
-            'include/javascript/jquery/jquery.hoverscroll.js'            => 'include/javascript/sugar_grp1_jquery.js',
-            'include/javascript/jquery/jquery.hotkeys.js'                => 'include/javascript/sugar_grp1_jquery.js',
-            'include/javascript/jquery/jquery.superfish.js'              => 'include/javascript/sugar_grp1_jquery.js',
-            'include/javascript/jquery/jquery.tipTip.js'              	 => 'include/javascript/sugar_grp1_jquery.js',
-            'include/javascript/jquery/jquery.sugarMenu.js'              => 'include/javascript/sugar_grp1_jquery.js',
-            'include/javascript/jquery/jquery.highLight.js'              => 'include/javascript/sugar_grp1_jquery.js',
-            'include/javascript/jquery/jquery.showLoading.js'            => 'include/javascript/sugar_grp1_jquery.js',
-            'include/javascript/jquery/jquery.dataTables.min.js'         => 'include/javascript/sugar_grp1_jquery.js',
-            'include/javascript/jquery/jquery.dataTables.customSort.js'  => 'include/javascript/sugar_grp1_jquery.js',
-            'include/javascript/jquery/jquery.jeditable.js'              => 'include/javascript/sugar_grp1_jquery.js',
-            'include/javascript/jquery/jquery.chosen.min.js'             => 'include/javascript/sugar_grp1_jquery.js',
-            'include/javascript/jquery/jquery.jstree.js'              	 => 'include/javascript/sugar_grp1_jquery.js',
-            'include/javascript/jquery/jquery.popoverext.js'              => 'include/javascript/sugar_grp1_jquery.js',
-            'include/javascript/jquery/jquery.effects.custombounce.js'              => 'include/javascript/sugar_grp1_jquery.js',
-			),
+            $sugar_grp_jquery_menus = getSubgroupForTarget('jquery_menus', 'include/javascript/sugar_grp1_jquery_menus.js'),
+
+            //core app jquery libraries
+			$sugar_grp_jquery = array_merge(getSubgroupForTarget('jquery_core', 'include/javascript/sugar_grp1_jquery.js'),
+                getSubgroupForTarget('bootstrap_core', 'include/javascript/sugar_grp1_jquery.js'),
+                getSubgroupForTarget('jquery_menus', 'include/javascript/sugar_grp1_jquery.js')
+            ),
+
            $sugar_field_grp = array(
                'include/SugarFields/Fields/Collection/SugarFieldCollection.js' => 'include/javascript/sugar_field_grp.js',
                //BEGIN SUGARCRM flav=pro ONLY
@@ -195,23 +247,18 @@
                 'modules/Meetings/jsclass_scheduler.js'   => 'include/javascript/sugar_grp_jsolait.js',
             ),
            //BEGIN SUGARCRM flav=ent ONLY
-            $sugar_grp_portal2 = array(
-                'sidecar/lib/jquery/jquery.placeholder.min.js'         => 'portal2/portal.min.js',
-
-                'styleguide/assets/js/bootstrap-button.js'  => 'portal2/portal.min.js',
-                'styleguide/assets/js/bootstrap-tooltip.js' => 'portal2/portal.min.js',
-                'styleguide/assets/js/bootstrap-dropdown.js'=> 'portal2/portal.min.js',
-                'styleguide/assets/js/bootstrap-popover.js' => 'portal2/portal.min.js',
-                'styleguide/assets/js/bootstrap-modal.js'   => 'portal2/portal.min.js',
-                'styleguide/assets/js/bootstrap-alert.js'   => 'portal2/portal.min.js',
-                'portal2/error.js'               => 'portal2/portal.min.js',
-                'portal2/user.js'                => 'portal2/portal.min.js',
-                'portal2/views/alert-view.js'    => 'portal2/portal.min.js',
-                'portal2/portal.js'              => 'portal2/portal.min.js',
-                'portal2/portal-ui.js'           => 'portal2/portal.min.js',
-                'include/javascript/jquery/jquery.popoverext.js'           => 'portal2/portal.min.js',
-                'include/javascript/jquery/jquery.effects.custombounce.js'           => 'portal2/portal.min.js',
-
+            $sugar_grp_portal2 = array_merge(
+                array('sidecar/lib/jquery/jquery.placeholder.min.js' => 'portal2/portal.min.js'), // preserve ordering
+                getSubgroupForTarget('bootstrap', 'portal2/portal.min.js'),
+                array(
+                    'portal2/error.js'               => 'portal2/portal.min.js',
+                    'portal2/user.js'                => 'portal2/portal.min.js',
+                    'portal2/views/alert-view.js'    => 'portal2/portal.min.js',
+                    'portal2/portal.js'              => 'portal2/portal.min.js',
+                    'portal2/portal-ui.js'           => 'portal2/portal.min.js',
+                    'include/javascript/jquery/jquery.popoverext.js'           => 'portal2/portal.min.js',
+                    'include/javascript/jquery/jquery.effects.custombounce.js'           => 'portal2/portal.min.js',
+                )
             ),
            //END SUGARCRM flav=ent ONLY
         );
@@ -223,6 +270,8 @@
     $cached_file = 'include/javascript/sidecar_forecasts.js';
 
     $sidecar_forecasts = array();
+    // Forecast and portal2 should include same styleguide bootstrap files
+    $sidecar_forecasts = array_merge($sidecar_forecasts, getSubgroupForTarget('bootstrap', $cached_file));
     $sidecar_forecasts['include/javascript/sugarAuthStore.js'] = $cached_file;
     $sidecar_forecasts['include/SugarCharts/Jit/js/Jit/jit.js'] = $cached_file;
     $sidecar_forecasts['include/SugarCharts/Jit/js/sugarCharts.js'] = $cached_file;
@@ -231,10 +280,8 @@
     $sidecar_forecasts['modules/Forecasts/clients/base/lib/BucketGridEnum.js'] = $cached_file;
     $sidecar_forecasts['modules/Forecasts/clients/base/lib/ForecastsUtils.js'] = $cached_file;
     $sidecar_forecasts['modules/Forecasts/tpls/SidecarView.js'] = $cached_file;
-    $sidecar_forecasts['include/javascript/twitterbootstrap/js/bootstrap-tooltip.js'] = $cached_file;
-    $sidecar_forecasts['include/javascript/twitterbootstrap/js/bootstrap-popover.js'] = $cached_file;
-    $sidecar_forecasts['include/javascript/twitterbootstrap/js/bootstrap-modal.js'] = $cached_file;
-    $sidecar_forecasts['include/javascript/twitterbootstrap/js/bootstrapx-clickover.js'] = $cached_file;
+    // Forecast and portal2 should include same styleguide bootstrap files
+    $sidecar_forecasts = array_merge($sidecar_forecasts, getSubgroupForTarget('bootstrap', $cached_file));
     $sidecar_forecasts['include/javascript/jquery/jquery.nouislider.js'] = $cached_file;
 
     $js_groupings[] = $sidecar_forecasts;
@@ -246,3 +293,4 @@
     foreach(SugarAutoLoader::existing("custom/jssource/JSGroupings.php", SugarAutoLoader::loadExtension("jsgroupings")) as $file) {
         require $file;
     }
+

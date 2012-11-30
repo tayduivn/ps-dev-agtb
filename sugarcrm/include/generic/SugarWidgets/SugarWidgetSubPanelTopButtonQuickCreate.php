@@ -189,5 +189,22 @@ class SugarWidgetSubPanelTopButtonQuickCreate extends SugarWidgetSubPanelTopButt
 		 }
 		 return $relationship_name;
 	}
+
+    /** This default function is used to create the HTML for a simple button */
+    function display($defines, $additionalFormFields = null)
+    {
+        /**
+         * Bug #55632 : Hiding Notes Module does not prevent creation of notes.
+         * if module is hidden or subpanel for the module is hidden - doesn't show quick create button
+         */
+        require_once('modules/MySettings/TabController.php');
+        $tabs = new TabController();
+        if ( !in_array($defines['module'], $tabs->get_system_tabs()) || in_array(strtolower($defines['module']), SubPanelDefinitions::get_hidden_subpanels()) )
+        {
+            return '';
+        }
+
+        return parent::display($defines, $additionalFormFields);
+    }
 }
 ?>

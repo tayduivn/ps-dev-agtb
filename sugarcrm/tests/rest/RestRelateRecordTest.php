@@ -503,6 +503,7 @@ class RestRelateRecordTest extends RestTestBase {
         $call = new Call();
         $call->name = "UNIT 1";
         $call->date_start = TimeDate::getInstance()->getNow()->asDb();
+
         $call->save();
 
         $this->calls[] = $call;

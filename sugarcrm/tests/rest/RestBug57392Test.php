@@ -1,4 +1,5 @@
 <?php
+//FILE SUGARCRM flav=ent ONLY
 /*********************************************************************************
  * The contents of this file are subject to the SugarCRM Professional End User
  * License Agreement ("License") which can be viewed at
@@ -24,20 +25,36 @@
 
 require_once('tests/rest/RestTestBase.php');
 
-/**
- * Bug 58563 - module_list does not return Employees
- */
-class RestBug58563Test extends RestTestBase
+
+class RestBug57392Test extends RestTestBase
 {
 
+    public function setUp()
+    {
+        parent::setUp();
+        // create a case assign it to admin
+        $case = BeanFactory::newBean('Cases');
+        $case->name = 'Test Case ' . create_guid();
+        $case->assigned_user_id = 1;
+        $case->save();
+        $this->case_id = $case->id;
+    }
+
+    public function tearDown()
+    {
+        parent::tearDown();
+        $GLOBALS['db']->query("DELETE FROM cases WHERE id = '{$this->case_id}'");
+    }
+
     /**
-     * Tests that multiselect default values are returned clean in the fields list
-     * from the metadata manager
-     * 
-     * @group Bug56505
+     * @group rest
      */
-    public function testEmployeeInModuleList() {
-        $restReply = $this->_restCall('me');
-        $this->assertTrue(in_array('Employees', $restReply['reply']['current_user']['module_list']), 'Employees not returned in the module list.');
+    public function testUpdatingAssignedUser()
+    {
+        $restReply = $this->_restCall("Cases/{$this->case_id}");
+        $this->assertEquals(1, $restReply['reply']['assigned_user_id'], "The assigned user id was not 1 it was {$restReply['reply']['assigned_user_id']}");
+
+        $restReply = $this->_restCall("Cases/{$this->case_id}",json_encode(array('assigned_user_id' => $GLOBALS['current_user']->id)), 'PUT');
+        $this->assertEquals($GLOBALS['current_user']->id, $restReply['reply']['assigned_user_id'], "The assigned user id was not {$GLOBALS['current_user']->id} it was {$restReply['reply']['assigned_user_id']}");
     }
 }

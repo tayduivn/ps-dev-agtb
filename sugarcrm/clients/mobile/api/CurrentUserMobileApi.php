@@ -1,6 +1,6 @@
 <?php
 if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
-/*********************************************************************************
+/********************************************************************************
  *The contents of this file are subject to the SugarCRM Professional End User License Agreement
  *("License") which can be viewed at http://www.sugarcrm.com/EULA.
  *By installing or using this file, You have unconditionally agreed to the terms and conditions of the License, and You may
@@ -19,28 +19,19 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *to the License for the specific language governing these rights and limitations under the License.
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
-//FILE SUGARCRM flav=pro ONLY
-$dictionary['product_bundle_quote'] = array (
-	'table' => 'product_bundle_quote',
-	'fields' => array (
-       array('name' =>'id', 'type' =>'varchar', 'len'=>'36')
-      , array ('name' => 'date_modified','type' => 'datetime')
-      , array('name' =>'deleted', 'type' =>'bool', 'len'=>'1', 'default'=>'0', 'required' => false,)
-      , array('name' =>'bundle_id', 'type' =>'varchar', 'len'=>'36')
-      , array('name' =>'quote_id', 'type' =>'varchar', 'len'=>'36')
-      , array('name' =>'bundle_index', 'type' =>'int', 'len'=>'11', 'auto_increment' => true, 'required' => true,)
-	),
-	'indices' => array (
-       array('name' =>'prod_bundl_quotepk', 'type' =>'primary', 'fields'=>array('id'))
-      , array('name' =>'idx_pbq_bundle', 'type' =>'index', 'fields'=>array('bundle_id'))
-      , array('name' =>'idx_pbq_quote', 'type' =>'index', 'fields'=>array('quote_id'))
-      , array('name' =>'idx_pbq_bq', 'type'=>'alternate_key', 'fields'=>array('quote_id','bundle_id'))
-      , array('name' => 'bundle_index_idx', 'type'=>'index', 'fields'=>array('bundle_index'))
-	),
 
-	'relationships' => array ('product_bundle_quote' => array('lhs_module'=> 'ProductBundles', 'lhs_table'=> 'product_bundles', 'lhs_key' => 'id',
-		'rhs_module'=> 'Quotes', 'rhs_table'=> 'quotes', 'rhs_key' => 'id',
-		'relationship_type'=>'many-to-many',
-		'join_table'=> 'product_bundle_quote', 'join_key_lhs'=>'bundle_id', 'join_key_rhs'=>'quote_id'))
-);
-?>
+require_once 'clients/base/api/CurrentUserApi.php';
+
+class CurrentUserMobileApi extends CurrentUserApi {
+    public function getModuleList() {
+        // replicate the essential part of the behavior of the private loadMapping() method in SugarController
+        foreach(SugarAutoLoader::existingCustom('include/MVC/Controller/wireless_module_registry.php') as $file){
+            require $file;
+        }
+
+        // $wireless_module_registry is defined in the file loaded above
+        return isset($wireless_module_registry) && is_array($wireless_module_registry) ?
+            $this->list2Array($wireless_module_registry) :
+            array();
+    }
+}
