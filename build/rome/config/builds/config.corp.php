@@ -143,8 +143,5 @@ $config['blackList']['corp'] = array(
 'sugarcrm/styleguide/tests'=>1,
 'sugarcrm/styleguide/build'=>1,
                             
-'sugarcrm/sidecar/src'=>1,  
-'sugarcrm/sidecar/docs'=>1, 
-'sugarcrm/sidecar/build.php'=>1,
 );
 $build = 'corp';
