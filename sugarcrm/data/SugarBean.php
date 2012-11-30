@@ -1382,7 +1382,7 @@ class SugarBean
             if(isset($def['dbType']))
                 $type .= $def['dbType'];
 
-            if($def['type'] == 'html') {
+            if($def['type'] == 'html' || $def['type'] == 'longhtml') {
                 $this->$key = SugarCleaner::cleanHtml($this->$key, true);
             } elseif((strpos($type, 'char') !== false ||
                 strpos($type, 'text') !== false ||
@@ -6262,7 +6262,7 @@ class SugarBean
      * in expression
      *
      * @param AbstractExpression $expr Parsed formula expression or nested expression
-     * @param string $linkName Name of the link to filter "related" expressions by 
+     * @param string $linkName Name of the link to filter "related" expressions by
      * @return array
      */
     protected function get_formula_related_fields(AbstractExpression $expr, $linkName)
