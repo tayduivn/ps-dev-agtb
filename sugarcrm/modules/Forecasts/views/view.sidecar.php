@@ -137,7 +137,7 @@ class ForecastsViewSidecar extends SidecarView
      */
     public function _displayJavascript()
     {
-        parent::_displayJavascript();
+        $this->_displayJavascriptCore();
 
         /**
          * load js files for sidecar forecasts
@@ -147,12 +147,21 @@ class ForecastsViewSidecar extends SidecarView
          * but it (sidecar.min.js) loads jquery library that is loaded and extended already in sugar_grp1_jquery.js -
          * so in this case we have errors on the page
          */
-        if ( !inDeveloperMode() )
+        if ( file_exists('sidecar/src/include-manifest.php') )
         {
-            echo "<script type='text/javascript' src='sidecar/minified/sidecar.min.js'></script>\n";
-            echo "<script type='text/javascript' src='include/javascript/jquery/jquery.dataTables.min.js'></script>\n";
-            echo "<script type='text/javascript' src='include/javascript/jquery/jquery.jeditable.js'></script>\n";
-            echo "<script type='text/javascript'>jQuery.noConflict();</script>\n";
+           require_once('sidecar/src/include-manifest.php');
+           if ( !empty($buildFiles) )
+           {
+               $buildFiles = array_diff($buildFiles['sidecar'], array('lib/jquery/jquery.min.js'));
+               foreach ( $buildFiles as $_file )
+               {
+                   echo getVersionedScript('sidecar/'.$_file) . "\n";
+               }
+           }
+        }
+            
+        if ( !inDeveloperMode() )
+        {                                      
             if  ( !is_file(sugar_cached("include/javascript/sidecar_forecasts.js")) ) {
                 $_REQUEST['root_directory'] = ".";
                 require_once("jssource/minify_utils.php");
@@ -161,19 +170,14 @@ class ForecastsViewSidecar extends SidecarView
             echo getVersionedScript('cache/include/javascript/sidecar_forecasts.js') . "\n";
 
         } else {
-
             require('sidecar/src/include-manifest.php');
             if (!empty($buildFiles['sidecar']))
-            {
-               foreach ( $buildFiles['sidecar'] as $file)
-               {
-                   echo "<script type='text/javascript' src='sidecar/{$file}'></script>\n";
-               }
+            {                
+                foreach ( $buildFiles['sidecar'] as $file)
+                {
+                    echo "<script type='text/javascript' src='sidecar/{$file}'></script>\n";
+                }                
             }
-
-            echo "<script type='text/javascript' src='include/javascript/jquery/jquery.dataTables.min.js'></script>\n";
-            echo "<script type='text/javascript' src='include/javascript/jquery/jquery.jeditable.js'></script>\n";
-            echo "<script type='text/javascript'>jQuery.noConflict();</script>\n";
 
             require_once('jssource/JSGroupings.php');
             if ( !empty($sidecar_forecasts) && is_array($sidecar_forecasts) )
@@ -182,8 +186,101 @@ class ForecastsViewSidecar extends SidecarView
                 {
                     echo "<script src='".$_file."'></script>\n";
                 }
-            }
-        }
+            }            
+        }         
     }
 
+    protected function _displayJavascriptCore()
+    {
+        global $locale, $sugar_config, $timedate;
+
+
+        //BEGIN SUGARCRM flav=int ONLY
+        //check to see if the script files need to be rebuilt, add needed variables to request array
+        $_REQUEST['root_directory'] = getcwd();
+        $_REQUEST['js_rebuild_concat'] = 'rebuild';
+        require_once ('jssource/minify.php');
+        //END SUGARCRM flav=int ONLY
+        if ($this->_getOption('show_javascript')) {
+            if (!$this->_getOption('show_header')) {
+                $langHeader = get_language_header();
+
+                echo <<<EOHTML
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html {$langHeader}>
+<head>
+EOHTML;
+            }
+
+            $js_vars = array(
+                "sugar_cache_dir" => "cache/",
+                );
+
+            if(isset($this->bean->module_dir)){
+                $js_vars['module_sugar_grp1'] = $this->bean->module_dir;
+            }
+            if(isset($_REQUEST['action'])){
+                $js_vars['action_sugar_grp1'] = $_REQUEST['action'];
+            }
+            echo '<script>jscal_today = 1000*' . $timedate->asUserTs($timedate->getNow()) . '; if(typeof app_strings == "undefined") app_strings = new Array();</script>';
+            if (!is_file(sugar_cached("include/javascript/sugar_grp1.js")) || !is_file(sugar_cached("include/javascript/sugar_grp1_yui.js")) || !is_file(sugar_cached("include/javascript/sugar_grp1_jquery_core.js")) || !is_file(sugar_cached("include/javascript/sugar_grp1_jquery_menus.js"))) {
+                $_REQUEST['root_directory'] = ".";
+                require_once("jssource/minify_utils.php");
+                ConcatenateFiles(".");
+            }
+            echo getVersionedScript('cache/include/javascript/sugar_grp1_jquery_core.js');
+            echo getVersionedScript('cache/include/javascript/sugar_grp1_jquery_menus.js');
+            echo getVersionedScript('cache/include/javascript/sugar_grp1_yui.js');
+            echo getVersionedScript('cache/include/javascript/sugar_grp1.js');
+            echo getVersionedScript('include/javascript/calendar.js');
+
+
+            // output necessary config js in the top of the page
+            $config_js = $this->getSugarConfigJS();
+            if(!empty($config_js)){
+                echo "<script>\n".implode("\n", $config_js)."</script>\n";
+            }
+
+            if ( isset($sugar_config['email_sugarclient_listviewmaxselect']) ) {
+                echo "<script>SUGAR.config.email_sugarclient_listviewmaxselect = {$GLOBALS['sugar_config']['email_sugarclient_listviewmaxselect']};</script>";
+            }
+
+            $image_server = (defined('TEMPLATE_URL'))?TEMPLATE_URL . '/':'';
+            echo '<script type="text/javascript">SUGAR.themes.image_server="' . $image_server . '";</script>'; // cn: bug 12274 - create session-stored key to defend against CSRF
+            echo '<script type="text/javascript">var name_format = "' . $locale->getLocaleFormatMacro() . '";</script>';
+            echo self::getJavascriptValidation();
+            if (!is_file(sugar_cached('jsLanguage/') . $GLOBALS['current_language'] . '.js')) {
+                require_once ('include/language/jsLanguage.php');
+                jsLanguage::createAppStringsCache($GLOBALS['current_language']);
+            }
+            echo getVersionedScript('cache/jsLanguage/'. $GLOBALS['current_language'] . '.js', $GLOBALS['sugar_config']['js_lang_version']);
+
+            echo $this->_getModLanguageJS();
+            echo getVersionedScript('include/javascript/productTour.js');
+            if(isset( $sugar_config['disc_client']) && $sugar_config['disc_client'])
+                echo getVersionedScript('modules/Sync/headersync.js');
+
+            //BEGIN SUGARCRM flav=pro ONLY
+            if (!is_file(sugar_cached("Expressions/functions_cache.js"))) {
+                $GLOBALS['updateSilent'] = true;
+                include("include/Expressions/updatecache.php");
+            }
+            if(inDeveloperMode())
+                echo getVersionedScript('cache/Expressions/functions_cache_debug.js');
+            else
+                echo getVersionedScript('cache/Expressions/functions_cache.js');
+
+            require_once("include/Expressions/DependencyManager.php");
+            echo "\n" . '<script type="text/javascript">' . DependencyManager::getJSUserVariables($GLOBALS['current_user']) . "</script>\n";
+            //END SUGARCRM flav=pro ONLY
+
+            //echo out the $js_vars variables as javascript variables
+            echo "<script type='text/javascript'>\n";
+            foreach($js_vars as $var=>$value)
+            {
+                echo "var {$var} = '{$value}';\n";
+            }
+            echo "</script>\n";
+        }
+    }
 }

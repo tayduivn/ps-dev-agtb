@@ -3572,6 +3572,13 @@ $app_strings = array (
     'LBL_SYNCED_RECURRING_MSG' => 'You cannot edit this record because it was synced from an external client.',
     'LBL_EXISTING' => 'Existing',
     'LBL_PANEL_DEFAULT' => 'Default',
+
+    //BEGIN SUGARCRM flav=pro ONLY
+    //These are for the timeperiod name formats
+    'LBL_ANNUAL_TIMEPERIOD_FORMAT' => 'Year {0}',
+    'LBL_QUARTER_TIMEPERIOD_FORMAT' => 'Q{0} ({1} - {2})',
+    'LBL_MONTH_TIMEPERIOD_FORMAT' => '{0} - {1}',
+    //END SUGARCRM flav=pro ONLY
 );
 
 
@@ -4423,12 +4430,12 @@ $app_strings ['documentation'] = array (
 );
 //BEGIN SUGARCRM flav=pro ONLY
 $app_list_strings['forecasts_config_category_options_dom'] = array(
-    'show_binary' => 'Two Categories',
-    'show_buckets' => 'Three Categories',
+    'show_binary' => 'Two Ranges',
+    'show_buckets' => 'Three Ranges',
 //END SUGARCRM flav=pro ONLY
 //BEGIN SUGARCRM flav=int ONLY
 //TODO-sfa Tag this as 'ent' when custom buckets are implemented (SFA-295)
-    'show_custom_buckets' => 'Custom Categories',
+    'show_custom_buckets' => 'Custom Ranges',
 //END SUGARCRM flav=int ONLY
 //BEGIN SUGARCRM flav=pro ONLY
 );
