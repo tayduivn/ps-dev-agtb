@@ -77,7 +77,40 @@
     commitButtonEnabled: false,
     commitFromSafeFetch: false,
     // boolean to denote that a fetch is currently in progress
-    fetchInProgress: false,
+    fetchInProgress : false,
+
+    events : {
+        'click a["rel=inspector"]>i' : 'inspector'
+    },
+
+    inspector: function(evt) {
+        var nTr = $(evt.target).parents('tr'),
+            uid = $(evt.target).attr('data-uid'),
+            totalRows = $(evt.target).parents('table').find('tr.odd, tr.even'),
+            selIndex = -1;
+        _.each(totalRows, function(element, index){
+            if(nTr[0] == element) {
+                selIndex = index;
+            }
+        });
+
+        // begin building params to pass to modal
+        var params = {
+            selectedIndex : selIndex,
+            dataset : totalRows,
+            title:'Preview',
+            context : {
+                module: "Opportunities",
+                model : app.data.createBean('Opportunities', {id : uid}),
+                meta  : app.metadata.getModule('Opportunities').views.forecastInspector.meta
+            },
+            components: [
+                { view: 'forecastInspector' }
+            ]
+        };
+
+        this.layout.getComponent('inspector').showInspector(params);
+    },
     
     /**
      * Initialize the View
@@ -245,10 +278,16 @@
             this.context.forecasts.on("change:selectedTimePeriod",
                 function(context, timePeriod) {
                     this.updateWorksheetBySelectedTimePeriod(timePeriod);
+                    // we need to hide the inspector if it's shown
+                    self.layout.getComponent('inspector').hide();
                 }, this);
             this.context.forecasts.on("change:selectedRanges",
                 function(context, ranges) {
+                    var insp = self.layout.getComponent('inspector'),
+                        row = insp.removeHighlight(insp.findHighlighted());
                     this.updateWorksheetBySelectedRanges(ranges);
+                    // we need to update the dataset
+                    self.layout.getComponent('inspector').setRows(self.$el.find('tr.odd, tr.even'), row);
                 },this);
             this.context.forecasts.worksheet.on("change", function() {
                 this.calculateTotals();

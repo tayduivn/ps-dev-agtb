@@ -55,6 +55,7 @@
                         <div class="view-forecastsChart"></div>
                     </div>
                     <div class="clearfix"></div>
+                    <div class="view-inspector"></div>
                 </div>
             </div>
         </div>

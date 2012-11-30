@@ -1,0 +1,1 @@
+<a href="#inspect/{{uid}}" rel="inspector"><i class="icon-eye-open label label-warn" data-uid="{{uid}}"></i></a>

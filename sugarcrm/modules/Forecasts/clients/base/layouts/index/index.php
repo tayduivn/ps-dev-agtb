@@ -67,5 +67,11 @@ $viewdefs['Forecasts']['base']['layout']['index'] = array(
         array(
             'layout' => 'info'
         ),
+        array(
+            'layout' => array(
+                'name' => 'inspector',
+                'type' => 'ForecastsInspector',
+            ),
+        )
     ),
 );
