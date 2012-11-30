@@ -24,44 +24,60 @@
  ********************************************************************************/
 
 /**
- * Bug49982Test.php
- * This test tests that the error message is returned after an upload that exceeds post_max_size
+ * Bug58685Test.php
+ * This test tests that the error message is returned after an upload that isn't a true upload but just an empty post
  *
- * @ticket 49982
+ * @ticket 58685
  */
-class Bug49982Test extends Sugar_PHPUnit_Framework_TestCase
+require_once('modules/Home/views/view.list.php');
+class Bug58685Test extends Sugar_PHPUnit_Framework_OutputTestCase
 {
-	var $doc = null;
-    var $contract = null;
+    /**
+     * @var array
+     */
+    protected $oldPost = array();
 
-    public function setUp()
+    /**
+     * @var string
+     */
+    protected $oldRM = null;
+
+    /**
+     * @var string
+     */
+    protected $oldCL = null;
+
+	public function setUp()
     {
-        $_POST = array();
-    }
+        $this->oldPost = $_POST;
+        if (isset($_SERVER['REQUEST_METHOD'])) {
+            $this->oldRM = $_SERVER['REQUEST_METHOD'];
+        }
+        if (isset($_SERVER['CONTENT_LENGTH'])) {
+            $this->oldCL = $_SERVER['CONTENT_LENGTH'];
+        }
+
+	}
 
     public function tearDown()
     {
-        unset($_SERVER['REQUEST_METHOD']);
-        $_POST = array();
+        $_POST = $this->oldPost;
+        $_SERVER['REQUEST_METHOD'] = $this->oldRM;
+        $_SERVER['CONTENT_LENGTH'] = $this->oldCL;
     }
 
     /**
-     * testUploadSizeError
-     * We want to simulate uploading a file that is bigger than the post max size. However the $_FILES global array cannot be overwritten
-     * without triggering php errors so we can't trigger the error codes directly.
-     * In the scenario we are trying to simulate, the post AND files array are returned empty by php, so let's simulate that
-     * in order to test the error message from home page
+     * testEmptyPostError
      */
-    function testSaveUploadError()
-    {
+    function testSaveUploadErrorMessage() {
         //first lets test that no errors show up under normal conditions, clear out Post array just in case there is stale info
-        require_once('include/MVC/View/SugarView.php');
-        $sv = new SugarView();
-        $this->assertFalse($sv->checkPostMaxSizeError(),'Sugar view indicated an upload error when there should be none.');
-
+        $_POST = array();
         //now lets simulate that we are coming from a post, which along with the empty file and post array should trigger the error message
         $_SERVER['REQUEST_METHOD'] = 'POST';
-        $this->assertTrue($sv->checkPostMaxSizeError(),'Sugar view list did not return an error, however conditions dictate that an upload with a file exceeding post_max_size has occurred.');
+        $_SERVER['CONTENT_LENGTH'] = 10;
+        $view = new HomeViewList();
+        $view->processMaxPostErrors();
+        $this->expectOutputRegex('/.*Please refresh your page and try again.*/');
     }
 
 }

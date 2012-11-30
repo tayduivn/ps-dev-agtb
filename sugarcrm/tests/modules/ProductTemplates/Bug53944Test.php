@@ -69,17 +69,12 @@ class Bug53944Test extends Sugar_PHPUnit_Framework_OutputTestCase
 
     public function setUp()
     {
-        $beanList = array();
-        $beanFiles = array();
-        require('include/modules.php');
-        $GLOBALS['beanList'] = $beanList;
-        $GLOBALS['beanFiles'] = $beanFiles;
-
-        global $current_user, $app_strings, $mod_strings, $app_list_strings;
-        $current_user = SugarTestUserUtilities::createAnonymousUser(true, 1);
-        $app_strings = return_application_language($GLOBALS['current_language']);
-        $mod_strings = return_module_language($GLOBALS['current_language'], 'ProductTemplates');
-        $app_list_strings = return_app_list_strings_language($GLOBALS['current_language']);
+        SugarTestHelper::setUp('beanFiles');
+        SugarTestHelper::setUp('beanList');
+        SugarTestHelper::setUp('current_user', array(true, 1));
+        SugarTestHelper::setUp('app_strings');
+        SugarTestHelper::setUp('app_list_strings');
+        SugarTestHelper::setUp('mod_strings', array('ProductTemplates'));
 
         //Adding relationship between module Accounts and new module
         $this->lhs_module='Accounts';
@@ -98,22 +93,10 @@ class Bug53944Test extends Sugar_PHPUnit_Framework_OutputTestCase
         $this->relationships->add($this->relationship);
         $this->relationships->save();
         $this->relationships->build();
-        LanguageManager::clearLanguageCache($this->lhs_module);
-        LanguageManager::clearLanguageCache($this->rhs_module);
-
-        //Updating $dictionary
-        global $dictionary;
-        $moduleInstaller = new ModuleInstaller();
-        $moduleInstaller->silent = true;
-        $moduleInstaller->rebuild_tabledictionary();
-        require 'modules/TableDictionary.php';
-
-        //Updating vardefs
-        VardefManager::$linkFields = array();
-        VardefManager::clearVardef();
-        VardefManager::refreshVardefs($this->lhs_module, BeanFactory::getObjectName($this->lhs_module));
-        VardefManager::refreshVardefs($this->rhs_module, BeanFactory::getObjectName($this->rhs_module));
-        SugarRelationshipFactory::rebuildCache();
+        SugarTestHelper::setUp('relation', array(
+            $this->lhs_module,
+            $this->rhs_module
+        ));
     }
 
     public function tearDown()
@@ -122,33 +105,8 @@ class Bug53944Test extends Sugar_PHPUnit_Framework_OutputTestCase
         $this->relationships = new DeployedRelationships($this->lhs_module);
         $this->relationships->delete($this->relationship->getName());
         $this->relationships->save();
-        SugarRelationshipFactory::deleteCache();
-        LanguageManager::clearLanguageCache($this->lhs_module);
-        LanguageManager::clearLanguageCache($this->rhs_module);
 
-        //Updating $dictionary
-        global $dictionary;
-        $dictionary = array();
-        $moduleInstaller = new ModuleInstaller();
-        $moduleInstaller->silent = true;
-        $moduleInstaller->rebuild_tabledictionary();
-        require 'modules/TableDictionary.php';
-
-        //Updating vardefs
-        VardefManager::$linkFields = array();
-        VardefManager::clearVardef();
-        VardefManager::refreshVardefs($this->lhs_module, BeanFactory::getObjectName($this->lhs_module));
-        VardefManager::refreshVardefs($this->rhs_module, BeanFactory::getObjectName($this->rhs_module));
-        SugarRelationshipFactory::rebuildCache();
-
-        SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
-        unset($GLOBALS['current_user']);
-
-        unset($GLOBALS['beanFiles'], $GLOBALS['beanList']);
-        unset($GLOBALS['app_strings'], $GLOBALS['app_list_strings'], $GLOBALS['mod_strings']);
-
-        unset($this->account);
-        unset($this->pt);
+        SugarTestHelper::tearDown();
     }
 
     public function testRelationOneToOne()

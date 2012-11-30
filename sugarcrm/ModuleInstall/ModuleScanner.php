@@ -378,6 +378,8 @@ class ModuleScanner{
         'xml_set_processing_instruction_handler',
         'xml_set_start_namespace_decl_handler',
         'xml_set_unparsed_entity_decl_handler',
+        
+        'setlevel'
 );
 
 	public function printToWiki(){
@@ -538,6 +540,7 @@ class ModuleScanner{
                             if(in_array($lastToken[1], $this->classBlackListExempt))break;
                         } else {
                             if(!in_array($token[1], $this->blackList))break;
+                            if (in_array($token[1], $this->blackList)) $issues[]= translate('ML_INVALID_FUNCTION') . ' ' .  $token[1] . '()';                            
                             if(in_array($token[1], $this->blackListExempt))break;
 
                             if ($lastToken !== false &&
