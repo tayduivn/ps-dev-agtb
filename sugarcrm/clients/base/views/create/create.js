@@ -80,8 +80,9 @@
      * Handle click on the cancel link
      */
     cancel: function() {
-        //TODO: close pushdown modal
-        window.history.back();
+        this.context.trigger("drawer:hide");
+        if (this.context.parent)
+            this.context.parent.trigger("drawer:hide");
     },
 
     /**
