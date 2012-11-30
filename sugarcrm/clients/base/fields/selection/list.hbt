@@ -1,1 +1,1 @@
-<input name="selection" class="selection" type="radio">
+<input name="{{name}}" class="selection" type="radio">

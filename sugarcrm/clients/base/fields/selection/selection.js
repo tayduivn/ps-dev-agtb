@@ -1,6 +1,6 @@
 ({
     events: {
-        'click input[name="selection"]': 'toggleSelect'
+        'click input.selection': 'toggleSelect'
     },
     toggleSelect: function(evt) {
         var $el = $(evt.currentTarget).is(":checked");
@@ -19,5 +19,8 @@
         if(this.model) {
             this.context.unset('selection_model');
         }
+    },
+    bindDomChange: function() {
+        //don't update the row's model & re-render, this is just a mechanism for selecting a row
     }
 })
