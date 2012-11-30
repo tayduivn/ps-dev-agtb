@@ -57,7 +57,7 @@ class CurrentUserPortalApi extends CurrentUserApi {
     }
 
     /**
-     * Updates current portals info
+     * Updates current portal users info
      *
      * @param $api
      * @param $args
