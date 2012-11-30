@@ -32,6 +32,21 @@
 require_once('modules/Home/views/view.list.php');
 class Bug58685Test extends Sugar_PHPUnit_Framework_OutputTestCase
 {
+    /**
+     * @var array
+     */
+    protected $oldPost = array();
+
+    /**
+     * @var string
+     */
+    protected $oldRM = null;
+
+    /**
+     * @var string
+     */
+    protected $oldCL = null;
+
 	public function setUp()
     {
         $this->oldPost = $_POST;
@@ -46,13 +61,9 @@ class Bug58685Test extends Sugar_PHPUnit_Framework_OutputTestCase
 
     public function tearDown()
     {
-        $_POST = $this->oldPost ;
-        if (isset($this->oldRM)) {
-            $_SERVER['REQUEST_METHOD'] = $this->oldRM ;
-        }
-        if (isset($this->oldCL)) {
-            $_SERVER['CONTENT_LENGTH'] = $this->oldCL ;
-        }
+        $_POST = $this->oldPost;
+        $_SERVER['REQUEST_METHOD'] = $this->oldRM;
+        $_SERVER['CONTENT_LENGTH'] = $this->oldCL;
     }
 
     /**
