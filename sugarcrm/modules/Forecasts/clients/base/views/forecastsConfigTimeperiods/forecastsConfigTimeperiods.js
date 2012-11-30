@@ -15,6 +15,14 @@
         }
     },
 
+    bindDataChange: function() {
+        this.model.on("change:timeperiod_start_picker", function (model, value) {
+            var pickedDate = new Date(value);
+            model.set("timeperiod_start_day", pickedDate.getDate() + 1);
+            model.set("timeperiod_start_month", pickedDate.getMonth() + 1);
+        });
+    },
+
     /**
      * Overriding _renderField because we need to set up a binding to the start month drop down to populate the day drop down on change
      * @param field
@@ -34,10 +42,6 @@
         }
         app.view.View.prototype._renderField.call(this, field);
 
-        // format the datepicker used to set the timeperiod start month and day to not show the year
-        if (field.name == 'timeperiod_start_picker') {
-            field.$('.datepicker').datepicker("option", "dateFormat", "mm-dd");
-        }
     },
 
     /**
@@ -66,31 +70,10 @@
     _setUpTimeperiodPicker: function(field) {
         var today = new Date();
 
-        field.bindDomChange  = function() {
-            if (!(this.model instanceof Backbone.Model)) return;
-
-            var self = this;
-            var el = this.$el.find(this.fieldTag);
-            el.on("change", function() {
-                var value = new Date(self.unformat(el.val()));
-
-                self.model.set("timeperiod_start_day", value.getDate() + 1);
-                self.model.set("timeperiod_start_month", value.getMonth() + 1);
-            });
-            // Focus doesn't always change when tabbing through inputs on IE9 (Bug54717)
-            // This prevents change events from being fired appropriately on IE9
-            if($.browser.msie && el.is("input")){
-                el.on("input", function() {
-                    // Set focus on input element receiving user input
-                   el.focus();
-                });
-            }
-        };
-
         /**
-         * override bindDataChange to update the date picker in the UI properly whene the value for either
+         * override bindDataChange to update the date picker in the UI properly when the value for either
          * `timeperiod_start_month` or `timeperiod_start_day` changes in the model.
-          */
+         */
         field.bindDataChange = function() {
             if (this.model) {
                 this.model.on("change:timeperiod_start_day change:timeperiod_start_month", function() {
