@@ -68,7 +68,8 @@ class RestConfigModuleApiTest extends RestTestBase {
     {
 
         $restReply = $this->_restCall('Opportunities/config?platform=base');
-        $this->assertNotEmpty($restReply['reply']['error_message']);
+        // now returns an empty array not an error
+        $this->assertEmpty($restReply['reply']);
     }
 
     /**

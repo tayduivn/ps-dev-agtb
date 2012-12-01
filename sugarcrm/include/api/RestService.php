@@ -50,6 +50,18 @@ class RestService extends ServiceBase {
     protected $response_headers = array();
 
     /**
+     * The minimum version accepted
+     * @var integer
+     */
+    protected $min_version = 10;
+
+    /**
+     * The maximum version accepted
+     * @var integer
+     */
+    protected $max_version = 10;
+
+    /**
      * This function executes the current request and outputs the response directly.
      */
     public function execute() {
@@ -59,6 +71,10 @@ class RestService extends ServiceBase {
             $this->getRequestHeaders();
 
             list($version,$path) = $this->parsePath($rawPath);
+
+            if($this->min_version > $version || $this->max_version < $version) {
+                throw new SugarApiExceptionIncorrectVersion("Please change your url to reflect version between {$this->min_version} and {$this->max_version}");
+            }
 
             $isLoggedIn = $this->authenticateUser();
 

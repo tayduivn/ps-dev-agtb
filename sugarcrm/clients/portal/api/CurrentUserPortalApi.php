@@ -32,12 +32,11 @@ class CurrentUserPortalApi extends CurrentUserApi {
      */
     public function retrieveCurrentUser($api, $args) {
         global $current_user;
-        
+
         // Get the basics
         $user_data = $this->getBasicUserInfo();
-        
         // Fill in the portal specific stuff
-        $contact = $this->getUserBean();
+        $contact = $this->getPortalContact();
         $user_data['type'] = 'support_portal';
         $user_data['user_id'] = $current_user->id;
         $user_data['user_name'] = $current_user->user_name;
@@ -58,12 +57,34 @@ class CurrentUserPortalApi extends CurrentUserApi {
     }
 
     /**
-     * Gets the user bean for the user of the api
-     * 
+     * Updates current portal users info
+     *
+     * @param $api
+     * @param $args
+     * @return array
+     */
+    public function updateCurrentUser($api, $args) {
+        $bean = $this->getPortalContact();
+        // setting these for the loadBean
+        $args['module'] = $bean->module_name;
+        $args['record'] = $bean->id;
+
+        $id = $this->updateBean($bean, $api, $args);
+
+        return $this->retrieveCurrentUser($api, $args);
+    }
+
+    /**
+     * Gets the current portal user's Contact bean.
+     * When working with Portal this contains the interesting user info
+     *
      * @return Contact
      */
-    protected function getUserBean() {
-        return BeanFactory::getBean('Contacts',$_SESSION['contact_id']);
+    protected function getPortalContact(){
+        if(!isset($this->portal_contact)){
+            $this->portal_contact = BeanFactory::getBean('Contacts', $_SESSION['contact_id']);
+        }
+        return $this->portal_contact;
     }
 
     /**
@@ -73,7 +94,7 @@ class CurrentUserPortalApi extends CurrentUserApi {
      * @return Contact
      */
     protected function getUserIfPassword($passwordToVerify) {
-        $contact = $this->getUserBean();
+        $contact = $this->getPortalContact();
         $currentPassword = $contact->portal_password;
         if (User::checkPassword($passwordToVerify, $currentPassword)) {
             return $contact;
@@ -134,7 +155,7 @@ class CurrentUserPortalApi extends CurrentUserApi {
      * @return array
      */
     protected function enforceModuleACLs(Array $acls) {
-        $apiPerson = BeanFactory::getBean('Contacts', $_SESSION['contact_id']);
+        $apiPerson = $this->getPortalContact();
         // This is a change in the ACL's for users without Accounts
         $vis = new SupportPortalVisibility($apiPerson);
         $accounts = $vis->getAccountIds();
@@ -149,5 +170,15 @@ class CurrentUserPortalApi extends CurrentUserApi {
         }
         
         return $acls;
+    }
+
+    public function getModuleList() {
+        // Use SugarPortalBrowser to get the portal modules that would appear
+        // in Studio
+        require_once 'modules/ModuleBuilder/Module/SugarPortalBrowser.php';
+        $pb = new SugarPortalBrowser();
+        $pb->loadModules();
+        $moduleList = $this->filterDisplayModules($pb->modules);
+        return $moduleList;
     }
 }

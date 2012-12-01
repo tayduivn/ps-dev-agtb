@@ -38,6 +38,7 @@ class RepairAndClear
         $this->execute=$autoexecute;
 
         //clear vardefs always..
+        // Since this is called here it should not be in the actions
         $this->clearVardefs();
         //first  clear the language cache.
         $this->clearLanguageCache();
@@ -67,9 +68,6 @@ class RepairAndClear
                 break;
             case 'clearThemeCache':
                 $this->clearThemeCache();
-                break;
-            case 'clearVardefs':
-                $this->clearVardefs();
                 break;
             case 'clearJsLangFiles':
                 $this->clearJsLangFiles();
