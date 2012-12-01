@@ -536,21 +536,14 @@ class User extends Person {
 
 		//BEGIN SUGARCRM flav=pro ONLY
 
-		//this code is meant to allow for the team widget to set the team_id as the 'Primary' team and
-		//then b/c Users uses the default_team field we can map it back when committing the user to the database.
-        if(!$this->is_admin) {
-            //Bug#53249: Prevent admin user set non-member team as a primary team
-            if(!empty($this->team_id)){
-                $this->default_team = $this->team_id;
-            }else{
-                $this->team_id = $this->default_team;
-            }
-        } else {
-            $this->team_id = $this->default_team;
+		// If the 'Primary' team changed then the team widget has set 'team_id' to a new value and we should
+		// assign the same value to default_team because User module uses it for setting the 'Primary' team
+		if (!empty($this->team_id))
+		{
+            $this->default_team = $this->team_id;
         }
-
+        
 		//END SUGARCRM flav=pro ONLY
-
 
 		parent::save($check_notify);
 
@@ -1002,25 +995,15 @@ EOQ;
 		}
 
         //BEGIN SUGARCRM flav=pro ONLY
-        $query = "SELECT team_id, teams.name, teams.name_2 FROM team_memberships rel RIGHT JOIN teams ON (rel.team_id = teams.id) WHERE rel.user_id = '{$this->id}' AND rel.team_id = '{$this->default_team}'";
-        $result = $this->db->query($query, false, "Error retrieving team name: ");
-
-        $row = $this->db->fetchByAssoc($result);
-        if (!empty ($row['team_id'])) {
-            $this->default_team = $row['team_id'];
-            $this->default_team_name = Team::getDisplayName($row['name'], $row['name_2'], $this->showLastNameFirst());
-        } else {
-            $this->default_team = '';
-            $this->default_team_name = '';
-            $this->team_set_id = '';
-        }
-
+        
         // Must set team_id for team widget purposes (default_team is primary team id)
         if (empty($this->team_id))
         {
             $this->team_id = $this->default_team;
         }
-
+        // Set default_team_name for Campaigns WebToLeadCreation
+        $this->default_team_name = Team::getTeamName($this->team_id);
+        
         //END SUGARCRM flav=pro ONLY
 
 		$this->_create_proper_name_field();
