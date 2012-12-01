@@ -248,7 +248,7 @@ if(empty($errors)) {
 				post_install_progress($progArray,'set');
 			}
 		}
-	    //clean vardefs
+		//clean vardefs
 		logThis('Performing UWrebuild()...', $path);
 		ob_start();
 		@UWrebuild();
@@ -488,7 +488,7 @@ if(isset($_SESSION['current_db_version']) && isset($_SESSION['target_db_version'
 	    ob_start();
 			include('include/Smarty/internals/core.write_file.php');
 		ob_end_clean();
-	 	$db =& DBManagerFactory::getInstance();
+	 	$db = DBManagerFactory::getInstance();
 		if($ce_to_pro_ent){
 	        //Also set license information
 	        $admin = new Administration();

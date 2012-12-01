@@ -161,6 +161,8 @@ define('SUGARCRM_PRE_INSTALL_FILE', 'scripts/pre_install.php');
 
 global $cwd;
 $cwd = getcwd(); // default to current, assumed to be in a valid SugarCRM root dir.
+touch($argv[2]);
+$path			= realpath($argv[2]); // custom log file, if blank will use ./upgradeWizard.log
 
 $upgradeType = verifyArguments($argv,$usage_regular);
 
@@ -176,8 +178,6 @@ $cwd = $argv[3];
 $GLOBALS['log']	= LoggerManager::getLogger('SugarCRM');
 $patchName		= basename($argv[1]);
 $zip_from_dir	= substr($patchName, 0, strlen($patchName) - 4); // patch folder name (minus ".zip")
-touch($argv[2]);
-$path			= realpath($argv[2]); // custom log file, if blank will use ./upgradeWizard.log
 
 $db				= DBManagerFactory::getInstance();
 $UWstrings		= return_module_language('en_us', 'UpgradeWizard');
