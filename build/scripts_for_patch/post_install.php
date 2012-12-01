@@ -246,6 +246,7 @@ function clearCompanyLogo(){
 
 
 function genericFunctions(){
+    global $path;
 	$server_software = $_SERVER["SERVER_SOFTWARE"];
 	if(strpos($server_software,'Microsoft-IIS') !== true)
 	{
@@ -435,13 +436,13 @@ function post_install() {
             $job->catch_up           = '0';
             $job->save();
         }
-        
+
 		// add sendEmailReminders job if not there
 		$job = new Scheduler();
 		$job->retrieve_by_string_fields(array("job" => 'function::sendEmailReminders'));
 		if(empty($job->id)) {
 			// not found - create
-			$job->name               = translate('LBL_OOTB_SEND_EMAIL_REMINDERS', 'Schedulers'); 
+			$job->name               = translate('LBL_OOTB_SEND_EMAIL_REMINDERS', 'Schedulers');
 			$job->job                = 'function::sendEmailReminders';
 			$job->date_time_start    = "2012-01-01 00:00:01";
 			$job->date_time_end      = "2030-12-31 23:59:59";
