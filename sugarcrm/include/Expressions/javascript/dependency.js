@@ -249,6 +249,11 @@ AH.getValue = function(variable, view, ignoreLinks) {
 	//For DetailViews where value is enclosed in a span tag
     if (field.tagName.toLowerCase() == "span")
     {
+        if (field.hasAttribute("data-id-value"))
+        {
+            return field.getAttribute("data-id-value");
+        }
+
         return document.all ? trim(field.innerText) : trim(field.textContent);
     }
 
@@ -662,7 +667,7 @@ AH.getRelatedFieldValues = function(fields, module, record)
                 var linkDef = SUGAR.forms.AssignmentHandler.getLink(fields[i].link);
                 if (linkDef && linkDef.id_name && linkDef.module) {
                     var idField = document.getElementById(linkDef.id_name);
-                    if (idField && idField.tagName == "INPUT")
+                    if (idField && (idField.tagName == "INPUT" || idField.hasAttribute("data-id-value")))
                     {
                         fields[i].relId = SUGAR.forms.AssignmentHandler.getValue(linkDef.id_name, false, true);
                         fields[i].relModule = linkDef.module;
