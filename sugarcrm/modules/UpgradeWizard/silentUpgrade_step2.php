@@ -413,10 +413,6 @@ if(empty($errors)) {
 	commitHandleReminders($skippedFiles, $path);
 }
 
-require_once('modules/Administration/Administration.php');
-$admin = new Administration();
-$admin->saveSetting('system','adminwizard',1);
-
 //BEGIN SUGARCRM flav=pro ONLY
 if($ce_to_pro_ent){
 	if(function_exists('upgradeDashletsForSalesAndMarketing')){

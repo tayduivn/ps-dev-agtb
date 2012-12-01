@@ -252,6 +252,10 @@ logThis('Start rebuild relationships.', $path);
 @rebuildRelations();
 logThis('End rebuild relationships.', $path);
 
+require_once('modules/Administration/Administration.php');
+$admin = new Administration();
+$admin->saveSetting('system','adminwizard',1);
+
 include("$unzip_dir/manifest.php");
 $ce_to_pro_ent = isset($manifest['name']) && ($manifest['name'] == 'SugarCE to SugarPro' || $manifest['name'] == 'SugarCE to SugarEnt'  || $manifest['name'] == 'SugarCE to SugarCorp' || $manifest['name'] == 'SugarCE to SugarUlt');
 $origVersion = getSilentUpgradeVar('origVersion');
