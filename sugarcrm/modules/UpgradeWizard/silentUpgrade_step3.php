@@ -61,6 +61,7 @@ $_SERVER['SERVER_SOFTWARE'] = '';
 
 define('SUGARCRM_INSTALL', 'SugarCRM_Install');
 $upgradeType = 'SugarCRM_Install';
+touch($argv[2]);
 $path = realpath($argv[2]); // custom log file, if blank will use ./upgradeWizard.log
 
 $errors = array();

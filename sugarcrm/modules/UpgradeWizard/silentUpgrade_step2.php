@@ -73,6 +73,7 @@ define('SUGARCRM_POST_UNINSTALL_FILE', 'scripts/post_uninstall.php');
 set_time_limit(0);
 ob_start();
 $errors = array();
+touch($argv[2]);
 $path = realpath($argv[2]); // custom log file, if blank will use ./upgradeWizard.log
 
 $cwd = $argv[3];
