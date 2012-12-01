@@ -83,6 +83,11 @@ class ImportFile extends ImportDataSource
      * Enclosure string we are using (i.e. ' or ")
      */
     private $_enclosure;
+    
+    /**
+     * File encoding, used to translate the data into UTF-8 for display and import
+     */
+    private $_encoding;
 
 
     /**
@@ -116,7 +121,9 @@ class ImportFile extends ImportDataSource
             $this->_delimiter = "\t";
         }
         $this->_enclosure  = ( empty($enclosure) ? '' : trim($enclosure) );
-        $this->setFpAfterBOM();
+
+        // Autodetect does setFpAfterBOM()
+        $this->_encoding = $this->autoDetectCharacterSet();
     }
 
     /**
@@ -184,28 +191,49 @@ class ImportFile extends ImportDataSource
         $this->_currentRow = FALSE;
 
         if (!$this->fileExists())
+        {
             return false;
+        }
 
         // explode on delimiter instead if enclosure is an empty string
-        if ( empty($this->_enclosure) ) {
-            $row = explode($this->_delimiter,rtrim(fgets($this->_fp, 8192),"\r\n"));
-            if ($row !== false && !( count($row) == 1 && trim($row[0]) == '') )
+        if (empty($this->_enclosure))
+        {
+            $row = explode($this->_delimiter, rtrim(fgets($this->_fp, 8192), "\r\n"));
+            if ($row !== false && !(count($row) == 1 && trim($row[0]) == ''))
+            {
                 $this->_currentRow = $row;
+            }
             else
+            {
                 return false;
+            }
         }
-        else {
+        else
+        {
             $row = fgetcsv($this->_fp, 8192, $this->_delimiter, $this->_enclosure);
             if ($row !== false && $row != array(null))
+            {
                 $this->_currentRow = $row;
+            }
             else
+            {
                 return false;
+            }
         }
 
-        // Bug 26219 - Convert all line endings to the same style as PHP_EOL
-        foreach ( $this->_currentRow as $key => $value ) {
-            // use preg_replace instead of str_replace as str_replace may cause extra lines on Windows
-            $this->_currentRow[$key] = preg_replace("[\r\n|\n|\r]", PHP_EOL, $value);
+        global $locale;
+        foreach ($this->_currentRow as $key => $value)
+        {
+            // If encoding is set, convert all values from it
+            if (!empty($this->_encoding))
+            {
+                // Convert all values to UTF-8 for display and import purposes
+                $this->_currentRow[$key] = $locale->translateCharset($value, $this->_encoding);
+            }
+            
+            // Convert all line endings to the same style as PHP_EOL
+            // Use preg_replace instead of str_replace as str_replace may cause extra lines on Windows
+            $this->_currentRow[$key] = preg_replace("[\r\n|\n|\r]", PHP_EOL, $this->_currentRow[$key]);
         }
 
         $this->_rowsCount++;
@@ -283,6 +311,16 @@ class ImportFile extends ImportDataSource
 
     public function autoDetectCharacterSet()
     {
+        // If encoding is already detected, just return it
+        if (!empty($this->_encoding))
+        {
+            return $this->_encoding;
+        }
+        
+        // Autodetect uses getNextRow() which changes the row count
+        // so we should backup the current and revert it when it's done
+        $backupRowCount = $this->_rowsCount;
+        
         global $locale;
 
         $this->setFpAfterBOM();
@@ -320,6 +358,9 @@ class ImportFile extends ImportDataSource
         //Reset the fp to after the bom if applicable.
         $this->setFpAfterBOM();
 
+        // Revert row count
+        $this->_rowsCount = $backupRowCount;
+        
         return $charset_for_import;
 
     }
@@ -360,7 +401,7 @@ class ImportFile extends ImportDataSource
             $heading = FALSE;
 
             if ($this->_detector)
-                $ret = $this->_detector->hasHeader($heading, $module);
+                $ret = $this->_detector->hasHeader($heading, $module, $this->_encoding);
 
             if ($ret)
                 $this->_hasHeader = $heading;
