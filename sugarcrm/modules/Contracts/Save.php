@@ -41,7 +41,7 @@ if(!empty($_POST['expiration_notice_time_meridiem']) && !empty($_POST['expiratio
 }
 
 
-$sugarbean = new Contract();
+$sugarbean = BeanFactory::getBean('Contracts');
 $sugarbean = populateFromPost('', $sugarbean);
 
 if (!$sugarbean->ACLAccess('Save')) {
@@ -59,11 +59,10 @@ $return_id = $sugarbean->id;
 
 if (!empty($_POST['type']) && $_POST['type'] !== $_POST['old_type']) {
 	//attach all documents from contract type into contract.
-	$ctype = new ContractType();
-	$ctype->retrieve($_POST['type']);
+	$ctype = BeanFactory::getBean('ContractTypes', $_POST['type']);
 	if (!empty($ctype->id)) {
 		$ctype->load_relationship('documents');
-		$doc = new Document();
+		$doc = BeanFactory::getBean('Documents');
 		$documents=$ctype->documents->getBeans($doc);
 		if (count($documents) > 0) {
 			$sugarbean->load_relationship('contracts_documents');

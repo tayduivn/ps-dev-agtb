@@ -36,7 +36,7 @@ global $mod_strings;
 
 
 
-$focus = new WorkFlowAlert();
+$focus = BeanFactory::getBean('WorkFlowAlerts');
 
 if(!isset($_REQUEST['record']))
 	sugar_die($mod_strings['ERR_DELETE_RECORD']);

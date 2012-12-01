@@ -28,9 +28,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  ********************************************************************************/
 
 
-$focus = new Campaign();
-
-$focus->retrieve($_POST['record']);
+$focus = BeanFactory::getBean('Campaigns', $_POST['record']);
 if(!$focus->ACLAccess('Save')){
 	ACLController::displayNoAccess(true);
 	sugar_cleanup(true);
@@ -58,8 +56,7 @@ $GLOBALS['log']->debug("Saved record with id of ".$return_id);
 
 //copy compaign targets on duplicate
 if( !empty($_REQUEST['duplicateSave']) &&  !empty($_REQUEST['duplicateId']) ){
-	$copyFromCompaign = new Campaign();
-	$copyFromCompaign->retrieve($_REQUEST['duplicateId']);
+	$copyFromCompaign = BeanFactory::getBean('Campaigns', $_REQUEST['duplicateId']);
 	$copyFromCompaign->load_relationship('prospectlists');
 
 	$focus->load_relationship('prospectlists');
@@ -99,7 +96,7 @@ if($focus->campaign_type =='NewsLetter'){
             //default prospect lists as these are required for newsletters.
 
              //create subscription list
-             $subs = new ProspectList();
+             $subs = BeanFactory::getBean('ProspectLists');
              $subs->name = $focus->name.' '.$mod_strings['LBL_SUBSCRIPTION_LIST'];
              $subs->assigned_user_id= $current_user->id;
              $subs->list_type = "default";
@@ -107,7 +104,7 @@ if($focus->campaign_type =='NewsLetter'){
              $focus->prospectlists->add($subs->id);
 
              //create unsubscription list
-             $unsubs = new ProspectList();
+             $unsubs = BeanFactory::getBean('ProspectLists');
              $unsubs->name = $focus->name.' '.$mod_strings['LBL_UNSUBSCRIPTION_LIST'];
              $unsubs->assigned_user_id= $current_user->id;
              $unsubs->list_type = "exempt";
@@ -115,7 +112,7 @@ if($focus->campaign_type =='NewsLetter'){
              $focus->prospectlists->add($unsubs->id);
 
              //create unsubscription list
-             $test_subs = new ProspectList();
+             $test_subs = BeanFactory::getBean('ProspectLists');
              $test_subs->name = $focus->name.' '.$mod_strings['LBL_TEST_LIST'];
              $test_subs->assigned_user_id= $current_user->id;
              $test_subs->list_type = "test";

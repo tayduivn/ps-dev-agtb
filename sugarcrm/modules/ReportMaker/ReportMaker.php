@@ -74,6 +74,17 @@ class ReportMaker extends SugarBean {
 	// This is used to retrieve related fields from form posts.
 	var $additional_column_fields = Array();
 
+    /**
+     * This is a depreciated method, please start using __construct() as this method will be removed in a future version
+     *
+     * @see __construct
+     * @deprecated
+     */
+    public function ReportMaker()
+    {
+        $this->__construct();
+    }
+
 	public function __construct() {
 		parent::__construct();
 
@@ -101,7 +112,7 @@ class ReportMaker extends SugarBean {
         function create_export_query(&$order_by, &$where)
         {
 
-			$export_object = new CustomQuery();
+			$export_object = BeanFactory::getBean('CustomQueries');
 			return $export_object->create_export_query();
 
 
@@ -229,7 +240,7 @@ class ReportMaker extends SugarBean {
 					 where $this->rel_dataset.report_id='$this->id'
 					 AND $this->rel_dataset.deleted=0 ".$orderBy;
 
-		return $this->build_related_list($query, new DataSet());
+		return $this->build_related_list($query, BeanFactory::getBean('DataSets'));
 	//end get_data_sets
 	}
 

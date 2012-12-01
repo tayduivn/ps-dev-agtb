@@ -27,7 +27,6 @@
  ********************************************************************************/
 $viewdefs['Contacts']['DetailView'] = array(
 'templateMeta' => array('form' => array('buttons'=>array('EDIT', 'DUPLICATE', 'DELETE', 'FIND_DUPLICATES',
-//BEGIN SUGARCRM flav!=sales ONLY
                                                          array('customCode'=>'<input type="submit" class="button" title="{$APP.LBL_MANAGE_SUBSCRIPTIONS}" onclick="this.form.return_module.value=\'Contacts\'; this.form.return_action.value=\'DetailView\'; this.form.return_id.value=\'{$fields.id.value}\'; this.form.action.value=\'Subscriptions\'; this.form.module.value=\'Campaigns\'; this.form.module_tab.value=\'Contacts\';" name="Manage Subscriptions" value="{$APP.LBL_MANAGE_SUBSCRIPTIONS}"/>',
                                                              //Bug#51778: The custom code will be replaced with sugar_html. customCode will be deplicated.
                                                              'sugar_html' => array(
@@ -43,22 +42,19 @@ $viewdefs['Contacts']['DetailView'] = array(
                                                              ),
 
                                                          ),
-//END SUGARCRM flav!=sales ONLY
                                                         ),
                                        ),
                         'maxColumns' => '2',
-                        //BEGIN SUGARCRM flav=pro || flav=sales ONLY
+                        //BEGIN SUGARCRM flav=pro ONLY
                         'useTabs' => true,
-                        //END SUGARCRM flav=pro || flav=sales ONLY
+                        //END SUGARCRM flav=pro ONLY
                         'widths' => array(
                                         array('label' => '10', 'field' => '30'),
                                         array('label' => '10', 'field' => '30')
                                         ),
 
 						'includes'=> array(
-										//BEGIN SUGARCRM flav!=sales ONLY
                             			array('file'=>'modules/Leads/Lead.js'),
-										//END SUGARCRM flav!=sales ONLY
                          				),
                         ),
 
@@ -213,7 +209,6 @@ $viewdefs['Contacts']['DetailView'] = array(
           ),
         ),
 
-        //BEGIN SUGARCRM flav!=sales ONLY
 	    array (
 
 		    array (
@@ -222,7 +217,6 @@ $viewdefs['Contacts']['DetailView'] = array(
 		    ),
 
 	  	),
-	  	//END SUGARCRM flav!=sales ONLY
 
 	    //BEGIN SUGARCRM flav=ent ONLY
 		array (

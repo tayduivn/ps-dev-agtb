@@ -205,7 +205,6 @@ class LayoutManager
                 'form_value'=>'LBL_NEW_BUTTON_LABEL',
                 'ACL'=>'edit',
             ),
-			//BEGIN SUGARCRM flav!=sales ONLY
 			'SugarWidgetSubPanelAddToProspectListButton' => array(
 				'widget_class'=>'SugarWidgetSubPanelTopSelectButton',
 				'module'=>'ProspectLists',
@@ -222,7 +221,6 @@ class LayoutManager
 					'link_type'=>'polymorphic',	 //polymorphic or default
 				)
 			),
-			//END SUGARCRM flav!=sales ONLY
 		);
 
 		$fieldDef = $this->getFieldDef($widget_def);
@@ -320,7 +318,7 @@ class LayoutManager
         static $beanCache;
 		if(!empty($widget_def['module']) &&!empty($GLOBALS['beanList'][$widget_def['module']]) && !empty($GLOBALS['beanFiles'][$GLOBALS['beanList'][$widget_def['module']]])){
             if (!isset($beanCache[$widget_def['module']])){
-                $beanCache[$widget_def['module']] = new $GLOBALS['beanList'][$widget_def['module']]();
+                $beanCache[$widget_def['module']] = BeanFactory::getBean($widget_def['module']);
             }
             $bean = $beanCache[$widget_def['module']];
 			if(!empty($widget_def['name']) && !empty($bean->field_name_map) &&!empty($bean->field_name_map[$widget_def['name']]) ){
@@ -335,7 +333,7 @@ class LayoutManager
 	{
 		$theclass = $this->getClassFromWidgetDef($widget_def, $use_default);
  		$label = isset($widget_def['module']) ? $widget_def['module'] : '';
-	    if (is_subclass_of($theclass, 'SugarWidgetSubPanelTopButton')) {
+	    if ($theclass instanceof SugarWidgetSubPanelTopButton) {
             $label = $theclass->get_subpanel_relationship_name($widget_def);
 	    }
 		$theclass->setWidgetId($label);

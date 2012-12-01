@@ -52,7 +52,7 @@ class ContactsQuickCreate extends QuickCreate {
         $this->javascript = new javascript();
         $this->javascript->setFormName('contactsQuickCreate');
         
-        $focus = new Contact();
+        $focus = BeanFactory::getBean('Contacts');
         $this->javascript->setSugarBean($focus);
         $this->javascript->addAllFields('');
 

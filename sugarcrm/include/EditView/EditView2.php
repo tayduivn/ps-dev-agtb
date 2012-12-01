@@ -113,15 +113,10 @@ class EditView
 
     function createFocus()
     {
-        global $beanList, $beanFiles;
-
-        if (empty($beanList[$this->module])) return;
         if(!$this->focus )
         {
-           $bean = $beanList[$this->module];
-           require_once($beanFiles[$bean]);
-           $obj = new $bean();
-           $this->focus = $obj;
+           $this->focus = BeanFactory::getBean($this->module);
+           if(empty($this->focus)) return;
         }
 
         //If there is no idea, assume we are creating a new instance
@@ -141,11 +136,7 @@ class EditView
     {
         if (!empty($_REQUEST['record']) && $this->populateBean)
         {
-           global $beanList;
-
-           $bean = $beanList[$this->module];
-           $obj = new $bean();
-           $this->focus = $obj->retrieve($_REQUEST['record']);
+            $this->focus = BeanFactory::getBean($this->module, $_REQUEST['record']);
         }
         else
         {
@@ -433,7 +424,7 @@ class EditView
                 if(isset($this->fieldDefs[$name]['options']) && is_array($this->fieldDefs[$name]['options']) && isset($this->fieldDefs[$name]['default_empty']) && !isset($this->fieldDefs[$name]['options'][$this->fieldDefs[$name]['default_empty']])) {
                     $this->fieldDefs[$name]['options'] = array_merge(array($this->fieldDefs[$name]['default_empty']=>$this->fieldDefs[$name]['default_empty']), $this->fieldDefs[$name]['options']);
                 }
-                                
+
 	       	 	if(isset($this->fieldDefs[$name]['function'])) {
 	       	 		$function = $this->fieldDefs[$name]['function'];
 	       			if(is_array($function) && isset($function['name'])){
@@ -645,8 +636,7 @@ class EditView
         $this->th->ss->assign('view', $this->view);
 
         //BEGIN SUGARCRM flav=pro ONLY
-        $admin = new Administration();
-        $admin->retrieveSettings();
+        $admin = Administration::getSettings();
         if (isset($admin->settings['portal_on']) && $admin->settings['portal_on'])
         {
            $this->th->ss->assign("PORTAL_ENABLED", true);

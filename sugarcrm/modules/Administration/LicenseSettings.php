@@ -52,8 +52,7 @@ if (!is_admin($current_user)) sugar_die("Unauthorized access to administration."
 if(isset($_REQUEST['validate'])){
 	checkDownloadKey();
 }
-$focus = new Administration();
-$focus->retrieveSettings();
+$focus = Administration::getSettings();
 if(!empty( $_FILES['VKFile']) ){
 
 	$response_data = array();
@@ -113,9 +112,6 @@ if(!empty($focus->settings['license_validation_key']))$xtpl->assign("LICENSE_VAL
 if(!empty($focus->settings['license_validation_notice'])){
 	$xtpl->assign("LICENSE_VALIDATION_NOTICE",           base64_decode($license->settings['license_msg_admin']));
 }else{
-	//BEGIN SUGARCRM flav=sales ONLY
-	$xtpl->assign("LICENSE_VALIDATION_HIDE", 'none');
-	//END SUGARCRM flav=sales ONLY
 }
 if(!empty($focus->settings['license_vk_end_date']))$xtpl->assign("LICENSE_VALIDATION_EXPIRE_DATE",    $timedate->to_display_date( $focus->settings['license_vk_end_date'], false) );
 if(empty($focus->settings['license_key'])){

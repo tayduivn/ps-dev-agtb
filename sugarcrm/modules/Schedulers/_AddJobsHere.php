@@ -44,14 +44,11 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  */
 $job_strings = array (
 	0 => 'refreshJobs',
-//BEGIN SUGARCRM flav!=sales ONLY
 	1 => 'pollMonitoredInboxes',
 	2 => 'runMassEmailCampaign',
     5 => 'pollMonitoredInboxesForBouncedCampaignEmails',
-//END SUGARCRM flav!=sales ONLY
 	3 => 'pruneDatabase',
 	4 => 'trimTracker',
-//BEGIN SUGARCRM flav!=sales ONLY
 	/*4 => 'securityAudit()',*/
 	//BEGIN SUGARCRM flav=pro ONLY
     6 => 'processWorkflow',
@@ -70,7 +67,6 @@ $job_strings = array (
 	//BEGIN SUGARCRM flav=int ONLY
 	999 => 'testEmail',
     //END SUGARCRM flav=int ONLY
-//END SUGARCRM flav!=sales ONLY
 
 );
 
@@ -96,15 +92,14 @@ function pollMonitoredInboxes() {
 
 	require_once('modules/Emails/EmailUI.php');
 
-	$ie = new InboundEmail();
+	$ie = BeanFactory::getBean('InboundEmail');
 	$emailUI = new EmailUI();
 	$r = $ie->db->query('SELECT id, name FROM inbound_email WHERE is_personal = 0 AND deleted=0 AND status=\'Active\' AND mailbox_type != \'bounce\'');
 	$GLOBALS['log']->debug('Just got Result from get all Inbounds of Inbound Emails');
 
 	while($a = $ie->db->fetchByAssoc($r)) {
 		$GLOBALS['log']->debug('In while loop of Inbound Emails');
-		$ieX = new InboundEmail();
-		$ieX->retrieve($a['id']);
+		$ieX = BeanFactory::getBean('InboundEmail', $a['id']);
         $GLOBALS['current_user']->team_id = $ieX->team_id;
         $GLOBALS['current_user']->team_set_id = $ieX->team_set_id;
 		$mailboxes = $ieX->mailboxarray;
@@ -151,7 +146,7 @@ function pollMonitoredInboxes() {
 						require_once("modules/Teams/TeamSet.php");
 						require_once("modules/Teams/Team.php");
 						$GLOBALS['log']->debug('Getting users for teamset');
-						$teamSet = new TeamSet();
+						$teamSet = BeanFactory::getBean('TeamSets');
 						$usersList = $teamSet->getTeamSetUsers($sugarFolder->team_set_id, true);
 						$GLOBALS['log']->debug('Done Getting users for teamset');
 						$users = array();
@@ -232,7 +227,7 @@ function pollMonitoredInboxes() {
 									/*If the group folder doesn't exist then download only those messages
 									 which has caseid in message*/
 									$ieX->getMessagesInEmailCache($msgNo, $uid);
-									$email = new Email();
+									$email = BeanFactory::getBean('Emails');
 									$header = imap_headerinfo($ieX->conn, $msgNo);
 									$email->name = $ieX->handleMimeHeaderDecode($header->subject);
 									$email->from_addr = $ieX->convertImapToSugarEmailAddress($header->from);
@@ -248,7 +243,7 @@ function pollMonitoredInboxes() {
 										if(!class_exists('aCase')) {
 
 										}
-										$c = new aCase();
+										$c = BeanFactory::getBean('Cases');
 										$GLOBALS['log']->debug('looking for a case for '.$email->name);
 										if ($ieX->getCaseIdFromCaseNumber($email->name, $c)) {
 											$ieX->importOneEmail($msgNo, $uid);
@@ -401,8 +396,7 @@ function trimTracker()
 	$GLOBALS['log']->info('----->Scheduler fired job of type trimTracker()');
 	$db = DBManagerFactory::getInstance();
 
-	$admin = new Administration();
-	$admin->retrieveSettings('tracker');
+	$admin = Administration::getSettings('tracker');
 	require('modules/Trackers/config.php');
 	$trackerConfig = $tracker_config;
 
@@ -436,12 +430,11 @@ function pollMonitoredInboxesForBouncedCampaignEmails() {
 	global $dictionary;
 
 
-	$ie = new InboundEmail();
+	$ie = BeanFactory::getBean('InboundEmail');
 	$r = $ie->db->query('SELECT id FROM inbound_email WHERE deleted=0 AND status=\'Active\' AND mailbox_type=\'bounce\'');
 
 	while($a = $ie->db->fetchByAssoc($r)) {
-		$ieX = new InboundEmail();
-		$ieX->retrieve($a['id']);
+		$ieX = BeanFactory::getBean('InboundEmail', $a['id']);
 		$ieX->connectMailserver();
         $GLOBALS['log']->info("Bounced campaign scheduler connected to mail server id: {$a['id']} ");
 		$newMsgs = array();
@@ -548,7 +541,7 @@ function performFullFTSIndex()
 function testEmail() {
 	// dev only, sends incrementally named emails to agent1/2@sugarcrm.com
 
-	$e = new Email();
+	$e = BeanFactory::getBean('Emails');
 	$r = $e->db->query('SELECT count(*) AS c FROM emails WHERE deleted=0 AND type="inbound"');
 	$a = $e->db->fetchByAssoc($r);
 	$e->name = 'Email '.($a['c'] + 1);

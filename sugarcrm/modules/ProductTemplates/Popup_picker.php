@@ -160,7 +160,7 @@ class Popup_Picker
 		$form->reset('main.SearchHeader');
 
 		// create the listview
-		$seed_bean = new ProductTemplate();
+		$seed_bean = BeanFactory::getBean('ProductTemplates');
 		$ListView = new ListView();
 		$ListView->show_export_button = false;
 		$ListView->show_delete_button = false;

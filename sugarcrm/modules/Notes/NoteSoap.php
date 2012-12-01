@@ -36,7 +36,7 @@ class NoteSoap
     {
         global $sugar_config;
 
-        $focus = new Note();
+        $focus = BeanFactory::getBean('Notes');
 
 				//BEGIN SUGARCRM flav=pro ONLY
                 if($portal){
@@ -80,7 +80,7 @@ class NoteSoap
     function newSaveFile($note, $portal = false){
         global $sugar_config;
 
-        $focus = new Note();
+        $focus = BeanFactory::getBean('Notes');
 
 		//BEGIN SUGARCRM flav=pro ONLY
         if($portal){

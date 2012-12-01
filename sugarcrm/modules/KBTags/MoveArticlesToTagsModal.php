@@ -48,7 +48,7 @@ $deleted=1;
 $deletedNot=0;
 
 
-   $KBTag = new KBTag();
+   $KBTag = BeanFactory::getBean('KBTags');
    $tagMoveFromId = $tagArticleIds[0];
    $tagMoveToId = $tagArticleIds[1];
    if($tagMoveFromId != $tagMoveToId){ 
@@ -74,8 +74,7 @@ $deletedNot=0;
 	      //if articles doesn't exist then add to the tag
 	      if(!$articleExists){
 		     //retrieve the team_id from kbdocument
-	          $KBDocument = new KBDocument();
-	          $KBDocument->retrieve($tagArticleIds[$i]);
+	          $KBDocument = BeanFactory::getBean('KBDocuments', $tagArticleIds[$i]);
 	          $doc_team_id = $KBDocument->team_id;  
 	          $guid = create_guid();		      
 		      $qi =	'INSERT INTO kbdocuments_kbtags (id,kbtag_id,kbdocument_id,team_id) values(\''.$guid.'\',\''.$tagMoveToId.'\',\''.$tagArticleIds[$i].'\',\''.$doc_team_id.'\')';	      

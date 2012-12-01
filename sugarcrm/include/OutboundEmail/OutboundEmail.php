@@ -311,8 +311,7 @@ class OutboundEmail {
 		$a = $this->db->fetchByAssoc($r);
 		if (!empty($a)) {
 		    // next see if the admin preference for using the system outbound is set
-            $admin = new Administration();
-            $admin->retrieveSettings('',TRUE);
+            $admin = Administration::getSettings('',TRUE);
             if (isset($admin->settings['notify_allow_default_outbound'])
                 &&  $admin->settings['notify_allow_default_outbound'] == 2 )
                 $allowAccess = TRUE;

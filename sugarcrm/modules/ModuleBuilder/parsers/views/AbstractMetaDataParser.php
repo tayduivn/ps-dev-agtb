@@ -165,4 +165,9 @@ abstract class AbstractMetaDataParser
     public static function isTruthy($val) {
         return self::isTrue($val);
     }
+
+    /**
+     * Cache killer, to be defined in child classes as needed. 
+     */
+    protected function _clearCaches() {}
 }

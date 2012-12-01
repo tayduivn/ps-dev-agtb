@@ -26,11 +26,6 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * governing these rights and limitations under the License.  Portions created
  * by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
-/*********************************************************************************
- * $Id: Selector.php 53409 2010-01-04 03:31:15Z roger $
- * Description:
- ********************************************************************************/
-
 global $theme;
 
 require_once('include/ListView/ProcessView.php');
@@ -42,11 +37,10 @@ global $mod_strings;
 global $urlPrefix;
 global $currentModule;
 
-$seed_object = new WorkFlow();
-
-if(!empty($_REQUEST['workflow_id']) && $_REQUEST['workflow_id']!="") {
-    $seed_object->retrieve($_REQUEST['workflow_id']);
-} else {
+if(!empty($_REQUEST['workflow_id']) ) {
+    $seed_object = BeanFactory::retrieveBean('WorkFlow', $_REQUEST['workflow_id']);
+}
+if(empty($seed_object)) {
 	sugar_die("You shouldn't be here");
 }
 
@@ -69,7 +63,7 @@ else {
 $form->assign("MOD", $mod_strings);
 $form->assign("APP", $app_strings);
 
-$focus = new WorkFlowActionShell();
+$focus = BeanFactory::getBean('WorkFlowActionShells');
 
 
 
@@ -81,24 +75,23 @@ $focus = new WorkFlowActionShell();
 
 //////////////////////////////////////////////////////////////////
 
-	$action_object = new WorkFlowAction();
+	$action_object = BeanFactory::getBean('WorkFlowActions');
 
-	if(!empty($_REQUEST['action_id']) && $_REQUEST['action_id']!=""){
+	if(!empty($_REQUEST['action_id'])){
 		$action_object->retrieve($_REQUEST['action_id']);
 	}
 
-	if(!empty($_REQUEST['target_field']) && $_REQUEST['target_field']!=""){
+	if(!empty($_REQUEST['target_field'])){
 		$action_object->field = $_REQUEST['target_field'];
 	}
 
 	foreach($action_object->selector_fields as $field){
 		if(isset($_REQUEST[$field])){
-			//echo "FIELD".$field."REQ:".$_REQUEST[$field]."<BR>";
-		$action_object->$field = $_REQUEST[$field];
+    		$action_object->$field = $_REQUEST[$field];
 		}
 	}
 
-	if(!empty($_REQUEST['adv_value']) && $_REQUEST['adv_value']!=""){
+	if(!empty($_REQUEST['adv_value'])){
 		$action_object->value = $_REQUEST['adv_value'];
 	}
 
@@ -146,7 +139,7 @@ $form->out("embeded");
 $form->parse("main");
 $form->out("main");
 	//rsmith
-	$temp_module = get_module_info($_REQUEST['target_module']);
+	$temp_module = BeanFactory::getBean($_REQUEST['target_module']);
 	global $mod_strings, $current_language;
 	$mod_strings = return_module_language($current_language, $temp_module->module_dir);
 	$field_num = $_REQUEST['field_num'];
@@ -177,7 +170,7 @@ function processJsForSelectorField(&$javascript, $field, $type, $tempModule, $fi
 {
     $jsString = '';
     $javascript = new javascript();
-    // Validate everything. 
+    // Validate everything.
     $workFlowActionsExceptionFields = array ();
     if (in_array($type, $workFlowActionsExceptionFields) != 1)
     {
@@ -188,7 +181,7 @@ function processJsForSelectorField(&$javascript, $field, $type, $tempModule, $fi
     {
         $jsString .=
             "addToValidate('EditView', 'field_{$fieldNumber}__{$ifAdvanced}_value', 'assigned_user_name', 1,'{$javascript->stripEndColon(translate($tempModule->field_name_map[$field]['vname']))}' )";
-    } 
+    }
     else if (!(in_array($type, $workFlowActionsExceptionFields) == 1))
     {
         $javascript->setFormName('EditView');

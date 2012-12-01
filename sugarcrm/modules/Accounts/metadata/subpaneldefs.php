@@ -164,7 +164,6 @@ $layout_defs['Accounts'] = array(
 				array('widget_class' => 'SubPanelTopButtonQuickCreate')
 			),
 		),
-//BEGIN SUGARCRM flav!=sales ONLY
 		'leads' => array(
 			'order' => 80,
 			'module' => 'Leads',
@@ -183,8 +182,6 @@ $layout_defs['Accounts'] = array(
 			),
 
 		),
-//END SUGARCRM flav!=sales ONLY
-//BEGIN SUGARCRM flav!=sales ONLY
 		'cases' => array(
 			'order' => 100,
 			'sort_order' => 'desc',
@@ -199,7 +196,6 @@ $layout_defs['Accounts'] = array(
 				array('widget_class' => 'SubPanelTopSelectButton', 'mode'=>'MultiSelect')
 			),
 		),
-//END SUGARCRM flav!=sales ONLY
 //BEGIN SUGARCRM flav=pro ONLY
         'products' => array(
             'order' => 60,
@@ -251,7 +247,6 @@ $layout_defs['Accounts'] = array(
 				array('widget_class' => 'SubPanelTopSelectAccountButton', 'mode'=>'MultiSelect')
 			),
 		),
-//BEGIN SUGARCRM flav!=sales ONLY
 		'bugs' => array(
 			'order' => 110,
 			'sort_order' => 'desc',
@@ -305,6 +300,5 @@ $layout_defs['Accounts'] = array(
 		),
 
         //END SUGARCRM flav=pro ONLY
-//END SUGARCRM flav!=sales ONLY
 	),
 );

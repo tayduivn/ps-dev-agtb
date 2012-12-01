@@ -50,7 +50,7 @@ class campaign_charts {
 			$GLOBALS['log']->debug("user_id is: ");
 			$GLOBALS['log']->debug("cache_file_name is: $xmlFile");
 
-			$focus = new Campaign();
+			$focus = BeanFactory::getBean('Campaigns');
 
 			$query = "SELECT activity_type,target_type, count(*) hits ";
 			$query.= " FROM campaign_log ";
@@ -172,8 +172,7 @@ class campaign_charts {
 			$GLOBALS['log']->debug("user_id is: ");
 			$GLOBALS['log']->debug("cache_file_name is: $cache_file_name");
 
-			$focus = new Campaign();
-            $focus->retrieve($campaign_id);
+			$focus = BeanFactory::getBean('Campaigns', $campaign_id);
 			$opp_count=0;
 			$opp_query  = "select count(*) opp_count,sum(" . db_convert("amount_usdollar","IFNULL",array(0)).")  total_value";
             $opp_query .= " from opportunities";
@@ -267,8 +266,7 @@ class campaign_charts {
         $currency_symbol = $sugar_config['default_currency_symbol'];
         if(!empty($currency_id)){
 
-            $cur = new Currency();
-            $cur->retrieve($currency_id);
+            $cur = BeanFactory::getBean('Currencies', $currency_id);
             $currency_symbol = $cur->symbol;
         }
 

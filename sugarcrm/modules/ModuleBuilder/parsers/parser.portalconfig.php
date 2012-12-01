@@ -127,7 +127,7 @@ class ParserModifyPortalConfig extends ModuleBuilderParser
         $portalUserName = "SugarCustomerSupportPortalUser";
         $id = User::retrieve_user_id($portalUserName);
         if (!$id) {
-            $user = new User();
+            $user = BeanFactory::getBean('Users');
             $user->user_name = $portalUserName;
             $user->title = 'Sugar Customer Support Portal User';
             $user->description = $user->title;
@@ -163,8 +163,7 @@ class ParserModifyPortalConfig extends ModuleBuilderParser
             // set user id in system settings
             $GLOBALS ['system_config']->saveSetting('supportPortal', 'RegCreatedBy', $id);
         }
-        $resultUser = new User();
-        $resultUser->retrieve($id);
+        $resultUser = BeanFactory::getBean('Users', $id);
         return $resultUser;
     }
 
@@ -177,7 +176,7 @@ class ParserModifyPortalConfig extends ModuleBuilderParser
         global $mod_strings;
         $allowedModules = array('Bugs', 'Cases', 'Notes', 'KBDocuments', 'Contacts');
         $allowedActions = array('edit', 'admin', 'access', 'list', 'view');
-        $role = new ACLRole();
+        $role = BeanFactory::getBean('ACLRoles');
         $role->retrieve_by_string_fields(array('name' => 'Customer Self-Service Portal Role'));
         if (empty($role->id)) {
             $role->name = "Customer Self-Service Portal Role";

@@ -30,9 +30,6 @@ $mod_strings_users = $mod_strings;
 
 global $current_user;
 if(!$GLOBALS['current_user']->isAdminForModule('Users')
-    //BEGIN SUGARCRM flav=sales ONLY
-    && $GLOBALS['current_user']->user_type != 'UserAdministrator'
-    //END SUGARCRM flav=sales ONLY
   ){
 	sugar_die("You cannot access this page.");
 }
@@ -127,7 +124,7 @@ echo get_select_options_with_id($all_users, isset($_SESSION['reassignRecords']['
 
 <?php
 $teamSetField = new SugarFieldTeamset('Teamset');
-$lead = new Lead();
+$lead = BeanFactory::getBean('Leads');
 $teamSetField->initClassicView($lead->field_defs, 'EditView');
 $sqs_objects = $teamSetField->getClassicViewQS();
 
@@ -147,12 +144,10 @@ echo $teamSetField->getClassicView();
 if(!isset($_SESSION['reassignRecords']['assignedModuleListCache'])){
 	$beanListDup = $beanList;
 	foreach($beanListDup as $m => $p){
-		if(empty($beanFiles[$p])){
-			unset($beanListDup[$m]);
-		}
-		else{
-			require_once($beanFiles[$p]);
-			$obj = new $p();
+        $obj = BeanFactory::getBean($m);
+        if(empty($obj)) {
+            unset($beanListDup[$m]);
+		} else {
 			if( !isset($obj->field_defs['assigned_user_id']) ||
 			     	(
 					isset($obj->field_defs['assigned_user_id']) &&
@@ -280,7 +275,7 @@ else if(!isset($_GET['execute'])){
 	$teams = $teamSetField->getTeamsFromRequest('team_name');
 	$team_ids = array_keys($teams);
 	$team_id = $teamSetField->getPrimaryTeamIdFromRequest('team_name', $_REQUEST);
-	$teamSet = new TeamSet();
+	$teamSet = BeanFactory::getBean('TeamSets');
 	$team_set_id = $teamSet->addTeams($team_ids);
 
 	$toteamname = TeamSetManager::getTeamsFromSet($team_set_id);
@@ -293,13 +288,11 @@ else if(!isset($_GET['execute'])){
 	echo "<li>* {$mod_strings_users['LBL_REASS_NOTES_TWO']}\n";
 	echo "<li>* {$mod_strings_users['LBL_REASS_NOTES_THREE']}\n";
 	echo "</ul>\n";
-	//BEGIN SUGARCRM flav!=sales ONLY
 	require_once('include/Smarty/plugins/function.sugar_help.php');
 	$sugar_smarty = new Sugar_Smarty();
         $help_img = smarty_function_sugar_help(array("text"=>$mod_strings['LBL_REASS_VERBOSE_HELP']),$sugar_smarty);
 	echo "<BR><input type=checkbox name=verbose> {$mod_strings_users['LBL_REASS_VERBOSE_OUTPUT']}".$help_img."<BR>\n";
-
-	//END SUGARCRM flav!=sales ONLY
+	
 	unset($_SESSION['reassignRecords']['modules']);
 	$beanListFlip = array_flip($_SESSION['reassignRecords']['assignedModuleListCache']);
 	foreach($_POST['modules'] as $module){
@@ -307,10 +300,7 @@ else if(!isset($_GET['execute'])){
 			//echo "$module not found as key in \$beanListFlip. Skipping $module.<BR>";
 			continue;
 		}
-		$p_module = $beanListFlip[$module];
-
-		require_once($beanFiles[$module]);
-		$object = new $module();
+		$object = BeanFactory::getBean($module);
 		if(empty($object->table_name)){
 //			echo "<h5>Could not find the database table for $p_module.</h5>";
 			continue;
@@ -472,13 +462,11 @@ else if(isset($_GET['execute']) && $_GET['execute'] == true){
 			$successarr = array();
 			$failarr = array();
 
-			require_once($beanFiles[$module]);
 			while($row = $db->fetchByAssoc($res)){
-				$bean = new $module();
 				if(empty($row['id'])){
 					continue;
 				}
-				$bean->retrieve($row['id']);
+				$bean = BeanFactory::getBean($p_module, $row['id']);
 
 				// So that we don't create new blank records.
 				if(!isset($bean->id)){

@@ -37,7 +37,7 @@ if(isset($_POST['user_id'])){
 
 if (!$GLOBALS['current_user']->isAdminForModule('Users')) sugar_die("Unauthorized access to administration.");
 
-$focus = new Team();
+$focus = BeanFactory::getBean('Teams');
 
 if ($_POST['isDuplicate'] != 1) {
 //	echo "not duplicate, retrieving record {$_POST['record']}";
@@ -60,8 +60,7 @@ if($focus->private && !empty($focus->associated_user_id)){
 		//e.g. Jean Paul Jones
 		
 			//since this is a private team we can try to match what the user's name is
-			$user = new User();
-			$user->retrieve($focus->associated_user_id);
+			$user = BeanFactory::getBean('Users', $focus->associated_user_id);
 			$tokenStr = '';
 			$index = count($tokens);
 			for($i = (count($tokens)-1); $i > 0; $i--){

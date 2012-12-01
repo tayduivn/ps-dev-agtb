@@ -1,5 +1,4 @@
 <?php
-//FILE SUGARCRM flav!=sales ONLY
 if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 /*********************************************************************************
  *The contents of this file are subject to the SugarCRM Professional End User License Agreement
@@ -81,10 +80,21 @@ class aCase extends Basic {
 									'meeting_id'=>'meetings', 'call_id'=>'calls', 'email_id'=>'emails',
 									);
 
+    /**
+     * This is a depreciated method, please start using __construct() as this method will be removed in a future version
+     *
+     * @see __construct
+     * @deprecated
+     */
+    public function aCase()
+    {
+        $this->__construct();
+    }
+
 	public function __construct() {
 		parent::__construct();
 		global $sugar_config;
-		if(!$sugar_config['require_accounts']){
+		if(empty($sugar_config['require_accounts'])){
 			unset($this->required_fields['account_name']);
 		}
 
@@ -170,7 +180,7 @@ class aCase extends Basic {
 			$query.=' '.$qstring;
 		}
 	    $temp = Array('id', 'first_name', 'last_name', 'title', 'email1', 'phone_work', 'case_role', 'case_rel_id');
-		return $this->build_related_list2($query, new Contact(), $temp);
+		return $this->build_related_list2($query, BeanFactory::getBean('Contacts'), $temp);
 	}
 
 	function get_list_view_data(){
@@ -242,8 +252,7 @@ class aCase extends Basic {
 		if(!isset($this->system_id) || empty($this->system_id))
 		{
 
-			$admin = new Administration();
-			$admin->retrieveSettings();
+			$admin = Administration::getSettings();
 			$system_id = $admin->settings['system_system_id'];
 			if(!isset($system_id)){
 				$system_id = 1;

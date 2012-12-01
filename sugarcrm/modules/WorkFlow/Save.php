@@ -37,7 +37,7 @@ require_once('include/controller/Controller.php');
 
 
 
-$focus = new WorkFlow();
+$focus = BeanFactory::getBean('WorkFlow');
 
 if(isset($_POST['record']) && $_POST['record']!=""){
 	$focus->retrieve($_POST['record']);
@@ -90,8 +90,7 @@ $focus->save();
 
 
 if(!empty($_POST['is_duplicate']) && $_POST['is_duplicate'] == "true"){
-	$old_workflow = new WorkFlow();
-	$old_workflow->retrieve($_POST['old_record_id']);
+	$old_workflow = BeanFactory::getBean('WorkFlow', $_POST['old_record_id']);
 	$alerts_list =& $old_workflow->get_linked_beans('alerts','WorkFlowAlertShell');
 	$actions_list =& $old_workflow->get_linked_beans('actions','WorkFlowActionShell');
 	$triggers_list = & $old_workflow->get_linked_beans('triggers','WorkFlowTriggerShell');
@@ -110,8 +109,7 @@ if(!empty($_POST['is_duplicate']) && $_POST['is_duplicate'] == "true"){
 		$query = "SELECT id FROM workflow WHERE parent_id = '{$action->id}' ";
 		$result1 = $focus->db->query($query);
 		while (($row=$focus->db->fetchByAssoc($result1)) != null) {
-			$copyWorkflow = new WorkFlow();
-			$copyWorkflow->retrieve($row['id']);
+			$copyWorkflow = BeanFactory::getBean('WorkFlow', $row['id']);
 			$copyWorkflow->id = '';
 			$copyWorkflow->parent_id = $newActionId;
 			$copyWorkflowId = $copyWorkflow->save();
@@ -119,8 +117,7 @@ if(!empty($_POST['is_duplicate']) && $_POST['is_duplicate'] == "true"){
 			$query = "SELECT id FROM workflow_alertshells WHERE parent_id = '{$row[id]}' ";
 			$result2 = $focus->db->query($query);
 			while (($alertshell=$focus->db->fetchByAssoc($result2)) != null) {
-				$copyAlertshell = new WorkFlowAlertShell();
-				$copyAlertshell->retrieve($alertshell['id']);
+				$copyAlertshell = BeanFactory::getBean('WorkFlowAlertShells', $alertshell['id']);
 				$copyAlertshell->id = '';
 				$copyAlertshell->parent_id = $copyWorkflowId;
 				$copyAlertshellId = $copyAlertshell->save();
@@ -128,8 +125,7 @@ if(!empty($_POST['is_duplicate']) && $_POST['is_duplicate'] == "true"){
 				$query = "SELECT id FROM workflow_alerts WHERE parent_id = '{$alertshell[id]}' ";
 				$result3 = $focus->db->query($query);
 				while (($alert=$focus->db->fetchByAssoc($result3)) != null) {
-					$copyAlert = new WorkFlowAlert();
-					$copyAlert->retrieve($alert['id']);
+					$copyAlert = BeanFactory::getBean('WorkFlowAlerts', $alert['id']);
 					$copyAlert->id = '';
 					$copyAlert->parent_id = $copyAlertshellId;
 					$copyAlertId = $copyAlert->save();

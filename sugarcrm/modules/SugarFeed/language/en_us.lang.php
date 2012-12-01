@@ -40,6 +40,7 @@ $mod_strings = array (
   'LBL_MODIFIED_USER' => 'Modified by User',
   'LBL_LIST_FORM_TITLE' => 'Feed List',
   'LBL_MODULE_NAME' => 'Activity Streams',
+  'LBL_MODULE_NAME_SINGULAR' => 'Activity Stream',
   'LBL_MODULE_TITLE' => 'Activity Streams',
   'LBL_DASHLET_DISABLED' => 'Warning: The Feed system is disabled, no new feed entries will be posted until it is activated',
   'LBL_ADMIN_SETTINGS' => 'Feed Settings',

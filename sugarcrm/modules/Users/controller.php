@@ -29,7 +29,7 @@ require_once("include/OutboundEmail/OutboundEmail.php");
 
 class UsersController extends SugarController
 {
-    //BEGIN SUGARCRM flav=pro || flav=sales ONLY
+    //BEGIN SUGARCRM flav=pro ONLY
 	protected function action_login()
 	{
 		if (isset($_REQUEST['mobile']) && $_REQUEST['mobile'] == 1) {
@@ -51,7 +51,7 @@ class UsersController extends SugarController
 			$this->view = 'classic';
 		}
 	}
-    //END SUGARCRM flav=pro || flav=sales ONLY	
+    //END SUGARCRM flav=pro ONLY	
 	/**
 	 * bug 48170
 	 * Action resetPreferences gets fired when user clicks on  'Reset User Preferences' button
@@ -59,8 +59,7 @@ class UsersController extends SugarController
 	 */
 	protected function action_resetPreferences(){
 	    if($_REQUEST['record'] == $GLOBALS['current_user']->id || ($GLOBALS['current_user']->isAdminForModule('Users'))){
-	        $u = new User();
-	        $u->retrieve($_REQUEST['record']);
+	        $u = BeanFactory::getBean('Users', $_REQUEST['record']);
 	        $u->resetPreferences();
 	        if($u->id == $GLOBALS['current_user']->id) {
 	            SugarApplication::redirect('index.php');
@@ -74,20 +73,16 @@ class UsersController extends SugarController
 	protected function action_delete()
 	{
 	    if($_REQUEST['record'] != $GLOBALS['current_user']->id && ($GLOBALS['current_user']->isAdminForModule('Users')
-//BEGIN SUGARCRM flav=sales ONLY
-|| $GLOBALS['current_user']->user_type == 'UserAdministrator'
-//END SUGARCRM flav=sales ONLY
             ))
         {
-            $u = new User();
-            $u->retrieve($_REQUEST['record']);
+            $u = BeanFactory::getBean('Users', $_REQUEST['record']);
             $u->status = 'Inactive';
             $u->deleted = 1;
             $u->employee_status = 'Terminated';
             $u->save();
             $GLOBALS['log']->info("User id: {$GLOBALS['current_user']->id} deleted user record: {$_REQUEST['record']}");
 
-            $eapm = loadBean('EAPM');
+            $eapm = BeanFactory::getBean('EAPM');
             $eapm->delete_user_accounts($_REQUEST['record']);
             $GLOBALS['log']->info("Removing user's External Accounts");
             
@@ -99,14 +94,14 @@ class UsersController extends SugarController
                 SugarApplication::redirect("index.php?module=Users&action=index");
             }
             //END SUGARCRM flav=PRO ONLY
-            //BEGIN SUGARCRM flav=sales || flav=COM ONLY
+            //BEGIN SUGARCRM flav=COM ONLY
             SugarApplication::redirect("index.php?module=Users&action=index");
-            //END SUGARCRM flav=sales || flav=COM ONLY
+            //END SUGARCRM flav=COM ONLY
         }
         else 
             sugar_die("Unauthorized access to administration.");
 	}
-    //BEGIN SUGARCRM flav=pro || flav=sales ONLY	
+    //BEGIN SUGARCRM flav=pro ONLY	
 	/**
 	 * Clear the reassign user records session variables. 
 	 *
@@ -123,7 +118,7 @@ class UsersController extends SugarController
 	{
 		$this->view = 'wirelessmain';
 	}
-	//END SUGARCRM flav=pro || flav=sales ONLY
+	//END SUGARCRM flav=pro ONLY
 	protected function action_wizard() 
 	{
 		$this->view = 'wizard';
@@ -141,9 +136,6 @@ class UsersController extends SugarController
 	    $_POST['reminder_time'] = 1800;
         $_POST['mailmerge_on'] = 'on';
         $_POST['receive_notifications'] = $current_user->receive_notifications;
-        //BEGIN SUGARCRM flav=sales ONLY
-        $_POST['email_link_type'] = $sugar_config['default_email_client'];
-        //END SUGARCRM flav=sales ONLY
         $_POST['user_theme'] = (string) SugarThemeRegistry::getDefault();
 	    
 	    // save and redirect to new view

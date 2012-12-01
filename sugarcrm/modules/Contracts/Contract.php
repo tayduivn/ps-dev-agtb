@@ -96,10 +96,21 @@ class Contract extends SugarBean {
 	// This is used to retrieve related fields from form posts.
 	var $additional_column_fields = array ('revision');
 
+	var $importable = true;
 	
-
 	var $new_schema = true;
 	var $module_dir = 'Contracts';
+
+    /**
+     * This is a depreciated method, please start using __construct() as this method will be removed in a future version
+     *
+     * @see __construct
+     * @deprecated
+     */
+    public function Contracts()
+    {
+        $this->__construct();
+    }
 
 	public function __construct() {
 		parent::__construct();
@@ -126,8 +137,7 @@ class Contract extends SugarBean {
         }
 		if ( $this->total_contract_value == '' ) { $this->total_contract_value = 0; }
 		if ( $this->total_contract_value_usdollar == '' ) { $this->total_contract_value_usdollar = 0; }
-		$currency = new Currency();
-		$currency->retrieve($this->currency_id);
+		$currency = BeanFactory::getBean('Currencies', $this->currency_id);
 		if(!empty($this->total_contract_value)){
 			$this->total_contract_value_usdollar = $currency->convertToDollar($this->total_contract_value);
 		}	
@@ -217,7 +227,7 @@ class Contract extends SugarBean {
 
 		$types = get_bean_select_array(true, 'ContractType','name','deleted=0','list_order');
 		$this->type_options = get_select_options_with_id($types, $this->type);	
-        $currency= new Currency();
+        $currency = BeanFactory::getBean('Currencies');
         
 		if(isset($this->currency_id) && !empty($this->currency_id)) {
 			$currency->retrieve($this->currency_id);
@@ -380,7 +390,7 @@ CIA;
 function getContractTypesDropDown(){	
 		static $contractTypes = null;
 		if(!$contractTypes){
-			$seedContractTypes = new ContractType();
+			$seedContractTypes = BeanFactory::getBean('ContractTypes');
 			$contractTypes = $seedContractTypes->get_contractTypes(TRUE);
 		}		
 		return $contractTypes;

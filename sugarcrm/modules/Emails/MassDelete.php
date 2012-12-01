@@ -22,7 +22,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 if(!empty($_REQUEST['grabbed'])) {
 	
-	$focus = new Email();
+	$focus = BeanFactory::getBean('Emails');
 	
 	$emailIds = array();
 	// CHECKED ONLY:

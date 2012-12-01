@@ -29,6 +29,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 $mod_strings = array (
   'LBL_MODULE_NAME' => 'Home',
+  'LBL_MODULE_NAME_SINGULAR' => 'Home',
   'LBL_MODULES_TO_SEARCH' => 'Modules to Search',
   'LBL_NEW_FORM_TITLE' => 'New Contact',
   'LBL_FIRST_NAME' => 'First Name:',
@@ -38,9 +39,7 @@ $mod_strings = array (
   'LBL_EMAIL_ADDRESS' => 'Email Address:',
   'LBL_MY_PIPELINE_FORM_TITLE' => 'My Pipeline',
   'LBL_PIPELINE_FORM_TITLE' => 'Pipeline By Sales Stage',
-  //BEGIN SUGARCRM flav!=sales ONLY
   'LBL_CAMPAIGN_ROI_FORM_TITLE' => 'Campaign ROI',
-  //END SUGARCRM flav!=sales ONLY
   'LBL_MY_CLOSED_OPPORTUNITIES_GAUGE' => 'My Closed Won Opportunities Gauge',
   'LNK_NEW_CONTACT' => 'Create Contact',
   'LNK_NEW_ACCOUNT' => 'Create Account',
@@ -71,9 +70,7 @@ $mod_strings = array (
   'LNK_COMPOSE_EMAIL' => 'Compose Email',
   'LNK_NEW_MEETING' => 'Schedule Meeting',
   'LNK_NEW_TASK' => 'Create Task',
-  //BEGIN SUGARCRM flav!=sales ONLY
   'LNK_NEW_BUG' => 'Report Bug',
-  //END SUGARCRM flav!=sales ONLY
   'LBL_ADD_BUSINESSCARD' => 'Enter Business Card',
   'ERR_ONE_CHAR' => 'Please enter at least one letter or number for your search ...',
   'LBL_OPEN_TASKS' => 'My Open Tasks',

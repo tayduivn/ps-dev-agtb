@@ -37,7 +37,7 @@ require_once('modules/Campaigns/utils.php');
 
 global $mod_strings, $app_list_strings, $app_strings, $current_user, $import_bean_map;
 global $import_file_name, $theme;$app_list_strings;
-$lead = new Lead();
+$lead = BeanFactory::getBean('Leads');
 $fields = array();
 
 $xtpl=new XTemplate ('modules/Campaigns/WebToLeadCreation.html');
@@ -234,7 +234,7 @@ $xtpl->assign("ASSIGNED_USER_ID", $focus->assigned_user_id );
 $xtpl->assign("REDIRECT_URL_DEFAULT",'http://');
 
 //required fields on Webtolead form
-$campaign= new Campaign();
+$campaign = BeanFactory::getBean('Campaigns');
 
 $javascript = new javascript();
 $javascript->setFormName('WebToLeadCreation');

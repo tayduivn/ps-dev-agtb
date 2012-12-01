@@ -59,33 +59,12 @@ function get_column_select($base_module, $drop_down_module="", $exclusion_array=
 		$column_module = $base_module;
 	}
 
-	//Get dictionary data for base bean and all connected beans
-
-	//Get dictionary and focus data for base bean
-	$vardef_name = $beanList[$column_module];
-
-	if(!SugarAutoLoader::existing('modules/'. $column_module . '/vardefs.php')){
-		return;
-	}
-
-	//BEGIN SUGARCRM flav!=sales ONLY
-	if($vardef_name=="aCase"){
-		$class_name = "Case";
-	} else {
-	//END SUGARCRM flav!=sales ONLY
-		$class_name = $vardef_name;
-	//BEGIN SUGARCRM flav!=sales ONLY
-	}
-	//END SUGARCRM flav!=sales ONLY
-
-	include_once('modules/'. $column_module . '/'.$class_name.'.php');
-	$temp_focus = new $vardef_name();
+	$temp_focus = BeanFactory::getBean($column_module);
 	add_to_column_select($column_options, $temp_focus, $column_module, $exclusion_array, $inclusion_array, $include_none);
-
 	return $column_options;
 
 	//end function get_column_select
-	}
+}
 
 function compare_type($value_array, $exclusion_array, $inclusion_array){
 
@@ -189,7 +168,7 @@ function compare_type($value_array, $exclusion_array, $inclusion_array){
 function translate_label_from_module($target_module, $target_element){
 		global $current_language;
 
-		$temp_module = get_module_info($target_module);
+		$temp_module = BeanFactory::getBean($target_module);
 		$temp_module_strings = return_module_language($current_language, $temp_module->module_dir);
 		$target_element_label = $temp_module->field_defs[$target_element]['vname'];
 		return get_label($target_element_label, $temp_module_strings);
@@ -278,7 +257,7 @@ include_once("include/workflow/custom_utils.php");
 
 		fwrite($fp, "\n?>");
 		fclose($fp);
-
+        SugarAutoLoader::addToMap($file);
 //end function write_triggers
 }
 
@@ -313,7 +292,7 @@ function get_rel_module_name($base_module, $relationship_name, & $db){
 	global $beanList;
 	global $dictionary;
 
-		$rel_bean = new Relationship();
+		$rel_bean = BeanFactory::getBean('Relationships');
 		$rel_module = $rel_bean->get_other_module($relationship_name, $base_module, $db);
 		return $rel_module;
 

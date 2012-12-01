@@ -61,11 +61,12 @@ class AnnualTimePeriod extends TimePeriod implements TimePeriodInterface {
         //The previous period modifier
         $this->previous_date_modifier = $this->is_fiscal ? '-52 week' : '-1 year';
 
+        global $app_strings;
         //The name template
-        $this->name_template = "Year %d";
+        $this->name_template = $app_strings['LBL_ANNUAL_TIMEPERIOD_FORMAT'];
 
         //The leaf name template
-        $this->leaf_name_template = "Q%d %d";
+        $this->leaf_name_template = $app_strings['LBL_QUARTER_TIMEPERIOD_FORMAT'];
     }
 
 
@@ -81,7 +82,7 @@ class AnnualTimePeriod extends TimePeriod implements TimePeriodInterface {
     public function getTimePeriodName($count)
     {
         $timedate = TimeDate::getInstance();
-        return sprintf($this->name_template, $timedate->fromDbDate($this->start_date)->format('Y'));
+        return string_format($this->name_template, array($timedate->fromDbDate($this->start_date)->format('Y')));
     }
 
 

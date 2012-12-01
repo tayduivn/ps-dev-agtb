@@ -113,7 +113,7 @@ function getWideFormBody($prefix, $mod='',$formname='',  $contact = '', $portal 
 //END SUGARCRM flav=pro ONLY
 
 	//Retrieve Email address and set email1, email2
-	$sugarEmailAddress = new SugarEmailAddress();
+	$sugarEmailAddress = BeanFactory::getBean('EmailAddresses');
 	$sugarEmailAddress->handleLegacyRetrieve($contact);
   	if(!isset($contact->email1)){
     	$contact->email1 = '';
@@ -139,19 +139,15 @@ function getWideFormBody($prefix, $mod='',$formname='',  $contact = '', $portal 
 
 //END SUGARCRM flav=pro ONLY
 
-//BEGIN SUGARCRM flav!=sales ONLY
 
 	if ($formname == 'ConvertProspect') {
 		$lead_source_label = "<td scope='row'>&nbsp;</td>";
 		$lead_source_field = "<td >&nbsp;</td>";
 	} else {
-//END SUGARCRM flav!=sales ONLY
 		$lead_source_label = "<td scope='row' nowrap>${mod_strings['LBL_LEAD_SOURCE']}</td>";
 		$lead_source_field = "<td ><select name='${prefix}lead_source'>$lead_source_options</select></td>";
-//BEGIN SUGARCRM flav!=sales ONLY
 	}
 
-//END SUGARCRM flav!=sales ONLY
 
 global $timedate;
 $birthdate = '';
@@ -538,7 +534,7 @@ function handleSave($prefix, $redirect=true, $useRequired=false){
 			}
 
 
-			$emailAddress = new SugarEmailAddress();
+			$emailAddress = BeanFactory::getBean('EmailAddresses');
 			$get .= $emailAddress->getFormBaseURL($focus);
 
 			//BEGIN SUGARCRM flav=pro ONLY
@@ -596,8 +592,7 @@ function handleSave($prefix, $redirect=true, $useRequired=false){
 		// fake this case like it's already saved.
 		$focus->save($check_notify);
 
-		$email = new Email();
-		$email->retrieve($_REQUEST['inbound_email_id']);
+		$email = BeanFactory::getBean('Emails', $_REQUEST['inbound_email_id']);
 		$email->parent_type = 'Contacts';
 		$email->parent_id = $focus->id;
 		$email->assigned_user_id = $current_user->id;
@@ -714,7 +709,7 @@ function handleRedirect($return_id){
     */
     protected function getContact()
     {
-        return new Contact();
+        return BeanFactory::getBean('Contacts');
     }
 }
 

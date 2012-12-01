@@ -73,14 +73,12 @@ class EmailReminder
     public function process()
     {
 
-        $admin = new Administration();
-        $admin->retrieveSettings();
+        $admin = Administration::getSettings();
         
         $meetings = $this->getMeetingsForRemind();
         foreach($meetings as $id ) {
             $recipients = $this->getRecipients($id,'Meetings');
-            $bean = new Meeting();
-            $bean->retrieve($id);
+            $bean = BeanFactory::getBean('Meetings', $id);
             if ( $this->sendReminders($bean, $admin, $recipients) ) {
                 $bean->email_reminder_sent = 1;
                 $bean->save();
@@ -90,8 +88,7 @@ class EmailReminder
         $calls = $this->getCallsForRemind();
         foreach($calls as $id ) {
             $recipients = $this->getRecipients($id,'Calls');
-            $bean = new Call();
-            $bean->retrieve($id);
+            $bean = BeanFactory::getBean('Calls', $id);
             if ( $this->sendReminders($bean, $admin, $recipients) ) {
                 $bean->email_reminder_sent = 1;
                 $bean->save();
@@ -115,8 +112,7 @@ class EmailReminder
             $currentLanguage = $GLOBALS["sugar_config"]["default_language"];
         }
 
-        $user = new User();
-        $user->retrieve($bean->created_by);
+        $user = BeanFactory::getBean('Users', $bean->created_by);
 
         $xtpl = new XTemplate(get_notify_template_file($currentLanguage));
         $xtpl = $this->setReminderBody($xtpl, $bean, $user);
@@ -281,8 +277,7 @@ class EmailReminder
         ";
         $re = $db->query($query);
         while($row = $db->fetchByAssoc($re) ) {
-            $user = new User();
-            $user->retrieve($row['user_id']);
+            $user = BeanFactory::getBean('Users', $row['user_id']);
             if ( !empty($user->email1) ) {
                 $arr = array(
                     'type' => 'Users',
@@ -296,8 +291,7 @@ class EmailReminder
         $query = "SELECT contact_id FROM {$field_part}s_contacts WHERE {$field_part}_id = '{$id}' AND accept_status != 'decline' AND deleted = 0";
         $re = $db->query($query);
         while($row = $db->fetchByAssoc($re) ) {
-            $contact = new Contact();
-            $contact->retrieve($row['contact_id']);
+            $contact = BeanFactory::getBean('Contacts', $row['contact_id']);
             if ( !empty($contact->email1) ) {
                 $arr = array(
                     'type' => 'Contacts',
@@ -311,8 +305,7 @@ class EmailReminder
         $query = "SELECT lead_id FROM {$field_part}s_leads WHERE {$field_part}_id = '{$id}' AND accept_status != 'decline' AND deleted = 0";
         $re = $db->query($query);
         while($row = $db->fetchByAssoc($re) ) {
-            $lead = new Lead();
-            $lead->retrieve($row['lead_id']);
+            $lead = BeanFactory::getBean('Leads', $row['lead_id']);
             if ( !empty($lead->email1) ) {
                 $arr = array(
                     'type' => 'Leads',

@@ -36,10 +36,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 
 
-$focus = new WorkFlowAlertShell();
-
-
-	$focus->retrieve($_POST['record']);
+$focus = BeanFactory::getBean('WorkFlowAlertShells', $_POST['record']);
 
 
 foreach($focus->column_fields as $field)

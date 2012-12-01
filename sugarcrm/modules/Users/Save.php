@@ -48,19 +48,12 @@ if (isset($_POST['id']))
 	sugar_die("Unauthorized access to administration.");
 if (isset($_POST['record']) && !is_admin($current_user)
      && !$GLOBALS['current_user']->isAdminForModule('Users')
-     //BEGIN SUGARCRM flav=sales ONLY
-     && $GLOBALS['current_user']->user_type != 'UserAdministrator'
-     //END SUGARCRM flav=sales ONLY
      && $_POST['record'] != $current_user->id)
 sugar_die("Unauthorized access to administration.");
 elseif (!isset($_POST['record']) && !is_admin($current_user)
-     //BEGIN SUGARCRM flav=sales ONLY
-     && $GLOBALS['current_user']->user_type != 'UserAdministrator'
-     //END SUGARCRM flav=sales ONLY
      && !$GLOBALS['current_user']->isAdminForModule('Users'))
 sugar_die ("Unauthorized access to user administration.");
-$focus = new User();
-$focus->retrieve($_POST['record']);
+$focus = BeanFactory::getBean('Users', $_POST['record']);
 
 //update any ETag seeds that are tied to the user object changing
 $focus->incrementETag("mainMenuETag");
@@ -78,18 +71,12 @@ if(empty($focus->user_name))
 
 
 if(!$current_user->is_admin && !$GLOBALS['current_user']->isAdminForModule('Users')
-    //BEGIN SUGARCRM flav=sales only
-    && $current_user->user_type != 'UserAdministrator'
-    //END SUGARCRM flav=sales only
     && $current_user->id != $focus->id) {
 	$GLOBALS['log']->fatal("SECURITY:Non-Admin ". $current_user->id . " attempted to change settings for user:". $focus->id);
 	header("Location: index.php?module=Users&action=Logout");
 	exit;
 }
 if(!$current_user->is_admin  && !$GLOBALS['current_user']->isAdminForModule('Users')
-    //BEGIN SUGARCRM flav=sales only
-    && $current_user->user_type != 'UserAdministrator'
-    //END SUGARCRM flav=sales only
     && !empty($_POST['is_admin'])) {
 	$GLOBALS['log']->fatal("SECURITY:Non-Admin ". $current_user->id . " attempted to change is_admin settings for user:". $focus->id);
 	header("Location: index.php?module=Users&action=Logout");
@@ -151,15 +138,6 @@ if(!$current_user->is_admin  && !$GLOBALS['current_user']->isAdminForModule('Use
 		}
 	}
 
-	//BEGIN SUGARCRM flav=sales ONLY
-	// The user type is Regular User if it's not set
-	$_POST['user_type'] = !empty($_POST['UserType']) ? $_POST['UserType'] : 'RegularUser';
-	// The exception is below. If we have a user that isn't new and the post value for user_type
-	//   isn't set, we need to keep it as it was.
-	if(!$newUser && empty($_POST['user_type'])){
-		unset($_POST['user_type']);
-	}
-	//END SUGARCRM flav=sales ONLY
 
 	// copy the group or portal user name over.  We renamed the field in order to ensure auto-complete would not change the value
 	if(isset($_POST['user_name']))
@@ -455,7 +433,7 @@ if(!$current_user->is_admin  && !$GLOBALS['current_user']->isAdminForModule('Use
 		////	INBOUND EMAIL SAVES
 		if(isset($_REQUEST['server_url']) && !empty($_REQUEST['server_url'])) {
 
-			$ie = new InboundEmail();
+			$ie = BeanFactory::getBean('InboundEmail');
 			if(false === $ie->savePersonalEmailAccount($return_id, $focus->user_name)) {
 				header("Location: index.php?action=Error&module=Users&error_string=&ie_error=true&id=".$return_id);
 				die(); // die here, else the header redirect below takes over.
@@ -463,7 +441,7 @@ if(!$current_user->is_admin  && !$GLOBALS['current_user']->isAdminForModule('Use
 		} elseif(isset($_REQUEST['ie_id']) && !empty($_REQUEST['ie_id']) && empty($_REQUEST['server_url'])) {
 			// user is deleting their I-E
 
-			$ie = new InboundEmail();
+			$ie = BeanFactory::getBean('InboundEmail');
 			$ie->deletePersonalEmailAccount($_REQUEST['ie_id'], $focus->user_name);
 		}
 		////	END INBOUND EMAIL SAVES
@@ -507,7 +485,7 @@ if(isset($_REQUEST['return_module']) && $_REQUEST['return_module'] != "") $retur
 else $return_module = "Users";
 if(isset($_REQUEST['return_action']) && $_REQUEST['return_action'] != "") $return_action = $_REQUEST['return_action'];
 else $return_action = "DetailView";
-if(isset($_REQUEST['return_id']) && $_REQUEST['return_id'] != "") $return_id = $_REQUEST['return_id'];
+if(isset($_REQUEST['return_id']) && $_REQUEST['return_id'] != "" && (!isset($_REQUEST['isDuplicate']) || $_REQUEST['isDuplicate'] == "0")) $return_id = $_REQUEST['return_id'];
 
 $GLOBALS['log']->debug("Saved record with id of ".$return_id);
 

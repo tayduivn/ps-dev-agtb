@@ -102,7 +102,7 @@ class SearchFormReports extends SearchForm
         global $app_strings;
 
         $SAVED_SEARCHES_OPTIONS = '';
-        $savedSearch = new SavedSearch();
+        $savedSearch = BeanFactory::getBean('SavedSearch');
         $SAVED_SEARCHES_OPTIONS = $savedSearch->getSelect($this->module);
         $str = "";
         if(!empty($SAVED_SEARCHES_OPTIONS) && $this->showSavedSearchOptions){

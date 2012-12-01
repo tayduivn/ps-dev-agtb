@@ -84,7 +84,7 @@ class ViewConvertLead extends SugarView
         $qsd = QuickSearchDefaults::getQuickSearchDefaults();
         $qsd->setFormName("ConvertLead");
 
-        $this->contact = new Contact();
+        $this->contact = BeanFactory::getBean('Contacts');
         // Bug #50126 We have to fill account_name & add ability to select account from popup with pre populated name
         if (!empty($this->focus->account_name))
         {
@@ -122,17 +122,10 @@ class ViewConvertLead extends SugarView
 
         foreach($this->defs as $module => $vdef)
         {
-            if(!isset($beanList[$module]))
-            {
-                continue;
-            }
-
-
-            $bean = $beanList[$module];
-            $focus = new $bean();
+            $focus = BeanFactory::getBean($module);
 
             // skip if we aren't allowed to save this bean
-            if (!$focus->ACLAccess('save'))
+            if (empty($focus) || !$focus->ACLAccess('save'))
             {
                 continue;
             }
@@ -205,7 +198,7 @@ class ViewConvertLead extends SugarView
 
     protected function getRecord()
     {
-    	$this->focus = new Lead();
+    	$this->focus = BeanFactory::getBean('Leads');
     	if (isset($_REQUEST['record']))
     	{
     		$this->focus->retrieve($_REQUEST['record']);
@@ -313,8 +306,7 @@ class ViewConvertLead extends SugarView
         $lead = false;
         if (!empty($_REQUEST['record']))
         {
-            $lead = new Lead();
-            $lead->retrieve($_REQUEST['record']);
+            $lead = BeanFactory::getBean('Leads', $_REQUEST['record']);
         }
 
         global $beanList;
@@ -323,7 +315,7 @@ class ViewConvertLead extends SugarView
         $selectedBeans = array();
         $selects = array();
         //Make sure the contact object is availible for relationships.
-        $beans['Contacts'] = new Contact();
+        $beans['Contacts'] = BeanFactory::getBean('Contacts');
         $beans['Contacts']->id = create_guid();
         $beans['Contacts']->new_with_id = true;
 
@@ -377,9 +369,8 @@ class ViewConvertLead extends SugarView
         	if (!empty($_REQUEST["convert_create_$module"]) && $_REQUEST["convert_create_$module"] != "false")
             {
                 //Save the new record
-                $bean = $beanList[$module];
 	            if (empty($beans[$module]))
-	            	$beans[$module] = new $bean();
+	            	$beans[$module] = BeanFactory::getBean($module);
 
             	$this->populateNewBean($module, $beans[$module], $beans['Contacts'], $lead);
 
@@ -403,9 +394,7 @@ class ViewConvertLead extends SugarView
                         $beans['Contacts']->$select = $_REQUEST[$select];
                     }
                     // Bug 39268 - Add the existing beans to a list of beans we'll potentially add the lead's activities to
-                    $bean = loadBean($module);
-                    $bean->retrieve($_REQUEST[$fieldDef['id_name']]);
-                    $selectedBeans[$module] = $bean;
+                    $selectedBeans[$module] = BeanFactory::getBean($module, $_REQUEST[$fieldDef['id_name']]);;
                 }
             }
         }
@@ -616,8 +605,7 @@ class ViewConvertLead extends SugarView
         $lead = null;
         if (!empty($_REQUEST['record']))
         {
-            $lead = new Lead();
-            $lead->retrieve($_REQUEST['record']);
+            $lead = BeanFactory::getBean('Leads', $_REQUEST['record']);
         }
 
         // delete the old relationship to the old parent (lead)
@@ -667,14 +655,11 @@ class ViewConvertLead extends SugarView
 
 		foreach($activitesList as $module)
 		{
-			$beanName = $beanList[$module];
-			$activity = new $beanName();
 			$query = "SELECT id FROM {$activity->table_name} WHERE parent_id = '{$lead->id}' AND parent_type = 'Leads'";
 			$result = $db->query($query,true);
             while($row = $db->fetchByAssoc($result))
             {
-            	$activity = new $beanName();
-				$activity->retrieve($row['id']);
+            	$activity = BeanFactory::getBean($module, $row['id']);
 				$activity->fixUpFormatting();
 				$activities[] = $activity;
             }
@@ -928,8 +913,7 @@ class ViewConvertLead extends SugarView
     		$q = "SELECT id, first_name, last_name FROM contacts WHERE first_name LIKE '{$lead->first_name}' AND last_name LIKE '{$lead->last_name}'";
     		$result = $lead->db->query($q);
     		while($row = $lead->db->fetchByAssoc($result)) {
-    			$contact = new Contact();
-    			$contact->retrieve($row['id']);
+    			$contact = BeanFactory::getBean('Contacts', $row['id']);
     			$dupes[$row['id']] = $contact->name;
     		}
     		if (!empty($dupes))

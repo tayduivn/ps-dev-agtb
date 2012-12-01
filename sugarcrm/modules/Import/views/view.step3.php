@@ -26,11 +26,6 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * governing these rights and limitations under the License.  Portions created
  * by SugarCRM are Copyright (C) 2004-2007 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
-/*********************************************************************************
- * Description: view handler for step 3 of the import process
- * Portions created by SugarCRM are Copyright (C) SugarCRM, Inc.
- * All Rights Reserved.
- ********************************************************************************/
 require_once('modules/Import/views/ImportView.php');
 require_once('modules/Import/sources/ImportFile.php');
 require_once('modules/Import/ImportFileSplitter.php');
@@ -63,7 +58,7 @@ class ImportViewStep3 extends ImportView
         $this->ss->assign("CURRENT_STEP", $this->currentStep);
         // attempt to lookup a preexisting field map
         // use the custom one if specfied to do so in step 1
-        $mapping_file = new ImportMap();
+        $mapping_file = BeanFactory::getBean('Import_1');
         $field_map = $mapping_file->set_get_import_wizard_fields();
         $default_values = array();
 		$ignored_fields = array();
@@ -71,8 +66,7 @@ class ImportViewStep3 extends ImportView
         if ( !empty( $_REQUEST['source_id']))
         {
             $GLOBALS['log']->fatal("Loading import map properties.");
-            $mapping_file = new ImportMap();
-            $mapping_file->retrieve( $_REQUEST['source_id'],false);
+            $mapping_file = BeanFactory::getBean('Import_1',  $_REQUEST['source_id'],array("encode" => false));
             $_REQUEST['source'] = $mapping_file->source;
             $has_header = $mapping_file->has_header;
             if (isset($mapping_file->delimiter))
@@ -150,7 +144,7 @@ class ImportViewStep3 extends ImportView
             $this->_showImportError($mod_strings['LBL_NO_LINES'],$_REQUEST['import_module'],'Step2');
             return;
         }
-        
+
         // save first row to send to step 4
         $this->ss->assign("FIRSTROW", base64_encode(serialize($rows[0])));
 

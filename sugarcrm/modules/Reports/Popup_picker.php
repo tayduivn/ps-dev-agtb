@@ -139,7 +139,7 @@ class Popup_Picker
 		$form->reset('main.SearchHeader');
 
 		// create the listview
-		$seed_bean = new SavedReport();
+		$seed_bean = BeanFactory::getBean('Reports');
 		$ListView = new ListView();
 		$ListView->show_export_button = false;
 		$ListView->process_for_popups = true;

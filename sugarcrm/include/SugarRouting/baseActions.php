@@ -97,8 +97,7 @@ function reply($action, $bean, $ie) {
 	$etId = $action['action1'];
 
 
-	$et = new EmailTemplate();
-	$et->retrieve($etId);
+	$et = BeanFactory::getBean('EmailTemplates', $etId);
 	$ie->setEmailForDisplay($bean->uid, false);
 	$ie->email->name = $app_strings['LBL_ROUTING_FW'].$et->name." - ".$ie->email->name;
 	$ie->email->description = trim($ie->email->description);
@@ -128,7 +127,7 @@ function reply($action, $bean, $ie) {
 
 	//_ppl("######### Sending Reply message to [ {$toEmail} ]");
 
-	$ea = new SugarEmailAddress();
+	$ea = BeanFactory::getBean('EmailAddresses');
 	$ie->email->from_name = $current_user->full_name;
 	//_ppl("from_name:".$ie->email->from_name);
 	$ie->email->from_addr = $ea->getReplyToAddress($current_user);
@@ -254,8 +253,7 @@ function copy_mail($action, $bean, $ie, $copy=true) {
 		}
 
 		$GLOBALS['log']->fatal("*** SUGARROUTING: baseActions:copy_email [ {$folder} ] [ {$ieId} ] [ {$bean->uid} ]");
-		$ie = new InboundEmail();
-		$ie->retrieve($ieId);
+		$ie = BeanFactory::getBean('InboundEmail', $ieId);
 		$GLOBALS['log']->fatal("*** SUGARROUTING: dest folder is IMAP Folder");
 		// destination is an IMAP folder
 		/**

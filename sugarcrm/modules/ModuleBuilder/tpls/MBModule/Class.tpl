@@ -52,12 +52,23 @@ class {{$class.name}}_sugar extends {{$class.extends}} {
 	var $disable_row_level_security = true;
 	{{/if}}
 	//END SUGARCRM flav=pro ONLY
-	function {{$class.name}}_sugar(){	
-		parent::{{$class.extends}}();
+
+	/**
+	 * This is a depreciated method, please start using __construct() as this method will be removed in a future version
+     *
+     * @see __construct
+     * @depreciated
+	 */
+	function {{$class.name}}_sugar(){
+		$this->__construct();
+	}
+
+	public function __construct(){
+		parent::__construct();
 	}
 	
 	{{if $class.acl}}
-function bean_implements($interface){
+public function bean_implements($interface){
 		switch($interface){
 			case 'ACL': return true;
 		}

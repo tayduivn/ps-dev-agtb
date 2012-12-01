@@ -34,7 +34,7 @@ require_once('include/DetailView/DetailView.php');
 global $app_strings;
 global $mod_strings;
 
-$focus = new EmailTemplate();
+$focus = BeanFactory::getBean('EmailTemplates');
 
 $detailView = new DetailView();
 $offset=0;

@@ -29,6 +29,9 @@ class RestPublicMetadataSugarViewsTest extends RestTestBase {
     {
         parent::setUp();
         $this->oldFiles = array();
+        
+        // Make sure the public test doesn't used a logged in client
+        $this->authToken = 'LOGGING_IN';
     }
 
     public function tearDown()
@@ -53,74 +56,6 @@ class RestPublicMetadataSugarViewsTest extends RestTestBase {
         $restReply = $this->_restCall('metadata/public?type_filter=views');
 
         $this->assertTrue(isset($restReply['reply']['views']['_hash']),'SugarView hash is missing.');
-    }
-    /**
-     * @group rest
-     */
-    public function testMetadataSugarViewsController() {
-        $this->markTestIncomplete('This test will no longer work due to changes in bug 56665');
-
-        $filesToCheck = array('clients/mobile/views/address/address.js',
-                              'clients/portal/views/address/address.js',
-                              'clients/base/views/address/address.js',
-                              'custom/clients/mobile/views/address/address.js',
-                              'custom/clients/portal/views/address/address.js',
-                              'custom/clients/base/views/address/address.js',
-        );
-
-        foreach ( $filesToCheck as $filename ) {
-            if ( file_exists($filename) ) {
-                $this->oldFiles[$filename] = file_get_contents($filename);
-            } else {
-                $this->oldFiles[$filename] = '_NO_FILE';
-            }
-        }
-
-        $dirsToMake = array('clients/mobile/views/address',
-                            'clients/portal/views/address',
-                            'clients/base/views/address',
-                            'custom/clients/mobile/views/address',
-                            'custom/clients/portal/views/address',
-                            'custom/clients/base/views/address',
-        );
-
-        foreach ($dirsToMake as $dir ) {
-            SugarAutoLoader::ensureDir($dir);
-        }
-
-        // Make sure we get it when we ask for mobile
-        SugarAutoLoader::put('clients/mobile/views/address/address.js','MOBILE CODE', true);
-        $restReply = $this->_restCall('metadata/public?type_filter=views&platform=mobile');
-        $this->assertEquals('MOBILE CODE',$restReply['reply']['views']['mobile']['address']['controller'],"Didn't get mobile code when that was the direct option");
-
-
-        // Make sure we get it when we ask for mobile, even though there is base code there
-        SugarAutoLoader::put('clients/base/views/address/address.js','BASE CODE', true);
-        $restReply = $this->_restCall('metadata/public?type_filter=views&platform=mobile');
-        $this->assertEquals('MOBILE CODE',$restReply['reply']['views']['mobile']['address']['controller'],"Didn't get mobile code when base code was there.");
-
-
-        // Make sure we get the base code when we ask for it.
-        $restReply = $this->_restCall('metadata/public?type_filter=views&platform=base');
-        $this->assertEquals('BASE CODE',$restReply['reply']['views']['address']['base']['controller'],"Didn't get base code when it was the direct option");
-
-
-        // Delete the mobile address and make sure it falls back to base
-        SugarAutoLoader::unlink('clients/mobile/views/address/address.js', true);
-        $restReply = $this->_restCall('metadata/public?type_filter=views&platform=mobile');
-        $this->assertEquals('BASE CODE',$restReply['reply']['views']['mobile']['address']['controller'],"Didn't fall back to base code when mobile code wasn't there.");
-
-
-        // Make sure the mobile code is loaded before the non-custom base code
-        SugarAutoLoader::put('custom/clients/mobile/views/address/address.js','CUSTOM MOBILE CODE', true);
-        $restReply = $this->_restCall('metadata/public?type_filter=views&platform=mobile');
-        $this->assertEquals('CUSTOM MOBILE CODE',$restReply['reply']['views']['mobile']['address']['controller'],"Didn't use the custom mobile code.");
-
-        // Make sure custom portal code works
-        SugarAutoLoader::put('custom/clients/portal/views/address/address.js','CUSTOM PORTAL CODE', true);
-        $restReply = $this->_restCall('metadata/public?type_filter=views&platform=portal');
-        $this->assertEquals('CUSTOM PORTAL CODE',$restReply['reply']['views']['portal']['address']['controller'],"Didn't use the custom portal code.");
-
     }
     /**
      * @group rest
@@ -166,35 +101,35 @@ class RestPublicMetadataSugarViewsTest extends RestTestBase {
         // Make sure we get it when we ask for mobile
         SugarAutoLoader::put('clients/mobile/views/address/editView.hbt','MOBILE EDITVIEW', true);
         $restReply = $this->_restCall('metadata/public?type_filter=views&platform=mobile');
-        $this->assertEquals('MOBILE EDITVIEW',$restReply['reply']['views']['mobile']['address']['templates']['editView'],"Didn't get mobile code when that was the direct option");
+        $this->assertEquals('MOBILE EDITVIEW',$restReply['reply']['views']['address']['templates']['editView'],"Didn't get mobile code when that was the direct option");
 
 
         // Make sure we get it when we ask for mobile, even though there is base code there
         SugarAutoLoader::put('clients/base/views/address/editView.hbt','BASE EDITVIEW', true);
         $restReply = $this->_restCall('metadata/public?type_filter=views&platform=mobile');
-        $this->assertEquals('MOBILE EDITVIEW',$restReply['reply']['views']['mobile']['address']['templates']['editView'],"Didn't get mobile code when base code was there.");
+        $this->assertEquals('MOBILE EDITVIEW',$restReply['reply']['views']['address']['templates']['editView'],"Didn't get mobile code when base code was there.");
 
 
         // Make sure we get the base code when we ask for it.
         $restReply = $this->_restCall('metadata/public?type_filter=views&platform=base');
-        $this->assertEquals('BASE EDITVIEW',$restReply['reply']['views']['base']['address']['templates']['editView'],"Didn't get base code when it was the direct option");
+        $this->assertEquals('BASE EDITVIEW',$restReply['reply']['views']['address']['templates']['editView'],"Didn't get base code when it was the direct option");
         $this->assertTrue(!isset($restReply['reply']['views']['mobile']), "Only should be base platform");
 
         // Delete the mobile address and make sure it falls back to base
         SugarAutoLoader::unlink('clients/mobile/views/address/editView.hbt', true);
         $restReply = $this->_restCall('metadata/public?type_filter=views&platform=mobile');
-        $this->assertEquals('BASE EDITVIEW',$restReply['reply']['views']['base']['address']['templates']['editView'],"Didn't fall back to base code when mobile code wasn't there.");
+        $this->assertEquals('BASE EDITVIEW',$restReply['reply']['views']['address']['templates']['editView'],"Didn't fall back to base code when mobile code wasn't there.");
 
 
         // Make sure the mobile code is loaded before the non-custom base code
         SugarAutoLoader::put('custom/clients/mobile/views/address/editView.hbt','CUSTOM MOBILE EDITVIEW', true);
         $restReply = $this->_restCall('metadata/public?type_filter=views&platform=mobile');
-        $this->assertEquals('CUSTOM MOBILE EDITVIEW',$restReply['reply']['views']['mobile']['address']['templates']['editView'],"Didn't use the custom mobile code.");
+        $this->assertEquals('CUSTOM MOBILE EDITVIEW',$restReply['reply']['views']['address']['templates']['editView'],"Didn't use the custom mobile code.");
 
         // Make sure custom base code works
         SugarAutoLoader::put('custom/clients/base/views/address/editView.hbt','CUSTOM BASE EDITVIEW', true);
         $restReply = $this->_restCall('metadata/public?type_filter=views&platform=base');
-        $this->assertEquals('CUSTOM BASE EDITVIEW',$restReply['reply']['views']['base']['address']['templates']['editView'],"Didn't use the custom base code.");
+        $this->assertEquals('CUSTOM BASE EDITVIEW',$restReply['reply']['views']['address']['templates']['editView'],"Didn't use the custom base code.");
     }
 
 

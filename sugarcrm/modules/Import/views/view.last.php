@@ -109,7 +109,6 @@ class ImportViewLast extends ImportView
         $this->ss->assign("errorrecordsFile", ImportCacheFiles::convertFileNameToUrl(ImportCacheFiles::getErrorRecordsWithoutErrorFileName()));
         $this->ss->assign("dupeFile", ImportCacheFiles::convertFileNameToUrl(ImportCacheFiles::getDuplicateFileName()));
 
-        //BEGIN SUGARCRM flav!=sales ONLY
         if ( $this->bean->object_name == "Prospect" )
         {
         	$this->ss->assign("PROSPECTLISTBUTTON", $this->_addToProspectListButton());
@@ -117,7 +116,6 @@ class ImportViewLast extends ImportView
         else {
             $this->ss->assign("PROSPECTLISTBUTTON","");
         }
-        //END SUGARCRM flav!=sales ONLY
 
         $resultsTable = "";
         foreach ( UsersLastImport::getBeansByImport($_REQUEST['import_module']) as $beanname )
@@ -125,7 +123,7 @@ class ImportViewLast extends ImportView
             // load bean
             if ( !( $this->bean instanceof $beanname ) )
             {
-                $this->bean = new $beanname;
+                $this->bean = BeanFactory::newBeanByName($beanname);
             }
            $resultsTable .= $this->getListViewResults();
         }
@@ -269,7 +267,6 @@ SUGAR.IV.togglePages('$activeTab');
 
 EOJAVASCRIPT;
     }
-    //BEGIN SUGARCRM flav!=sales ONLY
     /**
      * Returns a button to add this list of prospects to a Target List
      *
@@ -330,6 +327,5 @@ EOJAVASCRIPT;
 EOHTML;
 
     }
-    //END SUGARCRM flav!=sales ONLY
 }
 ?>

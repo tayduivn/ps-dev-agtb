@@ -36,6 +36,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 $mod_strings = array (
   'LBL_MODULE_NAME' => 'Expressions',
+  'LBL_MODULE_NAME_SINGULAR' => 'Expression',
   'LBL_MODULE_TITLE' => 'Work Flow Triggers: Home',
   'LBL_SEARCH_FORM_TITLE' => 'Work Flow Trigger Search',
   'LBL_LIST_FORM_TITLE' => 'Action List',

@@ -93,8 +93,7 @@ class Importer
         $this->ifs = $this->getFieldSanitizer();
 
         //Get the default user currency
-        $this->defaultUserCurrency = new Currency();
-        $this->defaultUserCurrency->retrieve('-99');
+        $this->defaultUserCurrency = BeanFactory::getBean('Currencies', '-99');
 
         //Get our import column definitions
         $this->importColumns = $this->getImportColumns();
@@ -514,14 +513,14 @@ class Importer
         */
         if ( ( !empty($focus->new_with_id) && !empty($focus->date_modified) ) ||
              ( empty($focus->new_with_id) && $timedate->to_db($focus->date_modified) != $timedate->to_db($timedate->to_display_date_time($focus->fetched_row['date_modified'])) )
-        ) 
+        )
             $focus->update_date_modified = false;
 
         // Bug 53636 - Allow update of "Date Created"
         if (!empty($focus->date_entered)) {
         	$focus->update_date_entered = true;
         }
-            
+
         $focus->optimistic_lock = false;
         if ( $focus->object_name == "Contact" && isset($focus->sync_contact) )
         {
@@ -543,7 +542,7 @@ class Importer
                     $focus->$key = $focus->parent_id;
                 }
             }
-        }					
+        }
         //bug# 40260 setting it true as the module in focus is involved in an import
         $focus->in_import=true;
         // call any logic needed for the module preSave
@@ -552,7 +551,7 @@ class Importer
         // Bug51192: check if there are any changes in the imported data
         $hasDataChanges = false;
         $dataChanges=$focus->db->getDataChanges($focus);
-        
+
         if(!empty($dataChanges)) {
             foreach($dataChanges as $field=>$fieldData) {
                 if($fieldData['data_type'] != 'date' || strtotime($fieldData['before']) != strtotime($fieldData['after'])) {
@@ -561,7 +560,7 @@ class Importer
                 }
             }
         }
-        
+
         // if modified_user_id is set, set the flag to false so SugarBEan will not reset it
         if (isset($focus->modified_user_id) && $focus->modified_user_id && !$hasDataChanges) {
             $focus->update_modified_by = false;
@@ -595,7 +594,7 @@ class Importer
 
         $firstrow    = unserialize(base64_decode($_REQUEST['firstrow']));
         $mappingValsArr = $this->importColumns;
-        $mapping_file = new ImportMap();
+        $mapping_file = BeanFactory::getBean('Import_1');
         if ( isset($_REQUEST['has_header']) && $_REQUEST['has_header'] == 'on')
         {
             $header_to_field = array ();
@@ -741,8 +740,7 @@ class Importer
             $ifs->$field = $this->importSource->$fieldKey;
         }
 
-        $currency = new Currency();
-        $currency->retrieve($this->importSource->importlocale_currency);
+        $currency = BeanFactory::getBean('Currencies', $this->importSource->importlocale_currency);
         $ifs->currency_symbol = $currency->symbol;
 
         return $ifs;
@@ -767,7 +765,7 @@ class Importer
      */
     protected function _undoCreatedBeans( array $ids )
     {
-        $focus = new UsersLastImport();
+        $focus = BeanFactory::getBean('Import_2');
         foreach ($ids as $id)
             $focus->undoById($id);
     }
@@ -825,14 +823,11 @@ class Importer
         $importableModules = array();
         foreach ($beanList as $moduleName => $beanName)
         {
-            if( class_exists($beanName) )
+            $tmp = BeanFactory::getBean($moduleName);
+            if( !empty($tmp->importable))
             {
-                $tmp = new $beanName();
-                if( isset($tmp->importable) && $tmp->importable )
-                {
-                    $label = isset($GLOBALS['app_list_strings']['moduleList'][$moduleName]) ? $GLOBALS['app_list_strings']['moduleList'][$moduleName] : $moduleName;
-                    $importableModules[$moduleName] = $label;
-                }
+                $label = isset($GLOBALS['app_list_strings']['moduleList'][$moduleName]) ? $GLOBALS['app_list_strings']['moduleList'][$moduleName] : $moduleName;
+                $importableModules[$moduleName] = $label;
             }
         }
 

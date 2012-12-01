@@ -1,6 +1,17 @@
 <div class="block thumbnail" id="guages">
+    <div class="btn-toolbar pull-right">
+        <form class="dropdown form-horizontal btn-group" id="forecastsProgressDisplayOptions">
+            <a href="#" data-toggle="dropdown" class="dropdown-toggle btn btn-mini btn-invisible"><span class="icon-cog"></span></a>
+            <ul class="dropdown-menu left carettop" id="progressDisplayOptions">
+                <div class="datasetOptions">
+                {{#eachOptions progressDataSet}}
+                <li><a href="#"><label data-set="{{this.key}}" class="radio checked"><i class="icon-ok"></i>&nbsp;{{this.value}}</label></a></li>
+                {{/eachOptions}}
+                </div>
+            </ul>
+        </form>
+    </div>
     <h4>{{str "LBL_PROJECTED" "Forecasts"}}</h4>
-
     <div class="row-fluid">
         <strong>
             <span class="span6">
@@ -12,8 +23,8 @@
         </strong>
     </div>
 
-    {{#if show_likely}}
-    <div class="row-fluid">
+    {{#if show_projected_likely}}
+    <div class="row-fluid projected_likely">
             <span class="span6">
             {{#if quota_likely_above}}
                 {{str "LBL_DISTANCE_ABOVE_LIKELY_FROM_QUOTA" "Forecasts"}}
@@ -29,8 +40,8 @@
             </span>
     </div>
     {{/if}}
-    {{#if show_best}}
-    <div class="row-fluid">
+    {{#if show_projected_best}}
+    <div class="row-fluid projected_best">
             <span class="span6">
             {{#if quota_best_above}}
                 {{str "LBL_DISTANCE_ABOVE_BEST_FROM_QUOTA" "Forecasts"}}
@@ -46,8 +57,8 @@
             </span>
     </div>
     {{/if}}
-    {{#if show_worst}}
-    <div class="row-fluid">
+    {{#if show_projected_worst}}
+    <div class="row-fluid projected_worst">
             <span class="span6">
             {{#if quota_worst_above}}
                 {{str "LBL_DISTANCE_ABOVE_WORST_FROM_QUOTA" "Forecasts"}}
@@ -73,8 +84,8 @@
             </span>
         </strong>
     </div>
-    {{#if show_likely}}
-    <div class="row-fluid">
+    {{#if show_projected_likely}}
+    <div class="row-fluid projected_likely">
             <span class="span6">
             {{#if closed_likely_above}}
                 {{str "LBL_DISTANCE_ABOVE_LIKELY_FROM_CLOSED" "Forecasts"}}
@@ -90,8 +101,8 @@
             </span>
     </div>
     {{/if}}
-    {{#if show_best}}
-    <div class="row-fluid">
+    {{#if show_projected_best}}
+    <div class="row-fluid projected_best">
             <span class="span6">
             {{#if closed_best_above}}
                 {{str "LBL_DISTANCE_ABOVE_BEST_FROM_CLOSED" "Forecasts"}}
@@ -107,8 +118,8 @@
             </span>
     </div>
     {{/if}}
-    {{#if show_worst}}
-    <div class="row-fluid">
+    {{#if show_projected_worst}}
+    <div class="row-fluid projected_worst">
             <span class="span6">
             {{#if closed_worst_above}}
                 {{str "LBL_DISTANCE_ABOVE_WORST_FROM_CLOSED" "Forecasts"}}
@@ -125,7 +136,7 @@
     </div>
     {{/if}}
 </div>
-<div class="row-fluid">
+<div class="row-fluid purpose" id="projected_bottom_line">
     <div class="span4 tcenter">
         {{str "LBL_PIPELINE_OPPORTUNITIES" "Forecasts"}}<br>
         <strong>{{formatNumber opportunities}}</strong>

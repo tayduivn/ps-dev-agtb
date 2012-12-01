@@ -126,21 +126,17 @@ ACLAllowedModules = {$ACLAllowedModules};
 				<td wrap="true">
 					<b>{$mod_strings.LBL_DISPLAY_COLUMNS}:</b> {$reportDisplayColumnsList}
 				</td>
-				{* //BEGIN SUGARCRM flav!=sales ONLY *}
 				<td wrap="true">
 					<b>{$mod_strings.LBL_OWNER}:</b> {$reportAssignedToName}
 				</td>
-				{* //END SUGARCRM flav!=sales ONLY *}
 			</tr>
 			{$summaryAndGroupDefData}
 			<tr>
-			{* //BEGIN SUGARCRM flav!=sales ONLY *}
 			<tr>
 				<td wrap="true" colspan="2">
 					<b>{$mod_strings.LBL_REPORT_SCHEDULE_TITLE}:</b> <span id="schduleDateTimeDiv">{$schedule_value}</span>
 				</td>
 			</tr>
-			{* //END SUGARCRM flav!=sales ONLY *}
 			<tr>
 				<td wrap="true" colspan="2">
 					<b>{$mod_strings.LBL_FILTERS}:</b>{$reportFilters}

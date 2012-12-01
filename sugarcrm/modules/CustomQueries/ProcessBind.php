@@ -37,7 +37,7 @@ require_once('modules/DataSets/DataSet_Layout.php');
 
 
 
-$focus = new CustomQuery();
+$focus = BeanFactory::getBean('CustomQueries');
 
 if(!empty($_REQUEST['record']) && $_REQUEST['record']!=""){
 	$focus->retrieve($_REQUEST['record']);

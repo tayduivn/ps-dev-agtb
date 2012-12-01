@@ -33,7 +33,7 @@ require_once('include/utils/encryption_utils.php');
 
 function getSystemInfo($send_usage_info=true){
 	global $sugar_config;
-	global $db, $administration, $timedate;
+	global $db, $timedate;
 	$info=array();
 	$info = getBaseSystemInfo($send_usage_info);
     if($send_usage_info){
@@ -53,16 +53,9 @@ function getSystemInfo($send_usage_info=true){
 		$users_where = "is_group=0 AND portal_only=0 AND user_name not like 'SugarCRMSupport' AND user_name not like '%_SupportUser' ";
 		//END SUGARCRM dep=od ONLY
 
-		//BEGIN SUGARCRM flav=sales ONLY
-		$users_where = "is_group=0 AND portal_only=0 AND is_admin = 0 AND user_name not like 'SugarCRMSupport' AND user_name not like '%_SupportUser' ";
-		//END SUGARCRM flav=sales ONLY
 		$info['users']=$db->getOne("select count(id) count from users WHERE status='Active' AND $users_where", false, 'fetching active users count');
 
-		if(empty($administration)){
-
-			$administration = new Administration();
-		}
-		$administration->retrieveSettings('system');
+	    $administration = Administration::getSettings('system');
 		$info['system_name'] = (!empty($administration->settings['system_name']))?substr($administration->settings['system_name'], 0 ,255):'';
 
 
@@ -344,7 +337,7 @@ function compareVersions($ver1, $ver2)
 function set_CheckUpdates_config_setting($value) {
 
 
-	$admin=new Administration();
+	$admin = BeanFactory::getBean('Administration');
 	$admin->saveSetting('Update','CheckUpdates',$value);
 }
 /* return's value for the 'CheckUpdates' config setting
@@ -355,8 +348,7 @@ function get_CheckUpdates_config_setting() {
 	$checkupdates='automatic';
 
 
-	$admin=new Administration();
-	$admin=$admin->retrieveSettings('Update',true);
+	$admin = Administration::getSettings('Update',true);
 	if (empty($admin->settings) or empty($admin->settings['Update_CheckUpdates'])) {
 		$admin->saveSetting('Update','CheckUpdates','automatic');
 	} else {
@@ -368,15 +360,14 @@ function get_CheckUpdates_config_setting() {
 function set_last_check_version_config_setting($value) {
 
 
-	$admin=new Administration();
+	$admin = BeanFactory::getBean('Administration');
 	$admin->saveSetting('Update','last_check_version',$value);
 }
 function get_last_check_version_config_setting() {
 
 
 
-	$admin=new Administration();
-	$admin=$admin->retrieveSettings('Update');
+	$admin = Administration::getSettings('Update');
 	if (empty($admin->settings) or empty($admin->settings['Update_last_check_version'])) {
 		return null;
 	} else {
@@ -388,15 +379,14 @@ function get_last_check_version_config_setting() {
 function set_last_check_date_config_setting($value) {
 
 
-	$admin=new Administration();
+	$admin = BeanFactory::getBean('Administration');
 	$admin->saveSetting('Update','last_check_date',$value);
 }
 function get_last_check_date_config_setting() {
 
 
 
-	$admin=new Administration();
-	$admin=$admin->retrieveSettings('Update');
+	$admin = Administration::getSettings('Update');
 	if (empty($admin->settings) or empty($admin->settings['Update_last_check_date'])) {
 		return 0;
 	} else {
@@ -724,8 +714,7 @@ function hasExceededOfflineClientLicenses($num_oc_lic){
 
 function loadLicense($firstLogin=false){
 
-	$GLOBALS['license']=new Administration();
-	$GLOBALS['license']=$GLOBALS['license']->retrieveSettings('license', $firstLogin);
+	$GLOBALS['license'] = Administration::getSettings('license', $firstLogin);
 
 }
 

@@ -72,13 +72,11 @@ class Link {
 
         $this->_relationship_name=$_rel_name;
 		$this->relationship_fields = (!empty($fieldDef['rel_fields']))?$fieldDef['rel_fields']: array();
-		$this->_bean=&$_bean;
-		$this->_relationship=new Relationship();
-		//$this->_relationship->retrieve_by_string_fields(array('relationship_name'=>$this->_relationship_name));
+		$this->_bean = $_bean;
+		$this->_relationship = BeanFactory::getBean("Relationships");
 		$this->_relationship->retrieve_by_name($this->_relationship_name);
 
 		$this->_db = DBManagerFactory::getInstance();
-
 
 		//Following behavior is tied to a property(ignore_role) value in the vardef. It alters the values of 2 properties, ignore_role_filter and add_distinct.
 		//the property values can be altered again before any requests are made.
@@ -622,8 +620,8 @@ class Link {
 	function _add_many_to_one_bean_based($key) {
 
 		//make a copy of this bean to avoid recursion.
-		$bean=new $this->_bean->object_name;
-		$bean->retrieve($this->_bean->id);
+		$bean = clone $this->_bean;
+		// BeanFactory::getBean($this->_bean->module_dir, $this->_bean->id);
 
 	   	$bean->{$this->_relationship->lhs_key}=$key;
 

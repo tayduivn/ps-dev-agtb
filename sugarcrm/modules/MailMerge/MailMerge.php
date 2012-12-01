@@ -32,8 +32,21 @@ class MailMerge
 	var $visible = false;
 	var $list;
 	var $fieldList;
-	
-	function MailMerge($list = NULL, $fieldList = null, $data_dir = 'data') {
+
+
+    /**
+     * This is a depreciated method, please start using __construct() as this method will be removed in a future version
+     *
+     * @see __construct
+     * @deprecated
+     */
+    public function MailMerge($list = null, $fieldList = null, $data_dir = 'data')
+    {
+        $this->__construct($list, $fieldList, $data_dir);
+    }
+
+
+	public function __construct($list = NULL, $fieldList = null, $data_dir = 'data') {
 		// this is the path to your data dir.
 		$this->mm_data_dir = $data_dir;
 		$this->list = $list;

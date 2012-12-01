@@ -24,9 +24,7 @@
  
 require_once 'include/database/DBManagerFactory.php';
 require_once 'modules/Contacts/Contact.php';
-//BEGIN SUGARCRM flav!=sales ONLY
 require_once 'modules/Cases/Case.php';
-//END SUGARCRM flav!=sales ONLY
 
 class DBHelperTest extends Sugar_PHPUnit_Framework_TestCase
 {
@@ -66,7 +64,7 @@ class DBHelperTest extends Sugar_PHPUnit_Framework_TestCase
 
     public function testCreateTableSQLParams()
     {
-        $bean = new Contact;
+        $bean = BeanFactory::getBean('Contacts');
 
         $sql = $this->_helper->createTableSQLParams(
             $bean->getTableName(),
@@ -88,7 +86,7 @@ class DBHelperTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testInsertSQLProperlyDecodesHtmlEntities()
     {
-        $bean = new Contact;
+        $bean = BeanFactory::getBean('Contacts');
         $bean->last_name = '&quot;Test&quot;';
 
         $sql = $this->_helper->insertSQL($bean);
@@ -109,7 +107,7 @@ class DBHelperTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testUpdateSQLProperlyDecodesHtmlEntities()
     {
-        $bean = new Contact;
+        $bean = BeanFactory::getBean('Contacts');
         $bean->last_name = '&quot;Test&quot;';
 
         $sql = $this->_helper->updateSQL($bean, array("id" => "1"));
@@ -183,10 +181,9 @@ class DBHelperTest extends Sugar_PHPUnit_Framework_TestCase
         unset($fieldDef['Type']);
         $this->assertEquals($this->_helper->getFieldType($fieldDef),'email');
     }
-    //BEGIN SUGARCRM flav!=sales ONLY
     public function testGetAutoIncrement()
     {
-        $case = new aCase();
+        $case = BeanFactory::getBean('Cases');
         $case->name = "foo";
         $case->save();
         $case->retrieve($case->id);
@@ -197,7 +194,6 @@ class DBHelperTest extends Sugar_PHPUnit_Framework_TestCase
 
         $this->assertEquals($lastAuto + 1, $helperResult);
     }
-    //END SUGARCRM flav!=sales ONLY
     //BEGIN SUGARCRM flav=ent ONLY
     public function testGetAutoIncrementSQL()
     {
@@ -209,10 +205,9 @@ class DBHelperTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertRegExp('/cases_case_number_seq\.nextval/i',$sql);
     }
     //END SUGARCRM flav=ent ONLY
-    //BEGIN SUGARCRM flav!=sales ONLY
     public function testSetAutoIncrementStart()
     {
-        $case = new aCase();
+        $case = BeanFactory::getBean('Cases');
         $case->name = "foo";
         $case->save();
         $case->retrieve($case->id);
@@ -221,7 +216,7 @@ class DBHelperTest extends Sugar_PHPUnit_Framework_TestCase
         $case->save();
     	$newAuto = $lastAuto + 5;
         $this->_helper->setAutoIncrementStart("cases", "case_number", $newAuto);
-        $case2 = new aCase();
+        $case2 = BeanFactory::getBean('Cases');
         $case2->name = "foo2";
         $case2->save();
         $case2->retrieve($case2->id);
@@ -232,7 +227,6 @@ class DBHelperTest extends Sugar_PHPUnit_Framework_TestCase
 
         $this->assertEquals($newAuto, $case_number);
     }
-    //END SUGARCRM flav!=sales ONLY
     public function testAddColumnSQL()
     {
         $sql = $this->_helper->addColumnSQL(

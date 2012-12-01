@@ -27,7 +27,7 @@ require_once('modules/Versions/DefaultVersions.php');
 
 foreach($default_versions as $default_version){
 	
-	$version = new Version();
+	$version = BeanFactory::getBean('Versions');
 	$query="select count(*) the_count from versions where name='{$default_version['name']}'";
 	$result=$version->db->query($query);
 	$row=$version->db->fetchByAssoc($result);

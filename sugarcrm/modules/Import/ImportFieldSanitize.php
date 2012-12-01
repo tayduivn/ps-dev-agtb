@@ -174,7 +174,7 @@ class ImportFieldSanitize
         // cache this object since we'll be reusing it a bunch
         if ( !($focus_user instanceof User) ) {
 
-            $focus_user = new User();
+            $focus_user = BeanFactory::getBean('Users');
         }
 
         //BEGIN SUGARCRM flav=pro ONLY
@@ -183,7 +183,7 @@ class ImportFieldSanitize
         // cache this object since we'll be reusing it a bunch
         if ( !($focus_team instanceof Team) ) {
 
-            $focus_team = new Team();
+            $focus_team = BeanFactory::getBean('Teams');
         }
         //END SUGARCRM flav=pro ONLY
 

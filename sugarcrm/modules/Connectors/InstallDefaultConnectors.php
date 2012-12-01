@@ -43,9 +43,7 @@ $default_modules_sources = array (
 
   'Leads' =>
   array (
-     //BEGIN SUGARCRM flav!=sales ONLY
     'ext_rest_linkedin' => 'ext_rest_linkedin',
-     //END SUGARCRM flav!=sales ONLY
     //BEGIN SUGARCRM flav=pro ONLY
      'ext_rest_twitter' => 'ext_rest_twitter',
     //END SUGARCRM flav=pro ONLY
@@ -53,9 +51,7 @@ $default_modules_sources = array (
   ),
   'Prospects' =>
   array (
-    //BEGIN SUGARCRM flav!=sales ONLY
     'ext_rest_linkedin' => 'ext_rest_linkedin',
-     //END SUGARCRM flav!=sales ONLY
 
     //BEGIN SUGARCRM flav=pro ONLY
      'ext_rest_twitter' => 'ext_rest_twitter',

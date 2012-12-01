@@ -50,7 +50,7 @@ function remove_workflow_dir($dir) {
 
 
 
-$workflow_object = new WorkFlow();
+$workflow_object = BeanFactory::getBean('WorkFlow');
 
 
 	$module_array = $workflow_object->get_module_array();

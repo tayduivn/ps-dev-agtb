@@ -24,7 +24,6 @@
  * governing these rights and limitations under the License.  Portions created
  * by SugarCRM are Copyright (C) 2006 SugarCRM, Inc.; All Rights Reserved.
  */
-//BEGIN SUGARCRM flav!=sales ONLY
 function set_campaignlog_and_save_background(popup_reply_data)
 {
     var form_name = popup_reply_data.form_name;
@@ -98,7 +97,6 @@ function set_campaignlog_and_save_background(popup_reply_data)
         document.location.reload(true);
     }
 }
-//END SUGARCRM flav!=sales ONLY
 
 function validatePortalName(e) {
     var portalName = document.getElementById('portal_name'); 

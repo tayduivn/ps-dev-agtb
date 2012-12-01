@@ -19,14 +19,6 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *to the License for the specific language governing these rights and limitations under the License.
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
-/*********************************************************************************
- * $Id: EditView.php 15417 2006-08-03 00:21:27 +0000 (Thu, 03 Aug 2006) wayne $
- * Description:  TODO: To be written.
- * Portions created by SugarCRM are Copyright (C) SugarCRM, Inc.
- * All Rights Reserved.
- * Contributor(s): ______________________________________..
- ********************************************************************************/
-
 /**************************** general UI Stuff *******************/
 
 
@@ -43,16 +35,13 @@ global $sugar_version, $sugar_config;
 
 
 /**************************** GENERAL SETUP WORK*******************/
-$campaign_focus = new Campaign();
-if (isset($_REQUEST['campaign_id']) && !empty($_REQUEST['campaign_id'])) {
-    $campaign_focus->retrieve($_REQUEST['campaign_id']);
+if (!empty($_REQUEST['campaign_id'])) {
+    $campaign_focus = BeanFactory::getBean('Campaigns', $_REQUEST['campaign_id']);
 }else{
     sugar_die($app_strings['ERROR_NO_RECORD']);
 }
 
 global $theme;
-
-
 
 $json = getJSONobj();
 
@@ -81,7 +70,7 @@ $ss->assign("DEC_SEP", $seps[1]);
 //$campaign_focus->load_relationship('emailmarketing');
 //$mrkt_ids = $campaign_focus->emailmarketing->get();
 
-$mrkt_focus = new EmailMarketing();
+$mrkt_focus = BeanFactory::getBean('EmailMarketing');
 
 //if record param exists and it is not empty, then retrieve this bean
 if(isset($_REQUEST['record']) and !empty($_REQUEST['record'])){
@@ -210,13 +199,12 @@ echo $javascript->getScript();
         $campaign_focus->load_relationship('prospectlists');
         $prospectlists=$campaign_focus->prospectlists->get();
 
-    
+
     $pl_count = 0;
     $pl_lists = 0;
     if(!empty($prospectlists)){
         foreach ($prospectlists as $prospect_id){
-            $pl_focus = new ProspectList();
-            $pl_focus->retrieve($prospect_id);
+            $pl_focus = BeanFactory::getBean('ProspectLists', $prospect_id);
 
             if (($pl_focus->list_type == 'default') || ($pl_focus->list_type == 'seed')){
                 $default_pl_focus= $pl_focus;

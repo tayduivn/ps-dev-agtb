@@ -44,8 +44,7 @@ class SugarWebServiceUtilv4_1 extends SugarWebServiceUtilv4
 
    				global $current_user;
    				require_once('modules/Users/User.php');
-   				$current_user = new User();
-   				$current_user->retrieve($_SESSION['user_id']);
+   				$current_user = BeanFactory::getBean('Users', $_SESSION['user_id']);
    				$this->login_success();
    				$GLOBALS['log']->info('Begin: SoapHelperWebServices->validate_authenticated - passed');
    				$GLOBALS['log']->info('End: SoapHelperWebServices->validate_authenticated');

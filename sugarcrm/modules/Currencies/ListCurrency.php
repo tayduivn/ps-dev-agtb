@@ -1,25 +1,24 @@
 <?php
 if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 /*********************************************************************************
- *The contents of this file are subject to the SugarCRM Professional End User License Agreement 
- *("License") which can be viewed at http://www.sugarcrm.com/EULA.  
- *By installing or using this file, You have unconditionally agreed to the terms and conditions of the License, and You may 
- *not use this file except in compliance with the License. Under the terms of the license, You 
- *shall not, among other things: 1) sublicense, resell, rent, lease, redistribute, assign or 
- *otherwise transfer Your rights to the Software, and 2) use the Software for timesharing or 
- *service bureau purposes such as hosting the Software for commercial gain and/or for the benefit 
- *of a third party.  Use of the Software may be subject to applicable fees and any use of the 
- *Software without first paying applicable fees is strictly prohibited.  You do not have the 
- *right to remove SugarCRM copyrights from the source code or user interface. 
+ *The contents of this file are subject to the SugarCRM Professional End User License Agreement
+ *("License") which can be viewed at http://www.sugarcrm.com/EULA.
+ *By installing or using this file, You have unconditionally agreed to the terms and conditions of the License, and You may
+ *not use this file except in compliance with the License. Under the terms of the license, You
+ *shall not, among other things: 1) sublicense, resell, rent, lease, redistribute, assign or
+ *otherwise transfer Your rights to the Software, and 2) use the Software for timesharing or
+ *service bureau purposes such as hosting the Software for commercial gain and/or for the benefit
+ *of a third party.  Use of the Software may be subject to applicable fees and any use of the
+ *Software without first paying applicable fees is strictly prohibited.  You do not have the
+ *right to remove SugarCRM copyrights from the source code or user interface.
  * All copies of the Covered Code must include on each user interface screen:
- * (i) the "Powered by SugarCRM" logo and 
- * (ii) the SugarCRM copyright notice 
+ * (i) the "Powered by SugarCRM" logo and
+ * (ii) the SugarCRM copyright notice
  * in the same form as they appear in the distribution.  See full license for requirements.
- *Your Warranty, Limitations of liability and Indemnity are expressly stated in the License.  Please refer 
+ *Your Warranty, Limitations of liability and Indemnity are expressly stated in the License.  Please refer
  *to the License for the specific language governing these rights and limitations under the License.
- *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.  
+ *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
-
 require_once('include/SugarQueue/SugarJobQueue.php');
 
  class ListCurrency{
@@ -27,17 +26,17 @@ require_once('include/SugarQueue/SugarJobQueue.php');
 	var $list = null;
 	var $javascript = '<script>';
 	function lookupCurrencies(){
-		
-		
-		$this->focus = new Currency();
+
+
+		$this->focus = BeanFactory::getBean('Currencies');
 		$this->list = $this->focus->get_full_list('name');
 		$this->focus->retrieve('-99');
 	  	if(is_array($this->list)){
 		$this->list = array_merge(Array($this->focus), $this->list);
 	  	}else{
-	  		$this->list = Array($this->focus);	
-	  	} 
-		
+	  		$this->list = Array($this->focus);
+	  	}
+
 	}
 
      /**
@@ -53,7 +52,7 @@ require_once('include/SugarQueue/SugarJobQueue.php');
             if(isset($_POST['edit']) && $_POST['edit'] == 'true' && isset($_POST['name']) && !empty($_POST['name']) && isset($_POST['conversion_rate']) && !empty($_POST['conversion_rate']) && isset($_POST['symbol']) && !empty($_POST['symbol']))
             {
 
-                $currency = new Currency();
+                $currency = BeanFactory::getBean('Currencies');
                 $isUpdate = false;
                 if(isset($_POST['record']) && !empty($_POST['record'])){
                    $isUpdate = true;
@@ -101,7 +100,7 @@ require_once('include/SugarQueue/SugarJobQueue.php');
 				return;	
 			}
 			
-				$temp = new Currency();
+				$temp = BeanFactory::getBean('Currencies');
 			for($i = 0; $i < $size; $i++){
 				$temp->id = $ids[$i];
 				$temp->name = $names[$i];
@@ -112,9 +111,9 @@ require_once('include/SugarQueue/SugarJobQueue.php');
 			}
 	}}
 	}
-	
-	function getJavascript(){ 
-		// wp: DO NOT add formatting and unformatting numbers in here, add them prior to calling these to avoid double calling 
+
+	function getJavascript(){
+		// wp: DO NOT add formatting and unformatting numbers in here, add them prior to calling these to avoid double calling
 		// of unformat number
 		return $this->javascript . <<<EOQ
 					function get_rate(id){
@@ -135,7 +134,7 @@ require_once('include/SugarQueue/SugarJobQueue.php');
 					function ConvertRateSingle(id,field){
 						var temp = field.innerHTML.substring(1, field.innerHTML.length);
 						unformattedNumber = unformatNumber(temp, num_grp_sep, dec_sep);
-						
+
 						field.innerHTML = CurrencySymbols[id] + formatNumber(toDecimal(ConvertFromDollar(ConvertToDollar(unformattedNumber, lastRate), ConversionRates[id])), num_grp_sep, dec_sep, 2, 2);
 						lastRate = ConversionRates[id];
 					}
@@ -143,36 +142,36 @@ require_once('include/SugarQueue/SugarJobQueue.php');
                         try {
                         var id = form.currency_id.options[form.currency_id.selectedIndex].value;
 						var fields = new Array();
-						
+
 						for(i in currencyFields){
 							var field = currencyFields[i];
 							if(typeof(form[field]) != 'undefined' && form[field].value.length > 0){
 								form[field].value = unformatNumber(form[field].value, num_grp_sep, dec_sep);
 								fields.push(form[field]);
 							}
-							
+
 						}
-							
+
 							ConvertRate(id, fields);
 						for(i in fields){
 							fields[i].value = formatNumber(fields[i].value, num_grp_sep, dec_sep);
 
 						}
-							
+
 						} catch (err) {
                             // Do nothing, if we can't find the currency_id field we will just not attempt to convert currencies
                             // This typically only happens in lead conversion and quick creates, where the currency_id field may be named somethnig else or hidden deep inside a sub-form.
                         }
-						
+
 					}
 				</script>
 EOQ;
 	}
-	
-	
+
+
 	function getSelectOptions($id = ''){
 		global $current_user;
-		$this->javascript .="var ConversionRates = new Array(); \n";		
+		$this->javascript .="var ConversionRates = new Array(); \n";
 		$this->javascript .="var CurrencySymbols = new Array(); \n";
 		$options = '';
 		$this->lookupCurrencies();
@@ -184,18 +183,18 @@ EOQ;
 			$options .= '<option value="'. $data->id . '" selected>';
 			$setLastRate = true;
 			$this->javascript .= 'var lastRate = "' . $data->conversion_rate . '";';
-			
+
 			}else{
 				$options .= '<option value="'. $data->id . '">'	;
 			}
-			$options .= $data->name . ' : ' . $data->symbol; 
+			$options .= $data->name . ' : ' . $data->symbol;
 			$this->javascript .=" ConversionRates['".$data->id."'] = '".$data->conversion_rate."';\n";
 			$this->javascript .=" CurrencySymbols['".$data->id."'] = '".$data->symbol."';\n";
 		}}
 		if(!$setLastRate){
 			$this->javascript .= 'var lastRate = "1";';
 		}
-		
+
 	}
 	return $options;
 	}
@@ -208,7 +207,7 @@ EOQ;
 		$add = translate('LBL_ADD');
 		$delete = translate('LBL_DELETE');
 		$update = translate('LBL_UPDATE');
-		
+
 		$form = $html = "<br><table cellpadding='0' cellspacing='0' border='0'  class='tabForm'><tr><td><tableborder='0' cellspacing='0' cellpadding='0'>";
 		$form .= <<<EOQ
 					<form name='DeleteCurrency' action='index.php' method='post'><input type='hidden' name='action' value='{$_REQUEST['action']}'>
@@ -221,7 +220,7 @@ EOQ;
 EOQ;
 		if(isset($this->list ) && !empty($this->list )){
 		foreach ($this->list as $data){
-			
+
 			$form .= '<tr><td>'.$data->iso4217. '<input type="hidden" name="iso[]" value="'.$data->iso4217.'"></td><td><input type="hidden" name="id[]" value="'.$data->id.'">'.$data->name. '<input type="hidden" name="name[]" value="'.$data->name.'"></td><td>'.$data->symbol. '<input type="hidden" name="symbol[]" value="'.$data->symbol.'"></td><td>'.$data->conversion_rate.'&nbsp;</td><td><input type="text" name="rate[]" value="'.$data->conversion_rate.'"><td>&nbsp;<input type="button" name="delete" class="button" value="'.$delete.'" onclick="document.forms[\'DeleteCurrency\'].deleteCur.value=\''.$data->id.'\';document.forms[\'DeleteCurrency\'].submit();"> </td></tr>';
 		}
 		}
@@ -235,22 +234,14 @@ EOQ;
 					</form></table></td></tr></table>
 EOQ;
 	return $form;
-		
+
 	}
-	
+
 	function setCurrencyFields($fields){
 		$json = getJSONobj();
 		$this->javascript .= 'var currencyFields = ' . $json->encode($fields) . ";\n";
 	}
-				
-		
+
+
 }
 
-//$lc = new ListCurrency();
-//$lc->handleDelete();
-//$lc->handleAdd();
-//$lc->handleUpdate();
-//echo '<select>'. $lc->getSelectOptions() . '</select>';
-//echo $lc->getTable();
-
-?>

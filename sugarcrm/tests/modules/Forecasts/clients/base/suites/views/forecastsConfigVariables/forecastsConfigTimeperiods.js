@@ -52,6 +52,7 @@ describe("The forecastsConfigTimeperiods view", function(){
             testMonthMethodStub = sinon.stub(view, "_setUpTimeperiodStartMonthBind", function() {return field;});
             testDayMethodStub = sinon.stub(view, "_setUpTimeperiodStartDayBind", function() {return field;});
             testIntervalMethodStub = sinon.stub(view, "_setUpTimeperiodIntervalBind", function() {return field;});
+            testShowFWBWMethodStub = sinon.stub(view, "_setUpTimeperiodShowField", function() {return field;});
             field = {
             }
             view.model = {
@@ -67,6 +68,21 @@ describe("The forecastsConfigTimeperiods view", function(){
             testDayMethodStub.restore();
             testIntervalMethodStub.restore();
             delete field;
+        });
+
+
+        it("should set up timeperiod_shown_forward field", function() {
+            field.name = "timeperiod_shown_forward";
+            view._renderField(field);
+            expect(_renderFieldStub).toHaveBeenCalledWith(field);
+            expect(testShowFWBWMethodStub).toHaveBeenCalledWith(field);
+        });
+
+        it("should set up timeperiod_shown_backward field", function() {
+            field.name = "timeperiod_shown_backward";
+            view._renderField(field);
+            expect(_renderFieldStub).toHaveBeenCalledWith(field);
+            expect(testShowFWBWMethodStub).toHaveBeenCalledWith(field);
         });
 
         it("should set up month field", function() {

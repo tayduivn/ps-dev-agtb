@@ -93,7 +93,6 @@ $viewdefs['Documents']['EditView'] = array(
       array('name'=>'description'),
     ),
 
-    //BEGIN SUGARCRM flav!=sales ONLY
     array (
       array('name'=>'related_doc_name',
             'customCode' => '<input name="related_document_name" type="text" size="30" maxlength="255" value="{$RELATED_DOCUMENT_NAME}" readonly>' .
@@ -103,7 +102,6 @@ $viewdefs['Documents']['EditView'] = array(
             'customCode' => '<select name="related_doc_rev_id" id="related_doc_rev_id" {$RELATED_DOCUMENT_REVISION_DISABLED}>{$RELATED_DOCUMENT_REVISION_OPTIONS}</select>',
            ),
     ),
-    //END SUGARCRM flav!=sales ONLY
 
     ),
   'LBL_PANEL_ASSIGNMENT' =>

@@ -38,6 +38,7 @@ class RepairAndClear
         $this->execute=$autoexecute;
 
         //clear vardefs always..
+        // Since this is called here it should not be in the actions
         $this->clearVardefs();
         //first  clear the language cache.
         $this->clearLanguageCache();
@@ -67,9 +68,6 @@ class RepairAndClear
                 break;
             case 'clearThemeCache':
                 $this->clearThemeCache();
-                break;
-            case 'clearVardefs':
-                $this->clearVardefs();
                 break;
             case 'clearJsLangFiles':
                 $this->clearJsLangFiles();
@@ -149,19 +147,15 @@ class RepairAndClear
 				//repair DB
 				$dm = inDeveloperMode();
 				$GLOBALS['sugar_config']['developerMode'] = true;
+				$GLOBALS['reload_vardefs'] = true;
 				foreach($this->module_list as $bean_name)
 				{
-
-					if (isset($beanFiles[$bean_name]) && file_exists($beanFiles[$bean_name]))
+				    $focus = BeanFactory::newBean($bean_name);
+					if (!empty($focus))
 					{
-						require_once($beanFiles[$bean_name]);
-						$GLOBALS['reload_vardefs'] = true;
-						$focus = new $bean_name ();
 						#30273
-						if($focus->disable_vardefs == false) {
+						if(empty($focus->disable_vardefs)) {
 							include('modules/' . $focus->module_dir . '/vardefs.php');
-
-
 							if($this->show_output)
 								print_r("<p>" .$mod_strings['LBL_REPAIR_DB_FOR'].' '. $bean_name . "</p>");
 							$sql .= $db->repairTable($focus, $this->execute);
@@ -252,7 +246,7 @@ class RepairAndClear
         global $expect_versions;
 
         if (isset($expect_versions['Chart Data Cache'])) {
-            $version = new Version();
+            $version = BeanFactory::getBean('Versions');
             $version->retrieve_by_string_fields(array('name'=>'Chart Data Cache'));
 
             $version->name = $expect_versions['Chart Data Cache']['name'];
@@ -418,7 +412,7 @@ class RepairAndClear
                     }
                 }
                 closedir($handle);
-            }            
+            }
         }
         // clear the platform cache from sugar_cache to avoid out of date data
         $platforms = MetaDataManager::getPlatformList();
@@ -428,7 +422,7 @@ class RepairAndClear
             sugar_cache_clear($hashKey);
         }
     }
-        
+
 
 	//////////////////////////////////////////////////////////////
 	/////REPAIR AUDIT TABLES
@@ -441,16 +435,16 @@ class RepairAndClear
 		if(!in_array( translate('LBL_ALL_MODULES'), $this->module_list) && !empty($this->module_list))
 		{
 			foreach ($this->module_list as $bean_name){
-				if( isset($beanFiles[$bean_name]) && file_exists($beanFiles[$bean_name])) {
-					require_once($beanFiles[$bean_name]);
-				    $this->_rebuildAuditTablesHelper(new $bean_name());
+			    $bean = BeanFactory::getBean($bean_name);
+				if(!empty($bean)) {
+				    $this->_rebuildAuditTablesHelper($bean);
 				}
 			}
 		} else if(in_array(translate('LBL_ALL_MODULES'), $this->module_list)) {
 			foreach ($beanFiles as $bean => $file){
-				if( file_exists($file)) {
-					require_once($file);
-				    $this->_rebuildAuditTablesHelper(new $bean());
+			    $bean_instance = BeanFactory::newBeanByName($bean_name);
+				if(!empty($bean_instance)) {
+				    $this->_rebuildAuditTablesHelper($bean_instance);
 				}
 			}
 		}

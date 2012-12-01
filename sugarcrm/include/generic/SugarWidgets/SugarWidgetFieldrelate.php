@@ -68,13 +68,9 @@ class SugarWidgetFieldRelate extends SugarWidgetReportField
     {
         $ids = array();
 
-        $relation = new Relationship();
+        $relation = BeanFactory::getBean('Relationships');
         $relation->retrieve_by_name($layout_def['link']);
-
-        global $beanList;
-        $beanClass = $beanList[$relation->lhs_module];
-        $seed = new $beanClass();
-        $seed->retrieve($layout_def['input_name0']);
+        $seed = BeanFactory::getBean($relation->lhs_module, $layout_def['input_name0']);
 
         $link = new Link2($layout_def['link'], $seed);
         $sql = $link->getQuery();
@@ -98,12 +94,10 @@ class SugarWidgetFieldRelate extends SugarWidgetReportField
     {
         $ids = array();
 
-        $relation = new Relationship();
+        $relation = BeanFactory::getBean('Relationships');
         $relation->retrieve_by_name($layout_def['link']);
 
-        global $beanList;
-        $beanClass = $beanList[$relation->lhs_module];
-        $seed = new $beanClass();
+        $seed = BeanFactory::getBean($relation->lhs_module);
 
         foreach($layout_def['input_name0'] as $beanId)
         {

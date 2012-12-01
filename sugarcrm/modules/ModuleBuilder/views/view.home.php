@@ -71,9 +71,7 @@ class ViewHome extends SugarView
 		$this->buttons[$GLOBALS['mod_strings']['LBL_STUDIO']] = array ('action' => 'javascript:ModuleBuilder.main("studio")', 'imageTitle' => 'Studio', 'size' => '128', 'help'=>'studioBtn');
         }
         if(is_admin($current_user)) {
-//BEGIN SUGARCRM flav!=sales ONLY
 		$this->buttons[$GLOBALS['mod_strings']['LBL_MODULEBUILDER']] = array ('action' => 'javascript:ModuleBuilder.main("mb")', 'imageTitle' => 'ModuleBuilder', 'size' => '128', 'help'=>'mbBtn');
-//END SUGARCRM flav!=sales ONLY
 //BEGIN SUGARCRM flav=ent ONLY
 
 		$this->buttons[$GLOBALS['mod_strings']['LBL_SUGARPORTAL']] = array ('action' => 'javascript:ModuleBuilder.main("sugarportal")', 'imageTitle' => $GLOBALS['mod_strings']['LBL_SUGAR_PORTAL'], 'imageName' => 'SugarPortal', 'size' => '128', 'help'=>'sugarPortalBtn');

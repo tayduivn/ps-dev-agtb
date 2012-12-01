@@ -1,5 +1,5 @@
 
-//FILE SUGARCRM flav=pro || flav=sales ONLY
+//FILE SUGARCRM flav=pro ONLY
 
 
 /**

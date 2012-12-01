@@ -42,8 +42,7 @@ class ProjectTaskViewDetail extends ViewDetail
 		global $beanFiles;
 		require_once($beanFiles['ProjectTask']);
 		
-		$focus = new ProjectTask();
-		$focus->retrieve($_REQUEST['record']);
+		$focus = BeanFactory::getBean('ProjectTask', $_REQUEST['record']);
 		
 		$this->ss->assign('resource', $focus->getResourceName());
 		

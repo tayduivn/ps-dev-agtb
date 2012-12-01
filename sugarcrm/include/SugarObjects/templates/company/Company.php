@@ -28,26 +28,38 @@
 require_once('include/SugarObjects/templates/basic/Basic.php');
 
 class Company extends Basic
-{ 	
+{
+
+    /**
+     * This is a depreciated method, please start using __construct() as this method will be removed in a future version
+     *
+     * @see __construct
+     * @deprecated
+     */
+    public function Company()
+    {
+        $this->__construct();
+    }
+
  	/**
  	 * Constructor
  	 */
     public function __construct()
  	{
  		parent::__construct();
- 		$this->emailAddress = new SugarEmailAddress();
+ 		$this->emailAddress = BeanFactory::getBean('EmailAddresses');
  	}
- 	
+
  	/**
  	 * @see parent::save()
  	 */
-	public function save($check_notify=false) 
+	public function save($check_notify=false)
  	{
  	    if(!empty($GLOBALS['resavingRelatedBeans']))
  	    {
  	        parent::save($check_notify);
  	        return $this;
- 	    } 	    
+ 	    }
 		$this->add_address_streets('billing_address_street');
 		$this->add_address_streets('shipping_address_street');
         $ori_in_workflow = empty($this->in_workflow) ? false : true;
@@ -68,7 +80,7 @@ class Company extends Basic
         }
 		return $this;
 	}
-	
+
  	/**
  	 * Populate email address fields here instead of retrieve() so that they are properly available for logic hooks
  	 *
@@ -79,12 +91,12 @@ class Company extends Basic
 	    parent::fill_in_relationship_fields();
 	    $this->emailAddress->handleLegacyRetrieve($this);
 	}
-	
+
 	/**
  	 * @see parent::get_list_view_data()
  	 */
-	public function get_list_view_data() 
-	{	
+	public function get_list_view_data()
+	{
 		global $system_config;
 		global $current_user;
 		$temp_array = $this->get_list_view_array();

@@ -329,29 +329,17 @@ class ListViewDisplay {
 		$mass->setSugarBean($this->seed);
 		if ( ( ACLController::checkAccess($this->seed->module_dir,'edit',true) && ACLController::checkAccess($this->seed->module_dir,'massupdate',true) ) && $this->showMassupdateFields && $mass->doMassUpdateFieldsExistForFocus() )
             $menuItems[] = $this->buildMassUpdateLink($location);
-		//BEGIN SUGARCRM flav=sales ONLY
-		else if($this->seed->module_dir == 'Users' && $GLOBALS['current_user']->user_type == 'UserAdministrator')
-			$menuItems[] = $this->buildMassUpdateLink($location);
-		//END SUGARCRM flav=sales ONLY
-		//BEGIN SUGARCRM flav!=sales ONLY
 		// merge
 		if ( $this->mailMerge )
 		    $menuItems[] = $this->buildMergeLink(null, $location);
-		//END SUGARCRM flav!=sales ONLY
 		if ( $this->mergeduplicates )
 		    $menuItems[] = $this->buildMergeDuplicatesLink($location);
-		//BEGIN SUGARCRM flav!=sales ONLY
 		// add to target list
 		if ( $this->targetList && ACLController::checkAccess('ProspectLists','edit',true) )
 		    $menuItems[] = $this->buildTargetList($location);
-		//END SUGARCRM flav!=sales ONLY
 		// export
 		if ( ACLController::checkAccess($this->seed->module_dir,'export',true) && $this->export )
 			$menuItems[] = $this->buildExportLink($location);
-		//BEGIN SUGARCRM flav=sales ONLY
-		else if($this->seed->module_dir == 'Users' && $GLOBALS['current_user']->user_type == 'UserAdministrator')
-			$menuItems[] = $this->buildExportLink($location);
-		//END SUGARCRM flav=sales ONLY
 
 		foreach ( $this->actionsMenuExtraItems as $item )
 		    $menuItems[] = $item;
@@ -490,7 +478,6 @@ class ListViewDisplay {
 
         return "";
      }
-	//BEGIN SUGARCRM flav!=sales ONLY
     /**
 	 * Builds the mail merge link
 	 *
@@ -503,8 +490,7 @@ class ListViewDisplay {
         }
         global $current_user, $app_strings;
 
-        $admin = new Administration();
-        $admin->retrieveSettings('system');
+        $admin = Administration::getSettings('system');
         $user_merge = $current_user->getPreference('mailmerge_on');
         $module_dir = (!empty($this->seed->module_dir) ? $this->seed->module_dir : '');
         $str = '';
@@ -599,7 +585,6 @@ EOF;
         $js = str_replace(array("\r","\n"),'',$js);
         return "<a href='javascript:void(0)' id=\"targetlist_listview_". $loc ." \" onclick=\"$js\">{$app_strings['LBL_ADD_TO_PROSPECT_LIST_BUTTON_LABEL']}</a>";
 	}
-	//END SUGARCRM flav!=sales ONLY
 	/**
 	 * Display the bottom of the ListView (ie MassUpdate
 	 * @return string contents

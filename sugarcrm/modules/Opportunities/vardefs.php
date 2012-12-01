@@ -76,7 +76,6 @@ $dictionary['Opportunity'] = array('table' => 'opportunities','audited'=>true, '
     'source'=>'non-db',
     'audited'=>true,
   ),
-//BEGIN SUGARCRM flav!=sales ONLY
   'campaign_id' =>
       array (
         'name' => 'campaign_id',
@@ -114,7 +113,6 @@ $dictionary['Opportunity'] = array('table' => 'opportunities','audited'=>true, '
 		'relationship' => 'campaign_opportunities',
 		'source' => 'non-db',
     ),
-	//END SUGARCRM flav!=sales ONLY
   'lead_source' =>
   array (
     'name' => 'lead_source',
@@ -271,7 +269,8 @@ $dictionary['Opportunity'] = array('table' => 'opportunities','audited'=>true, '
     'dbType' => 'currency',
     'type' => 'currency',
     'len' => '26,6',
-    'validation' => array('type' => 'range', 'min' => 0)
+    'validation' => array('type' => 'range', 'min' => 0),
+    'audited'=>true,
   ),
   'worst_case' =>
   array (
@@ -280,7 +279,8 @@ $dictionary['Opportunity'] = array('table' => 'opportunities','audited'=>true, '
     'dbType' => 'currency',
     'type' => 'currency',
     'len' => '26,6',
-    'validation' => array('type' => 'range', 'min' => 0)
+    'validation' => array('type' => 'range', 'min' => 0),
+    'audited'=>true,
   ),
   'commit_stage' =>
   array (
@@ -373,7 +373,6 @@ $dictionary['Opportunity'] = array('table' => 'opportunities','audited'=>true, '
   ),
 
    //END SUGARCRM flav=pro ONLY
-   //BEGIN SUGARCRM flav!=sales ONLY
 
   'project' =>
   array (
@@ -414,7 +413,6 @@ $dictionary['Opportunity'] = array('table' => 'opportunities','audited'=>true, '
         'source' => 'non-db',
         'reportable' => false
     ),
-  //END SUGARCRM flav!=sales ONLY
   'currencies' =>
   array (
     'name' => 'currencies',
@@ -481,11 +479,9 @@ $dictionary['Opportunity'] = array('table' => 'opportunities','audited'=>true, '
 							  'rhs_module'=> 'Emails', 'rhs_table'=> 'emails', 'rhs_key' => 'parent_id',
 							  'relationship_type'=>'one-to-many', 'relationship_role_column'=>'parent_type',
 							  'relationship_role_column_value'=>'Opportunities')
-	//BEGIN SUGARCRM flav!=sales ONLY
 	,'opportunity_leads' => array('lhs_module'=> 'Opportunities', 'lhs_table'=> 'opportunities', 'lhs_key' => 'id',
 							  'rhs_module'=> 'Leads', 'rhs_table'=> 'leads', 'rhs_key' => 'opportunity_id',
 							  'relationship_type'=>'one-to-many')
-   //END SUGARCRM flav!=sales ONLY
     ,'opportunity_currencies' => array('lhs_module'=> 'Opportunities', 'lhs_table'=> 'opportunities', 'lhs_key' => 'currency_id',
                               'rhs_module'=> 'Currencies', 'rhs_table'=> 'currencies', 'rhs_key' => 'id',
                               'relationship_type'=>'one-to-many')
@@ -503,12 +499,10 @@ $dictionary['Opportunity'] = array('table' => 'opportunities','audited'=>true, '
    array('lhs_module'=> 'Users', 'lhs_table'=> 'users', 'lhs_key' => 'id',
    'rhs_module'=> 'Opportunities', 'rhs_table'=> 'opportunities', 'rhs_key' => 'created_by',
    'relationship_type'=>'one-to-many'),
-   //BEGIN SUGARCRM flav!=sales ONLY
 'opportunities_campaign' =>
    array('lhs_module'=> 'Campaigns', 'lhs_table'=> 'campaigns', 'lhs_key' => 'id',
    'rhs_module'=> 'Opportunities', 'rhs_table'=> 'opportunities', 'rhs_key' => 'campaign_id',
    'relationship_type'=>'one-to-many'),
-   //END SUGARCRM flav!=sales ONLY
 
    //BEGIN SUGARCRM flav=pro ONLY
    'opportunities_products' =>

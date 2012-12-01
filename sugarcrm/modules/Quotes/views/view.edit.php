@@ -44,7 +44,7 @@ class QuotesViewEdit extends ViewEdit
 		global $timedate;
 		global $locale;
 
-		$original_quote = new Quote();
+		$original_quote = BeanFactory::getBean('Quotes');
 		if($this->ev->isDuplicate)
 		{
 			$this->bean->id = "";
@@ -74,8 +74,7 @@ class QuotesViewEdit extends ViewEdit
 				$this->bean->billing_account_id = $_REQUEST['account_id'];
 				$this->bean->shipping_account_id = $_REQUEST['account_id'];
 				require_once($beanFiles['Account']);
-				$account = new Account;
-				$account->retrieve($this->bean->shipping_account_id);
+				$account = BeanFactory::getBean('Accounts', $this->bean->shipping_account_id);
 				$this->bean->shipping_address_street 	= $account->shipping_address_street;
 				$this->bean->shipping_address_city 		= $account->shipping_address_city;
 				$this->bean->shipping_address_state 		= $account->shipping_address_state;
@@ -90,8 +89,7 @@ class QuotesViewEdit extends ViewEdit
 			if (isset($_REQUEST['contact_id'])) {
 				$this->bean->contact_id = $_REQUEST['contact_id'];
 				require_once($beanFiles['Contact']);
-				$contact = new Contact;
-				$contact->retrieve($this->bean->contact_id);
+				$contact = BeanFactory::getBean('Contacts', $this->bean->contact_id);
 				$this->bean->billing_contact_name 		= $locale->getLocaleFormattedName($contact->first_name, $contact->last_name);
 				$this->bean->billing_contact_id 			= $contact->id;
 				$this->bean->shipping_contact_name 		= $locale->getLocaleFormattedName($contact->first_name, $contact->last_name);
@@ -112,8 +110,7 @@ class QuotesViewEdit extends ViewEdit
 		}
 
 
-		$currency = new Currency();
-		$currency->retrieve($this->bean->currency_id);
+		$currency = BeanFactory::getBean('Currencies', $this->bean->currency_id);
 
 		// Set the number grouping and decimal separators
 		$seps = get_number_seperators();
@@ -160,12 +157,12 @@ class QuotesViewEdit extends ViewEdit
 
 		$this->ss->assign('USER_DATEFORMAT', '('. $timedate->get_user_date_format().')');
 		$this->ss->assign('CALENDAR_DATEFORMAT', $timedate->get_cal_date_format());
-		$taxrate = new TaxRate();
+		$taxrate = BeanFactory::getBean('TaxRates');
 		$this->ss->assign('TAXRATE_OPTIONS', get_select_options_with_id($taxrate->get_taxrates(false), $this->bean->taxrate_id));
 		if (empty($this->bean->taxrate_value)) { $this->ss->assign('TAXRATE_VALUE', $taxrate->get_default_taxrate_value() / 100); }
 		else { $this->ss->assign('TAXRATE_VALUE', $this->bean->taxrate_value / 100); }
 
-		$shipper = new Shipper();
+		$shipper = BeanFactory::getBean('Shippers');
 		$this->ss->assign('SHIPPER_OPTIONS', get_select_options_with_id($shipper->get_shippers(true), $this->bean->shipper_id));
 
 		if (empty($this->bean->assigned_user_id) && empty($this->bean->id))  $this->bean->assigned_user_id = $current_user->id;

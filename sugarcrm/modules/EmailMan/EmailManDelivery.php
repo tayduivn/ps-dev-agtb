@@ -19,7 +19,6 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *to the License for the specific language governing these rights and limitations under the License.
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
-//FILE SUGARCRM flav!=sales ONLY
 
 require_once "modules/Mailer/MailerFactory.php"; // imports all of the Mailer classes that are needed
 
@@ -46,8 +45,7 @@ try {
     return;
 }
 
-$admin = new Administration();
-$admin->retrieveSettings();
+$admin = Administration::getSettings();
 if (isset($admin->settings['massemailer_campaign_emails_per_run'])) {
 	$max_emails_per_run=$admin->settings['massemailer_campaign_emails_per_run'];
 }
@@ -69,7 +67,7 @@ if (isset($_REQUEST['campaign_id']) && !empty($_REQUEST['campaign_id'])) {
 
 $db = DBManagerFactory::getInstance();
 $timedate = TimeDate::getInstance();
-$emailman = new EmailMan();
+$emailman = BeanFactory::getBean('EmailMan');
 
     if($test){
         //if this is in test mode, then
@@ -116,7 +114,7 @@ do {
 	if(isset($current_user)){
 		$temp_user = $current_user;
 	}
-	$current_user = new User();
+	$current_user = BeanFactory::getBean('Users');
 	$startTime = microtime(true);
 
 	while(($row = $db->fetchByAssoc($result))!= null){
@@ -150,14 +148,12 @@ do {
             if (!class_exists('EmailMarketing')) {
 
             }
-            $current_emailmarketing=new EmailMarketing();
-            $current_emailmarketing->retrieve($row['marketing_id']);
+            $current_emailmarketing = BeanFactory::getBean('EmailMarketing', $row['marketing_id']);
 
             if (!class_exists('EmailTemplate')) {
 
             }
-            $current_emailtemplate= new EmailTemplate();
-            $current_emailtemplate->retrieve($current_emailmarketing->template_id);
+            $current_emailtemplate = BeanFactory::getBean('EmailTemplates', $current_emailmarketing->template_id);
 
         }
 

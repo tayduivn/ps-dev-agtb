@@ -30,6 +30,33 @@ describe("The Forecasts Progress Calculations display", function() {
         view = SugarTest.loadFile("../modules/Forecasts/clients/base/views/forecastsProgress", "forecastsProgress", "js", function(d) {return eval(d); });
     });
 
+    describe("handleRenderOptions", function(){
+        beforeEach(function() {
+            view.model = new Backbone.Model({
+                show_projected_likely: false,
+                show_projected_best: false,
+                show_projected_worst: false
+            });
+            view.progressDataSet = {
+                'likely' : 'Likely',
+                'best' : 'Best',
+                'worst' : 'Worst'
+            };
+        });
+
+        afterEach(function() {
+            delete view.model;
+            delete view.progressDataSet;
+        });
+
+        it("should cause models to change", function(){
+            view.handleRenderOptions();
+            expect(view.model.get('show_projected_likely')).toBeTruthy();
+            expect(view.model.get('show_projected_best')).toBeTruthy();
+            expect(view.model.get('show_projected_worst')).toBeTruthy();
+        });
+    });
+
     describe("Rep Worksheet changes", function() {
         beforeEach(function() {
             view.selectedUser = {isManager: false, showOpps: true, id: "seed_test"};

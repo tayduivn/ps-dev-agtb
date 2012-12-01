@@ -54,6 +54,17 @@ class UserPreference extends SugarBean
 
     protected $_userFocus;
 
+    /**
+     * This is a depreciated method, please start using __construct() as this method will be removed in a future version
+     *
+     * @see __construct
+     * @deprecated
+     */
+    public function UserPreference(User $user = null)
+    {
+        $this->__construct($user);
+    }
+
     // Do not actually declare, use the functions statically
     public function __construct(
         User $user = null
@@ -349,12 +360,6 @@ class UserPreference extends SugarBean
             $query .= " AND category = '" . $category . "'";
         $this->db->query($query);
 
-        //BEGIN SUGARCRM flav=sales ONLY
-        $this->setPreference('use_real_names', 'on');
-        $this->setPreference('reminder_time', 1800);
-        $this->setPreference('mailmerge_on', 'on');
-        $this->setPreference('email_link_type', 'mailto');
-        //END SUGARCRM flav=sales ONLY
 
         if($category) {
             unset($_SESSION[$user->user_name."_PREFERENCES"][$category]);

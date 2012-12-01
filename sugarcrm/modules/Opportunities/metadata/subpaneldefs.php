@@ -135,7 +135,6 @@ $layout_defs['Opportunities'] = array(
                     ),
                 ),
         ),
-		//BEGIN SUGARCRM flav!=sales ONLY
         'leads' => array(
 			'order' => 50,
 			'module' => 'Leads',
@@ -153,7 +152,6 @@ $layout_defs['Opportunities'] = array(
 				),
 			),
 		),
-		//END SUGARCRM flav!=sales ONLY
         'contacts' => array(
 			'order' => 30,
 			'module' => 'Contacts',
@@ -207,7 +205,6 @@ $layout_defs['Opportunities'] = array(
 
         //END SUGARCRM flav=ent ONLY
 
-        //BEGIN SUGARCRM flav!=sales ONLY
 
         'project' => array(
 			'order' => 70,
@@ -223,7 +220,6 @@ $layout_defs['Opportunities'] = array(
 			),
 		),
 
-		//END SUGARCRM flav!=sales ONLY
         //BEGIN SUGARCRM flav=pro ONLY
 
 		'contracts' => array(

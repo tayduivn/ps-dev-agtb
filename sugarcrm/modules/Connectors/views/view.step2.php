@@ -1,5 +1,5 @@
 <?php
-//FILE SUGARCRM flav=pro || flav=sales ONLY
+//FILE SUGARCRM flav=pro ONLY
 if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 /*********************************************************************************
@@ -128,7 +128,7 @@ class ViewStep2 extends SugarView
 		    }
 
 		    $merge_fields = array();
-            $focusBean = loadBean($module);
+            $focusBean = BeanFactory::getBean($module);
 		    foreach($viewdefs['Connector']['MergeView'][$module] as $field){
 		    	    if($focusBean->field_defs[$field]['type'] == 'relate') {
 		    	       continue;

@@ -348,7 +348,6 @@ $dictionary['Email'] = array(
 			'bean_name'		=> 'Account',
 			'source'		=> 'non-db',
 		),
-		//BEGIN SUGARCRM flav!=sales ONLY
 		'bugs'	=> array (
 			'name'			=> 'bugs',
 			'vname'			=> 'LBL_EMAILS_BUGS_REL',
@@ -358,7 +357,6 @@ $dictionary['Email'] = array(
 			'bean_name'		=> 'Bug',
 			'source'		=> 'non-db',
 		),
-		//END SUGARCRM flav!=sales ONLY
 		'cases'	=> array (
 			'name'			=> 'cases',
 			'vname'			=> 'LBL_EMAILS_CASES_REL',
@@ -377,7 +375,6 @@ $dictionary['Email'] = array(
 			'bean_name'		=> 'Contact',
 			'source'		=> 'non-db',
 		),
-		//BEGIN SUGARCRM flav!=sales ONLY
 		'leads'	=> array (
 			'name'			=> 'leads',
 			'vname'			=> 'LBL_EMAILS_LEADS_REL',
@@ -387,7 +384,6 @@ $dictionary['Email'] = array(
 			'bean_name'		=> 'Lead',
 			'source'		=> 'non-db',
 		),
-		//END SUGARCRM flav!=sales ONLY
 		'opportunities'	=> array (
 			'name'			=> 'opportunities',
 			'vname'			=> 'LBL_EMAILS_OPPORTUNITIES_REL',
@@ -397,7 +393,6 @@ $dictionary['Email'] = array(
 			'bean_name'		=> 'Opportunity',
 			'source'		=> 'non-db',
 		),
-		//BEGIN SUGARCRM flav!=sales ONLY
 		'project'=> array(
 			'name'			=> 'project',
 			'vname'			=> 'LBL_EMAILS_PROJECT_REL',
@@ -426,7 +421,6 @@ $dictionary['Email'] = array(
 			'source'		=> 'non-db',
 		),
 
-		//END SUGARCRM flav!=sales ONLY
 
 //BEGIN SUGARCRM flav=pro ONLY
 

@@ -79,10 +79,10 @@
 				    </td>
 					<td>&nbsp;&nbsp;</td>
 					<td>
-					    {* BEGIN SUGARCRM flav=pro || flav=sales ONLY *}
+					    {* BEGIN SUGARCRM flav=pro ONLY *}
 					    <b>{$mod.LBL_MODIFY_SEARCH_TITLE}</b><br/>
 						{$mod.LBL_MODIFY_SEARCH_DESC}
-						{* END SUGARCRM flav=pro || flav=sales ONLY *}
+						{* END SUGARCRM flav=pro ONLY *}
 					</td>	
 				</tr>
 

@@ -35,7 +35,6 @@
                             {$NEW_EMAIL}
                         </td>
                     </tr>
-                    <!--//BEGIN SUGARCRM flav!=sales ONLY -->
                     <tr id="email_options_link_type">
                         <td align="top"  scope="row">
                             {$MOD.LBL_EMAIL_LINK_TYPE|strip_semicolon}:
@@ -62,7 +61,6 @@
                         </td>
                     </tr>
                     {/if}
-                    <!--//END SUGARCRM flav!=sales ONLY -->
                 </table>
             </div>
         </div>
@@ -72,13 +70,11 @@
                 <tr>
                 <th colspan='4' align="left" width="100%" valign="top"><h4><slot>{$MOD.LBL_USER_SETTINGS}</slot></h4></th>
                 </tr>
-                <!--//BEGIN SUGARCRM flav!=sales ONLY -->
                 <tr>
                 <td scope="row"><slot>{$MOD.LBL_RECEIVE_NOTIFICATIONS|strip_semicolon}:</slot></td>
                 <td><slot><input class="checkbox" type="checkbox" disabled {$RECEIVE_NOTIFICATIONS}></slot></td>
                 <td><slot>{$MOD.LBL_RECEIVE_NOTIFICATIONS_TEXT}&nbsp;</slot></td>
                 </tr>
-                <!--//END SUGARCRM flav!=sales ONLY -->
                 <!--//BEGIN SUGARCRM flav=pro ONLY -->
                 <tr>
                 <td width="15%" scope="row"><slot>{$MOD.LBL_DEFAULT_TEAM|strip_semicolon}:</slot></td>
@@ -86,7 +82,6 @@
                 <td><slot>{$MOD.LBL_DEFAULT_TEAM_TEXT}&nbsp;</slot></td>
                 </tr>
                 <!--//END SUGARCRM flav=pro ONLY -->
-                <!--//BEGIN SUGARCRM flav!=sales ONLY -->
                 <tr>
                 <td scope="row" valign="top"><slot>{$MOD.LBL_REMINDER|strip_semicolon}:</td>
                 <td valign="top" nowrap><slot>{include file="modules/Meetings/tpls/reminders.tpl"}</slot></td>
@@ -98,7 +93,6 @@
                 <td valign="top" nowrap><slot><input tabindex='3' name='mailmerge_on' disabled class="checkbox" type="checkbox" {$MAILMERGE_ON}></slot></td>
                 <td><slot>{$MOD.LBL_MAILMERGE_TEXT}&nbsp;</slot></td>
                 </tr>
-                <!--//END SUGARCRM flav!=sales ONLY -->
                 <!--//BEGIN SUGARCRM flav=ent ONLY -->
                 <tr>
                 <td valign="top" scope="row"><slot>{$APP.LBL_OC_STATUS|strip_semicolon}:</slot></td>
@@ -224,7 +218,6 @@
         {/if}
         <!--//END SUGARCRM flav=pro ONLY -->
 
-        <!--//BEGIN SUGARCRM flav!=sales ONLY -->
         <div id='calendar_options'>
             <table width="100%" border="0" cellspacing="0" cellpadding="0" class="detail view">
             <tr>
@@ -254,8 +247,6 @@
             </tr>
             </table>
         </div>
-        <!--//END SUGARCRM flav!=sales ONLY -->
-        <!--//BEGIN SUGARCRM flav!=sales ONLY -->
         <div id='edit_tabs'>
             <table width="100%" border="0" cellspacing="0" cellpadding="0"  class="detail view">
             <tr>
@@ -273,7 +264,6 @@
             </tr>
             </table>
         </div>
-        <!--//END SUGARCRM flav!=sales ONLY -->
     </div>
 {if $SHOW_ROLES}
     {$ROLE_HTML}

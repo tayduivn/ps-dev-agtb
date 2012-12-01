@@ -52,15 +52,14 @@ class SugarWebServiceImplv3 extends SugarWebServiceImpl {
         $GLOBALS['log']->info('Begin: SugarWebServiceImpl->login');
         global $sugar_config, $system_config;
         $error = new SoapError();
-        $user = new User();
+        $user = BeanFactory::getBean('Users');
         $success = false;
         if(!empty($user_auth['encryption']) && $user_auth['encryption'] === 'PLAIN')
         {
             $user_auth['password'] = md5($user_auth['password']);
         }
         //rrs
-        $system_config = new Administration();
-        $system_config->retrieveSettings('system');
+        $system_config = Administration::getSettings('system');
         $authController = new AuthenticationController((!empty($sugar_config['authenticationClass'])? $sugar_config['authenticationClass'] : 'SugarAuthenticate'));
         //rrs
         $isLoginSuccess = $authController->login($user_auth['user_name'], $user_auth['password'], array('passwordEncrypted' => true));
@@ -129,8 +128,7 @@ class SugarWebServiceImplv3 extends SugarWebServiceImpl {
             $nameValueArray['user_default_team_id'] = self::$helperObject->get_name_value('user_default_team_id', $current_user->default_team );
             $nameValueArray['user_default_dateformat'] = self::$helperObject->get_name_value('user_default_dateformat', $current_user->getPreference('datef') );
             $nameValueArray['user_default_timeformat'] = self::$helperObject->get_name_value('user_default_timeformat', $current_user->getPreference('timef') );
-            $currencyObject = new Currency();
-            $currencyObject->retrieve($cur_id);
+            $currencyObject = BeanFactory::getBean('Currencies', $cur_id);
             $nameValueArray['user_currency_name'] = self::$helperObject->get_name_value('user_currency_name', $currencyObject->name);
             $_SESSION['user_language'] = $current_language;
             return array('id'=>session_id(), 'module_name'=>'Users', 'name_value_list'=>$nameValueArray);
@@ -204,9 +202,7 @@ class SugarWebServiceImplv3 extends SugarWebServiceImpl {
                 continue;
             }
 
-            $class_name = $beanList[$module_name];
-            require_once($beanFiles[$class_name]);
-            $seed = new $class_name();
+            $seed = BeanFactory::getBean($module_name);
 
             foreach ($a_view as $view)
             {
@@ -315,7 +311,7 @@ class SugarWebServiceImplv3 extends SugarWebServiceImpl {
             }
 
             if($module == 'Home') $module = '';
-    	    $tracker = new Tracker();
+    	    $tracker = BeanFactory::getBean('Trackers');
             $entryList = $tracker->get_recently_viewed($GLOBALS['current_user']->id, $module);
             foreach ($entryList as $entry)
                 $results[] = $entry;
@@ -392,9 +388,7 @@ class SugarWebServiceImplv3 extends SugarWebServiceImpl {
     	$modules_to_search = array();
     	$unified_search_modules['Users'] =   array('fields' => array());
 
-    	//BEGIN SUGARCRM flav!=sales ONLY
     	$unified_search_modules['ProjectTask'] =   array('fields' => array());
-        //END SUGARCRM flav!=sales ONLY
 
         foreach($unified_search_modules as $module=>$data) {
         	if (in_array($module, $modules)) {
@@ -414,13 +408,10 @@ class SugarWebServiceImplv3 extends SugarWebServiceImpl {
     				$unifiedSearchFields[$name] [ $field ]['value'] = $search_string;
     			}
 
-    			require_once $beanFiles[$beanName] ;
-    			$seed = new $beanName();
+    			$seed = BeanFactory::getBean($name);
     			require_once 'include/SearchForm/SearchForm2.php' ;
     			if ($beanName == "User"
-    			     //BEGIN SUGARCRM flav!=sales ONLY
     			    || $beanName == "ProjectTask"
-    			     //END SUGARCRM flav!=sales ONLY
     			    ) {
     				if(!self::$helperObject->check_modules_access($current_user, $seed->module_dir, 'read')){
     					continue;
@@ -431,9 +422,7 @@ class SugarWebServiceImplv3 extends SugarWebServiceImpl {
     			}
 
     			if ($beanName != "User"
-    			     //BEGIN SUGARCRM flav!=sales ONLY
     			    && $beanName != "ProjectTask"
-    			     //END SUGARCRM flav!=sales ONLY
     			    ) {
     				$searchForm = new SearchForm ($seed, $name ) ;
 
@@ -497,7 +486,6 @@ class SugarWebServiceImplv3 extends SugarWebServiceImpl {
     LEFT JOIN email_addresses ea ON (ea.id = eabl.email_address_id) ";
     					$main_query = $main_query . "where ((users.first_name like '{$search_string}') or (users.last_name like '{$search_string}') or (users.user_name like '{$search_string}') or (ea.email_address like '{$search_string}')) and users.deleted = 0 and users.is_group = 0 and users.employee_status = 'Active'";
     				} // if
-    				 //BEGIN SUGARCRM flav!=sales ONLY
     				if ($beanName == "ProjectTask") {
     					$filterFields = array('id', 'name', 'project_id', 'project_name');
     					$main_query = "select {$seed->table_name}.project_task_id id,{$seed->table_name}.project_id, {$seed->table_name}.name, project.name project_name from {$seed->table_name} ";
@@ -506,7 +494,6 @@ class SugarWebServiceImplv3 extends SugarWebServiceImpl {
     		            $main_query .= "LEFT JOIN project ON $seed->table_name.project_id = project.id ";
     		            $main_query .= "where {$seed->table_name}.name like '{$search_string}%'";
     				} // if
-    				 //END SUGARCRM flav!=sales ONLY
     			} // else
 
     			$GLOBALS['log']->info('SugarWebServiceImpl->search_by_module - query = ' . $main_query);
@@ -563,17 +550,13 @@ class SugarWebServiceImplv3 extends SugarWebServiceImpl {
     */
     function get_relationships($session, $module_name, $module_id, $link_field_name, $related_module_query, $related_fields, $related_module_link_name_to_fields_array, $deleted, $order_by = ''){
         $GLOBALS['log']->info('Begin: SugarWebServiceImpl->get_relationships');
-    	global  $beanList, $beanFiles;
     	$error = new SoapError();
     	if (!self::$helperObject->checkSessionAndModuleAccess($session, 'invalid_session', $module_name, 'read', 'no_access', $error)) {
     		$GLOBALS['log']->info('End: SugarWebServiceImpl->get_relationships');
     		return;
     	} // if
 
-    	$class_name = $beanList[$module_name];
-    	require_once($beanFiles[$class_name]);
-    	$mod = new $class_name();
-    	$mod->retrieve($module_id);
+    	$mod = BeanFactory::getBean($module_name, $module_id);
 
         if (!self::$helperObject->checkQuery($error, $related_module_query, $order_by)) {
     		$GLOBALS['log']->info('End: SugarWebServiceImpl->get_relationships');
@@ -600,12 +583,9 @@ class SugarWebServiceImplv3 extends SugarWebServiceImpl {
     		if (sizeof($list) > 0) {
     			// get the related module name and instantiate a bean for that.
     			$submodulename = $mod->$link_field_name->getRelatedModuleName();
-    			$submoduleclass = $beanList[$submodulename];
-    			require_once($beanFiles[$submoduleclass]);
 
-    			$submoduletemp = new $submoduleclass();
     			foreach($list as $row) {
-    				$submoduleobject = @clone($submoduletemp);
+    				$submoduleobject = BeanFactory::getBean($submodulename);
     				// set all the database data to this object
     				foreach ($filterFields as $field) {
     					$submoduleobject->$field = $row[$field];

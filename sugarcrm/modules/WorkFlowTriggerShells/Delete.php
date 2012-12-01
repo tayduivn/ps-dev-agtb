@@ -37,7 +37,7 @@ global $mod_strings;
 
 
 
-$focus = new WorkFlowTriggerShell();
+$focus = BeanFactory::getBean('WorkFlowTriggerShells');
 
 if(!isset($_REQUEST['record']))
 	sugar_die($mod_strings['ERR_DELETE_RECORD']);

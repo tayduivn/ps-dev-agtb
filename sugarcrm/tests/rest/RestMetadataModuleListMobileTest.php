@@ -54,7 +54,7 @@ class RestMetadataModuleListMobileTest extends RestTestBase {
      */
     public function testMetadataGetModuleListMobile() {
         $this->_clearMetadataCache();
-        $restReply = $this->_restCall('metadata?type_filter=module_list&platform=mobile');
+        $restReply = $this->_restCall('me');
 
         foreach (SugarAutoLoader::existingCustom('include/MVC/Controller/wireless_module_registry.php') as $file) {
             require $file;
@@ -63,8 +63,9 @@ class RestMetadataModuleListMobileTest extends RestTestBase {
         // $wireless_module_registry is defined in the file loaded above
         $enabledMobile = array_keys($wireless_module_registry);
 
-        $this->assertTrue(isset($restReply['reply']['module_list']),'There is no mobile module list');
-        $restModules = $restReply['reply']['module_list'];
+
+        $this->assertTrue(isset($restReply['reply']['current_user']['module_list']),'There is no mobile module list');
+        $restModules = $restReply['reply']['current_user']['module_list'];
         unset($restModules['_hash']);
         foreach ( $enabledMobile as $module ) {
             $this->assertTrue(in_array($module,$restModules),'Module '.$module.' missing from the mobile module list.');
@@ -78,10 +79,9 @@ class RestMetadataModuleListMobileTest extends RestTestBase {
         $enabledMobile = array('Accounts','Contacts','Opportunities');
 
         $this->_clearMetadataCache();
-        $restReply = $this->_restCall('metadata?type_filter=module_list&platform=mobile');
-        $this->assertTrue(isset($restReply['reply']['module_list']['_hash']),'There is no mobile module list on the second pass');
-        $restModules = $restReply['reply']['module_list'];
-        unset($restModules['_hash']);
+        $restReply = $this->_restCall('me');
+        $this->assertTrue(isset($restReply['reply']['current_user']['module_list']),'There is no mobile module list on the second pass');
+        $restModules = $restReply['reply']['current_user']['module_list'];
         foreach ( $enabledMobile as $module ) {
             $this->assertTrue(in_array($module,$restModules),'Module '.$module.' missing from the mobile module list on the second pass');
         }

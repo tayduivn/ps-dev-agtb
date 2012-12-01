@@ -68,6 +68,17 @@ class Forecast extends SugarBean
 	var $module_dir = 'Forecasts';
 
 
+    /**
+     * This is a depreciated method, please start using __construct() as this method will be removed in a future version
+     *
+     * @see __construct
+     * @deprecated
+     */
+    public function Forecast()
+    {
+        $this->__construct();
+    }
+
 	public function __construct()
 	{
 		global $current_user;
@@ -75,7 +86,7 @@ class Forecast extends SugarBean
 		$this->setupCustomFields('Forecasts'); //parameter is module name
 		$this->disable_row_level_security = true;
 
-		$this->currency = new Currency();
+		$this->currency = BeanFactory::getBean('Currencies');
 		if ( isset($current_user) ) {
 			$this->currency->retrieve($current_user->getPreference('currency'));
 		}

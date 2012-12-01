@@ -32,7 +32,7 @@ class QuoteFormBase{
 function checkForDuplicates($prefix){
 	require_once('include/formbase.php');
 
-	$focus = new Quote();
+	$focus = BeanFactory::getBean('Quotes');
 	if(!checkRequired($prefix, array_keys($focus->required_fields))){
 		return null;
 	}
@@ -148,7 +148,7 @@ function getWideFormBody($prefix, $mod='Quotes', $formname='', $lead=''){
 	}
 
 	if(empty($lead)){
-		$lead = new Lead();
+		$lead = BeanFactory::getBean('Leads');
 	}
 
 if(!empty($mod)){
@@ -229,7 +229,7 @@ EOQ;
 
 $javascript = new javascript();
 $javascript->setFormName($formname);
-$javascript->setSugarBean(new Quote());
+$javascript->setSugarBean(BeanFactory::getBean('Quotes'));
 $javascript->addRequiredFields($prefix);
 $the_form .=$javascript->getScript();
 
@@ -322,7 +322,7 @@ EOQ;
 
 $javascript = new javascript();
 $javascript->setFormName($formname);
-$javascript->setSugarBean(new Quote());
+$javascript->setSugarBean(BeanFactory::getBean('Quotes'));
 $javascript->addRequiredFields($prefix);
 $javascript->addField('date_quote_expected_closed', true, $prefix);
 $the_form .=$javascript->getScript();
@@ -338,7 +338,7 @@ function handleSave($prefix,$redirect=true, $useRequired=false){
 
 	require_once('include/formbase.php');
 
-	$focus = new Quote();
+	$focus = BeanFactory::getBean('Quotes');
 	if($useRequired &&  !checkRequired($prefix, array_keys($focus->required_fields))){
 		return null;
 	}

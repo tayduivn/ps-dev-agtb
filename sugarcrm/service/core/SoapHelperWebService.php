@@ -82,10 +82,9 @@ class SoapHelperWebServices {
 			} //foreach
 		} //if
 
-		//BEGIN SUGARCRM flav!=sales ONLY
 		if($value->module_dir == 'Bugs'){
 			require_once('modules/Releases/Release.php');
-			$seedRelease = new Release();
+			$seedRelease = BeanFactory::getBean('Releases');
 			$options = $seedRelease->get_releases(TRUE, "Active");
 			$options_ret = array();
 			foreach($options as $name=>$value){
@@ -104,7 +103,6 @@ class SoapHelperWebServices {
 				$module_fields['release_name']['options'] = $options_ret;
 			}
 		}
-		//END SUGARCRM flav!=sales ONLY
 
 		if(isset($value->assigned_user_name) && isset($module_fields['assigned_user_id'])) {
 			$module_fields['assigned_user_name'] = $module_fields['assigned_user_id'];
@@ -149,10 +147,9 @@ class SoapHelperWebServices {
 function validate_user($user_name, $password){
 	$GLOBALS['log']->info('Begin: SoapHelperWebServices->validate_user');
 	global $server, $current_user, $sugar_config, $system_config;
-	$user = new User();
+	$user = BeanFactory::getBean('Users');
 	$user->user_name = $user_name;
-	$system_config = new Administration();
-	$system_config->retrieveSettings('system');
+	$system_config = Administration::getSettings('system');
 	$authController = new AuthenticationController((!empty($sugar_config['authenticationClass'])? $sugar_config['authenticationClass'] : 'SugarAuthenticate'));
 	// Check to see if the user name and password are consistent.
 	if($user->authenticate_user($password)){
@@ -199,8 +196,7 @@ function validate_user($user_name, $password){
 
 				global $current_user;
 				require_once('modules/Users/User.php');
-				$current_user = new User();
-				$current_user->retrieve($_SESSION['user_id']);
+				$current_user = BeanFactory::getBean('Users', $_SESSION['user_id']);
 				$this->login_success();
 				$GLOBALS['log']->info('Begin: SoapHelperWebServices->validate_authenticated - passed');
 				$GLOBALS['log']->info('End: SoapHelperWebServices->validate_authenticated');
@@ -709,10 +705,7 @@ function validate_user($user_name, $password){
 			$GLOBALS['log']->info('End: SoapHelperWebServices->new_handle_set_relationship');
 	        return false;
 	    } // if
-	    $class_name = $beanList[$module_name];
-	    require_once($beanFiles[$class_name]);
-	    $mod = new $class_name();
-	    $mod->retrieve($module_id);
+	    $mod = BeanFactory::getBean($module_name, $module_id);
 		if(!$mod->ACLAccess('DetailView')){
 			$GLOBALS['log']->info('End: SoapHelperWebServices->new_handle_set_relationship');
 			return false;
@@ -748,18 +741,15 @@ function validate_user($user_name, $password){
 
 	function new_handle_set_entries($module_name, $name_value_lists, $select_fields = FALSE) {
 		$GLOBALS['log']->info('Begin: SoapHelperWebServices->new_handle_set_entries');
-		global $beanList, $beanFiles, $current_user, $app_list_strings;
+		global $current_user, $app_list_strings;
 
 		$ret_values = array();
 
-		$class_name = $beanList[$module_name];
-		require_once($beanFiles[$class_name]);
 		$ids = array();
 		$count = 1;
 		$total = sizeof($name_value_lists);
 		foreach($name_value_lists as $name_value_list){
-			$seed = new $class_name();
-
+			$seed = BeanFactory::getBean($module_name);
 			$seed->update_vcal = false;
 			foreach($name_value_list as $value){
 				if($value['name'] == 'id'){
@@ -809,7 +799,7 @@ function validate_user($user_name, $password){
 				else{
 					//since we found a duplicate we should set the sync flag
 					if( $seed->ACLAccess('Save')){
-						$seed = new $class_name();
+						$seed = $seed->getCopy();
 						$seed->id = $duplicate_id;
 						$seed->contacts_users_id = $current_user->id;
 						$seed->save();
@@ -1042,14 +1032,12 @@ function validate_user($user_name, $password){
 		$assigned_user_id = $current_user->id;
 
 		// check if it already exists
-	    $focus = new Account();
+	    $focus = BeanFactory::getBean('Accounts');
 	    if($focus->ACLAccess('Save')) {
-			$class = get_class($seed);
-			$temp = new $class();
-			$temp->retrieve($seed->id);
 			if ( empty($account_name) && empty($account_id)) {
 				return;
 			} // if
+	        $temp = BeanFactory::getBean($seed->module_dir, $seed->id);
 			if (!isset($seed->accounts)){
 			    $seed->load_relationship('accounts');
 			} // if
@@ -1173,8 +1161,7 @@ function validate_user($user_name, $password){
 		$GLOBALS['log']->info('Begin: SoapHelperWebServices->decrypt_string');
 		if(function_exists('mcrypt_cbc')){
 			require_once('modules/Administration/Administration.php');
-			$focus = new Administration();
-			$focus->retrieveSettings();
+			$focus = Administration::getSettings();
 			$key = '';
 			if(!empty($focus->settings['ldap_enc_key'])){
 				$key = $focus->settings['ldap_enc_key'];

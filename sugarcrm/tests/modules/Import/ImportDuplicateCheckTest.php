@@ -50,7 +50,7 @@ class ImportDuplicateCheckTest extends Sugar_PHPUnit_Framework_TestCase
     
     public function testGetDuplicateCheckIndexesWithEmail()
     {
-        $focus = loadBean('Contacts');
+        $focus = BeanFactory::getBean('Contacts');
         
         $idc     = new ImportDuplicateCheck($focus);
         $indexes = $idc->getDuplicateCheckIndexes();
@@ -65,7 +65,7 @@ class ImportDuplicateCheckTest extends Sugar_PHPUnit_Framework_TestCase
     
     public function testGetDuplicateCheckIndexesNoEmail()
     {
-        $focus = loadBean('Calls');
+        $focus = BeanFactory::getBean('Calls');
         
         $idc     = new ImportDuplicateCheck($focus);
         $indexes = $idc->getDuplicateCheckIndexes();
@@ -82,11 +82,11 @@ class ImportDuplicateCheckTest extends Sugar_PHPUnit_Framework_TestCase
     {
         $last_name = 'FooBar'.date("YmdHis");
         
-        $focus = loadBean('Contacts');
+        $focus = BeanFactory::getBean('Contacts');
         $focus->last_name = $last_name;
         $id = $focus->save(false);
         
-        $focus = loadBean('Contacts');
+        $focus = BeanFactory::getBean('Contacts');
         $focus->last_name = $last_name;
         
         $idc = new ImportDuplicateCheck($focus);
@@ -100,11 +100,11 @@ class ImportDuplicateCheckTest extends Sugar_PHPUnit_Framework_TestCase
     {
         $email = date("YmdHis").'@foobar.com';
         
-        $focus = loadBean('Contacts');
+        $focus = BeanFactory::getBean('Contacts');
         $focus->email1 = $email;
         $id = $focus->save(false);
         
-        $focus = loadBean('Contacts');
+        $focus = BeanFactory::getBean('Contacts');
         $focus->email1 = $email;
         
         $idc = new ImportDuplicateCheck($focus);
@@ -118,7 +118,7 @@ class ImportDuplicateCheckTest extends Sugar_PHPUnit_Framework_TestCase
     {
         $last_name = 'BadFooBar'.date("YmdHis");
         
-        $focus = loadBean('Contacts');
+        $focus = BeanFactory::getBean('Contacts');
         $focus->last_name = $last_name;
         
         $idc = new ImportDuplicateCheck($focus);
@@ -130,7 +130,7 @@ class ImportDuplicateCheckTest extends Sugar_PHPUnit_Framework_TestCase
     {
         $email = date("YmdHis").'@badfoobar.com';
         
-        $focus = loadBean('Contacts');
+        $focus = BeanFactory::getBean('Contacts');
         $focus->email1 = $email;
         
         $idc = new ImportDuplicateCheck($focus);
@@ -142,7 +142,7 @@ class ImportDuplicateCheckTest extends Sugar_PHPUnit_Framework_TestCase
     public function testExcludeIndexesFromDupeCheck()
     {
         //create the bean to test on
-        $focus = loadBean('Contacts');
+        $focus = BeanFactory::getBean('Contacts');
 
         //create the importDuplicateCheck object and get the list of duplicateCheckIndexes
         $idc = new ImportDuplicateCheck($focus);
@@ -170,7 +170,7 @@ class ImportDuplicateCheckTest extends Sugar_PHPUnit_Framework_TestCase
     public function testCompareOnlySelectedIndexesFromDupeCheck()
     {
         //create a bean, values, populate and save
-        $focus = loadBean('Contacts');
+        $focus = BeanFactory::getBean('Contacts');
         $focus->first_name = 'first '.date("YmdHis");
         $focus->last_name = 'last '.date("YmdHis");
         $focus->assigned_user_id = '1';

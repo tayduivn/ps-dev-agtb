@@ -108,7 +108,6 @@ $layout_defs['Emails'] = array(
 				array('widget_class' => 'SubPanelTopSelectButton', 'mode'=>'MultiSelect')
 			),
 		),
-//BEGIN SUGARCRM flav!=sales ONLY
         'bugs' => array(
 			'order' => 60,
 			'module' => 'Bugs',
@@ -123,7 +122,6 @@ $layout_defs['Emails'] = array(
 				array('widget_class' => 'SubPanelTopSelectButton', 'mode'=>'MultiSelect')
 			),
 		),
-//END SUGARCRM flav!=sales ONLY
 
 //BEGIN SUGARCRM flav=pro ONLY
         'quotes' => array(
@@ -155,7 +153,6 @@ $layout_defs['Emails'] = array(
 		    'top_buttons' => array(),
 		),
 //END SUGARCRM flav=pro ONLY
-//BEGIN SUGARCRM flav!=sales ONLY
 
         'project' => array(
 			'order' => 80,
@@ -171,7 +168,6 @@ $layout_defs['Emails'] = array(
 				array('widget_class' => 'SubPanelTopSelectButton', 'mode'=>'MultiSelect')
 			),
 		),
-//END SUGARCRM flav!=sales ONLY
 
 		'meetings' => array(
             'order' => 1,

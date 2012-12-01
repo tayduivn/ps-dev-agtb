@@ -37,20 +37,18 @@ global $mod_strings;
 
 if(!isset($_REQUEST['record']))
 	sugar_die($mod_strings['ERR_DELETE_RECORD']);
-$focus = new Document();
-$focus->retrieve($_REQUEST['record']);
+$focus = BeanFactory::getBean('Documents', $_REQUEST['record']);
 if(!$focus->ACLAccess('Delete')){
 	ACLController::displayNoAccess(true);
 	sugar_cleanup(true);
 }
 if (isset($_REQUEST['object']) && $_REQUEST['object']="documentrevision") {
 	//delete document revision.
-	$focus = new DocumentRevision();
+	$focus = BeanFactory::getBean('DocumentRevisions');
 	UploadFile::unlink_file($_REQUEST['revision_id'],$_REQUEST['filename']);
 } else {
 	//delete document and its revisions.
-	$focus = new Document();
-	$focus->retrieve($_REQUEST['record']);
+	$focus = BeanFactory::getBean('Documents', $_REQUEST['record']);
 
 	$focus->load_relationships('revisions');	
 	$revisions= $focus->get_linked_beans('revisions','DocumentRevision');

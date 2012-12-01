@@ -46,11 +46,11 @@ require_once 'include/SugarFields/SugarFieldHandler.php';
 class MetaDataManager {
     /**
      * SugarFieldHandler, to assist with cleansing default sugar field values
-     * 
+     *
      * @var SugarFieldHandler
      */
     protected $sfh;
-    
+
     /**
      * The user bean for the logged in user
      *
@@ -75,49 +75,6 @@ class MetaDataManager {
 
     }
 
-    /**
-     * Gets the view defs for a module for a given view|layout
-     *
-     * @param string $moduleName The name of the module
-     * @param string $viewdefType The type of def (layout or view)
-     * @return array
-     */
-    protected function getModuleViewdefs($moduleName, $viewdefType = 'view') {
-        // Return data
-        $data = array();
-
-        // The metadata filenames that we will be getting
-        $data = array();
-
-        // Module metadata directories for fetching controllers and templates
-        $moduledirs = array();
-
-        // Start with SugarObjects :: basic
-        $basic = "include/SugarObjects/templates/basic/clients/{$this->platforms[0]}/{$viewdefType}s";
-        if (SugarAutoLoader::fileExists($basic)) {
-            $result = $this->getSugarClientFiles($viewdefType, 'include/SugarObjects/templates/basic/', "<module_name>");
-            foreach ($result as $name => $fileArray) {
-                $data[$name] = $fileArray;
-            }
-        }
-
-        // Now get the SugarObjects :: $moduleType files
-        $moduleType = MetaDataFiles::getSugarObjectFileDir($moduleName, $this->platforms[0], $viewdefType);
-        if (SugarAutoLoader::fileExists($moduleType)) {
-            $result = $this->getSugarClientFiles($viewdefType, $moduleType, "<module_name>");
-            foreach ($result as $name => $fileArray) {
-                $data[$name] = $fileArray;
-            }
-        }
-
-        // Now handle the module locations
-        $result = $this->getSugarClientFiles($viewdefType, "modules/{$moduleName}/", $moduleName);
-        foreach ($result as $name => $fileArray) {
-            $data[$name] = $fileArray;
-        }
-
-        return $data;
-    }
     /**
      * For a specific module get any existing Subpanel Definitions it may have
      * @param string $moduleName
@@ -174,7 +131,7 @@ class MetaDataManager {
      * @return Array A hash of all of the view data.
      */
     public function getModuleViews($moduleName) {
-        return $this->getModuleViewdefs($moduleName, 'view');
+        return $this->getModuleClientData('view',$moduleName);
     }
 
     /**
@@ -185,7 +142,7 @@ class MetaDataManager {
      * @return Array A hash of all of the view data.
      */
     public function getModuleLayouts($moduleName) {
-        return $this->getModuleViewdefs($moduleName, 'layout');
+        return $this->getModuleClientData('layout', $moduleName);
     }
 
     /**
@@ -196,7 +153,7 @@ class MetaDataManager {
      * @return Array A hash of all of the view data.
      */
     public function getModuleFields($moduleName) {
-        return $this->getModuleViewdefs($moduleName, 'field');
+        return $this->getModuleClientData('field', $moduleName);
     }
 
     /**
@@ -226,7 +183,7 @@ class MetaDataManager {
         $seed = BeanFactory::newBean($moduleName);
 
         //BEGIN SUGARCRM flav=pro ONLY
-        if ($seed !== false) {
+        if (!empty($seed)) {
             $favoritesEnabled = ($seed->isFavoritesEnabled() !== false) ? true : false;
             $data['favoritesEnabled'] = $favoritesEnabled;
         }
@@ -302,8 +259,7 @@ class MetaDataManager {
 
             return $data;
         }
-
-
+        
         // Bug 56505 - multiselect fields default value wrapped in '^' character
         if (!empty($data['fields']) && is_array($data['fields']))
             $data['fields'] = $this->normalizeFielddefs($data['fields']);
@@ -348,58 +304,30 @@ class MetaDataManager {
      * Gets the ACL's for the module, will also expand them so the client side of the ACL's don't have to do as many checks.
      *
      * @param string $module The module we want to fetch the ACL for
-     * @param string $userId The user id for the ACL's we are retrieving.
+     * @param object $userObject The user object for the ACL's we are retrieving.
      * @return array Array of ACL's, first the action ACL's (access, create, edit, delete) then an array of the field level acl's
      */
-    public function getAclForModule($module,$userId) {
-        $aclAction = new ACLAction();
-        //BEGIN SUGARCRM flav=pro ONLY
-        $aclField = new ACLField();
-        //END SUGARCRM flav=pro ONLY
-        $acls = $aclAction->getUserActions($userId);
-        $userObject = BeanFactory::getBean('Users',$userId);
+    public function getAclForModule($module,$userObject) {
         $obj = BeanFactory::getObjectName($module);
 
         $outputAcl = array('fields'=>array());
-        if ( is_admin($userObject) ) {
-            foreach ( array('admin','developer','access','view','list','edit','delete','import','export','massupdate') as $action ) {
+        if ( is_admin($userObject) || !SugarACL::moduleSupportsACL($module) ) {
+            foreach ( array('admin', 'access','view','list','edit','delete','import','export','massupdate') as $action ) {
                 $outputAcl[$action] = 'yes';
             }
-        } else if ( isset($acls[$module]['module']) ) {
-            $moduleAcl = $acls[$module]['module'];
+        } else {
+            $moduleAcls = SugarACL::getUserAccess($module, array(), array('user' => $userObject));
 
-            if ( isset($moduleAcl['admin']) && isset($moduleAcl['admin']['aclaccess']) && (($moduleAcl['admin']['aclaccess'] == ACL_ALLOW_ADMIN) || ($moduleAcl['admin']['aclaccess'] == ACL_ALLOW_ADMIN_DEV)) ) {
-                $outputAcl['admin'] = 'yes';
-                $isAdmin = true;
-            } else {
-                $outputAcl['admin'] = 'no';
-                $isAdmin = false;
+            // Bug56391 - Use the SugarACL class to determine access to different actions within the module
+            foreach(SugarACL::$all_access AS $action => $bool) {
+                $outputAcl[$action] = ($moduleAcls[$action] == true || !isset($moduleAcls[$action])) ? 'yes' : 'no';
             }
 
-            if ( isset($moduleAcl['admin']) && isset($moduleAcl['admin']['aclaccess']) && (($moduleAcl['admin']['aclaccess'] == ACL_ALLOW_DEV) || ($moduleAcl['admin']['aclaccess'] == ACL_ALLOW_ADMIN_DEV)) ) {
-                $outputAcl['developer'] = 'yes';
-            } else {
-                $outputAcl['developer'] = 'no';
-            }
-
-            if ( ($moduleAcl['access']['aclaccess'] == ACL_ALLOW_ENABLED) || $isAdmin ) {
-                $outputAcl['access'] = 'yes';
-            } else {
-                $outputAcl['access'] = 'no';
-            }
+            // is the user an admin user for the module
+            $outputAcl['admin'] = ($userObject->isAdminForModule($module)) ? 'yes' : 'no';
 
             // Only loop through the fields if we have a reason to, admins give full access on everything, no access gives no access to anything
-            if ( $outputAcl['access'] == 'yes' && $outputAcl['developer'] == 'no' ) {
-
-                foreach ( array('view','list','edit','delete','import','export','massupdate') as $action ) {
-                    if ( $moduleAcl[$action]['aclaccess'] == ACL_ALLOW_ALL ) {
-                        $outputAcl[$action] = 'yes';
-                    } else if ( $moduleAcl[$action]['aclaccess'] == ACL_ALLOW_OWNER ) {
-                        $outputAcl[$action] = 'owner';
-                    } else {
-                        $outputAcl[$action] = 'no';
-                    }
-                }
+            if ( $outputAcl['access'] == 'yes') {
 
                 // Currently create just uses the edit permission, but there is probably a need for a separate permission for create
                 $outputAcl['create'] = $outputAcl['edit'];
@@ -407,29 +335,23 @@ class MetaDataManager {
                 // Now time to dig through the fields
                 $fieldsAcl = array();
                 //BEGIN SUGARCRM flav=pro ONLY
-                $fieldsAcl = $aclField->loadUserFields($module,$obj,$userId,true);
+                $fieldsAcl = ACLField::getAvailableFields($module);
                 //END SUGARCRM flav=pro ONLY
+                // get the field names
+                SugarACL::listFilter($module, $fieldsAcl, array('user' => $userObject), array('add_acl' => true));
                 foreach ( $fieldsAcl as $field => $fieldAcl ) {
-                    switch ( $fieldAcl ) {
-                        case ACL_READ_WRITE:
+                    switch ( $fieldAcl['acl'] ) {
+                        case SugarACL::ACL_READ_WRITE:
                             // Default, don't need to send anything down
                             break;
-                        case ACL_READ_OWNER_WRITE:
-                            // $outputAcl['fields'][$field]['read'] = 'yes';
-                            $outputAcl['fields'][$field]['write'] = 'owner';
-                            $outputAcl['fields'][$field]['create'] = 'owner';
-                            break;
-                        case ACL_READ_ONLY:
-                            // $outputAcl['fields'][$field]['read'] = 'yes';
+                        case SugarACL::ACL_READ_ONLY:
                             $outputAcl['fields'][$field]['write'] = 'no';
                             $outputAcl['fields'][$field]['create'] = 'no';
                             break;
-                        case ACL_OWNER_READ_WRITE:
-                            $outputAcl['fields'][$field]['read'] = 'owner';
-                            $outputAcl['fields'][$field]['write'] = 'owner';
-                            $outputAcl['fields'][$field]['create'] = 'owner';
+                        case 2:
+                            $outputAcl['fields'][$field]['read'] = 'no';
                             break;
-                        case ACL_ALLOW_NONE:
+                        case SugarACL::ACL_NO_ACCESS:
                         default:
                             $outputAcl['fields'][$field]['read'] = 'no';
                             $outputAcl['fields'][$field]['write'] = 'no';
@@ -437,7 +359,6 @@ class MetaDataManager {
                             break;
                     }
                 }
-
             }
         }
         $outputAcl['_hash'] = md5(serialize($outputAcl));
@@ -451,7 +372,7 @@ class MetaDataManager {
      */
     public function getSugarFields()
     {
-        return $this->getSugarClientFiles('field');
+        return $this->getSystemClientData('field');
     }
 
     /**
@@ -461,7 +382,7 @@ class MetaDataManager {
      */
     public function getSugarViews()
     {
-        return $this->getSugarClientFiles('view');
+        return $this->getSystemClientData('view');
     }
 
     /**
@@ -472,260 +393,31 @@ class MetaDataManager {
      */
     public function getSugarLayouts()
     {
-        return $this->getSugarClientFiles('layout');
+        return $this->getSystemClientData('layout');
     }
 
     /**
-     * Gets the directories for a given path along the known platform stack
-     *
-     * @param string $path The directory within a platform
-     * @param bool $full Whether to return full paths or dirnames only
-     * @param string $modulePath path to module 
-     * @return array
-     */
-    public function getSugarClientFileDirs($path, $full = false, $modulePath = "") {
-        $dirs = array();
-        foreach ( $this->platforms as $platform ) {
-            $basedir  = "{$modulePath}clients/{$platform}/{$path}/";
-            // get all dirs there and in custom
-            $alldirs = SugarAutoLoader::getFilesCustom($basedir, true);
-
-            foreach ($alldirs as $dir) {
-                // To prevent doing the work twice, let's sort this out by basename
-                $dirname = basename($dir);
-                $dirs[$dirname] = $full ? $dir . '/' : $dirname;
-            }
-        }
-
-        return $dirs;
-    }
-
-    /**
-     * Gets client files of type $type (view, layout, field)
+     * Gets client files of type $type (view, layout, field) for a module or for the system
      *
      * @param string $type The type of files to get
+     * @param string $module Module name (leave blank to get the system wide files)
      * @return array
      */
-    public function getSugarClientFiles($type, $modulePath = "", $module="")
+    public function getSystemClientData($type)
     {
-        $result = array();
+        // This is a semi-complicated multi-step process, so we're going to try and make this as easy as possible.
+        // This should get us a list of the client files for the system
+        $fileList = MetaDataFiles::getClientFiles($this->platforms, $type);
 
-        $typePath = $type . 's';
+        // And this should get us the contents of those files, properly sorted and everything.
+        $results = MetaDataFiles::getClientFileContents($fileList, $type);
 
-        $allSugarFiles = $this->getSugarClientFileDirs($typePath, false, $modulePath);
-
-        foreach ( $allSugarFiles as $dirname) {
-            // reset $fileData
-            $fileData = array();
-            // Check each platform in order of precendence to find the "best" controller
-            // Add in meta checking here as well
-            $meta = array();
-            foreach ( $this->platforms as $platform ) {
-                $dir = "{$modulePath}clients/$platform/$typePath/$dirname/";
-                $controller = SugarAutoLoader::existingCustomOne("{$dir}{$dirname}.js");
-                if (empty($meta)) {
-                    $meta = $this->fetchMetadataFromDirs(array($dir), $module);
-                }
-                if ( $controller ) {
-                    $fileData['controller'] = file_get_contents($controller);
-                    // We found a controller, let's get out of here!
-                    break;
-                }
-            }
-
-            // Reverse the platform order so that "better" templates override worse ones
-            $backwardsPlatforms = array_reverse($this->platforms);
-            $templateDirs = array();
-            foreach ( $backwardsPlatforms as $platform ) {
-                $templateDirs[] = "{$modulePath}clients/$platform/$typePath/$dirname/";
-            }
-            $templates = $this->fetchTemplates($templateDirs);
-            if (!empty($module) && $type != "field"){
-                //custom views/layouts can only have one templates
-                $fileData['template'] = reset($templates);
-            }
-            else
-                $fileData['templates'] = $templates;
-
-            if ($meta) {
-               $fileData['meta'] = array_shift($meta); // Get the first member
-            }
-            //$fileData['meta'] = $this->fetchMetadataFromDirs($templateDirs);
-
-            // Remove empty fileData members
-            foreach ($fileData as $k => $v) {
-                if (empty($v)) {
-                    unset($fileData[$k]);
-                }
-            }
-
-            $result[$dirname] = $fileData;
-        }
-
-        $result['_hash'] = md5(serialize($result));
-        return $result;
+        return $results;
     }
 
-    /**
-     * Gets client files of type $type (view, layout, field) for all platforms 
-     * specified. Resulting array will be delineated by platform.
-     *
-     * @param string $type The type of files to get
-     * @param array $platforms Which platforms to get client files for.
-     * @return array
-     */
-    public function getSugarClientFilesForPlatforms($type, $platforms = array())
+    public function getModuleClientData($type, $module)
     {
-        $result = array();
-
-        // If not called with $platforms will default to all platforms.
-        $platforms = (!empty($platforms) && count($platforms)) ? $platforms : $this->platforms;
-
-        // Platforms we'll push our loaded components on to.
-        $desiredPlatforms = array();
-        $typePath = $type . 's';
-
-        // Retrieves base directory names for all possible widgets
-        $allSugarFiles = $this->getSugarClientFileDirs($typePath, false, '');
-
-        foreach ( $allSugarFiles as $dirname) {
-            // reset $fileData
-            $fileData = array();
-            $meta = array();
-            $tplDir = array();
-            
-            foreach ( $platforms as $platform ) {
-                $dir = "clients/$platform/$typePath/$dirname/";
-                $controller = SugarAutoLoader::existingCustomOne("{$dir}{$dirname}.js");
-                if (empty($meta)) {
-                    $meta = $this->fetchMetadataFromDirs(array($dir), '');
-                }
-                if ( $controller ) {
-                    $fileData[$platform][$dirname]['controller'] = file_get_contents($controller);
-                }
-                // Now get templates
-                $tplDir[0] = "clients/$platform/$typePath/$dirname/";
-                $templates = $this->fetchTemplates($tplDir);
-                if (count($templates)) {
-                    $fileData[$platform][$dirname]['templates'] = $templates;
-                }
-                // Add the meta
-                if ($meta) {
-                   $fileData[$platform][$dirname]['meta'] = array_shift($meta); // Get the first member
-                }
-                // Remove empty fileData members. There's a chance of course we haven't 
-                // found anything and $fileData[$platform] my be unset
-                if (isset($fileData[$platform])) {
-                    foreach ($fileData[$platform] as $k => $v) {
-                        if (empty($v)) {
-                            unset($fileData[$platform][$k]);
-                        }
-                    }
-                }
-            }
-
-            foreach ($fileData as $pf => $pfData) {
-                $desiredPlatforms[$pf][$dirname] = $pfData[$dirname];
-            }
-        }
-        $result = $desiredPlatforms;
-        $result['_hash'] = md5(serialize($result));
-
-        return $result;
-    }
-
-    /**
-     * Fetches all metadata from a set of directories
-     *
-     * @param array $dirs The directories to read
-     * @return array
-     */
-    protected function fetchMetadataFromDirs($dirs, $module="") {
-        $return = array();
-        foreach ($dirs as $dir) {
-            $dir = rtrim($dir, '/') . '/';
-            $cust = "custom/$dir";
-            $return = array_merge($return, $this->fetchMetadataFromDir($dir, $module), $this->fetchMetadataFromDir($cust, $module));
-        }
-        return $return;
-    }
-
-    /**
-     * Fetches metadata from a single directory
-     *
-     * @param string $dir
-     * @return array
-     */
-    protected function fetchMetadataFromDir($dir, $module = "") {
-        $meta = array();
-        if (SugarAutoLoader::fileExists($dir)) {
-            // Get the client, type amd name for this particular directory
-            preg_match("#clients/([^/]*)/([^/]*)/([^/]*)/#", $dir, $m);
-            $platform = $m[1];
-            $type = substr_replace($m[2], '', -1); // Pluck the 's' from the type
-            $filename = $m[3];
-            $file = rtrim($dir, '/') . '/' . $filename . '.php';
-            if (SugarAutoLoader::fileExists($file)) {
-                // Changed from require_once to require so we can actually get
-                // these on multiple requests for them
-                require $file;
-
-                // Only get the viewdefs if they exist for this platform and file
-                // Also handle search, since those defs are different
-                if (!empty($module)) {
-                    if (isset($searchdefs[$module])) {
-                        $meta[$filename] = $searchdefs[$module];
-                    }
-                    else if (isset($viewdefs[$module][$platform][$type][$filename]))
-                    {
-                        $meta[$filename] = $viewdefs[$module][$platform][$type][$filename];
-                    }
-                }
-                else if (isset($viewdefs[$platform][$type][$filename]))
-                {
-                    $meta[$filename] = $viewdefs[$platform][$type][$filename];
-                }
-            }
-        }
-
-        return $meta;
-    }
-
-    /**
-     * A method to collect templates and pass them back, shared between sugarfields, viewtemplates and per-module templates
-     *
-     * @param $searchDirs array A list of directories to search, custom directories will be searched automatically, ordered by least to most important
-     * @param $extension string A extension to search for, defaults to ".hbt"
-     * @return array An array of template file contents keyed by the template name.
-     */
-    protected function fetchTemplates($searchDirs,$extension='.hbt') {
-        $templates = array();
-
-        foreach ( $searchDirs as $searchDir ) {
-            foreach(SugarAutoLoader::getFilesCustom($searchDir, false, $extension) as $templateFile) {
-
-                $templateName = basename($templateFile, $extension);
-                $templates[$templateName] = file_get_contents($templateFile);
-            }
-        }
-        return $templates;
-    }
-
-    /**
-     * The collector method for view templates
-     *
-     * @return array A hash of the template name and the template contents
-     */
-    public function getViewTemplates() {
-        $backwardsPlatforms = array_reverse($this->platforms);
-        $templateDirs = array();
-        foreach ( $backwardsPlatforms as $platform ) {
-            $moreTemplates = SugarAutoLoader::getFilesCustom("clients/${platform}/views/", true);
-            $templateDirs = array_merge($templateDirs,$moreTemplates);
-        }
-        $templates = $this->fetchTemplates($templateDirs);
-        $templates['_hash'] = md5(serialize($templates));
-        return $templates;
+        return MetaDataFiles::getModuleClientCache($this->platforms, $type, $module);
     }
 
     /**
@@ -741,7 +433,7 @@ class MetaDataManager {
                 $strings[$k] = $this->decodeStrings($v);
             }
         }
-        
+
         return $strings;
     }
 
@@ -767,49 +459,6 @@ class MetaDataManager {
         return $appStrings;
     }
 
-    /**
-     * The method for getting the module list, can collect for base, portal and mobile
-     *
-     * @return array The list of modules that are supported by this platform
-     * @deprecated Functionality for this method moved into the MetadataApi class
-     */
-    public function getModuleList($platform = 'base') {
-        if ( $platform == 'portal' ) {
-            // Use SugarPortalBrowser to get the portal modules that would appear
-            // in Studio
-            require_once 'modules/ModuleBuilder/Module/SugarPortalBrowser.php';
-            $pb = new SugarPortalBrowser();
-            $pb->loadModules();
-            $moduleList = array_keys($pb->modules);
-
-            // Bug 56911 - Notes metadata is needed for portal
-            $moduleList[] = "Notes";
-        } else if ( $platform == 'mobile' ) {
-            // replicate the essential part of the behavior of the private loadMapping() method in SugarController
-            foreach(SugarAutoLoader::existingCustom('include/MVC/Controller/wireless_module_registry.php') as $file) {
-                require $file;
-            }
-
-            // $wireless_module_registry is defined in the file loaded above
-            $moduleList = array_keys($wireless_module_registry);
-        } else {
-            // Loading a standard module list
-            require_once("modules/MySettings/TabController.php");
-            $controller = new TabController();
-            $moduleList = array_keys($controller->get_user_tabs($this->user));
-            $moduleList[] = 'ActivityStream';
-            $moduleList[] = 'Users';
-        }
-
-        $oldModuleList = $moduleList;
-        $moduleList = array();
-        foreach ( $oldModuleList as $module ) {
-            $moduleList[$module] = $module;
-        }
-
-        $moduleList['_hash'] = md5(serialize($moduleList));
-        return $moduleList;
-    }
 
     public static function getPlatformList()
     {
@@ -825,44 +474,44 @@ class MetaDataManager {
 
         return array_keys($platforms);
     }
-    
+
     /**
-     * Cleans field def default values before returning them as a member of the 
+     * Cleans field def default values before returning them as a member of the
      * metadata response payload
-     * 
+     *
      * Bug 56505
      * Cleans default value of fields to strip out metacharacters used by the app.
      * Used initially for cleaning default multienum values.
-     * 
+     *
      * @param array $fielddefs
      * @return array
      */
     protected function normalizeFielddefs(Array $fielddefs) {
         $this->getSugarFieldHandler();
-        
+
         foreach ($fielddefs as $name => $def) {
             if (isset($def['type'])) {
                 $type = !empty($def['custom_type']) ? $def['custom_type'] : $def['type'];
-                
+
                 $field = $this->sfh->getSugarField($type);
-                
+
                 $fielddefs[$name] = $field->getNormalizedDefs($def);
             }
         }
-        
+
         return $fielddefs;
     }
-    
+
     /**
      * Gets the SugarFieldHandler object
-     * 
+     *
      * @return SugarFieldHandler The SugarFieldHandler
      */
     protected function getSugarFieldHandler() {
         if (!$this->sfh instanceof SugarFieldHandler) {
             $this->sfh = new SugarFieldHandler;
         }
-        
+
         return $this->sfh;
     }
 
@@ -888,7 +537,7 @@ class MetaDataManager {
     /**
      * Recursive decoder that handles decoding of HTML entities in metadata strings
      * before returning them to a client
-     * 
+     *
      * @param mixed $source
      * @return array|string
      */
@@ -901,8 +550,32 @@ class MetaDataManager {
                     $source[$k] = $this->decodeStrings($v);
                 }
             }
-            
+
             return $source;
+        }
+    }
+
+    /**
+     * Clears the API metadata cache of all cache files
+     *
+     * @param bool $deleteModuleClientCache Should we also delete the client file cache of the modules
+     * @static
+     */
+    public static function clearAPICache( $deleteModuleClientCache = true ){
+        if ( $deleteModuleClientCache ) {
+            // Delete this first so there is no race condition between deleting a metadata cache
+            // and the module client cache being stale.
+            MetaDataFiles::clearModuleClientCache();
+        }
+
+        $metadataFiles = glob(sugar_cached('api/metadata/').'*');
+        if ( is_array($metadataFiles) ) {
+            foreach ( $metadataFiles as $metadataFile ) {
+                // This removes the file and the reference from the map. This does
+                // NOT save the file map since that would be expensive in a loop
+                // of many deletes.
+                unlink($metadataFile);
+            }
         }
     }
 }

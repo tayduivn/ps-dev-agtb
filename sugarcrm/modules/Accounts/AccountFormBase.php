@@ -33,7 +33,7 @@ class AccountFormBase{
 function checkForDuplicates($prefix){
 	require_once('include/formbase.php');
 
-	$focus = new Account();
+	$focus = BeanFactory::getBean('Accounts');
 	$query = '';
 	$baseQuery = 'select id, name, website, billing_address_city  from accounts where deleted!=1 and ';
 	if(!empty($_POST[$prefix.'name'])){
@@ -281,7 +281,7 @@ $form .='</p>';
 
 $javascript = new javascript();
 $javascript->setFormName($formname);
-$javascript->setSugarBean(new Account());
+$javascript->setSugarBean(BeanFactory::getBean('Accounts'));
 $javascript->addRequiredFields($prefix);
 $form .=$javascript->getScript();
 $mod_strings = $temp_strings;
@@ -296,7 +296,7 @@ function getWideFormBody($prefix, $mod='',$formname='',  $contact=''){
 	}
 
 	if(empty($contact)){
-		$contact = new Contact();
+		$contact = BeanFactory::getBean('Contacts');
 	}
 global $mod_strings;
 $temp_strings = $mod_strings;
@@ -306,7 +306,7 @@ if(!empty($mod)){
 }
 global $app_strings;
 global $current_user;
-$account = new Account();
+$account = BeanFactory::getBean('Accounts');
 
 $lbl_required_symbol = $app_strings['LBL_REQUIRED_SYMBOL'];
 $lbl_account_name = $mod_strings['LBL_ACCOUNT_NAME'];
@@ -319,7 +319,7 @@ if (isset($contact->assigned_user_id)) {
 }
 
 	//Retrieve Email address and set email1, email2
-	$sugarEmailAddress = new SugarEmailAddress();
+	$sugarEmailAddress = BeanFactory::getBean('EmailAddresses');
 	$sugarEmailAddress->handleLegacyRetrieve($contact);
  	 if(!isset($contact->email1)){
     	$contact->email1 = '';
@@ -379,7 +379,7 @@ if (isset($contact->team_id)) {
 		</tr>
 EOQ;
 	//carry forward custom lead fields common to accounts during Lead Conversion
-	$tempAccount = new Account();
+	$tempAccount = BeanFactory::getBean('Accounts');
 	if (method_exists($contact, 'convertCustomFieldsForm')) $contact->convertCustomFieldsForm($form, $tempAccount, $prefix);
 	unset($tempAccount);
 $form .= <<<EOQ
@@ -389,7 +389,7 @@ EOQ;
 
 $javascript = new javascript();
 $javascript->setFormName($formname);
-$javascript->setSugarBean(new Account());
+$javascript->setSugarBean(BeanFactory::getBean('Accounts'));
 $javascript->addRequiredFields($prefix);
 $form .=$javascript->getScript();
 $mod_strings = $temp_strings;
@@ -402,7 +402,7 @@ function handleSave($prefix,$redirect=true, $useRequired=false){
 
 	require_once('include/formbase.php');
 
-	$focus = new Account();
+	$focus = BeanFactory::getBean('Accounts');
 
 	if($useRequired &&  !checkRequired($prefix, array_keys($focus->required_fields))){
 		return null;
@@ -459,7 +459,7 @@ function handleSave($prefix,$redirect=true, $useRequired=false){
 
 
 
-			$emailAddress = new SugarEmailAddress();
+			$emailAddress = BeanFactory::getBean('EmailAddresses');
 			$get .= $emailAddress->getFormBaseURL($focus);
 
 			//BEGIN SUGARCRM flav=pro ONLY

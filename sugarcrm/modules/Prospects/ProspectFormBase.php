@@ -33,7 +33,7 @@ function checkForDuplicates($prefix){
 	global $local_log;
 	require_once('include/formbase.php');
 	
-	$focus = new Prospect();
+	$focus = BeanFactory::getBean('Prospects');
 	if(!checkRequired($prefix, array_keys($focus->required_fields))){
 		return null;
 	}
@@ -159,7 +159,7 @@ function getWideFormBody($prefix, $mod='',$formname='',  $prospect = ''){
 	}
 	
 	if(empty($prospect)){
-		$prospect = new Prospect();
+		$prospect = BeanFactory::getBean('Prospects');
 	}
 	global $mod_strings;
 $temp_strings = $mod_strings;
@@ -275,7 +275,7 @@ EOQ;
 
 $javascript = new javascript();
 $javascript->setFormName($formname);
-$javascript->setSugarBean(new Prospect());
+$javascript->setSugarBean(BeanFactory::getBean('Prospects'));
 $javascript->addField('email1','false',$prefix);
 $javascript->addField('email2','false',$prefix);
 $javascript->addRequiredFields($prefix);
@@ -339,7 +339,7 @@ EOQ;
 
 $javascript = new javascript();
 $javascript->setFormName($formname);
-$javascript->setSugarBean(new Prospect());
+$javascript->setSugarBean(BeanFactory::getBean('Prospects'));
 $javascript->addField('email1','false',$prefix);
 $javascript->addRequiredFields($prefix);
 
@@ -396,7 +396,7 @@ function handleSave($prefix,$redirect=true, $useRequired=false){
 	global $timedate;
 	
 	
-	$focus = new Prospect();
+	$focus = BeanFactory::getBean('Prospects');
 	if($useRequired &&  !checkRequired($prefix, array_keys($focus->required_fields))){
 		return null;
 	}

@@ -257,13 +257,13 @@ class SugarFieldRelate extends SugarFieldBase {
     {
         if ( !isset($vardef['module']) )
             return false;
-        $newbean = loadBean($vardef['module']);
+        $newbean = BeanFactory::getBean($vardef['module']);
 
         // Bug 38885 - If we are relating to the Users table on user_name, there's a good chance
         // that the related field data is the full_name, rather than the user_name. So to be sure
         // let's try to lookup the field the relationship is expecting to use (user_name).
         if ( $vardef['module'] == 'Users' && isset($vardef['rname']) && $vardef['rname'] == 'user_name' ) {
-            $userFocus = new User;
+            $userFocus = BeanFactory::getBean('Users');
             $query = sprintf("SELECT user_name FROM {$userFocus->table_name} WHERE %s=%s AND deleted=0",
                 $userFocus->db->concat('users',array('first_name','last_name')), $userFocus->db->quoted($value));
             $username = $userFocus->db->getOne($query);
@@ -293,7 +293,7 @@ class SugarFieldRelate extends SugarFieldBase {
 
             // Bug 24075 - clear out id field value if it is invalid
             if ( isset($focus->$idField) ) {
-                $checkfocus = loadBean($vardef['module']);
+                $checkfocus = BeanFactory::getBean($vardef['module']);
                 if ( $checkfocus && is_null($checkfocus->retrieve($focus->$idField)) )
                     $focus->$idField = '';
             }

@@ -76,9 +76,6 @@ var ERR_REENTER_PASSWORDS = '{$MOD.ERR_REENTER_PASSWORDS}';
 	<input type="hidden" name="edit_self" id="edit_self" value='{$EDIT_SELF}' >
 	<input type="hidden" name="required_email_address" id="required_email_address" value='{$REQUIRED_EMAIL_ADDRESS}' >
     <input type="hidden" name="isDuplicate" id="isDuplicate" value="{$isDuplicate}">
-<!-- //BEGIN SUGARCRM flav=sales ONLY -->
-	{$ut_hidden}
-<!-- //END SUGARCRM flav!=sales ONLY -->
 	<div id="popup_window"></div>
 
 <script type="text/javascript">
@@ -108,7 +105,7 @@ EditView_tabs.on('contentReady', function(e){
     }
 {/literal}
 {/if}
-//BEGIN SUGARCRM flav!=com && flav!=sales ONLY
+//BEGIN SUGARCRM flav!=com ONLY
 {if $EDIT_SELF && $SHOW_DOWNLOADS_TAB}
 {literal}
     EditView_tabs.addTab( new YAHOO.widget.Tab({
@@ -120,7 +117,7 @@ EditView_tabs.on('contentReady', function(e){
     EditView_tabs.getTab(5).getElementsByTagName('a')[0].id = 'tab6';
 {/literal}
 {/if}
-//END SUGARCRM flav!=com && flav!=sales ONLY
+//END SUGARCRM flav!=com ONLY
 
 {if $scroll_to_cal}
     {literal}

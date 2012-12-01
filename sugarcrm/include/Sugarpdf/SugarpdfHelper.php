@@ -103,18 +103,14 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
                 if(!empty($params['currency_id'])) {
                     if($override_currency_id != $params['currency_id']) {
                         $override_currency_id = $params['currency_id'];
-                        $currency = new Currency();
-                        $currency->retrieve($override_currency_id);
+                        $currency = BeanFactory::getBean('Currencies', $override_currency_id);
                         $last_override_currency = $currency;
                     } else {
                         $currency = $last_override_currency;
                     }
 
                 } elseif(!isset($current_users_currency)) { // else use current user's
-                    $current_users_currency = new Currency();
-                    if($current_user->getPreference('currency')) $current_users_currency->retrieve($current_user->getPreference('currency'));
-                    else $current_users_currency->retrieve('-99'); // use default if none set
-                    $currency = $current_users_currency;
+                    $currency = $current_users_currency = BeanFactory::getBean('Currencies')->getUserCurrency();
                 }
         }
         if(!empty($params['convert']) && $params['convert']) {

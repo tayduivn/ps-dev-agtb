@@ -45,7 +45,7 @@ class SugarForecasting_Progress_Manager extends SugarForecasting_Progress_Abstra
     public function getManagerProgress()
     {
         //create opportunity to use to build queries
-        $this->opportunity = new Opportunity();
+        $this->opportunity = BeanFactory::getBean('Opportunities');
 
         //get the quota data for user
         /* @var $quota Quota */
@@ -145,9 +145,9 @@ class SugarForecasting_Progress_Manager extends SugarForecasting_Progress_Abstra
     public function getClosedAmount()
     {
         $db = DBManagerFactory::getInstance();
-        
+
         $amountSum = 0;
-        
+
         $user_id = $this->getArg('user_id');
         $timeperiod_id = $this->getArg('timeperiod_id');
         $sales_stage_won = $this->getArg('sales_stage_won');

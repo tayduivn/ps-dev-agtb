@@ -59,8 +59,7 @@ if(!isset($_SESSION["MAILMERGE_DOCUMENT_ID"]))
 	}
 }
 $document_id = $_SESSION["MAILMERGE_DOCUMENT_ID"];
-$document = new Document();
-$document->retrieve($document_id);
+$document = BeanFactory::getBean('Documents', $document_id);
 $_SESSION["MAILMERGE_TEMPLATE"] = $document->document_name;
 
 if(!empty($_POST['selected_objects']))
@@ -99,10 +98,7 @@ $xtpl->assign("STEP3_HEADER", "Set ".get_singular_bean_name($relModule)." Associ
 
 
 $select = "Select id, name from contacts";
-global $beanList, $beanFiles;
-$class_name = $beanList[$relModule];
-require_once($beanFiles[$class_name]);
-$seed = new $class_name();
+$seed = BeanFactory::getBean($relModule);
 
 if(isset($_SESSION['MAILMERGE_SKIP_REL']) && $_SESSION['MAILMERGE_SKIP_REL'])
 {

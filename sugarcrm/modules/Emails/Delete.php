@@ -28,7 +28,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  ********************************************************************************/
 
 
-$focus = new Email();
+$focus = BeanFactory::getBean('Emails');
 
 if(!isset($_REQUEST['record']))
 	sugar_die("A record number must be specified to delete the email.");

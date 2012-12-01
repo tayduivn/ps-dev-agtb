@@ -55,7 +55,7 @@ $xtpl=new XTemplate ('modules/KBDocuments/KBAdminView.html');
 $xtpl->assign("MOD", $mod_strings);
 $xtpl->assign("APP", $app_strings);
 
-$tag = new KBTag();
+$tag = BeanFactory::getBean('KBTags');
 $xtpl->assign("TAG_NAME", $tag->tag_name);
  //tree header.
         $tagstree=new Tree('tagstree');
@@ -123,7 +123,7 @@ $xtpl->parse("main");
 $xtpl->out("main");
 
 
-$savedSearch = new SavedSearch();
+$savedSearch = BeanFactory::getBean('SavedSearch');
 $json = getJSONobj();
 $savedSearchSelects = $json->encode(array($GLOBALS['app_strings']['LBL_SAVED_SEARCH_SHORTCUT'] . '<br>' . $savedSearch->getSelect('KBDocuments')));
 $str = "<script>

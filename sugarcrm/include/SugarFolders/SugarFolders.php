@@ -344,7 +344,7 @@ ENDQ;
 
 		$return = array();
 
-		$email = new Email(); //Needed for email specific functions.
+		$email = BeanFactory::getBean('Emails'); //Needed for email specific functions.
 
 		while($a = $this->db->fetchByAssoc($r)) {
 
@@ -931,8 +931,7 @@ ENDQ;
 	    if ($this->is_group)
 	    {
 	        require_once("modules/Teams/Team.php");
-	        $team = new Team();
-	        $team->retrieve($this->team_id);
+	        $team = BeanFactory::getBean('Teams', $this->team_id);
 	        $usersList = $team->get_team_members(true);
 	        foreach($usersList as $userObject)
 	           $this->createSubscriptionForUser($userObject->id);

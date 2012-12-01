@@ -24,6 +24,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 $mod_strings = array (
 	'LBL_MODULE_NAME' => 'Holidays',
+	'LBL_MODULE_NAME_SINGULAR' => 'Holiday',
 	'LBL_MODULE_TITLE' => 'Holidays: Home',
 	'LBL_HOLIDAY' => 'Holiday: ',
 	'LBL_HOLIDAY_DATE' => 'Holiday Date: ',

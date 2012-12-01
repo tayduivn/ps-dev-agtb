@@ -36,8 +36,7 @@ global $theme;
 
 /* start standard DetailView layout process */
 $GLOBALS['log']->info("InboundEmails DetailView");
-$focus = new InboundEmail();
-$focus->retrieve($_REQUEST['record']);
+$focus = BeanFactory::getBean('InboundEmail', $_REQUEST['record']);
 if (empty($focus->id)) {
 	sugar_die($app_strings['ERROR_NO_RECORD']);
 } // if
@@ -62,15 +61,14 @@ if($focus->delete_seen == 1) {
 $groupName = '';
 if($focus->group_id) {
 	
-	//$group = new Group();
+	//$group = BeanFactory::getBean('Groups');
 	//$group->retrieve($focus->group_id);
 	//$groupName = $group->user_name;
 }
 
 if($focus->template_id) {
 	
-	$et = new EmailTemplate();
-	$et->retrieve($focus->template_id);
+	$et = BeanFactory::getBean('EmailTemplates', $focus->template_id);
 	$emailTemplate = $et->name;
 } else {
 	$emailTemplate = $mod_strings['LBL_NONE'];
@@ -94,7 +92,7 @@ if(!empty($focus->service)) {
 }
 
 // FROM NAME FROM ADDRESS STRINGS
-$email = new Email();
+$email = BeanFactory::getBean('Emails');
 $from = $email->getSystemDefaultEmail();
 $default_from_name = $from['name'];
 $default_from_addr = $from['email'];
@@ -170,8 +168,7 @@ if(!empty($focus->stored_options)) {
 
 if(!empty($create_case_email_template)) {
 	
-	$et = new EmailTemplate();
-	$et->retrieve($create_case_email_template);
+	$et = BeanFactory::getBean('EmailTemplates', $create_case_email_template);
 	$create_case_email_template_name = $et->name;
 }
 if (!empty($distrib_method)) {

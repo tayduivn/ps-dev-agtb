@@ -32,12 +32,8 @@ chdir(dirname(__FILE__).'/../');
 
 require('include/entryPoint.php');
 require_once("include/api/RestService.php");
-
-if ( file_exists('custom/include/RestService.php') ) {
-    $restServiceClass = 'CustomRestService';
-} else {
-    $restServiceClass = 'RestService';
-}
+SugarAutoLoader::load('custom/include/RestService.php');
+$restServiceClass = SugarAutoLoader::customClass('RestService');
 
 $service = new $restServiceClass();
 $service->execute();

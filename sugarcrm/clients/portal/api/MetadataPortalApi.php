@@ -58,37 +58,4 @@ class MetadataPortalApi extends MetadataApi {
         return $public;
     }
 
-    /**
-     * Gets the list of modules for this client
-     * 
-     * @return array
-     */
-    protected function getModules() {
-        // Use SugarPortalBrowser to get the portal modules that would appear
-        // in Studio
-        require_once 'modules/ModuleBuilder/Module/SugarPortalBrowser.php';
-        $pb = new SugarPortalBrowser();
-        $pb->loadModules();
-        $return = array_keys($pb->modules);
-        
-        // Bug 56911 Need to forcefully add Notes to the module list in order to
-        // get the Notes metadata
-        $return[] = 'Notes';
-        return $return;
-    }
-
-    /**
-     * Cleans up the module list for any modules that should not be on it
-     * 
-     * @param array $module_list The module list array
-     * @return array
-     */
-    protected function cleanUpModuleList($module_list) {
-        // Bug 56911 - Notes metadata is needed for portal
-        // Remove forcefully added Notes module to portal requests since we only
-        // need the metadata but do NOT need it in the module list        
-        $module_list = parent::cleanUpModuleList($module_list);
-        unset($module_list['Notes']);
-        return $module_list;
-    }
 }

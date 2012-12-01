@@ -28,7 +28,7 @@ class OpportunityFormBase{
 function checkForDuplicates($prefix){
 	require_once('include/formbase.php');
 	
-	$focus = new Opportunity();
+	$focus = BeanFactory::getBean('Opportunities');
 	$query = '';
 	$baseQuery = 'select id, name, sales_stage,amount, date_closed  from opportunities where deleted!=1 and (';
 
@@ -149,11 +149,9 @@ function getWideFormBody($prefix, $mod='Opportunities', $formname='', $lead='', 
 	if(!ACLController::checkAccess('Opportunities', 'edit', true)){
 		return '';
 	}
-	//BEGIN SUGARCRM flav!=sales ONLY
 	if(empty($lead)){
-		$lead = new Lead();
+		$lead = BeanFactory::getBean('Leads');
 	}
-	//END SUGARCRM flav!=sales ONLY
 global $mod_strings, $sugar_config;
 $showaccount = $showaccount && $sugar_config['require_accounts'];
 $temp_strings = $mod_strings;
@@ -197,15 +195,11 @@ EOQ;
 
 $ntc_date_format = $timedate->get_user_date_format();
 $cal_dateformat = $timedate->get_cal_date_format();
-//BEGIN SUGARCRM flav!=sales ONLY
 if (isset($lead->assigned_user_id)) {
 	$user_id=$lead->assigned_user_id;
 } else {
-//END SUGARCRM flav!=sales ONLY
 	$user_id = $current_user->id;
-//BEGIN SUGARCRM flav!=sales ONLY
 }
-//END SUGARCRM flav!=sales ONLY
 
 //BEGIN SUGARCRM flav=pro ONLY
 
@@ -226,16 +220,12 @@ $the_form="";
 
 //END SUGARCRM flav=pro ONLY
 
-//BEGIN SUGARCRM flav!=sales ONLY
 
 if (isset($lead->opportunity_amount)) {
 	$opp_amount=$lead->opportunity_amount;
 } else {
-//END SUGARCRM flav!=sales ONLY
  	$opp_amount='';
-//BEGIN SUGARCRM flav!=sales ONLY
 }
-//END SUGARCRM flav!=sales ONLY
 $jsCalendarImage = SugarThemeRegistry::current()->getImageURL('jscalendar.gif');
 $the_form .= <<<EOQ
 
@@ -249,12 +239,7 @@ $the_form .= <<<EOQ
     <td width="80%" scope="row">{$mod_strings['LBL_DESCRIPTION']}</td>
 </tr>
 <tr>
-    //BEGIN SUGARCRM flav!=sales ONLY
     <td ><input name='{$prefix}name' type="text" value="{$lead->opportunity_name}"></td>
-    //END SUGARCRM flav!=sales ONLY
-    //BEGIN SUGARCRM flav=sales ONLY
-    <td ><input name='{$prefix}name' type="text" value=""></td>    
-    //END SUGARCRM flav=sales ONLY
 	<td  rowspan="7"><textarea name='{$prefix}description' rows='5' cols='50'></textarea></td>
 </tr>
 <tr>
@@ -293,10 +278,8 @@ $the_form .= <<<EOQ
 </tr>
 EOQ;
 //carry forward custom lead fields to opportunities during Lead Conversion
-	$tempOpp = new Opportunity();
-	//BEGIN SUGARCRM flav!=sales ONLY
+	$tempOpp = BeanFactory::getBean('Opportunities');
 	if (method_exists($lead, 'convertCustomFieldsForm')) $lead->convertCustomFieldsForm($the_form, $tempOpp, $prefix);
-	//END SUGARCRM flav!=sales ONLY
 	unset($tempOpp);
 
 $the_form .= <<<EOQ
@@ -316,7 +299,7 @@ EOQ;
 
 $javascript = new javascript();
 $javascript->setFormName($formname);
-$javascript->setSugarBean(new Opportunity());
+$javascript->setSugarBean(BeanFactory::getBean('Opportunities'));
 $javascript->addRequiredFields($prefix);
 $the_form .=$javascript->getScript();
 $mod_strings = $temp_strings;
@@ -431,7 +414,7 @@ $the_form .= $quicksearch_js;
 
 $javascript = new javascript();
 $javascript->setFormName($formname);
-$javascript->setSugarBean(new Opportunity());
+$javascript->setSugarBean(BeanFactory::getBean('Opportunities'));
 $javascript->addRequiredFields($prefix);
 $the_form .=$javascript->getScript();
 
@@ -447,7 +430,7 @@ function handleSave($prefix,$redirect=true, $useRequired=false){
 	
 	require_once('include/formbase.php');
 	
-	$focus = new Opportunity();
+	$focus = BeanFactory::getBean('Opportunities');
 	if($useRequired &&  !checkRequired($prefix, array_keys($focus->required_fields))){
 		return null;
 	}

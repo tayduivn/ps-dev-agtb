@@ -36,6 +36,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 $mod_strings = array (
   'LBL_MODULE_NAME' => 'Alert Recipient List',
+  'LBL_MODULE_NAME_SINGULAR' => 'Alert Recipient List',
   'LBL_MODULE_TITLE' => 'Recipients: Home',
   'LBL_SEARCH_FORM_TITLE' => 'Workflow Recipient Search',
   'LBL_LIST_FORM_TITLE' => 'Recipient List',
@@ -132,6 +133,7 @@ $mod_strings = array (
 
 	//Invite Labels
 	  'LBL_MODULE_NAME_INVITE' => 'Invitee List',
+	'LBL_MODULE_NAME_SINGULAR_INVITE' => 'Invitee List',
 	  'LBL_LIST_STATEMENT_INVITE' => 'Meeting/Call Invitees:',
 
 	'LBL_SELECT_VALUE' => 'You must select a valid value.',

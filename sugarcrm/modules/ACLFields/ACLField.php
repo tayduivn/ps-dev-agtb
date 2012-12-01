@@ -27,36 +27,30 @@ require_once('modules/ACLFields/actiondefs.php');
  */
 class ACLField  extends ACLAction
 {
-    var $module_dir = 'ACLFields';
-    var $object_name = 'ACLField';
-    var $table_name = 'acl_fields';
-    var $disable_custom_fields = true;
-    var $new_schema = true;
-
-    function ACLField(){
-        parent::__construct();
-        //BEGIN SUGARCRM flav=pro ONLY
-        $this->disable_row_level_security =true;
-        //END SUGARCRM flav=pro ONLY
-    }
+    public $module_dir = 'ACLFields';
+    public $object_name = 'ACLField';
+    public $table_name = 'acl_fields';
+    public $disable_custom_fields = true;
+    public $new_schema = true;
+    //BEGIN SUGARCRM flav=pro ONLY
+    public $disable_row_level_security = true;
+    //END SUGARCRM flav=pro ONLY
 
     /**
-    * static addActions($category, $type='module')
-    * Adds all default actions for a category/type
+    * static getAvailableFields($module, $object=false)
+    * Adds available fields for module
     * @internal
-    * @param STRING $category - the category (e.g module name - Accounts, Contacts)
-    * @param STRING $type - the type (e.g. 'module', 'field')
+    * @param STRING $module
+    * @param STRING $object object name
     */
-    static function getAvailableFields($module, $object=false){
-
+    static function getAvailableFields($module, $object=false)
+    {
         static $exclude = array('deleted', 'assigned_user_id');
         static $modulesAvailableFields = array();
         if(!isset($modulesAvailableFields[$module])){
             if(empty($GLOBALS['dictionary'][$object]['fields'])){
-                $class = $GLOBALS['beanList'][$module];
-                require_once($GLOBALS['beanFiles'][$class]);
-                $mod = new $class();
-                if(!$mod->acl_fields)return array();
+                $mod = BeanFactory::getBean($module);
+                if(empty($mod->acl_fields)) return array();
                 $fieldDefs = $mod->field_defs;
             }else{
                 $fieldDefs = $GLOBALS['dictionary'][$object]['fields'];
@@ -312,7 +306,7 @@ class ACLField  extends ACLAction
      */
     function setAccessControl($module, $role_id, $field_id, $access)
     {
-        $acl = new ACLField();
+        $acl = BeanFactory::getBean('ACLFields');
         $id = md5($module. $role_id . $field_id);
         if(!$acl->retrieve($id) ){
             //if we don't have a value and its never been saved no need to start now

@@ -511,7 +511,7 @@ class iCalendar {
 					continue;
 				}
 
-				$meeting = new Meeting();
+				$meeting = BeanFactory::getBean('Meetings');
 				// Hack - we don't care about this bean's permissions
 				$meeting->disable_row_level_security = true;
 				$prev_seq = 0;

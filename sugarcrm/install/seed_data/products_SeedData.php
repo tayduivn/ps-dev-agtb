@@ -119,6 +119,9 @@ $first_name_count = count($sugar_demodata['first_name_array']);
 $company_name_array = $sugar_demodata['company_name_array'];
 $company_name_count = count($sugar_demodata['company_name_array']);
 global $dollar_id;
+if(empty($dollar_id)) {
+    $dollar_id = '-99';
+}
 global $manufacturer_id_arr;
 $first_name_max = $first_name_count - 1;
 

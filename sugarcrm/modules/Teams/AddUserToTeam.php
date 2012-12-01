@@ -36,7 +36,7 @@ global $current_user;
 
 if (!$GLOBALS['current_user']->isAdminForModule('Users')) sugar_die("Unauthorized access to administration.");
 
-$focus = new Team();
+$focus = BeanFactory::getBean('Teams');
 
 if(!isset($_REQUEST['record']) || !isset($_REQUEST['user_id'])) {
 	sugar_die($mod_strings['ERR_ADD_RECORD']);

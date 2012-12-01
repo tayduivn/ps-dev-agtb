@@ -1,5 +1,5 @@
 <?php
-//FILE SUGARCRM flav=pro || flav=sales ONLY
+//FILE SUGARCRM flav=pro ONLY
 if (!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 /*********************************************************************************
  *The contents of this file are subject to the SugarCRM Professional End User License Agreement
@@ -21,6 +21,7 @@ if (!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  *********************************************************************************/
 require_once 'modules/ModuleBuilder/parsers/views/ListLayoutMetaDataParser.php';
+require_once 'include/MetaDataManager/MetaDataManager.php';
 
 class SidecarListLayoutMetaDataParser extends ListLayoutMetaDataParser {
     /**
@@ -413,5 +414,16 @@ class SidecarListLayoutMetaDataParser extends ListLayoutMetaDataParser {
         }
         
         return $return;
+    }
+
+    /**
+     * Clears mobile and portal metadata caches that have been created by the API
+     * to allow immediate rendering of changes at the client
+     */
+    protected function _clearCaches() {
+        if ($this->implementation->isDeployed()) {
+            MetaDataFiles::clearModuleClientCache($this->_moduleName,'view');
+            MetaDataManager::clearAPICache(false);
+        }
     }
 }

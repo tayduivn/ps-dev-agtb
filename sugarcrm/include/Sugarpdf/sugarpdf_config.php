@@ -280,8 +280,7 @@ if (!defined('K_TCPDF_EXTERNAL_CONFIG')) {
 function defineFromConfig($value, $default){
     $lowerValue = strtolower($value);
    require_once("modules/Administration/Administration.php");
-    $focus = new Administration();
-    $focus->retrieveSettings();
+    $focus = Administration::getSettings();
     if(isset($focus->settings["sugarpdf_".$lowerValue])){
         define($value, $focus->settings["sugarpdf_".$lowerValue]);
     }else{

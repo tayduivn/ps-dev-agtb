@@ -19,19 +19,6 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *to the License for the specific language governing these rights and limitations under the License.
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
-/*********************************************************************************
- * $Id: ForecastOpportunities.php 51719 2009-10-22 17:18:00Z mitani $
- * Description: TODO:  To be written.
- * Portions created by SugarCRM are Copyright (C) SugarCRM, Inc.
- * All Rights Reserved.
- * Contributor(s): ______________________________________..
- ********************************************************************************/
-
-
-
-
-
-// User is used to store customer information.
 class ForecastOpportunities extends SugarBean {
 
     var $id;
@@ -74,15 +61,7 @@ class ForecastOpportunities extends SugarBean {
         parent::__construct();
         $this->disable_row_level_security =true;
 
-
-        $this->currency = new Currency();
-
-        if (isset($current_user)) {
-
-            $this->currency->retrieve($current_user->getPreference('currency'));
-        }else{
-            $this->currency->retrieve('-99');
-        }
+        $this->currency = BeanFactory::getBean('Currencies')->getUserCurrency();
         $this->currencysymbol= $this->currency->symbol;
     }
 
@@ -92,13 +71,7 @@ class ForecastOpportunities extends SugarBean {
 
     function get_summary_text()
     {
-        return "$this->name";
-    }
-
-    function retrieve($id, $encode=false, $deleted=true){
-        $ret = parent::retrieve($id, $encode, $deleted);
-
-        return $ret;
+        return $this->name;
     }
 
     function is_authenticated()

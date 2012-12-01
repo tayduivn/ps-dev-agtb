@@ -55,17 +55,28 @@ class KBDocumentKBTag extends SugarBean {
 	// This is used to retrieve related fields from form posts.
 	var $additional_column_fields = Array ('revision');
 
-	
+
 
 	var $new_schema = true;
 	var $module_dir = 'KBDocumentKBTags';
-	
+
 //todo remove leads relationship.
 	var $relationship_fields = Array('contract_id'=>'contracts',
-	 
+
 		'lead_id' => 'leads'
 	 );
-	  
+
+
+    /**
+     * This is a depreciated method, please start using __construct() as this method will be removed in a future version
+     *
+     * @see __construct
+     * @deprecated
+     */
+    public function KBDocumentKBTag()
+    {
+        $this->__construct();
+    }
 
 	public function __construct() {
 		parent::__construct();
@@ -76,11 +87,10 @@ class KBDocumentKBTag extends SugarBean {
 	function save($check_notify = false) {
 		return parent::save($check_notify);
 	}
-	
+
 	function fill_in_additional_detail_fields()
 	{
-	    $kbdoc = new KBDocument;
-	    $kbdoc = $kbdoc->retrieve($this->kbdocument_id);
+	    $kbdoc = BeanFactory::getBean('KBDocuments', $this->kbdocument_id);
 	    if ( !empty($kbdoc->id) ) {
 	        $this->kbdocument_name = $kbdoc->kbdocument_name;
 	    }
@@ -98,10 +108,10 @@ class KBDocumentKBTag extends SugarBean {
 	}
 
 	function mark_relationships_deleted($id) {
-		//do nothing, this call is here to avoid default delete processing since  
+		//do nothing, this call is here to avoid default delete processing since
 		//delete.php handles deletion of document revisions.
 	}
 
-	
+
 }
 ?>

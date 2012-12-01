@@ -46,14 +46,14 @@ if (isset($_POST['campaign_id']) && !empty($_POST['campaign_id'])) {
 	    //adding the client ip address
 	    $_POST['client_id_address'] = query_client_ip();
 		$campaign_id=$_POST['campaign_id'];
-		$campaign = new Campaign();
+		$campaign = BeanFactory::getBean('Campaigns');
 		$camp_query  = "select name,id from campaigns where id='$campaign_id'";
 		$camp_query .= " and deleted=0";
         $camp_result=$campaign->db->query($camp_query);
         $camp_data = $campaign->db->fetchByAssoc($camp_result);
         // Bug 41292 - have to select marketing_id for new lead
         $db = DBManagerFactory::getInstance();
-        $marketing = new EmailMarketing();
+        $marketing = BeanFactory::getBean('EmailMarketing');
         $marketing_query = $marketing->create_new_list_query(
                 'date_start desc, date_modified desc',
                 "campaign_id = '{$campaign_id}' and status = 'active' and date_start < " . $db->convert('', 'today'),
@@ -63,13 +63,12 @@ if (isset($_POST['campaign_id']) && !empty($_POST['campaign_id'])) {
         $marketing_data = $db->fetchByAssoc($marketing_result);
         // .Bug 41292
 		if (isset($_REQUEST['assigned_user_id']) && !empty($_REQUEST['assigned_user_id'])) {
-			$current_user = new User();
-			$current_user->retrieve($_REQUEST['assigned_user_id']);
+			$current_user = BeanFactory::getBean('Users', $_REQUEST['assigned_user_id']);
 		} 
 
 	    if(isset($camp_data) && $camp_data != null ){
 			$leadForm = new LeadFormBase();
-            $lead = new Lead();
+            $lead = BeanFactory::getBean('Leads');
 			$prefix = '';
 			if(!empty($_POST['prefix'])){
 				$prefix = $_POST['prefix'];
@@ -101,7 +100,7 @@ if (isset($_POST['campaign_id']) && !empty($_POST['campaign_id'])) {
 			if(!empty($lead)){
 				
 	            //create campaign log
-	            $camplog = new CampaignLog();
+	            $camplog = BeanFactory::getBean('CampaignLog');
 	            $camplog->campaign_id  = $_POST['campaign_id'];
 	            $camplog->related_id   = $lead->id;
 	            $camplog->related_type = $lead->module_dir;
@@ -151,11 +150,11 @@ if (isset($_POST['campaign_id']) && !empty($_POST['campaign_id'])) {
             if(isset($_POST['webtolead_email_opt_out']) || isset($_POST['email_opt_out'])){
                     
                 if(isset ($lead->email1) && !empty($lead->email1)){
-                    $sea = new SugarEmailAddress();
+                    $sea = BeanFactory::getBean('EmailAddresses');
                     $sea->AddUpdateEmailAddress($lead->email1,0,1);
                 }   
                 if(isset ($lead->email2) && !empty($lead->email2)){
-                    $sea = new SugarEmailAddress();
+                    $sea = BeanFactory::getBean('EmailAddresses');
                     $sea->AddUpdateEmailAddress($lead->email2,0,1);
                     
                 }

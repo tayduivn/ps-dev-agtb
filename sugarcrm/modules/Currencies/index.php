@@ -46,7 +46,7 @@ echo getClassicModuleTitle(
 if($current_user->is_admin){
 require_once('modules/Currencies/ListCurrency.php');
 
-$focus = new Currency();
+$focus = BeanFactory::getBean('Currencies');
 $lc = new ListCurrency();
 $lc->handleAdd();
 
@@ -58,14 +58,14 @@ if(isset($_REQUEST['domerge'])){
 	$currencies = $_REQUEST['mergecur'];
 	
 	
-	$opp = new Opportunity();
+	$opp = BeanFactory::getBean('Opportunities');
 	$opp->update_currency_id($currencies, $_REQUEST['mergeTo'] );
 //BEGIN SUGARCRM flav=pro ONLY
 	
-	$product = new ProductTemplate();
+	$product = BeanFactory::getBean('ProductTemplates');
 	$product->update_currency_id($currencies, $_REQUEST['mergeTo'] );
 
-	$quote = new Quote();
+	$quote = BeanFactory::getBean('Quotes');
 	$quote->update_currency_id($currencies, $_REQUEST['mergeTo'] );
 //END SUGARCRM flav=pro ONLY
 	foreach($currencies as $cur){

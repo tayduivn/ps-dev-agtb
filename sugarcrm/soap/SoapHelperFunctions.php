@@ -74,10 +74,9 @@ function get_field_list($value, $translate=true){
 		} //foreach
 	} //if
 
-	//BEGIN SUGARCRM flav!=sales ONLY
 	if($value->module_dir == 'Bugs'){
 
-		$seedRelease = new Release();
+		$seedRelease = BeanFactory::getBean('Releases');
 		$options = $seedRelease->get_releases(TRUE, "Active");
 		$options_ret = array();
 		foreach($options as $name=>$value){
@@ -96,7 +95,6 @@ function get_field_list($value, $translate=true){
 			$list['release_name']['options'] = $options_ret;
 		}
 	}
-	//END SUGARCRM flav!=sales ONLY
     if($value->module_dir == 'Emails'){
         $fields = array('from_addr_name', 'reply_to_addr', 'to_addrs_names', 'cc_addrs_names', 'bcc_addrs_names');
         foreach($fields as $field){
@@ -196,10 +194,9 @@ function new_get_field_list($value, $translate=true) {
 		} //foreach
 	} //if
 
-	//BEGIN SUGARCRM flav!=sales ONLY
 	if($value->module_dir == 'Bugs'){
 
-		$seedRelease = new Release();
+		$seedRelease = BeanFactory::getBean('Releases');
 		$options = $seedRelease->get_releases(TRUE, "Active");
 		$options_ret = array();
 		foreach($options as $name=>$value){
@@ -218,7 +215,6 @@ function new_get_field_list($value, $translate=true) {
 			$module_fields['release_name']['options'] = $options_ret;
 		}
 	}
-	//END SUGARCRM flav!=sales ONLY
 
 	if(isset($value->assigned_user_name) && isset($module_fields['assigned_user_id'])) {
 		$module_fields['assigned_user_name'] = $module_fields['assigned_user_id'];
@@ -512,7 +508,6 @@ function get_return_value_for_fields($value, $module, $fields) {
 }
 
 function getRelationshipResults($bean, $link_field_name, $link_module_fields) {
-	global  $beanList, $beanFiles;
 	$bean->load_relationship($link_field_name);
 	if (isset($bean->$link_field_name)) {
 		// get the query object for this link field
@@ -522,10 +517,8 @@ function getRelationshipResults($bean, $link_field_name, $link_module_fields) {
 
 		// get the related module name and instantiate a bean for that.
 		$submodulename = $bean->$link_field_name->getRelatedModuleName();
-		$submoduleclass = $beanList[$submodulename];
-		require_once($beanFiles[$submoduleclass]);
 
-		$submodule = new $submoduleclass();
+		$submodule = BeanFactory::getBean($submodulename);
 		$filterFields = filter_fields($submodule, $link_module_fields);
 		$relFields = $bean->$link_field_name->getRelatedFields();
 		$roleSelect = '';
@@ -609,23 +602,12 @@ function get_return_value_for_link_fields($bean, $module, $link_name_to_value_fi
  * @param Array $related_ids -- The array of ids for which we want to create relationships
  * @return true on success, false on failure
  */
-function new_handle_set_relationship($module_name, $module_id, $link_field_name, $related_ids) {
-    global  $beanList, $beanFiles;
-
-    if(empty($beanList[$module_name])) {
-        return false;
-    } // if
-    $class_name = $beanList[$module_name];
-    require_once($beanFiles[$class_name]);
-    $mod = new $class_name();
-    $mod->retrieve($module_id);
-	if(!$mod->ACLAccess('DetailView')){
+function new_handle_set_relationship($module_name, $module_id, $link_field_name, $related_ids)
+{
+    $mod = BeanFactory::getBean($module_name, $module_id);
+	if(empty($mod) || !$mod->ACLAccess('DetailView')){
 		return false;
 	}
-
-    foreach($related_ids as $ids) {
-    	$GLOBALS['log']->debug("ids = " . $ids );
-    }
 
 	if ($mod->load_relationship($link_field_name)) {
 		$mod->$link_field_name->add($related_ids);
@@ -636,18 +618,16 @@ function new_handle_set_relationship($module_name, $module_id, $link_field_name,
 }
 
 function new_handle_set_entries($module_name, $name_value_lists, $select_fields = FALSE) {
-	global $beanList, $beanFiles, $app_list_strings;
+	global $app_list_strings;
 	global $current_user;
 
 	$ret_values = array();
 
-	$class_name = $beanList[$module_name];
-	require_once($beanFiles[$class_name]);
 	$ids = array();
 	$count = 1;
 	$total = sizeof($name_value_lists);
 	foreach($name_value_lists as $name_value_list){
-		$seed = new $class_name();
+		$seed = BeanFactory::getBean($module_name);
 
 		$seed->update_vcal = false;
 		foreach($name_value_list as $value){
@@ -692,7 +672,7 @@ function new_handle_set_entries($module_name, $name_value_lists, $select_fields 
 			else{
 				//since we found a duplicate we should set the sync flag
 				if( $seed->ACLAccess('Save')){
-					$seed = new $class_name();
+					$seed = BeanFactory::getBean($module_name);
 					$seed->id = $duplicate_id;
 					$seed->contacts_users_id = $current_user->id;
 					$seed->save();
@@ -942,11 +922,9 @@ function add_create_account($seed)
 	$assigned_user_id = $current_user->id;
 
 	// check if it already exists
-    $focus = new Account();
+    $focus = BeanFactory::getBean('Accounts');
     if( $focus->ACLAccess('Save')){
-		$class = get_class($seed);
-		$temp = new $class();
-		$temp->retrieve($seed->id);
+		$temp = BeanFactory::getBean($seed->module_dir, $seed->id);
 		if ((! isset($account_name) || $account_name == ''))
 		{
 			return;
@@ -1124,8 +1102,7 @@ function get_decoded($object){
 function decrypt_string($string){
 	if(function_exists('mcrypt_cbc')){
 
-		$focus = new Administration();
-		$focus->retrieveSettings();
+		$focus = Administration::getSettings();
 		$key = '';
 		if(!empty($focus->settings['ldap_enc_key'])){
 			$key = $focus->settings['ldap_enc_key'];

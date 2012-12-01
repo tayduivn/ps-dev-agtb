@@ -47,11 +47,21 @@ class SavedSearch extends SugarBean {
 
     var $columns;
 
-	public function __construct($columns = array(), $orderBy = null, $sortOrder = 'DESC') {
+	public function __construct()
+	{
 		parent::__construct();
-        $this->columns = $columns;
-        $this->orderBy = $orderBy;
-        $this->sortOrder = $sortOrder;
+	    $args = func_get_args();
+	    if(count($args) > 0) {
+	        // old ctor, pass to init
+	        call_user_func_array(array($this, "init"), $args);
+	    }
+	}
+
+	public function init($columns = array(), $orderBy = null, $sortOrder = 'DESC')
+	{
+		$this->columns = $columns;
+		$this->orderBy = $orderBy;
+		$this->sortOrder = $sortOrder;
 		$this->setupCustomFields('SavedSearch');
 		foreach ($this->field_defs as $field) {
 			$this->field_name_map[$field['name']] = $field;
@@ -231,7 +241,7 @@ class SavedSearch extends SugarBean {
 
 		global $current_user, $timedate;
 
-		$focus = new SavedSearch();
+		$focus = BeanFactory::getBean('SavedSearch');
 		if($id) $focus->retrieve($id);
 
 		if($useRequired && !checkRequired($prefix, array_keys($focus->required_fields))) {
@@ -341,7 +351,7 @@ class SavedSearch extends SugarBean {
 
         if(isset($this->contents['search_module']))
         {
-           $searchModuleBean = loadBean($this->contents['search_module']);
+           $searchModuleBean = BeanFactory::getBean($this->contents['search_module']);
         }
 
         foreach($this->contents as $key=>$val){

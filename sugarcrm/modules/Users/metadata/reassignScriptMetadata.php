@@ -36,7 +36,6 @@ $moduleFilters = array(
 			),
 		),
 	),
-	//BEGIN SUGARCRM flav!=sales ONLY
 	'Bugs' => array(
 		'display_default' => false,
 		'fields' => array(
@@ -52,7 +51,6 @@ $moduleFilters = array(
 			),
 		),
 	),
-	//END SUGARCRM flav!=sales ONLY
 	'Calls' => array(
 		'display_default' => false,
 		'fields' => array(
@@ -69,7 +67,6 @@ $moduleFilters = array(
 		),
 	),
 	
-	//BEGIN SUGARCRM flav!=sales ONLY
 	'Cases' => array(
 		'display_default' => false,
 		'fields' => array(
@@ -95,7 +92,6 @@ $moduleFilters = array(
 			),
 		),
 	),
-	//END SUGARCRM flav!=sales ONLY
 	
 	'Opportunities' => array(
 		'display_default' => false,

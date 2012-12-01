@@ -670,9 +670,7 @@ EOJS;
 									   	'OpportunitiesByLeadSourceByOutcomeDashlet',
 									   	'OutcomeByMonthDashlet',
 									   	'PipelineBySalesStageDashlet',
-									   	//BEGIN SUGARCRM flav!=sales ONLY
 									   	'CampaignROIChartDashlet',
-									   	//END SUGARCRM flav!=sales ONLY
 									   	'MyOpportunitiesGaugeDashlet',
 									   	'MyForecastingChartDashlet',
 									   	'MyModulesUsedChartDashlet',
@@ -770,9 +768,9 @@ EOJS;
 								$trackerScriptArray .= "'$id',";
 				                $trackerScript = empty($trackerScript) ? $dashlet->displayScript() : $trackerScript;
 							}
-							//BEGIN SUGARCRM flav=pro || flav=sales ONLY
+							//BEGIN SUGARCRM flav=pro ONLY
 							$toggleHeaderToolsetScript .= "SUGAR.mySugar.attachToggleToolsetEvent('$id');";
-							//END SUGARCRM flav=pro || flav=sales ONLY
+							//END SUGARCRM flav=pro ONLY
 
 						} catch (Exception $ex) {
                             $display[$colNum]['dashlets'][$id]['display'] = $ex->getMessage();

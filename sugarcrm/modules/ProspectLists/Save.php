@@ -32,9 +32,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 
 
-$focus = new ProspectList();
-
-$focus->retrieve($_POST['record']);
+$focus = BeanFactory::getBean('ProspectLists', $_POST['record']);
 
 if (!empty($_POST['assigned_user_id']) && ($focus->assigned_user_id != $_POST['assigned_user_id']) && ($_POST['assigned_user_id'] != $current_user->id)) {
 	$check_notify = TRUE;
@@ -52,8 +50,7 @@ $return_id = $focus->id;
 
 //Bug 33675 Duplicate target list
 if( !empty($_REQUEST['duplicateId']) ){
-	$copyFromProspectList = new ProspectList();
-	$copyFromProspectList->retrieve($_REQUEST['duplicateId']);
+	$copyFromProspectList = BeanFactory::getBean('ProspectLists', $_REQUEST['duplicateId']);
 	$relations = $copyFromProspectList->retrieve_relationships('prospect_lists_prospects',array('prospect_list_id'=>$_REQUEST['duplicateId']),'related_id, related_type');
 	if(count($relations)>0){
 		foreach ($relations as $rel){

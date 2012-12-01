@@ -29,10 +29,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 
 
-$focus = new ProductType();
-
-
-	$focus->retrieve($_REQUEST['record']);
+$focus = BeanFactory::getBean('ProductTypes', $_REQUEST['record']);
 
 	foreach($focus->column_fields as $field)
 	{

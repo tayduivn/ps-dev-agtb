@@ -106,7 +106,7 @@ function get_new_record_form () {
 	$the_form .= $form->text('main');
 
 	
-	$focus = new Campaign();
+	$focus = BeanFactory::getBean('Campaigns');
 	
 	
 	$javascript = new javascript();

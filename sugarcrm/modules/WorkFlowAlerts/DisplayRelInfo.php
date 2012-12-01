@@ -33,7 +33,7 @@ global $beanList;
 
 
 
-$seed_object = new WorkFlowAlertShell();
+$seed_object = BeanFactory::getBean('WorkFlowAlertShells');
 
 if(!empty($_REQUEST['parent_id']) && $_REQUEST['parent_id']!="") {
     $seed_object->retrieve($_REQUEST['parent_id']);
@@ -43,7 +43,7 @@ if(!empty($_REQUEST['parent_id']) && $_REQUEST['parent_id']!="") {
 	sugar_die("You shouldn't be here");	
 }
 
-$focus = new WorkFlowAlert();
+$focus = BeanFactory::getBean('WorkFlowAlerts');
 if(!empty($_REQUEST['record']) && $_REQUEST['record']!="") {
 	$focus->retrieve($_REQUEST['record']);
 }	

@@ -145,6 +145,17 @@ class Quote extends SugarBean {
 									);
 	var $new_schema = true;
 
+    /**
+     * This is a depreciated method, please start using __construct() as this method will be removed in a future version
+     *
+     * @see __construct
+     * @deprecated
+     */
+    public function Quote()
+    {
+        $this->__construct();
+    }
+
 
 	/**
 	 * sole constructor
@@ -225,8 +236,7 @@ class Quote extends SugarBean {
         }
 
 		if(!empty($this->currency_id)) {
-		    $currency = new Currency();
-		    $currency->retrieve($this->currency_id);
+		    $currency = BeanFactory::getBean('Currencies', $this->currency_id);
     		if($currency->id != $this->currency_id || $currency->deleted == 1) {
     			$this->tax = $this->tax_usdollar;
     			$this->total = $this->total_usdollar;
@@ -421,8 +431,7 @@ class Quote extends SugarBean {
 
 
 		$idequals = '';
-		$currency = new Currency();
-		$currency->retrieve($toid);
+		$currency = BeanFactory::getBean('Currencies', $toid);
 
 		foreach($fromid as $f){
 			if(!empty($idequals)){
@@ -488,8 +497,7 @@ class Quote extends SugarBean {
         //BEGIN SUGARCRM flav=pro ONLY
 		if(!isset($this->system_id) || empty($this->system_id)) {
 
-			$admin = new Administration();
-			$admin->retrieveSettings();
+			$admin = Administration::getSettings();
 			$system_id = $admin->settings['system_system_id'];
 			if(!isset($system_id)){
 				$system_id = 1;
@@ -521,7 +529,7 @@ class Quote extends SugarBean {
 					FROM  $this->rel_product_bundles
 					WHERE quote_id='$this->id' AND deleted=0 ORDER BY bundle_index";
 
-		return $this->build_related_list($query, new ProductBundle());
+		return $this->build_related_list($query, BeanFactory::getBean('ProductBundles'));
 	}
 
 	function bean_implements($interface) {

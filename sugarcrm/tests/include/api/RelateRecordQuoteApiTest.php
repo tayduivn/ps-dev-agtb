@@ -62,6 +62,7 @@ class RelateRecordQuoteApiTest extends Sugar_PHPUnit_Framework_TestCase
             "link_name" => "quotes",
             "name" => $this->_quoteName,
             "assigned_user_id" => $GLOBALS['current_user']->id,
+            "date_quote_expected_closed" => TimeDate::getInstance()->getNow()->asDbDate(),
         );
 
         $this->_apiClass = new RelateRecordApi();

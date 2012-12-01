@@ -22,16 +22,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 require_once('soap/SoapHelperFunctions.php');
 require_once('soap/SoapTypes.php');
-
-
 require_once('soap/SoapPortalHelper.php');
-
-
-//BEGIN SUGARCRM flav=pro ONLY
-
-
-//END SUGARCRM flav=pro ONLY
-
 
 /*************************************************************************************
 
@@ -50,7 +41,7 @@ $server->register(
 
 function portal_login($portal_auth, $user_name, $application_name){
     $error = new SoapError();
-    $contact = new Contact();
+    $contact = BeanFactory::getBean('Contacts');
     $result = login_user($portal_auth);
 
     if($result == 'fail' || $result == 'sessions_exceeded'){
@@ -136,7 +127,7 @@ $server->register(
 function portal_login_contact($portal_auth, $contact_portal_auth, $application_name){
 
     $error = new SoapError();
-    $contact = new Contact();
+    $contact = BeanFactory::getBean('Contacts');
     $result = login_user($portal_auth);
 
     if($result == 'fail' || $result == 'sessions_exceeded'){
@@ -209,8 +200,7 @@ function portal_validate_authenticated($session_id){
             $valid_session->last_request_time = TimeDate::getInstance()->nowDb();
             $valid_session->save();
             //END SUGARCRM flav=pro ONLY
-            $current_user = new User();
-            $current_user->retrieve($_SESSION['portal_id']);
+            $current_user = BeanFactory::getBean('Users', $_SESSION['portal_id']);
             login_success();
             error_reporting($old_error_reporting);
             return true;
@@ -314,17 +304,15 @@ function portal_get_entry_list_filter($session, $module_name, $order_by, $select
 
     $sugar = null;
     if($module_name == 'Cases'){
-        $sugar = new aCase();
+        $sugar = BeanFactory::getBean('Cases');
     }else if($module_name == 'Contacts'){
-        $sugar = new Contact();
+        $sugar = BeanFactory::getBean('Contacts');
     }else if($module_name == 'Accounts'){
-        $sugar = new Account();
-    //BEGIN SUGARCRM flav!=sales ONLY
+        $sugar = BeanFactory::getBean('Accounts');
     } else if($module_name == 'Bugs'){
-        $sugar = new Bug();
+        $sugar = BeanFactory::getBean('Bugs');
     } else if($module_name == 'KBDocuments' || $module_name == 'FAQ') {
-        $sugar = new KBDocument();
-    //END SUGARCRM flav!=sales ONLY
+        $sugar = BeanFactory::getBean('KBDocuments');
     } else {
         $error->set_error('no_module_support');
         return array('result_count'=>-1, 'entry_list'=>array(), 'error'=>$error->get_soap_array());
@@ -395,7 +383,10 @@ function portal_get_entry($session, $module_name, $id,$select_fields ){
         $error->set_error('no_access');
         return array('result_count'=>-1, 'entry_list'=>array(), 'error'=>$error->get_soap_array());
     }
-    if(empty($beanList[$module_name])){
+
+    $seed = BeanFactory::getBean($module_name, $id, array("disable_row_level_security" => true));
+
+    if(empty($seed)){
         $error->set_error('no_module');
         return array('result_count'=>-1, 'entry_list'=>array(), 'error'=>$error->get_soap_array());
     }
@@ -405,13 +396,6 @@ function portal_get_entry($session, $module_name, $id,$select_fields ){
         return array('result_count'=>-1, 'entry_list'=>array(), 'error'=>$error->get_soap_array());
     }
 
-    $class_name = $beanList[$module_name];
-    require_once($beanFiles[$class_name]);
-    $seed = new $class_name();
-    //BEGIN SUGARCRM flav=pro ONLY
-    $seed->disable_row_level_security = true;
-    //END SUGARCRM flav=pro ONLY
-    $seed->retrieve($id);
     if($module_name == 'KBDocuments') {
        $body = $seed->get_kbdoc_body($id);
        $seed->description = $body;
@@ -447,7 +431,9 @@ function portal_set_entry($session,$module_name, $name_value_list){
         $error->set_error('invalid_session');
         return array('id'=>-1,  'error'=>$error->get_soap_array());
     }
-    if(empty($beanList[$module_name])){
+    $seed = BeanFactory::getBean($module_name);
+
+    if(empty($seed)){
         $error->set_error('no_module');
         return array('id'=>-1, 'error'=>$error->get_soap_array());
     }
@@ -461,16 +447,14 @@ function portal_set_entry($session,$module_name, $name_value_list){
         return array('id'=>-1, 'error'=>$error->get_soap_array());
     }
 
-
-    $class_name = $beanList[$module_name];
-    require_once($beanFiles[$class_name]);
-    $seed = new $class_name();
     $is_update = false;
     $values_set = array();
 
     foreach($name_value_list as $value){
         if($value['name'] == 'id' && !empty($value['value'])) {
+    //BEGIN SUGARCRM flav=pro ONLY
             $seed->disable_row_level_security = true;
+    //END SUGARCRM flav=pro ONLY
             $seed->retrieve($value['value']);
             $is_update = true;
             break;
@@ -527,9 +511,11 @@ function portal_set_entry($session,$module_name, $name_value_list){
             }
             $id = $seed->save();
         }else{
-            $contact = new Contact();
-            $contact->disable_row_level_security = TRUE;
-            $contact->retrieve($_SESSION['user_id']);
+            $contact = BeanFactory::getBean('Contacts', $_SESSION['user_id']
+//BEGIN SUGARCRM flav=pro ONLY
+                , array("disable_row_level_security" => true)
+//END SUGARCRM flav=pro ONLY
+            );
             $seed->contact_id = $contact;
 
             if(isset( $_SESSION['account_id'])){
@@ -591,11 +577,11 @@ function portal_remove_note_attachment($session, $id)
         return array('result_count'=>-1, 'entry_list'=>array(), 'error'=>$error->get_soap_array());
     }
 
-    $focus = new Note();
+    $focus = BeanFactory::getBean('Notes', $id
     //BEGIN SUGARCRM flav=pro ONLY
-    $focus->disable_row_level_security = true;
+        , array("disable_row_level_security" => true)
     //END SUGARCRM flav=pro ONLY
-    $focus->retrieve($id);
+    );
     $result = $focus->deleteAttachment();
 
     return $error->get_soap_array();
@@ -621,11 +607,11 @@ function portal_get_note_attachment($session,$id)
     }
     $current_user = $seed_user;
 
-    $note = new Note();
-    //BEGIN SUGARCRM flav=pro ONLY
-    $note->disable_row_level_security = true;
-    //END SUGARCRM flav=pro ONLY
-    $note->retrieve($id);
+    $note = BeanFactory::getBean('Notes', $id
+//BEGIN SUGARCRM flav=pro ONLY
+                , array("disable_row_level_security" => true)
+//END SUGARCRM flav=pro ONLY
+    );
     require_once('modules/Notes/NoteSoap.php');
     $ns = new NoteSoap();
     if(!isset($note->filename)){
@@ -652,20 +638,19 @@ function portal_relate_note_to_module($session,$note_id, $module_name, $module_i
     if(! portal_validate_authenticated($session)){
         $error->set_error('invalid_session');
         return $error->get_soap_array();
-        }
+    }
     if($_SESSION['type'] == 'lead' || !isset($_SESSION['viewable']['Notes'][$note_id]) || !isset($_SESSION['viewable'][$module_name][$module_id])){
         $error->set_error('no_access');
         return $error->get_soap_array();
-        }
-    if(empty($beanList[$module_name])){
-        $error->set_error('no_module');
-        return $error->get_soap_array();
     }
 
-    $class_name = $beanList[$module_name];
-    require_once($beanFiles[$class_name]);
+    $seed = BeanFactory::getBean($module_name);
 
-    $seed = new $class_name();
+    if(empty($seed)){
+        $error->set_error('no_module');
+        return array('id'=>-1, 'error'=>$error->get_soap_array());
+    }
+
     //BEGIN SUGARCRM flav=pro ONLY
     $seed->disable_row_level_security = true;
     //END SUGARCRM flav=pro ONLY
@@ -800,9 +785,11 @@ function portal_get_module_fields($session, $module_name){
         return array('module_name'=>$module_name, 'module_fields'=>$module_fields, 'error'=>$error->get_soap_array());
     }
 
-    if(empty($beanList[$module_name])){
+    $seed = BeanFactory::getBean($module_name);
+
+    if(empty($seed)){
         $error->set_error('no_module');
-        return array('module_name'=>$module_name, 'module_fields'=>$module_fields, 'error'=>$error->get_soap_array());
+        return array('id'=>-1, 'error'=>$error->get_soap_array());
     }
 
     if(($_SESSION['type'] == 'portal'||$_SESSION['type'] == 'contact') &&  !key_exists($module_name, $valid_modules_for_contact)){
@@ -810,9 +797,6 @@ function portal_get_module_fields($session, $module_name){
         return array('module_name'=>$module_name, 'module_fields'=>$module_fields, 'error'=>$error->get_soap_array());
     }
 
-    $class_name = $beanList[$module_name];
-    require_once($beanFiles[$class_name]);
-    $seed = new $class_name();
     $seed->fill_in_additional_detail_fields();
     $returnFields = get_return_module_fields($seed, $module_name, $error->get_soap_array(), true);
     if(is_subclass_of($seed, 'Person')) {
@@ -822,7 +806,6 @@ function portal_get_module_fields($session, $module_name){
 
     return $returnFields;
 }
-//BEGIN SUGARCRM flav!=sales ONLY
 $server->register(
     'portal_get_subscription_lists',
     array('session'=>'xsd:string'),
@@ -840,7 +823,7 @@ function portal_get_subscription_lists($session){
 
     require_once('modules/Campaigns/utils.php');
 
-    $contact = new Contact();
+    $contact = BeanFactory::getBean('Contacts');
     //BEGIN SUGARCRM flav=pro ONLY
     $contact->disable_row_level_security = true;
     //END SUGARCRM flav=pro ONLY
@@ -884,7 +867,7 @@ function portal_set_newsletters($session, $subscribe_ids, $unsubscribe_ids){
 
     require_once('modules/Campaigns/utils.php');
 
-    $contact = new Contact();
+    $contact = BeanFactory::getBean('Contacts');
     //BEGIN SUGARCRM flav=pro ONLY
     $contact->disable_row_level_security = true;
     //END SUGARCRM flav=pro ONLY
@@ -902,7 +885,6 @@ function portal_set_newsletters($session, $subscribe_ids, $unsubscribe_ids){
     return $error->get_soap_array();
 }
 
-//END SUGARCRM flav!=sales ONLY
 //BEGIN SUGARCRM flav=pro ONLY
 
 $server->register(

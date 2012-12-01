@@ -97,6 +97,7 @@ $mod_strings = array (
 'LBL_JOB_URL' => 'Job URL',
 'LBL_LAST_RUN' => 'Last Successful Run',
 'LBL_MODULE_NAME' => 'Sugar Scheduler',
+'LBL_MODULE_NAME_SINGULAR' => 'Sugar Scheduler',
 'LBL_MODULE_TITLE' => 'Schedulers',
 'LBL_NAME' => 'Job Name',
 'LBL_NEVER' => 'Never',

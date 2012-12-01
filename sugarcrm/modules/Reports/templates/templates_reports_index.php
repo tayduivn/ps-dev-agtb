@@ -116,7 +116,7 @@ if(isset($current_user))
 }
 	
 
-$saved_reports_seed = new SavedReport();
+$saved_reports_seed = BeanFactory::getBean('Reports');
 
 //determine the where query for the published reports
 	if (isset($_REQUEST['view']) && $_REQUEST['view']!="all"){
@@ -239,7 +239,7 @@ function schedulePOPUP(id){
 
 <?php
 
-$saved_reports_seed = new SavedReport();
+$saved_reports_seed = BeanFactory::getBean('Reports');
 
 $custom_reports_arr = $saved_reports_seed->retrieve_all_by_string_fields($query_arr,$order_by);
 $shownRows = false;
@@ -277,17 +277,13 @@ global $timedate;
 	$subModuleCheck = 0;
 	$subModuleCheckArray = array("Tasks", "Calls", "Meetings", "Notes");
 	
-	//BEGIN SUGARCRM flav!=sales ONLY
 	$subModuleProjectArray = array("ProjectTask");
-	//END SUGARCRM flav!=sales ONLY
 	 
 	if(in_array($report->module, $subModuleCheckArray) && (array_key_exists("Calendar", $tabArray) || array_key_exists("Activities", $tabArray)))
 		$subModuleCheck = 1;
 		
-    //BEGIN SUGARCRM flav!=sales ONLY
 	if(in_array($report->module, $subModuleProjectArray) && array_key_exists("Project", $tabArray))
 		$subModuleCheck = 1;
-	//END SUGARCRM flav!=sales ONLY
 		
 	if(array_key_exists($report->module, $tabArray) || $subModuleCheck)
 	{

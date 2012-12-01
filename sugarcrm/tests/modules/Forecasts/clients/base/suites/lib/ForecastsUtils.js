@@ -21,20 +21,200 @@
 
 describe("Forecasts Utils", function(){
 
-    var app, hbt_helper;
+    var app, hbt_helper, config;
 
     beforeEach(function() {
         app = SugarTest.app;
         SugarTest.loadFile("../modules/Forecasts/clients/base/lib", "ForecastsUtils", "js", function(d) { return eval(d); });
         SugarTest.loadFile("../sidecar/src/utils", "currency", "js", function(d) { return eval(d); });
-        hbt_heleper = SugarTest.loadFile("../modules/Forecasts/clients/base/helper","hbt-helpers", "js", function(d) { return eval(d); });
+        SugarTest.loadFile("../modules/Forecasts/clients/base/helper","hbt-helpers", "js", function(d) { return eval(d); });
+        config = new (Backbone.Model.extend({
+            "defaults": fixtures.metadata.modules.Forecasts.config
+        }));
+        SugarTest.seedMetadata(true);
+
+    });
+
+    afterEach(function() {
+        config = null;
+    });
+
+    describe("test getCommittedHistoryLabel function", function() {
+        var likelyArgs = {},
+            bestArgs = {},
+            worstArgs = {},
+            isFirstCommit = false;
+
+        beforeEach(function() {
+            // reset all args to false
+            isFirstCommit = false;
+            likelyArgs = {
+                changed : false,
+                show : false
+            };
+            bestArgs = {
+                changed : false,
+                show : false
+            };
+            worstArgs = {
+                changed : false,
+                show : false
+            };
+        });
+
+        // Testing just the number of args returned
+        describe("Should return the right amount of args", function() {
+            it("has no items shown, should return 1 arg", function() {
+                args = app.forecasts.utils.getCommittedHistoryLabel(bestArgs, likelyArgs, worstArgs, isFirstCommit);
+                expect(args.length).toBe(1);
+            });
+            it("has 1 item shown, should return 2 args", function() {
+                bestArgs.show = true;
+                args = app.forecasts.utils.getCommittedHistoryLabel(bestArgs, likelyArgs, worstArgs, isFirstCommit);
+                expect(args.length).toBe(2);
+            });
+            it("has 2 items shown, should return 3 args", function() {
+                bestArgs.show = true;
+                likelyArgs.show = true;
+                args = app.forecasts.utils.getCommittedHistoryLabel(bestArgs, likelyArgs, worstArgs, isFirstCommit);
+                expect(args.length).toBe(3);
+            });
+            it("has 3 items shown, should return 4 args", function() {
+                bestArgs.show = true;
+                likelyArgs.show = true;
+                worstArgs.show = true;
+                args = app.forecasts.utils.getCommittedHistoryLabel(bestArgs, likelyArgs, worstArgs, isFirstCommit);
+                expect(args.length).toBe(4);
+            });
+        });
+
+        // Testing just the proper lang strings returned for the first arg of
+        // LBL_COMMITTED_HISTORY_SETUP_FORECAST or LBL_COMMITTED_HISTORY_UPDATED_FORECAST
+        describe("First Time Setup vs. Updated Forecasts tests", function() {
+            it("has isFirstCommit = true & should return array with first arg being SETUP_FORECAST string", function() {
+                isFirstCommit = true;
+                args = app.forecasts.utils.getCommittedHistoryLabel(bestArgs, likelyArgs, worstArgs, isFirstCommit);
+                expect(args[0] == 'LBL_COMMITTED_HISTORY_SETUP_FORECAST').toBeTruthy();
+            });
+
+            it("has isFirstCommit = false & should return array with first arg being UPDATED_FORECAST string", function() {
+                isFirstCommit = false;
+                args = app.forecasts.utils.getCommittedHistoryLabel(bestArgs, likelyArgs, worstArgs, isFirstCommit);
+                expect(args[0] == 'LBL_COMMITTED_HISTORY_UPDATED_FORECAST').toBeTruthy();
+            });
+        })
+
+        // now that args count returned has been tested, and the first returned arg SETUP vs UPDATED has passed
+        // only testing likely/best/worst strings
+        describe("Likely/Best/Worst lang strings returned in the proper order", function() {
+
+            // test the return of just one column at a time
+            describe("One column shown or hidden at a time", function() {
+
+                it("likely is only column shown, no change", function() {
+                    likelyArgs.show = true;
+                    args = app.forecasts.utils.getCommittedHistoryLabel(bestArgs, likelyArgs, worstArgs, isFirstCommit);
+                    expect(args[1] == 'LBL_COMMITTED_HISTORY_LIKELY_SAME').toBeTruthy();
+                });
+                it("likely is only column shown, has changed", function() {
+                    likelyArgs.show = true;
+                    likelyArgs.changed = true;
+                    args = app.forecasts.utils.getCommittedHistoryLabel(bestArgs, likelyArgs, worstArgs, isFirstCommit);
+                    expect(args[1] == 'LBL_COMMITTED_HISTORY_LIKELY_CHANGED').toBeTruthy();
+                });
+
+                it("best is only column shown, no change", function() {
+                    bestArgs.show = true;
+                    args = app.forecasts.utils.getCommittedHistoryLabel(bestArgs, likelyArgs, worstArgs, isFirstCommit);
+                    expect(args[1] == 'LBL_COMMITTED_HISTORY_BEST_SAME').toBeTruthy();
+                });
+                it("best is only column shown, has changed", function() {
+                    bestArgs.show = true;
+                    bestArgs.changed = true;
+                    args = app.forecasts.utils.getCommittedHistoryLabel(bestArgs, likelyArgs, worstArgs, isFirstCommit);
+                    expect(args[1] == 'LBL_COMMITTED_HISTORY_BEST_CHANGED').toBeTruthy();
+                });
+
+                it("worst is only column shown, no change", function() {
+                    worstArgs.show = true;
+                    args = app.forecasts.utils.getCommittedHistoryLabel(bestArgs, likelyArgs, worstArgs, isFirstCommit);
+                    expect(args[1] == 'LBL_COMMITTED_HISTORY_WORST_SAME').toBeTruthy();
+                });
+                it("worst is only column shown, has changed", function() {
+                    worstArgs.show = true;
+                    worstArgs.changed = true;
+                    args = app.forecasts.utils.getCommittedHistoryLabel(bestArgs, likelyArgs, worstArgs, isFirstCommit);
+                    expect(args[1] == 'LBL_COMMITTED_HISTORY_WORST_CHANGED').toBeTruthy();
+                });
+
+            });
+
+            describe("Two columns shown, checking proper order is maintained", function() {
+                // One column has been tested, just making sure order is right
+                // LIKELY > BEST > WORST
+                it("likely and best shown, likely should be first", function() {
+                    likelyArgs.show = true;
+                    bestArgs.show = true;
+                    args = app.forecasts.utils.getCommittedHistoryLabel(bestArgs, likelyArgs, worstArgs, isFirstCommit);
+                    expect(args[1] == 'LBL_COMMITTED_HISTORY_LIKELY_SAME').toBeTruthy();
+                    expect(args[2] == 'LBL_COMMITTED_HISTORY_BEST_SAME').toBeTruthy();
+                });
+                it("likely and worst shown, likely should be first", function() {
+                    likelyArgs.show = true;
+                    worstArgs.show = true;
+                    args = app.forecasts.utils.getCommittedHistoryLabel(bestArgs, likelyArgs, worstArgs, isFirstCommit);
+                    expect(args[1] == 'LBL_COMMITTED_HISTORY_LIKELY_SAME').toBeTruthy();
+                    expect(args[2] == 'LBL_COMMITTED_HISTORY_WORST_SAME').toBeTruthy();
+                });
+                it("best and worst shown, best should be first", function() {
+                    bestArgs.show = true;
+                    worstArgs.show = true;
+                    args = app.forecasts.utils.getCommittedHistoryLabel(bestArgs, likelyArgs, worstArgs, isFirstCommit);
+                    expect(args[1] == 'LBL_COMMITTED_HISTORY_BEST_SAME').toBeTruthy();
+                    expect(args[2] == 'LBL_COMMITTED_HISTORY_WORST_SAME').toBeTruthy();
+                });
+            });
+
+            describe("Three columns shown, checking proper order is maintained", function() {
+                // One and two columns have been tested, just making sure order is right
+                // LIKELY > BEST > WORST
+                it("likely and best shown, likely should be first", function() {
+                    likelyArgs.show = true;
+                    bestArgs.show = true;
+                    worstArgs.show = true;
+                    args = app.forecasts.utils.getCommittedHistoryLabel(bestArgs, likelyArgs, worstArgs, isFirstCommit);
+                    expect(args[1] == 'LBL_COMMITTED_HISTORY_LIKELY_SAME').toBeTruthy();
+                    expect(args[2] == 'LBL_COMMITTED_HISTORY_BEST_SAME').toBeTruthy();
+                    expect(args[3] == 'LBL_COMMITTED_HISTORY_WORST_SAME').toBeTruthy();
+                });
+            });
+
+        });
+
     });
 
     describe("test createHistoryLog function", function() {
         beforeEach(function() {
-            App = app;
+            config.set({
+                show_worksheet_likely : false,
+                show_worksheet_best : false,
+                show_worksheet_worst : false
+            });
             newestModel = new Backbone.Model();
             oldestModel = new Backbone.Model();
+            // set the exact same default models so change is not a factor in these tests
+            newestModel.set({
+                best_case : 1000,
+                likely_case : 900,
+                worst_case : 700,
+                date_entered : '2012-07-12 18:37:36'
+            });
+            oldestModel.set({
+                best_case : 1000,
+                likely_case : 900,
+                worst_case : 700,
+                date_entered : '2012-07-12 18:37:36'
+            });
         });
 
         afterEach(function(){
@@ -42,317 +222,202 @@ describe("Forecasts Utils", function(){
             oldestModel = null;
         });
 
-        describe("should show all values changed", function() {
-            it("should return object with text attribute indicating both best and likely values changed", function() {
-                newestModel.set('best_case', 1000);
-                newestModel.set('likely_case', 900);
-                newestModel.set('worst_case', 700);
-                newestModel.set('date_entered', '2012-07-12 18:37:36');
-
-                oldestModel.set('best_case', 900);
-                oldestModel.set('likely_case', 800);
-                oldestModel.set('worst_case', 600);
-                oldestModel.set('date_entered', '2012-07-12 18:37:36');
-
-                result = app.forecasts.utils.createHistoryLog(oldestModel,newestModel);
-                expect(result.text == 'LBL_COMMITTED_HISTORY_BEST_LIKELY_WORST_CHANGED').toBeTruthy();
+        // These tests are only testing createHistoryLog and the returned lang string which
+        // shows how many columns should be shown based on config params
+        it("The one column lang string should be used", function() {
+            config.set({
+                show_worksheet_likely : true
             });
-
-            it("should return object with text attribute indicating both best and likely values changed (first commit)", function() {
-                newestModel.set('best_case', 1000);
-                newestModel.set('likely_case', 900);
-                newestModel.set('worst_case', 700);
-                newestModel.set('date_entered', '2012-07-12 18:37:36');
-
-                result = app.forecasts.utils.createHistoryLog('',newestModel);
-                expect(result.text == 'LBL_COMMITTED_HISTORY_BEST_LIKELY_WORST_SETUP').toBeTruthy();
+            result = app.forecasts.utils.createHistoryLog(oldestModel,newestModel,config);
+            expect(result.text == 'LBL_COMMITTED_HISTORY_1_SHOWN').toBeTruthy();
+        });
+        it("The two column lang string should be used", function() {
+            config.set({
+                show_worksheet_likely : true,
+                show_worksheet_best : true
             });
-
-            it("should return label indicating all values have changed", function() {
-               //call getCommitted history label with best_changed = true, likely_changed = true and worst_changed = true
-               text = app.forecasts.utils.getCommittedHistoryLabel(true, true, true);
-               expect(text).toEqual('LBL_COMMITTED_HISTORY_BEST_LIKELY_WORST_CHANGED');
+            result = app.forecasts.utils.createHistoryLog(oldestModel,newestModel,config);
+            expect(result.text == 'LBL_COMMITTED_HISTORY_2_SHOWN').toBeTruthy();
+        });
+        it("The three column lang string should be used", function() {
+            config.set({
+                show_worksheet_likely : true,
+                show_worksheet_best : true,
+                show_worksheet_worst : true
             });
+            result = app.forecasts.utils.createHistoryLog(oldestModel,newestModel,config);
+            expect(result.text == 'LBL_COMMITTED_HISTORY_3_SHOWN').toBeTruthy();
+        });
+    });
 
-            it("should return label indicating all values have changed (first commit)", function() {
-                //call getCommitted history label with best_changed = true, likely_changed = true, worst_changed = true and is_first_commit = true
-                text = app.forecasts.utils.getCommittedHistoryLabel(true, true, true, true);
-                expect(text).toEqual('LBL_COMMITTED_HISTORY_BEST_LIKELY_WORST_SETUP');
+    describe("test parseArgsAndLabels function", function() {
+        var argsArray = [],
+            labels = [];
+
+        beforeEach(function() {
+            // reset arrays before each
+            argsArray = [];
+            labels = [];
+        });
+
+        // "mismatched array lengths" refers to argsArray appropriately being 1 less than labels
+        // labels will have a label for SETUP/UPDATED lang string which needs no args so it should return null
+        it("on mismatched array lengths should return null", function() {
+            result = app.forecasts.utils.parseArgsAndLabels(argsArray, labels);
+            expect(result).toBeNull();
+        });
+
+        // No further tests can be done on this function because Handlebars doesn't compile in our jasmine tests
+    });
+
+    describe("test getDifference function", function() {
+        beforeEach(function() {
+            newestModel = new Backbone.Model();
+            oldestModel = new Backbone.Model();
+            // set the exact same default models
+            newestModel.set({
+                best_case : 1000
+            });
+            oldestModel.set({
+                best_case : 1000
             });
         });
 
-        describe("should show best and likely values changed", function() {
-            it("should return object with text attribute indicating both best and likely values changed", function() {
-                newestModel.set('best_case', 1000);
-                newestModel.set('likely_case', 900);
-                newestModel.set('worst_case', 700);
-                newestModel.set('date_entered', '2012-07-12 18:37:36');
+        it("newestModel being higher should give a positive difference", function() {
+            newestModel.set({best_case : 2000});
+            result = app.forecasts.utils.getDifference(oldestModel, newestModel, 'best_case');
+            expect(result).toBe(1000);
+        });
+        it("newestModel being lower should give a negative difference", function() {
+            oldestModel.set({best_case : 2000});
+            result = app.forecasts.utils.getDifference(oldestModel, newestModel, 'best_case');
+            expect(result).toBe(-1000);
+        });
+        it("newestModel being the same as oldestModel should give a difference of 0", function() {
+            result = app.forecasts.utils.getDifference(oldestModel, newestModel, 'best_case');
+            expect(result).toBe(0);
+        });
+    });
 
-                oldestModel.set('best_case', 900);
-                oldestModel.set('likely_case', 800);
-                oldestModel.set('worst_case', 700);
-                oldestModel.set('date_entered', '2012-07-12 18:37:36');
+    describe("test getDirection function", function() {
+        var testDifference = 0;
+        beforeEach(function() {
+            testDifference = 0;
+        });
 
-                result = app.forecasts.utils.createHistoryLog(oldestModel,newestModel);
-                expect(result.text == 'LBL_COMMITTED_HISTORY_BEST_LIKELY_CHANGED').toBeTruthy();
-            });
+        it("testDifference being positive should result in LBL_UP", function() {
+            testDifference = 100;
+            result = app.forecasts.utils.getDirection(testDifference);
+            expect(result).toEqual('LBL_UP');
+        });
+        it("testDifference being negative should result in LBL_DOWN", function() {
+            testDifference = -100;
+            result = app.forecasts.utils.getDirection(testDifference);
+            expect(result).toEqual('LBL_DOWN');
+        });
+        it("testDifference being 0 should result in an empty string", function() {
+            result = app.forecasts.utils.getDirection(testDifference);
+            expect(result).toEqual('');
+        });
+    });
 
-            it("should return object with text attribute indicating both best and likely values changed (first commit)", function() {
-                newestModel.set('worst_case', 0);
+    describe("test gatherLangArgsByParams function", function() {
+        var dir = '',
+            arrow = '',
+            diff = 0,
+            model = {},
+            attrStr = '';
 
-                result = app.forecasts.utils.createHistoryLog('',newestModel);
-                expect(result.text == 'LBL_COMMITTED_HISTORY_BEST_LIKELY_SETUP').toBeTruthy();
-            });
+        beforeEach(function() {
+            dir = 'LBL_UP';
+            arrow = '&nbsp;<span class="icon-arrow-up font-green"></span>';
+            diff = 1000;
+            model = new (Backbone.Model.extend({
+                defaults : {
+                    likely_case : 250,
+                    best_case : 500,
+                    worst_case : 100
+                }
+            }));
+            attrStr = 'likely_case';
+        });
 
-            it("should return label indicating best and likely values have changed", function() {
-               //call getCommitted history label with best_changed = true, likely_changed = true and worst_changed = false
-               text = app.forecasts.utils.getCommittedHistoryLabel(true, true, false);
-               expect(text).toEqual('LBL_COMMITTED_HISTORY_BEST_LIKELY_CHANGED');
-            });
+        it("should return an array of three args", function() {
+            var testArgs = app.forecasts.utils.gatherLangArgsByParams(dir, arrow, diff, model, attrStr);
+            expect(testArgs.length).toEqual(3);
+        });
+    });
 
-            it("should return label indicating best and likely values have changed (first commit)", function() {
-                //call getCommitted history label with best_changed = true, likely_changed = true, worst_changed = false and is_first_commit = true
-                text = app.forecasts.utils.getCommittedHistoryLabel(true, true, false, true);
-                expect(text).toEqual('LBL_COMMITTED_HISTORY_BEST_LIKELY_SETUP');
+    describe("Should return a span for the arrow dependent on direction passed", function() {
+        it("should return a span indicating an arrow up", function() {
+            arrowText = app.forecasts.utils.getArrowDirectionSpan("LBL_UP");
+            expect(arrowText).toEqual('&nbsp;<span class="icon-arrow-up font-green"></span>');
+        });
+
+        it("should return a span indicating an arrow down", function() {
+            arrowText = app.forecasts.utils.getArrowDirectionSpan("LBL_DOWN");
+            expect(arrowText).toEqual('&nbsp;<span class="icon-arrow-down font-red"></span>');
+        });
+
+        it("should return a span indicating no change", function() {
+            arrowText = app.forecasts.utils.getArrowDirectionSpan("");
+            expect(arrowText).toEqual('');
+        });
+    });
+    
+    describe("getAppConfigDatasets method", function () {
+
+        var lstubs = [],
+        config;
+
+        beforeEach(function () {
+            lstubs.push(sinon.stub(app.metadata, "getStrings", function () {
+                return {
+                    'forecasts_options_dataset':{
+                        'likely':'Likely',
+                        'best':'Best',
+                        'worst':'Worst'
+                    }
+                }
+            }));
+
+            config = new Backbone.Model({
+                'show_worksheet_likely' : 0,
+                'show_worksheet_best' : 0,
+                'show_worksheet_worst' : 0
             });
         });
 
-        describe("should show best and worst values changed", function() {
-            it("should return object with text attribute indicating both best and likely values changed", function() {
-                newestModel.set('best_case', 1000);
-                newestModel.set('likely_case', 900);
-                newestModel.set('worst_case', 800);
-                newestModel.set('date_entered', '2012-07-12 18:37:36');
-
-                oldestModel.set('best_case', 900);
-                oldestModel.set('likely_case', 900);
-                oldestModel.set('worst_case', 700);
-                oldestModel.set('date_entered', '2012-07-12 18:37:36');
-
-                result = app.forecasts.utils.createHistoryLog(oldestModel,newestModel);
-                expect(result.text == 'LBL_COMMITTED_HISTORY_BEST_WORST_CHANGED').toBeTruthy();
+        afterEach(function () {
+            _.each(lstubs, function (stub) {
+                stub.restore();
             });
 
-            it("should return object with text attribute indicating both best and likely values changed (first commit)", function() {
-                newestModel.set('likely_case', 0);
-
-                result = app.forecasts.utils.createHistoryLog('',newestModel);
-                expect(result.text == 'LBL_COMMITTED_HISTORY_BEST_WORST_SETUP').toBeTruthy();
-            });
-
-            it("should return label indicating best and worst values have changed", function() {
-               //call getCommitted history label with best_changed = true, likely_changed = false and worst_changed = true
-               text = app.forecasts.utils.getCommittedHistoryLabel(true, false, true);
-               expect(text).toEqual('LBL_COMMITTED_HISTORY_BEST_WORST_CHANGED');
-            });
-
-            it("should return label indicating best and worst values have changed (first commit)", function() {
-                //call getCommitted history label with best_changed = true, likely_changed = false, worst_changed = true and is_first_commit = true
-                text = app.forecasts.utils.getCommittedHistoryLabel(true, false, true, true);
-                expect(text).toEqual('LBL_COMMITTED_HISTORY_BEST_WORST_SETUP');
-            });
+            delete config;
         });
 
-        describe("should show likely and worst values changed", function() {
-            it("should return object with text attribute indicating both best and likely values changed", function() {
-                newestModel.set('best_case', 1000);
-                newestModel.set('likely_case', 900);
-                newestModel.set('worst_case', 800);
-                newestModel.set('date_entered', '2012-07-12 18:37:36');
+        it("should return no dataset", function () {
+            ds = app.forecasts.utils.getAppConfigDatasets('forecasts_options_dataset', 'show_worksheet_', config);
 
-                oldestModel.set('best_case', 1000);
-                oldestModel.set('likely_case', 800);
-                oldestModel.set('worst_case', 700);
-                oldestModel.set('date_entered', '2012-07-12 18:37:36');
-
-                result = app.forecasts.utils.createHistoryLog(oldestModel,newestModel);
-                expect(result.text == 'LBL_COMMITTED_HISTORY_LIKELY_WORST_CHANGED').toBeTruthy();
-            });
-
-            it("should return object with text attribute indicating both best and likely values changed (first commit)", function() {
-                newestModel.set('best_case', 0);
-
-                result = app.forecasts.utils.createHistoryLog('',newestModel);
-                expect(result.text == 'LBL_COMMITTED_HISTORY_LIKELY_WORST_SETUP').toBeTruthy();
-            });
-
-            it("should return label indicating likely ad worst values have changed", function() {
-               //call getCommitted history label with best_changed = false, likely_changed = true and worst_changed = true
-               text = app.forecasts.utils.getCommittedHistoryLabel(false, true, true);
-               expect(text).toEqual('LBL_COMMITTED_HISTORY_LIKELY_WORST_CHANGED');
-            });
-
-            it("should return label indicating likely ad worst values have changed (first commit)", function() {
-                //call getCommitted history label with best_changed = false, likely_changed = true, worst_changed = true and is_first_commit = true
-                text = app.forecasts.utils.getCommittedHistoryLabel(false, true, true, true);
-                expect(text).toEqual('LBL_COMMITTED_HISTORY_LIKELY_WORST_SETUP');
-            });
+            expect(_.isEmpty(ds)).toBeTruthy();
         });
+        it("should return likely dataset", function(){
+            config.set({'show_worksheet_likely': 1});
+            ds = app.forecasts.utils.getAppConfigDatasets('forecasts_options_dataset', 'show_worksheet_', config);
 
-        describe("should show best values changed", function() {
-            it("should return object with text attribute best case value changed", function() {
-                newestModel.set('best_case', 1000);
-                newestModel.set('likely_case', 900);
-                newestModel.set('worst_case', 700);
-                newestModel.set('date_entered', '2012-07-12 18:37:36');
-
-                oldestModel.set('best_case', 900);
-                oldestModel.set('likely_case', 900);
-                oldestModel.set('worst_case', 700);
-                oldestModel.set('date_entered', '2012-07-12 18:37:36');
-
-                result = app.forecasts.utils.createHistoryLog(oldestModel,newestModel);
-                expect(result.text == 'LBL_COMMITTED_HISTORY_BEST_CHANGED').toBeTruthy();
-            });
-
-            it("should return object with text attribute best case value changed", function() {
-                newestModel.set('likely_case', 0);
-                newestModel.set('worst_case', 0);
-
-                result = app.forecasts.utils.createHistoryLog('',newestModel);
-                expect(result.text == 'LBL_COMMITTED_HISTORY_BEST_SETUP').toBeTruthy();
-            });
-
-            it("should return label indicating best values have changed", function() {
-               //call getCommitted history label with best_changed = true, likely_changed = false and worst_changed = false
-               text = app.forecasts.utils.getCommittedHistoryLabel(true, false, false);
-               expect(text).toEqual('LBL_COMMITTED_HISTORY_BEST_CHANGED');
-            });
-
-            it("should return label indicating best values have changed (first commit)", function() {
-                //call getCommitted history label with best_changed = true, likely_changed = false, worst_changed = false and is_first_commit = true
-                text = app.forecasts.utils.getCommittedHistoryLabel(true, false, false, true);
-                expect(text).toEqual('LBL_COMMITTED_HISTORY_BEST_SETUP');
-            });
+            expect(_.keys(ds)).toEqual(['likely']);
         });
+        it("should return likely and best dataset", function(){
+            config.set({'show_worksheet_likely': 1, 'show_worksheet_best': 1});
+            ds = app.forecasts.utils.getAppConfigDatasets('forecasts_options_dataset', 'show_worksheet_', config);
 
-        describe("should show likely values changed", function() {
-            it("should return object with text attribute likely case value changed", function() {
-                newestModel.set('best_case', 1000);
-                newestModel.set('likely_case', 900);
-                newestModel.set('worst_case', 700);
-                newestModel.set('date_entered', '2012-07-12 18:37:36');
-
-                oldestModel.set('best_case', 1000);
-                oldestModel.set('likely_case', 800);
-                oldestModel.set('worst_case', 700);
-                oldestModel.set('date_entered', '2012-07-12 18:37:36');
-
-                result = app.forecasts.utils.createHistoryLog(oldestModel,newestModel);
-                expect(result.text == 'LBL_COMMITTED_HISTORY_LIKELY_CHANGED').toBeTruthy();
-            });
-
-            it("should return object with text attribute likely case value changed (first commit)", function() {
-                newestModel.set('best_case', 0);
-                newestModel.set('worst_case', 0);
-
-                result = app.forecasts.utils.createHistoryLog('',newestModel);
-                expect(result.text == 'LBL_COMMITTED_HISTORY_LIKELY_SETUP').toBeTruthy();
-            });
-
-            it("should return label indicating likely values have changed", function() {
-               //call getCommitted history label with best_changed = false, likely_changed = true and worst_changed = false
-               text = app.forecasts.utils.getCommittedHistoryLabel(false, true, false);
-               expect(text).toEqual('LBL_COMMITTED_HISTORY_LIKELY_CHANGED');
-            });
-
-            it("should return label indicating likely values have changed (first commit)", function() {
-                //call getCommitted history label with best_changed = false, likely_changed = true, worst_changed = false and is_first_commit = true
-                text = app.forecasts.utils.getCommittedHistoryLabel(false, true, false, true);
-                expect(text).toEqual('LBL_COMMITTED_HISTORY_LIKELY_SETUP');
-            });
+            expect(_.keys(ds)).toEqual(['likely', 'best']);
         });
+        it("should return likely, best and worst dataset", function(){
+            config.set({'show_worksheet_likely': 1, 'show_worksheet_best': 1, 'show_worksheet_worst': 1});
+            ds = app.forecasts.utils.getAppConfigDatasets('forecasts_options_dataset', 'show_worksheet_', config);
 
-        describe("should show worst values changed", function() {
-            it("should return object with text attribute likely case value changed", function() {
-                newestModel.set('best_case', 1000);
-                newestModel.set('likely_case', 800);
-                newestModel.set('worst_case', 800);
-                newestModel.set('date_entered', '2012-07-12 18:37:36');
-
-                oldestModel.set('best_case', 1000);
-                oldestModel.set('likely_case', 800);
-                oldestModel.set('worst_case', 700);
-                oldestModel.set('date_entered', '2012-07-12 18:37:36');
-
-                result = app.forecasts.utils.createHistoryLog(oldestModel,newestModel);
-                expect(result.text == 'LBL_COMMITTED_HISTORY_WORST_CHANGED').toBeTruthy();
-            });
-
-            it("should return object with text attribute likely case value changed (first commit)", function() {
-                newestModel.set('best_case', 0);
-                newestModel.set('likely_case', 0);
-
-                result = app.forecasts.utils.createHistoryLog('',newestModel);
-                expect(result.text == 'LBL_COMMITTED_HISTORY_WORST_SETUP').toBeTruthy();
-            });
-
-            it("should return label indicating worst values have changed", function() {
-               //call getCommitted history label with best_changed = false, likely_changed = false and worst_changed = true
-               text = app.forecasts.utils.getCommittedHistoryLabel(false, false, true);
-               expect(text).toEqual('LBL_COMMITTED_HISTORY_WORST_CHANGED');
-            });
-
-            it("should return label indicating worst values have changed (first commit)", function() {
-                //call getCommitted history label with best_changed = false, likely_changed = false, worst_changed = true and is_first_commit = true
-                text = app.forecasts.utils.getCommittedHistoryLabel(false, false, true, true);
-                expect(text).toEqual('LBL_COMMITTED_HISTORY_WORST_SETUP');
-            });
-        });
-
-        describe("should show no values changed", function() {
-            it("should return object with text attribute no value changed", function() {
-                newestModel.set('best_case', 1000);
-                newestModel.set('likely_case', 900);
-                newestModel.set('worst_case', 700);
-                newestModel.set('date_entered', '2012-07-12 18:37:36');
-
-                oldestModel.set('best_case', 1000);
-                oldestModel.set('likely_case', 900);
-                oldestModel.set('worst_case', 700);
-                oldestModel.set('date_entered', '2012-07-12 18:37:36');
-
-                result = app.forecasts.utils.createHistoryLog(oldestModel,newestModel);
-                expect(result.text == 'LBL_COMMITTED_HISTORY_CHANGED').toBeTruthy();
-            });
-
-            it("should return object with text attribute no value changed (first commit)", function() {
-                newestModel.set('best_case', 0);
-                newestModel.set('likely_case', 0);
-                newestModel.set('worst_case', 0);
-
-                result = app.forecasts.utils.createHistoryLog('',newestModel);
-                expect(result.text == 'LBL_COMMITTED_HISTORY_SETUP').toBeTruthy();
-            });
-
-            it("should return label indicating no values have changed", function() {
-               //call getCommitted history label with best_changed = false, likely_changed = false and worst_changed = false
-               text = app.forecasts.utils.getCommittedHistoryLabel(false, false, false);
-               expect(text).toEqual('LBL_COMMITTED_HISTORY_CHANGED');
-            });
-
-            it("should return label indicating no values have changed (first commit)", function() {
-                //call getCommitted history label with best_changed = false, likely_changed = false, worst_changed = false and is_first_commit = true
-                text = app.forecasts.utils.getCommittedHistoryLabel(false, false, false, true);
-                expect(text).toEqual('LBL_COMMITTED_HISTORY_SETUP');
-            });
-        });
-
-        describe("Should return a span for the arrow dependent on direction passed", function() {
-           it("should return a span indicating an arrow up", function() {
-               arrowText = app.forecasts.utils.getArrowDirectionSpan("LBL_UP");
-               expect(arrowText).toEqual('&nbsp;<span class="icon-arrow-up font-green"></span>');
-           });
-
-           it("should return a span indicating an arrow down", function() {
-                arrowText = app.forecasts.utils.getArrowDirectionSpan("LBL_DOWN");
-                expect(arrowText).toEqual('&nbsp;<span class="icon-arrow-down font-red"></span>');
-           });
-
-           it("should return a span indicating no change", function() {
-               arrowText = app.forecasts.utils.getArrowDirectionSpan("");
-               expect(arrowText).toEqual('');
-           });
+            expect(_.keys(ds)).toEqual(['likely', 'best', 'worst']);
         });
     });
 });

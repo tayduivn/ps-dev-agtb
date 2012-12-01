@@ -225,10 +225,9 @@ if (!isset ($_SERVER['REQUEST_URI'])) {
 	$_SERVER['REQUEST_URI'] = '';
 }
 
-$current_user = new User();
+$current_user = BeanFactory::getBean('Users');
 $current_entity = null;
-$system_config = new Administration();
-$system_config->retrieveSettings();
+$system_config = Administration::getSettings();
 
 LogicHook::initialize()->call_custom_logic('', 'after_entry_point');
 }

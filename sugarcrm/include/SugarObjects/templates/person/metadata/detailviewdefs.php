@@ -30,9 +30,9 @@ $viewdefs[$module_name]['DetailView'] = array(
 'templateMeta' => array('form' => array('buttons'=>array('EDIT', 'DUPLICATE', 'DELETE', 'FIND_DUPLICATES', 
                                                         ),
                                        ),
-                        //BEGIN SUGARCRM flav=pro || flav=sales ONLY
+                        //BEGIN SUGARCRM flav=pro ONLY
                         'useTabs' => true,
-                        //END SUGARCRM flav=pro || flav=sales ONLY
+                        //END SUGARCRM flav=pro ONLY
                         'maxColumns' => '2', 
                         'widths' => array(
                                         array('label' => '10', 'field' => '30'), 

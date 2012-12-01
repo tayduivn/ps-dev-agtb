@@ -28,9 +28,7 @@ require_once 'modules/Users/User.php';
 require_once "modules/Notes/Note.php";
 require_once "modules/Tasks/Task.php";
 require_once "modules/Bugs/Bug.php";
-//BEGIN SUGARCRM flav!=sales ONLY
 require_once "modules/Campaigns/Campaign.php";
-//END SUGARCRM flav!=sales ONLY
 
 /**
  * @ticket 20955
@@ -86,8 +84,7 @@ class Bug20955Test extends Sugar_PHPUnit_Framework_TestCase
 		return $this->assertEquals($temp_bug->team_id,$current_user->default_team, "The bug default team is not the current user's default team! ");
 	}
 
-	//BEGIN SUGARCRM flav!=sales ONLY
-	public function testDisabledNewCampaignDefaultTeam()
+	public function testDisabledNewCampaignDefaultTeam() 
     {
 		global $current_user;
         $timedate = TimeDate::getInstance();
@@ -96,6 +93,5 @@ class Bug20955Test extends Sugar_PHPUnit_Framework_TestCase
         $temp_campaign->save();
 		return $this->assertEquals($temp_campaign->team_id,$current_user->default_team, "The campaign default team is not the current user's default team! ");
 	}
-	//END SUGARCRM flav!=sales ONLY
 }
 

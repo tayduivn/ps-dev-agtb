@@ -73,6 +73,17 @@ class CustomQuery extends SugarBean {
 	// This is used to retrieve related fields from form posts.
 	var $additional_column_fields = Array();
 
+    /**
+     * This is a depreciated method, please start using __construct() as this method will be removed in a future version
+     *
+     * @see __construct
+     * @deprecated
+     */
+    public function CustomQuery()
+    {
+        $this->__construct();
+    }
+
 	public function __construct() {
 		parent::__construct();
         $this->db_slave = DBManagerFactory::getInstance('reports');
@@ -307,8 +318,7 @@ class CustomQuery extends SugarBean {
 			while (($row = $this->db_slave->fetchByAssoc($result)) != null) {
 			//while ($row = $this->db->fetchByAssoc($result)) {
 
-				$dataset_object = new DataSet();
-				$dataset_object->retrieve($row['id']);
+				$dataset_object = BeanFactory::getBean('DataSets', $row['id']);
 				$dataset_object->disable_custom_layout();
 
 			//end while rows

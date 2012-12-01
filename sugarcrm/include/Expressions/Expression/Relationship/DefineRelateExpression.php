@@ -62,11 +62,10 @@ class DefineRelateExpression extends RelateExpression
 
     protected function getBean($module)
     {
-       global $beanList;
-       if (empty($beanList[$module]))
+        $bean = BeanFactory::getBean($module);
+        if (empty($bean))
            throw new Exception("No bean for module $module");
-       $bean = $beanList[$module];
-       return new $bean();
+        return $bean;
     }
 
 	/**

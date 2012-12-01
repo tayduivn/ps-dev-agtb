@@ -52,6 +52,17 @@ class Role extends SugarBean {
 	var $module_dir = 'Roles';
 	var $new_schema = true;
 
+    /**
+     * This is a depreciated method, please start using __construct() as this method will be removed in a future version
+     *
+     * @see __construct
+     * @deprecated
+     */
+    public function Role()
+    {
+        $this->__construct();
+    }
+
 	public function __construct()
 	{
 		parent::__construct();
@@ -167,7 +178,7 @@ class Role extends SugarBean {
 		
 		$query = "SELECT user_id as id FROM roles_users WHERE role_id='$this->id' AND deleted=0";
 		
-		return $this->build_related_list($query, new User());
+		return $this->build_related_list($query, BeanFactory::getBean('Users'));
 	}
 
 	function check_user_role_count($user_id)

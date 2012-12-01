@@ -26,13 +26,13 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * governing these rights and limitations under the License.  Portions created
  * by SugarCRM are Copyright (C) 2004-2007 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
- 
+
 require_once('modules/DynamicFields/templates/Fields/TemplateField.php');
 class TemplateRelatedTextField extends TemplateText{
     var $type = 'relate';
     //ext1 is the name field
     //ext2 is the related module
-    
+
     function get_html_edit(){
         $this->prepare();
         $name = $this->name .'_name';
@@ -47,17 +47,17 @@ class TemplateRelatedTextField extends TemplateText{
         $value_name = strtoupper('{'.$name.'}');
         $id = $this->name ;
         $value_id = strtoupper('{'.$id .'}');
-        
-        return "<a href='index.php?module=$this->ext2&action=DetailView&record={$value_id}'>{$value_name}</a>" ;    
+
+        return "<a href='index.php?module=$this->ext2&action=DetailView&record={$value_id}'>{$value_name}</a>" ;
     }
-    
+
     function get_html_list(){
         if(isset($this->bean)){
             $name = $this->bean->object_name . '.'. $this->ext1;
         }else{
-            $name = $this->ext1;    
+            $name = $this->ext1;
         }
-        return '{'. strtoupper($name) . '}';    
+        return '{'. strtoupper($name) . '}';
     }
 
     function get_html_search(){
@@ -68,11 +68,11 @@ class TemplateRelatedTextField extends TemplateText{
         //END SUGARCRM flav=pro ONLY
         if(!empty($def['id_name']) && in_array($def['id_name'], $searchable)){
             $name = $def['id_name'];
-            return "<select size='3' name='{$name}[]' tabindex='1' multiple='multiple'>{".strtoupper($name). "_FILTER}</select>";   
+            return "<select size='3' name='{$name}[]' tabindex='1' multiple='multiple'>{".strtoupper($name). "_FILTER}</select>";
         }
         //return 'NOT AVAILABLE';
         return $this->get_html_edit();
-    }   
+    }
 
     function get_xtpl_search(){
         $searchable=array();
@@ -86,7 +86,7 @@ class TemplateRelatedTextField extends TemplateText{
             $team_list = '';
             foreach(get_team_array() as $id=>$team){
                 $selected = '';
-                
+
                 if(!empty($_REQUEST[$name]) && is_array($_REQUEST[$name]) && in_array($id, $_REQUEST[$name])){
                     $selected = 'selected';
                 }
@@ -105,7 +105,7 @@ class TemplateRelatedTextField extends TemplateText{
                                         $this->ext1 => $name,
                                     ),
             );
-        
+
             $json = getJSONobj();
             $encoded_popup_request_data = $json->encode($popup_request_data);
             $returnXTPL['ENCODED_'.strtoupper($id).'_POPUP_REQUEST_DATA'] = $encoded_popup_request_data;
@@ -118,13 +118,13 @@ class TemplateRelatedTextField extends TemplateText{
                $returnXTPL[strtoupper($id)] =  $_REQUEST[$id];
             }
         }
-        return $returnXTPL; 
+        return $returnXTPL;
     }
 
 
     function get_xtpl_edit(){
     global $beanList;
-        
+
         $name = $this->name .'_name';
         $id = $this->name;
         $module = $this->ext2;
@@ -137,30 +137,24 @@ class TemplateRelatedTextField extends TemplateText{
             $this->ext1 => $name,
         ),
         );
-        
+
         //$GLOBALS['log']->fatal($this->bean);
-      
+
         $json = getJSONobj();
         $encoded_contact_popup_request_data = $json->encode($popup_request_data);
         $returnXTPL['ENCODED_'.strtoupper($id).'_POPUP_REQUEST_DATA'] = $encoded_contact_popup_request_data;
         $returnXTPL[strtoupper($id).'_MODULE'] = $module;
 
-        if(isset($beanList[$module]) && isset($this->bean->$id)){
+        if(isset($this->bean->$id)){
             if(!isset($this->bean->$name)){
                 $mod_field = $this->ext1;
-                global $beanFiles;
-                
-                $class = $beanList[$module];
-            
-                require_once($beanFiles[$class]);
-                $mod = new $class();
-                $mod->retrieve($this->bean->$id);
+                $mod = BeanFactory::getBean($module, $this->bean->$id);
                 if(isset($mod->$mod_field)){
-                    $this->bean->$name = $mod->$mod_field;  
-                }   
+                    $this->bean->$name = $mod->$mod_field;
+                }
             }
-            
-            
+
+
             $returnXTPL[strtoupper($id)] = $this->bean->$id;
         }
         if(isset($this->bean->$name)){
@@ -169,19 +163,19 @@ class TemplateRelatedTextField extends TemplateText{
         if(isset($this->bean->$id)) {
             $returnXTPL[strtoupper($id)] = $this->bean->$id;
         }
-        
-        
-        return $returnXTPL; 
+
+
+        return $returnXTPL;
     }
-    
+
     function get_xtpl_detail(){
         return $this->get_xtpl_edit();
     }
-    
+
     function get_related_info(){
-            
+
     }
-    
+
      function get_field_def(){
         $def = parent::get_field_def();
         $def['id_name'] = $this->ext3;
@@ -196,17 +190,17 @@ class TemplateRelatedTextField extends TemplateText{
         $def['quicksearch'] = 'enabled';
         $def['studio'] = 'visible';
         $def['source'] = 'non-db';
-        return $def;    
+        return $def;
     }
-    
+
     function delete($df){
         parent::delete($df);
-        
+
         $id = new TemplateId();
         $id->name = $this->ext3;
         $id->delete($df);
     }
-    
+
     function save($df){
         // create the new ID field associated with this relate field - this will hold the id of the related record
         // this field must have a unique name as the name is used when constructing quicksearches and when saving the field
@@ -219,34 +213,34 @@ class TemplateRelatedTextField extends TemplateText{
 	        $count = 0;
 	        $basename = strtolower(get_singular_bean_name($this->ext2)).'_id' ;
 	        $idName = $basename.'_c' ;
-	        
+
 	        while ( $df->fieldExists($idName, 'id') )
 	        {
 	            $idName = $basename.++$count.'_c' ;
 	        }
 	        $id->name = $idName ;
-			$id->reportable = false;				
+			$id->reportable = false;
 	        $id->save($df);
-	        
+
 	        // record the id field's name, and save
 	        $this->ext3 = $id->name;
         }
-        
+
         parent::save($df);
     }
-    
+
     function get_db_add_alter_table($table){
     	return "";
     }
-    
+
     function get_db_delete_alter_table($table) {
     	return "";
     }
-    
+
     function get_db_modify_alter_table($table){
     	return "";
     }
-    
+
 }
 
 

@@ -63,8 +63,7 @@ global $report_modules,
 foreach ($reportsToEmail as $scheduleInfo) {
     $GLOBALS["log"]->debug("-----> in Reports foreach() loop");
 
-    $user = new User();
-    $user->retrieve($scheduleInfo['user_id']);
+    $user = BeanFactory::getBean('Users', $schedule_info['user_id']);
 
     $current_user = $user; // this changes the global $current_user
 
@@ -72,8 +71,7 @@ foreach ($reportsToEmail as $scheduleInfo) {
     $report_modules = getAllowedReportModules($modListHeader);
 
     $theme       = $sugar_config['default_theme'];
-    $savedReport = new SavedReport();
-    $savedReport->retrieve($scheduleInfo['report_id']);
+    $savedReport = BeanFactory::getBean('Reports', $schedule_info['report_id']);
 
     $GLOBALS["log"]->debug("-----> Generating Reporter");
     $reporter = new Report(html_entity_decode($savedReport->content));
@@ -91,6 +89,7 @@ foreach ($reportsToEmail as $scheduleInfo) {
         try {
             require_once 'modules/Reports/utils.php';
 
+            BeanFactory::getBean('Users', $savedReport->assigned_user_id);
             $reportOwner = new User();
             $reportOwner->retrieve($savedReport->assigned_user_id);
 

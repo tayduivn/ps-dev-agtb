@@ -31,8 +31,7 @@ var $required_modules = array('Home');
 
 function is_system_tabs_in_db(){
 
-        $administration = new Administration();
-        $administration->retrieveSettings('MySettings');
+        $administration = Administration::getSettings('MySettings');
         if(isset($administration->settings) && isset($administration->settings['MySettings_tab']))
         {
             return true;
@@ -52,8 +51,7 @@ function get_system_tabs(){
     if (empty($system_tabs_result) || !self::$isCacheValid)
 	{
 
-		$administration = new Administration();
-		$administration->retrieveSettings('MySettings');
+		$administration = Administration::getSettings('MySettings');
 		if(isset($administration->settings) && isset($administration->settings['MySettings_tab'])){
 			$tabs= $administration->settings['MySettings_tab'];
 			$trimmed_tabs = trim($tabs);
@@ -107,7 +105,7 @@ function get_tabs_system(){
 
 function set_system_tabs($tabs){
 
-	$administration = new Administration();
+	$administration = BeanFactory::getBean('Administration');
 	$serialized = base64_encode(serialize($tabs));
 	$administration->saveSetting('MySettings', 'tab', $serialized);
     self::$isCacheValid = false;
@@ -115,8 +113,7 @@ function set_system_tabs($tabs){
 
 function get_users_can_edit(){
 
-	$administration = new Administration();
-	$administration->retrieveSettings('MySettings');
+	$administration = Administration::getSettings('MySettings');
 	if(isset($administration->settings) && isset($administration->settings['MySettings_disable_useredit'])){
 		if($administration->settings['MySettings_disable_useredit'] == 'yes'){
 			return false;
@@ -129,7 +126,7 @@ function set_users_can_edit($boolean){
 	global $current_user;
 	if(is_admin($current_user)){
 
-		$administration = new Administration();
+		$administration = BeanFactory::getBean('Administration');
 		if($boolean){
 			$administration->saveSetting('MySettings', 'disable_useredit', 'no');
 		}else{

@@ -26,17 +26,6 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * governing these rights and limitations under the License.  Portions created
  * by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
-/*********************************************************************************
- * Description:  TODO: To be written.
- * Portions created by SugarCRM are Copyright (C) SugarCRM, Inc.
- * All Rights Reserved.
- * Contributor(s): ______________________________________..
- ********************************************************************************/
-
-
-
-
-
 // Contact is used to store customer information.
 class SavedReport extends SugarBean
 {
@@ -134,9 +123,9 @@ class SavedReport extends SugarBean
 		//BEGIN SUGARCRM flav=pro ONLY
 		$this->team_id = $team_id;
 		//END SUGARCRM flav=pro ONLY
-		//BEGIN SUGARCRM flav=pro || flav=sales ONLY
+		//BEGIN SUGARCRM flav=pro ONLY
 		$this->module = $module;
-		//END SUGARCRM flav=pro || flav=sales ONLY
+		//END SUGARCRM flav=pro ONLY
 		$this->is_published = $is_published;
 		$this->chart_type = $chart_type;
 
@@ -170,8 +159,7 @@ class SavedReport extends SugarBean
 			//END SUGARCRM flav=pro ONLY
 			)
 			{
-				$owner_user = new User();
-				$owner_user->retrieve($this->assigned_user_id);
+				$owner_user = BeanFactory::getBean('Users', $this->assigned_user_id);
 				//BEGIN SUGARCRM flav=pro ONLY
 				$default_team = $owner_user->getPrivateTeamID();
 				//END SUGARCRM flav=pro ONLY
@@ -208,7 +196,7 @@ class SavedReport extends SugarBean
 
 		while ($row = $this->db->fetchByAssoc($result,FALSE) )
 		{
-			$focus = new SavedReport();
+			$focus = BeanFactory::getBean('Reports');
 
 			foreach($this->column_fields as $field)
 			{
@@ -474,13 +462,10 @@ class SavedReport extends SugarBean
      $report_modules = getAllowedReportModules($modListHeader);
 
      foreach($report_modules as $module=>$class_name) {
-        if(isset($beanFiles[$class_name])) {
-            require_once($beanFiles[$class_name]);
-            $seed = new $class_name;
+         $seed = BeanFactory::getBean($module);
 
-            if(!$seed->ACLAccess('DetailView')) {
+         if(empty($seed) || !$seed->ACLAccess('DetailView')) {
                 unset($report_modules[$module]);
-            }
         }
      }
      $_SESSION['reports_getACLAllowedModules'] = $report_modules;
@@ -496,19 +481,15 @@ class SavedReport extends SugarBean
 
      require_once('modules/Reports/config.php');
 
-     global $beanFiles, $modListHeader;
+     global $modListHeader;
 
      $report_modules = getAllowedReportModules($modListHeader);
 
-	$unallowed_modules = array();
+	 $unallowed_modules = array();
      foreach($report_modules as $module=>$class_name) {
-        if(isset($beanFiles[$class_name])) {
-            require_once($beanFiles[$class_name]);
-            $seed = new $class_name;
-
-            if(!$seed->ACLAccess('DetailView')) {
+         $seed = BeanFactory::getBean($module);
+         if(empty($seed) || !$seed->ACLAccess('DetailView')) {
                 $unallowed_modules[$module] = $class_name;
-            }
         }
      }
 

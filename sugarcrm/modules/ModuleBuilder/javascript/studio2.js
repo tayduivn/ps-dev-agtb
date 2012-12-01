@@ -855,12 +855,12 @@ Studio2 = {
 		}
 		if (view == "detailview")	
 			return true;  
-		//BEGIN SUGARCRM flav=pro || flav=sales ONLY
+		//BEGIN SUGARCRM flav=pro ONLY
 		else if (view == "wirelessdetailview")
 			return true;
 		else if (view == "wirelesseditview" && !Studio2.checkCalcFields(view, 'ERROR_CALCULATED_MOBILE_FIELDS'))
 			return false;
-		//END SUGARCRM flav=pro || flav=sales ONLY
+		//END SUGARCRM flav=pro ONLY
 		
 	    return Studio2.checkRequiredFields();
 	},
@@ -902,10 +902,10 @@ Studio2 = {
 	checkCalcFields: function(view, error) {
 		if (view == "DetailView")
            return true;
-        //BEGIN SUGARCRM flav=pro || flav=sales ONLY
+        //BEGIN SUGARCRM flav=pro ONLY
    		else if (view == "wirelessdetailview")
    			return true;
-   		//END SUGARCRM flav=pro || flav=sales ONLY
+   		//END SUGARCRM flav=pro ONLY
 		
    		var Dom = YAHOO.util.Dom;
 	    var panels = Dom.get('panels');

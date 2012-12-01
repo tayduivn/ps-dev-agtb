@@ -26,12 +26,6 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * governing these rights and limitations under the License.  Portions created
  * by SugarCRM are Copyright (C) 2004-2007 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
-/*********************************************************************************
- * $Id: end.php 56650 2010-05-24 18:53:17Z jenny $
- * Description:
- * Portions created by SugarCRM are Copyright (C) SugarCRM, Inc. All Rights
- * Reserved. Contributor(s): ______________________________________..
- * *******************************************************************************/
 logThis('[At end.php]');
 global $unzip_dir;
 global $path;
@@ -91,7 +85,7 @@ foreach ($beanFiles as $bean => $file) {
 	if(file_exists($file)){
 		require_once ($file);
 		unset($GLOBALS['dictionary'][$bean]);
-		$focus = new $bean ();
+		$focus = BeanFactory::newBeanByName($bean);
 		if (($focus instanceOf SugarBean))
 		{
 			if(!isset($repairedTables[$focus->table_name]))
@@ -237,7 +231,7 @@ if(isset($_SESSION['current_db_version']) && isset($_SESSION['target_db_version'
 	 	$db =& DBManagerFactory::getInstance();
 		if($ce_to_pro_ent){
 	        //Also set license information
-			$admin = new Administration();
+			$admin = BeanFactory::getBean('Administration');
 			$category = 'license';
 			$value = '0';
 			$admin->saveSetting($category, 'users', $value);
@@ -251,7 +245,7 @@ if(isset($_SESSION['current_db_version']) && isset($_SESSION['target_db_version'
 }
 
 // Mark the instance as having gone thru the admin wizard
-$admin = new Administration();
+$admin = BeanFactory::getBean('Administration');
 $admin->saveSetting('system','adminwizard',1);
 
  /////////////////////////Old Logger settings///////////////////////////////////////
@@ -339,6 +333,7 @@ logThis('Cleaning up the session.  Goodbye.');
 unlinkUWTempFiles();
 logThis('Cleaning up the session.  Goodbye.');
 resetUwSession();
+SugarAutoLoader::buildCache();
 // flag to say upgrade has completed
 $_SESSION['upgrade_complete'] = true;
 

@@ -60,9 +60,7 @@
 			</td>
 
 			<td valign="top">
-			    <!--//BEGIN SUGARCRM flav!=sales ONLY -->
 				<div>{$CAMPAIGNS}</div>
-				<!--//END SUGARCRM flav!=sales ONLY -->
 				<div>{$QUOTES}</div>
 				<div>{$REPORTS}</div>
 			</td>

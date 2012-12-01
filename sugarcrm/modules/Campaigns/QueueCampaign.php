@@ -36,8 +36,7 @@ global $timedate;
 global $current_user;
 global $mod_strings;
 
-$campaign = new Campaign();
-$campaign->retrieve($_REQUEST['record']);
+$campaign = BeanFactory::getBean('Campaigns', $_REQUEST['record']);
 $err_messages=array();
 
 $test=false;
@@ -69,8 +68,7 @@ foreach ($_POST['mass'] as $message_id) {
 	if (!class_exists('EmailMarketing')) require_once('modules/EmailMarketing/EmailMarketing.php');
 
 
-	$marketing = new EmailMarketing();
-	$marketing->retrieve($message_id);
+	$marketing = BeanFactory::getBean('EmailMarketing', $message_id);
 
 	//make sure that the marketing message has a mailbox.
 	//

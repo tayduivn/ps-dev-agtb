@@ -40,7 +40,7 @@ class TimePeriodsSeedData {
  */
 public static function populateSeedData()
 {
-    //Simulate settings to create 2 forward and 0 backward timeperiods
+    //Simulate settings to create 2 forward and 2 backward timeperiods
     $settings = array();
     $settings['timeperiod_start_month'] = 1;
     $settings['timeperiod_start_day'] = 1;

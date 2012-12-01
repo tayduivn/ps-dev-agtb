@@ -44,12 +44,7 @@
                 selectedCategory: defaultSelections.category,
                 selectedGroupBy : defaultSelections.group_by,
                 selectedDataSet: defaultSelections.dataset,
-                selectedUser : defaultSelections.selectedUser,
-                
-                /**
-                 * boolean to see fire the dirty check for switching between manager and rep worksheets of the same user
-                 */
-                checkDirtyWorksheetFlag: false,
+                selectedUser : defaultSelections.selectedUser,      
                 
                 /**
                  * boolean to reload the active worksheet

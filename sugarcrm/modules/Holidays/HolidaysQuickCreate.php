@@ -40,12 +40,10 @@ class HolidaysQuickCreate extends QuickCreate {
         
         if ($_REQUEST['return_module'] == 'Project'){
 			
-        	$projectBean = new Project();
+        	$projectBean = BeanFactory::getBean('Project', $_REQUEST['return_id']);
         	
-        	$projectBean->retrieve($_REQUEST['return_id']);
-        	
-        	$userBean = new User();
-        	$contactBean = new Contact();
+        	$userBean = BeanFactory::getBean('Users');
+        	$contactBean = BeanFactory::getBean('Contacts');
         	
         	$projectBean->load_relationship("user_resources");
         	$userResources = $projectBean->user_resources->getBeans($userBean);
@@ -74,7 +72,7 @@ class HolidaysQuickCreate extends QuickCreate {
         $this->javascript = new javascript();
         $this->javascript->setFormName('holidayQuickCreate');
         
-        $focus = new Holiday();
+        $focus = BeanFactory::getBean('Holidays');
         $this->javascript->setSugarBean($focus);
         $this->javascript->addAllFields('');
 

@@ -38,7 +38,7 @@ require_once 'modules/ModuleBuilder/parsers/views/History.php' ;
 
 class ParserPortalListView extends ParserModifyListView
 {
-	
+
 	var $listViewDefs = false;
 	var $defaults = array();
 	var $additional = array();
@@ -47,7 +47,7 @@ class ParserPortalListView extends ParserModifyListView
     var $columns = array('LBL_DEFAULT' => 'getDefaultFields', 'LBL_AVAILABLE' => 'getAvailableFields');
     var $customFile; // private
     var $originalFile; // private
-	
+
 	function init ($module_name)
 	{
 		global $app_list_strings;
@@ -56,9 +56,7 @@ class ParserPortalListView extends ParserModifyListView
 
 
         // get our bean
-		$class = $GLOBALS ['beanList'] [$this->module_name];
-		require_once ($GLOBALS ['beanFiles'] [$class]);
-		$this->module = new $class();
+		$this->module = BeanFactory::getBean($this->module_name);
 
         // Set our def file
         $defFile = 'modules/' . $this->module_name . '/metadata/portal.listviewdefs.php';
@@ -78,14 +76,14 @@ class ParserPortalListView extends ParserModifyListView
 		{
 			$this->listViewDefs = & $this->originalListViewDefs;
 		}
-		
+
 		$this->_fromNewToOldMetaData();
 
 		$this->language_module = $this->module_name;
-		
+
 		$this->_history = new History ($this->customFile);
 	}
-	
+
 	function _fromNewToOldMetaData()
 	{
 	    foreach($this->listViewDefs as $key=>$value)
@@ -101,22 +99,20 @@ class ParserPortalListView extends ParserModifyListView
 			$listfielddef['module'] = $modFieldDef['module'];
 			$listfielddef['id'] = strtoupper($modFieldDef['id_name']);
 			$listfielddef['link'] = in_array($listfielddef['module'], array('Cases', 
-			                                                                //BEGIN SUGARCRM flav!=sales ONLY
 			                                                                'Bugs', 
-			                                                                //END SUGARCRM flav!=sales ONLY
 			                                                                'KBDocuments'));
 			$listfielddef['related_fields'] = array (strtolower($modFieldDef['id_name']));
 		}
 		return $listfielddef;
-	}	
-	
+	}
+
 	function handleSave ()
 	{
 		if (!file_exists($this->customFile)) {
 			//Backup the orginal layout to the history
 			$this->_history->append($this->originalFile);
 		}
-		
+
 		$requestfields = $this->_loadLayoutFromRequest();
 	    $fields = array();
         foreach($requestfields as $key=>$value) {
@@ -124,14 +120,14 @@ class ParserPortalListView extends ParserModifyListView
                 unset($value['default']);
                 $fields[strtoupper($key)] = $value;
             }
-        }	
+        }
 	    mkdir_recursive(dirname($this->customFile));
         if (! write_array_to_file("viewdefs['{$this->module_name}']['listview']", $fields, $this->customFile)) {
             $GLOBALS ['log']->fatal("Could not write $newFile");
         }
-	}	
+	}
 
-	
+
 	/**
 	 * returns unused fields that are available for using in either default or additional list views
 	 */
@@ -168,14 +164,14 @@ class ParserPortalListView extends ParserModifyListView
 			}
 		}
 		return $this->availableFields;
-	}       
-	
+	}
+
 	function getHistory ()
 	{
 		return $this->_history ;
 	}
 
-    
+
 }
 
 ?>
