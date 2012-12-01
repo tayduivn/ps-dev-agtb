@@ -43,7 +43,7 @@ class MyDocumentsDashlet extends DashletGeneric {
         $this->searchFields = $dashletData['MyDocumentsDashlet']['searchFields'];
         $this->columns = $dashletData['MyDocumentsDashlet']['columns'];
 
-        $this->seedBean = new Document();        
+        $this->seedBean = BeanFactory::getBean('Documents');        
     }
 
     function displayOptions() {

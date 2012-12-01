@@ -37,7 +37,7 @@ require_once('include/controller/Controller.php');
 
 $local_log =& LoggerManager::getLogger('index');
 
-$focus = new WorkFlow();
+$focus = BeanFactory::getBean('WorkFlow');
 $controller = new Controller();
 
 	

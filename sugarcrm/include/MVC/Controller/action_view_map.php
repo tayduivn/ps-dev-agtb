@@ -45,7 +45,7 @@ $action_view_map['favorites']= 'favorites';
 $action_view_map['ajaxui']= 'ajaxui';
 $action_view_map['sidecar']= 'sidecar';
 $action_view_map['noaccess']= 'noaccess';
-//BEGIN SUGARCRM flav=pro || flav=sales ONLY
+//BEGIN SUGARCRM flav=pro ONLY
 $action_view_map['quickedit']= 'quickedit';
 
 // SugarWireless views
@@ -58,7 +58,7 @@ $action_view_map['wirelessdetail'] = 'wirelessdetail';
 $action_view_map['wirelesslist'] = 'wirelesslist';
 $action_view_map['wirelessedit'] = 'wirelessedit';
 $action_view_map['wlsave'] = 'wirelesssave';
-//END SUGARCRM flav=pro || flav=sales ONLY
+//END SUGARCRM flav=pro ONLY
 
 //BEGIN SUGARCRM flav=int ONLY
 $action_view_map['bronzeview']= 'bronze';

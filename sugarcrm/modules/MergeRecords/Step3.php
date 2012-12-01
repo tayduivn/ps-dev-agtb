@@ -27,16 +27,6 @@ if (!defined('sugarEntry') || !sugarEntry)
  * governing these rights and limitations under the License.  Portions created
  * by SugarCRM are Copyright (C) 2004-2007 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
-/*********************************************************************************
- * $Id: Step3.php 56965 2010-06-15 17:57:35Z jenny $
- * Description:  TODO: To be written.
- * Portions created by SugarCRM are Copyright (C) SugarCRM, Inc.
- * All Rights Reserved.
- * Contributor(s): ______________________________________..
- ********************************************************************************/
-
-
-
 require_once ('include/JSON.php');
 $timedate = TimeDate::getInstance();
 global $app_strings;
@@ -98,7 +88,7 @@ if (isset($_REQUEST['change_parent']) && $_REQUEST['change_parent']=='1') {
         $merge_ids_array[] = $id;
      }
 }
-$focus = BeanFactory::getBean('MergeRecord');
+$focus = BeanFactory::getBean('MergeRecords');
 $focus->load_merge_bean($_REQUEST['merge_module'], true, $base_id);
 $params = array();
 $params[] = "<a href='index.php?module={$focus->merge_bean->module_dir}&action=index'>{$GLOBALS['app_list_strings']['moduleList'][$focus->merge_bean->module_dir]}</a>";
@@ -112,9 +102,7 @@ $records=1;
 $merged_ids='';
 $merge_records_names=array();
 foreach ($merge_ids_array as $id) {
-    require_once ($focus->merge_bean_file_path);
-    $mergeBeanArray[$id] = new $focus->merge_bean_class();
-    $mergeBeanArray[$id]->retrieve($id);
+    $mergeBeanArray[$id] = BeanFactory::getBean($focus->merge_module, $id);
     $merge_records_names[]=$mergeBeanArray[$id]->get_summary_text();
     $records++;
     $merged_ids.="<input type='hidden' name='merged_ids[]' value='$id'>";
@@ -294,8 +282,7 @@ foreach ($temp_field_array as $field_array) {
 
 				require_once('include/SugarFields/Fields/Teamset/EmailSugarFieldTeamsetCollection.php');
 				$mod = isset($_REQUEST['action_module']) ? $_REQUEST['action_module'] : $_REQUEST['merge_module'];
-				$bean = loadBean($mod);
-				$bean->retrieve($base_id);
+				$bean = BeanFactory::getBean($mod, $base_id);
 				$teamsWidget = new EmailSugarFieldTeamsetCollection($bean, $bean->field_defs, '', 'EditView');
 				$teamsWidget->hideShowHideButton = true;
 				$xtpl->assign('TEAM_FIELD', $teamsWidget->get_code());
@@ -412,13 +399,11 @@ $xtpl->assign("MERGE_VERIFY",$merge_verify);
 
 global $beanList;
 
-//BEGIN SUGARCRM flav!=sales ONLY
 //Jenny - Bug 8386 - The object_name couldn't be found because it was searching for
 // 'Case' instead of 'aCase'.
 if ($focus->merge_bean->object_name == 'Case') {
     $focus->merge_bean->object_name = 'aCase';
 }
-//END SUGARCRM flav!=sales ONLY
 
 $mod=array_search($focus->merge_bean->object_name,$beanList);
 $mod_strings = return_module_language($current_language, $mod);
@@ -510,11 +495,7 @@ function get_related_name($field_def,$id_value) {
             $col_name = $field_def['rname'];
             //if this module is non db and has a module set, then check to see if this field should be concatenated
             if (!empty($field_def['module']) && $field_def['source'] == 'non-db'){
-                global $beanList, $beanFiles;
-                  //get the bean field defs based on the module param
-                  $bean = $beanList[$field_def['module']];
-                  require_once ($beanFiles[$bean]);
-                  $focus = new $bean();
+                  $focus = BeanFactory::getBean($field_def['module']);
                   if(!empty( $focus->field_defs[$field_def['rname']])){
 	                $related_def = $focus->field_defs[$field_def['rname']];
 	                //if field defs has concat field array set, then concatenate values

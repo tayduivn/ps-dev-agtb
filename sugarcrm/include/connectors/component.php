@@ -55,7 +55,7 @@ class component{
 		   $args = $this->mapInput($args, $module);
 	       $item = $this->_source->getItem($args, $module);
 	       $result = $this->mapOutput($bean, $item);
-	    } else if(!empty($module) && ($bean = loadBean($module))) {
+	    } else if(!empty($module) && ($bean = BeanFactory::getBean($module))) {
 	       return $this->fillBean($args, $module, $bean);
 	    } else {
 	       throw new Exception("Invalid bean");
@@ -96,7 +96,7 @@ class component{
 			} else {
 
 			   for($x=0; $x < $resultSize; $x++) {
-			   	   $beans[$x] = loadBean($module);
+			   	   $beans[$x] = BeanFactory::getBean($module);
 			   }
 			}
 

@@ -36,7 +36,7 @@ global $app_list_strings;
 global $mod_strings;
 global $sugar_version, $sugar_config;
 
-$focus = new CampaignTracker();
+$focus = BeanFactory::getBean('CampaignTrackers');
 
 if(isset($_REQUEST['record'])) {
     $focus->retrieve($_REQUEST['record']);

@@ -1188,9 +1188,6 @@ function insert_default_settings(){
 
     //END SUGARCRM flav=pro ONLY
 
-    //BEGIN SUGARCRM flav=sales ONLY
-    $db->query( "INSERT INTO config (category, name, value) VALUES ( 'system', 'mailmerge_on', '1')" );
-    //END SUGARCRM flav=sales ONLY
     $db->query( "INSERT INTO config (category, name, value) VALUES ( 'system', 'skypeout_on', '1')" );
 
 }

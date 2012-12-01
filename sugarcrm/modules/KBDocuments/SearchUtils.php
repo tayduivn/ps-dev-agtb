@@ -55,7 +55,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
     $savedDisplayColumns = $current_user->getPreference('ListViewDisplayColumns', $currentModule); // get user defined display columns
     $json = getJSONobj();
-    $seedDocument = new KBDocument(); // seed bean
+    $seedDocument = BeanFactory::getBean('KBDocuments'); // seed bean
 
     // setup listview smarty
     $lv = new ListViewSmarty();
@@ -213,9 +213,7 @@ function get_admin_fts_list($where,$isMultiSelect=false){
 
 	$json = getJSONobj();
 
-	$seedCase = new KBDocument(); // seed bean
-	//$searchForm = new SearchForm('KBDocuments', $seedCase); // new searchform instance
-
+	$seedCase = BeanFactory::getBean('KBDocuments'); // seed bean
 	// setup listview smarty
 	$lv = new ListViewSmarty();
     $lv->lvd= new KBListViewData();
@@ -326,10 +324,9 @@ function get_admin_fts_list($where,$isMultiSelect=false){
        $result = $bean->db->query($query);
 
        while($row = $bean->db->fetchByAssoc($result)) {
-             $record = new KBDocument();
-             $record->disable_row_level_security = true;
              $id = $row['id'];
-             $record->retrieve($id);
+             $record = BeanFactory::getBean('KBDocuments', $id, array("disable_row_level_security" => true));
+             if(empty($record)) continue;
              $query = "SELECT first_name, last_name FROM users WHERE id = '".$row['created_by']."'";
              $results = $bean->db->query($query);
              $row2 = $bean->db->fetchByAssoc($results);

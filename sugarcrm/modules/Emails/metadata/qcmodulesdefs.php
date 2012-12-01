@@ -36,14 +36,10 @@ if (!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  ********************************************************************************/
 
 $QCModules = array(
-    //BEGIN SUGARCRM flav!=sales ONLY
     'Bugs',
     'Cases',
-    //END SUGARCRM flav!=sales ONLY
     'Contacts',
     'Opportunities',
-    //BEGIN SUGARCRM flav!=sales ONLY
     'Leads',
-    //END SUGARCRM flav!=sales ONLY
     'Tasks',
 );

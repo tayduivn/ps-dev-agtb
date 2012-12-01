@@ -215,6 +215,7 @@ class ForecastsDefaultsTest extends Sugar_PHPUnit_Framework_TestCase
         $db = DBManagerFactory::getInstance();
         $admin = BeanFactory::getBean('Administration');
         $admin->saveSetting('Forecasts', 'is_setup', '1', 'base');
+        $admin->saveSetting('Forecasts', 'sales_stage_won', '[]', 'base');
         $currency = SugarTestCurrencyUtilities::createCurrency('Yen','¥','YEN',78.87);
 
         // base_rate should get calculated from usdollar field

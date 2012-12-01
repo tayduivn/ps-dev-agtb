@@ -126,13 +126,24 @@ class Product extends SugarBean {
 								 'weight',  'support_name', 'support_term',
 								 'support_description', 'support_contact');
 
+    /**
+     * This is a depreciated method, please start using __construct() as this method will be removed in a future version
+     *
+     * @see __construct
+     * @deprecated
+     */
+    public function Product()
+    {
+        $this->__construct();
+    }
+
 	public function __construct() {
 
 		parent::__construct();
 
 		$this->team_id = 1; // make the item globally accessible
 
-		$currency= new Currency();
+		$currency = BeanFactory::getBean('Currencies');
 		$this->default_currency_symbol = $currency->getDefaultCurrencySymbol();
 
 
@@ -218,8 +229,7 @@ class Product extends SugarBean {
 	    parent::fill_in_additional_detail_fields();
 
 
-		$currency = new Currency();
-		$currency->retrieve($this->currency_id);
+		$currency = BeanFactory::getBean('Currencies', $this->currency_id);
 		$this->currency_symbol = $currency->symbol;
 		$this->currency_name = $currency->name;
 		if($currency->id != $this->currency_id || $currency->deleted == 1){
@@ -427,11 +437,9 @@ class Product extends SugarBean {
 		// See if a user has a preferred currency
 		if ($current_user->getPreference('currency')) {
 			// Retrieve the product currency
-			$currency = new Currency();
-			$currency->retrieve($this->currency_id);
+			$currency = BeanFactory::getBean('Currencies', $this->currency_id);
 			// Retrieve the users currency
-			$userCurrency = new Currency();
-			$userCurrency->retrieve($current_user->getPreference('currency'));
+			$userCurrency = BeanFactory::getBean('Currencies', $current_user->getPreference('currency'));
 			// If the product currency and the user default currency are different, convert to users currency
 			if ($userCurrency->id != $currency->id) {
 				$this->cost_price = $userCurrency->convertFromDollar($currency->convertToDollar($this->cost_price));
@@ -509,8 +517,7 @@ class Product extends SugarBean {
 
 	function save($check_notify = FALSE) {
 
-		$currency = new Currency();
-		$currency->retrieve($this->currency_id);
+		$currency = BeanFactory::getBean('Currencies', $this->currency_id);
 		// RPS - begin - decimals cant be null in sql server
 		if ( $this->cost_price == '' ) { $this->cost_price = '0'; }
 		if ( $this->discount_price == '' ) { $this->discount_price = '0'; }
@@ -577,7 +584,7 @@ class Product extends SugarBean {
 				$total_usdollar = 0.00;
 				if( $row =  $this->db->fetchByAssoc($result)){
 					while ($row != null) {
-						$product = new Product();
+						$product = BeanFactory::getBean('Products');
 					    $product->id = $row['product_id'];
 					    $product->retrieve();
 					    $subtotal_usdollar += $product->discount_usdollar * $product->quantity;

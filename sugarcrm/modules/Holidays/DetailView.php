@@ -37,7 +37,7 @@ global $app_strings;
 global $app_list_strings;
 global $current_user;
 
-$focus = new Holiday();
+$focus = BeanFactory::getBean('Holidays');
 
 $detailView = new DetailView();
 $offset=0;

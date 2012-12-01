@@ -65,8 +65,7 @@ class ViewViewofflineclients extends SugarView
         $seed = new System();
         $searchForm = new SearchForm('Administration', $seed);
         
-        $admin = new Administration();
-        $admin->retrieveSettings();
+        $admin = Administration::getSettings();
         $system_id = 1;
         if(!empty($admin->settings['system_system_id'])){
             $system_id = $admin->settings['system_system_id'];
@@ -116,7 +115,7 @@ class ViewViewofflineclients extends SugarView
             $user_name = (isset($_REQUEST['user_name']) ? $_REQUEST['user_name'] : ''); 
             require_once('modules/Administration/metadata/SearchFields.php');
             $searchForm->setup();
-            $user = new User();
+            $user = BeanFactory::getBean('Users');
             $searchForm->populateFromRequest('advanced_search');
             
             $where_clauses = $searchForm->generateSearchWhere(true, "Administration"); 

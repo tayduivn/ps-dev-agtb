@@ -20,12 +20,8 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
-class EmailTemplateFormBase {
-
-    public function __construct()
-    {
-
-    }
+class EmailTemplateFormBase
+{
 
 	function getFormBody($prefix, $mod='',$formname='', $size='30') {
 
@@ -68,7 +64,7 @@ EOF;
 
 	$javascript = new javascript();
 	$javascript->setFormName($formname);
-	$javascript->setSugarBean(new EmailTemplate());
+	$javascript->setSugarBean(BeanFactory::getBean('EmailTemplates'));
 	$javascript->addRequiredFields($prefix);
 	$form .=$javascript->getScript();
 	$mod_strings = $temp_strings;
@@ -118,7 +114,7 @@ EOQ;
 		global $mod_strings;
 		global $sugar_config;
 
-		$focus = new EmailTemplate();
+		$focus = BeanFactory::getBean('EmailTemplates');
 		if($useRequired && !checkRequired($prefix, array_keys($focus->required_fields))) {
 			return null;
 		}
@@ -181,7 +177,7 @@ EOQ;
 		$max_files_upload = count($_FILES);
 
 		if(!empty($focus->id)) {
-			$note = new Note();
+			$note = BeanFactory::getBean('Notes');
 			$where = "notes.parent_id='{$focus->id}'";
 			if(!empty($_REQUEST['old_id'])) { // to support duplication of email templates
 				$where .= " OR notes.parent_id='".$_REQUEST['old_id']."'";
@@ -204,7 +200,7 @@ EOQ;
 
 		foreach ($_FILES as $key => $file)
 		{
-			$note = new Note();
+			$note = BeanFactory::getBean('Notes');
 
 			//Images are presaved above so we need to prevent duplicate files from being created.
 			if( isset($preProcessedImages[$file['name']]) )
@@ -249,8 +245,7 @@ EOQ;
 				{
 					// we're duplicating a template with attachments
 					// dupe the file, create a new note, assign the note to the new template
-					$newNote = new Note();
-					$newNote->retrieve($note->id);
+					$newNote = BeanFactory::getBean('Notes', $note->id);
 					$newNote->id = create_guid();
 					$newNote->parent_id = $focus->id;
 					$newNote->new_with_id = true;
@@ -280,24 +275,19 @@ EOQ;
 
 	///////////////////////////////////////////////////////////////////////////
 	////	ATTACHMENTS FROM DOCUMENTS
-	$count='';
-	//_pp($_REQUEST);
-	//_ppd(count($_REQUEST['document']));
 	if(!empty($_REQUEST['document'])){
       $count = count($_REQUEST['document']);
-    }
-    else{
+    } else {
     	$count=10;
     }
 
 	for($i=0; $i<$count; $i++) {
 		if(isset($_REQUEST['documentId'.$i]) && !empty($_REQUEST['documentId'.$i])) {
-			$doc = new Document();
-			$docRev = new DocumentRevision();
-			$docNote = new Note();
-
-			$doc->retrieve($_REQUEST['documentId'.$i]);
-			$docRev->retrieve($doc->document_revision_id);
+			$doc = BeanFactory::retrieveBean('Documents', $_REQUEST['documentId'.$i]);
+			if(empty($doc)) continue;
+			$docRev = BeanFactory::retrieveBean('DocumentRevisions', $doc->document_revision_id);
+			if(empty($docRev)) continue;
+			$docNote = BeanFactory::getBean('Notes');
 
 			array_push($focus->saved_attachments, $docRev);
 

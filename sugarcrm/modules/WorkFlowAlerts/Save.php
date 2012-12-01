@@ -26,30 +26,13 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * governing these rights and limitations under the License.  Portions created
  * by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
-/*********************************************************************************
- * $Id: Save.php 54045 2010-01-26 20:25:05Z roger $
- * Description:  
- ********************************************************************************/
-
-
-
-
-
-
-
-$focus = new WorkFlowAlert();
-
+$focus = BeanFactory::getBean('WorkFlowAlerts', $_POST['record']);
 $save_expression_object = false;
-
-
-	$focus->retrieve($_POST['record']);
-
 foreach($focus->column_fields as $field)
 {
 	if(isset($_POST[$field]))
 	{
 		$focus->$field = $_POST[$field];
-		
 	}
 }
 
@@ -59,30 +42,30 @@ foreach($focus->additional_column_fields as $field)
 	{
 		$value = $_POST[$field];
 		$focus->$field = $value;
-	
+
 	}
 }
 
 if(!empty($_POST['rel1_type']) && $_POST['rel1_type']!=""){
-	$focus->rel_module1_type = $_POST['rel1_type'];	
+	$focus->rel_module1_type = $_POST['rel1_type'];
 }
-	
+
 if(!empty($_POST['rel2_type']) && $_POST['rel2_type']!=""){
-	$focus->rel_module2_type = $_POST['rel2_type'];	
-}	
+	$focus->rel_module2_type = $_POST['rel2_type'];
+}
 
 
 	//Step 2, alert_user_meta_array
 	if(		$_POST['user_type']=="current_user" ||
 			$_POST['user_type']=="rel_user"
 	){
-		
+
 		$focus->user_type = $_POST['user_type'];
 		$focus->relate_type = $_POST['relate_type_'.$focus->user_display_type];
 		$focus->address_type = $_POST['address_type_'.$focus->user_display_type];
 		$focus->field_value = $_POST['field_value_'.$focus->user_display_type];
 		$focus->array_type = $_POST['array_type_'.$focus->user_display_type];
-		
+
 		//clear out rel modules if this is from the triggered record
 		if($_POST['user_type']=="current_user"){
 			$focus->rel_module1 = "";
@@ -90,50 +73,48 @@ if(!empty($_POST['rel2_type']) && $_POST['rel2_type']!=""){
 			$focus->rel_email_value = "";
 		}
 	//end if alert_user_meta_array related_user or current_user
-	}	
+	}
 
 	if($_POST['user_type']=="rel_user_custom" ||
-	
+
 	$_POST['user_type']=="trig_user_custom"
-	
-		){	
+
+		){
 		if (isset($_POST['mod_rel_custom2']) && $_POST['mod_rel_custom2']=="on"){
-		//filter, so an expression object is needed or present	
-			
-			$exp_object = new Expression();
-			if(isset($_POST['rel_custom2_exp_id']) && $_POST['rel_custom2_exp_id']!=""){
-				
+		//filter, so an expression object is needed or present
+
+			$exp_object = BeanFactory::getBean('Expressions');
+			if(!empty($_POST['rel_custom2_exp_id'])){
 				$exp_object->retrieve($_POST['rel_custom2_exp_id']);
 			}
-			
+
 			foreach($exp_object->column_fields as $field){
 				if(isset($_POST["rel_custom2_".$field])){
 					$exp_object->$field = $_POST["rel_custom2_".$field];
 
 				}
 			}
-				
+
 			$save_expression_object = true;
 
-		//end if expression object is needed	
+		//end if expression object is needed
 		} else {
-			if(isset($_POST['rel_custom2_exp_id']) && $_POST['rel_custom2_exp_id']!=""){
+			if(!empty($_POST['rel_custom2_exp_id'])){
 			//expression object existing prior, so remove it.
-				$exp_object = new Expression();
-				$exp_object->mark_deleted($_POST['rel_custom2_exp_id']);	
-			}	
-			
-		//else if expression object is not needed, but could be present so needs to be removed	
-		}	
+				BeanFactory::deleteBean('Expressions', $_POST['rel_custom2_exp_id']);
+			}
+
+		//else if expression object is not needed, but could be present so needs to be removed
+		}
 
 		$focus->array_type = "future";
 		$focus->user_type = $_POST['user_type'];
 		$focus->relate_type = "Self";
 		$focus->address_type = $_REQUEST['address_type'];
-		
+
 	//end if user_type related_user_custom
-	}	
-		
+	}
+
 	//Choosing a specific User, Team, or Role
 	if(		$_POST['user_type']=="specific_user" ||
 			$_POST['user_type']=="specific_team" ||
@@ -145,11 +126,11 @@ if(!empty($_POST['rel2_type']) && $_POST['rel2_type']!=""){
 		$focus->rel_module1 = "";
 		$focus->rel_module2 = "";
 		$focus->rel_email_value = "";
-		$focus->address_type = $_REQUEST['address_type_lang_'.$focus->user_type];	
+		$focus->address_type = $_REQUEST['address_type_lang_'.$focus->user_type];
 		//echo $focus->address_type."TEST";
-	//end if user_type = specific_user, team, role	
+	//end if user_type = specific_user, team, role
 	}
-	
+
 	if(		$_POST['user_type']=="login_user" ){
 			$focus->array_type = "future";
 			$focus->user_type = $_POST['user_type'];
@@ -157,10 +138,10 @@ if(!empty($_POST['rel2_type']) && $_POST['rel2_type']!=""){
 			$focus->rel_module1 = "";
 			$focus->rel_module2 = "";
 			$focus->rel_email_value = "";
-			$focus->field_value = "modified_user_id";			
+			$focus->field_value = "modified_user_id";
 			$focus->address_type = $_POST['address_type_lang_'.$focus->user_type];
 	//end if user_type is logged in user
-	}	
+	}
     if( $_POST['user_type']=="assigned_team_target" ){
 			$focus->array_type = "future";
 			$focus->user_type = $_POST['user_type'];
@@ -168,13 +149,13 @@ if(!empty($_POST['rel2_type']) && $_POST['rel2_type']!=""){
 			$focus->rel_module1 = "";
 			$focus->rel_module2 = "";
 			$focus->rel_email_value = "";
-			$focus->field_value = "team_set_id";			
+			$focus->field_value = "team_set_id";
 			$focus->address_type = $_POST['address_type_lang_'.$focus->user_type];
 	}
 $focus->save();
 
 if($save_expression_object == true){
-	
+
 	$exp_object->parent_id = $focus->id;
 	$exp_object->save();
 }

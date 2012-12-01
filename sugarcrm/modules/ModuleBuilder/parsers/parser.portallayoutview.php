@@ -77,9 +77,7 @@ class ParserPortalLayoutView extends ParserModifyLayoutView
         }
 
         // Get the fieldDefs from the bean
-        $class = $GLOBALS['beanList'][$module];
-        require_once($GLOBALS['beanFiles'][$class]);
-        $bean = new $class();
+        $bean = BeanFactory::getBean($module);
         $this->_fieldDefs = &$bean->field_defs;
 
         // This will load up the view defs into this parser
@@ -97,7 +95,7 @@ class ParserPortalLayoutView extends ParserModifyLayoutView
         } else {
             $this->_padFields(); // destined for a View, so we want to add in (empty) fields
         }
-		
+
 		$this->_history = new History($this->_customFile);
     }
 
@@ -165,7 +163,7 @@ class ParserPortalLayoutView extends ParserModifyLayoutView
             {
                 foreach($row as $fieldID=>$field)
                 {
-                    if ((! empty($this->_fieldDefs [$field ['name']] ['auto_increment']) && 
+                    if ((! empty($this->_fieldDefs [$field ['name']] ['auto_increment']) &&
                             $this->_fieldDefs [$field ['name']] ['auto_increment']) ||
                         !empty($this->_fieldDefs [$field ['name']]['calculated']))
                     {
@@ -254,7 +252,7 @@ class ParserPortalLayoutView extends ParserModifyLayoutView
                 $modelFields[$field] = array('name' => $field, 'label' => $def ['label']);
             }
         }
-        
+
         $invalidTypes = array('parent', 'parent_type', 'iframe', 'encrypt');
         foreach ($this->_fieldDefs as $field => $def)
         {
@@ -278,7 +276,7 @@ class ParserPortalLayoutView extends ParserModifyLayoutView
         }
         return $modelFields;
     }
-    
+
     /**
      * @return Array list of fields in this module that have the calculated property
      */
@@ -291,10 +289,10 @@ class ParserPortalLayoutView extends ParserModifyLayoutView
         		$ret[] = $field;
         	}
         }
-        
+
         return $ret;
     }
-	
+
 	function getHistory ()
 	{
 		return $this->_history ;

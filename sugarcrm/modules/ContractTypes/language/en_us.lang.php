@@ -37,6 +37,7 @@ $mod_strings = array (
 	'LBL_DOCUMENTS'=>'Documents',
 	'LBL_TYPE_NAME'=>'Type Name',
 	'LBL_MODULE_NAME'=>'Contract Type',
+	'LBL_MODULE_NAME_SINGULAR' => 'Contract Type',
 	'LBL_MODULE_TITLE'=>'Contract Types',
 	'LBL_LIST_FORM_TITLE'=>'Contract Types',
 	'LBL_CONTRACT_TYPE'=>'Contract Type',

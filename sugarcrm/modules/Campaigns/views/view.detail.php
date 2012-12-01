@@ -2,26 +2,26 @@
 if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 /*********************************************************************************
- *The contents of this file are subject to the SugarCRM Professional End User License Agreement 
- *("License") which can be viewed at http://www.sugarcrm.com/EULA.  
- *By installing or using this file, You have unconditionally agreed to the terms and conditions of the License, and You may 
- *not use this file except in compliance with the License. Under the terms of the license, You 
- *shall not, among other things: 1) sublicense, resell, rent, lease, redistribute, assign or 
- *otherwise transfer Your rights to the Software, and 2) use the Software for timesharing or 
- *service bureau purposes such as hosting the Software for commercial gain and/or for the benefit 
- *of a third party.  Use of the Software may be subject to applicable fees and any use of the 
- *Software without first paying applicable fees is strictly prohibited.  You do not have the 
- *right to remove SugarCRM copyrights from the source code or user interface. 
+ *The contents of this file are subject to the SugarCRM Professional End User License Agreement
+ *("License") which can be viewed at http://www.sugarcrm.com/EULA.
+ *By installing or using this file, You have unconditionally agreed to the terms and conditions of the License, and You may
+ *not use this file except in compliance with the License. Under the terms of the license, You
+ *shall not, among other things: 1) sublicense, resell, rent, lease, redistribute, assign or
+ *otherwise transfer Your rights to the Software, and 2) use the Software for timesharing or
+ *service bureau purposes such as hosting the Software for commercial gain and/or for the benefit
+ *of a third party.  Use of the Software may be subject to applicable fees and any use of the
+ *Software without first paying applicable fees is strictly prohibited.  You do not have the
+ *right to remove SugarCRM copyrights from the source code or user interface.
  * All copies of the Covered Code must include on each user interface screen:
- * (i) the "Powered by SugarCRM" logo and 
- * (ii) the SugarCRM copyright notice 
+ * (i) the "Powered by SugarCRM" logo and
+ * (ii) the SugarCRM copyright notice
  * in the same form as they appear in the distribution.  See full license for requirements.
- *Your Warranty, Limitations of liability and Indemnity are expressly stated in the License.  Please refer 
+ *Your Warranty, Limitations of liability and Indemnity are expressly stated in the License.  Please refer
  *to the License for the specific language governing these rights and limitations under the License.
- *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.  
+ *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 /*********************************************************************************
- * $Id: view.detail.php 
+ * $Id: view.detail.php
  * Description: This file is used to override the default Meta-data DetailView behavior
  * to provide customization specific to the Campaigns module.
  * Portions created by SugarCRM are Copyright (C) SugarCRM, Inc.
@@ -40,9 +40,9 @@ class CampaignsViewDetail extends ViewDetail {
         parent::ViewDetail();
         //turn off normal display of subpanels
         $this->options['show_subpanels'] = false;
-        
+
  	}
- 	
+
 
     function preDisplay(){
         global $mod_strings;
@@ -52,26 +52,26 @@ class CampaignsViewDetail extends ViewDetail {
         parent::preDisplay();
         $this->options['show_subpanels'] = false;
 
-    }        
+    }
 
  	function display() {
- 	    global $app_list_strings; 
+ 	    global $app_list_strings;
  	    $this->ss->assign('APP_LIST', $app_list_strings);
- 	    
+
         if (isset($_REQUEST['mode']) && $_REQUEST['mode']=='set_target'){
             require_once('modules/Campaigns/utils.php');
             //call function to create campaign logs
             $mess = track_campaign_prospects($this->bean);
-            
-            $confirm_msg = "var ajax_C_LOG_Status = new SUGAR.ajaxStatusClass(); 
-            window.setTimeout(\"ajax_C_LOG_Status.showStatus('".$mess."')\",1000); 
-            window.setTimeout('ajax_C_LOG_Status.hideStatus()', 1500); 
-            window.setTimeout(\"ajax_C_LOG_Status.showStatus('".$mess."')\",2000); 
+
+            $confirm_msg = "var ajax_C_LOG_Status = new SUGAR.ajaxStatusClass();
+            window.setTimeout(\"ajax_C_LOG_Status.showStatus('".$mess."')\",1000);
+            window.setTimeout('ajax_C_LOG_Status.hideStatus()', 1500);
+            window.setTimeout(\"ajax_C_LOG_Status.showStatus('".$mess."')\",2000);
             window.setTimeout('ajax_C_LOG_Status.hideStatus()', 5000); ";
             $this->ss->assign("MSG_SCRIPT",$confirm_msg);
-            
-        }         
-        
+
+        }
+
 	    if (($this->bean->campaign_type == 'Email') || ($this->bean->campaign_type == 'NewsLetter' )) {
 	    	$this->ss->assign("ADD_BUTTON_STATE", "submit");
 	        $this->ss->assign("TARGET_BUTTON_STATE", "hidden");
@@ -80,15 +80,15 @@ class CampaignsViewDetail extends ViewDetail {
 	    	$this->ss->assign("DISABLE_LINK", "display:none");
 	        $this->ss->assign("TARGET_BUTTON_STATE", "submit");
 	    }
-	    
-	    $currency = new Currency();
-	    if(isset($this->bean->currency_id) && !empty($this->bean->currency_id))
+
+	    $currency = BeanFactory::getBean('Currencies');
+	    if(!empty($this->bean->currency_id))
 	    {
 	    	$currency->retrieve($this->bean->currency_id);
 	    	if( $currency->deleted != 1){
 	    		$this->ss->assign('CURRENCY', $currency->iso4217 .' '.$currency->symbol);
 	    	}else {
-	    	    $this->ss->assign('CURRENCY', $currency->getDefaultISO4217() .' '.$currency->getDefaultCurrencySymbol());	
+	    	    $this->ss->assign('CURRENCY', $currency->getDefaultISO4217() .' '.$currency->getDefaultCurrencySymbol());
 	    	}
 	    }else{
 	    	$this->ss->assign('CURRENCY', $currency->getDefaultISO4217() .' '.$currency->getDefaultCurrencySymbol());
@@ -97,7 +97,7 @@ class CampaignsViewDetail extends ViewDetail {
         parent::display();
 
         //We want to display subset of available, panels, so we will call subpanel
-        //object directly instead of using sugarview.  
+        //object directly instead of using sugarview.
         $GLOBALS['focus'] = $this->bean;
         require_once('include/SubPanel/SubPanelTiles.php');
         $subpanel = new SubPanelTiles($this->bean, $this->module);
@@ -109,7 +109,7 @@ class CampaignsViewDetail extends ViewDetail {
                 if ($name != 'prospectlists' && $name!='emailmarketing' && $name != 'tracked_urls') {
                     //exclude subpanels that are not prospectlists, emailmarketing, or tracked urls
                     $subpanel->subpanel_definitions->exclude_tab($name);
-                }   
+                }
             }
             //only show email marketing subpanel for email/newsletter campaigns
             if ($this->bean->campaign_type != 'Email' && $this->bean->campaign_type != 'NewsLetter' ) {
@@ -117,10 +117,10 @@ class CampaignsViewDetail extends ViewDetail {
                 $subpanel->subpanel_definitions->exclude_tab('emailmarketing');
                 // Bug #49893  - 20120120 - Captivea (ybi) - Remove trackers subpanels if not on an email/newsletter campaign (useless subpannl)
                 $subpanel->subpanel_definitions->exclude_tab('tracked_urls');
-            }                       
+            }
         }
         //show filtered subpanel list
-        echo $subpanel->display();    
+        echo $subpanel->display();
 
     }
 }

@@ -72,9 +72,7 @@ $popupMeta = array(
 		'title',
 		'lead_source',
 		'email',
-		//BEGIN SUGARCRM flav!=sales ONLY
 		array('name' => 'campaign_name', 'displayParams' => array('hideButtons'=>'true', 'size'=>30, 'class'=>'sqsEnabled sqsNoAutofill')),
-		//END SUGARCRM flav!=sales ONLY
 		array('name' => 'assigned_user_id', 'type' => 'enum', 'label' => 'LBL_ASSIGNED_TO', 'function' => array('name' => 'get_user_array', 'params' => array(false))),
 	  )
 	);

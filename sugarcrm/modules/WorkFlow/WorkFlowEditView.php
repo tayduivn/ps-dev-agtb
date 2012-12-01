@@ -45,7 +45,7 @@ global $app_strings;
 global $app_list_strings;
 global $mod_strings;
 
-$focus = new EmailTemplate();
+$focus = BeanFactory::getBean('EmailTemplates');
 
 if(isset($_REQUEST['record'])) {
     $focus->retrieve($_REQUEST['record']);
@@ -109,8 +109,7 @@ $xtpl->assign("ID", $focus->id);
 if (isset($focus->name)) $xtpl->assign("NAME", $focus->name); else $xtpl->assign("NAME", "");
 if (isset($focus->description)) $xtpl->assign("DESCRIPTION", $focus->description); else $xtpl->assign("DESCRIPTION", "");
 if (isset($focus->subject)) $xtpl->assign("SUBJECT", $focus->subject); else $xtpl->assign("SUBJECT", "");
-$admin = new Administration();
-$admin->retrieveSettings();
+$admin = Administration::getSettings();
 if ($focus->from_name != "") $xtpl->assign("FROM_NAME", $focus->from_name); else $xtpl->assign("FROM_NAME",$admin->settings['notify_fromname']);
 if ($focus->from_address != "") $xtpl->assign("FROM_ADDRESS", $focus->from_address); else $xtpl->assign("FROM_ADDRESS",$admin->settings['notify_fromaddress']);
 if ( $focus->published == 'on')

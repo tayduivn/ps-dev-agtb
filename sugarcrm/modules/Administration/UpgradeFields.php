@@ -48,11 +48,8 @@ if (!isset ($_REQUEST['run'])) {
 }
 
 foreach ($modules as $the_module => $fields) {
-	$class_name = $beanList[$the_module];
 	echo "<br><br>Scanning $the_module <br>";
-
-	require_once ($beanFiles[$class_name]);
-	$mod = new $class_name ();
+    $mod = BeanFactory::getBean($the_module);
 	if (!$db->tableExists($mod->table_name."_cstm")) {
 		$mod->custom_fields = new DynamicField();
 		$mod->custom_fields->setup($mod);

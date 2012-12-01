@@ -60,6 +60,8 @@
         // hide the start button
         $(evt.target).addClass('hide');
 
+        this.$el.parents('div.modal-body').addClass('with-nav');
+
         this.$el.find('a[name=next_button]').toggleClass('hide show');
         this.$el.find('a[name=previous_button]').toggleClass('hide show');
 
@@ -76,8 +78,12 @@
             // make it so you can click save again.
             $(evt.target).addClass('disabled');
             var self = this;
-
-            this.model.set('is_setup', true);
+            
+            this.model.set({
+                is_setup:true,
+                show_forecasts_commit_warnings: true
+            });
+            
             // push this model back to the main config model
             this.context.forecasts.config.set(this.model.toJSON());
             this.context.forecasts.config.save({}, {
@@ -121,6 +127,7 @@
     },
 
     breadcrumb:function (evt) {
+        evt.preventDefault();
         // ignore the click if the crumb is already active
         if ($(evt.target).parent().is(".active,.disabled") == false) {
             // get the index of the clicked crumb

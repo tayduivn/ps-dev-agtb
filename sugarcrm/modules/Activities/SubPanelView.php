@@ -247,12 +247,10 @@ $button .= "<input type='hidden' name='return_id' value='".$focus->id."'>\n";
 $button .= "<input type='hidden' name='type' value='out'>\n";
 $button .= "<input type='hidden' name='action'>\n";
 
-//BEGIN SUGARCRM flav!=sales ONLY
 if($currentModule != 'Project' && $currentModule != 'ProjectTask')
 {
 	$button .= "<input title='".$current_module_strings['LBL_NEW_TASK_BUTTON_TITLE']."'  class='button' onclick=\"this.form.action.value='EditView';this.form.module.value='Tasks'\" type='submit' name='button' value='".$current_module_strings['LBL_NEW_TASK_BUTTON_LABEL']."'>\n";
 }
-//END SUGARCRM flav!=sales ONLY
 
 $button .= "<input title='".$current_module_strings['LBL_SCHEDULE_MEETING_BUTTON_TITLE']."'  class='button' onclick=\"this.form.action.value='EditView';this.form.module.value='Meetings'\" type='submit' name='button' value='".$current_module_strings['LBL_SCHEDULE_MEETING_BUTTON_LABEL']."'>\n";
 

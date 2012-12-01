@@ -134,7 +134,7 @@ class ModuleBuilderViewWizard extends SugarView
 					$this->ajax->addCrumb ( translate( 'LBL_LAYOUTS' ), '' ) ;
 					break;
 
-				//BEGIN SUGARCRM flav=pro || flav=sales ONLY
+				//BEGIN SUGARCRM flav=pro ONLY
 				case 'wirelesslayouts':
 					//Studio Select WirelessLayout page
 					$this->buttons = $module->getWirelessLayouts() ;
@@ -143,7 +143,7 @@ class ModuleBuilderViewWizard extends SugarView
 					$this->help = 'layoutsHelp' ;
 					$this->ajax->addCrumb ( translate( 'LBL_WIRELESSLAYOUTS' ), '' ) ;
 					break;
-				//END SUGARCRM flav=pro || flav=sales ONLY
+				//END SUGARCRM flav=pro ONLY
 
 				case 'subpanels':
 					//Studio Select Subpanel page.
@@ -241,7 +241,7 @@ class ModuleBuilderViewWizard extends SugarView
 				$this->help = 'dashletHelp' ;
 				break;
 
-			//BEGIN SUGARCRM flav=pro || flav=sales ONLY
+			//BEGIN SUGARCRM flav=pro ONLY
 			case 'wirelesslayouts':
 				$ajax->addCrumb ( translate( 'LBL_WIRELESSLAYOUTS' ), 'ModuleBuilder.getContent("module=ModuleBuilder&MB=true&action=wizard&view=wirelesslayouts&view_module=' . $this->editModule . '&view_package=' . $this->package . '")' ) ;
 				$mb = new ModuleBuilder ( ) ;
@@ -262,7 +262,7 @@ class ModuleBuilderViewWizard extends SugarView
 				$ajax->addCrumb ( translate( 'LBL_WIRELESSSEARCH' ), '' ) ;
 				$this->help = "searchHelp" ;
 				break;
-			//END SUGARCRM flav=pro || flav=sales ONLY
+			//END SUGARCRM flav=pro ONLY
 
 			case 'popup':
 				$this->generateMBPopupButtons();

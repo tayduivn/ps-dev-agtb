@@ -48,6 +48,8 @@ class SugarJobCreateNextTimePeriodTest extends Sugar_PHPUnit_Framework_TestCase
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('beanList');
         SugarTestHelper::setUp('current_user');
+        global $current_user;
+        $current_user->is_admin = 1;
     }
 
     public static function tearDownAfterClass()
@@ -99,6 +101,7 @@ class SugarJobCreateNextTimePeriodTest extends Sugar_PHPUnit_Framework_TestCase
     /**
      * @group timeperiods
      * @group forecasts
+     * @outputBuffering disabled
      */
     public function testSugarJobCreateNextTimePeriodJobForAnnualParent()
     {
@@ -120,12 +123,13 @@ class SugarJobCreateNextTimePeriodTest extends Sugar_PHPUnit_Framework_TestCase
         $latestStartDate = $timedate->fromDbDate($latestTimePeriod->start_date);
 
         $shownForward = $config['timeperiod_shown_forward'];
+
         //Move the current start date forward by the leaf period amounts
         for($x=0; $x < $shownForward; $x++) {
             $correctStartDate->modify($parentTimePeriod->next_date_modifier);
         }
 
-        $this->assertTrue($correctStartDate > $latestStartDate);
+        $this->assertGreaterThanOrEqual($correctStartDate, $latestStartDate);
 
         $job = SugarTestJobQueueUtilities::createAndRunJob(
             'SugarJobCreateNextTimePeriod',
@@ -199,7 +203,7 @@ class SugarJobCreateNextTimePeriodTest extends Sugar_PHPUnit_Framework_TestCase
             $correctStartDate->modify($parentTimePeriod->next_date_modifier);
         }
 
-        $this->assertTrue($correctStartDate > $latestStartDate);
+        $this->assertGreaterThanOrEqual($correctStartDate, $latestStartDate);
 
         $job = SugarTestJobQueueUtilities::createAndRunJob(
             'SugarJobCreateNextTimePeriod',

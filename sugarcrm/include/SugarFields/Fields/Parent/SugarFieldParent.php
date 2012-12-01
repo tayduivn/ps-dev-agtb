@@ -117,7 +117,7 @@ class SugarFieldParent extends SugarFieldRelate {
             if ( isset($focus->$moduleName) && isset($beanList[$focus->$moduleName]) ) {
                 $vardef['module'] = $focus->$moduleName;
                 $vardef['rname'] = 'name';
-                $relatedBean = loadBean($focus->$moduleName);
+                $relatedBean = BeanFactory::getBean($focus->$moduleName);
                 $vardef['table'] = $relatedBean->table_name;
                 return parent::importSanitize($value,$vardef,$focus,$settings);
             }

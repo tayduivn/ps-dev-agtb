@@ -547,7 +547,7 @@ class TemplateField{
      */
     protected function get_field_name($module, $name)
     {
-       $bean = loadBean($module);
+       $bean = BeanFactory::getBean($module);
        if(empty($bean) || is_null($bean))
        {
        	  return $name;

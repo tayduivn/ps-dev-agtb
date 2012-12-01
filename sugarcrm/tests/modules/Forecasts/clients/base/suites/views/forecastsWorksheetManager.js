@@ -228,14 +228,6 @@ describe("The forecasts manager worksheet", function(){
     		expect(view.context.forecasts.worksheetmanager.on).toHaveBeenCalledWith("change");
     	});
     	
-    	it("forecasts.on should have been called with reloadWorksheetFlag", function(){
-    		expect(view.context.forecasts.on).toHaveBeenCalledWith("change:reloadWorksheetFlag");
-    	});
-    	
-    	it("forecasts.on should have been called with checkDirtyWorksheetFlag", function(){
-    		expect(view.context.forecasts.on).toHaveBeenCalledWith("change:checkDirtyWorksheetFlag");
-    	});
-
         // TODO: tagged for 6.8 see SFA-253 for details
     	xit("forecasts.config.on should have been called with show_worksheet_likely", function(){
     		expect(view.context.forecasts.config.on).toHaveBeenCalledWith("change:show_worksheet_likely");

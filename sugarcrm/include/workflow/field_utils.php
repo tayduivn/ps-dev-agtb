@@ -584,7 +584,7 @@ include_once('include/workflow/expression_utils.php');
 function get_username_by_id($userid)
 {
     if(empty($userid)) return false;
-    $user = SugarModule::get('Users')->loadBean();
+    $user = BeanFactory::getBean('Users');
     $user->retrieve($userid);
     if($userid != $user->id) {
         return false;

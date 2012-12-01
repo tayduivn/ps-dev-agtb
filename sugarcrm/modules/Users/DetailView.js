@@ -95,20 +95,16 @@ function user_status_display(field){
 	switch (field){
 	
 		case 'RegularUser':
-			//BEGIN SUGARCRM flav!=sales ONLY
 		    document.getElementById("calendar_options").style.display="";
 			document.getElementById("edit_tabs").style.display="";
-			//END SUGARCRM flav!=sales ONLY
 		    document.getElementById("locale").style.display="";
 			document.getElementById("settings").style.display="";
 			document.getElementById("information").style.display="";
 			break;
 			
 		case 'GroupUser':
-			//BEGIN SUGARCRM flav!=sales ONLY
 		    document.getElementById("calendar_options").style.display="none";
 			document.getElementById("edit_tabs").style.display="none";
-			//END SUGARCRM flav!=sales ONLY
 		    document.getElementById("locale").style.display="none";
 			document.getElementById("settings").style.display="none";
 			document.getElementById("information").style.display="none";
@@ -121,10 +117,8 @@ function user_status_display(field){
 	    break;
 
 		case 'PortalUser':
-			//BEGIN SUGARCRM flav!=sales ONLY
 		    document.getElementById("calendar_options").style.display="none";
 			document.getElementById("edit_tabs").style.display="none";
-			//END SUGARCRM flav!=sales ONLY
 		    document.getElementById("locale").style.display="none";
 			document.getElementById("settings").style.display="none";
 			document.getElementById("information").style.display="none";

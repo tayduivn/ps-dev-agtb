@@ -27,7 +27,6 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * by SugarCRM are Copyright (C) 2004-2010 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
-//FILE SUGARCRM flav!=sales ONLY
 require_once('include/Sugarpdf/sugarpdf_config.php');
 
 $SugarpdfSettings = array(

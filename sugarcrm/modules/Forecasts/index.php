@@ -33,8 +33,7 @@ require_once('modules/Forecasts/ForecastUtils.php');
 global $mod_strings;
 
 if (!empty($_REQUEST['page'])) {
-    $user = new User();
-    $user->retrieve($user,$_REQUEST['page']);
+    $user = BeanFactory::getBean('Users', $user,$_REQUEST['page']);
     echo get_chart_for_user($current_user,$_REQUEST['forecast_type']);
 } else {
     include ('modules/Forecasts/DetailView.php');

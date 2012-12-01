@@ -36,9 +36,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 
 
-$focus = new ReportMaker();
-
-$focus->retrieve($_POST['record']);
+$focus = BeanFactory::getBean('ReportMaker', $_POST['record']);
 
 foreach($focus->column_fields as $field)
 {

@@ -82,6 +82,13 @@ abstract class SugarRelationship
      * @return string|array the query to join against the related modules table for the given link.
      */
     public abstract function getJoin($link);
+    /**
+     * @abstract
+     * @param Link2 $link 
+     * @param SugarQuery $sugar_query 
+     * @return SugarQuery
+     */
+    public abstract function buildJoinSugarQuery(Link2 $link, $sugar_query, $options);
 
     /**
      * @abstract
@@ -298,6 +305,40 @@ abstract class SugarRelationship
             }
         }
         return $roleCheck;
+    }
+
+    /**
+     * Build a Where object for a role in a relationship
+     * @param SugarQuery $sugar_query 
+     * @param string $table 
+     * @param bool $ignore_role_filter 
+     * @return SugarQuery
+     */
+    protected function buildSugarQueryRoleWhere($sugar_query, $table = "", $ignore_role_filter = false)
+    {
+        $ignore_role_filter = $ignore_role_filter || $this->ignore_role_filter;
+        $roleCheck = array();
+        if (empty ($table))
+            $table = $this->getRelationshipTable();
+        
+        if (!empty($this->def['relationship_role_column']) && !empty($this->def["relationship_role_column_value"]) && !$ignore_role_filter )
+        {
+            if (empty($table))
+                $field = $this->relationship_role_column;
+            else
+                $field = "$table.{$this->relationship_role_column}";
+            //role column value.
+            if(!empty($table)) {
+                if (empty($this->def['relationship_role_column_value']))
+                {
+                    $sugar_query->join[$table]->on()->isNull($field);
+                }
+                else {
+                    $sugar_query->join[$table]->on()->equals($field,$this->relationship_role_column_value);
+                }
+            }
+        }
+        return $sugar_query;
     }
 
     /**

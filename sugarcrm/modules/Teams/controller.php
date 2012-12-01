@@ -27,22 +27,15 @@
  ********************************************************************************/
 
 require_once('include/MVC/Controller/SugarController.php');
-//BEGIN SUGARCRM flav=int ONLY
-
-//END SUGARCRM flav=int ONLY
 class TeamsController extends SugarController {
 
-	function TeamsController(){
-		parent::SugarController();
-	}
-	
 	//BEGIN SUGARCRM flav=int ONLY
 	public function action_GetTeamHierarchy(){
 		$this->view = 'ajax';
 		if(!empty($_REQUEST['node']) && $_REQUEST['node'] != 'ynode-7'){
 			$parent_id = $_REQUEST['node'];
 			$sql = "SELECT team_hierarchies.id, teams.name FROM team_hierarchies INNER JOIN teams ON teams.id = team_hierarchies.team_id WHERE parent_id = '$parent_id'";
-			
+
 		}else{
 			//return the whole tree with top level nodes only
 			//echo '[{"text":"build","id":"123456","cls":"folder"},{"text":"INCLUDE_ORDER.txt","id":"\/INCLUDE_ORDER.txt","leaf":true,"cls":"file"},{"text":"ext-core.js","id":"\/ext-core.js","leaf":true,"cls":"file"},{"text":"source","id":"\/source","cls":"folder"},{"text":"adapter","id":"\/adapter","cls":"folder"},{"text":"examples","id":"\/examples","cls":"folder"},{"text":"docs","id":"\/docs","cls":"folder"},{"text":"ext-all.js","id":"\/ext-all.js","leaf":true,"cls":"file"},{"text":"license.txt","id":"\/license.txt","leaf":true,"cls":"file"},{"text":"ext-core-debug.js","id":"\/ext-core-debug.js","leaf":true,"cls":"file"},{"text":"ext-all-debug.js","id":"\/ext-all-debug.js","leaf":true,"cls":"file"},{"text":"resources","id":"\/resources","cls":"folder"},{"text":"CHANGES.html","id":"\/CHANGES.html","leaf":true,"cls":"file"}]';
@@ -66,10 +59,10 @@ class TeamsController extends SugarController {
 	   	$json = getJSONobj();
 		echo $json->encode($nodes);
 	}
-	
+
 	public function action_AddTeamToHierarchy(){
 		if(!empty($_POST['team_id'])){
-			$teamH = new TeamHierarchy();
+			$teamH = BeanFactory::getBean('TeamHierarchy');
 			if(!empty($_POST['parent_id']))
 				$teamH->parent_id = $_POST['parent_id'];
 			$teamH->team_id = $_POST['team_id'];
@@ -77,24 +70,20 @@ class TeamsController extends SugarController {
 		}
 		$this->view = 'tree';
 	}
-	
+
 
 	public function action_AddTheUserToTeam(){
 		if(!empty($_POST['user_id']) && !empty($_POST['user_parent_id'])){
-			//$focus = new Team();
-			//$focus->retrieve($_POST['user_team_id']);
-			//$focus->add_user_to_team($_POST['user_id']);
-			$teamH = new TeamHierarchy();
+			$teamH = BeanFactory::getBean('TeamHierarchy');
 			$teamH->addUserToTeam($_POST['user_id'], $_POST['user_parent_id']);
 		}
 		$this->view = 'tree';
 	}
-	
+
 	public function action_ReorderTree(){
 		$this->view = 'ajax';
 		if(!empty($_POST['node_id']) && !empty($_POST['parent_id'])){
-			$teamH = new TeamHierarchy();
-			$teamH->retrieve($_POST['node_id']);
+			$teamH = BeanFactory::getBean('TeamHierarchy', $_POST['node_id']);
 			$teamH->parent_id = $_POST['parent_id'];
 			$teamH->save();
 			return 'success';
@@ -102,7 +91,7 @@ class TeamsController extends SugarController {
 		return 'failure';
 	}
 	//END SUGARCRM flav=int ONLY
-	
+
 	public function action_DisplayInlineTeams(){
 		$this->view = 'ajax';
 		$body = '';
@@ -111,10 +100,10 @@ class TeamsController extends SugarController {
 		if(!empty($_REQUEST['team_set_id'])){
 			require_once('modules/Teams/TeamSetManager.php');
 			$teams = TeamSetManager::getTeamsFromSet($_REQUEST['team_set_id']);
-			
+
 			foreach($teams as $row){
 				if($row['id'] == $primary_team_id) {
-				   $body = $row['display_name'] . '*<br/>' . $body;	
+				   $body = $row['display_name'] . '*<br/>' . $body;
 				} else {
 				   $body .= $row['display_name'].'<br/>';
 				}
@@ -123,10 +112,10 @@ class TeamsController extends SugarController {
 		global $theme;
 		$json = getJSONobj();
 		$retArray = array();
-		
+
 		$retArray['body'] = $body;
 		$retArray['caption'] = $caption;
-	    $retArray['width'] = '100';             
+	    $retArray['width'] = '100';
 	    $retArray['theme'] = $theme;
 	    echo 'result = ' . $json->encode($retArray);
 	}

@@ -30,9 +30,6 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * by SugarCRM are Copyright (C) 2005 SugarCRM, Inc.; All Rights Reserved.
  */
 
-// $Id$
-
-
 global $timedate;
 global $app_strings;
 global $app_list_strings;
@@ -40,7 +37,7 @@ global $current_language;
 global $current_user;
 global $hilite_bg;
 global $sugar_version, $sugar_config;
-$focus = new Project();
+$focus = BeanFactory::getBean('Project');
 
 if(!empty($_REQUEST['record']))
 {
@@ -70,10 +67,10 @@ $sugar_smarty->assign("ID", $focus->id);
 $sugar_smarty->assign("NAME", $focus->name);
 $sugar_smarty->assign("IS_TEMPLATE", $focus->is_template);
 
-$userBean = new User();
+$userBean = BeanFactory::getBean('Users');
 $focus->load_relationship("user_resources");
 $users = $focus->user_resources->getBeans($userBean);
-$contactBean = new Contact();
+$contactBean = BeanFactory::getBean('Contacts');
 $focus->load_relationship("contact_resources");
 $contacts = $focus->contact_resources->getBeans($contactBean);
 
@@ -89,7 +86,7 @@ $sugar_smarty->assign("RESOURCES", $resources);
 
 // Get resource holidays ////////////////////////////////////////////////
 
-$holidayBean = new Holiday();
+$holidayBean = BeanFactory::getBean('Holidays');
 $holidays = array();
 
 if (count($resources) > 0){
@@ -117,15 +114,14 @@ if (count($resources) > 0){
             $i++;
         }
 	$query .= " ) and deleted=0 and holiday_date between '". $timedate->to_db_date($focus->estimated_start_date, false) ."' and '". $timedate->to_db_date($focus->estimated_end_date, false) ."'";
-	$result = $holidayBean->db->query($query, true, "");   
-	$row = $holidayBean->db->fetchByAssoc($result);
-	
-	while ($row != null) {
-	    $holiday = new Holiday();
-	    $holiday->id = $row['id'];
-	    $holiday->retrieve();
-	    array_push($holidays, $holiday);
-	    $row = $holidayBean->db->fetchByAssoc($result);    
+	$result = $holidayBean->db->query($query, true, "");
+
+
+	while (($row = $holidayBean->db->fetchByAssoc($result)) != null) {
+	    $holiday = BeanFactory::retrieveBean('Holidays', $row['id']);
+	    if(!empty($holiday)) {
+	        array_push($holidays, $holiday);
+	    }
 	}
 	$sugar_smarty->assign("HOLIDAYS", $holidays);
 }
@@ -149,7 +145,7 @@ if (isset($_REQUEST["view_filter_resource"]))
 
 
 
-$projectTaskBean = new ProjectTask();
+$projectTaskBean = BeanFactory::getBean('ProjectTask');
 $projectTasks = array();
 
 //todo: Ajay to make sure that the getBeans() call takes a sortArray and actually uses it.
@@ -173,7 +169,7 @@ elseif (isset($_REQUEST["selected_view"]) && $_REQUEST["selected_view"] == 4) {
 //Tasks for Resource
 elseif (isset($_REQUEST["selected_view"]) && $_REQUEST["selected_view"] == 5) {
 	$resource_name = explode(' ', $_REQUEST['view_filter_resource']);
-	
+
 	// check to see if a last name query is required
 	if (!empty($resource_name[1])){
 		$userLastNameQry = "AND users.last_name like '" . $resource_name[1] . "%' ";
@@ -183,12 +179,12 @@ elseif (isset($_REQUEST["selected_view"]) && $_REQUEST["selected_view"] == 5) {
 		$userLastNameQry = '';
 		$contactLastNameQry = '';
 	}
-	
-	// UNION to get the resource names from contacts and users table	
+
+	// UNION to get the resource names from contacts and users table
     $query = "SELECT project_task.*, users.first_name, users.last_name FROM project_task, users WHERE project_task.project_id='" .$_REQUEST['record']."' AND project_task.resource_id like users.id AND (users.last_name like '". $resource_name[0] ."%' OR users.first_name like '". $resource_name[0] ."%') " . $userLastNameQry . "AND project_task.deleted=0 ";
     $query .= "UNION ALL ";
     $query .= "SELECT project_task.*, contacts.first_name, contacts.last_name FROM project_task, contacts WHERE project_task.project_id='" .$_REQUEST['record']."' AND project_task.resource_id like contacts.id AND (contacts.last_name like '". $resource_name[0] ."%' OR contacts.first_name like '". $resource_name[0] ."%') " . $contactLastNameQry . "AND project_task.deleted=0 ";
-    
+
     $result = $projectTaskBean->db->query($query, true, "");
 }
 
@@ -215,7 +211,7 @@ elseif (isset($_REQUEST["selected_view"]) && $_REQUEST["selected_view"] == 8) {
     $query = "SELECT * FROM project_task WHERE project_task.project_id='" .$_REQUEST['record']."' AND " .
             "(project_task.date_start BETWEEN '" . $today . "' AND '". $nextWeek . "' OR ".
             "project_task.date_finish BETWEEN '". $today . "' AND '". $nextWeek . "') AND project_task.deleted=0 order by project_task.project_task_id";
-    
+
     $result = $projectTaskBean->db->query($query, true, "");
 }
 // My Tasks
@@ -234,7 +230,7 @@ elseif (isset($_REQUEST["selected_view"]) && $_REQUEST["selected_view"] == 11) {
     $query = "SELECT * FROM project_task WHERE project_task.project_id='" .$_REQUEST['record']. "' AND project_task.resource_id like '" .$current_user->id ."' AND " .
         "(project_task.date_start BETWEEN '" . $today . "' AND '". $nextWeek . "' OR ".
         "project_task.date_finish BETWEEN '". $today . "' AND '". $nextWeek . "') AND project_task.deleted=0 order by project_task.project_task_id";
-    
+
     $result = $projectTaskBean->db->query($query, true, "");
 }
 else
@@ -242,18 +238,16 @@ else
 
 if (!isset($_REQUEST["selected_view"]) || ($_REQUEST["selected_view"] == 0 || $_REQUEST["selected_view"] == 1 || $_REQUEST["selected_view"] == 3)) {
     $result = $projectTaskBean->db->query($query, true, "");
-    $row = $projectTaskBean->db->fetchByAssoc($result);
+
     $count = 0;
-    while ($row != null) {
-        $projectTask = new ProjectTask();
-        $projectTask->id = $row['id'];
-        $projectTask->retrieve();
+    while (($row = $projectTaskBean->db->fetchByAssoc($result)) != null) {
+        $projectTask = BeanFactory::retrieveBean('ProjectTask', $row['id']);
+        if(empty($projectTask)) continue;
         if (empty($projectTask->percent_complete))
             $projectTask->percent_complete = 0;
         if (empty($projectTask->duration))
             $projectTask->duration = 0;
         array_push($projectTasks, $projectTask);
-        $row = $projectTaskBean->db->fetchByAssoc($result);
         $count++;
     }
 }
@@ -261,30 +255,24 @@ else {
     // Get all the tasks that participate in a parent relationship with any task.
     $query = "SELECT * from project_task WHERE project_task.project_id='" .$_REQUEST['record']."' AND project_task.project_task_id in (SELECT parent_task_id FROM project_task WHERE project_task.project_id='" .$_REQUEST['record']."' AND project_task.deleted=0)";
     $parentResult = $projectTaskBean->db->query($query, true, "");
-    $row = $projectTaskBean->db->fetchByAssoc($result);
-    $parentRow = $projectTaskBean->db->fetchByAssoc($parentResult);
     $parentRows = array();
-    
-    while ($parentRow != null) {
-        $parentProjectTask = new ProjectTask();
-        $parentProjectTask->id = $parentRow['id'];
-        $parentProjectTask->retrieve();
+
+    while (($parentRow = $projectTaskBean->db->fetchByAssoc($parentResult)) != null) {
+        $projectTask = BeanFactory::retrieveBean('ProjectTask', $parentRow['id']);
+        if(empty($projectTask)) continue;
         $parentRows[$parentProjectTask->project_task_id] = $parentProjectTask;
-        $parentRow = $projectTaskBean->db->fetchByAssoc($parentResult);
     }
 
-    while ($row != null) {
-        $projectTask = new ProjectTask();
-        $projectTask->id = $row['id'];
-        $projectTask->retrieve();
+    while (($row = $projectTaskBean->db->fetchByAssoc($result)) != null) {
+        $projectTask = BeanFactory::retrieveBean('ProjectTask', $row['id']);
+        if(empty($projectTask)) continue;
         $projectTasks[$projectTask->project_task_id] = $projectTask;
         $parent = $projectTask->parent_task_id;
         while ($parent != null) {
             $parentProjectTask = $parentRows[$parent];
             $projectTasks[$parentProjectTask->project_task_id] = $parentProjectTask;
-            $parent = $parentProjectTask->parent_task_id;            
+            $parent = $parentProjectTask->parent_task_id;
         }
-        $row = $projectTaskBean->db->fetchByAssoc($result); 
     }
     ksort($projectTasks);
 }
@@ -319,7 +307,7 @@ $sugar_smarty->assign("TEAM", $focus->team_id);
 $sugar_smarty->assign("OWNER", $focus->assigned_user_id);
 $sugar_smarty->assign('NAME_LENGTH', $projectTaskBean->field_defs['name']['len']);
 
-//todo: also add the owner's managers 
+//todo: also add the owner's managers
 
 global $current_user;
 if(is_admin($current_user)
@@ -335,7 +323,7 @@ if(is_admin($current_user)
 	$sugar_smarty->assign("ADMIN_EDIT","<a href='index.php?action=index&module=DynamicLayout&from_action="
 		.$_REQUEST['action'] ."&from_module=".$_REQUEST['module']
 		."&record=".$record. "'>"
-		.SugarThemeRegistry::current()->getImage("EditLayout","border='0' align='bottom'",null,null,'.gif',$mod_strings['LBL_EDITLAYOUT'])."</a>");		
+		.SugarThemeRegistry::current()->getImage("EditLayout","border='0' align='bottom'",null,null,'.gif',$mod_strings['LBL_EDITLAYOUT'])."</a>");
 }
 $sugar_smarty->assign("DATE_FORMAT", $current_user->getPreference('datef'));
 $sugar_smarty->assign("CURRENT_USER", $current_user->id);
@@ -351,7 +339,7 @@ require_once("modules/Teams/TeamSet.php");
 $list_of_teams = array();
 
 if (isset($focus->team_set_id)) {
-    $teamSet        = new TeamSet();
+    $teamSet = BeanFactory::getBean('TeamSets');
     $list_of_teams  = $teamSet->getTeamIds($focus->team_set_id);
 } else { // since no team_set_id exists, we can just use the current team id
     $list_of_teams[] = $focus->team_id;

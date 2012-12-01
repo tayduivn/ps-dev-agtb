@@ -202,8 +202,8 @@ class SugarACLStatic extends SugarACLStrategy
 
     public function checkFieldList($module, $field_list, $action, $context)
     {
-        $user_id = $this->getUserID($context);
-        if(is_admin($GLOBALS['current_user']) || empty($user_id) || empty($_SESSION['ACL'][$user_id][$module]['fields'])) {
+        $user = $this->getCurrentUser($context);
+        if(empty($user) || empty($user->id) || is_admin($user) || empty($_SESSION['ACL'][$user->id][$module]['fields'])) {
             return array();
         }
         return parent::checkFieldList($module, $field_list, $action, $context);
@@ -211,10 +211,66 @@ class SugarACLStatic extends SugarACLStrategy
 
     public function getFieldListAccess($module, $field_list, $context)
     {
-        $user_id = $this->getUserID($context);
-        if(is_admin($GLOBALS['current_user']) || empty($user_id) || empty($_SESSION['ACL'][$user_id][$module]['fields'])) {
+        $user = $this->getCurrentUser($context);
+        if(empty($user) || empty($user->id) || is_admin($user) || empty($_SESSION['ACL'][$user->id][$module]['fields'])) {
         	return array();
         }
         return parent::getFieldListAccess($module, $field_list, $context);
+    }
+
+    /**
+     * For some mysterious reasons Tracker ACLs are "special" and do not follow the rules.
+     * @var array
+     */
+    protected static $non_module_acls = array(
+        'Trackers' => 'Tracker',
+        'TrackerQueries' => 'TrackerQuery',
+        'TrackerPerfs' => 'TrackerPerf',
+        'TrackerSessions' => 'TrackerSession',
+
+    );
+
+    /**
+     * Get user access for the list of actions
+     * @param string $module
+     * @param array $access_list List of actions
+     * @returns array - List of access levels. Access levels not returned are assumed to be "all allowed".
+     */
+    public function getUserAccess($module, $access_list, $context)
+    {
+        $user = $this->getCurrentUser($context);
+        if(empty($user) || empty($user->id) || is_admin($user)) {
+            // no user or admin - do nothing
+            return $access_list;
+        }
+        $is_owner = !(isset($context['owner_override']) && $context['owner_override'] == false);
+        if(isset(self::$non_module_acls[$module])) {
+            $level = self::$non_module_acls[$module];
+        } else {
+            $level = 'module';
+        }
+        $actions = ACLAction::getUserActions($user->id, false, $module, $level);
+        if(empty($actions)) {
+            return $access_list;
+        }
+        // default implementation, specific ACLs can override
+        $access = $access_list;
+        // check 'access' first - if it's false all others will be false
+        if(isset($access_list['access'])) {
+        	if(!ACLAction::userHasAccess($user->id, $module, 'access', $level, true)) {
+        		foreach($access_list as $action => $value) {
+        			$access[$action] = false;
+        		}
+        		return $access;
+        	}
+        	// no need to check it second time
+        	unset($access_list['access']);
+        }
+        foreach($access_list as $action => $value) {
+        	if(isset($actions[$action]['aclaccess']) && !ACLAction::hasAccess($is_owner, $actions[$action]['aclaccess'])) {
+        		$access[$action] = false;
+        	}
+        }
+        return $access;
     }
 }

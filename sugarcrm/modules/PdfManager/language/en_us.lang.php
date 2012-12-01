@@ -50,6 +50,7 @@ $mod_strings = array (
   'LBL_LIST_NAME' => 'Name',
   'LBL_LIST_FORM_TITLE' => 'PDF Template List',
   'LBL_MODULE_NAME' => 'PdfManager',
+  'LBL_MODULE_NAME_SINGULAR' => 'PdfManager',
   'LBL_MODULE_TITLE' => 'PdfManager',
   'LBL_HOMEPAGE_TITLE' => 'My PDF Templates',
   'LNK_NEW_RECORD' => 'Create PDF Template',

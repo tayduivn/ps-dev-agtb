@@ -65,10 +65,7 @@ class ViewSugarFieldCollection{
      * call retrieve values()
      */
     function setup(){
-        if(!class_exists('Relationship')){
-
-        }
-        $rel = new Relationship();
+        $rel = BeanFactory::getBean('Relationships');
         if(!empty($this->vardef['relationship'])){
         	$rel->retrieve_by_name($this->vardef['relationship']);
         }
@@ -85,21 +82,14 @@ class ViewSugarFieldCollection{
             if($module_dir != $this->module_dir){
                 die('These modules do not match : '. $this->module_dir . ' and ' . $module_dir);
             }
-            if(isset($GLOBALS['beanList'][$this->module_dir])){
-                $class = $GLOBALS['beanList'][$this->module_dir];
-                if(SugarAutoLoader::fileExists($GLOBALS['beanFiles'][$class])){
-                    $this->bean = loadBean($this->module_dir);
-                    $this->bean->retrieve($_REQUEST['bean_id']);
-                    if($this->bean->load_relationship($this->vardef['name'])){
-                        $this->retrieve_values();
-                    }else{
-                        die('failed to load the relationship');
-                    }
-                }else{
-                    die('class file do not exist');
-                }
+            $this->bean = BeanFactory::retrieveBean($this->module_dir, $_REQUEST['bean_id']);
+            if(empty($this->bean)) {
+                die('failed to load the bean');
+            }
+            if($this->bean->load_relationship($this->vardef['name'])){
+                $this->retrieve_values();
             }else{
-                die($this->module_dir . ' is not in the beanList.');
+                die('failed to load the relationship');
             }
         }
         else{
@@ -134,12 +124,9 @@ class ViewSugarFieldCollection{
                     $primary_id = $secondary_ids[0]['id'];
                     unset($secondary_ids[0]);
                 }
-                if(isset($GLOBALS['beanList'][ $this->related_module])){
-                    $class = $GLOBALS['beanList'][$this->related_module];
-                    if(SugarAutoLoader::fileExists($GLOBALS['beanFiles'][$class])){
-                        $mod = loadBean($this->module_dir);
+                $mod = BeanFactory::getBean($this->module_dir, $primary_id);
+                if(!empty($mod)) {
                         $mod->relDepth = $this->bean->relDepth + 1;
-                        $mod->retrieve($primary_id);
                         if (isset($mod->name)) {
                             $this->bean->{$this->value_name}=array_merge($this->bean->{$this->value_name}, array('primary'=>array('id'=>$primary_id, 'name'=>$mod->name)));
                         }
@@ -161,7 +148,6 @@ class ViewSugarFieldCollection{
                                 }
                             }
                         }
-                    }
                 }
             }
         }
@@ -243,17 +229,17 @@ class ViewSugarFieldCollection{
                         $v['displayParams']=array();
                     }
                 }
-                //BEGIN SUGARCRM flav=pro || flav=sales ONLY
+                //BEGIN SUGARCRM flav=pro ONLY
                 // Wireless view for Enum type because the wireless view retrieve and translate the list on real time.
                 if($collection_field_vardef['type'] == 'enum'){
                     //TODO Change to an other view
                     $viewtype='WirelessEditView';
                 }else{
-                //END SUGARCRM flav=pro || flav=sales ONLY
+                //END SUGARCRM flav=pro ONLY
                     $viewtype='EditView';
-                //BEGIN SUGARCRM flav=pro || flav=sales ONLY
+                //BEGIN SUGARCRM flav=pro ONLY
                 }
-                //END SUGARCRM flav=pro || flav=sales ONLY
+                //END SUGARCRM flav=pro ONLY
                 $name = $collection_field_vardef['name'];
                 // Rearranging the array with name as key instaead of number. This is required for displaySmarty() to assign the good variable.
                 $this->displayParams['collection_field_list'][$name]['vardefName'] = $this->displayParams['collection_field_list'][$k]['name'];
@@ -365,11 +351,9 @@ FRA;
             if(!$this->skipModuleQuickSearch && preg_match('/(Campaigns|Teams|Users|Accounts)/si', $this->related_module, $matches)) {
                 if($matches[0] == 'Users'){
                     $sqs_objects[$name1] = $qsd->getQSUser();
-            //BEGIN SUGARCRM flav!=sales ONLY
                 } else if($matches[0] == 'Campaigns') {
                     $sqs_objects[$name1] = $qsd->getQSCampaigns();
 
-            //END SUGARCRM flav!=sales ONLY
             //BEGIN SUGARCRM flav=pro ONLY
 
                 } else if($matches[0] == 'Teams') {

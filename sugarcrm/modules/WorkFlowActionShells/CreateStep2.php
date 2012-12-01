@@ -26,22 +26,9 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * governing these rights and limitations under the License.  Portions created
  * by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
-/*********************************************************************************
- * $Id: CreateStep2.php 45763 2009-04-01 19:16:18Z majed $
- * Description:
- ********************************************************************************/
-
-global $theme;
-
-
-
-
 require_once('include/workflow/field_utils.php');
 
-
-
-
-
+global $theme;
 global $app_strings;
 global $app_list_strings;
 global $mod_strings;
@@ -49,11 +36,8 @@ global $mod_strings;
 global $urlPrefix;
 global $currentModule;
 
-
-$seed_object = new WorkFlow();
-
-if(!empty($_REQUEST['workflow_id']) && $_REQUEST['workflow_id']!="") {
-    $seed_object->retrieve($_REQUEST['workflow_id']);
+if(!empty($_REQUEST['workflow_id'])) {
+    $seed_object = BeanFactory::retrieveBean('WorkFlow', $_REQUEST['workflow_id']);
 } else {
 	sugar_die("You shouldn't be here");
 }
@@ -77,11 +61,11 @@ else {
 $form->assign("MOD", $mod_strings);
 $form->assign("APP", $app_strings);
 
-$focus = new WorkFlowActionShell();
+$focus = BeanFactory::getBean('WorkFlowActionShells');
 //Add When Expressions Object is availabe
 //$exp_object = new Expressions();
 
-if(isset($_REQUEST['record']) && isset($_REQUEST['record'])) {
+if(!empty($_REQUEST['record'])) {
     $focus->retrieve($_REQUEST['record']);
 
 }

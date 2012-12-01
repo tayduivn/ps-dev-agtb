@@ -28,7 +28,6 @@
 /*********************************************************************************
  * $Id: config.tpl 24985 2007-08-02 06:13:58Z chris $
  ********************************************************************************/
-//FILE SUGARCRM flav!=sales ONLY
 *}
 {$ROLLOVER}
 <script type="text/javascript" src="{sugar_getjspath file='modules/Users/User.js'}"></script>

@@ -65,18 +65,15 @@ function get_entry($session, $module_name, $id,$select_fields, $link_name_to_fie
 */
 function get_entries($session, $module_name, $ids, $select_fields, $link_name_to_fields_array){
 	$GLOBALS['log']->info('Begin: SugarWebServiceImpl->get_entries');
-	global  $beanList, $beanFiles;
 	$error = new SoapError();
 
 	$linkoutput_list = array();
 	$output_list = array();
     $using_cp = false;
-    //BEGIN SUGARCRM flav!=sales ONLY
     if($module_name == 'CampaignProspects'){
         $module_name = 'Prospects';
         $using_cp = true;
     }
-    //END SUGARCRM flav!=sales ONLY
 	if (!self::$helperObject->checkSessionAndModuleAccess($session, 'invalid_session', $module_name, 'read', 'no_access', $error)) {
 		$GLOBALS['log']->info('End: SugarWebServiceImpl->get_entries');
 		return;
@@ -89,12 +86,8 @@ function get_entries($session, $module_name, $ids, $select_fields, $link_name_to
 		return;
 	}
 
-	$class_name = $beanList[$module_name];
-	require_once($beanFiles[$class_name]);
-
-	$temp = new $class_name();
 	foreach($ids as $id) {
-		$seed = @clone($temp);
+		$seed = BeanFactory::getBean($module_name);
 	    if($using_cp){
 	        $seed = $seed->retrieveTarget($id);
 	    }else{
@@ -145,15 +138,12 @@ function get_entries($session, $module_name, $ids, $select_fields, $link_name_to
 */
 function get_entry_list($session, $module_name, $query, $order_by,$offset, $select_fields, $link_name_to_fields_array, $max_results, $deleted=0 ){
 	$GLOBALS['log']->info('Begin: SugarWebServiceImpl->get_entry_list');
-	global  $beanList, $beanFiles;
 	$error = new SoapError();
     $using_cp = false;
-    //BEGIN SUGARCRM flav!=sales ONLY
     if($module_name == 'CampaignProspects'){
         $module_name = 'Prospects';
         $using_cp = true;
     }
-    //END SUGARCRM flav!=sales ONLY
 	if (!self::$helperObject->checkSessionAndModuleAccess($session, 'invalid_session', $module_name, 'read', 'no_access', $error)) {
 		$GLOBALS['log']->info('End: SugarWebServiceImpl->get_entry_list');
 		return;
@@ -165,9 +155,7 @@ function get_entry_list($session, $module_name, $query, $order_by,$offset, $sele
 		$sugar_config['list_max_entries_per_page'] = $max_results;
 	} // if
 
-	$class_name = $beanList[$module_name];
-	require_once($beanFiles[$class_name]);
-	$seed = new $class_name();
+	$seed = BeanFactory::getBean($module_name);
 
     if (!self::$helperObject->checkQuery($error, $query, $order_by)) {
 		$GLOBALS['log']->info('End: SugarWebServiceImpl->get_entry_list');
@@ -348,17 +336,13 @@ function set_relationships($session, $module_names, $module_ids, $link_field_nam
 function get_relationships($session, $module_name, $module_id, $link_field_name, $related_module_query, $related_fields, $related_module_link_name_to_fields_array, $deleted){
 
 	$GLOBALS['log']->info('Begin: SugarWebServiceImpl->get_relationships');
-	global  $beanList, $beanFiles;
 	$error = new SoapError();
 	if (!self::$helperObject->checkSessionAndModuleAccess($session, 'invalid_session', $module_name, 'read', 'no_access', $error)) {
 		$GLOBALS['log']->info('End: SugarWebServiceImpl->get_relationships');
 		return;
 	} // if
 
-	$class_name = $beanList[$module_name];
-	require_once($beanFiles[$class_name]);
-	$mod = new $class_name();
-	$mod->retrieve($module_id);
+	$mod = BeanFactory::getBean($module_name, $module_id);
 
     if (!self::$helperObject->checkQuery($error, $related_module_query)) {
 		$GLOBALS['log']->info('End: SugarWebServiceImpl->get_relationships');
@@ -385,12 +369,9 @@ function get_relationships($session, $module_name, $module_id, $link_field_name,
 		if (sizeof($list) > 0) {
 			// get the related module name and instantiate a bean for that.
 			$submodulename = $mod->$link_field_name->getRelatedModuleName();
-			$submoduleclass = $beanList[$submodulename];
-			require_once($beanFiles[$submoduleclass]);
 
-			$submoduletemp = new $submoduleclass();
 			foreach($list as $row) {
-				$submoduleobject = @clone($submoduletemp);
+				$submoduleobject = BeanFactory::getBean($submodulename);
 				// set all the database data to this object
 				foreach ($filterFields as $field) {
 					$submoduleobject->$field = $row[$field];
@@ -423,7 +404,7 @@ function get_relationships($session, $module_name, $module_id, $link_field_name,
  * @exception 'SoapFault' -- The SOAP error, if any
 */
 function set_entry($session,$module_name, $name_value_list){
-	global  $beanList, $beanFiles, $current_user;
+	global  $current_user;
 
 	$GLOBALS['log']->info('Begin: SugarWebServiceImpl->set_entry');
     if (self::$helperObject->isLogLevelDebug()) {
@@ -434,9 +415,7 @@ function set_entry($session,$module_name, $name_value_list){
 		$GLOBALS['log']->info('End: SugarWebServiceImpl->set_entry');
 		return;
 	} // if
-	$class_name = $beanList[$module_name];
-	require_once($beanFiles[$class_name]);
-	$seed = new $class_name();
+	$seed = BeanFactory::getBean($module_name);
 	foreach($name_value_list as $name=>$value){
 		if(is_array($value) &&  $value['name'] == 'id'){
 			$seed->retrieve($value['value']);
@@ -514,14 +493,13 @@ public function login($user_auth, $application, $name_value_list){
 	$GLOBALS['log']->info('Begin: SugarWebServiceImpl->login');
 	global $sugar_config, $system_config;
 	$error = new SoapError();
-	$user = new User();
+	$user = BeanFactory::getBean('Users');
 	$success = false;
 	if(!empty($user_auth['encryption']) && $user_auth['encryption'] === 'PLAIN'){
 		$user_auth['password'] = md5($user_auth['password']);
 	}
 	//rrs
-		$system_config = new Administration();
-	$system_config->retrieveSettings('system');
+		$system_config = Administration::getSettings('system');
 	$authController = new AuthenticationController((!empty($sugar_config['authenticationClass'])? $sugar_config['authenticationClass'] : 'SugarAuthenticate'));
 	//rrs
 	$isLoginSuccess = $authController->login($user_auth['user_name'], $user_auth['password'], array('passwordEncrypted' => true));
@@ -579,8 +557,7 @@ public function login($user_auth, $application, $name_value_list){
 		$nameValueArray['user_language'] = self::$helperObject->get_name_value('user_language', $current_language);
 		$cur_id = $current_user->getPreference('currency');
 		$nameValueArray['user_currency_id'] = self::$helperObject->get_name_value('user_currency_id', $cur_id);
-		$currencyObject = new Currency();
-		$currencyObject->retrieve($cur_id);
+		$currencyObject = BeanFactory::getBean('Currencies', $cur_id);
 		$nameValueArray['user_currency_name'] = self::$helperObject->get_name_value('user_currency_name', $currencyObject->name);
 		$_SESSION['user_language'] = $current_language;
 		return array('id'=>session_id(), 'module_name'=>'Users', 'name_value_list'=>$nameValueArray);
@@ -630,8 +607,7 @@ function get_server_info(){
 	require_once('sugar_version.php');
 	require_once('modules/Administration/Administration.php');
 
-	$admin  = new Administration();
-	$admin->retrieveSettings('info');
+	$admin = Administration::getSettings('info');
 	$sugar_version = '';
 	if(isset($admin->settings['info_sugar_version'])){
 		$sugar_version = $admin->settings['info_sugar_version'];
@@ -673,7 +649,6 @@ function get_user_id($session){
  */
 function get_module_fields($session, $module_name, $fields = array()){
 	$GLOBALS['log']->info('Begin: SugarWebServiceImpl->get_module_fields for ' . $module_name);
-	global  $beanList, $beanFiles;
 	$error = new SoapError();
 	$module_fields = array();
 
@@ -682,9 +657,7 @@ function get_module_fields($session, $module_name, $fields = array()){
 		return;
 	} // if
 
-	$class_name = $beanList[$module_name];
-	require_once($beanFiles[$class_name]);
-	$seed = new $class_name();
+	$seed = BeanFactory::getBean($module_name);
 	if($seed->ACLAccess('ListView', true) || $seed->ACLAccess('DetailView', true) || 	$seed->ACLAccess('EditView', true) ) {
     	$return = self::$helperObject->get_return_module_fields($seed, $module_name, $fields);
         $GLOBALS['log']->info('End: SugarWebServiceImpl->get_module_fields SUCCESS for ' . $module_name);
@@ -767,9 +740,7 @@ function get_note_attachment($session,$id) {
 		return;
 	} // if
 	require_once('modules/Notes/Note.php');
-	$note = new Note();
-
-	$note->retrieve($id);
+	$note = BeanFactory::getBean('Notes', $id);
     if (!self::$helperObject->checkACLAccess($note, 'DetailView', $error, 'no_access')) {
 		$GLOBALS['log']->info('End: SugarWebServiceImpl->get_note_attachment');
     	return;
@@ -840,8 +811,7 @@ function get_document_revision($session, $id) {
 	} // if
 
     require_once('modules/DocumentRevisions/DocumentRevision.php');
-    $dr = new DocumentRevision();
-    $dr->retrieve($id);
+    $dr = BeanFactory::getBean('DocumentRevisions', $id);
     if(!empty($dr->filename)){
         $filename = "upload://{$dr->id}";
         if (filesize($filename) > 0) {
@@ -900,9 +870,7 @@ function search_by_module($session, $search_string, $modules, $offset, $max_resu
 	$modules_to_search = array();
 	$unified_search_modules['Users'] =   array('fields' => array());
 
-	//BEGIN SUGARCRM flav!=sales ONLY
 	$unified_search_modules['ProjectTask'] =   array('fields' => array());
-    //END SUGARCRM flav!=sales ONLY
 
     foreach($unified_search_modules as $module=>$data) {
     	if (in_array($module, $modules)) {
@@ -922,13 +890,10 @@ function search_by_module($session, $search_string, $modules, $offset, $max_resu
 				$unifiedSearchFields[$name] [ $field ]['value'] = $search_string;
 			}
 
-			require_once $beanFiles[$beanName] ;
-			$seed = new $beanName();
+			$seed = BeanFactory::getBean($name);
 			require_once 'include/SearchForm/SearchForm2.php' ;
 			if ($beanName == "User"
-			     //BEGIN SUGARCRM flav!=sales ONLY
 			    || $beanName == "ProjectTask"
-			     //END SUGARCRM flav!=sales ONLY
 			    ) {
 				if(!self::$helperObject->check_modules_access($current_user, $seed->module_dir, 'read')){
 					continue;
@@ -939,9 +904,7 @@ function search_by_module($session, $search_string, $modules, $offset, $max_resu
 			}
 
 			if ($beanName != "User"
-			     //BEGIN SUGARCRM flav!=sales ONLY
 			    && $beanName != "ProjectTask"
-			     //END SUGARCRM flav!=sales ONLY
 			    ) {
 				$searchForm = new SearchForm ($seed, $name ) ;
 
@@ -988,7 +951,6 @@ function search_by_module($session, $search_string, $modules, $offset, $max_resu
 LEFT JOIN email_addresses ea ON (ea.id = eabl.email_address_id) ";
 					$main_query = $main_query . "where ((users.first_name like '{$search_string}') or (users.last_name like '{$search_string}') or (users.user_name like '{$search_string}') or (ea.email_address like '{$search_string}')) and users.deleted = 0 and users.is_group = 0 and users.employee_status = 'Active'";
 				} // if
-				 //BEGIN SUGARCRM flav!=sales ONLY
 				if ($beanName == "ProjectTask") {
                     // $search_string gets cleaned above, so we can use it here
 					$filterFields = array('id', 'name', 'project_id', 'project_name');
@@ -998,7 +960,6 @@ LEFT JOIN email_addresses ea ON (ea.id = eabl.email_address_id) ";
 		            $main_query .= "LEFT JOIN project ON $seed->table_name.project_id = project.id ";
 		            $main_query .= "where {$seed->table_name}.name like '{$search_string}%'";
 				} // if
-				 //END SUGARCRM flav!=sales ONLY
 			} // else
 
 			$GLOBALS['log']->info('SugarWebServiceImpl->search_by_module - query = ' . $main_query);
@@ -1084,7 +1045,6 @@ function get_user_team_id($session){
 
 
 //END SUGARCRM flav=pro ONLY
-//BEGIN SUGARCRM flav!=sales ONLY
 
 /**
 *   Once we have successfuly done a mail merge on a campaign, we need to notify Sugar of the targets
@@ -1117,7 +1077,6 @@ function set_campaign_merge($session,$targets, $campaign_id){
         campaign_log_mail_merge($campaign_id,$targets);
     } // else
 } // fn
-//END SUGARCRM flav!=sales ONLY
 /**
 *   Retrieve number of records in a given module
 *
@@ -1138,12 +1097,9 @@ function get_entries_count($session, $module_name, $query, $deleted) {
 		return;
 	} // if
 
-	global $beanList, $beanFiles, $current_user;
+	global $current_user;
 
-	$class_name = $beanList[$module_name];
-	require_once($beanFiles[$class_name]);
-	$seed = new $class_name();
-
+	$seed = BeanFactory::getBean($module_name);
     if (!self::$helperObject->checkQuery($error, $query)) {
 		$GLOBALS['log']->info('End: SugarWebServiceImpl->get_entries_count');
     	return;
@@ -1202,7 +1158,6 @@ function get_entries_count($session, $module_name, $query, $deleted) {
  */
 function get_report_entries($session, $ids, $select_fields ){
 	$GLOBALS['log']->info('Begin: SugarWebServiceImpl->get_report_entries');
-	global  $beanList, $beanFiles;
 	$error = new SoapError();
 
 	$output_list = array();
@@ -1217,14 +1172,8 @@ function get_report_entries($session, $ids, $select_fields ){
 	require_once('modules/Reports/SavedReport.php');
 	require_once('modules/Reports/Report.php');
 
-	$module_name = "Reports";
-	$class_name = $beanList[$module_name];
-	require_once($beanFiles[$class_name]);
-
-	$temp = new $class_name('','','',true);
 	foreach($ids as $id) {
-		$seed = @clone($temp);
-		$seed->retrieve($id);
+		$seed = BeanFactory::getBean('Reports', $id);
 	    if (!self::$helperObject->checkACLAccess($seed, 'DetailView', $error, 'no_access')) {
 	    	return;
 	    }

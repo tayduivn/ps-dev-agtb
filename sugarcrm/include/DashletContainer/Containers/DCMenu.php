@@ -83,7 +83,7 @@ class DCMenu extends DashletContainer
 		    if ( $shouldSkip != '1' )
             {
                 require_once('modules/Notifications/Notifications.php');
-                $n = new Notifications();
+                $n = BeanFactory::getBean('Notifications');
                 $unreadNotifications = $n->getSystemNotificationsCount();
                 if ( $unreadNotifications == 0 )
                     sugar_cache_put('dcmenu_check_notifications','1');
@@ -182,10 +182,6 @@ EOQ;
         {
 			if(ACLController::checkAccess($action, 'edit', true))
             {
-			   //BEGIN SUGARCRM flav=sales ONLY
-			   $ss_admin_whitelist = getSugarSalesAdminWhiteList();
-			   if(!is_admin($GLOBALS['current_user']) || in_array($action, $ss_admin_whitelist))
-			   //END SUGARCRM flav=sales ONLY
 			   $filterDCActions[] = $this->getMenuItem($action);
 			}
 		}

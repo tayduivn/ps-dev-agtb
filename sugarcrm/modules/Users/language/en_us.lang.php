@@ -46,16 +46,10 @@ $mod_strings = array (
     'LBL_TEAM_SET'                      => 'Team Set',
 
 //END SUGARCRM flav=pro ONLY
-//BEGIN SUGARCRM flav!=sales ONLY
     'LBL_DELETE_USER_CONFIRM'           => 'When the User record is deleted, the corresponding Employee record will also be deleted. After the user is deleted, any workflow definitions and reports involving the user might need to be updated.<br/><br/>'.
                                                 'Deleting a User record cannot be undone.',
 	'LBL_DELETE_GROUP_CONFIRM'          => 'Are you sure you want to delete this Group User? Click OK to delete the User record.<br/>After clicking OK, you will be given the ability to reassign records assigned to the Group User to another user.',
 	'LBL_DELETE_PORTAL_CONFIRM'         => 'Are you sure you want to delete this Portal API User? Click OK to delete the User record.',
-//END SUGARCRM flav!=sales ONLY
-//BEGIN SUGARCRM flav=sales ONLY
-	'LBL_DELETE_USER_CONFIRM'           => 'When the User record is deleted, the corresponding Employee record will also be deleted. After the user is deleted, any workflow definitions and reports involving the user might need to be updated.<br/><br/>'.
-                                                'Click OK to delete the User record.',
-//END SUGARCRM flav=sales ONLY
 //BEGIN SUGARCRM flav=com ONLY
     'LBL_DELETE_USER_CONFIRM'           => 'When the User record is deleted, the corresponding Employee record will also be deleted.<br/><br/>'.
                                                   'Click OK to delete the User record.',
@@ -108,12 +102,13 @@ $mod_strings = array (
 	'LBL_ADDRESS_STREET'				=> 'Address Street',
 	'LBL_ADDRESS'						=> 'Address',
 	'LBL_ADMIN_USER'					=> 'System Administrator User',
-	//BEGIN SUGARCRM flav=com || flav=sales ONLY
+
+	//BEGIN SUGARCRM flav=com ONLY
 
 	'LBL_ADMIN_DESC'					=> 'User can access the Administration page all records.',
 	'LBL_REGULAR_DESC'					=> 'User can access modules and records based on roles.',
 
-	//END SUGARCRM flav=com || flav=sales ONLY
+	//END SUGARCRM flav=com ONLY
 
 
 	//BEGIN SUGARCRM flav=pro ONLY
@@ -275,6 +270,7 @@ $mod_strings = array (
 	'LBL_CREATED_BY_NAME' => 'Created By', //bug 48978
     'LBL_MODIFIED_BY_ID'               =>'Modified By ID',
     'LBL_MODULE_NAME'					=> 'Users',
+    'LBL_MODULE_NAME_SINGULAR'				=> 'User',
 	'LBL_MODULE_TITLE'					=> 'Users: Home',
     'LBL_NAME'							=> 'Full Name',
     'LBL_SIGNATURE_NAME'                                        =>  'Name',
@@ -414,17 +410,9 @@ $mod_strings = array (
     'LBL_UPDATE_FINISH'                 => 'Update complete',
     'LBL_AFFECTED'                      => 'affected',
 
-    //BEGIN SUGARCRM flav=sales ONLY
-    'LBL_USER_NAME_FOR_ROLE'            => 'Users/Roles',
-    'LBL_USER_TYPE'                     => 'User Type',
-    'LBL_USER_ADMINISTRATOR'            => 'User Administrator',
-    'LBL_USER_ADMIN_DESC'               => 'User can manage users in the system.',
-    //END SUGARCRM flav=sales ONLY
-    //BEGIN SUGARCRM flav!=sales ONLY
     'LBL_USER_NAME_FOR_ROLE'            =>'Users/Teams/Roles',
-    //END SUGARCRM flav!=sales ONLY
     'LBL_SESSION_EXPIRED'               => 'You have been logged out because your session has expired.',
-//BEGIN SUGARCRM flav=pro||flav=sales ONLY
+//BEGIN SUGARCRM flav=pro ONLY
 
     'LBL_TOO_MANY_CONCURRENT'           => 'This session has ended because another session has been started under the same username.',
 // MASS REASSIGNMENT SCRIPT STRINGS
@@ -447,24 +435,14 @@ $mod_strings = array (
 	'LBL_REASS_FILTERS'					=> 'Filters',
 	'LBL_REASS_NOTES_TITLE'				=> 'Notes:',
 	'LBL_REASS_NOTES_THREE'				=> 'Assigning records to yourself will not trigger assignment notifications.',
-	//BEGIN SUGARCRM flav=sales ONLY
-	'LBL_REASS_NOTES_ONE'				=> 'Including Notifications, and Audit tracking in the reassignment is significantly slower.',
-	//END SUGARCRM flav=sales ONLY
-	//BEGIN SUGARCRM flav!=sales ONLY
 	'LBL_REASS_NOTES_ONE'				=> 'Running workflows will cause the reassignment process to be significantly slower.',
-	//END SUGARCRM flav!=sales ONLY
 	'LBL_REASS_NOTES_TWO'				=> 'Even though you do not select to do audit tracking, the Date Modified and Modified By field in the records will still be updated accordingly.',
 	'LBL_REASS_VERBOSE_OUTPUT'			=> 'Verbose Output',
         'LBL_REASS_VERBOSE_HELP'                     =>  'Select this option to view detailed information about the reassignment tasks that involve workflows.',
 	'LBL_REASS_ASSESSING'				=> 'Assessing',
 	'LBL_REASS_RECORDS_FROM'			=> 'records from',
 	'LBL_REASS_WILL_BE_UPDATED'			=> 'will be updated.',
-	//BEGIN SUGARCRM flav=sales ONLY
-	'LBL_REASS_WORK_NOTIF_AUDIT' => 'Include Notifications/Audit (significantly slower)',
-	//END SUGARCRM flav=sales ONLY
-	//BEGIN SUGARCRM flav!=sales ONLY
 	'LBL_REASS_WORK_NOTIF_AUDIT' => 'Include Workflow/Notifications/Audit (significantly slower)',
-	//END SUGARCRM flav!=sales ONLY
 	'LBL_REASS_SUCCESS_ASSIGN'			=> 'Successfully assigned',
 	'LBL_REASS_FROM'					=> 'from',
 	'LBL_REASS_TO'						=> 'to',
@@ -494,7 +472,7 @@ $mod_strings = array (
 	'ERR_REASS_DIFF_USERS'				=> 'Please select a To User that is different from the From User.',
 // END MASS REASSIGNMENT SCRIPT STRINGS
 
-//END SUGARCRM flav=pro||flav=sales ONLY
+//END SUGARCRM flav=pro ONLY
 
 // INBOUND EMAIL STRINGS
 	'LBL_APPLY_OPTIMUMS'				=> 'Apply Optimums',

@@ -26,7 +26,7 @@ require_once('modules/Forecasts/ForecastUtils.php');
 
 
 //create dummy bean so vardefs are loaded during ajax call with new entrypoint
-$fcst = new Forecast();
+$fcst = BeanFactory::getBean('Forecasts');
 
 //function returns an array of objects of Node type.
 function get_node_data($params,$get_array=false) {
@@ -66,7 +66,7 @@ function get_worksheet($params) {
 }
 
 function commit_forecast($params) {
-	$saveforecast = new Forecast();
+	$saveforecast = BeanFactory::getBean('Forecasts');
 
 	//save forecast.
 	foreach ($saveforecast->column_fields as $akey=>$avalue) {
@@ -82,8 +82,7 @@ function commit_forecast($params) {
 
     //convert values from preferred currency to base currency.
     global $current_user;
-    $currency = new Currency();
-    $currency->retrieve($current_user->getPreference('currency'));
+    $currency = BeanFactory::getBean('Currencies', $current_user->getPreference('currency'));
 
     $saveforecast->opp_weigh_value=$currency->convertToDollar($saveforecast->opp_weigh_value);
     $saveforecast->best_case=$currency->convertToDollar($saveforecast->best_case);
@@ -178,7 +177,7 @@ function save_worksheet($params) {
 			if (!(!$sel_user_is_manager && $owner_id == $sel_user_id)) {
 		
 				//_pp('direct processing');
-				$forecast = new ForecastOpportunities();
+				$forecast = BeanFactory::getBean('ForecastOpportunities');
 				$forecast->current_user_id=$sel_user_id;
 				$forecast->current_timeperiod_id=$sel_timeperiod_id;
 

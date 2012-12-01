@@ -69,9 +69,6 @@ class UserViewHelper {
 
         // There is a lot of extra stuff that needs to go in here to properly render
         $this->is_current_admin=is_admin($current_user)
-        //BEGIN SUGARCRM flav=sales ONLY
-            ||$current_user->user_type = 'UserAdministrator'
-        //END SUGARCRM flav=sales ONLY
             ||$current_user->isAdminForModule('Users');
         $this->is_super_admin = is_admin($current_user);
 
@@ -83,16 +80,7 @@ class UserViewHelper {
 
         // check if the user has access to the User Management
         $this->ss->assign('USER_ADMIN',$current_user->isAdminForModule('Users')&& !is_admin($current_user));
-
-        //BEGIN SUGARCRM flav=sales ONLY
-        if($current_user->user_type == "UserAdministrator" && !is_admin($current_user)){
-            $this->ss->assign('USER_ADMIN', false);
-            $this->ss->assign('NON_ADMIN_USER_ADMIN_RIGHTS', true);
-        }
-        if(!empty($this->bean->id) && $this->bean->user_type == "UserAdministrator" && !is_admin($this->bean)){
-            $this->ss->assign('IS_USER_ADMIN', true); // although wording is similar as above, these are different
-        }
-        //END SUGARCRM flav=sales ONLY
+        
 
         if ($this->is_current_admin) {
             $this->ss->assign('IS_ADMIN','1');
@@ -114,12 +102,10 @@ class UserViewHelper {
         }
         //END SUGARCRM flav=ent ONLY
         $this->ss->assign('IS_GROUP', '0');
-        //BEGIN SUGARCRM flav!=sales ONLY
         if((!empty($this->bean->is_group) && $this->bean->is_group)  || (isset($_REQUEST['usertype']) && $_REQUEST['usertype']=='group')){
             $this->ss->assign('IS_GROUP', '1');
             $this->usertype='GROUP';
         }
-        //END SUGARCRM flav!=sales ONLY
 
 
 
@@ -216,12 +202,6 @@ class UserViewHelper {
                 'label' => translate('LBL_REGULAR_USER','Users'),
                 'description' => translate('LBL_REGULAR_DESC','Users'),
             ),
-            //BEGIN SUGARCRM flav=sales ONLY
-            'UserAdministrator' => array(
-                'label' => translate('LBL_USER_ADMINISTRATOR','Users'),
-                'description' => translate('LBL_USER_ADMIN_DESC','Users'),
-            ),
-            //END SUGARCRM flav=sales ONLY
             'GROUP' => array(
                 'label' => translate('LBL_GROUP_USER','Users'),
                 'description' => translate('LBL_GROUP_DESC','Users'),
@@ -248,9 +228,6 @@ class UserViewHelper {
             } elseif($this->ss->get_template_vars('IS_SUPER_ADMIN')) {
                 $availableUserTypes = array(
                     'RegularUser',
-                    //BEGIN SUGARCRM flav=sales ONLY
-                    'UserAdministrator',
-                    //END SUGARCRM flav=sales ONLY
                     'Administrator',
                     );
             } else {
@@ -412,32 +389,28 @@ class UserViewHelper {
             $this->ss->assign('USE_REAL_NAMES', 'CHECKED');
         }
 
-        //BEGIN SUGARCRM flav!=sales ONLY
         if($this->bean->getPreference('mailmerge_on') == 'on') {
             $this->ss->assign('MAILMERGE_ON', 'checked');
         }
-        //END SUGARCRM flav!=sales ONLY
 
         if($this->bean->getPreference('no_opps') == 'on') {
             $this->ss->assign('NO_OPPS', 'CHECKED');
         }
 
-	    $reminder_time = $this->bean->getPreference('reminder_time');
-	    if(empty($reminder_time)){
-		    $reminder_time = -1;
-	    }
-	    $email_reminder_time = $this->bean->getPreference('email_reminder_time');
-	    if(empty($email_reminder_time)){
-		    $email_reminder_time = -1;
-	    }
-    //BEGIN SUGARCRM flav!=sales ONLY
-        $this->ss->assign("REMINDER_TIME_OPTIONS", $app_list_strings['reminder_time_options']);
-        $this->ss->assign("EMAIL_REMINDER_TIME_OPTIONS", $app_list_strings['reminder_time_options']);
-	    $this->ss->assign("REMINDER_TIME", $reminder_time);
-	    $this->ss->assign("EMAIL_REMINDER_TIME", $email_reminder_time);
-	    $this->ss->assign("REMINDER_TABINDEX", "12");
-	    $publish_key = $this->bean->getPreference('calendar_publish_key' );
-        $this->ss->assign('CALENDAR_PUBLISH_KEY', $publish_key);
+	$reminder_time = $this->bean->getPreference('reminder_time');
+	if(empty($reminder_time)){
+		$reminder_time = -1;
+	}	
+	$email_reminder_time = $this->bean->getPreference('email_reminder_time');
+	if(empty($email_reminder_time)){
+		$email_reminder_time = -1;
+	}
+        $this->ss->assign("REMINDER_TIME_OPTIONS", $app_list_strings['reminder_time_options']);	
+        $this->ss->assign("EMAIL_REMINDER_TIME_OPTIONS", $app_list_strings['reminder_time_options']);	        
+	$this->ss->assign("REMINDER_TIME", $reminder_time);
+	$this->ss->assign("EMAIL_REMINDER_TIME", $email_reminder_time);
+	$this->ss->assign("REMINDER_TABINDEX", "12");
+        $this->ss->assign('CALENDAR_PUBLISH_KEY', $this->bean->getPreference('calendar_publish_key' ));
 
         $publish_url = $sugar_config['site_url'].'/vcal_server.php';
         $token = "/";
@@ -469,7 +442,6 @@ class UserViewHelper {
         $this->ss->assign("CALENDAR_PUBLISH_URL", $publish_url);
         $this->ss->assign("CALENDAR_SEARCH_URL", $sugar_config['site_url']."/vcal_server.php/type=vfb&key=<span id=\"search_pub_key_span\">$publish_key</span>&email=%NAME%@%SERVER%");
         $this->ss->assign("CALENDAR_ICAL_URL", $ical_url);
-        //END SUGARCRM flav!=sales ONLY
         //BEGIN SUGARCRM flav=ent ONLY
         $oc_status = $this->bean->getPreference('OfflineClientStatus');
         $this->ss->assign('OC_STATUS', get_select_options_with_id($app_list_strings['oc_status_dom'], $oc_status));
@@ -552,16 +524,13 @@ class UserViewHelper {
         }
         $this->ss->assign("USE_GROUP_TABS",($useGroupTabs=='gm')?'checked':'');
 
-        //BEGIN SUGARCRM flav!=sales ONLY
         $user_subpanel_tabs = $this->bean->getPreference('subpanel_tabs');
         if(isset($user_subpanel_tabs)) {
             $this->ss->assign("SUBPANEL_TABS", $user_subpanel_tabs?'checked':'');
         } else {
             $this->ss->assign("SUBPANEL_TABS", $GLOBALS['sugar_config']['default_subpanel_tabs']?'checked':'');
         }
-        //END SUGARCRM flav!=sales ONLY
 
-        //BEGIN SUGARCRM flav!=sales ONLY
         /* Module Tab Chooser */
         require_once('include/templates/TemplateGroupChooser.php');
         require_once('modules/MySettings/TabController.php');
@@ -600,7 +569,6 @@ class UserViewHelper {
         $this->ss->assign('TAB_CHOOSER', $chooser->display());
         $this->ss->assign('CHOOSER_SCRIPT','set_chooser();');
         $this->ss->assign('CHOOSE_WHICH', translate('LBL_CHOOSE_WHICH','Users'));
-        //END SUGARCRM flav!=sales ONLY
 
     }
 
@@ -640,9 +608,6 @@ class UserViewHelper {
 
         if(!$this->bean->getPreference('ut')) {
             $this->ss->assign('PROMPTTZ', ' checked');
-            //BEGIN SUGARCRM flav=sales ONLY
-            $this->ss->assign('ut_hidden', "<input type='hidden' name='ut' id='ut' value='true'>");
-            //END SUGARCRM flav=sales ONLY
         }
         $this->ss->assign('TIMEZONE_CURRENT', $userTZ);
         $this->ss->assign('TIMEZONEOPTIONS', TimeDate::getTimezoneList());
@@ -687,8 +652,8 @@ class UserViewHelper {
         }
         $currencySymbolJSON = json_encode($currencyList);
         $this->ss->assign('currencySymbolJSON', $currencySymbolJSON);
-
-        $currencyDisplay = new Currency();
+        
+        $currencyDisplay = BeanFactory::getBean('Currencies');
         if(isset($cur_id) ) {
             $currencyDisplay->retrieve($cur_id);
             $this->ss->assign('CURRENCY_DISPLAY', $currencyDisplay->iso4217 .' '.$currencyDisplay->symbol );

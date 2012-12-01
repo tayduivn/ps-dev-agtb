@@ -19,13 +19,6 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *to the License for the specific language governing these rights and limitations under the License.
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
-/*********************************************************************************
- * $Id: Save2.php 56952 2010-06-14 21:44:26Z sadek $
- * Description:  TODO: To be written.
- * Portions created by SugarCRM are Copyright (C) SugarCRM, Inc.
- * All Rights Reserved.
- * Contributor(s): ______________________________________..
- ********************************************************************************/
 
 /*
 ARGS:
@@ -49,7 +42,6 @@ if (isset($_REQUEST['return_type'])  && $_REQUEST['return_type'] == 'report') {
 					 ,$_REQUEST['module'] //module_name
 					 ,$_REQUEST['subpanel_field_name'] //link attribute name
 	);
-//BEGIN SUGARCRM flav!=sales ONLY
 } else if (isset($_REQUEST['return_type'])  && $_REQUEST['return_type'] == 'addtoprospectlist') {
 
 	$GLOBALS['log']->debug(print_r($_REQUEST,true));
@@ -75,14 +67,7 @@ if (isset($_REQUEST['return_type'])  && $_REQUEST['return_type'] == 'report') {
     // Get a list of campaigns selected.
     if (isset($_REQUEST['subpanel_id'])  && !empty($_REQUEST['subpanel_id'])) {
         $campaign_ids = $_REQUEST['subpanel_id'];
-        global $beanFiles;
-        global $beanList;
-        //retrieve current bean
-        $bean_name = $beanList[$_REQUEST['module']];
-        require_once($beanFiles[$bean_name]);
-        $focus = new $bean_name();
-        $focus->retrieve($_REQUEST['record']);
-
+        $focus = BeanFactory::getBean($_REQUEST['module'], $_REQUEST['record']);
         require_once('modules/Campaigns/utils.php');
         //call util function to create the campaign log entry
         foreach($campaign_ids as $id){
@@ -90,16 +75,9 @@ if (isset($_REQUEST['return_type'])  && $_REQUEST['return_type'] == 'report') {
         }
         $refreshsubpanel=true;
     }
-//END SUGARCRM flav!=sales ONLY
 }
 else {
-
-	global $beanFiles,$beanList;
- 	$bean_name = $beanList[$_REQUEST['module']];
- 	require_once($beanFiles[$bean_name]);
- 	$focus = new $bean_name();
-
- 	$focus->retrieve($_REQUEST['record']);
+    $focus = BeanFactory::getBean($_REQUEST['module'], $_REQUEST['record']);
 
  	// If the user selected "All records" from the selection menu, we pull up the list
  	// based on the query they used on that popup to relate them to the parent record

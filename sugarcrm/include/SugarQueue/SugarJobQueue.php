@@ -54,7 +54,7 @@ class SugarJobQueue
     public function __construct()
     {
         $this->db = DBManagerFactory::getInstance();
-        $job = new SchedulersJob();
+        $job = BeanFactory::getBean('SchedulersJobs');
         $this->job_queue_table = $job->table_name;
         if(!empty($GLOBALS['sugar_config']['jobs']['max_retries'])) {
             $this->jobTries = $GLOBALS['sugar_config']['jobs']['max_retries'];
@@ -90,8 +90,7 @@ class SugarJobQueue
      */
     protected function getJob($jobId)
     {
-        $job = new SchedulersJob();
-        $job->retrieve($jobId);
+        $job = BeanFactory::getBean('SchedulersJobs', $jobId);
         if(empty($job->id)) {
             $GLOBALS['log']->info("Job $jobId not found!");
             return null;
@@ -133,9 +132,7 @@ class SugarJobQueue
      */
     public function deleteJob($jobId)
     {
-        $job = new SchedulersJob();
-        if(empty($job)) return false;
-        return $job->mark_deleted($jobId);
+        return BeanFactory::deleteBean('SchedulersJobs', $jobId);
     }
 
     /**
@@ -181,8 +178,7 @@ class SugarJobQueue
             if(empty($id)) {
                 return null;
             }
-            $job = new SchedulersJob();
-            $job->retrieve($id);
+            $job = BeanFactory::getBean('SchedulersJobs', $id);
             if(empty($job->id)) {
                 return null;
             }
@@ -210,7 +206,7 @@ class SugarJobQueue
      */
     public function runSchedulers()
     {
-        $sched = new Scheduler();
+        $sched = BeanFactory::getBean('Schedulers');
         $sched->checkPendingJobs($this);
     }
 }

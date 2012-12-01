@@ -1,5 +1,5 @@
 <div id="alerts" class="alert-top"></div>
-<div class="container-fluid" id="contentflex">
+<div id="contentflex">
     <div class="row-fluid">
         <div class="span8">
             <div id="headerbar">

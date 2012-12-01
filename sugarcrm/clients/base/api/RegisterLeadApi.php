@@ -65,8 +65,7 @@ class RegisterLeadApi extends SugarApi {
         // Bug 54515: Set modified by and created by users to assigned to user. If not set default to admin.
         $bean->update_modified_by = false;
         $bean->set_created_by = false;
-        $admin = new Administration();
-       	$admin->retrieveSettings();
+        $admin = Administration::getSettings();
         if (isset($admin->settings['supportPortal_RegCreatedBy']) && !empty($admin->settings['supportPortal_RegCreatedBy'])) {
             $bean->created_by = $admin->settings['supportPortal_RegCreatedBy'];
             $bean->modified_user_id = $admin->settings['supportPortal_RegCreatedBy'];
@@ -125,8 +124,7 @@ class RegisterLeadApi extends SugarApi {
             'lead_source' => 'Support Portal User Registration',
         );
 
-        $admin = new Administration();
-       	$admin->retrieveSettings();
+        $admin = Administration::getSettings();
 
         if (isset($admin->settings['portal_defaultUser']) && !empty($admin->settings['portal_defaultUser'])) {
             $fields['assigned_user_id'] = json_decode(html_entity_decode($admin->settings['portal_defaultUser']));

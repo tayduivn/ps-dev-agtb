@@ -64,22 +64,17 @@ class ForecastsController extends SugarController
         $args = array();
         $args['timeperiod_id'] = isset($_REQUEST['timeperiod_id']) ? $_REQUEST['timeperiod_id'] : TimePeriod::getCurrentId();
         $args['user_id'] = isset($_REQUEST['user_id']) ? $_REQUEST['user_id'] : $current_user->id;
+        // don't allow encoding to html for data used in export
+        $args['encode_to_html'] = false;
 
         // base file and class name
         $file = 'include/SugarForecasting/Export/Manager.php';
         $klass = 'SugarForecasting_Export_Manager';
 
         // check for a custom file exists
-        $include_file = get_custom_file_if_exists($file);
-
-        // if a custom file exists then we need to rename the class name to be Custom_
-        if($include_file != $file) {
-            $klass = "Custom_" . $klass;
-        }
-
-        // include the class in since we don't have a auto loader
-        require_once($include_file);
-        // create the lass
+        SugarAutoLoader::requireWithCustom($file);
+        $klass = SugarAutoLoader::customClass($klass);
+        // create the class
 
         /* @var $obj SugarForecasting_AbstractForecast */
         $obj = new $klass($args);
@@ -103,22 +98,17 @@ class ForecastsController extends SugarController
         $args = array();
         $args['timeperiod_id'] = isset($_REQUEST['timeperiod_id']) ? $_REQUEST['timeperiod_id'] : TimePeriod::getCurrentId();
         $args['user_id'] = isset($_REQUEST['user_id']) ? $_REQUEST['user_id'] : $current_user->id;
+        // don't allow encoding to html for data used in export
+        $args['encode_to_html'] = false;
 
         // base file and class name
         $file = 'include/SugarForecasting/Export/Individual.php';
         $klass = 'SugarForecasting_Export_Individual';
 
         // check for a custom file exists
-        $include_file = get_custom_file_if_exists($file);
-
-        // if a custom file exists then we need to rename the class name to be Custom_
-        if($include_file != $file) {
-            $klass = "Custom_" . $klass;
-        }
-
-        // include the class in since we don't have a auto loader
-        require_once($include_file);
-        // create the lass
+        SugarAutoLoader::requireWithCustom($file);
+        $klass = SugarAutoLoader::customClass($klass);
+        // create the class
 
         /* @var $obj SugarForecasting_AbstractForecast */
         $obj = new $klass($args);

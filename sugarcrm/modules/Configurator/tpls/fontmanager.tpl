@@ -1,5 +1,4 @@
 {*
-//FILE SUGARCRM flav!=sales ONLY
 /**
  * LICENSE: The contents of this file are subject to the SugarCRM Professional
  * End User License Agreement ("License") which can be viewed at

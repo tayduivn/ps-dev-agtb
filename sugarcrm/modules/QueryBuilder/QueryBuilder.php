@@ -69,6 +69,17 @@ class QueryBuilder extends SugarBean {
     // This is used to retrieve related fields from form posts.
     var $additional_column_fields = Array();
 
+    /**
+     * This is a depreciated method, please start using __construct() as this method will be removed in a future version
+     *
+     * @see __construct
+     * @deprecated
+     */
+    public function QueryBuilder()
+    {
+        $this->__construct();
+    }
+
     public function __construct() {
         parent::__construct();
 
@@ -263,7 +274,7 @@ class QueryBuilder extends SugarBean {
                     where $this->rel_dataset.report_id='$this->id'
                     AND $this->rel_dataset.deleted=0 ".$orderBy;
 
-        return $this->build_related_list($query, new DataSet());
+        return $this->build_related_list($query, BeanFactory::getBean('DataSets'));
     }
 
 
@@ -331,17 +342,23 @@ class QueryBuilder extends SugarBean {
     }
 
 
+    /**
+     * Get bean by module name
+     * @deprecated use BeanFactory::getBean
+     * @param string $module_name
+     * @return SugarBean|null
+     */
     function get_module_info($module_name)
     {
-        return BeanFactory::newBean($module_name);
+        return BeanFactory::getBean($module_name);
     }
 
     function get_field_table($module, $field){
 
-        $seed_object = $this->get_module_info($module);
+        $seed_object = BeanFactory::getBean($module);
         $field_table = $this->determine_field_type($seed_object, $field);
 
-    return $field_table;
+        return $field_table;
 
     //end function get_module_table
     }

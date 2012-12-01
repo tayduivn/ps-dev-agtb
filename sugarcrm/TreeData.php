@@ -75,7 +75,6 @@ require('include/modules.php');
 if (!empty($modulename) && !empty($func_name) && isset($beanList[$modulename]) ) {
     require_once('modules/'.$modulename.'/TreeData.php');
     $TreeDataFunctions = array(
-        //BEGIN SUGARCRM flav!=sales ONLY
         'ProductTemplates' => array('get_node_data'=>'','get_categories_and_products'=>''),
         'ProductCategories' => array('get_node_data'=>'','get_product_categories'=>''),
         'KBTags' => array(
@@ -112,7 +111,6 @@ if (!empty($modulename) && !empty($func_name) && isset($beanList[$modulename]) )
             'reset_worksheet'=>'',
             'get_chart'=>'',
             ),
-        //END SUGARCRM flav!=sales ONLY
         'Documents' => array(
             'get_node_data'=>'',
             'get_category_nodes'=>'',

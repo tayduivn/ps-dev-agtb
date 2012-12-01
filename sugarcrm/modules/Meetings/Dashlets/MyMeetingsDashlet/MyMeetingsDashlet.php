@@ -59,7 +59,7 @@ class MyMeetingsDashlet extends DashletGeneric {
                                               'related_fields' => array('status'));*/
         $this->hasScript = true;  // dashlet has javascript attached to it                
 
-        $this->seedBean = new Meeting();
+        $this->seedBean = BeanFactory::getBean('Meetings');
         //BEGIN SUGARCRM flav=pro ONLY
         $this->seedBean->disable_row_level_security = true;
         //END SUGARCRM flav=pro ONLY

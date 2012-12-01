@@ -46,13 +46,9 @@ function schedulePOPUP(id){
 	<td scope="col"  width="40%"  nowrap><slot><a href="{ORDER_BY}name" class="listViewThLinkS1">{MOD.LBL_REPORT_NAME}{arrow_start}{name_arrow}{arrow_end}</a></slot></td>
 	<td scope="col"  width="20%"  nowrap><slot><a href="{ORDER_BY}module" class="listViewThLinkS1">{MOD.LBL_MODULE_NAME_SAVED}{arrow_start}{module_arrow}{arrow_end}</a></slot></td>
 	<td scope="col"  width="20%"  nowrap><slot><a href="{ORDER_BY}report_type" class="listViewThLinkS1">{MOD.LBL_REPORT_TYPE}{arrow_start}{report_type_arrow}{arrow_end}</a></slot></td>
-	 <!--//BEGIN SUGARCRM flav!=sales ONLY -->
 	<td scope="col"  width="5%"  nowrap><slot>{MOD.LBL_SCHEDULE_REPORT}</slot></td>
-	 <!--//END SUGARCRM flav!=sales ONLY -->
 	<td scope="col"  width="5%"  nowrap><slot>&nbsp;</slot></td>
-	 <!--//BEGIN SUGARCRM flav!=sales ONLY -->
 	<td scope="col"  width="5%"  nowrap><slot>&nbsp;</slot></td>
-	 <!--//END SUGARCRM flav!=sales ONLY -->
 	<td scope="col"  width="5%"  nowrap><slot>&nbsp;</slot></td>
 	  
 	  </tr>
@@ -64,13 +60,9 @@ function schedulePOPUP(id){
    		<td valign=TOP><slot>{MY_SAVED_REPORT.MODULE}</slot></td>
    		<td valign=TOP><slot>{MY_SAVED_REPORT.REPORT_TYPE_TRANS}</slot></td>
 
-         <!--//BEGIN SUGARCRM flav!=sales ONLY -->
     	<td nowrap="nowrap" valign="top"><slot><a  href="#" onclick="schedulePOPUP('{MY_SAVED_REPORT.ID}')" class="listViewTdToolsS1">{MY_SAVED_REPORT.IS_SCHEDULED_IMG} {MY_SAVED_REPORT.IS_SCHEDULED}</a></slot></td>
-    	 <!--//END SUGARCRM flav!=sales ONLY -->
     	<td nowrap="nowrap" valign="top"><slot><a href="index.php?module=Reports&action=index&page=report&id={MY_SAVED_REPORT.ID}"  class="listViewTdToolsS1">{MY_SAVED_REPORT.VIEW}</a></slot></td>
-    	 <!--//BEGIN SUGARCRM flav!=sales ONLY -->
     	<td nowrap="nowrap" valign="top"><slot>{MY_SAVED_REPORT.DELETE_MY_REPORTS}</slot></td>
-    	 <!--//END SUGARCRM flav!=sales ONLY -->
 		<td nowrap="nowrap" valign="top"><slot>{MY_SAVED_REPORT.PUBLISH_MY_REPORTS}</slot></td>
 		
 		
@@ -97,9 +89,7 @@ function schedulePOPUP(id){
   <td scope="col"  width="40%"  nowrap><slot><a href="{ORDER_BY}name" class="listViewThLinkS1">{MOD.LBL_REPORT_NAME}{arrow_start}{name_arrow}{arrow_end}</a></slot></td>
   <td scope="col"  width="20%"  nowrap><slot><a href="{ORDER_BY}module" class="listViewThLinkS1">{MOD.LBL_MODULE_NAME_SAVED}{arrow_start}{module_arrow}{arrow_end}</a></slot></td>
   <td scope="col"  width="20%"  nowrap><slot><a href="{ORDER_BY}report_type" class="listViewThLinkS1">{MOD.LBL_REPORT_TYPE}{arrow_start}{report_type_arrow}{arrow_end}</a></slot></td>
-  <!--//BEGIN SUGARCRM flav!=sales ONLY -->
   <td scope="col"  width="5%"  nowrap><slot>{MOD.LBL_SCHEDULE_REPORT}</slot></td>
-  <!--//END SUGARCRM flav!=sales ONLY -->
   <td scope="col"  width="5%"  nowrap><slot>&nbsp;</slot></td>
   <td scope="col"  width="5%"  nowrap><slot>&nbsp;</slot></td>
   <td scope="col"  width="5%"  nowrap><slot>&nbsp;</slot></td>
@@ -112,9 +102,7 @@ function schedulePOPUP(id){
       <td valign=TOP><slot>{TEAM_SAVED_REPORT.MODULE}</slot></td>
       <td valign=TOP><slot>{TEAM_SAVED_REPORT.REPORT_TYPE_TRANS}</slot></td>
            
-      <!--//BEGIN SUGARCRM flav!=sales ONLY -->
       <td nowrap="nowrap" valign="top"><slot><a  href="#" onclick="schedulePOPUP('{TEAM_SAVED_REPORT.ID}')" class="listViewTdToolsS1">{TEAM_SAVED_REPORT.IS_SCHEDULED_IMG} {TEAM_SAVED_REPORT.IS_SCHEDULED}</a></slot></td>
-      <!--//END SUGARCRM flav!=sales ONLY -->
       <td nowrap="nowrap" valign="top"><slot><a href="index.php?module=Reports&action=index&page=report&id={TEAM_SAVED_REPORT.ID}"  class="listViewTdToolsS1">{TEAM_SAVED_REPORT.VIEW}</a></slot></td>
       <td nowrap="nowrap" valign="top"><slot>{TEAM_SAVED_REPORT.DELETE}</slot></td>
     <td nowrap="nowrap" valign="top"><slot>{TEAM_SAVED_REPORT.PUBLISH_MY_REPORTS}</slot></td>
@@ -141,9 +129,7 @@ function schedulePOPUP(id){
 	<td scope="col"  width="40%"  nowrap><slot><a href="{ORDER_BY}name" class="listViewThLinkS1">{MOD.LBL_REPORT_NAME}{arrow_start}{name_arrow}{arrow_end}</a></slot></td>
 	<td scope="col"  width="20%"  nowrap><slot><a href="{ORDER_BY}module" class="listViewThLinkS1">{MOD.LBL_MODULE_NAME_SAVED}{arrow_start}{module_arrow}{arrow_end}</a></slot></td>
 	<td scope="col"  width="20%"  nowrap><slot><a href="{ORDER_BY}report_type" class="listViewThLinkS1">{MOD.LBL_REPORT_TYPE}{arrow_start}{report_type_arrow}{arrow_end}</a></slot></td>
-	<!--//BEGIN SUGARCRM flav!=sales ONLY -->
 	<td scope="col"  width="5%"  nowrap><slot>{MOD.LBL_SCHEDULE_REPORT}</slot></td>
-	<!--//END SUGARCRM flav!=sales ONLY -->
 	<td scope="col"  width="5%"  nowrap><slot>&nbsp;</slot></td>
 	<td scope="col"  width="5%"  nowrap><slot>&nbsp;</slot></td>
 	<td scope="col"  width="5%"  nowrap><slot>&nbsp;</slot></td>
@@ -156,9 +142,7 @@ function schedulePOPUP(id){
    		<td valign=TOP><slot>{SAVED_REPORT.MODULE}</slot></td>
    		<td valign=TOP><slot>{SAVED_REPORT.REPORT_TYPE_TRANS}</slot></td>
 
-        <!--//BEGIN SUGARCRM flav!=sales ONLY -->
     	<td nowrap="nowrap" valign="top"><slot><a  href="#" onclick="schedulePOPUP('{SAVED_REPORT.ID}')" class="listViewTdToolsS1">{SAVED_REPORT.IS_SCHEDULED_IMG} {SAVED_REPORT.IS_SCHEDULED}</a></slot></td>
-    	<!--//END SUGARCRM flav!=sales ONLY -->
     	<td nowrap="nowrap" valign="top"><slot><a href="index.php?module=Reports&action=index&page=report&id={SAVED_REPORT.ID}"  class="listViewTdToolsS1">{SAVED_REPORT.VIEW}</a></slot></td>
     	<td nowrap="nowrap" valign="top"><slot>{SAVED_REPORT.DELETE}</slot></td>
 		<td nowrap="nowrap" valign="top"><slot>{SAVED_REPORT.UNPUBLISH_REPORT}</slot></td>

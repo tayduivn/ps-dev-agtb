@@ -37,8 +37,7 @@ global $current_user, $app;
 if (isset($app) && isset($app->controller)){
 	$projectId = $app->controller->record;
 	
-	$focus = new Project();
-	$focus->retrieve($projectId);
+	$focus = BeanFactory::getBean('Project', $projectId);
 	
 	if (!$focus->isTemplate()){
 		$subpanel_layout = array(

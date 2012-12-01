@@ -71,7 +71,6 @@ switch ($_REQUEST['view']) {
 		$send_action = isset($_REQUEST['help_action']) ? $_REQUEST['help_action'] : "";
 		$send_key = isset($_REQUEST['key']) ? $_REQUEST['key'] : "";
 		$send_anchor = '';
-		//BEGIN SUGARCRM flav!=sales ONLY
 		// awu: Fixes the ProjectTasks pluralization issue -- must fix in later versions.
 		if ($send_module == 'ProjectTasks')
 			$send_module = 'ProjectTask';
@@ -81,7 +80,6 @@ switch ($_REQUEST['view']) {
                 $send_module = 'ProspectLists';
         if ($send_module == 'Targets')
                 $send_module = 'Prospects';
-        //END SUGARCRM flav!=sales ONLY
 		// FG - Bug 39819 - Check for custom help files
 		$helpPath = SugarAutoLoader::existingCustomOne('modules/'.$send_module.'/language/'.$send_lang.'.help.'.$send_action.'.html');
 

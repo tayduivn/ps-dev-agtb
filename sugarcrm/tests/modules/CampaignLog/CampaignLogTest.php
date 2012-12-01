@@ -81,7 +81,7 @@ class CampaignLogTest extends Sugar_PHPUnit_Framework_TestCase
 			$this->$type_obj = $bean;
 
 			//save email
-			$sea = new SugarEmailAddress();
+			$sea = BeanFactory::getBean('EmailAddresses');
 			$id = $this->$type_obj->id;
 			$module = $this->$type_obj->module_dir;
 			$new_addrs=array();$primary='';$replyTo='';$invalid='';$optOut='';$in_workflow=false;

@@ -731,7 +731,7 @@ function getTablesWithRelations(){
 	        {
 	            require ($file) ;
 	        }
-	        $focus = new $bean ( ) ;
+	        $focus = BeanFactory::newBeanByName($bean);
 	        $table_name = $focus->table_name ;
 	        $empty = '' ;
 	        checkIfTableHasRelation($focus->getObjectName(),$table_name, $empty, $focus->module_dir,$processed_tables_with_relations);

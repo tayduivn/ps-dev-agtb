@@ -143,6 +143,17 @@ class Email extends SugarBean {
      */
     public $modifiedFieldDefs = array();
 
+    /**
+     * This is a depreciated method, please start using __construct() as this method will be removed in a future version
+     *
+     * @see __construct
+     * @deprecated
+     */
+    public function Email()
+    {
+        $this->__construct();
+    }
+
 	/**
 	 * sole constructor
 	 */
@@ -155,7 +166,7 @@ class Email extends SugarBean {
 		$this->team_id = 1; // make the item globally accessible
 		//END SUGARCRM flav=pro ONLY
 
-		$this->emailAddress = new SugarEmailAddress();
+		$this->emailAddress = BeanFactory::getBean('EmailAddresses');
 
 		$this->imagePrefix = rtrim($GLOBALS['sugar_config']['site_url'], "/")."/cache/images/";
 	}
@@ -463,27 +474,19 @@ class Email extends SugarBean {
 			/* Apply Email Templates */
 			// do not parse email templates if the email is being saved as draft....
 		    $toAddresses = $this->email2ParseAddresses($_REQUEST['sendTo']);
-	        $sea = new SugarEmailAddress();
+	        $sea = BeanFactory::getBean('EmailAddresses');
 	        $object_arr = array();
 
-			if( isset($_REQUEST['parent_type']) && !empty($_REQUEST['parent_type']) &&
-				isset($_REQUEST['parent_id']) && !empty($_REQUEST['parent_id']) &&
+			if( !empty($_REQUEST['parent_type']) && !empty($_REQUEST['parent_id']) &&
 				($_REQUEST['parent_type'] == 'Accounts' ||
 				$_REQUEST['parent_type'] == 'Contacts' ||
 				$_REQUEST['parent_type'] == 'Leads' ||
 				$_REQUEST['parent_type'] == 'Users' ||
 				$_REQUEST['parent_type'] == 'Prospects')) {
-					if(isset($beanList[$_REQUEST['parent_type']]) && !empty($beanList[$_REQUEST['parent_type']])) {
-						$className = $beanList[$_REQUEST['parent_type']];
-						if(isset($beanFiles[$className]) && !empty($beanFiles[$className])) {
-							if(!class_exists($className)) {
-								require_once($beanFiles[$className]);
-							}
-							$bean = new $className();
-							$bean->retrieve($_REQUEST['parent_id']);
-	                		$object_arr[$bean->module_dir] = $bean->id;
-						} // if
-					} // if
+			        $bean = BeanFactory::getBean($_REQUEST['parent_type'], $_REQUEST['parent_id']);
+			        if(!empty($bean->id)) {
+			            $object_arr[$bean->module_dir] = $bean->id;
+			        }
 			}
 			foreach($toAddresses as $addrMeta) {
 				$addr = $addrMeta['email'];
@@ -797,8 +800,7 @@ class Email extends SugarBean {
 
 		if ((!(empty($orignialId) || isset($request['saveDraft']) || ($this->type == 'draft' && $this->status == 'draft'))) &&
 			(($_REQUEST['composeType'] == 'reply') || ($_REQUEST['composeType'] == 'replyAll') || ($_REQUEST['composeType'] == 'replyCase')) && ($orignialId != $this->id)) {
-			$originalEmail = new Email();
-			$originalEmail->retrieve($orignialId);
+			$originalEmail = BeanFactory::getBean('Emails', $orignialId);
 			$originalEmail->reply_to_status = 1;
 			$originalEmail->save();
 			$this->reply_to_status = 0;
@@ -806,8 +808,7 @@ class Email extends SugarBean {
 
         if (isset($_REQUEST['composeType']) && ($_REQUEST['composeType'] == 'reply' || $_REQUEST['composeType'] == 'replyCase')) {
 			if (isset($_REQUEST['ieId']) && isset($_REQUEST['mbox'])) {
-				$emailFromIe = new InboundEmail();
-				$emailFromIe->retrieve($_REQUEST['ieId']);
+				$emailFromIe = BeanFactory::getBean('InboundEmail', $_REQUEST['ieId']);
 				$emailFromIe->mailbox = $_REQUEST['mbox'];
 				if (isset($emailFromIe->id) && $emailFromIe->is_personal) {
 					if ($emailFromIe->isPop3Protocol()) {
@@ -839,7 +840,7 @@ class Email extends SugarBean {
 			$this->bcc_addrs_names = $_REQUEST['sendBcc'];
 			//BEGIN SUGARCRM flav=pro ONLY
 			$this->team_id = (isset($_REQUEST['primaryteam']) ?  $_REQUEST['primaryteam'] : $current_user->getPrivateTeamID());
-			$teamSet = new TeamSet();
+			$teamSet = BeanFactory::getBean('TeamSets');
 			$teamIdsArray = (isset($_REQUEST['teamIds']) ?  explode(",", $_REQUEST['teamIds']) : array($current_user->getPrivateTeamID()));
 			$this->team_set_id = $teamSet->addTeams($teamIdsArray);
 			//END SUGARCRM flav=pro ONLY
@@ -849,47 +850,26 @@ class Email extends SugarBean {
 			///////////////////////////////////////////////////////////////////
 			////	LINK EMAIL TO SUGARBEANS BASED ON EMAIL ADDY
 
-			if( isset($_REQUEST['parent_type']) && !empty($_REQUEST['parent_type']) &&
-				isset($_REQUEST['parent_id']) && !empty($_REQUEST['parent_id']) ) {
-	                $this->parent_id = $_REQUEST['parent_id'];
-	                $this->parent_type = $_REQUEST['parent_type'];
-					$q = "SELECT count(*) c FROM emails_beans WHERE  email_id = '{$this->id}' AND bean_id = '{$_REQUEST['parent_id']}' AND bean_module = '{$_REQUEST['parent_type']}'";
-					$r = $this->db->query($q);
-					$a = $this->db->fetchByAssoc($r);
-					if($a['c'] <= 0) {
-						if(isset($beanList[$_REQUEST['parent_type']]) && !empty($beanList[$_REQUEST['parent_type']])) {
-							$className = $beanList[$_REQUEST['parent_type']];
-							if(isset($beanFiles[$className]) && !empty($beanFiles[$className])) {
-								if(!class_exists($className)) {
-									require_once($beanFiles[$className]);
-								}
-								$bean = new $className();
-								$bean->retrieve($_REQUEST['parent_id']);
-								if($bean->load_relationship('emails')) {
-									$bean->emails->add($this->id);
-								} // if
-
-							} // if
-
-						} // if
-
+			if(!empty($_REQUEST['parent_type']) && !empty($_REQUEST['parent_id']) ) {
+	                $this->parent_id = $this->db->quote($_REQUEST['parent_id']);
+	                $this->parent_type = $this->db->quote($_REQUEST['parent_type']);
+					$a = $this->db->fetchOne("SELECT count(*) c FROM emails_beans WHERE  email_id = '{$this->id}' AND bean_id = '{$this->parent_id}' AND bean_module = '{$this->parent_type}'");
+					if($a['c'] == 0) {
+					    $bean = BeanFactory::getBean($_REQUEST['parent_type'], $_REQUEST['parent_id']);
+					    if(!empty($bean) && $bean->load_relationship('emails')) {
+					        $bean->emails->add($this->id);
+					    }
 					} // if
 
 				} else {
-					if(!class_exists('aCase')) {
-
-					}
-					else{
-						$c = new aCase();
-						if($caseId = InboundEmail::getCaseIdFromCaseNumber($subject, $c)) {
-							$c->retrieve($caseId);
-							$c->load_relationship('emails');
-							$c->emails->add($this->id);
-							$this->parent_type = "Cases";
-							$this->parent_id = $caseId;
-						} // if
-					}
-
+                    $c = BeanFactory::getBean('Cases');
+                    if($caseId = InboundEmail::getCaseIdFromCaseNumber($subject, $c)) {
+                        $c->retrieve($caseId);
+                        $c->load_relationship('emails');
+                        $c->emails->add($this->id);
+                        $this->parent_type = "Cases";
+                        $this->parent_id = $caseId;
+                    } // if
 				} // else
 
 			////	LINK EMAIL TO SUGARBEANS BASED ON EMAIL ADDY
@@ -939,7 +919,7 @@ class Email extends SugarBean {
 	{
 		global $locale;
 		global $db;
-		$table = SugarModule::get($module)->loadBean()->table_name;
+		$table = BeanFactory::getBean($module)->table_name;
 		$returndata = array();
 		$idsString = "";
 		foreach($idsArray as $id) {
@@ -1074,7 +1054,7 @@ class Email extends SugarBean {
 	 */
 	function saveTempNoteAttachments($filename,$fileLocation, $mimeType)
 	{
-	    $tmpNote = new Note();
+	    $tmpNote = BeanFactory::getBean('Notes');
 	    $tmpNote->id = create_guid();
 	    $tmpNote->new_with_id = true;
 	    $tmpNote->parent_id = $this->id;
@@ -1196,7 +1176,7 @@ class Email extends SugarBean {
 
 	protected function saveEmailText()
 	{
-        $text = SugarModule::get("EmailText")->loadBean();
+        $text = BeanFactory::getBean("EmailText");
         foreach($this->email_to_text as $textfield=>$mailfield) {
             $text->$textfield = $this->$mailfield;
         }
@@ -1343,8 +1323,7 @@ class Email extends SugarBean {
 
         while($a = $this->db->fetchByAssoc($r)) {
         	if(!in_array($a['id'], $exRemoved)) {
-	            $note = new Note();
-	            $note->retrieve($a['id']);
+	            $note = BeanFactory::getBean('Notes', $a['id']);
 
 	            // duplicate actual file when creating forwards
 		        if($duplicate) {
@@ -1711,8 +1690,7 @@ class Email extends SugarBean {
 				if(in_array($noteId, $removeArr)) {
 					continue;
 				}
-				$noteTemplate = new Note();
-				$noteTemplate->retrieve($noteId);
+				$noteTemplate = BeanFactory::getBean('Notes', $noteId);
 				$noteTemplate->id = create_guid();
 				$noteTemplate->new_with_id = true; // duplicating the note with files
 				$noteTemplate->parent_id = $this->id;
@@ -1740,7 +1718,7 @@ class Email extends SugarBean {
         if($this->status != "draft") {
     		$notes_list = array();
     		if(!empty($this->id) && !$this->new_with_id) {
-    			$note = new Note();
+    			$note = BeanFactory::getBean('Notes');
     			$where = "notes.parent_id='{$this->id}'";
     			$notes_list = $note->get_full_list("", $where, true);
     		}
@@ -1769,7 +1747,7 @@ class Email extends SugarBean {
 				continue;
 			}
 
-			$note = new Note();
+			$note = BeanFactory::getBean('Notes');
 			$note->parent_id = $this->id;
 			$note->parent_type = $this->module_dir;
 			$upload_file = new UploadFile('email_attachment'.$i);
@@ -1813,9 +1791,9 @@ class Email extends SugarBean {
 		////	ATTACHMENTS FROM DOCUMENTS
 		for($i=0; $i<10; $i++) {
 			if(isset($_REQUEST['documentId'.$i]) && !empty($_REQUEST['documentId'.$i])) {
-				$doc = new Document();
-				$docRev = new DocumentRevision();
-				$docNote = new Note();
+				$doc = BeanFactory::getBean('Documents');
+				$docRev = BeanFactory::getBean('DocumentRevisions');
+				$docNote = BeanFactory::getBean('Notes');
 				$noteFile = new UploadFile();
 
 				$doc->retrieve($_REQUEST['documentId'.$i]);
@@ -2234,8 +2212,7 @@ class Email extends SugarBean {
 			if($row != null)
 			{
 
-				$contact = new Contact();
-				$contact->retrieve($row['id']);
+				$contact = BeanFactory::getBean('Contacts', $row['id']);
 				$this->contact_name = $contact->full_name;
 				$this->contact_phone = $row['phone_work'];
 				$this->contact_id = $row['id'];
@@ -2372,11 +2349,9 @@ class Email extends SugarBean {
 					$email_fields['CREATE_RELATED'] = '<a href="index.php?module=Contacts&action=EditView&inbound_email_id='.$this->id.'" >'.SugarThemeRegistry::current()->getImage('CreateContacts', 'border="0"', null, null, ".gif", $mod_strings['LBL_CREATE_CONTACTS']).$mod_strings['LBL_CREATE_CONTACT'].'</a>';
 				break;
 
-				//BEGIN SUGARCRM flav!=sales ONLY
 				case 'bug':
 					$email_fields['CREATE_RELATED'] = '<a href="index.php?module=Bugs&action=EditView&inbound_email_id='.$this->id.'" >'.SugarThemeRegistry::current()->getImage('CreateBugs', 'border="0"', null, null, ".gif", $mod_strings['LBL_CREATE_BUGS']).$mod_strings['LBL_CREATE_BUG'].'</a>';
 				break;
-                //END SUGARCRM flav!=sales ONLY
 
 				case 'task':
 					$email_fields['CREATE_RELATED'] = '<a href="index.php?module=Tasks&action=EditView&inbound_email_id='.$this->id.'" >'.SugarThemeRegistry::current()->getImage('CreateTasks', 'border="0"', null, null, ".gif", $mod_strings['LBL_CREATE_TASKS']).$mod_strings['LBL_CREATE_TASK'].'</a>';
@@ -2468,7 +2443,7 @@ class Email extends SugarBean {
 
 		//Perform a count query needed for pagination.
 		$countQuery = $this->create_list_count_query($fullQuery);
-		
+
 		$count_rs = $this->db->query($countQuery, false, 'Error executing count query for imported emails search');
 		$count_row = $this->db->fetchByAssoc($count_rs);
 		$total_count = ($count_row != null) ? $count_row['c'] : 0;
@@ -2500,7 +2475,7 @@ class Email extends SugarBean {
 			if( empty($temp['from']) || empty($temp['to_addrs']) )
 			{
     			//Retrieve email addresses seperatly.
-    			$tmpEmail = new Email();
+    			$tmpEmail = BeanFactory::getBean('Emails');
     			$tmpEmail->id = $a['id'];
     			$tmpEmail->retrieveEmailAddresses();
     			$temp['from'] = $tmpEmail->from_addr;
@@ -2584,7 +2559,7 @@ class Email extends SugarBean {
              $query['where'] .= " AND NOT EXISTS ( SELECT id FROM notes n WHERE n.parent_id = emails.id AND n.deleted = 0 AND n.filename is not null )";
 
         $fullQuery = "SELECT " . $query['select'] . " " . $query['joins'] . " " . $query['where'];
-        
+
         return $fullQuery;
     }
         /**
@@ -2618,8 +2593,8 @@ class Email extends SugarBean {
 		          $additionalWhereClause[] = "{$properties['table_name']}.$db_key $opp '$searchValue' ";
 		      }
         }
-        
-        
+
+
 
         $isDateFromSearchSet = !empty($_REQUEST['searchDateFrom']);
         $isdateToSearchSet = !empty($_REQUEST['searchDateTo']);

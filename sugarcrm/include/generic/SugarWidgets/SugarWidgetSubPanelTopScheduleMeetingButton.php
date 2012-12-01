@@ -145,7 +145,7 @@ class SugarWidgetSubPanelTopScheduleMeetingButton extends SugarWidgetSubPanelTop
 
 	function display($defines, $additionalFormFields = null)
 	{
-	    $focus = new Meeting;
+	    $focus = BeanFactory::getBean('Meetings');
 		if ( !$focus->ACLAccess('EditView') ) {
 		    return '';
 	    }

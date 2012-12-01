@@ -1,5 +1,5 @@
 <?php
-//FILE SUGARCRM flav=pro || flav=sales ONLY
+//FILE SUGARCRM flav=pro ONLY
 if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 /**
  * Layout definition for Accounts
@@ -59,7 +59,6 @@ $layout_defs['Accounts'] = array(
 			'get_subpanel_data' => 'contacts',
 			'title_key' => 'LBL_CONTACTS_SUBPANEL_TITLE',		
 		),
-		//BEGIN SUGARCRM flav!=sales ONLY
 		'leads'=> array(
 			'order' => 50,
 			'module' => 'Leads',
@@ -72,7 +71,6 @@ $layout_defs['Accounts'] = array(
 			'get_subpanel_data' => 'cases',
 			'title_key' => 'LBL_CASES_SUBPANEL_TITLE',		
 		),
-		//END SUGARCRM flav!=sales ONLY
 		'opportunities'=> array(
 			'order' => 70,
 			'module' => 'Opportunities',

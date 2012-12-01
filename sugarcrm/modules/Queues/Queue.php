@@ -73,6 +73,17 @@ class Queue extends SugarBean {
 										'queue_id' => 'queues_workflow');
 	var $required_fields		= array('name');
 
+    /**
+     * This is a depreciated method, please start using __construct() as this method will be removed in a future version
+     *
+     * @see __construct
+     * @deprecated
+     */
+    public function Queue()
+    {
+        $this->__construct();
+    }
+
 	/**
 	 * Sole constructor
 	 */
@@ -188,17 +199,10 @@ class Queue extends SugarBean {
 	function getQueueItems() {
 		$r = $this->db->query('SELECT object_id, module_dir FROM queues_beans WHERE deleted = 0 AND queue_id = "'.$this->id.'"');
 		if($this->db->getRowCount($r) > 0) {
-			global $beanList;
 			$returnArray = array();
 			while($a = $this->db->fetchByAssoc($r)) {
-				// hardcode
-				$a['module_dir'] = 'Emails';
-				$objectName = $beanList[$a['module_dir']];
-
-				require_once('modules/'.$a['module_dir'].'/'.$objectName.'.php');
-				$newObject = new $objectName();
-				$newObject->retrieve($a['object_id']);
-				$returnArray[] = $newObject;
+				// hardcode Emails
+				$returnArray[] = BeanFactory::getBean('Emails', $a['object_id']);
 			}
 			return $returnArray;
 		} else {
@@ -526,19 +530,13 @@ class Queue extends SugarBean {
 			$this->setPersistentMemory('last_robin', $nextId);
 
 			// now that we have a target Queue, prep the item to add to it
-			if(!class_exists($beanName)) {
-				require($beanFiles[$beanName]);
-			}
-			$addBean = new $beanName();
+			$addBean = BeanFactory::newBeanByName($beanName);
 			$addBean->retrieve($beanId);
 
-			_pp('adding item for: '.$nextQ->name);
 			$nextQ->addItemToQueue($addBean->id, $addBean->module_dir, $addBean->object_name, true, $this);
-			//_pp('finished item for: '.$nextQ->name);
 			return true;
 		} else {
 			// no child queues to distribute to
-			_pp('END DISTRIBUTION hit leaf node for queues: '.$this->name);
 			return false;
 		}
 	}
@@ -570,9 +568,8 @@ class Queue extends SugarBean {
 
 
 		// instantiate new class of passed bean info
-		$addBean = new $beanName();
+		$addBean = BeanFactory::newBeanByName($beanName);
 		$addBean->retrieve($beanId);
-
 
 		_pp('Adding item ('.$addBean->object_name.':'.$addBean->name.') to Queue ('.$nextQueue->name.')');
 		$nextQueue->addItemToQueue($addBean->id, $addBean->module_dir, $addBean->object_name, true, $this);

@@ -184,7 +184,7 @@ class SugarViewTest extends Sugar_PHPUnit_Framework_TestCase
         SugarThemeRegistry::set($theme);
 
         $this->assertEquals(
-            "<span class='pointer'>&raquo;</span>",
+            "<span class='breadCrumbSymbol'>&raquo;</span>",
             $this->_view->getBreadCrumbSymbol()
             );
     }
@@ -195,7 +195,7 @@ class SugarViewTest extends Sugar_PHPUnit_Framework_TestCase
         SugarThemeRegistry::set($theme);
 
         $this->assertEquals(
-            "<span class='pointer'>&laquo;</span>",
+            "<span class='breadCrumbSymbol'>&laquo;</span>",
             $this->_view->getBreadCrumbSymbol()
             );
     }

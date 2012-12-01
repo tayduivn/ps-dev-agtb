@@ -46,9 +46,7 @@
                     	    'status',
                     	    'is_admin',
                     	    'title',
-                    	    //BEGIN SUGARCRM flav!=sales ONLY
                     	    'is_group',
-                    	    //END SUGARCRM flav!=sales ONLY
                     	    'department',
                     	    'phone' => 
                               array (

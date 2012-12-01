@@ -48,7 +48,7 @@ $app_list_strings = return_app_list_strings_language($current_language);
 $app_strings = return_application_language($current_language);
 
 global $current_user;
-$current_user = new User();
+$current_user = BeanFactory::getBean('Users');
 $current_user->getSystemUser();
 
 $moules = ($argc > 1) ?  array($argv[1]) : array();

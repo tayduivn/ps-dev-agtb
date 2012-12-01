@@ -115,15 +115,15 @@ $dictionary['Contract'] = array(
 			'len' => '255',
 			'source' => 'non-db',
 			'required' => true,
-			'importable' => 'required',
 			'unified_search' => true,
 		),
 
 		'account_id' => array (
 			'name' => 'account_id',
-			'vname' => 'LBL_ACCOUNT_NAME',
+			'vname' => 'LBL_ACCOUNT_ID',
 			'type' => 'id',
 			'audited' => true,
+			'importable' => 'required',
 			'reportable' => false,
 			'comment' => 'The account ID to which the contract is associated'
 		),

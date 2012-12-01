@@ -61,8 +61,7 @@ else {
         // Pull up the document revision, if it's of type Document
         if ( isset($focus->object_name) && $focus->object_name == 'Document' ) {
             // It's a document, get the revision that really stores this file
-            $focusRevision = new DocumentRevision();
-            $focusRevision->retrieve($_REQUEST['id']);
+            $focusRevision = BeanFactory::getBean('DocumentRevisions', $_REQUEST['id']);
 
             if ( empty($focusRevision->id) ) {
                 // This wasn't a document revision id, it's probably actually a document id,

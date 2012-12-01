@@ -104,9 +104,8 @@ class SugarSearchEngineFullIndexer extends SugarSearchEngineIndexerBase
         $this->removeExistingFTSConsumers();
 
         // clear flag
-        $admin = new Administration();
-        $settings = $admin->retrieveSettings();
-        if (!empty($settings->settings['info_fts_index_done'])) {
+        $admin = Administration::getSettings();
+        if (!empty($admin->settings['info_fts_index_done'])) {
             $admin->saveSetting('info', 'fts_index_done', 0);
         }
 
@@ -161,7 +160,7 @@ class SugarSearchEngineFullIndexer extends SugarSearchEngineIndexerBase
     public function createJobQueueConsumerForModule($module)
     {
         $GLOBALS['log']->info("Creating FTS Job queue consumer for: {$module} ");
-        $job = new SchedulersJob();
+        $job = BeanFactory::getBean('SchedulersJobs');
         $job->data = $module;
         $job->name = "FTSConsumer {$module}";
         $job->target = "class::SugarSearchEngineFullIndexer";
@@ -342,10 +341,9 @@ class SugarSearchEngineFullIndexer extends SugarSearchEngineIndexerBase
         {
             $stats = self::getStatistics();
             // indexing completed, set flag to 1
-            $admin = new Administration();
-            $settings = $admin->retrieveSettings();
+            $settings = Administration::getSettings('proxy');
             if (empty($settings->settings['info_fts_index_done'])) {
-                $admin->saveSetting('info', 'fts_index_done', 1);
+                $settings->saveSetting('info', 'fts_index_done', 1);
             }
 
             $GLOBALS['log']->fatal("FTS Indexing completed with the following statistics: " . var_export($stats, TRUE));
@@ -393,7 +391,7 @@ class SugarSearchEngineFullIndexer extends SugarSearchEngineIndexerBase
      */
     public static function isFTSIndexScheduled()
     {
-        $sched = new Scheduler();
+        $sched = BeanFactory::getBean('Schedulers');
         $sched = $sched->retrieve_by_string_fields(array('name'=> self::$schedulerName));
 
         if($sched == NULL)

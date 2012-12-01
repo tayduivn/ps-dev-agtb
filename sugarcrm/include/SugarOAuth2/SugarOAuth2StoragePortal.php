@@ -193,13 +193,13 @@ class SugarOAuth2StoragePortal extends SugarOAuth2StoragePlatform {
             return $this->portalApiUser;
         }
 
-        $portalApiUser = BeanFactory::newBean('Users');
-
         // Find the Portal API user
-        // FIXME: What to do if they have more than one portal user?
-        $portalApiUser = $portalApiUser->retrieve_by_string_fields(array('portal_only'=>'1','status'=>'Active'));
-        
-        if ($portalApiUser != null) {
+        $admin = new Administration();
+        $admin->retrieveSettings(false, true);
+        if (isset($admin->settings['supportPortal_RegCreatedBy'])) {
+            $portalApiUser = BeanFactory::getBean('Users', $admin->settings['supportPortal_RegCreatedBy']);
+        }
+        if (!empty($portalApiUser->id)) {
             $this->portalApiUser = $portalApiUser;
             return $this->portalApiUser;
         } else {

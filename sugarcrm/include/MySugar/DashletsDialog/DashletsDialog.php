@@ -184,7 +184,7 @@ class DashletsDialog {
     	//require_once('modules/Reports/Report.php');
 
     	$chartsList = array();
-    	$focus = new SavedReport();
+    	$focus = BeanFactory::getBean('Reports');
     	$focus->disable_row_level_security = false;
     	switch($category){
     		case 'global':
@@ -216,7 +216,7 @@ class DashletsDialog {
 
 		    case 'myFavorites':
                 global $current_user;
-                $sugaFav = new SugarFavorites();
+                $sugaFav = BeanFactory::getBean('SugarFavorites');
                 $current_favorites_beans = $sugaFav->getUserFavoritesByModule('Reports', $current_user);
                 $current_favorites = array();
                 foreach ((array)$current_favorites_beans as $key=>$val) {

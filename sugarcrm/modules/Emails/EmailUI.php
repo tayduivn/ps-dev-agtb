@@ -28,10 +28,19 @@ class EmailUI {
 								   JOIN emails_text on emails.id = emails_text.email_id
                                    WHERE (type = '::TYPE::' OR status = '::STATUS::') AND assigned_user_id = '::USER_ID::' AND emails.deleted = '0'";
 
-	/**
-	 * Sole constructor
-	 */
-	function EmailUI() {
+
+    /**
+     * This is a depreciated method, please start using __construct() as this method will be removed in a future version
+     *
+     * @see __construct
+     * @deprecated
+     */
+    public function EmailUI()
+    {
+        $this->__construct();
+    }
+
+	public function __construct() {
 		global $sugar_config;
 		global $current_user;
 
@@ -70,7 +79,7 @@ class EmailUI {
 		global $server_unique_key;
 
 		$this->preflightUserCache();
-		$ie = new InboundEmail();
+		$ie = BeanFactory::getBean('InboundEmail');
 
 		// focus listView
 		$list = array(
@@ -308,7 +317,7 @@ eoq;
         }
 
         foreach($QCModules as $module) {
-            $seed = SugarModule::get($module)->loadBean();
+            $seed = BeanFactory::getBean($module);
             if ( ( $seed instanceOf SugarBean ) && $seed->ACLAccess('edit') ) {
                 $QCAvailableModules[] = $module;
             }
@@ -435,7 +444,7 @@ eoq;
         $this->smarty->assign('lang', $lang);
         $this->smarty->assign('app_strings', $app_strings);
 		$this->smarty->assign('mod_strings', $email_mod_strings);
-        $ie1 = new InboundEmail();
+        $ie1 = BeanFactory::getBean('InboundEmail');
         //BEGIN SUGARCRM flav=pro ONLY
 		$ie1->team_id = empty($current_user->default_team) ? $current_user->team_id : $current_user->default_team;
 		$ie1->team_set_id = $current_user->team_set_id;
@@ -468,19 +477,15 @@ eoq;
 		//#20776 jchi
 		$peopleTables = array("users",
 		                      "contacts",
-		                      //BEGIN SUGARCRM flav!=sales ONLY
 		                      "leads",
 		                      "prospects",
-		                      //END SUGARCRM flav!=sales ONLY
 		                      "accounts");
 		$filterPeopleTables = array();
 		global $app_list_strings, $app_strings;
 		$filterPeopleTables['LBL_DROPDOWN_LIST_ALL'] = $app_strings['LBL_DROPDOWN_LIST_ALL'];
 		foreach($peopleTables as $table) {
 			$module = ucfirst($table);
-            $class = substr($module, 0, strlen($module) - 1);
-            require_once("modules/{$module}/{$class}.php");
-            $person = new $class();
+            $person = BeanFactory::getBean($module);
 
             if (!$person->ACLAccess('list')) continue;
             $filterPeopleTables[$person->table_name] = $app_list_strings['moduleList'][$person->module_dir];
@@ -498,7 +503,7 @@ eoq;
 		$emailSettings = $e2UserPreferences['emailSettings'];
 		$return = array();
 
-		$ie1 = new InboundEmail();
+		$ie1 = BeanFactory::getBean('InboundEmail');
 		$ie1->team_set_id = '';
 		$teamSetField = new EmailSugarFieldTeamsetCollection($ie1, $ie1->field_defs, '', 'Distribute');
 		$code2 = $teamSetField->get_code(TRUE);
@@ -590,8 +595,7 @@ eoq;
 		$str = from_html($str);
 		$obj = $json->decode($str);
 
-		$contact = new Contact();
-		$contact->retrieve($obj['contact_id']);
+		$contact = BeanFactory::getBean('Contacts', $obj['contact_id']);
 		$contact->first_name = $obj['contact_first_name'];
 		$contact->last_name = $obj['contact_last_name'];
 		$contact->save();
@@ -625,8 +629,7 @@ eoq;
 
 		}
 
-		$contact = new Contact();
-		$contact->retrieve($_REQUEST['id']);
+		$contact = BeanFactory::getBean('Contacts', $_REQUEST['id']);
 		$ret = array();
 
 		if($contact->ACLAccess('edit')) {
@@ -640,7 +643,7 @@ eoq;
 			$this->smarty->assign("contact_strings", return_module_language($_SESSION['authenticated_user_language'], 'Contacts'));
 			$this->smarty->assign("contact", $contactMeta);
 
-			$ea = new SugarEmailAddress();
+			$ea = BeanFactory::getBean('EmailAddresses');
 			$newEmail = $ea->getEmailAddressWidgetEditView($id, $module, true);
 			$this->smarty->assign("emailWidget", $newEmail['html']);
 
@@ -810,7 +813,7 @@ eoq;
 			$user = $current_user;
 		}
 
-		$emailAddress = new SugarEmailAddress();
+		$emailAddress = BeanFactory::getBean('EmailAddresses');
 		$ret = array();
 
 		$union = '';
@@ -1094,7 +1097,7 @@ eoq;
 		$tree->tree_style= 'include/ytree/TreeView/css/check/tree.css';
 
 		$nodes = array();
-		$ie = new InboundEmail();
+		$ie = BeanFactory::getBean('InboundEmail');
 		$refreshOffset = $this->cacheTimeouts['folders']; // 5 mins.  this will be set via user prefs
 
 		$rootNode = new ExtNode($app_strings['LBL_EMAIL_HOME_FOLDER'], $app_strings['LBL_EMAIL_HOME_FOLDER']);
@@ -1373,24 +1376,15 @@ eoq;
 		global $app_strings;
 		global $mod_strings;
 		global $current_user;
-		global $beanList;
-		global $beanFiles;
 		global $current_language;
 
 		//Setup the current module languge
 		$mod_strings = return_module_language($current_language, $_REQUEST['qc_module']);
-
-		$bean = $beanList[$_REQUEST['qc_module']];
-		$class = $beanFiles[$bean];
-		require_once($class);
-
-		$focus = new $bean();
+        $focus = BeanFactory::getBean($_REQUEST['qc_module']);
 
 		$people = array(
 		'Contact'
-		//BEGIN SUGARCRM flav!=sales ONLY
 		,'Lead'
-		//END SUGARCRM flav!=sales ONLY
 		);
 		$emailAddress = array();
 
@@ -1487,8 +1481,7 @@ eoq;
 
 		//BEGIN SUGARCRM flav=ent ONLY
 		if($focus->object_name == 'Contact') {
-			$admin = new Administration();
-			$admin->retrieveSettings();
+			$admin = Administration::getSettings();
 
 	    	if(empty($admin->settings['portal_on']) || !$admin->settings['portal_on']) {
 			   unset($EditView->sectionPanels[strtoupper('lbl_portal_information')]);
@@ -1609,8 +1602,7 @@ EOQ;
         $smarty = new Sugar_Smarty();
 
 		// SETTING DEFAULTS
-		$focus		= new Email();
-		$focus->retrieve($emailId);
+		$focus = BeanFactory::getBean('Emails', $emailId);
 		$detailView->ss = new Sugar_Smarty();
 		$detailView	= new DetailView();
 		$title = "";
@@ -1687,7 +1679,7 @@ EOQ;
 		////	NOTES (attachements, etc.)
 		///////////////////////////////////////////////////////////////////////////////
 
-		$note = new Note();
+		$note = BeanFactory::getBean('Notes');
 		$where = "notes.parent_id='{$focus->id}'";
 		//take in account if this is from campaign and the template id is stored in the macros.
 
@@ -1747,8 +1739,7 @@ EOQ;
 		if(strpos($folder, 'sugar::') !== false) {
 			// dealing with a sugar email object, uids are GUIDs
 			foreach($exUids as $id) {
-				$email = new Email();
-				$email->retrieve($id);
+				$email = BeanFactory::getBean('Emails', $id);
 
                 // BUG FIX BEGIN
                 // Bug 50973 - marking unread in group inbox removes message
@@ -1774,7 +1765,7 @@ EOQ;
                         // Bug #45395 : Deleted emails from a group inbox does not move the emails to the Trash folder for Google Apps
                         if ( !empty($email->message_uid) )
                         {
-                            $ieX = new InboundEmail();
+                            $ieX = BeanFactory::getBean('InboundEmail');
                             $ieX->retrieve_by_string_fields(array('groupfolder_id' => $ieId, 'deleted' => 0));
                             if ( !empty($ieX->id) && !$ieX->is_personal )
                             {
@@ -1820,7 +1811,7 @@ EOQ;
 			global $ie; // provided by EmailUIAjax.php
 			if(empty($ie)) {
 
-				$ie = new InboundEmail();
+				$ie = BeanFactory::getBean('InboundEmail');
 			}
 			$ie->retrieve($ieId);
 			$ie->mailbox = $folder;
@@ -1873,8 +1864,7 @@ function doAssignment($distributeMethod, $ieid, $folder, $uids, $users) {
 	if($folder != 'sugar::Emails') {
 		$emailIds = array();
 		$uids = explode($app_strings['LBL_EMAIL_DELIMITER'], $uids);
-		$ie = new InboundEmail();
-		$ie->retrieve($ieid);
+		$ie = BeanFactory::getBean('InboundEmail', $ieid);
 		$messageIndex = 1;
 		// dealing with an inbound email data so we need to import an email and then
 		foreach($uids as $uid) {
@@ -1919,7 +1909,7 @@ function getTeams() {
 	if (!empty($_REQUEST['team_ids'])) {
 		$teamInfo['primaryTeamId'] = $_REQUEST['primary_team_id'];
 		$teamIds = explode(",", $_REQUEST['team_ids']);
-		$teamSet = new TeamSet();
+		$teamSet = BeanFactory::getBean('TeamSets');
 		$teamInfo['teamSetId'] = $teamSet->addTeams($teamIds);
 	} // if
 	return $teamInfo;
@@ -1967,8 +1957,7 @@ function distRoundRobin($userIds, $mailIds) {
 			$lastRobin = $userIds[0];
 		}
 
-		$email = new Email();
-		$email->retrieve($mailId);
+		$email = BeanFactory::getBean('Emails', $mailId);
 		$email->assigned_user_id = $thisRobin;
 		$email->status = 'unread';
 		//BEGIN SUGARCRM flav=pro ONLY
@@ -2002,8 +1991,7 @@ function distLeastBusy($userIds, $mailIds) {
 	$assignedTeamInfo = $this->getTeams();
 	//END SUGARCRM flav=pro ONLY
 	foreach($mailIds as $k => $mailId) {
-		$email = new Email();
-		$email->retrieve($mailId);
+		$email = BeanFactory::getBean('Emails', $mailId);
 		foreach($userIds as $k => $id) {
 			$r = $this->db->query("SELECT count(*) AS c FROM emails WHERE assigned_user_id = '.$id.' AND status = 'unread'");
 			$a = $this->db->fetchByAssoc($r);
@@ -2044,8 +2032,7 @@ function distDirect($user, $mailIds) {
 	$assignedTeamInfo = $this->getTeams();
 	//END SUGARCRM flav=pro ONLY
 	foreach($mailIds as $k => $mailId) {
-		$email = new Email();
-		$email->retrieve($mailId);
+		$email = BeanFactory::getBean('Emails', $mailId);
 		$email->assigned_user_id = $user;
 		$email->status = 'unread';
 
@@ -2205,8 +2192,7 @@ eoq;
 		global $sugar_config;
 
 
-		$ie = new InboundEmail();
-		$ie->retrieve($ieId);
+		$ie = BeanFactory::getBean('InboundEmail', $ieId);
 		$list = $ie->displayFolderContents($mbox, $forceRefresh);
 
 		return $list;
@@ -2221,7 +2207,7 @@ eoq;
 		global $current_user;
 
 
-		$ea = new SugarEmailAddress();
+		$ea = BeanFactory::getBean('EmailAddresses');
 
 		if(!empty($email)) {
 		    $email->cids2Links();
@@ -2329,13 +2315,11 @@ eoq;
 				$email->cc_addrs = "";
 			break;
 
-			 //BEGIN SUGARCRM flav!=sales ONLY
 			case "replyCase":
 				$GLOBALS['log']->debug("EMAILUI: At reply case");
 				$header = $email->getReplyHeader();
 
-                $myCase = new aCase();
-                $myCase->retrieve($email->parent_id);
+                $myCase = BeanFactory::getBean('Cases', $email->parent_id);
                 $myCaseMacro = $myCase->getEmailSubjectMacro();
                 $email->parent_name = $myCase->name;
                 $GLOBALS['log']->debug("****Case # : {$myCase->case_number} macro: $myCaseMacro");
@@ -2345,7 +2329,6 @@ eoq;
 		        }
                 $email->name = "{$mod_strings['LBL_RE']} {$email->name}";
             break;
-            //END SUGARCRM flav!=sales ONLY
 		}
 
 		$html = trim($email->description_html);
@@ -2370,10 +2353,8 @@ eoq;
 		if(!isset($person) || $person === 'LBL_DROPDOWN_LIST_ALL'){
 			$peopleTables = array("users",
 			                      "contacts",
-			                      //BEGIN SUGARCRM flav!=sales ONLY
 			                      "leads",
 			                      "prospects",
-			                      //END SUGARCRM flav!=sales ONLY
 			                      "accounts"
 			                     );
 		}else{
@@ -2394,9 +2375,7 @@ eoq;
 
 		foreach($peopleTables as $table) {
 			$module = ucfirst($table);
-            $class = substr($module, 0, strlen($module) - 1);
-            require_once("modules/{$module}/{$class}.php");
-            $person = new $class();
+			$person = BeanFactory::getBean($module);
 			if (!$person->ACLAccess('list')) {
 				continue;
 			} // if
@@ -2447,10 +2426,8 @@ eoq;
 		if($beanType === 'LBL_DROPDOWN_LIST_ALL')
 			$searchBeans = array("users",
 			                     "contacts",
-			                     //BEGIN SUGARCRM flav!=sales ONLY
 			                     "leads",
 			                     "prospects",
-			                     //END SUGARCRM flav!=sales ONLY
 			                     "accounts"
 			                    );
 
@@ -2474,9 +2451,7 @@ eoq;
     	}
     	else
     	{
-    	    $class = $beanList[$relatedBeanInfoArr['related_bean_type']];
-    	    $focus = new $class();
-    	    $focus->retrieve($relatedBeanInfoArr['related_bean_id']);
+    	    $focus = BeanFactory::getBean($relatedBeanInfoArr['related_bean_type'], $relatedBeanInfoArr['related_bean_id']);
     	    if ($searchBeans != null)
     	    {
     	        $q = array();
@@ -2535,9 +2510,7 @@ eoq;
 		}
 		$table = $beanType;
 		$module = ucfirst($table);
-	    $class = substr($module, 0, strlen($module) - 1);
-	    require_once("modules/{$module}/{$class}.php");
-	    $person = new $class();
+		$person = BeanFactory::getBean($module);
 		if ($person->ACLAccess('list')) {
 			if ($relatedIDs != '') {
 				$where = "({$table}.deleted = 0 AND eabr.primary_address = 1 AND {$table}.id in ($relatedIDs))";
@@ -2631,7 +2604,7 @@ eoq;
 				$folder->folder_type = "inbound";
 				$folder->dynamic_query = $this->generateDynamicFolderQuery('inbound', $user->id);
 				//BEGIN SUGARCRM flav=pro ONLY
-				$teamSet = new TeamSet();
+				$teamSet = BeanFactory::getBean('TeamSets');
 				$team_set_id = $teamSet->addTeams($privateTeam);
 				$folder->team_id = $privateTeam;
 				$folder->team_set_id = $team_set_id;
@@ -2758,7 +2731,7 @@ eoq;
 		global $app_strings;
 
 		if(ACLController::checkAccess('EmailTemplates', 'list', true) && ACLController::checkAccess('EmailTemplates', 'view', true)) {
-			$et = new EmailTemplate();
+			$et = BeanFactory::getBean('EmailTemplates');
             $etResult = $et->db->query($et->create_new_list_query('',"(type IS NULL OR type='' OR type='email')",array(),array(),''));
 			$email_templates_arr = array('' => $app_strings['LBL_NONE']);
 			while($etA = $et->db->fetchByAssoc($etResult)) {
@@ -2835,8 +2808,7 @@ eoq;
 
         if( !empty($system->mail_smtpserver) )
         {
-            $admin = new Administration();
-            $admin->retrieveSettings(); //retrieve all admin settings.
+            $admin = Administration::getSettings(); //retrieve all admin settings.
             $ieAccountsFrom[] = array("value" => $system->id, "text" =>
                 "{$ret['name']} ({$ret['email']}){$myAccountString}");
         }
@@ -2904,8 +2876,7 @@ eoq;
 
         if(!empty($system->id)) {
 
-            $admin = new Administration();
-            $admin->retrieveSettings(); //retrieve all admin settings.
+            $admin = Administration::getSettings(); //retrieve all admin settings.
             if (in_array(trim($return['email']), $toArray)) {
             	$foundInSystemAccounts = true;
             } // if

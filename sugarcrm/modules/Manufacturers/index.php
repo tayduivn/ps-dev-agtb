@@ -34,7 +34,7 @@ if (!is_admin($current_user) && !is_admin_for_module($GLOBALS['current_user'],'P
    sugar_die("Unauthorized access to administration.");
 }
 
-$focus = new Manufacturer();
+$focus = BeanFactory::getBean('Manufacturers');
 
 $params = array();
 $params[] = "<a href='index.php?module=Administration&action=index'>".translate('LBL_MODULE_NAME','Administration')."</a>";

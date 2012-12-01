@@ -1,5 +1,4 @@
 <?php
-//FILE SUGARCRM flav!=sales ONLY
 if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 /**
  * LICENSE: The contents of this file are subject to the SugarCRM Professional
@@ -43,7 +42,7 @@ class MyCasesDashlet extends DashletGeneric {
         if(empty($def['title'])) $this->title = translate('LBL_LIST_MY_CASES', 'Cases');
         $this->searchFields = $dashletData['MyCasesDashlet']['searchFields'];
         $this->columns = $dashletData['MyCasesDashlet']['columns'];
-        $this->seedBean = new aCase();        
+        $this->seedBean = BeanFactory::getBean('Cases');        
     }
 }
 

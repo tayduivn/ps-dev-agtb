@@ -41,20 +41,17 @@ class HomeViewAdditionaldetailsretrieve extends SugarView
         // Bug 40216 - Add support for a custom additionalDetails.php file
         $additionalDetailsFile = $this->getAdditionalDetailsMetadataFile($moduleDir);
 
-        if(empty($beanFiles[$beanName]) ||
-            empty($id) || !is_file($additionalDetailsFile) ) {
+        if(empty($id) || empty($additionalDetailsFile) ) {
                 echo 'bad data';
                 die();
         }
 
-        require_once($beanFiles[$beanName]);
         require_once($additionalDetailsFile);
         $adFunction = 'additionalDetails' . $beanName;
 
         if(function_exists($adFunction)) { // does the additional details function exist
             $json = getJSONobj();
-            $bean = new $beanName();
-            $bean->retrieve($id);
+            $bean = BeanFactory::getBean($moduleDir, $id);
 
         	//bug38901 - shows dropdown list label instead of database value
 			foreach($bean->field_name_map as $field => $value)

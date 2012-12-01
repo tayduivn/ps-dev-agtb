@@ -39,7 +39,18 @@ class Configurator {
 	var $previous_sugar_override_config_array = array();
 	var $useAuthenticationClass = false;
 
-	function Configurator() {
+    /**
+     * This is a depreciated method, please start using __construct() as this method will be removed in a future version
+     *
+     * @see __construct
+     * @deprecated
+     */
+    public function Configurator()
+    {
+        $this->__construct();
+    }
+
+	public function __construct() {
 		$this->loadConfig();
 	}
 

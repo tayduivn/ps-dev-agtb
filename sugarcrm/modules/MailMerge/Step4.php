@@ -19,20 +19,6 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *to the License for the specific language governing these rights and limitations under the License.
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
-/*
- * Created on Oct 4, 2005
- *
- * To change the template for this generated file go to
- * Window - Preferences - PHPeclipse - PHP - Code Templates
- */
-
-
-
-
-
-
-
-
 global $app_strings;
 global $app_list_strings;
 global $mod_strings;
@@ -48,10 +34,7 @@ if(!empty($_POST['document_id']))
 	$_SESSION['MAILMERGE_DOCUMENT_ID'] = $_POST['document_id'];
 }
 $document_id = $_SESSION['MAILMERGE_DOCUMENT_ID'];
-$revision = new DocumentRevision();
-$revision->retrieve($document_id);
-//$document = new Document();
-//$document->retrieve($document_id);
+$revision = BeanFactory::getBean('DocumentRevisions', $document_id);
 
 if(!empty($_POST['selected_objects']))
 {
@@ -81,14 +64,10 @@ foreach($sel_obj as $key=>$value)
 $builtArray = array();
 if(count($relArray) > 0)
 {
-$_SESSION['MAILMERGE_RELATED_CONTACTS'] = $relArray;
+    $_SESSION['MAILMERGE_RELATED_CONTACTS'] = $relArray;
 
-$relModule = $_SESSION['MAILMERGE_CONTAINS_CONTACT_INFO'];
-global $beanList, $beanFiles;
-$class_name = $beanList[$relModule ];
-require_once($beanFiles[$class_name]);
-
-	$seed = new $class_name();
+    $relModule = $_SESSION['MAILMERGE_CONTAINS_CONTACT_INFO'];
+	$seed = BeanFactory::getBean($relModule);
 	foreach($sel_obj as $key=>$value)
 	{
 		$builtArray[$key] = $value;

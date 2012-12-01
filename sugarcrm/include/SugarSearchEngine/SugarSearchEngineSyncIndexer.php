@@ -67,7 +67,7 @@ class SugarSearchEngineSyncIndexer extends SugarSearchEngineIndexerBase
             $timedate = TimeDate::getInstance();
         }
 
-        $job = new SchedulersJob();
+        $job = BeanFactory::getBean('SchedulersJobs');
         $job->requeue = 1;
         $job->name = "FTSSyncConsumer";
         $job->target = "class::SugarSearchEngineSyncIndexer";

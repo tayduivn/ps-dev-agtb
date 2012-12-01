@@ -78,11 +78,6 @@ class ModuleBuilderController extends SugarController
         $GLOBALS ['log']->info(get_class($this) . ":");
         global $current_user;
         $access = $current_user->getDeveloperModules();
-        //BEGIN SUGARCRM flav=sales ONLY
-        if (!empty($_REQUEST['type']) && $_REQUEST['type'] == 'mb') {
-            $this->hasAccess = false;
-        } else
-            //END SUGARCRM flav=sales ONLY
             if ($current_user->isAdmin() || ($current_user->isDeveloperForAnyModule() && !isset($_REQUEST['view_module']) && (isset($_REQUEST['action']) && $_REQUEST['action'] != 'package')) ||
                 (isset($_REQUEST['view_module']) && (in_array($_REQUEST['view_module'], $access) || empty($_REQUEST['view_module']))) ||
                 (isset($_REQUEST['type']) && (($_REQUEST['type'] == 'dropdowns' && $current_user->isDeveloperForAnyModule()) ||
@@ -115,24 +110,24 @@ class ModuleBuilderController extends SugarController
                 case MB_EDITVIEW :
                 case MB_DETAILVIEW :
                 case MB_QUICKCREATE :
-                    //BEGIN SUGARCRM flav=pro || flav=sales ONLY
+                    //BEGIN SUGARCRM flav=pro ONLY
                 case MB_WIRELESSEDITVIEW :
                 case MB_WIRELESSDETAILVIEW :
-                    //END SUGARCRM flav=pro || flav=sales ONLY
+                    //END SUGARCRM flav=pro ONLY
                     $this->view = 'layoutView';
                     break;
                 case MB_LISTVIEW :
-                    //BEGIN SUGARCRM flav=pro || flav=sales ONLY
+                    //BEGIN SUGARCRM flav=pro ONLY
                 case MB_WIRELESSLISTVIEW :
-                    //END SUGARCRM flav=pro || flav=sales ONLY
+                    //END SUGARCRM flav=pro ONLY
                     $this->view = 'listView';
                     break;
                 case MB_BASICSEARCH :
                 case MB_ADVANCEDSEARCH :
-                    //BEGIN SUGARCRM flav=pro || flav=sales ONLY
+                    //BEGIN SUGARCRM flav=pro ONLY
                 case MB_WIRELESSBASICSEARCH :
                 case MB_WIRELESSADVANCEDSEARCH :
-                    //END SUGARCRM flav=pro || flav=sales ONLY
+                    //END SUGARCRM flav=pro ONLY
                     $this->view = 'searchView';
                     break;
                 case MB_DASHLET :
@@ -393,9 +388,7 @@ class ModuleBuilderController extends SugarController
                 }
 
                 $df = new DynamicField ($module);
-                $class_name = $GLOBALS ['beanList'] [$module];
-                require_once ($GLOBALS ['beanFiles'] [$class_name]);
-                $mod = new $class_name ();
+                $mod = BeanFactory::getBean($module);
                 $df->setup($mod);
 
                 $field->save($df);
@@ -625,9 +618,7 @@ class ModuleBuilderController extends SugarController
                 if ($moduleName == 'Employees')
                     $moduleName = 'Users';
 
-                $class_name = $GLOBALS ['beanList'] [$moduleName];
-                require_once ($GLOBALS ['beanFiles'] [$class_name]);
-                $seed = new $class_name ();
+                $seed = BeanFactory::getBean($moduleName);
                 $df = new DynamicField ($moduleName);
                 $df->setup($seed);
                 //Need to load the entire field_meta_data for some field types
@@ -638,7 +629,7 @@ class ModuleBuilderController extends SugarController
                 $_REQUEST['execute_sql'] = true;
                 include_once ('modules/Administration/QuickRepairAndRebuild.php');
                 $repair = new RepairAndClear();
-                $repair->repairAndClearAll(array('rebuildExtensions', 'clearVardefs', 'clearTpls'), array($class_name), true, false);
+                $repair->repairAndClearAll(array('rebuildExtensions', 'clearVardefs', 'clearTpls'), array($moduleName), true, false);
                 require_once 'modules/ModuleBuilder/Module/StudioModuleFactory.php';
                 $module = StudioModuleFactory::getStudioModule($moduleName);
             }

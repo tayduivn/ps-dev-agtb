@@ -418,7 +418,7 @@ function traceDuplicateRelations($checkThisRel){
 	        {
 	            require ($file) ;
 	        }
-	        $focus = new $bean ( ) ;
+	        $focus = BeanFactory::newBeanByName($bean);
 	        $table_name = $focus->table_name ;
 	        $empty = '' ;
 	        traceDuplicateRelationshipMeta( $focus->getObjectName (),$table_name, $empty, $focus->module_dir,$processed_relationships,$duplicate_relationships,$checkThisRel);
@@ -837,7 +837,7 @@ function checkIndexExistsInVardef($table_name,$column_name){
 	        {
 	            require ($file) ;
 	        }
-	        $focus = new $bean();
+	        $focus = BeanFactory::newBeanByName($bean);
 	        $empty = '' ;
 	        if(trim(strtolower($focus->table_name)) == trim(strtolower($table_name))) {
 	       		$table_found = true;
@@ -921,7 +921,7 @@ function checkDupIndeicesInVardef($table_name,$column_name){
 	        {
 	            require ($file) ;
 	        }
-	        $focus = new $bean();
+	        $focus = BeanFactory::newBeanByName($bean);
 	        $empty = '' ;
 	        if(trim(strtolower($focus->table_name)) == trim(strtolower($table_name))) {
 	       		$table_found = true;
@@ -1008,7 +1008,7 @@ function checkTableComments($table_name){
 	        {
 	            require ($file) ;
 	        }
-	        $focus = new $bean();
+	        $focus = BeanFactory::newBeanByName($bean);
 	        $empty = '' ;
 	        if(trim(strtolower($focus->table_name)) == trim(strtolower($table_name))) {
 	       		$table_found = true;

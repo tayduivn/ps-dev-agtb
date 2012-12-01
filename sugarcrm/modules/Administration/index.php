@@ -99,12 +99,10 @@ foreach ($admin_group_header as $key=>$values) {
                 if(!in_array('Products', $access)&& isset($values[3]['Products'])){
                     unset($values[3]['Products']);
                 }
-                //BEGIN SUGARCRM flav!=sales ONLY
                 // Need this check because Emails and Campaigns share the header group
                 if(!in_array('Campaigns', $access)&& isset($values[3]['Campaigns'])){
                     unset($values[3]['Campaigns']);
                 }
-                //END SUGARCRM flav!=sales ONLY
                 //END SUGARCRM flav=pro ONLY
 
                 //////////////////

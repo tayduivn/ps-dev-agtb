@@ -50,7 +50,7 @@ class ImportController extends SugarController
 
         $this->importModule = isset($_REQUEST['import_module']) ? $_REQUEST['import_module'] : '';
 
-        $this->bean = loadBean($this->importModule);
+        $this->bean = BeanFactory::getBean($this->importModule);
         if ( $this->bean ) {
             if ( !$this->bean->importable )
                 $this->bean = false;
@@ -63,7 +63,7 @@ class ImportController extends SugarController
                 }
             }
         }
-        
+
         if ( !$this->bean ) {
             $_REQUEST['message'] = $mod_strings['LBL_ERROR_IMPORTS_NOT_SET_UP'];
             $this->view = 'error';
@@ -71,7 +71,7 @@ class ImportController extends SugarController
         else
             $GLOBALS['FOCUS'] = $this->bean;
     }
-    
+
     function action_index()
     {
         $this->action_Step1();
@@ -84,15 +84,12 @@ class ImportController extends SugarController
         // handle publishing and deleting import maps
         if(isset($_REQUEST['delete_map_id']))
         {
-            $import_map = new ImportMap();
-            $import_map->mark_deleted($_REQUEST['delete_map_id']);
+            $import_map = BeanFactory::deleteBean('Import_1', $_REQUEST['delete_map_id']);
         }
 
         if(isset($_REQUEST['publish']) )
         {
-            $import_map = new ImportMap();
-
-            $import_map = $import_map->retrieve($_REQUEST['import_map_id'], false);
+            $import_map = BeanFactory::getBean('Import_1', $_REQUEST['import_map_id'], array("encode" => false));
 
             if($_REQUEST['publish'] == 'yes')
             {
@@ -108,7 +105,7 @@ class ImportController extends SugarController
                     $results['message'] = $mod_strings['LBL_ERROR_UNABLE_TO_UNPUBLISH'];
             }
         }
-        
+
         echo json_encode($results);
         sugar_cleanup(TRUE);
     }
@@ -155,10 +152,10 @@ class ImportController extends SugarController
         $if->setHeaderRow($has_header);
         $lv = new ImportListView($if,array('offset'=> $offset), $tableID);
         $lv->display(FALSE);
-        
+
         sugar_cleanup(TRUE);
     }
-    
+
 	function action_Step1()
     {
         $fromAdminView = isset($_REQUEST['from_admin_wizard']) ? $_REQUEST['from_admin_wizard'] : FALSE;
@@ -173,7 +170,7 @@ class ImportController extends SugarController
         else
             $this->view = 'step2';
     }
-    
+
     function action_Step2()
     {
 		$this->view = 'step2';
@@ -198,17 +195,17 @@ class ImportController extends SugarController
     {
 		$this->view = 'step4';
     }
-    
+
     function action_Last()
     {
 		$this->view = 'last';
     }
-    
+
     function action_Undo()
     {
 		$this->view = 'undo';
     }
-    
+
     function action_Error()
     {
 		$this->view = 'error';
@@ -228,7 +225,7 @@ class ImportController extends SugarController
     {
         $this->view = 'extimport';
     }
-    
+
     function action_GetControl()
     {
         echo getControl($_REQUEST['import_module'],$_REQUEST['field_name']);

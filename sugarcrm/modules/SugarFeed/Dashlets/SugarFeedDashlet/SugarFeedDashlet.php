@@ -97,7 +97,7 @@ var $myFavoritesOnly = false;
 			}
 		}
 
-        $this->seedBean = new SugarFeed();
+        $this->seedBean = BeanFactory::getBean('SugarFeed');
     }
 
 	function process($lvsParams = array()) {
@@ -228,7 +228,7 @@ var $myFavoritesOnly = false;
 //BEGIN SUGARCRM flav=pro ONLY
             if ($this->myFavoritesOnly) {
                 require_once('modules/SugarFavorites/SugarFavorites.php');
-                $user_favorites_module = new SugarFavorites();
+                $user_favorites_module = BeanFactory::getBean('SugarFavorites');
 
                 if (!isset($lvsParams['custom_from'])) {
                     $lvsParams['custom_from'] = '';
@@ -342,8 +342,7 @@ var $myFavoritesOnly = false;
             if ( empty($item['IMAGE_URL']) ) {
                 $item['IMAGE_URL'] = 'include/images/default_user_feed_picture.png';
                 if ( isset($item['CREATED_BY']) ) {
-                    $user = loadBean('Users');
-                    $user->retrieve($item['CREATED_BY']);
+                    $user = BeanFactory::getBean('Users', $item['CREATED_BY']);
                     if ( !empty($user->picture) ) {
                         $item['IMAGE_URL'] = 'index.php?entryPoint=download&id='.$user->picture.'&type=SugarFieldImage&isTempFile=1';
                     }
@@ -358,8 +357,7 @@ var $myFavoritesOnly = false;
 
 	  function deleteUserFeed() {
     	if(!empty($_REQUEST['record'])) {
-			$feed = new SugarFeed();
-			$feed->retrieve($_REQUEST['record']);
+			$feed = BeanFactory::getBean('SugarFeed', $_REQUEST['record']);
 			if(is_admin($GLOBALS['current_user']) || $feed->created_by == $GLOBALS['current_user']->id){
             	$feed->mark_deleted($_REQUEST['record']);
 
@@ -396,8 +394,7 @@ var $myFavoritesOnly = false;
 			$text = preg_replace('/&amp;lt;(\/*[bi])&amp;gt;/i','<$1>', $text);
 //BEGIN SUGARCRM flav=pro ONLY
             // Fetch the parent, use the same team id's
-            $parentFeed = new SugarFeed();
-            $parentFeed->retrieve($_REQUEST['parentFeed']);
+            $parentFeed = BeanFactory::getBean('SugarFeed', $_REQUEST['parentFeed']);
 			$team_id = $parentFeed->team_id;
 			$team_set_id = $team_id; //For now, but if we allow for multiple team selection then we'll have to change this
 //END SUGARCRM flav=pro ONLY
@@ -645,8 +642,7 @@ EOQ;
     // This is called from the include/MySugar/DashletsDialog/DashletsDialog.php and determines if we should display the SugarFeed dashlet as an option or not
     static function shouldDisplay() {
 
-        $admin = new Administration();
-        $admin->retrieveSettings();
+        $admin = Administration::getSettings();
 
         if ( !isset($admin->settings['sugarfeed_enabled']) || $admin->settings['sugarfeed_enabled'] != '1' ) {
             return false;

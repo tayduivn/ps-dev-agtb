@@ -61,7 +61,7 @@ class ViewMappingProperties extends ViewList
 	    	foreach($mapping['beans'] as $module=>$field_mapping) {
 	            
 	    		$mod_strings = return_module_language($GLOBALS['current_language'], $module);
-	    		$bean = loadBean($module);
+	    		$bean = BeanFactory::getBean($module);
 	    		if ( !is_object($bean) )
 	    		    continue;
 	    		$field_defs = $bean->getFieldDefinitions();

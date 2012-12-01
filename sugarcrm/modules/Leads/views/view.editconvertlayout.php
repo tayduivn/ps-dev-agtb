@@ -120,7 +120,7 @@ class ViewEditConvertLayout extends SugarView {
     protected function getRelationshipsForModule($module, $currentRel = "")
     {
         $ret = array();
-        $seed = new Contact();
+        $seed = BeanFactory::getBean('Contacts');
         $bean_rels = $seed->get_related_fields();
         foreach($bean_rels as $field => $fDef)
         {

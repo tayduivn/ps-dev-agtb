@@ -20,10 +20,8 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 $portal_modules = array('Contacts', 'Accounts', 'Notes');
-//BEGIN SUGARCRM flav!=sales ONLY
 $portal_modules[] = 'Cases';
 $portal_modules[] = 'Bugs';
-//END SUGARCRM flav!=sales ONLY
 
 //BEGIN SUGARCRM flav=pro ONLY
 $portal_modules[] = 'KBDocuments';
@@ -32,10 +30,6 @@ $portal_modules[] = 'KBDocuments';
 /*
 BUGS
 */
-
-
-
-
 //BEGIN SUGARCRM flav=pro ONLY
 
 require_once('modules/KBDocuments/SearchUtils.php');
@@ -60,7 +54,7 @@ function get_bugs_in_contacts($in, $orderBy = '')
         }
         //END SUGARCRM flav=pro ONLY
 
-        $sugar = new Contact();
+        $sugar = BeanFactory::getBean('Contacts');
         //BEGIN SUGARCRM flav=pro ONLY
         $sugar->disable_row_level_security = true;
         //END SUGARCRM flav=pro ONLY
@@ -86,7 +80,7 @@ function get_bugs_in_accounts($in, $orderBy = '')
         }
         //END SUGARCRM flav=pro ONLY
 
-        $sugar = new Account();
+        $sugar = BeanFactory::getBean('Accounts');
         //BEGIN SUGARCRM flav=pro ONLY
         $sugar->disable_row_level_security = true;
         //END SUGARCRM flav=pro ONLY
@@ -117,7 +111,7 @@ function get_cases_in_contacts($in, $orderBy = '')
         }
         //END SUGARCRM flav=pro ONLY
 
-        $sugar = new Contact();
+        $sugar = BeanFactory::getBean('Contacts');
         //BEGIN SUGARCRM flav=pro ONLY
         $sugar->disable_row_level_security = true;
         //END SUGARCRM flav=pro ONLY
@@ -145,7 +139,7 @@ function get_cases_in_accounts($in, $orderBy = '')
         }
         //END SUGARCRM flav=pro ONLY
 
-        $sugar = new Account();
+        $sugar = BeanFactory::getBean('Accounts');
         //BEGIN SUGARCRM flav=pro ONLY
         $sugar->disable_row_level_security = true;
         //END SUGARCRM flav=pro ONLY
@@ -169,11 +163,11 @@ function get_notes_in_contacts($in, $orderBy = '')
             $query .= ' ORDER BY ' . $orderBy;
         }
 
-        $contact = new Contact();
+        $contact = BeanFactory::getBean('Contacts');
         //BEGIN SUGARCRM flav=pro ONLY
         $contact->disable_row_level_security = true;
         //END SUGARCRM flav=pro ONLY
-        $note = new Note();
+        $note = BeanFactory::getBean('Notes');
         //BEGIN SUGARCRM flav=pro ONLY
         $note->disable_row_level_security = true;
         //END SUGARCRM flav=pro ONLY
@@ -189,20 +183,16 @@ function get_notes_in_module($in, $module, $orderBy = '')
         if(!empty($orderBy)){
             $query .= ' ORDER BY ' . $orderBy;
         }
-        global $beanList, $beanFiles;
 
-        if(!empty($beanList[$module])){
-            $class_name = $beanList[$module];
-            require_once($beanFiles[$class_name]);
-            $sugar = new $class_name();
-        }else{
+        $sugar = BeanFactory::getBean($module);
+        if(empty($sugar)) {
             return array();
         }
 
         //BEGIN SUGARCRM flav=pro ONLY
         $sugar->disable_row_level_security = true;
         //END SUGARCRM flav=pro ONLY
-        $note = new Note();
+        $note = BeanFactory::getBean('Notes');
         //BEGIN SUGARCRM flav=pro ONLY
         $note->disable_row_level_security = true;
         //END SUGARCRM flav=pro ONLY
@@ -211,13 +201,14 @@ function get_notes_in_module($in, $module, $orderBy = '')
 
     function get_related_in_module($in, $module, $rel_module, $orderBy = '', $row_offset = 0, $limit= -1)
     {
-        global $beanList, $beanFiles;
-         if(!empty($beanList[$rel_module])){
-            $class_name = $beanList[$rel_module];
-            require_once($beanFiles[$class_name]);
-            $rel = new $class_name();
-        }else{
-            return array();
+        $rel = BeanFactory::getBean($rel_module);
+        if(empty($rel)) {
+        	return array();
+        }
+
+        $sugar = BeanFactory::getBean($module);
+        if(empty($sugar)) {
+        	return array();
         }
 
         //bail if the in is empty
@@ -244,18 +235,8 @@ function get_notes_in_module($in, $module, $orderBy = '')
 
         }
 
-        if(!empty($beanList[$module])){
-            $class_name = $beanList[$module];
-            require_once($beanFiles[$class_name]);
-            $sugar = new $class_name();
-        }else{
-            return array();
-        }
-
         //BEGIN SUGARCRM flav=pro ONLY
         $sugar->disable_row_level_security = true;
-        //END SUGARCRM flav=pro ONLY
-        //BEGIN SUGARCRM flav=pro ONLY
         $rel->disable_row_level_security = true;
         //END SUGARCRM flav=pro ONLY
 
@@ -282,7 +263,7 @@ function get_accounts_from_contact($contact_id, $orderBy = '')
         if(!empty($orderBy)){
             $query .= ' ORDER BY ' . $orderBy;
         }
-        $sugar = new Contact();
+        $sugar = BeanFactory::getBean('Contacts');
         //BEGIN SUGARCRM flav=pro ONLY
         $sugar->disable_row_level_security = true;
         //END SUGARCRM flav=pro ONLY
@@ -296,7 +277,7 @@ function get_contacts_from_account($account_id, $orderBy = '')
         if(!empty($orderBy)){
             $query .= ' ORDER BY ' . $orderBy;
         }
-        $sugar = new Account();
+        $sugar = BeanFactory::getBean('Accounts');
         //BEGIN SUGARCRM flav=pro ONLY
         $sugar->disable_row_level_security = true;
         //END SUGARCRM flav=pro ONLY
@@ -418,8 +399,7 @@ function login_user($portal_auth){
 
      if(!empty($user)) {
             global $current_user;
-            $bean = new User();
-            $bean->retrieve($user['id']);
+            $bean = BeanFactory::getBean('Users', $user['id']);
             $current_user = $bean;
             //BEGIN SUGARCRM flav=ent ONLY
             $sessionManager = new SessionManager();
@@ -454,7 +434,7 @@ function portal_get_child_tags_query($session, $tag) {
         'error' => $error->get_soap_array());
     }
 
-    $sugar = new KBDocument();
+    $sugar = BeanFactory::getBean('KBDocuments');
     //Use KBDocuments/SearchUtils.php
     return get_child_tags($tag, $sugar);
 }
@@ -469,7 +449,7 @@ function portal_get_tag_docs_query($session, $tag) {
         'error' => $error->get_soap_array());
     }
 
-    $sugar = new KBDocument();
+    $sugar = BeanFactory::getBean('KBDocuments');
     //Use KBDocuments/SearchUtils.php
     return get_tag_docs($tag, $sugar);
 }
@@ -484,7 +464,7 @@ function portal_get_kbdocument_body_query($session, $id) {
         'error' => $error->get_soap_array());
     }
 
-    $sugar = new KBDocument();
+    $sugar = BeanFactory::getBean('KBDocuments');
     //Use KBDocuments/SearchUtils.php
     return get_kbdocument_body($id, $sugar);
 }
@@ -517,21 +497,21 @@ function portal_get_entry_list_limited($session, $module_name,$where, $order_by,
            if(!empty($a)) { get_cases_in_accounts($a);}
         }
 
-        $sugar = new aCase();
+        $sugar = BeanFactory::getBean('Cases');
 
         $list = array();
         //if no Cases have been loaded into the session as viewable, then do not issue query, just return empty list
         //issuing a query with no cases loaded in session will return ALL the Cases, which is not a good thing
         if(!empty($_SESSION['viewable'][$module_name])){
-            $list =  get_related_list(get_module_in($module_name), new aCase(), $where,$order_by, $row_offset, $limit);
+            $list =  get_related_list(get_module_in($module_name), BeanFactory::getBean('Cases'), $where,$order_by, $row_offset, $limit);
         }
 
     }else if($module_name == 'Contacts'){
-            $sugar = new Contact();
-            $list =  get_related_list(get_module_in($module_name), new Contact(), $where,$order_by);
+            $sugar = BeanFactory::getBean('Contacts');
+            $list =  get_related_list(get_module_in($module_name), BeanFactory::getBean('Contacts'), $where,$order_by);
     }else if($module_name == 'Accounts'){
-            $sugar = new Account();
-            $list =  get_related_list(get_module_in($module_name), new Account(), $where,$order_by);
+            $sugar = BeanFactory::getBean('Accounts');
+            $list =  get_related_list(get_module_in($module_name), BeanFactory::getBean('Accounts'), $where,$order_by);
     }else if($module_name == 'Bugs'){
 
         //if the related bugs have not yet been loaded into the session object,
@@ -548,11 +528,11 @@ function portal_get_entry_list_limited($session, $module_name,$where, $order_by,
         //if no Bugs have been loaded into the session as viewable, then do not issue query, just return empty list
         //issuing a query with no bugs loaded in session will return ALL the Bugs, which is not a good thing
         if(!empty($_SESSION['viewable'][$module_name])){
-            $list = get_related_list(get_module_in($module_name), new Bug(), $where, $order_by, $row_offset, $limit);
+            $list = get_related_list(get_module_in($module_name), BeanFactory::getBean('Bugs'), $where, $order_by, $row_offset, $limit);
         }
     } else if ($module_name == 'KBDocuments') {
 //BEGIN SUGARCRM flav=pro ONLY
-            $sugar = new KBDocument();
+            $sugar = BeanFactory::getBean('KBDocuments');
             $sugar->disable_row_level_security = true;
             $keywords = array();
             //Check if there was a LIKE or = clause built.  If so, the key/value pairs
@@ -570,16 +550,14 @@ function portal_get_entry_list_limited($session, $module_name,$where, $order_by,
             while ($row = $sugar->db->fetchByAssoc($result)) {
                    $id = $row['id'];
                    //$list[] = $id;
-                   $record = new KBDocument();
-                   $record->disable_row_level_security = true;
-                   $record->retrieve($id);
+                   $record = BeanFactory::getBean('KBDocuments', $id, array("disable_row_level_security" => true));
                    $record->fill_in_additional_list_fields();
                    $list[] = $record;
             }
 //END SUGARCRM flav=pro ONLY
     } else if ($module_name == 'FAQ') {
 //BEGIN SUGARCRM flav=pro ONLY
-                $sugar = new KBDocument();
+                $sugar = BeanFactory::getBean('KBDocuments');
                 preg_match("/kbdocuments.tags[\s]=[\s]+[(][\'](.*?)[\'][)]/si", $where, $matches);
                 //Use KBDocuments/SearchUtils.php
                 //ToDo: Set Global ID for FAQ somewhere, can't assume it's faq1
@@ -595,8 +573,6 @@ function portal_get_entry_list_limited($session, $module_name,$where, $order_by,
     $field_list = array();
     foreach($list as $value)
     {
-
-        //$loga->fatal("Adding another account to the list");
         $output_list[] = get_return_value($value, $module_name);
         $_SESSION['viewable'][$module_name][$value->id] = $value->id;
         if(empty($field_list)){
@@ -611,8 +587,3 @@ function portal_get_entry_list_limited($session, $module_name,$where, $order_by,
 
 $invalid_contact_fields = array('portal_password'=>1, 'portal_active'=>1);
 $valid_modules_for_contact = array('Contacts'=>1, 'Cases'=>1, 'Notes'=>1, 'Bugs'=>1, 'Accounts'=>1, 'Leads'=>1, 'KBDocuments'=>1);
-
-
-
-
-?>

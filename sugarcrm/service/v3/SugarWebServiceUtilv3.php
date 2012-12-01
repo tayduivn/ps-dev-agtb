@@ -191,7 +191,7 @@ class SugarWebServiceUtilv3 extends SoapHelperWebServices {
 
 		if($value->module_dir == 'Bugs'){
 			require_once('modules/Releases/Release.php');
-			$seedRelease = new Release();
+			$seedRelease = BeanFactory::getBean('Releases');
 			$options = $seedRelease->get_releases(TRUE, "Active");
 			$options_ret = array();
 			foreach($options as $name=>$value){
@@ -268,10 +268,8 @@ class SugarWebServiceUtilv3 extends SoapHelperWebServices {
 	    foreach ($layout_defs[$module]['subpanel_setup'] as $subpanel => $subpaneldefs)
 	    {
 	        $moduleToCheck = $subpaneldefs['module'];
-	        if(!isset($beanList[$moduleToCheck]))
-	           continue;
-	        $class_name = $beanList[$moduleToCheck];
-	        $bean = new $class_name();
+	        $bean = BeanFactory::getBean($moduleToCheck);
+	        if(empty($bean)) continue;
 	        if($bean->ACLAccess('list'))
 	            $results[$subpanel] = $subpaneldefs;
 	    }
@@ -293,7 +291,7 @@ class SugarWebServiceUtilv3 extends SoapHelperWebServices {
                     $GLOBALS['module'] = $module_name; //WirelessView keys off global variable not instance variable...
                     $v = new SugarWirelessListView();
                     $results = $v->getMetaDataFile();
-                    
+
                     // Needed for conversion
                     require_once 'include/MetaDataManager/MetaDataConverter.php';
                     $results = MetaDataConverter::toLegacy('list', $results);
@@ -308,7 +306,7 @@ class SugarWebServiceUtilv3 extends SoapHelperWebServices {
                     $meta = $v->getMetaDataFile('Wireless' . $fullView);
                     $metadataFile = $meta['filename'];
                     require_once($metadataFile);
-                    
+
                     // For handling view def conversion
                     $viewtype = strtolower($view);
 
@@ -317,6 +315,9 @@ class SugarWebServiceUtilv3 extends SoapHelperWebServices {
                         // Needed for conversion
                         require_once 'include/MetaDataManager/MetaDataConverter.php';
                         $results = MetaDataConverter::toLegacy($viewtype, $viewdefs[$meta['module_name']]['mobile']['view'][$viewtype]);
+                        
+                        // Handle fieldset conversions
+                        $results = MetaDataConverter::fromGridFieldsets($results);
                     } else {
                         //Wireless detail metadata may actually be just edit metadata.
                         $results = isset($viewdefs[$meta['module_name']][$fullView] ) ? $viewdefs[$meta['module_name']][$fullView] : $viewdefs[$meta['module_name']]['EditView'];
@@ -399,7 +400,6 @@ class SugarWebServiceUtilv3 extends SoapHelperWebServices {
      */
     function get_upcoming_activities()
     {
-        global $beanList;
         $maxCount = 10;
 
         $activityModules = array('Meetings' => array('date_field' => 'date_start','status' => 'Planned','status_field' => 'status', 'status_opp' => '='),
@@ -415,8 +415,7 @@ class SugarWebServiceUtilv3 extends SoapHelperWebServices {
                 continue;
             }
 
-            $class_name = $beanList[$module];
-	        $seed = new $class_name();
+	        $seed = BeanFactory::getBean($module);
             $query = $this->generateUpcomingActivitiesWhereClause($seed, $meta);
 
             $response = $seed->get_list(/* Order by date field */"{$meta['date_field']} ASC",  /*Where clause */$query, /* No Offset */ 0,

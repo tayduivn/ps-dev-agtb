@@ -30,15 +30,15 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 	
 if(!empty($_REQUEST['saved_search_action'])) {
 
-	$ss = new SavedSearch();
+	$ss = BeanFactory::getBean('SavedSearch');
 	
 	switch($_REQUEST['saved_search_action']) {
         case 'update': // save here
-        	$savedSearchBean = loadBean($_REQUEST['search_module']);
+        	$savedSearchBean = BeanFactory::getBean($_REQUEST['search_module']);
             $ss->handleSave('', true, false, $_REQUEST['saved_search_select'], $savedSearchBean);
             break;
 		case 'save': // save here
-			$savedSearchBean = loadBean($_REQUEST['search_module']);
+			$savedSearchBean = BeanFactory::getBean($_REQUEST['search_module']);
 			$ss->handleSave('', true, false, null, $savedSearchBean);
 			break;
 		case 'delete': // delete here
@@ -61,7 +61,7 @@ elseif(!empty($_REQUEST['saved_search_select'])) { // requesting a search here.
 	}
 	else {
 		
-		$ss = new SavedSearch();
+		$ss = BeanFactory::getBean('SavedSearch');
         $show='no';
         if(isset($_REQUEST['showSSDIV'])){$show = $_REQUEST['showSSDIV'];}
 		$ss->returnSavedSearch($_REQUEST['saved_search_select'], $searchFormTab, $show);

@@ -41,7 +41,7 @@ class charts {
      */
     function campaign_response_chart($targets,$campaign_id) {
 
-        $focus = new Campaign();
+        $focus = BeanFactory::getBean('Campaigns');
         $leadSourceArr = array();
 
         $query = "SELECT activity_type,target_type, count(*) hits ";

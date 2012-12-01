@@ -100,7 +100,7 @@ class MassUpdate
 		unset($_REQUEST['PHPSESSID']);
 		$query = base64_encode(serialize($_REQUEST));
 
-        $bean = loadBean($_REQUEST['module']);
+        $bean = BeanFactory::getBean($_REQUEST['module']);
        $order_by_name = $bean->module_dir.'2_'.strtoupper($bean->object_name).'_ORDER_BY' ;
        $lvso = isset($_REQUEST['lvso'])?$_REQUEST['lvso']:"";
        $request_order_by_name = isset($_REQUEST[$order_by_name])?$_REQUEST[$order_by_name]:"";
@@ -284,8 +284,7 @@ eoq;
 
 					if($count++ != 0) {
 					   //Create a new instance to clear values and handle additional updates to bean's 2,3,4...
-                       $className = get_class($this->sugarbean);
-                       $this->sugarbean = new $className();
+                       $this->sugarbean = $this->sugarbean->getCopy();
 					}
 
 					$this->sugarbean->retrieve($id);
@@ -1261,9 +1260,8 @@ EOQ;
 	    }
 	}
 
-    function generateSearchWhere($module, $query)
-    {//this function is similar with function prepareSearchForm() in view.list.php
-        $seed = loadBean($module);
+    function generateSearchWhere($module, $query) {//this function is similar with function prepareSearchForm() in view.list.php
+        $seed = BeanFactory::getBean($module);
         $this->use_old_search = true;
         if(SugarAutoLoader::existing('modules/'.$module.'/SearchForm.html')){
             if(SugarAutoLoader::existing('modules/' . $module . '/metadata/SearchFields.php')) {

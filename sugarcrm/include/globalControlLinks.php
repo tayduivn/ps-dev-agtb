@@ -37,9 +37,6 @@ if(isset( $sugar_config['disc_client']) && $sugar_config['disc_client']){
 
 //BEGIN SUGARCRM flav!=com ONLY
 if(SugarThemeRegistry::current()->name != 'Classic')
-//BEGIN SUGARCRM flav=sales ONLY
-if(!is_admin($GLOBALS['current_user']))
-//END SUGARCRM flav=sales ONLY
 $global_control_links['profile'] = array(
 'linkinfo' => array($app_strings['LBL_PROFILE'] => 'index.php?module=Users&action=EditView&record='.$GLOBALS['current_user']->id),
 'submenu' => ''
@@ -61,19 +58,10 @@ if (
 'linkinfo' => array($app_strings['LBL_ADMIN'] => 'index.php?module=Administration&action=index'),
 'submenu' => ''
 );
-//BEGIN SUGARCRM flav=sales ONLY
-if ($current_user->user_type == "UserAdministrator")
-$global_control_links['admin'] = array(
-'linkinfo' => array($app_strings['LBL_USER_ADMIN'] => 'index.php?module=Users&action=index'),
-'submenu' => ''
-);
-//END SUGARCRM flav=sales ONLY
-//BEGIN SUGARCRM flav!=sales ONLY
 $global_control_links['training'] = array(
 'linkinfo' => array($app_strings['LBL_TRAINING'] => 'javascript:void(window.open(\'http://support.sugarcrm.com\'))'),
 'submenu' => ''
  );
-//END SUGARCRM flav!=sales ONLY
 
 /* no longer goes in the menubar - now implemented in the bottom bar.
 $global_control_links['help'] = array(

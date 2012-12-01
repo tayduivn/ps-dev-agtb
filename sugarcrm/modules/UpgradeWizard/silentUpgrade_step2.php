@@ -268,7 +268,7 @@ $errors = array();
 	//////////////////////////////////////////////////////////////////////////////
 	//Adding admin user to the silent upgrade
 
-	$current_user = new User();
+	$current_user = BeanFactory::getBean('Users');
 	if(isset($argv[4])) {
 	   //if being used for internal upgrades avoid admin user verification
 	   $user_name = $argv[4];
@@ -410,7 +410,7 @@ foreach ($beanFiles as $bean => $file) {
 	if(file_exists($file)){
 		unset($GLOBALS['dictionary'][$bean]);
 		require_once($file);
-		$focus = new $bean ();
+		$focus = BeanFactory::newBeanByName($bean);
 		if(empty($focus->table_name) || isset($repairedTables[$focus->table_name])) {
 		   continue;
 		}
@@ -476,8 +476,7 @@ logThis("Complete: Update custom module built using module builder to add favori
 
 if($ce_to_pro_ent) {
 	//add the global team if it does not exist
-	$globalteam = new Team();
-	$globalteam->retrieve('1');
+	$globalteam = BeanFactory::getBean('Teams', '1');
 	require_once($unzip_dir.'/'.$zip_from_dir.'/modules/Administration/language/en_us.lang.php');
 	if(isset($globalteam->name)){
 		echo 'Global '.$mod_strings['LBL_UPGRADE_TEAM_EXISTS'].'<br>';

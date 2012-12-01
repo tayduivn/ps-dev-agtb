@@ -157,7 +157,7 @@ class PredefinedChart
 		}
 
 		$user_id = $ids;
-		$opp = new Opportunity;
+		$opp = BeanFactory::getBean('Opportunities');
 		$where="";
 		//build the where clause for the query that matches $user
 		$count = count($user_id);
@@ -273,7 +273,7 @@ class PredefinedChart
 
 		$user_id = $ids;
 
-		$opp = new Opportunity();
+		$opp = BeanFactory::getBean('Opportunities');
 		$where="";
 		//build the where clause for the query that matches $user
 		$count = count($user_id);
@@ -389,7 +389,7 @@ class PredefinedChart
 		$dateStartDisplay = $timedate->asUserDate($timedate->fromString($date_start));
 		$dateEndDisplay = $timedate->asUserDate($timedate->fromString($date_end));
 
-		$opp = new Opportunity();
+		$opp = BeanFactory::getBean('Opportunities');
 		//build the where clause for the query that matches $date_start and $date_end
 		$where .= "AND opportunities.date_closed >= ".db_convert("'".$date_start."'",'date')." AND opportunities.date_closed <= ".db_convert("'".$date_end."'",'date')." AND opportunities.deleted=0";
 		$query = "SELECT sales_stage,".db_convert('opportunities.date_closed','date_format',array("'%Y-%m'"),array("'YYYY-MM'"))." as m, sum(amount_usdollar/1000) as total, count(*) as opp_count FROM opportunities ";
@@ -453,7 +453,7 @@ class PredefinedChart
 		}
 
 		$user_id = $ids;
-		$opp = new Opportunity;
+		$opp = BeanFactory::getBean('Opportunities');
 		//Now do the db queries
 		//query for opportunity data that matches $legends and $user
 		$where="";

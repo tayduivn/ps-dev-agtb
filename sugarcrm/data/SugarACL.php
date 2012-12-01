@@ -309,4 +309,39 @@ class SugarACL
             }
         }
     }
+
+    public static $all_access = array('access' => true,'view' => true,'list' => true,'edit' => true,
+        'delete' => true,'import' => true,'export' => true,'massupdate' => true);
+
+    /**
+     * Get user access for the list of actions
+     * @param string $module
+     * @param array $access_list List of actions
+     * @returns array - List of access levels. Access levels not returned are assumed to be "all allowed".
+     */
+    public static function getUserAccess($module, $access_list = array(), $context = array())
+    {
+        if(!isset(self::$acls[$module])) {
+        	self::loadACLs($module, $context);
+        }
+        if(empty($access_list)) {
+            $access_list = self::$all_access;
+        }
+        $access = $access_list;
+        foreach(self::$acls[$module] as $acl) {
+            $acl_access = $acl->getUserAccess($module, $access_list, $context);
+            foreach($acl_access as $name => $value) {
+                if($value == false) {
+                    $access[$name] = false;
+                    // don't check already rejected ones
+                    unset($access_list[$name]);
+                }
+            }
+            // if we did not have any actions left, we're done
+            if(empty($access_list)) {
+                break;
+            }
+        }
+        return $access;
+    }
 }

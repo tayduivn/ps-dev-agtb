@@ -44,19 +44,53 @@ class OpportunitiesViewEdit extends ViewEdit {
  		if(empty($this->bean->id) && empty($_REQUEST['probability'])) {
 		   $prePopProb = 'document.getElementsByName(\'sales_stage\')[0].onchange();';
 		}
+		//BEGIN SUGARCRM flav=pro ONLY
+		$admin = BeanFactory::getBean('Administration');
+		$settings = $admin->getConfigForModule('Forecasts');
+		$wonStages = $json->encode($settings['sales_stage_won']);
+		//END SUGARCRM flav=pro ONLY
 		
 $probability_script=<<<EOQ
 	<script>
 	prob_array = $prob_array;
-	document.getElementsByName('sales_stage')[0].onchange = function() {
-			if(typeof(document.getElementsByName('sales_stage')[0].value) != "undefined" && prob_array[document.getElementsByName('sales_stage')[0].value]
-			&& typeof(document.getElementsByName('probability')[0]) != "undefined"
-			) {
-				document.getElementsByName('probability')[0].value = prob_array[document.getElementsByName('sales_stage')[0].value];
-				SUGAR.util.callOnChangeListers(document.getElementsByName('probability')[0]);
+	var sales_stage = document.getElementsByName('sales_stage')[0];
+	var probability = document.getElementsByName('probability')[0];
+	//BEGIN SUGARCRM flav=pro ONLY
+	won_stages = $wonStages;
+	var best_case = document.getElementsByName('best_case')[0];
+	var worst_case = document.getElementsByName('worst_case')[0];
+	var amount = document.getElementsByName('amount')[0];
 
-			} 
-		};
+	if(won_stages.indexOf(sales_stage.value) > -1) {
+	    best_case.value = amount.value;
+	    worst_case.value = amount.value;
+	    best_case.setAttribute("readonly", "true");
+	    worst_case.setAttribute("readonly", "true");
+	}
+	//END SUGARCRM flav=pro ONLY
+	sales_stage.onchange = function() {
+	    if(typeof(sales_stage.value) != "undefined" && prob_array[sales_stage.value] && typeof(probability) != "undefined") {
+        	probability.value = prob_array[sales_stage.value];
+        	SUGAR.util.callOnChangeListers(probability);
+	    }
+	//BEGIN SUGARCRM flav=pro ONLY
+	    if(won_stages.indexOf(sales_stage.value) > -1) {
+        	best_case.value = amount.value;
+        	worst_case.value = amount.value;
+        	best_case.setAttribute("readonly", "true");
+        	worst_case.setAttribute("readonly", "true");
+	    } else if(typeof(sales_stage.value) != "undefined") {
+        	best_case.removeAttribute("readonly");
+        	worst_case.removeAttribute("readonly");
+	    }
+	};
+	amount.onchange = function() {
+	    if(won_stages.indexOf(sales_stage.value) > -1) {
+	        best_case.value = amount.value;
+	        worst_case.value = amount.value;
+	    }
+	//END SUGARCRM flav=pro ONLY
+	};
 	$prePopProb
 	</script>
 EOQ;

@@ -242,7 +242,6 @@ $dictionary['Call'] = array('table' => 'calls', 'comment' => 'A Call is an activ
 		'link_type'=>'one',
 		'vname'=>'LBL_OPPORTUNITY',
   ),
-  //BEGIN SUGARCRM flav!=sales ONLY
   'leads' =>
   array (
     'name' => 'leads',
@@ -251,7 +250,6 @@ $dictionary['Call'] = array('table' => 'calls', 'comment' => 'A Call is an activ
     'source'=>'non-db',
         'vname'=>'LBL_LEADS',
   ),
-  //END SUGARCRM flav!=sales ONLY
     // Bug #42619 Missed back-relation from Project module
     'project'=> array (
         'name' => 'project',

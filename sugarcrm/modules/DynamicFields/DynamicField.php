@@ -28,6 +28,19 @@ class DynamicField {
     var $use_existing_labels = false; // this value is set to true by install_custom_fields() in ModuleInstaller.php; everything else expects it to be false
     var $base_path = "";
 
+
+    /**
+     * This is a depreciated method, please start using __construct() as this method will be removed in a future version
+     *
+     * @see __construct
+     * @deprecated
+     */
+    public function DynamicField($module = '')
+    {
+        $this->__construct($module);
+    }
+
+
     public function __construct($module = '') {
         $this->module = (! empty ( $module )) ? $module :( (isset($_REQUEST['module']) && ! empty($_REQUEST['module'])) ? $_REQUEST ['module'] : '');
         $this->base_path = "custom/Extension/modules/{$this->module}/Ext/Vardefs";
@@ -285,18 +298,16 @@ class DynamicField {
 
     }
 
-   function getRelateJoin($field_def, $joinTableAlias) {
+   public function getRelateJoin($field_def, $joinTableAlias) {
         if (empty($field_def['type']) || $field_def['type'] != "relate") {
             return false;
         }
-        global $beanFiles, $beanList, $module;
-        $rel_module = $field_def['module'];
-        if(empty($beanFiles[$beanList[$rel_module]])) {
+        global $module;
+        $rel_mod = BeanFactory::getBean($field_def['module']);
+        if(empty($rel_mod)) {
             return false;
         }
 
-        require_once($beanFiles[$beanList[$rel_module]]);
-        $rel_mod = new $beanList[$rel_module]();
         $rel_table = $rel_mod->table_name;
         if (isset($rel_mod->field_defs['name']))
         {
@@ -329,7 +340,7 @@ class DynamicField {
     * Fills in all the custom fields of type relate relationships for an object
     *
     */
-   function fill_relationships(){
+   public function fill_relationships(){
         global $beanList, $beanFiles;
         if(!empty($this->bean->relDepth)) {
             if($this->bean->relDepth > 1)return;
@@ -343,13 +354,12 @@ class DynamicField {
                 $name = $field['name'];
                 if (empty($this->bean->$name)) { //Don't load the relationship twice
                     $id_name = $field['id_name'];
-                    if(isset($beanList[ $related_module]) && isset($this->bean->$name)){
-                        $mod = BeanFactory::newBean($related_module);
-                        if(!empty($mod)) {
+                    $mod = BeanFactory::getBean($related_module);
+
+                    if(!empty($mod) && isset($this->bean->$name)){
                             $mod->relDepth = $this->bean->relDepth + 1;
                             $mod->retrieve($this->bean->$id_name);
                             $this->bean->$name = $mod->name;
-                        }
                     }
                 }
             }
@@ -361,7 +371,7 @@ class DynamicField {
      *
      * @param boolean $isUpdate
      */
-     function save($isUpdate){
+     public function save($isUpdate){
 
         if($this->bean->hasCustomFields() && isset($this->bean->id)){
 
@@ -441,7 +451,7 @@ class DynamicField {
      * Use the widgets get_db_modify_alter_table() method to get the table sql - some widgets do not need any custom table modifications
      * @param STRING $name - field name
      */
-    function deleteField($widget){
+    public function deleteField($widget){
         require_once('modules/DynamicFields/templates/Fields/TemplateField.php');
         global $beanList;
         if (!($widget instanceof TemplateField)) {
@@ -501,12 +511,12 @@ class DynamicField {
      * @param Field Object $field
      * @return boolean
      */
-    function addFieldObject(&$field){
+    public function addFieldObject(&$field){
         $GLOBALS['log']->debug('adding field');
         $object_name = $this->module;
         $db_name = $field->name;
 
-        $fmd = new FieldsMetaData();
+        $fmd = BeanFactory::getBean('EditCustomFields');
         $id =  $fmd->retrieve($object_name.$db_name,true, false);
         $is_update = false;
         $label = strtoupper( $field->label );
@@ -577,14 +587,14 @@ class DynamicField {
         return true;
     }
 
-    function saveExtendedAttributes($field, $column_fields)
+    public function saveExtendedAttributes($field, $column_fields)
     {
-            require_once ('modules/ModuleBuilder/parsers/StandardField.php') ;
-            require_once ('modules/DynamicFields/FieldCases.php') ;
-            global $beanList;
+        require_once ('modules/ModuleBuilder/parsers/StandardField.php') ;
+        require_once ('modules/DynamicFields/FieldCases.php') ;
+        global $beanList;
 
-            $to_save = array();
-            $base_field = get_widget ( $field->type) ;
+        $to_save = array();
+        $base_field = get_widget ( $field->type) ;
         foreach ($field->vardef_map as $property => $fmd_col){
             //Skip over attribes that are either the default or part of the normal attributes stored in the DB
             if (!isset($field->$property) || in_array($fmd_col, $column_fields) || in_array($property, $column_fields)

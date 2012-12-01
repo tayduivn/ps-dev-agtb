@@ -57,6 +57,8 @@ class RestPublicMetadataSugarLayoutsTest extends RestTestBase {
             SugarAutoLoader::put($file, $contents);
         }
         SugarAutoLoader::saveMap();
+        // Make sure we don't login before running public api tests
+        $this->authToken = 'LOGGING_IN';
     }
 
     public function tearDown()
@@ -78,7 +80,7 @@ class RestPublicMetadataSugarLayoutsTest extends RestTestBase {
         $reply = $this->_restCall('metadata/public');
         $this->assertNotEmpty($reply['reply']['layouts'], 'Layouts return data is missing');
         $this->assertTrue(isset($reply['reply']['layouts']['_hash']), 'Layout hash is missing.');
-        $this->assertArrayHasKey('wiggle', $reply['reply']['layouts']['base'], 'Test result not found');
+        $this->assertArrayHasKey('wiggle', $reply['reply']['layouts'], 'Test result not found');
     }
     /**
      * @group rest
@@ -87,7 +89,7 @@ class RestPublicMetadataSugarLayoutsTest extends RestTestBase {
         $reply = $this->_restCall('metadata/public?type_filter=layouts');
         $this->assertNotEmpty($reply['reply']['layouts'], 'Layouts return data is missing');
         $this->assertTrue(isset($reply['reply']['layouts']['_hash']), 'Layout hash is missing.');
-        $this->assertArrayHasKey('woggle', $reply['reply']['layouts']['base'], 'Test result not found');
+        $this->assertArrayHasKey('woggle', $reply['reply']['layouts'], 'Test result not found');
     }
     /**
      * @group rest
@@ -96,16 +98,16 @@ class RestPublicMetadataSugarLayoutsTest extends RestTestBase {
         $reply = $this->_restCall('metadata/public?platform=portal');
         $this->assertNotEmpty($reply['reply']['layouts'], 'Layouts return data is missing');
         $this->assertTrue(isset($reply['reply']['layouts']['_hash']), 'Layout hash is missing.');
-        $this->assertArrayHasKey('bizzle', $reply['reply']['layouts']['portal'], 'Test result not found');
+        $this->assertArrayHasKey('bizzle', $reply['reply']['layouts'], 'Test result not found');
     }
     /**
      * @group rest
      */
     public function testPortalLayoutRequestLayoutsOnly() {
         $reply = $this->_restCall('metadata/public?type_filter=layouts&platform=portal');
-        $this->assertNotEmpty($reply['reply']['layouts']['portal'], 'Layouts return data is missing');
+        $this->assertNotEmpty($reply['reply']['layouts'], 'Layouts return data is missing');
         $this->assertTrue(isset($reply['reply']['layouts']['_hash']), 'Layout hash is missing.');
-        $this->assertArrayHasKey('bozzle', $reply['reply']['layouts']['portal'], 'Test result not found');
+        $this->assertArrayHasKey('bozzle', $reply['reply']['layouts'], 'Test result not found');
     }
     /**
      * @group rest
@@ -114,17 +116,18 @@ class RestPublicMetadataSugarLayoutsTest extends RestTestBase {
         $reply = $this->_restCall('metadata/public?platform=mobile');
         $this->assertNotEmpty($reply['reply']['layouts'], 'Layouts return data is missing');
         $this->assertTrue(isset($reply['reply']['layouts']['_hash']), 'Layout hash is missing.');
-        $this->assertArrayHasKey('pozzle', $reply['reply']['layouts']['mobile'], 'Test result not found');
+        $this->assertArrayHasKey('pozzle', $reply['reply']['layouts'], 'Test result not found');
     }
     /**
      * @group rest
      */
     public function testMobileLayoutRequestLayoutsOnly() {
         $reply = $this->_restCall('metadata/public?type_filter=layouts&platform=mobile');
+        $replyBase = $this->_restCall('metadata/public?type_filter=layouts&platform=base');
         $this->assertNotEmpty($reply['reply']['layouts'], 'Layouts return data is missing');
         $this->assertTrue(isset($reply['reply']['layouts']['_hash']), 'Layout hash is missing.');
-        $this->assertTrue(!isset($reply['reply']['layouts']['mobile']['dizzle']), 'Incorrectly picked up metadata that should not have been read');
-        $this->assertArrayHasKey('wiggle', $reply['reply']['layouts']['base'], 'BASE metadata not picked up');
-        $this->assertNotEmpty($reply['reply']['layouts']['base']['wiggle']['meta']['test'], 'Test result data not returned');
+        $this->assertTrue(!isset($reply['reply']['layouts']['dizzle']), 'Incorrectly picked up metadata that should not have been read');
+        $this->assertArrayHasKey('wiggle', $replyBase['reply']['layouts'], 'BASE metadata not picked up');
+        $this->assertNotEmpty($replyBase['reply']['layouts']['wiggle']['meta']['test'], 'Test result data not returned');
     }
 }

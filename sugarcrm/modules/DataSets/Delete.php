@@ -28,7 +28,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  ********************************************************************************/
 /*********************************************************************************
  * $Id: Delete.php 45763 2009-04-01 19:16:18Z majed $
- * Description:  
+ * Description:
  ********************************************************************************/
 
 
@@ -36,15 +36,15 @@ require_once('include/controller/Controller.php');
 global $mod_strings;
 
 
-
-$focus = new DataSet();
-
 if(!isset($_REQUEST['record']))
 	sugar_die($mod_strings['ERR_DELETE_RECORD']);
 
-$focus->retrieve($_REQUEST['record']);
+$focus = BeanFactory::getBean('DataSets', $_REQUEST['record']);
 
-	//if report_id is present
+if(empty($focus))
+	sugar_die($mod_strings['ERR_DELETE_RECORD']);
+
+//if report_id is present
 	if(!empty($focus->report_id) && $focus->report_id!=""){
 	//now we need to go in and reorder the reports
 		$controller = new Controller();
@@ -53,9 +53,9 @@ $focus->retrieve($_REQUEST['record']);
 
 	//end if report id exists;
 	}
-	
+
 $focus->mark_deleted($_REQUEST['record']);
-$focus->disable_custom_layout();	
+$focus->disable_custom_layout();
 
 header("Location: index.php?module=".$_REQUEST['return_module']."&action=".$_REQUEST['return_action']."&record=".$_REQUEST['return_id']);
 ?>

@@ -62,7 +62,7 @@ $sugar_smarty->assign("CURRENT_USER", $current_user->id);
 $sugar_smarty->assign("CALENDAR_LANG_FILE", getJSPath('jscalendar/lang/calendar-' . substr($GLOBALS['current_language'], 0, 2).'.js'));
 
 
-$focus = new Project();
+$focus = BeanFactory::getBean('Project');
 
 if(!empty($_REQUEST['record']))
 {
@@ -70,10 +70,10 @@ if(!empty($_REQUEST['record']))
     $sugar_smarty->assign('ID', $_REQUEST['record']);
 }
 
-$userBean = new User();
+$userBean = BeanFactory::getBean('Users');
 $focus->load_relationship("user_resources");
 $users = $focus->user_resources->getBeans($userBean);
-$contactBean = new Contact();
+$contactBean = BeanFactory::getBean('Contacts');
 $focus->load_relationship("contact_resources");
 $contacts = $focus->contact_resources->getBeans($contactBean);
 
@@ -88,11 +88,11 @@ ksort($resources);
 $sugar_smarty->assign("RESOURCES", $resources);
 
 $projectTasks = array();
-$projectTaskBean = new ProjectTask();
-$holidayBean = new Holiday();
+$projectTaskBean = BeanFactory::getBean('ProjectTask');
+$holidayBean = BeanFactory::getBean('Holidays');
 $holidays = array();
 $projects= array();
-$projectBean = new Project();
+$projectBean = BeanFactory::getBean('Project');
 $dateRangeArray = array();
 
 if (!empty($_REQUEST['resource'])) {
@@ -109,7 +109,7 @@ if (!empty($_REQUEST['resource'])) {
 
     $result = $projectTaskBean->db->query($query, true, "");
     while(($row = $projectTaskBean->db->fetchByAssoc($result)) != null) {
-        $projectTask = new ProjectTask();
+        $projectTask = BeanFactory::getBean('ProjectTask');
         $projectTask->id = $row['id'];
         $projectTask->retrieve();
         $projectTasks[] = $projectTask;
@@ -118,7 +118,7 @@ if (!empty($_REQUEST['resource'])) {
     //Projects //////////////////////
     $result = $projectBean->db->query($query, true, "");
     while(($row = $projectBean->db->fetchByAssoc($result)) != null) {
-        $project = new Project();
+        $project = BeanFactory::getBean('Project');
         $project->id = $row['project_id'];
         $project->retrieve();
         $projects[$project->id] = $project;
@@ -139,7 +139,7 @@ if (!empty($_REQUEST['resource'])) {
     $i = 0;
     $isHoliday = array();
     while (($row = $holidayBean->db->fetchByAssoc($result)) != null) {
-        $holiday = new Holiday();
+        $holiday = BeanFactory::getBean('Holidays');
         $holiday->id = $row['id'];
         $holiday->retrieve();
         $holidayDate = $timedate->fromUserDate($holiday->holiday_date, false);

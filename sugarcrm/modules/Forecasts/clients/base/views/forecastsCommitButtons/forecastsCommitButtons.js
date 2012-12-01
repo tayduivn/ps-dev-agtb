@@ -4,6 +4,10 @@
  * forecasts:commitButtons:disabled
  *      on: context.forecasts
  *      by: change:selectedUser, change:selectedTimePeriod
+ * 
+ * forecasts:commitButtons:saved
+ *      on: context.forecasts
+ *      by: triggerSaveDraft()
  *
  * modal:forecastsTabbedConfig:open - to cause modal.js to pop up
  *      on: layout
@@ -25,6 +29,11 @@
      * Used to determine whether the config setting cog button is displayed
      */
     showConfigButton: false,
+    
+    /**
+     * Used to know which version to save, draft or live
+     */
+    draft: 0,
             
     /**
      * Adds event listener to elements
@@ -32,7 +41,6 @@
     events: {
         "click a[id=commit_forecast]" : "triggerCommit",
         "click a[id=save_draft]" : "triggerSaveDraft",
-        "click a[name=forecastSettings]" : "triggerConfigModal",
         "click a.drawerTrig" : "triggerRightColumnVisibility",
         "click a[id=export]" : "triggerExport",
         "click a[id=print]" : "triggerPrint"
@@ -73,6 +81,7 @@
             this.context.forecasts.worksheet.on("change", this.showSaveButton, self);
             this.context.forecasts.worksheetmanager.on("change", this.showSaveButton, self);
             this.context.forecasts.on("forecasts:forecastcommitbuttons:triggerCommit", this.triggerCommit, self);
+            this.context.forecasts.on("forecasts:forecastcommitbuttons:triggerSaveDraft", this.triggerSaveDraft, self);
             this.context.forecasts.on("change:selectedUser", function(){
             	this.context.forecasts.trigger("forecasts:commitButtons:disabled");
             }, this);
@@ -103,19 +112,23 @@
      * 
      */
     showSaveButton: function(){
-    	var self = this;
-    	var worksheet = this.context.forecasts[this.context.forecasts.get("currentWorksheet")];
+    	var self = this,
+    	    worksheet = this.context.forecasts[this.context.forecasts.get("currentWorksheet")],    	    
+    	    savebtn = this.$el.find('#save_draft');
     	
 		_.each(worksheet.models, function(model, index){
 			var isDirty = model.get("isDirty");
 			if(_.isBoolean(isDirty) && isDirty){
-				self.enableCommitButton();
-				self.$el.find('a[id=save_draft]').removeClass('disabled');
 				//if something in the worksheet is dirty, we need to flag the entire worksheet as dirty.
 				worksheet.isDirty = true;
 			}
 		});
-    	
+		
+		//if the sheet is dirty, trigger the event for the app to show the commit buttons.
+		if(worksheet.isDirty){
+		    savebtn.removeClass("disabled");
+		    this.context.forecasts.trigger("forecasts:commitButtons:enabled");
+		}		
     },
     
     /**
@@ -145,98 +158,81 @@
      */
     triggerCommit: function() {
     	var commitbtn =  this.$el.find('#commit_forecast'),
-    	savebtn = this.$el.find('#save_draft'),
-    	worksheet = this.context.forecasts[this.context.forecasts.get("currentWorksheet")],
-    	self = this,
-    	saveCount = 0;
+    	    savebtn = this.$el.find('#save_draft'),
+    	    self = this,
+    	    saved = 0;
+    	self.draft = 0;
+    	
         if(!commitbtn.hasClass("disabled")){
-            var models = _.filter(worksheet.models, function(model, index) {
-                return (model.get("version") == 0 || (_.isBoolean(model.get("isDirty")) && model.get("isDirty")));
-            }, this);
-            //commit each model that needs saved
-            _.each(models, function(model, index){
-            //set properties on model to aid in save
-                model.set({
-                    "draft" : 0,
-                    "isDirty" : false,
-                    "timeperiod_id" : self.context.forecasts.get("selectedTimePeriod").id,
-                    "current_user" : app.user.get('id')
-                }, {silent:true});
-                //set what url  is used for save
-                model.url = worksheet.url.split("?")[0] + "/" + model.get("id");
-                model.save({}, {success: function() {
-                    saveCount++;
-                    //if this is the last save and this is the manager worksheet, flag the worksheet to reload
-                    if(models.length === saveCount && self.context.forecasts.get("currentWorksheet") == "worksheetmanager") {
-                        self.context.forecasts.set({reloadWorksheetFlag: true});
-                    }
-                }});
-                //this worksheet is clean
-                worksheet.isDirty = false;
-            });
-
+            saved = self.saveDirtyWorksheets(function(){
+                self.context.forecasts.set({commitForecastFlag: true});
+            }, true);
+            
+            //we didn't have anything to save (and wait to finish), so go ahead and trigger the commit
+            if(saved == 0){
+                self.context.forecasts.set({commitForecastFlag: true});
+            }
             savebtn.addClass("disabled");
-    		self.context.forecasts.set({commitForecastFlag: true});
     	}        
     },
-
+    
     /**
-     * Triggers the event expected by the modal layout to show the config panels
+     * saveDirtyWorksheets
+     * utility function to save dirty worksheets
+     * @param fcn callback
+     * @param boolean Boolean to suppress the forecasts:commitButtons:saved event from triggering
+     * @return integer Number of items saved
      */
-    triggerConfigModal: function() {
-        var params = {
-            title: app.lang.get("LBL_FORECASTS_CONFIG_TITLE", "Forecasts"),
-            components: [{layout:"tabbedConfig"}],
-            span: 10,
-            before: {
-                hide: function() {
-                    // Check to see if we're closing modal via cancel button
-                    // We have no event passed here to get which button was clicked
-                    if(this.context.forecasts.get('saveClicked')) {
-                        // display a success message
-                        app.alert.show('success', {
-                            level: 'success',
-                            closeable: false,
-                            autoClose: true,
-                            title : app.lang.get("LBL_FORECASTS_WIZARD_SUCCESS_TITLE", "Forecasts") + ":",
-                            messages: [app.lang.get("LBL_FORECASTS_TABBED_CONFIG_SUCCESS_MESSAGE", "Forecasts")]
-                        });
-                        // call tell the metadata to sync to get the updated config's and refresh the layout
-                        app.sync();
-                    } else {
-                        // reset without a change event in case they click settings again
-                        // before refreshing the page
-                        this.context.forecasts.set({ saveClicked : false }, {silent:true});
-                    }
+    saveDirtyWorksheets: function(fcn, suppressSaveTrigger){
+        var worksheet = this.context.forecasts[this.context.forecasts.get("currentWorksheet")],
+            self = this,
+            saveCount = 0,
+            models = _.filter(worksheet.models, function(model, index) {
+                return (model.get("version") == 0 || (_.isBoolean(model.get("isDirty")) && model.get("isDirty")));
+            }, this);
+               
+        //commit each model that needs saved
+        _.each(models, function(model, index){
+           //set properties on model to aid in save
+            model.set({
+                "draft" : self.draft,
+                "isDirty" : false,
+                "timeperiod_id" : self.context.forecasts.get("selectedTimePeriod").id,
+                "current_user" : app.user.get('id')
+            }, {silent:true});
+            
+            //set what url  is used for save
+            model.url = worksheet.url.split("?")[0] + "/" + model.get("id");
+            model.save({}, {success: function() {
+                saveCount++;
+                //if this is the last save, go ahead and trigger the callback;
+                if(models.length === saveCount) {
+                   if(_.isFunction(fcn)){
+                       fcn();   
+                   }
+                   if(suppressSaveTrigger != true){
+                       self.context.forecasts.trigger("forecasts:commitButtons:saved");
+                   }
                 }
-            }
-        };
-        if(app.user.getAcls()['Forecasts'].admin == "yes") {
-            this.layout.trigger("modal:forecastsTabbedConfig:open", params);
-        }
+            }});
+            //this worksheet is clean
+            worksheet.isDirty = false;
+        });
+        
+        return models.length;
     },
 
     /**
      * Handles Save Draft button being clicked
      */
     triggerSaveDraft: function() {
-    	var savebtn = this.$el.find('#save_draft');
+    	var savebtn = this.$el.find('#save_draft'),
+    	    self = this,
+    	    saved = 0;
+    	self.draft = 1;
+    	
     	if(!savebtn.hasClass("disabled")){
-    		var worksheet = this.context.forecasts[this.context.forecasts.get("currentWorksheet")];
-    		var self = this;
-    		var modelCount = 0;
-    		var saveCount = 0;
-    		_.each(worksheet.models, function(model, index){
-    			var isDirty = model.get("isDirty");
-    			if(_.isBoolean(isDirty) && isDirty){
-    				modelCount++;
-    				model.set({draft: 1}, {silent:true});
-    				model.save();
-    				model.set({isDirty: false}, {silent:true});
-    				worksheet.isDirty = false;
-    			}    			    				
-    		});
-
+    	    saved = self.saveDirtyWorksheets();    				
             savebtn.addClass("disabled");
     		this.enableCommitButton();
     	}

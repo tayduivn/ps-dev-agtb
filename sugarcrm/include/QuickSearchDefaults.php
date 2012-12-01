@@ -168,7 +168,6 @@ class QuickSearchDefaults
                         'limit' => '30','no_match_text' => $app_strings['ERR_SQS_NO_MATCH']);
         return $qsUser;
     }
-    //BEGIN SUGARCRM flav!=sales ONLY
     function getQSCampaigns($c_name = 'campaign_name', $c_id = 'campaign_id') {
         global $app_strings;
 
@@ -186,7 +185,6 @@ class QuickSearchDefaults
         return $qsCampaign;
     }
 
-    //END SUGARCRM flav!=sales ONLY
     //BEGIN SUGARCRM flav=pro ONLY
 
     function getQSTeam($t_name = 'team_name', $t_id = 'team_id') {
@@ -207,7 +205,6 @@ class QuickSearchDefaults
     }
     //END SUGARCRM flav=pro ONLY
 
-    //BEGIN SUGARCRM flav!=sales ONLY
     /**
      * Loads Quick Search Object for any object (if suitable method is defined)
      *
@@ -242,7 +239,6 @@ class QuickSearchDefaults
         }
         return $result;
     }
-    //END SUGARCRM flav!=sales ONLY
 
     // BEGIN QuickSearch functions for 4.5.x backwards compatibility support
     function getQSScripts() {

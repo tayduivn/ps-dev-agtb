@@ -29,7 +29,7 @@ $viewdefs['Forecasts']['base']['layout']['config'] = array(
         array(
             'layout' => array(
                 'type' => 'modal',
-                'showEvent' => 'modal:forecastsWizardConfig:open',
+                'showEvent' => 'modal:forecastsConfig:open',
             ),
         ),
     ),

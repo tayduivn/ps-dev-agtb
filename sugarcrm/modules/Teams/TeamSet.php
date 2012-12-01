@@ -94,7 +94,7 @@ class TeamSet extends SugarBean{
         $teams = array();
 
         while($row = $this->db->fetchByAssoc($result)){
-            $team = new Team();
+            $team = BeanFactory::getBean('Teams');
             $team->id = $row['id'];
             $team->name = $row['name'];
             $team->name_2 = $row['name_2'];
@@ -320,7 +320,7 @@ class TeamSet extends SugarBean{
         $teamIds = $this->getTeamIds($team_set_id);
         if(!empty($teamIds)) {
             foreach($teamIds as $team_id) {
-                $team = new Team();
+                $team = BeanFactory::getBean('Teams');
                 $team->id = $team_id;
                 $usersList = $team->get_team_members($only_active_users);
                 if (!empty($usersList)) {

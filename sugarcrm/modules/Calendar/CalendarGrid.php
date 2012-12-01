@@ -43,6 +43,17 @@ class CalendarGrid {
 	protected $date_time_format; // user date time format
 	protected $scroll_height; // height of scrollable div
 
+    /**
+     * This is a depreciated method, please start using __construct() as this method will be removed in a future version
+     *
+     * @see __construct
+     * @deprecated
+     */
+    public function CalendarGrid(Calendar $cal)
+    {
+        $this->__construct($cal);
+    }
+
 	/**
 	 * constructor
 	 * @param Calendar $cal
@@ -375,7 +386,7 @@ class CalendarGrid {
 		$str .= "<div id='cal-grid' style='visibility: hidden;'>";
 		$user_number = 0;
 
-		$shared_user = new User();
+		$shared_user = BeanFactory::getBean('Users');
 		foreach($this->cal->shared_ids as $member_id){
 
 			$user_number_str = "_".$user_number;

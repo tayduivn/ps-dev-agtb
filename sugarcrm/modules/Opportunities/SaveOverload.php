@@ -31,7 +31,6 @@ function perform_save($focus){
     /* @var $admin Administration */
     $admin = BeanFactory::getBean('Administration');
     $settings = $admin->getConfigForModule('Forecasts');
-
     //Determine the default commit_stage based on the probability
     if ($settings['is_setup'] && empty($focus->commit_stage) && $focus->probability !== '')
     {
@@ -68,14 +67,21 @@ function perform_save($focus){
         $focus->worst_case = $focus->amount;
     }
 
+    // if sales stage was set to Closed Won set best and worst cases to amount
+    $wonStages = $settings['sales_stage_won'];
+    if (!empty($focus->sales_stage) && in_array($focus->sales_stage, $wonStages))
+    {
+        $focus->best_case = $focus->amount;
+        $focus->worst_case = $focus->amount;
+    }
+
     // Bug49495: amount may be a calculated field
     $focus->updateCalculatedFields();
     //END SUGARCRM flav=pro ONLY
 
 	//Store the base currency value
 	if(isset($focus->amount) && !number_empty($focus->amount)){
-        $currency = new Currency();
-		$currency->retrieve($focus->currency_id);
+        $currency = BeanFactory::getBean('Currencies', $focus->currency_id);
 		$focus->amount_usdollar = SugarCurrency::convertAmountToBase($focus->amount,$currency->id);
     }
 

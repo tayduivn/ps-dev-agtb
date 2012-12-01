@@ -45,7 +45,7 @@ class Bug44931Test extends SOAPTestCase
 
         $app_list_strings = return_app_list_strings_language('en_us');
 
-		$kbdoc = new KBDocument();
+		$kbdoc = BeanFactory::getBean('KBDocuments');
 		$kbdoc->kbdocument_name = "Bug44931";
 		$kbdoc->status_id = array_rand($app_list_strings['kbdocument_status_dom']);
 		$kbdoc->team_id = $GLOBALS['current_user']->team_id;
@@ -54,18 +54,18 @@ class Bug44931Test extends SOAPTestCase
 		$kbdoc->save();
 		$this->kbDocId = $kbdoc->id;
 
-		$kbdocRevision = new KBDocumentRevision;
+		$kbdocRevision = BeanFactory::getBean('KBDocumentRevisions');
 		$kbdocRevision->revision = '1';
 		$kbdocRevision->kbdocument_id = $kbdoc->id;
 		$kbdocRevision->latest = true;
 		$kbdocRevision->save();
 
-		$docRevision = new DocumentRevision();
+		$docRevision = BeanFactory::getBean('DocumentRevisions');
 		$docRevision->filename = $kbdoc->kbdocument_name;
 		$docRevision->save();
 		$this->docRevisionId = $docRevision->id;
 
-	    $kbdocContent = new KBContent();
+	    $kbdocContent = BeanFactory::getBean('KBContents');
 	    $kbdocContent->document_revision_id = $docRevision->id;
 	    $kbdocContent->team_id = $kbdoc->team_id;
 		$kbdocContent->kbdocument_body = 'TEST!';
@@ -78,11 +78,11 @@ class Bug44931Test extends SOAPTestCase
 	    $kbdoc->kbdocument_revision_id = $kbdocRevision->id;
 		$kbdoc->save();
 
-	    $kbtag = new KBTag;
+	    $kbtag = BeanFactory::getBean('KBTags');
 	    $kbtag->tag_name = 'Bug44931';
 	    $id = $kbtag->save();
 
-		$kbdocKBTag = new KBDocumentKBTag();
+		$kbdocKBTag = BeanFactory::getBean('KBDocumentKBTags');
 		$kbdocKBTag->kbtag_id = $kbtag->id;
 		$kbdocKBTag->kbdocument_id = $kbdoc->id;
 		$kbdocKBTag->team_id = $kbdoc->team_id;

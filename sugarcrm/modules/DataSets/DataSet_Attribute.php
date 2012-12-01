@@ -31,11 +31,6 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * Description:
  ********************************************************************************/
 
-
-
-
-
-
 require_once('include/ListView/ReportListView.php');
 
 
@@ -113,6 +108,17 @@ class DataSet_Attribute extends SugarBean {
     var $required_fields =  array();
 
 
+    /**
+     * This is a depreciated method, please start using __construct() as this method will be removed in a future version
+     *
+     * @see __construct
+     * @deprecated
+     */
+    public function DataSet_Attribute()
+    {
+        $this->__construct();
+    }
+
     public function __construct() {
         global $dictionary;
         if(isset($this->module_dir) && isset($this->object_name) && !isset($dictionary[$this->object_name])){
@@ -143,7 +149,7 @@ class DataSet_Attribute extends SugarBean {
         function create_export_query(&$order_by, &$where)
         {
 
-            $export_object = new CustomQuery();
+            $export_object = BeanFactory::getBean('CustomQueries');
             return $export_object->create_export_query();
 
 

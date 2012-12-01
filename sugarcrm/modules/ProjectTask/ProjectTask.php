@@ -86,6 +86,17 @@ class ProjectTask extends SugarBean {
 	// METHODS
 	//////////////////////////////////////////////////////////////////
 
+    /**
+     * This is a depreciated method, please start using __construct() as this method will be removed in a future version
+     *
+     * @see __construct
+     * @deprecated
+     */
+    public function ProjectTask()
+    {
+        $this->__construct();
+    }
+
 	/*
 	 *
 	 */
@@ -101,8 +112,7 @@ class ProjectTask extends SugarBean {
 			if(empty($current_user))
 			{
 				$this->assigned_user_id = 1;
-				$admin_user = new User();
-				$admin_user->retrieve($this->assigned_user_id);
+				$admin_user = BeanFactory::getBean('Users', $this->assigned_user_id);
 				$this->assigned_user_name = $admin_user->user_name;
 			}
 			else

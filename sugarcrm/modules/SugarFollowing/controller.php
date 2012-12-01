@@ -19,26 +19,25 @@
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
-class SugarFollowingController extends SugarController {
-	public function __construct(){
-	}
+class SugarFollowingController extends SugarController
+{
 	public function loadBean(){
 		if(empty($this->record))$this->record = SugarFollowing::generateGUID($_REQUEST['following_module'], $_REQUEST['following_id']);
-		$this->bean = new SugarFollowing();
+		$this->bean = BeanFactory::getBean('SugarFollowing');
 	}
 	public function pre_save(){
 		if(!$this->bean->retrieve($this->record, true, false)){
 			$this->bean->new_with_id = true;
-		}	
+		}
 		$this->bean->id = $this->record;
 		$this->bean->module = $_REQUEST['following_module'];
 		$this->bean->record_id = $_REQUEST['following_id'];
 		$this->bean->deleted = 0;
 	}
-	
+
 	public function action_save(){
 		$this->bean->save();
-		
+
 	}
 	public function post_save(){
 		echo $this->record;
@@ -52,7 +51,7 @@ class SugarFollowingController extends SugarController {
 	}
 	public function action_tag(){
 		return 'Favorite Tagged';
-		
+
 	}
 }
 ?>

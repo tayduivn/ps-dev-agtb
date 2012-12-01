@@ -50,7 +50,7 @@ if (!is_admin($current_user))
 }
 
 
-$focus = new CustomQuery();
+$focus = BeanFactory::getBean('CustomQueries');
 echo getClassicModuleTitle($mod_strings['LBL_MODULE_NAME'], array($mod_strings['LBL_MODULE_TITLE']), true); 
 $is_edit = false;
 if(!empty($_REQUEST['record'])) {

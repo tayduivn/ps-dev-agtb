@@ -70,8 +70,7 @@ class SugarWidgetSubPanelRemoveButton extends SugarWidgetField
 			}	
 			
 			//We also cannot remove the user whose private team is set to the parent_record_id value
-			$user = new User();
-			$user->retrieve($layout_def['fields']['ID']);
+			$user = BeanFactory::getBean('Users', $layout_def['fields']['ID']);
 			if($parent_record_id == $user->getPrivateTeamID())
 			{
 			    $hideremove = true;
@@ -96,10 +95,8 @@ class SugarWidgetSubPanelRemoveButton extends SugarWidgetField
 
 		$icon_remove_text = strtolower($app_strings['LBL_ID_FF_REMOVE']);
 		
-		//BEGIN SUGARCRM flav!=sales ONLY
          if($linked_field == 'get_emails_by_assign_or_link')
             $linked_field = 'emails';
-		//END SUGARCRM flav!=sales ONLY
 		//based on listview since that lets you select records
 		if($layout_def['ListView'] && !$hideremove) {
             $retStr = "<a href=\"javascript:sub_p_rem('$subpanel', '$linked_field'" 

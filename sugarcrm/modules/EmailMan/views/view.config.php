@@ -72,8 +72,7 @@ class ViewConfig extends SugarView
         echo $this->getModuleTitle();
         global $currentModule;
 
-        $focus = new Administration();
-        $focus->retrieveSettings(); //retrieve all admin settings.
+        $focus = Administration::getSettings(); //retrieve all admin settings.
         $GLOBALS['log']->info("Mass Emailer(EmailMan) ConfigureSettings view");
 
         $this->ss->assign("MOD", $mod_strings);
@@ -89,9 +88,7 @@ class ViewConfig extends SugarView
         $this->ss->assign("notify_send_from_assigning_user", (isset($focus->settings['notify_send_from_assigning_user']) && !empty($focus->settings['notify_send_from_assigning_user'])) ? "checked='checked'" : "");
         $this->ss->assign("notify_on", ($focus->settings['notify_on']) ? "checked='checked'" : "");
         $this->ss->assign("notify_fromname", $focus->settings['notify_fromname']);
-        //BEGIN SUGARCRM flav!=sales ONLY
         $this->ss->assign("notify_allow_default_outbound_on", (!empty($focus->settings['notify_allow_default_outbound']) && $focus->settings['notify_allow_default_outbound']) ? "checked='checked'" : "");
-        //END SUGARCRM flav!=sales ONLY
 
         $this->ss->assign("mail_smtptype", $focus->settings['mail_smtptype']);
         $this->ss->assign("mail_smtpserver", $focus->settings['mail_smtpserver']);
@@ -154,7 +151,7 @@ class ViewConfig extends SugarView
         ///////////////////////////////////////////////////////////////////////////////
 
         require_once('modules/Emails/Email.php');
-        $email = new Email();
+        $email = BeanFactory::getBean('Emails');
         $this->ss->assign('ROLLOVER', $email->rolloverStyle);
         $this->ss->assign('THEME', $GLOBALS['theme']);
 

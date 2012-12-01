@@ -96,21 +96,18 @@ if(isset($_POST['handle']) && $_POST['handle'] == 'Save'){
 		}
 	}
 	if(!empty($_POST['selectedContact'])){
-		$contact = new Contact();
-		$contact->retrieve($_POST['selectedContact']);	
+		$contact = BeanFactory::getBean('Contacts', $_POST['selectedContact']);	
 	}else{
 		$contact= $contactForm->handleSave('Contacts',false, false);
 	}
 	if(!empty($_POST['selectedAccount'])){
-		$account = new Account();
-		$account->retrieve($_POST['selectedAccount']);	
+		$account = BeanFactory::getBean('Accounts', $_POST['selectedAccount']);	
 	}else if(isset($_POST['newaccount']) && $_POST['newaccount']=='on' ){
 		$account= $accountForm->handleSave('Accounts',false, false);
 	}
 	if(isset($_POST['newopportunity']) && $_POST['newopportunity']=='on' ){
 		if(!empty($_POST['selectedOpportunity'])){
-			$opportunity = new Opportunity();
-			$opportunity->retrieve($_POST['selectedOpportunity']);
+			$opportunity = BeanFactory::getBean('Opportunities', $_POST['selectedOpportunity']);
 		}else{
 			if(isset($account)){
 				$_POST['Opportunitiesaccount_id'] = $account->id;

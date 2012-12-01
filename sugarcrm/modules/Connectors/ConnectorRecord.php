@@ -25,9 +25,21 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  class ConnectorRecord extends MergeRecord{
 	var $object_name = 'ConnectorRecord';
     var $module_dir = 'Connector'; 
+
+
+    /**
+     * This is a depreciated method, please start using __construct() as this method will be removed in a future version
+     *
+     * @see __construct
+     * @deprecated
+     */
+    public function ConnectorRecord($merge_module = '', $merge_id = '')
+    {
+        $this->__construct($merge_module, $merge_id);
+    }
+
     
-    
-    function ConnectorRecord($merge_module = '', $merge_id = '') {
+    function __construct($merge_module = '', $merge_id = '') {
        parent::__construct($merge_module, $merge_id);
     }
 

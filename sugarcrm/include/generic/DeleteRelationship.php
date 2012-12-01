@@ -19,13 +19,6 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *to the License for the specific language governing these rights and limitations under the License.
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
-/*********************************************************************************
- * $Id: DeleteRelationship.php 51841 2009-10-26 20:33:15Z jmertic $
- * Description:  TODO: To be written.
- * Portions created by SugarCRM are Copyright (C) SugarCRM, Inc.
- * All Rights Reserved.
- * Contributor(s): ______________________________________..
- ********************************************************************************/
 
 /*
  Removes Relationships, input is a form POST
@@ -42,15 +35,10 @@ ARGS:
   2) $_REQUEST['return_module']; :
   3) $_REQUEST['return_action']; :
 */
-//_ppd($_REQUEST);
-
 
 require_once('include/formbase.php');
 
- global $beanFiles,$beanList;
- $bean_name = $beanList[$_REQUEST['module']];
- require_once($beanFiles[$bean_name]);
- $focus = new $bean_name();
+ $focus = BeanFactory::getBean($_REQUEST['module']);
  if (  empty($_REQUEST['linked_id']) || empty($_REQUEST['linked_field'])  || empty($_REQUEST['record']))
  {
 	die("need linked_field, linked_id and record fields");
@@ -58,7 +46,7 @@ require_once('include/formbase.php');
  $linked_field = $_REQUEST['linked_field'];
  $record = $_REQUEST['record'];
  $linked_id = $_REQUEST['linked_id'];
- if($bean_name == 'Team')
+ if($focus->object_name == 'Team')
  {
  	$focus->retrieve($record);
  	$focus->remove_user_from_team($linked_id);
@@ -71,8 +59,7 @@ require_once('include/formbase.php');
  		unset($focus->$linked_field->_relationship->relationship_role_column);
  	$focus->$linked_field->delete($record,$linked_id);
  }
- //BEGIN SUGARCRM flav!=sales ONLY
- if ($bean_name == 'Campaign' and $linked_field=='prospectlists' ) {
+ if ($focus->object_name == 'Campaign' and $linked_field=='prospectlists' ) {
 
  	$query="SELECT email_marketing_prospect_lists.id from email_marketing_prospect_lists ";
  	$query.=" left join email_marketing on email_marketing.id=email_marketing_prospect_lists.email_marketing_id";
@@ -87,11 +74,9 @@ require_once('include/formbase.php');
 	}
  	$focus->db->query($query);
  }
- //END SUGARCRM flav!=sales ONLY
-if ($bean_name == "Meeting") {
+if ($focus->object_name == "Meeting") {
     $focus->retrieve($record);
-    $user = new User();
-    $user->retrieve($linked_id);
+    $user = BeanFactory::getBean('Users', $linked_id);
     if (!empty($user->id)) {  //make sure that record exists. we may have a contact on our hands.
 
     	if($focus->update_vcal)
@@ -100,9 +85,8 @@ if ($bean_name == "Meeting") {
     	}
     }
 }
-if ($bean_name == "User" && $linked_field == 'eapm') {
-    $eapm = new EAPM();
-    $eapm->mark_deleted($linked_id);
+if ($focus->object_name == "User" && $linked_field == 'eapm') {
+    BeanFactory::deleteBean('EAPM', $linked_id);
 }
 //BEGIN SUGARCRM flav=pro ONLY
 require_once("data/Relationships/SugarRelationship.php");
@@ -112,7 +96,7 @@ SugarRelationship::resaveRelatedBeans();
 if(!empty($_REQUEST['return_url'])){
 	$_REQUEST['return_url'] =urldecode($_REQUEST['return_url']);
 }
-$GLOBALS['log']->debug("deleted relationship: bean: $bean_name, linked_field: $linked_field, linked_id:$linked_id" );
+$GLOBALS['log']->debug("deleted relationship: bean: {$focus->object_name}, linked_field: $linked_field, linked_id:$linked_id" );
 if(empty($_REQUEST['refresh_page'])){
 	handleRedirect();
 }

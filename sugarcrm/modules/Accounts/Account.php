@@ -71,9 +71,7 @@ class Account extends Company {
     var $shipping_address_street_3;
     var $shipping_address_street_4;
 
-//BEGIN SUGARCRM flav!=sales ONLY
     var $campaign_id;
-//END SUGARCRM flav!=sales ONLY
 
 	var $sic_code;
 	var $ticker_symbol;
@@ -133,6 +131,17 @@ class Account extends Company {
     //Meta-Data Framework fields
     var $push_billing;
     var $push_shipping;
+
+    /**
+     * This is a depreciated method, please start using __construct() as this method will be removed in a future version
+     *
+     * @see __construct
+     * @deprecated
+     */
+    public function Account()
+    {
+        $this->__construct();
+    }
 
 	public function __construct() {
         parent::__construct();
@@ -210,16 +219,14 @@ class Account extends Company {
 			}
         }
 
-//BEGIN SUGARCRM flav!=sales ONLY
         // Set campaign name if there is a campaign id
 		if( !empty($this->campaign_id)){
 
-			$camp = new Campaign();
+			$camp = BeanFactory::getBean('Campaigns');
 		    $where = "campaigns.id='{$this->campaign_id}'";
 		    $campaign_list = $camp->get_full_list("campaigns.name", $where, true);
 		    $this->campaign_name = $campaign_list[0]->name;
 		}
-//END SUGARCRM flav!=sales ONLY
 	}
 
 	function get_list_view_data(){

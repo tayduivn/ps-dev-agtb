@@ -55,10 +55,9 @@ class Bug43683Test extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testAddUserToTeamWithManagers()
     {
-        $team = new Team();
-        $team->retrieve($this->user2->getPrivateTeamID());
+        $team = BeanFactory::getBean('Teams', $this->user2->getPrivateTeamID());
         $team->add_user_to_team($this->user2->id);
-        $team_membership = new TeamMembership();
+        $team_membership = BeanFactory::getBean('TeamMemberships');
         $this->assertTrue($team_membership->retrieve_by_user_and_team($this->user1->id, $team->id), 'Implicit membership exists');
     }
 }

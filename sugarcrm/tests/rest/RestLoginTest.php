@@ -84,6 +84,37 @@ class RestLoginTest extends RestTestBase
     /**
      * @group rest
      */
+    public function testRestOauthViaGet()
+    {
+        $args = array(
+            'grant_type' => 'password',
+            'username' => $this->_user->user_name,
+            'password' => $this->_user->user_name,
+            'client_id' => 'sugar',
+            'client_secret' => '',
+            'platform' => 'base',
+        );
+
+        $reply = $this->_restCall('oauth2/token',json_encode($args));
+        $this->assertNotEmpty($reply['reply']['access_token']);
+        $this->assertNotEmpty($reply['reply']['refresh_token']);
+        $this->assertNotEquals($reply['reply']['access_token'],$reply['reply']['refresh_token']);
+        $this->assertEquals('bearer',$reply['reply']['token_type']);
+        
+        $this->authToken = $reply['reply']['access_token'];
+        $replyPing = $this->_restCall('ping');
+        $this->assertEquals('pong',$replyPing['reply']);
+
+        $this->authToken = 'LOGGING_IN';
+        $replyPing2 = $this->_restCall('ping?oauth_token='.$reply['reply']['access_token']);
+        $this->assertEquals('pong',$replyPing2['reply']);
+
+    }
+
+
+    /**
+     * @group rest
+     */
     public function testRestLoginUserAutocreateKey()
     {
         $GLOBALS['db']->query("DELETE FROM oauth_consumer WHERE c_key = 'sugar'");
@@ -196,85 +227,6 @@ class RestLoginTest extends RestTestBase
         $this->assertEquals('pong',$replyPing['reply']);
     }
 
-    //BEGIN SUGARCRM flav=pro ONLY
-    /**
-     * @group rest
-     */
-    public function testRestLoginSupportPortal()
-    {
-        // Create a portal API user
-        $this->apiuser = BeanFactory::newBean('Users');
-        $this->apiuser->id = "UNIT-TEST-apiuser";
-        $this->apiuser->new_with_id = true;
-        $this->apiuser->first_name = "Portal";
-        $this->apiuser->last_name = "Apiuserson";
-        $this->apiuser->username = "_unittest_apiuser";
-        $this->apiuser->portal_only = true;
-        $this->apiuser->status = 'Active';
-        $this->apiuser->save();
-
-        // Create a contact to log in as
-        $this->contact = BeanFactory::newBean('Contacts');
-        $this->contact->id = "UNIT-TEST-littleunittest";
-        $this->contact->new_with_id = true;
-        $this->contact->first_name = "Little";
-        $this->contact->last_name = "Unittest";
-        $this->contact->description = "Little Unittest";
-        $this->contact->portal_name = "liltest@unit.com";
-        $this->contact->portal_active = '1';
-        $this->contact->portal_password = User::getPasswordHash("unittest");
-        $this->contact->save();
-        $GLOBALS ['system_config']->saveSetting('supportPortal', 'RegCreatedBy', $this->apiuser->id);
-        $GLOBALS ['system_config']->saveSetting('portal', 'on', 1);
-        $GLOBALS['db']->commit();
-        
-        $args = array(
-            'grant_type' => 'password',
-            'username' => $this->contact->portal_name,
-            'password' => 'unittest',
-            'client_id' => 'support_portal',
-            'client_secret' => '',
-        );
-        
-        $reply = $this->_restCall('oauth2/token',json_encode($args));
-        // if ( empty($reply['reply']['access_token']) ) { print_r($reply); }
-        $this->assertNotEmpty($reply['reply']['access_token']);
-        $this->assertNotEmpty($reply['reply']['refresh_token']);
-        $this->assertNotEquals($reply['reply']['access_token'],$reply['reply']['refresh_token']);
-        $this->assertEquals('bearer',$reply['reply']['token_type']);
-
-        $this->authToken = $reply['reply']['access_token'];
-        $replyPing = $this->_restCall('ping');
-        $this->assertEquals('pong',$replyPing['reply']);
-
-        $refreshToken = $reply['reply']['refresh_token'];
-
-        
-        $args = array(
-            'grant_type' => 'refresh_token',
-            'refresh_token' => $refreshToken,
-            'client_id' => 'support_portal',
-            'client_secret' => '',
-        );
-        
-        // Prevents _restCall from automatically logging in
-        $this->authToken = 'LOGGING_IN';
-        $reply2 = $this->_restCall('oauth2/token',json_encode($args));
-        // if ( empty($reply2['reply']['access_token']) ) { print_r($reply2); }
-        $this->assertNotEmpty($reply2['reply']['access_token']);
-        $this->assertNotEmpty($reply2['reply']['refresh_token']);
-        $this->assertNotEquals($reply2['reply']['access_token'],$reply2['reply']['refresh_token']);
-        $this->assertNotEquals($reply['reply']['access_token'],$reply2['reply']['access_token']);
-        $this->assertNotEquals($reply['reply']['refresh_token'],$reply2['reply']['refresh_token']);
-        $this->assertEquals('bearer',$reply2['reply']['token_type']);
-        
-        $this->authToken = $reply2['reply']['access_token'];
-        $replyPing = $this->_restCall('ping');
-        $this->assertEquals('pong',$replyPing['reply']);
-                                                          
-    }
-    //END SUGARCRM flav=pro ONLY
-
     /**
      * @group rest
      */
@@ -331,4 +283,6 @@ class RestLoginTest extends RestTestBase
         $this->assertNotEmpty($reply['reply']['error']);
         $this->assertEquals('need_login',$reply['reply']['error']);
     }
+
+
 }

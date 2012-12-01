@@ -40,25 +40,25 @@ require_once 'include/SugarOAuth2/SugarOAuth2StorageInterface.php';
  */
 class SugarOAuth2Storage implements IOAuth2GrantUser, IOAuth2RefreshTokens, SugarOAuth2StorageInterface {
     /**
-     * The client platform 
-     * 
+     * The client platform
+     *
      * @var string
      */
     protected $platform = 'base';
-    
+
     /**
      * The platform specific storage object
-     * 
+     *
      * @var SugarOAuth2StoragePlatform
      */
     protected $platformStore;
-    
+
     /**
      * The SugarCRM User record for this user
      * @var User
      */
     protected $userBean;
-    
+
     /**
      * The record of the OAuth Key based off of the user's supplide client_id
      * @var OAuthKeys
@@ -67,15 +67,15 @@ class SugarOAuth2Storage implements IOAuth2GrantUser, IOAuth2RefreshTokens, Suga
 
     /**
      * The user type for this client
-     * 
+     *
      * @var string
      */
     protected $userType;
-    
+
     // BEING METHOD FROM SugarOAuth2StorageInterface
     /**
      * Get the user type for this user
-     * 
+     *
      * @return string
      */
     public function getUserType() {
@@ -84,8 +84,8 @@ class SugarOAuth2Storage implements IOAuth2GrantUser, IOAuth2RefreshTokens, Suga
 
 
     /**
-     * Gets a user bean 
-     * 
+     * Gets a user bean
+     *
      * @param  string $user_id The ID of the User to get
      * @return User
      */
@@ -96,34 +96,22 @@ class SugarOAuth2Storage implements IOAuth2GrantUser, IOAuth2RefreshTokens, Suga
     /**
      * Small validator for child classes to use to determine whether a session can
      * be written to
-     * 
+     *
      * @return boolean
      */
     public function canStartSession() {
         return $this->getPlatformStore()->canStartSession();
-        // Find the Portal API user
-        $admin = new Administration();
-        $admin->retrieveSettings(false, true);
-        if (isset($admin->settings['supportPortal_RegCreatedBy'])) {
-            $portalApiUser = BeanFactory::getBean('Users', $admin->settings['supportPortal_RegCreatedBy']);
-        }
-        if (!empty($portalApiUser->id)) {
-            $this->portalApiUser = $portalApiUser;
-            return $this->portalApiUser;
-        } else {
-            return null;
-        }
     }
-    
+
     /**
      * Fills in any added session data needed by this client type
-     * 
+     *
      * This method is used by child classes like portal
      */
     public function fillInAddedSessionData() {
         return $this->getPlatformStore()->fillInAddedSessionData();
     }
-    
+
     /**
      * Gets the authentication bean for a given client
      * @param OAuthToken
@@ -132,51 +120,51 @@ class SugarOAuth2Storage implements IOAuth2GrantUser, IOAuth2RefreshTokens, Suga
     public function getAuthBean(OAuthToken $token) {
         return $this->getPlatformStore()->getAuthBean($token);
     }
-    
+
     /**
      * Gets contact and user ids for a user id. Most commonly different for clients
      * like portal
-     * 
+     *
      * @param string $client_id The client id for this check
      * @return array An array of contact_id and user_id
      */
     public function getIdsForUser($user_id, $client_id) {
         return $this->getPlatformStore()->getIdsForUser($user_id, $client_id);
     }
-    
+
     /**
      * Sets up necessary visibility for a client. Not all clients will set this
-     * 
+     *
      * @return void
      */
     public function setupVisibility() {
         $this->getPlatformStore()->setupVisibility();
     }
 
-    // END METHOD FROM SugarOAuth2StorageInterface    
+    // END METHOD FROM SugarOAuth2StorageInterface
 
     /**
      * Sets the platform type. This should be called before any calls to platform
      * specific methods and as soon after instantiation of this object as possible.
      * This will create the platform store object as well, which, once set, cannot
      * be unset.
-     * 
+     *
      * @param string $platform
      */
     public function setPlatform($platform) {
         $this->platform = $platform;
         $this->setPlatformStore($platform);
     }
-    
+
     /**
      * Gets the platform name of the given storage mechanism
-     * 
+     *
      * @return string
      */
     public function getPlatformName() {
         return $this->platform;
     }
-    
+
     // BEGIN METHODS FROM IOAuth2Storage
 	/**
 	 * Make sure that the client credentials is valid.
@@ -197,7 +185,6 @@ class SugarOAuth2Storage implements IOAuth2GrantUser, IOAuth2RefreshTokens, Suga
 	public function checkClientCredentials($client_id, $client_secret = NULL)
     {
         $clientInfo = $this->getClientDetails($client_id);
-
         if ($clientInfo === false) {
             return false;
         }
@@ -243,7 +230,7 @@ class SugarOAuth2Storage implements IOAuth2GrantUser, IOAuth2RefreshTokens, Suga
             if ($client_id != 'sugar') {
                 return false;
             }
-            
+
             $newKey = BeanFactory::newBean('OAuthKeys');
             $newKey->oauth_type = 'oauth2';
             $newKey->c_secret = '';
@@ -252,7 +239,7 @@ class SugarOAuth2Storage implements IOAuth2GrantUser, IOAuth2RefreshTokens, Suga
             $newKey->name = 'Standard OAuth Username & Password Key';
             $newKey->description = 'This OAuth key is automatically created by the OAuth2.0 system to enable username and password logins';
             $newKey->save();
-            
+
             // Set the client bean/authkey record
             $clientBean = $newKey;
             $this->oauthKeyRecord = $clientBean;
@@ -262,7 +249,7 @@ class SugarOAuth2Storage implements IOAuth2GrantUser, IOAuth2RefreshTokens, Suga
         // client key is either sugar OR the client type matches the named type
         // of the storage. For now this assumes a one-to-one mapping of oauthkey
         // client_type to the client type in an oauth2storage class
-        $clientAllowed = $clientBean != null && 
+        $clientAllowed = $clientBean != null &&
                          (
                              $clientBean->client_type == 'user' ||
                              (($clientType = $this->getPlatformStore()->getClientType()) !== null && $clientBean->client_type == $clientType)
@@ -276,8 +263,8 @@ class SugarOAuth2Storage implements IOAuth2GrantUser, IOAuth2RefreshTokens, Suga
                                 'record_id'=>$clientBean->id,
             );
             return $returnData;
-        } 
-        
+        }
+
         // If we get here we didn't meet all the necessary checks
         return false;
     }
@@ -313,6 +300,9 @@ class SugarOAuth2Storage implements IOAuth2GrantUser, IOAuth2RefreshTokens, Suga
             session_start();
         }
 
+        // Set the platform store
+        $this->setPlatformStore();
+        
         if ( isset($_SESSION['oauth2']) ) {
             return $_SESSION['oauth2'];
         } else if ( !empty($_SESSION['authenticated_user_id']) ) {
@@ -353,7 +343,7 @@ class SugarOAuth2Storage implements IOAuth2GrantUser, IOAuth2RefreshTokens, Suga
         if ( $clientInfo === false ) {
             return false;
         }
-        
+
         // Get the user bean if there is one to be found
         $userBean = $this->getUserBean($user_id);
 
@@ -376,7 +366,7 @@ class SugarOAuth2Storage implements IOAuth2GrantUser, IOAuth2RefreshTokens, Suga
         // Clear out the old session data
         $_SESSION = array();
 
-        // Since we have to setup the session for oauth2 here, we might as well 
+        // Since we have to setup the session for oauth2 here, we might as well
         // set up the rest of the session, but only if we have what is needed
         if ($this->canStartSession()) {
             $GLOBALS['current_user'] = $this->userBean;
@@ -388,17 +378,17 @@ class SugarOAuth2Storage implements IOAuth2GrantUser, IOAuth2RefreshTokens, Suga
             $_SESSION['unique_key'] = $sugar_config['unique_key'];
             $_SESSION['platform'] = $this->platform;
             //$this->setPlatformStore($_SESSION['platform']);
-            
+
             $this->fillInAddedSessionData();
             $_SESSION['oauth2'] = array(
                 'client_id'=>$client_id,
                 'user_id'=>$user_id,
                 'expires'=>$expires,
             );
-            
+
             return true;
         }
-        
+
         throw new SugarApiException('Could not start session because client type was not found');
     }
 
@@ -504,7 +494,7 @@ class SugarOAuth2Storage implements IOAuth2GrantUser, IOAuth2RefreshTokens, Suga
         if ( $token === FALSE || $token->consumer_obj === FALSE || $authBean === null ) {
             return null;
         }
-        
+
         return array(
             'refresh_token'=>$token->id,
             'client_id'=>$token->consumer_obj->c_key,
@@ -538,16 +528,16 @@ class SugarOAuth2Storage implements IOAuth2GrantUser, IOAuth2RefreshTokens, Suga
 	public function setRefreshToken($refresh_token, $client_id, $user_id, $expires, $scope = NULL)
     {
         $keyInfo = $this->getClientDetails($client_id);
-        
+
         $ids = $this->getIdsForUser($user_id, $client_id);
         $contact_id = $ids['contact_id'];
         $user_id = $ids['user_id'];
-        
+
         // User ID should always be set. Contact may not always be set to something
         if (!$user_id) {
             return;
         }
-        
+
         $token = BeanFactory::newBean('OAuthTokens');
 
         $token->id = $refresh_token;
@@ -586,7 +576,7 @@ class SugarOAuth2Storage implements IOAuth2GrantUser, IOAuth2RefreshTokens, Suga
 
     /**
      * Sets the platform storage object into this object
-     * 
+     *
      * @param string $platform
      * @throws Exception
      */
@@ -596,66 +586,40 @@ class SugarOAuth2Storage implements IOAuth2GrantUser, IOAuth2RefreshTokens, Suga
             if (empty($platform)) {
                 $platform = empty($_SESSION['platform']) ? 'base' : $_SESSION['platform'];
             }
-            
+
             // Reset the platform if it doesn't match
             if ($this->platform != $platform) {
                 $this->platform = $platform;
             }
-            
+
             // Normalize the platform
-            $storageType = ucfirst(strtolower($platform));
-            
-            // Setup the default platform and base storage classes as well as
-            // the custom ones
-            $classes[3] = 'SugarOAuth2StorageBase';
-            $classes[2] = $classes[3] . 'Cstm';
-            
-            // Only add these in if the platform is not base
-            if ($platform != 'base') {
-                $classes[1] = 'SugarOAuth2Storage' . $storageType;
-                $classes[0] = $classes[1] . 'Cstm';
+            $platform_class = 'SugarOAuth2Storage' . ucfirst(strtolower($platform));
+
+            if($platform != 'base' && SugarAutoLoader::requireWithCustom("include/SugarOAuth2/{$platform_class}.php")) {
+                $oauthStorageName = SugarAutoLoader::customClass($platform_class);
+            } else {
+                SugarAutoLoader::requireWithCustom('include/SugarOAuth2/SugarOAuth2StorageBase.php');
+                $oauthStorageName = SugarAutoLoader::customClass('SugarOAuth2StorageBase');
             }
-    
-            // Run through the stack of storages and fight the right one
-            $oauthStorageName = null;
-            ksort($classes);
-            foreach ($classes as $class) {
-                $path = 'include/SugarOAuth2/' . $class;
-                
-                // Handle custom class names
-                if (substr($class, -4) == 'Cstm') {
-                    $path = 'custom/' . $path;
-                }
-                
-                // Build the file name
-                $file = $path . '.php';
-                if (file_exists($file)) {
-                    require_once $file;
-                    
-                    // Set the storage class name for instantiation later
-                    $oauthStorageName = $class;
-                    break;
-                }
-            }
-            
+
             if (empty($oauthStorageName)) {
                 throw new Exception('No OAuth storage handler found');
             }
-            
+
             $this->platformStore = new $oauthStorageName;
         }
     }
 
     /**
      * Gets the current platform storage object
-     * 
+     *
      * @return SugarOAuth2StoragePlatform
      */
     protected function getPlatformStore() {
         if (empty($this->platformStore)) {
             $this->setPlatformStore();
         }
-        
+
         return $this->platformStore;
     }
 }

@@ -39,41 +39,29 @@ if(!empty($_REQUEST['identifier'])) {
 
     //user is most likely not defined, retrieve admin user so that team queries are bypassed
     if(empty($current_user) || empty($current_user->id)){
-            $current_user = new User();
-            $current_user->retrieve('1');
+            $current_user = BeanFactory::getBean('Users', '1');
     }
-    
+
     $keys=log_campaign_activity($_REQUEST['identifier'],'removed');
     global $current_language;
     $mod_strings = return_module_language($current_language, 'Campaigns');
 
-    
+
     if (!empty($keys) && $keys['target_type'] == 'Users'){
         //Users cannot opt out of receiving emails, print out warning message.
-        echo $mod_strings['LBL_USERS_CANNOT_OPTOUT'];       
+        echo $mod_strings['LBL_USERS_CANNOT_OPTOUT'];
      }elseif(!empty($keys) && isset($keys['campaign_id']) && !empty($keys['campaign_id'])){
         //we need to unsubscribe the user from this particular campaign
-        $beantype = $beanList[$keys['target_type']];
-        require_once($beanFiles[$beantype]);
-        $focus = new $beantype();
+        $focus = BeanFactory::getBean($keys['target_type'], $keys['target_id']
         //BEGIN SUGARCRM flav=pro ONLY
-        $tmp_security = $focus->disable_row_level_security;
-        $focus->disable_row_level_security = 1;
+        , array('disable_row_level_security' => true)
         //END SUGARCRM flav=pro ONLY
-        $focus->retrieve($keys['target_id']);
-        //BEGIN SUGARCRM flav=pro ONLY
-        $focus->disable_row_level_security = $tmp_security;   
-        //END SUGARCRM flav=pro ONLY
-        unsubscribe($keys['campaign_id'], $focus); 
-    
+        );
+        unsubscribe($keys['campaign_id'], $focus);
+
     }elseif(!empty($keys)){
 		$id = $keys['target_id'];
-		$module = trim($keys['target_type']);
-		$class = $beanList[$module];
-		require_once($beanFiles[$class]);
-		$mod = new $class();
 		$db = DBManagerFactory::getInstance();
-
 		$id = $db->quote($id);
 
 		//no opt out for users.
@@ -88,7 +76,7 @@ if(!empty($_REQUEST['identifier'])) {
     }
 		//Print Confirmation Message.
 		echo $mod_strings['LBL_ELECTED_TO_OPTOUT'];
-	
+
 }
 sugar_cleanup();
 ?>

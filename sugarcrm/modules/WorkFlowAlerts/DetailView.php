@@ -26,27 +26,16 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * governing these rights and limitations under the License.  Portions created
  * by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
-/*********************************************************************************
- * $Id: DetailView.php 45763 2009-04-01 19:16:18Z majed $
- * Description:
- ********************************************************************************/
-
-
-
-
-
-
 global $mod_strings;
 global $app_strings;
 global $app_list_strings;
 global $focus, $support_coming_due, $support_expired;
-$focus = new WorkFlow();
+
 if(!empty($_REQUEST['record'])) {
-    $result = $focus->retrieve($_REQUEST['record']);
-    if($result == null)
-    {
-    sugar_die($app_strings['LBL_UNAUTH_ADMIN']);
-        }
+    $focus = BeanFactory::retrieveBean('WorkFlow', $_REQUEST['record']);
+    if(empty($focus)) {
+        sugar_die($app_strings['LBL_UNAUTH_ADMIN']);
+    }
 }
 else {
 	header("Location: index.php?module=WorkFlow&action=index");

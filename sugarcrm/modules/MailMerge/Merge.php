@@ -19,22 +19,10 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *to the License for the specific language governing these rights and limitations under the License.
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
-/*
- * Created on Oct 7, 2005
- *
- * To change the template for this generated file go to
- * Window - Preferences - PHPeclipse - PHP - Code Templates
- */
 require_once('soap/SoapHelperFunctions.php');
-require_once('modules/MailMerge/MailMerge.php'); 
- 
- 
- 
+require_once('modules/MailMerge/MailMerge.php');
 require_once('include/upload_file.php');
 
-
-
-global  $beanList, $beanFiles;
 global $app_strings;
 global $app_list_strings;
 global $mod_strings;
@@ -65,34 +53,27 @@ $item_ids = array();
 parse_str(stripslashes(html_entity_decode($selObjs, ENT_QUOTES)),$item_ids);
 
 if($module == 'CampaignProspects'){
-    $module = 'Prospects';   
+    $module = 'Prospects';
     if(!empty($_SESSION['MAILMERGE_CAMPAIGN_ID'])){
     	$targets = array_keys($item_ids);
     	require_once('modules/Campaigns/utils.php');
     	campaign_log_mail_merge($_SESSION['MAILMERGE_CAMPAIGN_ID'],$targets);
     }
 }
-$class_name = $beanList[$module];
-$includedir = $beanFiles[$class_name];
-require_once($includedir);
-$seed = new $class_name(); 
-
+$seed = BeanFactory::getBean($module);
 $fields =  get_field_list($seed);
 
-$document = new DocumentRevision();//new Document();
-$document->retrieve($document_id);
+$document = BeanFactory::getBean('DocumentRevisions', $document_id);
 
 if(!empty($relModule)){
-$rel_class_name = $beanList[$relModule ];
-require_once($beanFiles[$rel_class_name]);
-$rel_seed = new $rel_class_name();
+    $rel_seed = BeanFactory::getBean($relModule);
 }
 
 global $sugar_config;
 
 $filter = array();
 if(array_key_exists('mailmerge_filter', $sugar_config)){
- //   $filter = $sugar_config['mailmerge_filter']; 
+ //   $filter = $sugar_config['mailmerge_filter'];
 }
 array_push($filter, 'link');
 
@@ -117,7 +98,7 @@ if(!file_exists($dataDir))
 {
 	sugar_mkdir($dataDir);
 }
-srand((double)microtime()*1000000); 
+srand((double)microtime()*1000000);
 $mTime = microtime();
 $dataFileName = 'sugardata'.$mTime.'.php';
 write_array_to_file('merge_array', $merge_array, $dataDir.$dataFileName);

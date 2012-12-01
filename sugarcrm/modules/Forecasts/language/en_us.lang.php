@@ -31,6 +31,7 @@ $mod_strings = array (
 
     //module strings.
     'LBL_MODULE_NAME' => 'Forecasts',
+    'LBL_MODULE_NAME_SINGULAR' => 'Forecast',
     'LNK_NEW_OPPORTUNITY' => 'Create Opportunity',
     'LBL_MODULE_TITLE' => 'Forecasts',
     'LBL_LIST_FORM_TITLE' => 'Committed Forecasts',
@@ -230,7 +231,6 @@ $mod_strings = array (
     'LBL_SALES_STAGE' => 'Stage',
     'LBL_AMOUNT' => 'Amount',
     'LBL_DATE_CLOSED' => 'Expected Close',
-    'LBL_PROBABILITY' => 'Probability',
     'LBL_PRODUCT_ID' => 'Product ID',
     'LBL_QUOTA_ID' => 'Quota ID',
     'LBL_VERSION' => 'Version',
@@ -240,28 +240,24 @@ $mod_strings = array (
     'LBL_UP' => 'up',
     'LBL_DOWN' => 'down',
     'LBL_PREVIOUS_COMMIT' => 'Latest Commit:',
-    'LBL_COMMITTED_HISTORY_BEST_LIKELY_WORST_CHANGED' => 'Updated forecast likely {3} {4} to {5}, best {0} {1} to {2} and worst {6} {7} to {8}',
-    'LBL_COMMITTED_HISTORY_BEST_LIKELY_CHANGED' => 'Updated forecast likely {3} {4} to {5}, best {0} {1} to {2} and worst stayed the same',
-    'LBL_COMMITTED_HISTORY_LIKELY_WORST_CHANGED' => 'Updated forecast likely {0} {1} to {2}, best stayed the same and worst {3} {4} to {5}',
-    'LBL_COMMITTED_HISTORY_BEST_WORST_CHANGED' => 'Updated forecast likely stayed the same, best {0} {1} to {2} and worst {3} {4} to {5}',
-    'LBL_COMMITTED_HISTORY_BEST_CHANGED' => 'Updated forecast likely stayed the same, best {0} {1} to {2} and worst stayed the same',
-    'LBL_COMMITTED_HISTORY_LIKELY_CHANGED' => 'Updated forecast likely {0} {1} to {2}, best and worst stayed the same',
-    'LBL_COMMITTED_HISTORY_WORST_CHANGED' => 'Updated forecast likely and best stayed the same and worst {0} {1} to {2}',
-    'LBL_COMMITTED_HISTORY_CHANGED' => 'Updated forecast worst, likely and best all stayed the same',
+
+    'LBL_COMMITTED_HISTORY_SETUP_FORECAST' => 'Setup forecast',
+    'LBL_COMMITTED_HISTORY_UPDATED_FORECAST' => 'Updated forecast',
+    'LBL_COMMITTED_HISTORY_1_SHOWN' => '{0} {1}',
+    'LBL_COMMITTED_HISTORY_2_SHOWN' => '{0} {1}, {2}',
+    'LBL_COMMITTED_HISTORY_3_SHOWN' => '{0} {1}, {2}, and {3}',
+    'LBL_COMMITTED_HISTORY_LIKELY_CHANGED' => 'likely {0} {1} to {2}',
+    'LBL_COMMITTED_HISTORY_BEST_CHANGED' => 'best {0} {1} to {2}',
+    'LBL_COMMITTED_HISTORY_WORST_CHANGED' => 'worst {0} {1} to {2}',
+    'LBL_COMMITTED_HISTORY_LIKELY_SAME' => 'likely stayed the same',
+    'LBL_COMMITTED_HISTORY_BEST_SAME' => 'best stayed the same',
+    'LBL_COMMITTED_HISTORY_WORST_SAME' => 'worst stayed the same',
+
     'LBL_COMMITTED_THIS_MONTH' => 'This month on {0}',
     'LBL_COMMITTED_MONTHS_AGO' => '{0} months ago on {1}',
-    'LBL_COMMITTED_HISTORY_BEST_LIKELY_WORST_SETUP' => 'Setup forecast likely to {5}, best to {2} and worst to {8}',
-    'LBL_COMMITTED_HISTORY_BEST_LIKELY_SETUP' => 'Setup forecast likely to {5} and best to {2}',
-    'LBL_COMMITTED_HISTORY_LIKELY_WORST_SETUP' => 'Setup forecast likely to {2} and worst to {5}',
-    'LBL_COMMITTED_HISTORY_BEST_WORST_SETUP' => 'Setup forecast best to {2} and worst to {5}',
-    'LBL_COMMITTED_HISTORY_BEST_SETUP' => 'Setup forecast best to {2}',
-    'LBL_COMMITTED_HISTORY_LIKELY_SETUP' => 'Setup forecast likely to {2}',
-    'LBL_COMMITTED_HISTORY_WORST_SETUP' => 'Setup forecast worst to {2}',
-    'LBL_COMMITTED_HISTORY_SETUP' => 'Setup forecast likely, best and worst all stayed the same',
 
     //Labels for jsTree implementation
     'LBL_TREE_PARENT' => 'Parent',
-    'LBL_TREE_TEAMS' => 'Teams',
 
     'LBL_MY_OPPORTUNITIES' => 'Opportunities ({0})',
 
@@ -270,7 +266,9 @@ $mod_strings = array (
     'LBL_INCLUDED_TOTAL' => 'Included Total',
     'LBL_OVERALL_TOTAL' => 'Overall Total',
     'LBL_TOTAL' => 'Total',
-    'LBL_CLICKTOEDIT_INVALID' => 'Invalid',
+    'LBL_CLICKTOEDIT_INVALID' => 'Invalid Value: {0}',
+    'LBL_CLICKTOEDIT_INVALID_NEGATIVE' => '{0} should be 0 or greater',
+    'LBL_CLICKTOEDIT_INVALID_RANGE' => 'Probability (%) value {0} is not within the valid range (0-100)',
     'LBL_WORKSHEET_SAVE_CONFIRM' => 'You have unsaved changes in your Worksheet. Press Ok to save these as a draft and continue, or Cancel to discard these changes continue.',
     'LBL_WORKSHEET_COMMIT_CONFIRM' => 'You have saved changes that have not been committed in the rep view. The saved changes will not be visible in the Manager view until you commit.<br>Press OK to commit the changes and continue, or Cancel to not commit the changes and continue.',
     'LBL_WORKSHEET_COMMIT_ALERT' => 'You have committed your Rep view, but not your Manager view; the team\'s forecast will not be committed until your Manager view is committed.',
@@ -284,13 +282,8 @@ $mod_strings = array (
     'LBL_CHART_OPTIONS' => 'Chart Options',
     'LBL_CHART_AMOUNT' => 'Amount',
     'LBL_CHART_TYPE' => 'Type',
-    'LBL_CHART_OPTION_LIKELY' => 'Likely',
-    'LBL_CHART_OPTION_BEST' => 'Best',
-    'LBL_CHART_OPTION_WORST' => 'Worst',
 
     // Labels for Data Filters
-    'LBL_FORECAST_PERIOD' => 'Forecast Period:',
-    'LBL_FORECAST_CATEGORY' => 'Forecast Category:',
     'LBL_FILTERS' => 'Filters',
 
     // Labels for toggle buttons
@@ -299,19 +292,19 @@ $mod_strings = array (
 
     // Labels for Progress
     'LBL_PROJECTED' => 'Projected',
-    'LBL_DISTANCE_ABOVE_LIKELY_FROM_QUOTA' => 'Distance Above: Likely from Quota',
-    'LBL_DISTANCE_LEFT_LIKELY_TO_QUOTA' => 'Distance Left: Likely to Quota',
-    'LBL_DISTANCE_ABOVE_BEST_FROM_QUOTA' => 'Distance Above: Best from Quota',
-    'LBL_DISTANCE_LEFT_BEST_TO_QUOTA' => 'Distance Left: Best to Quota',
-    'LBL_DISTANCE_ABOVE_WORST_FROM_QUOTA' => 'Distance Above: Worst from Quota',
-    'LBL_DISTANCE_LEFT_WORST_TO_QUOTA' => 'Distance Left: Worst to Quota',
+    'LBL_DISTANCE_ABOVE_LIKELY_FROM_QUOTA' => 'Likely from Quota',
+    'LBL_DISTANCE_LEFT_LIKELY_TO_QUOTA' => 'Likely to Quota',
+    'LBL_DISTANCE_ABOVE_BEST_FROM_QUOTA' => 'Best from Quota',
+    'LBL_DISTANCE_LEFT_BEST_TO_QUOTA' => 'Best to Quota',
+    'LBL_DISTANCE_ABOVE_WORST_FROM_QUOTA' => 'Worst from Quota',
+    'LBL_DISTANCE_LEFT_WORST_TO_QUOTA' => 'Worst to Quota',
     'LBL_CLOSED' => 'Closed',
-    'LBL_DISTANCE_ABOVE_LIKELY_FROM_CLOSED' => 'Distance Above: Likely from Closed',
-    'LBL_DISTANCE_LEFT_LIKELY_TO_CLOSED' => 'Distance Left: Likely to Closed',
-    'LBL_DISTANCE_ABOVE_BEST_FROM_CLOSED' => 'Distance Above: Best from Closed',
-    'LBL_DISTANCE_LEFT_BEST_TO_CLOSED' => 'Distance Left: Best to Closed',
-    'LBL_DISTANCE_ABOVE_WORST_FROM_CLOSED' => 'Distance Above: Worst from Closed',
-    'LBL_DISTANCE_LEFT_WORST_TO_CLOSED' => 'Distance Left: Worst to Closed',
+    'LBL_DISTANCE_ABOVE_LIKELY_FROM_CLOSED' => 'Likely from Closed',
+    'LBL_DISTANCE_LEFT_LIKELY_TO_CLOSED' => 'Likely to Closed',
+    'LBL_DISTANCE_ABOVE_BEST_FROM_CLOSED' => 'Best from Closed',
+    'LBL_DISTANCE_LEFT_BEST_TO_CLOSED' => 'Best to Closed',
+    'LBL_DISTANCE_ABOVE_WORST_FROM_CLOSED' => 'Worst from Closed',
+    'LBL_DISTANCE_LEFT_WORST_TO_CLOSED' => 'Worst to Closed',
     'LBL_REVENUE' => 'Revenue',
     'LBL_PIPELINE_SIZE' => 'Pipeline Size',
     'LBL_PIPELINE_REVENUE' => 'Pipeline Revenue',
@@ -325,11 +318,9 @@ $mod_strings = array (
 
     'LBL_CHART_FORECAST_FOR' => 'Forecast for {0}',
     'LBL_FORECAST_TITLE' => 'Forecast: {0}',
-
     'LBL_CHART_INCLUDED' => 'Included',
     'LBL_CHART_NOT_INCLUDED' => 'Not Included',
     'LBL_CHART_ADJUSTED' => ' (Adjusted)',
-
     'LBL_SAVE_DRAFT' => 'Save Draft',
     'LBL_CHANGES_BY' => 'Changes by {0}',
     'LBL_FORECAST_SETTINGS' => 'Settings',
@@ -344,8 +335,8 @@ $mod_strings = array (
     'LBL_FORECASTS_CONFIG_USER_SPLASH' => 'Forecasting has not been configured yet.  Please contact your system administrator.',
 
     // Panel and BreadCrumb Labels
-    'LBL_FORECASTS_CONFIG_BREADCRUMB_CATEGORIES' => 'Categories',
-    'LBL_FORECASTS_CONFIG_BREADCRUMB_RANGE' => 'Ranges',
+    'LBL_FORECASTS_CONFIG_BREADCRUMB_CATEGORIES' => 'Ranges',
+    'LBL_FORECASTS_CONFIG_BREADCRUMB_RANGE' => 'Scenarios',
     'LBL_FORECASTS_CONFIG_BREADCRUMB_TIMEPERIODS' => 'Time Periods',
     'LBL_FORECASTS_CONFIG_BREADCRUMB_VARIABLES' => 'Variables',
 
@@ -363,14 +354,17 @@ $mod_strings = array (
 
     // category config
     //TODO-sfa remove this once the ability to map buckets when they get changed is implemented (SFA-215).
-    'LBL_FORECASTS_CONFIG_CATEGORY_SETUP_NOTICE' => 'Please note that Category page will be read only after the first commit or save draft; for this reason the Category should be set up carefully.',
-    'LBL_FORECASTS_CONFIG_CATEGORIES' => 'Forecast Category Options:',
+    //TODO-sfa refactors the code references for category to be ranges (SFA-337).
+    'LBL_FORECASTS_CONFIG_CATEGORY_SETUP_NOTICE' => 'Please note that Ranges page will be read only after the first commit or save draft; for this reason the Forecast Ranges should be set up carefully.',
+    'LBL_FORECASTS_CONFIG_CATEGORIES' => 'Forecast Range Options:',
     'LBL_FORECASTS_CONFIG_CATEGORY_OPTIONS' => 'Select the way you would like to categorize opportunities.',
     'LBL_FORECASTS_CONFIG_SHOW_BINARY_RANGES_DESCRIPTION' => 'This option gives a user the ability to be included or excluded from a forecast.',
     'LBL_FORECASTS_CONFIG_SHOW_BUCKETS_RANGES_DESCRIPTION' => 'This option gives a user the ability to categorize their opportunities that are not included in the commit but are upside and have the potential of closing if everything goes well and opportunities that are to be excluded from the forecast.',
-    'LBL_FORECASTS_CONFIG_SHOW_CUSTOM_BUCKETS_CATEGORIES' => 'Custom Categories: This option gives a user the ability to categorize their opportunities to be committed into the forecast into a committed category, excluded category and any other categories that you setup.',
+    'LBL_FORECASTS_CONFIG_SHOW_CUSTOM_BUCKETS_CATEGORIES' => 'Custom Ranges: This option gives a user the ability to categorize their opportunities to be committed into the forecast into a committed range, excluded range and any others that you setup.',
+    'LBL_FORECASTS_CONFIG_CATEGORY_EXCLUDE_INFO' => 'The Exclude Range is from 0% to the minimum of the previous Forecast Range by default.',
 
     // range config
+    //TODO-sfa refactors the code references for ranges to be scenarios (SFA-337).
     'LBL_FORECASTS_CONFIG_WORKSHEET_RANGE' => 'Select the column you would like the user to fill out for their forecast for each opportunity.',
     'LBL_FORECASTS_CONFIG_WORKSHEET_LIKELY_INFO' => 'Please note the Likely amount is tied to the amount shown in Opportunities; for this reason the Likely column cannot be hidden.',
     'LBL_FORECASTS_CONFIG_WORKSHEET_RANGE_LIKELY' => 'Likely',

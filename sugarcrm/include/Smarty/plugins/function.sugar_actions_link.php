@@ -125,7 +125,7 @@ function smarty_function_sugar_actions_link($params, &$smarty)
 				$view = '{if $bean->aclAccess("detail")}{if !empty($fields.id.value) && $isAuditEnabled}'.$audit_link.'{/if}{/if}';
 				return $view;
 
-			//BEGIN SUGARCRM flav=pro || flav=sales ONLY
+			//BEGIN SUGARCRM flav=pro ONLY
 			//Button for the Connector intergration wizard
 			case "CONNECTOR":
 				require_once('include/connectors/utils/ConnectorUtils.php');
@@ -146,7 +146,7 @@ function smarty_function_sugar_actions_link($params, &$smarty)
 				}
 				return '';
 
-			//END SUGARCRM flav=pro || flav=sales ONLY
+			//END SUGARCRM flav=pro ONLY
 
    	  } //switch
 

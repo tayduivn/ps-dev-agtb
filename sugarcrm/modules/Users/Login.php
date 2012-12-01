@@ -34,7 +34,7 @@ if(isset($_REQUEST['login_language'])){
 $sugar_smarty = new Sugar_Smarty();
 echo '<link rel="stylesheet" type="text/css" media="all" href="'.getJSPath('modules/Users/login.css').'">';
 echo '<script type="text/javascript" src="'.getJSPath('modules/Users/login.js').'"></script>';
-//BEGIN SUGARCRM flav=pro || flav=sales ONLY
+//BEGIN SUGARCRM flav=pro ONLY
 // detect mobile device on login page, redirect accordingly
 if ( isset($_REQUEST['mobile']) && $_REQUEST['mobile'] == '0' ) {
     if (isset($_SESSION['isMobile'])) unset($_SESSION['isMobile']);
@@ -45,7 +45,7 @@ elseif (checkForMobile()){
     $url = $GLOBALS['app']->getLoginRedirect()."&mobile=1";
     header( "Location: ". $url );
 }
-//END SUGARCRM flav=pro || flav=sales ONLY
+//END SUGARCRM flav=pro ONLY
 global $app_language, $sugar_config;
 //we don't want the parent module's string file, but rather the string file specifc to this subpanel
 global $current_language;
@@ -58,9 +58,6 @@ else {
     //BEGIN SUGARCRM flav=pro && flav!=ent ONLY
     $login_image = '<IMG src="include/images/sugar_md.png" alt="Sugar" width="340" height="25">';
     //END SUGARCRM flav=pro && flav!=ent ONLY
-    //BEGIN SUGARCRM flav=sales ONLY
-    $login_image = '<IMG src="include/images/sugar_md_sales.png" alt="Sugar" width="340" height="25" style="margin: 5px 0;">';
-    //END SUGARCRM flav=sales ONLY
     //BEGIN SUGARCRM flav=dev ONLY
     $login_image = '<IMG src="include/images/sugar_md_dev.png" alt="Sugar" width="340" height="25">';
     //END SUGARCRM flav=dev ONLY
@@ -123,8 +120,7 @@ if((isset($sugar_flavor) && $sugar_flavor != null) &&
 	global $db;
 	$result = $db->query($query, true, "Error filling in user array: ");
 	$row = $db->fetchByAssoc($result);
-   	$admin = new Administration();
-    $admin->retrieveSettings();
+   	$admin = Administration::getSettings();
     $license_users = $admin->settings['license_users'];
     $license_seats_needed = $row['total'] - $license_users;
     if( $license_seats_needed > 0 ){
@@ -196,8 +192,7 @@ if ( !empty($logindisplay) )
 
 // RECAPTCHA
 
-	$admin = new Administration();
-	$admin->retrieveSettings('captcha');
+	$admin = Administration::getSettings('captcha');
 	$captcha_privatekey = "";
 	$captcha_publickey="";
 	$captcha_js = "";

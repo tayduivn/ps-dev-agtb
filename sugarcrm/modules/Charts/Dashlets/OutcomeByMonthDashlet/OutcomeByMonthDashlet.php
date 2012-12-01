@@ -81,8 +81,7 @@ class OutcomeByMonthDashlet extends DashletGenericChart
         $currency_symbol = $GLOBALS['sugar_config']['default_currency_symbol'];
         if ($GLOBALS['current_user']->getPreference('currency')){
 
-            $currency = new Currency();
-            $currency->retrieve($GLOBALS['current_user']->getPreference('currency'));
+            $currency = BeanFactory::getBean('Currencies', $GLOBALS['current_user']->getPreference('currency'));
             $currency_symbol = $currency->symbol;
         }
 

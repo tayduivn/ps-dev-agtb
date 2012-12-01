@@ -45,7 +45,7 @@ class MyReportsDashlet extends DashletGeneric {
         $this->isConfigurable = false;
         $this->searchFields = $dashletData['MyReportsDashlet']['searchFields'];
         $this->columns = $dashletData['MyReportsDashlet']['columns'];
-        $this->seedBean = new SavedReport();        
+        $this->seedBean = BeanFactory::getBean('Reports');        
     }
     
     function process() {
@@ -57,7 +57,7 @@ class MyReportsDashlet extends DashletGeneric {
         global $current_user;
         $where_clauses = array();
         
-        $sugaFav = new SugarFavorites();
+        $sugaFav = BeanFactory::getBean('SugarFavorites');
         $current_favorites_beans = $sugaFav->getUserFavoritesByModule('Reports', $current_user);
         $current_favorites = array();
         foreach ($current_favorites_beans as $key=>$val) {

@@ -44,7 +44,7 @@ foreach ( $GLOBALS['beanFiles'] as $bean => $file )
         {
             require ($file) ;
         }
-        $focus = new $bean ( ) ;
+        $focus = BeanFactory::newBeanByName($bean);
         if ( $focus instanceOf SugarBean ) {
             $table_name = $focus->table_name ;
             $empty = array() ;
@@ -67,7 +67,7 @@ foreach ( $GLOBALS['beanFiles'] as $bean => $file )
     {
         require ($file) ;
     }
-    $focus = new $bean ( ) ;
+    $focus = BeanFactory::newBeanByName($bean);
     if ( $focus instanceOf SugarBean ) {
         $table_name = $focus->table_name ;
         $empty = array() ;
@@ -124,7 +124,7 @@ $query = 'INSERT INTO versions (id, deleted, date_entered, date_modified, modifi
 $log->info ( $query ) ;
 $db->query ( $query ) ;
 
-$rel = new Relationship();
+$rel = BeanFactory::getBean('Relationships');
 Relationship::delete_cache();
 $rel->build_relationship_cache();
 

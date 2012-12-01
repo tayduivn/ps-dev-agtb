@@ -46,8 +46,7 @@ class Bug42286Test extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testRemoveUserFromTeam()
     {
-	   $team = new Team();
-	   $team->retrieve($this->testUser->getPrivateTeamID());
+	   $team = BeanFactory::getBean('Teams', $this->testUser->getPrivateTeamID());
 	   
 	   $user2 = SugarTestUserUtilities::createAnonymousUser();
 	   $team->add_user_to_team($user2->id, $user2);

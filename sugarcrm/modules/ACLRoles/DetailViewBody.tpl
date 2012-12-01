@@ -45,11 +45,11 @@
 </TR>
 {foreach from=$CATEGORIES item="TYPES" key="CATEGORY_NAME"}
 
-	{* //BEGIN SUGARCRM flav=com || flav=sales ONLY*}
+	{* //BEGIN SUGARCRM flav=com ONLY*}
 
     {if $APP_LIST.moduleList[$CATEGORY_NAME]!='Users'}
 
-    {* //END SUGARCRM flav=com || flav=sales ONLY*}
+    {* //END SUGARCRM flav=com ONLY*}
 
 	<TR>
 	{if $APP_LIST.moduleList[$CATEGORY_NAME]=='Users'}
@@ -75,11 +75,11 @@
 	{/foreach}
 	</TR>
 
-	{* //BEGIN SUGARCRM flav=com || flav=sales ONLY*}
+	{* //BEGIN SUGARCRM flav=com ONLY*}
 
     {/if}
 
-    {* //END SUGARCRM flav=com || flav=sales ONLY*}
+    {* //END SUGARCRM flav=com ONLY*}
 
 {foreachelse}
 	<tr> <td colspan="2">No Actions</td></tr>

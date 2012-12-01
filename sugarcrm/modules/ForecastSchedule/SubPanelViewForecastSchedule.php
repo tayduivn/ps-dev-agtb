@@ -69,7 +69,7 @@ echo get_form_header($current_module_strings['LBL_SVFS_HEADER'], $button, false)
 
 $return_url = "&return_action=DetailView&return_module=TimePeriods&return_id=".$focus->id;
 
-$seeddata = new ForecastSchedule();
+$seeddata = BeanFactory::getBean('ForecastSchedule');
 $ListView = new ListView();
 $ListView->show_export_button=false;
 $ListView->show_delete_button = false;

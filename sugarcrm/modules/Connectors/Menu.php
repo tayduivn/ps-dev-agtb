@@ -33,11 +33,11 @@ if(in_array($GLOBALS['action'], $actions)){
 	$module_menu[]=Array("index.php?module=Connectors&action=ModifyDisplay", $mod_strings['LBL_MODIFY_DISPLAY_TITLE'],"icon_ConnectorEnable_16");
 	$module_menu[]=Array("index.php?module=Connectors&action=ModifyMapping", $mod_strings['LBL_MODIFY_MAPPING_TITLE'],"icon_ConnectorMap_16");
 
-	//BEGIN SUGARCRM flav=pro || flav=sales ONLY
+	//BEGIN SUGARCRM flav=pro ONLY
 
 	$module_menu[]=Array("index.php?module=Connectors&action=ModifySearch", $mod_strings['LBL_MODIFY_SEARCH_TITLE'],"icon_ConnectorSearchFields_16");
 
-	//END SUGARCRM flav=pro || flav=sales ONLY
+	//END SUGARCRM flav=pro ONLY
 
 }
 

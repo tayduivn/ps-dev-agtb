@@ -59,6 +59,17 @@ class Tracker extends SugarBean
         "visible"
     );
 
+    /**
+     * This is a depreciated method, please start using __construct() as this method will be removed in a future version
+     *
+     * @see __construct
+     * @deprecated
+     */
+    public function Tracker()
+    {
+        $this->__construct();
+    }
+
     public function __construct()
     {
         global $dictionary;
@@ -142,7 +153,7 @@ class Tracker extends SugarBean
         require($path);
         foreach($tracker_config as $key=>$configEntry) {
         if(isset($configEntry['bean']) && $configEntry['bean'] != 'Tracker') {
-            $bean = new $configEntry['bean']();
+            $bean = BeanFactory::newBeanByName($configEntry['bean']);
             if($bean->bean_implements('ACL')) {
                   ACLAction::addActions($bean->getACLCategory(), $configEntry['bean']);
                }

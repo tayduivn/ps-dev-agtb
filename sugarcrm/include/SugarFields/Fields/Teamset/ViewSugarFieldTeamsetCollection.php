@@ -103,7 +103,7 @@ class ViewSugarFieldTeamsetCollection extends ViewSugarFieldCollection {
         	if(!empty($GLOBALS['beanList'][$this->module_dir])){
 	        	$class = $GLOBALS['beanList'][$this->module_dir];
 	            if(SugarAutoLoader::fileExists($GLOBALS['beanFiles'][$class])){
-		        	$this->bean = loadBean($this->module_dir);
+		        	$this->bean = BeanFactory::getBean($this->module_dir);
 					$secondaries = array();
 					$primary = false;
 
@@ -131,8 +131,7 @@ class ViewSugarFieldTeamsetCollection extends ViewSugarFieldCollection {
 			        	} //foreach
 			        }elseif(!empty($this->bean->team_id)){
 			        	//since the team_set_id is not set, but the team_id is.
-			        	$focus = new Team();
-			        	$focus->retrieve($this->bean->team_id);
+			        	$focus = BeanFactory::getBean('Teams', $this->bean->team_id);
 			        	$display_name = Team::getDisplayName($focus->name, $focus->name_2);
 			        	$this->bean->{$this->value_name}=array_merge($this->bean->{$this->value_name}, array('primary'=>array('id'=>$focus->id, 'name'=>$display_name)));
 			        }
@@ -252,7 +251,7 @@ class ViewSugarFieldTeamsetCollection extends ViewSugarFieldCollection {
     	if(empty($_REQUEST['record'])) {
            $isDuplicate = isset($_REQUEST['isDuplicate']) && $_REQUEST['isDuplicate'] == 'true' && $this->bean->aclAccess('edit');
            if($isDuplicate) {
-		        $dupBean = loadBean($_REQUEST['module']);
+		        $dupBean = BeanFactory::getBean($_REQUEST['module']);
 		        $dupBean->retrieve($_REQUEST['record']);
 		        $full_form_values = array();
 		        $full_form_values['primary'] = array('id'=>$dupBean->team_id, 'name'=>$dupBean->team_name);

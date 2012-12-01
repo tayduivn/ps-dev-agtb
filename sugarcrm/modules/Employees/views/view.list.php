@@ -126,16 +126,6 @@ EOHTML;
 			    $this->where .= " AND ";
 			}
             $this->where .= "(users.status <> 'Reserved' or users.status is null) ";
-			//BEGIN SUGARCRM flav=sales ONLY
-			$tplFile = 'include/ListView/ListViewNoMassUpdate.tpl';
-			$this->lv->export = false;
-			$this->lv->showMassupdateFields = false;
-			$this->lv->delete = false;
-			// Hide system admins from non system admin users
-			if(!is_admin($GLOBALS['current_user'])){
-				$this->where .= " AND users.is_admin = 0";
-			}
-			//END SUGARCRM flav=sales ONLY
 			$this->lv->setup($this->seed, $tplFile, $this->where, $this->params);
 			$savedSearchName = empty($_REQUEST['saved_search_select_name']) ? '' : (' - ' . $_REQUEST['saved_search_select_name']);
 			echo $this->lv->display();

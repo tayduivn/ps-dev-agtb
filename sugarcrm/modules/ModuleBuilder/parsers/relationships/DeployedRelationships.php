@@ -2,23 +2,23 @@
 if (! defined ( 'sugarEntry' ) || ! sugarEntry)
     die ( 'Not A Valid Entry Point' ) ;
 /*********************************************************************************
- *The contents of this file are subject to the SugarCRM Professional End User License Agreement 
- *("License") which can be viewed at http://www.sugarcrm.com/EULA.  
- *By installing or using this file, You have unconditionally agreed to the terms and conditions of the License, and You may 
- *not use this file except in compliance with the License. Under the terms of the license, You 
- *shall not, among other things: 1) sublicense, resell, rent, lease, redistribute, assign or 
- *otherwise transfer Your rights to the Software, and 2) use the Software for timesharing or 
- *service bureau purposes such as hosting the Software for commercial gain and/or for the benefit 
- *of a third party.  Use of the Software may be subject to applicable fees and any use of the 
- *Software without first paying applicable fees is strictly prohibited.  You do not have the 
- *right to remove SugarCRM copyrights from the source code or user interface. 
+ *The contents of this file are subject to the SugarCRM Professional End User License Agreement
+ *("License") which can be viewed at http://www.sugarcrm.com/EULA.
+ *By installing or using this file, You have unconditionally agreed to the terms and conditions of the License, and You may
+ *not use this file except in compliance with the License. Under the terms of the license, You
+ *shall not, among other things: 1) sublicense, resell, rent, lease, redistribute, assign or
+ *otherwise transfer Your rights to the Software, and 2) use the Software for timesharing or
+ *service bureau purposes such as hosting the Software for commercial gain and/or for the benefit
+ *of a third party.  Use of the Software may be subject to applicable fees and any use of the
+ *Software without first paying applicable fees is strictly prohibited.  You do not have the
+ *right to remove SugarCRM copyrights from the source code or user interface.
  * All copies of the Covered Code must include on each user interface screen:
- * (i) the "Powered by SugarCRM" logo and 
- * (ii) the SugarCRM copyright notice 
+ * (i) the "Powered by SugarCRM" logo and
+ * (ii) the SugarCRM copyright notice
  * in the same form as they appear in the distribution.  See full license for requirements.
- *Your Warranty, Limitations of liability and Indemnity are expressly stated in the License.  Please refer 
+ *Your Warranty, Limitations of liability and Indemnity are expressly stated in the License.  Please refer
  *to the License for the specific language governing these rights and limitations under the License.
- *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.  
+ *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  * $Id: additionalDetails.php 13782 2006-06-06 17:58:55Z majed $
  *********************************************************************************/
 
@@ -44,20 +44,19 @@ class DeployedRelationships extends AbstractRelationships implements Relationshi
     /*
      * Load the set of relationships for this module - the set is the combination of that held in the working file plus all of the relevant deployed relationships for the module
      * Note that deployed relationships are readonly and cannot be modified - getDeployedRelationships() takes care of marking them as such
-     * Assumes that only called for modules which exist in $beansList - otherwise get_module_info will break
      * This means that load() cannot be called for Activities, only Tasks, Notes, etc
-     * 
+     *
      * Note that we may need to adjust the cardinality for any custom relationships that we do not have entries for in the working directory
      * These relationships might have been loaded from an installation package by ModuleInstaller, or the custom/working directory might have been cleared at some point
      * The cardinality in the installed relationship is not necessarily correct for custom relationships, which currently are all built as many-to-many relationships
      * Instead we must obtain the true cardinality from a property we added to the relationship metadata when we created the relationship
      * This relationship metadata is accessed through the Table Dictionary
-     */ 
+     */
     function load ()
     {
-        
+
         $relationships = $this->getDeployedRelationships () ;
-        
+
         if (! empty ( $relationships ))
         {
             // load the relationship definitions for all installed custom relationships into $dictionary
@@ -66,13 +65,13 @@ class DeployedRelationships extends AbstractRelationships implements Relationshi
             {
                 include ('custom/application/Ext/TableDictionary/tabledictionary.ext.php') ;
             }
-            
+
             $invalidModules = array();
             //BEGIN SUGARCRM flav=pro ONLY
             $invalidModules [] = 'Teams' ;
             //END SUGARCRM flav=pro ONLY
             $validModules = array_keys ( self::findRelatableModules () ) ;
-            
+
             // now convert the relationships array into an array of AbstractRelationship objects
             foreach ( $relationships as $name => $definition )
             {
@@ -84,9 +83,9 @@ class DeployedRelationships extends AbstractRelationships implements Relationshi
                         // identify the subpanels for this relationship - TODO: optimize this - currently does m x n scans through the subpanel list...
                         $definition [ 'rhs_subpanel' ] = self::identifySubpanel ( $definition [ 'lhs_module' ], $definition [ 'rhs_module' ] ) ;
                         $definition [ 'lhs_subpanel' ] = self::identifySubpanel ( $definition [ 'rhs_module' ], $definition [ 'lhs_module' ] ) ;
-                        
+
                         // now adjust the cardinality with the true cardinality found in the relationships metadata (see method comment above)
-                        
+
 
                         if (! empty ( $dictionary ) && ! empty ( $dictionary [ $name ] ) ) {
                         	if (! empty ( $dictionary [ $name ] [ 'true_relationship_type' ] )) {
@@ -97,15 +96,15 @@ class DeployedRelationships extends AbstractRelationships implements Relationshi
                             }
                         	$definition [ 'is_custom' ] = true;
                         }
-                            
-                        
+
+
                         $this->relationships [ $name ] = RelationshipFactory::newRelationship ( $definition ) ;
                     }
                 }
             }
-        
+
         }
-        
+
     /*        // Now override with any definitions from the working directory
         // must do this to capture one-to-ones that we have created as these don't show up in the relationship table that is the source for getDeployedRelationships()
         $overrides = parent::_load ( "custom/working/modules/{$this->moduleName}" ) ;
@@ -113,7 +112,7 @@ class DeployedRelationships extends AbstractRelationships implements Relationshi
         {
             $this->relationships [ $name ] = $relationship ;
         }*/
-    
+
     }
 
     /*
@@ -151,11 +150,11 @@ class DeployedRelationships extends AbstractRelationships implements Relationshi
     	$mi = new ModuleInstaller();
     	$mi->silent = true;
     	$mi->uninstall_relationship("custom/metadata/{$rel_name}MetaData.php");
-    	
+
     	// now clear all caches so that our changes are visible
     	Relationship::delete_cache();
         $mi->rebuild_tabledictionary();
-        
+
         $MBmodStrings = $GLOBALS [ 'mod_strings' ];
         $GLOBALS [ 'mod_strings' ] = return_module_language ( '', 'Administration' ) ;
         $rac = new RepairAndClear ( ) ;
@@ -188,15 +187,17 @@ class DeployedRelationships extends AbstractRelationships implements Relationshi
      */
     static private function identifySubpanel ($thisModuleName , $sourceModuleName)
     {
-        $module = get_module_info ( $thisModuleName ) ;
-        require_once ('include/SubPanel/SubPanelDefinitions.php') ;
+        $module = BeanFactory::getBean($thisModuleName);
+        if(empty($module)) {
+            return null;
+        }        require_once ('include/SubPanel/SubPanelDefinitions.php') ;
         $spd = new SubPanelDefinitions ( $module ) ;
         $subpanelNames = $spd->get_available_tabs () ; // actually these are the displayed subpanels
-        
+
         foreach ( $subpanelNames as $key => $name )
         {
             $GLOBALS [ 'log' ]->debug ( $thisModuleName . " " . $name ) ;
-            
+
             $subPanel = $spd->load_subpanel ( $name ) ;
             if ($subPanel && ! isset ( $subPanel->_instance_properties [ 'collection_list' ] ))
             {
@@ -206,9 +207,9 @@ class DeployedRelationships extends AbstractRelationships implements Relationshi
                 }
             }
         }
-        
+
         return null ;
-    
+
     }
 
     /*
@@ -216,13 +217,15 @@ class DeployedRelationships extends AbstractRelationships implements Relationshi
      * We can assume that both sides of the relationship are deployed modules as this is only called within the context of DeployedRelationships
      * @param string $thisModuleName    Name of the related module
      * @param string $sourceModuleName  Name of the primary module
-     * @return string Name of the relate field, if found; null otherwise    
+     * @return string Name of the relate field, if found; null otherwise
      */
-    
+
     static private function identifyRelateField ($thisModuleName , $sourceModuleName)
     {
-        $module = get_module_info ( $thisModuleName ) ;
-        
+        $module = BeanFactory::getBean($thisModuleName);
+        if(empty($module)) {
+            return null;
+        }
         foreach ( $module->field_defs as $field )
         {
             if ($field [ 'type' ] == 'relate' && isset ( $field [ 'module' ] ) && $field [ 'module' ] == $sourceModuleName)
@@ -242,10 +245,10 @@ class DeployedRelationships extends AbstractRelationships implements Relationshi
     {
         $lhs = $relationship->lhs_module ;
         $rhs = $relationship->rhs_module ;
-        // if the lhs_module already has a subpanel or relate field sourced from the rhs_module, 
+        // if the lhs_module already has a subpanel or relate field sourced from the rhs_module,
     // or the rhs_module already has a subpanel or relate field sourced from the lhs_module,
     // then set "relationship_only" in the relationship
-    
+
 
     //        if (($relationship->getType() != MB_ONETOONE && ! is_null ( self::identifySubpanel ( $lhs, $rhs ) )) || ($relationship->getType() == MB_MANYTOMANY && ! is_null ( self::identifySubpanel ( $rhs, $lhs ) )) || ($relationship->getType() == MB_ONETOONE && ! is_null ( self::identifyRelateField ( $rhs, $lhs ) )) || ($relationship->getType() != MB_MANYTOMANY && ! is_null ( self::identifyRelateField ( $lhs, $rhs ) )))
     //            $relationship->setRelationship_only () ;
@@ -254,7 +257,7 @@ class DeployedRelationships extends AbstractRelationships implements Relationshi
     /*
      * BUILD FUNCTIONS
      */
-    
+
     /*
      * Implement all of the Relationships in this set of relationships
      * This is more general than it needs to be given that deployed relationships are built immediately - there should only be one relationship to build here...
@@ -264,9 +267,9 @@ class DeployedRelationships extends AbstractRelationships implements Relationshi
     function build ()
     {
         $basepath = "custom/Extension/modules" ;
-        
+
         $this->activitiesToAdd = false ;
-        
+
         // and mark all as built so that the next time we come through we'll know and won't build again
         foreach ( $this->relationships as $name => $relationship )
         {
@@ -286,12 +289,12 @@ class DeployedRelationships extends AbstractRelationships implements Relationshi
                 unset ( $this->relationships [ $name ] ) ;
             }
         }
-        
+
         $GLOBALS [ 'log' ]->info ( get_class ( $this ) . "->build(): installing relationships" ) ;
 
         $MBModStrings = $GLOBALS [ 'mod_strings' ] ;
         $adminModStrings = return_module_language ( '', 'Administration' ) ; // required by ModuleInstaller
-            
+
         foreach ( $this->relationships as $name => $relationship )
         {
             $relationship->setFromStudio();
@@ -303,8 +306,8 @@ class DeployedRelationships extends AbstractRelationships implements Relationshi
             $this->relationships [ $name ] = $relationship ;
 
             // now install the relationship - ModuleInstaller normally only does this as part of a package load where it installs the relationships defined in the manifest. However, we don't have a manifest or a package, so...
-            
-            // If we were to chose to just use the Extension mechanism, without using the ModuleInstaller install_...() methods, we must : 
+
+            // If we were to chose to just use the Extension mechanism, without using the ModuleInstaller install_...() methods, we must :
             // 1)   place the information for each side of the relationship in the appropriate Ext directory for the module, which means specific $this->save...() methods for DeployedRelationships, and
             // 2)   we must also manually add the relationship into the custom/application/Ext/TableDictionary/tabledictionary.ext.php file as install_relationship doesn't handle that (install_relationships which requires the manifest however does)
             //      Relationships must be in tabledictionary.ext.php for the Admin command Rebuild Relationships to reliably work:
@@ -312,7 +315,7 @@ class DeployedRelationships extends AbstractRelationships implements Relationshi
             //      if the relationship is not defined in one of those four places it could be deleted during a rebuilt, or during a module installation (when RebuildRelationships.php deletes all entries in the Relationships table)
             // So instead of doing this, we use common save...() methods between DeployedRelationships and UndeployedRelationships that will produce installDefs,
             // and rather than building a full manifest file to carry them, we manually add these installDefs to the ModuleInstaller, and then
-            // individually call the appropriate ModuleInstaller->install_...() methods to take our relationship out of our staging area and expand it out to the individual module Ext areas       
+            // individually call the appropriate ModuleInstaller->install_...() methods to take our relationship out of our staging area and expand it out to the individual module Ext areas
 
             $GLOBALS [ 'mod_strings' ] = $adminModStrings ;
             require_once 'ModuleInstall/ModuleInstaller.php' ;
@@ -323,7 +326,7 @@ class DeployedRelationships extends AbstractRelationships implements Relationshi
             $mi->base_dir = $basepath ;
             $mi->silent = true ;
 
-            
+
             VardefManager::clearVardef () ;
 
             $mi->install_relationships () ;
@@ -333,7 +336,7 @@ class DeployedRelationships extends AbstractRelationships implements Relationshi
             $mi->install_extensions();
 
         }
-        
+
         // Run through the module installer to rebuild the relationships once after everything is done.
         require_once 'ModuleInstall/ModuleInstaller.php' ;
         $mi = new ModuleInstaller ( ) ;
@@ -349,7 +352,7 @@ class DeployedRelationships extends AbstractRelationships implements Relationshi
 
         // save out the updated definitions so that we keep track of the change in built status
         $this->save () ;
-        
+
         $GLOBALS [ 'log' ]->info ( get_class ( $this ) . "->build(): finished relationship installation" ) ;
 
     }
@@ -364,11 +367,11 @@ class DeployedRelationships extends AbstractRelationships implements Relationshi
     protected function saveFieldsToLayouts ($basepath , $dummy , $relationshipName , $layoutAdditions)
     {
         require_once 'modules/ModuleBuilder/parsers/views/GridLayoutMetaDataParser.php' ;
-        
+
         // these modules either lack editviews/detailviews or use custom mechanisms for the editview/detailview. In either case, we don't want to attempt to add a relate field to them
         // would be better if GridLayoutMetaDataParser could handle this gracefully, so we don't have to maintain this list here
         $invalidModules = array ( 'emails' , 'kbdocuments' ) ;
-        
+
         foreach ( $layoutAdditions as $deployedModuleName => $fieldName )
         {
             if (! in_array ( strtolower ( $deployedModuleName ), $invalidModules ))
@@ -381,7 +384,7 @@ class DeployedRelationships extends AbstractRelationships implements Relationshi
                 }
         }
     }
-    
+
     /**
      * Added for bug #40941
      * Deletes the field from DetailView and editView of the appropriate module
@@ -391,14 +394,14 @@ class DeployedRelationships extends AbstractRelationships implements Relationshi
      */
 	private function removeFieldsFromDeployedLayout ($relationship)
     {
-        
+
         // many-to-many relationships don't have fields so if we have a many-to-many we can just skip this...
         if ($relationship->getType () == MB_MANYTOMANY)
             return false ;
-        
+
         $successful = true ;
         $layoutAdditions = $relationship->buildFieldsToLayouts () ;
-        
+
         require_once 'modules/ModuleBuilder/parsers/views/GridLayoutMetaDataParser.php' ;
         foreach ( $layoutAdditions as $deployedModuleName => $fieldName )
         {
@@ -407,10 +410,10 @@ class DeployedRelationships extends AbstractRelationships implements Relationshi
                 $parser = new GridLayoutMetaDataParser ( $view, $deployedModuleName ) ;
                 $parser->removeField ( $fieldName );
                 $parser->handleSave ( false ) ;
-             
+
             }
         }
-        
+
         return $successful ;
     }
 

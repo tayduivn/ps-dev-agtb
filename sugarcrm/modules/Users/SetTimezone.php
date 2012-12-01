@@ -36,10 +36,9 @@ global $app_strings;
 global $app_list_strings;
 global $mod_strings;
 
-$admin = new Administration();
-$admin->retrieveSettings("notify");
+$admin = Administration::getSettings("notify");
 
-//BEGIN SUGARCRM flav=pro || flav=sales ONLY
+//BEGIN SUGARCRM flav=pro ONLY
 if ( isset($_SESSION['isMobile']) ) {
 	session_destroy();
 	session_start();
@@ -47,7 +46,7 @@ if ( isset($_SESSION['isMobile']) ) {
     header("Location: index.php?module=Users&action=Login&mobile=1");
     sugar_cleanup(true);
 }
-//END SUGARCRM flav=pro || flav=sales ONLY
+//END SUGARCRM flav=pro ONLY
 
 ///////////////////////////////////////////////////////////////////////////////
 ////	HELPER FUNCTIONS
@@ -58,8 +57,7 @@ if(isset($_REQUEST['userOffset'])) { // ajax call to lookup timezone
     echo 'userTimezone = "' . TimeDate::guessTimezone($_REQUEST['userOffset']) . '";';
     exit();
 }
-$admin = new Administration();
-$admin->retrieveSettings();
+$admin = Administration::getSettings();
 $sugar_smarty = new Sugar_Smarty();
 $sugar_smarty->assign('MOD', $mod_strings);
 $sugar_smarty->assign('APP', $app_strings);

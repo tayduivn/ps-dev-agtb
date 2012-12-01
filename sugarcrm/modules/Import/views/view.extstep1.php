@@ -54,7 +54,7 @@ class ImportViewExtStep1 extends ImportViewStep3
         global $mod_strings, $app_strings, $current_user, $sugar_config;
 
         // Clear out this user's last import
-        $seedUsersLastImport = new UsersLastImport();
+        $seedUsersLastImport = BeanFactory::getBean('Import_2');
         $seedUsersLastImport->mark_deleted_by_user_id($current_user->id);
         ImportCacheFiles::clearCacheFiles();
 

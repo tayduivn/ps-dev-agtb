@@ -27,7 +27,7 @@ function additionaldetailsforecastopportunities($fields) {
     $overlib_string = '';
     
     if(!empty($fields['ACCOUNT_NAME'])) $overlib_string .= '<b>'. $mod_strings['LBL_ACCOUNT_NAME'] . '</b> ' . $fields['ACCOUNT_NAME'] . '<br>';
-    if(!empty($fields['PROBABILITY'])) $overlib_string .= '<b>'. $mod_strings['LBL_PROBABILITY'] . '</b> ' . $fields['PROBABILITY'] . '<br>';
+    if(!empty($fields['PROBABILITY'])) $overlib_string .= '<b>'. $mod_strings['LBL_OW_PROBABILITY'] . '</b> ' . $fields['PROBABILITY'] . '<br>';
     if(!empty($fields['NEXT_STEP'])) $overlib_string .= '<b>'. $mod_strings['LBL_NEXT_STEP'] . '</b> ' . $fields['NEXT_STEP'] . '<br>';
     if(!empty($fields['OPPORTUNITY_TYPE'])) $overlib_string .= '<b>'. $mod_strings['LBL_TYPE'] . '</b> ' . $app_list_strings['opportunity_type_dom'][$fields['OPPORTUNITY_TYPE']] . '<br>';
 

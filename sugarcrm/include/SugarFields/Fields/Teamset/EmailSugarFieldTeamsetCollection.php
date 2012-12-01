@@ -43,7 +43,6 @@ class EmailSugarFieldTeamsetCollection extends ViewSugarFieldTeamsetCollection {
         $this->form_name = $form_name;
         $this->customMethod = $customMethod;
 
-    	//$this->bean = loadBean($this->module_dir);
     	$this->bean = $bean;
 
     	if(empty($this->bean)) {
@@ -55,12 +54,6 @@ class EmailSugarFieldTeamsetCollection extends ViewSugarFieldTeamsetCollection {
 		$this->displayParams['formName'] = $this->form_name;
 		$this->displayParams['primaryChecked'] = true;
 
-    	//Attempt to retrieve the bean if _bean_id is set
-    	if(!empty($this->bean_id)) {
-    	   //$this->bean->retrieve($this->bean_id);
-    	}
-
-    	//$this->vardef = $this->bean->field_defs['team_name'];
     	$this->vardef = $field_defs['team_name'];
     	$this->name = $this->vardef['name'];
 		$this->related_module = 'Teams';
@@ -122,7 +115,6 @@ class EmailSugarFieldTeamsetCollection extends ViewSugarFieldTeamsetCollection {
         $this->ss->assign('CUSTOM_METHOD', $this->customMethod);
         $this->ss->assign("USER_ID", (!empty($this->user_id) ? $this->user_id : ''));
 		$this->process();
-		//$this->init_tpl();
 		return $this->display();
     }
 

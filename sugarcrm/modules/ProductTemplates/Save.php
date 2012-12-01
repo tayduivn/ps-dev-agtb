@@ -29,9 +29,7 @@ require_once('modules/ProductTemplates/Formulas.php');
 refresh_price_formulas();
 require_once('include/formbase.php');
 
-$focus = new ProductTemplate();
-
-$focus->retrieve($_REQUEST['record']);
+$focus = BeanFactory::getBean('ProductTemplates', $_REQUEST['record']);
 
 foreach($focus->column_fields as $field) {
 	if(isset($_REQUEST[$field])) {

@@ -46,10 +46,9 @@ function getPrintLink()
 function ajaxBannedModules(){
     $bannedModules = array(
         'Calendar',
-        //BEGIN SUGARCRM flav=pro || flav=sales ONLY
+        //BEGIN SUGARCRM flav=pro ONLY
         'Reports',
-        //END SUGARCRM flav=pro || flav=sales ONLY
-        //BEGIN SUGARCRM flav!=sales ONLY
+        //END SUGARCRM flav=pro ONLY
         'Emails',
         'Campaigns',
         'Documents',
@@ -62,7 +61,6 @@ function ajaxBannedModules(){
         'Releases',
         'Groups',
         'EmailMan',
-        //END SUGARCRM flav!=sales ONLY
         //BEGIN SUGARCRM flav=pro ONLY
         'ACLFields',
         'ACLRoles',

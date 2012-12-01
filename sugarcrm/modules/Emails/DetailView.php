@@ -42,7 +42,7 @@ global $app_strings;
 global $focus;
 
 // SETTING DEFAULTS
-$focus		= new Email();
+$focus = BeanFactory::getBean('Emails');
 $detailView	= new DetailView();
 $offset		= 0;
 $email_type	= 'archived';
@@ -104,8 +104,7 @@ if (!empty($focus->status)) {
 	// "Read" flag for InboundEmail
 	if($focus->status == 'unread') {
 		// creating a new instance here to avoid data corruption below
-		$e = new Email();
-		$e->retrieve($focus->id);
+		$e = BeanFactory::getBean('Emails', $focus->id);
 		$e->status = 'read';
 		$e->save();
 		$email_type = $e->status;
@@ -211,7 +210,6 @@ if(empty($html)) {
 	$xtpl->assign('SHOW_PLAINTEXT', 'false');
 }
 $show_subpanels=true;
-//BEGIN SUGARCRM flav!=sales ONLY
 //if the email is of type campaign, process the macros...using the values stored in the relationship table.
 //this is is part of the feature that adds support for one email per campaign.
 if ($focus->type=='campaign' and !empty($_REQUEST['parent_id']) and !empty($_REQUEST['parent_module'])) {
@@ -243,7 +241,6 @@ if ($focus->type=='campaign' and !empty($_REQUEST['parent_id']) and !empty($_REQ
         }
     }
 }
-//END SUGARCRM flav!=sales ONLY
 //if not empty or set to test (from test campaigns)
 if (!empty($focus->parent_type) && $focus->parent_type !='test') {
 	$xtpl->assign('PARENT_MODULE', $focus->parent_type);
@@ -446,7 +443,7 @@ if ($do_open) {
 ////	NOTES (attachements, etc.)
 ///////////////////////////////////////////////////////////////////////////////
 
-$note = new Note();
+$note = BeanFactory::getBean('Notes');
 $where = "notes.parent_id='{$focus->id}'";
 //take in account if this is from campaign and the template id is stored in the macros.
 

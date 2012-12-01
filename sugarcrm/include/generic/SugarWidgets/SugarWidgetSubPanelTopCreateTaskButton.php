@@ -144,11 +144,11 @@ class SugarWidgetSubPanelTopCreateTaskButton extends SugarWidgetSubPanelTopButto
 
 	function display($defines, $additionalFormFields = null)
 	{
-	    $focus = new Task;
+	    $focus = BeanFactory::getBean('Tasks');
 		if ( !$focus->ACLAccess('EditView') ) {
 		    return '';
 	    }
-		
+
 		return parent::display($defines, $additionalFormFields);
 	}
 }

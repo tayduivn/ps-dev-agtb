@@ -543,7 +543,7 @@ class ModuleInstaller{
             return true;
         }
 
-        $user = new User();
+        $user = BeanFactory::getBean('Users');
         $users = get_user_array();
         $unified_search_modules_display = array();
         require('custom/modules/unified_search_modules_display.php');
@@ -1113,8 +1113,8 @@ class ModuleInstaller{
 		require_once('modules/DynamicFields/FieldCases.php');
 		foreach($fields as $field){
 			$installed = false;
-			if(isset($beanList[ $field['module']])){
-				$class = $beanList[ $field['module']];
+			if(!empty($beanList[ $field['module']])){
+
                 if(!isset($field['ext4']))$field['ext4'] = '';
                 if(!isset($field['mass_update']))$field['mass_update'] = 0;
                 if(!isset($field['duplicate_merge']))$field['duplicate_merge'] = 0;
@@ -1131,9 +1131,9 @@ class ModuleInstaller{
                     }
                 }
 
-                if(file_exists($beanFiles[$class])){
-					require_once($beanFiles[$class]);
-					$mod = new $class();
+                $mod = BeanFactory::getBean($field['module']);
+
+                if(!empty($mod)){
 					$installed = true;
 					$fieldObject = get_widget($field['type']);
 					$fieldObject->populateFromRow($field);
@@ -1148,19 +1148,16 @@ class ModuleInstaller{
 	}
 
 	function uninstall_custom_fields($fields){
-		global $beanList, $beanFiles;
 		require_once('modules/DynamicFields/DynamicField.php');
 		$dyField = new DynamicField();
 
 		foreach($fields as $field){
-			$class = $beanList[ $field['module']];
-			if(file_exists($beanFiles[$class])){
-					require_once($beanFiles[$class]);
-					$mod = new $class();
-					$dyField->bean = $mod;
-					$dyField->module = $field['module'];
-					$dyField->deleteField($field['name']);
-			}
+		    $mod = BeanFactory::getBean($field['module']);
+		    if(!empty($mod)) {
+				$dyField->bean = $mod;
+				$dyField->module = $field['module'];
+				$dyField->deleteField($field['name']);
+		    }
 		}
 	}
 
@@ -1409,8 +1406,7 @@ class ModuleInstaller{
 									$studioMod->removeFieldFromLayouts( $field );
 									if (isset($def['custom_module'])) {
 										require_once ('modules/DynamicFields/DynamicField.php') ;
-										require_once ($beanFiles [ $bean ]) ;
-										$seed = new $bean ( ) ;
+										$seed = BeanFactory::getBean($mod);
 										$df = new DynamicField ( $mod ) ;
 										$df->setup ( $seed ) ;
 										//Need to load the entire field_meta_data for some field types
@@ -1647,8 +1643,6 @@ class ModuleInstaller{
 		if(!$application){
 		$GLOBALS['log']->debug( get_class($this)."->merge_files() : merging module files in custom/Extension/modules/<module>/$path to custom/modules/<module>/$path$name");
 		foreach($this->modules as $module){
-				//$GLOBALS['log']->debug("Merging Files for: ".$module);
-				//$GLOBALS['log']->debug("Merging Files for path: ".$path);
 				$extension = "<?php \n //WARNING: The contents of this file are auto-generated\n";
 				$extpath = "modules/$module/$path";
 				$module_install  = 'custom/Extension/'.$extpath;
@@ -1684,9 +1678,11 @@ class ModuleInstaller{
 					$out = sugar_fopen("custom/$extpath/$name", 'w');
 					fwrite($out,$extension);
 					fclose($out);
+                    SugarAutoLoader::addToMap("custom/$extpath/$name");
 				}else{
-					if(file_exists("custom/$extpath/$name")){
+					if(file_exists("custom/$extpath/$name")) {
 						unlink("custom/$extpath/$name");
+                        SugarAutoLoader::delFromMap("custom/$extpath/$name");
 					}
 				}
 			}
@@ -1719,9 +1715,11 @@ class ModuleInstaller{
 						$out = sugar_fopen("custom/$extpath/$name", 'w');
 						fwrite($out,$extension);
 						fclose($out);
+                        SugarAutoLoader::addToMap("custom/$extpath/$name");
 					}else{
 					if(file_exists("custom/$extpath/$name")){
 						unlink("custom/$extpath/$name");
+                        SugarAutoLoader::delFromMap("custom/$extpath/$name");
 					}
 				}
 
@@ -1769,45 +1767,25 @@ class ModuleInstaller{
      * bean/module.
      */
 	function install_beans($beans){
-        include('include/modules.php');
 		foreach($beans as $bean){
 			$this->log( translate('LBL_MI_IN_BEAN') . " $bean");
-			if(isset($beanList[$bean])){
-				$class = $beanList[$bean];
-				if(file_exists($beanFiles[$class])){
-					require_once($beanFiles[$class]);
-					$mod = new $class();
-					//#30273
-					if(is_subclass_of($mod, 'SugarBean')  && $mod->disable_vardefs == false ){
-						$GLOBALS['log']->debug( "Creating Tables Bean : $bean");
-						$mod->create_tables();
-						SugarBean::createRelationshipMeta($mod->getObjectName(), $mod->db,$mod->table_name,'',$mod->module_dir);
-					}
-				}else{
-					$GLOBALS['log']->debug( "File Does Not Exist:" . $beanFiles[$class] );
-				}
+			$mod = BeanFactory::getBean($bean);
+			if(!empty($mod) && $mod instanceof SugarBean && empty($mod->disable_vardefs)) { //#30273
+				$GLOBALS['log']->debug( "Creating Tables Bean : $bean");
+				$mod->create_tables();
+				SugarBean::createRelationshipMeta($mod->getObjectName(), $mod->db,$mod->table_name,'',$mod->module_dir);
 			}
 		}
 	}
 
 		function uninstall_beans($beans){
-		include('include/modules.php');
         foreach($beans as $bean){
 			$this->log( translate('LBL_MI_UN_BEAN') . " $bean");
-			if(isset($beanList[$bean])){
-				$class = $beanList[$bean];
-
-				if(file_exists($beanFiles[$class])){
-					require_once($beanFiles[$class]);
-					$mod = new $class();
-
-					if(is_subclass_of($mod, 'SugarBean')){
-						$GLOBALS['log']->debug( "Drop Tables : $bean");
-						if(isset($GLOBALS['mi_remove_tables']) && $GLOBALS['mi_remove_tables'])
-							$mod->drop_tables();
-					}
-				}else{
-					$GLOBALS['log']->debug( "File Does Not Exist:" . $beanFiles[$class] );
+			$mod = BeanFactory::getBean($bean);
+			if(!empty($mod) && $mod instanceof SugarBean) {
+				$GLOBALS['log']->debug( "Drop Tables : $bean");
+				if(isset($GLOBALS['mi_remove_tables']) && $GLOBALS['mi_remove_tables']) {
+					$mod->drop_tables();
 				}
 			}
 		}

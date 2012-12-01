@@ -151,9 +151,7 @@ SugarWidgetSchedulerSearch.submit = function(form) {
 	var conditions	= new Array();
 
 	var queryModules = ["Users","Contacts"
-        //BEGIN SUGARCRM flav!=sales ONLY
         ,"Leads"
-        //END SUGARCRM flav!=sales ONLY
     ];
 	if(form.search_first_name.value != '') {
 		conditions[conditions.length] = {"name":"first_name","op":"starts_with","value":form.search_first_name.value}
@@ -366,10 +364,8 @@ SugarWidgetScheduler.fill_invitees = function(form) {
 			form.user_invitees.value += GLOBAL_REGISTRY.focus.users_arr[i].fields.id + ",";
 		} else if(GLOBAL_REGISTRY.focus.users_arr[i].module == 'Contact') {
 			form.contact_invitees.value += GLOBAL_REGISTRY.focus.users_arr[i].fields.id + ",";
-        //BEGIN SUGARCRM flav!=sales ONLY
 		} else if(GLOBAL_REGISTRY.focus.users_arr[i].module == 'Lead') {
 			form.lead_invitees.value += GLOBAL_REGISTRY.focus.users_arr[i].fields.id + ",";
-        //END SUGARCRM flav!=sales ONLY
 		}
 	}
 }

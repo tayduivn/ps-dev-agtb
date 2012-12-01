@@ -292,13 +292,15 @@ require_once('include/EditView/EditView2.php');
 
      function displaySavedSearch()
      {
-        $savedSearch = new SavedSearch($this->listViewDefs[$this->module], $this->lv->data['pageData']['ordering']['orderBy'], $this->lv->data['pageData']['ordering']['sortOrder']);
+        $savedSearch = BeanFactory::getBean('SavedSearch');
+        $savedSearch->init($this->listViewDefs[$this->module], $this->lv->data['pageData']['ordering']['orderBy'], $this->lv->data['pageData']['ordering']['sortOrder']);
         return $savedSearch->getForm($this->module, false);
     }
 
 
   function displaySavedSearchSelect(){
-        $savedSearch = new SavedSearch($this->listViewDefs[$this->module], $this->lv->data['pageData']['ordering']['orderBy'], $this->lv->data['pageData']['ordering']['sortOrder']);
+        $savedSearch = BeanFactory::getBean('SavedSearch');
+        $savedSearch->init($this->listViewDefs[$this->module], $this->lv->data['pageData']['ordering']['orderBy'], $this->lv->data['pageData']['ordering']['sortOrder']);
         return $savedSearch->getSelect($this->module);
     }
 
@@ -314,7 +316,7 @@ require_once('include/EditView/EditView2.php');
     function _displayTabs($currentKey)
     {
         if(isset($_REQUEST['saved_search_select']) && $_REQUEST['saved_search_select']!='_none') {
-            $saved_search=loadBean('SavedSearch');
+            $saved_search=BeanFactory::getBean('SavedSearch');
             $saved_search->retrieveSavedSearch($_REQUEST['saved_search_select']);
         }
 
@@ -853,10 +855,8 @@ require_once('include/EditView/EditView2.php');
                                  if (!empty($this->searchFields['parent_type'])) {
                                      $parentType = $this->searchFields['parent_type'];
                                      $rel_module = $parentType['value'];
-                                     global $beanFiles, $beanList;
-                                     if(!empty($beanFiles[$beanList[$rel_module]])) {
-                                         require_once($beanFiles[$beanList[$rel_module]]);
-                                         $rel_seed = new $beanList[$rel_module]();
+                                     $rel_seed = BeanFactory::getBean($rel_module);
+                                     if(!empty($rel_seed)) {
                                          $db_field = 'parent_' . $rel_module . '_' . $rel_seed->table_name . '.name';
                                      }
                                  }
@@ -957,8 +957,7 @@ require_once('include/EditView/EditView2.php');
                                          $currency_id = -99;
                                      }
                                      if ( $currency_id != -99 ) {
-                                         $currency = new Currency();
-                                         $currency->retrieve($currency_id);
+                                         $currency = BeanFactory::getBean('Currencies', $currency_id);
                                          $tmpfield_value = $currency->convertToDollar($tmpfield_value);
                                      }
                                  }

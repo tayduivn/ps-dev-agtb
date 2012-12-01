@@ -51,6 +51,17 @@ class KBContent extends SugarBean {
 	var $module_dir = 'KBContents';
 	 
 
+    /**
+     * This is a depreciated method, please start using __construct() as this method will be removed in a future version
+     *
+     * @see __construct
+     * @deprecated
+     */
+    public function KBContent()
+    {
+        $this->__construct();
+    }
+
 	public function __construct() {
 		parent::__construct();
 		$this->setupCustomFields('KBContents'); //parameter is module name

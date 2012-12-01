@@ -25,7 +25,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 //BEGIN SUGARCRM flav=pro ONLY
 
 //END SUGARCRM flav=pro ONLY
-$role = new ACLRole();
+$role = BeanFactory::getBean('ACLRoles');
 if(isset($_REQUEST['record']))$role->id = $_POST['record'];
 if(!empty($_REQUEST['name'])){
 	$role->name = $_POST['name'];

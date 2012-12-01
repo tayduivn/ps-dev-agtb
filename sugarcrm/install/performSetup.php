@@ -242,12 +242,12 @@ foreach( $beanFiles as $bean => $file ) {
             if($bean == "Administration")
                 $new_config = 1;
 
-            //BEGIN SUGARCRM flav=pro || flav=sales ONLY
+            //BEGIN SUGARCRM flav=pro ONLY
 
             if($bean == "SavedReport")
                 $new_report = 1;
 
-            //END SUGARCRM flav=pro || flav=sales ONLY
+            //END SUGARCRM flav=pro ONLY
 
         }
 
@@ -336,7 +336,7 @@ echo "<br>";
     installerHook('post_createUsers');
 
 
-    //BEGIN SUGARCRM flav=pro || flav=sales ONLY
+    //BEGIN SUGARCRM flav=pro ONLY
 
     if ($new_report) {
         echo $line_entry_format.$mod_strings['LBL_PERFORM_DEFAULT_REPORTS'].$line_exit_format;
@@ -348,7 +348,7 @@ echo "<br>";
         echo $mod_strings['LBL_PERFORM_DONE'];
     }
 
-    //END SUGARCRM flav=pro || flav=sales  ONLY
+    //END SUGARCRM flav=pro  ONLY
 
 
     // default OOB schedulers
@@ -519,9 +519,9 @@ createFTSLogicHook('Extension/application/Ext/LogicHooks/SugarFTSHooks.php');
 //END SUGARCRM flav=int ONLY
 
 
-//BEGIN SUGARCRM flav=pro || flav=sales || flav=com ONLY
+//BEGIN SUGARCRM flav=pro || flav=com ONLY
     require_once('modules/Connectors/InstallDefaultConnectors.php');
-//END SUGARCRM flav=pro || flav=sales || flav=com ONLY
+//END SUGARCRM flav=pro || flav=com ONLY
 
 	///////////////////////////////////////////////////////////////////////////////
 	////    INSTALL PASSWORD TEMPLATES
@@ -595,10 +595,6 @@ FP;
         $admin->saveSetting('system','name',$_SESSION['setup_system_name']);
     }
 
-    //BEGIN SUGARCRM flav=sales ONLY
-    $admin=new Administration();
-    $admin->saveSetting('notify','allow_default_outbound', 0);
-    //END SUGARCRM flav=sales ONLY
 
     // Bug 28601 - Set the default list of tabs to show
     $enabled_tabs = array();
@@ -607,21 +603,17 @@ FP;
     $enabled_tabs[] = 'Accounts';
     $enabled_tabs[] = 'Contacts';
     $enabled_tabs[] = 'Opportunities';
-    //BEGIN SUGARCRM flav!=sales ONLY
     $enabled_tabs[] = 'Leads';
-    //END SUGARCRM flav!=sales ONLY
     $enabled_tabs[] = 'Calendar';
-    //BEGIN SUGARCRM flav=pro || flav=sales ONLY
+    //BEGIN SUGARCRM flav=pro ONLY
     $enabled_tabs[] = 'Reports';
-    //END SUGARCRM flav=pro || flav=sales ONLY
+    //END SUGARCRM flav=pro ONLY
     //BEGIN SUGARCRM flav=pro ONLY
     $enabled_tabs[] = 'Quotes';
     //END SUGARCRM flav=pro ONLY
     $enabled_tabs[] = 'Documents';
     $enabled_tabs[] = 'Emails';
-    //BEGIN SUGARCRM flav!=sales ONLY
     $enabled_tabs[] = 'Campaigns';
-    //END SUGARCRM flav!=sales ONLY
     $enabled_tabs[] = 'Calls';
     $enabled_tabs[] = 'Meetings';
     $enabled_tabs[] = 'Tasks';
@@ -629,13 +621,9 @@ FP;
     //BEGIN SUGARCRM flav=pro ONLY
     $enabled_tabs[] = 'Forecasts';
     //END SUGARCRM flav=pro ONLY
-	//BEGIN SUGARCRM flav!=sales ONLY
     $enabled_tabs[] = 'Cases';
-	//END SUGARCRM flav!=sales ONLY
-    //BEGIN SUGARCRM flav!=sales ONLY
     $enabled_tabs[] = 'Prospects';
     $enabled_tabs[] = 'ProspectLists';
-    //END SUGARCRM flav!=sales ONLY
 
     //BEGIN SUGARCRM flav=ent ONLY
     if ($_SESSION['demoData'] != 'no') {
