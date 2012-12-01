@@ -49,6 +49,8 @@ class Bug58685Test extends Sugar_PHPUnit_Framework_OutputTestCase
 
 	public function setUp()
     {
+        SugarTestHelper::setUp('app_strings');
+
         $this->oldPost = $_POST;
         if (isset($_SERVER['REQUEST_METHOD'])) {
             $this->oldRM = $_SERVER['REQUEST_METHOD'];
@@ -64,6 +66,8 @@ class Bug58685Test extends Sugar_PHPUnit_Framework_OutputTestCase
         $_POST = $this->oldPost;
         $_SERVER['REQUEST_METHOD'] = $this->oldRM;
         $_SERVER['CONTENT_LENGTH'] = $this->oldCL;
+
+        SugarTestHelper::tearDown();
     }
 
     /**
