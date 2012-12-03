@@ -29,15 +29,10 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * by SugarCRM are Copyright (C) 2005 SugarCRM, Inc.; All Rights Reserved.
  */
 
-// $Id: Popup.php 45763 2009-04-01 19:16:18Z majed $
-
 if(isset($_REQUEST['mode']) && $_REQUEST['mode'] == 'show_raw') {
-	if(!class_exists("Email")) {
-
-	}
 	$email = new Email();
 	$email->retrieve($_REQUEST['metadata']);
-	echo nl2br(SugarCleaner::cleanHtml($email->raw_source));
+    echo nl2br($email->raw_source);
 } else {
 	require_once('include/Popups/Popup_picker.php');
 	$popup = new Popup_Picker();
