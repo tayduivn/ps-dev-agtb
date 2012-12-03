@@ -72,6 +72,13 @@ class SugarForecasting_Progress_Manager extends SugarForecasting_Progress_Abstra
 		return $progressData;
     }
 
+    /**
+     * Get quota figures for top level manager
+     *
+     * @param $user_id
+     * @param $timeperiod_id
+     * @return int sum for quota
+     */
     public function getTopLevelManagerQuota($user_id, $timeperiod_id)
     {
         $dataArray = array();
@@ -95,18 +102,13 @@ class SugarForecasting_Progress_Manager extends SugarForecasting_Progress_Abstra
         }
 
         //get worksheet data for top level manager to override in event a draft is saved
-        $reportees_query = "SELECT u2.user_name, " .
+        $reportees_query = "SELECT u.user_name, " .
       						   "w.quota " .
       						   "from users u " .
-      						   "inner join users u2 " .
-      						   		"on u.id = u2.reports_to_id " .
-      						   		"or u.id = u2.id " .
       						   "inner join worksheet w " .
       						   		"on w.user_id = u.id " .
       						   		"and w.timeperiod_id = " . $db->quoted($timeperiod_id) .
-      						   		"and ((w.related_id = u.id and u2.id = u.id) " .
-      						   			 "or (w.related_id = u2.id)) " .
-      						   "where u.id = " . $db->quoted($user_id)  .
+      						    "where u.id = " . $db->quoted($user_id)  .
       						        " and w.deleted = 0 " .
                                     " and w.version = 0 " .
                                " order by w.date_modified desc";
