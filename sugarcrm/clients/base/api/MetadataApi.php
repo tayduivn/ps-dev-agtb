@@ -25,14 +25,6 @@ require_once('include/api/SugarApi.php');
 
 // An API to let the user in to the metadata
 class MetadataApi extends SugarApi {
-    /**
-     * Added to allow use of the $user property without throwing errors in public
-     * cased where there is no user defined.
-     *
-     * @var User
-     */
-    protected $user = null;
-
     public function registerApiRest() {
         return array(
             'getAllMetadata' => array(
@@ -72,22 +64,16 @@ class MetadataApi extends SugarApi {
     }
 
     protected function getMetadataManager( $public = false ) {
-        return new MetaDataManager($this->user,$this->platforms, $public);
+        static $mm;
+        if ( !isset($mm) ) {
+            $mm = new MetaDataManager(null,$this->platforms, $public);
+        }
+        return $mm;
     }
 
     public function getAllMetadata(ServiceBase $api, array $args) {
-        global $current_language, $app_strings, $app_list_strings, $current_user;
-
-        // asking for a specific language
-        if (isset($args['lang']) && !empty($args['lang'])) {
-            $current_language = $args['lang'];
-            $app_strings = return_application_language($current_language);
-            $app_list_strings = return_app_list_strings_language($current_language);
-
-        }
-
         // Default the type filter to everything
-        $this->typeFilter = array('modules','full_module_list','fields','labels','mod_strings','app_strings','app_list_strings','module_list', 'views', 'layouts','relationships','currencies', 'jssource');
+        $this->typeFilter = array('modules','full_module_list','fields', 'labels', 'module_list', 'views', 'layouts','relationships','currencies', 'jssource', 'server_info');
         if ( !empty($args['type_filter']) ) {
             // Explode is fine here, we control the list of types
             $types = explode(",", $args['type_filter']);
@@ -115,45 +101,22 @@ class MetadataApi extends SugarApi {
         }
 
 
-        $this->user = $GLOBALS['current_user'];
-
         $this->setPlatformList($api);
 
-        $data = array();
 
-        $userHashKey = '_PUBLIC_';
-        if ( isset($GLOBALS['current_user']->id) ) {
-            $userHashKey = $GLOBALS['current_user']->id;
-        }
-        $hashKey = "metadata:" . implode(",", $this->platforms) . $userHashKey . ":hash";
-        //First check if the hash is cached so we don't have to load the metadata manually to calculate it
-        $hash = sugar_cache_retrieve($hashKey);
-        //If it was, check if the client has the same version cached
-        if (!empty($hash)) {
-            generateETagHeader($hash);
-            //If we got here without dying, the client doesn't have the metadata cached.
-            //First check if we have the metadata contents cached in a file
-            $cacheFile = sugar_cached("api/metadata/{$hash}.php");
-            if (file_exists($cacheFile)) {
-                //$data will be populated by the include
-                include($cacheFile);
-            }
-        }
+        $data = $this->getMetadataCache($this->platforms[0],false);
 
         //If we failed to load the metadata from cache, load it now the hard way.
         if (empty($data)) {
-            $data = $this->loadMetadata($hashKey);
-        }
-        $data['jssource'] = $this->buildJSFileFromMD($data, $this->platforms[0]);
-
-        //If we had to generate a new hash, create the etag with the new hash
-        if (empty($hash)) {
-            generateETagHeader($data['_hash']);
+            $data = $this->loadMetadata();
+            $this->putMetadataCache($data, $this->platforms[0], false);
         }
 
-        $baseChunks = array('fields','app_strings','app_list_strings','module_list', 'views', 'layouts', 'full_module_list','relationships', 'currencies', 'jssource');
-        $perModuleChunks = array('modules','mod_strings');
+        generateETagHeader($data['_hash']);
 
+        $baseChunks = array('fields','labels','module_list', 'views', 'layouts', 'full_module_list','relationships', 'currencies', 'jssource', 'server_info');
+        $perModuleChunks = array('modules');
+        
         return $this->filterResults($args, $data, $onlyHash, $baseChunks, $perModuleChunks, $moduleFilter);
     }
 
@@ -166,34 +129,8 @@ class MetadataApi extends SugarApi {
         // erroring out. -- rgonzalez
         $this->setPlatformList($api);
 
-        //temporary replace 'forecasts' w/ 'base'
-        //as forecast settings store in db w/ prefix 'base_'
-        $category = $this->platforms[0] == 'forecasts' ? 'base' : $this->platforms[0];
-        $prefix = "{$category}_";
-        $admin = new Administration();
-        $admin->retrieveSettings($category, true);
-        foreach($admin->settings AS $setting_name => $setting_value) {
-            if(stristr($setting_name, $prefix)) {
-                $key = str_replace($prefix, '', $setting_name);
-                
-                // Empty array was getting decoded as '[]' as tertiary was falsy .. this fixes
-                $decoded = json_decode(html_entity_decode($setting_value));
-                $configs[$key] = $setting_value; // set to fallback in case
-                if (strcasecmp($setting_name, "null") == 0 || $decoded !== NULL) {
-                    $configs[$key] = $decoded;
-                }
-            }
-        }
-
-        global $current_language, $app_strings, $app_list_strings;
-        if ( isset($args['lang']) ) {
-            $current_language = $args['lang'];
-            $app_strings = return_application_language($current_language);
-            $app_list_strings = return_app_list_strings_language($current_language);
-        }
-
         // Default the type filter to everything available to the public, no module info at this time
-        $this->typeFilter = array('fields','app_strings','views', 'layouts', 'config', 'jssource');
+        $this->typeFilter = array('fields','labels','views', 'layouts', 'config', 'jssource');
 
         if ( !empty($args['type_filter']) ) {
             // Explode is fine here, we control the list of types
@@ -209,32 +146,32 @@ class MetadataApi extends SugarApi {
             $onlyHash = true;
         }
 
-        // since this is a public metadata call pass true to the meta data manager to only get public/
-        $mm = $this->getMetadataManager( TRUE );
+        $data = $this->getMetadataCache($this->platforms[0],true);
+        
+        if ( empty($data) ) {
+            // since this is a public metadata call pass true to the meta data manager to only get public/
+            $mm = $this->getMetadataManager( TRUE );
+            
+            
+            // Start collecting data
+            $data = array();
+            
+            $data['fields']  = $mm->getSugarFields();
+            $data['views']   = $mm->getSugarViews();
+            $data['layouts'] = $mm->getSugarLayouts();
+            $data['labels'] = $this->getStringUrls($data,true);
+            $data['modules'] = array(
+                "Login" => array("fields" => array()));
+            $data['config']           = $this->getConfigs();
+            $data['jssource']         = $this->buildJSFileFromMD($data, $this->platforms[0]);        
+            $data["_hash"] = md5(serialize($data));
+            
+            $this->putMetadataCache($data, $this->platforms[0], TRUE);
 
-        // Exception for the AppListStrings.
-        $app_list_strings = $mm->getAppListStrings();
-        $app_list_strings_public = array();
-        $app_list_strings_public['available_language_dom'] = $app_list_strings['available_language_dom'];
+        }
+        generateETagHeader($data['_hash']);
 
-        // Let clients fill in any gaps that may need to be filled in
-        $app_list_strings_public = $this->fillInAppListStrings($app_list_strings_public, $app_list_strings);
-
-        // Start collecting data
-        $data = array();
-
-        $data['fields']  = $mm->getSugarFields();
-        $data['views']   = $mm->getSugarViews();
-        $data['layouts'] = $mm->getSugarLayouts();
-        $data['app_strings'] = $mm->getAppStrings();
-        $data['app_list_strings'] = $app_list_strings_public;
-        $data['modules'] = array(
-            "Login" => array("fields" => array()));
-        $data['config']           = $this->getConfigs();
-        $data['jssource']         = $this->buildJSFileFromMD($data, $this->platforms[0]);        
-        $data["_hash"] = md5(serialize($data));
-
-        $baseChunks = array('fields','app_strings','views', 'layouts', 'config', 'jssource');
+        $baseChunks = array('fields','labels','views', 'layouts', 'config', 'jssource');
 
         return $this->filterResults($args, $data, $onlyHash, $baseChunks);
     }
@@ -271,9 +208,8 @@ class MetadataApi extends SugarApi {
             mkdir_recursive(dirname($path));
             file_put_contents($path, $js);
         }
-        global $sugar_config;
-        $sugar_config['site_url'];
-        return $sugar_config['site_url'] . "/{$path}";
+
+        return $this->getUrlForCacheFile($path);
     }
 
 
@@ -352,7 +288,7 @@ class MetadataApi extends SugarApi {
         return substr($controller, 0, $pos) . $headerComment . substr($controller, $pos);
     }
 
-    protected function loadMetadata($hashKey) {
+    protected function loadMetadata() {
         // Start collecting data
         $data = $this->_populateModules(array());
         $mm = $this->getMetadataManager();
@@ -362,7 +298,6 @@ class MetadataApi extends SugarApi {
         // we now have child classes like MetadataPortalApi overriding getModules, etc., I'm
         // tentative to push the following three calls out to $mm. I propose refactor to instead
         // inherit as MetadataPortalDataManager and put all accessors, etc., there.
-        $data['mod_strings'] = $this->getModStrings($data);
         $data['currencies'] = $this->getSystemCurrencies();
 
         $data['modules'] = array();
@@ -402,19 +337,12 @@ class MetadataApi extends SugarApi {
         $data['fields']  = $mm->getSugarFields();
         $data['views']   = $mm->getSugarViews();
         $data['layouts'] = $mm->getSugarLayouts();
-        $data['app_strings'] = $mm->getAppStrings();
-        $data['app_list_strings'] = $mm->getAppListStrings();
+        $data['labels'] = $this->getStringUrls($data,false);
         $data['relationships'] = $mm->getRelationshipData();
+        $data['jssource'] = $this->buildJSFileFromMD($data, $this->platforms[0]);
+        $data['server_info'] = $mm->getServerInfo();
         $hash = md5(serialize($data));
         $data["_hash"] = $hash;
-
-        //Cache the result to the filesystem
-        $cacheFile = sugar_cached("api/metadata/{$hash}.php");
-        create_cache_directory("api/metadata/{$hash}.php");
-        write_array_to_file("data", $data, $cacheFile);
-
-        //Cache the hash in sugar_cache so we don't have to hit the filesystem for etag comparisons
-        sugar_cache_put($hashKey, $hash);
 
         return $data;
     }
@@ -519,7 +447,7 @@ class MetadataApi extends SugarApi {
     protected function setPlatformList(ServiceBase $api)
     {
         if ( $api->platform != 'base' ) {
-            $this->platforms = array($api->platform,'base');
+            $this->platforms = array(basename($api->platform),'base');
         } else {
             $this->platforms = array('base');
         }
@@ -609,20 +537,60 @@ class MetadataApi extends SugarApi {
     }
 
     /**
-     * Gets mod strings
+     * Returns a list of URL's pointing to json-encoded versions of the strings
      *
      * @param array $data The metadata array
      * @return array
      */
-    public function getModStrings($data) {
+    public function getStringUrls(&$data, $isPublic = false) {
         $mm = $this->getMetadataManager();
-        $modStrings = array();
-        foreach ($data['modules'] as $modName => $moduleDef) {
-            $modData = $mm->getModuleStrings($modName);
-            $modStrings[$modName] = $modData;
-            $modStrings[$modName]['_hash'] = md5(serialize($modStrings[$modName]));
+
+        $languageList = array_keys(get_languages());
+        sugar_mkdir(sugar_cached('api/metadata'), null, true);
+
+        $fileList = array();
+        foreach ( $languageList as $language ) {            
+            $stringData = array();
+            $stringData['app_list_strings'] = $mm->getAppListStrings($language);
+            $stringData['app_strings'] = $mm->getAppStrings($language);
+            if ( $isPublic ) {
+                // Exception for the AppListStrings.
+                $app_list_strings_public = array();
+                $app_list_strings_public['available_language_dom'] = $stringData['app_list_strings']['available_language_dom'];
+                
+                // Let clients fill in any gaps that may need to be filled in
+                $app_list_strings_public = $this->fillInAppListStrings($app_list_strings_public, $stringData['app_list_strings'],$language);
+                $stringData['app_list_strings'] = $app_list_strings_public;
+                
+            } else {
+                $modStrings = array();
+                foreach ($data['modules'] as $modName => $moduleDef) {
+                    $modData = $mm->getModuleStrings($modName, $language);
+                    $modStrings[$modName] = $modData;
+                }
+                $stringData['mod_strings'] = $modStrings;
+            }
+            $stringData['_hash'] = md5(serialize($stringData));
+            $fileList[$language] = sugar_cached('api/metadata/lang_'.$language.'_'.$stringData['_hash'].'.json');
+            sugar_file_put_contents_atomic($fileList[$language],json_encode($stringData));
         }
-        return $modStrings;
+        
+        $urlList = array();
+        foreach ( $fileList as $lang => $file ) {
+            $urlList[$lang] = $this->getUrlForCacheFile($file);
+        }
+
+        // We need the default language somewhere, how about here?
+        $urlList['default'] = $GLOBALS['sugar_config']['default_language'];
+        $urlList['_hash'] = md5(serialize($urlList));
+
+        return $urlList;
+    }
+
+    public function getUrlForCacheFile($cacheFile) {
+        // This is here so we can override it and have the cache files upload to a CDN
+        // and return the CDN locations later.
+        return $GLOBALS['sugar_config']['site_url'].'/'.$cacheFile;
     }
 
     /**
@@ -653,25 +621,38 @@ class MetadataApi extends SugarApi {
         return $currencies;
     }
 
-    //TODO: This function needs to be in /me as it is user defined
-    protected function getDisplayModules($moduleList)
+    protected function putMetadataCache($data, $platform, $isPublic)
     {
-        global $app_list_strings;
-        $ret = $moduleList;
-        if (!empty($this->user))
-        {
-            // Loading a standard module list
-            require_once("modules/MySettings/TabController.php");
-            $controller = new TabController();
-            $ret = array_intersect_key($controller->get_user_tabs($this->user), $moduleList);
+        if ( $isPublic ) {
+            $type = 'public';
+        } else {
+            $type = 'private';
         }
-        $output = array();
-        foreach($ret as $mod => $lbl)
-        {
-            $output[] = $mod;
-        }
-        return $output;
-
+        $cacheFile = sugar_cached('api/metadata/metadata_'.$platform.'_'.$type.'.php');
+        create_cache_directory($cacheFile);
+        write_array_to_file('metadata', $data, $cacheFile);
     }
 
+    protected function getMetadataCache($platform, $isPublic)
+    {
+        if ( $isPublic ) {
+            $type = 'public';
+        } else {
+            $type = 'private';
+        }
+        $cacheFile = sugar_cached('api/metadata/metadata_'.$platform.'_'.$type.'.php');
+        if ( file_exists($cacheFile) ) {
+            require $cacheFile;
+            return $metadata;
+        } else {
+            return null;
+        }
+    }
+
+    public function clearMetadataCache()
+    {
+        $mm = $this->getMetadataManager();
+        $mm->clearAPICache();
+    }
+    
 }

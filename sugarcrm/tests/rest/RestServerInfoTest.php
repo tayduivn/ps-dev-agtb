@@ -40,16 +40,18 @@ class RestServerInfoTest extends RestTestBase {
      */
     public function testServerInfo() {
         // Test Server Fetch
-        $restReply = $this->_restCall("ServerInfo");
+        // SIDECAR-14 - Changed endpoint of the test to be consistent with moving 
+        // server info into the metadata api
+        $restReply = $this->_restCall("metadata?type_filter=server_info");
 
-        $this->assertTrue(isset($restReply['reply']['flavor']), "No Flavor Set");
-        $this->assertTrue(isset($restReply['reply']['version']), "No Version Set");
+        $this->assertTrue(isset($restReply['reply']['server_info']['flavor']), "No Flavor Set");
+        $this->assertTrue(isset($restReply['reply']['server_info']['version']), "No Version Set");
         //BEGIN SUGARCRM flav=pro ONLY
-        $this->assertTrue(is_array($restReply['reply']['fts']), "No FTS Info Set");
+        $this->assertTrue(is_array($restReply['reply']['server_info']['fts']), "No FTS Info Set");
         //END SUGARCRM flav=pro ONLY
         
-        $this->assertTrue(isset($restReply['reply']['gmt_time']), "No GMT Time Set");
-        $this->assertTrue(isset($restReply['reply']['server_time']), "No Server Time Set");
+        $this->assertTrue(isset($restReply['reply']['server_info']['gmt_time']), "No GMT Time Set");
+        $this->assertTrue(isset($restReply['reply']['server_info']['server_time']), "No Server Time Set");
     }
 
 }
