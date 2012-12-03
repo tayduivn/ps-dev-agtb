@@ -40,7 +40,7 @@ class DuplicateCheckApi extends FilterApi
     {
         return array(
             'duplicateCheck' => array(
-                'reqType' => 'GET',
+                'reqType' => 'POST',
                 'path' => array('<module>','duplicateCheck'),
                 'pathVars' => array('module',''),
                 'method' => 'checkForDuplicates',
