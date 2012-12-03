@@ -586,7 +586,23 @@ $dictionary['Lead'] = array('table' => 'leads','audited'=>true, 'unified_search'
 						  			'relationship_type'	=>'one-to-many'
 						  		)
 
-	)
+	),
+    'duplicate_check' => array(
+        'filter_template' => array(
+            array('$and' => array(
+                array('$or' => array(
+                    array('status' => array('$not_equals' => 'Converted')),
+                    array('status' => array('$is_null' => '')),
+                )),
+                array('first_name' => array('$equals' => '||FIELD_DATA||first_name')),
+                array('last_name' => array('$equals' => '||FIELD_DATA||last_name')),
+            ))
+        ),
+        'ranking_fields' => array(
+            array('in_field_name' => 'last_name', 'dupe_field_name' => 'last_name'),
+            array('in_field_name' => 'first_name', 'dupe_field_name' => 'first_name'),
+        )
+    )
 	//This enables optimistic locking for Saves From EditView
 	,'optimistic_locking'=>true,
 );

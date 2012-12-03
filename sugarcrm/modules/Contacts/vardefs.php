@@ -724,6 +724,19 @@ array (
   			'relationship_type'	=>'one-to-many'
   		),
 ),
+    'duplicate_check' => array(
+        'filter_template' => array(
+            array('$and' => array(
+                array('first_name' => array('$starts' => '||FIELD_DATA||first_name')),
+                array('last_name' => array('$equals' => '||FIELD_DATA||last_name')),
+                array('id' => array('$not_equals' => '||FIELD_DATA||id')),
+            ))
+        ),
+        'ranking_fields' => array(
+            array('in_field_name' => 'last_name', 'dupe_field_name' => 'last_name'),
+            array('in_field_name' => 'first_name', 'dupe_field_name' => 'first_name'),
+        )
+    ),
 
 //This enables optimistic locking for Saves From EditView
 'optimistic_locking'=>true,

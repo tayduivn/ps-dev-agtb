@@ -217,7 +217,21 @@ $dictionary['Prospect'] = array(
 						  			'relationship_type'	=>'one-to-many'
 						  		),
 
-	)
+	),
+    'duplicate_check' => array(
+        'filter_template' => array(
+            array('$or' => array(
+                array('$and' => array(
+                    array('first_name' => array('$starts' => '||FIELD_DATA||first_name')),
+                    array('last_name' => array('$starts' => '||FIELD_DATA||last_name')),
+                )),
+                array('email1' => array('$equals' => '||FIELD_DATA||email1')),
+                array('email1' => array('$equals' => '||FIELD_DATA||email2')),
+                array('email2' => array('$equals' => '||FIELD_DATA||email2')),
+                array('email2' => array('$equals' => '||FIELD_DATA||email1')),
+            ))
+        )
+    )
 );
 VardefManager::createVardef('Prospects','Prospect', array('default', 'assignable',
 //BEGIN SUGARCRM flav=pro ONLY

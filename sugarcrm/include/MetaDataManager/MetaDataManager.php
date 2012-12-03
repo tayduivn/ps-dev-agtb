@@ -249,21 +249,27 @@ class MetaDataManager {
                 $data = $dictionary[$obj];
             }
 
-            // vardefs are missing something, for consistancy let's populate some arrays
+            // vardefs are missing something, for consistency let's populate some arrays
             if (!isset($data['fields'])) {
                 $data['fields'] = array();
             }
             if (!isset($data['relationships'])) {
                 $data['relationships'] = array();
             }
+            if (!isset($data['duplicate_check'])) {
+                $data['duplicate_check'] = array(
+                    'filter_template' => array(),
+                    'ranking_fields' => array()
+                );
+            }
 
             return $data;
         }
-        
+
         // Bug 56505 - multiselect fields default value wrapped in '^' character
         if (!empty($data['fields']) && is_array($data['fields']))
             $data['fields'] = $this->normalizeFielddefs($data['fields']);
-        
+
         if (!isset($data['relationships'])) {
             $data['relationships'] = array();
         }
