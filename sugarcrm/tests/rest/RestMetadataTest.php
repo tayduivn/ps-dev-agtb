@@ -32,8 +32,9 @@ class RestMetadataTest extends RestTestBase {
         // Cleanup
         foreach($this->createdFiles as $file)
         {
-        	if (is_file($file))
+        	if (is_file($file)) {
         		SugarAutoLoader::unlink($file, true);
+            }
         }
 
         parent::tearDown();
@@ -74,24 +75,34 @@ class RestMetadataTest extends RestTestBase {
      * @group rest
      */
     public function testMetadataLanguage() {
-        $langContent = <<<EOQ
-        <?php
-        \$app_strings = array (
-            'LBL_KEYBOARD_SHORTCUTS_HELP_TITLE' => 'UnitTest',
-            );
-EOQ;
+        if ( get_class(SugarCache::instance()) == 'SugarCacheAPC' ) {
+            $this->markTestSkipped('This test will not pass with APC enabled.');
+            return;
+        }
+        $langContent = "<?php\n\$app_strings = array('LBL_KEYBOARD_SHORTCUTS_HELP_TITLE' => 'UnitTest');\n";
 
-        $fileLoc = "include/language/ua_UA.lang.php";
+        $fileLoc = "custom/include/language/en_us.lang.php";
         $this->createdFiles[] = $fileLoc;
+        SugarAutoLoader::ensureDir('custom/include/language');
         SugarAutoLoader::put($fileLoc, $langContent, true);
+        sugar_cache_clear('app_strings.en_us');
+        $langStrings = return_application_language('en_us');
+        $this->assertEquals($langStrings['LBL_KEYBOARD_SHORTCUTS_HELP_TITLE'], "UnitTest",'The override is not taking effect in the same instance, there is no hope for the rest of this test.');
         // No current user
-        $restReply = $this->_restCall('metadata/public?lang=ua_UA&app_name=superAwesome&platform=portal');
-        $this->assertEquals($restReply['reply']['app_strings']['LBL_KEYBOARD_SHORTCUTS_HELP_TITLE'], "UnitTest");
+        $this->_clearMetadataCache();
+        $restReply = $this->_restCall('metadata/public?platform=portal&type_filter=labels');
+
+        $this->assertArrayHasKey('en_us',$restReply['reply']['labels']);
+        $fileLoc = ltrim($GLOBALS['sugar_config']['site_url'],$restReply['reply']['labels']['en_us']);
+        $en_us = json_decode(file_get_contents($restReply['reply']['labels']['en_us']),true);
+        $this->assertEquals($en_us['app_strings']['LBL_KEYBOARD_SHORTCUTS_HELP_TITLE'], "UnitTest");
 
         // Current user is logged in & submit language
-        $restReply = $this->_restCall('metadata?lang=ua_UA&app_name=superAwesome&platform=portal');
+        $restReply = $this->_restCall('metadata');
 
-        $this->assertEquals($restReply['reply']['app_strings']['LBL_KEYBOARD_SHORTCUTS_HELP_TITLE'], "UnitTest");
+        $this->assertArrayHasKey('en_us',$restReply['reply']['labels']);
+        $en_us = json_decode(file_get_contents($restReply['reply']['labels']['en_us']),true);
+        $this->assertEquals($en_us['app_strings']['LBL_KEYBOARD_SHORTCUTS_HELP_TITLE'], "UnitTest");
 
         // TODO add test for user pref when that field gets added
 
