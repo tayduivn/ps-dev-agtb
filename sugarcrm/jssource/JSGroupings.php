@@ -94,8 +94,7 @@
                     case 'sidecar_libs':
                         return array(
                                 'sidecar/lib/handlebars/handlebars-1.0.rc.1.js'                  =>   $target,
-                                //'lib/jquery/jquery.min.js',
-                                'sidecar/lib/jquery-ui/js/jquery-ui-1.8.18.custom.min.js',
+                                'sidecar/lib/jquery-ui/js/jquery-ui-1.8.18.custom.min.js'        =>   $target,
                                 'sidecar/lib/backbone/underscore.js'                             =>   $target,
                                 'sidecar/lib/backbone/backbone.js'                               =>   $target,
                                 'sidecar/lib/stash/stash.js'                                     =>   $target,
