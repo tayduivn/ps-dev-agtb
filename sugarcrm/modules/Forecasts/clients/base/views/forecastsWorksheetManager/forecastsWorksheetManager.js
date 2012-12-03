@@ -139,7 +139,7 @@
             this.context.forecasts.worksheetmanager.on("change", function() {
             	this.calculateTotals();
             }, this);
-            this.context.forecasts.on("forecasts:committed:saved", function(){
+            this.context.forecasts.on("forecasts:committed:saved forecasts:commitButtons:saved", function(){
             	if(this.showMe()){
             		var model = this.context.forecasts.worksheetmanager;
             		model.url = this.createURL();
@@ -276,7 +276,7 @@
     _render:function () {
         var self = this;
         var enableCommit = false;
-
+      
         if(!this.showMe()){
         	return false;
         }
