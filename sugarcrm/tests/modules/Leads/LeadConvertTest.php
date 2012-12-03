@@ -69,7 +69,6 @@ class LeadConvertTest  extends Sugar_PHPUnit_Framework_TestCase
             'module' => 'Tasks',
             'required' => false,
             'duplicateCheck' => true,
-            'contactRelateField' => 'account_name',
             'fieldMapping' => array()
         );
 
@@ -339,7 +338,7 @@ class LeadConvertTest  extends Sugar_PHPUnit_Framework_TestCase
     }
 
     /**
-     * @group leadconvert
+     * @group leadconvert99
      */
     public function testSetRelationshipsForModulesToContacts_OneToManyRelationship_RelationshipIsAdded_FieldOnContactSet()
     {
@@ -418,7 +417,7 @@ class LeadConvertTest  extends Sugar_PHPUnit_Framework_TestCase
     /**
      * @group leadconvert
      */
-    public function testConvertLead_NoContact_LeadIsConverted()
+    public function testCopwdnvertLead_NoContact_LeadIsConverted()
     {
         $task = SugarTestTaskUtilities::createTask();
         $account = SugarTestAccountUtilities::createAccount();
