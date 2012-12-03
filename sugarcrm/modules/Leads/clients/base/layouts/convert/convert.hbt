@@ -5,7 +5,6 @@
     <div class="btn-toolbar pull-right">
         <div class="btn-group">
             <a class="btn" href="javascript:void(0)" name="cancel_button">{{str "LBL_CANCEL_BUTTON_LABEL"}}</a>
-            <!--<a class="btn btn-primary" href="javascript:void(0)" name="convert_continue_button">Continue</a>-->
             <a class="btn btn-primary disabled" href="javascript:void(0)" name="lead_convert_finish_button">{{str "LBL_FINISH_BUTTON_LABEL"}}</a>
         </div>
     </div>

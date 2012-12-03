@@ -207,13 +207,14 @@
         _.each(meta.panels, function(panel){
             var singleSelect = [{
                 'type' : 'selection',
-                'name' : module + '_select',
+                'name' : meta.selection.name || module + '_select',
                 'sortable' : false,
                 'label' : meta.selection.label || ''
             }];
 
             panel.fields = singleSelect.concat(panel.fields);
         });
+
         return meta;
     },
     addMultiSelectionAction: function(meta) {
@@ -233,6 +234,7 @@
             }
             panel.fields = multiSelect.concat(panel.fields);
         });
+
         return meta;
     },
     showTooltip: function(e) {

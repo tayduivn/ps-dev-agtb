@@ -225,44 +225,57 @@ describe("ConvertLeadLayout", function() {
     });
 
     describe('Finishing Convert Lead', function() {
-        var layout;
+        var layout,
+            showAlertStub,
+            last_name = 'mylastname',
+            account_name = 'myaccname',
+            opportunity_name = 'myoppname';
 
         beforeEach(function() {
             layout = initializeLayout();
-        });
-
-        afterEach(function() {
-            delete layout;
-        });
-
-        it("clicking on finish bundles up models from each panel and calls the API", function() {
-            var showAlertStub,
-                last_name = 'mylastname',
-                account_name = 'myaccname',
-                opportunity_name = 'myoppname';
-
             layout.model.set('last_name', last_name);
             layout.model.set('account_name', account_name);
             layout.model.set('opportunity_name', opportunity_name);
             layout.render();
-
             showAlertStub = sinon.stub(SugarTest.app.alert, 'show', $.noop());
+        });
 
-            sinon.stub(layout, 'createConvertModel', function (id) {
+        afterEach(function() {
+            showAlertStub.restore();
+            delete layout;
+        });
+
+        var getMockCreateConvertModel = function(expectedModel) {
+            return function () {
                 var convertModel = Backbone.Model.extend({
-                    sync:function (method, model, options) {
-                        var expectedModel = '{"modules":{"Contacts":{"last_name":"'+last_name+'"},"Accounts":{"name":"'+account_name+'"},"Opportunities":{"name":"'+opportunity_name+'"}}}';
+                    sync:function (method, model) {
                         expect(JSON.stringify(model)).toEqual(expectedModel);
                     }
                 });
 
                 return new convertModel();
-            });
+            }
+        };
 
-            layout._components[1].$('.accordion-heading').click();
+        it("clicking on finish after completing all panels bundles up models from each panel and calls the API", function() {
+            sinon.stub(layout, 'createConvertModel', getMockCreateConvertModel(
+                '{"modules":{"Contacts":{"last_name":"'+last_name+'"},"Accounts":{"name":"'+account_name+'"},"Opportunities":{"name":"'+opportunity_name+'"}}}'
+            ));
+
+            layout._components[1].$('.accordion-heading').click(); //click Account to complete Contact
             layout._components[1].$('.accordion-heading').find('.show-record').click();
-            layout.$('[name="lead_convert_finish_button"]').click();
-            showAlertStub.restore();
+            layout._components[2].$('.accordion-heading').click(); //click Opportunity to complete Account
+            layout.$('[name="lead_convert_finish_button"]').click(); //click finish to complete Opportunity
+        });
+
+        it("clicking on finish when optional panels have not been completed should not pass the optional model to API", function() {
+            sinon.stub(layout, 'createConvertModel', getMockCreateConvertModel(
+                '{"modules":{"Contacts":{"last_name":"'+last_name+'"},"Accounts":{"name":"'+account_name+'"}}}'
+            ));
+
+            layout._components[1].$('.accordion-heading').click(); //click Account to complete Contact
+            layout._components[1].$('.accordion-heading').find('.show-record').click();
+            layout.$('[name="lead_convert_finish_button"]').click(); //click Finish to complete Account
         });
     });
 

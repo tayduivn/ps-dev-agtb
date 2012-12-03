@@ -94,6 +94,7 @@
         var self = this,
             searchModule = this.getSearchModule(),
             chosen_select = this.$(this.fieldTag).not(":disabled"),
+            chosen_search_input = self.$(self.fieldTag + " + .chzn-container .chzn-search input"),
             params = {
                 limit: 3
             };
@@ -109,7 +110,7 @@
             $(opt_adv_search).html(adv_search).appendTo(chosen_select);
 
             chosen_select.trigger("liszt:updated");
-            self.$(".chzn-search input").val(term);
+            chosen_search_input.val(term);
 
             self.search_collection = app.data.createBeanCollection(searchModule);
             self.search_collection.fetch({
@@ -119,7 +120,7 @@
                     self.onSearchSuccess.call(self, data);
                 },
                 complete: function() {
-                    self.$(".chzn-search input").val(term);
+                    chosen_search_input.val(term);
                 },
                 error: function() {
                     app.logger.error("Unable to fetch the bean collection.");

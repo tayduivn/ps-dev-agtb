@@ -1,6 +1,5 @@
 ({
     events:{
-        'click [name=convert_continue_button]':'processContinue', //TODO: remove this if we don't do the continue button
         'click .accordion-heading.enabled': 'handlePanelHeaderClick',
         'click [name=lead_convert_finish_button].enabled': 'initiateFinish'
     },
@@ -8,10 +7,6 @@
     initialize:function (options) {
         _.bindAll(this);
         app.view.Layout.prototype.initialize.call(this, options);
-
-        //TODO: remove this if we don't do the continue button
-        //set up the convert steps to control continue flow
-        this.context.steps = this.buildConvertStepsList(this.meta.modules);
 
         //create and place all the accordion panels
         this.initializePanels(this.meta.modules);
@@ -54,7 +49,7 @@
 
         //show first panel
         firstModule = _.first(this.meta.modules).module;
-        this.context.currentStep = this.context.steps.search(firstModule);
+        this.setStep(firstModule);
         this.context.trigger('lead:convert:' + firstModule + ':show');
         this.checkRequired();
     },
@@ -68,14 +63,14 @@
 
     initiateShow: function(nextModule) {
         var self = this,
-            currentModule = this.context.currentStep.key,
+            currentModule = this.getStep(),
             callback = function() {
                 self.context.trigger('lead:convert:' + currentModule + ':hide');
                 self.context.trigger('lead:convert:' + nextModule + ':show');
-                self.setNextStep(nextModule);
+                self.setStep(nextModule);
             };
 
-        if (nextModule != this.context.currentStep.key) {
+        if (nextModule != this.getStep()) {
             self.context.trigger('lead:convert:' + currentModule + ':validate', callback);
         }
     },
@@ -146,8 +141,12 @@
         this.checkRequired();
     },
 
-    setNextStep: function(nextModule) {
-        this.context.currentStep = this.context.steps.search(nextModule);
+    setStep: function(nextModule) {
+        this.context.currentStep = nextModule;
+    },
+
+    getStep: function() {
+        return this.context.currentStep;
     },
 
     _getModuleMeta: function(nextModule) {
@@ -156,7 +155,6 @@
         })
     },
 
-    //todo: fix to not access this._components directly
     _getPanelByModuleName: function(moduleName) {
         return _.find(this._components, function(component) {
             return ((component.name === 'convert-panel') && (component.meta.module === moduleName));
@@ -179,7 +177,7 @@
     },
 
     initiateFinish: function() {
-        var currentModule = this.context.currentStep.key
+        var currentModule = this.getStep();
         //run validation - set force=true to make sure required panels are completed
         this.context.trigger('lead:convert:' + currentModule + ':validate', this.processConvert, true);
     },
@@ -201,7 +199,9 @@
         _.each(this.meta.modules, function (moduleMeta) {
             var convertPanel = self._getPanelByModuleName(moduleMeta.module),
                 associatedModel = convertPanel.getAssociatedModel();
-            models[moduleMeta.module] = associatedModel;
+            if (!_.isEmpty(associatedModel)) {
+                models[moduleMeta.module] = associatedModel;
+            }
         });
         convertModel.set('modules', models);
 
@@ -212,62 +212,5 @@
                 //todo: display success message?
             }
         });
-    },
-
-    //TODO: remove this if we don't do the continue button
-    processContinue:function () {
-        var currentStep = this.context.currentStep;
-
-        if (!_.isEmpty(currentStep.next)) {
-            this.initiateShow(currentStep.next.key);
-        }
-    },
-
-    //TODO: remove this if we don't do the continue button
-    buildConvertStepsList: function(moduleMetadata) {
-        var linkedListNode = function (key) {
-            return {
-                key: key,
-                next: null
-            };
-        };
-        var linkedList = function () {
-            var head = null;
-            var next = null;
-            var insert = function (node) {
-                if (head == null) {
-                    head = node;
-                }
-                if (next != null) {
-                    next.next = node;
-                }
-                next = node;
-            };
-
-            var search = function (key) {
-                var node = head;
-                while (node !== null && node.key !== key) {
-                    node = node.next;
-                };
-                return node;
-            };
-
-            var getHead = function () {
-                return head;
-            };
-
-            return {
-                insert:insert,
-                search:search,
-                getHead:getHead
-            };
-        };
-
-        var convertSteps = new linkedList();
-        _.each(moduleMetadata, function (element, index, list) {
-            convertSteps.insert(new linkedListNode(element.module));
-        });
-
-        return convertSteps;
     }
 })
