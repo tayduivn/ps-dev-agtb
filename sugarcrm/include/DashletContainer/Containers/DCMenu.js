@@ -118,35 +118,12 @@ var DCMenu = YUI({debug:false,combine: true, timeout: 10000, base:"include/javas
     	if(typeof menuFunctions[module] == 'undefined'){
     		loadView(
                 module,
-                this.menuUrl(module),
+                'index.php?source_module=' + this.module + '&record=' + this.record + '&action=Quickcreate&module=' + module,
                 null,null,title,{modal : modal ? true : false}
             );
     	}	
     }
-
-    DCMenu.menuUrl = function(module){
-        var u = [], i, params = {'module': module,
-                                'action': 'Quickcreate'};
-
-        if ('Meetings' == module && 'undefined' != typeof(this.quickCreateMeeting) )
-        {
-            for(i in this.quickCreateMeeting)
-            {
-                params[i] = this.quickCreateMeeting[i];
-            }
-        }
-        else
-        {
-            params['source_module'] = this.module;
-            params['record'] = this.record;
-        }
-
-        for(i in params)
-        {
-            u.push(i+'='+encodeURIComponent(params[i]));
-        }
-        return 'index.php?' + u.join('&');
-    }
+    
     
     DCMenu.displayModuleMenu = function(obj, module){
     	loadView(module, 'index.php?module=' + module + '&action=ajaxmenu', 0, 'moduleTabLI_' + module); 	

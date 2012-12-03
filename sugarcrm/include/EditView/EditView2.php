@@ -752,25 +752,11 @@ class EditView
 
         $str = $this->showTitle($showTitle);
 
-        $this->th->ss->assign('quickCreateMeeting', getJSONobj()->encode($this->displayQuickCreateMeeting()) );
-
         //Use the output filter to trim the whitespace
         $this->th->ss->load_filter('output', 'trimwhitespace');
         $str .= $this->th->displayTemplate($this->module, $form_name, $this->tpl, $ajaxSave, $this->defs);
 
         return $str;
-    }
-
-    private function displayQuickCreateMeeting()
-    {
-        $arr = getScheduleMeetingBean2Assoc($this->focus);
-        $out = array(
-            'source_module' =>  $arr['parent_type'],
-            'record'        =>  $arr['parent_id'],
-            'relate_to'     =>  $arr['relate_to'],
-            'return_id'     =>  $arr['return_id']
-        );
-        return $out;
     }
 
     function insertJavascript($javascript)

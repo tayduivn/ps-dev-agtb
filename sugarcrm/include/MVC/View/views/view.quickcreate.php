@@ -62,7 +62,7 @@ class ViewQuickcreate extends ViewAjax
                 if(!empty($this->bean->id))$_REQUEST['parent_id'] = $this->bean->id;
                 if(!empty($this->bean->module_dir))$_REQUEST['parent_type'] = $this->bean->module_dir;
                 if(!empty($this->bean->name))$_REQUEST['parent_name'] = $this->bean->name;
-                if(!empty($this->bean->id) && empty($_REQUEST['return_id']) )$_REQUEST['return_id'] = $this->bean->id;
+                if(!empty($this->bean->id))$_REQUEST['return_id'] = $this->bean->id;
                 if(!empty($this->bean->module_dir))$_REQUEST['return_module'] = $this->bean->module_dir;
                 
                 //Now preload any related fields 
