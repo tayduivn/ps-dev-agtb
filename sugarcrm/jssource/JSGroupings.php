@@ -68,7 +68,7 @@
                         break;
                     case 'jquery_core':
                         return array (
-                            'include/javascript/jquery/jquery-min.js'             =>    $target,
+                            'sidecar/lib/jquery/jquery.min.js'                    =>    $target,
                             'include/javascript/jquery/jquery-ui-min.js'          =>    $target,
                             'include/javascript/jquery/jquery.json-2.3.js'        =>    $target,
                         );
@@ -89,6 +89,21 @@
                             'include/javascript/jquery/jquery.chosen.min.js'             =>   $target,
                             'include/javascript/jquery/jquery.jstree.js'              	 =>   $target,                            
                             'include/javascript/jquery/jquery.effects.custombounce.js'   =>   $target,
+                        );
+                        break;
+                    case 'sidecar_libs':
+                        return array(
+                                'sidecar/lib/handlebars/handlebars-1.0.rc.1.js'                  =>   $target,
+                                //'lib/jquery/jquery.min.js',
+                                'sidecar/lib/jquery-ui/js/jquery-ui-1.8.18.custom.min.js',
+                                'sidecar/lib/backbone/underscore.js'                             =>   $target,
+                                'sidecar/lib/backbone/backbone.js'                               =>   $target,
+                                'sidecar/lib/stash/stash.js'                                     =>   $target,
+                                'sidecar/lib/async/async.js'                                     =>   $target,
+                                'sidecar/lib/chosen/chosen.jquery.js'                            =>   $target,
+                                'sidecar/lib/jquery/jquery.iframe.transport.js'                  =>   $target,
+                                'sidecar/lib/jquery-timepicker/jquery.timepicker.js'             =>   $target,
+                                'sidecar/lib/php-js/version_compare.js'                          =>   $target
                         );
                         break;
                     default:
@@ -132,6 +147,9 @@
                 getSubgroupForTarget('bootstrap_core', 'include/javascript/sugar_grp1_jquery.js'),
                 getSubgroupForTarget('jquery_menus', 'include/javascript/sugar_grp1_jquery.js')
             ),
+            
+            //sidecar 3rd party libs
+            $sugar_grp_sidecar_libs = getSubgroupForTarget('sidecar_libs', 'include/javascript/sugar_grp1_sidecar_libs.js'),
 
            $sugar_field_grp = array(
                'include/SugarFields/Fields/Collection/SugarFieldCollection.js' => 'include/javascript/sugar_field_grp.js',

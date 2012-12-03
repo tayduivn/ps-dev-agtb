@@ -139,26 +139,9 @@ class ForecastsViewSidecar extends SidecarView
     {
         $this->_displayJavascriptCore();
 
-        /**
-         * load js files for sidecar forecasts
-         * @see jssource/JSGroupings.php - $sidecar_forecasts
-         * @see sidecar/src/include-manifest.php - files defined for sidecar
-         * it will be better if we load sidecar.min.js
-         * but it (sidecar.min.js) loads jquery library that is loaded and extended already in sugar_grp1_jquery.js -
-         * so in this case we have errors on the page
-         */
-        if ( file_exists('sidecar/src/include-manifest.php') )
-        {
-           require_once('sidecar/src/include-manifest.php');
-           if ( !empty($buildFiles) )
-           {
-               $buildFiles = array_diff($buildFiles['sidecar'], array('lib/jquery/jquery.min.js'));
-               foreach ( $buildFiles as $_file )
-               {
-                   echo getVersionedScript('sidecar/'.$_file) . "\n";
-               }
-           }
-        }
+        //load sidecar.lite and 3rd party libs for sidecar
+        echo getVersionedScript("cache/include/javascript/sugar_grp1_sidecar_libs.js") . "\n";      
+        echo "<script type='text/javascript' src='sidecar/minified/sidecar.lite.min.js'></script>\n";
             
         if ( !inDeveloperMode() )
         {                                      
