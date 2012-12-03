@@ -344,7 +344,6 @@ describe("Forecasts Utils", function(){
 
         it("should return an array of three args", function() {
             var testArgs = app.forecasts.utils.gatherLangArgsByParams(dir, arrow, diff, model, attrStr);
-            console.log(testArgs);
             expect(testArgs.length).toEqual(3);
         });
     });

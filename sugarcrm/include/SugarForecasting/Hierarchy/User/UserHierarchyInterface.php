@@ -26,34 +26,13 @@
  * by SugarCRM are Copyright (C) 2006 SugarCRM, Inc.; All Rights Reserved.
  */
 
-require_once('include/SugarForecasting/AbstractForecast.php');
-class SugarForecasting_ReportingUsers extends SugarForecasting_AbstractForecast
+interface SugarForecasting_Hierarchy_User_UserHierarchyInterface
 {
     /**
-     * Process to get an array of Users for the user that was passed in
+     * This is used to retrieve a user hierarchy data structure
      *
-     * @return array|string
+     * @param array of filter arguments
+     * @return mixed
      */
-    public function process()
-    {
-        // base file and class name
-        $file = 'include/SugarForecasting/Hierarchy/User/RecursiveDBUserHierarchy.php';
-        $klass = 'SugarForecasting_Hierarchy_User_RecursiveDBUserHierarchy';
-
-        $db = DBManagerFactory::getInstance();
-        //If the database driver does not support recursive queries, use the NonRecursiveDBUserHierarchy class
-        if(!$db->supports('recursive_query')) {
-            $file = 'include/SugarForecasting/Hierarchy/User/NonRecursiveDBUserHierarchy.php';
-            $klass = 'SugarForecasting_Hierarchy_User_NonRecursiveDBUserHierarchy';
-        }
-
-        // check for a custom file exists
-        SugarAutoLoader::requireWithCustom($file);
-        $klass = SugarAutoLoader::customClass($klass);
-
-        // create the class
-        $obj = new $klass($args);
-        return $obj->getReportees($this->getArgs());
-    }
-
+    public function getReportees($args);
 }

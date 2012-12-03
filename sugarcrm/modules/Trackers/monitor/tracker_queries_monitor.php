@@ -53,7 +53,7 @@ class tracker_queries_monitor extends Monitor implements Trackable {
 
         $this->cached_data[] = $this->toArray();
 
-    	if($flush && empty($GLOBALS['tracker_' . $this->table_name]) && !empty($this->cached_data)) {
+    	if(empty($GLOBALS['tracker_' . $this->table_name]) && $flush && !empty($this->cached_data)) {
             require_once('modules/Trackers/TrackerUtility.php');
             $write_entries = array();
 
@@ -68,9 +68,10 @@ class tracker_queries_monitor extends Monitor implements Trackable {
                 if(!isset($write_entries[$md5])) {
 
                    $entry['query_hash'] = $md5;
-                   $result = $GLOBALS['db']->query("SELECT * FROM tracker_queries WHERE query_hash = '{$md5}'");
+                   $db = DBManagerFactory::getInstance();
+                   $result = $db->query("SELECT * FROM tracker_queries WHERE query_hash = '{$md5}'");
 
-                   if ($row = $GLOBALS['db']->fetchByAssoc($result)) {
+                   if ($row = $db->fetchByAssoc($result)) {
                         $entry['query_id'] = $row['query_id'];
                         $entry['run_count'] = $row['run_count'] + 1;
                         $entry['sec_total'] = $row['sec_total'] + $entry['sec_total'];
@@ -117,7 +118,7 @@ class tracker_queries_monitor extends Monitor implements Trackable {
                 } //foreach
                 $trackerManager->unPause();
             }
-        unset($this->cached_data);
+            unset($this->cached_data);
     	} //if
    } //save
 }

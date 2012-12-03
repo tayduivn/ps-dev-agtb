@@ -19,14 +19,6 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *to the License for the specific language governing these rights and limitations under the License.
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
-/*********************************************************************************
- * $Id: TimePeriod.php 54636 2010-02-19 02:54:46Z jmertic $
- * Description: TODO:  To be written.
- * Portions created by SugarCRM are Copyright (C) SugarCRM, Inc.
- * All Rights Reserved.
- * Contributor(s): ______________________________________..
- ********************************************************************************/
-
 require_once('include/SugarQueue/SugarJobQueue.php');
 
 // User is used to store customer information.
@@ -162,13 +154,13 @@ class TimePeriod extends SugarBean {
     public function fill_in_additional_detail_fields()
 	{
 		if (isset($this->parent_id) && !empty($this->parent_id)) {
-		
+
 		  $query ="SELECT name from timeperiods where id = '$this->parent_id' and deleted = 0";
 		  $result =$this->db->query($query, true, "Error filling in additional detail fields") ;
 		  $row = $this->db->fetchByAssoc($result);
 		  $GLOBALS['log']->debug("additional detail query results: ".print_r($row, true));
 
-		  
+
 		  if($row != null) {
 			 $this->fiscal_year = $row['name'];
 		  }
@@ -178,12 +170,12 @@ class TimePeriod extends SugarBean {
 
     public function get_list_view_data(){
 
-		$timeperiod_fields = $this->get_list_view_array();		
+		$timeperiod_fields = $this->get_list_view_array();
 		$timeperiod_fields['FISCAL_YEAR'] = $this->fiscal_year;
-	
+
 		if ($this->is_fiscal_year == 1)
 			$timeperiod_fields['FISCAL_YEAR_CHECKED'] = "checked";
-		
+
 		return $timeperiod_fields;
 	}
 
@@ -247,7 +239,7 @@ class TimePeriod extends SugarBean {
 
 				$fiscal_years[$row['id']]=$row['name'];
 			}
-			
+
 			if (!isset($fiscal_years)) {
 				$fiscal_years=array();
 			}
@@ -397,7 +389,7 @@ class TimePeriod extends SugarBean {
                 self::$currentId[$type] = $row['id'];
             }
         }
-        
+
         return self::$currentId[$type];
     }
 
