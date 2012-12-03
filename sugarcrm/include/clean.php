@@ -91,7 +91,7 @@ class SugarCleaner
         // for style
         //$config->set('Filter.ExtractStyleBlocks', true);
         $config->set('Filter.ExtractStyleBlocks.TidyImpl', false); // can't use csstidy, GPL
-        if(!empty($GLOBALS['sugar_conifg']['html_allow_objects'])) {
+        if(!empty($GLOBALS['sugar_config']['html_allow_objects'])) {
             // for object
             $config->set('HTML.SafeObject', true);
             // for embed
