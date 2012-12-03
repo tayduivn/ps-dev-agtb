@@ -1,88 +1,128 @@
 {
-    "x0": 634.5,
-    "y0": 0,
     "id": 10000,
-    "children": [{
-        "id": 1,
-        "x0": 391,
-        "y0": 120,
-        "children": [{
-            "id": 2,
-            "x0": 94,
-            "y0": 240,
-            "children": [{
-                "id": 8,
-                "x0": 94,
-                "y0": 360,
-                "children": [{
-                    "id": 13,
-                    "x0": 62,
-                    "y0": 480
+    "name": "Jim Brennan",
+    "title": "VP Sales",
+    "image": "avatar_james.jpg",
+    "children": [
+        {
+            "id": 1,
+            "name": "Sarah Smith",
+            "title": "Sales Manager West",
+            "image": "avatar_nate.jpg",
+            "children": [
+                {
+                    "id": 2,
+                    "name": "Max Jensen",
+                    "title": "Senior Sales Rep",
+                    "image": "avatar_sabra.jpg",
+                    "children": [
+                        {
+                            "id": 8,
+                            "name": "Alex Jensen",
+                            "title": "Field Sales Rep",
+                            "image": "avatar_uwelcome.jpg",
+                            "children": [
+                                {
+                                    "id": 13,
+                                    "name": "Dave Smith",
+                                    "title": "Sales Engineer",
+                                    "image": "avatar_weyland.png"
+                                }, {
+                                    "id": 16,
+                                    "name": "Jane Doe",
+                                    "title": "Sales Engineer",
+                                    "image": "avatar_weyland.png"
+                                }
+                            ]
+                        }, {
+                            "id": 19,
+                            "name": "Felix Jensen",
+                            "title": "Field Sales Rep",
+                            "image": "avatar_uwelcome.jpg"
+                        }
+                    ]
                 }, {
-                    "id": 16,
-                    "x0": 125,
-                    "y0": 480
-                }]
-            }, {
-                "id": 19
-            }]
+                    "id": 3,
+                    "name": "Sally Bronsen",
+                    "title": "Senior Account Rep",
+                    "image": "avatar_sabra.jpg",
+                    "children": [
+                        {
+                            "id": 5,
+                            "name": "Alex Jensen",
+                            "title": "Field Sales Rep",
+                            "image": "avatar_mia.jpg",
+                            "children": [
+                                {
+                                    "id": 7,
+                                    "name": "Dave Smith",
+                                    "title": "Sales Engineer",
+                                    "image": "avatar_weyland.png"
+                                }
+                            ]
+                        }
+                    ]
+                }, {
+                    "id": 4,
+                    "name": "Max Jensen",
+                    "title": "Sales Rep",
+                    "image": "avatar_sabra.jpg",
+                    "children": [
+                        {
+                            "id": 17,
+                            "name": "Alex Jensen",
+                            "title": "Field Sales Rep",
+                            "image": "avatar_uwelcome.jpg"
+                        }, {
+                            "id": 18,
+                            "name": "Felix Jensen",
+                            "title": "Field Sales Rep",
+                            "image": "avatar_uwelcome.jpg"
+                        }
+                    ]
+                }, {
+                    "id": 9,
+                    "name": "Sally Bronsen",
+                    "title": "Senior Account Rep",
+                    "image": "avatar_sabra.jpg",
+                    "children": [
+                        {
+                            "id": 11,
+                            "name": "Felix Jensen",
+                            "title": "Field Sales Rep",
+                            "image": "avatar_uwelcome.jpg"
+                        }
+                    ]
+                }, {
+                    "id": 14,
+                    "name": "Max Jensen",
+                    "title": "Sales Rep",
+                    "image": "avatar_sabra.jpg"
+                }, {
+                    "id": 15,
+                    "name": "Sally Bronsen",
+                    "title": "Senior Account Rep",
+                    "image": "avatar_sabra.jpg"
+                }
+            ]
         }, {
-            "id": 3,
-            "x0": 250,
-            "y0": 240,
-            "children": [{
-                "id": 5,
-                "x0": 250,
-                "y0": 360,
-                "children": [{
-                    "id": 7,
-                    "x0": 250,
-                    "y0": 480
-                }]
-            }]
+            "id": 6,
+            "name": "Will Westin",
+            "title": "Sales Manager East",
+            "image": "avatar_nate.jpg",
+            "children": [
+                {
+                    "id": 12,
+                    "name": "Chris Olliver",
+                    "title": "Senior Account Rep",
+                    "image": "avatar_sabra.jpg"
+                }
+            ]
         }, {
-            "id": 4,
-            "x0": 407,
-            "y0": 240,
-            "children": [{
-                "id": 17,
-                "x0": 376,
-                "y0": 360
-            }, {
-                "id": 18,
-                "x0": 438,
-                "y0": 360
-            }]
-        }, {
-            "id": 9,
-            "x0": 564,
-            "y0": 240,
-            "children": [{
-                "id": 11,
-                "x0": 564,
-                "y0": 360
-            }]
-        }, {
-            "id": 14,
-            "x0": 626,
-            "y0": 240
-        }, {
-            "id": 15,
-            "x0": 689,
-            "y0": 240
-        }]
-    }, {
-        "id": 6,
-        "x0": 814,
-        "y0": 120,
-        "children": [{
-            "id": 12,
-            "x0": 814,
-            "y0": 240
-        }]
-    }, {
-        "id": 10,
-        "x0": 877,
-        "y0": 120
-    }]
+            "id": 10,
+            "name": "Jane Ganesh",
+            "title": "Sales Manager Asia",
+            "image": "avatar_mia.jpg"
+        }
+    ]
 }
