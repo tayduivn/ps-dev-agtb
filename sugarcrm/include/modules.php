@@ -475,7 +475,12 @@ $beanFiles['OAuthToken'] = 'modules/OAuthTokens/OAuthToken.php';
 $modules_exempt_from_availability_check['OAuthTokens'] = 'OAuthTokens';
 $modInvisList[] = 'OAuthTokens';
 
+
 //BEGIN SUGARCRM flav=pro ONLY
+$beanList['DBFTS'] = 'DBFTS';
+$beanFiles['DBFTS'] = 'modules/DBFTS/DBFTS.php';
+$modInvisList[] = 'DBFTS';
+$modules_exempt_from_availability_check['DBFTS'] = 'DBFTS';
 $beanList['SugarFavorites'] = 'SugarFavorites';
 $beanFiles['SugarFavorites'] = 'modules/SugarFavorites/SugarFavorites.php';
 $modules_exempt_from_availability_check['SugarFavorites'] = 'SugarFavorites';

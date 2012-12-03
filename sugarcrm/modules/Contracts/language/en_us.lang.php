@@ -28,9 +28,11 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  */
 // $Id: en_us.lang.php 56510 2010-05-17 18:54:49Z jenny $
 $mod_strings = array (
-    // module labels
-    'LBL_MODULE_NAME' => 'Contracts',
-    'LBL_MODULE_TITLE' => 'Contracts: Home',
+	// module labels
+	'LBL_MODULE_NAME' => 'Contracts',
+	'LBL_MODULE_NAME_SINGULAR' => 'Contract',
+	'LBL_MODULE_TITLE' => 'Contracts: Home',
+	
 
     // quick menu link labels
     'LNK_NEW_CONTRACT' => 'Create Contract',
