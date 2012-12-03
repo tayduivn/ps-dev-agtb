@@ -74,9 +74,12 @@ class SugarForecasting_Progress_Manager extends SugarForecasting_Progress_Abstra
 
     public function getTopLevelManagerQuota($user_id, $timeperiod_id)
     {
+        $dataArray = array();
+        global $current_user;
         $db = DBManagerFactory::getInstance();
 
-        $query = "select sum(q.amount) " .
+        //get quotas for current user (top level manager) and their reportees
+        $query = "select u.user_name user_name, q.amount quota " .
                  " FROM quotas q " .
                  " INNER JOIN users u " .
                  " ON q.user_id = u.id " .
@@ -84,7 +87,45 @@ class SugarForecasting_Progress_Manager extends SugarForecasting_Progress_Abstra
                  " OR ( u.reports_to_id = ". $db->quoted($user_id) ." AND quota_type = " . $db->quoted('Rollup') . "))" .
                  " WHERE q.deleted = 0 and q.timeperiod_id = " . $db->quoted($timeperiod_id);
 
-        return $db->getOne($query);
+        $result = $db->query($query);
+
+        while(($row=$db->fetchByAssoc($result))!=null)
+        {
+            $dataArray[$row['user_name']]['quota'] = $row['quota'];
+        }
+
+        //get worksheet data for top level manager to override in event a draft is saved
+        $reportees_query = "SELECT u2.user_name, " .
+      						   "w.quota " .
+      						   "from users u " .
+      						   "inner join users u2 " .
+      						   		"on u.id = u2.reports_to_id " .
+      						   		"or u.id = u2.id " .
+      						   "inner join worksheet w " .
+      						   		"on w.user_id = u.id " .
+      						   		"and w.timeperiod_id = " . $db->quoted($timeperiod_id) .
+      						   		"and ((w.related_id = u.id and u2.id = u.id) " .
+      						   			 "or (w.related_id = u2.id)) " .
+      						   "where u.id = " . $db->quoted($user_id)  .
+      						        " and w.deleted = 0 " .
+                                    " and w.version = 0 " .
+                               " order by w.date_modified desc";
+
+
+        $result = $db->limitQuery($reportees_query,0,1);
+        //override the quota values for where the worksheet has a value to override the quota for the top manager
+        while(($row=$db->fetchByAssoc($result))!=null)
+        {
+            $dataArray[$row['user_name']]['quota'] = $row['quota'];
+        }
+        $quota = 0;
+
+        //sum the quota values
+        foreach ($dataArray as $data) {
+            $quota += $data['quota'];
+        }
+
+        return $quota;
     }
 
 
