@@ -112,6 +112,9 @@ $config['blackList']['com'] = array(
 'sugarcrm/include/SugarObjects/templates/person/icons/person_bar_32.png'=>1,
 'sugarcrm/include/SugarObjects/templates/sale/icons/sale_bar_32.png'=>1,
 
+'sugarcrm/include/SugarSearchEngine/Elastic'=>1,
+'sugarcrm/include/SugarSearchEngine/DBFTS'=>1,
+
 'sugarcrm/modules/Notifications'=>1,
 'sugarcrm/themes/default/images/icon_notifications.gif'=>1,
 'sugarcrm/themes/default/images/icon_notifications.png'=>1,
@@ -206,7 +209,6 @@ $config['blackList']['com'] = array(
 'sugarcrm/include/images/sugar_md_sales.png'=>1,
 'sugarcrm/include/images/sugar_md_corp.png'=>1,
 'sugarcrm/include/images/sugar_md_ult.png'=>1,
-'sugarcrm/include/SugarSearchEngine' => 1,
 
 'sugarcrm/themes/default/images/AccountReports.gif'=>1,
 'sugarcrm/themes/default/images/CallReports.gif'=>1,
