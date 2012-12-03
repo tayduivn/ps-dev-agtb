@@ -52,6 +52,7 @@ $(document).ready(function(){
     //initialize global tooltips
 	SUGAR.themes.globalToolTips();
 
+    SUGAR.themes.currentMenuIndex =  $("#themeTabGroupMenu_All" ).children("li").index($("#themeTabGroupMenu_All").children("li.current"));
 
     $('body').click(function(e) {
     	if($(e.target).closest('#dcmenuSearchDiv').length == 0 && !$("#SpotResults").parent().hasClass("dccontent") && $("#dcgscontent").css("visibility") != "visible"){
@@ -364,7 +365,8 @@ SUGAR.append(SUGAR.themes, {
             menuItemsWidth = SUGAR.themes.menuItemsWidth || $("#moduleList").width(),
             _ie_adjustment = 10,
             menuItems = currentModuleList.children("li"),
-            menuLength = menuItems.length;
+            menuLength = menuItems.length,
+            currentMenu = currentModuleList.children("li.current");
         if($.browser.msie) {
             menuItemsWidth = 0;
             menuItems.each(function(){
@@ -383,11 +385,12 @@ SUGAR.append(SUGAR.themes, {
             var moreNode = $("#moduleTabMore" + sugar_theme_gm_current);
             while(menuItemsWidth >= maxMenuWidth && menuLength-- > 0){
                 var menuNode = $("#moduleTabExtraMenu" + sugar_theme_gm_current).prev();
+
                 if(menuNode.hasClass("current")){
                     menuNode = menuNode.prev();
                 }
                 if(menuNode.hasClass("home")){
-                    menuNode = menuNode.prev();
+                    //menuNode = menuNode.prev();
                 }
                 menuNode.find(".megamenu").css({
                     'left' : '',
@@ -410,18 +413,18 @@ SUGAR.append(SUGAR.themes, {
                     SUGAR.themes.menuItemsWidth = false;
                 }
             }
-
         }
         else {
 
-            var insertNode = $("#moduleTabExtraMenu" + sugar_theme_gm_current);
-            if(insertNode.prev().hasClass("current")){
-                insertNode = insertNode.prev();
+            var insertNode = $("#moduleTabExtraMenu" + sugar_theme_gm_current),
+                dynamicMenuLength = insertNode.parent().children("li").length;
+            if(dynamicMenuLength <= this.currentMenuIndex+1){
+                insertNode = currentMenu;
             }
             while(menuItemsWidth <= maxMenuWidth && (menuLength <= max_tabs)){
                 var menuNode = $("#moduleTabMore" + sugar_theme_gm_current).children("li:first"),
-                    menuNodeWidth = ($.browser.msie) ? (menuNode.attr("width") || menuNode.width()) : menuNode.width();
-
+                    menuNodeWidth = ($.browser.msie) ? (menuNode.attr("width") || menuNode.width()) : menuNode.width(),
+                    menuNodeIndex = menuNode.parent().prevAll().length;
                 if((menuNode.attr("id") != undefined &&
                     menuNode.attr("id").match(/moduleMenuOverFlow[a-zA-Z]*/)) ||
                     (menuItemsWidth + parseInt(menuNodeWidth)) > maxMenuWidth){
