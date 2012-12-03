@@ -59,7 +59,7 @@ require_once 'modules/vCals/HTTP_WebDAV_Server_vCal.php';
         public function __construct()
         {
            $this->vcal_focus = new iCal();
-           $this->user_focus = new User();
+           $this->user_focus = BeanFactory::getBean('Users');
         }
 
         /**

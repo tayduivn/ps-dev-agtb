@@ -454,8 +454,7 @@ class SchedulersJob extends Basic
         if($exJob[0] == 'function') {
             // set up the current user and drop session
             if(!empty($this->assigned_user_id)) {
-                $user = new User();
-                $user->retrieve($this->assigned_user_id);
+                $user = BeanFactory::getBean('Users', $this->assigned_user_id);
                 if(empty($user->id)) {
                     $this->resolveJob(self::JOB_FAILURE, sprintf(translate('ERR_NOSUCHUSER', 'SchedulersJobs'), $this->assigned_user_id));
                     return;

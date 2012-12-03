@@ -36,6 +36,17 @@ class CalendarActivity {
 	var $start_time;
 	var $end_time;
 
+    /**
+     * This is a depreciated method, please start using __construct() as this method will be removed in a future version
+     *
+     * @see __construct
+     * @deprecated
+     */
+    public function CalendarActivity($args)
+    {
+        $this->__construct($args);
+    }
+
 	public function __construct($args){
 		// if we've passed in an array, then this is a free/busy slot
 		// and does not have a sugarbean associated to it
@@ -113,7 +124,7 @@ class CalendarActivity {
 
 	function get_freebusy_activities($user_focus, $start_date_time, $end_date_time){
 		$act_list = array();
-		$vcal_focus = new vCal();
+		$vcal_focus = BeanFactory::getBean('vCals');
 		$vcal_str = $vcal_focus->get_vcal_freebusy($user_focus);
 
 		$lines = explode("\n",$vcal_str);
@@ -146,7 +157,7 @@ class CalendarActivity {
 
 		// get all upcoming meetings, tasks due, and calls for a user
 		if(ACLController::checkAccess('Meetings', 'list', $current_user->id == $user_id)) {
-			$meeting = new Meeting();
+			$meeting = BeanFactory::getBean('Meetings');
 
 			if($current_user->id  == $user_id) {
 				$meeting->disable_row_level_security = true;
@@ -170,7 +181,7 @@ class CalendarActivity {
 
 		if($show_calls){
 			if(ACLController::checkAccess('Calls', 'list',$current_user->id  == $user_id)) {
-				$call = new Call();
+				$call = BeanFactory::getBean('Calls');
 
 				if($current_user->id  == $user_id) {
 					$call->disable_row_level_security = true;
@@ -196,7 +207,7 @@ class CalendarActivity {
 
 		if($show_tasks){
 			if(ACLController::checkAccess('Tasks', 'list',$current_user->id == $user_id)) {
-				$task = new Task();
+				$task = BeanFactory::getBean('Tasks');
 
 				$where = CalendarActivity::get_occurs_within_where_clause('tasks', '', $view_start_time, $view_end_time, 'date_due', $view);
 				$where .= " AND tasks.assigned_user_id='$user_id' ";

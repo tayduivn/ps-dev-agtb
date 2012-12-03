@@ -65,10 +65,11 @@ class QuarterTimePeriod extends TimePeriod implements TimePeriodInterface {
         $this->previous_date_modifier = '-3 month';
 
         //The name template
-        $this->name_template = "Q%d %d";
+        global $app_strings;
+        $this->name_template = $app_strings['LBL_QUARTER_TIMEPERIOD_FORMAT'];
 
         //The leaf name template
-        $this->leaf_name_template = "%s %d";
+        $this->leaf_name_template = $app_strings['LBL_MONTH_TIMEPERIOD_FORMAT'];
 
         //The chart label
         $this->chart_label = "F Y";
@@ -88,8 +89,11 @@ class QuarterTimePeriod extends TimePeriod implements TimePeriodInterface {
      */
     public function getTimePeriodName($count)
     {
+        global $sugar_config;
         $timedate = TimeDate::getInstance();
-        return sprintf($this->name_template, $count, $timedate->fromDbDate($this->start_date)->format('Y'));
+        $start = $timedate->fromDbDate($this->start_date)->format($sugar_config['datef']);
+        $end = $timedate->fromDbDate($this->end_date)->format($sugar_config['datef']);
+        return string_format($this->name_template, array($count, $start, $end));
     }
 
 

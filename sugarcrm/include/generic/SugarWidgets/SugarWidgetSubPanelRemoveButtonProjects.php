@@ -1,5 +1,4 @@
 <?php
-//FILE SUGARCRM flav!=sales ONLY
 if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 /**
  * SugarWidgetSubPanelRemoveButton
@@ -70,9 +69,7 @@ class SugarWidgetSubPanelRemoveButtonProjects extends SugarWidgetField
 		$return_id = $_REQUEST['record'];
 		
 		
-		$focus = new Project();
-		
-		$focus->retrieve($return_id);
+		$focus = BeanFactory::getBean('Project', $return_id);
 		
 		if ($current_user->id == $focus->assigned_user_id || is_admin($current_user)){
 			$is_owner = true;

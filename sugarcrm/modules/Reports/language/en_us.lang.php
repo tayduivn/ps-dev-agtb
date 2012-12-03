@@ -80,15 +80,11 @@ $mod_strings = array (
   'LBL_SAVE_AS' => 'Save As',
   'LBL_FILTERS' => 'Filters',
   'LBL_NO_CHART_DRAWN_MESSAGE' => 'Chart not able to be drawn because of insufficient data',
+  'LBL_CANNOT_DISPLAY_CHART_MESSAGE' => 'The chart cannot be displayed due to its configuration.',
   'LBL_RUNTIME_FILTERS' => 'Run-time Filters',
   'LBL_VIEWER_RUNTIME_HELP'=> 'Specify values for <b>Run-time Filters</b> and click the <b>Apply Filters</b> button to re-run the report.',
   'LBL_REPORT_RESULTS' => 'Results',
-  //BEGIN SUGARCRM flav!=sales ONLY
   'LBL_REPORT_RESULTS_MESSAGE' => 'Click on Run Report to view results.',
-  //END SUGARCRM flav!=sales ONLY
-  //BEGIN SUGARCRM flav=sales ONLY
-  'LBL_REPORT_RESULTS_MESSAGE' => 'Click on Refresh Report to view results.',
-  //END SUGARCRM flav=sales ONLY
   'LBL_REPORT_FILTER_MODIFIED_MESSAGE' => 'Report filters have been modified since last run.',
   'LBL_REPORT_MODIFIED_MESSAGE' => 'Report has been modified since last run.',
   'LBL_ADD_NEW_FILTER' => 'Add New Filter',
@@ -99,10 +95,8 @@ $mod_strings = array (
   'LBL_QUERY' => 'Query',
   'LBL_CHANGE' => 'Change',
   'LBL_REMOVE' => 'Remove',
-  //BEGIN SUGARCRM flav!=sales ONLY
   'LBL_CREATE_CUSTOM_REPORT' => 'Report Wizard',
   'LBL_CREATE_REPORT' => 'Create Report',
-  //END SUGARCRM flav!=sales ONLY
   'LBL_MY_SAVED_REPORTS' => 'My Saved Reports',
   'LBL_MY_TEAMS_REPORTS' => 'My Team\'s Reports',
   'LBL_REPORT_NAME' => 'Report Name',
@@ -138,11 +132,9 @@ $mod_strings = array (
 
   'LBL_CASE_REPORTS' => 'Case Reports',
 
-  //BEGIN SUGARCRM flav!=sales ONLY
   'LBL_BUG_REPORTS' => 'Bug Reports',
   'LBL_LEAD_REPORTS' => 'Lead Reports',
   'LBL_QUOTE_REPORTS' => 'Quote Reports',
-  //END SUGARCRM flav!=sales ONLY
 
   'LBL_CALL_REPORTS' => 'Call Reports',
   'LBL_MEETING_REPORTS' => 'Meeting Reports',
@@ -160,34 +152,28 @@ $mod_strings = array (
   'LBL_MY_TEAM_CONTACT_REPORTS' => 'My Team\'s Contact Reports',
   'LBL_MY_TEAM_CASE_REPORTS' => 'My Team\'s Case Reports',
 
-  //BEGIN SUGARCRM flav!=sales ONLY
   'LBL_MY_TEAM_BUG_REPORTS' => 'My Team\'s Bug Reports',
   'LBL_MY_TEAM_LEAD_REPORTS' => 'My Team\'s Lead Reports',
   'LBL_MY_TEAM_QUOTE_REPORTS' => 'My Team\'s Quote Reports',
-  //END SUGARCRM flav!=sales ONLY
 
   'LBL_MY_TEAM_CALL_REPORTS' => 'My Team\'s Call Reports',
   'LBL_MY_TEAM_MEETING_REPORTS' => 'My Team\'s Meeting Reports',
   'LBL_MY_TEAM_TASK_REPORTS' => 'My Team\'s Task Reports',
   'LBL_MY_TEAM_EMAIL_REPORTS' => 'My Team\'s Email Reports',
 
-   //BEGIN SUGARCRM flav!=sales ONLY
   'LBL_MY_TEAM_FORECAST_REPORTS' => 'My Team\'s Forecast Reports',
   'LBL_MY_TEAM_PROSPECT_REPORTS' =>'My Team\'s Target Reports',
   'LBL_MY_TEAM_CONTRACT_REPORTS' => 'My Team\'s Contract Reports',
   'LBL_MY_TEAM_PROJECT_TASK_REPORTS' => 'My Team\'s Project Task Reports',
-  //END SUGARCRM flav!=sales ONLY
 
   'LBL_MY_ACCOUNT_REPORTS' => 'My Account Reports',
   'LBL_MY_OPPORTUNITY_REPORTS' => 'My Opportunity Reports',
   'LBL_MY_CONTACT_REPORTS' => 'My Contact Reports',
 
-  //BEGIN SUGARCRM flav!=sales ONLY
   'LBL_MY_CASE_REPORTS' => 'My Case Reports',
   'LBL_MY_BUG_REPORTS' => 'My Bug Reports',
   'LBL_MY_LEAD_REPORTS' => 'My Lead Reports',
   'LBL_MY_QUOTE_REPORTS' => 'My Quote Reports',
-  //END SUGARCRM flav!=sales ONLY
 
   'LBL_MY_CALL_REPORTS' => 'My Call Reports',
   'LBL_MY_MEETING_REPORTS' => 'My Meeting Reports',
@@ -232,11 +218,9 @@ $mod_strings = array (
   'LBL_PUBLISHED_OPPORTUNITY_REPORTS' => 'Published Opportunity Reports',
   'LBL_PUBLISHED_CASE_REPORTS' => 'Published Case Reports',
 
-  //BEGIN SUGARCRM flav!=sales ONLY
   'LBL_PUBLISHED_BUG_REPORTS' => 'Published Bug Reports',
   'LBL_PUBLISHED_LEAD_REPORTS' => 'Published Lead Reports',
   'LBL_PUBLISHED_QUOTE_REPORTS' => 'Published Quote Reports',
-  //END SUGARCRM flav!=sales ONLY
 
   //BEGIN SUGARCRM flav=pro ONLY
   'LBL_PUBLISHED_FORECAST_REPORTS' => 'Published Forecast Reports',
@@ -265,14 +249,8 @@ $mod_strings = array (
   'LBL_REPORT_RESET_FILTER' => 'Reset',
   'LBL_DISPLAY_SUMMARIES'=>'Choose Display Summaries',
   'LBL_HIDE_SUMMARIES'=>'Hide Summaries',
-  //BEGIN SUGARCRM flav!=sales ONLY
   'LBL_RUN_BUTTON_TITLE'=>'Run Report',
   'LBL_RUN_REPORT_BUTTON_LABEL' => 'Run Report',
-  //END SUGARCRM flav!=sales ONLY
-  //BEGIN SUGARCRM flav=sales ONLY
-  'LBL_RUN_BUTTON_TITLE'=>'Refresh Report',
-  'LBL_RUN_REPORT_BUTTON_LABEL' => 'Refresh Report',
-  //END SUGARCRM flav=sales ONLY
   'LBL_RUN_REPORT_BUTTON_KEY' => 'R',
   'LBL_DUPLICATE_AS_ORIGINAL' => 'As Original Type',
   'LBL_DUPLICATE_AS_ROWS_AND_COLS' => 'As Rows and Columns',
@@ -288,12 +266,10 @@ $mod_strings = array (
   'LBL_ADD_COLUMN' => 'Add Column',
   'LBL_GRAND_TOTAL' => 'Grand Total',
    'LBL_SEARCH_FORM_TITLE' => 'Reports Search',
- //BEGIN SUGARCRM flav!=sales ONLY
   'LBL_FORECAST_REPORTS' => 'Forecast Reports',
   'LBL_MY_PROJECT_TASK_REPORTS'=>'My Project Tasks Reports',
   'LBL_PUBLISHED_PROJECT_TASK_REPORTS'=>'Published Project Tasks Reports',
   'LBL_PROJECT_TASK_REPORTS'=>'Project Task Reports',
- //END SUGARCRM flav!=sales ONLY
 
   'DROPDOWN_SCHEDULE_INTERVALS'=>array(
   							'3600'=>'Hourly',
@@ -465,12 +441,8 @@ $mod_strings = array (
     'DEFAULT_REPORT_TITLE_41' => 'Active User Sessions (Last 7 Days)',
     'DEFAULT_REPORT_TITLE_42' => 'User Sessions Summary (Last 7 Days)',
 
-    //BEGIN SUGARCRM flav=sales ONLY
-    'DEFAULT_REPORT_TITLE_54' => 'Pipeline By User',
-  	'DEFAULT_REPORT_TITLE_55' => 'Pipeline By Type',
-    //END SUGARCRM flav=sales ONLY
 
-    //BEGIN SUGARCRM flav=sales || flav=pro || flav=ent ONLY
+    //BEGIN SUGARCRM flav=pro || flav=ent ONLY
     'DEFAULT_REPORT_TITLE_43' => 'Customer Account Owners',
   	'DEFAULT_REPORT_TITLE_44' => 'My New Customer Accounts',
   	'DEFAULT_REPORT_TITLE_45' => 'Opportunities By Sales Stage',
@@ -486,7 +458,7 @@ $mod_strings = array (
     'DEFAULT_REPORT_TITLE_57' => 'Opportunities Sales Stage For Past, Current, Next Timeperiod By Month',
     'DEFAULT_REPORT_TITLE_58' => 'Last/Current/Next Quarter Forecast',
     'DEFAULT_REPORT_TITLE_59' => 'Opportunities By Sales Stage For Reportees in Current Period',
-    //END SUGARCRM flav=sales || flav=pro || flav=ent ONLY
+    //END SUGARCRM flav=pro || flav=ent ONLY
 
     //'LBL_CHART_ON_DASHLET' => 'Do not Display Chart on Dashlet',
     'LBL_ASSIGNED_TO_NAME'=>'Assigned To:',

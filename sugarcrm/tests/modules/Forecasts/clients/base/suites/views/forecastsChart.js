@@ -44,61 +44,6 @@ describe("The forecasts chart view", function () {
         })
     });
 
-    describe("getChartDatasets method", function () {
-
-        var lstubs = [];
-
-        beforeEach(function () {
-            lstubs.push(sinon.stub(app.metadata, "getStrings", function () {
-                return {
-                    'forecasts_chart_options_dataset':{
-                        'likely':'Likely',
-                        'best':'Best',
-                        'worst':'Worst'
-                    }
-                }
-            }));
-
-            view.context.forecasts.config = new Backbone.Model({
-                'show_worksheet_likely' : 0,
-                'show_worksheet_best' : 0,
-                'show_worksheet_worst' : 0
-            });
-        });
-
-        afterEach(function () {
-            _.each(lstubs, function (stub) {
-                stub.restore();
-            });
-
-            delete view.context.forecasts.config;
-        });
-
-        it("should return no dataset", function () {
-            ds = view.getChartDatasets();
-
-            expect(_.isEmpty(ds)).toBeTruthy();
-        });
-        it("should return likely dataset", function(){
-            view.context.forecasts.config.set({'show_worksheet_likely': 1});
-            ds = view.getChartDatasets();
-
-            expect(_.keys(ds)).toEqual(['likely']);
-        });
-        it("should return likely and best dataset", function(){
-            view.context.forecasts.config.set({'show_worksheet_likely': 1, 'show_worksheet_best': 1});
-            ds = view.getChartDatasets();
-
-            expect(_.keys(ds)).toEqual(['likely', 'best']);
-        });
-        it("should return likely, best and worst dataset", function(){
-            view.context.forecasts.config.set({'show_worksheet_likely': 1, 'show_worksheet_best': 1, 'show_worksheet_worst': 1});
-            ds = view.getChartDatasets();
-
-            expect(_.keys(ds)).toEqual(['likely', 'best', 'worst']);
-        });
-    });
-
     describe("handleRenderOptions", function(){
         var renderStub, valuesSpy;
         beforeEach(function() {

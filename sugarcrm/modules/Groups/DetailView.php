@@ -30,8 +30,7 @@ global $mod_strings;
 
 /* start standard DetailView layout process */
 $GLOBALS['log']->info("Groups DetailView");
-$focus = new Group();
-$focus->retrieve($_REQUEST['record']);
+$focus = BeanFactory::getBean('Groups', $_REQUEST['record']);
 $detailView = new DetailView();
 $offset=0;
 if (isset($_REQUEST['offset']) or isset($_REQUEST['record'])) {

@@ -32,7 +32,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 
 $current_module_strings = return_module_language($current_language, "Opportunities");
-$seedOpportunity = new Opportunity();
+$seedOpportunity = BeanFactory::getBean('Opportunities');
 	
 //build top 5 opportunity list
 $where = "opportunities.sales_stage <> 'Closed Won' AND opportunities.sales_stage <> 'Closed Lost' AND opportunities.assigned_user_id='".$current_user->id."'";

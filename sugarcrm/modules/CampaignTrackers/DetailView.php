@@ -35,8 +35,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 global $app_strings;
 global $mod_strings;
 
-$focus = new CampaignTracker();
-$focus->retrieve($_REQUEST['record']);
+$focus = BeanFactory::getBean('CampaignTrackers', $_REQUEST['record']);
 
 if(isset($_REQUEST['isDuplicate']) && $_REQUEST['isDuplicate'] == 'true') {
 	$focus->id = "";

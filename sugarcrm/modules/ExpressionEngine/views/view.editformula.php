@@ -18,7 +18,6 @@
  *to the License for the specific language governing these rights and limitations under the License.
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
-//require_once('include/Utils.php');
 
 require_once('modules/ExpressionEngine/formulaHelper.php');
 
@@ -50,9 +49,7 @@ class ViewEditFormula extends SugarView
  				$defs = $pak->modules[$module]->getVardefs();
                 $fields = FormulaHelper::cleanFields(array_merge($pak->modules[$module]->getLinkFields(), $defs['fields']));
  			} else {
- 				$class = $beanList[$module];
-				require_once $beanFiles [ $class ] ;
-	        	$seed = new $class ( ) ;
+ 			    $seed = BeanFactory::getBean($module);
 	        	$fields = FormulaHelper::cleanFields($seed->field_defs);
  			}
         	$smarty->assign('Field_Array', $json->encode($fields));

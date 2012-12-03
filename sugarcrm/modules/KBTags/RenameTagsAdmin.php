@@ -77,8 +77,7 @@ if(!empty($new_tag_name)){
 
  if(!$found){ 
            
-    $kbtag = new KBTag();    
-    $kbtag->retrieve($tag_id);    
+    $kbtag = BeanFactory::getBean('KBTags', $tag_id);    
     $kbtag->tag_name  = $new_tag_name;    		         
     $kbtag->save();
      //refresh tree

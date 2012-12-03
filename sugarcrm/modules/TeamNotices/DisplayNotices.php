@@ -27,7 +27,7 @@ global $app_list_strings;
 global $app_strings;
 global $current_user;
 
-$focus = new TeamNotice();
+$focus = BeanFactory::getBean('TeamNotices');
 
 $is_edit = true;
 if(!empty($_REQUEST['record'])) {

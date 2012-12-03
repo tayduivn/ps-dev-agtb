@@ -50,7 +50,7 @@ function retrieveFile($id){
 function retrieveFileName($id) {	
     
     $query = "select filename from document_revisions where id = '$id'";
-    $bean = new KBDocument();
+    $bean = BeanFactory::getBean('KBDocuments');
     $result = $bean->db->query($query);
     if(isset($result)) {
        $row = $bean->db->fetchByAssoc($result);

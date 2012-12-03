@@ -102,13 +102,14 @@ class SugarJobCreateNextTimePeriod implements RunnableSchedulerJob
            if($leafCycle == 1) {
               $parentTimePeriod = TimePeriod::getByType($timeperiodInterval);
               $parentTimePeriod->setStartDate($startDate->asDbDate());
-              $parentTimePeriod->name = $parentTimePeriod->getTimePeriodName($leafCycle);
+              $year = $startDate->format('Y');
+              $parentTimePeriod->name = $parentTimePeriod->getTimePeriodName($leafCycle, $year);
               $parentTimePeriod->save();
            }
 
            $leafTimePeriod = TimePeriod::getByType($timeperiodLeafInterval);
            $leafTimePeriod->setStartDate($startDate->asDbDate());
-           $leafTimePeriod->name = $leafTimePeriod->getTimePeriodName($leafCycle);
+           $leafTimePeriod->name = $leafTimePeriod->getTimePeriodName($leafCycle, $year);
            $leafTimePeriod->leaf_cycle = $leafCycle;
            $leafTimePeriod->save();
         }

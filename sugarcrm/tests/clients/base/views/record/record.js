@@ -5,9 +5,9 @@ describe("Record View", function() {
 
     beforeEach(function() {
         SugarTest.testMetadata.init();
-        SugarTest.loadViewHandlebarsTemplate('base', viewName);
+        SugarTest.loadHandlebarsTemplate(viewName, 'view', 'base');
         SugarTest.loadComponent('base', 'view', viewName);
-        SugarTest.testMetadata.addModuleViewDefinition(moduleName, viewName, {
+        SugarTest.testMetadata.addViewDefinition(viewName, {
             "buttons": [{
                 "type": "button",
                 "label": "LBL_SAVE_BUTTON_LABEL",
@@ -44,7 +44,7 @@ describe("Record View", function() {
                 "placeholders": true,
                 "fields": ["created_by","date_entered","date_modified","modified_user_id"]
             }]
-        });
+        }, moduleName);
         SugarTest.testMetadata.set();
         SugarTest.app.data.declareModels();
 
@@ -123,6 +123,7 @@ describe("Record View", function() {
             sinonSandbox.stub(SugarTest.app.acl, 'hasAccessToModel', function() {
                 return false;
             });
+            sinonSandbox.stub(SugarTest.app.error, 'handleRenderError', $.noop());
 
             view.render();
             view.model.set({

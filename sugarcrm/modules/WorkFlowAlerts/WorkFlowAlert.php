@@ -114,6 +114,17 @@ class WorkFlowAlert extends SugarBean {
 	// This is the list of fields that are required
 	var $required_fields =  array('user_type'=>1);
 
+    /**
+     * This is a depreciated method, please start using __construct() as this method will be removed in a future version
+     *
+     * @see __construct
+     * @deprecated
+     */
+    public function WorkFlowAlert()
+    {
+        $this->__construct();
+    }
+
 	public function __construct() {
 		parent::__construct();
 
@@ -258,7 +269,7 @@ function get_rel_module($base_module, $var_rel_name){
 	
 	//get the vardef fields relationship name
 	//get the base_module bean
-	$module_bean = get_module_info($base_module);
+	$module_bean = BeanFactory::getBean($base_module);
 	require_once('data/Link.php');
 	$rel_name = Relationship::retrieve_by_modules($var_rel_name, $this->base_module, $GLOBALS['db']);
 	if(!empty($module_bean->field_defs[$rel_name])){
@@ -275,8 +286,7 @@ function get_rel_module($base_module, $var_rel_name){
 
 	function get_workflow_object(){
 
-		$workflow_alertshell = new WorkFlowAlertShell();
-		$workflow_alertshell->retrieve($this->parent_id);
+		$workflow_alertshell = BeanFactory::getBean('WorkFlowAlertShells', $this->parent_id);
 		$workflow_object = $workflow_alertshell->get_workflow_object();
 		return $workflow_object;	
 	
@@ -298,7 +308,7 @@ function handleFilterSave($prefix, $target_vardef_field, $target_rel_type){
 	} else {
 		$rel_filter_id = "";
 	}
-	$rel_object = new Expression();
+	$rel_object = BeanFactory::getBean('Expressions');
 
 	//Checked if there is an advanced filter
 	if($this->$target_rel_type!="filter"){
@@ -324,8 +334,7 @@ function handleFilterSave($prefix, $target_vardef_field, $target_rel_type){
 
 	function get_address_type_dom(){
 
-		$workflow_alertshell = new WorkFlowAlertShell();
-		$workflow_alertshell->retrieve($this->parent_id);
+		$workflow_alertshell = BeanFactory::getBean('WorkFlowAlertShells', $this->parent_id);
 
 		if($workflow_alertshell->alert_type=="Invite"){
 			

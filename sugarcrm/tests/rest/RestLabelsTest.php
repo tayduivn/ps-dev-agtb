@@ -24,17 +24,8 @@
 
 require_once('tests/rest/RestTestBase.php');
 
-class RestLabelsTest extends RestTestBase {
-    public function setUp()
-    {
-        parent::setUp();
-    }
-    
-    public function tearDown()
-    {
-        parent::tearDown();
-    }
-
+class RestLabelsTest extends RestTestBase
+{
     /**
      * @group rest
      */
@@ -49,7 +40,7 @@ class RestLabelsTest extends RestTestBase {
      */
     public function testAppListLabels() {
         $restReply = $this->_restCall('metadata?type_filter=app_list_strings');
-        
+
         $this->assertNotEmpty($restReply['reply']['app_list_strings']['checkbox_dom'],"Could not find the label for the checkbox dropdown, these don't look like app_list_strings to me (/metadata)");
         $this->assertNotEmpty($restReply['reply']['app_list_strings']['available_language_dom'],"Could not find the list of available languages in appListStrings. (/metadata)");
 

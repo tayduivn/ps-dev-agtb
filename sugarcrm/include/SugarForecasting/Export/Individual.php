@@ -48,16 +48,9 @@ class SugarForecasting_Export_Individual extends SugarForecasting_Export_Abstrac
         $klass = 'SugarForecasting_Individual';
 
         // check for a custom file exists
-        $include_file = get_custom_file_if_exists($file);
-
-        // if a custom file exists then we need to rename the class name to be Custom_
-        if ($include_file != $file) {
-            $klass = "Custom_" . $klass;
-        }
-
-        // include the class in since we don't have a auto loader
-        require_once($include_file);
-
+        SugarAutoLoader::requireWithCustom($file);
+        $klass = SugarAutoLoader::customClass($klass);
+        // create the class
         $obj = new $klass($this->args);
         $data = $obj->process();
 

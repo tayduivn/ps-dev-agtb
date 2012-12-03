@@ -44,7 +44,7 @@ global $urlPrefix;
 global $currentModule;
 
 
-$seed_object = new WorkFlow();
+$seed_object = BeanFactory::getBean('WorkFlow');
 
 if(!empty($_REQUEST['workflow_id']) && $_REQUEST['workflow_id']!="") {
     $seed_object->retrieve($_REQUEST['workflow_id']);
@@ -71,7 +71,7 @@ else {
 $form->assign("MOD", $mod_strings);
 $form->assign("APP", $app_strings);
 
-$focus = new WorkFlowActionShell();
+$focus = BeanFactory::getBean('WorkFlowActionShells');
 //Add When Expressions Object is availabe
 //$exp_object = new Expressions();
 
@@ -101,19 +101,19 @@ if(isset($_REQUEST['rel_module']) && $_REQUEST['rel_module']!=""){
     $form->assign("REL_MODULE", $focus->rel_module);
 
    if($focus->action_type=="update"){
-   	 	$temp_module = get_module_info($seed_object->base_module);
+   	 	$temp_module = BeanFactory::getBean($seed_object->base_module);
    	 	$meta_filter = "action_filter";
 	}
 
 	if($focus->action_type=="update_rel"){
 		$rel_module = $seed_object->get_rel_module($focus->rel_module);
-		$temp_module = get_module_info($rel_module);
+		$temp_module = BeanFactory::getBean($rel_module);
     	$meta_filter = "action_filter";
 	}
 
 	if($focus->action_type=="new"){
 		$rel_module = $seed_object->get_rel_module($focus->action_module);
-		$temp_module = get_module_info($rel_module);
+		$temp_module = BeanFactory::getBean($rel_module);
    		$meta_filter = "action_filter";
 	}
 

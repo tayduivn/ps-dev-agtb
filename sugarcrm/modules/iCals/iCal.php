@@ -51,6 +51,17 @@ class iCal extends vCal {
     const UTC_FORMAT = 'Ymd\THi00\Z';
 
     /**
+     * This is a depreciated method, please start using __construct() as this method will be removed in a future version
+     *
+     * @see __construct
+     * @deprecated
+     */
+    public function iCal()
+    {
+        $this->__construct();
+    }
+
+    /**
     * Constructor for the iCal class.
     */
     public function __construct()
@@ -244,7 +255,7 @@ class iCal extends vCal {
                     $str .= "LOCATION:" . $event->location . "\n";
                     $eventUsers = $event->get_meeting_users();
                     $query = "SELECT contact_id as id from meetings_contacts where meeting_id='$event->id' AND deleted=0";
-                    $eventContacts = $event->build_related_list($query, new Contact());
+                    $eventContacts = $event->build_related_list($query, BeanFactory::getBean('Contacts'));
                     $eventAttendees = array_merge($eventUsers, $eventContacts);
                     if (is_array($eventAttendees))
                     {
@@ -295,7 +306,7 @@ class iCal extends vCal {
         $where = "project_task.assigned_user_id='{$user_bean->id}' ".
             "AND (project_task.status IS NULL OR (project_task.status!='Deferred')) ".
             "AND (project_task.date_start IS NULL OR project_task.date_start <= '$today')";
-        $seedProjectTask = new ProjectTask();
+        $seedProjectTask = BeanFactory::getBean('ProjectTask');
         $projectTaskList = $seedProjectTask->get_full_list("", $where);
         if (is_array($projectTaskList))
         {
@@ -309,7 +320,7 @@ class iCal extends vCal {
         $where = "tasks.assigned_user_id='{$user_bean->id}' ".
             "AND (tasks.status IS NULL OR (tasks.status!='Deferred')) ".
             "AND (tasks.date_start IS NULL OR tasks.date_start <= '$today')";
-        $seedTask = new Task();
+        $seedTask = BeanFactory::getBean('Tasks');
         $taskList = $seedTask->get_full_list("", $where);
         if (is_array($taskList))
         {

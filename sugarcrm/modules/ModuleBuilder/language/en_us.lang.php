@@ -447,13 +447,13 @@ $mod_strings = array(
 'LBL_COPY_FROM_EDITVIEW' => 'Copy from EditView',
 'LBL_DROPDOWN_BLANK_WARNING' => 'Values are required for both the Item Name and the Display Label. To add a blank item, click Add without entering any values for the Item Name and the Display Label.',
 
-//BEGIN SUGARCRM flav=pro || flav=sales ONLY
+//BEGIN SUGARCRM flav=pro ONLY
 'LBL_WIRELESSLAYOUTS'=>'Mobile Layouts',
 'LBL_WIRELESSEDITVIEW'=>'Mobile EditView',
 'LBL_WIRELESSDETAILVIEW'=>'Mobile DetailView',
 'LBL_WIRELESSLISTVIEW'=>'Mobile ListView',
 'LBL_WIRELESSSEARCH'=>'Mobile Search',
-//END SUGARCRM flav=pro || flav=sales ONLY
+//END SUGARCRM flav=pro ONLY
 
 //BEGIN SUGARCRM flav=pro ONLY
 'LBL_BTN_ADD_DEPENDENCY'=>'Add Dependency',
@@ -647,9 +647,7 @@ $mod_strings = array(
 //PORTAL PREVIEW
 'LBL_CASES'=>'Cases',
 'LBL_NEWSLETTERS'=>'Newsletters',
-//BEGIN SUGARCRM flav!=sales ONLY
 'LBL_BUG_TRACKER'=>'Bug Tracker',
-//END SUGARCRM flav!=sales ONLY
 'LBL_MY_ACCOUNT'=>'My Account',
 'LBL_LOGOUT'=>'Logout',
 'LBL_CREATE_NEW'=>'Create New',

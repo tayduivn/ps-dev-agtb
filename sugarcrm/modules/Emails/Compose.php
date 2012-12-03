@@ -31,7 +31,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 $data = $_REQUEST;
 
 if (!empty($data['listViewExternalClient'])) {
-    $email = new Email();
+    $email = BeanFactory::getBean('Emails');
     echo $email->getNamePlusEmailAddressesForCompose($_REQUEST['action_module'], (explode(",", $_REQUEST['uid'])));
 }
 //For the full compose/email screen, the compose package is generated and script execution
@@ -81,16 +81,8 @@ function generateComposeDataPackage($data,$forFullCompose = TRUE, $bean = null)
 	isset($data['parent_id']) && !empty($data['parent_id']) &&
 	!isset($data['ListView']) && !isset($data['replyForward'])) {
 	    if(empty($bean)) {
-    		global $beanList;
-    		global $beanFiles;
     		global $mod_strings;
-
-    		$parentName = '';
-    		$class = $beanList[$data['parent_type']];
-    		require_once($beanFiles[$class]);
-
-    		$bean = new $class();
-    		$bean->retrieve($data['parent_id']);
+            $bean = BeanFactory::getBean($data['parent_type'], $data['parent_id']);
 	    }
 		if (isset($bean->full_name)) {
 			$parentName = $bean->full_name;
@@ -120,7 +112,7 @@ function generateComposeDataPackage($data,$forFullCompose = TRUE, $bean = null)
 			$subject = str_replace('%1', $bean->case_number, $bean->getEmailSubjectMacro() . " ". from_html($bean->name)) ;//bug 41928
 			$bean->load_relationship("contacts");
 			$contact_ids = $bean->contacts->get();
-			$contact = new Contact();
+			$contact = BeanFactory::getBean('Contacts');
 			foreach($contact_ids as $cid)
 			{
 				$contact->retrieve($cid);
@@ -128,7 +120,6 @@ function generateComposeDataPackage($data,$forFullCompose = TRUE, $bean = null)
 				$namePlusEmail .= from_html($contact->full_name) . " <".from_html($contact->emailAddress->getPrimaryAddress($contact)).">";
 			}
 		}
-		//BEGIN SUGARCRM flav!=sales ONLY
 		if ($bean->module_dir == 'KBDocuments') {
 
 			require_once("modules/Emails/EmailUI.php");
@@ -138,7 +129,6 @@ function generateComposeDataPackage($data,$forFullCompose = TRUE, $bean = null)
 			$attachments = KBDocument::get_kbdoc_attachments_for_newemail($bean->id);
 			$attachments = $attachments['attachments'];
 		} // if
-		//END SUGARCRM flav!=sales ONLY
 		if ($bean->module_dir == 'Quotes' && isset($data['recordId'])) {
 			$quotesData = getQuotesRelatedData($bean,$data);
 			global $current_language;
@@ -161,7 +151,7 @@ function generateComposeDataPackage($data,$forFullCompose = TRUE, $bean = null)
 	);
 } else if(isset($_REQUEST['ListView'])) {
 
-	$email = new Email();
+	$email = BeanFactory::getBean('Emails');
 	$namePlusEmail = $email->getNamePlusEmailAddressesForCompose($_REQUEST['action_module'], (explode(",", $_REQUEST['uid'])));
 	$ret = array(
 		'to_email_addrs' => $namePlusEmail,
@@ -171,8 +161,8 @@ function generateComposeDataPackage($data,$forFullCompose = TRUE, $bean = null)
 		require_once("modules/Emails/EmailUI.php");
 
 		$ret = array();
-		$ie = new InboundEmail();
-		$ie->email = new Email();
+		$ie = BeanFactory::getBean('InboundEmail');
+		$ie->email = BeanFactory::getBean('Emails');
 		$ie->email->email2init();
 		$replyType = $data['reply'];
 		$email_id = $data['record'];
@@ -241,8 +231,7 @@ function getQuotesRelatedData($bean,$data) {
 	$emailId = $data['recordId'];
 
   	require_once("modules/Emails/EmailUI.php");
-	$email = new Email();
-	$email->retrieve($emailId);
+	$email = BeanFactory::getBean('Emails', $emailId);
 	$return['subject'] = $email->name;
 	$return['body'] = from_html($email->description_html);
 	$return['toAddress'] = $email->to_addrs;

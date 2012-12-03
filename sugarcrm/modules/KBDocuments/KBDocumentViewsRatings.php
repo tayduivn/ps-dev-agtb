@@ -53,6 +53,17 @@ class KBDocumentViewsRating extends SugarBean {
     var $new_schema = true;
     var $module_dir = 'KBDocuments';
 
+    /**
+     * This is a depreciated method, please start using __construct() as this method will be removed in a future version
+     *
+     * @see __construct
+     * @deprecated
+     */
+    public function KBDocumentViewsRatings()
+    {
+        $this->__construct();
+    }
+
     public function __construct() {
         parent::__construct();
         $this->setupCustomFields('KBDocumentViewsRating'); //parameter is module name

@@ -78,9 +78,7 @@ div.resultsTable {
         {/if}
         <input title="{$MOD.LBL_IMPORT_MORE}"  class="button" type="submit" name="importmore" id="importmore" value="  {$MOD.LBL_IMPORT_MORE}  ">
         <input title="{$MOD.LBL_FINISHED}{$MODULENAME}"  class="button" type="submit" name="finished" id="finished" value="  {$MOD.LBL_IMPORT_COMPLETE}  ">
-            <!--//BEGIN SUGARCRM flav!=sales ONLY -->
             {$PROSPECTLISTBUTTON}
-            <!--//END SUGARCRM flav!=sales ONLY -->
         </td>
     </tr>
 </table>
@@ -171,11 +169,9 @@ div.resultsTable {
     </div>
 </div>
 
-<!--//BEGIN SUGARCRM flav!=sales ONLY -->
 {if $PROSPECTLISTBUTTON != ''}
 <form name="DetailView">
     <input type="hidden" name="module" value="Prospects">
     <input type="hidden" name="record" value="id">
 </form>
 {/if}
-<!--//END SUGARCRM flav!=sales ONLY -->

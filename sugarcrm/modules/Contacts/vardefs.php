@@ -286,7 +286,6 @@ array (
 		'vname' => 'LBL_EMAIL_ADDRESS_PRIMARY',
 		'duplicate_merge'=> 'disabled',
 	),
-	//BEGIN SUGARCRM flav!=sales ONLY
 	'bugs' =>
 		array (
 			'name' => 'bugs',
@@ -295,7 +294,6 @@ array (
 			'source' => 'non-db',
 			'vname' => 'LBL_BUGS',
 		),
-	//END SUGARCRM flav!=sales ONLY
 	'calls' =>
 		array (
 			'name' => 'calls',
@@ -304,7 +302,6 @@ array (
 			'source' => 'non-db',
 			'vname' => 'LBL_CALLS',
 		),
-	//BEGIN SUGARCRM flav!=sales ONLY
 	'cases' =>
 		array (
 			'name' => 'cases',
@@ -313,7 +310,6 @@ array (
 			'source' => 'non-db',
 			'vname' => 'LBL_CASES',
 		),
-	//END SUGARCRM flav!=sales ONLY
 	'direct_reports'=>
 		array (
 			'name' => 'direct_reports',
@@ -484,7 +480,6 @@ array (
             'table' => 'users',
             'duplicate_merge'=>'enabled'
 		),
-		//BEGIN SUGARCRM flav!=sales ONLY
        'campaign_id' =>
           array (
             'name' => 'campaign_id',
@@ -538,7 +533,6 @@ array (
       'relationship' => 'campaign_contacts',
       'source' => 'non-db',
     ),
-	//END SUGARCRM flav!=sales ONLY
 	'c_accept_status_fields' =>
 		array (
 			'name' => 'c_accept_status_fields',
@@ -587,7 +581,6 @@ array (
 			'options' => 'dom_meeting_accept_status',
 			'importable' => 'false',
 		),
-//BEGIN SUGARCRM flav!=sales ONLY
       'prospect_lists' =>
       array (
         'name' => 'prospect_lists',
@@ -597,7 +590,6 @@ array (
         'source'=>'non-db',
         'vname'=>'LBL_PROSPECT_LIST',
       ),
-//END SUGARCRM flav!=sales ONLY
       'sync_contact' =>
       array (
         'massupdate' => false,
@@ -722,7 +714,6 @@ array (
             'relationship_type' => 'one-to-many'),
 
         //END SUGARCRM flav=pro ONLY
-        //BEGIN SUGARCRM flav!=sales ONLY
 		'contact_campaign_log' => array(
 			'lhs_module'		=>	'Contacts',
 			'lhs_table'			=>	'contacts',
@@ -732,7 +723,6 @@ array (
 			'rhs_key' 			=> 	'target_id',
   			'relationship_type'	=>'one-to-many'
   		),
-//END SUGARCRM flav!=sales ONLY
 ),
 
 //This enables optimistic locking for Saves From EditView

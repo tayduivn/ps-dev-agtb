@@ -116,7 +116,7 @@ class Bug55154Test extends Sugar_PHPUnit_Framework_TestCase {
         $fields = $parser->getAvailableFields();
         $this->assertArrayNotHasKey($this->testField, $fields, "$this->testField should not be in the available fields list");
     }
-    //BEGIN SUGARCRM flav=pro || flav=sales ONLY
+    //BEGIN SUGARCRM flav=pro ONLY
     public function testMobileEditView()
     {
         // SidecarGridLayoutMetaDataParser
@@ -188,7 +188,7 @@ class Bug55154Test extends Sugar_PHPUnit_Framework_TestCase {
         $fields = $parser->getDefaultFields();
         $this->assertArrayNotHasKey($this->testField, $fields, "$this->testField should not be in the default mobile search fields list");
     }
-    //END SUGARCRM flav=pro || flav=sales ONLY
+    //END SUGARCRM flav=pro ONLY
     
     //BEGIN SUGARCRM flav=ent ONLY
     public function testPortalDetailView()

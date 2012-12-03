@@ -129,8 +129,7 @@ class Report
         global $current_user, $current_language, $app_list_strings;
         if (!isset($current_user) || empty($current_user)) {
 
-            $current_user = new User();
-            $current_user->retrieve('1');
+            $current_user = BeanFactory::getBean('Users', '1');
         }
 
         //Scheduled reports don't have $_REQUEST.
@@ -234,11 +233,7 @@ class Report
         global $beanFiles;
         // START: Dynamically convert ancient versions to 5.1 version of content string.
         if (!empty($this->report_def['links_def'])) {
-            $tmpBeanName = $beanList[$this->full_table_list['self']['module']];
-
-            require_once($beanFiles[$tmpBeanName]);
-
-            $tmpBean = new $tmpBeanName();
+            $tmpBean = BeanFactory::getBean($this->full_table_list['self']['module']);
             $linked_fields = $tmpBean->get_linked_fields();
 
             foreach ($this->report_def['links_def'] as $old_link)
@@ -404,26 +399,22 @@ class Report
                 $beanLabel = $table_data['module'];
             }
 
-            if (empty($beanList[$beanLabel])) {
+            $bean = BeanFactory::getBean($beanLabel);
+
+            if (empty($bean)) {
                 die("beanList[" . $beanLabel . "] is empty!<br>\n");
             }
-            $beanName = $beanList[$beanLabel];
             // Store this for later, in case we want it.
             $this->full_table_list[$table_key]['bean_label'] = $beanLabel;
-            $this->full_table_list[$table_key]['bean_name'] = $beanName;
+            $this->full_table_list[$table_key]['bean_name'] = $bean->object_name;
             $this->full_table_list[$table_key]['bean_module'] = $beanLabel;
-
-            require_once($beanFiles[$beanName]);
-
-            $this->full_bean_list[$table_key] = new $beanName();
+            $this->full_bean_list[$table_key] = $bean;
             if ($table_key == 'self') {
                 // Alias that to $this->focus, because it is very commonly used
                 $this->focus = $this->full_bean_list[$table_key];
             }
             $this->alias_lookup[$table_key] = 'l' . count($this->alias_lookup);
         }
-        //$this->linked_fields = $this->focus->get_linked_fields();
-        //  $this->_check_user_permissions();
 
         $this->_load_all_fields();
         $this->_load_currency();
@@ -601,11 +592,9 @@ class Report
                 $moduleMap['Meetings'] = 1;
                 $moduleMap['Notes'] = 1;
             }
-            //BEGIN SUGARCRM flav!=sales ONLY
             if (isset($moduleMap["Project"])) {
                 $moduleMap['ProjectTask'] = 1;
             }
-            //END SUGARCRM flav!=sales ONLY
             if (empty($moduleMap[$this->module_dir])) {
                 die ("you do not have access to report this module");
             }
@@ -647,9 +636,7 @@ class Report
                     $field_def['real_table'] .= '_cstm';
                 }
                 if ($field_def['type'] == 'relate' && !empty($field_def['ext2'])) {
-                    global $beanFiles, $beanList;
-                    require_once($beanFiles[$beanList[$field_def['ext2']]]);
-                    $joinFocus = new $beanList[$field_def['ext2']]();
+                    $joinFocus = BeanFactory::getBean($field_def['ext2']);
                     $field_def['secondary_table'] = $joinFocus->table_name;
                     if(isset($table_data['link_def']) && $table_data['link_def']['module'] == $table_data['module'])
                     {
@@ -666,21 +653,8 @@ class Report
 
     function _load_currency()
     {
-
-
-        $this->currency_obj = new Currency();
-        $this->currency_symbol = '$';
-        global $current_user;
-
-        if ($current_user->getPreference('currency')) {
-            $this->currency_obj->retrieve($current_user->getPreference('currency'));
-            $this->currency_symbol = $this->currency_obj->symbol;
-        }
-        else
-        {
-            $this->currency_obj->retrieve('-99');
-            $this->currency_symbol = $this->currency_obj->symbol;
-        }
+        $this->currency_obj = BeanFactory::getBean('Currencies')->getUserCurrency();
+        $this->currency_symbol = $this->currency_obj->symbol;
     }
 
     function clear_results()
@@ -996,11 +970,6 @@ class Report
         $layout_def['column_key'] = $this->_get_full_key($layout_def);
         if (!empty($field_def['ext2']) && !empty($field_def['id_name'])) {
             $layout_def['name'] = $field_def['id_name'];
-            /*
-            global $beanFiles,$beanList;
-            require_once($beanFiles[$beanList[$field_def['ext2']]]);
-            $joinFocus = new $beanList[$field_def['ext2']]();
-            */
             //#27662  , if the table was not in reristed cutom links, we will regist it
             $kk = $field_def['secondary_table'] . '_' . $field_def['rep_rel_name'];
             if (!isset($this->selected_loaded_custom_links[$kk])) {
@@ -1107,7 +1076,6 @@ class Report
 
     protected function addSecurity($query, $focus, $alias)
     {
-//BEGIN SUGARCRM flav!=sales ONLY
         $from = '';
         $focus->addVisibilityFrom($from, $this->visibilityOpts);
         $where = '';
@@ -1118,7 +1086,6 @@ class Report
             }
             $query = str_replace(" {$focus->table_name} $alias ", "(SELECT {$focus->table_name}.* FROM {$focus->table_name} $from $where) $alias ", $query);
         }
-//END SUGARCRM flav!=sales ONLY
         return $query;
     }
 
@@ -1130,7 +1097,6 @@ class Report
         $where_clause = "";
         if (isset($filters['Filter_1']))
             Report::filtersIterate($filters['Filter_1'], $where_clause);
-        //BEGIN SUGARCRM flav!=sales ONLY
         $where_clause = $this->focus->addVisibilityWhere($where_clause, $this->visibilityOpts);
 //         if (!is_admin($GLOBALS['current_user']) && !$GLOBALS['current_user']->isAdminForModule($this->focus->module_dir) && !$this->focus->disable_row_level_security) {
 //             if (!empty($where_clause)) {
@@ -1141,7 +1107,6 @@ class Report
 //                                 tst.team_id = team_memberships.team_id AND team_memberships.user_id =
 //                                 '{$GLOBALS['current_user']->id}' AND team_memberships.deleted=0)";
 //         }
-        //END SUGARCRM flav!=sales ONLY
         $this->where = $where_clause;
     }
 
@@ -1514,9 +1479,7 @@ return str_replace(' > ','_',
         $this->full_table_list['self']['params']['join_table_link_alias'] = $this->focus->table_name . "_l";
 
         $this->from = "\nFROM " . $this->focus->table_name . "\n";
-        //BEGIN SUGARCRM flav!=sales ONLY
         $this->focus->addVisibilityFrom($this->from, $this->visibilityOpts);
-        //END SUGARCRM flav!=sales ONLY
 
         $this->jtcount = 0;
         foreach ($this->full_table_list as $table_key => $table_def)
@@ -1622,20 +1585,6 @@ return str_replace(' > ','_',
             {
                 die("table_def[parent] is not an object! (" . $table_def['parent'] . ")<br>");
             }
-
-            // Do not add team security on modules that opt out of row level security
-            // require_once($beanFiles[$table_def['bean_name']]);
-            // $focus = new $table_def['bean_name']();
-            //BEGIN SUGARCRM flav!=sales ONLY
-            /*
-            if (!is_admin($GLOBALS['current_user']) && !$GLOBALS['current_user']->isAdminForModule($focus->module_dir) && !$focus->disable_row_level_security) {
-                $this->from .= " AND {$params['join_table_alias']}.team_set_id IN (SELECT  tst.team_set_id from team_sets_teams
-                                    tst INNER JOIN team_memberships team_memberships ON tst.team_id =
-                                    team_memberships.team_id AND team_memberships.user_id = '{$GLOBALS['current_user']->id}' AND team_memberships.deleted=0)";
-                //$this->focus->add_team_security_where_clause($this->from,$params['join_table_alias'],$team_join_type);
-            }
-            */
-            //END SUGARCRM flav!=sales ONLY
         }
         foreach ($this->selected_loaded_custom_links as $custom_table => $params)
         {
@@ -2146,8 +2095,7 @@ return str_replace(' > ','_',
 					// Otherwise, use the currency and amount to convert to dollar and ignore amount_usdollar
 					if (isset($fields[$currencyId]) && !($fields[$currencyId] == '-99' && $fields[$amount] == $fields[$amountUSDollar])) {
 						// Get currency
-						$currency = new Currency();
-						$currency->retrieve($fields[$currencyId]);
+						$currency = BeanFactory::getBean('Currencies', $fields[$currencyId]);
 						// Just convert to dollar, because if the currency isn't found, conversion rate is set to one, and won't change anything
 						$display = $currency->convertToDollar($fields[$amount]);
 					}
@@ -2233,7 +2181,7 @@ return str_replace(' > ','_',
             $row['group_column_is_invisible'] = $this->group_column_is_invisible;
         }
 
-        
+
         // fix for bug47120
          // RTA - check each column for access, and blank value if no access
          $col_module = $this->report_def['module'];
@@ -2256,7 +2204,7 @@ return str_replace(' > ','_',
         global $current_user;
         $saved_vars = array();
 
-        $saved_report = new SavedReport();
+        $saved_report = BeanFactory::getBean('Reports');
         $report_type = 'tabular';
         $chart_type = 'none';
 
@@ -2357,9 +2305,7 @@ return str_replace(' > ','_',
     {
         $modules = array();
         $modules_hash[$report_def['module']] = 1;
-        global $beanFiles, $beanList;
-        require_once($beanFiles[$beanList[$report_def['module']]]);
-        $focus = new $beanList[$report_def['module']]();
+        $focus = BeanFactory::getBean($report_def['module']);
         $linked_fields = $focus->get_linked_fields();
 
         foreach ($report_def['links_def'] as $name) {
@@ -2404,8 +2350,7 @@ return str_replace(' > ','_',
      */
     private function getExt2FieldDefSelectPiece($field_def, $add_alias = true)
     {
-        global $beanList;
-        $extModule = new $beanList[$field_def['ext2']];
+        $extModule = BeanFactory::getBean($field_def['ext2']);
         $secondaryTableAlias = $field_def['secondary_table'];
         if (!empty($this->selected_loaded_custom_links) && !empty($this->selected_loaded_custom_links[$field_def['secondary_table'] . '_' . $field_def['rep_rel_name']])) {
             $secondaryTableAlias = $this->selected_loaded_custom_links[$field_def['secondary_table'] . '_' . $field_def['rep_rel_name']]['join_table_alias'];

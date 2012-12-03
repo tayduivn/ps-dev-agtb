@@ -26,15 +26,6 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * governing these rights and limitations under the License.  Portions created
  * by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
-/*********************************************************************************
- * $Id: EditView.php 55289 2010-03-15 14:56:02Z jmertic $
- * Description:  
- ********************************************************************************/
-
-
-
-
-
 require_once('include/workflow/workflow_utils.php');
 require_once('include/VarDefHandler/VarDefHandler.php');
 global $current_user;
@@ -48,30 +39,25 @@ if (!is_admin($current_user)&& !is_admin_for_any_module($current_user)) {
 global $mod_strings;
 global $app_list_strings;
 global $app_strings;
-// Unimplemented until jscalendar language files are fixed
-// global $current_language;
-// global $default_language;
-// global $cal_codes;
 
-$workflow_object = new WorkFlow();
-if(isset($_REQUEST['workflow_id']) && isset($_REQUEST['workflow_id'])) {
-    $workflow_object->retrieve($_REQUEST['workflow_id']);
-} else {
+if(!empty($_REQUEST['workflow_id'])) {
+    $workflow_object = BeanFactory::retrieveBean('WorkFlow', $_REQUEST['workflow_id']);
+}
+if(empty($workflow_object)) {
 	sugar_die("You shouldn't be here");
 }
 
-$focus = new WorkFlowTriggerShell();
+$focus = BeanFactory::getBean('WorkFlowTriggerShells');
 
-if(isset($_REQUEST['record']) && isset($_REQUEST['record'])) {
+if(!empty($_REQUEST['record'])) {
     $focus->retrieve($_REQUEST['record']);
 }
-
 
 
 if(isset($_REQUEST['isDuplicate']) && $_REQUEST['isDuplicate'] == 'true') {
 	$focus->id = "";
 }
-echo getClassicModuleTitle($mod_strings['LBL_MODULE_NAME'], array($mod_strings['LBL_MODULE_NAME']), true); 
+echo getClassicModuleTitle($mod_strings['LBL_MODULE_NAME'], array($mod_strings['LBL_MODULE_NAME']), true);
 
 $GLOBALS['log']->info("WorkFlow edit view");
 
@@ -88,12 +74,12 @@ if (isset($_REQUEST['return_action'])){
 	$xtpl->assign("RETURN_ACTION", $_REQUEST['return_action']);
 } else {
 	$xtpl->assign("RETURN_ACTION", "DetailView");
-}	
+}
 if (isset($_REQUEST['return_id'])){
 	$xtpl->assign("RETURN_ID", $_REQUEST['return_id']);
 } else {
 	$xtpl->assign("RETURN_ID", $_REQUEST['workflow_id']);
-}	
+}
 
 $xtpl->assign("PRINT_website", "index.php?".$GLOBALS['request_string']);
 $xtpl->assign("JAVASCRIPT", get_set_focus_js());
@@ -111,14 +97,14 @@ if(empty($focus->parent_id)){
 		$meta_array_type = "normal_trigger";
 	} else {
 		$meta_array_type = "time_trigger";
-	}	
+	}
 
-	$temp_module = get_module_info($workflow_object->base_module);
+	$temp_module = BeanFactory::getBean($workflow_object->base_module);
 	$temp_module->call_vardef_handler($meta_array_type);
-	$field_array = $temp_module->vardef_handler->get_vardef_array();  
+	$field_array = $temp_module->vardef_handler->get_vardef_array();
 
-	
-	
+
+
 $field_select = get_select_options_with_id($field_array, $focus->field);
 $xtpl->assign('FIELD_SELECT', $field_select);
 

@@ -153,7 +153,7 @@ function ConvertDiscClient(){
         		}
         		else{
 
-					$admin = new Administration();
+					$admin = BeanFactory::getBean('Administration');
 					$system_id = $result['id'];
 					if(!isset($system_id)){
 						$system_id = 1;

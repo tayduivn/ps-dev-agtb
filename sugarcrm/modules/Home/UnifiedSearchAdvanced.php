@@ -207,8 +207,7 @@ class UnifiedSearchAdvanced {
 
 		if(!empty($this->query_string)) {
 			foreach($modules_to_search as $moduleName => $beanName) {
-                require_once $beanFiles[$beanName] ;
-                $seed = new $beanName();
+			    $seed = BeanFactory::getBean($moduleName);
 
                 $lv = new ListViewSmarty();
                 $lv->lvd->additionalDetails = false;
@@ -271,8 +270,6 @@ class UnifiedSearchAdvanced {
                  * Use searchForm2->generateSearchWhere() to create the search query, as it can generate SQL for the full set of comparisons required
                  * generateSearchWhere() expects to find the search conditions for a field in the 'value' parameter of the searchFields entry for that field
                  */
-                require_once $beanFiles[$beanName] ;
-                $seed = new $beanName();
 
 				require_once $this->searchFormPath;
                 $searchForm = new $this->searchFormClass ( $seed, $moduleName ) ;

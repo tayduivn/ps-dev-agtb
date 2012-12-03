@@ -114,7 +114,7 @@ class RelationshipHandler extends Relationship {
 	*/
 	function build_info($build_rel2=false){
 		if($this->base_bean == null){
-			$this->base_bean = get_module_info($this->base_module);
+			$this->base_bean = BeanFactory::getBean($this->base_module);
 		}	
 		
 		if(empty($this->rel1_bean)){
@@ -354,7 +354,7 @@ function process_by_rel_bean($rel1_module){
 	
 	$this->rel1_relationship_name = $this->retrieve_by_modules($this->base_module, $rel1_module, $this->db);
 	$this->rel1_module = $rel1_module;
-	$this->rel1_bean = get_module_info($this->rel1_module);
+	$this->rel1_bean = BeanFactory::getBean($this->rel1_module);
 	
 //end function process_by_rel_bean	
 }	

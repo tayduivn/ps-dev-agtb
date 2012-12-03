@@ -30,16 +30,12 @@ class ACLFieldsEditView{
 	function getView($module, $role_id){
 		$fields = ACLField::getFields( $module, '', $role_id);
 		$sugar_smarty = new Sugar_Smarty();
-		//BEGIN SUGARCRM flav!=sales ONLY
 		if(substr($module, 0, 2)=='KB'){
         	$sugar_smarty->assign('LBL_MODULE', 'KBDocuments');
         }
         else{
-        //END SUGARCRM flav!=sales ONLY
         	$sugar_smarty->assign('LBL_MODULE', $module);
-        //BEGIN SUGARCRM flav!=sales ONLY
         }
-        //END SUGARCRM flav!=sales ONLY
 		$sugar_smarty->assign('MOD', $GLOBALS['mod_strings']);
 		$sugar_smarty->assign('APP', $GLOBALS['app_strings']);
 		$sugar_smarty->assign('FLC_MODULE', $module);

@@ -1,4 +1,4 @@
-<div class="block padded thumbnail widget">
+<div class="block thumbnail widget">
     <h4 data-tour="tour-{{module}}-crunchbase-overview">Overview</h4>
     <div class="crunchbase-widget">
         {{#if image}}

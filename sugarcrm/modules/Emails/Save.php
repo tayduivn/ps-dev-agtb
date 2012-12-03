@@ -29,7 +29,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 ///////////////////////////////////////////////////////////////////////////////
 ////	EMAIL SEND/SAVE SETUP
-$focus = new Email();
+$focus = BeanFactory::getBean('Emails');
 
 if(!isset($prefix)) {
 	$prefix = '';

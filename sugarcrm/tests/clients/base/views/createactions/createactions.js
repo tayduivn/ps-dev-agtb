@@ -4,7 +4,7 @@ describe("Create Actions Dropdown", function() {
 
     beforeEach(function() {
         SugarTest.testMetadata.init();
-        SugarTest.loadViewHandlebarsTemplate('base', viewName);
+        SugarTest.loadHandlebarsTemplate(viewName, 'view', 'base');
         SugarTest.loadComponent('base', 'view', viewName);
         SugarTest.testMetadata.set();
     });

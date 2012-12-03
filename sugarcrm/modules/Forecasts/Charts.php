@@ -42,11 +42,10 @@ class forecast_charts extends SugarView {
         
         $current_module_strings = return_module_language($current_language, 'Forecasts');
         //currency files..
-        $currency = new Currency();
-        $currency->retrieve($current_user->getPreference('currency'));
+        $currency = BeanFactory::getBean('Currencies', $current_user->getPreference('currency'));
 
         $cache_file_name = sugar_cached("xml/").$current_user->getUserPrivGuid().$user->id.$forecast_type.".xml";
-        $forecast = new Forecast();
+        $forecast = BeanFactory::getBean('Forecasts');
         $data=array();
         $d = array();
         $chart_data = array();

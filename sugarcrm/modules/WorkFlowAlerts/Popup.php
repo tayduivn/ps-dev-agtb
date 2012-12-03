@@ -26,20 +26,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * governing these rights and limitations under the License.  Portions created
  * by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
-/*********************************************************************************
- * $Id: Popup.php 45763 2009-04-01 19:16:18Z majed $
- * Description:
- ********************************************************************************/
-
 global $theme;
-
-
-
-
-
-
-
-
 global $app_strings;
 global $app_list_strings;
 global $mod_strings;
@@ -48,18 +35,15 @@ global $urlPrefix;
 global $currentModule;
 
 
-$seed_object = new WorkFlowAlertShell();
 
-if(!empty($_REQUEST['parent_id']) && $_REQUEST['parent_id']!="") {
-    $seed_object->retrieve($_REQUEST['parent_id']);
-    $workflow_object = $seed_object->get_workflow_object();
 
-} else {
+if(!empty($_REQUEST['parent_id']) ) {
+    $seed_object = BeanFactory::retrieveBean('WorkFlowAlertShells', $_REQUEST['parent_id']);
+}
+if(empty($seed_object)) {
 	sugar_die("You shouldn't be here");
 }
-
-
-
+$workflow_object = $seed_object->get_workflow_object();
 
 ////////////////////////////////////////////////////////
 // Start the output
@@ -78,7 +62,7 @@ else {
 $form->assign("MOD", $mod_strings);
 $form->assign("APP", $app_strings);
 
-$focus = new WorkFlowAlert();
+$focus = BeanFactory::getBean('WorkFlowAlerts');
 //Add When Expressions Object is availabe
 //$exp_object = new Expressions();
 

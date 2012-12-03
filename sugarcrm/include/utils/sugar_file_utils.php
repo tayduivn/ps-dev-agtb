@@ -124,12 +124,21 @@ function sugar_file_put_contents($filename, $data, $flags=null, $context=null){
 	}
 
 	if(empty($flags)) {
-		return file_put_contents($filename, $data);
+		$return = file_put_contents($filename, $data);
 	} elseif(empty($context)) {
-		return file_put_contents($filename, $data, $flags);
+        $return = file_put_contents($filename, $data, $flags);
 	} else{
-		return file_put_contents($filename, $data, $flags, $context);
+        $return = file_put_contents($filename, $data, $flags, $context);
 	}
+    
+    // Add to the file loader cache if it isn't there
+    if ($return) {
+        if (!SugarAutoLoader::fileExists($filename)) {
+            SugarAutoLoader::addToMap($filename);
+        }
+    }
+    
+    return $return;
 }
 
 
@@ -174,7 +183,12 @@ function sugar_file_put_contents_atomic($filename, $data, $mode='wb', $use_inclu
 
     if(file_exists($filename))
     {
-       return sugar_chmod($filename, 0655);
+        // Add to the file loader cache
+        if (!SugarAutoLoader::fileExists($filename)) {
+            SugarAutoLoader::addToMap($filename);
+        }
+        
+        return sugar_chmod($filename, 0655);
     }
 
     return false;
@@ -189,9 +203,9 @@ function sugar_file_put_contents_atomic($filename, $data, $mode='wb', $use_inclu
  * @return string|boolean - Returns a file data on success, false otherwise
  */
 function sugar_file_get_contents($filename, $use_include_path=false, $context=null){
-	//check to see if the file exists, if not then use touch to create it.
-	if(!file_exists($filename)){
-		sugar_touch($filename);
+	if(!SugarAutoLoader::fileExists($filename)){
+        $GLOBALS['log']->error("File $filename does not exist");
+        return false;
 	}
 
 	if ( !is_readable($filename) ) {
@@ -246,7 +260,12 @@ function sugar_touch($filename, $time=null, $atime=null) {
 		sugar_chgrp($filename);
 	}
 
-   return true;
+    // Add this to the file loader cache
+    if (!SugarAutoLoader::fileExists($filename)) {
+        SugarAutoLoader::addToMap($filename);
+    }
+    
+    return true;
 }
 
 /**

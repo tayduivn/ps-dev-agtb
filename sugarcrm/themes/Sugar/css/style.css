@@ -146,7 +146,6 @@ ul.clickMenu:hover, ul.clickMenu li ul.subnav li a:hover,ul.clickMenu li ul.subn
     filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#0e3e68', endColorstr='#08233b', GradientType=0);
     filter:progid:DXImageTransform.Microsoft.gradient(enabled = false);
     top: 0px;
-    height: 15px;
 }
 
 #sugar_spot_search {

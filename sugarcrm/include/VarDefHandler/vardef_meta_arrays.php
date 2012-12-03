@@ -199,9 +199,7 @@ $vardef_meta_array = array (
 		'ex_override' => array(
 			'name' => array('users', 'emails', 'product_bundles', 'email_addresses', 'email_addresses_primary', 'emailmarketing', 'tracked_urls', 'queueitems', 'log_entries', 'contract_types'),
 			'module' => array('Users', 'Teams',
-			    //BEGIN SUGARCRM flav!=sales ONLY
 			    'CampaignLog'
-			    //END SUGARCRM flav!=sales ONLY
 			    ),
 		//end ex_override
 		)
@@ -226,9 +224,7 @@ $vardef_meta_array = array (
 		'ex_override' => array(
 			'name' => array('users', 'emails', 'product_bundles', 'email_addresses', 'email_addresses_primary', 'emailmarketing', 'tracked_urls', 'queueitems', 'log_entries', 'contract_types', 'reports_to_link'),
 			'module' => array('Users', 'Teams',
-			    //BEGIN SUGARCRM flav!=sales ONLY
 			    'CampaignLog',
-			    //END SUGARCRM flav!=sales ONLY
 			    'Releases'),
 		//end ex_override
 		)
@@ -304,9 +300,7 @@ $vardef_meta_array = array (
 		'ex_override' => array(
 			'name' => array('users', 'email_addresses', 'email_addresses_primary', 'emailmarketing', 'tracked_urls', 'queueitems', 'log_entries', 'reports_to_link'),
 			'module' => array('Users', 'Teams',
-			    //BEGIN SUGARCRM flav!=sales ONLY
 			    'CampaignLog'
-			    //END SUGARCRM flav!=sales ONLY
 			    ),
 		//end ex_override
 		)

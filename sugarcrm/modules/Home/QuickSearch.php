@@ -366,7 +366,7 @@ class quicksearchQuery
         $data    = array();
 
         foreach ($args['modules'] as $module) {
-            $focus = SugarModule::get($module)->loadBean();
+            $focus = BeanFactory::getBean($module);
 
             $orderBy = $focus->db->getValidDBName(($args['order_by_name'] && $focus instanceof Person && $args['order'] == 'name') ? 'last_name' : $orderBy);
 

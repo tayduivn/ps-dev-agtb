@@ -34,12 +34,10 @@ class vCard
 		$this->properties = array();
 	}
 
-	function loadContact($contactid, $module='Contacts') {
+	function loadContact($contactid, $module='Contacts')
+	{
 		global $app_list_strings;
-
-		require_once($GLOBALS['beanFiles'][$GLOBALS['beanList'][$module]]);
-		$contact = new $GLOBALS['beanList'][$module]();
-		$contact->retrieve($contactid);
+		$contact = BeanFactory::getBean($module, $contactid);
 		//BEGIN SUGARCRM flav=pro ONLY
 		// Bug 21824 - Filter fields exported to a vCard by ACLField permissions.
 		$contact->ACLFilterFields();
@@ -153,7 +151,7 @@ class vCard
 		global $current_user;
 		$lines =	file($filename);
 		$start = false;
-		$contact = loadBean($module);
+		$contact = BeanFactory::getBean($module);
 
 		$contact->title = 'imported';
 		$contact->assigned_user_id = $current_user->id;
@@ -290,9 +288,9 @@ class vCard
                         $GLOBALS['log']->debug('I found a company name');
 						if(!empty($value)){
                             $GLOBALS['log']->debug('I found a company name (fer real)');
-                            if ( is_a($contact,"Contact") || is_a($contact,"Lead") ) {
+                            if ( $contact instanceof Contact || $contact instanceof Lead ) {
                                 $GLOBALS['log']->debug('And Im dealing with a person!');
-                                $accountBean = loadBean('Accounts');
+                                $accountBean = BeanFactory::getBean('Accounts');
                                 // It's a contact, we better try and match up an account
 								$full_company_name = trim($values[0]);
                                 // Do we have a full company name match?
@@ -315,7 +313,7 @@ class vCard
                                     $result = $accountBean->retrieve_by_string_fields(array('name' => $short_company_name, 'deleted' => 0));
                                 }
 
-                                if (  is_a($contact,"Lead") || ! isset($result->id) ) {
+                                if ( $contact instanceof Lead || ! isset($result->id) ) {
                                     // We could not find a parent account, or this is a lead so only copy the name, no linking
                                     $GLOBALS['log']->debug("Did not find a matching company ($full_company_name)");
                                     $contact->account_id = '';
@@ -345,10 +343,10 @@ class vCard
 
 		}
 
-        if ( is_a($contact, "Contact") && empty($contact->account_id) && !empty($contact->account_name) ) {
+        if ( $contact instanceof Contact && empty($contact->account_id) && !empty($contact->account_name) ) {
             $GLOBALS['log']->debug("Look ma! I'm creating a new account: ".$contact->account_name);
             // We need to create a new account
-            $accountBean = loadBean('Accounts');
+            $accountBean = BeanFactory::getBean('Accounts');
             // Populate the newly created account with all of the contact information
             foreach ( $contact->field_defs as $field_name => $field_def ) {
                 if ( !empty($contact->$field_name) ) {
@@ -363,13 +361,4 @@ class vCard
         $contactId = $contact->save();
         return $contactId;
 	}
-	}
-
-
-
-
-
-
-
-
-?>
+}

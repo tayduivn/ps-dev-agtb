@@ -65,8 +65,7 @@ if(true) {
 			// if run from cron, we need to run jobs as Admin
 			if(empty($current_user)) {
 				require_once('modules/Users/User.php');
-				$current_user = new User();
-				$current_user->retrieve('1');
+				$current_user = BeanFactory::getBean('Users', '1');
 			}
 
 			$job_id = $_REQUEST['job_id'];
@@ -75,8 +74,7 @@ if(true) {
 			ignore_user_abort(true); // keep processing if browser is closed
 			set_time_limit(0); // no timeout to allow long jobs (mass-mailings) to go through
 
-			$job = new SchedulersJob();
-			$job->retrieve($_REQUEST['record']);
+			$job = BeanFactory::getBean('SchedulersJobs', $_REQUEST['record']);
 			$job->runtime = TimeDate::getInstance()->nowDb();
 
 			if($job->startJob($job_id)) {

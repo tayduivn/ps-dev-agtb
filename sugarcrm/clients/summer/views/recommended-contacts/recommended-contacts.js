@@ -3,7 +3,7 @@
         var self = this;
         app.view.View.prototype.render.call(this);
 
-        app.api.call('GET', '../rest/v10/google/contacts', null, {
+        app.api.call('GET', app.api.buildURL('google/contacts'), null, {
             success: function(o) {
                 self.$(".recommended-contacts").empty();
                 _.each(o.contacts, function(contact) {

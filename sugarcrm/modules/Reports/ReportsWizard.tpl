@@ -41,9 +41,7 @@ document.getElementById('progress_div').innerHTML = '{sugar_getimage name="bar_l
 <script type="text/javascript" src="{sugar_getjspath file='include/javascript/reports.js'}"></script>
 <script type="text/javascript" src="{sugar_getjspath file='cache/include/javascript/sugar_grp_yui_widgets.js'}"></script>
 <script type="text/javascript" src="{sugar_getjspath file='include/javascript/FiltersWidget.js'}"></script>
-{* //BEGIN SUGARCRM flav!=sales ONLY*}
 <script type="text/javascript" src="{sugar_getjspath file='include/SugarFields/Fields/Teamset/Teamset.js'}"></script>
-{* //END SUGARCRM flav!=sales ONLY*}
 <!--
 <style>
 .x-tree-node-collapsed .x-tree-node-icon{literal}{{/literal}

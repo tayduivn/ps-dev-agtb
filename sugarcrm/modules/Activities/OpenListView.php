@@ -78,7 +78,7 @@ $dayEnd = $timedate->asDb($laterDate->get_day_end_time());
 $GLOBALS['log']->debug("filter $appointment_filter date $dayEnd");
 
 if(ACLController::checkAccess('Meetings', 'list', true)){
-	$meeting = new Meeting();
+	$meeting = BeanFactory::getBean('Meetings');
 	$where = '(';
 	$or = false;
 	foreach ($open_status as $status) {
@@ -111,7 +111,7 @@ if(ACLController::checkAccess('Meetings', 'list', true)){
 }
 
 if(ACLController::checkAccess('Calls', 'list', true)) {
-	$call = new Call();
+	$call = BeanFactory::getBean('Calls');
 	$where = '(';
 	$or = false;
 

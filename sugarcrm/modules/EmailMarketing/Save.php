@@ -46,7 +46,7 @@ if(empty($_REQUEST['time_start'])) {
   $_POST['date_start'] = $_POST['date_start'] . ' ' . $_POST['time_start'];
 }
 
-$marketing = new EmailMarketing();
+$marketing = BeanFactory::getBean('EmailMarketing');
 if (isset($_POST['record']) && !empty($_POST['record'])) {
 	$marketing->retrieve($_POST['record']);
 }

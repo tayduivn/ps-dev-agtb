@@ -56,11 +56,6 @@ class UsersViewList extends ViewList
 					$this->where .= " AND";
 			}
                         $this->where .= " (users.status !='Reserved' or users.status is null) ";
-//BEGIN SUGARCRM flav=sales ONLY
-			if(!is_admin($GLOBALS['current_user'])){
-				$this->where = " AND users.is_admin = '0'";
-			}
-//END SUGARCRM flav=sales ONLY
 			$this->lv->setup($this->seed, 'include/ListView/ListViewGeneric.tpl', $this->where, $this->params);
 			$savedSearchName = empty($_REQUEST['saved_search_select_name']) ? '' : (' - ' . $_REQUEST['saved_search_select_name']);
 			echo $this->lv->display();

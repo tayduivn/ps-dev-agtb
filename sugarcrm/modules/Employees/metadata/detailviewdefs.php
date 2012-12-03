@@ -27,7 +27,6 @@
  ********************************************************************************/
 $viewdefs['Employees']['DetailView'] = array(
 'templateMeta' => array('form' => array('buttons'=>array(
-    //BEGIN SUGARCRM flav!=sales ONLY
     array('customCode'=>'{if $DISPLAY_EDIT}<input title="{$APP.LBL_EDIT_BUTTON_TITLE}" accessKey="{$APP.LBL_EDIT_BUTTON_KEY}" class="button" onclick="this.form.return_module.value=\'{$module}\'; this.form.return_action.value=\'DetailView\'; this.form.return_id.value=\'{$id}\'; this.form.action.value=\'EditView\'" type="submit" name="Edit" id="edit_button" value="{$APP.LBL_EDIT_BUTTON_LABEL}">{/if}',
         //Bug#51778: The custom code will be replaced with sugar_html. customCode will be deplicated.
         'sugar_html' => array(
@@ -44,7 +43,6 @@ $viewdefs['Employees']['DetailView'] = array(
             'template' => '{if $DISPLAY_EDIT}[CONTENT]{/if}',
         ),
     ),
-    //END SUGARCRM flav!=sales ONLY
     array('customCode'=>'{if $DISPLAY_DUPLICATE}<input title="{$APP.LBL_DUPLICATE_BUTTON_TITLE}" accessKey="{$APP.LBL_DUPLICATE_BUTTON_KEY}" class="button" onclick="this.form.return_module.value=\'{$module}\'     ; this.form.return_action.value=\'DetailView\'; this.form.return_id.value=\'{$id}\'; this.form.isDuplicate.value=true; this.form.action.value=\'EditView\'" type="submit" name="Duplicate" value="{$APP.LBL_DUPLICATE_BUTTON_LABEL}" id="duplicate_button">{/if}',
         //Bug#51778: The custom code will be replaced with sugar_html. customCode will be deplicated.
         'sugar_html' => array(

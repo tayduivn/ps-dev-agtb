@@ -64,9 +64,8 @@ class SugarAuthenticate{
 		//BEGIN SUGARCRM flav=pro ONLY
 		$res = $GLOBALS['sugar_config']['passwordsetting'];
 		//END SUGARCRM flav=pro ONLY
-		$usr= new user();
-		$usr_id=$usr->retrieve_user_id($username);
-		$usr->retrieve($usr_id);
+		$usr_id=User::retrieve_user_id($username);
+		$usr= BeanFactory::getBean('Users', $usr_id);
 		$_SESSION['login_error']='';
 		$_SESSION['waiting_error']='';
 		$_SESSION['hasExpiredPassword']='0';

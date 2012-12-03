@@ -47,7 +47,7 @@ class TeamSetLink extends Link {
 
 	public function __construct($_rel_name, &$_bean, $fieldDef, $_table_name='', $_key_name=''){
 		parent::Link($_rel_name, $_bean, $fieldDef, $_table_name, $_key_name);
-		$this->_teamSet = new TeamSet();
+		$this->_teamSet = BeanFactory::getBean('TeamSets');
 		$this->_teamList = array();
 	}
 

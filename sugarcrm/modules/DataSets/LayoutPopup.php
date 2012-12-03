@@ -48,7 +48,7 @@ global $urlPrefix;
 global $currentModule;
 
 
-$seed_object = new DataSet();
+$seed_object = BeanFactory::getBean('DataSets');
 
 if(isset($_REQUEST['record']) && isset($_REQUEST['record'])) {
     $seed_object->retrieve($_REQUEST['record']);

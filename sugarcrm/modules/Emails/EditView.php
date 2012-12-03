@@ -28,13 +28,9 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * governing these rights and limitations under the License.  Portions created
  * by SugarCRM are Copyright(C) 2005 SugarCRM, Inc.; All Rights Reserved.
  */
-// $Id: EditView.php 54471 2010-02-11 19:02:45Z dwheeler $
 $GLOBALS['log']->info("Email edit view");
 
 require_once('include/SugarTinyMCE.php');
-
-
-
 
 global $theme;
 global $app_strings;
@@ -46,10 +42,10 @@ global $timedate;
 
 ///////////////////////////////////////////////////////////////////////////////
 ////	PREPROCESS BEAN DATA FOR DISPLAY
-$focus = new Email();
+$focus = BeanFactory::getBean('Emails');
 $email_type = 'archived';
 
-if(isset($_REQUEST['record'])) {
+if(!empty($_REQUEST['record'])) {
     $focus->retrieve($_REQUEST['record']);
 }
 if(!empty($_REQUEST['type'])) {
@@ -66,10 +62,8 @@ if(isset($_REQUEST['contact_name']) && is_null($focus->contact_name)) {
 }
 
 if(!empty($_REQUEST['load_id']) && !empty($beanList[$_REQUEST['load_module']])) {
-	$class_name = $beanList[$_REQUEST['load_module']];
-	require_once($beanFiles[$class_name]);
-	$contact = new $class_name();
-	if($contact->retrieve($_REQUEST['load_id'])) {
+    $contact = BeanFactory::retrieveBean($_REQUEST['load_module'], $_REQUEST['load_id']);
+	if(!empty($contact)) {
     	$link_id = $class_name . '_id';
     	$focus->$link_id = $_REQUEST['load_id'];
     	$focus->contact_name = (isset($contact->full_name)) ? $contact->full_name : $contact->name;
@@ -78,14 +72,16 @@ if(!empty($_REQUEST['load_id']) && !empty($beanList[$_REQUEST['load_module']])) 
         //Retrieve the email address.
         //If Opportunity or Case then Oppurtinity/Case->Accounts->(email_addr_bean_rel->email_addresses)
         //If Contacts, Leads etc.. then Contact->(email_addr_bean_rel->email_addresses)
-    	$sugarEmailAddress = new SugarEmailAddress();
-    	if($class_name == 'Opportunity' || $class_name == 'aCase'){
-    		$account = new Account();
-    		if($contact->account_id != null && $account->retrieve($contact->account_id)){
-    			$sugarEmailAddress->handleLegacyRetrieve($account);
-    		    if(isset($account->email1)){
-	    			$focus->to_addrs_emails = $account->email1;
-	    			$focus->to_addrs = "$focus->contact_name <$account->email1>";
+    	$sugarEmailAddress = BeanFactory::getBean('EmailAddresses');
+    	if($contact->object_name == 'Opportunity' || $contact->object_name == 'aCase'){
+    	    if(!empty($contact->account_id)) {
+    		    $account = BeanFactory::retrieveBean('Accounts', $contact->account_id);
+    		    if(!empty($account)){
+        			$sugarEmailAddress->handleLegacyRetrieve($account);
+        		    if(isset($account->email1)){
+    	    			$focus->to_addrs_emails = $account->email1;
+    	    			$focus->to_addrs = "$focus->contact_name <$account->email1>";
+        		    }
     		    }
     		}
     	}
@@ -205,8 +201,7 @@ if(isset($_REQUEST['email_name'])) {
 	$name = str_replace('_',' ',$_REQUEST['email_name']);
 }
 if(isset($_REQUEST['inbound_email_id'])) {
-	$ieMail = new Email();
-	$ieMail->retrieve($_REQUEST['inbound_email_id']);
+	$ieMail = BeanFactory::getBean('Emails', $_REQUEST['inbound_email_id']);
 
 	$quoted = '';
 	// cn: bug 9725: replies/forwards lose real content
@@ -262,8 +257,7 @@ if(isset($_REQUEST['inbound_email_id'])) {
 		// "Read" flag for InboundEmail
 		if($ieMail->status == 'unread') {
 			// creating a new instance here to avoid data corruption below
-			$e = new Email();
-			$e->retrieve($ieMail->id);
+			$e = BeanFactory::getBean('Emails', $ieMail->id);
 			$e->status = 'read';
 			$e->save();
 			$email_type = $e->status;
@@ -319,8 +313,7 @@ if(!empty($_REQUEST['parent_id']) && !empty($_REQUEST['parent_type'])) {
 if(!empty($focus->parent_id) && !empty($focus->parent_type)) {
 	if($focus->parent_type == 'Cases') {
 
-		$myCase = new aCase();
-		$myCase->retrieve($focus->parent_id);
+		$myCase = BeanFactory::getBean('Cases', $focus->parent_id);
 		$myCaseMacro = $myCase->getEmailSubjectMacro();
 		if(isset($ieMail->name) && !empty($ieMail->name)) { // if replying directly to an InboundEmail
 			$oldEmailSubj = $ieMail->name;
@@ -628,7 +621,7 @@ if(!empty($focus->id) || (!empty($_REQUEST['record']) && $_REQUEST['type'] == 'f
 	$ids = '';
 
 	$focusId = empty($focus->id) ? $_REQUEST['record'] : $focus->id;
-	$note = new Note();
+	$note = BeanFactory::getBean('Notes');
 	$where = "notes.parent_id='{$focusId}' AND notes.filename IS NOT NULL";
 	$notes_list = $note->get_full_list("", $where,true);
 
@@ -710,7 +703,7 @@ if($parse_open) {
 ///////////////////////////////////////////////////////////////////////////////
 ////	EMAIL TEMPLATES
 if(ACLController::checkAccess('EmailTemplates', 'list', true) && ACLController::checkAccess('EmailTemplates', 'view', true)) {
-	$et = new EmailTemplate();
+	$et = BeanFactory::getBean('EmailTemplates');
 	$etResult = $focus->db->query($et->create_new_list_query('','',array(),array(),''));
 	$email_templates_arr[] = '';
 	while($etA = $focus->db->fetchByAssoc($etResult)) {

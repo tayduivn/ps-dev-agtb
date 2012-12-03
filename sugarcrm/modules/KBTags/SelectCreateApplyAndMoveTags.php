@@ -45,7 +45,7 @@ if (!empty($_REQUEST['searchTagName'])) {
     }
 }
 
-$KBTag = new KBTag();
+$KBTag = BeanFactory::getBean('KBTags');
 $response = '';
 if ($tagsMode == 'Select Create Tags') {
     $tagstree = new Tree('tagstree');

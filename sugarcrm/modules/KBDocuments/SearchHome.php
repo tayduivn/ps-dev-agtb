@@ -35,7 +35,7 @@ require_once('modules/KBDocuments/SearchUtils.php');
 global $mod_strings, $app_strings;
 
 
-$focus = new KBDocument();
+$focus = BeanFactory::getBean('KBDocuments');
 
 echo getClassicModuleTitle("KBDocuments", array($app_strings['LBL_SEARCH']), true);
 
@@ -598,8 +598,7 @@ function perform_advanced_search($focus,$default=false){
 
         if (!empty($focus->kbdoc_approver_id)) {
 
-            $user = new User();
-            $user->retrieve($focus->kbdoc_approver_id,true);
+            $user = BeanFactory::getBean('Users', $focus->kbdoc_approver_id);
             $ss_adv->assign("KBDOC_APPROVER_NAME", $user->name);
             $ss_adv->assign("KBDOC_APPROVER_ID", $focus->kbdoc_approver_id);
         }
@@ -632,7 +631,7 @@ function perform_advanced_search($focus,$default=false){
 
             //create tree for tag selection modal
 
-            $tag = new KBTag();
+            $tag = BeanFactory::getBean('KBTags');
             $ss_adv->assign("TAG_NAME", $tag->tag_name);
 
             //tree header.
@@ -786,7 +785,7 @@ function perform_advanced_search($focus,$default=false){
 
 
         //create new bean instance, and retrieve search if id is provided
-        $search_bean = new SavedSearch();
+        $search_bean = BeanFactory::getBean('SavedSearch');
         if($update && isset($s_id)  && !empty($s_id)){
             $search_bean->retrieve($s_id);
             if($search_bean ==null){
@@ -833,7 +832,7 @@ function perform_advanced_search($focus,$default=false){
      */
     function loadSavedSearch($s_id){
 
-        $search_bean = new SavedSearch();
+        $search_bean = BeanFactory::getBean('SavedSearch');
 
         if(isset($s_id)  && !empty($s_id)){
             //retrieve saved search and unserialize/decode it's contents
@@ -869,7 +868,7 @@ function perform_advanced_search($focus,$default=false){
      global $current_user, $mod_strings, $app_strings;
 
 
-        $search_bean = new SavedSearch();
+        $search_bean = BeanFactory::getBean('SavedSearch');
         if(isset($s_id)  && !empty($s_id)){
             //mark bean as deleted, and set clear_loaded param to true
             $search_bean->mark_deleted($s_id);

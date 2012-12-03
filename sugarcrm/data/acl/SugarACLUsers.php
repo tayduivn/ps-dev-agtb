@@ -57,7 +57,7 @@ class SugarACLUsers extends SugarACLStrategy
             return true;
         }
 
-        if($view == 'view' || $view == 'ListView' || $view == 'list' || $view == 'field' || $view == 'DetailView' || $view == 'detail' || $view == 'team_security' ) {
+        if($view == 'view' || $view == 'ListView' || $view == 'list' || $view == 'field' || $view == 'DetailView' || $view == 'detail' || $view == 'team_security'  || $view == 'access') {
             if($view == 'field' && $context['field'] == 'password') {
                 return false;
             }
@@ -66,8 +66,6 @@ class SugarACLUsers extends SugarACLStrategy
             }
             return true;
         }
-
-
 
         return false;
     }

@@ -30,7 +30,7 @@ global $app_strings;
 global $current_user;
 $GLOBALS['displayListView'] = true; 
 $header_text = '';
-$focus = new TeamNotice();
+$focus = BeanFactory::getBean('TeamNotices');
 //$is_edit = true;
 
 $GLOBALS['log']->info("TeamNotice list view");

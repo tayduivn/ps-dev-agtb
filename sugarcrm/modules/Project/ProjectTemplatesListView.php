@@ -52,7 +52,7 @@ if(!empty($_REQUEST['clear_query']) && $_REQUEST['clear_query'] == 'true')
 
 $json = getJSONobj();
 
-$seedProject = new Project(); // seed bean
+$seedProject = BeanFactory::getBean('Project'); // seed bean
 $searchForm = new SearchForm('Project', $seedProject); // new searchform instance
 
 // setup listview smarty
@@ -168,7 +168,7 @@ echo get_form_header($current_module_strings['LBL_LIST_FORM_TITLE'] . $savedSear
 
 echo $lv->display();
 
-$savedSearch = new SavedSearch();
+$savedSearch = BeanFactory::getBean('SavedSearch');
 $json = getJSONobj();
 // fills in saved views select box on shortcut menu
 $savedSearchSelects = $json->encode(array($GLOBALS['app_strings']['LBL_SAVED_SEARCH_SHORTCUT'] . '<br>' . $savedSearch->getSelect('Project')));

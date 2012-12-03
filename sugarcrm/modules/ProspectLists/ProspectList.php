@@ -19,20 +19,9 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *to the License for the specific language governing these rights and limitations under the License.
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
-/*********************************************************************************
- * $Id: ProspectList.php 53409 2010-01-04 03:31:15Z roger $
- * Description:
- ********************************************************************************/
-
-
-
-
-
-
-
 class ProspectList extends SugarBean {
 	var $field_name_map;
-	
+
 	// Stored fields
 	var $id;
 	var $date_entered;
@@ -51,7 +40,7 @@ class ProspectList extends SugarBean {
 
 	var $name;
 	var $description;
-	
+
 	// These are related
 	var $assigned_user_name;
 	var $prospect_id;
@@ -74,12 +63,6 @@ class ProspectList extends SugarBean {
 	);
 
     var $entry_count;
-    
-	public function __construct() {
-		global $sugar_config;
-		parent::__construct();
-		
-	}
 
 	var $new_schema = true;
 
@@ -91,14 +74,14 @@ class ProspectList extends SugarBean {
 	function create_list_query($order_by, $where, $show_deleted = 0)
 	{
 		$custom_join = $this->custom_fields->getJOIN();
-		
+
 		$query = "SELECT ";
 		$query .= "users.user_name as assigned_user_name, ";
 		$query .= "prospect_lists.*";
 
 		if($custom_join){
 			$query .= $custom_join['select'];
-		}	    
+		}
         //BEGIN SUGARCRM flav=pro ONLY
         $query .= ", teams.name as team_name";
         //END SUGARCRM flav=pro ONLY
@@ -117,7 +100,7 @@ class ProspectList extends SugarBean {
 		if($custom_join){
 			$query .= $custom_join['join'];
 		}
-		
+
 			$where_auto = '1=1';
 				if($show_deleted == 0){
                 	$where_auto = "$this->table_name.deleted=0";
@@ -175,7 +158,7 @@ class ProspectList extends SugarBean {
 
 	function create_export_members_query($record_id)
 	{
-		$leads_query = "SELECT l.id AS id, 'Leads' AS related_type, '' AS \"name\", l.first_name AS first_name, l.last_name AS last_name, l.title AS title, l.salutation AS salutation, 
+		$leads_query = "SELECT l.id AS id, 'Leads' AS related_type, '' AS \"name\", l.first_name AS first_name, l.last_name AS last_name, l.title AS title, l.salutation AS salutation,
 				l.primary_address_street AS primary_address_street,l.primary_address_city AS primary_address_city, l.primary_address_state AS primary_address_state, l.primary_address_postalcode AS primary_address_postalcode, l.primary_address_country AS primary_address_country,
 				l.account_name AS account_name,
 				ea.email_address AS primary_email_address, ea.invalid_email AS invalid_email, ea.opt_out AS opt_out, ea.deleted AS ea_deleted, ear.deleted AS ear_deleted, ear.primary_address AS primary_address,
@@ -184,11 +167,11 @@ class ProspectList extends SugarBean {
 				INNER JOIN leads l ON plp.related_id=l.id
 				LEFT JOIN email_addr_bean_rel ear ON  ear.bean_id=l.id AND ear.deleted=0
 				LEFT JOIN email_addresses ea ON ear.email_address_id=ea.id
-				WHERE plp.prospect_list_id = $record_id AND plp.deleted=0 
+				WHERE plp.prospect_list_id = $record_id AND plp.deleted=0
 				AND l.deleted=0
 				AND (ear.deleted=0 OR ear.deleted IS NULL)";
 
-		$users_query = "SELECT u.id AS id, 'Users' AS related_type, '' AS \"name\", u.first_name AS first_name, u.last_name AS last_name,u.title AS title, '' AS salutation, 
+		$users_query = "SELECT u.id AS id, 'Users' AS related_type, '' AS \"name\", u.first_name AS first_name, u.last_name AS last_name,u.title AS title, '' AS salutation,
 				u.address_street AS primary_address_street,u.address_city AS primary_address_city, u.address_state AS primary_address_state,  u.address_postalcode AS primary_address_postalcode, u.address_country AS primary_address_country,
 				'' AS account_name,
 				ea.email_address AS email_address, ea.invalid_email AS invalid_email, ea.opt_out AS opt_out, ea.deleted AS ea_deleted, ear.deleted AS ear_deleted, ear.primary_address AS primary_address,
@@ -197,11 +180,11 @@ class ProspectList extends SugarBean {
 				INNER JOIN users u ON plp.related_id=u.id
 				LEFT JOIN email_addr_bean_rel ear ON  ear.bean_id=u.id AND ear.deleted=0
 				LEFT JOIN email_addresses ea ON ear.email_address_id=ea.id
-				WHERE plp.prospect_list_id = $record_id AND plp.deleted=0 
+				WHERE plp.prospect_list_id = $record_id AND plp.deleted=0
 				AND u.deleted=0
 				AND (ear.deleted=0 OR ear.deleted IS NULL)";
 
-		$contacts_query = "SELECT c.id AS id, 'Contacts' AS related_type, '' AS \"name\", c.first_name AS first_name, c.last_name AS last_name,c.title AS title, c.salutation AS salutation, 
+		$contacts_query = "SELECT c.id AS id, 'Contacts' AS related_type, '' AS \"name\", c.first_name AS first_name, c.last_name AS last_name,c.title AS title, c.salutation AS salutation,
 				c.primary_address_street AS primary_address_street,c.primary_address_city AS primary_address_city, c.primary_address_state AS primary_address_state,  c.primary_address_postalcode AS primary_address_postalcode, c.primary_address_country AS primary_address_country,
 				a.name AS account_name,
 				ea.email_address AS email_address, ea.invalid_email AS invalid_email, ea.opt_out AS opt_out, ea.deleted AS ea_deleted, ear.deleted AS ear_deleted, ear.primary_address AS primary_address,
@@ -210,11 +193,11 @@ FROM prospect_lists_prospects plp
 				INNER JOIN contacts c ON plp.related_id=c.id LEFT JOIN accounts_contacts ac ON ac.contact_id=c.id LEFT JOIN accounts a ON ac.account_id=a.id
 				LEFT JOIN email_addr_bean_rel ear ON ear.bean_id=c.id AND ear.deleted=0
 				LEFT JOIN email_addresses ea ON ear.email_address_id=ea.id
-				WHERE plp.prospect_list_id = $record_id AND plp.deleted=0 
+				WHERE plp.prospect_list_id = $record_id AND plp.deleted=0
 				AND c.deleted=0
                 AND (ear.deleted=0 OR ear.deleted IS NULL)";
 
-		$prospects_query = "SELECT p.id AS id, 'Prospects' AS related_type, '' AS \"name\", p.first_name AS first_name, p.last_name AS last_name,p.title AS title, p.salutation AS salutation, 
+		$prospects_query = "SELECT p.id AS id, 'Prospects' AS related_type, '' AS \"name\", p.first_name AS first_name, p.last_name AS last_name,p.title AS title, p.salutation AS salutation,
 				p.primary_address_street AS primary_address_street,p.primary_address_city AS primary_address_city, p.primary_address_state AS primary_address_state,  p.primary_address_postalcode AS primary_address_postalcode, p.primary_address_country AS primary_address_country,
 				p.account_name AS account_name,
 				ea.email_address AS email_address, ea.invalid_email AS invalid_email, ea.opt_out AS opt_out, ea.deleted AS ea_deleted, ear.deleted AS ear_deleted, ear.primary_address AS primary_address,
@@ -223,11 +206,11 @@ FROM prospect_lists_prospects plp
 				INNER JOIN prospects p ON plp.related_id=p.id
 				LEFT JOIN email_addr_bean_rel ear ON  ear.bean_id=p.id AND ear.deleted=0
 				LEFT JOIN email_addresses ea ON ear.email_address_id=ea.id
-				WHERE plp.prospect_list_id = $record_id  AND plp.deleted=0 
+				WHERE plp.prospect_list_id = $record_id  AND plp.deleted=0
 				AND p.deleted=0
 				AND (ear.deleted=0 OR ear.deleted IS NULL)";
 
-		$accounts_query = "SELECT a.id AS id, 'Accounts' AS related_type, a.name AS \"name\", '' AS first_name, '' AS last_name,'' AS title, '' AS salutation, 
+		$accounts_query = "SELECT a.id AS id, 'Accounts' AS related_type, a.name AS \"name\", '' AS first_name, '' AS last_name,'' AS title, '' AS salutation,
 				a.billing_address_street AS primary_address_street,a.billing_address_city AS primary_address_city, a.billing_address_state AS primary_address_state, a.billing_address_postalcode AS primary_address_postalcode, a.billing_address_country AS primary_address_country,
 				'' AS account_name,
 				ea.email_address AS email_address, ea.invalid_email AS invalid_email, ea.opt_out AS opt_out, ea.deleted AS ea_deleted, ear.deleted AS ear_deleted, ear.primary_address AS primary_address,
@@ -236,14 +219,14 @@ FROM prospect_lists_prospects plp
 				INNER JOIN accounts a ON plp.related_id=a.id
 				LEFT JOIN email_addr_bean_rel ear ON  ear.bean_id=a.id AND ear.deleted=0
 				LEFT JOIN email_addresses ea ON ear.email_address_id=ea.id
-				WHERE plp.prospect_list_id = $record_id  AND plp.deleted=0 
+				WHERE plp.prospect_list_id = $record_id  AND plp.deleted=0
 				AND a.deleted=0
 				AND (ear.deleted=0 OR ear.deleted IS NULL)";
 		$order_by = "ORDER BY related_type, id, primary_address DESC";
 		$query = "$leads_query UNION ALL $users_query UNION ALL $contacts_query UNION ALL $prospects_query UNION ALL $accounts_query $order_by";
 		return $query;
 	}
-	
+
 	function save_relationship_changes($is_update)
     {
     	parent::save_relationship_changes($is_update);
@@ -258,7 +241,7 @@ FROM prospect_lists_prospects plp
 	function set_prospect_relationship($prospect_list_id, &$link_ids, $link_name)
 	{
 		$link_field = sprintf("%s_id", $link_name);
-		
+
 		foreach($link_ids as $link_id)
 		{
 			$this->set_relationship('prospect_lists_prospects', array( $link_field=>$link_id, 'prospect_list_id'=>$prospect_list_id ));
@@ -268,7 +251,7 @@ FROM prospect_lists_prospects plp
 	function set_prospect_relationship_single($prospect_list_id, $link_id, $link_name)
 	{
 		$link_field = sprintf("%s_id", $link_name);
-		
+
 		$this->set_relationship('prospect_lists_prospects', array( $link_field=>$link_id, 'prospect_list_id'=>$prospect_list_id ));
 	}
 
@@ -277,12 +260,12 @@ FROM prospect_lists_prospects plp
 	{
 		$link_field = sprintf("%s_id", $link_name);
 		$where_clause = " AND $link_field = '$link_id' ";
-		
+
 		$query = sprintf("DELETE FROM prospect_lists_prospects WHERE prospect_list_id='%s' AND deleted = '0' %s", $prospect_list_id, $where_clause);
-	
+
 		$this->db->query($query, true, "Error clearing prospect/prospect_list relationship: ");
 	}
-	
+
 
 	function mark_relationships_deleted($id)
 	{
@@ -298,7 +281,7 @@ FROM prospect_lists_prospects plp
         $this->entry_count = $this->get_entry_count();
 	}
 
-	
+
 	function update_currency_id($fromid, $toid){
 	}
 
@@ -307,7 +290,7 @@ FROM prospect_lists_prospects plp
 	{
 		$query = "SELECT count(*) AS num FROM prospect_lists_prospects WHERE prospect_list_id='$this->id' AND deleted = '0'";
 		$result = $this->db->query($query, true, "Grabbing prospect_list entry count");
-		
+
 		$row = $this->db->fetchByAssoc($result);
 
 		if($row)
@@ -315,16 +298,16 @@ FROM prospect_lists_prospects plp
 		else
 			return 0;
 	}
-		
-		
+
+
 	function get_list_view_data(){
 		$temp_array = $this->get_list_view_array();
-		$temp_array["ENTRY_COUNT"] = $this->get_entry_count();		
+		$temp_array["ENTRY_COUNT"] = $this->get_entry_count();
 		//BEGIN SUGARCRM flav=pro ONLY
 	    $this->load_relationship('teams');
         require_once('modules/Teams/TeamSetManager.php');
         $teams = TeamSetManager::getTeamsFromSet($this->team_set_id);
-      
+
         if(count($teams) > 1) {
       	   $temp_array['TEAM_NAME'] .= "<span id='div_{$this->id}_teams'>
 						<a href=\"#\" onMouseOver=\"javascript:toggleMore('div_{$this->id}_teams','img_{$this->id}_teams', 'Teams', 'DisplayInlineTeams', 'team_set_id={$this->team_set_id}&team_id={$this->team_id}');\"  onFocus=\"javascript:toggleMore('div_{$this->id}_teams','img_{$this->id}_teams', 'Teams', 'DisplayInlineTeams', 'team_set_id={$this->team_set_id}');\" id='more_feather' class=\"utilsLink\">
@@ -339,7 +322,7 @@ FROM prospect_lists_prospects plp
 		builds a generic search based on the query string using or
 		do not include any $this-> because this is called on without having the class instantiated
 	*/
-	function build_generic_where_clause ($the_query_string) 
+	function build_generic_where_clause ($the_query_string)
 	{
 		$where_clauses = Array();
 		$the_query_string = $GLOBALS['db']->quote($the_query_string);
@@ -361,7 +344,7 @@ FROM prospect_lists_prospects plp
 		return parent::save($check_notify);
 
 	}
-	
+
 	 function bean_implements($interface){
 		switch($interface){
 			case 'ACL':return true;

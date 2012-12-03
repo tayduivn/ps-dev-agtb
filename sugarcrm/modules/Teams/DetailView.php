@@ -42,7 +42,7 @@ global $current_user;
 
 if (!$GLOBALS['current_user']->isAdminForModule('Users')) sugar_die("Unauthorized access to administration.");
 
-$focus = new Team();
+$focus = BeanFactory::getBean('Teams');
 
 $detailView = new DetailView();
 $offset=0;
@@ -118,8 +118,7 @@ if(!empty($error_message))
    {
    	  $error_message = $app_strings['LBL_MASSUPDATE_DELETE_GLOBAL_TEAM'];
    } else if($error_message == 'LBL_MASSUPDATE_DELETE_USER_EXISTS') {
-   	  $user = new User();
-	  $user->retrieve($focus->associated_user_id);
+   	  $user = BeanFactory::getBean('Users', $focus->associated_user_id);
 	  $error_message = string_format($app_strings['LBL_MASSUPDATE_DELETE_USER_EXISTS'], array(Team::getDisplayName($focus->name, $focus->name_2), $user->full_name));
    }
    

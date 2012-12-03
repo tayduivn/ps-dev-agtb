@@ -39,6 +39,7 @@
         <script src='{$configFile}'></script>
         <script src="include/javascript/jquery/bootstrap-wysihtml5/wysihtml5-0.3.0.min.js"></script>
         <script src="include/javascript/jquery/bootstrap-wysihtml5/bootstrap-wysihtml5.js"></script>
+        <script src="include/javascript/jquery/jquery.dataTables.min.js"></script>
 
         <!-- CSS -->
         <link rel="stylesheet" href="sidecar/lib/chosen/chosen.css"/>
@@ -86,7 +87,7 @@
                             _.extend(opts, {modelId: id});
                         } else {
                             _.extend(opts, {create: true});
-                            opts.layout = "newrecord";
+                            opts.layout = "create";
                         }
 
                         app.controller.loadView(opts);
@@ -94,6 +95,12 @@
 
                     // Hack to overload the routes currently
                     app.router.route(":module/:id", "record", recordHandler);
+                    app.router.route(":module", "list", function(module) {
+                        app.controller.loadView({
+                            module: module,
+                            layout: "records"
+                        });
+                    });
                 });
             })(SUGAR.App);
 

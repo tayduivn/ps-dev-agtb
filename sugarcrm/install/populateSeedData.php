@@ -215,7 +215,6 @@ for($i = 0; $i < $number_companies; $i++) {
 	$account_ids[] = $account->id;
 	$accounts[] = $account;
 
-	//BEGIN SUGARCRM flav!=sales ONLY
     for($c = 0; $c < $number_cases; $c++) {
 	// Create a case for the account
 	$case = new aCase();
@@ -250,7 +249,6 @@ for($i = 0; $i < $number_companies; $i++) {
     $bug->portal_viewable = 1;
 //END SUGARCRM flav=ent ONLY
 	$bug->save();
-	//END SUGARCRM flav!=sales ONLY
 
 	$note = new Note();
 	$note->parent_type = 'Accounts';
@@ -295,10 +293,8 @@ $first_name_max = $first_name_count - 1;
 $last_name_max = $last_name_count - 1;
 $street_address_max = $street_address_count - 1;
 $city_array_max = $city_array_count - 1;
-//BEGIN SUGARCRM flav!=sales ONLY
 $lead_source_max = count($app_list_strings['lead_source_dom']) - 1;
 $lead_status_max = count($app_list_strings['lead_status_dom']) - 1;
-//END SUGARCRM flav!=sales ONLY
 $title_max = count($titles) - 1;
 ///////////////////////////////////////////////////////////////////////////////
 ////	DEMO CONTACTS
@@ -440,7 +436,6 @@ for($i=0; $i<1000; $i++)
 	$email->accounts->add($contacts_account);
 }
 
-//BEGIN SUGARCRM flav!=sales ONLY
 for($i=0; $i<$number_leads; $i++)
 {
 	$lead = new Lead();
@@ -649,6 +644,7 @@ include_once('modules/TeamNotices/DefaultNotices.php');
 include_once('modules/Contracts/Contract.php');
 foreach($sugar_demodata['contract_seed_data'] as $v){
 	$contract = new Contract();
+    $contract->currency_id = '-99';
 	$contract->name = $v['name'];
 	$contract->reference_code = $v['reference_code'];
 	$contract->status = 'signed';
@@ -741,7 +737,6 @@ if(!empty($sugar_demodata['emailtemplates_seed_data'])) {
 	    $id =$EmailTemp->save();
 	}
 }
-//BEGIN SUGARCRM flav!=sales ONLY
 ///
 /// SEED DATA FOR PROJECT AND PROJECT TASK
 ///
@@ -836,7 +831,6 @@ $GLOBALS['mod_strings']  = $installerStrings;
     //END SUGARCRM flav=ent ONLY
 
 
-//END SUGARCRM flav!=sales ONLY
 
 //BEGIN SUGARCRM flav=pro ONLY
     include('install/seed_data/ForecastTreeSeedData.php');

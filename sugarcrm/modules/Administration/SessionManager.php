@@ -175,8 +175,7 @@ class SessionManager extends SugarBean {
      * return @string
      */
     function getTimeDiff(){
-        $admin = new Administration();
-        $admin->retrieveSettings('system');
+        $admin = Administration::getSettings('system');
 
         if(isset($admin->settings['system_session_timeout'])){
             $session_timeout = abs($admin->settings['system_session_timeout']);
@@ -195,8 +194,7 @@ class SessionManager extends SugarBean {
      * as defined by the license
      */
     function getNumPortalUsers(){
-        $admin = new Administration();
-        $admin->retrieveSettings('license');
+        $admin = Administration::getSettings('license');
         return $admin->settings['license_num_portal_users'];
     }
 
@@ -205,8 +203,7 @@ class SessionManager extends SugarBean {
      *
      */
     function getEnforcePortalUserLimit() {
-        $admin = new Administration();
-        $admin->retrieveSettings('license');
+        $admin = Administration::getSettings('license');
         return isset($admin->settings['license_enforce_portal_user_limit']) && $admin->settings['license_enforce_portal_user_limit'] == '1' ? true : false;
     }
 

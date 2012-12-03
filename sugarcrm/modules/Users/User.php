@@ -22,8 +22,9 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 require_once('include/SugarObjects/templates/person/Person.php');
 require_once "modules/Mailer/MailerFactory.php"; // imports all of the Mailer classes that are needed
 
-
-// User is used to store customer information.
+/**
+ * User is used to store customer information.
+ */
 class User extends Person {
 	// Stored fields
 	var $name = '';
@@ -31,9 +32,6 @@ class User extends Person {
 	var $id;
 	var $user_name;
 	var $user_hash;
-	//BEGIN SUGARCRM flav=sales ONLY
-	var $user_type;
-	//END SUGARCRM flav=sales ONLY
 	var $salutation;
 	var $first_name;
 	var $last_name;
@@ -100,6 +98,17 @@ class User extends Person {
 
 
 	var $new_schema = true;
+
+    /**
+     * This is a depreciated method, please start using __construct() as this method will be removed in a future version
+     *
+     * @see __construct
+     * @deprecated
+     */
+    public function User()
+    {
+        $this->__construct();
+    }
 
 	public function __construct() {
 		parent::__construct();
@@ -224,7 +233,7 @@ class User extends Person {
 	 */
 	public function hasPersonalEmail()
 	{
-	    $focus = new InboundEmail;
+	    $focus = BeanFactory::getBean('InboundEmail');
 	    $focus->retrieve_by_string_fields(array('group_id' => $this->id));
 
 	    return !empty($focus->id);
@@ -470,8 +479,7 @@ class User extends Person {
  	    //BEGIN SUGARCRM lic=sub ONLY
 
 		global $sugar_flavor;
-        $admin = new Administration();
-        $admin->retrieveSettings();
+        $admin = Administration::getSettings();
 		if((isset($sugar_flavor) && $sugar_flavor != null) &&
 			($sugar_flavor=='CE' || isset($admin->settings['license_enforce_user_limit']) && $admin->settings['license_enforce_user_limit'] == 1)){
 
@@ -555,7 +563,7 @@ class User extends Person {
             if (!$isUpdate) {
                 // If this is a new user, make sure to add them to the appriate default teams
                 if (!$this->team_exists) {
-                    $team = new Team();
+                    $team = BeanFactory::getBean('Teams');
                     $team->new_user_created($this);
                 }
             }else{
@@ -564,8 +572,7 @@ class User extends Person {
                 $team_id = $this->getPrivateTeamID();
                 if(!empty($team_id)){
 
-                    $team = new Team();
-                    $team->retrieve($team_id);
+                    $team = BeanFactory::getBean('Teams', $team_id);
                     Team::set_team_name_from_user($team, $this);
                     $team->save();
                 }
@@ -721,12 +728,7 @@ EOQ;
 
    function bean_implements($interface) {
         switch($interface){
-//BEGIN SUGARCRM flav!=sales ONLY
             case 'ACL':return true;
-//END SUGARCRM flav!=sales ONLY
-//BEGIN SUGARCRM flav=sales ONLY
-            case 'ACL':return false;
-//END SUGARCRM flav=sales ONLY
         }
         return false;
     }
@@ -1021,11 +1023,9 @@ EOQ;
 		$this->_create_proper_name_field();
 	}
 
-	public function retrieve_user_id(
-	    $user_name
-	    )
+	public function retrieve_user_id($user_name)
 	{
-	    $userFocus = new User;
+	    $userFocus = BeanFactory::getBean('Users');
 	    $userFocus->retrieve_by_string_fields(array('user_name'=>$user_name));
 	    if ( empty($userFocus->id) )
 	        return false;
@@ -1165,8 +1165,7 @@ EOQ;
 	 */
 	function getPrivateTeam($id='') {
 		if(!empty($id)) {
-			$user = new User();
-			$user->retrieve($id);
+			$user = BeanFactory::getBean('Users', $id);
 			return $user->getPrivateTeamID();
 		}
 		return $this->getPrivateTeamID();
@@ -1185,7 +1184,7 @@ EOQ;
 
 		while ($row = $this->db->fetchByAssoc($result)) {
 			if ($return_obj) {
-				$out[$x] = new Team();
+				$out[$x] = BeanFactory::getBean('Teams');
 				$out[$x]->retrieve($row['team_id']);
 				$out[$x++]->implicit_assign = $row['implicit_assign'];
 			} else {
@@ -1215,7 +1214,7 @@ EOQ;
 	 */
 	function update_team_memberships($old_reports_to_id) {
 
-		$team = new Team();
+		$team = BeanFactory::getBean('Teams');
 		$team->user_manager_changed($this->id, $old_reports_to_id, $this->reports_to_id);
 	}
 	//END SUGARCRM flav=pro ONLY
@@ -1277,12 +1276,12 @@ EOQ;
 	function get_meetings() {
 		// First, get the list of IDs.
 		$query = "SELECT meeting_id as id from meetings_users where user_id='$this->id' AND deleted=0";
-		return $this->build_related_list($query, new Meeting());
+		return $this->build_related_list($query, BeanFactory::getBean('Meetings'));
 	}
 	function get_calls() {
 		// First, get the list of IDs.
 		$query = "SELECT call_id as id from calls_users where user_id='$this->id' AND deleted=0";
-		return $this->build_related_list($query, new Call());
+		return $this->build_related_list($query, BeanFactory::getBean('Calls'));
 	}
 
 	/**
@@ -1378,7 +1377,7 @@ EOQ;
 
 	function getSystemDefaultNameAndEmail() {
 
-		$email = new Email();
+		$email = BeanFactory::getBean('Emails');
 		$return = $email->getSystemDefaultEmail();
 		$prefAddr = $return['email'];
 		$fullName = $return['name'];
@@ -1407,8 +1406,7 @@ EOQ;
     function getEmailInfo($id='') {
         $user = $this;
         if(!empty($id)) {
-            $user = new User();
-            $user->retrieve($id);
+            $user = BeanFactory::getBean('Users', $id);
         }
 
         // from name
@@ -1651,7 +1649,7 @@ EOQ;
 
     public static function staticGetPrivateTeamID($user_id)
 	{
-	    $teamFocus = new Team;
+	    $teamFocus = BeanFactory::getBean('Teams');
 	    $teamFocus->retrieve_by_string_fields(array('associated_user_id'=>$user_id));
 	    if ( empty($teamFocus->id) )
 	        return '';
@@ -1714,7 +1712,7 @@ EOQ;
                 continue;
             }
 
-            $focus = SugarModule::get($module)->loadBean();
+            $focus = BeanFactory::getBean($module);
             if ( $focus instanceOf SugarBean ) {
                 $key = $focus->acltype;
             } else {
@@ -2051,7 +2049,7 @@ EOQ;
             'message' => ''
         );
 
-        $emailTemplate                             = new EmailTemplate();
+        $emailTemplate                             = BeanFactory::getBean('EmailTemplates');
         $emailTemplate->disable_row_level_security = true;
 
         if ($emailTemplate->retrieve($templateId) == '') {

@@ -52,7 +52,7 @@ if ($error_msg != '')
 if((isset($_REQUEST['popup']) && $_REQUEST['popup'] == 'true') ||(isset($_POST['popup']) && $_POST['popup']==true)) insert_popup_header($theme);
 
 
-$account = new Account();
+$account = BeanFactory::getBean('Accounts');
 require_once('modules/Accounts/AccountFormBase.php');
 $accountForm = new AccountFormBase();
 $GLOBALS['check_notify'] = FALSE;
@@ -113,7 +113,7 @@ if(!empty($_POST['Contactsrelate_id'])) {
 $input .= get_teams_hidden_inputs('Accounts');
 //END SUGARCRM flav=pro ONLY
 
-$emailAddress = new SugarEmailAddress();
+$emailAddress = BeanFactory::getBean('EmailAddresses');
 $input .= $emailAddress->getEmailAddressWidgetDuplicatesView($account);
 
 $get = '';

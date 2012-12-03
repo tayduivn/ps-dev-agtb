@@ -88,8 +88,7 @@
         });
     },
     persistMenu: function(e) {
-        // This will prevent the dropup menu from closing
-        // when clicking anywhere on it
+        // This will prevent the dropup menu from closing when clicking anywhere on it
         e.stopPropagation();
     },
     handleEscKey: function() {

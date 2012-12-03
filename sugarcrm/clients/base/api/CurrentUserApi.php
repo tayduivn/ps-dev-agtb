@@ -151,6 +151,7 @@ class CurrentUserApi extends SugarApi {
         //BEGIN SUGARCRM flav=pro ONLY
         $user_data['primary_team_name'] = $current_user->team_name;
         $user_data['primary_team_id'] = $current_user->team_id;
+        $user_data['default_teams'] = $current_user->get_my_teams();
         //END SUGARCRM flav=pro ONLY
         if(isset($current_user->preferred_language)) {
             $user_data['preferred_language'] = $current_user->preferred_language;
@@ -259,8 +260,9 @@ class CurrentUserApi extends SugarApi {
      * @return array
      */  
     public function getAcls($platform) {
+        // in this case we should always have current_user be the user
+        global $current_user;        
         $mm = $this->getMetadataManager($platform);
-        $current_user = $this->getUserBean();
         $fullModuleList = array_keys($GLOBALS['app_list_strings']['moduleList']);
         $acls = array();
         foreach ($fullModuleList as $modName) {
@@ -271,7 +273,7 @@ class CurrentUserApi extends SugarApi {
             }
 
 
-            $acls[$modName] = $mm->getAclForModule($modName,$current_user->id);
+            $acls[$modName] = $mm->getAclForModule($modName,$current_user);
             $acls[$modName] = $this->verifyACLs($acls[$modName]);
         }
         // Handle enforcement of acls for clients that override this (e.g. portal)
@@ -347,6 +349,7 @@ class CurrentUserApi extends SugarApi {
         $user_data['decimal_precision'] = $locale->getPrecision();
         $user_data['decimal_separator'] = $locale->getDecimalSeparator();
         $user_data['number_grouping_separator'] = $locale->getNumberGroupingSeparator();
+        $user_data['module_list'] = $this->getModuleList();
 
         return $user_data;
     }
@@ -503,5 +506,49 @@ class CurrentUserApi extends SugarApi {
         return $args['preference_name'];
     }
 
+    /**
+     * Gets display module list per user defined tabs
+     * @return array
+     */
+    public function getModuleList() {
+        $current_user = $this->getUserBean();
+        // Loading a standard module list
+        require_once("modules/MySettings/TabController.php");
+        $controller = new TabController();
+        $moduleList = $this->list2Array($controller->get_user_tabs($current_user));
+        // always add back in employees see Bug58563
+        if (!in_array('Employees',$moduleList)) {
+            $moduleList[] = 'Employees';
+        }
+        return $moduleList;
+    }
+    /**
+     * Filters a list of modules against the display modules
+     * @param $moduleList
+     * @return array
+     */
+    protected function filterDisplayModules($moduleList)
+    {
+        $current_user = $this->getUserBean();
+        // Loading a standard module list
+        require_once("modules/MySettings/TabController.php");
+        $controller = new TabController();
+        $ret = array_intersect_key($controller->get_user_tabs($current_user), $moduleList);
+        return $this->list2Array($ret);
 
+    }
+
+    /**
+     * converts hash into flat array preserving order
+     * @param $ret
+     * @return array
+     */
+    public function list2Array($ret) {
+        $output = array();
+        foreach($ret as $mod => $lbl)
+        {
+            $output[] = $mod;
+        }
+        return $output;
+    }
 }

@@ -45,9 +45,7 @@ $searchFields['Contacts'] =
 		'current_user_only'=> array('query_type'=>'default','db_field'=>array('assigned_user_id'),'my_items'=>true, 'vname' => 'LBL_CURRENT_USER_FILTER', 'type' => 'bool'),
 		'assigned_user_id'=> array('query_type'=>'default'),
         'account_id'=> array('query_type'=>'default','db_field'=>array('accounts.id')),
-        //BEGIN SUGARCRM flav!=sales ONLY
         'campaign_name'=> array('query_type'=>'default'),
-		//END SUGARCRM flav!=sales ONLY
 		//BEGIN SUGARCRM flav=pro ONLY
 		'favorites_only' => array(
             'query_type'=>'format',

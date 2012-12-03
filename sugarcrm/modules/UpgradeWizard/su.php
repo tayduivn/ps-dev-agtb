@@ -177,8 +177,7 @@ global $sugar_config;
 $configOptions = $sugar_config['dbconfig'];
 
 
-$current_user = new User();
-$current_user->retrieve(1);
+$current_user = BeanFactory::getBean('Users', 1);
 if(isset($current_user) && $current_user->user_name == null){
 	echo "No admin user in users table. Create an admin user with id = 1\n";
 	die();

@@ -172,10 +172,8 @@ class LanguageManager
 		if(empty($createdModules[$module]) && isset($GLOBALS['beanList'][$module])){
 				$object = $GLOBALS['beanList'][$module];
 
-				//BEGIN SUGARCRM flav!=sales ONLY
 				if ($object == 'aCase')
 		            $object = 'Case';
-		        //END SUGARCRM flav!=sales ONLY
 
 		        if(!empty($GLOBALS["dictionary"]["$object"]["templates"])){
 		        	$templates = $GLOBALS["dictionary"]["$object"]["templates"];

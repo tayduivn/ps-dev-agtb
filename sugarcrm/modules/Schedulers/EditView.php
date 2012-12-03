@@ -36,11 +36,11 @@ global $app_strings;
 global $current_user;
 global $timedate;
 
-$email = new Email();
+$email = BeanFactory::getBean('Emails');
 
 /* Start standard EditView setup logic */
 $mod_strings = return_module_language($current_language, 'Schedulers');
-$focus = new Scheduler();
+$focus = BeanFactory::getBean('Schedulers');
 $focus->checkCurl();
 if(isset($_REQUEST['record'])) {
 	$GLOBALS['log']->debug("In Scheduler edit view, about to retrieve record: ".$_REQUEST['record']);

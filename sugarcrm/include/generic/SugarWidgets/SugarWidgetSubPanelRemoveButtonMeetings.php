@@ -43,8 +43,8 @@ class SugarWidgetSubPanelRemoveButtonMeetings extends SugarWidgetField
 	function displayList(&$layout_def)
 	{
 		global $app_strings;
-		
-				
+
+
 		$parent_record_id = $_REQUEST['record'];
 		$parent_module = $_REQUEST['module'];
 
@@ -55,26 +55,20 @@ class SugarWidgetSubPanelRemoveButtonMeetings extends SugarWidgetField
 		$return_action = 'SubPanelViewer';
 		$subpanel = $layout_def['subpanel_id'];
 		$return_id = $_REQUEST['record'];
-		
-		
-		if(isset($GLOBALS['FOCUS'])) {	
+
+
+		if(isset($GLOBALS['FOCUS'])) {
 			$focus = $GLOBALS['FOCUS'];
 		}
-		
+
         /* Handle case where we generate subpanels from MySettings/LoadTabSubpanels.php */
         else if($return_module == 'MySettings') {
-        	global $beanList, $beanFiles;
-            $return_module = $_REQUEST['loadModule'];
-            
-            $class = $beanList[$return_module];
-            require_once($beanFiles[$class]);
-            $focus = new $class();
-            $focus->retrieve($return_id);
+            $focus = BeanFactory::getBean($_REQUEST['loadModule'], $return_id);
         }
-		
+
         //CCL - Comment out restriction to not remove assigned user
 		//if($focus->assigned_user_id == $record) return '';
-		
+
 		if (isset($layout_def['linked_field_set']) && !empty($layout_def['linked_field_set'])) {
 			$linked_field= $layout_def['linked_field_set'] ;
 		} else {

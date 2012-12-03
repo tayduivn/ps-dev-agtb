@@ -26,16 +26,6 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * governing these rights and limitations under the License.  Portions created
  * by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
-/*********************************************************************************
- * $Id: EditView.php 45763 2009-04-01 19:16:18Z majed $
- * Description:  
- ********************************************************************************/
-
-
-
-
-
-
 global $current_user;
 //Only allow admins to enter this screen
 if (!is_admin($current_user)) {
@@ -52,16 +42,16 @@ global $app_strings;
 // global $default_language;
 // global $cal_codes;
 
-$focus = new WorkFlow();
+$focus = BeanFactory::getBean('WorkFlow');
 
-if(isset($_REQUEST['record']) && isset($_REQUEST['record'])) {
+if(!empty($_REQUEST['record'])) {
     $focus->retrieve($_REQUEST['record']);
 }
 
 if(isset($_REQUEST['isDuplicate']) && $_REQUEST['isDuplicate'] == 'true') {
 	$focus->id = "";
 }
-echo getClassicModuleTitle($mod_strings['LBL_MODULE_NAME'], array($mod_strings['LBL_MODULE_NAME'], $focus->name), true); 
+echo getClassicModuleTitle($mod_strings['LBL_MODULE_NAME'], array($mod_strings['LBL_MODULE_NAME'], $focus->name), true);
 
 
 

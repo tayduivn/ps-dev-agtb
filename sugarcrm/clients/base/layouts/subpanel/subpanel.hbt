@@ -1,0 +1,69 @@
+<div class="tabbable hide">
+    <ul class="nav nav-tabs related-tabs"></ul>
+    <div class="tab-content"></div>
+</div>
+<form class="form-search" action="">
+    <div class="row-fluid">
+        <div class="span9 myfilter">
+            <input value="" placeholder="Search accounts..." class="span12">
+
+            <div class="actions btn-group dropdown">
+                <a href="" data-toggle="dropdown" class="dropdown-toggle btn btn-invisible">Filter &nbsp;<i
+                        class="icon-caret-down"></i></a>
+                <ul class="dropdown-menu carettop">
+                    <li><a href="#myAccount">My accounts</a></li>
+                    <li class="primary"><a href="#createFilter" class="newfilter">+ Create a filter</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="span3 toolbar-btns">
+            <div class="pull-right">
+                <a href="" class="btn btn-invisible active" data-view="activitystream"><i class="icon-th-list"></i></a>
+                <a href="" class="btn btn-invisible" data-view="timeline"><i class="icon-time"></i></a>
+                <a href="" class="btn btn-invisible" data-view="calendar"><i class="icon-calendar"></i></a>
+                <a href="" class="btn btn-invisible" data-view="list"><i class="icon-table"></i></a>
+            </div>
+        </div>
+    </div>
+    <div class="filtered extend results hide">
+        <article class="filtered-header">
+            <input placeholder="Select a name...">
+
+            <div class="pull-right dropdown">
+                <a href="" class="btn">Save</a><a href="" class="btn btn-invisible"><i class="icon-remove"></i></a>
+            </div>
+        </article>
+        <article class="filtered-body">
+            <select class="chzn-select buildit">
+                <option>Name</option>
+                <option>Sales Stage</option>
+            </select>
+            <select class="chzn-select">
+                <option>matches</option>
+            </select>
+            <input placeholder="Select a name...">
+            <a href="" class="btn btn-invisible pull-right addme"><i class="icon-plus"></i></a>
+        </article>
+    </div>
+    <div class="mu extend results hide">
+        <article class="filtered-header">
+            <strong>Mass Update</strong>
+
+            <div class="btn-group pull-right dropdown">
+                <a href="" class="btn">update</a>
+            </div>
+        </article>
+        <article class="filtered-body">
+            <select class="chzn-select buildit">
+                <option>Name</option>
+                <option>Sales Stage</option>
+            </select>
+            <select class="chzn-select">
+                <option>matches</option>
+            </select>
+            <input placeholder="Select a name...">
+            <a href="" class="btn btn-invisible pull-right addme"><i class="icon-plus"></i></a>
+        </article>
+    </div>
+</form>
+</form>

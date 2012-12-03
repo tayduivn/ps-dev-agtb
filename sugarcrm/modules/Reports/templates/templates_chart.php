@@ -66,7 +66,7 @@ function print_currency_symbol($report_defs) {
     $currency_symbol = '';
     if (isset($report_defs['numerical_chart_column_type']) && $report_defs['numerical_chart_column_type'] == 'currency'){
     	global $current_user;
-	    $currency = new Currency();
+	    $currency = BeanFactory::getBean('Currencies');
 	    if ($current_user->getPreference('currency'))
 	        $currency->retrieve($current_user->getPreference('currency'));
 	    else

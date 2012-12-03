@@ -222,9 +222,7 @@ function buildRedirectURL($return_id='', $return_module='')
 			&& $_REQUEST['return_module'] != 'WorkFlow'
 //END SUGARCRM flav=pro ONLY
 			&& $_REQUEST['return_module'] != 'Home'
-//BEGIN SUGARCRM flav!=sales ONLY
 			&& $_REQUEST['return_module'] != 'Forecasts'
-//END SUGARCRM flav!=sales ONLY
 			&& $_REQUEST['return_module'] != 'Calendar'
 			&& $_REQUEST['return_module'] != 'MailMerge'
 			//BEGIN SUGARCRM flav=pro ONLY

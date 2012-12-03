@@ -39,7 +39,7 @@ global $current_user;
 
 if (!is_admin($current_user)) sugar_die("Unauthorized access to administration.");
 
-$focus = new Administration();
+$focus = BeanFactory::getBean('Administration');
 
 // filter for relevant POST data and update config table
 foreach ($_POST as $key => $val) {

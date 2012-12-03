@@ -34,8 +34,7 @@ if(ACLController::checkAccess('KBDocuments', 'edit', true))$module_menu[]=Array(
 //if(ACLController::checkAccess('KBDocuments', 'list', true))$module_menu[]=Array("index.php?module=KBDocuments&action=index", $mod_strings['LNK_KBDOCUMENT_LIST'],"Documents");
 if(ACLController::checkAccess('KBDocuments', 'edit', true)){
 	
-	$admin = new Administration();
-	$admin->retrieveSettings();
+	$admin = Administration::getSettings();
 	$user_merge = $current_user->getPreference('mailmerge_on');
 	if ($user_merge == 'on' && isset($admin->settings['system_mailmerge_on']) && $admin->settings['system_mailmerge_on']){
 		$module_menu[]=Array("index.php?module=MailMerge&action=index&reset=true", $mod_strings['LNK_NEW_MAIL_MERGE'],"Documents");

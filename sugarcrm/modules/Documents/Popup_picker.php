@@ -188,7 +188,7 @@ class Popup_Picker
         $output_html .= $treehtml;
         
 		// create the listview
-		$seed_bean = new Document();
+		$seed_bean = BeanFactory::getBean('Documents');
 		$ListView = new ListView();
 		$ListView->show_select_menu = false;
 		$ListView->show_delete_button = false;

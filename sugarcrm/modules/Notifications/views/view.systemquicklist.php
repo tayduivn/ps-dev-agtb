@@ -45,8 +45,7 @@ class ViewSystemQuicklist extends ViewQuickList{
         // after the notification is displayed, clear the fts flag
         if (is_admin($GLOBALS['current_user']))
         {
-            $admin = new Administration();
-            $settings = $admin->retrieveSettings();
+            $admin = Administration::getSettings();
             if (!empty($settings->settings['info_fts_index_done']))
             {
                 $admin->saveSetting('info', 'fts_index_done', 0);

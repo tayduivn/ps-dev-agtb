@@ -30,8 +30,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  // $Id: ChangePassword.php 55866 2010-04-07 19:53:06Z jmertic $
 if (isset($_POST['saveConfig'])){
     require_once('modules/Users/User.php');
-	$focus = new User();
-	$focus->retrieve($_POST['record']);	
+	$focus = BeanFactory::getBean('Users', $_POST['record']);	
 	if(!$focus->change_password($_POST['old_password'], $_POST['new_password']))
 		SugarApplication::redirect("index.php?action=ChangePassword&module=Users&record=".$_POST['record']."&error_password=".urlencode($focus->error_string));
     
@@ -66,9 +65,6 @@ $sugar_smarty->assign('ID', $current_user->id);
 $sugar_smarty->assign('IS_ADMIN', $current_user->is_admin);
 $sugar_smarty->assign('USER_NAME', $current_user->user_name);
 $sugar_smarty->assign("INSTRUCTION", $mod_strings['LBL_CHANGE_SYSTEM_PASSWORD']);
-//BEGIN SUGARCRM flav=sales ONLY
-$sugar_smarty->assign('sugar_md',getWebPath('include/images/sugar_md_sales.png'));
-//END SUGARCRM flav=sales ONLY
 //BEGIN SUGARCRM flav=dev ONLY
 $sugar_smarty->assign('sugar_md',getWebPath('include/images/sugar_md_dev.png'));
 //END SUGARCRM flav=dev ONLY

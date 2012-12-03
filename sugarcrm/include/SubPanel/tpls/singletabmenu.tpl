@@ -66,7 +66,6 @@ SUGAR.util.doWhen("typeof get_module_name != 'undefined'", function()
 
 
 {if !empty($sugartabs)}
-{* //BEGIN SUGARCRM flav!=sales ONLY*}
 <ul id="groupTabs" class="subpanelTablist">
 {foreach from=$sugartabs item=tab}
 	<li id="{$tab.label}_sp_tab">
@@ -81,7 +80,6 @@ SUGAR.util.doWhen("typeof get_module_name != 'undefined'", function()
 	</li>
 {/if}
 </ul>
-{* //END SUGARCRM flav!=sales ONLY*}
 {* Table closed in SubPanelTiles.php, line 295 *}
 <table width="100%" cellspacing="0" cellpadding="0" border="0" class="subpanelTabForm">
 	<tr>

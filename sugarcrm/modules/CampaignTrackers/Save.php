@@ -28,9 +28,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  ********************************************************************************/
 require_once('include/formbase.php');
 
-$focus = new CampaignTracker();
-
-$focus->retrieve($_POST['record']);
+$focus = BeanFactory::getBean('CampaignTrackers', $_POST['record']);
 if(!$focus->ACLAccess('Save')){
 	ACLController::displayNoAccess(true);
 	sugar_cleanup(true);

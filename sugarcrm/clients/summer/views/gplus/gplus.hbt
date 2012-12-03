@@ -1,6 +1,6 @@
 {{#if gPlusId}}
 {{#if gPlusPosts}}
-<div class="block thumbnail padded widget">
+<div class="block thumbnail widget">
     <h4>G+ Activity</h4>
     <div class="gplus-widget">
         <br>

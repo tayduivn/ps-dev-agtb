@@ -66,7 +66,7 @@ class ForecastScheduleApi extends ModuleApi {
     {
         // Load up a seed bean
         require_once('modules/ForecastSchedule/ForecastSchedule.php');
-        $seed = new ForecastSchedule();
+        $seed = BeanFactory::getBean('ForecastSchedule');
 
         if (!$seed->ACLAccess('list') ) {
             throw new SugarApiExceptionNotAuthorized('No access to view records for module: '.$args['module']);
@@ -121,7 +121,7 @@ class ForecastScheduleApi extends ModuleApi {
     {
         require_once('modules/ForecastSchedule/ForecastSchedule.php');
         require_once('include/SugarFields/SugarFieldHandler.php');
-        $seed = new ForecastSchedule();
+        $seed = BeanFactory::getBean('ForecastSchedule');
         $seed->loadFromRow($args);
         $sfh = new SugarFieldHandler();
 

@@ -162,8 +162,7 @@ class UsersLastImport extends SugarBean
 
         // load bean
         if ( !( $focus instanceof $module) ) {
-            require_once($GLOBALS['beanFiles'][$module]);
-            $focus = new $module;
+            $focus = BeanFactory::newBeanByName($module);
         }
 
         $result = $this->db->query(

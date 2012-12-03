@@ -6,9 +6,9 @@ $viewdefs['Accounts']['EditView'] = array(
     'templateMeta' => array(
                             'form' => array('buttons'=>array('SAVE', 'CANCEL')),
                             'maxColumns' => '2', 
-                            //BEGIN SUGARCRM flav=pro || flav=sales ONLY
+                            //BEGIN SUGARCRM flav=pro ONLY
                             'useTabs' => true,
-                            //END SUGARCRM flav=pro || flav=sales ONLY
+                            //END SUGARCRM flav=pro ONLY
                             'widths' => array(
                                             array('label' => '10', 'field' => '30'),
                                             array('label' => '10', 'field' => '30'),
@@ -122,9 +122,7 @@ $viewdefs['Accounts']['EditView'] = array(
         ),
 
         array (
-		  //BEGIN SUGARCRM flav!=sales ONLY
           'campaign_name',
-          //END SUGARCRM flav!=sales ONLY
           'rating'
         ),
       ),

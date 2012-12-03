@@ -37,7 +37,7 @@ $_REQUEST['group_id'] = $_REQUEST['groupFoldersUser'];
 //BEGIN SUGARCRM flav=pro ONLY
 require_once("modules/Teams/TeamSet.php");
 $_REQUEST['team_id'] = $_REQUEST['primaryTeamId'];
-$teamSet = new TeamSet();
+$teamSet = BeanFactory::getBean('TeamSets');
 $teamIds = explode(",", $_REQUEST['teamIds']);
 $team_set_id = $teamSet->addTeams($teamIds);
 $_REQUEST['team_set_id'] = $team_set_id;

@@ -356,6 +356,24 @@ function smarty_function_sugar_button($params, &$smarty)
                 $output = '<input title="{$APP.LBL_FULL_FORM_BUTTON_TITLE}" class="button" onclick="'.$js_form.' disableOnUnloadEditView(_form); _form.return_action.value=\'DetailView\'; _form.action.value=\'EditView\'; if(typeof(_form.to_pdf)!=\'undefined\') _form.to_pdf.value=\'0\';" type="submit" name="' . $params['module'] . '_subpanel_full_form_button" id="' . $params['module'] . '_subpanel_full_form_button" value="{$APP.LBL_FULL_FORM_BUTTON_LABEL}"> ';
                 $output .= '<input type="hidden" name="full_form" value="full_form">';
             break;
+            case "DCMENUCANCEL":
+                $output = '<input title="{$APP.LBL_CANCEL_BUTTON_TITLE}" accessKey="{$APP.LBL_CANCEL_BUTTON_KEY}" class="button" onclick="javascript:lastLoadedMenu=undefined;DCMenu.closeOverlay();return false;" type="submit" name="' . $params['module'] . '_dcmenu_cancel_button" id="' . $params['module'] . '_dcmenu_cancel_button" value="{$APP.LBL_CANCEL_BUTTON_LABEL}"> ';
+            break;
+            case "DCMENUSAVE":
+                if ($view == 'QuickCreate')
+                {
+                    $view = "form_DCQuickCreate_{$module}";
+                }
+                else if ($view == 'EditView')
+                {
+                    $view = "form_DCEditView_{$module}";
+                }
+                $output = '{if $bean->aclAccess("save")}<input title="{$APP.LBL_SAVE_BUTTON_TITLE}" accessKey="{$APP.LBL_SAVE_BUTTON_KEY}" class="button primary" onclick="'.$js_form.' _form.action.value=\'Save\';if(check_form(\''.$view.'\'))return DCMenu.save(_form.id, \'' . $params['module'] . '_subpanel_save_button\');return false;" type="submit" name="' . $params['module'] . '_dcmenu_save_button" id="' . $params['module'] . '_dcmenu_save_button" value="{$APP.LBL_SAVE_BUTTON_LABEL}">{/if} ';
+            break;
+            case "DCMENUFULLFORM":
+                $output = '<input title="{$APP.LBL_FULL_FORM_BUTTON_TITLE}" accessKey="{$APP.LBL_FULL_FORM_BUTTON_KEY}" class="button" onclick="'.$js_form.' disableOnUnloadEditView(_form); _form.return_action.value=\'DetailView\'; _form.action.value=\'EditView\'; _form.return_module.value=\'' . $params['module'] . '\';_form.return_id.value=_form.record.value;if(typeof(_form.to_pdf)!=\'undefined\') _form.to_pdf.value=\'0\';SUGAR.ajaxUI.submitForm(_form,null,true);DCMenu.closeOverlay();" type="button" name="' . $params['module'] . '_subpanel_full_form_button" id="' . $params['module'] . '_subpanel_full_form_button" value="{$APP.LBL_FULL_FORM_BUTTON_LABEL}"> ';
+                $output .= '<input type="hidden" name="full_form" value="full_form">';
+            break;
 			case "POPUPSAVE":
 				$view = ($view == 'QuickCreate') ? "form_QuickCreate_{$module}" : $view;
 				$output = '{if $bean->aclAccess("save")}<input title="{$APP.LBL_SAVE_BUTTON_TITLE}" accessKey="{$APP.LBL_SAVE_BUTTON_KEY}" '
@@ -384,7 +402,7 @@ function smarty_function_sugar_button($params, &$smarty)
                 $output = '{if $bean->aclAccess("detail")}{if !empty($fields.id.value) && $isAuditEnabled}'.$audit_link.'{/if}{/if}';
             break;
 
-			//BEGIN SUGARCRM flav=pro || flav=sales ONLY
+			//BEGIN SUGARCRM flav=pro ONLY
 			//Button for the Connector intergration wizard
 			case "CONNECTOR":
 				require_once('include/connectors/utils/ConnectorUtils.php');
@@ -410,7 +428,7 @@ function smarty_function_sugar_button($params, &$smarty)
 				}
 				return '';
 
-			//END SUGARCRM flav=pro || flav=sales ONLY
+			//END SUGARCRM flav=pro ONLY
 			//BEGIN SUGARCRM flav=pro ONLY
             case "PDFVIEW":
                 $output='{sugar_button module="$module" id="REALPDFVIEW" view="$view" form_id="formDetailView" record=$fields.id.value}';

@@ -383,7 +383,7 @@ class RenameModules
     private function renameModuleSubpanel($moduleName, $beanName)
     {
         $GLOBALS['log']->info("About to rename subpanel for module: $moduleName");
-        $bean = new $beanName();
+        $bean = BeanFactory::getBean($moduleName);
         //Get the subpanel def
         $subpanelDefs = $this->getSubpanelDefs($bean);
 
@@ -496,7 +496,7 @@ class RenameModules
     private function renameModuleRelatedLinks($moduleName, $moduleClass)
     {
         $GLOBALS['log']->info("Begining to renameModuleRelatedLinks for $moduleClass\n");
-        $tmp = new $moduleClass;
+        $tmp = BeanFactory::getBean($moduleName);
         if( ! method_exists($tmp, 'get_related_fields') )
         {
             $GLOBALS['log']->info("Unable to resolve linked fields for module $moduleClass ");
@@ -931,14 +931,13 @@ class RenameModules
      */
     public function getModuleSingularKey($moduleName)
     {
-        $className = isset($GLOBALS['beanList'][$moduleName]) ? $GLOBALS['beanList'][$moduleName] : null;
-        if( is_null($className) || ! class_exists($className) )
+        $tmp = BeanFactory::getBean($moduleName);
+        if( empty($tmp))
         {
             $GLOBALS['log']->error("Unable to get module singular key for class: $className");
             return $moduleName;
         }
 
-        $tmp = new $className();
         if( property_exists($tmp, 'object_name') )
             return $tmp->object_name;
         else

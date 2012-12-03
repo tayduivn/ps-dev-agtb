@@ -26,12 +26,6 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * governing these rights and limitations under the License.  Portions created
  * by SugarCRM are Copyright (C) 2004-2007 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
-/*********************************************************************************
- * $Id: view.step1.php 31561 2008-02-04 18:41:10Z jmertic $
- * Description: view handler for step 1 of the import process
- * Portions created by SugarCRM are Copyright (C) SugarCRM, Inc.
- * All Rights Reserved.
- ********************************************************************************/
 require_once('modules/Import/views/ImportView.php');
 require_once('modules/Import/sources/ImportFile.php');
 require_once('modules/Import/ImportFileSplitter.php');
@@ -66,7 +60,7 @@ class ImportViewConfirm extends ImportView
         $importSource = isset($_REQUEST['source']) ? $_REQUEST['source'] : 'csv' ;
 
         // Clear out this user's last import
-        $seedUsersLastImport = new UsersLastImport();
+        $seedUsersLastImport = BeanFactory::getBean('Import_2');
         $seedUsersLastImport->mark_deleted_by_user_id($current_user->id);
         ImportCacheFiles::clearCacheFiles();
 
@@ -256,8 +250,7 @@ class ImportViewConfirm extends ImportView
         if ( strncasecmp("custom:",$importSource,7) == 0)
         {
             $id = substr($importSource,7);
-            $import_map_seed = new ImportMap();
-            $import_map_seed->retrieve($id, false);
+            $import_map_seed = BeanFactory::getBean('Import_1', $id, array("encode" => false));
 
             $this->ss->assign("SOURCE_ID", $import_map_seed->id);
             $this->ss->assign("SOURCE_NAME", $import_map_seed->name);
@@ -440,7 +433,7 @@ eoq;
                 }
             }
         }
-        
+
         foreach ($rows as &$row) {
             if (is_array($row)) {
                 foreach ($row as &$val) {
@@ -448,7 +441,7 @@ eoq;
                 }
             }
         }
-    
+
         return $rows;
     }
 

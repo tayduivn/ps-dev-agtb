@@ -28,21 +28,18 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  ********************************************************************************/
 /*********************************************************************************
  * $Id: Delete.php 45763 2009-04-01 19:16:18Z majed $
- * Description:  
+ * Description:
  ********************************************************************************/
 
 
 global $mod_strings;
-
-
-
-$focus = new CustomQuery();
-
 if(!isset($_REQUEST['record']))
 	sugar_die($mod_strings['ERR_DELETE_RECORD']);
 
-$focus->mark_deleted($_REQUEST['record']);
+$focus = BeanFactory::deleteBean('CustomQueries', $_REQUEST['record']);
 
+if(!$focus)
+	sugar_die($mod_strings['ERR_DELETE_RECORD']);
 
 //Remove the query_id from any data_sets that are currently using it.
 

@@ -171,7 +171,7 @@ class SugarWidgetSubPanelEditButton extends SugarWidgetField
 
 
 		if(empty($this->bean)) {
-            $this->bean = new $beanList[$layout_def['module']]();
+            $this->bean = BeanFactory::getBean($layout_def['module']);
 		}
 
         //load the bean relationships for the next check
@@ -186,7 +186,7 @@ class SugarWidgetSubPanelEditButton extends SugarWidgetField
 
         } else {
             //if the relationship was not found on the subpanel bean, then see if the relationship is defined on the parent bean
-	        $parentBean = new $beanList[$mod]();
+	        $parentBean = BeanFactory::getBean($mod);
             $subpanelMod = strtolower($layout_def['module']);
             if(!empty($parentBean->field_name_map[$subpanelMod]) && !empty($parentBean->field_name_map[$subpanelMod]['relationship'])){
                 //return relationship name

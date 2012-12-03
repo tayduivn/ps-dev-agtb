@@ -48,7 +48,7 @@ global $selector_meta_array;
 
 
 
-	$exp_object = new Expression();
+	$exp_object = BeanFactory::getBean('Expressions');
 
 
 
@@ -104,7 +104,7 @@ $xtpl->assign('EXP_META_TYPE', $exp_meta_type);
 	$xtpl->assign('PARENT_TYPE', $exp_object->parent_type);
 $form_name = "FieldView";
 if(isset($exp_meta_array['select_field']) && $exp_meta_array['select_field']===true) {
-	$temp_module = get_module_info($exp_object->lhs_module);
+	$temp_module = BeanFactory::getBean($exp_object->lhs_module);
 	$temp_module->call_vardef_handler("normal_trigger");
 	$temp_module->vardef_handler->start_none = true;
 	$field_array = $temp_module->vardef_handler->get_vardef_array();
@@ -177,7 +177,7 @@ if($exp_object->lhs_field != ""){
 	$xtpl->out("main");
 
 	//rsmith
-	$temp_module = get_module_info($exp_object->lhs_module);
+	$temp_module = BeanFactory::getBean($exp_object->lhs_module);
 	$field = $exp_object->lhs_field;
 
 	//now build toggle js

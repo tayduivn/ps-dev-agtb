@@ -27,7 +27,6 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * governing these rights and limitations under the License.  Portions created
  * by SugarCRM are Copyright (C) 2005 SugarCRM, Inc.; All Rights Reserved.
  */
-//FILE SUGARCRM flav!=sales ONLY
 // $Id: ForProspectLists.php 13782 2006-06-06 17:58:55Z majed $
 $subpanel_layout = array(
 	'top_buttons' => array(

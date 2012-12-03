@@ -1,5 +1,5 @@
 <?php
-//FILE SUGARCRM flav=pro || flav=sales
+//FILE SUGARCRM flav=pro
 if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 /*********************************************************************************
  * The contents of this file are subject to the SugarCRM Enterprise Subscription
@@ -56,15 +56,11 @@ class SubpanelQuickEdit{
 
 
         //retrieve bean if id or record is passed in
-        if (isset($_REQUEST['record']) || isset($_REQUEST['id'])){
-            global $beanList;
-            $bean = $beanList[$module];
-            $this->ev->focus = new $bean();
-
-            if (isset($_REQUEST['record']) && empty($_REQUEST['id'])){
-                $_REQUEST['id'] = $_REQUEST['record'];
+        if (!empty($_REQUEST['record']) || !empty($_REQUEST['id'])){
+            if (!empty($_REQUEST['record']) && empty($_REQUEST['id'])){
+            	$_REQUEST['id'] = $_REQUEST['record'];
             }
-            $this->ev->focus->retrieve($_REQUEST['record']);
+            $this->ev->focus = BeanFactory::retrieveBean($module, $_REQUEST['id']);
             //call setup with focus passed in
 		    $this->ev->setup($module, $this->ev->focus, $source);
         }else{
@@ -83,7 +79,7 @@ class SubpanelQuickEdit{
 		if(!empty($viewEditSource) && !$proccessOverride) {
             include($viewEditSource);
             $c = $module . 'ViewEdit';
-            
+
             $customClass = 'Custom' . $c;
             if(class_exists($customClass)) {
                 $c = $customClass;
@@ -101,12 +97,7 @@ class SubpanelQuickEdit{
 
 		            $view->ev = $this->ev;
 		            $view->ss = $this->ev->ss;
-					$class = $GLOBALS['beanList'][$module];
-					if(!empty($GLOBALS['beanFiles'][$class])){
-						require_once($GLOBALS['beanFiles'][$class]);
-						$bean = new $class();
-						$view->bean = $bean;
-					}
+					$view->bean = BeanFactory::getBean($module);
 					$this->ev->formName = 'form_Subpanel'.$this->ev->view .'_'.$module;
 					$view->showTitle = false; // Do not show title since this is for subpanel
 		            $view->display();

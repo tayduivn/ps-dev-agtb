@@ -20,7 +20,6 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
-//FILE SUGARCRM flav!=sales ONLY
 class ConfiguratorViewSugarpdfsettings extends SugarView
 {
 
@@ -61,13 +60,15 @@ class ConfiguratorViewSugarpdfsettings extends SugarView
 	{
 	    global $mod_strings, $app_strings, $app_list_strings;
 
-	    SugarAutoLoader::requireWithCustom("modules/Configurator/metadata/SugarpdfSettingsdefs.php", true);
+	    foreach(SugarAutoLoader::existingCustom("modules/Configurator/metadata/SugarpdfSettingsdefs.php") as $file) {
+	        include $file;
+	    }
 
         if(!empty($_POST['save'])){
             // Save the logos
             $error=$this->checkUploadImage();
             if(empty($error)){
-                $focus = new Administration();
+                $focus = BeanFactory::getBean('Administration');
                 foreach($SugarpdfSettings as $k=>$v){
                     if($v['type'] == 'password'){
                         if(isset($_POST[$k])){
@@ -87,7 +88,7 @@ class ConfiguratorViewSugarpdfsettings extends SugarView
         }
 
         if(!empty($_POST['restore'])){
-            $focus = new Administration();
+            $focus = BeanFactory::getBean('Administration');
             foreach($_POST as $key => $val) {
                 $prefix = $focus->get_config_prefix($key);
                 if(in_array($prefix[0], $focus->config_categories)) {

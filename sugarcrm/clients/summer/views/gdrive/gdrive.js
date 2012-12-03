@@ -58,7 +58,7 @@
     getData: function(term) {
         var self = this,
             email = this.model.get("email1") || this.model.get('email2'),
-            url = '../rest/v10/google/docs?limit=5';
+            url = app.api.buildURL('google/docs') + '?limit=5';
 
         if (this.term && term && this.term === term) {
             return;

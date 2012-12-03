@@ -1,4 +1,6 @@
 <?php
+if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
+
 /*********************************************************************************
  * The contents of this file are subject to the SugarCRM Enterprise End User
  * License Agreement ("License") which can be viewed at
@@ -27,8 +29,8 @@
  ********************************************************************************/
 
 
-class SugarFavorites extends Basic 
-{	
+class SugarFavorites extends Basic
+{
 	public $new_schema = true;
 	public $module_dir = 'SugarFavorites';
 	public $object_name = 'SugarFavorites';
@@ -55,10 +57,10 @@ class SugarFavorites extends Basic
     public $tag;
     public $record_name;
     public $disable_row_level_security = true;
-	
+
 	public static function generateStar(
-	    $on, 
-	    $module, 
+	    $on,
+	    $module,
 	    $record
 	    )
 	{
@@ -68,30 +70,29 @@ class SugarFavorites extends Basic
 		else
 			return '<div class="star"><div class="off"  title="'.$app_strings['LBL_ADD_TO_FAVORITES'].'" onclick="DCMenu.addToFavorites(this, \''.$module. '\',  \''.$record. '\');">&nbsp;</div></div>';
 	}
-	
+
 	public static function generateGUID(
-	    $module, 
+	    $module,
 	    $record,
 	    $user_id = ''
 	    )
 	{
 	    if(empty($user_id))
 	        $user_id = $GLOBALS['current_user']->id;
-	    
+
 		return md5($module . $record . $user_id);
 	}
-	
+
 	public static function isUserFavorite(
-	    $module, 
+	    $module,
 	    $record,
 	    $user_id = ''
 	    )
 	{
 		$id = SugarFavorites::generateGUID($module, $record, $user_id);
 
-		$focus = new SugarFavorites;
-		$focus->retrieve($id);
-		
+		$focus = BeanFactory::getBean('SugarFavotires', $id);
+
 		return !empty($focus->id);
 	}
 
@@ -101,7 +102,7 @@ class SugarFavorites extends Basic
 	        $where = " sugarfavorites.assigned_user_id = '{$GLOBALS['current_user']->id}' ";
 	    else
 	        $where = " sugarfavorites.assigned_user_id = '{$user->id}' ";
-	    
+
         if ( !empty($module) ) {
             if ( is_array($module) ) {
                 $where .= " AND sugarfavorites.module IN ('" . implode("','",$module) . "')";
@@ -110,9 +111,9 @@ class SugarFavorites extends Basic
             	$where .= " AND sugarfavorites.module = '$module' ";
             }
         }
-        $focus = new SugarFavorites;
+        $focus = BeanFactory::getBean('SugarFavorites');
 		$response = $focus->get_list($orderBy,$where,0,$limit);
-	    
+
 	    return $response['list'];
 	}
 
@@ -129,13 +130,13 @@ class SugarFavorites extends Basic
                 $where .= " sugarfavorites.module = '$module' ";
             }
         }
-        
+
         $where .= " AND sugarfavorites.record_id = '{$id}'";
 
-        $focus = new SugarFavorites;
+        $focus = BeanFactory::getBean('SugarFavorites');
 		$response = $focus->get_list($orderBy,$where,0,$limit);
 
-	    return $response['list'];		
+	    return $response['list'];
 	}
 
 	public function markRecordDeletedInFavoritesByUser($record_id, $module, $assigned_user_id)
@@ -146,8 +147,8 @@ class SugarFavorites extends Basic
 
 	/**
 	 * An easy way to toggle a favorite on and off.
-	 * @param string $id 
-	 * @param int $deleted 
+	 * @param string $id
+	 * @param int $deleted
 	 * @return bool
 	 */
 	public function toggleExistingFavorite($id, $deleted)
@@ -164,7 +165,7 @@ class SugarFavorites extends Basic
 
     public static function markRecordDeletedInFavorites($record_id, $date_modified, $modified_user_id = "")
     {
-        $focus = new SugarFavorites();
+        $focus = BeanFactory::getBean('SugarFavorites');
         $focus->mark_records_deleted_in_favorites($record_id, $date_modified, $modified_user_id);
     }
 
@@ -181,12 +182,64 @@ class SugarFavorites extends Basic
 	public function fill_in_additional_list_fields()
 	{
 	    parent::fill_in_additional_list_fields();
-	    
-	    $focus = loadBean($this->module);
+
+	    $focus = BeanFactory::getBean($this->module);
 	    if ( $focus instanceOf SugarBean ) {
 	        $focus->retrieve($this->record_id);
 	        if ( !empty($focus->id) )
 	            $this->record_name = $focus->name;
 	    }
 	}
+
+    /**
+     * Add a Favorites block to the SugarQuery Object to fetch favorites for a specific [default to current] user
+     * @param SugarQuery $sugar_query
+     * @param bool $joinTo
+     * @param string $join_type
+     * @param bool|guid $user_id
+     * @return string
+     */
+    public function addToSugarQuery(SugarQuery $sugar_query, $options = array()) {
+        $alias = '';
+        $user_id = (!isset($options['current_user_id'])) ? $GLOBALS['current_user']->id : $options['current_user_id'];
+        $joinTo = (!isset($options['joinTo'])) ? false : $options['joinTo'];
+        $joinType = (!isset($options['joinType'])) ? 'INNER' : $options['joinType'];
+
+        if(!$joinTo) {
+            if(is_array($sugar_query->from)) {
+                list($bean, $alias) = $sugar_query->from;
+            }
+            else {
+                $bean = $sugar_query->from;
+                $alias = $bean->getTableName();
+            }
+        }
+        else {
+            $linkName = $sugar_query->join[$joinTo]->linkName;
+
+            require_once('data/Link2.php');
+
+            $bean = $sugar_query->from;
+            if(is_array($bean)) {
+                list($bean, $alias) = $bean;
+            }
+
+            $relationship = $bean->field_name_map[$linkName]['name'];
+
+            $link = new Link2($relationship, $bean);
+
+            $bean = BeanFactory::newBean($link->getRelatedModuleName());
+
+            $alias = $joinTo;
+        }
+
+        $sfAlias = "sf_" . $bean->getTableName();
+
+        $sugar_query->joinTable(self::getTableName(), array('alias'=>$sfAlias, 'joinType'=>$joinType))
+                    ->on()->equals("{$sfAlias}.module", $bean->module_name, $this)
+                        ->equalsField("{$sfAlias}.record_id","{$alias}.id", $this)
+                    ->equals("{$sfAlias}.assigned_user_id", $user_id);
+
+        return $sfAlias;
+    }
 }

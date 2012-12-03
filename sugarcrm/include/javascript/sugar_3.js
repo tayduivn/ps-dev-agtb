@@ -182,19 +182,25 @@ SUGAR.isSupportedBrowser = function(){
 
 SUGAR.tour = function() {
     var tourModal;
+    var screenShotModal;
     return {
         init: function(params) {
             var modals = params.modals;
 
             tourModal = $('<div id="'+params.id+'" class="modal '+params.className+' tour"></div>').modal({backdrop: false}).draggable({handle: ".modal-header"});
+            tourModal.modal("hide");
+
+            screenShotModal = $('<div id="'+params.id+'_screenshot" class="modal '+params.className+' tour screenshot"><div class="modal-header"><a class="close" data-dismiss="modal">×</a><h3>Screen Shot</h3></div><div class="modal-body"></div></div>').modal();
+            screenShotModal.modal("hide");
 
             var tourIdSel = "#"+params.id;
+            var screenShotIdSel = "#"+params.id+"_screenshot";
 
             $.ajax({
                 url: params.modalUrl,
                 success: function(data){
                     $(tourIdSel).html(data);
-
+                    tourModal.modal("show");
                     $(tourIdSel+'Start a.btn.btn-primary').on("click",function(e){
                         $(tourIdSel+'Start').css("display","none");
                         $(tourIdSel+'End').css("display","block");
@@ -224,7 +230,7 @@ SUGAR.tour = function() {
                         centerModal();
                     });
 
-                    $('div.modal.'+params.className+'.tour a.close').live("click",function(e){
+                    $('div.modal.'+params.className+'.tour a.close').not('.screenshot').live("click",function(e){
                         closeTour();
                     });
 
@@ -269,6 +275,7 @@ SUGAR.tour = function() {
                                 direction = "right";
                             }
 
+                            screenshot(i);
                             $(modals[i].target).popoverext({
                                 title: "",
                                 content: "arrow",
@@ -305,7 +312,18 @@ SUGAR.tour = function() {
                         centerModal();
                     });
 
+                    function screenshot(i){
+                        var thumb = i+1;
+                        if(modals[i].screenShotUrl != undefined) {
+                            $('#thumbnail_'+thumb).live("click", function(){
+                                $(screenShotIdSel+ " .modal-header h3").html(modals[i].title);
+                                $(screenShotIdSel+ " .modal-body").html("<img src='"+modals[i].screenShotUrl+"' width='600'>");
+                                screenShotModal.modal("show");
+                                centerModal();
+                            });
+                        }
 
+                    }
 
                     function centerModal() {
                         $(".tour").each(function(){
@@ -395,12 +413,6 @@ SUGAR.tour = function() {
                         return content.html();
                     }
 
-
-
-
-
-
-
                 }
             });
         },
@@ -410,10 +422,6 @@ SUGAR.tour = function() {
                 url: url
             });
         }
-
-
-
-
     };
 }();
 

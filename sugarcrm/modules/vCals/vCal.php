@@ -46,6 +46,17 @@ class vCal extends SugarBean {
 
 	const UTC_FORMAT = 'Ymd\THi00\Z';
 
+    /**
+     * This is a depreciated method, please start using __construct() as this method will be removed in a future version
+     *
+     * @see __construct
+     * @deprecated
+     */
+    public function vCal()
+    {
+        $this->__construct();
+    }
+
 	public function __construct()
 	{
 
@@ -77,7 +88,7 @@ class vCal extends SugarBean {
 		$str = '';
 		// First, get the list of IDs.
 		$query = "SELECT id from vcals where user_id='{$user_bean->id}' AND type='vfb' AND deleted=0";
-		$vcal_arr = $this->build_related_list($query, new vCal());
+		$vcal_arr = $this->build_related_list($query, BeanFactory::getBean('vCals'));
 
 		foreach ($vcal_arr as $focus)
 		{
@@ -201,7 +212,7 @@ class vCal extends SugarBean {
         // caches vcal for Activities in Sugar database
         function cache_sugar_vcal_freebusy(&$user_focus)
         {
-            $focus = new vCal();
+            $focus = BeanFactory::getBean('vCals');
             // set freebusy members and save
             $arr = array('user_id'=>$user_focus->id,'type'=>'vfb','source'=>'sugar');
             $focus->retrieve_by_string_fields($arr);

@@ -33,14 +33,13 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 require_once('modules/TimePeriods/Forms.php');
 
 
-$admin = new Administration();
-$admin->retrieveSettings("notify");
+$admin = Administration::getSettings("notify");
 
 global $app_strings;
 global $app_list_strings;
 global $mod_strings;
 
-$focus = new TimePeriod();
+$focus = BeanFactory::getBean('TimePeriods');
 
 if (!isset($_REQUEST['record'])) $_REQUEST['record'] = "";
 

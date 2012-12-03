@@ -403,9 +403,9 @@ class SugarView
             $ss->assign("ONLOAD", 'onload="set_focus()"');
 
         $ss->assign("AUTHENTICATED",isset($_SESSION["authenticated_user_id"]));
-        //BEGIN SUGARCRM flav=pro || flav=sales ONLY
+        //BEGIN SUGARCRM flav=pro ONLY
         $ss->assign("ISPRINT",isset($_REQUEST['print'])); //this will be used by header.tpl to hide the megamenu bar when its 'print' view
-        //END SUGARCRM flav=pro || flav=sales ONLY
+        //END SUGARCRM flav=pro ONLY
 
         // get other things needed for page style popup
         if (isset($_SESSION["authenticated_user_id"])) {
@@ -415,7 +415,7 @@ class SugarView
             $ss->assign("CURRENT_USER_ID", $current_user->id);
 
             // get the last viewed records
-            $tracker = new Tracker();
+            $tracker = BeanFactory::getBean('Trackers');
             $history = $tracker->get_recently_viewed($current_user->id);
             $ss->assign("recentRecords",$this->processRecentRecords($history));
         }
@@ -451,16 +451,6 @@ class SugarView
                 }
             }
 
-            //BEGIN SUGARCRM flav=sales ONLY
-            $ss_admin_whitelist = getSugarSalesAdminWhiteList();
-            if(is_admin($GLOBALS['current_user'])){
-                foreach($fullModuleList as $mod_key => $ignore){
-                    if(!in_array($mod_key, $ss_admin_whitelist['modules'])){
-                        unset($fullModuleList[$mod_key]);
-                    }
-                }
-            }
-            //END SUGARCRM flav=sales ONLY
 
             if(!should_hide_iframes()) {
                 $iFrame = new iFrame();
@@ -636,7 +626,7 @@ class SugarView
 		$ss->assign("homeImage",$homeImage);
         global $mod_strings;
         $mod_strings = $bakModStrings;
-        //BEGIN SUGARCRM flav=sales || flav=pro ONLY
+        //BEGIN SUGARCRM flav=pro ONLY
 		/******************DC MENU*********************/
 		if(!empty($current_user->id) && !$this->_getOption('view_print')){
 			require_once('include/DashletContainer/DCFactory.php');
@@ -674,7 +664,7 @@ class SugarView
 			//$ss->assign('SUGAR_DCMENU', $data['html']);
 		}
 		/******************END DC MENU*********************/
-        //END SUGARCRM flav=sales || flav=pro ONLY
+        //END SUGARCRM flav=pro ONLY
         $headerTpl = $themeObject->getTemplate('header.tpl');
         if (inDeveloperMode() )
             $ss->clear_compiled_tpl($headerTpl);
@@ -1072,14 +1062,14 @@ EOHTML;
         }
         // End Required Image
         $ss->assign('COPYRIGHT',$copyright);
-        //BEGIN SUGARCRM flav=sales || flav=pro ONLY
+        //BEGIN SUGARCRM flav=pro ONLY
         if(isset($GLOBALS['current_user']) && !empty($GLOBALS['current_user']->id))
         {
             require_once('include/DashletContainer/DCFactory.php');
             $dcm = DCFactory::getContainer(null, 'DCMenu');
             $ss->assign('DYNAMICDCACTIONS',$dcm->getPartnerIconMenus());
         }
-        //END SUGARCRM flav=sales || flav=pro ONLY
+        //END SUGARCRM flav=pro ONLY
 
         // here we allocate the help link data
         $help_actions_blacklist = array('Login'); // we don't want to show a context help link here
@@ -1699,9 +1689,9 @@ EOHTML;
 
         $favicon = '';
         if ( $module_favicon )
-            //BEGIN SUGARCRM flav=sales || flav=pro ONLY
+            //BEGIN SUGARCRM flav=pro ONLY
             $favicon = $themeObject->getImageURL($this->module.'_favico.png',false);
-            //END SUGARCRM flav=sales || flav=pro ONLY
+            //END SUGARCRM flav=pro ONLY
             //BEGIN SUGARCRM flav=com ONLY
             $favicon = $themeObject->getImageURL($this->module.'.gif',false);
             //END SUGARCRM flav=com ONLY

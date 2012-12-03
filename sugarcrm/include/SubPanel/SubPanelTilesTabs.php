@@ -96,10 +96,8 @@ class SubPanelTilesTabs extends SubPanelTiles
      */
 	function getTabs($tabs, $showTabs = true, $selectedGroup='All')
     {
-        //BEGIN SUGARCRM flav!=sales ONLY
         //WDong Bug: 12258 "All" tab in the middle of a record's detail view is not localized.
         if($selectedGroup=='All')
-    	//END SUGARCRM flav!=sales ONLY
         	$selectedGroup=translate('LBL_TABGROUP_ALL');
 
     	// Set up a mapping from subpanelID, found in the $tabs list, to the source module name
@@ -172,14 +170,10 @@ class SubPanelTilesTabs extends SubPanelTiles
          * Note that if a tab group already exists with the name 'All',
          * it will be overwritten in this union operation.
          */
-        //BEGIN SUGARCRM flav!=sales ONLY
         if(count($groups) <= 1)
-        //END SUGARCRM flav!=sales ONLY
         	$groups = array(translate('LBL_TABGROUP_ALL') => array('label' => translate('LBL_TABGROUP_ALL'), 'modules' => $tabs));
-        //BEGIN SUGARCRM flav!=sales ONLY
         else
             $groups = array(translate('LBL_TABGROUP_ALL') => array('label' => translate('LBL_TABGROUP_ALL'), 'modules' => $tabs)) + $groups;
-        //END SUGARCRM flav!=sales ONLY
         /* Note - all $display checking and array_intersects with $tabs
          * are now redundant (thanks to GroupedTabStructure), and could
          * be removed for performance, but for now can stay to help ensure

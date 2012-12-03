@@ -176,7 +176,6 @@ function change_state(radiobutton) {
                             <td width="20%">&nbsp;</td>
                             <td width="30%">&nbsp;</td>
                        </tr>
-                       {* //BEGIN SUGARCRM flav!=sales ONLY *}
 				 		<tr id="mail_allow_user">
 				 		     <td width="20%" scope="row">
 									{$MOD.LBL_ALLOW_DEFAULT_SELECTION}&nbsp;
@@ -189,7 +188,6 @@ function change_state(radiobutton) {
 							<td width="20%">&nbsp;</td>
 							<td width="30%">&nbsp;</td>
 				 		</tr>
-                       {* //END SUGARCRM flav!=sales ONLY *}
 				 	</table>
 				 </div>
 			</td>
@@ -219,7 +217,6 @@ function change_state(radiobutton) {
     	<td scope="row" width="17%"></td>
         <td></td>
     </tr>
-    <!-- //BEGIN SUGARCRM flav!=sales ONLY -->
      <tr>
     	<td width="20%" scope="row" valign='top'>
     	   {$MOD.LBL_EMAIL_DEFAULT_DELETE_ATTACHMENTS}:&nbsp;
@@ -233,9 +230,7 @@ function change_state(radiobutton) {
     	</td>
     	<td width="30%"  valign='top'><input type='hidden' name='notify_send_from_assigning_user' value='0'><input name='notify_send_from_assigning_user' value="2" tabindex='1' class="checkbox" type="checkbox" {$notify_send_from_assigning_user}></td>
     </tr>
-    <!-- //END SUGARCRM flav!=sales ONLY -->
 </table>
-<!-- //BEGIN SUGARCRM flav!=sales ONLY -->
 <table width="100%" border="0" cellspacing="0" cellpadding="0" class="edit view">
 			<tr>
 				<th align="left" scope="row" colspan="4"><h4>{$MOD.LBL_SECURITY_TITLE}</h4></th>
@@ -405,7 +400,6 @@ function change_state(radiobutton) {
 </td>
 </tr>
 </table>
-<!-- //END SUGARCRM flav!=sales ONLY -->
 <div id="testOutboundDialog" class="yui-hidden">
     <div id="testOutbound">
 		<table width="100%" border="0" cellspacing="0" cellpadding="0" class="edit view">
@@ -613,7 +607,6 @@ function setDefaultSMTPPort()
     }
 }
 
-//BEGIN SUGARCRM flav!=sales ONLY
 /**
 *  If the outlook options are all set on page load then enable the outlook field so that the user has an indication
 *  that that filter has been applied.
@@ -639,7 +632,6 @@ function setOutlookDefault()
 
 }
 YAHOO.util.Event.onDOMReady(setOutlookDefault);
-//END SUGARCRM flav!=sales ONLY
 notify_setrequired(document.ConfigureSettings);
 
 function changeEmailScreenDisplay(smtptype, clear)

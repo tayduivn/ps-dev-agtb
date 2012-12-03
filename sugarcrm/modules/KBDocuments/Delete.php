@@ -32,8 +32,7 @@ global $sugar_config;
 
 if(!isset($_REQUEST['record']))
 	sugar_die($mod_strings['ERR_DELETE_RECORD']);
-$focus = new KBDocument();
-$focus->retrieve($_REQUEST['record']);
+$focus = BeanFactory::getBean('KBDocuments', $_REQUEST['record']);
 if(!$focus->ACLAccess('Delete')){
 	ACLController::displayNoAccess(true);
 	sugar_cleanup(true);
@@ -44,13 +43,11 @@ $kbdocrevs = KBDocument::get_kbdocument_revisions($_REQUEST['record']);
 //Loop through kbdocument revisions and delete one by one.
 if (!empty($kbdocrevs) && is_array($kbdocrevs)) {
 	foreach($kbdocrevs as $key=>$thiskbid) {
-		$thiskbversion = new KBDocumentRevision();
-		$thiskbversion->retrieve($thiskbid);
+		$thiskbversion = BeanFactory::getBean('KBDocumentRevisions', $thiskbid);
 		//Check for related documentrevision and delete.
         if($thiskbversion->document_revision_id != null){
 	        $docrev_id = $thiskbversion->document_revision_id;
-			$thisdocrev = new DocumentRevision();
-			$thisdocrev->retrieve($docrev_id);
+			$thisdocrev = BeanFactory::getBean('DocumentRevisions', $docrev_id);
 
            	UploadFile::unlink_file($docrev_id,$thisdocrev->filename);
            	UploadFile::unlink_file($docrev_id);
@@ -59,10 +56,7 @@ if (!empty($kbdocrevs) && is_array($kbdocrevs)) {
         }
         //Also check for related kbcontent and delete.
         if($thiskbversion->kbcontent_id != null){
-	        $kbcont_id = $thiskbversion->kbcontent_id;
-			$thiskbcont = new KBContent();
-			$thiskbcont->retrieve($kbcont_id);
-			$thiskbcont->mark_deleted($kbcont_id);
+			BeanFactory::deleteBean('KBContents', $thiskbversion->kbcontent_id);
         }
 		//Finally delete the kbdocument revision.
 	   $thiskbversion->mark_deleted($thiskbversion->id);

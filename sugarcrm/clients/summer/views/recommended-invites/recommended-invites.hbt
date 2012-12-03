@@ -1,5 +1,5 @@
 {{#if data}}
-<div class="block thumbnail padded">
+<div class="block thumbnail">
     <h4 data-tour="tour-recommended-invites">Invite recommendations</h4>
     These are the recommended invites:
     <div>

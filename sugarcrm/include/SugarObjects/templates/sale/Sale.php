@@ -31,6 +31,16 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  require_once('include/SugarObjects/templates/basic/Basic.php');
  class Sale extends Basic{
 
+    /**
+     * This is a depreciated method, please start using __construct() as this method will be removed in a future version
+     *
+     * @see __construct
+     * @deprecated
+     */
+    public function Sale()
+    {
+        $this->__construct();
+    }
  	public function __construct(){
  		parent::__construct();
 
@@ -73,8 +83,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 		if(isset($this->amount) && !number_empty($this->amount)){
             if (!number_empty($this->currency_id))
 			{
-                $currency = new Currency();
-                $currency->retrieve($this->currency_id);
+                $currency = BeanFactory::getBean('Currencies', $this->currency_id);
                 $this->amount_usdollar = $currency->convertToDollar($this->amount);
 			}
 			else 
@@ -86,4 +95,3 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 		return parent::save($check_notify);
  	}
  }
-?>

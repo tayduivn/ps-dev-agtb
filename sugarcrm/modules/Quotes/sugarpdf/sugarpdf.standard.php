@@ -109,8 +109,7 @@ class QuotesSugarpdfStandard extends QuotesSugarpdfQuotes{
         //retrieve the sales person's first name
         global $beanFiles;
         require_once($beanFiles['User']);
-        $rep = new User;
-        $rep->retrieve($this->bean->assigned_user_id);
+        $rep = BeanFactory::getBean('Users', $this->bean->assigned_user_id);
 
         $quote[0]['TITLE'] = $mod_strings['LBL_PDF_QUOTE_NUMBER'];
         $quote[1]['TITLE'] = $mod_strings['LBL_PDF_QUOTE_DATE'];
@@ -172,7 +171,7 @@ class QuotesSugarpdfStandard extends QuotesSugarpdfQuotes{
         $this->writeHTMLTable($addressBS, false, $this->addressOptions);
 
         require_once('modules/Currencies/Currency.php');
-        $currency = new Currency();
+        $currency = BeanFactory::getBean('Currencies');
         ////    settings
         $format_number_array = array(
             'currency_symbol' => true,

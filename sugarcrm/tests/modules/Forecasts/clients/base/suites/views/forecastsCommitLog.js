@@ -28,7 +28,11 @@ describe("The forecastCommitted view", function(){
         SugarTest.loadFile("../sidecar/src/utils", "currency", "js", function(d) { return eval(d); });
         SugarTest.loadFile("../sidecar/src/utils", "date", "js", function(d) { return eval(d); });
         SugarTest.loadFile("../modules/Forecasts/clients/base/lib", "ForecastsUtils", "js", function(d) { return eval(d); });
-
+        view.context = {};
+        view.context.forecasts = {};
+        view.context.forecasts.config = new (Backbone.Model.extend({
+            "defaults": fixtures.metadata.modules.Forecasts.config
+        }));
         view.render = function() {};
     });
 
@@ -141,11 +145,7 @@ describe("The forecastCommitted view", function(){
         //bindDataChange redefines this.collection to be context.forecasts.committed
         it("collection.on should have been called with 'reset change'", function(){
             expect(view.collection.on).toHaveBeenCalledWith("reset change");
-        });
-        
-        it("context.forecasts.on should have been called with forecasts:committed:saved", function(){
-            expect(view.context.forecasts.on).toHaveBeenCalledWith("forecasts:committed:saved");
-        });
+        });               
     });
     
     describe("Forecasts Commit Log Reset (resetCommittedLog)", function(){

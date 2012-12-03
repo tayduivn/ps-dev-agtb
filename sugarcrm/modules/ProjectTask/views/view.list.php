@@ -65,7 +65,7 @@ class ProjectTaskViewList extends ViewList
 
         if(!empty($_REQUEST['saved_search_select']) && $_REQUEST['saved_search_select']!='_none') {
             if(empty($_REQUEST['button']) && (empty($_REQUEST['clear_query']) || $_REQUEST['clear_query']!='true')) {
-                $this->saved_search = loadBean('SavedSearch');
+                $this->saved_search = BeanFactory::getBean('SavedSearch');
                 $this->saved_search->retrieveSavedSearch($_REQUEST['saved_search_select']);
                 $this->saved_search->populateRequest();
             }

@@ -56,7 +56,7 @@ $args = array();
 //}
 if ($_REQUEST['action'] == 'index') {
 if ( isset($_REQUEST['id'])) {
-	$saved_report_seed = new SavedReport();
+	$saved_report_seed = BeanFactory::getBean('Reports');
 	$saved_report_seed->disable_row_level_security = true;
 
 	$saved_report_seed->retrieve($_REQUEST['id'], false);
@@ -120,7 +120,6 @@ $args['upper_left'] = '';
 control($args);
 
 
-//BEGIN SUGARCRM flav!=sales ONLY
 // show report interface
 if (isset($_REQUEST['page'] ) && $_REQUEST['page'] == 'report')
 {
@@ -143,7 +142,6 @@ if (isset($_REQUEST['page'] ) && $_REQUEST['page'] == 'report')
 // show report lists
 else
 {
-//END SUGARCRM flav!=sales ONLY
 if ( empty($_REQUEST['search_form_only']) ) {
     $params = array();
     if(!empty($_REQUEST['favorite'])) {
@@ -157,14 +155,11 @@ if ( empty($_REQUEST['search_form_only']) ) {
     echo getClassicModuleTitle("Reports", $params, true, '', $createURL) . "<div class='clear'></div>";
 }
 
-include(get_custom_file_if_exists("modules/Reports/ListView.php"));
-//BEGIN SUGARCRM flav!=sales ONLY
+include SugarAutoLoader::existingCustomOne("modules/Reports/ListView.php");
 }
-//END SUGARCRM flav!=sales ONLY
 
 }
 function checkACLForEachColInArr ($arr, $full_table_list, $is_owner = 1){
-	//BEGIN SUGARCRM flav!=sales ONLY
 	foreach ($arr as $column) {
 		$col_module = $full_table_list[$column['table_key']]['module'];
 		//todo: check the last param of this call (is_owner)
@@ -172,7 +167,6 @@ function checkACLForEachColInArr ($arr, $full_table_list, $is_owner = 1){
 			return false;
 		}
 	}
-	//END SUGARCRM flav!=sales ONLY
 	return true;
 }
 
@@ -195,11 +189,9 @@ function checkACLForEachColForFilter($filters, $full_table_list, $is_owner, $has
 		}
 		else {
 			$col_module = $full_table_list[$current_filter['table_key']]['module'];
-			//BEGIN SUGARCRM flav!=sales ONLY
 			if(!SugarACL::checkField($col_module, $current_filter['name'], $is_owner?array("onwer_override" => true):array())) {
 				return false;
 			} // if
-			//END SUGARCRM flav!=sales ONLY
 		}
 		$i++;
 	} // while
@@ -236,8 +228,8 @@ function checkSavedReportACL(&$reporter,&$args) {
 			$col_module = $full_table_list[$column['table_key']]['module'];
             $ACLenabled = false;
 			if(!isset($hashModules[$col_module])) {
-               $b = loadBean($col_module);
-               $ACLenabled = $b->bean_implements('ACL');
+               $b = BeanFactory::getBean($col_module);
+			   $ACLenabled = $b->bean_implements('ACL');
                $hashModules[$col_module] = !empty($b) ? $b->acltype : 'module';
 			}
 			$type = $hashModules[$col_module];
@@ -279,8 +271,7 @@ function checkSavedReportACL(&$reporter,&$args) {
 function check_report_perms($report_id)
 {
 	global $current_user;
-	$saved = new SavedReport();
-	$saved->retrieve($report_id);
+	$saved = BeanFactory::getBean('Reports', $report_id);
 	if (! is_admin($current_user) && $saved->assigned_user_id != $current_user->id)
 	{
 		return false;
@@ -325,8 +316,7 @@ function control(&$args)
 					return;
 				}
 
-        $saved_report = new SavedReport();
-        $saved_report->mark_deleted($_REQUEST['delete_report_id']);
+        BeanFactory::deleteBean('Reports', $_REQUEST['delete_report_id']);
   }
 
   if (isset($_REQUEST['publish']) )
@@ -337,7 +327,7 @@ function control(&$args)
 					return;
 				}
 
-        $saved_report = new SavedReport();
+        $saved_report = BeanFactory::getBean('Reports');
         $result = 0;
 
         $saved_report = $saved_report->retrieve($_REQUEST['publish_report_id'], false);

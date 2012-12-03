@@ -54,8 +54,8 @@ class WorkFlowBugsTest extends Sugar_PHPUnit_Framework_TestCase
              if(file_exists($test_file))
              {
            		copy($test_file, $target_file);
+                SugarAutoLoader::addToMap($target_file, false);
              }
-             SugarAutoLoader::addToMap($target_file, false);
         }
 
         if(file_exists('custom/modules/Accounts/logic_hooks.php'))
@@ -165,7 +165,7 @@ class WorkFlowBugsTest extends Sugar_PHPUnit_Framework_TestCase
         } else {
             SugarAutoLoader::unlink('custom/modules/Accounts/logic_hooks.php');
         }
-
+        SugarAutoLoader::saveMap();
         $sql = "DELETE FROM workflow where id in ('436cfc81-1926-5ba6-cfec-4c72d7b861c4', '43406320-49b6-6503-0074-4c73532a4325')";
         $GLOBALS['db']->query($sql);
 

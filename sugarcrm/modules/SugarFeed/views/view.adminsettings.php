@@ -50,8 +50,7 @@ class ViewAdminsettings extends SugarView
     {
         global $mod_strings, $app_strings;
         
-        $admin = new Administration();
-        $admin->retrieveSettings();
+        $admin = Administration::getSettings();
         
         // Handle posts
         if ( !empty($_REQUEST['process']) ) {

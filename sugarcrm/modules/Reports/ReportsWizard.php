@@ -213,7 +213,7 @@ else if (isset($_REQUEST['save_report']) && ($_REQUEST['save_report'] == 'on')) 
 	}
 
 	if (!empty($_REQUEST['id'])) {
-		$saved_report_seed = new SavedReport();
+		$saved_report_seed = BeanFactory::getBean('Reports');
 		$saved_report_seed->disable_row_level_security = true;
 		$saved_report_seed->retrieve($_REQUEST['id'], false);
 //		$args['reporter'] = new Report($saved_report_seed->content);
@@ -286,8 +286,7 @@ else if (isset($_REQUEST['save_report']) && ($_REQUEST['save_report'] == 'on')) 
 	}
 }
 else if (isset($_REQUEST['is_delete']) && ($_REQUEST['is_delete'] == '1')) {
-    $report = new SavedReport();
-    $report->retrieve($_REQUEST['id']);
+    $report = BeanFactory::getBean('Reports', $_REQUEST['id']);
     if($report->ACLAccess('Delete')){
         $report->mark_deleted($_REQUEST['id']);
 		header('location:index.php?action=index&module=Reports');
@@ -295,7 +294,7 @@ else if (isset($_REQUEST['is_delete']) && ($_REQUEST['is_delete'] == '1')) {
 
 }
 else if (!empty($_REQUEST['id'])) {
-	$saved_report_seed = new SavedReport();
+	$saved_report_seed = BeanFactory::getBean('Reports');
 	$saved_report_seed->disable_row_level_security = true;
 	$saved_report_seed->retrieve($_REQUEST['id'], false);
 	$args['reporter'] = new Report($saved_report_seed->content);

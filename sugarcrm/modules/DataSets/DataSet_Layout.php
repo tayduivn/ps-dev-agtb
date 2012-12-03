@@ -30,17 +30,8 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * $Id: DataSet_Layout.php 45763 2009-04-01 19:16:18Z majed $
  * Description:
  ********************************************************************************/
-
-
-
-
 require_once('modules/DataSets/DataSet_Attribute.php');
-
-
-
-
 require_once('modules/DataSets/ScalarFormat.php');
-
 
 // DataSet_Layout is used to store customer information.
 class DataSet_Layout extends SugarBean {
@@ -104,6 +95,17 @@ class DataSet_Layout extends SugarBean {
         ,"start_axis" => "x"
         );
 
+
+    /**
+     * This is a depreciated method, please start using __construct() as this method will be removed in a future version
+     *
+     * @see __construct
+     * @deprecated
+     */
+    public function DataSet_Layout()
+    {
+        $this->__construct();
+    }
 
     public function __construct() {
         global $dictionary;
@@ -175,8 +177,8 @@ class DataSet_Layout extends SugarBean {
     return $the_where;
 }
 
-	
-	function construct($parent_id, $layout_type, $list_order_x, $display_type, $parent_value){	
+
+	function construct($parent_id, $layout_type, $list_order_x, $display_type, $parent_value){
 
 	//used when enabling custom layout on dataset
 		$this->parent_id = $parent_id;
@@ -221,22 +223,16 @@ class DataSet_Layout extends SugarBean {
 				 	";
 		$result = $this->db->query($query,true," Error retrieving layout records for this data set: ");
 
-		//if($this->db->getRowCount($result) > 0){
-		
 			// Print out the calculation column info
 			while (($row = $this->db->fetchByAssoc($result)) != null) {
-			//while($row = $this->db->fetchByAssoc($result)){
-	
 				//Mark all attributes deleted
-				$attribute_object = new DataSet_Attribute();
-				$attribute_object->mark_deleted($row['id']);
-				//Mark all layout rows deleted
-		
+				BeanFactory::deleteBean('DataSet_Attribute', $row['id']);
+
 				//Remove the layout records
-				$this->mark_deleted($row['id']);	
-			
+				$this->mark_deleted($row['id']);
+
 			//end while
-			}	
+			}
 		//end if rows exist
 		//}
 
@@ -244,25 +240,25 @@ class DataSet_Layout extends SugarBean {
 	}
 
 	function get_layout_array($data_set_id, $hide_columns=false){
-	
-		
+
+
 		//if this is the final report then hide_columns should be set to true
 		if($hide_columns==true){
 			$hide_columns_where = "AND (".$this->table_name.".hide_column='0' OR ".$this->table_name.".hide_column='off' OR ".$this->table_name.".hide_column IS NULL )";
 		} else {
 			$hide_columns_where = "";
-		}		
-		
+		}
+
 		$layout_array = array();
-	
-		//gets custom_layout column_array	
+
+		//gets custom_layout column_array
 		//Select all layout records for this data set
 		$query = 	"SELECT $this->table_name.* from $this->table_name
 					 where $this->table_name.parent_id='$data_set_id'
 					 AND $this->table_name.deleted='0'
 					 ".$hide_columns_where."
 					 ORDER BY list_order_x
-					 ";	
+					 ";
 
 		$result = $this->db->query($query,true," Error retrieving layout records for this data set: ");
 
@@ -271,7 +267,7 @@ class DataSet_Layout extends SugarBean {
 			//while($row = $this->db->fetchByAssoc($result)){
 				//Get head attribute information
 				$head_attribute_id = $this->get_attribute_id("Head", $row['id']);
-				$head_att_object = new DataSet_Attribute();
+				$head_att_object = BeanFactory::getBean('DataSet_Attribute');
 				if(!empty($head_attribute_id) && $head_attribute_id!=""){
 					$head_att_object->retrieve($head_attribute_id);
 ////////////////Head Specific Information
@@ -294,7 +290,7 @@ class DataSet_Layout extends SugarBean {
 
                 //Get body attribute information
                 $body_attribute_id = $this->get_attribute_id("Body", $row['id']);
-                $body_att_object = new DataSet_Attribute();
+                $body_att_object = BeanFactory::getBean('DataSet_Attribute');
                 if(!empty($body_attribute_id) && $body_attribute_id!=""){
                     $body_att_object->retrieve($body_attribute_id);
 
@@ -372,11 +368,7 @@ class DataSet_Layout extends SugarBean {
 
     function get_att_object($type){
         $attribute_id = $this->get_attribute_id($type);
-        $attribute_object = new DataSet_Attribute();
-        if(!empty($attribute_id) && $attribute_id!=""){
-            $attribute_object->retrieve($attribute_id);
-        }
-
+        $attribute_object = BeanFactory::getBean('DataSet_Attribute', $attribute_id);
         return $attribute_object;
     //end function get_att_object
     }

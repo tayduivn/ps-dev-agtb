@@ -115,8 +115,7 @@ class AuthenticationController
 				$GLOBALS['current_user']->call_custom_logic('after_login');
 
 			// Check for running Admin Wizard
-			$config = new Administration();
-			$config->retrieveSettings();
+            $config = Administration::getSettings();
 		    if ( is_admin($GLOBALS['current_user']) && empty($config->settings['system_adminwizard']) && (empty($_REQUEST['action']) || $_REQUEST['action'] != 'AdminWizard') ) {
 
                 if ( isset($PARAMS['noRedirect']) && $PARAMS['noRedirect'] == true ) {

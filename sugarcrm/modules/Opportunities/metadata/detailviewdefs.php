@@ -65,9 +65,7 @@ $viewdefs['Opportunities']['DetailView'] = array(
 	        
 	        array (
 	        	'next_step',
-	            //BEGIN SUGARCRM flav!=sales ONLY
 	            'campaign_name'
-	        	//END SUGARCRM flav!=sales ONLY
 	        ),
 	        array(
 	            array(

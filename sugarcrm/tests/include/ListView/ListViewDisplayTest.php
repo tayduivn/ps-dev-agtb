@@ -469,7 +469,6 @@ class ListViewDisplayTest extends Sugar_PHPUnit_Framework_TestCase
 
         $this->assertContains("\"foobarfoobar\",\"&return_module=foo&return_action=bar&return_id=1\");}",$output);
     }
-    //BEGIN SUGARCRM flav!=sales ONLY
     public function testBuildMergeLinkWhenUserDisabledMailMerge()
     {
         $this->_lvd->seed = new stdClass;
@@ -548,7 +547,6 @@ class ListViewDisplayTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertContains("input.setAttribute ( 'name' , 'module' );			    input.setAttribute ( 'value' , 'foobarfoobar' );",$output);
         $this->assertContains("input.setAttribute ( 'name' , 'current_query_by_page' );			    input.setAttribute ( 'value', '".base64_encode(serialize($_REQUEST))."' );",$output);
     }
-    //END SUGARCRM flav!=sales ONLY
 
     public function testDisplayEndWhenNotShowingMassUpdateForm()
     {

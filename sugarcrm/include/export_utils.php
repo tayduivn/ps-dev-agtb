@@ -257,7 +257,7 @@ function getExportContentFromResult(
                   && !empty($focus->field_name_map[$fields_array[$key]]['rname']) && $focus->field_name_map[$fields_array[$key]]['rname'] == 'user_name'
                 ){
                    global $locale;
-                   $userFocus = new User();
+                   $userFocus = BeanFactory::getBean('Users');
                    $userFocus->retrieve_by_string_fields(array('user_name' => $value ));
                    if ( !empty($userFocus->id) ) {
                        $value = $locale->getLocaleFormattedName($userFocus->first_name, $userFocus->last_name);
@@ -689,6 +689,7 @@ function get_field_order_mapping($name='', $reorderArr = '', $exclude = true){
                 return $newReorder;
             }
 
+            //get an instance of the bean
             $focus = BeanFactory::getBean($_REQUEST['module']);
 
             //if module is of type person

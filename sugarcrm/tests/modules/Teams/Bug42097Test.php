@@ -47,8 +47,7 @@ class Bug42097Test extends Sugar_PHPUnit_Framework_TestCase
      */    
     public function testRemoveUserFromTeam() 
     {
-	   $team = new Team();
-	   $team->retrieve($this->testUser->getPrivateTeamID());
+	   $team = BeanFactory::getBean('Teams', $this->testUser->getPrivateTeamID());
 	   $exceptionThrown = false;
 	   try {
 	     $team->remove_user_from_team($this->testUser->id);

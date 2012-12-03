@@ -32,8 +32,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  */
 require_once('include/recaptcha/recaptchalib.php');
 
-$admin=new Administration();
-$admin->retrieveSettings('captcha');
+$admin = Administration::getSettings('captcha');
 if($admin->settings['captcha_on']=='1' && !empty($admin->settings['captcha_private_key'])){
 	$privatekey = $admin->settings['captcha_private_key'];
 }else

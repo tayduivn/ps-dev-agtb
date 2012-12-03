@@ -46,6 +46,7 @@ class RestCurrentUserTest extends RestTestBase {
         //BEGIN SUGARCRM flav=pro ONLY
         $this->assertNotEmpty($restReply['reply']['current_user']['primary_team_id']);
         $this->assertNotEmpty($restReply['reply']['current_user']['primary_team_name']);
+        $this->assertNotEmpty($restReply['reply']['current_user']['default_teams']);
         //END SUGARCRM flav=pro ONLY
     }
 
@@ -76,6 +77,23 @@ class RestCurrentUserTest extends RestTestBase {
         $this->assertEquals('m/d/Y',$restReply['reply']['current_user']['datepref'],"trd: Date pref is not the configured value");
         $this->assertEquals('H:i a',$restReply['reply']['current_user']['timepref'],"trd: Time pref is not the configured value");
     }
+    
+    /**
+     * @group rest
+     */
+    public function testAclUsers() {
+      $restReply = $this->_restCall("me");
+      // verify the user is not the admin of the users module
+      $userAcl = $restReply['reply']['current_user']['acl']['Users'];
+      $this->assertEquals('no', $userAcl['admin'], "This user is the admin and should not be");
+      // log in as an admin
+      $GLOBALS['current_user']->is_admin = 1;
+      $GLOBALS['current_user']->save();
+      $restReply = $this->_restCall("me");
+      // verify the user is the admin of the users module
+      $userAcl = $restReply['reply']['current_user']['acl']['Users'];
+      $this->assertEquals('yes', $userAcl['admin'], "This user is not the admin and they should be");
+    } 
 
     /**
      * @group rest

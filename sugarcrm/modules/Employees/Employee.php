@@ -89,13 +89,24 @@ class Employee extends Person {
 
 	var $new_schema = true;
 
+    /**
+     * This is a depreciated method, please start using __construct() as this method will be removed in a future version
+     *
+     * @see __construct
+     * @deprecated
+     */
+    public function Employee()
+    {
+        $this->__construct();
+    }
+
 	public function __construct() {
 		parent::__construct();
 		$this->setupCustomFields('Users');
 		//BEGIN SUGARCRM flav=pro ONLY
 		$this->disable_row_level_security =true;
 		//END SUGARCRM flav=pro ONLY
-		$this->emailAddress = new SugarEmailAddress();
+		$this->emailAddress = BeanFactory::getBean('EmailAddresses');
 	}
 
 
@@ -174,7 +185,7 @@ class Employee extends Person {
 	function update_team_memberships($old_reports_to_id)
 	{
 
-		$team = new Team();
+		$team = BeanFactory::getBean('Teams');
 		$team->user_manager_changed($this->id, $old_reports_to_id, $this->reports_to_id);
 	}
 	//END SUGARCRM flav=pro ONLY

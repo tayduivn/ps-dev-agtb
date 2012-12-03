@@ -549,7 +549,7 @@ function commitHandleReminders($skippedFiles, $path='') {
 		if($_REQUEST['addTaskReminder'] == 'remind') {
 			logThis('Adding Task for admin for manual merge.', $path);
 
-			$task = new Task();
+			$task = BeanFactory::getBean('Tasks');
 			$task->name = $mod_strings['LBL_UW_COMMIT_ADD_TASK_NAME'];
 			$task->description = $desc;
 			$task->date_due = $nowDate;
@@ -569,7 +569,7 @@ function commitHandleReminders($skippedFiles, $path='') {
 		if($_REQUEST['addEmailReminder'] == 'remind') {
 			logThis('Sending Reminder for admin for manual merge.', $path);
 
-			$email = new Email();
+			$email = BeanFactory::getBean('Emails');
 			$email->assigned_user_id = $current_user->id;
 			$email->name = $mod_strings['LBL_UW_COMMIT_ADD_TASK_NAME'];
 			$email->description = $desc;
@@ -715,6 +715,9 @@ function upgradeUWFiles($file) {
     // users
     if(file_exists("$from_dir/modules/Users")) {
         $allFiles[] = findAllFiles("$from_dir/modules/Users", $allFiles);
+    }
+    if(file_exists("$from_dir/include/utils/autoloader.php")) {
+    	$allFiles[] = "$from_dir/include/utils/autoloader.php";
     }
 
     upgradeUWFilesCopy($allFiles, $from_dir);
@@ -2924,13 +2927,12 @@ function repairDBForUpgrade($execute=false,$path=''){
 	global $dictionary;
 	set_time_limit(3600);
 
-	$db = &DBManagerFactory::getInstance();
+	$db = DBManagerFactory::getInstance();
 	$sql = '';
 	VardefManager::clearVardef();
 	require_once('include/ListView/ListView.php');
 	foreach ($beanFiles as $bean => $file) {
-		require_once ($file);
-		$focus = new $bean ();
+		$focus = BeanFactory::newBeanByName($bean);
 		$sql .= $db->repairTable($focus, $execute);
 
 	}
@@ -3010,8 +3012,7 @@ function upgradeDashletsForSalesAndMarketing() {
     $result = $db->query("SELECT id FROM users where deleted = '0'");
 
    	while($row = $db->fetchByAssoc($result)) {
-	      $current_user = new User();
-	      $current_user->retrieve($row['id']);
+	      $current_user = BeanFactory::getBean('Users', $row['id']);
 
 	      //Set the user theme to be 'Sugar' theme since this is run for CE flavor conversions
 	      $current_user->setPreference('user_theme', 'Sugar', 0, 'global');
@@ -3055,7 +3056,7 @@ function upgradeDashletsForSalesAndMarketing() {
 		    }
 
 		    foreach ($defaultSalesChartDashlets as $salesChartDashlet=>$module) {
-				$savedReport = new SavedReport();
+				$savedReport = BeanFactory::getBean('Reports');
 				$reportId = $savedReport->retrieveReportIdByName($salesChartDashlet);
 				// clint - fixes bug #20398
 				// only display dashlets that are from visibile modules and that the user has permission to list
@@ -3089,7 +3090,7 @@ function upgradeDashletsForSalesAndMarketing() {
 			// BEGIN 'Marketing Page'
 			$marketingDashlets = array();
 		    foreach ($defaultMarketingChartDashlets as $marketingChartDashlet=>$module){
-				$savedReport = new SavedReport();
+				$savedReport = BeanFactory::getBean('Reports');
 				$reportId = $savedReport->retrieveReportIdByName($marketingChartDashlet);
 				// clint - fixes bug #20398
 				// only display dashlets that are from visibile modules and that the user has permission to list
@@ -3146,7 +3147,7 @@ function upgradeDashletsForSalesAndMarketing() {
 		    // BEGIN 'Support Page'- bug46195
 			$supportDashlets = array();
 		    foreach ($defaultSupportChartDashlets as $supportChartDashlet=>$module){
-				$savedReport = new SavedReport();
+				$savedReport = BeanFactory::getBean('Reports');
 				$reportId = $savedReport->retrieveReportIdByName($supportChartDashlet);
 				$myDashlet = new MySugar($module);
 				$displayDashlet = $myDashlet->checkDashletDisplay();
@@ -3291,8 +3292,7 @@ function upgradeUserPreferences() {
     $result = $db->query("SELECT id FROM users where deleted = '0'");
    	while($row = $db->fetchByAssoc($result))
     {
-        $current_user = new User();
-        $current_user->retrieve($row['id']);
+        $current_user = BeanFactory::getBean('Users', $row['id']);
 
         // get the user's name locale format, check if it's in our list, add it if it's not, keep it as user's default
         $currentUserNameFormat = $current_user->getPreference('default_locale_name_format');
@@ -3412,7 +3412,7 @@ function upgradeUserPreferences() {
 		$category = 'tracker';
 		$value = 1;
 		$key = array('Tracker', 'tracker_sessions','tracker_perf','tracker_queries');
-		$admin = new Administration();
+		$admin = BeanFactory::getBean('Administration');
 		foreach($key as $k){
 			$admin->saveSetting($category, $k, $value);
 		}
@@ -3505,15 +3505,14 @@ function migrate_sugar_favorite_reports(){
     }
 
     foreach($active_users as $user_id){
-        $user = new User();
-        $user->retrieve($user_id);
+        $user = BeanFactory::getBean('Users', $user_id);
 
         $user_favorites = $user->getPreference('favorites', 'Reports');
         if(!is_array($user_favorites)) $user_favorites = array();
 
         if(!empty($user_favorites)){
             foreach($user_favorites as $report_id => $bool){
-                $fav = new SugarFavorites();
+                $fav = BeanFactory::getBean('SugarFavorites');
                 $record = SugarFavorites::generateGUID('Reports', $report_id, $user_id);
                 if(!$fav->retrieve($record, true, false)){
                         $fav->new_with_id = true;
@@ -3626,7 +3625,7 @@ function upgradeModulesForTeamsets($filter=array()) {
 	        if($moduleName == 'TeamMemberships' || $moduleName == 'ForecastOpportunities'){
                 continue;
             }
-			$bean = loadBean($moduleName);
+			$bean = BeanFactory::getBean($moduleName);
 			if(empty($bean) ||
 			   empty($bean->table_name)) {
 			   continue;
@@ -3642,11 +3641,11 @@ function upgradeModulesForTeamsets($filter=array()) {
 	} //foreach
 
     //Upgrade users table
-	$bean = loadBean('Users');
+	$bean = BeanFactory::getBean('Users');
    	upgradeTeamColumn($bean, 'default_team');
 	$result = $GLOBALS['db']->query("SELECT id FROM teams where deleted=0");
 	while($row = $GLOBALS['db']->fetchByAssoc($result)) {
-	      $teamset = new TeamSet();
+	      $teamset = BeanFactory::getBean('TeamSets');
 	      $teamset->addTeams($row['id']);
 	}
 }
@@ -3773,9 +3772,8 @@ function upgradeModulesForTeam() {
     	$assoc = '';
   		if(!$assoc = $GLOBALS['db']->fetchByAssoc($results2)) {
   			//if team does not exist, then lets create the team for this user
-  			$team = new Team();
-			$user = new User();
-  			$user->retrieve($row['id']);
+  			$team = BeanFactory::getBean('Teams');
+			$user = BeanFactory::getBean('Users', $row['id']);
 			$team->new_user_created($user);
 			$team_id = $team->id;
   		}else{
@@ -3869,8 +3867,7 @@ function upgradeModulesForTeam() {
 			$assigned_user_id = $row['assigned_user_id'];
 			$record_id = $row['id'];
 
-			$current_user = new User();
-			$current_user->retrieve($row['assigned_user_id']);
+			$current_user = BeanFactory::getBean('Users', $row['assigned_user_id']);
 
 			if(!empty($content['dashlets']) && !empty($content['pages'])){
 				$originalDashlets = $content['dashlets'];
@@ -4421,6 +4418,9 @@ function upgradeSugarCache($file)
 	if(file_exists("$from_dir/include/utils/sugar_file_utils.php")) {
 		$allFiles[] = "$from_dir/include/utils/sugar_file_utils.php";
 	}
+	if(file_exists("$from_dir/include/utils/autoloader.php")) {
+		$allFiles[] = "$from_dir/include/utils/autoloader.php";
+	}
 
 	foreach($allFiles as $k => $file) {
 		$destFile = str_replace($from_dir."/", "", $file);
@@ -4769,12 +4769,12 @@ function repairUpgradeHistoryTable()
  * addPdfManagerTemplate
  *
  * This method adds default PDF Template in PDF Manager
- */  
+ */
 function addPdfManagerTemplate() {
     logThis('Begin addPdfManagerTemplate');
-  
+
     include 'install/seed_data/PdfManager_SeedData.php';
-    
+
     logThis('End addPdfManagerTemplate');
 }
 

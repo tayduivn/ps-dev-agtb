@@ -1,4 +1,4 @@
-<div class="block thumbnail padded">
+<div class="block thumbnail">
     <h4 data-tour="tour-recommended-experts">Recommended Experts</h4>
     <div class="recommended-experts-input-wrapper">
         <input class="span9 job-title" type="text" data-provide="typeahead" placeholder="Type a job title">

@@ -42,7 +42,7 @@ class MyQuotesDashlet extends DashletGeneric {
         if(empty($def['title'])) $this->title = translate('LBL_LIST_MY_QUOTES', 'Quotes');
         $this->searchFields = $dashletData['MyQuotesDashlet']['searchFields'];
         $this->columns = $dashletData['MyQuotesDashlet']['columns'];
-        $this->seedBean = new Quote();        
+        $this->seedBean = BeanFactory::getBean('Quotes');        
     }
 }
 

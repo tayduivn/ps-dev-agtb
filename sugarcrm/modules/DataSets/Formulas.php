@@ -26,32 +26,25 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * governing these rights and limitations under the License.  Portions created
  * by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
-/*********************************************************************************
- * $Id: Formulas.php 45763 2009-04-01 19:16:18Z majed $
- * Description:  
- ********************************************************************************/
-
-
-
 // We suggest that if you wish to modify an existing formula, copy & paste the existing formula file to a new file
 // this will prevent conflicts with future upgrades.
 
-// To add a new formula, you will need to register the new file below and in the pricing_formula_dom array 
+// To add a new formula, you will need to register the new file below and in the pricing_formula_dom array
 // in modules/ProductTemplates/language/<lang>.lang.php
 $price_formulas = array(
 	//$discount_price manually entered by admin
 	'Fixed'=>'modules/ProductTemplates/formulas/price_fixed.php'
 
-	//Profit Margin: $discount_price = $cost_price * 100 /(100 - $factor) 
+	//Profit Margin: $discount_price = $cost_price * 100 /(100 - $factor)
 	,'ProfitMargin'=>'modules/ProductTemplates/formulas/price_profit_margin.php'
 
-	//Percentage Markup: $discount_price = $cost_price x (1 + $percentage) 
+	//Percentage Markup: $discount_price = $cost_price x (1 + $percentage)
 	,'PercentageMarkup'=>'modules/ProductTemplates/formulas/price_cost_markup.php'
 
-	//Percentage Discount: $discount_price = $list_price x (1 - $percentage) 
+	//Percentage Discount: $discount_price = $list_price x (1 - $percentage)
 	,'PercentageDiscount'=>'modules/ProductTemplates/formulas/price_list_discount.php'
 
-	//List: $discount_price = $list_price  
+	//List: $discount_price = $list_price
 	,'IsList'=>'modules/ProductTemplates/formulas/price_list.php'
 	);
 
@@ -69,7 +62,7 @@ function get_formula_details($pricing_factor) {
 }
 
 function get_edit($formulas, $formula) {
-	$the_script = '';	
+	$the_script = '';
 	//begin by creating all the divs for each formula's price factor
 	foreach ($formulas as $name=>$content) {
 		if ($name == $formula) {
@@ -86,13 +79,13 @@ function get_edit($formulas, $formula) {
 	foreach ($formulas as $name=>$content) {
 		$the_script .= "	this.document.getElementById('edit_$name').style.display='none'; \n";
 	}
-	
-	//then turn on a new pricing factor div based on the selected formula 
+
+	//then turn on a new pricing factor div based on the selected formula
 	$the_script .= "	switch(this.document.getElementById('pricing_formula').value) { \n";
 	foreach ($formulas as $name=>$content) {
-		$the_script .= "		case '$name': \n"; 
+		$the_script .= "		case '$name': \n";
 		$the_script .= "			this.document.getElementById('edit_$name').style.display='inline'; \n";
-		$the_script .= "		  	return true; \n"; 
+		$the_script .= "		  	return true; \n";
 	}
 	$the_script .= "		} \n";
 	$the_script .= "} \n";
@@ -103,19 +96,19 @@ function get_edit($formulas, $formula) {
 		$the_script .= "		case '$name': \n";
 		$the_script .= "			${content['formula_js']} \n";
 		$the_script .= "			this.document.getElementById('pricing_factor').value = this.document.getElementById('pricing_factor_$name').value; \n";
-		$the_script .= "		  	return true; \n"; 
+		$the_script .= "		  	return true; \n";
 }
 	$the_script .= "		} \n";
 	$the_script .= "} \n";
 
 	$the_script .= "//  End -->\n</script> \n\n";
-	
+
 	return $the_script;
-}  
+}
 
 function get_detail($formula, $factor) {
 	global $mod_strings, $price_formulas;
-	if (isset($price_formulas[$formula])) 
+	if (isset($price_formulas[$formula]))
 	{
 		require_once($price_formulas[$formula]);
 		$focus = new $formula;

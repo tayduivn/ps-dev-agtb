@@ -35,7 +35,7 @@ EOQ;
 	
 	}else{
 	
-	$fmd = new FieldsMetaData();
+	$fmd = BeanFactory::getBean('EditCustomFields');
 	
 	echo $mod_strings['LBL_ICF_DROPPING'] . '<br>';
 	$lines = file($_FILES['sugfile']['tmp_name']);
@@ -47,7 +47,7 @@ EOQ;
 			echo 'Adding:'.$fmd->custom_module . '-'. $fmd->name. '<br>';
 			$fmd->db->query("DELETE FROM $fmd->table_name WHERE id='$fmd->id'");
 			$fmd->save(false);
-			$fmd = new FieldsMetaData();
+			$fmd = BeanFactory::getBean('EditCustomFields');
 			
 
 			

@@ -82,7 +82,7 @@ class ViewFactory{
 		            $view_config_all['actions'] = array_merge($view_config_all['actions'], $view_config['actions']);
 		        }
 		        if(!empty($view_config['req_params'])) {
-		        	$view_config_all['req_params'] = array_merge($view_config_all['actions'], $view_config['req_params']);
+		        	$view_config_all['req_params'] = array_merge($view_config_all['req_params'], $view_config['req_params']);
 		        }
 		    }
 		    $view_config = $view_config_all;

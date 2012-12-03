@@ -1,0 +1,56 @@
+<div class="sidebar-stream">
+    {{#each streamCollection.models}}
+    <div class="stream-item clearfix">
+        <a href="#Users/{{attributes.created_by}}" class="pull-left avatar avatar42">
+            <img src="{{attributes.created_by_picture_url}}" class="avatar" alt="{{attributes.created_by_name}}">
+        </a>
+        <a href="#Users/{{attributes.created_by}}">{{attributes.created_by_name}}</a>
+        <span>{{attributes.activity_type}}</span>
+        <em>{{attributes.activity_data.field_name}}</em>
+        {{#eq attributes.activity_type "updated"}}
+        {{#each attributes.activity_data}}
+        <a href="#" rel="tooltip" title="Was: {{this.before}}<br>Now: {{this.after}}">{{this.field_name}}</a>,
+        {{/each}}
+        <span>on</span>
+        {{/eq}}
+        {{#eq attributes.activity_type "posted"}}
+        "{{{attributes.activity_data.value}}}"
+        {{#if attributes.target_name}}
+        <span>on</span>
+        {{/if}}
+        {{/eq}}
+        {{#eq attributes.activity_type "related"}}
+        <a href="#{{attributes.activity_data.relate_to}}/{{attributes.activity_data.relate_id}}">{{attributes.activity_data.relate_name}}</a>
+        <span>{{str "LBL_ROUTING_TO"}}</span>
+        {{/eq}}
+        {{#if attributes.target_module}}
+        {{#if attributes.target_id}}
+        <a href="#{{attributes.target_module}}/{{attributes.target_id}}">{{attributes.target_name}}</a>
+        {{else}}
+        <a href="#{{attributes.target_module}}">{{attributes.target_name}}</a>
+        {{/if}}
+        {{else}}
+        {{#notEq attributes.activity_type "posted"}}
+        <span>a record</span>
+        {{/notEq}}
+        {{/if}}
+        <div class="post-date-container">
+            <date class="date">
+                {{#eq attributes.activity_type "created"}}
+                <i class="icon-plus-sign icon-added"></i>
+                {{/eq}}
+                {{#eq attributes.activity_type "posted"}}
+                <i class="icon-plus-sign icon-added"></i>
+                {{/eq}}
+                {{#eq attributes.activity_type "related"}}
+                <i class="icon-circle-arrow-right icon-related"></i>
+                {{/eq}}
+                {{#eq attributes.activity_type "updated"}}
+                <i class="icon-ok-sign icon-updated"></i>
+                {{/eq}}
+                <span> {{timeago attributes.date_created}}</span>
+            </date>
+        </div>
+    </div>
+    {{/each}}
+</div>

@@ -59,17 +59,13 @@ class ListViewReports extends ListViewSmarty {
                 $this->data['data'][$i]['IS_SCHEDULED'] = "<a href='#' onclick=\"schedulePOPUP('{$rowData['ID']}'); return false\" class='listViewTdToolsS1'>{$rowData['IS_SCHEDULED_IMG']} {$rowData['IS_SCHEDULED']}</a>";
             }
 
-            //BEGIN SUGARCRM flav!=sales ONLY
             if(!isset($this->data['data'][$i]['IS_EDIT'])) {
             	if ($this->data['data'][$i]['ASSIGNED_USER_ID'] != $current_user->id || !ACLController::checkAccess('Reports', 'edit', $this->data['data'][$i]['ASSIGNED_USER_ID'])) {
-		    //END SUGARCRM flav!=sales ONLY
             		$this->data['data'][$i]['IS_EDIT'] = "&nbsp;";
-            //BEGIN SUGARCRM flav!=sales ONLY
             	} else {
                 	$this->data['data'][$i]['IS_EDIT'] = "<a title=\"{$app_strings['LBL_EDIT_BUTTON']}\" href=\"index.php?action=ReportsWizard&module=Reports&page=report&record={$rowData['ID']}\">".SugarThemeRegistry::current()->getImage("edit_inline", '', null, null, ".gif", $mod_strings['LBL_EDIT'])."</a>";
             	}
             }
-            //END SUGARCRM flav!=sales ONLY
         }
 
         

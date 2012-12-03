@@ -57,7 +57,8 @@ class MonthTimePeriod extends TimePeriod implements TimePeriodInterface {
         $this->previous_date_modifier = '-1 month';
 
         //The name template
-        $this->name_template = "%s %d";
+        global $app_strings;
+        $this->name_template = $app_strings['LBL_MONTH_TIMEPERIOD_FORMAT'];
 
         //The chart label
         $this->chart_label = "n/j";
@@ -75,8 +76,11 @@ class MonthTimePeriod extends TimePeriod implements TimePeriodInterface {
      */
     public function getTimePeriodName($count)
     {
+        global $sugar_config;
         $timedate = TimeDate::getInstance();
-        return sprintf($this->name_template, $timedate->fromDbDate($this->start_date)->format('M'), $timedate->fromDbDate($this->start_date)->format('Y'));
+        $start = $timedate->fromDbDate($this->start_date)->format($sugar_config['datef']);
+        $end = $timedate->fromDbDate($this->end_date)->format($sugar_config['datef']);
+        return string_format($this->name_template, array($start, $end));
     }
 
 

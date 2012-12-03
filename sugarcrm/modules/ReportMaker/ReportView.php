@@ -45,7 +45,7 @@ global $app_strings;
 global $app_list_strings;
 
 
-$focus = new ReportMaker();
+$focus = BeanFactory::getBean('ReportMaker');
 if(!empty($_REQUEST['record'])) {
     $result = $focus->retrieve($_REQUEST['record']);
     if($result == null)
@@ -104,8 +104,7 @@ foreach($data_set_list AS $item => $data_object){
 	if(!empty($data_object->query_id) && $data_object->query_id!=""){
 	
 	//OUTPUT THE DATASET
-	$data_set = new CustomQuery();
-	$data_set->retrieve($data_object->query_id);
+	$data_set = BeanFactory::getBean('CustomQueries', $data_object->query_id);
 	$QueryView = new ReportListView();
 	
 	//pass the previous width array if available

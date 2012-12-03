@@ -297,7 +297,7 @@ echo get_validate_chart_js();
 			$GLOBALS['log']->debug("user_id is: ");
 			$GLOBALS['log']->debug($user_id);
 			$GLOBALS['log']->debug("cache_file_name is: $cache_file_name");
-			$opp = new Opportunity;
+			$opp = BeanFactory::getBean('Opportunities');
 			$where="";
 			//build the where clause for the query that matches $user
 			$count = count($user_id);
@@ -356,8 +356,7 @@ echo get_validate_chart_js();
 			global $current_user;
 			if($current_user->getPreference('currency') ){
 
-				$currency = new Currency();
-				$currency->retrieve($current_user->getPreference('currency'));
+				$currency = BeanFactory::getBean('Currencies', $current_user->getPreference('currency'));
 				$div = $currency->conversion_rate;
 				$symbol = $currency->symbol;
 			}
@@ -553,7 +552,7 @@ $GLOBALS['log']->debug($datax);
 		}
 
 		$user_id = $ids;
-		$opp = new Opportunity;
+		$opp = BeanFactory::getBean('Opportunities');
 		$where="";
 		//build the where clause for the query that matches $user
 		$count = count($user_id);

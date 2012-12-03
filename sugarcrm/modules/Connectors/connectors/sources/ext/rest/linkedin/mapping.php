@@ -28,14 +28,12 @@ $mapping = array(
 		'Contacts' => array (
 		    'name'=>'account_name',
 		),
-		//BEGIN SUGARCRM flav!=sales ONLY
 		'Leads' => array (
 		    'name'=>'account_name',
 		),
 		'Prospects' => array(
 		    'name'=>'account_name',
 		)
-		//END SUGARCRM flav!=sales ONLY
 	),
 );
 ?>

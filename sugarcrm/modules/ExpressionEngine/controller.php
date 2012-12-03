@@ -31,11 +31,6 @@ class ExpressionEngineController extends SugarController
     	$GLOBALS [ 'log' ]->info ( get_class($this).":" ) ;
         global $current_user;
         $access = get_admin_modules_for_user($current_user);
-		//BEGIN SUGARCRM flav=sales ONLY
-		if(!empty($_REQUEST['type']) && $_REQUEST['type'] == 'mb'){
-			$this->hasAccess = false;
-		}else
-		//END SUGARCRM flav=sales ONLY
 		//Non admins can still execute functions
         if((!empty($_REQUEST['action']) && in_array($_REQUEST['action'], $this->non_admin_actions))
            || $this->isModuleAdmin($access))

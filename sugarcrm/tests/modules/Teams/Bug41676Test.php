@@ -33,14 +33,13 @@ class Bug41676Test extends Sugar_PHPUnit_Framework_TestCase
 	{
 		//Make sure we are an admin
 		global $current_user;   
-    	$current_user = new User();
-        $current_user->retrieve('1');		
+    	$current_user = BeanFactory::getBean('Users', '1');		
 
 		$this->testUser = SugarTestUserUtilities::createAnonymousUser();
 		$this->testAccount = SugarTestAccountUtilities::createAccount();        
         $this->testUser->is_admin = false; // ensure non-admin user
 
-        $this->teamSet = new TeamSet();
+        $this->teamSet = BeanFactory::getBean('TeamSets');
         $this->teamSet->addTeams($this->testUser->getPrivateTeamID());
         
 
@@ -63,16 +62,14 @@ class Bug41676Test extends Sugar_PHPUnit_Framework_TestCase
         $this->testUser->deleted = 1;
         $this->testUser->employee_status = 'Terminated';
         $this->testUser->save();
-        $eapm = loadBean('EAPM');
+        $eapm = BeanFactory::getBean('EAPM');
         $eapm->delete_user_accounts($this->testUser->id); 
         
         //Simulate deleting the team
-        $team = new Team();
-        $team->retrieve($this->testUser->getPrivateTeamID());
+        $team = BeanFactory::getBean('Teams', $this->testUser->getPrivateTeamID());
         $team->mark_deleted();
         
-        $account = new Account();
-        $account->retrieve($this->testAccount->id);
+        $account = BeanFactory::getBean('Accounts', $this->testAccount->id);
      
         $this->assertEquals($account->team_set_id, $this->teamSet->id, 'Assert that team set id value is correctly set');
         $this->assertEquals($account->assigned_user_id, $this->testUser->id, 'Assert that assigned user id value is correctly set');

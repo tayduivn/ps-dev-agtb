@@ -31,7 +31,7 @@ $themedef = array(
     'name'  => "Racer X",
     'description' => "Racer X",
     'version' => array(
-        'regex_matches' => array('6\.*.*'),
+        'regex_matches' => array('[6|7]\.*.*'),
         ),
     'group_tabs' => true,
     );

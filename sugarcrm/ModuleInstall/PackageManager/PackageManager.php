@@ -208,8 +208,7 @@ class PackageManager{
 
     function setCredentials($username, $password, $systemname){
 
-        $admin = new Administration();
-        $admin->retrieveSettings();
+        $admin = Administration::getSettings();
          $admin->saveSetting(CREDENTIAL_CATEGORY, CREDENTIAL_USERNAME, $username);
          $admin->saveSetting(CREDENTIAL_CATEGORY, CREDENTIAL_PASSWORD, $password);
          if(!empty($systemname)){
@@ -219,8 +218,7 @@ class PackageManager{
 
     function getCredentials(){
 
-        $admin = new Administration();
-        $admin->retrieveSettings(CREDENTIAL_CATEGORY, true);
+        $admin = Administration::getSettings(CREDENTIAL_CATEGORY, true);
         $credentials = array();
         $credentials['username'] = '';
         $credentials['password'] = '';

@@ -1,5 +1,6 @@
 ({
     editMode: false,
+    createMode: false,
 
     events: {
         'click .record-edit': 'editClicked',
@@ -8,8 +9,7 @@
         'click .record-cancel': 'cancelClicked',
         'click .record-delete': 'deleteClicked',
         'click .more': 'toggleMoreLess',
-        'click .less': 'toggleMoreLess',
-        'click .drawerTrig': 'toggleSidePanel'
+        'click .less': 'toggleMoreLess'
     },
 
     // button states
@@ -23,6 +23,8 @@
 
         app.view.View.prototype.initialize.call(this, options);
 
+        this.createMode = this.context.get("create") ? true : false;
+
         // Set the save button to show if the model has been edited.
         this.model.on("change", function() {
             if (this.editMode || this.editAllMode) {
@@ -31,7 +33,7 @@
             }
         }, this);
 
-        if (this.context.get("create") === true) {
+        if (this.createMode) {
             this.model.isNotEmpty = true;
         }
     },
@@ -84,7 +86,7 @@
         app.view.View.prototype.render.call(this);
 
         // Check if this is a new record, if it is, enable the edit view
-        if (this.context.has("create") && this.model.isNew) {
+        if (this.createMode && this.model.isNew()) {
             this.editAllMode = false;
             this.toggleEdit(true);
         }
@@ -101,7 +103,7 @@
     checkAclForButtons: function() {
         if (this.context.get("model").module === "Users") {
             this.hasAccess = (app.user.get("id") == this.context.get("model").id);
-        } else if (this.context.get("create") === true) {
+        } else if (this.createMode) {
             this.hasAccess = true;
         } else {
             this.hasAccess = app.acl.hasAccessToModel("edit", this.model);
@@ -190,9 +192,21 @@
             }
 
             if (_.isUndefined(isEdit)) {
-                field.options.viewName = (!this.editAllMode) ? "edit" : "detail";
+                if (this.editAllMode) {
+                    field.options.viewName = "detail";
+                    this.$('.record-edit-link-wrapper').show();
+                } else {
+                    field.options.viewName = "edit";
+                    this.$('.record-edit-link-wrapper').hide();
+                }
             } else {
-                field.options.viewName = isEdit ? "edit" : "detail";
+                if (isEdit) {
+                    field.options.viewName = "edit";
+                    this.$('.record-edit-link-wrapper').hide();
+                } else {
+                    field.options.viewName = "detail";
+                    this.$('.record-edit-link-wrapper').show();
+                }
             }
 
             field.render();
@@ -250,7 +264,7 @@
         this.editAllMode = false;
         this.model.save({}, {
             success: function() {
-                if (self.context.get("create") === true) {
+                if (self.createMode) {
                     app.navigate(self.context, self.model);
                 } else {
                     self.render();
@@ -320,8 +334,10 @@
     toggleField: function(field, cell, close) {
         cell.toggleClass('edit-mode');
 
-        field.options.viewName = ((!field.options.viewName || field.options.viewName == "detail") && !close)
-            ? "edit" : field.options.viewName = "detail";
+        var viewName = ((!field.options.viewName || field.options.viewName == "detail") && !close)
+            ? "edit" : "detail";
+
+        field.setViewName(viewName);
 
         field.render();
 
@@ -409,23 +425,15 @@
     },
 
     /**
-     * Hide / show the side panel
+     * Set the title in the header pane
+     * @param title
      */
-    toggleSidePanel: function() {
-        var chevron = this.$('.drawerTrig span'),
-            pointRightClass = 'icon-chevron-right',
-            pointLeftClass = 'icon-chevron-left';
-
-        if (chevron.hasClass(pointRightClass)) {
-            chevron
-                .removeClass(pointRightClass)
-                .addClass(pointLeftClass);
+    setTitle: function(title) {
+        var $title = this.$('.headerpane h1.title');
+        if ($title.length > 0) {
+            $title.text(title);
         } else {
-            chevron
-                .removeClass(pointLeftClass)
-                .addClass(pointRightClass);
+            this.$('.headerpane').prepend('<h1 class="title">' + title + '</h1>');
         }
-
-        //TODO: toggle panes
     }
 })

@@ -33,8 +33,8 @@ global $sugar_version, $sugar_config;
 
 /*************** GENERAL SETUP WORK **********/
 
-$focus = new Campaign();
-if(isset($_REQUEST['record'])) {
+$focus = BeanFactory::getBean('Campaigns');
+if(!empty($_REQUEST['record'])) {
     $focus->retrieve($_REQUEST['record']);
 }
 if(isset($_REQUEST['isDuplicate']) && $_REQUEST['isDuplicate'] == 'true') {
@@ -292,8 +292,7 @@ global $odd_bg, $even_bg, $hilite_bg;
     $trkr_count = 0;
 //create the html to create tracker table
     foreach($trkr_lists as $trkr_id){
-        $ct_focus = new CampaignTracker();
-        $ct_focus->retrieve($trkr_id);
+        $ct_focus = BeanFactory::getBean('CampaignTrackers', $trkr_id);
       if(isset($ct_focus->tracker_name) && !empty($ct_focus->tracker_name)){
             if($ct_focus->is_optout){$opt = 'checked';}else{$opt = '';}
             $trkr_html .= "<div id='existing_trkr".$trkr_count."'> <table width='100%' border='0' cellspacing='0' cellpadding='0'>" ;
@@ -398,8 +397,7 @@ if(count($prospect_lists)>0){
 
     foreach($prospect_lists as $pl_id){
     //retrieve prospect list
-     $pl = new ProspectList();
-     $pl->retrieve($pl_id);
+     $pl = BeanFactory::getBean('ProspectLists', $pl_id);
 
       if(isset($pl->list_type) && !empty($pl->list_type)){
          //assign values based on type
@@ -438,8 +436,7 @@ if(count($prospect_lists)>0){
 
         foreach($prospect_lists as $pl_id){
         //retrieve prospect list
-             $pl = new ProspectList();
-             $pl_focus = $pl->retrieve($pl_id);
+             $pl_focus = BeanFactory::getBean('ProspectLists', $pl_id);
              $trgt_html .= "<div id='existing_trgt".$trgt_count."'> <table class='tabDetailViewDL2' width='100%'>" ;
              $trgt_html .= "<td width='25%'> <input id='existing_target_name". $trgt_count ."' type='hidden' type='text' size='60' maxlength='255' name='existing_target_name". $trgt_count ."'  value='". $pl_focus->name."' >". $pl_focus->name."</td>";
              $trgt_html .= "<td width='25%'><input type='hidden' size='60' maxlength='255' name='existing_tracker_list_type". $trgt_count ."'   id='existing_tracker_list_type". $trgt_count ."' value='".$pl_focus->list_type."' >".$app_list_strings['prospect_list_type_dom'][$pl_focus->list_type];
@@ -549,6 +546,7 @@ $ss->display(SugarAutoLoader::existingCustomOne('modules/Campaigns/tpls/WizardNe
 
 function create_common_wizard_steps()
 {
+    global $mod_strings;
     $steps = array();
     $steps[$mod_strings['LBL_NAVIGATION_MENU_GEN1']]          = SugarAutoLoader::existingCustomOne('modules/Campaigns/tpls/WizardCampaignHeader.tpl');
     $steps[$mod_strings['LBL_NAVIGATION_MENU_GEN2']]          = SugarAutoLoader::existingCustomOne('modules/Campaigns/tpls/WizardCampaignBudget.tpl');
@@ -583,7 +581,7 @@ function create_wiz_step_divs($steps,$ss){
 //Assign the Teamset field
 require_once('include/SugarFields/Fields/Teamset/SugarFieldTeamset.php');
 $teamSetField = new SugarFieldTeamset('Teamset');
-$focus = new Campaign();
+$focus = BeanFactory::getBean('Campaigns');
 $code = $teamSetField->getClassicView($focus->field_defs, 'wizform');
 $ss->assign("TEAM_SET_FIELD", $code);
 //END SUGARCRM flav=pro ONLY

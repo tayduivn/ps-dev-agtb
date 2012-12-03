@@ -85,14 +85,12 @@ EOHTML;
     }
 
  	function display() {
- 		//BEGIN SUGARCRM flav!=sales ONLY
        	if(is_admin($GLOBALS['current_user']) || $_REQUEST['record'] == $GLOBALS['current_user']->id) {
 			 $this->ss->assign('DISPLAY_EDIT', true);
         }
         if(is_admin($GLOBALS['current_user'])){
  			$this->ss->assign('DISPLAY_DUPLICATE', true);
  		}
- 		//END SUGARCRM flav!=sales ONLY
 
  		$showDeleteButton = FALSE;
  		if(  $_REQUEST['record'] != $GLOBALS['current_user']->id && $GLOBALS['current_user']->isAdminForModule('Users') )
@@ -104,9 +102,6 @@ EOHTML;
  		         $deleteWarning = $GLOBALS['mod_strings']['LBL_DELETE_USER_CONFIRM'];
  		     $this->ss->assign('DELETE_WARNING', $deleteWarning);
         }
-        //BEGIN SUGARCRM flav=sales ONLY
-        $showDeleteButton = FALSE;
-        //END SUGARCRM flav=sales ONLY
         $this->ss->assign('DISPLAY_DELETE', $showDeleteButton);
         
  		parent::display();

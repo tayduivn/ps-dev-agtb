@@ -50,7 +50,7 @@ $deletedNot=0;
 
 
 
-   $KBTag = new KBTag();
+   $KBTag = BeanFactory::getBean('KBTags');
    $tagsCount = $tagArticleIds[0];
    $articlesCount =  $tagArticleIds[1];
    
@@ -72,8 +72,7 @@ $deletedNot=0;
        		}
        	  }      
          if(!$articleExists){
-			  $KBDocument = new KBDocument();
-			  $KBDocument->retrieve($tagArticleIds[$j+2+$tagsCount]);
+			  $KBDocument = BeanFactory::getBean('KBDocuments', $tagArticleIds[$j+2+$tagsCount]);
 			  $doc_team_id = $KBDocument->team_id;  
 			  $guid = create_guid();		      
 			  $qi =	'INSERT INTO kbdocuments_kbtags (id,kbtag_id,kbdocument_id,team_id) values(\''.$guid.'\',\''.$tagId.'\',\''.$tagArticleIds[$j+2+$tagsCount].'\',\''.$doc_team_id.'\')';	      

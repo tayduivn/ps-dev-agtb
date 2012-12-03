@@ -161,12 +161,10 @@ class registry {
 		    'get_user_team_id',
 	        array('session'=>'xsd:string'),
 	        array('return'=>'xsd:string'));
-	    //BEGIN SUGARCRM flav!=sales ONLY
 		$this->serviceClass->registerFunction(
 		    'set_campaign_merge',
 	        array('session'=>'xsd:string', 'targets'=>'tns:select_fields', 'campaign_id'=>'xsd:string'),
 	        array());
-	    //END SUGARCRM flav!=sales ONLY
 		$this->serviceClass->registerFunction(
 		    'get_entries_count',
 	        array('session'=>'xsd:string', 'module_name'=>'xsd:string', 'query'=>'xsd:string', 'deleted' => 'xsd:int'),

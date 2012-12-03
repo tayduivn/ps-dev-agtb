@@ -84,13 +84,24 @@ class KBDocument extends SugarBean {
 		'lead_id' => 'leads'
 	 );
 
+    /**
+     * This is a depreciated method, please start using __construct() as this method will be removed in a future version
+     *
+     * @see __construct
+     * @deprecated
+     */
+    public function KBDocument()
+    {
+        $this->__construct();
+    }
+
 	public function __construct() {
 		parent::__construct();
 		$this->setupCustomFields('KBDocuments'); //parameter is module name
 	}
 
 	function get_notification_recipients() {
-		$notify_user = new User();
+		$notify_user = BeanFactory::getBean('Users');
 		if ($this->status_id=='In Review') {
 			$notify_user->retrieve($this->kbdoc_approver_id);
 		} else {
@@ -108,8 +119,7 @@ class KBDocument extends SugarBean {
 	  function set_notification_body($xtpl, $kbdoc)
 	{
 		global $app_list_strings,$current_user,$mod_strings,$timedate;
-		$user = new User();
-		$user->retrieve($kbdoc->created_by);
+		$user = BeanFactory::getBean('Users', $kbdoc->created_by);
 		$user_name = '';
 
 		if($user->first_name != null){
@@ -461,7 +471,7 @@ class KBDocument extends SugarBean {
         $ret['attachments'] = array();
 		while($a = $GLOBALS['db']->fetchByAssoc($result)) {
 			$fileLocation = "upload://{$a['id']}";
-			$note = new Note();
+			$note = BeanFactory::getBean('Notes');
 			$note->id = create_guid();
 			$note->new_with_id = true; // duplicating the note with files
 			//$note->parent_id = $this->id;
@@ -575,7 +585,7 @@ function get_tags($kbdoc_id){
 
 function get_kbdoc_tags_heirarchy($kbdoc_id,$screen){
         global $app_strings,$mod_strings;
-		$focus = new KBDocument();
+		$focus = BeanFactory::getBean('KBDocuments');
 		$kbtags_heirarchy=array();
 	    $kbtags = array();
 	    $kbdoctags = array();
@@ -660,7 +670,7 @@ function get_kbdoc_tags_heirarchy($kbdoc_id,$screen){
     * @param int $limit Optional, default -1
     * @return array
 	*/
-	function build_related_list($query, &$template, $row_offset = 0, $limit = -1)
+	function build_related_list($query, $template, $row_offset = 0, $limit = -1)
 	{
 		$GLOBALS['log']->info("Finding linked records $this->object_name: ".$query);
 
@@ -671,22 +681,16 @@ function get_kbdoc_tags_heirarchy($kbdoc_id,$screen){
 		}
 
 		$list = Array();
-		$isFirstTime = true;
-		$class = get_class($template);
 		//BEGIN SUGARCRM flav=pro ONLY
 		$disable_security_flag = ($template->disable_row_level_security) ? true : false;
 		$authors = array();
 		//END SUGARCRM flav=pro ONLY
 		while($row = $this->db->fetchByAssoc($result))
 		{
-			if(!$isFirstTime)
-			{
-				$template = new $class();
-				//BEGIN SUGARCRM flav=pro ONLY
-				$template->disable_row_level_security = $disable_security_flag;
-				//END SUGARCRM flav=pro ONLY
-			}
-			$isFirstTime = false;
+		    $template = $template->getCopy();
+			//BEGIN SUGARCRM flav=pro ONLY
+			$template->disable_row_level_security = $disable_security_flag;
+			//END SUGARCRM flav=pro ONLY
 			$record = $template->retrieve($row['id']);
 
 			if($record != null)

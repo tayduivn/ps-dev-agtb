@@ -1,4 +1,4 @@
-<div class="block thumbnail padded">
+<div class="block thumbnail">
   <h4>Untouched records closing this month</h4>
   {{#each collection.models}}
     <article class='row-fluid'>

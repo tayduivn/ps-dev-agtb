@@ -1,5 +1,5 @@
 <?php
-if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
+if (!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 /*********************************************************************************
  *The contents of this file are subject to the SugarCRM Professional End User License Agreement
  *("License") which can be viewed at http://www.sugarcrm.com/EULA.
@@ -27,14 +27,25 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * All Rights Reserved.
  * Contributor(s): ______________________________________..
  ********************************************************************************/
- 
- require_once('include/SugarObjects/templates/basic/Basic.php');
- class Chance extends Basic{
 
- 	function Chance(){
- 		parent::__construct();
+require_once('include/SugarObjects/templates/basic/Basic.php');
+class Chance extends Basic
+{
+    /**
+     * This is a depreciated method, please start using __construct() as this method will be removed in a future version
+     *
+     * @see __construct
+     * @deprecated
+     */
+    public function Chance()
+    {
+        $this->__construct();
+    }
 
- 	}
+    public function __construct()
+    {
+        parent::__construct();
+    }
 
- }
-?>
+}
+

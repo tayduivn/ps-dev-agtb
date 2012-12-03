@@ -5,7 +5,7 @@
 require_once('include/SugarFields/Fields/Base/SugarFieldBase.php');
 class SugarFieldCollection extends SugarFieldBase {
 	var $tpl_path;
-	
+
 	function getDetailViewSmarty($parentFieldArray, $vardef, $displayParams, $tabindex) {
 		$nolink = array('Users');
 		if(in_array($vardef['module'], $nolink)){
@@ -92,18 +92,15 @@ class SugarFieldCollection extends SugarFieldBase {
                 $link_field[$primary]['primary']=true;
             }
             // Create or update record and take care of the extra_field
-            require('include/modules.php');
             require_once('data/Link.php');
        	 	$class = load_link_class($bean->field_defs[$field]);
-    		
+
             $link_obj = new $class($bean->field_defs[$field]['relationship'], $bean, $bean->field_defs[$field]);
             $module = $link_obj->getRelatedModuleName();
-            $beanName = $beanList[$module];
-            require_once($beanFiles[$beanName]);
             foreach($link_field as $k=>$v){
                 $save = false;
                 $update_fields = array();
-                $obj = new $beanName();
+                $obj = BeanFactory::getBean($module);
                 if(!isset($link_field[$k]['name']) || empty($link_field[$k]['name'])){
                     // There is no name so it is an empty record -> ignore it!
                     unset($link_field[$k]);

@@ -25,8 +25,7 @@ $userName = $mod_strings['LBL_UNKNOWN'];
 
 if(isset($_REQUEST['user'])) {
 	
-	$user = new User();
-	$user->retrieve($_REQUEST['user']);
+	$user = BeanFactory::getBean('Users', $_REQUEST['user']);
 	$userName = $locale->getLocaleFormattedName($user->first_name, $user->last_name);
 }
 
@@ -34,7 +33,7 @@ if(isset($_REQUEST['user'])) {
 // NEXT FREE
 if(isset($_REQUEST['next_free']) && $_REQUEST['next_free'] == true) {
 	
-	$next = new Email();
+	$next = BeanFactory::getBean('Emails');
 	$rG = $next->db->query('SELECT count(id) AS c FROM users WHERE deleted = 0 AND users.is_group = 1');
 	$aG = $next->db->fetchByAssoc($rG);
 	if($rG['c'] > 0) {

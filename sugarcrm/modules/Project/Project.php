@@ -299,15 +299,10 @@ class Project extends SugarBean {
 
 		$query = "SELECT * FROM project_task WHERE project_id = '" . $this->id. "' AND deleted = 0 ORDER BY project_task_id";
 		$result = $this->db->query($query,true,"Error retrieving project tasks");
-		$row = $this->db->fetchByAssoc($result);
-
-		while ($row != null){
-			$projectTaskBean = new ProjectTask();
-			$projectTaskBean->id = $row['id'];
-			$projectTaskBean->retrieve();
+		while (($row = $this->db->fetchByAssoc($result)) != null){
+		    $projectTaskBean = BeanFactory::retrieveBean('ProjectTask', $row['id']);
+		    if(empty($projectTaskBean)) continue;
 			array_push($projectTasks, $projectTaskBean);
-
-			$row = $this->db->fetchByAssoc($result);
 		}
 
 		return $projectTasks;
@@ -315,8 +310,8 @@ class Project extends SugarBean {
 //BEGIN SUGARCRM flav=pro ONLY
 	/* helper function for UserHoliday subpanel -- display javascript that cannot be achieved through AJAX call */
 	function resourceSelectJS(){
-       	$userBean = new User();
-    	$contactBean = new Contact();
+       	$userBean = BeanFactory::getBean('Users');
+    	$contactBean = BeanFactory::getBean('Contacts');
 
     	$this->load_relationship("user_resources");
     	$userResources = $this->user_resources->getBeans($userBean);

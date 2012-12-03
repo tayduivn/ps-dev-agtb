@@ -78,7 +78,7 @@ var mySugarLoader = new YAHOO.util.YUILoader({
 	onSuccess: function(){
 		initMySugar();
 		initmySugarCharts();
-		//BEGIN SUGARCRM flav=pro || flav=sales ONLY
+		//BEGIN SUGARCRM flav=pro ONLY
 		{/literal}
 		{counter assign=hiddenCounter start=0 print=false}
 		{foreach from=$columns key=colNum item=data}
@@ -88,7 +88,7 @@ var mySugarLoader = new YAHOO.util.YUILoader({
 		{counter}
 		{/foreach}
 		{literal}
-		//END SUGARCRM flav=pro || flav=sales ONLY
+		//END SUGARCRM flav=pro ONLY
 		SUGAR.mySugar.maxCount = 	{/literal}{$maxCount}{literal};
 		SUGAR.mySugar.homepage_dd = new Array();
 		var j = 0;
@@ -153,7 +153,7 @@ mySugarLoader.insert();
 
 
 
-<!--//BEGIN SUGARCRM flav=pro || flav=sales ONLY -->
+<!--//BEGIN SUGARCRM flav=pro ONLY -->
 {$form_header}
 <table cellpadding="0" cellspacing="0" border="0" width="100%" id="tabListContainerTable">
 <tr>
@@ -195,7 +195,7 @@ mySugarLoader.insert();
 <!--//END SUGARCRM flav=pro ONLY -->
 </td>
 
-<!--//BEGIN SUGARCRM flav=pro || flav=sales ONLY -->
+<!--//BEGIN SUGARCRM flav=pro ONLY -->
 {if !$lock_homepage}
 <td nowrap id="dashletCtrlsTD">
 	<div id="dashletCtrls">
@@ -212,10 +212,10 @@ mySugarLoader.insert();
 	</div>
 </td>
 {/if}
-<!--//END SUGARCRM flav=pro || flav=sales ONLY -->
+<!--//END SUGARCRM flav=pro ONLY -->
 </tr>
 </table>
-<!--//END SUGARCRM flav=pro || flav=sales ONLY -->
+<!--//END SUGARCRM flav=pro ONLY -->
 <div class="clear"></div>
 <div id="pageContainer" class="yui-skin-sam">
 <div id="pageNum_{$activePage}_div">

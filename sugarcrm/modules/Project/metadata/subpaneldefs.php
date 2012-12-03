@@ -294,10 +294,9 @@ global $current_user, $app;
 if (isset($app) && isset($app->controller))
 {
 $projectId = $app->controller->record;
-$focus = new Project();
-$focus->retrieve($projectId);
+$focus = BeanFactory::getBean('Project', $projectId);
 	if (isset($focus) && $focus->object_name == 'Project')
-	{	
+	{
 		// make this security check ONLY in the Project detail view
 	    $layout_defs['Project']['subpanel_setup']['holidays']['top_buttons'] =
 	    array(array('widget_class' => 'SubPanelTopCreateButton'),array('widget_class' => 'SubPanelTopSelectButton', 'mode'=>'MultiSelect' ));

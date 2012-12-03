@@ -35,6 +35,13 @@ require_once 'modules/ModuleBuilder/parsers/views/History.php' ;
 
 abstract class AbstractMetaDataImplementation
 {
+    /**
+     * Flag for deployed state of this implementation, used by the parsers for 
+     * determining cache clearing and other stuff
+     * 
+     * @var bool
+     */
+    protected $_deployed = false;
 	protected $_view;
     protected $_viewClient = null; // base, portal, mobile
     protected $_viewType; // list, edit, search, detail
@@ -58,13 +65,13 @@ abstract class AbstractMetaDataImplementation
 	MB_EDITVIEW 	 			=> 'viewdefs',
 	MB_DETAILVIEW 	 			=> 'viewdefs',
 	MB_QUICKCREATE 	 			=> 'viewdefs',
-	//BEGIN SUGARCRM flav=pro || flav=sales ONLY
+	//BEGIN SUGARCRM flav=pro ONLY
 	MB_WIRELESSEDITVIEW 		=> 'viewdefs',
 	MB_WIRELESSDETAILVIEW 		=> 'viewdefs',
 	MB_WIRELESSLISTVIEW 	 	=> 'viewdefs',
 	MB_WIRELESSBASICSEARCH 	 	=> 'searchdefs',
 	MB_WIRELESSADVANCEDSEARCH 	=> 'searchdefs',
-	//END SUGARCRM flav=pro || flav=sales ONLY
+	//END SUGARCRM flav=pro ONLY
     //BEGIN SUGARCRM flav=ent ONLY
     MB_PORTALEDITVIEW 		    => 'viewdefs',
     MB_PORTALDETAILVIEW 		=> 'viewdefs',
@@ -73,6 +80,16 @@ abstract class AbstractMetaDataImplementation
     //END SUGARCRM flav=ent ONLY
 	) ;
 
+    /**
+     * Gets the flag for the deployed state of this implementation
+     * 
+     * @return bool
+     */
+    public function isDeployed()
+    {
+        return $this->_deployed;
+    }
+    
 	/*
 	 * Getters for the definitions loaded by the Constructor
 	 */
@@ -346,6 +363,9 @@ abstract class AbstractMetaDataImplementation
 		if (sugar_file_put_contents($filename, $out) === false) {
 			$GLOBALS['log']->fatal(get_class($this).": could not write new viewdef file " . $filename);
         }
+        
+        // Add this file to the File Cache map
+        SugarAutoLoader::addToMap($filename);
 	}
 
 	/*

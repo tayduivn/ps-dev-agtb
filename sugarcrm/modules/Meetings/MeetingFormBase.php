@@ -97,7 +97,7 @@ EOF;
 
 $javascript = new javascript();
 $javascript->setFormName($formname);
-$javascript->setSugarBean(new Meeting());
+$javascript->setSugarBean(BeanFactory::getBean('Meetings'));
 $javascript->addRequiredFields($prefix);
 $form .=$javascript->getScript();
 $mod_strings = $temp_strings;
@@ -163,7 +163,7 @@ function handleSave($prefix,$redirect=true, $useRequired=false) {
 	global $current_user;
 	global $timedate;
 
-	$focus = new Meeting();
+	$focus = BeanFactory::getBean('Meetings');
 
 	if($useRequired && !checkRequired($prefix, array_keys($focus->required_fields))) {
 		return null;
@@ -286,7 +286,6 @@ function handleSave($prefix,$redirect=true, $useRequired=false) {
                 } 
             }
             
-            //BEGIN SUGARCRM flav!=sales ONLY            
             if (!empty($_POST['lead_invitees'])) {
                 $leadInvitees = explode(',', trim($_POST['lead_invitees'], ','));
             }            
@@ -301,7 +300,6 @@ function handleSave($prefix,$redirect=true, $useRequired=false) {
                     $leadInvitees[] = $_REQUEST['relate_id'];
                 } 
             }
-            //END SUGARCRM flav!=sales ONLY
 
             // Call the Meeting module's save function to handle saving other fields besides
             // the users and contacts relationships
@@ -323,9 +321,7 @@ function handleSave($prefix,$redirect=true, $useRequired=false) {
             
             $focus->setUserInvitees($userInvitees, $existingUsers);
             $focus->setContactInvitees($contactInvitees, $existingContacts);
-            //BEGIN SUGARCRM flav!=sales ONLY
             $focus->setLeadInvitees($leadInvitees, $existingLeads);
-            //END SUGARCRM flav!=sales ONLY
 
             // Bug #49195 : update vcal
             vCal::cache_sugar_vcal($current_user);

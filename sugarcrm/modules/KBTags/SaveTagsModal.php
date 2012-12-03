@@ -89,7 +89,7 @@ if(!empty($tag_name)){
 
  if(!$found){ 
            
-    $kbtag = new KBTag();        
+    $kbtag = BeanFactory::getBean('KBTags');        
     $kbtag->tag_name  = $tag_name;
     if($parent_tag_id != null){
      $kbtag->parent_tag_id  = $parent_tag_id;

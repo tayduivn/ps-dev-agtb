@@ -99,7 +99,7 @@ class ProductBundleNote extends SugarBean {
 
 	//deletes related products might want to change this in the future if we allow for sharing of products
 	function mark_deleted($id){
-		$pb = new ProductBundleNote();
+		$pb = BeanFactory::getBean('ProductBundleNotes');
 		$pb->id = $id;
 /*
 		$products = $pb->get_products();
@@ -109,6 +109,18 @@ class ProductBundleNote extends SugarBean {
 */
 		return parent::mark_deleted($id);
 	}
+
+    /**
+     * This is a depreciated method, please start using __construct() as this method will be removed in a future version
+     *
+     * @see __construct
+     * @deprecated
+     */
+    public function ProductBundleNote()
+    {
+        $this->__construct();
+    }
+
 	public function __construct() {
 		parent::__construct();
 

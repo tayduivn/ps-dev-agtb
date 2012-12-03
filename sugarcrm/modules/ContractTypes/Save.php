@@ -33,9 +33,7 @@ require_once('include/formbase.php');
 
 
 
-$focus = new ContractType();
-
-$focus->retrieve($_POST['record']);
+$focus = BeanFactory::getBean('ContractTypes', $_POST['record']);
 if(!$focus->ACLAccess('Save')){
 	ACLController::displayNoAccess(true);
 	sugar_cleanup(true);

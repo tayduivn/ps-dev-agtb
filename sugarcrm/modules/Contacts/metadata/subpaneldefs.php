@@ -148,7 +148,6 @@ $layout_defs['Contacts'] = array(
                     ),
                 ),
         ),
-//BEGIN SUGARCRM flav!=sales ONLY
 		'leads' => array(
 			'order' => 60,
 			'module' => 'Leads',
@@ -166,7 +165,6 @@ $layout_defs['Contacts'] = array(
 				),
 			),
 		),
-//END SUGARCRM flav!=sales ONLY
 		'opportunities' => array(
 			'order' => 30,
 			'module' => 'Opportunities',
@@ -218,7 +216,6 @@ $layout_defs['Contacts'] = array(
 
         ),
 		//END SUGARCRM flav=pro ONLY
-//BEGIN SUGARCRM flav!=sales ONLY
 		'cases' => array(
 			'order' => 80,
 			'sort_order' => 'desc',
@@ -233,8 +230,6 @@ $layout_defs['Contacts'] = array(
 				array('widget_class' => 'SubPanelTopSelectButton', 'mode'=>'MultiSelect')
 			),
 		),
-//END SUGARCRM flav!=sales ONLY
-//BEGIN SUGARCRM flav!=sales ONLY
 		'bugs' => array(
 			'order' => 90,
 			'module' => 'Bugs',
@@ -249,7 +244,6 @@ $layout_defs['Contacts'] = array(
 				array('widget_class' => 'SubPanelTopSelectButton', 'mode'=>'MultiSelect')
 			),
 		),
-//END SUGARCRM flav!=sales ONLY
 		'contacts' => array(
 			'order' => 100,
 			'module' => 'Contacts',
@@ -264,7 +258,6 @@ $layout_defs['Contacts'] = array(
 				array('widget_class' => 'SubPanelTopSelectButton', 'mode'=>'MultiSelect')
 			),
 		),
-//BEGIN SUGARCRM flav!=sales ONLY
 		'project' => array(
 			'order' => 110,
 			'module' => 'Project',
@@ -287,7 +280,6 @@ $layout_defs['Contacts'] = array(
 			'subpanel_name' => 'ForTargets',
 			'title_key' => 'LBL_CAMPAIGN_LIST_SUBPANEL_TITLE',
 		),
-//END SUGARCRM flav!=sales ONLY
         //BEGIN SUGARCRM flav=pro ONLY
 		'contracts' => array(
 			'order' => 120,

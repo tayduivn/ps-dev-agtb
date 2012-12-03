@@ -98,7 +98,7 @@ class ParserFactory
             case MB_QUICKCREATE :
                 require_once 'modules/ModuleBuilder/parsers/views/GridLayoutMetaDataParser.php' ;
                 return new GridLayoutMetaDataParser ( $view, $moduleName, $packageName ) ;
-            //BEGIN SUGARCRM flav=pro || flav=sales ONLY
+            //BEGIN SUGARCRM flav=pro ONLY
             case MB_WIRELESSEDITVIEW :
             case MB_WIRELESSDETAILVIEW :
             //BEGIN SUGARCRM flav=ent ONLY
@@ -134,10 +134,10 @@ class ParserFactory
                 }
                 require_once 'modules/ModuleBuilder/parsers/views/SidecarListLayoutMetaDataParser.php' ;
                 return new SidecarListLayoutMetaDataParser($view, $moduleName, $packageName, $client);
-            //END SUGARCRM flav=pro || flav=sales ONLY
+            //END SUGARCRM flav=pro ONLY
             case MB_BASICSEARCH :
             case MB_ADVANCEDSEARCH :
-            //BEGIN SUGARCRM flav=pro || flav=sales ONLY
+            //BEGIN SUGARCRM flav=pro ONLY
             case MB_WIRELESSBASICSEARCH :
             case MB_WIRELESSADVANCEDSEARCH :
                 // Make sure we have the right client
@@ -145,7 +145,7 @@ class ParserFactory
                 {
                     $client = MB_WIRELESS;
                 }
-            //END SUGARCRM flav=pro || flav=sales ONLY
+            //END SUGARCRM flav=pro ONLY
                 require_once 'modules/ModuleBuilder/parsers/views/SearchViewMetaDataParser.php' ;
                 return new SearchViewMetaDataParser ( $view, $moduleName, $packageName, $client ) ;
             case MB_LISTVIEW :

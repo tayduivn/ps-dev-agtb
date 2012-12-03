@@ -100,7 +100,7 @@ class MassUpdate
 		unset($_REQUEST['PHPSESSID']);
 		$query = base64_encode(serialize($_REQUEST));
 
-        $bean = loadBean($_REQUEST['module']);
+        $bean = BeanFactory::getBean($_REQUEST['module']);
        $order_by_name = $bean->module_dir.'2_'.strtoupper($bean->object_name).'_ORDER_BY' ;
        $lvso = isset($_REQUEST['lvso'])?$_REQUEST['lvso']:"";
        $request_order_by_name = isset($_REQUEST[$order_by_name])?$_REQUEST[$order_by_name]:"";
@@ -143,7 +143,7 @@ eoq;
 	  * @param displayname Name to display in the popup window
       * @param varname name of the variable
 	  */
-	function handleMassUpdate(){
+        function handleMassUpdate($fetch_only = false, $update_blank=false){
 
 		require_once('include/formbase.php');
 		global $current_user, $db, $disable_date_format, $timedate;
@@ -154,10 +154,12 @@ eoq;
 					unset($_POST[$post]);
 				}
 			}elseif(strlen($value) == 0){
+                            if (!$update_blank) {
 				if( isset($this->sugarbean->field_defs[$post]) && $this->sugarbean->field_defs[$post]['type'] == 'radioenum' && isset($_POST[$post]) ){
 				  $_POST[$post] = '';
 				}else{
 				  unset($_POST[$post]);
+                                }
 			    }
             }
 
@@ -214,6 +216,10 @@ eoq;
 			}
 			$_POST['mass'] = $new_arr;
 		}
+
+                if ($fetch_only) {
+                    return;
+                }
 
 		if(isset($_POST['mass']) && is_array($_POST['mass'])  && $_REQUEST['massupdate'] == 'true'){
 			$count = 0;
@@ -278,8 +284,7 @@ eoq;
 
 					if($count++ != 0) {
 					   //Create a new instance to clear values and handle additional updates to bean's 2,3,4...
-                       $className = get_class($this->sugarbean);
-                       $this->sugarbean = new $className();
+                       $this->sugarbean = $this->sugarbean->getCopy();
 					}
 
 					$this->sugarbean->retrieve($id);
@@ -1255,9 +1260,8 @@ EOQ;
 	    }
 	}
 
-    function generateSearchWhere($module, $query)
-    {//this function is similar with function prepareSearchForm() in view.list.php
-        $seed = loadBean($module);
+    function generateSearchWhere($module, $query) {//this function is similar with function prepareSearchForm() in view.list.php
+        $seed = BeanFactory::getBean($module);
         $this->use_old_search = true;
         if(SugarAutoLoader::existing('modules/'.$module.'/SearchForm.html')){
             if(SugarAutoLoader::existing('modules/' . $module . '/metadata/SearchFields.php')) {

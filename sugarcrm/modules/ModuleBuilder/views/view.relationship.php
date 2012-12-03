@@ -175,7 +175,6 @@ class ViewRelationship extends SugarView
             if (isset ($definition['rhs_module']) && $definition['rhs_module'] == 'Activities') {
             	$cardinality = array( MB_ONETOMANY => translate ( 'LBL_ONETOMANY' ));
             }
-            //BEGIN SUGARCRM flav!=sales ONLY
             //Bug 23139, Campaigns module current cannot display custom subpanels, so we need to ban it from any
             //relationships that would require a new subpanel to be shown in Campaigns.
         	if (isset ($definition['lhs_module']) && $definition['lhs_module'] == 'Campaigns') {
@@ -186,7 +185,6 @@ class ViewRelationship extends SugarView
             	unset ( $cardinality [ MB_MANYTOMANY ] ) ;
             	unset ( $cardinality [ MB_MANYTOONE ] );
             }
-            //END SUGARCRM flav!=sales ONLY
             if (! isset($cardinality[$relationship->getType()]))
             {
                 end ($cardinality) ;

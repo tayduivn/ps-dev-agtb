@@ -20,10 +20,17 @@
     },
 
     initialize: function(options) {
+        var self = this;
+
         _.bindAll(this);
         this.opts = {params: {}};
 
         app.view.View.prototype.initialize.call(this, options);
+
+        this.layout.off("stream:more:fire", null, this);
+        this.layout.on("stream:more:fire", function(collection) {
+            self.context.trigger("preview:collection:change", collection);
+        }, this);
 
         // Check to see if we need to make a related activity stream.
         // Currently the "Home" module is dubbed ActivityStreem
@@ -83,6 +90,7 @@
         options.success = function() {
             app.alert.dismiss('show_more_records');
             self.layout.trigger("list:paginate:success");
+            self.layout.trigger("stream:more:fire", self.streamCollection, self);
             self.render();
             window.scrollTo(0, document.body.scrollHeight);
         };

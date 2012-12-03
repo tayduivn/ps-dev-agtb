@@ -59,10 +59,8 @@ $fields_array['User'] = array (
 		,'employee_status'
 		,'messenger_id'
 		,'messenger_type'
-		//BEGIN SUGARCRM flav!=sales ONLY
 		,'is_group'
 
-        //END SUGARCRM flav!=sales ONLY
 		//BEGIN SUGARCRM flav=pro ONLY
 
 		,'default_team'
@@ -82,10 +80,8 @@ $fields_array['User'] = array (
 		'title', 
 		'reports_to_name', 
 		'reports_to_id', 
-		//BEGIN SUGARCRM flav!=sales ONLY
 		'is_group'
 
-		//END SUGARCRM flav!=sales ONLY
 	),
 	'export_fields' => array(
 		'id',
@@ -111,18 +107,14 @@ $fields_array['User'] = array (
 		,'address_postalcode'
 		,'address_country'
 		,'reports_to_id'
-		//BEGIN SUGARCRM flav!=sales ONLY
 		,'portal_only'
-		//END SUGARCRM flav!=sales ONLY
 		,'status'
 		,'receive_notifications'
 		,'employee_status'
 		,'messenger_id'
 		,'messenger_type'
-		//BEGIN SUGARCRM flav!=sales ONLY
 		,'is_group'
 
-		//END SUGARCRM flav!=sales ONLY
 		//BEGIN SUGARCRM flav=pro ONLY
 
 		,'default_team'

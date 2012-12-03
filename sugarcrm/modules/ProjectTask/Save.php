@@ -32,7 +32,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 // $Id: Save.php 49350 2009-07-08 16:37:37Z eddy $
 
 
-$project = new ProjectTask();
+$project = BeanFactory::getBean('ProjectTask');
 if(!empty($_POST['record']))
 {
 	$project->retrieve($_POST['record']);

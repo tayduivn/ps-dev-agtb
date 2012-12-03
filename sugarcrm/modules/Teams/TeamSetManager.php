@@ -73,7 +73,7 @@ class TeamSetManager {
 	 *
 	 */
 	public static function cleanUp(){
-		$teamSetModule = new TeamSetModule();
+		$teamSetModule = BeanFactory::getBean('TeamSetModules');
 		//maintain a list of the team set ids we would like to remove
 		$setsToRemove = array();
 		$setsToRemain = array();
@@ -147,7 +147,7 @@ class TeamSetManager {
 		//and modules in the team_set_modules table
 		if(!empty($GLOBALS['sugar_config']['enable_team_module_save'])){
 			foreach(self::$_setHash as $team_set_id => $table_names){
-				$teamSetModule = new TeamSetModule();
+				$teamSetModule = BeanFactory::getBean('TeamSetModules');
 				$teamSetModule->team_set_id = $team_set_id;
 
 				foreach($table_names as $table_name){
@@ -170,7 +170,7 @@ class TeamSetManager {
 		//if this entry is set in the config file, then store the set
 		//and modules in the team_set_modules table
 		if(!empty($GLOBALS['sugar_config']['enable_team_module_save'])){
-			$teamSetModule = new TeamSetModule();
+			$teamSetModule = BeanFactory::getBean('TeamSetModules');
 			$teamSetModule->team_set_id = $teamSetId;
 			$teamSetModule->module_table_name = $tableName;
 			$teamSetModule->save();
@@ -269,7 +269,7 @@ class TeamSetManager {
         }
 
 
-		$teamSet = new TeamSet();
+		$teamSet = BeanFactory::getBean('TeamSets');
 		$teams = $teamSet->getTeams($team_set_id);
 		$team_names = array();
 		foreach($teams as $id => $team){
@@ -370,7 +370,7 @@ class TeamSetManager {
      */
     public static function rebuildTeamSets(){
 
-		$teamSet = new TeamSet();
+		$teamSet = BeanFactory::getBean('TeamSets');
 		$sql = "SELECT id FROM $teamSet->table_name WHERE deleted = 0";
 
 		$result = $teamSet->db->query($sql);
@@ -412,7 +412,7 @@ class TeamSetManager {
      */
     public static function removeTeamFromSets($team_id){
 
-		$teamSet = new TeamSet();
+		$teamSet = BeanFactory::getBean('TeamSets');
 		$sql = "SELECT tsm.team_set_id, tsm.module_table_name FROM team_sets_modules tsm inner join team_sets_teams tst on tsm.team_set_id = tst.team_set_id where tst.team_id = '$team_id'";
     	$result = $teamSet->db->query($sql);
     	$affectedTeamSets = array();

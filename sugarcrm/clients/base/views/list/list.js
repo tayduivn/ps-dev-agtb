@@ -1,3 +1,29 @@
+/*********************************************************************************
+ * The contents of this file are subject to the SugarCRM Master Subscription
+ * Agreement (""License"") which can be viewed at
+ * http://www.sugarcrm.com/crm/master-subscription-agreement
+ * By installing or using this file, You have unconditionally agreed to the
+ * terms and conditions of the License, and You may not use this file except in
+ * compliance with the License.  Under the terms of the license, You shall not,
+ * among other things: 1) sublicense, resell, rent, lease, redistribute, assign
+ * or otherwise transfer Your rights to the Software, and 2) use the Software
+ * for timesharing or service bureau purposes such as hosting the Software for
+ * commercial gain and/or for the benefit of a third party.  Use of the Software
+ * may be subject to applicable fees and any use of the Software without first
+ * paying applicable fees is strictly prohibited.  You do not have the right to
+ * remove SugarCRM copyrights from the source code or user interface.
+ *
+ * All copies of the Covered Code must include on each user interface screen:
+ *  (i) the ""Powered by SugarCRM"" logo and
+ *  (ii) the SugarCRM copyright notice
+ * in the same form as they appear in the distribution.  See full license for
+ * requirements.
+ *
+ * Your Warranty, Limitations of liability and Indemnity are expressly stated
+ * in the License.  Please refer to the License for the specific language
+ * governing these rights and limitations under the License.  Portions created
+ * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
+ ********************************************************************************/
 ({
 
     /**
@@ -15,10 +41,23 @@
         'mouseleave tr':'hideActions'
     },
     initialize: function(options) {
+        if(!_.isUndefined(options.meta.selection) && !_.isUndefined(options.meta.selection.type)) {
+            switch (options.meta.selection.type) {
+                case "single":
+                    options.meta = this.addSingleSelectionAction(options.meta, options.module);
+                    break;
+                case "multi":
+                    options.meta = this.addMultiSelectionAction(options.meta);
+                    break;
+                default:
+                    break;
+            }
+        }
         app.view.View.prototype.initialize.call(this, options);
         this.fallbackFieldTemplate = 'list-header';
     },
     _renderHtml:function () {
+        var self = this;
         app.view.View.prototype._renderHtml.call(this);
         // off prevents multiple bindings for each render
         this.layout.off("list:search:fire", null, this);
@@ -31,6 +70,16 @@
         this.layout.on("list:alert:show", this.showAlert, this);
         this.layout.off("list:alert:hide", null, this);
         this.layout.on("list:alert:hide", this.hideAlert, this);
+        this.layout.off("list:sort:fire", null, this);
+        this.layout.on("list:sort:fire", function(collection) {
+            if( _.isUndefined(self.context._callbacks) ) {
+                // Sorting on a related module, need the parent context instead
+                self.context.parent.trigger("preview:collection:change", collection);
+            }
+            else {
+                self.context.trigger("preview:collection:change", collection);
+            }
+        }, this);
 
         // Dashboard layout injects shared context with limit: 5. 
         // Otherwise, we don't set so fetches will use max query in config.
@@ -53,7 +102,7 @@
                 q:term
             },
             fields:this.collection.fields || {}
-        }
+        };
         //TODO: This should be handled automagically by the collection by checking its own tie to the context
         if (this.context.get('link')) {
             options.relate = true;
@@ -123,6 +172,7 @@
         // amount. Also, add true will make it append to already loaded records.
         options.limit = self.limit || null;
         options.success = function () {
+            self.layout.trigger("list:sort:fire", collection, self);
             self.render();
         };
         if (this.context.get('link')) {
@@ -169,8 +219,7 @@
                 model.set("_module", module);
 
                 if( _.isUndefined(self.context._callbacks) ) {
-                    // Clicking preview on a related module, need the
-                    // parent context instead
+                    // Clicking preview on a related module, need the parent context instead
                     self.context.parent.trigger("togglePreview", model, self.collection);
                 }
                 else {
@@ -178,6 +227,41 @@
                 }
             }
         });
+    },
+    addSingleSelectionAction: function(meta, module) {
+        meta = $.extend(true, {}, meta);
+        _.each(meta.panels, function(panel){
+            var singleSelect = [{
+                'type' : 'selection',
+                'name' : meta.selection.name || module + '_select',
+                'sortable' : false,
+                'label' : meta.selection.label || ''
+            }];
+
+            panel.fields = singleSelect.concat(panel.fields);
+        });
+
+        return meta;
+    },
+    addMultiSelectionAction: function(meta) {
+        meta = $.extend(true, {}, meta);
+        _.each(meta.panels, function(panel){
+            var multiSelect = [{
+                'type' : 'fieldset',
+                'fields' : [{
+                    'type' : 'actionmenu',
+                    'buttons' : []
+                }],
+                'value' : false,
+                'sortable' : false
+            }];
+            if (!_.isUndefined(meta.selection.actions)) {
+                multiSelect[0].fields[0].buttons = meta.selection.actions;
+            }
+            panel.fields = multiSelect.concat(panel.fields);
+        });
+
+        return meta;
     },
     showTooltip: function(e) {
         this.$(e.currentTarget).tooltip("show");
@@ -197,4 +281,3 @@
         }
     }
 })
-

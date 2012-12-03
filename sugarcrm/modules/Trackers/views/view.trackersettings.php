@@ -58,8 +58,7 @@ class TrackersViewTrackersettings extends SugarView
     {
         global $mod_strings, $app_strings;
         
-        $admin = new Administration();
-        $admin->retrieveSettings();
+        $admin = Administration::getSettings();
         
         require('modules/Trackers/config.php');
         

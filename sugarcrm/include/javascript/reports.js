@@ -1,4 +1,4 @@
-//FILE SUGARCRM flav=pro || flav=sales ONLY
+//FILE SUGARCRM flav=pro ONLY
 
 
 /**
@@ -385,12 +385,10 @@ SUGAR.reports = function() {
 		},
 		
 		getListFieldDef:function(field, link, module) {
-			//BEGIN SUGARCRM flav!=sales ONLY
 			if(field == 'team_set_id') {
 			   link = SUGAR.reports.getTeamSetIdTableValue(link, current_module, false);
 			   module = link.indexOf(">") == -1 ? link : module;
 			} 			
-			//END SUGARCRM flav!=sales ONLY
 			var link = link.replace(/ > /g, ":");
 			var field_def = new Object();
 			//var field_val_arr = field.split(" > ");
@@ -477,11 +475,9 @@ SUGAR.reports = function() {
 				}
 				
 				field_def.table_key = cells[0].getElementsByTagName('input')[1].value;
-				//BEGIN SUGARCRM flav!=sales ONLY
 				if(field == 'team_set_id') {
 				   field_def.table_key = SUGAR.reports.getTeamSetIdTableValue(field_def.table_key, current_module, true);					
 				}
-				//END SUGARCRM flav!=sales ONLY
 				
 				field_def.table_key = field_def.table_key.replace(/>/g,':');
 				
@@ -540,11 +536,9 @@ SUGAR.reports = function() {
 					field_def['label'] = cells[2].getElementsByTagName('input')[0].value;
 				field_def.table_key = cells[0].getElementsByTagName('input')[1].value;
 				field_def.table_key = field_def.table_key.replace(/>/g,':');	
-				//BEGIN SUGARCRM flav!=sales ONLY
 				if(field == 'team_set_id') {
 				   field_def.table_key = SUGAR.reports.getTeamSetIdTableValue(field_def.table_key, current_module, true);				
 				}	
-				//END SUGARCRM flav!=sales ONLY
 				
 				if (field_def.table_key  == current_module)
 					field_def.table_key = 'self';		
@@ -626,11 +620,9 @@ SUGAR.reports = function() {
 				var group_by_def = SUGAR.reports.getListFieldDef(field, link, module);
 
 				group_by_def.table_key = cells[0].getElementsByTagName('input')[1].value;
-				//BEGIN SUGARCRM flav!=sales ONLY
 				if(field == 'team_set_id') {
 				   group_by_def.table_key = SUGAR.reports.getTeamSetIdTableValue(group_by_def.table_key, current_module, true);
 				}
-				//END SUGARCRM flav!=sales ONLY
 				group_by_def.table_key = group_by_def.table_key.replace(/>/g,':');
 				if (group_by_def.table_key  == current_module)
 					group_by_def.table_key = 'self';
@@ -648,7 +640,6 @@ SUGAR.reports = function() {
 			filter_def.name = cells[0].getElementsByTagName('input')[0].value;
 			
 			var module = cells[0].getElementsByTagName('input')[2].value;
-			//BEGIN SUGARCRM flav!=sales ONLY
 			if(filter_def.name == 'team_set_id') {
 				filter_def.table_key = cells[0].getElementsByTagName('input')[1].value;
 				filter_def.table_key = SUGAR.reports.getTeamSetIdTableValue(filter_def.table_key, current_module, false);
@@ -661,13 +652,10 @@ SUGAR.reports = function() {
 				field['vname'] = SUGAR.language.get('app_strings', 'LBL_TEAMS');
 				field['type'] = 'team_set_id';					
 			} else {
-			//END SUGARCRM flav!=sales ONLY
 				filter_def.table_key = cells[0].getElementsByTagName('input')[1].value;
 				filter_def.table_key = filter_def.table_key.replace(/>/g,':');
 				var field = module_defs[module].field_defs[filter_def.name];
-			//BEGIN SUGARCRM flav!=sales ONLY
 			}
-			//END SUGARCRM flav!=sales ONLY
 			
 			if (filter_def.table_key  == current_module)
 				filter_def.table_key = 'self';
@@ -760,7 +748,6 @@ SUGAR.reports = function() {
 					filter_def.panelId = panels[i].id;
 					filter_def.name = cells[0].getElementsByTagName('input')[0].value;
 					var module = cells[0].getElementsByTagName('input')[2].value;
-					//BEGIN SUGARCRM flav!=sales ONLY
 					if(filter_def.name == 'team_set_id') {
 						filter_def.table_key = cells[0].getElementsByTagName('input')[1].value;
 						filter_def.table_key = SUGAR.reports.getTeamSetIdTableValue(filter_def.table_key, current_module, false);
@@ -773,13 +760,10 @@ SUGAR.reports = function() {
 						field['vname'] = SUGAR.language.get('app_strings', 'LBL_TEAMS');
 						field['type'] = 'team_set_id';						
 					} else {
-					//END SUGARCRM flav!=sales ONLY
 						filter_def.table_key = cells[0].getElementsByTagName('input')[1].value;
 						filter_def.table_key = filter_def.table_key.replace(/>/g,':');
 						var field = module_defs[module].field_defs[filter_def.name];
-					//BEGIN SUGARCRM flav!=sales ONLY
 					}
-					//END SUGARCRM flav!=sales ONLY
 					
 					if (filter_def.table_key  == current_module)
 						filter_def.table_key = 'self';
@@ -797,7 +781,6 @@ SUGAR.reports = function() {
 					
 					if (runtime_filter && runtime_filter.checked)
 						filter_def.runtime = 1;
-					//BEGIN SUGARCRM flav!=sales ONLY
 					if(field.name == 'team_set_id'){
 						//push the list of team ids
 						filter_def.input_name0 = new Array();
@@ -822,7 +805,6 @@ SUGAR.reports = function() {
 							error_msgs += "\"" + column_vname + "\" " + lbl_missing_input_value + "\n";
 						}
 					}
-					//END SUGARCRM flav!=sales ONLY
 					else if ( typeof(input_arr[0]) !=  'undefined' && input_arr[0].id.search(/runtime_filter/) == -1) {
 						filter_def.input_name0=input_arr[0].value;
 						if (input_arr[0].value == '') {
@@ -1827,12 +1809,10 @@ SUGAR.reports = function() {
 				alert(SUGAR.language.get('Reports', 'LBL_OWNER') + SUGAR.language.get('Reports', 'LBL_CANNOT_BE_EMPTY'));
 				return false;
 			}
-			//BEGIN SUGARCRM flav!=sales ONLY
 			if(!is_primary_team_selected('ReportsWizardForm', 'team_name')) {
 			   alert(SUGAR.language.get('app_strings', 'ERR_NO_PRIMARY_TEAM_SPECIFIED'));
 			   return false;
 			}
-			//END SUGARCRM flav!=sales ONLY
 			
 			return true;
 		},
@@ -3004,12 +2984,10 @@ SUGAR.reports = function() {
 			htmlTableCell.innerHTML = "<table><tr></tr></table>";
 		
 			var row = htmlTableCell.getElementsByTagName("tr")[0];
-			//BEGIN SUGARCRM flav!=sales ONLY
 			if(field.name == 'team_set_id'){
 				SUGAR.reports.addFilterTeamSet(row,field, filter);
 				//SUGAR.reports.addRunTimeCheckBox(row,filter, rowId);
 			}
-			//END SUGARCRM flav!=sales ONLY
 			else if (qualifier_name == 'between') {
 				SUGAR.reports.addFilterInputTextBetween(row,filter);
 				SUGAR.reports.addRunTimeCheckBox(row,filter, rowId);		
@@ -3099,11 +3077,9 @@ SUGAR.reports = function() {
 		            SUGAR.reports.addFilterInputSelectSingle(row,options,filter,rowId);
 					SUGAR.reports.addRunTimeCheckBox(row,filter,rowId);		
 		    }
-			//BEGIN SUGARCRM flav!=sales ONLY
 			else if (field_type == 'teamset') {
 		            SUGAR.reports.addTeamset(row,field.options,filter);	
 			}
-			//END SUGARCRM flav!=sales ONLY
 			else {
 				SUGAR.reports.addFilterInputText(row,filter);
 				SUGAR.reports.addRunTimeCheckBox(row,filter,rowId);		
@@ -3130,7 +3106,6 @@ SUGAR.reports = function() {
 			}
 
 		},
-		//BEGIN SUGARCRM flav!=sales ONLY
 		addFilterTeamSet: function(row, field, filter) {
 			var filter_row = filters_arr[filters_count_map[current_filter_id]];
 			var field = filter_row.field;		
@@ -3212,7 +3187,6 @@ SUGAR.reports = function() {
 			
     		
 		},			
-		//END SUGARCRM flav!=sales ONLY
 
         /**
          * Removing element from dependents of full_table_list
@@ -3357,7 +3331,6 @@ SUGAR.reports = function() {
 		addFilterOnLoad: function(filter, current_filters_table) {
 			var module = full_table_list[filter.table_key].module;
 			var fieldName = filter.name;
-			//BEGIN SUGARCRM flav!=sales ONLY
 			if(fieldName == 'team_set_id') {
 			   var field = new Array();
 			   field['vname'] = SUGAR.language.get('app_strings', 'LBL_TEAMS');
@@ -3382,7 +3355,6 @@ SUGAR.reports = function() {
 			var filterRow = document.getElementById(current_filters_table).insertRow(numFilterRows);
 			filterRow.setAttribute('id', current_filters_table +'_filter_row_' + totalFilterRows);
 			var filterCell = filterRow.insertCell(0);
-			//END SUGARCRM flav!=sales ONLY
 			if (link == "self") {
 				link = module;
 				var module_str = module;
@@ -4216,7 +4188,6 @@ SUGAR.reports = function() {
 		    }
 		    
 		},
-		//BEGIN SUGARCRM flav!=sales ONLY
 		getTeamSetIdTableValue: function(team_set_id, current_module, check_current_module) {
 			team_set_id = team_set_id.replace(/>team_link/g,'');
 			if(check_current_module) {
@@ -4224,7 +4195,6 @@ SUGAR.reports = function() {
 			}
 			return team_set_id;
 		}
-		//END SUGARCRM flav!=sales ONLY
 	};
 }();
 

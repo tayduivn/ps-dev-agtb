@@ -1,5 +1,5 @@
 <?php
-//FILE SUGARCRM flav=pro || flav=sales ONLY
+//FILE SUGARCRM flav=pro ONLY
 if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 /*********************************************************************************
  *The contents of this file are subject to the SugarCRM Professional End User License Agreement
@@ -52,8 +52,7 @@ class ViewWirelesslist extends SugarWirelessListView
 		$backed_request = $_REQUEST;
 		if (isset($_REQUEST['wl_saved_search_select'])){
 
-			$savedSearch = new SavedSearch();
-			$savedSearch->retrieve($_REQUEST['wl_saved_search_select']);
+			$savedSearch = BeanFactory::getBean('SavedSearch', $_REQUEST['wl_saved_search_select']);
 			$_REQUEST = $savedSearch->returnSavedSearchContents($_REQUEST['wl_saved_search_select']);
 
 			$this->ss->assign('SAVED_SEARCH_NAME', $savedSearch->name);

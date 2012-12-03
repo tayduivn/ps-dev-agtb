@@ -57,6 +57,10 @@ $viewdefs['Opportunities']['base']['view']['record'] = array(
             'label'   => 'LBL_DELETE_BUTTON_LABEL',
             'css_class' => 'record-delete',
         ),
+        array(
+            'name' => 'sidebar_toggle',
+            'type' => 'sidebartoggle',
+        ),
     ),
     'panels' => array(
         array(
