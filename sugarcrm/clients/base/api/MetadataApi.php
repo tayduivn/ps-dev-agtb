@@ -546,7 +546,7 @@ class MetadataApi extends SugarApi {
         $mm = $this->getMetadataManager();
 
         $languageList = array_keys(get_languages());
-        sugar_mkdir(sugar_cached('api/metadata/lang/'), null, true);
+        sugar_mkdir(sugar_cached('api/metadata'), null, true);
 
         $fileList = array();
         foreach ( $languageList as $language ) {            
@@ -571,7 +571,7 @@ class MetadataApi extends SugarApi {
                 $stringData['mod_strings'] = $modStrings;
             }
             $stringData['_hash'] = md5(serialize($stringData));
-            $fileList[$language] = sugar_cached('api/metadata/lang/'.$language.'_'.$stringData['_hash'].'.json');
+            $fileList[$language] = sugar_cached('api/metadata/lang_'.$language.'_'.$stringData['_hash'].'.json');
             sugar_file_put_contents_atomic($fileList[$language],json_encode($stringData));
         }
         
