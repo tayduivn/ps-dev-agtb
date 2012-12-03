@@ -45,7 +45,8 @@
     _render: function() {
         this.saveButtonWasClicked = false;
         app.view.View.prototype._render.call(this);
-        this.events = _.extend(this.events, {
+        this.events = _.clone(this.events);
+        _.extend(this.events, {
             "focusin input[name=new_password]" : "verifyCurrentPassword",
             "focusin input[name=confirm_password]" : "verifyCurrentPassword"
         });
