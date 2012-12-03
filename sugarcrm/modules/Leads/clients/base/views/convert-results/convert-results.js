@@ -34,7 +34,6 @@
 
     },
     previewRecord: function(e) {
-        debugger;
         var self = this,
             el = this.$(e.currentTarget),
             data = el.data(),
