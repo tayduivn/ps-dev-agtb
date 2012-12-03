@@ -101,6 +101,12 @@ class Bug53944Test extends Sugar_PHPUnit_Framework_OutputTestCase
 
     public function tearDown()
     {
+        SugarTestAccountUtilities::removeAllCreatedAccounts();
+        if ($this->pt)
+        {
+            $this->pt->mark_deleted($this->pt->id);
+        }
+
         //Removing created relationship
         $this->relationships = new DeployedRelationships($this->lhs_module);
         $this->relationships->delete($this->relationship->getName());
@@ -112,26 +118,21 @@ class Bug53944Test extends Sugar_PHPUnit_Framework_OutputTestCase
     public function testRelationOneToOne()
     {
         //Creating new Account
-        $this->account = new Account;
-        $this->account->name = "Bug53944Account".time();
-        $this->account->save();
+        $this->account = SugarTestAccountUtilities::createAccount();
 
-        $_REQUEST['relate_to']=$this->rhs_module;
-        $rel_name = $this->relationship->getName();
-        $ida = $rel_name.'accounts_ida';
-        $name = $rel_name.'_name';
+        $_REQUEST['relate_to'] = $this->rhs_module;
 
         //Creating new ProductTemplate
         $this->pt = new ProductTemplate();
-        $this->pt->name = "Bug53944ProductTemplates".time();
+        $this->pt->name = "Bug53944ProductTemplates" . time();
+        $rel_name = $this->relationship->getName();
+        $ida = $this->pt->field_defs[$rel_name]['id_name'];
         $this->pt->$ida = $this->account->id;
-        $this->pt->$name = $this->account->name;
         $this->pt->save();
 
-        $query = "SELECT ". $this->relationship->joinKeyLHS." FROM ".$rel_name."_c WHERE ".$rel_name."_c.".$this->relationship->joinKeyRHS."='".$this->pt->id."'";
-        $result = $GLOBALS['db']->query($query);
-        $row = $GLOBALS['db']->fetchRow($result);
+        $this->pt->load_relationship($rel_name);
+        $actual = $this->pt->$rel_name->getBeans();
 
-        $this->assertNotNull($row[$ida],'Table account_producttemplates_c was not filled');
+        $this->assertArrayHasKey($this->account->id, $actual, 'Relationship was not created');
     }
 }

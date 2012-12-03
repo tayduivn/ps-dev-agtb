@@ -1,5 +1,4 @@
 <?php
-//FILE SUGARCRM flav=pro ONLY
 /*********************************************************************************
  * The contents of this file are subject to the SugarCRM Professional End User
  * License Agreement ("License") which can be viewed at
@@ -23,65 +22,55 @@
  * All Rights Reserved.
  ********************************************************************************/
 
+require_once('modules/Import/sources/ImportFile.php');
+
 /**
- * Bug58685Test.php
- * This test tests that the error message is returned after an upload that isn't a true upload but just an empty post
+ * Test checks Import when not using UTF-8 encoding
+ * 
+ * @ticket 58207
+ * @author avucinic
  *
- * @ticket 58685
  */
-require_once('modules/Home/views/view.list.php');
-class Bug58685Test extends Sugar_PHPUnit_Framework_OutputTestCase
+class Bug58207Test extends Sugar_PHPUnit_Framework_TestCase
 {
-    /**
-     * @var array
-     */
-    protected $oldPost = array();
 
-    /**
-     * @var string
-     */
-    protected $oldRM = null;
+    private $_file;
+    private $_sugarConfig;
 
-    /**
-     * @var string
-     */
-    protected $oldCL = null;
-
-	public function setUp()
+    public function setUp()
     {
-        SugarTestHelper::setUp('app_strings');
+        // SJIS encoded Japanese CSV
+        $this->_file = 'tests/modules/Import/Bug58207Test.csv';
+        
+        global $sugar_config;
+        $this->_sugarConfig = $sugar_config; 
+        $sugar_config['default_export_charset'] = "SJIS";
 
-        $this->oldPost = $_POST;
-        if (isset($_SERVER['REQUEST_METHOD'])) {
-            $this->oldRM = $_SERVER['REQUEST_METHOD'];
-        }
-        if (isset($_SERVER['CONTENT_LENGTH'])) {
-            $this->oldCL = $_SERVER['CONTENT_LENGTH'];
-        }
-
-	}
+        SugarTestHelper::setUp('current_user');
+    }
 
     public function tearDown()
     {
-        $_POST = $this->oldPost;
-        $_SERVER['REQUEST_METHOD'] = $this->oldRM;
-        $_SERVER['CONTENT_LENGTH'] = $this->oldCL;
-
         SugarTestHelper::tearDown();
+        global $sugar_config;
+        $sugar_config = $this->_sugarConfig;
     }
 
     /**
-     * testEmptyPostError
+     * Import a SJIS encoded file, and check if getNextRow() properly
+     * converts all the data into UTF-8
      */
-    function testSaveUploadErrorMessage() {
-        //first lets test that no errors show up under normal conditions, clear out Post array just in case there is stale info
-        $_POST = array();
-        //now lets simulate that we are coming from a post, which along with the empty file and post array should trigger the error message
-        $_SERVER['REQUEST_METHOD'] = 'POST';
-        $_SERVER['CONTENT_LENGTH'] = 10;
-        $view = new HomeViewList();
-        $view->processMaxPostErrors();
-        $this->expectOutputRegex('/.*Please refresh your page and try again.*/');
+    public function testFileImportEncoding()
+    {
+        $importFile = new ImportFile($this->_file, ',', '"', FALSE, FALSE);
+
+        $row = $importFile->getNextRow();
+
+        // Hardcode some Japanese strings
+        $this->assertEquals('名前', $row[0]);
+        $this->assertEquals('請求先郵便番号', $row[10]);
+        $this->assertEquals('年間売上', $row[20]);
+        $this->assertEquals('チームID', $row[30]);
     }
 
 }

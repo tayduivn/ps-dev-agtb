@@ -54,6 +54,7 @@ class SugarTestUserUtilities
         }
         //BEGIN SUGARCRM flav=pro ONLY
         $user->default_team = '1'; //Set Default Team to Global
+        $user->team_id = '1';
         //END SUGARCRM flav=pro ONLY
         if ( $save ) {
             $user->save();
