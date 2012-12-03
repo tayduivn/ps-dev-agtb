@@ -64,10 +64,9 @@ class ForecastsConfigApi extends ConfigModuleApi {
                 $args['has_commits'] = true;
             }
         }
-        parent::configSave($api, $args);
 
         //reload the settings to get the current settings
-        $current_forecasts_settings = $admin->getConfigForModule('Forecasts', $platform);
+        $current_forecasts_settings = parent::configSave($api, $args);
 
         //if primary settings for timeperiods have changed, then rebuild them
         if($this->timePeriodSettingsChanged($prior_forecasts_settings, $current_forecasts_settings)) {
