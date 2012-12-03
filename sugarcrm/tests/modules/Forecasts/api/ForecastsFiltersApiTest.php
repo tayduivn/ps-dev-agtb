@@ -94,11 +94,6 @@ class ForecastsFiltersApiTest extends RestTestBase
     public function testReportees()
     {
         $db = DBManagerFactory::getInstance();
-        if ( !$db->supports('recursive_query') )
-        {
-            // @see SugarForecasting_ReportingUsers::getReportees()
-            $this->markTestSkipped('DBManager does not support recursive query');
-        }
 
         $restReply = $this->_restCall("Forecasts/reportees/" . self::$currentUser->id);
         $this->assertEquals($restReply['reply']['metadata']['id'], self::$currentUser->id, "currentUser's id was not found in the Expected place in the rest reply" );
@@ -123,11 +118,6 @@ class ForecastsFiltersApiTest extends RestTestBase
     public function testDeletedReportees()
     {
         $db = DBManagerFactory::getInstance();
-        if ( !$db->supports('recursive_query') )
-        {
-            // @see SugarForecasting_ReportingUsers::getReportees()
-            $this->markTestSkipped('DBManager does not support recursive query');
-        }
 
         // delete one user for this test
         self::$employee2->deleted = 1;
@@ -187,11 +177,6 @@ class ForecastsFiltersApiTest extends RestTestBase
     {
         global $locale;
         $db = DBManagerFactory::getInstance();
-        if ( !$db->supports('recursive_query') )
-        {
-            // @see SugarForecasting_ReportingUsers::getReportees()
-            $this->markTestSkipped('DBManager does not support recursive query');
-        }
 
         $defaultPreference = $this->_user->getPreference('default_locale_name_format');
         $this->_user->setPreference('default_locale_name_format', 'l, f', 0, 'global');
