@@ -49,7 +49,8 @@ class ForecastsConfigApi extends ConfigModuleApi {
             $prior_forecasts_settings['timeperiod_shown_forward'] = 0;
             $prior_forecasts_settings['timeperiod_shown_backward'] = 0;
         }
-
+        
+        $upgraded = 0;
         if (!empty($prior_forecasts_settings['is_upgrade']))
         {
             $db = DBManagerFactory::getInstance();
@@ -57,12 +58,15 @@ class ForecastsConfigApi extends ConfigModuleApi {
             $upgraded = $db->getOne("SELECT count(id) as total FROM upgrade_history WHERE type = 'patch' AND status = 'installed' AND version LIKE '6.7.%'");
             if ($upgraded == 1)
             {
-                require_once('modules/UpgradeWizard/uw_utils.php');
-                updateOpportunitiesForForecasting();
-
                 //TODO-sfa remove this once the ability to map buckets when they get changed is implemented (SFA-215).
                 $args['has_commits'] = true;
             }
+        }
+        
+        if($upgraded || empty($prior_forecasts_settings['is_setup']))
+        {
+        	 require_once('modules/UpgradeWizard/uw_utils.php');
+             updateOpportunitiesForForecasting();
         }
 
         //reload the settings to get the current settings
