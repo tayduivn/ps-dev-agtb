@@ -71,6 +71,7 @@
       url: 'partial/'+ template + '.html',
       dataType:"text",
       async: false,
+      cache: 'false',
       success: function(data) {
           if(data !== undefined){
             ich.addTemplate(template,data);

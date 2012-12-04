@@ -1,5 +1,5 @@
 <!-- synced dom with sidecar on 11/21/2112 -->
-<form class="form-search" action="">
+<form class="form-search" action="" id="{{sourceid}}">
     <div class="row-fluid">
         <div class="control-group filter">
             <div class="controls">
@@ -97,7 +97,7 @@
       loadContent('partial/common/search-filter-row.html', '.filter-options', undefined, 'append');
 
       // toggle module search (needs tap logic for mobile)
-      $('.form-search').on('click', '.addit', function(e) {
+      $('#{{sourceid}}.form-search').on('click', '.addit', function(e) {
           $(this).toggleClass('active');
           $(this).parent().parent().parent().find('.form-addit').toggleClass('hide');
           e.stopPropagation();
@@ -107,17 +107,17 @@
 
       // select filter dropdown option
       $("#search_filter_chzn .chzn-results > li").bind('click',function(e){
-          var li_active = $("ul.chzn-choices").find('.search-choice').first().attr('id'),
+          var li_active = $("#{{sourceid}} ul.chzn-choices").find('.search-choice').first().attr('id'),
               li_orig = li_active.replace("_chzn_c_","_chzn_o_");
 
           // if active filter "pills" exist, remove pill from dom
           // if($("ul.chzn-choices").find('.search-choice').length > 1) {
           //   $("ul.chzn-choices").find('.search-choice').first().remove();
           // }
-          $("#"+li_orig).removeClass("result-selected").addClass("active-result");
+          $("#{{sourceid}} #"+li_orig).removeClass("result-selected").addClass("active-result");
 
-          if($('.chzn-container').hasClass('chzn-container-active') === true ) {
-              $('.chzn-container').removeClass('chzn-container-active');
+          if($('#{{sourceid}} .chzn-container').hasClass('chzn-container-active') === true ) {
+              $('#{{sourceid}} .chzn-container').removeClass('chzn-container-active');
           }
           e.stopPropagation();
           e.preventDefault();
@@ -136,17 +136,17 @@
       ---------------------- */
 
       // if filter name changes or is erased
-      $('.filter-header input[type="text"]').on('keyup change', function(){
-          $('.filter-header a[href="#save"]').toggleClass( 'disabled', $('.filter-header input[type="text"]').val()==='' );
+      $('#{{sourceid}} .filter-header input[type="text"]').on('keyup change', function(){
+          $('#{{sourceid}} .filter-header a[href="#save"]').toggleClass( 'disabled', $('#{{sourceid}} .filter-header input[type="text"]').val()==='' );
       });
 
       // if click save button
-      $('.filter-header a[href="#save"]').on('click', function(e){
-          var choicesLength = $('#search_filter_chzn .chzn-choices li').length;
+      $('#{{sourceid}} .filter-header a[href="#save"]').on('click', function(e){
+          var choicesLength = $('#{{sourceid}} #search_filter_chzn .chzn-choices li').length;
           if ( !$(this).hasClass('disabled') ) {
-              $('#search_filter_chzn .chzn-choices li').slice(1,choicesLength-1).remove();
-              $('#search_filter_chzn .search-field').before(
-                  searchChoiceConstructor(2, $('.filter-header input[type="text"]').val(), 99 )
+              $('#{{sourceid}} #search_filter_chzn .chzn-choices li').slice(1,choicesLength-1).remove();
+              $('#{{sourceid}} #search_filter_chzn .search-field').before(
+                  searchChoiceConstructor(2, $('#{{sourceid}} .filter-header input[type="text"]').val(), 99 )
               );
           }
           e.stopPropagation();
@@ -154,9 +154,9 @@
       });
 
       // close filter option extend
-      $('.filter-header .filter-close').on('click', function(e){
+      $('#{{sourceid}} .filter-header .filter-close').on('click', function(e){
           $(this).parents('.form-search').find('.filter-options').addClass('hide');
-          $('.filter-header input[type="text"]').val('');
+          $('#{{sourceid}} .filter-header input[type="text"]').val('');
           e.stopPropagation();
           e.preventDefault();
       });
@@ -166,7 +166,7 @@
       ---------------------- */
 
       // add search filter row to current filter set
-      $('.form-search').on('click', '.addme', function(e) {
+      $('#{{sourceid}}.form-search').on('click', '.addme', function(e) {
           var article = $(this).parents('article');
           $(this).after('<a href="#" class="removeme btn btn-invisible"><i class="icon-minus"></i></a>');
           $('.form-search ul.chzn-choices li.search-field').before('<li class="search-choice search-choice-option" id="'+article.attr('id')+'_choice"><span>'+article.find('.buildit').val()+'</span><a>'+article.find('.operator').val()+'</a></li>');
@@ -175,7 +175,7 @@
       });
 
       // remove filter option
-      $('.filter-options').on('click', '.removeme', function(e) {
+      $('#{{sourceid}} .filter-options').on('click', '.removeme', function(e) {
           $(this).parents('.filter-body').remove();
           e.preventDefault();
       });
@@ -199,27 +199,27 @@
 
       // add the current module as default filter
       if ( window.location.pathname.split('/').pop() !== 'dashboard.html') {
-          $('.form-search ul.chzn-choices').prepend('<li class="search-choice search-choice-option" id="search_filter_00_choice"><span>Module</span><span>{{title}}</span></li>');
+          $('#{{sourceid}}.form-search ul.chzn-choices').prepend('<li class="search-choice search-choice-option" id="search_filter_00_choice"><span>Module</span><span>{{title}}</span></li>');
       }
 
       // prepend legend to .chzn-choices
-      $('#search_filter_chzn .chzn-choices').prepend(
+      $('#{{sourceid}} #search_filter_chzn .chzn-choices').prepend(
           '<legend class="chzn-select-legend"><i class="icon-caret-down"></i></legend>'
       );
 
       // append create filter icon
-      $('#search_filter_chzn').append('<div class="filter-create"><i class="icon-plus"></i></div>');
-      $('.filter-create').on('mousedown', function(e){
+      $('#{{sourceid}} #search_filter_chzn').append('<div class="filter-create"><i class="icon-plus"></i></div>');
+      $('#{{sourceid}} .filter-create').on('mousedown', function(e){
           $(this).parents('.form-search').find('.filter-options').removeClass('hide');
           e.stopPropagation();
           e.preventDefault();
       });
 
       // append checkmarks to filter dropdown results
-      $('#search_filter_chzn .chzn-results').find('li').after("<span class='icon-ok' />");
+      $('#{{sourceid}} #search_filter_chzn .chzn-results').find('li').after("<span class='icon-ok' />");
 
       // instatiate filter select chosen
-      $("#search_filter").chosen({ searchChoiceConstructor: searchChoiceConstructor });
+      $("#{{sourceid}} #search_filter").chosen({ searchChoiceConstructor: searchChoiceConstructor });
 
   });
   function invokeSaveButtons(){

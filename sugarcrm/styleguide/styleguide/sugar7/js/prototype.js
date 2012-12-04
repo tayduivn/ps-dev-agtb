@@ -1,3 +1,4 @@
+  page.rand = function(){return Math.floor((Math.random()*100)+1);};
 
   function loadPartial(template) {
     if (!ich[template]) {
@@ -6,6 +7,7 @@
         dataType: 'html',
         cache: 'false',
         async: false,
+        cache: false,
         success: function(data) {
           if(data !== undefined){
             ich.addTemplate(template,data);
@@ -29,6 +31,7 @@
         var source = 'partial/'+ t.file + '.html';
         loadPartial(source);
         var partial = ich[source];
+        page.sourceid = t.file.split('/').pop() + '-' + Math.floor((Math.random()*100)+1);
         if (t.method==='prepend') {
           $(t.target).prepend(partial(page));
         } else if (t.method==='append') {
