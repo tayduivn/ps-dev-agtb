@@ -97,10 +97,7 @@ class ForecastsConfigApi extends ConfigModuleApi {
         if(!isset($priorSettings['timeperiod_type']) || (isset($currentSettings['timeperiod_type']) && ($currentSettings['timeperiod_type'] != $priorSettings['timeperiod_type']))) {
             return true;
         }
-        if(!isset($priorSettings['timeperiod_start_month']) || (isset($currentSettings['timeperiod_start_month']) && ($currentSettings['timeperiod_start_month'] != $priorSettings['timeperiod_start_month']))) {
-            return true;
-        }
-        if(!isset($priorSettings['timeperiod_start_day']) || (isset($currentSettings['timeperiod_start_day']) && ($currentSettings['timeperiod_start_day'] != $priorSettings['timeperiod_start_day']))) {
+        if(!isset($priorSettings['timeperiod_start_date']) || (isset($currentSettings['timeperiod_start_date']) && ($currentSettings['timeperiod_start_date'] != $priorSettings['timeperiod_start_date']))) {
             return true;
         }
         if(!isset($priorSettings['timeperiod_leaf_interval']) || (isset($currentSettings['timeperiod_leaf_interval']) && ($currentSettings['timeperiod_leaf_interval'] != $priorSettings['timeperiod_leaf_interval']))) {
