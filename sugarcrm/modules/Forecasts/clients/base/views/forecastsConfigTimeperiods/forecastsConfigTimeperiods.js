@@ -15,14 +15,6 @@
         }
     },
 
-    bindDataChange: function() {
-        this.model.on("change:timeperiod_start_picker", function (model, value) {
-            var pickedDate = new Date(value);
-            model.set("timeperiod_start_day", pickedDate.getDate() + 1);
-            model.set("timeperiod_start_month", pickedDate.getMonth() + 1);
-        });
-    },
-
     /**
      * Overriding _renderField because we need to set up a binding to the start month drop down to populate the day drop down on change
      * @param field
@@ -52,8 +44,6 @@
      */
     _setUpTimeperiodConfigField: function(field) {
         switch(field.name) {
-            case "timeperiod_start_picker":
-                return this._setUpTimeperiodPicker(field);
             case "timeperiod_shown_forward":
             case "timeperiod_shown_backward":
                 return this._setUpTimeperiodShowField(field);
@@ -64,33 +54,6 @@
             default:
                 return field;
         }
-    },
-
-
-    _setUpTimeperiodPicker: function(field) {
-        var today = new Date();
-
-        /**
-         * override bindDataChange to update the date picker in the UI properly when the value for either
-         * `timeperiod_start_month` or `timeperiod_start_day` changes in the model.
-         */
-        field.bindDataChange = function() {
-            if (this.model) {
-                this.model.on("change:timeperiod_start_day change:timeperiod_start_month", function() {
-                    var today = new Date();
-
-                    this.value = today.getFullYear().toString() + '-' + this.model.get('timeperiod_start_month') + '-' + this.model.get('timeperiod_start_day');
-                    this.model.set(this.name, this.value);
-                    this.render();
-                }, this);
-            }
-        };
-
-
-        field.value = today.getFullYear().toString() + '-' + this.model.get('timeperiod_start_month') + '-' + this.model.get('timeperiod_start_day');
-        field.model.set(field.name, field.value);
-
-        return field;
     },
 
     /**

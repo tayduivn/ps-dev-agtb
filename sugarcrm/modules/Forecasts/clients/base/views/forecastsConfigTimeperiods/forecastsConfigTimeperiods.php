@@ -52,9 +52,9 @@ $viewdefs['Forecasts']['base']['view']['forecastsConfigTimeperiods'] = array(
                     'view' => 'forecastsTimeperiod'
                 ),
                 array(
-                    'name' => 'timeperiod_start_picker',
+                    'name' => 'timeperiod_start_date',
                     'type' => 'date',
-                    'label' => 'LBL_FORECASTS_CONFIG_START',
+                    'label' => 'LBL_FORECASTS_CONFIG_START_DATE',
                     'default' => false,
                     'enabled' => true,
                     'view' => 'edit'
