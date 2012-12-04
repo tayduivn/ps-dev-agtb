@@ -467,7 +467,11 @@ $beanList['SugarFeed'] = 'SugarFeed';
 $beanFiles['SugarFeed'] = 'modules/SugarFeed/SugarFeed.php';
 $modInvisList[] = 'SugarFeed';
 
-//BEGIN SUGARCRM flav=pro OR flav=sales ONLY
+
+$beanList['Words'] = 'Words';
+$beanFiles['Words'] = 'modules/Words/Words.php';
+
+//BEGIN SUGARCRM flav=pro ONLY
 $beanList['Notifications'] = 'Notifications';
 $beanFiles['Notifications'] = 'modules/Notifications/Notifications.php';
 $modInvisList[] = 'Notifications';
