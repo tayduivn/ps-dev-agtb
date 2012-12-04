@@ -21,7 +21,13 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  ********************************************************************************/
 
 require_once 'clients/base/api/MetadataApi.php';
+require_once 'clients/mobile/api/CurrentUserMobileApi.php';
 
 // An API to let the user in to the metadata
 class MetadataMobileApi extends MetadataApi {
+    protected function getModules() {
+        // The current user API gets the proper list of modules, we'll re-use it here
+        $currentUserApi = new CurrentUserMobileApi();
+        return $currentUserApi->getModuleList();
+    }
 }
