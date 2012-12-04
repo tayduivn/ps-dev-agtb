@@ -33,44 +33,50 @@
  */
 
 
-class Words_sugar extends Basic {
-	var $new_schema = true;
-	var $module_dir = 'Words';
-	var $object_name = 'Words';
-	var $table_name = 'words';
-	var $importable = true;
-		var $id;
-		var $name;
-		var $date_entered;
-		var $date_modified;
-		var $modified_user_id;
-		var $modified_by_name;
-		var $created_by;
-		var $created_by_name;
-		var $description;
-		var $deleted;
-		var $created_by_link;
-		var $modified_user_link;
-		var $team_id;
-		var $team_set_id;
-		var $team_count;
-		var $team_name;
-		var $team_link;
-		var $team_count_link;
-		var $teams;
-		var $assigned_user_id;
-		var $assigned_user_name;
-		var $assigned_user_link;
-			function Words_sugar(){
-		parent::Basic();
-	}
-	
-	function bean_implements($interface){
-		switch($interface){
-			case 'ACL': return true;
-		}
-		return false;
+class Words_sugar extends Basic
+{
+    var $new_schema = true;
+    var $module_dir = 'Words';
+    var $object_name = 'Words';
+    var $table_name = 'words';
+    var $importable = true;
+    var $id;
+    var $name;
+    var $date_entered;
+    var $date_modified;
+    var $modified_user_id;
+    var $modified_by_name;
+    var $created_by;
+    var $created_by_name;
+    var $description;
+    var $deleted;
+    var $created_by_link;
+    var $modified_user_link;
+    var $team_id;
+    var $team_set_id;
+    var $team_count;
+    var $team_name;
+    var $team_link;
+    var $team_count_link;
+    var $teams;
+    var $assigned_user_id;
+    var $assigned_user_name;
+    var $assigned_user_link;
+
+    function Words_sugar()
+    {
+        parent::Basic();
+    }
+
+    function bean_implements($interface)
+    {
+        switch ($interface) {
+            case 'ACL':
+                return true;
+        }
+        return false;
+    }
+
 }
-		
-}
+
 ?>

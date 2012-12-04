@@ -1,5 +1,5 @@
 <?php
-if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
+if (!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 /*********************************************************************************
  * The contents of this file are subject to the SugarCRM Master Subscription
  * Agreement ("License") which can be viewed at
@@ -28,28 +28,26 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  ********************************************************************************/
 
 
-
-
 global $current_user;
 
-$dashletData['WordsDashlet']['searchFields'] = array('date_entered'     => array('default' => ''),
-                                                          'date_modified'    => array('default' => ''),
-                                                          'team_id'          => array('default' => ''),
-                                                          'assigned_user_id' => array('type'    => 'assigned_user_name', 
-                                                                                      'default' => $current_user->name));
-$dashletData['WordsDashlet']['columns'] =  array(   'name' => array('width'   => '40',
-                                                                      'label'   => 'LBL_LIST_NAME',
-                                                                      'link'    => true,
-                                                                      'default' => true), 
-                                                      'date_entered' => array('width'   => '15', 
-                                                                              'label'   => 'LBL_DATE_ENTERED',
-                                                                              'default' => true),
-                                                      'date_modified' => array('width'   => '15', 
-                                                                              'label'   => 'LBL_DATE_MODIFIED'),    
-                                                      'created_by' => array('width'   => '8', 
-                                                                            'label'   => 'LBL_CREATED'),
-                                                      'assigned_user_name' => array('width'   => '8', 
-                                                                                     'label'   => 'LBL_LIST_ASSIGNED_USER'),
-                                                      'team_name' => array('width'   => '15', 
-                                                                           'label'   => 'LBL_LIST_TEAM'),
-                                               );
+$dashletData['WordsDashlet']['searchFields'] = array('date_entered' => array('default' => ''),
+    'date_modified' => array('default' => ''),
+    'team_id' => array('default' => ''),
+    'assigned_user_id' => array('type' => 'assigned_user_name',
+        'default' => $current_user->name));
+$dashletData['WordsDashlet']['columns'] = array('name' => array('width' => '40',
+    'label' => 'LBL_LIST_NAME',
+    'link' => true,
+    'default' => true),
+    'date_entered' => array('width' => '15',
+        'label' => 'LBL_DATE_ENTERED',
+        'default' => true),
+    'date_modified' => array('width' => '15',
+        'label' => 'LBL_DATE_MODIFIED'),
+    'created_by' => array('width' => '8',
+        'label' => 'LBL_CREATED'),
+    'assigned_user_name' => array('width' => '8',
+        'label' => 'LBL_LIST_ASSIGNED_USER'),
+    'team_name' => array('width' => '15',
+        'label' => 'LBL_LIST_TEAM'),
+);
