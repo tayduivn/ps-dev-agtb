@@ -220,7 +220,7 @@ class ImportFile extends ImportDataSource
                 return false;
             }
         }
-
+        
         global $locale;
         foreach ($this->_currentRow as $key => $value)
         {
@@ -235,7 +235,7 @@ class ImportFile extends ImportDataSource
             // Use preg_replace instead of str_replace as str_replace may cause extra lines on Windows
             $this->_currentRow[$key] = preg_replace("[\r\n|\n|\r]", PHP_EOL, $this->_currentRow[$key]);
         }
-
+        
         $this->_rowsCount++;
 
         return $this->_currentRow;
@@ -317,49 +317,47 @@ class ImportFile extends ImportDataSource
             return $this->_encoding;
         }
         
-        // Autodetect uses getNextRow() which changes the row count
-        // so we should backup the current and revert it when it's done
-        $backupRowCount = $this->_rowsCount;
+        // Move file pointer to start
+        $this->setFpAfterBOM();
         
         global $locale;
-
-        $this->setFpAfterBOM();
-
-        //Retrieve a sample set of data
-        $rows = array();
-
         $user_charset = $locale->getExportCharset();
         $system_charset = $locale->default_export_charset;
         $other_charsets = 'UTF-8, UTF-7, ASCII, CP1252, EUC-JP, SJIS, eucJP-win, SJIS-win, JIS, ISO-2022-JP';
         $detectable_charsets = "UTF-8, {$user_charset}, {$system_charset}, {$other_charsets}";
+
         // Bug 26824 - mb_detect_encoding() thinks CP1252 is IS0-8859-1, so use that instead in the encoding list passed to the function
-        $detectable_charsets = str_replace('CP1252','ISO-8859-1',$detectable_charsets);
-        $charset_for_import = $user_charset; //We will set the default import charset option by user's preference.
-        $able_to_detect = function_exists('mb_detect_encoding');
-        for ( $i = 0; $i < 3; $i++ )
+        $detectable_charsets = str_replace('CP1252', 'ISO-8859-1', $detectable_charsets);
+        
+        // If we are able to detect encoding
+        if (function_exists('mb_detect_encoding'))
         {
-            $rows[$i] = $this->getNextRow();
-            if(!empty($rows[$i]) && $able_to_detect)
+            // Retrieve a sample of data set
+            $text = '';
+            
+            // Read 10 lines from the file and put them all together in a variable
+            $i = 0;
+            while ($i < 10 && $temp = fgets($this->_fp, 8192))
             {
-                foreach($rows[$i] as & $temp_value)
-                {
-                    $current_charset = mb_detect_encoding($temp_value, $detectable_charsets);
-                    if(!empty($current_charset) && $current_charset != "UTF-8")
-                    {
-                        $temp_value = $locale->translateCharset($temp_value, $current_charset);// we will use utf-8 for displaying the data on the page.
-                        $charset_for_import = $current_charset;
-                        //set the default import charset option according to the current_charset.
-                        //If it is not utf-8, tt may be overwritten by the later one. So the uploaded file should not contain two types of charset($user_charset, $system_charset), and I think this situation will not occur.
-                    }
-                }
+                $text .= $temp;
+                $i++;
+            }
+            
+            // If we picked any text, try to detect charset
+            if (strlen($text) > 0)
+            {
+                $charset_for_import = mb_detect_encoding($text, $detectable_charsets);
             }
         }
-
-        //Reset the fp to after the bom if applicable.
+        
+        // If we couldn't detect the charset, set it to default export/import charset 
+        if (empty($charset_for_import))
+        {
+            $charset_for_import = $locale->getExportCharset(); 
+        }
+        
+        // Reset the fp to after the bom if applicable.
         $this->setFpAfterBOM();
-
-        // Revert row count
-        $this->_rowsCount = $backupRowCount;
         
         return $charset_for_import;
 
