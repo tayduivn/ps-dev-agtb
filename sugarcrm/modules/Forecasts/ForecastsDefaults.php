@@ -92,7 +92,7 @@ class ForecastsDefaults
             // the leaf interval that gets the extra week if main period is fiscal + quaterly, options come from forecasts_timeperiod_leaf_quarterly_options_dom, (first, middle, last)
             'timeperiod_leaf_interval' => TimePeriod::QUARTER_TYPE,
             // the starting point for each fiscal year, this is also used as the starting point to dynamically build the timeperiods
-            'timeperiod_start_date' => '2012-01-01',
+            'timeperiod_start_date' => date("Y") . '-01-01',
             // number of timeperiods forward from the current that are displayed
             'timeperiod_shown_forward' => 2,
             // number of timeperiods in the past from the current that are displayed
