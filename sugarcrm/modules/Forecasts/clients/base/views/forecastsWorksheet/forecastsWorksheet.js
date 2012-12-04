@@ -278,16 +278,11 @@
             this.context.forecasts.on("change:selectedTimePeriod",
                 function(context, timePeriod) {
                     this.updateWorksheetBySelectedTimePeriod(timePeriod);
-                    // we need to hide the inspector if it's shown
-                    self.layout.getComponent('inspector').hide();
                 }, this);
             this.context.forecasts.on("change:selectedRanges",
                 function(context, ranges) {
-                    var insp = self.layout.getComponent('inspector'),
-                        row = insp.removeHighlight(insp.findHighlighted());
                     this.updateWorksheetBySelectedRanges(ranges);
-                    // we need to update the dataset
-                    self.layout.getComponent('inspector').setRows(self.$el.find('tr.odd, tr.even'), row);
+                    self.layout.trigger('worksheetRows', self.$el.find('tr.odd, tr.even'));
                 },this);
             this.context.forecasts.worksheet.on("change", function() {
                 this.calculateTotals();

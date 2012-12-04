@@ -46,6 +46,14 @@
             // set the value of the hiddenSidecar to we can stop the render if the sidebar is hidden
             self.toggleSidebar = value;
         });
+        this.context.forecasts.on("change:selectedTimePeriod", function(context, timePeriod) {
+            // when the time-period changes, we need to hide this.
+            self.hide();
+        });
+        this.layout.on('worksheetRows', function(newRows) {
+            var row = self.removeHighlight(self.findHighlighted());
+            self.setRows(newRows, row);
+        });
     },
 
     /**
@@ -70,6 +78,8 @@
         // highlight the new row
         this.highlight(this.selectedIndex);
         this.handleButtons(this.selectedIndex);
+
+        this.layout.trigger("inspectorVisible", true);
     },
 
     /**
@@ -79,6 +89,8 @@
      */
     onHide: function (layout) {
         this.checkSidebarVisibility('hide');
+
+        this.layout.trigger("inspectorVisible", false);
     },
 
     /**
