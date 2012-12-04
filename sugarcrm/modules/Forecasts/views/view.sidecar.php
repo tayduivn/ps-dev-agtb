@@ -141,7 +141,7 @@ class ForecastsViewSidecar extends SidecarView
 
         //load sidecar.lite and 3rd party libs for sidecar
         echo getVersionedScript("cache/include/javascript/sugar_grp1_sidecar_libs.js") . "\n";      
-        echo "<script type='text/javascript' src='sidecar/minified/sidecar.lite.min.js'></script>\n";
+        echo getVersionedScript("sidecar/minified/sidecar.lite.min.js") . "\n";
             
         if ( !inDeveloperMode() )
         {                                      
