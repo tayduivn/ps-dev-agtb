@@ -1,4 +1,4 @@
-<!--//FILE SUGARCRM flav=pro || flav=sales ONLY -->
+<!--//FILE SUGARCRM flav=pro ONLY -->
 {*
 /**
  * LICENSE: The contents of this file are subject to the SugarCRM Professional

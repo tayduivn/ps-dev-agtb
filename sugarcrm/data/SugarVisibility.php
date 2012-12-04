@@ -75,6 +75,27 @@ abstract class SugarVisibility
         return $query;
     }
 
+   /**
+     * Add visibility clauses to the FROM part of the query
+     * @param string $query
+     * @return string
+     */
+    public function addVisibilityFromQuery(SugarQuery $query)
+    {
+        return $query;
+    }
+
+    /**
+     * Add visibility clauses to the WHERE part of the query
+     * @param string $query
+     * @return string
+     */
+    public function addVisibilityWhereQuery(SugarQuery $query)
+    {
+        return $query;
+    }
+
+
     /**
      * Get visibility options
      * @param string $name

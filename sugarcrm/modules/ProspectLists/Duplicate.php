@@ -33,9 +33,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 global $mod_strings;
 
 
-$focus = new ProspectList();
-
-$focus->retrieve($_POST['record']);
+$focus = BeanFactory::getBean('ProspectLists', $_POST['record']);
 if (isset($_POST['isDuplicate']) && $_POST['isDuplicate'] == true) {
 
 	$focus->id='';

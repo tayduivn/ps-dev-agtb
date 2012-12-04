@@ -32,6 +32,7 @@ $mod_strings = array (
   'LBL_REPLY_NAME' => '"Reply-to" Name: ',
 
   'LBL_MODULE_NAME' => 'Email Marketing',
+  'LBL_MODULE_NAME_SINGULAR' => 'Email Marketing',
   'LBL_MODULE_TITLE' => 'Email Marketing: Home',
   'LBL_LIST_FORM_TITLE' => 'Email Marketing Campaigns',
   'LBL_NAME' => 'Name: ',

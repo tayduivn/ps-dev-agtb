@@ -384,6 +384,15 @@ class RestRelateRecordTest extends RestTestBase {
         }
 
         $GLOBALS['db']->commit();
+        // get how many opps and contacts there currently are
+        $oppCountQuery = $db->query("SELECT count(*) AS count FROM opportunities");
+        $contactCountQuery = $db->query("SELECT count(*) AS count FROM contacts");
+        
+        $oppCountRow = $db->fetchByAssoc($oppCountQuery);
+        $oppCount = $oppCountRow['count'];
+
+        $contactCountRow = $db->fetchByAssoc($contactCountQuery);
+        $contactCount = $contactCountRow['count'];
 
         $restReply = $this->_restCall("Opportunities/" . $this->opps[0]->id . "/link/contacts/" . $this->contacts[1]->id,
             json_encode(array(
@@ -398,7 +407,20 @@ class RestRelateRecordTest extends RestTestBase {
         
         $row = $db->fetchByAssoc($ret);
         $this->assertEquals($this->contacts[1]->opportunity_role,$row['contact_role'],"Did not set the related contact's role");
+
+        //verify no duplicate contact or opportunity was created with this link
+        $oppCountQuery = $db->query("SELECT count(*) AS count FROM opportunities");
+        $contactCountQuery = $db->query("SELECT count(*) AS count FROM contacts");
         
+        $oppCountRow = $db->fetchByAssoc($oppCountQuery);
+        $oppCountNew = $oppCountRow['count'];
+
+        $contactCountRow = $db->fetchByAssoc($contactCountQuery);
+        $contactCountNew = $contactCountRow['count'];
+
+        $this->assertEquals($oppCount, $oppCountNew, "More Opps were created in this process");
+        $this->assertEquals($contactCount, $contactCountNew, "More contacts where created in this process");
+
     }
 
     /**
@@ -480,6 +502,8 @@ class RestRelateRecordTest extends RestTestBase {
     public function testCreateWithModuleWithParentType() {
         $call = new Call();
         $call->name = "UNIT 1";
+        $call->date_start = TimeDate::getInstance()->getNow()->asDb();
+
         $call->save();
 
         $this->calls[] = $call;
@@ -499,5 +523,4 @@ class RestRelateRecordTest extends RestTestBase {
 
     }
 
-    
 }

@@ -1,5 +1,5 @@
 <?php
-//FILE SUGARCRM flav=pro || flav=sales ONLY
+//FILE SUGARCRM flav=pro ONLY
 if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 /*********************************************************************************
@@ -23,7 +23,6 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  ********************************************************************************/
 $mapping = array (
     'beans' => array (
-      //BEGIN SUGARCRM flav!=sales ONLY
       'Leads' => array (
             'id' => 'id',
 		  	'recname' => 'account_name',
@@ -35,7 +34,6 @@ $mapping = array (
 		    'addrzip' => 'primary_address_postalcode',
 		    'hqphone' => 'phone_work',	    
       ),
-      //END SUGARCRM flav!=sales ONLY
       'Accounts' => array (
             'id' => 'id',
 		  	'recname' => 'name',

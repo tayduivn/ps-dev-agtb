@@ -80,7 +80,7 @@ class ImportViewStep2 extends ImportView
         $this->ss->assign('savedMappingHelpText',$savedMappingHelpText);
         $this->ss->assign('is_admin',$is_admin);
 
-        $import_map_seed = new ImportMap();
+        $import_map_seed = BeanFactory::getBean('Import_1');
         $custom_imports_arr = $import_map_seed->retrieve_all_by_string_fields( array('assigned_user_id' => $current_user->id, 'is_published' => 'no','module' => $_REQUEST['import_module']));
 
         if( count($custom_imports_arr) )

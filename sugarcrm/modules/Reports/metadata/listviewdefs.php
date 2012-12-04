@@ -63,7 +63,6 @@ $listViewDefs['Reports'] = array(
         'default' => true,
         ),
         
-     //BEGIN SUGARCRM flav!=sales ONLY
      'IS_SCHEDULED' => array(
         'width' => '10',
         'label' => 'LBL_SCHEDULE_REPORT',
@@ -71,7 +70,6 @@ $listViewDefs['Reports'] = array(
         'related_fields' => array('active', 'schedule_id'),
         'sortable' => false
       ),
-     //END SUGARCRM flav!=sales ONLY
     'LAST_RUN_DATE' => array(
         'width' => '15', 
         'label' => 'LBL_REPORT_LAST_RUN_DATE',

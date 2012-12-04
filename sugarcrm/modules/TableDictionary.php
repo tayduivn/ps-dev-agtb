@@ -22,20 +22,16 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 // $Id: TableDictionary.php 53116 2009-12-10 01:24:37Z mitani $
 include("metadata/activity_commentsMetaData.php");
 include("metadata/activity_tagsMetaData.php");
-//BEGIN SUGARCRM flav!=sales ONLY
 include("metadata/accounts_bugsMetaData.php");
 include("metadata/accounts_casesMetaData.php");
-//END SUGARCRM flav!=sales ONLY
 include("metadata/accounts_contactsMetaData.php");
 include("metadata/accounts_opportunitiesMetaData.php");
 include("metadata/calls_contactsMetaData.php");
 include("metadata/calls_usersMetaData.php");
-//BEGIN SUGARCRM flav!=sales ONLY
 include("metadata/calls_leadsMetaData.php");
 include("metadata/cases_bugsMetaData.php");
 include("metadata/contacts_bugsMetaData.php");
 include("metadata/contacts_casesMetaData.php");
-//END SUGARCRM flav!=sales ONLY
 include("metadata/configMetaData.php");
 include("metadata/contacts_usersMetaData.php");
 include("metadata/custom_fieldsMetaData.php");
@@ -45,9 +41,7 @@ include("metadata/foldersMetaData.php");
 include("metadata/import_mapsMetaData.php");
 include("metadata/meetings_contactsMetaData.php");
 include("metadata/meetings_usersMetaData.php");
-//BEGIN SUGARCRM flav!=sales ONLY
 include("metadata/meetings_leadsMetaData.php");
-//END SUGARCRM flav!=sales ONLY
 include("metadata/opportunities_contactsMetaData.php");
 include("metadata/user_feedsMetaData.php");
 include("metadata/users_passwordLinkMetaData.php");
@@ -58,16 +52,13 @@ include("metadata/tracker_queriesMetaData.php");
 include("metadata/tracker_sessionsMetaData.php");
 include("metadata/tracker_tracker_queriesMetaData.php");
 //END SUGARCRM flav=pro ONLY
-//BEGIN SUGARCRM flav!=sales ONLY
 include("metadata/prospect_list_campaignsMetaData.php");
 include("metadata/prospect_lists_prospectsMetaData.php");
-//END SUGARCRM flav!=sales ONLY
 include("metadata/roles_modulesMetaData.php");
 include("metadata/roles_usersMetaData.php");
 //include("metadata/project_relationMetaData.php");
 include("metadata/outboundEmailMetaData.php");
 include("metadata/addressBookMetaData.php");
-//BEGIN SUGARCRM flav!=sales ONLY
 include("metadata/project_bugsMetaData.php");
 include("metadata/project_casesMetaData.php");
 include("metadata/project_productsMetaData.php");
@@ -75,16 +66,14 @@ include("metadata/projects_accountsMetaData.php");
 include("metadata/projects_contactsMetaData.php");
 include("metadata/projects_opportunitiesMetaData.php");
 
-//END SUGARCRM flav!=sales ONLY
 
-//BEGIN SUGARCRM flav=pro || flav=sales ONLY
+//BEGIN SUGARCRM flav=pro ONLY
 include("metadata/report_cache.php");
 include("metadata/report_schedulesMetaData.php");
 include("metadata/saved_reportsMetaData.php");
-//END SUGARCRM flav=pro || flav=sales ONLY
+//END SUGARCRM flav=pro ONLY
 
 //BEGIN SUGARCRM flav=pro ONLY
-//BEGIN SUGARCRM flav!=sales ONLY
 include("metadata/product_bundle_noteMetaData.php");
 include("metadata/product_bundle_productMetaData.php");
 include("metadata/product_bundle_quoteMetaData.php");
@@ -104,7 +93,6 @@ include("metadata/contracts_quotesMetaData.php");
 include("metadata/contracts_productsMetaData.php");
 include("metadata/projects_quotesMetaData.php");
 include("metadata/kbdocuments_views_ratingsMetaData.php");
-//END SUGARCRM flav!=sales ONLY
 include("metadata/users_holidaysMetaData.php");
 
 //END SUGARCRM flav=pro ONLY
@@ -120,14 +108,10 @@ include("metadata/acl_roles_usersMetaData.php");
 include("metadata/inboundEmail_autoreplyMetaData.php");
 include("metadata/inboundEmail_cacheTimestampMetaData.php");
 include("metadata/email_cacheMetaData.php");
-//BEGIN SUGARCRM flav!=sales ONLY
 include("metadata/email_marketing_prospect_listsMetaData.php");
-//END SUGARCRM flav!=sales ONLY
 include("metadata/users_signaturesMetaData.php");
 //linked documents.
-//BEGIN SUGARCRM flav!=sales ONLY
 include("metadata/linked_documentsMetaData.php");
-//END SUGARCRM flav!=sales ONLY
 //BEGIN SUGARCRM flav=pro ONLY
 include("metadata/sessionHistoryMetaData.php");
 //END SUGARCRM flav=pro ONLY

@@ -41,11 +41,9 @@ $dictionary['emails_beans'] = array('table' => 'emails_beans',
 			'len'		=> '100',
 			'comment' 	=> 'bean\'s Module',
 		),
-		//BEGIN SUGARCRM flav!=sales ONLY
         array(  'name'      => 'campaign_data',
                 'type'      => 'text',
         ),
-        //END SUGARCRM flav!=sales ONLY
 		array(
 			'name'		=> 'date_modified',
 			'type'		=>	'datetime'

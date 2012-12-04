@@ -73,8 +73,7 @@ if(isset($_REQUEST['inline']) && $_REQUEST['inline'] == 'inline'){
 
 /************  EMAIL COMPONENTS *************/
 //monitored mailbox section
-$focus = new Administration();
-$focus->retrieveSettings(); //retrieve all admin settings.
+$focus = Administration::getSettings(); //retrieve all admin settings.
 
 
 //run query for mail boxes of type 'bounce' 

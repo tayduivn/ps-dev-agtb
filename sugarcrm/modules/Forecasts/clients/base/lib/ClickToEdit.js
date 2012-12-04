@@ -24,25 +24,46 @@
      * @private
      */
     app.view.ClickToEditField.prototype._checkDatatype = function(field, value) {
-        var ds = app.utils.regexEscape(app.user.get('decimal_separator')) || '.';
-        var gs = app.utils.regexEscape(app.user.get('number_grouping_separator')) || ',';
-        // matches a valid positive decimal number
-        var reg1 = new RegExp("^\\+?(\\d+|\\d{1,3}("+gs+"\\d{3})*)?("+ds+"\\d+)?\\%?$");
-        // matches a valid decimal percentage
-        var reg2 = new RegExp("^[\\+\\-]?\\d+?("+ds+"\\d+)?\\%$");
-        var reg3 = new RegExp("^\\+?\\d+$");
+        var ds = app.utils.regexEscape(app.user.get('decimal_separator')) || '.',
+            gs = app.utils.regexEscape(app.user.get('number_grouping_separator')) || ',',
+            // matches a valid decimal number
+            reg1 = new RegExp("^[\\+\\-]?(\\d+|\\d{1,3}("+gs+"\\d{3})*)?("+ds+"\\d+)?\\%?$"),
+            // matches a valid decimal percentage
+            reg2 = new RegExp("^[\\+\\-]?(\\d+)?("+ds+"\\d+)?\\%$"),
+            // matches valid integer
+            reg3 = new RegExp("^[\\+\\-]?\\d+$"),
+            hb = Handlebars.compile("{{str_format key module args}}"),
+            labelText = app.lang.get(field.def.label, 'Forecasts');
     	switch(field.type){
             case "int":
-                return !_.isNull(value.match(reg3)) && value >= 0 && value <= 100;
+                if(_.isNull(value.match(reg3))) {
+                    field.errorMessage = hb({'key' : 'LBL_CLICKTOEDIT_INVALID', 'module' : 'Forecasts', 'args' : [labelText]});
+                    return false;
+                } else if(value < 0 || value > 100) {
+                    field.errorMessage = hb({'key' : 'LBL_CLICKTOEDIT_INVALID_RANGE', 'module' : 'Forecasts', 'args' : value});
+                    return false;
+                }
+                break;
             case "numeric":
             case "float":
             case "currency":
-                return !_.isNull(value.match(reg1)) || !_.isNull(value.match(reg2));
-                break;
-            default:
-                return true;
+                if(value.indexOf('%') !== -1) {
+                    if(_.isNull(value.match(reg2))) {
+                        field.errorMessage = hb({'key' : 'LBL_CLICKTOEDIT_INVALID', 'module' : 'Forecasts', 'args' : [labelText]});
+                        return false;
+                    }
+                } else if(!_.isNull(value.match(reg1))) {
+                    if(value.indexOf('-') !== -1) {
+                        field.errorMessage = hb({'key' : 'LBL_CLICKTOEDIT_INVALID_NEGATIVE', 'module' : 'Forecasts', 'args' : [labelText]});
+                        return false;
+                    }
+                } else {
+                    field.errorMessage = hb({'key' : 'LBL_CLICKTOEDIT_INVALID', 'module' : 'Forecasts', 'args' : [labelText]});
+                    return false;
+                }
                 break;
     	}
+        return true;
     };
 
     /**
@@ -65,6 +86,7 @@
             function(value, settings) {
                 // check if input was valid for formatting in callback
                 settings.field.isValid = settings.checkDatatype(settings.field, value);
+                settings.field.errorMessage = null;
                 settings.field.isEditing = false;
                 if(_.isEmpty(value)) {
                     value = settings.field.holder;
@@ -167,7 +189,7 @@
                     // if not, show an error and cancel submit.
                     if(!settings.field.isValid) {
                         $(this).find('.control-group').addClass('error');
-                        var invalid = $('<span class="help-inline jeditable-error" style="white-space: nowrap;"><span class="btn btn-danger"><i class="icon-white icon-exclamation-sign"></i></span> ' + app.lang.get("LBL_CLICKTOEDIT_INVALID", "Forecasts") + '</span>');
+                        var invalid = $('<span class="help-inline jeditable-error" style="white-space: nowrap;"><span class="btn btn-danger"><i class="icon-white icon-exclamation-sign"></i></span> ' + settings.field.errorMessage + '</span>');
                         $(this).find('input').parent().parent().append(invalid);
                         $(this).find('input').select();
                     }

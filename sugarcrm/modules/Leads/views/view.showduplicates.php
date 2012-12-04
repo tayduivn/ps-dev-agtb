@@ -51,7 +51,7 @@ class ViewShowDuplicates extends SugarView
         //if((isset($_REQUEST['popup']) && $_REQUEST['popup'] == 'true') ||(isset($_POST['popup']) && $_POST['popup']==true)) insert_popup_header($theme);
         //END SUGARCRM flav=int ONLY
 
-        $lead = new Lead();
+        $lead = BeanFactory::getBean('Leads');
         require_once('modules/Leads/LeadFormBase.php');
         $leadForm = new LeadFormBase();
         $GLOBALS['check_notify'] = FALSE;
@@ -112,7 +112,7 @@ class ViewShowDuplicates extends SugarView
         $input .= get_teams_hidden_inputs('Leads');
         //END SUGARCRM flav=pro ONLY
 
-        $emailAddress = new SugarEmailAddress();
+        $emailAddress = BeanFactory::getBean('EmailAddresses');
         $input .= $emailAddress->getEmailAddressWidgetDuplicatesView($lead);
 
         $get = '';

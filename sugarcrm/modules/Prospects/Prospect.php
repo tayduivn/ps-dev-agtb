@@ -19,13 +19,6 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *to the License for the specific language governing these rights and limitations under the License.
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
-/*********************************************************************************
- * $Id: Prospect.php 55799 2010-04-05 20:00:37Z jmertic $
- * Description:  TODO: To be written.
- * Portions created by SugarCRM are Copyright (C) SugarCRM, Inc.
- * All Rights Reserved.
- * Contributor(s): ______________________________________..
- ********************************************************************************/
 
 require_once('include/SugarObjects/templates/person/Person.php');
 
@@ -93,6 +86,17 @@ class Prospect extends Person {
     // This is used to retrieve related fields from form posts.
 	var $additional_column_fields = Array('assigned_user_name');
 
+
+    /**
+     * This is a depreciated method, please start using __construct() as this method will be removed in a future version
+     *
+     * @see __construct
+     * @deprecated
+     */
+    public function Prospect()
+    {
+        $this->__construct();
+    }
 
 	public function __construct() {
 		parent::__construct();
@@ -266,9 +270,7 @@ class Prospect extends Person {
         }
 
         $module_name = ucfirst($module_name);
-        $class_name = $beanList[$module_name];
-        require_once($beanFiles[$class_name]);
-        $seed = new $class_name();
+        $seed = BeanFactory::getBean($module_name);
         if(empty($sel_fields)){
             $sel_fields = $seed->table_name.'.*';
         }
@@ -295,12 +297,7 @@ class Prospect extends Person {
         $query = "SELECT related_id, related_type FROM prospect_lists_prospects WHERE id = '".$this->db->quote($id)."'";
         $result = $this->db->query($query);
         if(($row = $this->db->fetchByAssoc($result))){
-             global  $beanList, $beanFiles;
-             $module_name = $row['related_type'];
-             $class_name = $beanList[$module_name];
-             require_once($beanFiles[$class_name]);
-             $seed = new $class_name();
-             return $seed->retrieve($row['related_id']);
+             return BeanFactory::retrieveBean($row['related_type'], $row['related_id']);
         }else{
             return null;
         }

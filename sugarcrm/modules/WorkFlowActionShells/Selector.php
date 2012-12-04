@@ -49,7 +49,7 @@ global $urlPrefix;
 global $currentModule;
 
 
-$seed_object = new WorkFlow();
+$seed_object = BeanFactory::getBean('WorkFlow');
 
 if(!empty($_REQUEST['workflow_id']) && $_REQUEST['workflow_id']!="") {
     $seed_object->retrieve($_REQUEST['workflow_id']);
@@ -75,12 +75,12 @@ else {
 $form->assign("MOD", $mod_strings);
 $form->assign("APP", $app_strings);
 
-$focus = new WorkFlowActionShell();  
+$focus = BeanFactory::getBean('WorkFlowActionShells');  
 
 
 if(isset($_REQUEST['action_type']) && ($_REQUEST['action_type'])=='action_update_rel') {
 	
-	$temp_module = get_module_info($seed_object->base_module);
+	$temp_module = BeanFactory::getBean($seed_object->base_module);
 	$temp_module->call_vardef_handler("rel_filter");
 	$temp_module->vardef_handler->start_none=true;
 	$temp_module->vardef_handler->start_none_lbl = "Please Select";

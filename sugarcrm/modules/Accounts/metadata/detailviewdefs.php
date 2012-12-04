@@ -12,9 +12,9 @@ $viewdefs['Accounts']['DetailView'] = array(
 //END SUGARCRM flav!= com ONLY
 )),
                             'maxColumns' => '2',
-                            //BEGIN SUGARCRM flav=pro || flav=sales ONLY
+                            //BEGIN SUGARCRM flav=pro ONLY
                             'useTabs' => true,
-                            //END SUGARCRM flav=pro || flav=sales ONLY
+                            //END SUGARCRM flav=pro ONLY
                             'widths' => array(
                                             array('label' => '10', 'field' => '30'), 
                                             array('label' => '10', 'field' => '30')
@@ -162,9 +162,7 @@ $viewdefs['Accounts']['DetailView'] = array(
         ),
 
         array (
-		  //BEGIN SUGARCRM flav!=sales ONLY
           'campaign_name',
-          //END SUGARCRM flav!=sales ONLY
         
           array (
             'name' => 'rating',

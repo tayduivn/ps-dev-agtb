@@ -34,7 +34,7 @@ global $current_user;
 
 if (!is_admin($current_user)&& !is_admin_for_module($current_user,'ForecastSchedule')&& !is_admin_for_module($current_user,'Forecasts')) sugar_die("Unauthorized access to administration.");
 
-$focus = new ForecastSchedule();
+$focus = BeanFactory::getBean('ForecastSchedule');
 
 if ($_POST['isDuplicate'] != 1) {
 //	echo "not duplicate, retrieving record {$_POST['record']}";

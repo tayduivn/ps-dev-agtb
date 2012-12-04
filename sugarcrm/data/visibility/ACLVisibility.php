@@ -43,4 +43,14 @@ class ACLVisibility extends SugarVisibility
         }
         return $query;
     }
+
+    public function addVisibilityWhereQuery(SugarQuery $sugarQuery, $options = array()) {
+        $where = null;
+        $this->addVisibilityWhere($where, $options);
+        if(!empty($where)) {
+            $sugarQuery->where()->addRaw($where);
+        }
+        
+        return $sugarQuery;
+    }
 }

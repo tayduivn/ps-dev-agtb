@@ -30,7 +30,6 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 require_once('include/MVC/Controller/SugarController.php');
 class ConfiguratorController extends SugarController
 {
-    //BEGIN SUGARCRM flav!=sales ONLY
     /**
      * Go to the font manager view
      */
@@ -124,15 +123,13 @@ class ConfiguratorController extends SugarController
         }
         $this->view = 'addFontResult';
     }
-    //END SUGARCRM flav!=sales ONLY
     function action_saveadminwizard()
     {
         global $current_user;
         if(!is_admin($current_user)){
             sugar_die($GLOBALS['app_strings']['ERR_NOT_ADMIN']); 
         }
-        $focus = new Administration();
-        $focus->retrieveSettings();
+        $focus = Administration::getSettings();
         $focus->saveConfig();
 
         $configurator = new Configurator();
@@ -142,8 +139,7 @@ class ConfiguratorController extends SugarController
         $configurator->saveConfig();
 
         // Bug 37310 - Delete any existing currency that matches the one we've just set the default to during the admin wizard
-        $currency = new Currency;
-        $currency->retrieve($currency->retrieve_id_by_name($_REQUEST['default_currency_name']));
+        $currency = BeanFactory::getBean('Currencies', $currency->retrieve_id_by_name($_REQUEST['default_currency_name']));
         if ( !empty($currency->id)
                 && $currency->symbol == $_REQUEST['default_currency_symbol']
                 && $currency->iso4217 == $_REQUEST['default_currency_iso4217'] ) {
@@ -163,7 +159,7 @@ class ConfiguratorController extends SugarController
         $configurator = new Configurator();
         $configurator->saveConfig();
 
-        $focus = new Administration();
+        $focus = BeanFactory::getBean('Administration');
         $focus->saveConfig();
 
         // Clear the Contacts file b/c portal flag affects rendering

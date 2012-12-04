@@ -28,13 +28,6 @@ require_once('tests/rest/RestTestBase.php');
 
 class RestTestPortalBase extends RestTestBase {
 
-    protected $accounts = array();
-    protected $contacts = array();
-    protected $opps = array();
-    protected $cases = array();
-    protected $bugs = array();
-    protected $notes = array();
-    protected $kbdocs = array();
     protected $currentPortalBean = null;
     protected $testConsumer = null;
 
@@ -111,107 +104,11 @@ class RestTestPortalBase extends RestTestBase {
         $portalIds = "('".implode("','",$this->oldPortal)."')";
         $db->query("UPDATE users SET deleted = '0' WHERE id IN {$portalIds}");
 
-        // Cleaning up after ourselves, but only if there is cleanup to do
-        // Accounts clean up
-        if (count($this->accounts)) {
-            $accountIds = array();
-            foreach ( $this->accounts as $account ) {
-                $accountIds[] = $account->id;
-            }
-            $accountIds = "('".implode("','",$accountIds)."')";
-            $GLOBALS['db']->query("DELETE FROM accounts WHERE id IN {$accountIds}");
-            if ($GLOBALS['db']->tableExists('accounts_cstm')) {
-                $GLOBALS['db']->query("DELETE FROM accounts_cstm WHERE id_c IN {$accountIds}");
-            }
-        }
-
-        // Opportunities clean up
-        if (count($this->opps)) {
-            $oppIds = array();
-            foreach ( $this->opps as $opp ) {
-                $oppIds[] = $opp->id;
-            }
-            $oppIds = "('".implode("','",$oppIds)."')";
-            $GLOBALS['db']->query("DELETE FROM opportunities WHERE id IN {$oppIds}");
-            $GLOBALS['db']->query("DELETE FROM accounts_opportunities WHERE opportunity_id IN {$oppIds}");
-            $GLOBALS['db']->query("DELETE FROM opportunities_contacts WHERE opportunity_id IN {$oppIds}");
-            if ($GLOBALS['db']->tableExists('opportunities_cstm')) {
-                $GLOBALS['db']->query("DELETE FROM opportunities_cstm WHERE id_c IN {$oppIds}");
-            }
-        }
-
-        // Contacts cleanup
-        if (count($this->contacts)) {
-            $contactIds = array();
-            foreach ( $this->contacts as $contact ) {
-                $contactIds[] = $contact->id;
-            }
-            $contactIds = "('".implode("','",$contactIds)."')";
-
-            $GLOBALS['db']->query("DELETE FROM contacts WHERE id IN {$contactIds}");
-            $GLOBALS['db']->query("DELETE FROM accounts_contacts WHERE contact_id IN {$contactIds}");
-            if ($GLOBALS['db']->tableExists('contacts_cstm')) {
-                $GLOBALS['db']->query("DELETE FROM contacts_cstm WHERE id_c IN {$contactIds}");
-            }
-        }
-
-        // Cases cleanup
-        if (count($this->cases)) {
-            $caseIds = array();
-            foreach ( $this->cases as $aCase ) {
-                $caseIds[] = $aCase->id;
-            }
-            $caseIds = "('".implode("','",$caseIds)."')";
-
-            $GLOBALS['db']->query("DELETE FROM cases WHERE id IN {$caseIds}");
-            $GLOBALS['db']->query("DELETE FROM accounts_cases WHERE case_id IN {$caseIds}");
-            if ($GLOBALS['db']->tableExists('cases_cstm')) {
-                $GLOBALS['db']->query("DELETE FROM cases_cstm WHERE id_c IN {$caseIds}");
-            }
-        }
-
-        // Bugs cleanup
-        if (count($this->bugs)) {
-            $bugIds = array();
-            foreach( $this->bugs AS $bug ) {
-                $bugIds[] = $bug->id;
-            }
-            $bugIds = "('" . implode( "','", $bugIds) . "')";
-            $GLOBALS['db']->query("DELETE FROM bugs WHERE id IN {$bugIds}");
-            if ($GLOBALS['db']->tableExists('bugs_cstm')) {
-                $GLOBALS['db']->query("DELETE FROM bugs_cstm WHERE id_c IN {$bugIds}");
-            }
-        }
-
-        // Notes cleanup
-        if (count($this->notes)) {
-            $noteIds = array();
-            foreach ( $this->notes as $note ) {
-                $noteIds[] = $note->id;
-            }
-            $noteIds = "('".implode("','",$noteIds)."')";
-
-            $GLOBALS['db']->query("DELETE FROM notes WHERE id IN {$noteIds}");
-            if ($GLOBALS['db']->tableExists('notes_cstm')) {
-                $GLOBALS['db']->query("DELETE FROM notes_cstm WHERE id_c IN {$noteIds}");
-            }
-        }
-
-        // KBDocs cleanup
-        if (count($this->kbdocs)) {
-            $kbdocIds = array();
-            foreach ( $this->kbdocs as $kbdoc ) {
-                $kbdocIds[] = $kbdoc->id;
-            }
-            $kbdocIds = "('".implode("','",$kbdocIds)."')";
-            $GLOBALS['db']->query("DELETE FROM kbdocuments WHERE id IN {$kbdocIds}");
-            if ($GLOBALS['db']->tableExists('kbdocuments_cstm')) {
-                $GLOBALS['db']->query("DELETE FROM kbdocuments_cstm WHERE id_c IN {$kbdocIds}");
-            }
-        }
 
         // Delete test support_portal user
         $db->query("DELETE FROM ".$this->testConsumer->table_name." WHERE client_type = 'support_portal'");
+        
+        $this->_cleanUpRecords();
 
         // Add back original support_portal user
         if(!empty($this->currentPortalBean->id)) {

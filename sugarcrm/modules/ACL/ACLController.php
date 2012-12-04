@@ -233,27 +233,6 @@ class ACLController
 	    if(!isset($GLOBALS['beanList'][$module])) return false;
 	    // Always use ACLs via SugarACL
 	    return SugarACL::moduleSupportsACL($module);
-
-		static $checkModules = array();
-		global $beanFiles, $beanList;
-		if(isset($checkModules[$module])){
-			return $checkModules[$module];
-		}
-		if(!isset($beanList[$module])){
-			$checkModules[$module] = false;
-
-		}else{
-			$class = $beanList[$module];
-			require_once($beanFiles[$class]);
-			$mod = new $class();
-			if(!is_subclass_of($mod, 'SugarBean')){
-				$checkModules[$module] = false;
-			}else{
-				$checkModules[$module] = $mod->bean_implements('ACL');
-			}
-		}
-		return $checkModules[$module] ;
-
 	}
 
 	/**

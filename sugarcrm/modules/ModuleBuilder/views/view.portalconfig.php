@@ -74,7 +74,7 @@ class ViewPortalConfig extends SugarView
           }
         };
 
-        $admin = new Administration();
+        $admin = Administration::getSettings();
 
         $portalConfig = $admin->getConfigForModule('portal','support');
         $smarty = new Sugar_Smarty();

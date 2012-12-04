@@ -1,0 +1,6 @@
+{{#eq value hiddenValue}}
+{{value}}
+{{/eq}}
+{{#notEq value hiddenValue}}
+<a href="#{{this.def.module}}/{{getFieldValue this.model "parent_id"}}">{{value}}</a>
+{{/notEq}}

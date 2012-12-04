@@ -35,8 +35,7 @@ global $mod_strings;
 global $app_strings;
 
 
-$focus = new Team();
-$focus->retrieve($_REQUEST['record']);
+$focus = BeanFactory::getBean('Teams', $_REQUEST['record']);
 
 //Check if there are module records where this team is assigned to in a team_set_id
 //if so, redirect to prompt the Administrator to select a new team
@@ -54,8 +53,7 @@ if($focus->has_records_in_modules()) {
 	}
 	
 	//Check if the associated user is deleted
-	$user = new User();
-	$user->retrieve($focus->associated_user_id);
+	$user = BeanFactory::getBean('Users', $focus->associated_user_id);
 	if($focus->private == 1 && (!empty($user->id) && $user->deleted != 1))
 	{
 		$msg = string_format($GLOBALS['app_strings']['LBL_MASSUPDATE_DELETE_USER_EXISTS'], array(Team::getDisplayName($focus->name, $focus->name_2), $user->full_name));

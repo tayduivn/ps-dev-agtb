@@ -30,10 +30,10 @@ class SearchViewMetaDataParser extends ListLayoutMetaDataParser
     static $variableMap = array (
     						MB_BASICSEARCH => 'basic_search' ,
     						MB_ADVANCEDSEARCH => 'advanced_search' ,
-    						//BEGIN SUGARCRM flav=pro || flav=sales ONLY
+    						//BEGIN SUGARCRM flav=pro ONLY
     						MB_WIRELESSBASICSEARCH => 'basic_search' ,
     						MB_WIRELESSADVANCEDSEARCH => 'advanced_search'
-    						//END SUGARCRM flav=pro || flav=sales ONLY
+    						//END SUGARCRM flav=pro ONLY
     						) ;
     // Columns is used by the view to construct the listview - each column is built by calling the named function
     public $columns = array ( 'LBL_DEFAULT' => 'getDefaultFields' , 'LBL_HIDDEN' => 'getAvailableFields' ) ;

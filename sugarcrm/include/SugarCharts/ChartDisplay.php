@@ -297,12 +297,7 @@ class ChartDisplay
         $report_defs = $this->reporter->report_def;
         $currency_symbol = '';
         if (isset($report_defs['numerical_chart_column_type']) && $report_defs['numerical_chart_column_type'] == 'currency') {
-            global $current_user;
-            $currency = new Currency();
-            if ($current_user->getPreference('currency'))
-                $currency->retrieve($current_user->getPreference('currency'));
-            else
-                $currency->retrieve('-99');
+            $currency = BeanFactory::getBean('Currencies')->getUserCurrency();
 
             $currency_symbol = $currency->symbol;
         } else if (!isset($report_defs['numerical_chart_column_type'])) {
@@ -482,6 +477,14 @@ class ChartDisplay
             $width = '100%';
             $height = '480';
             $guid = $this->reporter->saved_report_id;
+        }
+
+        // Bug #57213 : Reports with data series removed render charts inconsistently
+        if ( $this->reporter && !$this->reporter->has_summary_columns() )
+        {
+            global $current_language;
+            $mod_strings = return_module_language($current_language, 'Reports');
+            return $mod_strings['LBL_CANNOT_DISPLAY_CHART_MESSAGE'];
         }
 
         $sugarChart = $this->getSugarChart();

@@ -171,17 +171,15 @@ abstract class ImportDataSource implements Iterator
         static $last_import;
 
         if ( !($last_import instanceof UsersLastImport) )
-            $last_import = new UsersLastImport();
+            $last_import = BeanFactory::getBean('Import_2');
 
         $last_import->id = null;
         $last_import->deleted = null;
         $last_import->assigned_user_id = $GLOBALS['current_user']->id;
         $last_import->import_module = $import_module;
-        //BEGIN SUGARCRM flav!=sales ONLY
         if ( $module == 'Case' )
             $module = 'aCase';
         
-        //END SUGARCRM flav!=sales ONLY
         $last_import->bean_type = $module;
         $last_import->bean_id = $id;
         return $last_import->save();

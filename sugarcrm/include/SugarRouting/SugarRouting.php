@@ -54,22 +54,7 @@ class SugarRouting {
 	 */
 	function save($rules) {
 		require_once('include/SugarDependentDropdown/SugarDependentDropdown.php');
-		global $beanFiles;
 		global $sugar_config;
-
-		// get seed bean & load rules
-		if(empty($beanFiles)) {
-			include("include/modules.php");
-		}
-
-		if(isset($beanFiles[$rules['bean']])) {
-			require_once($beanFiles[$rules['bean']]);
-			$bean = new $rules['bean']();
-		} else {
-			$bean = new SugarBean();
-		}
-
-		$this->loadRules();
 
 		// need $sdd->metadata
 		$sdd = new SugarDependentDropdown("include/SugarDependentDropdown/metadata/dependentDropdown.php");

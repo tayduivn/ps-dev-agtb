@@ -22,12 +22,22 @@
  * All Rights Reserved.
  ********************************************************************************/
 
+require_once 'modules/ModuleBuilder/parsers/MetaDataFiles.php';
+
 abstract class RestTestBase extends Sugar_PHPUnit_Framework_TestCase
 {
     protected $authToken;
     protected $refreshToken;
     protected $_user;
     protected $consumerId = "sugar";
+    protected $version = '10';
+    protected $accounts = array();
+    protected $contacts = array();
+    protected $opps = array();
+    protected $cases = array();
+    protected $bugs = array();
+    protected $notes = array();
+    protected $kbdocs = array();
 
     public function setUp()
     {
@@ -49,6 +59,109 @@ abstract class RestTestBase extends Sugar_PHPUnit_Framework_TestCase
         $GLOBALS['db']->query("DELETE FROM oauth_consumer WHERE id LIKE 'UNIT%'");
         $GLOBALS['db']->query("DELETE FROM oauth_tokens WHERE consumer LIKE 'UNIT%'");
         $GLOBALS['db']->commit();
+    }
+
+    protected function _cleanUpRecords()
+    {
+        // Cleaning up after ourselves, but only if there is cleanup to do
+        // Accounts clean up
+        if (count($this->accounts)) {
+            $accountIds = array();
+            foreach ( $this->accounts as $account ) {
+                $accountIds[] = $account->id;
+            }
+            $accountIds = "('".implode("','",$accountIds)."')";
+            $GLOBALS['db']->query("DELETE FROM accounts WHERE id IN {$accountIds}");
+            if ($GLOBALS['db']->tableExists('accounts_cstm')) {
+                $GLOBALS['db']->query("DELETE FROM accounts_cstm WHERE id_c IN {$accountIds}");
+            }
+        }
+
+        // Opportunities clean up
+        if (count($this->opps)) {
+            $oppIds = array();
+            foreach ( $this->opps as $opp ) {
+                $oppIds[] = $opp->id;
+            }
+            $oppIds = "('".implode("','",$oppIds)."')";
+            $GLOBALS['db']->query("DELETE FROM opportunities WHERE id IN {$oppIds}");
+            $GLOBALS['db']->query("DELETE FROM accounts_opportunities WHERE opportunity_id IN {$oppIds}");
+            $GLOBALS['db']->query("DELETE FROM opportunities_contacts WHERE opportunity_id IN {$oppIds}");
+            if ($GLOBALS['db']->tableExists('opportunities_cstm')) {
+                $GLOBALS['db']->query("DELETE FROM opportunities_cstm WHERE id_c IN {$oppIds}");
+            }
+        }
+
+        // Contacts cleanup
+        if (count($this->contacts)) {
+            $contactIds = array();
+            foreach ( $this->contacts as $contact ) {
+                $contactIds[] = $contact->id;
+            }
+            $contactIds = "('".implode("','",$contactIds)."')";
+
+            $GLOBALS['db']->query("DELETE FROM contacts WHERE id IN {$contactIds}");
+            $GLOBALS['db']->query("DELETE FROM accounts_contacts WHERE contact_id IN {$contactIds}");
+            if ($GLOBALS['db']->tableExists('contacts_cstm')) {
+                $GLOBALS['db']->query("DELETE FROM contacts_cstm WHERE id_c IN {$contactIds}");
+            }
+        }
+
+        // Cases cleanup
+        if (count($this->cases)) {
+            $caseIds = array();
+            foreach ( $this->cases as $aCase ) {
+                $caseIds[] = $aCase->id;
+            }
+            $caseIds = "('".implode("','",$caseIds)."')";
+
+            $GLOBALS['db']->query("DELETE FROM cases WHERE id IN {$caseIds}");
+            $GLOBALS['db']->query("DELETE FROM accounts_cases WHERE case_id IN {$caseIds}");
+            if ($GLOBALS['db']->tableExists('cases_cstm')) {
+                $GLOBALS['db']->query("DELETE FROM cases_cstm WHERE id_c IN {$caseIds}");
+            }
+        }
+
+        // Bugs cleanup
+        if (count($this->bugs)) {
+            $bugIds = array();
+            foreach( $this->bugs AS $bug ) {
+                $bugIds[] = $bug->id;
+            }
+            $bugIds = "('" . implode( "','", $bugIds) . "')";
+            $GLOBALS['db']->query("DELETE FROM bugs WHERE id IN {$bugIds}");
+            if ($GLOBALS['db']->tableExists('bugs_cstm')) {
+                $GLOBALS['db']->query("DELETE FROM bugs_cstm WHERE id_c IN {$bugIds}");
+            }
+        }
+
+        // Notes cleanup
+        if (count($this->notes)) {
+            $noteIds = array();
+            foreach ( $this->notes as $note ) {
+                $noteIds[] = $note->id;
+            }
+            $noteIds = "('".implode("','",$noteIds)."')";
+
+            $GLOBALS['db']->query("DELETE FROM notes WHERE id IN {$noteIds}");
+            if ($GLOBALS['db']->tableExists('notes_cstm')) {
+                $GLOBALS['db']->query("DELETE FROM notes_cstm WHERE id_c IN {$noteIds}");
+            }
+        }
+
+        // KBDocs cleanup
+        if (count($this->kbdocs)) {
+            $kbdocIds = array();
+            foreach ( $this->kbdocs as $kbdoc ) {
+                $kbdocIds[] = $kbdoc->id;
+            }
+            $kbdocIds = "('".implode("','",$kbdocIds)."')";
+            $GLOBALS['db']->query("DELETE FROM kbdocuments WHERE id IN {$kbdocIds}");
+            if ($GLOBALS['db']->tableExists('kbdocuments_cstm')) {
+                $GLOBALS['db']->query("DELETE FROM kbdocuments_cstm WHERE id_c IN {$kbdocIds}");
+            }
+        }
+
     }
 
     protected function _restLogin($username = '', $password = '', $platform = 'base')
@@ -85,7 +198,8 @@ abstract class RestTestBase extends Sugar_PHPUnit_Framework_TestCase
         // lying around in an open transaction.
         $GLOBALS['db']->commit();
 
-        $urlBase = $GLOBALS['sugar_config']['site_url'].'/api/rest.php/v6/';
+        $urlBase = $GLOBALS['sugar_config']['site_url'].'/api/rest.php/v' . $this->version . '/';
+        
         if ( empty($this->authToken) ) {
             $this->_restLogin();
         }
@@ -168,7 +282,7 @@ abstract class RestTestBase extends Sugar_PHPUnit_Framework_TestCase
             $this->_restLogin();
         }
 
-        $urlBase = $GLOBALS['sugar_config']['site_url'].'/api/rest.php/v6/';
+        $urlBase = $GLOBALS['sugar_config']['site_url'].'/api/rest.php/v' . $this->version . '/';
         $filename = basename($args['filename']);
         $url = $urlBase . $urlPart;
         if ($passInQueryString) {
@@ -240,6 +354,8 @@ abstract class RestTestBase extends Sugar_PHPUnit_Framework_TestCase
 
     protected function _clearMetadataCache()
     {
+        MetaDataFiles::clearModuleClientCache();
+        
         $metadataFiles = glob(sugar_cached('api/metadata/').'*');
         if ( is_array($metadataFiles) ) {
             foreach ( $metadataFiles as $metadataFile ) {

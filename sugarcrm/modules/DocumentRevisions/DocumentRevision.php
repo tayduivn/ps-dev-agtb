@@ -93,7 +93,18 @@ class DocumentRevision extends SugarBean {
 		
 	var $required_fields = Array("revision");
 	
-	
+
+    /**
+     * This is a depreciated method, please start using __construct() as this method will be removed in a future version
+     *
+     * @see __construct
+     * @deprecated
+     */
+    public function DocumentRevision()
+    {
+        $this->__construct();
+    }
+
 
 	public function __construct() {
 		parent::__construct();
@@ -177,12 +188,11 @@ class DocumentRevision extends SugarBean {
 		$localLabels = return_module_language($current_language, 'DocumentRevisions');
 		
 		// prep - get source Document
-		$document = new Document();
+		$document = BeanFactory::getBean('Documents');
 		
 		// use passed revision ID
 		if(!empty($revId)) {
-			$tempDoc = new DocumentRevision();
-			$tempDoc->retrieve($revId);
+			$tempDoc = BeanFactory::getBean('DocumentRevisions', $revId);
 		} else {
 			$tempDoc = $this;
 		}

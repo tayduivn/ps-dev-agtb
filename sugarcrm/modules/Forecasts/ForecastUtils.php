@@ -50,8 +50,7 @@ function get_worksheet_defintion($user_id, $forecast_type, $timeperiod_id, $allo
     global $mod_strings;
     
 
-    $sel_user = new User();
-    $sel_user->retrieve($user_id);
+    $sel_user = BeanFactory::getBean('Users', $user_id);
 
 	$json = new JSON(JSON_LOOSE_TYPE);
 
@@ -65,7 +64,7 @@ function get_worksheet_defintion($user_id, $forecast_type, $timeperiod_id, $allo
 	$hhelper->set_current_user($user_id);
 	$hhelper->setup();
 
-	$seedForecastOpportunities = new ForecastOpportunities();
+	$seedForecastOpportunities = BeanFactory::getBean('ForecastOpportunities');
 	if (strtolower($forecast_type) == 'direct') {
 
 		require_once ('include/ListView/ListViewXTPL.php');
@@ -372,7 +371,7 @@ function upsert_worksheet_record($owner_id, $timeperiod_id, $forecast_type, $wk_
 
     if ($convert_to_basecurrency) {
         
-        $currency = new Currency();
+        $currency = BeanFactory::getBean('Currencies');
         if (isset($current_user)) {
            $currency->retrieve($current_user->getPreference('currency'));
         }else{
@@ -392,7 +391,7 @@ function upsert_worksheet_record($owner_id, $timeperiod_id, $forecast_type, $wk_
 	$row = $GLOBALS['db']->fetchByAssoc($resource);
 	if (empty ($row)) {
 		//_pp('inserting');
-		$wk = new Worksheet();
+		$wk = BeanFactory::getBean('Worksheet');
 
 		$wk->user_id = $owner_id;
 		$wk->timeperiod_id = $timeperiod_id;
@@ -432,8 +431,7 @@ function processnavigation($url_string, $json = null) {
  */
 function user_owns_opps($user_id = null, $user = null) {
 	if (empty ($user)) {
-		$user = new User();
-		$user->retrieve($user_id);
+		$user = BeanFactory::getBean('Users', $user_id);
 	}
 	$pref_no_opps = $user->getPreference('no_opps', 'global');
 	if ($pref_no_opps == 'on') {
@@ -448,8 +446,7 @@ function user_owns_opps($user_id = null, $user = null) {
 function get_chart_for_user($user=null,$user_id=null,$forecast_type='Direct') {
 
     if (empty($user)) {
-        $user = new User();
-        $user->retrieve($user_id);
+        $user = BeanFactory::getBean('Users', $user_id);
     }
     require_once('modules/Forecasts/Charts.php');
     $chart= new forecast_charts();

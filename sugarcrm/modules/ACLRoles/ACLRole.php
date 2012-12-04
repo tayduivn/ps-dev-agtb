@@ -33,6 +33,17 @@ class ACLRole extends SugarBean{
 
     var $created_by;
 
+    /**
+     * This is a depreciated method, please start using __construct() as this method will be removed in a future version
+     *
+     * @see __construct
+     * @deprecated
+     */
+    public function ACLRole()
+    {
+        $this->__construct();
+    }
+
     public function __construct(){
         parent::__construct();
         //BEGIN SUGARCRM flav=pro ONLY
@@ -84,7 +95,7 @@ function getUserRoles($user_id, $getAsNameArray = true){
         $user_roles = array();
 
         while($row = $GLOBALS['db']->fetchByAssoc($result) ){
-            $role = new ACLRole();
+            $role = BeanFactory::getBean('ACLRoles');
             $role->populateFromRow($row);
             if($getAsNameArray)
                 $user_roles[] = $role->name;
@@ -144,7 +155,7 @@ function getAllRoles($returnAsArray = false){
         $roles = array();
 
         while($row = $db->fetchByAssoc($result) ){
-            $role = new ACLRole();
+            $role = BeanFactory::getBean('ACLRoles');
             $role->populateFromRow($row);
             if($returnAsArray){
                 $roles[] = $role->toArray();
@@ -186,7 +197,7 @@ function getRoleActions($role_id, $type='module'){
         $role_actions = array();
 
         while($row = $db->fetchByAssoc($result) ){
-            $action = new ACLAction();
+            $action = BeanFactory::getBean('ACLActions');
             $action->populateFromRow($row);
             if(!empty($row['access_override'])){
                 $action->aclaccess = $row['access_override'];

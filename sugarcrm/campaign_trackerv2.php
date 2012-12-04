@@ -26,7 +26,6 @@
  * All Rights Reserved.
  * Contributor(s): ______________________________________..
  ********************************************************************************/
-//FILE SUGARCRM flav!=sales ONLY
 header('HTTP/1.1 301 Moved Permanently');
 header('Location: index.php?entryPoint=campaign_trackerv2&'.$_SERVER["QUERY_STRING"]);
 ?>

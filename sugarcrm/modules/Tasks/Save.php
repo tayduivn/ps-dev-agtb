@@ -30,7 +30,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 
 
-$focus = new Task();
+$focus = BeanFactory::getBean('Tasks');
 if (!isset($prefix)) $prefix='';
 
 global $timedate;
@@ -95,8 +95,7 @@ if(isset($_REQUEST['inbound_email_id']) && !empty($_REQUEST['inbound_email_id'])
 	// fake this case like it's already saved.
 	$focus->save();
 	
-	$email = new Email();
-	$email->retrieve($_REQUEST['inbound_email_id']);
+	$email = BeanFactory::getBean('Emails', $_REQUEST['inbound_email_id']);
 	$email->parent_type = 'Tasks';
 	$email->parent_id = $focus->id;
 	$email->assigned_user_id = $current_user->id;

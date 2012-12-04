@@ -50,7 +50,7 @@ class SubPanel
     var $layout_def_key='';
 	function SubPanel($module, $record_id, $subpanel_id, $subpanelDef, $layout_def_key='')
 	{
-		global $theme, $beanList, $beanFiles, $focus, $app_strings;
+		global $theme, $focus, $app_strings;
 
 		$this->subpanel_defs=$subpanelDef;
 		$this->subpanel_id = $subpanel_id;
@@ -58,17 +58,10 @@ class SubPanel
 		$this->parent_module = $module;
         $this->layout_def_key = $layout_def_key;
 
-		$this->parent_bean = $focus;
-		$result = $focus;
-
+		$result = $this->parent_bean = $focus;
 		if(empty($result))
 		{
-			$parent_bean_name = $beanList[$module];
-			$parent_bean_file = $beanFiles[$parent_bean_name];
-			require_once($parent_bean_file);
-			$this->parent_bean = new $parent_bean_name();
-            $this->parent_bean->retrieve($this->parent_record_id);
-            $result = $this->parent_bean;
+		    $result = $this->parent_bean = BeanFactory::getBean($module, $this->parent_record_id);
 		}
 
 		if($record_id!='fab4' && $result == null)
@@ -246,29 +239,25 @@ class SubPanel
 
   function getModuleSubpanels($module){
   	require_once('include/SubPanel/SubPanelDefinitions.php');
-  		global $beanList, $beanFiles;
-  		if(!isset($beanList[$module])){
-  			return array();
-  		}
 
-  		$class = $beanList[$module];
-  		require_once($beanFiles[$class]);
-  		$mod = new $class();
-  		$spd = new SubPanelDefinitions($mod);
-  		$tabs = $spd->get_available_tabs(true);
-  		$ret_tabs = array();
-  		$reject_tabs = array('history'=>1, 'activities'=>1);
-  		foreach($tabs as $key=>$tab){
+  	$mod = BeanFactory::getBean($module);
+  	if(empty($mod)) {
+		return array();
+	}
+
+	$spd = new SubPanelDefinitions($mod);
+	$tabs = $spd->get_available_tabs(true);
+	$ret_tabs = array();
+	$reject_tabs = array('history'=>1, 'activities'=>1);
+	foreach($tabs as $key=>$tab){
   		    foreach($tab as $k=>$v){
                 if (! isset ( $reject_tabs [$k] )) {
                     $ret_tabs [$k] = $v;
                 }
             }
-  		}
+	}
 
-  		return $ret_tabs;
-
-
+	return $ret_tabs;
   }
 
   //saves overrides for defs

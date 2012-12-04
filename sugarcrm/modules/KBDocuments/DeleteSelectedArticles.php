@@ -55,8 +55,7 @@ foreach($selectedArticles as $articleId){
 		
 		       
         //retrieve article  
-        $kbarticle = new KBDocument();                    
-        $kbarticle->retrieve($articleId);        	        		       
+        $kbarticle = BeanFactory::getBean('KBDocuments', $articleId);        	        		       
         $deleted=1; 
         //also retrieve children and check if there is any article linked                                                 
         $kbarticle->deleted = 1;
@@ -66,12 +65,10 @@ foreach($selectedArticles as $articleId){
     
   	   if (!empty($kbdocrevs) && is_array($kbdocrevs)) {
 		 foreach($kbdocrevs as $key=>$thiskbid) {	
-			$thiskbversion = new KBDocumentRevision();
-			$thiskbversion->retrieve($thiskbid);			
+			$thiskbversion = BeanFactory::getBean('KBDocumentRevisions', $thiskbid);			
 	        $docrev_ids = KBDocumentRevision::get_docrevs($thiskbid);
 			foreach($docrev_ids as $key=>$thisdocrevid){
-			 $thisdocrev = new DocumentRevision();
-			 $thisdocrev->retrieve($thisdocrevid);
+			 $thisdocrev = BeanFactory::getBean('DocumentRevisions', $thisdocrevid);
 			 UploadFile::unlink_file($thisdocrevid,$thisdocrev->filename);
 			 //mark version deleted
 			 $thisdocrev->mark_deleted($thisdocrev->id);

@@ -1,5 +1,4 @@
 <?php
-//FILE SUGARCRM flav!=sales ONLY
 if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 /*********************************************************************************
  *The contents of this file are subject to the SugarCRM Professional End User License Agreement 
@@ -53,7 +52,7 @@ class CasesQuickCreate extends QuickCreate {
         $this->javascript = new javascript();
         $this->javascript->setFormName('casesQuickCreate');
         
-        $focus = new aCase();
+        $focus = BeanFactory::getBean('Cases');
         $this->javascript->setSugarBean($focus);
         $this->javascript->addAllFields('');
 

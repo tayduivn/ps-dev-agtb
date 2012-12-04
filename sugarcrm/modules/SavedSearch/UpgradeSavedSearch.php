@@ -25,8 +25,7 @@ class UpgradeSavedSearch {
 		
 		$result = $GLOBALS['db']->query("SELECT id FROM saved_search");
 		while($row = $GLOBALS['db']->fetchByAssoc($result)) {
-		      $focus = new SavedSearch();
-			  $focus->retrieve($row['id']);
+		      $focus = BeanFactory::getBean('SavedSearch', $row['id']);
 			  $contents = unserialize(base64_decode($focus->contents));
               $has_team_name_saved = isset($contents['team_name_advanced']) || isset($contents['team_name_basic']) ? true : false;
 			  //If $contents['searchFormTab'] is set then this is coming from a 4.x saved search
@@ -44,7 +43,7 @@ class UpgradeSavedSearch {
 			  	 	$field_map = $searchFields[$module];
 			  	 } else {
 				  	
-				  	$bean = loadBean($module);
+				  	$bean = BeanFactory::getBean($module);
 				  	$field_map = $bean->field_name_map;	 	 
 			  	 }
 

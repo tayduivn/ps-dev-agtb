@@ -50,7 +50,6 @@
 	<th align="left" scope="row" colspan="4"><h4>{$MOD.DEFAULT_SYSTEM_SETTINGS}</h4></th>
 </tr>
 
-	{* //BEGIN SUGARCRM flav!=sales ONLY*}
 	<tr>
 		<td  scope="row">{$MOD.LIST_ENTRIES_PER_LISTVIEW}: </td>
 		<td  >
@@ -61,8 +60,6 @@
 			<input type='text' size='4' id='ConfigureSettings_list_max_entries_per_subpanel' name='list_max_entries_per_subpanel' value='{$config.list_max_entries_per_subpanel}'>
 		</td>
 	</tr>
-	{* //END SUGARCRM flav!=sales ONLY*}
-	{* //BEGIN SUGARCRM flav!=sales ONLY*}
 	<tr>
 		<td  scope="row">{$MOD.LOCK_HOMEPAGE}: </td>
 		<td  >
@@ -101,7 +98,6 @@
 			<input name='use_real_names'  type="checkbox" value="true" {$use_real_names}>
 		</td>
 	</tr>
-	{* //END SUGARCRM flav!=sales ONLY*}
 	<tr>
 		<td  scope="row">{$MOD.DISPLAY_RESPONSE_TIME}: </td>
 		{if !empty($config.calculate_response_time )}
@@ -110,7 +106,6 @@
 			{assign var='calculate_response_time_checked' value=''}
 		{/if}
 		<td ><input type='hidden' name='calculate_response_time' value='false'><input name='calculate_response_time'  type="checkbox" value="true" {$calculate_response_time_checked}></td>
-		{* //BEGIN SUGARCRM flav!=sales ONLY*}
 		<td scope="row">{$MOD.LBL_MODULE_FAVICON} &nbsp;{sugar_help text=$MOD.LBL_MODULE_FAVICON_HELP} </td>
 		{if !empty($config.default_module_favicon)}
 			{assign var='default_module_favicon' value='CHECKED'}
@@ -121,7 +116,6 @@
 			<input type='hidden' name='default_module_favicon' value='false'>
 			<input name='default_module_favicon'  type="checkbox" value="true" {$default_module_favicon}>
 		</td>
-		{* //END SUGARCRM flav!=sales ONLY*}
 	</tr>
 	<tr>
 		<td scope="row" width='15%' nowrap>{$MOD.SYSTEM_NAME} </td>
@@ -140,7 +134,7 @@
         <td width='35%' >
             <img id="company_logo_image" src='{$company_logo}' alt=$mod_strings.LBL_LOGO>
         </td>
-        //BEGIN SUGARCRM flav!=com && flav!=sales ONLY
+        //BEGIN SUGARCRM flav!=com ONLY
         <td  scope="row"> {$MOD.SHOW_DOWNLOADS_TAB}: &nbsp;{sugar_help text=$MOD.SHOW_DOWNLOADS_TAB_HELP} </td>
 		{if !isset($config.show_download_tab) || !empty($config.show_download_tab)}
 			{assign var='show_download_tab_checked' value='CHECKED'}
@@ -148,7 +142,7 @@
 			{assign var='show_download_tab_checked' value=''}
 		{/if}
 		<td ><input type='hidden' name='show_download_tab' value='false'><input name='show_download_tab'  type="checkbox" value='true' {$show_download_tab_checked}></td>
-        //END SUGARCRM flav!=com && flav!=sales ONLY
+        //END SUGARCRM flav!=com ONLY
     </tr>
     <tr>
         <td  scope="row" width='12%' nowrap>
@@ -162,9 +156,7 @@
     <tr>
             <td scope="row">{$MOD.LBL_LEAD_CONV_OPTION}:&nbsp;{sugar_help text=$MOD.LEAD_CONV_OPT_HELP}</td>
             <td> <select name="lead_conv_activity_opt">{$lead_conv_activities}</select></td>
-<!-- //BEGIN SUGARCRM flav!=sales ONLY -->
             <td><a href="./index.php?module=Administration&action=ConfigureAjaxUI" id="configure_ajax">{$MOD.LBL_CONFIG_AJAX}</a>&nbsp;{sugar_help text=$MOD.LBL_CONFIG_AJAX_DESC}</td>
-<!-- //END SUGARCRM flav!=sales ONLY -->
     </tr>
 
     <tr>
@@ -200,7 +192,6 @@
 
 </table>
 
-{* //BEGIN SUGARCRM flav!=sales ONLY*}
 <table width="100%" border="0" cellspacing="1" cellpadding="0" class="edit view">
 
 	<tr>
@@ -248,7 +239,6 @@
  </table>
 
 
-{* //END SUGARCRM flav!=sales ONLY*}
 <!--//BEGIN SUGARCRM flav=ent ONLY -->
 <table width="100%" border="0" cellspacing="1" cellpadding="0" class="edit view">
 
@@ -282,7 +272,7 @@
  </table>
 
 
-{* //BEGIN SUGARCRM flav!=sales && flav!=com ONLY*}
+{* //BEGIN SUGARCRM flav!=com ONLY*}
 <table width="100%" border="0" cellspacing="1" cellpadding="0" class="edit view">
 	<tr>
 	<th align="left" scope="row" colspan="4"><h4>{$MOD.LBL_MAILMERGE}</h4></th>
@@ -297,7 +287,7 @@
 	<td width="75%" align="left"  valign='middle'><input type='hidden' name='system_mailmerge_on' value='0'><input name="system_mailmerge_on" id="system_mailmerge" value="1" class="checkbox" type="checkbox" {$system_mailmerge_on_checked}></td>
 	</tr>
 </table>
-{* //END SUGARCRM flav!=sales && flav!=com ONLY*}
+{* //END SUGARCRM flav!=com ONLY*}
 
 <!--//BEGIN SUGARCRM flav=ent ONLY -->
 
@@ -319,7 +309,6 @@
 </table>
 
 <!--//END SUGARCRM flav=ent ONLY -->
-{* //BEGIN SUGARCRM flav!=sales ONLY*}
 <table width="100%" border="0" cellspacing="1" cellpadding="0" class="edit view">
 	<tr>
 	<th align="left" scope="row" colspan="4"><h4>{$MOD.ADVANCED}</h4></th>
@@ -436,7 +425,6 @@
 </table>
 
 
-{* //END SUGARCRM flav!=sales ONLY*}
 
 <div style="padding-top: 2px;">
 <input title="{$APP.LBL_SAVE_BUTTON_TITLE}" class="button primary"  type="submit" name="save" value="  {$APP.LBL_SAVE_BUTTON_LABEL}  " class="button primary"/>

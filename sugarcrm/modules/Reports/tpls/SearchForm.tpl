@@ -45,9 +45,7 @@
     	<tr valign='top'>
     		<td scope="row" colspan='2'>{$APP.LBL_CURRENT_USER_FILTER}&nbsp;&nbsp;<input name='current_user_only' tabindex='1' onchange='this.form.submit();' class="checkbox" type="checkbox" {$CURRENT_USER_ONLY}></td>
     		<td scope="row" noWrap valign='top'><span sugar='slot2'>{$APP.LBL_ASSIGNED_TO}</td><td ><select size="3" tabindex='1' name='assigned_user_id[]' multiple="multiple">{$USER_FILTER}</select></span sugar='slot'></td>
-    		{* //BEGIN SUGARCRM flav=!sales ONLY*}
 			<td scope="row" noWrap valign='top'><span sugar='slot2b'>{$APP.LBL_TEAM}</td><td ><select size="3" tabindex='1' name='team_id[]' multiple="multiple">{$TEAM_FILTER}</select></span sugar='slot'></td>
-	  		{* //END SUGARCRM flav=!sales ONLY*}
 	   </tr>
 	</table>
 </td></tr>

@@ -121,13 +121,13 @@ class SugarFieldBase {
         }
     }
 
-    //BEGIN SUGARCRM flav=pro || flav=sales ONLY
+    //BEGIN SUGARCRM flav=pro ONLY
     function getWirelessSmartyView($parentFieldArray, $vardef, $displayParams, $tabindex = -1, $view){
     	$this->setup($parentFieldArray, $vardef, $displayParams, $tabindex, false);
         return $this->fetch($this->findTemplate($view));
     }
 
-    //END SUGARCRM flav=pro || flav=sales ONLY
+    //END SUGARCRM flav=pro ONLY
 
     public function unformatField($formattedField, $vardef){
         // The base field doesn't do any formatting, so override it in subclasses for more specific actions
@@ -182,11 +182,11 @@ class SugarFieldBase {
         return $this->formatField($parentFieldArray[$vardef['name']],$vardef);
     }
 
-    //BEGIN SUGARCRM flav=pro || flav=sales ONLY
+    //BEGIN SUGARCRM flav=pro ONLY
     function getWirelessDetailViewSmarty($parentFieldArray, $vardef, $displayParams, $tabindex) {
         return $this->getWirelessSmartyView($parentFieldArray, $vardef, $displayParams, $tabindex, 'WirelessDetailView');
     }
-    //END SUGARCRM flav=pro || flav=sales ONLY
+    //END SUGARCRM flav=pro ONLY
 
     function getEditViewSmarty($parentFieldArray, $vardef, $displayParams, $tabindex) {
     	if(!empty($vardef['function']['returns']) && $vardef['function']['returns'] == 'html'){
@@ -210,7 +210,7 @@ class SugarFieldBase {
         return $this->getEditViewSmarty($parentFieldArray, $vardef, $displayParams, $tabindex);
     }
 
-    //BEGIN SUGARCRM flav=pro || flav=sales ONLY
+    //BEGIN SUGARCRM flav=pro ONLY
     function getWirelessEditViewSmarty($parentFieldArray, $vardef, $displayParams, $tabindex) {
     	if(!empty($vardef['function']['returns']) && $vardef['function']['returns'] == 'html'){
     		$type = $this->type;
@@ -227,7 +227,7 @@ class SugarFieldBase {
         $vardef['name'] = $vardef['name'].'_advanced';
         return $this->getWirelessEditViewSmarty($parentFieldArray, $vardef, $displayParams, $tabindex);
     }
-    //END SUGARCRM flav=pro || flav=sales ONLY
+    //END SUGARCRM flav=pro ONLY
 
 
     function getSearchViewSmarty($parentFieldArray, $vardef, $displayParams, $tabindex) {
@@ -302,12 +302,12 @@ class SugarFieldBase {
             if ( $returnsHtml ) {
                 $this->setup($parentFieldArray, $vardef, $displayParams, $tabindex);
                 $tpl = $this->findTemplate($displayType.'Function');
-                //BEGIN SUGARCRM flav=pro || flav=sales ONLY
+                //BEGIN SUGARCRM flav=pro ONLY
                 if ( $tpl == '' ) {
                     // Didn't find the wireless version, try the non-wireless version.
                     $tpl = $this->findTemplate(str_replace('wireless','',$displayType));
                 }
-                //END SUGARCRM flav=pro || flav=sales ONLY
+                //END SUGARCRM flav=pro ONLY
                 if ( $tpl == '' ) {
                     // Can't find a function template, just use the base
                     $tpl = $this->findTemplate('DetailViewFunction');

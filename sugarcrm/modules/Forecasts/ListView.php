@@ -87,14 +87,13 @@ if (empty($ws_timeperiod_id)) {
 }
 
 //get logged in users currency preference.
-$Currency = new Currency();
-$Currency->retrieve($current_user->getPreference('currency'));
+$Currency = BeanFactory::getBean('Currencies', $current_user->getPreference('currency'));
 if( $Currency->deleted != 1)
    $CurrencySymbol= $Currency->symbol;
 else
    $CurrencySymbol= $currency->getDefaultCurrencySymbol();
 
-$seedForecast = new Forecast();
+$seedForecast = BeanFactory::getBean('Forecasts');
 
 echo getClassicModuleTitle($mod_strings['LBL_MODULE_NAME'], array($mod_strings['LBL_FORECAST_HISTORY_TITLE']), false);
 

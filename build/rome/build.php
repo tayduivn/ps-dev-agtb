@@ -29,19 +29,25 @@ if(!empty($config['clean'])) {
 if(!empty($config['ver']))$rome->setVersion($config['ver']);
 if(!empty($config['cleanCache'])){
     foreach ( $config['builds'] as $build ) {
-        $rome->remove($rome->getBuildDir() ."/$build/sugarcrm/cache/jsLanguage");
-        $rome->remove($rome->getBuildDir() ."/$build/sugarcrm/cache/modules");
-        $rome->remove($rome->getBuildDir() ."/$build/sugarcrm/cache/smarty");
-        $rome->remove($rome->getBuildDir() ."/$build/sugarcrm/cache/Expressions");
-        $rome->remove($rome->getBuildDir() ."/$build/sugarcrm/cache/themes");
-        $rome->remove($rome->getBuildDir() ."/$build/sugarcrm/cache/blowfish");
-        $rome->remove($rome->getBuildDir() ."/$build/sugarcrm/cache/dashlets");
-        $rome->remove($rome->getBuildDir() ."/$build/sugarcrm/cache/api");
-        $rome->remove($rome->getBuildDir() ."/$build/sugarcrm/cache/javascript");
-        $rome->remove($rome->getBuildDir() ."/$build/sugarcrm/cache/include/api");
-        $rome->remove($rome->getBuildDir() ."/$build/sugarcrm/cache/file_map.php");
-        $rome->remove($rome->getBuildDir() ."/$build/sugarcrm/cache/include/javascript/sugar_grp1.js");
-        $rome->remove($rome->getBuildDir() ."/$build/sugarcrm/cache/include/javascript/sugar_grp1_yui.js");
+        $path = $rome->getBuildDir();
+        $path .= "/$build";
+
+        if(is_dir($path . "/sugarcrm")) {
+            $path .= "/sugarcrm";
+        }
+        $rome->remove($path ."/cache/jsLanguage");
+        $rome->remove($path ."/cache/modules");
+        $rome->remove($path ."/cache/smarty");
+        $rome->remove($path ."/cache/Expressions");
+        $rome->remove($path ."/cache/themes");
+        $rome->remove($path ."/cache/blowfish");
+        $rome->remove($path ."/cache/javascript");
+        $rome->remove($path ."/cache/include/javascript");
+        $rome->remove($path ."/cache/dashlets");
+        $rome->remove($path ."/cache/include/api");
+        $rome->remove($path ."/cache/include/file_map.php");
+        $rome->remove($path ."/cache/include/javascript/sugar_grp1.js");
+        $rome->remove($path ."/cache/include/javascript/sugar_grp1_yui.js");
     }
 }
 

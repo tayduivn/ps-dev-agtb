@@ -21,12 +21,9 @@ if ( !defined('sugarEntry') || !sugarEntry ) {
  *to the License for the specific language governing these rights and limitations under the License.
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
-/*********************************************************************************
- * $Id: Quota.php 55318 2010-03-15 16:36:53Z jmertic $
- * Description:
- ********************************************************************************/
-
-// Quotas is used to store quota information on certain users.
+/**
+ *  Quotas are used to store quota information on certain users.
+ */
 class Quota extends SugarBean
 {
 	// Stored fields
@@ -64,6 +61,17 @@ class Quota extends SugarBean
 	// This is used to retrieve related fields from form posts.
 	var $additional_column_fields = Array();
 
+    /**
+     * This is a depreciated method, please start using __construct() as this method will be removed in a future version
+     *
+     * @see __construct
+     * @deprecated
+     */
+    public function Quota()
+    {
+        $this->__construct();
+    }
+
 
 	public function __construct()
 	{
@@ -78,7 +86,7 @@ class Quota extends SugarBean
 	 {
 		 return "$this->name";
 	 }
- 
+
  */
 
 	/**
@@ -136,15 +144,15 @@ class Quota extends SugarBean
 	/*
 	 function save_relationship_changes($is_update)
 	 {
- 
+
 	 }
- 
+
 	 function clear_product_producttype_relationship($producttype_id)
 	 {
 		 $query = "UPDATE $this->rel_products set type_id='' where (type_id='$producttype_id') and deleted=0";
 		 $this->db->query($query,true,"Error clearing producttype to producttype relationship: ");
 	 }
- 
+
 	 function mark_relationships_deleted($id)
 	 {
 		 $this->clear_product_producttype_relationship($id);
@@ -668,15 +676,15 @@ class Quota extends SugarBean
 		 $where_clauses = Array();
 		 $the_query_string = $this->db->quote($the_query_string);
 		 array_push($where_clauses, "name like '$the_query_string%'");
- 
+
 		 $the_where = "";
 		 foreach($where_clauses as $clause)
 		 {
 			 if($the_where != "") $the_where .= " or ";
 			 $the_where .= $clause;
 		 }
- 
- 
+
+
 		 return $the_where;
 	 }
  */

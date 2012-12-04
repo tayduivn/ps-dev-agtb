@@ -3,12 +3,6 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 /*********************************************************************************
  * The contents of this file are subject to
  * *******************************************************************************/
- /*********************************************************************************
-  * $Id: Delete.php,v 1.22 2006/01/17 22:50:52 majed Exp $
-  * Description:
-  * Portions created by SugarCRM are Copyright (C) SugarCRM, Inc. All Rights
-  * Reserved. Contributor(s): ______________________________________..
-  *********************************************************************************/
   //increate timeout for phpo script execution
   ini_set('max_execution_time',300);
   //ajaxInit();
@@ -18,9 +12,9 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
   require_once("include/ytree/Tree.php");
   require_once("include/ytree/ExtNode.php");
 
-  $email = new Email();
+  $email = BeanFactory::getBean('Emails');
   $email->email2init();
-  $ie = new InboundEmail();
+  $ie = BeanFactory::getBean('InboundEmail');
   $ie->email = $email;
   $json = getJSONobj();
 
@@ -200,8 +194,8 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
         $GLOBALS['log']->debug("********** EMAIL 2.0 - Asynchronous - at: deleteSignature");
         if(isset($_REQUEST['id'])) {
   			require_once("modules/Users/UserSignature.php");
-        	$us = new UserSignature();
-        	$us->mark_deleted($_REQUEST['id']);
+
+  			BeanFactory::deleteBean('UserSignature', $_REQUEST['id']);
             $signatureArray = $current_user->getSignaturesArray();
 	        // clean "none"
 	        foreach($signatureArray as $k => $v) {
@@ -227,7 +221,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
             $where = "parent_id='{$_REQUEST['parent_id']}'";
             $order = "";
-            $seed = new Note();
+            $seed = BeanFactory::getBean('Notes');
             $fullList = $seed->get_full_list($order, $where, '');
             $all_fields = array_merge($seed->column_fields, $seed->additional_column_fields);
 
@@ -431,8 +425,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
     	    $mod = strtolower($_REQUEST['parent_type']);
     	    $modId = $_REQUEST['parent_id'];
     	    foreach($uids as $id) {
-    	        $email = new Email();
-                $email->retrieve($id);
+    	        $email = BeanFactory::getBean('Emails', $id);
     	        $email->parent_id = $modId;
                 $email->parent_type = $_REQUEST['parent_type'];
                 $email->status = 'read';
@@ -803,8 +796,7 @@ eoq;
             $out = array();
 
             foreach($exIds as $id) {
-                $e = new Email();
-                $e->retrieve($id);
+                $e = BeanFactory::getBean('Emails', $id);
                 $e->description_html = from_html($e->description_html);
                 $ie->email = $e;
                 $out[] = $ie->displayOneEmail($id, $_REQUEST['mbox']);
@@ -1220,7 +1212,7 @@ eoq;
    		global $current_user;
     	$GLOBALS['log']->debug("********** EMAIL 2.0 - Asynchronous - at: saveDefaultOutbound");
     	$outbound_id = empty($_REQUEST['id']) ? "" : $_REQUEST['id'];
-    	$ie = new InboundEmail();
+    	$ie = BeanFactory::getBean('InboundEmail');
    		$ie->setUsersDefaultOutboundServerId($current_user, $outbound_id);
     	break;
     case "testOutbound":

@@ -112,6 +112,7 @@ $mod_strings = array (
     'LBL_LIST_TAXCLASS' => 'Tax Class',
     'LBL_MODIFIED_BY'=>'Modified By',
     'LBL_MODULE_NAME' => 'Quotes',
+    'LBL_MODULE_NAME_SINGULAR' => 'Quote',
     'LBL_MODULE_TITLE' => 'Quotes: Home',
     'LBL_NAME' => 'Quote Name',
     'LBL_NEW_FORM_TITLE' => 'Create Quote',

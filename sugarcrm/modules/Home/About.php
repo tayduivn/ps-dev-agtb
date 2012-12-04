@@ -40,9 +40,6 @@ list-style-type: square;
 <!-- //BEGIN SUGARCRM flav=pro && flav!=ent && flav!=corp && flav!=ult ONLY -->
 <h1><IMG src="include/images/sugar_md.png" alt="SugarCRM" width="425" height="30" ondblclick='abouter.display();'></h1>
 <!-- //END SUGARCRM flav=pro && flav!=ent && flav!=corp && flav!=ult ONLY -->
-<!-- //BEGIN SUGARCRM flav=sales ONLY
-<h1><IMG src="include/images/sugar_md_sales.png" alt="SugarCRM" width="425" height="30" ondblclick='abouter.display();'></h1>
-<!-- //END SUGARCRM flav=sales ONLY
 <!-- //BEGIN SUGARCRM flav=dev ONLY
 <h1><IMG src="include/images/sugar_md_dev.png" alt="SugarCRM" width="425" height="30" ondblclick='abouter.display();'></h1>
 <!-- //END SUGARCRM flav=dev ONLY
@@ -148,10 +145,6 @@ $theProductName = 'Sugar Community Edition';
 $theProductName = 'Sugar Express Edition';
 
 //END SUGARCRM flav=exp ONLY
- //BEGIN SUGARCRM flav=sales ONLY
-// Product Name for Sales edition.
-$theProductName = "Sugar Sales";
-//END SUGARCRM flav=sales ONLY
 //BEGIN SUGARCRM flav=pro ONLY
 
 // Product Name for Professional edition.

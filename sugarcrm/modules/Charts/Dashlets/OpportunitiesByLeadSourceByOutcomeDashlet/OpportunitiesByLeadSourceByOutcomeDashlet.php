@@ -79,8 +79,7 @@ class OpportunitiesByLeadSourceByOutcomeDashlet extends DashletGenericChart
         $currency_symbol = $sugar_config['default_currency_symbol'];
         if ($current_user->getPreference('currency')){
             
-            $currency = new Currency();
-            $currency->retrieve($current_user->getPreference('currency'));
+            $currency = BeanFactory::getBean('Currencies', $current_user->getPreference('currency'));
             $currency_symbol = $currency->symbol;
         }
         $subtitle = translate('LBL_OPP_SIZE', 'Charts') . " " . $currency_symbol . "1" . translate('LBL_OPP_THOUSANDS', 'Charts');

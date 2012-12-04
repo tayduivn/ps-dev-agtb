@@ -33,7 +33,7 @@ global $current_user;
 global $currentModule;
 
 $GLOBALS['displayListView'] = true; 
-$focus = new ProductCategory();
+$focus = BeanFactory::getBean('ProductCategories');
 echo getClassicModuleTitle($focus->module_dir, array($mod_strings['LBL_MODULE_NAME']), true);
 $is_edit = false;
 if(!empty($_REQUEST['record'])) {

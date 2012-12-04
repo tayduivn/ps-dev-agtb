@@ -69,9 +69,6 @@ $install_script = true;
 //// INSTALL RESOURCE SETUP
 $css = 'install/install.css';
 $icon = 'include/images/sugar_icon.ico';
-//BEGIN SUGARCRM flav=sales ONLY
-$sugar_md = 'include/images/sugar_md_sales.png';
-//END SUGARCRM flav=sales ONLY
 //BEGIN SUGARCRM flav=ent && flav!=dev ONLY
 $sugar_md = 'include/images/sugar_md_ent.png';
 //END SUGARCRM flav=ent && flav!=dev ONLY

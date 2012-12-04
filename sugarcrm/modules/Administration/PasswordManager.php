@@ -19,20 +19,11 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *to the License for the specific language governing these rights and limitations under the License.
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
-/*********************************************************************************
- * $Id: index.php 36996 2008-06-23 19:12:16Z vineet $
- * Description: TODO:  To be written.
- * Portions created by SugarCRM are Copyright (C) SugarCRM, Inc.
- * All Rights Reserved.
- * Contributor(s): ______________________________________..
- ********************************************************************************/
-//FILE SUGARCRM flav!=sales ONLY
- // $Id: PasswordManager.php 35791 2009-05-20 23:06:34Z faissah $
 
 require_once "modules/OutboundEmailConfiguration/OutboundEmailConfigurationPeer.php";
 
 if(!is_admin($current_user)){
-    sugar_die($GLOBALS['app_strings']['ERR_NOT_ADMIN']); 
+    sugar_die($GLOBALS['app_strings']['ERR_NOT_ADMIN']);
 }
 function clearPasswordSettings() {
 	    $_POST['passwordsetting_SystemGeneratedPasswordON'] = '';
@@ -68,17 +59,17 @@ function clearPasswordSettings() {
 }
 require_once('modules/Administration/Forms.php');
 echo getClassicModuleTitle(
-        "Administration", 
+        "Administration",
         array(
             "<a href='index.php?module=Administration&action=index'>".translate('LBL_MODULE_NAME','Administration')."</a>",
            $mod_strings['LBL_MANAGE_PASSWORD_TITLE'],
-           ), 
+           ),
         false
         );
 require_once('modules/Configurator/Configurator.php');
 $configurator = new Configurator();
 $sugarConfig = SugarConfig::getInstance();
-$focus = new Administration();
+$focus = BeanFactory::getBean('Administration');
 $configurator->parseLoggerSettings();
 $valid_public_key= true;
 if(!empty($_POST['saveConfig'])){
@@ -97,8 +88,8 @@ if(!empty($_POST['saveConfig'])){
 		if (isset($_REQUEST['system_ldap_enabled']) && $_REQUEST['system_ldap_enabled'] == 'on') {
 			$_POST['system_ldap_enabled'] = 1;
 			clearPasswordSettings();
-		} 
-		else 
+		}
+		else
 			$_POST['system_ldap_enabled'] = 0;
 
 
@@ -111,23 +102,23 @@ if(!empty($_POST['saveConfig'])){
         }
 
 
-		if (isset($_REQUEST['ldap_group_checkbox']) && $_REQUEST['ldap_group_checkbox'] == 'on') 
+		if (isset($_REQUEST['ldap_group_checkbox']) && $_REQUEST['ldap_group_checkbox'] == 'on')
 			$_POST['ldap_group'] = 1;
 		else
 			$_POST['ldap_group'] = 0;
-			
-		if (isset($_REQUEST['ldap_authentication_checkbox']) && $_REQUEST['ldap_authentication_checkbox'] == 'on') 
+
+		if (isset($_REQUEST['ldap_authentication_checkbox']) && $_REQUEST['ldap_authentication_checkbox'] == 'on')
 			$_POST['ldap_authentication'] = 1;
 		else
 		    $_POST['ldap_authentication'] = 0;
-		
+
 		if( isset($_REQUEST['passwordsetting_lockoutexpirationtime']) && is_numeric($_REQUEST['passwordsetting_lockoutexpirationtime'])  )
 		    $_POST['passwordsetting_lockoutexpiration'] = 2;
 
 		$configurator->saveConfig();
-		
+
 		$focus->saveConfig();
-		
+
 		header('Location: index.php?module=Administration&action=index');
 	}
 }
@@ -155,7 +146,7 @@ $sugar_smarty->assign('saml_enabled_checked', false);
 
 //echo "sugar_config[authenticationClass]: " . $sugar_config['authenticationClass'];
 //if (array_key_exists('authenticationClass', $sugar_config) && $sugar_config['authenticationClass'] == 'SAMLAuthenticate') {
-//   $sugar_smarty->assign('saml_enabled_checked', true);	
+//   $sugar_smarty->assign('saml_enabled_checked', true);
 //} else {
 //	$sugar_smarty->assign('saml_enabled_checked', false);
 //}
@@ -181,25 +172,25 @@ if ($valid_public_key){
 
 $sugar_smarty->assign("VALID_PUBLIC_KEY", $valid_public_key);
 
-	
+
 
 $res=$GLOBALS['sugar_config']['passwordsetting'];
 
 $smtpServerIsSet = (OutboundEmailConfigurationPeer::validSystemMailConfigurationExists($current_user)) ? "0" : "1";
 $sugar_smarty->assign("SMTP_SERVER_NOT_SET", $smtpServerIsSet);
 
-$focus = new InboundEmail();
+$focus = BeanFactory::getBean('InboundEmail');
 $focus->checkImap();
-$storedOptions = unserialize(base64_decode($focus->stored_options));	
+$storedOptions = unserialize(base64_decode($focus->stored_options));
 $email_templates_arr = get_bean_select_array(true, 'EmailTemplate','name', '','name',true);
 $create_case_email_template = (isset($storedOptions['create_case_email_template'])) ? $storedOptions['create_case_email_template'] : "";
-$TMPL_DRPDWN_LOST =get_select_options_with_id($email_templates_arr, $res['lostpasswordtmpl']); 
+$TMPL_DRPDWN_LOST =get_select_options_with_id($email_templates_arr, $res['lostpasswordtmpl']);
 $TMPL_DRPDWN_GENERATE =get_select_options_with_id($email_templates_arr, $res['generatepasswordtmpl']);
 
 $sugar_smarty->assign("TMPL_DRPDWN_LOST", $TMPL_DRPDWN_LOST);
 $sugar_smarty->assign("TMPL_DRPDWN_GENERATE", $TMPL_DRPDWN_GENERATE);
 //BEGIN SUGARCRM flav=pro ONLY
-$LOGGED_OUT_DISPLAY= (isset($res['lockoutexpiration']) && $res['lockoutexpiration'] == '0') ? 'none' : ''; 
+$LOGGED_OUT_DISPLAY= (isset($res['lockoutexpiration']) && $res['lockoutexpiration'] == '0') ? 'none' : '';
 $sugar_smarty->assign("LOGGED_OUT_DISPLAY_STATUS", $LOGGED_OUT_DISPLAY);
 //END SUGARCRM flav=pro ONLY
 

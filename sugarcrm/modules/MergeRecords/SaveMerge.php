@@ -26,15 +26,8 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * governing these rights and limitations under the License.  Portions created
  * by SugarCRM are Copyright (C) 2004-2007 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
-/*********************************************************************************
- * Description:  TODO: To be written.
- * Portions created by SugarCRM are Copyright (C) SugarCRM, Inc.
- * All Rights Reserved.
- * Contributor(s): ______________________________________..
- ********************************************************************************/
 
-
-$focus = BeanFactory::getBean('MergeRecord');
+$focus = BeanFactory::getBean('MergeRecords');
 $focus->load_merge_bean($_REQUEST['merge_module'], true, $_REQUEST['record']);
 
 foreach($focus->merge_bean->column_fields as $field)
@@ -91,9 +84,7 @@ $exclude = explode(',', $_REQUEST['merged_links']);
 
 if (is_array($_POST['merged_ids'])) {
     foreach ($_POST['merged_ids'] as $id) {
-        require_once ($focus->merge_bean_file_path);
-        $mergesource = new $focus->merge_bean_class();
-        $mergesource->retrieve($id);        
+        $mergesource = BeanFactory::getBean($focus->merge_module, $id);
         //kbrill Bug #13826
         foreach ($linked_fields as $name => $properties) {
         	if ($properties['name']=='modified_user_link' || in_array($properties['name'], $exclude))
@@ -101,7 +92,7 @@ if (is_array($_POST['merged_ids'])) {
         		continue;
         	}
             if (isset($properties['duplicate_merge'])) {
-                if ($properties['duplicate_merge']=='disabled' or 
+                if ($properties['duplicate_merge']=='disabled' or
                     $properties['duplicate_merge']=='false' or
                     $properties['name']=='assigned_user_link') {
                     continue;
@@ -109,11 +100,11 @@ if (is_array($_POST['merged_ids'])) {
             }
             if ($name == 'accounts' && $focus->merge_bean->module_dir == 'Opportunities')
             	continue;
-            	
+
             //BEGIN SUGARCRM flav=pro ONLY
             if ($name == 'teams') {
 				require_once('include/SugarFields/Fields/Teamset/SugarFieldTeamset.php');
-				$teamSetField = new SugarFieldTeamset('Teamset');	
+				$teamSetField = new SugarFieldTeamset('Teamset');
 			    if($teamSetField != null){
 			       $teamSetField->save($focus->merge_bean, $_REQUEST, 'team_name', '');
                    $focus->merge_bean->teams->setSaved(FALSE);
@@ -121,15 +112,15 @@ if (is_array($_POST['merged_ids'])) {
 			       $focus->merge_bean->save();
 			    }
             	continue;
-            }	
+            }
             //END SUGARCRM flav=pro ONLY
-            	
+
             if ($mergesource->load_relationship($name)) {
                 //check to see if loaded relationship is with email address
                 $relName=$mergesource->$name->getRelatedModuleName();
                 if (!empty($relName) and strtolower($relName)=='emailaddresses'){
                     //handle email address merge
-                    handleEmailMerge($focus,$name,$mergesource->$name->get());   
+                    handleEmailMerge($focus,$name,$mergesource->$name->get());
                 }else{
                     $data=$mergesource->$name->get();
                     if (is_array($data)) {
@@ -137,7 +128,7 @@ if (is_array($_POST['merged_ids'])) {
                             foreach ($data as $related_id) {
                                 //add to primary bean
                                 $focus->merge_bean->$name->add($related_id);
-                            }   
+                            }
                         }
                     }
                 }
@@ -165,14 +156,14 @@ function handleEmailMerge($focus,$name,$data){
 
     //make sure id's to merge exist and are in array format
 
-    //get the existing email id's 
+    //get the existing email id's
     $focus->merge_bean->load_relationship($name);
     $exData=$focus->merge_bean->$name->get();
 
     if (!is_array($existingData) || empty($existingData)) {
         return ;
     }
-        //query email and retrieve existing email address 
+        //query email and retrieve existing email address
         $exEmailQuery = 'Select id, email_address from email_addresses where id in (';
             $first = true;
             foreach($exData as $id){
@@ -202,10 +193,10 @@ function handleEmailMerge($focus,$name,$data){
                 }else{
                     $newEmailQuery .= ", '$id' ";
                     $first = false;
-                }        
+                }
             }
         $newEmailQuery .= ')';
-        
+
         $newResult = $focus->merge_bean->db->query($newEmailQuery);
         while(($row=$focus->merge_bean->db->fetchByAssoc($newResult))!= null) {
             $newEmails[$row['id']]=$row['email_address'];
@@ -215,13 +206,13 @@ function handleEmailMerge($focus,$name,$data){
         foreach($newEmails as $k=>$n){
             if(!in_array($n,$existingEmails)){
                 $mrgArray[$k] = $n;
-            }   
+            }
         }
 
         //add email id's.
         foreach ($mrgArray as $related_id=>$related_val) {
             //add to primary bean
             $focus->merge_bean->$name->add($related_id);
-        }   
+        }
 }
 ?>

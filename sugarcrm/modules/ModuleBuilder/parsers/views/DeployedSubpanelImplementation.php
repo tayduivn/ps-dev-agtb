@@ -52,8 +52,9 @@ class DeployedSubpanelImplementation extends AbstractMetaDataImplementation impl
         $this->_subpanelName = $subpanelName ;
         $this->_moduleName = $moduleName ;
 
+        $module = BeanFactory::getBean($moduleName);
         // BEGIN ASSERTIONS
-        if (! isset ( $GLOBALS [ 'beanList' ] [ $moduleName ] ))
+        if (empty($module))
         {
             sugar_die ( get_class ( $this ) . ": Modulename $moduleName is not a Deployed Module" ) ;
         }
@@ -61,8 +62,6 @@ class DeployedSubpanelImplementation extends AbstractMetaDataImplementation impl
 
         $this->historyPathname = 'custom/history/modules/' . $moduleName . '/subpanels/' . $subpanelName . '/' . self::HISTORYFILENAME ;
         $this->_history = new History ( $this->historyPathname ) ;
-
-        $module = get_module_info ( $moduleName ) ;
 
         require_once ('include/SubPanel/SubPanelDefinitions.php') ;
         // retrieve the definitions for all the available subpanels for this module from the subpanel
@@ -72,7 +71,7 @@ class DeployedSubpanelImplementation extends AbstractMetaDataImplementation impl
         // Get the fields lists from an aSubPanel object describing this subpanel from the SubPanelDefinitions object
         $this->_viewdefs = array ( ) ;
         $this->_fielddefs = array ( ) ;
-        $this->_language = '' ;    
+        $this->_language = '' ;
         if (! empty ( $spd->layout_defs ))
             if (array_key_exists ( strtolower ( $subpanelName ), $spd->layout_defs [ 'subpanel_setup' ] ))
             {
@@ -80,7 +79,7 @@ class DeployedSubpanelImplementation extends AbstractMetaDataImplementation impl
                 $originalSubpanel = $spd->load_subpanel( $subpanelName , false, true);
                 $this->_fullFielddefs = $originalSubpanel->get_list_fields ();
                 $this->_mergeFielddefs ( $this->_fielddefs , $this->_fullFielddefs ) ;
-                
+
                 $this->_aSubPanelObject = $spd->load_subpanel ( $subpanelName ) ;
                 // now check if there is a restored subpanel in the history area - if there is, then go ahead and use it
                 if (file_exists ( $this->historyPathname ))
@@ -118,7 +117,7 @@ class DeployedSubpanelImplementation extends AbstractMetaDataImplementation impl
                         }
                     }
                 }
-                
+
                 $this->_mergeFielddefs ( $this->_fielddefs , $this->_viewdefs ) ;
             }
 

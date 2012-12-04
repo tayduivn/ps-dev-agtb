@@ -44,10 +44,8 @@ class StudioWizard{
     	$options = array('SelectModuleWizard'=>$GLOBALS['mod_strings']['LBL_SW_EDIT_MODULE'], 
     	                 'EditDropDownWizard'=>$GLOBALS['mod_strings']['LBL_SW_EDIT_DROPDOWNS'],
     	                 'RenameTabs'=>$GLOBALS['mod_strings']['LBL_SW_RENAME_TABS'],
-                         //BEGIN SUGARCRM flav!=sales ONLY
     	                 'ConfigureTabs'=>$GLOBALS['mod_strings']['LBL_SW_EDIT_TABS'],
     	                 'ConfigureGroupTabs'=>$GLOBALS['mod_strings']['LBL_SW_EDIT_GROUPTABS'],
-    	                 //END SUGARCRM flav!=sales ONLY
     	                 'Portal'=>$GLOBALS['mod_strings']['LBL_SW_EDIT_PORTAL'],
 				         //BEGIN SUGARCRM flav=pro ONLY
 				         'Workflow'=>$GLOBALS['mod_strings']['LBL_SW_EDIT_WORKFLOW'],
@@ -85,14 +83,12 @@ class StudioWizard{
                 $newWiz = new RenameModules();
                 $newWiz->process();
                 break; 
-            //BEGIN SUGARCRM flav!=sales ONLY
             case 'ConfigureTabs':
                 header('Location: index.php?module=Administration&action=ConfigureTabs');
                 sugar_cleanup(true); 
             case 'ConfigureGroupTabs':
                 require_once('modules/Studio/TabGroups/EditViewTabs.php');
                 break;
-            //END SUGARCRM flav!=sales ONLY
             case 'Workflow':
                 header('Location: index.php?module=WorkFlow&action=ListView');
                 sugar_cleanup(true);

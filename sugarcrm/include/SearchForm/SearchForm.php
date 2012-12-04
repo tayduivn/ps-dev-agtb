@@ -423,7 +423,7 @@ class SearchForm {
         $tabPanel = new SugarWidgetTabs($this->tabs, $currentKey, 'SUGAR.searchForm.searchFormSelect');
 
         if(isset($_REQUEST['saved_search_select']) && $_REQUEST['saved_search_select']!='_none') {
-            $saved_search=loadBean('SavedSearch');
+            $saved_search = BeanFactory::getBean('SavedSearch');
             $saved_search->retrieveSavedSearch($_REQUEST['saved_search_select']);
         }
 
@@ -590,7 +590,8 @@ class SearchForm {
         $this->bean->custom_fields->populateAllXTPL($this->xtpl, 'search' );
         if(!empty($listViewDefs) && !empty($lv)){
             $GLOBALS['log']->debug('SearchForm.php->displayAdvanced(): showing saved search');
-            $savedSearch = new SavedSearch($listViewDefs[$this->module], $lv->data['pageData']['ordering']['orderBy'], $lv->data['pageData']['ordering']['sortOrder']);
+            $savedSearch = BeanFactory::getBean('SavedSearch');
+            $savedSearch->init($listViewDefs[$this->module], $lv->data['pageData']['ordering']['orderBy'], $lv->data['pageData']['ordering']['sortOrder']);
             $this->xtpl->assign('SAVED_SEARCH', $savedSearch->getForm($this->module, false));
             $this->xtpl->assign('MOD_SAVEDSEARCH', return_module_language($current_language, 'SavedSearch'));
             $this->xtpl->assign('ADVANCED_SEARCH_IMG', SugarThemeRegistry::current()->getImageURL('advanced_search.gif'));
@@ -626,7 +627,8 @@ class SearchForm {
     function displaySavedViews($listViewDefs, $lv, $header = true, $return = false) {
         global $current_user;
 
-        $savedSearch = new SavedSearch($listViewDefs[$this->module], $lv->data['pageData']['ordering']['orderBy'], $lv->data['pageData']['ordering']['sortOrder']);
+        $savedSearch = BeanFactory::getBean('SavedSearch');
+        $savedSearch->init($listViewDefs[$this->module], $lv->data['pageData']['ordering']['orderBy'], $lv->data['pageData']['ordering']['sortOrder']);
 
         if($header) {
             $this->displayWithHeaders('saved_views', $this->displayBasic(false, true), $this->displayAdvanced(false, true), $savedSearch->getForm($this->module));
@@ -646,7 +648,7 @@ class SearchForm {
         global $app_strings;
 
         $SAVED_SEARCHES_OPTIONS = '';
-        $savedSearch = new SavedSearch();
+        $savedSearch = BeanFactory::getBean('SavedSearch');
         $SAVED_SEARCHES_OPTIONS = $savedSearch->getSelect($this->module);
         $str = "<input tabindex='2' title='{$app_strings['LBL_SEARCH_BUTTON_TITLE']}' onclick='SUGAR.savedViews.setChooser()' class='button' type='submit' name='button' value='{$app_strings['LBL_SEARCH_BUTTON_LABEL']}' id='search_form_submit'/>&nbsp;";
         $str .= "<input tabindex='2' title='{$app_strings['LBL_CLEAR_BUTTON_TITLE']}' onclick='SUGAR.searchForm.clear_form(this.form); return false;' class='button' type='button' name='clear' value=' {$app_strings['LBL_CLEAR_BUTTON_LABEL']} ' id='search_form_clear'/>";

@@ -103,7 +103,7 @@ EOQ;
 
 $javascript = new javascript();
 $javascript->setFormName($formname);
-$javascript->setSugarBean(new Lead());
+$javascript->setSugarBean(BeanFactory::getBean('Leads'));
 $javascript->addField('email1','false',$prefix);
 $javascript->addField('email2','false',$prefix);
 $javascript->addRequiredFields($prefix);
@@ -149,7 +149,7 @@ EOQ;
 
 $javascript = new javascript();
 $javascript->setFormName($formname);
-$javascript->setSugarBean(new Lead());
+$javascript->setSugarBean(BeanFactory::getBean('Leads'));
 $javascript->addField('email1','false',$prefix);
 $javascript->addField('email2','false',$prefix);
 $javascript->addRequiredFields($prefix);
@@ -201,7 +201,7 @@ function handleSave($prefix,$redirect=true, $useRequired=false, $do_save=true, $
 	require_once('include/formbase.php');
 
 	if(empty($exist_lead)) {
-        $focus = new Lead();
+        $focus = BeanFactory::getBean('Leads');
     }
     else {
         $focus = $exist_lead;
@@ -266,7 +266,7 @@ function handleSave($prefix,$redirect=true, $useRequired=false, $do_save=true, $
 			}
 
 
-			$emailAddress = new SugarEmailAddress();
+			$emailAddress = BeanFactory::getBean('EmailAddresses');
 			$get .= $emailAddress->getFormBaseURL($focus);
 
 			//BEGIN SUGARCRM flav=pro ONLY
@@ -334,8 +334,7 @@ function handleSave($prefix,$redirect=true, $useRequired=false, $do_save=true, $
     $return_id = $focus->id;
 
 	if (isset($_POST[$prefix.'prospect_id']) &&  !empty($_POST[$prefix.'prospect_id'])) {
-		$prospect=new Prospect();
-		$prospect->retrieve($_POST[$prefix.'prospect_id']);
+		$prospect = BeanFactory::getBean('Prospects', $_POST[$prefix.'prospect_id']);
 		$prospect->lead_id=$focus->id;
 		// Set to keep email in target
 		$prospect->in_workflow = true;
@@ -361,8 +360,7 @@ function handleSave($prefix,$redirect=true, $useRequired=false, $do_save=true, $
 
 		// fake this case like it's already saved.
 
-		$email = new Email();
-		$email->retrieve($_REQUEST['inbound_email_id']);
+		$email = BeanFactory::getBean('Emails', $_REQUEST['inbound_email_id']);
 		$email->parent_type = 'Leads';
 		$email->parent_id = $focus->id;
 		$email->assigned_user_id = $current_user->id;

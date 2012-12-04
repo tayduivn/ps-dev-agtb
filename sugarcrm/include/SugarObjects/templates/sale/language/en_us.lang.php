@@ -84,11 +84,9 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
   'LBL_CURRENCY' => 'Currency:',
   'LBL_DATE_CLOSED' => 'Expected Close Date:',
   'LBL_TYPE' => 'Type:',
-  //BEGIN SUGARCRM flav!=sales ONLY
   'LBL_CAMPAIGN' => 'Campaign:',
   'LBL_LEADS_SUBPANEL_TITLE' => 'Leads',
   'LBL_PROJECTS_SUBPANEL_TITLE' => 'Projects',  
-  //END SUGARCRM flav!=sales ONLY
   'LBL_NEXT_STEP' => 'Next Step:',
   'LBL_LEAD_SOURCE' => 'Lead Source:',
   'LBL_SALES_STAGE' => 'Sales Stage:',

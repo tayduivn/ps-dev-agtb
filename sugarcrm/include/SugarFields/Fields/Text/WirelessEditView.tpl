@@ -1,5 +1,5 @@
 {*
-<!--//FILE SUGARCRM flav=pro || flav=sales ONLY -->
+<!--//FILE SUGARCRM flav=pro ONLY -->
 /*********************************************************************************
  * The contents of this file are subject to the SugarCRM Professional Subscription
  * Agreement ("License") which can be viewed at

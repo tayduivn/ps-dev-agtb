@@ -235,7 +235,7 @@ echo get_validate_chart_js();
 			$dateStartDisplay = $timedate->asUserDate($timedate->fromString($date_start));
 			$dateEndDisplay = $timedate->asUserDate($timedate->fromString($date_end));
 
-			$opp = new Opportunity();
+			$opp = BeanFactory::getBean('Opportunities');
 			//build the where clause for the query that matches $date_start and $date_end
 			$where .= "AND opportunities.date_closed >= ".db_convert("'".$date_start."'",'date')." AND opportunities.date_closed <= ".db_convert("'".$date_end."'",'date')." AND opportunities.deleted=0";
 			$query = "SELECT sales_stage,".db_convert('opportunities.date_closed','date_format',array("'%Y-%m'"),array("'YYYY-MM'"))." as m, sum(amount_usdollar/1000) as total, count(*) as opp_count FROM opportunities ";
@@ -261,8 +261,7 @@ echo get_validate_chart_js();
 			$salesStages = array("Closed Lost"=>$app_list_strings['sales_stage_dom']["Closed Lost"],"Closed Won"=>$app_list_strings['sales_stage_dom']["Closed Won"],"Other"=>$other);
 			if($current_user->getPreference('currency') ){
 
-				$currency = new Currency();
-				$currency->retrieve($current_user->getPreference('currency'));
+				$currency = BeanFactory::getBean('Currencies', $current_user->getPreference('currency'));
 				$div = $currency->conversion_rate;
 				$symbol = $currency->symbol;
 			}
@@ -428,7 +427,7 @@ echo get_validate_chart_js();
 		$dateStartDisplay = $timedate->asUserDate($timedate->fromString($date_start));
 		$dateEndDisplay = $timedate->asUserDate($timedate->fromString($date_end));
 
-		$opp = new Opportunity();
+		$opp = BeanFactory::getBean('Opportunities');
 		//build the where clause for the query that matches $date_start and $date_end
 		$where .= "AND opportunities.date_closed >= ".db_convert("'".$date_start."'",'date')." AND opportunities.date_closed <= ".db_convert("'".$date_end."'",'date')." AND opportunities.deleted=0";
 		$query = "SELECT sales_stage,".db_convert('opportunities.date_closed','date_format',array("'%Y-%m'"),array("'YYYY-MM'"))." as m, sum(amount_usdollar/1000) as total, count(*) as opp_count FROM opportunities ";

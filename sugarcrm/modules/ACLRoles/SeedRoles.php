@@ -28,32 +28,26 @@ $mlaRoles = array(
      'Sales Administrator'=>array(
          'Accounts'=>array('admin'=>100, 'access'=>89),
          'Contacts'=>array('admin'=>100, 'access'=>89),
-         //BEGIN SUGARCRM flav!=sales ONLY
          'Forecasts'=>array('admin'=>100, 'access'=>89),
          'ForecastSchedule'=>array('admin'=>100, 'access'=>89),
          'Leads'=>array('admin'=>100, 'access'=>89),
          'Quotes'=>array('admin'=>100, 'access'=>89),
-		 //END SUGARCRM flav!=sales ONLY
          'Opportunities'=>array('admin'=>100, 'access'=>89),
      ),
      'Marketing Administrator'=>array(
          'Accounts'=>array('admin'=>100, 'access'=>89),
          'Contacts'=>array('admin'=>100, 'access'=>89),
-         //BEGIN SUGARCRM flav!=sales ONLY
          'Campaigns'=>array('admin'=>100, 'access'=>89),
          'ProspectLists'=>array('admin'=>100, 'access'=>89),
          'Leads'=>array('admin'=>100, 'access'=>89),
          'Prospects'=>array('admin'=>100, 'access'=>89),
-         //END SUGARCRM flav!=sales ONLY
      ),
      'Customer Support Administrator'=>array(
          'Accounts'=>array('admin'=>100, 'access'=>89),
          'Contacts'=>array('admin'=>100, 'access'=>89),
-         //BEGIN SUGARCRM flav!=sales ONLY
          'Bugs'=>array('admin'=>100, 'access'=>89),
          'Cases'=>array('admin'=>100, 'access'=>89),
          'KBDocuments'=>array('admin'=>100, 'access'=>89),
-         //END SUGARCRM flav!=sales ONLY
         )
 );
 global $db;

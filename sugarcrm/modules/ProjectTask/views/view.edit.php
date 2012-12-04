@@ -40,7 +40,7 @@ class ProjectTaskViewEdit extends ViewEdit
 		global $beanFiles;
 		require_once($beanFiles['ProjectTask']);
 		
-		$focus = new ProjectTask();
+		$focus = BeanFactory::getBean('ProjectTask');
 		if (isset($_REQUEST['record'])){
 			$focus->retrieve($_REQUEST['record']);
 		}

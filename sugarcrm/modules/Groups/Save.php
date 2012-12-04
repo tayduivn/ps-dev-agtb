@@ -25,7 +25,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 
 //_ppd($_REQUEST);
-$focus = new Group();
+$focus = BeanFactory::getBean('Groups');
 
 // New user
 //BEGIN SUGARCRM flav=pro ONLY

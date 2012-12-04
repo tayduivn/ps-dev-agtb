@@ -11,7 +11,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *********************************************************************************/
 
 
-$focus = new Email();
+$focus = BeanFactory::getBean('Emails');
 $focus->email2init();
 $focus->et->preflightUser($current_user);
 $out = $focus->et->displayEmailFrame();

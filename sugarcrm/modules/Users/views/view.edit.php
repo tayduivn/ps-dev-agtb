@@ -43,11 +43,9 @@ var $useForSubpanel = true;
             $userType = 'Portal';
         }
         //END SUGARCRM flav=ent ONLY
-        //BEGIN SUGARCRM flav!=sales ONLY
         if($this->fieldHelper->usertype == 'GROUP'){
             $userType = 'Group';
         }
-        //END SUGARCRM flav!=sales ONLY
 
         if ( $userType != 'Regular' ) {
             $oldType = $this->type;
@@ -128,8 +126,7 @@ var $useForSubpanel = true;
 
 	    //BEGIN SUGARCRM lic=sub ONLY
         global $sugar_flavor;
-        $admin = new Administration();
-        $admin->retrieveSettings();
+        $admin = Administration::getSettings();
 
         if((isset($sugar_flavor) && $sugar_flavor != null) &&
            ($sugar_flavor=='CE' || isset($admin->settings['license_enforce_user_limit']) && $admin->settings['license_enforce_user_limit'] == 1)){
@@ -180,7 +177,6 @@ var $useForSubpanel = true;
 
         $processSpecial = false;
         $processFormName = '';
-        //BEGIN SUGARCRM flav!=sales ONLY
         if ( isset($this->fieldHelper->usertype) && ($this->fieldHelper->usertype == 'GROUP'
              //BEGIN SUGARCRM flav=ent ONLY
              || $this->fieldHelper->usertype == 'PORTAL_ONLY'
@@ -191,7 +187,6 @@ var $useForSubpanel = true;
             $processSpecial = true;
             $processFormName = 'EditViewGroup';
         }
-        //END SUGARCRM flav!=sales ONLY
 
         //Bug#51609 Replace {php} code block in EditViewHeader.tpl
         $action_button = array();
@@ -263,9 +258,6 @@ EOD
         $theTitle = '';
 
         if($GLOBALS['current_user']->isAdminForModule('Users')
-		//BEGIN SUGARCRM flav=sales ONLY
-		|| $GLOBALS['current_user']->user_type == 'UserAdministrator'
-		//END SUGARCRM flav=sales ONLY
         ) {
         $createImageURL = SugarThemeRegistry::current()->getImageURL('create-record.gif');
         $url = ajaxLink("index.php?module=$module&action=EditView&return_module=$module&return_action=DetailView");

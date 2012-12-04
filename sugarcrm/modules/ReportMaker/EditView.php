@@ -26,17 +26,6 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * governing these rights and limitations under the License.  Portions created
  * by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
-/*********************************************************************************
- * $Id: EditView.php 55779 2010-04-02 19:51:23Z jmertic $
- * Description:  
- ********************************************************************************/
-
-
-
-
-//require_once('modules/DataSets/DataSet.php');
-
-
 global $current_user;
 
 
@@ -48,9 +37,9 @@ global $app_strings;
 // global $default_language;
 // global $cal_codes;
 
-$focus = new ReportMaker();
+$focus = BeanFactory::getBean('ReportMaker');
 
-if(isset($_REQUEST['record']) && isset($_REQUEST['record'])) {
+if(!empty($_REQUEST['record'])) {
     $focus->retrieve($_REQUEST['record']);
 }
 if(isset($_REQUEST['isDuplicate']) && $_REQUEST['isDuplicate'] == 'true') {
@@ -109,7 +98,7 @@ else {
 
 global $current_user;
 
-//if(is_admin($current_user) && $_REQUEST['module'] != 'DynamicLayout' && !empty($_SESSION['editinplace'])){	
+//if(is_admin($current_user) && $_REQUEST['module'] != 'DynamicLayout' && !empty($_SESSION['editinplace'])){
 //	$record = '';
 //	if(!empty($_REQUEST['record'])){
 //		$record = 	$_REQUEST['record'];

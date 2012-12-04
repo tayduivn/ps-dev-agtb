@@ -1,4 +1,30 @@
 <?php
+/*********************************************************************************
+ * The contents of this file are subject to the SugarCRM Master Subscription
+ * Agreement ("License") which can be viewed at
+ * http://www.sugarcrm.com/crm/master-subscription-agreement
+ * By installing or using this file, You have unconditionally agreed to the
+ * terms and conditions of the License, and You may not use this file except in
+ * compliance with the License.  Under the terms of the license, You shall not,
+ * among other things: 1) sublicense, resell, rent, lease, redistribute, assign
+ * or otherwise transfer Your rights to the Software, and 2) use the Software
+ * for timesharing or service bureau purposes such as hosting the Software for
+ * commercial gain and/or for the benefit of a third party.  Use of the Software
+ * may be subject to applicable fees and any use of the Software without first
+ * paying applicable fees is strictly prohibited.  You do not have the right to
+ * remove SugarCRM copyrights from the source code or user interface.
+ *
+ * All copies of the Covered Code must include on each user interface screen:
+ *  (i) the "Powered by SugarCRM" logo and
+ *  (ii) the SugarCRM copyright notice
+ * in the same form as they appear in the distribution.  See full license for
+ * requirements.
+ *
+ * Your Warranty, Limitations of liability and Indemnity are expressly stated
+ * in the License.  Please refer to the License for the specific language
+ * governing these rights and limitations under the License.  Portions created
+ * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
+ ********************************************************************************/
 /**
  * Assists in backporting 6.6 Metadata formats to legacy style in order to
  * maintain backward compatibility with old clients consuming the V3 and V4 apis.
@@ -10,6 +36,41 @@ class MetaDataConverter {
      * @var MetaDataConverter 
      */
     protected static $converter = null;
+
+    /**
+     * Converts edit and detail view defs that contain fieldsets to a compatible
+     * defs that does not contain fieldsets. In essence, it splits up any fieldsets
+     * and moves them out of their grouping into individual fields within the panel.
+     * 
+     * This method assumes that the defs have already been converted to a legacy 
+     * format.
+     * 
+     * @param array $defs
+     * @return array
+     */
+    public static function fromGridFieldsets(array $defs) {
+        if (isset($defs['panels']) && is_array($defs['panels'])) {
+            $newpanels = array();
+            $offset = 0;
+            foreach ($defs['panels'] as $row) {
+                if (is_array($row[0]) && isset($row[0]['type']) && $row[0]['type'] == 'fieldset' && isset($row[0]['related_fields'])) {
+                    // Fieldset.... convert
+                    foreach ($row[0]['related_fields'] as $fName) {
+                        $newpanels[$offset] = array($fName);
+                        $offset++;
+                    }
+                } else {
+                    // do nothing
+                    $newpanels[$offset] = $row;
+                    $offset++;
+                }
+            }
+            
+            $defs['panels'] = $newpanels;
+        }
+        
+        return $defs;
+    }
     
     /**
      * Static entry point, will instantiate an object of itself to run the process.

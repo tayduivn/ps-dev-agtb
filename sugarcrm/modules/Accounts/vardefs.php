@@ -106,7 +106,6 @@ $dictionary['Account'] = array('table' => 'accounts', 'audited'=>true, 'activity
 		    'massupdate' => false,
 			'studio'=>'false',
 		),
-//BEGIN SUGARCRM flav!=sales ONLY
   'cases' =>
   array (
     'name' => 'cases',
@@ -131,7 +130,6 @@ $dictionary['Account'] = array('table' => 'accounts', 'audited'=>true, 'activity
 			'vname' =>'LBL_ANY_EMAIL',
 			'studio' => array('visible'=>false, 'searchview'=>true),
 		),
-//END SUGARCRM flav!=sales ONLY
   'tasks' =>
   array (
     'name' => 'tasks',
@@ -269,7 +267,6 @@ $dictionary['Account'] = array('table' => 'accounts', 'audited'=>true, 'activity
 
 //END SUGARCRM flav=pro ONLY
 
-  //BEGIN SUGARCRM flav!=sales ONLY
 
   'project' =>
   array (
@@ -311,7 +308,6 @@ $dictionary['Account'] = array('table' => 'accounts', 'audited'=>true, 'activity
       'source' => 'non-db',
   ),
 
-  //END SUGARCRM flav!=sales ONLY
   'created_by_link' =>
   array (
     'name' => 'created_by_link',
@@ -369,7 +365,6 @@ $dictionary['Account'] = array('table' => 'accounts', 'audited'=>true, 'activity
   ),
 
 //END SUGARCRM flav=pro ONLY
-//BEGIN SUGARCRM flav!=sales ONLY
 
  'campaign_id' =>
   array (
@@ -412,7 +407,6 @@ $dictionary['Account'] = array('table' => 'accounts', 'audited'=>true, 'activity
         'source'=>'non-db',
         'vname'=>'LBL_PROSPECT_LIST',
       ),
-//END SUGARCRM flav!=sales ONLY
 )
 , 'indices' => array (
         array('name' =>'idx_accnt_id_del', 'type' =>'index', 'fields'=>array('id', 'deleted')),
@@ -488,11 +482,9 @@ $dictionary['Account'] = array('table' => 'accounts', 'audited'=>true, 'activity
   'rhs_module'=> 'Accounts', 'rhs_table'=> 'accounts', 'rhs_key' => 'created_by',
   'relationship_type'=>'one-to-many'),
 
-//BEGIN SUGARCRM flav!=sales ONLY
   'account_campaign_log' => array('lhs_module' => 'Accounts', 'lhs_table'=> 'accounts', 'lhs_key'=> 'id',
   'rhs_module'=> 'CampaignLog','rhs_table'=>'campaign_log', 'rhs_key'=> 'target_id',
   'relationship_type'	=>'one-to-many'),
-//END SUGARCRM flav!=sales ONLY
 
   ),
   //This enables optimistic locking for Saves From EditView

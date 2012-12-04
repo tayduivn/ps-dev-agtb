@@ -47,7 +47,7 @@ class SugarAuthenticateUser{
 	function authenticateUser($name, $password, $fallback=false)
 	{
 	    $row = User::findUserPassword($name, $password, "(portal_only IS NULL OR portal_only !='1') AND (is_group IS NULL OR is_group !='1') AND status !='Inactive'");
-    
+
 	    // set the ID in the seed user.  This can be used for retrieving the full user record later
 		//if it's falling back on Sugar Authentication after the login failed on an external authentication return empty if the user has external_auth_disabled for them
 		if (empty ($row) || !empty($row['external_auth_only'])) {
@@ -111,9 +111,8 @@ class SugarAuthenticateUser{
 		}
 
 		if(!empty($_SESSION['authenticated_user_id']) || !empty($user_id)){
-			$GLOBALS['current_user'] = new User();
+			$GLOBALS['current_user'] = BeanFactory::getBean('Users');
 			if($GLOBALS['current_user']->retrieve($_SESSION['authenticated_user_id'])){
-
 				return true;
 			}
 		}

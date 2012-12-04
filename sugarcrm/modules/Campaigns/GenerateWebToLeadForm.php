@@ -91,15 +91,15 @@ if(isset($_REQUEST['team_name']) && !empty($_REQUEST['team_name'])){
 	$teamIds = $sf->getTeamsFromRequest('team_name');
 	$web_team_user = $sf->getPrimaryTeamIdFromRequest('team_name', $_POST);
 	
-	$teamSet = new TeamSet();
+	$teamSet = BeanFactory::getBean('TeamSets');
 	$web_team_set_id_user = $teamSet->addTeams($teamIds);
 	require_once('modules/Teams/TeamSetManager.php');
 	TeamSetManager::add($web_team_set_id_user, 'leads');
 }
 //END SUGARCRM flav=pro ONLY
 
- $lead = new Lead();
- $fieldsMetaData = new FieldsMetaData();
+ $lead = BeanFactory::getBean('Leads');
+ $fieldsMetaData = BeanFactory::getBean('EditCustomFields');
  $xtpl=new XTemplate ('modules/Campaigns/WebToLeadForm.html');
  $xtpl->assign("MOD", $mod_strings);
  $xtpl->assign("APP", $app_strings);
@@ -535,8 +535,7 @@ if(!empty($boolean_fields)){
 //BEGIN SUGARCRM flav=int ONLY
 	/////BEGIN CAPTCHA VALIDATION
 	
-	$admin = new Administration();
-	$admin->retrieveSettings('captcha');
+	$admin = Administration::getSettings('captcha');
 	$add_captcha = 0;
 	$captcha_privatekey = "";
 	$captcha_publickey="";

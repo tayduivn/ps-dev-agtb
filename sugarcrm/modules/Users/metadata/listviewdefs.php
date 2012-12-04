@@ -73,12 +73,10 @@ $listViewDefs['Users'] = array(
         'label' => 'LBL_ADMIN', 
         'link' => false,
         'default' => true),
-    //BEGIN SUGARCRM flav!=sales ONLY
     'IS_GROUP' => array(
         'width' => '10', 
         'label' => 'LBL_LIST_GROUP', 
         'link' => true,
         'default' => false),
-    //END SUGARCRM flav!=sales ONLY
 );
 ?>

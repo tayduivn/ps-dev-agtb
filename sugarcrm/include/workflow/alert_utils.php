@@ -37,8 +37,7 @@ require_once "modules/Mailer/MailerFactory.php"; // imports all of the Mailer cl
 
 function process_workflow_alerts(& $target_module, $alert_user_array, $alert_shell_array, $check_for_bridge=false){
 
-	$admin = new Administration();
-	$admin->retrieveSettings();
+	$admin = Administration::getSettings();
 
 
 	/*
@@ -83,8 +82,7 @@ function process_workflow_alerts(& $target_module, $alert_user_array, $alert_she
 
 function get_manager_info($user_id){
 
-	$notify_user = new User();
-	$notify_user->retrieve($user_id);
+	$notify_user = BeanFactory::getBean('Users', $user_id);
 	return $notify_user->reports_to_id;
 
 //end function get_manager_info
@@ -149,8 +147,7 @@ function get_user_alert_details(& $focus, $user_meta_array, & $address_array){
 	//end if specific user
 	}
 	if($user_meta_array['user_type'] == "specific_team"){
-		$team_object = new Team;
-		$team_object->retrieve($user_meta_array['field_value']);
+		$team_object = BeanFactory::getBean('Teams', $user_meta_array['field_value']);
 		$team_user_list = $team_object->get_team_members(true);
 
 		foreach($team_user_list as $user_object){
@@ -177,7 +174,7 @@ function get_user_alert_details(& $focus, $user_meta_array, & $address_array){
 
 	    if( ! empty($focus->team_set_id) )
 	    {
-    	    $ts = new TeamSet();
+    	    $ts = BeanFactory::getBean('TeamSets');
     	    $teams = $ts->getTeams($focus->team_set_id);
 	    }
 	    else
@@ -188,8 +185,7 @@ function get_user_alert_details(& $focus, $user_meta_array, & $address_array){
 	    //Iterate over all teams associated with the team set and grab all users.
 	    foreach ($teams as $singleTeamId => $singleTeam)
 	    {
-	        $team_object = new Team;
-		    $team_object->retrieve($singleTeamId);
+	        $team_object = BeanFactory::getBean('Teams', $singleTeamId);
 		    $team_user_list = $team_object->get_team_members(true);
 
 		    //De dup the users list in case a user is in multiple teams.
@@ -221,8 +217,7 @@ function get_user_alert_details(& $focus, $user_meta_array, & $address_array){
 
 	if($user_meta_array['user_type'] == "specific_role")
 	{
-		$role_object = new ACLRole();
-		$role_object->retrieve($user_meta_array['field_value']);
+		$role_object = BeanFactory::getBean('ACLRoles', $user_meta_array['field_value']);
 		$role_user_list = $role_object->get_linked_beans('users','User');
 
 		foreach($role_user_list as $user_object){
@@ -273,8 +268,7 @@ function get_user_alert_details(& $focus, $user_meta_array, & $address_array){
 	function get_alert_recipient($user_id)
 	{
 	    global $locale;
-		$notify_user = new User();
-		$notify_user->retrieve($user_id);
+		$notify_user = BeanFactory::getBean('Users', $user_id);
 
 		if (empty($notify_user->email1) && empty($notify_user->email2)) {
 			//return false if there is no email set
@@ -636,7 +630,7 @@ function compile_rel_user_info($target_object, $user_meta_array, &$address_array
 /////////////////////////////////////////Parsing Custom Templates//////////
 
 function fill_mail_object(&$mail_object, &$focus, $template_id, $source_field, $notify_user_id = "") {
-    $template                             = new EmailTemplate();
+    $template = BeanFactory::getBean('EmailTemplates');
     $template->disable_row_level_security = true;
 
     if (isset($template_id) && $template_id != "") {
@@ -781,7 +775,7 @@ function reconstruct_target_body($focus, $target_body, $component_array, $notify
                     $rel_handler->rel1_relationship_name = $focus->field_defs[$module_name]['relationship'];
                     $rel_module = get_rel_module_name($focus->module_dir, $rel_handler->rel1_relationship_name, $focus->db);
                     $rel_handler->rel1_module = $rel_module;
-                    $rel_handler->rel1_bean = get_module_info($rel_module);
+                    $rel_handler->rel1_bean = BeanFactory::getBean($rel_module);
                 }
                 else {
                     $rel_handler->process_by_rel_bean($module_name);

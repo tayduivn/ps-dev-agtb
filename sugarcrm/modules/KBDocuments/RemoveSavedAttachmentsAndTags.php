@@ -49,7 +49,7 @@ if( $docRev[1] !=null) $deleted= $docRev[1];
 if( $docRev[2] !=null) $tagOrAtt= $docRev[2];
 
 
-    $KBTag = new KBTag();
+    $KBTag = BeanFactory::getBean('KBTags');
     if($tagOrAtt==1){
 	  $q = 'UPDATE document_revisions SET deleted = '.$deleted.' WHERE id = \''.$docRevOrTagId.'\'';
     }

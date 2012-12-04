@@ -56,7 +56,7 @@ $savedDisplayColumns = $current_user->getPreference('ListViewDisplayColumns', $c
 
 $json = getJSONobj();
 
-$seedCase = new KBDocument(); // seed bean
+$seedCase = BeanFactory::getBean('KBDocuments'); // seed bean
 $searchForm = new SearchForm('Cases', $seedCase); // new searchform instance
 
 // setup listview smarty
@@ -64,7 +64,7 @@ $lv = new ListViewSmarty();
 
 if(!empty($_REQUEST['saved_search_select']) && $_REQUEST['saved_search_select']!='_none') {
     if(empty($_REQUEST['fts_search']) && empty($_REQUEST['fts_search_ADV']) && (empty($_REQUEST['clear_query']) || $_REQUEST['clear_query']!='true')) {
-        $saved_search = loadBean('SavedSearch');
+        $saved_search = BeanFactory::getBean('SavedSearch');
         $saved_search->retrieveSavedSearch($_REQUEST['saved_search_select']);
         $saved_search->populateRequest();
     }
@@ -166,7 +166,7 @@ $savedSearchName = empty($_REQUEST['saved_search_select_name']) ? '' : (' - ' . 
 echo get_form_header($current_module_strings['LBL_LIST_FORM_TITLE'] . $savedSearchName, '', false);
 echo $lv->display();
 
-$savedSearch = new SavedSearch();
+$savedSearch = BeanFactory::getBean('SavedSearch');
 $json = getJSONobj();
 // fills in saved views select box on shortcut menu
 $savedSearchSelects = $json->encode(array($GLOBALS['app_strings']['LBL_SAVED_SEARCH_SHORTCUT'] . '<br>' . $savedSearch->getSelect('KBDocuments')));

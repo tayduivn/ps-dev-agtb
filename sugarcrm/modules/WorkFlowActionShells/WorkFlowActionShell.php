@@ -119,6 +119,17 @@ class WorkFlowActionShell extends SugarBean {
 	// This is the list of fields that are required
 	var $required_fields =  array();
 
+    /**
+     * This is a depreciated method, please start using __construct() as this method will be removed in a future version
+     *
+     * @see __construct
+     * @deprecated
+     */
+    public function WorkFlowActionShell()
+    {
+        $this->__construct();
+    }
+
 	public function __construct() {
 		parent::__construct();
 
@@ -142,7 +153,7 @@ class WorkFlowActionShell extends SugarBean {
         {
             $actions = $this->get_actions($this->id);
             $workflow_object = $this->get_workflow_object();
-            $temp_module = get_module_info($workflow_object->base_module);
+            $temp_module = BeanFactory::getBean($workflow_object->base_module);
             $temp_module->call_vardef_handler("action_filter");
             $field_array = $temp_module->vardef_handler->get_vardef_array();
             foreach($actions as $action)
@@ -376,8 +387,7 @@ class WorkFlowActionShell extends SugarBean {
 		// Get the id and the name.
 		$actions = array();
 		while($row = $this->db->fetchByAssoc($result)){
-			$action = new WorkFlowAction();
-			$action->retrieve($row['id']);
+			$action = BeanFactory::getBean('WorkFlowActions', $row['id']);
 			$actions[] = $action;
 		}	
 	return $actions;
@@ -411,8 +421,7 @@ function copy($parent_id){
 	
 	
 	function get_workflow_object(){
-		$workflow_object = new WorkFlow();
-		$workflow_object->retrieve($this->parent_id);
+		$workflow_object = BeanFactory::getBean('WorkFlow', $this->parent_id);
 		return $workflow_object;	
 	
 	//end function get_workflow_type	
@@ -475,7 +484,7 @@ function copy($parent_id){
 				
 				
 			//Build bridging workflow object
-			$bridge_object = new WorkFlow();	
+			$bridge_object = BeanFactory::getBean('WorkFlow');	
 			$bridge_object->parent_id = $this->id;
 			$bridge_object->name = 'Meeting/Call Bridging Object';
 			$bridge_object->status = 'on';
@@ -490,7 +499,7 @@ function copy($parent_id){
 			
 			
 			//Predefine AlertShell Object
-			$alert_shell_object = new WorkFlowAlertShell();
+			$alert_shell_object = BeanFactory::getBean('WorkFlowAlertShells');
 			$alert_shell_object->name = 'Invite People';
 			$alert_shell_object->alert_type = 'Invite';
 			$alert_shell_object->source_type = 'System Default';
@@ -548,8 +557,7 @@ function copy($parent_id){
 		
 			if($delete==true){
 				
-				$workflow_object = new WorkFlow();
-				$workflow_object->retrieve($row['id']);
+				$workflow_object = BeanFactory::getBean('WorkFlow', $row['id']);
 				$workflow_object->check_controller = false;
                 $workflow_object->mark_deleted($row['id']);
 
@@ -576,8 +584,7 @@ function copy($parent_id){
 		
 		if($workflow_id!=""){
 			
-			$child_workflow_object = new WorkFlow();
-			$child_workflow_object->retrieve($workflow_id);
+			$child_workflow_object = BeanFactory::getBean('WorkFlow', $workflow_id);
 			
 				$child_alertshell_list = & $child_workflow_object->get_linked_beans('alerts','WorkFlowAlertShell');	
 			

@@ -28,22 +28,18 @@ $moduleList[] = 'Calls';
 $moduleList[] = 'Meetings';
 $moduleList[] = 'Tasks';
 $moduleList[] = 'Notes';
-//BEGIN SUGARCRM flav=pro || flav=sales ONLY
+//BEGIN SUGARCRM flav=pro ONLY
 $moduleList[] = 'Reports';
-//END SUGARCRM flav=pro || flav=sales ONLY
-//BEGIN SUGARCRM flav!=sales ONLY
+//END SUGARCRM flav=pro ONLY
 $moduleList[] = 'Leads';
-//END SUGARCRM flav!=sales ONLY
 $moduleList[] = 'Contacts';
 $moduleList[] = 'Accounts';
 $moduleList[] = 'Opportunities';
 
-//BEGIN SUGARCRM flav!=sales ONLY
 $moduleList[] = 'Emails';
 $moduleList[] = 'Campaigns';
 $moduleList[] = 'Prospects';
 $moduleList[] = 'ProspectLists';
-//END SUGARCRM flav!=sales ONLY
 
 //BEGIN SUGARCRM flav=pro ONLY
 $moduleList[] = 'Quotes';
@@ -53,12 +49,10 @@ $moduleList[] = 'Contracts';
 $moduleList[] = 'KBDocuments';
 //END SUGARCRM flav=pro ONLY
 
-//BEGIN SUGARCRM flav!=sales ONLY
 $moduleList[] = 'Documents';
 $moduleList[] = 'Cases';
 $moduleList[] = 'Project';
 $moduleList[] = 'Bugs';
-//END SUGARCRM flav!=sales ONLY
 
 // this list defines all of the module names and bean names in the app
 // to create a new module's bean class, add the bean definition here
@@ -70,7 +64,6 @@ $beanList['ACLActions']     = 'ACLAction';
 $beanList['ACLFields']       = 'ACLField';
 //END SUGARCRM flav=pro ONLY
 //END ACL OBJECTS
-//BEGIN SUGARCRM flav!=sales ONLY
 $beanList['Leads']          = 'Lead';
 $beanList['Cases']          = 'aCase';
 $beanList['Bugs']           = 'Bug';
@@ -85,7 +78,6 @@ $beanList['CampaignTrackers']   = 'CampaignTracker';
 $beanList['Releases']       = 'Release';
 $beanList['Groups'] = 'Group';
 $beanList['EmailMan'] = 'EmailMan';
-//END SUGARCRM flav!=sales ONLY
 $beanList['Schedulers']  = 'Scheduler';
 $beanList['SchedulersJobs']  = 'SchedulersJob';
 $beanList['Contacts']       = 'Contact';
@@ -117,13 +109,8 @@ $beanList['vCals']          = 'vCal';
 $beanList['CustomFields']       = 'CustomFields';
 
 
-
-
-
-//BEGIN SUGARCRM flav!=sales ONLY
 $beanList['Documents']  = 'Document';
 $beanList['DocumentRevisions']  = 'DocumentRevision';
-//END SUGARCRM flav!=sales ONLY
 $beanList['Roles']  = 'Role';
 
 $beanList['Audit']  = 'Audit';
@@ -141,16 +128,13 @@ $beanList['EmailAddresses'] = 'EmailAddress';
 $beanList['EmailText'] = 'EmailText';
 $beanList['Relationships'] = 'Relationship';
 $beanList['Employees']      = 'Employee';
-//BEGIN SUGARCRM flav=pro || flav=sales ONLY
+//BEGIN SUGARCRM flav=pro ONLY
 $beanList['Reports']        = 'SavedReport';
 $beanList['Reports_1']      = 'SavedReport';
-//END SUGARCRM flav=pro || flav=sales ONLY
+//END SUGARCRM flav=pro ONLY
 //BEGIN SUGARCRM flav=pro ONLY
 $beanList['Teams']          = 'Team';
 $beanList['TeamMemberships']            = 'TeamMembership';
-//BEGIN SUGARCRM flav=int ONLY
-$beanList['TeamHierarchies']            = 'TeamHierarchy';
-//END SUGARCRM flav=int ONLY
 $beanList['TeamSets']            = 'TeamSet';
 $beanList['TeamSetModules']            = 'TeamSetModule';
 $beanList['Quotes']         = 'Quote';
@@ -177,6 +161,7 @@ $beanList['ForecastManagerWorksheets']  = 'ForecastManagerWorksheet';
 $beanList['ForecastSchedule']  = 'ForecastSchedule';
 $beanList['Worksheet']  = 'Worksheet';
 $beanList['ForecastOpportunities']  = 'ForecastOpportunities';
+$beanList['ForecastDirectReports'] = 'ForecastDirectReports';
 $beanList['Quotas']     = 'Quota';
 $beanList['WorkFlow']  = 'WorkFlow';
 $beanList['WorkFlowTriggerShells']  = 'WorkFlowTriggerShell';
@@ -199,12 +184,12 @@ $beanList['ProjectResources'] = 'ProjectResource';
 //BEGIN SUGARCRM flav=ent ONLY
 $beanList['CustomQueries']  = 'CustomQuery';
 $beanList['DataSets']  = 'DataSet';
+$beanList['DataSet_Attribute']  = 'DataSet_Attribute';
 $beanList['ReportMaker']  = 'ReportMaker';
 //END SUGARCRM flav=ent ONLY
-//BEGIN SUGARCRM flav=int ONLY
-//$beanList['QueryBuilder']  = 'QueryBuilder';
-//END SUGARCRM flav=int ONLY
-
+$beanList['UserSignature'] = 'UserSignature';
+$beanList['Empty'] = 'EmptyBean';
+$beanList['TeamHierarchy'] = 'TeamHierarchy';
 
 // this list defines all of the files that contain the SugarBean class definitions from $beanList
 // to create a new module's bean class, add the file definition here
@@ -214,7 +199,6 @@ $beanFiles['ACLAction'] = 'modules/ACLActions/ACLAction.php';
 $beanFiles['ACLRole'] = 'modules/ACLRoles/ACLRole.php';
 $beanFiles['Relationship']  = 'modules/Relationships/Relationship.php';
 
-//BEGIN SUGARCRM flav!=sales ONLY
 $beanFiles['Lead']          = 'modules/Leads/Lead.php';
 $beanFiles['aCase']         = 'modules/Cases/Case.php';
 $beanFiles['Bug']           = 'modules/Bugs/Bug.php';
@@ -230,7 +214,6 @@ $beanFiles['EmailMarketing']          = 'modules/EmailMarketing/EmailMarketing.p
 $beanFiles['CampaignTracker']  = 'modules/CampaignTrackers/CampaignTracker.php';
 $beanFiles['Release']           = 'modules/Releases/Release.php';
 $beanFiles['EmailMan']          = 'modules/EmailMan/EmailMan.php';
-//END SUGARCRM flav!=sales ONLY
 
 $beanFiles['Scheduler']  = 'modules/Schedulers/Scheduler.php';
 $beanFiles['SchedulersJob']  = 'modules/SchedulersJobs/SchedulersJob.php';
@@ -262,10 +245,8 @@ $beanFiles['Version']           = 'modules/Versions/Version.php';
 
 $beanFiles['Role']          = 'modules/Roles/Role.php';
 
-//BEGIN SUGARCRM flav!=sales ONLY
 $beanFiles['Document']  = 'modules/Documents/Document.php';
 $beanFiles['DocumentRevision']  = 'modules/DocumentRevisions/DocumentRevision.php';
-//END SUGARCRM flav!=sales ONLY
 $beanFiles['FieldsMetaData']    = 'modules/DynamicFields/FieldsMetaData.php';
 //$beanFiles['Audit']           = 'modules/Audit/Audit.php';
 
@@ -281,9 +262,9 @@ $beanFiles['UserPreference']  = 'modules/UserPreferences/UserPreference.php';
 $beanFiles['MergeRecord']  = 'modules/MergeRecords/MergeRecord.php';
 $beanFiles['EmailAddress'] = 'modules/EmailAddresses/EmailAddress.php';
 $beanFiles['EmailText'] = 'modules/EmailText/EmailText.php';
-//BEGIN SUGARCRM flav=pro || flav=sales ONLY
+//BEGIN SUGARCRM flav=pro ONLY
 $beanFiles['SavedReport']   = 'modules/Reports/SavedReport.php';
-//END SUGARCRM flav=pro || flav=sales ONLY
+//END SUGARCRM flav=pro ONLY
 //BEGIN SUGARCRM flav=pro ONLY
 $beanFiles['ACLField'] = 'modules/ACLFields/ACLField.php';
 $beanFiles['Contract']  = 'modules/Contracts/Contract.php';
@@ -317,6 +298,7 @@ $beanFiles['ForecastWorksheet'] = 'modules/Forecasts/ForecastWorksheet.php';
 $beanFiles['ForecastManagerWorksheet'] = 'modules/Forecasts/ForecastManagerWorksheet.php';
 $beanFiles['ForecastSchedule']  = 'modules/ForecastSchedule/ForecastSchedule.php';
 $beanFiles['ForecastOpportunities']  = 'modules/Forecasts/ForecastOpportunities.php';
+$beanFiles['ForecastDirectReports'] = 'modules/Forecasts/ForecastDirectReports.php';
 $beanFiles['Quota']  = 'modules/Quotas/Quota.php';
 $beanFiles['Worksheet']  = 'modules/Forecasts/Worksheet.php';
 $beanFiles['WorkFlow']  = 'modules/WorkFlow/WorkFlow.php';
@@ -340,20 +322,13 @@ $beanFiles['Holiday'] = 'modules/Holidays/Holiday.php';
 //BEGIN SUGARCRM flav=ent ONLY
 $beanFiles['CustomQuery']= 'modules/CustomQueries/CustomQuery.php';
 $beanFiles['DataSet']= 'modules/DataSets/DataSet.php';
+$beanFiles['DataSet_Attribute']= 'modules/DataSets/DataSet_Attribute.php';
 $beanFiles['ReportMaker']= 'modules/ReportMaker/ReportMaker.php';
 //END SUGARCRM flav=ent ONLY
 
-//BEGIN SUGARCRM flav=int ONLY
-//$beanFiles['QueryBuilder']= 'modules/QueryBuilder/QueryBuilder.php';
-//END SUGARCRM flav=int ONLY
-
-
-// TODO: Remove the Library module, it is an example.
-//$moduleList[] = 'Library';
-//$beanList['Library']= 'Library';
-//$beanFiles['Library'] = 'modules/Library/Library.php';
-
 $beanFiles['Configurator']          = 'modules/Configurator/Configurator.php';
+$beanFiles['EmptyBean'] = 'data/EmptyBean.php';
+$beanFiles['UserSignature'] = 'modules/Users/UserSignature.php';
 
 // added these lists for security settings for tabs
 $modInvisList = array('Administration', 'Currencies', 'CustomFields', 'Connectors',
@@ -363,7 +338,7 @@ $modInvisList = array('Administration', 'Currencies', 'CustomFields', 'Connector
     //BEGIN SUGARCRM flav=pro ONLY
     'Manufacturers','ProductBundles', 'ProductBundleNotes', 'ProductCategories', 'ProductTemplates', 'ProductTypes','Shippers',
     'TaxRates', 'TeamNotices', 'Teams','TimePeriods','ForecastOpportunities','Quotas','KBDocumentRevisions','KBDocumentKBTags','KBTags','KBContents',
-    'ContractTypes', 'ForecastSchedule', 'Worksheet','ACLFields', 'ProjectResources', 'Holidays', 'SNIP',
+    'ContractTypes', 'ForecastSchedule', 'Worksheet','ACLFields', 'ProjectResources', 'Holidays', 'SNIP', 'ForecastDirectReports',
     //END SUGARCRM flav=pro ONLY
     'Releases','Sync',
     'Users',  'Versions', 'LabelEditor','Roles','EmailMarketing'
@@ -372,18 +347,12 @@ $modInvisList = array('Administration', 'Currencies', 'CustomFields', 'Connector
     'TeamHierarchy',
     //END SUGARCRM flav=int ONLY
     'Schedulers','Schedulers_jobs', /*'Queues',*/ 'EmailTemplates',
-    //BEGIN SUGARCRM flav!=sales ONLY
     'CampaignTrackers', 'CampaignLog', 'EmailMan', 'Prospects', 'ProspectLists',
-    //END SUGARCRM flav!=sales ONLY
     'Groups','InboundEmail',
     'ACLActions', 'ACLRoles',
-    //BEGIN SUGARCRM flav!=sales ONLY
     'DocumentRevisions',
-    //END SUGARCRM flav!=sales ONLY
     'ProjectTask',
-    //BEGIN SUGARCRM flav=sales ONLY
-    'Emails',
-    //END SUGARCRM flav=sales ONLY
+    'Empty', 'UserSignature'
     );
 $adminOnlyList = array(
                     //module => list of actions  (all says all actions are admin only)
@@ -411,6 +380,7 @@ $apiModuleList = array('Users', 'ActivityStream');
 //BEGIN SUGARCRM flav=ent ONLY
 $modInvisList[] = 'CustomQueries';
 $modInvisList[] = 'DataSets';
+$modInvisList[] = 'DataSet_Attribute';
 $modInvisList[] = 'ReportMaker';
 //END SUGARCRM flav=ent ONLY
 
@@ -449,10 +419,8 @@ $report_include_modules['Contracts']='Contract';
 //END SUGARCRM flav=pro ONLY
 //add Tracker modules
 
-//BEGIN SUGARCRM flav!=sales ONLY
 $report_include_modules['Trackers']         = 'Tracker';
 
-//END SUGARCRM flav!=sales ONLY
 
 //BEGIN SUGARCRM flav=pro ONLY
 $report_include_modules['TimePeriods'] = 'TimePeriod';
@@ -467,11 +435,11 @@ $beanList['SugarFeed'] = 'SugarFeed';
 $beanFiles['SugarFeed'] = 'modules/SugarFeed/SugarFeed.php';
 $modInvisList[] = 'SugarFeed';
 
-//BEGIN SUGARCRM flav=pro OR flav=sales ONLY
+//BEGIN SUGARCRM flav=pro ONLY
 $beanList['Notifications'] = 'Notifications';
 $beanFiles['Notifications'] = 'modules/Notifications/Notifications.php';
 $modInvisList[] = 'Notifications';
-//END SUGARCRM flav=pro OR flav=sales ONLY
+//END SUGARCRM flav=pro ONLY
 // This is the mapping for modules that appear under a different module's tab
 // Be sure to also add the modules to $modInvisList, otherwise their tab will still appear
 $GLOBALS['moduleTabMap'] = array(
@@ -482,17 +450,13 @@ $GLOBALS['moduleTabMap'] = array(
     'Studio' => 'Administration',
     'Currencies' => 'Administration',
     'SugarFeed' => 'Administration',
-    //BEGIN SUGARCRM flav!=sales ONLY
     'DocumentRevisions' => 'Documents',
-    //END SUGARCRM flav!=sales ONLY
     'EmailTemplates' => 'Emails',
 //BEGIN SUGARCRM flav=ent ONLY
     'DataSets' => 'ReportMaker',
     'CustomQueries' => 'ReportMaker',
 //END SUGARCRM flav=ent ONLY
-//BEGIN SUGARCRM flav!=sales ONLY
     'EmailMarketing' => 'Campaigns',
-//END SUGARCRM flav!=sales ONLY
 //BEGIN SUGARCRM flav=pro ONLY
     'Quotas' => 'Forecasts',
     'TeamNotices' => 'Teams',
@@ -511,7 +475,12 @@ $beanFiles['OAuthToken'] = 'modules/OAuthTokens/OAuthToken.php';
 $modules_exempt_from_availability_check['OAuthTokens'] = 'OAuthTokens';
 $modInvisList[] = 'OAuthTokens';
 
+
 //BEGIN SUGARCRM flav=pro ONLY
+$beanList['DBFTS'] = 'DBFTS';
+$beanFiles['DBFTS'] = 'modules/DBFTS/DBFTS.php';
+$modInvisList[] = 'DBFTS';
+$modules_exempt_from_availability_check['DBFTS'] = 'DBFTS';
 $beanList['SugarFavorites'] = 'SugarFavorites';
 $beanFiles['SugarFavorites'] = 'modules/SugarFavorites/SugarFavorites.php';
 $modules_exempt_from_availability_check['SugarFavorites'] = 'SugarFavorites';

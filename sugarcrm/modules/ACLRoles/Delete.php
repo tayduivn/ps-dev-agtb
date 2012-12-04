@@ -20,7 +20,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
-$role = new ACLRole();
+$role = BeanFactory::getBean('ACLRoles');
 if(isset($_REQUEST['record'])){
 	$role->mark_deleted($_REQUEST['record']);
 }

@@ -107,23 +107,18 @@ class SugarApplication
             exit ();
         }
 
-        $authController = new AuthenticationController((!empty($GLOBALS['sugar_config']['authenticationClass'])
-            ? $GLOBALS['sugar_config']['authenticationClass'] : 'SugarAuthenticate'));
-        $GLOBALS['current_user'] = new User();
-        if (isset($_SESSION['authenticated_user_id'])) {
-            // set in modules/Users/Authenticate.php
-            if (!$authController->sessionAuthenticate()) {
-                // if the object we get back is null for some reason, this will break - like user prefs are corrupted
-                $GLOBALS['log']->fatal(
-                    'User retrieval for ID: (' . $_SESSION['authenticated_user_id']
-                        . ') does not exist in database or retrieval failed catastrophically.  Calling session_destroy() and sending user to Login page.'
-                );
-                session_destroy();
-                SugarApplication::redirect($this->getUnauthenticatedHomeUrl());
-                die();
-            }
-            //BEGIN SUGARCRM flav=pro ONLY
-            else {
+		$authController = new AuthenticationController((!empty($GLOBALS['sugar_config']['authenticationClass'])? $GLOBALS['sugar_config']['authenticationClass'] : 'SugarAuthenticate'));
+		$GLOBALS['current_user'] = BeanFactory::getBean('Users');
+		if(isset($_SESSION['authenticated_user_id'])){
+			// set in modules/Users/Authenticate.php
+			if(!$authController->sessionAuthenticate()){
+				 // if the object we get back is null for some reason, this will break - like user prefs are corrupted
+				$GLOBALS['log']->fatal('User retrieval for ID: ('.$_SESSION['authenticated_user_id'].') does not exist in database or retrieval failed catastrophically.  Calling session_destroy() and sending user to Login page.');
+				session_destroy();
+				SugarApplication::redirect($this->getUnauthenticatedHomeUrl());
+				die();
+                //BEGIN SUGARCRM flav=pro ONLY
+            } else {
                 $trackerManager = TrackerManager::getInstance();
                 $monitor = $trackerManager->getMonitor('tracker_sessions');
                 $active = $monitor->getValue('active');
@@ -240,57 +235,43 @@ class SugarApplication
         $GLOBALS['request_string'] .= 'print=true';
     }
 
-    function preProcess()
-    {
-        //BEGIN SUGARCRM flav=sales ONLY
-        // Create a module whitelist of all modules in Administration
-        $ss_admin_whitelist = getSugarSalesAdminWhiteList();
-        if (!in_array($this->controller->module, $ss_admin_whitelist['modules'])
-            && !in_array($this->controller->action, $ss_admin_whitelist['actions'])
-            && is_admin($GLOBALS['current_user'])
-        ) {
-            self::redirect("index.php?module=Administration&action=index");
-        }
-        //END SUGARCRM flav=sales ONLY
-        $config = new Administration;
-        $config->retrieveSettings();
-        if (!empty($_SESSION['authenticated_user_id'])) {
-            if (isset($_SESSION['hasExpiredPassword']) && $_SESSION['hasExpiredPassword'] == '1') {
-                if ($this->controller->action != 'Save' && $this->controller->action != 'Logout') {
-                    $this->controller->module = 'Users';
-                    $this->controller->action = 'ChangePassword';
-                    $record = $GLOBALS['current_user']->id;
-                } else {
-                    $this->handleOfflineClient();
-                }
-            } else {
-                $ut = $GLOBALS['current_user']->getPreference('ut');
-                if (empty($ut)
-                    && $this->controller->action != 'AdminWizard'
-                    && $this->controller->action != 'EmailUIAjax'
-                    && $this->controller->action != 'Wizard'
-                    && $this->controller->action != 'SaveAdminWizard'
-                    && $this->controller->action != 'SaveUserWizard'
-                    && $this->controller->action != 'SaveTimezone'
-                    && $this->controller->action != 'Logout'
-                ) {
-                    $this->controller->module = 'Users';
-                    $this->controller->action = 'SetTimezone';
-                    $record = $GLOBALS['current_user']->id;
-                } else {
-                    if ($this->controller->action != 'AdminWizard'
-                        && $this->controller->action != 'EmailUIAjax'
-                        && $this->controller->action != 'Wizard'
-                        && $this->controller->action != 'SaveAdminWizard'
-                        && $this->controller->action != 'SaveUserWizard'
-                    ) {
-                        $this->handleOfflineClient();
-                    }
-                }
-            }
-        }
-        $this->handleAccessControl();
-    }
+	function preProcess(){
+	    $config = Administration::getSettings();
+		if(!empty($_SESSION['authenticated_user_id'])){
+			if(isset($_SESSION['hasExpiredPassword']) && $_SESSION['hasExpiredPassword'] == '1'){
+				if( $this->controller->action!= 'Save' && $this->controller->action != 'Logout') {
+	                $this->controller->module = 'Users';
+	                $this->controller->action = 'ChangePassword';
+	                $record = $GLOBALS['current_user']->id;
+	             }else{
+					$this->handleOfflineClient();
+				 }
+			}else{
+				$ut = $GLOBALS['current_user']->getPreference('ut');
+			    if(empty($ut)
+			            && $this->controller->action != 'AdminWizard'
+			            && $this->controller->action != 'EmailUIAjax'
+			            && $this->controller->action != 'Wizard'
+			            && $this->controller->action != 'SaveAdminWizard'
+			            && $this->controller->action != 'SaveUserWizard'
+			            && $this->controller->action != 'SaveTimezone'
+			            && $this->controller->action != 'Logout') {
+					$this->controller->module = 'Users';
+					$this->controller->action = 'SetTimezone';
+					$record = $GLOBALS['current_user']->id;
+				}else{
+					if($this->controller->action != 'AdminWizard'
+			            && $this->controller->action != 'EmailUIAjax'
+			            && $this->controller->action != 'Wizard'
+			            && $this->controller->action != 'SaveAdminWizard'
+			            && $this->controller->action != 'SaveUserWizard'){
+							$this->handleOfflineClient();
+			            }
+				}
+			}
+		}
+		$this->handleAccessControl();
+	}
 
     function handleOfflineClient()
     {

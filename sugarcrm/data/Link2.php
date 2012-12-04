@@ -340,6 +340,16 @@ class Link2 {
     }
 
     /**
+     * Build a Relationship Join with a SugarQuery Object
+     * @param SugarQuery $sugar_query 
+     * @return SugarQuery
+     */
+    function buildJoinSugarQuery($sugar_query, $options = array())
+    {
+        return $this->relationship->buildJoinSugarQuery($this, $sugar_query, $options);
+    }
+
+    /**
      * @param array $params optional parameters. Possible Values;
      * 'return_as_array': returns the query broken into
      * @return String/Array query to grab just ids for this relationship

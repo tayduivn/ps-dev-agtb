@@ -26,16 +26,16 @@ require_once('include/SugarFields/Fields/Base/SugarFieldBase.php');
 
     /**
      * Decrypt encrypt fields values before inserting them into the emails
-     * 
+     *
      * @param string $inputField
      * @param mixed $vardef
      * @param mixed $displayParams
      * @param int $tabindex
-     * @return string 
+     * @return string
      */
 	public function getEmailTemplateValue($inputField, $vardef, $displayParams = array(), $tabindex = 0){
         // Uncrypt the value
-        $account = new Account();
+        $account = BeanFactory::getBean('Empty');
         return $account->decrypt_after_retrieve($inputField);
     }
 }

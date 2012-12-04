@@ -62,6 +62,10 @@ $viewdefs['Accounts']['base']['view']['create'] = array(
             'label'   => 'LBL_SAVE_BUTTON_LABEL',
             'css_class' => 'disabled',
         ),
+        array(
+            'name' => 'sidebar_toggle',
+            'type' => 'sidebartoggle',
+        ),
     ),
     'panels' => array(
         array(

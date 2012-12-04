@@ -34,8 +34,7 @@ global $db, $current_user, $mod_strings, $app_strings, $app_list_strings;
 $ret = $db->query("SELECT id FROM meetings_users WHERE meeting_id = '".$db->quote($_REQUEST['meeting_id'])."' AND user_id = '".$current_user->id."' AND deleted = 0",true);
 $row = $db->fetchByAssoc($ret);
 
-$meetingBean = loadBean('Meetings');
-$meetingBean->retrieve($_REQUEST['meeting_id']);
+$meetingBean = BeanFactory::getBean('Meetings', $_REQUEST['meeting_id']);
 
 if ( $_REQUEST['host_meeting'] == '1' ) {
     if($meetingBean->assigned_user_id == $GLOBALS['current_user']->id || is_admin($GLOBALS['current_user']) || is_admin_for_module($GLOBALS['current_user'],'Meetings')){

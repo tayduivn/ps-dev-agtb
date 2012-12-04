@@ -36,7 +36,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 
 
-$sugarbean = new Project();
+$sugarbean = BeanFactory::getBean('Project');
 
 // perform the delete if given a record to delete
 

@@ -97,6 +97,17 @@ class WorkFlowSchedule extends SugarBean {
     var $disable_row_level_security = true;
     //END SUGARCRM flav=pro ONLY
 
+    /**
+     * This is a depreciated method, please start using __construct() as this method will be removed in a future version
+     *
+     * @see __construct
+     * @deprecated
+     */
+    public function WorkFlowSchedule()
+    {
+        $this->__construct();
+    }
+
     public function __construct() {
         global $dictionary;
         if(isset($this->module_dir) && isset($this->object_name) && !isset($dictionary[$this->object_name])){
@@ -269,7 +280,7 @@ function process_scheduled(){
 
     // Print out the calculation column info
     while($row = $this->db->fetchByAssoc($result)){
-        $temp_module = get_module_info($row['target_module']);
+        $temp_module = BeanFactory::getBean($row['target_module']);
         $_SESSION['workflow_cron'] = "Yes";
         $_SESSION['workflow_id_cron'] = $row['workflow_id'];
 

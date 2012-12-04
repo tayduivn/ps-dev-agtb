@@ -215,8 +215,11 @@ EOQ;
 		}
 		// CREATE STUFF
 
-		if(isset($this->_popupMeta['className'])) $seed_bean = new $this->_popupMeta['className']();
-		else $seed_bean = new $this->_popupMeta['moduleMain']();
+		if(isset($this->_popupMeta['className'])) {
+		    $seed_bean = BeanFactory::newBeanByName($this->_popupMeta['className']);
+		} else {
+		    $seed_bean = BeanFactory::newBeanByName($this->_popupMeta['moduleMain']);
+		}
 
 		// assign search inputs to xtemplates
 		foreach(array_keys($searchInputs) as $key) {

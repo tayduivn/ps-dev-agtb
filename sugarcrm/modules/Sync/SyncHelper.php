@@ -40,13 +40,8 @@ if(!function_exists("get_encoded")){
 }
 
 function clean_for_sync( $module_name){
-	$name = strtolower($module_name);
-	global  $beanList, $beanFiles;
-	$class_name = $beanList[$module_name];
-	require_once($beanFiles[$class_name]);
-	$seed = new $class_name();
+	$seed = BeanFactory::getBean($module_name);
 	$table_name = $seed->table_name;
-	//$seed->db->query("DELETE FROM $table_name WHERE 1=1");
 	$seed->db->query("TRUNCATE TABLE $table_name");
 	//clean up custom fields
 	if($seed->hasCustomFields()){
@@ -56,7 +51,7 @@ function clean_for_sync( $module_name){
 
 function clean_relationships_for_sync($module_name,  $related_module){
 	if(strtolower($related_module) != 'emailaddresses'){
-		global  $beanList, $beanFiles, $dictionary;
+		global  $beanList, $dictionary;
 		$result_list = array();
 		if(empty($beanList[$module_name]) || empty($beanList[$related_module])){
 			return false;
@@ -75,9 +70,7 @@ function clean_relationships_for_sync($module_name,  $related_module){
 			$module_1 = $related_module;
 		}
 		$table = $row['join_table'];
-		$class_name = $beanList[$module_1];
-		require_once($beanFiles[$class_name]);
-		$mod = new $class_name();
+		$mod = BeanFactory::getBean($module_1);
 		$clear_query = "TRUNCATE TABLE $table";
 		$result = $mod->db->query($clear_query);
 	}
@@ -86,7 +79,6 @@ function clean_relationships_for_sync($module_name,  $related_module){
 
 function get_altered( $module_name,$from_date,$to_date){
 	$name = strtolower($module_name);
-	global  $beanList, $beanFiles;
 	global $disable_date_format;
 	$disable_date_format = true;
 
@@ -94,9 +86,7 @@ function get_altered( $module_name,$from_date,$to_date){
 	//$sugar_config['list_max_entries_per_page'] = 1000;
 
 
-	$class_name = $beanList[$module_name];
-	require_once($beanFiles[$class_name]);
-	$seed = new $class_name();
+	$seed = BeanFactory::getBean($module_name);
 	$table_name = $seed->table_name;
 
 	$removeAutoIncrementFields = false;
@@ -142,11 +132,7 @@ function get_altered( $module_name,$from_date,$to_date){
 }
 
 function execute_query($module_name, $query){
-	global  $beanList, $beanFiles;
-	global $sugar_config;
-	$class_name = $beanList[$module_name];
-	require_once($beanFiles[$class_name]);
-	$seed = new $class_name();
+	$seed = BeanFactory::getBean($module_name);
 	$seed->db->query($query);
 }
 
@@ -158,15 +144,13 @@ function save_altered($module_name, $list){
 
 
 
-	$class_name = $beanList[$module_name];
-	require_once($beanFiles[$class_name]);
 	$add = 0;
 	$modify = 0;
 	if(!empty($list)){
 		foreach($list as $record)
 		{
 
-			$cur = new $class_name();
+			$cur = BeanFactory::getBean($module_name);
 			$cur->disable_row_level_security = true;
 			$cur->set_created_by = false;
 			if(isset($record['name_value_list'])){
@@ -365,12 +349,9 @@ function display_conflicts($conflicts_encoded){
 
 function display_conflict($conflict){
 	global $beanList, $beanFiles, $disable_date_format, $odd_bg, $even_bg, $locale;
-	$module_name = $conflict['module_name'];
-	$class_name = $beanList[$module_name];
-	require_once($beanFiles[$class_name]);
-	$cur = new $class_name();
+
 	$disable_date_format = true;
-	$cur->retrieve($conflict['id']);
+	$cur = BeanFactory::getBean($conflict['module_name'],$conflict['id']);
 
 	$title = '<tr><td >&nbsp;</td>';
 	$server= '<tr class="oddListRowS1" bgcolor="'.$odd_bg.'"><td><b>Server</b></td>';
@@ -543,13 +524,12 @@ function sync_users($soapclient, $session, $clean = false, $is_conversion = fals
 					if($clean){
 						//now save the admin account/current user back if it's a clean sync just so we can make sure they still exist
 
-						$temp_user = new User();
-
-						if(!isset($current_user)){
+						if(empty($current_user->id)){
 							//retrieve the admin user
-							$current_user = new User();
-							$current_user->retrieve(1);
+							$current_user = BeanFactory::getBean('Users', '1');
 						}
+					    $temp_user = BeanFactory::getBean('Users');
+
 						if(!$temp_user->retrieve($current_user->id)){
 							$current_user->new_with_id = true;
 							$current_user->team_exists = true;
@@ -567,7 +547,7 @@ function sync_users($soapclient, $session, $clean = false, $is_conversion = fals
 			if($clean){
 			//now save the admin account/current user back if it's a clean sync just so we can make sure they still exist
 
-			$temp_user = new User();
+			$temp_user = BeanFactory::getBean('Users');
 			if(!$temp_user->retrieve($current_user->id)){
 				$current_user->new_with_id = true;
 				$current_user->team_exists = true;

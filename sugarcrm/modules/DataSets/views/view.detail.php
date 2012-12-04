@@ -50,8 +50,7 @@ class DataSetsViewDetail extends ViewDetail {
 			//CHECK FOR SUB-QUERIES
 			$this->bean->check_interlock();
 			//OUTPUT THE DATASET
-			$data_set = new CustomQuery();
-			$data_set->retrieve($this->bean->query_id);
+			$data_set = BeanFactory::getBean('CustomQueries', $this->bean->query_id);
 			$QueryView = new ReportListView();
 			$QueryView->initNewXTemplate( 'modules/CustomQueries/QueryView.html',$mod_strings);
 			$QueryView->setHeaderTitle($this->bean->name);

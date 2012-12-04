@@ -53,11 +53,10 @@ class SugarWebServiceImplv4 extends SugarWebServiceImplv3_1 {
         $GLOBALS['log']->info("Begin: SugarWebServiceImpl->login({$user_auth['user_name']}, $application, ". print_r($name_value_list, true) .")");
         global $sugar_config, $system_config;
         $error = new SoapError();
-        $user = new User();
+        $user = BeanFactory::getBean('Users');
         $success = false;
         //rrs
-        $system_config = new Administration();
-        $system_config->retrieveSettings('system');
+        $system_config = Administration::getSettings('system');
         $authController = new AuthenticationController((!empty($sugar_config['authenticationClass'])? $sugar_config['authenticationClass'] : 'SugarAuthenticate'));
         //rrs
         if(!empty($user_auth['encryption']) && $user_auth['encryption'] === 'PLAIN' && $authController->authController->userAuthenticateClass != "LDAPAuthenticateUser")
@@ -179,8 +178,7 @@ class SugarWebServiceImplv4 extends SugarWebServiceImplv3_1 {
             }
             //END SUGARCRM flav=pro ONLY
 
-            $currencyObject = new Currency();
-            $currencyObject->retrieve($cur_id);
+            $currencyObject = BeanFactory::getBean('Currencies', $cur_id);
             $nameValueArray['user_currency_name'] = self::$helperObject->get_name_value('user_currency_name', $currencyObject->name);
             $_SESSION['user_language'] = $current_language;
             return array('id'=>session_id(), 'module_name'=>'Users', 'name_value_list'=>$nameValueArray);
@@ -251,12 +249,10 @@ class SugarWebServiceImplv4 extends SugarWebServiceImplv3_1 {
         global  $beanList, $beanFiles;
         $error = new SoapError();
         $using_cp = false;
-        //BEGIN SUGARCRM flav!=sales ONLY
         if($module_name == 'CampaignProspects'){
             $module_name = 'Prospects';
             $using_cp = true;
         }
-        //END SUGARCRM flav!=sales ONLY
         if (!self::$helperObject->checkSessionAndModuleAccess($session, 'invalid_session', $module_name, 'read', 'no_access', $error)) {
             $GLOBALS['log']->error('End: SugarWebServiceImpl->get_entry_list - FAILED on checkSessionAndModuleAccess');
             return;
@@ -273,9 +269,7 @@ class SugarWebServiceImplv4 extends SugarWebServiceImplv3_1 {
             $sugar_config['list_max_entries_per_page'] = $max_results;
         } // if
 
-        $class_name = $beanList[$module_name];
-        require_once($beanFiles[$class_name]);
-        $seed = new $class_name();
+        $seed = BeanFactory::getBean($module_name);
 
         if (!self::$helperObject->checkACLAccess($seed, 'list', $error, 'no_access')) {
             $GLOBALS['log']->error('End: SugarWebServiceImpl->get_entry_list - FAILED on checkACLAccess');
@@ -364,9 +358,9 @@ class SugarWebServiceImplv4 extends SugarWebServiceImplv3_1 {
             if( empty($module_name) )
                 continue;
 
-            $class_name = $beanList[$module_name];
-            require_once($beanFiles[$class_name]);
-            $seed = new $class_name();
+            $seed = BeanFactory::getBean($module_name);
+            if( empty($seed) )
+            	continue;
 
             foreach ($a_view as $view)
             {
@@ -435,9 +429,7 @@ class SugarWebServiceImplv4 extends SugarWebServiceImplv3_1 {
     	$modules_to_search = array();
     	$unified_search_modules['Users'] =   array('fields' => array());
 
-    	//BEGIN SUGARCRM flav!=sales ONLY
     	$unified_search_modules['ProjectTask'] =   array('fields' => array());
-        //END SUGARCRM flav!=sales ONLY
 
         //If we are ignoring the unified search flag within the vardef we need to re-create the search fields.  This allows us to search
         //against a specific module even though it is not enabled for the unified search within the application.
@@ -472,13 +464,10 @@ class SugarWebServiceImplv4 extends SugarWebServiceImplv3_1 {
     				$unifiedSearchFields[$name] [ $field ]['value'] = $search_string;
     			}
 
-    			require_once $beanFiles[$beanName] ;
-    			$seed = new $beanName();
+    			$seed = BeanFactory::getBean($name);
     			require_once 'include/SearchForm/SearchForm2.php' ;
     			if ($beanName == "User"
-    			     //BEGIN SUGARCRM flav!=sales ONLY
     			    || $beanName == "ProjectTask"
-    			     //END SUGARCRM flav!=sales ONLY
     			    ) {
     				if(!self::$helperObject->check_modules_access($current_user, $seed->module_dir, 'read')){
     					continue;
@@ -489,9 +478,7 @@ class SugarWebServiceImplv4 extends SugarWebServiceImplv3_1 {
     			}
 
     			if ($beanName != "User"
-    			     //BEGIN SUGARCRM flav!=sales ONLY
     			    && $beanName != "ProjectTask"
-    			     //END SUGARCRM flav!=sales ONLY
     			    ) {
     				$searchForm = new SearchForm ($seed, $name ) ;
 
@@ -568,7 +555,6 @@ class SugarWebServiceImplv4 extends SugarWebServiceImplv3_1 {
     LEFT JOIN email_addresses ea ON (ea.id = eabl.email_address_id) ";
     					$main_query = $main_query . "where ((users.first_name like '{$search_string}') or (users.last_name like '{$search_string}') or (users.user_name like '{$search_string}') or (ea.email_address like '{$search_string}')) and users.deleted = 0 and users.is_group = 0 and users.employee_status = 'Active'";
     				} // if
-    				 //BEGIN SUGARCRM flav!=sales ONLY
     				if ($beanName == "ProjectTask") {
     					$filterFields = array('id', 'name', 'project_id', 'project_name');
     					$main_query = "select {$seed->table_name}.project_task_id id,{$seed->table_name}.project_id, {$seed->table_name}.name, project.name project_name from {$seed->table_name} ";
@@ -577,7 +563,6 @@ class SugarWebServiceImplv4 extends SugarWebServiceImplv3_1 {
     		            $main_query .= "LEFT JOIN project ON $seed->table_name.project_id = project.id ";
     		            $main_query .= "where {$seed->table_name}.name like '{$search_string}%'";
     				} // if
-    				 //END SUGARCRM flav!=sales ONLY
     			} // else
 
     			$GLOBALS['log']->info('SugarWebServiceImpl->search_by_module - query = ' . $main_query);
@@ -642,8 +627,7 @@ class SugarWebServiceImplv4 extends SugarWebServiceImplv3_1 {
 
         $GLOBALS['disable_date_format'] = FALSE;
         require_once('include/Sugarpdf/SugarpdfFactory.php');
-        $bean = new Quote();
-        $bean->retrieve($quote_id);
+        $bean = BeanFactory::getBean('Quotes', $quote_id);
         $sugarpdfBean = SugarpdfFactory::loadSugarpdf($pdf_format, 'Quotes', $bean, array() );
         $sugarpdfBean->process();
 
@@ -682,8 +666,7 @@ class SugarWebServiceImplv4 extends SugarWebServiceImplv3_1 {
         $GLOBALS['disable_date_format'] = FALSE;
     	require_once('modules/Reports/templates/templates_pdf.php');
 
-    	$saved_report = new SavedReport();
-    	$saved_report->retrieve($report_id);
+    	$saved_report = BeanFactory::getBean('Reports', $report_id);
 
     	$contents = '';
     	if($saved_report->id != null)
@@ -812,7 +795,7 @@ class SugarWebServiceImplv4 extends SugarWebServiceImplv3_1 {
 
         }
 
-        $seed = new User();
+        $seed = BeanFactory::getBean('Users');
         $res = $seed->db->query($query);
         $emails = array();
         while($row = $seed->db->fetchByAssoc($res)) {

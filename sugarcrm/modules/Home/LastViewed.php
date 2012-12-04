@@ -39,7 +39,7 @@ global $current_user;
 		
 <?php
 $current_row=1;
-$tracker = new Tracker();
+$tracker = BeanFactory::getBean('Trackers');
 $history = $tracker->get_recently_viewed($current_user->id);
 
 foreach($history as $row)

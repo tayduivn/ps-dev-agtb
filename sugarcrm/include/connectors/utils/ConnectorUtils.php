@@ -451,7 +451,7 @@ class ConnectorUtils
         $insertConnectorButton = true;
 
 
-        //BEGIN SUGARCRM flav=pro || flav=sales ONLY
+        //BEGIN SUGARCRM flav=pro ONLY
 
         if(!empty($viewdefs)) {
             $buttons = !empty($viewdefs[$module]['DetailView']['templateMeta']['form']['buttons']) ? $viewdefs[$module]['DetailView']['templateMeta']['form']['buttons'] : array();
@@ -472,7 +472,7 @@ class ConnectorUtils
        //Update the button changes
        $viewdefs[$module]['DetailView']['templateMeta']['form']['buttons'] = $buttons;
 
-       //END SUGARCRM flav=pro || flav=sales ONLY
+       //END SUGARCRM flav=pro ONLY
 
 
        self::removeHoverField($viewdefs, $module);
@@ -524,7 +524,7 @@ class ConnectorUtils
                      $insertConnectorButton = true;
 
 
-                     //BEGIN SUGARCRM flav=pro || flav=sales ONLY
+                     //BEGIN SUGARCRM flav=pro ONLY
 
                      if(!empty($viewdefs)) {
                         $buttons = !empty($viewdefs[$module]['DetailView']['templateMeta']['form']['buttons']) ? $viewdefs[$module]['DetailView']['templateMeta']['form']['buttons'] : array();
@@ -552,7 +552,7 @@ class ConnectorUtils
                      //Update the button changes
                      $viewdefs[$module]['DetailView']['templateMeta']['form']['buttons'] = $buttons;
 
-                     //END SUGARCRM flav=pro || flav=sales ONLY
+                     //END SUGARCRM flav=pro ONLY
 
 
                      self::removeHoverField($viewdefs, $module);
@@ -922,7 +922,7 @@ class ConnectorUtils
         }
 
 
-        //BEGIN SUGARCRM flav=pro || flav=sales ONLY
+        //BEGIN SUGARCRM flav=pro ONLY
 
         //Remove from searchdefs
         $searchdefs = ConnectorUtils::getSearchDefs();
@@ -935,7 +935,7 @@ class ConnectorUtils
            return false;
         }
 
-        //END SUGARCRM flav=pro || flav=sales ONLY
+        //END SUGARCRM flav=pro ONLY
 
         return true;
     }

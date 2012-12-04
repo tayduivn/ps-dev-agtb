@@ -9,6 +9,43 @@
     likelyTotal: 0,
     bestTotal: 0,
     shouldRollup: 0,
+    progressDataSet : [],
+    /**
+     * events on the view for which to watch
+     */
+    events : {
+        'click #forecastsProgressDisplayOptions div.datasetOptions label.radio' : 'changeDisplayOptions'
+    },
+
+    /**
+     * event handler to update which dataset is used.
+     */
+    changeDisplayOptions : function(evt) {
+        this.handleOptionChange(evt);
+    },
+
+    /**
+     * Handle the click event for the optins menu
+     *
+     * @param evt
+     * @return {Array}
+     */
+    handleOptionChange: function(evt) {
+        el = $(evt.currentTarget);
+        var changedSegment = el.attr('data-set');
+
+        //check what needs to be done to the target
+        if(el.hasClass('checked')) {
+            //item was checked, uncheck it
+            el.removeClass('checked');
+            $('div .projected_' + changedSegment).hide();
+        } else {
+            //item was unchecked and needs checked now
+            el.addClass('checked');
+            $('div .projected_' + changedSegment).show();
+        }
+    },
+
     /**
      * initialize base models and set the initial user and timeperiod
      * @param options
@@ -39,9 +76,9 @@
             quota_worst_amount : 0,
             quota_worst_percent : 0,
             quota_worst_above : 0,
-            show_likely: options.context.forecasts.config.get('show_worksheet_likely'),
-            show_best: options.context.forecasts.config.get('show_worksheet_best'),
-            show_worst: options.context.forecasts.config.get('show_worksheet_worst'),
+            show_projected_likely: false,
+            show_projected_best: false,
+            show_projected_worst: false,
             pipeline : 0
         });
 
@@ -71,7 +108,7 @@
 
         //render when model changes
         if(this.model) {
-            this.model.on("change reset", this.render, this);
+            this.model.on("change reset", self.render, this);
         }
 
         if (this.context.forecasts) {
@@ -108,21 +145,21 @@
                     self.recalculateRepTotals(totals);
                 }
             });
-
-            /*
-             * // TODO: tagged for 6.8 see SFA-253 for details
-            //Listen for config changes
-            this.context.forecasts.config.on('change:show_projected_likely change:show_projected_best change:show_projected_worst', function(context, value) {
-                self.model.set({
-                    show_projected_likely: context.get('show_projected_likely') == 1,
-                    show_projected_best: context.get('show_projected_best') == 1,
-                    show_projected_worst: context.get('show_projected_worst') == 1
-                });
-            });
-            */
         }
     },
 
+    /**
+     * Handle putting the options into the values array that is used to keep track of what changes
+     * so we only render when something changes.
+     * @param options
+     */
+    handleRenderOptions:function () {
+        this.model.set({
+            show_projected_likely: _.has(this.progressDataSet, "likely"),
+            show_projected_best: _.has(this.progressDataSet, "best"),
+            show_projected_worst: _.has(this.progressDataSet, "worst")
+        });
+    },
 
     /**
      * take in the totals when they update for the rep worksheet and make sure the rest of the progress model recalculates according to the changes
@@ -238,6 +275,9 @@
 
     _renderHtml: function (ctx, options) {
         _.extend(this, this.model.toJSON());
+        this.progressDataSet = app.forecasts.utils.getAppConfigDatasets('forecasts_options_dataset', 'show_worksheet_', this.context.forecasts.config);
+        this.handleRenderOptions();
+
         app.view.View.prototype._renderHtml.call(this, ctx, options);
     },
 

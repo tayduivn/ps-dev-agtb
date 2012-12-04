@@ -88,12 +88,10 @@ $viewdefs['Documents']['DetailView'] = array(
           ),
         ),
 	    
-        //BEGIN SUGARCRM flav!=sales ONLY
 	    array (
 	       'related_doc_name',
 	       'related_doc_rev_number',
 	    ),
-	    //END SUGARCRM flav!=sales ONLY
 
        array (
         array (

@@ -27,8 +27,6 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * by SugarCRM are Copyright (C) 2006 SugarCRM, Inc.; All Rights Reserved.
  */
 
- // $Id: LoadTabSubpanels.php 45763 2009-04-01 19:16:18Z majed $
-
 /**
  * Created on Jul 17, 2006
  * Ajax Procedure for loading all subpanels for a certain subpanel tab.
@@ -37,11 +35,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 require_once('include/DetailView/DetailView.php');
 $detailView = new DetailView();
 
-
-$class = $beanList[$_REQUEST['loadModule']];
-
-require_once($beanFiles[$class]);
-$focus = new $class();
+$focus = BeanFactory::getBean($_REQUEST['loadModule']);
 $focus->id = $_REQUEST['record'];
 
 require_once('include/SubPanel/SubPanelTiles.php');

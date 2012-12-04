@@ -244,11 +244,10 @@ class CsvAutoDetect {
             return false;
         }
 
-        if (!isset($GLOBALS['beanList'][$module])) {
+        $bean = BeanFactory::getBean($module);
+        if(empty($bean)) {
             return false;
         }
-
-        $bean = new $GLOBALS['beanList'][$module]();
 
         $match_count = 0;
 

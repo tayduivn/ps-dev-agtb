@@ -26,8 +26,7 @@ if($GLOBALS['sugar_config']['disable_export'] || (!empty($GLOBALS['sugar_config'
 	die("Exports Disabled");
 }
 
-$export_object = new DataSet();
-$export_object->retrieve($_REQUEST['record']);
+$export_object = BeanFactory::getBean('DataSets', $_REQUEST['record']);
 $csv_output = $export_object->export_csv();
 
 header("Pragma: cache");

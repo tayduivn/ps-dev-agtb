@@ -72,8 +72,7 @@ class System extends SugarBean {
         //obtain the number of Offline Client licenses
         global $current_user;
 
-        $admin = new Administration();
-        $admin->retrieveSettings();
+        $admin = Administration::getSettings();
         $system_id = $admin->settings['system_system_id'];
         $num_lic_oc = $admin->settings['license_num_lic_oc'];
         if(!$system_id){
@@ -238,8 +237,7 @@ class System extends SugarBean {
         $temp_array = $this->get_list_view_array();
 
 
-        $user = new User();
-        $user->retrieve($this->user_id);
+        $user = BeanFactory::getBean('Users', $this->user_id);
         $temp_array['USER_NAME'] = $user->user_name;
         $temp_array['LBL_DISABLE'] = $mod_strings['LNK_DISABLE'];
         $temp_array['NTC_DISABLE_ALERT'] = $mod_strings['NTC_DISABLE_OFFLINE_CLIENT_ALERT'];
@@ -315,11 +313,9 @@ class System extends SugarBean {
     * return   true if if we can add the user, false otherwise
     */
     function canAddUser($user_id){
-        $admin = new Administration();
-        $admin->retrieveSettings('system');
+        $admin = Administration::getSettings('system');
         if(!isset($admin->settings['system_oc_active']) || $admin->settings['system_oc_active'] != 'true'){
-            $user = new User();
-            $user->retrieve($user_id);
+            $user = BeanFactory::getBean('Users', $user_id);
             $status = $user->getPreference('OfflineClientStatus');
             return ($status == 'Active');
         }else{

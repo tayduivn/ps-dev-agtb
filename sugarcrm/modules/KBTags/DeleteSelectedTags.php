@@ -71,7 +71,7 @@ foreach($tagIds as $tagId){
 	if(!empty($tagId)){
 		       
         //retrieve Tag    
-        $kbtag = new KBTag();                    
+        $kbtag = BeanFactory::getBean('KBTags');                    
 	if(tagHasArticle($tagId) || $tagId=='FAQs'){              
               /*
               if($tagHasArticle == null){

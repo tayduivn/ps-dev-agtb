@@ -54,7 +54,7 @@ class MyCallsDashlet extends DashletGeneric {
                                               'sortable' => false,
                                               'related_fields' => array('status'),
                                               'default' => 'true');*/
-        $this->seedBean = new Call();
+        $this->seedBean = BeanFactory::getBean('Calls');
         //BEGIN SUGARCRM flav=pro ONLY
         $this->seedBean->disable_row_level_security = true;
         //END SUGARCRM flav=pro ONLY

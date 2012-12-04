@@ -60,9 +60,7 @@ class ConvertLayoutMetadataParser extends GridLayoutMetaDataParser
 	function __construct ($module)
 	{
         $this->FILLER = array ( 'name' => MBConstants::$FILLER['name'] , 'label' => translate ( MBConstants::$FILLER['label'] ) ) ;
-		global $beanFiles, $beanList;
-		$class = $beanList[$module];
-		$this->seed = new $class();
+        $this->seed = BeanFactory::getBean($module);
         $this->_moduleName = $module;
         $this->_view = MB_EDITVIEW;
         $this->_fielddefs = $this->seed->field_defs;
@@ -88,7 +86,7 @@ class ConvertLayoutMetadataParser extends GridLayoutMetaDataParser
         return $this->_history;
     }
 
-    function handleSave ($populate = true)
+    function handleSave($populate = true)
     {
         if ($populate)
         {
@@ -222,9 +220,12 @@ class ConvertLayoutMetadataParser extends GridLayoutMetaDataParser
     	$this->_viewdefs[$this->_moduleName]['ConvertLead']['panels'] = $this->_convertToCanonicalForm($this->_viewdefs['panels'], $this->_fielddefs);
     }
 
-    function loadViewDefs()
-    {
-        $viewDefFile = SugarAutoLoader::existingCustomOne($this->fileName);
+    function loadViewDefs() {
+        $viewDefFile = $this->fileName;
+        if (file_exists("custom/$this->fileName"))
+        {
+            $viewDefFile = "custom/$this->fileName";
+        }
         include($viewDefFile);
         $this->_viewdefs = $viewdefs;
         if (isset($this->_viewdefs[$this->_moduleName]))

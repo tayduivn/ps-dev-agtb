@@ -394,13 +394,10 @@ function traceDuplicateRelations($checkThisRel=''){
 	foreach ( $beanFiles as $bean => $file )
 	{
 		if(in_array($bean,$exclude_beans)) continue;
-	    if (strlen ( $file ) > 0 && file_exists ( $file ))
+	    if (!empty($file))
 	    {
-	        if (! class_exists ( $bean ))
-	        {
-	            require ($file) ;
-	        }
-	        $focus = new $bean ( ) ;
+	        $focus = BeanFactory::newBeanByName($bean);
+	        if(empty($focus)) continue;
 	        $table_name = $focus->table_name ;
 	        $empty = '' ;
 	        traceDuplicateRelationshipMeta( $focus->getObjectName (),$table_name, $empty, $focus->module_dir,$processed_relationships,$duplicate_relationships,$checkThisRel='');

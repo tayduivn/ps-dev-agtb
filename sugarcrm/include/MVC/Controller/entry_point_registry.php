@@ -44,12 +44,10 @@ $entry_point_registry = array(
 //BEGIN SUGARCRM flav=pro ONLY
 	'oc_convert' => array('file' => 'oc_convert.php', 'auth' => false),
 //END SUGARCRM flav=pro ONLY
-//BEGIN SUGARCRM flav!=sales ONLY
     'image' => array('file' => 'modules/Campaigns/image.php', 'auth' => false),
     'campaign_trackerv2' => array('file' => 'modules/Campaigns/Tracker.php', 'auth' => false),
     'WebToLeadCapture' => array('file' => 'modules/Campaigns/WebToLeadCapture.php', 'auth' => false),
     'removeme' => array('file' => 'modules/Campaigns/RemoveMe.php', 'auth' => false),
-//END SUGARCRM flav!=sales ONLY
     'acceptDecline' => array('file' => 'modules/Contacts/AcceptDecline.php', 'auth' => false),
     'leadCapture' => array('file' => 'modules/Leads/Capture.php', 'auth' => false),
     'process_queue' => array('file' => 'process_queue.php', 'auth' => true),

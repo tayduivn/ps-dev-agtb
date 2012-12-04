@@ -91,19 +91,18 @@
         // finds all radiobuttons with this name
         var elements = this.$el.find(':radio[name="' + this.forecast_categories_field.name + '"]');
 
-        // apply change handler to all elements
-        elements.change({
-            view:this
-        }, this.selectionHandler);
-
-        // of the elements find the one that is checked
+        // apply the change handler to each of the category radio button elements.
         _.each(elements, function(el) {
+            $(el).change({
+                view:this
+            }, this.selectionHandler);
+            // of the elements find the one that is checked
             if($(el).prop('checked')) {
                 // manually trigger the handler on the checked element so that it will render
                 // for the default/previously set value
                 $(el).triggerHandler("change");
             }
-        });
+        }, this);
     },
 
     selectionHandler: function(event) {
@@ -124,60 +123,66 @@
 
         if (showElement.children().length == 0) {
             // add the things here...
+            view.fieldRanges[this.value] = {};
             showElement.append('<p>' + app.lang.get('LBL_FORECASTS_CONFIG_' + this.value.toUpperCase() + '_RANGES_DESCRIPTION', 'Forecasts') + '</p>');
             _.each(app.lang.getAppListStrings(bucket_dom), function(label, key) {
-                var rangeField,
-                    model = new Backbone.Model(),
-                    fieldSettings;
+                if (key != 'exclude') {
 
-                // get the value in the current model and use it to display the slider
-                model.set(key, this.view.model.get(this.category + '_ranges')[key]);
+                    var rangeField,
+                        model = new Backbone.Model(),
+                        fieldSettings;
 
-                // build a range field
-                fieldSettings = {
-                    view: this.view,
-                    def: _.find(
-                        _.find(
-                            _.first(this.view.meta.panels).fields,
-                            function(field) {
-                                return field.name == 'category_ranges';
-                            }
-                        ).ranges,
-                        function(range) {
-                            return range.name == this.key
-                        },
-                        {key: key}
-                    ),
-                    viewName:'edit',
-                    context: this.view.context,
-                    module: this.view.module,
-                    model: model,
-                    meta: app.metadata.getField('range')
-                };
+                    // get the value in the current model and use it to display the slider
+                    model.set(key, this.view.model.get(this.category + '_ranges')[key]);
 
-                //TODO-sfa remove this once the ability to map buckets when they get changed is implemented (SFA-215).
-                if(this.view.disableCategories) {
-                    fieldSettings.viewName = 'detail';
-                    fieldSettings.def.view = 'detail';
-                }
-
-                rangeField = app.view.createField(fieldSettings);
-                this.showElement.append('<b>'+ label +':</b>').append(rangeField.el);
-                rangeField.render();
-
-                // now give the view a way to get at this field's model, so it can be used to set the value on the
-                // real model.
-                view.fieldRanges[key] = rangeField;
-
-                // this gives the field a way to save to the view's real model.  It's wrapped in a closure to allow us to
-                // ensure we have everything when switching contexts from this handler back to the view.
-                rangeField.sliderDoneDelegate = function(category, key, view) {
-                    return function (value) {
-                        view.updateRangeSettings(category, key, value);
+                    // build a range field
+                    fieldSettings = {
+                        view: this.view,
+                        def: _.find(
+                            _.find(
+                                _.first(this.view.meta.panels).fields,
+                                function(field) {
+                                    return field.name == 'category_ranges';
+                                }
+                            ).ranges,
+                            function(range) {
+                                return range.name == this.key
+                            },
+                            {key: key}
+                        ),
+                        viewName:'edit',
+                        context: this.view.context,
+                        module: this.view.module,
+                        model: model,
+                        meta: app.metadata.getField('range')
                     };
-                }(this.category, key, this.view);
 
+                    //TODO-sfa remove this once the ability to map buckets when they get changed is implemented (SFA-215).
+                    if(this.view.disableCategories) {
+                        fieldSettings.viewName = 'detail';
+                        fieldSettings.def.view = 'detail';
+                    }
+
+                    rangeField = app.view.createField(fieldSettings);
+                    this.showElement.append('<b>'+ label +':</b>').append(rangeField.el);
+                    rangeField.render();
+
+                    // now give the view a way to get at this field's model, so it can be used to set the value on the
+                    // real model.
+                    view.fieldRanges[this.category][key] = rangeField;
+
+                    // this gives the field a way to save to the view's real model.  It's wrapped in a closure to allow us to
+                    // ensure we have everything when switching contexts from this handler back to the view.
+                    rangeField.sliderDoneDelegate = function(category, key, view) {
+                        return function (value) {
+                            view.updateRangeSettings(category, key, value);
+                        };
+                    }(this.category, key, this.view);
+                }
             }, {view: view, showElement:showElement, category: this.value});
+            showElement.append($('<p>' + app.lang.get("LBL_FORECASTS_CONFIG_CATEGORY_EXCLUDE_INFO", "Forecasts")+ '</p>'));
+            // use call to set context back to the view for connecting the sliders
+            view.connectSliders.call(view, this.value, view.fieldRanges);
         }
 
         if (hideElement) {
@@ -186,9 +191,6 @@
         if (showElement){
             showElement.toggleClass('hide', false);
         }
-
-        // use call to set context back to the view for connecting the sliders
-        view.connectSliders.call(view, this.value, view.fieldRanges);
 
         // set the forecast category and associated dropdown dom on the model
         view.model.set(this.name, this.value);
@@ -217,37 +219,50 @@
      * selection handler when the user selects a category type.
      */
     connectSliders: function(category, sliders) {
-        if(category == 'show_binary') {
-            sliders.include.sliderChangeDelegate = function (value) {
-                sliders.exclude.$el.find(sliders.exclude.fieldTag).noUiSlider('move', {to: value.min-1});
-            };
-            sliders.exclude.sliderChangeDelegate = function (value) {
-                sliders.include.$el.find(sliders.include.fieldTag).noUiSlider('move', {to: value.max+1});
-            }
-        } else if (category == 'show_buckets') {
-            sliders.include.sliderChangeDelegate = function (value) {
-                sliders.upside.$el.find(sliders.upside.fieldTag).noUiSlider('move', {handle: 'upper', to: value.min-1});
-                if(value.min <= sliders.upside.$el.find(sliders.upside.fieldTag).noUiSlider('value')[0] + 1) {
-                    sliders.upside.$el.find(sliders.upside.fieldTag).noUiSlider('move', {handle: 'lower', to: value.min-2});
-                }
-                if(value.min <= sliders.exclude.$el.find(sliders.exclude.fieldTag).noUiSlider('value')[1] + 2) {
-                    sliders.exclude.$el.find(sliders.exclude.fieldTag).noUiSlider('move', {to: value.min-3});
-                }
-            };
-            sliders.upside.sliderChangeDelegate = function (value) {
-                sliders.include.$el.find(sliders.include.fieldTag).noUiSlider('move', {to: value.max+1});
-                sliders.exclude.$el.find(sliders.exclude.fieldTag).noUiSlider('move', {to: value.min-1});
-            };
-            sliders.exclude.sliderChangeDelegate = function (value) {
-                sliders.upside.$el.find(sliders.upside.fieldTag).noUiSlider('move', {handle: 'lower', to: value.max+1});
-                if(value.max >= sliders.upside.$el.find(sliders.upside.fieldTag).noUiSlider('value')[1] - 1) {
-                    sliders.upside.$el.find(sliders.upside.fieldTag).noUiSlider('move', {handle: 'upper', to: value.max+2});
-                }
-                if(value.max >= sliders.include.$el.find(sliders.include.fieldTag).noUiSlider('value')[0] - 2) {
-                    sliders.include.$el.find(sliders.include.fieldTag).noUiSlider('move', {to: value.max+3});
-                }
-            }
-        }
+        var categorySliders = sliders[category];
 
+        if(category == 'show_binary') {
+            categorySliders.include.sliderChangeDelegate = function (value) {
+                // lock the upper handle to 100, as per UI/UX requirements to show a dual slider
+                categorySliders.include.$el.find(categorySliders.include.fieldTag).noUiSlider('move', {handle: 'upper', to: categorySliders.include.def.maxRange});
+                // set the excluded range based on the lower value of the include range
+                this.view.setExcludeValueForLastSlider(value, category, categorySliders.include);
+            };
+        } else if (category == 'show_buckets') {
+            categorySliders.include.sliderChangeDelegate = function (value) {
+                // lock the upper handle to 100, as per UI/UX requirements to show a dual slider
+                categorySliders.include.$el.find(categorySliders.include.fieldTag).noUiSlider('move', {handle: 'upper', to: categorySliders.include.def.maxRange});
+
+                categorySliders.upside.$el.find(categorySliders.upside.fieldTag).noUiSlider('move', {handle: 'upper', to: value.min-1});
+                if(value.min <= categorySliders.upside.$el.find(categorySliders.upside.fieldTag).noUiSlider('value')[0] + 1) {
+                    categorySliders.upside.$el.find(categorySliders.upside.fieldTag).noUiSlider('move', {handle: 'lower', to: value.min-2});
+                }
+            };
+            categorySliders.upside.sliderChangeDelegate = function (value) {
+                categorySliders.include.$el.find(categorySliders.include.fieldTag).noUiSlider('move', {handle: 'lower', to: value.max+1});
+                // set the excluded range based on the lower value of the upside range
+                this.view.setExcludeValueForLastSlider(value, category, categorySliders.upside);
+            };
+        }
+    },
+
+    /**
+     * Provides a way for the last of the slider fields in the view, to set the value for the exclude range.
+     * @param value the range value of the slider
+     * @param category the selected config category
+     * @param slider the slider
+     */
+    setExcludeValueForLastSlider: function(value, category, slider) {
+        var excludeRange = {
+            min: 0,
+            max: 100
+        },
+        settingName = category + '_ranges',
+        setting = this.model.get(settingName);
+
+        excludeRange.max = value.min - 1;
+        excludeRange.min = slider.def.minRange;
+        setting.exclude = excludeRange;
+        this.model.set(settingName, setting);
     }
 })

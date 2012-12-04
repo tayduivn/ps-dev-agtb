@@ -70,9 +70,9 @@ $viewdefs['Leads']['DetailView'] = array (
 			'headerTpl'=>'modules/Leads/tpls/DetailViewHeader.tpl',
 		),
 		'maxColumns' => '2',
-		//BEGIN SUGARCRM flav=pro || flav=sales ONLY
+		//BEGIN SUGARCRM flav=pro ONLY
 		'useTabs' => true,
-		//END SUGARCRM flav=pro || flav=sales ONLY
+		//END SUGARCRM flav=pro ONLY
 		'widths' => array (
 			array (
 				'label' => '10',

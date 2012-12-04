@@ -21,16 +21,8 @@
      * @private
      */
     _renderField: function(field) {
-        if (field.name == "timeperiod_start_month") {
-            field = this._setUpTimeperiodStartMonthBind(field);
-        } else if(field.name == "timeperiod_start_day") {
-            field = this._setUpTimeperiodStartDayBind(field);
-        }
-        //BEGIN SUGARCRM flav=pro ONLY
-            if (field.name == "timeperiod_interval") {
-                field = this._setUpTimeperiodIntervalBind(field);
-            }
-        //END SUGARCRM flav=pro ONLY
+
+        field = this._setUpTimeperiodConfigField(field);
 
         // TODO-sfa this will get removed when the timeperiod mapping functionality is added (SFA-214)
         /**
@@ -41,6 +33,51 @@
             field.options.def.view = 'detail';
         }
         app.view.View.prototype._renderField.call(this, field);
+    },
+
+    /**
+     * Sets up the fields with the handlers needed to properly get and set their values for the timeperiods config view.
+     * @param field the field to be setup for this config view.
+     * @return {*} field that has been properly setup and augmented to function for this config view.
+     * @private
+     */
+    _setUpTimeperiodConfigField: function(field) {
+        switch(field.name) {
+            case "timeperiod_start_month":
+                return this._setUpTimeperiodStartMonthBind(field);
+            case "timeperiod_start_day":
+                return this._setUpTimeperiodStartDayBind(field);
+            case "timeperiod_shown_forward":
+            case "timeperiod_shown_backward":
+                return this._setUpTimeperiodShowField(field);
+//BEGIN SUGARCRM flav=pro ONLY
+            case "timeperiod_interval":
+                return this._setUpTimeperiodIntervalBind(field);
+//END SUGARCRM flav=pro ONLY
+            default:
+                return field;
+        }
+    },
+
+    /**
+     * Sets up the timeperiod_shown_forward and timeperiod_shown_backward dropdowns to set the model and values properly
+     * @param field The field being set up.
+     * @return {*} The configured field.
+     * @private
+     */
+    _setUpTimeperiodShowField: function (field) {
+        // ensure Date object gets an additional function
+        field.events = _.extend({"change select":  "_updateSelection"}, field.events);
+        field.bindDomChange = function() {};
+
+        field._updateSelection = function(event, input) {
+            var value =  parseInt(input.selected);
+            this.def.value = value;
+            this.model.set(this.name, value);
+        };
+
+        field.def.value = this.model.get(field.name) || 1;
+        return field;
     },
 
     /**

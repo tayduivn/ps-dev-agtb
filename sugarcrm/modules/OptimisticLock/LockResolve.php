@@ -51,9 +51,7 @@ function display_conflict_between_objects($object_1, $object_2, $field_defs,$mod
 if(isset($_SESSION['o_lock_object'])){
 	global $beanFiles, $moduleList;
 	$object = 	$_SESSION['o_lock_object'];
-	require_once($beanFiles[$beanList[$_SESSION['o_lock_module']]]);
-	$current_state = new $_SESSION['o_lock_class']();
-	$current_state->retrieve($object['id']);
+	$current_state = BeanFactory::getBean($_SESSION['o_lock_module'], $object['id']);
 
 	if(isset($_REQUEST['save'])){
 		$_SESSION['o_lock_fs'] = true;

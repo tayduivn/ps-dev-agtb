@@ -476,7 +476,7 @@ if(!function_exists('sugar_cached'))
 	//////////////////////////////////////////////////////////////////////////////
 	//Adding admin user to the silent upgrade
 
-	$current_user = new User();
+	$current_user = BeanFactory::getBean('Users');
 	if(isset($argv[4])) {
 	   //if being used for internal upgrades avoid admin user verification
 	   $user_name = $argv[4];
@@ -949,7 +949,7 @@ if(file_exists(clean_path(getcwd()).'/original451files')){
 }
 
 require_once('modules/Administration/Administration.php');
-$admin = new Administration();
+$admin = BeanFactory::getBean('Administration');
 $admin->saveSetting('system','adminwizard',1);
 
 //BEGIN SUGARCRM flav=pro ONLY
@@ -1029,7 +1029,7 @@ if(isset($_SESSION['current_db_version']) && isset($_SESSION['target_db_version'
 	 	$db =& DBManagerFactory::getInstance();
 		if($ce_to_pro_ent){
 	        //Also set license information
-	        $admin = new Administration();
+	        $admin = BeanFactory::getBean('Administration');
 			$category = 'license';
 			$value = 0;
 			$admin->saveSetting($category, 'users', $value);

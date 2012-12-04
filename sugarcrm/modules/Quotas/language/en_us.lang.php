@@ -29,6 +29,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 $mod_strings = array (
   'LBL_MODULE_NAME' => 'Quotas',
+  'LBL_MODULE_NAME_SINGULAR' => 'Quota',
   'LBL_MODULE_TITLE' => 'Quotas: Home',
   'LBL_LIST_FORM_TITLE' => 'Quota List',
   'LBL_QUOTA' => 'Quota:',

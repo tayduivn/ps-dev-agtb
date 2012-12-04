@@ -55,6 +55,17 @@ class SugarFeed extends Basic {
 		var $assigned_user_name;
 		var $assigned_user_link;
 
+    /**
+     * This is a depreciated method, please start using __construct() as this method will be removed in a future version
+     *
+     * @see __construct
+     * @deprecated
+     */
+    public function SugarFeed()
+    {
+        $this->__construct();
+    }
+
 	public function __construct(){
 		parent::__construct();
 	}
@@ -75,7 +86,7 @@ class SugarFeed extends Basic {
         }
         if ( $updateDB == true ) {
 
-            $admin = new Administration();
+            $admin = BeanFactory::getBean('Administration');
             $admin->saveSetting('sugarfeed','module_'.$admin->db->quote($module),'1');
         }
     }
@@ -97,7 +108,7 @@ class SugarFeed extends Basic {
 
         if ( $updateDB == true ) {
 
-            $admin = new Administration();
+            $admin = BeanFactory::getBean('Administration');
             $admin->saveSetting('sugarfeed','module_'.$admin->db->quote($module),'0');
         }
     }
@@ -148,8 +159,7 @@ class SugarFeed extends Basic {
 
         // Gotta go looking for it
 
-        $admin = new Administration();
-        $admin->retrieveSettings();
+        $admin = Administration::getSettings();
 
         $feedModules = array();
         if ( isset($admin->settings['sugarfeed_enabled']) && $admin->settings['sugarfeed_enabled'] == '1' ) {
@@ -229,7 +239,7 @@ class SugarFeed extends Basic {
 		,$team_set_id=''
 		//END SUGARCRM flav=pro ONLY
 		) {
-		$feed = new SugarFeed();
+		$feed = BeanFactory::getBean('SugarFeed');
 		if((empty($text) && empty($link_url)) || !$feed->ACLAccess('save', true) )
 		{
 			$GLOBALS['log']->error('Unable to save SugarFeed record (missing data or no ACL access)');
@@ -349,7 +359,7 @@ class SugarFeed extends Basic {
 	}
 
     function fetchReplies($data) {
-        $seedBean = new SugarFeed;
+        $seedBean = $this->getCopy();
 
         $replies = $seedBean->get_list('date_entered',"related_module = 'SugarFeed' AND related_id = '".$data['ID']."'");
 

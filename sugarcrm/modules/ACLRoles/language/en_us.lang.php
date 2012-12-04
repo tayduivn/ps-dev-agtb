@@ -21,6 +21,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  ********************************************************************************/
 $mod_strings = array (
 'LBL_MODULE_NAME' => 'Roles',
+'LBL_MODULE_NAME_SINGULAR' => 'Role',
 'LBL_MODULE_TITLE' => 'Roles: Home',
 'LBL_ROLE'=>'Role',
 'LBL_NAME'=>'Name',
@@ -37,8 +38,8 @@ $mod_strings = array (
 'LBL_ACTION_ADMIN'=>'Access Type',
 'LBL_ALL'=>'All',
 'LBL_DUPLICATE_OF'=>'Duplicate Of ',
-//BEGIN SUGARCRM flav!=com && flav!=sales ONLY
+//BEGIN SUGARCRM flav!=com
 'LBL_USER_NAME_FOR_ROLE'=>'Users/Teams/Roles',
-//END SUGARCRM flav!=com && flav!=sales ONLY
+//END SUGARCRM flav!=com
 )
 ?>

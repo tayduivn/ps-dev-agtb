@@ -97,4 +97,18 @@ class BeanVisibility
         }
         return $query;
     }
+
+    public function addVisibilityFromQuery(SugarQuery $query, $options = array()) {
+        foreach($this->strategies as $strategy) {
+            $strategy->setOptions($options)->addVisibilityFromQuery($query);
+        }
+        return $query;
+    }
+
+    public function addVisibilityWhereQuery(SugarQuery $query, $options = array()) {
+        foreach($this->strategies as $strategy) {
+            $strategy->setOptions($options)->addVisibilityWhereQuery($query);
+        }
+        return $query;
+    }    
 }

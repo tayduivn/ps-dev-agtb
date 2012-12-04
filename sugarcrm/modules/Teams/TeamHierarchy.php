@@ -42,7 +42,7 @@ require_once('include/ytree/Node.php');
  *
  * Example Usage:
  *
- * $focus = new TeamHierarchy();
+ * $focus = BeanFactory::getBean('TeamHierarchy');
  * $focus->team_id = 'The team id this record represents';
  * $focus->parent_id = 'The parent of this record';
  * $focus->save();
@@ -212,7 +212,7 @@ class TeamHierarchy extends SugarBean{
         $tree=new Tree('tree_widget');
         $node = new Node($row['id'], $row['name']);
         $tree->add_node($node);
-        $teamH = new TeamHierarchy();
+        $teamH = BeanFactory::getBean('TeamHierarchy');
         $teamH->populateFromRow($row);
         $this->buildTree($node, $teamH);
         echo $tree->generate_header();
@@ -234,7 +234,7 @@ class TeamHierarchy extends SugarBean{
         $result = $GLOBALS['db']->query($query);
         while ($row = $GLOBALS['db']->fetchByAssoc($result)) {
             $childNode = new Node($row['id'], $row['name']);
-            $teamH = new TeamHierarchy();
+            $teamH = BeanFactory::getBean('TeamHierarchy');
             $teamH->populateFromRow($row);
             $parentNode->add_node($childNode);
             $this->buildTree($childNode, $teamH);
@@ -251,9 +251,8 @@ class TeamHierarchy extends SugarBean{
     public function addUserToTeam($user_id, $team_hierarchy_id){
         //add the user explicitly to the team passed in
         //and implicity to hierarchy.
-        $teamH = new TeamHierarchy();
-        $teamH->retrieve($team_hierarchy_id);
-        $membership = new TeamMembership();
+        $teamH = BeanFactory::getBean('TeamHierarchy', $team_hierarchy_id);
+        $membership = BeanFactory::getBean('TeamMemberships');
         $result = $membership->retrieve_by_user_and_team($user_id, $teamH->team_id);
         if(empty($result)){
             $membership->user_id = $user_id;
@@ -268,7 +267,7 @@ class TeamHierarchy extends SugarBean{
         $query = 'SELECT '.$this->table_name.'.* FROM '.$this->table_name.' WHERE parent_id = \''.$team_hierarchy_id.'\'';
         $result = $GLOBALS['db']->query($query);
         while ($row = $GLOBALS['db']->fetchByAssoc($result)) {
-            $membership = new TeamMembership();
+            $membership = BeanFactory::getBean('TeamMemberships');
             $result = $membership->retrieve_by_user_and_team($user_id, $row['team_id']);
             if(empty($result)){
                 $membership->user_id = $user_id;

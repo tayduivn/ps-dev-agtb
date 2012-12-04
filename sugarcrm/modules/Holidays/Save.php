@@ -23,7 +23,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 require_once('include/formbase.php');
 
-$focus = new Holiday();
+$focus = BeanFactory::getBean('Holidays');
 global $current_user;
 
 $focus->disable_row_level_security = true;	

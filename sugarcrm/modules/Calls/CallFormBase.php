@@ -120,7 +120,7 @@ EOQ;
 
 $javascript = new javascript();
 $javascript->setFormName($formname);
-$javascript->setSugarBean(new Call());
+$javascript->setSugarBean(BeanFactory::getBean('Calls'));
 $javascript->addRequiredFields($prefix);
 $form .=$javascript->getScript();
 $form .= "<td align=\"left\" valign=top><input title='$lbl_save_button_title' accessKey='$lbl_save_button_key' class='button' type='submit' name='button' value=' $lbl_save_button_label ' ></td></tr></table></form>";
@@ -194,7 +194,7 @@ function handleSave($prefix,$redirect=true,$useRequired=false) {
 		$_POST[$prefix.'duration_hours'] = trim($_POST[$prefix.'duration_hours']);
 	}
 
-	$focus = new Call();
+	$focus = BeanFactory::getBean('Calls');
 
 	if($useRequired && !checkRequired($prefix, array_keys($focus->required_fields))) {
 		return null;
@@ -311,7 +311,6 @@ function handleSave($prefix,$redirect=true,$useRequired=false) {
                 } 
             }
             
-            //BEGIN SUGARCRM flav!=sales ONLY            
             if (!empty($_POST['lead_invitees'])) {
                 $leadInvitees = explode(',', trim($_POST['lead_invitees'], ','));
             }            
@@ -326,7 +325,6 @@ function handleSave($prefix,$redirect=true,$useRequired=false) {
                     $leadInvitees[] = $_REQUEST['relate_id'];
                 } 
             }
-            //END SUGARCRM flav!=sales ONLY
 
             // Call the Call module's save function to handle saving other fields besides
             // the users and contacts relationships
@@ -341,9 +339,7 @@ function handleSave($prefix,$redirect=true,$useRequired=false) {
             
             $focus->setUserInvitees($userInvitees, $existingUsers);
             $focus->setContactInvitees($contactInvitees, $existingContacts);
-            //BEGIN SUGARCRM flav!=sales ONLY
             $focus->setLeadInvitees($leadInvitees, $existingLeads);
-            //END SUGARCRM flav!=sales ONLY
 
             // Bug #49195 : update vcal
             vCal::cache_sugar_vcal($current_user);
@@ -481,7 +477,7 @@ EOQ;
 
 $javascript = new javascript();
 $javascript->setFormName($formname);
-$javascript->setSugarBean(new Call());
+$javascript->setSugarBean(BeanFactory::getBean('Calls'));
 $javascript->addRequiredFields($prefix);
 $form .=$javascript->getScript();
 $mod_strings = $temp_strings;

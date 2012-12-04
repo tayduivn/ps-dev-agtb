@@ -41,7 +41,7 @@ global $app_list_strings;
 global $app_strings;
 global $current_user;
 
-$focus = new CustomQuery();
+$focus = BeanFactory::getBean('CustomQueries');
 
 	if(isset($_REQUEST['record']) && isset($_REQUEST['record'])) {
     	$focus->retrieve($_REQUEST['record']);

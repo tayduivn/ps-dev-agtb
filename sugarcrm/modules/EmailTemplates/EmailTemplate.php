@@ -66,18 +66,14 @@ class EmailTemplate extends SugarBean {
 		//END SUGARCRM flav=pro ONLY
 		'account_description',
 		'contact_id',
-		//BEGIN SUGARCRM flav!=sales ONLY
 		'lead_id',
-		//END SUGARCRM flav!=sales ONLY
 		'opportunity_amount',
 		'opportunity_id',
 		'opportunity_name',
 		'opportunity_role_id',
 		'opportunity_role_fields',
 		'opportunity_role',
-		//BEGIN SUGARCRM flav!=sales ONLY
 		'campaign_id',
-		//END SUGARCRM flav!=sales ONLY
 		// User objects
 		'id',
 		'date_entered',
@@ -98,6 +94,17 @@ class EmailTemplate extends SugarBean {
 		'accept_status_id',
 		'accept_status_name',
 	);
+
+    /**
+     * This is a depreciated method, please start using __construct() as this method will be removed in a future version
+     *
+     * @see __construct
+     * @deprecated
+     */
+    public function EmailTemplate()
+    {
+        $this->__construct();
+    }
 
 	public function __construct() {
 		parent::__construct();
@@ -120,25 +127,16 @@ class EmailTemplate extends SugarBean {
 	function generateFieldDefsJS() {
 		global $current_user;
 
-
-
-
-
-		$contact = new Contact();
-		$account = new Account();
-		//BEGIN SUGARCRM flav!=sales ONLY
-		$lead = new Lead();
-		$prospect = new Prospect();
-		//END SUGARCRM flav!=sales ONLY
-
+		$contact = BeanFactory::getBean('Contacts');
+		$account = BeanFactory::getBean('Accounts');
+		$lead = BeanFactory::getBean('Leads');
+		$prospect = BeanFactory::getBean('Prospects');
 
 		$loopControl = array(
 			'Contacts' => array(
 			    'Contacts' => $contact,
-		        //BEGIN SUGARCRM flav!=sales ONLY
 			    'Leads' => $lead,
 				'Prospects' => $prospect,
-		        //END SUGARCRM flav!=sales ONLY
 			),
 			'Accounts' => array(
 				'Accounts' => $account,
@@ -318,8 +316,8 @@ class EmailTemplate extends SugarBean {
 		global $beanFiles, $beanList, $app_list_strings;
 
 		// generate User instance that owns this "Contact" for contact_user_* macros
-		$user = new User();
-        if(isset($focus->assigned_user_id)  && !empty($focus->assigned_user_id)){
+		$user = BeanFactory::getBean('Users');
+        if(!empty($focus->assigned_user_id)){
 		  $user->retrieve($focus->assigned_user_id);
         }
 
@@ -453,14 +451,13 @@ class EmailTemplate extends SugarBean {
 		$repl_arr = array();
 
 		// cn: bug 9277 - create a replace array with empty strings to blank-out invalid vars
-		$acct = new Account();
-		$contact = new Contact();
+		$acct = BeanFactory::getBean('Accounts');
+		$contact = BeanFactory::getBean('Contacts');
 		//BEGIN SUGARCRM flav!=sales ONLY
-		$lead = new Lead();
-		$prospect = new Prospect();
+		$lead = BeanFactory::getBean('Leads');
+		$prospect = BeanFactory::getBean('Prospects');
 		//END SUGARCRM flav!=sales ONLY
 
-		//BEGIN SUGARCRM flav!=sales ONLY
 		foreach($lead->field_defs as $field_def) {
 			if(($field_def['type'] == 'relate' && empty($field_def['custom_type'])) || $field_def['type'] == 'assigned_user_name') {
          		continue;
@@ -479,7 +476,6 @@ class EmailTemplate extends SugarBean {
                 'contact_account_' . $field_def['name'] => '',
             ));
 		}
-		//END SUGARCRM flav!=sales ONLY
 		foreach($contact->field_defs as $field_def) {
 			if(($field_def['type'] == 'relate' && empty($field_def['custom_type'])) || $field_def['type'] == 'assigned_user_name') {
          		continue;
@@ -540,8 +536,7 @@ class EmailTemplate extends SugarBean {
 			}
 
 			if(!empty($focus->assigned_user_id)) {
-				$user = new User();
-				$user->retrieve($focus->assigned_user_id);
+				$user = BeanFactory::getBean('Users', $focus->assigned_user_id);
 				$repl_arr = EmailTemplate::_parseUserValues($repl_arr, $user);
 			}
 		} elseif($bean_name == 'Users') {
@@ -666,14 +661,11 @@ class EmailTemplate extends SugarBean {
         return $data;
     }
 
-	function parse_template($string, &$bean_arr) {
+	function parse_template($string, $bean_arr) {
 		global $beanFiles, $beanList;
 
 		foreach($bean_arr as $bean_name => $bean_id) {
-			require_once($beanFiles[$beanList[$bean_name]]);
-
-			$focus = new $beanList[$bean_name];
-			$result = $focus->retrieve($bean_id);
+		    $focus = BeanFactory::getBean($bean_name, $bean_id);
 
 			if($bean_name == 'Leads' || $bean_name == 'Prospects') {
 				$bean_name = 'Contacts';
@@ -689,16 +681,14 @@ class EmailTemplate extends SugarBean {
 	}
 
 	function bean_implements($interface) {
-	    //BEGIN SUGARCRM flav!=sales ONLY
 		switch($interface) {
 			case 'ACL':return true;
 		}
-		//END SUGARCRM flav!=sales ONLY
 		return false;
 	}
 
     static function getTypeOptionsForSearch(){
-        $template = new EmailTemplate();
+        $template = BeanFactory::getBean('EmailTemplates');
         $optionKey = $template->field_defs['type']['options'];
         $options = $GLOBALS['app_list_strings'][$optionKey];
         if( ! is_admin($GLOBALS['current_user']) && isset($options['workflow']))

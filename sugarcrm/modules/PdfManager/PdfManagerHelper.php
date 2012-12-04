@@ -454,10 +454,7 @@ class PdfManagerHelper
                 count($module_instance->$name->get()) == 1
                ) {
                 $related_module = $module_instance->$name->getRelatedModuleName();
-                $related_module = $GLOBALS['beanList'][$related_module];
-                $related_file   = $GLOBALS['beanFiles'][$related_module];
-                require_once $related_file;
-                $related_instance = new $related_module;
+                $related_instance = BeanFactory::getBean($related_module);
                 $related_instance_id = $module_instance->$name->get();
                 if ($related_instance->retrieve($related_instance_id[0]) === null) {
                     $GLOBALS['log']->fatal(__FILE__ . ' Failed loading module ' . $related_module . ' with id ' . $related_instance_id[0]);

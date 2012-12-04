@@ -206,11 +206,7 @@ function createSchema($execute=false,$return=false,&$response){
     $sqlArray = array();
 	foreach( $beanFiles as $bean => $file ) {
 		$doNotInit = array('Scheduler', 'SchedulersJob');
-		if(in_array($bean, $doNotInit)) {
-			$focus = new $bean(false);
-		} else {
-		    $focus = new $bean();
-		}
+		$focus = BeanFactory::newBeanByName($bean);
 		if(!isset($focus->table_name)){
 			continue;
 		}

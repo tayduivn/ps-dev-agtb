@@ -19,13 +19,6 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *to the License for the specific language governing these rights and limitations under the License.
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
-/*********************************************************************************
- * $Id: Administration.php 57528 2010-07-19 01:37:50Z kjing $
- * Description:  TODO: To be written.
- * Portions created by SugarCRM are Copyright (C) SugarCRM, Inc.
- * All Rights Reserved.
- * Contributor(s): ______________________________________..
- ********************************************************************************/
 require_once('data/SugarBean.php');
 require_once('include/OutboundEmail/OutboundEmail.php');
 
@@ -56,6 +49,20 @@ class Administration extends SugarBean {
     );
     var $disable_custom_fields = true;
     var $checkbox_fields = Array("notify_send_by_default", "mail_smtpauth_req", "notify_on", 'portal_on', 'skypeout_on', 'system_mailmerge_on', 'proxy_auth', 'proxy_on', 'system_ldap_enabled','captcha_on');
+    //BEGIN SUGARCRM flav=pro ONLY
+    public $disable_row_level_security = true;
+    //END SUGARCRM flav=pro ONLY
+
+    /**
+     * This is a depreciated method, please start using __construct() as this method will be removed in a future version
+     *
+     * @see __construct
+     * @deprecated
+     */
+    public function Administration()
+    {
+        $this->__construct();
+    }
 
     public function __construct() {
         parent::__construct();
@@ -273,6 +280,19 @@ class Administration extends SugarBean {
 
     function get_config_prefix($str) {
         return Array(substr($str, 0, strpos($str, "_")), substr($str, strpos($str, "_")+1));
+    }
+
+    /**
+     * Return Administration object with filled in settings
+     * @param string $category
+     * @param bool $clean
+     * @return Administration
+     */
+    public static function getSettings($category = FALSE, $clean=false)
+    {
+        $admin = BeanFactory::getBean('Administration');
+        $admin->retrieveSettings($category, $clean);
+        return $admin;
     }
 }
 

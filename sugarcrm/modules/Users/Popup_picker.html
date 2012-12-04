@@ -46,14 +46,10 @@
 <td scope="row" valign="top" nowrap="nowrap">{MOD.LBL_USER_NAME}</td>
 <td ><input type="text" size="10" tabindex='2' name="user_name"  value="{USER_NAME}" /></td>
 <td scope="row">
-<!--//BEGIN SUGARCRM flav!=sales ONLY -->
 <slot>{MOD.LBL_GROUP_USER}</slot>
-<!--//END SUGARCRM flav!=sales ONLY -->
 </td>
 <td>
-<!--//BEGIN SUGARCRM flav!=sales ONLY -->
 <slot><input name='is_group' class="checkbox" value='1' type="checkbox" tabindex='2' {IS_GROUP}></slot>
-<!--//END SUGARCRM flav!=sales ONLY -->
 </td>
 <td rowspan='2' valign="top" align="right">
 <input type="hidden" name="module" value="{MODULE_NAME}" />
@@ -84,18 +80,14 @@
 <td scope="col"  NOWRAP>{CHECKALL}</td>
 <td scope="col" width="50%"  nowrap="nowrap"><a href="{ORDER_BY}last_name" class="listViewThLinkS1">{MOD.LBL_LIST_NAME}{arrow_start}{first_name_arrow}{arrow_end}</a></td>
 <td scope="col" width="50%"  nowrap="nowrap"><a href="{ORDER_BY}user_name" class="listViewThLinkS1" >{MOD.LBL_LIST_USER_NAME}{arrow_start}{user_name_arrow}{arrow_end}</a></td>
-<!--//BEGIN SUGARCRM flav!=sales ONLY -->
 <td scope="col"  NOWRAP><slot><a href="{ORDER_BY}IS_GROUP" class="listViewThLinkS1">{MOD.LBL_LIST_GROUP}{arrow_start}{IS_GROUP_arrow}{arrow_end}</a></slot></td>
-<!--//END SUGARCRM flav!=sales ONLY -->
 </tr>
 <!-- BEGIN: row -->
 <tr height="20" class="{ROW_COLOR}S1">
 <td valign="top">{PREROW}&nbsp;</td>
 <td scope='row' valign="top"><{TAG_TYPE} href="#" onclick="send_back('Users','{USER.ID}');" >{USER.FULL_NAME}</{TAG_TYPE}></td>
 <td valign="top" >{USER.USER_NAME}</td>
-<!--//BEGIN SUGARCRM flav!=sales ONLY -->
 <td valign="top" >{USER.IS_GROUP_IMAGE}&nbsp;</td>
-<!--//END SUGARCRM flav!=sales ONLY -->
 </tr>
 
 <!-- END: row -->

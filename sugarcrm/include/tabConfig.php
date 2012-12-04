@@ -37,20 +37,15 @@ $GLOBALS['tabStructure'] = array(
             "Accounts",
             "Contacts",
             "Opportunities",
-            //BEGIN SUGARCRM flav!=sales ONLY
             "Leads",
             "Contracts",
             "Quotes",
-            //END SUGARCRM flav!=sales ONLY
             //BEGIN SUGARCRM flav=pro ONLY
             "Products",
             //END SUGARCRM flav=pro ONLY
-            //BEGIN SUGARCRM flav!=sales ONLY
             "Forecasts",
-            //END SUGARCRM flav!=sales ONLY
         )
     ),
-    //BEGIN SUGARCRM flav!=sales ONLY
     "LBL_TABGROUP_MARKETING" => array(
         'label' => 'LBL_TABGROUP_MARKETING',
         'modules' => array(
@@ -71,14 +66,11 @@ $GLOBALS['tabStructure'] = array(
             "Contacts",
             "Cases",
             "Bugs",
-    //END SUGARCRM flav!=sales ONLY
             //BEGIN SUGARCRM flav=pro ONLY
             "KBDocuments",
             //END SUGARCRM flav=pro ONLY
-    //BEGIN SUGARCRM flav!=sales ONLY
         )
     ),
-    //END SUGARCRM flav!=sales ONLY
     "LBL_TABGROUP_ACTIVITIES" => array(
         'label' => 'LBL_TABGROUP_ACTIVITIES',
         'modules' => array(
@@ -97,25 +89,21 @@ $GLOBALS['tabStructure'] = array(
             "Home",
             "Emails",
             "Documents",
-            //BEGIN SUGARCRM flav!=sales ONLY
             "Project",
-    	    //END SUGARCRM flav!=sales ONLY
             //BEGIN SUGARCRM flav=pro ONLY
             "KBDocuments",
             //END SUGARCRM flav=pro ONLY
         )
     ),
-//BEGIN SUGARCRM flav=pro || flav=sales ONLY
+//BEGIN SUGARCRM flav=pro ONLY
     "LBL_TABGROUP_REPORTS"=>array(
         'label' => 'LBL_TABGROUP_REPORTS',
         'modules' => array(
             "Home",
             "Reports",
-            //BEGIN SUGARCRM flav!=sales ONLY
             "Forecasts",
-            //END SUGARCRM flav!=sales ONLY
         )
     ),
-//END SUGARCRM flav=pro || flav=sales ONLY
+//END SUGARCRM flav=pro ONLY
 );
 

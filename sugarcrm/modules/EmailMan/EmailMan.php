@@ -55,6 +55,17 @@ class EmailMan extends SugarBean{
     // This is used to retrieve related fields from form posts.
 	var $additional_column_fields = array();
 
+    /**
+     * This is a depreciated method, please start using __construct() as this method will be removed in a future version
+     *
+     * @see __construct
+     * @deprecated
+     */
+    public function EmailMan()
+    {
+        $this->__construct();
+    }
+
 	public function __construct() {
 		parent::__construct();
 		//BEGIN SUGARCRM flav=pro ONLY
@@ -256,7 +267,7 @@ class EmailMan extends SugarBean{
 
 			//create new campaign log record.
 
-			$campaign_log = new CampaignLog();
+			$campaign_log = BeanFactory::getBean('CampaignLog');
 			$campaign_log->campaign_id=$this->campaign_id;
 			$campaign_log->target_tracker_key=$this->target_tracker_key;
 			$campaign_log->target_id= $this->related_id;
@@ -304,7 +315,7 @@ class EmailMan extends SugarBean{
        global $mod_Strings, $timedate;
        $upd_ref_email=false;
        if ($newmessage or empty($this->ref_email->id)) {
-           $this->ref_email = new Email();
+           $this->ref_email = BeanFactory::getBean('Emails');
            $this->ref_email->retrieve($marketing_id, true, false);
 
            //the reference email should be updated when user swithces from test mode to regular mode,and, for every run in test mode, and is user
@@ -367,7 +378,7 @@ class EmailMan extends SugarBean{
                         $mime_type = $note->file_mime_type;
                     }
 
-                    $noteAudit = new Note();
+                    $noteAudit = BeanFactory::getBean('Notes');
                     $noteAudit->parent_id = $retId;
                     $noteAudit->parent_type = $this->ref_email->module_dir;
                     $noteAudit->description = "[".$note->filename."] ".$mod_strings['LBL_ATTACHMENT_AUDIT'];
@@ -428,7 +439,7 @@ class EmailMan extends SugarBean{
         global $timedate,
                $mod_strings;
 
-        $email = new Email();
+        $email = BeanFactory::getBean('Emails');
 
         //BEGIN SUGARCRM flav=pro ONLY
         $email->team_id = 1;
@@ -454,7 +465,7 @@ class EmailMan extends SugarBean{
 
         foreach ($this->notes_array as $note) {
             // create "audit" email without duping off the file to save on disk space
-            $noteAudit              = new Note();
+            $noteAudit              = BeanFactory::getBean('Notes');
             $noteAudit->parent_id   = $retId;
             $noteAudit->parent_type = $email->module_dir;
             $noteAudit->description = "[{$note->filename}] {$mod_strings['LBL_ATTACHMENT_AUDIT']}";
@@ -501,7 +512,7 @@ class EmailMan extends SugarBean{
             if (!class_exists('EmailMarketing')) {
 
             }
-            $email_marketing = new EmailMarketing();
+            $email_marketing = BeanFactory::getBean('EmailMarketing');
             $ret=$email_marketing->retrieve($marketing_id);
             if (empty($ret)) {
                 $GLOBALS['log']->fatal('Error retrieving marketing message for the email campaign. marketing_id = ' .$marketing_id);
@@ -517,7 +528,7 @@ class EmailMan extends SugarBean{
             if (!class_exists('EmailTemplate')) {
 
             }
-            $emailtemplate= new EmailTemplate();
+            $emailtemplate = BeanFactory::getBean('EmailTemplates');
 
             $ret=$emailtemplate->retrieve($email_marketing->template_id);
             if (empty($ret)) {
@@ -539,7 +550,7 @@ class EmailMan extends SugarBean{
         $success = false;
 	    $this->test=$testmode;
 
-		global $beanList, $beanFiles, $sugar_config;
+		global $sugar_config;
 		global $mod_strings;
         global $locale;
         $OBCharset = $locale->getPrecedentPreference('default_email_charset');
@@ -547,11 +558,7 @@ class EmailMan extends SugarBean{
 
 		//get tracking entities locations.
 		if (!isset($this->tracking_url)) {
-			if (!class_exists('Administration')) {
-
-			}
-			$admin=new Administration();
-			$admin->retrieveSettings('massemailer'); //retrieve all admin settings.
+			$admin = Administration::getSettings('massemailer'); //retrieve all admin settings.
 		    if (isset($admin->settings['massemailer_tracking_entities_location_type']) and $admin->settings['massemailer_tracking_entities_location_type']=='2'  and isset($admin->settings['massemailer_tracking_entities_location']) ) {
 				$this->tracking_url=$admin->settings['massemailer_tracking_entities_location'];
 		    } else {
@@ -565,20 +572,10 @@ class EmailMan extends SugarBean{
             $this->tracking_url .='/';
         }
 
-		if(!isset($beanList[$this->related_type])){
-			return false;
+		$module = BeanFactory::getBean($this->related_type, $this->related_id);
+		if(empty($module)) {
+		    return false;
 		}
-		$class = $beanList[$this->related_type];
-		if (!class_exists($class)) {
-			require_once($beanFiles[$class]);
-		}
-
-		if (!class_exists('Email')) {
-
-		}
-
-		$module = new $class();
-		$module->retrieve($this->related_id);
 		$module->emailAddress->handleLegacyRetrieve($module);
 
         //check to see if bean has a primary email address
@@ -642,7 +639,7 @@ class EmailMan extends SugarBean{
 
 				}
 
-				$this->current_emailmarketing=new EmailMarketing();
+				$this->current_emailmarketing = BeanFactory::getBean('EmailMarketing');
 
 			}
 			if (empty($this->current_emailmarketing->id) or $this->current_emailmarketing->id !== $this->marketing_id) {
@@ -655,7 +652,7 @@ class EmailMan extends SugarBean{
 				if (!class_exists('EmailTemplate')) {
 
 				}
-				$this->current_emailtemplate= new EmailTemplate();
+				$this->current_emailtemplate = BeanFactory::getBean('EmailTemplates');
 
 				$this->current_emailtemplate->retrieve($this->current_emailmarketing->template_id);
 
@@ -673,8 +670,7 @@ class EmailMan extends SugarBean{
                 	require_once('modules/Notes/Note.php');
 				}
 				while($a = $this->db->fetchByAssoc($r)) {
-					$noteTemplate = new Note();
-					$noteTemplate->retrieve($a['id']);
+					$noteTemplate = BeanFactory::getBean('Notes', $a['id']);
 					$this->notes_array[] = $noteTemplate;
 				}
 			}
@@ -684,7 +680,7 @@ class EmailMan extends SugarBean{
 				if (!class_exists('InboundEmail')) {
 
 				}
-				$this->current_mailbox= new InboundEmail();
+				$this->current_mailbox = BeanFactory::getBean('InboundEmail');
 			}
 			if (empty($this->current_mailbox->id) or $this->current_mailbox->id !== $this->current_emailmarketing->inbound_email_id) {
 				$this->current_mailbox->retrieve($this->current_emailmarketing->inbound_email_id);
@@ -697,7 +693,7 @@ class EmailMan extends SugarBean{
 				if (!class_exists('Campaign')) {
 
 				}
-				$this->current_campaign= new Campaign();
+				$this->current_campaign = BeanFactory::getBean('Campaigns');
 			}
 			if (empty($this->current_campaign->id) or $this->current_campaign->id !== $this->current_emailmarketing->campaign_id) {
 				$this->current_campaign->retrieve($this->current_emailmarketing->campaign_id);

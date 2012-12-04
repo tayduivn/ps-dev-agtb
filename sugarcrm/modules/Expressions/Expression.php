@@ -158,6 +158,17 @@ class Expression extends SugarBean {
 	// This is the list of fields that are required
 	var $required_fields =  array();
 
+    /**
+     * This is a depreciated method, please start using __construct() as this method will be removed in a future version
+     *
+     * @see __construct
+     * @deprecated
+     */
+    public function Expression()
+    {
+        $this->__construct();
+    }
+
 	public function __construct() {
 		parent::__construct();
 
@@ -246,7 +257,7 @@ class Expression extends SugarBean {
 		}
 	
 		if($type=='field'){
-		    $temp_module = SugarModule::get($dom_name)->loadBean();
+		    $temp_module = BeanFactory::getBean($dom_name);
 		    if ( !is_object($temp_module) ) {
 		        var_dump($dom_name);
 		        display_stack_trace(true);
@@ -278,7 +289,7 @@ class Expression extends SugarBean {
 		if($type=='module_list'){
 			if($only_related_modules){
 					global $beanList;
-					$temp_module = get_module_info($dom_name);
+					$temp_module = BeanFactory::getBean($dom_name);
 					$temp_module->call_vardef_handler("rel_filter");
 
 					$select_array = $temp_module->vardef_handler->get_vardef_array(true, '', true, true);
@@ -289,10 +300,8 @@ class Expression extends SugarBean {
 				$select_array = get_module_map();		
 			}		
 		
-			//BEGIN SUGARCRM flav!=sales ONLY
 			unset($select_array["Forecasts"]);
 			unset($select_array["Products"]);
-			//END SUGARCRM flav!=sales ONLY
 			unset($select_array["Documents"]);
 			asort($select_array);
 		//end if type is module_list	
@@ -315,7 +324,7 @@ class Expression extends SugarBean {
 	function build_field_filter($base_module, $target_field, $enum_multi=false){
 
 			////Begin - New Code call to workflow_utils
-		$temp_module = get_module_info($base_module);
+		$temp_module = BeanFactory::getBean($base_module);
 		//Build Selector Array
 		$selector_array = array(
 							'value' => $this->rhs_value,
@@ -347,9 +356,9 @@ class Expression extends SugarBean {
 	//you can either build using lhs_module or override with your own
 	
 		if($target_module==""){
-			$target_bean = get_module_info($this->lhs_module);
+			$target_bean = BeanFactory::getBean($this->lhs_module);
 		} else {
-			$target_bean = get_module_info($target_module);
+			$target_bean = BeanFactory::getBean($target_module);
 		}	
 			
 		return $this->get_display_array($target_bean);

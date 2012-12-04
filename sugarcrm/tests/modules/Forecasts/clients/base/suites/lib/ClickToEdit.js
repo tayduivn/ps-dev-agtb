@@ -20,7 +20,7 @@
  ********************************************************************************/
 
 describe("ClickToEdit", function(){
-    var field, view, editable, clickToEdit;
+    var field, view, editable, clickToEdit, handlebarHelpers;
 
     beforeEach(function() {
         app = SugarTest.app;
@@ -30,6 +30,7 @@ describe("ClickToEdit", function(){
         });
         editable = SugarTest.loadFile("../include/javascript/twitterbootstrap/js", "jquery.jeditable", "js", function(d) { return eval(d); });
         clickToEdit = SugarTest.loadFile("../modules/Forecasts/clients/base/lib", "ClickToEdit", "js", function(d) { return eval(d); });
+        handlebarHelpers = SugarTest.loadFile("../modules/Forecasts/clients/base/helper", "hbt-helpers", "js", function(d) { return eval(d); });
         view = {
             $el: $('<div class="testview"></div>'),
             url: "/test"
@@ -48,6 +49,9 @@ describe("ClickToEdit", function(){
     afterEach(function() {
         view = {};
         field = {};
+        editable = null;
+        clickToEdit = null;
+        handlebarHelpers = null;
     });
 
     it("should add the editable plugin on the element", function() {

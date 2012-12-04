@@ -26,20 +26,9 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * governing these rights and limitations under the License.  Portions created
  * by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
-/*********************************************************************************
- * $Id: SingleSelector.php 45763 2009-04-01 19:16:18Z majed $
- * Description:
- ********************************************************************************/
-
 global $theme;
 
 require_once('include/utils/expression_utils.php');
-
-
-
-
-
-
 global $app_strings;
 global $app_list_strings;
 global $mod_strings;
@@ -48,35 +37,33 @@ global $urlPrefix;
 global $currentModule;
 global $sugar_version, $sugar_config;
 
+$focus = BeanFactory::getBean('Expressions');
 
-$focus = new Expression();
-
-if(!empty($_REQUEST['type']) && $_REQUEST['type']!="") {
+if(!empty($_REQUEST['type'])) {
     $type = $_REQUEST['type'];
 } else {
-	sugar_die("You shouldn't be here");	
+	sugar_die("You shouldn't be here");
 }
-if(!empty($_REQUEST['value']) && $_REQUEST['value']!="") {
+if(!empty($_REQUEST['value'])) {
     $value = $_REQUEST['value'];
 } else {
-	$value ="";	
-}	
-if(!empty($_REQUEST['dom_name']) && $_REQUEST['dom_name']!="") {
+	$value ="";
+}
+if(!empty($_REQUEST['dom_name'])) {
     $dom_name = $_REQUEST['dom_name'];
 } else {
 	$dom_name ="";
 }
-if(!empty($_REQUEST['meta_filter_name']) && $_REQUEST['meta_filter_name']!="") {
+if(!empty($_REQUEST['meta_filter_name'])) {
     $meta_filter_name = $_REQUEST['meta_filter_name'];
 } else {
 	$meta_filter_name ="";
-}	
-if(!empty($_REQUEST['trigger_type']) && $_REQUEST['trigger_type'] != "") {
+}
+if(!empty($_REQUEST['trigger_type'])) {
     $trigger_type = $_REQUEST['trigger_type'];
 } else {
 	$trigger_type = "";
-}	
-
+}
 
 
 ////////////////////////////////////////////////////////
@@ -107,6 +94,4 @@ $form->out("embeded");
 $form->parse("main");
 $form->out("main");
 
-?>
-
-<?php insert_popup_footer(); ?>
+insert_popup_footer();

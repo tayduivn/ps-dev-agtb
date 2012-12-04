@@ -41,8 +41,7 @@ $mod_strings=return_module_language('','Users');
 if(isset($_REQUEST['recaptcha_challenge_field']) && isset($_REQUEST['recaptcha_response_field'])){
 	require_once('include/reCaptcha/recaptchalib.php');
 
-	$admin=new Administration();
-	$admin->retrieveSettings('captcha');
+	$admin = Administration::getSettings('captcha');
 	if($admin->settings['captcha_on']=='1' && !empty($admin->settings['captcha_private_key'])){
 		$privatekey = $admin->settings['captcha_private_key'];
 	}else
@@ -159,8 +158,7 @@ if ($redirect!='0')
 
 	$sugar_smarty = new Sugar_Smarty();
 
-	$admin = new Administration();
-	$admin->retrieveSettings('captcha');
+	$admin = Administration::getSettings('captcha');
 	$add_captcha = 0;
 	$captcha_privatekey = "";
 	$captcha_publickey="";
@@ -229,9 +227,6 @@ $pwd_regex=str_replace( "\\","\\\\",$pwd_settings['customregex']);
 $sugar_smarty->assign("REGEX",$pwd_regex);
 //END SUGARCRM flav=pro ONLY
 
-//BEGIN SUGARCRM flav=sales ONLY
-$sugar_smarty->assign('sugar_md',getWebPath('include/images/sugar_md_sales.png'));
-//END SUGARCRM flav=sales ONLY
 //BEGIN SUGARCRM flav=dev ONLY
 $sugar_smarty->assign('sugar_md',getWebPath('include/images/sugar_md_dev.png'));
 //END SUGARCRM flav=dev ONLY

@@ -24,8 +24,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 require_once('modules/Configurator/Configurator.php');
 
 
-$admin = new Administration();
-$admin->retrieveSettings();
+$admin = Administration::getSettings();
 
 // Handle posts
 if ( !empty($_REQUEST['process']) ) {

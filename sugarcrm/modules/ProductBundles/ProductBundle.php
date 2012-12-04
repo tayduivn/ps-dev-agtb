@@ -96,7 +96,7 @@ class ProductBundle extends SugarBean {
 
 	//deletes related products might want to change this in the future if we allow for sharing of products
 	function mark_deleted($id){
-		$pb = new ProductBundle();
+		$pb = BeanFactory::getBean('ProductBundles');
 		$pb->id = $id;
 		$products = $pb->get_products();
 		foreach($products as $product){
@@ -104,6 +104,18 @@ class ProductBundle extends SugarBean {
 		}
 		return parent::mark_deleted($id);
 	}
+
+    /**
+     * This is a depreciated method, please start using __construct() as this method will be removed in a future version
+     *
+     * @see __construct
+     * @deprecated
+     */
+    public function ProductBundle()
+    {
+        $this->__construct();
+    }
+
 	public function __construct() {
 		parent::__construct();
 		$this->team_id = 1; // make the item globally accessible
@@ -127,7 +139,7 @@ class ProductBundle extends SugarBean {
 					from  $this->rel_products
 					where bundle_id='$this->id' AND deleted=0 ORDER BY product_index";
 
-		return $this->build_related_list($query, new Product());
+		return $this->build_related_list($query, BeanFactory::getBean('Products'));
 	}
 
 
@@ -143,7 +155,7 @@ class ProductBundle extends SugarBean {
 					from  $this->rel_quotes
 					where bundle_id='$this->id' AND deleted=0";
 
-		return $this->build_related_list($query, new Quote());
+		return $this->build_related_list($query, BeanFactory::getBean('Quotes'));
 	}
 
 	function get_bundle_product_indexes() {
@@ -159,7 +171,7 @@ class ProductBundle extends SugarBean {
 	function get_notes()
 	{
 		$query = "SELECT note_id as id FROM $this->rel_notes WHERE bundle_id='$this->id' AND deleted=0 ORDER BY note_index";
-		return $this->build_related_list($query, new ProductBundleNote());
+		return $this->build_related_list($query, BeanFactory::getBean('ProductBundleNotes'));
 	}
 
 	function get_product_bundle_line_items() {
@@ -307,12 +319,12 @@ class ProductBundle extends SugarBean {
 		$this->db->query($query,true,"Error clearing quote to product bundle relationship: ");
 	}
 
-    function set_productbundle_quote_relationship($quote_id, $bundle_id, $bundle_index = '0')
+    function set_productbundle_quote_relationship($quote_id, $bundle_id)
 	{
 		if(empty($bundle_id)){
 			$bundle_id = $this->id;
 		}
-        $query = "insert into $this->rel_quotes (id,quote_id,bundle_id,bundle_index, date_modified) values (" . $this->db->quoted(create_guid()) . ", " . $this->db->quoted($quote_id) . ", " . $this->db->quoted($bundle_id) . ", " . $this->db->quoted($bundle_index) . ", " . $this->db->convert($this->db->quoted(TimeDate::getInstance()->nowDb()), 'datetime') . ")";
+        $query = "insert into $this->rel_quotes (id,quote_id,bundle_id, date_modified) values (" . $this->db->quoted(create_guid()) . ", " . $this->db->quoted($quote_id) . ", " . $this->db->quoted($bundle_id) . ", " . $this->db->convert($this->db->quoted(TimeDate::getInstance()->nowDb()), 'datetime') . ")";
 		$this->db->query($query,true,"Error setting quote to product bundle relationship: "."<BR>$query");
 		$GLOBALS['log']->debug("Setting quote to product bundle relationship for $quote_id and $bundle_id");
 	}
@@ -333,8 +345,7 @@ class ProductBundle extends SugarBean {
 	function fill_in_additional_detail_fields()
 	{
 		
-		$currency = new Currency();
-		$currency->retrieve($this->currency_id);
+		$currency = BeanFactory::getBean('Currencies', $this->currency_id);
 		if($currency->id != $this->currency_id || $currency->deleted == 1){
 				$this->tax = $this->tax_usdollar;
 				$this->shipping = $this->shipping_usdollar;
@@ -360,7 +371,7 @@ class ProductBundle extends SugarBean {
 		$symbol = $currency->getDefaultCurrencySymbol();
 		global $current_user;
 		
-		$currency = new Currency();
+		$currency = BeanFactory::getBean('Currencies');
 		if($current_user->getPreference('currency') ){
 			$currency->retrieve($current_user->getPreference('currency'));
 			$symbol = $currency->symbol;
@@ -402,8 +413,7 @@ function save($check_notify = FALSE)
 	{
 
 		
-		$currency = new Currency();
-			$currency->retrieve($this->currency_id);
+		$currency = BeanFactory::getBean('Currencies', $this->currency_id);
 			//US DOLLAR
 			if(!empty($this->tax)){
 				$this->tax_usdollar = $currency->convertToDollar($this->tax);

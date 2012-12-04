@@ -38,7 +38,7 @@ class ForecastsSeedData {
 
         global $timedate, $current_user, $app_list_strings;
 
-        $user = new User();
+        $user = BeanFactory::getBean('Users');
         $comm = new Common();
         $commit_order=$comm->get_forecast_commit_order();
 
@@ -51,12 +51,12 @@ class ForecastsSeedData {
                 if ($commit_type_array[1] == 'Direct') {
 
                     //commit a direct forecast for this user and timeperiod.
-                    $forecastopp = new ForecastOpportunities();
+                    $forecastopp = BeanFactory::getBean('ForecastOpportunities');
                     $forecastopp->current_timeperiod_id = $timeperiod_id;
                     $forecastopp->current_user_id = $commit_type_array[0];
                     $opp_summary_array= $forecastopp->get_opportunity_summary(false);
 
-                    $fcst_schedule = new ForecastSchedule();
+                    $fcst_schedule = BeanFactory::getBean('ForecastSchedule');
                     $fcst_schedule->timeperiod_id=$timeperiod_id;
                     $fcst_schedule->user_id=$commit_type_array[0];
                     $fcst_schedule->cascade_hierarchy=0;
@@ -74,7 +74,7 @@ class ForecastsSeedData {
                         continue;
                     }
 
-                    $forecast = new Forecast();
+                    $forecast = BeanFactory::getBean('Forecasts');
                     $forecast->timeperiod_id=$timeperiod_id;
                     $forecast->user_id =  $commit_type_array[0];
                     $forecast->opp_count= $opp_summary_array['OPPORTUNITYCOUNT'];
@@ -88,7 +88,7 @@ class ForecastsSeedData {
                     $forecast->save();
 
                     //Create a previous forecast to simulate change
-                    $forecast2 = new Forecast();
+                    $forecast2 = BeanFactory::getBean('Forecasts');
                     $forecast2->timeperiod_id=$timeperiod_id;
                     $forecast2->user_id =  $commit_type_array[0];
                     $forecast2->opp_count= $opp_summary_array['OPPORTUNITYCOUNT'];
@@ -100,7 +100,7 @@ class ForecastsSeedData {
                     $forecast2->date_committed = $timedate->asDb($timedate->getNow()->modify("+1 day"));
                     $forecast2->save();
 
-                    $quota = new Quota();
+                    $quota = BeanFactory::getBean('Quotas');
                     $quota->timeperiod_id=$timeperiod_id;
                     $quota->user_id = $commit_type_array[0];
                     $quota->quota_type='Direct';
@@ -123,7 +123,7 @@ class ForecastsSeedData {
                     $quota->save();
 
                     if(!$user->isManager($commit_type_array[0])) {
-                        $quotaRollup = new Quota();
+                        $quotaRollup = BeanFactory::getBean('Quotas');
                         $quotaRollup->timeperiod_id=$timeperiod_id;
                         $quotaRollup->user_id = $commit_type_array[0];
                         $quotaRollup->quota_type='Rollup';
@@ -149,12 +149,12 @@ class ForecastsSeedData {
                     $where .= " AND (users.id = '$commit_type_array[0]'";
                     $where .= " or users.reports_to_id = '$commit_type_array[0]')";
                     //Get the forecasts created by the direct reports.
-                    $DirReportsFocus = new ForecastDirectReports();
+                    $DirReportsFocus = BeanFactory::getBean('ForecastDirectReports');
                     $DirReportsFocus->current_user_id=$commit_type_array[0];
                     $DirReportsFocus->current_timeperiod_id=$timeperiod_id;
                     $DirReportsFocus->compute_rollup_totals('',$where,false);
 
-                    $forecast = new Forecast();
+                    $forecast = BeanFactory::getBean('Forecasts');
                     $forecast->timeperiod_id=$timeperiod_id;
                     $forecast->user_id =  $commit_type_array[0];
                     $forecast->opp_count= $DirReportsFocus->total_opp_count;
@@ -168,7 +168,7 @@ class ForecastsSeedData {
                     $forecast->save();
 
 
-                    $quota = new Quota();
+                    $quota = BeanFactory::getBean('Quotas');
                     $quota->timeperiod_id=$timeperiod_id;
                     $quota->user_id = $commit_type_array[0];
                     $quota->quota_type='Rollup';

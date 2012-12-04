@@ -33,13 +33,12 @@ $field_value = $_REQUEST['save_value'];
 $field = $_REQUEST['save_field_name'];
 $type = $_REQUEST['type'];
 
-$bean = new $beanList[$module];
-$bean->retrieve($record);
+$bean = BeanFactory::getBean($module, $record);
 if ($type != 'currency')
     $bean->$field = $field_value;
 else {
     $bean->$field = unformat_number($field_value);
-} 
+}
 
 $bean->save(false);
 
@@ -49,12 +48,12 @@ $ret_array['field'] = $field;
 if ($type != 'currency')
     $ret_array['value'] = $bean->$field;
 else {
-    global $locale;                  
+    global $locale;
     $params = array();
     $params['currency_id'] = $_REQUEST['currency_id'];
     $params['convert'] = false;
     $params['currency_symbol'] = $_REQUEST['currency_symbol'];
-                
+
     $ret_array['currency_formatted_value']  = currency_format_number($bean->$field, $params);
     $ret_array['formatted_value'] = format_number($bean->$field);
 }

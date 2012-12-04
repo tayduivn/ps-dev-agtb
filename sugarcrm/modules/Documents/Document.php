@@ -80,6 +80,17 @@ class Document extends SugarBean {
 		'contract_id'=>'contracts',
 	 );
 
+    /**
+     * This is a depreciated method, please start using __construct() as this method will be removed in a future version
+     *
+     * @see __construct
+     * @deprecated
+     */
+    public function Document()
+    {
+        $this->__construct();
+    }
+
 
 	public function __construct() {
 		parent::__construct();
@@ -106,7 +117,7 @@ class Document extends SugarBean {
                 $isDuplicate = false;
             }
 
-            $Revision = new DocumentRevision();
+            $Revision = BeanFactory::getBean('DocumentRevisions');
             //save revision.
             $Revision->in_workflow = true;
             $Revision->not_use_rel_in_req = true;
@@ -145,8 +156,7 @@ class Document extends SugarBean {
                 $createRevision = true;
             } else if ( $isDuplicate && ( empty($this->doc_type) || $this->doc_type == 'Sugar' ) ) {
                 // Looks like we need to duplicate a file, this is tricky
-                $oldDocument = new Document();
-                $oldDocument->retrieve($_REQUEST['duplicateId']);
+                $oldDocument = BeanFactory::getBean('Documents', $_REQUEST['duplicateId']);
                 $old_name = "upload://{$oldDocument->document_revision_id}";
                 $new_name = "upload://{$Revision->id}";
                 $GLOBALS['log']->debug("Attempting to copy from $old_name to $new_name");

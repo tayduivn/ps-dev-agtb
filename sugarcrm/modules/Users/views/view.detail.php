@@ -62,13 +62,7 @@ class UsersViewDetail extends ViewDetail {
         $this->ss->assign("ERROR_MESSAGE", $msgGood ? translate('LBL_PASSWORD_SENT','Users') : translate('LBL_CANNOT_SEND_PASSWORD','Users'));
         $buttons = array();
         if ((is_admin($current_user) || $_REQUEST['record'] == $current_user->id
-             //BEGIN SUGARCRM flav=sales ONLY
-             || $current_user->user_type == 'UserAdministrator'
-             //END SUGARCRM flav=sales ONLY
                 )
-            //BEGIN SUGARCRM flav=sales ONLY
-            && !is_admin($this->bean)
-            //END SUGARCRM flav=sales ONLY
             && !empty($sugar_config['default_user_name'])
             && $sugar_config['default_user_name'] == $this->bean->user_name
             && isset($sugar_config['lock_default_user_name'])
@@ -77,15 +71,9 @@ class UsersViewDetail extends ViewDetail {
 
         }
         elseif (is_admin($current_user)|| ($GLOBALS['current_user']->isAdminForModule('Users')&& !$this->bean->is_admin)
-                //BEGIN SUGARCRM flav=sales ONLY
-                || ($current_user->user_type == 'UserAdministrator' && !$this->bean->is_admin)
-                //END SUGARCRM flav=sales ONLY
                 || $_REQUEST['record'] == $current_user->id) {
             $buttons[] = "<input title='".$app_strings['LBL_EDIT_BUTTON_TITLE']."' accessKey='".$app_strings['LBL_EDIT_BUTTON_KEY']."' name='Edit' id='edit_button' value='".$app_strings['LBL_EDIT_BUTTON_LABEL']."' onclick=\"this.form.return_module.value='Users'; this.form.return_action.value='DetailView'; this.form.return_id.value='".$this->bean->id."'; this.form.action.value='EditView'\" type='submit' value='" . $app_strings['LBL_EDIT_BUTTON_LABEL'] .  "'>";
             if ((is_admin($current_user)|| $GLOBALS['current_user']->isAdminForModule('Users')
-                 //BEGIN SUGARCRM flav=sales ONLY
-                 || ($current_user->user_type == 'UserAdministrator' && !is_admin($this->bean))
-                 //END SUGARCRM flav=sales ONLY
                     )) {
                 if (!$current_user->is_group){
                     $buttons[] = "<input id='duplicate_button' title='".$app_strings['LBL_DUPLICATE_BUTTON_TITLE']."' accessKey='".$app_strings['LBL_DUPLICATE_BUTTON_KEY']."' class='button' onclick=\"this.form.return_module.value='Users'; this.form.return_action.value='DetailView'; this.form.isDuplicate.value=true; this.form.action.value='EditView'\" type='submit' name='Duplicate' value='".$app_strings['LBL_DUPLICATE_BUTTON_LABEL']."'>";
@@ -106,12 +94,7 @@ class UsersViewDetail extends ViewDetail {
 
         $this->ss->assign('EDITBUTTONS',$buttons);
 
-        //BEGIN SUGARCRM flav!=sales ONLY
         $show_roles = (!($this->bean->is_group=='1' || $this->bean->portal_only=='1'));
-        //END SUGARCRM flav!=sales ONLY
-        //BEGIN SUGARCRM flav=sales ONLY
-        $show_roles = false;
-        //END SUGARCRM flav=sales ONLY
         $this->ss->assign('SHOW_ROLES', $show_roles);
         //Mark whether or not the user is a group or portal user
         $this->ss->assign('IS_GROUP_OR_PORTAL', ($this->bean->is_group=='1' || $this->bean->portal_only=='1') ? true : false);
@@ -142,11 +125,9 @@ class UsersViewDetail extends ViewDetail {
             $userType = 'Portal';
         }
         //END SUGARCRM flav=ent ONLY
-        //BEGIN SUGARCRM flav!=sales ONLY
         if($this->bean->is_group == 1){
             $userType = 'Group';
         }
-        //END SUGARCRM flav!=sales ONLY
 
         if ( $userType != 'Regular' ) {
             $oldType = $this->type;
@@ -195,9 +176,6 @@ class UsersViewDetail extends ViewDetail {
         $theTitle = '';
 
         if($GLOBALS['current_user']->isAdminForModule('Users')
-		//BEGIN SUGARCRM flav=sales ONLY
-		|| $GLOBALS['current_user']->user_type == 'UserAdministrator'
-		//END SUGARCRM flav=sales ONLY
         ) {
         $createImageURL = SugarThemeRegistry::current()->getImageURL('create-record.gif');
         $url = ajaxLink("index.php?module=$module&action=EditView&return_module=$module&return_action=DetailView");

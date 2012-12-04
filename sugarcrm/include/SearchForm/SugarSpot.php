@@ -297,16 +297,11 @@ class SugarSpot
                 continue;
             }
 
-            $class = $GLOBALS['beanList'][$moduleName];
-            $return_fields = array();
-            $seed = new $class();
-            if (!$seed->ACLAccess('ListView')) continue;
+            $seed = BeanFactory::getBean($moduleName);
+            if(!$seed->ACLAccess('ListView')) continue;
 
-            if ($class == 'aCase') {
-                $class = 'Case';
-            }
-
-            foreach ($searchFields[$moduleName] as $k => $v) {
+            foreach ($searchFields[$moduleName] as $k => $v) 
+            {
                 /*
                  * Restrict Bool searches from free-form text searches.
                  * Reasoning: cases.status is unified_search = true
@@ -326,15 +321,21 @@ class SugarSpot
                     continue;
                 }
 
-                if (!empty($GLOBALS['dictionary'][$class]['unified_search'])) {
-
-                    if (empty($GLOBALS['dictionary'][$class]['fields'][$k]['unified_search'])) {
-
-                        if (isset($searchFields[$moduleName][$k]['db_field'])) {
-                            foreach ($searchFields[$moduleName][$k]['db_field'] as $field) {
-                                if (!empty($GLOBALS['dictionary'][$class]['fields'][$field]['unified_search'])) {
-                                    if (isset($GLOBALS['dictionary'][$class]['fields'][$field]['type'])) {
-                                        if (!$this->filterSearchType($GLOBALS['dictionary'][$class]['fields'][$field]['type'], $query)) {
+                if(!empty($GLOBALS['dictionary'][$seed->object_name]['unified_search']))
+                {
+                    if(empty($GLOBALS['dictionary'][$seed->object_name]['fields'][$k]['unified_search']))
+                    {
+                       
+                        if(isset($searchFields[$moduleName][$k]['db_field']))
+                        {
+                            foreach($searchFields[$moduleName][$k]['db_field'] as $field)
+                            {
+                                if(!empty($GLOBALS['dictionary'][$seed->object_name]['fields'][$field]['unified_search']))
+                                {
+                                    if(isset($GLOBALS['dictionary'][$seed->object_name]['fields'][$field]['type']))
+                                    {
+                                        if(!$this->filterSearchType($GLOBALS['dictionary'][$seed->object_name]['fields'][$field]['type'], $query))
+                                        {
                                             unset($searchFields[$moduleName][$k]);
                                             continue;
                                         }
@@ -345,22 +346,29 @@ class SugarSpot
                             } //foreach
                         }
                         # Bug 42961 Spot search for custom fields
-                        if (!$keep && (isset($v['force_unifiedsearch']) == false || $v['force_unifiedsearch'] != true)) {
+                        if (!$keep && (isset($v['force_unifiedsearch']) == false || $v['force_unifiedsearch'] != true)) 
+                        {
                             if (strpos($k, 'email') === false || !$searchEmail) {
                                 unset($searchFields[$moduleName][$k]);
                             }
                         }
-                    } else {
-                        if ($GLOBALS['dictionary'][$class]['fields'][$k]['type'] == 'int' && !is_numeric($query)) {
+                    } 
+                    else 
+                    {
+                        if ($GLOBALS['dictionary'][$seed->object_name]['fields'][$k]['type'] == 'int' && !is_numeric($query)) {
                             unset($searchFields[$moduleName][$k]);
                         }
                     }
-                } else if (empty($GLOBALS['dictionary'][$class]['fields'][$k])) {
+                } 
+                else if (empty($GLOBALS['dictionary'][$seed->object_name]['fields'][$k])) 
+                {
                     //If module did not have unified_search defined, then check the exception for an email search before we unset
-                    if (strpos($k, 'email') === false || !$searchEmail) {
+                    if (strpos($k, 'email') === false || !$searchEmail) 
+                    {
                         unset($searchFields[$moduleName][$k]);
                     }
-                } else if (!$this->filterSearchType($GLOBALS['dictionary'][$class]['fields'][$k]['type'], $query)) {
+                } else if (!$this->filterSearchType($GLOBALS['dictionary'][$seed->object_name]['fields'][$k]['type'], $query)) 
+                {
                     unset($searchFields[$moduleName][$k]);
                 }
             } //foreach

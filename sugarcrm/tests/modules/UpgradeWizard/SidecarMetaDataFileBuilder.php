@@ -1,5 +1,5 @@
 <?php
-//FILE SUGARCRM flav=pro || flav=ent || flav=sales ONLY
+//FILE SUGARCRM flav=pro || flav=ent ONLY
 /**
  * This class moves test metadata files into legacy locations to test the upgrade
  * routine. Will back up any existing legacy and sidecar files, and restore them,
@@ -34,7 +34,7 @@ class SidecarMetaDataFileBuilder {
      * @var array
      */
     private $filesToMake = array(
-        //BEGIN SUGARCRM flav=pro || flav=sales ONLY
+        //BEGIN SUGARCRM flav=pro ONLY
         array(
             'module'      => 'Accounts', 'view' => 'edit', 'type' => 'mobile', 
             'testpath'    => 'tests/modules/UpgradeWizard/metadata/Accountswirelessedit.php',
@@ -59,7 +59,7 @@ class SidecarMetaDataFileBuilder {
             'legacypath'  => 'custom/working/modules/Bugs/metadata/wireless.searchdefs.php', 
             'sidecarpath' => 'custom/working/modules/Bugs/clients/mobile/views/search/search.php',
         ),
-        //END SUGARCRM flav=pro || flav=sales ONLY
+        //END SUGARCRM flav=pro ONLY
         //BEGIN SUGARCRM flav=ent ONLY
         array(
             'module'      => 'Cases', 'view' => 'edit', 'type' => 'portal', 

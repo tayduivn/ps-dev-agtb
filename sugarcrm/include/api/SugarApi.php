@@ -112,9 +112,9 @@ abstract class SugarApi {
      */
     protected function loadBean(ServiceBase $api, $args, $aclToCheck = 'read') {
 
-        $bean = BeanFactory::getBean($args['module'],$args['record']);
+        $bean = BeanFactory::retrieveBean($args['module'],$args['record']);
 
-        if ( $bean == FALSE ) {
+        if (  empty($bean) ) {
             // Couldn't load the bean
             throw new SugarApiExceptionNotFound('Could not find record: '.$args['record'].' in module: '.$args['module']);
         }
@@ -178,18 +178,13 @@ abstract class SugarApi {
 
     protected function toggleFavorites($module, $record, $favorite)
     {
-        if($favorite == "false" || $favorite == "0") {
-            $favorite = false;
-        }
-
+        
         $favorite = (bool) $favorite;
 
         $fav_id = SugarFavorites::generateGUID($module,$record);
 
-        $fav = new SugarFavorites();
-
         // get it even if its deleted
-        $fav->retrieve($fav_id, true, false);
+        $fav = BeanFactory::getBean('SugarFavorites', $fav_id, array("deleted" => true));
 
         // already exists
         if(!empty($fav->id)) {
@@ -199,7 +194,7 @@ abstract class SugarApi {
         }
 
         if($favorite) {
-            $fav = new SugarFavorites();
+            $fav = BeanFactory::getBean('SugarFavorites');
             $fav->id = $fav_id;
             $fav->new_with_id = true;
             $fav->module = $module;

@@ -264,12 +264,7 @@ function get_sugar_config_defaults() {
 	'admin_export_only' => false,
 	'export_delimiter' => ',',
 	'cache_dir' => 'cache/',
-	//BEGIN SUGARCRM flav!=sales ONLY
 	'calculate_response_time' => true,
-	//END SUGARCRM flav!=sales ONLY
-	//BEGIN SUGARCRM flav=sales ONLY
-	'calculate_response_time' => false,
-	//END SUGARCRM flav=sales ONLY
 	'create_default_user' => false,
  	'chartEngine' => 'Jit',
 	'date_formats' => array (
@@ -1529,10 +1524,8 @@ function displayWorkflowForCurrentUser()
     $workflow_mod_list['Calls'] = "Calls";
     $workflow_mod_list['Meetings'] = "Meetings";
     $workflow_mod_list['Notes'] = "Notes";
-    //BEGIN SUGARCRM flav!=sales ONLY
     $workflow_mod_list['ProjectTask'] = "Project Tasks";
 	$workflow_mod_list['Leads'] = "Leads";
-	//END SUGARCRM flav!=sales ONLY
 	$workflow_mod_list['Opportunities'] = "Opportunities";
 	// End of list
 
@@ -1587,13 +1580,11 @@ function get_admin_modules_for_user($user) {
     	return $workflow_admin_modules;
     }
     $actions = ACLAction::getUserActions($user->id);
-    //BEGIN SUGARCRM flav!=sales ONLY
     //check for ForecastSchedule because it doesn't exist in $workflow_mod_list
     if (isset($actions['ForecastSchedule']['module']['admin']['aclaccess']) && ($actions['ForecastSchedule']['module']['admin']['aclaccess']==ACL_ALLOW_DEV ||
         $actions['ForecastSchedule']['module']['admin']['aclaccess']==ACL_ALLOW_ADMIN_DEV)) {
         $workflow_admin_modules['Forecasts'] = 'Forecasts';
     }
-    //END SUGARCRM flav!=sales ONLY
     foreach ($workflow_mod_list as $key=>$val) {
         if(!in_array($val, $workflow_admin_modules) && ($val!='iFrames' && $val!='Feeds' && $val!='Home' && $val!='Dashboard'
             && $val!='Calendar' && $val!='Activities' && $val!='Reports') &&
@@ -2468,7 +2459,7 @@ function clone_history(&$db, $from_id,$to_id, $to_type)
 		while($row = $db->fetchByAssoc($results))
 		{
 			//retrieve existing record.
-			$bean= new $bean_class();
+			$bean = BeanFactory::newBeanByName($bean_class);
 			$bean->retrieve($row['id']);
 			//process for new instance.
 			if ($bProcessingNotes)
@@ -2644,9 +2635,7 @@ function number_empty($value)
 
 function get_bean_select_array($add_blank=true, $bean_name, $display_columns, $where='', $order_by='', $blank_is_none=false)
 {
-	global $beanFiles;
-	require_once($beanFiles[$bean_name]);
-	$focus = new $bean_name();
+	$focus = BeanFactory::newBeanByName($bean_name);
 	$user_array = array();
 
     $key = ($bean_name == 'EmailTemplate') ?  $bean_name : $bean_name . $display_columns. $where . $order_by;
@@ -2727,13 +2716,11 @@ function parse_list_modules(&$listArray)
 		}
 		//END SUGARCRM flav=pro ONLY
 
-		//BEGIN SUGARCRM flav!=sales ONLY
 		// special case for projects
 		if(array_key_exists('Project', $modListHeader))
 		{
 			$returnArray['ProjectTask'] = $listArray['ProjectTask'];
 		}
-		//END SUGARCRM flav!=sales ONLY
 	}
 	$returnArray = SugarACL::filterModuleList($listArray, 'access', true);
 	asort($returnArray);
@@ -3549,7 +3536,6 @@ function convert_module_to_singular($module_array){
 	foreach($module_array as $key => $value){
 		if(!empty($beanList[$value])) $module_array[$key] = $beanList[$value];
 
-        //BEGIN SUGARCRM flav!=sales ONLY
 		if($value=="Cases") {
 			$module_array[$key] = "Case";
 		}
@@ -3557,7 +3543,6 @@ function convert_module_to_singular($module_array){
 			$module_array['ProjectTask'] = "Project Task";
 			unset($module_array[$key]);
 		}
-		//END SUGARCRM flav!=sales ONLY
 	}
 
 	return $module_array;
@@ -3637,7 +3622,7 @@ function search_filter_rel_info(& $focus, $tar_rel_module, $relationship_name){
 
 	foreach($focus->relationship_fields as $rel_key => $rel_value){
 		if($rel_value == $relationship_name){
-			$temp_bean = get_module_info($tar_rel_module);
+			$temp_bean = BeanFactory::getBean($tar_rel_module);
 	//		echo $focus->$rel_key;
 			$temp_bean->retrieve($focus->$rel_key);
 			if($temp_bean->id!=""){
@@ -3655,7 +3640,7 @@ function search_filter_rel_info(& $focus, $tar_rel_module, $relationship_name){
 		&& !empty($focus->field_defs[$field_def['id_name']]['relationship'])
 		&& $focus->field_defs[$field_def['id_name']]['relationship'] == $relationship_name)
 		{
-			$temp_bean = get_module_info($tar_rel_module);
+			$temp_bean = BeanFactory::getBean($tar_rel_module);
 		//	echo $focus->$field_def['id_name'];
 			$temp_bean->retrieve($focus->$field_def['id_name']);
 			if($temp_bean->id!=""){
@@ -3665,7 +3650,7 @@ function search_filter_rel_info(& $focus, $tar_rel_module, $relationship_name){
 			}
 		//Check if the relationship_name matches a "link" in a relate field
 		} else if(!empty($rel_value['link']) && !empty($rel_value['id_name']) && $rel_value['link'] == $relationship_name){
-			$temp_bean = get_module_info($tar_rel_module);
+			$temp_bean = BeanFactory::getBean($tar_rel_module);
 		//	echo $focus->$rel_value['id_name'];
 			$temp_bean->retrieve($focus->$rel_value['id_name']);
 			if($temp_bean->id!=""){
@@ -3678,7 +3663,7 @@ function search_filter_rel_info(& $focus, $tar_rel_module, $relationship_name){
 
 	// special case for unlisted parent-type relationships
 	if( !empty($focus->parent_type) && $focus->parent_type == $tar_rel_module && !empty($focus->parent_id)) {
-		$temp_bean = get_module_info($tar_rel_module);
+		$temp_bean = BeanFactory::getBean($tar_rel_module);
 		$temp_bean->retrieve($focus->parent_id);
 		if($temp_bean->id!=""){
 			$rel_list[] = $temp_bean;
@@ -3691,56 +3676,26 @@ function search_filter_rel_info(& $focus, $tar_rel_module, $relationship_name){
 	//end function search_filter_rel_info
 }
 
-function get_module_info($module_name){
-	global $beanList;
-	global $dictionary;
-
-	//Get dictionary and focus data for module
-	$vardef_name = $beanList[$module_name];
-
-	//BEGIN SUGARCRM flav!=sales ONLY
-	if($vardef_name=="aCase"){
-		$class_name = "Case";
-	} else {
-	//END SUGARCRM flav!=sales ONLY
-		$class_name = $vardef_name;
-	//BEGIN SUGARCRM flav!=sales ONLY
-	}
-	//END SUGARCRM flav!=sales ONLY
-
-	if(!SugarAutoLoader::fileExists('modules/'. $module_name . '/'.$class_name.'.php')){
-		return;
-	}
-
-	include_once('modules/'. $module_name . '/'.$class_name.'.php');
-
-	$module_bean = new $vardef_name();
-	return $module_bean;
-	//end function get_module_table
+/**
+ * Get new Bean by module name
+ * @deprecated use BeanFactory::getBean
+ * @param string $module_name
+ * @return SugarBean
+ */
+function get_module_info($module_name)
+{
+	return BeanFactory::getBean($module_name);
 }
 
 /**
  * In order to have one place to obtain the proper object name. aCase for example causes issues throughout the application.
- *
+ * @deprecated use BeanFactory::getObjectName
  * @param string $moduleName
  */
-function get_valid_bean_name($module_name){
-	global $beanList;
-
-	$vardef_name = $beanList[$module_name];
-	//BEGIN SUGARCRM flav!=sales ONLY
-	if($vardef_name=="aCase"){
-		$bean_name = "Case";
-	} else {
-	//END SUGARCRM flav!=sales ONLY
-		$bean_name = $vardef_name;
-	//BEGIN SUGARCRM flav!=sales ONLY
-	}
-	//END SUGARCRM flav!=sales ONLY
-	return $bean_name;
+function get_valid_bean_name($module_name)
+{
+    return BeanFactory::getObjectName($module_name);
 }
-
-
 
 function  checkAuthUserStatus(){
 
@@ -3844,7 +3799,7 @@ function string_format($format, $args){
     }
 
     $result = str_replace(array_keys($replaceArray),array_values($replaceArray),$format);
- 
+
 	return $result;
 }
 
@@ -4315,7 +4270,7 @@ function array_depth($array, $depth_count=-1, $depth_array=array()){
 function createGroupUser($name) {
 
 
-	$group = new User();
+	$group = BeanFactory::getBean('Users');
 	$group->user_name	= $name;
 	$group->last_name	= $name;
 	$group->is_group	= 1;
@@ -4523,18 +4478,16 @@ function getAbsolutePath(
 /**
  * Returns the bean object of the given module
  *
- * @deprecated use SugarModule::loadBean() instead
+ * @deprecated use BeanFactory::getBean
  * @param  string $module
  * @return object
  */
-function loadBean(
-    $module
-    )
+function loadBean($module)
 {
-    return SugarModule::get($module)->loadBean();
+    return BeanFactory::getBean($module);
 }
 
-//BEGIN SUGARCRM flav=pro || flav=sales ONLY
+//BEGIN SUGARCRM flav=pro ONLY
 /**
  * Checks for hit from a mobile browser
  *
@@ -4602,7 +4555,7 @@ function checkForMobile(){
 
     return $isMobile;
 }
-//END SUGARCRM flav=pro || flav=sales ONLY
+//END SUGARCRM flav=pro ONLY
 
 /**
  * Returns true if the application is being accessed on a touch screen interface ( like an iPad )
@@ -4670,7 +4623,7 @@ function getTeamSetNameJoin($table_name){
 
 function inDeveloperMode()
 {
-    return isset($GLOBALS['sugar_config']['developerMode']) && $GLOBALS['sugar_config']['developerMode'];
+    return !empty($GLOBALS['sugar_config']['developerMode']);
 }
 
 /**
@@ -4756,7 +4709,7 @@ function create_export_query_relate_link_patch($module, $searchFields, $where){
 		$ret_array['where'] = $where;
 		return $ret_array;
 	}
-	$seed = loadBean($module);
+	$seed = BeanFactory::getBean($module);
     foreach($seed->field_defs as $name=>$field)
 	{
 

@@ -37,7 +37,7 @@ global $mod_strings;
 global $current_user;
 global $sugar_version, $sugar_config;
 
-$focus = new KBDocument();
+$focus = BeanFactory::getBean('KBDocuments');
 $load_signed=false;
 
 if ((isset($_REQUEST['load_signed_id']) and !empty($_REQUEST['load_signed_id']))) {
@@ -67,16 +67,14 @@ $xtpl=new XTemplate ('modules/KBDocuments/EditView.html');
 $from_case = '';
 
 if(isset($_REQUEST['case_id']) && !empty($_REQUEST['case_id'])){
-	$from_case = new aCase();
-	$from_case->retrieve($_REQUEST['case_id']);
+	$from_case = BeanFactory::getBean('Cases', $_REQUEST['case_id']);
 	$xtpl->assign('PARENT_ID',$_REQUEST['case_id']);
 	$xtpl->assign('PARENT_TYPE','Cases');
 }
 
 if(isset($_REQUEST['return_module']) && $_REQUEST['return_module'] == 'Cases'){
   if(isset($_REQUEST['record']) && !empty($_REQUEST['record'])){
-	$from_case = new aCase();
-	$from_case->retrieve($_REQUEST['record']);
+	$from_case = BeanFactory::getBean('Cases', $_REQUEST['record']);
 	$xtpl->assign('PARENT_ID',$_REQUEST['record']);
 	$xtpl->assign('PARENT_TYPE','Cases');
   }
@@ -84,8 +82,7 @@ if(isset($_REQUEST['return_module']) && $_REQUEST['return_module'] == 'Cases'){
   $_REQUEST['return_module']='';
 }
 if(isset($_REQUEST['email_id']) && !empty($_REQUEST['email_id'])){
-	$from_email = new Email();
-	$from_email->retrieve($_REQUEST['email_id']);
+	$from_email = BeanFactory::getBean('Emails', $_REQUEST['email_id']);
 	$xtpl->assign('PARENT_ID',$_REQUEST['email_id']);
 	$xtpl->assign('PARENT_TYPE','Emails');
 }
@@ -181,7 +178,7 @@ $quicksearch_js .= '<script type="text/javascript" language="javascript">
 */
 $javascript = get_set_focus_js().$quicksearch_js;
 //END SUGARCRM flav=pro ONLY
-$tag = new KBTag();
+$tag = BeanFactory::getBean('KBTags');
 $xtpl->assign("TAG_NAME", $tag->tag_name);
  //tree header.
         $tagstree=new Tree('tagstree');
@@ -320,8 +317,7 @@ $xtpl->assign("DEFAULT_TEAM_ID", $current_user->default_team);
 
 if (!empty($focus->kbdoc_approver_id)) {
 
-	$user = new User();
-	$user->retrieve($focus->kbdoc_approver_id,true);
+	$user = BeanFactory::getBean('Users', $focus->kbdoc_approver_id);
 	$xtpl->assign("KBDOC_APPROVER_NAME", $user->name);
 	$xtpl->assign("KBDOC_APPROVER_ID", $focus->kbdoc_approver_id);
 }
@@ -330,8 +326,7 @@ if (empty($focus->assigned_user_id) && empty($focus->id))  $focus->assigned_user
 if (empty($focus->assigned_name) && empty($focus->id))  $focus->assigned_user_name = $current_user->user_name;
 
 if (!empty($focus->assigned_user_id)) {
-        $user = new User();
-        $user->retrieve($focus->assigned_user_id, true);
+        $user = BeanFactory::getBean('Users', $focus->assigned_user_id);
         $xtpl->assign("KBARTICLE_AUTHOR_NAME", $user->name);
         $xtpl->assign("KBARTICLE_AUTHOR_ID",$focus->assigned_user_id);
     }
@@ -512,7 +507,7 @@ $xtpl->parse("main");
 $xtpl->out("main");
 
 
-$savedSearch = new SavedSearch();
+$savedSearch = BeanFactory::getBean('SavedSearch');
 $json = getJSONobj();
 $savedSearchSelects = $json->encode(array($GLOBALS['app_strings']['LBL_SAVED_SEARCH_SHORTCUT'] . '<br>' . $savedSearch->getSelect('KBDocuments')));
 $str = "<script>

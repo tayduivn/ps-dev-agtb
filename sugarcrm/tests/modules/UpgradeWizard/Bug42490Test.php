@@ -55,10 +55,8 @@ class Bug42490Test extends Sugar_PHPUnit_Framework_TestCase
             'Meetings',
             'Tasks',
             'Notes',
-            //BEGIN SUGARCRM flav!=sales ONLY
             'Prospects',
             'ProspectLists',
-            //END SUGARCRM flav!=sales ONLY
             //END SUGARCRM flav!=dce ONLY
         );
 

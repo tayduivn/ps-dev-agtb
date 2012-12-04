@@ -63,9 +63,7 @@ $viewdefs['Opportunities']['EditView'] = array(
     ),
     array (      
 		'probability',
-     	//BEGIN SUGARCRM flav!=sales ONLY
       	'campaign_name',
-    	//END SUGARCRM flav!=sales ONLY
     ),
     array (
       	'next_step',

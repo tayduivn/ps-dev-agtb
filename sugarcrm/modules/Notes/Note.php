@@ -76,6 +76,17 @@ class Note extends SugarBean {
 	var $additional_column_fields = Array('contact_name', 'contact_phone', 'contact_email', 'parent_name','first_name','last_name');
 
 
+    /**
+     * This is a depreciated method, please start using __construct() as this method will be removed in a future version
+     *
+     * @see __construct
+     * @deprecated
+     */
+    public function Note()
+    {
+        $this->__construct();
+    }
+
 
 	public function __construct() {
 		parent::__construct();
@@ -222,13 +233,12 @@ class Note extends SugarBean {
 		$this->getRelatedFields('Contacts', $this->contact_id, array('name'=>'contact_name', 'phone_work'=>'contact_phone') );
 		if(!empty($this->contact_name)){
 
-			$emailAddress = new SugarEmailAddress();
+			$emailAddress = BeanFactory::getBean('EmailAddresses');
 			$this->contact_email = $emailAddress->getPrimaryAddress(false, $this->contact_id, 'Contacts');
 		}
 
 		if(isset($this->contact_id) && $this->contact_id != '') {
-		    $contact = new Contact();
-		    $contact->retrieve($this->contact_id);
+		    $contact = BeanFactory::getBean('Contacts', $this->contact_id);
 		    if(isset($contact->id)) {
 		        $this->contact_name = $contact->full_name;
 		    }
@@ -258,8 +268,7 @@ class Note extends SugarBean {
             //END SUGARCRM flav=pro ONLY
         }
         if(isset($this->contact_id) && $this->contact_id != '') {
-			$contact = new Contact();
-			$contact->retrieve($this->contact_id);
+			$contact = BeanFactory::getBean('Contacts', $this->contact_id);
 			if(isset($contact->id)) {
 			    $this->contact_name = $contact->full_name;
 			}

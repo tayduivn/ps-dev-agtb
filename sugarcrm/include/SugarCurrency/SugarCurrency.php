@@ -25,7 +25,6 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *
  * A class for manipulating currencies and currency amounts
  *
- * @author Monte Ohrt <mohrt@sugarcrm.com>
  */
 class SugarCurrency
 {
@@ -53,17 +52,21 @@ class SugarCurrency
      * @param  float  $amount
      * @param  string $fromId source currency_id
      * @param  string $toId target currency_id
+     * @param  int    $precision Optional decimal precision
      * @return float   converted amount
      */
-    public static function convertAmount( $amount, $fromId, $toId ) {
+    public static function convertAmount( $amount, $fromId, $toId, $precision = 6 ) {
         if($fromId == $toId) {
             return $amount;
         }
         $currency1 = self::_getCurrency($fromId);
         $currency2 = self::_getCurrency($toId);
-        // NOTE: we always calculate in maximum precision, which the database defines to 6
-        // formatting to two decimals is done with formatting functions
-        return round($amount / $currency1->conversion_rate * $currency2->conversion_rate, 6);
+        // if either conversion_rate is 0 or not defined, we just return the amount
+        if(empty($currency1->conversion_rate) || empty($currency2->conversion_rate)) {
+            return $amount;
+        }
+        // NOTE: database defines precision to 6 by default
+        return self::convertWithRate($amount, $currency1->conversion_rate, $currency2->conversion_rate, $precision);
     }
 
     /**
@@ -72,10 +75,11 @@ class SugarCurrency
      * @access public
      * @param  float  $amount
      * @param  string $fromId source currency_id
+     * @param  int    $precision Optional decimal precision
      * @return float   converted amount
      */
-    public static function convertAmountToBase( $amount, $fromId ) {
-        return self::convertAmount($amount, $fromId, '-99');
+    public static function convertAmountToBase( $amount, $fromId, $precision = 6 ) {
+        return self::convertAmount($amount, $fromId, '-99', $precision);
     }
 
     /**
@@ -84,10 +88,11 @@ class SugarCurrency
      * @access public
      * @param  float  $amount
      * @param  string $toId source currency_id
+     * @param  int    $precision Optional decimal precision
      * @return float   converted amount
      */
-    public static function convertAmountFromBase( $amount, $toId ) {
-        return self::convertAmount($amount, '-99', $toId);
+    public static function convertAmountFromBase( $amount, $toId, $precision = 6 ) {
+        return self::convertAmount($amount, '-99', $toId, $precision);
     }
 
     /**
@@ -95,11 +100,17 @@ class SugarCurrency
      *
      * @access public
      * @param  float  $amount
-     * @param  float  $rate rate to convert with
+     * @param  float  $fromRate rate to convert from
+     * @param  float  $toRate rate to convert to (default base rate)
+     * @param  int    $precision Optional decimal precision
      * @return float   converted amount
      */
-    public static function convertWithRate( $amount, $rate ) {
-        return round($amount / $rate, 6);
+    public static function convertWithRate( $amount, $fromRate, $toRate=1.0, $precision = 6 ) {
+        // if rate is 0 or null, just return the amount
+        if(empty($fromRate) || empty($toRate)) {
+            return $amount;
+        }
+        return round($amount / $fromRate * $toRate, $precision);
     }
 
     /**
@@ -188,6 +199,20 @@ class SugarCurrency
     public static function getCurrencyByISO( $ISO ) {
         $currency = self::_getCurrency('-99');
         $currencyId = $currency->retrieveIDByISO($ISO);
+        $currency = self::_getCurrency($currencyId);
+        return $currency;
+    }
+
+    /**
+     * get a currency object by currency symbol
+     *
+     * @access public
+     * @param  string $symbol currency symbol
+     * @return object  currency object
+     */
+    public static function getCurrencyBySymbol( $symbol ) {
+        $currency = self::_getCurrency('-99');
+        $currencyId = $currency->retrieveIDBySymbol($symbol);
         $currency = self::_getCurrency($currencyId);
         return $currency;
     }

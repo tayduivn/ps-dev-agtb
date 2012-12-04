@@ -29,6 +29,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 $mod_strings = array (
   'LBL_MODULE_NAME' => 'Currencies',
+  'LBL_MODULE_NAME_SINGULAR' => 'Currency',
   'LBL_LIST_FORM_TITLE' => 'Currencies',
   'LBL_CURRENCY' => 'Currency',
   'LBL_ADD' => 'Add',

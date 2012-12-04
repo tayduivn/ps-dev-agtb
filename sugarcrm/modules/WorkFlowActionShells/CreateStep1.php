@@ -49,7 +49,7 @@ global $urlPrefix;
 global $currentModule;
 
 
-$seed_object = new WorkFlow();
+$seed_object = BeanFactory::getBean('WorkFlow');
 
 if(!empty($_REQUEST['workflow_id']) && $_REQUEST['workflow_id']!="") {
     $seed_object->retrieve($_REQUEST['workflow_id']);
@@ -76,7 +76,7 @@ else {
 $form->assign("MOD", $mod_strings);
 $form->assign("APP", $app_strings);
 
-$focus = new WorkFlowActionShell();
+$focus = BeanFactory::getBean('WorkFlowActionShells');
 //Add When Expressions Object is availabe
 //$exp_object = new Expressions();
 

@@ -22,8 +22,6 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 require_once('soap/SoapHelperFunctions.php');
 require_once('modules/MailMerge/MailMerge.php');
 
-global  $beanList, $beanFiles;
-
 $module = $_POST['mailmerge_module'];
 $document_id = $_POST['document_id'];
 $selObjs = urldecode($_POST['selected_objects_def']);
@@ -31,15 +29,10 @@ $selObjs = urldecode($_POST['selected_objects_def']);
 $item_ids = array();
 parse_str($selObjs,$item_ids);
 
-$class_name = $beanList[$module];
-$includedir = $beanFiles[$class_name];
-require_once($includedir);
-$seed = new $class_name();
-
+$seed = BeanFactory::getBean($module);
 $fields =  get_field_list($seed);
 
-$document = new Document();
-$document->retrieve($document_id);
+$document = BeanFactory::getBean('Documents', $document_id);
 
 $items = array();
 foreach($item_ids as $key=>$value)

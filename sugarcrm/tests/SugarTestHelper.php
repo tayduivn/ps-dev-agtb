@@ -44,8 +44,10 @@ if ( !isset($_SERVER['HTTP_USER_AGENT']) )
 // move current working directory
 chdir(dirname(__FILE__) . '/..');
 
+// this is needed so modules.php properly registers the modules globals, otherwise they
+// end up defined in wrong scope
+global $beanFiles, $beanList, $objectList, $moduleList, $modInvisList;
 require_once('include/entryPoint.php');
-
 require_once('include/utils/layout_utils.php');
 
 $GLOBALS['db'] = DBManagerFactory::getInstance();

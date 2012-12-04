@@ -1,5 +1,5 @@
 <?php
-//FILE SUGARCRM flav=pro || flav=sales ONLY
+//FILE SUGARCRM flav=pro ONLY
 /**
  * LICENSE: The contents of this file are subject to the SugarCRM Professional
  * End User License Agreement ("License") which can be viewed at
@@ -47,8 +47,32 @@ $viewdefs['Calls']['mobile']['view']['detail'] = array(
                 'date_start',
                 'direction',
                 'status',
-                'duration_hours',
-                'duration_minutes',
+                array(
+                    'name' => 'duration',
+                    'type' => 'fieldset',
+                    'orientation' => 'horizontal',
+                    'related_fields' => array('duration_hours', 'duration_minutes'),
+                    'label' => "LBL_DURATION",
+                    'fields' => array(
+                        array(
+                            'name' => 'duration_hours',
+                        ),
+                        array(
+                            'type' => "label",
+                            'default' => "LBL_HOURS_ABBREV",
+                            'css_class' => "label_duration_hours hide",
+                        ),
+                        array(
+                            'name' => 'duration_minutes',
+                        ),
+                        array(
+                            'type' => "label",
+                            'default' => "LBL_MINSS_ABBREV",
+                            'css_class' => "label_duration_minutes hide",
+
+                        ),
+                    ),
+                ),
                 'description',
                 'assigned_user_name',
                 //BEGIN SUGARCRM flav=pro ONLY

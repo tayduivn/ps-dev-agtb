@@ -30,8 +30,7 @@ class BugsViewDetail extends ViewDetail {
  	}
  	
  	function display() {
-        $admin = new Administration();
-        $admin->retrieveSettings();
+        $admin = Administration::getSettings();
         if(isset($admin->settings['portal_on']) && $admin->settings['portal_on']) {
            $this->ss->assign("PORTAL_ENABLED", true);
         }

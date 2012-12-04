@@ -27,22 +27,18 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * Contributor(s): ______________________________________..
  ********************************************************************************/
 
-//BEGIN SUGARCRM flav!=sales ONLY
 require_once('modules/Campaigns/utils.php');
 
 //if campaign_id is passed then we assume this is being invoked from the campaign module and in a popup.
 $has_campaign=true;
 $inboundEmail=true;
 if (!isset($_REQUEST['campaign_id']) || empty($_REQUEST['campaign_id'])) {
-//END SUGARCRM flav!=sales ONLY
 	$has_campaign=false;
-//BEGIN SUGARCRM flav!=sales ONLY
 }
-//END SUGARCRM flav!=sales ONLY
 if (!isset($_REQUEST['inboundEmail']) || empty($_REQUEST['inboundEmail'])) {
     $inboundEmail=false;
 }
-$focus = new EmailTemplate();
+$focus = BeanFactory::getBean('EmailTemplates');
 
 if(isset($_REQUEST['record'])) {
     $focus->retrieve($_REQUEST['record']);
@@ -257,23 +253,18 @@ if(true) {
 	if($has_campaign || $inboundEmail) {
 		$xtpl->assign("INPOPUPWINDOW",'true');
 		$xtpl->assign("INSERT_URL_ONCLICK", "insert_variable_html_link(document.EditView.tracker_url.value)");
-		//BEGIN SUGARCRM flav!=sales ONLY
 		if($has_campaign){
 		  $campaign_urls=get_campaign_urls($_REQUEST['campaign_id']);
 		}
-		//END SUGARCRM flav!=sales ONLY
 		if(!empty($campaign_urls)) {
 			$xtpl->assign("DEFAULT_URL_TEXT",key($campaign_urls));
 	  	}
-	  	//BEGIN SUGARCRM flav!=sales ONLY
 	    if($has_campaign){
 		  $xtpl->assign("TRACKER_KEY_OPTIONS", get_select_options_with_id($campaign_urls, null));
 		  $xtpl->parse("main.NoInbound.tracker_url");
 	    }
-	    //END SUGARCRM flav!=sales ONLY
 	}
 
-    //BEGIN SUGARCRM flav!=sales ONLY
     // create option of "Contact/Lead/Task" from corresponding module
     // translations
     $lblContactAndOthers = implode('/', array(
@@ -281,13 +272,8 @@ if(true) {
         isset($app_list_strings['moduleListSingular']['Leads']) ? $app_list_strings['moduleListSingular']['Leads'] : 'Lead',
         isset($app_list_strings['moduleListSingular']['Prospects']) ? $app_list_strings['moduleListSingular']['Prospects'] : 'Target',
     ));
-    //END SUGARCRM flav!=sales ONLY
-    //BEGIN SUGARCRM flav=sales ONLY
-    $lblContactAndOthers = $app_list_strings['moduleListSingular']['Contacts'];
-    //END SUGARCRM flav=sales ONLY
 
 	// The insert variable drodown should be conditionally displayed.
-	//BEGIN SUGARCRM flav!=sales ONLY
 	// If it's campaign then hide the Account.
 	if($has_campaign) {
 	    $dropdown="<option value='Contacts'>
@@ -297,7 +283,6 @@ if(true) {
 	     $xtpl->assign("DEFAULT_MODULE",'Contacts');
          //$xtpl->assign("CAMPAIGN_POPUP_JS", '<script type="text/javascript" src="include/javascript/sugar_3.js"></script>');
 	} else {
-    //END SUGARCRM flav!=sales ONLY
 	     $dropdown="<option value='Accounts'>
 						".$app_list_strings['moduleListSingular']['Accounts']."
 		  	       </option>
@@ -309,9 +294,7 @@ if(true) {
 			       </option>";
 		$xtpl->assign("DROPDOWN",$dropdown);
 		$xtpl->assign("DEFAULT_MODULE",'Accounts');
-    //BEGIN SUGARCRM flav!=sales ONLY
 	}
-	//END SUGARCRM flav!=sales ONLY
 	////	END CAMPAIGNS
 	///////////////////////////////////////
 
@@ -325,7 +308,7 @@ if(true) {
 	    $etid = $old_id;
 	}
 	if(!empty($etid)) {
-	    $note = new Note();
+	    $note = BeanFactory::getBean('Notes');
 	    $where = "notes.parent_id='{$etid}' AND notes.filename IS NOT NULL";
 	    $notes_list = $note->get_full_list("", $where,true);
 

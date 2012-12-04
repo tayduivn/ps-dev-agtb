@@ -77,6 +77,24 @@ class Campaign extends SugarBean {
 
 	var $new_schema = true;
 
+
+    /**
+     * This is a depreciated method, please start using __construct() as this method will be removed in a future version
+     *
+     * @see __construct
+     * @deprecated
+     */
+    public function Campaign()
+    {
+        $this->__construct();
+    }
+
+    public function __construct()
+    {
+        parent::__construct();
+    }
+
+
 	function list_view_parse_additional_sections(&$listTmpl) {
 		global $locale;
 
@@ -225,8 +243,7 @@ class Campaign extends SugarBean {
 			//US DOLLAR
 			if(isset($this->amount) && !empty($this->amount)){
 
-				$currency = new Currency();
-				$currency->retrieve($this->currency_id);
+				$currency = BeanFactory::getBean('Currencies', $this->currency_id);
 				$this->amount_usdollar = $currency->convertToDollar($this->amount);
 
 			}
@@ -244,12 +261,10 @@ class Campaign extends SugarBean {
 
 
 	function mark_deleted($id){
-        //BEGIN SUGARCRM flav!=sales ONLY
         $query = "update contacts set campaign_id = null where campaign_id = '{$id}' ";
         $this->db->query($query);
         $query = "update accounts set campaign_id = null where campaign_id = '{$id}' ";
         $this->db->query($query);
-        //END SUGARCRM flav!=sales ONLY
         // bug49632 - delete campaign logs for the campaign as well
         $query = "update campaign_log set deleted = 1 where campaign_id = '{$id}' ";
         $this->db->query($query);
@@ -354,7 +369,7 @@ class Campaign extends SugarBean {
         }
 
 		//get select query from email man
-		$man = new EmailMan();
+		$man = BeanFactory::getBean('EmailMan');
 		$listquery= $man->create_queue_items_query('',str_replace(array("WHERE","where"),"",$query_array['where']),null,$query_array);
 		return $listquery;
 

@@ -98,7 +98,7 @@ foreach ($timeperiods as $timeperiod_id=>$timeperiod)
                 $products = $opp->getProducts();
                 foreach($products as $prod)
                 {
-                    $worksheet = new Worksheet();
+                    $worksheet = BeanFactory::getBean('Worksheet');
                     $worksheet->user_id = $user_id;
                     $worksheet->timeperiod_id = $timeperiod_id;
                     $worksheet->forecast_type = 'Direct';
@@ -118,7 +118,7 @@ foreach ($timeperiods as $timeperiod_id=>$timeperiod)
             //this is the direct worksheet for the manager
             if($isManager)
             {
-	            $worksheet = new Worksheet();
+	            $worksheet = BeanFactory::getBean('Worksheet');
 	            $worksheet->user_id = $user_id;
 	            $worksheet->timeperiod_id = $timeperiod_id;
 	            $worksheet->forecast_type = 'Rollup';
@@ -136,7 +136,7 @@ foreach ($timeperiods as $timeperiod_id=>$timeperiod)
 			
             foreach($comm->my_managers as $manager_id)
             {
-                $worksheet = new Worksheet();
+                $worksheet = BeanFactory::getBean('Worksheet');
                 $worksheet->user_id = $manager_id;
                 $worksheet->timeperiod_id = $timeperiod_id;
                 $worksheet->forecast_type = 'Rollup';

@@ -50,7 +50,7 @@ global $urlPrefix;
 global $currentModule;
 
 
-$workflow_object = new WorkFlow();
+$workflow_object = BeanFactory::getBean('WorkFlow');
 if(isset($_REQUEST['workflow_id']) && isset($_REQUEST['workflow_id'])) {
     $workflow_object->retrieve($_REQUEST['workflow_id']);
 } else {
@@ -59,7 +59,7 @@ if(isset($_REQUEST['workflow_id']) && isset($_REQUEST['workflow_id'])) {
 
 
 
-$focus = new WorkFlowTriggerShell();
+$focus = BeanFactory::getBean('WorkFlowTriggerShells');
 
 if(isset($_REQUEST['record']) && isset($_REQUEST['record'])) {
     $focus->retrieve($_REQUEST['record']);
@@ -149,7 +149,7 @@ $form->out("embeded");
 ////////////////////Base expression object///////////////////////////////
 //store lhs_type, lhs_module (rel_module), operator, rhs_value (count_quantity)
 
-	$base_object = new Expression();
+	$base_object = BeanFactory::getBean('Expressions');
 		$base_list = $focus->get_linked_beans('expressions','Expression');
 		if(isset($base_list[0]) && $base_list[0]!='') {
 			$base_id = $base_list[0]->id;
@@ -185,7 +185,7 @@ $form->out("embeded");
 
 //////////////////BEGIN 1st Filter Object	/////////////////////////////////
 
-		$filter1_object = new Expression();
+		$filter1_object = BeanFactory::getBean('Expressions');
 		//only try to retrieve if there is a base object set
 		if(isset($base_id) && $base_id!="") {
 			$filter_list = $base_object->get_linked_beans('members','Expression');
@@ -221,7 +221,7 @@ $form->out("embeded");
 
 //////////////////BEGIN 2nd Filter Object	/////////////////////////////////
 
-		$filter2_object = new Expression();
+		$filter2_object = BeanFactory::getBean('Expressions');
 		//only try to retrieve if there is a base object set
 		if(isset($base_id) && $base_id!="") {
 			if(isset($filter_list[1]) && $filter_list[1]!='') {

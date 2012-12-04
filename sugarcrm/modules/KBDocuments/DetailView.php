@@ -19,17 +19,6 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *to the License for the specific language governing these rights and limitations under the License.
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
-/*********************************************************************************
- * $Id: DetailView.php 16528 2007-02-28 20:53:08 +0000 (Wed, 28 Feb 2007) vineet $
- * Description:  TODO: To be written.
- * Portions created by SugarCRM are Copyright (C) SugarCRM, Inc.
- * All Rights Reserved.
- * Contributor(s): ______________________________________..
- ********************************************************************************/
-
-
-
-
 require_once('include/upload_file.php');
 
 require_once('include/DetailView/DetailView.php');
@@ -43,7 +32,7 @@ global $gridline;
 
 $mod_strings = return_module_language($current_language, 'KBDocuments');
 
-$focus = new KBDocument();
+$focus = BeanFactory::getBean('KBDocuments');
 $detailView = new DetailView();
 $offset=0;
 
@@ -150,21 +139,18 @@ if (isset($focus->date_entered) && !empty($focus->date_entered)) {
 
 if (!empty($focus->team_id)) {
 
-	$team = new Team();
-	$team->retrieve($focus->team_id,true);
+	$team = BeanFactory::getBean('Teams', $focus->team_id,true);
 	require_once('modules/Teams/TeamSetManager.php');
 	$xtpl->assign("TEAM", TeamSetManager::getCommaDelimitedTeams($focus->team_set_id, $focus->team_id, true));
 }
 if (!empty($focus->kbdoc_approver_id)) {
 
-	$user = new User();
-	$user->retrieve($focus->kbdoc_approver_id,true);
+	$user = BeanFactory::getBean('Users', $focus->kbdoc_approver_id);
 	$xtpl->assign("KBDOC_APPROVED_BY", $user->name);
 }
 if (!empty($focus->assigned_user_id)) {
 
-	$user = new User();
-	$user->retrieve($focus->assigned_user_id,true);
+	$user = BeanFactory::getBean('Users', $focus->assigned_user_id);
 	$xtpl->assign("KBARTICLE_AUTHOR_NAME", $user->name);
 }
 
@@ -189,7 +175,7 @@ $xtpl->parse("main");
 $xtpl->out("main");
 
 
-$savedSearch = new SavedSearch();
+$savedSearch = BeanFactory::getBean('SavedSearch');
 $json = getJSONobj();
 $savedSearchSelects = $json->encode(array($GLOBALS['app_strings']['LBL_SAVED_SEARCH_SHORTCUT'] . '<br>' . $savedSearch->getSelect('KBDocuments')));
 $str = "<script>

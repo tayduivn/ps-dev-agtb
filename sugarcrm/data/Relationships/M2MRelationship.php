@@ -464,6 +464,73 @@ class M2MRelationship extends SugarRelationship
     }
 
     /**
+     * Build a Join using an existing SugarQuery Object
+     * @param Link2 $link 
+     * @param SugarQuery $sugar_query 
+     * @return SugarQuery
+     */
+    public function buildJoinSugarQuery(Link2 $link, $sugar_query, $options)
+    {
+        $linkIsLHS = $link->getSide() == REL_LHS;
+        if ($linkIsLHS) {
+            $startingTable = $link->getFocus()->table_name;
+        } else {
+            $startingTable = $link->getFocus()->table_name;
+        }
+
+        $startingKey = $linkIsLHS ? $this->def['lhs_key'] : $this->def['rhs_key'];
+
+        $startingJoinKey = $linkIsLHS ? $this->def['join_key_lhs'] : $this->def['join_key_rhs'];
+
+        $joinTable = $this->getRelationshipTable();
+
+        $joinKey = $linkIsLHS ? $this->def['join_key_rhs'] : $this->def['join_key_lhs'];
+
+        
+        $targetTable = $linkIsLHS ? $this->def['rhs_table'] : $this->def['lhs_table'];
+        
+        $targetTableWithAlias = $targetTable;
+        
+        $targetKey = $linkIsLHS ? $this->def['rhs_key'] : $this->def['lhs_key'];
+
+        $join_type= isset($options['join_type']) ? $options['join_type'] : 'INNER';
+
+        if(isset($options['joinType']))
+        {
+            $join_type= $options['joinType'];    
+        }
+        
+        $join = '';
+
+        if($options['joinTableAlias'] != $startingTable)
+        {
+            $startingTable = strtolower($options['joinTableAlias']);
+        }
+        if($options['myAlias'] == $joinTable)
+        {
+            $targetTable_alias = $joinTable . '_link';
+        }
+        else
+        {
+            $targetTable_alias = strtolower($options['myAlias']);
+        }
+
+        $joinTable_alias = $targetTable . '_link';
+
+        $sugar_query->joinTable($joinTable, array('alias'=>$joinTable_alias, 'joinType' => $join_type))
+                    ->on()->equalsField("{$startingTable}.{$startingKey}","{$joinTable_alias}.{$startingJoinKey}")
+                    ->equals("{$joinTable_alias}.deleted","0");
+        
+        $sugar_query->joinTable($targetTable, array('alias' => $targetTable_alias, 'joinType' => $join_type))
+                    ->on()->equalsField("{$targetTable_alias}.{$targetKey}", "{$joinTable_alias}.{$joinKey}")
+                    ->equals("{$targetTable_alias}.deleted","0");
+
+        $this->buildSugarQueryRoleWhere($sugar_query,$joinTable);
+        return array($joinTable_alias => $sugar_query->join[$joinTable_alias], $targetTable_alias => $sugar_query->join[$targetTable_alias]);
+    }
+
+
+    /**
      * Similar to getQuery or Get join, except this time we are starting from the related table and
      * searching for items with id's matching the $link->focus->id
      * @param  $link

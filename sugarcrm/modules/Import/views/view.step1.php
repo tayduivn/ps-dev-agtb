@@ -52,14 +52,14 @@ class ImportViewStep1 extends ImportView
             $this->importModule = 'Administration';
         }
  	}
- 	
+
  	/**
 	 * @see SugarView::_getModuleTitleParams()
 	 */
 	protected function _getModuleTitleParams($browserTitle = false)
 	{
 	    global $mod_strings, $app_list_strings;
-	    
+
 	    $iconPath = $this->getModuleTitleIconPath($this->module);
 	    $returnArray = array();
 	    if (!empty($iconPath) && !$browserTitle) {
@@ -70,11 +70,11 @@ class ImportViewStep1 extends ImportView
     	}
 	    $returnArray[] = "<a href='index.php?module=Import&action=Step1&import_module={$_REQUEST['import_module']}'>".$mod_strings['LBL_MODULE_NAME']."</a>";
 	    $returnArray[] = $mod_strings['LBL_STEP_1_TITLE'];
-    	
+
 	    return $returnArray;
     }
 
- 	/** 
+ 	/**
      * @see SugarView::display()
      */
  	public function display()
@@ -115,7 +115,7 @@ class ImportViewStep1 extends ImportView
         $this->ss->assign("selectExternalSource", $selectExternal);
 
         $content = $this->ss->fetch('modules/Import/tpls/step1.tpl');
-        
+
         $submitContent = "<table width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\"><tr><td align=\"right\">";
         $submitContent .= "<input title=\"".$mod_strings['LBL_IMPORT_COMPLETE']."\" onclick=\"SUGAR.importWizard.closeDialog();\" class=\"button\" type=\"submit\" name=\"finished\" value=\"  ".$mod_strings['LBL_IMPORT_COMPLETE']."  \" id=\"finished\">";
         $submitContent .= "<input title=\"".$mod_strings['LBL_NEXT']."\" class=\"button primary\" type=\"submit\" name=\"button\" value=\"  ".$mod_strings['LBL_NEXT']."  \"  id=\"gonext\"></td></tr></table>";
@@ -132,11 +132,9 @@ class ImportViewStep1 extends ImportView
         $results = array();
         foreach ($beanList as $moduleName => $beanName)
         {
-            if( class_exists($beanName) )
-            {
-                $tmp = new $beanName();
-                if( isset($tmp->importable) && $tmp->importable && ($tmp instanceof Person))
-                    $results[$moduleName] = $moduleName;
+            $tmp = BeanFactory::getBean($moduleName);
+            if( !empty($tmp->importable) && ($tmp instanceof Person)) {
+                $results[$moduleName] = $moduleName;
             }
         }
 
@@ -161,7 +159,7 @@ class ImportViewStep1 extends ImportView
         global $mod_strings;
         $EXTERNAL_AUTHENTICATED_SOURCES = json_encode($this->getAuthenticatedImportableExternalEAPMs());
         $selectExternalSource = !empty($_REQUEST['application']) ? $_REQUEST['application'] : '';
-        
+
         $showModuleSelection = ($this->importModule == 'Administration');
         $importableModulesOptions = array();
         $importablePersonModules = array();
@@ -173,7 +171,7 @@ class ImportViewStep1 extends ImportView
 
 
         $PERSON_MODULE_LIST = json_encode($importablePersonModules);
-        
+
         return <<<EOJAVASCRIPT
 
 
@@ -229,7 +227,7 @@ YAHOO.util.Event.onDOMReady(function(){
         {
             trEl.style.display = '';
             document.getElementById('gonext').disabled = true;
-            
+
             //Highlight the first selection by default
             if(externalSourceBttns.length >= 1)
             {
@@ -315,7 +313,7 @@ YAHOO.util.Event.onDOMReady(function(){
         isExtSourceValid(selectedExternalSource);
     });
     //END SUGARCRM flav=pro ONLY
-    
+
     function initExtSourceSelection()
     {
         var el1 = YAHOO.util.Dom.get('ext_source');

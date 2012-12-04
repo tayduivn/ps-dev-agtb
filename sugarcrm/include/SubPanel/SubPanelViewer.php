@@ -59,11 +59,6 @@ if(empty($_REQUEST['inline']))
 	insert_popup_header($theme);
 }
 
-//require_once('include/SubPanel/SubPanelDefinitions.php');
-//require_once($beanFiles[$beanList[$_REQUEST['module']]]);
-//$focus=new $beanList[$_REQUEST['module']];
-//$focus->retrieve($record);
-
 include('include/SubPanel/SubPanel.php');
 $layout_def_key = '';
 if(!empty($_REQUEST['layout_def_key'])){
@@ -73,7 +68,7 @@ if(!empty($_REQUEST['layout_def_key'])){
 $subpanel_object = new SubPanel($module, $record, $subpanel,null, $layout_def_key);
 
 $subpanel_object->setTemplateFile('include/SubPanel/SubPanelDynamic.html');
-echo (empty($_REQUEST['inline']))?$subpanel_object->get_buttons():'' ;  
+echo (empty($_REQUEST['inline']))?$subpanel_object->get_buttons():'' ;
 
 $subpanel_object->display();
 

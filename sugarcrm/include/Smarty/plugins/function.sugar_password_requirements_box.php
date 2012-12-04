@@ -76,7 +76,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * @param array
  * @param Smarty
  */
- //FILE SUGARCRM flav=pro || flav=sales ONLY
+ //FILE SUGARCRM flav=pro ONLY
 function smarty_function_sugar_password_requirements_box($params, &$smarty)
 {
 global $current_language;

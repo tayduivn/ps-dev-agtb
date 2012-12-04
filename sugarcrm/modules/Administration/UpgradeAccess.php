@@ -122,7 +122,7 @@ include('modules/Versions/ExpectedVersions.php');
 global $expect_versions;
 
 if (isset($expect_versions['htaccess'])) {
-        $version = new Version();
+        $version = BeanFactory::getBean('Versions');
         $version->retrieve_by_string_fields(array('name'=>'htaccess'));
 
         $version->name = $expect_versions['htaccess']['name'];

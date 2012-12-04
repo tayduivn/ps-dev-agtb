@@ -27,7 +27,6 @@
  * All Rights Reserved.
  * Contributor(s): ______________________________________..
  ********************************************************************************/
-//FILE SUGARCRM flav!=sales ONLY
 require_once('include/entryPoint.php');
 
 // logic will be added here at a later date to track campaigns

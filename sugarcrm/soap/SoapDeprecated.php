@@ -131,13 +131,11 @@ $server->register(
     array('user_name'=>'xsd:string','password'=>'xsd:string', 'first_name'=>'xsd:string', 'last_name'=>'xsd:string', 'email_address'=>'xsd:string'),
     array('return'=>'xsd:string'),
     $NAMESPACE);
-//BEGIN SUGARCRM flav!=sales ONLY
 $server->register(
 	'create_lead',
     array('user_name'=>'xsd:string','password'=>'xsd:string', 'first_name'=>'xsd:string', 'last_name'=>'xsd:string', 'email_address'=>'xsd:string'),
     array('return'=>'xsd:string'),
     $NAMESPACE);
-//END SUGARCRM flav!=sales ONLY
 $server->register(
 	'create_account',
     array('user_name'=>'xsd:string','password'=>'xsd:string', 'name'=>'xsd:string', 'phone'=>'xsd:string', 'website'=>'xsd:string'),
@@ -150,13 +148,11 @@ $server->register(
     array('return'=>'xsd:string'),
     $NAMESPACE);
 
-//BEGIN SUGARCRM flav!=sales ONLY
 $server->register(
 	'create_case',
     array('user_name'=>'xsd:string','password'=>'xsd:string', 'name'=>'xsd:string'),
     array('return'=>'xsd:string'),
     $NAMESPACE);
-//END SUGARCRM flav!=sales ONLY
 /**
  * Create a new session.  This method is required before calling any other functions.
  *
@@ -199,10 +195,9 @@ function end_session($user_name)
  */
 function validate_user($user_name, $password){
 	global $server, $current_user, $sugar_config, $system_config;
-	$user = new User();
+	$user = BeanFactory::getBean('Users');
 	$user->user_name = $user_name;
-	$system_config = new Administration();
-	$system_config->retrieveSettings('system');
+	$system_config = Administration::getSettings('system');
 	$authController = new AuthenticationController((!empty($sugar_config['authenticationClass'])? $sugar_config['authenticationClass'] : 'SugarAuthenticate'));
 	// Check to see if the user name and password are consistent.
 	if($user->authenticate_user($password)){
@@ -275,7 +270,6 @@ function add_contacts_matching_email_address(&$output_list, $email_address, &$se
 			$output_list[] = get_opportunity_array($opp, $msi_id);
 		}
 
-		//BEGIN SUGARCRM flav!=sales ONLY
         $cases = $contact->get_linked_beans('cases','aCase');
 		foreach($cases as $case)
 		{
@@ -293,12 +287,10 @@ function add_contacts_matching_email_address(&$output_list, $email_address, &$se
 		{
 			$output_list[] = get_bean_array($project, $msi_id, 'Project');
 		}
-		//END SUGARCRM flav!=sales ONLY
 
 		$msi_id = $msi_id + 1;
 	}
 }
-//BEGIN SUGARCRM flav!=sales ONLY
 /**
  * Internal: Add Leads that match the specified email address to the result array
  *
@@ -332,7 +324,6 @@ function add_leads_matching_email_address(&$output_list, $email_address, &$seed_
 		$msi_id = $msi_id + 1;
 	}
 }
-//END SUGARCRM flav!=sales ONLY
 /**
  * Return a list of modules related to the specifed contact record
  *
@@ -349,7 +340,7 @@ function get_contact_relationships($user_name, $password, $id)
 		return array();
 	}
 
-	$seed_contact = new Contact();
+	$seed_contact = BeanFactory::getBean('Contacts');
 	// Verify that the user has permission to see Contact list views
 	if(!$seed_contact->ACLAccess('ListView'))
 	{
@@ -379,7 +370,6 @@ function get_contact_relationships($user_name, $password, $id)
 			$output_list[] = get_opportunity_array($opp, $msi_id);
 		}
 
-		//BEGIN SUGARCRM flav!=sales ONLY
         $cases = $seed_contact->get_linked_beans('cases','aCase');
 		foreach($cases as $case)
 		{
@@ -397,7 +387,6 @@ function get_contact_relationships($user_name, $password, $id)
 		{
 			$output_list[] = get_bean_array($project, $msi_id, 'Project');
 		}
-		//END SUGARCRM flav!=sales ONLY
 		return $output_list;
 }
 
@@ -421,10 +410,8 @@ function contact_by_email($user_name, $password, $email_address)
 		return array();
 	}
 
-	$seed_contact = new Contact();
-	//BEGIN SUGARCRM flav!=sales ONLY
-	$seed_lead = new Lead();
-	//END SUGARCRM flav!=sales ONLY
+	$seed_contact = BeanFactory::getBean('Contacts');
+	$seed_lead = BeanFactory::getBean('Leads');
 	$output_list = Array();
 	$email_address_list = explode("; ", $email_address);
 
@@ -461,12 +448,10 @@ function contact_by_email($user_name, $password, $email_address)
 		if($seed_contact->ACLAccess('ListView')){
 			add_contacts_matching_email_address($output_list, $single_address, $seed_contact, $msi_id);
 		}
-		//BEGIN SUGARCRM flav!=sales ONLY
 	    // verify that leads can be listed
 		if($seed_lead->ACLAccess('ListView')){
 			add_leads_matching_email_address($output_list, $single_address, $seed_lead, $msi_id);
 		}
-		//END SUGARCRM flav!=sales ONLY
 	}
 
 	return $output_list;
@@ -521,7 +506,7 @@ function user_list($user, $password) {
 		return array();
 	}
 
-    $seed_user = new User();
+    $seed_user = BeanFactory::getBean('Users');
     $output_list = Array();
 	if(!$seed_user->ACLAccess('ListView')){
 		return $output_list;
@@ -547,7 +532,7 @@ function user_list($user, $password) {
  */
 function contact_by_search($name, $where = '', $msi_id = '0')
 {
-	$seed_contact = new Contact();
+	$seed_contact = BeanFactory::getBean('Contacts');
 	if($where == ''){
 		$where = $seed_contact->build_generic_where_clause($name);
 	}
@@ -566,7 +551,6 @@ function contact_by_search($name, $where = '', $msi_id = '0')
 	}
 	return $output_list;
 }
-//BEGIN SUGARCRM flav!=sales ONLY
 /**
  * Internal: convert a bean into an array
  *
@@ -587,7 +571,7 @@ function get_lead_array($lead, $msi_id = '0'){
 
 function lead_by_search($name, $where = '', $msi_id = '0')
 {
-	$seed_lead = new Lead();
+	$seed_lead = BeanFactory::getBean('Leads');
 	if($where == ''){
 		$where = $seed_lead->build_generic_where_clause($name);
 	}
@@ -606,7 +590,6 @@ function lead_by_search($name, $where = '', $msi_id = '0')
 	}
 	return $output_list;
 }
-//END SUGARCRM flav!=sales ONLY
 /**
  * Internal: convert a bean into an array
  *
@@ -626,7 +609,7 @@ function get_account_array($account, $msi_id){
 
 function account_by_search($name, $where = '', $msi_id = '0')
 {
-	$seed_account = new Account();
+	$seed_account = BeanFactory::getBean('Accounts');
 	if(!$seed_account->ACLAccess('ListView')){
 		return array();
 	}
@@ -666,7 +649,7 @@ function get_opportunity_array($value, $msi_id = '0'){
 
 function opportunity_by_search($name, $where = '', $msi_id = '0')
 {
-	$seed = new Opportunity();
+	$seed = BeanFactory::getBean('Opportunities');
 	if(!$seed->ACLAccess('ListView')){
 		return array();
 	}
@@ -703,7 +686,6 @@ function get_bean_array($value, $msi_id, $type){
 			"email_address" => '');
 
 }
-//BEGIN SUGARCRM flav!=sales ONLY
 /**
  * Internal: convert a bean into an array
  *
@@ -724,7 +706,7 @@ function get_case_array($value, $msi_id){
 
 function bug_by_search($name, $where = '', $msi_id='0')
 {
-	$seed = new Bug();
+	$seed = BeanFactory::getBean('Bugs');
 	if(!$seed->ACLAccess('ListView')){
 		return array();
 	}
@@ -746,7 +728,7 @@ function bug_by_search($name, $where = '', $msi_id='0')
 
 function case_by_search($name, $where = '', $msi_id='0')
 {
-	$seed = new aCase();
+	$seed = BeanFactory::getBean('Cases');
 	if(!$seed->ACLAccess('ListView')){
 		return array();
 	}
@@ -765,7 +747,6 @@ function case_by_search($name, $where = '', $msi_id='0')
 	}
 	return $output_list;
 }
-//END SUGARCRM flav!=sales ONLY
 /**
  * Record and email message and associated it with the specified parent bean and contact ids.
  *
@@ -796,14 +777,14 @@ function track_email($user_name, $password,$parent_id, $contact_ids, $date_sent,
 	$date_sent = preg_replace("@([0-9]*)/([0-9]*)/([0-9]*)( .*$)@", "\\3-\\1-\\2\\4", $date_sent);
 
 
-	$seed_user = new User();
+	$seed_user = BeanFactory::getBean('Users');
 
 	$user_id = $seed_user->retrieve_user_id($user_name);
 	$seed_user->retrieve($user_id);
 	$current_user = $seed_user;
 
 
-	$email = new Email();
+	$email = BeanFactory::getBean('Emails');
 	if(!$email->ACLAccess('Save')){
 		return -1;
 	}
@@ -846,12 +827,12 @@ function create_contact($user_name,$password, $first_name, $last_name, $email_ad
 	}
 
 
-	$seed_user = new User();
+	$seed_user = BeanFactory::getBean('Users');
 	$user_id = $seed_user->retrieve_user_id($user_name);
 	$seed_user->retrieve($user_id);
 
 
-	$contact = new Contact();
+	$contact = BeanFactory::getBean('Contacts');
 	if(!$contact->ACLAccess('Save')){
 		return -1;
 	}
@@ -865,7 +846,6 @@ function create_contact($user_name,$password, $first_name, $last_name, $email_ad
 	//END SUGARCRM flav=pro ONLY
 	return $contact->save();
 }
-//BEGIN SUGARCRM flav!=sales ONLY
 function create_lead($user_name,$password, $first_name, $last_name, $email_address)
 {
 	if(!validate_user($user_name, $password)){
@@ -875,11 +855,11 @@ function create_lead($user_name,$password, $first_name, $last_name, $email_addre
 	//todo make the activity body not be html encoded
 
 
-	$seed_user = new User();
+	$seed_user = BeanFactory::getBean('Users');
 	$user_id = $seed_user->retrieve_user_id($user_name);
 
 
-	$lead = new Lead();
+	$lead = BeanFactory::getBean('Leads');
 	if(!$lead->ACLAccess('Save')){
 		return -1;
 	}
@@ -890,7 +870,6 @@ function create_lead($user_name,$password, $first_name, $last_name, $email_addre
 	$lead->assigned_user_name = $user_name;
 	return $lead->save();
 }
-//END SUGARCRM flav!=sales ONLY
 function create_account($user_name,$password, $name, $phone, $website)
 {
 	if(!validate_user($user_name, $password)){
@@ -900,9 +879,9 @@ function create_account($user_name,$password, $name, $phone, $website)
 	//todo make the activity body not be html encoded
 
 
-	$seed_user = new User();
+	$seed_user = BeanFactory::getBean('Users');
 	$user_id = $seed_user->retrieve_user_id($user_name);
-	$account = new Account();
+	$account = BeanFactory::getBean('Accounts');
 	if(!$account->ACLAccess('Save')){
 		return -1;
 	}
@@ -915,7 +894,6 @@ function create_account($user_name,$password, $name, $phone, $website)
 	return $account->id;
 
 }
-//BEGIN SUGARCRM flav!=sales ONLY
 function create_case($user_name,$password, $name)
 {
 	if(!validate_user($user_name, $password)){
@@ -925,9 +903,9 @@ function create_case($user_name,$password, $name)
 	//todo make the activity body not be html encoded
 
 
-	$seed_user = new User();
+	$seed_user = BeanFactory::getBean('Users');
 	$user_id = $seed_user->retrieve_user_id($user_name);
-	$case = new aCase();
+	$case = BeanFactory::getBean('Cases');
 	if(!$case->ACLAccess('Save')){
 		return -1;
 	}
@@ -936,7 +914,6 @@ function create_case($user_name,$password, $name)
 	$case->name = $name;
 	return $case->save();
 }
-//END SUGARCRM flav!=sales ONLY
 function create_opportunity($user_name,$password, $name, $amount)
 {
 	if(!validate_user($user_name, $password)){
@@ -944,9 +921,9 @@ function create_opportunity($user_name,$password, $name, $amount)
 	}
 
 
-	$seed_user = new User();
+	$seed_user = BeanFactory::getBean('Users');
 	$user_id = $seed_user->retrieve_user_id($user_name);
-	$opp = new Opportunity();
+	$opp = BeanFactory::getBean('Opportunities');
 	if(!$opp->ACLAccess('Save')){
 		return -1;
 	}
@@ -966,17 +943,11 @@ function search($user_name, $password,$name){
 	foreach( $name_list as $single_name)
 	{
 	    $list = array_merge($list, contact_by_search($single_name));
-	    //BEGIN SUGARCRM flav!=sales ONLY
 	    $list = array_merge($list, lead_by_search($single_name));
-	    //END SUGARCRM flav!=sales ONLY
 	    $list = array_merge($list, account_by_search($single_name));
-	    //BEGIN SUGARCRM flav!=sales ONLY
 	    $list = array_merge($list, case_by_search($single_name));
-	    //END SUGARCRM flav!=sales ONLY
 	    $list = array_merge($list, opportunity_by_search($single_name));
-	    //BEGIN SUGARCRM flav!=sales ONLY
 	    $list = array_merge($list, bug_by_search($single_name));
-	    //END SUGARCRM flav!=sales ONLY
     }
 	return $list;
 }

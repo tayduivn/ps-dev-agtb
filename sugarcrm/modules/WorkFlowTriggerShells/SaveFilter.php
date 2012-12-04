@@ -37,7 +37,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 $past_remove = false;
 
 
-$focus = new WorkFlowTriggerShell();
+$focus = BeanFactory::getBean('WorkFlowTriggerShells');
 
 
 if(!empty($_POST['record']) && $_POST['record']!=""){
@@ -82,7 +82,7 @@ foreach($focus->additional_column_fields as $field)
 			$base_id = "";	
 		}
 
-		$base_object = new Expression();
+		$base_object = BeanFactory::getBean('Expressions');
 				
 		if(!empty($base_id) && $base_id!=""){
 			$base_object->retrieve($base_id);

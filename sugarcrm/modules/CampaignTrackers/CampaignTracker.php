@@ -82,6 +82,18 @@ class CampaignTracker extends SugarBean {
     var $relationship_fields = Array('campaing_id'=>'campaign');
 
     var $required_fields =  array('tracker_name'=>1,'tracker_url'=>1);
+
+    /**
+     * This is a depreciated method, please start using __construct() as this method will be removed in a future version
+     *
+     * @see __construct
+     * @deprecated
+     */
+    public function CampaignTracker()
+    {
+        $this->__construct();
+    }
+
     /*This bean's constructor*/
     public function __construct() {
         parent::__construct();
@@ -131,8 +143,7 @@ class CampaignTracker extends SugarBean {
         if (!class_exists('Administration')) {
 
         }
-        $admin=new Administration();
-        $admin->retrieveSettings('massemailer'); //retrieve all admin settings.
+        $admin = Administration::getSettings('massemailer'); //retrieve all admin settings.
         if (isset($admin->settings['massemailer_tracking_entities_location_type']) and $admin->settings['massemailer_tracking_entities_location_type']=='2'  and isset($admin->settings['massemailer_tracking_entities_location']) ) {
             $this->message_url=$admin->settings['massemailer_tracking_entities_location'];
         } else {

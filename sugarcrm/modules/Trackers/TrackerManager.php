@@ -55,9 +55,8 @@ private function TrackerManager() {
  */
 private function setup() {
 	if(!empty($this->metadata) && empty($GLOBALS['installing'])) {
-
-		$admin = new Administration();
-		$admin->retrieveSettings('tracker');
+        
+		$admin = Administration::getSettings('tracker');
 		foreach($this->metadata as $key=>$entry) {
 		   if(isset($entry['bean'])) {
 		   	  if(!empty($admin->settings['tracker_'. $entry['name']])) {

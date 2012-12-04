@@ -36,15 +36,15 @@ $focus = 0;
 if(isset($_REQUEST['return_module'])){
     if($_REQUEST['return_module'] == 'Contacts'){
 
-        $focus = new Contact();
+        $focus = BeanFactory::getBean('Contacts');
     }
     if($_REQUEST['return_module'] == 'Leads'){
 
-        $focus = new Lead();
+        $focus = BeanFactory::getBean('Leads');
     }
     if($_REQUEST['return_module'] == 'Prospects'){
 
-        $focus = new Prospect();
+        $focus = BeanFactory::getBean('Prospects');
     }
 }
 

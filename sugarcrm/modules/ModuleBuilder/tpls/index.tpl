@@ -81,9 +81,7 @@ MBLoader.insert();
     <input type="button" class="button" value="{$mod.LBL_STUDIO}" onclick="ModuleBuilder.main('studio');">
     {/if}
     {if $ADMIN == true}
-  	 {* //BEGIN SUGARCRM flav!=sales ONLY*}
     <input type="button" class="button" value="{$mod.LBL_MODULEBUILDER}" onclick="ModuleBuilder.main('mb');">
-     {* //END SUGARCRM flav!=sales ONLY*}
 	{* //BEGIN SUGARCRM flav=ent ONLY*}
 
     <input type="button" class="button" value="{$mod.LBL_SUGARPORTAL}" onclick="ModuleBuilder.main('sugarportal');">

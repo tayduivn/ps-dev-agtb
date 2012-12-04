@@ -32,15 +32,15 @@ class ViewQuickview extends SugarView{
 	}
 
 	function display()
-	{	
-	    $record = empty($_REQUEST['record']) ? "" : $_REQUEST['record'];
-	    $n = new Notifications();
-	    $focus = $n->retrieve($record);
-        
-	    //Mark as read.
-	    $focus->is_read = true;
-	    $focus->save(FALSE);
-	    
+	{
+	    $focus = BeanFactory::getBean('Notifications', empty($_REQUEST['record']) ? "" : $_REQUEST['record']);
+
+	    if(!empty($focus->id)) {
+    	    //Mark as read.
+    	    $focus->is_read = true;
+    	    $focus->save(FALSE);
+	    }
+
 	    $results = array('contents' => $this->_formatNotificationForDisplay($focus) );
 
 	    $json = getJSONobj();
@@ -48,9 +48,9 @@ class ViewQuickview extends SugarView{
 		ob_clean();
 		print($out);
 		sugar_cleanup(true);
-		
+
 	}
-	
+
 	function _formatNotificationForDisplay($notification)
     {
         global $app_strings;
