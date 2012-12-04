@@ -60,7 +60,6 @@ class TimePeriodTest extends Sugar_PHPUnit_Framework_TestCase
     public function testTimePeriodTimeStamps()
     {
         // create a time period
-        
         $tp = SugarTestTimePeriodUtilities::createTimePeriod('2009-01-01', '2009-03-31');
         $timedate = TimeDate::getInstance();
 
