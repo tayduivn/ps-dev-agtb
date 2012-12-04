@@ -31,6 +31,13 @@
         'click #forecastsChartDisplayOptions div.groupByOptions label.radio' : 'changeGroupByOptions'
     },
 
+    initialize : function(options) {
+        app.view.View.prototype.initialize.call(this, options);
+
+        // clear out the values if the object is re-inited.
+        this.values.clear({silent: true});
+    },
+
     /**
      * event handler to update which dataset is used.
      */
