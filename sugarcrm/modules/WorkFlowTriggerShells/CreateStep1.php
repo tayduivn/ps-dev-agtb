@@ -26,11 +26,6 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * governing these rights and limitations under the License.  Portions created
  * by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
-/*********************************************************************************
- * $Id: CreateStep1.php 45763 2009-04-01 19:16:18Z majed $
- * Description:
- ********************************************************************************/
-
 global $theme;
 
 ////////////////////Maybe move to separate function////////////////////
@@ -46,16 +41,16 @@ global $urlPrefix;
 global $currentModule;
 
 
-$workflow_object = new WorkFlow();
-if(isset($_REQUEST['workflow_id']) && isset($_REQUEST['workflow_id'])) {
-    $workflow_object->retrieve($_REQUEST['workflow_id']);
-} else {
+if(!empty($_REQUEST['workflow_id'])) {
+    $workflow_object = BeanFactory::retrieveBean('WorkFlow', $_REQUEST['workflow_id']);
+}
+if(empty($workflow_object)) {
 	sugar_die("You shouldn't be here");
 }
 
-$focus = new WorkFlowTriggerShell();
+$focus = BeanFactory::getBean('WorkFlowTriggerShells');
 
-if(isset($_REQUEST['record']) && isset($_REQUEST['record'])) {
+if(!empty($_REQUEST['record'])) {
     $focus->retrieve($_REQUEST['record']);
 }
 

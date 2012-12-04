@@ -30,9 +30,7 @@ require_once('include/nusoap/nusoap.php');
 require_once('modules/Contacts/Contact.php');
 require_once('modules/Accounts/Account.php');
 require_once('modules/Opportunities/Opportunity.php');
-//BEGIN SUGARCRM flav!=sales ONLY
 require_once('modules/Cases/Case.php');
-//END SUGARCRM flav!=sales ONLY
 //ignore notices
 error_reporting(E_ALL ^ E_NOTICE);
 
@@ -43,8 +41,7 @@ checkSystemState();
 
 global $HTTP_RAW_POST_DATA;
 
-$administrator = new Administration();
-$administrator->retrieveSettings();
+$administrator = Administration::getSettings();
 
 $NAMESPACE = 'http://www.sugarcrm.com/sugarcrm';
 $server = new soap_server;

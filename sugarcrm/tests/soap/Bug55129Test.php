@@ -43,7 +43,7 @@ class Bug55129Test extends SOAPTestCase
         parent::setUp();
 
         $this->user = self::$_user = SugarTestUserUtilities::createAnonymousUser();
-        $this->currency            = new Currency;
+        $this->currency            = BeanFactory::getBean('Currencies');
         $GLOBALS['current_user']   = SOAPTestCase::$_user;
 
         $found = $this->currency->retrieve_by_string_fields(array(

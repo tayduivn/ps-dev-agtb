@@ -63,6 +63,7 @@ if(!empty($sugar_demodata['quotes_seed_data']['quotes'])) {
 		$focus->show_line_nums = 1;
 		$focus->team_id = $current_user->team_id;
 		$focus->team_set_id = $current_user->team_set_id;
+        $focus->currency_id = '-99';
 		
 		//Set random account and contact ids
 		$sql = 'SELECT * FROM accounts WHERE deleted = 0';

@@ -795,7 +795,7 @@ class MssqlManager extends DBManager
         if (strpos($orig_order_match, " ") === false) {
         	$orig_order_match .= " ASC";
         }
-            
+
         //grab first space in order by
         $firstSpace = strpos($orig_order_match, " ");
 
@@ -880,20 +880,13 @@ class MssqlManager extends DBManager
      */
     private function getTableNameFromModuleName($module_str, $sql)
     {
-
-        global $beanList, $beanFiles;
         $GLOBALS['log']->debug("Module being processed is " . $module_str);
         //get the right module files
         //the module string exists in bean list, then process bean for correct table name
         //note that we exempt the reports module from this, as queries from reporting module should be parsed for
         //correct table name.
-        if (($module_str != 'Reports' && $module_str != 'SavedReport') && isset($beanList[$module_str])  &&  isset($beanFiles[$beanList[$module_str]])){
-            //if the class is not already loaded, then load files
-            if (!class_exists($beanList[$module_str]))
-                require_once($beanFiles[$beanList[$module_str]]);
-
-            //instantiate new bean
-            $module_bean = new $beanList[$module_str]();
+        $module_bean = BeanFactory::getBean($module_str);
+        if (($module_str != 'Reports' && $module_str != 'SavedReport') && !empty($module_bean)){
             //get table name from bean
             $tbl_name = $module_bean->table_name;
             //make sure table name is not just a blank space, or empty

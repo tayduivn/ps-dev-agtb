@@ -31,7 +31,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 global $mod_strings;
 global $app_strings;
 
-$focus = new Email();
+$focus = BeanFactory::getBean('Emails');
 
 if(!empty($_REQUEST['record'])) {
     $result = $focus->retrieve($_REQUEST['record']);

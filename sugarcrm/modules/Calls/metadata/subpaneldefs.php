@@ -43,7 +43,6 @@ $layout_defs['Calls'] = array(
 			'get_subpanel_data' => 'users',
 			'title_key' => 'LBL_USERS_SUBPANEL_TITLE',
 		),
-        //BEGIN SUGARCRM flav!=sales ONLY
 		'leads' => array(
 			'order' => 30,
 			'module' => 'Leads',
@@ -54,7 +53,6 @@ $layout_defs['Calls'] = array(
 			'title_key' => 'LBL_LEADS_SUBPANEL_TITLE',
 			'top_buttons' => array(),
 		),
-        //END SUGARCRM flav!=sales ONLY
 		'history' => array(
 			'order' => 40,
 			'title_key' => 'LBL_HISTORY_SUBPANEL_TITLE',

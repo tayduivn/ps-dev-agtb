@@ -44,7 +44,7 @@ global $currentModule;
 global $theme;
 global $focus_list; // focus_list is the means of passing data to a ListView.
 
-$focus				= new Email();
+$focus = BeanFactory::getBean('Emails');
 $header_text		= '';
 $where				= '';
 $type				= '';

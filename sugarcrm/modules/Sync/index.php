@@ -45,7 +45,7 @@ if(isset($_REQUEST['go_online'])){
 
 	if(!isset($current_user)){
 
-		$current_user = new User();
+		$current_user = BeanFactory::getBean('Users');
 		if(isset($_SESSION['authenticated_user_id']))
 		{
 			$result = $current_user->retrieve($_SESSION['authenticated_user_id']);

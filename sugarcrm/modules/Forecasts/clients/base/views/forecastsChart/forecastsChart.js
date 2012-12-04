@@ -11,7 +11,6 @@
     chart: null,
 
     chartRendered: false,
-    commitUpdate: false,
 
     chartDataSet : [],
     chartGroupByOptions : [],
@@ -96,7 +95,7 @@
         //this.chartTitle = app.lang.get("LBL_CHART_FORECAST_FOR", "Forecasts") + ' ' + app.defaultSelections.timeperiod_id.label;
         this.timeperiod_label = app.defaultSelections.timeperiod_id.label;
 
-        this.chartDataSet = this.getChartDatasets();
+        this.chartDataSet = app.forecasts.utils.getAppConfigDatasets('forecasts_options_dataset', 'show_worksheet_', this.context.forecasts.config);
         this.chartGroupByOptions = app.metadata.getStrings('app_list_strings').forecasts_chart_options_group || [];
         this.defaultDataset = app.defaultSelections.dataset;
         this.defaultGroupBy = app.defaultSelections.group_by;
@@ -151,32 +150,13 @@
      */
     bindDataChange:function () {
         var self = this;
-        this.context.forecasts.worksheetmanager.on('rendered', function(){
-            if(self.commitUpdate && self.chartRendered) {
-                self.commitUpdate = false;
-                self.renderChart();
-            }
-        }, this);
-        this.context.forecasts.worksheet.on('rendered', function() {
-            if(self.commitUpdate && self.chartRendered) {
-                self.renderChart();
-            }
-        }, this);
-        this.context.forecasts.worksheetmanager.on('change', function(context){
-            if(!self.commitUpdate) {
-                self.commitUpdate = true;
-            }
-        }, this);
-        this.context.forecasts.worksheet.on('change', function(context){
-            if(!self.commitUpdate) {
-                self.commitUpdate = true;
-            }
-        }, this);
-        this.context.forecasts.on("change:commitForecastFlag", function(context, flag) {
-            if(flag) {
-                self.commitUpdate = true;
-            }
-        }, this);
+        
+        //This is fired when anything in the worksheets is saved.  We want to wait until this happens
+        //before we go and grab new chart data.
+        this.context.forecasts.on("forecasts:commitButtons:saved forecasts:committed:saved", function(){
+            self.renderChart();
+        });  
+        
         this.context.forecasts.on('change:selectedUser', function (context, user) {
             if(!_.isEmpty(self.chart)) {
                 self.handleRenderOptions({user_id: user.id, display_manager : (user.showOpps === false && user.isManager === true)});
@@ -217,7 +197,7 @@
     },
 
     /**
-     * Handle putting the optoins into the values array that is used to keep track of what changes
+     * Handle putting the options into the values array that is used to keep track of what changes
      * so we only render when something changes.
      * @param options
      */
@@ -230,27 +210,6 @@
      */
     renderChart:function () {
         this._initializeChart();
-    },
-
-    /**
-     * Get the Chart Datasets that are only shown in the Worksheet
-     *
-     * @return {Object}
-     */
-    getChartDatasets: function() {
-        var self = this;
-        var ds = app.metadata.getStrings('app_list_strings').forecasts_chart_options_dataset || [];
-
-        cfg = this.context.forecasts.config;
-        cfg_key = 'show_worksheet_';
-
-        var returnDs = {};
-        _.each(ds, function(value, key){
-            if(cfg.get(cfg_key + key) == 1) {
-                returnDs[key] = value
-            }
-        }, self);
-        return returnDs;
     },
 
     /**

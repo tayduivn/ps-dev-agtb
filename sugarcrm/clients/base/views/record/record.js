@@ -86,7 +86,7 @@
         app.view.View.prototype.render.call(this);
 
         // Check if this is a new record, if it is, enable the edit view
-        if (this.context.has("create") && this.model.isNew) {
+        if (this.createMode && this.model.isNew()) {
             this.editAllMode = false;
             this.toggleEdit(true);
         }
@@ -192,9 +192,21 @@
             }
 
             if (_.isUndefined(isEdit)) {
-                field.options.viewName = (!this.editAllMode) ? "edit" : "detail";
+                if (this.editAllMode) {
+                    field.options.viewName = "detail";
+                    this.$('.record-edit-link-wrapper').show();
+                } else {
+                    field.options.viewName = "edit";
+                    this.$('.record-edit-link-wrapper').hide();
+                }
             } else {
-                field.options.viewName = isEdit ? "edit" : "detail";
+                if (isEdit) {
+                    field.options.viewName = "edit";
+                    this.$('.record-edit-link-wrapper').hide();
+                } else {
+                    field.options.viewName = "detail";
+                    this.$('.record-edit-link-wrapper').show();
+                }
             }
 
             field.render();
@@ -417,6 +429,11 @@
      * @param title
      */
     setTitle: function(title) {
-        this.$('.headerpane').prepend('<h1>' + title + '</h1>');
+        var $title = this.$('.headerpane h1.title');
+        if ($title.length > 0) {
+            $title.text(title);
+        } else {
+            this.$('.headerpane').prepend('<h1 class="title">' + title + '</h1>');
+        }
     }
 })

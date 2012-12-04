@@ -144,7 +144,7 @@ class ConnectorsController extends SugarController {
 		    require_once('include/connectors/utils/ConnectorUtils.php');
             $searchdefs = ConnectorUtils::getSearchDefs();
 			$merge_module = $_REQUEST['merge_module'];
-			$seed = loadBean($merge_module);
+			$seed = BeanFactory::getBean($merge_module);
 			$_searchDefs = isset($searchdefs) ? $searchdefs : array();
 			$_trueFields = array();
 			$source = $_REQUEST['source_id'];
@@ -185,7 +185,7 @@ class ConnectorsController extends SugarController {
 	function pre_save(){}
 	function post_save(){}
 
-	//BEGIN SUGARCRM flav=pro || flav=sales ONLY
+	//BEGIN SUGARCRM flav=pro ONLY
 
 	/**
 	 * Once the user has completed the merge, save the data that has been merged onto the bean.
@@ -220,7 +220,7 @@ class ConnectorsController extends SugarController {
 		header("Location: index.php?action=$return_action&module=$return_module&record=$return_id");
 	}
 
-	//END SUGARCRM flav=pro || flav=sales ONLY
+	//END SUGARCRM flav=pro ONLY
 
     function action_CallConnectorFunc() {
         $this->view = 'ajax';
@@ -298,8 +298,7 @@ class ConnectorsController extends SugarController {
 	    //Error checking
 
 	    //Load bean
-	    $bean = loadBean($module);
-	    $bean->retrieve($id);
+	    $bean = BeanFactory::getBean($module, $id);
 
 	    require_once('include/connectors/ConnectorFactory.php');
 	    $component = ConnectorFactory::getInstance($source_id);
@@ -569,7 +568,7 @@ class ConnectorsController extends SugarController {
 	}
 
 
-	//BEGIN SUGARCRM flav=pro || flav=sales ONLY
+	//BEGIN SUGARCRM flav=pro ONLY
 
 	function action_SaveModifySearch() {
 		$search_sources = !empty($_REQUEST['search_sources']) ? explode(',', $_REQUEST['search_sources']) : array();
@@ -626,7 +625,7 @@ class ConnectorsController extends SugarController {
 	    // END SUGAR INT
 	}
 
-	//END SUGARCRM flav=pro || flav=sales ONLY
+	//END SUGARCRM flav=pro ONLY
 
 
 	/**
@@ -656,12 +655,12 @@ class ConnectorsController extends SugarController {
 		} //foreach
 
 
-		//BEGIN SUGARCRM flav=pro || flav=sales ONLY
+		//BEGIN SUGARCRM flav=pro ONLY
 
 		if ( isset($_SESSION['searchDefs']) )
 		    unset($_SESSION['searchDefs']);
 
-		//END SUGARCRM flav=pro || flav=sales ONLY
+		//END SUGARCRM flav=pro ONLY
 
 
 		require_once('include/connectors/utils/ConnectorUtils.php');

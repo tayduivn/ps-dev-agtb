@@ -59,11 +59,9 @@ function getAllowedReportModules(&$local_modListHeader, $skipCache = false) {
 	$report_modules = array();
 
 	$subModuleCheckArray = array("Tasks", "Calls", "Meetings", "Notes");
-
-	//BEGIN SUGARCRM flav!=sales ONLY
+	
 	$subModuleProjectArray = array("ProjectTask");
-    //END SUGARCRM flav!=sales ONLY
-
+ 
 	foreach($beanList as $key=>$value) {
 
 		if(isset($all_modules[$key])) {
@@ -79,14 +77,12 @@ function getAllowedReportModules(&$local_modListHeader, $skipCache = false) {
 			(array_key_exists("Calendar", $all_modules) || array_key_exists("Activities", $all_modules))) {
 			$report_modules[$key] = $value;
 		}
-
-		//BEGIN SUGARCRM flav!=sales ONLY
-		if(in_array($key, $subModuleProjectArray) &&
+		
+		if(in_array($key, $subModuleProjectArray) && 
 			array_key_exists("Project", $all_modules)) {
 			$report_modules[$key] = $value;
 		}
-		//END SUGARCRM flav!=sales ONLY
-
+		 
 	    if($key == 'Users' || $key == 'Teams'  || $key =='EmailAddresses') {
             $report_modules[$key] = $value;
         }
@@ -133,14 +129,12 @@ global $report_modules;
 
 $module_map = array(
 	'accounts'		=> 'Accounts',
-//BEGIN SUGARCRM flav!=sales ONLY
 	'bugs'			=> 'Bugs',
 	'forecasts'		=> 'Forecasts',
 	'leads'			=> 'Leads',
 	'project_task'	=> 'ProjectTask',
 	'prospects'		=> 'Prospects',
 	'quotes'		=> 'Quotes',
-//END SUGARCRM flav!=sales ONLY
 	'calls'			=> 'Calls',
 	'cases'			=> 'Cases',
 	'contacts'		=> 'Contacts',
@@ -162,7 +156,6 @@ $my_report_titles = array(
 	'Contacts'		=> $local_mod_strings['LBL_MY_CONTACT_REPORTS'],
 	'Opportunities'	=> $local_mod_strings['LBL_MY_OPPORTUNITY_REPORTS'],
 
-//BEGIN SUGARCRM flav!=sales ONLY
 	'Bugs'			=> $local_mod_strings['LBL_MY_BUG_REPORTS'],
 	'Cases'			=> $local_mod_strings['LBL_MY_CASE_REPORTS'],
 	'Leads'			=> $local_mod_strings['LBL_MY_LEAD_REPORTS'],
@@ -170,7 +163,6 @@ $my_report_titles = array(
 	'ProjectTask'	=> $local_mod_strings['LBL_MY_PROJECT_TASK_REPORTS'],
 	'Prospects'		=> $local_mod_strings['LBL_MY_PROSPECT_REPORTS'],
 	'Quotes'		=> $local_mod_strings['LBL_MY_QUOTE_REPORTS'],
-//END SUGARCRM flav!=sales ONLY
 
 	'Calls'			=> $local_mod_strings['LBL_MY_CALL_REPORTS'],
 	'Meetings'		=> $local_mod_strings['LBL_MY_MEETING_REPORTS'],
@@ -189,7 +181,6 @@ $my_team_report_titles = array(
     'Contacts'      => $local_mod_strings['LBL_MY_TEAM_CONTACT_REPORTS'],
     'Opportunities' => $local_mod_strings['LBL_MY_TEAM_OPPORTUNITY_REPORTS'],
 
-//BEGIN SUGARCRM flav!=sales ONLY
     'Leads'         => $local_mod_strings['LBL_MY_TEAM_LEAD_REPORTS'],
     'Quotes'        => $local_mod_strings['LBL_MY_TEAM_QUOTE_REPORTS'],
     'Cases'         => $local_mod_strings['LBL_MY_TEAM_CASE_REPORTS'],
@@ -197,7 +188,6 @@ $my_team_report_titles = array(
     'Forecasts'     => $local_mod_strings['LBL_MY_TEAM_FORECAST_REPORTS'],
     'ProjectTask'   => $local_mod_strings['LBL_MY_TEAM_PROJECT_TASK_REPORTS'],
     'Prospects'     => $local_mod_strings['LBL_MY_TEAM_PROSPECT_REPORTS'],
-//END SUGARCRM flav!=sales ONLY
 
     'Calls'         => $local_mod_strings['LBL_MY_TEAM_CALL_REPORTS'],
     'Meetings'      => $local_mod_strings['LBL_MY_TEAM_MEETING_REPORTS'],
@@ -214,7 +204,6 @@ $published_report_titles = array(
 	'Contacts'		=> $local_mod_strings['LBL_PUBLISHED_CONTACT_REPORTS'],
 	'Opportunities'	=> $local_mod_strings['LBL_PUBLISHED_OPPORTUNITY_REPORTS'],
 
-//BEGIN SUGARCRM flav!=sales ONLY
 	'Leads'			=> $local_mod_strings['LBL_PUBLISHED_LEAD_REPORTS'],
 	'Quotes'		=> $local_mod_strings['LBL_PUBLISHED_QUOTE_REPORTS'],
 	'Cases'			=> $local_mod_strings['LBL_PUBLISHED_CASE_REPORTS'],
@@ -222,7 +211,6 @@ $published_report_titles = array(
 	'Forecasts'		=> $local_mod_strings['LBL_PUBLISHED_FORECAST_REPORTS'],
 	'ProjectTask'	=> $local_mod_strings['LBL_PUBLISHED_PROJECT_TASK_REPORTS'],
 	'Prospects'		=> $local_mod_strings['LBL_PUBLISHED_PROSPECT_REPORTS'],
-//END SUGARCRM flav!=sales ONLY
 
 	'Calls'			=> $local_mod_strings['LBL_PUBLISHED_CALL_REPORTS'],
 	'Meetings'		=> $local_mod_strings['LBL_PUBLISHED_MEETING_REPORTS'],

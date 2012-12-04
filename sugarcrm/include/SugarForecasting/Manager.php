@@ -131,9 +131,13 @@ class SugarForecasting_Manager extends SugarForecasting_AbstractForecast impleme
 
         $data = array();
 
+        // use to_html when call DBManager::fetchByAssoc if encode_to_html isn't defined or not equal false
+        // @see Bug #58397 : Comma in opportunity name is exported as #039;
+        $encode_to_html = !isset($this->args['encode_to_html']) || $this->args['encode_to_html'] != false;
+
         foreach($reportees as $reportee_id=>$reportee_username) {
             /** @var $reportee User */
-            $reportee = BeanFactory::getBean('Users', $reportee_id);
+            $reportee = BeanFactory::getBean('Users', $reportee_id, array('encode' => $encode_to_html));
             $default_data = $this->defaultData;
             $default_data['id'] = $reportee_id;
 
@@ -311,12 +315,11 @@ class SugarForecasting_Manager extends SugarForecasting_AbstractForecast impleme
         {
             // if the reportee is the manager, we need to get the roll up amount instead of the direct amount
             $forecast_type = (User::isManager($id) && $id != $args['user_id']) ? 'ROLLUP' : 'DIRECT';
-            $forecast_query = "SELECT id, best_case, likely_case, worst_case, date_modified, currency_id, base_rate
-                                FROM forecasts
-                                WHERE timeperiod_id = '" . $args['timeperiod_id'] . "'
-                                    AND forecast_type = '" . $forecast_type . "'
-                                    AND user_id = '" . $id .  "'
-                                    AND deleted = 0 ORDER BY date_modified DESC";
+            $forecast_query = sprintf("SELECT id, best_case, likely_case, worst_case, date_modified, currency_id, base_rate FROM forecasts WHERE timeperiod_id = '%s' AND forecast_type = '%s' AND user_id = '%s' AND deleted = 0 ORDER BY forecasts.date_modified DESC",
+                                    $args['timeperiod_id'],
+                                    $forecast_type,
+                                    $id);
+
             $result = $db->limitQuery($forecast_query, 0, 1);
 
             while($row=$db->fetchByAssoc($result)) {
@@ -404,7 +407,7 @@ GROUP BY u.user_name";
     {
         require_once('modules/Forecasts/ForecastManagerWorksheet.php');
         require_once('include/SugarFields/SugarFieldHandler.php');
-        $seed = new ForecastManagerWorksheet();
+        $seed = BeanFactory::getBean('ForecastManagerWorksheets');
         $seed->loadFromRow($this->getArgs());
         $sfh = new SugarFieldHandler();
 

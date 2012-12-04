@@ -115,9 +115,6 @@ class iFrameDashlet extends Dashlet {
     }
 
     function display(){
-    	//BEGIN SUGARCRM flav=sales ONLY
-        $sugar_edition = 'SALES';
-        //END SUGARCRM flav=sales ONLY
         //BEGIN SUGARCRM flav=com ONLY
 
         $sugar_edition = 'COM';

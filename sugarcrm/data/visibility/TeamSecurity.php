@@ -72,4 +72,19 @@ class TeamSecurity extends SugarVisibility
             }
         }
     }
+
+    /**
+     * Add Visibility to a SugarQuery Object
+     * @param SugarQuery $sugarQuery
+     * @param array $options
+     * @return string|SugarQuery
+     */
+    public function addVisibilityFromQuery(SugarQuery $sugarQuery, $options = array()) {
+        $join = false;
+        $this->addVisibilityFrom($join, $options);
+        if(!empty($join)) {
+            $sugarQuery->joinRaw($join);
+        }
+        return $sugarQuery;
+    }
 }

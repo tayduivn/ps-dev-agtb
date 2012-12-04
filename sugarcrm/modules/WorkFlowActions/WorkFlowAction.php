@@ -106,6 +106,17 @@ class WorkFlowAction extends SugarBean {
 	// This is the list of fields that are required
 	var $required_fields =  array();
 
+    /**
+     * This is a depreciated method, please start using __construct() as this method will be removed in a future version
+     *
+     * @see __construct
+     * @deprecated
+     */
+    public function WorkflowAction()
+    {
+        $this->__construct();
+    }
+
 	public function __construct() {
 		parent::__construct();
 
@@ -194,7 +205,7 @@ class WorkFlowAction extends SugarBean {
 
 	function build_field_selector($field_num, $base_module, $workflow_type="", $action_type=""){
 		////Begin - New Code call to workflow_utils
-		$temp_module = get_module_info($base_module);
+		$temp_module = BeanFactory::getBean($base_module);
 		//Build Selector Array
 		$selector_array = array(
 							'value' => $this->value,

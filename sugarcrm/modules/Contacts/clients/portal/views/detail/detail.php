@@ -40,7 +40,7 @@ $viewdefs ['Contacts']['portal']['view']['detail'] =
                 'css_class' => 'btn-primary edit-profile',
                 'events' =>
                 array(
-                    'click' => 'function(e){ this.app.router.navigate("profile/edit", {trigger:true});}'
+                    'click' => 'function(e){ app.router.navigate("profile/edit", {trigger:true});}'
                 ),
             ),
         ),

@@ -54,7 +54,7 @@ class Bug40989 extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testRetrieveByStringFieldsFetchedRow()
     {
-        $loadedContact = loadBean('Contacts');
+        $loadedContact = BeanFactory::getBean('Contacts');
         $loadedContact = $loadedContact->retrieve_by_string_fields(array('last_name'=>'SugarContactLast'));
         $this->assertEquals('SugarContactLast', $loadedContact->fetched_row['last_name']);
     }

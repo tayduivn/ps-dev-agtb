@@ -114,6 +114,17 @@ class DataSet extends SugarBean {
 		);
 
 
+    /**
+     * This is a depreciated method, please start using __construct() as this method will be removed in a future version
+     *
+     * @see __construct
+     * @deprecated
+     */
+    public function DataSet()
+    {
+        $this->__construct();
+    }
+
 	public function __construct() {
 		parent::__construct();
 
@@ -287,13 +298,11 @@ class DataSet extends SugarBean {
 	function process_interlock($list_array){
 		global $mod_strings;
 
-		$sub_data_set = new DataSet();
-		$sub_data_set->retrieve($this->sub_id);
+		$sub_data_set = BeanFactory::getBean('DataSets', $this->sub_id);
 		$sub_data_set->sub_query = true;
 
 			//OUTPUT THE SUB-DATASET
-			$data_set = new CustomQuery();
-			$data_set->retrieve($sub_data_set->query_id);
+			$data_set = BeanFactory::getBean('CustomQueries', $sub_data_set->query_id);
 			$data_set->sub_query_array = $list_array;
 			$SubView = new ReportListView();
 			$SubView->initNewXTemplate( 'modules/CustomQueries/QueryView.html',$mod_strings);
@@ -334,8 +343,7 @@ class DataSet extends SugarBean {
 	function enable_custom_layout(){
 
 		//First examine the query
-		$query_object = new CustomQuery();
-		$query_object->retrieve($this->query_id);
+		$query_object = BeanFactory::getBean('CustomQueries', $this->query_id);
 		$query_object->get_custom_results(false, true);
 
 		if(!empty($query_object->column_array)){
@@ -417,7 +425,7 @@ class DataSet extends SugarBean {
 		$app_strings = return_application_language($current_language);
 		//$symbol = $app_strings['LBL_CURRENCY_SYMBOL'];
 
-		$currency = new Currency();
+		$currency = BeanFactory::getBean('Currencies');
 		if($current_user->getPreference('currency') ){
 			$currency->retrieve($current_user->getPreference('currency'));
 			$symbol = $currency->symbol;
@@ -435,8 +443,7 @@ class DataSet extends SugarBean {
 	function export_csv(){
 		global $current_user;
 		//outputs CSV content
-		$query_object = new CustomQuery();
-		$query_object->retrieve($this->query_id);
+		$query_object = BeanFactory::getBean('CustomQueries', $this->query_id);
 		//check for query running error
 		$result_message = $query_object->get_custom_results(true);
 		if($result_message['result']=="Valid"){

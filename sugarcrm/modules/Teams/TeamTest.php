@@ -157,21 +157,21 @@ $expected_results = array();
 $time = date('Y-m-d H:i:s');
 $passes = 0;
 echo 'creating user A<br>';
-$user_a = new User();
+$user_a = BeanFactory::getBean('Users');
 $user_a->first_name = 'A';
 $user_a->last_name = $time;
 $user_a->user_name = 'A ' . $time;
 $user_a->save();
 
 echo 'creating user B<br>';
-$user_b = new User();
+$user_b = BeanFactory::getBean('Users');
 $user_b->first_name = 'B';
 $user_b->last_name = $time;
 $user_b->user_name = 'B ' . $time;
 $user_b->save();
 
 echo 'creating user C<br>';
-$user_c = new User();
+$user_c = BeanFactory::getBean('Users');
 $user_c->first_name = 'C';
 $user_c->last_name = $time;
 $user_c->user_name = 'C ' . $time;
@@ -197,7 +197,7 @@ $passes +=TeamTest::displayTeamsData($results[count($results) -1], $results[coun
 
 
 echo '<br>Creating Team 1<br><br>';
-$team1 = new Team();
+$team1 = BeanFactory::getBean('Teams');
 $team1->private = false;
 $team1->name = 'Team 1 ' . $time;
 $team1->save();
@@ -209,7 +209,7 @@ $passes +=TeamTest::displayTeamsData($results[count($results) -1], $results[coun
 
 
 echo '<br>Creating Team 2<br><br>';
-$team2 = new Team();
+$team2 = BeanFactory::getBean('Teams');
 $team2->private = false;
 $team2->name = 'Team 2 ' . $time;
 $team2->save();

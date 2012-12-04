@@ -37,7 +37,7 @@ if(isset($_REQUEST['execute'])) {
 	$defaults = $_REQUEST;
 
 	for($i=0; $i<$_REQUEST['number']; $i++) {
-		$email = new Email();
+		$email = BeanFactory::getBean('Emails');
 		$email->name = $_REQUEST['prescript'] ." ". str_pad($i, 3, "0", STR_PAD_LEFT);
 		$email->description = $_REQUEST['body_text'];
 		$email->from_addr = $_REQUEST['from_address'];

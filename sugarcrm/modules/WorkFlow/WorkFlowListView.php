@@ -44,8 +44,8 @@ if (!is_admin($current_user) && empty($workflow_modules))
 
 
 
-$seedEmailTemplate = new EmailTemplate();
-$workflow_object = new WorkFlow();
+$seedEmailTemplate = BeanFactory::getBean('EmailTemplates');
+$workflow_object = BeanFactory::getBean('WorkFlow');
 global $app_strings;
 global $app_list_strings;
 global $mod_strings;

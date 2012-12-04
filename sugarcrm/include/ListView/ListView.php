@@ -282,9 +282,7 @@ function process_dynamic_listview($source_module, $sugarbean,$subpanel_def)
         // TODO: expensive and needs to be removed and done better elsewhere
 
         if(!empty($fill_additional_fields[$aItem->object_name])
-        //BEGIN SUGARCRM flav!=sales ONLY
         || ($aItem->object_name == 'Case' && !empty($fill_additional_fields['aCase']))
-        //END SUGARCRM flav!=sales ONLY
         )
         {
             $aItem->fill_in_additional_list_fields();
@@ -1351,11 +1349,9 @@ $close_inline_img = SugarThemeRegistry::current()->getImage('close_inline', 'bor
                 $delete_link = '&nbsp;';
             }
 
-            $admin = new Administration();
-            $admin->retrieveSettings('system');
+            $admin = Administration::getSettings('system');
 
             $user_merge = $current_user->getPreference('mailmerge_on');
-            //BEGIN SUGARCRM flav!=sales ONLY
             if($user_merge == 'on' && isset($admin->settings['system_mailmerge_on']) && $admin->settings['system_mailmerge_on']) {
                 echo "<script>
                 function mailmerge_dialog(el) {
@@ -1380,10 +1376,6 @@ $close_inline_img = SugarThemeRegistry::current()->getImage('close_inline', 'bor
             } else {
                 $merge_link = "&nbsp;";
             }
-            //END SUGARCRM flav!=sales ONLY
-            //BEGIN SUGARCRM flav=sales ONLY
-            $merge_link = "&nbsp;";
-            //END SUGARCRM flav=sales ONLY
 
             $selected_objects_span = "&nbsp;|&nbsp;{$this->local_app_strings['LBL_LISTVIEW_SELECTED_OBJECTS']}<input  style='border: 0px; background: transparent; font-size: inherit; color: inherit' type='text' readonly name='selectCount[]' value='" . ((isset($_POST['mass'])) ? count($_POST['mass']): 0) . "' />";
 
@@ -1797,7 +1789,6 @@ $close_inline_img = SugarThemeRegistry::current()->getImage('close_inline', 'bor
             $list = $seed;
         }
 
-        //BEGIN SUGARCRM flav!=sales ONLY
         if (is_object($seed) && isset($seed->object_name) && $seed->object_name == 'WorkFlow') {
             $tab=array();
             $access = get_workflow_admin_modules_for_user($current_user);
@@ -1808,7 +1799,6 @@ $close_inline_img = SugarThemeRegistry::current()->getImage('close_inline', 'bor
             }
             $list = $tab;
         }
-        //END SUGARCRM flav!=sales ONLY
 
         if($this->is_dynamic) {
             $this->processHeaderDynamic($xTemplateSection,$html_varName);

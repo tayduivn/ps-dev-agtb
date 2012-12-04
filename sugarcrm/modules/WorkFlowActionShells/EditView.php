@@ -53,14 +53,14 @@ global $app_strings;
 // global $default_language;
 // global $cal_codes;
 
-$workflow_object = new WorkFlow();
+$workflow_object = BeanFactory::getBean('WorkFlow');
 if(isset($_REQUEST['workflow_id']) && isset($_REQUEST['workflow_id'])) {
     $workflow_object->retrieve($_REQUEST['workflow_id']);
 } else {
 	sugar_die("You shouldn't be here");
 }
 
-$focus = new WorkFlowTriggerShell();
+$focus = BeanFactory::getBean('WorkFlowTriggerShells');
 
 if(isset($_REQUEST['record']) && isset($_REQUEST['record'])) {
     $focus->retrieve($_REQUEST['record']);

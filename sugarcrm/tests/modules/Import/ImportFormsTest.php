@@ -152,7 +152,7 @@ class ImportFormsTest extends Sugar_PHPUnit_Framework_OutputTestCase
 
         $html = getControl('Opportunities','currency_id');
 
-        $focus = loadBean('Opportunities');
+        $focus = BeanFactory::getBean('Opportunities');
 
         require_once('modules/Opportunities/Opportunity.php');
 

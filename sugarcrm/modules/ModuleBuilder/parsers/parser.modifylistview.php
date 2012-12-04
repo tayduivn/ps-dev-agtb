@@ -43,14 +43,12 @@ class ParserModifyListView extends ModuleBuilderParser
 		global $app_list_strings ;
 		$this->module_name = $module_name ;
 		$mod_strings = return_module_language ( $GLOBALS [ 'current_language' ], $this->module_name ) ; // needed solely so that listviewdefs that reference this can be included without error
-		$class = $GLOBALS [ 'beanList' ] [ $this->module_name ] ;
-		require_once ($GLOBALS [ 'beanFiles' ] [ $class ]) ;
-		$this->module = new $class ( ) ;
+		$this->module = BeanFactory::getBean($this->module_name);
 
 		$loaded = $this->_loadFromFile('ListView','modules/' . $this->module_name . '/metadata/listviewdefs.php',$this->module_name);
 		$this->originalListViewDefs = $loaded['viewdefs'] [ $this->module_name ] ;
 		$this->_variables = $loaded['variables'];
-		//		_pp($loaded);
+
 		$this->customFile = 'custom/modules/' . $this->module_name . '/metadata/listviewdefs.php' ;
 		if (file_exists ( $this->customFile ))
 		{
@@ -66,7 +64,7 @@ class ParserModifyListView extends ModuleBuilderParser
 		$this->fixKeys ( $this->listViewDefs ) ;
 		$this->language_module = $this->module_name ;
 	}
-	
+
 	function getLanguage()
 	{
 	    return $this->language_module;
@@ -92,7 +90,7 @@ class ParserModifyListView extends ModuleBuilderParser
 		}
 		$defs = $temp ;
 	}
-	
+
 	/**
 	 * returns the default fields for a listview
 	 * Called only when displaying the listview for editing; not called when saving
@@ -175,16 +173,16 @@ class ParserModifyListView extends ModuleBuilderParser
         return $this->module->field_defs;
     }
 
-	
+
 	function isValidField($key, $def) {
-	    //Allow fields that are studio visible  
+	    //Allow fields that are studio visible
 		if (! empty ( $def [ 'studio' ] ) && $def [ 'studio' ] == 'visible')
 		  return true;
-		  
+
 		//No ID fields
 		if  ((!empty ( $def [ 'dbType' ] ) && $def [ 'dbType' ] == 'id') || (!empty ( $def [ 'type' ] ) && $def [ 'type' ] == 'id'))
 		  return false;
-		  
+
 		//only allow DB and custom fields (if a source is specified)
 	    if (!empty($def [ 'source' ]) && $def [ 'source' ] != 'db' && $def [ 'source' ] != 'custom_fields')
 		  return false;
@@ -196,8 +194,8 @@ class ParserModifyListView extends ModuleBuilderParser
 	    //If none of the "ifs" are true, the field is valid
 	    return true;
 	}
-	
-	
+
+
 	function getField ( $fieldName )
 	{
 		$fieldName = strtolower ( $fieldName ) ;
@@ -269,7 +267,7 @@ class ParserModifyListView extends ModuleBuilderParser
 						$fields [ $fieldname ] [ 'sortable' ] = false ;
 					}
 					// Bug 23728 - Make adding a currency type field default to setting the 'currency_format' to true
-					if (isset ( $this->module->field_defs [ strtolower ( $fieldname ) ] [ 'type ' ] ) && $this->module->field_defs [ strtolower ( $fieldname ) ] [ 'type' ] == 'currency') 
+					if (isset ( $this->module->field_defs [ strtolower ( $fieldname ) ] [ 'type ' ] ) && $this->module->field_defs [ strtolower ( $fieldname ) ] [ 'type' ] == 'currency')
 					{
 						$fields [ $fieldname ] [ 'currency_format' ] = true;
 					}
@@ -304,7 +302,7 @@ class ParserModifyListView extends ModuleBuilderParser
 		{
 		    $fields[ $key ] = $def;
 		}
-		
+
 		return $fields ;
 	}
 	function handleSave ()

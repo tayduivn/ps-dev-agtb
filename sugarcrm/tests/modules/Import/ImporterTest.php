@@ -83,7 +83,7 @@ class ImporterTest extends Sugar_PHPUnit_Framework_TestCase
 
         $importSource = new ImportFile($file, ',', '"');
 
-        $bean = loadBean($this->_importModule);
+        $bean = BeanFactory::getBean($this->_importModule);
 
         $_REQUEST['columncount'] = 2;
         $_REQUEST['colnum_0'] = 'date_entered';

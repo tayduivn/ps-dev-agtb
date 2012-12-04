@@ -93,9 +93,7 @@ class ParserModifyLayoutView extends ModuleBuilderParser
         }
 
         // get the fieldDefs from the bean
-        $class = $GLOBALS ['beanList'] [$module];
-        require_once ($GLOBALS ['beanFiles'] [$class]);
-        $bean = new $class();
+        $bean = BeanFactory::getBean($module);
         $this->_fieldDefs = & $bean->field_defs;
 
         $this->loadModule($this->_module, $this->_sourceView);
@@ -159,8 +157,8 @@ class ParserModifyLayoutView extends ModuleBuilderParser
         {
         	TemplateHandler::clearCache($this->_module,"form_SubPanelQuickCreate_{$this->_module}.tpl");
         	TemplateHandler::clearCache($this->_module,"form_DCQuickCreate_{$this->_module}.tpl");
-        } 
-        else 
+        }
+        else
         {
         	TemplateHandler::clearCache($this->_module,"{$this->_view}.tpl");
         }

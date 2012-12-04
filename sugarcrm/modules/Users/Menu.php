@@ -32,17 +32,12 @@ global $current_user, $sugar_config;
 
 $module_menu=Array();
 if($GLOBALS['current_user']->isAdminForModule('Users')
-		//BEGIN SUGARCRM flav=sales ONLY
-		|| $current_user->user_type == 'UserAdministrator'
-		//END SUGARCRM flav=sales ONLY
 )
 {
 
 	$module_menu = Array(
 		Array("index.php?module=Users&action=EditView&return_module=Users&return_action=DetailView", $mod_strings['LNK_NEW_USER'],"CreateUsers"),
-		//BEGIN SUGARCRM flav!=sales ONLY
 		Array("index.php?module=Users&action=EditView&usertype=group&return_module=Users&return_action=DetailView", $mod_strings['LNK_NEW_GROUP_USER'],"CreateUsers")
-		//END SUGARCRM flav!=sales ONLY
 	);
 	//BEGIN SUGARCRM flav=pro ONLY
 

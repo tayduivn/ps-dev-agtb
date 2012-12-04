@@ -26,7 +26,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 
 
-$focus = new Quota();
+$focus = BeanFactory::getBean('Quotas');
 
 require_once('include/formbase.php');
 $focus = populateFromPost('', $focus);
@@ -62,7 +62,7 @@ else
 
 // Check to see if current user is a top level manager
 if ($focus->isTopLevelManager()){
-	$topLevelFocus = new Quota();
+	$topLevelFocus = BeanFactory::getBean('Quotas');
 	
 	$topLevelFocus->timeperiod_id = $_REQUEST['timeperiod_id'];
 	$topLevelFocus->user_id = $current_user->id;

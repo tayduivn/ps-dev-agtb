@@ -45,9 +45,7 @@ $app_list_strings = array (
     'Meetings' => 'Meetings',
     'Tasks' => 'Tasks',
     'Calendar' => 'Calendar',
-  //BEGIN SUGARCRM flav!=sales ONLY
     'Leads' => 'Leads',
-  //END SUGARCRM flav!=sales ONLY
     'Currencies' => 'Currencies',
     //BEGIN SUGARCRM flav=pro ONLY
     'Contracts'=>'Contracts',
@@ -58,10 +56,10 @@ $app_list_strings = array (
     'ProductTemplates' => 'Product Catalog',
   //END SUGARCRM flav=pro ONLY
 
-  //BEGIN SUGARCRM flav=pro || flav=sales ONLY
+  //BEGIN SUGARCRM flav=pro ONLY
     'Reports' => 'Reports',
     'Reports_1'=>'Reports',
-  //END SUGARCRM flav=pro || flav=sales ONLY
+  //END SUGARCRM flav=pro ONLY
   //BEGIN SUGARCRM flav=pro ONLY
     'Forecasts' => 'Forecasts',
     'ForecastSchedule'=>'Forecast Schedule',
@@ -75,7 +73,6 @@ $app_list_strings = array (
     //END SUGARCRM flav=pro ONLY
     'Activities' => 'Activities',
     'ActivityStream' => 'Activity Stream',
-  //BEGIN SUGARCRM flav!=sales ONLY
     'Bugs' => 'Bug Tracker',
     'Feeds' => 'RSS',
     'iFrames'=>'My Sites',
@@ -89,7 +86,6 @@ $app_list_strings = array (
     'CampaignLog'=>'Campaign Log',
     'Documents'=>'Documents',
     'DocumentRevisions'=>'Document Revisions',
-    //END SUGARCRM flav!=sales ONLY
     'Connectors'=>'Connectors',
     'Roles'=>'Roles',
     //BEGIN SUGARCRM flav=following ONLY
@@ -118,9 +114,7 @@ $app_list_strings = array (
     'EmailMarketing' => 'Email Marketing',
     'EmailTemplates' => 'Email Templates',
     'SNIP' => "Email Archiving",
-//BEGIN SUGARCRM flav!=sales ONLY
     'ProspectLists' => 'Target Lists',
-//END SUGARCRM flav!=sales ONLY
     'SavedSearch' => 'Saved Searches',
     'UpgradeWizard' => 'Upgrade Wizard',
     'Trackers' => 'Trackers',
@@ -143,9 +137,7 @@ $app_list_strings = array (
   'moduleListSingular' =>
   array (
     'Home' => 'Home',
-  //BEGIN SUGARCRM flav!=sales ONLY
     'Dashboard' => 'Dashboard',
-  //END SUGARCRM flav!=sales ONLY
     'Contacts' => 'Contact',
     'Accounts' => 'Account',
     'Opportunities' => 'Opportunity',
@@ -156,9 +148,7 @@ $app_list_strings = array (
     'Meetings' => 'Meeting',
     'Tasks' => 'Task',
     'Calendar' => 'Calendar',
-  //BEGIN SUGARCRM flav!=sales ONLY
     'Leads' => 'Lead',
-  //END SUGARCRM flav!=sales ONLY
     //BEGIN SUGARCRM flav=pro ONLY
     'Contracts'=>'Contract',
     'Quotes' => 'Quote',
@@ -173,7 +163,6 @@ $app_list_strings = array (
     //END SUGARCRM flav=pro ONLY
     'Activities' => 'Activity',
     'ActivityStream' => 'Activity Stream',
-  //BEGIN SUGARCRM flav!=sales ONLY
     'Bugs' => 'Bug',
     'KBDocuments' => 'KBDocument',
     'Feeds' => 'RSS',
@@ -184,7 +173,6 @@ $app_list_strings = array (
     'Prospects' => 'Target',
     'Campaigns'=>'Campaign',
     'Documents'=>'Document',
-    //END SUGARCRM flav!=sales ONLY
     'SugarFollowing'=>'SugarFollowing',
     'Sync'=>'Sync',
 //BEGIN SUGARCRM flav=pro ONLY
@@ -198,7 +186,8 @@ $app_list_strings = array (
     'EAPM' => 'External Account',
 //END SUGARCRM flav=pro ONLY
     'Users' => 'User',
-  'SugarFavorites'=>'SugarFavorites'
+  'SugarFavorites'=>'SugarFavorites',
+   'Employees' => 'Employee',
 
         ),
 
@@ -309,7 +298,6 @@ $app_list_strings = array (
     'Influencer' => 'Influencer',
     'Other' => 'Other',
   ),
-  //BEGIN SUGARCRM flav!=sales ONLY
   //Note:  do not translate case_relationship_type_default_key
 //       it is the key for the default case_relationship_type_dom value
   'case_relationship_type_default_key' => 'Primary Contact',
@@ -319,7 +307,6 @@ $app_list_strings = array (
     'Primary Contact' => 'Primary Contact',
     'Alternate Contact' => 'Alternate Contact',
   ),
-  //END SUGARCRM flav!=sales ONLY
   'payment_terms' =>
   array (
     '' => '',
@@ -329,7 +316,8 @@ $app_list_strings = array (
   'sales_stage_default_key' => 'Prospecting',
   'fts_type' => array (
       '' => '',
-      'Elastic' => 'elasticsearch'
+      'Elastic' => 'ElasticSearch',
+      'DBFTS'  => 'Basic DBFTS',
   ),
   'sales_stage_dom' =>
   array (
@@ -465,7 +453,6 @@ $app_list_strings = array (
     'Inbound' => 'Inbound',
     'Outbound' => 'Outbound',
   ),
-  //BEGIN SUGARCRM flav!=sales ONLY
   'lead_status_dom' =>
   array (
     '' => '',
@@ -476,13 +463,11 @@ $app_list_strings = array (
     'Recycled' => 'Recycled',
     'Dead' => 'Dead',
   ),
-  //END SUGARCRM flav!=sales ONLY
    'gender_list' =>
   array (
     'male' => 'Male',
     'female' => 'Female',
   ),
-  //BEGIN SUGARCRM flav!=sales ONLY
   //Note:  do not translate case_status_default_key
 //       it is the key for the default case_status_dom value
   'case_status_default_key' => 'New',
@@ -502,13 +487,9 @@ $app_list_strings = array (
     'P2' => 'Medium',
     'P3' => 'Low',
   ),
-  //END SUGARCRM flav!=sales ONLY
   'user_type_dom' =>
   array (
     'RegularUser' => 'Regular User',
-  //BEGIN SUGARCRM flav=sales ONLY
-    'UserAdministrator' => 'User Administrator',
-  //END SUGARCRM flav=sales ONLY
     'Administrator' => 'Administrator',
   ),
   'user_status_dom' =>
@@ -529,7 +510,6 @@ $app_list_strings = array (
     'Yahoo!' => 'Yahoo!',
     'AOL' => 'AOL',
   ),
-//BEGIN SUGARCRM flav!=sales ONLY
     'project_task_priority_options' => array (
         'High' => 'High',
         'Medium' => 'Medium',
@@ -570,7 +550,6 @@ $app_list_strings = array (
         'Low' => 'Low',
     ),
     'project_priority_default' => 'Medium',
-//END SUGARCRM flav!=sales ONLY
   //Note:  do not translate record_type_default_key
 //       it is the key for the default record_type_module value
   'record_type_default_key' => 'Accounts',
@@ -579,10 +558,8 @@ $app_list_strings = array (
     '' => '',
     'Accounts' => 'Account',
     'Opportunities' => 'Opportunity',
-  //BEGIN SUGARCRM flav!=sales ONLY
     'Cases' => 'Case',
     'Leads' => 'Lead',
-  //END SUGARCRM flav!=sales ONLY
     'Contacts' => 'Contacts', // cn (11/22/2005) added to support Emails
     //BEGIN SUGARCRM flav=pro ONLY
     'ProductTemplates' => 'Product',
@@ -590,14 +567,12 @@ $app_list_strings = array (
 
     //END SUGARCRM flav=pro ONLY
 
-    //BEGIN SUGARCRM flav!=sales ONLY
 
     'Bugs' => 'Bug',
     'Project' => 'Project',
 
     'Prospects' => 'Target',
     'ProjectTask' => 'Project Task',
-    //END SUGARCRM flav!=sales ONLY
 
     //BEGIN SUGARCRM flav=int ONLY
 
@@ -623,14 +598,12 @@ $app_list_strings = array (
     //END SUGARCRM flav=pro ONLY
     'Emails' => 'Email',
 
-//BEGIN SUGARCRM flav!=sales ONLY
     'Bugs' => 'Bug',
     'Project' => 'Project',
     'ProjectTask' => 'Project Task',
     'Prospects' => 'Target',
     'Cases' => 'Case',
     'Leads' => 'Lead',
-//END SUGARCRM flav!=sales ONLY
 
     'Meetings' => 'Meeting',
     'Calls' => 'Call',
@@ -651,7 +624,6 @@ $app_list_strings = array (
     'Quotes' => 'Quote',
     //END SUGARCRM flav=pro ONLY
 
-    //BEGIN SUGARCRM flav!=sales ONLY
     'Bugs' => 'Bug Tracker',
     'Cases' => 'Case',
     'Leads' => 'Lead',
@@ -660,7 +632,6 @@ $app_list_strings = array (
     'ProjectTask' => 'Project Task',
 
     'Prospects' => 'Target',
-    //END SUGARCRM flav!=sales ONLY
 
   ),
 
@@ -749,7 +720,6 @@ $app_list_strings = array (
     'Invoice' => 'Invoice',
   ),
   //END SUGARCRM flav=PRO ONLY
-  //BEGIN SUGARCRM flav!=sales ONLY
   'issue_priority_default_key' => 'Medium',
   'issue_priority_dom' =>
   array (
@@ -899,7 +869,6 @@ $app_list_strings = array (
         'Quarterly' => 'Quarterly',
         'Annually' => 'Annually',
         ),
-  //END SUGARCRM flav!=sales ONLY
 
   'notifymail_sendtype' =>
   array (
@@ -1049,7 +1018,6 @@ $app_list_strings = array (
         'min' => 'Minutes',
         'hour' => 'Hours',
         ),
-    //BEGIN SUGARCRM flav!=sales ONLY
     'forecast_schedule_status_dom' =>
     array (
     'Active' => 'Active',
@@ -1093,7 +1061,6 @@ $app_list_strings = array (
     'nda'=>'NDA',
     'license'=>'License Agreement',
   ),
-    //END SUGARCRM flav!=sales ONLY
     'dom_meeting_accept_options' =>
     array (
     'accept' => 'Accept',
@@ -1531,7 +1498,6 @@ $app_list_strings = array (
     'Mailbox' => 'Mailbox',
 ),
 */
-//BEGIN SUGARCRM flav!=sales ONLY
 //prospect list type dom
   'prospect_list_type_dom' =>
   array (
@@ -1578,7 +1544,6 @@ $app_list_strings = array (
     'Leads'=>'Leads',
     'Accounts'=>'Accounts',
   ),
-//END SUGARCRM flav!=sales ONLY
   'merge_operators_dom' => array (
     'like'=>'Contains',
     'exact'=>'Exactly',
@@ -1649,7 +1614,6 @@ $app_list_strings = array (
 
 
 //END SUGARCRM flav=pro ONLY
-//BEGIN SUGARCRM flav!=sales ONLY
 
     'projects_priority_options' => array (
         'high'      => 'High',
@@ -1662,7 +1626,6 @@ $app_list_strings = array (
         'inprogress'    => 'In Progress',
         'completed'     => 'Completed',
     ),
-//END SUGARCRM flav!=sales ONLY
     // strings to pass to Flash charts
     'chart_strings' => array (
         'expandlegend'      => 'Expand Legend',
@@ -1777,7 +1740,7 @@ $app_list_strings = array (
         'sales_stage' => 'Sales Stage',
         'probability' => 'Probability'
     ),
-    'forecasts_chart_options_dataset' => array(
+    'forecasts_options_dataset' => array(
         'likely' => 'Likely',
         'best' => 'Best',
         'worst' => 'Worst'
@@ -2392,8 +2355,8 @@ $app_strings = array (
 
     //Forecast specific error messages
     'ERR_TIMEPERIOD_UNDEFINED_FOR_DATE' => 'Error Timeperiod undefined for date {0}',
-    'ERR_TIMEPERIOD_ALREADY_HAS_LEAVES' => 'This TimePeriod already has leaves',
-    'ERR_TIMEPERIOD_ALREADY_LEAF' => 'Leaf Time Periods cannot have leaves',
+    'ERR_TIMEPERIOD_ALREADY_HAS_LEAVES' => 'This TimePeriod already has sub-periods',
+    'ERR_TIMEPERIOD_ALREADY_LEAF' => 'Sub Time Periods cannot have sub-periods',
     'ERR_TIMEPERIOD_TYPE_DOES_NOT_EXIST' => 'Unable to retrieve any timeperiods of type: {0}',
     'LBL_CURRENT_TIMEPERIOD' => 'Current Time Period',
     'LBL_PREVIOUS_TIMEPERIOD' => 'Previous Time Period',
@@ -2422,9 +2385,6 @@ $app_strings = array (
     'LBL_ADDITIONAL_DETAILS_CLOSE' => 'Close',
     'LBL_ADDITIONAL_DETAILS' => 'Additional Details',
     'LBL_ADMIN' => 'Admin',
-//BEGIN SUGARCRM flav=sales ONLY
-    'LBL_USER_ADMIN' => 'User Admin',
-//END SUGARCRM flav=sales ONLY
     'LBL_ALT_HOT_KEY' => '',
     'LBL_ARCHIVE' => 'Archive',
     'LBL_ASSIGNED_TO_USER'=>'Assigned to User',
@@ -2439,9 +2399,7 @@ $app_strings = array (
     'LBL_BY' => 'by',
     'LBL_CALLS'=>'Calls',
     'LBL_CALL'=>'Call',
-//BEGIN SUGARCRM flav!=sales ONLY
     'LBL_CAMPAIGNS_SEND_QUEUED' => 'Send Queued Campaign Emails',
-//END SUGARCRM flav!=sales ONLY
     'LBL_SUBMIT_BUTTON_LABEL' => 'Submit',
     'LBL_CASE'=>'Case',
     'LBL_CASES'=>'Cases',
@@ -2531,17 +2489,13 @@ $app_strings = array (
     'LBL_SHOW_LESS' => 'Show Less',
     'LBL_SHOW_MORE' => 'Show More',
     'LBL_TODAYS_ACTIVITIES' => 'Today\'s Activities',
-  //BEGIN SUGARCRM flav!=sales ONLY
     'LBL_LEADS'=>'Leads',
-  //END SUGARCRM flav!=sales ONLY
     'LBL_LESS' => 'less',
-//BEGIN SUGARCRM flav!=sales ONLY
     'LBL_CAMPAIGN' => 'Campaign:',
     'LBL_CAMPAIGNS' => 'Campaigns',
     'LBL_CAMPAIGNLOG' => 'CampaignLog',
     'LBL_CAMPAIGN_CONTACT'=>'Campaigns',
     'LBL_CAMPAIGN_ID'=>'campaign_id',
-//END SUGARCRM flav!=sales ONLY
     'LBL_SITEMAP'=>'Sitemap',
     'LBL_THEME'=>'Theme:',
     'LBL_THEME_PICKER'=>'Page Style',
@@ -2637,7 +2591,6 @@ $app_strings = array (
 	'LBL_BILLING_STREET'=> 'Street:',
 	'LBL_SHIPPING_STREET'=> 'Street:',
 
-    //BEGIN SUGARCRM flav=pro || flav!=sales ONLY
     'LBL_PRODUCT_BUNDLES'=>'Product Bundles',
     'LBL_PRODUCTS'=>'Products',
     'LBL_PROJECT_TASKS'=>'Project Tasks',
@@ -2647,7 +2600,6 @@ $app_strings = array (
     'LBL_QUOTE_TO_OPPORTUNITY_TITLE' => 'Create Opportunity from Quote',
     'LBL_QUOTES_SHIP_TO'=>'Quotes Ship to',
     'LBL_QUOTES'=>'Quotes',
-    //END SUGARCRM flav=pro || flav!=sales ONLY
 
     // Strings for Instance Picker Widget
     'LBL_INVITE' => 'Invite',
@@ -2992,9 +2944,7 @@ $app_strings = array (
 
     'LBL_PLEASE_SELECT' => 'Please Select',
     'LBL_REDIRECT_URL'=>'Redirect URL',
-//BEGIN SUGARCRM flav!=sales ONLY
     'LBL_RELATED_CAMPAIGN' =>'Related campaign',
-//END SUGARCRM flav!=sales ONLY
     'LBL_ADD_ALL_LEAD_FIELDS' => 'Add All Fields',
     'LBL_REMOVE_ALL_LEAD_FIELDS' => 'Remove All Fields',
     'LBL_ONLY_IMAGE_ATTACHMENT' => 'Only image type attachment can be embedded',
@@ -3087,9 +3037,9 @@ $app_strings = array (
     //BEGIN SUGARCRM flav=pro ONLY
     'LBL_TEAM_ID' => 'Team id',
     //END SUGARCRM flav=pro ONLY
-    //BEGIN SUGARCRM flav=pro || flav=sales ONLY
+    //BEGIN SUGARCRM flav=pro ONLY
     'LBL_SELECT_MODULE' => 'Select a module:',
-    //END SUGARCRM flav=pro || flav=sales ONLY
+    //END SUGARCRM flav=pro ONLY
     'LBL_USER_ID' => 'User Id',
     'LBL_MODULE_NAME' => 'Module Name',
     'LBL_ITEM_ID' => 'Item Id',
@@ -3407,22 +3357,24 @@ $app_strings = array (
     'BorderColor' => 'Border Color',
     'NavigationBar' => 'Navigation Bar',
     'PrimaryButton' => 'Primary Button',
-    
+
   	//BEGIN SUGARCRM flav=PRO ONLY
     //in app tour
-    'LBL_TOUR_PDF_MANAGER' => 'New PDF Manager',
-    'LBL_TOUR_PDF_MANAGER_DESCRIPTION' => '<div style="float: left;"><div class="well" style="float: left; width: 157px; margin-right: 20px;"><img src="themes/default/images/pt-pdf-manager.png" width="157" height="167"><div class="caption">PDF Manager link in Admin</div></div><div style="float: left; width: 400px;"><ul><li class="icon-ok">Admin users can modify predefined Quote and Invoice Templates</li><li class="icon-ok">Admin users can add new templates for standard or custom modules utilizing a flexible HTML editor</li><li class="icon-ok">The new PDF Manager enables companies to create custom, personalized PDF documents by merging data from any record in any module</li></ul><p>Click on Admin under Profile menu to find a link to the PDF Manager under the System settings</p><i class="icon-arrow-left icon-lg" style="float: right; position: relative; right: 444px; top: -92px;"></i></div></div><div class="clear"></div>',
-    'LBL_TOUR_MEETINGS_CALLS' => 'Meetings and Calls',
-    'LBL_TOUR_MEETINGS_CALLS_DESCRIPTION' => '<ul><li class="icon-ok">Recurring Meetings and Calls can now be scheduled from the detail view</li><li class="icon-ok">Invitees for Meetings or Calls can now be selected by searching for contacts associated with accounts</li></ul>',
-    'LBL_TOUR_NOTIFICATIONS' => 'Notifications',
-    'LBL_TOUR_NOTIFICATIONS_DESCRIPTION' => '<div style="float: left;"><div class="well" style="float: left; width: 317px; margin-right: 20px;"><img src="themes/default/images/pt-notifications.png" width="317" height="212"><div class="caption">Notifications</div></div><div style="float: left; width: 400px;"><ul><li class="icon-ok">Administrators now receive a notification when the full text search indexing is completed</li></ul></div></div><div class="clear"></div>',
-    'LBL_TOUR_SPELL_CHECK' => 'Spell Check',
-    'LBL_TOUR_SPELL_CHECK_DESCRIPTION' => '<div style="float: left;"><div class="well" style="float: left; width: 112px; margin-right: 20px;"><img src="themes/default/images/pt-spell-check.png" width="112" height="212"><div class="caption">Spell check menu</div></div><div style="float: left; width: 400px;"><ul><li class="icon-ok">Spell checking is now available when composing emails,  editing PDF Manager templates, and when editing email templates in the Emails, Campaigns and Workflow modules.</li></ul></div></div><div class="clear"></div>',
-    'LBL_TOUR_IE8' => 'Internet Explorer 8',
-    'LBL_TOUR_IE8_DESCRIPTION' => '<ul><li class="icon-ok">Internet Explorer 8 web browser is no longer supported</li></ul>',
+    'LBL_TOUR_SCREEN_1_TITLE' => 'Now you can do forecasting in Sugar',
+    'LBL_TOUR_SCREEN_1_DESCRIPTION' => '<div style="float: left;"><div style="float: left; width: 300px;"><ul><li class="icon-ok">Set up your forecasting parameters</li><li class="icon-ok">Keep track of your projected sales</li><li class="icon-ok">Forecast your sales team\'s projected sales</li></ul></div><div class="well" style="float: left; width: 220px; margin-left: 20px;"><img src="themes/default/images/pt-screen1-thumb.png" width="220" id="thumbnail_1" class="thumb"></div></div><div class="clear"></div>',
+    'LBL_TOUR_SCREEN_2_TITLE' => 'Setup your Forecasting Parameters',
+    'LBL_TOUR_SCREEN_2_DESCRIPTION' => '<div style="float: left;"><div style="float: left; width: 300px;"><ul><li class="icon-ok">Select Fiscal Year start date</li><li class="icon-ok">Choose Yearly or Quarterly time periods</li><li class="icon-ok">Select number of Time Periods to Forecast over</li><li class="icon-ok">Select Categories to include in Forecast</li><li class="icon-ok">Select Range to forecast, such as likely, best or worst</li></ul></div><div class="well" style="float: left; width: 220px; margin-left: 20px;"><img src="themes/default/images/pt-screen2-thumb.png" width="220" id="thumbnail_2" class="thumb"></div></div><div class="clear"></div>',
+    'LBL_TOUR_SCREEN_3_TITLE' => 'Manage your Sales Teams Projected Sales',
+    'LBL_TOUR_SCREEN_3_DESCRIPTION' => '<div style="float: left;"><div style="float: left; width: 300px;"><ul><li class="icon-ok">Select the Time Period to view</li><li class="icon-ok">See your sales team\'s committed worksheets and adjust their forecasts</li><li class="icon-ok">See Alerts when your sales team members commit new forecasts</li><li class="icon-ok">Save your Worksheet without committing or;</li><li class="icon-ok">Commit Forecast to Manager and view History of previous Commits</li></ul></div><div class="well" style="float: left; width: 220px; margin-left: 20px;"><img src="themes/default/images/pt-screen3-thumb.png" width="220" id="thumbnail_3" class="thumb"></div></div><div class="clear"></div>',
+    'LBL_TOUR_SCREEN_4_TITLE' => 'Manage your Sales Teams Projected Sales',
+    'LBL_TOUR_SCREEN_4_DESCRIPTION' => '<div style="float: left;"><div style="float: left; width: 300px;"><ul><li class="icon-ok">View Charts or Tables with the projected sales numbers for the entire sales team or by individual team member</li><li class="icon-ok">Change the Chart to visualize projected sales by Likely, Best or Worst case values</li></ul></div><div class="well" style="float: left; width: 220px; margin-left: 20px;"><img src="themes/default/images/pt-screen4-thumb.png" width="220" id="thumbnail_4" class="thumb"></div></div><div class="clear"></div>',
+    'LBL_TOUR_SCREEN_5_TITLE' => 'Manage your Projected Sales',
+    'LBL_TOUR_SCREEN_5_DESCRIPTION' => '<div style="float: left;"><div style="float: left; width: 300px;"><ul><li class="icon-ok">Select the Time Period for your Forecast</li><li class="icon-ok">Review and Edit Amounts and Probabilities for your Opportunities</li><li class="icon-ok">Save your Forecast Worksheet without committing or;</li><li class="icon-ok">Commit Forecast to Manager, and view History of previous Commits</li></ul></div><div class="well" style="float: left; width: 220px; margin-left: 20px;"><img src="themes/default/images/pt-screen5-thumb.png" width="220" id="thumbnail_5" class="thumb"></div></div><div class="clear"></div>',
+    'LBL_TOUR_SCREEN_6_TITLE' => 'Manage your Projected Sales',
+    'LBL_TOUR_SCREEN_6_DESCRIPTION' => '<div style="float: left;"><div style="float: left; width: 300px;"><ul><li class="icon-ok">View Charts and Tables of projected sales amounts for your own Opportunities</li><li class="icon-ok">Edit settings to view by Sales Stage and Probability</li></ul></div><div class="well" style="float: left; width: 220px; margin-left: 20px;"><img src="themes/default/images/pt-screen6-thumb.png" width="220" id="thumbnail_6" class="thumb"></div></div><div class="clear"></div>',
     'LBL_TOUR_WELCOME' => 'What\'s New in Sugar',
     'LBL_TOUR_WATCH' => 'Watch What\'s New in Sugar',
-    'LBL_TOUR_FEATURES' => '<ul style=""><li class="icon-ok">Apply custom PDF templates to all modules</li><li class="icon-ok">Create recurring Meetings and Calls from detail view</li><li class="icon-ok">Search for invitees by account when scheduling Meetings and Calls</li><li class="icon-ok">Administrators are notified when Global Search indexing completes</li><li class="icon-ok">Spell Check is available in TinyMCE Editor</li><li class="icon-ok">IE 8 is no longer supported</li></ul>',
+    'LBL_TOUR_FEATURES' => '<ul style=""><li class="icon-ok">Sweeter look and feel– now with a modern edgy and sharp theme!</li><li class="icon-ok">Forecasting Module has been given an overhaul - now with better functionality and fantastic visual appeal!</li></ul>',
     'LBL_TOUR_VISIT' => 'For more information please visit our application',
     'LBL_TOUR_DONE' => 'You\'re Done!',
     'LBL_TOUR_REFERENCE_1' => 'You can always reference our',
@@ -3431,7 +3383,7 @@ $app_strings = array (
     'LBL_TOUR_CALENDAR_URL_1' => 'Do you share your SugarCRM calendar with 3rd party applications, such as Microsoft Outlook or Exchange? If so, you have a new URL. This new, more secure URL includes a personal key which will prevent unauthorized publishing of your calendar.',
     'LBL_TOUR_CALENDAR_URL_2' => 'Retrieve your new shared calendar URL.',
     //END SUGARCRM flav=PRO ONLY
-    
+
     //begin portal
     //BEGIN SUGARCRM flav=ent ONLY
     // for nomad mobile
@@ -3521,10 +3473,10 @@ $app_strings = array (
     'ERR_MOBILE_EMAIL' => 'Error. Invalid Email Address.',
     'LBL_MOBILE_FILE_NOT_SUPPORTED' => 'This document type is unsupported.',
     'LBL_MOBILE_GENERIC_NATIVE_ERROR' => 'An unexpected error has occurred.',
-
     //END SUGARCRM flav=pro ONLY
 
     //for portal
+
     'LBL_PORTAL_SEARCH' => 'Search by Name, Number',
     'LBL_SIGNUP_BUTTON_LABEL' => 'Sign Up',
     'LBL_PORTAL_SIGNUP_PROCESS' => 'Registering',
@@ -3627,6 +3579,13 @@ $app_strings = array (
     'LBL_EXISTING' => 'Existing',
     'LBL_PANEL_DEFAULT' => 'Default',
 
+    //BEGIN SUGARCRM flav=pro ONLY
+    //These are for the timeperiod name formats
+    'LBL_ANNUAL_TIMEPERIOD_FORMAT' => 'Year {0}',
+    'LBL_QUARTER_TIMEPERIOD_FORMAT' => 'Q{0} ({1} - {2})',
+    'LBL_MONTH_TIMEPERIOD_FORMAT' => '{0} - {1}',
+    //END SUGARCRM flav=pro ONLY
+
     //quickcreate modal dialog
     'LBL_IGNORE_DUPLICATE_AND_SAVE' => 'Ignore Duplicate and Save',
     'LBL_SAVE_AND_CREATE_ANOTHER' => 'Save and create new',
@@ -3638,7 +3597,6 @@ $app_strings = array (
 $app_list_strings['moduleList']['Library'] = 'Library';
 $app_list_strings['library_type'] = array('Books'=>'Book', 'Music'=>'Music', 'DVD'=>'DVD', 'Magazines'=>'Magazines');
 $app_list_strings['moduleList']['EmailAddresses'] = 'Email Address';
-//BEGIN SUGARCRM flav!=sales ONLY
 $app_list_strings['project_priority_default'] = 'Medium';
 $app_list_strings['project_priority_options'] = array (
     'High' => 'High',
@@ -3715,7 +3673,6 @@ $app_list_strings['kbdocument_status_dom'] = array (
     'next_year' => 'Next Year',
     'isnull' => 'Is Null',
         );
-    //END SUGARCRM flav!=sales ONLY
 
     $app_list_strings['countries_dom'] = array(
         '' => '',
@@ -4475,20 +4432,20 @@ $app_list_strings ['emailTemplates_type_list_no_workflow'] = array (
   );
 $app_strings ['documentation'] = array (
     'LBL_DOCS' => 'Documentation',
-    'ULT' => '02_Sugar_Ultimate',
-	'ENT' => '02_Sugar_Enterprise',
-	'CORP' => '03_Sugar_Corporate',
-	'PRO' => '04_Sugar_Professional',
-	'COM' => '05_Sugar_Community_Edition'
+    'ULT' => '01_Sugar_Ultimate',
+    'ENT' => '02_Sugar_Enterprise',
+    'CORP' => '03_Sugar_Corporate',
+    'PRO' => '04_Sugar_Professional',
+    'COM' => '05_Sugar_Community_Edition'
 );
 //BEGIN SUGARCRM flav=pro ONLY
 $app_list_strings['forecasts_config_category_options_dom'] = array(
-    'show_binary' => 'Two Categories',
-    'show_buckets' => 'Three Categories',
+    'show_binary' => 'Two Ranges',
+    'show_buckets' => 'Three Ranges',
 //END SUGARCRM flav=pro ONLY
 //BEGIN SUGARCRM flav=int ONLY
 //TODO-sfa Tag this as 'ent' when custom buckets are implemented (SFA-295)
-    'show_custom_buckets' => 'Custom Categories',
+    'show_custom_buckets' => 'Custom Ranges',
 //END SUGARCRM flav=int ONLY
 //BEGIN SUGARCRM flav=pro ONLY
 );
@@ -4496,8 +4453,8 @@ $app_list_strings['forecasts_timeperiod_types_dom'] = array(
     'chronological' => 'Date Based Year',
 );
 $app_list_strings['forecasts_timeperiod_options_dom'] = array(
-    'Annual' => 'Yearly (Quarterly leaf periods)',
-    'Quarter' => 'Quarterly (Monthly leaf periods)',
+    'Annual' => 'Yearly (Quarterly sub-periods)',
+    'Quarter' => 'Quarterly (Monthly sub-periods)',
 );
 
 $app_list_strings['forecasts_timeperiod_month_options_dom'] = array(

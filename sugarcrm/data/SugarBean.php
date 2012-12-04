@@ -302,15 +302,48 @@ class SugarBean
     static protected $field_key;
 
     /**
+     * Create Bean
+     * @deprecated
+     * @param string $beanName
+     * @return SugarBean
+     * FIXME: this will be removed, needed for ensuring BeanFactory is always used
+     */
+    public function _createBean($beanName)
+    {
+        return new $beanName();
+    }
+
+    /**
      * This method has been moved into the __construct() method to follow php standards
+     *
+     * Please start using __construct() as this method will be removed in a future version
      *
      * @see __construct()
      * @deprecated
      */
-    function SugarBean()
+    protected function SugarBean()
     {
         self::__construct();
     }
+
+    // FIXME: this will be removed, needed for ensuring BeanFactory is always used
+    protected function checkBacktrace()
+    {
+        if($this instanceof UserPreference || $this instanceof DynamicField || $this instanceof System) {
+            return true;
+        }
+        $back = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS|DEBUG_BACKTRACE_PROVIDE_OBJECT, 10);
+        foreach($back as $traceitem) {
+            if($traceitem['function'] == '_createBean') {
+                return true;
+            }
+            if(!empty($traceitem['object']) && $traceitem['object'] !== $this) {
+                break;
+            }
+        }
+        throw new Exception("Bean created not via createBean!");
+    }
+
 
     /**
      * Constructor for the bean, it performs following tasks:
@@ -319,11 +352,14 @@ class SugarBean
      * 2. Load the vardefs for the module implemeting the class. cache the entries
      *    if needed
      * 3. Setup row-level security preference
-     * All implementing classes  must call this constructor using the parent::SugarBean() class.
+     * All implementing classes  must call this constructor using the parent::__construct()
      *
      */
     public function __construct()
     {
+        // FIXME: this will be removed, needed for ensuring BeanFactory is always used
+        //$this->checkBacktrace();
+
         global  $dictionary, $current_user;
         static $loaded_defs = array();
         $this->db = DBManagerFactory::getInstance();
@@ -331,8 +367,11 @@ class SugarBean
             $this->module_name = $this->module_dir;
 
         //BEGIN SUGARCRM flav=pro ONLY
+        if(isset($this->disable_team_security)){
+            $this->disable_row_level_security = $this->disable_team_security;
+        }
         // Verify that current user is not null then do an ACL check.  The current user check is to support installation.
-        if(!empty($current_user->id) &&
+        if(!$this->disable_row_level_security && !empty($current_user->id) &&
                 (is_admin($current_user) ||
                 ($this->bean_implements('ACL') && (ACLAction::getUserAccessLevel($current_user->id,$this->module_dir, 'access')
                 == ACL_ALLOW_ENABLED && (ACLAction::getUserAccessLevel($current_user->id, $this->module_dir, 'admin')
@@ -354,7 +393,9 @@ class SugarBean
                 display_notice('<b>missing object_name for ' . $this->object_name . '</b>');
             }
             //END SUGARCRM flav=int ONLY
-            VardefManager::loadVardef($this->module_dir, $this->object_name, false, array("bean" => $this));
+
+            $refresh = inDeveloperMode() || !empty($_SESSION['developerMode']);
+            VardefManager::loadVardef($this->module_dir, $this->object_name, $refresh, array("bean" => $this));
 
             // build $this->column_fields from the field_defs if they exist
             if (!empty($dictionary[$this->object_name]['fields'])) {
@@ -419,8 +460,8 @@ class SugarBean
 
         //BEGIN SUGARCRM flav=pro ONLY
         // Verify that current user is not null then do an ACL check.  The current user check is to support installation.
-        if(!empty($current_user->id) && !isset($this->disable_team_security) &&  empty($this->disable_row_level_security)
-            && !SugarACL::checkAccess($this->module_dir, 'team_security', array('bean' => $this))) {
+        if(!$this->disable_row_level_security && !empty($current_user->id) && !isset($this->disable_team_security) 
+			&& !SugarACL::checkAccess($this->module_dir, 'team_security', array('bean' => $this))) {
         	// We can disable team security for this module
         	$this->disable_row_level_security =true;
         }
@@ -516,6 +557,18 @@ class SugarBean
     public function addVisibilityWhere(&$query, $options = null)
     {
         return $this->loadVisibility()->addVisibilityWhere($query, $options);
+    }
+    /**
+     * Add visibility to a SugarQuery Object
+     * @param SugarQuery $query 
+     * @param array $options 
+     * @return SugarQuery
+     */
+    public function addVisibilityQuery($query, $options = null)
+    {
+        $query = $this->loadVisibility()->addVisibilityFromQuery($query);
+        $query = $this->loadVisibility()->addVisibilityWhereQuery($query);
+        return $query;
     }
 
     /**
@@ -1253,16 +1306,14 @@ class SugarBean
     function get_linked_beans($field_name,$bean_name, $sort_array = array(), $begin_index = 0, $end_index = -1,
                               $deleted=0, $optional_where="")
     {
-        //BEGIN SUGARCRM flav!=sales ONLY
         //if bean_name is Case then use aCase
         if($bean_name=="Case")
             $bean_name = "aCase";
-        //END SUGARCRM flav!=sales ONLY
 
         if($this->load_relationship($field_name)) {
             if ($this->$field_name instanceof Link) {
                 // some classes are still based on Link, e.g. TeamSetLink
-                return array_values($this->$field_name->getBeans(new $bean_name(), $sort_array, $begin_index, $end_index, $deleted, $optional_where));
+                return array_values($this->$field_name->getBeans(BeanFactory::newBeanByName($bean_name), $sort_array, $begin_index, $end_index, $deleted, $optional_where));
             } else {
                 // Link2 style
                 if ($end_index != -1 || !empty($deleted) || !empty($optional_where))
@@ -1563,10 +1614,6 @@ class SugarBean
 		if(empty($this->date_modified) || $this->update_date_modified)
 		{
 			$this->date_modified = $GLOBALS['timedate']->nowDb();
-
-            if(!empty($this->field_defs['last_activity_date'])){
-                $this->last_activity_date = $this->date_modified;
-            }
 		}
 
         $this->_checkOptimisticLocking($action, $isUpdate);
@@ -1581,7 +1628,6 @@ class SugarBean
                 $this->modified_user_id = $current_user->id;
                 $this->modified_by_name = $current_user->user_name;
             }
-
         }
         if ($this->deleted != 1)
             $this->deleted = 0;
@@ -1662,12 +1708,6 @@ class SugarBean
         // use the db independent query generator
         $this->preprocess_fields_on_save();
 
-        // create activity if enabled
-        if ($this->isActivityEnabled()) {
-            $activity = new ActivityStream();
-            $isUpdate ? $activity->addUpdate($this) : $activity->addCreate($this);
-        }
-                
         //construct the SQL to create the audit record if auditing is enabled.
         $dataChanges=array();
         if ($this->is_AuditEnabled()) {
@@ -1912,8 +1952,7 @@ class SugarBean
     * Determines which users receive a notification
     */
     function get_notification_recipients() {
-        $notify_user = new User();
-        $notify_user->retrieve($this->assigned_user_id);
+        $notify_user = BeanFactory::getBean('Users', $this->assigned_user_id);
         $this->new_assigned_user_name = $notify_user->full_name;
 
         $GLOBALS['log']->info("Notifications: recipient is $this->new_assigned_user_name");
@@ -1973,11 +2012,11 @@ class SugarBean
 
             //BEGIN SUGARCRM flav=notifications ONLY
             //Save the notification
-            $notification = new Notifications();
-            $notification->name = $subject;
-            $notification->description = $body;
-            $notification->assigned_user_id = $notify_user->id;
-            $notification->save(FALSE);
+            $n = BeanFactory::getBean('Notifications');
+            $n->name = $notify_mail->Subject;
+            $n->description = $notify_mail->Body;
+            $n->assigned_user_id = $notify_user->id;
+            $n->save(FALSE);
             //END SUGARCRM flav=notifications ONLY
 
             $mailTransmissionProtocol = "unknown";
@@ -2601,7 +2640,7 @@ class SugarBean
      *
      * Internal function, do not override.
     */
-    function retrieve($id = -1, $encode=true,$deleted=true)
+    function retrieve($id='-1', $encode=true,$deleted=true)
     {
 
         $custom_logic_arguments['id'] = $id;
@@ -3346,9 +3385,7 @@ class SugarBean
             $submodule = false;
             if(!$subpanel_def->isCollection())
             {
-                $submodulename = $subpanel_def->_instance_properties['module'];
-                $submoduleclass = $beanList[$submodulename];
-                $submodule = new $submoduleclass();
+                $submodule = BeanFactory::getBean($subpanel_def->_instance_properties['module']);
             }
             if(!empty($submodule) && !empty($submodule->table_name))
             {
@@ -3630,9 +3667,7 @@ class SugarBean
                     if (!empty($data['custom_module'])) {
                         $localTable .= '_cstm';
                     }
-                    global $beanFiles, $beanList, $module;
-                    require_once($beanFiles[$beanList[$joinModule]]);
-                    $rel_mod = new $beanList[$joinModule]();
+                    $rel_mod = BeanFactory::getBean($joinModule);
                     $nameField = "$joinTableAlias.name";
                     if (isset($rel_mod->field_defs['name']))
                     {
@@ -3689,12 +3724,8 @@ class SugarBean
                     $table_joined = !empty($joined_tables[$params['join_table_alias']]) || (!empty($joined_tables[$params['join_table_link_alias']]) && isset($data['link_type']) && $data['link_type'] == 'relationship_info');
 
 					//if rname is set to 'name', and bean files exist, then check if field should be a concatenated name
-					global $beanFiles, $beanList;
-					if($data['rname'] && !empty($beanFiles[$beanList[$rel_module]])) {
-
-						//create an instance of the related bean
-						require_once($beanFiles[$beanList[$rel_module]]);
-						$rel_mod = new $beanList[$rel_module]();
+					$rel_mod = BeanFactory::getBean($rel_module);
+					if($data['rname'] && !empty($rel_mod)) {
 						//if bean has first and last name fields, then name should be concatenated
 						if(isset($rel_mod->field_name_map['first_name']) && isset($rel_mod->field_name_map['last_name'])){
 								$data['db_concat_fields'] = array(0=>'first_name', 1=>'last_name');
@@ -3707,11 +3738,9 @@ class SugarBean
     					if(empty($ret_array['secondary_select']))
     					{
     						$ret_array['secondary_select'] = " SELECT $this->table_name.id ref_id  ";
-
-                            if(!empty($beanFiles[$beanList[$rel_module]]) && $join_primary)
+    						$rel_mod = BeanFactory::getBean($rel_module);
+                            if(!empty($rel_mod) && $join_primary)
                             {
-                                require_once($beanFiles[$beanList[$rel_module]]);
-                                $rel_mod = new $beanList[$rel_module]();
                                 if(isset($rel_mod->field_defs['assigned_user_id']))
                                 {
                                     $ret_array['secondary_select'].= " , ".	$params['join_table_alias'] . ".assigned_user_id {$field}_owner, '$rel_module' {$field}_mod";
@@ -3798,10 +3827,9 @@ class SugarBean
                         if(!$table_joined)
                         {
                             $ret_array['from'] .= ' ' . $join['join']. ' AND ' . $params['join_table_alias'].'.deleted=0';
-                            if(!empty($beanList[$rel_module]) && !empty($beanFiles[$beanList[$rel_module]]))
+                            $rel_mod = BeanFactory::getBean($rel_module);
+                            if(!empty($rel_mod))
                             {
-                                require_once($beanFiles[$beanList[$rel_module]]);
-                                $rel_mod = new $beanList[$rel_module]();
                                 if(isset($value['target_record_key']) && !empty($filter))
                                 {
                                     $selectedFields[$this->table_name.'.'.$value['target_record_key']] = true;
@@ -3964,14 +3992,12 @@ class SugarBean
                         if ($child_info['parent_type'] == 'test') {
                             continue;
                         }
-                        $class = $beanList[$child_info['parent_type']];
-                        // Added to avoid error below; just silently fail and write message to log
-                        if ( empty($beanFiles[$class]) ) {
-                            $GLOBALS['log']->error($this->object_name.'::retrieve_parent_fields() - cannot load class "'.$class.'", skip loading.');
+                        $parent_bean = BeanFactory::getBean($child_info['parent_type']);
+                        if (empty($parent_bean)) {
+                            $GLOBALS['log']->error($this->object_name."::retrieve_parent_fields() - cannot load bean of type {$child_info['parent_type']}, skip loading.");
                             continue;
                         }
-                        require_once($beanFiles[$class]);
-                        $templates[$child_info['parent_type']] = new $class();
+                        $templates[$child_info['parent_type']] = $parent_bean;
                     }
 
                     if(empty($queries[$child_info['parent_type']]))
@@ -4100,7 +4126,6 @@ class SugarBean
         $previous_offset = $row_offset - $max_per_page;
         $next_offset = $row_offset + $max_per_page;
 
-        $class = get_class($this);
             //FIXME: Bug? we should remove the magic number -99
             //use -99 to return all
             $index = $row_offset;
@@ -4112,7 +4137,7 @@ class SugarBean
                 //instantiate a new class each time. This is because php5 passes
                 //by reference by default so if we continually update $this, we will
                 //at the end have a list of all the same objects
-                $temp = new $class();
+                $temp = $this->getCopy();
 
                 foreach($this->field_defs as $field=>$value)
                 {
@@ -4147,9 +4172,7 @@ class SugarBean
                 {
                     // manually retrieve default currency object as long as it's
                     // not stored in database and thus cannot be joined in query
-                    require_once 'modules/Currencies/Currency.php';
-                    $currency = new Currency();
-                    $currency->retrieve($temp->currency_id);
+                    $currency = BeanFactory::getBean('Currencies', $temp->currency_id);
 
                     // walk through all currency-related fields
                     foreach ($temp->field_defs as $temp_field)
@@ -4371,20 +4394,15 @@ class SugarBean
                     {
                         if ($processing_collection)
                         {
-                            $current_bean =$subpanel_def->sub_subpanels[$row['panel_name']]->template_instance;
-                            if(!$isFirstTime)
-                            {
-                                $class = get_class($subpanel_def->sub_subpanels[$row['panel_name']]->template_instance);
-                                $current_bean = new $class();
-                            }
+                            $current_bean = $subpanel_def->sub_subpanels[$row['panel_name']]->template_instance;
                         } else {
-                            $current_bean=$subpanel_def->template_instance;
-                            if(!$isFirstTime)
-                            {
-                                $class = get_class($subpanel_def->template_instance);
-                                $current_bean = new $class();
-                            }
+                            $current_bean = $subpanel_def->template_instance;
                         }
+                        if(!$isFirstTime)
+                        {
+                            $current_bean = $current_bean->getCopy();
+                        }
+
                         $isFirstTime = false;
                         //set the panel name in the bean instance.
                         if (isset($row['panel_name']))
@@ -4583,19 +4601,11 @@ class SugarBean
         $GLOBALS['log']->debug("process_full_list_query: query is ".$query);
         $result = $this->db->query($query, false);
         $GLOBALS['log']->debug("process_full_list_query: result is ".print_r($result,true));
-        $class = get_class($this);
-        $isFirstTime = true;
-        $bean = new $class();
-
         // We have some data.
-        while (($row = $bean->db->fetchByAssoc($result)) != null)
+        while (($row = $this->db->fetchByAssoc($result)) != null)
         {
             $row = $this->convertRow($row);
-            if(!$isFirstTime)
-            {
-                $bean = new $class();
-            }
-            $isFirstTime = false;
+            $bean = $this->getCopy();
 
             foreach($bean->field_defs as $field=>$value)
             {
@@ -4788,25 +4798,16 @@ class SugarBean
                     {
                        $this->fill_in_link_field($id_name, $field);
                     }
-                    if(!empty($this->$id_name) && ( $this->object_name != $related_module || ( $this->object_name == $related_module && $this->$id_name != $this->id ))){
-                        if(isset($GLOBALS['beanList'][ $related_module])){
-
-                            if(!empty($this->$id_name) && isset($this->$name)){
-                                $mod = BeanFactory::newBean($related_module);
-                                // disable row level security in order to be able
-                                // to retrieve related bean properties (bug #44928)
-
-                                //BEGIN SUGARCRM flav=pro ONLY
-                                $mod->disable_row_level_security = true;
-                                //END SUGARCRM flav=pro ONLY
-                                $mod->retrieve($this->$id_name);
-
-                                if (!empty($field['rname'])) {
-                                    $this->$name = $mod->$field['rname'];
-                                } else if (isset($mod->name)) {
-                                    $this->$name = $mod->name;
-                                }
-                            }
+                    if(!empty($this->$id_name) && isset($this->$name) && ( $this->object_name != $related_module || ( $this->object_name == $related_module && $this->$id_name != $this->id ))){
+                        $mod = BeanFactory::getBean($related_module, $this->$id_name
+                        //BEGIN SUGARCRM flav=pro ONLY
+                        , array("disable_row_level_security" => true)
+                        //END SUGARCRM flav=pro ONLY
+                        );
+                        if (!empty($field['rname'])) {
+                        	$this->$name = $mod->$field['rname'];
+                        } else if (isset($mod->name)) {
+                        	$this->$name = $mod->name;
                         }
                     }
                     if(!empty($this->$id_name) && isset($this->$name))
@@ -4884,7 +4885,7 @@ class SugarBean
             SugarRelationship::resaveRelatedBeans();
 
             // Take the item off the recently viewed lists
-            $tracker = new Tracker();
+            $tracker = BeanFactory::getBean('Trackers');
             $tracker->makeInvisibleForAll($id);
 
             // call the custom business logic
@@ -4934,7 +4935,7 @@ class SugarBean
     * @param int $limit Optional, default -1
     * @return array
     */
-    function build_related_list($query, &$template, $row_offset = 0, $limit = -1)
+    function build_related_list($query, $template, $row_offset = 0, $limit = -1)
     {
         $GLOBALS['log']->debug("Finding linked records $this->object_name: ".$query);
         $db = DBManagerFactory::getInstance('listviews');
@@ -4949,24 +4950,14 @@ class SugarBean
         }
 
         $list = Array();
-        $isFirstTime = true;
-        $class = get_class($template);
-        //BEGIN SUGARCRM flav=pro ONLY
-        $disable_security_flag = ($template->disable_row_level_security) ? true : false;
-        //END SUGARCRM flav=pro ONLY
         while($row = $this->db->fetchByAssoc($result))
         {
-            if(!$isFirstTime)
-            {
-                $template = new $class();
-                //BEGIN SUGARCRM flav=pro ONLY
-                $template->disable_row_level_security = $disable_security_flag;
-                //END SUGARCRM flav=pro ONLY
-            }
-            $isFirstTime = false;
-            $record = $template->retrieve($row['id']);
-
-            if($record != null)
+            $record = BeanFactory::retrieveBean($template->module_dir, $row['id']
+            //BEGIN SUGARCRM flav=pro ONLY
+            , array("disable_row_level_security" => $template->disable_row_level_security)
+            //END SUGARCRM flav=pro ONLY
+            );
+            if(!empty($record))
             {
                 // this copies the object into the array
                 $list[] = $template;
@@ -4984,7 +4975,7 @@ class SugarBean
     * @param string $query - the query that should be executed to build the list
     * @param object $template - The object that should be used to copy the records.
     */
-  function build_related_list_where($query, &$template, $where='', $in='', $order_by, $limit='', $row_offset = 0)
+  function build_related_list_where($query, $template, $where='', $in='', $order_by, $limit='', $row_offset = 0)
   {
     $db = DBManagerFactory::getInstance('listviews');
     // No need to do an additional query
@@ -5032,20 +5023,14 @@ class SugarBean
     }
 
     $list = Array();
-    $isFirstTime = true;
-    $class = get_class($template);
-
-    $disable_security_flag = ($template->disable_row_level_security) ? true : false;
     while($row = $db->fetchByAssoc($result))
     {
-        if(!$isFirstTime)
-        {
-            $template = new $class();
-            $template->disable_row_level_security = $disable_security_flag;
-        }
-        $isFirstTime = false;
-        $record = $template->retrieve($row['id']);
-        if($record != null)
+        $record = BeanFactory::retrieveBean($template->module_dir, $row['id']
+        //BEGIN SUGARCRM flav=pro ONLY
+        , array("disable_row_level_security" => $template->disable_row_level_security)
+        //END SUGARCRM flav=pro ONLY
+        );
+        if(!empty($record))
         {
             // this copies the object into the array
             $list[] = $template;
@@ -5098,33 +5083,24 @@ class SugarBean
     * @param array $field_list List of  fields.
     * @return array
     */
-    function build_related_list2($query, &$template, &$field_list)
+    function build_related_list2($query, $template, &$field_list)
     {
         $GLOBALS['log']->debug("Finding linked values $this->object_name: ".$query);
 
         $result = $this->db->query($query, true);
 
         $list = Array();
-        $isFirstTime = true;
-        $class = get_class($template);
-        while($row = $this->db->fetchByAssoc($result))
+        while($row = $db->fetchByAssoc($result))
         {
-            // Create a blank copy
-            $copy = $template;
-            if(!$isFirstTime)
-            {
-                $copy = new $class();
-            }
-            $isFirstTime = false;
+        	$record = $template->getCopy();
             foreach($field_list as $field)
             {
                 // Copy the relevant fields
-                $copy->$field = $row[$field];
-
+                $record->$field = $row[$field];
             }
 
             // this copies the object into the array
-            $list[] = $copy;
+            $list[] = $record;
         }
 
         return $list;
@@ -5908,8 +5884,7 @@ class SugarBean
             case 'edit':
             case 'save':
                 if( !$is_owner && $not_set && !empty($this->id)){
-                    $class = get_class($this);
-                    $temp = new $class();
+                    $temp = $this->getCopy();
                     if(!empty($this->fetched_row) && !empty($this->fetched_row['id']) && !empty($this->fetched_row['assigned_user_id']) && !empty($this->fetched_row['created_by'])){
                         $temp->populateFromRow($this->fetched_row);
                     }else{
@@ -6270,8 +6245,7 @@ class SugarBean
         if($check_notify || (isset($this->notify_inworkflow) && $this->notify_inworkflow == true) // cn: bug 5795 - no invites sent to Contacts, and also bug 25995, in workflow, it will set the notify_on_save=true.
            && !$this->isOwner($this->created_by) )  // cn: bug 42727 no need to send email to owner (within workflow)
         {
-            $admin = new Administration();
-            $admin->retrieveSettings();
+            $admin = Administration::getSettings();
             $sendNotifications = false;
 
             if ($admin->settings['notify_on'])
@@ -6425,5 +6399,14 @@ class SugarBean
 	public function create_export_query($order_by, $where)
 	{
 		return $this->create_new_list_query($order_by, $where, array(), array(), 0, '', false, $this, true, true);
+	}
+
+	/**
+	 * Get a fresh copy of this bean
+	 * @return SugarBean
+	 */
+	public function getCopy()
+	{
+	    return BeanFactory::getBean($this->module_dir);
 	}
 }

@@ -162,6 +162,7 @@ class MysqliManager extends MysqlManager
         $this->query_time = microtime(true) - $this->query_time;
         $GLOBALS['log']->info('Query Execution Time:'.$this->query_time);
 
+
         // This is some heavy duty debugging, leave commented out unless you need this:
         /*
           $bt = debug_backtrace();
@@ -174,14 +175,22 @@ class MysqliManager extends MysqlManager
           $GLOBALS['log']->fatal("${line['file']}:${line['line']} ${line['function']} \nQuery: $sql\n");
           */
 
-        if($this->dump_slow_queries($sql)) {
-            $this->track_slow_queries($sql);
+		if($keepResult) {
+			$this->lastResult = $result;
         }
 
-        if($keepResult)
-            $this->lastResult = $result;
+        if (mysqli_errno($this->database) == 2006 && $this->retryCount < 1) {
+            $GLOBALS['log']->fatal('mysqli has gone away, retrying');
+            $this->retryCount++;
+            $this->disconnect();
+            $this->connect();
+            return $this->query($sql, $dieOnError, $msg, $suppress, $keepResult);
+        } else {
+            $this->retryCount = 0;
+        }
+
         $this->checkError($msg.' Query Failed: ' . $sql, $dieOnError);
-        //echo "returning from queryMulti. Result was:  >" . print_r($result), "<  \n";
+
         return $result;
     }
 

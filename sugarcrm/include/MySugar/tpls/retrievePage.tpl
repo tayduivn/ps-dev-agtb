@@ -69,11 +69,11 @@
 					{$dashlet.displayFooter}
 			    </div>
 			</li>
-            {* //BEGIN SUGARCRM flav=pro || flav=sales ONLY *}
+            {* //BEGIN SUGARCRM flav=pro ONLY *}
 			<script>
 				SUGAR.mySugar.attachToggleToolsetEvent('{$id}');
 			</script>
-            {* //END SUGARCRM flav=pro || flav=sales ONLY *}
+            {* //END SUGARCRM flav=pro ONLY *}
 			{/foreach}
 			<li id='page_{$selectedPage}_hidden{$hiddenCounter}' style='height: 5px' class='noBullet'>&nbsp;&nbsp;&nbsp;</li>
 		</ul>

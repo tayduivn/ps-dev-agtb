@@ -31,11 +31,9 @@ class EmployeesController extends SugarController{
 	}
 
 	function action_editview(){
-		//BEGIN SUGARCRM flav!=sales ONLY
 		if(is_admin($GLOBALS['current_user']) || $_REQUEST['record'] == $GLOBALS['current_user']->id) 
 			$this->view = 'edit';
 		else
-		//END SUGARCRM flav!=sales ONLY
 			sugar_die("Unauthorized access to employees.");
 		return true;
 	}
@@ -44,8 +42,7 @@ class EmployeesController extends SugarController{
 	{
 	    if($_REQUEST['record'] != $GLOBALS['current_user']->id && $GLOBALS['current_user']->isAdminForModule('Users'))
         {
-            $u = new User();
-            $u->retrieve($_REQUEST['record']);
+            $u = BeanFactory::getBean('Users', $_REQUEST['record']);
             $u->deleted = 1;
             $u->status = 'Inactive';
             $u->employee_status = 'Terminated';

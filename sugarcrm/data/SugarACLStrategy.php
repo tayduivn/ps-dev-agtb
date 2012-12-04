@@ -105,4 +105,33 @@ abstract class SugarACLStrategy
         }
         return $result;
     }
+
+    /**
+     * Get user access for the list of actions
+     * @param string $module
+     * @param array $access_list List of actions
+     * @returns array - List of access levels. Access levels not returned are assumed to be "all allowed".
+     */
+    public function getUserAccess($module, $access_list, $context)
+    {
+        // default implementation, specific ACLs can override
+        $access = $access_list;
+        // check 'access' first - if it's false all others will be false
+        if(isset($access_list['access'])) {
+            if(!$this->checkAccess($module, 'access', $context)) {
+        	    foreach($access_list as $action => $value) {
+        		    $access[$action] = false;
+        	    }
+        		return $access;
+            }
+            // no need to check it second time
+            unset($access_list['access']);
+        }
+        foreach($access_list as $action => $value) {
+        	if(!$this->checkAccess($module, $action, $context)) {
+        		$access[$action] = false;
+        	}
+        }
+        return $access;
+    }
 }

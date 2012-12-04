@@ -72,6 +72,17 @@ class Task extends SugarBean {
 	var $additional_column_fields = Array('assigned_user_name', 'assigned_user_id', 'contact_name', 'contact_phone', 'contact_email', 'parent_name');
 
 
+    /**
+     * This is a depreciated method, please start using __construct() as this method will be removed in a future version
+     *
+     * @see __construct
+     * @deprecated
+     */
+    public function Task()
+    {
+        $this->__construct();
+    }
+
 	public function __construct() {
 		parent::__construct();
 	}
@@ -162,8 +173,7 @@ class Task extends SugarBean {
 
 		if (isset($this->contact_id)) {
 
-			$contact = new Contact();
-			$contact->retrieve($this->contact_id);
+			$contact = BeanFactory::getBean('Contacts', $this->contact_id);
 
 			if($contact->id != "") {
 				$this->contact_name = $contact->full_name;
@@ -188,16 +198,13 @@ class Task extends SugarBean {
 	{
 
 		$this->parent_name = '';
-		global $app_strings, $beanFiles, $beanList, $locale;
-		if ( ! isset($beanList[$this->parent_type]))
+		global $app_strings, $locale;
+
+		$parent = BeanFactory::getBean($this->parent_type);
+		if ( empty($parent))
 		{
-			$this->parent_name = '';
 			return;
 		}
-
-	    $beanType = $beanList[$this->parent_type];
-		require_once($beanFiles[$beanType]);
-		$parent = new $beanType();
 
 		if (is_subclass_of($parent, 'Person')) {
 			$query = "SELECT first_name, last_name, assigned_user_id parent_name_owner from $parent->table_name where id = '$this->parent_id'";

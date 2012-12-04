@@ -38,14 +38,11 @@ require_once("include/upload_file.php");
 require_once('include/utils/db_utils.php');
 require_once('modules/Audit/Audit.php');
 
-global $beanList, $beanFiles, $currentModule, $focus, $action, $app_strings, $app_list_strings, $current_language, $timedate, $mod_strings;
+global $currentModule, $focus, $action, $app_strings, $app_list_strings, $current_language, $timedate, $mod_strings;
 //we don't want the parent module's string file, but rather the string file specific to this subpanel
 
 
-
-$bean = $beanList[$_REQUEST['module_name']];
-require_once($beanFiles[$bean]);
-$focus = new $bean;
+$focus = BeanFactory::getBean($_REQUEST['module_name']);
 
 class Popup_Picker
 {

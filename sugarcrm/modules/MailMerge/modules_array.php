@@ -21,12 +21,8 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  ********************************************************************************/
 
 $modules_array = array('Accounts' => 'Accounts',
-					   //BEGIN SUGARCRM flav!=sales ONLY
 					   'Cases' => 'Cases',
-					   //END SUGARCRM flav!=sales ONLY
 					   'Contacts' => 'Contacts',
-					   //BEGIN SUGARCRM flav!=sales ONLY
 					   'Leads' => 'Leads',
-					   //END SUGARCRM flav!=sales ONLY
 					   'Opportunities' => 'Opportunities');
 ?>

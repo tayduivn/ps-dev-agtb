@@ -30,8 +30,6 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * by SugarCRM are Copyright (C) 2005 SugarCRM, Inc.; All Rights Reserved.
  */
 
-// $Id: EditView.php 16705 2006-09-12 23:59:52 +0000 (Tue, 12 Sep 2006) jenny $
-
 global $timedate;
 global $app_strings;
 global $app_list_strings;
@@ -41,8 +39,6 @@ global $hilite_bg;
 global $sugar_version, $sugar_config;
 
 global $theme;
-
-
 
 $GLOBALS['log']->info("Project Dashboard view");
 
@@ -58,7 +54,7 @@ $sugar_smarty->assign('APP', $app_strings);
 $sugar_smarty->assign("PRINT_URL", "index.php?".$GLOBALS['request_string']);
 
 // MY PROJECTS DASHBOARD ////////////////////////////////////////
-$projectBean = new Project();
+$projectBean = BeanFactory::getBean('Project');
 $projects = array();
 
 $today = $timedate->nowDbDate();
@@ -67,13 +63,10 @@ $nextWeek = $timedate->asDbDate( $timedate->getNow()->get('+1 week'));
 $query = "SELECT * FROM project WHERE project.assigned_user_id='".$current_user->id."' AND project.estimated_end_date >= '".
         $today."' AND project.is_template=0 AND project.deleted=0 order by project.estimated_end_date ASC";
 $result = $projectBean->db->query($query, true, "");
-$row = $projectBean->db->fetchByAssoc($result);
-while ($row != null) {
-    $project = new Project();
-    $project->id = $row['id'];
-    $project->retrieve();
+while (($row = $projectBean->db->fetchByAssoc($result)) != null) {
+    $project = BeanFactory::retrieveBean('Project', $row['id']);
+    if(empty($project)) continue;
     array_push($projects, $project);
-    $row = $projectBean->db->fetchByAssoc($result);
 }
 
 $overdueTasks = array();
@@ -85,20 +78,18 @@ $upcomingTaskCount = array();
 
 foreach ($projects as $project) {
     // Find all overdue tasks/////////////////
-    $projectTaskBean = new ProjectTask();
+    $projectTaskBean = BeanFactory::getBean('ProjectTask');
     $query = "SELECT * FROM project_task WHERE project_task.project_id='" .$project->id."' AND project_task.date_finish < '". $today . "' AND project_task.percent_complete < 100 AND project_task.deleted=0 order by project_task.date_finish ASC";
     $result = $projectTaskBean->db->query($query, true, "");
-    $row = $projectTaskBean->db->fetchByAssoc($result);
     $count = 0;
-    while ($row != null) {
+    while (($row = $projectTaskBean->db->fetchByAssoc($result)) != null) {
         if ($count == 10) {
             $count++;
             break;
         }
-            
-        $projectTask = new ProjectTask();
-        $projectTask->id = $row['id'];
-        $projectTask->retrieve();
+
+        $projectTask = BeanFactory::retrieveBean('ProjectTask', $row['id']);
+        if(empty($projectTask)) continue;
         if (isset($overdueTasks[$project->id])) {
             array_push($overdueTasks[$project->id], $projectTask);
         }
@@ -107,28 +98,25 @@ foreach ($projects as $project) {
             array_push($overdueTasks[$project->id], $projectTask);
         }
         $count++;
-        $row = $projectTaskBean->db->fetchByAssoc($result);
     }
     $overdueTaskCount[$project->id] = $count;
     /////////////////////////////////////////
 
     // Find all upcoming tasks/////////////////
-    $projectTaskBean = new ProjectTask();
+    $projectTaskBean = BeanFactory::getBean('ProjectTask');
     $query = "SELECT * FROM project_task WHERE project_task.project_id='" .$project->id."' AND " .
             "(project_task.date_start BETWEEN '" . $today . "' AND '". $nextWeek . "' OR ".
             "project_task.date_finish BETWEEN '". $today . "' AND '". $nextWeek . "') AND project_task.deleted=0 order by project_task.date_finish ASC";
 
     $result = $projectTaskBean->db->query($query, true, "");
-    $row = $projectTaskBean->db->fetchByAssoc($result);
     $count = 0;
-    while ($row != null) {
+    while (($row = $projectTaskBean->db->fetchByAssoc($result)) != null) {
         if ($count == 10) {
             $count++;
             break;
         }
-        $projectTask = new ProjectTask();
-        $projectTask->id = $row['id'];
-        $projectTask->retrieve();
+        $projectTask = BeanFactory::retrieveBean('ProjectTask', $row['id']);
+        if(empty($projectTask)) continue;
         if (isset($upcomingTasks[$project->id]))
             array_push($upcomingTasks[$project->id], $projectTask);
         else {
@@ -136,30 +124,27 @@ foreach ($projects as $project) {
             array_push($upcomingTasks[$project->id], $projectTask);
         }
         $count++;
-        $row = $projectTaskBean->db->fetchByAssoc($result);
     }
     $upcomingTaskCount[$project->id] = $count;
-    
+
     /////////////////////////////////////////
-    
+
     // Find all related Cases /////////////////
-    $caseBean = new aCase();
+    $caseBean = BeanFactory::getBean('Cases');
     $query = "SELECT * from cases where id in ".
             "(SELECT case_id from projects_cases where project_id='". $project->id. "' and deleted = 0) and status != '".
             $app_list_strings['case_status_dom']['Closed'] . "'";
 
     $result = $caseBean->db->query($query, true, "");
-    $row = $caseBean->db->fetchByAssoc($result);
     $count = 0;
-    while ($row != null) {
+    while (($row = $caseBean->db->fetchByAssoc($result)) != null) {
         if ($count == 10) {
             $count++;
             break;
         }
-        $case = new aCase();
-        $case->id = $row['id'];
-        $case->retrieve();
-        
+        $case = BeanFactory::retrieveBean('Cases', $row['id']);
+        if(empty($case)) continue;
+
         if (isset($openCases[$project->id]))
             array_push($openCases[$project->id], $case);
         else {
@@ -167,26 +152,25 @@ foreach ($projects as $project) {
             array_push($openCases[$project->id], $case);
         }
         $count++;
-        $row = $caseBean->db->fetchByAssoc($result);
     }
     $caseCount[$project->id] = $count;
-    /////////////////////////////////////////    
+    /////////////////////////////////////////
     // Find all resources/////////////////
 
-    $userBean = new User();
+    $userBean = BeanFactory::getBean('Users');
     $project->load_relationship("user_resources");
     $users = $project->user_resources->getBeans($userBean);
-    $contactBean = new Contact();
+    $contactBean = BeanFactory::getBean('Contacts');
     $project->load_relationship("contact_resources");
     $contacts = $project->contact_resources->getBeans($contactBean);
-    
+
     for ($i = 0; $i < count($users); $i++) {
         if (!isset ($resources[$users[$i]->id]))
             $resources[$users[$i]->id] = $users[$i]->full_name;
     }
     for ($i = 0; $i < count($contacts); $i++) {
         if (!isset ($resources[$contacts[$i]->id]))
-            $resources[$contacts[$i]->id] = $contacts[$i]->full_name;    
+            $resources[$contacts[$i]->id] = $contacts[$i]->full_name;
     }
     /////////////////////////////////////////
 }
@@ -198,7 +182,7 @@ $sugar_smarty->assign("OVERDUE_TASKS", $overdueTasks);
 $sugar_smarty->assign("OPEN_CASES", $openCases);
 $sugar_smarty->assign("BG_COLOR", $hilite_bg);
 $sugar_smarty->assign("CALENDAR_DATEFORMAT", $timedate->get_cal_date_format());
-//todo: also add the owner's managers 
+//todo: also add the owner's managers
 
 $sugar_smarty->assign("DATE_FORMAT", $current_user->getPreference('datef'));
 $sugar_smarty->assign("CURRENT_USER", $current_user->id);
@@ -208,36 +192,30 @@ $myOverdueTasks = array();
 $myUpcomingTasks = array();
 
 // Find all my overdue tasks/////////////////
-$projectTaskBean = new ProjectTask();
+$projectTaskBean = BeanFactory::getBean('ProjectTask');
 $query = "SELECT * FROM project_task WHERE project_task.resource_id like '".$current_user->id."' AND project_task.date_finish < '". $today . "' AND project_task.percent_complete < 100 AND project_task.deleted=0 order by project_task.date_finish ASC";
 $result = $projectTaskBean->db->query($query, true, "");
-$row = $projectTaskBean->db->fetchByAssoc($result);
 $myOverDueTasksCount = 0;
-while ($row != null) {
-    $projectTask = new ProjectTask();
-    $projectTask->id = $row['id'];
-    $projectTask->retrieve();
+while (($row = $projectTaskBean->db->fetchByAssoc($result)) != null) {
+    $projectTask = BeanFactory::retrieveBean('ProjectTask', $row['id']);
+    if(empty($projectTask)) continue;
     array_push($myOverdueTasks, $projectTask);
     $myOverDueTasksCount++;
-    $row = $projectTaskBean->db->fetchByAssoc($result);
 }
 /////////////////////////////////////////
 // Find all upcoming tasks/////////////////
-$projectTaskBean = new ProjectTask();
+$projectTaskBean = BeanFactory::getBean('ProjectTask');
 $query = "SELECT * FROM project_task WHERE project_task.resource_id like '" .$current_user->id."' AND " .
         "(project_task.date_start BETWEEN '" . $today . "' AND '". $nextWeek . "' OR ".
         "project_task.date_finish BETWEEN '". $today . "' AND '". $nextWeek . "') AND project_task.deleted=0 order by project_task.date_finish ASC";
 
 $result = $projectTaskBean->db->query($query, true, "");
-$row = $projectTaskBean->db->fetchByAssoc($result);
 $myUpcomingTasksCount = 0;
-while ($row != null) {
-    $projectTask = new ProjectTask();
-    $projectTask->id = $row['id'];
-    $projectTask->retrieve();
+while (($row = $projectTaskBean->db->fetchByAssoc($result)) != null) {
+    $projectTask = BeanFactory::retrieveBean('ProjectTask', $row['id']);
+    if(empty($projectTask)) continue;
     array_push($myUpcomingTasks, $projectTask);
     $myUpcomingTasksCount++;
-    $row = $projectTaskBean->db->fetchByAssoc($result);
 }
 /////////////////////////////////////////
 $sugar_smarty->assign("MY_UPCOMING_TASKS", $myUpcomingTasks);
@@ -247,4 +225,3 @@ $sugar_smarty->assign("OVERDUE_TASKS_COUNT", $overdueTaskCount);
 $sugar_smarty->assign("UPCOMING_TASKS_COUNT", $upcomingTaskCount);
 
 echo $sugar_smarty->fetch('modules/Project/Dashboard.tpl');
-?>

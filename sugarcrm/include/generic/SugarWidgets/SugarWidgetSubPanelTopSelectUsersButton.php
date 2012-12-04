@@ -95,16 +95,12 @@ class SugarWidgetSubPanelTopSelectUsersButton extends SugarWidgetSubPanelTopSele
 			$this->module_name = $subpanel_name;
 		}
 
-		//BEGIN SUGARCRM flav!=sales ONLY
 		if ($subpanel_name == 'Project'){
 			$link_field_name = 'user_resources';
 		}
 		else{
-		//END SUGARCRM flav!=sales ONLY
 			$link_field_name = $subpanel_definition->get_data_source_name(true);
-		//BEGIN SUGARCRM flav!=sales ONLY
 		}
-		//END SUGARCRM flav!=sales ONLY
 
 		$popup_mode='Single';
 		if(isset($widget_data['mode'])){

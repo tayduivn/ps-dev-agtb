@@ -27,7 +27,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 global $mod_strings;
 global $current_language;
 
-$focus = new Group();
+$focus = BeanFactory::getBean('Groups');
 $where = ' users.users.is_group = 1 ';
 
 $current_module_strings = return_module_language($current_language, 'Users');

@@ -149,18 +149,14 @@ class SugarWidgetSubPanelTopButton extends SugarWidget
 
         $formValues['return_module'] = $currentModule;
 
-        //BEGIN SUGARCRM flav!=sales ONLY
         if($currentModule == 'Campaigns'){
             $formValues['return_action'] = "DetailView";
         }else{
-        //END SUGARCRM flav!=sales ONLY
             $formValues['return_action'] = $defines['action'];
             if ( $formValues['return_action'] == 'SubPanelViewer' ) {
                 $formValues['return_action'] = 'DetailView';
             }
-        //BEGIN SUGARCRM flav!=sales ONLY
         }
-        //END SUGARCRM flav!=sales ONLY
 
         $formValues['return_id'] = $defines['focus']->id;
         $formValues['return_relationship'] = $relationship_name;

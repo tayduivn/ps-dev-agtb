@@ -58,8 +58,7 @@ class QuotesViewDetail extends ViewDetail
 
 		$this->ss->assign('ordered_bundle_list', $ordered_bundle_list);
 		
-		$currency = new Currency();
-		$currency->retrieve($this->bean->currency_id);
+		$currency = BeanFactory::getBean('Currencies', $this->bean->currency_id);
 		$this->ss->assign('CURRENCY_SYMBOL', $currency->symbol);
 		$this->ss->assign('CURRENCY', $currency->iso4217);
 		$this->ss->assign('CURRENCY_ID', $currency->id);

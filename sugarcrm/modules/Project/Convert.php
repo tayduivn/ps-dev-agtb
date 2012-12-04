@@ -38,7 +38,7 @@ global $app_list_strings;
 global $current_language;
 global $current_user;
 global $sugar_version, $sugar_config;
-$focus = new Project();
+$focus = BeanFactory::getBean('Project');
 
 
 

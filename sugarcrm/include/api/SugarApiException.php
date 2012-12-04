@@ -134,6 +134,14 @@ class SugarApiExceptionError extends SugarApiException
     public $errorLabel = 'fatal_error';
     public $messageLabel = 'EXCEPTION_FATAL_ERROR';
 }
+
+class SugarApiExceptionIncorrectVersion extends SugarApiException
+{
+    public $httpCode = 301;
+    public $errorLabel = 'incorrect_version';
+    public $messageLabel = 'EXCEPTION_INCORRECT_VERSION';
+}
+
 class SugarApiExceptionNeedLogin extends SugarApiException 
 { 
     public $httpCode = 401; 
@@ -176,6 +184,12 @@ class SugarApiExceptionMissingParameter extends SugarApiException
     public $errorLabel = 'missing_parameter';
     public $messageLabel = 'EXCEPTION_MISSING_PARAMTER';
 }
+class SugarApiExceptionInvalidParameter extends SugarApiException
+{
+    public $httpCode = 412;
+    public $errorLabel = 'invalid_parameter';
+    public $messageLabel = 'EXCEPTION_INVALID_PARAMETER';
+}
 class SugarApiExceptionRequestMethodFailure extends SugarApiException
 {
     public $httpCode = 412;
@@ -188,9 +202,4 @@ class SugarApiExceptionRequestTooLarge extends SugarApiException
     public $errorLabel = 'request_too_large';
     public $messageLabel = 'EXCEPTION_REQUEST_TOO_LARGE';
 }
-class SugarApiExceptionInvalidParameter extends SugarApiException
-{
-    public $httpCode = 422;
-    public $errorLabel = 'invalid_parameter';
-    public $messageLabel = 'EXCEPTION_INVALID_PARAMETER';
-}
+

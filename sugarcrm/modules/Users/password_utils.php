@@ -76,11 +76,11 @@ function canSendPassword() {
     return $mod_strings['LBL_EMAIL_NOT_SENT'];
 }
 
-function  hasPasswordExpired($username){
-    $current_user= new user();
-    $usr_id=$current_user->retrieve_user_id($username);
-	$current_user->retrieve($usr_id);
-	$type = '';
+function  hasPasswordExpired($username)
+{
+	$usr_id=User::retrieve_user_id($username);
+	$usr= BeanFactory::getBean('Users', $usr_id);
+    $type = '';
 	if ($current_user->system_generated_password == '1'){
         $type='syst';
     }

@@ -222,8 +222,8 @@
      * @param totals
      */
     updateTotals : function (totals) {
-        var self = this;    
-        
+        var self = this;  
+         
         // these fields don't matter when it comes to tracking these values so just 0 them out.
         // we don't care about this field
         if(!_.isUndefined(totals.quota)) {
@@ -231,7 +231,6 @@
         }
 
         if(!_.isEqual(self.totals, totals)) {
-
             var best = {};
             var likely = {};
             var worst = {};
@@ -321,6 +320,8 @@
     commitForecast: function() {
         var self = this;
         var worksheetData = {};
+        worksheetData["new"] = {};
+        worksheetData["current"] = {};
         
         var currentWorksheet = self.context.forecasts.get("currentWorksheet");
         
@@ -328,14 +329,11 @@
         	var worksheetDataCurrent = [];
         	var worksheetDataNew = [];
         	_.each(self.context.forecasts[currentWorksheet].models, function(item){
-        		//if isDirty is defined this has been saved from the worksheet save so we can skip it here 
-        		if(_.isUndefined(item.get("isDirty"))){
-        			if(_.isEmpty(item.get("worksheet_id"))){
-            			worksheetDataNew.push(item.attributes);
-            		}
-            		else{
-            			worksheetDataCurrent.push(item.attributes);
-            		}
+    			if(_.isEmpty(item.get("worksheet_id"))){
+        			worksheetDataNew.push(item.attributes);
+        		}
+        		else{
+        			worksheetDataCurrent.push(item.attributes);
         		}        		
         	});
         	worksheetData = {"current": worksheetDataCurrent, "new": worksheetDataNew};

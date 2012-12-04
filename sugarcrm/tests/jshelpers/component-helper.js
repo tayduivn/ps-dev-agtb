@@ -11,15 +11,16 @@
                 app.logger.error("Failed to eval view controller for " + name + ": " + e + ":\n" + data);
             }
             app.view.declareComponent(type, name, module, data, null, true);
-            test.testMetadata.addController(client, name, type, data, module);
+            test.testMetadata.addController(name, type, data, module, client);
         });
     };
 
-    test.loadHandlebarsTemplate = function(name, type, client, module) {
+    test.loadHandlebarsTemplate = function(name, type, client, template, module) {
+        var templateName = template || name;
         var path = "/clients/" + client + "/" + type + "s/" + name;
         path = (module) ? "../modules/" + module + path : ".." + path;
-        SugarTest.loadFile(path, name, "hbt", function(data) {
-            test.testMetadata.addTemplate(name, type, data, module);
+        SugarTest.loadFile(path, templateName, "hbt", function(data) {
+            test.testMetadata.addTemplate(name, type, data, templateName, module, client);
         });
     };
 
@@ -99,51 +100,46 @@
             this._data.fields = this._data.fields || {};
         },
 
-        addController: function(client, name, type, controller, module) {
+        addController: function(name, type, controller, module, platform) {
             type = type + 's';
+            platform = platform || 'base';
             if (this.isInitialized()) {
                 if (module) {
                     this._initModuleStructure(module, type, name);
                     this._data.modules[module][type][name].controller = controller;
                 } else {
-                    this._data[type][client][name] = this._data[type][client][name] || {};
-                    this._data[type][client][name].controller = controller;
+                    this._data[type][platform][name] = this._data[type][platform][name] || {};
+                    this._data[type][platform][name].controller = controller;
                 }
             }
         },
 
-        addTemplate: function(name, type, template, module) {
+        addTemplate: function(name, type, template, templateName, module, platform) {
             type = type + 's';
+            platform = platform || 'base';
             if (this.isInitialized()) {
                 if (module) {
                     this._initModuleStructure(module, type, name);
                     this._data.modules[module][type][name].template = template;
                 } else {
-                    this._data[type][name] = this._data[type][name] || {};
-                    this._data[type][name].templates = this._data[type][name].templates || {};
-                    this._data[type][name].templates[name] = template;
+                    this._data[type][platform][name] = this._data[type][platform][name] || {};
+                    this._data[type][platform][name].templates = this._data[type][platform][name].templates || {};
+                    this._data[type][platform][name].templates[templateName] = template;
                 }
             }
         },
 
-        addViewDefinition: function(name, viewDef) {
+        addViewDefinition: function(name, viewDef, module, platform) {
+            var type = 'views';
+            platform = platform || 'base';
             if (this.isInitialized()) {
-                this._data.views[name] = this._data.views[name] || {};
-                this._data.views[name].meta = viewDef;
-            }
-        },
-
-        addModuleViewDefinition: function(module, name, viewDef) {
-            if (this.isInitialized()) {
-                this._data.modules[module].views = this._data.modules[module].views || {};
-                this._data.modules[module].views[name] = this._data.modules[module].views[name] || {};
-                this._data.modules[module].views[name].meta = viewDef;
-            }
-        },
-
-        addModuleDefinition: function(module, moduleDef) {
-            if (this.isInitialized()) {
-                this._data.modules[module] = moduleDef;
+                if (module) {
+                    this._initModuleStructure(module, type, name);
+                    this._data.modules[module][type][name].meta = viewDef;
+                } else {
+                    this._data[type][platform][name] = this._data[type][platform][name] || {};
+                    this._data[type][platform][name].meta = viewDef;
+                }
             }
         },
 

@@ -77,11 +77,10 @@ function login($user_auth, $application){
 	global $sugar_config, $system_config;
 
 	$error = new SoapError();
-	$user = new User();
+	$user = BeanFactory::getBean('Users');
 	$success = false;
 	//rrs
-		$system_config = new Administration();
-	$system_config->retrieveSettings('system');
+		$system_config = Administration::getSettings('system');
 	$authController = new AuthenticationController((!empty($sugar_config['authenticationClass'])? $sugar_config['authenticationClass'] : 'SugarAuthenticate'));
 	//rrs
 	$isLoginSuccess = $authController->login($user_auth['user_name'], $user_auth['password'], array('passwordEncrypted' => true));
@@ -178,8 +177,7 @@ function validate_authenticated($session_id){
 
 			global $current_user;
 
-			$current_user = new User();
-			$current_user->retrieve($_SESSION['user_id']);
+			$current_user = BeanFactory::getBean('Users', $_SESSION['user_id']);
 			login_success();
 			return true;
 		}
@@ -286,23 +284,16 @@ $server->register(
  *               'error' -- The SOAP error, if any
  */
 function get_entry_list($session, $module_name, $query, $order_by,$offset, $select_fields, $max_results, $deleted ){
-	global  $beanList, $beanFiles, $current_user;
 	$error = new SoapError();
 	if(!validate_authenticated($session)){
 		$error->set_error('invalid_login');
 		return array('result_count'=>-1, 'entry_list'=>array(), 'error'=>$error->get_soap_array());
 	}
     $using_cp = false;
-    //BEGIN SUGARCRM flav!=sales ONLY
     if($module_name == 'CampaignProspects'){
         $module_name = 'Prospects';
         $using_cp = true;
     }
-    //END SUGARCRM flav!=sales ONLY
-	if(empty($beanList[$module_name])){
-		$error->set_error('no_module');
-		return array('result_count'=>-1, 'entry_list'=>array(), 'error'=>$error->get_soap_array());
-	}
 	global $current_user;
 	if(!check_modules_access($current_user, $module_name, 'read')){
 		$error->set_error('no_access');
@@ -315,11 +306,12 @@ function get_entry_list($session, $module_name, $query, $order_by,$offset, $sele
 		$sugar_config['list_max_entries_per_page'] = $max_results;
 	}
 
-
-	$class_name = $beanList[$module_name];
-	require_once($beanFiles[$class_name]);
-	$seed = new $class_name();
-	if(! ($seed->ACLAccess('Export') && $seed->ACLAccess('list')))
+    $seed = BeanFactory::getBean($module_name);
+	if(empty($seed)){
+		$error->set_error('no_module');
+		return array('result_count'=>-1, 'entry_list'=>array(), 'error'=>$error->get_soap_array());
+	}
+    if(! ($seed->ACLAccess('Export') && $seed->ACLAccess('list')))
 	{
 		$error->set_error('no_access');
 		return array('result_count'=>-1, 'entry_list'=>array(), 'error'=>$error->get_soap_array());
@@ -361,8 +353,7 @@ function get_entry_list($session, $module_name, $query, $order_by,$offset, $sele
     require_once 'modules/Currencies/Currency.php';
 
     $userCurrencyId = $current_user->getPreference('currency');
-    $userCurrency = new Currency;
-    $userCurrency->retrieve($userCurrencyId);
+    $userCurrency = BeanFactory::getBean('Currencies', $userCurrencyId);
 
 	foreach($list as $value)
 	{
@@ -458,7 +449,7 @@ $server->register(
  *               'error' -- The SOAP error, if any
  */
 function get_entries($session, $module_name, $ids,$select_fields ){
-	global  $beanList, $beanFiles;
+	global  $beanList;
 	$error = new SoapError();
 	$field_list = array();
 	$output_list = array();
@@ -467,12 +458,10 @@ function get_entries($session, $module_name, $ids,$select_fields ){
 		return array('field_list'=>$field_list, 'entry_list'=>array(), 'error'=>$error->get_soap_array());
 	}
     $using_cp = false;
-    //BEGIN SUGARCRM flav!=sales ONLY
     if($module_name == 'CampaignProspects'){
         $module_name = 'Prospects';
         $using_cp = true;
     }
-    //END SUGARCRM flav!=sales ONLY
 	if(empty($beanList[$module_name])){
 		$error->set_error('no_module');
 		return array('field_list'=>$field_list, 'entry_list'=>array(), 'error'=>$error->get_soap_array());
@@ -483,15 +472,13 @@ function get_entries($session, $module_name, $ids,$select_fields ){
 		return array('field_list'=>$field_list, 'entry_list'=>array(), 'error'=>$error->get_soap_array());
 	}
 
-	$class_name = $beanList[$module_name];
-	require_once($beanFiles[$class_name]);
-
 	//todo can modify in there to call bean->get_list($order_by, $where, 0, -1, -1, $deleted);
 	//that way we do not have to call retrieve for each bean
 	//perhaps also add a select_fields to this, so we only get the fields we need
 	//and not do a select *
 	foreach($ids as $id){
-		$seed = new $class_name();
+		$seed = BeanFactory::getBean($module_name);
+
 
     if($using_cp){
         $seed = $seed->retrieveTarget($id);
@@ -554,15 +541,9 @@ $server->register(
  *                  'error' -- The SOAP error if any.
  */
 function set_entry($session,$module_name, $name_value_list){
-	global  $beanList, $beanFiles;
-
 	$error = new SoapError();
 	if(!validate_authenticated($session)){
 		$error->set_error('invalid_login');
-		return array('id'=>-1, 'error'=>$error->get_soap_array());
-	}
-	if(empty($beanList[$module_name])){
-		$error->set_error('no_module');
 		return array('id'=>-1, 'error'=>$error->get_soap_array());
 	}
 	global $current_user;
@@ -571,9 +552,12 @@ function set_entry($session,$module_name, $name_value_list){
 		return array('id'=>-1, 'error'=>$error->get_soap_array());
 	}
 
-	$class_name = $beanList[$module_name];
-	require_once($beanFiles[$class_name]);
-	$seed = new $class_name();
+	$seed = BeanFactory::getBean($module_name);
+	if(empty($seed)){
+		$error->set_error('no_module');
+		return array('id'=>-1, 'error'=>$error->get_soap_array());
+	}
+
 
 	foreach($name_value_list as $value){
         if($value['name'] == 'id' && isset($value['value']) && strlen($value['value']) > 0){
@@ -698,9 +682,7 @@ function get_note_attachment($session,$id)
 		return array('result_count'=>-1, 'entry_list'=>array(), 'error'=>$error->get_soap_array());
 	}
 
-	$note = new Note();
-
-	$note->retrieve($id);
+	$note = BeanFactory::getBean('Notes', $id);
 	if(!$note->ACLAccess('DetailView')){
 		$error->set_error('no_access');
 		return array('result_count'=>-1, 'entry_list'=>array(), 'error'=>$error->get_soap_array());
@@ -736,7 +718,7 @@ $server->register(
  * @return no error for success, error for failure
  */
 function relate_note_to_module($session,$note_id, $module_name, $module_id){
-	global  $beanList, $beanFiles;
+	global  $beanList;
 	$error = new SoapError();
 	if(!validate_authenticated($session)){
 		$error->set_error('invalid_login');
@@ -751,10 +733,9 @@ function relate_note_to_module($session,$note_id, $module_name, $module_id){
 		$error->set_error('no_access');
 		return $error->get_soap_array();
 	}
-	$class_name = $beanList['Notes'];
-	require_once($beanFiles[$class_name]);
-	$seed = new $class_name();
-	$seed->retrieve($note_id);
+
+	$seed = BeanFactory::getBean('Notes', $note_id);
+
 	if(!$seed->ACLAccess('ListView')){
 		$error->set_error('no_access');
 		return array('result_count'=>-1, 'entry_list'=>array(), 'error'=>$error->get_soap_array());
@@ -795,14 +776,9 @@ $server->register(
  *                  'error' -- The SOAP error, if any
  */
 function get_related_notes($session,$module_name, $module_id, $select_fields){
-	global  $beanList, $beanFiles;
 	$error = new SoapError();
 	if(!validate_authenticated($session)){
 		$error->set_error('invalid_login');
-		return array('result_count'=>-1, 'entry_list'=>array(), 'error'=>$error->get_soap_array());
-	}
-	if(empty($beanList[$module_name])){
-		$error->set_error('no_module');
 		return array('result_count'=>-1, 'entry_list'=>array(), 'error'=>$error->get_soap_array());
 	}
 	global $current_user;
@@ -811,10 +787,11 @@ function get_related_notes($session,$module_name, $module_id, $select_fields){
 		return array('result_count'=>-1, 'entry_list'=>array(), 'error'=>$error->get_soap_array());
 	}
 
-	$class_name = $beanList[$module_name];
-	require_once($beanFiles[$class_name]);
-	$seed = new $class_name();
-	$seed->retrieve($module_id);
+	$seed = BeanFactory::getBean($module_name, $module_id);
+	if(empty($seed)){
+		$error->set_error('no_module');
+		return array('result_count'=>-1, 'entry_list'=>array(), 'error'=>$error->get_soap_array());
+	}
 	if(!$seed->ACLAccess('DetailView')){
 		$error->set_error('no_access');
 		return array('result_count'=>-1, 'entry_list'=>array(), 'error'=>$error->get_soap_array());
@@ -880,7 +857,7 @@ $server->register(
  *                  'error' -- The SOAP error, if any
  */
 function get_module_fields($session, $module_name){
-	global  $beanList, $beanFiles;
+	global  $beanList;
 	$error = new SoapError();
 	$module_fields = array();
 	if(! validate_authenticated($session)){
@@ -896,16 +873,14 @@ function get_module_fields($session, $module_name){
 		$error->set_error('no_access');
 		return array('module_fields'=>$module_fields, 'error'=>$error->get_soap_array());
 	}
-	$class_name = $beanList[$module_name];
+	$seed = BeanFactory::getBean($module_name);
 
-	if(empty($beanFiles[$class_name]))
+	if(empty($seed))
 	{
        $error->set_error('no_file');
        return array('module_fields'=>$module_fields, 'error'=>$error->get_soap_array());
 	}
 
-	require_once($beanFiles[$class_name]);
-	$seed = new $class_name();
 	if($seed->ACLAccess('ListView', true) || $seed->ACLAccess('DetailView', true) || 	$seed->ACLAccess('EditView', true) )
     {
     	return get_return_module_fields($seed, $module_name, $error);
@@ -964,7 +939,7 @@ function update_portal_user($session,$portal_name, $name_value_list){
 		$error->set_error('invalid_session');
 		return $error->get_soap_array();
 	}
-	$contact = new Contact();
+	$contact = BeanFactory::getBean('Contacts');
 
 	$searchBy = array('deleted'=>0);
 	foreach($name_value_list as $name_value){
@@ -1106,8 +1081,7 @@ $server->register(
  */
 function get_server_version(){
 
-	$admin  = new Administration();
-	$admin->retrieveSettings('info');
+	$admin = Administration::getSettings('info');
 	if(isset($admin->settings['info_sugar_version'])){
 		return $admin->settings['info_sugar_version'];
 	}else{
@@ -1141,17 +1115,15 @@ function get_relationships($session, $module_name, $module_id, $related_module, 
 		$error->set_error('invalid_login');
 		return array('ids'=>$ids,'error'=> $error->get_soap_array());
 	}
-	global  $beanList, $beanFiles;
 	$error = new SoapError();
 
-	if(empty($beanList[$module_name]) || empty($beanList[$related_module])){
+	$mod = BeanFactory::getBean($module_name, $module_id);
+    $related_mod = BeanFactory::getBean($related_module);
+
+	if(empty($mod) || empty($related_mod)){
 		$error->set_error('no_module');
 		return array('ids'=>$ids, 'error'=>$error->get_soap_array());
 	}
-	$class_name = $beanList[$module_name];
-	require_once($beanFiles[$class_name]);
-	$mod = new $class_name();
-	$mod->retrieve($module_id);
 	if(!$mod->ACLAccess('DetailView')){
 		$error->set_error('no_access');
 		return array('ids'=>$ids, 'error'=>$error->get_soap_array());
@@ -1182,10 +1154,6 @@ function get_relationships($session, $module_name, $module_id, $related_module, 
 
 	$in = "'".implode("', '", $id_list)."'";
 
-	$related_class_name = $beanList[$related_module];
-	require_once($beanFiles[$related_class_name]);
-	$related_mod = new $related_class_name();
-
 	$sql = "SELECT {$related_mod->table_name}.id FROM {$related_mod->table_name} ";
 
 	//BEGIN SUGARCRM flav=pro ONLY
@@ -1206,9 +1174,7 @@ function get_relationships($session, $module_name, $module_id, $related_module, 
 	$return_list = array();
 
 	foreach($list as $id) {
-		$related_class_name = $beanList[$related_module];
-		$related_mod = new $related_class_name();
-		$related_mod->retrieve($id);
+		$related_mod = BeanFactory::getBean($related_module, $id);
 
 		$return_list[] = array(
 			'id' => $id,
@@ -1311,10 +1277,7 @@ function handle_set_relationship($set_relationship_value, $session='')
         $error->set_error('no_module');
         return $error->get_soap_array();
     }
-    $class_name = $beanList[$module1];
-    require_once($beanFiles[$class_name]);
-    $mod = new $class_name();
-    $mod->retrieve($module1_id);
+    $mod = BeanFactory::getBean($module1, $module1_id);
 	if(!$mod->ACLAccess('DetailView')){
 		$error->set_error('no_access');
 		return $error->get_soap_array();
@@ -1332,9 +1295,7 @@ function handle_set_relationship($set_relationship_value, $session='')
                 // Alternative solution is perhaps to
                 // do whatever Sugar does when the same
                 // request is received from the web:
-                $pb_cls = $beanList[$module2];
-                $pb = new $pb_cls();
-                $pb->retrieve($module2_id);
+                $pb = BeanFactory::getBean($module2, $module2_id);
 
                 // Check if this relationship already exists
                 $query = "SELECT count(*) AS count FROM product_bundle_quote WHERE quote_id = '{$module1_id}' AND bundle_id = '{$module2_id}' AND deleted = '0'";
@@ -1361,9 +1322,7 @@ function handle_set_relationship($set_relationship_value, $session='')
 
             } else if ($module1 == "ProductBundles" && $module2 == "Products") {
                 // And, well, similar things apply in this case
-                $pb_cls = $beanList[$module1];
-                $pb = new $pb_cls();
-                $pb->retrieve($module1_id);
+                $pb = BeanFactory::getBean($module1, $module1_id);
 
                 // Check if this relationship already exists
                 $query = "SELECT count(*) AS count FROM product_bundle_product WHERE bundle_id = '{$module1_id}' AND product_id = '{$module2_id}' AND deleted = '0'";
@@ -1386,9 +1345,7 @@ function handle_set_relationship($set_relationship_value, $session='')
                 $pb->set_productbundle_product_relationship($module2_id,$idx,$module1_id);
                 $pb->save();
 
-                $prod_cls = $beanList[$module2];
-                $prod = new $prod_cls();
-                $prod->retrieve($module2_id);
+                $prod = BeanFactory::getBean($module2, $module2_id);
                 $prod->quote_id = $pb->quote_id;
                 $prod->save();
                 return $error->get_soap_array();
@@ -1479,8 +1436,6 @@ $server->register(
  * @return get_entry_list_result 	- id, module_name, and list of fields from each record
  */
 function search_by_module($user_name, $password, $search_string, $modules, $offset, $max_results){
-	global  $beanList, $beanFiles;
-
 	$error = new SoapError();
     $hasLoginError = false;
 
@@ -1511,13 +1466,11 @@ function search_by_module($user_name, $password, $search_string, $modules, $offs
 	}
 	//  MRF - BUG:19552 - added a join for accounts' emails below
 	$query_array = array('Accounts'=>array('where'=>array('Accounts' => array(0 => "accounts.name like '{0}%'"), 'EmailAddresses' => array(0 => "ea.email_address like '{0}%'")),'fields'=>"accounts.id, accounts.name"),
-							//BEGIN SUGARCRM flav!=sales ONLY
 	                        'Bugs'=>array('where'=>array('Bugs' => array(0 => "bugs.name like '{0}%'", 1 => "bugs.bug_number = {0}")),'fields'=>"bugs.id, bugs.name, bugs.bug_number"),
 							'Cases'=>array('where'=>array('Cases' => array(0 => "cases.name like '{0}%'", 1 => "cases.case_number = {0}")),'fields'=>"cases.id, cases.name, cases.case_number"),
 							'Leads'=>array('where'=>array('Leads' => array(0 => "leads.first_name like '{0}%'",1 => "leads.last_name like '{0}%'"), 'EmailAddresses' => array(0 => "ea.email_address like '{0}%'")), 'fields'=>"leads.id, leads.first_name, leads.last_name, leads.status"),
  							'Project'=>array('where'=>array('Project' => array(0 => "project.name like '{0}%'")), 'fields'=>"project.id, project.name"),
                             'ProjectTask'=>array('where'=>array('ProjectTask' => array(0 => "project.id = '{0}'")), 'fields'=>"project_task.id, project_task.name"),
-							//END SUGARCRM flav!=sales ONLY
 							'Contacts'=>array('where'=>array('Contacts' => array(0 => "contacts.first_name like '{0}%'", 1 => "contacts.last_name like '{0}%'"), 'EmailAddresses' => array(0 => "ea.email_address like '{0}%'")),'fields'=>"contacts.id, contacts.first_name, contacts.last_name"),
 							'Opportunities'=>array('where'=>array('Opportunities' => array(0 => "opportunities.name like '{0}%'")), 'fields'=>"opportunities.id, opportunities.name"),
 							'Users'=>array('where'=>array('EmailAddresses' => array(0 => "ea.email_address like '{0}%'")),'fields'=>"users.id, users.user_name, users.first_name, ea.email_address"),
@@ -1525,10 +1478,8 @@ function search_by_module($user_name, $password, $search_string, $modules, $offs
 
 	if(!empty($search_string) && isset($search_string)){
 		foreach($modules as $module_name){
-			$class_name = $beanList[$module_name];
-			require_once($beanFiles[$class_name]);
-			$seed = new $class_name();
-			if(empty($beanList[$module_name])){
+		    $seed = BeanFactory::getBean($module_name);
+			if(empty($seed)){
 				continue;
 			}
 			if(!check_modules_access($current_user, $module_name, 'read')){
@@ -1557,12 +1508,10 @@ function search_by_module($user_name, $password, $search_string, $modules, $offs
 						}
 						//END SUGARCRM flav=pro ONLY
 
-						//BEGIN SUGARCRM flav!=sales ONLY
 
 		                if($module_name == 'ProjectTask'){
 		                    $tmpQuery .= "INNER JOIN project ON $seed->table_name.project_id = project.id ";
 		                }
-		                //END SUGARCRM flav!=sales ONLY
 
 		               	if(isset($seed->emailAddress) && $key == 'EmailAddresses'){
 		               		$tmpQuery .= " INNER JOIN email_addr_bean_rel eabl  ON eabl.bean_id = $seed->table_name.id and eabl.deleted=0";
@@ -1650,7 +1599,7 @@ $NAMESPACE);
  */
 function get_mailmerge_document($session, $file_name, $fields)
 {
-    global  $beanList, $beanFiles, $app_list_strings;
+    global $app_list_strings;
     $error = new SoapError();
     if(!validate_authenticated($session))
     {
@@ -1673,36 +1622,27 @@ function get_mailmerge_document($session, $file_name, $fields)
         include($file_name);
 
         $class1 = $merge_array['master_module'];
-        $beanL = $beanList[$class1];
-        $bean1 = $beanFiles[$beanL];
-        require_once($bean1);
-        $seed1 = new $beanL();
+        $seed1 = BeanFactory::getBean($merge_array['master_module']);
 
         if(!empty($merge_array['related_module']))
         {
-            $class2 = $merge_array['related_module'];
-            $beanR = $beanList[$class2];
-            $bean2 = $beanFiles[$beanR];
-            require_once($bean2);
-            $seed2 = new $beanR();
+            $seed2 = BeanFactory::getBean($merge_array['related_module']);
         }
 
         //parse fields
         //$token1 = strtolower($class1);
-        //BEGIN SUGARCRM flav!=sales ONLY
         if($class1 == 'Prospects'){
             $class1 = 'CampaignProspects';
         }
-        //END SUGARCRM flav!=sales ONLY
         foreach($fields as $field)
         {
             $pos = strpos(strtolower($field), strtolower($class1));
-            $pos2 = strpos(strtolower($field), strtolower($class2));
+            $pos2 = strpos(strtolower($field), strtolower($seed2->module_dir));
             if($pos !== false){
             	$fieldName = str_replace(strtolower($class1).'_', '', strtolower($field));
             	array_push($master_fields, $fieldName);
             }else if($pos2 !== false){
-            	$fieldName = str_replace(strtolower($class2).'_', '', strtolower($field));
+            	$fieldName = str_replace(strtolower($seed2->module_dir).'_', '', strtolower($field));
             	array_push($related_fields, $fieldName);
             }
         }
@@ -1713,7 +1653,7 @@ function get_mailmerge_document($session, $file_name, $fields)
             $html .= '<td>'.$class1.'_'.$master_field.'</td>';
         }
         foreach($related_fields as $related_field){
-            $html .= '<td>'.$class2.'_'.$related_field.'</td>';
+            $html .= '<td>'.$seed2->module_dir.'_'.$related_field.'</td>';
         }
         $html .= '</tr>';
 
@@ -1780,7 +1720,7 @@ $NAMESPACE);
  */
 function get_mailmerge_document2($session, $file_name, $fields)
 {
-    global  $beanList, $beanFiles, $app_list_strings, $app_strings;
+    global $app_list_strings, $app_strings;
 
     $error = new SoapError();
     if(!validate_authenticated($session))
@@ -1806,27 +1746,18 @@ function get_mailmerge_document2($session, $file_name, $fields)
         include($file_name);
 
         $class1 = $merge_array['master_module'];
-        $beanL = $beanList[$class1];
-        $bean1 = $beanFiles[$beanL];
-        require_once($bean1);
-        $seed1 = new $beanL();
+        $seed1 = BeanFactory::getBean($merge_array['master_module']);
 
         if(!empty($merge_array['related_module']))
         {
             $class2 = $merge_array['related_module'];
-            $beanR = $beanList[$class2];
-            $bean2 = $beanFiles[$beanR];
-            require_once($bean2);
-            $seed2 = new $beanR();
+            $seed2 = BeanFactory::getBean($merge_array['related_module']);
         }
 
         //parse fields
-        //$token1 = strtolower($class1);
-        //BEGIN SUGARCRM flav!=sales ONLY
         if($class1 == 'Prospects'){
             $class1 = 'CampaignProspects';
         }
-        //END SUGARCRM flav!=sales ONLY
         foreach($fields as $field)
         {
         	$pos = strpos(strtolower($field), strtolower($class1));
@@ -1948,8 +1879,7 @@ function get_document_revision($session,$id)
     }
 
 
-    $dr = new DocumentRevision();
-    $dr->retrieve($id);
+    $dr = BeanFactory::getBean('DocumentRevisions', $id);
     if(!empty($dr->filename)){
         $filename = "upload://{$dr->id}";
         $contents = base64_encode(sugar_file_get_contents($filename));
@@ -1960,7 +1890,6 @@ function get_document_revision($session,$id)
     }
 
 }
-//BEGIN SUGARCRM flav!=sales ONLY
 $server->register(
     'set_campaign_merge',
     array('session'=>'xsd:string', 'targets'=>'tns:select_fields', 'campaign_id'=>'xsd:string'),
@@ -1991,7 +1920,6 @@ function set_campaign_merge($session,$targets, $campaign_id){
 
     return $error->get_soap_array();
 }
-//END SUGARCRM flav!=sales ONLY
 $server->register(
     'get_entries_count',
     array('session'=>'xsd:string', 'module_name'=>'xsd:string', 'query'=>'xsd:string', 'deleted' => 'xsd:int'),
@@ -2009,20 +1937,12 @@ $server->register(
 @return get_entries_count_result - this is a complex type as defined in SoapTypes.php
 */
 function get_entries_count($session, $module_name, $query, $deleted) {
-	global $beanList, $beanFiles, $current_user;
+	global $current_user;
 
 	$error = new SoapError();
 
 	if (!validate_authenticated($session)) {
 		$error->set_error('invalid_login');
-		return array(
-			'result_count' => -1,
-			'error' => $error->get_soap_array()
-		);
-	}
-
-	if (empty($beanList[$module_name])) {
-		$error->set_error('no_module');
 		return array(
 			'result_count' => -1,
 			'error' => $error->get_soap_array()
@@ -2037,9 +1957,14 @@ function get_entries_count($session, $module_name, $query, $deleted) {
 		);
 	}
 
-	$class_name = $beanList[$module_name];
-	require_once($beanFiles[$class_name]);
-	$seed = new $class_name();
+	$seed = BeanFactory::getBean($module_name);
+	if (empty($seed)) {
+		$error->set_error('no_module');
+		return array(
+				'result_count' => -1,
+				'error' => $error->get_soap_array()
+		);
+	}
 
 	if (!$seed->ACLAccess('ListView')) {
 		$error->set_error('no_access');
@@ -2126,7 +2051,7 @@ function set_entries_details($session, $module_name, $name_value_lists, $select_
 
 // INTERNAL FUNCTION NOT EXPOSED THROUGH API
 function handle_set_entries($module_name, $name_value_lists, $select_fields = FALSE) {
-	global $beanList, $beanFiles, $app_list_strings, $current_user;
+	global $beanList, $app_list_strings, $current_user;
 
 	$error = new SoapError();
 	$ret_values = array();
@@ -2141,14 +2066,12 @@ function handle_set_entries($module_name, $name_value_lists, $select_fields = FA
 		return array('ids'=>-1, 'error'=>$error->get_soap_array());
 	}
 
-	$class_name = $beanList[$module_name];
-	require_once($beanFiles[$class_name]);
 	$ids = array();
 	$count = 1;
 	$total = sizeof($name_value_lists);
 
 	foreach($name_value_lists as $name_value_list){
-		$seed = new $class_name();
+		$seed = BeanFactory::getBean($module_name);
 
 		$seed->update_vcal = false;
 

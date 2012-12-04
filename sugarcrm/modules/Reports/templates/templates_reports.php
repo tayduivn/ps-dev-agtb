@@ -271,7 +271,6 @@ function reportCriteriaWithResult(&$reporter,&$args) {
 		$smarty->assign('filterTabStyle', "display:''");
 	}
 	$smarty->assign('reportResultHeader', $mod_strings['LBL_REPORT_RESULTS']);
-	//BEGIN SUGARCRM flav!=sales ONLY
 	$reportDetailsButtonTitle = $mod_strings['LBL_REPORT_HIDE_DETAILS'];
 	$reportDetailsTableStyle = '';
 	if (isset($args['reportCache'])) {
@@ -283,21 +282,7 @@ function reportCriteriaWithResult(&$reporter,&$args) {
 			}
 		} // if
 	} // if
-	//END SUGARCRM flav!=sales ONLY
 
-	//BEGIN SUGARCRM flav=sales ONLY
-	$reportDetailsButtonTitle = $mod_strings['LBL_REPORT_SHOW_DETAILS'];
-	$reportDetailsTableStyle = 'display:none';
-	if (isset($args['reportCache'])) {
-		$reportCache = $args['reportCache'];
-		if (!empty($reportCache->report_options_array)) {
-			if (array_key_exists("showDetails", $reportCache->report_options_array) && !$reportCache->report_options_array['showDetails']) {
-				$reportDetailsButtonTitle = $mod_strings['LBL_REPORT_HIDE_DETAILS'];
-				$reportDetailsTableStyle = '';
-			}
-		} // if
-	} // if
-	//END SUGARCRM flav=sales ONLY
 
 
 	$smarty->assign('reportDetailsButtonTitle', $reportDetailsButtonTitle);
@@ -318,12 +303,6 @@ function reportCriteriaWithResult(&$reporter,&$args) {
                onclick="var _form = $('#EditView')[0]; _form.to_pdf.value='';_form.to_csv.value='';_form.save_report.value='';_form.submit();" value="{$mod_strings['LBL_RUN_REPORT_BUTTON_LABEL']}">
 EOD
     ;
-    //BEGIN SUGARCRM flav=sales ONLY
-    $buttons[] = <<<EOD
-        <input type="button" class="button" name="showHideReportDetails" id="showHideReportDetails" value="{$reportDetailsButtonTitle}" onClick="showHideReportDetailsButton();">
-EOD
-    ;
-    //END SUGARCRM flav=sales ONLY
 
     //BEGIN SUGARCRM flav=pro ONLY
     if ($report_edit_access) {
@@ -974,7 +953,7 @@ else
      require_once("include/SugarCharts/ChartDisplay.php");
      $chartDisplay = new ChartDisplay();
      $chartDisplay->setReporter($reporter);
-     echo $chartDisplay->legacyDisplay(null, false);
+     echo "<div align='center'>".$chartDisplay->legacyDisplay(null, false)."</div>";
 	 echo "</div>";
 	} // if
 
@@ -1163,7 +1142,7 @@ function template_reports_tables(&$smarty, &$args) {
 	if (! empty($reporter->saved_report)) {
 		$focus = & $reporter->saved_report;
 	} else {
-		$focus = new SavedReport();
+		$focus = BeanFactory::getBean('Reports');
 		$focus->assigned_user_name = (empty($_REQUEST['assigned_user_name']) ? '' : $_REQUEST['assigned_user_name']);
 		$focus->assigned_user_id = (empty($_REQUEST['assigned_user_id']) ? '' : $_REQUEST['assigned_user_id']);
 		$focus->team_name = (empty($_REQUEST['team_name']) ? '' : $_REQUEST['team_name']);

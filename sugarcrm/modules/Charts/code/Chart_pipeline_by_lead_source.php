@@ -211,7 +211,7 @@ global $timedate;
 			$GLOBALS['log']->debug($user_id);
 			$GLOBALS['log']->debug("cache_file_name is: $cache_file_name");
 
-			$opp = new Opportunity;
+			$opp = BeanFactory::getBean('Opportunities');
 			//Now do the db queries
 			//query for opportunity data that matches $legends and $user
 			$where="";
@@ -253,8 +253,7 @@ global $timedate;
 			$symbol = $sugar_config['default_currency_symbol'];
 			global $current_user;
 			if($current_user->getPreference('currency') ) {
-				$currency = new Currency();
-				$currency->retrieve($current_user->getPreference('currency'));
+				$currency = BeanFactory::getBean('Currencies', $current_user->getPreference('currency'));
 				$div = $currency->conversion_rate;
 				$symbol = $currency->symbol;
 			}
@@ -382,7 +381,7 @@ global $timedate;
 
 		$user_id = $ids;
 
-		$opp = new Opportunity;
+		$opp = BeanFactory::getBean('Opportunities');
 		//Now do the db queries
 		//query for opportunity data that matches $legends and $user
 		$where="";

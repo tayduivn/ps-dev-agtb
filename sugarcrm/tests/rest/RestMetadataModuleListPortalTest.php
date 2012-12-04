@@ -87,23 +87,25 @@ class RestMetadataModuleListPortalTest extends RestTestPortalBase {
         $this->defaultTabs = $tabs->get_tabs_system();
 
         $this->_clearMetadataCache();
-        $restReply = $this->_restCall('metadata?type_filter=module_list&platform=portal');
+        $restReply = $this->_restCall('me');
 
-        $this->assertTrue(isset($restReply['reply']['module_list']),'There is no portal module list');
+        $this->assertTrue(isset($restReply['reply']['current_user']['module_list']),'There is no portal module list');
         // There should only be the following modules by default: Bugs, Cases, KBDocuments, Leads
         $enabledPortal = array('Cases','Contacts');
-        $restModules = $restReply['reply']['module_list'];
+        $restModules = $restReply['reply']['current_user']['module_list'];
 
         unset($restModules['_hash']);
         foreach ( $enabledPortal as $module ) {
             $this->assertTrue(in_array($module,$restModules),'Module '.$module.' missing from the portal module list.');
         }
         // Bugs and KBDocuments are sometimes enabled, and they are fine, just not in the normal list
-        if ( isset($restModules['Bugs']) ) {
-            unset($restModules['Bugs']);
+        $idx = array_search('Bugs',$restModules);
+        if ( is_int($idx) ) {
+            unset($restModules[$idx]);
         }
-        if ( isset($restModules['KBDocuments']) ) {
-            unset($restModules['KBDocuments']);
+        $idx = array_search('KBDocuments',$restModules);
+        if ( is_int($idx)) {
+            unset($restModules[$idx]);
         }
         // Although there are 4 OOTB portal modules, only 2 are enabled by default
         $this->assertEquals(2,count($restModules),'There are extra modules in the portal module list');
@@ -116,13 +118,13 @@ class RestMetadataModuleListPortalTest extends RestTestPortalBase {
         // Do this to load the tab list into cache
         $tabs->get_tabs_system();
         $this->_clearMetadataCache();
-        $restReply = $this->_restCall('metadata?type_filter=module_list&platform=portal');
+        $restReply = $this->_restCall('me');
 
-        $this->assertTrue(isset($restReply['reply']['module_list']),'There is no portal module list');
+        $this->assertTrue(isset($restReply['reply']['current_user']['module_list']),'There is no portal module list');
         // There should only be the following modules by default: Bugs, Cases, KBDocuments, Contacts
         // And now 3 are enabled
         $enabledPortal = array('Cases','Contacts', 'Bugs');
-        $restModules = $restReply['reply']['module_list'];
+        $restModules = $restReply['reply']['current_user']['module_list'];
 
         unset($restModules['_hash']);
         foreach ( $enabledPortal as $module ) {
@@ -143,9 +145,9 @@ class RestMetadataModuleListPortalTest extends RestTestPortalBase {
         }
         SugarAutoLoader::put($this->oppTestPath, "<?php\n\$viewdefs['Accounts']['portal']['view']['list'] = array('test' => 'Testing');", true);
         $this->_clearMetadataCache();
-        $restReply = $this->_restCall('metadata?type_filter=module_list&platform=portal');
+        $restReply = $this->_restCall('me');
 
-        $this->assertTrue(in_array('Accounts',$restReply['reply']['module_list']),'The new Accounts module did not appear in the portal list');
+        $this->assertTrue(in_array('Accounts',$restReply['reply']['current_user']['module_list']),'The new Accounts module did not appear in the portal list');
 
     }
 

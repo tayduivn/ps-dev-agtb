@@ -26,7 +26,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 
 
-$focus = new Role();
+$focus = BeanFactory::getBean('Roles');
 
 $tabs_def = urldecode($_REQUEST['display_tabs_def']);
 $tabs_hide = urldecode($_REQUEST['hide_tabs_def']);

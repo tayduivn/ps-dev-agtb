@@ -82,9 +82,9 @@ class SugarController
 	public $process_tasks = array(
 						'blockFileAccess',
 						'handleEntryPoint',
-						//BEGIN SUGARCRM flav=pro || flav=sales ONLY
+						//BEGIN SUGARCRM flav=pro ONLY
 						'remapWirelessAction',
-						//END SUGARCRM flav=pro || flav=sales ONLY
+						//END SUGARCRM flav=pro ONLY
 						'callLegacyCode',
 						'remapAction',
 						'handle_action',
@@ -197,18 +197,16 @@ class SugarController
 	 */
 	public function loadBean()
 	{
-		if(!empty($GLOBALS['beanList'][$this->module])){
-			$class = $GLOBALS['beanList'][$this->module];
-			if(!empty($GLOBALS['beanFiles'][$class])){
-				require_once($GLOBALS['beanFiles'][$class]);
-				$this->bean = new $class();
-				if(!empty($this->record)){
-					$this->bean->retrieve($this->record);
-					if($this->bean)
-						$GLOBALS['FOCUS'] = $this->bean;
+	    $bean = BeanFactory::newBean($this->module);
+	    if(!empty($bean)) {
+			$this->bean = $bean;
+			if(!empty($this->record)){
+				$this->bean->retrieve($this->record);
+				if(!empty($this->bean->id)) {
+					$GLOBALS['FOCUS'] = $this->bean;
 				}
 			}
-		}
+	    }
 	}
 
 	/**
@@ -269,7 +267,7 @@ class SugarController
       */
     protected function handleException(Exception $e)
     {
-        $GLOBALS['log']->fatal('Exception in Controller: ' . $e->getMessage());
+        $GLOBALS['log']->fatal('Exception in Controller: ' . $e);
         $logicHook = new LogicHook();
 
         if (isset($this->bean))
@@ -600,7 +598,7 @@ class SugarController
             $GLOBALS['db']->setQueryLimit(0);
             require_once("include/MassUpdate.php");
             require_once('modules/MySettings/StoreQuery.php');
-            $seed = loadBean($_REQUEST['module']);
+            $seed = BeanFactory::getBean($_REQUEST['module']);
             $mass = new MassUpdate();
             $mass->setSugarBean($seed);
             if(isset($_REQUEST['entire']) && empty($_POST['mass'])) {
@@ -891,7 +889,7 @@ class SugarController
 		}
 	}
 
-    //BEGIN SUGARCRM flav=pro || flav=sales ONLY
+    //BEGIN SUGARCRM flav=pro ONLY
     /**
 	 * Remap the action to the wireless equivalent if the module supports it and
 	 * the user is on a mobile device. Also, map wireless actions to normal ones if the
@@ -918,6 +916,6 @@ class SugarController
 		}
         $this->do_action = $this->action;
     }
-    //END SUGARCRM flav=pro || flav=sales ONLY
+    //END SUGARCRM flav=pro ONLY
 }
 ?>

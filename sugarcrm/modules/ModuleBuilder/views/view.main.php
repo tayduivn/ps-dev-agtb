@@ -65,13 +65,11 @@ class ViewMain extends SugarView
  				require_once('modules/ModuleBuilder/Module/StudioTree.php');
 				$mbt = new StudioTree();
 				break;
-			//BEGIN SUGARCRM flav!=sales ONLY
  			case 'mb':
  				//$smarty->assign('ONLOAD','ModuleBuilder.getContent("module=ModuleBuilder&action=package&package=")');
  				require_once('modules/ModuleBuilder/MB/MBPackageTree.php');
 				$mbt = new MBPackageTree();
 				break;
-			//END SUGARCRM flav!=sales ONLY
  			//BEGIN SUGARCRM flav=ent ONLY
 
 			case 'sugarportal':

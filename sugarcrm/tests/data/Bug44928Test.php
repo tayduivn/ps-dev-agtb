@@ -95,18 +95,18 @@ class Bug44928Test extends Sugar_PHPUnit_Framework_TestCase
         $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
 
         // create new private team
-        $this->team = new Team();
+        $this->team = BeanFactory::getBean('Teams');
         $this->team->private = true;
         $this->team->save();
 
         // create new campaign associated with the team
-        $this->campaign = new Campaign();
+        $this->campaign = BeanFactory::getBean('Campaigns');
         $this->campaign->team_id = $this->team->id;
         $this->campaign->name = $this->campaign_name;
         $this->campaign->save();
 
         // create new lead associated with the campaign
-        $this->lead = new Lead();
+        $this->lead = BeanFactory::getBean('Leads');
         $this->lead->campaign_id = $this->campaign->id;
         $this->lead->save();
 
@@ -136,8 +136,7 @@ class Bug44928Test extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testRelatedBeanPropertiesAreAccessible()
     {
-        $lead = new Lead();
-        $lead->retrieve($this->lead_id);
+        $lead = BeanFactory::getBean('Leads', $this->lead_id);
         $this->assertEquals($this->campaign_name, $lead->campaign_name);
     }
 }

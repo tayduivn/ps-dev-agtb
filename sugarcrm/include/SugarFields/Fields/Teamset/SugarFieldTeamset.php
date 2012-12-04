@@ -544,7 +544,7 @@ class SugarFieldTeamset extends SugarFieldBase {
     {
         static $teamBean;
         if ( !isset($teamBean) ) {
-            $teamBean = loadBean('Teams');
+            $teamBean = BeanFactory::getBean('Teams');
         }
         
     	if(!is_array($value)){
@@ -571,7 +571,7 @@ class SugarFieldTeamset extends SugarFieldBase {
                     continue;
                 }
                 //3) ok we did not find the id, so we need to create a team.
-                $newbean = loadBean('Teams');
+                $newbean = BeanFactory::getBean('Teams');
                  if ( $newbean->ACLAccess('save') ) {
                  	$newbean->$vardef['rname'] = $val;
                  	
@@ -605,7 +605,7 @@ class SugarFieldTeamset extends SugarFieldBase {
     }
     
     private function _isTeamId($value, $module){
-    	$checkfocus = loadBean($module);
+    	$checkfocus = BeanFactory::getBean($module);
         if ( $checkfocus && is_null($checkfocus->retrieve($value)) ){
         	return false;
         }

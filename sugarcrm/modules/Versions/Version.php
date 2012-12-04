@@ -56,6 +56,17 @@ class Version extends SugarBean {
 	// This is used to retrieve related fields from form posts.
 	var $additional_column_fields = Array();
 
+    /**
+     * This is a depreciated method, please start using __construct() as this method will be removed in a future version
+     *
+     * @see __construct
+     * @deprecated
+     */
+    public function Version()
+    {
+        $this->__construct();
+    }
+
 	public function __construct() {
 		parent::__construct();
 		//BEGIN SUGARCRM flav=pro ONLY
@@ -103,7 +114,7 @@ function is_expected_version($expected_version){
 function mark_upgraded($name, $dbVersion, $fileVersion){
 	$query = "DELETE FROM versions WHERE name='$name'";
 	$GLOBALS['db']->query($query);
-	$version = new Version();
+	$version = BeanFactory::getBean('Versions');
 	$version->name = $name;
 	$version->file_version = $fileVersion;
 	$version->db_version = $dbVersion;

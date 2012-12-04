@@ -87,11 +87,9 @@ class TemplateHandler {
             global $dictionary, $beanList, $app_strings, $mod_strings;
             $mod = $beanList[$module];
 
-            //BEGIN SUGARCRM flav!=sales ONLY
             if($mod == 'aCase') {
                 $mod = 'Case';
             }
-            //END SUGARCRM flav!=sales ONLY
 
             $defs = $dictionary[$mod]['fields'];
             $defs2 = array();
@@ -198,11 +196,9 @@ class TemplateHandler {
             global $dictionary, $beanList, $app_strings, $mod_strings;
             $mod = $beanList[$module];
 
-            //BEGIN SUGARCRM flav!=sales ONLY
             if($mod == 'aCase') {
                 $mod = 'Case';
             }
-            //END SUGARCRM flav!=sales ONLY
 
             $defs = $dictionary[$mod]['fields'];
             $contents .= '{literal}';
@@ -348,10 +344,8 @@ class TemplateHandler {
                             else {
                                 $sqs_objects[$name.'_'.$parsedView] = $qsd->getQSUser();
                             }
-                        //BEGIN SUGARCRM flav!=sales ONLY
                         } else if($matches[0] == 'Campaigns') {
                             $sqs_objects[$name.'_'.$parsedView] = $qsd->loadQSObject('Campaigns', 'Campaign', $field['name'], $field['id_name'], $field['id_name']);
-                        //END SUGARCRM flav!=sales ONLY
                         //BEGIN SUGARCRM flav=pro ONLY
                         } else if($matches[0] == 'Teams') {
                             $sqs_objects[$name.'_'.$parsedView] = $qsd->loadQSObject('Teams', 'Team', $field['name'], $field['name'], $field['id_name']);
@@ -440,10 +434,8 @@ class TemplateHandler {
                                  $sqs_objects[$name] = $qsd->getQSUser($field['name'], $field['id_name']);
 
 							}
-                        //BEGIN SUGARCRM flav!=sales ONLY
                         } else if($matches[0] == 'Campaigns') {
                             $sqs_objects[$name] = $qsd->loadQSObject('Campaigns', 'Campaign', $field['name'], $field['id_name'], $field['id_name']);
-                        //END SUGARCRM flav!=sales ONLY
                         //BEGIN SUGARCRM flav=pro ONLY
                         } else if($matches[0] == 'Teams') {
                             $sqs_objects[$name] = $qsd->loadQSObject('Teams', 'Team', $field['name'], $field['name'], $field['id_name']);

@@ -21,10 +21,6 @@ if ( !defined('sugarEntry') || !sugarEntry ) {
  *to the License for the specific language governing these rights and limitations under the License.
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
-/*********************************************************************************
- * $Id: Opportunity.php 54706 2010-02-22 19:09:36Z dwheeler $
- * Description:
- ********************************************************************************/
 
 // Opportunity is used to store customer information.
 class Opportunity extends SugarBean
@@ -55,9 +51,7 @@ class Opportunity extends SugarBean
 	var $next_step;
 	var $sales_stage;
 	var $probability;
-	//BEGIN SUGARCRM flav!=sales ONLY
 	var $campaign_id;
-	//END SUGARCRM flav!=sales ONLY
 	//BEGIN SUGARCRM flav=pro ONLY
 	var $team_name;
 	var $team_id;
@@ -106,12 +100,24 @@ class Opportunity extends SugarBean
 		//END SUGARCRM flav=pro ONLY
 	);
 
+    /**
+     * This is a depreciated method, please start using __construct() as this method will be removed in a future version
+     *
+     * @see __construct
+     * @deprecated
+     */
+    public function Opportunity()
+    {
+        $this->__construct();
+    }
+
 
 	public function __construct()
 	{
 		parent::__construct();
 		global $sugar_config;
-		if ( !$sugar_config['require_accounts'] ) {
+
+		if(empty($sugar_config['require_accounts'])){
 			unset($this->required_fields['account_name']);
 		}
 		//BEGIN SUGARCRM flav=pro ONLY
@@ -277,21 +283,17 @@ class Opportunity extends SugarBean
 		parent::fill_in_additional_detail_fields();
 
 		if ( !empty($this->currency_id) ) {
-			$currency = new Currency();
-			$currency->retrieve($this->currency_id);
+			$currency = BeanFactory::getBean('Currencies', $this->currency_id);
 			if ( $currency->id != $this->currency_id || $currency->deleted == 1 ) {
 				$this->amount      = $this->amount_usdollar;
 				$this->currency_id = $currency->id;
 			}
 		}
-		//BEGIN SUGARCRM flav!=sales ONLY
 		//get campaign name
 		if ( !empty($this->campaign_id) ) {
-			$camp = new Campaign();
-			$camp->retrieve($this->campaign_id);
+			$camp = BeanFactory::getBean('Campaigns', $this->campaign_id);
 			$this->campaign_name = $camp->name;
 		}
-		//END SUGARCRM flav!=sales ONLY
 		$this->account_name = '';
 		$this->account_id   = '';
 		if ( !empty($this->id) ) {
@@ -323,7 +325,7 @@ class Opportunity extends SugarBean
 			$query .= ' ' . $qstring;
 		}
 		$temp = Array('id', 'first_name', 'last_name', 'title', 'email1', 'phone_work', 'opportunity_role', 'opportunity_rel_id');
-		return $this->build_related_list2($query, new Contact(), $temp);
+		return $this->build_related_list2($query, BeanFactory::getBean('Contacts'), $temp);
 	}
 
 
@@ -331,9 +333,7 @@ class Opportunity extends SugarBean
 	{
 		$idequals = '';
 
-		$currency = new Currency();
-		$currency->retrieve($toid);
-
+		$currency = BeanFactory::getBean('Currencies', $toid);
 		foreach ( $fromid as $f ) {
 			if ( !empty($idequals) ) {
 				$idequals .= ' or ';
@@ -344,7 +344,7 @@ class Opportunity extends SugarBean
 		if ( !empty($idequals) ) {
 			$query  = "select amount, id from opportunities where (" . $idequals . ") and deleted=0 and opportunities.sales_stage <> 'Closed Won' AND opportunities.sales_stage <> 'Closed Lost';";
 			$result = $this->db->query($query);
-			
+
 			while ( $row = $this->db->fetchByAssoc($result) ) {
                 $query = sprintf("update opportunities set currency_id='%s',
                     amount_usdollar='%s',
@@ -436,8 +436,7 @@ class Opportunity extends SugarBean
 			}
 		}
 
-		require_once(get_custom_file_if_exists('modules/Opportunities/SaveOverload.php'));
-
+		SugarAutoLoader::requireWithCustom('modules/Opportunities/SaveOverload.php');
 		perform_save($this);
 
 		return parent::save($check_notify);
@@ -458,7 +457,7 @@ class Opportunity extends SugarBean
 		// Bug 38529 & 40938 - exclude currency_id
 		parent::save_relationship_changes($is_update, array('currency_id'));
 
-		if ( !empty($this->contact_id) ) {
+		if (!empty($this->contact_id)) {
 			$this->set_opportunity_contact_relationship($this->contact_id);
 		}
 	}
@@ -551,7 +550,7 @@ class Opportunity extends SugarBean
 	 */
 	public function getProducts()
 	{
-		return $this->get_linked_beans('products', new Product());
+		return $this->get_linked_beans('products', BeanFactory::getBean('Products'));
 	}
 
 	/**

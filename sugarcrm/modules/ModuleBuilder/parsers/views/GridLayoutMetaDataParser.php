@@ -34,10 +34,10 @@ class GridLayoutMetaDataParser extends AbstractMetaDataParser implements MetaDat
     	MB_EDITVIEW => 'EditView' ,
     	MB_DETAILVIEW => 'DetailView' ,
     	MB_QUICKCREATE => 'QuickCreate',
-    	//BEGIN SUGARCRM flav=pro || flav=sales ONLY
+    	//BEGIN SUGARCRM flav=pro ONLY
     	MB_WIRELESSEDITVIEW => 'EditView' ,
     	MB_WIRELESSDETAILVIEW => 'DetailView' ,
-    	//END SUGARCRM flav=pro || flav=sales ONLY
+    	//END SUGARCRM flav=pro ONLY
         //BEGIN SUGARCRM flav=ent ONLY
         MB_PORTALEDITVIEW => array('portal','view','edit'),
         MB_PORTALDETAILVIEW => array('portal','view','detail') ,
@@ -155,6 +155,7 @@ class GridLayoutMetaDataParser extends AbstractMetaDataParser implements MetaDat
         $viewdefs = $this->_viewdefs ;
         $viewdefs [ 'panels' ] = $this->_convertToCanonicalForm ( $this->_viewdefs [ 'panels' ] , $this->_fielddefs ) ;
         $this->implementation->deploy(MetaDataFiles::mapPathToArray(MetaDataFiles::getViewDefVar($this->_view),$viewdefs));
+        $this->_clearCaches();
     }
 
     /*

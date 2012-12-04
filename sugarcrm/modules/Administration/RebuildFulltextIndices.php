@@ -29,7 +29,7 @@ if(!is_admin($current_user)){
 global $beanFiles;
 foreach ($beanFiles as $beanname=>$beanpath) {
 	require_once($beanpath);
-	$focus= new $beanname();
+	$focus = BeanFactory::newBeanByName($beanname);
 
 	//skips beans based on same tables. user, employee and group are an example.
 	if(empty($focus->table_name) || isset($processed_tables[$focus->table_name])) {

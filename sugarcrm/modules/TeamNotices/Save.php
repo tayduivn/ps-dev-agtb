@@ -28,7 +28,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  ********************************************************************************/
 if (!$GLOBALS['current_user']->isAdminForModule('Users')) sugar_die($GLOBALS['app_strings']['ERR_NOT_ADMIN']);
 
-$focus = new TeamNotice();
+$focus = BeanFactory::getBean('TeamNotices');
 
 require_once('include/formbase.php');
 $focus = populateFromPost('', $focus);	

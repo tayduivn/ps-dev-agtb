@@ -49,6 +49,17 @@ class CalendarDisplay {
 		),
 	);
 
+    /**
+     * This is a depreciated method, please start using __construct() as this method will be removed in a future version
+     *
+     * @see __construct
+     * @deprecated
+     */
+    public function CalendarDisplay(Calendar $cal, $dashlet_id = "")
+    {
+        $this->__construct($cal, $dashlet_id);
+    }
+
 	/**
 	 * constructor
 	 * @param Calendar $cal
@@ -473,8 +484,7 @@ class CalendarDisplay {
 
 			//BEGIN SUGARCRM flav=pro ONLY
 			if(!empty($this->cal->shared_team_id)){
-				$team = new Team();
-				$team->retrieve($this->cal->shared_team_id);
+				$team = BeanFactory::getBean('Teams', $this->cal->shared_team_id);
                			$users = $team->get_team_members(true);
 				$user_ids = array();
 

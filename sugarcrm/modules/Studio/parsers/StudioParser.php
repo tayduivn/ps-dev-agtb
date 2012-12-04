@@ -450,11 +450,9 @@ EOQ;
 			$temp_xtpl = new XTemplate($file);
 			if ($temp_xtpl->exists('advanced')) {
 
-				global $current_language, $beanFiles, $beanList;
+				global $current_language;
 				$mods = return_module_language($current_language, 'DynamicLayout');
-				$class_name = $beanList[$module];
-				require_once ($beanFiles[$class_name]);
-				$mod = new $class_name ();
+				$mod = BeanFactory::getBean($module);
 
 				$this->populateRequestFromBuffer($file);
 				$mod->assign_display_fields($module);

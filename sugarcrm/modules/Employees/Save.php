@@ -46,9 +46,7 @@ elseif (!isset($_POST['record']) && !is_admin($GLOBALS['current_user']) && !$GLO
     sugar_die ("Unauthorized access to user administration.");
 }
 
-$focus = new Employee();
-
-$focus->retrieve($_POST['record']);
+$focus = BeanFactory::getBean('Employees', $_POST['record']);
 
 //rrs bug: 30035 - I am not sure how this ever worked b/c old_reports_to_id was not populated.
 $old_reports_to_id = $focus->reports_to_id;

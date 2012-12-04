@@ -39,11 +39,9 @@ global $current_language;
 $ent_mod_strings = return_module_language($current_language, "ReportMaker");
 //END SUGARCRM flav=ent ONLY
 $module_menu = Array(
-//BEGIN SUGARCRM flav!=sales ONLY
 
     Array("index.php?module=Reports&report_module=&action=index&page=report&Create+Custom+Report=Create+Custom+Report", $mod_strings['LBL_CREATE_REPORT'],"CreateReport", 'Reports'),
     //Array("index.php?module=Reports&favorite=1&action=index", $mod_strings['LBL_FAVORITE_REPORTS'], "FavoriteReports", 'Reports'),
-//END SUGARCRM flav!=sales ONLY
     Array("index.php?module=Reports&action=index", $mod_strings['LBL_ALL_REPORTS'],"Reports", 'Reports'),
     /*
     Array("index.php?module=Reports&action=ActivitiesReports", $mod_strings['LBL_ACTIVITIES_REPORTS'],"Reports", 'Reports'),

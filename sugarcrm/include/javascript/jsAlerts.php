@@ -134,7 +134,7 @@ EOQ;
 
 			//BEGIN SUGARCRM flav=notifications ONLY
 			//Add the notification
-			$n = new Notifications();
+			$n = BeanFactory::getBean('Notifications');
 			$n->name = $app_strings['MSG_JS_ALERT_MTG_REMINDER_MEETING'] .": " . $meetingName;
 			$n->description = $app_strings['MSG_JS_ALERT_MTG_REMINDER_LOC'].$row['location']. $description.$instructions;
 			$n->assigned_user_id = $current_user->id;
@@ -175,7 +175,7 @@ EOQ;
 
 			//BEGIN SUGARCRM flav=notifications ONLY
 			//Add the notification
-			$n = new Notifications();
+			$n = BeanFactory::getBean('Notifications');
 			$n->name = $app_strings['MSG_JS_ALERT_MTG_REMINDER_CALL'] . ": ".$row['name'];
 			$n->description = $app_strings['MSG_JS_ALERT_MTG_REMINDER_DESC'].$row['description']. $app_strings['MSG_JS_ALERT_MTG_REMINDER_CALL_MSG'];
 			$n->assigned_user_id = $current_user->id;

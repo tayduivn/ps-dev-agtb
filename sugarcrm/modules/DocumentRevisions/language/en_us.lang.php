@@ -30,6 +30,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 $mod_strings = array (
 	//module
 	'LBL_MODULE_NAME' => 'Document Revision',
+	'LBL_MODULE_NAME_SINGULAR' => 'Document Revision',
 
 	'LNK_NEW_DOCUMENT' => 'Create Document',
 	'LNK_DOCUMENT_LIST'=> 'View Documents',

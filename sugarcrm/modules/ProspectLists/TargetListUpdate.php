@@ -31,10 +31,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 require_once 'include/formbase.php';
 
-global $beanFiles,$beanList;
-$bean_name = $beanList[$_REQUEST['module']];
-require_once($beanFiles[$bean_name]);
-$focus = new $bean_name();
+$focus = BeanFactory::getBean($_REQUEST['module']);
 
 $uids = array();
 if($_REQUEST['select_entire_list'] == '1'){

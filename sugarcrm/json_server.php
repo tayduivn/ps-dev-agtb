@@ -40,14 +40,9 @@ $SUPPORTED_METHODS = array(
  */
 function json_retrieve($request_id, $params) {
 	global $current_user;
-	global $beanFiles,$beanList;
     $json = getJSONobj();
 
-	$record = $params[0]['record'];
-
-	require_once($beanFiles[$beanList[$params[0]['module']]]);
-	$focus = new $beanList[$params[0]['module']];
-	$focus->retrieve($record);
+	$focus = BeanFactory::getBean($params[0]['module'], $params[0]['record']);
 
 	// to get a simplified version of the sugarbean
 	$module_arr = populateBean($focus);
@@ -61,7 +56,6 @@ function json_retrieve($request_id, $params) {
 
 function json_query($request_id, $params) {
 	global $response, $sugar_config;
-	global $beanFiles, $beanList;
 	$json = getJSONobj();
 
 	if($sugar_config['list_max_entries_per_page'] < 31)	// override query limits
@@ -88,8 +82,7 @@ function json_query($request_id, $params) {
 	}
 
 	foreach($args['modules'] as $module) {
-		require_once($beanFiles[$beanList[$module]]);
-		$focus = new $beanList[$module];
+	    $focus = BeanFactory::getBean($module);
 
 		$query_orderby = '';
 		if(!empty($args['order'])) {
@@ -127,7 +120,7 @@ function json_query($request_id, $params) {
 
 		foreach($args['field_list'] as $field) {
 
-			
+
 			//handle links
 			if( $list_return[$i]->field_name_map[$field]['type'] == "relate" ) {
 				 $linked = current($list_return[$i]->get_linked_beans($list_return[$i]->field_name_map[$field]['link'], get_valid_bean_name($list_return[$i]->field_name_map[$field]['module'])));
@@ -137,7 +130,7 @@ function json_query($request_id, $params) {
 					 $list_return[$i]->$field = $linked->$linkFieldName;
 				 }
 			}
-			
+
 
 		    if(!empty($list_return[$i]->field_name_map[$field]['sensitive'])) {
 		        continue;
@@ -222,7 +215,7 @@ function authenticate() {
 		return null;
 	}
 
-	$current_user = new User();
+	$current_user = BeanFactory::getBean('Users');
 
 	$result = $current_user->retrieve($_SESSION['authenticated_user_id']);
 	$GLOBALS['log']->debug("JSON_SERVER: retrieved user from SESSION");

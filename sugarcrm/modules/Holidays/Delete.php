@@ -29,7 +29,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 
 
-$focus = new Holiday();
+$focus = BeanFactory::getBean('Holidays');
 
 if(!isset($_REQUEST['record']))
 	sugar_die("A record number must be specified to delete this holiday.");

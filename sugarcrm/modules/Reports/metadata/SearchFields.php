@@ -25,7 +25,6 @@ $searchFields['Reports'] =
         'report_module' => array('query_type' => 'default', 'db_field' => array('module')),
         'assigned_user_id'=> array('query_type' => 'default'),
         'report_type' => array('query_type' => 'default'),
-		//BEGIN SUGARCRM flav=!sales ONLY
         'team_id'=> array(
 			'query_type' => 'format',
 			'operator' => 'subquery',
@@ -34,7 +33,6 @@ $searchFields['Reports'] =
 				'team_set_id',
 			)
 		),
-		//END SUGARCRM flav=!sales ONLY
         'current_user_only'=> array('query_type'=>'default','db_field'=>array('assigned_user_id'),'my_items'=>true, 'vname' => 'LBL_CURRENT_USER_FILTER', 'type' => 'bool'),
 		//BEGIN SUGARCRM flav=pro ONLY
 		'favorites_only' => array(

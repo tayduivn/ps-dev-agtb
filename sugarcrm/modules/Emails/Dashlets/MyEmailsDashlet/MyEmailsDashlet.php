@@ -1,5 +1,4 @@
 <?php
-//FILE SUGARCRM flav!=sales ONLY
 if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 /**
  * LICENSE: The contents of this file are subject to the SugarCRM Professional
@@ -49,7 +48,7 @@ class MyEmailsDashlet extends DashletGeneric {
 
         $this->columns = $dashletData['MyEmailsDashlet']['columns'];
 
-        $this->seedBean = new Email();
+        $this->seedBean = BeanFactory::getBean('Emails');
     }
 
     function process() {
@@ -75,15 +74,11 @@ class MyEmailsDashlet extends DashletGeneric {
         $mod_strings = return_module_language($current_language, 'Emails');
         $casesImageURL = "\"" . SugarThemeRegistry::current()->getImageURL('Cases.gif') . "\"";
         
-        //BEGIN SUGARCRM flav!=sales ONLY
         $leadsImageURL = "\"" . SugarThemeRegistry::current()->getImageURL('Leads.gif') . "\"";
-        //END SUGARCRM flav!=sales ONLY
         
         $contactsImageURL = "\"" . SugarThemeRegistry::current()->getImageURL('Contacts.gif') . "\"";
         
-        //BEGIN SUGARCRM flav!=sales ONLY
         $bugsImageURL = "\"" . SugarThemeRegistry::current()->getImageURL('Bugs.gif') . "\"";
-        //END SUGARCRM flav!=sales ONLY
         
         $tasksURL = "\"" . SugarThemeRegistry::current()->getImageURL('Tasks.gif') . "\"";
         $script = <<<EOQ
@@ -95,24 +90,20 @@ class MyEmailsDashlet extends DashletGeneric {
             "<!--not_in_theme!--><img border='0' src='" + {$casesImageURL} + "' style='margin-right:5px'>" + '{$mod_strings['LBL_LIST_CASE']}' + '</a>' +
 
             
-            //BEGIN SUGARCRM flav!=sales ONLY
             "<a style='width: 150px' class='menuItem' onmouseover='hiliteItem(this,\"yes\");' onmouseout='unhiliteItem(this);' href='index.php?module=Leads&action=EditView&inbound_email_id=" + id + "'>" +
                     "<!--not_in_theme!--><img border='0' src='" + {$leadsImageURL} + "' style='margin-right:5px'>"
 
                     + '{$mod_strings['LBL_LIST_LEAD']}' + "</a>" +
-            //END SUGARCRM flav!=sales ONLY
                     
             "<a style='width: 150px' class='menuItem' onmouseover='hiliteItem(this,\"yes\");' onmouseout='unhiliteItem(this);' href='index.php?module=Contacts&action=EditView&inbound_email_id=" + id + "'>" +
                     "<!--not_in_theme!--><img border='0' src='" + {$contactsImageURL} + "' style='margin-right:5px'>"
 
                     + '{$mod_strings['LBL_LIST_CONTACT']}' + "</a>" +
              
-             //BEGIN SUGARCRM flav!=sales ONLY
              "<a style='width: 150px' class='menuItem' onmouseover='hiliteItem(this,\"yes\");' onmouseout='unhiliteItem(this);' href='index.php?module=Bugs&action=EditView&inbound_email_id=" + id + "'>"+
                     "<!--not_in_theme!--><img border='0' src='" + {$bugsImageURL} + "' style='margin-right:5px'>"
 
                     + '{$mod_strings['LBL_LIST_BUG']}' + "</a>" +
-             //END SUGARCRM flav!=sales ONLY
                     
              "<a style='width: 150px' class='menuItem' onmouseover='hiliteItem(this,\"yes\");' onmouseout='unhiliteItem(this);' href='index.php?module=Tasks&action=EditView&inbound_email_id=" + id + "'>" +
                     "<!--not_in_theme!--><img border='0' src='" + {$tasksURL} + "' style='margin-right:5px'>"

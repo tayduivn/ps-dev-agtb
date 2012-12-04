@@ -26,23 +26,10 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * governing these rights and limitations under the License.  Portions created
  * by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
-/*********************************************************************************
- * $Id: CreateStepSpecific.php 56786 2010-06-02 18:29:56Z jenny $
- * Description:
- ********************************************************************************/
-
-global $theme;
-
-
 require_once('include/workflow/workflow_utils.php');
 require_once('include/workflow/field_utils.php');
 
-
-
-
-
-
-
+global $theme;
 global $app_strings;
 global $app_list_strings;
 global $mod_strings;
@@ -50,26 +37,24 @@ global $mod_strings;
 global $urlPrefix;
 global $currentModule;
 
-
-$workflow_object = new WorkFlow();
-if(isset($_REQUEST['workflow_id']) && isset($_REQUEST['workflow_id'])) {
-    $workflow_object->retrieve($_REQUEST['workflow_id']);
-} else {
+if(!empty($_REQUEST['workflow_id'])) {
+    $workflow_object = BeanFactory::retrieveBean('WorkFlow', $_REQUEST['workflow_id']);
+}
+if(empty($workflow_object)) {
 	sugar_die("You shouldn't be here");
 }
 
-$focus = new WorkFlowTriggerShell();
-
-if(isset($_REQUEST['record']) && isset($_REQUEST['record'])) {
+$focus = BeanFactory::getBean('WorkFlowTriggerShells');
+if(!empty($_REQUEST['record']) ) {
     $focus->retrieve($_REQUEST['record']);
 
 }
 
-if(!empty($_REQUEST['field']) && $_REQUEST['field']!="") {
+if(!empty($_REQUEST['field'])) {
    $focus->field = $_REQUEST['field'];
 }
 
-if(!empty($_REQUEST['type']) && $_REQUEST['type']!="") {
+if(!empty($_REQUEST['type'])) {
    $focus->type = $_REQUEST['type'];
 }
 
@@ -133,7 +118,7 @@ $form->out("embeded");
 
 ////////Middle Items/////////////////////////////
 
-	$temp_module = get_module_info($workflow_object->base_module);
+	$temp_module = BeanFactory::getBean($workflow_object->base_module);
 	$display_field_name = $temp_module->field_defs[$focus->field]['vname'];
 	$current_module_strings = return_module_language($current_language, $workflow_object->base_module);
 	$display_field_name = "<i><b>\" ".get_label($display_field_name, $current_module_strings)." \"</i></b>";
@@ -159,7 +144,7 @@ $form->out("embeded");
 
 //////////////////BEGIN Future Object	/////////////////////////////////
 
-		$future_object = new Expression();
+		$future_object = BeanFactory::getBean('Expressions');
 		$future_list = $focus->get_linked_beans('future_triggers','Expression');
 		if(!empty($future_list[0])) {
 			$future_id = $future_list[0]->id;
@@ -231,7 +216,7 @@ if($workflow_object->type=="Normal"){
 		}
 
 
-		$past_object = new Expression();
+		$past_object = BeanFactory::getBean('Expressions');
 		$past_list = $focus->get_linked_beans('past_triggers','Expression');
 		if(isset($past_list[0]) && $past_list[0]!='') {
 			$past_id = $past_list[0]->id;

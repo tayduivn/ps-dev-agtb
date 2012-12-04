@@ -29,8 +29,7 @@ if (!$GLOBALS['current_user']->isAdminForModule('Users')) sugar_die("Unauthorize
 $error_message = '';
 
 if(isset($_REQUEST['team_id']) && isset($_REQUEST['teams'])) {
-	$new_team = new Team();
-	$new_team->retrieve($_REQUEST['team_id']);
+	$new_team = BeanFactory::getBean('Teams', $_REQUEST['team_id']);
 	
 	//Grab the list of teams to reassign
 	$old_teams = explode(",", $_REQUEST['teams']);
@@ -49,7 +48,7 @@ if(isset($_REQUEST['team_id']) && isset($_REQUEST['teams'])) {
 }
 	
 $teams = array();
-$focus = new Team();
+$focus = BeanFactory::getBean('Teams');
 
 if(isset($_SESSION['REASSIGN_TEAMS'])) {
   foreach($_SESSION['REASSIGN_TEAMS'] as $team_id) {

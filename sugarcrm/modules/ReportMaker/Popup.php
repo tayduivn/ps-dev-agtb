@@ -47,7 +47,7 @@ global $urlPrefix;
 global $currentModule;
 
 
-$seed_object = new DataSet();
+$seed_object = BeanFactory::getBean('DataSets');
 
 
 $where = "";

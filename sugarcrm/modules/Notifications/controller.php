@@ -45,7 +45,7 @@ class NotificationsController extends SugarController
 
 	    $lastNotiticationCheck = !empty($_SESSION['lastNotificationCheck']) ? $_SESSION['lastNotificationCheck'] : $thirtySecondsAgoFormatted;
 	    
-        $n = new Notifications();
+        $n = BeanFactory::getBean('Notifications');
         $unreadCount = $n->retrieveUnreadCountFromDateEnteredFilter($lastNotiticationCheck);
         
         //Store the last datetime checked.

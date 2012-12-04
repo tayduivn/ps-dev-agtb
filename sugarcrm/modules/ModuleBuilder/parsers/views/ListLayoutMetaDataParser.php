@@ -48,9 +48,9 @@ class ListLayoutMetaDataParser extends AbstractMetaDataParser implements MetaDat
         MB_DASHLETSEARCH,
         MB_POPUPLIST,
         MB_POPUPSEARCH,
-        //BEGIN SUGARCRM flav=pro || flav=sales ONLY
+        //BEGIN SUGARCRM flav=pro ONLY
     	MB_WIRELESSLISTVIEW,
-    	//END SUGARCRM flav=pro || flav=sales ONLY
+    	//END SUGARCRM flav=pro ONLY
         //BEGIN SUGARCRM flav=ent ONLY
         MB_PORTALLISTVIEW,
         //END SUGARCRM flav=ent ONLY
@@ -122,6 +122,7 @@ class ListLayoutMetaDataParser extends AbstractMetaDataParser implements MetaDat
             $this->_populateFromRequest();
         }
         $this->implementation->deploy($this->_viewdefs); // force the field names back to upper case so the list view will work correctly
+        $this->_clearCaches();
     }
 
     function getLayout ()

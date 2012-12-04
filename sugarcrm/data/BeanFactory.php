@@ -32,6 +32,7 @@ class BeanFactory {
     protected static $total = 0;
     protected static $loadOrder = array();
     protected static $touched = array();
+    protected static $flipBeans;
     public static $hits = 0;
 
     /**
@@ -47,7 +48,7 @@ class BeanFactory {
      *        If $params is boolean we revert to the old arguments (encode, deleted), and use $params as $encode.
      *        This will be changed to using only $params in later versions.
      * @param Bool $deleted @see SugarBean::retrieve
-     * @return SugarBean
+     * @return SugarBean|null
      */
     public static function getBean($module, $id = null, $params = array(), $deleted = true)
     {
@@ -68,43 +69,111 @@ class BeanFactory {
 
         $beanClass = self::getBeanName($module);
 
-        if (empty($beanClass) || !class_exists($beanClass)) return false;
+        if (empty($beanClass) || !class_exists($beanClass)) return null;
 
         if (!empty($id))
         {
             if (empty(self::$loadedBeans[$module][$id]))
             {
-                $bean = new $beanClass();
+                // $bean = new $beanClass();
+                $bean = SugarBean::_createBean($beanClass);
                 //BEGIN SUGARCRM flav=pro ONLY
                 // Pro+ versions, to disable team check if we have rights
-                // to change the parent bean, but not the related (e.g. change Account Name of Opportunity) 
+                // to change the parent bean, but not the related (e.g. change Account Name of Opportunity)
                 if (!empty($params['disable_row_level_security'])) {
                     $bean->disable_row_level_security = true;
                 }
                 //END SUGARCRM flav=pro ONLY
                 $result = $bean->retrieve($id, $encode, $deleted);
-                if($result == null)
-                    return FALSE;
-                else
+                if(empty($result)) {
+                    if(empty($params['strict_retrieve'])) {
+                        return $bean;
+                    } else {
+                        return null;
+                    }
+                } else {
                     self::registerBean($module, $bean, $id);
-            } else
-            {
+                }
+            } else {
                 self::$hits++;
                 self::$touched[$module][$id]++;
                 $bean = self::$loadedBeans[$module][$id];
             }
         } else {
-            $bean = new $beanClass();
+            $bean = SugarBean::_createBean($beanClass);
+            //$bean = new $beanClass();
         }
 
         return $bean;
     }
 
+    /**
+     * Same as getBean but return null if retrieve fails
+     * @param string $module
+     * @param string $id
+     * @param array $params
+     * @param bool $deleted
+     * @return SugarBean|null
+     */
+    public static function retrieveBean($module, $id = null, $params = array(), $deleted = true)
+    {
+        // Check if params is an array, if not use old arguments
+        if (isset($params) && !is_array($params)) {
+        	$params = array('encode' => $params);
+        }
+        $params['strict_retrieve'] = true;
+        return self::getBean($module, $id, $params, $deleted);
+    }
+
+    /**
+     * Delete bean and remove from cache
+     * Uses mark_deleted function
+     * @param string $module
+     * @param string $id
+     * @return SugarBean|null return bean in case we need it for something, or null if no such module
+     */
+    public static function deleteBean($module, $id)
+    {
+       $bean = self::getBean($module);
+       if(empty($bean)) return null;
+       $bean->mark_deleted($id);
+       if(isset(self::$loadedBeans[$module][$id])) {
+           unset(self::$loadedBeans[$module][$id]);
+       }
+       return $bean;
+    }
+
+    /**
+     * Create new empty bean
+     * @param string $module
+     * @return SugarBean
+     */
     public static function newBean($module)
     {
         return self::getBean($module);
     }
 
+    /**
+     * Create new empty bean by object name
+     * @param string $name
+     * @return SugarBean|null
+     */
+    public static function newBeanByName($name)
+    {
+        if(empty(self::$flipBeans)) {
+            self::$flipBeans = array_flip($GLOBALS['beanList']);
+        }
+        if(empty(self::$flipBeans[$name])) {
+            return null;
+        }
+        return self::getBean(self::$flipBeans[$name]);
+    }
+
+    /**
+     * Get bean class name by module name
+     * @param string $module
+     * @return string|false
+     */
     public static function getBeanName($module)
     {
         global $beanList;

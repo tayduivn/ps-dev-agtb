@@ -307,7 +307,7 @@ class SchedulerDaemon extends Scheduler {
 
 		while($a = $this->db->fetchByAssoc($r)) {
 			
-			$job = new SchedulersJob();
+			$job = BeanFactory::getBean('SchedulersJobs');
 			
 			$paramJob = $a['scheduler_id'];
 			$job->fire($sugar_config['site_url'].'/index.php?entryPoint=schedulers&type=job&job_id='.$paramJob.'&record='.$a['id']);
@@ -746,8 +746,7 @@ class SchedulerDaemon extends Scheduler {
 		$executeIds = array();
 		$executeJobTimes = array();
 		while(($arr = $this->db->fetchByAssoc($result)) != null) {
-			$focus = new Scheduler();
-			$focus->retrieve($arr['id']);
+			$focus = BeanFactory::getBean('Schedulers', $arr['id']);
 			$executeTimes[$rows] = $this->deriveDBDateTimes($focus);
 			if(count($executeTimes) > 0) {
 				foreach($executeTimes as $k => $time) {

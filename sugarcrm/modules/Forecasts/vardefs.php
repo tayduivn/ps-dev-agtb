@@ -628,7 +628,7 @@ $dictionary['Worksheet'] =  array('table' => 'worksheet', 'fields' => array (
   'op_probability' =>
   array (
     'name' => 'op_probability',
-    'vname' => 'LBL_PROBABILITY',
+    'vname' => 'LBL_OW_PROBABILITY',
     'type' => 'int',
     'dbType' => 'double',
     'comment' => 'Worksheet Placeholder for the probability of closure',
@@ -710,7 +710,7 @@ $dictionary['ForecastWorksheet'] = array('table'=>'does_not_exist',
     'probability' =>
     array(
         'name' => 'probability',
-        'vname' => 'LBL_PROBABILITY',
+        'vname' => 'LBL_OW_PROBABILITY',
         'type' => 'int',
     ),
     'amount' =>

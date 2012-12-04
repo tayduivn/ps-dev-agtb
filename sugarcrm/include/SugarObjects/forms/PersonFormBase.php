@@ -176,7 +176,7 @@ function checkForDuplicates($prefix='')
 {
 	require_once('include/formbase.php');
     require_once('include/MVC/SugarModule.php');
-    $focus = SugarModule::get($this->moduleName)->loadBean();
+    $focus = BeanFactory::getBean($this->moduleName);
 
 	$query = $this->getDuplicateQuery($focus, $prefix);
 

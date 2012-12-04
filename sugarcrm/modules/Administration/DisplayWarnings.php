@@ -24,16 +24,16 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 global $db;
 function displayAdminError($errorString){
 	$output = '<p class="error">' . $errorString .'</p>';
-	//BEGIN SUGARCRM flav=pro || flav=sales ONLY
+	//BEGIN SUGARCRM flav=pro ONLY
 	if(!empty($GLOBALS['buffer_system_notifications'])){
 		$GLOBALS['system_notification_count']++;
 		$GLOBALS['system_notification_buffer'][] = $output;
 	}else{
-		//END SUGARCRM flav=pro || flav=sales ONLY
+		//END SUGARCRM flav=pro ONLY
 		echo $output;
-		//BEGIN SUGARCRM flav=pro || flav=sales ONLY
+		//BEGIN SUGARCRM flav=pro ONLY
 	}
-		//END SUGARCRM flav=pro || flav=sales ONLY
+		//END SUGARCRM flav=pro ONLY
 }
 
 if(!empty($_SESSION['display_lotuslive_alert'])){
@@ -59,9 +59,8 @@ if (is_admin($current_user))
     }
 
     // if fts indexing is done, show the notification to admin
-    $admin = new Administration();
-    $settings = $admin->retrieveSettings();
-    if (!empty($settings->settings['info_fts_index_done'])) {
+    $admin = Administration::getSettings();
+    if (!empty($admin->settings['info_fts_index_done'])) {
         displayAdminError(translate('LBL_FTS_INDEXING_DONE', 'Administration'));
     }
 }
@@ -78,8 +77,7 @@ if(isset($_SESSION['rebuild_extensions'])){
 }
 
 if (empty($license)){
-	$license=new Administration();
-	$license=$license->retrieveSettings('license');
+	$license = Administration::getSettings('license');
 }
 
 
@@ -135,8 +133,7 @@ if(isset($license) && !empty($license->settings['license_msg_admin'])){
 
 //No SMTP server is set up Error.
 $smtp_error = false;
-$admin = new Administration();
-$admin->retrieveSettings();
+$admin = Administration::getSettings();
 
 //If sendmail has been configured by setting the config variable ignore this warning
 $sendMailEnabled = isset($sugar_config['allow_sendmail_outbound']) && $sugar_config['allow_sendmail_outbound'];
@@ -147,7 +144,7 @@ if(trim($admin->settings['mail_smtpserver']) == '' && !$sendMailEnabled) {
     }
     //BEGIN SUGARCRM flav=pro ONLY
     else {
-        $workflow = new WorkFlow();
+        $workflow = BeanFactory::getBean('WorkFlow');
         if($workflow->getActiveWorkFlowCount()>0) {
             $smtp_error = true;
         }
@@ -211,8 +208,7 @@ if($smtp_error) {
         }
 
         if( !isset($_SESSION['license_seats_needed']) ){
-            $focus = new Administration();
-            $focus->retrieveSettings();
+            $focus = Administration::getSettings();
             $license_users = isset($focus->settings['license_users'])?$focus->settings['license_users']:'';
 
             $_SESSION['license_seats_needed'] = $db->getOne("SELECT count(id) as total from users WHERE ".User::getLicensedUsersWhere()) - $license_users;

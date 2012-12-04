@@ -106,9 +106,7 @@ class Contact extends Person {
     var $portal_password;
     var $primary_address_street_2;
     var $primary_address_street_3;
-//BEGIN SUGARCRM flav!=sales ONLY
     var $campaign_id;
-//END SUGARCRM flav!=sales ONLY
     var $sync_contact;
 //BEGIN SUGARCRM flav=pro ONLY
 	var $team_name;
@@ -142,6 +140,18 @@ class Contact extends Person {
 	var $relationship_fields = Array('account_id'=> 'accounts','bug_id' => 'bugs', 'call_id'=>'calls','case_id'=>'cases','email_id'=>'emails',
 								'meeting_id'=>'meetings','note_id'=>'notes','task_id'=>'tasks', 'opportunity_id'=>'opportunities', 'contacts_users_id' => 'user_sync'
 								);
+
+
+    /**
+     * This is a depreciated method, please start using __construct() as this method will be removed in a future version
+     *
+     * @see __construct
+     * @deprecated
+     */
+    public function Contact()
+    {
+        $this->__construct();
+    }
 
 	public function __construct() {
 		parent::__construct();
@@ -405,16 +415,14 @@ class Contact extends Person {
 		if(!empty($this->portal_active) && $this->portal_active == 1) {
 		   $this->portal_active = true;
 		}
-//BEGIN SUGARCRM flav!=sales ONLY
         // Set campaign name if there is a campaign id
 		if( !empty($this->campaign_id)){
 
-			$camp = new Campaign();
+			$camp = BeanFactory::getBean('Campaigns');
 		    $where = "campaigns.id='{$this->campaign_id}'";
 		    $campaign_list = $camp->get_full_list("campaigns.name", $where, true);
 		    $this->campaign_name = $campaign_list[0]->name;
 		}
-//END SUGARCRM flav!=sales ONLY
 	}
 
 		/**
@@ -560,7 +568,7 @@ class Contact extends Person {
         // cache this object since we'll be reusing it a bunch
         if ( !($focus_user instanceof User) ) {
 
-            $focus_user = new User();
+            $focus_user = BeanFactory::getBean('Users');
         }
 
         //BEGIN SUGARCRM flav=pro ONLY
@@ -569,7 +577,7 @@ class Contact extends Person {
         // cache this object since we'll be reusing it a bunch
         if ( !($focus_team instanceof Team) ) {
 
-            $focus_team = new Team();
+            $focus_team = BeanFactory::getBean('Teams');
         }
         //END SUGARCRM flav=pro ONLY
 

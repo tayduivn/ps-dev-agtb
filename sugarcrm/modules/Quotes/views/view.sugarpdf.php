@@ -19,14 +19,6 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *to the License for the specific language governing these rights and limitations under the License.
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
-/*********************************************************************************
- * $Id: view.sugarpdf.php
- * Description: This file is used to override the default Meta-data EditView behavior
- * to provide customization specific to the Quotes module.
- * Portions created by SugarCRM are Copyright (C) SugarCRM, Inc.
- * All Rights Reserved.
- * Contributor(s): ______________________________________..
- ********************************************************************************/
 
 require_once('include/MVC/View/views/view.sugarpdf.php');
 
@@ -81,11 +73,8 @@ class QuotesViewSugarpdf extends ViewSugarpdf{
         global $layouts;
         global $current_user;
 
-        require_once('modules/Emails/Email.php');
-        require_once('modules/Notes/Note.php');
-
         //First Create e-mail draft
-        $email_object = new Email();
+        $email_object = BeanFactory::getBean('Emails');
         // set the id for relationships
         $email_object->id = create_guid();
         $email_object->new_with_id = true;
@@ -111,8 +100,7 @@ class QuotesViewSugarpdf extends ViewSugarpdf{
         if(!empty($focus->billing_contact_id) && $focus->billing_contact_id!="") {
             global $beanFiles;
             require_once($beanFiles['Contact']);
-            $contact = new Contact;
-            $contact->retrieve($focus->billing_contact_id);
+            $contact = BeanFactory::getBean('Contacts', $focus->billing_contact_id);
 
             if(!empty($contact->email1) || !empty($contact->email2)) {
                 //contact email is set
@@ -132,9 +120,7 @@ class QuotesViewSugarpdf extends ViewSugarpdf{
                 $contact->emails->add($email_object->id);
             }//end if contact name is set
         } elseif(isset($focus->billing_account_id) && !empty($focus->billing_account_id)) {
-            require_once('modules/Accounts/Account.php');
-            $acct = new Account();
-            $acct->retrieve($focus->billing_account_id);
+            $acct = BeanFactory::getBean('Accounts', $focus->billing_account_id);
 
             if(!empty($acct->email1) || !empty($acct->email2)) {
                 //acct email is set
@@ -168,7 +154,7 @@ class QuotesViewSugarpdf extends ViewSugarpdf{
         $email_id = $email_object->id;
 
         //Handle PDF Attachment
-        $note = new Note();
+        $note = BeanFactory::getBean('Notes');
         $note->filename = $file_name;
         $note->team_id = "";
         $note->file_mime_type = "application/pdf";

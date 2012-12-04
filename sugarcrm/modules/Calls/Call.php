@@ -19,13 +19,6 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *to the License for the specific language governing these rights and limitations under the License.
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
-/*********************************************************************************
- * $Id: Call.php 56853 2010-06-08 02:36:54Z clee $
- * Description:  TODO: To be written.
- * Portions created by SugarCRM are Copyright (C) SugarCRM, Inc.
- * All Rights Reserved.
- * Contributor(s): ______________________________________..
- ********************************************************************************/
 
 class Call extends SugarBean {
 	var $field_name_map;
@@ -107,6 +100,17 @@ class Call extends SugarBean {
 										'note_id'			=> 'notes',
                                         'lead_id'			=> 'leads',
 								);
+
+    /**
+     * This is a depreciated method, please start using __construct() as this method will be removed in a future version
+     *
+     * @see __construct
+     * @deprecated
+     */
+    public function Call()
+    {
+        $this->__construct();
+    }
 
 	public function __construct() {
 		parent::__construct();
@@ -191,8 +195,7 @@ class Call extends SugarBean {
 		}
 		if(empty($_REQUEST['send_invites'])) {
 			if(!empty($this->id)) {
-				$old_record = new Call();
-				$old_record->retrieve($this->id);
+				$old_record = BeanFactory::getBean('Calls', $this->id);
 				$old_assigned_user_id = $old_record->assigned_user_id;
 			}
 			if((empty($this->id) && isset($_REQUEST['assigned_user_id']) && !empty($_REQUEST['assigned_user_id']) && $GLOBALS['current_user']->id != $_REQUEST['assigned_user_id']) || (isset($old_assigned_user_id) && !empty($old_assigned_user_id) && isset($_REQUEST['assigned_user_id']) && !empty($_REQUEST['assigned_user_id']) && $old_assigned_user_id != $_REQUEST['assigned_user_id']) ){
@@ -240,7 +243,7 @@ class Call extends SugarBean {
 		// First, get the list of IDs.
 		$query = "SELECT contact_id as id from calls_contacts where call_id='$this->id' AND deleted=0";
 
-		return $this->build_related_list($query, new Contact());
+		return $this->build_related_list($query, BeanFactory::getBean('Contacts'));
 	}
 
 
@@ -544,7 +547,6 @@ class Call extends SugarBean {
 
 
 	function get_call_users() {
-		$template = new User();
 		// First, get the list of IDs.
 		$query = "SELECT calls_users.required, calls_users.accept_status, calls_users.user_id from calls_users where calls_users.call_id='$this->id' AND calls_users.deleted=0";
 		$GLOBALS['log']->debug("Finding linked records $this->object_name: ".$query);
@@ -552,53 +554,40 @@ class Call extends SugarBean {
 		$list = Array();
 
 		while($row = $this->db->fetchByAssoc($result)) {
-			$template = new User(); // PHP 5 will retrieve by reference, always over-writing the "old" one
-			$record = $template->retrieve($row['user_id']);
-			$template->required = $row['required'];
-			$template->accept_status = $row['accept_status'];
-
-			if($record != null) {
-			    // this copies the object into the array
-				$list[] = $template;
-			}
+			$record = BeanFactory::retrieveBean('Users', $row['user_id']);
+			if(empty($record)) continue;
+			$record->required = $row['required'];
+			$record->accept_status = $row['accept_status'];
+			$list[] = $record;
 		}
 		return $list;
 	}
 
 
-  function get_invite_calls(&$user)
+  function get_invite_calls($user)
   {
-    $template = $this;
     // First, get the list of IDs.
     $query = "SELECT calls_users.required, calls_users.accept_status, calls_users.call_id from calls_users where calls_users.user_id='$user->id' AND ( calls_users.accept_status IS NULL OR  calls_users.accept_status='none') AND calls_users.deleted=0";
     $GLOBALS['log']->debug("Finding linked records $this->object_name: ".$query);
 
-
     $result = $this->db->query($query, true);
-
 
     $list = Array();
 
-
     while($row = $this->db->fetchByAssoc($result))
     {
-      $record = $template->retrieve($row['call_id']);
-      $template->required = $row['required'];
-      $template->accept_status = $row['accept_status'];
-
-
-      if($record != null)
-      {
-        // this copies the object into the array
-        $list[] = $template;
-      }
+        $record = BeanFactory::retrieveBean($this->module_dir, $row['call_id']);
+        if(empty($record)) continue;
+        $record->required = $row['required'];
+        $record->accept_status = $row['accept_status'];
+        $list[] = $record;
     }
     return $list;
 
   }
 
 
-  function set_accept_status(&$user,$status)
+  function set_accept_status($user,$status)
   {
     if ( $user->object_name == 'User')
     {
@@ -648,24 +637,21 @@ class Call extends SugarBean {
 		}
 
 		foreach($this->users_arr as $user_id) {
-			$notify_user = new User();
-			$notify_user->retrieve($user_id);
+			$notify_user = BeanFactory::getBean('Users', $user_id);
 			$notify_user->new_assigned_user_name = $notify_user->full_name;
 			$GLOBALS['log']->info("Notifications: recipient is $notify_user->new_assigned_user_name");
 			$list[$notify_user->id] = $notify_user;
 		}
 
 		foreach($this->contacts_arr as $contact_id) {
-			$notify_user = new Contact();
-			$notify_user->retrieve($contact_id);
+			$notify_user = BeanFactory::getBean('Contacts', $contact_id);
 			$notify_user->new_assigned_user_name = $notify_user->full_name;
 			$GLOBALS['log']->info("Notifications: recipient is $notify_user->new_assigned_user_name");
 			$list[$notify_user->id] = $notify_user;
 		}
 
         foreach($this->leads_arr as $lead_id) {
-			$notify_user = new Lead();
-			$notify_user->retrieve($lead_id);
+			$notify_user = BeanFactory::getBean('Leads', $lead_id);
 			$notify_user->new_assigned_user_name = $notify_user->full_name;
 			$GLOBALS['log']->info("Notifications: recipient is $notify_user->new_assigned_user_name");
 			$list[$notify_user->id] = $notify_user;
@@ -762,7 +748,7 @@ class Call extends SugarBean {
 
         parent::mark_deleted($id);
     }
-    
+
     /**
      * Stores contact invitees
      *
@@ -770,9 +756,9 @@ class Call extends SugarBean {
      * @patam array $existingUsers
      */
     public function setContactInvitees($contactInvitees, $existingContacts = array())
-    {   
+    {
         $this->contacts_arr = $contactInvitees;
-        
+
         $deleteContacts = array();
         $this->load_relationship('contacts');
         $q = 'SELECT mu.contact_id, mu.accept_status FROM calls_contacts mu WHERE mu.call_id = \''.$this->id.'\'';
@@ -795,7 +781,7 @@ class Call extends SugarBean {
             $sql = "UPDATE calls_contacts SET deleted = 1 WHERE contact_id IN ($sql) AND call_id = '". $this->id . "'";
             $this->db->query($sql);
         }
-        
+
         foreach ($contactInvitees as $contactId) {
             if (empty($contactId) || isset($existingContacts[$contactId]) || isset($deleteContacts[$contactId])) {
                 continue;
@@ -811,7 +797,7 @@ class Call extends SugarBean {
             }
         }
     }
-    
+
     /**
      * Stores user invitees
      *
@@ -821,7 +807,7 @@ class Call extends SugarBean {
     public function setUserInvitees($userInvitees, $existingUsers = array())
     {
         $this->users_arr = $userInvitees;
-        
+
         $deleteUsers = array();
         $this->load_relationship('users');
         // Get all users for the call
@@ -845,7 +831,7 @@ class Call extends SugarBean {
             $sql = "UPDATE calls_users SET deleted = 1 WHERE user_id IN ($sql) AND call_id = '". $this->id . "'";
             $this->db->query($sql);
         }
-        
+
         foreach ($userInvitees as $userId) {
             if (empty($userId) || isset($existingUsers[$userId]) || isset($deleteUsers[$userId])) {
                 continue;
@@ -861,7 +847,7 @@ class Call extends SugarBean {
             }
         }
     }
-    
+
     /**
      * Stores lead invitees
      *
@@ -871,7 +857,7 @@ class Call extends SugarBean {
     public function setLeadInvitees($leadInvitees, $existingLeads = array())
     {
         $this->leads_arr = $leadInvitees;
-        
+
         $deleteLeads = array();
         $this->load_relationship('leads');
         $q = 'SELECT mu.lead_id, mu.accept_status FROM calls_leads mu WHERE mu.call_id = \''.$this->id.'\'';
@@ -894,7 +880,7 @@ class Call extends SugarBean {
             $sql = "UPDATE calls_leads SET deleted = 1 WHERE lead_id IN ($sql) AND call_id = '". $this->id . "'";
             $this->db->query($sql);
         }
-        
+
         foreach ($leadInvitees as $leadId) {
             if(empty($leadId) || isset($existingLeads[$leadId]) || isset($deleteLeads[$leadId])) {
                 continue;
@@ -908,6 +894,6 @@ class Call extends SugarBean {
                 $qU .= 'AND lead_id = \''.$leadId.'\'';
                 $this->db->query($qU);
             }
-        }        
+        }
     }
 }

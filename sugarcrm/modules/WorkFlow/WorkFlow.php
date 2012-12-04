@@ -26,7 +26,6 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * governing these rights and limitations under the License.  Portions created
  * by SugarCRM are Copyright (C) 2004-2007 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
-
 require_once('include/workflow/workflow_utils.php');
 require_once('include/workflow/time_utils.php');
 require_once('include/workflow/alert_utils.php');
@@ -126,6 +125,17 @@ class WorkFlow extends SugarBean
 
     // Flag whether
     var $check_controller = true;
+
+    /**
+     * This is a depreciated method, please start using __construct() as this method will be removed in a future version
+     *
+     * @see __construct
+     * @deprecated
+     */
+    public function Workflow()
+    {
+        $this->__construct();
+    }
 
 	public function __construct() {
 		parent::__construct();
@@ -364,7 +374,7 @@ function filter_base_modules(){
 					 where $this->rel_dataset.report_id='$this->id'
 					 AND $this->rel_dataset.deleted=0 ".$orderBy;
 
-		return $this->build_related_list($query, new DataSet());
+		return $this->build_related_list($query, BeanFactory::getBean('DataSets'));
 	}
 
 
@@ -427,14 +437,19 @@ function filter_base_modules(){
 	}
 
 
-	function get_module_info($module_name)
-	{
-        return BeanFactory::newBean($module_name);
+	function get_module_info($module_name){
+
+		//expand this function to return other types of module information based on the name
+
+		//Get dictionary and focus data for module
+		return BeanFactory::getBean($module_name);
+
+	//end function get_module_info
 	}
 
 	function get_field_table($module, $field){
 
-		$seed_object = $this->get_module_info($module);
+		$seed_object = BeanFactory::getBean($module);
 		$field_table = $this->determine_field_type($seed_object, $field);
 
 	return $field_table;
@@ -693,7 +708,7 @@ $alert_file_contents = "";
 
 
 
-				$trigger_object = new WorkFlowTriggerShell();
+				$trigger_object = BeanFactory::getBean('WorkFlowTriggerShells');
 
 				$time_interval_array = $trigger_object->get_time_int($row['triggershell_id']);
 
@@ -1096,7 +1111,7 @@ function get_action_contents($workflow_id, $trigger_count, $action_module_name){
 			if($row['action_type']=="new" && ($row['action_module']=="Calls" || $row['action_module']=="Meetings" || $row['action_module']=="calls" || $row['action_module']=="meetings")){
 
 
-				$actionshell_object = new WorkFlowActionShell();
+				$actionshell_object = BeanFactory::getBean('WorkFlowActionShells');
 				$process = $actionshell_object->check_for_child_invitee($row['id']);
 
 
@@ -1224,7 +1239,7 @@ function get_rel_module($var_rel_name, $get_rel_name = false){
 
 	//get the vardef fields relationship name
 	//get the base_module bean
-	$module_bean = get_module_info($this->base_module);
+	$module_bean = BeanFactory::getBean($this->base_module);
 	require_once('data/Link.php');
 	$rel_name = Relationship::retrieve_by_modules($var_rel_name, $this->base_module, $GLOBALS['db']);
 	if(!empty($module_bean->field_defs[$rel_name])){
@@ -1269,7 +1284,7 @@ function repair_workflow(){
 		while($row = $this->db->fetchByAssoc($result)){
 
 			//Instantiate the workflow object and run the write
-			//$temp_workflow = new WorkFlow();
+			//$temp_workflow = BeanFactory::getBean('WorkFlow');
 			$this->retrieve($row['id']);
 			$this->check_logic_hook_file();
 			$this->write_workflow();
@@ -1288,10 +1303,8 @@ function repair_workflow(){
 
 		if($this->parent_id!=""){
 
-			$action_shell_object = new WorkFlowActionShell();
-			$action_shell_object->retrieve($this->parent_id);
-			$workflow_object = new WorkFlow();
-			$workflow_object->retrieve($action_shell_object->parent_id);
+			$action_shell_object = BeanFactory::getBean('WorkFlowActionShells', $this->parent_id);
+			$workflow_object = BeanFactory::getBean('WorkFlow', $action_shell_object->parent_id);
 			return $workflow_object;
 		}
 			//parent does not exist so return self

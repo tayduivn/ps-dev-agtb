@@ -28,7 +28,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * Contributor(s): ______________________________________..
  ********************************************************************************/
 
-$focus = new EmailTemplate();
+$focus = BeanFactory::getBean('EmailTemplates');
 require_once('include/formbase.php');
 $focus = populateFromPost('', $focus);
 

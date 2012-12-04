@@ -47,7 +47,6 @@
                                     {$NEW_EMAIL}
                                 </td>
                             </tr>
-                            <!--//BEGIN SUGARCRM flav!=sales ONLY -->
                             <tr id="email_options_link_type" style='display:{$HIDE_FOR_GROUP_AND_PORTAL}'>
                                 <td scope="row" width="17%">
                                     {$MOD.LBL_EMAIL_LINK_TYPE}:&nbsp;{sugar_help text=$MOD.LBL_EMAIL_LINK_TYPE_HELP WIDTH=450}
@@ -58,7 +57,6 @@
                                     </select>
                                 </td>
                             </tr>
-                            <!--//END SUGARCRM flav!=sales ONLY -->
                             {if !$HIDE_IF_CAN_USE_DEFAULT_OUTBOUND}
                             <tr id="mail_smtpserver_tr">
                                 <td width="20%" scope="row"><span id="mail_smtpserver_label">{$MOD.LBL_EMAIL_PROVIDER}</span></td>
@@ -171,11 +169,11 @@
                         </table>
                     </td>
                     <td width='60%' style="vertical-align:middle;">
-                        <!--//BEGIN SUGARCRM flav=pro || flav=sales ONLY -->
+                        <!--//BEGIN SUGARCRM flav=pro ONLY -->
                         {if !$IS_PORTALONLY}
                             {sugar_password_requirements_box width='300px' class='x-sqs-list' style='background-color:white; padding:5px !important;'}
                         {/if}
-                        <!--//END SUGARCRM flav=pro || flav=sales ONLY -->
+                        <!--//END SUGARCRM flav=pro ONLY -->
                     </td>
                 </tr>
             </table>
@@ -224,14 +222,10 @@
                             <td scope="row"  valign="top"><slot>{$MOD.LBL_EXPORT_DELIMITER}:</slot>&nbsp;{sugar_help text=$MOD.LBL_EXPORT_DELIMITER_DESC }</td>
                             <td ><slot><input type="text" tabindex='12' name="export_delimiter" value="{$EXPORT_DELIMITER}" size="5"></slot></td>
                             <td scope="row" width="17%">
-                            {* //BEGIN SUGARCRM flav!=sales ONLY*}
                             <slot>{$MOD.LBL_RECEIVE_NOTIFICATIONS}:</slot>&nbsp;{sugar_help text=$MOD.LBL_RECEIVE_NOTIFICATIONS_TEXT}
-                            {* //END SUGARCRM flav!=sales ONLY*}
                             </td>
                             <td width="33%">
-                            {* //BEGIN SUGARCRM flav!=sales ONLY*}
                             <slot><input name='receive_notifications' class="checkbox" tabindex='12' type="checkbox" value="12" {$RECEIVE_NOTIFICATIONS}></slot>
-                            {* //END SUGARCRM flav!=sales ONLY*}
                             </td>
                         </tr>
 
@@ -239,28 +233,20 @@
                             <td scope="row" valign="top"><slot>{$MOD.LBL_EXPORT_CHARSET}:</slot>&nbsp;{sugar_help text=$MOD.LBL_EXPORT_CHARSET_DESC }</td>
                             <td ><slot><select tabindex='12' name="default_export_charset">{$EXPORT_CHARSET}</select></slot></td>
                             <td scope="row" valign="top">
-                            {* //BEGIN SUGARCRM flav!=sales ONLY*}
                             <slot>{$MOD.LBL_REMINDER}:</slot>&nbsp;{sugar_help text=$MOD.LBL_REMINDER_TEXT }
-                            {* //END SUGARCRM flav!=sales ONLY*}
                             </td>
                             <td valign="top"  nowrap>
-                                {* //BEGIN SUGARCRM flav!=sales ONLY*}
                                 <slot>{include file="modules/Meetings/tpls/reminders.tpl"}</slot>
-                               {* //END SUGARCRM flav!=sales ONLY*}
                             </td>
                         </tr>
                         <tr>
                             <td scope="row" valign="top"><slot>{$MOD.LBL_USE_REAL_NAMES}:</slot>&nbsp;{sugar_help text=$MOD.LBL_USE_REAL_NAMES_DESC }</td>
                             <td ><slot><input tabindex='12' type="checkbox" name="use_real_names" {$USE_REAL_NAMES}></slot></td>
                             <td scope="row" valign="top">
-                            {* //BEGIN SUGARCRM flav!=sales ONLY*}
                             <slot>{$MOD.LBL_MAILMERGE}:</slot>&nbsp;{sugar_help text=$MOD.LBL_MAILMERGE_TEXT }
-                            {* //END SUGARCRM flav!=sales ONLY*}
                             </td>
                             <td valign="top"  nowrap>
-                            {* //BEGIN SUGARCRM flav!=sales ONLY*}
                             <slot><input tabindex='12' name='mailmerge_on' class="checkbox" type="checkbox" {$MAILMERGE_ON}></slot>
-                            {* //END SUGARCRM flav!=sales ONLY*}
                             </td>
                         </tr>
                         <!--//BEGIN SUGARCRM flav=pro ONLY -->
@@ -298,7 +284,6 @@
                         <!--{/if}-->
                     </table>
         </div>
-        {* //BEGIN SUGARCRM flav!=sales ONLY*}
         <div id="layout">
         <table class="edit view" border="0" cellpadding="0" cellspacing="1" width="100%">
             <tbody>
@@ -325,7 +310,6 @@
                             </tr>
                         </table>
         </div>
-        {* //END SUGARCRM flav!=sales ONLY*}
         <div id="locale" style="display:{$HIDE_FOR_GROUP_AND_PORTAL}">
         <table width="100%" border="0" cellspacing="1" cellpadding="0" class="edit view">
                         <tr>
@@ -369,17 +353,13 @@
                             <!-- END: currency -->
                         </tr>
                         <tr>
-                        <!--  //BEGIN SUGARCRM flav!=sales ONLY -->
                         {if ($IS_ADMIN)}
                             <td scope="row"><slot>{$MOD.LBL_PROMPT_TIMEZONE}:</slot>&nbsp;{sugar_help text=$MOD.LBL_PROMPT_TIMEZONE_TEXT }</td>
                             <td ><slot><input type="checkbox" tabindex='14'class="checkbox" name="ut" value="0" {$PROMPTTZ}></slot></td>
                         {else}
-                        <!--  //END SUGARCRM flav!=sales ONLY -->
                             <td scope="row"><slot></td>
                             <td ><slot></slot></td>
-                        <!--  //BEGIN SUGARCRM flav!=sales ONLY -->
                         {/if}
-                        <!--  //END SUGARCRM flav!=sales ONLY -->
                             <td width="17%" scope="row"><slot>{$MOD.LBL_NUMBER_GROUPING_SEP}:</slot>&nbsp;{sugar_help text=$MOD.LBL_NUMBER_GROUPING_SEP_TEXT }</td>
                             <td ><slot>
                                 <input tabindex='14' name='num_grp_sep' id='default_number_grouping_seperator'
@@ -432,7 +412,6 @@
         {/if}
         </div>
         <!--//END SUGARCRM flav=pro ONLY -->
-        <!--//BEGIN SUGARCRM flav!=sales ONLY -->
         <div id="calendar_options" style="display:{$HIDE_FOR_GROUP_AND_PORTAL}">
         <table width="100%" border="0" cellspacing="1" cellpadding="0" class="edit view">
             <tr>
@@ -463,7 +442,6 @@
                         </tr>
                     </table>
         </div>
-        <!--//END SUGARCRM flav!=sales ONLY -->
     </div>
     {if $ID}
     <div id="eapm_area" style='display:{$HIDE_FOR_GROUP_AND_PORTAL};'>
@@ -513,7 +491,6 @@ $(document).ready(function() {
 {/literal}
 </script>
 {$JAVASCRIPT}
-<!--//BEGIN SUGARCRM flav!=sales ONLY -->
 {literal}
 <script type="text/javascript" language="Javascript">
 {/literal}
@@ -529,7 +506,6 @@ onUserEditView();
 
 </form>
 
-<!--//END SUGARCRM flav!=sales ONLY -->
 <div id="testOutboundDialog" class="yui-hidden">
     <div id="testOutbound">
         <form>

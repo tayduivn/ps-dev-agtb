@@ -46,16 +46,9 @@ global $mod_strings;
 global $module_map;
 global $report_modules;
 
-$savedReportsSeed = new SavedReport();
+$savedReportsSeed = BeanFactory::getBean('Reports');
 $lv = new ListViewReports();
 
-//BEGIN SUGARCRM flav=sales ONLY
-//CCL - Do not display Delete button or ability to select checkboxes for Sugar Sales
-$lv->delete=false;
-$lv->select=false;
-$lv->multiSelect=false;
-$lv->quickViewLinks=false;
-//END SUGARCRM flav=sales ONLY
 
 if ( empty($_REQUEST['search_form_only']) )
     echo "<div class='listViewBody'>";
@@ -88,7 +81,7 @@ if(isset($_REQUEST['Reports2_SAVEDREPORT_offset'])) {//if you click the paginati
 
 if(!empty($_REQUEST['saved_search_select']) && $_REQUEST['saved_search_select']!='_none') {
     if(empty($_REQUEST['button']) && (empty($_REQUEST['clear_query']) || $_REQUEST['clear_query']!='true')) {
-        $saved_search = loadBean('SavedSearch');
+        $saved_search = BeanFactory::getBean('SavedSearch');
         $saved_search->retrieveSavedSearch($_REQUEST['saved_search_select']);
         $saved_search->populateRequest();
     }
@@ -113,18 +106,13 @@ if(!isset($_REQUEST['query']) && empty($_GET['favorite'])){// when we click the 
 $thisMod = 'Reports';
 $searchForm = new SearchFormReports($thisMod, $savedReportsSeed);
 
-//BEGIN SUGARCRM flav=sales ONLY
-$searchForm->showSavedSearchOptions = false;
-//END SUGARCRM flav=sales ONLY
 
 $searchForm->tabs = array(array('title'  => $app_strings['LNK_BASIC_SEARCH'],
                           'link'   => $thisMod . '|basic_search',
                           'key'    => $thisMod . '|basic_search'),
-                    //BEGIN SUGARCRM flav!=sales ONLY
                     array('title'  => $app_strings['LNK_ADVANCED_SEARCH'],
                           'link'   => $thisMod . '|advanced_search',
                           'key'    => $thisMod . '|advanced_search')
-                    //END SUGARCRM flav!=sales ONLY
                     );
 
 $searchForm->populateFromRequest();
@@ -134,11 +122,6 @@ $where_clauses = $searchForm->generateSearchWhere();
 include('include/modules.php');
 $ACLAllowedModules = getACLAllowedModules();
 
-//BEGIN SUGARCRM flav=sales ONLY
-if(isset($ACLAllowedModules['SugarFavorites'])) {
-   unset($ACLAllowedModules['SugarFavorites']);
-}
-//END SUGARCRM flav=sales ONLY
 
 $ACLUnAllowedModules = getACLDisAllowedModules();
 $ACLAllowedModulesKeys = array_keys($ACLAllowedModules);
@@ -164,14 +147,11 @@ if(!empty($_REQUEST['search_form_only']) && $_REQUEST['search_form_only']) { // 
             $searchForm->setup();
 		    $searchForm->xtpl->assign('MODULES', get_select_options_with_id($reportModules,  (empty($_REQUEST['report_module']) ? '' : $_REQUEST['report_module'])));
 			$searchForm->xtpl->assign('USER_FILTER', get_select_options_with_id(get_user_array(FALSE), (empty($_REQUEST['assigned_user_id']) ? '' : $_REQUEST['assigned_user_id'])));
-			//BEGIN SUGARCRM flav=!sales ONLY
 			$searchForm->xtpl->assign('TEAM_FILTER', get_select_options_with_id(get_team_array(FALSE), (empty($_REQUEST['team_id']) ? '' : $_REQUEST['team_id'])));
-			//END SUGARCRM flav=!sales ONLY
 			$searchForm->xtpl->assign('REPORT_TYPES', get_select_options_with_id($app_list_strings['dom_report_types'], (empty($_REQUEST['report_type']) ? '' : $_REQUEST['report_type'])));
 		    $searchForm->xtpl->assign('FAVORITE', (isset($_REQUEST['favorite']) ? 'checked' : ''));
             $searchForm->displayBasic(false);
             break;
-        //BEGIN SUGARCRM flav!=sales ONLY
         case 'advanced_search':
             $searchForm->setup();
 		    $searchForm->xtpl->assign('MODULES', get_select_options_with_id($reportModules,  (empty($_REQUEST['report_module']) ? '' : $_REQUEST['report_module'])));
@@ -187,7 +167,6 @@ if(!empty($_REQUEST['search_form_only']) && $_REQUEST['search_form_only']) { // 
         case 'saved_views':
             echo $searchForm->displaySavedViews($listViewDefsNewArray, $lv, false);
             break;
-        //END SUGARCRM flav!=sales ONLY
     }
     return;
 }
@@ -232,7 +211,6 @@ $lv->displayColumns = $displayColumns;
 //if(empty($_REQUEST['favorite'])) { // display search form for non-favorite views
 	if(!isset($_REQUEST['search_form']) || $_REQUEST['search_form'] != 'false') {
 	    $searchForm->setup();
-	    //BEGIN SUGARCRM flav!=sales ONLY
 	    if(isset($_REQUEST['searchFormTab']) && $_REQUEST['searchFormTab'] == 'advanced_search') {
 		    $searchForm->xtpl->assign('MODULES', get_select_options_with_id($reportModules, empty($_REQUEST['report_module']) ? isset($saved_search->contents['report_module']) && $saved_search->contents['report_module']!='_none' ? $saved_search->contents['report_module'] : '' : $_REQUEST['report_module'] ));
 			$searchForm->xtpl->assign('TEAM_FILTER', get_select_options_with_id(get_team_array(FALSE), empty($_REQUEST['team_id']) ? isset($saved_search->contents['team_id']) && $saved_search->contents['team_id']!='_none' ? $saved_search->contents['team_id'] : '' : $_REQUEST['team_id'] ));
@@ -244,24 +222,20 @@ $lv->displayColumns = $displayColumns;
 		loadSSL_Scripts();
 	}</script>";
 	    }else {
-	    //END SUGARCRM flav!=sales ONLY
 		    $searchForm->xtpl->assign('MODULES', get_select_options_with_id($reportModules, empty($_REQUEST['report_module_basic']) ? isset($saved_search->contents['report_module_basic']) && $saved_search->contents['report_module_basic']!='_none' ? $saved_search->contents['report_module_basic'] : '' : $_REQUEST['report_module_basic'] ));
 			$searchForm->xtpl->assign('USER_FILTER', get_select_options_with_id(get_user_array(FALSE), empty($_REQUEST['assigned_user_id_basic']) ? isset($saved_search->contents['assigned_user_id_basic']) && $saved_search->contents['assigned_user_id_basic']!='_none' ? $saved_search->contents['assigned_user_id_basic'] : '' : $_REQUEST['assigned_user_id_basic'] ));
 			$searchForm->xtpl->assign('REPORT_TYPES', get_select_options_with_id($app_list_strings['dom_report_types'], empty($_REQUEST['report_type_basic']) ? isset($saved_search->contents['report_type_basic']) && $saved_search->contents['report_type_basic']!='_none' ? $saved_search->contents['report_type_basic'] : '' : $_REQUEST['report_type_basic'] ));
 		    $searchForm->xtpl->assign('FAVORITE', (isset($_REQUEST['favorite']) ? 'checked' : ''));
 	        $searchForm->displayBasic();
-	    //BEGIN SUGARCRM flav!=sales ONLY
 	    }
-	    //END SUGARCRM flav!=sales ONLY
 	}
 //}
 $params = array('massupdate' => true, 'handleMassupdate' => false);
 
 // handle add to favorites request
 $favoritesText = '';
-//BEGIN SUGARCRM flav!=sales ONLY
 if((!empty($_POST['addtofavorites']) || !empty($_POST['delete'])) && !empty($_POST['mass'])) {
-    $report = new SavedReport();
+    $report = BeanFactory::getBean('Reports');
     if(isset($_POST['Delete'])) {
        	$couldNotDelete = 0;
         foreach($_POST['mass'] as $id) {
@@ -279,7 +253,6 @@ if((!empty($_POST['addtofavorites']) || !empty($_POST['delete'])) && !empty($_PO
     }
 
 }
-//END SUGARCRM flav!=sales ONLY
 
 if(!empty($_REQUEST['orderBy'])) {
     if(trim($_REQUEST['orderBy']) == 'REPORT_TYPE_TRANS'){
@@ -317,34 +290,24 @@ if (!isset($params['orderBy']) && $toSetdefaultOrderBy) {
 } // if
 
 $lv->showMassupdateFields = false;
-//BEGIN SUGARCRM flav!=sales ONLY
 $lv->setup($savedReportsSeed, 'include/ListView/ListViewGeneric.tpl', implode(' AND ', $where_clauses), $params);
-//END SUGARCRM flav!=sales ONLY
 
-//BEGIN SUGARCRM flav=sales ONLY
-$lv->setup($savedReportsSeed, 'include/ListView/ListViewNoMassUpdate.tpl', implode(' AND ', $where_clauses), $params);
-//END SUGARCRM flav=sales ONLY
 
 // display
-//BEGIN SUGARCRM flav!=sales ONLY
 if(empty($_REQUEST['favorite'])) { // display search form for non-favorite views
-//END SUGARCRM flav!=sales ONLY
 	// start display
 	// which tab of search form to display
     //echo get_form_header($mod_strings['LBL_SEARCH_FORM_TITLE'], "", false);
     $lv->displayEndTpl = 'modules/Reports/tpls/MassUpdate.tpl';
-//BEGIN SUGARCRM flav!=sales ONLY
 }
 else { // display different ending (with remove from my favorites button);
     //echo get_form_header($mod_strings['LBL_SEARCH_FORM_TITLE'], "", false);
     $lv->displayEndTpl = 'modules/Reports/tpls/FavoritesEnd.tpl';
 }
-//END SUGARCRM flav!=sales ONLY
 
 echo $lv->display();
 
-//BEGIN SUGARCRM flav!=sales ONLY
-$savedSearch = new SavedSearch();
+$savedSearch = BeanFactory::getBean('SavedSearch');
 $json = getJSONobj();
 // fills in saved views select box on shortcut menu
 $savedSearchSelects = $json->encode(array($GLOBALS['app_strings']['LBL_SAVED_SEARCH_SHORTCUT'] . '<br>' . $savedSearch->getSelect('Reports')));
@@ -352,7 +315,6 @@ $str = "<script>
 YAHOO.util.Event.addListener(window, 'load', SUGAR.util.fillShortcuts, $savedSearchSelects);
 </script>";
 echo $str;
-//END SUGARCRM flav!=sales ONLY
 
 echo <<<EOQ
 <script>

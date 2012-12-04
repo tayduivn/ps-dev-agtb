@@ -89,7 +89,7 @@ function traceTableRelations($table_name,$check_relation){
 	        {
 	            require ($file) ;
 	        }
-	        $focus = new $bean();
+	        $focus = BeanFactory::newBeanByName($bean);
 	        $empty = '' ;
 	        if(trim(strtolower($table_name)) == trim(strtolower($focus->table_name))) {
 	       		$table_found = true;

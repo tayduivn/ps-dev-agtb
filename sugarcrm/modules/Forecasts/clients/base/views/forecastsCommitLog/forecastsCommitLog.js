@@ -146,7 +146,7 @@
      */
     _renderHtml : function(ctx, options) {
         app.view.View.prototype._renderHtml.call(this, ctx, options);
-
+        
         if(this.showHistoryLog) {
 
             if(this.showMoreLog) {
@@ -154,7 +154,7 @@
                 this.$el.find('div[id=more]').html('<p><span class=" icon-minus-sign">&nbsp;' + App.lang.get('LBL_LESS', 'Forecasts') + '</span></p><br />');
             }
         }
-
+        
         this.$el.parents('div.topline').find("span.lastBestCommit").html(this.previousBestCase);
         this.$el.parents('div.topline').find("span.lastLikelyCommit").html(this.previousLikelyCase);
         this.$el.parents('div.topline').find("span.lastWorstCommit").html(this.previousWorstCase);
@@ -167,10 +167,7 @@
         this.collection = this.context.forecasts.committed;
         this.collection.on("reset change", function() {
             self.buildForecastsCommitted();
-        }, this);
-        this.context.forecasts.on("forecasts:committed:saved", function(){
-            self.buildForecastsCommitted();
-        }, this);        
+        }, this);       
     },
 
     /**
@@ -219,7 +216,7 @@
             self.render();
             return;
         }
-
+       
         // get the first model so we can get the previous date entered
         previousModel = _.first(self.collection.models);
 
@@ -230,17 +227,17 @@
         }
         // set the previous date entered in the users format
         self.previousDateEntered = app.date.format(dateEntered, app.user.get('datepref') + ' ' + app.user.get('timepref'));
-
-        // set the start point in the history log
-        self.historyLog.push(app.forecasts.utils.createHistoryLog('', previousModel));
-
-        // get the rest of the models to loop over
-        // by using the length of the models array minus 1 for the first one we already took off
-        models = _.last(self.collection.models, self.collection.models.length-1);
-
+        
+        //loop through from oldest to newest to build the log correctly
+        var loopPreviousModel = '';
+        var models = _.clone(self.collection.models).reverse();
         _.each(models, function (model) {
-            self.historyLog.push(app.forecasts.utils.createHistoryLog(model, previousModel));
+            self.historyLog.push(app.forecasts.utils.createHistoryLog(loopPreviousModel, model, self.context.forecasts.config));
+            loopPreviousModel = model;           
         });
+        
+        //reset the order of the history log for display
+        self.historyLog.reverse();
 
         // save the values from the last model to display in the dataset line on the interface
         this.previousBestCase = app.currency.formatAmountLocale(previousModel.get('best_case'));

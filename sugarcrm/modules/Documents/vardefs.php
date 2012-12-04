@@ -222,7 +222,6 @@ $dictionary['Document'] = array('table' => 'documents',
             'reportable' => false,
             'source' => 'non-db'
         ),
-        //BEGIN SUGARCRM flav!=sales ONLY
         'contracts' => array(
             'name' => 'contracts',
             'type' => 'link',
@@ -230,7 +229,6 @@ $dictionary['Document'] = array('table' => 'documents',
             'source' => 'non-db',
             'vname' => 'LBL_CONTRACTS',
         ),
-        //END SUGARCRM flav!=sales ONLY
         //todo remove
         'leads' => array(
             'name' => 'leads',
@@ -374,7 +372,6 @@ $dictionary['Document'] = array('table' => 'documents',
             'reportable' => false,
             'source' => 'non-db'
         ),
-        //BEGIN SUGARCRM flav!=sales ONLY
         'contract_status' =>
         array(
             'name' => 'contract_status',
@@ -391,7 +388,6 @@ $dictionary['Document'] = array('table' => 'documents',
             'reportable' => false,
             'source' => 'non-db'
         ),
-        //END SUGARCRM flav!=sales ONLY
         'linked_id' =>
         array(
             'name' => 'linked_id',

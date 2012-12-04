@@ -69,8 +69,7 @@ class SugarWidgetFieldName extends SugarWidgetFieldVarchar
 		$str .= $this->displayListPlain($layout_def);
 		$str .= "</a>";
         //BEGIN SUGARCRM flav=pro ONLY
-       global $beanList;
-       $tempBean = new $beanList[$module]();
+       $tempBean = BeanFactory::getBean($module);
         //only present edit link if user has save access
        if($tempBean->ACLAccess('Save')){
             //if the module is employee or users, make an additional check to make sure current user is an admin

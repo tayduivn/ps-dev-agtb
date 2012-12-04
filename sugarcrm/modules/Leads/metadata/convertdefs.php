@@ -25,57 +25,16 @@
  * governing these rights and limitations under the License.  Portions created
  * by SugarCRM are Copyright (C) 2004-2006 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
-$viewdefs['Leads']['Convert'] = array(
-    'Contacts' => array(
-        'copyData' => true,
-        'required' => true,
-        'relationship' => 'contact_leads', //TODO: verify if this is additional.
-        'view' => 'convert',
-        'context' => array(
-            'module' => 'Prospects'
-        ),
-        'fieldmapping' => array(
-
-        )
-    ),
-    'Accounts' =>array(
-        'copyData' => true,
-        'required' => true,
-        'relationship' => 'account_leads',
-        'view' => 'convert',
-        'context' => array(
-            'module' => 'ProspectLists'
-        ),
-        'fieldmapping' => array(
-
-        )
-        ),
-    'Opportunities' => array(
-        'copyData' => true,
-        'required' => true,
-        'relationship' => 'opportunity_leads',
-        'view' => 'convert',
-        'context' => array(
-            'module' => 'Leads'
-        ),
-        'fieldmapping' => array(
-
-        )
-     ),
-
-);
-
-
-
-
-
-/*
+$viewdefs['Contacts']['ConvertLead'] = array(
     'copyData' => true,
     'required' => true,
     'templateMeta' => array(
         'form'=>array(
             'hidden'=>array(
                 '<input type="hidden" name="opportunity_id" value="{$smarty.request.opportunity_id}">',
+                //BEGIN SUGARCRM flav=dce ONLY
+                '<input type="hidden" name="instance_id" value="{$smarty.request.instance_id}">',
+                //END SUGARCRM flav=dce ONLY
     			'<input type="hidden" name="case_id" value="{$smarty.request.case_id}">',
     			'<input type="hidden" name="bug_id" value="{$smarty.request.bug_id}">',
     			'<input type="hidden" name="email_id" value="{$smarty.request.email_id}">',
@@ -140,6 +99,9 @@ $viewdefs['Accounts']['ConvertLead'] = array(
         'form'=>array(
             'hidden'=>array(
                 '<input type="hidden" name="opportunity_id" value="{$smarty.request.opportunity_id}">',
+                //BEGIN SUGARCRM flav=dce ONLY
+                '<input type="hidden" name="instance_id" value="{$smarty.request.instance_id}">',
+                //END SUGARCRM flav=dce ONLY
                 '<input type="hidden" name="case_id" value="{$smarty.request.case_id}">',
                 '<input type="hidden" name="bug_id" value="{$smarty.request.bug_id}">',
                 '<input type="hidden" name="email_id" value="{$smarty.request.email_id}">',
@@ -173,6 +135,9 @@ $viewdefs['Opportunities']['ConvertLead'] = array(
     'templateMeta' => array(
         'form'=>array(
             'hidden'=>array(
+                //BEGIN SUGARCRM flav=dce ONLY
+                '<input type="hidden" name="instance_id" value="{$smarty.request.instance_id}">',
+                //END SUGARCRM flav=dce ONLY
             )
         ),
         'maxColumns' => '2', 
@@ -208,6 +173,9 @@ $viewdefs['Notes']['ConvertLead'] = array(
         'form'=>array(
             'hidden'=>array(
                 '<input type="hidden" name="opportunity_id" value="{$smarty.request.opportunity_id}">',
+                //BEGIN SUGARCRM flav=dce ONLY
+                '<input type="hidden" name="instance_id" value="{$smarty.request.instance_id}">',
+                //END SUGARCRM flav=dce ONLY
                 '<input type="hidden" name="case_id" value="{$smarty.request.case_id}">',
                 '<input type="hidden" name="bug_id" value="{$smarty.request.bug_id}">',
                 '<input type="hidden" name="email_id" value="{$smarty.request.email_id}">',
@@ -239,6 +207,9 @@ $viewdefs['Calls']['ConvertLead'] = array(
         'form'=>array(
             'hidden'=>array(
                 '<input type="hidden" name="opportunity_id" value="{$smarty.request.opportunity_id}">',
+                //BEGIN SUGARCRM flav=dce ONLY
+                '<input type="hidden" name="instance_id" value="{$smarty.request.instance_id}">',
+                //END SUGARCRM flav=dce ONLY
                 '<input type="hidden" name="case_id" value="{$smarty.request.case_id}">',
                 '<input type="hidden" name="bug_id" value="{$smarty.request.bug_id}">',
                 '<input type="hidden" name="email_id" value="{$smarty.request.email_id}">',
@@ -298,6 +269,9 @@ $viewdefs['Meetings']['ConvertLead'] = array(
         'form'=>array(
             'hidden'=>array(
                 '<input type="hidden" name="opportunity_id" value="{$smarty.request.opportunity_id}">',
+                //BEGIN SUGARCRM flav=dce ONLY
+                '<input type="hidden" name="instance_id" value="{$smarty.request.instance_id}">',
+                //END SUGARCRM flav=dce ONLY
                 '<input type="hidden" name="case_id" value="{$smarty.request.case_id}">',
                 '<input type="hidden" name="bug_id" value="{$smarty.request.bug_id}">',
                 '<input type="hidden" name="email_id" value="{$smarty.request.email_id}">',
@@ -356,6 +330,9 @@ $viewdefs['Tasks']['ConvertLead'] = array(
         'form'=>array(
             'hidden'=>array(
                 '<input type="hidden" name="opportunity_id" value="{$smarty.request.opportunity_id}">',
+                //BEGIN SUGARCRM flav=dce ONLY
+                '<input type="hidden" name="instance_id" value="{$smarty.request.instance_id}">',
+                //END SUGARCRM flav=dce ONLY
                 '<input type="hidden" name="case_id" value="{$smarty.request.case_id}">',
                 '<input type="hidden" name="bug_id" value="{$smarty.request.bug_id}">',
                 '<input type="hidden" name="email_id" value="{$smarty.request.email_id}">',
@@ -384,5 +361,5 @@ $viewdefs['Tasks']['ConvertLead'] = array(
     ),
 );
 
-*/
+
 ?>

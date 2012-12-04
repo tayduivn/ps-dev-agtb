@@ -202,7 +202,7 @@ function convert_disc_client(){
                        $errors[] =  $result['error']['description'];
                     }else{
 
-					   $admin = new Administration();
+					   $admin = BeanFactory::getBean('Administration');
 					   $system_id = $result['id'];
 					   if(!isset($system_id)){
 						  $system_id = 1;

@@ -31,7 +31,7 @@ require_once('include/formbase.php');
 require_once('modules/Quotes/config.php');
 require_once('include/SugarFields/SugarFieldHandler.php');
 
-$focus = new Quote();
+$focus = BeanFactory::getBean('Quotes');
 $focus = populateFromPost('', $focus);
 
 if(!$focus->ACLAccess('Save')){
@@ -105,10 +105,9 @@ if(isset($_REQUEST['duplicateSave']) && isset($_REQUEST['relate_id'])){
 		$total_keys = array();
 	}
 	$product_bundels = array();
-    $last_pb_index = -1;
     $last_pb = null;
 	for($k = 0; $k < sizeof($total_keys); $k++){
-		$pb = new ProductBundle();
+		$pb = BeanFactory::getBean('ProductBundles');
 
 		if(substr_count($total_keys[$k], 'group_') == 0){
 				$pb->id = $total_keys[$k];
@@ -139,14 +138,7 @@ if(isset($_REQUEST['duplicateSave']) && isset($_REQUEST['relate_id'])){
 
 		$product_bundels[$total_keys[$k]] = $pb->save();
 		if(substr_count($total_keys[$k], 'group_') > 0){
-		    // Base new index on last saved bundle's index +1
-		    // or 0 if no bundles were saved
-		    if($last_pb_index == -1 && !empty($last_pb)) {
-		        $last_pb_index_row = $last_pb->get_index($focus->id);
-		        $last_pb_index = $last_pb_index_row[0]['bundle_index'];
-		    }
-		    $last_pb_index++;
-		    $pb->set_productbundle_quote_relationship($focus->id, $pb->id, $last_pb_index);
+            $pb->set_productbundle_quote_relationship($focus->id, $pb->id);
 		} else {
 		    $last_pb = $pb;
 		}
@@ -157,7 +149,7 @@ if(isset($_REQUEST['duplicateSave']) && isset($_REQUEST['relate_id'])){
 	}
 	unset($last_pb);
 
-	$pb = new ProductBundle();
+	$pb = BeanFactory::getBean('ProductBundles');
 	$deletedGroups = array();
 	if(isset($_POST['delete_table'])){
 	foreach($_POST['delete_table'] as $todelete){
@@ -170,22 +162,22 @@ if(isset($_REQUEST['duplicateSave']) && isset($_REQUEST['relate_id'])){
 	//Fix bug 25509
 	$focus->process_save_dates = true;
 
-	$pb = new ProductBundle();
+	$pb = BeanFactory::getBean('ProductBundles');
 	for($i = 0; $i < $product_count; $i++) {
 
 		if((isset($_POST['delete'][$i]) && $_POST['delete'][$i] != '1')){
-			$product = new Product();
+			$product = BeanFactory::getBean('Products');
 			$GLOBALS['log']->debug("deleting product id ".$_POST['delete'][$i]);
 			$product->mark_deleted($_POST['delete'][$i]);
 		// delete a comment row
 		} else if (isset($_POST['comment_delete'][$i]) && $_POST['comment_delete'][$i] != '1') {
-			$product_bundle_note = new ProductBundleNote();
+			$product_bundle_note = BeanFactory::getBean('ProductBundleNotes');
 			$GLOBALS['log']->debug("Deleting Product Bundle Note Id: ".$_POST['comment_delete'][$i]);
 			$product_bundle_note->mark_deleted($_POST['comment_delete'][$i]);
 		}
 		// insert/update a product into products table
 		else if (!empty($_POST['product_name'][$i]) && !empty($_POST['parent_group'][$i])) {
-		$product = new Product();
+		$product = BeanFactory::getBean('Products');
 		$the_product_template_id = '-1';
 		if (!empty($_POST['product_id'][$i])) {
 			$product->retrieve($_POST['product_id'][$i]);
@@ -212,8 +204,7 @@ if(isset($_REQUEST['duplicateSave']) && isset($_REQUEST['relate_id'])){
 		}
 		if (!empty($_POST['product_template_id'][$i]) && $_POST['product_template_id'][$i] != $the_product_template_id ) {
 			require_once($beanFiles['ProductTemplate']);
-			$template = new ProductTemplate();
-			$template->retrieve($_POST['product_template_id'][$i]);
+			$template = BeanFactory::getBean('ProductTemplates', $_POST['product_template_id'][$i]);
 			foreach($product->template_fields as $temp_field)
 			{
 				if(isset($template->$temp_field))
@@ -242,7 +233,7 @@ if(isset($_REQUEST['duplicateSave']) && isset($_REQUEST['relate_id'])){
 
 		// insert comment row
 		else if (!empty($_POST['comment_index'][$i]) && !empty($_POST['parent_group'][$i])) {
-			$product_bundle_note = new ProductBundleNote();
+			$product_bundle_note = BeanFactory::getBean('ProductBundleNotes');
 			if (!empty($_POST['comment_id'][$i])) {
 				$product_bundle_note->id = $_POST['comment_id'][$i];
 			}

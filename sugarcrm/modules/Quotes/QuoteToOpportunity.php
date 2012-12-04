@@ -116,7 +116,7 @@ elseif(query_opportunity_subject_exists($_REQUEST["opportunity_subject"]) > 0)
 }
 else
 {
-	$opp = new Opportunity();
+	$opp = BeanFactory::getBean('Opportunities');
 	printf("%s<br><br>", $opp->id);
 	$opp->assigned_user_id = $_REQUEST["user_id"];
 	$opp->date_closed = $_REQUEST["valid_until"];
@@ -144,8 +144,7 @@ else
 
 
 	//link quote contracts with the opportunity.
-	$quote = new Quote();
-	$quote->retrieve($_REQUEST['record']);
+	$quote = BeanFactory::getBean('Quotes', $_REQUEST['record']);
 	$quote->load_relationship('contracts');
 	$contracts=$quote->contracts->get();
 

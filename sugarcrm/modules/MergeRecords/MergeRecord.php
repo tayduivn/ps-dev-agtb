@@ -27,27 +27,13 @@ if (!defined('sugarEntry') || !sugarEntry)
  * governing these rights and limitations under the License.  Portions created
  * by SugarCRM are Copyright (C) 2004-2007 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
-/*********************************************************************************
- * $Id: MergeRecord.php 49621 2009-07-22 16:51:39Z jmertic $
- * Description:  TODO: To be written.
- * Portions created by SugarCRM are Copyright (C) SugarCRM, Inc.
- * All Rights Reserved.
- * Contributor(s): ______________________________________..
- ********************************************************************************/
-
-
-
 class MergeRecord extends SugarBean {
     var $object_name = 'MergeRecord';
     var $module_dir = 'MergeRecords';
 	var $acl_display_only = true;
     var $merge_module;
-    var $merge_bean_class;
-    var $merge_bean_file_path;
 
     var $merge_module2;
-    var $merge_bean_class2;
-    var $merge_bean_file_path2;
 
     var $master_id;
 
@@ -61,9 +47,20 @@ class MergeRecord extends SugarBean {
     //store a copy of the merge bean related strings
     var $merge_bean_strings = Array ();
 
+    /**
+     * This is a depreciated method, please start using __construct() as this method will be removed in a future version
+     *
+     * @see __construct
+     * @deprecated
+     */
+    public function MergeRecord($merge_module = '', $merge_id = '')
+    {
+        $this->__construct($merge_module, $merge_id);
+    }
+
     public function __construct($merge_module = '', $merge_id = '') {
         global $sugar_config;
-       //parent::SugarBean();
+       //parent::__construct();
 
         if ($merge_module != '')
             $this->load_merge_bean($merge_module, $merge_id);
@@ -83,13 +80,7 @@ class MergeRecord extends SugarBean {
         global $current_language;
 
         $this->merge_module = $merge_module;
-        $this->merge_bean_class = $beanList[$this->merge_module];
-        $this->merge_bean_file_path = $beanFiles[$this->merge_bean_class];
-
-        require_once ($this->merge_bean_file_path);
-        $this->merge_bean = new $this->merge_bean_class();
-        if ($merge_id != '')
-            $this->merge_bean->retrieve($merge_id);
+        $this->merge_bean = BeanFactory::getBean($this->merge_module, $merge_id);
 
         // Bug 18853 - Disable this view if the user doesn't have edit and delete permissions
         if ( !$this->merge_bean->ACLAccess('edit') || !$this->merge_bean->ACLAccess('delete') ) {
@@ -109,14 +100,7 @@ class MergeRecord extends SugarBean {
         global $beanFiles;
         global $current_language;
 
-        $this->merge_module2 = $merge_module;
-        $this->merge_bean_class2 = $beanList[$this->merge_module2];
-        $this->merge_bean_file_path2 = $beanFiles[$this->merge_bean_class2];
-
-        require_once ($this->merge_bean_file_path2);
-        $this->merge_bean2 = new $this->merge_bean_class2();
-        if ($merge_id != '')
-            $this->merge_bean2->retrieve($merge_id);
+        $this->merge_bean2 = BeanFactory::getBean($this->merge_module2, $merge_id);
         //load master module strings
         if ($load_module_strings)
             $this->merge_bean_strings2 = return_module_language($current_language, $merge_module);

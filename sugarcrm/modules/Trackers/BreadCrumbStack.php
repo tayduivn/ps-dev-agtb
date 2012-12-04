@@ -60,8 +60,7 @@ class BreadCrumbStack {
       $this->stack = array();
       $this->stackMap = array();
       
-      $admin = new Administration();
-	  $admin->retrieveSettings('tracker');      
+      $admin = Administration::getSettings('tracker');      
  
       $this->deleteInvisible = !empty($admin->settings['tracker_Tracker']);
       $db = DBManagerFactory::getInstance();

@@ -27,7 +27,6 @@
  */
 
 // $Id: PasswordManager.tpl 37436 2009-06-01 01:14:03Z Faissah $
-//FILE SUGARCRM flav!=sales ONLY
 *}
 <form name="ConfigurePasswordSettings" method="POST" action="index.php" >
 <input type='hidden' name='action' value='PasswordManager'/>

@@ -46,9 +46,9 @@ function tearDown()
 function testPopulateSeedData()
 {
     $this->createdTimePeriods = TimePeriodsSeedData::populateSeedData();
-    $this->assertEquals(8, count($this->createdTimePeriods));
+    $this->assertEquals(20, count($this->createdTimePeriods));
     $total = $GLOBALS['db']->getOne("SELECT count(id) as total FROM timeperiods WHERE deleted = 0");
-    $this->assertEquals(10, $total);
+    $this->assertEquals(25, $total);
 }
 
 

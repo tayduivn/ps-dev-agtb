@@ -296,6 +296,36 @@ class One2MBeanRelationship extends One2MRelationship
         return $join;
     }
 
+    /**
+     * Build a Join Query with a SugarQuery Object
+     * @param Link2 $link 
+     * @param SugarQuery $sugar_query 
+     * @return SugarQuery
+     */
+    public function buildJoinSugarQuery(Link2 $link, $sugar_query, $options)
+    {
+        $linkIsLHS = $link->getSide() == REL_LHS;
+        $startingTable = $this->def['lhs_table'];
+        
+        if (!$linkIsLHS)
+            $startingTable = $this->def['rhs_table'];
+
+        $startingKey = $linkIsLHS ? $this->def['lhs_key'] : $this->def['rhs_key'];
+        $targetTable = $linkIsLHS ? $this->def['rhs_table'] : $this->def['lhs_table'];
+
+        $targetKey = $linkIsLHS ? $this->def['rhs_key'] : $this->def['lhs_key'];
+        $join_type= isset($options['join_type']) ? $options['join_type'] : 'INNER';
+
+        $sugar_query->joinTable($targetTable, array('alias' => $targetTable, 'joinType' => $join_type))
+            ->on()->equalsField("{$startingTable}.{$startingKey}", "{$targetTable}.{$targetKey}")
+            ->equals("{$targetTable}.deleted","0");
+
+
+        $this->buildSugarQueryRoleWhere($sugar_query,$targetTable);
+        return $sugar_query->join[$targetTable];
+    }
+
+
     public function getSubpanelQuery($link, $params = array(), $return_array = false)
     {
 

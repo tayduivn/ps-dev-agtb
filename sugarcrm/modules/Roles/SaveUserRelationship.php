@@ -32,9 +32,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 
 
-$focus = new Role();
-
-$focus->retrieve($_REQUEST['record']);
+$focus = BeanFactory::getBean('Roles', $_REQUEST['record']);
 
 $focus->set_user_relationship($focus->id, $_REQUEST['mass']);
 

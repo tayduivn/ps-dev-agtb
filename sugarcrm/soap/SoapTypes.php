@@ -729,7 +729,6 @@ $server->wsdl->addComplexType(
     ),
     'tns:name_value_operator'
 );
-//BEGIN SUGARCRM flav!=sales ONLY
 $server->wsdl->addComplexType(
     'newsletter',
     'complexType',
@@ -771,7 +770,6 @@ $server->wsdl->addComplexType(
         'error' => array('name' =>'error', 'type'=>'tns:error_value'),
     )
 );
-//END SUGARCRM flav!=sales ONLY
 // generic type for an array of strings
 $server->wsdl->addComplexType(
 	'str_array',

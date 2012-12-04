@@ -89,6 +89,7 @@ $mod_strings = array (
 	'LBL_MARKETING_ID'							=> 'Marketing Id',
     'LBL_MODULE_ID'                             => 'EmailMan',
 	'LBL_MODULE_NAME'							=> 'Email Settings',
+	'LBL_MODULE_NAME_SINGULAR'						=> 'Email Settings',
 	'LBL_CONFIGURE_CAMPAIGN_EMAIL_SETTINGS'    => 'Configure Campaign Email Settings',
 	'LBL_MODULE_TITLE'							=> 'Outbound Email Queue Management',
 	'LBL_NOTIFICATION_ON_DESC' 					=> 'When enabled, emails are sent to users when records are assigned to them.',

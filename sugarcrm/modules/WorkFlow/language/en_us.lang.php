@@ -36,6 +36,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 $mod_strings = array (
   'LBL_MODULE_NAME' => 'Workflow Definitions',
+  'LBL_MODULE_NAME_SINGULAR' => 'Workflow Definition',
   'LBL_MODULE_ID' => 'WorkFlow',  
   'LBL_MODULE_TITLE' => 'Workflow: Home',
   'LBL_SEARCH_FORM_TITLE' => 'Workflow Search',

@@ -52,8 +52,7 @@ class CalendarViewGetGRUsers extends SugarView {
 		foreach($user_ids as $u_id){
 			if(empty($u_id))
 				continue;
-			$bean = new User();
-			$bean->retrieve($u_id);
+			$bean = BeanFactory::getBean('Users', $u_id);
 			array_push($users_arr, $json_config->populateBean($bean));        	
 		}
 		

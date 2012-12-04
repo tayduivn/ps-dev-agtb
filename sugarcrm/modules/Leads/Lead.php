@@ -125,6 +125,17 @@ class Lead extends Person {
 	var $additional_column_fields = Array('assigned_user_name', 'task_id', 'note_id', 'meeting_id', 'call_id', 'email_id');
 	var $relationship_fields = Array('email_id'=>'emails','call_id'=>'calls','meeting_id'=>'meetings','task_id'=>'tasks',);
 
+    /**
+     * This is a depreciated method, please start using __construct() as this method will be removed in a future version
+     *
+     * @see __construct
+     * @deprecated
+     */
+    public function Lead()
+    {
+        $this->__construct();
+    }
+
 	public function __construct() {
 		parent::__construct();
 		//BEGIN SUGARCRM flav=pro ONLY
@@ -298,8 +309,7 @@ class Lead extends Person {
 
 		//we must move the status out here in order to be able to capture workflow conditions
 		$leadid = str_replace("'","", $leadid);
-		$lead = new Lead();
-		$lead->retrieve($leadid);
+		$lead = BeanFactory::getBean('Leads', $leadid);
 		$lead->status='Converted';
 		$lead->save();
     }
@@ -325,7 +335,7 @@ class Lead extends Person {
 
 		if(!empty($this->campaign_id)){
 			
-			$camp = new Campaign();
+			$camp = BeanFactory::getBean('Campaigns');
 			$where = "campaigns.id='$this->campaign_id'";
 			$campaign_list = $camp->get_full_list("campaigns.name", $where, true);
 			if(!empty($campaign_list))

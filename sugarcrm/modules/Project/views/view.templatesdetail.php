@@ -43,8 +43,7 @@ class ProjectViewTemplatesDetail extends ViewDetail
  		global $beanFiles;
 		require_once($beanFiles['Project']);
 
-		$focus = new Project();
-		$focus->retrieve($_REQUEST['record']);
+		$focus = BeanFactory::getBean('Project', $_REQUEST['record']);
 
 		global $app_list_strings, $current_user, $mod_strings;
 		$this->ss->assign('APP_LIST_STRINGS', $app_list_strings);

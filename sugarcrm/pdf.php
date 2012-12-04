@@ -20,9 +20,9 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
-global $beanList, $beanFiles, $locale;
+global $locale;
 
-if(isset($_REQUEST['module']) && isset($_REQUEST['action']) && isset($_REQUEST['record'])) {
+if(!empty($_REQUEST['module']) && !empty($_REQUEST['action']) && !empty($_REQUEST['record'])) {
 	$currentModule = clean_string($_REQUEST['module']);
 	$action = clean_string($_REQUEST['action']);
 	$record = clean_string($_REQUEST['record']);
@@ -30,11 +30,11 @@ if(isset($_REQUEST['module']) && isset($_REQUEST['action']) && isset($_REQUEST['
 	die ("module, action, and record id all are required");
 }
 
-$entity = $GLOBALS['beanList'][$currentModule];
-require_once($GLOBALS['beanFiles'][$entity]);
-$GLOBALS['focus'] = new $entity();
-$GLOBALS['focus']->retrieve(clean_string($_REQUEST['record']));
-
+$GLOBALS['focus'] = BeanFactory::getBean($currentModule, $record);
+if(empty($focus)) {
+    ACLController::displayNoAccess();
+    sugar_die();
+}
 include("modules/$currentModule/$action.php");
 
 ?>

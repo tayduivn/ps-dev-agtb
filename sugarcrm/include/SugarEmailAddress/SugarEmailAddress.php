@@ -3,16 +3,7 @@ if (!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 /*********************************************************************************
  * The contents of this file are subject to
  * *******************************************************************************/
-/*********************************************************************************
- * $Id: Delete.php,v 1.22 2006/01/17 22:50:52 majed Exp $
- * Description:
- * Portions created by SugarCRM are Copyright (C) SugarCRM, Inc. All Rights
- * Reserved. Contributor(s): ______________________________________..
- *********************************************************************************/
-
-
 require_once("include/JSON.php");
-
 
 class SugarEmailAddress extends SugarBean
 {
@@ -33,11 +24,19 @@ class SugarEmailAddress extends SugarBean
 
     static $count = 0;
 
+
     /**
-     * Sole constructor
+     * This is a depreciated method, please start using __construct() as this method will be removed in a future version
+     *
+     * @see __construct
+     * @deprecated
      */
-    function SugarEmailAddress()
+    public function SugarEmailAddress()
     {
+        $this->__construct();
+    }
+
+    public function __construct() {
         parent::__construct();
         $this->index = self::$count;
         self::$count++;
@@ -66,7 +65,7 @@ class SugarEmailAddress extends SugarBean
                         $primaryE = (isset($emailAddr['primary_address']) && $emailAddr['primary_address'] == "1") ? true : false;
                         $this->addAddress($address, $primaryE, false, $invalidE, $optO);
                     }
-                } else if (!isset($bean->email)) {
+                } else if (empty($bean->email)) {
                     // Special case if not bean->email - removing results in legacy breakage, broken tests, and general sadness. 
                     for ($i = 1; $i <= 10; $i++) {
                         $email = 'email' . $i;
@@ -327,24 +326,11 @@ class SugarEmailAddress extends SugarBean
         $r = $this->db->query($q);
 
         while ($a = $this->db->fetchByAssoc($r)) {
-            if (isset($beanList[$a['bean_module']]) && !empty($beanList[$a['bean_module']])) {
-                $className = $beanList[$a['bean_module']];
+            if(empty($a['bean_module'])) continue;
+            $bean = BeanFactory::retrieveBean($a['bean_module'], $a['bean_id']);
+            if(empty($bean)) continue;
 
-                if (isset($beanFiles[$className]) && !empty($beanFiles[$className])) {
-                    if (!class_exists($className)) {
-                        require_once($beanFiles[$className]);
-                    }
-
-                    $bean = new $className();
-                    $bean->retrieve($a['bean_id']);
-
-                    $ret[] = $bean;
-                } else {
-                    $GLOBALS['log']->fatal("SUGAREMAILADDRESS: could not find valid class file for [ {$className} ]");
-                }
-            } else {
-                $GLOBALS['log']->fatal("SUGAREMAILADDRESS: could not find valid class [ {$a['bean_module']} ]");
-            }
+            $ret[] = $bean;
         }
 
         return $ret;
@@ -1168,7 +1154,7 @@ class SugarEmailAddress extends SugarBean
  */
 function getEmailAddressWidget($focus, $field, $value, $view, $tabindex = '0')
 {
-    $sea = new SugarEmailAddress();
+    $sea = BeanFactory::getBean('EmailAddresses');
     $sea->setView($view);
 
     //BEGIN SUGARCRM flav=pro ONLY

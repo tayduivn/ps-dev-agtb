@@ -388,15 +388,6 @@ $dictionary['User'] = array(
             'reportable' => false,
             'studio' => array('formula' => false),
         ),
-        //BEGIN SUGARCRM flav=sales ONLY
-        'user_type' => array(
-            'name' => 'user_type',
-            'vname' => 'LBL_USER_TYPE',
-            'type' => 'enum',
-            'len' => 50,
-            'options' => 'user_type_dom',
-        ),
-        //END SUGARCRM flav=sales ONLY
         //BEGIN SUGARCRM flav=pro ONLY
         'default_team' => array(
             'name' => 'default_team',
@@ -564,9 +555,6 @@ $dictionary['User'] = array(
             'vname' => 'LBL_PORTAL_ONLY_USER',
             'type' => 'bool',
             'massupdate' => false,
-            //BEGIN SUGARCRM flav=sales ONLY
-            'importable' => false,
-            //END SUGARCRM flav=sales ONLY
             'default' => '0',
             'studio' => array('listview' => false, 'searchview'=>false, 'formula' => false),
         ) ,
@@ -724,9 +712,6 @@ $dictionary['User'] = array(
             'type' => 'bool',
             'massupdate' => false,
             'studio' => array('listview' => false, 'searchview'=>false, 'formula' => false),
-            //BEGIN SUGARCRM flav=sales ONLY
-            'importable' => false,
-            //END SUGARCRM flav=sales ONLY
         ) ,
         /* to support Meetings SubPanels */
         'c_accept_status_fields' => array(
@@ -776,7 +761,6 @@ $dictionary['User'] = array(
             'massupdate' => false,
             'studio' => array('listview' => false, 'searchview'=>false, 'formula' => false),
         ) ,
-        //BEGIN SUGARCRM flav!=sales ONLY
         'prospect_lists' => array(
             'name' => 'prospect_lists',
             'type' => 'link',
@@ -785,7 +769,6 @@ $dictionary['User'] = array(
             'source' => 'non-db',
             'vname' => 'LBL_PROSPECT_LIST',
         ) ,
-        //END SUGARCRM flav!=sales ONLY
         'emails_users' => array(
             'name' => 'emails_users',
             'type' => 'link',
@@ -886,9 +869,7 @@ $dictionary['User'] = array(
             'type' => 'index',
             'fields' => array(
                 'user_name',
-                //BEGIN SUGARCRM flav!=sales ONLY
                 'is_group',
-                //END SUGARCRM flav!=sales ONLY
                 'status',
                 'last_name',
                 'first_name',

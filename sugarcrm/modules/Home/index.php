@@ -189,7 +189,7 @@ if(!$hasUserPreferences){
     }
 
     foreach ($defaultSalesChartDashlets as $salesChartDashlet=>$module){
-		$savedReport = new SavedReport();
+		$savedReport = BeanFactory::getBean('Reports');
 		$reportId = $savedReport->retrieveReportIdByName($salesChartDashlet);
 		// clint - fixes bug #20398
 		// only display dashlets that are from visibile modules and that the user has permission to list
@@ -240,7 +240,7 @@ if(!$hasUserPreferences){
 	// BEGIN 'Marketing Page'
 	$marketingDashlets = array();
     foreach ($defaultMarketingChartDashlets as $marketingChartDashlet=>$module){
-		$savedReport = new SavedReport();
+		$savedReport = BeanFactory::getBean('Reports');
 		$reportId = $savedReport->retrieveReportIdByName($marketingChartDashlet);
 		// clint - fixes bug #20398
 		// only display dashlets that are from visibile modules and that the user has permission to list
@@ -293,7 +293,7 @@ if(!$hasUserPreferences){
 	// BEGIN 'Support Page'
 	$supportDashlets = array();
     foreach ($defaultSupportChartDashlets as $supportChartDashlet=>$module){
-		$savedReport = new SavedReport();
+		$savedReport = BeanFactory::getBean('Reports');
 		$reportId = $savedReport->retrieveReportIdByName($supportChartDashlet);
 		// clint - fixes bug #20398
 		// only display dashlets that are from visibile modules and that the user has permission to list
@@ -365,7 +365,7 @@ if(!$hasUserPreferences){
     }
 
     foreach($defaultTrackingReportDashlets as $name=>$module) {
-    	$savedReport = new SavedReport();
+    	$savedReport = BeanFactory::getBean('Reports');
         $reportId = $savedReport->retrieveReportIdByName($name);
 
     	$myDashlet = new MySugar($module);

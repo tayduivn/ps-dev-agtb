@@ -16,6 +16,12 @@
  *      on: context.forecasts
  *      by: _render()
  *      when: done rendering
+ *
+ * forecasts:forecastcommitbuttons:triggerSaveDraft
+ *      on: context.forecasts
+ *      by: safeFetch()
+ *      when: user performs an action that causes a check to be made against dirty data
+ *
  */
 ({
     url: 'rest/v10/ForecastManagerWorksheets',
@@ -26,6 +32,8 @@
     // boolean for enabled expandable row behavior
     isExpandableRows:'',
     _collection:{},
+    // boolean to denote that a fetch is currently in progress
+    fetchInProgress :  false,
 
 
     /**
@@ -131,26 +139,14 @@
             this.context.forecasts.worksheetmanager.on("change", function() {
             	this.calculateTotals();
             }, this);
-            this.context.forecasts.on("change:reloadWorksheetFlag", function(){
-
-            	if(this.context.forecasts.get('reloadWorksheetFlag') && this.showMe()){
+            this.context.forecasts.on("forecasts:committed:saved", function(){
+            	if(this.showMe()){
             		var model = this.context.forecasts.worksheetmanager;
             		model.url = this.createURL();
             		this.safeFetch();
-            		this.context.forecasts.set({reloadWorksheetFlag: false});
             	}
-
             }, this);
-            this.context.forecasts.on("change:checkDirtyWorksheetFlag", function(){
-            	if(this.context.forecasts.get('checkDirtyWorksheetFlag') && !this.showMe()){
-            		var model = this.context.forecasts.worksheetmanager;
-            		model.url = this.createURL();
-            		this.safeFetch(false);
-            		this.context.forecasts.set({checkDirtyWorksheetFlag: false});
-            	}
-
-            }, this);
-
+            
             /*
              * // TODO: tagged for 6.8 see SFA-253 for details
             this.context.forecasts.config.on('change:show_worksheet_likely', function(context, value) {
@@ -222,7 +218,12 @@
      * @param fetch {boolean} Tells the function to go ahead and fetch if true, or runs dirty checks (saving) w/o fetching if false 
      */
     safeFetch: function(fetch){
-
+        //fetch currently already in progress, no need to duplicate
+        if(this.fetchInProgress) {
+            return;
+        }
+        //mark that a fetch is in process so no duplicate fetches begin
+        this.fetchInProgress = true;
         if(typeof fetch == 'undefined')
         {
             fetch = true;
@@ -232,26 +233,9 @@
     	if(collection.isDirty){
     		//unsaved changes, ask if you want to save.
     		if(confirm(app.lang.get("LBL_WORKSHEET_SAVE_CONFIRM", "Forecasts"))){
-    			var modelCount = 0;
-    			var saveCount = 0;
-    			_.each(collection.models, function(model, index){
-					var isDirty = model.get("isDirty");
-					if(_.isBoolean(isDirty) && isDirty ){
-						modelCount++;
-        				model.set({draft: 1}, {silent:true});
-        				model.save({}, {success:function(){
-        					saveCount++;
-        					if(saveCount === modelCount){
-        						collection.isDirty = false;
-        						collection.fetch();
-        					}
-        				}});
-        				model.set({isDirty: false}, {silent:true});
-        			}  
-				});
-
-		}
-    		else{
+                self.context.forecasts.trigger("forecasts:forecastcommitbuttons:triggerSaveDraft");
+		    }
+    		else {
     			//ignore, fetch still
     			collection.isDirty = false;
     			self.context.forecasts.set({reloadCommitButton: true});
@@ -268,6 +252,7 @@
     		}
     		
     	}
+        this.fetchInProgress = false;
     },
 
     /**
@@ -297,7 +282,6 @@
         }
         $("#view-sales-rep").addClass('hide').removeClass('show');
         $("#view-manager").addClass('show').removeClass('hide');
-        this.context.forecasts.set({checkDirtyWorksheetFlag: true});
         this.context.forecasts.set({currentWorksheet: "worksheetmanager"});
         
         app.view.View.prototype._render.call(this);
@@ -306,19 +290,23 @@
         // so you can sort on the column's "name" prop from metadata
         var columnDefs = [];
         var fields = this.meta.panels[0].fields;
-
-        for( var i = 0; i < fields.length; i++ )  {
-            if(fields[i].enabled) {
+        
+        _.each(fields, function(field, key){
+            if(field.enabled) {
                 // in case we add column rearranging
                 var fieldDef = {
-                    "sName": fields[i].name,
-                    "bVisible" : this.checkConfigForColumnVisibility(fields[i].name)
+                    "sName": field.name,
+                    "bVisible" : self.checkConfigForColumnVisibility(field.name)
                 };
+                
+                if(_.isBoolean(field.sortable)){
+                    fieldDef["bSortable"] = field.sortable;
+                }
 
                 //Apply sorting for the worksheet
-                if(typeof(fields[i].type) != "undefined")
+                if(!_.isUndefined(field.type))
                 {
-                    switch(fields[i].type)
+                    switch(field.type)
                     {
                         case "int":
                         case "currency":
@@ -327,7 +315,7 @@
                             fieldDef["sClass"] = "number";
                             break;
                     }
-                    switch(fields[i].name)
+                    switch(field.name)
                     {
                         case "name":
                             fieldDef["sWidth"] = "30%";
@@ -337,7 +325,7 @@
 
                 columnDefs.push(fieldDef);
             }
-        }
+        });
 
         this.gTable = this.$el.find(".worksheetManagerTable").dataTable(
             {
@@ -396,7 +384,8 @@
     fetchUserCommitHistory: function(event, nTr) {
         var options = {
             timeperiod_id : this.timePeriod,
-            user_id : $(event.target).attr('data-uid')
+            user_id : $(event.target).attr('data-uid'),
+            forecast_type : 'direct'
         };
 
         var dataCommitDate = $(event.target).attr('data-commitdate');
@@ -423,7 +412,7 @@
                     }
 
                     // create the history log
-                    outputLog = app.forecasts.utils.createHistoryLog(oldestModel,newestModel);
+                    outputLog = app.forecasts.utils.createHistoryLog(oldestModel,newestModel,this.context.forecasts.config);
                     // update the div that was created earlier and set the html to what was the commit log
                     $(nTr).next().children("td").children("div").html(this.commitLogTemplate(outputLog));
                 }

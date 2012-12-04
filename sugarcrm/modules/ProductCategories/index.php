@@ -36,7 +36,7 @@ if (!is_admin($current_user)&&!is_admin_for_module($GLOBALS['current_user'],'Pro
    sugar_die("Unauthorized access to administration.");
 }
 $GLOBALS['displayListView'] = true;
-$focus = new ProductCategory();
+$focus = BeanFactory::getBean('ProductCategories');
 echo getClassicModuleTitle($focus->module_dir, array($mod_strings['LBL_MODULE_NAME']), true);
 
 $is_edit = false;

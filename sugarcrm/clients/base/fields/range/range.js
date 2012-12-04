@@ -245,9 +245,9 @@
         }
 
         if(!field.def.hideStyle) {
-            values = $(this).noUiSlider( 'value' );
-            $(this).find('.noUi-lowerHandle .infoBox .tooltip-inner').text(values[0]+"%");
-            $(this).find('.noUi-upperHandle .infoBox .tooltip-inner').text(values[1]+"%");
+            values = this.noUiSlider( 'value' );
+            this.find('.noUi-lowerHandle .infoBox .tooltip-inner').text(values[0]+"%");
+            this.find('.noUi-upperHandle .infoBox .tooltip-inner').text(values[1]+"%");
         }
 
         // disables the hook if moved by another slider, to prevent circular references

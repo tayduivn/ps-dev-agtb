@@ -1,5 +1,5 @@
 <?php
-//FILE SUGARCRM flav=pro || flav=ent || flav=sales ONLY
+//FILE SUGARCRM flav=pro || flav=ent ONLY
 /*********************************************************************************
  * The contents of this file are subject to the SugarCRM Professional End User
  * License Agreement ("License") which can be viewed at

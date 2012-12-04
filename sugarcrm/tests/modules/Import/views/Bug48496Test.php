@@ -68,7 +68,7 @@ class Bug48496Test extends Sugar_PHPUnit_Framework_OutputTestCase
                 AND accounts.deleted = 0",
         );
 
-        $seed = SugarModule::get('Accounts')->loadBean();
+        $seed = BeanFactory::getBean('Accounts');
 
         $lvfMock = $this->getMock('ListViewFacade', array('setup', 'display', 'build'), array($seed, 'Accounts'));
 

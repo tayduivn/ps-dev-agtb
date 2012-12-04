@@ -22,46 +22,39 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 global $sugar_config, $dbconfig, $beanList, $beanFiles, $app_strings, $app_list_strings, $current_user;
 
-global $currentModule, $focus; 
+global $currentModule, $focus;
 
 if ( !empty($_REQUEST['user_id'])) {
-    $current_user = new User();
-    $result = $current_user->retrieve($_REQUEST['user_id']);
-    if ($result == null) {
+    $result = BeanFactory::retrieveBean('Users', $_REQUEST['user_id']);
+    if (empty($result)) {
         session_destroy();
         sugar_cleanup();
         die("The user id doesn't exist");
     }
-    $current_entity = $current_user;
+    $current_entity = $current_user = $result;
 }
 else if ( ! empty($_REQUEST['contact_id'])) {
-    $current_entity = new Contact();
-    $current_entity->disable_row_level_security = true;
-    $result = $current_entity->retrieve($_REQUEST['contact_id']);
-    if($result == null) {
+    $result = BeanFactory::retrieveBean('Contacts', $_REQUEST['contact_id'], array('disable_row_level_security' => true));
+    if(empty($result)) {
         session_destroy();
         sugar_cleanup();
         die("The contact id doesn't exist");
     }
+    $current_entity = $result;
 }
 else if ( ! empty($_REQUEST['lead_id'])) {
-    $current_entity = new Lead();
-    $current_entity->disable_row_level_security = true;
-    $result = $current_entity->retrieve($_REQUEST['lead_id']);
-    if($result == null) {
+    $result = BeanFactory::retrieveBean('Leads', $_REQUEST['lead_id'], array('disable_row_level_security' => true));
+    if(empty($result)) {
         session_destroy();
         sugar_cleanup();
         die("The lead id doesn't exist");
     }
+    $current_entity = $result;
 }
 
-$bean = $beanList[clean_string($_REQUEST['module'])];
-require_once($beanFiles[$bean]);
-$focus = new $bean;
-$focus->disable_row_level_security = true;
-$result = $focus->retrieve($_REQUEST['record']);
+$focus = BeanFactory::retrieveBean(clean_string($_REQUEST['module']), $_REQUEST['record'], array('disable_row_level_security' => true));
 
-if($result == null) {
+if(empty($focus)) {
 	session_destroy();
 	sugar_cleanup();
 	die("The focus id doesn't exist");
@@ -76,4 +69,3 @@ print "<BR><BR>";
 print "<a href='?module=$currentModule&action=DetailView&record=$focus->id'>".$app_strings['LBL_MEETING_GO_BACK']."</a><br>";
 sugar_cleanup();
 exit;
-?>

@@ -36,7 +36,7 @@ var user_detailview_tabs = new YAHOO.widget.TabView("user_detailview_tabs");
 {literal}
 user_detailview_tabs.on('contentReady', function(e){
 {/literal}
-//BEGIN SUGARCRM flav!=com && flav!=sales ONLY
+//BEGIN SUGARCRM flav!=com ONLY
 {if $EDIT_SELF && $SHOW_DOWNLOADS_TAB}
 {literal}
     user_detailview_tabs.addTab( new YAHOO.widget.Tab({
@@ -48,7 +48,7 @@ user_detailview_tabs.on('contentReady', function(e){
     user_detailview_tabs.getTab(3).getElementsByTagName('a')[0].id = 'tab4';
 {/literal}
 {/if}
-//END SUGARCRM flav!=com && flav!=sales ONLY
+//END SUGARCRM flav!=com ONLY
 });
 {literal}
 $(document).ready(function(){
@@ -98,11 +98,9 @@ $(document).ready(function(){
     <ul class="yui-nav">
         <li class="selected"><a id="tab1" href="#tab1"><em>{$MOD.LBL_USER_INFORMATION}</em></a></li>
         <li {if $IS_GROUP_OR_PORTAL}style="display: none;"{/if}><a id="tab2" href="#tab2"><em>{$MOD.LBL_ADVANCED}</em></a></li>
-        {* //BEGIN SUGARCRM flav!=sales ONLY *}
         {if $SHOW_ROLES}
         <li><a id="tab3" href="#tab3"><em>{$MOD.LBL_USER_ACCESS}</em></a></li>
         {/if}
-        {* //END SUGARCRM flav!=sales ONLY *}
     </ul>
     <div class="yui-content">
         <div>

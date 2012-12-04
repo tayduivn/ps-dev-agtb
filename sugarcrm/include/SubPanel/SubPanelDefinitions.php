@@ -495,16 +495,9 @@ class aSubPanel
 		$module_name = $this->get_module_name () ;
 		if (! empty ( $module_name ))
 		{
-
-			$bean_name = $beanList [ $this->get_module_name () ] ;
-
-			$this->bean_name = $bean_name ;
-
-			include_once ($beanFiles [ $bean_name ]) ;
-			$this->template_instance = new $bean_name ( ) ;
+		    $this->template_instance = BeanFactory::getBean($module_name);
 			$this->template_instance->force_load_details = true ;
 			$this->table_name = $this->template_instance->table_name ;
-			//$this->db_fields=$this->template_instance->column_fields;
 		}
 	}
 	//this function is to be used only with sub-panels that are based
@@ -518,17 +511,6 @@ class aSubPanel
 				return $this->sub_subpanels [ $this->_instance_properties [ 'header_definition_from_subpanel' ] ] ;
 			} else
 			{
-				$display_fields = array();
-				//If we are not pulling from a specific subpanel, create a list of all list fields and use that.
-				foreach($this->sub_subpanels as $subpanel)
-				{
-					$list_fields = $subpanel->get_list_fields();
-					foreach($list_fields as $field => $def)
-					{
-
-					}
-				}
-
 				reset ( $this->sub_subpanels ) ;
 				return current ( $this->sub_subpanels ) ;
 			}
@@ -760,17 +742,9 @@ class SubPanelDefinitions
             if (isset($hidden[strtolower($mod_name)])) {
                     continue;
             }
-            
-			//skip if module name is not in bean list, otherwise get the bean class name
-			if(!isset($beanList[$mod_name])) continue;
-			$class = $beanList[$mod_name];
 
-			//skip if class name is not in file list, otherwise require the bean file and create new class
-			if(!isset($beanFiles[$class]) || !SugarAutoLoader::fileExists($beanFiles[$class])) continue;
-
-			//retrieve subpanels for this bean
-			require_once($beanFiles[$class]);
-			$bean_class = new $class();
+		    $bean_class = BeanFactory::getBean($mod_name);
+            if(empty($bean_class)) continue;
 
 			//create new subpanel definition instance and get list of tabs
 			$spd = new SubPanelDefinitions($bean_class) ;
@@ -800,7 +774,7 @@ class SubPanelDefinitions
 	 * save array of hidden panels to mysettings category in config table
 	 */
 	function set_hidden_subpanels($panels){
-		$administration = new Administration();
+		$administration = BeanFactory::getBean('Administration');
 		$serialized = base64_encode(serialize($panels));
 		$administration->saveSetting('MySettings', 'hide_subpanels', $serialized);
         // Allow the hidden subpanel cache to refresh
@@ -822,8 +796,7 @@ class SubPanelDefinitions
             $hidden_subpanels = array();
 
 			//create Administration object and retrieve any settings for panels
-			$administration = new Administration();
-			$administration->retrieveSettings('MySettings');
+			$administration = Administration::getSettings('MySettings');
 
 			if(isset($administration->settings) && isset($administration->settings['MySettings_hide_subpanels'])){
 				$hidden_subpanels = $administration->settings['MySettings_hide_subpanels'];

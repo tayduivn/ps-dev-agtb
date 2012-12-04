@@ -33,7 +33,8 @@ $mod_strings = array (
   'LBL_REPLY_NAME' => '"Reply-to" Name: ',
 
   'LBL_MODULE_NAME' => 'Campaigns',
-  'LBL_MODULE_TITLE' => 'Campaigns: Home',
+    'LBL_MODULE_NAME_SINGULAR'	=> 'Campaign',
+    'LBL_MODULE_TITLE' => 'Campaigns: Home',
   'LBL_NEWSLETTER_TITLE'=>'Campaigns: Newsletters',
   'LBL_SEARCH_FORM_TITLE' => 'Campaign Search',
   'LBL_LIST_FORM_TITLE' => 'Campaign List',

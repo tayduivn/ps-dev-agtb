@@ -26,22 +26,9 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * governing these rights and limitations under the License.  Portions created
  * by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
-/*********************************************************************************
- * $Id: CreateStepFilter.php 45763 2009-04-01 19:16:18Z majed $
- * Description:
- ********************************************************************************/
-
-global $theme;
-
-
 require_once('include/workflow/workflow_utils.php');
 
-
-
-
-
-
-
+global $theme;
 global $app_strings;
 global $app_list_strings;
 global $mod_strings;
@@ -51,32 +38,25 @@ global $currentModule;
 
 $log = LoggerManager::getLogger('workflow_alerts');
 
-$workflow_object = new WorkFlow();
-if(isset($_REQUEST['workflow_id']) && isset($_REQUEST['workflow_id'])) {
-    $workflow_object->retrieve($_REQUEST['workflow_id']);
-} else {
+
+if(!empty($_REQUEST['workflow_id'])) {
+    $workflow_object = BeanFactory::retrieveBean('WorkFlow', $_REQUEST['workflow_id']);
+}
+if(empty($workflow_object)) {
 	sugar_die("You shouldn't be here");
 }
 
+$focus = BeanFactory::getBean('WorkFlowTriggerShells');
 
-
-$focus = new WorkFlowTriggerShell();
-
-if(isset($_REQUEST['record']) && isset($_REQUEST['record'])) {
+if(!empty($_REQUEST['record']) ) {
     $focus->retrieve($_REQUEST['record']);
 }
-if(!empty($_REQUEST['rel_module']) && $_REQUEST['rel_module']!="") {
+if(!empty($_REQUEST['rel_module'])) {
    $focus->rel_module = $_REQUEST['rel_module'];
 }
-if(!empty($_REQUEST['type']) && $_REQUEST['type']!="") {
+if(!empty($_REQUEST['type'])) {
    $focus->type = $_REQUEST['type'];
 }
-
-
-
-
-
-
 
 ////////////////////////////////////////////////////////
 // Start the output
@@ -177,7 +157,7 @@ $form->out("embeded");
 
 //////////////////BEGIN 1st Filter Object	/////////////////////////////////
 
-		$filter1_object = new Expression();
+		$filter1_object = BeanFactory::getBean('Expressions');
 		//only try to retrieve if there is a base object set
 		if(isset($focus->id) && $focus->id!="") {
 			$filter_list = $focus->get_linked_beans('expressions','Expression');

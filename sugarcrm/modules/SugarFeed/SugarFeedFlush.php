@@ -25,8 +25,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 class SugarFeedFlush {
     function flushStaleEntries($bean, $event, $arguments) {
-        $admin = new Administration();
-        $admin->retrieveSettings();
+        $admin = Administration::getSettings();
 
         $timedate = TimeDate::getInstance();
 
@@ -36,7 +35,7 @@ class SugarFeedFlush {
             if ( ! isset($db) ) { $db = DBManagerFactory::getInstance(); }
 
             $tmpTime = time();
-            $tmpSF = new SugarFeed();
+            $tmpSF = BeanFactory::getBean('SugarFeed');
             $flushBefore = $timedate->asDbDate($timedate->getNow()->modify("-14 days")->setTime(0,0));
             $db->query("DELETE FROM ".$tmpSF->table_name." WHERE date_entered < '".$db->quote($flushBefore)."'");
             $admin->saveSetting('sugarfeed','flushdate',$currDate);

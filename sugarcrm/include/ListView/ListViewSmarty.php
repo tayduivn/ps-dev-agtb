@@ -138,13 +138,11 @@ class ListViewSmarty extends ListViewDisplay{
 		} else {
             $this->ss->assign('multiSelectData', '<textarea style="display: none" name="uid"></textarea>');
         }
-		//BEGIN SUGARCRM flav!=sales ONLY
 		// include button for Adding to Target List if in one of four applicable modules
 		if ( isset ( $_REQUEST['module']) && in_array ( $_REQUEST['module'] , array ( 'Contacts','Prospects','Leads','Accounts' ))
 		&& ACLController::checkAccess('ProspectLists','edit',true)) {
 			$this->ss->assign( 'targetLink', $this->buildTargetList() ) ;
 		}
-		//END SUGARCRM flav!=sales ONLY
 		$this->processArrows($data['pageData']['ordering']);
 		$this->ss->assign('prerow', $this->multiSelect);
 		$this->ss->assign('clearAll', $app_strings['LBL_CLEARALL']);

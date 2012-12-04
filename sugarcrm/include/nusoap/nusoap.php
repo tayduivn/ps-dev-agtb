@@ -9128,8 +9128,7 @@ class nusoap_client extends nusoap_base  {
 			if(empty($proxy_config)){
 				if(!empty($GLOBALS['db'])){
 
-					$proxy_config = new Administration();
-					$proxy_config->retrieveSettings('proxy');
+					$proxy_config = Administration::getSettings('proxy');
 				}
 			}
 

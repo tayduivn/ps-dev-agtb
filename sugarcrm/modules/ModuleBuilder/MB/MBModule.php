@@ -565,11 +565,11 @@ class MBModule
         $searchSubs = array ( ) ;
         $searchSubs [] = array ( 'name' => translate('LBL_BASIC_SEARCH') , 'type' => 'list' , 'action' => "module=ModuleBuilder&MB=true&action=editLayout&view=basic_search&view_module={$this->name}&view_package={$this->package}"  ) ;
         $searchSubs [] = array ( 'name' => translate('LBL_ADVANCED_SEARCH') , 'type' => 'list' , 'action' => 'module=ModuleBuilder&MB=true&action=editLayout&view=advanced_search&view_module=' . $this->name . '&view_package=' . $this->package  ) ;
-        //BEGIN SUGARCRM flav=pro || flav=sales ONLY
+        //BEGIN SUGARCRM flav=pro ONLY
         $wirelessSearchSubs = array ( ) ;
         $wirelessSearchSubs [] = array ( 'name' => translate('LBL_WIRELESS_BASIC_SEARCH') , 'type' => 'list' , 'action' => 'module=ModuleBuilder&MB=true&action=editLayout&view='.MB_WIRELESSBASICSEARCH.'&view_module=' . $this->name . '&view_package=' . $this->package  ) ;
         $wirelessSearchSubs [] = array ( 'name' => translate('LBL_WIRELESS_ADVANCED_SEARCH') , 'type' => 'list' , 'action' => 'module=ModuleBuilder&MB=true&action=editLayout&view='.MB_WIRELESSADVANCEDSEARCH.'&view_module=' . $this->name . '&view_package=' . $this->package  ) ;
-        //END SUGARCRM flav=pro || flav=sales ONLY
+        //END SUGARCRM flav=pro ONLY
         $dashlets = array( );
         $dashlets [] = array('name' => translate('LBL_DASHLETLISTVIEW') , 'type' => 'dashlet' , 'action' => 'module=ModuleBuilder&MB=true&action=editLayout&view=dashlet&view_module=' . $this->name . '&view_package=' . $this->package );
 		$dashlets [] = array('name' => translate('LBL_DASHLETSEARCHVIEW') , 'type' => 'dashletsearch' , 'action' => 'module=ModuleBuilder&MB=true&action=editLayout&view=dashletsearch&view_module=' . $this->name . '&view_package=' . $this->package );
@@ -591,13 +591,11 @@ class MBModule
         $children = array (
         	array ( 'name' => translate('LBL_FIELDS') , 'action' => 'module=ModuleBuilder&action=modulefields&view_module=' . $this->name . '&view_package=' . $this->package ) ,
         	array ( 'name' => translate('LBL_LABELS') , 'action' => 'module=ModuleBuilder&action=modulelabels&view_module=' . $this->name . '&view_package=' . $this->package ) ,
-        	//BEGIN SUGARCRM flav!=sales ONLY
         	array ( 'name' => translate('LBL_RELATIONSHIPS') , 'action' => 'module=ModuleBuilder&action=relationships&view_module=' . $this->name . '&view_package=' . $this->package ) ,
-        	//END SUGARCRM flav!=sales ONLY
         	array ( 'name' => translate('LBL_LAYOUTS') , 'type' => 'Folder' , 'action' => "module=ModuleBuilder&action=wizard&view_module={$this->name}&view_package={$this->package}&MB=1" , 'children' => $layouts ) ,
-        	//BEGIN SUGARCRM flav=pro || flav=sales ONLY
+        	//BEGIN SUGARCRM flav=pro ONLY
         	array ( 'name' => translate('LBL_WIRELESSLAYOUTS') , 'type' => 'Folder' , 'action' => "module=ModuleBuilder&action=wizard&view=wirelesslayouts&view_module={$this->name}&view_package={$this->package}&MB=1" , 'children' => $this->getWirelessLayouts() )
-        	//END SUGARCRM flav=pro || flav=sales ONLY
+        	//END SUGARCRM flav=pro ONLY
         	) ;
 
         if (count ( $lSubs ) > 0)
@@ -610,7 +608,7 @@ class MBModule
         return $nodes ;
     }
 
-//BEGIN SUGARCRM flav=pro || flav=sales ONLY
+//BEGIN SUGARCRM flav=pro ONLY
     function getWirelessLayouts ()
     {
         $nodes [ translate ('LBL_WIRELESSEDITVIEW') ] = array ( 
@@ -647,7 +645,7 @@ class MBModule
         ) ;
     	return $nodes ;
     }
-//END SUGARCRM flav=pro || flav=sales ONLY
+//END SUGARCRM flav=pro ONLY
 
     function getProvidedSubpanels ()
     {
@@ -885,9 +883,9 @@ class MBModule
         $template = "" ;
         foreach ( $this->config [ 'templates' ] as $temp => $val )
             $template = $temp ;
-		//BEGIN SUGARCRM flav=pro || flav=sales ONLY	
+		//BEGIN SUGARCRM flav=pro ONLY	
 		copy ( "themes/Sugar/images/icon_{$template}_32.png", "$icondir/icon_" . ucfirst ( $this->key_name ) . "_32.png" ) ;
-		//END SUGARCRM flav=pro || flav=sales ONLY
+		//END SUGARCRM flav=pro ONLY
 		//BEGIN SUGARCRM flav=com ONLY
         copy ( "themes/default/images/icon_$template.gif", "$icondir/icon_" . ucfirst ( $this->key_name ) . ".gif" ) ;
 		//END SUGARCRM flav=com ONLY
@@ -898,10 +896,10 @@ class MBModule
         if (file_exists("include/SugarObjects/templates/$template/icons/{$template}_32.gif"))
         	copy ( "include/SugarObjects/templates/$template/icons/{$template}_32.gif", "$icondir/icon_" . $this->key_name . "_32.gif" ) ;
 		//END SUGARCRM flav=com ONLY	
-        //BEGIN SUGARCRM flav=pro || flav=sales ONLY
+        //BEGIN SUGARCRM flav=pro ONLY
         if (file_exists("include/SugarObjects/templates/$template/icons/{$template}_bar_32.png"))
         	copy ( "include/SugarObjects/templates/$template/icons/{$template}_bar_32.png", "$icondir/icon_{$this->key_name}_bar_32.png" ) ;
-    	//END SUGARCRM flav=pro || flav=sales ONLY
+    	//END SUGARCRM flav=pro ONLY
     }
 
     function removeFieldFromLayouts ( $fieldName )
@@ -909,10 +907,10 @@ class MBModule
         // hardcoded list of types for now, as also hardcoded in a different form in getNodes
         // TODO: replace by similar mechanism to StudioModule to determine the list of available views for this module
         $views = array ( 'editview' , 'detailview' , 'listview' , 'basic_search' , 'advanced_search' , 'dashlet' , 'popuplist');
-    	//BEGIN SUGARCRM flav=pro || flav=sales ONLY
+    	//BEGIN SUGARCRM flav=pro ONLY
     	foreach ($this->getWirelessLayouts() as $layout)
     		$views[] = $layout['type'];
-        //END SUGARCRM flav=pro || flav=sales ONLY
+        //END SUGARCRM flav=pro ONLY
         
     	foreach ($views as $type )
         {

@@ -31,7 +31,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 
 
-$focus = new EmailTemplate();
+$focus = BeanFactory::getBean('EmailTemplates');
 
 if(!isset($_REQUEST['record']))
 	sugar_die("A record number must be specified to delete the template.");

@@ -74,8 +74,7 @@ class ForecastManagerWorksheet extends SugarBean
     	//leaving this here just in case we need it in the future.
     	//save forecast
     	/*if(isset($this->id)){
-	    	$forecast = new Forecast();
-			$forecast->retrieve($this->forecast_id);
+	    	$forecast = BeanFactory::getBean('Forecasts', $this->args["forecast_id"]);
 			$forecast->best_case = $this->best_case;
 			$forecast->likely_case = $this->likely_case;
 			$forecast->forecast = ($this->forecast) ? 1 : 0;

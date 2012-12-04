@@ -37,8 +37,7 @@ global $mod_strings;
 if(!isset($_REQUEST['record']))
 	sugar_die($mod_strings['ERR_DELETE_RECORD']);
 
-$focus = new ForecastSchedule();
-$focus->retrieve($_REQUEST['record']);
+$focus = BeanFactory::getBean('ForecastSchedule', $_REQUEST['record']);
 if(!$focus->ACLAccess('Delete')){
 	ACLController::displayNoAccess(true);
 	sugar_cleanup(true);

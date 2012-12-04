@@ -53,7 +53,7 @@ include('modules/Versions/ExpectedVersions.php');
 global $expect_versions;
 
 if (isset($expect_versions['Chart Data Cache'])) {
-	$version = new Version();
+	$version = BeanFactory::getBean('Versions');
 	$version->retrieve_by_string_fields(array('name'=>'Chart Data Cache'));
 
 	$version->name = $expect_versions['Chart Data Cache']['name'];

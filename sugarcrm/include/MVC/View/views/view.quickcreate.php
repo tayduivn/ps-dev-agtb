@@ -1,5 +1,5 @@
 <?php
-//FILE SUGARCRM flav=pro || flav=sales
+//FILE SUGARCRM flav=pro
 if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 /*********************************************************************************
  *The contents of this file are subject to the SugarCRM Professional End User License Agreement
@@ -55,7 +55,7 @@ class ViewQuickcreate extends ViewAjax
     public function preDisplay()
     {
     	if(!empty($_REQUEST['source_module']) && $_REQUEST['source_module'] != 'undefined' && !empty($_REQUEST['record'])) {
-			$this->bean = loadBean($_REQUEST['source_module']);
+			$this->bean = BeanFactory::getBean($_REQUEST['source_module']);
 			if ( $this->bean instanceOf SugarBean
 			        && !in_array($this->bean->object_name,array('EmailMan')) ) {
                 $this->bean->retrieve($_REQUEST['record']);
@@ -67,7 +67,7 @@ class ViewQuickcreate extends ViewAjax
 
                 //Now preload any related fields
 			    if(isset($_REQUEST['module'])) {
-                	$target_bean = loadBean($_REQUEST['module']);
+                	$target_bean = BeanFactory::getBean($_REQUEST['module']);
 	                foreach($target_bean->field_defs as $fields) {
 	                	if($fields['type'] == 'relate' && isset($fields['module']) && $fields['module'] == $_REQUEST['source_module'] && isset($fields['rname'])) {
 	                	   $rel_name = $fields['rname'];
@@ -121,7 +121,9 @@ class ViewQuickcreate extends ViewAjax
         //Load the parent view class if it exists.  Check for custom file first
         loadParentView('edit');
 
-		if(SugarAutoLoader::requireWithCustom('modules/'.$module.'/views/view.edit.php')) {
+		if(file_exists('modules/'.$module.'/views/view.edit.php')) {
+            include('modules/'.$module.'/views/view.edit.php');
+
             $c = $module . 'ViewEdit';
 
             if(class_exists($c)) {
@@ -130,19 +132,13 @@ class ViewQuickcreate extends ViewAjax
 	            	$defaultProcess = false;
 
 	            	//Check if we shold use the module's QuickCreate.tpl file
-	            	if($view->useModuleQuickCreateTemplate &&
-	                	($qc_tpl = SugarAutoLoader::existingCustomOne('modules/'.$module.'/tpls/QuickCreate.tpl'))) {
-	            	   $this->ev->defs['templateMeta']['form']['headerTpl'] = $qc_tpl;
+	            	if($view->useModuleQuickCreateTemplate && file_exists('modules/'.$module.'/tpls/QuickCreate.tpl')) {
+	            	   $this->ev->defs['templateMeta']['form']['headerTpl'] = 'modules/'.$module.'/tpls/QuickCreate.tpl';
 	            	}
 
-		            $view->ev = & $this->ev;
-		            $view->ss = & $this->ev->ss;
-					$class = $GLOBALS['beanList'][$module];
-					if(!empty($GLOBALS['beanFiles'][$class])){
-						require_once($GLOBALS['beanFiles'][$class]);
-						$bean = new $class();
-						$view->bean = $bean;
-					}
+		            $view->ev = $this->ev;
+		            $view->ss = $this->ev->ss;
+		            $view->bean = BeanFactory::getBean($module);
 					$view->ev->formName = 'form_DC'.$view->ev->view .'_'.$module;
 					$view->showTitle = false; // Do not show title since this is for subpanel
 		            $view->display();

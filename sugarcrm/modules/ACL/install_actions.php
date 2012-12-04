@@ -44,10 +44,7 @@ if(is_admin($current_user)){
                 ACLAction::addActions('Trackers', 'Tracker');
                 //END SUGARCRM flav=pro ONLY
             } else {
-                $mod = BeanFactory::newBean($module);
-                if(empty($mod)) {
-                    continue;
-                }
+                $mod = BeanFactory::newBeanByName($class);
                 $GLOBALS['log']->debug("DOING: $class");
                 if($mod->bean_implements('ACL') && empty($mod->acl_display_only)){
                     // BUG 10339: do not display messages for upgrade wizard
@@ -72,7 +69,7 @@ if(is_admin($current_user)){
 $installActions = false;
 $missingAclRolesActions = false;
 
-$role1 = new ACLRole();
+$role1 = BeanFactory::getBean('ACLRoles');
 
 $result = $GLOBALS['db']->query("SELECT id FROM acl_roles where name = 'Tracker'");
 $role_id = $GLOBALS['db']->fetchByAssoc($result);
@@ -123,7 +120,7 @@ $installActions = false;
 $missingAclRolesActions = false;
 
 
-$role1 = new ACLRole();
+$role1 = BeanFactory::getBean('ACLRoles');
 
 $result = $GLOBALS['db']->query("SELECT id FROM acl_roles where name = 'Sales Administrator'");
 $role_id = $GLOBALS['db']->fetchByAssoc($result);
@@ -147,9 +144,7 @@ if($installActions || $missingAclRolesActions) {
      'Sales Administrator'=>array(
          'Accounts'=>array('admin'=>100, 'access'=>89),
          'Contacts'=>array('admin'=>100, 'access'=>89),
-         //BEGIN SUGARCRM flav!=sales ONLY
          'Forecasts'=>array('admin'=>100, 'access'=>89),
-         //END SUGARCRM flav!=sales ONLY
          'ForecastSchedule'=>array('admin'=>100, 'access'=>89),
          'Leads'=>array('admin'=>100, 'access'=>89),
          'Opportunities'=>array('admin'=>100, 'access'=>89),
@@ -159,12 +154,10 @@ if($installActions || $missingAclRolesActions) {
      'Marketing Administrator'=>array(
          'Accounts'=>array('admin'=>100, 'access'=>89),
          'Contacts'=>array('admin'=>100, 'access'=>89),
-         //BEGIN SUGARCRM flav!=sales ONLY
          'Campaigns'=>array('admin'=>100, 'access'=>89),
          'ProspectLists'=>array('admin'=>100, 'access'=>89),
          'Leads'=>array('admin'=>100, 'access'=>89),
          'Prospects'=>array('admin'=>100, 'access'=>89),
-         //END SUGARCRM flav!=sales ONLY
 
      ),
      'Customer Support Administrator'=>array(
@@ -172,16 +165,14 @@ if($installActions || $missingAclRolesActions) {
          'Contacts'=>array('admin'=>100, 'access'=>89),
          'Bugs'=>array('admin'=>100, 'access'=>89),
          'Cases'=>array('admin'=>100, 'access'=>89),
-         //BEGIN SUGARCRM flav!=sales ONLY
          'KBDocuments'=>array('admin'=>100, 'access'=>89),
-         //END SUGARCRM flav!=sales ONLY
         )
     );
 
 
     foreach($mlaRoles as $roleName=>$role){
-        $ACLField = new ACLField();
-        $role1= new ACLRole();
+        $ACLField = BeanFactory::getBean('ACLFields');
+        $role1 = BeanFactory::getBean('ACLRoles');
         $role1->name = $roleName;
         $role1->description = $roleName." Role";
         $role1_id=$role1->save();

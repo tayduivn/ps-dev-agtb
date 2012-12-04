@@ -79,8 +79,7 @@ $button .= smarty_function_sugar_action_menu(array(
 $button .= "</form>";
 
 
-	$admin = new Administration();
-	$admin->retrieveSettings();
+	$admin = Administration::getSettings();
 	$mail_server = trim($admin->settings['mail_smtpserver']);
 
 	if (empty($mail_server) && !empty($focus_alerts_list)) {

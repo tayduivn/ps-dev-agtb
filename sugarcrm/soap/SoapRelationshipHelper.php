@@ -1,6 +1,4 @@
 <?php
-
-
 if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 /*********************************************************************************
  *The contents of this file are subject to the SugarCRM Professional End User License Agreement
@@ -40,7 +38,7 @@ function check_for_relationship($relationships, $module){
 
 function retrieve_relationships_properties($module_1, $module_2, $relationship_name = ""){
 
-	$rs = new Relationship();
+	$rs = BeanFactory::getBean('Relationships');
 	$query =  "SELECT * FROM $rs->table_name WHERE ((lhs_module = '".$rs->db->quote($module_1)."' AND rhs_module='".$rs->db->quote($module_2)."') OR (lhs_module = '".$rs->db->quote($module_2)."' AND rhs_module='".$rs->db->quote($module_1)."'))";
 	if(!empty($relationship_name) && isset($relationship_name)){
 		$query .= " AND relationship_name = '".$rs->db->quote($relationship_name)."'";
@@ -63,7 +61,7 @@ function retrieve_relationships_properties($module_1, $module_2, $relationship_n
  *
  */
 function retrieve_relationships($module_name,  $related_module, $relationship_query, $show_deleted, $offset, $max_results){
-	global  $beanList, $beanFiles, $dictionary, $current_user;
+	global  $beanList, $dictionary, $current_user;
 
 	$error = new SoapError();
 	$result_list = array();
@@ -84,9 +82,7 @@ function retrieve_relationships($module_name,  $related_module, $relationship_qu
 	$module_1 = $result['module_1'];
 	$table = $result['join_table'];
 
-	$class_name = $beanList[$module_1];
-	require_once($beanFiles[$class_name]);
-	$mod = new $class_name();
+	$mod = BeanFactory::getBean($module_1);
 
 	$count_query = str_replace('rt.*', 'count(*)', $query);
 	$result = $mod->db->query($count_query);
@@ -129,11 +125,10 @@ function retrieve_relationships($module_name,  $related_module, $relationship_qu
  */
 function retrieve_modified_relationships($module_name, $related_module, $relationship_query, $show_deleted, $offset, $max_results, $select_fields = array(), $relationship_name = ''){
 
-    global  $beanList, $beanFiles, $dictionary, $current_user;
+    global  $beanList, $dictionary, $current_user;
 	$error = new SoapError();
 	$result_list = array();
 	if(empty($beanList[$module_name]) || empty($beanList[$related_module])){
-
 		$error->set_error('no_module');
 		return array('result'=>$result_list, 'error'=>$error->get_soap_array());
 	}
@@ -141,7 +136,6 @@ function retrieve_modified_relationships($module_name, $related_module, $relatio
 	$row = retrieve_relationships_properties($module_name, $related_module, $relationship_name);
 
 	if(empty($row)){
-
 		$error->set_error('no_relationship_support');
 		return array('result'=>$result_list, 'error'=>$error->get_soap_array());
 	}
@@ -164,15 +158,9 @@ function retrieve_modified_relationships($module_name, $related_module, $relatio
 		$mod2_key = $row['join_key_rhs'];
 	}
 
+	$mod = BeanFactory::getBean($module_1);
+	$mod2 = BeanFactory::getBean($module_2);
 
-
-	$class_name = $beanList[$module_1];
-	require_once($beanFiles[$class_name]);
-	$mod = new $class_name();
-
-	$mod2_name = $beanList[$module_2];
-	require_once($beanFiles[$mod2_name]);
-	$mod2 = new $mod2_name();
 	$table_alias = 'rt';
 	if($has_join == false){
 		$table_alias = 'm1';
@@ -273,7 +261,6 @@ function retrieve_modified_relationships($module_name, $related_module, $relatio
 
 function server_save_relationships($list, $from_date, $to_date){
 	require_once('include/utils/db_utils.php');
-	global  $beanList, $beanFiles;
 	$from_date = db_convert("'".$GLOBALS['db']->quote($from_date)."'", 'datetime');
 	$to_date = db_convert("'".$GLOBALS['db']->quote($to_date)."'", 'datetime');
 	global $sugar_config;
@@ -419,13 +406,10 @@ function retrieve_relationship_query($module_name,  $related_module, $relationsh
 	if(empty($table)){
 		return array('query' =>"", 'module_1'=>"", 'join_table' =>"", 'error'=>$error->get_soap_array());
 	}
-	$class_name = $beanList[$module_1];
-	require_once($beanFiles[$class_name]);
-	$mod = new $class_name();
 
-	$mod2_name = $beanList[$module_2];
-	require_once($beanFiles[$mod2_name]);
-	$mod2 = new $mod2_name();
+	$mod = BeanFactory::getBean($module_1);
+	$mod2 = BeanFactory::getBean($module_2);
+
 	$query = "SELECT rt.* FROM  $table rt ";
 	$query .= " inner join $mod->table_name m1 on rt.$mod_key = m1.id ";
 	$query .= " inner join $mod2->table_name m2 on rt.$mod2_key = m2.id  ";
@@ -467,17 +451,14 @@ function retrieve_relationship_query($module_name,  $related_module, $relationsh
 
 // Returns name of 'link' field between two given modules
 function get_module_link_field($module_1, $module_2) {
-	global $beanList, $beanFiles;
+	global $beanList;
 
 	// check to make sure both modules exist
 	if (empty($beanList[$module_1]) || empty($beanList[$module_2])) {
 		return FALSE;
 	}
 
-	$class_1 = $beanList[$module_1];
-	require_once($beanFiles[$class_1]);
-
-	$obj_1 = new $class_1();
+	$obj_1 = BeanFactory::getBean($module_1);
 
 	// loop through link fields of $module_1, checking for a link to $module_2
 	foreach ($obj_1->get_linked_fields() as $linked_field) {
@@ -499,13 +480,8 @@ function get_module_link_field($module_1, $module_2) {
 // Retrieves array of ids for records of $get_module linked to $from_module by $get_id
 // Example: to retrieve list of Contacts associated to Account X: $return = get_linked_records("Contacts", "Accounts", "X");
 function get_linked_records($get_module, $from_module, $get_id) {
-	global $beanList, $beanFiles;
-
 	// instantiate and retrieve $from_module
-	$from_class = $beanList[$from_module];
-	require_once($beanFiles[$from_class]);
-	$from_mod = new $from_class();
-	$from_mod->retrieve($get_id);
+	$from_mod = BeanFactory::getBean($from_module, $get_id);
 
 	$field = get_module_link_field($from_module, $get_module);
 	if ($field === FALSE) {

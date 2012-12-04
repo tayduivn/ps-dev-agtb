@@ -41,7 +41,7 @@ $GLOBALS['log']->info("Team edit view");
 
 if (!$GLOBALS['current_user']->isAdminForModule('Users')) sugar_die("Unauthorized access to administration.");
 
-$focus = new Team();
+$focus = BeanFactory::getBean('Teams');
 
 if (isset($_REQUEST['record']) && isset($_REQUEST['record'])) {
     $focus->retrieve($_REQUEST['record']);
