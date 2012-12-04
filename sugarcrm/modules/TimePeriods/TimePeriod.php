@@ -501,8 +501,9 @@ class TimePeriod extends SugarBean {
        //If this is not an upgrade or if there are no existing time periods, we can build the timeperiods
        if(!$isUpgrade)
        {
+           $settingsDate = $timedate->fromDbDate($currentSettings["timeperiod_start_date"]);
            //set the target date based on the current year and the selected start month and day
-           $targetStartDate = $timedate->getNow()->setDate($currentDate->format("Y"), $currentSettings["timeperiod_start_month"], $currentSettings["timeperiod_start_day"]);
+           $targetStartDate = $timedate->getNow()->setDate($currentDate->format("Y"), $settingsDate->format("m"), $settingsDate->format("d"));
 
            //if the target start date is in the future then set the year to be back one year
            if($currentDate < $targetStartDate)
@@ -566,8 +567,9 @@ class TimePeriod extends SugarBean {
            if(!empty($currentTimePeriod)) {
                //set the target date
                $currentEndDate = $timedate->fromDbDate($currentTimePeriod->end_date);
+               $selectedStartDate = $timedate->fromDbDate($currentSettings["timeperiod_start_date"]);
 
-               $targetStartDate = $timedate->getNow()->setDate($currentEndDate->format("Y"), $currentSettings["timeperiod_start_month"], $currentSettings["timeperiod_start_day"]);
+               $targetStartDate = $timedate->getNow()->setDate($currentEndDate->format("Y"), $selectedStartDate->format("m"), $selectedStartDate->format("d"));
 
                //If the target starting date is before the current year's starting date, add a year
                if($targetStartDate < $currentEndDate) {
@@ -681,14 +683,16 @@ class TimePeriod extends SugarBean {
     public function isTargetDateDifferentFromPrevious($targetStartDate, $priorSettings)
     {
         //First check if prior settings are empty
-        if(empty($priorSettings) || !isset($priorSettings['timeperiod_start_month']) || !isset($priorSettings['timeperiod_start_day']))
+        if(empty($priorSettings) || !isset($priorSettings['timeperiod_start_date']))
         {
             return true;
         }
 
         $timedate = TimeDate::getInstance();
         $priorDate = $timedate->getNow();
-        $priorDate->setDate(intval($targetStartDate->format("Y")), $priorSettings['timeperiod_start_month'], $priorSettings['timeperiod_start_day']);
+        $settingsDate = $timedate->fromDbDate($priorSettings['timeperiod_start_date']);
+
+        $priorDate->setDate(intval($targetStartDate->format("Y")), $settingsDate->format("m"), $settingsDate->format("d"));
 
         return $targetStartDate != $priorDate;
     }
@@ -762,10 +766,7 @@ class TimePeriod extends SugarBean {
         if(!isset($priorSettings['timeperiod_type']) || ($currentSettings['timeperiod_type'] != $priorSettings['timeperiod_type'])) {
             return false;
         }
-        if(!isset($priorSettings['timeperiod_start_month']) || ($currentSettings['timeperiod_start_month'] != $priorSettings['timeperiod_start_month'])) {
-            return false;
-        }
-        if(!isset($priorSettings['timeperiod_start_day']) || ($currentSettings['timeperiod_start_day'] != $priorSettings['timeperiod_start_day'])) {
+        if(!isset($priorSettings['timeperiod_start_date']) || ($currentSettings['timeperiod_start_date'] != $priorSettings['timeperiod_start_date'])) {
             return false;
         }
         if(!isset($priorSettings['timeperiod_leaf_interval']) || ($currentSettings['timeperiod_leaf_interval'] != $priorSettings['timeperiod_leaf_interval'])) {
