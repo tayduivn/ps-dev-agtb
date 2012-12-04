@@ -37,7 +37,7 @@ class SugarForecasting_Filter_TimePeriodFilterTest extends Sugar_PHPUnit_Framewo
         $admin = BeanFactory::getBean('Administration');
         $settings = $admin->getConfigForModule('Forecasts', 'base');
 
-        $settingsToRestore = array('timeperod_interval', 'timeperiod_leaf_interval', 'timeperiod_start_month', 'timeperiod_start_day', 'timeperiod_shown_forward', 'timeperiod_shown_backward');
+        $settingsToRestore = array('timeperod_interval', 'timeperiod_leaf_interval', 'timeperiod_start_date', 'timeperiod_shown_forward', 'timeperiod_shown_backward');
         foreach($settingsToRestore as $id) {
             if(isset($settings[$id])) {
                 self::$currentSettings[$id] = $settings[$id];
@@ -68,12 +68,12 @@ class SugarForecasting_Filter_TimePeriodFilterTest extends Sugar_PHPUnit_Framewo
 
     public function timePeriodFilterWithTimePeriodsProvider() {
         return array(
-            array(TimePeriod::ANNUAL_TYPE, TimePeriod::QUARTER_TYPE, 1, 1, 1, 1, 12),
-            array(TimePeriod::ANNUAL_TYPE, TimePeriod::QUARTER_TYPE, 1, 1, 2, 2, 20),
-            array(TimePeriod::ANNUAL_TYPE, TimePeriod::QUARTER_TYPE, 2, 1, 1, 1, 12),
-            array(TimePeriod::QUARTER_TYPE, TimePeriod::MONTH_TYPE, 1, 1, 1, 1, 9),
-            array(TimePeriod::QUARTER_TYPE, TimePeriod::MONTH_TYPE, 1, 1, 2, 2, 15),
-            array(TimePeriod::QUARTER_TYPE, TimePeriod::MONTH_TYPE, 2, 1, 2, 2, 15),
+            array(TimePeriod::ANNUAL_TYPE, TimePeriod::QUARTER_TYPE, "2012-01-01", 1, 1, 12),
+            array(TimePeriod::ANNUAL_TYPE, TimePeriod::QUARTER_TYPE, "2012-01-01", 2, 2, 20),
+            array(TimePeriod::ANNUAL_TYPE, TimePeriod::QUARTER_TYPE, "2012-02-01", 1, 1, 12),
+            array(TimePeriod::QUARTER_TYPE, TimePeriod::MONTH_TYPE, "2012-01-01", 1, 1, 9),
+            array(TimePeriod::QUARTER_TYPE, TimePeriod::MONTH_TYPE, "2012-01-01", 2, 2, 15),
+            array(TimePeriod::QUARTER_TYPE, TimePeriod::MONTH_TYPE, "2012-02-01", 2, 2, 15),
         );
     }
 
@@ -85,13 +85,12 @@ class SugarForecasting_Filter_TimePeriodFilterTest extends Sugar_PHPUnit_Framewo
      * @group timeperiods
      * @dataProvider timePeriodFilterWithTimePeriodsProvider
      */
-    public function testTimePeriodFilterWithTimePeriods($parentType, $leafType, $startMonth, $startDay, $shownForward, $shownBackward, $expectedLeaves) {
+    public function testTimePeriodFilterWithTimePeriods($parentType, $leafType, $startDate, $shownForward, $shownBackward, $expectedLeaves) {
 
         $forecastConfigSettings = array (
             'timeperiod_interval' => $parentType,
             'timeperiod_leaf_interval' => $leafType,
-            'timeperiod_start_month' => $startMonth,
-            'timeperiod_start_day' => $startDay,
+            'timeperiod_start_date' => $startDate,
             'timeperiod_shown_forward' => $shownForward,
             'timeperiod_shown_backward' => $shownBackward
         );
