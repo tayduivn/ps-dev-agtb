@@ -86,21 +86,39 @@ $viewdefs['Accounts']['base']['view']['record'] = array(
             'columns' => '2',
             'labelsOnTop' => true,
             'fields' => array(
-                'billing_address_street',
-                'shipping_address_street',
                 array(
                     'name' => 'fieldset_address',
                     'type' => 'fieldset',
                     'label' => 'Billing Address',
-                    'fields' => array('billing_address_city', 'billing_address_state', 'billing_address_postalcode')
+                    'fields' => array(
+                        'billing_address_street',
+                        'billing_address_city',
+                        'billing_address_state',
+                        'billing_address_postalcode',
+                    ),
                 ),
                 array(
                     'name' => 'fieldset_shipping_address',
                     'type' => 'fieldset',
                     'label' => 'Shipping Address',
-                    'fields' => array('shipping_address_city', 'shipping_address_state', 'shipping_address_postalcode')
+                    'fields' => array(
+                        'shipping_address_street',
+                        'shipping_address_city',
+                        'shipping_address_state',
+                        'shipping_address_postalcode',
+                        array(
+                            'name' => 'copy',
+                            'type' => 'copy',
+                            'mapping' => array(
+                                'billing_address_street' => 'shipping_address_street',
+                                'billing_address_city' => 'shipping_address_city',
+                                'billing_address_state' => 'shipping_address_state',
+                                'billing_address_postalcode' => 'shipping_address_postalcode',
+                            ),
+                        ),
+                    ),
                 ),
-            )
+            ),
         ),
         array(
             'name' => 'panel_hidden',
