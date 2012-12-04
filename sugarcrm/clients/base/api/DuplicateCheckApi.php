@@ -64,7 +64,12 @@ class DuplicateCheckApi extends FilterApi
         //build filter to hand off to the FilterApi
         $dupeCheckMetadata = $this->retrieveDupeCheckMetadata($args['module']);
         $dupeCheckFilterTemplate = $dupeCheckMetadata['filter_template'];
-        $args['filter'] = $this->buildDupeCheckFilter($dupeCheckFilterTemplate, $args['field_data']);
+        $fieldData = $args['field_data'];
+        $filter = $this->buildDupeCheckFilter($dupeCheckFilterTemplate, $fieldData);
+        if (!empty($fieldData['id'])) {
+            $filter = $this->addFilterForEdits($filter[0], $fieldData['id']);
+        }
+        $args['filter'] = $filter;
         $args['max_num'] = self::FILTER_QUERY_LIMIT;
 
         //invoke the FilterApi
@@ -123,6 +128,23 @@ class DuplicateCheckApi extends FilterApi
     }
 
     /**
+     * Add condition to filter to exclude existing record when running dupe check during edit
+     *
+     * @param string $filter
+     * @param string $id
+     * @return array
+     */
+    function addFilterForEdits($filter, $id)
+    {
+        return array(
+            array('$and' => array(
+                array('id' => array('$not_equals' => $id)),
+                $filter,
+            ))
+        );
+    }
+
+    /**
      * If filter value starts with the field placeholder, returns the name of the incoming field
      * otherwise, returns false
      *
@@ -145,8 +167,9 @@ class DuplicateCheckApi extends FilterApi
      * @param array $fieldData
      * @return array
      */
-    function rankAndSortDuplicates($duplicates, $rankingFields, $fieldData)
+    function rankAndSortDuplicates($results, $rankingFields, $fieldData)
     {
+        $duplicates = $results['records'];
         //calculate rank of each duplicate based on rank field metadata
         $startingFieldWeight = count($rankingFields);
         foreach ($duplicates as &$duplicate) {
@@ -166,8 +189,9 @@ class DuplicateCheckApi extends FilterApi
 
         //sort the duplicates based on rank
         usort($duplicates, array($this, 'compareDuplicateRanks'));
+        $results['records'] = $duplicates;
 
-        return $duplicates;
+        return $results;
     }
 
     /**
