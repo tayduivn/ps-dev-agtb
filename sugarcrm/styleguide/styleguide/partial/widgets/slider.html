@@ -17,7 +17,7 @@
 
                   <div class="well">
 
-                      <div id="sliderExample" class="noUiSlider"></div>
+                      <div class="noUiSliderEnds"><div id="sliderExample" class="noUiSlider"></div></div>
                   </div>
 
                   <hr>
@@ -160,7 +160,8 @@
                               $(this).append('<div class="tooltip fade top in infoBox"><div class="tooltip-arrow"></div><div class="tooltip-inner">'+start[index]+'%'+'</div></div>');
 
                   });
-
+                  //update text content at ends of slider
+                  $('.noUiSliderEnds').attr('data-content-before', '0%').attr('data-content-after', '100%');
               };
 
               init.call();

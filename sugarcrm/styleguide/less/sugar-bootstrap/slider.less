@@ -8,7 +8,6 @@
 .noUiSlider {
     #gradient > .vertical(@grayLight,@gray);
     border-color:@gray;
-    margin: 50px 31px 14px;
     width: 300px;
     border-width: 1px 0px 1px 0px;
 
@@ -23,30 +22,36 @@
 
     }
 }
-.noUiSlider:before {
-    #gradient > .vertical(@grayLight,@gray);
-    .border-radius(6px 0px 0px 6px);
-    width: 10px;
-    content : ' ';
-    left:-11px;
-    top:-1px;
-    height : 8px;
-    width: 10px;
+.noUiSliderEnds {
+    position: relative;
+    width: 300px;
+    margin: 45px 45px 30px;
+}
+.noUiSliderEnds:before,
+.noUiSliderEnds:after {
+    top:0px;
+    height: 8px;
     position:absolute;
+    font-weight: bold;
+    line-height: 8px;
     border: 1px solid @gray;
+    border-left: 0px;
+    #gradient > .vertical(@grayLight,@gray);
+}
+.noUiSliderEnds:before {
+    .border-radius(6px 0px 0px 6px);
+    content: attr(data-content-before);
+    text-indent: -22px;
+    left:-11px;
+    width: 10px;
     border-right: 0px;
 }
-.noUiSlider:after {
-    #gradient > .vertical(@grayLight,@gray);
+.noUiSliderEnds:after {
     .border-radius(0px 6px 6px 0px);
-    width: 10px;
-    content : ' ';
+    content: attr(data-content-after);
+    text-indent: 10px;
     right:-8px;
-    top:-1px;
-    height : 8px;
     width: 7px;
-    position:absolute;
-    border: 1px solid @gray;
     border-left: 0px;
 }
 
