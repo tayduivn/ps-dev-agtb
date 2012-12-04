@@ -106,7 +106,7 @@
 
 
       // select filter dropdown option
-      $("#search_filter_chzn .chzn-results > li").bind('click',function(e){
+      $("{{sourceid}} #search_filter_chzn .chzn-results > li").bind('click',function(e){
           var li_active = $("#{{sourceid}} ul.chzn-choices").find('.search-choice').first().attr('id'),
               li_orig = li_active.replace("_chzn_c_","_chzn_o_");
 
