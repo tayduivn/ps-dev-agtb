@@ -109,7 +109,9 @@
         var view = event.data.view,
             oldValue,
             bucket_dom,
-            hideElement, showElement;
+            hideElement,
+            showElement,
+            category_options;
 
         // get the value of the previous selection so that we can hide that element
         oldValue = view.selection;
@@ -122,10 +124,11 @@
         showElement = view.$el.find('#' + this.value + '_ranges');
 
         if (showElement.children().length == 0) {
+            category_options = app.lang.getAppListStrings(bucket_dom);
             // add the things here...
             view.fieldRanges[this.value] = {};
             showElement.append('<p>' + app.lang.get('LBL_FORECASTS_CONFIG_' + this.value.toUpperCase() + '_RANGES_DESCRIPTION', 'Forecasts') + '</p>');
-            _.each(app.lang.getAppListStrings(bucket_dom), function(label, key) {
+            _.each(category_options, function(label, key) {
                 if (key != 'exclude') {
 
                     var rangeField,
@@ -180,7 +183,7 @@
                     }(this.category, key, this.view);
                 }
             }, {view: view, showElement:showElement, category: this.value});
-            showElement.append($('<p>' + app.lang.get("LBL_FORECASTS_CONFIG_CATEGORY_EXCLUDE_INFO", "Forecasts")+ '</p>'));
+            showElement.append('<b>'+ category_options['exclude'] +':</b>').append($('<p>' + app.lang.get("LBL_FORECASTS_CONFIG_CATEGORY_EXCLUDE_INFO", "Forecasts")+ '</p>'));
             // use call to set context back to the view for connecting the sliders
             view.connectSliders.call(view, this.value, view.fieldRanges);
         }

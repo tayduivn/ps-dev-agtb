@@ -1153,32 +1153,13 @@ function logThis($entry, $path='') {
 	if(file_exists('include/utils/sugar_file_utils.php')){
 		require_once('include/utils/sugar_file_utils.php');
 	}
-		$log = empty($path) ? clean_path(getcwd().'/upgradeWizard.log') : clean_path($path);
+		$log = empty($path) ? 'upgradeWizard.log' : $path;
 
 		// create if not exists
-		if(!file_exists($log)) {
-			if(function_exists('sugar_fopen')){
-				$fp = @sugar_fopen($log, 'w+'); // attempts to create file
-		     }
-		     else{
-				$fp = fopen($log, 'w+'); // attempts to create file
-		     }
-			if(!is_resource($fp)) {
-				$GLOBALS['log']->fatal('UpgradeWizard could not create the upgradeWizard.log file');
-				die($mod_strings['ERR_UW_LOG_FILE_UNWRITABLE']);
-			}
-		} else {
-			if(function_exists('sugar_fopen')){
-				$fp = @sugar_fopen($log, 'a+'); // write pointer at end of file
-		     }
-		     else{
-				$fp = @fopen($log, 'a+'); // write pointer at end of file
-		     }
-
-			if(!is_resource($fp)) {
+		$fp = @fopen($log, 'a+');
+		if(!is_resource($fp)) {
 				$GLOBALS['log']->fatal('UpgradeWizard could not open/lock upgradeWizard.log file');
 				die($mod_strings['ERR_UW_LOG_FILE_UNWRITABLE']);
-			}
 		}
 
 		$line = date('r').' [UpgradeWizard] - '.$entry."\n";
@@ -2905,7 +2886,7 @@ function post_install_progress($progArray='',$action=''){
 		else{
 			fopen($upgrade_progress_file, 'w+');
 		}
-		if(!is_array($upgrade_config[sizeof($upgrade_config)]['commit']['post_install'])){
+		if(empty($upgrade_config[sizeof($upgrade_config)]['commit']['post_install']) || !is_array($upgrade_config[sizeof($upgrade_config)]['commit']['post_install'])){
 			$upgrade_config[sizeof($upgrade_config)]['commit']['post_install']=array();
 			$upgrade_config[sizeof($upgrade_config)]['commit']['post_install']['post_install'] = 'in_progress';
 		}
