@@ -432,7 +432,13 @@ class MetaDataManager {
      * @return array The app strings for the requested language
      */
     public function getAppStrings($lang = 'en_us' ) {
-        return return_application_language($lang);
+        $strings = return_application_language($lang);
+        if (is_array($strings)) {
+            foreach ($strings as $k => $v) {
+                $strings[$k] = $this->decodeStrings($v);
+            }
+        }
+        return $strings;        
     }
 
     /**
@@ -442,7 +448,13 @@ class MetaDataManager {
      * @return array The app list strings for the requested language
      */
     public function getAppListStrings($lang = 'en_us') {
-        return return_app_list_strings_language($lang);
+        $strings = return_app_list_strings_language($lang);
+        if (is_array($strings)) {
+            foreach ($strings as $k => $v) {
+                $strings[$k] = $this->decodeStrings($v);
+            }
+        }
+        return $strings;        
     }
 
 
