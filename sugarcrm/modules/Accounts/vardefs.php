@@ -490,10 +490,10 @@ $dictionary['Account'] = array('table' => 'accounts', 'audited'=>true, 'activity
     'duplicate_check' => array(
         'filter_template' => array(
             array('$and' => array(
-                array('name' => array('$starts' => '||FIELD_DATA||name')),
+                array('name' => array('$starts' => '$name')),
                 array('$or' => array(
-                    array('billing_address_city' => array('$starts' => '||FIELD_DATA||billing_address_city')),
-                    array('shipping_address_city' => array('$starts' => '||FIELD_DATA||shipping_address_city')),
+                    array('billing_address_city' => array('$starts' => '$billing_address_city')),
+                    array('shipping_address_city' => array('$starts' => '$shipping_address_city')),
                 )),
             ))
         ),

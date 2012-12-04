@@ -513,7 +513,7 @@ $dictionary['Opportunity'] = array('table' => 'opportunities','audited'=>true, '
 ),
     'duplicate_check' => array(
         'filter_template' => array(
-            array('name' => array('$starts' => '||FIELD_DATA||name')),
+            array('name' => array('$starts' => '$name')),
         ),
         'ranking_fields' => array(
             array('in_field_name' => 'name', 'dupe_field_name' => 'name'),

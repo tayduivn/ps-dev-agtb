@@ -727,9 +727,9 @@ array (
     'duplicate_check' => array(
         'filter_template' => array(
             array('$and' => array(
-                array('first_name' => array('$starts' => '||FIELD_DATA||first_name')),
-                array('last_name' => array('$equals' => '||FIELD_DATA||last_name')),
-                array('id' => array('$not_equals' => '||FIELD_DATA||id')),
+                array('first_name' => array('$starts' => '$first_name')),
+                array('last_name' => array('$equals' => '$last_name')),
+                array('id' => array('$not_equals' => '$id')),
             ))
         ),
         'ranking_fields' => array(

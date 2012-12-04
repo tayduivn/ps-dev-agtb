@@ -34,7 +34,8 @@ require_once('include/MetaDataManager/MetaDataManager.php');
 class DuplicateCheckApi extends FilterApi
 {
     const DUPE_CHECK_RANK = 'duplicate_check_rank';
-    const FIELD_PLACEHOLDER = '||FIELD_DATA||';
+    const FIELD_PLACEHOLDER = '$';
+    const FILTER_QUERY_LIMIT = 20;
 
     public function registerApiRest()
     {
@@ -64,6 +65,7 @@ class DuplicateCheckApi extends FilterApi
         $dupeCheckMetadata = $this->retrieveDupeCheckMetadata($args['module']);
         $dupeCheckFilterTemplate = $dupeCheckMetadata['filter_template'];
         $args['filter'] = $this->buildDupeCheckFilter($dupeCheckFilterTemplate, $args['field_data']);
+        $args['max_num'] = self::FILTER_QUERY_LIMIT;
 
         //invoke the FilterApi
         $duplicates = $this->filterList($api, $args);

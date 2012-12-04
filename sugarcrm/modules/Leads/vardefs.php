@@ -594,8 +594,8 @@ $dictionary['Lead'] = array('table' => 'leads','audited'=>true, 'unified_search'
                     array('status' => array('$not_equals' => 'Converted')),
                     array('status' => array('$is_null' => '')),
                 )),
-                array('first_name' => array('$equals' => '||FIELD_DATA||first_name')),
-                array('last_name' => array('$equals' => '||FIELD_DATA||last_name')),
+                array('first_name' => array('$equals' => '$first_name')),
+                array('last_name' => array('$equals' => '$last_name')),
             ))
         ),
         'ranking_fields' => array(
