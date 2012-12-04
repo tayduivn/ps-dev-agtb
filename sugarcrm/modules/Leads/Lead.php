@@ -197,7 +197,6 @@ class Lead extends Person {
 				$this->contact_name_owner = $row['contact_name_owner'];
 				$this->contact_name_mod = 'Contacts';
 			}
-
 	}}
 
 	function create_list_query($order_by, $where, $show_deleted=0)
