@@ -26,15 +26,12 @@
  * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 }}
-<form name='{{name}}'>
-    <div class="container welcome subhead">
+    <div class="container welcome subhead tcenter">
         <div class="row">
             <div class="span4 offset4 thumbnail signup">
-                <div class="tcenter">
-                    <h2 class="brand" {{#if logoURL}} style=" background: url({{logoURL}}) 50% 50% no-repeat;"{{/if}}>SugarCRM</h2>
-                </div>
+                <h2 class="brand" {{#if logoURL}} style=" background: url({{logoURL}}) 50% 50% no-repeat;"{{/if}}>SugarCRM</h2>
+                <form name='{{name}}'>
                 {{#each meta.panels}}
-                <div class="form-horizontal">
                     {{#if ../signup_success}}
                     <div class="alert alert-success tleft">
                         <p><strong>{{str "LBL_PORTAL_SIGNUP_TITLE"}}</strong><p>
@@ -42,15 +39,13 @@
                     </div>
                     {{else}}
                     {{#each fields}}
-                    <div class="row-fluid control-group">
-                    <div class="tcenter">
+                    <div class="row-fluid control-group tcenter">
                     {{field ../../../this ../../../model}}
-                    </div>
                     </div>
                     {{/each}}
                     {{/if}}
-                </div>
                 {{/each}}
+                </form>
                 <div class="signup-footer span3">
                     {{#each meta.buttons}}
                     {{field ../this ../model}}
@@ -59,4 +54,3 @@
             </div>
         </div>
     </div>
-</form>
