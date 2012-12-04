@@ -3,9 +3,17 @@
         "click .toolbar-btns a": "toggleView"
     },
 
+    availableToggles: {
+        "activitystream" : "icon-th-list",
+        "timeline" : "icon-time",
+        "calendar" : "icon-calendar",
+        "list" : "icon-table"
+    },
+
     initialize: function(opts) {
         _.bindAll(this);
 
+        this.first = true;
         this.processMeta();
         this.template = app.template.get("l.filterpanel");
         this.renderHtml();
@@ -18,16 +26,25 @@
     },
 
     renderHtml: function() {
+        // Enable toggles
+        var toggles = _.pluck(this.options.meta.components, "view");
+        this.toggles = [];
+
+        _.each(toggles, function(toggle) {
+            if (this.availableToggles[toggle]) {
+                this.toggles.push({toggle: toggle, class: this.availableToggles[toggle]});
+            }
+        }, this);
+
         this.$el.html(this.template(this));
-        if (this.options.context.has("modelId") && !_.isEmpty(this.tabs)) {
-            this.$(".tabbable").toggleClass("hide");
-        }
     },
 
     _placeComponent: function(component) {
         this.$el.append(component.el);
 
-        if (this.options.meta.defaultToggle && (component.name !== this.options.meta.defaultToggle)) {
+        if (this.first) {
+            this.first = false;
+        } else {
             component.hide();
         }
     },

@@ -1,12 +1,3 @@
-<div class="tabbable hide">
-    <ul class="nav nav-tabs related-tabs">
-        {{#each tabs}}
-        <li><a href="#">{{name}}</a></li>
-        {{/each}}
-    </ul>
-    <div class="tab-content"></div>
-</div>
-
 <form class="form-search" action="">
     <div class="row-fluid">
         <div class="span9 myfilter">
@@ -24,11 +15,10 @@
             </div>
         </div>
         <div class="span3">
-            <div class="pull-right">
-                <a href="" class="btn btn-invisible" data-view="activitystream"><i class="icon-th-list"></i></a>
-                <a href="" class="btn btn-invisible" data-view="timeline"><i class="icon-time"></i></a>
-                <a href="" class="btn btn-invisible" data-view="calendar"><i class="icon-calendar"></i></a>
-                <a href="" class="btn btn-invisible" data-view="list"><i class="icon-table"></i></a>
+            <div class="pull-right toolbar-btns">
+                {{#each toggles}}
+                <a href="" class="btn btn-invisible" data-view="{{toggle}}"><i class="{{class}}"></i></a>
+                {{/each}}
             </div>
         </div>
     </div>
