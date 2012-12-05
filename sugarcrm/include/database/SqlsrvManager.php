@@ -591,7 +591,7 @@ EOSQL;
         return function_exists("sqlsrv_connect");
     }
 
-    public function prepareStatement($sql, array $data, array $fieldDefs = array() )
+    public function prepareStatement($sql, array $fieldDefs = array() )
     {
         return new SqlsrvPreparedStatement($this, $sql, $data, $fieldDefs );
     }

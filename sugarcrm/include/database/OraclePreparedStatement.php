@@ -144,7 +144,7 @@ class OraclePreparedStatement extends PreparedStatement
 
 
 
-  public function preparePreparedStatement($sql, array $data, array $fieldDefs = array() ){
+  public function preparePreparedStatement($sql, array $fieldDefs = array() ){
 
 
       echo "\n\n---------------------------------------------\n";
@@ -182,16 +182,8 @@ class OraclePreparedStatement extends PreparedStatement
                  $fields[] = $name;
                  $dataTypes[] = $dataType;
 
-                 //echo "sugarDataType:\n";
-                 //var_dump($sugarDataType);
-                 //if ( $sugarDataType === "" ) //no type, default to varchar
-                 //    $dataTypes[] = SQLT_CHR;
-                 //else
-                 //    $dataTypes[] = $sugarDataType;
                  $sql = substr($sql, $nextParam+1); // strip off the ?
-                 echo "remaining sql is: $sql\n";
                  $nextParam = strpos( $sql, "?" ); // look for another param
-                 echo "another nextParam is at $nextParam\n";
                  $i++;
               }
           }
@@ -199,13 +191,11 @@ class OraclePreparedStatement extends PreparedStatement
           // add the remaining sql
           $cleanedSql .= $sql;
 
-          echo "finished building sql: $cleanedSql \n";
           var_dump($dataTypes);
 
       }
       else {
          $errorMsg ="ERROR Prepared Statements without field definitions not yet supported.";
-         echo "$errorMsg \n";
          return $errorMsg;
       }
 
@@ -239,7 +229,7 @@ class OraclePreparedStatement extends PreparedStatement
 
 
 
-   public function executePreparedStatement($data){
+   public function executePreparedStatement(array $data){
 
       echo "--------------------------------------------------\n";
       echo "==> OraclePreparedStatment.executePreparedStatement: entry    data is:\n";

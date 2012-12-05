@@ -1836,7 +1836,7 @@ EOQ;
       	return "'$guidStart-' || HEX(generate_unique())";
     }
 
-    public function prepareStatement($sql, array $data, array $fieldDefs = array() )
+    public function prepareStatement($sql, array $fieldDefs = array() )
     {
         return new IBMDB2PreparedStatement($this, $sql, $data, $fieldDefs = array() );
     }

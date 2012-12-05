@@ -2251,7 +2251,7 @@ EOQ;
         return parent::sqlLikeString($str, $wildcard, $appendWildcard);
     }
 
-    public function prepareStatement($sql, array $data, array $fieldDefs = array() )
+    public function prepareStatement($sql, array $fieldDefs = array() )
     {
         return new MysqliPreparedStatement($this, $sql, $data);
     }

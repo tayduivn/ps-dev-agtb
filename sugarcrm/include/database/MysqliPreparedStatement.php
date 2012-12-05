@@ -95,32 +95,22 @@ class MysqliPreparedStatement extends PreparedStatement
    * @param array    fieldDefs field definitions
    *
    */
-  public function preparePreparedStatement($sqlText, array $data, array $fieldDefs = array() ){
+  public function preparePreparedStatement($sqlText,  array $fieldDefs = array() ){   // removed array $data,
 
-      echo "preparePreparedStatement: entry  sqlText: >$sqlText <  data:\n" ;
-      var_dump($data);
-      echo "fieldDefs:\n";
-      var_dump($fieldDefs);
-      echo "------\n\n";
 
       if (!($this->stmt = $this->dblink->prepare($sqlText))) {
-          echo "preparePreparedStatement: Prepare Failed! \n";
           return "Prepare failed: (" . $this->dblink->errno . ") " . $this->dblink->error;
       }
       $num_args = $this->stmt->param_count;
-      echo "preparePreparedStatement: num_args from prepare: $num_args \n";
       $this->bound_vars = $bound = array_fill(0, $num_args, null);
       $types = "";
       for($i=0; $i<$num_args;$i++) {
-          $types .= $this->ps_type_map[ $fieldDefs[$i]["type"] ];
+          $thisType = trim($fieldDefs[$i]["type"]);
+          $types .= $this->ps_type_map[ $thisType ];
           $bound[$i] =& $this->bound_vars[$i];
       }
-      echo "types: >$types<\n";
-      array_unshift($bound, $types);
+      array_unshift($bound, $types);    // puts $types in front of the data elements
 
-      echo "Binding the data: types then vars\n";
-      var_dump($bound);
-      // Pre-bind the internal data array to    $this->bound_vars
       call_user_func_array(array($this->stmt, "bind_param"), $bound);
 
       return $this;
@@ -129,22 +119,17 @@ class MysqliPreparedStatement extends PreparedStatement
 
 
 
-   public function executePreparedStatement($data){
-
-      echo "--------------------------------------------------\n";
-      echo "executePreparedStatement: entry    data:\n";
-      var_dump($data);
+   public function executePreparedStatement(array $data){
 
       if ($this->stmt->param_count != count($data) )
           return "incorrect number of elements. Expected " . $this->stmt->param_count . " but got " . count($data);
 
-      // transfer the data from the input array to the bound array
-      for($i=0; $i<count($data);$i++) {
+      for($i=0; $i<$this->stmt->param_count;$i++) {
          $this->bound_vars[$i] = array_shift($data);
       }
 
       if (!($res = $this->stmt->execute())) {
-          return "Execute Prepared Statement failed: (" . $dblink->errno . ") " . $dblink->error;
+          return "Execute Prepared Statement failed: (" ; //. $dblink->errno . ") " . $dblink->error;
       }
 
       return $this->stmt;

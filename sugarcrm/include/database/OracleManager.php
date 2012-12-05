@@ -1826,7 +1826,7 @@ EOQ;
       	return "'$guidStart-' || sys_guid()";
     }
 
-    public function prepareStatement($sql, array $data, array $fieldDefs = array() )
+    public function prepareStatement($sql, array $fieldDefs = array() )
     {
         return new OraclePreparedStatement($this, $sql, $data, $fieldDefs);
     }

@@ -2769,17 +2769,13 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
     /**
      * @group preparedStatements
      */
-    public function testPreparedStatementsSmoketest()
+    public function testPreparedStatements()
     {
         if ( !$this->_db->supports('prepared_statements') )
         {
             $this->markTestSkipped('DBManager does not support prepared statements');
         }
 
-        $this->_db->usePreparedStatements = true;
-
-        echo "-------------------------------------------\n";
-        echo "Initializing testPreparedStatementsSmoketest\n";
         $tableName = "testPreparedStatement";
         $params =  array(
             'id' => array (
@@ -2810,27 +2806,31 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
         }
         $this->_db->createTableParams($tableName, $params, $indexes);
 
-        /*
-        echo "Preparing stmt\n";
+        // turn on prepared statements
+        $this->_db->usePreparedStatements = true;
+
+
+        // "== Prepared Statement API Test ==\n";
         $data = array(1, "col1 data", "col2 data");
         $sql = "INSERT INTO testPreparedStatement(id,col1,col2) VALUES(?int, ?, ?varchar)";
         $fieldDefs = array( array( 'name' => 'id', ),
                             array( 'name' => 'col1', ),
                             array( 'name' => 'col2', ),
                           );
-        $ps = $this->_db->prepareStatement($sql, $data, $fieldDefs);
 
-        echo "Executing stmt\n";
-        $result = $ps->executeStatement($data);
-        echo "result:";
-        var_dump($result);
-        */
+        $ps = $this->_db->prepareStatement($sql, $fieldDefs);     // $data,
+        $ps->executePreparedStatement($data);    //executeStatement
+        $data = array(2, "1", "col2 data");
+        $ps->executePreparedStatement($data);
+        $result = $this->_db->query("SELECT * FROM $tableName WHERE ID in (1,2)");
+        $resultsCnt = 0;
+        while(($row = $this->_db->fetchByAssoc($result)) != null)
+            $resultsCnt++;
+        $this->assertEquals($resultsCnt, 2, "Incorrect number or records. Found: $resultsCnt Expected: 2");
 
-        echo "=======================\n";
-        echo "== insertParams Test ==\n";
-        echo "=======================\n";
 
-        $id = 3;
+        // "== insertParams Test ==\n";
+        $id = mt_rand();
         $data =  array('id' => $id, 'col1' => "col1 data for id $id", 'col2' => "col2 data for id $id");
         $this->_db->insertParams($tableName, $params, $data, null, true, true);
         $result = $this->_db->query("SELECT * FROM $tableName WHERE ID = $id");
@@ -2839,58 +2839,93 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
             $resultsCnt++;
         $this->assertEquals($resultsCnt, 1, "Incorrect number or records. Found: $resultsCnt Expected: 1 row for ID: $id");
 
+
+
+        // "== insert Bean Test  ==\n";
+        $bean = new Contact();
+        $bean->last_name = 'foobar' . mt_rand();
+        $bean->id   = 'test' . mt_rand();
+        //$this->_db->insert($bean);
+        $this->_db->insertParams($bean->getTableName(), $bean->getFieldDefinitions(), get_object_vars($bean),
+            isset($bean->field_name_map)?$bean->field_name_map:null, true, true);
+
+        $result = $this->_db->query("select id, last_name from contacts where id = '{$bean->id}'");
+        $row = $this->_db->fetchByAssoc($result);
+        $this->assertEquals($row['last_name'],$bean->last_name);
+        $this->assertEquals($row['id'],$bean->id);
+
+
+
+        // "== update Bean Test  ==\n";
+        $bean->last_name = 'newfoobar' . mt_rand();   // change their lastname field
+        $this->_db->updateSQL($bean, array('id'=>$bean->id), true);
+        $result = $this->_db->query("select id, last_name from contacts where id = '{$bean->id}'");
+        $row = $this->_db->fetchByAssoc($result);
+        $this->assertEquals($row['last_name'],$bean->last_name);
+        $this->assertEquals($row['id'],$bean->id);
+
+
+
+        // "== delete Bean Test  ==\n";
+        $sql=$this->_db->deleteSQL($bean,array('id'=>$bean->id), true);
+        $this->_db->query($sql,true,"Error deleting from table");
+        $result = $this->_db->query("select deleted from contacts where id = '{$bean->id}'");
+        $row = $this->_db->fetchByAssoc($result);
+        var_dump($row);
+        $this->assertEquals($row['deleted'],'1');
+
+
+
+        /*
+        // "== simple SQL Select Test  ==\n";
+        $sql = "SELECT * FROM testPreparedStatement WHERE ID = ?int ";
+        $fieldDefs = array( array( 'name' => 'id', ),
+            array( 'name' => 'col1', ),
+            array( 'name' => 'col2', ),
+        );
+        $data = array(1);
+        $ps = $this->_db->prepareStatement($sql, $data, $fieldDefs);
+        $ps->executeStatement($data);
+        echo "DBManagerTest is done. ps:\n";
+        print_r($ps);
+        $ps->bind_result($p1);
+        while ($ps->fetch()) {
+            print_r($p1);
+        }
+        */
+
+        //$resultsCnt = 0;
+        //while(($row = $this->_db->fetchByAssoc($result)) != null)
+        //    $resultsCnt++;
+        //$this->assertEquals($resultsCnt, 1, "Incorrect number of records. Found: $resultsCnt Expected: 2");
+
+/*
+
+        // "== complex SQL Select Test  ==\n";
+        $sql = "SELECT * FROM testPreparedStatement(id,col1,col2) WHERE ID = ?int "
+             . " AND ID = (SELECT col1 FROM testPreparedStatement WHERE ID = ?int)";
+        $fieldDefs = array( array( 'name' => 'id', ),
+            array( 'name' => 'col1', ),
+            array( 'name' => 'col2', ),
+        );
+        $data = array(1, 2);
+        $ps = $this->_db->prepareStatement($sql, $data, $fieldDefs);
+        $result=$ps->executeStatement($data);
+        var_dump($result);
+
+        //$resultsCnt = 0;
+        //while(($row = $this->_db->fetchByAssoc($result)) != null)
+        //    $resultsCnt++;
+        //$this->assertEquals($resultsCnt, 1, "Incorrect number of records. Found: $resultsCnt Expected: 2");
+
+*/
+        // turn off prepared statements
+        $this->_db->usePreparedStatements = false;
+
+        // cleanup
+        $this->_db->query("delete from contacts where id = '{$bean->id}'");
+        $this->_db->dropTableName($tableName);
     }
-
-
-    /**
-     * @group preparedStatements
-     */
-    public function testPreparedStatementsDirectSQL()
-    {
-        if ( !$this->_db->supports('prepared_statements') )
-        {
-            $this->markTestSkipped('DBManager does not support prepared statements');
-        }
-
-        $this->_db->preInstall();
-
-        // setup test table and fill it with data if it doesn't already exist
-        $table = 'testRecursive_';
-        if(!$this->_db->tableExists($table)) {
-            $table = $this->setupRecursiveStructure();
-        }
-
-        // Testing lineage
-        $lineageSQL = $this->_db->getRecursiveSelectSQL($table, 'id', 'parent_id', 'id, parent_id, db_level', true, "id ='$idCurrent'");
-
-        $result = $this->_db->query($lineageSQL);
-
-        while($row = $this->_db->fetchByAssoc($result))
-        {
-
-            $this->assertEquals($idCurrent, $row['id'], "Incorrect id found");
-            if(!empty($row['parent_id'])) $idCurrent = $row['parent_id'];
-            $this->assertEquals($levels--, $row['db_level'], "Incorrect level found");
-        }
-        $this->assertEquals('1', $idCurrent, "Incorrect top node id");
-        $this->assertEquals(0, $levels+1, "Incorrect end level"); //Compensate for extra -1 after last node level assert
-
-        // Testing children
-        $idCurrent = $startId;
-        $childcount = 0;
-        $childrenSQL = $this->_db->getRecursiveSelectSQL($table,'id','parent_id', 'id, parent_id, db_level',false, "id ='$idCurrent'");
-
-        $result = $this->_db->query($childrenSQL);
-
-        while(($row = $this->_db->fetchByAssoc($result)) != null)
-        {
-            $this->assertEquals(0, strpos($row['id'], $idCurrent), "Row id doesn't start with starting id as expected");
-            $childcount++;
-        }
-        $this->assertEquals($nrchildren, $childcount, "Number of found descendants does not match expectations");
-
-    }
-
 
 
 

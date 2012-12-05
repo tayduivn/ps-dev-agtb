@@ -125,7 +125,7 @@ class SqlsrvPreparedStatement extends PreparedStatement
 
 
 
-  public function preparePreparedStatement($sqlText, array $data, array $fieldDefs = array() ){
+  public function preparePreparedStatement($sqlText, array $fieldDefs = array() ){
 
       echo "preparePreparedStatement: entry  sqlText: >$sqlText <  data:\n" ;
       var_dump($data);
@@ -173,7 +173,7 @@ class SqlsrvPreparedStatement extends PreparedStatement
 
 
 
-   public function executePreparedStatement($data){
+   public function executePreparedStatement(array $data){
 
       echo "--------------------------------------------------\n";
       echo "executePreparedStatement: entry    data:\n";
