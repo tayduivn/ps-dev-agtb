@@ -530,9 +530,15 @@ class RestService extends ServiceBase {
      * @return bool
      */
     protected function setPostHeaders() {
-        $this->setHeader('Cache-Control', 'no-cache, must-revalidate');
-        $this->setHeader('Pragma', 'no-cache');
-        $this->setHeader('Expires', 'Sat, 26 Jul 1997 05:00:00 GMT');
+        if(!$this->hasHeader('Cache-Control')) {
+            $this->setHeader('Cache-Control', 'no-cache, must-revalidate');    
+        }
+        if(!$this->hasHeader('Pragma')) {
+            $this->setHeader('Pragma', 'no-cache');
+        }
+        if(!$this->hasHeader('Expires')) {
+            $this->setHeader('Expires', 'Sat, 26 Jul 1997 05:00:00 GMT');
+        }
         return true;
     }
 
@@ -541,9 +547,15 @@ class RestService extends ServiceBase {
      * @return bool
      */
     protected function setGetHeaders() {
-        $this->setHeader('Cache-Control','');
-        $this->setHeader('Expires', '');
-        $this->setHeader('Pragma', '');
+        if(!$this->hasHeader('Cache-Control')) {
+            $this->setHeader('Cache-Control','');
+        }
+        if(!$this->hasHeader('Pragma')) {
+            $this->setHeader('Expires', '');
+        }
+        if(!$this->hasHeader('Expires')) {
+            $this->setHeader('Pragma', '');
+        }        
         return true;
     }
     /**
