@@ -40,7 +40,16 @@ table.dataTable {
   th.sorting_asc,
   th.sorting_desc {
   }
+
+
+  tbody tr.selected td {
+    //background-color: @tableBackgroundHover;
+    //background-image:url('@textureSecondary');
+    background-color:red;
+  }
 }
+
+
 
 //removed in UIUX-130 and moved to preview.less
 /*table.table.dataTable td.highlighted {

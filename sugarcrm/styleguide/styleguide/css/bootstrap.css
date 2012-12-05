@@ -5687,6 +5687,7 @@ table.dataTable th.sorting {
   font-weight:normal;
   color:#58595b;
 }
+table.dataTable tbody tr.selected td { background-color:red; }
 .dataTables_filter {
   position:relative;
   margin:-1px 1px 0 0;
