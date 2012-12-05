@@ -111,7 +111,7 @@ class SugarForecasting_Filter_TimePeriodFilterTest extends Sugar_PHPUnit_Framewo
         $timePeriodToCheck = TimePeriod::getEarliest($leafType);
 
         while($timePeriodToCheck != null) {
-            if($timedate->fromDbDate($timePeriodToCheck->start_date)->format('n') == $startMonth) {
+            if($timedate->fromDbDate($timePeriodToCheck->start_date)->format('n') == $timedate->fromDbDate($startDate)->format('n')) {
                 $this->assertEquals(1, $timePeriodToCheck->leaf_cycle);
             }
             $timePeriodToCheck = $timePeriodToCheck->getNextTimePeriod();
