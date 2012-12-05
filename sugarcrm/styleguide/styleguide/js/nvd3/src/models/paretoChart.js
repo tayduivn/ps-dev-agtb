@@ -109,7 +109,7 @@ nv.models.paretoChart = function() {
 
       var availableWidth = (width  || parseInt(container.style('width')) || 960) - margin.left - margin.right
         , availableHeight = (height || parseInt(container.style('height')) || 400) - margin.top - margin.bottom
-        , expandMode = container.node().offsetParent.className.indexOf('expanded') !== -1;
+        , expandMode = container.node().parentNode.className.indexOf('expanded') !== -1;
 
       margin.left = (expandMode) ? 50 : 40;
       margin.bottom = (expandMode) ? 40 : 34;

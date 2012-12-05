@@ -404,6 +404,46 @@ nv.utils.roundedRectangle = function (x, y, width, height, radius)
        + "a" + radius + "," + radius + " 0 0 1 " + radius + "," + -radius
        + "z";
 }
+
+nv.utils.dropShadow = function (id, defs)
+{
+  var filter = defs.append('filter')
+        .attr('id', id)
+        .attr('height', '130%');
+  var offset = filter.append('feOffset')
+        .attr('in','SourceGraphic')
+        .attr('result','offsetBlur')
+        .attr('dx',2)
+        .attr('dy',2); //how much to offset
+  var color = filter.append('feColorMatrix')
+        .attr('in','offsetBlur')
+        .attr('result','matrixOut')
+        .attr('type','matrix')
+        .attr('values','1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 1 0');
+  var blur = filter.append('feGaussianBlur')
+        .attr('in','matrixOut')
+        .attr('result','blurOut')
+        .attr('stdDeviation',1); //stdDeviation is how much to blur
+  var merge = filter.append('feMerge');
+      merge.append('feMergeNode'); //this contains the offset blurred image
+      merge.append('feMergeNode')
+        .attr('in','SourceGraphic'); //this contains the element that the filter is applied to
+
+  return 'url(#'+ id +')';
+}
+// <svg xmlns="http://www.w3.org/2000/svg" version="1.1">
+//   <defs>
+//     <filter id="f1" x="0" y="0" width="200%" height="200%">
+//       <feOffset result="offOut" in="SourceGraphic" dx="20" dy="20" />
+//       <feColorMatrix result="matrixOut" in="offOut" type="matrix"
+//       values="0.2 0 0 0 0 0 0.2 0 0 0 0 0 0.2 0 0 0 0 0 1 0" />
+//       <feGaussianBlur result="blurOut" in="matrixOut" stdDeviation="10" />
+//       <feBlend in="SourceGraphic" in2="blurOut" mode="normal" />
+//     </filter>
+//   </defs>
+//   <rect width="90" height="90" stroke="green" stroke-width="3"
+//   fill="yellow" filter="url(#f1)" />
+// </svg>
 nv.models.axis = function() {
 
   //============================================================
@@ -4429,7 +4469,7 @@ nv.models.paretoChart = function() {
 
       var availableWidth = (width  || parseInt(container.style('width')) || 960) - margin.left - margin.right
         , availableHeight = (height || parseInt(container.style('height')) || 400) - margin.top - margin.bottom
-        , expandMode = container.node().offsetParent.className.indexOf('expanded') !== -1;
+        , expandMode = container.node().parentNode.className.indexOf('expanded') !== -1;
 
       margin.left = (expandMode) ? 50 : 40;
       margin.bottom = (expandMode) ? 40 : 34;
