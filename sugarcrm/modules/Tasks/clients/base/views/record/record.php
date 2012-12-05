@@ -56,12 +56,19 @@ $viewdefs['Tasks']['base']['view']['record'] = array(
             'label' => 'LBL_CLOSE_BUTTON_TITLE',
             'events' => array(
                 'click' => 'function(e){
-                var self = this;                    
-                this.model.set("status", "Completed");
+                var self = this; 
+                app.alert.show("close_task", {level: "process", title: app.lang.getAppString("LBL_PROCESSING_REQUEST")});
+                this.model.set("status", "Completed", {silent:true});
                 this.model.save({}, {
                     success: function() {
+                        app.alert.dismiss("close_task");            
                         self.render();
-                    }
+                    },
+                    error:function(error) {
+                        app.alert.dismiss("close_task");                     
+                        app.alert.show("close_task_error", {level: "error", auto_close:true, title: app.lang.getAppString("ERR_AJAX_LOAD")});                    
+                        app.logger.error("Failed to close a task. " + error);
+                    }                    
                 });                    
             }'),                
         ),                       
