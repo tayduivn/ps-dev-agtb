@@ -8,9 +8,8 @@
                       <option value="favorites">My Favorites</option>
                       <option value="my{{title}}">My {{title}}</option>
                       <option value="mycustomfilter">My Custom Filter</option>
-                      <!-- <option class="primary newfilter">+ Create a filter</option> -->
+                      <option class="primary disabled filter-new">+ Create a filter</option>
                     </select>
-                    <!--<legend class="chzn-select-legend">Filter <i class="icon-caret-down"></i></legend>-->
                 </div>
             </div>
         </div>
@@ -106,22 +105,22 @@
 
 
       // select filter dropdown option
-      $("{{sourceid}} #search_filter_chzn .chzn-results > li").bind('click',function(e){
-          var li_active = $("#{{sourceid}} ul.chzn-choices").find('.search-choice').first().attr('id'),
-              li_orig = li_active.replace("_chzn_c_","_chzn_o_");
+//       $("{{sourceid}} #search_filter_chzn .chzn-results > li").bind('click',function(e){
+//           var li_active = $("#{{sourceid}} ul.chzn-choices").find('.search-choice').first().attr('id'),
+//               li_orig = li_active.replace("_chzn_c_","_chzn_o_");
+// console.log(li_orig)
+//           // if active filter "pills" exist, remove pill from dom
+//           // if($("ul.chzn-choices").find('.search-choice').length > 1) {
+//           //   $("ul.chzn-choices").find('.search-choice').first().remove();
+//           // }
+//           $("#{{sourceid}} #"+li_orig).removeClass("result-selected").addClass("active-result");
 
-          // if active filter "pills" exist, remove pill from dom
-          // if($("ul.chzn-choices").find('.search-choice').length > 1) {
-          //   $("ul.chzn-choices").find('.search-choice').first().remove();
-          // }
-          $("#{{sourceid}} #"+li_orig).removeClass("result-selected").addClass("active-result");
-
-          if($('#{{sourceid}} .chzn-container').hasClass('chzn-container-active') === true ) {
-              $('#{{sourceid}} .chzn-container').removeClass('chzn-container-active');
-          }
-          e.stopPropagation();
-          e.preventDefault();
-      });
+//           if($('#{{sourceid}} .chzn-container').hasClass('chzn-container-active') === true ) {
+//               $('#{{sourceid}} .chzn-container').removeClass('chzn-container-active');
+//           }
+//           e.stopPropagation();
+//           e.preventDefault();
+//       });
 
 
       // table - mass update
@@ -204,12 +203,12 @@
 
       // prepend legend to .chzn-choices
       $('#{{sourceid}} #search_filter_chzn .chzn-choices').prepend(
-          '<legend class="chzn-select-legend"><i class="icon-caret-down"></i></legend>'
+          '<legend class="chzn-select-legend">Filter <i class="icon-caret-down"></i></legend>'
       );
 
       // append create filter icon
-      $('#{{sourceid}} #search_filter_chzn').append('<div class="filter-create"><i class="icon-plus"></i></div>');
-      $('#{{sourceid}} .filter-create').on('mousedown', function(e){
+      //$('#{{sourceid}} #search_filter_chzn').append('<div class="filter-create"><i class="icon-plus"></i></div>');
+      $('#{{sourceid}} .filter-new').on('mousedown click', function(e){
           $(this).parents('.form-search').find('.filter-options').removeClass('hide');
           e.stopPropagation();
           e.preventDefault();
