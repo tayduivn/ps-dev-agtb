@@ -608,10 +608,10 @@ class MetadataApi extends SugarApi {
             {
                 $currency = array();
                 $currency['name'] = $current->name;
-                $currency['iso'] = $current->iso4217;
+                $currency['iso4217'] = $current->iso4217;
                 $currency['status'] = $current->status;
                 $currency['symbol'] = $current->symbol;
-                $currency['rate'] = $current->conversion_rate;
+                $currency['conversion_rate'] = $current->conversion_rate;
                 $currency['name'] = $current->name;
                 $currency['date_entered'] = $current->date_entered;
                 $currency['date_modified'] = $current->date_modified;
