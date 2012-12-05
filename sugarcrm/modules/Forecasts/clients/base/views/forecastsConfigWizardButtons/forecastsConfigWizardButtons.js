@@ -222,7 +222,7 @@
     switchNavigationTab:function (next) {
         $(this.navTabs[next]).removeClass('disabled');
 
-        $(this.navTabs[this.activePanel]).toggleClass('active');
+        $(this.navTabs[this.activePanel]).toggleClass('active').addClass('highlight');
         $(this.navTabs[next]).toggleClass('active');
     }
 })
