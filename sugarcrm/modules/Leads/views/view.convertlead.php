@@ -380,7 +380,7 @@ class ViewConvertLead extends SugarView
             $lead->contact_id = $_REQUEST['reports_to_id'];
             $beans['Contacts']->retrieve($_REQUEST['reports_to_id']);
             $beans['Contacts']->new_with_id = false;
-            // Using this field only for selecting accounts
+            // Using this field only for selecting Contacts
             unset($_REQUEST['reports_to_id']);
         }
         else
