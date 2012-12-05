@@ -6638,6 +6638,8 @@ h1 span { margin-left:5px; }
   right:3px;
   top:6px;
 }
+.form-search .toolbar-btns a.btn>i { color:#8b8c8e !important; }
+.form-search .toolbar-btns a.btn.active > i { color:#262627 !important; }
 .form-search input { padding:4px 8px; }
 .form-search .actions { position:absolute; }
 .form-search .extend {
