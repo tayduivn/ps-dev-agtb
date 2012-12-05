@@ -26,6 +26,8 @@
             }
         });
         app.events.on("app:sync:complete", function() {
+            self.tourBgImg = app.config.siteUrl + "/clients/base/views/tourguide/tour.jpg";
+            self.render();
             if( app.user.get("show_tour") ) {
                 // disable the tour flag on initial app sync
                 app.api.call("update", app.api.buildURL("me/tour"));
@@ -185,7 +187,7 @@
     },
     getData: function() {
         var self = this;
-        return $.getJSON(app.config.siteUrl + "clients/base/views/tourguide/data.json", null, function(tourData) {
+        return $.getJSON(app.config.siteUrl + "/clients/base/views/tourguide/data.json", null, function(tourData) {
                 if( tourData.error ) {
                     app.alert.show('retrieve_failed', {level: 'error', title:'Tour Failed', messages: 'Failed to retrieve ' +
                         'tour data: '+ tourData.error, autoClose: false});

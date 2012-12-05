@@ -6,7 +6,7 @@
     <div class="modal-body">
         <div class="tour-modal-description">
             <p>Take a tour of Summer! (Estimated time: 15 mins)</p>
-            <div class="tour-modal-image"></div>
+            <img src="{{tourBgImg}}">
         </div>
         <div class="modal-footer">
             <a class="btn " data-dismiss="modal">{{str "LBL_CANCEL_BUTTON_LABEL"}}</a>
