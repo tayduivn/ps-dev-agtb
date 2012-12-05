@@ -49,7 +49,6 @@ describe("The forecastsConfigTimeperiods view", function(){
 
     describe("timeperiod selects setup method", function() {
         beforeEach(function() {
-            testStartDatePickerMethodStub = sinon.stub(view, "_setUpTimeperiodPicker", function() {return field;});
             testIntervalMethodStub = sinon.stub(view, "_setUpTimeperiodIntervalBind", function() {return field;});
             testShowFWBWMethodStub = sinon.stub(view, "_setUpTimeperiodShowField", function() {return field;});
             field = {
@@ -63,7 +62,6 @@ describe("The forecastsConfigTimeperiods view", function(){
 
         afterEach(function() {
             delete view.model;
-            testStartDatePickerMethodStub.restore();
             testIntervalMethodStub.restore();
             testShowFWBWMethodStub.restore();
             delete field;
@@ -84,13 +82,6 @@ describe("The forecastsConfigTimeperiods view", function(){
             expect(testShowFWBWMethodStub).toHaveBeenCalledWith(field);
         });
 
-        it("should set up timeperiod start date picker", function() {
-            field.name = "timeperiod_start_picker";
-            view._renderField(field);
-            expect(_renderFieldStub).toHaveBeenCalledWith(field);
-            expect(testStartDatePickerMethodStub).toHaveBeenCalledWith(field);
-        });
-
         //BEGIN SUGARCRM flav=pro ONLY
         it("should set up day field", function() {
             field.name = "timeperiod_interval";
@@ -104,7 +95,6 @@ describe("The forecastsConfigTimeperiods view", function(){
             field.name = "timeperiod_config_other";
             view._renderField(field);
             expect(_renderFieldStub).toHaveBeenCalledWith(field);
-            expect(testStartDatePickerMethodStub).not.toHaveBeenCalled();
             //BEGIN SUGARCRM flav=pro ONLY
                 expect(testIntervalMethodStub).not.toHaveBeenCalled();
             //END SUGARCRM flav=pro ONLY
@@ -125,46 +115,18 @@ describe("The forecastsConfigTimeperiods view", function(){
                 },
                 set: function(key, value) {}
                 });
-            monthField = {
-                model: {
-                    get: function(param) {
-                        return {};
-                    },
-                    set: function(key, value) {}
-                },
-                name: 'timeperiod_start_month',
-                def: {
-                    options: {}
-                }
-            }
-            dayField = {
-                model: {
-                    get: function(param) {
-                        return {};
-                    },
-                    set: function(key, value) {}
-                },
-                name: 'timeperiod_start_day',
-                def: {
-                    options: {}
-                }
-            }
             intervalField = {
                 name: 'timeperiod_interval',
                 def: {
                     options: {}
                 }
             }
-            monthField = view._setUpTimeperiodStartMonthBind(monthField);
-            dayField = view._setUpTimeperiodStartDayBind(dayField);
             intervalField = view._setUpTimeperiodIntervalBind(intervalField);
             intervalField.model = view.model;
 
         });
 
         afterEach(function() {
-            delete monthField;
-            delete dayField;
             delete intervalField;
             delete testValue;
             delete testIntervalValue;
@@ -172,33 +134,9 @@ describe("The forecastsConfigTimeperiods view", function(){
         });
 
         it("should add the event handlers to update the selections for the field", function() {
-            expect(monthField.events["change select"]).toBeDefined();
-            expect(monthField.events["change select"]).toEqual("_updateDaysForMonth");
-            expect(monthField._updateDaysForMonth).toBeDefined();
-            expect(monthField._buildDaysOptions).toBeDefined();
-            expect(dayField.events["change select"]).toBeDefined();
-            expect(dayField.events["change select"]).toEqual("_updateDays");
-            expect(dayField._updateDays).toBeDefined();
             expect(intervalField.events["change select"]).toBeDefined();
             expect(intervalField.events["change select"]).toEqual("_updateIntervals");
             expect(intervalField._updateIntervals).toBeDefined();
-        });
-
-        it("should check that the method to build the day options was called with the correct month", function() {
-            var testDayMethodStub = sinon.stub(monthField, "_buildDaysOptions", function() {return '';});
-            monthField._updateDaysForMonth({}, {selected: testValue});
-            expect(testDayMethodStub).toHaveBeenCalledWith(testValue);
-        });
-
-        it("should change the number of days in the day selector when the user selects a month", function() {
-            var options = monthField._buildDaysOptions(testValue);
-
-            //build expected string, based on month of March,
-            var expectedOptions = '<option value=""></option>';
-            for(var i = 1; i <= 31; i++) {
-                expectedOptions +='<option value="'+i+'">'+i+'</option>';
-            }
-            expect(options).toEqual(expectedOptions);
         });
 
         //BEGIN SUGARCRM flav=pro ONLY
