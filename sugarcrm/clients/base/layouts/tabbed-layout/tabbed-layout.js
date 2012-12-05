@@ -10,8 +10,6 @@
     },
 
     renderHtml: function() {
-        console.log("render HTML", this);
-        debugger;
         this.$el.html(this.template(this));
     },
 
