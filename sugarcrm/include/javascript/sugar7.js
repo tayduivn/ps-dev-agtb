@@ -16,6 +16,37 @@
                 route: "logout"
             },
             {
+                name: "bwc",
+                route: "bwc/*url",
+                callback: function(url) {
+                    app.logger.debug("BWC: " + url);
+
+                    var frame = $('#bwc-frame');
+                    if (frame.length === 1 &&
+                        'index.php' + frame.get(0).contentWindow.location.search === url
+                        ) {
+                        // update hash link only
+                        return;
+                    }
+
+                    // if only index.php is given, redirect to Home
+                    if (url === 'index.php') {
+                        app.router.navigate('#Home', {trigger: true});
+                        return;
+                    }
+                    var params = {
+                        layout: 'bwc',
+                        url: url
+                    };
+                    var module = /module=([^&]*)/.exec(url);
+                    if (!_.isNull(module) && !_.isEmpty(module[1])) {
+                        params.module = module[1];
+                    }
+
+                    app.controller.loadView(params);
+                }
+            },
+            {
                 name: "list",
                 route: ":module"
             },
