@@ -5,13 +5,14 @@
 .container-fluid.contentflex,
 .container-fluid#contentflex,
 #content .container-fluid {
+  position: absolute;
+  width: 100%;
+  top: 47px;
+  right: 0;
+  bottom: 44px;
+  left: 0;
   margin: 0;
   padding: 0;
-  width: 100%;
-  left: 0;
-  top: 47px;
-  bottom: 44px;
-  position: absolute;
 }
 
 
@@ -23,25 +24,39 @@
 .row-fluid .main-pane,
 .row-fluid .side.sidebar-content {
   position: absolute;
+  height: 100%;
+  top: 0;
+  bottom: 0;
   overflow-y: auto;
   overflow-x: hidden;
-  top: 0px;
-  bottom: 0px;
 }
 
 .row-fluid .main-pane.span8 {
   width: 66%;
-  margin-left: 0px
+  margin-left: 0;
+  .headerpane {
+    position: absolute;
+    right: 1px;
+    left: 0px;
+  }
+  .record {
+    position: absolute;
+    top: 60px;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    margin: 0;
+    overflow: auto;
+  }
 }
 
 .row-fluid .side.sidebar-content.span4 {
+  width: 34%;
   right: 1px;
   margin: 0;
-  width: 34%;
   background-image: url('@{textureSecondary}');
 }
 
 .row-fluid .side.sidebar-content.hide {
   display: none;
 }
-

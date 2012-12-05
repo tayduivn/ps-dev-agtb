@@ -5308,29 +5308,45 @@ footer {
 .tright { text-align:right; }
 .container-fluid { margin-top:20px; }
 .container-fluid.contentflex, .container-fluid#contentflex, #content .container-fluid {
+  position:absolute;
+  width:100%;
+  top:47px;
+  right:0;
+  bottom:44px;
+  left:0;
   margin:0;
   padding:0;
-  width:100%;
-  left:0;
-  top:47px;
-  bottom:44px;
-  position:absolute;
 }
 .row-fluid .main-pane, .row-fluid .side.sidebar-content {
   position:absolute;
+  height:100%;
+  top:0;
+  bottom:0;
   overflow-y:auto;
   overflow-x:hidden;
-  top:0px;
-  bottom:0px;
 }
 .row-fluid .main-pane.span8 {
   width:66%;
-  margin-left:0px;
+  margin-left:0;
+}
+.row-fluid .main-pane.span8 .headerpane {
+  position:absolute;
+  right:1px;
+  left:0px;
+}
+.row-fluid .main-pane.span8 .record {
+  position:absolute;
+  top:60px;
+  right:0;
+  bottom:0;
+  left:0;
+  margin:0;
+  overflow:auto;
 }
 .row-fluid .side.sidebar-content.span4 {
+  width:34%;
   right:1px;
   margin:0;
-  width:34%;
   background-image:url('../../assets/img/texture/furley_bg.png');
 }
 .row-fluid .side.sidebar-content.hide { display:none; }
@@ -9261,117 +9277,57 @@ a.preview-list-item:hover {
   text-decoration:none;
   cursor:pointer;
 }
+.module-edit { display:none; }
 .drawer {
+  position:absolute;
   height:50%;
   width:100%;
-  overflow-y:auto;
-  position:absolute;
-  top:0px;
-}
-#content .container-fluid .row-fluid.module-edit {
-  height:0%;
-  bottom:0%;
-  position:absolute;
-  top:0px;
-  display:none;
-}
-.edit #content .container-fluid .row-fluid.module-edit {
-  height:50%;
+  top:0;
   bottom:50%;
   display:block;
-}
-.edit #content .container-fluid .row-fluid.module-edit .main-pane .headerpane {
-  position:absolute;
-  left:0px;
-  right:1px;
-}
-.edit #content .container-fluid .row-fluid.module-edit .main-pane .record {
-  position:absolute;
-  left:0px;
-  right:0px;
-  top:60px;
-  bottom:0px;
-  overflow:auto;
-  margin:0 0 16px 0;
-}
-.drawer-squeezed {
-  position:absolute;
-  height:50%;
-  top:50%;
-  width:100%;
-  bottom:0px;
-}
-#content .container-fluid .row-fluid.module-view {
-  position:absolute;
-  height:100%;
-  top:0px;
-  bottom:0px;
-  overflow:hidden;
-}
-.edit #content .container-fluid .row-fluid.module-view {
-  height:50%;
-  top:50%;
-}
-.drawer-tab { display:none; }
-.drawer-tab .btn {
-  left:50%;
-  position:absolute;
-  z-index:1011;
-  margin-left:-50px;
-  width:20px;
-  height:15px;
-  top:3px;
-  -webkit-border-radius:0 0 4px 4px;
-  -moz-border-radius:0 0 4px 4px;
-  border-radius:0 0 4px 4px;
-}
-.edit .edit-backdrop, .edit .edit-drawer .btn { display:block; }
-.edit-drawer .btn {
-  left:50%;
-  position:absolute;
-  z-index:1011;
-  margin-left:-50px;
-  width:20px;
-  height:15px;
-  top:3px;
-  display:none;
-  -webkit-border-radius:0 0 4px 4px;
-  -moz-border-radius:0 0 4px 4px;
-  border-radius:0 0 4px 4px;
 }
 .drawer.expand {
   height:auto;
   bottom:60px;
 }
+.module-view { display:block; }
+.drawer-squeezed {
+  position:absolute;
+  height:50%;
+  width:100%;
+  top:50%;
+  bottom:0;
+}
 .drawer-squeezed.collapse {
   height:62px;
   top:auto;
 }
-.edit #content .container-fluid .row-fluid.module-edit.expand {
-  height:auto;
-  bottom:60px;
-}
-.edit #content .container-fluid .row-fluid.module-view.collapse {
-  height:62px;
-  top:auto;
+.drawer-tab { display:none; }
+.drawer-tab .btn {
+  position:absolute;
+  height:15px;
+  width:20px;
+  top:3px;
+  left:50%;
+  margin-left:-10px;
+  z-index:1011;
+  -webkit-border-radius:0 0 4px 4px;
+  -moz-border-radius:0 0 4px 4px;
+  border-radius:0 0 4px 4px;
 }
 .drawer-backdrop {
-  z-index:1010;
-  background-color:white;
-  opacity:.5;
-  display:none;
-  border-top:4px solid #8b8c8e;
-}
-.drawer-backdrop.drawer-squeezed.collapse { height:59px; }
-.edit-backdrop {
-  position:absolute;
-  top:0;
-  right:0;
-  bottom:0;
-  left:0;
   z-index:1010;
   background-color:#ffffff;
   opacity:.5;
   display:none;
   border-top:4px solid #8b8c8e;
 }
+.drawer-backdrop.drawer-squeezed.collapse { height:59px; }
+.drawer-backdrop {
+  position:absolute;
+  top:0;
+  right:0;
+  bottom:0;
+  left:0;
+}
+.drawer-squeezed .drawer-backdrop, .drawer-squeezed .drawer-tab { display:block; }

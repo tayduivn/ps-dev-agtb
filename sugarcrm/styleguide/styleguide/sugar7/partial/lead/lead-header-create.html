@@ -21,12 +21,18 @@
       console.log('click');
     });
 
+    $('body').on('click','.cancel',function(e){
+      $('.module-edit').removeClass('drawer');
+      $('.module-view').removeClass('drawer-squeezed');
+    });
+
     $('body').on('click','.save',function(e){
         if($(this).hasClass('save_save')===false) {
           console.log('first click');
           $(this).addClass('save_save').attr({'href':''});
         } else {
-          $('body').removeClass('edit');
+          $('.module-edit').removeClass('drawer');
+          $('.module-view').removeClass('drawer-squeezed');
           console.log('second click');
           throwMessage('<strong>Success!</strong> You successfully created the lead "Tameka Dammann"', 'success', true);
         }
