@@ -275,7 +275,8 @@
         this.field.showCteIcon = function() {
             if(!this.isEditing) {
                 //this.$el.parent().css('overflow-x', 'visible');
-                this.$el.before(this.cteIcon);
+                //this.$el.before(this.cteIcon);
+                this.$el.find('.click.format').before(this.cteIcon);
             }
         };
 
