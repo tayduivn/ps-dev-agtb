@@ -100,12 +100,14 @@
             }, this);
         }
 
-        this.context.off("drawer:callback").on("drawer:callback", function(model) {
+        this.context.off("drawer:callback");
+        this.context.on("drawer:callback", function(model) {
             callback(model);
             this.hide();
         }, this);
 
-        this.context.off("drawer:hide").on("drawer:hide", this.hide, this);
+        this.context.off("drawer:hide");
+        this.context.on("drawer:hide", this.hide, this);
     },
 
     /**
