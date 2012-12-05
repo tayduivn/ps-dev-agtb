@@ -153,7 +153,8 @@
          */
         additionalComponents: {
             header: {
-                target: '#header'
+                target: '#header',
+                layout: 'header'
             },
             footer: {
                 target: '#footer',

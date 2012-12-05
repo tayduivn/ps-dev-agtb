@@ -24,8 +24,8 @@
         var self = this;
         this.module_list = {};
         if (app.metadata.getModuleNames(true, true)) {
-            _.each(app.metadata.getModuleNames(true, true), function(val, key) {
-                    self.module_list[val] = app.lang.get('LBL_MODULE_NAME',val);
+            _.each(app.metadata.getModuleNames(true, true), function(val) {
+                self.module_list[val] = app.lang.get('LBL_MODULE_NAME',val);
             });
         }
 
