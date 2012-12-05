@@ -184,7 +184,7 @@ abstract class SugarApi {
         $fav_id = SugarFavorites::generateGUID($module,$record);
 
         // get it even if its deleted
-        $fav = BeanFactory::getBean('SugarFavorites', $fav_id, array("deleted" => true));
+        $fav = BeanFactory::getBean('SugarFavorites', $fav_id, array("deleted" => false));
 
         // already exists
         if(!empty($fav->id)) {

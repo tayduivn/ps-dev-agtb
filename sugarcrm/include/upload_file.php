@@ -296,7 +296,7 @@ class UploadFile
 		} else {
             // Try to get the mime type, using application/octet-stream as a default
             $mime = get_file_mime_type($_FILES_element['tmp_name'], 'application/octet-stream');
-        } 
+        }
 		return $mime;
 	}
 
@@ -661,12 +661,7 @@ class UploadStream
     public function register()
     {
         if(isset($GLOBALS['sugar_config']['upload_wrapper_class'])) {
-            // FIXME: after file loading patch is merged, make it use autoloader API
-            if(file_exists("custom/include/{$GLOBALS['sugar_config']['upload_wrapper_class']}.php")) {
-                require_once "custom/include/{$GLOBALS['sugar_config']['upload_wrapper_class']}.php";
-            } else if(file_exists("include/{$GLOBALS['sugar_config']['upload_wrapper_class']}.php")) {
-                require_once "include/{$GLOBALS['sugar_config']['upload_wrapper_class']}.php";
-            }
+            SugarAutoLoader::requireWithCustom("include/{$GLOBALS['sugar_config']['upload_wrapper_class']}.php");
             if(class_exists($GLOBALS['sugar_config']['upload_wrapper_class'])) {
                 self::$wrapper_class = $GLOBALS['sugar_config']['upload_wrapper_class'];
             } else {
