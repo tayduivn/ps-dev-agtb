@@ -52,6 +52,20 @@ $viewdefs['Tasks']['base']['view']['record'] = array(
             'css_class' => 'record-delete',
         ),
         array(
+            'type' => 'button',
+            'label' => 'LBL_CLOSE_BUTTON_TITLE',
+            'events' => array(
+                'click' => 'function(e){
+                var self = this;                    
+                this.model.set("status", "Completed");
+                this.model.save({}, {
+                    success: function() {
+                        self.render();
+                    }
+                });                    
+            }'),                
+        ),                       
+        array(
             'name' => 'sidebar_toggle',
             'type' => 'sidebartoggle',
         ),
