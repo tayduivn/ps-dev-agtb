@@ -66,8 +66,8 @@ $viewdefs['Tasks']['base']['view']['record'] = array(
                     },
                     error:function(error) {
                         app.alert.dismiss("close_task");                     
-                        app.alert.show("close_task_error", {level: "error", auto_close:true, title: app.lang.getAppString("ERR_AJAX_LOAD")});                    
-                        app.logger.error("Failed to close a task. " + error);
+                        app.alert.show("close_task_error", {level: "error", autoClose: true, title: app.lang.getAppString("ERR_AJAX_LOAD")});                    
+                        app.logger.error("Failed to close a task. " + error);                 
                     }                    
                 });                    
             }'),                
