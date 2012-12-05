@@ -1666,6 +1666,7 @@ button.btn.btn-mini, input[type="submit"].btn.btn-mini {
   display:block;
   float:left;
 }
+.navbar .nav > li.hide { display:none; }
 .navbar .nav > li > a {
   float:none;
   padding:12px 8px;

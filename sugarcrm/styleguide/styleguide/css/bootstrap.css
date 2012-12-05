@@ -2256,6 +2256,7 @@ button.btn.btn-mini, input[type="submit"].btn.btn-mini {
   display:block;
   float:left;
 }
+.navbar .nav > li.hide { display:none; }
 .navbar .nav > li > a {
   float:none;
   padding:12px 8px;
@@ -4152,13 +4153,6 @@ div.purpose {
   display:none;
   visibility:hidden;
 }
-#searchForm {
-  position:relative;
-  display:inline-block;
-  float:right;
-}
-#searchForm .btn { margin-right:0px; }
-#searchForm input.search-query { min-width:200px; }
 @media (max-width: 480px) {
   .nav-collapse { -webkit-transform:translate3d(0,0,0); }
   .page-header h1 small {
@@ -5881,6 +5875,14 @@ table.table.dataTable td.details .extend article:nth-child(even), table.table.da
   line-height:8px;
   margin:0 8px;
 }
+#searchForm {
+  position:relative;
+  display:inline-block;
+  float:right;
+}
+#searchForm .btn { margin-right:0px; }
+#searchForm input.search-query { min-width:200px; }
+#searchForm label { display:inline-block; }
 .vcard { display:inline-block; }
 .vcard span { margin-left:70px; }
 .block span.add-on { margin-left:0 !important; }
