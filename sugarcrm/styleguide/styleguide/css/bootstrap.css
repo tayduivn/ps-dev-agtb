@@ -5263,7 +5263,7 @@ table.datatable tr td .actions {
 table.datatable tr td .actions a:hover { color:#343433; }
 table th {
   min-width:20px;
-  color:#58595b !important;
+  color:#58595b;
 }
 table th .btn-group { margin:0 0 0 -10px; }
 table th .btn input { margin:-2px 0 0 0; }
@@ -5578,7 +5578,7 @@ table th, table td { position:relative; }
 table th {
   line-height:26px !important;
   min-width:20px;
-  color:#58595b !important;
+  color:#58595b;
   border-right:1px solid #f5f5f5;
 }
 table th .btn-group {
@@ -5678,6 +5678,14 @@ table.table.dataTable td.details .extend article:first-child {
 table.table.dataTable td.details .extend article:nth-child(even), table.table.dataTable td.details .extend article:nth-child(odd) {
   border-top:1px solid #f5f5f5;
   border-bottom-color:#58595b;
+}
+table.dataTable th a {
+  color:#58595b;
+  text-decoration:none;
+}
+table.dataTable th.sorting {
+  font-weight:normal;
+  color:#58595b;
 }
 .dataTables_filter {
   position:relative;

@@ -26,6 +26,22 @@ table.table.dataTable td.details {
   }
 }
 
+table.dataTable {
+  th {
+    a {
+      color:@gray;
+      text-decoration:none;
+    }
+  }
+  th.sorting {
+    font-weight:normal;
+    color:@gray;
+  }
+  th.sorting_asc,
+  th.sorting_desc {
+  }
+}
+
 //removed in UIUX-130 and moved to preview.less
 /*table.table.dataTable td.highlighted {
      background-color: @infoBackground;
