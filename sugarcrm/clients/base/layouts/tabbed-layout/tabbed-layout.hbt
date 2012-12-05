@@ -1,5 +1,5 @@
 <div class="tabbable">
-    <ul class="nav nav-tabs related-tabs">
+    <ul class="nav nav-tabs related-tabs{{#if options.meta.notabs}} hide{{/if}}">
     </ul>
     <div class="tab-content">
     </div>

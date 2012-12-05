@@ -9,10 +9,13 @@ class FilterPanelLayout
     protected $defaultTab = array("name" => "Activity Stream", "toggles" => array("activitystream", "timeline", "calendar"));
     protected $layout;
     protected $baseLayout;
+    protected $count = 0;
 
     /**
      * Constructor for FilterPanel Layout
      * @param array $opts Takes an array of options. Set the 'override' key to
+     *  - override
+     *  - notabs
      * whichever tab you want to focus on by default.
      */
     public function __construct($opts = array())
@@ -22,6 +25,10 @@ class FilterPanelLayout
 
         if (!isset($opts["override"])) {
             $this->push($this->defaultTab);
+        }
+
+        foreach ($opts as $name => $option) {
+            $this->layout->set($name, $option);
         }
     }
 
@@ -37,6 +44,10 @@ class FilterPanelLayout
         } else {
             $filteredLayout = MetaDataManager::getLayout("GenericLayout", array("type" => "filterpanel"));
 
+            if ($tab["name"]) {
+                $filteredLayout->set("name", $tab["name"]);
+            }
+
             foreach ($tab["toggles"] as $toggle) {
                 $component = array("view" => $toggle);
 
@@ -49,6 +60,8 @@ class FilterPanelLayout
         }
 
         $this->layout->push($filteredLayout->getLayout(true));
+
+        $this->count++;
     }
 
     /**
@@ -57,6 +70,9 @@ class FilterPanelLayout
      */
     public function getLayout()
     {
+        if ($this->count == 1) {
+            $this->layout->set("onetab", true);
+        }
         $this->baseLayout->push($this->layout->getLayout(true));
 
         return $this->baseLayout->getLayout();
