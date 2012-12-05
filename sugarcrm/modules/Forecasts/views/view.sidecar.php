@@ -139,12 +139,13 @@ class ForecastsViewSidecar extends SidecarView
     {
         $this->_displayJavascriptCore();
 
-        //load sidecar.lite and 3rd party libs for sidecar
-        echo getVersionedScript("cache/include/javascript/sugar_grp1_sidecar_libs.js") . "\n";      
-        echo getVersionedScript("sidecar/minified/sidecar.lite.min.js") . "\n";
-            
+        //load 3rd party libs for sidecar
+        echo getVersionedScript("cache/include/javascript/sugar_grp1_sidecar_libs.js") . "\n";
+
         if ( !inDeveloperMode() )
-        {                                      
+        {
+            echo getVersionedScript("sidecar/minified/sidecar.lite.min.js") . "\n";
+
             if  ( !is_file(sugar_cached("include/javascript/sidecar_forecasts.js")) ) {
                 $_REQUEST['root_directory'] = ".";
                 require_once("jssource/minify_utils.php");
@@ -153,13 +154,13 @@ class ForecastsViewSidecar extends SidecarView
             echo getVersionedScript('cache/include/javascript/sidecar_forecasts.js') . "\n";
 
         } else {
+
             require('sidecar/src/include-manifest.php');
-            if (!empty($buildFiles['sidecar']))
-            {                
-                foreach ( $buildFiles['sidecar'] as $file)
+            if(!empty($buildFiles['sidecar.lite'])) {
+                foreach ( $buildFiles['sidecar.lite'] as $file)
                 {
                     echo "<script type='text/javascript' src='sidecar/{$file}'></script>\n";
-                }                
+                }
             }
 
             require_once('jssource/JSGroupings.php');
@@ -169,8 +170,8 @@ class ForecastsViewSidecar extends SidecarView
                 {
                     echo "<script src='".$_file."'></script>\n";
                 }
-            }            
-        }         
+            }
+        }
     }
 
     protected function _displayJavascriptCore()
