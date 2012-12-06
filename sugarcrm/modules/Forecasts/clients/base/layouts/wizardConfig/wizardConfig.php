@@ -35,7 +35,7 @@ $viewdefs['Forecasts']['base']['layout']['wizardConfig'] = array(
             'view' => 'forecastsConfigCategories',
         ),
         array(
-            'view' => 'forecastsConfigRange',
+            'view' => 'forecastsConfigScenarios',
         ),
         // BEGIN SUGARCRM flav=int ONLY
         // todo-sfa: Move to flav=ent for when we start on 6.8

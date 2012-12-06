@@ -334,7 +334,7 @@ $mod_strings = array (
 
     // Panel and BreadCrumb Labels
     'LBL_FORECASTS_CONFIG_BREADCRUMB_CATEGORIES' => 'Ranges',
-    'LBL_FORECASTS_CONFIG_BREADCRUMB_RANGE' => 'Scenarios',
+    'LBL_FORECASTS_CONFIG_BREADCRUMB_SCENARIOS' => 'Scenarios',
     'LBL_FORECASTS_CONFIG_BREADCRUMB_TIMEPERIODS' => 'Time Periods',
     'LBL_FORECASTS_CONFIG_BREADCRUMB_VARIABLES' => 'Variables',
 
@@ -360,17 +360,17 @@ $mod_strings = array (
     'LBL_FORECASTS_CONFIG_SHOW_CUSTOM_BUCKETS_CATEGORIES' => 'Custom Ranges: This option gives a user the ability to categorize their opportunities to be committed into the forecast into a committed range, excluded range and any others that you setup.',
     'LBL_FORECASTS_CONFIG_CATEGORY_EXCLUDE_INFO' => 'The Exclude Range is from 0% to the minimum of the previous Forecast Range by default.',
 
-    // range config
-    //TODO-sfa refactors the code references for ranges to be scenarios (SFA-337).
-    'LBL_FORECASTS_CONFIG_WORKSHEET_RANGE' => 'Select the column you would like the user to fill out for their forecast for each opportunity.',
+    // scenarios config
+    //TODO-sfa refactors the code references for scenarios to be scenarios (SFA-337).
+    'LBL_FORECASTS_CONFIG_WORKSHEET_SCENARIOS' => 'Select the column you would like the user to fill out for their forecast for each opportunity.',
     'LBL_FORECASTS_CONFIG_WORKSHEET_LIKELY_INFO' => 'Please note the Likely amount is tied to the amount shown in Opportunities; for this reason the Likely column cannot be hidden.',
-    'LBL_FORECASTS_CONFIG_WORKSHEET_RANGE_LIKELY' => 'Likely',
-    'LBL_FORECASTS_CONFIG_WORKSHEET_RANGE_BEST' => 'Best',
-    'LBL_FORECASTS_CONFIG_WORKSHEET_RANGE_WORST' => 'Worst',
-    'LBL_FORECASTS_CONFIG_PROJECTED_RANGE' => 'Show projected ranges in the totals',
-    'LBL_FORECASTS_CONFIG_PROJECTED_RANGE_LIKELY' => 'Show Likely Case Totals',
-    'LBL_FORECASTS_CONFIG_PROJECTED_RANGE_BEST' => 'Show Best Case Totals',
-    'LBL_FORECASTS_CONFIG_PROJECTED_RANGE_WORST' => 'Show Worst Case Totals',
+    'LBL_FORECASTS_CONFIG_WORKSHEET_SCENARIOS_LIKELY' => 'Likely',
+    'LBL_FORECASTS_CONFIG_WORKSHEET_SCENARIOS_BEST' => 'Best',
+    'LBL_FORECASTS_CONFIG_WORKSHEET_SCENARIOS_WORST' => 'Worst',
+    'LBL_FORECASTS_CONFIG_PROJECTED_SCENARIOS' => 'Show projected scenarios in the totals',
+    'LBL_FORECASTS_CONFIG_PROJECTED_SCENARIOS_LIKELY' => 'Show Likely Case Totals',
+    'LBL_FORECASTS_CONFIG_PROJECTED_SCENARIOS_BEST' => 'Show Best Case Totals',
+    'LBL_FORECASTS_CONFIG_PROJECTED_SCENARIOS_WORST' => 'Show Worst Case Totals',
 
     // variables config
     'LBL_FORECASTS_CONFIG_VARIABLES' => 'Variables',
