@@ -41,12 +41,39 @@ table.dataTable {
   th.sorting_desc {
   }
 
-
-  tbody tr.selected td {
-    //background-color: @tableBackgroundHover;
-    //background-image:url('@textureSecondary');
-    background-color:red;
+  tbody tr.active {
+    td {
+      background-image: url('@{textureSecondary}');
+      .icon-eye-open {
+        color:@black !important;
+      }
+    }
   }
+
+
+  tr td .actions {
+    display:inline-block;
+    top:0;
+  }
+
+
+  tr td:not(:hover) {
+    .dropdown.btn-group {
+      .btn {
+        border-color: transparent !important;
+        background: transparent !important;
+        -webkit-box-shadow:none !important;
+        -moz-box-shadow:none !important;
+        box-shadow:none !important;
+        &.dropdown-toggle {
+          visibility: hidden;
+        }
+      }
+    }
+  }
+
+
+
 }
 
 

@@ -5257,7 +5257,7 @@ table.datatable tbody td {
 }
 table th, table td { position:relative; }
 table.datatable tr td .actions {
-  top:4px !important;
+  top:4px;
   right:8px;
 }
 table.datatable tr td .actions a:hover { color:#343433; }
@@ -5687,7 +5687,20 @@ table.dataTable th.sorting {
   font-weight:normal;
   color:#58595b;
 }
-table.dataTable tbody tr.selected td { background-color:red; }
+table.dataTable tbody tr.active td { background-image:url('../../assets/img/texture/furley_bg.png'); }
+table.dataTable tbody tr.active td .icon-eye-open { color:#000000 !important; }
+table.dataTable tr td .actions {
+  display:inline-block;
+  top:0;
+}
+table.dataTable tr td:not(:hover) .dropdown.btn-group .btn {
+  border-color:transparent !important;
+  background:transparent !important;
+  -webkit-box-shadow:none !important;
+  -moz-box-shadow:none !important;
+  box-shadow:none !important;
+}
+table.dataTable tr td:not(:hover) .dropdown.btn-group .btn.dropdown-toggle { visibility:hidden; }
 .dataTables_filter {
   position:relative;
   margin:-1px 1px 0 0;
