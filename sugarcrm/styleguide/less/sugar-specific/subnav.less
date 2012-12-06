@@ -89,7 +89,7 @@ header .subnav {
     margin-right: 12px;
   }
 
-  [class^="icon-"] {
+  [class*="icon-"] {
     font-size: 20px;
   }
 
@@ -98,11 +98,38 @@ header .subnav {
   }
 
   .span12 {
-    margin-left: 0px;
+    margin-left: 0;
   }
 
   .drawerTrig {
-    margin-right: 10px;
+    margin: 0 8px 0 8px;
+    padding: 5px 6px 3px;
+    color: @grayLight;
+    &.pull-right {
+      .border-radius(0 2px 2px 0);
+      position: relative;
+    }
+
+    &.pull-left {
+      .border-radius(2px);
+      margin-right: 0;
+      padding: 4px 4px 0 4px;
+      position: absolute;
+      left: 0;
+      top: 0;
+    }
+    i[class*="icon-"]{
+        //.opacity(20);
+        font-size: 15px;
+    }
+    i.one {
+        position: relative;
+        //left: 2px;
+    }
+    i.two {
+        position: relative;
+        //left: -2px;
+    }
   }
 
   .btn-toolbar {
@@ -135,32 +162,10 @@ header .subnav {
     white-space: nowrap;
   }
 
-  .dropdown-toggle {
-    .box-shadow(none);
-  }
-
-  .span12 {
-    margin-left: 0px;
-  }
-
   .fav-star {
     padding: 4px 5px 1px;
     margin-right: 5px;
-  }
-
-  .drawerTrig {
-    padding: 4px 10px 1px;
-    margin-right: 5px;
-    [class^="icon-"] {
-      font-size: 20px;
-    }
-  }
-
-  .btn-toolbar {
-    margin-top: 15px;
-    .btn-group {
-      vertical-align: middle;
-    }
+    font-size: 20px;
   }
 
   .avatar {

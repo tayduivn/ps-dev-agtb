@@ -255,7 +255,14 @@
       //$('#moduleActivity .form-search input').quicksearch('ul.results li');
     }
 
-
+    $('body')
+      .off('click', '.drawerTrig')
+      .on('click', '.drawerTrig', function (e) {
+        $(this).find('i').toggleClass('icon-chevron-left').toggleClass('icon-chevron-right');
+        $('.side').toggleClass('hide');
+        $('.main-pane').toggleClass('span8').toggleClass('span12');
+        e.preventDefault();
+      });
   });
 }(window.jQuery);
 

@@ -1,19 +1,5 @@
 <div class="btn-toolbar pull-right dropdown">
   <a href="partial/{{module}}/{{module}}-create.html" data-toggle="tab" data-target="#edit .record" data-mode="edit" title="Create {{module}}" class="btn btn-primary">Create</a>
-  <a href="#" title="Collapse side pane" class="btn btn-invisible drawerTrig"><i class="icon-chevron-right two"></i></a>
+  <a href="#" title="Collapse side pane" class="btn btn-invisible drawerTrig"><i class="icon-chevron-right one"></i><i class="icon-chevron-right two"></i></a>
 </div>
 <h1>{{title}}</h1>
-
-<script>
-$(document).ready(function() {
-  // column collapse
-  $('body')
-    .off('click', '.drawerTrig')
-    .on('click', '.drawerTrig', function (e) {
-      $(this).find('i').toggleClass('icon-chevron-left').toggleClass('icon-chevron-right');
-      $('.side').toggleClass('hide');
-      $('.main-pane').toggleClass('span8').toggleClass('span12');
-      e.preventDefault();
-    });
-});
-</script>
