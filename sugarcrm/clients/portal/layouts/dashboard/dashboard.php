@@ -27,7 +27,6 @@
  ********************************************************************************/
 
 $viewdefs['portal']['layout']['dashboard'] = array(
-    'type' => 'fluid',
     'components' => array(
 //        0 => array(
 //            'layout' => "list"
