@@ -291,6 +291,7 @@ class MetaDataManager {
      *
      * @param string $module The module we want to fetch the ACL for
      * @param object $userObject The user object for the ACL's we are retrieving.
+     * @param object|bool $bean The SugarBean for getting specific ACL's for a module
      * @return array Array of ACL's, first the action ACL's (access, create, edit, delete) then an array of the field level acl's
      */
     public function getAclForModule($module,$userObject,$bean=false) {
