@@ -44,14 +44,14 @@ class FilterPanelLayout
         } else {
             $filteredLayout = MetaDataManager::getLayout("GenericLayout", array("type" => "filterpanel"));
 
-            if ($tab["name"]) {
+            if (isset($tab["name"])) {
                 $filteredLayout->set("name", $tab["name"]);
             }
 
             foreach ($tab["toggles"] as $toggle) {
                 $component = array("view" => $toggle);
 
-                if ($tab["context"]) {
+                if (isset($tab["context"])) {
                     $component["context"] = $tab["context"];
                 }
 
