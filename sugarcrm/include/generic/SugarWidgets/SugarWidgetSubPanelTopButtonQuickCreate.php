@@ -100,15 +100,40 @@ class SugarWidgetSubPanelTopButtonQuickCreate extends SugarWidgetSubPanelTopButt
         $button .= '<input type="hidden" name="tpl" value="QuickCreate.tpl" />';
 		$button .= '<input type="hidden" name="return_module" value="' . $currentModule . "\" />\n";
 		$button .= '<input type="hidden" name="return_action" value="' . $defines['action'] . "\" />\n";
+		$button .= '<input type="hidden" name="return_id" value="' . $defines['focus']->id . "\" />\n";
 		$button .= '<input type="hidden" name="return_relationship" value="' . $relationship_name . "\" />\n";
 		$button .= '<input type="hidden" name="record" value="" />';
 
 		// TODO: move this out and get $additionalFormFields working properly
-        foreach(getScheduleMeetingBean2Assoc($defines['focus']) AS $key=>$value){
-            if (!array_key_exists($key, $additionalFormFields) || empty($additionalFormFields[$key]) ){
-                $additionalFormFields[$key] = $value;
-            }
-        }
+		if(empty($additionalFormFields['parent_type']))
+		{
+			if($defines['focus']->object_name=='Contact') {
+				$additionalFormFields['parent_type'] = 'Accounts';
+			}
+			else {
+				$additionalFormFields['parent_type'] = $defines['focus']->module_dir;
+			}
+		}
+		if(empty($additionalFormFields['parent_name']))
+		{
+			if($defines['focus']->object_name=='Contact') {
+				$additionalFormFields['parent_name'] = $defines['focus']->account_name;
+				$additionalFormFields['account_name'] = $defines['focus']->account_name;
+			}
+			else {
+				$additionalFormFields['parent_name'] = $defines['focus']->name;
+			}
+		}
+		if(empty($additionalFormFields['parent_id']))
+		{
+			if($defines['focus']->object_name=='Contact') {
+				$additionalFormFields['parent_id'] = $defines['focus']->account_id;
+				$additionalFormFields['account_id'] = $defines['focus']->account_id;
+			}
+			else {
+				$additionalFormFields['parent_id'] = $defines['focus']->id;
+			}
+		}
 
         if(strtolower($defines['child_module_name']) =='contracts') {
             //set variables to account name, or parent account name

@@ -230,7 +230,3 @@ var {{$module}}_detailview_tabs = new YAHOO.widget.TabView("{{$module}}_detailvi
 {{$module}}_detailview_tabs.selectTab(0);
 </script>
 {{/if}}
-
-<script type="text/javascript">
- DCMenu.quickCreateMeeting = {$quickCreateMeeting};
-</script>
