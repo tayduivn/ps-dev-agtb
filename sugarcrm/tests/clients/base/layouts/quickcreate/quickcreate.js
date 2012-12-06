@@ -1,4 +1,4 @@
-describe("Quickcreate", function() {
+xdescribe("Quickcreate", function() {
 
     beforeEach(function() {
         SugarTest.testMetadata.init();
@@ -369,7 +369,7 @@ describe("Quickcreate", function() {
             });
         });
 
-        xit("should display an alert when duplicates are found", function() {
+        it("should display an alert when duplicates are found", function() {
             var flag = false,
                 restoreAndCallShowAlert = function(args) {
                     alertShowStub.restore();
