@@ -37,6 +37,7 @@ class Bug22882Test extends Sugar_PHPUnit_Framework_TestCase
     {
         if ( !is_dir('custom/include/language') )
             @mkdir('custom/include/language', 0777, true);
+
         sugar_cache_clear('app_list_strings.en_us');
         sugar_cache_clear('app_list_strings.fr_test');
     }
@@ -321,22 +322,34 @@ ENEN;
 <?php
 \$app_list_strings['account_type_dom']['Analyst'] = 'Test';
 ENEN;
+
+        $file_fr = <<<FRFR
+<?php
+\$app_list_strings['account_type_dom']['Analyst'] = 'Test (French)';
+FRFR;
+
         if(!file_exists('include/language/fr_test.lang.php')){
             $this->file = file_get_contents('include/language/en_us.lang.php');
             file_put_contents('include/language/fr_test.lang.php', $this->file);
+            SugarAutoLoader::addToMap('include/language/fr_test.lang.php', false);
         }
+
         if(!file_exists('custom/include/language/fr_test.lang.php')){
-            file_put_contents('custom/include/language/fr_test.lang.php', '');
+            file_put_contents('custom/include/language/fr_test.lang.php', $file_fr);
         }else{
             $this->file_fr_tmp = file_get_contents('custom/include/language/fr_test.lang.php');
-            file_put_contents('custom/include/language/fr_test.lang.php', '');
+            file_put_contents('custom/include/language/fr_test.lang.php', $file_fr);
         }
+
+        SugarAutoLoader::addToMap('custom/include/language/fr_test.lang.php', false);
+
         if(!file_exists('custom/include/language/en_us.lang.php')){
             file_put_contents('custom/include/language/en_us.lang.php', $file_en);
         }else{
             $this->file_en_tmp = file_get_contents('custom/include/language/en_us.lang.php');
             file_put_contents('custom/include/language/en_us.lang.php', $file_en);
         }
+        SugarAutoLoader::addToMap('custom/include/language/en_us.lang.php', false);
     }
 
     public function cleanupFiles(){
@@ -348,14 +361,14 @@ ENEN;
         if(!empty($this->file_fr_tmp)){
             file_put_contents('custom/include/language/fr_test.lang.php', $this->file_fr_tmp);
             $this->file_fr_tmp = '';
-        }else{
+        }else if(file_exists('custom/include/language/fr_test.lang.php')) {
             unlink('custom/include/language/fr_test.lang.php');
             SugarAutoLoader::delFromMap('custom/include/language/fr_test.lang.php');
         }
         if(!empty($this->file_en_tmp)){
             file_put_contents('custom/include/language/en_us.lang.php', $this->file_en_tmp);
             $this->file_en_tmp = '';
-        }else{
+        }else if(file_exists('custom/include/language/en_us.lang.php')) {
             unlink('custom/include/language/en_us.lang.php');
             SugarAutoLoader::delFromMap('custom/include/language/en_us.lang.php');
         }
