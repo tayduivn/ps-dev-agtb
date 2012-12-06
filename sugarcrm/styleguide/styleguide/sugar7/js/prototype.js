@@ -59,6 +59,13 @@
       }
       if ( mode !== 'preview' ) {
         $('body').removeClass('edit view list preview').addClass(mode);//toggleClass( mode, source !== '#' );
+        if ( mode === 'edit' ) {
+          $('.module-edit').addClass('drawer');
+          $('.module-view').addClass('drawer-squeezed');
+        } else {
+          $('.module-edit').removeClass('drawer');
+          $('.module-view').removeClass('drawer-squeezed');
+        }
       } else {
         $('body').toggleClass('preview',(source !== '#'));
       }

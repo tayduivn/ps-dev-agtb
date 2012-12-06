@@ -94,13 +94,30 @@
 }
 
 
+div.filter_el,
 div.want_filter {
   line-height:18px;
-  padding:8px 8px 8px 16px;
   border-top:1px solid #E8E8E8;
   border-bottom:1px solid #E8E8E8;
 }
 
+div.filter_el {
+  padding-right:0;
+  padding-left:0;
+  div.header {
+    padding:8px 8px 8px 16px;
+  }
+  div.step_extend {
+    padding:0;
+  }
+}
+
+.record.active .filter_el:last-child {
+  border-top:0;
+}
+
+.record.active article.highlight,
+div.filter_el.highlight,
 div.want_filter.highlight,
 table.duplicates.highlight tbody tr:nth-child(even) td {
   background-color:#FCF9E8; 
@@ -133,4 +150,66 @@ padding:0;
 
 .layout_Leads .want_filter .row-fluid {
 margin: 0;
+}
+
+#search_option_ .row-fluid {
+margin: f6px 0 8px 0;
+}
+
+.step-circle {
+
+}
+
+.step-circle > span {
+  display: inline-block;
+  line-height:20px;
+  font-weight:900;
+}
+
+.step-circle .step-circle-left {
+  margin-right:12px;
+}
+
+.step-circle .step-circle-right {
+  .border-radius(10px);
+  margin-right:12px;
+  display:inline-block;
+  height:10px;
+  width:10px;
+  background: @grayLight;
+  font-size:8px;
+  line-height:10px;
+  text-indent:2px;
+}
+
+.step-circle .step-circle-right.complete {
+  background:@green;
+  color:@white;
+}
+
+
+.step_1_container .form-horizontal {
+  background: @grayLighter;
+  margin-bottom:0;
+  padding-bottom:1px;
+  padding-top:10px;
+  .control-label {
+    border:0 !important;
+    background:none;
+  }
+}
+
+.step_1_container {
+  .form-search {
+    padding-top:0;
+  }
+  .filter-options.extend {
+    margin-top:0;
+    article {
+      padding:0px 8px 0 20px;
+    }
+  }
+  &>.row-fluid {
+    margin:0;
+  }
 }

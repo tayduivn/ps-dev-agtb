@@ -5,7 +5,7 @@
     <a href="partial/{{module}}/{{module}}-view.html" data-toggle="tab" data-target="#view .record" data-mode="view" class="btn btn-invisible btn-link save">Save and view</a>
   </span>
   <a href="partial/{{module}}/{{module}}-table.html" data-toggle="tab" data-target="#view .main-content" data-mode="list" title="Save Lead" class="btn btn-primary">Save</a>
-  <a href="#overview" title="Collapse sidebar" class="btn btn-invisible drawerTrig"><i class="icon-chevron-right"></i></a>
+  <a href="#overview" title="Collapse sidebar" class="btn btn-invisible drawerTrig"><i class="icon-chevron-right two"></i></a>
 </div>
 <h1>Create {{title}}</h1>
 
@@ -13,14 +13,16 @@
   $(document).ready(function() {
     // create record view
     $('body').on( 'change', 'form', function(){ invokeSaveButtons(); });
-    $('body').on( 'click', '.form-change-actions .btn.save', function(e){
-      e.preventDefault();
-      e.stopPropagation();
-      throwMessage('<strong>Success!</strong> You successfully created the {{module}} "ASDF"', 'success', true)
-    });
+    $('body')
+      .off('click', '.form-change-actions .btn.save')
+      .on( 'click', '.form-change-actions .btn.save', function(e){
+        // e.preventDefault();
+        // e.stopPropagation();
+        throwMessage('<strong>Success!</strong> You successfully created the {{module}} "ASDF"', 'success', true)
+      });
   });
 
   function invokeSaveButtons(){
-      $('.form-change-actions .btn').show();
+    $('.form-change-actions .btn').show();
   }
 </script>

@@ -8956,19 +8956,63 @@ div.sugareditable.focus { display:inline-block; }
   text-align:center;
 }
 .avatar-widget .avatar.preview .icon-plus { text-align:left; }
-div.want_filter {
+div.filter_el, div.want_filter {
   line-height:18px;
-  padding:8px 8px 8px 16px;
   border-top:1px solid #e8e8e8;
   border-bottom:1px solid #e8e8e8;
 }
-div.want_filter.highlight, table.duplicates.highlight tbody tr:nth-child(even) td { background-color:#fcf9e8; }
+div.filter_el {
+  padding-right:0;
+  padding-left:0;
+}
+div.filter_el div.header { padding:8px 8px 8px 16px; }
+div.filter_el div.step_extend { padding:0; }
+.record.active .filter_el:last-child { border-top:0; }
+.record.active article.highlight, div.filter_el.highlight, div.want_filter.highlight, table.duplicates.highlight tbody tr:nth-child(even) td { background-color:#fcf9e8; }
 table.duplicates.highlight thead th, table.table-striped.duplicates.highlight tbody tr:nth-child(odd) td, table.duplicates.highlight tbody td { background-color:#fcfcf2; }
 .layout_Leads .want_filter .form-search > .row-fluid, .layout_Leads .want_filter .form-search .filter-header { display:none; }
 .layout_Leads .want_filter .form-search .extend { margin-top:-5px; }
 .layout_Leads .want_filter .form-search > .hide:not(.mu) { display:block !important; }
 .layout_Leads .want_filter.active { padding:0; }
 .layout_Leads .want_filter .row-fluid { margin:0; }
+#search_option_ .row-fluid { margin:f6px 0 8px 0; }
+.step-circle > span {
+  display:inline-block;
+  line-height:20px;
+  font-weight:900;
+}
+.step-circle .step-circle-left { margin-right:12px; }
+.step-circle .step-circle-right {
+  margin-right:12px;
+  display:inline-block;
+  height:10px;
+  width:10px;
+  background:#cdcccb;
+  font-size:8px;
+  line-height:10px;
+  text-indent:2px;
+  -webkit-border-radius:10px;
+  -moz-border-radius:10px;
+  border-radius:10px;
+}
+.step-circle .step-circle-right.complete {
+  background:#3fb300;
+  color:#ffffff;
+}
+.step_1_container .form-horizontal {
+  background:#f5f5f5;
+  margin-bottom:0;
+  padding-bottom:1px;
+  padding-top:10px;
+}
+.step_1_container .form-horizontal .control-label {
+  border:0 !important;
+  background:none;
+}
+.step_1_container .form-search { padding-top:0; }
+.step_1_container .filter-options.extend { margin-top:0; }
+.step_1_container .filter-options.extend article { padding:0px 8px 0 20px; }
+.step_1_container>.row-fluid { margin:0; }
 .ui-timepicker-list {
   overflow:visible;
   height:150px;

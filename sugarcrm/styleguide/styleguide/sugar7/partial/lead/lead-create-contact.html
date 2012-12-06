@@ -1,6 +1,9 @@
 <div class="form-horizontal padded">
 
+
+
   <fieldset class="card2">
+
 
     <div class="row-fluid avatar-widget">
      <div class="pull-left">
@@ -162,12 +165,11 @@
 
 <script>
   loadPartials([
-    {"file":"lead/lead-header-create","target":"#edit .headerpane","method":"replace"},
+    {"file":"common/header-create","target":"#edit .headerpane","method":"replace"},
     {"file":"lead/lead-howto1","target":"#overview-edit","method":"replace"}
   ]);
 
   $(document).ready(function() {
-
     $('.module-edit').addClass('drawer');
     $('.module-view').addClass('drawer-squeezed');
 

@@ -7,6 +7,13 @@
     var page = {
         "title": "Leads"
       , "description": ""
+      , "convertLead": function () {
+          return function (text, render) {
+            if (render(text) === 'lead') {
+              return '<li id="convert_lead_option"><a href="partial/lead/lead-convert.html" data-toggle="tab" data-target="#edit .record" data-mode="edit" class="btn btn-invisible btn-link save">Convert Lead</a></li>';
+            }
+          }
+        }
       , "templates": [
           {"file":"common/head","target":"head","method":"append"}
         , {"file":"common/navbar","target":"#header","method":"append"}

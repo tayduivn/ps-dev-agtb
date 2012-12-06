@@ -1,3 +1,4 @@
+
 <div class="btn-toolbar pull-right dropdown">
   <span class="btn btn-invisible fav-star"><i class="icon-favorite active"></i></span>
   <div class="btn-group">
@@ -11,11 +12,11 @@
     <ul class="dropdown-menu">
       <li><a href="#">Delete</a></li>
       <li><a href="partial/{{module}}/{{module}}-create.html" data-toggle="tab" data-target="#edit .record" data-mode="edit" class="btn btn-invisible btn-link save">Create new</a></li>
-      <li><a href="partial/{{module}}/{{module}}-convert.html" data-toggle="tab" data-target="#edit .record" data-mode="edit" class="btn btn-invisible btn-link save">Convert {{module}}</a></li>
+      {{#convertLead}}{{module}}{{/convertLead}}
       <li><a href="#">Settings</a></li>
     </ul>
   </div>
-  <a href="#overview" title="Create {{module}}" class="btn btn-invisible drawerTrig"><i class="icon-chevron-right"></i></a>
+  <a href="#overview" title="Create {{module}}" class="btn btn-invisible drawerTrig"><i class="icon-chevron-right two"></i></a>
 </div>
 <span class="avatar avatar42">
   <img src="../img/avatar_mia.jpg">
