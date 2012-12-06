@@ -136,12 +136,10 @@
 
       throwMessage('<strong>Success!</strong> You successfully converted lead "Tameka Dammann"', 'success', true);
 
-      $('.module-edit').removeClass('drawer');
-      $('.module-view').removeClass('drawer-squeezed');
+      drawer(false);
     }
 
-    $('.module-edit').addClass('drawer');
-    $('.module-view').addClass('drawer-squeezed');
+    drawer(true);
 
   });
 </script>

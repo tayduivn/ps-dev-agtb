@@ -27,8 +27,7 @@
       .off('click','.save_and_view')
       .on('click','.save_and_view',function(e){
         throwMessage('<strong>Success!</strong> You successfully created the lead "Tameka Dammann"', 'success', true);
-        $('.module-edit').removeClass('drawer');
-        $('.module-view').removeClass('drawer-squeezed');
+        drawer(false);
         // e.preventDefault();
         // e.stopPropagation();
       });
@@ -36,8 +35,7 @@
     $('body')
       .off('click','.cancel')
       .on('click','.cancel',function(e){
-        $('.module-edit').removeClass('drawer');
-        $('.module-view').removeClass('drawer-squeezed');
+        drawer(false);
         // e.preventDefault();
         // e.stopPropagation();
       });
@@ -49,8 +47,7 @@
           console.log('first click');
           $(this).addClass('save_save').attr({'href':''});
         } else {
-          $('.module-edit').removeClass('drawer');
-          $('.module-view').removeClass('drawer-squeezed');
+          drawer(false);
           console.log('second click');
           throwMessage('<strong>Success!</strong> You successfully created the lead "Tameka Dammann"', 'success', true);
         }

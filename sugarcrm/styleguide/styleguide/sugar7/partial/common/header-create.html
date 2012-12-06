@@ -16,8 +16,6 @@
     $('body')
       .off('click', '.form-change-actions .btn.save')
       .on( 'click', '.form-change-actions .btn.save', function(e){
-        // e.preventDefault();
-        // e.stopPropagation();
         throwMessage('<strong>Success!</strong> You successfully created the {{module}} "ASDF"', 'success', true)
       });
   });

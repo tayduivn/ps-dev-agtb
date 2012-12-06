@@ -7,18 +7,20 @@
 
 <script>
   $(document).ready(function() {
-    $('body').on( 'click', '.omnibar', function (e) {
-        e.preventDefault();
-        e.stopPropagation();
-        var omnibar = $(this);
-        omnibar.toggleClass('active');
-        if(omnibar.hasClass('active')) {
-          omnibar.append('<div class="inputactions"><a href=""><i class="icon-tag"></i></a> <a href=""><i class="icon-paper-clip"></i></a> <input type="submit" class="pull-right btn btn-primary"><span class="pull-right"><a href="" class="btn btn-invisible btn-link">Send to Everyone</a> &nbsp;</div>');
-          $('.sayit').html('');
-        } else {
-          $('.inputactions').remove();
+    $('body')
+      .off( 'click', '.omnibar')
+      .on( 'click', '.omnibar', function (e) {
+          e.preventDefault();
+          e.stopPropagation();
+          var omnibar = $(this);
+          omnibar.toggleClass('active');
+          if(omnibar.hasClass('active')) {
+            omnibar.append('<div class="inputactions"><a href=""><i class="icon-tag"></i></a> <a href=""><i class="icon-paper-clip"></i></a> <input type="submit" class="pull-right btn btn-primary"><span class="pull-right"><a href="" class="btn btn-invisible btn-link">Send to Everyone</a> &nbsp;</div>');
+            $('.sayit').html('');
+          } else {
+            $('.inputactions').remove();
+          }
         }
-      }
-    );
+      );
   });
 </script>

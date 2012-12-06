@@ -1,16 +1,29 @@
-<div class="drawer-backdrop"></div>
 <div class="drawer-tab">
   <a href="#" title="Collapse list pane" class="btn"><i class="icon-chevron-down"></i></a>
 </div>
 
 <script>
-$(document).ready(function() {
-  // expand edit row
-  $('body').on('click', '.drawer-tab .btn', function (e) {
-    $(this).find('i').toggleClass('icon-chevron-up').toggleClass('icon-chevron-down');
-    $('.drawer').toggleClass('expand');
-    $('.drawer-squeezed').toggleClass('collapse');
-    e.preventDefault();
+  $(document).ready(function() {
+
+    $('#content>.container-fluid').append('<div class="drawer-backdrop"></div>');
+
+    // expand edit row
+    $('body').on('click', '.drawer-tab .btn', function (e) {
+      $(this).find('i').toggleClass('icon-chevron-up').toggleClass('icon-chevron-down');
+      $('.drawer').toggleClass('expand');
+      $('.drawer-squeezed').toggleClass('collapse');
+      e.preventDefault();
+    });
+
   });
-});
+
+  function drawer(show) {
+      $('.module-edit').toggleClass('drawer',show);
+      $('.module-view').toggleClass('drawer-squeezed',show);
+      $('.drawer-backdrop').toggleClass('drawer-squeezed',show);
+      if (!show) {
+        $('.drawer').removeClass('expand');
+        $('.drawer-squeezed').removeClass('collapse');
+      }
+  }
 </script>

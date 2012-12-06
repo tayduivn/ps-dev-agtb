@@ -9374,11 +9374,4 @@ a.preview-list-item:hover {
   border-top:4px solid #8b8c8e;
 }
 .drawer-backdrop.drawer-squeezed.collapse { height:59px; }
-.drawer-backdrop {
-  position:absolute;
-  top:0;
-  right:0;
-  bottom:0;
-  left:0;
-}
-.drawer-squeezed .drawer-backdrop, .drawer-squeezed .drawer-tab { display:block; }
+.drawer-backdrop.drawer-squeezed, .drawer-squeezed .drawer-tab { display:block; }
