@@ -116,7 +116,19 @@ class SugarBeanApiHelper
 
         // set ACL
         // if not an admin and the hashes differ, send back bean specific acl's
-        $data['_acl'] = array();
+        $data['_acl'] = $this->getBeanAcl($bean);
+
+
+        return $data;
+    } 
+
+    /**
+     * Get the beans ACL's to pass back any that differ
+     * @param type SugarBean $bean 
+     * @return array
+     */
+    public function getBeanAcl(SugarBean $bean) {
+        $acl = array();
         if(!is_admin($GLOBALS['current_user']) && SugarACL::moduleSupportsACL($bean->module_dir)) {
             $mm = new MetaDataManager($GLOBALS['current_user']);
             $moduleAcl = $mm->getAclForModule($bean->module_dir, $GLOBALS['current_user']);
@@ -135,20 +147,18 @@ class SugarBeanApiHelper
                 unset($moduleAcl['_hash']);
                 unset($beanAcl['_hash']);
 
-                $data['_acl'] = array_diff_assoc($beanAcl, $moduleAcl);
+                $acl = array_diff_assoc($beanAcl, $moduleAcl);
 
                 if(!empty($beanAclFields) && !empty($moduleAclFields)) {
-                    $data['_acl']['fields'] = array_diff_assoc($beanAclFields, $moduleAclFields);
+                    $acl['fields'] = array_diff_assoc($beanAclFields, $moduleAclFields);
                 }
 
             }
 
         }
+        return $acl;        
+    }
 
-
-        return $data;
-    } 
-    
     /**
      * This function 
      *
