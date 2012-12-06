@@ -35,6 +35,8 @@ if(!empty($config['cleanCache'])){
         if(is_dir($path . "/sugarcrm")) {
             $path .= "/sugarcrm";
         }
+        $rome->remove($path ."/cache/file_map.php");
+        $rome->remove($path ."/cache/api");
         $rome->remove($path ."/cache/jsLanguage");
         $rome->remove($path ."/cache/modules");
         $rome->remove($path ."/cache/smarty");
