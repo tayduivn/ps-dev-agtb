@@ -1,7 +1,24 @@
 <div class="btn-toolbar pull-right dropdown">
-  <a href="partial/{{module}}/{{module}}-create.html" data-toggle="tab" data-target="#edit .record" data-mode="edit" title="Create {{module}}" class="btn btn-primary">Create</a>
-  <a href="#" title="Collapse side pane" class="btn btn-invisible drawerTrig"><i class="icon-chevron-right"></i></a>
+  <div id="pageConfig" class="btn-group">
+    <a href="partial/{{module}}/{{module}}-create.html" data-toggle="tab" data-target="#edit .record" data-mode="edit" title="Create {{module}}" class="btn btn-primary">Create</a><a class="btn btn-primary dropdown-toggle" data-toggle="dropdown" href="#">
+      <span class="caret"></span>
+    </a>
+    <ul class="dropdown-menu">
+      <li><a href="#">Edit all</a></li>
+    </ul>
+  </div>
+  <a href="#overview" title="Create {{module}}" class="btn btn-invisible drawerTrig"><i class="icon-chevron-right"></i></a>
 </div>
+
+
+
+
+
+
+
+
+
+
 <h1>{{title}}</h1>
 
 <script>

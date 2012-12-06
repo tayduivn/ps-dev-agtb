@@ -8648,7 +8648,10 @@ ul.moduleTabMore.showMore .moduleMenuOverFlowMore, ul.moduleTabMore.showLess .mo
 }
 #chartActions .dropdown-menu input[type=checkbox], #projectActions .dropdown-menu input[type=checkbox] { margin-right:5px; }
 #pageConfig.btn-group > .btn { float:none; }
-#pageConfig .dropdown-menu { right:9px; }
+#pageConfig .dropdown-menu {
+  right:9px;
+  z-index:1001;
+}
 #pageConfig .dropdown-menu:after {
   content:'';
   display:inline-block;
