@@ -231,6 +231,7 @@
 
     $('body').on('click','.actions .dropdown-menu .delete',function(){
       $(this).closest('tr').remove();
+      throwMessage('<strong>Success!</strong> You successfully deleted the lead', 'success', true);
     });
 
 
