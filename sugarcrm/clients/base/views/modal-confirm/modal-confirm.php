@@ -1,5 +1,6 @@
 <?php
 $viewdefs['base']['view']['modal-confirm'] = array(
+    'type' => 'edit',
     'buttons' => array(
         array(
             'name' => 'ok_button',
