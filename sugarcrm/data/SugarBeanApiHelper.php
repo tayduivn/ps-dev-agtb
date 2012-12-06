@@ -21,6 +21,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  ********************************************************************************/
 
 require_once('include/SugarFields/SugarFieldHandler.php');
+require_once('include/MetaDataManager/MetaDataManager.php');
 
 /**
  * This class is here to provide functions to easily call in to the individual module api helpers
@@ -112,6 +113,37 @@ class SugarBeanApiHelper
         }
 
         //END SUGARCRM flav=pro ONLY
+
+        // set ACL
+        // if not an admin and the hashes differ, send back bean specific acl's
+        $data['_acl'] = array();
+        if(!is_admin($GLOBALS['current_user']) && SugarACL::moduleSupportsACL($bean->module_dir)) {
+            $mm = new MetaDataManager($GLOBALS['current_user']);
+            $moduleAcl = $mm->getAclForModule($bean->module_dir, $GLOBALS['current_user']);
+
+            $beanAcl = $mm->getAclForModule($bean->module_dir, $GLOBALS['current_user'], $bean);
+    
+            if($beanAcl['_hash'] != $moduleAcl['_hash']) {
+                // diff the fields separately, they are usually empty anyway so we won't diff these often.
+                $moduleAclFields = $moduleAcl['fields'];
+                $beanAclFields = $beanAcl['fields'];
+                // dont' need the fields here will append at the end
+                unset($moduleAcl['fields']);
+                unset($beanAcl['fields']);
+
+                // don't need the hashes anymore
+                unset($moduleAcl['_hash']);
+                unset($beanAcl['_hash']);
+
+                $data['_acl'] = array_diff_assoc($beanAcl, $moduleAcl);
+
+                if(!empty($beanAclFields) && !empty($moduleAclFields)) {
+                    $data['_acl']['fields'] = array_diff_assoc($beanAclFields, $moduleAclFields);
+                }
+
+            }
+
+        }
 
 
         return $data;

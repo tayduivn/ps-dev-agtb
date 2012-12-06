@@ -293,7 +293,7 @@ class MetaDataManager {
      * @param object $userObject The user object for the ACL's we are retrieving.
      * @return array Array of ACL's, first the action ACL's (access, create, edit, delete) then an array of the field level acl's
      */
-    public function getAclForModule($module,$userObject) {
+    public function getAclForModule($module,$userObject,$bean=false) {
         $obj = BeanFactory::getObjectName($module);
 
         $outputAcl = array('fields'=>array());
@@ -302,7 +302,13 @@ class MetaDataManager {
                 $outputAcl[$action] = 'yes';
             }
         } else {
-            $moduleAcls = SugarACL::getUserAccess($module, array(), array('user' => $userObject));
+            $context = array(
+                    'user' => $userObject,
+                );
+            if($bean instanceof SugarBean) {
+                $context['bean'] = $bean;
+            }
+            $moduleAcls = SugarACL::getUserAccess($module, array(), $context);
 
             // Bug56391 - Use the SugarACL class to determine access to different actions within the module
             foreach(SugarACL::$all_access AS $action => $bool) {
@@ -324,7 +330,7 @@ class MetaDataManager {
                 $fieldsAcl = ACLField::getAvailableFields($module);
                 //END SUGARCRM flav=pro ONLY
                 // get the field names
-                SugarACL::listFilter($module, $fieldsAcl, array('user' => $userObject), array('add_acl' => true));
+                SugarACL::listFilter($module, $fieldsAcl, $context, array('add_acl' => true));
                 foreach ( $fieldsAcl as $field => $fieldAcl ) {
                     switch ( $fieldAcl['acl'] ) {
                         case SugarACL::ACL_READ_WRITE:
