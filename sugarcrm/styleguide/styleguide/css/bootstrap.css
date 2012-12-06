@@ -5693,6 +5693,22 @@ table.dataTable tr td .actions {
   display:inline-block;
   top:0;
 }
+table.dataTable tr td .actions ul.dropdown-menu .ext {
+  background:#ffffff;
+  display:inline-block;
+  width:10px;
+  height:10px;
+  position:absolute;
+  right:6px;
+  top:-6px;
+  border-left:1px solid rgba(0,0,0,0.2);
+  border-top:1px solid rgba(0,0,0,0.2);
+  -webkit-transform:rotate(45deg);
+  -moz-transform:rotate(45deg);
+  -ms-transform:rotate(45deg);
+  -o-transform:rotate(45deg);
+  transform:rotate(45deg);
+}
 table.dataTable tr td:not(:hover) .dropdown.btn-group .btn {
   border-color:transparent !important;
   background:transparent !important;
