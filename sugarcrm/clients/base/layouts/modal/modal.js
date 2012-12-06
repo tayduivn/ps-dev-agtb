@@ -39,12 +39,14 @@
     baseComponents: [
         { 'view' : 'modal-header' }
     ],
-    initialize: function(options) {
+    initialize: function(options, skipModalJsCheck) {
         var self = this,
             showEvent = options.meta.showEvent;
 
-        if(!_.isFunction(this.$el.modal)) {
-            app.logger.error("Unable to load modal.js: Needs bootstrap modal plugin.");
+        if (!skipModalJsCheck) {
+            if(!_.isFunction(this.$el.modal)) {
+                app.logger.error("Unable to load modal.js: Needs bootstrap modal plugin.");
+            }
         }
 
         this.metaComponents = options.meta.components;
@@ -55,13 +57,16 @@
             });
         }
         app.view.Layout.prototype.initialize.call(this, options);
-        if(_.isArray(showEvent)) {
-            //Bind the multiple event handler names
-            _.each(showEvent, function(evt, index) {
-                self._bindShowEvent(evt);
-            });
-        } else {
-            self._bindShowEvent(showEvent);
+        options.meta.components = this.metaComponents; //revert components metadata back to original
+        if (showEvent) {
+            if(_.isArray(showEvent)) {
+                //Bind the multiple event handler names
+                _.each(showEvent, function(evt, index) {
+                    self._bindShowEvent(evt);
+                });
+            } else {
+                self._bindShowEvent(showEvent);
+            }
         }
     },
     _bindShowEvent : function(event, delegate){
