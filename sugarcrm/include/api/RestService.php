@@ -551,10 +551,10 @@ class RestService extends ServiceBase {
             $this->setHeader('Cache-Control','');
         }
         if(!$this->hasHeader('Pragma')) {
-            $this->setHeader('Expires', '');
+            $this->setHeader('Pragma', '');
         }
         if(!$this->hasHeader('Expires')) {
-            $this->setHeader('Pragma', '');
+            $this->setHeader('Expires', '');
         }        
         return true;
     }
