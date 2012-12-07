@@ -575,13 +575,13 @@ class ListViewData {
         }
         if($offset > 0)
         {
-            $queries['nextPage'] = $queries['baseURL'];
+            $queries['startPage'] = $queries['baseURL'];
             $queries['startPage'][$this->var_offset] = 0;
         }
         if($prevOffset > -1)
         {
             $queries['prevPage'] = $queries['baseURL'];
-            $queries['startPage'][$this->var_offset] = $prevOffset;
+            $queries['prevPage'][$this->var_offset] = $prevOffset;
         }
         if($totalCounted)
         {
