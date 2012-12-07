@@ -186,18 +186,18 @@ class Meeting extends SugarBean {
 
 	    if(isset($this->date_start) && isset($this->duration_hours) && isset($this->duration_minutes))
         {
-        	if(isset($this->date_start) && isset($this->duration_hours) && isset($this->duration_minutes))
-	        {
-	    	    $td = $timedate->fromDb($this->date_start);
-	    	    if(!$td){
-	    	    		$this->date_start = $timedate->to_db($this->date_start);
-	    	    		$td = $timedate->fromDb($this->date_start);
-	    	    }
-	    	    if($td)
-	    	    {
-		        	$this->date_end = $td->modify("+{$this->duration_hours} hours {$this->duration_minutes} mins")->asDb();
-	    	    }
-	        }
+            // Set the duration hours and minutes to 0 if one of them isn't set but the other one is.
+            $this->duration_hours = empty($this->duration_hours) ? 0 : $this->duration_hours;
+            $this->duration_minutes = empty($this->duration_minutes) ? 0 : $this->duration_minutes;
+            $td = $timedate->fromDb($this->date_start);
+            if(!$td){
+                $this->date_start = $timedate->to_db($this->date_start);
+                $td = $timedate->fromDb($this->date_start);
+            }
+            if($td)
+            {
+                $this->date_end = $td->modify("+{$this->duration_hours} hours {$this->duration_minutes} mins")->asDb();
+            }
 		}
 
 		$check_notify =(!empty($_REQUEST['send_invites']) && $_REQUEST['send_invites'] == '1') ? true : false;
