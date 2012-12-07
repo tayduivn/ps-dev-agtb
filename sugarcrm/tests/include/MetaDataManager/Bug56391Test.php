@@ -33,10 +33,14 @@ class Bug56391Test extends Sugar_PHPUnit_Framework_TestCase
     {
         SugarTestHelper::setUp('current_user');
         SugarTestHelper::setUp('app_list_strings');
+        $this->accounts = array();
     }
 
     public function tearDown()
     {
+        foreach($this->accounts AS $account_id) {
+            $GLOBALS['db']->query("DELETE FROM accounts WHERE id = '{$account_id}'");
+        }
         SugarTestHelper::tearDown();
     }
 
@@ -213,8 +217,94 @@ class Bug56391Test extends Sugar_PHPUnit_Framework_TestCase
         }
     }
 
+   /**
+     * Test Owner Access
+     *
+     * Test if Edit = Owner that we can not edit a bean that is not owned by the current user.
+     *
+     * @group Bug56391
+     */
+    public function testModuleOwnerAccess()
+    {
+        $modules = array('Accounts', );
 
-    protected function createRole($name, $allowedModules, $allowedActions) {
+
+        $expected_bean_result['access'] = array(
+                                'access' => 'yes',
+                                'admin' => 'no',
+                                'create' => 'yes',
+                                'view' => 'yes',
+                                'list' => 'yes',
+                                'edit' => 'yes',
+                                'delete' => 'yes',
+                                'import' => 'no',
+                                'export' => 'yes',
+                                'massupdate' => 'no',            
+            );
+
+        $expected_bean_result['no_access'] = array(
+                                'access' => 'yes',
+                                'admin' => 'no',
+                                'create' => 'no',
+                                'view' => 'yes',
+                                'list' => 'yes',
+                                'edit' => 'no',
+                                'delete' => 'yes',
+                                'import' => 'no',
+                                'export' => 'yes',
+                                'massupdate' => 'no',            
+            );
+
+        $role = $this->createRole('UNIT TEST ' . create_guid(), $modules, array('access', 'view', 'list', 'edit', 'delete', 'export'), array('edit'));
+
+        if (!($GLOBALS['current_user']->check_role_membership($role->name))) {
+            $GLOBALS['current_user']->load_relationship('aclroles');
+            $GLOBALS['current_user']->aclroles->add($role);
+            $GLOBALS['current_user']->save();
+        }
+        $id = $GLOBALS['current_user']->id;
+        $GLOBALS['current_user'] = BeanFactory::getBean('Users', $id);
+
+        // create two accounts
+        $account = BeanFactory::newBean('Accounts');
+        $account->name = 'Unit Test ' . create_guid();
+        $account->assigned_user_id = 1;
+        $account->save();
+        $this->accounts['no_access'] = $account->id;
+
+        unset($account);
+        
+        $account = BeanFactory::newBean('Accounts');
+        $account->name = 'Unit Test ' . create_guid();
+        $account->assigned_user_id = $GLOBALS['current_user']->id;
+        $account->save();
+        $this->accounts['access'] = $account->id;
+
+        unset($account);
+
+        $mm = new MetaDataManager($GLOBALS['current_user']);
+
+        $acls = $mm->getAclForModule('Accounts', $GLOBALS['current_user'], BeanFactory::getBean('Accounts', $this->accounts['no_access']));
+        unset($acls['_hash']);
+        // not checking fields right now
+        unset($acls['fields']);
+
+
+        $this->assertEquals($expected_bean_result['no_access'], $acls, 'No Access Failed');
+
+        $acls = $mm->getAclForModule('Accounts', $GLOBALS['current_user'], BeanFactory::getBean('Accounts', $this->accounts['access']));
+        unset($acls['_hash']);
+        // not checking fields right now
+        unset($acls['fields']);
+
+
+        $this->assertEquals($expected_bean_result['access'], $acls, 'Access Failed');
+
+
+    }
+
+
+    protected function createRole($name, $allowedModules, $allowedActions, $ownerActions = array()) {
         $role = new ACLRole();
         $role->name = $name;
         $role->description = $name;
@@ -238,13 +328,13 @@ class Bug56391Test extends Sugar_PHPUnit_Framework_TestCase
 
             if (in_array($moduleName, $allowedModules)) {
                 foreach ($actions['module'] as $actionName => $action) {
-
-                    if (in_array($actionName, $allowedActions)) {
+                    if(in_array($actionName, $allowedActions) && in_array($actionName, $ownerActions)) {
+                        $aclAllow = ACL_ALLOW_OWNER;
+                    }
+                    elseif (in_array($actionName, $allowedActions)) {
                         $aclAllow = ACL_ALLOW_ALL;
-                        $save = 'All';
                     } else {
                         $aclAllow = ACL_ALLOW_NONE;
-                        $save = 'None';
                     }
 
                     $role->setAction($role->id, $action['id'], $aclAllow);
