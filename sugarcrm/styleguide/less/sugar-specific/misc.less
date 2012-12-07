@@ -28,7 +28,20 @@
 }
 
 .more, .less {
-  margin: 0 20px 20px;
+  //margin: 0 20px 20px;
+  color: @linkMore;
+  &:hover {
+    color: @linkMore;
+    text-decoration: none;
+  }
+  [class^="icon-"] {
+    display: inline-block;
+    width: 1.25em;
+    text-align: center;
+  }
+  &:hover [class^="icon-"] {
+    text-decoration: none;
+  }
 }
 
 .commented .avatar {

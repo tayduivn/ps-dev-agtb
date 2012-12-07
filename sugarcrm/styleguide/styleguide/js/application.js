@@ -81,19 +81,27 @@
     });
 
     // toggle more...less blocks
-    $('body').on( 'click', '.more', function(e) {
-      var link = $(this);
-      //$(this).parent().prev('.extend').slideToggle('slow');
-      if ( link.text().indexOf('More') !== -1 ) {
-        link.html('Less &nbsp;<i class="icon-caret-up"></i>');
-        link.parent().prev('.extend').removeClass('hide');
-        link.mouseleave();
-      } else {
-        link.html('More &nbsp;<i class="icon-caret-down"></i>');
-        link.parent().prev('.extend').addClass('hide');
-      }
-      e.preventDefault();
-    });
+    $('body')
+      .on('mouseover', '.more', function(e) {
+        e.preventDefault();
+        $(this).css('text-decoration', 'underline');
+      })
+      .on('mouseout', '.more', function(e) {
+        e.preventDefault();
+        $(this).css('text-decoration', 'none');
+      })
+      .on( 'mousedown', '.more', function(e) {
+        e.preventDefault();
+        var link = $(this);
+        link.css('text-decoration', 'none');
+        if ( link.text().indexOf('More') !== -1 ) {
+          link.html(link.text().replace('More','Less')+'<i class="icon-caret-up"></i>');
+          link.parent().prev('.extend').removeClass('hide');
+        } else {
+          link.html(link.text().replace('Less','More')+'<i class="icon-caret-down"></i>');
+          link.parent().prev('.extend').addClass('hide');
+        }
+      });
 
     // editable example
     $('.dblclick').hover(
