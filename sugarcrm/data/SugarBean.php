@@ -308,7 +308,7 @@ class SugarBean
      * @return SugarBean
      * FIXME: this will be removed, needed for ensuring BeanFactory is always used
      */
-    public function _createBean($beanName)
+    public static function _createBean($beanName)
     {
         return new $beanName();
     }
