@@ -184,7 +184,7 @@ class Meeting extends SugarBean {
 
 		global $disable_date_format;
 
-	    if(isset($this->date_start) && isset($this->duration_hours) && isset($this->duration_minutes))
+	    if(isset($this->date_start) && (isset($this->duration_hours) || isset($this->duration_minutes)))
         {
             // Set the duration hours and minutes to 0 if one of them isn't set but the other one is.
             $this->duration_hours = empty($this->duration_hours) ? 0 : $this->duration_hours;
