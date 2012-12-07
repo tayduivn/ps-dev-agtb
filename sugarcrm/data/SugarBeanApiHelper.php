@@ -116,7 +116,7 @@ class SugarBeanApiHelper
 
         // set ACL
         // if not an admin and the hashes differ, send back bean specific acl's
-        $data['_acl'] = $this->getBeanAcl($bean);
+        $data['_acl'] = self::getBeanAcl($bean);
 
 
         return $data;
