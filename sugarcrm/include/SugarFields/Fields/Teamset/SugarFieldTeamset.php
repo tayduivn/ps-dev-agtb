@@ -658,6 +658,8 @@ class SugarFieldTeamset extends SugarFieldBase {
         }
         $teamIds = array();
         foreach ( $teamList as $idx => $team ) {
+            //For empty array
+            if(!isset($team['id'])) continue;
             if ( isset($team['primary']) && $team['primary'] == true ) {
                 $primaryTeamId = $team['id'];
             }

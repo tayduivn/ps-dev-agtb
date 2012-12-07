@@ -1,0 +1,5 @@
+{{#each value}}
+<div class="control-group teamset">
+     {{name}} {{#if primary}}<label>({{str "LBL_COLLECTION_PRIMARY"}})</label>{{/if}}
+</div>
+{{/each}}
