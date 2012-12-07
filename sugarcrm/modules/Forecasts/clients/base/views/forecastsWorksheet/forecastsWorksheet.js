@@ -150,13 +150,13 @@
             field.def.options = this.context.forecasts.config.get("buckets_dom") || 'commit_stage_dom';
             field = this._setUpCommitStage(field);
             if(!this.isEditableWorksheet) {
-                field.view = 'detail';
+                field.options.viewName = 'detail';
             }
         }
         this._createFieldColumnDef(field.def);
         app.view.View.prototype._renderField.call(this, field);
 
-        if (this.isEditableWorksheet === true && field.viewName !="edit" && field.def.clickToEdit === true && !_.contains(this.context.forecasts.config.get("sales_stage_won"), field.model.get('sales_stage')) && !_.contains(this.context.forecasts.config.get("sales_stage_lost"), field.model.get('sales_stage'))) {
+        if (this.isEditableWorksheet === true && field.options.viewName !="edit" && field.def.clickToEdit === true && !_.contains(this.context.forecasts.config.get("sales_stage_won"), field.model.get('sales_stage')) && !_.contains(this.context.forecasts.config.get("sales_stage_lost"), field.model.get('sales_stage'))) {
             new app.view.ClickToEditField(field, this);
         }
 
