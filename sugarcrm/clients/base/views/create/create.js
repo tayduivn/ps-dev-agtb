@@ -23,6 +23,14 @@
 
         app.view.views.RecordView.prototype.initialize.call(this, options);
 
+        //duplicate a record
+        if(app.cache.has("duplicate"+this.module)) {
+            _.each(app.cache.get("duplicate"+this.module), function(value, key) {
+                if(key != 'id') this.model.set(key, value);
+            }, this);  
+            app.cache.cut("duplicate"+this.module);
+        }  
+        
         //keep track of what post-save action was chosen in case user chooses to ignore dupes
         this.context.lastSaveAction = null;
 
