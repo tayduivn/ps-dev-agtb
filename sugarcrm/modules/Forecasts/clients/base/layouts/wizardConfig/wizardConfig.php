@@ -32,7 +32,7 @@ $viewdefs['Forecasts']['base']['layout']['wizardConfig'] = array(
             'view' => 'forecastsConfigTimeperiods',
         ),
         array(
-            'view' => 'forecastsConfigCategories',
+            'view' => 'forecastsConfigRanges',
         ),
         array(
             'view' => 'forecastsConfigScenarios',

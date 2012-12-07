@@ -22,7 +22,7 @@ fixtures.metadata.modules.Forecasts.config = {
     "timeperiod_start_date":"2012-01-01",
     "timeperiod_shown_forward":4,
     "timeperiod_shown_backward":4,
-    "forecast_categories":"show_binary",
+    "forecast_ranges":"show_binary",
     "buckets_dom":"commit_stage_dom",
     "category_ranges":{
         "include":{

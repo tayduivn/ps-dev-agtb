@@ -25,12 +25,12 @@
  *
  * forecasts:worksheet:filtered
  *      on: context.forecasts
- *      by: updateWorksheetBySelectedCategory()
+ *      by: updateWorksheetBySelectedRanges()
  *      when: dataTable is finished filtering itself
  *
  * forecasts:worksheet:filtered
  *      on: context.forecasts
- *      by: updateWorksheetBySelectedCategory()
+ *      by: updateWorksheetBySelectedRanges()
  *      when: dataTable is finished filtering itself and has destroyed and redrawn itself
  */
 ({
@@ -82,7 +82,7 @@
 
         // INIT tree with logged-in user       
         this.timePeriod = app.defaultSelections.timeperiod_id.id;
-        this.updateWorksheetBySelectedCategory(app.defaultSelections.category);
+        this.updateWorksheetBySelectedRanges(app.defaultSelections.ranges);
         this._collection.url = this.createURL();
     },
 
@@ -114,11 +114,11 @@
      * @private
      */
     _setUpCommitStage: function (field) {
-        var forecastCategories = this.context.forecasts.config.get("forecast_categories");
+        var forecastRanges = this.context.forecasts.config.get("forecast_ranges");
         var self = this;
                 
         //show_binary, show_buckets, show_n_buckets
-        if(forecastCategories == "show_binary"){
+        if(forecastRanges== "show_binary"){
             field.type = "bool";
             field.format = function(value){
                 return value == "include";
@@ -156,7 +156,9 @@
         }
         app.view.View.prototype._renderField.call(this, field);
 
-        if (this.isEditableWorksheet === true && field.viewName !="edit" && field.def.clickToEdit === true && !_.contains(this.context.forecasts.config.get("sales_stage_won"), field.model.get('sales_stage')) && !_.contains(this.context.forecasts.config.get("sales_stage_lost"), field.model.get('sales_stage'))) {
+        if (this.isEditableWorksheet === true && field.viewName !="edit" && field.def.clickToEdit === true &&
+            !_.contains(this.context.forecasts.config.get("sales_stage_won"), field.model.get('sales_stage')) &&
+            !_.contains(this.context.forecasts.config.get("sales_stage_lost"), field.model.get('sales_stage'))) {
             new app.view.ClickToEditField(field, this);
         }
 
@@ -203,9 +205,9 @@
                 function(context, timePeriod) {
                     this.updateWorksheetBySelectedTimePeriod(timePeriod);
                 }, this);
-            this.context.forecasts.on("change:selectedCategory",
-                function(context, category) {
-                    this.updateWorksheetBySelectedCategory(category);
+            this.context.forecasts.on("change:selectedRanges",
+                function(context, ranges) {
+                    this.updateWorksheetBySelectedRanges(ranges);
                 },this);
             this.context.forecasts.worksheet.on("change", function() {
                 this.calculateTotals();
@@ -252,7 +254,7 @@
                 }
             });
             */
-            this.context.forecasts.config.on('change:buckets_dom change:forecast_categories', this.render, this);
+            this.context.forecasts.config.on('change:buckets_dom change:forecast_ranges', this.render, this);
 
             var worksheet = this;
             $(window).bind("beforeunload",function(){
@@ -434,7 +436,6 @@
         
         this.context.forecasts.set({currentWorksheet: "worksheet"});
         this.isEditableWorksheet = this.isMyWorksheet();
-        this._setForecastColumn(this.meta.panels[0].fields);
 
         app.view.View.prototype._render.call(this);
 
@@ -520,7 +521,7 @@
             return $(this).width();
         }).get();
 
-        $('.likely .converted').width(_.max(likelyWidths));
+        this.$('.likely .converted').width(_.max(likelyWidths));
         $('.likely label.original').width(_.max(likelyLabelWidths));
         $('.best .converted').width(_.max(bestWidths));
         $('.best label.original').width(_.max(bestLabelWidths));
@@ -710,10 +711,10 @@
      *
      * @param params is always a context
      */
-    updateWorksheetBySelectedCategory:function (params) {
+    updateWorksheetBySelectedRanges:function (params) {
         // Set the filters for the datatable then re-render
         var self = this,
-            forecast_categories_setting = this.context.forecasts.config.get('forecast_categories') || 'show_binary';
+            forecast_ranges_setting = this.context.forecasts.config.get('forecast_ranges') || 'show_binary';
 
         // start with no filters, i. e. show everything.
         $.fn.dataTableExt.afnFiltering.splice(0, $.fn.dataTableExt.afnFiltering.length);
@@ -732,7 +733,7 @@
                         checkState;
 
                     //If we are in an editable worksheet get the selected dropdown/checkbox value; otherwise, get the detail/default text
-                    if (forecast_categories_setting == 'show_binary') {
+                    if (forecast_ranges_setting == 'show_binary') {
                         checkState = rowCategory.find('input').attr('checked');
                         selectVal = ((checkState == "checked") || (checkState == "on") || (checkState == "1")) ? 'include' : 'exclude';
                     } else {

@@ -29,7 +29,7 @@ $viewdefs['Forecasts']['base']['layout']['tabbedConfig'] = array(
             'view' => 'forecastsConfigTimeperiods',
         ),
         array(
-            'view' => 'forecastsConfigCategories',
+            'view' => 'forecastsConfigRanges',
         ),
         array(
             'view' => 'forecastsConfigScenarios',
