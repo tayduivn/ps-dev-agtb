@@ -5689,7 +5689,7 @@ table.dataTable th.sorting {
 }
 table.dataTable tbody tr.active td { background-image:url('../../assets/img/texture/furley_bg.png'); }
 table.dataTable tbody tr.active td .icon-eye-open { color:#000000 !important; }
-table.dataTable .tr-inline-edit td {
+table.dataTable .tr-inline-edit.single td {
   background:#e5f4fb !important;
   padding-bottom:0;
 }

@@ -231,7 +231,7 @@
       // init edit mode
       if($(this).hasClass('edit') ){
         var editid = Math.floor(Math.random()*999999);
-        $('<tr id="edit-id-'+editid+'" class="tr-inline-edit"></tr>').insertAfter($(this).closest('tr'));
+        $('<tr id="edit-id-'+editid+'" class="tr-inline-edit single"></tr>').insertAfter($(this).closest('tr'));
         loadPartials([
            {"file":"common/table-cell-edit","target":"#edit-id-"+editid,"method":"append"},
         ]);
