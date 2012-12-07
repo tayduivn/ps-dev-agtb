@@ -165,6 +165,13 @@
         }
     },
 
+    /**
+     * Adding the field to the ColumnDef for the DataTables Plugin.  If the field is already in the array it will not be
+     * added again.
+     *
+     * @param field {Object}        Field Def Information
+     * @private
+     */
     _createFieldColumnDef: function(field) {
         // make sure we don't already have the field in the list.
         if(_.find(this.columnDefs, _.bind(function(obj) {return obj.sName == this.name }, field))) {
