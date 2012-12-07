@@ -235,7 +235,23 @@
         loadPartials([
            {"file":"common/table-cell-edit","target":"#edit-id-"+editid,"method":"append"},
         ]);
+
         $('.chzn-select').chosen({ disable_search_threshold: 5 });
+
+        var tr_val = new Array(),
+            tr_i = 0;
+        $(this).closest('tr').find('td').each(function(el){
+            //console.log($(this).text());
+            tr_val[tr_i]=$(this).text();
+            tr_i = tr_i + 1;
+        });
+
+        var tr_i = 0;
+        $('#edit-id-'+editid).find('td').each(function(el){
+          $(this).find('input[type=text]').attr('value',tr_val[tr_i]);
+          tr_i = tr_i + 1;
+        });
+
         $(this).closest('tr').addClass('hide');
       }
     });
