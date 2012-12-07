@@ -475,7 +475,6 @@
         
         this.context.forecasts.set({currentWorksheet: "worksheet"});
         this.isEditableWorksheet = this.isMyWorksheet();
-        this._setForecastColumn(this.meta.panels[0].fields);
 
         // empty out the columnDefs if it's be re-rendred again
         this.columnDefs = [];
