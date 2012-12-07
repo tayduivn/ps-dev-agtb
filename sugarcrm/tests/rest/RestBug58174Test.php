@@ -49,7 +49,7 @@ class RestBug58174Test extends RestTestBase
          );";
         
         mkdir_recursive(dirname($this->_testLangFile));
-        sugar_file_put_contents($this->_testLangFile, $content);
+        SugarAutoLoader::put($this->_testLangFile, $content);
         
         // Clear the metadata cache to ensure a fresh load of data
         $this->_clearMetadataCache();
@@ -97,12 +97,18 @@ class RestBug58174Test extends RestTestBase
      */
     public function testHtmlEntitiesAreConvertedInMetadataRequest()
     {
-        $reply = $this->_restCall('metadata?module_filter=Notes&type_filter=mod_strings');
-        $this->assertTrue(isset($reply['reply']['mod_strings']['Notes']['LBL_ASSIGNED_TO_ID']), "'LBL_ASSIGNED_TO_ID' mod strings for the Notes module was not returned");
-        $this->assertEquals("Assigned User's Id", $reply['reply']['mod_strings']['Notes']['LBL_ASSIGNED_TO_ID'], "Returned value for 'LBL_ASSIGNED_TO_ID' was not decoded properly");
+        $this->_clearMetadataCache();
+        $reply = $this->_restCall('metadata?module_filter=Notes&type_filter=labels');
+        $json = file_get_contents($reply['reply']['labels']['en_us']);
+
+        $object = json_decode($json, true);
+
+
+        $this->assertTrue(isset($object['mod_strings']['Notes']['LBL_ASSIGNED_TO_ID']), "'LBL_ASSIGNED_TO_ID' mod strings for the Notes module was not returned");
+        $this->assertEquals("Assigned User's Id", $object['mod_strings']['Notes']['LBL_ASSIGNED_TO_ID'], "Returned value for 'LBL_ASSIGNED_TO_ID' was not decoded properly");
         
-        $this->assertTrue(isset($reply['reply']['mod_strings']['Notes']['LBL_ACCOUNT_ID']), "'LBL_ACCOUNT_ID' mod strings for the Notes module was not returned");
-        $this->assertEquals("Account's ID:", $reply['reply']['mod_strings']['Notes']['LBL_ACCOUNT_ID'], "Returned value for 'LBL_ACCOUNT_ID' was not decoded properly");
+        $this->assertTrue(isset($object['mod_strings']['Notes']['LBL_ACCOUNT_ID']), "'LBL_ACCOUNT_ID' mod strings for the Notes module was not returned");
+        $this->assertEquals("Account's ID:", $object['mod_strings']['Notes']['LBL_ACCOUNT_ID'], "Returned value for 'LBL_ACCOUNT_ID' was not decoded properly");
     }
 }
 

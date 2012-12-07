@@ -12,7 +12,8 @@
 
     events:{
         'focus .chzn-container input': 'dropFocus',
-        'click .chzn-container .chzn-drop' : 'chznClick'
+        'click .chzn-container .chzn-drop' : 'chznClick',
+        'click .chzn-select-legend': 'chznContainerClick'
     },
 
     dropFocus:function (evt) {
@@ -28,6 +29,16 @@
 
     chznClick: function(evt) {
         $(evt.target).css("right","auto");
+    },
+
+    /**
+     * handler for click event on filter
+     * @param evt
+     */
+    chznContainerClick: function (evt)
+    {
+        var chosen = this.fields.category.$el.find('select').data('chosen');
+        chosen.results_toggle();
     },
 
     /**
@@ -90,6 +101,10 @@
         field.$el.find('.chzn-container').css("width", "100%");
         field.$el.find('.chzn-choices').prepend('<legend class="chzn-select-legend">Filter <i class="icon-caret-down"></i></legend>');
         field.$el.find('.chzn-results li').after("<span class='icon-ok' />");
+
+        // override default behavior of chosen - @see #58125
+        var chosen = field.$el.find('select').data('chosen');
+        chosen.container_mousedown = function(){};
 
         this.fields[field.name] = field;
     },

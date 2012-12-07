@@ -1,6 +1,5 @@
 <?php
-if (!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
-/********************************************************************************
+/*********************************************************************************
  *The contents of this file are subject to the SugarCRM Professional End User License Agreement
  *("License") which can be viewed at http://www.sugarcrm.com/EULA.
  *By installing or using this file, You have unconditionally agreed to the terms and conditions of the License, and You may
@@ -20,50 +19,28 @@ if (!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
-require_once('data/SugarBeanApiHelper.php');
+require_once('modules/UpgradeWizard/UpgradeRemoval.php');
 
-class MeetingsApiHelper extends SugarBeanApiHelper
+class UpgradeRemoval67x extends UpgradeRemoval
 {
     /**
-     * This function adds the Meetings specific saves for leads, contacts, and users on a call also updates the vcal
-     * @param SugarBean $bean
-     * @param array $submittedData
-     * @param array $options
+     * Return an array of files/directories to remove for 66x upgrades
+     * 
+     * @param string $version
      * @return array
      */
-    public function populateFromApi(SugarBean $bean, array $submittedData, array $options = array())
+    public function getFilesToRemove($version)
     {
-        $data = parent::populateFromApi($bean, $submittedData, $options);
+        $files = array();
 
-        if($bean->status != 'Held') {
-
-            $userInvitees[] = $bean->assigned_user_id;
-            if($bean->assigned_user_id != $GLOBALS['current_user']->id) {
-                $userInvitees[] = $GLOBALS['current_user']->id;
-            }
-            
-            // Call the Call module's save function to handle saving other fields besides
-            // the users and contacts relationships
-
-            $bean->update_vcal = false;    // Bug #49195 : don't update vcal b/s related users aren't saved yet, create vcal cache below
-
-            $bean->users_arr = $userInvitees;
-
-            $bean->save(true);
-
-            $bean->setUserInvitees($userInvitees);
-
-
-
-            vCal::cache_sugar_vcal(BeanFactory::getBean('Users', $bean->assigned_user_id));
-            if($bean->assigned_user_id != $GLOBALS['current_user']->id) {
-                vCal::cache_sugar_vcal(BeanFactory::getBean('Users', $GLOBALS['current_user_id']));
-            }
+        if(version_compare($version, '670', '<'))
+        {
+            //Remove the themes/Sugar/js directory
+            $files[] = 'themes/Sugar/js';
+            //Remove the themes/Sugar/tpls directory
+            $files[] = 'themes/Sugar/tpls';
         }
 
-
-        return $data;
+        return $files;
     }
-
-
 }
