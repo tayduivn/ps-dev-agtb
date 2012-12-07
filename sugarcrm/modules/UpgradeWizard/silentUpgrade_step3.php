@@ -257,7 +257,7 @@ $admin = new Administration();
 $admin->saveSetting('system','adminwizard',1);
 
 include("$unzip_dir/manifest.php");
-$ce_to_pro_ent = isset($manifest['name']) && ($manifest['name'] == 'SugarCE to SugarPro' || $manifest['name'] == 'SugarCE to SugarEnt'  || $manifest['name'] == 'SugarCE to SugarCorp' || $manifest['name'] == 'SugarCE to SugarUlt');
+$ce_to_pro_ent = isset($manifest['name']) && preg_match('/^SugarCE.*?(Pro|Ent|Corp|Ult)$/', $manifest['name']);
 $origVersion = getSilentUpgradeVar('origVersion');
 if(!$origVersion){
     global $silent_upgrade_vars_loaded;
@@ -334,6 +334,9 @@ if(function_exists('rebuildSprites') && function_exists('imagecreatetruecolor'))
 {
     rebuildSprites(true);
 }
+
+//Patch for bug57431 : Module name isn't updated in portal layout editor
+updateRenamedModulesLabels();
 
 //BEGIN SUGARCRM flav=PRO ONLY
 //setup forecast defualt settings
