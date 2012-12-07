@@ -649,10 +649,12 @@ class MetadataApi extends SugarApi {
         }
     }
 
+    /**
+     * Accessor to the metadata manager cache cleaner
+     */
     public function clearMetadataCache()
     {
-        $mm = $this->getMetadataManager();
-        $mm->clearAPICache();
+        MetaDataManager::clearAPICache();
     }
     
 }
