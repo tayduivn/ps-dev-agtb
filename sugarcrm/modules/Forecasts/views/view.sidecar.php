@@ -142,7 +142,7 @@ class ForecastsViewSidecar extends SidecarView
         //load 3rd party libs for sidecar
         echo getVersionedScript("cache/include/javascript/sugar_grp1_sidecar_libs.js") . "\n";
 
-        if ( !inDeveloperMode() )
+        /*if ( !inDeveloperMode() )
         {
             echo getVersionedScript("sidecar/minified/sidecar.lite.min.js") . "\n";
 
@@ -153,7 +153,7 @@ class ForecastsViewSidecar extends SidecarView
             }
             echo getVersionedScript('cache/include/javascript/sidecar_forecasts.js') . "\n";
 
-        } else {
+        } else {*/
 
             require('sidecar/src/include-manifest.php');
             if(!empty($buildFiles['sidecar.lite'])) {
@@ -171,7 +171,7 @@ class ForecastsViewSidecar extends SidecarView
                     echo "<script src='".$_file."'></script>\n";
                 }
             }
-        }
+        //}
     }
 
     protected function _displayJavascriptCore()
