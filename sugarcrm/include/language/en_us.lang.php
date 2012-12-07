@@ -4429,7 +4429,7 @@ $app_strings ['documentation'] = array (
     'COM' => '05_Sugar_Community_Edition'
 );
 //BEGIN SUGARCRM flav=pro ONLY
-$app_list_strings['forecasts_config_category_options_dom'] = array(
+$app_list_strings['forecasts_config_ranges_options_dom'] = array(
     'show_binary' => 'Two Ranges',
     'show_buckets' => 'Three Ranges',
 //END SUGARCRM flav=pro ONLY
