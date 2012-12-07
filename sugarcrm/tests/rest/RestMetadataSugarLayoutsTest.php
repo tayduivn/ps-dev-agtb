@@ -62,6 +62,7 @@ class RestMetadataSugarLayoutsTest extends RestTestBase {
 //END SUGARCRM flav=pro ONLY
         $this->_restLogin('','','base');
         $this->baseAuthToken = $this->authToken;
+        $this->_clearMetadataCache();
     }
 
     public function tearDown()
