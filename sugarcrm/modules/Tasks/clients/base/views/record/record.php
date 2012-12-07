@@ -40,7 +40,7 @@ $viewdefs['Tasks']['base']['view']['record'] = array(
             'type' => 'button',
             'label' => 'LBL_CANCEL_BUTTON_LABEL',
             'css_class' => 'hide record-cancel',
-        ),
+        ),                                             
         array(
             'type' => 'button',
             'label' => 'LBL_EDIT_BUTTON_LABEL',
@@ -51,6 +51,28 @@ $viewdefs['Tasks']['base']['view']['record'] = array(
             'label' => 'LBL_DELETE_BUTTON_LABEL',
             'css_class' => 'record-delete',
         ),
+        array(
+            'type' => 'button',
+            'label' => 'LBL_CLOSE_AND_CREATE_BUTTON_TITLE',
+            'events' => array(
+                'click' => 'function(e){
+                var self = this;                    
+                app.alert.show("close_task", {level: "process", title: app.lang.getAppString("LBL_PROCESSING_REQUEST")});
+                this.model.set("status", "Completed", {silent:true});
+                this.model.save({}, {
+                    success: function() {
+                        app.alert.dismiss("close_task");
+                        app.cache.set("duplicate"+self.module, self.model.attributes);
+                        app.router.navigate("#"+self.module+"/create", {trigger: true});                    
+                    },
+                    error:function(error) {
+                        app.alert.dismiss("close_task");
+                        app.alert.show("close_task_error", {level: "error", autoClose: true, title: app.lang.getAppString("ERR_AJAX_LOAD")});
+                        app.logger.error("Failed to close a task. " + error);
+                    }
+                });
+            }'),
+        ),            
         array(
             'type' => 'button',
             'label' => 'LBL_CLOSE_BUTTON_TITLE',
