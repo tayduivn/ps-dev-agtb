@@ -241,7 +241,7 @@
     });
 
     $('body').on('change', '.tr-inline-edit', function(){
-      $(this).closest('tr').find('.btn.btn-primary').removeClass('disabled');
+      $('.btn.inline-save').removeClass('disabled');
     });
 
     $('body').on('click', '.tr-inline-edit .inline-cancel, .tr-inline-edit .inline-save', function(){
@@ -274,13 +274,18 @@
            {"file":"common/header-edit-list","target":".headerpane.ellipsis","method":"replace"},
         ]);
         $('.chzn-select').chosen({ disable_search_threshold: 5 });
+        $('.headerpane.ellipsis').find('.save').addClass('disabled');
         $(this).closest('tr').addClass('hide');
       });
       return false;
     });
 
-
-
+    $('body').on('click', '.headerpane.ellipsis .inline-save', function(){
+      $('tr.tr-inline-edit').remove();
+      $('tr.hide').removeClass('hide')
+      throwMessage('<strong>Success!</strong> Your edits have been saved', 'success', true);
+      return false;
+    });
 
   });
 </script>
