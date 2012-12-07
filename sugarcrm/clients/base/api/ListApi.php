@@ -137,6 +137,8 @@ class ListApi extends SugarApi {
             }
             
             $orderBy = implode(',',$orderByArray);
+        } else {
+            $orderBy = 'date_modified DESC';
         }
 
         $whereParts = array();
