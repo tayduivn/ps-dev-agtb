@@ -85,13 +85,13 @@ class CalendarUtils {
 					if(empty($bean->$end_field))
 						$bean->$end_field = $bean->$start_field;
 
-					$timestamp = SugarDateTime::createFromFormat($GLOBALS['timedate']->get_date_time_format(),$bean->$start_field,new DateTimeZone('UTC'))->format('U');
+                    $timestamp = $GLOBALS['timedate']->fromDb($bean->$start_field)->format('U');
 					$arr['timestamp'] = $timestamp;
 					$arr['time_start'] = $GLOBALS['timedate']->fromTimestamp($arr['timestamp'])->format($GLOBALS['timedate']->get_time_format());
-					$date_start = SugarDateTime::createFromFormat($GLOBALS['timedate']->get_date_time_format(),$bean->$start_field,new DateTimeZone('UTC'));
+                    $date_start = $GLOBALS['timedate']->fromDb($bean->$start_field);
 					$arr['ts_start'] = $date_start->get("-".$date_start->format("H")." hours -".$date_start->format("i")." minutes -".$date_start->format("s")." seconds")->format('U');
 					$arr['offset'] = $date_start->format('H') * 3600 + $date_start->format('i') * 60;
-					$date_end = SugarDateTime::createFromFormat($GLOBALS['timedate']->get_date_time_format(),$bean->$end_field,new DateTimeZone('UTC'));
+                    $date_end = $GLOBALS['timedate']->fromDb($bean->$end_field);
 					if($bean->object_name != 'Task')
 						$date_end->modify("-1 minute");
 					$arr['ts_end'] = $date_end->get("+1 day")->get("-".$date_end->format("H")." hours -".$date_end->format("i")." minutes -".$date_end->format("s")." seconds")->format('U');
@@ -176,12 +176,12 @@ class CalendarUtils {
 	 		}
 
 	 		// TODO CHECK DATETIME VARIABLE
-	 		if(!empty($_REQUEST['date_start'])){
-	 			$date_start = $_REQUEST['date_start'];
-	 		}else
-	 			$date_start = $bean->date_start;
+             if (!empty($_REQUEST['date_start'])) {
+                 $date = SugarDateTime::createFromFormat($GLOBALS['timedate']->get_date_time_format(), $_REQUEST['date_start']);
+             } else {
+                 $date = $GLOBALS['timedate']->fromDb($bean->date_start);
+             }
 
-	 		$date = SugarDateTime::createFromFormat($GLOBALS['timedate']->get_date_time_format(),$date_start);
 		 	$arr = array_merge($arr,array(
 		 		'current_dow' => $date->format("w"),
 		 		'default_repeat_until' => $date->get("+1 Month")->format($GLOBALS['timedate']->get_date_format()),
@@ -353,18 +353,20 @@ class CalendarUtils {
 		$arr = array();
 		$i = 0;
 		foreach($time_arr as $date_start){
-			$clone = $bean;	// we don't use clone keyword cause not necessary
-			$clone->id = "";
-			$clone->date_start = $date_start;
 			// TODO CHECK DATETIME VARIABLE
-			$date = SugarDateTime::createFromFormat($GLOBALS['timedate']->get_date_time_format(),$date_start);
-			$date = $date->get("+{$bean->duration_hours} Hours")->get("+{$bean->duration_minutes} Minutes");
-			$date_end = $date->format($GLOBALS['timedate']->get_date_time_format());
-			$clone->date_end = $date_end;
-			$clone->recurring_source = "Sugar";
-			$clone->repeat_parent_id = $id;
-			$clone->update_vcal = false;
-			$clone->save(false);
+            $date = SugarDateTime::createFromFormat($GLOBALS['timedate']->get_date_time_format(),$date_start);
+            $date_start = $date->asDb();
+            $date = $date->get("+{$bean->duration_hours} Hours")->get("+{$bean->duration_minutes} Minutes");
+            $date_end = $date->asDb();
+
+            $clone = $bean;	// we don't use clone keyword cause not necessary
+            $clone->id = "";
+            $clone->date_start = $date_start;
+            $clone->date_end = $date_end;
+            $clone->recurring_source = "Sugar";
+            $clone->repeat_parent_id = $id;
+            $clone->update_vcal = false;
+            $clone->save(false);
 
 			if($clone->id){
 				foreach($users_rel_arr as $user_id){
