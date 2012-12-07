@@ -521,7 +521,7 @@
             return $(this).width();
         }).get();
 
-        this.$('.likely .converted').width(_.max(likelyWidths));
+        $('.likely .converted').width(_.max(likelyWidths));
         $('.likely label.original').width(_.max(likelyLabelWidths));
         $('.best .converted').width(_.max(bestWidths));
         $('.best label.original').width(_.max(bestLabelWidths));
