@@ -47,6 +47,7 @@ describe("The forecasts worksheet", function(){
                 def:{
                     clickToEdit:true
                 },
+                options : {},
                 model : {
                     get : function(param) {
                         return [testValue];
@@ -206,6 +207,7 @@ describe("The forecasts worksheet", function(){
                 viewName:'worksheet',
                 name:'commit_stage',
                 type:'enum',
+                options: {},
                 def: {
                     clickToEdit: 'false'
                 },
@@ -251,7 +253,7 @@ describe("The forecasts worksheet", function(){
             _setUpCommitStageSpy = sinon.spy(view, "_setUpCommitStage");
             view._renderField(field);
             expect(_setUpCommitStageSpy).toHaveBeenCalled();
-            expect(field.view == "detail").toBeTruthy();
+            expect(field.options.viewName == "detail").toBeTruthy();
             _setUpCommitStageSpy.restore();
             testMethodStub.restore();
         });
