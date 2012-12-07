@@ -666,7 +666,7 @@
     </div>
     <div class="span5">
       <div class="control-group">
-        <label for="select01" class="control-label">Teams:</label>
+        <label for="select01" class="control-label">Teams:</label><br>
         <div class="controls pull-left">
           <select data-placeholder="Choose a account..." class="chzn-select span2" tabindex="2">
             <option value="pk">Global</option>
@@ -706,7 +706,8 @@
       </div>
       <br><br><br>
       <div class="control-group">
-        <label for="select01" class="control-label">Emails:</label>
+        <label for="select01" class="control-label">Emails:</label><br>
+        
         <div class="controls pull-left">
             <input type="text" class="span2" placeholder="email address" value="dave@sugarcrm.com"  disabled="disabled">
         </div>
@@ -747,4 +748,7 @@
       $(".chzn-select").chosen({ disable_search_threshold: 5 });
       $(".chzn-select-deselect").chosen({allow_single_deselect:true});
     }
+    $('body').tooltip({
+      selector: "[rel=tooltip]"
+    });
 </script>
