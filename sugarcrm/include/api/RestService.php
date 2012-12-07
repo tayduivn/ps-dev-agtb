@@ -500,7 +500,9 @@ class RestService extends ServiceBase {
      * @return bool
      */
     public function hasHeader($header) {
-        return array_key_exists($header, $this->response_headers);
+        // do a case insensitive check
+        $headers = array_change_key_case($this->response_headers, CASE_LOWER);
+        return array_key_exists(strtolower($header), $headers);
     }
 
     /**
