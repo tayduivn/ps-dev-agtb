@@ -319,6 +319,9 @@
       $('tr.tr-inline-edit').remove();
       $('tr.hide').removeClass('hide')
       throwMessage('<strong>Success!</strong> Your edits have been saved', 'success', true);
+      loadPartials([
+        {"file":"common/header","target":".headerpane.ellipsis","method":"replace"},
+      ]);
       return false;
     });
 
