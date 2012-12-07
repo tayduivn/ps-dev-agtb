@@ -43,7 +43,7 @@
 
         var star = $(evt.currentTarget);
 
-        if (!this.model.favorite(!this.model.isFavorite())) {
+        if (this.model.favorite(!this.model.isFavorite()) === false) {
             app.logger.error("Unable to set '" + this.model.module + "' record '" + this.model.id + "' as favorite");
             return;
         }
