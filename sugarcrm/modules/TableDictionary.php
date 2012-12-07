@@ -109,7 +109,7 @@ include("metadata/inboundEmail_autoreplyMetaData.php");
 include("metadata/inboundEmail_cacheTimestampMetaData.php");
 include("metadata/email_cacheMetaData.php");
 include("metadata/email_marketing_prospect_listsMetaData.php");
-include("metadata/users_signaturesMetaData.php");
+
 //linked documents.
 include("metadata/linked_documentsMetaData.php");
 //BEGIN SUGARCRM flav=pro ONLY

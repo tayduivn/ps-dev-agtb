@@ -38,16 +38,7 @@ class UserSignature extends SugarBean
 	//BEGIN SUGARCRM flav=pro ONLY
 	var $disable_row_level_security = true;
 	//END SUGARCRM flav=pro ONLY
-
-	public function __construct()
-	{
-		//Ensure the vardefs get loaded.
-		global $dictionary;
-		require_once SugarAutoLoader::existingCustomOne('metadata/users_signaturesMetaData.php');
-
-		parent::__construct();
-	}
-
+    
 	/**
 	 * returns the bean name - overrides SugarBean's
 	 */
