@@ -267,7 +267,8 @@ class SugarACLStatic extends SugarACLStrategy
         	unset($access_list['access']);
         }
         foreach($access_list as $action => $value) {
-        	if(isset($actions[$action]['aclaccess']) && !ACLAction::hasAccess($is_owner, $actions[$action]['aclaccess'])) {
+            // may have the bean, so we need to use checkAccess
+        	if(!$this->checkAccess($module, $action, $context) || (isset($actions[$action]['aclaccess']) && !ACLAction::hasAccess($is_owner, $actions[$action]['aclaccess']))) {
         		$access[$action] = false;
         	}
         }
