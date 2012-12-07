@@ -33,6 +33,9 @@ class RestRelateRecordTest extends RestTestBase {
         $this->accounts = array();
         $this->contacts = array();
         $this->opps = array();
+        $this->calls = array();
+        $this->notes = array();
+        $this->leads = array();
     }
     
     public function tearDown()
