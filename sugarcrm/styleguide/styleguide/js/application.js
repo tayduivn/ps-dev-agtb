@@ -124,6 +124,7 @@
     $("[rel=popover]").popover();
     $("[rel=popoverTop]").popover({placement: "top"});
     $("[rel=popoverBottom]").popover({placement: "bottom"});
+    $("[rel=popoverHover]").popover({trigger: "hover"});
 
     // add modal content into DOM and show modal
     $('body').on('click', '.modal-link', function(e){
