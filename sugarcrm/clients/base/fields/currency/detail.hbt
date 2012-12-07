@@ -1,1 +1,1 @@
-{{#if transactionValue}}<label class="original" style="min-width: 80px;">{{transactionValue}}</label>{{/if}}<div class="converted" style="min-width: 80px;"><div class="sugareditable"><span class="click format">{{value}}</span></div></div>
+{{#if transactionValue}}<label class="original" style="min-width: 80px;">{{transactionValue}}</label>{{/if}}<div class="converted">{{value}}</div>
