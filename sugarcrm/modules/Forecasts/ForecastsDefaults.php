@@ -158,7 +158,7 @@ class ForecastsDefaults
         }
 
         //Update the currency_id and base_rate columns for existing records so that we have currency_id and base_rate values set up correctly
-        $tables = array('opportunities', 'products', 'worksheet', 'forecasts's, 'quotes', 'quotas');
+        $tables = array('opportunities', 'products', 'worksheet', 'forecasts', 'quotes', 'quotas');
         foreach($tables as $table)
         {
             $isUsDollar = true; // set false if table has no usdollar fields
