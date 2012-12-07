@@ -111,11 +111,22 @@ $GLOBALS['log']	= new FakeLogger($path);
 $zipBasePath = "$unzip_dir/{$zip_from_dir}";
 $uwFiles = findAllFiles("{$zipBasePath}/modules/UpgradeWizard", array());
 $destFiles = array();
+$newDirs = array();
 
 foreach($uwFiles as $uwFile) {
 	$destFile = str_replace($zipBasePath."/", '', $uwFile);
+
+    $dir = dirname($destFile);
+
+    //Ensure that the parent directory exists
+    if(!isset($newDirs[$dir]) && !file_exists($dir)) {
+       mkdir_recursive($dir);
+       $newDirs[$dir] = true;
+    }
+
 	copy($uwFile, $destFile);
 }
+
 require_once('modules/UpgradeWizard/uw_utils.php'); // This is the NEW uw_utils.php file
 removeSilentUpgradeVarsCache(); // Clear the silent upgrade vars - Note: Any calls to these functions within this file are removed here
 logThis("*** SILENT UPGRADE INITIATED.", $path);
@@ -128,7 +139,7 @@ initialize_session_vars();
 // Load manifest
 require("$unzip_dir/manifest.php");
 
-$ce_to_pro_ent = isset($manifest['name']) && ($manifest['name'] == 'SugarCE to SugarPro' || $manifest['name'] == 'SugarCE to SugarEnt' || $manifest['name'] == 'SugarCE to SugarCorp' || $manifest['name'] == 'SugarCE to SugarUlt');
+$ce_to_pro_ent = isset($manifest['name']) && preg_match('/^SugarCE.*?(Pro|Ent|Corp|Ult)$/', $manifest['name']);
 $_SESSION['upgrade_from_flavor'] = $manifest['name'];
 
 global $sugar_config;

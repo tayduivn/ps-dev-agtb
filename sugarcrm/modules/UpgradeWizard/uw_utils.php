@@ -3268,26 +3268,27 @@ function upgradeUserPreferences() {
 							   );
 
     $GLOBALS['mod_strings'] = return_module_language($GLOBALS['current_language'], 'Home');
-
-    $ce_to_pro_or_ent = (isset($_SESSION['upgrade_from_flavor']) && ($_SESSION['upgrade_from_flavor'] == 'SugarCE to SugarPro' || $_SESSION['upgrade_from_flavor'] == 'SugarCE to SugarEnt' || $_SESSION['upgrade_from_flavor'] == 'SugarCE to SugarCorp' || $_SESSION['upgrade_from_flavor'] == 'SugarCE to SugarUlt'));
 //END SUGARCRM flav=pro ONLY
+
+    $ce_to_pro_or_ent = (isset($_SESSION['upgrade_from_flavor']) && preg_match('/^SugarCE.*?(Pro|Ent|Corp|Ult)$/', $_SESSION['upgrade_from_flavor']));
+
    	$db = &DBManagerFactory::getInstance();
-    $result = $db->query("SELECT id FROM users where deleted = '0'");
+    $result = $db->query("SELECT id FROM users WHERE " . User::getLicensedUsersWhere());
    	while($row = $db->fetchByAssoc($result))
     {
         $current_user = new User();
         $current_user->retrieve($row['id']);
 
         // get the user's name locale format, check if it's in our list, add it if it's not, keep it as user's default
+        $changed = false;
         $currentUserNameFormat = $current_user->getPreference('default_locale_name_format');
         if ($localization->isAllowedNameFormat($currentUserNameFormat)) {
             upgradeLocaleNameFormat($currentUserNameFormat);
         } else {
             $current_user->setPreference('default_locale_name_format', 's f l', 0, 'global');
-            $current_user->savePreferencesToDB();
+            $changed = true;
         }
 
-        $changed = false;
         if(!$current_user->getPreference('calendar_publish_key')) {
         	// set publish key if not set already
         	$current_user->setPreference('calendar_publish_key', create_guid());
@@ -3298,10 +3299,11 @@ function upgradeUserPreferences() {
 	      //Set the user theme to be 'Sugar' theme since this is run for CE flavor conversions
 	      $userTheme = $current_user->getPreference('user_theme', 'global');
 
-	      if(empty($userTheme) || $ce_to_pro_or_ent)
+          //If theme is empty or if theme was set to Classic (Sugar5) or if this is a ce to pro/ent flavor upgrade change to RacerX theme
+	      if(empty($userTheme) || $userTheme == 'Sugar5' || $ce_to_pro_or_ent)
 	      {
             $changed = true;
-	      	$current_user->setPreference('user_theme', 'Sugar', 0, 'global');
+	      	$current_user->setPreference('user_theme', 'RacerX', 0, 'global');
 	      }
 
 	      //Set the number of tabs by default to 7
@@ -3391,7 +3393,7 @@ function upgradeUserPreferences() {
 	 * For the CE version, we are checking to see that there are no entries enabled for PRO/ENT versions
 	 * we are checking for Tracker sessions, performance and queries.
 	 */
-	if(isset($_SESSION['upgrade_from_flavor']) && ($_SESSION['upgrade_from_flavor'] == 'SugarCE to SugarPro' || $_SESSION['upgrade_from_flavor'] == 'SugarCE to SugarEnt' || $_SESSION['upgrade_from_flavor'] == 'SugarCE to SugarCorp' || $_SESSION['upgrade_from_flavor'] == 'SugarCE to SugarUlt')) {
+	if($ce_to_pro_or_ent) {
 		//Set tracker settings. Disable tracker session, performance and queries
 		$category = 'tracker';
 		$value = 1;
@@ -3783,7 +3785,7 @@ function upgradeModulesForTeam() {
     } //while
 
     //Update the team_set_id and default_team columns
-    $ce_to_pro_or_ent = (isset($_SESSION['upgrade_from_flavor']) && ($_SESSION['upgrade_from_flavor'] == 'SugarCE to SugarPro' || $_SESSION['upgrade_from_flavor'] == 'SugarCE to SugarEnt' || $_SESSION['upgrade_from_flavor'] == 'SugarCE to SugarCorp' || $_SESSION['upgrade_from_flavor'] == 'SugarCE to SugarUlt'));
+    $ce_to_pro_or_ent = isset($_SESSION['upgrade_from_flavor']) && preg_match('/^SugarCE.*?(Pro|Ent|Corp|Ult)$/', $_SESSION['upgrade_from_flavor']);
 
     //Update team_set_id
 	if($ce_to_pro_or_ent) {
@@ -4750,6 +4752,51 @@ function repairUpgradeHistoryTable()
     }
 
 }
+
+
+/**
+ * Patch for bug57431
+ * Compares current moduleList to base moduleList to detect if some modules have been renamed
+ * Run changeModuleModStrings to create new labels based on customizations.
+ */
+function updateRenamedModulesLabels()
+{
+    require_once('modules/Studio/wizards/RenameModules.php');
+    require_once('include/utils.php');
+
+    $klass = new RenameModules();
+    $languages = get_languages();
+
+    foreach ($languages as $langKey => $langName) {
+        //get list strings for this language
+        $strings = return_app_list_strings_language($langKey);
+
+        //get base list strings for this language
+        if (file_exists("include/language/$langKey.lang.php")) {
+            include("include/language/$langKey.lang.php");
+
+            //Keep only renamed modules
+            $renamedModules = array_diff($strings['moduleList'], $app_list_strings['moduleList']);
+
+            foreach ($renamedModules as $moduleId => $moduleName) {
+                if(isset($app_list_strings['moduleListSingular'][$moduleId])) {
+                    $klass->selectedLanguage = $langKey;
+
+                    $replacementLabels = array(
+                        'singular' => $strings['moduleListSingular'][$moduleId],
+                        'plural' => $strings['moduleList'][$moduleId],
+                        'prev_singular' => $app_list_strings['moduleListSingular'][$moduleId],
+                        'prev_plural' => $app_list_strings['moduleList'][$moduleId],
+                        'key_plural' => $moduleId,
+                        'key_singular' => $klass->getModuleSingularKey($moduleId)
+                    );
+                    $klass->changeModuleModStrings($moduleId, $replacementLabels);
+                }
+            }
+        }
+    }
+}
+
 
 //BEGIN SUGARCRM flav=pro ONLY
 /**
