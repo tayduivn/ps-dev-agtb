@@ -8,8 +8,6 @@ describe('copy field', function() {
         beforeEach(function() {
 
             app = SugarTest.app;
-            app.view.Field.prototype._renderHtml = function() {
-            };
 
             model = new Backbone.Model({
                 int: 1234567890,
@@ -69,7 +67,6 @@ describe('copy field', function() {
             var prev = model.clone();
 
             field.render();
-            field._renderHtml();
 
             _.each(field.def.mapping, function(target, source) {
                 expect(field.model.get(target)).toEqual(prev.get(target));
@@ -100,7 +97,6 @@ describe('copy field', function() {
             var prev = model.clone();
 
             field.render();
-            field._renderHtml();
 
             _.each(field.def.mapping, function(target, source) {
                 expect(field.model.get(target)).toEqual(prev.get(target));
@@ -117,7 +113,6 @@ describe('copy field', function() {
             var prev = model.clone();
 
             field.render();
-            field._renderHtml();
 
             _.each(field.def.mapping, function(target, source) {
                 expect(field.model.get(target)).toEqual(prev.get(target));
@@ -149,7 +144,6 @@ describe('copy field', function() {
             var prev = model.clone();
 
             field.render();
-            field._renderHtml();
 
             _.each(field.def.mapping, function(target, source) {
                 expect(field.model.get(target)).toEqual(prev.get(target));
@@ -172,7 +166,6 @@ describe('copy field', function() {
             expect(field.def.sync).toBeFalsy();
 
             field.render();
-            field._renderHtml();
 
             _.each(field.def.mapping, function(target, source) {
                 expect(field.model.get(target)).toEqual(prev.get(target));
