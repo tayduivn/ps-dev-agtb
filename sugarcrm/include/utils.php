@@ -966,7 +966,7 @@ function return_app_list_strings_language($language)
 
 	// Check for cached value
 	$cache_entry = sugar_cache_retrieve($cache_key);
-	if(!empty($cache_entry))
+	if(false && !empty($cache_entry))
 	{
 		return $cache_entry;
 	}
@@ -975,17 +975,24 @@ function return_app_list_strings_language($language)
 	$temp_app_list_strings = $app_list_strings;
 
 	$langs = array();
+    /*
 	if ($language != 'en_us') {
 	    $langs[] = 'en_us';
 	}
 	if ($default_language != 'en_us' && $language != $default_language) {
 	    $langs[] = $default_language;
 	}
+    */
 	$langs[] = $language;
+
+    $GLOBALS['log']->fatal('------------------------------------------------');
+    $GLOBALS['log']->fatal(var_export($GLOBALS['app_list_strings']['moduleList']['Accounts'], true));
 
 	$app_list_strings_array = array();
 
 	foreach ( $langs as $lang ) {
+        $app_list_strings = array();
+
 	    foreach(SugarAutoLoader::existing(
 	        "include/language/$lang.lang.php",
 	        "include/language/$lang.lang.override.php",
@@ -998,21 +1005,26 @@ function return_app_list_strings_language($language)
         $app_list_strings_array[] = $app_list_strings;
     }
 
+    $GLOBALS['log']->fatal(var_export($GLOBALS['app_list_strings']['moduleList']['Accounts'], true));
+
     $app_list_strings = array();
     foreach ( $app_list_strings_array as $app_list_strings_item ) {
         $app_list_strings = sugarLangArrayMerge($app_list_strings, $app_list_strings_item);
     }
 
+    $GLOBALS['log']->fatal(var_export($GLOBALS['app_list_strings']['moduleList']['Accounts'], true));
 
-    foreach ( $langs as $lang ) {
-        foreach(SugarAutoLoader::existing(
-            "custom/application/Ext/Language/$lang.lang.ext.php",
-            "custom/include/language/$lang.lang.php"
-        ) as $file) {
-            $app_list_strings = _mergeCustomAppListStrings($file , $app_list_strings);
-            $GLOBALS['log']->info("Found extended language file: $file");
-        }
+    foreach (SugarAutoLoader::existing(
+                 "custom/application/Ext/Language/$lang.lang.ext.php",
+                 "custom/include/language/$lang.lang.php"
+             ) as $file) {
+
+
+        $app_list_strings = _mergeCustomAppListStrings($file, $app_list_strings);
+        $GLOBALS['log']->fatal("Found extended language file: $file");
     }
+
+    $GLOBALS['log']->fatal(var_export($GLOBALS['app_list_strings']['moduleList']['Accounts'], true));
 
     if(!isset($app_list_strings)) {
 		$GLOBALS['log']->fatal("Unable to load the application language file for the selected language ($language) or the default language ($default_language) or the en_us language");
@@ -1103,7 +1115,7 @@ function return_application_language($language)
 
 	$app_strings_array = array();
 	foreach ( $langs as $lang ) {
-		$app_list_strings = array();
+		$app_strings = array();
 		foreach(SugarAutoLoader::existing(
 				"include/language/$lang.lang.php",
 				"include/language/$lang.lang.override.php",
