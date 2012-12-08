@@ -635,6 +635,10 @@ class MetadataApi extends SugarApi {
 
     protected function getMetadataCache($platform, $isPublic)
     {
+        if ( inDeveloperMode() ) {
+            return null;
+        }
+
         if ( $isPublic ) {
             $type = 'public';
         } else {
