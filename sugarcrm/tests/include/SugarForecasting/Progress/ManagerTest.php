@@ -106,6 +106,13 @@ class SugarForecasting_Progress_ManagerTest extends Sugar_PHPUnit_Framework_Test
     }
 
     /**
+     * destroy some parts after each test
+     */
+    public function tearDown() {
+        SugarTestWorksheetUtilities::removeAllCreatedWorksheets();
+    }
+
+    /**
      * check process method to make sure what is returned to the endpoint is correct
      *
      * @group forecasts
@@ -189,15 +196,42 @@ class SugarForecasting_Progress_ManagerTest extends Sugar_PHPUnit_Framework_Test
     }
 
     /**
+     * Dataset Provider
+     *
+     * @return array
+     */
+    public function dataProviderDatasets()
+    {
+        // keys are as follows
+        // 1 -> quota amount
+        // 2 -> quota currency id
+
+        return array(
+            array(30000, -99),
+            array(80000, -99),
+        );
+    }
+
+    /**
      * check top level manager quota to make sure it returns the expected sum of values for manager that doesn't report to anyone
      *
+     * @dataProvider dataProviderDatasets
      * @group forecasts
      * @group forecastsprogress
      */
-    public function testGetTopLevelManagerQuota()
+    public function testGetTopLevelManagerQuota($quotaAmount, $quotaCurrencyId)
     {
         self::$args['user_id'] = self::$users['top_manager']['user']->id;
 
+        //create worksheet data based on dataprovider
+        $worksheet = SugarTestWorksheetUtilities::createWorksheet();
+        $worksheet->user_id = self::$users['top_manager']['user']->id;
+        $worksheet->related_id = self::$users['top_manager']['user']->id;
+        $worksheet->timeperiod_id = self::$args['timeperiod_id'];
+        $worksheet->quota = $quotaAmount;
+        $worksheet->currency_id = $quotaCurrencyId;
+        $worksheet->version = 0;
+        $worksheet->save();
         $obj = new SugarForecasting_Progress_Manager(self::$args);
         $quotaAmount = $obj->getTopLevelManagerQuota(self::$args['user_id'], self::$args['timeperiod_id']);
 
@@ -209,8 +243,9 @@ class SugarForecasting_Progress_ManagerTest extends Sugar_PHPUnit_Framework_Test
             {
                 if($quota->quota_type == "Direct" && $quota->user_id == self::$args['user_id'])
                 {
-                    $expectedQuotaAmount += $quota->amount;
-                }
+                    //personal quota for the top level manager
+                    //use worksheet quota number as it will cause an override in the function
+                    $expectedQuotaAmount += $worksheet->quota;
 
                 if($quota->quota_type == "Rollup" && $quota->user_id == self::$users['manager']['user']->id)
                 {
