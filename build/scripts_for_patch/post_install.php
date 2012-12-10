@@ -455,11 +455,16 @@ function post_install() {
 		}
     }
 
+    //BEGIN SUGARCRM flav=pro ONLY
+    require_once("install/install_utils.php");
+    _logThis("Building sidecar config", $path);
+    handleSidecarConfig();
+    //END SUGARCRM flav=pro ONLY
+
     //BEGIN SUGARCRM flav=ent ONLY
     ///////////////////////////////////////////////////////////////////////////
 	////	REBUILD PORTAL CONFIG
     _logThis("Rebuilding portal config", $path);
-    require_once("install/install_utils.php");
     handlePortalConfig();
     //END SUGARCRM flav=ent ONLY
 

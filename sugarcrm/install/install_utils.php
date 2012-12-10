@@ -863,6 +863,11 @@ function handleSugarConfig() {
     //BEGIN SUGARCRM flav=ent ONLY
     handlePortalConfig();
     //END SUGARCRM flav=ent ONLY
+
+    //BEGIN SUGARCRM flav=pro ONLY
+    handleSidecarConfig();
+    //END SUGARCRM flav=pro ONLY
+
     ////    END $sugar_config
     ///////////////////////////////////////////////////////////////////////////////
     return $bottle;
@@ -907,6 +912,32 @@ function handlePortalConfig()
 
 }
 //END SUGARCRM flav=ent ONLY
+
+//BEGIN SUGARCRM flav=pro ONLY
+function handleSidecarConfig() {
+
+    global $sugar_config;
+
+    $sidecarConfig = array(
+        'appId' => 'SugarCRM',
+        'env' => 'dev',
+        'platform' => 'base',
+        'additionalComponents' => array(
+            'alert' => array(
+                'target' => '#alerts'
+            )
+        ),
+        'serverUrl' => $sugar_config['site_url'].'/rest/v10',
+        'siteUrl' => $sugar_config['site_url'],
+        'loadCss' => false,
+        'unsecureRoutes' => array('login', 'error'),
+        'clientID' => 'sugar',
+        'authStore'  => 'sugarAuthStore',
+        'keyValueStore' => 'sugarAuthStore'
+    );
+    sugar_file_put_contents('config.js', '(function(app) {app.augment("config", ' . json_encode($sidecarConfig) . ', false);})(SUGAR.App);');
+}
+//END SUGARCRM flav=pro ONLY
 
 /**
  * (re)write the .htaccess file to prevent browser access to the log file
