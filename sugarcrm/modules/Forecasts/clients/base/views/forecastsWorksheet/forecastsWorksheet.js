@@ -185,7 +185,7 @@
                 "bVisible" : this.checkConfigForColumnVisibility(field.name)
             };
 
-            if(_.isUndefined(field.type)) {
+            if(!_.isUndefined(field.type)) {
                 //Apply sorting for the worksheet
                 switch(field.type)
                 {
