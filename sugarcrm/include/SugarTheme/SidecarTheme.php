@@ -97,7 +97,7 @@ class SidecarTheme
             $customThemeVars = $this->paths['custom'] . 'variables.less';
             $baseThemeVars = $this->paths['base'] . 'variables.less';
             if ( SugarAutoLoader::fileExists($customThemeVars) || SugarAutoLoader::fileExists($baseThemeVars) ) {
-                $this->compileTheme();
+                $hash = $this->compileTheme();
                 $cacheCSS = $this->paths['cache'].$hash.".css";
             }
             else {

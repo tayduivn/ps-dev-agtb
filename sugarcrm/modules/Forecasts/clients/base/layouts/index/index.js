@@ -31,7 +31,6 @@
     },
 
     initForecastsModule: function(forecastData, options, ctx) {
-        debugger;
         // get default selections for filter and category
         app.defaultSelections = forecastData.defaultSelections;
         app.initData = forecastData.initData;
@@ -309,7 +308,6 @@
     _render : function() {
         var self = this;
         $.when(self.deferredRender).done(function() {
-            debugger;
             app.view.Layout.prototype._render.call(self);
 
             // init the alerts

@@ -28,3 +28,5 @@
         </div>
     </div>
 </div>
+<!--theshark: this should be retrieved dynamically - this is hardcoded for testing purposes...-->
+<script type="text/javascript" src="cache/include/javascript/sidecar_forecasts.js"></script>
