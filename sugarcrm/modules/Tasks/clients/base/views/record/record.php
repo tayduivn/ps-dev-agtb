@@ -40,7 +40,7 @@ $viewdefs['Tasks']['base']['view']['record'] = array(
             'type' => 'button',
             'label' => 'LBL_CANCEL_BUTTON_LABEL',
             'css_class' => 'hide record-cancel',
-        ),                                             
+        ),
         array(
             'type' => 'button',
             'label' => 'LBL_EDIT_BUTTON_LABEL',

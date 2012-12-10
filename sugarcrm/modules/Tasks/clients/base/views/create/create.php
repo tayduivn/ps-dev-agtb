@@ -101,7 +101,7 @@ $viewdefs['Tasks']['base']['view']['create'] = array(
             'fields' => array(
                 array('name' => 'description', 'span' => 12),
                 'contact_name',
-                array('label' => 'Created By', 'type' => 'fieldset', 'name' => 'created_by_date', 'fields' => array('created_by_name', 'date_entered')),
+                array('label' => 'LBL_CREATED_BY_USER', 'type' => 'fieldset', 'name' => 'created_by_date', 'fields' => array('created_by_name', 'date_entered')),
                 'team_sets',
                 'date_modified',
             )
