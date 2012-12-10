@@ -395,6 +395,27 @@ abstract class DBManager
 	}
 
 	/**
+	 * Service method for addDistinctClause, replaces subquery with JOIN
+	 * @param array $matches
+	 * @return string
+	 */
+	protected function replaceTeamClause($matches)
+	{
+	    $part = $matches[0];
+	    $search = array();
+	    $replace = array();
+
+	    $table = $matches[2];
+	    $search[] =  'INNER JOIN (select tst.team_set_id from team_sets_teams tst';
+	    $replace[] =  ' INNER JOIN team_sets_teams tst ON tst.team_set_id = ' . $table . '.team_set_id';
+	    $search[] = 'group by tst.team_set_id) ' . $table . '_tf on ' . $table . '_tf.team_set_id  = ' . $table .'.team_set_id';
+	    $replace[] = '';
+
+	    $part= str_replace($search, $replace, $part);
+	    return $part;
+	}
+
+	/**
 	 * addDistinctClause
 	 * This method takes a SQL statement and checks if the disable_count_query setting is enabled
 	 * before altering it.  The alteration modifies the way the team security queries are made by
@@ -412,24 +433,22 @@ abstract class DBManager
 			}
 			$newSql = '';
 			foreach($parts as $p=>$part){
-				if(preg_match_all('/INNER JOIN \((select tst\.team_set_id[^\)]*)\)\s*(\w*)_tf on \w*_tf\.team_set_id  = \w*\.team_set_id/i', $part, $matches,  PREG_SET_ORDER  )) {
-					$search = array();
-					$replace = array();
-					$table = $matches[0][2];
-					$search[] =  'INNER JOIN (select tst.team_set_id from team_sets_teams tst';
-					$replace[] =  ' INNER JOIN team_sets_teams tst ON tst.team_set_id = ' . $table . '.team_set_id';
-					$search[] = 'group by tst.team_set_id) ' . $table . '_tf on ' . $table . '_tf.team_set_id  = ' . $table .'.team_set_id';
-					$replace[] = '';
+			    $part = preg_replace_callback('/INNER JOIN \((select tst\.team_set_id[^\)]*)\)\s*(\w*)_tf on \w*_tf\.team_set_id  = \w*\.team_set_id/i',
+			        array($this, "replaceTeamClause"), $part);
+			    $start = 0;
+			    while(true) {
+    			    $selectPos = stripos($part , 'select', $start);
+	    		    if($selectPos !== false){
+		    	        $distinctPos = stripos($part , 'distinct', $selectPos);
+			        	if($distinctPos === false || $distinctPos > 20){
+			            	$part = substr($part, 0, $selectPos + 6) .' DISTINCT ' . substr( $part, $selectPos + 7);
+			    	    }
+	    		    } else {
+	    		        break;
+	    		    }
+			    	$start = $selectPos+1;
+			    }
 
-					$selectPos = stripos($part , 'select');
-					if($selectPos !== false){
-						$distinctPos = stripos($part , 'distinct', $selectPos);
-						if($distinctPos === false || $distinctPos > 20){
-							$part = substr($part, 0, $selectPos + 6) .' DISTINCT ' . substr( $part, $selectPos + 7);
-						}
-					}
-					$part= str_replace($search, $replace, $part);
-				}
 				if( $p < count($parts) - 1 )$part .= 'UNION ALL';
 				$newSql .= $part;
 
@@ -2882,7 +2901,7 @@ protected function checkQuery($sql, $object_name = false)
 		$audit_fields=$bean->getAuditEnabledFieldDefinitions();
 
         $fetched_row = array();
-        if (is_array($bean->fetched_row)) 
+        if (is_array($bean->fetched_row))
         {
             $fetched_row = array_merge($bean->fetched_row, $bean->fetched_rel_row);
         }
