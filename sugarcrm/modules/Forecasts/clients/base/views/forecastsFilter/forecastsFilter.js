@@ -37,7 +37,7 @@
      */
     chznContainerClick: function (evt)
     {
-        var chosen = this.fields.category.$el.find('select').data('chosen');
+        var chosen = this.fields.ranges.$el.find('select').data('chosen');
         chosen.results_toggle();
     },
 
