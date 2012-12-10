@@ -42,7 +42,16 @@ class SugarView
     /**
      * Options for what UI elements to hide/show/
      */
-    var $options = array('show_header' => true, 'show_title' => true, 'show_subpanels' => false, 'show_search' => true, 'show_footer' => true, 'show_javascript' => true, 'view_print' => false, 'use_table_container' => true);
+    var $options = array(
+        'show_header' => true,
+        'show_title' => true,
+        'show_subpanels' => false,
+        'show_search' => true,
+        'show_footer' => false,
+        'show_javascript' => true,
+        'view_print' => false,
+        'use_table_container' => true
+    );
     var $type = null;
     var $responseTime;
     var $fileResources;
@@ -240,6 +249,7 @@ class SugarView
 
     /**
      * Displays the header on section of the page; basically everything before the content
+     * @deprecated since 7.0, will be removed from 7.2.
      */
     public function displayHeader($retModTabs=false)
     {
@@ -247,7 +257,6 @@ class SugarView
         global $max_tabs;
         global $app_strings;
         global $current_user;
-        global $sugar_config;
         global $app_list_strings;
         global $mod_strings;
         global $current_language;
@@ -281,12 +290,6 @@ class SugarView
 
         $ss->assign("SUGAR_JS",ob_get_contents().$themeObject->getJS());
         ob_end_clean();
-
-        // get favicon
-        if(isset($GLOBALS['sugar_config']['default_module_favicon']))
-            $module_favicon = $GLOBALS['sugar_config']['default_module_favicon'];
-        else
-            $module_favicon = false;
 
         $favicon = $this->getFavicon();
         $ss->assign('FAVICON_URL', $favicon['url']);
@@ -628,41 +631,42 @@ class SugarView
         $mod_strings = $bakModStrings;
         //BEGIN SUGARCRM flav=pro ONLY
 		/******************DC MENU*********************/
-		if(!empty($current_user->id) && !$this->_getOption('view_print')){
-			require_once('include/DashletContainer/DCFactory.php');
-            require_once('include/SugarSearchEngine/SugarSearchEngineFactory.php');
-			$dcm = DCFactory::getContainer(null, 'DCMenu');
-			$notifData = $dcm->getNotifications();
-			$dcjs = getVersionedScript('include/DashletContainer/Containers/DCMenu.js');
-			$ss->assign('NOTIFCLASS', $notifData['class']);
-			$ss->assign('NOTIFCODE', $notifData['code']);
-			$ss->assign('NOTIFICON', $notifData['icon']);
-			$ss->assign('DCSCRIPT', $dcm->getScript());
-			$ss->assign('ICONSEARCH', $dcm->getSearchIcon());
-			$ss->assign('DCACTIONS',$dcm->getMenus());
-			$ss->assign('PICTURE', $current_user->picture);
-            $ftsAutocompleteEnable = TRUE;
-            $searchEngine = SugarSearchEngineFactory::getInstance();
-            if( ($searchEngine instanceOf SugarSearchEngine) || (isset($GLOBALS['sugar_config']['full_text_engine'])
-                && isset($GLOBALS['sugar_config']['full_text_engine']['disable_autocomplete']) && $GLOBALS['sugar_config']['full_text_engine']['disable_autocomplete'] )
-                )
-                    $ftsAutocompleteEnable = FALSE;
-
-            if (SugarSearchEngineAbstractBase::isSearchEngineDown()) {
-                $ftsAutocompleteEnable = false;
-            }
-            $ss->assign('FTS_AUTOCOMPLETE_ENABLE', $ftsAutocompleteEnable);
-			$ss->assign('AJAX', isset($_REQUEST['ajax_load'])?$_REQUEST['ajax_load']:"0");
-			$ss->assign('ACTION', isset($_REQUEST['action'])?$_REQUEST['action']:"");
-			$ss->assign('FULL', isset($_REQUEST['full'])?$_REQUEST['full']:"false");
-			if(is_admin($GLOBALS['current_user'])){
-				$ss->assign('ISADMIN', true);
-			} else {
-				$ss->assign('ISADMIN', false);
-			}
-			$ss->assign('SUGAR_DCJS', $dcjs);
-			//$ss->assign('SUGAR_DCMENU', $data['html']);
-		}
+        // DEPRECATED since 7.0, will be removed from 7.2
+//		if(!empty($current_user->id) && !$this->_getOption('view_print')){
+//			require_once('include/DashletContainer/DCFactory.php');
+//            require_once('include/SugarSearchEngine/SugarSearchEngineFactory.php');
+//			$dcm = DCFactory::getContainer(null, 'DCMenu');
+//			$notifData = $dcm->getNotifications();
+//			$dcjs = getVersionedScript('include/DashletContainer/Containers/DCMenu.js');
+//			$ss->assign('NOTIFCLASS', $notifData['class']);
+//			$ss->assign('NOTIFCODE', $notifData['code']);
+//			$ss->assign('NOTIFICON', $notifData['icon']);
+//			$ss->assign('DCSCRIPT', $dcm->getScript());
+//			$ss->assign('ICONSEARCH', $dcm->getSearchIcon());
+//			$ss->assign('DCACTIONS',$dcm->getMenus());
+//			$ss->assign('PICTURE', $current_user->picture);
+//            $ftsAutocompleteEnable = TRUE;
+//            $searchEngine = SugarSearchEngineFactory::getInstance();
+//            if( ($searchEngine instanceOf SugarSearchEngine) || (isset($GLOBALS['sugar_config']['full_text_engine'])
+//                && isset($GLOBALS['sugar_config']['full_text_engine']['disable_autocomplete']) && $GLOBALS['sugar_config']['full_text_engine']['disable_autocomplete'] )
+//                )
+//                    $ftsAutocompleteEnable = FALSE;
+//
+//            if (SugarSearchEngineAbstractBase::isSearchEngineDown()) {
+//                $ftsAutocompleteEnable = false;
+//            }
+//            $ss->assign('FTS_AUTOCOMPLETE_ENABLE', $ftsAutocompleteEnable);
+//			$ss->assign('AJAX', isset($_REQUEST['ajax_load'])?$_REQUEST['ajax_load']:"0");
+//			$ss->assign('ACTION', isset($_REQUEST['action'])?$_REQUEST['action']:"");
+//			$ss->assign('FULL', isset($_REQUEST['full'])?$_REQUEST['full']:"false");
+//			if(is_admin($GLOBALS['current_user'])){
+//				$ss->assign('ISADMIN', true);
+//			} else {
+//				$ss->assign('ISADMIN', false);
+//			}
+//			$ss->assign('SUGAR_DCJS', $dcjs);
+//			//$ss->assign('SUGAR_DCMENU', $data['html']);
+//		}
 		/******************END DC MENU*********************/
         //END SUGARCRM flav=pro ONLY
         $headerTpl = $themeObject->getTemplate('header.tpl');
@@ -909,9 +913,22 @@ EOHTML;
 
     /**
      * Called from process(). This method will display the footer on the page.
+     * @deprecated since 7.0, will be removed from 7.2.
      */
     public function displayFooter()
     {
+        // TODO make me a function
+        $message = sprintf(
+            "Deprecated as of '%s'. Will be removed with '%s'; in '%s'.",
+            '7.0',
+            '7.2',
+            __FILE__
+        );
+        $GLOBALS['log']->deprecated($message);
+
+        // TODO check if we need this on flav < PRO
+
+        /*
         if (empty($this->responseTime)) {
             $this->_calculateFooterMetrics();
         }
@@ -1092,6 +1109,7 @@ EOHTML;
         //END SUGARCRM flav=pro ONLY
 
         $ss->display(SugarThemeRegistry::current()->getTemplate('footer.tpl'));
+        */
     }
 
     /**
