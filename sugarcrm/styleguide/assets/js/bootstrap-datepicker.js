@@ -109,6 +109,7 @@
 					target = this.component ? this.component : this.element;
 			if (target.is("input"))
 			{
+				target.parent().css('position','relative')
 				offset = target.position();
 			}
 			this.picker.css({
