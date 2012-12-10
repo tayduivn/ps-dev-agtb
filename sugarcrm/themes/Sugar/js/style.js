@@ -326,9 +326,11 @@ SUGAR.append(SUGAR.themes, {
 			onShow: function() {
 				// WebKit hack for reappearing menu when using ajaxui
 				// If it's a page reload and the 'Home' menu is recognized as hovered over, don't show it
-				if (SUGAR.ajaxUI.menuFix && $("#moduleTab_AllHome").is(":hover"))
+				if (SUGAR.ajaxUI.menuFix)
 				{
-					$('ul.sf-menu:visible li').hideSuperfishUl();
+				    $("#moduleTab_AllHome").hover(function(){
+				        $('ul.sf-menu:visible li').hideSuperfishUl();
+				    });
 				}
 				SUGAR.ajaxUI.menuFix = false;
 			}
