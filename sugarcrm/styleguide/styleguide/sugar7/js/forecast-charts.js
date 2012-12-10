@@ -70,8 +70,14 @@
             };
         },
         callback: function(graph) {
+          var self = this;
           d3Chart = graph;
+          d3Chart.updateData = function (json,stacked){
+            d3.select('#db620e51-8350-c596-06d1-4f866bfcfd5b svg')
+              .datum(self.translateDataToD3(json))
+              .transition().duration(500).call(d3Chart.stacked(stacked));
         }
+      }
       });
 
       $('.thumbnail.viz .btn-expand-full').on('click', toggleExpand);

@@ -1,81 +1,3 @@
-<script>
-    //instantiate D3 chart using NVD3
-    var d3Chart = null;
-
-    nv.addGraph({
-      generate: function() {
-          var chart = nv.models.paretoChart()
-                .margin({top: 10, right: 10, bottom: 30, left: 40})
-                .showControls(false)
-                .showTitle(false)
-                .stacked(true)
-                .colorData( 'default' )
-                .colorFill( 'default' );
-
-          d3.select('#db620e51-8350-c596-06d1-4f866bfcfd5b svg')
-            .datum(this.translateDataToD3(mark_gibson_Q1))
-            .transition().duration(500).call(chart);
-
-          nv.utils.windowResize(chart.update);
-
-          return chart;
-      },
-      translateDataToD3 : function( json, params )
-      {
-          return {
-              'properties':{
-                  'title': json.properties[0].title
-                , 'quota': parseInt(json.values[0].goalmarkervalue[0],10)
-                // bar group data (x-axis)
-                , 'groupData': json.values.map( function(d,i){
-                      return {
-                        'group': i
-                      , 'l': json.values[i].label
-                      , 't': json.values[i].values.reduce( function(p, c, i, a){
-                          return parseInt(p,10) + parseInt(c,10);
-                        })
-                      }
-                  })
-              }
-              // series data
-            , 'data': json.label.map( function(d,i){
-                  return {
-                      'key': d
-                    , 'type': 'bar'
-                    , 'series': i
-                    , 'values': json.values.map( function(e,j){
-                          return { 'series': i, 'x': j+1, 'y': parseInt(e.values[i],10),  y0: 0 };
-                      })
-                    , 'valuesOrig': json.values.map( function(e,j){
-                          return { 'series': i, 'x': j+1, 'y': parseInt(e.values[i],10),  y0: 0 };
-                      })
-                  }
-              }).concat(
-                  json.properties[0].goal_marker_label.filter( function(d,i){
-                      return d !== 'Quota';
-                    }).map( function(d,i){
-                      return {
-                          'key': d
-                        , 'type': 'line'
-                        , 'series': i
-                        , 'values': json.values.map( function(e,j){
-                            return { 'series': i, 'x': j+1, 'y': parseInt(e.goalmarkervalue[i+1],10) };
-                          })
-                        , 'valuesOrig': json.values.map( function(e,j){
-                            return { 'series': i, 'x': j+1, 'y': parseInt(e.goalmarkervalue[i+1],10) };
-                          })
-                      }
-                  })
-              )
-          };
-      },
-      callback: function(graph) {
-        d3Chart = graph;
-      }
-    });
-
-    $('.thumbnail.viz .btn-expand-full').on('click', toggleExpand);
-</script>
 
 <div class="side sidebar-content span4">
     <div class="side-pane active">
@@ -180,3 +102,10 @@
     </div>
 
 </div>
+<script>
+    //update D3 chart data
+    d3Chart.updateData(mark_gibson_Q1,true);
+
+    $('.thumbnail.viz .btn-expand-full').on('click', toggleExpand);
+</script>
+

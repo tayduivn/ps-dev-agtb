@@ -212,7 +212,7 @@ $(document).ready(function() {
             var nCloneTh = document.createElement( 'th' );
             var nCloneTh2 = document.createElement( 'th' );
             // variable for current side-pane content file
-            var currentSidebarDetails = 'partial/sabra_details.html';
+            var currentSidebarDetails = 'partial/forecast/sabra_details.html';
             var sideSelector = '.side.sidebar-content.span4';
             var contentSelector = '#content';
 
@@ -228,7 +228,7 @@ $(document).ready(function() {
                 $(contentSelector).removeClass("preview");
                 $("td",oTable).removeClass("highlighted");
                 $("td,th",oTable).removeClass("preview");
-                currentSidebarDetails = ( currentSidebarDetails === 'partial/sabra_details.html' ) ? 'partial/mark_details.html' : 'partial/sabra_details.html';
+                currentSidebarDetails = ( currentSidebarDetails === 'partial/forecast/sabra_details.html' ) ? 'partial/forecast/mark_details.html' : 'partial/forecast/sabra_details.html';
                 jQuery.ajax({
                     url: currentSidebarDetails + "?r=" + new Date().getTime(),
                     dataType:"text",
@@ -342,7 +342,7 @@ $(document).ready(function() {
                     $('td,th',pTr).addClass('preview above');
                     $('td,th',nTr).addClass('preview below');
                     jQuery.ajax({
-                        url: 'partial/' + aData[9]+'_preview.html?r=' + new Date().getTime(),
+                        url: 'partial/forecast/' + aData[9]+'_preview.html?r=' + new Date().getTime(),
                         dataType:'text',
                         async: false,
                         success: function(data) {
