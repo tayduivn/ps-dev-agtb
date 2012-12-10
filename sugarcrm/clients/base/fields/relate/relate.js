@@ -29,7 +29,7 @@
         'keyup .chzn-search input': 'throttleSearch'
     },
     allow_single_deselect: true,
-    minChars: 3,
+    minChars: 1,
     _previousTerm: null,
     fieldTag: 'select.chzn-select',
     /**
@@ -120,7 +120,7 @@
         var self = this,
             searchModule = this.getSearchModule(),
             chosen_select = this.$(this.fieldTag).not(":disabled"),
-            chosen_search_input = self.$(self.fieldTag + " + .chzn-container .chzn-search input"),
+            chosen_search_input = self.$(self.fieldTag + " + .chzn-container-active .chzn-search input"),
             params = {
                 limit: 3
             };
