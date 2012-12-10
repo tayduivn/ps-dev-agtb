@@ -26,15 +26,23 @@ require_once('install/install_utils.php');
 
 class InstallUtilsTest extends Sugar_PHPUnit_Framework_TestCase
 {
-	public function setUp()
-	{
+    private static $configJSContents;
 
-	}
+    public static function setUpBeforeClass()
+    {
+        if(file_exists('config.js')) {
+           self::$configJSContents = file_get_contents('config.js');
+           unlink('config.js');
+        }
+    }
 
-	public function tearDown()
-	{
-
-	}
+    public static function tearDownAfterClass()
+    {
+        //If we had existing config.js content, copy it back in
+        if(!empty(self::$configJSContents)) {
+            file_put_contents('config.js', self::$configJSContents);
+        }
+    }
 
 	public function testParseAcceptLanguage()
 	{
@@ -50,5 +58,24 @@ class InstallUtilsTest extends Sugar_PHPUnit_Framework_TestCase
 			SugarAutoLoader::delFromMap('config_si.php');
 		}
 	}
+
+    //BEGIN SUGARCRM flav=pro ONLY
+    /**
+     * This is a test to check the creation of the config.js file used by the sidecar framework beginning in the 6.7 release.
+     * In the future this configuration may move to be contained within a database.
+     */
+    public function testHandleSidecarConfig()
+    {
+        handleSidecarConfig();
+        $this->assertFileExists('config.js');
+        $configJSContents = file_get_contents('config.js');
+
+        $this->assertNotEmpty($configJSContents);
+        $this->assertRegExp('/\"platform\"\s*?\:\s*?\"base\"/', $configJSContents);
+        $this->assertRegExp('/\"clientID\"\s*?\:\s*?\"sugar\"/', $configJSContents);
+        $this->assertRegExp('/\"authStore\"\s*?\:\s*?\"sugarAuthStore\"/', $configJSContents);
+        $this->assertRegExp('/\"keyValueStore\"\s*?\:\s*?\"sugarAuthStore\"/', $configJSContents);
+    }
+    //END SUGARCRM flav=pro ONLY
 }
 ?>

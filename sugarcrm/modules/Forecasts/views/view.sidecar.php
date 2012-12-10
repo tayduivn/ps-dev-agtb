@@ -102,34 +102,6 @@ class ForecastsViewSidecar extends SidecarView
         return $returnInitData;
     }
 
-    /**
-     * Override the buildConfig method to create a config.js file with specific settings for Forecasts.
-     * Todo: This method will need to be removed in the future when everything shifts to the base platform
-     */
-    protected function buildConfig(){
-        global $sugar_config;
-        $sidecarConfig = array(
-            'appId' => 'SugarCRM',
-            'env' => 'dev',
-            'platform' => 'base',
-            'additionalComponents' => array(
-                'alert' => array(
-                    'target' => '#alerts'
-                )
-            ),
-            'serverUrl' => $sugar_config['site_url'].'/rest/v10',
-            'siteUrl' => $sugar_config['site_url'],
-            'loadCss' => false,
-            'unsecureRoutes' => array('login', 'error'),
-            'clientID' => 'sugar',
-            'authStore'  => 'sugarAuthStore',
-            'keyValueStore' => 'sugarAuthStore'
-        );
-        $configString = json_encode($sidecarConfig);
-        $sidecarJSConfig = '(function(app) {app.augment("config", ' . $configString . ', false);})(SUGAR.App);';
-        sugar_file_put_contents($this->configFile, $sidecarJSConfig);
-    }
-
 
     /**
      * Override the _displayJavascript function to output sidecar libraries for this view
