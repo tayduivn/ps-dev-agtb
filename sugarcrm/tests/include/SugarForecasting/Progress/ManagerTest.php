@@ -246,12 +246,9 @@ class SugarForecasting_Progress_ManagerTest extends Sugar_PHPUnit_Framework_Test
                     //personal quota for the top level manager
                     //use worksheet quota number as it will cause an override in the function
                     $expectedQuotaAmount += $worksheet->quota;
-
-                if($quota->quota_type == "Rollup" && $quota->user_id == self::$users['manager']['user']->id)
-                {
+                } else if ($quota->quota_type == "Rollup" && $quota->user_id == self::$users['manager']['user']->id) {
                     $expectedQuotaAmount += $quota->amount;
                 }
-
             }
         }
         //compare expected and actual
