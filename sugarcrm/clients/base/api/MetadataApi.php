@@ -299,33 +299,7 @@ class MetadataApi extends SugarApi {
         // tentative to push the following three calls out to $mm. I propose refactor to instead
         // inherit as MetadataPortalDataManager and put all accessors, etc., there.
         $data['currencies'] = $this->getSystemCurrencies();
-
-        $data['modules'] = array();
-
-        foreach($data['full_module_list'] as $module) {
-            $bean = BeanFactory::newBean($module);
-
-            $modData = $mm->getModuleData($module);
-            $data['modules'][$module] = $modData;
-
-            if (isset($data['modules'][$module]['fields'])) {
-                $fields = $data['modules'][$module]['fields'];
-                foreach($fields as $fieldName => $fieldDef) {
-                    if (isset($fieldDef['type']) && ($fieldDef['type'] == 'relate')) {
-                        if (isset($fieldDef['module']) && !in_array($fieldDef['module'], $data['full_module_list'])) {
-                            $data['full_module_list'][$fieldDef['module']] = $fieldDef['module'];
-                        }
-                    } elseif (isset($fieldDef['type']) && ($fieldDef['type'] == 'link')) {
-                        $bean->load_relationship($fieldDef['name']);
-                        if ( isset($bean->$fieldDef['name']) && method_exists($bean->$fieldDef['name'],'getRelatedModuleName') ) {
-                            $otherSide = $bean->$fieldDef['name']->getRelatedModuleName();
-                            $data['full_module_list'][$otherSide] = $otherSide;
-                        }
-                    }
-                }
-            }
-        }
-
+        
         foreach($data['modules'] as $moduleName => $moduleDef) {
             if (!array_key_exists($moduleName, $data['full_module_list']) && array_key_exists($moduleName, $data['modules'])) {
                 unset($data['modules'][$moduleName]);
