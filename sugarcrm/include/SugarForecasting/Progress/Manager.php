@@ -102,17 +102,7 @@ class SugarForecasting_Progress_Manager extends SugarForecasting_Progress_Abstra
         }
 
         //get worksheet data for top level manager to override in event a draft is saved
-        $reportees_query = "SELECT u.user_name, " .
-      						   "w.quota " .
-      						   "from users u " .
-      						   "inner join worksheet w " .
-      						   		"on w.user_id = u.id " .
-      						   		"and w.timeperiod_id = " . $db->quoted($timeperiod_id) .
-      						    "where u.id = " . $db->quoted($user_id)  .
-      						        " and w.deleted = 0 " .
-                                    " and w.version = 0 " .
-                               " order by w.date_modified desc";
-
+        $reportees_query = sprintf("SELECT u.user_name, w.quota FROM users u INNER JOIN worksheet w ON w.user_id = u.id AND w.timeperiod_id = %s WHERE u.id = %s and w.deleted = 0 and w.version = 0 ORDER BY w.date_modified desc" , $db->quoted($timeperiod_id), $db->quoted($user_id));
 
         $result = $db->limitQuery($reportees_query,0,1);
         //override the quota values for where the worksheet has a value to override the quota for the top manager
