@@ -2,9 +2,9 @@
 $viewdefs['Forecasts']['base']['layout']['index'] = array(
     'type' => 'index',
     'components' => array(
-        array(
-            'view' => 'forecastsChart',
-        ),
+//        array(
+//            'view' => 'forecastsChart',
+//        ),
         array(
             'view' => 'forecastsProgress',
         ),

@@ -39,7 +39,7 @@ describe("The forecastsWizardConfig layout controller", function(){
             return eval(d);
         });
         stubs = [];
-        app.viewModule = "";
+        app.viewModule = "Forecasts";
         app.initData = {};
 
         stubs.push(sinon.stub(app.metadata, "getLayout", function(layout){

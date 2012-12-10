@@ -69,7 +69,7 @@
                                 "bPaginate":false
                           };
         
-        this.viewModule = app.viewModule;
+        this.viewModule = "Forecasts";
 
         //set expandable behavior to false by default
         this.isExpandableRows = false;
