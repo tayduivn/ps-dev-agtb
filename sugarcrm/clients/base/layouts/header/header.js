@@ -50,5 +50,17 @@
         modulelist.show();
 
         this.trigger('view:resize', maxMenuWidth - totalWidth);
+    },
+
+    _render: function() {
+        if(app.api.isAuthenticated()) {
+            var result = app.view.Layout.prototype._render.call(this);
+            this.$el.show();
+            this.resize();
+        } else {
+            this.$el.hide();
+            return this;
+        }
+        return result;
     }
 })
