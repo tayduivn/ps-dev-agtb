@@ -35,8 +35,7 @@ class ForecastsTimePeriodTest extends Sugar_PHPUnit_Framework_TestCase
         array('name' => 'timeperiod_type', 'value' => 'chronological', 'platform' => 'base', 'category' => 'Forecasts'),
         array('name' => 'timeperiod_interval', 'value' => TimePeriod::ANNUAL_TYPE, 'platform' => 'base', 'category' => 'Forecasts'),
         array('name' => 'timeperiod_leaf_interval', 'value' => TimePeriod::QUARTER_TYPE, 'platform' => 'base', 'category' => 'Forecasts'),
-        array('name' => 'timeperiod_start_month', 'value' => '1', 'platform' => 'base', 'category' => 'Forecasts'),
-        array('name' => 'timeperiod_start_day', 'value' => '1', 'platform' => 'base', 'category' => 'Forecasts'),
+        array('name' => 'timeperiod_start_date', 'value' => '2012-01-01', 'platform' => 'base', 'category' => 'Forecasts'),
         array('name' => 'timeperiod_shown_forward', 'value' => '2', 'platform' => 'base', 'category' => 'Forecasts'),
         array('name' => 'timeperiod_shown_backward', 'value' => '2', 'platform' => 'base', 'category' => 'Forecasts')
     );
@@ -190,19 +189,13 @@ class ForecastsTimePeriodTest extends Sugar_PHPUnit_Framework_TestCase
 
         $this->assertFalse($timeperiod->isTargetDateDifferentFromPrevious($targetStartDate, $priorForecastSettings), sprintf("Failed asserting that %s is not different target start date", $timedate->asDbDate($targetStartDate)));
 
-        //Check if the start_month is different
-        $priorForecastSettings['timeperiod_start_month'] = 2;
-        $this->assertTrue($timeperiod->isTargetDateDifferentFromPrevious($targetStartDate, $priorForecastSettings), sprintf("Failed asserting that %s is different target start date", $timedate->asDbDate($targetStartDate)));
-
-        //Check if the start_day is different
-        $priorForecastSettings['timeperiod_start_month'] = 1;
-        $priorForecastSettings['timeperiod_start_day'] = 2;
+        //Check if the start_date is different
+        $priorForecastSettings['timeperiod_start_date'] = '2012-02-02';
         $this->assertTrue($timeperiod->isTargetDateDifferentFromPrevious($targetStartDate, $priorForecastSettings), sprintf("Failed asserting that %s is different target start date", $timedate->asDbDate($targetStartDate)));
 
         //Check if the targetStartDate is one year back
         $targetStartDate->modify('-1 year');
-        $priorForecastSettings['timeperiod_start_month'] = 1;
-        $priorForecastSettings['timeperiod_start_day'] = 1;
+        $priorForecastSettings['timeperiod_start_date'] = '2012-01-01';
         $this->assertFalse($timeperiod->isTargetDateDifferentFromPrevious($targetStartDate, $priorForecastSettings), sprintf("Failed asserting that %s is different target start date", $timedate->asDbDate($targetStartDate)));
 
         //Check if the targetStartDate is one year back
@@ -631,8 +624,7 @@ class ForecastsTimePeriodTest extends Sugar_PHPUnit_Framework_TestCase
         $db = DBManagerFactory::getInstance();
         $db->query("UPDATE timeperiods SET deleted = 1");
 
-        $settings['timeperiod_start_month'] = 2;
-        $settings['timeperiod_start_day'] = 29;
+        $settings['timeperiod_start_date'] = "2012-02-29";
         $settings['timeperiod_interval'] = TimePeriod::ANNUAL_TYPE;
         $settings['timeperiod_leaf_interval'] = TimePeriod::QUARTER_TYPE;
         $settings['timeperiod_shown_backward'] = 4;

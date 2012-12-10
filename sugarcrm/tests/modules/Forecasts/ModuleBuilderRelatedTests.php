@@ -1,4 +1,5 @@
 <?php
+//FILE SUGARCRM flav=pro ONLY
 /*********************************************************************************
  * The contents of this file are subject to the SugarCRM Professional End User
  * License Agreement ("License") which can be viewed at
@@ -22,44 +23,29 @@
  * All Rights Reserved.
  ********************************************************************************/
 
-require_once('tests/rest/RestTestBase.php');
+require_once('modules/ModuleBuilder/Module/DropDownBrowser.php');
 
-class RestMeetingHelperTest extends RestTestBase {
+class ModuleBuilderRelatedTests extends Sugar_PHPUnit_Framework_TestCase
+{
 
-    public function tearDown()
-    {
-        parent::tearDown();
-        $GLOBALS['db']->query("DELETE FROM meetings WHERE id = '{$this->meeting_id}'");
+    public static function setUpBeforeClass() {
+        SugarTestHelper::setUp('app_list_strings');
     }
 
-    public function testMeeting() {
-
-        // create a meeting linked to yourself, a contact, and a lead, verify the meeting is linked to each and on your calendar
-        $meeting = array(
-            'name' => 'Test Meeting',
-            'duration' => 1,
-            'start_date' => date('Y-m-d'),
-            'assigned_user_id' => 1,
-        );
-
-        $restReply = $this->_restCall('Meetings/', json_encode($meeting), 'POST');
-
-        $this->assertTrue(isset($restReply['reply']['id']), 'Meeting was not created, reply was: ' . print_r($restReply['reply'], true));
-
-        $meeting_id = $restReply['reply']['id'];
-        $this->meeting_id = $meeting_id;
-
-
-        // verify the user has the meeting, which will validate on calendar
-        $restReplyUsers = $this->_restCall("Meetings/{$meeting_id}/link/users");
-        $users_linked = array();
-        foreach($restReplyUsers['reply']['records'] AS $record) {
-            $users_linked[] = $record['id'];
-        }
-
-        $this->assertTrue(in_array($GLOBALS['current_user']->id, $users_linked), "Current User was not successfully linked");
-        $this->assertTrue(in_array(1, $users_linked), "Assigned User was not successfully linked");
-
-
+    public static function tearDownAfterClass() {
+        SugarTestHelper::tearDown();
     }
+
+    /**
+     * This is a test to check that the commit stage labels are not shown on the drop down editor
+     *
+     * @group forecasts
+     * @group bug59133
+     */
+    public function testRestrictedDropdownOptions() {
+        $this->assertTrue(in_array('commit_stage_dom', DropDownBrowser::$restrictedDropdowns));
+        $this->assertTrue(in_array('commit_stage_binary_dom', DropDownBrowser::$restrictedDropdowns));
+        $this->assertTrue(in_array('commit_stage_custom_dom', DropDownBrowser::$restrictedDropdowns));
+    }
+
 }

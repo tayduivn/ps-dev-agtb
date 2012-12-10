@@ -22,37 +22,64 @@
  * All Rights Reserved.
  ********************************************************************************/
 
-require_once('tests/rest/RestTestBase.php');
+require_once 'include/MetaDataManager/MetaDataManager.php';
 
-class RestServerInfoTest extends RestTestBase {
+/**
+ * Bug 58926 
+ */
+class Bug58926Test extends Sugar_PHPUnit_Framework_TestCase
+{
     public function setUp()
     {
-        parent::setUp();
+        SugarTestHelper::setUp('current_user');
     }
     
     public function tearDown()
     {
-        parent::tearDown();
+        SugarTestHelper::tearDown();
     }
 
     /**
-     * @group rest
+     * Tests if an app_list_string or app_string has special html characters in it if it will be decoded properly in the MetadataManager
+     * when requested
+     * 
+     * @group Bug58926
      */
-    public function testServerInfo() {
-        // Test Server Fetch
-        // SIDECAR-14 - Changed endpoint of the test to be consistent with moving 
-        // server info into the metadata api
-        $restReply = $this->_restCall("metadata?type_filter=server_info");
+    public function testAppStringsWithSpecialChars()
+    {
 
-        $this->assertTrue(isset($restReply['reply']['server_info']['flavor']), "No Flavor Set");
-        $this->assertTrue(isset($restReply['reply']['server_info']['version']), "No Version Set");
-        //BEGIN SUGARCRM flav=pro ONLY
-        $this->assertTrue(is_array($restReply['reply']['server_info']['fts']), "No FTS Info Set");
-        //END SUGARCRM flav=pro ONLY
+        $result = array(
+                'app_list_strings' => array(
+                        'moduleList' => array(
+                                'Leads' => "Lead's Are Special",
+                            ),
+                        'moduleListSingular' => array(
+                                'Leads' => "Leads' Are Special",
+                            ),
+                    ),
+                'app_strings' => array(
+                        'LBL_NEXT' => "Next's Are the worst",
+                    ),
+            );
+
+        $mm = new MetaDataManagerBug58926($GLOBALS['current_user']);
         
-        $this->assertTrue(isset($restReply['reply']['server_info']['gmt_time']), "No GMT Time Set");
-        $this->assertTrue(isset($restReply['reply']['server_info']['server_time']), "No Server Time Set");
-    }
+        $test['app_list_strings']['moduleList']['Leads'] = $mm->getDecodeStrings("Lead&#39;s Are Special");
+        $test['app_list_strings']['moduleListSingular']['Leads'] = $mm->getDecodeStrings("Leads&#39; Are Special");
+        $test['app_strings']['LBL_NEXT'] = $mm->getDecodeStrings("Next&#39;s Are the worst");
+                
 
+        $this->assertEquals($test, $result, "Decoding did not work");
+    }
 }
 
+/**
+ * Accessor class to the metadatamanager to allow access to protected methods
+ */
+class MetaDataManagerBug58926 extends MetaDataManager
+{
+    public function getDecodeStrings($data)
+    {
+        return $this->decodeStrings($data);
+    }
+}

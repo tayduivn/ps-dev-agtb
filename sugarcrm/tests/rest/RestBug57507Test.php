@@ -70,13 +70,13 @@ class RestBug57507Test extends RestTestBase
                                   json_encode(array('name' => 'Test call, empty int',
                                                     'duration_hours' => 1,
                                                     'duration_minutes' => 15,
-                                                    'date_start' => TimeDate::getInstance()->getNow()->asDb(),
+                                                    'date_start' => TimeDate::getInstance()->asIso(TimeDate::getInstance()->getNow()),
                                                     'status' => 'Not Held',
                                                     'direction' => 'Incoming',
                                                     'repeat_count' => null,
                                                   )),
                                   'POST');
-        $this->assertTrue(!empty($reply['reply']['id']),'Could not create a call');
+        $this->assertTrue(!empty($reply['reply']['id']),'Could not create a call..response was: ' . print_r($reply, true));
         $call = BeanFactory::getBean('Calls',$reply['reply']['id']);
         $this->calls[] = $call;
 

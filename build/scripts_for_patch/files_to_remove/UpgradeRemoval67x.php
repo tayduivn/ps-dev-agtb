@@ -1,6 +1,5 @@
 <?php
-if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
-/********************************************************************************
+/*********************************************************************************
  *The contents of this file are subject to the SugarCRM Professional End User License Agreement
  *("License") which can be viewed at http://www.sugarcrm.com/EULA.
  *By installing or using this file, You have unconditionally agreed to the terms and conditions of the License, and You may
@@ -20,14 +19,28 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
-require_once 'clients/base/api/MetadataApi.php';
-require_once 'clients/mobile/api/CurrentUserMobileApi.php';
+require_once('modules/UpgradeWizard/UpgradeRemoval.php');
 
-// An API to let the user in to the metadata
-class MetadataMobileApi extends MetadataApi {
-    protected function getModules() {
-        // The current user API gets the proper list of modules, we'll re-use it here
-        $currentUserApi = new CurrentUserMobileApi();
-        return $currentUserApi->getModuleList();
+class UpgradeRemoval67x extends UpgradeRemoval
+{
+    /**
+     * Return an array of files/directories to remove for 66x upgrades
+     * 
+     * @param string $version
+     * @return array
+     */
+    public function getFilesToRemove($version)
+    {
+        $files = array();
+
+        if(version_compare($version, '670', '<'))
+        {
+            //Remove the themes/Sugar/js directory
+            $files[] = 'themes/Sugar/js';
+            //Remove the themes/Sugar/tpls directory
+            $files[] = 'themes/Sugar/tpls';
+        }
+
+        return $files;
     }
 }

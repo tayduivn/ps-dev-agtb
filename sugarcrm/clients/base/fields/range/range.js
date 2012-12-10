@@ -154,7 +154,7 @@
             i++;
         });
 
-        this.$('.noUiSlider').attr('data-content-before', _.first(endpoints) + '%').attr('data-content-after', _.last(endpoints) + '%')
+        this.$('.noUiSliderEnds').attr('data-content-before', _.first(endpoints) + '%').attr('data-content-after', _.last(endpoints) + '%')
     },
 
     /**

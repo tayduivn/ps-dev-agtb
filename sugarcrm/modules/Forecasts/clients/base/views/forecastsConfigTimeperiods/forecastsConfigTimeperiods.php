@@ -52,27 +52,12 @@ $viewdefs['Forecasts']['base']['view']['forecastsConfigTimeperiods'] = array(
                     'view' => 'forecastsTimeperiod'
                 ),
                 array(
-                    'name' => 'timeperiod_start_month',
-                    'type' => 'enum',
-                    'options' => 'forecasts_timeperiod_month_options_dom',
-                    'searchBarThreshold' => 5,
-                    'label' => 'LBL_FORECASTS_CONFIG_START_MONTH',
+                    'name' => 'timeperiod_start_date',
+                    'type' => 'date',
+                    'label' => 'LBL_FORECASTS_CONFIG_START_DATE',
                     'default' => false,
                     'enabled' => true,
-                    'view' => 'forecastsTimeperiod'
-                ),
-                array(
-                    'name' => 'timeperiod_start_day',
-                    'type' => 'enum',
-                    /*
-                    This is an enum field, however the 'options' string is set dynamically in the view (which is why it
-                    is missing here), since the dropdown shown to the user depends on a config setting
-                    */
-                    'label' => 'LBL_FORECASTS_CONFIG_START_DAY',
-                    'searchBarThreshold' => 5,
-                    'default' => false,
-                    'enabled' => true,
-                    'view' => 'forecastsTimeperiod'
+                    'view' => 'edit'
                 ),
                 array(
                     'name' => 'timeperiod_shown_forward',

@@ -129,7 +129,7 @@ global $currentModule;
 
 
     /********** FINAL END OF PAGE UI Stuff ********/
-    $ss->display(SugarAutoLoader::existingCustomOne('/modules/Campaigns/WizardHome.html'));
+    $ss->display(SugarAutoLoader::existingCustomOne('modules/Campaigns/WizardHome.html'));
 
 }else{
     //there is no record to retrieve, so ask which type of campaign wizard to launch

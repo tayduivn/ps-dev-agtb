@@ -41,6 +41,7 @@ class DatabaseStore implements Store {
        $metrics = $monitor->getMetrics();
        $columns = array();
        $values = array();
+       $db = DBManagerFactory::getInstance();
        foreach($metrics as $name=>$metric) {
        	  if(!empty($monitor->$name)) {
        	  	 $columns[] = $name;
@@ -49,9 +50,9 @@ class DatabaseStore implements Store {
        	  	 } else if($metrics[$name]->_type == 'double') {
                 $values[] = floatval($monitor->$name);
              } else if ($metrics[$name]->_type == 'datetime') {
-             	$values[] = $GLOBALS['db']->convert($GLOBALS['db']->quoted($monitor->$name), "datetime");
+             	$values[] = $db->convert($GLOBALS['db']->quoted($monitor->$name), "datetime");
        	  	 } else {
-                $values[] = $GLOBALS['db']->quoted($monitor->$name);
+                $values[] = $db->quoted($monitor->$name);
              }
        	  }
        } //foreach
@@ -60,14 +61,14 @@ class DatabaseStore implements Store {
        	  return;
        }
 
-       $id = $GLOBALS['db']->getAutoIncrementSQL($monitor->table_name,'id');
+       $id = $db->getAutoIncrementSQL($monitor->table_name,'id');
        if(!empty($id)) {
        	  $columns[] = 'id';
        	  $values[] = $id;
        }
 
        $query = "INSERT INTO $monitor->table_name (" .implode("," , $columns). " ) VALUES ( ". implode("," , $values). ')';
-	   $GLOBALS['db']->query($query);
+	   $db->query($query);
     }
 }
 

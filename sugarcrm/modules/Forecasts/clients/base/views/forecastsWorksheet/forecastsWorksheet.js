@@ -25,12 +25,12 @@
  *
  * forecasts:worksheet:filtered
  *      on: context.forecasts
- *      by: updateWorksheetBySelectedCategory()
+ *      by: updateWorksheetBySelectedRanges()
  *      when: dataTable is finished filtering itself
  *
  * forecasts:worksheet:filtered
  *      on: context.forecasts
- *      by: updateWorksheetBySelectedCategory()
+ *      by: updateWorksheetBySelectedRanges()
  *      when: dataTable is finished filtering itself and has destroyed and redrawn itself
  */
 ({
@@ -46,7 +46,7 @@
     isExpandableRows:'',
     isEditableWorksheet:false,
     _collection:{},
-    columnDefs : [],    
+    columnDefs : [],
     mgrNeedsCommitted : false,
     commitButtonEnabled : false,
     // boolean to denote that a fetch is currently in progress
@@ -62,12 +62,12 @@
         var self = this;
         
         self.gTableDefs = {
-                                "bAutoWidth": false,
-                                "aoColumnDefs": self.columnDefs,
-                                "aaSorting": self.aaSorting,
-                                "bInfo":false,
-                                "bPaginate":false
-                          };
+                "bAutoWidth": false,
+                "aoColumnDefs": self.columnDefs,
+                "aaSorting": self.aaSorting,
+                "bInfo":false,
+                "bPaginate":false
+          };
         
         this.viewModule = app.viewModule;
 
@@ -82,7 +82,7 @@
 
         // INIT tree with logged-in user       
         this.timePeriod = app.defaultSelections.timeperiod_id.id;
-        this.updateWorksheetBySelectedCategory(app.defaultSelections.category);
+        this.updateWorksheetBySelectedRanges(app.defaultSelections.ranges);
         this._collection.url = this.createURL();
     },
 
@@ -114,11 +114,11 @@
      * @private
      */
     _setUpCommitStage: function (field) {
-        var forecastCategories = this.context.forecasts.config.get("forecast_categories");
+        var forecastRanges = this.context.forecasts.config.get("forecast_ranges");
         var self = this;
                 
         //show_binary, show_buckets, show_n_buckets
-        if(forecastCategories == "show_binary"){
+        if(forecastRanges== "show_binary"){
             field.type = "bool";
             field.format = function(value){
                 return value == "include";
@@ -149,11 +149,11 @@
             //Set the field.def.options value based on app.config.buckets_dom (if set)
             field.def.options = this.context.forecasts.config.get("buckets_dom") || 'commit_stage_dom';
             field = this._setUpCommitStage(field);
-            if(!this.isEditableWorksheet)
-            {
-                field.view = 'detail';
+            if(!this.isEditableWorksheet) {
+                field.options.viewName = 'detail';
             }
         }
+        this._createFieldColumnDef(field.def);
         app.view.View.prototype._renderField.call(this, field);
 
         if (this.isEditableWorksheet === true && field.viewName !="edit" && field.def.clickToEdit === true && !_.contains(this.context.forecasts.config.get("sales_stage_won"), field.model.get('sales_stage')) && !_.contains(this.context.forecasts.config.get("sales_stage_lost"), field.model.get('sales_stage'))) {
@@ -162,6 +162,65 @@
 
         if (this.isEditableWorksheet === true && field.name == "commit_stage") {
             new app.view.BucketGridEnum(field, this, "ForecastWorksheets");
+        }
+    },
+
+    /**
+     * Adding the field to the ColumnDef for the DataTables Plugin.  If the field is already in the array it will not be
+     * added again.
+     *
+     * @param field {Object}        Field Def Information
+     * @private
+     */
+    _createFieldColumnDef: function(field) {
+        // make sure we don't already have the field in the list.
+        if(_.find(this.columnDefs, _.bind(function(obj) {return obj.sName == this.name }, field))) {
+            // we have the field in the columnDefs, just ignore it now.
+            return;
+        }
+        if(field.enabled) {
+            var fieldDef = {
+                "sName": field.name,
+                "aTargets": [ this.columnDefs.length ],
+                "bVisible" : this.checkConfigForColumnVisibility(field.name)
+            };
+
+            if(_.isUndefined(field.type)) {
+                //Apply sorting for the worksheet
+                switch(field.type)
+                {
+                    case "enum":
+                    case "bool":
+                        // disable sorting for non-numerical fields
+                        fieldDef["bSortable"] = false;
+                        break;
+                    case "int":
+                    case "currency":
+                        fieldDef["sSortDataType"] = "dom-number";
+                        fieldDef["sType"] = "numeric";
+                        break;
+                }
+                // apply class and width
+                switch(field.name) {
+                    case "likely_case":
+                        fieldDef["sClass"] = "number likely";
+                        fieldDef["sWidth"] = "22%";
+                        break;
+                    case "best_case":
+                        fieldDef["sClass"] = "number best";
+                        fieldDef["sWidth"] = "22%";
+                        break;
+                    case "worst_case":
+                        fieldDef["sClass"] = "number worst";
+                        fieldDef["sWidth"] = "22%";
+                        break;
+                    case "probability":
+                        fieldDef["sClass"] = "number";
+                        break;
+                }
+            }
+
+            this.columnDefs.push(fieldDef);
         }
     },
 
@@ -203,9 +262,9 @@
                 function(context, timePeriod) {
                     this.updateWorksheetBySelectedTimePeriod(timePeriod);
                 }, this);
-            this.context.forecasts.on("change:selectedCategory",
-                function(context, category) {
-                    this.updateWorksheetBySelectedCategory(category);
+            this.context.forecasts.on("change:selectedRanges",
+                function(context, ranges) {
+                    this.updateWorksheetBySelectedRanges(ranges);
                 },this);
             this.context.forecasts.worksheet.on("change", function() {
                 this.calculateTotals();
@@ -252,7 +311,7 @@
                 }
             });
             */
-            this.context.forecasts.config.on('change:buckets_dom change:forecast_categories', this.render, this);
+            this.context.forecasts.config.on('change:buckets_dom change:forecast_ranges', this.render, this);
 
             var worksheet = this;
             $(window).bind("beforeunload",function(){
@@ -399,22 +458,6 @@
     },
 
     /**
-     *
-     * @param {Object} fields
-     * @private
-     */
-    _setForecastColumn: function(fields) {
-        var self = this;
-
-        _.each(fields, function(field) {
-            if (field.name == "commit_stage") {
-                field.view = self.isEditableWorksheet ? self.name : 'detail';
-            }
-        });
-
-    },
-
-    /**
      * renders the view
      *
      * @return {Object} this
@@ -423,8 +466,6 @@
     _render: function() {
         var self = this;
         var enableCommit = false;
-        var fields = this.meta.panels[0].fields;
-        var columnKeys = {};
 
         if(!this.showMe()){
             return false;
@@ -434,115 +475,19 @@
         
         this.context.forecasts.set({currentWorksheet: "worksheet"});
         this.isEditableWorksheet = this.isMyWorksheet();
-        this._setForecastColumn(this.meta.panels[0].fields);
+
+        // empty out the columnDefs if it's be re-rendred again
+        this.columnDefs = [];
 
         app.view.View.prototype._render.call(this);
 
-        // parse metadata into columnDefs
-        // so you can sort on the column's "name" prop from metadata
+        // set the columnDefs back into the tableDefs
+        this.gTableDefs['aoColumnDefs'] = this.columnDefs;
 
-        _.each(fields, function(field, key){
-            if(field.enabled)
-            {
-                var name = field.name;
-
-                var fieldDef = {
-                    "sName": name,
-                    "aTargets": [ key ],
-                    "bVisible" : self.checkConfigForColumnVisibility(field.name)
-                };
-
-                if(typeof(field.type) != "undefined")
-                {
-                    //Apply sorting for the worksheet
-                    switch(field.type)
-                    {
-                        case "enum":
-                        case "bool":
-                            // disable sorting for non-numerical fields
-                            fieldDef["bSortable"] = false;
-                            break;
-                        case "int":
-                        case "currency":
-                            fieldDef["sSortDataType"] = "dom-number";
-                            fieldDef["sType"] = "numeric";
-                            break;
-                    }
-                    // apply class and width
-                    switch(field.name) {
-                        case "likely_case":
-                            fieldDef["sClass"] = "number likely";
-                            fieldDef["sWidth"] = "22%";
-                            break;
-                        case "best_case":
-                            fieldDef["sClass"] = "number best";
-                            fieldDef["sWidth"] = "22%";
-                            break;
-                        case "worst_case":
-                            fieldDef["sClass"] = "number worst";
-                            fieldDef["sWidth"] = "22%";
-                            break;
-                        case "probability":
-                            fieldDef["sClass"] = "number";
-                            break;
-                    }
-                }
-
-                self.columnDefs.push(fieldDef);
-                columnKeys[name] = key;
-            }
-        });
+        // render the table
         this.gTable = this.$('.worksheetTable').dataTable(this.gTableDefs);
 
-        // set dynamic widths on currency columns showing original currency
-
-        var likelyWidths= $('.likely .converted').map(function() {
-            return $(this).width();
-        }).get();
-
-        var likelyLabelWidths= $('.likely label.original').map(function() {
-            return $(this).width();
-        }).get();
-
-        var bestWidths= $('.best .converted').map(function() {
-            return $(this).width();
-        }).get();
-
-        var bestLabelWidths= $('.best label.original').map(function() {
-            return $(this).width();
-        }).get();
-
-        var worstWidths= $('.worst .converted').map(function() {
-            return $(this).width();
-        }).get();
-
-        var worstLabelWidths= $('.worst label.original').map(function() {
-            return $(this).width();
-        }).get();
-
-        $('.likely .converted').width(_.max(likelyWidths));
-        $('.likely label.original').width(_.max(likelyLabelWidths));
-        $('.best .converted').width(_.max(bestWidths));
-        $('.best label.original').width(_.max(bestLabelWidths));
-        $('.worst .converted').width(_.max(worstWidths));
-        $('.worst label.original').width(_.max(worstLabelWidths));
-
-        // now set table column width from this value
-        $('.number .likely').width($('.likely .converted').width()+$('.likely label.original').width());
-        $('.number .best').width($('.best .converted').width()+$('.best label.original').width());
-        $('.number .worst').width($('.worst .converted').width()+$('.worst label.original').width());
-
-        // if isExpandable, add expandable row behavior
-        if (this.isExpandableRows) {
-            $('.worksheetTable tr').on('click', function () {
-                if (self.gTable.fnIsOpen(this)) {
-                    self.gTable.fnClose(this);
-                } else {
-                    self.gTable.fnOpen(this, self.formatAdditionalDetails(this), 'details');
-                }
-            });
-        }
-
+        self.adjustCurrencyColumnWidths();
         self.calculateTotals();
 
         // fix the style on the rows that contain a checkbox
@@ -562,6 +507,55 @@
             self.context.forecasts.trigger("forecasts:commitButtons:enabled");
         }
         return this;
+    },
+
+    /**
+     * set dynamic widths on currency columns showing original currency
+     */
+    adjustCurrencyColumnWidths : function() {
+
+        var likelyConverted = this.$el.find('.likely .converted'),
+            likelyOriginal = this.$el.find('.likely label.original'),
+            bestConverted = this.$el.find('.best .converted'),
+            bestOriginal = this.$el.find('.best label.original'),
+            worstConverted = this.$el.find('.worst .converted'),
+            worstOriginal = this.$el.find('.worst label.original');
+
+        var likelyWidths= likelyConverted.map(function() {
+            return $(this).width();
+        }).get();
+
+        var likelyLabelWidths= likelyOriginal.map(function() {
+            return $(this).width();
+        }).get();
+
+        var bestWidths= bestConverted.map(function() {
+            return $(this).width();
+        }).get();
+
+        var bestLabelWidths= bestOriginal.map(function() {
+            return $(this).width();
+        }).get();
+
+        var worstWidths= worstConverted.map(function() {
+            return $(this).width();
+        }).get();
+
+        var worstLabelWidths= worstOriginal.map(function() {
+            return $(this).width();
+        }).get();
+
+        likelyConverted.width(_.max(likelyWidths));
+        likelyOriginal.width(_.max(likelyLabelWidths));
+        bestConverted.width(_.max(bestWidths));
+        bestOriginal.width(_.max(bestLabelWidths));
+        worstConverted.width(_.max(worstWidths));
+        worstOriginal.width(_.max(worstLabelWidths));
+
+        // now set table column width from this value
+        this.$el.find('.number .likely').width(likelyConverted.width()+likelyOriginal.width());
+        this.$el.find('.number .best').width(bestConverted.width()+bestOriginal.width());
+        this.$el.find('.number .worst').width(worstConverted.width()+worstOriginal.width());
     },
 
     /**
@@ -710,10 +704,10 @@
      *
      * @param params is always a context
      */
-    updateWorksheetBySelectedCategory:function (params) {
+    updateWorksheetBySelectedRanges:function (params) {
         // Set the filters for the datatable then re-render
         var self = this,
-            forecast_categories_setting = this.context.forecasts.config.get('forecast_categories') || 'show_binary';
+            forecast_ranges_setting = this.context.forecasts.config.get('forecast_ranges') || 'show_binary';
 
         // start with no filters, i. e. show everything.
         $.fn.dataTableExt.afnFiltering.splice(0, $.fn.dataTableExt.afnFiltering.length);
@@ -732,7 +726,7 @@
                         checkState;
 
                     //If we are in an editable worksheet get the selected dropdown/checkbox value; otherwise, get the detail/default text
-                    if (forecast_categories_setting == 'show_binary') {
+                    if (forecast_ranges_setting == 'show_binary') {
                         checkState = rowCategory.find('input').attr('checked');
                         selectVal = ((checkState == "checked") || (checkState == "on") || (checkState == "1")) ? 'include' : 'exclude';
                     } else {

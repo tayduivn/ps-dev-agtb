@@ -112,6 +112,10 @@ class AdministrationController extends SugarController
             //Users doesn't appear in the normal module list, but its value is cached on login.
             sugar_cache_clear("CONTROLLER_wireless_module_registry_Users");
             sugar_cache_reset();
+            
+            // Bug 59121 - Clear the metadata cache
+            require_once 'include/MetaDataManager/MetaDataManager.php';
+            MetaDataManager::clearAPICache();
         }
 
         echo "true";

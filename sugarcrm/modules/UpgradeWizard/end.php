@@ -134,7 +134,7 @@ foreach ($dictionary as $meta) {
 
 logThis('database repaired', $path);
 
-$ce_to_pro_ent = isset($_SESSION['upgrade_from_flavor']) && ($_SESSION['upgrade_from_flavor'] == 'SugarCE to SugarPro' || $_SESSION['upgrade_from_flavor'] == 'SugarCE to SugarEnt' || $_SESSION['upgrade_from_flavor'] == 'SugarCE to SugarCorp' || $_SESSION['upgrade_from_flavor'] == 'SugarCE to SugarUlt');
+$ce_to_pro_ent = isset($_SESSION['upgrade_from_flavor']) && preg_match('/^SugarCE.*?(Pro|Ent|Corp|Ult)$/', $_SESSION['upgrade_from_flavor']);
 
 //BEGIN SUGARCRM flav=pro ONLY
 // Run this code if we are upgrading from pre-550 version or if we are doing a CE to PRO/ENT conversion
@@ -314,6 +314,9 @@ require_once('modules/Administration/upgrade_custom_relationships.php');
 upgrade_custom_relationships();
 
 require_once('modules/UpgradeWizard/uw_utils.php');
+
+//Patch for bug57431 : Module name isn't updated in portal layout editor
+updateRenamedModulesLabels();
 
 //BEGIN SUGARCRM flav=PRO ONLY
 //setup forecast defualt settings

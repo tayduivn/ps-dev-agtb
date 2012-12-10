@@ -68,7 +68,7 @@
         //set up base selected user
     	this.selectedUser = {id: app.user.get('id'), "isManager":app.user.get('isManager'), "showOpps": false};
         this.timePeriod = app.defaultSelections.timeperiod_id.id
-        this.category = app.defaultSelections.category.id
+        this.ranges = app.defaultSelections.ranges.id
 
         this._collection = this.context.forecasts.worksheetmanager;
         this._collection.url = this.createURL();
@@ -132,14 +132,14 @@
                 function(context, timePeriod) {
                     this.updateWorksheetBySelectedTimePeriod(timePeriod);
                 }, this);
-            this.context.forecasts.on("change:selectedCategory",
-                function(context, category) {
-                    this.updateWorksheetBySelectedCategory(category);
+            this.context.forecasts.on("change:selectedRanges",
+                function(context, ranges) {
+                    this.updateWorksheetBySelectedRanges(ranges);
                 },this);
             this.context.forecasts.worksheetmanager.on("change", function() {
             	this.calculateTotals();
             }, this);
-            this.context.forecasts.on("forecasts:committed:saved", function(){
+            this.context.forecasts.on("forecasts:committed:saved forecasts:commitButtons:saved", function(){
             	if(this.showMe()){
             		var model = this.context.forecasts.worksheetmanager;
             		model.url = this.createURL();
@@ -276,7 +276,7 @@
     _render:function () {
         var self = this;
         var enableCommit = false;
-
+      
         if(!this.showMe()){
         	return false;
         }
@@ -501,15 +501,15 @@
     },
 
     /**
-     * Event Handler for updating the worksheet by a selected category
+     * Event Handler for updating the worksheet by a selected ranges
      *
      * @param params is always a context
      */
-    updateWorksheetBySelectedCategory:function (params) {
-        if (this.context.forecasts.config.get('forecast_categories') != 'show_binary') {
+    updateWorksheetBySelectedRanges:function (params) {
+        if (this.context.forecasts.config.get('forecast_ranges') != 'show_binary') {
             // TODO: this.
         } else {
-            this.category = _.first(params);
+            this.ranges = _.first(params);
         }
 
         var model = this.context.forecasts.worksheetmanager;
@@ -542,8 +542,8 @@
            args['timeperiod_id'] = this.timePeriod;
         }
 
-        if(this.category) {
-            args['category'] = this.category;
+        if(this.ranges) {
+            args['ranges'] = this.ranges;
         }
 
         if(this.selectedUser)
