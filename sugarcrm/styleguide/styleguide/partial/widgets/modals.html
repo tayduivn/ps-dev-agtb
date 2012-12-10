@@ -156,11 +156,11 @@
                       <span class="add-on"><i class="icon-calendar"></i></span>
                     </div>
 
-                    <h4>Datepicker on input in a modal</h4>
+                    <h4>Datepicker and Timepicker on input in a modal</h4>
                     <p><a href="#" rel="tooltip" title="Tooltip">This link</a> and <a href="#" rel="tooltip" title="Tooltip">that link</a> should have tooltips on hover.</p>
                     <div class="well">
                       <input type="text" class="span2" value="" placeholder="mm-dd-yyyy" id="dp1" rel="datepicker">
-                      <!-- <input type="text" class="span2" placeholder="hh:mm" id="tp1" rel="timepicker"> -->
+                      <input type="text" class="span2" placeholder="hh:mm" id="tp1" rel="timepicker">
                     </div>
 
                     <h4>Popover in a modal</h4>
@@ -291,6 +291,9 @@ $('#myModal').on('hide', function () {
         </div>
       </div>
     </section>
+
+<script src="../assets/js/jquery.timepicker.js"></script>
+
 <script type="text/javascript">
   $("[rel=popover]").popover();
 
@@ -301,4 +304,5 @@ $('#myModal').on('hide', function () {
     format: 'mm-dd-yyyy'
   });
   $('#dp3').datepicker();
+  $('#tp1').timepicker();
 </script>

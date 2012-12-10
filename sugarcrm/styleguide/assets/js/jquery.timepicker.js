@@ -136,8 +136,8 @@ requires jQuery 1.6+
 				list.css({ 'left':(self.offset().left), 'top': self.offset().top + topMargin + self.outerHeight() });
 			}
 			*/
-
-			list.css({ 'left':(self.offset().left), 'top': self.offset().top + topMargin + self.outerHeight() });
+			var offset = self.position();
+			list.css({ 'left': (offset.left), 'top': offset.top + self.outerHeight() });
 			list.show();
 
 			var settings = self.data('timepicker-settings');
@@ -290,7 +290,10 @@ requires jQuery 1.6+
 		list.data('timepicker-input', self);
 		self.data('timepicker-list', list);
 
-		$('body').append(list);
+		// $('body').append(list);
+		// Insert adjacent to our timepicker input (for scrolling in modals, etc.)
+		self.after(list);
+
 		_setSelected(self, list);
 
 		list.on('click', 'li', function(e) {
