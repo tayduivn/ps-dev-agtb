@@ -90,22 +90,60 @@ class OraclePreparedStatement extends PreparedStatement
      */
     protected $bound_vars = array();
 
-    // Oracle type defs
 
-    //     SQLT_BFILEE or OCI_B_BFILE - for BFILEs;
-    //     SQLT_CFILEE or OCI_B_CFILEE - for CFILEs;
-    //     SQLT_CLOB   or OCI_B_CLOB - for CLOBs;
-    //     SQLT_BLOB   or OCI_B_BLOB - for BLOBs;
-    //     SQLT_RDD    or OCI_B_ROWID - for ROWIDs;
-    //     SQLT_NTY    or OCI_B_NTY - for named datatypes;
-    //     SQLT_INT    or OCI_B_INT - for integers;
-    //     SQLT_CHR - for VARCHARs;
-    //     SQLT_BIN    or OCI_B_BIN - for RAW columns;
-    //     SQLT_LNG - for LONG columns;
-    //     SQLT_LBI - for LONG RAW columns;
-    //     SQLT_RSET - for cursors created with oci_new_cursor().
+    /*
+     * Maps MySQL column datatypes to MySQL bind variable types
+     *
+     * Oracle type defs
+     *
+     *     SQLT_BFILEE or OCI_B_BFILE    - for BFILEs;
+     *     SQLT_CFILEE or OCI_B_CFILEE   - for CFILEs;
+     *     SQLT_CLOB   or OCI_B_CLOB     - for CLOBs;
+     *     SQLT_BLOB   or OCI_B_BLOB     - for BLOBs;
+     *     SQLT_RDD    or OCI_B_ROWID    - for ROWIDs;
+     *     SQLT_NTY    or OCI_B_NTY      - for named datatypes;
+     *     SQLT_INT    or OCI_B_INT      - for integers;
+     *     SQLT_CHR                      - for VARCHARs;
+     *     SQLT_BIN    or OCI_B_BIN      - for RAW columns;
+     *     SQLT_LNG                      - for LONG columns;
+     *     SQLT_LBI                      - for LONG RAW columns;
+     *     SQLT_RSET                     - for cursors created with oci_new_cursor().
+     *
+     */
+    protected $ps_type_mapMysql = array(
+        // Sugar DataType      PHP Bind Variable data type
 
+        // char types
+        'char'             => 's', // char
+        'char(36)'         => 's', // id
+        'varchar'          => 's', // varchar, enum, relate, url, encrypt, file
+        'text'             => 's', // text, multienum, html,
+        'longtext'         => 's', // longtext, longhtml
+        'blob'             => 'b', // blob
+        'longblob'         => 'b', // longblob
 
+        // floating point types
+        'double'           => 'd', // double
+        'float'            => 'd', // float
+        'decimal(26,6)'    => 'd', // currency
+        'decimal'          => 'd', // decimal, decimal2
+        'decimal(%d, %d)'  => 'd', // decimal_tpl
+
+        // integer types
+        'bool'             => 'i', // bool
+        'tinyint'          => 'i', // tinyint
+        'smallint'         => 'i', // short
+        'int'              => 'i', // int
+        'int unsigned'     => 'i', // uint
+        'bigint'           => 'i', // long
+        'bigint unsigned'  => 'i', // ulong
+
+        // date time types
+        'time'             => 's', // time
+        'date'             => 's', // date
+        'datetime'         => 's', // datetime, datetimecombo
+
+    );
 
     public $ps_type_map = array(
         'int'           => SQLT_INT,
@@ -144,7 +182,7 @@ class OraclePreparedStatement extends PreparedStatement
 
 
 
-  public function preparePreparedStatement($sql, array $fieldDefs = array() ){
+  public function preparePreparedStatement($sql, array $fieldDefs,  $msg = '' ){
 
 
       echo "\n\n---------------------------------------------\n";
@@ -154,6 +192,8 @@ class OraclePreparedStatement extends PreparedStatement
       echo "OraclePreparedStatement.preparePreparedStatement: fileddefs:\n";
       var_dump($fieldDefs);
 
+      $this->lastsql = $sqlText;
+      $GLOBALS['log']->info('QueryPrepare:' . $sqlText);
 
       // Convert ? into :var in prepared statements
       if (!empty($fieldDefs) or (!is_array($fieldDefs))) {
@@ -173,10 +213,10 @@ class OraclePreparedStatement extends PreparedStatement
              while ($nextParam > 0 ) {
                  $name = "p$i"; // we don't always get fielddefs so we make up our own instead of using $fieldDefs[$i]['name'];
                  $type = $fieldDefs[$i]['type'];
-                 $dataType = $this->ps_type_map["$type"];
-                 echo "Processing param $i Name: $name   type:$type   dataType: $dataType\n" ;
+                 $dataType = $this->ps_type_map[$this->type_map[ $Type ] ];
+                 //echo "Processing param $i Name: $name   type:$type   dataType: $dataType\n" ;
                  $cleanedSql .= substr( $sql, 0, $nextParam ) . ":$name";
-                 echo "cleanedSql: $cleanedSql\n";
+                 //echo "cleanedSql: $cleanedSql\n";
 
                  // insert the fieldDef and type
                  $fields[] = $name;
@@ -195,19 +235,19 @@ class OraclePreparedStatement extends PreparedStatement
 
       }
       else {
-         $errorMsg ="ERROR Prepared Statements without field definitions not yet supported.";
-         return $errorMsg;
+         $this->log->error("ERROR Prepared Statements without field definitions not yet supported.");
+         return false;
       }
 
       $sqlText = $cleanedSql;
-      echo "\n\n\npreparePreparedStatement: oci_parse call for oracle converted sqlText: >$sqlText <  \n" ;
+      //echo "\n\n\npreparePreparedStatement: oci_parse call for oracle converted sqlText: >$sqlText <  \n" ;
 
 
-      // do the parse
-      echo "\n\n\nOraclePreparedStatment.preparePreparedStatement: oci_parse call for oracle converted sqlText: >$sqlText <  \n" ;
+      // do the prepare
+      //echo "\n\n\nOraclePreparedStatment.preparePreparedStatement: oci_parse call for oracle converted sqlText: >$sqlText <  \n" ;
       if (!($this->stmt = oci_parse($this->dblink, $sqlText))) {
-          echo "preparePreparedStatement: Prepare Failed! \n";
-          return "Prepare failed: (" . $this->dblink->errno . ") " . $this->dblink->error;
+          $this->log->error("preparePreparedStatement: Prepare failed: $msg for sql: $sqlText (" . $this->dblink->errno . ") " . $this->dblink->error);
+          return false;
       }
 
       // bind the array elements
@@ -216,12 +256,14 @@ class OraclePreparedStatement extends PreparedStatement
       $this->bound_vars = $bound = array_fill(0, $num_args, null);
       $types = "";
       for($i=0; $i<$num_args;$i++) {
-          $bound[$i] =& $this->bound_vars[$i];
-          $dataTypes[$i] = SQLT_CHR;
+          //$bound[$i] =& $this->bound_vars[$i];
+          $dataTypes[$i] = $this->ps_type_map[$this->type_map[$fieldDefs['type'][$i]]];
           $fieldName = "bound[" . $i . "]";
           echo "binding $fields[$i] to $fieldName, Type: $dataTypes[$i]  \n";
-          oci_bind_by_name($this->stmt, $fields[$i], $fieldName, $dataTypes[$i]);   // $bound[$i]
+          oci_bind_by_name($this->stmt, $fields[$i], $this->bound_vars[$i], -1, $dataTypes[$i]);
       }
+
+      $this->checkError(" QueryPrepare Failed: $msg for sql: $sqlText ::", $dieOnError);
 
       return $this;
   }
@@ -229,11 +271,15 @@ class OraclePreparedStatement extends PreparedStatement
 
 
 
-   public function executePreparedStatement(array $data){
+   public function executePreparedStatement(array $data,  $msg = ''){
 
       echo "--------------------------------------------------\n";
       echo "==> OraclePreparedStatment.executePreparedStatement: entry    data is:\n";
       var_dump($data);
+
+      parent::countQuery($this->sqlText);
+      $GLOBALS['log']->info('Query:' . $this->sqlText);
+      $this->query_time = microtime(true);
 
       // transfer the data from the input array to the bound array
       for($i=0; $i<count($data);$i++) {
@@ -250,11 +296,25 @@ class OraclePreparedStatement extends PreparedStatement
       }
 
 
-      if (!($res = oci_execute($this->stmt, OCI_DEFAULT))) {
-          return "Execute Prepared Statement failed: (" . $dblink->errno . ") " . $dblink->error;
+      $res = oci_execute($this->stmt, OCI_DEFAULT);
+
+
+      $this->query_time = microtime(true) - $this->query_time;
+      $GLOBALS['log']->info('Query Execution Time:'.$this->query_time);
+
+      if (!$res) {
+          $this->log->error("Query Failed: $this->sqlText");           $this->stmt = false; // Making sure we don't use the statement resource for error reporting
       }
-      oci_commit($this->database);
-      return $res;
+      else {
+
+          if($this->dump_slow_queries($this->sqlText)) {
+              $this->track_slow_queries($this->sqlText);
+          }
+      }
+      $this->checkError($msg.' Query Failed:' . $this->sqlText . '::', $dieOnError);
+
+
+      return $this->stmt;
    }
 
 }

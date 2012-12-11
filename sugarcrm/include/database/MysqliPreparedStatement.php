@@ -48,39 +48,49 @@ class MysqliPreparedStatement extends PreparedStatement
      */
     protected $bound_vars = array();
 
-    public $ps_type_map = array(
-        'int'      => 'i',
-        'double'   => 'd',
-        'float'    => 'd',
-        'uint'     => 'i',
-        'ulong'    => 'i',
-        'long'     => 'd',
-        'short'    => 'i',
-        'varchar'  => 's',
-        'text'     => 'b',
-        'longtext' => 'b',
-        'date'     => 'd',
-        'enum'     => 's',
-        'relate'   => 's',
-        'multienum'=> 's',
-        'html'     => 's',
-        'longhtml' => 's',
-        'datetime' => 's',
-        'datetimecombo' => 's',
-        'time'     => 'i',
-        'bool'     => 'i',
-        'tinyint'  => 'i',
-        'char'     => 's',
-        'blob'     => 'b',
-        'longblob' => 'b',
-        'currency' => 's',
-        'decimal'  => 'd',
-        'decimal2' => 'd',
-        'id'       => 's',
-        'url'      => 's',
-        'encrypt'  => 's',
-        'file'     => 's',
-        'decimal_tpl' => 's',
+
+    /*
+     * Maps MySQL column datatypes to MySQL bind variable types
+     *
+     * Possible types are:
+     *   b - blob
+     *   d - double
+     *   i - integer
+     *   s - string
+     *
+     */
+    protected $ps_type_map = array(
+        // Sugar DataType      PHP Bind Variable data type
+
+        // char types
+        'char'             => 's', // char
+        'char(36)'         => 's', // id
+        'varchar'          => 's', // varchar, enum, relate, url, encrypt, file
+        'text'             => 's', // text, multienum, html,
+        'longtext'         => 's', // longtext, longhtml
+        'blob'             => 'b', // blob
+        'longblob'         => 'b', // longblob
+
+        // floating point types
+        'double'           => 'd', // double
+        'float'            => 'd', // float
+        'decimal(26,6)'    => 'd', // currency
+        'decimal'          => 'd', // decimal, decimal2
+        'decimal(%d, %d)'  => 'd', // decimal_tpl
+
+        // integer types
+        'bool'             => 'i', // bool
+        'tinyint'          => 'i', // tinyint
+        'smallint'         => 'i', // short
+        'int'              => 'i', // int
+        'int unsigned'     => 'i', // uint
+        'bigint'           => 'i', // long
+        'bigint unsigned'  => 'i', // ulong
+
+        // date time types
+        'time'             => 's', // time
+        'date'             => 's', // date
+        'datetime'         => 's', // datetime, datetimecombo
 
     );
 
@@ -95,23 +105,29 @@ class MysqliPreparedStatement extends PreparedStatement
    * @param array    fieldDefs field definitions
    *
    */
-  public function preparePreparedStatement($sqlText,  array $fieldDefs = array() ){   // removed array $data,
+  public function preparePreparedStatement($sqlText,  array $fieldDefs, $msg = '' ){
 
+      $this->lastsql = $sqlText;
+      $GLOBALS['log']->info('QueryPrepare:' . $sqlText);
 
       if (!($this->stmt = $this->dblink->prepare($sqlText))) {
-          return "Prepare failed: (" . $this->dblink->errno . ") " . $this->dblink->error;
+          $this->log->error("Prepare failed: $msg for sql: $sqlText (" . $this->dblink->errno . ") " . $this->dblink->error);
+          return false;
       }
       $num_args = $this->stmt->param_count;
       $this->bound_vars = $bound = array_fill(0, $num_args, null);
       $types = "";
       for($i=0; $i<$num_args;$i++) {
           $thisType = trim($fieldDefs[$i]["type"]);
-          $types .= $this->ps_type_map[ $thisType ];
+          $mappedType = $this->DBM->type_map[$thisType];
+          $types .= $this->ps_type_map[ $mappedType ];  // SugarType->type_map->ps_type_map
           $bound[$i] =& $this->bound_vars[$i];
       }
       array_unshift($bound, $types);    // puts $types in front of the data elements
 
       call_user_func_array(array($this->stmt, "bind_param"), $bound);
+
+      $this->DBM->checkError(" QueryPrepare Failed: $msg for sql: $sqlText ::");
 
       return $this;
   }
@@ -119,18 +135,36 @@ class MysqliPreparedStatement extends PreparedStatement
 
 
 
-   public function executePreparedStatement(array $data){
+   public function executePreparedStatement(array $data, $msg = ''){
+
+      //parent::countQuery($this->sqlText);
+      $GLOBALS['log']->info('Query:' . $this->sqlText);
 
       if ($this->stmt->param_count != count($data) )
           return "incorrect number of elements. Expected " . $this->stmt->param_count . " but got " . count($data);
+
+      $this->query_time = microtime(true);
 
       for($i=0; $i<$this->stmt->param_count;$i++) {
          $this->bound_vars[$i] = array_shift($data);
       }
 
-      if (!($res = $this->stmt->execute())) {
-          return "Execute Prepared Statement failed: (" ; //. $dblink->errno . ") " . $dblink->error;
+      $res = $this->stmt->execute();
+
+      $this->query_time = microtime(true) - $this->query_time;
+      $GLOBALS['log']->info('Query Execution Time:'.$this->query_time);
+
+      if (!$res) {
+          $this->log->error("Query Failed: $this->sqlText");
+          $this->stmt = false; // Making sure we don't use the statement resource for error reporting
       }
+      else {
+
+          if($this->DBM->dump_slow_queries($this->sqlText)) {
+              $this->DBM->track_slow_queries($this->sqlText);
+          }
+      }
+      $this->DBM->checkError($msg.' Query Failed:' . $this->sqlText . '::');
 
       return $this->stmt;
    }

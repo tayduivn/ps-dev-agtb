@@ -1828,6 +1828,6 @@ EOQ;
 
     public function prepareStatement($sql, array $fieldDefs = array() )
     {
-        return new OraclePreparedStatement($this, $sql, $data, $fieldDefs);
+        return new OraclePreparedStatement($this, $sql, $fieldDefs);
     }
 }

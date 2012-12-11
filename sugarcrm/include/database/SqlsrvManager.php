@@ -593,6 +593,6 @@ EOSQL;
 
     public function prepareStatement($sql, array $fieldDefs = array() )
     {
-        return new SqlsrvPreparedStatement($this, $sql, $data, $fieldDefs );
+        return new SqlsrvPreparedStatement($this, $sql, $fieldDefs );
     }
 }

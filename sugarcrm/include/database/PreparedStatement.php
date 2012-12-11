@@ -68,9 +68,9 @@ abstract class PreparedStatement{
 
     protected $preparedStatementHndl = null;
 
-    abstract public function preparePreparedStatement($sqlText,  array $fieldDefs = array() );
+    abstract public function preparePreparedStatement($sqlText,  array $fieldDefs,  $msg = '' );
 
-    abstract public function executePreparedStatement(array $data );
+    abstract public function executePreparedStatement(array $data,  $msg = '' );
 
     /**
      * Create Prepared Statement object from sql in the form of "INSERT INTO testPreparedStatement(id) VALUES(?int, ?varchar)"
@@ -78,18 +78,19 @@ abstract class PreparedStatement{
     public function __construct($DBM, $sql, array $fieldDefs = array() ){
         $this->timedate = TimeDate::getInstance();
         $this->log = $GLOBALS['log'];
+        $this->DBM = $DBM;
         $this->dblink = $DBM->getDatabase();
 
         if (empty($DBM))    {
-          $msg = "ERROR Database object missing";
-          echo "$msg\n";
-          return $msg;
+            $errmsg = "ERROR Database object missing";
+            $this->log->error("Prepare failed: $errmsg. $msg for sql: $sqlText (" . $this->dblink->errno . ") " . $this->dblink->error);
+            return false;
         }
 
         if (empty($sql))    {
-            $msg = "ERROR Prepared SQL text is missing";
-            echo "$msg\n";
-            return $msg;
+            $errmsg = "ERROR Database object missing";
+            $this->log->error("Prepare failed: $errmsg. $msg for sql: $sqlText (" . $this->dblink->errno . ") " . $this->dblink->error);
+            return false;
         }
 
 
@@ -131,8 +132,10 @@ abstract class PreparedStatement{
 
         //Prepare the statement in the database                  $DBM
         $preparedStatementHndl = $this->preparePreparedStatement($cleanedSql, $fieldDefs );
-        if (empty($preparedStatementHndl))
-            return "preparing statement failed";
+        if (empty($preparedStatementHndl)) {
+            $this->log->error("Prepare failed: $msg for sql: $sql (" . $this->dblink->errno . ") " . $this->dblink->error);
+            return false;
+        }
     }
 
 }

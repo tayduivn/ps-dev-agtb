@@ -1838,6 +1838,6 @@ EOQ;
 
     public function prepareStatement($sql, array $fieldDefs = array() )
     {
-        return new IBMDB2PreparedStatement($this, $sql, $data, $fieldDefs = array() );
+        return new IBMDB2PreparedStatement($this, $sql, $fieldDefs );
     }
 }

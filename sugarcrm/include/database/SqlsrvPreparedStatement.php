@@ -88,67 +88,58 @@ class SqlsrvPreparedStatement extends PreparedStatement
     */
 
     public $ps_type_map = array(
-        'int'           =>  'SQLSRV_SQLTYPE_INT',
-        'double'        =>  'SQLSRV_SQLTYPE_FLOAT',
-        'float'         =>  'SQLSRV_SQLTYPE_FLOAT',
-        'uint'          =>  'SQLSRV_SQLTYPE_INT',
-        'ulong'         =>  'SQLSRV_SQLTYPE_INT',
-        'long'          =>  'SQLSRV_SQLTYPE_INT',
-        'short'         =>  'SQLSRV_SQLTYPE_INT',
-        'varchar'       =>  'SQLSRV_SQLTYPE_CHAR',
-        'text'          =>  'SQLSRV_SQLTYPE_TEXT',
-        'longtext'      =>  'SQLSRV_SQLTYPE_TEXT',
-        'date'          =>  'SQLSRV_SQLTYPE_DATE',
-        'enum'          =>  'SQLSRV_SQLTYPE_CHAR',
-        'relate'        =>  'SQLSRV_SQLTYPE_CHAR',
-        'multienum'     =>  'SQLSRV_SQLTYPE_CHAR',
-        'html'          =>  'SQLSRV_SQLTYPE_CHAR',
-        'longhtml'      =>  'SQLSRV_SQLTYPE_CHAR',
-        'datetime'      =>  'SQLSRV_SQLTYPE_DATETIME',
-        'datetimecombo' =>  'SQLSRV_SQLTYPE_DATE',
-        'time'          =>  'SQLSRV_SQLTYPE_TIME',
-        'bool'          =>  'SQLSRV_SQLTYPE_BIT',
-        'tinyint'       =>  'SQLSRV_SQLTYPE_TINYINT',
-        'char'          =>  'SQLSRV_SQLTYPE_CHAR',
-        'blob'          =>  'SQLSRV_SQLTYPE_BINARY',
-        'longblob'      =>  'SQLSRV_SQLTYPE_BINARY',
-        'currency'      =>  'SQLSRV_SQLTYPE_MONEY',
-        'decimal'       =>  'SQLSRV_SQLTYPE_DECIMAL',
-        'decimal2'      =>  'SQLSRV_SQLTYPE_DECIMAL',
-        'id'            =>  'SQLSRV_SQLTYPE_CHAR',
-        'url'           =>  'SQLSRV_SQLTYPE_CHAR',
-        'encrypt'       =>  'SQLSRV_SQLTYPE_CHAR',
-        'file'          =>  'SQLSRV_SQLTYPE_CHAR',
-        'decimal_tpl'   =>  'SQLSRV_SQLTYPE_CHAR',
+        'int'           =>  SQLSRV_SQLTYPE_INT,
+        'double'        =>  SQLSRV_SQLTYPE_FLOAT,
+        'float'         =>  SQLSRV_SQLTYPE_FLOAT,
+        'uint'          =>  SQLSRV_SQLTYPE_INT,
+        'ulong'         =>  SQLSRV_SQLTYPE_INT,
+        'long'          =>  SQLSRV_SQLTYPE_INT,
+        'short'         =>  SQLSRV_SQLTYPE_INT,
+        'varchar'       =>  SQLSRV_SQLTYPE_CHAR,
+        'text'          =>  SQLSRV_SQLTYPE_TEXT,
+        'longtext'      =>  SQLSRV_SQLTYPE_TEXT,
+        'date'          =>  SQLSRV_SQLTYPE_DATE,
+        'enum'          =>  SQLSRV_SQLTYPE_CHAR,
+        'relate'        =>  SQLSRV_SQLTYPE_CHAR,
+        'multienum'     =>  SQLSRV_SQLTYPE_CHAR,
+        'html'          =>  SQLSRV_SQLTYPE_CHAR,
+        'longhtml'      =>  SQLSRV_SQLTYPE_CHAR,
+        'datetime'      =>  SQLSRV_SQLTYPE_DATETIME,
+        'datetimecombo' =>  SQLSRV_SQLTYPE_DATE,
+        'time'          =>  SQLSRV_SQLTYPE_TIME,
+        'bool'          =>  SQLSRV_SQLTYPE_BIT,
+        'tinyint'       =>  SQLSRV_SQLTYPE_TINYINT,
+        'char'          =>  SQLSRV_SQLTYPE_CHAR,
+        'blob'          =>  SQLSRV_SQLTYPE_BINARY,
+        'longblob'      =>  SQLSRV_SQLTYPE_BINARY,
+        'currency'      =>  SQLSRV_SQLTYPE_MONEY,
+        'decimal'       =>  SQLSRV_SQLTYPE_DECIMAL,
+        'decimal2'      =>  SQLSRV_SQLTYPE_DECIMAL,
+        'id'            =>  SQLSRV_SQLTYPE_CHAR,
+        'url'           =>  SQLSRV_SQLTYPE_CHAR,
+        'encrypt'       =>  SQLSRV_SQLTYPE_CHAR,
+        'file'          =>  SQLSRV_SQLTYPE_CHAR,
+        'decimal_tpl'   =>  SQLSRV_SQLTYPE_CHAR,
 
     );
 
 
 
-  public function preparePreparedStatement($sqlText, array $fieldDefs = array() ){
+  public function preparePreparedStatementOldSqlsrv($sqlText, array $fieldDefs, $msg = '' ){
 
-      echo "preparePreparedStatement: entry  sqlText: >$sqlText <  data:\n" ;
-      var_dump($data);
+      $this->lastsql = $sqlText;
+      $GLOBALS['log']->info('QueryPrepare:' . $sqlText);
 
 	  $keylessData = array();
-
-	  //strip quotation marks
 	  foreach($data as &$dataElement) {
-	      if (substr($dataElement, 0, 1) =="'" )
-			  $dataElement = substr($dataElement,1);
-		  $len = strlen($dataElement);
-		  if (substr($dataElement, $len-1, 1) =="'" )
-			  $dataElement = substr($dataElement,0, $len-1);
           $keylessData[] = $dataElement;
 	  }
-      echo "preparePreparedStatement: cleaned data:\n" ;
-      var_dump($keylessData);
 
       if (!($this->stmt = sqlsrv_prepare($this->dblink, $sqlText, $keylessData))) {
-          echo "preparePreparedStatement: Prepare Failed! \n";
-		  print_r( sqlsrv_errors() );
-          return "Prepare failed: (" . $this->dblink->errno . ") " . $this->dblink->error;
+          $this->log->error("Prepare failed: $msg for sql: $sqlText (" . $this->dblink->errno . ") " . $this->dblink->error);
+          return false;
       }
+
       /*
       $num_args = $this->stmt->param_count;
       echo "preparePreparedStatement: num_args from prepare: $num_args \n";
@@ -167,17 +158,49 @@ class SqlsrvPreparedStatement extends PreparedStatement
       call_user_func_array(array($this->stmt, "bind_param"), $bound);
       */
 
+      $this->checkError(" QueryPrepare Failed: $msg for sql: $sqlText ::");
+
       return $this;
   }
 
 
 
+    public function preparePreparedStatement($sqlText,  array $fieldDefs, $msg = '' ){
 
-   public function executePreparedStatement(array $data){
+        $this->lastsql = $sqlText;
+        $GLOBALS['log']->info('QueryPrepare:' . $sqlText);
 
-      echo "--------------------------------------------------\n";
-      echo "executePreparedStatement: entry    data:\n";
-      var_dump($data);
+        $num_args = $this->stmt->param_count;
+        $this->bound_vars = $bound = array_fill(0, $num_args, null);
+        $types = "";
+        for($i=0; $i<$num_args;$i++) {
+            $thisType = trim($fieldDefs[$i]["type"]);
+            $types .= $this->ps_type_map[ $this->type_map[ $thisType ] ];  // SugarType->type_map->ps_type_map
+            $bound[$i] =& $this->bound_vars[$i];
+        }
+
+        if (!($this->stmt = sqlsrv_prepare($this->dblink, $sqlText, $bound))) {
+            $this->log->error("Prepare failed: $msg for sql: $sqlText (" . $this->dblink->errno . ") " . $this->dblink->error);
+            return false;
+        }
+
+        $this->checkError(" QueryPrepare Failed: $msg for sql: $sqlText ::", $dieOnError);
+
+        return $this;
+    }
+
+
+
+
+   public function executePreparedStatementOldSqlsrv(array $data, $msg = ''){
+
+       parent::countQuery($this->sqlText);
+       $GLOBALS['log']->info('Query:' . $this->sqlText);
+
+       if ($this->stmt->param_count != count($data) )
+           return "incorrect number of elements. Expected " . $this->stmt->param_count . " but got " . count($data);
+
+       $this->query_time = microtime(true);
 
        /*
       if ($this->stmt->param_count != count($data) )
@@ -189,11 +212,64 @@ class SqlsrvPreparedStatement extends PreparedStatement
       }
       */
 
-      if (!($res = sqlsrv_execute($this->stmt))) {
-          return "Execute Prepared Statement failed: (" . $dblink->errno . ") " . $dblink->error;
-      }
+      $res = sqlsrv_execute($this->stmt);
 
-      return $res;
+
+      $this->query_time = microtime(true) - $this->query_time;
+      $GLOBALS['log']->info('Query Execution Time:'.$this->query_time);
+
+      if (!$res) {
+          $this->log->error("Query Failed: $this->sqlText");
+          $this->stmt = false; // Making sure we don't use the statement resource for error reporting
+      }
+      else {
+
+          if($this->dump_slow_queries($this->sqlText)) {
+              $this->track_slow_queries($this->sqlText);
    }
+      }
+      $this->checkError($msg.' Query Failed:' . $this->sqlText . '::', $dieOnError);
+
+      return $this->stmt;
+   }
+
+
+
+
+
+    public function executePreparedStatement(array $data, $msg = ''){
+
+        parent::countQuery($this->sqlText);
+        $GLOBALS['log']->info('Query:' . $this->sqlText);
+
+        if ($this->stmt->param_count != count($data) )
+            return "incorrect number of elements. Expected " . $this->stmt->param_count . " but got " . count($data);
+
+        $this->query_time = microtime(true);
+
+        for($i=0; $i<$this->stmt->param_count;$i++) {
+            $this->bound_vars[$i] = array_shift($data);
+        }
+
+        $res = sqlsrv_execute($this->stmt);
+
+        $this->query_time = microtime(true) - $this->query_time;
+        $GLOBALS['log']->info('Query Execution Time:'.$this->query_time);
+
+        if (!$res) {
+            $this->log->error("Query Failed: $this->sqlText");
+            $this->stmt = false; // Making sure we don't use the statement resource for error reporting
+        }
+        else {
+
+            if($this->dump_slow_queries($this->sqlText)) {
+                $this->track_slow_queries($this->sqlText);
+            }
+        }
+        $this->checkError($msg.' Query Failed:' . $this->sqlText . '::', $dieOnError);
+
+        return $this->stmt;
+    }
+
 
 }

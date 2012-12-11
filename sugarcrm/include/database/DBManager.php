@@ -369,7 +369,7 @@ abstract class DBManager
 	 * @param  string  $query query to log
 	 * @return boolean true if the query was logged, false otherwise
 	 */
-	protected function dump_slow_queries($query)
+	public function dump_slow_queries($query)
 	{
 		global $sugar_config;
 
@@ -630,20 +630,17 @@ protected function checkQuery($sql, $object_name = false)
 	public function insertParams($table, $field_defs, $data, $field_map = null, $execute = true, $usePrepared=false)
 	{
 
- 	    //echo "==> DBManager.insertParams starting for table: $table  execute: $execute usePrepared: $usePrepared \n";
-
         if ( isset($usePreparedStatements) AND ( $usePreparedStatements == true) )
             $usePrepared = true;
         else if (!isset($usePrepared))
             $usePrepared = false;
         $useQuotes = !$usePrepared;
-//        echo "insertParams: useQuotes: $useQuotes \n";
 
         $values = array();
 		foreach ($field_defs as $field => $fieldDef)
 		{
 			if (isset($fieldDef['source']) && $fieldDef['source'] != 'db')  continue;
-			//custom fields handle there save seperatley
+			//custom fields handle their save separately
 			if(!empty($field_map) && !empty($field_map[$field]['custom_type'])) continue;
 
 			if(isset($data[$field])) {
@@ -698,7 +695,7 @@ protected function checkQuery($sql, $object_name = false)
                 return $query;
 
             // Prepare and execute the statement
-            $ps = $this->prepareStatement($query, $values);
+            $ps = $this->prepareStatement($query);
             $result = $ps->executePreparedStatement($values);
             return $result;
         }
@@ -2190,7 +2187,7 @@ protected function checkQuery($sql, $object_name = false)
 
 
 
-    abstract public function prepareStatement($sql,  array $fieldDefs = array() );  // removed array $data,
+    abstract public function prepareStatement($sql,  array $fieldDefs = array() );
 
 
 /********************** SQL FUNCTIONS ****************************/

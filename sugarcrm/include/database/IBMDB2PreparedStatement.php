@@ -93,14 +93,14 @@ class IBMDB2PreparedStatement extends PreparedStatement
 
 
 
-  public function preparePreparedStatement($sqlText, array $fieldDefs = array() ){
+  public function preparePreparedStatement($sqlText, array $fieldDefs,  $msg = '' ){
 
-      echo "preparePreparedStatement: entry  sqlText: >$sqlText <  data:\n" ;
-      var_dump($data);
+      $this->lastsql = $sqlText;
+      $GLOBALS['log']->info('QueryPrepare:' . $sqlText);
 
       if (!($this->stmt = db2_prepare($this->dblink, $sqlText))) {
-          echo "preparePreparedStatement: Prepare Failed! \n";
-          return "Prepare failed: (" . $this->dblink->errno . ") " . $this->dblink->error;
+          $this->log->error("Prepare failed: $msg for sql: $sqlText (" . $this->dblink->errno . ") " . $this->dblink->error);
+          return false;
       }
       /*
       $num_args = $this->stmt->param_count;
@@ -120,17 +120,18 @@ class IBMDB2PreparedStatement extends PreparedStatement
       call_user_func_array(array($this->stmt, "bind_param"), $bound);
       */
 
+      $this->checkError(" QueryPrepare Failed: $msg for sql: $sqlText ::", $dieOnError);
+
       return $this;
   }
 
 
 
 
-   public function executePreparedStatement(array $data){
+   public function executePreparedStatement(array $data,  $msg = ''){
 
-      echo "--------------------------------------------------\n";
-      echo "executePreparedStatement: entry    data:\n";
-      var_dump($data);
+       parent::countQuery($this->sqlText);
+       $GLOBALS['log']->info('Query:' . $this->sqlText);
 
        /*
       if ($this->stmt->param_count != count($data) )
@@ -142,11 +143,26 @@ class IBMDB2PreparedStatement extends PreparedStatement
       }
       */
 
-      if (!($res = db2_execute($this->stmt, $data))) {
-          return "Execute Prepared Statement failed: (" . $dblink->errno . ") " . $dblink->error;
-      }
+      $this->query_time = microtime(true);
 
-      return $res;
+      $res = db2_execute($this->stmt, $data);
+
+      $this->query_time = microtime(true) - $this->query_time;
+      $GLOBALS['log']->info('Query Execution Time:'.$this->query_time);
+
+       if (!$res) {
+           $this->log->error("Query Failed: $this->sqlText");
+           $this->stmt = false; // Making sure we don't use the statement resource for error reporting
+      }
+       else {
+
+           if($this->dump_slow_queries($this->sqlText)) {
+               $this->track_slow_queries($this->sqlText);
+           }
+       }
+       $this->checkError($msg.' Query Failed:' . $this->sqlText . '::', $dieOnError);
+
+      return $this->stmt;
    }
 
 }
