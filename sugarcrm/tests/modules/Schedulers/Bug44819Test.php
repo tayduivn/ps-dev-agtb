@@ -35,14 +35,16 @@ class Bug44819Test extends Sugar_PHPUnit_Framework_TestCase
 
 	public function setUp()
     {
+        parent::setUp();
+        SugarTestHelper::setUp("current_user", array(true, 1));
     	// Create admin user
-    	SugarTestUserUtilities::createAnonymousUser(true, 1);
+    	$GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser(true, 1);
     }
 
     public function tearDown()
     {
 		// Clear the admin user created
-    	SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
+        SugarTestHelper::tearDown();
     }
 
 	public function testInitUser() {
