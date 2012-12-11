@@ -42,7 +42,13 @@ class ViewSystemQuicklist extends ViewQuickList{
 	    
 		echo $this->_formatNotificationsForQuickDisplay($GLOBALS['system_notification_buffer'], "modules/Notifications/tpls/systemQuickView.tpl");
 
-        // after the notification is displayed, clear the fts flag
+        $this->clearFTSFlags();
+	}
+    /**
+     * After the notification is displayed, clear the fts flags
+     * @return type
+     */
+    protected function clearFTSFlags() {
         if (is_admin($GLOBALS['current_user']))
         {
             $admin = new Administration();
@@ -51,6 +57,10 @@ class ViewSystemQuicklist extends ViewQuickList{
             {
                 $admin->saveSetting('info', 'fts_index_done', 0);
             }
-        }
-	}
+            // remove notification disabled notification
+            $cfg = new Configurator();
+            $cfg->config['fts_disable_notification'] = false;
+            $cfg->handleOverride();
+        }        
+    }
 }
