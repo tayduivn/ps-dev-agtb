@@ -29,34 +29,38 @@ if (!defined('sugarEntry') || !sugarEntry) {
  * Contributor(s): ______________________________________..
  ********************************************************************************/
 
-$viewdefs['Leads']['base']['view']['record'] = array(
-    'buttons' =>
-    array(
+$viewdefs['Contacts']['base']['view']['create'] = array(
+    'type' => 'record',
+    'buttons' => array(
         array(
-            'type'    => 'button',
-            'label'   => 'LBL_SAVE_BUTTON_LABEL',
-            'css_class' => 'hide btn-primary record-save',
-        ),
-        array(
+            'name'    => 'cancel_button',
             'type'    => 'button',
             'label'   => 'LBL_CANCEL_BUTTON_LABEL',
-            'css_class' => 'hide record-cancel',
+            'css_class' => 'btn-invisible btn-link',
         ),
         array(
+            'name'    => 'restore_button',
             'type'    => 'button',
-            'label'   => 'LBL_EDIT_BUTTON_LABEL',
-            'css_class' => 'record-edit',
+            'label'   => 'LBL_RESTORE',
+            'css_class' => 'hide btn-invisible btn-link',
         ),
         array(
+            'name'    => 'save_create_button',
             'type'    => 'button',
-            'label'   => 'LBL_CONVERT_BUTTON_LABEL',
-            'css_class' => 'btn-primary lead-convert',
-            'name'    => 'lead_convert_button'
+            'label'   => 'LBL_SAVE_AND_CREATE_ANOTHER',
+            'css_class' => 'hide btn-invisible btn-link',
         ),
         array(
+            'name'    => 'save_view_button',
             'type'    => 'button',
-            'label'   => 'LBL_DELETE_BUTTON_LABEL',
-            'css_class' => 'record-delete',
+            'label'   => 'LBL_SAVE_AND_VIEW',
+            'css_class' => 'hide btn-invisible btn-link',
+        ),
+        array(
+            'name'    => 'save_button',
+            'type'    => 'button',
+            'label'   => 'LBL_SAVE_BUTTON_LABEL',
+            'css_class' => 'disabled',
         ),
         array(
             'name' => 'sidebar_toggle',
@@ -69,89 +73,69 @@ $viewdefs['Leads']['base']['view']['record'] = array(
             'header' => true,
             'fields' => array(
                 array(
-                    'name' => 'fieldset_name',
-                    'type' => 'fieldset',
-                    'fields' => array('salutation', 'first_name', 'last_name'),
+                    'name' => 'img',
+                    'noedit' => true,
                 ),
                 array(
-                    'type' => 'badge',
-                    'noedit'=> true,
-                    'related_fields' => array('converted', 'account_id', 'contact_id', 'contact_name', 'opportunity_id', 'opportunity_name'),
-                )
+                    'name' => 'fieldset_full_name',
+                    'type' => 'fieldset',
+                    'fields' => array('salutation', 'first_name', 'last_name')
+                ),
             )
         ),
         array(
             'name' => 'panel_body',
-            'label' => 'LBL_PANEL_2',
             'columns' => 2,
-            'labels' => true,
+            'labels' => false,
             'labelsOnTop' => true,
             'placeholders' => true,
             'fields' => array(
-                'account_name',
-                'website',
                 'title',
-                array(
-                    'name' => 'email',
-                    'label' => 'LBL_EMAIL_ADDRESSES',
-                ),
-                'department',
                 'phone_mobile',
-                array(
-                    'name' => 'fieldset_primaryaddress',
-                    'type' => 'fieldset',
-                    'label' => 'Primary Address',
-                    'fields' => array(
-                        'primary_address_street',
-                        'primary_address_city',
-                        'primary_address_state',
-                        'primary_address_postalcode',
-                        'primary_address_country',
-                    ),
-                ),
+                'department',
                 'phone_work',
-                'do_not_call',
+                'account_name',
                 'phone_fax',
-            )
+                array(
+                    'name' => 'fieldset_address',
+                    'type' => 'fieldset',
+                    'label' => 'Primay Address',
+                    'fields' => array('primary_address_street', 'primary_address_city', 'primary_address_state', 'primary_address_postalcode')
+                ),
+                'email'
+
+            ),
         ),
         array(
+            'columns' => 2,
             'name' => 'panel_hidden',
             'hide' => true,
-            'label' => 'LBL_PANEL_3',
-            'columns' => 2,
-            'labels' => true,
             'labelsOnTop' => true,
             'placeholders' => true,
             'fields' => array(
-                array(
-                    'name' => 'description',
-                    'span' => 12,
-                ),
-                'status',
-                'status_description',
+                'description',
+                'report_to_name',
+                'sync_contact',
                 'lead_source',
-                'lead_source_description',
-                'campaign_name',
-                'opportunity_amount',
+                'do_not_call',
                 array(
-                    'name' => 'fieldset_altaddress',
-                    'type' => 'fieldset',
-                    'label' => 'Other Address',
-                    'fields' => array(
-                        'alt_address_street',
-                        'alt_address_city',
-                        'alt_address_state',
-                        'alt_address_postalcode',
-                        'alt_address_country'
-                    )
+                    'name' => 'campaign_name',
+                    'span' => 12
                 ),
-                'refered_by',
-                'assigned_user_name',
-                'date_modified',
-                //BEGIN SUGARCRM flav=pro ONLY
+                'portal_name',
+                'portal_active',
+                'preferred_language',
+                'assigned_user_id',
                 'team_name',
-                //END SUGARCRM flav=pro ONLY
-                'date_entered'
+                'date_modified',
+                'date_entered',
+                array(
+                    'name' => 'fieldset_alt_address',
+                    'type' => 'fieldset',
+                    'label' => 'Alternate Address',
+                    'fields' => array('alt_address_street', 'alt_address_city', 'alt_address_state', 'alt_address_postalcode')
+                ),
+
             )
         )
     ),

@@ -29,34 +29,38 @@ if (!defined('sugarEntry') || !sugarEntry) {
  * Contributor(s): ______________________________________..
  ********************************************************************************/
 
-$viewdefs['Leads']['base']['view']['record'] = array(
-    'buttons' =>
-    array(
+$viewdefs['Opportunities']['base']['view']['create'] = array(
+    'type' => 'record',
+    'buttons' => array(
         array(
-            'type'    => 'button',
-            'label'   => 'LBL_SAVE_BUTTON_LABEL',
-            'css_class' => 'hide btn-primary record-save',
-        ),
-        array(
+            'name'    => 'cancel_button',
             'type'    => 'button',
             'label'   => 'LBL_CANCEL_BUTTON_LABEL',
-            'css_class' => 'hide record-cancel',
+            'css_class' => 'btn-invisible btn-link',
         ),
         array(
+            'name'    => 'restore_button',
             'type'    => 'button',
-            'label'   => 'LBL_EDIT_BUTTON_LABEL',
-            'css_class' => 'record-edit',
+            'label'   => 'LBL_RESTORE',
+            'css_class' => 'hide btn-invisible btn-link',
         ),
         array(
+            'name'    => 'save_create_button',
             'type'    => 'button',
-            'label'   => 'LBL_CONVERT_BUTTON_LABEL',
-            'css_class' => 'btn-primary lead-convert',
-            'name'    => 'lead_convert_button'
+            'label'   => 'LBL_SAVE_AND_CREATE_ANOTHER',
+            'css_class' => 'hide btn-invisible btn-link',
         ),
         array(
+            'name'    => 'save_view_button',
             'type'    => 'button',
-            'label'   => 'LBL_DELETE_BUTTON_LABEL',
-            'css_class' => 'record-delete',
+            'label'   => 'LBL_SAVE_AND_VIEW',
+            'css_class' => 'hide btn-invisible btn-link',
+        ),
+        array(
+            'name'    => 'save_button',
+            'type'    => 'button',
+            'label'   => 'LBL_SAVE_BUTTON_LABEL',
+            'css_class' => 'disabled',
         ),
         array(
             'name' => 'sidebar_toggle',
@@ -71,13 +75,8 @@ $viewdefs['Leads']['base']['view']['record'] = array(
                 array(
                     'name' => 'fieldset_name',
                     'type' => 'fieldset',
-                    'fields' => array('salutation', 'first_name', 'last_name'),
+                    'fields' => array('name'),
                 ),
-                array(
-                    'type' => 'badge',
-                    'noedit'=> true,
-                    'related_fields' => array('converted', 'account_id', 'contact_id', 'contact_name', 'opportunity_id', 'opportunity_name'),
-                )
             )
         ),
         array(
@@ -89,69 +88,30 @@ $viewdefs['Leads']['base']['view']['record'] = array(
             'placeholders' => true,
             'fields' => array(
                 'account_name',
-                'website',
-                'title',
+                'date_closed',
                 array(
-                    'name' => 'email',
-                    'label' => 'LBL_EMAIL_ADDRESSES',
-                ),
-                'department',
-                'phone_mobile',
-                array(
-                    'name' => 'fieldset_primaryaddress',
+                    'name' => 'fieldset_amount',
                     'type' => 'fieldset',
-                    'label' => 'Primary Address',
-                    'fields' => array(
-                        'primary_address_street',
-                        'primary_address_city',
-                        'primary_address_state',
-                        'primary_address_postalcode',
-                        'primary_address_country',
-                    ),
+                    'label' => 'LBL_LIST_AMOUNT',
+                    'fields' => array('amount'),
                 ),
-                'phone_work',
-                'do_not_call',
-                'phone_fax',
+                array('name'=>'htmlfield', 'type'=>'html', 'default_value'=>'&nbsp;'),
             )
         ),
         array(
             'name' => 'panel_hidden',
             'hide' => true,
-            'label' => 'LBL_PANEL_3',
-            'columns' => 2,
-            'labels' => true,
             'labelsOnTop' => true,
             'placeholders' => true,
+            'columns' => 2,
             'fields' => array(
-                array(
-                    'name' => 'description',
-                    'span' => 12,
-                ),
-                'status',
-                'status_description',
+                'campaign_id',
                 'lead_source',
-                'lead_source_description',
-                'campaign_name',
-                'opportunity_amount',
-                array(
-                    'name' => 'fieldset_altaddress',
-                    'type' => 'fieldset',
-                    'label' => 'Other Address',
-                    'fields' => array(
-                        'alt_address_street',
-                        'alt_address_city',
-                        'alt_address_state',
-                        'alt_address_postalcode',
-                        'alt_address_country'
-                    )
-                ),
-                'refered_by',
-                'assigned_user_name',
-                'date_modified',
-                //BEGIN SUGARCRM flav=pro ONLY
-                'team_name',
-                //END SUGARCRM flav=pro ONLY
-                'date_entered'
+                'opportunity_type',
+                'assigned_user_id',
+                'team_id',
+                'next_step',
+                'description',
             )
         )
     ),

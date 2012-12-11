@@ -3,7 +3,7 @@
 class LeadConvert
 {
     const STATUS_CONVERTED = 'Converted';
-    protected $fileName = "modules/Leads/clients/base/layouts/convert/convert.php";
+    protected $fileName = "modules/Leads/clients/base/layouts/convert-main/convert-main.php";
     protected $modules;
     protected $lead;
     protected $contact;
@@ -16,8 +16,6 @@ class LeadConvert
     public function initialize($leadId)
     {
         $this->defs = $this->getVarDefs();
-
-        //TODO: check whether to use this or direct create then retrieve
         $this->lead = BeanFactory::getBean('Leads', $leadId);
 
         if ($this->lead === FALSE) {
@@ -74,18 +72,6 @@ class LeadConvert
             $this->contact->save();
             $this->addLogForContactInCampaign();
         }
-
-        /*
-        $this->handleActivities($this->lead, $this->modules);
-        // Bug 39268 - Add the lead's activities to the selected beans
-        $this->handleActivities($lead, $selectedBeans);
-
-        //link selected account to lead if it exists
-        if (!empty($this->modules['Accounts']))
-        {
-            $this->lead->account_id = $this->modules['Accounts']->id;
-        }
-        */
 
         $this->lead->status = LeadConvert::STATUS_CONVERTED;
         $this->lead->converted = 1;
@@ -210,7 +196,7 @@ class LeadConvert
         $viewdefs = array();
         $metaDataFile = SugarAutoLoader::existingCustomOne($this->fileName);
         include($metaDataFile);
-        return $viewdefs['Leads']['base']['layout']['convert']['modules'];
+        return $viewdefs['Leads']['base']['layout']['convert-main']['modules'];
 
     }
 

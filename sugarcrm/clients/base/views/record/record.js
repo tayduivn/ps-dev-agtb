@@ -1,7 +1,7 @@
 ({
     editMode: false,
     createMode: false,
-
+    enableHeaderPane: true,
     events: {
         'click .record-duplicate': 'duplicateClicked',    	
         'click .record-edit': 'editClicked',

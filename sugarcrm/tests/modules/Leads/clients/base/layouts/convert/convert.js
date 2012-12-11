@@ -2,10 +2,14 @@ describe("ConvertLeadLayout", function() {
 
     beforeEach(function() {
         SugarTest.testMetadata.init();
-        SugarTest.loadHandlebarsTemplate('convert', 'layout', 'base', 'Leads');
+        SugarTest.loadHandlebarsTemplate('convert-main', 'layout', 'base', 'Leads');
         SugarTest.loadHandlebarsTemplate('convert-panel', 'view', 'base', 'Leads');
+
+        SugarTest.loadComponent('base', 'layout', 'convert-main', 'Leads');
         SugarTest.loadComponent('base', 'layout', 'convert', 'Leads');
+
         SugarTest.loadComponent('base', 'view', 'convert-panel', 'Leads');
+        SugarTest.loadComponent('base', 'view', 'convert-results', 'Leads');
         SugarTest.loadComponent('base', 'view', 'alert');
 
         SugarTest.testMetadata.addController('base', 'duplicate-list', 'view', createMockDupeView());
@@ -47,7 +51,7 @@ describe("ConvertLeadLayout", function() {
                 }
             ]
         };
-        var layout = SugarTest.createLayout('base', 'Leads', 'convert', meta, null, true);
+        var layout = SugarTest.createLayout('base', 'Leads', 'convert-main', meta, null, true);
 
         return layout;
     };
@@ -99,6 +103,7 @@ describe("ConvertLeadLayout", function() {
 
         it("first component is active, other two are not", function() {
             layout.render();
+            debugger;
             expect(layout._components[0].$('.accordion-heading').hasClass('active')).toBeTruthy();
             expect(layout._components[1].$('.accordion-heading').hasClass('active')).toBeFalsy();
             expect(layout._components[2].$('.accordion-heading').hasClass('active')).toBeFalsy();

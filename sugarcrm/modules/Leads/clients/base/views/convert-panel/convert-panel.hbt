@@ -1,5 +1,6 @@
     <div class="accordion-heading {{#if this.meta.dependentModules}}disabled{{/if}}{{#unless this.meta.dependentModules}}enabled{{/unless}}" data-module="{{this.meta.module}}">
-        <span class="module-number">{{this.meta.moduleNumber}}.</span>
+        <span class="pull-left step-circle">{{this.meta.moduleNumber}}</span>
+        <span class="step-circle-right tcenter">&nbsp;</span>
         <span class="completed"><i class="icon-ok-sign icon-added"></i> </span>
         <span class="title"></span>
         {{#unless this.meta.required}}
