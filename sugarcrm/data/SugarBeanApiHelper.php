@@ -128,7 +128,7 @@ class SugarBeanApiHelper
      * @return array
      */
     public function getBeanAcl(SugarBean $bean) {
-        $acl = array();
+        $acl = array('fields' => (object) array());
         if(!is_admin($GLOBALS['current_user']) && SugarACL::moduleSupportsACL($bean->module_dir)) {
             $mm = new MetaDataManager($GLOBALS['current_user']);
             $moduleAcl = $mm->getAclForModule($bean->module_dir, $GLOBALS['current_user']);
@@ -148,11 +148,33 @@ class SugarBeanApiHelper
                 unset($beanAcl['_hash']);
 
                 $acl = array_diff_assoc($beanAcl, $moduleAcl);
+                $fieldAcls = array();
 
-                if(!empty($beanAclFields) && !empty($moduleAclFields)) {
-                    $acl['fields'] = array_diff_assoc($beanAclFields, $moduleAclFields);
+                /**
+                 * Fields are different than module level acces
+                 * if fields is empty that means all access is granted
+                 * beanAclFields is empty and moduleAclFields is empty -> all access -> return empty
+                 * beanAclFields is empty and moduleAclFields is !empty -> all access -> return yes's
+                 * beanAclFields is !empty and moduleAclFields is empty -> beanAclFields access restrictions -> return beanAclFields
+                 * beanAclFields is !empty and moduleAclFields is !empty -> diff the arrays -> return diffArray
+                 */
+
+                if(!empty($beanAclFields) && empty($moduleAclFields)) {
+                    $fieldsAcls = $beanAclFields;
+                }
+                elseif(!empty($beanAclFields) && !empty($moduleAclFields)) {
+                    $fieldsAcls = array_diff_assoc($beanAclFields, $moduleAclFields);
+                }
+                if(empty($beanAclFields) && !empty($moduleAclFields)) {
+                    // it is different because we now have access...
+                    foreach($moduleAclFields AS $field => $aclActions) {
+                        foreach($aclActions AS $action => $access) {
+                            $fieldAcls[$field][$action] = "yes";
+                        }
+                    }
                 }
 
+                $acl['fields'] = (object)$fieldAcls;
             }
 
         }
