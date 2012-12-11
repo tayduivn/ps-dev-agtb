@@ -29,6 +29,16 @@ abstract class SugarListApi extends SugarApi {
     protected $addDefaultFields = array('id','date_modified');
     protected $checkAcls = true;
 
+    /**
+     * This function will parse arguments and hand them back in an array
+     * The defaults are set as part of the class ($defaultLimit, $allowOffsetEnd, $defaultOrderBy, $addDefaultFields, $checkAcls)
+     * 
+     * @param ServiceBase $api The API class (typically RestService)
+     * @param array $args The argument array as passed in to the API call, currently checked variables are
+     *        max_num, offset, fields, order_by
+     * @param SugarBean $seed This is the seed bean that feeds the list, if you pass in a null seed then the fields are not validated
+     * @return array An array with the options limit, offset, fields and order_by set
+     */
     public function parseArguments(ServiceBase $api, array $args, SugarBean $seed = null) {
         $limit = $this->defaultLimit;
         if ( isset($args['max_num']) ) {
@@ -122,6 +132,11 @@ abstract class SugarListApi extends SugarApi {
         
     }
 
+    /**
+     * This function will convert an order by array returned by parseArguments into a SQL string
+     * @param array $orderByArray an array of $column => $direction
+     * @return string A SQL string of the order by.
+     */
     public function convertOrderByToSql(array $orderByArray) {
         $sqlArray = array();
         foreach ( $orderByArray as $column => $direction ) {
