@@ -128,7 +128,7 @@ class ForecastsViewSidecar extends SidecarView
         } else {
 
             //Need to make sure that we really do have sidecar/src directory
-            if(file_exists('sidecar/src')) {
+            if(file_exists('sidecar/src/include-manifest.php')) {
                 require('sidecar/src/include-manifest.php');
                 if(!empty($buildFiles['sidecar.lite'])) {
                     foreach ( $buildFiles['sidecar.lite'] as $file)
