@@ -10,7 +10,7 @@
         'change span.edit input' : 'onChange'
     },
     
-    inputSelector: this.inputSelector,
+    inputSelector: 'span.edit input',
 
     errorCode : '',
 
