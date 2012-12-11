@@ -51,6 +51,7 @@ $viewdefs['Leads']['base']['view']['record'] = array(
             'type'    => 'button',
             'label'   => 'LBL_CONVERT_BUTTON_LABEL',
             'css_class' => 'btn-primary lead-convert',
+            'name'    => 'lead_convert_button'
         ),
         array(
             'type'    => 'button',

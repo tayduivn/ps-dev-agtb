@@ -29,49 +29,39 @@ if (!defined('sugarEntry') || !sugarEntry) {
  * Contributor(s): ______________________________________..
  ********************************************************************************/
 
-$viewdefs['Tasks']['base']['view']['record'] = array(
+$viewdefs['Contacts']['base']['view']['create'] = array(
+    'type' => 'record',
     'buttons' => array(
         array(
-            'type' => 'button',
-            'label' => 'LBL_SAVE_BUTTON_LABEL',
-            'css_class' => 'hide btn-primary record-save',
+            'name'    => 'cancel_button',
+            'type'    => 'button',
+            'label'   => 'LBL_CANCEL_BUTTON_LABEL',
+            'css_class' => 'btn-invisible btn-link',
         ),
         array(
-            'type' => 'button',
-            'label' => 'LBL_CANCEL_BUTTON_LABEL',
-            'css_class' => 'hide record-cancel',
+            'name'    => 'restore_button',
+            'type'    => 'button',
+            'label'   => 'LBL_RESTORE',
+            'css_class' => 'hide btn-invisible btn-link',
         ),
         array(
-            'type' => 'button',
-            'label' => 'LBL_EDIT_BUTTON_LABEL',
-            'css_class' => 'record-edit',
+            'name'    => 'save_create_button',
+            'type'    => 'button',
+            'label'   => 'LBL_SAVE_AND_CREATE_ANOTHER',
+            'css_class' => 'hide btn-invisible btn-link',
         ),
         array(
-            'type' => 'button',
-            'label' => 'LBL_DELETE_BUTTON_LABEL',
-            'css_class' => 'record-delete',
+            'name'    => 'save_view_button',
+            'type'    => 'button',
+            'label'   => 'LBL_SAVE_AND_VIEW',
+            'css_class' => 'hide btn-invisible btn-link',
         ),
         array(
-            'type' => 'button',
-            'label' => 'LBL_CLOSE_BUTTON_TITLE',
-            'events' => array(
-                'click' => 'function(e){
-                var self = this; 
-                app.alert.show("close_task", {level: "process", title: app.lang.getAppString("LBL_PROCESSING_REQUEST")});
-                this.model.set("status", "Completed", {silent:true});
-                this.model.save({}, {
-                    success: function() {
-                        app.alert.dismiss("close_task");            
-                        self.render();
-                    },
-                    error:function(error) {
-                        app.alert.dismiss("close_task");                     
-                        app.alert.show("close_task_error", {level: "error", autoClose: true, title: app.lang.getAppString("ERR_AJAX_LOAD")});                    
-                        app.logger.error("Failed to close a task. " + error);                 
-                    }                    
-                });                    
-            }'),                
-        ),                       
+            'name'    => 'save_button',
+            'type'    => 'button',
+            'label'   => 'LBL_SAVE_BUTTON_LABEL',
+            'css_class' => 'disabled',
+        ),
         array(
             'name' => 'sidebar_toggle',
             'type' => 'sidebartoggle',
@@ -82,7 +72,15 @@ $viewdefs['Tasks']['base']['view']['record'] = array(
             'name' => 'panel_header',
             'header' => true,
             'fields' => array(
-                'name',
+                array(
+                    'name' => 'img',
+                    'noedit' => true,
+                ),
+                array(
+                    'name' => 'fieldset_full_name',
+                    'type' => 'fieldset',
+                    'fields' => array('salutation', 'first_name', 'last_name')
+                ),
             )
         ),
         array(
@@ -92,22 +90,52 @@ $viewdefs['Tasks']['base']['view']['record'] = array(
             'labelsOnTop' => true,
             'placeholders' => true,
             'fields' => array(
-                'date_start', 'priority',
-                'date_due', 'status',
-                'assigned_user_name', 'parent_name',
+                'title',
+                'phone_mobile',
+                'department',
+                'phone_work',
+                'account_name',
+                'phone_fax',
+                array(
+                    'name' => 'fieldset_address',
+                    'type' => 'fieldset',
+                    'label' => 'Primay Address',
+                    'fields' => array('primary_address_street', 'primary_address_city', 'primary_address_state', 'primary_address_postalcode')
+                ),
+                'email'
+
             ),
         ),
         array(
+            'columns' => 2,
             'name' => 'panel_hidden',
             'hide' => true,
-            'columns' => 2,
             'labelsOnTop' => true,
+            'placeholders' => true,
             'fields' => array(
-                array('name' => 'description', 'span' => 12),
-                'contact_name',
-                array('label' => 'Created By', 'type' => 'fieldset', 'name' => 'created_by_date', 'fields' => array('created_by_name', 'date_entered')),
-                'team_sets',
+                'description',
+                'report_to_name',
+                'sync_contact',
+                'lead_source',
+                'do_not_call',
+                array(
+                    'name' => 'campaign_name',
+                    'span' => 12
+                ),
+                'portal_name',
+                'portal_active',
+                'preferred_language',
+                'assigned_user_id',
+                'team_name',
                 'date_modified',
+                'date_entered',
+                array(
+                    'name' => 'fieldset_alt_address',
+                    'type' => 'fieldset',
+                    'label' => 'Alternate Address',
+                    'fields' => array('alt_address_street', 'alt_address_city', 'alt_address_state', 'alt_address_postalcode')
+                ),
+
             )
         )
     ),

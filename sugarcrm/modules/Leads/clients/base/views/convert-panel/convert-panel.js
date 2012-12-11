@@ -57,11 +57,12 @@
     },
 
     insertDuplicateViewInPanel: function(moduleMeta) {
+        debugger;
         var self = this,
             def = {
                 'view':'duplicate-list',
-                'context':{'module':moduleMeta.module}
-        };
+                'context':{'module':moduleMeta.module, forceNew:true}
+            };
 
         this.duplicateView = this.insertViewInPanel(moduleMeta, this.DUPLICATE_VIEW, def);
         this.duplicateView.context.on('change:selection_model', this.selectDuplicate, self);
@@ -69,12 +70,33 @@
     },
 
     insertRecordViewInPanel: function(moduleMeta) {
-        var def = {
-            'view':'edit',
-            'context':{'module':moduleMeta.module}
-        };
+        debugger;
+        var self = this,
+            def = {
+                'view':'create',
+                'context':{'module':moduleMeta.module, forceNew:true, create: true}
+            };
+       var context = self.context.getChildContext(def.context);
 
-        this.recordView = this.insertViewInPanel(moduleMeta, this.RECORD_VIEW, def);
+        context.set('createMode', true);
+        context.set('limit', 3); //todo: set this to 10? once we have style that will limit the rows displayed & make scrollable
+
+        context.prepare();
+
+       this.recordView = app.view.createView({
+            context:context,
+            name:def.view,
+            module:moduleMeta.module,
+            layout:self,
+            id:def.id
+        });
+
+        this.$('.' +  this.RECORD_VIEW + 'View').append(this.recordView.el);
+        this.recordView.enableHeaderPane = false;
+        this.recordView.render();
+
+       // this.recordView = this.insertViewInPanel(moduleMeta, this.RECORD_VIEW, def);
+
         this.recordView.validationStatus = this.STATUS_DIRTY;
     },
 
@@ -82,8 +104,10 @@
         var self = this,
             context = self.context.getChildContext(def.context);
 
-        context.prepare();
+       // context.set('create', true);
         context.set('limit', 3); //todo: set this to 10? once we have style that will limit the rows displayed & make scrollable
+
+        context.prepare();
 
         var view = app.view.createView({
             context:context,
@@ -121,7 +145,7 @@
     },
 
     handleToggleClick: function(event) {
-        if (this.$(event.target).hasClass('show-duplicate')) {
+         if (this.$(event.target).hasClass('show-duplicate')) {
             this.toggleSubViews(this.DUPLICATE_VIEW);
         } else if (this.$(event.target).hasClass('show-record')) {
             this.toggleSubViews(this.RECORD_VIEW);
@@ -277,10 +301,10 @@
             var view = this.recordView,
                 model = view.model;
 
-            if (model.isValid(view.getFields(view.module))) {
+          //  if (model.isValid(view.getFields(view.module))) {
                 this.setStatus(this.STATUS_COMPLETE);
                 callback();
-            }
+           // }
         }
     },
 

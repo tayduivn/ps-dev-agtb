@@ -14,27 +14,44 @@ describe("Create Actions Dropdown", function() {
     });
 
     describe('Render', function() {
-        var view, isAuthenticatedStub;
+        var view, isAuthenticatedStub, getModuleNamesStub;
 
         beforeEach(function() {
             view = SugarTest.createView("base", moduleName, viewName, null, null);
             isAuthenticatedStub = sinon.stub(SugarTest.app.api, 'isAuthenticated', function() {
                 return true;
             });
+            getModuleNamesStub = sinon.stub(SugarTest.app.metadata, 'getModuleNames', function() {
+                return [
+                    'Accounts',
+                    'Bugs',
+                    'Calendar',
+                    'Calls',
+                    'Campaigns',
+                    'Cases',
+                    'Contacts',
+                    'Forecasts',
+                    'Home',
+                    'Opportunities',
+                    'Prospects',
+                    'Reports',
+                    'Tasks'
+                ];
+            });
         });
 
         afterEach(function() {
-            delete view;
             isAuthenticatedStub.restore();
+            getModuleNamesStub.restore();
         });
 
         it("Should display create actions for all modules", function() {
+            var modules = SugarTest.app.metadata.getModuleNames();
+
             view.render();
 
-            _.each(SugarTest.app.metadata.data.module_list, function(module, key) {
-                if (key !== '_hash') {
-                    expect(view.$el.find('.' + key).length).not.toBe(0);
-                }
+            _.each(modules, function(module, key) {
+                expect(view.$el.find('.' + module).length).not.toBe(0);
             });
         });
     });

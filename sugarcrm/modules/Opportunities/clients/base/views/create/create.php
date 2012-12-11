@@ -29,49 +29,39 @@ if (!defined('sugarEntry') || !sugarEntry) {
  * Contributor(s): ______________________________________..
  ********************************************************************************/
 
-$viewdefs['Tasks']['base']['view']['record'] = array(
+$viewdefs['Opportunities']['base']['view']['create'] = array(
+    'type' => 'record',
     'buttons' => array(
         array(
-            'type' => 'button',
-            'label' => 'LBL_SAVE_BUTTON_LABEL',
-            'css_class' => 'hide btn-primary record-save',
+            'name'    => 'cancel_button',
+            'type'    => 'button',
+            'label'   => 'LBL_CANCEL_BUTTON_LABEL',
+            'css_class' => 'btn-invisible btn-link',
         ),
         array(
-            'type' => 'button',
-            'label' => 'LBL_CANCEL_BUTTON_LABEL',
-            'css_class' => 'hide record-cancel',
+            'name'    => 'restore_button',
+            'type'    => 'button',
+            'label'   => 'LBL_RESTORE',
+            'css_class' => 'hide btn-invisible btn-link',
         ),
         array(
-            'type' => 'button',
-            'label' => 'LBL_EDIT_BUTTON_LABEL',
-            'css_class' => 'record-edit',
+            'name'    => 'save_create_button',
+            'type'    => 'button',
+            'label'   => 'LBL_SAVE_AND_CREATE_ANOTHER',
+            'css_class' => 'hide btn-invisible btn-link',
         ),
         array(
-            'type' => 'button',
-            'label' => 'LBL_DELETE_BUTTON_LABEL',
-            'css_class' => 'record-delete',
+            'name'    => 'save_view_button',
+            'type'    => 'button',
+            'label'   => 'LBL_SAVE_AND_VIEW',
+            'css_class' => 'hide btn-invisible btn-link',
         ),
         array(
-            'type' => 'button',
-            'label' => 'LBL_CLOSE_BUTTON_TITLE',
-            'events' => array(
-                'click' => 'function(e){
-                var self = this; 
-                app.alert.show("close_task", {level: "process", title: app.lang.getAppString("LBL_PROCESSING_REQUEST")});
-                this.model.set("status", "Completed", {silent:true});
-                this.model.save({}, {
-                    success: function() {
-                        app.alert.dismiss("close_task");            
-                        self.render();
-                    },
-                    error:function(error) {
-                        app.alert.dismiss("close_task");                     
-                        app.alert.show("close_task_error", {level: "error", autoClose: true, title: app.lang.getAppString("ERR_AJAX_LOAD")});                    
-                        app.logger.error("Failed to close a task. " + error);                 
-                    }                    
-                });                    
-            }'),                
-        ),                       
+            'name'    => 'save_button',
+            'type'    => 'button',
+            'label'   => 'LBL_SAVE_BUTTON_LABEL',
+            'css_class' => 'disabled',
+        ),
         array(
             'name' => 'sidebar_toggle',
             'type' => 'sidebartoggle',
@@ -82,32 +72,46 @@ $viewdefs['Tasks']['base']['view']['record'] = array(
             'name' => 'panel_header',
             'header' => true,
             'fields' => array(
-                'name',
+                array(
+                    'name' => 'fieldset_name',
+                    'type' => 'fieldset',
+                    'fields' => array('name'),
+                ),
             )
         ),
         array(
             'name' => 'panel_body',
+            'label' => 'LBL_PANEL_2',
             'columns' => 2,
-            'labels' => false,
+            'labels' => true,
             'labelsOnTop' => true,
             'placeholders' => true,
             'fields' => array(
-                'date_start', 'priority',
-                'date_due', 'status',
-                'assigned_user_name', 'parent_name',
-            ),
+                'account_name',
+                'date_closed',
+                array(
+                    'name' => 'fieldset_amount',
+                    'type' => 'fieldset',
+                    'label' => 'LBL_LIST_AMOUNT',
+                    'fields' => array('amount'),
+                ),
+                array('name'=>'htmlfield', 'type'=>'html', 'default_value'=>'&nbsp;'),
+            )
         ),
         array(
             'name' => 'panel_hidden',
             'hide' => true,
-            'columns' => 2,
             'labelsOnTop' => true,
+            'placeholders' => true,
+            'columns' => 2,
             'fields' => array(
-                array('name' => 'description', 'span' => 12),
-                'contact_name',
-                array('label' => 'Created By', 'type' => 'fieldset', 'name' => 'created_by_date', 'fields' => array('created_by_name', 'date_entered')),
-                'team_sets',
-                'date_modified',
+                'campaign_id',
+                'lead_source',
+                'opportunity_type',
+                'assigned_user_id',
+                'team_id',
+                'next_step',
+                'description',
             )
         )
     ),

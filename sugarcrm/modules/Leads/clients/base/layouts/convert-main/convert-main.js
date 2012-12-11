@@ -13,6 +13,7 @@
 
         //listen for panel status updates
         this.context.on("lead:convert:panel:update", this.handlePanelUpdate, this);
+        this.context.on("lead:convert:finish", this.initiateFinish, this);
     },
 
     initializePanels: function(modulesMetadata) {
@@ -37,13 +38,18 @@
     },
 
     _placeComponent: function(component) {
-        this.$('#convert-accordion').append(component.el);
+        this.$el.append(component.el);
     },
 
     render: function () {
         var firstModule;
         app.view.Layout.prototype.render.call(this);
 
+        //This is because backbone injects a wrapper element.
+        this.$el.addClass('accordion');
+        this.$el.attr('id','convert-accordion');
+
+     //   $('#content>.layout_Leads').addClass('container-fluid');
         this.$(".collapse").collapse({toggle:false, parent:'#convert-accordion'});
         this.context.trigger("lead:convert:populate", this.model);
 
@@ -132,8 +138,8 @@
     },
 
     toggleFinishButton: function(enable) {
-        this.$('[name=lead_convert_finish_button]').toggleClass('enabled', enable);
-        this.$('[name=lead_convert_finish_button]').toggleClass('disabled', !enable);
+        $('[name=lead_convert_finish_button]').toggleClass('enabled', enable);
+        $('[name=lead_convert_finish_button]').toggleClass('disabled', !enable);
     },
 
     handlePanelUpdate: function() {
@@ -209,7 +215,6 @@
             success:function (data) {
                 app.alert.dismiss('processing_convert');
                 app.navigate(self.context, self.model, 'record');
-                //todo: display success message?
             }
         });
     }

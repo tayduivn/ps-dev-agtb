@@ -1,35 +1,36 @@
 <div data-tour="tour-{{module}}-businesscard">
     {{#if model.isNotEmpty}}
-
-        <div class="headerpane">
-            {{#unless createMode}}
-                {{#each meta.panels}}
-                    {{#if header}}
-                        {{#each fields}}
-                            <span class="record-cell" data-type="{{type}}" data-name="{{name}}">
-                                <h1>
-                                    <span class='index{{index}}' data-fieldname="{{name}}" data-index="{{index}}" data-tour="tour-{{../../../this.module}}-{{name}}">
-                                        {{field ../../../this}}
-                                    </span>
-                                    {{#unless noedit}}
-                                        <span class="record-edit-link-wrapper" data-name="{{name}}">
-                                            <a class="record-edit-link icon-pencil" data-type="{{type}}" data-name="{{name}}"></a>
+        {{#if enableHeaderPane}}
+            <div class="headerpane">
+                {{#unless createMode}}
+                    {{#each meta.panels}}
+                        {{#if header}}
+                            {{#each fields}}
+                                <span class="record-cell" data-type="{{type}}" data-name="{{name}}">
+                                    <h1>
+                                        <span class='index{{index}}' data-fieldname="{{name}}" data-index="{{index}}" data-tour="tour-{{../../../this.module}}-{{name}}">
+                                            {{field ../../../this}}
                                         </span>
-                                    {{/unless}}
-                                </h1>
-                            </span>
-                        {{/each}}
-                    {{/if}}
-                {{/each}}
-            {{/unless}}
-                <div class="btn-toolbar pull-right dropdown">
-                    {{#if hasAccess}}
-                        {{#each meta.buttons}}
-                            {{field ../this}}
-                        {{/each}}
-                    {{/if}}
-                </div>
-        </div>
+                                        {{#unless noedit}}
+                                            <span class="record-edit-link-wrapper" data-name="{{name}}">
+                                                <a class="record-edit-link icon-pencil" data-type="{{type}}" data-name="{{name}}"></a>
+                                            </span>
+                                        {{/unless}}
+                                    </h1>
+                                </span>
+                            {{/each}}
+                        {{/if}}
+                    {{/each}}
+                {{/unless}}
+                    <div class="btn-toolbar pull-right dropdown">
+                        {{#if hasAccess}}
+                            {{#each meta.buttons}}
+                                {{field ../this}}
+                            {{/each}}
+                        {{/if}}
+                    </div>
+            </div>
+        {{/if}}
         <div class="record">
             {{#if createMode}}
                 {{#each meta.panels}}
@@ -87,14 +88,13 @@
                 {{/unless}}
             {{/each}}
         </div>
+        <div class="row-fluid{{#unless hiddenPanelExists}} hide{{/unless}}">
+            <div class="record-cell">
+                <a href="javascript:void(0)" class="more">{{str "LBL_SHOW_MORE"}} <i class="icon-chevron-down"></i></a>
+                <a href="javascript:void(0)" class="less hide">{{str "LBL_SHOW_LESS"}} <i class="icon-chevron-up"></i></a>
+            </div>
+        </div>
     {{else}}
         {{#if context._dataFetched}}{{str "LBL_DETAILVIEW_NO_RECORDS"}}{{else}}{{str "LBL_LOADING"}}{{/if}}
     {{/if}}
-
-    <div class="row-fluid{{#unless hiddenPanelExists}} hide{{/unless}}">
-       <div class="record-cell">
-             <a href="javascript:void(0)" class="more">{{str "LBL_SHOW_MORE"}} <i class="icon-chevron-down"></i></a>
-             <a href="javascript:void(0)" class="less hide">{{str "LBL_SHOW_LESS"}} <i class="icon-chevron-up"></i></a>
-       </div>
-    </div>
 </div>

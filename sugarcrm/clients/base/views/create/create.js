@@ -23,6 +23,14 @@
 
         app.view.views.RecordView.prototype.initialize.call(this, options);
 
+        //duplicate a record
+        if(app.cache.has("duplicate"+this.module)) {
+            _.each(app.cache.get("duplicate"+this.module), function(value, key) {
+                if(key != 'id') this.model.set(key, value);
+            }, this);  
+            app.cache.cut("duplicate"+this.module);
+        }  
+        
         //keep track of what post-save action was chosen in case user chooses to ignore dupes
         this.context.lastSaveAction = null;
 
@@ -70,8 +78,7 @@
      */
     saveAndClose: function() {
         this.initiateSave(_.bind(function() {
-            //TODO: close pushdown modal instead
-            app.navigate(this.context, this.model, 'record');
+            this.cancel();
             this.alerts.showSuccess();
         }, this));
     },
@@ -118,9 +125,8 @@
     saveAndView: function() {
         this.context.lastSaveAction = this.SAVEACTIONS.SAVE_AND_VIEW;
         this.initiateSave(_.bind(function() {
-            //TODO: close pushdown modal
-            this.alerts.showSuccess();
             app.navigate(this.context, this.model);
+            this.alerts.showSuccess();
         }, this));
     },
 
@@ -512,14 +518,14 @@
         showDuplicateFound: function(numOfDupes, clickHandler) {
             var alert;
 
-            app.alert.show('record-saved', {
+            app.alert.show('record-duplicate', {
                 level: 'warning',
                 title: numOfDupes + ' Duplicate Records.',
                 messages: 'You can <a class="alert-action-save">ignore duplicates and save</a> or select to edit one of the duplicates.',
                 autoClose: true
             });
 
-            alert = app.alert.get('record-saved');
+            alert = app.alert.get('record-duplicate');
             alert.$('.alert-action-save').one('click', function() {
                 clickHandler();
                 alert.close();
