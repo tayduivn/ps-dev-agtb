@@ -148,7 +148,7 @@
         {
             //Set the field.def.options value based on app.config.buckets_dom (if set)
             field.def.options = this.context.forecasts.config.get("buckets_dom") || 'commit_stage_dom';
-            field = this._setUpCommitStage(field);
+            //field = this._setUpCommitStage(field);
             if(!this.isEditableWorksheet)
             {
                 field.view = 'detail';
@@ -160,9 +160,9 @@
             new app.view.ClickToEditField(field, this);
         }
 
-        if (this.isEditableWorksheet === true && field.name == "commit_stage") {
+        /*if (this.isEditableWorksheet === true && field.name == "commit_stage") {
             new app.view.BucketGridEnum(field, this, "ForecastWorksheets");
-        }
+        }*/
     },
 
     /**
