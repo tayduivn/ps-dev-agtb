@@ -5,10 +5,12 @@
         'mouseenter span.editable': 'onMouseEnter',
         'mouseleave span.editable': 'onMouseLeave',
         'click span.editable': 'onClick',
-        //'blur span.edit input' : 'onBlur',
+        'blur span.edit input' : 'onBlur',
         'keypress span.edit input' : 'onKeypress',
         'change span.edit input' : 'onChange'
     },
+    
+    inputSelector: this.inputSelector,
 
     errorCode : '',
 
@@ -57,7 +59,7 @@
         this.render();
 
         // put the focus on the input
-        this.$el.find('span.edit input').focus().select();
+        this.$el.find(this.inputSelector).focus().select();
     },
 
     /**
@@ -67,7 +69,12 @@
     onKeypress : function(evt) {
         // submit if pressed return or tab
         if(evt.which == 13 || evt.which == 9) {
-            this.onBlur(evt);
+            var ogVal = this.value,
+                ngVal = this.$el.find(this.inputSelector).val();
+
+            if(_.isEqual(ogVal, ngVal)) {
+                this.$el.find(this.inputSelector).blur();
+            }
         }
     },
 
@@ -76,8 +83,17 @@
      * @param evt
      */
     onChange : function(evt) {
-        // submit if value changed
-        this.onBlur(evt);
+        evt.preventDefault();
+        if(!this.isEditable()) return;
+        var value = this.parsePercentage(this.$el.find(this.inputSelector).val());
+        if(this.isValid(value)) {
+            this.model.set(this.name, value);
+            this.$el.find(this.inputSelector).blur();
+        } else {
+            // will generate error styles here, for now log to console
+            console.log(app.lang.get(this.errorCode, "Forecasts"));
+            this.$el.find(this.inputSelector).focus().select();
+        }
     },
 
     /**
@@ -87,17 +103,8 @@
     onBlur : function(evt) {
         // submit if unfocused
         evt.preventDefault();
-        if(!this.isEditable()) return;
-        var value = this.parsePercentage(this.$el.find('span.edit input').val());
-        if(this.isValid(value)) {
-            this.model.set(this.name, value);
-            this.options.viewName = 'detail';
-            this.render();
-        } else {
-            // will generate error styles here, for now log to console
-            console.log(app.lang.get(this.errorCode, "Forecasts"));
-            this.$el.find('span.edit input').focus().select();
-        }
+        this.options.viewName = 'detail';
+        this.render();
     },
 
     /**
