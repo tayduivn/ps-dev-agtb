@@ -50,9 +50,9 @@
 
     // keybinding
     $(document).keyup( function (e){
-        if(e.keyCode === 27) {
-          $(".alert-top .timeten").remove();
-        }
+      if(e.keyCode === 27) {
+        $(".alert-top .timeten").remove();
+      }
     });
 
     // toggle all stars
@@ -106,7 +106,7 @@
     // editable example
     $('.dblclick').hover(
       function () {
-       $(this).before('<span class="inlined"><i class="icon-pencil"></i></span>');
+        $(this).before('<span class="inlined"><i class="icon-pencil"></i></span>');
       },
       function () {
         $('.inlined').remove();
@@ -177,7 +177,7 @@
         , source = 'partial/' + module + '/' + module +'-' + mode + '.html'
         , target = window.location.hash + ' .record';
 
-      loadContent(source,target,mode);
+      loadContent(source,target,mode,method);
     }
 
     // timeout the alerts
@@ -264,6 +264,7 @@
       //$('#moduleActivity .form-search input').quicksearch('ul.results li');
     }
 
+    //j Toggle display of side pane
     $('body')
       .off('click', '.drawerTrig')
       .on('click', '.drawerTrig', function (e) {
