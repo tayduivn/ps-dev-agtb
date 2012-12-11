@@ -194,11 +194,6 @@ class SugarBeanApiHelper
             }
         }
 
-        if(isset($bean->field_defs['parent_type']) && isset($bean->field_defs['parent_id']) && isset($submittedData['module']) && isset($submittedData['record']) && isset($submittedData['link_name'])) {
-            $bean->parent_type = $submittedData['module'];
-            $bean->parent_id = $submittedData['record'];
-        }
-
         return true;
     }
 }
