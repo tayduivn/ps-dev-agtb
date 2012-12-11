@@ -35,8 +35,8 @@ function perform_save($focus){
     if ($settings['is_setup'] && empty($focus->commit_stage) && $focus->probability !== '')
     {
         //Retrieve Forecasts_category_ranges and json decode as an associative array
-        $forecast_category = isset($settings['forecast_categories']) ? $settings['forecast_categories'] : '';
-        $category_ranges = isset($settings[$forecast_category.'_ranges']) ? $settings[$forecast_category.'_ranges'] : array();
+        $forecast_ranges = isset($settings['forecast_ranges']) ? $settings['forecast_ranges'] : '';
+        $category_ranges = isset($settings[$forecast_ranges.'_ranges']) ? $settings[$forecast_ranges.'_ranges'] : array();
         foreach($category_ranges as $key=>$entry)
         {
             if($focus->probability >= $entry['min'] && $focus->probability <= $entry['max'])

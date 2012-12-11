@@ -19,12 +19,12 @@
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
-describe("The forecastsConfigCategories view", function(){
+describe("The forecastsConfigRanges view", function(){
     var app, view, testStub, addHandlerStub;
 
     beforeEach(function() {
         app = SugarTest.app;
-        view = SugarTest.loadFile("../modules/Forecasts/clients/base/views/forecastsConfigCategories", "forecastsConfigCategories", "js", function(d) { return eval(d); });
+        view = SugarTest.loadFile("../modules/Forecasts/clients/base/views/forecastsConfigRanges", "forecastsConfigRanges", "js", function(d) { return eval(d); });
         view.context = {};
         view.context.forecasts = {};
         view.context.forecasts.config = new (Backbone.Model.extend({
@@ -41,8 +41,8 @@ describe("The forecastsConfigCategories view", function(){
         expect(view.label).toBeDefined();
     })
 
-    it("should have a forecasts_categories_field parameter to hold the metadata for the field", function() {
-        expect(view.forecast_categories_field).toBeDefined();
+    it("should have a forecasts_ranges_field parameter to hold the metadata for the field", function() {
+        expect(view.forecast_ranges_field).toBeDefined();
     });
 
     it("should have a buckets_dom_field parameter to hold the metadata for the field", function() {
@@ -70,11 +70,11 @@ describe("The forecastsConfigCategories view", function(){
                         label: 'testLabel',
                         fields: [
                             {
-                                name:'forecast_categories',
+                                name:'forecast_ranges',
                                 type: 'radioenum',
-                                label: 'LBL_FORECASTS_CONFIG_CATEGORY_OPTIONS',
+                                label: 'LBL_FORECASTS_CONFIG_RANGES_OPTIONS',
                                 view: 'edit',
-                                options: 'forecasts_config_category_options_dom',
+                                options: 'forecasts_config_ranges_options_dom',
                                 default: false,
                                 enabled: true,
                                 value: ''
@@ -120,7 +120,7 @@ describe("The forecastsConfigCategories view", function(){
                 fieldMeta = _.first(view.meta.panels).fields;
             view.initialize(options);
             expect(testStub).toHaveBeenCalled();
-            expect(view.forecast_categories_field).toEqual(fieldMeta[0]);
+            expect(view.forecast_ranges_field).toEqual(fieldMeta[0]);
             expect(view.category_ranges_field).toEqual(fieldMeta[1]);
             expect(view.buckets_dom_field).toEqual(fieldMeta[2]);
         });
@@ -130,11 +130,11 @@ describe("The forecastsConfigCategories view", function(){
             beforeEach(function() {
                 view.model = {
                     get: function(item) {
-                        if (item == 'forecast_categories') {
-                            return 'test_category';
+                        if (item == 'forecast_ranges') {
+                            return 'test_ranges';
                         }
                         if (item == 'buckets_dom') {
-                            return 'test_category_dom';
+                            return 'test_ranges_dom';
                         }
                     }
                 };
@@ -144,17 +144,17 @@ describe("The forecastsConfigCategories view", function(){
                 delete view.model;
             });
 
-            describe("forecast_categories_field", function() {
+            describe("forecast_ranges_field", function() {
                 it("should be defined", function() {
                     view.initialize({ meta : []});
                     expect(testStub).toHaveBeenCalled();
-                    expect(view.forecast_categories_field.value).toBeDefined();
+                    expect(view.forecast_ranges_field.value).toBeDefined();
                 });
 
                 it("should be set to what is in the model during initialize", function() {
                     view.initialize({ meta : [] });
                     expect(testStub).toHaveBeenCalled();
-                    expect(view.forecast_categories_field.value).toEqual('test_category');
+                    expect(view.forecast_ranges_field.value).toEqual('test_ranges');
                 });
             });
 
@@ -168,7 +168,7 @@ describe("The forecastsConfigCategories view", function(){
                 it("should be set to what is in the model during initialize", function() {
                     view.initialize({ meta : [] });
                     expect(testStub).toHaveBeenCalled();
-                    expect(view.buckets_dom_field.value).toEqual('test_category_dom');
+                    expect(view.buckets_dom_field.value).toEqual('test_ranges_dom');
                 });
             });
 
@@ -176,10 +176,10 @@ describe("The forecastsConfigCategories view", function(){
 
     });
 
-    describe("the forecast_category radios", function() {
+    describe("the forecast_ranges radios", function() {
         beforeEach(function() {
             testStub = sinon.stub(app.view.View.prototype, "_render");
-            addHandlerStub = sinon.stub(view, "_addForecastCategorySelectionHandler");
+            addHandlerStub = sinon.stub(view, "_addForecastRangesSelectionHandler");
         });
 
         afterEach(function() {

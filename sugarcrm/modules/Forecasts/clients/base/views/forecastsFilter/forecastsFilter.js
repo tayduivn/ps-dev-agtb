@@ -37,7 +37,7 @@
      */
     chznContainerClick: function (evt)
     {
-        var chosen = this.fields.category.$el.find('select').data('chosen');
+        var chosen = this.fields.ranges.$el.find('select').data('chosen');
         chosen.results_toggle();
     },
 
@@ -68,7 +68,7 @@
         if (this.context && this.context.forecasts) {
             this.context.forecasts.on("change:selectedUser", function (context, user) {
                 self.selectedUser = user;
-                this.toggleCategoryFieldVisibility();
+                this.toggleRangesFieldVisibility();
             }, this);
         }
     },
@@ -76,25 +76,25 @@
     /**
      * Method to toggle the field visibility of the group by field
      */
-    toggleCategoryFieldVisibility:function () {
-        if (!_.isUndefined(this.fields['category']) && this.selectedUser.isManager && this.selectedUser.showOpps === false) {
-            this.fields['category'].$el.hide();
+    toggleRangesFieldVisibility:function () {
+        if (!_.isUndefined(this.fields['ranges']) && this.selectedUser.isManager && this.selectedUser.showOpps === false) {
+            this.fields['ranges'].$el.hide();
         } else {
-            this.fields['category'].$el.show();
+            this.fields['ranges'].$el.show();
         }
     },
 
     /**
      * Overriding _renderField because we need to determine whether the config settings are set to show buckets or
-     * binary for forecasts and adjusts the category filter accordingly
+     * binary for forecasts and adjusts the ranges filter accordingly
      * @param field
      * @private
      */
     _renderField:function (field) {
-        if (field.name == 'category') {
+        if (field.name == 'ranges') {
             field.def.options = this.context.forecasts.config.get('buckets_dom') || 'show_binary_dom';
-            field.def.value = this.context.forecasts.has("selectedCategory") ? this.context.forecasts.get("selectedCategory") : app.defaultSelections.category;
-            field = this._setUpCategoryField(field);
+            field.def.value = this.context.forecasts.has("selectedRanges") ? this.context.forecasts.get("selectedRanges") : app.defaultSelections.ranges;
+            field = this._setUpRangesField(field);
         }
         app.view.View.prototype._renderField.call(this, field);
 
@@ -118,7 +118,7 @@
         app.view.View.prototype._render.call(this);
 
         // toggle the visibility of the group by field for the initial render
-        this.toggleCategoryFieldVisibility();
+        this.toggleRangesFieldVisibility();
 
         return this;
     },
@@ -129,7 +129,7 @@
      * @return {*}
      * @private
      */
-    _setUpCategoryField:function (field) {
+    _setUpRangesField:function (field) {
 
         field.events = _.extend({"change select":"_updateSelections"}, field.events);
         field.bindDomChange = function () {
@@ -142,30 +142,30 @@
          * @private
          */
         field._updateSelections = function (event, input) {
-            var selectedCategory = this.context.forecasts.get("selectedCategory");
+            var selectedRanges = this.context.forecasts.get("selectedRanges");
             var selectElement = this.$el.find("select");
             var id;
 
-            if (!_.isArray(selectedCategory)) {
-                selectedCategory = new Array();
+            if (!_.isArray(selectedRanges)) {
+                selectedRanges= new Array();
             }
 
             if (this.def.multi) { // if it's a multiselect we need to add or drop the correct values from the filter model
                 if (_.has(input, "selected")) {
                     id = input.selected;
-                    if (!_.contains(selectedCategory, id)) {
-                        selectedCategory = _.union(selectedCategory, id);
+                    if (!_.contains(selectedRanges, id)) {
+                        selectedRanges = _.union(selectedRanges, id);
                     }
                 } else if (_.has(input, "deselected")) {
                     id = input.deselected;
-                    if (_.contains(selectedCategory, id)) {
-                        selectedCategory = _.without(selectedCategory, id);
+                    if (_.contains(selectedRanges, id)) {
+                        selectedRanges = _.without(selectedRanges, id);
                     }
                 }
             } else {  // not multi, just set the selected filter
-                selectedCategory = new Array(input.selected);
+                selectedRanges = new Array(input.selected);
             }
-            this.context.forecasts.set('selectedCategory', selectedCategory);
+            this.context.forecasts.set('selectedRanges', selectedRanges);
         };
 
         return field;

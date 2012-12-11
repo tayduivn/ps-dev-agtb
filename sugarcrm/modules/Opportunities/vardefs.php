@@ -291,7 +291,7 @@ $dictionary['Opportunity'] = array('table' => 'opportunities','audited'=>true, '
     'type' => 'enum',
     'options' => 'commit_stage_dom',
     'len' => '20',
-    'comment' => 'Forecast commit category: Include, Likely, Omit etc.',
+    'comment' => 'Forecast commit ranges: Include, Likely, Omit etc.',
   ),
 //END SUGARCRM flav=PRO ONLY
   'accounts' =>

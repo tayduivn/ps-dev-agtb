@@ -92,7 +92,7 @@ class ForecastsViewSidecar extends SidecarView
             // INVESTIGATE:  these need to be more dynamic and deal with potential customizations based on how filters are built in admin and/or studio
             $admin = BeanFactory::getBean("Administration");
             $forecastsSettings = $admin->getConfigForModule("Forecasts", "base");
-            $defaultSelections["category"] = array("include");
+            $defaultSelections["ranges"] = array("include");
             $defaultSelections["group_by"] = 'forecast';
             $defaultSelections["dataset"] = 'likely';
         }
@@ -100,34 +100,6 @@ class ForecastsViewSidecar extends SidecarView
         $returnInitData["defaultSelections"] = $defaultSelections;
 
         return $returnInitData;
-    }
-
-    /**
-     * Override the buildConfig method to create a config.js file with specific settings for Forecasts.
-     * Todo: This method will need to be removed in the future when everything shifts to the base platform
-     */
-    protected function buildConfig(){
-        global $sugar_config;
-        $sidecarConfig = array(
-            'appId' => 'SugarCRM',
-            'env' => 'dev',
-            'platform' => 'base',
-            'additionalComponents' => array(
-                'alert' => array(
-                    'target' => '#alerts'
-                )
-            ),
-            'serverUrl' => $sugar_config['site_url'].'/rest/v10',
-            'siteUrl' => $sugar_config['site_url'],
-            'loadCss' => false,
-            'unsecureRoutes' => array('login', 'error'),
-            'clientID' => 'sugar',
-            'authStore'  => 'sugarAuthStore',
-            'keyValueStore' => 'sugarAuthStore'
-        );
-        $configString = json_encode($sidecarConfig);
-        $sidecarJSConfig = '(function(app) {app.augment("config", ' . $configString . ', false);})(SUGAR.App);';
-        sugar_file_put_contents($this->configFile, $sidecarJSConfig);
     }
 
 
@@ -155,12 +127,17 @@ class ForecastsViewSidecar extends SidecarView
 
         } else {
 
-            require('sidecar/src/include-manifest.php');
-            if(!empty($buildFiles['sidecar.lite'])) {
-                foreach ( $buildFiles['sidecar.lite'] as $file)
-                {
-                    echo "<script type='text/javascript' src='sidecar/{$file}'></script>\n";
+            //Need to make sure that we really do have sidecar/src directory
+            if(file_exists('sidecar/src')) {
+                require('sidecar/src/include-manifest.php');
+                if(!empty($buildFiles['sidecar.lite'])) {
+                    foreach ( $buildFiles['sidecar.lite'] as $file)
+                    {
+                        echo "<script type='text/javascript' src='sidecar/{$file}'></script>\n";
+                    }
                 }
+            } else {
+                echo getVersionedScript("sidecar/minified/sidecar.lite.min.js") . "\n";
             }
 
             require_once('jssource/JSGroupings.php');

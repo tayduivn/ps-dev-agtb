@@ -28,7 +28,6 @@
     /**
      * Overriding _renderField because we need to set up the events to set the proper value depending on which field is
      * being changed.
-     * binary for forecasts and adjusts the category filter accordingly
      * @param field
      * @protected
      */
