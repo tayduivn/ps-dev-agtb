@@ -5350,13 +5350,13 @@ table.datatable tbody td {
 }
 table th, table td { position:relative; }
 table.datatable tr td .actions {
-  top:4px !important;
+  top:4px;
   right:8px;
 }
 table.datatable tr td .actions a:hover { color:#343433; }
 table th {
   min-width:20px;
-  color:#58595b !important;
+  color:#58595b;
 }
 table th .btn-group { margin:0 0 0 -10px; }
 table th .btn input { margin:-2px 0 0 0; }
@@ -5671,7 +5671,7 @@ table th, table td { position:relative; }
 table th {
   line-height:26px !important;
   min-width:20px;
-  color:#58595b !important;
+  color:#58595b;
   border-right:1px solid #f5f5f5;
 }
 table th .btn-group {
@@ -5769,6 +5769,48 @@ table.table.dataTable td.details .extend article:nth-child(even), table.table.da
   border-top:1px solid #f5f5f5;
   border-bottom-color:#58595b;
 }
+table.dataTable th a {
+  color:#58595b;
+  text-decoration:none;
+}
+table.dataTable th.sorting {
+  font-weight:normal;
+  color:#58595b;
+}
+table.dataTable tbody tr.active td { background-image:url('../../assets/img/texture/furley_bg.png'); }
+table.dataTable tbody tr.active td .icon-eye-open { color:#000000 !important; }
+table.dataTable .tr-inline-edit.single td {
+  background:#e5f4fb !important;
+  padding-bottom:0;
+}
+table.dataTable tr td .actions {
+  display:inline-block;
+  top:0;
+}
+table.dataTable tr td .actions ul.dropdown-menu .ext {
+  background:#ffffff;
+  display:inline-block;
+  width:10px;
+  height:10px;
+  position:absolute;
+  right:6px;
+  top:-6px;
+  border-left:1px solid rgba(0,0,0,0.2);
+  border-top:1px solid rgba(0,0,0,0.2);
+  -webkit-transform:rotate(45deg);
+  -moz-transform:rotate(45deg);
+  -ms-transform:rotate(45deg);
+  -o-transform:rotate(45deg);
+  transform:rotate(45deg);
+}
+table.dataTable tr td:not(:hover) .dropdown.btn-group .btn {
+  border-color:transparent !important;
+  background:transparent !important;
+  -webkit-box-shadow:none !important;
+  -moz-box-shadow:none !important;
+  box-shadow:none !important;
+}
+table.dataTable tr td:not(:hover) .dropdown.btn-group .btn.dropdown-toggle { visibility:hidden; }
 .dataTables_filter {
   position:relative;
   margin:-1px 1px 0 0;
@@ -6499,7 +6541,7 @@ table [class^="icon-favorite"] { margin-left:18px; }
   cursor:pointer;
 }
 .active.icon-favorite {
-  color:#e57417;
+  color:#fed440;
   cursor:pointer;
 }
 h1 span { margin-left:5px; }
@@ -6686,6 +6728,8 @@ h1 span { margin-left:5px; }
   right:3px;
   top:6px;
 }
+.form-search .toolbar-btns a.btn>i { color:#8b8c8e !important; }
+.form-search .toolbar-btns a.btn.active > i { color:#262627 !important; }
 .form-search input { padding:4px 8px; }
 .form-search .actions { position:absolute; }
 .form-search .extend {
@@ -8670,7 +8714,10 @@ ul.moduleTabMore.showMore .moduleMenuOverFlowMore, ul.moduleTabMore.showLess .mo
 }
 #chartActions .dropdown-menu input[type=checkbox], #projectActions .dropdown-menu input[type=checkbox] { margin-right:5px; }
 #pageConfig.btn-group > .btn { float:none; }
-#pageConfig .dropdown-menu { right:9px; }
+#pageConfig .dropdown-menu {
+  right:9px;
+  z-index:1001;
+}
 #pageConfig .dropdown-menu:after {
   content:'';
   display:inline-block;

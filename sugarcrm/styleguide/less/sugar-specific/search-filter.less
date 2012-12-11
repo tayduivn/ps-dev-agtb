@@ -51,6 +51,14 @@
     position: absolute;
     right: 3px;
     top: 6px;
+    a.btn {
+      &>i {
+        color:lighten(@gray,20%) !important;
+      }
+      &.active > i {
+        color:darken(@gray,20%) !important;
+      }
+    }
   }
 
   input {
