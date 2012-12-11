@@ -291,10 +291,9 @@ class MetaDataManager {
      *
      * @param string $module The module we want to fetch the ACL for
      * @param object $userObject The user object for the ACL's we are retrieving.
-     * @param object|bool $bean The SugarBean for getting specific ACL's for a module
      * @return array Array of ACL's, first the action ACL's (access, create, edit, delete) then an array of the field level acl's
      */
-    public function getAclForModule($module,$userObject,$bean=false) {
+    public function getAclForModule($module,$userObject) {
         $obj = BeanFactory::getObjectName($module);
 
         $outputAcl = array('fields'=>array());
@@ -303,13 +302,7 @@ class MetaDataManager {
                 $outputAcl[$action] = 'yes';
             }
         } else {
-            $context = array(
-                    'user' => $userObject,
-                );
-            if($bean instanceof SugarBean) {
-                $context['bean'] = $bean;
-            }
-            $moduleAcls = SugarACL::getUserAccess($module, array(), $context);
+            $moduleAcls = SugarACL::getUserAccess($module, array(), array('user' => $userObject));
 
             // Bug56391 - Use the SugarACL class to determine access to different actions within the module
             foreach(SugarACL::$all_access AS $action => $bool) {
@@ -331,8 +324,7 @@ class MetaDataManager {
                 $fieldsAcl = ACLField::getAvailableFields($module);
                 //END SUGARCRM flav=pro ONLY
                 // get the field names
-                SugarACL::listFilter($module, $fieldsAcl, $context, array('add_acl' => true));
-
+                SugarACL::listFilter($module, $fieldsAcl, array('user' => $userObject), array('add_acl' => true));
                 foreach ( $fieldsAcl as $field => $fieldAcl ) {
                     switch ( $fieldAcl['acl'] ) {
                         case SugarACL::ACL_READ_WRITE:
@@ -341,7 +333,7 @@ class MetaDataManager {
                         case SugarACL::ACL_READ_ONLY:
                             $outputAcl['fields'][$field]['write'] = 'no';
                             $outputAcl['fields'][$field]['create'] = 'no';
-                            break;                    
+                            break;
                         case 2:
                             $outputAcl['fields'][$field]['read'] = 'no';
                             break;
@@ -417,13 +409,11 @@ class MetaDataManager {
     /**
      * The collector method for the module strings
      *
-     * @param string $moduleName The name of the module
-     * @param string $language The language for the translations
-     * @return array The module strings for the requested language
+     * @return array The module strings for the current language
      */
-    public function getModuleStrings( $moduleName, $language = 'en_us' ) {
+    public function getModuleStrings( $moduleName ) {
         // Bug 58174 - Escaped labels are sent to the client escaped
-        $strings = return_module_language($language,$moduleName);
+        $strings = return_module_language($GLOBALS['current_language'],$moduleName);
         if (is_array($strings)) {
             foreach ($strings as $k => $v) {
                 $strings[$k] = $this->decodeStrings($v);
@@ -435,34 +425,24 @@ class MetaDataManager {
 
     /**
      * The collector method for the app strings
-     * 
-     * @param string $lang The language you wish to fetch the app strings for
-     * @return array The app strings for the requested language
+     *
+     * @return array The app strings for the current language, and a hash of the app strings
      */
-    public function getAppStrings($lang = 'en_us' ) {
-        $strings = return_application_language($lang);
-        if (is_array($strings)) {
-            foreach ($strings as $k => $v) {
-                $strings[$k] = $this->decodeStrings($v);
-            }
-        }
-        return $strings;        
+    public function getAppStrings() {
+        $appStrings = $GLOBALS['app_strings'];
+        $appStrings['_hash'] = md5(serialize($appStrings));
+        return $appStrings;
     }
 
     /**
      * The collector method for the app strings
      *
-     * @param string $lang The language you wish to fetch the app list strings for
-     * @return array The app list strings for the requested language
+     * @return array The app strings for the current language, and a hash of the app strings
      */
-    public function getAppListStrings($lang = 'en_us') {
-        $strings = return_app_list_strings_language($lang);
-        if (is_array($strings)) {
-            foreach ($strings as $k => $v) {
-                $strings[$k] = $this->decodeStrings($v);
-            }
-        }
-        return $strings;        
+    public function getAppListStrings() {
+        $appStrings = $GLOBALS['app_list_strings'];
+        $appStrings['_hash'] = md5(serialize($appStrings));
+        return $appStrings;
     }
 
 
@@ -564,40 +544,5 @@ class MetaDataManager {
                 unlink($metadataFile);
             }
         }
-    }
-    
-    /**
-     * Gets server information
-     * 
-     * @return array of ServerInfo
-     */
-    public function getServerInfo() {
-        global $sugar_flavor;
-        global $sugar_version;
-        global $timedate;
-
-        $data['flavor'] = $sugar_flavor;
-        $data['version'] = $sugar_version;
-        
-        //BEGIN SUGARCRM flav=pro ONLY
-        $fts_enabled = SugarSearchEngineFactory::getFTSEngineNameFromConfig();
-        if(!empty($fts_enabled) && $fts_enabled != 'SugarSearchEngine') {
-            $data['fts'] = array(
-                'enabled' =>  true,
-                'type'    =>  $fts_enabled,
-            );
-        } else {
-            $data['fts'] = array(
-                'enabled' =>  false,
-            );
-        }
-        //END SUGARCRM flav=pro ONLY
-
-        //Always return dates in ISO-8601
-        $date = new SugarDateTime();
-        $data['server_time'] = $timedate->asIso($date, $GLOBALS['current_user']);
-        $data['gmt_time'] = gmdate('Y-m-d\TH:i:s') . '+0000';
-
-        return $data;
     }
 }

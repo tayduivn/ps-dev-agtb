@@ -190,8 +190,6 @@ class RelateRecordApi extends ModuleApi {
         $relatedData = $this->getRelatedFields($api, $args, $primaryBean, $linkName, $relatedBean);
         $primaryBean->$linkName->add(array($relatedBean),$relatedData);
 
-        $this->setParentProperties($relatedBean, $primaryBean);
-
         //Clean up any hanging related records.
         SugarRelationship::resaveRelatedBeans();
 
@@ -212,8 +210,6 @@ class RelateRecordApi extends ModuleApi {
 
         $relatedData = $this->getRelatedFields($api, $args, $primaryBean, $linkName, $relatedBean);
         $primaryBean->$linkName->add(array($relatedBean),$relatedData);
-
-        $this->setParentProperties($relatedBean, $primaryBean);
         
         //Clean up any hanging related records.
         SugarRelationship::resaveRelatedBeans();
@@ -233,12 +229,8 @@ class RelateRecordApi extends ModuleApi {
             throw new SugarApiExceptionNotFound('Could not find the related bean');
         }
 
-
-
         $id = $this->updateBean($relatedBean, $api, $args);
-        
-        $this->setParentProperties($relatedBean, $primaryBean);
-        
+
         $relatedData = $this->getRelatedFields($api, $args, $primaryBean, $linkName, $relatedBean);
         $primaryBean->$linkName->add(array($relatedBean),$relatedData);
         
@@ -263,25 +255,6 @@ class RelateRecordApi extends ModuleApi {
 
         //Because the relationship is now deleted, we need to pass the $relatedBean data into formatNearAndFarRecords
         return $this->formatNearAndFarRecords($api,$args,$primaryBean, $this->formatBean($api, $args, $relatedBean));
-    }
-
-    /**
-     * Set the Parent Properties of a bean
-     * @param SugarBean $bean 
-     * @param SugarBean $otherBean 
-     * @return null
-     */
-    protected function setParentProperties(SugarBean $bean, SugarBean $otherBean) {
-        if(isset($bean->field_defs['parent_type']) && isset($bean->field_defs['parent_id'])) {
-            $bean->parent_type = $otherBean->module_dir;
-            $bean->parent_id = $otherBean->id;
-            $bean->save();
-        }        
-        elseif(isset($otherBean->field_defs['parent_type']) && isset($otherBean->field_defs['parent_id'])) {
-            $otherBean->parent_type = $bean->module_dir;
-            $otherBean->parent_id = $bean->id;
-            $otherBean->save();
-        }        
     }
 
 
