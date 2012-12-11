@@ -105,35 +105,6 @@
         url = app.api.buildURL('ForecastWorksheets', '', '', args);
         return url;
     },
-        
-    /**
-     * Sets up the save event and handler for the commit_stage dropdown fields in the worksheet.
-     *
-     * @param field the commit_stage field
-     * @return {*}
-     * @private
-     */
-    _setUpCommitStage: function (field) {
-        var forecastRanges = this.context.forecasts.config.get("forecast_ranges");
-        var self = this;
-                
-        //show_binary, show_buckets, show_n_buckets
-        if(forecastRanges== "show_binary"){
-            field.type = "bool";
-            field.format = function(value){
-                return value == "include";
-            };
-            field.unformat = function(value){
-                return this.$el.find(".checkbox").prop('checked') ? "include" : "exclude";
-            };
-        }
-        else{
-            field.type = "enum";
-            field.def.options = this.context.forecasts.config.get("buckets_dom") || 'commit_stage_dom';
-        }      
-        
-        return field;
-    },
 
     /**
      * Renders a field.
@@ -144,26 +115,12 @@
      * @protected
      */
     _renderField: function(field) {
-        if(field.name == "commit_stage")
-        {
-            //Set the field.def.options value based on app.config.buckets_dom (if set)
-            field.def.options = this.context.forecasts.config.get("buckets_dom") || 'commit_stage_dom';
-            //field = this._setUpCommitStage(field);
-            if(!this.isEditableWorksheet)
-            {
-                field.view = 'detail';
-            }
-        }
         this._createFieldColumnDef(field.def);
         app.view.View.prototype._renderField.call(this, field);
 
         if (this.isEditableWorksheet === true && field.viewName !="edit" && field.def.clickToEdit === true && !_.contains(this.context.forecasts.config.get("sales_stage_won"), field.model.get('sales_stage')) && !_.contains(this.context.forecasts.config.get("sales_stage_lost"), field.model.get('sales_stage'))) {
             new app.view.ClickToEditField(field, this);
-        }
-
-        /*if (this.isEditableWorksheet === true && field.name == "commit_stage") {
-            new app.view.BucketGridEnum(field, this, "ForecastWorksheets");
-        }*/
+        }        
     },
 
     /**
@@ -190,6 +147,7 @@
                 //Apply sorting for the worksheet
                 switch(field.type)
                 {
+                    case "buckets":
                     case "enum":
                     case "bool":
                         // disable sorting for non-numerical fields
@@ -467,7 +425,7 @@
     _render: function() {
         var self = this;
         var enableCommit = false;
-
+        
         if(!this.showMe()){
             return false;
         }
@@ -725,7 +683,7 @@
                         selectVal,
                         rowCategory = $(_.first(aData)),
                         checkState;
-
+                    debugger;
                     //If we are in an editable worksheet get the selected dropdown/checkbox value; otherwise, get the detail/default text
                     if (forecast_ranges_setting == 'show_binary') {
                         checkState = rowCategory.find('input').attr('checked');
