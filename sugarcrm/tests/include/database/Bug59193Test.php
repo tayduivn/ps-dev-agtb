@@ -25,7 +25,7 @@ class Bug59193Test extends Sugar_PHPUnit_Framework_TestCase
 	public function testAddDistinct()
 	{
 	      $q = <<<END
-SELECT accounts.id primaryid, accounts.name, l1.id, CONCAT(l1.first_name,' ',l1.last_name) l1_full_name
+SELECT accounts.id primaryid, accounts.name, l1.id, l1.last_name l1_full_name
 								FROM accounts
 
 INNER JOIN (select tst.team_set_id from team_sets_teams tst INNER JOIN team_memberships team_memberships ON tst.team_id = team_memberships.team_id
