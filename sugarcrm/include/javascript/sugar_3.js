@@ -612,16 +612,17 @@ function isDBName(str) {
 }
 var time_reg_format = "[0-9]{1,2}\:[0-9]{2}";
 function isTime(timeStr) {
-    var time_reg_format = "[0-9]{1,2}\:[0-9]{2}";
-	time_reg_format = time_reg_format.replace('([ap]m)', '');
-	time_reg_format = time_reg_format.replace('([AP]M)', '');
+    var timeRegex = time_reg_format;
+    // eliminate the am/pm from the external time_reg_format
+	timeRegex = timeRegex.replace(/[ ]*\([^)]*m\)/i, '');
 	if(timeStr.length== 0){
 		return true;
 	}
 	//we now support multiple time formats
-	myregexp = new RegExp(time_reg_format)
-	if(!myregexp.test(timeStr))
-		return false
+	myregexp = new RegExp(timeRegex);
+	if(!myregexp.test(timeStr)) {
+        return false;
+    }
 
 	return true;
 }
