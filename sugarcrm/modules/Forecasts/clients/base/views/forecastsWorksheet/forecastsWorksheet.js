@@ -683,7 +683,7 @@
                         selectVal,
                         rowCategory = $(_.first(aData)),
                         checkState;
-                    debugger;
+                    
                     //If we are in an editable worksheet get the selected dropdown/checkbox value; otherwise, get the detail/default text
                     if (forecast_ranges_setting == 'show_binary') {
                         checkState = rowCategory.find('input').attr('checked');
