@@ -116,7 +116,7 @@ if (count($resources) > 0){
             }
             $i++;
         }
-	$query .= " ) and deleted=0 and holiday_date between '". $focus->estimated_start_date ."' and '". $focus->estimated_end_date ."'";
+	$query .= " ) and deleted=0 and holiday_date between '". $timedate->to_db_date($focus->estimated_start_date, false) ."' and '". $timedate->to_db_date($focus->estimated_end_date, false) ."'";
 	$result = $holidayBean->db->query($query, true, "");   
 	$row = $holidayBean->db->fetchByAssoc($result);
 	

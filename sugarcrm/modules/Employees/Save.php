@@ -27,7 +27,6 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * Contributor(s): ______________________________________..
  ********************************************************************************/
 
-require_once('include/SugarFields/SugarFieldHandler.php');
 require_once('modules/MySettings/TabController.php');
 
 $tabs_def = urldecode(isset($_REQUEST['display_tabs_def']) ? $_REQUEST['display_tabs_def'] : '');
@@ -83,9 +82,7 @@ function populateFromRow(&$focus,$row){
 
 
 	//only employee specific field values need to be copied.
-    $e_fields=array('first_name','last_name','reports_to_id','description','phone_home','phone_mobile','phone_work',
-        'phone_other','phone_fax','address_street','address_city','address_state','address_country',
-        'address_country', 'address_postalcode', 'messenger_id','messenger_type', 'picture');
+	$e_fields=array('first_name','last_name','reports_to_id','description','phone_home','phone_mobile','phone_work','phone_other','phone_fax','address_street','address_city','address_state','address_country','address_country', 'address_postalcode', 'messenger_id','messenger_type');
 	if ( is_admin($GLOBALS['current_user']) ) {
         $e_fields = array_merge($e_fields,array('title','department','employee_status'));
     }
@@ -96,20 +93,10 @@ function populateFromRow(&$focus,$row){
         }
     }
     $nullvalue='';
-    $sfh = new SugarFieldHandler();
 	foreach($e_fields as $field)
 	{
 		$rfield = $field; // fetch returns it in lowercase only
-        if ($field == 'picture')
-        {
-            /** @var $sf SugarFieldImage */
-            $sf = $sfh->getSugarField('image');
-            if ($sf)
-            {
-                $sf->save($focus, $row, $field, '');
-            }
-        }
-        else if (isset($row[$rfield]))
+		if(isset($row[$rfield]))
 		{
 			$focus->$field = $row[$rfield];
 		}

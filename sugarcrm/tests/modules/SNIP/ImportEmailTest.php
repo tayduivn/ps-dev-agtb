@@ -244,7 +244,7 @@ class ImportEmailTest extends Sugar_PHPUnit_Framework_TestCase {
 
 		// get configured date format
 		$timedate = new TimeDate();
-        $this->date_time_format = $timedate->get_db_date_time_format();
+		$this->date_time_format = $timedate->get_date_time_format();
 	}
 
 	public function tearDown ()

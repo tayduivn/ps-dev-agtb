@@ -417,9 +417,9 @@ class Meeting extends SugarBean {
 
         //setting default date and time
 		if (is_null($this->date_start))
-			$this->date_start = $timedate->nowDb();
+			$this->date_start = $timedate->now();
 		if (is_null($this->time_start))
-			$this->time_start = $timedate->asDbTime($timedate->getNow());
+			$this->time_start = $timedate->to_display_time(TimeDate::getInstance()->nowDb(), true);
 		if (is_null($this->duration_hours)) {
 			$this->duration_hours = "0";
 		}
@@ -430,14 +430,14 @@ class Meeting extends SugarBean {
 			$this->date_start = $_REQUEST['date_start'];
 		}
 		if(!empty($this->date_start)) {
-		    $start = SugarDateTime::createFromFormat($timedate->get_db_date_time_format(),$this->date_start);
+		    $start = SugarDateTime::createFromFormat($GLOBALS['timedate']->get_date_time_format(),$this->date_start);
 		    if (!empty($start)) {
 		        if (!empty($this->duration_hours) || !empty($this->duration_minutes)) {
 		            $this->date_end = $start->modify("+{$this->duration_hours} Hours +{$this->duration_minutes} Minutes")
-		            ->format($timedate->get_db_date_time_format());
+		            ->format($GLOBALS['timedate']->get_date_time_format());
 		        }
 		    } else {
-		        $GLOBALS['log']->fatal("Meeting::save: Bad date {$this->date_start} for format ".$timedate->get_db_date_time_format());
+		        $GLOBALS['log']->fatal("Meeting::save: Bad date {$this->date_start} for format ".$GLOBALS['timedate']->get_date_time_format());
 		    }
 		}
 

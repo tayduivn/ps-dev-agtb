@@ -228,6 +228,38 @@ class Employee extends Person {
 	}
 	*/
 
+	function preprocess_fields_on_save(){
+		parent::preprocess_fields_on_save();
+
+		//BEGIN SUGARCRM flav!=com ONLY
+        require_once('include/upload_file.php');
+		$upload_file = new UploadFile("picture");
+
+		//remove file
+		if (isset($_REQUEST['remove_imagefile_picture']) && $_REQUEST['remove_imagefile_picture'] == 1)
+		{
+			UploadFile::unlink_file($this->picture);
+			$this->picture="";
+		}
+
+		//uploadfile
+		if (isset($_FILES['picture']))
+		{
+			//confirm only image file type can be uploaded
+			$imgType = array('image/gif', 'image/png', 'image/bmp', 'image/jpeg', 'image/jpg', 'image/pjpeg');
+			if (in_array($_FILES['picture']["type"], $imgType))
+			{
+				if ($upload_file->confirm_upload())
+				{
+					$this->picture = create_guid();
+					$upload_file->final_move($this->picture);
+				}
+			}
+		}
+		//END SUGARCRM flav!=com ONLY
+	}
+
+
     /**
      * create_new_list_query
      *

@@ -865,7 +865,8 @@ class Email extends SugarBean {
 			$this->team_set_id = $teamSet->addTeams($teamIdsArray);
 			//END SUGARCRM flav=pro ONLY
 			$this->assigned_user_id = $current_user->id;
-			$this->date_sent = $timedate->nowDbDate();
+
+			$this->date_sent = $timedate->now();
 			///////////////////////////////////////////////////////////////////
 			////	LINK EMAIL TO SUGARBEANS BASED ON EMAIL ADDY
 

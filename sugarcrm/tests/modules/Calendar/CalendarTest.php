@@ -107,7 +107,7 @@ class CalendarTest extends Sugar_PHPUnit_Framework_TestCase {
 		$format = $GLOBALS['current_user']->getUserDateTimePreferences();
 		$meeting = new Meeting();
 		$meeting->meeting_id = uniqid();
-		$meeting->date_start = $this->time_date->swap_formats("2012-01-01 11:00pm" , 'Y-m-d h:ia', $this->time_date->get_db_date_time_format());
+		$meeting->date_start = $this->time_date->swap_formats("2012-01-01 11:00pm" , 'Y-m-d h:ia', $format['date'].' '.$format['time']);
 		$meeting->name = "test";
 		$cal->acts_arr = array();		
 		$cal->acts_arr[$GLOBALS['current_user']->id] = array();
