@@ -6519,11 +6519,6 @@ li.active a img.deletePageImg, li.active a span.deletePageImg {
    display: inline-block !important;
 }
 
-#ajaxUIErrorPanel .ft {
-    font-weight: bold;
-    font-size: 1.2em;
-}
-
 ul.clickMenu {
 	list-style: none;
 	padding: 0px;	

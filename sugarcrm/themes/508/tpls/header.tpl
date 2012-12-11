@@ -1,4 +1,5 @@
 {*
+FIXME Remove this template
 /*********************************************************************************
  * The contents of this file are subject to the SugarCRM Enterprise End User
  * License Agreement ("License") which can be viewed at

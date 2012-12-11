@@ -34,7 +34,6 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 function template_reports_functions_js(&$args)
 {
 global $mod_strings;
-global $sugar_config, $sugar_version;
 ?>
 <script language="javascript">
 var image_path = "<?php echo $args['IMAGE_PATH']; ?>";

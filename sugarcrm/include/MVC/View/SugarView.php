@@ -99,6 +99,7 @@ class SugarView
         $this->_trackView();
 
         //For the ajaxUI, we need to use output buffering to return the page in an ajax friendly format
+        // FIXME review this code (no more ajax load)
         if ($this->_getOption('json_output')){
 			ob_start();
 			if(!empty($_REQUEST['ajax_load']) && !empty($_REQUEST['loadLanguageJS'])) {
@@ -130,6 +131,10 @@ class SugarView
         }
         if ($this->_getOption('show_footer')) $this->displayFooter();
         $GLOBALS['logic_hook']->call_custom_logic('', 'after_ui_footer');
+
+
+        // TODO no more ajaxUI?
+        /*
         if ($this->_getOption('json_output'))
         {
             $content = ob_get_clean();
@@ -147,9 +152,6 @@ class SugarView
                 'favicon' => $this->getFavicon(),
             );
 
-            if(SugarThemeRegistry::current()->name == 'Classic')
-                $ajax_ret['moduleList'] = $this->displayHeader(true);
-
             if(empty($this->responseTime))
                 $this->_calculateFooterMetrics();
             $ajax_ret['responseTime'] = $this->responseTime;
@@ -158,6 +160,7 @@ class SugarView
             $GLOBALS['app']->headerDisplayed = false;
             ob_flush();
         }
+        */
         //Do not track if there is no module or if module is not a String
         $this->_track();
     }
@@ -1401,8 +1404,8 @@ EOHTML;
         // Default anonymous pages to be under Home
         elseif ( !isset($app_list_strings['moduleList'][$this->module]) )
             return $defaultTab;
-        elseif ( isset($_REQUEST['action']) && $_REQUEST['action'] == "ajaxui" )
-        	return $defaultTab;
+//        elseif ( isset($_REQUEST['action']) && $_REQUEST['action'] == "ajaxui" )
+//        	return $defaultTab;
         else
             return $this->module;
     }
@@ -1620,23 +1623,6 @@ EOHTML;
 
         // Set all the config parameters in the JS config as necessary
         $config_js = array();
-        // AjaxUI stock banned modules
-        $config_js[] = "SUGAR.config.stockAjaxBannedModules = ".json_encode(ajaxBannedModules()).";";
-        if ( isset($sugar_config['quicksearch_querydelay']) ) {
-            $config_js[] = $this->prepareConfigVarForJs('quicksearch_querydelay', $sugar_config['quicksearch_querydelay']);
-        }
-        if ( empty($sugar_config['disableAjaxUI']) ) {
-            $config_js[] = "SUGAR.config.disableAjaxUI = false;";
-        }
-        else{
-            $config_js[] = "SUGAR.config.disableAjaxUI = true;";
-        }
-        if ( !empty($sugar_config['addAjaxBannedModules']) ){
-            $config_js[] = $this->prepareConfigVarForJs('addAjaxBannedModules', $sugar_config['addAjaxBannedModules']);
-        }
-        if ( !empty($sugar_config['overrideAjaxBannedModules']) ){
-            $config_js[] = $this->prepareConfigVarForJs('overrideAjaxBannedModules', $sugar_config['overrideAjaxBannedModules']);
-        }
         if (!empty($sugar_config['js_available']) && is_array ($sugar_config['js_available']))
         {
             foreach ($sugar_config['js_available'] as $configKey)
