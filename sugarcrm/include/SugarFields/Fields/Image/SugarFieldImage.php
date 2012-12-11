@@ -92,6 +92,9 @@ class SugarFieldImage extends SugarFieldBase {
                     $this->error = $upload_file->getErrorMessage();
                 }
 			}
+            else {
+                $this->error = $GLOBALS['app_strings']["LBL_UPLOAD_IMAGE_FILE_INVALID"];
+            }
 		}
 
 		//Check if we have the duplicate value set and use it if $bean->$field is empty

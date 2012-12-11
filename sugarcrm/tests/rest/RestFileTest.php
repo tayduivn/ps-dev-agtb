@@ -96,7 +96,18 @@ class RestFileTest extends RestFileTestBase
     /**
      * @group rest
      */
-    public function testPutUploadImageToContact()
+    public function testPostUploadNonImageToContact()
+    {
+        $post = array('picture' => '@include/fonts/Courier.afm');
+        $reply = $this->_restCall('Contacts/' . $this->_contact_id . '/file/picture', $post);
+        $this->assertArrayHasKey('error', $reply['reply'], 'Bug58324 - No error message returned');
+        $this->assertEquals('fatal_error', $reply['reply']['error'], 'Bug58324 - Expected error string not returned');
+    }
+
+    /**
+     * @group rest
+     */
+    public function testPutUploadImageToContact() 
     {
         $filename = 'include/images/badge_256.png';
         $opts = array(CURLOPT_INFILESIZE => filesize($filename), CURLOPT_INFILE => fopen($filename, 'r'));
