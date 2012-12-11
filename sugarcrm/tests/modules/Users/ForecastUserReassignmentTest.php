@@ -516,7 +516,6 @@ class ForecastUserReassignmentTest extends  Sugar_PHPUnit_Framework_OutputTestCa
         $current_user = $this->_users['sally'];
         $api = new SugarForecasting_Individual( array('timeperiod_id' => $this->_timeperiod->id, 'user_id' => $this->_users['sally']->id) );
         $result = $api->process();
-        $GLOBALS['log']->fatal(var_export($result, true));
         $this->assertEquals(10, sizeof($result));
 
         $this->_doReassign('sally', 'chris');

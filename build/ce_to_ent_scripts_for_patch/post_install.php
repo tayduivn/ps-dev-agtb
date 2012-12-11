@@ -177,10 +177,13 @@ function post_install()
     	_logThis('*** ERROR: install/lang.config.php was not found and writen to config.php!!', $path);
     }
 
+    require_once("install/install_utils.php");
+    _logThis("Building sidecar config", $path);
+    handleSidecarConfig();
+
     ///////////////////////////////////////////////////////////////////////////
 	////	BUILD PORTAL CONFIG
     _logThis("Building portal config", $path);
-    require_once("install/install_utils.php");
     handlePortalConfig();
 	
 	//Upgrade Projects

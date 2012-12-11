@@ -135,7 +135,7 @@ class RestBug57887Test extends RestTestBase
         $this->assertEmpty($files, "The cache metadata file should not exist");
 
         // Confirm custom file is in the file map cache
-        $exists = SugarAutoLoader::fileExists($this->_metadataFile);
+        $exists = (bool) SugarAutoLoader::fileExists($this->_metadataFile);
         $this->assertTrue($exists, "The custom file was not found in the file map cache");
         
         // Make an API Metadata call to fetch newest

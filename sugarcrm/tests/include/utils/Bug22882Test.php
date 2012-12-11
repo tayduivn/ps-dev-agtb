@@ -335,7 +335,8 @@ FRFR;
         }
 
         if(!file_exists('custom/include/language/fr_test.lang.php')){
-            file_put_contents('custom/include/language/fr_test.lang.php', $file_fr);
+            file_put_contents('custom/include/language/fr_test.lang.php', '');
+            SugarAutoLoader::addToMap('custom/include/language/fr_test.lang.php', false);
         }else{
             $this->file_fr_tmp = file_get_contents('custom/include/language/fr_test.lang.php');
             file_put_contents('custom/include/language/fr_test.lang.php', $file_fr);
@@ -345,6 +346,7 @@ FRFR;
 
         if(!file_exists('custom/include/language/en_us.lang.php')){
             file_put_contents('custom/include/language/en_us.lang.php', $file_en);
+            SugarAutoLoader::addToMap('custom/include/language/en_us.lang.php', false);
         }else{
             $this->file_en_tmp = file_get_contents('custom/include/language/en_us.lang.php');
             file_put_contents('custom/include/language/en_us.lang.php', $file_en);

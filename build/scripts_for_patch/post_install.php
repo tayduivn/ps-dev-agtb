@@ -455,16 +455,18 @@ function post_install() {
 		}
     }
 
+    //BEGIN SUGARCRM flav=pro ONLY
+    require_once("install/install_utils.php");
+    _logThis("Building sidecar config", $path);
+    handleSidecarConfig();
+    //END SUGARCRM flav=pro ONLY
+
     //BEGIN SUGARCRM flav=ent ONLY
     ///////////////////////////////////////////////////////////////////////////
 	////	REBUILD PORTAL CONFIG
     _logThis("Rebuilding portal config", $path);
-    require_once("install/install_utils.php");
     handlePortalConfig();
     //END SUGARCRM flav=ent ONLY
-
-     //Patch for bug57431 : Module name isn't updated in portal layout editor
-    updateRenamedModulesLabels();
 
     //bug 57426 was introduced in 654, and it's effects need to be repaired during upgrade.
     //Run the repair script if the original version is greater than 654, but less than 661
@@ -472,48 +474,6 @@ function post_install() {
     if ($origVersion > '654' && $origVersion < '661')
     {
         process_email_address_relationships();
-    }
-}
-
-/**
- * Patch for bug57431
- * Compares current moduleList to base moduleList to detect if some modules have been renamed
- * Run changeModuleModStrings to create new labels based on customizations.
- */
-function updateRenamedModulesLabels()
-{
-    require_once('modules/Studio/wizards/RenameModules.php');
-    require_once('include/utils.php');
-
-    $klass = new RenameModules();
-    $languages = get_languages();
-
-    foreach ($languages as $langKey => $langName) {
-        //get list strings for this language
-        $strings = return_app_list_strings_language($langKey);
-
-        //get base list strings for this language
-        if (file_exists("include/language/$langKey.lang.php")) {
-            include("include/language/$langKey.lang.php");
-
-            //Keep only renamed modules
-            $renamedModules = array_diff($strings['moduleList'], $app_list_strings['moduleList']);
-
-            foreach ($renamedModules as $moduleId => $moduleName) {
-
-                $klass->selectedLanguage = $langKey;
-
-                $replacementLabels = array(
-                    'singular' => $strings['moduleListSingular'][$moduleId],
-                    'plural' => $strings['moduleList'][$moduleId],
-                    'prev_singular' => $app_list_strings['moduleListSingular'][$moduleId],
-                    'prev_plural' => $app_list_strings['moduleList'][$moduleId],
-                    'key_plural' => $moduleId,
-                    'key_singular' => $klass->getModuleSingularKey($moduleId)
-                );
-                $klass->changeModuleModStrings($moduleId, $replacementLabels);
-            }
-        }
     }
 }
 

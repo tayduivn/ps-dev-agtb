@@ -723,7 +723,7 @@ class SugarTestHelper
 
         foreach($GLOBALS['beanList'] as $k => $v)
         {
-            VardefManager::loadVardef($k, $v);
+            VardefManager::loadVardef($k, BeanFactory::getObjectName($k));
         }
         return true;
     }

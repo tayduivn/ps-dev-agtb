@@ -68,7 +68,7 @@ class RestService extends ServiceBase {
         try {
             $rawPath = $this->getRawPath();
             
-            $this->getRequestHeaders();
+            $this->setRequestHeaders();
 
             list($version,$path) = $this->parsePath($rawPath);
 
@@ -191,7 +191,7 @@ class RestService extends ServiceBase {
      * Set the Request headers in an array
      * @return bool
      */
-    public function getRequestHeaders() {
+    public function setRequestHeaders() {
         $headers = array();
         foreach($_SERVER as $key => $value) {
             if (substr($key, 0, 5) <> 'HTTP_') {
@@ -477,7 +477,6 @@ class RestService extends ServiceBase {
      */
     protected function sendContent($content, $args) {
         $response = json_encode($content);
-        $this->generateETagHeader(md5($response));
         if (isset($args['format']) && $args['format'] == 'sugar-html-json' && (!isset($args['platform']) || $args['platform'] == 'portal')) {
             $response = htmlentities($response);
         }
@@ -501,17 +500,27 @@ class RestService extends ServiceBase {
      * @return bool
      */
     public function hasHeader($header) {
-        return array_key_exists($header, $this->response_headers);
+        // do a case insensitive check
+        $headers = array_change_key_case($this->response_headers, CASE_LOWER);
+        return array_key_exists(strtolower($header), $headers);
     }
 
     /**
      * Send the response headers
      * @return bool
      */
-    public function sendHeaders() {
+    public function sendHeaders($etag) {
         if(headers_sent()) {
             return false;
         }
+        if($_SERVER['REQUEST_METHOD'] == 'GET') {
+            $this->setGetHeaders();
+            $this->generateETagHeader($etag);
+        }
+        else {
+            $this->setPostHeaders();
+        }
+
         foreach($this->response_headers AS $header => $info) {
             header("{$header}: {$info}");
         }
@@ -523,9 +532,32 @@ class RestService extends ServiceBase {
      * @return bool
      */
     protected function setPostHeaders() {
-        $this->setHeader('Cache-Control', 'no-cache, must-revalidate');
-        $this->setHeader('Pragma', 'no-cache');
-        $this->setHeader('Expires', 'Sat, 26 Jul 1997 05:00:00 GMT');
+        if(!$this->hasHeader('Cache-Control')) {
+            $this->setHeader('Cache-Control', 'no-cache, must-revalidate');    
+        }
+        if(!$this->hasHeader('Pragma')) {
+            $this->setHeader('Pragma', 'no-cache');
+        }
+        if(!$this->hasHeader('Expires')) {
+            $this->setHeader('Expires', 'Sat, 26 Jul 1997 05:00:00 GMT');
+        }
+        return true;
+    }
+
+    /**
+     * Explicitly Set Get Headers
+     * @return bool
+     */
+    protected function setGetHeaders() {
+        if(!$this->hasHeader('Cache-Control')) {
+            $this->setHeader('Cache-Control','');
+        }
+        if(!$this->hasHeader('Pragma')) {
+            $this->setHeader('Pragma', '');
+        }
+        if(!$this->hasHeader('Expires')) {
+            $this->setHeader('Expires', '');
+        }        
         return true;
     }
     /**
@@ -569,21 +601,17 @@ class RestService extends ServiceBase {
     protected function respond($output, $route, $args) {
         // TODO: gzip, and possibly XML based output
         if (!empty($route['rawReply'])) {
-            if ($_SERVER['REQUEST_METHOD'] == 'GET') {
-        	   $this->generateETagHeader(md5($output));
-            }
-            elseif($_SERVER['REQUEST_METHOD'] == 'POST') {
-                $this->setPostHeaders();
-            }
-            $this->sendHeaders();
+            $this->sendHeaders(md5($output));
             echo $output;
         } else {
             // Handle content type header sending
             $this->setContentTypeHeader($args);
-            $this->sendHeaders();
+            $this->sendHeaders(md5(json_encode($output)));
             // Send the content
             $this->sendContent($output, $args);
         }
+
+        $this->response_headers = array();
     }
     /**
 	 * generateETagHeader
