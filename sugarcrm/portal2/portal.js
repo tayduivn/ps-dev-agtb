@@ -190,7 +190,6 @@
             }
 
             // need to add error styling to parent view element
-            debugger;
             this.$el.parents('.control-group').addClass("error");
             var ftag = this.fieldTag || '';
 
