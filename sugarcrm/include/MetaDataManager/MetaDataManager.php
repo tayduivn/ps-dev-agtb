@@ -332,7 +332,6 @@ class MetaDataManager {
                 //END SUGARCRM flav=pro ONLY
                 // get the field names
                 SugarACL::listFilter($module, $fieldsAcl, $context, array('add_acl' => true));
-
                 foreach ( $fieldsAcl as $field => $fieldAcl ) {
                     switch ( $fieldAcl['acl'] ) {
                         case SugarACL::ACL_READ_WRITE:
@@ -341,7 +340,7 @@ class MetaDataManager {
                         case SugarACL::ACL_READ_ONLY:
                             $outputAcl['fields'][$field]['write'] = 'no';
                             $outputAcl['fields'][$field]['create'] = 'no';
-                            break;                    
+                            break; 
                         case 2:
                             $outputAcl['fields'][$field]['read'] = 'no';
                             break;
