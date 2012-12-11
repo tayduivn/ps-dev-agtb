@@ -2,8 +2,8 @@
     extendsFrom : 'IntField',
 
     events : {
-        'mouseenter span.editable': 'onMouseEnter',
-        'mouseleave span.editable': 'onMouseLeave',
+        'mouseenter span.editable': 'togglePencil',
+        'mouseleave span.editable': 'togglePencil',
         'click span.editable': 'onClick',
         'blur span.edit input' : 'onBlur',
         'keypress span.edit input' : 'onKeypress',
@@ -30,25 +30,18 @@
     },
 
     /**
+     * Toggles the pencil icon on and off depending on the mouse state
      *
      * @param evt
      */
-    onMouseEnter : function(evt) {
+    togglePencil : function(evt) {
+        evt.preventDefault();
         if(!this.isEditable()) return;
-        this.$el.find('i').addClass('icon-pencil icon-small');
+        this.$el.find('i').toggleClass('icon-pencil icon-small');
     },
 
     /**
-     *
-     * @param evt
-     */
-    onMouseLeave : function(evt) {
-        if(!this.isEditable()) return;
-        this.$el.find('i').removeClass('icon-pencil icon-small');
-    },
-
-    /**
-     *
+     * Switch the view to the Edit view if the field is editable and it's clicked on
      * @param evt
      */
     onClick : function(evt) {
@@ -63,6 +56,7 @@
     },
 
     /**
+     * Handle when return/enter and tab keys are pressed
      *
      * @param evt
      */
@@ -79,6 +73,7 @@
     },
 
     /**
+     * When the value is changed,this handles setting the value back to the model and then blur's out the field
      *
      * @param evt
      */
@@ -97,6 +92,9 @@
     },
 
     /**
+     * Blur event handler
+     *
+     * This forces the field to re-render as the DetailView
      *
      * @param evt
      */
@@ -108,6 +106,7 @@
     },
 
     /**
+     * Is the new value valid for this field.
      *
      * @param value
      * @return {Boolean}
@@ -142,6 +141,12 @@
         return this._canEdit;
     },
 
+    /**
+     * Check the value to see if it's a percentage, if it is, then figure out the change.
+     *
+     * @param value
+     * @return {*}
+     */
     parsePercentage : function(value) {
         var orig = this.value;
         var parts = value.match(/^([+-])([\d\.]+?)\%$/);
