@@ -186,10 +186,8 @@ $subdirs		= array('full', 'langpack', 'module', 'patch', 'theme', 'temp');
 /// Update upgrader vars
 require_once($unzip_dir.'/scripts/upgrade_utils.php');
 $new_sugar_version = getUpgradeVersion();
-$origVersion = substr(preg_replace("/[^0-9]/", "", $sugar_version),0,3);
-$destVersion = substr(preg_replace("/[^0-9]/", "", $new_sugar_version),0,3);
-$siv_varset_1 = setSilentUpgradeVar('origVersion', $origVersion);
-$siv_varset_2 = setSilentUpgradeVar('destVersion', $destVersion);
+$siv_varset_1 = setSilentUpgradeVar('origVersion', $sugar_version);
+$siv_varset_2 = setSilentUpgradeVar('destVersion', $new_sugar_version);
 $siv_write    = writeSilentUpgradeVars();
 if(!$siv_varset_1 || !$siv_varset_2 || !$siv_write){
 	logThis("Error with silent upgrade variables: origVersion write success is ({$siv_varset_1}) ".
@@ -323,8 +321,10 @@ if(empty($errors)) {
 
 		logThis('Upgrade the sugar_version', $path);
 		$sugar_config['sugar_version'] = $sugar_version;
-		if($destVersion == $origVersion)
-			require('config.php');
+        if (version_compare($new_sugar_version, $sugar_version, '='))
+        {
+            require('config.php');
+        }
         if( !write_array_to_file( "sugar_config", $sugar_config, "config.php" ) ) {
             logThis('*** ERROR: could not write config.php! - upgrade will fail!', $path);
             $errors[] = 'Could not write config.php!';
@@ -490,7 +490,8 @@ if($ce_to_pro_ent)
 
 //Also set the tracker settings if  flavor conversion ce->pro or ce->ent
 if(isset($_SESSION['current_db_version']) && isset($_SESSION['target_db_version'])){
-	if($_SESSION['current_db_version'] == $_SESSION['target_db_version']){
+    if (version_compare($_SESSION['current_db_version'], $_SESSION['target_db_version'], '='))
+    {
 	    $_REQUEST['upgradeWizard'] = true;
 	    ob_start();
 			include('include/Smarty/internals/core.write_file.php');
