@@ -84,27 +84,13 @@ function rebuild_dashlets(){
         unlink('cache/dashlets/dashlets.php');
     }
 
-    global $sugar_version;
-    if (version_compare($sugar_version, '5.5.0', '<'))
-    {
-        require_once('include/SugarTheme/SugarTheme.php');
-    }
-
     require_once('include/Dashlets/DashletCacheBuilder.php');
-
     $dc = new DashletCacheBuilder();
     $dc->buildCache();
 }
 // BEGIN SUGARCRM flav=pro ONLY
-function rebuild_teams(){
-	global $sugar_version;
-    if (version_compare($sugar_version, '5.5.0', '<'))
-    {
-    	require_once('modules/Teams/TeamMembership.php');
-    	require_once('modules/Teams/Team.php');
-    }
+function rebuild_teams() {
     require_once('modules/Administration/RepairTeams.php');
-
     process_team_access(false, false,true,'1');
 }
 // END SUGARCRM flav=pro ONLY
@@ -114,11 +100,6 @@ function rebuild_roles(){
   global $ACLActions, $beanList, $beanFiles;
   include('modules/ACLActions/actiondefs.php');
   include('include/modules.php');
-  global $sugar_version;
-  if (version_compare($sugar_version, '5.5.0', '<'))
-  {
-  	require_once('include/ListView/ListView.php');
-  }
   include("modules/ACL/install_actions.php");
 }
 
@@ -337,9 +318,6 @@ function post_install() {
 	  	post_install_progress($currProg,'set');
 	  }
 
-	//if upgrading from 50GA we only need to do the version update.
-    if (version_compare($sugar_version, '5.0.0', '>'))
-    {
 		genericFunctions();
 
 		//BEGIN SUGARCRM flav=pro ONLY
@@ -348,14 +326,7 @@ function post_install() {
 		ACLAction::addActions('Users', 'module');
 		//END SUGARCRM flav=pro ONLY
 		upgradeDbAndFileVersion($new_sugar_version);
-	}
 
-	//Set the chart engine
-    if (version_compare($sugar_version, '6.2.0', '<'))
-    {
-		_logThis('Set chartEngine in config.php to JS Charts', $path);
-		$sugar_config['chartEngine'] = 'Jit';
-	}
     // Bug 51075 JennyG - We increased the upload_maxsize in 6.4.
     if (version_compare($sugar_version, '6.4.2', '<'))
     {
