@@ -8,7 +8,7 @@
      * Render Field
      */
     _render:function () {
-        var forecastCategories = this.context.forecasts.config.get("forecast_categories");
+        var forecastCategories = this.context.forecasts.config.get("forecast_ranges");
         this.disabled = false;
        
         //Check to see if you're a manager on someone else's sheet, disable changes
