@@ -30,6 +30,11 @@ require_once('modules/UpgradeWizard/UpgradeRemoval.php');
 class UpgradeRemoval66x extends UpgradeRemoval
 {
     /**
+     * @var string minimal version for removal
+     */
+    public $version = '6.6.0';
+
+    /**
      * Return an array of files/directories to remove for 66x upgrades
      * 
      * @param string $version
@@ -42,7 +47,7 @@ class UpgradeRemoval66x extends UpgradeRemoval
         // In 6.6.0 we did the following
         // 1) Introduced unified sidecar metadata and studio changes
 
-        if($version < '660')
+        if (version_compare($version, $this->version, '<'))
         {
             // Handle the metadata upgrade files for sidecar conversion
             require_once 'modules/UpgradeWizard/SidecarUpdate/SidecarMetaDataUpgrader.php';

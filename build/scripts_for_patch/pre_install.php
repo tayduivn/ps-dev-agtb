@@ -51,24 +51,5 @@ function upgrade_config_pwd(){
 }
 
 function pre_install() {
-	global $sugar_version, $path;
-    if($sugar_version < '5.5.0') {
-        _logThis("Begin Upgrade passwords in table config", $path);
-        upgrade_config_pwd();
-        _logThis("End Upgrade passwords in table config", $path);
-
-// BEGIN SUGARCRM flav=com ONLY
-        _logThis("Begin remove ACL actions for Trackers", $path);
-        include('include/modules.php');
-        if(isset($beanFiles['Tracker']) && file_exists($beanFiles['Tracker']))
-        {
-            require_once('modules/ACLActions/ACLAction.php');
-            ACLAction::removeActions('Trackers', 'Tracker');
-        }
-        _logThis("End remove ACL actions for Trackers", $path);
-// END SUGARCRM flav=com ONLY
-
-    }
-	return true;
+    return true;
 }
-?>
