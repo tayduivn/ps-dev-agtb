@@ -98,7 +98,7 @@ class ForecastsDefaults
             // number of timeperiods in the past from the current that are displayed
             'timeperiod_shown_backward' => 2,
             // used to indicate the available option for grouping opportunities
-            'forecast_categories' => 'show_binary',  // options:  'show_binary', 'show_buckets', 'show_custom_buckets'
+            'forecast_ranges' => 'show_binary',  // options:  'show_binary', 'show_buckets', 'show_custom_buckets'
             // used to reference the app_list_string entry to indicate the commit stage list to use
             'buckets_dom' => 'commit_stage_binary_dom', // options:  commit_stage_binary_dom, commit_stage_dom, commit_stage_extended_dom
             // the defined binary ranges the different buckets opportunities will fall in by default based on their probability

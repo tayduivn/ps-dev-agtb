@@ -221,7 +221,7 @@ describe("The forecasts worksheet", function(){
             _renderFieldStub.restore();
         });
 
-        it("should have format and unformat handlers on field when config is set to forecast_categories show_binary", function() {
+        it("should have format and unformat handlers on field when config is set to forecast_ranges show_binary", function() {
             sinon.stub(view.context.forecasts.config, "get", function(key) {
                 return "show_binary";
             });
@@ -345,8 +345,8 @@ describe("The forecasts worksheet", function(){
     		expect(view.context.forecasts.on).toHaveBeenCalledWith("change:selectedTimePeriod");
     	});
     	
-    	it("forecasts.on should have been called with selectedCategory", function(){
-    		expect(view.context.forecasts.on).toHaveBeenCalledWith("change:selectedCategory");
+    	it("forecasts.on should have been called with selectedRanges", function(){
+    		expect(view.context.forecasts.on).toHaveBeenCalledWith("change:selectedRanges");
     	});
     	
     	it("forecasts.worksheet.on should have been called with change", function(){

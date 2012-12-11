@@ -121,7 +121,7 @@
             timeperiod_id : app.defaultSelections.timeperiod_id.id,
             group_by : _.first(this.getCheckedOptions('groupByOptions')),
             dataset : this.getCheckedOptions('datasetOptions'),
-            category : app.defaultSelections.category
+            ranges: app.defaultSelections.ranges
         };
 
         this.handleRenderOptions(values);
@@ -181,9 +181,9 @@
                 self.handleRenderOptions({group_by: groupBy});
             }
         });
-        this.context.forecasts.on('change:selectedCategory', function(context, value) {
+        this.context.forecasts.on('change:selectedRanges', function(context, value) {
             if(!_.isEmpty(self.chart)) {
-                self.handleRenderOptions({category: value});
+                self.handleRenderOptions({ranges: value});
             }
         });
         this.context.forecasts.on('change:hiddenSidebar', function(context, value){
@@ -293,7 +293,7 @@
         );
 
         if(this.values.get('display_manager') === true) {
-            this.values.set({category: 'include'}, {silent: true});
+            this.values.set({ranges: 'include'}, {silent: true});
         }
 
         // update the chart title

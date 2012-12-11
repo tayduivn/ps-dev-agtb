@@ -48,7 +48,15 @@ class ChartDisplayTest extends Sugar_PHPUnit_Framework_TestCase
         SugarTestHelper::setUp('app_list_strings');
         SugarTestHelper::setUp('app_strings');
         SugarTestHelper::setUp('current_user', array(true, 1));
+    }
 
+    public static function tearDownAfterClass()
+    {
+        SugarTestHelper::tearDown();
+    }
+
+    public function setUp()
+    {
         // create 5 accounts with shipping_states equal to Indiana
         $x=0;
         while($x<5) {
@@ -62,20 +70,6 @@ class ChartDisplayTest extends Sugar_PHPUnit_Framework_TestCase
         self::$report_defs = array();
         self::$report_defs[] = '{"display_columns":[],"module":"Accounts","group_defs":[{"name":"account_type","label":"Type","table_key":"self","type":"enum"}],"summary_columns":[{"name":"count","label":"Count","field_type":"","group_function":"count","table_key":"self"},{"name":"account_type","label":"Type","table_key":"self"}],"report_name":"Test Run","chart_type":"hBarF","do_round":1,"chart_description":"","numerical_chart_column":"self:count","numerical_chart_column_type":"","assigned_user_id":"1","report_type":"summary","full_table_list":{"self":{"value":"Accounts","module":"Accounts","label":"Accounts"}},"filters_def":{"Filter_1":{"operator":"AND","0":{"name":"shipping_address_state","table_key":"self","qualifier_name":"equals","input_name0":"IN","input_name1":"on"}}}}';
 
-        parent::setUpBeforeClass();
-
-    }
-
-    public static function tearDownAfterClass()
-    {
-        SugarTestAccountUtilities::removeAllCreatedAccounts();
-        parent::tearDownAfterClass();
-    }
-
-    public function setUp()
-    {
-        parent::setUp();
-
         // run the code here since we just want to test what it outputs
         $this->chartDisplay = new ChartDisplay();
 
@@ -88,8 +82,7 @@ class ChartDisplayTest extends Sugar_PHPUnit_Framework_TestCase
 
     public function tearDown()
     {
-        parent::tearDown();
-
+        SugarTestAccountUtilities::removeAllCreatedAccounts();
         unset($this->chartDisplay);
         unset($this->chartData);
     }

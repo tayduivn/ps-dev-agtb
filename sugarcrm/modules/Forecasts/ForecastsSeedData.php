@@ -187,7 +187,7 @@ class ForecastsSeedData {
         $admin->saveSetting('Forecasts', 'is_setup', 1, 'base');
 
         // TODO-sfa - remove this once the ability to map buckets when they get changed is implemented (SFA-215).
-        // this locks the forecasts category configs if the apps is installed with demo data and already has commits
+        // this locks the forecasts ranges configs if the apps is installed with demo data and already has commits
         $admin->saveSetting('Forecasts', 'has_commits', 1, 'base');
     }
 }

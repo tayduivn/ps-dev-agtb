@@ -153,10 +153,10 @@
         _.each(fields, function(field) {
             if (field.name == "expected_commit_stage") {
                 field.view = self.editableWorksheet ? self.name : 'detail';
-                var forecastCategories = self.context.forecasts.config.get("forecast_categories");
+                var forecastRanges = self.context.forecasts.config.get("forecast_ranges");
 
                 //show_binary, show_buckets, show_n_buckets
-                if(forecastCategories == "show_binary"){
+                if(forecastRanges == "show_binary"){
                     field.type = 'bool';
                 }
             } else {
@@ -166,11 +166,11 @@
     },
 
     _setUpCommitStage: function(field) {
-    	var forecastCategories = this.context.forecasts.config.get("forecast_categories");
+    	var forecastRanges = this.context.forecasts.config.get("forecast_ranges");
     	var self = this;
 
     	//show_binary, show_buckets, show_n_buckets
-    	if(forecastCategories == "show_binary"){
+    	if(forecastRanges == "show_binary"){
             this.isBinary = true;
     		field.type = "bool";
     					
