@@ -41,6 +41,8 @@ class Bug56391Test extends Sugar_PHPUnit_Framework_TestCase
         foreach($this->accounts AS $account_id) {
             $GLOBALS['db']->query("DELETE FROM accounts WHERE id = '{$account_id}'");
         }
+        $GLOBALS['db']->query("DELETE FROM roles WHERE name LIKE 'Unit Test%'");
+        $GLOBALS['db']->query("DELETE FROM acl_roles WHERE name LIKE 'Unit Test%'");
         SugarTestHelper::tearDown();
     }
 
@@ -145,6 +147,7 @@ class Bug56391Test extends Sugar_PHPUnit_Framework_TestCase
         }
         $id = $GLOBALS['current_user']->id;
         $GLOBALS['current_user'] = BeanFactory::getBean('Users', $id);
+        unset($_SESSION['ACL']);
 
 
 
@@ -194,7 +197,6 @@ class Bug56391Test extends Sugar_PHPUnit_Framework_TestCase
 
         $role = $this->createRole('UNIT TEST ' . create_guid(), $modules, array('access', 'create', 'view', 'list', 'edit','delete','import', 'export', 'massupdate'));
 
-        // set the website field as Read Only
         $aclField = new ACLField();
         $aclField->setAccessControl('Accounts', $role->id, 'website', -99);
         ACLField::loadUserFields('Accounts', 'Account', $GLOBALS['current_user']->id, true );
@@ -242,6 +244,40 @@ class Bug56391Test extends Sugar_PHPUnit_Framework_TestCase
                                 'massupdate' => 'no',            
             );
 
+
+
+        $role = $this->createRole('UNIT TEST ' . create_guid(), $modules, array('access', 'view', 'list', 'edit', 'delete', 'export'), array('edit'));
+
+        if (!($GLOBALS['current_user']->check_role_membership($role->name))) {
+            $GLOBALS['current_user']->load_relationship('aclroles');
+            $GLOBALS['current_user']->aclroles->add($role);
+            $GLOBALS['current_user']->save();
+        }
+        $id = $GLOBALS['current_user']->id;
+        $GLOBALS['current_user'] = BeanFactory::getBean('Users', $id);
+        unset($_SESSION['ACL']);
+
+        $account = BeanFactory::newBean('Accounts');
+        $account->name = 'Unit Test ' . create_guid();
+        $account->assigned_user_id = $GLOBALS['current_user']->id;
+        $account->save();
+        $this->accounts['access'] = $account->id;
+
+        unset($account);
+
+        $mm = new MetaDataManager($GLOBALS['current_user']);
+
+        $acls = $mm->getAclForModule('Accounts', $GLOBALS['current_user'], BeanFactory::getBean('Accounts', $this->accounts['access']));
+        unset($acls['_hash']);
+        // not checking fields right now
+        unset($acls['fields']);
+
+        $this->assertEquals($expected_bean_result['access'], $acls, 'Access Failed');
+    }
+
+    public function testModuleOwnerNoAccess() {
+        $modules = array('Accounts', );
+
         $expected_bean_result['no_access'] = array(
                                 'access' => 'yes',
                                 'admin' => 'no',
@@ -255,7 +291,14 @@ class Bug56391Test extends Sugar_PHPUnit_Framework_TestCase
                                 'massupdate' => 'no',            
             );
 
-        $role = $this->createRole('UNIT TEST ' . create_guid(), $modules, array('access', 'view', 'list', 'edit', 'delete', 'export'), array('edit'));
+        $account = BeanFactory::newBean('Accounts');
+        $account->name = 'Unit Test ' . create_guid();
+        $account->assigned_user_id = 1;
+        $account->save();
+        $this->accounts['no_access'] = $account->id;
+
+        unset($account);        
+        $role = $this->createRole('UNIT TEST ' . create_guid(), $modules, array('access', 'view', 'list', 'edit', 'delete', 'export'), array('edit',));
 
         if (!($GLOBALS['current_user']->check_role_membership($role->name))) {
             $GLOBALS['current_user']->load_relationship('aclroles');
@@ -264,16 +307,28 @@ class Bug56391Test extends Sugar_PHPUnit_Framework_TestCase
         }
         $id = $GLOBALS['current_user']->id;
         $GLOBALS['current_user'] = BeanFactory::getBean('Users', $id);
+        unset($_SESSION['ACL']);
 
-        // create two accounts
-        $account = BeanFactory::newBean('Accounts');
-        $account->name = 'Unit Test ' . create_guid();
-        $account->assigned_user_id = 1;
-        $account->save();
-        $this->accounts['no_access'] = $account->id;
+        $mm = new MetaDataManager($GLOBALS['current_user']);
 
-        unset($account);
-        
+        $acls = $mm->getAclForModule('Accounts', $GLOBALS['current_user'], BeanFactory::getBean('Accounts', $this->accounts['no_access']));
+
+        unset($acls['_hash']);
+        // not checking fields right now
+        unset($acls['fields']);
+
+        $this->assertEquals($expected_bean_result['no_access'], $acls, 'No Access Failed');
+
+    }
+
+    public function testModuleFieldOwnerAccess() {
+        $modules = array('Accounts', );
+
+        $expected_bean_result['field_access'] = array(
+            );
+
+
+                
         $account = BeanFactory::newBean('Accounts');
         $account->name = 'Unit Test ' . create_guid();
         $account->assigned_user_id = $GLOBALS['current_user']->id;
@@ -282,24 +337,76 @@ class Bug56391Test extends Sugar_PHPUnit_Framework_TestCase
 
         unset($account);
 
+        $role = $this->createRole('UNIT TEST ' . create_guid(), $modules, array('access', 'view', 'list', 'edit', 'delete', 'export'), array('edit'));
+
+        // set the name field as Read Only
+        $aclField = new ACLField();
+        $aclField->setAccessControl('Accounts', $role->id, 'name', ACL_READ_OWNER_WRITE);
+        ACLField::loadUserFields('Accounts', 'Account', $GLOBALS['current_user']->id, true );
+        
+        if (!($GLOBALS['current_user']->check_role_membership($role->name))) {
+            $GLOBALS['current_user']->load_relationship('aclroles');
+            $GLOBALS['current_user']->aclroles->add($role);
+            $GLOBALS['current_user']->save();
+        }
+        $id = $GLOBALS['current_user']->id;
+        $GLOBALS['current_user'] = BeanFactory::getBean('Users', $id);
+        unset($_SESSION['ACL']);
+
+        $mm = new MetaDataManager($GLOBALS['current_user']);
+
+
+        $acls = $mm->getAclForModule('Accounts', $GLOBALS['current_user'], BeanFactory::getBean('Accounts', $this->accounts['access']));
+        unset($acls['_hash']);
+
+        $fields = $acls['fields'];
+        unset($acls['fields']);
+        $this->assertEquals($expected_bean_result['field_access'], $fields, 'Field Access Failed');        
+
+    }
+
+    public function testModuleFieldOwnerNoAccess() {
+        $modules = array('Accounts', );
+
+        $expected_bean_result['field_no_access'] = array(
+                'name' => array(
+                        'write' => 'no',
+                        'create' => 'no',
+                    ),
+            );
+        $account = BeanFactory::newBean('Accounts');
+        $account->name = 'Unit Test ' . create_guid();
+        $account->assigned_user_id = 1;
+        $account->save();
+        $this->accounts['no_access'] = $account->id;
+
+        unset($account);        
+        $role = $this->createRole('UNIT TEST ' . create_guid(), $modules, array('access', 'view', 'list', 'edit', 'delete', 'export'), array('edit'));
+        
+        // set the name field as Read Only
+        $aclField = new ACLField();
+        $aclField->setAccessControl('Accounts', $role->id, 'name', ACL_READ_OWNER_WRITE);
+        ACLField::loadUserFields('Accounts', 'Account', $GLOBALS['current_user']->id, true );
+
+        if (!($GLOBALS['current_user']->check_role_membership($role->name))) {
+            $GLOBALS['current_user']->load_relationship('aclroles');
+            $GLOBALS['current_user']->aclroles->add($role);
+            $GLOBALS['current_user']->save();
+        }
+        $id = $GLOBALS['current_user']->id;
+        $GLOBALS['current_user'] = BeanFactory::getBean('Users', $id);
+        unset($_SESSION['ACL']);
+
+
         $mm = new MetaDataManager($GLOBALS['current_user']);
 
         $acls = $mm->getAclForModule('Accounts', $GLOBALS['current_user'], BeanFactory::getBean('Accounts', $this->accounts['no_access']));
         unset($acls['_hash']);
-        // not checking fields right now
+        
+        $fields = $acls['fields'];
         unset($acls['fields']);
 
-
-        $this->assertEquals($expected_bean_result['no_access'], $acls, 'No Access Failed');
-
-        $acls = $mm->getAclForModule('Accounts', $GLOBALS['current_user'], BeanFactory::getBean('Accounts', $this->accounts['access']));
-        unset($acls['_hash']);
-        // not checking fields right now
-        unset($acls['fields']);
-
-
-        $this->assertEquals($expected_bean_result['access'], $acls, 'Access Failed');
-
+        $this->assertEquals($expected_bean_result['field_no_access'], $fields, 'No Field Access Failed');        
 
     }
 

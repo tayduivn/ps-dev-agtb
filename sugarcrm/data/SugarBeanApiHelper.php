@@ -159,8 +159,6 @@ class SugarBeanApiHelper
                  * beanAclFields is !empty and moduleAclFields is !empty -> diff the arrays -> return diffArray
                  */
 
-                $GLOBALS['log']->fatal("{$bean->id}::\r\n\r\n", print_r($beanAclFields, true) . "\r\n\r\n");
-
                 if(!empty($beanAclFields) && empty($moduleAclFields)) {
                     $fieldsAcls = $beanAclFields;
                 }
