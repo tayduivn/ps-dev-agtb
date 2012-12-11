@@ -50,10 +50,12 @@ $viewdefs['Forecasts']['base']['view']['forecastsWorksheet'] = array(
                 array(
                     'name' => 'probability',
                     'label' => 'LBL_OW_PROBABILITY',
-                    'type' => 'int',
+                    'type' => 'editableInt',
                     'default' => true,
                     'enabled' => true,
-                    'clickToEdit' => true
+                    'maxValue' => 100,
+                    'minValue' => 0,
+                    //'clickToEdit' => true
                 ),
 
                 array(

@@ -47,7 +47,7 @@
                 self.$el.find(self.inputSelector).blur();
             } else {
                 // will generate error styles here, for now log to console
-                console.log(app.lang.get(self.errorCode, "Forecasts"));
+                self.showErrors();
                 self.$el.find(self.inputSelector).focus().select();
             }
         });
@@ -76,7 +76,7 @@
      * Switch the view to the Edit view if the field is editable and it's clicked on
      * @param evt
      */
-    onClick: function (evt) {
+    onClick : function(evt) {
         evt.preventDefault();
         if (!this.isEditable()) return;
 
@@ -111,8 +111,7 @@
      *
      * @param evt
      */
-    onBlur: function (evt) {
-        // submit if unfocused
+    onBlur : function(evt) {
         evt.preventDefault();
         this.options.viewName = 'detail';
         this.render();
@@ -125,7 +124,7 @@
      * @return {Boolean}
      */
     isValid: function (value) {
-        var regex = new RegExp("^\\+?\\d+$");
+        var regex = new RegExp("^[+-]?\\d+$");
         // always make sure that we have a string here, since match only works on strings
         if (_.isNull(value.toString().match(regex))) {
             this.errorCode = 'LBL_CLICKTOEDIT_INVALID';
@@ -135,8 +134,8 @@
         // we have digits, lets make sure it's int a valid range is one is specified
         if (!_.isUndefined(this.def.minValue) && !_.isUndefined(this.def.maxValue)) {
             // we have a min and max value
-            if (value < this.def.minValue || value > this.def.maxValue) {
-                this.errorCode = 'LBL_CLICKTOEDIT_INVALID';
+            if(value < this.def.minValue || value > this.def.maxValue) {
+                this.errorCode = 'LBL_CLICKTOEDIT_INVALID_RANGE';
                 return false;
             }
         }
@@ -160,14 +159,30 @@
      * @param value
      * @return {*}
      */
-    parsePercentage: function (value) {
+    parsePercentage : function(value) {
         var orig = this.value;
-        var parts = value.match(/^([+-])([\d\.]+?)\%$/);
-        if (parts) {
+        var parts = value.toString().match(/^([+-])(\d+(\.\d+)?)\%$/);
+        if(parts) {
             // use original number to apply calculations
-            return Math.round(eval(orig + parts[1] + "(" + parts[2] / 100 + "*" + orig + ")"));
+            value = app.math.mul(app.math.div(parts[2],100),orig);
+            if(parts[1] == '+') {
+                value = app.math.add(orig,value);
+            } else {
+                value = app.math.sub(orig,value);
+            }
+            // we round to nearest integer for this field type
+            value = app.math.round(value, 0);
         }
+        return value;
+    },
 
-        return value
+    showErrors : function() {
+        // remove any previous errors
+        this.$el.find('.editable-error').remove();
+        // attach error styles
+        this.$el.find('.control-group').addClass('error');
+        var invalid = $('<span class="help-inline editable-error" style="white-space: nowrap;"><span class="btn btn-danger"><i class="icon-white icon-exclamation-sign"></i></span>' + app.lang.get(this.errorCode, "Forecasts") + '</span>');
+        this.$el.find('.controls').append(invalid);
     }
+
 })

@@ -30,6 +30,10 @@
     {{#if def.auto_increment}}
         {{#eq value "NaN"}}--{{else}}{{value}}{{/eq}}
     {{else}}
-        <input type="text" value="{{value}}" class="input-mini focused tright">
+        <div class="controls">
+            <div class="control-group">
+                <input type="text" value="{{value}}" class="input-mini focused tright" maxlength="26">
+            </div>
+        </div>
     {{/if}}
 </span>
