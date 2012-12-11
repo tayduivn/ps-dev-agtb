@@ -46,7 +46,7 @@ class ViewSystemQuicklist extends ViewQuickList{
 	}
     /**
      * After the notification is displayed, clear the fts flags
-     * @return type
+     * @return null
      */
     protected function clearFTSFlags() {
         if (is_admin($GLOBALS['current_user']))
