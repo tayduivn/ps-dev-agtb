@@ -190,11 +190,12 @@
             }
 
             // need to add error styling to parent view element
-            this.$el.parent().parent().addClass("error");
+            debugger;
+            this.$el.parents('.control-group').addClass("error");
             var ftag = this.fieldTag || '';
 
             // Reset Field
-            if (this.$el.parent().parent().find('.input-append').length > 0) {
+            if (this.$el.parents('.control-group').find('.input-append').length > 0) {
                 this.$el.unwrap()
             }
             self.$('.help-block').html('');
