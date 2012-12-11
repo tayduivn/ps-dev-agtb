@@ -5,7 +5,7 @@
         'mouseenter span.editable': 'onMouseEnter',
         'mouseleave span.editable': 'onMouseLeave',
         'click span.editable': 'onClick',
-        'blur span.edit input' : 'onBlur',
+        //'blur span.edit input' : 'onBlur',
         'keypress span.edit input' : 'onKeypress',
         'change span.edit input' : 'onChange'
     },
@@ -66,8 +66,7 @@
      */
     onKeypress : function(evt) {
         // submit if pressed return or tab
-        if(evt.which == 13 || evt.which == 9)
-        {
+        if(evt.which == 13 || evt.which == 9) {
             this.onBlur(evt);
         }
     },
@@ -89,14 +88,14 @@
         // submit if unfocused
         evt.preventDefault();
         if(!this.isEditable()) return;
-        var value = this.$el.find('input').val();
+        var value = this.parsePercentage(this.$el.find('span.edit input').val());
         if(this.isValid(value)) {
             this.model.set(this.name, value);
             this.options.viewName = 'detail';
             this.render();
         } else {
             // will generate error styles here, for now log to console
-            console.log(app.lang.get("LBL_CLICKTOEDIT_INVALID", "Forecasts"));
+            console.log(app.lang.get(this.errorCode, "Forecasts"));
             this.$el.find('span.edit input').focus().select();
         }
     },
@@ -108,7 +107,8 @@
      */
     isValid: function(value) {
         var regex = new RegExp("^\\+?\\d+$");
-        if(_.isNull(value.match(regex))) {
+        // always make sure that we have a string here, since match only works on strings
+        if(_.isNull(value.toString().match(regex))) {
             this.errorCode = 'LBL_CLICKTOEDIT_INVALID';
             return false;
         }
@@ -133,5 +133,16 @@
      */
     isEditable : function() {
         return this._canEdit;
+    },
+
+    parsePercentage : function(value) {
+        var orig = this.value;
+        var parts = value.match(/^([+-])([\d\.]+?)\%$/);
+        if(parts) {
+            // use original number to apply calculations
+            return Math.round(eval(orig + parts[1] + "(" + parts[2] / 100 + "*" + orig +")"));
+        }
+
+        return value
     }
 })
