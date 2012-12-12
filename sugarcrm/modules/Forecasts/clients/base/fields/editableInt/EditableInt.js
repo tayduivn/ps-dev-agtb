@@ -11,14 +11,12 @@
 
     inputSelector: 'span.edit input',
 
-    errorCode: '',
+    errorMessage: '',
 
     _canEdit: true,
 
     initialize: function (options) {
-
         app.view.fields.IntField.prototype.initialize.call(this, options);
-
         this.checkIfCanEdit();
     },
 
@@ -131,10 +129,16 @@
      * @return {Boolean}
      */
     isValid: function (value) {
-        var regex = new RegExp("^[+-]?\\d+$");
+        var regex = new RegExp("^[+-]?\\d+$"),
+            hb = Handlebars.compile("{{str_format key module args}}"),
+            args = [];
+
+        text2 = hb({'key' : 'LBL_COMMITTED_THIS_MONTH', 'module' : 'Forecasts', 'args' : args});
+
         // always make sure that we have a string here, since match only works on strings
         if (_.isNull(value.toString().match(regex))) {
-            this.errorCode = 'LBL_CLICKTOEDIT_INVALID';
+            args = [this.def.label];
+            this.errorMessage = hb({'key' : 'LBL_EDITABLE_INVALID', 'module' : 'Forecasts', 'args' : args});
             return false;
         }
 
@@ -142,7 +146,8 @@
         if (!_.isUndefined(this.def.minValue) && !_.isUndefined(this.def.maxValue)) {
             // we have a min and max value
             if(value < this.def.minValue || value > this.def.maxValue) {
-                this.errorCode = 'LBL_CLICKTOEDIT_INVALID_RANGE';
+                args = [this.def.minValue, this.def.maxValue];
+                this.errorMessage = hb({'key' : 'LBL_EDITABLE_INVALID_RANGE', 'module' : 'Forecasts', 'args' : args});
                 return false;
             }
         }
@@ -168,13 +173,13 @@
      */
     parsePercentage : function(value) {
         var orig = this.value;
-        var parts = value.toString().match(/^([+-])(\d+(\.\d+)?)\%$/);
+        var parts = value.toString().match(/^([+-]?)(\d+(\.\d+)?)\%$/);
         if(parts) {
             // use original number to apply calculations
             value = app.math.mul(app.math.div(parts[2],100),orig);
             if(parts[1] == '+') {
                 value = app.math.add(orig,value);
-            } else {
+            } else if(parts[1] == '-') {
                 value = app.math.sub(orig,value);
             }
             // we round to nearest integer for this field type
@@ -184,12 +189,10 @@
     },
 
     showErrors : function() {
-        // remove any previous errors
-        this.$el.find('.editable-error').remove();
         // attach error styles
+        this.$el.find('.error-message').html(this.errorMessage);
         this.$el.find('.control-group').addClass('error');
-        var invalid = $('<span class="help-inline editable-error" style="white-space: nowrap;"><span class="btn btn-danger"><i class="icon-white icon-exclamation-sign"></i></span>' + app.lang.get(this.errorCode, "Forecasts") + '</span>');
-        this.$el.find('.controls').append(invalid);
+        this.$el.find('.help-inline.editable-error').removeClass('hide').addClass('show');
     }
 
 })
