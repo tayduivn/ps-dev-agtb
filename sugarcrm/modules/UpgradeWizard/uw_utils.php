@@ -718,23 +718,23 @@ function upgradeUWFiles($file) {
     }
     // upgradeWizard
     if(file_exists("$from_dir/modules/UpgradeWizard")) {
-        $allFiles[] = findAllFiles("$from_dir/modules/UpgradeWizard", $allFiles);
+        $allFiles[] = findAllFiles("$from_dir/modules/UpgradeWizard", array());
     }
     // moduleInstaller
     if(file_exists("$from_dir/ModuleInstall")) {
-        $allFiles[] = findAllFiles("$from_dir/ModuleInstall", $allFiles);
+        $allFiles[] = findAllFiles("$from_dir/ModuleInstall", array());
     }
     if(file_exists("$from_dir/include/javascript/yui")) {
-        $allFiles[] = findAllFiles("$from_dir/include/javascript/yui", $allFiles);
+        $allFiles[] = findAllFiles("$from_dir/include/javascript/yui", array());
     }
     if(file_exists("$from_dir/HandleAjaxCall.php")) {
         $allFiles[] = "$from_dir/HandleAjaxCall.php";
     }
     if(file_exists("$from_dir/include/SugarTheme")) {
-        $allFiles[] = findAllFiles("$from_dir/include/SugarTheme", $allFiles);
+        $allFiles[] = findAllFiles("$from_dir/include/SugarTheme", array());
     }
     if(file_exists("$from_dir/include/SugarCache")) {
-        $allFiles[] = findAllFiles("$from_dir/include/SugarCache", $allFiles);
+        $allFiles[] = findAllFiles("$from_dir/include/SugarCache", array());
     }
     if(file_exists("$from_dir/include/utils/external_cache.php")) {
         $allFiles[] = "$from_dir/include/utils/external_cache.php";
@@ -753,7 +753,7 @@ function upgradeUWFiles($file) {
     }
     // users
     if(file_exists("$from_dir/modules/Users")) {
-        $allFiles[] = findAllFiles("$from_dir/modules/Users", $allFiles);
+        $allFiles[] = findAllFiles("$from_dir/modules/Users", array());
     }
     if(file_exists("$from_dir/include/utils/autoloader.php")) {
     	$allFiles[] = "$from_dir/include/utils/autoloader.php";
