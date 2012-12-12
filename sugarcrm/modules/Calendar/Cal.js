@@ -271,13 +271,21 @@
 		
 		
 		if(params.type == "advanced"){
-		var elContent = document.createElement("div");
+			var elContent = document.createElement("div");
 			elContent.setAttribute("class","content");
 			if(params.content_style != "") {
 				elContent.style[params.content_style] = params.content_style_value;
 			}
 			elContent.innerHTML = params.item_text;
 			el.appendChild(elContent);
+
+			var related_to = document.createElement("div");
+			related_to.setAttribute("class","content");
+			if(params.content_style != "") {
+			    related_to.style[params.content_style] = params.content_style_value;
+			}
+			related_to.innerHTML = params.related_to;
+			el.appendChild(related_to);
 		}
 		
 
@@ -782,7 +790,7 @@
 				return;
 			}
 				
-			var head_text = CAL.get_header_text(item.type,item.time_start,item.name,item.record);					
+			var head_text = CAL.get_header_text(item.type,item.time_start,item.name,item.record);
 			var time_cell = item.timestamp - item.timestamp % (CAL.t_step * 60);			
 			var duration_coef; 
 			if(item.module_name == 'Tasks'){
@@ -795,6 +803,7 @@
 			}
 
 			var item_text = SUGAR.language.languages.app_list_strings[item.type +'_status_dom'][item.status];
+			var related_to = item.related_to;
 			
 			var content_style = "";
 			var content_style_value = "";
@@ -814,7 +823,8 @@
 				id_suffix: id_suffix,
 				item_text: item_text,
 				content_style: content_style,
-				content_style_value: content_style_value
+				content_style_value: content_style_value,
+				related_to: related_to
 			});
 			
 			YAHOO.util.Event.on(el,"click",function(){
@@ -840,7 +850,7 @@
 	}
 
 	CAL.get_header_text = function (type,time_start,text,record){
-			var start_text = "<span class='start_time'>" + time_start + "</span> " + text;
+			var start_text = text;
 			return start_text;
 	}
 	
