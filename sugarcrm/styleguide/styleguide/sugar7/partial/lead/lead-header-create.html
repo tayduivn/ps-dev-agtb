@@ -45,14 +45,17 @@
       .on('click','.save',function(e){
         if($(this).hasClass('save_save')===false) {
           console.log('first click');
+          loadPartials([
+            {"file":"lead/lead-create-duplicates","target":"#edit .record.active","method":"prepend"}
+          ]);
           $(this).addClass('save_save').attr({'href':''});
         } else {
           drawer(false);
           console.log('second click');
           throwMessage('<strong>Success!</strong> You successfully created the lead "Tameka Dammann"', 'success', true);
+          $('.want_filter, #DataTables_Table_1_wrapper').hide(); 
         }
       });
-
   });
 
   function invokeSaveButtons(){
