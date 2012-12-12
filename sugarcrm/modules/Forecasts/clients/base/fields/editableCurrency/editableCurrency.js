@@ -13,7 +13,7 @@
 
     inputSelector: 'span.edit input',
 
-    errorCode: '',
+    errorMessage: '',
 
     _canEdit: true,
 
@@ -146,16 +146,17 @@
      * @return {Boolean}
      */
     isValid: function (value) {
-        var ds = app.utils.regexEscape(app.user.get('decimal_separator')) || '.';
-        var gs = app.utils.regexEscape(app.user.get('number_grouping_separator')) || ',';
-        // matches a valid positive decimal number
-        var reg1 = new RegExp("^\\+?(\\d+|\\d{1,3}("+gs+"\\d{3})*)?("+ds+"\\d+)?\\%?$");
-        // matches a valid decimal percentage
-        var reg2 = new RegExp("^[\\+\\-]?\\d+?("+ds+"\\d+)?\\%$");
+        var ds = app.utils.regexEscape(app.user.get('decimal_separator')) || '.',
+            gs = app.utils.regexEscape(app.user.get('number_grouping_separator')) || ',',
+            // matches a valid positive decimal number
+            reg = new RegExp("^\\+?(\\d+|\\d{1,3}("+gs+"\\d{3})*)?("+ds+"\\d+)?\\%?$"),
+            hb = Handlebars.compile("{{str_format key module args}}"),
+            args = [];
 
         // always make sure that we have a string here, since match only works on strings
-        if (_.isNull(value.toString().match(reg1)) || _.isNull(value.toString().match(reg2))) {
-            this.errorCode = 'LBL_CLICKTOEDIT_INVALID';
+        if (_.isNull(value.toString().match(reg))) {
+            args = [this.def.label];
+            this.errorMessage = hb({'key' : 'LBL_EDITABLE_INVALID', 'module' : 'Forecasts', 'args' : args});
             return false;
         }
 
@@ -179,29 +180,27 @@
      * @return {*}
      */
     parsePercentage : function(value) {
-        var orig = this.value;
-        var parts = value.toString().match(/^([+-])(\d+(\.\d+)?)\%$/);
+        var orig = this.model.get(this.name);
+        var parts = value.toString().match(/^([+-]?)(\d+(\.\d+)?)\%$/);
         if(parts) {
             // use original number to apply calculations
             value = app.math.mul(app.math.div(parts[2],100),orig);
             if(parts[1] == '+') {
                 value = app.math.add(orig,value);
-            } else {
+            } else if(parts[1] == '-') {
                 value = app.math.sub(orig,value);
             }
             // we round to nearest integer for this field type
-            value = app.math.round(value);
+            value = app.math.round(value, 0);
         }
         return value;
     },
 
     showErrors : function() {
-        // remove any previous errors
-        this.$el.find('.editable-error').remove();
         // attach error styles
+        this.$el.find('.error-message').html(this.errorMessage);
         this.$el.find('.control-group').addClass('error');
-        var invalid = $('<span class="help-inline editable-error" style="white-space: nowrap;"><span class="btn btn-danger"><i class="icon-white icon-exclamation-sign"></i></span>' + app.lang.get(this.errorCode, "Forecasts") + '</span>');
-        this.$el.find('.controls').append(invalid);
+        this.$el.find('.help-inline.editable-error').removeClass('hide').addClass('show');
     }
 
 })

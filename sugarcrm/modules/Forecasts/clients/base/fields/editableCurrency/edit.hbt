@@ -33,5 +33,11 @@
                 <span class="add-on">{{symbol}}</span><input type="text" value="{{value}}" class="input-small focused tright" maxlength="26">
             </div>
         </div>
+            <span class="help-inline editable-error hide" style="white-space: nowrap;">
+                <span class="btn btn-danger">
+                    <i class="icon-white icon-exclamation-sign"></i>
+                </span>
+                <span class="error-message">Error Message</span>
+            </span>
     </div>
 </span>
