@@ -127,9 +127,16 @@ class SugarWidgetReportField extends SugarWidgetField
 				return $alias;
     	}
 
-    	// Removed ISNULL check as per bug 49452
-		$alias = "{$layout_def['group_function']}($alias)";
-		//$this->reporter->db->convert($alias, "IFNULL", array(0)));
+        // for a field with type='currency' conversion of values into a user-preferred currency
+        if ($layout_def['type'] == 'currency' && strpos($layout_def['name'], '_usdoll') === false) {
+            $currency = $this->reporter->currency_obj;
+            $currency_alias = isset($layout_def['currency_alias'])
+                ? $layout_def['currency_alias'] : $currency->table_name;
+            $query = $this->reporter->db->convert($currency_alias.".conversion_rate", "IFNULL", array(1));
+            $alias = "{$layout_def['group_function']}($alias/{$query})*{$currency->conversion_rate}";
+        } else {
+            $alias = "{$layout_def['group_function']}($alias)";
+        }
 	}
 
 	$reportAlias[$alias] = $layout_def;
