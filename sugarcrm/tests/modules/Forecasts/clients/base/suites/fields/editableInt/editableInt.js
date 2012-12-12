@@ -101,7 +101,7 @@ describe("forecast editableInt field", function () {
         });
         it("should return 53 with percentage is +5%", function() {
             field.value = "50";
-            expect(field.parsePercentage("+5%")).toEqual(35);
+            expect(field.parsePercentage("+5%")).toEqual(53);
         });
     })
 
