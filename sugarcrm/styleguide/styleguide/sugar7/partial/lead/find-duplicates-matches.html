@@ -1,4 +1,4 @@
-<div class="filter_init">
+<div class="filter_init duplicates">
 </div>
 <table class="duplicates highlight table dupdatatable table-striped">
   <thead>
@@ -47,6 +47,10 @@
 
 <script>
   $(document).ready(function() {
+
+    loadPartials([
+      {"file":"common/search-duplicates-row","target":"div.filter_init","method":"replace"},
+    ]);
 
     $('.drawer .main-pane .headerpane h1').html('3 Duplicates Found')
 

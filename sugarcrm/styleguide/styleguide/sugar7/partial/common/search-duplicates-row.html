@@ -1,0 +1,41 @@
+<article class="filter-body new" id="search_option_">
+  <div class="row-fluid">
+    <div class="controls span2">
+      <select class="chzn-select chzn-inherit-width buildit">
+          <option>
+              Name
+          </option>
+          <option>
+              Sales Stage
+          </option>
+      </select>
+    </div>
+    <div class="controls span2">
+      <select class="chzn-select chzn-inherit-width operator">
+          <option>
+              matches
+          </option>
+      </select>
+    </div>
+    <div class="filter-value controls span6">
+      <input type="text" placeholder="Enter a name..." class="inherit-width">
+    </div>
+    <div class="span2 tright">
+      <a href="#" class="btn btn-invisible removeme"><i class="icon-minus"></i></a>
+      <a href="#" class="btn btn-invisible addme"><i class="icon-plus"></i></a>
+    </div>
+  </div>
+</article>
+
+<script>
+
+  $(document).ready(function(){
+    $('body').on('click', '.addme', function(){
+      $(this).closest('article').clone().prependTo($('.filter_init.duplicates')).removeClass('new');
+      $('.filter-body.new').find('.filter-value input').attr('value','');
+    });
+  });
+
+  $('.filter-options').find('article').last().attr( 'id', 'search_option_'+$('.filtered').find('article').length );
+  $('.chzn-select').chosen({ disable_search_threshold: 5, searchChoiceConstructor: searchChoiceConstructor });
+</script>

@@ -6526,6 +6526,10 @@ hr.soften {
   border:0;
 }
 .padded { padding:20px; }
+.filter_init.duplicates { background:#e8e8e8; }
+.filter_init.duplicates article#search_option_.filter-body { padding:10px 10px 0 10px; }
+.filter_init.duplicates article#search_option_.filter-body>div { margin:0; }
+.filter_init.duplicates article#search_option_.filter-body.new .removeme { display:none; }
 [class^="icon-"] {
   font-size:14px;
   -webkit-font-smoothing:antialiased;
@@ -9076,7 +9080,7 @@ table.duplicates.highlight thead th, table.table-striped.duplicates.highlight tb
 .layout_Leads .want_filter .form-search > .hide:not(.mu) { display:block !important; }
 .layout_Leads .want_filter.active { padding:0; }
 .layout_Leads .want_filter .row-fluid { margin:0; }
-#search_option_ .row-fluid { margin:f6px 0 8px 0; }
+#search_option_ .row-fluid { margin:6px 0 8px 0; }
 .step-circle > span {
   display:inline-block;
   line-height:20px;
