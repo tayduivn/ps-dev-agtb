@@ -137,7 +137,8 @@
 
         // always make sure that we have a string here, since match only works on strings
         if (_.isNull(value.toString().match(regex))) {
-            args = [this.def.label];
+            var langString = app.lang.get(this.def.label,'Forecasts');
+            args = [langString];
             this.errorMessage = hb({'key' : 'LBL_EDITABLE_INVALID', 'module' : 'Forecasts', 'args' : args});
             return false;
         }
