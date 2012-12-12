@@ -94,10 +94,19 @@
         this.options.viewName = 'edit';
         this.render();
 
+        // set the edit input string to an unformatted number
+        var formattedValue = app.utils.formatNumber(
+            this.model.get(this.name),
+            app.user.get('decimal_precision'),
+            app.user.get('decimal_precision'),
+            '',
+            app.user.get('decimal_separator')
+        );
+        this.$el.find(this.inputSelector).val(formattedValue);
+
         // put the focus on the input
         this.$el.find(this.inputSelector).focus().select();
 
-        debugger;
     },
 
     /**
