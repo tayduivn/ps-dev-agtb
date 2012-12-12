@@ -30,11 +30,12 @@ class ExtTest extends Sugar_PHPUnit_Framework_TestCase
 
     public static function setUpBeforeClass()
     {
-        $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
-        $GLOBALS['current_user']->is_admin = "1";
         $GLOBALS['current_language'] = "en_us";
-        $GLOBALS['app_strings'] = return_application_language($GLOBALS['current_language']);
-        $GLOBALS['mod_strings'] = return_module_language($GLOBALS['current_language'], 'Administration');
+
+        SugarTestHelper::setUp("current_user");
+        SugarTestHelper::setUp("app_strings");
+        SugarTestHelper::setUp("mod_strings");
+        $GLOBALS['current_user']->is_admin = "1";
         mkdir_recursive("cache/ExtTest");
     }
 
@@ -61,12 +62,8 @@ class ExtTest extends Sugar_PHPUnit_Framework_TestCase
 
 	public static function tearDownAfterClass()
 	{
-		SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
-        unset($GLOBALS['current_user']);
-        unset($GLOBALS['current_language']);
-        unset($GLOBALS['app_strings']);
-        unset($GLOBALS['mod_strings']);
-	    if(file_exists("cache/ExtTest/test.ext.php")) {
+        SugarTestHelper::tearDown();
+        if(file_exists("cache/ExtTest/test.ext.php")) {
 	        @unlink("cache/ExtTest/test.ext.php");
 	    }
         rmdir_recursive("cache/ExtTest");

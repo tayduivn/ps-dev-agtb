@@ -28,8 +28,9 @@ class ImportableFieldsTest extends Sugar_PHPUnit_Framework_TestCase
 
 	public function setUp()
 	{
-        $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
-        
+        parent::setUp();
+        SugarTestHelper::setUp("current_user");
+
         $this->myBean = new SugarBean();
         
         $this->myBean->field_defs = array( 
@@ -54,9 +55,8 @@ class ImportableFieldsTest extends Sugar_PHPUnit_Framework_TestCase
 
 	public function tearDown()
 	{
-		SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
-        unset($GLOBALS['current_user']);
-        unset($this->time_date);
+		unset($this->time_date);
+        parent::tearDown();
 	}
 	
 	/**

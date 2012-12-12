@@ -30,12 +30,12 @@ class UserTest extends Sugar_PHPUnit_Framework_TestCase
 	public function setUp() 
     {
     	$this->_user = SugarTestUserUtilities::createAnonymousUser();
-    	$GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
+        SugarTestHelper::setUp("current_user");
 	}
 	
 	public function tearDown()
 	{
-	    unset($GLOBALS['current_user']);
+        SugarTestHelper::tearDown();
 	    SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
 	}
 

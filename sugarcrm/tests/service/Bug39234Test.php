@@ -48,12 +48,9 @@ class Bug39234Test extends Sugar_PHPUnit_Framework_TestCase
     	$this->_soapClient = new nusoapclient($GLOBALS['sugar_config']['site_url'].'/soap.php',false,false,false,false,false,600,600);
         $this->_setupTestUser();
         
-		$beanList = array();
-		$beanFiles = array();
-		require('include/modules.php');
-		$GLOBALS['beanList'] = $beanList;
-		$GLOBALS['beanFiles'] = $beanFiles;
-        
+		SugarTestHelper::setUp("beanList");
+        SugarTestHelper::setUp("beanFiles");
+
         $unid = uniqid();
 		$time = date('Y-m-d H:i:s');
 
@@ -112,9 +109,8 @@ class Bug39234Test extends Sugar_PHPUnit_Framework_TestCase
         unset($soap_version_test_opportunityId);
         unset($soap_version_test_contactId);
 
-		unset($GLOBALS['beanList']);
-		unset($GLOBALS['beanFiles']);
-    }	
+        SugarTestHelper::tearDown();
+    }
     
     public function testSetEntries() {
     	$this->_login();

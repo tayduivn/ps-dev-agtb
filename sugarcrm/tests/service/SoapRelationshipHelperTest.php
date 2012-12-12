@@ -48,10 +48,9 @@ class SoapRelationshipHelperTest extends Sugar_PHPUnit_Framework_TestCase
     {
         global $timedate, $current_user;
         $timedate = TimeDate::getInstance();
-        require('include/modules.php');
-        $GLOBALS['beanList'] = $beanList;
-        $GLOBALS['beanFiles'] = $beanFiles;
-        $current_user = SugarTestUserUtilities::createAnonymousUser();
+        SugarTestHelper::setUp("beanList");
+        SugarTestHelper::setUp("beanFiles");
+        SugarTestHelper::setUp("current_user");
         $this->nowTime = $timedate->asDb($timedate->getNow()->get("-10 minutes"));
         $this->tenMinutesLaterTime = $timedate->asDb($timedate->getNow()->get("+10 minutes"));
         $current_user->is_admin = 1;
@@ -120,9 +119,7 @@ class SoapRelationshipHelperTest extends Sugar_PHPUnit_Framework_TestCase
         SugarTestCallUtilities::removeAllCreatedCalls();
         SugarTestContactUtilities::removeAllCreatedContacts();
         SugarTestTaskUtilities::removeAllCreatedTasks();
-        unset($GLOBALS['current_user']);
-        unset($GLOBALS['beanFiles']);
-        unset($GLOBALS['beanList']);
+        SugarTestHelper::tearDown();
     }
 
 

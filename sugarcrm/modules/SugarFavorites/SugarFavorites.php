@@ -91,7 +91,7 @@ class SugarFavorites extends Basic
 	{
 		$id = SugarFavorites::generateGUID($module, $record, $user_id);
 
-		$focus = BeanFactory::getBean('SugarFavotires', $id);
+		$focus = BeanFactory::getBean('SugarFavorites', $id);
 
 		return !empty($focus->id);
 	}

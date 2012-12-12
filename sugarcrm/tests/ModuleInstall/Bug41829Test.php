@@ -30,7 +30,7 @@ class Bug41829Test extends Sugar_PHPUnit_Framework_TestCase
 
 	public function setUp()
 	{
-        $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
+        SugarTestHelper::setUp("current_user");
         $this->module_installer = new ModuleInstaller();
         $this->module_installer->silent = true;
         $this->module_installer->base_dir = '';
@@ -46,8 +46,7 @@ class Bug41829Test extends Sugar_PHPUnit_Framework_TestCase
 
 	public function tearDown()
 	{
-		SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
-        unset($GLOBALS['current_user']);
+        SugarTestHelper::tearDown();
         $GLOBALS['log'] = $this->log;
 	}
 

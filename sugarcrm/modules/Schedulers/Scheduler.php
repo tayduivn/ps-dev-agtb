@@ -89,9 +89,10 @@ class Scheduler extends SugarBean {
     public static function initUser()
     {
         $user = BeanFactory::getBean('Users');
+        $db = $user->db;
         //check is default admin exists
-        $adminId = $this->db->getOne(
-            'SELECT id FROM users WHERE id=\'1\' AND is_admin=1 AND deleted=0 AND status='.$this->db->quoted('Active'),
+        $adminId = $db->getOne(
+            'SELECT id FROM users WHERE id=\'1\' AND is_admin=1 AND deleted=0 AND status='.$db->quoted('Active'),
             true,
             'Error retrieving Admin account info'
         );
