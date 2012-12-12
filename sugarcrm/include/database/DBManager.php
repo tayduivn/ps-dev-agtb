@@ -331,7 +331,7 @@ abstract class DBManager
 			}
 			$this->log->fatal($message);
 			if ($dieOnError || $this->dieOnError) {
-                if(isset($GLOBALS['app_strings']['ERR_DB_FAIL'])) {
+				if(isset($GLOBALS['app_strings']['ERR_DB_FAIL'])) {
 					sugar_die($GLOBALS['app_strings']['ERR_DB_FAIL']);
 				} else {
 					sugar_die("Database error. Please check sugarcrm.log for details.");
