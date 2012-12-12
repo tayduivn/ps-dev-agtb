@@ -745,9 +745,6 @@ function upgradeUWFiles($file) {
     if(file_exists("$from_dir/include/file_utils.php")) {
         $allFiles[] = "$from_dir/include/file_utils.php";
     }
-    if(file_exists("$from_dir/include/upload_file.php")) {
-        $allFiles[] = "$from_dir/include/upload_file.php";
-    }
     if(file_exists("$from_dir/include/utils/sugar_file_utils.php")) {
         $allFiles[] = "$from_dir/include/utils/sugar_file_utils.php";
     }
