@@ -175,6 +175,14 @@ class SugarBeanApiHelper
                             }
                         }
                     }
+
+                    // cleanup BeanAclFields, we don't want to pass a field that doens't have actions
+                    foreach($beanAclFields AS $field => $actions) {
+                        if(empty($actions)) {
+                            unset($beanAclFields[$field]);
+                        }
+                    }
+
                     $fieldAcls = $beanAclFields;   
                 }
                 elseif(empty($beanAclFields) && !empty($moduleAclFields)) {
