@@ -40,6 +40,7 @@ class ForecastManagerWorksheet extends SugarBean
     var $best_adjusted;
     var $likely_adjusted;
     var $worst_adjusted;
+    var $isBatch = false;
     var $object_name = 'ForecastManagerWorksheet';
     var $module_name = 'ForecastManagerWorksheets';
     var $module_dir = 'Forecasts';
@@ -57,7 +58,6 @@ class ForecastManagerWorksheet extends SugarBean
     	if(isset($this->draft) && $this->draft == 1){
 			$version = 0;
 		}
-		
 		if(($this->user_id == $GLOBALS["current_user"]->id) || !$this->isManager)
 		{
 			$relatedType = "Direct";
@@ -235,8 +235,8 @@ class ForecastManagerWorksheet extends SugarBean
 	 */
 	 protected function recalcQuotas()
 	 {
-	 	//don't recalc if we are editing the manager row
-	 	if($this->user_id != $this->current_user)
+        //only recalc if this is not the manager or this is a batch update.
+	 	if($this->user_id != $this->current_user || $this->isBatch)
 	 	{
 			//Recalc Manager direct
 			$this->recalcUserQuota($this->current_user);

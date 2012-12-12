@@ -197,6 +197,7 @@
             model.set({
                 "draft" : self.draft,
                 "isDirty" : false,
+                "isBatch" : models.length > 1 ? true : false,
                 "timeperiod_id" : self.context.forecasts.get("selectedTimePeriod").id,
                 "current_user" : app.user.get('id')
             }, {silent:true});
