@@ -67,8 +67,10 @@
 
     $('body').on('click', '#dm0', function(){
       var check_boxes = "#dm1, #dm2, #dm3";
+          checkbox_all = "#dm0";
       if($(check_boxes).attr('checked')) {
           $(check_boxes).removeAttr('checked');
+          $(checkbox_all).removeAttr('checked')
       }else{
           $(check_boxes).attr('checked', 'checked');
       }
