@@ -233,14 +233,15 @@ class VardefManager{
         // Some of the vardefs do not correctly define dictionary as global.  Declare it first.
         global $dictionary, $beanList;
         static $guard = array();
-        if(isset($guard["$module:$object"])) {
-            $guard["$module:$object"]++;
-            if($guard["$module:$object"] > 1) {
-                $GLOBALS['log']->fatal("Loop in refreshVardefs: $module:$object");
+        $guard_name = "$module:$object";
+        if(isset($guard[$guard_name])) {
+            $guard[$guard_name]++;
+            if($guard[$guard_name] > 1) {
+                $GLOBALS['log']->fatal("Loop in refreshVardefs: $guard_name");
                 return;
             }
         } else {
-            $guard["$module:$object"] = 1;
+            $guard[$guard_name] = 1;
         }
         $vardef_paths = array(
                     'modules/'.$module.'/vardefs.php',
@@ -322,11 +323,11 @@ class VardefManager{
         if(!empty($dictionary[$object])) {
             VardefManager::saveCache($module, $object);
         }
-        if(isset($guard["$module:$object"])) {
-            if($guard["$module:$object"] > 1) {
-                $guard["$module:$object"]--;
+        if(isset($guard[$guard_name])) {
+            if($guard[$guard_name] > 1) {
+                $guard[$guard_name]--;
             } else {
-                unset($guard["$module:$object"]);
+                unset($guard[$guard_name]);
             }
         }
     }
