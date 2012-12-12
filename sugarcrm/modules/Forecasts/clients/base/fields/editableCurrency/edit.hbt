@@ -26,4 +26,12 @@
  * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 }}
-<span class="editable"><i></i> {{value}}</span>
+<span class="edit">
+    <div class="controls">
+        <div class="control-group">
+            <div class="input-prepend" style="white-space: nowrap">
+                <span class="add-on">{{symbol}}</span><input type="text" value="{{value}}" class="input-small focused tright" maxlength="26">
+            </div>
+        </div>
+    </div>
+</span>
