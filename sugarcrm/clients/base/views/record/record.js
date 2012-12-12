@@ -261,7 +261,11 @@
                 break;
             default:
                 this.toggleCell(field, cell);
-                field.$el.find("input").focus().val(field.$el.find("input").val());
+                if (_.isFunction(field.focus)) {
+                    field.focus();
+                } else {
+                    field.$el.find("input").focus().val(field.$el.find("input").val());
+                }
         }
     },
 
@@ -409,7 +413,6 @@
             cancel: this.$('.record-cancel'),
             del:    this.$('.record-delete')
         };
-
         switch (state) {
             case this.STATE.EDIT:
                 $buttons.edit.toggleClass('hide', false).addClass('disabled');
