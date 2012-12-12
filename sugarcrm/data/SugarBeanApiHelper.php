@@ -134,7 +134,10 @@ class SugarBeanApiHelper
             $moduleAcl = $mm->getAclForModule($bean->module_dir, $GLOBALS['current_user']);
 
             $beanAcl = $mm->getAclForModule($bean->module_dir, $GLOBALS['current_user'], $bean);
-    
+                $GLOBALS['log']->fatal("USER:" . var_export($GLOBALS['current_user']->first_name, true));
+                $GLOBALS['log']->fatal("BEAN:" . var_export($beanAcl, true));
+                $GLOBALS['log']->fatal("Module:" . var_export($moduleAcl, true));
+
             if($beanAcl['_hash'] != $moduleAcl['_hash']) {
                 // diff the fields separately, they are usually empty anyway so we won't diff these often.
                 $moduleAclFields = $moduleAcl['fields'];
@@ -156,16 +159,28 @@ class SugarBeanApiHelper
                  * beanAclFields is empty and moduleAclFields is empty -> all access -> return empty
                  * beanAclFields is empty and moduleAclFields is !empty -> all access -> return yes's
                  * beanAclFields is !empty and moduleAclFields is empty -> beanAclFields access restrictions -> return beanAclFields
-                 * beanAclFields is !empty and moduleAclFields is !empty -> diff the arrays -> return diffArray
+                 * beanAclFields is !empty and moduleAclFields is !empty -> return all access = "Yes" from moduleAcl and unset any in beanAcl that is in ModuleAcl [don't dupe data]
                  */
 
                 if(!empty($beanAclFields) && empty($moduleAclFields)) {
                     $fieldsAcls = $beanAclFields;
                 }
                 elseif(!empty($beanAclFields) && !empty($moduleAclFields)) {
-                    $fieldsAcls = array_diff_assoc($beanAclFields, $moduleAclFields);
+                    // we need the ones that are moduleAclFields but not in beanAclFields
+                    foreach($moduleAclFields AS $field => $aclActions) {
+                        foreach($aclActions AS $action => $access) {
+                            if(!isset($beanAclFields[$field][$action])) {
+                                $beanAclFields[$field][$action] = "yes";
+                            }
+                            // if the bean action is set and it matches the access from module, we do not need to send it down
+                            if(isset($beanAclFields[$field][$action]) && $beanAclFields[$field][$action] == $access) {
+                                unset($beanAclFields[$field][$action]);
+                            }
+                        }
+                    }
+                    $fieldAcls = $beanAclFields;   
                 }
-                if(empty($beanAclFields) && !empty($moduleAclFields)) {
+                elseif(empty($beanAclFields) && !empty($moduleAclFields)) {
                     // it is different because we now have access...
                     foreach($moduleAclFields AS $field => $aclActions) {
                         foreach($aclActions AS $action => $access) {
