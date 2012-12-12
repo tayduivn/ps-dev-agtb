@@ -69,12 +69,10 @@ EOQ;
         }
 
 
-        global $beanList, $beanFiles, $current_user;
-        //$beanList['Contacts'] = 'Contact';
-        //$beanFiles['Bug48784Mock'] = 'modules/Contacts/Contact.php';
+        global $current_user;
 
         //Create an anonymous user for login purposes/
-        $current_user = SugarTestUserUtilities::createAnonymousUser();
+        SugarTestHelper::setUp("current_user");
         $current_user->status = 'Active';
         $current_user->is_admin = 1;
         $current_user->save();
@@ -97,6 +95,7 @@ EOQ;
         }
 
         unset($_SESSION['avail_modules'][$this->package]);
+        SugarTestHelper::tearDown();
     }
 
     public function testWirelessModuleLayoutForCustomModule()

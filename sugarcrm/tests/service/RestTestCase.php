@@ -41,9 +41,8 @@ abstract class RestTestCase extends Sugar_PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-		require('include/modules.php');
-		$GLOBALS['beanList'] = $beanList;
-		$GLOBALS['beanFiles'] = $beanFiles;
+        SugarTestHelper::setUp("beanList");
+        SugarTestHelper::setUp("beanFiles");
 
         //Reload langauge strings
         $GLOBALS['app_strings'] = return_application_language($GLOBALS['current_language']);
@@ -60,11 +59,10 @@ abstract class RestTestCase extends Sugar_PHPUnit_Framework_TestCase
     {
 	    if(isset($GLOBALS['listViewDefs'])) unset($GLOBALS['listViewDefs']);
 	    if(isset($GLOBALS['viewdefs'])) unset($GLOBALS['viewdefs']);
-	    unset($GLOBALS['beanList']);
-		unset($GLOBALS['beanFiles']);
-		unset($GLOBALS['app_list_strings']);
+        unset($GLOBALS['app_list_strings']);
 	    unset($GLOBALS['app_strings']);
 	    unset($GLOBALS['mod_strings']);
+        SugarTestHelper::tearDown();
     }
 
     /**

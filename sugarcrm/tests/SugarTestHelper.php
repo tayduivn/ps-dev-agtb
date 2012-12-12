@@ -178,6 +178,11 @@ class Sugar_PHPUnit_Framework_TestCase extends PHPUnit_Framework_TestCase
         restore_error_handler();
     }
 
+    public static function setUpBeforeClass()
+   {
+        SugarTestHelper::init();
+   }
+
     public static function tearDownAfterClass()
     {
         unset($GLOBALS['disable_date_format']);
@@ -189,6 +194,7 @@ class Sugar_PHPUnit_Framework_TestCase extends PHPUnit_Framework_TestCase
                 SugarAutoLoader::buildCache();
             }
         }
+        SugarTestHelper::tearDown();
     }
 
     public static function compareArray($arr1, $arr2, $path = "")
@@ -455,11 +461,28 @@ class SugarTestHelper
         }
 
         // backup of service_object
-        self::$initVars['GLOBALS']['service_object'] = null;
+
         if (isset($GLOBALS['service_object']))
         {
             self::$initVars['GLOBALS']['service_object'] = $GLOBALS['service_object'];
         }
+
+
+        //Backup everything that could have been loaded in modules.php
+        include("include/modules.php");
+        foreach(array('moduleList', 'beanList', 'beanFiles', 'modInvisList',
+                      'objectList', 'modules_exempt_from_availability_check', 'adminOnlyList'
+                     ) as $globVar)
+        {
+            $GLOBALS[$globVar] = $$globVar;
+            self::$initVars['GLOBALS'][$globVar] = $GLOBALS[$globVar];
+        }
+
+        //ensure current user exists
+        /*if (!isset($GLOBALS['current_user'])){
+            $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
+        }*/
+        self::$initVars['GLOBALS']['current_user'] = $GLOBALS['current_user'];
 
         // backup of SugarThemeRegistry
         self::$systemVars['SugarThemeRegistry'] = SugarThemeRegistry::current();
@@ -544,9 +567,11 @@ class SugarTestHelper
      * @param array $params parameters for SugarTestUserUtilities::createAnonymousUser method
      * @return bool is variable setuped or not
      */
-    protected static function setUp_current_user(array $params)
+    protected static function setUp_current_user(array $params, $register = true)
     {
-        self::$registeredVars['current_user'] = true;
+        if ($register){
+            self::$registeredVars['current_user'] = true;
+        }
         $GLOBALS['current_user'] = call_user_func_array('SugarTestUserUtilities::createAnonymousUser', $params);
         return true;
     }
@@ -570,9 +595,11 @@ class SugarTestHelper
      * @static
      * @return bool is variable setuped or not
      */
-    protected static function setUp_beanList()
+    protected static function setUp_beanList($params = array(), $register = true)
     {
-        self::$registeredVars['beanList'] = true;
+        if ($register){
+            self::$registeredVars['beanList'] = true;
+        }
         global $beanList;
         require('include/modules.php');
         return true;
@@ -584,9 +611,11 @@ class SugarTestHelper
      * @static
      * @return bool is variable setuped or not
      */
-    protected static function setUp_beanFiles()
+    protected static function setUp_beanFiles($params = array(), $register = true)
     {
-        self::$registeredVars['beanFiles'] = true;
+        if ($register){
+            self::$registeredVars['beanFiles'] = true;
+        }
         global $beanFiles;
         require('include/modules.php');
         return true;
@@ -598,9 +627,11 @@ class SugarTestHelper
      * @static
      * @return bool is variable setuped or not
      */
-    protected static function setUp_moduleList()
+    protected static function setUp_moduleList($params = array(), $register = true)
     {
-        self::$registeredVars['moduleList'] = true;
+        if ($register){
+            self::$registeredVars['moduleList'] = true;
+        }
         global $moduleList;
         require('include/modules.php');
         return true;
@@ -669,9 +700,11 @@ class SugarTestHelper
      * @static
      * @return bool is variable setuped or not
      */
-    protected static function setUp_timedate()
+    protected static function setUp_timedate($params = array(), $register = true)
     {
-        self::$registeredVars['timedate'] = true;
+        if ($register){
+            self::$registeredVars['timedate'] = true;
+        }
         $GLOBALS['timedate'] = TimeDate::getInstance();
         return true;
     }
