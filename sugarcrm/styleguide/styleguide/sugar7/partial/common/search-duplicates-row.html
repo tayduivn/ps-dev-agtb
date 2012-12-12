@@ -34,6 +34,11 @@
       $(this).closest('article').clone().prependTo($('.filter_init.duplicates')).removeClass('new');
       $('.filter-body.new').find('.filter-value input').attr('value','');
     });
+
+    $('body').on('click', '.removeme', function(){
+      $(this).closest('article').remove();
+    });
+
   });
 
   $('.filter-options').find('article').last().attr( 'id', 'search_option_'+$('.filtered').find('article').length );
