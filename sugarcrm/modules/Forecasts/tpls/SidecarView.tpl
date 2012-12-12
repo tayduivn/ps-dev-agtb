@@ -44,48 +44,30 @@
         <script language="javascript">
             var syncResult, view, layout, html;
 
-            SUGAR.App.sugarAuthStore.set('AuthAccessToken', {/literal}'{$token}'{literal});
-            SUGAR.App.sugarAuthStore.set('AuthRefreshToken', {/literal}'{$token}'{literal});
-
             (function(app) {
                 if(!_.has(app, 'forecasts')) {
                     app.forecasts = {}
                 }
                 app.augment("forecasts", _.extend(app.forecasts, {
-                    initForecast: function(authAccessToken) {
+                    initForecast: function() {
                         app.viewModule = {/literal}'{$module}';{literal}
-                        app.AUTH_ACCESS_TOKEN = authAccessToken;
-                        app.AUTH_REFRESH_TOKEN = authAccessToken;
                         app.init({
                             el: "forecasts",
                             contentEl: ".content",
-                            //keyValueStore: app.sugarAuthStore, //override the keyValueStore
                             callback: function(app) {
-                                var url = app.api.buildURL("Forecasts/init");
-                                app.api.call('GET', url, null, {success: function(forecastData) {
-                                    // get default selections for filter and category
-                                    app.defaultSelections = forecastData.defaultSelections;
-                                    app.initData = forecastData.initData;
-                                    app.user.set(app.initData.selectedUser);
-
-                                    if(forecastData.initData.forecasts_setup == 0) {
-                                        window.location.hash = "#config";
-                                    }
-                                    // resize the top menu after the layout has been initialized
-                                    SUGAR.themes.resizeMenu();
-                                    app.start();
-                                }});
+                                app.start();
                             }
                         });
                         return app;
                     }
-                    }));
-
+                }));
              })(SUGAR.App);
 
             //Call initForecast with the session id as token
-            var App = SUGAR.App.forecasts.initForecast({/literal}'{$token}'{literal});
+            var App = SUGAR.App.forecasts.initForecast();
 
             App.api.debug = App.config.debugSugarApi;
         </script>
         {/literal}
+    </body>
+</html>
