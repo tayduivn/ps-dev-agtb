@@ -236,7 +236,7 @@ class VardefManager{
         $guard_name = "$module:$object";
         if(isset($guard[$guard_name])) {
             $guard[$guard_name]++;
-            if($guard[$guard_name] > 1) {
+            if($guard[$guard_name] > 2) {
                 $GLOBALS['log']->fatal("Loop in refreshVardefs: $guard_name");
                 return;
             }
