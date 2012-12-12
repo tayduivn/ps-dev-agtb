@@ -9,4 +9,5 @@
     {{#if value}}
     <option value="{{getFieldValue model "parent_id"}}" selected>{{value}}</option>
     {{/if}}
+    <option data-searchmore="true" value="{{str "LBL_SEARCH_FOR_MORE"}}" class="more">{{str "LBL_SEARCH_FOR_MORE"}}</option>
 </select>

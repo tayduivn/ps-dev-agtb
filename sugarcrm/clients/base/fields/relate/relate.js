@@ -61,7 +61,16 @@
                     if(searchmore || empty) {
                         $(evt.currentTarget).val('');
                         $(this).trigger("liszt:updated");
-                        //TODO: inline Modal for selection
+                        self.view.layout.trigger("drawer:selection:fire", {
+                            components: [{
+                                layout : 'selection-list'
+                            }],
+                            context: {
+                                module: self.getSearchModule()
+                            }
+                        }, function(model) {
+                            self.setValue({id: model.id, value: model.get('name')});
+                        });
                     } else {
                         self.setValue({id: id, value: value});
                     }
