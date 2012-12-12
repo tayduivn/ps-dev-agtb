@@ -3288,6 +3288,7 @@ $app_strings = array (
     'LBL_SELECT_THIS_ROW_TITLE' => 'Select this row',
     'LBL_TEAM_SELECTED_TITLE' => 'Team Selected ',
     'LBL_TEAM_SELECT_AS_PRIM_TITLE' => 'Select to make this team primary',
+    'LBL_SEARCH_AND_SELECT' => 'Search and select {{module}}',
 
     //for upload errors
     'UPLOAD_ERROR_TEXT'          => 'ERROR: There was an error during upload. Error code: {0} - {1}',

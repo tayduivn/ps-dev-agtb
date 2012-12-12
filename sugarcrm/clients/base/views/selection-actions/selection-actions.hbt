@@ -1,0 +1,15 @@
+<div class="record">
+    <div class="pull-right dropdown">
+        {{#each meta.buttons}}
+            {{field ../this null "list-header"}}
+        {{/each}}
+    </div>
+    <h5>{{title}}</h5>
+</div>
+<form class="form-search" action="">
+    <div class="row-fluid">
+        <div class="span9 myfilter">
+            <input value="" class="span12">
+        </div>
+    </div>
+</form>

@@ -42,6 +42,7 @@
     },
     initialize: function(options) {
         options.meta = _.extend(app.metadata.getView(options.module, 'baselist') || {}, options.meta);
+        options.meta.type = options.meta.type || 'list';
         if(!_.isUndefined(options.meta.selection) && !_.isUndefined(options.meta.selection.type)) {
             switch (options.meta.selection.type) {
                 case "single":
