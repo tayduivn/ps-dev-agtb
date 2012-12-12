@@ -98,14 +98,26 @@ class ViewConvertLead extends SugarView
         $qsd->setFormName("ConvertLead");
 
         $this->contact = new Contact();
-        // Bug #50126 We have to fill account_name & add ability to select account from popup with pre populated name
+        
+        /*
+         * Setup filter for Account/Contact popup picker
+         */ 
+        $filter = '';
+        // Check if Lead has an account set
         if (!empty($this->focus->account_name))
         {
-            $smarty->assign('displayParams', array(
-                'initial_filter' => '&name_advanced=' . urlencode($this->focus->account_name))
-            );
+            $filter .= '&name_advanced=' . urlencode($this->focus->account_name);
         }
-
+        // Check if Lead First name is available
+        if (!empty($this->focus->first_name))
+        {
+            $filter .= '&first_name_advanced=' . urlencode($this->focus->first_name);
+        }
+        // Lead Last Name is always available
+        $filter .= '&last_name_advanced=' . urlencode($this->focus->last_name);
+        
+        $smarty->assign('displayParams', array('initial_filter' => $filter));
+        
         $relatedFields = $this->contact->get_related_fields();
         $selectFields = array();
         foreach ($this->defs as $moduleName => $mDefs)
@@ -124,6 +136,7 @@ class ViewConvertLead extends SugarView
                 }
             }
         }
+        
         $smarty->assign('selectFields', $selectFields);
 
         $smarty->assign("contact_def", $this->contact->field_defs);
@@ -356,12 +369,30 @@ class ViewConvertLead extends SugarView
         $beans = array();
         $selectedBeans = array();
         $selects = array();
-        //Make sure the contact object is availible for relationships.
+        
+        // Make sure the contact object is availible for relationships.
         $beans['Contacts'] = new Contact();
-        $beans['Contacts']->id = create_guid();
-        $beans['Contacts']->new_with_id = true;
 
-        // Bug 39287 - Check for Duplicates on selected modules before save
+        // If we selected a contact through the picker, set it now so all other beans are related to it properly
+        if (isset($_REQUEST["convert_create_Contacts"]) && $_REQUEST["convert_create_Contacts"] == "false" && !empty($_REQUEST['reports_to_id']))
+        {
+            // Link the Lead to the Contact and set $beans['Contacts']->id which is used for relating the Contact
+            $lead->contact_id = $_REQUEST['reports_to_id'];
+            $beans['Contacts']->retrieve($_REQUEST['reports_to_id']);
+            $beans['Contacts']->new_with_id = false;
+            // Using this field only for selecting Contacts
+            unset($_REQUEST['reports_to_id']);
+        }
+        else
+        {
+            $beans['Contacts']->id = create_guid();
+            $beans['Contacts']->new_with_id = true;
+        }
+        
+        /*
+         * Check for Duplicates on creating selected modules before save
+         */
+        // Contacts
         if (!empty($_REQUEST['selectedContact']))
         {
             $beans['Contacts']->retrieve($_REQUEST['selectedContact']);
@@ -387,6 +418,7 @@ class ViewConvertLead extends SugarView
         } elseif (isset($_POST['ContinueContact'])) {
             $this->new_contact = true;
         }
+        // Accounts
         if (!empty($_REQUEST['selectedAccount']))
         {
             $_REQUEST['account_id'] = $_REQUEST['selectedAccount'];
@@ -448,7 +480,7 @@ class ViewConvertLead extends SugarView
         // Bug 39268 - Add the lead's activities to the selected beans
         $this->handleActivities($lead, $selectedBeans);
 
-        //link selected account to lead if it exists
+        // link selected account to lead if it exists
         if (!empty($selectedBeans['Accounts']))
         {
             $lead->account_id = $selectedBeans['Accounts']->id;
