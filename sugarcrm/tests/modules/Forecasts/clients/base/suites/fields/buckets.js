@@ -20,17 +20,20 @@
  ********************************************************************************/
 
 describe("forecast buckets field", function() {
-    var field, oldApp, createBucketsSpy, getLanguageValueSpy;
+    var field, fieldDef, context;
     
     beforeEach(function() {
-        var fieldDef = {
+        fieldDef = {
                 "name": "commit_stage",
                 "type": "buckets",
                 "options": "commit_stage_dom"
             };
-        field = SugarTest.createField("../modules/Forecasts/clients/base", "buckets", "buckets", "detail", fieldDef, "Forecasts");
         app = SugarTest.app;
         app.user.id = "tester";
+        app.lang.getAppListStrings = function(){
+            return {test:"test"};
+        };
+        context = app.context.getContext();
     });
     
     afterEach(function(){
@@ -39,7 +42,7 @@ describe("forecast buckets field", function() {
     
     describe("when buckets are set to show_binary", function(){        
         beforeEach(function(){
-            field.context.forecasts = {
+            context.forecasts = {
                 config:{
                     get:function(key){
                         return "show_binary";
@@ -54,11 +57,14 @@ describe("forecast buckets field", function() {
         
         describe("when it is your sheet", function(){
             beforeEach(function(){
-                field.context.forecasts.get = function(key){
+                context.forecasts.get = function(key){
                     return {id:"tester"};                    
-            };
+                };
+                
+                field = SugarTest.createField("../modules/Forecasts/clients/base", "buckets", "buckets", "detail", fieldDef, "Forecasts", null, context);
                 field._render();
             });
+            
             it("should have def.view set to bool", function(){
                 expect(field.def.view).toBe("bool");
             });
@@ -78,9 +84,11 @@ describe("forecast buckets field", function() {
         
         describe("when it is not your sheet", function(){
             beforeEach(function(){
-                field.context.forecasts.get = function(key){
+                context.forecasts.get = function(key){
                     return {id:"tester2"};                    
-            };
+                };
+                
+                field = SugarTest.createField("../modules/Forecasts/clients/base", "buckets", "buckets", "detail", fieldDef, "Forecasts", null, context);
                 field._render();
             });
             it("should have def.view set to bool", function(){
@@ -103,14 +111,11 @@ describe("forecast buckets field", function() {
     
     describe("when buckets are set to show_buckets", function(){
         beforeEach(function(){ 
-            field.context.forecasts = {
+            context.forecasts = {
                 config:{
                     get:function(key){
                         return "show_buckets";
                     }
-                },
-                get:function(key){
-                    return "1";
                 }
             };
         });
@@ -121,15 +126,16 @@ describe("forecast buckets field", function() {
         
         describe("when it is your sheet", function(){
             beforeEach(function(){
-                field.context.forecasts.get = function(key){
-                        return {id:"tester"};                    
+                context.forecasts.get = function(key){
+                    return {id:"tester"};                    
                 };
-                createBucketsSpy = sinon.spy(field, "createBuckets");
+                
+                field = SugarTest.createField("../modules/Forecasts/clients/base", "buckets", "buckets", "detail", fieldDef, "Forecasts", null, context);
                 field._render();
             });
             
             afterEach(function(){
-                createBucketsSpy.restore();
+               
             });
             
             it("should have def.view set to enum", function(){
@@ -137,21 +143,22 @@ describe("forecast buckets field", function() {
             });
             
             it("should have called createBuckets", function(){
-                expect(field.createBuckets).toHaveBeenCalled();
+                expect($.data(document.body, "buckets")).toBeTruthy();
             });
         });
         
         describe("when it is not your sheet", function(){
             beforeEach(function(){
-                field.context.forecasts.get = function(key){
-                    return {id:"tester2"};
+                context.forecasts.get = function(key){
+                    return {id:"tester2"};                    
                 };
-                getLanguageValueSpy = sinon.spy(field, "getLanguageValue");
-               field._render();
+                
+                field = SugarTest.createField("../modules/Forecasts/clients/base", "buckets", "buckets", "detail", fieldDef, "Forecasts", null, context);
+                field._render();
             });
             
             afterEach(function(){
-                getLanguageValueSpy.restore();
+                
             });
             
             it("should have def.view set to default", function(){
@@ -159,7 +166,7 @@ describe("forecast buckets field", function() {
             });
             
             it("should have called getLanguageValue", function(){
-                expect(field.getLanguageValue).toHaveBeenCalled();
+                expect(field.langValue).toBeUndefined();
             });
         });
     });

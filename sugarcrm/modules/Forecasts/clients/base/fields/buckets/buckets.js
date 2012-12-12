@@ -22,22 +22,29 @@
     /**
      * Attach a Change event to the field
      */
-    events : { 'change' : 'bucketsChanged' },
+    events: { 'change' : 'bucketsChanged' },   
     
     /**
-     * Render Field
+     * flag for if the field should render disabled
      */
-    _render:function () {
-        var forecastCategories = this.context.forecasts.config.get("forecast_ranges");
-        this.disabled = false;
-       
+    disabled: false,
+    
+    langValue: "",
+    
+    /**
+     * Initialize
+     */
+    initialize: function(options){
+        app.view.Field.prototype.initialize.call(this, options);
+        var forecastRanges = this.context.forecasts.config.get("forecast_ranges");
+        
         //Check to see if you're a manager on someone else's sheet, disable changes
         if(this.context.forecasts.get("selectedUser")["id"] != app.user.id){
             this.disabled = true;
         }
         
         //show_binary, show_buckets, show_n_buckets logic
-        if(forecastCategories == "show_binary"){
+        if(forecastRanges == "show_binary"){
             //If we're in binary mode
             this.def.view = "bool";
             this.format = function(value){
@@ -47,7 +54,7 @@
                 return this.$el.find(".checkbox").prop('checked') ? "include" : "exclude";
             };
         }
-        else if(forecastCategories == "show_buckets"){
+        else if(forecastRanges == "show_buckets"){
             //Show buckets, but only if we are on our sheet.
             if(!this.disabled){
                 this.def.view = "enum";
@@ -58,7 +65,12 @@
                 this.getLanguageValue();
             }
         }
-        
+    },
+    
+    /**
+     * Render Field
+     */
+    _render:function () {
         app.view.Field.prototype._render.call(this);
         
         //If we are on our own sheet, and need to show the dropdown, init things
@@ -72,9 +84,9 @@
      * Change handler for the buckets field
      */
     bucketsChanged: function(){
-        var self = this;
-        var values = {};
-        var moduleName = self.moduleName;
+        var self = this,
+            values = {},
+            moduleName = self.moduleName;
         
         if(self.def.view == "bool"){
             self.value = self.unformat();
@@ -128,6 +140,6 @@
      */
     getLanguageValue: function(){
         var options = app.lang.getAppListStrings(this.def.options) || 'commit_stage_dom';
-        this.langValue = options[this.model.get(this.def.name)];
+        this.langValue = options[this.model.get(this.def.name)]; 
     }
 })
