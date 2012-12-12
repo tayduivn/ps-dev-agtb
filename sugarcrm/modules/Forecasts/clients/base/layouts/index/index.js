@@ -39,8 +39,6 @@
         if(forecastData.initData.forecasts_setup == 0) {
             window.location.hash = "#config";
         }
-        // resize the top menu after the layout has been initialized
-        //                SUGAR.themes.resizeMenu();
 
         ctx.componentsMeta = options.meta.components;
 
@@ -315,6 +313,9 @@
 
             return self;
         });
+
+        // resize the top menu after the layout has been initialized
+        SUGAR.themes.resizeMenu();
     }
 
 })
