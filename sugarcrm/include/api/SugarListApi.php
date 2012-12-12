@@ -36,7 +36,7 @@ abstract class SugarListApi extends SugarApi {
      * @param ServiceBase $api The API class (typically RestService)
      * @param array $args The argument array as passed in to the API call, currently checked variables are
      *        max_num, offset, fields, order_by
-     * @param SugarBean $seed This is the seed bean that feeds the list, if you pass in a null seed then the fields are not validated
+     * @param SugarBean|null $seed This is the seed bean that feeds the list, if you pass in a null seed then the fields are not validated
      * @return array An array with the options limit, offset, fields and order_by set
      */
     public function parseArguments(ServiceBase $api, array $args, $seed = null) {
