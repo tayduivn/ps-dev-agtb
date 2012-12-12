@@ -21,55 +21,47 @@
  * Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.;
  * All Rights Reserved.
  ********************************************************************************/
- 
-require_once('modules/UpgradeWizard/uw_utils.php');
-require_once('modules/MySettings/TabController.php');
+require_once('modules/Notifications/views/view.systemquicklist.php');
+require_once('modules/Administration/Administration.php');
 
-class Bug42490Test extends Sugar_PHPUnit_Framework_TestCase 
+class SystemQuickListFTSClearTest extends Sugar_PHPUnit_Framework_TestCase
 {
-	private $_originalEnabledTabs;
-	private $_tc;
-	
-    public function setUp()
+    public function setup()
     {
-        SugarTestHelper::setUp('moduleList');
-        SugarTestHelper::setUp('current_user', array(true, 1));
-        $this->_tc = new TabController();
-        $tabs = $this->_tc->get_tabs_system();
-        $this->_originalEnabledTabs = $tabs[0];
+        SugarTestHelper::setUp('beanFiles');
+        SugarTestHelper::setUp('beanList');
+        SugarTestHelper::setUp('app_list_strings');
+        SugarTestHelper::setUp('current_user');
+    }
+    
+    public function tearDown()
+    {
+        SugarTestHelper::tearDown();
     }
 
-	public function tearDown() 
-	{
-        if (!empty($this->_originalEnabledTabs))
-        {
-            $this->_tc->set_system_tabs($this->_originalEnabledTabs);
-        }
-	}
+    public function testFTSFlagRemoval() {
+        $GLOBALS['current_user']->is_admin = 1;
+        $admin = BeanFactory::newBean('Administration');
+        $admin->saveSetting('info', 'fts_index_done', 1);
 
-	public function testUpgradeDisplayedTabsAndSubpanels() 
-	{
-        $modules_to_add = array(
-            //BEGIN SUGARCRM flav!=dce ONLY
-            'Calls',
-            'Meetings',
-            'Tasks',
-            'Notes',
-            //BEGIN SUGARCRM flav!=sales ONLY
-            'Prospects',
-            'ProspectLists',
-            //END SUGARCRM flav!=sales ONLY
-            //END SUGARCRM flav!=dce ONLY
-        );
+        $cfg = new Configurator();
+        $cfg->config['fts_disable_notification'] = true;
+        $cfg->handleOverride();
+        
 
-		upgradeDisplayedTabsAndSubpanels('610');
-		
-		$all_tabs = $this->_tc->get_tabs_system();
-		$tabs = $all_tabs[0];
-		
-		foreach($modules_to_add as $module)
-		{
-            $this->assertArrayHasKey($module, $tabs, 'Assert that ' . $module . ' tab is set for system tabs');
-		}
-	}
+        $vsql = new ViewSystemQuicklistMock();
+        $vsql->clear();
+
+        $cfg->loadConfig();
+        $this->assertFalse($cfg->config['fts_disable_notification'], "FTS Disabled Notification is not false, it was: " . var_export($cfg->config['fts_disable_notification'], true));
+        $settings = $admin->retrieveSettings();
+        $this->assertEmpty($settings->settings['info_fts_index_done'], "FTS Index Done Flag not cleared, it was: " . var_export($settings->settings['info_fts_index_done'], true));
+
+    }
+}
+
+class ViewSystemQuicklistMock extends ViewSystemQuicklist {
+    public function clear() {
+        return $this->clearFTSFlags();
+    }
 }
