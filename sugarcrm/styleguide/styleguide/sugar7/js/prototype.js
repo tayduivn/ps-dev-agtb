@@ -1,20 +1,18 @@
   page.rand = function(){return Math.floor((Math.random()*100)+1);};
 
   function loadPartial(template) {
-    if (!ich[template]) {
-      jQuery.ajax({
-        url: template,
-        dataType: 'html',
-        cache: 'false',
-        async: false,
-        cache: false,
-        success: function(data) {
-          if(data !== undefined){
-            ich.addTemplate(template,data);
-          }
+    jQuery.ajax({
+      url: template,
+      dataType: 'html',
+      cache: 'false',
+      async: false,
+      cache: false,
+      success: function(data) {
+        if(data !== undefined){
+          ich.addTemplate(template,data);
         }
-      });
-    }
+      }
+    });
   }
 
   function loadPage(page) {

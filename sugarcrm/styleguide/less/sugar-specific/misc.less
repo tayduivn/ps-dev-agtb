@@ -222,3 +222,20 @@ hr.soften {
 .padded {
   padding: 20px;
 }
+
+.filter_init.duplicates {
+  background: darken(@grayLighter, 5%);
+  article#search_option_.filter-body {
+    padding:10px 10px 0 10px;
+    &>div {
+      margin: 0;
+    }
+    &.new {
+      .removeme {
+        display:none;
+      }
+    }
+  }
+}
+
+
