@@ -39,7 +39,7 @@ class RestMeetingHelperTest extends RestTestBase {
             'name' => 'Test Meeting',
             'duration' => 1,
             'start_date' => date('Y-m-d'),
-            'assigned_user_id' => $GLOBALS['current_user']->id,
+            'assigned_user_id' => 1,
         );
 
         $restReply = $this->_restCall('Meetings/', json_encode($meeting), 'POST');
@@ -49,9 +49,17 @@ class RestMeetingHelperTest extends RestTestBase {
         $meeting_id = $restReply['reply']['id'];
         $this->meeting_id = $meeting_id;
 
-        // verify the user has the meeting, which will validate on calendar
-        $restReplyUser = $this->_restCall("Users/{$GLOBALS['current_user']->id}/link/meetings");
 
-        $this->assertEquals($meeting_id, $restReplyUser['reply']['records'][0]['id'], "The Users meeting was incorrect");
+        // verify the user has the meeting, which will validate on calendar
+        $restReplyUsers = $this->_restCall("Meetings/{$meeting_id}/link/users");
+        $users_linked = array();
+        foreach($restReplyUsers['reply']['records'] AS $record) {
+            $users_linked[] = $record['id'];
+        }
+
+        $this->assertTrue(in_array($GLOBALS['current_user']->id, $users_linked), "Current User was not successfully linked");
+        $this->assertTrue(in_array(1, $users_linked), "Assigned User was not successfully linked");
+
+
     }
 }

@@ -49,7 +49,8 @@ class ForecastsConfigApi extends ConfigModuleApi {
             $prior_forecasts_settings['timeperiod_shown_forward'] = 0;
             $prior_forecasts_settings['timeperiod_shown_backward'] = 0;
         }
-
+        
+        $upgraded = 0;
         if (!empty($prior_forecasts_settings['is_upgrade']))
         {
             $db = DBManagerFactory::getInstance();
@@ -57,17 +58,19 @@ class ForecastsConfigApi extends ConfigModuleApi {
             $upgraded = $db->getOne("SELECT count(id) as total FROM upgrade_history WHERE type = 'patch' AND status = 'installed' AND version LIKE '6.7.%'");
             if ($upgraded == 1)
             {
-                require_once('modules/UpgradeWizard/uw_utils.php');
-                updateOpportunitiesForForecasting();
-
                 //TODO-sfa remove this once the ability to map buckets when they get changed is implemented (SFA-215).
                 $args['has_commits'] = true;
             }
         }
-        parent::configSave($api, $args);
+        
+        if($upgraded || empty($prior_forecasts_settings['is_setup']))
+        {
+        	 require_once('modules/UpgradeWizard/uw_utils.php');
+             updateOpportunitiesForForecasting();
+        }
 
         //reload the settings to get the current settings
-        $current_forecasts_settings = $admin->getConfigForModule('Forecasts', $platform);
+        $current_forecasts_settings = parent::configSave($api, $args);
 
         //if primary settings for timeperiods have changed, then rebuild them
         if($this->timePeriodSettingsChanged($prior_forecasts_settings, $current_forecasts_settings)) {
@@ -98,10 +101,7 @@ class ForecastsConfigApi extends ConfigModuleApi {
         if(!isset($priorSettings['timeperiod_type']) || (isset($currentSettings['timeperiod_type']) && ($currentSettings['timeperiod_type'] != $priorSettings['timeperiod_type']))) {
             return true;
         }
-        if(!isset($priorSettings['timeperiod_start_month']) || (isset($currentSettings['timeperiod_start_month']) && ($currentSettings['timeperiod_start_month'] != $priorSettings['timeperiod_start_month']))) {
-            return true;
-        }
-        if(!isset($priorSettings['timeperiod_start_day']) || (isset($currentSettings['timeperiod_start_day']) && ($currentSettings['timeperiod_start_day'] != $priorSettings['timeperiod_start_day']))) {
+        if(!isset($priorSettings['timeperiod_start_date']) || (isset($currentSettings['timeperiod_start_date']) && ($currentSettings['timeperiod_start_date'] != $priorSettings['timeperiod_start_date']))) {
             return true;
         }
         if(!isset($priorSettings['timeperiod_leaf_interval']) || (isset($currentSettings['timeperiod_leaf_interval']) && ($currentSettings['timeperiod_leaf_interval'] != $priorSettings['timeperiod_leaf_interval']))) {

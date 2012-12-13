@@ -65,7 +65,7 @@ class RestBug55141Test extends RestTestBase {
         $hash = $metadata['reply']['_hash'];
 
         // verify hash file exists
-        $this->assertTrue(file_exists('cache/api/metadata/' . $hash . '.php'), "Didn't create the cache file");
+        $this->assertTrue(file_exists('cache/api/metadata/metadata_base_private.php'), "Didn't create the cache file");
 
         // run repair and rebuild and verify the cache file is gone
         $old_user = $GLOBALS['current_user'];
@@ -78,7 +78,7 @@ class RestBug55141Test extends RestTestBase {
         $GLOBALS['current_user'] = $old_user;
         
         // verify it no longer does
-        $this->assertFalse(file_exists('cache/api/metadata/' . $hash . '.php'), "Didn't really clear the cache");
+        $this->assertFalse(file_exists('cache/api/metadata/metadata_base_private.php'), "Didn't really clear the cache");
 
     }
 }

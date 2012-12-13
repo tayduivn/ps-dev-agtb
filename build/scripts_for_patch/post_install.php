@@ -84,25 +84,13 @@ function rebuild_dashlets(){
         unlink('cache/dashlets/dashlets.php');
     }
 
-    global $sugar_version;
-    if($sugar_version < '5.5.0') {
-        require_once('include/SugarTheme/SugarTheme.php');
-    }
-
     require_once('include/Dashlets/DashletCacheBuilder.php');
-
     $dc = new DashletCacheBuilder();
     $dc->buildCache();
 }
 // BEGIN SUGARCRM flav=pro ONLY
-function rebuild_teams(){
-	global $sugar_version;
-    if($sugar_version < '5.5.0') {
-    	require_once('modules/Teams/TeamMembership.php');
-    	require_once('modules/Teams/Team.php');
-    }
+function rebuild_teams() {
     require_once('modules/Administration/RepairTeams.php');
-
     process_team_access(false, false,true,'1');
 }
 // END SUGARCRM flav=pro ONLY
@@ -112,10 +100,6 @@ function rebuild_roles(){
   global $ACLActions, $beanList, $beanFiles;
   include('modules/ACLActions/actiondefs.php');
   include('include/modules.php');
-  global $sugar_version;
-  if($sugar_version < '5.5.0') {
-  	require_once('include/ListView/ListView.php');
-  }
   include("modules/ACL/install_actions.php");
 }
 
@@ -143,8 +127,9 @@ function runSqlFiles($origVersion,$destVersion,$queryType,$resumeFromQuery=''){
 	if(!isset($_SESSION['schema_change']) || /* pre-4.5.0 upgrade wizard */
 		$_SESSION['schema_change'] == 'sugar') {
 		_logThis("Upgrading the database from {$origVersion} to version {$destVersion}", $path);
-		$origVersion = substr($origVersion, 0, 2) . 'x';
-		$destVersion = substr($destVersion, 0, 2) . 'x';
+
+        $origVersion = implodeVersion($origVersion, 3, 'x');
+        $destVersion = implodeVersion($destVersion, 3, 'x');
 
 		$schemaFileName = $origVersion."_to_".$destVersion;
 
@@ -246,6 +231,7 @@ function clearCompanyLogo(){
 
 
 function genericFunctions(){
+    global $path;
 	$server_software = $_SERVER["SERVER_SOFTWARE"];
 	if(strpos($server_software,'Microsoft-IIS') !== true)
 	{
@@ -316,28 +302,24 @@ function post_install() {
 
 	///////////////////////////////////////////////////////////////////////////
 	////	PUT DATABASE UPGRADE SCRIPT HANDLING HERE
-	$new_sugar_version = getUpgradeVersion();
-	$origVersion = substr(preg_replace("/[^0-9]/", "", $sugar_version),0,3);
-	$destVersion = substr(preg_replace("/[^0-9]/", "", $new_sugar_version),0,3);
+    $new_sugar_version = getUpgradeVersion();
 
     $post_action = status_post_install_action('sql_query');
 	if($post_action != null){
 	   if($post_action != 'done'){
 			//continue from where left in previous run
-			runSqlFiles($origVersion,$destVersion,'sql_query',$post_action);
+            runSqlFiles($sugar_version, $new_sugar_version, 'sql_query', $post_action);
 		  	$currProg['sql_query'] = 'done';
 		  	post_install_progress($currProg,'set');
 		}
 	 }
 	 else{
 		//never ran before
-		runSqlFiles($origVersion,$destVersion,'sql_query');
+        runSqlFiles($sugar_version, $new_sugar_version, 'sql_query');
 	  	$currProg['sql_query'] = 'done';
 	  	post_install_progress($currProg,'set');
 	  }
 
-	//if upgrading from 50GA we only need to do the version update.
-	if ($origVersion>'500') {
 		genericFunctions();
 
 		//BEGIN SUGARCRM flav=pro ONLY
@@ -346,8 +328,13 @@ function post_install() {
 		ACLAction::addActions('Users', 'module');
 		//END SUGARCRM flav=pro ONLY
 		upgradeDbAndFileVersion($new_sugar_version);
-	}
 
+    // Bug 51075 JennyG - We increased the upload_maxsize in 6.4.
+    if (version_compare($sugar_version, '6.4.2', '<'))
+    {
+        _logThis('Set upload_maxsize to the new limit that was introduced in 6.4', $path);
+        $sugar_config['upload_maxsize'] = 30000000;
+    }
 	// Bug 40044 JennyG - We removed modules/Administration/SaveTabs.php in 6.1. and we need to remove it
 	// for upgraded instances.  We need to go through the controller for the Administration module (action_savetabs).
     if(file_exists('modules/Administration/SaveTabs.php'))
@@ -418,7 +405,64 @@ function post_install() {
            _logThis('Renamed cache/blowfish to custom/blowfish');
     }
 
-    if($origVersion < '651') {
+    if (version_compare($sugar_version, '6.5.0', '<'))
+    {
+       // move uploads dir
+       if($sugar_config['upload_dir'] == $sugar_config['cache_dir'].'upload/') {
+
+           $sugar_config['upload_dir'] = 'upload/';
+
+           if(file_exists('upload'))
+           {
+               _logThis("Renaming existing upload directory to upload_backup");
+               if(file_exists($sugar_config['cache_dir'].'upload/upgrades')) {
+                   //Somehow the upgrade script has been stop completely, the dump /upload path possibly exists.
+                   $ext = '';
+                   while(file_exists('upload/upgrades_backup'.$ext)) {
+                       $ext = empty($ext) ? 1 : $ext + 1;
+                   }
+                   rename('upload', 'upload_backup'.$ext);
+               } else {
+                   rename('upload', 'upload_backup');
+               }
+           }
+
+           _logThis("Renaming {$sugar_config['cache_dir']}/upload directory to upload");
+           rename($sugar_config['cache_dir'].'upload', 'upload');
+
+           if(!file_exists('upload/index.html') && file_exists('upload_backup/index.html'))
+           {
+              rename('upload_backup/index.html', 'upload/index.html');
+           }
+
+           if(!write_array_to_file( "sugar_config", $sugar_config, "config.php" ) ) {
+              _logThis('*** ERROR: could not write upload config information to config.php!!', $path);
+           }else{
+              _logThis('sugar_config array in config.php has been updated with upload config contents', $path);
+           }
+
+           mkdir($sugar_config['cache_dir'].'upgrades', 0755, true);
+           //Bug#53276: If upgrade patches exists, the move back to the its original path
+           if(file_exists('upload/upgrades/temp')) {
+               if(file_exists($sugar_config['cache_dir'].'upload/upgrades')) {
+                   //Somehow the upgrade script has been stop completely, the daump cache/upload path possibly exists.
+                   $ext = '';
+                   if(file_exists($sugar_config['cache_dir'].'upload/upgrades')) {
+                       while(file_exists($sugar_config['cache_dir'].'upload/upgrades_backup'.$ext)) {
+                           $ext = empty($ext) ? 1 : $ext + 1;
+                       }
+                       rename($sugar_config['cache_dir'].'upload/upgrades', $sugar_config['cache_dir'].'upload/upgrades_backup'.$ext);
+                   }
+               } else {
+                   mkdir($sugar_config['cache_dir'].'upload/upgrades', 0755, true);
+               }
+               rename('upload/upgrades/temp', $sugar_config['cache_dir'].'upload/upgrades/temp');
+           }
+       }
+    }
+
+    if (version_compare($sugar_version, '6.5.1', '<'))
+    {
         // add cleanJobQueue job if not there
         $job = new Scheduler();
         $job->retrieve_by_string_fields(array("job" => 'function::cleanJobQueue'));
@@ -435,13 +479,13 @@ function post_install() {
             $job->catch_up           = '0';
             $job->save();
         }
-        
+
 		// add sendEmailReminders job if not there
 		$job = new Scheduler();
 		$job->retrieve_by_string_fields(array("job" => 'function::sendEmailReminders'));
 		if(empty($job->id)) {
 			// not found - create
-			$job->name               = translate('LBL_OOTB_SEND_EMAIL_REMINDERS', 'Schedulers'); 
+			$job->name               = translate('LBL_OOTB_SEND_EMAIL_REMINDERS', 'Schedulers');
 			$job->job                = 'function::sendEmailReminders';
 			$job->date_time_start    = "2012-01-01 00:00:01";
 			$job->date_time_end      = "2030-12-31 23:59:59";
@@ -454,65 +498,24 @@ function post_install() {
 		}
     }
 
+    //BEGIN SUGARCRM flav=pro ONLY
+    require_once("install/install_utils.php");
+    _logThis("Building sidecar config", $path);
+    handleSidecarConfig();
+    //END SUGARCRM flav=pro ONLY
+
     //BEGIN SUGARCRM flav=ent ONLY
     ///////////////////////////////////////////////////////////////////////////
 	////	REBUILD PORTAL CONFIG
     _logThis("Rebuilding portal config", $path);
-    require_once("install/install_utils.php");
     handlePortalConfig();
     //END SUGARCRM flav=ent ONLY
-
-     //Patch for bug57431 : Module name isn't updated in portal layout editor
-    updateRenamedModulesLabels();
 
     //bug 57426 was introduced in 654, and it's effects need to be repaired during upgrade.
     //Run the repair script if the original version is greater than 654, but less than 661
     //(bug fix was introduced into 658 and 661 branches)
-    if ($origVersion > '654' && $origVersion < '661')
-    {
+    if (version_compare($sugar_version, '6.5.4', '>') && version_compare($sugar_version, '6.6.1', '<')) {
         process_email_address_relationships();
-    }
-}
-
-/**
- * Patch for bug57431
- * Compares current moduleList to base moduleList to detect if some modules have been renamed
- * Run changeModuleModStrings to create new labels based on customizations.
- */
-function updateRenamedModulesLabels()
-{
-    require_once('modules/Studio/wizards/RenameModules.php');
-    require_once('include/utils.php');
-
-    $klass = new RenameModules();
-    $languages = get_languages();
-
-    foreach ($languages as $langKey => $langName) {
-        //get list strings for this language
-        $strings = return_app_list_strings_language($langKey);
-
-        //get base list strings for this language
-        if (file_exists("include/language/$langKey.lang.php")) {
-            include("include/language/$langKey.lang.php");
-
-            //Keep only renamed modules
-            $renamedModules = array_diff($strings['moduleList'], $app_list_strings['moduleList']);
-
-            foreach ($renamedModules as $moduleId => $moduleName) {
-
-                $klass->selectedLanguage = $langKey;
-
-                $replacementLabels = array(
-                    'singular' => $strings['moduleListSingular'][$moduleId],
-                    'plural' => $strings['moduleList'][$moduleId],
-                    'prev_singular' => $app_list_strings['moduleListSingular'][$moduleId],
-                    'prev_plural' => $app_list_strings['moduleList'][$moduleId],
-                    'key_plural' => $moduleId,
-                    'key_singular' => $klass->getModuleSingularKey($moduleId)
-                );
-                $klass->changeModuleModStrings($moduleId, $replacementLabels);
-            }
-        }
     }
 }
 

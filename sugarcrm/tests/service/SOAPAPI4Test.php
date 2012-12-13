@@ -241,7 +241,6 @@ class SOAPAPI4Test extends SOAPTestCase
      */
     function testGetAvailableModules()
     {
-        global $beanList, $beanFiles;
         $soap_data = array('session' => $this->_sessionId,'filter' => 'mobile');
         $result = $this->_soapClient->call('get_available_modules', $soap_data);
 
@@ -251,9 +250,8 @@ class SOAPAPI4Test extends SOAPTestCase
             $this->assertTrue( isset($tmpModEntry['acls']) );
             $this->assertTrue( isset($tmpModEntry['module_key']) );
 
-            $class_name = $beanList[$tmpModEntry['module_key']];
-            require_once($beanFiles[$class_name]);
-            $mod = new $class_name();
+
+            $mod = BeanFactory::getBean($tmpModEntry['module_key']);
             $this->assertEquals( $mod->isFavoritesEnabled(), $tmpModEntry['favorite_enabled']);
         }
     }

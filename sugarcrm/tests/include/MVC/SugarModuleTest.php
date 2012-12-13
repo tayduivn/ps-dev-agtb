@@ -28,21 +28,9 @@ class SugarModuleTest extends Sugar_PHPUnit_Framework_TestCase
 {
     public function setUp()
     {
-        $beanList = array();
-        $beanFiles = array();
-        require('include/modules.php');
-        $GLOBALS['beanList'] = $beanList;
-        $GLOBALS['beanFiles'] = $beanFiles;
-        $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
+        parent::setUp();
+        SugarTestHelper::setUp("current_user");
         $GLOBALS['current_user']->is_admin = '1';
-    }
-    
-    public function tearDown()
-    {
-        SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
-        unset($GLOBALS['current_user']);
-        unset($GLOBALS['beanFiles']);
-        unset($GLOBALS['beanList']);
     }
     
     public function testLoadBean()

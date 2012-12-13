@@ -45,11 +45,8 @@ class Bug47683Test extends SOAPTestCase
     {
         $this->_soapURL = $GLOBALS['sugar_config']['site_url'].'/soap.php';
         parent::setUp();
-        $beanList = array();
-        $beanFiles = array();
-        require('include/modules.php');
-        $GLOBALS['beanList'] = $beanList;
-        $GLOBALS['beanFiles'] = $beanFiles;
+        SugarTestHelper::setUp("beanList");
+        SugarTestHelper::setUp("beanFiles");
         $this->_setupTestContact();
     }
 
@@ -65,8 +62,7 @@ class Bug47683Test extends SOAPTestCase
         SugarTestContactUtilities::removeCreatedContactsUsersRelationships();
         $this->_contact = null;
         SugarTestMeetingUtilities::removeMeetingContacts();
-        unset($GLOBALS['beanList']);
-        unset($GLOBALS['beanFiles']);
+        SugarTestHelper::tearDown();
     }
 
     public function testGetModifiedEntries()

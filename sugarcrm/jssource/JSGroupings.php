@@ -294,9 +294,9 @@
 			),
 
             $sugar_grp_yui2 = array(
-               //YUI combination 2
-               'include/javascript/yui/build/dragdrop/dragdrop-min.js'    => 'include/javascript/sugar_grp_yui2.js',
-               'include/javascript/yui/build/container/container-min.js'  => 'include/javascript/sugar_grp_yui2.js',
+            //YUI combination 2
+            'include/javascript/yui/build/dragdrop/dragdrop-min.js'    => 'include/javascript/sugar_grp_yui2.js',
+            'include/javascript/yui/build/container/container-min.js'  => 'include/javascript/sugar_grp_yui2.js',
             ),
 
             //Grouping for emails module.
@@ -377,6 +377,7 @@
            //END SUGARCRM flav=ent ONLY
         );
 
+    //BEGIN SUGARCRM flav=pro ONLY
     // groupings for sidecar forecast
     // use sidecar/src/include-manifest.php file to define what files should be loaded
     // exclude lib/jquery/jquery.min.js b/s jquery is loaded and extended with sugar_grp1_jquery.js
@@ -399,6 +400,7 @@
     $sidecar_forecasts['include/javascript/jquery/jquery.nouislider.js'] = $cached_file;
 
     $js_groupings[] = $sidecar_forecasts;
+    //END SUGARCRM flav=pro ONLY
 
     /**
      * Check for custom additions to this code

@@ -147,7 +147,7 @@
                                     name: "login_button",
                                     type: "button",
                                     label: "LBL_LOGIN_BUTTON_LABEL",
-                                    'class': "login-submit",
+                                    'class': "login-submit pull-right",
                                     value: "login",
                                     primary: true
                                 },

@@ -48,7 +48,7 @@
                     callback: function(app) {
                         var url = app.api.buildURL("Forecasts/init");
                         app.api.call('GET', url, null, {success: function(forecastData) {
-                            // get default selections for filter and category
+                            // get default selections for filter and ranges
                             app.defaultSelections = forecastData.defaultSelections;
                             app.initData = forecastData.initData;
                             app.user.set(app.initData.selectedUser);

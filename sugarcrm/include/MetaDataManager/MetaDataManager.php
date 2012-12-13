@@ -124,7 +124,7 @@ class MetaDataManager {
     }
 
     /**
-     * This method collects all view data for a module
+     * This method collects all view data for a modul
      *
      * @param $moduleName The name of the sugar module to collect info about.
      *
@@ -235,12 +235,10 @@ class MetaDataManager {
      * @return array The vardef's $dictonary array.
      */
     public function getVarDef($moduleName)
-
     {
         require_once("data/BeanFactory.php");
         $obj = BeanFactory::getObjectName($moduleName);
 
-        $data = false;
         if ($obj) {
             require_once("include/SugarObjects/VardefManager.php");
             global $dictionary;
@@ -259,11 +257,11 @@ class MetaDataManager {
 
             return $data;
         }
-        
+
         // Bug 56505 - multiselect fields default value wrapped in '^' character
         if (!empty($data['fields']) && is_array($data['fields']))
             $data['fields'] = $this->normalizeFielddefs($data['fields']);
-        
+
         if (!isset($data['relationships'])) {
             $data['relationships'] = array();
         }
@@ -296,7 +294,6 @@ class MetaDataManager {
             }
         }
 
-
         return $data;
     }
 
@@ -305,9 +302,10 @@ class MetaDataManager {
      *
      * @param string $module The module we want to fetch the ACL for
      * @param object $userObject The user object for the ACL's we are retrieving.
+     * @param object|bool $bean The SugarBean for getting specific ACL's for a module
      * @return array Array of ACL's, first the action ACL's (access, create, edit, delete) then an array of the field level acl's
      */
-    public function getAclForModule($module,$userObject) {
+    public function getAclForModule($module,$userObject,$bean=false) {
         $obj = BeanFactory::getObjectName($module);
 
         $outputAcl = array('fields'=>array());
@@ -325,6 +323,10 @@ class MetaDataManager {
 
             // is the user an admin user for the module
             $outputAcl['admin'] = ($userObject->isAdminForModule($module)) ? 'yes' : 'no';
+            // Bug56391 - Use the SugarACL class to determine access to different actions within the module
+            foreach(SugarACL::$all_access AS $action => $bool) {
+                $outputAcl[$action] = ($moduleAcls[$action] == true || !isset($moduleAcls[$action])) ? 'yes' : 'no';
+            }
 
             // Only loop through the fields if we have a reason to, admins give full access on everything, no access gives no access to anything
             if ( $outputAcl['access'] == 'yes') {
@@ -423,11 +425,13 @@ class MetaDataManager {
     /**
      * The collector method for the module strings
      *
-     * @return array The module strings for the current language
+     * @param string $moduleName The name of the module
+     * @param string $language The language for the translations
+     * @return array The module strings for the requested language
      */
-    public function getModuleStrings( $moduleName ) {
+    public function getModuleStrings( $moduleName, $language = 'en_us' ) {
         // Bug 58174 - Escaped labels are sent to the client escaped
-        $strings = return_module_language($GLOBALS['current_language'],$moduleName);
+        $strings = return_module_language($language,$moduleName);
         if (is_array($strings)) {
             foreach ($strings as $k => $v) {
                 $strings[$k] = $this->decodeStrings($v);
@@ -439,24 +443,34 @@ class MetaDataManager {
 
     /**
      * The collector method for the app strings
-     *
-     * @return array The app strings for the current language, and a hash of the app strings
+     * 
+     * @param string $lang The language you wish to fetch the app strings for
+     * @return array The app strings for the requested language
      */
-    public function getAppStrings() {
-        $appStrings = $GLOBALS['app_strings'];
-        $appStrings['_hash'] = md5(serialize($appStrings));
-        return $appStrings;
+    public function getAppStrings($lang = 'en_us' ) {
+        $strings = return_application_language($lang);
+        if (is_array($strings)) {
+            foreach ($strings as $k => $v) {
+                $strings[$k] = $this->decodeStrings($v);
+            }
+        }
+        return $strings;        
     }
 
     /**
      * The collector method for the app strings
      *
-     * @return array The app strings for the current language, and a hash of the app strings
+     * @param string $lang The language you wish to fetch the app list strings for
+     * @return array The app list strings for the requested language
      */
-    public function getAppListStrings() {
-        $appStrings = $GLOBALS['app_list_strings'];
-        $appStrings['_hash'] = md5(serialize($appStrings));
-        return $appStrings;
+    public function getAppListStrings($lang = 'en_us') {
+        $strings = return_app_list_strings_language($lang);
+        if (is_array($strings)) {
+            foreach ($strings as $k => $v) {
+                $strings[$k] = $this->decodeStrings($v);
+            }
+        }
+        return $strings;        
     }
 
 
@@ -577,5 +591,40 @@ class MetaDataManager {
                 unlink($metadataFile);
             }
         }
+    }
+    
+    /**
+     * Gets server information
+     * 
+     * @return array of ServerInfo
+     */
+    public function getServerInfo() {
+        global $sugar_flavor;
+        global $sugar_version;
+        global $timedate;
+
+        $data['flavor'] = $sugar_flavor;
+        $data['version'] = $sugar_version;
+        
+        //BEGIN SUGARCRM flav=pro ONLY
+        $fts_enabled = SugarSearchEngineFactory::getFTSEngineNameFromConfig();
+        if(!empty($fts_enabled) && $fts_enabled != 'SugarSearchEngine') {
+            $data['fts'] = array(
+                'enabled' =>  true,
+                'type'    =>  $fts_enabled,
+            );
+        } else {
+            $data['fts'] = array(
+                'enabled' =>  false,
+            );
+        }
+        //END SUGARCRM flav=pro ONLY
+
+        //Always return dates in ISO-8601
+        $date = new SugarDateTime();
+        $data['server_time'] = $timedate->asIso($date, $GLOBALS['current_user']);
+        $data['gmt_time'] = gmdate('Y-m-d\TH:i:s') . '+0000';
+
+        return $data;
     }
 }

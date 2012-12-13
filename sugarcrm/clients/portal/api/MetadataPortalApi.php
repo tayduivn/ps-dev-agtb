@@ -36,7 +36,7 @@ class MetadataPortalApi extends MetadataApi {
         foreach($admin->settings AS $setting_name => $setting_value) {
             if(stristr($setting_name, 'portal_')) {
                 $key = str_replace('portal_', '', $setting_name);
-                $configs[$key] = json_decode(html_entity_decode($setting_value));
+                $configs[$key] = json_decode(html_entity_decode($setting_value),true);
             }
         }
         
