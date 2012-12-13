@@ -44,6 +44,7 @@ class UpgradeRemoval67x extends UpgradeRemoval
             $files[] = 'themes/Sugar/js';
             //Remove the themes/Sugar/tpls directory
             $files[] = 'themes/Sugar/tpls';
+            $files[] = 'themes/Sugar5';
         }
 
         return $files;
