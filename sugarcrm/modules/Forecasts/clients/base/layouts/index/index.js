@@ -41,7 +41,7 @@
             // Set initial selected data on the context
             options.context.forecasts.set({
                 selectedTimePeriod : defaultSelections.timeperiod_id,
-                selectedCategory: defaultSelections.category,
+                selectedRanges: defaultSelections.ranges,
                 selectedGroupBy : defaultSelections.group_by,
                 selectedDataSet: defaultSelections.dataset,
                 selectedUser : defaultSelections.selectedUser,      

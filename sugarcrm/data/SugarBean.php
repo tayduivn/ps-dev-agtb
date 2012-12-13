@@ -308,7 +308,7 @@ class SugarBean
      * @return SugarBean
      * FIXME: this will be removed, needed for ensuring BeanFactory is always used
      */
-    public function _createBean($beanName)
+    public static function _createBean($beanName)
     {
         return new $beanName();
     }
@@ -4804,10 +4804,12 @@ class SugarBean
                         , array("disable_row_level_security" => true)
                         //END SUGARCRM flav=pro ONLY
                         );
-                        if (!empty($field['rname'])) {
-                        	$this->$name = $mod->$field['rname'];
-                        } else if (isset($mod->name)) {
-                        	$this->$name = $mod->name;
+                        if ($mod){
+                            if (!empty($field['rname'])) {
+                                $this->$name = $mod->$field['rname'];
+                            } else if (isset($mod->name)) {
+                                $this->$name = $mod->name;
+                            }
                         }
                     }
                     if(!empty($this->$id_name) && isset($this->$name))

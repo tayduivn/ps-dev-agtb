@@ -655,7 +655,8 @@ class ViewConvertLead extends SugarView
 
 		foreach($activitesList as $module)
 		{
-			$query = "SELECT id FROM {$activity->table_name} WHERE parent_id = '{$lead->id}' AND parent_type = 'Leads'";
+            $activity = BeanFactory::newBean($module);
+            $query = "SELECT id FROM {$activity->table_name} WHERE parent_id = '{$lead->id}' AND parent_type = 'Leads'";
 			$result = $db->query($query,true);
             while($row = $db->fetchByAssoc($result))
             {

@@ -93,6 +93,10 @@ $sugar_md = 'include/images/sugar_md_ult.png';
 $loginImage = 'include/images/sugarcrm_login.png';
 $common = 'install/installCommon.js';
 
+//Make sure the TrackerManager is paused on install
+$trackerManager = TrackerManager::getInstance();
+$trackerManager->pause();
+
 ///////////////////////////////////////////////////////////////////////////////
 ////	INSTALLER LANGUAGE
 function getSupportedInstallLanguages(){

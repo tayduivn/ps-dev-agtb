@@ -3,6 +3,7 @@
     createMode: false,
 
     events: {
+        'click .record-duplicate': 'duplicateClicked',    	
         'click .record-edit': 'editClicked',
         'click .record-edit-link-wrapper': 'handleEdit',
         'click .record-save': 'saveClicked',
@@ -155,6 +156,13 @@
         return false;
     },
 
+    duplicateClicked: function(event) {
+        if (!this.$(event.target).hasClass('disabled')) {
+            app.cache.set("duplicate"+this.module, this.model.attributes);
+            app.router.navigate("#"+this.module+"/create", {trigger: true});
+        }
+    },
+    
     editClicked: function(event) {
         if (!this.$(event.target).hasClass('disabled')) {
             this.toggleEdit();

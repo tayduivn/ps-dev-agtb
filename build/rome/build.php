@@ -35,17 +35,16 @@ if(!empty($config['cleanCache'])){
         if(is_dir($path . "/sugarcrm")) {
             $path .= "/sugarcrm";
         }
+        $rome->remove($path ."/cache/file_map.php");
+        $rome->remove($path ."/cache/api");
         $rome->remove($path ."/cache/jsLanguage");
         $rome->remove($path ."/cache/modules");
         $rome->remove($path ."/cache/smarty");
         $rome->remove($path ."/cache/Expressions");
         $rome->remove($path ."/cache/themes");
         $rome->remove($path ."/cache/blowfish");
-        $rome->remove($path ."/cache/javascript");
-        $rome->remove($path ."/cache/include/javascript");
         $rome->remove($path ."/cache/dashlets");
         $rome->remove($path ."/cache/include/api");
-        $rome->remove($path ."/cache/include/file_map.php");
         $rome->remove($path ."/cache/include/javascript/sugar_grp1.js");
         $rome->remove($path ."/cache/include/javascript/sugar_grp1_yui.js");
     }

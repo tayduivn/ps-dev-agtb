@@ -32,18 +32,14 @@ class RESTAPI4FieldACLsTest extends Sugar_PHPUnit_Framework_TestCase
     protected $v4;
     
     public function setUp() {
-        $beanList = array();
-        $beanFiles = array();
-        require('include/modules.php');
-        $GLOBALS['beanList'] = $beanList;
-        $GLOBALS['beanFiles'] = $beanFiles;
+        SugarTestHelper::setUp("beanList");
+        SugarTestHelper::setUp("beanFiles");
+        SugarTestHelper::setUp("current_user");
 
         //Reload langauge strings
         $GLOBALS['app_strings'] = return_application_language($GLOBALS['current_language']);
         $GLOBALS['app_list_strings'] = return_app_list_strings_language($GLOBALS['current_language']);
         $GLOBALS['mod_strings'] = return_module_language($GLOBALS['current_language'], 'Accounts');
-        //Create an anonymous user for login purposes/
-        $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
         
         $this->v4 = new SugarWebServiceUtilv4();
     }
@@ -52,12 +48,10 @@ class RESTAPI4FieldACLsTest extends Sugar_PHPUnit_Framework_TestCase
         // Copied from RESTAPI4Test, minus the isset check which is unnecessary
         unset($GLOBALS['listViewDefs']);
         unset($GLOBALS['viewdefs']);
-        unset($GLOBALS['beanList']);
-        unset($GLOBALS['beanFiles']);
         unset($GLOBALS['app_list_strings']);
         unset($GLOBALS['app_strings']);
         unset($GLOBALS['mod_strings']);
-        unset($GLOBALS['current_user']);
+        SugarTestHelper::tearDown();
     }
     
     /**

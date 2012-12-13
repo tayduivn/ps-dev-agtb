@@ -34,6 +34,11 @@ class DropDownBrowser
         'eapm_list_documents',
         'eapm_list_import',
         'extapi_meeting_password',
+        //BEGIN SUGARCRM flav=pro ONLY
+        'commit_stage_dom',
+        'commit_stage_custom_dom',
+        'commit_stage_binary_dom',
+        //END SUGARCRM flav=pro ONLY
         // 'moduleList', // We may want to put this in at a later date
         // 'moduleListSingular', // Same with this
     );

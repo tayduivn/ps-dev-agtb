@@ -106,7 +106,7 @@ class ForecastsCurrentUserApi extends CurrentUserApi {
 
         $returnInitData["initData"]['forecasts_setup'] = (isset($forecastsSettings['is_setup'])) ? $forecastsSettings['is_setup'] : 0;
 
-        $defaultSelections["category"] = array("include");
+        $defaultSelections["ranges"] = array("include");
         $defaultSelections["group_by"] = 'forecast';
         $defaultSelections["dataset"] = 'likely';
 

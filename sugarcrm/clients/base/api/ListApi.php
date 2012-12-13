@@ -21,122 +21,25 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  ********************************************************************************/
 
 require_once('data/BeanFactory.php');
+require_once('include/api/SugarListApi.php');
 
-class ListApi extends SugarApi {
+class ListApi extends SugarListApi {
     public function registerApiRest() {
         return array(
-/*
-            'listModules' => array(
-                'reqType' => 'GET',
-                'path' => array('<module>'),
-                'pathVars' => array('module'),
-                'method' => 'listModule',
-                'shortHelp' => 'List records in this module',
-                'longHelp' => 'include/api/help/getListModule.html',
-            ),
-            'searchModules' => array(
-                'reqType' => 'GET',
-                'path' => array('<module>','search','?'),
-                'pathVars' => array('module','','q'),
-                'method' => 'listModule',
-                'shortHelp' => 'Searches records in this module',
-                'longHelp' => 'include/api/help/getListSearch.html',
-            ),
-            'searchModulesPost' => array(
-                'reqType' => 'POST',
-                'path' => array('<module>','search'),
-                'pathVars' => array('module',''),
-                'method' => 'listModule',
-                'shortHelp' => 'Searches records in this module',
-                'longHelp' => 'include/api/help/postListSearch.html',
-            ),
-*/
         );
     }
-
-    protected $defaultLimit = 20; // How many records should we show if they don't pass up a limit
 
     public function __construct() {
         $this->defaultLimit = $GLOBALS['sugar_config']['list_max_entries_per_page'];
     }
 
-    protected function parseArguments($api, $args, $seed) {
+    public function parseArguments($api, $args, $seed) {
+
+        $parsed = parent::parseArguments($api, $args, $seed);
 
         $deleted = false;
         if ( isset($args['deleted']) && ( strtolower($args['deleted']) == 'true' || $args['deleted'] == '1' ) ) {
             $deleted = true;
-        }
-
-        $limit = $this->defaultLimit;
-        if ( isset($args['max_num']) ) {
-            $limit = (int)$args['max_num'];
-        }
-
-        $offset = 0;
-        if ( isset($args['offset']) ) {
-            if ( $args['offset'] === 'end' ) {
-                $offset = 'end';
-            } else {
-                //Do not allow negative offsets
-                $offset = max(0, (int)$args['offset']);
-            }
-        }
-        
-        $userFields = null;
-        if (!empty($args['fields'])) {
-            $userFields = explode(",", $args["fields"]);
-            
-            foreach ( $userFields as $field ) {
-                //BEGIN SUGARCRM flav=pro ONLY
-                if ( !$seed->ACLFieldAccess($field,'list') || !isset($seed->field_defs[$field]) ) {
-                    throw new SugarApiExceptionNotAuthorized('No access to view field: '.$field.' in module: '.$args['module']);
-                }
-                //END SUGARCRM flav=pro ONLY
-                //BEGIN SUGARCRM flav!=pro ONLY
-                if ( !isset($seed->field_defs[$field]) ) {
-                    throw new SugarApiExceptionNotAuthorized('No access to view field: '.$field.' in module: '.$args['module']);
-                }
-                //END SUGARCRM flav=!pro ONLY
-            }
-            
-            if ( ! in_array('date_modified',$userFields) ) {
-                $userFields[] = 'date_modified';
-            }
-
-        }
-
-
-        $orderBy = '';
-        if ( isset($args['order_by']) ) {
-            if ( strpos($args['order_by'],',') !== 0 ) {
-                // There is a comma, we are ordering by more than one thing
-                $orderBys = explode(',',$args['order_by']);
-            } else {
-                $orderBys = array($args['order_by']);
-            }
-            $orderByArray = array();
-            foreach ( $orderBys as $order ) {
-                if ( strpos($order,':') ) {
-                    // It has a :, it's specifying ASC / DESC
-                    list($column,$direction) = explode(':',$order);
-                    if ( strtolower($direction) == 'desc' ) {
-                        $direction = 'DESC';
-                    } else {
-                        $direction = 'ASC';
-                    }
-                } else {
-                    // No direction specified, let's let it fly free
-                    $column = $order;
-                    $direction = 'ASC';
-                }
-                if ( !$seed->ACLFieldAccess($column,'list') || !isset($seed->field_defs[$column]) ) {
-                    throw new SugarApiExceptionNotAuthorized('No access to view field: '.$column.' in module: '.$args['module']);
-                }
-                
-                $orderByArray[] = $column.' '.$direction;
-            }
-            
-            $orderBy = implode(',',$orderByArray);
         }
 
         $whereParts = array();
@@ -176,10 +79,10 @@ class ListApi extends SugarApi {
 
 
         return array('deleted'=>$deleted,
-                     'limit'=>$limit,
-                     'offset'=>$offset,
-                     'userFields'=>$userFields,
-                     'orderBy'=>$orderBy,
+                     'limit'=>$parsed['limit'],
+                     'offset'=>$parsed['offset'],
+                     'userFields'=>$parsed['fields'],
+                     'orderBy'=>$this->convertOrderByToSql($parsed['orderBy']),
                      'params'=>$params,
                      'whereParts'=>$whereParts,
                      'where'=>$where,
@@ -199,13 +102,9 @@ class ListApi extends SugarApi {
         
         $options = $this->parseArguments($api, $args, $seed);
 
-        if ( !empty($args['q']) ) {
-            return $this->performSearch($api, $args, $seed, $args['q'], $options);
-        } else {
-            $listQueryParts = $seed->create_new_list_query($options['orderBy'], $options['where'], $options['userFields'], $options['params'], $options['deleted'], '', true, null, false, false);
-            
-            return $this->performQuery($api, $args, $seed, $listQueryParts, $options['limit'], $options['offset']);
-        }
+        $listQueryParts = $seed->create_new_list_query($options['orderBy'], $options['where'], $options['userFields'], $options['params'], $options['deleted'], '', true, null, false, false);
+        
+        return $this->performQuery($api, $args, $seed, $listQueryParts, $options['limit'], $options['offset']);
     }
 
 
