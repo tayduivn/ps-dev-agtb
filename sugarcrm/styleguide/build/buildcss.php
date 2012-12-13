@@ -12,17 +12,22 @@ try {
     $variables['baseUrl'] = '"../../assets"';
 
     //build bootstrap.css
-    $less = new lessc('../less/clients/' . $client . '/config.less');
+    $less = new lessc('../less/clients/' . $client . '/bootstrap.less');
     if (isset($_GET["min"]) && $_GET["min"]=="true") $less->setFormatter("compressed");
     file_put_contents('../styleguide/css/bootstrap.css', $less->parse($variables));
+
+    //build sugar.css
+    $less = new lessc('../less/clients/' . $client . '/sugar.less');
+    if (isset($_GET["min"]) && $_GET["min"]=="true") $less->setFormatter("compressed");
+    file_put_contents('../styleguide/css/sugar.css', $less->parse($variables));
 
     //$variables['baseUrl'] = '"../../../../../styleguide/assets"';
     //file_put_contents('../../cache/themes/clients/base/default/bootstrap.css', $less->parse($variables));
 
     //build bootstrap-mobile.css
-    $less = new lessc('../less/clients/mobile/config.less');
-    if (isset($_GET["min"]) && $_GET["min"]=="true") $less->setFormatter("compressed");
-    file_put_contents('../styleguide/css/bootstrap-mobile.css', $less->parse($variables));
+    // $less = new lessc('../less/clients/mobile/config.less');
+    // if (isset($_GET["min"]) && $_GET["min"]=="true") $less->setFormatter("compressed");
+    // file_put_contents('../styleguide/css/bootstrap-mobile.css', $less->parse($variables));
 
     //build utility css files
     $modulesRoot = '../less/modules';

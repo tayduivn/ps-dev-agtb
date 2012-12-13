@@ -1,18 +1,21 @@
   page.rand = function(){return Math.floor((Math.random()*100)+1);};
 
   function loadPartial(template) {
-    jQuery.ajax({
-      url: template,
-      dataType: 'html',
-      cache: 'false',
-      async: false,
-      cache: false,
-      success: function(data) {
-        if(data !== undefined){
-          ich.addTemplate(template,data);
+    //console.log('loadPartial')
+    if (!ich[template]) {
+      jQuery.ajax({
+        url: template,
+        dataType: 'html',
+        cache: 'false',
+        async: false,
+        cache: false,
+        success: function(data) {
+          if(data !== undefined){
+            ich.addTemplate(template,data);
+          }
         }
-      }
-    });
+      });
+    }
   }
 
   function loadPage(page) {
@@ -23,6 +26,7 @@
   }
 
   function loadPartials(templates) {
+    //console.log('loadPartials')
     jQuery.each(
       templates,
       function(i,t){
@@ -42,9 +46,12 @@
   }
 
   function loadContent(source,target,mode,method) {
+    //console.log('loadContent')
     // console.log(source);
     // console.log(target);
     // console.log(mode);
+    // console.log(mode);
+    // console.log('==============');
 
     if ( typeof method === 'undefined' ) {
       method = 'replace';

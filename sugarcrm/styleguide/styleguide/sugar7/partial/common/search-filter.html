@@ -15,15 +15,15 @@
         </div>
         <div class="toolbar-btns">
             <div class="pull-right">
-                <a href="partial/{{module}}/{{module}}-activitystream.html" class="btn btn-invisible" data-view="activitystream" data-toggle="tab" data-target="#view .main-content" data-mode="view"><i class="icon-th-list"></i></a>
+                <a href="partial/{{module}}/{{module}}-activitystream.html" class="btn btn-invisible" data-view="activitystream" data-toggle="proto" data-target="#view .main-content" data-mode="view"><i class="icon-th-list"></i></a>
                 <a href="#" class="btn btn-invisible" data-view="timeline"><i class="icon-time"></i></a>
                 <a href="#" class="btn btn-invisible" data-view="calendar"><i class="icon-calendar"></i></a>
-                <a href="partial/{{module}}/{{module}}-table.html" data-view="list" class="btn btn-invisible active" data-toggle="tab" data-target="#view .main-content" data-mode="view"><i class="icon-table"></i></a>
+                <a href="partial/{{module}}/{{module}}-table.html" data-view="list" class="btn btn-invisible active" data-toggle="proto" data-target="#view .main-content" data-mode="view"><i class="icon-table"></i></a>
                 <!-- <ul class="nav nav-tabs">
-                    <li class=""><a href="partial/{{module}}/{{module}}-activitystream.html" class="btn btn-invisible" data-view="activitystream" data-toggle="tab" data-target="#view .main-content" data-mode="view"><i class="icon-th-list"></i></a></li>
+                    <li class=""><a href="partial/{{module}}/{{module}}-activitystream.html" class="btn btn-invisible" data-view="activitystream" data-toggle="proto" data-target="#view .main-content" data-mode="view"><i class="icon-th-list"></i></a></li>
                     <li class=""><a href="#" class="btn btn-invisible" data-view="timeline"><i class="icon-time"></i></a></li>
                     <li class=""><a href="#" class="btn btn-invisible" data-view="calendar"><i class="icon-calendar"></i></a></li>
-                    <li class="active"><a href="partial/{{module}}/{{module}}-table.html" data-view="list" class="btn btn-invisible" data-toggle="tab" data-target="#view .main-content" data-mode="view"><i class="icon-table"></i></a></li>
+                    <li class="active"><a href="partial/{{module}}/{{module}}-table.html" data-view="list" class="btn btn-invisible" data-toggle="proto" data-target="#view .main-content" data-mode="view"><i class="icon-table"></i></a></li>
                 </ul> -->
             </div>
         </div>
@@ -225,7 +225,13 @@
       $('.form-change-actions .btn').show();
   }
   function searchChoiceConstructor (id,html,index){
-    return '<li class="search-choice search-choice-option" id="search_filter_'+index+'_choice"><span>Filter</span><a>'+html+'</a></li>';
+    if (html.indexOf('Create a filter')===-1)
+    {
+      return '<li class="search-choice search-choice-option" id="search_filter_'+index+'_choice"><span>Filter</span><a>'+html+'</a></li>';
+    }
+    else {
+      return '';
+    }
   }
 </script>
 
