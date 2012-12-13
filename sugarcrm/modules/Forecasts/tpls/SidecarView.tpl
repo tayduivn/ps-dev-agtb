@@ -2,7 +2,6 @@
 <html>
     <head>
         <meta http-equiv="X-UA-Compatible" content="IE=8, IE=9, IE=10" >
-        <link rel="stylesheet" type="text/css" href="{$css_url}" />
     </head>
     <body>
         <div id="sugarcrm">
