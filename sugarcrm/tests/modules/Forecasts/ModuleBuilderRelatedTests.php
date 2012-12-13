@@ -1,4 +1,5 @@
 <?php
+//FILE SUGARCRM flav=pro ONLY
 /*********************************************************************************
  * The contents of this file are subject to the SugarCRM Professional End User
  * License Agreement ("License") which can be viewed at
@@ -21,53 +22,30 @@
  * Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.;
  * All Rights Reserved.
  ********************************************************************************/
- 
-require_once('modules/UpgradeWizard/uw_utils.php');
-require_once('modules/MySettings/TabController.php');
 
-class Bug42490Test extends Sugar_PHPUnit_Framework_TestCase 
+require_once('modules/ModuleBuilder/Module/DropDownBrowser.php');
+
+class ModuleBuilderRelatedTests extends Sugar_PHPUnit_Framework_TestCase
 {
-	private $_originalEnabledTabs;
-	private $_tc;
-	
-    public function setUp()
-    {
-        SugarTestHelper::setUp('moduleList');
-        SugarTestHelper::setUp('current_user', array(true, 1));
-        $this->_tc = new TabController();
-        $tabs = $this->_tc->get_tabs_system();
-        $this->_originalEnabledTabs = $tabs[0];
+
+    public static function setUpBeforeClass() {
+        SugarTestHelper::setUp('app_list_strings');
     }
 
-	public function tearDown() 
-	{
-        if (!empty($this->_originalEnabledTabs))
-        {
-            $this->_tc->set_system_tabs($this->_originalEnabledTabs);
-        }
-	}
+    public static function tearDownAfterClass() {
+        SugarTestHelper::tearDown();
+    }
 
-	public function testUpgradeDisplayedTabsAndSubpanels() 
-	{
-        $modules_to_add = array(
-            //BEGIN SUGARCRM flav!=dce ONLY
-            'Calls',
-            'Meetings',
-            'Tasks',
-            'Notes',
-            'Prospects',
-            'ProspectLists',
-            //END SUGARCRM flav!=dce ONLY
-        );
+    /**
+     * This is a test to check that the commit stage labels are not shown on the drop down editor
+     *
+     * @group forecasts
+     * @group bug59133
+     */
+    public function testRestrictedDropdownOptions() {
+        $this->assertTrue(in_array('commit_stage_dom', DropDownBrowser::$restrictedDropdowns));
+        $this->assertTrue(in_array('commit_stage_binary_dom', DropDownBrowser::$restrictedDropdowns));
+        $this->assertTrue(in_array('commit_stage_custom_dom', DropDownBrowser::$restrictedDropdowns));
+    }
 
-		upgradeDisplayedTabsAndSubpanels('610');
-		
-		$all_tabs = $this->_tc->get_tabs_system();
-		$tabs = $all_tabs[0];
-		
-		foreach($modules_to_add as $module)
-		{
-            $this->assertArrayHasKey($module, $tabs, 'Assert that ' . $module . ' tab is set for system tabs');
-		}
-	}
 }

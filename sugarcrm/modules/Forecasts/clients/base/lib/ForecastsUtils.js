@@ -323,29 +323,6 @@
                 returnValue = true;
             }
             return returnValue;
-        },
-
-        /**
-         * Get the Datasets for the specified app list string that are only present via the specified config key list string combination
-         *
-         * @param app_list_dataset_name {String} variable to pull from app list strings for the datasets needed
-         * @param cfg_key_prefix {String} config key part to prepend to the values of the app list string dataset, and will create a key to match within the config vars
-         * @param cfg {Backbone.Model} the Config model from the view
-         * @return {Object}
-         */
-        getAppConfigDatasets: function(app_list_dataset_name, cfg_key_prefix, cfg) {
-            var self = this;
-            var ds = app.metadata.getStrings('app_list_strings')[app_list_dataset_name] || [];
-
-            var returnDs = {};
-            _.each(ds, function(value, key){
-                if(cfg.get(cfg_key_prefix + key) == 1) {
-                    returnDs[key] = value
-                }
-            }, self);
-            return returnDs;
         }
-
-
     };
 })(SUGAR.App);

@@ -108,7 +108,7 @@ class ActivityStreamApi extends ListApi {
         return $module == 'ActivityStream' ? $seed->deletePost($id) : $seed->deleteComment($id);
     }
 
-    protected function parseArguments($api, $args, $seed) {
+    public function parseArguments($api, $args, $seed) {
         // options supported: limit, offset (no 'end'), filter ('favorites', 'myactivities'), link, parent_module, parent_id
         $options = parent::parseArguments($api, $args, $seed);
         if(isset($args['filter']) && in_array($args['filter'], array('favorites', 'myactivities'))) {

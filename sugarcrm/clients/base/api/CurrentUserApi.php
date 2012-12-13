@@ -149,9 +149,22 @@ class CurrentUserApi extends SugarApi {
         $user_data['user_name'] = $current_user->user_name;
         $user_data['acl'] = $this->getAcls($platform);
         //BEGIN SUGARCRM flav=pro ONLY
-        $user_data['primary_team_name'] = $current_user->team_name;
-        $user_data['primary_team_id'] = $current_user->team_id;
-        $user_data['default_teams'] = $current_user->get_my_teams();
+        require_once('modules/Teams/TeamSetManager.php');
+        $user_data['primary_team'] = array("id" => $current_user->team_id, "name" => $current_user->team_name);
+        $teams = $current_user->get_my_teams();
+        $my_teams = array();
+        foreach($teams AS $id => $name) {
+            $my_teams[] = array("id" => $id, "name" => $name,);
+        }
+        $user_data['my_teams'] = $my_teams;
+
+        $user_data['default_teams'] = TeamSetManager::getTeamsFromSet($current_user->team_set_id);
+        foreach($user_data['default_teams'] AS $id => $team) {
+            $user_data['default_teams'][$id]['primary'] = false;
+            if($team['id'] == $user_data['primary_team']['id']) {
+                $user_data['default_teams'][$id]['primary'] = true;
+            }
+        }
         //END SUGARCRM flav=pro ONLY
         if(isset($current_user->preferred_language)) {
             $user_data['preferred_language'] = $current_user->preferred_language;
