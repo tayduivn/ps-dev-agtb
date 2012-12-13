@@ -320,7 +320,6 @@ class MetaDataManager {
             foreach(SugarACL::$all_access AS $action => $bool) {
                 $outputAcl[$action] = ($moduleAcls[$action] == true || !isset($moduleAcls[$action])) ? 'yes' : 'no';
             }
-            $moduleAcls = SugarACL::getUserAccess($module, array(), $context);
 
             // is the user an admin user for the module
             $outputAcl['admin'] = ($userObject->isAdminForModule($module)) ? 'yes' : 'no';
