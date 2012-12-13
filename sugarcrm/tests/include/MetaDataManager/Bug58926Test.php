@@ -1,5 +1,4 @@
 <?php
-//FILE SUGARCRM flav=ent ONLY
 /*********************************************************************************
  * The contents of this file are subject to the SugarCRM Professional End User
  * License Agreement ("License") which can be viewed at
@@ -23,38 +22,64 @@
  * All Rights Reserved.
  ********************************************************************************/
 
-require_once('tests/rest/RestTestBase.php');
+require_once 'include/MetaDataManager/MetaDataManager.php';
 
-
-class RestBug57392Test extends RestTestBase
+/**
+ * Bug 58926 
+ */
+class Bug58926Test extends Sugar_PHPUnit_Framework_TestCase
 {
-
     public function setUp()
     {
-        parent::setUp();
-        // create a case assign it to admin
-        $case = BeanFactory::newBean('Cases');
-        $case->name = 'Test Case ' . create_guid();
-        $case->assigned_user_id = 1;
-        $case->save();
-        $this->case_id = $case->id;
+        SugarTestHelper::setUp('current_user');
     }
-
+    
     public function tearDown()
     {
-        parent::tearDown();
-        $GLOBALS['db']->query("DELETE FROM cases WHERE id = '{$this->case_id}'");
+        SugarTestHelper::tearDown();
     }
 
     /**
-     * @group rest
+     * Tests if an app_list_string or app_string has special html characters in it if it will be decoded properly in the MetadataManager
+     * when requested
+     * 
+     * @group Bug58926
      */
-    public function testUpdatingAssignedUser()
+    public function testAppStringsWithSpecialChars()
     {
-        $restReply = $this->_restCall("Cases/{$this->case_id}");
-        $this->assertEquals(1, $restReply['reply']['assigned_user_id'], "The assigned user id was not 1 it was {$restReply['reply']['assigned_user_id']}");
 
-        $restReply = $this->_restCall("Cases/{$this->case_id}",json_encode(array('assigned_user_id' => $GLOBALS['current_user']->id)), 'PUT');
-        $this->assertEquals($GLOBALS['current_user']->id, $restReply['reply']['assigned_user_id'], "The assigned user id was not {$GLOBALS['current_user']->id} it was {$restReply['reply']['assigned_user_id']}");
+        $result = array(
+                'app_list_strings' => array(
+                        'moduleList' => array(
+                                'Leads' => "Lead's Are Special",
+                            ),
+                        'moduleListSingular' => array(
+                                'Leads' => "Leads' Are Special",
+                            ),
+                    ),
+                'app_strings' => array(
+                        'LBL_NEXT' => "Next's Are the worst",
+                    ),
+            );
+
+        $mm = new MetaDataManagerBug58926($GLOBALS['current_user']);
+        
+        $test['app_list_strings']['moduleList']['Leads'] = $mm->getDecodeStrings("Lead&#39;s Are Special");
+        $test['app_list_strings']['moduleListSingular']['Leads'] = $mm->getDecodeStrings("Leads&#39; Are Special");
+        $test['app_strings']['LBL_NEXT'] = $mm->getDecodeStrings("Next&#39;s Are the worst");
+                
+
+        $this->assertEquals($test, $result, "Decoding did not work");
+    }
+}
+
+/**
+ * Accessor class to the metadatamanager to allow access to protected methods
+ */
+class MetaDataManagerBug58926 extends MetaDataManager
+{
+    public function getDecodeStrings($data)
+    {
+        return $this->decodeStrings($data);
     }
 }

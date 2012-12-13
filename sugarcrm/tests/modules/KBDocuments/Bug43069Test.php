@@ -34,17 +34,16 @@
      * @ticket 43069
      * @author arymarchik@sugarcrm.com
      */
-require_once 'PHPUnit/Extensions/OutputTestCase.php';
 
-class Bug43069Test extends PHPUnit_Extensions_OutputTestCase
+class Bug43069Test extends Sugar_PHPUnit_Framework_OutputTestCase
 {
-    private $_current_user = null;
-    private $_current_acl = null;
-
     public function setUp()
     {
-        $GLOBALS['app_strings'] = return_application_language('en_us');
-        $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
+        SugarTestHelper::setUp('beanList');
+        SugarTestHelper::setUp('beanFiles');
+        SugarTestHelper::setUp('app_strings');
+        SugarTestHelper::setUp('current_user');
+
         $_SESSION['ACL'] = array();
         $_SESSION['ACL'][$GLOBALS['current_user']->id]['KBDocuments'] =
         array(
@@ -94,7 +93,6 @@ class Bug43069Test extends PHPUnit_Extensions_OutputTestCase
             'fields' => array(),
         );
         $GLOBALS['mod_strings'] = return_module_language($GLOBALS['current_language'], 'ACL');
-        $GLOBALS['app_strings'] = return_application_language($GLOBALS['current_language']);
         // reset cached ACLs
         SugarACL::$acls = array();
     }
@@ -102,14 +100,15 @@ class Bug43069Test extends PHPUnit_Extensions_OutputTestCase
     /**
      * Creating KBDocument bean and try to display view for action EditView
      * @group 43069
+     *
      */
     public function testAccessToKBDocument()
     {
-        $this->expectOutputRegex('/.*(' . quotemeta($GLOBALS['mod_strings']['LBL_NO_ACCESS']) . ')+.*/');
         $controller = new KBDocument();
         $view_object_map = array();
         $view_object_map['remap_action'] = 'edit';
         $view = ViewFactory::loadView('classic', 'KBDocuments', $controller, $view_object_map, null);
+        $this->expectOutputRegex('/.*' . quotemeta($GLOBALS['mod_strings']['LBL_NO_ACCESS']) . '.*/');
         $view->action='EditView';
         $GLOBALS['current_view'] = $view;
         $this->assertFalse($view->display());
@@ -117,10 +116,7 @@ class Bug43069Test extends PHPUnit_Extensions_OutputTestCase
 
     public function tearDown()
     {
-        SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
-        unset($GLOBALS['current_user']);
+        SugarTestHelper::tearDown();
         unset($_SESSION['ACL']);
-        unset($GLOBALS['mod_strings']);
-        unset($GLOBALS['app_strings']);
     }
 }

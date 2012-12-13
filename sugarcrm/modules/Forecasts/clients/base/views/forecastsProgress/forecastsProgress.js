@@ -125,6 +125,10 @@
                     this.updateProgress();
                 }
             }, this);
+            this.context.forecasts.on("forecasts:commitButtons:saved forecasts:committed:saved", function(){
+                self.updateProgress();
+            });
+
 
             //update timeperiod
             this.context.forecasts.on("change:selectedTimePeriod reset:selectedTimePeriod",

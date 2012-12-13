@@ -100,6 +100,20 @@ class RestMetadataViewDefsTest extends RestTestPortalBase {
         $this->assertEquals('Full',$restReply['reply']['modules']['Cases']['views']['ghostrider']['meta']['pattern'], "Failed to retrieve all view metadata");
 
     }
+
+    /**
+     * @group rest
+     */
+    public function testMetadataCacheBuild() {
+        $this->_clearMetadataCache();
+        $restReply = $this->_restCall('metadata/public?type_filter=config&platform=portal');
+        $this->assertArrayHasKey('_hash',$restReply['reply'],"Did not have a _hash on the first run");
+
+        $restReply = $this->_restCall('metadata/public?type_filter=config&platform=portal');
+        $this->assertArrayHasKey('_hash',$restReply['reply'],"Did not have a _hash on the second run");
+
+    }
+
     //END SUGARCRM flav=ent ONLY
 
 }

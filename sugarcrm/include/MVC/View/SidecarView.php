@@ -17,7 +17,7 @@ require_once('include/MVC/View/SugarView.php');
 
 class SidecarView extends SugarView
 {
-    public $configFile = "config.js";
+    protected $configFile = "config.js";
 
     /**
      * This method checks to see if the configuration file exists and, if not, creates one by default

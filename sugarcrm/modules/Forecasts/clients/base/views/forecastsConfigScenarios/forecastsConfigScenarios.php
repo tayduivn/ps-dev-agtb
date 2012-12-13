@@ -22,16 +22,16 @@ if (!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.;
  * All Rights Reserved.
  ********************************************************************************/
-$viewdefs['Forecasts']['base']['view']['forecastsConfigRange'] = array(
+$viewdefs['Forecasts']['base']['view']['forecastsConfigScenarios'] = array(
     'registerLabelAsBreadCrumb' => true,
     'panels' => array(
         array(
-            'label' => 'LBL_FORECASTS_CONFIG_BREADCRUMB_RANGE',
+            'label' => 'LBL_FORECASTS_CONFIG_BREADCRUMB_SCENARIOS',
             'fields' => array(
                 array(
                     'name' => 'show_worksheet_likely',
                     'type' => 'bool',
-                    'label' => 'LBL_FORECASTS_CONFIG_WORKSHEET_RANGE_LIKELY',
+                    'label' => 'LBL_FORECASTS_CONFIG_WORKSHEET_SCENARIOS_LIKELY',
                     'default' => false,
                     'enabled' => true,
                     'view' => 'detail',
@@ -39,7 +39,7 @@ $viewdefs['Forecasts']['base']['view']['forecastsConfigRange'] = array(
                 array(
                     'name' => 'show_worksheet_best',
                     'type' => 'bool',
-                    'label' => 'LBL_FORECASTS_CONFIG_WORKSHEET_RANGE_BEST',
+                    'label' => 'LBL_FORECASTS_CONFIG_WORKSHEET_SCENARIOS_BEST',
                     'default' => false,
                     'enabled' => true,
                     'view' => 'forecastsWorksheet',
@@ -47,7 +47,7 @@ $viewdefs['Forecasts']['base']['view']['forecastsConfigRange'] = array(
                 array(
                     'name' => 'show_worksheet_worst',
                     'type' => 'bool',
-                    'label' => 'LBL_FORECASTS_CONFIG_WORKSHEET_RANGE_WORST',
+                    'label' => 'LBL_FORECASTS_CONFIG_WORKSHEET_SCENARIOS_WORST',
                     'default' => false,
                     'enabled' => true,
                     'view' => 'forecastsWorksheet',
@@ -57,12 +57,12 @@ $viewdefs['Forecasts']['base']['view']['forecastsConfigRange'] = array(
         //TODO-sfa - this will be revisited in a future sprint and determined whether it should go in 6.7, 6.8 or later
         // BEGIN SUGARCRM flav=int ONLY
         array(
-            'label' => 'LBL_FORECASTS_CONFIG_PROJECTED_RANGE',
+            'label' => 'LBL_FORECASTS_CONFIG_PROJECTED_SCENARIOS',
             'fields' => array(
                 array(
                     'name' => 'show_projected_likely',
                     'type' => 'bool',
-                    'label' => 'LBL_FORECASTS_CONFIG_PROJECTED_RANGE_LIKELY',
+                    'label' => 'LBL_FORECASTS_CONFIG_PROJECTED_SCENARIOS_LIKELY',
                     'default' => false,
                     'enabled' => true,
                     'view' => 'detail',
@@ -70,7 +70,7 @@ $viewdefs['Forecasts']['base']['view']['forecastsConfigRange'] = array(
                 array(
                     'name' => 'show_projected_best',
                     'type' => 'bool',
-                    'label' => 'LBL_FORECASTS_CONFIG_PROJECTED_RANGE_BEST',
+                    'label' => 'LBL_FORECASTS_CONFIG_PROJECTED_SCENARIOS_BEST',
                     'default' => false,
                     'enabled' => true,
                     'view' => 'edit',
@@ -78,7 +78,7 @@ $viewdefs['Forecasts']['base']['view']['forecastsConfigRange'] = array(
                 array(
                     'name' => 'show_projected_worst',
                     'type' => 'bool',
-                    'label' => 'LBL_FORECASTS_CONFIG_PROJECTED_RANGE_WORST',
+                    'label' => 'LBL_FORECASTS_CONFIG_PROJECTED_SCENARIOS_WORST',
                     'default' => false,
                     'enabled' => true,
                     'view' => 'edit',

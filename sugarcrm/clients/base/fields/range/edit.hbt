@@ -1,1 +1,3 @@
-<div class="rangeSlider noUiSlider"></div>
+<div class="noUiSliderEnds">
+    <div class="rangeSlider noUiSlider"></div>
+</div>

@@ -9,6 +9,8 @@
     app.view.ClickToEditField = function (field, view) {
         // set attr so tabbing can locate next field
         field.$el.attr('jeditable','true');
+        field.$el.wrapInner('<span class="click format"></span>');
+        field.$el.wrapInner('<div class="sugareditable"></div>');
         this.field = field;
         this.view = view;
         this.numberTypes = ['int', 'float', 'currency'];
@@ -134,23 +136,27 @@
                  * @return {String}
                  */
                 data: function(value, settings) {
-                  if(settings.field.type !== 'currency') {
-                      return value;
-                  }
+                    // run a safety check here.  we can't always be assured that the model contains a value
+                    var fieldValue = settings.field.model.get(settings.field.name);
 
-                  // run a safety check here.  we can't always be assured that the model contains a value
-                  var fieldValue = settings.field.model.get(settings.field.name);
-                  if(fieldValue == null)
-                  {
-                     return 0;
-                  }
-                  // format for currency editing, remove markup
-                  return app.utils.formatNumber(
-                      fieldValue,
-                      app.user.get('decimal_precision'),
-                      app.user.get('decimal_precision'),
-                      '',
-                      app.user.get('decimal_separator'));
+                    if(settings.field.type == 'int') {
+                        return (fieldValue == null) ? 0 : fieldValue;
+                    } else if (settings.field.type == 'currency' || settings.field.type == 'float') {
+                        if(fieldValue == null)
+                        {
+                          return 0;
+                        }
+                        // format for currency/float editing, remove markup
+                        return app.utils.formatNumber(
+                            fieldValue,
+                            app.user.get('decimal_precision'),
+                            app.user.get('decimal_precision'),
+                            '',
+                            app.user.get('decimal_separator')
+                        );
+                    } else {
+                        return fieldValue;
+                    }
                 },
                 /**
                  * sets up the field for editing
@@ -296,14 +302,12 @@
         // add events
         this.field.showCteIcon = function() {
             if(!this.isEditing) {
-                //this.$el.parent().css('overflow-x', 'visible');
-                this.$el.before(this.cteIcon);
+                this.$el.find('.click.format').before(this.cteIcon);
             }
         };
 
         this.field.hideCteIcon = function() {
             this.$el.parent().find(this.cteIcon).detach();
-            //this.$el.parent().css('overflow-x', 'hidden');
         };
 
         var events = this.field.events || {};

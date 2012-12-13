@@ -45,7 +45,7 @@ function unzip_file( $zip_archive, $archive_file, $zip_dir)
             die( "Specified directory '$zip_dir' for zip file '$zip_archive' extraction does not exist." );
         }
     }
-    
+
     $zip = new ZipArchive;
 
     $res = $zip->open(UploadFile::realpath($zip_archive)); // we need realpath here for PHP streams support
@@ -66,7 +66,7 @@ function unzip_file( $zip_archive, $archive_file, $zip_dir)
     } else {
         $res = $zip->extractTo(UploadFile::realpath($zip_dir));
     }
-    
+
     if($res !== TRUE) {
         if (defined('SUGAR_PHPUNIT_RUNNER') || defined('SUGARCRM_INSTALL'))
         {

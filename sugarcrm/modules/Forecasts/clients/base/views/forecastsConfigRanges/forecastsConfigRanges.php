@@ -22,18 +22,18 @@ if (!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.;
  * All Rights Reserved.
  ********************************************************************************/
-$viewdefs['Forecasts']['base']['view']['forecastsConfigCategories'] = array(
+$viewdefs['Forecasts']['base']['view']['forecastsConfigRanges'] = array(
     'registerLabelAsBreadCrumb' => true,
     'panels' => array(
         array(
-            'label' => 'LBL_FORECASTS_CONFIG_BREADCRUMB_CATEGORIES',
+            'label' => 'LBL_FORECASTS_CONFIG_BREADCRUMB_RANGES',
             'fields' => array(
                 array(
-                    'name' =>'forecast_categories',
+                    'name' =>'forecast_ranges',
                     'type' => 'radioenum',
-                    'label' => 'LBL_FORECASTS_CONFIG_CATEGORY_OPTIONS',
+                    'label' => 'LBL_FORECASTS_CONFIG_RANGES_OPTIONS',
                     'view' => 'edit',
-                    'options' => 'forecasts_config_category_options_dom',
+                    'options' => 'forecasts_config_ranges_options_dom',
                     'default' => false,
                     'enabled' => true,
                 ),

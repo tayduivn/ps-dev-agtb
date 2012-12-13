@@ -96,9 +96,19 @@
                 title:app.lang.get("LBL_FORECASTS_WIZARD_SUCCESS_TITLE", "Forecasts") + ":",
                 messages:[app.lang.get("LBL_FORECASTS_WIZARD_SUCCESS_MESSAGE", "Forecasts")]
             });
+                       
             // only sync the metadata and then push it back to the main location
             app.metadata.sync(function() {
-                window.location.hash = "#"
+                window.location.hash = "#";
+                
+                //issue notice about setting up Opportunities, we want this to happen after the page "refreshes"
+                setTimeout(function(){
+                    app.alert.show('forecast_opp_notice', {
+                        level:'info',
+                        autoClose:false,
+                        closeable:true,
+                        messages: app.lang.get("LBL_FORECASTS_WIZARD_REFRESH_NOTICE", "Forecasts")
+                    });}, 1000);
             });
         }
     }

@@ -30,6 +30,7 @@ class UWUtilsTest extends Sugar_PHPUnit_Framework_TestCase  {
 
     private $job;
     private static $isSetup;
+    private static $forecastRanges;
 
     public static function setUpBeforeClass()
     {
@@ -39,15 +40,22 @@ class UWUtilsTest extends Sugar_PHPUnit_Framework_TestCase  {
         $admin = BeanFactory::getBean('Administration');
         $settings = $admin->getConfigForModule('Forecasts');
         self::$isSetup = $settings['is_setup'];
+        self::$forecastRanges = $settings['forecast_ranges'];
         //Set is_setup to 0 for testing purposes
-        $admin->saveSetting('Forecasts', 'is_setup', 0, 'base');
+        $admin->saveSetting('Forecasts', 'is_setup', 1, 'base');
+        $admin->saveSetting('Forecasts', 'forecast_ranges', 'show_binary', 'base');
+        $db = DBManagerFactory::getInstance();
+        $db->query("UPDATE opportunities SET deleted = 1");
     }
 
     public static function tearDownAfterClass()
     {
         $admin = BeanFactory::getBean('Administration');
         $admin->saveSetting('Forecasts', 'is_setup', self::$isSetup, 'base');
+        $admin->saveSetting('Forecasts', 'forecast_ranges', self::$forecastRanges, 'base');
         SugarTestOpportunityUtilities::removeAllCreatedOpportunities();
+        $db = DBManagerFactory::getInstance();
+        $db->query("UPDATE opportunities SET deleted = 0");
         SugarTestHelper::tearDown();
     }
 
@@ -64,16 +72,14 @@ class UWUtilsTest extends Sugar_PHPUnit_Framework_TestCase  {
 
         $opp = SugarTestOpportunityUtilities::createOpportunity();
         $opp->assigned_user_id = $current_user->id;
-        $opp->probability = '80';
+        $opp->probability = '';
+        $opp->commit_stage = '';
         $opp->save();
 
-        $this->assertEmpty($opp->commit_stage, 'Commit stage should be empty for old opp');
+        $this->assertEmpty($opp->commit_stage, 'Commit stage should be empty for old Opportunity');
 
         //unset best/worst cases
-        $db->query("UPDATE opportunities SET best_case = '', worst_case = '' WHERE id = '{$opp->id}'");
-
-        $admin = BeanFactory::getBean('Administration');
-        $admin->saveSetting('Forecasts', 'is_setup', '1', 'base');
+        $db->query("UPDATE opportunities SET best_case = '', worst_case = '', probability = 80 WHERE id = '{$opp->id}'");
 
         $this->job = updateOpportunitiesForForecasting();
 
@@ -83,8 +89,8 @@ class UWUtilsTest extends Sugar_PHPUnit_Framework_TestCase  {
         $job->runnable_data = '';
         $job->runJob();
 
-        $updated_opp = $opp->retrieve();
-        $this->assertNotEmpty($updated_opp->commit_stage, "Updated opp's commit stage should be not empty");
+        $updated_opp = BeanFactory::getBean('Opportunities', $opp->id);
+        $this->assertNotEmpty($updated_opp->commit_stage, "Updated opportunity's commit stage should not be empty");
 
         $timedate = TimeDate::getInstance();
         $exp_product = array('name' => $updated_opp->name,
@@ -96,8 +102,6 @@ class UWUtilsTest extends Sugar_PHPUnit_Framework_TestCase  {
             'currency_id' => $updated_opp->currency_id,
             'base_rate' => $updated_opp->base_rate,
             'probability' => $updated_opp->probability,
-            'date_closed' => $timedate->to_db_date($updated_opp->date_closed),
-            'date_closed_timestamp' => $updated_opp->date_closed_timestamp,
             'assigned_user_id' => $updated_opp->assigned_user_id,
             'opportunity_id' => $updated_opp->id,
             'commit_stage' => $updated_opp->commit_stage);
@@ -118,8 +122,6 @@ class UWUtilsTest extends Sugar_PHPUnit_Framework_TestCase  {
             'currency_id' => $product->currency_id,
             'base_rate' => $product->base_rate,
             'probability' => $product->probability,
-            'date_closed' => $product->date_closed,
-            'date_closed_timestamp' => $product->date_closed_timestamp,
             'assigned_user_id' => $product->assigned_user_id,
             'opportunity_id' => $product->opportunity_id,
             'commit_stage' => $product->commit_stage);

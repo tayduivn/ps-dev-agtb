@@ -48,7 +48,15 @@ class ChartDisplayTest extends Sugar_PHPUnit_Framework_TestCase
         SugarTestHelper::setUp('app_list_strings');
         SugarTestHelper::setUp('app_strings');
         SugarTestHelper::setUp('current_user', array(true, 1));
+    }
 
+    public static function tearDownAfterClass()
+    {
+        SugarTestHelper::tearDown();
+    }
+
+    public function setUp()
+    {
         // create 5 accounts with shipping_states equal to Indiana
         $x=0;
         while($x<5) {
@@ -90,7 +98,8 @@ class ChartDisplayTest extends Sugar_PHPUnit_Framework_TestCase
     public function tearDown()
     {
         parent::tearDown();
-
+        SugarTestAccountUtilities::removeAllCreatedAccounts();
+        
         unset($this->chartDisplay);
         unset($this->chartData);
     }
