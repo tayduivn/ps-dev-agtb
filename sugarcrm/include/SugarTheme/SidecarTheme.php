@@ -84,10 +84,10 @@ class SidecarTheme
      */
     public function getCSSURL()
     {
-
         $hashKey = $this->paths['hashKey'];
         //First check if the hash is cached so we don't have to load the metadata manually to calculate it
         $hash = sugar_cache_retrieve($hashKey);
+
         //If it was, check if the client has the same version cached
         $cacheCSS = $this->paths['cache'].$hash.".css";
         // Check if file exists on the system
@@ -97,14 +97,14 @@ class SidecarTheme
             $customThemeVars = $this->paths['custom'] . 'variables.less';
             $baseThemeVars = $this->paths['base'] . 'variables.less';
             if ( SugarAutoLoader::fileExists($customThemeVars) || SugarAutoLoader::fileExists($baseThemeVars) ) {
-                $this->compileTheme();
+                $hash = $this->compileTheme();
                 $cacheCSS = $this->paths['cache'].$hash.".css";
             }
             else {
                 // Otherwise we compile the default theme if it exists
                 $clientDefaultTheme = new SidecarTheme($this->myClient, 'default');
                 $hash = $clientDefaultTheme->compileTheme();
-                $cacheCSS = $this->paths['cache'].$hash.".css";
+                $cacheCSS = $clientDefaultTheme->paths['cache'].$hash.".css";
             }
         }
         return $cacheCSS;
