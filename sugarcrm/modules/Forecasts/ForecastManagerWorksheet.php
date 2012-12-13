@@ -57,6 +57,7 @@ class ForecastManagerWorksheet extends SugarBean
     	if(isset($this->draft) && $this->draft == 1){
 			$version = 0;
 		}
+
 		if(($this->user_id == $GLOBALS["current_user"]->id) || !$this->isManager)
 		{
 			$relatedType = "Direct";
