@@ -12,7 +12,7 @@
         'click .more': 'toggleMoreLess',
         'click .less': 'toggleMoreLess'
     },
-
+    buttons: {},
     // button states
     STATE: {
         EDIT: 'edit',
@@ -30,6 +30,9 @@
         this.model.on("change", function() {
             if (this.editMode || this.editAllMode) {
                 this.previousModelState = this.model.previousAttributes();
+                if(this.buttons['record-save']) {
+                    this.buttons['record-save'].setDisabled(false);
+                }
                 this.setButtonStates(this.STATE.EDIT);
             }
         }, this);
@@ -39,7 +42,7 @@
         }
     },
 
-    render: function() {
+    _render: function() {
         var totalFieldCount = 0;
 
         _.each(this.meta.panels, function(panel) {
@@ -84,13 +87,24 @@
             panel.grid = rows;
         }, this);
 
-        app.view.View.prototype.render.call(this);
+        var result = app.view.View.prototype._render.call(this);
+        if(this.options.meta && this.options.meta.buttons) {
+            this.buttons = {};
+            _.each(this.options.meta.buttons, function(button, index) {
+                var field = this.getField(button.name);
+                if(field) {
+                    this.buttons[field.name || index] = field;
+                }
+            }, this);
+        }
+        this.setButtonStates(this.STATE.VIEW);
 
         // Check if this is a new record, if it is, enable the edit view
         if (this.createMode && this.model.isNew()) {
             this.editAllMode = false;
             this.toggleEdit(true);
         }
+        return result;
     },
 
     _renderHtml: function() {
@@ -172,6 +186,7 @@
     
     editClicked: function(event) {
         if (!this.$(event.target).hasClass('disabled')) {
+            this.setButtonStates(this.STATE.EDIT);
             this.toggleEdit();
         }
     },
@@ -185,6 +200,9 @@
 
     cancelClicked: function(event) {
         if (!this.$(event.target).hasClass('disabled')) {
+            if(this.buttons['record-save']) {
+                this.buttons['record-save'].setDisabled(true);
+            }
             this.setButtonStates(this.STATE.VIEW);
             this.handleCancel();
         }
@@ -199,6 +217,11 @@
     // Handler functions
     toggleEdit: function(isEdit) {
         _.each(this.fields, function(field) {
+
+            // Exclude buttons
+            if(field.name && this.buttons[field.name]) {
+                return;
+            }
 
             // Exclude image picker,
             // This is just a stop gap solution.
@@ -412,33 +435,13 @@
      * @param state
      */
     setButtonStates: function(state) {
-        var $buttons = {
-            edit:   this.$('.record-edit'),
-            save:   this.$('.record-save'),
-            cancel: this.$('.record-cancel'),
-            del:    this.$('.record-delete')
-        };
-
-        switch (state) {
-            case this.STATE.EDIT:
-                $buttons.edit.toggleClass('hide', false).addClass('disabled');
-                $buttons.save.toggleClass('hide', false);
-                $buttons.cancel.toggleClass('hide', false);
-                $buttons.del.toggleClass('hide', false);
-                break;
-            case this.STATE.VIEW:
-                $buttons.edit.toggleClass('hide', false).removeClass('disabled');
-                $buttons.save.toggleClass('hide', true);
-                $buttons.cancel.toggleClass('hide', true);
-                $buttons.del.toggleClass('hide', false);
-                break;
-            default:
-                $buttons.edit.toggleClass('hide', true).removeClass('disabled');
-                $buttons.save.toggleClass('hide', true);
-                $buttons.cancel.toggleClass('hide', true);
-                $buttons.del.toggleClass('hide', true);
-                break;
-        }
+        _.each(this.buttons, function(field, name) {
+            if(_.isUndefined(field.def.mode) || field.def.mode == state) {
+                field.getFieldElement().show();
+            } else {
+                field.getFieldElement().hide();
+            }
+        });
     },
 
     /**
