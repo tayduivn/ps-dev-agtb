@@ -47,12 +47,6 @@
 
   function loadContent(source,target,mode,method) {
     //console.log('loadContent')
-    // console.log(source);
-    // console.log(target);
-    // console.log(mode);
-    // console.log(mode);
-    // console.log('==============');
-
     if ( typeof method === 'undefined' ) {
       method = 'replace';
     }
