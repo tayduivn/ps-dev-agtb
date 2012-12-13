@@ -60,6 +60,10 @@ class SugarRelationshipFactory {
         {
             unlink($file);
         }
+        
+        //clear out the api metadata cache
+        require_once("include/MetaDataManager/MetaDataManager.php");
+        MetaDataManager::clearAPICache();
     }
 
     /**

@@ -231,6 +231,10 @@ class AbstractRelationships
         mkdir_recursive ( $basepath ) ;
         // replace any existing relationships.php
         write_array_to_file ( 'relationships', $definitions, $basepath . '/relationships.php', 'w', $header ) ;
+        
+        // Clear out the api metadata cache
+        require_once("include/MetaDataManager/MetaDataManager.php");
+        MetaDataManager::clearAPICache();
     }
 
     /*

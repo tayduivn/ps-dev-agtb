@@ -100,6 +100,10 @@ class LanguageManager
 		// put the item in the sugar cache.
 		$key = self::getLanguageCacheKey($module,$lang);
 		sugar_cache_put($key,$loaded_mod_strings);
+        
+        // Handle metadata cache clearing
+        require_once("include/MetaDataManager/MetaDataManager.php");
+        MetaDataManager::clearAPICache();        
 	}
 
 	/**
@@ -132,6 +136,10 @@ class LanguageManager
 				closedir($dir);
 			}
 		}
+        
+        // Handle metadata cache clearing
+        require_once("include/MetaDataManager/MetaDataManager.php");
+        MetaDataManager::clearAPICache();        
 	}
 
 	/**

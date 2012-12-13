@@ -81,6 +81,9 @@ class RepairAndClear
             case 'clearAdditionalCaches':
                 $this->clearAdditionalCaches();
                 break;
+            case 'clearMetadataAPICache':
+                $this->clearMetadataAPICache();
+                break;
             //BEGIN SUGARCRM flav=pro ONLY
             case 'clearPDFFontCache':
                 $this->clearPDFFontCache();
@@ -405,31 +408,21 @@ class RepairAndClear
         require_once('include/api/ServiceDictionary.php');
         $sd = new ServiceDictionary();
         $sd->clearCache();
+        
+        // Moving this out so it is accessible without the need to wipe out the 
+        // API service dictionary cache 
+        $this->clearMetadataAPICache();
+    }
+
+    /**
+     * Clears out the metadata file cache and memory caches
+     */
+    public function clearMetadataAPICache() {
         //clear out the api metadata cache
         require_once("include/MetaDataManager/MetaDataManager.php");
         // Bug 55141: Metadata Cache is a Smart cache so we can delete everything from the cache dir
-        $metadata_cache_dir = sugar_cached("api/metadata");
-        if(is_dir($metadata_cache_dir))
-        {
-            if ($handle = opendir($metadata_cache_dir)) {
-                while (false !== ($cache_file = readdir($handle))) {
-                    if ($cache_file != "." && $cache_file != "..") {
-                        $unlink_file = sugar_cached("api/metadata/{$cache_file}");
-                        unlink($unlink_file);
-                    }
-                }
-                closedir($handle);
-            }            
-        }
-        // clear the platform cache from sugar_cache to avoid out of date data
-        $platforms = MetaDataManager::getPlatformList();
-        foreach($platforms as $platform) {
-            $platformKey = $platform == "base" ?  "base" : implode(",", array($platform, "base"));
-            $hashKey = "metadata:$platformKey:hash";
-            sugar_cache_clear($hashKey);
-        }
+        MetaDataManager::clearAPICache();
     }
-        
 
 	//////////////////////////////////////////////////////////////
 	/////REPAIR AUDIT TABLES

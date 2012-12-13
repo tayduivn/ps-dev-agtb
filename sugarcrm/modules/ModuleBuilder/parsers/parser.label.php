@@ -247,7 +247,7 @@ class ParserLabel extends ModuleBuilderParser
     	$langs = get_languages();
     	foreach($langs as $lang_key => $lang_display)
         {
-    		$this->addLabels($lang_key, $labels, $this->moduleName);
+    		self::addLabels($lang_key, $labels, $this->moduleName);
         }
     }
 }

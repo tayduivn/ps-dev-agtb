@@ -106,6 +106,10 @@ class ParserDropDown extends ModuleBuilderParser {
 		}
 		sugar_cache_reset();
 		clearAllJsAndJsLangFilesWithoutOutput();
+        
+        // Clear out the api metadata cache
+        require_once("include/MetaDataManager/MetaDataManager.php");
+        MetaDataManager::clearAPICache();
     }
 
     /**
