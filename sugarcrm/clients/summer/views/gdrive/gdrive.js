@@ -9,8 +9,9 @@
         _.bindAll(this);
 
         app.view.View.prototype.initialize.call(this, o);
-
-        this.getData();
+        if(this.module == "ActivityStream") {
+            this.getData();
+        }
     },
 
     render: function() {
@@ -57,21 +58,22 @@
 
     getData: function(term) {
         var self = this,
-            email = this.model.get("email1") || this.model.get('email2'),
+            emails = this.model.get("email"),
             url = app.api.buildURL('google/docs') + '?limit=5';
-
         if (this.term && term && this.term === term) {
             return;
         }
 
-        this.term = term;
+        if(_.isString(term)) {
+            this.term = term;
+        }
 
         if (this.term) {
             url += '&q=' + term;
         }
 
-        if (email) {
-            url += '&email=' + email;
+        if (emails) {
+            url += '&email=' + emails[0].email_address;
         }
 
         app.api.call('GET', url, null, {
@@ -84,7 +86,7 @@
 
     bindDataChange: function() {
         if (this.model) {
-            this.model.on("change", this.getData, this);
+            this.model.on("change", this.getData);
         }
     }
 })

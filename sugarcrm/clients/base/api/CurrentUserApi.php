@@ -147,6 +147,7 @@ class CurrentUserApi extends SugarApi {
         $user_data['id'] = $current_user->id;
         $user_data['full_name'] = $current_user->full_name;
         $user_data['user_name'] = $current_user->user_name;
+        $user_data['picture'] = $current_user->picture;
         $user_data['acl'] = $this->getAcls($platform);
         //BEGIN SUGARCRM flav=pro ONLY
         require_once('modules/Teams/TeamSetManager.php');
@@ -170,17 +171,6 @@ class CurrentUserApi extends SugarApi {
             $user_data['preferred_language'] = $current_user->preferred_language;
         }
         return array('current_user' => $user_data);
-        
-        //BEGIN SUGARCRM flav=free ONLY
-        if(class_exists('BoxOfficeClient')) {
-            $box = BoxOfficeClient::getInstance();
-            $inst = $box->getCurrentInstance();
-            $user_data['instance_name'] = $inst['name'];
-            $user_data['instance_id'] = $inst['id'];
-        }
-        //END SUGARCRM flav=free ONLY
-
-        return $data = array('current_user'=>$user_data);
     }
     
     /**

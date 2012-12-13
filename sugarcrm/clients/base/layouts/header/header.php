@@ -11,7 +11,10 @@ $viewdefs['base']['layout']['header'] = array(
             'view' => 'profileactions',
         ),
         array(
-            'view' => 'globalsearch',
+            'view' => 'notifications',
         ),
+        array(
+            'view' => 'globalsearch',
+        )
     ),
 );
