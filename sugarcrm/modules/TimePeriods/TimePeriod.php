@@ -500,9 +500,10 @@ class TimePeriod extends SugarBean {
        //If this is not an upgrade or if there are no existing time periods, we can build the timeperiods
        if(!$isUpgrade)
        {
+           $settingsDate = $timedate->fromDbDate($currentSettings["timeperiod_start_date"]);
            //set the target date based on the current year and the selected start month and day
-           $targetStartDate = $timedate->getNow()->setDate($currentDate->format("Y"), $currentSettings["timeperiod_start_month"], $currentSettings["timeperiod_start_day"]);
-            
+           $targetStartDate = $timedate->getNow()->setDate($currentDate->format("Y"), $settingsDate->format("m"), $settingsDate->format("d"));
+
            //if the target start date is in the future then set the year to be back one year
            if($currentDate < $targetStartDate)
            {
