@@ -93,6 +93,9 @@ class SugarForecasting_Progress_ManagerTest extends Sugar_PHPUnit_Framework_Test
      */
     public function setup() {
         self::$args['user_id'] = self::$users['manager']['user']->id;
+
+        global $current_user;
+        $current_user = self::$users['manager']['user'];
     }
 
     public static function tearDownAfterClass()
@@ -207,8 +210,10 @@ class SugarForecasting_Progress_ManagerTest extends Sugar_PHPUnit_Framework_Test
         // 2 -> quota currency id
 
         return array(
-            array(30000, -99),
-            array(80000, -99),
+            array(false, false, 0, 0, -99),
+            array(true, false, 15000, 0, -99),
+            array(false, true, 0, 30000, -99),
+            array(true, true, 15000, 30000, -99),
         );
     }
 
@@ -219,21 +224,40 @@ class SugarForecasting_Progress_ManagerTest extends Sugar_PHPUnit_Framework_Test
      * @group forecasts
      * @group forecastsprogress
      */
-    public function testGetTopLevelManagerQuota($quotaAmount, $quotaCurrencyId)
+    public function testGetTopLevelManagerQuota($createManagerWorksheet, $createRepWorksheet, $managerQuotaAmount, $repQuotaAmount, $quotaCurrencyId)
     {
+        global $current_user;
+        $current_user = self::$users['top_manager']['user'];
         self::$args['user_id'] = self::$users['top_manager']['user']->id;
 
-        //create worksheet data based on dataprovider
-        $worksheet = SugarTestWorksheetUtilities::createWorksheet();
-        $worksheet->user_id = self::$users['top_manager']['user']->id;
-        $worksheet->related_id = self::$users['top_manager']['user']->id;
-        $worksheet->timeperiod_id = self::$args['timeperiod_id'];
-        $worksheet->quota = $quotaAmount;
-        $worksheet->currency_id = $quotaCurrencyId;
-        $worksheet->version = 0;
-        $worksheet->save();
+        if($createManagerWorksheet) {
+            //create worksheet data based on dataprovider
+            $managerWorksheet = SugarTestWorksheetUtilities::createWorksheet();
+            $managerWorksheet->user_id = self::$users['top_manager']['user']->id;
+            $managerWorksheet->related_id = self::$users['top_manager']['user']->id;
+            $managerWorksheet->timeperiod_id = self::$args['timeperiod_id'];
+            $managerWorksheet->quota = $managerQuotaAmount;
+            $managerWorksheet->currency_id = $quotaCurrencyId;
+            $managerWorksheet->forecast_type = 'Rollup';
+            $managerWorksheet->related_forecast_type = 'Direct';
+            $managerWorksheet->version = 0;
+            $managerWorksheet->save();
+        }
+        if($createRepWorksheet) {
+            //create worksheet data based on dataprovider
+            $repWorksheet = SugarTestWorksheetUtilities::createWorksheet();
+            $repWorksheet->user_id = self::$users['top_manager']['user']->id;
+            $repWorksheet->related_id = self::$users['manager']['user']->id;
+            $repWorksheet->timeperiod_id = self::$args['timeperiod_id'];
+            $repWorksheet->quota = $repQuotaAmount;
+            $repWorksheet->currency_id = $quotaCurrencyId;
+            $repWorksheet->forecast_type = 'Rollup';
+            $repWorksheet->related_forecast_type = 'Rollup';
+            $repWorksheet->version = 0;
+            $repWorksheet->save();
+        }
         $obj = new SugarForecasting_Progress_Manager(self::$args);
-        $quotaAmount = $obj->getTopLevelManagerQuota(self::$args['user_id'], self::$args['timeperiod_id']);
+        $quotaAmount = $obj->getQuotaTotalFromData();
 
         $expectedQuotaAmount = 0;
         //determine how much quota should be
@@ -245,11 +269,11 @@ class SugarForecasting_Progress_ManagerTest extends Sugar_PHPUnit_Framework_Test
                 {
                     //personal quota for the top level manager
                     //use worksheet quota number as it will cause an override in the function
-                    $expectedQuotaAmount += $worksheet->quota;
-
+                    $expectedQuotaAmount += ($createManagerWorksheet ? $managerQuotaAmount : $quota->amount);
+                }
                 if($quota->quota_type == "Rollup" && $quota->user_id == self::$users['manager']['user']->id)
                 {
-                    $expectedQuotaAmount += $quota->amount;
+                    $expectedQuotaAmount += ($createRepWorksheet ? $repQuotaAmount : $quota->amount);
                 }
 
             }
