@@ -234,7 +234,7 @@ class ForecastManagerWorksheet extends SugarBean
 	 */
 	 protected function recalcQuotas()
 	 {
-        //only recalc if this is not the manager or this is a batch update.
+        //don't recalc if we are editing the manager row
 	 	if($this->user_id != $this->current_user)
 	 	{
 			//Recalc Manager direct
