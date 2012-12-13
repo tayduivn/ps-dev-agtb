@@ -1003,8 +1003,8 @@ EOQ;
         }
 
         //set the team info if the team id has already been set.
-        //checking for the team id will prevent breakage during upgrade/flavor conversions
-        if (!empty ($row['team_id'])) {
+        //running only if team class exists will prevent breakage during upgrade/flavor conversions
+        if (class_exists('Team') ) {
             // Set default_team_name for Campaigns WebToLeadCreation
             $this->default_team_name = Team::getTeamName($this->team_id);
         } else {
