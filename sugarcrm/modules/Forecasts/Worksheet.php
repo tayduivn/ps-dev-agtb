@@ -69,7 +69,7 @@ class Worksheet extends SugarBean {
      */
     public function save($check_notify = false){
         if(empty($this->id) || $this->new_with_id == true) {
-        	$currency = SugarCurrency::getUserLocaleCurrency();
+        	$currency = SugarCurrency::getBaseCurrency();
             $this->currency_id = $currency->id;
             $this->base_rate = $currency->conversion_rate;
         }

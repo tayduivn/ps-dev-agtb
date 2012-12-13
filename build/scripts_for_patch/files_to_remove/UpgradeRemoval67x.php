@@ -24,6 +24,11 @@ require_once('modules/UpgradeWizard/UpgradeRemoval.php');
 class UpgradeRemoval67x extends UpgradeRemoval
 {
     /**
+     * @var string minimal version for removal
+     */
+    public $version = '6.7.0';
+
+    /**
      * Return an array of files/directories to remove for 66x upgrades
      * 
      * @param string $version
@@ -33,12 +38,13 @@ class UpgradeRemoval67x extends UpgradeRemoval
     {
         $files = array();
 
-        if(version_compare($version, '670', '<'))
+        if (version_compare($version, $this->version, '<'))
         {
             //Remove the themes/Sugar/js directory
             $files[] = 'themes/Sugar/js';
             //Remove the themes/Sugar/tpls directory
             $files[] = 'themes/Sugar/tpls';
+            $files[] = 'themes/Sugar5';
         }
 
         return $files;

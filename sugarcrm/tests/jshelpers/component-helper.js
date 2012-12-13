@@ -11,13 +11,13 @@
         });
     };
 
-    test.createField = function(client, name, type, viewName, fieldDef, module) {
-        test.loadComponent(client, "field", type);
-        var context = app.context.getContext();
+    test.createField = function(client, name, type, viewName, fieldDef, module, model, context) {
+        test.loadComponent(client, "field", type, module);
         var view = new app.view.View({ name: viewName, context: context });
         var def = { name: name, type: type };
-
-        var model = new Backbone.Model();
+        
+        context = context || app.context.getContext();
+        model = model || new Backbone.Model();
 
         if (fieldDef) {
             model.fields = {};

@@ -173,6 +173,7 @@ class SugarACLStatic extends SugarACLStrategy
             case 'delete':
             case 'view':
             case 'export':
+            case 'massupdate':
                 return ACLController::checkAccessInternal($module, $action, $is_owner);
             case 'edit':
                 if(!isset($context['owner_override']) && !empty($bean->id)) {

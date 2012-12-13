@@ -90,7 +90,7 @@ abstract class SugarApi {
      */
     protected function htmlDecodeReturn(&$data) {
         foreach($data AS $key => $value) {
-            if(is_array($value) && !empty($value)) {
+            if((is_object($value) || is_array($value)) && !empty($value)) {
                 $this->htmlDecodeReturn($value);
             }
             elseif(!empty($data) && !empty($value)) {

@@ -55,6 +55,9 @@ class ReportsExportApiTest extends RestTestBase
         parent::tearDown();
     }
 
+    /**
+     * @group rest
+     */
     public function testReportExportBase64Api()
     {
         $rep = new SavedReport();
@@ -71,6 +74,9 @@ class ReportsExportApiTest extends RestTestBase
         $this->assertTrue(!empty($restReply), 'no file received');
     }
 
+    /**
+     * @group rest
+     */
     public function testReportExportPdfApi()
     {
         $rep = new SavedReport();

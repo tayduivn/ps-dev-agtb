@@ -652,7 +652,7 @@ class MetaDataFiles
     {
         $clientCache = array();
         $cacheFile = sugar_cached('modules/'.$module.'/clients/'.$platforms[0].'/'.$type.'.php');
-        if ( !file_exists($cacheFile) ) {
+        if ( !file_exists($cacheFile) || inDeveloperMode() ) {
             self::buildModuleClientCache( $platforms, $type, $module );
         }
         $clientCache[$module][$platforms[0]][$type] = array();

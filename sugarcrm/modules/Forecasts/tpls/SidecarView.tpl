@@ -17,7 +17,7 @@
         <div class="span6">
             <div class="btn-toolbar pull-right">
                 <div class="btn-group">
-                    <a data-toggle="modal" title="Activity View Tour" href="#systemTour" class="btn btn-invisible"><i class="icon-road"></i> Tour</a>
+                    <a data-toggle="modal" title="Activity View Tour" id="productTour" href="javascript: void(0);"  class="btn btn-invisible"><i class="icon-road"></i> Tour</a>
                     <a data-toggle="modal" title="Support" href="#systemSupport" class="btn btn-invisible"><i class="icon-question-sign"></i> Support</a>
                 </div>
             </div>
@@ -72,5 +72,21 @@
     var App = SUGAR.App.forecasts.initForecast({/literal}'{$token}'{literal});
 
     App.api.debug = App.config.debugSugarApi;
+
+$("#productTour").click(function(){
+           console.log('test')
+    if($('#tour').length > 0){
+        $('#tour').modal("show");
+    }  else {
+        SUGAR.tour.init({
+            id: 'tour',
+            modals: modals,
+            modalUrl: "index.php?module=Home&action=tour&to_pdf=1",
+            prefUrl: "index.php?module=Users&action=UpdateTourStatus&to_pdf=true&viewed=true",
+            className: 'whatsnew',
+            onTourFinish: function() {}
+        });
+    }
+});
 </script>
 {/literal}

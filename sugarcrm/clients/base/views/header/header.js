@@ -172,11 +172,20 @@
         }
     },
     setModuleInfo: function() {
-        var self = this;
-        this.createListLabels = [];
         this.currentModule = this.module;
-        this.module_list = app.metadata.getModuleNames(true, 'list');
-        this.creatableModuleList = app.metadata.getModuleNames(true,"create");
+        this.module_list = [];
+        var LBL_MODULE_NAME = app.lang.getAppString('LBL_MODULE_NAME');
+        var module_list = app.metadata.getModuleNames(true, 'list');
+        //use _.every in order to stop the loop if it detects modStrings are missing.
+        _.every(module_list, function(module) {
+            if (app.lang.get('LBL_MODULE_NAME', module) !== LBL_MODULE_NAME){
+                this.module_list.push(module);
+                return true;
+            } else {
+                return false;
+            }
+        }, this);
+        this.creatableModuleList = _.intersection(this.module_list, app.metadata.getModuleNames(true,"create"));
     },
 
     /**
