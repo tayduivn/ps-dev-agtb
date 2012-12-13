@@ -1,8 +1,7 @@
-<?php
-if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
+<!--
 /*********************************************************************************
  * The contents of this file are subject to the SugarCRM Master Subscription
- * Agreement ("License") which can be viewed at
+ * Agreement (""License"") which can be viewed at
  * http://www.sugarcrm.com/crm/master-subscription-agreement
  * By installing or using this file, You have unconditionally agreed to the
  * terms and conditions of the License, and You may not use this file except in
@@ -16,7 +15,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * remove SugarCRM copyrights from the source code or user interface.
  *
  * All copies of the Covered Code must include on each user interface screen:
- *  (i) the "Powered by SugarCRM" logo and
+ *  (i) the ""Powered by SugarCRM"" logo and
  *  (ii) the SugarCRM copyright notice
  * in the same form as they appear in the distribution.  See full license for
  * requirements.
@@ -26,45 +25,48 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * governing these rights and limitations under the License.  Portions created
  * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
-
-
-require_once 'clients/base/api/ListApi.php';
-require_once('modules/Audit/Audit.php');
-require_once 'data/BeanFactory.php';
-
-class AuditApi extends ListApi
-{
-    public function registerApiRest()
-    {
-        return array(
-            'view_change_log' => array(
-                'reqType' => 'GET',
-                'path' => array('Audit'),
-                'pathVars' => array(''),
-                'method' => 'viewChangeLog',
-                'shortHelp' => 'View change log in record view',
-                'longHelp' => 'include/api/help/audit_view_change_log_help.html',
-            ),
-        );
-    }
-
-    public function viewChangeLog($api, $args) {
-        global $focus, $current_user; 
-        
-        $this->requireArgs($args,array('module', 'record'));
-        
-        if(!isset($_REQUEST['record'])) {
-            // Required by Audit::get_audit_list()
-            $_REQUEST['record'] = $args['record'];
+-->
+<div class="longHelpTitle">
+    Gets data changes to a record.
+</div>
+<h2>Summary:</h2>
+  This endpoint returns data changes to a record.
+</div>
+<div class="params">
+<h2>Query Parameters:</h2>
+<table>
+    <tr><th>Param</td><th>Description</td><th>Optional</td></tr>
+    <tr><td>record</td><td>record id</td><td></td></tr>
+    <tr><td>module</td><td>module name</td><td></td></tr>
+</table>
+</div>
+<div class="input">
+<h2>Input Example:</h2>
+    <code class="codesample">
+        GET data changes to a record:
+        "module":"Accounts",
+        "record":"84d51eba-ae77-3280-2777-50c93157353a"
+    </code>
+</div>
+<div class="output">
+  <h2>Output Example:</h2>
+    <code class="codesample">
+        {
+            "next_offset" : -1
+            "records" :
+            [
+                {
+                     "id" : "d3b2d522-1527-be0c-4630-50c931c1aa4a",
+                     "parent_id" : "84d51eba-ae77-3280-2777-50c93157353a",
+                     "date_created" : "12/13/2012 01:40am",
+                     "created_by" : "SugarUser1993326565",
+                     "field_name" : "Name",
+                     "data_type" : "name",
+                     "before_value_string" : "UNIT TEST - BEFORE",
+                     "after_value_string" : "UNIT TEST - AFTER"
+                }
+            ]
         }
-        
-        $focus = BeanFactory::newBean($args['module']);
-                
-        if(!$focus->ACLAccess('view')) {
-            throw new SugarApiExceptionNotAuthorized('no access to the bean');
-        }
-        
-        $records = Audit::get_audit_list();        
-        return array('next_offset'=>-1,'records'=>$records);
-    }
-}
+    </code>
+</code>
+</div>
