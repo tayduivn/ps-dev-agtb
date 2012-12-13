@@ -191,8 +191,7 @@
             } else if(parts[1] == '-') {
                 value = app.math.sub(orig,value);
             }
-            // we round to nearest integer for this field type
-            value = app.math.round(value, 0);
+            value = app.math.round(value);
         }
         return value;
     },
