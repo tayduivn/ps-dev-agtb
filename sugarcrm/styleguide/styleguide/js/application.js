@@ -154,15 +154,22 @@
       //$('#'+target).modal('show');
     });
 
-    // load tab content into DOM and show tab
-    $('body').on( 'shown', 'a[data-toggle="tab"]', function (e){
+    // load tab content into DOM and show proto
+    $('body').on( 'click', 'a[data-toggle="proto"]', function (e){
       //e.relatedTarget // previous tab
-      var link = $(e.target)
+      e.preventDefault();
+      e.stopPropagation();
+
+      var link = $(this)
         , source = link.attr('href')
         , target = link.data('target')
         , mode = link.data('mode')
         , method = link.data('method');
-
+    // console.log(source);
+    // console.log(target);
+    // console.log(mode);
+    // console.log(mode);
+    // console.log('==============');
       loadContent(source,target,mode,method);
     });
 

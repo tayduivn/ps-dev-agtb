@@ -41,6 +41,7 @@ foreach ($themesClientsDir as $platform) {
     <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
     <![endif]-->
     <link data-linkcss="bootstrap" href="../styleguide/css/bootstrap.css" rel="stylesheet">
+    <link data-linkcss="bootstrap" href="../styleguide/css/sugar.css" rel="stylesheet">
 </head>
 <body>
 
@@ -144,6 +145,14 @@ foreach ($themesClientsDir as $platform) {
                   rel:  "stylesheet",
                   type: "text/css",
                   href: '../styleguide/css/bootstrap.css?t=' + new Date().getTime()
+                });
+            $("head").append("<link>");
+                var css = $("head").children(":last");
+                css.attr({
+                  'data-linkcss': 'sugar',
+                  rel:  "stylesheet",
+                  type: "text/css",
+                  href: '../styleguide/css/sugar.css?t=' + new Date().getTime()
                 });
         });
     });

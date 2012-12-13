@@ -8,7 +8,7 @@
     $('#content>.container-fluid').append('<div class="drawer-backdrop"></div>');
 
     // expand edit row
-    $('body').on('click', '.drawer-tab .btn', function (e) {
+    $('.drawer-tab .btn').off('click').on('click', function (e) {
       $(this).find('i').toggleClass('icon-chevron-up').toggleClass('icon-chevron-down');
       $('.drawer').toggleClass('expand');
       $('.drawer-squeezed').toggleClass('collapse');
@@ -22,8 +22,12 @@
       $('.module-view').toggleClass('drawer-squeezed',show);
       $('.drawer-backdrop').toggleClass('drawer-squeezed',show);
       if (!show) {
+		$('.drawer-tab .btn').find('i').removeClass('icon-chevron-up').addClass('icon-chevron-down');
         $('.drawer').removeClass('expand');
         $('.drawer-squeezed').removeClass('collapse');
+        $('.drawer-backdrop').removeClass('collapse');
+        $('.module-edit').removeClass('expand');
+        $('.module-view').removeClass('collapse');
       }
   }
 </script>

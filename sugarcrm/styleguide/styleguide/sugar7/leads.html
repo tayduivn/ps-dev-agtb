@@ -3,6 +3,7 @@
 <head>
   <meta charset="utf-8">
   <link href="../css/bootstrap.css" rel="stylesheet">
+  <link href="../css/sugar.css" rel="stylesheet">
   <script>
     var page = {
         "title": "Leads"
@@ -10,7 +11,7 @@
       , "convertLead": function () {
           return function (text, render) {
             if (render(text) === 'lead') {
-              return '<li id="convert_lead_option"><a href="partial/lead/lead-convert.html" data-toggle="tab" data-target="#edit .record" data-mode="edit" class="btn btn-invisible btn-link save">Convert Lead</a></li>';
+              return '<li id="convert_lead_option"><a href="partial/lead/lead-convert.html" data-toggle="proto" data-target="#edit .record" data-mode="edit" class="btn btn-invisible btn-link">Convert Lead</a></li>';
             }
           }
         }
@@ -90,7 +91,6 @@
   <script src="../../assets/js/bootstrapx-clickover.js"></script>
   <script src="../../assets/js/bootstrap-datepicker.js"></script>
   <script type="text/javascript" src="../../assets/js/jquery.form.js"></script>
-
 
   <script src="../js/jquery.datatables.js"></script>
   <script src="../js/FixedColumns.min.js"></script>
