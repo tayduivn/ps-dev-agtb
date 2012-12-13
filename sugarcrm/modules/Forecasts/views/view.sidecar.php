@@ -191,6 +191,7 @@ EOHTML;
             }
             echo getVersionedScript('cache/include/javascript/sugar_grp1_jquery_core.js');
             echo getVersionedScript('cache/include/javascript/sugar_grp1_jquery_menus.js');
+            echo getVersionedScript('cache/include/javascript/sugar_grp1_bootstrap.js');
             echo getVersionedScript('cache/include/javascript/sugar_grp1_yui.js');
             echo getVersionedScript('cache/include/javascript/sugar_grp1.js');
             echo getVersionedScript('include/javascript/calendar.js');
