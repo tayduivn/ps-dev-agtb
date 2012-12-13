@@ -189,6 +189,9 @@
         return value;
     },
 
+    /**
+     * Method to show the error message
+     */
     showErrors : function() {
         // attach error styles
         this.$el.find('.error-message').html(this.errorMessage);
