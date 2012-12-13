@@ -1,7 +1,7 @@
 <table class="table datatable table-striped">
   <thead>
     <tr>
-      <th class="nosort">
+      <th style="width:7%" class="nosort">
         <div class="btn-group">
           <b class="btn"><input type="checkbox" class="toggle-all"></b>
           <a class="btn dropdown-toggle" data-toggle="dropdown" href="#"> <span class="caret"></span></a>
@@ -18,7 +18,7 @@
       <th>Country</th>
       <th>Phone</th>
       <th>Email</th>
-      <th class="nosort morecol">
+      <th class="nosort morecol" style="width:7%">
         <a href="" data-toggle="dropdown" class="dropdown-toggle">. . .</a>
         <ul class="dropdown-menu left carettop">
           <li><a href="#myLead">Column1</a></li>
@@ -247,6 +247,7 @@
 
       // init edit mode
       if($(this).hasClass('edit') ){
+        $('#DataTables_Table_0').addClass('inline-edit-active');
         var editid = Math.floor(Math.random()*999999);
         $('<tr id="edit-id-'+editid+'" class="tr-inline-edit single"></tr>').insertAfter($(this).closest('tr'));
         loadPartials([
@@ -283,6 +284,7 @@
       if($(this).hasClass('inline-save')) {
         throwMessage('<strong>Success!</strong> Your edits have been saved', 'success', true);
       }
+      $('#DataTables_Table_0').removeClass('inline-edit-active');
       return false;
     });
 
@@ -292,6 +294,7 @@
     });
 
     $('body').on('click', '.cancel', function(){
+        $('#DataTables_Table_0').removeClass('inline-edit-active');
         loadPartials([
            {"file":"common/header","target":".headerpane.ellipsis","method":"replace"},
         ]);

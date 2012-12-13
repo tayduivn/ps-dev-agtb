@@ -71,15 +71,7 @@ table.dataTable {
       border-left:1px solid rgba(0, 0, 0, 0.2);
       border-top:1px solid rgba(0, 0, 0, 0.2);
     }
-    &.inline-edit-active {
-      tr {
-        td {
-          overflow:visible !important;
-        }
-      }
-    }
   }
-
 
   tr td:not(:hover) {
     .dropdown.btn-group {
@@ -96,8 +88,16 @@ table.dataTable {
     }
   }
 
-
-
+  &.inline-edit-active {
+    tr {
+      td {
+        overflow-x: visible !important;
+        .chzn-drop {
+          width:98% !important;
+        }
+      }
+    }
+  }
 }
 
 
