@@ -23,7 +23,7 @@
             svg = d3.select("div svg").append('g');
             path = d3.geo.path().projection(xy);
 
-            d3.json("../clients/base/views/countrychart/world-countries.json", function(collection) {
+            d3.json(app.config.siteUrl + "/clients/base/views/countrychart/world-countries.json", function(collection) {
                 var g = svg.selectAll("path")
                     .data(collection.features)
                     .enter().append("g");
