@@ -99,6 +99,18 @@ class GoogleAPI extends SugarApi
                 }
             }
 
+            $inv['image_uri'] = "";
+            if(!empty($entry['link'])) {
+                foreach ($entry['link'] as $link) {
+                    // From Google Contacts API Docs (v3):
+                    // If a contact does not have a photo, then the photo link element has no gd$etag attribute
+                    if (isset($link['gd$etag'])) {
+                        $inv['image_uri'] = $this->getContactImageURI($link['href']);
+                        break;
+                    }
+                }
+            }
+
             if (!empty($excludeDomain) && substr_count($email, $excludeDomain) == 1) continue;
 
             // TODO: Optimize this, somehow.
@@ -160,9 +172,18 @@ class GoogleAPI extends SugarApi
         list($myfirst, $mydomain) = $this->getEmailParts($current_user);
         $contacts = array();
         if($mydomain && $mydomain != 'gmail.com') {
-            $contacts = $this->findContacts('', $mydomain);
+            $contacts = $this->findContacts('', 20);
         }
-        return array("invites" => $contacts);
+
+        $users = $this->box->getUserList();
+
+        foreach ($contacts as $k => $v) {
+            if(in_array($v['email'], $users)) {
+                unset($contacts[$k]);
+            }
+        }
+
+        return array("invites" => array_slice(array_values($contacts), 0, 5));
     }
 
     protected function getEmailParts($current_user) {
@@ -175,5 +196,13 @@ class GoogleAPI extends SugarApi
             }
         }
         return explode('@', $email);
+    }
+
+    protected function getContactImageURI($url) {
+        $img_raw = $this->box->oauthGet($url);
+        $f = finfo_open();
+        $mime_type = finfo_buffer($f, $img_raw, FILEINFO_MIME_TYPE);
+        finfo_close($f);
+        return $img_uri = 'data:' . $mime_type . ';base64,' . base64_encode($img_raw);
     }
 }
