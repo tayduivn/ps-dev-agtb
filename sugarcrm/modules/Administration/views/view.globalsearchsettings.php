@@ -110,9 +110,32 @@ class AdministrationViewGlobalsearchsettings extends SugarView
         require_once('include/SugarSearchEngine/SugarSearchEngineFactory.php');
         $searchEngine = SugarSearchEngineFactory::getInstance();
         $result = $searchEngine->getServerStatus();
-        if($result['valid'])
+        if($result['valid']) {
+            $this->setFTSUp();
             return TRUE;
-        else
+        }
+        else {
             return FALSE;
+        }
+    }
+
+    /**
+     * This method sets the full text search to available when a scheduled FTS Index occurs.  
+     * An indexing can only occur with a valid connection
+     * 
+     * TODO: XXX Fix this to use admin settings not config options
+     * @return bool
+     */
+    protected function setFTSUp() {
+        require_once('include/SugarSearchEngine/SugarSearchEngineAbstractBase.php');
+        require_once('modules/Administration/Administration.php');
+        $cfg = new Configurator();
+        $cfg->config['fts_disable_notification'] = false;
+        $cfg->handleOverride();
+        // set it up
+        SugarSearchEngineAbstractBase::markSearchEngineStatus(false);
+        $admin = BeanFactory::newBean('Administration');
+        $admin->retrieveSettings(FALSE, TRUE);
+        return TRUE;
     }
 }
