@@ -28,6 +28,8 @@
 $viewdefs['Contacts']['ConvertLead'] = array(
     'copyData' => true,
     'required' => true,
+    'select' => "report_to_name",
+    'default_action' => 'create',
     'templateMeta' => array(
         'form'=>array(
             'hidden'=>array(
