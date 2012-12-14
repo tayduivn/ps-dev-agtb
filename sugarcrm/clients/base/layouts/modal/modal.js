@@ -10,16 +10,18 @@
  *      @params Parameters - [Object] {
  *              span - [int] size of modal[1-12]
  *              options - (Optional) 3rd party options goes here
- *              context - [Object] configured context attributes
+ *
+ *              components - [Array] list of either views or layouts (optional for single layout)
+ *                           i.e. [ {view: ... } , {layout: ..., context: ... }, ...]
+ *
+ *                  context should be within the each component metadata.
+ *                  context - [Object] configured context attributes
  *                        i.e. { module:..., link:..., modelId:... }
  *                        {
  *                            module - [String] Module name (i.e. Accounts, Contacts, etc) (optional),
  *                            link - [String] related module name (optional),
  *                            modelId - [String] model ID (optional)
  *                        }
- *
- *              components - [Array] list of either views or layouts (optional for single layout)
- *                           i.e. [ {view: ... } , {layout: ...}, ...]
  *      }
  *
  *      @params callback - [function(model)] - called by trigger "modal:callback" with correponded model
@@ -121,7 +123,8 @@
             components = (params.components || this.metaComponents || []),
             title = (params.title || this.meta.title) + '';
         if(message && components.length == 0) {
-            components.push({view: 'modal-confirm', message: message});
+            this.confirmMessage = message;
+            components.push({view: 'modal-confirm'});
         }
         //stops for empty component elements
         if(components.length == 0) {

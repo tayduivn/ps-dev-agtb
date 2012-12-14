@@ -112,17 +112,17 @@ describe("Base.Layout.Modal", function() {
 
         //Add one layout component
         parent.trigger('app:layout:modal:open', {
-            components: [ {view: expectedLayout} ],
-            context: { module: expectedModule }
+            components: [ {view: expectedLayout, context: { module: expectedModule }} ]
         });
         var actualLayout = layout._components[layout._components.length-1].options.name,
             actualModule = layout._components[layout._initComponentSize].module;
         expect(layout._components.length).toEqual(layout._initComponentSize + 1);
         expect(actualLayout).toEqual(expectedLayout);
         expect(actualModule).toEqual(expectedModule);
-        expect(_.has(layout.context._callbacks, 'modal:callback')).toBe(true);
-        expect(_.has(layout.context._callbacks, 'modal:close')).toBe(true);
-        expect(_.has(layout.context._callbacks, 'modal:undefined')).toBe(false);
+        var actualContext = (layout.getBodyComponents())[0].context.parent;
+        expect(_.has(actualContext._callbacks, 'modal:callback')).toBe(true);
+        expect(_.has(actualContext._callbacks, 'modal:close')).toBe(true);
+        expect(_.has(actualContext._callbacks, 'modal:undefined')).toBe(false);
 
         //Add two components
         var previousLayout = expectedLayout,
