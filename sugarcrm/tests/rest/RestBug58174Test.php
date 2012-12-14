@@ -30,15 +30,19 @@ require_once 'include/MetaDataManager/MetaDataManager.php';
 class RestBug58174Test extends RestTestBase
 {
     protected $_testLangFile;
+    private $_customContents;
     
     public function setUp()
     {
         parent::setUp();
-        
+
         // Create a custom language file
         $this->_testLangFile = 'custom/modules/Notes/language/en_us.lang.php';
+
         if (file_exists($this->_testLangFile)) {
-            rename($this->_testLangFile, $this->_testLangFile . '.testbackup');
+            $this->_customContents = file_get_contents($this->_testLangFile);
+        } else {
+            mkdir_recursive(dirname($this->_testLangFile));
         }
         
         // Write our test file
@@ -47,9 +51,9 @@ class RestBug58174Test extends RestTestBase
            'LBL_ASSIGNED_TO_ID' => 'Assigned User&#039;s Id',
            'LBL_ACCOUNT_ID' => 'Account&#039;s ID:',
          );";
-        
-        mkdir_recursive(dirname($this->_testLangFile));
-        SugarAutoLoader::put($this->_testLangFile, $content);
+
+        file_put_contents($this->_testLangFile, $content);
+        SugarAutoLoader::addToMap($this->_testLangFile);
         
         // Clear the metadata cache to ensure a fresh load of data
         $this->_clearMetadataCache();
@@ -59,8 +63,10 @@ class RestBug58174Test extends RestTestBase
     {
         // Get rid of our test file and restore if there's a need
         unlink($this->_testLangFile);
-        if (file_exists($this->_testLangFile . '.testbackup')) {
-            rename($this->_testLangFile . '.testbackup', $this->_testLangFile);
+        if (!empty($this->_customContents)) {
+            file_put_contents($this->_testLangFile, $this->_customContents);
+        } else {
+            SugarAutoLoader::delFromMap($this->_testLangFile);
         }
         
         parent::tearDown();
@@ -102,7 +108,6 @@ class RestBug58174Test extends RestTestBase
         $json = file_get_contents($reply['reply']['labels']['en_us']);
 
         $object = json_decode($json, true);
-
 
         $this->assertTrue(isset($object['mod_strings']['Notes']['LBL_ASSIGNED_TO_ID']), "'LBL_ASSIGNED_TO_ID' mod strings for the Notes module was not returned");
         $this->assertEquals("Assigned User's Id", $object['mod_strings']['Notes']['LBL_ASSIGNED_TO_ID'], "Returned value for 'LBL_ASSIGNED_TO_ID' was not decoded properly");

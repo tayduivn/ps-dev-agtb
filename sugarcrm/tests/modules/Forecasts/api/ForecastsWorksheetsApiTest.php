@@ -59,15 +59,23 @@ class ForecastsWorksheetsApiTest extends RestTestBase
      */
     protected static $admin;
 
+    /**
+     * @var isSetup
+     */
+    private static $_isSetup;
+
     public static function setUpBeforeClass()
     {
         SugarTestHelper::setUp("app_strings");
         SugarTestHelper::setUp("app_list_strings");
         SugarTestHelper::setUp("beanFiles");
         SugarTestHelper::setUp("beanList");
-        parent::setUpBeforeClass();
         // get current settings
         self::$admin = BeanFactory::getBean('Administration');
+        $adminConfig = self::$admin->getConfigForModule('Forecasts');
+        self::$_isSetup = $adminConfig['is_setup'];
+        self::$admin->saveSetting('Forecasts', 'is_setup', '1', 'base');
+        parent::setUpBeforeClass();
     }
 
     public function setUp()
@@ -137,6 +145,8 @@ class ForecastsWorksheetsApiTest extends RestTestBase
 
     public static function tearDownAfterClass()
     {
+        self::$admin->saveSetting('Forecasts', 'is_setup', self::$_isSetup, 'base');
+        SugarTestHelper::tearDown();
         parent::tearDown();
     }
 
