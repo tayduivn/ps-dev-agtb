@@ -72,11 +72,12 @@
     isExpandableRows:'',
     isEditableWorksheet:false,
     _collection:{},
-    columnDefs : [],
-    mgrNeedsCommitted : false,
-    commitButtonEnabled : false,
+    columnDefs: [],
+    mgrNeedsCommitted: false,
+    commitButtonEnabled: false,
+    commitFromSafeFetch: false,
     // boolean to denote that a fetch is currently in progress
-    fetchInProgress : false,
+    fetchInProgress: false,
     
     /**
      * Initialize the View
@@ -258,8 +259,14 @@
                 if(this.showMe()){
                     var model = this.context.forecasts.worksheet;
                     model.url = this.createURL();
-                    this.safeFetch();                   
-                    this.mgrNeedsCommitted = true;
+                    this.safeFetch();
+                    if(!this.commitFromSafeFetch){
+                        this.mgrNeedsCommitted = true;
+                    }
+                    else{
+                        this.commitFromSafeFetch = false;
+                    }
+                    
                 }                
             }, this);
             
@@ -408,6 +415,7 @@
                 //show dialog
                 if(confirm(msg[0] + "\n\n" + msg[1])){
                     self.context.forecasts.trigger("forecasts:forecastcommitbuttons:triggerCommit");
+                    self.commitFromSafeFetch = true;
                 }
                 //canceled, continue fetching
                 else{
