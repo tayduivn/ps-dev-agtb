@@ -1,0 +1,35 @@
+
+<div class="widget-control">
+  <a href="#" data-toggle="dropdown" class="dropdown-toggle btn">&hellip;</a>
+  <ul class="dropdown-menu left carettop" id="widget-options">
+    <div class="widget-options">
+      <li><a href="partial/chart/chart-events.html" data-toggle="proto" data-target="#overview" data-method="toggle"><label class="radio checked"><i class="icon-null"></i>&nbsp;Events</label></a></li>
+      <li><a href="partial/preview/interactions-preview.html" data-toggle="proto" data-target="#overview" data-method="toggle"><label class="radio"><i class="icon-null"></i>&nbsp;Interactions</label></a></li>
+      <li><a href="partial/preview/stats-preview.html" data-toggle="proto" data-target="#overview" data-method="toggle"><label class="radio"><i class="icon-null"></i>&nbsp;Stats</label></a></li>
+    </div>
+  </ul>
+</div>
+
+<script>
+$('document').ready(function(){
+
+  $('#overview .thumbnail').each(function(){
+    var link_id = $(this).attr('id').replace(/_/g,'/') + '.html';
+    $('#widget-options a[href="'+link_id+'"]').find('i').addClass('icon-ok');
+  });
+
+  $('.widget-options a').off('click').on('click', function(e) {
+    var target = $(this).find('i');
+    if (target.hasClass('icon-ok')) {
+      target.removeClass('icon-ok');
+      var target_id = $(this).attr('href').replace(/\//g,'_').replace('.html','');
+      $('#overview #'+ target_id).remove();
+      e.stopPropagation();
+      e.preventDefault();
+    }
+    else {
+      target.addClass('icon-ok');
+    }
+  });
+})
+</script>

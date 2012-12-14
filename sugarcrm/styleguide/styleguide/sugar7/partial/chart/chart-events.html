@@ -1,16 +1,26 @@
-<div class="block thumbnail">
+<div class="thumbnail" {{{target_id}}}>
+  <div class="btn-toolbar pull-right">
+    <a href="#" data-toggle="dropdown" class="dropdown-toggle btn btn-invisible" rel="tooltip" title="Admin"><span class="icon-cog"></span></a>
+    <ul class="dropdown-menu left carettop">
+      <div>
+        <li><a href="#" class="primary">Expand</a></li>
+        <li><a href="#">Chart options</a></li>
+        <li><a href="#">Remove</a></li>
+      </div>
+    </ul>
+  </div>
   <h4>Events</h4>
   <div id="donut" style="height: 300px">
     <svg></svg>
   </div>
-  <div class="actions dropdown pull-right">
-    <a data-toggle="dropdown" rel="tooltip" class="dashletActionAdmin dropdown-toggle" href="#" title="Admin"><i class="icon-cog"></i></a>
+<!--   <div class="actions dropdown pull-right">
+    <a href="#" data-toggle="dropdown" rel="tooltip" class="dashletActionAdmin dropdown-toggle" title="Admin"><i class="icon-cog"></i></a>
     <ul class="dropdown-menu">
       <li><a href="">Expand</a></li>
       <li><a href="">Chart options</a></li>
       <li class="primary"><a href="" class="remove">Remove dashlet</a></li>
     </ul>
-  </div>
+  </div> -->
 </div>
 
 <script src="../js/nvd3/data/pie_data.js"></script>

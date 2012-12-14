@@ -30,13 +30,22 @@
     jQuery.each(
       templates,
       function(i,t){
+
         var source = 'partial/'+ t.file + '.html';
+
         loadPartial(source);
+
+        page.target_id = 'id="'+ source.replace(/\//g,'_').replace('.html','') + '"';
+
         var partial = ich[source];
+
         page.sourceid = t.file.split('/').pop() + '-' + Math.floor((Math.random()*100)+1);
+
         if (t.method==='prepend') {
           $(t.target).prepend(partial(page));
         } else if (t.method==='append') {
+          $(t.target).append(partial(page));
+        } else if (t.method==='toggle') {
           $(t.target).append(partial(page));
         } else {
           $(t.target).html(partial(page));
@@ -66,13 +75,18 @@
 
     if ( source.indexOf('partial') === 0 )
     {
+
       loadPartial(source);
+
+      page.target_id = 'id="'+ source.replace(/\//g,'_').replace('.html','') + '"';
 
       var partial = ich[source];
 
       if ( method==='prepend' ) {
         $(target).prepend(partial(page));
       } else if ( method==='append' ) {
+        $(target).append(partial(page));
+      } else if ( method==='toggle' ) {
         $(target).append(partial(page));
       } else {
         $(target).html(partial(page));
