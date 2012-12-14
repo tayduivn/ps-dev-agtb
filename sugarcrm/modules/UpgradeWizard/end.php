@@ -211,7 +211,8 @@ logThis("Complete: Update custom module built using module builder to add favori
 //END SUGARCRM flav=pro ONLY
 
 if(isset($_SESSION['current_db_version']) && isset($_SESSION['target_db_version'])){
-	if($_SESSION['current_db_version'] != $_SESSION['target_db_version']){
+    if (version_compare($_SESSION['current_db_version'], $_SESSION['target_db_version'], '!='))
+    {
 		//BEGIN SUGARCRM flav=pro ONLY
 		logThis("Adding Saved Report Chart Types", $path);
 		if(file_exists("$unzip_dir/scripts/upgrade_homepage.php")) {
@@ -219,16 +220,12 @@ if(isset($_SESSION['current_db_version']) && isset($_SESSION['target_db_version'
 		    add_report_chart_types();
 		}
 		//END SUGARCRM flav=pro ONLY
-		logThis("Upgrading multienum data", $path);
-        if(file_exists("$unzip_dir/scripts/upgrade_multienum_data.php")) {
-            require_once("$unzip_dir/scripts/upgrade_multienum_data.php");
-            upgrade_multienum_data();
-        }
 	 }
 
 
 	 //keeping separate. making easily visible and readable
-	 if($_SESSION['current_db_version'] == $_SESSION['target_db_version']){
+     if (version_compare($_SESSION['current_db_version'], $_SESSION['target_db_version'], '='))
+     {
 	    $_REQUEST['upgradeWizard'] = true;
 	    ob_start();
 			include('modules/ACL/install_actions.php');
@@ -292,22 +289,31 @@ logThis('Begin upgrade_connectors', $path);
 upgrade_connectors();
 logThis('End upgrade_connectors', $path);
 
-
-//Upgrade system displayed tabs and subpanels
-if(function_exists('upgradeDisplayedTabsAndSubpanels'))
+if (version_compare($_SESSION['current_db_version'], '6.5.0', '<'))
 {
-	upgradeDisplayedTabsAndSubpanels($_SESSION['current_db_version']);
+    // Bug 53650 - Workflow Type Templates not saving Type upon upgrade to 6.5.0, usable as Email Templates
+    $db->query("UPDATE email_templates SET type = 'workflow' WHERE
+        coalesce(" . $db->convert("base_module", "length") . ",0) > 0
+        AND
+        coalesce(" . $db->convert("type", "length") . ",0) = 0
+    ");
 }
 
 //Unlink files that have been removed
 if(function_exists('unlinkUpgradeFiles'))
 {
-	unlinkUpgradeFiles($_SESSION['current_db_version']);
+	unlinkUpgradeFiles($_SESSION['current_db_version'], $path);
 }
 
 if(function_exists('rebuildSprites') && function_exists('imagecreatetruecolor'))
 {
     rebuildSprites(true);
+}
+
+//Run repairUpgradeHistoryTable
+if (version_compare($_SESSION['current_db_version'], '6.5.0', '<') && function_exists('repairUpgradeHistoryTable'))
+{
+    repairUpgradeHistoryTable();
 }
 
 require_once('modules/Administration/upgrade_custom_relationships.php');
@@ -320,7 +326,7 @@ updateRenamedModulesLabels();
 
 //BEGIN SUGARCRM flav=PRO ONLY
 //setup forecast defualt settings
-if($_SESSION['current_db_version'] < '670')
+if(version_compare($_SESSION['current_db_version'], '6.7.0', '<'))
 {
     require_once('modules/Forecasts/ForecastsDefaults.php');
     ForecastsDefaults::setupForecastSettings(true,$_SESSION['current_db_version'],$_SESSION['target_db_version']);

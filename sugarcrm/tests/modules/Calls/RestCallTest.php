@@ -33,6 +33,14 @@ class RestCallTest extends RestTestBase {
                 $GLOBALS['db']->query("DELETE FROM calls_cstm WHERE id_c = '{$this->call_id}'");
             }
         }
+
+        if ( isset($this->contact_id) ) {
+            $GLOBALS['db']->query("DELETE FROM contact WHERE id = '{$this->contact_id}'");
+            if ($GLOBALS['db']->tableExists('contacts_cstm')) {
+                $GLOBALS['db']->query("DELETE FROM contacts_cstm WHERE id_c = '{$this->contact_id}'");
+            }
+        }
+
         //BEGIN SUGARCRM flav=pro ONLY
         $GLOBALS['db']->query("DELETE FROM sugarfavorites WHERE created_by = '".$GLOBALS['current_user']->id."'");
         //END SUGARCRM flav=pro ONLY
@@ -61,9 +69,51 @@ class RestCallTest extends RestTestBase {
                                       'POST');
         $this->assertTrue(isset($restReply['reply']['id']),
                           "An Call was not created (or if it was, the ID was not returned)");
+        $this->call_id =  $restReply['reply']['id'];
 
         $this->assertEquals('2012-12-06T23:00:00+00:00',$restReply['reply']['date_end'],
                             'The end date was not calculated correctly');
+    }
+
+
+    /**
+     * @group rest
+     */
+    public function testCreateWithParentContact() {
+        $contact = BeanFactory::newBean('Contacts');
+        $contact->first_name = "UNIT";
+        $contact->last_name = "TEST";
+        $contact->save();
+        $this->contact_id = $contact->id;
+
+        $restReply = $this->_restCall("Calls/",
+                                      json_encode(array(
+                                                      'name'=>'UNIT TEST - Call with parent contact', 
+                                                      "deleted" => "0",
+                                                      "status" => "Planned",
+                                                      "reminder_time" => -1,
+                                                      "email_reminder_time" => -1,
+                                                      "email_reminder_sent" => 0,
+                                                      "repeat_interval" => 1,
+                                                      "assigned_user_id" => $GLOBALS['current_user']->id,
+                                                      "team_name" => array(array("id" => 1,"name" => "Global", "primary" => true)),
+                                                      "date_start" => "2012-12-06T00:00:00.000Z",
+                                                      "direction" => "Inbound",
+                                                      "duration_hours" => "0",
+                                                      "duration_minutes" => "30",
+                                                      "parent_type" => "Contacts",
+                                                      "parent_id" => $this->contact_id,
+                                                      )),
+                                      'POST');
+        $this->assertTrue(isset($restReply['reply']['id']),
+                          "An Call was not created (or if it was, the ID was not returned)");
+        $this->call_id = $restReply['reply']['id'];
+
+        $this->assertEquals($this->contact_id,$restReply['reply']['parent_id'],
+                            'The parent id was not set correctly');
+
+        $restReply = $this->_restCall("Calls/".$this->call_id."/link/contacts");
+        $this->assertEquals($this->contact_id,$restReply['reply']['records'][0]['id'],"The contact was not linked to the call.");
     }
 
 }

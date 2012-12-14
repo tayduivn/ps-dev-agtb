@@ -195,14 +195,16 @@
                                     type: "button",
                                     label: "LBL_CANCEL_BUTTON_LABEL",
                                     value: "signup",
-                                    primary: false
+                                    primary: false,
+                                    'class': 'pull-left'
                                 },
                                 {
                                     name: "signup_button",
                                     type: "button",
                                     label: "LBL_SIGNUP_BUTTON_LABEL",
                                     value: "signup",
-                                    primary: true
+                                    primary: true,
+                                    'class': 'pull-right'
                                 }
                             ],
                             "panels": [

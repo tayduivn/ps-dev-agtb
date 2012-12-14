@@ -166,7 +166,7 @@ class SugarWidgetReportField extends SugarWidgetField
          * Bug #54990
          * use the table and column names in order by in order to support all databases
          */
-        $order_by = $layout_def['table_alias'] . "." . $layout_def['name'] . " \n";
+        $order_by = $layout_def['table_alias'] . "." . $layout_def['name'] . " \n";	
 	}
 
 			if ( empty($layout_def['sort_dir']) || $layout_def['sort_dir'] == 'a')
@@ -260,7 +260,7 @@ class SugarWidgetReportField extends SugarWidgetField
      // this comment is being added to trigger the upgrade package
         if ( ! empty($layout_def['group_function']) && $layout_def['group_function']=='count')
         {
-                return $layout_def['table_alias'] . '__count';
+                return 'count';
         }
 
         if ( ! empty($layout_def['table_alias']))
@@ -327,14 +327,14 @@ class SugarWidgetReportField extends SugarWidgetField
      return "($column IS NOT NULL AND $column <> ".$this->reporter->db->emptyValue($layout_def['type']).")";
  }
 
-    protected function getInputValue($layout_def)
-    {
-        $input_name0 = $layout_def['input_name0'];
-        if (is_array($layout_def['input_name0']))
-        {
-            $input_name0 = $layout_def['input_name0'][0];
-        }
-        return $input_name0;
-    }
+ protected function getInputValue($layout_def)
+ {
+     $input_name0 = $layout_def['input_name0'];
+     if (is_array($layout_def['input_name0']))
+     {
+         $input_name0 = $layout_def['input_name0'][0];
+     }
+     return $input_name0;
+ }
 
 }
