@@ -42,7 +42,6 @@
         if(this.context.forecasts.get("selectedUser")["id"] != app.user.id){
             this.disabled = true;
         }
-        
         //show_binary, show_buckets, show_n_buckets logic
         if(forecastRanges == "show_binary"){
             //If we're in binary mode
@@ -55,15 +54,13 @@
             };
         }
         else if(forecastRanges == "show_buckets"){
-            //Show buckets, but only if we are on our sheet.
-            if(!this.disabled){
-                this.def.view = "enum";
+            this.def.view = "default";
+            this.getLanguageValue();            
+            //create buckets, but only if we are on our sheet.
+            if(!this.disabled){                
                 this.createBuckets();
-            }
-            else{
-                this.def.view = "default";
-                this.getLanguageValue();
-            }
+                this.createCTEIconHTML();
+            }            
         }
     },
     
@@ -72,9 +69,15 @@
      */
     _render:function () {
         app.view.Field.prototype._render.call(this);
-        
-        //If we are on our own sheet, and need to show the dropdown, init things
+               
+        /* If we are on our own sheet, and need to show the dropdown, init things
+         * and disable events
+         */
         if(!this.disabled && this.def.view == "enum"){
+            //todo: remove events component.js
+            this.$el.unbind("click");
+            this.$el.unbind("mouseenter");
+            this.$el.unbind("mouseleave");            
             this.$el.find("option[value=" + this.value + "]").attr("selected", "selected");
             this.$el.find("select").chosen();
         }
@@ -90,9 +93,13 @@
         
         if(self.def.view == "bool"){
             self.value = self.unformat();
-            values[self.name] = self.value;
+            values[self.def.name] = self.value;
         }
-                    
+        else if(self.def.view == "enum"){
+            self.value = self.$el.find("select")[0].value;
+            values[self.def.name] = self.value;
+        }
+                  
         values["timeperiod_id"] = self.context.forecasts.get("selectedTimePeriod").id;
         values["current_user"] = app.user.get('id');
         values["isDirty"] = true;
@@ -106,6 +113,13 @@
         }
         
         self.model.set(values);
+        
+        if(self.def.view == "enum"){
+            self.def.view = "default";
+            self.getLanguageValue();
+            self.delegateEvents();
+            self.render();
+        }
     },
     
     /**
@@ -132,6 +146,50 @@
     },
     
     /**
+     * Sets up CTE Icon HTML
+     * 
+     * If the HTML hasn't been set up yet, create it and store it on the DOM.  If it has, simply use it
+     */
+    createCTEIconHTML: function(){
+        var self = this,
+            cteIcon = $.data(document.body, "cteIcon"),
+            events = self.events || {},
+            sales_stage = self.model.get("sales_stage");
+        
+        if(_.isUndefined(cteIcon)){
+            cteIcon = '<span class="edit-icon"><i class="icon-pencil icon-sm"></i></span>';
+            $.data(document.body, "cteIcon", cteIcon);
+        }             
+        
+        //Events
+        /* if it's not a bucket, and sales stage is not "Closed Lost", we don't want to add the pencil
+         * (Closed Lost IS the key in the language file btw)
+         */
+        self.showCteIcon = function() {
+            if((self.def.view != "enum") && (sales_stage != "Closed Lost")){
+                self.$el.find("span").before($(cteIcon));
+            }
+        };
+        /* if it's not a bucket, and sales stage is not "Closed Lost", we don't want to try to remove the pencil
+         * (Closed Lost IS the key in the language file btw)
+         */
+        self.hideCteIcon = function() {
+            if((self.def.view != "enum") && (sales_stage != "Closed Lost")){
+                self.$el.parent().find(".edit-icon").detach();
+            }
+            else{
+                console.log("mouseOut");
+            }
+        };
+        
+        self.events = _.extend(events, {
+            'mouseenter': 'showCteIcon',
+            'mouseleave': 'hideCteIcon',
+            'click'     : 'clickToEdit'
+        });            
+    },
+    
+    /**
      * Gets proper value of the item out of the language file.
      * 
      * If we are in buckets mode and are on a non-editable sheet, we need to display the proper value of this
@@ -141,5 +199,19 @@
     getLanguageValue: function(){
         var options = app.lang.getAppListStrings(this.def.options) || 'commit_stage_dom';
         this.langValue = options[this.model.get(this.def.name)]; 
+    },
+    
+    /**
+     * Click to edit handler
+     * 
+     * Handles the click to make the field editable.
+     */
+    clickToEdit: function(){
+        var self = this,
+            sales_stage = self.model.get("sales_stage");
+        if(sales_stage != "Closed Lost"){
+            self.def.view = "enum";
+            self.render();
+        }
     }
 })

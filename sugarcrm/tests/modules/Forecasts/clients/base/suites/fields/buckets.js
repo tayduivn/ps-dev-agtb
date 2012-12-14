@@ -138,12 +138,26 @@ describe("forecast buckets field", function() {
                
             });
             
-            it("should have def.view set to enum", function(){
-                expect(field.def.view).toBe("enum");                
+            it("should have def.view set to default", function(){
+                expect(field.def.view).toBe("default");                
             });
             
             it("should have called createBuckets", function(){
                 expect($.data(document.body, "buckets")).toBeTruthy();
+            });
+            
+            //this should be called, but since things aren't stubbed out, it returns
+            //undefined to replace the "" that was set up at the beginning of the test.
+            it("should have called getLanguageValue", function(){
+                expect(field.langValue).toBeUndefined();
+            });
+            
+            it("should have field.showCteIcon defined", function(){
+                expect(field.showCteIcon).toBeDefined();
+            });
+            
+            it("should have field.hideCteIcon defined", function(){
+                expect(field.hideCteIcon).toBeDefined();
             });
         });
         
@@ -165,6 +179,8 @@ describe("forecast buckets field", function() {
                 expect(field.def.view).toBe("default");                
             });
             
+            //this should be called, but since things aren't stubbed out, it returns
+            //undefined to replace the "" that was set up at the beginning of the test.
             it("should have called getLanguageValue", function(){
                 expect(field.langValue).toBeUndefined();
             });
