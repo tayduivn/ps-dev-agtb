@@ -373,8 +373,6 @@ class ViewConvertLead extends SugarView
         
         // Make sure the contact object is availible for relationships.
         $beans['Contacts'] = new Contact();
-        $beans['Contacts']->new_with_id = true;
-        $beans['Contacts']->id = create_guid();
         
         // Contacts
         if (!empty($_REQUEST['selectedContact']))
@@ -433,8 +431,12 @@ class ViewConvertLead extends SugarView
 
             	$this->populateNewBean($module, $beans[$module], $beans['Contacts'], $lead);
 
-                // when creating a new contact, do not populate it with lead's old account_id
-                if ($module == 'Contacts') {
+                // when creating a new contact, create the id for linking with other modules
+                // and do not populate it with lead's old account_id
+                if ($module == 'Contacts')
+                {
+                    $beans[$module]->id = create_guid();
+                    $beans[$module]->new_with_id = true;
                     $beans[$module]->account_id = '';
                 }
             }
