@@ -520,6 +520,7 @@ logThis('Begin upgrade_connectors', $path);
 upgrade_connectors();
 logThis('End upgrade_connectors', $path);
 
+//BEGIN SUGARCRM flav=pro ONLY
 if (version_compare($sugar_version, '6.5.0', '<'))
 {
     // Bug 53650 - Workflow Type Templates not saving Type upon upgrade to 6.5.0, usable as Email Templates
@@ -529,6 +530,7 @@ if (version_compare($sugar_version, '6.5.0', '<'))
         coalesce(" . $db->convert("type", "length") . ",0) = 0
     ");
 }
+//END SUGARCRM flav=pro ONLY
 
 //Unlink files that have been removed
 if(function_exists('unlinkUpgradeFiles'))
