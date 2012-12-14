@@ -7,12 +7,11 @@ nv.addGraph(function() {
     .showTitle(false)
     .donut(true)
     .donutLabelsOutside(true)
-    .colorData( 'default' )
+    .colorData( 'graduated', {c1: '#C7E8F7', c2: '#023B68', l: pie_data.data.length} )
     .colorFill( 'default' )
     .tooltip( function(key, x, y, e, graph) {
-      return '<p>Event: <b>' + key + '</b></p>' +
-             '<p>Amount: <b>' +  parseInt(y) + '</b></p>' +
-             '<p>Percent: <b>' +  x + '%</b></p>'
+      return '<p>Interaction: <b>' + key + '</b></p>' +
+             '<p>Events: <b>' +  parseInt(y) + '</b></p>';
     });
 
     d3.select("#donut svg")
@@ -21,6 +20,5 @@ nv.addGraph(function() {
       .call(chart);
 
     nv.utils.windowResize(function(){chart.update();});
-
     return chart;
 });
