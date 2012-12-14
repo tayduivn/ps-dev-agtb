@@ -90,7 +90,7 @@ describe("Drawer Layout", function() {
         context.prepare();
 
         layout = SugarTest.createLayout('base', moduleName, layoutName, {
-            "type": "fluid",
+            "type": "drawer",
             "components": [
                 {"view":"create"}
             ]
