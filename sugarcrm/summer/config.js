@@ -29,7 +29,7 @@
          * Logging level.
          * @cfg {Object} [logLevel=Utils.Logger.Levels.DEBUG]
          */
-        logLevel: 'ERROR',
+        logLevel: 'DEBUG',
 
         /**
          * Logging writer.
@@ -153,7 +153,8 @@
          */
         additionalComponents: {
             header: {
-                target: '#header'
+                target: '#header',
+                layout: 'header'
             },
             footer: {
                 target: '#footer',

@@ -109,14 +109,13 @@
                 "sidecar/lib/chosen/chosen.jquery.js" => "summer/summer.min.js",
                 "sidecar/lib/sugar/sugar.searchahead.js" => "summer/summer.min.js",
                 "sidecar/lib/sugar/sugar.timeago.js" => "summer/summer.min.js",
-                "summer/lib/jquery/jquery.fancybox-1.3.4.js" => "summer/summer.min.js",
-                "summer/lib/Crypto/Crypto.js" => "summer/summer.min.js",
                 "summer/lib/TimelineJS/js/storyjs-embed.js" => "summer/summer.min.js",
                 "summer/lib/fullcalendar/fullcalendar.js" => "summer/summer.min.js",
                 "sidecar/lib/sugarapi/sugarapi.js" => "summer/summer.min.js",
                 "sidecar/src/app.js" => "summer/summer.min.js",
                 "sidecar/src/utils/date.js" => "summer/summer.min.js",
                 "sidecar/src/utils/utils.js" => "summer/summer.min.js",
+                "sidecar/src/utils/math.js" => "summer/summer.min.js",
                 "sidecar/src/utils/currency.js" => "summer/summer.min.js",
                 "sidecar/src/core/cache.js" => "summer/summer.min.js",
                 "sidecar/src/core/events.js" => "summer/summer.min.js",
@@ -172,6 +171,7 @@
                 "modules/Forecasts/clients/base/helper/hbt-helpers.js" => "summer/summer.min.js",
                 "include/javascript/twitterbootstrap/js/sugarCharts.js" => "summer/summer.min.js",
                 "include/javascript/jquery/jquery.jstree.js" => "summer/summer.min.js",
+                "include/javascript/phpjs/base64_encode.js" => "summer/summer.min.js",
             ),
 
             $summer_css = array(
@@ -191,6 +191,7 @@
                 "sidecar/lib/chosen/chosen.css" => "summer/summer-splash.min.css",
                 "summer/lib/twitterbootstrap/css/bootstrap.css" => "summer/summer-splash.min.css",
                 "sidecar/lib/jquery-ui/css/smoothness/jquery-ui-1.8.18.custom.css" => "summer/summer-splash.min.css",
+                "summer/splash/static/css/splash.css" => "summer/summer-splash.min.css",
             ),
            $sugar_grp1 = array(
                 //scripts loaded on first page
@@ -402,6 +403,12 @@
     /**
      * Check for custom additions to this code
      */
+
+    if(!class_exists('SugarAutoLoader')) {
+        // This block is required because this file could be called from a non-entrypoint (such as jssource/minify.php).
+        require_once('include/utils/autoloader.php');
+        SugarAutoLoader::init();
+    }
 
     foreach(SugarAutoLoader::existing("custom/jssource/JSGroupings.php", SugarAutoLoader::loadExtension("jsgroupings")) as $file) {
         require $file;

@@ -43,7 +43,7 @@
                 self.$(".invitee-input").val('');
                 app.alert.show('invited',
                     {level: 'info', title:'Invited',
-                        messages: app.lang.getAppString('LBL_INSTANCE_INVITE_SENT') + ':' + emailAddr, autoClose: true});
+                        messages: app.lang.getAppString('LBL_INSTANCE_INVITE_SENT') + ': ' + emailAddr, autoClose: true});
             },
             error: function(o) {
                 app.alert.show('invalid_parameter',
@@ -69,7 +69,7 @@
                         if( o.error ) {
                             app.alert.show('switch_failed',
                                 {level: 'error', title:'Failed',
-                                    messages: app.lang.getAppString('LBL_INSTANCE_SWITCH_FAILED') + ':' + o.error, autoClose: false});
+                                    messages: app.lang.getAppString('LBL_INSTANCE_SWITCH_FAILED') + ': ' + o.error, autoClose: false});
                             return;
                         }
                         if( o.url ) {

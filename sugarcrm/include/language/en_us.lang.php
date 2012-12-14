@@ -3635,6 +3635,7 @@ $app_list_strings['kbdocument_status_dom'] = array (
     );
 
   $app_list_strings['moduleList']['KBDocuments'] = 'Knowledge Base';
+$app_list_strings['moduleList']['Words'] = 'Words';
   $app_strings['LBL_CREATE_KB_DOCUMENT'] = 'Create Article';
   $app_list_strings['kbdocument_viewing_frequency_dom'] =
   array(

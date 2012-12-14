@@ -6,10 +6,10 @@
       </li>
   </ul>
   <div class="dataTables_filter">
-      <input class="span12" placeholder="Search Dccuments" type="text" aria-controls="DataTables_Table_0" value="{{term}}">
+      <input class="span12" placeholder="Search Documents" type="text" aria-controls="DataTables_Table_0" value="{{term}}">
   </div>
   {{#each docs}}
-    <article class='row-fluid'>
+    <article class='row-fluid gdrive-item'>
       <a data-name="{{name}}" data-preview="{{previewLink}}" data-edit="{{editLink}}" data-toggle="modal">{{name}}</a>
     </article>
   {{/each}}

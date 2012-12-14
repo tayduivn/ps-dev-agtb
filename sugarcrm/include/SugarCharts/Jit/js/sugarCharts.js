@@ -94,7 +94,6 @@ function loadSugarChart (chartId, jsonFilename, css, chartConfig, params, callba
                                 {
                                     $(window).resize(function(length) {
                                         return function(event) {
-                                            debugger;
                                             fixChartContainer(event, length);
                                         }
                                     }(json.values.length));
