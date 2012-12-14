@@ -137,6 +137,7 @@ $config['blackList']['ent'] = array(
 'sugarcrm/include/MVC/View/views/view.inlinefieldsave.php'=>1,
 
 'sugarcrm/styleguide/styleguide'=>1,
+'sugarcrm/styleguide/tests'=>1,
 'sugarcrm/styleguide/build'=>1,
 );
 $build = 'ent';
