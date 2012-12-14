@@ -84,7 +84,6 @@ class Bug22882Test extends AppListStringsTest
         $resultfr = $resultfr['account_type_dom']['Analyst'];
         $resulten = $resulten['account_type_dom']['Analyst'];
         $this->assertNotEquals($resultfr, $resulten, 'The custom default language overrides french lang.');
-        $this->cleanupFiles();
     }
 
 

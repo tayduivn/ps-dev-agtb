@@ -40,7 +40,9 @@ class AppListStringsTest extends Sugar_PHPUnit_Framework_TestCase
 
     public function tearDown()
     {
-        $this->cleanupFiles();
+        $this->restore_or_delete('include/language/fr_test.lang.php');
+        $this->restore_or_delete('custom/include/language/en_us.lang.php');
+        $this->restore_or_delete('custom/include/language/fr_test.lang.php');
     }
 
     public function testAppListStringsLanguage()
@@ -77,7 +79,7 @@ class AppListStringsTest extends Sugar_PHPUnit_Framework_TestCase
         );
     }
 
-    public function isEqualTest()
+    public function testIsEqual()
     {
         $arr1 = array(
             "a" => array(
@@ -132,10 +134,6 @@ class AppListStringsTest extends Sugar_PHPUnit_Framework_TestCase
             $this->isEqual($arr2, $arr1),
             'isEqual does not make the job.'
         );
-        $this->assertTrue(
-            $arr1 === $arr2,
-            'insure we can\'t use a native function.'
-        );
     }
 
     /**
@@ -168,48 +166,15 @@ class AppListStringsTest extends Sugar_PHPUnit_Framework_TestCase
         }
     }
 
-    protected function cleanupFiles()
-    {
-        $this->restore_or_delete('include/language/fr_test.lang.php');
-        $this->restore_or_delete('custom/include/language/en_us.lang.php');
-        $this->restore_or_delete('custom/include/language/fr_test.lang.php');
-    }
-
     /**
-     * Compare the size of two arrays
-     * @param $gimp
-     * @param $dom
-     * @return bool
-     */
-    protected function isSameSize($gimp, $dom)
-    {
-        if (count($gimp) != count($dom)) {
-            $this->assertTrue(false, 'The 2 drop down list didn\'t have the same size.');
-            return false;
-        }
-        return true;
-    }
-
-    /**
-     * Recursive comparison of two arrays and verify they have the same key/value pairs in the same order.
+     * TRUE if $gimp and $dom have the same key/value pairs in the same order and of the same types.
      * @param $gimp
      * @param $dom
      * @return bool
      */
     protected function isEqual($gimp, $dom)
     {
-        //TRUE if $gimp and $dom have the same key/value pairs in the same order and of the same types.
-        $compare = $gimp === $dom;
-        if (!$compare) {
-            return false;
-        } else if ($compare && is_array($gimp) && is_array($dom)) {
-            foreach ($dom as $domKey => $domVal) {
-                if (!$this->isEqual($domVal, $gimp[$domKey])) {
-                    return false;
-                }
-            }
-        }
-        return true;
+        return $gimp === $dom;
     }
 
     private function loadFrench()
