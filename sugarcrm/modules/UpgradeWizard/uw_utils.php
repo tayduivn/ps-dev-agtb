@@ -4468,7 +4468,7 @@ function merge_config_si_settings($write_to_upgrade_log=false, $config_location=
 	} else {
 	   if($write_to_upgrade_log)
 	   {
-	      logThis('config.php values are in sync with config_si.php values.  Skipped merging.');
+	      logThis('config.php values are in sync with config_si.php values.  Skipped merging.', $path);
 	   }
 	   return false;
 	}
