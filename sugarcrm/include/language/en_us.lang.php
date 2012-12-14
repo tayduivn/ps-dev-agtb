@@ -3402,6 +3402,7 @@ $app_strings = array (
     'LBL_UNLINK_BUTTON' => 'Unlink',
     'LBL_MAP_BUTTON' => 'Map',
     'LBL_FILE_BUTTON' => 'File',
+    'LBL_URL_BUTTON' => 'Web',
     'LBL_WARNING' => 'Warning',
     'LBL_CONFIRM' => 'Confirm',
     'LBL_CREATE_RELATED_RECORD' => 'Create Related Record',
