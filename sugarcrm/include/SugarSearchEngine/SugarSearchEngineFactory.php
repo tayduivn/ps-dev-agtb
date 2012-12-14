@@ -80,14 +80,15 @@ class SugarSearchEngineFactory
      */
     protected static function setupEngine($name = '', $config = array())
     {
-        if( empty($name) )
-        {
-            //if the name is empty then let's try to see if we have one configured in the config
-            if(!empty($GLOBALS['sugar_config']['full_text_engine']))
-            {
-                $name = self::getFTSEngineNameFromConfig();
-                $config = !empty($config) ? $config : $GLOBALS['sugar_config']['full_text_engine'][$name];
-            }
+        // if name is empty set name and config
+        if(empty($name) && !empty($GLOBALS['sugar_config']['full_text_engine'])) {
+            $name = self::getFTSEngineNameFromConfig();
+            $config = $GLOBALS['sugar_config']['full_text_engine'][$name];
+        }
+
+        // if config is empty set config
+        if(empty($config) && !empty($GLOBALS['sugar_config']['full_text_engine'][$name])) {
+            $config = $GLOBALS['sugar_config']['full_text_engine'][$name];
         }
 
         $defaultTemplateLocation = "include/SugarSearchEngine/%sSugarSearchEngine%s.php";
