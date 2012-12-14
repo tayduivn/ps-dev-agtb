@@ -70,8 +70,23 @@
                 selectedRanges: defaultSelections.ranges,
                 selectedGroupBy : defaultSelections.group_by,
                 selectedDataSet: defaultSelections.dataset,
-                selectedUser : defaultSelections.selectedUser,      
-                
+
+                /**
+                 * Initially set to the currently logged-in user, selectedUser is different from currentUser
+                 * because selectedUser is used by other components and is changeable by most components
+                 * (e.g. selecting a different user via the hierarchy tree or clicking in the worksheet)
+                 */
+                selectedUser : defaultSelections.selectedUser,
+
+                /**
+                 * todo-sfa: when teams/ACLs are implemented, we won't need this anymore and we can just use app.user
+                 *
+                 * currentUser is the currently logged-in user
+                 * this is separate from selectedUser so we can maintain all of the originally passed-down data
+                 * from the server on the currently logged-in user
+                 */
+                currentUser : defaultSelections.selectedUser,
+
                 /**
                  * boolean to reload the active worksheet
                  */

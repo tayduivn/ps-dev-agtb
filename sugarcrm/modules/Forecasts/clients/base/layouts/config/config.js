@@ -71,7 +71,7 @@
     _showModal:function () {
         var self = this;
 
-        if (app.user.getAcls()['Forecasts'].admin == "yes") {
+        if (app.initData.selectedUser.admin == "yes") {
             // begin building params to pass to modal
             var params = {
                 title:app.lang.get("LBL_FORECASTS_CONFIG_TITLE", "Forecasts"),

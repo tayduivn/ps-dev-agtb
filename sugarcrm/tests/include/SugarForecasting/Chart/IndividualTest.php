@@ -149,7 +149,7 @@ class SugarForecasting_Chart_IndividualTest extends Sugar_PHPUnit_Framework_Test
     {
         $args = self::$args;
         $args['dataset'] = $dataset;
-        $args['category'] = 'include';
+        $args['ranges'] = 'include';
         $obj = new SugarForecasting_Chart_Individual($args);
         $data = $obj->process();
 
@@ -195,7 +195,7 @@ class SugarForecasting_Chart_IndividualTest extends Sugar_PHPUnit_Framework_Test
     {
         $args = self::$args;
         $args['dataset'] = $dataset;
-        $args['category'] = 'include';
+        $args['ranges'] = 'include';
         $obj = new MockSugarForecasting_Chart_Individual($args);
         $data = $obj->process();
 
@@ -252,25 +252,25 @@ class SugarForecasting_Chart_IndividualTest extends Sugar_PHPUnit_Framework_Test
     }
 
     /**
-     * @dataProvider dataProviderCategories
+     * @dataProvider dataProviderRanges
      * @group forecasts
      * @group forecastschart
      */
-    public function testChartFiltering($category)
+    public function testChartFiltering($ranges)
     {
         $args = self::$args;
-        $args['category'] = $category;
+        $args['ranges'] = $ranges;
         $obj = new SugarForecasting_Chart_Individual($args);
         $data = $obj->process();
 
-        foreach ($category as $key => $value)
+        foreach ($ranges as $key => $value)
         {
-            $category[$key] = ucfirst($value);
+            $ranges[$key] = ucfirst($value);
         }
 
-        if (!empty($category))
+        if (!empty($ranges))
         {
-            $categories = $category;
+            $categories = $ranges;
         }
         else
         {
@@ -287,12 +287,12 @@ class SugarForecasting_Chart_IndividualTest extends Sugar_PHPUnit_Framework_Test
         $this->assertEmpty(array_diff($categories, $data['label']));
     }
 
-        /**
+    /**
      * Dataset Provider
      *
      * @return array
      */
-    public function dataProviderCategories()
+    public function dataProviderRanges()
     {
         return array(
             array(array('include')),
