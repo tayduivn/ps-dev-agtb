@@ -79,7 +79,7 @@
         if(!_.isNull(app.initData) && !_.isNull(app.initData.selectedUser)) {
             isAdmin = (app.initData.selectedUser.admin == "yes");
         } else {
-            isAdmin = (this.context.forecasts.get('currentUser').admin = "yes");
+            isAdmin = (this.context.forecasts.get('currentUser').admin == "yes");
         }
 
         if (isAdmin) {
