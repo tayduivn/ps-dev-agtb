@@ -177,9 +177,6 @@
             if((self.def.view != "enum") && (sales_stage != "Closed Lost")){
                 self.$el.parent().find(".edit-icon").detach();
             }
-            else{
-                console.log("mouseOut");
-            }
         };
         
         self.events = _.extend(events, {
