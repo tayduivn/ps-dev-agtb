@@ -226,6 +226,91 @@
                       <hr>
 
 
+
+                      <h3>List view</h3>
+
+<table class="table datatable table-striped">
+  <thead>
+    <tr>
+      <th style="width:7%" class="nosort">
+        <div class="btn-group">
+          <b class="btn"><input type="checkbox" class="toggle-all"></b>
+          <a class="btn dropdown-toggle" data-toggle="dropdown" href="#"> <span class="caret"></span></a>
+          <ul class="dropdown-menu"><span class="ext"></span>
+            <li><a href="#">Email</a></li>
+            <li><a href="#" class="tmu">Mass Update</a></li>
+            <li><a href="#">Merge</a></li>
+            <li><a href="#">Export</a></li>
+          </ul>
+        </div>
+      </th>
+      <th>Name</th>
+      <th>City</th>
+      <th>Country</th>
+      <th>Phone</th>
+      <th>Email</th>
+      <th class="nosort morecol" style="width:7%">
+        <a href="" data-toggle="dropdown" class="dropdown-toggle">. . .</a>
+        <ul class="dropdown-menu left carettop">
+          <li><a href="#myLead">Column1</a></li>
+          <li><a href="#myContacts">Column2</a></li>
+          <li><a href="#myOpportunities">Column3</a></li>
+        </ul>
+      </th>
+    </tr>
+  </thead>
+  <tbody id="listed">
+    <tr>
+      <td><input type="checkbox"> <span><i class="icon-favorite" rel="tooltip" data-title="Add to favorites"></i></span></td>
+      <td><a href="partial/lead/lead-view.html" data-toggle="proto" data-target="#view .record" data-mode="view">Plato's LED MFT</a></td>
+      <td><span class="dblclick">Cupertino</span></td>
+      <td><span class="dblclick">USA</span></td>
+      <td><span class="dblclick">(408) 555-5271</span></td>
+      <td><a href="mailto:sales@perkins.com">sales@perkins.com</a></td>
+      <td>
+        <span class="actions dropdown pull-right btn-group">
+          <a class="btn preview" href="partial/preview/lead-preview.html" rel="tooltip" data-toggle="proto" data-target="#preview" data-mode="preview" data-original-title="Preview"><i class="icon-eye-open"></i></a>
+          <a class="btn dropdown-toggle" data-toggle="dropdown" href="#"><span class="icon-caret-down"></span></a>
+          <ul class="dropdown-menu"><span class="ext"></span><span class="ext"></span>
+            <li><a class="edit" href="#"><i class="icon-pencil"></i> Edit</a></li>
+            <li><a class="delete" href="#"><i class="icon-trash"></i> Delete</a></li>
+          </ul>
+        </span>
+      </td>
+    </tr>
+
+
+    <tr id="edit-id-6943901" class="tr-inline-edit single">
+      <td style="padding-bottom:10px"><a class="btn btn-link btn-invisible inline-cancel" href="">Cancel</a></td>
+      <td><div class="controls span12"><input type="text" value="Plato's LED MFT" class="inherit-width"></div></td>
+      <td><div class="controls span12"><input type="text" value="Cupertino" class="inherit-width"></div></td>
+      
+      <td>
+        <div class="controls span12">
+          <select name="priority" class="chzn-select chzn-narrow inherit-width chzn-done" tabindex="-1" id="sel4H9" style="display: none;">
+            <option value="one" selected="">One</option>
+            <option value="two">Two</option>
+            <option value="three">Three</option>
+            <option value="four">Four-</option>
+          </select><div id="sel4H9_chzn" class="chzn-container chzn-container-single chzn-container-single-nosearch" style="width: 100%;"><a href="javascript:void(0)" class="chzn-single" tabindex="-1"><span>One</span><div><b></b></div></a><div class="chzn-drop" style="left: -9000px; width: auto; top: 28px;"><div class="chzn-search"><input type="text" autocomplete="off" style="width: auto;" tabindex="3" value="USA"></div><ul class="chzn-results"><li id="sel4H9_chzn_o_0" class="active-result result-selected" style="">One</li><li id="sel4H9_chzn_o_1" class="active-result" style="">Two</li><li id="sel4H9_chzn_o_2" class="active-result" style="">Three</li><li id="sel4H9_chzn_o_3" class="active-result" style="">Four-</li></ul></div></div>
+        </div>
+      </td>
+      <td><div class="controls span12"><input type="text" value="(408) 555-5271" class="inherit-width"></div></td>
+      <td><div class="controls span12"><input type="text" value="sales@perkins.com" class="inherit-width"></div></td>
+      <td class="tcenter">
+        <input type="button" value="Save" class="btn btn-primary inline-save disabled">
+      </td></tr>
+
+
+  </tbody>
+</table>
+
+
+
+
+                      <hr>
+
+
                       <h3>Legacy field</h3>
 
                       <div class="row-fluid control-group">
