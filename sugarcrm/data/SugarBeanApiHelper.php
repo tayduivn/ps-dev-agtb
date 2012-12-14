@@ -129,7 +129,7 @@ class SugarBeanApiHelper
      */
     public function getBeanAcl(SugarBean $bean) {
         $acl = array('fields' => (object) array());
-        if(!is_admin($GLOBALS['current_user']) && SugarACL::moduleSupportsACL($bean->module_dir)) {
+        if(SugarACL::moduleSupportsACL($bean->module_dir)) {
             $mm = new MetaDataManager($GLOBALS['current_user']);
             $moduleAcl = $mm->getAclForModule($bean->module_dir, $GLOBALS['current_user']);
 

@@ -298,9 +298,15 @@ class MetaDataManager {
         $obj = BeanFactory::getObjectName($module);
 
         $outputAcl = array('fields'=>array());
-        if ( is_admin($userObject) || !SugarACL::moduleSupportsACL($module) ) {
+
+        if (is_admin($userObject) || !SugarACL::moduleSupportsACL($module)) {
             foreach ( array('admin', 'access','view','list','edit','delete','import','export','massupdate') as $action ) {
                 $outputAcl[$action] = 'yes';
+            }
+            if($bean instanceof User || $bean instanceof Employee) {
+                if($bean->id == $userObject->id) {
+                    $outputAcl['delete'] = 'no';
+                }
             }
         } else {
             $context = array(
