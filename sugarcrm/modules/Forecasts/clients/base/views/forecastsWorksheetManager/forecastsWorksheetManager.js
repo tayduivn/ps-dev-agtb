@@ -60,7 +60,7 @@
      * @param {Object} options
      */
     initialize:function (options) {
-        this.viewModule = app.viewModule;
+        this.viewModule = "Forecasts";
         var self = this;
 
         app.view.View.prototype.initialize.call(this, options);
