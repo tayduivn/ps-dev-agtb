@@ -39,15 +39,19 @@ class SugarACLUsers extends SugarACLStrategy
 
         $current_user = $this->getCurrentUser($context);
 
+        $bean = self::loadBean($module, $context);
+
         if(is_admin($current_user)) {
+            // even an admin can't delete themselves
+            if(!empty($bean->id) && $bean->id == $current_user->id && $view == 'delete') {
+                return false;
+            }
             return true;
         }
 
         if(empty($view) || empty($current_user->id)) {
             return true;
         }
-
-        $bean = self::loadBean($module, $context);
 
         // we can update ourselves
         if(!empty($bean->id) && $bean->id == $current_user->id) {
