@@ -23,7 +23,10 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 //BEGIN SUGARCRM flav=pro ONLY
 require_once('include/SugarSearchEngine/SugarSearchEngineFullIndexer.php');
 require_once('include/SugarSearchEngine/SugarSearchEngineMetadataHelper.php');
+require_once('include/SugarSearchEngine/SugarSearchEngineFactory.php');
+require_once('include/SugarSearchEngine/SugarSearchEngineAbstractBase.php');
 //END SUGARCRM flav=pro ONLY
+require_once('modules/Administration/Administration.php');
 
 class AdministrationViewGlobalsearchsettings extends SugarView
 {
@@ -107,7 +110,6 @@ class AdministrationViewGlobalsearchsettings extends SugarView
 
     protected function isFTSConnectionValid()
     {
-        require_once('include/SugarSearchEngine/SugarSearchEngineFactory.php');
         $searchEngine = SugarSearchEngineFactory::getInstance();
         $result = $searchEngine->getServerStatus();
         if($result['valid']) {
@@ -127,8 +129,6 @@ class AdministrationViewGlobalsearchsettings extends SugarView
      * @return bool
      */
     protected function setFTSUp() {
-        require_once('include/SugarSearchEngine/SugarSearchEngineAbstractBase.php');
-        require_once('modules/Administration/Administration.php');
         $cfg = new Configurator();
         $cfg->config['fts_disable_notification'] = false;
         $cfg->handleOverride();
