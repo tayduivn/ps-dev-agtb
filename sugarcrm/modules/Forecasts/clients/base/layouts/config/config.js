@@ -72,6 +72,7 @@
         var self = this;
             isAdmin = false;
 
+        // todo-sfa: undo this change once sidecar ACLs are used again
         // on first load, when is_setup == 0, app.initData.selectedUser.admin setting should be used
         // because at that point there is no context.forecasts
         // every other load there will be no app.initData so use the context
