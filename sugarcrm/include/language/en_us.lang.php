@@ -2604,6 +2604,8 @@ $app_strings = array (
 
     // Strings for Instance Picker Widget
     'LBL_INVITE' => 'Invite',
+    'LBL_INVITED' => 'Invited',
+    'LBL_RECOMMENDED_INVITES' => 'Recommended Invites',
     'LBL_INSTANCES' => 'Instances',
     'LBL_YOUR_INSTANCES' => 'Your Instances',
     'LBL_INSTANCE_USERS' => 'Instance Users',

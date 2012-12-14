@@ -431,6 +431,15 @@ class BoxOfficeClient
     }
 
     /**
+     * Return list of users in current instance
+     * @return array
+     */
+    public function getUserList()
+    {
+        return $this->callBox("GET", "rest/sessions/{$this->getToken()}/userList");
+    }
+
+    /**
      * Delete current login session from BoxOffice
      */
     public function deleteSession()
