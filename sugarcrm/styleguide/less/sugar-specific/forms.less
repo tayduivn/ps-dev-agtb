@@ -222,8 +222,8 @@ textarea[readonly] {
     padding: 0;
   }
   .controls {
-    margin-left: 0px;
-    padding: 0px 0 0 8px;
+    margin-left: @fluidGridGutterWidth;
+    padding: 0;
 
     &.controls-four {
       padding-right: 144px;
@@ -243,17 +243,17 @@ textarea[readonly] {
 
     &.btn-fit {
       .btn {
-        position:absolute;
-        top:0;
-        right:10px;
+        position: absolute;
+        top: 0;
+        right: 0px;
         &:nth-child(5) {
-          right:118px;
+          right: 108px;
         }
         &:nth-child(4) {
-          right:82px;
+          right: 72px;
         }
         &:nth-child(3) {
-          right:46px;
+          right: 36px;
         }
         &:nth-child(2) {
           /* right:___; default  */
