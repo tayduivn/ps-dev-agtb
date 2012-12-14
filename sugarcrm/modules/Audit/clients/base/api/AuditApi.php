@@ -28,9 +28,9 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  ********************************************************************************/
 
 
-require_once 'clients/base/api/ListApi.php';
+require_once('clients/base/api/ListApi.php');
 require_once('modules/Audit/Audit.php');
-require_once 'data/BeanFactory.php';
+require_once('data/BeanFactory.php');
 
 class AuditApi extends ListApi
 {
