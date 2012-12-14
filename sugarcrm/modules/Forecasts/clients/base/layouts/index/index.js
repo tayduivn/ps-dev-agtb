@@ -18,7 +18,15 @@
      */
     initDataModel: {},
 
+    /**
+     * this is used to defer the render until the forecasts initialization returns with the data
+     */
     deferredRender: new $.Deferred(),
+
+    /**
+     * This is used to hold the path for the forecasts specific JS
+     */
+    forecastsJavascript: "",
 
     initialize: function(options) {
         var self = this,
@@ -31,6 +39,9 @@
     },
 
     initForecastsModule: function(forecastData, options, ctx) {
+        // set the forecasts specific JS.
+        $("#content").append($('<script src="' + forecastData.forecastsJavascript + '"></script>'));
+
         // get default selections for filter and category
         app.defaultSelections = forecastData.defaultSelections;
         app.initData = forecastData.initData;
@@ -313,9 +324,6 @@
 
             return self;
         });
-
-        // resize the top menu after the layout has been initialized
-        SUGAR.themes.resizeMenu();
     }
 
 })
