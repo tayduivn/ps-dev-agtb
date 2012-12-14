@@ -23,6 +23,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 require_once('modules/Reports/sugarpdf/sugarpdf.reports.php');
 require_once('modules/Reports/templates/templates_chart.php');
 require_once('include/SugarCharts/SugarChartFactory.php');
+require_once('include/SugarCharts/ChartDisplay.php');
 
 class ReportsSugarpdfSummary extends ReportsSugarpdfReports
 {
@@ -38,7 +39,9 @@ class ReportsSugarpdfSummary extends ReportsSugarpdfReports
         // if chart_type is 'none' we don't need do add any image to pdf
         if ($this->bean->chart_type != 'none')
         {
-            $xmlFile = get_cache_file_name($this->bean);
+            $chartDisplay = new ChartDisplay();
+            $xmlFile = $chartDisplay->get_cache_file_name($this->bean);
+
             $sugarChart = SugarChartFactory::getInstance();
             if($sugarChart->supports_image_export) {
                 $imageFile = $sugarChart->get_image_cache_file_name($xmlFile,".".$sugarChart->image_export_type);
