@@ -1198,7 +1198,7 @@ function return_module_language($language, $module, $refresh=false)
     if(!file_exists(sugar_cached('modules/'). $module . '/language/'.$language.'.lang.php')
 			&& !empty($GLOBALS['beanList'][$module])){
 		$object = BeanFactory::getObjectName($module);
-		VardefManager::refreshVardefs($module,$object);
+		VardefManager::loadVardef($module,$object);
 	}
 
 	$loaded_mod_strings = LanguageManager::loadModuleLanguage($module, $language,$refresh);
@@ -3844,7 +3844,7 @@ function string_format($format, $args){
     }
 
     $result = str_replace(array_keys($replaceArray),array_values($replaceArray),$format);
- 
+
 	return $result;
 }
 
@@ -5275,7 +5275,7 @@ function getDuplicateRelationListWithTitle($def, $var_def, $module)
         $temp_module_strings = return_module_language($current_language, $module);
         $temp_duplicate_array = array_diff_assoc($def, $select_array);
         $temp_duplicate_array = array_merge($temp_duplicate_array, array_intersect($select_array, $temp_duplicate_array));
-        
+
         foreach ($temp_duplicate_array as $temp_key => $temp_value)
         {
             // Don't add duplicate relationships
@@ -5285,14 +5285,14 @@ function getDuplicateRelationListWithTitle($def, $var_def, $module)
             }
             $select_array[$temp_key] = $temp_value;
         }
-        
+
         // Add the relationship name for easier recognition
         foreach ($select_array as $key => $value)
         {
             $select_array[$key] .= ' (' . $key . ')';
         }
     }
-    
+
     asort($select_array);
     return $select_array;
 }

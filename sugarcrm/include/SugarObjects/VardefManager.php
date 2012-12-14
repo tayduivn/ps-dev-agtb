@@ -33,6 +33,7 @@
 class VardefManager{
     static $custom_disabled_modules = array();
     static $linkFields;
+    public static $inReload = array();
 
     /**
      * this method is called within a vardefs.php file which extends from a SugarObject.
@@ -232,16 +233,17 @@ class VardefManager{
     {
         // Some of the vardefs do not correctly define dictionary as global.  Declare it first.
         global $dictionary, $beanList;
-        static $guard = array();
         $guard_name = "$module:$object";
-        if(isset($guard[$guard_name])) {
-            $guard[$guard_name]++;
-            if($guard[$guard_name] > 2) {
+        if(isset(self::$inReload[$guard_name])) {
+            self::$inReload[$guard_name]++;
+            if(self::$inReload[$guard_name] > 2) {
                 $GLOBALS['log']->fatal("Loop in refreshVardefs: $guard_name");
+                echo "<pre>";
+                debug_print_backtrace();
                 return;
             }
         } else {
-            $guard[$guard_name] = 1;
+            self::$inReload[$guard_name] = 1;
         }
         $vardef_paths = array(
                     'modules/'.$module.'/vardefs.php',
@@ -323,11 +325,11 @@ class VardefManager{
         if(!empty($dictionary[$object])) {
             VardefManager::saveCache($module, $object);
         }
-        if(isset($guard[$guard_name])) {
-            if($guard[$guard_name] > 1) {
-                $guard[$guard_name]--;
+        if(isset(self::$inReload[$guard_name])) {
+            if(self::$inReload[$guard_name] > 1) {
+                self::$inReload[$guard_name]--;
             } else {
-                unset($guard[$guard_name]);
+                unset(self::$inReload[$guard_name]);
             }
         }
     }
