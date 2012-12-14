@@ -51,6 +51,20 @@ if(!empty($config['cleanCache'])){
 }
 if(!empty($config['base_dir'])){
 	$config['base_dir'] = realpath($config['base_dir']);
+
+    $build_dir = $rome->getBuildDir();
+    if (!empty($config['sidecar'])) {
+        foreach ( $config['builds'] as $build ) {
+            if (is_file ("$build_dir/$build/sugarcrm/sidecar/build.php")) {
+                echo "\nBuilding sidecar in $build\n";
+                $cwd = getcwd();
+                chdir ("$build_dir/$build/sugarcrm/sidecar/");
+                include("build.php");
+                chdir($cwd);
+            }
+        }
+    }
+
 	if(!empty($config['file'])){
 		if(file_exists($config['file'])) {
 			$config['file'] = realpath($config['file']);
@@ -91,18 +105,6 @@ if(!empty($config['base_dir'])){
 		require_once('Latin.php');
 		$latin = new Latin($rome, $config['languages']['gitPath'], $config['base_dir'], $config['ver']);
 		$latin->copyTranslations();
-	}
-    $build_dir = $rome->getBuildDir();
-    if (!empty($config['sidecar'])) {
-        foreach ( $config['builds'] as $build ) {
-            if (is_file ("$build_dir/$build/sugarcrm/sidecar/build.php")) {
-                echo "\nBuilding sidecar in $build\n";
-                $cwd = getcwd();
-                chdir ("$build_dir/$build/sugarcrm/sidecar/");
-                include("build.php");
-                chdir($cwd);
-            }
-        }
 	}
 
 }else{
