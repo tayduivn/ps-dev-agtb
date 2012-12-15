@@ -1,6 +1,7 @@
-<div class="thumbnail block widget" {{{target_id}}}>
+<div class="thumbnail widget" {{{target_id}}}>
   <div class="btn-toolbar pull-right">
-    <a href="#" data-toggle="dropdown" class="dropdown-toggle btn btn-invisible"><span class="icon-cog"></span></a>
+    <a href="javascript:void()" class="btn btn-invisible"><i class="icon-chevron-up"></i></a>
+    <a href="#" data-toggle="dropdown" class="dropdown-toggle btn btn-invisible"><i class="icon-cog"></i></a>
     <ul class="dropdown-menu left carettop">
       <div>
         <li><a href="#">Settings</a></li>
@@ -8,8 +9,8 @@
       </div>
     </ul>
   </div>
-  <h4>Stats</h4>
-  <ul class="unstyled">
+  <h4 data-target="{{sourceid}}">Stats</h4>
+  <ul class="unstyled widget-content" id="{{sourceid}}">
     <li>
       36% Emails <span class="pull-right strong">167</span>
       <div class="progress progress-striped ">

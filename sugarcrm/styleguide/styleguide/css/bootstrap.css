@@ -6307,6 +6307,19 @@ footer .btn-toolbar.pull-left {
   left:1px;
   height:20px;
 }
+.widget h4 { cursor:pointer; }
+.widget.out { padding:0; }
+.widget.out h4 {
+  border-radius:4px;
+  border-bottom:0 !important;
+}
+.widget.out .widget-content { display:none; }
+.widget.out i.icon-chevron-up::before { content:"\f078"; }
+.widget-control {
+  position:absolute;
+  right:5%;
+  top:15px;
+}
 tr .dropdown.hide { display:none; }
 tr:hover .dropdown.hide {
   display:block;
@@ -6540,11 +6553,6 @@ hr.soften {
 .filter_init.duplicates article#search_option_.filter-body { padding:10px 10px 0 10px; }
 .filter_init.duplicates article#search_option_.filter-body>div { margin:0; }
 .filter_init.duplicates article#search_option_.filter-body.new .removeme { display:none; }
-.widget-control {
-  position:absolute;
-  right:5%;
-  top:15px;
-}
 [class^="icon-"] {
   font-size:14px;
   -webkit-font-smoothing:antialiased;

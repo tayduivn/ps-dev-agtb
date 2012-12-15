@@ -1,4 +1,3 @@
-
 <div class="widget-control">
   <a href="#" data-toggle="dropdown" class="dropdown-toggle btn">&hellip;</a>
   <ul class="dropdown-menu left carettop" id="widget-options">
@@ -11,7 +10,7 @@
 </div>
 
 <script>
-$('document').ready(function(){
+$(function() {
 
   var sidepane_widgets = $('#overview .widget');
 
@@ -47,6 +46,12 @@ $('document').ready(function(){
     $('#widget-options a[href="'+link_id+'"]').find('i').removeClass('icon-ok');
     $(this).parents('.widget').remove();
   });
+
+  $('#overview')
+    .off('click', '.widget [data-toggle="widget"]')
+    .on('click', '.widget [data-toggle="widget"]', function(){
+      $(this).parents('.widget').toggleClass('out');
+    });
 
 });
 
