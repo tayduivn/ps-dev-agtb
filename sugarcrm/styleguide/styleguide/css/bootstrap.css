@@ -6324,9 +6324,6 @@ tr .dropdown.hide { display:none; }
 tr:hover .dropdown.hide {
   display:block;
   white-space:nowrap;
-  position:absolute;
-  right:4px;
-  top:8px;
 }
 tr:hover td { overflow:display; }
 .form-change-actions .btn { display:none; }
