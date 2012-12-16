@@ -36,6 +36,12 @@ class RestBug58174Test extends RestTestBase
     {
         parent::setUp();
 
+        /*
+        if(file_exists('cache/modules/Notes/language/en_us.lang.php')) {
+           unlink('cache/modules/Notes/language/en_us.lang.php');
+        }
+        */
+
         // Create a custom language file
         $this->_testLangFile = 'custom/modules/Notes/language/en_us.lang.php';
 
@@ -54,7 +60,9 @@ class RestBug58174Test extends RestTestBase
 
         file_put_contents($this->_testLangFile, $content);
         SugarAutoLoader::addToMap($this->_testLangFile);
-        
+
+        LanguageManager::refreshLanguage('Notes', 'en_us');
+
         // Clear the metadata cache to ensure a fresh load of data
         $this->_clearMetadataCache();
     }
@@ -105,6 +113,9 @@ class RestBug58174Test extends RestTestBase
     {
         $this->_clearMetadataCache();
         $reply = $this->_restCall('metadata?module_filter=Notes&type_filter=labels');
+
+        //$this->assertFileExists($reply['reply']['labels']['en_us'], "Language file does not exist");
+
         $json = file_get_contents($reply['reply']['labels']['en_us']);
 
         $object = json_decode($json, true);

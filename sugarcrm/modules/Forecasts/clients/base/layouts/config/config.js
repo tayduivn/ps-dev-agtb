@@ -70,8 +70,19 @@
 
     _showModal:function () {
         var self = this;
+            isAdmin = false;
 
-        if (app.initData.selectedUser.admin == "yes") {
+        // todo-sfa: undo this change once sidecar ACLs are used again
+        // on first load, when is_setup == 0, app.initData.selectedUser.admin setting should be used
+        // because at that point there is no context.forecasts
+        // every other load there will be no app.initData so use the context
+        if(!_.isNull(app.initData) && !_.isNull(app.initData.selectedUser)) {
+            isAdmin = (app.initData.selectedUser.admin == "yes");
+        } else {
+            isAdmin = (this.context.forecasts.get('currentUser').admin == "yes");
+        }
+
+        if (isAdmin) {
             // begin building params to pass to modal
             var params = {
                 title:app.lang.get("LBL_FORECASTS_CONFIG_TITLE", "Forecasts"),
