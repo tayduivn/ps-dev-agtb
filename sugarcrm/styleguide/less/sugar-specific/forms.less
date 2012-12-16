@@ -1,4 +1,24 @@
 
+input[disabled],
+select[disabled],
+textarea[disabled],
+input[readonly],
+select[readonly],
+textarea[readonly] {
+  cursor: not-allowed;
+  border: 1px solid @inputBorder;
+  color: @placeholderText;
+}
+
+#content .control-group label {
+  padding: 0 1em 0 0;
+  display:inline-block;
+}
+
+input[type=radio] {
+  display:inline-block;
+}
+
 //headerpane record name edit
 h1 input[type="text"] {
   font-size: 20px;
@@ -82,77 +102,6 @@ h1 input[type="text"] {
   float: none;
 }
 
-/* To maintain same size of input boxes, substructing 27px for .add-on exclamation */
-
-.control-group.error {
-/*
-  input.input-mini       { width: 33px; }
-  input.input-small      { width: 63px; }
-  input.input-medium     { width: 127px; }
-  input.input-large      { width: 183px; }
-  input.input-xlarge     { width: 243px; }
-  input.input-xxlarge    { width: 503px; }
-*/
-  &>div:first-child,
-  &>div:first-child label,
-  &> label {
-    font-weight:500;
-    color:@errorText;
-  }
-  .input-append label {
-    color:@errorText;
-  }
-  .chzn-choices,
-  .chzn-container-single > a.chzn-single,
-  .upload-field-custom.btn.avatar {
-    border-color:@errorText;
-  }
-  .chzn-search {
-    border: 1px solid @errorText;
-    border-top: 0;
-    margin-left: -1px;
-    margin-right: -1px;
-  }
-  .chzn-container-single > a > div > b {
-    margin-left: -18px;
-  }
-  .help-block {
-    font-weight:normal;
-  }
-  .preview > span > .icon-plus {
-    border-color:@errorText;
-    color:@errorText;
-  }
-  label.file-upload {
-    background:@errorText;
-  }
-}
-
-.inline-error {
-  label,
-  .record-label {
-    font-weight: 500;
-    color:@errorText;
-  }
-  .help-block {
-    color:@errorText;
-    position:relative;
-  }
-  .add-on {
-    color:@errorText;
-    position:relative;
-    margin-left:-20px;
-    z-index:2;
-  }
-  input {
-    border-color:@errorText;
-    color:@errorText;
-    &:focus {
-      z-index:3;
-    }
-  }
-}
-
 .control-group {
   margin-bottom:0;
   clear: both;
@@ -178,28 +127,49 @@ h1 input[type="text"] {
     overflow: hidden;
     text-overflow: ellipsis;
   }
+  /* To maintain same size of input boxes, substructing 27px for .add-on exclamation */
+  &.error {
+    &>div:first-child,
+    &>div:first-child label,
+    &> label {
+      font-weight:500;
+      color:@errorText;
+    }
+    .input-append label {
+      color:@errorText;
+    }
+    .chzn-choices,
+    .chzn-container-single > a.chzn-single,
+    .upload-field-custom.btn.avatar {
+      border-color:@errorText;
+    }
+    .chzn-search {
+      border: 1px solid @errorText;
+      border-top: 0;
+      margin-left: -1px;
+      margin-right: -1px;
+    }
+    .chzn-container-single > a > div > b {
+      margin-left: -18px;
+    }
+    .help-block {
+      font-weight:normal;
+    }
+    .preview > span > .icon-plus {
+      border-color:@errorText;
+      color:@errorText;
+    }
+    label.file-upload {
+      background:@errorText;
+    }
+    .urleditable-wrap {
+      .editable-trigger > i,
+      .urleditable-field a {
+        color:@errorText !important;
+      }
+    }
+  }
 }
-
-//54606: align `Email` label with its fields
-//896492a63d300e820c003aa8707c714ed1fb6e3b
-/*.control-group.email .btn-mini {
-  margin-right:0;
-  width:auto;
-  height:auto;
-}*/
-
-
-input[disabled],
-select[disabled],
-textarea[disabled],
-input[readonly],
-select[readonly],
-textarea[readonly] {
-  cursor: not-allowed;
-  border: 1px solid @inputBorder;
-  color: @placeholderText;
-}
-
 
 // fluid width input fields - fixes overflow of row-fluid spans
 .controls[class*="span"] {
@@ -257,7 +227,6 @@ textarea[readonly] {
       }
     }
   }
-
   .card2 .control-group:first-child .control-label {
     .border-radius(3px 3px 0 0);
     border-top: 1px solid lighten(@grayLight,14%);
@@ -267,7 +236,6 @@ textarea[readonly] {
     .border-radius(0 0 3px 3px);
     border-bottom: 1px solid lighten(@grayLight,14%);
   }
-
   div.control-label {
     float: left;
     /*width: 140px;*/
@@ -287,7 +255,6 @@ textarea[readonly] {
   .chzn-container {
     margin-top: 1px;
   }
-
 }
 
 .form-actions {
@@ -295,110 +262,13 @@ textarea[readonly] {
   background:transparent;
 }
 
-#content .control-group label {
-  padding: 0 1em 0 0;
-  display:inline-block;
-}
-
-input[type=radio] {
-  display:inline-block;
-}
-
 /* bug: 56864 */
 .btn-group > .btn.active {
   z-index: 0;
 }
 
-.control-group.error {
-  .urleditable-wrap {
-    .editable-trigger > i,
-    .urleditable-field a {
-      color:@errorText !important;
-    }
-  }
-}
-
 .mu.extend .fieldPlaceHolder {
-margin-left:4px;
-}
-
-
-/* Customize look of upload button */
-.upload-field-custom {
-  overflow: hidden;
-  display: inline-block;
-  position: relative;
-  vertical-align: middle;
-  text-align: center;
-  height:18px !important;
-  padding-right: 0 !important;
-  padding-left: 0 !important;
-  input {
-    position: absolute;
-    top: 0;
-    left: 0;
-    margin: 0;
-    font-size: 70px;
-
-    /* Loses tab index in webkit if width is set to 0 */
-    opacity: 0;
-    filter: alpha(opacity=0);
-  }
-  /*
-  &.focus {
-    outline: 2px solid yellow;
-    }
-  */
-
-  &:active strong {
-    color:#ffffff;
-  }
-
-  span {
-    position: absolute;
-    top: 0;
-    left: 0;
-    display: inline-block;
-
-    /* Adjust button text vertical alignment */
-    padding-top: .45em;
-
-    &> strong {
-      white-space:nowrap;
-
-    }
-  }
-
-  &,
-  & span {
-    width: 100px;
-  }
-}
-
-.file-upload-status {
-  padding:0 0 0 .5em;
-  position:relative;
-  top:2 px;
-}
-
-//headerpane record name edit
-h1 input[type="text"] {
-  font-size: 20px;
-  height: 28px;
-  margin: 0;
-}
-
-@media (max-width: 480px) {
-  .row > .empty,
-  .row-fluid > .empty {
-    display:none !important;
-  }
-}
-@media (max-width: 768px) {
-  .row > .empty,
-  .row-fluid > .empty {
-    display:none !important;
-  }
+  margin-left:4px;
 }
 
 /* Inline avatar upload */
@@ -502,6 +372,7 @@ h1 input[type="text"] {
     display:none !important;
   }
 }
+
 @media (max-width: 768px) {
   .row > .empty,
   .row-fluid > .empty {

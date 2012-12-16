@@ -63,6 +63,30 @@
   }
 }
 
+.inline-error {
+  label,
+  .record-label {
+    font-weight: 500;
+    color:@errorText;
+  }
+  .help-block {
+    color:@errorText;
+    position:relative;
+  }
+  .add-on {
+    color:@errorText;
+    position:relative;
+    margin-left:-20px;
+    z-index:2;
+  }
+  input {
+    border-color:@errorText;
+    color:@errorText;
+    &:focus {
+      z-index:3;
+    }
+  }
+}
 
 /* Editable URLs */
 .urleditable-wrap {
