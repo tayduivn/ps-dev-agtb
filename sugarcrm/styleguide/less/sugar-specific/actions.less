@@ -47,6 +47,24 @@ tr:hover td {
   border-left: none;
 }
 
+.actions li {
+  border-left: darken(@grayLighter, 5%) solid 1px;
+  padding: 0 1px;
+}
+.actions li a {
+  margin: 0;
+}
+.actions li:first-child {
+  border: none;
+}
+
+article .actions, tr .actions {
+  display: none;
+}
+article:hover .actions,  tr:hover .actions {
+  display: block;
+}
+
 .dropdown-menu li.primary {
   border-top: 1px solid @grayLight;
 }
