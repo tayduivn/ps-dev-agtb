@@ -196,11 +196,12 @@
         }
         // build search-specific options and return
         options = {
-            params:{
-                q:term
-            },
+            params:{},
             fields:collection.fields ? collection.fields : this.collection
         };
+        if(term) {
+            options.params.q = term;
+        }
         if (this.context.get('link')) {
             options.relate = true;
         }
