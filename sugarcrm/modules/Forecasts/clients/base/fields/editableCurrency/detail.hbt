@@ -26,4 +26,4 @@
  * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 }}
-<span class="editable"><i></i> {{#if transactionValue}}<label class="original">{{transactionValue}}</label>{{/if}}<div class="converted">{{value}}</div></span>
+<span class="editable">{{#if transactionValue}}<label class="original">{{transactionValue}}</label>{{/if}}<div class="converted"><div class="sugareditable"><span class="edit-icon hide"><i class="icon-pencil icon-sm"></i></span> <span class="click format">{{value}}</span></div></div></span>
