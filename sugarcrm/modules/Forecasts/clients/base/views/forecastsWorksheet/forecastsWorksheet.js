@@ -155,6 +155,7 @@
                         break;
                     case "int":
                     case "currency":
+                    case "editableCurrency":
                         fieldDef["sSortDataType"] = "dom-number";
                         fieldDef["sType"] = "numeric";
                         break;
