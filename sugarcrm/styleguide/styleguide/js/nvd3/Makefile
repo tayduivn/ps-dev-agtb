@@ -41,10 +41,10 @@ nv.d3.js: Makefile
 	cat $(filter %.js,$^) >> $@
 
 %.min.js:: Makefile
-	rm -f $@
-	cat $(filter %.js,$^) | $(JS_COMPILER) >> $@
+	rm -f ../../../assets/$@
+	cat $(filter %.js,$^) | $(JS_COMPILER) >> ../../../assets/js/nvd3/$@
 
 clean:
-	rm -rf nv.d3.js nv.d3.min.js
+	rm -rf nv.d3.js ../../../assets/js/nvd3/nv.d3.min.js
 
 
