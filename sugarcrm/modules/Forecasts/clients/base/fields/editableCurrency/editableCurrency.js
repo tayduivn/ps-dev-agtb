@@ -73,7 +73,7 @@
     },
 
     /**
-     * Toggles the pencil icon on and off depending on the mouse state
+     * show the pencil edit icon
      *
      * @param evt
      */
@@ -85,7 +85,7 @@
     },
 
     /**
-     * Toggles the pencil icon on and off depending on the mouse state
+     * hide the pencil edit icon
      *
      * @param evt
      */
