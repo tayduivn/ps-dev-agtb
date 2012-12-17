@@ -68,18 +68,31 @@
      * Render Field
      */
     _render:function () {
+        var self = this;
         app.view.Field.prototype._render.call(this);
                
         /* If we are on our own sheet, and need to show the dropdown, init things
          * and disable events
          */
-        if(!this.disabled && this.def.view == "enum"){
-            //todo: remove events component.js
-            this.$el.unbind("click");
-            this.$el.unbind("mouseenter");
-            this.$el.unbind("mouseleave");            
-            this.$el.find("option[value=" + this.value + "]").attr("selected", "selected");
-            this.$el.find("select").chosen();
+        if(!self.disabled && self.def.view == "enum"){
+            self.$el.off("click");            
+                        
+            //custom namespaced window click event to destroy the chosen dropdown on "blur"
+            $(window).on("click." + self.model.get("id"), function(e){
+                if(!_.isEqual(self.model.get("id"), $(e.target).attr("itemid"))){
+                    self.resetBucket();
+                }
+            });
+            
+           //custom click handler for the dropdown to set things up for the global click to not fire
+            self.$el.on("click", function(e){
+                $(e.target).attr("itemid", self.model.get("id"));
+            });
+                        
+            self.$el.off("mouseenter");
+            self.$el.off("mouseleave");            
+            self.$el.find("option[value=" + self.value + "]").attr("selected", "selected");
+            self.$el.find("select").chosen();
         }
     },
     
@@ -115,10 +128,7 @@
         self.model.set(values);
         
         if(self.def.view == "enum"){
-            self.def.view = "default";
-            self.getLanguageValue();
-            self.delegateEvents();
-            self.render();
+            self.resetBucket();
         }
     },
     
@@ -203,12 +213,29 @@
      * 
      * Handles the click to make the field editable.
      */
-    clickToEdit: function(){
+    clickToEdit: function(e){
         var self = this,
             sales_stage = self.model.get("sales_stage");
         if(sales_stage != "Closed Lost"){
+            $(e.target).attr("itemid", self.model.get("id"));
             self.def.view = "enum";
             self.render();
         }
+    },
+    
+    /**
+     * Removes chosen dropdown from unfocused field
+     */
+    resetBucket: function(){
+        var self = this;
+        
+        //remove custom click handler
+        $(window).off("click." + self.model.get("id"));
+        self.$el.off("click");
+        self.def.view = "default";
+        self.getLanguageValue();
+        self.delegateEvents();
+        self.render();
+        
     }
 })
