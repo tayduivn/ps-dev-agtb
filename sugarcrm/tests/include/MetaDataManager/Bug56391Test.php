@@ -94,6 +94,7 @@ class Bug56391Test extends Sugar_PHPUnit_Framework_TestCase
         $expected_result = array(
                                     'access' => 'yes',
                                     'admin' => 'yes',
+                                    'create' => 'yes',
                                     'view' => 'yes',
                                     'list' => 'yes',
                                     'edit' => 'yes',
@@ -103,6 +104,44 @@ class Bug56391Test extends Sugar_PHPUnit_Framework_TestCase
                                     'massupdate' => 'yes',
                                 );
         $acls = $mm->getAclForModule('Users', $GLOBALS['current_user']);
+        unset($acls['_hash']);
+        // not checking fields right now
+        unset($acls['fields']);
+
+        $this->assertEquals($expected_result, $acls);
+
+        // remove admin
+        $GLOBALS['current_user']->is_admin = 0;
+        $GLOBALS['current_user']->save();
+    }
+
+    /**
+     * Test Users Module as Admin
+     *
+     * @group Bug56391
+     */
+    public function testUsersAsAdminModuleForSelf()
+    {
+        // set current user as an admin
+        $GLOBALS['current_user']->is_admin = 1;
+        $GLOBALS['current_user']->save();
+        unset($_SESSION['ACL']);
+        $mm = new MetaDataManager($GLOBALS['current_user']);
+        // because the user is not an admin the user should only have view and list access
+
+        $expected_result = array(
+                                    'access' => 'yes',
+                                    'admin' => 'yes',
+                                    'create' => 'yes',
+                                    'view' => 'yes',
+                                    'list' => 'yes',
+                                    'edit' => 'yes',
+                                    'delete' => 'no',
+                                    'import' => 'yes',
+                                    'export' => 'yes',
+                                    'massupdate' => 'yes',
+                                );
+        $acls = $mm->getAclForModule('Users', $GLOBALS['current_user'], $GLOBALS['current_user']);
         unset($acls['_hash']);
         // not checking fields right now
         unset($acls['fields']);
