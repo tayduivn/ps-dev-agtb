@@ -89,7 +89,7 @@
         if (isAdmin) {
             // begin building params to pass to modal
             var params = {
-                title:app.lang.get("LBL_FORECASTS_CONFIG_TITLE", "Forecasts"),
+                title:app.lang.get("LBL_FORECASTS_CONFIG_TITLE", "Forecasts") + ":",
                 span:10,
                 before:{
                     hide:self.checkSettingsAndRedirect
