@@ -66,6 +66,14 @@
                             'include/javascript/jquery/jquery.popoverext.js'             =>   $target,
                         );
                         break;
+                    // these are the only files not in bootstrap.min.js that we need in forecasts
+                    // as bootstrap.min.js is already included in sugar_grp1_bootstrap.js
+                    case 'bootstrap_forecasts':
+                        return array(
+                            'styleguide/assets/js/bootstrap-datepicker.js' => $target,
+                            'styleguide/assets/js/bootstrapx-clickover.js' => $target,
+                        );
+                        break;
                     case 'jquery_core':
                         return array (
                             'include/javascript/jquery/jquery-min.js'             =>    $target,
@@ -292,8 +300,7 @@
     $cached_file = 'include/javascript/sidecar_forecasts.js';
 
     $sidecar_forecasts = array();
-    // Forecast and portal2 should include same styleguide bootstrap files
-    $sidecar_forecasts = array_merge($sidecar_forecasts, getSubgroupForTarget('bootstrap', $cached_file));
+    $sidecar_forecasts = array_merge($sidecar_forecasts, getSubgroupForTarget('bootstrap_forecasts', $cached_file));
     $sidecar_forecasts['include/javascript/sugarAuthStore.js'] = $cached_file;
     $sidecar_forecasts['include/SugarCharts/Jit/js/Jit/jit.js'] = $cached_file;
     $sidecar_forecasts['include/SugarCharts/Jit/js/sugarCharts.js'] = $cached_file;
@@ -303,7 +310,6 @@
     $sidecar_forecasts['modules/Forecasts/clients/base/lib/ForecastsUtils.js'] = $cached_file;
     $sidecar_forecasts['modules/Forecasts/tpls/SidecarView.js'] = $cached_file;
     // Forecast and portal2 should include same styleguide bootstrap files
-    $sidecar_forecasts = array_merge($sidecar_forecasts, getSubgroupForTarget('bootstrap', $cached_file));
     $sidecar_forecasts['include/javascript/jquery/jquery.nouislider.js'] = $cached_file;
 
     $js_groupings[] = $sidecar_forecasts;

@@ -357,6 +357,10 @@ class SugarBean
             //END SUGARCRM flav=int ONLY
 
             $refresh = inDeveloperMode() || !empty($_SESSION['developerMode']);
+            if($refresh && !empty(VardefManager::$inReload["{$this->module_dir}:{$this->object_name}"])) {
+                // if we're already reloading this vardef, no need to do it again
+                $refresh = false;
+            }
             VardefManager::loadVardef($this->module_dir, $this->object_name, $refresh, array("bean" => $this));
 
             // build $this->column_fields from the field_defs if they exist
