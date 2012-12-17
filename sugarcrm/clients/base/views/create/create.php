@@ -29,7 +29,7 @@ if (!defined('sugarEntry') || !sugarEntry) {
  * Contributor(s): ______________________________________..
  ********************************************************************************/
 
-$viewdefs['Accounts']['base']['view']['create'] = array(
+$viewdefs['base']['view']['create'] = array(
     'type' => 'record',
     'buttons' => array(
         array(
@@ -66,51 +66,5 @@ $viewdefs['Accounts']['base']['view']['create'] = array(
             'name' => 'sidebar_toggle',
             'type' => 'sidebartoggle',
         ),
-    ),
-    'panels' => array(
-        array(
-            'name' => 'panel_header',
-            'placeholders' => true,
-            'header' => true,
-            'labels' => false,
-            'fields' => array(
-                array(
-                    'name' => 'name',
-                    'label' => '',
-                    'placeholder' => 'LBL_NAME'
-                ),
-            )
-        ),
-        array(
-            'name' => 'panel_body',
-            'columns' => 2,
-            'labels' => false,
-            'labelsOnTop' => true,
-            'placeholders' => true,
-            'fields' => array(
-                'assigned_user_name',
-                'billing_address_street',
-                'industry',
-                array(
-                    'name' => 'fieldset_address',
-                    'type' => 'fieldset',
-                    'label' => 'Billing Address',
-                    'fields' => array('billing_address_city', 'billing_address_state', 'billing_address_postalcode')
-                ),
-                'website',
-                'billing_address_country',
-                'phone_office',
-                'email1'
-            ),
-        ),
-        array(
-            'name' => 'panel_hidden',
-            'hide' => true,
-            'labelsOnTop' => true,
-            'placeholders' => true,
-            'fields' => array(
-                'twitter',
-            )
-        )
     ),
 );

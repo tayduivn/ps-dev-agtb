@@ -8,9 +8,43 @@ describe("Drawer Layout", function() {
         SugarTest.testMetadata.init();
         SugarTest.loadHandlebarsTemplate('record', 'view', 'base');
         SugarTest.loadHandlebarsTemplate('button', 'field', 'base', 'edit');
-        SugarTest.loadComponent('base', 'view', 'record');
-        SugarTest.loadComponent('base', 'view', viewName);
         SugarTest.loadComponent('base', 'layout', 'modal');
+        SugarTest.loadComponent('base', 'view', 'record');
+        SugarTest.testMetadata.addViewDefinition('record', {
+            "panels":[
+                {
+                    "name":"panel_header",
+                    "placeholders":true,
+                    "header":true,
+                    "labels":false,
+                    "fields":[
+                        {
+                            "name":"first_name",
+                            "label":"",
+                            "placeholder":"LBL_NAME"
+                        },
+                        {
+                            "name":"last_name",
+                            "label":"",
+                            "placeholder":"LBL_NAME"
+                        }
+                    ]
+                }, {
+                    "name":"panel_body",
+                    "columns":2,
+                    "labels":false,
+                    "labelsOnTop":true,
+                    "placeholders":true,
+                    "fields":[
+                        "phone_work",
+                        "email1",
+                        "phone_office",
+                        "full_name"
+                    ]
+                }
+            ]
+        }, moduleName);
+        SugarTest.loadComponent('base', 'view', viewName);
         SugarTest.testMetadata.addViewDefinition(viewName, {
             "type":"record",
             "buttons":[
@@ -42,38 +76,6 @@ describe("Drawer Layout", function() {
                 }, {
                     "name":"sidebar_toggle",
                     "type":"sidebartoggle"
-                }
-            ],
-            "panels":[
-                {
-                    "name":"panel_header",
-                    "placeholders":true,
-                    "header":true,
-                    "labels":false,
-                    "fields":[
-                        {
-                            "name":"first_name",
-                            "label":"",
-                            "placeholder":"LBL_NAME"
-                        },
-                        {
-                            "name":"last_name",
-                            "label":"",
-                            "placeholder":"LBL_NAME"
-                        }
-                    ]
-                }, {
-                    "name":"panel_body",
-                    "columns":2,
-                    "labels":false,
-                    "labelsOnTop":true,
-                    "placeholders":true,
-                    "fields":[
-                        "phone_work",
-                        "email1",
-                        "phone_office",
-                        "full_name"
-                    ]
                 }
             ]
         }, moduleName);
