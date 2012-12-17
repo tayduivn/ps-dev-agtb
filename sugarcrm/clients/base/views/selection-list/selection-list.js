@@ -9,7 +9,7 @@
         app.view.views.BaselistView.prototype._render.call(this);
         this.context.off("change:selection_model", null, this);
         this.context.on("change:selection_model", function() {
-            this.context.trigger("drawer:callback", this.context.get("selection_model"));
+            this.context.parent.trigger("drawer:callback", this.context.get("selection_model"));
         }, this)
     }
 
