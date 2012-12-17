@@ -215,7 +215,7 @@ class SugarBeanApiHelper
     {
         $sfh = new SugarFieldHandler();
         foreach ( $bean->field_defs as $fieldName => $properties ) {
-            if ( !isset($submittedData[$fieldName]) || $submittedData[$fieldName] === $bean->$fieldName || $properties['source'] == 'non-db') {
+            if ( !isset($submittedData[$fieldName]) || $submittedData[$fieldName] === $bean->$fieldName || (isset($properties['source']) && $properties['source'] == 'non-db')) {
                 // They aren't trying to modify this field
                 continue;
             }
