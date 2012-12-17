@@ -40,7 +40,7 @@
 
         <!-- CSS -->
         <link rel="stylesheet" href="sidecar/lib/chosen/chosen.css"/>
-        <link rel="stylesheet" href="include/javascript/twitterbootstrap/css/bootstrap.css"/>
+        <link rel="stylesheet" href="styleguide/styleguide/bootstrap.css"/>
         <link rel="stylesheet" href="sidecar/lib/jquery-ui/css/smoothness/jquery-ui-1.8.18.custom.css"/>
         <link href="http://fonts.googleapis.com/css?family=Open+Sans:300,400,600" rel="stylesheet" type="text/css">
     </head>
