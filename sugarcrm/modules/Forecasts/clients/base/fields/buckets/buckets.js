@@ -29,37 +29,50 @@
      */
     disabled: false,
     
+    /**
+     * Language string value of the data in the view.
+     */
     langValue: "",
+    
+    /**
+     * Current view type this field is rendered.
+     * 
+     * This is needed because this.def.view is shared across all instances of the view.
+     */
+    currentView: "",
     
     /**
      * Initialize
      */
     initialize: function(options){
         app.view.Field.prototype.initialize.call(this, options);
-        var forecastRanges = this.context.forecasts.config.get("forecast_ranges");
-        
+        var self = this,
+            forecastRanges = self.context.forecasts.config.get("forecast_ranges");
+          
         //Check to see if you're a manager on someone else's sheet, disable changes
-        if(this.context.forecasts.get("selectedUser")["id"] != app.user.id){
-            this.disabled = true;
+        if(self.context.forecasts.get("selectedUser")["id"] != app.user.id){
+            self.disabled = true;
         }
         //show_binary, show_buckets, show_n_buckets logic
         if(forecastRanges == "show_binary"){
             //If we're in binary mode
-            this.def.view = "bool";
-            this.format = function(value){
+            self.def.view = "bool";
+            self.currentView = "bool";
+            self.format = function(value){
                 return value == "include";
             };
-            this.unformat = function(value){
-                return this.$el.find(".checkbox").prop('checked') ? "include" : "exclude";
+            self.unformat = function(value){
+                return self.$el.find(".checkbox").prop('checked') ? "include" : "exclude";
             };
         }
         else if(forecastRanges == "show_buckets"){
-            this.def.view = "default";
-            this.getLanguageValue();            
+            self.def.view = "default";
+            self.currentView = "bool";
+            self.getLanguageValue();            
             //create buckets, but only if we are on our sheet.
-            if(!this.disabled){                
-                this.createBuckets();
-                this.createCTEIconHTML();
+            if(!self.disabled){                
+                self.createBuckets();
+                self.createCTEIconHTML();
             }            
         }
     },
@@ -74,7 +87,7 @@
         /* If we are on our own sheet, and need to show the dropdown, init things
          * and disable events
          */
-        if(!self.disabled && self.def.view == "enum"){
+        if(!self.disabled && self.currentView == "enum"){
             self.$el.off("click");            
                         
             //custom namespaced window click event to destroy the chosen dropdown on "blur"
@@ -104,11 +117,11 @@
             values = {},
             moduleName = self.moduleName;
         
-        if(self.def.view == "bool"){
+        if(self.currentView == "bool"){
             self.value = self.unformat();
             values[self.def.name] = self.value;
         }
-        else if(self.def.view == "enum"){
+        else if(self.currentView == "enum"){
             self.value = self.$el.find("select")[0].value;
             values[self.def.name] = self.value;
         }
@@ -126,8 +139,7 @@
         }
         
         self.model.set(values);
-        
-        if(self.def.view == "enum"){
+        if(self.currentView == "enum"){
             self.resetBucket();
         }
     },
@@ -176,15 +188,16 @@
          * (Closed Lost IS the key in the language file btw)
          */
         self.showCteIcon = function() {
-            if((self.def.view != "enum") && (sales_stage != "Closed Lost")){
+            if((self.currentView != "enum") && (sales_stage != "Closed Lost")){
                 self.$el.find("span").before($(cteIcon));
             }
         };
+        
         /* if it's not a bucket, and sales stage is not "Closed Lost", we don't want to try to remove the pencil
          * (Closed Lost IS the key in the language file btw)
          */
         self.hideCteIcon = function() {
-            if((self.def.view != "enum") && (sales_stage != "Closed Lost")){
+            if((self.currentView != "enum") && (sales_stage != "Closed Lost")){
                 self.$el.parent().find(".edit-icon").detach();
             }
         };
@@ -219,6 +232,7 @@
         if(sales_stage != "Closed Lost"){
             $(e.target).attr("itemid", self.model.get("id"));
             self.def.view = "enum";
+            self.currentView = "enum";
             self.render();
         }
     },
@@ -233,9 +247,9 @@
         $(window).off("click." + self.model.get("id"));
         self.$el.off("click");
         self.def.view = "default";
+        self.currentView = "default";
         self.getLanguageValue();
         self.delegateEvents();
-        self.render();
-        
+        self.render();        
     }
 })
