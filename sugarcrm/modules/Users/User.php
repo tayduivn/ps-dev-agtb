@@ -884,7 +884,6 @@ EOQ;
         $_SESSION['hasExpiredPassword'] = '0';
 	}
 
-
 	/**
 	 * Verify that the current password is correct and write the new password to the DB.
 	 *
