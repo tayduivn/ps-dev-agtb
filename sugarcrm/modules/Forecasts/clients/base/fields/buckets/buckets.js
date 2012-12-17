@@ -49,10 +49,9 @@
         var self = this,
             forecastRanges = self.context.forecasts.config.get("forecast_ranges");
           
-        //Check to see if you're a manager on someone else's sheet, disable changes
-        if(self.context.forecasts.get("selectedUser")["id"] != app.user.id){
-            self.disabled = true;
-        }
+        //Check to see if the field is editable
+        self.isEditable();
+        
         //show_binary, show_buckets, show_n_buckets logic
         if(forecastRanges == "show_binary"){
             //If we're in binary mode
@@ -67,12 +66,12 @@
         }
         else if(forecastRanges == "show_buckets"){
             self.def.view = "default";
-            self.currentView = "bool";
-            self.getLanguageValue();            
+            self.currentView = "default";
+            self.getLanguageValue();
+            self.createCTEIconHTML();
             //create buckets, but only if we are on our sheet.
             if(!self.disabled){                
-                self.createBuckets();
-                self.createCTEIconHTML();
+                self.createBuckets();                
             }            
         }
     },
@@ -184,20 +183,18 @@
         }             
         
         //Events
-        /* if it's not a bucket, and sales stage is not "Closed Lost", we don't want to add the pencil
-         * (Closed Lost IS the key in the language file btw)
+        /* if it's not a bucket, and it's not editable, we don't want to try to add the pencil
          */
         self.showCteIcon = function() {
-            if((self.currentView != "enum") && (sales_stage != "Closed Lost")){
+            if((self.currentView != "enum") && (!self.disabled)){
                 self.$el.find("span").before($(cteIcon));
             }
         };
         
-        /* if it's not a bucket, and sales stage is not "Closed Lost", we don't want to try to remove the pencil
-         * (Closed Lost IS the key in the language file btw)
+        /* if it's not a bucket, and it's not editable, we don't want to try to remove the pencil         
          */
         self.hideCteIcon = function() {
-            if((self.currentView != "enum") && (sales_stage != "Closed Lost")){
+            if((self.currentView != "enum") && (!self.disabled)){
                 self.$el.parent().find(".edit-icon").detach();
             }
         };
@@ -229,7 +226,7 @@
     clickToEdit: function(e){
         var self = this,
             sales_stage = self.model.get("sales_stage");
-        if(sales_stage != "Closed Lost"){
+        if(!self.disabled){
             $(e.target).attr("itemid", self.model.get("id"));
             self.def.view = "enum";
             self.currentView = "enum";
@@ -251,5 +248,30 @@
         self.getLanguageValue();
         self.delegateEvents();
         self.render();        
-    }
+    },
+    
+    /**
+     * Utility Method to check if the field is editable
+     */
+    isEditable: function() {
+        var self = this,
+            sales_stages,
+            hasStage = false
+            isOwner = true;
+        
+        if(!_.isUndefined(self.context.forecasts)){
+            //Check to see if the sales stage is one of the configured lost or won stages.
+            if (!_.isUndefined(self.context.forecasts.config)) {    
+                sales_stages = self.context.forecasts.config.get("sales_stage_won").concat(self.context.forecasts.config.get("sales_stage_lost"));
+                hasStage = _.contains(sales_stages, self.model.get('sales_stage'));
+            }
+            
+            //Check to see if you're a manager on someone else's sheet, disable changes
+            if(self.context.forecasts.get("selectedUser")["id"] != app.user.id){
+                isOwner = false;
+            }
+        }
+        
+        self.disabled = hasStage || !isOwner; 
+    },
 })
