@@ -77,19 +77,21 @@ $viewdefs['Forecasts']['base']['view']['forecastsWorksheet'] = array(
                 array(
                     'name' => 'probability',
                     'label' => 'LBL_OW_PROBABILITY',
-                    'type' => 'int',
+                    'type' => 'editableInt',
                     'default' => true,
                     'enabled' => true,
-                    'clickToEdit' => true
+                    'maxValue' => 100,
+                    'minValue' => 0,
+                    //'clickToEdit' => true
                 ),
 
                 array(
                     'name' => 'likely_case',
                     'label' => 'LBL_LIKELY_CASE',
-                    'type' => 'currency',
+                    'type' => 'editableCurrency',
                     'default' => true,
                     'enabled' => true,
-                    'clickToEdit' => true,
+                    //'clickToEdit' => true,
                     'convertToBase'=> true,
                     'showTransactionalAmount'=>true,
                 ),
@@ -97,21 +99,21 @@ $viewdefs['Forecasts']['base']['view']['forecastsWorksheet'] = array(
                 array(
                     'name' => 'best_case',
                     'label' => 'LBL_BEST_CASE',
-                    'type' => 'currency',
+                    'type' => 'editableCurrency',
                     'default' => true,
                     'enabled' => true,
-                    'clickToEdit' => true,
+                    //'clickToEdit' => true,
                     'convertToBase'=> true,
                     'showTransactionalAmount'=>true,
                 ),
 
                 array(
                     'name' => 'worst_case',
-                    'type' => 'currency',
+                    'type' => 'editableCurrency',
                     'label' => 'LBL_WORST_CASE',
                     'default' => true,
                     'enabled' => true,
-                    'clickToEdit' => true,
+                    //'clickToEdit' => true,
                     'convertToBase'=> true,
                     'showTransactionalAmount'=>true,
                 ),
