@@ -4,8 +4,8 @@
     symbol: '',
 
     events: {
-        'mouseenter span.editable': 'showPencil',
-        'mouseleave span.editable': 'hidePencil',
+        'mouseenter span.editable': 'togglePencil',
+        'mouseleave span.editable': 'togglePencil',
         'click span.editable': 'onClick',
         'blur span.edit input': 'onBlur',
         'keypress span.edit input': 'onKeypress'
@@ -73,27 +73,20 @@
     },
 
     /**
-     * show the pencil edit icon
+     * Toggles the pencil icon on and off depending on the mouse state
      *
      * @param evt
      */
-    showPencil: function (evt) {
+    togglePencil: function (evt) {
         evt.preventDefault();
         if (!this.isEditable()) return;
-        this.$el.find('.edit-icon').removeClass('hide');
-        this.$el.find('.edit-icon').addClass('show');
-    },
-
-    /**
-     * hide the pencil edit icon
-     *
-     * @param evt
-     */
-    hidePencil: function (evt) {
-        evt.preventDefault();
-        if (!this.isEditable()) return;
-        this.$el.find('.edit-icon').removeClass('show');
-        this.$el.find('.edit-icon').addClass('hide');
+        if(evt.type == 'mouseenter') {
+            this.$el.find('.edit-icon').removeClass('hide');
+            this.$el.find('.edit-icon').addClass('show');
+        } else {
+            this.$el.find('.edit-icon').removeClass('show');
+            this.$el.find('.edit-icon').addClass('hide');
+        }
     },
 
 
