@@ -55,7 +55,6 @@ $viewdefs['Forecasts']['base']['view']['forecastsWorksheet'] = array(
                     'enabled' => true,
                     'maxValue' => 100,
                     'minValue' => 0,
-                    //'clickToEdit' => true
                 ),
 
                 array(
@@ -64,7 +63,6 @@ $viewdefs['Forecasts']['base']['view']['forecastsWorksheet'] = array(
                     'type' => 'editableCurrency',
                     'default' => true,
                     'enabled' => true,
-                    //'clickToEdit' => true,
                     'convertToBase'=> true,
                     'showTransactionalAmount'=>true,
                 ),
@@ -75,7 +73,6 @@ $viewdefs['Forecasts']['base']['view']['forecastsWorksheet'] = array(
                     'type' => 'editableCurrency',
                     'default' => true,
                     'enabled' => true,
-                    //'clickToEdit' => true,
                     'convertToBase'=> true,
                     'showTransactionalAmount'=>true,
                 ),
@@ -86,7 +83,6 @@ $viewdefs['Forecasts']['base']['view']['forecastsWorksheet'] = array(
                     'label' => 'LBL_WORST_CASE',
                     'default' => true,
                     'enabled' => true,
-                    //'clickToEdit' => true,
                     'convertToBase'=> true,
                     'showTransactionalAmount'=>true,
                 ),

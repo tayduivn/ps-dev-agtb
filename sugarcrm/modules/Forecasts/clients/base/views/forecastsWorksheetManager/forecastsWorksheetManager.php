@@ -36,7 +36,6 @@ $viewdefs['Forecasts']['base']['view']['forecastsWorksheetManager'] = array(
                     'label' => 'LBL_QUOTA',
                     'default' => true,
                     'enabled' => true,
-                    //'clickToEdit' => true,
                     'convertToBase'=> true,
                 ),
 
@@ -55,7 +54,6 @@ $viewdefs['Forecasts']['base']['view']['forecastsWorksheetManager'] = array(
                     'label' => 'LBL_LIKELY_CASE_VALUE',
                     'default' => true,
                     'enabled' => true,
-                    //'clickToEdit' => true,
                     'convertToBase'=> true,
                ),
 
@@ -74,7 +72,6 @@ $viewdefs['Forecasts']['base']['view']['forecastsWorksheetManager'] = array(
                     'label' => 'LBL_BEST_CASE_VALUE',
                     'default' => true,
                     'enabled' => true,
-                    //'clickToEdit' => true,
                     'convertToBase'=> true,
                 ),
 
@@ -93,7 +90,6 @@ $viewdefs['Forecasts']['base']['view']['forecastsWorksheetManager'] = array(
                     'label' => 'LBL_WORST_CASE_VALUE',
                     'default' => true,
                     'enabled' => true,
-                    //'clickToEdit' => true,
                     'convertToBase'=> true,
                 ),
 
