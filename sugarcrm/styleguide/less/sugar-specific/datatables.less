@@ -1,3 +1,81 @@
+/*sugar mods*/
+.dataTables_wrapper {
+  overflow-x: auto;
+}
+
+table.table.dataTable tfoot tr.overall th {
+  font-weight: bold;
+}
+
+table th.nosort.select-all {
+  padding:0;
+  .btn-group {
+  	position: absolute;
+  	top: 0;
+  }
+}
+
+//centering checkbox in btn-group
+.select-all .btn-group > .btn:first-child {
+  padding-top: 7px;
+  padding-bottom: 1px;
+}
+
+table tbody tr:last-child td:last-child, table tbody tr:last-child td:first-child,
+table tfoot tr:last-child td:last-child, table tfoot tr:last-child td:first-child {
+  .border-radius(0 0 4px 4px)
+}
+table th {
+  white-space: nowrap;
+}
+table.datatable tbody td {
+  white-space: nowrap;
+  max-width: 100px;
+  overflow-x: hidden;
+}
+table th, table td {
+  position: relative;
+}
+
+table.datatable tr td .actions {
+  //position: absolute;
+  top: 4px;
+  right: 8px;
+}
+table.datatable tr td .actions a:hover {
+  color: @grayDark;
+}
+
+table th {
+  min-width: 20px;
+  color: @tableHeader;
+}
+table th .btn-group {
+  margin: 0 0 0 -10px;
+}
+table th .btn input {
+ margin: -2px 0 0 0;
+}
+table th .toggle-all {
+  margin: 10px;
+}
+table td .btn-toolbar {
+  margin: -5px 0 -10px;
+}
+.dblclick input {
+  padding: 3px 3px 2px;
+  position: absolute;
+  top: 1px;
+  width: 80% !important;
+}
+table tfoot td {
+  font-weight: bold;
+  border-top: 2px solid @grayLight !important;
+}
+
+
+
+/*sugar specific*/
 table.table.dataTable td.details {
   padding: 0px;
 
