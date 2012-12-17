@@ -695,6 +695,12 @@ $stepRecheck = $_REQUEST['step'];
 
 $_SESSION['step'][$steps['files'][$_REQUEST['step']]] =($stop) ? 'failed' : 'success';
 
+//Unlink files that have been removed
+if(function_exists('unlinkUpgradeFiles'))
+{
+	unlinkUpgradeFiles($_SESSION['current_db_version'], $path);
+}
+
 // clear out the theme cache
 if(!class_exists('SugarThemeRegistry')){
     require_once('include/SugarTheme/SugarTheme.php');
@@ -729,7 +735,7 @@ $_REQUEST['root_directory'] = getcwd();
 $_REQUEST['js_rebuild_concat'] = 'rebuild';
 require_once('jssource/minify.php');
 
-//The buld registry call above will reload the default theme for what was written to the config file during flav conversions
+//The build registry call above will reload the default theme for what was written to the config file during flavor conversions
 //which we don't want to happen until after this request as we have already started rendering with a specific theme.
 $themeName = (string) $themeObject;
 if($themeName != $GLOBALS['sugar_config']['default_theme'])
