@@ -232,6 +232,7 @@
         }
 
         var chart,
+            self = this,
             chartId = "db620e51-8350-c596-06d1-4f866bfcfd5b",
             css = {
                 "gridLineColor":"#cccccc",
@@ -242,7 +243,7 @@
                 "orientation":"vertical",
                 "barType": this.values.get('display_manager') ? "grouped" : "stacked",
                 "tip":"name",
-                "chartType":"barChart",
+                "chartType":"d3-barChart",
                 "imageExportType":"png",
                 "showNodeLabels":false,
                 "showAggregates":false,
@@ -250,9 +251,9 @@
                 "dataPointSize":"5"
             };
 
-        var oldChart = $("#" + chartId + "-canvaswidget");
+        var oldChart = $("#" + chartId );
         if(!_.isEmpty(oldChart)) {
-            oldChart.remove();
+            d3.select('#' + chartId + ' svg').remove();
         }
 
         SUGAR.charts = $.extend(SUGAR.charts,
@@ -267,7 +268,56 @@
                   url = app.api.buildURL('Forecasts', 'chart', '', data);
 
                   app.api.call('read', url, data, {success : success});
-              }
+              },
+                translateDataToD3 : function( json, params )
+                {
+                    return {
+                        'properties':{
+                            'title': json.properties[0].title
+                            , 'quota': parseInt(json.values[0].goalmarkervalue[0],10)
+                            // bar group data (x-axis)
+                            , 'groupData': json.values.map( function(d,i){
+                                return {
+                                    'group': i
+                                    , 'l': json.values[i].label
+                                    , 't': json.values[i].values.reduce( function(p, c, i, a){
+                                        return parseInt(p,10) + parseInt(c,10);
+                                    })
+                                }
+                            })
+                        }
+                        // series data
+                        , 'data': json.label.map( function(d,i){
+                            return {
+                                'key': d
+                                , 'type': 'bar'
+                                , 'series': i
+                                , 'values': json.values.map( function(e,j){
+                                    return { 'series': i, 'x': j+1, 'y': parseInt(e.values[i],10), y0: 0 };
+                                })
+                                , 'valuesOrig': json.values.map( function(e,j){
+                                    return { 'series': i, 'x': j+1, 'y': parseInt(e.values[i],10), y0: 0 };
+                                })
+                            }
+                        }).concat(
+                            json.properties[0].goal_marker_label.filter( function(d,i){
+                                return d !== 'Quota';
+                            }).map( function(d,i){
+                                    return {
+                                        'key': d
+                                        , 'type': 'line'
+                                        , 'series': i
+                                        , 'values': json.values.map( function(e,j){
+                                            return { 'series': i, 'x': j+1, 'y': parseInt(e.goalmarkervalue[i+1],10) };
+                                        })
+                                        , 'valuesOrig': json.values.map( function(e,j){
+                                            return { 'series': i, 'x': j+1, 'y': parseInt(e.goalmarkervalue[i+1],10) };
+                                        })
+                                    }
+                                })
+                        )
+                    };
+                }
             }
         );
 
@@ -283,6 +333,7 @@
         var params = this.values.toJSON() || {};
         params.contentEl = 'chart';
         params.minColumnWidth = 120;
+        params.chartId = chartId;
 
         chart = new loadSugarChart(chartId, this.url, css, chartConfig, params, _.bind(function(chart){
             this.chart = chart;

@@ -39,6 +39,8 @@
         </div>
 
         <script src='{$configFile}'></script>
+        <link href="styleguide/assets/css/nv.d3.css" rel="stylesheet" type="text/css">
+
         {literal}
         <script language="javascript">
             var syncResult, view, layout, html;
