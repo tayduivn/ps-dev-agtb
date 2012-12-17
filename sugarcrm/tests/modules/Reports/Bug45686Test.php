@@ -33,7 +33,8 @@ class Bug45686Test extends Sugar_PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
+        parent::setUp();
+        SugarTestHelper::setUp("current_user");
         $this->reportDefs = <<<DEFS
 {"display_columns":[{"name":"account_type","label":"<s>Type</s>","table_key":"self"}],"module":"Accounts",
 "group_defs":[{"name":"account_type","label":"<s>Type</s>","table_key":"self","type":"enum"}],
@@ -43,20 +44,12 @@ class Bug45686Test extends Sugar_PHPUnit_Framework_TestCase
 "report_type":"summary","full_table_list":{"self":{"value":"Accounts","module":"Accounts","label":"<s>Accounts</s>"}},
 "filters_def":{"Filter_1":{"operator":"AND"}}}
 DEFS;
-    	$beanList = array();
-		$beanFiles = array();
-		require('include/modules.php');
-		$GLOBALS['beanList'] = $beanList;
-		$GLOBALS['beanFiles'] = $beanFiles;
     }
 
     public function tearDown()
     {
         $GLOBALS['db']->query("DELETE FROM saved_reports WHERE assigned_user_id='{$GLOBALS['current_user']->id}'");
-        SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
-        unset($GLOBALS['current_user']);
-	    unset($GLOBALS['beanFiles']);
-        unset($GLOBALS['beanList']);
+        SugarTestHelper::tearDown();
     }
 
     /**

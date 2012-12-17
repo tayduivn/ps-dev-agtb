@@ -67,32 +67,36 @@ function loadSugarChart (chartId, jsonFilename, css, chartConfig, params, callba
                         {
                             function fixChartContainer(event, itemsCount)
                             {
-                                var chartCanvas = YAHOO.util.Dom.getElementsByClassName('chartCanvas', 'div');
-                                var chartContainer = YAHOO.util.Dom.getElementsByClassName('chartContainer', 'div');
-                                var region = YAHOO.util.Dom.getRegion(contentEl);
+                                var chartCanvas = $("div.chartCanvas");
+                                var chartContainer = $("div.chartContainer");
+                                var region = $('#' + contentEl);
                                 if ( chartContainer.length > 0 && chartCanvas.length > 0 )
                                 {
                                     if ( region && region.width )
                                     {
                                         // one bar needs about minColumnWidth px to correct display data and labels
                                         var realWidth = itemsCount * parseInt(minColumnWidth, 10);
-                                        chartContainer = YAHOO.util.Dom.get(chartContainer[0]);
-                                        chartCanvas = YAHOO.util.Dom.get(chartCanvas[0]);
+                                        chartContainer = chartContainer.first();
+                                        chartCanvas = chartCanvas.first();
                                         if ( realWidth > region.width )
                                         {
-                                            YAHOO.util.Dom.setStyle(chartContainer, 'width', region.width+'px')
-                                            YAHOO.util.Dom.setStyle(chartCanvas, 'width', realWidth+'px');
+                                            chartContainer.width(region.width() + 'px');
+                                            chartCanvas.width(realWidth + 'px');
                                         }
                                         else
                                         {
-                                            YAHOO.util.Dom.setStyle(chartContainer, 'width', region.width+'px')
-                                            YAHOO.util.Dom.setStyle(chartCanvas, 'width', region.width+'px');
+                                            chartContainer.width(region.width() + 'px');
+                                            chartCanvas.width(region.width() + 'px');
                                         }
                                     }
                                 }
                                 if (!event)
                                 {
-                                    YAHOO.util.Event.addListener(window, "resize", fixChartContainer, json.values.length);
+                                    $(window).resize(function(length) {
+                                        return function(event) {
+                                            fixChartContainer(event, length);
+                                        }
+                                    }(json.values.length));
                                 }
                             }
                             fixChartContainer(null, json.values.length);

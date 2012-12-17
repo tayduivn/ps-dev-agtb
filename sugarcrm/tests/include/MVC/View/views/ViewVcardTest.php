@@ -28,20 +28,8 @@ class ViewVcardTest extends Sugar_PHPUnit_Framework_OutputTestCase
 {   
     public function setUp()
     {
-        $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
-        $beanList = array();
-        $beanFiles = array();
-        require('include/modules.php');
-        $GLOBALS['beanList'] = $beanList;
-        $GLOBALS['beanFiles'] = $beanFiles;
-    }
-    
-    public function tearDown()
-    {
-        unset($GLOBALS['current_user']);
-        unset($GLOBALS['beanList']);
-        unset($GLOBALS['beanFiles']);
-        SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
+        parent::setUp();
+        SugarTestHelper::setUp("current_user");
     }
     
     public function testConstructor() 

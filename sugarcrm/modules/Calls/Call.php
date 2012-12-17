@@ -179,8 +179,11 @@ class Call extends SugarBean {
 	function save($check_notify = FALSE) {
 		global $timedate,$current_user;
 
-	    if(isset($this->date_start) && isset($this->duration_hours) && isset($this->duration_minutes))
+	    if(isset($this->date_start) && (isset($this->duration_hours) || isset($this->duration_minutes)))
         {
+            // Set the duration hours and minutes to 0 if one of them isn't set but the other one is.
+            $this->duration_hours = empty($this->duration_hours) ? 0 : $this->duration_hours;
+            $this->duration_minutes = empty($this->duration_minutes) ? 0 : $this->duration_minutes;
     	    $td = $timedate->fromDb($this->date_start);
     	    if($td)
     	    {

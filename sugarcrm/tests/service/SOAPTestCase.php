@@ -35,6 +35,7 @@ abstract class SOAPTestCase extends Sugar_PHPUnit_Framework_TestCase
 
     public static function setUpBeforeClass()
     {
+        parent::setUpBeforeClass();
         self::$_user = SugarTestUserUtilities::createAnonymousUser();
         self::$_user->status = 'Active';
         self::$_user->is_admin = 1;
@@ -50,6 +51,7 @@ abstract class SOAPTestCase extends Sugar_PHPUnit_Framework_TestCase
         SugarTestAccountUtilities::removeAllCreatedAccounts();
         unset($GLOBALS['current_user']);
         $GLOBALS['db']->commit();
+        parent::tearDownAfterClass();
     }
 
     /**
@@ -58,11 +60,8 @@ abstract class SOAPTestCase extends Sugar_PHPUnit_Framework_TestCase
      */
 	public function setUp()
     {
-        $beanList = array();
-		$beanFiles = array();
-		require('include/modules.php');
-		$GLOBALS['beanList'] = $beanList;
-		$GLOBALS['beanFiles'] = $beanFiles;
+        SugarTestHelper::setUp("beanList");
+        SugarTestHelper::setUp("beanFiles");
 
         $this->_soapClient = new nusoapclient($this->_soapURL,false,false,false,false,false,600,600);
         parent::setUp();
@@ -77,8 +76,7 @@ abstract class SOAPTestCase extends Sugar_PHPUnit_Framework_TestCase
     {
         $this->_sessionId = '';
 
-		unset($GLOBALS['beanList']);
-		unset($GLOBALS['beanFiles']);
+        SugarTestHelper::tearDown();
         $GLOBALS['db']->commit();
     }
 

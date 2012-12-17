@@ -1,7 +1,7 @@
 <ul class="nav" id="module_list">
     <li class="Home"><a class="cube" href="#" rel="tooltip" title="{{str "LBL_TABGROUP_HOME"}}"></a></li>
     {{#eachOptions module_list}}
-    <li class="{{key}}">
+    <li class="{{key}}" data-tour="tour-navbar-{{key}}">
         <a href="#{{key}}">{{value}}</a>
     </li>
     {{/eachOptions}}

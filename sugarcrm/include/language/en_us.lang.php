@@ -1781,7 +1781,7 @@ $app_strings = array (
   'LBL_PLUS_INLINE' => 'Add' /*for 508 compliance fix*/,
   'LBL_ID_FF_CLEAR' => 'Clear' /*for 508 compliance fix*/,
   'LBL_ID_FF_VCARD' => 'vCard' /*for 508 compliance fix*/,
-  'LBL_ID_FF_REMOVE' => 'Remove' /*for 508 compliance fix*/,
+  'LBL_ID_FF_REMOVE' => 'Unlink' /*for 508 compliance fix*/,
   'LBL_ADD' => 'Add' /*for 508 compliance fix*/,
   'LBL_COMPANY_LOGO' => 'Company logo' /*for 508 compliance fix*/,
   'LBL_JS_CALENDAR' => 'Calendar' /*for 508 compliance fix*/,
@@ -3635,6 +3635,7 @@ $app_list_strings['kbdocument_status_dom'] = array (
     );
 
   $app_list_strings['moduleList']['KBDocuments'] = 'Knowledge Base';
+$app_list_strings['moduleList']['Words'] = 'Words';
   $app_strings['LBL_CREATE_KB_DOCUMENT'] = 'Create Article';
   $app_list_strings['kbdocument_viewing_frequency_dom'] =
   array(
@@ -4440,7 +4441,7 @@ $app_strings ['documentation'] = array (
     'COM' => '05_Sugar_Community_Edition'
 );
 //BEGIN SUGARCRM flav=pro ONLY
-$app_list_strings['forecasts_config_category_options_dom'] = array(
+$app_list_strings['forecasts_config_ranges_options_dom'] = array(
     'show_binary' => 'Two Ranges',
     'show_buckets' => 'Three Ranges',
 //END SUGARCRM flav=pro ONLY

@@ -47,7 +47,9 @@
         });
 
         maxMenuWidth = container.first().width();
-        modulelist.show();
+        if(modulelist) {
+            modulelist.show();
+        }
 
         this.trigger('view:resize', maxMenuWidth - totalWidth);
     }

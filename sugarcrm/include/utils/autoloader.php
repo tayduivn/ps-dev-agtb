@@ -114,7 +114,7 @@ class SugarAutoLoader
 	 * Extensions to include in mapping
 	 * @var string
 	 */
-    public static $exts = array("php", "tpl", "html", "js", "override", 'gif', 'png', 'jpg', 'tif', 'bmp', 'css', 'xml', 'hbt', 'less');
+    public static $exts = array("php", "tpl", "html", "js", "override", 'gif', 'png', 'jpg', 'tif', 'bmp', 'ico', 'css', 'xml', 'hbt', 'less');
     /**
      * File map
      * @var array
@@ -621,11 +621,11 @@ class SugarAutoLoader
     public static function fileExists($filename)
     {
         $filename = self::normalizeFilePath($filename);
-        
+
         if(isset(self::$memmap[$filename])) {
-            return self::$memmap[$filename];
+            return (bool)self::$memmap[$filename];
         }
-        
+
         $parts = explode('/', $filename);
         $data = self::$filemap;
         foreach($parts as $part) {
@@ -656,7 +656,7 @@ class SugarAutoLoader
         if(empty(self::$filemap)) {
             self::init();
         }
-        
+
         // remove leading . if present
         $extension = ltrim($extension, ".");
         $dir = rtrim($dir, "/");
@@ -741,10 +741,10 @@ class SugarAutoLoader
 	 */
 	public static function addToMap($filename, $save = true, $dir = false)
 	{
-	     // Normalize filename
+        // Normalize filename
         $filename = self::normalizeFilePath($filename);
-        
-        if(self::fileExists($filename))
+
+	    if(self::fileExists($filename))
 	        return;
         foreach(self::$exclude as $exclude_pattern) {
             if(substr($filename, 0, strlen($exclude_pattern)) == $exclude_pattern) {
@@ -752,6 +752,8 @@ class SugarAutoLoader
             }
         }
 	    
+        self::$memmap[$filename] = 1;
+
         self::$memmap[$filename] = 1;
 
         $parts = explode('/', $filename);
@@ -783,7 +785,7 @@ class SugarAutoLoader
 	{
 	    // Normalize directory separators
         $filename = self::normalizeFilePath($filename);
-	            
+
 	    // we have to reset here since we could delete a directory
         // and memmap is not hierarchical. It may be a performance hit
         //
@@ -915,7 +917,7 @@ class SugarAutoLoader
 
     /**
      * Cleans up a filepath, normalizing path separators and removing extras
-     * 
+     *
      * @param string $filename The name of the file to work on
      * @return string
      */
@@ -924,10 +926,10 @@ class SugarAutoLoader
         if(DIRECTORY_SEPARATOR != '/') {
             $filename = str_replace(DIRECTORY_SEPARATOR, "/", $filename);
         }
-        
+
         // Remove repeated separators
         $filename = preg_replace('#(/)(\1+)#', '/', $filename);
-        
+
         return $filename;
     }
 }

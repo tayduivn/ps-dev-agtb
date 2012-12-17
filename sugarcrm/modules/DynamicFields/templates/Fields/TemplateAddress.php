@@ -31,28 +31,44 @@ require_once ('modules/DynamicFields/templates/Fields/TemplateAddressCountry.php
 
 class TemplateAddress extends TemplateField
 {
-    var $type = 'varchar';
-    var $supports_unified_search = true;
-
     function save ($df)
     {
-        $this->type = 'varchar' ;
-
+        // Bug 58560 - Set the group name since addresses are part of a group
+        $this->group = $df->getDBName($this->name);
+        
         require_once 'modules/ModuleBuilder/parsers/parser.label.php' ;
         $parser = new ParserLabel ( $df->getModuleName() , $df->getPackageName() ) ;
-        foreach ( array ( 'City' , 'State' , 'PostalCode' , 'Country' ) as $addressFieldName )
+        
+        // Clean up the labels so they more accurately reflect the actual field
+        if (!empty($this->label_value)) {
+            $labelValue = $this->label_value;
+        } else {
+            $labelValue = empty($_REQUEST['labelValue']) ? '' : $_REQUEST['labelValue'];
+        }
+        
+        // If there is a label to use, space it here for use below
+        if (!empty($labelValue)) {
+            $labelValue .= ' ';
+        }
+        
+        // To keep consistency with OOTB address groups, add Street to the fields
+        foreach ( array ( 'Street', 'City' , 'State' , 'PostalCode' , 'Country' ) as $addressFieldName )
         {
             $systemLabel = strtoupper( "LBL_" . $this->name . '_' . $addressFieldName );
-            $parser->handleSave ( array( "label_" . $systemLabel => $this->label_value . ' ' . $addressFieldName ) , $GLOBALS [ 'current_language' ] ) ;
+            // Use the entered label value as a prefix instead of the field name
+            $parser->handleSave ( array( "label_" . $systemLabel => $labelValue . $addressFieldName ) , $GLOBALS [ 'current_language' ] ) ;
             $addressField = new TemplateField ( ) ;
             $addressField->len = ($addressFieldName == 'PostalCode') ? 20 : 100 ;
             $addressField->name = $this->name . '_' . strtolower ( $addressFieldName ) ;
             $addressField->label = $addressField->vname = $systemLabel ;
+            // Bug 58560 - Add the group to this field so it gets written to the custom vardefs
+            $addressField->group = $this->group;
+            
+            // Maintain unified search setting for 'Street'
+            $addressField->supports_unified_search = $addressField == 'Street';
+            
             $addressField->save ( $df ) ;
         }
-        // finally save the base street address field
-        parent::save($df);      
-        
     }
 }
 

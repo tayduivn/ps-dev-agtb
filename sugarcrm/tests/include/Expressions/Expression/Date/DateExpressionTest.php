@@ -33,11 +33,9 @@ class DateExpressionTest extends Sugar_PHPUnit_Framework_TestCase
     
 	public static function setUpBeforeClass()
 	{
-	    require('include/modules.php');
-	    $GLOBALS['beanList'] = $beanList;
-	    $GLOBALS['beanFiles'] = $beanFiles;
-	    $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
-	    $GLOBALS['current_user']->setPreference('timezone', "America/Los_Angeles");
+	    parent::setUp();
+        SugarTestHelper::setUp("current_user");
+        $GLOBALS['current_user']->setPreference('timezone', "America/Los_Angeles");
 	    $GLOBALS['current_user']->setPreference('datef', "m/d/Y");
 		$GLOBALS['current_user']->setPreference('timef', "h.iA");
 		unset($GLOBALS['disable_date_format']);
@@ -49,10 +47,7 @@ class DateExpressionTest extends Sugar_PHPUnit_Framework_TestCase
         {
             $bean->mark_deleted($bean->id);
         }
-        SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
-	    unset($GLOBALS['current_user']);
-	    unset($GLOBALS['beanList']);
-	    unset($GLOBALS['beanFiles']);
+        parent::tearDownAfterClass();
 	}
 
 	public function testAddDays()

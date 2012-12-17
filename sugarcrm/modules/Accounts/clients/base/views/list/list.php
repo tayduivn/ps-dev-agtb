@@ -28,103 +28,38 @@ if (!defined('sugarEntry') || !sugarEntry) {
  * All Rights Reserved.
  * Contributor(s): ______________________________________..
  ********************************************************************************/
-
 $viewdefs['Accounts']['base']['view']['list'] = array(
-    'panels' => array(
-        array(
-            'name' => 'panel_header',
-            'label' => 'LBL_PANEL_1',
-            'fields' => array(
-                array(
-                    'type' => 'fieldset',
-                    'fields' => array(
-                        array(
-                            'type' => 'actionmenu',
-                            'buttons' => array(
-                                array(
-                                    'name' => 'edit_button',
-                                    'type' => 'button',
-                                    'label' => 'LBL_MASS_UPDATE',
-                                    'value' => 'edit',
-                                    'primary' => true,
-                                    'events' => array(
-                                        'click' => 'function(e){
-                                            this.view.layout.trigger("list:massupdate:fire");
-                                        }'
-                                    ),
-                                ),
-
-                                array(
-                                    'name' => 'delete_button',
-                                    'type' => 'button',
-                                    'label' => 'LBL_DELETE',
-                                    'value' => 'delete',
-                                    'primary' => true,
-                                    'events' => array(
-                                        'click' => 'function(e){
-                                            this.view.layout.trigger("list:massdelete:fire");
-                                        }'
-                                    ),
-                                ),
-                            ),
-                        ),
-                    ),
-                    'value' => false,
-                    'sortable' => false,
-                ),
-                array(
-                    'name' => 'name',
-                    'width' =>  49,
-                    'link' => true,
-                    'label' => 'LBL_LIST_ACCOUNT_NAME',
-                    'enabled' => true,
-                    'default' => true
-                ),
-                array(
-                    'name' => 'billing_address_city',
-                    'width' =>  13,
-                    'label' => 'LBL_LIST_CITY',
-                    'enabled' => true,
-                    'default' => true
-                ),
-                array(
-                    'name' => 'billing_address_country',
-                    'width' =>  13,
-                    'label' => 'LBL_BILLING_ADDRESS_COUNTRY',
-                    'enabled' => true,
-                    'default' => true
-                ),
-                array (
-                    'name' => 'phone_office',
-                    'width' => '10%',
-                    'label' => 'LBL_LIST_PHONE',
-                    'default' => true,
-                ),
-                array (
-                    'name' => 'assigned_user_name',
-                    'width' => '10%',
-                    'label' => 'LBL_LIST_ASSIGNED_USER',
-                    'id' => 'ASSIGNED_USER_ID',
-                    'default' => true,
-                ),
-                array(
-                    'name' => 'email1',
-                    'width' => '15%',
-                    'label' => 'LBL_EMAIL_ADDRESS',
-                    'sortable' => false,
-                    'link' => true,
-                    'default' => true
-                ),
-                array (
-                    'name' => 'date_entered',
-                    'type' => 'datetime',
-                    'label' => 'LBL_DATE_ENTERED',
-                    'enabled' => true,
-                    'width' => 13,
-                    'default' => true,
+    'favorite' => true,
+    'selection' => array(
+        'type' => 'multi',
+        'actions' => array(
+            array(
+                'name' => 'edit_button',
+                'type' => 'button',
+                'label' => 'LBL_MASS_UPDATE',
+                'value' => 'edit',
+                'primary' => true,
+                'events' => array(
+                    'click' => 'function(e){
+                    console.log("massupdate");
+                    this.view.layout.trigger("list:massupdate:fire");
+                    }'
                 ),
             ),
 
+            array(
+                'name' => 'delete_button',
+                'type' => 'button',
+                'label' => 'LBL_DELETE',
+                'value' => 'delete',
+                'primary' => true,
+                'events' => array(
+                    'click' => 'function(e){
+                    console.log("massdelete");
+                    this.view.layout.trigger("list:massdelete:fire");
+                    }'
+                ),
+            ),
         ),
-    ),
+    )
 );

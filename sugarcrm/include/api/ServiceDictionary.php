@@ -58,7 +58,7 @@ class ServiceDictionary {
      */
     protected function loadDictionaryFromStorage($apiType) {
         $dictFile = $this->cacheDir.'ServiceDictionary.'.$apiType.'.php';
-        if ( ! file_exists($dictFile) ) {
+        if ( ! file_exists($dictFile) || inDeveloperMode() ) {
             // No stored service dictionary, I need to build them
             $this->buildAllDictionaries();
         }

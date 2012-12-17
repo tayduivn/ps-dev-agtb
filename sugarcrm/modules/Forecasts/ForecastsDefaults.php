@@ -91,14 +91,14 @@ class ForecastsDefaults
             'timeperiod_interval' => TimePeriod::ANNUAL_TYPE,
             // the leaf interval that gets the extra week if main period is fiscal + quaterly, options come from forecasts_timeperiod_leaf_quarterly_options_dom, (first, middle, last)
             'timeperiod_leaf_interval' => TimePeriod::QUARTER_TYPE,
-            'timeperiod_start_month' => '1',
-            'timeperiod_start_day' => '1',
+            // the starting point for each fiscal year, this is also used as the starting point to dynamically build the timeperiods
+            'timeperiod_start_date' => date("Y") . '-01-01',
             // number of timeperiods forward from the current that are displayed
             'timeperiod_shown_forward' => 2,
             // number of timeperiods in the past from the current that are displayed
             'timeperiod_shown_backward' => 2,
             // used to indicate the available option for grouping opportunities
-            'forecast_categories' => 'show_binary',  // options:  'show_binary', 'show_buckets', 'show_custom_buckets'
+            'forecast_ranges' => 'show_binary',  // options:  'show_binary', 'show_buckets', 'show_custom_buckets'
             // used to reference the app_list_string entry to indicate the commit stage list to use
             'buckets_dom' => 'commit_stage_binary_dom', // options:  commit_stage_binary_dom, commit_stage_dom, commit_stage_extended_dom
             // the defined binary ranges the different buckets opportunities will fall in by default based on their probability
@@ -158,7 +158,7 @@ class ForecastsDefaults
         }
 
         //Update the currency_id and base_rate columns for existing records so that we have currency_id and base_rate values set up correctly
-        $tables = array('opportunities', 'products', 'worksheet', 'forecasts', 'forecast_schedule', 'quotes', 'quotas');
+        $tables = array('opportunities', 'products', 'worksheet', 'forecasts', 'quotes', 'quotas');
         foreach($tables as $table)
         {
             $isUsDollar = true; // set false if table has no usdollar fields

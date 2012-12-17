@@ -60,6 +60,8 @@ class RestMetadataModuleListMobileTest extends RestTestBase {
             require $file;
         }
 
+        // Users is being forcibly removed
+        unset($wireless_module_registry['Users']);
         // $wireless_module_registry is defined in the file loaded above
         $enabledMobile = array_keys($wireless_module_registry);
 

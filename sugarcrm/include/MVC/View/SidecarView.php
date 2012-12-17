@@ -14,10 +14,11 @@
  */
 
 require_once('include/MVC/View/SugarView.php');
+require_once('include/SugarTheme/SidecarTheme.php');
 
 class SidecarView extends SugarView
 {
-    public $configFile = "config.js";
+    protected $configFile = "config.js";
 
     /**
      * This method checks to see if the configuration file exists and, if not, creates one by default
@@ -37,6 +38,10 @@ class SidecarView extends SugarView
             require_once("jssource/minify_utils.php");
             ConcatenateFiles(".");
         }
+
+        //Load sidecar theme css
+        $theme = new SidecarTheme();
+        $this->ss->assign("css_url", $theme->getCSSURL());
     }
 
     /**

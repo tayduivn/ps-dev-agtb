@@ -90,9 +90,11 @@ class ChartDisplayTest extends Sugar_PHPUnit_Framework_TestCase
     public function tearDown()
     {
         parent::tearDown();
-
+        SugarTestAccountUtilities::removeAllCreatedAccounts();
+        
         unset($this->chartDisplay);
         unset($this->chartData);
+        SugarTestHelper::tearDown();
     }
 
     public function testChartDisplayHasCorrectTitle()

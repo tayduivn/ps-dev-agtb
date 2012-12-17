@@ -39,18 +39,12 @@ class OAuthTest extends Sugar_PHPUnit_Framework_TestCase
 
     public static function setUpBeforeClass()
     {
-        $beanList = array();
-		$beanFiles = array();
-		require('include/modules.php');
-		$GLOBALS['beanList'] = $beanList;
-		$GLOBALS['beanFiles'] = $beanFiles;
-
-        //Reload langauge strings
-        $GLOBALS['app_strings'] = return_application_language($GLOBALS['current_language']);
-        $GLOBALS['app_list_strings'] = return_app_list_strings_language($GLOBALS['current_language']);
-        $GLOBALS['mod_strings'] = return_module_language($GLOBALS['current_language'], 'Accounts');
+        SugarTestHelper::setUp("beanList");
+        SugarTestHelper::setUp("beanFiles");
+        SugarTestHelper::setUp("app_strings");
         //Create an anonymous user for login purposes/
-        $GLOBALS['current_user'] = self::$_user = SugarTestUserUtilities::createAnonymousUser();
+        self::$_user = SugarTestHelper::setUp("current_user");
+        SugarTestHelper::setUp("mod_strings", array('Accounts'));
 
         self::$helperObject = new APIv3Helper();
         // create our own customer key
@@ -64,12 +58,7 @@ class OAuthTest extends Sugar_PHPUnit_Framework_TestCase
 
     public static function tearDownAfterClass()
 	{
-	    unset($GLOBALS['beanList']);
-		unset($GLOBALS['beanFiles']);
-		unset($GLOBALS['app_list_strings']);
-	    unset($GLOBALS['app_strings']);
-	    unset($GLOBALS['mod_strings']);
-	    unset($GLOBALS['current_user']);
+        SugarTestHelper::tearDown();
 	    $GLOBALS['db']->query("DELETE FROM oauth_consumer where c_key='TESTCUSTOMER'");
 	    $GLOBALS['db']->query("DELETE FROM oauth_nonce where conskey='TESTCUSTOMER'");
 	    $GLOBALS['db']->query("DELETE FROM oauth_tokens where consumer='".self::$_consumer->id."'");

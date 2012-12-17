@@ -140,14 +140,14 @@ describe("The forecasts chart view", function () {
             expect(handleRenderOptionsStub).toHaveBeenCalled()
         });
 
-        it("trigger change:selectedCategory should not call handleRenderOptions", function() {
-            view.context.forecasts.set('selectedCategory', {hello: 'world'});
+        it("trigger change:selectedRanges should not call handleRenderOptions", function() {
+            view.context.forecasts.set('selectedRanges', {hello: 'world'});
             expect(handleRenderOptionsStub).not.toHaveBeenCalled()
         });
 
-        it("trigger change:selectedCategory should call handleRenderOptions", function() {
+        it("trigger change:selectedRanges should call handleRenderOptions", function() {
             view.chart = {'chart_object' : 'obj'};
-            view.context.forecasts.set('selectedCategory', {hello: 'world'});
+            view.context.forecasts.set('selectedRanges', {hello: 'world'});
             expect(handleRenderOptionsStub).toHaveBeenCalled()
         });
 

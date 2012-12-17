@@ -45,10 +45,6 @@
         this.layout.on("preview:pagination:fire", this.switchPreview, this);
     },
 
-    _render: function() {
-        this.$el.parent().parent().addClass("container-fluid tab-content");
-    },
-
     _renderHtml: function() {
         var fieldsArray;
         app.view.View.prototype._renderHtml.call(this);
