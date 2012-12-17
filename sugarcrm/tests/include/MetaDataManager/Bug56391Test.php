@@ -94,6 +94,7 @@ class Bug56391Test extends Sugar_PHPUnit_Framework_TestCase
         $expected_result = array(
                                     'access' => 'yes',
                                     'admin' => 'yes',
+                                    'create' => 'yes',
                                     'view' => 'yes',
                                     'list' => 'yes',
                                     'edit' => 'yes',
@@ -131,6 +132,7 @@ class Bug56391Test extends Sugar_PHPUnit_Framework_TestCase
         $expected_result = array(
                                     'access' => 'yes',
                                     'admin' => 'yes',
+                                    'create' => 'yes',
                                     'view' => 'yes',
                                     'list' => 'yes',
                                     'edit' => 'yes',
