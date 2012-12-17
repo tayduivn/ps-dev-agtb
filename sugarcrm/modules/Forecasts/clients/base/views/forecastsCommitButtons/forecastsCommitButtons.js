@@ -251,6 +251,7 @@
      * @param evt
      */
     triggerRightColumnVisibility : function(evt) {
+        evt.preventDefault();
         // we need to use currentTarget so we always get the a and not any child that was clicked on
         var el = $(evt.currentTarget);
         el.find('i').toggleClass('icon-chevron-right icon-chevron-left');
