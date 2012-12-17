@@ -134,7 +134,7 @@ class SugarBeanApiHelper
             $moduleAcl = $mm->getAclForModule($bean->module_dir, $GLOBALS['current_user']);
 
             $beanAcl = $mm->getAclForModule($bean->module_dir, $GLOBALS['current_user'], $bean);
-
+            $GLOBALS['log']->fatal(var_export($beanAcl, true));
             if($beanAcl['_hash'] != $moduleAcl['_hash']) {
                 // diff the fields separately, they are usually empty anyway so we won't diff these often.
                 $moduleAclFields = $moduleAcl['fields'];
