@@ -168,6 +168,11 @@ class MetaDataManager {
         require_once('include/SugarSearchEngine/SugarSearchEngineMetadataHelper.php');
         //END SUGARCRM flav=pro ONLY
         $vardefs = $this->getVarDef($moduleName);
+        if (!empty($vardefs['fields']) && is_array($vardefs['fields']))
+        {
+            require_once("include/MassUpdate.php");
+            $vardefs['fields'] = MassUpdate::setMassUpdateFielddefs($vardefs['fields'], $moduleName);
+        }
 
         $data['fields'] = isset($vardefs['fields']) ? $vardefs['fields'] : array();
         $data['views'] = $this->getModuleViews($moduleName);
