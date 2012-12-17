@@ -14,7 +14,7 @@ describe("Module List", function() {
     });
 
     describe('Render', function() {
-        var view, isAuthenticatedStub, getModuleNamesStub;
+        var view, isAuthenticatedStub, getModuleNamesStub, modStrings;
 
         beforeEach(function() {
             view = SugarTest.createView("base", moduleName, "modulelist", null, null);
@@ -38,9 +38,15 @@ describe("Module List", function() {
                     Tasks: 'Tasks'
                 }
             });
+            modStrings = sinon.stub(SugarTest.app.metadata, 'getStrings', function() {
+                return {
+                    Accounts: {}
+                }
+            });
         });
 
         afterEach(function() {
+            modStrings.restore();
             isAuthenticatedStub.restore();
             getModuleNamesStub.restore();
         });
