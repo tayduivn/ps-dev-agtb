@@ -108,7 +108,7 @@
             var alert = app.alert.show('no_access_error', {
                     level:'error',
                     messages:app.lang.get("LBL_FORECASTS_CONFIG_USER_SPLASH", "Forecasts"),
-                    title:app.lang.get("LBL_FORECASTS_CONFIG_TITLE", "Forecasts")} + ":"
+                    title:app.lang.get("LBL_FORECASTS_CONFIG_TITLE", "Forecasts") + ":"}
             );
             alert.getCloseSelector().on('click', function () {
                 return self.checkSettingsAndRedirect();
