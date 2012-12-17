@@ -213,17 +213,25 @@ class SugarBeanApiHelper
      */
     public function populateFromApi(SugarBean $bean, array $submittedData, array $options = array() )
     {
+        $changedData = array();
+        $originalData = $this->formatForApi($bean, array(), array() );
+        $this->getChangedData($bean, $submittedData, $originalData, $changedData);
         $sfh = new SugarFieldHandler();
-        foreach ( $bean->field_defs as $fieldName => $properties ) {
+        foreach ( $changedData as $fieldName => $val ) {
+
+            $properties = $bean->field_defs[$fieldName];
+
             if ( !isset($submittedData[$fieldName]) || $submittedData[$fieldName] === $bean->$fieldName || (isset($properties['source']) && $properties['source'] == 'non-db')) {
                 // They aren't trying to modify this field
                 continue;
             }
 
             //BEGIN SUGARCRM flav=pro ONLY
-            if ( !$bean->ACLFieldAccess($fieldName,'save') ) { 
-                // No write access to this field, but they tried to edit it
-                throw new SugarApiExceptionNotAuthorized('Not allowed to edit field '.$fieldName.' in module: '.$submittedData['module']);
+            if($bean->$fieldName != $submittedData[$fieldName] && (isset($properties['source']) && $properties['source'] == 'non-db')) {
+                if ( !$bean->ACLFieldAccess($fieldName,'save') ) { 
+                    // No write access to this field, but they tried to edit it
+                    throw new SugarApiExceptionNotAuthorized('Not allowed to edit field '.$fieldName.' in module: '.$submittedData['module']);
+                }
             }
             //END SUGARCRM flav=pro ONLY
             
@@ -236,5 +244,26 @@ class SugarBeanApiHelper
         }
 
         return true;
+    }
+
+    public function getChangedData(SugarBean $bean, array $submittedData, array $originalData, array &$changedData) {
+        foreach($originalData AS $field => $val) {
+            if(isset($bean->field_defs[$field]['source']) && $bean->field_defs[$field]['source'] == 'non-db' && isset($submittedData[$field])) {
+                continue;
+            }
+            if(!isset($submittedData[$field])) {
+                continue;
+            }            
+            if(is_array($val)) {
+                $this->getChangedData($bean, $submittedData[$field], $originalData[$field], $changedData[$field]);
+            }
+            if(isset($submittedData[$field]) && $submittedData[$field] == $val) {
+                continue;
+            }
+
+            $changedData[$field] = $submittedData[$field];
+        }
+
+        return $submittedData;
     }
 }
