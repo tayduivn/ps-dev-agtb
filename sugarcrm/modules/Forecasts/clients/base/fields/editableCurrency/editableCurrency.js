@@ -80,8 +80,15 @@
     togglePencil: function (evt) {
         evt.preventDefault();
         if (!this.isEditable()) return;
-        this.$el.find('i').toggleClass('icon-pencil icon-small');
+        if(evt.type == 'mouseenter') {
+            this.$el.find('.edit-icon').removeClass('hide');
+            this.$el.find('.edit-icon').addClass('show');
+        } else {
+            this.$el.find('.edit-icon').removeClass('show');
+            this.$el.find('.edit-icon').addClass('hide');
+        }
     },
+
 
     /**
      * Switch the view to the Edit view if the field is editable and it's clicked on
