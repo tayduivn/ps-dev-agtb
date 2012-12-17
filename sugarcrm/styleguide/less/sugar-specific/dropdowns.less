@@ -1,5 +1,6 @@
 .dropdown-menu {
   top: 34px;
+  padding: 0;
   &.carettop {
     .caret-top(10px,9px,auto,auto);
   }
@@ -10,10 +11,34 @@
       .caret-top(auto,auto,10px,9px);
     }
   }
+  h4.title {
+    margin-top: -5px;
+    padding: 5px 10px;
+    text-shadow: 0 -1px 1px rgba(0,0,0,0.8);
+    font-size: @baseFontSize;
+    color: @white !important;
+    #gradient > .vertical(@navbarBackgroundHighlight, @navbarBackground);
+    .border-radius(3px 3px 0 0);
+  }
   ul {
+    margin: 0;
+    list-style: none;
     li {
+      margin: 0;
+      padding: 0;
       border: 0px none;
+      &.primary {
+        border-top: 1px solid @grayLight;
+      }
     }
+  }
+  li:first-child a {
+    border-top: none;
+  }
+  a {
+    margin: 0;
+    padding: 8px 10px;
+    border-top: 1px solid @grayLighter;
   }
   // Hover state
   // -----------
