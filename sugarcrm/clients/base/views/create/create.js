@@ -44,7 +44,7 @@
         this.buttons.initialize(this);
 
         //extend the record view definition
-        this.meta = _.extend(app.metadata.getView(this.module, 'record'), this.meta);
+        this.meta = _.extend({}, app.metadata.getView(this.module, 'record'), this.meta);
     },
 
     render: function() {
