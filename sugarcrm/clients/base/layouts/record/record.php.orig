@@ -2,12 +2,19 @@
 
 $layout = MetaDataManager::getLayout('SideBarLayout');
 $layout->push('main', array(
+<<<<<<< HEAD
+    'layout'=> array(
+        'type' => 'drawer',
+        'showEvent' => array(
+            "event" => "drawer:create:fire",
+        ),           
+=======
     'layout' => array(
         'type' => 'drawer',
         'showEvent' => array(
-            "drawer:selection:fire", 
-            "drawer:create:fire",
+            "event" => "drawer:selection:fire",
         )
+>>>>>>> Integrated selection layout in relate, parent, and team widget
     ),
 ));
 $layout->push('main', array('view'=>'record'));

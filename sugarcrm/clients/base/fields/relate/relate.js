@@ -59,18 +59,17 @@
                         searchmore = selected.data("searchmore"),
                         empty = selected.data("empty");
                     if(searchmore || empty) {
+                        self.beforeSearchMore();
                         $(evt.currentTarget).val('');
                         $(this).trigger("liszt:updated");
                         self.view.layout.trigger("drawer:selection:fire", {
                             components: [{
-                                layout : 'selection-list'
-                            }],
-                            context: {
-                                module: self.getSearchModule()
-                            }
-                        }, function(model) {
-                            self.setValue({id: model.id, value: model.get('name')});
-                        });
+                                layout : 'selection-list',
+                                context: {
+                                    module: self.getSearchModule()
+                                }
+                            }]
+                        }, self.afterSearchMore);
                     } else {
                         self.setValue({id: id, value: value});
                     }
@@ -83,6 +82,10 @@
                 });
         }
         return result;
+    },
+    beforeSearchMore: function() {},
+    afterSearchMore: function(model) {
+        this.setValue({id: model.id, value: model.get('name')});
     },
     bindDataChange: function() {
         if (this.model) {
