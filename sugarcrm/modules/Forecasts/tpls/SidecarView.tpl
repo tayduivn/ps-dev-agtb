@@ -39,7 +39,6 @@
         </div>
 
         <script src='{$configFile}'></script>
-
         {literal}
         <script language="javascript">
             var syncResult, view, layout, html;
