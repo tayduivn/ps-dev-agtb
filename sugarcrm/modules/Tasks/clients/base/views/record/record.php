@@ -42,6 +42,11 @@ $viewdefs['Tasks']['base']['view']['record'] = array(
             'css_class' => 'hide record-cancel',
         ),
         array(
+            'type'    => 'button',
+            'label'   => 'LBL_DUPLICATE_BUTTON_LABEL',
+            'css_class' => 'record-duplicate',
+        ),            
+        array(
             'type' => 'button',
             'label' => 'LBL_EDIT_BUTTON_LABEL',
             'css_class' => 'record-edit',
@@ -63,7 +68,14 @@ $viewdefs['Tasks']['base']['view']['record'] = array(
                     success: function() {
                         app.alert.dismiss("close_task");
                         app.cache.set("duplicate"+self.module, self.model.attributes);
-                        app.router.navigate("#"+self.module+"/create", {trigger: true});                    
+                        self.view.layout.trigger("drawer:create:fire", {
+                            components: [{
+                                layout : "create",
+                                context: {
+                                    create: true
+                                }
+                            }]
+                        }, self);                    
                     },
                     error:function(error) {
                         app.alert.dismiss("close_task");
