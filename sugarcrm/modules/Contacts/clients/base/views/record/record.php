@@ -42,6 +42,11 @@ $viewdefs['Contacts']['base']['view']['record'] = array(
             'css_class' => 'hide record-cancel',
         ),
         array(
+            'type'    => 'button',
+            'label'   => 'LBL_DUPLICATE_BUTTON_LABEL',
+            'css_class' => 'record-duplicate',
+        ),            
+        array(
             'type' => 'button',
             'label' => 'LBL_EDIT_BUTTON_LABEL',
             'css_class' => 'record-edit',
