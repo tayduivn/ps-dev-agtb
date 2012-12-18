@@ -125,16 +125,7 @@ class ProjectTaskViewList extends ViewList{
 		    }
 		}
 
-		global $current_user;
-
-		if (!is_admin($current_user)){
-			$params = array( 'massupdate' => false );
-			$lv->export = false;
-            $lv->multiSelect = false;
-		}
-		else{
-			$params = array( 'massupdate' => true, 'export' => true);
-		}
+        $params = array( 'massupdate' => true, 'export' => true);
 
 		if(!empty($_REQUEST['orderBy'])) {
 		    $params['orderBy'] = $_REQUEST['orderBy'];
@@ -248,13 +239,16 @@ class ProjectTaskViewList extends ViewList{
          $lv->searchColumns = $searchForm->searchColumns;
 
 		if(empty($_REQUEST['search_form_only']) || $_REQUEST['search_form_only'] == false){
-			if (!is_admin($current_user)){
-				$lv->setup($seed, 'include/ListView/ListViewNoMassUpdate.tpl', $where, $params);
-			}
-			else {
-				$lv->setup($seed, 'include/ListView/ListViewGeneric.tpl', $where, $params);
-			}
-			$savedSearchName = empty($_REQUEST['saved_search_select_name']) ? '' : (' - ' . $_REQUEST['saved_search_select_name']);
+            //Bug 58841 - mass update form was not displayed for non-admin users that should have access
+            if(ACLController::checkAccess($module, 'massupdate') || ACLController::checkAccess($module, 'export'))
+            {
+                $lv->setup($seed, 'include/ListView/ListViewGeneric.tpl', $where, $params);
+            }
+            else
+            {
+                $lv->setup($seed, 'include/ListView/ListViewNoMassUpdate.tpl', $where, $params);
+            }
+
 			echo $lv->display();
 		}
  	}
