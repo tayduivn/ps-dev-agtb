@@ -172,7 +172,7 @@
             this.context.forecasts.worksheetmanager.on("change", function() {
             	this.calculateTotals();
             }, this);
-            this.context.forecasts.on("forecasts:commitButtons:saved forecasts:commitButtons:saved", function(){
+            this.context.forecasts.on("forecasts:committed:saved forecasts:commitButtons:saved", function(){
             	if(this.showMe()){
             		this.context.forecasts.worksheetmanager.url = this.createURL();
             		this.safeFetch();
