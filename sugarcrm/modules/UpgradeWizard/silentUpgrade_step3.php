@@ -321,7 +321,7 @@ logThis('End upgrade_connectors', $path);
 
 //Unlink files that have been removed
 if(function_exists('unlinkUpgradeFiles')) {
-    unlinkUpgradeFiles($sugar_version);
+    unlinkUpgradeFiles($sugar_version, $path);
 }
 
 if(function_exists('rebuildSprites') && function_exists('imagecreatetruecolor'))

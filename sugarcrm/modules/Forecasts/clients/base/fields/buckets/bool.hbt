@@ -1,0 +1,1 @@
+<input type="checkbox" class="checkbox" {{#if disabled}}disabled{{/if}} {{#if value}}checked{{/if}} name="{{name}}">

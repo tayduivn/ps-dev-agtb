@@ -336,7 +336,7 @@ function handleSave($prefix,$redirect=true,$useRequired=false) {
             
             $focus->save(true);
             $return_id = $focus->id;
-            
+
             $focus->setUserInvitees($userInvitees, $existingUsers);
             $focus->setContactInvitees($contactInvitees, $existingContacts);
             $focus->setLeadInvitees($leadInvitees, $existingLeads);

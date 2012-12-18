@@ -28,7 +28,7 @@ describe("ClickToEdit", function(){
             'decimal_separator' : '.',
             'number_grouping_separator' : ','
         });
-        editable = SugarTest.loadFile("../include/javascript/twitterbootstrap/js", "jquery.jeditable", "js", function(d) { return eval(d); });
+        editable = SugarTest.loadFile("../include/javascript/jquery", "jquery.jeditable", "js", function(d) { return eval(d); });
         clickToEdit = SugarTest.loadFile("../modules/Forecasts/clients/base/lib", "ClickToEdit", "js", function(d) { return eval(d); });
         handlebarHelpers = SugarTest.loadFile("../modules/Forecasts/clients/base/helper", "hbt-helpers", "js", function(d) { return eval(d); });
         view = {

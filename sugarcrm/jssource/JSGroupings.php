@@ -65,6 +65,14 @@
                             'include/javascript/jquery/jquery.popoverext.js'             =>   $target,
                         );
                         break;
+                    // these are the only files not in bootstrap.min.js that we need in forecasts
+                    // as bootstrap.min.js is already included in sugar_grp1_bootstrap.js
+                    case 'bootstrap_forecasts':
+                        return array(
+                            'styleguide/assets/js/bootstrap-datepicker.js' => $target,
+                            'styleguide/assets/js/bootstrapx-clickover.js' => $target,
+                        );
+                        break;
                     case 'jquery_core':
                         return array (
                             'include/javascript/jquery/jquery-min.js'             =>    $target,
@@ -385,8 +393,6 @@
     $cached_file = 'include/javascript/sidecar_forecasts.js';
 
     $sidecar_forecasts = array();
-
-//    $sidecar_forecasts = array_merge($sidecar_forecasts, getSubgroupForTarget('jquery_menus', $cached_file));
     $sidecar_forecasts['include/javascript/jquery/jquery.dataTables.min.js'] = $cached_file;
     $sidecar_forecasts['include/javascript/jquery/jquery.dataTables.customSort.js'] = $cached_file;
     $sidecar_forecasts['include/javascript/jquery/jquery.jeditable.js'] = $cached_file;
