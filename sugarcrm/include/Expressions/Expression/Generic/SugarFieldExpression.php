@@ -23,10 +23,6 @@ require_once('include/Expressions/Expression/Generic/GenericExpression.php');
 
 class SugarFieldExpression extends GenericExpression
 {
-    /**
-     * @var SugarBean
-     */
-    public $context;
 
     function __construct($varName){
         $this->varName = $varName;
@@ -56,28 +52,28 @@ class SugarFieldExpression extends GenericExpression
             case 'datetime':
             case 'datetimecombo':
                 if(empty($this->context->$fieldName)) {
-                    return false;
+                    throw new Exception("attempt to get date from empty field: {$fieldName}");
                 }
                 $date = $timedate->fromDb($this->context->$fieldName);
                 if(empty($date)) {
-                    return false;
+                     throw new Exception("attempt to convert invalid value to date: {$this->context->$fieldName}");
                 }
                 $timedate->tzUser($date);
                 $date->def = $def;
                 return $date;
             case 'date':
                 if(empty($this->context->$fieldName)) {
-                    return false;
+                     throw new Exception("attempt to get date from empty field: {$fieldName}");
                 }
                 $date = $timedate->fromDbDate($this->context->$fieldName);
                 if(empty($date)) {
-                    return false;
+                    throw new Exception("attempt to convert invalid value to date: {$this->context->$fieldName}");
                 }
                 $date->def = $def;
                 return $date;
             case 'time':
                 if(empty($this->context->$fieldName)) {
-                    return false;
+                     throw new Exception("attempt to get date from empty field: {$fieldName}");
                 }
                 return $timedate->fromUserTime($timedate->to_display_time($this->context->$fieldName));
             case 'bool':
