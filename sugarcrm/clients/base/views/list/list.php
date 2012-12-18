@@ -1,5 +1,4 @@
 <?php
-//FILE SUGARCRM flav=pro || flav=sales ONLY
 if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 /**
  * LICENSE: The contents of this file are subject to the SugarCRM Professional
@@ -27,37 +26,37 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * governing these rights and limitations under the License.  Portions created
  * by SugarCRM are Copyright (C) 2006 SugarCRM, Inc.; All Rights Reserved.
  */
-$module_name = '<module_name>';
-$viewdefs[$module_name]['base']['view']['list'] = array(
-    'panels' => array(
-        array(
-            'label' => 'LBL_PANEL_1',
-            'fields' => array(
-                array(
-                    'name' => 'name',
-                    'label' => 'LBL_NAME',
-                    'default' => true,
-                    'enabled' => true,
-                    'link' => true,
+$viewdefs['base']['view']['list'] = array(
+    'favorite' => true,
+    'selection' => array(
+        'type' => 'multi',
+        'actions' => array(
+            array(
+                'name' => 'edit_button',
+                'type' => 'button',
+                'label' => 'LBL_MASS_UPDATE',
+                'value' => 'edit',
+                'primary' => true,
+                'events' => array(
+                    'click' => 'function(e){
+                    console.log("massupdate");
+                    this.view.layout.trigger("list:massupdate:fire");
+                    }'
                 ),
-                //BEGIN SUGARCRM flav=pro ONLY
-                array(
-                    'name' => 'team_name',
-                    'label' => 'LBL_TEAM',
-                    'width' => 9,
-                    'default' => true,
-                    'enabled' => true,
-                ),
-                //END SUGARCRM flav=pro ONLY
-                array(
-                    'name' => 'assigned_user_name',
-                    'label' => 'LBL_ASSIGNED_TO_NAME',
-                    'width' => 9,
-                    'default' => true,
-                    'enabled' => true,
-                    'link' => true,
+            ),
+            array(
+                'name' => 'delete_button',
+                'type' => 'button',
+                'label' => 'LBL_DELETE',
+                'value' => 'delete',
+                'primary' => true,
+                'events' => array(
+                    'click' => 'function(e){
+                    console.log("massdelete");
+                    this.view.layout.trigger("list:massdelete:fire");
+                    }'
                 ),
             ),
         ),
-    ),
+    )
 );

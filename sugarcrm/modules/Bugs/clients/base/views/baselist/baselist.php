@@ -28,38 +28,25 @@ if (!defined('sugarEntry') || !sugarEntry) {
  * All Rights Reserved.
  * Contributor(s): ______________________________________..
  ********************************************************************************/
-$viewdefs['Accounts']['base']['view']['list'] = array(
-    'favorite' => true,
-    'selection' => array(
-        'type' => 'multi',
-        'actions' => array(
-            array(
-                'name' => 'edit_button',
-                'type' => 'button',
-                'label' => 'LBL_MASS_UPDATE',
-                'value' => 'edit',
-                'primary' => true,
-                'events' => array(
-                    'click' => 'function(e){
-                    console.log("massupdate");
-                    this.view.layout.trigger("list:massupdate:fire");
-                    }'
-                ),
+
+$viewdefs['Bugs']['base']['view']['baselist'] = array(
+    'panels' => array(
+        array(
+            'name' => 'panel_header',
+            'label' => 'LBL_PANEL_1',
+            'fields' => array(
+                'bug_number',
+                'name',
+                'status',
+                'type',
+                'priority',
+                'release_name',
+                'fixed_in_release_name',
+                'resolution',
+                'team_name',
+                'assigned_user_name',
             ),
 
-            array(
-                'name' => 'delete_button',
-                'type' => 'button',
-                'label' => 'LBL_DELETE',
-                'value' => 'delete',
-                'primary' => true,
-                'events' => array(
-                    'click' => 'function(e){
-                    console.log("massdelete");
-                    this.view.layout.trigger("list:massdelete:fire");
-                    }'
-                ),
-            ),
         ),
-    )
+    ),
 );

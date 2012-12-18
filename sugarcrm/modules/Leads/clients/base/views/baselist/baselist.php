@@ -1,5 +1,6 @@
 <?php
 if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
+
 /**
  * LICENSE: The contents of this file are subject to the SugarCRM Professional
  * End User License Agreement ("License") which can be viewed at
@@ -26,66 +27,59 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * governing these rights and limitations under the License.  Portions created
  * by SugarCRM are Copyright (C) 2006 SugarCRM, Inc.; All Rights Reserved.
  */
-$viewdefs['Cases']['base']['view']['list'] = array(
-    'panels' =>
-    array(
-        0 =>
+
+$viewdefs['Leads']['base']['view']['baselist'] = array(
+    'panels' => array(
         array(
+            'name' => 'panel_header',
             'label' => 'LBL_PANEL_1',
-            'fields' =>
-            array(
-                array(
-                    'name' => 'case_number',
-                    'label' => 'LBL_LIST_NUMBER',
-                    'width' =>  5,
-                ),
-                array(
+            'fields' => array(
+                array (
                     'name' => 'name',
-                    'label' => 'LBL_LIST_SUBJECT',
-                    'width' =>  25,
+                    'width' => '10%',
+                    'label' => 'LBL_LIST_NAME',
                     'link' => true,
-                ),
-                array(
-                    'name' => 'account_name',
-                    'label' => 'LBL_LIST_ACCOUNT_NAME',
-                    'width' => 20,
-                    'module' => 'Accounts',
-                    'id' => 'ACCOUNT_ID',
-                    'ACLTag' => 'ACCOUNT',
-                    'related_fields' => array('account_id'),
-                    'link' => true,
+                    'orderBy' => 'last_name',
                     'default' => true,
                 ),
-                array(
-                    'name' => 'priority',
-                    'label' => 'LBL_LIST_PRIORITY',
-                    'width' =>  10,
-                ),
-                array(               
+                array (
                     'name' => 'status',
-                    'label' => 'LBL_STATUS',
-                    'width' =>  10,
-                ),
-                //BEGIN SUGARCRM flav=pro ONLY
-                array(
-                    'name' => 'team_name',
-                    'label' => 'LBL_LIST_TEAM',
-                    'width' =>  10,
-                ),
-                //END SUGARCRM flav=pro ONLY
-                array(
-                    'name' => 'assigned_user_name',
-                    'label' => 'LBL_ASSIGNED_TO_NAME',
-                    'width' =>  10,
-                    'module' => 'Employees',
-                    'id' => 'ASSIGNED_USER_ID',
+                    'width' => '7%',
+                    'label' => 'LBL_LIST_STATUS',
+                    'default' => true,
                 ),
                 array (
-                    'name' => 'date_entered',
+                    'name' => 'account_name',
+                    'width' => '15%',
+                    'label' => 'LBL_LIST_ACCOUNT_NAME',
+                    'default' => true,
+                ),
+                array (
+                    'name'  => 'phone_work',
+                    'width' => '15%',
+                    'label' => 'LBL_LIST_PHONE',
+                    'default' => true,
+                ),
+                array (
+                    'name'     => 'email1',
+                    'width' => '16%',
+                    'label' => 'LBL_LIST_EMAIL_ADDRESS',
+                    'sortable' => false,
+                    'default' => true,
+                ),
+                array (
+                    'name'  => 'assigned_user_name',
+                    'width' => '5%',
+                    'label' => 'LBL_LIST_ASSIGNED_USER',
+                    'default' => true,
+                ),
+                array (
+                    'name'  => 'date_entered',
+                    'width' => '10%',
                     'label' => 'LBL_DATE_ENTERED',
-                    'width' => 10,
+                    'default' => true,
                 ),
             ),
-        )
-    )
+        ),
+    ),
 );

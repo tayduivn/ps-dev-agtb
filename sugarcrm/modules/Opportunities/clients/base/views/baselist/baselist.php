@@ -35,49 +35,12 @@ if (!defined('sugarEntry') || !sugarEntry) {
  * Contributor(s): ______________________________________..
  ********************************************************************************/
 
-$viewdefs['Opportunities']['base']['view']['list'] = array(
+$viewdefs['Opportunities']['base']['view']['baselist'] = array(
     'panels' => array(
         array(
             'name' => 'panel_header',
             'label' => 'LBL_PANEL_1',
             'fields' => array(
-                array(
-                    'type' => 'fieldset',
-                    'fields' => array(
-                        array(
-                            'type' => 'actionmenu',
-                            'buttons' => array(
-                                array(
-                                    'name' => 'edit_button',
-                                    'type' => 'button',
-                                    'label' => 'LBL_MASS_UPDATE',
-                                    'value' => 'edit',
-                                    'primary' => true,
-                                    'events' => array(
-                                        'click' => 'function(e){
-                                            this.view.layout.trigger("list:massupdate:fire");
-                                        }'
-                                    ),
-                                ),
-
-                                array(
-                                    'name' => 'delete_button',
-                                    'type' => 'button',
-                                    'label' => 'LBL_DELETE',
-                                    'value' => 'delete',
-                                    'primary' => true,
-                                    'events' => array(
-                                        'click' => 'function(e){
-                                            this.view.layout.trigger("list:massdelete:fire");
-                                        }'
-                                    ),
-                                ),
-                            ),
-                        ),
-                    ),
-                    'value' => false,
-                    'sortable' => false,
-                ),
                 array(
                     'name' => 'name',
                     'width' =>  49,
