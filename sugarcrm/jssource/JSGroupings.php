@@ -391,6 +391,8 @@
     $sidecar_forecasts['include/javascript/jquery/jquery.dataTables.customSort.js'] = $cached_file;
     $sidecar_forecasts['include/javascript/jquery/jquery.jeditable.js'] = $cached_file;
     $sidecar_forecasts['include/javascript/jquery/jquery.jstree.js'] = $cached_file;
+    // cookie.js is needed by jit.js, including in case we need to display legacy (i. e. non-NVD3) charts in Forecasts
+    $sidecar_forecasts['include/javascript/cookie.js'] = $cached_file;
     $sidecar_forecasts['include/SugarCharts/Jit/js/Jit/jit.js'] = $cached_file;
     $sidecar_forecasts['include/SugarCharts/Jit/js/sugarCharts.js'] = $cached_file;
     $sidecar_forecasts['modules/Forecasts/clients/base/helper/hbt-helpers.js'] = $cached_file;
