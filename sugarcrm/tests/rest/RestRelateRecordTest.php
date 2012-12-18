@@ -536,6 +536,46 @@ class RestRelateRecordTest extends RestTestBase {
 
     }
 
+    public function testCreateWithModuleWithOutParentInfo() {
+        $call = BeanFactory::newBean('Calls');
+        $call->name = "UNIT TEST" . create_guid();
+        $call->date_start = TimeDate::getInstance()->getNow()->asDb();
+
+        $call->save();
+
+        $this->calls[] = $call;
+
+        $post = array(
+                'embed_flag'        => 0,
+                'deleted'           => 0,
+                'name'              => 'Test Note',
+                'description'       => 'This is a test note',
+                'assigned_user_id'  => 1,
+            );
+
+        $restReply = $this->_restCall("Calls/{$call->id}/link/notes", $post, 'POST');
+
+        $this->notes[] = $restReply['reply']['related_record']['id'];
+        $this->assertEquals($restReply['reply']['related_record']['parent_id'], $call->id, "Call ID was not the parent id of the note.");
+        $this->assertEquals($restReply['reply']['related_record']['parent_type'], 'Calls', "Call Module was not the parent type of the note.");
+
+        // try with leads and notes
+        $lead = BeanFactory::newBean('Leads');
+        $lead->name = "Unit Test" . create_guid();
+        $lead->save();
+        $this->leads[] = $lead;
+
+        $post = array(
+            'name' => 'CALL FOR LEAD ' . create_guid(),
+            );
+
+        $restReply = $this->_restCall("Leads/{$lead->id}/link/calls", $post, 'POST');
+
+        $this->calls[] = $restReply['reply']['related_record']['id'];
+        $this->assertEquals($restReply['reply']['related_record']['parent_id'], $lead->id, "Lead ID was not the parent id of the call.");
+        $this->assertEquals($restReply['reply']['related_record']['parent_type'], 'Leads', "Leads Module was not the parent type of the call.");
+    }
+
     public function testCreateWithModuleWithParentType() {
         $call = BeanFactory::newBean('Calls');
         $call->name = "UNIT TEST" . create_guid();
@@ -567,6 +607,90 @@ class RestRelateRecordTest extends RestTestBase {
 
         $post = array(
             'name' => 'CALL FOR LEAD ' . create_guid(),
+            'parent_type' => 'Leads',
+            );
+
+        $restReply = $this->_restCall("Leads/{$lead->id}/link/calls", $post, 'POST');
+
+        $this->calls[] = $restReply['reply']['related_record']['id'];
+        $this->assertEquals($restReply['reply']['related_record']['parent_id'], $lead->id, "Lead ID was not the parent id of the call.");
+        $this->assertEquals($restReply['reply']['related_record']['parent_type'], 'Leads', "Leads Module was not the parent type of the call.");
+    }
+
+    public function testCreateWithModuleWithParentId() {
+        $call = BeanFactory::newBean('Calls');
+        $call->name = "UNIT TEST" . create_guid();
+        $call->date_start = TimeDate::getInstance()->getNow()->asDb();
+
+        $call->save();
+
+        $this->calls[] = $call;
+
+        $post = array(
+                'embed_flag'        => 0,
+                'deleted'           => 0,
+                'name'              => 'Test Note',
+                'description'       => 'This is a test note',
+                'assigned_user_id'  => 1,
+            );
+
+        $restReply = $this->_restCall("Calls/{$call->id}/link/notes", $post, 'POST');
+
+        $this->notes[] = $restReply['reply']['related_record']['id'];
+        $this->assertEquals($restReply['reply']['related_record']['parent_id'], $call->id, "Call ID was not the parent id of the note.");
+        $this->assertEquals($restReply['reply']['related_record']['parent_type'], 'Calls', "Call Module was not the parent type of the note.");
+
+        // try with leads and notes
+        $lead = BeanFactory::newBean('Leads');
+        $lead->name = "Unit Test" . create_guid();
+        $lead->save();
+        $this->leads[] = $lead;
+
+        $post = array(
+            'name' => 'CALL FOR LEAD ' . create_guid(),
+            'parent_id' => $lead->id,
+            );
+
+        $restReply = $this->_restCall("Leads/{$lead->id}/link/calls", $post, 'POST');
+
+        $this->calls[] = $restReply['reply']['related_record']['id'];
+        $this->assertEquals($restReply['reply']['related_record']['parent_id'], $lead->id, "Lead ID was not the parent id of the call.");
+        $this->assertEquals($restReply['reply']['related_record']['parent_type'], 'Leads', "Leads Module was not the parent type of the call.");
+    }
+
+   public function testCreateWithModuleWithParentInfo() {
+        $call = BeanFactory::newBean('Calls');
+        $call->name = "UNIT TEST" . create_guid();
+        $call->date_start = TimeDate::getInstance()->getNow()->asDb();
+
+        $call->save();
+
+        $this->calls[] = $call;
+
+        $post = array(
+                'embed_flag'        => 0,
+                'deleted'           => 0,
+                'name'              => 'Test Note',
+                'description'       => 'This is a test note',
+                'assigned_user_id'  => 1,
+            );
+
+        $restReply = $this->_restCall("Calls/{$call->id}/link/notes", $post, 'POST');
+
+        $this->notes[] = $restReply['reply']['related_record']['id'];
+        $this->assertEquals($restReply['reply']['related_record']['parent_id'], $call->id, "Call ID was not the parent id of the note.");
+        $this->assertEquals($restReply['reply']['related_record']['parent_type'], 'Calls', "Call Module was not the parent type of the note.");
+
+        // try with leads and notes
+        $lead = BeanFactory::newBean('Leads');
+        $lead->name = "Unit Test" . create_guid();
+        $lead->save();
+        $this->leads[] = $lead;
+
+        $post = array(
+            'name' => 'CALL FOR LEAD ' . create_guid(),
+            'parent_id' => $lead->id,
+            'parent_type' => 'Leads'
             );
 
         $restReply = $this->_restCall("Leads/{$lead->id}/link/calls", $post, 'POST');

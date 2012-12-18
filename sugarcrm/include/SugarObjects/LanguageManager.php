@@ -25,6 +25,12 @@
  * governing these rights and limitations under the License.  Portions created
  * by SugarCRM are Copyright (C) 2004-2006 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
+
+/**
+ * Used in clearing out the metadata API cache
+ */
+require_once "include/MetaDataManager/MetaDataManager.php";
+
 /**
  * Language files management
  * @api
@@ -100,6 +106,9 @@ class LanguageManager
 		// put the item in the sugar cache.
 		$key = self::getLanguageCacheKey($module,$lang);
 		sugar_cache_put($key,$loaded_mod_strings);
+        
+        // Handle metadata cache clearing
+        MetaDataManager::clearAPICache();        
 	}
 
 	/**
@@ -132,6 +141,9 @@ class LanguageManager
 				closedir($dir);
 			}
 		}
+        
+        // Handle metadata cache clearing
+        MetaDataManager::clearAPICache();        
 	}
 
 	/**
