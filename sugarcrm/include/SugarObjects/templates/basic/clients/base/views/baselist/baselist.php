@@ -1,5 +1,6 @@
 <?php
-if (!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
+//FILE SUGARCRM flav=pro || flav=sales ONLY
+if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 /**
  * LICENSE: The contents of this file are subject to the SugarCRM Professional
  * End User License Agreement ("License") which can be viewed at
@@ -26,52 +27,35 @@ if (!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * governing these rights and limitations under the License.  Portions created
  * by SugarCRM are Copyright (C) 2006 SugarCRM, Inc.; All Rights Reserved.
  */
-
-
-$viewdefs['ProspectLists']['base']['view']['list'] = array(
+$module_name = '<module_name>';
+$viewdefs[$module_name]['base']['view']['baselist'] = array(
     'panels' => array(
-        0 => array(
+        array(
             'label' => 'LBL_PANEL_1',
             'fields' => array(
-               array(
+                array(
                     'name' => 'name',
-                    'width' => '25',
-                    'label' => 'LBL_LIST_PROSPECT_LIST_NAME',
+                    'label' => 'LBL_NAME',
+                    'default' => true,
+                    'enabled' => true,
                     'link' => true,
-                    'enabled' => true,
-                    'default' => true
                 ),
+                //BEGIN SUGARCRM flav=pro ONLY
                 array(
-                    'name' => 'list_type',
-                    'width' => '15',
-                    'label' => 'LBL_LIST_TYPE_LIST_NAME',
+                    'name' => 'team_name',
+                    'label' => 'LBL_TEAM',
+                    'width' => 9,
+                    'default' => true,
                     'enabled' => true,
-                    'default' => true
                 ),
-                array(
-                    'name' => 'description',
-                    'width' => '40',
-                    'label' => 'LBL_LIST_DESCRIPTION',
-                    'enabled' => true,
-                    'default' => true
-                ),
+                //END SUGARCRM flav=pro ONLY
                 array(
                     'name' => 'assigned_user_name',
-                    'width' => '10',
-                    'label' => 'LBL_LIST_ASSIGNED_USER',
-                    'module' => 'Employees',
-                    'id' => 'ASSIGNED_USER_ID',
+                    'label' => 'LBL_ASSIGNED_TO_NAME',
+                    'width' => 9,
+                    'default' => true,
                     'enabled' => true,
-                    'default' => true
-                ),
-
-                array(
-                    'name' => 'date_entered',
-                    'type' => 'datetime',
-                    'label' => 'LBL_DATE_ENTERED',
-                    'width' => '10',
-                    'enabled' => true,
-                    'default' => true
+                    'link' => true,
                 ),
             ),
         ),

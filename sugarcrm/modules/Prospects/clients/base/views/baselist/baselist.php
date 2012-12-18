@@ -28,7 +28,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
-$viewdefs['Prospects']['base']['view']['list'] = array(
+$viewdefs['Prospects']['base']['view']['baselist'] = array(
 	'panels' => array(
 		array(
 			'fields' => array(
