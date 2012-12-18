@@ -227,7 +227,7 @@ class RestClearMetadataCacheTest extends RestTestBase
         
         // Test relationship no longer shows up 
         $reply = $this->_restCall('metadata');
-        $this->assertEmpty($reply['reply']['relationships'][$relName], "The created relationship was found in the metadata response and it should not have been");
+        $this->assertFalse(isset($reply['reply']['relationships'][$relName]), "The created relationship was found in the metadata response and it should not have been");
     }
 
     /**

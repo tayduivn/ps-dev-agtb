@@ -20,6 +20,24 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
+//Used in rebuildExtensions
+require_once 'ModuleInstall/ModuleInstaller.php';
+
+// Used in clearExternalAPICache
+require_once 'include/externalAPI/ExternalAPIFactory.php';
+
+// Used in clearPDFFontCache
+require_once 'include/Sugarpdf/FontManager.php';
+
+// Used in clearAdditionalCaches
+require_once 'include/api/ServiceDictionary.php';
+
+//clear out the api metadata cache
+require_once "include/MetaDataManager/MetaDataManager.php";
+
+/**
+ * Class for handling repairing of the sugar installation and rebuilding of caches
+ */
 class RepairAndClear
 {
     public $module_list;
@@ -210,7 +228,7 @@ class RepairAndClear
 		global $mod_strings;
 		if($this->show_output) echo $mod_strings['LBL_QR_REBUILDEXT'];
 		global $current_user;
-		require_once('ModuleInstall/ModuleInstaller.php');
+		
 		$mi = new ModuleInstaller();
 		$mi->rebuild_all(!$this->show_output);
 
@@ -383,7 +401,7 @@ class RepairAndClear
 	{
         global $mod_strings, $sugar_config;
         if($this->show_output) echo "<h3>{$mod_strings['LBL_QR_CLEAR_EXT_API']}</h3>";
-        require_once('include/externalAPI/ExternalAPIFactory.php');
+        
         ExternalAPIFactory::clearCache();
     }
 	//BEGIN SUGARCRM flav=pro ONLY
@@ -391,7 +409,7 @@ class RepairAndClear
 	{
         global $mod_strings, $sugar_config;
         if($this->show_output) echo "<h3>{$mod_strings['LBL_QR_CLEARPDFFONT']}</h3>";
-        require_once('include/Sugarpdf/FontManager.php');
+        
         $fontManager = new FontManager();
         $fontManager->clearCachedFile();
     }
@@ -405,7 +423,7 @@ class RepairAndClear
         global $mod_strings, $sugar_config;
 		if($this->show_output) echo "<h3>{$mod_strings['LBL_QR_CLEAR_ADD_CACHE']}</h3>";
         // clear out the API Cache
-        require_once('include/api/ServiceDictionary.php');
+        
         $sd = new ServiceDictionary();
         $sd->clearCache();
         
@@ -416,10 +434,10 @@ class RepairAndClear
 
     /**
      * Clears out the metadata file cache and memory caches
+     * 
+     * Bug 55141 - Clear the metadata API cache
      */
     public function clearMetadataAPICache() {
-        //clear out the api metadata cache
-        require_once("include/MetaDataManager/MetaDataManager.php");
         // Bug 55141: Metadata Cache is a Smart cache so we can delete everything from the cache dir
         MetaDataManager::clearAPICache();
     }
