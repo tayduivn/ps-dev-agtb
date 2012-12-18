@@ -72,6 +72,8 @@
      */
     commitLogLoadingTemplate : _.template('<div class="extend results"><article><%= loadingMessage %></article></div>'),
 
+    dirtyModels : new Backbone.Collection(),
+
     /**
      * Handle Any Events
      */
@@ -98,7 +100,6 @@
 
         this._collection = this.context.forecasts.worksheetmanager;
         this._collection.url = this.createURL();
-        this._collection.isDirty = false;
 
         this.totalModel = new (Backbone.Model.extend(
             {
@@ -140,10 +141,16 @@
     },
 
     bindDataChange: function() {
-        if(this._collection)
-        {
-            this._collection.on("reset", function(){
-            	this.render();
+        if (this._collection) {
+            this._collection.on("reset", function() {
+                self.dirtyModels.reset();
+                self.render();
+            }, this);
+
+            this._collection.on("change", function(model, changed) {
+                // The Model has changed vai CTE. save it in the isDirty
+                this.dirtyModels.add(model);
+                this.context.forecasts.trigger('forecasts:worksheetDirty', model, changed);
             }, this);
         }
         // listening for updates to context for selectedUser:change
@@ -165,12 +172,16 @@
             this.context.forecasts.worksheetmanager.on("change", function() {
             	this.calculateTotals();
             }, this);
-            this.context.forecasts.on("forecasts:committed:saved forecasts:commitButtons:saved", function(){
+            this.context.forecasts.on("forecasts:commitButtons:saved", function(){
             	if(this.showMe()){
             		var model = this.context.forecasts.worksheetmanager;
             		model.url = this.createURL();
             		this.safeFetch();
             	}
+            }, this);
+
+            this.context.forecasts.on('forecasts:worksheetSave', function(callback, suppressSaveTrigger) {
+                this.saveWorksheet(callback, suppressSaveTrigger);
             }, this);
             
             /*
@@ -199,11 +210,61 @@
             
             var worksheet = this;
             $(window).bind("beforeunload",function(){
-                if(worksheet._collection.isDirty){
+                if(worksheet.isDirty()){
                 	return app.lang.get("LBL_WORKSHEET_SAVE_CONFIRM_UNLOAD", "Forecasts");
                 }            	
             });
         }
+    },
+
+    /**
+     * Is this worksheet dirty or not?
+     * @return {boolean}
+     */
+    isDirty : function() {
+        return (this.dirtyModels.length > 0);
+    },
+
+    /**
+     *
+     * @param callback
+     * @param suppressSaveTrigger
+     * @return {Number}
+     */
+    saveWorksheet : function(callback, suppressSaveTrigger) {
+        // only run the save when the worksheet is visible and it has dirty records
+        if(!this.showMe() || !this.isDirty()) { return 0; }
+        var self = this,
+            totalToSave = self.dirtyModels.length,
+            saveCount = 0;
+        self.dirtyModels.each(function(model){
+           //set properties on model to aid in save
+            model.set({
+                "draft" : 1,
+                "timeperiod_id" : self.context.forecasts.get("selectedTimePeriod").id,
+                "current_user" : app.user.get('id')
+            }, {silent:true});
+
+            //set what url  is used for save
+            model.url = self.url.split("?")[0] + "/" + model.get("id");
+            model.save({}, {success: function() {
+                saveCount++;
+                //if this is the last save, go ahead and trigger the callback;
+                if(totalToSave === saveCount) {
+                   if(_.isFunction(callback)){
+                       callback();
+                   }
+                   if(suppressSaveTrigger != true){
+                       self.context.forecasts.trigger("forecasts:commitButtons:saved");
+                   }
+                }
+            }});
+        });
+
+        // clean up the dirty records
+        self.dirtyModels.reset();
+
+        return totalToSave;
     },
 
 
@@ -250,20 +311,20 @@
         }
         //mark that a fetch is in process so no duplicate fetches begin
         this.fetchInProgress = true;
-        if(typeof fetch == 'undefined')
-        {
+        if(_.isUndefined(fetch)) {
             fetch = true;
         }
     	var collection = this._collection;
     	var self = this;
-    	if(collection.isDirty){
+    	if(this.isDirty()){
     		//unsaved changes, ask if you want to save.
     		if(confirm(app.lang.get("LBL_WORKSHEET_SAVE_CONFIRM", "Forecasts"))){
-                self.context.forecasts.trigger("forecasts:forecastcommitbuttons:triggerSaveDraft");
-		    }
-    		else {
+                self.context.forecasts.set({reloadCommitButton: true});
+                this.saveWorksheet(function(){
+                    collection.fetch();
+                })
+		    } else {
     			//ignore, fetch still
-    			collection.isDirty = false;
     			self.context.forecasts.set({reloadCommitButton: true});
     			if(fetch){
     				collection.fetch();
@@ -301,7 +362,6 @@
      */
     _render:function () {
         var self = this;
-        var enableCommit = false;
       
         if(!this.showMe()){
         	return false;
@@ -326,7 +386,7 @@
                 };
 
                 //Apply sorting for the worksheet
-                if(typeof(fields[i].type) != "undefined")
+                if(!_.isUndefined(fields[i].type))
                 {
                     switch(fields[i].type)
                     {
@@ -361,15 +421,13 @@
         );
 
         //see if anything in the model is a draft version
-        _.each(this._collection.models, function(model, index){
-        	if(model.get("version") == 0){
-        		enableCommit = true;
-        	}
-        });
-        if (enableCommit) {
-        	self.context.forecasts.trigger("forecasts:commitButtons:enabled");
+        var enableCommit = self._collection.find(function(model) {
+            return (model.get("version") == 0)
+        }, this);
+        if (!_.isObject(enableCommit)) {
+            self.context.forecasts.trigger("forecasts:commitButtons:enabled");
         }
-        
+
         this.calculateTotals();
         self.context.forecasts.trigger('forecasts:worksheetmanager:rendered');
 

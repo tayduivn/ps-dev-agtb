@@ -109,7 +109,6 @@
                 this.$el.find('#save_draft').removeClass("disabled");
 		        this.context.forecasts.trigger("forecasts:commitButtons:enabled");
             }, self);
-            this.context.forecasts.worksheetmanager.on("change", this.showSaveButton, self);
             this.context.forecasts.on("forecasts:forecastcommitbuttons:triggerCommit", this.triggerCommit, self);
             this.context.forecasts.on("forecasts:forecastcommitbuttons:triggerSaveDraft", this.triggerSaveDraft, self);
             this.context.forecasts.on("change:selectedUser", function(){
@@ -136,31 +135,7 @@
             }
         }        
     },
-        
-    /**
-     *	Shows the save button
-     * 
-     */
-    showSaveButton: function(){
-    	var self = this,
-    	    worksheet = this.context.forecasts[this.context.forecasts.get("currentWorksheet")],    	    
-    	    savebtn = this.$el.find('#save_draft');
-    	
-		_.each(worksheet.models, function(model, index){
-			var isDirty = model.get("isDirty");
-			if(_.isBoolean(isDirty) && isDirty){
-				//if something in the worksheet is dirty, we need to flag the entire worksheet as dirty.
-				worksheet.isDirty = true;
-			}
-		});
-		
-		//if the sheet is dirty, trigger the event for the app to show the commit buttons.
-		if(worksheet.isDirty){
-		    savebtn.removeClass("disabled");
-		    this.context.forecasts.trigger("forecasts:commitButtons:enabled");
-		}		
-    },
-    
+
     /**
      * Event handler to disable/reset the commit/save button
      */
@@ -197,9 +172,6 @@
             saved = this.context.forecasts.trigger("forecasts:worksheetSave", _.bind(function(){
                 this.context.forecasts.set({commitForecastFlag: true});
             }, this), true);
-            /*saved = self.saveDirtyWorksheets(function(){
-                self.context.forecasts.set({commitForecastFlag: true});
-            }, true);*/
             
             //we didn't have anything to save (and wait to finish), so go ahead and trigger the commit
             if(saved == 0){
@@ -207,52 +179,6 @@
             }
             savebtn.addClass("disabled");
     	}        
-    },
-    
-    /**
-     * saveDirtyWorksheets
-     * utility function to save dirty worksheets
-     * @param fcn callback
-     * @param boolean Boolean to suppress the forecasts:commitButtons:saved event from triggering
-     * @return integer Number of items saved
-     */
-    saveDirtyWorksheets: function(fcn, suppressSaveTrigger){
-        var worksheet = this.context.forecasts[this.context.forecasts.get("currentWorksheet")],
-            self = this,
-            saveCount = 0,
-            models = _.filter(worksheet.models, function(model, index) {
-                return (model.get("version") == 0 || (_.isBoolean(model.get("isDirty")) && model.get("isDirty")));
-            }, this);
-               
-        //commit each model that needs saved
-        _.each(models, function(model, index){
-           //set properties on model to aid in save
-            model.set({
-                "draft" : self.draft,
-                "isDirty" : false,
-                "timeperiod_id" : self.context.forecasts.get("selectedTimePeriod").id,
-                "current_user" : app.user.get('id')
-            }, {silent:true});
-            
-            //set what url  is used for save
-            model.url = worksheet.url.split("?")[0] + "/" + model.get("id");
-            model.save({}, {success: function() {
-                saveCount++;
-                //if this is the last save, go ahead and trigger the callback;
-                if(models.length === saveCount) {
-                   if(_.isFunction(fcn)){
-                       fcn();   
-                   }
-                   if(suppressSaveTrigger != true){
-                       self.context.forecasts.trigger("forecasts:commitButtons:saved");
-                   }
-                }
-            }});
-            //this worksheet is clean
-            worksheet.isDirty = false;
-        });
-        
-        return models.length;
     },
 
     /**
