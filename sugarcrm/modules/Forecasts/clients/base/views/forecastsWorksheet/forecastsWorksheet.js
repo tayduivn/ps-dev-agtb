@@ -1,3 +1,29 @@
+/*********************************************************************************
+ * The contents of this file are subject to the SugarCRM Master Subscription
+ * Agreement (""License"") which can be viewed at
+ * http://www.sugarcrm.com/crm/master-subscription-agreement
+ * By installing or using this file, You have unconditionally agreed to the
+ * terms and conditions of the License, and You may not use this file except in
+ * compliance with the License.  Under the terms of the license, You shall not,
+ * among other things: 1) sublicense, resell, rent, lease, redistribute, assign
+ * or otherwise transfer Your rights to the Software, and 2) use the Software
+ * for timesharing or service bureau purposes such as hosting the Software for
+ * commercial gain and/or for the benefit of a third party.  Use of the Software
+ * may be subject to applicable fees and any use of the Software without first
+ * paying applicable fees is strictly prohibited.  You do not have the right to
+ * remove SugarCRM copyrights from the source code or user interface.
+ *
+ * All copies of the Covered Code must include on each user interface screen:
+ *  (i) the ""Powered by SugarCRM"" logo and
+ *  (ii) the SugarCRM copyright notice
+ * in the same form as they appear in the distribution.  See full license for
+ * requirements.
+ *
+ * Your Warranty, Limitations of liability and Indemnity are expressly stated
+ * in the License.  Please refer to the License for the specific language
+ * governing these rights and limitations under the License.  Portions created
+ * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
+ ********************************************************************************/
 /**
  * View that displays header for current app
  *
@@ -46,11 +72,12 @@
     isExpandableRows:'',
     isEditableWorksheet:false,
     _collection:{},
-    columnDefs : [],
-    mgrNeedsCommitted : false,
-    commitButtonEnabled : false,
+    columnDefs: [],
+    mgrNeedsCommitted: false,
+    commitButtonEnabled: false,
+    commitFromSafeFetch: false,
     // boolean to denote that a fetch is currently in progress
-    fetchInProgress : false,
+    fetchInProgress: false,
     
     /**
      * Initialize the View
@@ -105,35 +132,6 @@
         url = app.api.buildURL('ForecastWorksheets', '', '', args);
         return url;
     },
-        
-    /**
-     * Sets up the save event and handler for the commit_stage dropdown fields in the worksheet.
-     *
-     * @param field the commit_stage field
-     * @return {*}
-     * @private
-     */
-    _setUpCommitStage: function (field) {
-        var forecastRanges = this.context.forecasts.config.get("forecast_ranges");
-        var self = this;
-                
-        //show_binary, show_buckets, show_n_buckets
-        if(forecastRanges== "show_binary"){
-            field.type = "bool";
-            field.format = function(value){
-                return value == "include";
-            };
-            field.unformat = function(value){
-                return this.$el.find(".checkbox").prop('checked') ? "include" : "exclude";
-            };
-        }
-        else{
-            field.type = "enum";
-            field.def.options = this.context.forecasts.config.get("buckets_dom") || 'commit_stage_dom';
-        }      
-        
-        return field;
-    },
 
     /**
      * Renders a field.
@@ -144,25 +142,12 @@
      * @protected
      */
     _renderField: function(field) {
-        if(field.name == "commit_stage")
-        {
-            //Set the field.def.options value based on app.config.buckets_dom (if set)
-            field.def.options = this.context.forecasts.config.get("buckets_dom") || 'commit_stage_dom';
-            field = this._setUpCommitStage(field);
-            if(!this.isEditableWorksheet) {
-                field.options.viewName = 'detail';
-            }
-        }
         this._createFieldColumnDef(field.def);
         app.view.View.prototype._renderField.call(this, field);
 
         if (this.isEditableWorksheet === true && field.viewName !="edit" && field.def.clickToEdit === true && !_.contains(this.context.forecasts.config.get("sales_stage_won"), field.model.get('sales_stage')) && !_.contains(this.context.forecasts.config.get("sales_stage_lost"), field.model.get('sales_stage'))) {
             new app.view.ClickToEditField(field, this);
-        }
-
-        if (this.isEditableWorksheet === true && field.name == "commit_stage") {
-            new app.view.BucketGridEnum(field, this, "ForecastWorksheets");
-        }
+        }        
     },
 
     /**
@@ -189,6 +174,7 @@
                 //Apply sorting for the worksheet
                 switch(field.type)
                 {
+                    case "buckets":
                     case "enum":
                     case "bool":
                         // disable sorting for non-numerical fields
@@ -196,6 +182,7 @@
                         break;
                     case "int":
                     case "currency":
+                    case "editableCurrency":
                         fieldDef["sSortDataType"] = "dom-number";
                         fieldDef["sType"] = "numeric";
                         break;
@@ -273,8 +260,14 @@
                 if(this.showMe()){
                     var model = this.context.forecasts.worksheet;
                     model.url = this.createURL();
-                    this.safeFetch();                   
-                    this.mgrNeedsCommitted = true;
+                    this.safeFetch();
+                    if(!this.commitFromSafeFetch){
+                        this.mgrNeedsCommitted = true;
+                    }
+                    else{
+                        this.commitFromSafeFetch = false;
+                    }
+                    
                 }                
             }, this);
             
@@ -423,6 +416,7 @@
                 //show dialog
                 if(confirm(msg[0] + "\n\n" + msg[1])){
                     self.context.forecasts.trigger("forecasts:forecastcommitbuttons:triggerCommit");
+                    self.commitFromSafeFetch = true;
                 }
                 //canceled, continue fetching
                 else{
@@ -466,7 +460,7 @@
     _render: function() {
         var self = this;
         var enableCommit = false;
-
+        
         if(!this.showMe()){
             return false;
         }
@@ -724,7 +718,7 @@
                         selectVal,
                         rowCategory = $(_.first(aData)),
                         checkState;
-
+                    
                     //If we are in an editable worksheet get the selected dropdown/checkbox value; otherwise, get the detail/default text
                     if (forecast_ranges_setting == 'show_binary') {
                         checkState = rowCategory.find('input').attr('checked');

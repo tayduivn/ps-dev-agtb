@@ -128,7 +128,7 @@ class ForecastsViewSidecar extends SidecarView
         } else {
 
             //Need to make sure that we really do have sidecar/src directory
-            if(file_exists('sidecar/src')) {
+            if(file_exists('sidecar/src/include-manifest.php')) {
                 require('sidecar/src/include-manifest.php');
                 if(!empty($buildFiles['sidecar.lite'])) {
                     foreach ( $buildFiles['sidecar.lite'] as $file)
@@ -191,6 +191,7 @@ EOHTML;
             }
             echo getVersionedScript('cache/include/javascript/sugar_grp1_jquery_core.js');
             echo getVersionedScript('cache/include/javascript/sugar_grp1_jquery_menus.js');
+            echo getVersionedScript('cache/include/javascript/sugar_grp1_bootstrap.js');
             echo getVersionedScript('cache/include/javascript/sugar_grp1_yui.js');
             echo getVersionedScript('cache/include/javascript/sugar_grp1.js');
             echo getVersionedScript('include/javascript/calendar.js');

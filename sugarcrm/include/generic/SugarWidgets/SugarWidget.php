@@ -99,6 +99,25 @@ class SugarWidget
 	  	}
 	    return strtoupper(substr($column_name,0,22) . substr(md5(strtolower($column_name)), 0, 6));
     }
+
+    /**
+     * check was module hidden in the top navigation bar or as subpanels
+     * @param string moduleName - name of module to chaeck e.g. Notes, Tasks
+     * @return bool
+     * @see Bug #55632 : Hiding Notes Module does not prevent creation of notes.
+     */
+    static public function isModuleHidden( $moduleName )
+    {
+        require_once('modules/MySettings/TabController.php');
+        require_once('include/SubPanel/SubPanelDefinitions.php');
+        $tabs = new TabController();
+        if ( !in_array($moduleName, $tabs->get_system_tabs()) || in_array(strtolower($moduleName), SubPanelDefinitions::get_hidden_subpanels()) )
+        {
+            return true;
+        }
+
+        return false;
+    }
 }
 
 ?>

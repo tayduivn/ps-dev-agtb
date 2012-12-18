@@ -33,6 +33,7 @@
 class VardefManager{
     static $custom_disabled_modules = array();
     static $linkFields;
+    public static $inReload = array();
 
     /**
      * this method is called within a vardefs.php file which extends from a SugarObject.
@@ -232,6 +233,18 @@ class VardefManager{
     {
         // Some of the vardefs do not correctly define dictionary as global.  Declare it first.
         global $dictionary, $beanList;
+        $guard_name = "$module:$object";
+        if(isset(self::$inReload[$guard_name])) {
+            self::$inReload[$guard_name]++;
+            if(self::$inReload[$guard_name] > 2) {
+                $GLOBALS['log']->fatal("Loop in refreshVardefs: $guard_name");
+                echo "<pre>";
+                debug_print_backtrace();
+                return;
+            }
+        } else {
+            self::$inReload[$guard_name] = 1;
+        }
         $vardef_paths = array(
                     'modules/'.$module.'/vardefs.php',
                     SugarAutoLoader::loadExtension("vardefs", $module),
@@ -253,16 +266,18 @@ class VardefManager{
             $bean = $params['bean'];
         } else {
             if(!empty($dictionary[$object])) {
+                //BEGIN SUGARCRM flav=pro ONLY
                 // to avoid extra refresh - we'll fill it in later
                 if(!isset($GLOBALS['dictionary'][$object]['related_calc_fields'])) {
                     $GLOBALS['dictionary'][$object]['related_calc_fields'] = array();
                 }
+                //END SUGARCRM flav=pro ONLY
             }
             // we will instantiate here even though dictionary may not be there,
             // since in case somebody calls us with wrong module name we need bean
             // to get $module_dir. This may cause a loop but since the second call will
             // have the right module name the loop should be short.
-            $bean = BeanFactory::newBean($module);
+            $bean = $params['bean'] = BeanFactory::newBean($module);
         }
         //Some modules have multiple beans, we need to see if this object has a module_dir that is different from its module_name
         if(!$found){
@@ -282,19 +297,25 @@ class VardefManager{
             $object = $newName != false ? $newName : $object;
         }
 
+        if (empty($params['ignore_rel_calc_fields'])) {
+            if(!empty($GLOBALS['dictionary'][$object]) && !isset($GLOBALS['dictionary'][$object]['related_calc_fields'])) {
+                $GLOBALS['dictionary'][$object]['related_calc_fields'] = array();
+            }
+        }
         //load custom fields into the vardef cache
-        if($cacheCustom){
+        if($cacheCustom && !empty($GLOBALS['dictionary'][$object]['fields'])){
             require_once("modules/DynamicFields/DynamicField.php");
             $df = new DynamicField ($module) ;
             $df->buildCache($module, false);
         }
         //BEGIN SUGARCRM flav=pro ONLY
-        if (empty($params['ignore_rel_calc_fields']))
+        if (empty($params['ignore_rel_calc_fields'])) {
             self::updateRelCFModules($module, $object);
+        }
         //END SUGARCRM flav=pro ONLY
 
         // Put ACLStatic into vardefs for beans supporting ACLs
-        if(!empty($bean) && !empty($dictionary[$object]) && !isset($dictionary[$object]['acls']['SugarACLStatic'])
+        if(!empty($bean) && ($bean instanceof SugarBean) && !empty($dictionary[$object]) && !isset($dictionary[$object]['acls']['SugarACLStatic'])
             && $bean->bean_implements('ACL')) {
             $dictionary[$object]['acls']['SugarACLStatic'] = true;
         }
@@ -303,6 +324,13 @@ class VardefManager{
         //let's go save them to the cache file.
         if(!empty($dictionary[$object])) {
             VardefManager::saveCache($module, $object);
+        }
+        if(isset(self::$inReload[$guard_name])) {
+            if(self::$inReload[$guard_name] > 1) {
+                self::$inReload[$guard_name]--;
+            } else {
+                unset(self::$inReload[$guard_name]);
+            }
         }
     }
 

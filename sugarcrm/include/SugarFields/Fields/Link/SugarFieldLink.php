@@ -16,6 +16,8 @@ class SugarFieldLink extends SugarFieldBase {
 	            );
 			$nothing = '';
 	        $data[$fieldName] = smarty_function_sugar_replace_vars($params, $nothing);
-	    }
+	    } else {
+            parent::apiFormatField($data, $bean, $args, $fieldName, $properties);
+        }
     }
 }

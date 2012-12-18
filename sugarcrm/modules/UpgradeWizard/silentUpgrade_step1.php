@@ -46,7 +46,11 @@
 //// - Run 3-way merges
 /////////////////////////////////////////////////////////////////////////////////////////
 ini_set('memory_limit',-1);
-ini_set('error_reporting',E_ALL &~E_STRICT & ~E_DEPRECATED);
+if (version_compare(PHP_VERSION, '5.3.0', '>=')) {
+    ini_set('error_reporting', E_ALL & ~E_STRICT & ~E_DEPRECATED);
+} else {
+    ini_set('error_reporting', E_ALL & ~E_STRICT);
+}
 ///////////////////////////////////////////////////////////////////////////////
 
 function verifyArguments($argv,$usage_regular)

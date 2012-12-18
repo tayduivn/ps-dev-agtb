@@ -983,36 +983,37 @@ function return_app_list_strings_language($language)
 	}
 	$langs[] = $language;
 
-	$app_list_strings_array = array();
+    $app_list_strings_array = array();
 
-	foreach ( $langs as $lang ) {
-	    foreach(SugarAutoLoader::existing(
-	        "include/language/$lang.lang.php",
-	        "include/language/$lang.lang.override.php",
-	        "include/language/$lang.lang.php.override"
-	    ) as $file) {
-            include $file;
-            $GLOBALS['log']->info("Found language file: $file");
-	    }
+    //Merge language files together
+   	foreach ( $langs as $key => $lang ) {
 
-        $app_list_strings_array[] = $app_list_strings;
+        $app_list_strings_state = $app_list_strings;
+   	    foreach(SugarAutoLoader::existing(
+   	        "include/language/$lang.lang.php",
+   	        "include/language/$lang.lang.override.php",
+   	        "include/language/$lang.lang.php.override"
+   	    ) as $file) {
+               include $file;
+               $GLOBALS['log']->info("Found language file: $file");
+   	    }
+
+       $app_list_strings_array[$lang] = $app_list_strings;
+       //Return to previous state unless we are on first iteration and do an intersect merge
+       if ($key > 0) {
+           $app_list_strings = $app_list_strings_state;
+           //In case a custom file doesn't exist for the expected language, we want the custom lists from the default language
+           //(if there are key additions/deletions) but we want strings in our expected language (as much as possible).
+           $app_list_strings = sugarArrayIntersectMerge($app_list_strings, $app_list_strings_array[$lang]);
+       }
+       foreach(SugarAutoLoader::existing(
+           "custom/application/Ext/Language/$lang.lang.ext.php",
+           "custom/include/language/$lang.lang.php"
+       ) as $file) {
+           $app_list_strings = _mergeCustomAppListStrings($file , $app_list_strings);
+           $GLOBALS['log']->info("Found extended language file: $file");
+       }
     }
-
-    $app_list_strings = array();
-    foreach ( $app_list_strings_array as $app_list_strings_item ) {
-        $app_list_strings = sugarLangArrayMerge($app_list_strings, $app_list_strings_item);
-    }
-
-
-
-    foreach(SugarAutoLoader::existing(
-        "custom/application/Ext/Language/$lang.lang.ext.php",
-        "custom/include/language/$lang.lang.php"
-    ) as $file) {
-        $app_list_strings = _mergeCustomAppListStrings($file , $app_list_strings);
-        $GLOBALS['log']->info("Found extended language file: $file");
-    }
-
 
     if(!isset($app_list_strings)) {
 		$GLOBALS['log']->fatal("Unable to load the application language file for the selected language ($language) or the default language ($default_language) or the en_us language");
@@ -1198,7 +1199,7 @@ function return_module_language($language, $module, $refresh=false)
     if(!file_exists(sugar_cached('modules/'). $module . '/language/'.$language.'.lang.php')
 			&& !empty($GLOBALS['beanList'][$module])){
 		$object = BeanFactory::getObjectName($module);
-		VardefManager::refreshVardefs($module,$object);
+		VardefManager::loadVardef($module,$object);
 	}
 
 	$loaded_mod_strings = LanguageManager::loadModuleLanguage($module, $language,$refresh);
@@ -3844,7 +3845,7 @@ function string_format($format, $args){
     }
 
     $result = str_replace(array_keys($replaceArray),array_values($replaceArray),$format);
- 
+
 	return $result;
 }
 
@@ -3946,6 +3947,31 @@ function setPhpIniSettings() {
 	if(!empty($backtrack_limit)) {
 		ini_set('pcre.backtrack_limit', '-1');
 	}
+}
+
+
+/**
+ * Replace values from $gimp with values from $dom, but only the keys that are in $gimp are replaced.
+ *
+ * @param array $gimp the array whose values will be overloaded
+ * @param array $dom the array whose values will pwn the gimp's
+ * @return array beaten $gimp
+ */
+function sugarArrayIntersectMerge($gimp, $dom)
+{
+    if (is_array($gimp) && is_array($dom)) {
+        foreach ($gimp as $domKey => $domVal) {
+            if (isset($dom[$domKey])) {
+                if (is_array($dom[$domKey])) {
+                    $gimp[$domKey] = array_merge($gimp[$domKey], array_intersect_key($dom[$domKey], $gimp[$domKey]));
+                } else {
+                    $gimp[$domKey] = $dom[$domKey];
+                }
+            }
+        }
+    }
+
+    return $gimp;
 }
 
 /**
@@ -5275,7 +5301,7 @@ function getDuplicateRelationListWithTitle($def, $var_def, $module)
         $temp_module_strings = return_module_language($current_language, $module);
         $temp_duplicate_array = array_diff_assoc($def, $select_array);
         $temp_duplicate_array = array_merge($temp_duplicate_array, array_intersect($select_array, $temp_duplicate_array));
-        
+
         foreach ($temp_duplicate_array as $temp_key => $temp_value)
         {
             // Don't add duplicate relationships
@@ -5285,14 +5311,14 @@ function getDuplicateRelationListWithTitle($def, $var_def, $module)
             }
             $select_array[$temp_key] = $temp_value;
         }
-        
+
         // Add the relationship name for easier recognition
         foreach ($select_array as $key => $value)
         {
             $select_array[$key] .= ' (' . $key . ')';
         }
     }
-    
+
     asort($select_array);
     return $select_array;
 }

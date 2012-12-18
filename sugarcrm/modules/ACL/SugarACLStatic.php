@@ -173,6 +173,7 @@ class SugarACLStatic extends SugarACLStrategy
             case 'delete':
             case 'view':
             case 'export':
+            case 'massupdate':
                 return ACLController::checkAccessInternal($module, $action, $is_owner);
             case 'edit':
                 if(!isset($context['owner_override']) && !empty($bean->id)) {
@@ -184,11 +185,11 @@ class SugarACLStatic extends SugarACLStrategy
                             $is_owner = true;
                         } else {
                             $temp = BeanFactory::getBean($bean->module_dir, $bean->id);
-                            if(!empty($temp)) {
-                                $is_owner = $temp->isOwner($this->getUserID($context));
-                            }
-                            unset($temp);
                         }
+                    }
+                    if(!empty($temp)) {
+                        $is_owner = $temp->isOwner($this->getUserID($context));
+                        unset($temp);
                     }
                 }
             case 'popupeditview':

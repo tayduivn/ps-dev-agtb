@@ -54,6 +54,15 @@ class SugarWidgetSubPanelTopSelectButton extends SugarWidgetSubPanelTopButton
 	function display(&$widget_data)
 	{
 		global $app_strings;
+
+        /**
+         * if module is hidden or subpanel for the module is hidden - doesn't show select button
+         */
+        if ( SugarWidget::isModuleHidden( $widget_data['module'] ) )
+        {
+            return '';
+        }
+
 		$initial_filter = '';
 
 	    $this->title     = $this->getTitle();
