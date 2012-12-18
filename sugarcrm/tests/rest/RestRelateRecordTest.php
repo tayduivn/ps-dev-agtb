@@ -70,7 +70,7 @@ class RestRelateRecordTest extends RestTestBase {
 
         $noteIds = array();
         foreach ( $this->notes as $note ) {
-            $noteIds[] = $note->id;
+            $noteIds[] = $note;
         }
         $noteIds = "('".implode("','",$noteIds)."')";
 
@@ -571,7 +571,8 @@ class RestRelateRecordTest extends RestTestBase {
 
         $restReply = $this->_restCall("Leads/{$lead->id}/link/calls", $post, 'POST');
 
-        $this->calls[] = $restReply['reply']['related_record']['id'];
+        $this->calls[] = BeanFactory::getBean('Calls', $restReply['reply']['related_record']['id']);
+
         $this->assertEquals($restReply['reply']['related_record']['parent_id'], $lead->id, "Lead ID was not the parent id of the call.");
         $this->assertEquals($restReply['reply']['related_record']['parent_type'], 'Leads', "Leads Module was not the parent type of the call.");
     }
@@ -612,7 +613,8 @@ class RestRelateRecordTest extends RestTestBase {
 
         $restReply = $this->_restCall("Leads/{$lead->id}/link/calls", $post, 'POST');
 
-        $this->calls[] = $restReply['reply']['related_record']['id'];
+        $this->calls[] = BeanFactory::getBean('Calls', $restReply['reply']['related_record']['id']);
+
         $this->assertEquals($restReply['reply']['related_record']['parent_id'], $lead->id, "Lead ID was not the parent id of the call.");
         $this->assertEquals($restReply['reply']['related_record']['parent_type'], 'Leads', "Leads Module was not the parent type of the call.");
     }
@@ -652,8 +654,7 @@ class RestRelateRecordTest extends RestTestBase {
             );
 
         $restReply = $this->_restCall("Leads/{$lead->id}/link/calls", $post, 'POST');
-
-        $this->calls[] = $restReply['reply']['related_record']['id'];
+        $this->calls[] = BeanFactory::getBean('Calls', $restReply['reply']['related_record']['id']);
         $this->assertEquals($restReply['reply']['related_record']['parent_id'], $lead->id, "Lead ID was not the parent id of the call.");
         $this->assertEquals($restReply['reply']['related_record']['parent_type'], 'Leads', "Leads Module was not the parent type of the call.");
     }
@@ -694,8 +695,7 @@ class RestRelateRecordTest extends RestTestBase {
             );
 
         $restReply = $this->_restCall("Leads/{$lead->id}/link/calls", $post, 'POST');
-
-        $this->calls[] = $restReply['reply']['related_record']['id'];
+        $this->calls[] = BeanFactory::getBean('Calls', $restReply['reply']['related_record']['id']);
         $this->assertEquals($restReply['reply']['related_record']['parent_id'], $lead->id, "Lead ID was not the parent id of the call.");
         $this->assertEquals($restReply['reply']['related_record']['parent_type'], 'Leads', "Leads Module was not the parent type of the call.");
     }

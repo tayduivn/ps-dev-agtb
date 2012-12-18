@@ -407,7 +407,7 @@ class RestListTest extends RestTestBase {
         $this->assertEquals($employee_count, count($restReply['reply']['records']), "Number of employees incorrect.  Should be 11 but is " . count($restReply['reply']['records']));
 
         $restReply = $this->_restCall('Users');
-        $this->assertEquals($user_count, count($restReply['reply']['records']), "Number of users incorrect.  Should be 12 but is " . count($restReply['reply']['records']));
+        $this->assertEquals($user_count, count($restReply['reply']['records']), "Number of users incorrect.  Should be {$user_count} but is " . count($restReply['reply']['records']));
 
         // set a user employee_status as terminated
         $user = BeanFactory::getBean('Users', $this->users[0]);
@@ -420,7 +420,7 @@ class RestListTest extends RestTestBase {
         $this->assertEquals($current_employee_count, count($restReply['reply']['records']), "Number of employees incorrect.  Should be {$current_employee_count} but is " . count($restReply['reply']['records']));
 
         $restReply = $this->_restCall('Users');
-        $this->assertEquals($user_count, count($restReply['reply']['records']), "Number of users incorrect.  Should be 12 but is " . count($restReply['reply']['records']));        
+        $this->assertEquals($user_count, count($restReply['reply']['records']), "Number of users incorrect.  Should be {$user_count} but is " . count($restReply['reply']['records']));        
 
         // set a users status as inactive
         $user = BeanFactory::getBean('Users', $this->users[1]);

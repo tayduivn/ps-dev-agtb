@@ -129,12 +129,12 @@ class SugarBeanApiHelper
      */
     public function getBeanAcl(SugarBean $bean) {
         $acl = array('fields' => (object) array());
-        if(SugarACL::moduleSupportsACL($bean->module_dir)) {
+        if(!is_admin($GLOBALS['current_user']) && SugarACL::moduleSupportsACL($bean->module_dir)) {
             $mm = new MetaDataManager($GLOBALS['current_user']);
             $moduleAcl = $mm->getAclForModule($bean->module_dir, $GLOBALS['current_user']);
 
             $beanAcl = $mm->getAclForModule($bean->module_dir, $GLOBALS['current_user'], $bean);
-            $GLOBALS['log']->fatal(var_export($beanAcl, true));
+    
             if($beanAcl['_hash'] != $moduleAcl['_hash']) {
                 // diff the fields separately, they are usually empty anyway so we won't diff these often.
                 $moduleAclFields = $moduleAcl['fields'];
@@ -156,36 +156,16 @@ class SugarBeanApiHelper
                  * beanAclFields is empty and moduleAclFields is empty -> all access -> return empty
                  * beanAclFields is empty and moduleAclFields is !empty -> all access -> return yes's
                  * beanAclFields is !empty and moduleAclFields is empty -> beanAclFields access restrictions -> return beanAclFields
-                 * beanAclFields is !empty and moduleAclFields is !empty -> return all access = "Yes" from moduleAcl and unset any in beanAcl that is in ModuleAcl [don't dupe data]
+                 * beanAclFields is !empty and moduleAclFields is !empty -> diff the arrays -> return diffArray
                  */
 
                 if(!empty($beanAclFields) && empty($moduleAclFields)) {
                     $fieldsAcls = $beanAclFields;
                 }
                 elseif(!empty($beanAclFields) && !empty($moduleAclFields)) {
-                    // we need the ones that are moduleAclFields but not in beanAclFields
-                    foreach($moduleAclFields AS $field => $aclActions) {
-                        foreach($aclActions AS $action => $access) {
-                            if(!isset($beanAclFields[$field][$action])) {
-                                $beanAclFields[$field][$action] = "yes";
-                            }
-                            // if the bean action is set and it matches the access from module, we do not need to send it down
-                            if(isset($beanAclFields[$field][$action]) && $beanAclFields[$field][$action] == $access) {
-                                unset($beanAclFields[$field][$action]);
-                            }
-                        }
-                    }
-
-                    // cleanup BeanAclFields, we don't want to pass a field that doens't have actions
-                    foreach($beanAclFields AS $field => $actions) {
-                        if(empty($actions)) {
-                            unset($beanAclFields[$field]);
-                        }
-                    }
-
-                    $fieldAcls = $beanAclFields;   
+                    $fieldsAcls = array_diff_assoc($beanAclFields, $moduleAclFields);
                 }
-                elseif(empty($beanAclFields) && !empty($moduleAclFields)) {
+                if(empty($beanAclFields) && !empty($moduleAclFields)) {
                     // it is different because we now have access...
                     foreach($moduleAclFields AS $field => $aclActions) {
                         foreach($aclActions AS $action => $access) {
@@ -213,25 +193,13 @@ class SugarBeanApiHelper
      */
     public function populateFromApi(SugarBean $bean, array $submittedData, array $options = array() )
     {
-        $originalData = $this->formatForApi($bean, array(), array() );
-        
-        //nothings changed
-        if(md5(json_encode($originalData)) == md5(json_encode($submittedData))) {
-            return true;
-        }
-        // don't need either of these
-        unset($originalData['_acl']);
-        unset($submittedData['_acl']);
-
-        $changedData = array();
-        $this->getChangedData($bean, $submittedData, $originalData, $changedData);
-
         $sfh = new SugarFieldHandler();
-        foreach ( $changedData as $fieldName => $val ) {
-            if(!isset($bean->field_defs[$fieldName])) {
+
+        foreach ( $bean->field_defs as $fieldName => $properties ) {
+            if ( !isset($submittedData[$fieldName]) ) {
+                // They aren't trying to modify this field
                 continue;
             }
-            $properties = $bean->field_defs[$fieldName];
 
             //BEGIN SUGARCRM flav=pro ONLY
             if ( !$bean->ACLFieldAccess($fieldName,'save') ) { 
@@ -248,24 +216,11 @@ class SugarBeanApiHelper
             }
         }
 
-        return true;
-    }
-
-    public function getChangedData(SugarBean $bean, array $submittedData, array $originalData, array &$changedData) {
-        foreach($submittedData AS $field => $val) {
-            if(isset($bean->field_defs[$field]['source']) && $bean->field_defs[$field]['source'] == 'non-db' && isset($field)) {
-                continue;
-            }
-            if(is_array($val)) {
-                $this->getChangedData($bean, $submittedData[$field], $originalData[$field], $changedData[$field]);
-            }
-            if(isset($originalData[$field]) && $originalData[$field] == $val) {
-                continue;
-            }
-
-            $changedData[$field] = $val;
+        if(isset($bean->field_defs['parent_type']) && isset($bean->field_defs['parent_id']) && empty($bean->parent_type) && empty($bean->parent_id) && isset($submittedData['link_name']) && isset($submittedData['remote_id'])) {
+            $bean->parent_type = $bean->$submittedData['link_name']->getRelatedModuleName();
+            $bean->parent_id = $submittedData['remote_id'];
         }
 
-        return $submittedData;
+        return true;
     }
 }
