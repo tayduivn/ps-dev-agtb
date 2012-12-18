@@ -48,16 +48,12 @@ $viewdefs['Forecasts']['base']['view']['forecastsWorksheet'] = array(
                     'name' => 'name',
                     'label' => 'LBL_NAME',
                     'link' => true,
-                    'route' =>
-                    array(
-                        'module'=>'Opportunities',
-                        'action'=>'DetailView',
-                        'recordID'=>'id'
-                    ),
                     'sortable' => true,
                     'default' => true,
                     'enabled' => true,
-                    'type' => 'recordLink'
+                    'type' => 'relate',
+                    'module' => 'Opportunities',
+                    'id_name' => 'id',
                 ),
 
                 array(

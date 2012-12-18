@@ -197,6 +197,12 @@ $app_list_strings = array (
     '2'=>'No',
   ),
 
+  'optout_dom' => array(
+      '' => '-none-',
+      'false' => 'No',
+      'true' => 'Yes',
+  ),
+
   //e.g. en franï¿½ais 'Analyst'=>'Analyste',
   'account_type_dom' =>
   array (
@@ -2540,6 +2546,9 @@ $app_strings = array (
     'LBL_MAILMERGE' => 'Mail Merge',
     'LBL_MASS_UPDATE' => 'Mass Update',
     'LBL_NO_MASS_UPDATE_FIELDS_AVAILABLE' => 'There are no fields available for the Mass Update operation',
+    'LBL_MASS_UPDATE_JOB_QUEUED' => 'Your request for mass update has been scheduled.',
+    'LBL_MASS_UPDATE_EMPTY_VALUES' => 'The following attributes have empty values: ',
+    'LBL_MASS_UPDATE_EMPTY_CONFIRM' => 'Do you want to continue?',
     'LBL_OPT_OUT_FLAG_PRIMARY' => 'Opt out Primary Email',
     'LBL_MEETINGS'=>'Meetings',
     'LBL_MEETING'=>'Meeting',
