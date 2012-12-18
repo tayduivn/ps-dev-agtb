@@ -263,7 +263,14 @@ copy($argv[1], $install_file);
 ///////////////////////////////////////////////////////////////////////////////
 ////	MAKE SURE PATCH IS COMPATIBLE
 if(is_file("$unzip_dir/manifest.php")) {
-    require_once("{$zipBasePath}/modules/UpgradeWizard/uw_utils.php");
+
+    //Check if uw_utils.php exists in zip package, fall back to existing file if not found (needed for flavor conversions)
+    if(file_exists("{$zipBasePath}/modules/UpgradeWizard/uw_utils.php")) {
+        require_once("{$zipBasePath}/modules/UpgradeWizard/uw_utils.php");
+    } else {
+        require_once("modules/UpgradeWizard/uw_utils.php");
+    }
+
     // provides $manifest array
 	include("$unzip_dir/manifest.php");
 	if(!isset($manifest)) {
