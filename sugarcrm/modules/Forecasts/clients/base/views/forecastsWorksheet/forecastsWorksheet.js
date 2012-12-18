@@ -693,7 +693,7 @@
     },
 
     /**
-     * Event Handler for updating the worksheet by a selected category
+     * Event Handler for updating the worksheet by a selected range
      *
      * @param params is always a context
      */

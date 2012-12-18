@@ -68,7 +68,7 @@
         // set the forecasts specific JS.
         $("#content").append($('<script src="' + forecastData.forecastsJavascript + '"></script>'));
 
-        // get default selections for filter and category
+        // get default selections for filter and range
         app.defaultSelections = forecastData.defaultSelections;
         app.initData = forecastData.initData;
         app.user.set(app.initData.selectedUser);
@@ -98,7 +98,7 @@
         // Set initial selected data on the context
         options.context.forecasts.set({
             selectedTimePeriod : defaultSelections.timeperiod_id,
-            selectedCategory: defaultSelections.category,
+            selectedCategory: defaultSelections.ranges,
             selectedGroupBy : defaultSelections.group_by,
             selectedDataSet: defaultSelections.dataset,
 
@@ -189,116 +189,6 @@
     loadData: function() {
         this.fetchAllModels();
     },
-
-
-    initialize: function(options) {
-        var self = this,
-            url = app.api.buildURL("Forecasts/init");
-        app.api.call('GET', url, null, {
-            success: function(data) {
-                return self.initForecastsModule(data, options, self);
-            }
-        });
-    },
-
-    initForecastsModule: function(forecastData, options, ctx) {
-// set the forecasts specific JS.
-        $("#content").append($('<script src="' + forecastData.forecastsJavascript + '"></script>'));
-
-        // get default selections for filter and category
-        app.defaultSelections = forecastData.defaultSelections;
-        app.initData = forecastData.initData;
-        app.user.set(app.initData.selectedUser);
-
-        if(forecastData.initData.forecasts_setup == 0) {
-            window.location.hash = "#config";
-        }
-
-        ctx.componentsMeta = options.meta.components;
-
-        options.context = _.extend(options.context, ctx.initializeAllModels());
-
-        // Initialize the config model
-        var ConfigModel = Backbone.Model.extend({
-            url: app.api.buildURL("Forecasts", "config"),
-            sync: function(method, model, options) {
-                var url = _.isFunction(model.url) ? model.url() : model.url;
-                return app.api.call(method, url, model, options);
-            },
-            // include metadata from config into the config model by default
-            defaults: app.metadata.getModule('Forecasts').config
-        });
-        options.context.forecasts.config = new ConfigModel();
-
-        var defaultSelections = app.defaultSelections;
-
-        // Set initial selected data on the context
-        options.context.forecasts.set({
-            selectedTimePeriod : defaultSelections.timeperiod_id,
-            selectedCategory: defaultSelections.category,
-            selectedGroupBy : defaultSelections.group_by,
-            selectedDataSet: defaultSelections.dataset,
-            selectedUser : defaultSelections.selectedUser,
-
-            /**
-             * boolean to reload the active worksheet
-             */
-            reloadWorksheetFlag: false,
-
-            /**
-             * The active worksheet
-             */
-            currentWorksheet: "",
-
-
-            /**
-             * used across Forecasts to contain sales rep worksheet totals
-             */
-            updatedTotals : {},
-
-            /**
-             * used across Forecasts to contain manager worksheet totals
-             */
-            updatedManagerTotals : {},
-
-            /**
-             * todo-sfa keep track of changes to modal.js and when they have proper events being passed
-             * we can do away with this
-             *
-             * set by forecastsConfigTabbedButtons.js when the saved button is clicked so that it's callback
-             * can check this variable to know which button was clicked
-             */
-            saveClicked : false,
-
-            // todo: the following three booleans need to be refactored out and made into events, not flags/booleans
-            /**
-             * boolean to use across components to enable commit button or not
-             */
-            reloadCommitButton : false,
-
-            /**
-             * forecastsCommitButtons triggers this flag to tell forecastsCommitted to call commitForecast()
-             */
-            commitForecastFlag : false,
-
-            /**
-             * hiddenSidebar: Is the sidebar hidden or not.
-             */
-            hiddenSidebar : false
-
-        });
-
-        // grab a copy of the init data for forecasts to use
-        ctx.initDataModel = app.initData;
-
-        // then get rid of the data from app
-        app.initData = null;
-
-        app.view.Layout.prototype.initialize.call(ctx, options);
-
-        ctx.deferredRender.resolve();
-    },
-
 
     /**
      * Iterates through all the loaded models & collections as defined in metadata and does a "fetch" on it
