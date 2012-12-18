@@ -1005,8 +1005,18 @@ EOQ;
         {
             $this->team_id = $this->default_team;
         }
-        // Set default_team_name for Campaigns WebToLeadCreation
-        $this->default_team_name = Team::getTeamName($this->team_id);
+
+        //set the team info if the team id has already been set.
+        //running only if team class exists will prevent breakage during upgrade/flavor conversions
+        if (class_exists('Team') ) {
+            // Set default_team_name for Campaigns WebToLeadCreation
+            $this->default_team_name = Team::getTeamName($this->team_id);
+        } else {
+            //if no team id exists, set the team info to blank
+            $this->default_team = '';
+            $this->default_team_name = '';
+            $this->team_set_id = '';
+        }
         
         //END SUGARCRM flav=pro ONLY
 
