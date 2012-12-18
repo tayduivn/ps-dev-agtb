@@ -104,7 +104,11 @@
             this.context.forecasts.on("change:reloadCommitButton", function(){
             	self._render();
             }, self);
-            this.context.forecasts.worksheet.on("change", this.showSaveButton, self);
+            //this.context.forecasts.worksheet.on("change", this.showSaveButton, self);
+            this.context.forecasts.on('forecasts:worksheetDirty', function(model, changed){
+                this.$el.find('#save_draft').removeClass("disabled");
+		        this.context.forecasts.trigger("forecasts:commitButtons:enabled");
+            }, self);
             this.context.forecasts.worksheetmanager.on("change", this.showSaveButton, self);
             this.context.forecasts.on("forecasts:forecastcommitbuttons:triggerCommit", this.triggerCommit, self);
             this.context.forecasts.on("forecasts:forecastcommitbuttons:triggerSaveDraft", this.triggerSaveDraft, self);
@@ -190,9 +194,12 @@
     	self.draft = 0;
     	
         if(!commitbtn.hasClass("disabled")){
-            saved = self.saveDirtyWorksheets(function(){
+            saved = this.context.forecasts.trigger("forecasts:worksheetSave", _.bind(function(){
+                this.context.forecasts.set({commitForecastFlag: true});
+            }, this), true);
+            /*saved = self.saveDirtyWorksheets(function(){
                 self.context.forecasts.set({commitForecastFlag: true});
-            }, true);
+            }, true);*/
             
             //we didn't have anything to save (and wait to finish), so go ahead and trigger the commit
             if(saved == 0){
@@ -258,7 +265,9 @@
     	self.draft = 1;
     	
     	if(!savebtn.hasClass("disabled")){
-    	    saved = self.saveDirtyWorksheets();    				
+            // pass true since we are saving a draft version.
+            this.context.forecasts.trigger("forecasts:worksheetSave");
+    	    // saved = self.saveDirtyWorksheets();
             savebtn.addClass("disabled");
     		this.enableCommitButton();
     	}

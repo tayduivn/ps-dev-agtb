@@ -78,6 +78,8 @@
     commitFromSafeFetch: false,
     // boolean to denote that a fetch is currently in progress
     fetchInProgress: false,
+
+    dirtyModels : new Backbone.Collection(),
     
     /**
      * Initialize the View
@@ -221,20 +223,76 @@
     },
 
     /**
+     * Is this worksheet dirty or not?
+     * @return {boolean}
+     */
+    isDirty : function() {
+        return (this.dirtyModels.length > 0);
+    },
+
+    /**
+     *
+     * @param callback
+     * @param suppressSaveTrigger
+     * @return {Number}
+     */
+    saveWorksheet : function(callback, suppressSaveTrigger) {
+        // only run the save when the worksheet is visible and it has dirty records
+        if(!this.showMe() || !this.isDirty()) { return 0; }
+        var self = this,
+            totalToSave = self.dirtyModels.length,
+            saveCount = 0;
+        self.dirtyModels.each(function(model){
+           //set properties on model to aid in save
+            model.set({
+                "draft" : 1,
+                "timeperiod_id" : self.context.forecasts.get("selectedTimePeriod").id,
+                "current_user" : app.user.get('id')
+            }, {silent:true});
+
+            //set what url  is used for save
+            model.url = self.url.split("?")[0] + "/" + model.get("id");
+            model.save({}, {success: function() {
+                saveCount++;
+                //if this is the last save, go ahead and trigger the callback;
+                if(totalToSave === saveCount) {
+                   if(_.isFunction(callback)){
+                       callback();
+                   }
+                   if(suppressSaveTrigger != true){
+                       self.context.forecasts.trigger("forecasts:commitButtons:saved");
+                   }
+                }
+            }});
+        });
+
+        // clean up the dirty records
+        self.dirtyModels.reset();
+
+        return totalToSave;
+    },
+
+    /**
      *
      * @param {Object} params
      */
     bindDataChange: function(params) {
         var self = this;
         if (this._collection) {
-            this._collection.on("reset", function() {self.render(); }, this);
-            this._collection.on("change", function() {
-                _.each(this._collection.models, function(element){
-                    if(element.hasChanged("commit_stage")) {
-                        this.gTable.fnDestroy();
-                        this.gTable = this.$('.worksheetTable').dataTable(self.gTableDefs);
-                    }
-                }, this);
+            this._collection.on("reset", function() {
+                self.dirtyModels.reset();
+                self.render();
+            }, this);
+
+            this._collection.on("change", function(model, changed) {
+                if(_.include(_.keys(changed.changes), 'commit_stage')) {
+                    this.gTable.fnDestroy();
+                    this.gTable = this.$('.worksheetTable').dataTable(self.gTableDefs);
+                } else {
+                    // The Model has changed vai CTE. save it in the isDirty
+                    this.dirtyModels.add(model);
+                    this.context.forecasts.trigger('forecasts:worksheetDirty', model, changed);
+                }
             }, this);
         }
 
@@ -280,6 +338,10 @@
                 self.commitButtonEnabled = false;
             },this);
 
+            this.context.forecasts.on('forecasts:worksheetSave', function(callback, suppressSaveTrigger) {
+                this.saveWorksheet(callback, suppressSaveTrigger);
+            }, this);
+
             /*
              * // TODO: tagged for 6.8 see SFA-253 for details
             this.context.forecasts.config.on('change:show_worksheet_likely', function(context, value) {
@@ -305,10 +367,9 @@
             */
             this.context.forecasts.config.on('change:buckets_dom change:forecast_ranges', this.render, this);
 
-            var worksheet = this;
             $(window).bind("beforeunload",function(){
                 //if the record is dirty, warn the user.
-                if(worksheet._collection.isDirty){
+                if(self.isDirty()){
                     return app.lang.get("LBL_WORKSHEET_SAVE_CONFIRM_UNLOAD", "Forecasts");
                 }
                 //special manager cases for messages
@@ -386,15 +447,16 @@
          * First we need to see if the collection is dirty. This is marked if any of the models 
          * is marked as dirty. This will show the "unsaved changes" dialog
          */
-        if(collection.isDirty){
+        if(self.isDirty()){
             //unsaved changes, ask if you want to save.
             if(confirm(app.lang.get("LBL_WORKSHEET_SAVE_CONFIRM", "Forecasts"))){
-                self.context.forecasts.trigger("forecasts:forecastcommitbuttons:triggerSaveDraft");
+                self.context.forecasts.set({reloadCommitButton: true});
+                this.saveWorksheet(function(){
+                    collection.fetch();
+                })
             }
             //user clicked cancel, ignore and fetch if fetch is enabled
             else{
-                
-                collection.isDirty = false;
                 self.context.forecasts.set({reloadCommitButton: true});
                 if(fetch){
                     collection.fetch();
@@ -458,7 +520,6 @@
      */
     _render: function() {
         var self = this;
-        var enableCommit = false;
         
         if(!this.showMe()){
             return false;
@@ -491,14 +552,13 @@
 
         //Check to see if any worksheet entries are older than the source data.  If so, that means that the
         //last commit is older, and that we need to enable the commit buttons
-        _.each(this._collection.models, function(model, index){
-            if(!_.isEmpty(model.get("w_date_modified")) && (new Date(model.get("w_date_modified")) < new Date(model.get("date_modified")))) {
-                enableCommit = true;
-            }
-        });
-        if (enableCommit) {
+        var enableCommit = self._collection.find(function(model) {
+            return !_.isEmpty(model.get("w_date_modified")) && (new Date(model.get("w_date_modified")) < new Date(model.get("date_modified")))
+        }, this);
+        if (!_.isObject(enableCommit)) {
             self.context.forecasts.trigger("forecasts:commitButtons:enabled");
         }
+
         return this;
     },
 
@@ -703,35 +763,37 @@
             forecast_ranges_setting = this.context.forecasts.config.get('forecast_ranges') || 'show_binary';
 
         // start with no filters, i. e. show everything.
-        $.fn.dataTableExt.afnFiltering.splice(0, $.fn.dataTableExt.afnFiltering.length);
-        if (!_.isEmpty(params)) {
-            $.fn.dataTableExt.afnFiltering.push (
-                function(oSettings, aData, iDataIndex) {
+        if(!_.isUndefined($.fn.dataTableExt)) {
+            $.fn.dataTableExt.afnFiltering.splice(0, $.fn.dataTableExt.afnFiltering.length);
+            if (!_.isEmpty(params)) {
+                $.fn.dataTableExt.afnFiltering.push (
+                    function(oSettings, aData, iDataIndex) {
 
-                    // This is required to prevent manager view from filtering incorrectly, since datatables does filtering globally
-                    if(oSettings.nTable == _.first($('.worksheetManagerTable'))) {
-                        return true;
+                        // This is required to prevent manager view from filtering incorrectly, since datatables does filtering globally
+                        if(oSettings.nTable == _.first($('.worksheetManagerTable'))) {
+                            return true;
+                        }
+
+                        var editable = self.isMyWorksheet(),
+                            selectVal,
+                            rowCategory = $(_.first(aData)),
+                            checkState;
+
+                        //If we are in an editable worksheet get the selected dropdown/checkbox value; otherwise, get the detail/default text
+                        if (forecast_ranges_setting == 'show_binary') {
+                            checkState = rowCategory.find('input').attr('checked');
+                            selectVal = ((checkState == "checked") || (checkState == "on") || (checkState == "1")) ? 'include' : 'exclude';
+                        } else {
+                            selectVal = editable ? rowCategory.find("select").attr("value") : rowCategory.text().trim().toLowerCase();
+                        }
+
+                        self.context.forecasts.trigger('forecasts:worksheet:filtered');
+
+                        return (_.contains(params, selectVal));
+
                     }
-
-                    var editable = self.isMyWorksheet(),
-                        selectVal,
-                        rowCategory = $(_.first(aData)),
-                        checkState;
-                    
-                    //If we are in an editable worksheet get the selected dropdown/checkbox value; otherwise, get the detail/default text
-                    if (forecast_ranges_setting == 'show_binary') {
-                        checkState = rowCategory.find('input').attr('checked');
-                        selectVal = ((checkState == "checked") || (checkState == "on") || (checkState == "1")) ? 'include' : 'exclude';
-                    } else {
-                        selectVal = editable ? rowCategory.find("select").attr("value") : rowCategory.text().trim().toLowerCase();
-                    }
-
-                    self.context.forecasts.trigger('forecasts:worksheet:filtered');
-
-                    return (_.contains(params, selectVal));
-
-                }
-            );
+                );
+            }
         }
         if(!_.isUndefined(this.gTable.fnDestroy)){
             this.gTable.fnDestroy();
