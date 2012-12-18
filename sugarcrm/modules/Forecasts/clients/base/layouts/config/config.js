@@ -36,20 +36,24 @@
     extendsFrom:"ForecastsIndexLayout",
 
     initialize:function (options) {
-        options.context = _.extend(options.context, this.initializeAllModels(options.context));
-        options.context.forecasts = new Backbone.Model({'saveClicked' : false});
+        // If is_setup == 1 and users come back to config, the context.forecasts will already be here
+        // so only make this new config mode there is no forecasts object on the context
+        if(_.isUndefined(options.context.forecasts)) {
+            options.context = _.extend(options.context, this.initializeAllModels(options.context));
+            options.context.forecasts = new Backbone.Model({'saveClicked' : false});
 
-        // Initialize the config model
-        var ConfigModel = Backbone.Model.extend({
-            url:app.api.buildURL("Forecasts", "config"),
-            sync:function (method, model, options) {
-                var url = _.isFunction(model.url) ? model.url() : model.url;
-                return app.api.call(method, url, model, options);
-            },
-            // include metadata from config into the config model by default
-            defaults:app.metadata.getModule('Forecasts').config
-        });
-        options.context.forecasts.config = new ConfigModel();
+            // Initialize the config model
+            var ConfigModel = Backbone.Model.extend({
+                url:app.api.buildURL("Forecasts", "config"),
+                sync:function (method, model, options) {
+                    var url = _.isFunction(model.url) ? model.url() : model.url;
+                    return app.api.call(method, url, model, options);
+                },
+                // include metadata from config into the config model by default
+                defaults:app.metadata.getModule('Forecasts').config
+            });
+            options.context.forecasts.config = new ConfigModel();
+        }
 
         app.view.Layout.prototype.initialize.call(this, options);
     },
@@ -85,7 +89,7 @@
         if (isAdmin) {
             // begin building params to pass to modal
             var params = {
-                title:app.lang.get("LBL_FORECASTS_CONFIG_TITLE", "Forecasts"),
+                title:app.lang.get("LBL_FORECASTS_CONFIG_TITLE", "Forecasts") + ":",
                 span:10,
                 before:{
                     hide:self.checkSettingsAndRedirect
@@ -104,7 +108,7 @@
             var alert = app.alert.show('no_access_error', {
                     level:'error',
                     messages:app.lang.get("LBL_FORECASTS_CONFIG_USER_SPLASH", "Forecasts"),
-                    title:app.lang.get("LBL_FORECASTS_CONFIG_TITLE", "Forecasts")}
+                    title:app.lang.get("LBL_FORECASTS_CONFIG_TITLE", "Forecasts") + ":"}
             );
             alert.getCloseSelector().on('click', function () {
                 return self.checkSettingsAndRedirect();

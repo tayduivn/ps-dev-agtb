@@ -23,6 +23,18 @@ if (! defined ( 'sugarEntry' ) || ! sugarEntry)
  * $Id: additionalDetails.php 13782 2006-06-06 17:58:55Z majed $
  *********************************************************************************/
 
+// Used in findRelatableModules
+require_once 'modules/ModuleBuilder/Module/StudioBrowser.php';
+
+// Used in addFromPost 
+require_once 'modules/ModuleBuilder/parsers/relationships/AbstractRelationship.php';
+
+// Used in parseDeployedModuleName
+require_once 'modules/ModuleBuilder/MB/ModuleBuilder.php';
+
+// Metadata API cache clearing
+require_once 'include/MetaDataManager/MetaDataManager.php';
+
 /*
  * Abstract class for managing a set of Relationships
  * The Relationships we're managing consist of metadata about relationships, rather than relationship implementations used by the application
@@ -74,7 +86,6 @@ class AbstractRelationships
         $relatableModules [ 'Activities' ] [ 'default' ] = translate( 'LBL_DEFAULT' ) ;
             
         // find all deployed modules
-        require_once 'modules/ModuleBuilder/Module/StudioBrowser.php' ;
         $browser = new StudioBrowser() ;
         $browser->loadRelatableModules();
         reset($browser->modules) ;
@@ -142,7 +153,6 @@ class AbstractRelationships
     {
         $definition = array ( ) ;
         
-        require_once 'modules/ModuleBuilder/parsers/relationships/AbstractRelationship.php' ;
         foreach ( AbstractRelationship::$definitionKeys as $key )
         {
             if (! empty ( $_REQUEST [ $key ] ))
@@ -231,6 +241,9 @@ class AbstractRelationships
         mkdir_recursive ( $basepath ) ;
         // replace any existing relationships.php
         write_array_to_file ( 'relationships', $definitions, $basepath . '/relationships.php', 'w', $header ) ;
+        
+        // Clear out the api metadata cache
+        MetaDataManager::clearAPICache();
     }
 
     /*
@@ -586,7 +599,6 @@ class AbstractRelationships
      */
     static function parseDeployedModuleName ($deployedName)
     {
-        require_once 'modules/ModuleBuilder/MB/ModuleBuilder.php' ;
         $mb = new ModuleBuilder ( ) ;
         
         $packageName = '' ;

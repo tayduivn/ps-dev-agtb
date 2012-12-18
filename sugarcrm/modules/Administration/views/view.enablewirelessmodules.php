@@ -106,9 +106,6 @@ class AdministrationViewEnablewirelessmodules extends SugarView
             $disabled_modules ['Employees'] = $app_strings['LBL_EMPLOYEES'];
         }
 
-        natcasesort($enabled_modules);
-        natcasesort($disabled_modules);
-
         $json_enabled = array();
         foreach($enabled_modules as $mod => $label)
         {
