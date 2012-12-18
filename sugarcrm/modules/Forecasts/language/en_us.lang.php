@@ -230,6 +230,7 @@ $mod_strings = array (
     'LBL_COMMIT_STAGE' => 'Commit Stage',
     'LBL_SALES_STAGE' => 'Stage',
     'LBL_AMOUNT' => 'Amount',
+    'LBL_PERCENT' => 'Percent',
     'LBL_DATE_CLOSED' => 'Expected Close',
     'LBL_PRODUCT_ID' => 'Product ID',
     'LBL_QUOTA_ID' => 'Quota ID',

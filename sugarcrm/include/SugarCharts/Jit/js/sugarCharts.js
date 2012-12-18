@@ -54,6 +54,80 @@ function loadSugarChart (chartId, jsonFilename, css, chartConfig, params, callba
     minColumnWidth = params.minColumnWidth || minColumnWidth;
 
 			switch(chartConfig["chartType"]) {
+                case "d3-barChart":
+                    SUGAR.charts.get(jsonFilename, params, function(data) {
+
+                        if(SUGAR.charts.isDataEmpty(data)){
+                            var json = data;
+
+                            var marginBottom = (chartConfig["orientation"] == 'vertical' && data.values.length > 8) ? 20*4 : 20;
+
+                            var paretoChart = nv.models.paretoChart()
+                                .margin({top: 0, right: 0, bottom: 20, left: 45})
+                                .showTitle(false)
+                                .tooltips(true)
+                                .tooltipLine(function(key, x, y, e, graph) {
+                                    // Format the value using currency class and user settings
+                                    var val = App.currency.formatAmountLocale(e.point.y)
+                                    return '<p>' + key +': <b>' + val + '</b></p>'
+                                })
+                                .tooltipBar(function(key, x, y, e, graph) {
+                                    // Format the value using currency class and user settings
+                                    var val = App.currency.formatAmountLocale(e.value)
+                                    return '<p>' + SUGAR.App.lang.get('LBL_SALES_STAGE', 'Forecasts') + ': <b>' + key + '</b></p>' +
+                                        '<p>' + SUGAR.App.lang.get('LBL_AMOUNT', 'Forecasts') + ': <b>' + val + '</b></p>' +
+                                        '<p>' + SUGAR.App.lang.get('LBL_PERCENT', 'Forecasts') + ': <b>' + x + '%</b></p>'
+                                })
+                                .showControls(false)
+                                .colorData( 'default' )
+                                .colorFill( 'default' )
+                                .stacked(!params.display_manager)
+                                .id(chartId);
+
+                            // get chartId from params or use the default for sugar
+                            var chartId = params.chartId || 'db620e51-8350-c596-06d1-4f866bfcfd5b';
+
+                            // After the .call(paretoChart) line, we are selecting the text elements for the Y-Axis
+                            // only so we can custom format the Y-Axis values
+                            d3.select('#' + chartId)
+                                .append('svg')
+                                .datum( SUGAR.charts.translateDataToD3(json,params) )
+                                .transition().duration(500)
+                                .call(paretoChart)
+                                .selectAll('.nv-y.nv-axis text')
+                                .text(function(d) {
+                                    return App.user.get('currency_symbol') + d3.format(",.2s")(d);
+                                });
+
+                            nv.utils.windowResize(paretoChart.update);
+
+                            //this expand to full screen call shouldn't be in the chart def
+                            //don't know where to put it
+                            $('.thumbnail.viz .btn-expand-full').unbind('click').bind('click',
+                                function(e){
+                                    if ( $('.thumbnail.viz').hasClass('expanded') )
+                                    {
+                                        $('.thumbnail.viz').removeClass('expanded');
+                                        $('.thumbnail.viz .chart-container').css({'height':'300px'});
+                                        $('.thumbnail.viz .btn-expand-full span').removeClass('icon-resize-small');
+                                    }
+                                    else
+                                    {
+                                        $('.thumbnail.viz').addClass('expanded');
+                                        $('.thumbnail.viz .chart-container').css({'height':$(window).height()-130});
+                                        $('.thumbnail.viz .btn-expand-full span').addClass('icon-resize-small');
+                                    }
+                                    that.chartObject.update();
+                                }
+                            );
+
+                            that.chartObject = paretoChart;
+
+                            SUGAR.charts.setChartObject(paretoChart);
+                        }
+                        SUGAR.charts.callback(callback);
+                    });
+                    break;
 			case "barChart":
                 SUGAR.charts.get(jsonFilename, params, function(data) {
                     if(SUGAR.charts.isDataEmpty(data)){
