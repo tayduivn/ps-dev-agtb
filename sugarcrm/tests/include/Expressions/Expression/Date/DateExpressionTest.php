@@ -28,7 +28,6 @@ class DateExpressionTest extends Sugar_PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-    	$this->useOutputBuffering = false;
     }
     
 	public static function setUpBeforeClass()
