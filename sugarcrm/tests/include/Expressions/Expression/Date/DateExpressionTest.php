@@ -28,7 +28,7 @@ class DateExpressionTest extends Sugar_PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-
+    	$this->useOutputBuffering = false;
     }
     
 	public static function setUpBeforeClass()
@@ -206,12 +206,20 @@ class DateExpressionTest extends Sugar_PHPUnit_Framework_TestCase
         }
         $task->date_due = 'Chuck Norris';
 	    $expr = 'addDays($date_due, 3)';
-        $result = Parser::evaluate($expr, $task)->evaluate();
-        $this->assertFalse($result, "Incorrecty converted '{$task->date_due }' to date $result");
+	    try {
+            $result = Parser::evaluate($expr, $task)->evaluate();
+	        $this->assertTrue(false, "Incorrecty converted '{$task->date_due }' to date $result");
+        } catch (Exception $e){
+            $this->assertContains("invalid value to date", $e->getMessage());
+        }
 
 	    $expr = 'addDays($date_start, 3)'; // not setting the value
-        $result = Parser::evaluate($expr, $task)->evaluate();
-        $this->assertFalse($result, "Incorrecty converted empty string to date $result");
+	    try {
+            $result = Parser::evaluate($expr, $task)->evaluate();
+	        $this->assertTrue(false, "Incorrecty converted empty string to date $result");
+        } catch (Exception $e){
+            $this->assertContains("attempt to get date from empty field", $e->getMessage());
+        }
 	}
 
 	/**
@@ -228,7 +236,6 @@ class DateExpressionTest extends Sugar_PHPUnit_Framework_TestCase
 	    $this->assertInstanceOf("DateTime", $result);
 	    $this->assertEquals($timedate->asUser($timedate->getNow(true)->get("+3 days")), $timedate->asUser($result));
 	}
-
 
     /**
      * @group bug57900
