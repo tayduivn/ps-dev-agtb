@@ -39,26 +39,22 @@ class RESTAPI4Test extends Sugar_PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        $beanList = array();
-		$beanFiles = array();
-		require('include/modules.php');
-		$GLOBALS['beanList'] = $beanList;
-		$GLOBALS['beanFiles'] = $beanFiles;
+        SugarTestHelper::setUp("beanList");
+        SugarTestHelper::setUp("beanFiles");
+        //Create an anonymous user for login purposes/
+        $this->_user = SugarTestHelper::setUp("current_user");
 
         //Reload langauge strings
         $GLOBALS['app_strings'] = return_application_language($GLOBALS['current_language']);
         $GLOBALS['app_list_strings'] = return_app_list_strings_language($GLOBALS['current_language']);
         $GLOBALS['mod_strings'] = return_module_language($GLOBALS['current_language'], 'Accounts');
-        //Create an anonymous user for login purposes/
-        $this->_user = SugarTestUserUtilities::createAnonymousUser();
+
 
         $this->_admin_user = SugarTestUserUtilities::createAnonymousUser();
         $this->_admin_user->status = 'Active';
         $this->_admin_user->is_admin = 1;
         $this->_admin_user->save();
         $GLOBALS['db']->commit(); // Making sure we commit any changes before continuing
-
-        $GLOBALS['current_user'] = $this->_user;
 
         self::$helperObject = new APIv3Helper();
 
@@ -89,13 +85,10 @@ class RESTAPI4Test extends Sugar_PHPUnit_Framework_TestCase
 
 	    if(isset($GLOBALS['listViewDefs'])) unset($GLOBALS['listViewDefs']);
 	    if(isset($GLOBALS['viewdefs'])) unset($GLOBALS['viewdefs']);
-	    unset($GLOBALS['beanList']);
-		unset($GLOBALS['beanFiles']);
-		unset($GLOBALS['app_list_strings']);
+	    unset($GLOBALS['app_list_strings']);
 	    unset($GLOBALS['app_strings']);
 	    unset($GLOBALS['mod_strings']);
-	    unset($GLOBALS['current_user']);
-        SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
+        SugarTestHelper::tearDown();
 	}
 
     protected function _makeRESTCall($method,$parameters)

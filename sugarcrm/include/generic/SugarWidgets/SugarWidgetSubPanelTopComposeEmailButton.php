@@ -51,7 +51,15 @@ class SugarWidgetSubPanelTopComposeEmailButton extends SugarWidgetSubPanelTopBut
 			$temp = '';
 			return $temp;
 		}
-		
+
+        /**
+         * if module is hidden or subpanel for the module is hidden - doesn't show quick create button
+         */
+        if ( SugarWidget::isModuleHidden( 'Emails' ) )
+        {
+            return '';
+        }
+
 		global $app_strings,$current_user,$sugar_config,$beanList,$beanFiles;
 		$title = $app_strings['LBL_COMPOSE_EMAIL_BUTTON_TITLE'];
 		//$accesskey = $app_strings['LBL_COMPOSE_EMAIL_BUTTON_KEY'];

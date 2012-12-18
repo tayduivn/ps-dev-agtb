@@ -222,10 +222,9 @@ class DynamicField {
                 }
             }
 
-            $manager = new VardefManager();
             if($saveCache)
             {
-                $manager->saveCache ($this->module, $object);
+                VardefManager::saveCache ($this->module, $object);
             }
 
             // Everything works off of vardefs, so let's have it save the users vardefs
@@ -233,7 +232,7 @@ class DynamicField {
             // the scenes
             if ($module == 'Users')
             {
-                $manager->loadVardef('Employees', 'Employee', true);
+                VardefManager::loadVardef('Employees', 'Employee');
                 return;
             }
 

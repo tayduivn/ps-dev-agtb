@@ -43,7 +43,7 @@ class SugarTestUserUtilities
         
         $time = mt_rand();
     	$userId = 'SugarUser';
-    	$user = new User();
+    	$user = BeanFactory::getBean("Users");
         $user->user_name = $userId . $time;
         $user->user_hash = md5($userId.$time);
         $user->first_name = $userId;

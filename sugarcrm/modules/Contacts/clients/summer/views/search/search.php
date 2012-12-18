@@ -27,14 +27,14 @@
  * by SugarCRM are Copyright (C) 2004-2006 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 $searchdefs['Contacts'] = array(
-  					'templateMeta' => array('maxColumns' => '1', 
-                            'widths' => array('label' => '10', 'field' => '30'), 
-                           ),
-                    'layout' => array(
-	  					'basic_search' => array(
-							'last_name',
-							'first_name',
-							),
-					),
- 			   );
+    'templateMeta' => array('maxColumns' => '1',
+        'widths' => array('label' => '10', 'field' => '30'),
+    ),
+    'layout' => array(
+        'basic_search' => array(
+            'last_name',
+            'first_name',
+        ),
+    ),
+);
 ?>

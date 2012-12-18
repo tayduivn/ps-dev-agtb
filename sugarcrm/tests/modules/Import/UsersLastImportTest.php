@@ -34,13 +34,7 @@ class UsersLastImportTest extends Sugar_PHPUnit_Framework_TestCase
     
     public function setUp() 
     {
-        $beanList = array();
-        $beanFiles = array();
-        require('include/modules.php');
-        $GLOBALS['beanList'] = $beanList;
-        $GLOBALS['beanFiles'] = $beanFiles;
-        
-        $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
+        SugarTestHelper::setUp("current_user");
         $this->_importModule = 'Notes';
         $this->_importObject = 'Note';
         $this->_importRecordCount = 3;
@@ -60,10 +54,7 @@ class UsersLastImportTest extends Sugar_PHPUnit_Framework_TestCase
             'DELETE FROM users_last_import 
                 WHERE id IN (\'' . 
                     implode("','",$this->_usersLastImportIds) . '\')');
-        SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
-        unset($GLOBALS['current_user']);
-        unset($GLOBALS['beanList']);
-        unset($GLOBALS['beanFiles']);
+        SugarTestHelper::tearDown();
     }
     
     private function _loadBean()

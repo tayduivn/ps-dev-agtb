@@ -34,7 +34,7 @@
                         {{#if ../collection.models}}
                         {{#each ../../collection.models}}
                         <li class="activity" data-id="{{id}}">
-                            <a href="javascript:void(0)" data-toggle="tab"><span class="label label-{{module}}">{{str "LBL_MODULE_NAME_SINGULAR" module}}</span></a>
+                            <a class="avatar pull-left" href="javascript:void(0)" data-toggle="tab"><span class="label label-{{module}}">{{str "LBL_MODULE_NAME_SINGULAR" module}}</span></a>
                             <p>
                                 <a href="javascript:void(0)">{{attributes.name}}</a>
                                 <br>

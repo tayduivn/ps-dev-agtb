@@ -59,6 +59,7 @@ class RestPublicMetadataSugarLayoutsTest extends RestTestBase {
         SugarAutoLoader::saveMap();
         // Make sure we don't login before running public api tests
         $this->authToken = 'LOGGING_IN';
+        $this->_clearMetadataCache();
     }
 
     public function tearDown()

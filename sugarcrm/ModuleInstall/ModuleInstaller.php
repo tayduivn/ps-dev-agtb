@@ -2417,7 +2417,7 @@ private function dir_file_count($path){
             'serverUrl' => $sugar_config['site_url'].'/rest/v10',
             'siteUrl' => $sugar_config['site_url'],
             'unsecureRoutes' => array('login', 'error'),
-            'loadCss' => 'url',
+            'loadCss' => false,
             'themeName' => 'default',
             'clientID' => 'sugar'
         );

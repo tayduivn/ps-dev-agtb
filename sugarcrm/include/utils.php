@@ -999,15 +999,15 @@ function return_app_list_strings_language($language)
     }
 
 
-    foreach ( $langs as $lang ) {
-        foreach(SugarAutoLoader::existing(
-            "custom/application/Ext/Language/$lang.lang.ext.php",
-            "custom/include/language/$lang.lang.php"
-        ) as $file) {
-            $app_list_strings = _mergeCustomAppListStrings($file , $app_list_strings);
-            $GLOBALS['log']->info("Found extended language file: $file");
-        }
+
+    foreach(SugarAutoLoader::existing(
+        "custom/application/Ext/Language/$lang.lang.ext.php",
+        "custom/include/language/$lang.lang.php"
+    ) as $file) {
+        $app_list_strings = _mergeCustomAppListStrings($file , $app_list_strings);
+        $GLOBALS['log']->info("Found extended language file: $file");
     }
+
 
     if(!isset($app_list_strings)) {
 		$GLOBALS['log']->fatal("Unable to load the application language file for the selected language ($language) or the default language ($default_language) or the en_us language");
@@ -1163,8 +1163,15 @@ function return_module_language($language, $module, $refresh=false)
 
 	// Jenny - Bug 8119: Need to check if $module is not empty
 	if (empty($module)) {
-		$stack  = debug_backtrace();
-		$GLOBALS['log']->warn("Variable module is not in return_module_language ". var_export($stack, true));
+		$message = "Variable module is not in return_module_language ";
+        //If any object in the stack contains a circualr reference,
+        //debug_backtrace will cause a fatal recursive dependency error without DEBUG_BACKTRACE_IGNORE_ARGS
+        if (version_compare(PHP_VERSION, '5.3.6') >= 0)
+        {
+            $message .= var_export(debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS), true);
+        }
+        $GLOBALS['log']->warn($message);
+
 		return array();
 	}
 

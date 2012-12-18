@@ -172,7 +172,7 @@ $dictionary['SavedReport'] = array ( 'table' => 'saved_reports'
     'dbType' => 'datetime',
 	'table' => 'report_cache',
 	'isnull' => 'true',
-	'module' => 'Report',
+	'module' => 'Reports',
 	'reportable'=>false,
 	'source' => 'non-db',
 	'massupdate' => false,

@@ -6,7 +6,7 @@
  */
 ({
     values: new Backbone.Model(),
-    url:'rest/v10/Forecasts/chart',
+    url: app.api.buildURL('Forecasts/chart'),
 
     chart: null,
 
@@ -29,6 +29,13 @@
     events : {
         'click #forecastsChartDisplayOptions div.datasetOptions label.radio' : 'changeDisplayOptions',
         'click #forecastsChartDisplayOptions div.groupByOptions label.radio' : 'changeGroupByOptions'
+    },
+
+    initialize : function(options) {
+        app.view.View.prototype.initialize.call(this, options);
+
+        // clear out the values if the object is re-inited.
+        this.values.clear({silent: true});
     },
 
     /**
@@ -114,7 +121,7 @@
             timeperiod_id : app.defaultSelections.timeperiod_id.id,
             group_by : _.first(this.getCheckedOptions('groupByOptions')),
             dataset : this.getCheckedOptions('datasetOptions'),
-            category : app.defaultSelections.category
+            ranges: app.defaultSelections.ranges
         };
 
         this.handleRenderOptions(values);
@@ -174,9 +181,9 @@
                 self.handleRenderOptions({group_by: groupBy});
             }
         });
-        this.context.forecasts.on('change:selectedCategory', function(context, value) {
+        this.context.forecasts.on('change:selectedRanges', function(context, value) {
             if(!_.isEmpty(self.chart)) {
-                self.handleRenderOptions({category: value});
+                self.handleRenderOptions({ranges: value});
             }
         });
         this.context.forecasts.on('change:hiddenSidebar', function(context, value){
@@ -225,6 +232,7 @@
         }
 
         var chart,
+            self = this,
             chartId = "db620e51-8350-c596-06d1-4f866bfcfd5b",
             css = {
                 "gridLineColor":"#cccccc",
@@ -235,7 +243,7 @@
                 "orientation":"vertical",
                 "barType": this.values.get('display_manager') ? "grouped" : "stacked",
                 "tip":"name",
-                "chartType":"barChart",
+                "chartType":"d3-barChart",
                 "imageExportType":"png",
                 "showNodeLabels":false,
                 "showAggregates":false,
@@ -243,9 +251,9 @@
                 "dataPointSize":"5"
             };
 
-        var oldChart = $("#" + chartId + "-canvaswidget");
+        var oldChart = $("#" + chartId );
         if(!_.isEmpty(oldChart)) {
-            oldChart.remove();
+            d3.select('#' + chartId + ' svg').remove();
         }
 
         SUGAR.charts = $.extend(SUGAR.charts,
@@ -260,12 +268,61 @@
                   url = app.api.buildURL('Forecasts', 'chart', '', data);
 
                   app.api.call('read', url, data, {success : success});
-              }
+              },
+                translateDataToD3 : function( json, params )
+                {
+                    return {
+                        'properties':{
+                            'title': json.properties[0].title
+                            , 'quota': parseInt(json.values[0].goalmarkervalue[0],10)
+                            // bar group data (x-axis)
+                            , 'groupData': json.values.map( function(d,i){
+                                return {
+                                    'group': i
+                                    , 'l': json.values[i].label
+                                    , 't': json.values[i].values.reduce( function(p, c, i, a){
+                                        return parseInt(p,10) + parseInt(c,10);
+                                    })
+                                }
+                            })
+                        }
+                        // series data
+                        , 'data': json.label.map( function(d,i){
+                            return {
+                                'key': d
+                                , 'type': 'bar'
+                                , 'series': i
+                                , 'values': json.values.map( function(e,j){
+                                    return { 'series': i, 'x': j+1, 'y': parseInt(e.values[i],10), y0: 0 };
+                                })
+                                , 'valuesOrig': json.values.map( function(e,j){
+                                    return { 'series': i, 'x': j+1, 'y': parseInt(e.values[i],10), y0: 0 };
+                                })
+                            }
+                        }).concat(
+                            json.properties[0].goal_marker_label.filter( function(d,i){
+                                return d !== 'Quota';
+                            }).map( function(d,i){
+                                    return {
+                                        'key': d
+                                        , 'type': 'line'
+                                        , 'series': i
+                                        , 'values': json.values.map( function(e,j){
+                                            return { 'series': i, 'x': j+1, 'y': parseInt(e.goalmarkervalue[i+1],10) };
+                                        })
+                                        , 'valuesOrig': json.values.map( function(e,j){
+                                            return { 'series': i, 'x': j+1, 'y': parseInt(e.goalmarkervalue[i+1],10) };
+                                        })
+                                    }
+                                })
+                        )
+                    };
+                }
             }
         );
 
         if(this.values.get('display_manager') === true) {
-            this.values.set({category: 'include'}, {silent: true});
+            this.values.set({ranges: 'include'}, {silent: true});
         }
 
         // update the chart title
@@ -276,6 +333,7 @@
         var params = this.values.toJSON() || {};
         params.contentEl = 'chart';
         params.minColumnWidth = 120;
+        params.chartId = chartId;
 
         chart = new loadSugarChart(chartId, this.url, css, chartConfig, params, _.bind(function(chart){
             this.chart = chart;

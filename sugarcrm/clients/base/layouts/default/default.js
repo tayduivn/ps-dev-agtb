@@ -46,17 +46,17 @@
     },
 
     showPreview: function() {
-        this.$(".side-pane").addClass("hide");
-        this.$(".preview-pane").removeClass("hide");
+        this.$(".side-pane").removeClass("active");
+        this.$(".preview-pane").addClass("active");
     },
 
     hidePreview: function() {
-        this.$(".preview-pane").addClass("hide");
-        this.$(".side-pane").removeClass("hide");
+        this.$(".preview-pane").removeClass("active");
+        this.$(".side-pane").addClass("active");
     },
 
     togglePreview: function() {
-        this.$(".side-pane").toggleClass("hide");
-        this.$(".preview-pane").toggleClass("hide");
+        this.$(".side-pane").toggleClass("active");
+        this.$(".preview-pane").toggleClass("active");
     }
 })
