@@ -39,7 +39,6 @@ $viewdefs['base']['view']['list'] = array(
                 'primary' => true,
                 'events' => array(
                     'click' => 'function(e){
-                    console.log("massupdate");
                     this.view.layout.trigger("list:massupdate:fire");
                     }'
                 ),
@@ -52,7 +51,6 @@ $viewdefs['base']['view']['list'] = array(
                 'primary' => true,
                 'events' => array(
                     'click' => 'function(e){
-                    console.log("massdelete");
                     this.view.layout.trigger("list:massdelete:fire");
                     }'
                 ),
