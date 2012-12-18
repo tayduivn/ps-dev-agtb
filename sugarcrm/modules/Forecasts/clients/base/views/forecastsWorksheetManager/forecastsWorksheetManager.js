@@ -172,10 +172,9 @@
             this.context.forecasts.worksheetmanager.on("change", function() {
             	this.calculateTotals();
             }, this);
-            this.context.forecasts.on("forecasts:commitButtons:saved", function(){
+            this.context.forecasts.on("forecasts:commitButtons:saved forecasts:commitButtons:saved", function(){
             	if(this.showMe()){
-            		var model = this.context.forecasts.worksheetmanager;
-            		model.url = this.createURL();
+            		this.context.forecasts.worksheetmanager.url = this.createURL();
             		this.safeFetch();
             	}
             }, this);

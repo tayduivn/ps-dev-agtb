@@ -169,9 +169,9 @@
     	self.draft = 0;
     	
         if(!commitbtn.hasClass("disabled")){
-            saved = this.context.forecasts.trigger("forecasts:worksheetSave", _.bind(function(){
-                this.context.forecasts.set({commitForecastFlag: true});
-            }, this), true);
+            saved = this.context.forecasts.trigger("forecasts:worksheetSave", function(){
+                self.context.forecasts.set({commitForecastFlag: true});
+            }, true);
             
             //we didn't have anything to save (and wait to finish), so go ahead and trigger the commit
             if(saved == 0){
@@ -185,19 +185,13 @@
      * Handles Save Draft button being clicked
      */
     triggerSaveDraft: function() {
-    	var savebtn = this.$el.find('#save_draft'),
-    	    self = this,
-    	    saved = 0;
-    	self.draft = 1;
+    	var savebtn = this.$el.find('#save_draft');
     	
     	if(!savebtn.hasClass("disabled")){
-            // pass true since we are saving a draft version.
             this.context.forecasts.trigger("forecasts:worksheetSave");
-    	    // saved = self.saveDirtyWorksheets();
-            savebtn.addClass("disabled");
+    	    savebtn.addClass("disabled");
     		this.enableCommitButton();
     	}
-    	
     },
 
     /**

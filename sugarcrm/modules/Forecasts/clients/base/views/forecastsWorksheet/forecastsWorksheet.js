@@ -289,11 +289,10 @@
                 if(_.include(_.keys(changed.changes), 'commit_stage')) {
                     this.gTable.fnDestroy();
                     this.gTable = this.$('.worksheetTable').dataTable(self.gTableDefs);
-                } else {
-                    // The Model has changed vai CTE. save it in the isDirty
-                    this.dirtyModels.add(model);
-                    this.context.forecasts.trigger('forecasts:worksheetDirty', model, changed);
                 }
+                // The Model has changed via CTE. save it in the isDirty
+                this.dirtyModels.add(model);
+                this.context.forecasts.trigger('forecasts:worksheetDirty', model, changed);
             }, this);
         }
 
