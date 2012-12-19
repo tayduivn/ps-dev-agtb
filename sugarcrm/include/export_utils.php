@@ -278,6 +278,17 @@ function getExportContentFromFilter($args, $remove_from_members, $focus, $member
         $nextOffset = $data['next_offset'];
     }
 
+    foreach ($records as &$record) {
+        foreach ($record as $name=>$val) {
+            if (is_array($record[$name])) {
+                if ($name != 'team_name' && $name != 'email') {
+                    // we do not need arrays like $record['_acl']
+                    unset($record[$name]);
+                }
+            }
+        }
+    }
+
     if (is_array($records) && !empty($records)) {
         $fields_array = get_field_order_mapping2($args['module'], array_keys($records[0]), true, true);
     } else {
