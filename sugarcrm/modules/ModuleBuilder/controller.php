@@ -685,6 +685,7 @@ class ModuleBuilderController extends SugarController
 
                 $GLOBALS ['mod_strings']['LBL_ALL_MODULES'] = 'all_modules';
                 $_REQUEST['execute_sql'] = true;
+                include_once ('modules/Administration/QuickRepairAndRebuild.php');
                 $repair = new RepairAndClear();
                 $repair->repairAndClearAll(array('rebuildExtensions', 'clearVardefs', 'clearTpls'), array($class_name), true, false);
                 $module = StudioModuleFactory::getStudioModule($moduleName);
