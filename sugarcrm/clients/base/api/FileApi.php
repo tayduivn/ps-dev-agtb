@@ -41,15 +41,6 @@ class FileApi extends SugarApi {
                 'shortHelp' => 'Saves a file. The file can be a new file or a file override.',
                 'longHelp' => 'include/api/help/filePost.html',
             ),
-            'saveTempImagePost' => array(
-                'reqType' => 'POST',
-                'path' => array('<module>', 'temp', 'file', '?'),
-                'pathVars' => array('module', 'temp', '', 'field'),
-                'method' => 'saveTempImagePost',
-                'rawPostContents' => true,
-                'shortHelp' => 'Saves a temporary image.',
-                'longHelp' => 'include/api/help/tempImagePost.html',
-            ),
             'saveFilePut' => array(
                 'reqType' => 'PUT',
                 'path' => array('<module>', '?', 'file', '?'),
@@ -75,15 +66,6 @@ class FileApi extends SugarApi {
                 'rawReply' => true,
                 'shortHelp' => 'Gets the contents of a single file related to a field for a module record.',
                 'longHelp' => 'include/api/help/fileGet.html',
-            ),
-            'getTempImage' => array(
-                'reqType' => 'GET',
-                'path' => array('<module>', 'temp', 'file', '?', '?'),
-                'pathVars' => array('module', 'record', '', 'field', 'temp_id'),
-                'method' => 'getTempImage',
-                'rawReply' => true,
-                'shortHelp' => 'Reads a temporary image and deletes it.',
-                'longHelp' => 'include/api/help/tempImageGet.html',
             ),
             'removeFile' => array(
                 'reqType' => 'DELETE',
@@ -172,10 +154,14 @@ class FileApi extends SugarApi {
      *
      * @param ServiceBase $api The service base
      * @param array $args Arguments array built by the service base
+     * @param bool $temporary true if we are saving a temporary image
      * @return array
      * @throws SugarApiExceptionError
      */
-    public function saveFilePost($api, $args) {
+    public function saveFilePost($api, $args, $temporary = false) {
+        //Needed by SugarFieldImage.php to know if we are saving a temporary image
+        $args['temp'] = $temporary;
+
         // Get the field
         $field = $args['field'];
 
@@ -189,7 +175,28 @@ class FileApi extends SugarApi {
         $bean = $this->loadBean($api, $args);
 
         // Simple validation
-        $this->simplePostValidation($bean, $args, $_FILES, $filesIndex);
+        // In the case of very large files that are too big for the request too handle AND
+        // if the auth token was sent as part of the request body, you will get a no auth error
+        // message on uploads. This check is in place specifically for file uploads that are too
+        // big to be handled by checking for the presence of the $_FILES array and also if it is empty.
+        if (isset($_FILES)) {
+            if (empty($_FILES)) {
+
+                // If we get here, the attachment was > php.ini upload_max_filesize value so we need to
+                // check if delete_if_fails optional parameter was set true, etc.
+                $this->deleteIfFails($bean, $args);
+
+                // @TODO Localize this exception message
+                throw new SugarApiExceptionRequestTooLarge('Attachment is too large');
+            }
+        } else {
+            throw new SugarApiExceptionMissingParameter('Attachment is missing');
+        }
+
+        if (empty($_FILES[$filesIndex])) {
+            // @TODO Localize this exception message
+            throw new SugarApiExceptionMissingParameter("Incorrect field name for attachement: $filesIndex");
+        }
 
         //BEGIN SUGARCRM flav=pro ONLY
         // Handle ACL - if there is no current field data, it is a CREATE
@@ -255,95 +262,25 @@ class FileApi extends SugarApi {
                     throw new SugarApiExceptionError($sf->error);
                 }
 
-                // Save the bean
-                $bean->save();
-
-                // Prep our return
-                $fileinfo = $this->getFileInfo($bean, $field, $api);
-
-                // Clean up the uri
-                $fileinfo['uri'] = rtrim($api->getResourceURI(''), '/');
-
-                // This isn't needed in this return
-                unset($fileinfo['path']);
-
-                // This is a good return
-                return array($field => $fileinfo);
-            }
-        }
-
-        // @TODO Localize this exception message
-        throw new SugarApiExceptionError("Unexpected field type: $def[type]");
-    }
-
-
-
-    /**
-     * Saves a temporary image to a module field using the POST method (but not attached to any model)
-     *
-     * @param ServiceBase $api The service base
-     * @param array $args Arguments array built by the service base
-     * @return array
-     * @throws SugarApiExceptionError
-     */
-    public function saveTempImagePost($api, $args) {
-        // Get the field
-        $field = $args['field'];
-        $args['temp_id'] = create_guid();
-
-        // To support field prefixes like Sugar proper
-        $prefix = empty($args['prefix']) ? '' : $args['prefix'];
-
-        //Initiate an empty bean
-        $bean = BeanFactory::newBean($args['module']);
-
-        // Simple validation
-        $this->simplePostValidation($bean, $args, $_FILES, $field);
-
-        //BEGIN SUGARCRM flav=pro ONLY
-        // Handle ACL - if there is no current field data, it is a CREATE
-        // This addresses an issue where the portal user has create but not edit
-        // rights for particular modules. The perspective here is that even if
-        // a record exists, if there is no attachment, you are CREATING the
-        // attachment instead of EDITING the parent record. -rgonzalez
-        $accessType = empty($bean->$field) ? 'create' : 'edit';
-        $this->verifyFieldAccess($bean, $field, $accessType);
-        //END SUGARCRM flav=pro ONLY
-
-        // Get the defs for this field
-        $def = $bean->field_defs[$field];
-
-        // Only work on file or image fields
-        if (isset($def['type']) && ($def['type'] == 'image')) {
-            // Get our tools to actually save the file|image
-            require_once 'include/SugarFields/SugarFieldHandler.php';
-            $sfh = new SugarFieldHandler();
-            $sf = $sfh->getSugarField($def['type']);
-            if ($sf) {
-                // SugarFieldFile expects something different than SugarFieldImage
-
-                // Noticed for some reason that API FILE[type] was set to application/octet-stream
-                // That breaks the uploader which is looking for very specific mime types
-                // So rather than rely on what $_FILES thinks, set it with our own methodology
-                require_once 'include/download_file.php';
-                $dl = new DownloadFile();
-                $mime = $dl->getMimeType($_FILES[$field]['tmp_name']);
-                $_FILES[$field]['type'] = $mime;
-
-                // This saves the attachment
-                $sf->save($bean, $args, $field, $def, $prefix);
-
-                // Handle errors
-                if (!empty($sf->error)) {
-                    // Note, that although the code earlier in this method (where attachment too large) handles
-                    // if file > php.ini upload_maxsize, we still may have a file > sugarcrm maxsize
-                    $this->deleteIfFails($bean, $args);
-                    throw new SugarApiExceptionError($sf->error);
-                }
-
                 // Prep our return
                 $fileinfo = array();
-                $fileinfo['guid'] = $args['temp_id'];
+                
+                //In case we are returning a temporary file
+                if ($temporary) {
+                    $fileinfo['guid'] = $bean->$field;
+                }
+                else {
+                    // Save the bean
+                    $bean->save();
+
+                    $fileinfo = $this->getFileInfo($bean, $field, $api);
+
+                    // Clean up the uri
+                    $fileinfo['uri'] = rtrim($api->getResourceURI(''), '/');
+
+                    // This isn't needed in this return
+                    unset($fileinfo['path']);
+                }
 
                 // This is a good return
                 return array($field => $fileinfo);
@@ -426,58 +363,6 @@ class FileApi extends SugarApi {
         $download = new DownloadFile();
         try {
             $download->getFile($bean, $field);
-        } catch (Exception $e) {
-            throw new SugarApiExceptionNotFound($e->getMessage(), null, null, 0, $e);
-        }
-    }
-
-
-    /**
-     * Saves a file to a module field using the PUT method
-     *
-     * @param ServiceBase $api The service base
-     * @param array $args Arguments array built by the service base
-     * @return array
-     */
-    public function getTempImage($api, $args) {
-
-        // Get the field
-        if (empty($args['field'])) {
-            // @TODO Localize this exception message
-            throw new SugarApiExceptionMissingParameter('Field name is missing');
-        }
-        $field = $args['field'];
-
-        // Get the bean
-        $bean = BeanFactory::newBean($args['module']);
-
-        //BEGIN SUGARCRM flav=pro ONLY
-        // Handle ACL
-        $this->verifyFieldAccess($bean, $field);
-        //END SUGARCRM flav=pro ONLY
-
-        $filepath = UploadStream::path("upload://tmp/") . $args['temp_id'];
-        $filedata = getimagesize($filepath);
-
-        try {
-            header("Content-Type: {$filedata['mime']}");
-            header("Content-Length: " . filesize($filepath));
-            header('Expires: ' . gmdate('D, d M Y H:i:s \G\M\T', time() + 10));
-            set_time_limit(0);
-            ob_start();
-
-            //BEGIN SUGARCRM flav=int ONLY
-            // awu: stripping out zend_send_file function call, the function changes the filename to be whatever is on the file system
-            if(function_exists('zend_send_file')){
-                zend_send_file($filepath);
-            }else{
-            //END SUGARCRM flav=int ONLY
-                readfile($filepath);
-            //BEGIN SUGARCRM flav=int ONLY
-            }
-            //END SUGARCRM flav=int ONLY
-            @ob_end_flush();
-            unlink($filepath);
         } catch (Exception $e) {
             throw new SugarApiExceptionNotFound($e->getMessage(), null, null, 0, $e);
         }
@@ -607,40 +492,5 @@ class FileApi extends SugarApi {
         }
 
         return $info;
-    }
-
-    /**
-     * In the case of very large files that are too big for the request too handle AND
-     * if the auth token was sent as part of the request body, you will get a no auth error
-     * message on uploads. This check is in place specifically for file uploads that are too
-     * big to be handled by checking for the presence of the $_FILES array and also if it is empty.
-     *
-     * @param ServiceBase $api The service base
-     * @param array $args Arguments array built by the service base
-     * @param array $_FILES HTTP File upload variables
-     * @param string $filesIndex the field name
-     * @throws SugarApiExceptionRequestTooLarge
-     * @throws SugarApiExceptionMissingParameter
-     */
-    private function simplePostValidation($bean, $args, $_FILES, $filesIndex) {
-
-        if (isset($_FILES)) {
-            if (empty($_FILES)) {
-
-                // If we get here, the attachment was > php.ini upload_max_filesize value so we need to
-                // check if delete_if_fails optional parameter was set true, etc.
-                $this->deleteIfFails($bean, $args);
-
-                // @TODO Localize this exception message
-                throw new SugarApiExceptionRequestTooLarge('Attachment is too large');
-            }
-        } else {
-            throw new SugarApiExceptionMissingParameter('Attachment is missing');
-        }
-
-        if (empty($_FILES[$filesIndex])) {
-            // @TODO Localize this exception message
-            throw new SugarApiExceptionMissingParameter("Incorrect field name for attachement: $filesIndex");
-        }
     }
 }

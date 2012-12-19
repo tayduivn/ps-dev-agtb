@@ -74,10 +74,13 @@ class SugarFieldImage extends SugarFieldBase {
 				if ($upload_file->confirm_upload())
 				{
                     // for saveTempImage API
-                    if (isset($params['temp']) && $params['temp'] == true) {
+                    if (isset($params['temp']) && $params['temp'] === true) {
+
+                        // Create the new field value
+                        $bean->$field = create_guid();
 
                         // Move to temporary folder
-                        if (!$upload_file->final_move($params['temp_id'], true)) {
+                        if (!$upload_file->final_move($bean->$field, true)) {
                             // If this was a fail, reset the bean field to original
                             $this->error = $upload_file->getErrorMessage();
                         }

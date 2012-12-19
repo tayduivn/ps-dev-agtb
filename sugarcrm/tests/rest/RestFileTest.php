@@ -58,7 +58,8 @@ class RestFileTest extends RestFileTestBase
 
         // Grab the temporary file and make sure it's been deleted
         $fetch = $this->_restCall('Contacts/temp/file/picture/' . $reply['reply']['picture']['guid']);
-        $this->assertEmpty($fetch['replyRaw'], 'Temporary file is still here');
+        $this->assertArrayHasKey('error', $fetch['reply'], 'Temporary file is still here');
+        $this->assertEquals('invalid_parameter', $fetch['reply']['error'], 'Expected error string not returned');
     }
 
     /**
