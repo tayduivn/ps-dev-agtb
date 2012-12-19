@@ -144,7 +144,6 @@
     // column collapse
     $('.drawerTrig').on('click',
     function () {
-        console.log('test');
       $(this).toggleClass('pull-right').toggleClass('pull-left');
       $(this).find('i').toggleClass('icon-chevron-left').toggleClass('icon-chevron-right');
       $('#drawer').toggleClass('span2');
