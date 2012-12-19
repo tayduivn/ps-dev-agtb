@@ -270,10 +270,11 @@ function getExportContentFromFilter($args, $remove_from_members, $focus, $member
     $api = new RestService();
     $nextOffset = 0;
     $records = array();
-    $args['max_num'] = 1000;
+    $filterArgs = array('filter'=>$args['filter'], 'module'=>$args['module']);
+    $filterArgs['max_num'] = 1000;
     while ($nextOffset != -1) { // still have records to be fetched
-        $args['offset'] = $nextOffset;
-        $data = $filterApi->filterList($api, $args);
+        $filterArgs['offset'] = $nextOffset;
+        $data = $filterApi->filterList($api, $filterArgs);
         $records = array_merge($data['records'], $records);
         $nextOffset = $data['next_offset'];
     }
