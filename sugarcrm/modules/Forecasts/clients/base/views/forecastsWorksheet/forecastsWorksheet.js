@@ -65,6 +65,7 @@
     show: false,
     viewModule: {},
     selectedUser: {},
+    timePeriod : '',
     gTable:'',
     gTableDefs:{},
     aaSorting:[],
@@ -79,7 +80,20 @@
     // boolean to denote that a fetch is currently in progress
     fetchInProgress: false,
 
+    /**
+     * A Collection to keep track of all the dirty models
+     */
     dirtyModels : new Backbone.Collection(),
+
+    /**
+     * If the timeperiod is changed and we have dirtyModels, keep the previous one to use if they save the models
+     */
+    dirtyTimeperiod : '',
+
+    /**
+     * If the timeperiod is changed and we have dirtyModels, keep the previous one to use if they save the models
+     */
+    dirtyUser : '',
     
     /**
      * Initialize the View
@@ -247,8 +261,8 @@
            //set properties on model to aid in save
             model.set({
                 "draft" : 1,
-                "timeperiod_id" : self.context.forecasts.get("selectedTimePeriod").id,
-                "current_user" : app.user.get('id')
+                "timeperiod_id" : self.dirtyTimeperiod || self.timePeriod,
+                "current_user" : self.dirtyUser.id || self.selectedUser.id
             }, {silent:true});
 
             //set what url  is used for save
@@ -267,10 +281,19 @@
             }});
         });
 
-        // clean up the dirty records
-        self.dirtyModels.reset();
+        self.cleanUpDirtyModels();
 
         return totalToSave;
+    },
+
+    /**
+     * Clean Up the Dirty Modules Collection and dirtyVariables
+     */
+    cleanUpDirtyModels : function() {
+        // clean up the dirty records and variables
+        this.dirtyModels.reset();
+        this.dirtyTimeperiod = '';
+        this.dirtyUser = '';
     },
 
     /**
@@ -281,7 +304,7 @@
         var self = this;
         if (this._collection) {
             this._collection.on("reset", function() {
-                self.dirtyModels.reset();
+                self.cleanUpDirtyModels();
                 self.render();
             }, this);
 
@@ -627,14 +650,9 @@
      * @return {Boolean} this.show
      */
     showMe: function(){
-        var selectedUser = this.selectedUser;
-        this.show = false;
+        var selectedUser = (this.isDirty() && this.dirtyUser) ? this.dirtyUser : this.selectedUser;
 
-        if(selectedUser.showOpps || !selectedUser.isManager){
-            this.show = true;
-        }
-
-        return this.show;
+        return selectedUser.showOpps || !selectedUser.isManager;
     },
 
     /**
@@ -743,9 +761,13 @@
     updateWorksheetBySelectedUser:function (selectedUser) {
         //do a dirty check before fetching. Safe fetch uses selected user for some of its checks, so we need to check
         //things before this.selectedUser is replaced.
+        if(this.isDirty()) {
+            // since the model is dirty, save it so we can use it later
+            this.dirtyUser = this.selectedUser;
+        }
         this.safeFetch(false);        
         this.selectedUser = selectedUser;
-        if(this.selectedUser && !this.selectedUser){
+        if(!this.showMe()){
             return false;
         }
         this._collection.url = this.createURL();
@@ -810,6 +832,10 @@
      * @param {Object} params is always a context
      */
     updateWorksheetBySelectedTimePeriod:function (params) {
+        if(this.isDirty()) {
+            // since the model is dirty, save it so we can use it later
+            this.dirtyTimeperiod = this.timePeriod;
+        }
         this.timePeriod = params.id;
         if(!this.showMe()){
             return false;

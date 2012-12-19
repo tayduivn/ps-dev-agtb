@@ -54,6 +54,7 @@
     show: false,
     viewModule: {},
     selectedUser: {},
+    timePeriod: '',
     gTable:'',
     // boolean for enabled expandable row behavior
     isExpandableRows:'',
@@ -73,6 +74,16 @@
     commitLogLoadingTemplate : _.template('<div class="extend results"><article><%= loadingMessage %></article></div>'),
 
     dirtyModels : new Backbone.Collection(),
+
+    /**
+     * If the timeperiod is changed and we have dirtyModels, keep the previous one to use if they save the models
+     */
+    dirtyTimeperiod : '',
+
+    /**
+     * If the timeperiod is changed and we have dirtyModels, keep the previous one to use if they save the models
+     */
+    dirtyUser : '',
 
     /**
      * Handle Any Events
@@ -121,12 +132,15 @@
      * @param params is always a context
      */
     updateWorksheetBySelectedUser:function (selectedUser) {
+        if(this.isDirty()) {
+            // since the model is dirty, save it so we can use it later
+            this.dirtyUser = this.selectedUser;
+        }
         this.selectedUser = selectedUser;
         if(!this.showMe()){
         	return false;
         }
-        this._collection = this.context.forecasts.worksheetmanager;
-        this._collection.url = this.createURL();
+        this.context.forecasts.worksheetmanager.url = this.createURL();
         this.safeFetch(true);
     },
 
@@ -143,7 +157,7 @@
     bindDataChange: function() {
         if (this._collection) {
             this._collection.on("reset", function() {
-                self.dirtyModels.reset();
+                self.cleanUpDirtyModels();
                 self.render();
             }, this);
 
@@ -240,8 +254,8 @@
            //set properties on model to aid in save
             model.set({
                 "draft" : 1,
-                "timeperiod_id" : self.context.forecasts.get("selectedTimePeriod").id,
-                "current_user" : app.user.get('id')
+                "timeperiod_id" : self.dirtyTimeperiod || self.timePeriod,
+                "current_user" : self.dirtyUser.id || self.selectedUser.id
             }, {silent:true});
 
             //set what url  is used for save
@@ -260,10 +274,19 @@
             }});
         });
 
-        // clean up the dirty records
-        self.dirtyModels.reset();
+        self.cleanUpDirtyModels();
 
         return totalToSave;
+    },
+
+    /**
+     * Clean Up the Dirty Modules Collection and dirtyVariables
+     */
+    cleanUpDirtyModels : function() {
+        // clean up the dirty records and variables
+        this.dirtyModels.reset();
+        this.dirtyTimeperiod = '';
+        this.dirtyUser = '';
     },
 
 
@@ -576,12 +599,9 @@
      * Determines if this Worksheet should be rendered
      */
     showMe: function(){
-    	var selectedUser = this.selectedUser;
-    	this.show = false;
-    	if(!selectedUser.showOpps && selectedUser.isManager){
-    		this.show = true;
-    	}
-    	return this.show;
+    	var selectedUser = (this.isDirty() && this.dirtyUser) ? this.dirtyUser : this.selectedUser;
+
+        return (!selectedUser.showOpps && selectedUser.isManager)
     },
 
     /**
@@ -610,6 +630,10 @@
      * @param params is always a context
      */
     updateWorksheetBySelectedTimePeriod:function (params) {
+        if(this.isDirty()) {
+            // since the model is dirty, save it so we can use it later
+            this.dirtyTimeperiod = this.timePeriod;
+        }
     	this.timePeriod = params.id;
         var model = this.context.forecasts.worksheetmanager;
         if(!this.showMe()){

@@ -28,15 +28,17 @@ describe("The forecasts manager worksheet", function(){
         SugarTest.loadFile("../modules/Forecasts/clients/base/lib", "ForecastsUtils", "js", function(d) { return eval(d); });
         SugarTest.loadFile("../styleguide/styleguide/js", "jquery.datatables", "js", function(d) { return eval(d); });
 
+        app.user.set({'id' : 'test_userid', 'isManager' : true});
+
         app.defaultSelections = {
-                timeperiod_id: {},
+                timeperiod_id: {
+                    'id' : 'test_timeperiod'
+                },
                 group_by: {},
                 dataset: {},
                 selectedUser: {},
                 ranges: {}
             };
-
-        app.user.set('isManager', true);
 
         var context = app.context.getContext();
         context.forecasts = new Backbone.Model({'selectedTimePeriod' : new Backbone.Model({'id' : 'fake_id'})});
@@ -57,6 +59,7 @@ describe("The forecasts manager worksheet", function(){
     });
 
     afterEach(function() {
+        app.user.unset('id');
         app.user.set('isManager', false);
         //view.unbindData();
     });
@@ -253,6 +256,65 @@ describe("The forecasts manager worksheet", function(){
             m.set({'hello':'jon1'});
             expect(view.saveWorksheet()).toEqual(1);
             expect(saveStub).toHaveBeenCalled()
+        });
+    });
+    describe("Forecasts worksheet save dirty models with correct timeperiod after timeperiod changes", function() {
+        var m, saveStub, safeFetchStub;
+        beforeEach(function(){
+            m = new Backbone.Model({'hello' : 'world'});
+            saveStub = sinon.stub(m, 'save', function(){});
+            safeFetchStub = sinon.stub(view, 'safeFetch', function(){});
+            view._collection.add(m);
+    	});
+
+    	afterEach(function(){
+            view._collection.reset();
+            saveStub.restore();
+            safeFetchStub.restore();
+            m = undefined;
+    	});
+
+        it('model should contain the old timeperiod id', function() {
+            m.set({'hello':'jon1'});
+            view.updateWorksheetBySelectedTimePeriod({'id' : 'my_new_timeperiod'});
+            expect(view.saveWorksheet()).toEqual(1);
+            expect(saveStub).toHaveBeenCalled();
+            expect(safeFetchStub).toHaveBeenCalled();
+
+            expect(m.get('timeperiod_id')).toEqual('test_timeperiod');
+            expect(view.timePeriod).toEqual('my_new_timeperiod');
+            expect(view.dirtyTimeperiod).toEqual('');
+        });
+    });
+
+    describe("Forecasts worksheet save dirty models with correct user_id after selected_user changes", function() {
+        var m, saveStub, safeFetchStub, viewStub;
+        beforeEach(function(){
+            m = new Backbone.Model({'hello' : 'world'});
+            saveStub = sinon.stub(m, 'save', function(){});
+            safeFetchStub = sinon.stub(view, 'safeFetch', function(){});
+            view._collection.add(m);
+            viewStub = sinon.stub(view._collection, 'fetch', function(){});
+
+    	});
+
+    	afterEach(function(){
+            view._collection.reset();
+            saveStub.restore();
+            safeFetchStub.restore();
+            m = undefined;
+    	});
+
+        it('model should contain the old userid', function() {
+            m.set({'hello':'jon1'});
+            view.updateWorksheetBySelectedUser({'id' : 'my_new_user_id', 'isManager': true, 'showOpps' : false});
+            expect(view.saveWorksheet()).toEqual(1);
+            expect(saveStub).toHaveBeenCalled();
+            expect(safeFetchStub).toHaveBeenCalled();
+
+            expect(m.get('current_user')).toEqual('test_userid');
+            expect(view.selectedUser.id).toEqual('my_new_user_id');
+            expect(view.dirtyUser).toEqual('');
         });
     });
     
