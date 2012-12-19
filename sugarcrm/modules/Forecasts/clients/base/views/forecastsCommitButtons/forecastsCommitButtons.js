@@ -166,12 +166,16 @@
     	    savebtn = this.$el.find('#save_draft');
     	
         if(!commitbtn.hasClass("disabled")){
-            this.context.forecasts.on('forecasts:worksheetSaved', function(totalSaved, worksheet){
+            var self = this;
+
+            wkstCallBack = function(totalSaved, worksheet){
                 // turn off the event
-                this.context.forecasts.off('forecasts:worksheetSaved');
+                self.context.forecasts.off('forecasts:worksheetSaved', wkstCallBack);
                 // now actually commit the forecast
-                this.context.forecasts.trigger('forecasts:commitForecast');
-            }, this);
+                self.context.forecasts.trigger('forecasts:commitForecast');
+            };
+
+            self.context.forecasts.on('forecasts:worksheetSaved', wkstCallBack);
 
             this.context.forecasts.trigger("forecasts:worksheetSave", false);
             savebtn.addClass("disabled");
