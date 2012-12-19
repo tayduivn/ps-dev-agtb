@@ -123,10 +123,10 @@
     checkSettingsAndRedirect:function () {
         if (!this.context.forecasts.config.get('is_setup')) {
             // this should only ever happen on the wizard view
-            window.location = 'index.php?module=Home';
+            window.location.hash = '#Home';
         } else if (app.metadata.getModule('Forecasts').config.is_setup == 1 && this.context.forecasts.get('saveClicked') == false) {
             // this should only ever happen on the tabbed view when cancel is clicked
-            window.location.hash = '#';
+            window.location.hash = '#Forecasts/layout/index';
         } else {
             // can happen on both views but it's the same methods/messages
             // we have a success save, so we need to call the app.metadata.sync() and then redirect back to the index
@@ -140,7 +140,7 @@
                        
             // only sync the metadata and then push it back to the main location
             app.metadata.sync(function() {
-                window.location.hash = "#";
+                window.location.hash = "#Forecasts/layout/index";
                 
                 //issue notice about setting up Opportunities, we want this to happen after the page "refreshes"
                 setTimeout(function(){
