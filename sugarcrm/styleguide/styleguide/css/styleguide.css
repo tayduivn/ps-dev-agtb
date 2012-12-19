@@ -2,6 +2,7 @@
 .clearfix:before, .clearfix:after {
   display:table;
   content:"";
+  line-height:0;
 }
 .clearfix:after { clear:both; }
 .hide-text {
@@ -14,10 +15,9 @@
 .input-block-level {
   display:block;
   width:100%;
-  min-height:28px;
+  min-height:;
   -webkit-box-sizing:border-box;
   -moz-box-sizing:border-box;
-  -ms-box-sizing:border-box;
   box-sizing:border-box;
 }
 .show-grid {
