@@ -193,8 +193,8 @@
             	}
             }, this);
 
-            this.context.forecasts.on('forecasts:worksheetSave', function() {
-                this.saveWorksheet();
+            this.context.forecasts.on('forecasts:worksheetSave', function(isDraft) {
+                this.saveWorksheet(isDraft);
             }, this);
             
             /*
@@ -243,7 +243,7 @@
      * @triggers forecasts:worksheetSaved
      * @return {Number}
      */
-    saveWorksheet : function() {
+    saveWorksheet : function(isDraft) {
         // only run the save when the worksheet is visible and it has dirty records
         var totalToSave = 0;
         if(this.showMe()) {
@@ -257,7 +257,7 @@
                 self.dirtyModels.each(function(model){
                    //set properties on model to aid in save
                     model.set({
-                        "draft" : 1,
+                        "draft" : (isDraft && isDraft == true) ? 1 : 0,
                         "timeperiod_id" : self.dirtyTimeperiod || self.timePeriod,
                         "current_user" : self.dirtyUser.id || self.selectedUser.id
                     }, {silent:true});
@@ -557,17 +557,16 @@
         }
 
 
-        _.each(self._collection.models, function (model) {
-
-           var base_rate = parseFloat(model.get('base_rate'));
-           amount 			+= app.currency.convertWithRate(model.get('amount'), base_rate);
-           quota 			+= app.currency.convertWithRate(model.get('quota'), base_rate);
-           best_case 		+= app.currency.convertWithRate(model.get('best_case'), base_rate);
-           best_adjusted 	+= app.currency.convertWithRate(model.get('best_adjusted'), base_rate);
-           likely_case 		+= app.currency.convertWithRate(model.get('likely_case'), base_rate);
-           likely_adjusted 	+= app.currency.convertWithRate(model.get('likely_adjusted'), base_rate);
-           worst_case       += app.currency.convertWithRate(model.get('worst_case'), base_rate);
-           worst_adjusted 	+= app.currency.convertWithRate(model.get('worst_adjusted'), base_rate);
+        self._collection.forEach(function (model) {
+            var base_rate = parseFloat(model.get('base_rate'));
+            amount 			+= app.currency.convertWithRate(model.get('amount'), base_rate);
+            quota 			+= app.currency.convertWithRate(model.get('quota'), base_rate);
+            best_case 		+= app.currency.convertWithRate(model.get('best_case'), base_rate);
+            best_adjusted 	+= app.currency.convertWithRate(model.get('best_adjusted'), base_rate);
+            likely_case 		+= app.currency.convertWithRate(model.get('likely_case'), base_rate);
+            likely_adjusted 	+= app.currency.convertWithRate(model.get('likely_adjusted'), base_rate);
+            worst_case       += app.currency.convertWithRate(model.get('worst_case'), base_rate);
+            worst_adjusted 	+= app.currency.convertWithRate(model.get('worst_adjusted'), base_rate);
         });
 
         self.totalModel.set({

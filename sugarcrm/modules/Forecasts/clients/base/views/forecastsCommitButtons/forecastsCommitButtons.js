@@ -173,7 +173,7 @@
                 this.context.forecasts.trigger('forecasts:commitForecast');
             }, this);
 
-            this.context.forecasts.trigger("forecasts:worksheetSave");
+            this.context.forecasts.trigger("forecasts:worksheetSave", false);
             savebtn.addClass("disabled");
     	}        
     },
@@ -185,7 +185,7 @@
     	var savebtn = this.$el.find('#save_draft');
     	
     	if(!savebtn.hasClass("disabled")){
-            this.context.forecasts.trigger("forecasts:worksheetSave");
+            this.context.forecasts.trigger("forecasts:worksheetSave", true);
     	    savebtn.addClass("disabled");
     		this.enableCommitButton();
     	}

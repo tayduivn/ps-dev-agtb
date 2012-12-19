@@ -250,7 +250,7 @@
      * @triggers forecasts:worksheetSaved
      * @return {Number}
      */
-    saveWorksheet : function() {
+    saveWorksheet : function(isDraft) {
         // only run the save when the worksheet is visible and it has dirty records
         var totalToSave = 0;
         if(this.showMe()) {
@@ -263,7 +263,7 @@
                 self.dirtyModels.each(function(model){
                    //set properties on model to aid in save
                     model.set({
-                        "draft" : 1,
+                        "draft" : (isDraft && isDraft == true) ? 1 : 0,
                         "timeperiod_id" : self.dirtyTimeperiod || self.timePeriod,
                         "current_user" : self.dirtyUser.id || self.selectedUser.id
                     }, {silent:true});
@@ -363,8 +363,8 @@
                 self.commitButtonEnabled = false;
             },this);
 
-            this.context.forecasts.on('forecasts:worksheetSave', function() {
-                this.saveWorksheet();
+            this.context.forecasts.on('forecasts:worksheetSave', function(isDraft) {
+                this.saveWorksheet(isDraft);
             }, this);
 
             /*
