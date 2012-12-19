@@ -3434,6 +3434,7 @@ $app_strings = array (
     'LBL_PREFERRED_LANGUAGE' => 'Preferred Language:',
     'LBL_LOADING_LANGUAGE' => 'Loading language pack',
     'LBL_UPLOADING' => 'Uploading',
+    'LBL_IMAGE_DELETE_CONFIRM' => 'Are you sure you want to delete this image?',
 
     //theme roller
     'LBL_RESET' => 'Reset',

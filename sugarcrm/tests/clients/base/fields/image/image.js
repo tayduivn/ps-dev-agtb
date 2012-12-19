@@ -4,6 +4,10 @@ describe("image field", function() {
 
     beforeEach(function() {
         app = SugarTest.app;
+        SugarTest.testMetadata.init();
+        SugarTest.loadHandlebarsTemplate('image', 'field', 'base', 'edit');
+        SugarTest.loadHandlebarsTemplate('image', 'field', 'base', 'detail');
+        SugarTest.testMetadata.set();
         field = SugarTest.createField("base","test_image_upload", "image", "detail", {});
         model = field.model;
     });
@@ -18,51 +22,51 @@ describe("image field", function() {
 
     describe("image", function() {
 
-        it("should define widget height and width on initialize", function() {
+        it("should define widget height and width on render", function() {
+            field.render();
             expect(field.width).toEqual(50);
             expect(field.height).toEqual(50);
 
             field = SugarTest.createField("base","test_image_search", "image", "detail", {width: "120"});
+            field.render();
             expect(field.width).toEqual(120);
             expect(field.height).toEqual(120);
 
             field = SugarTest.createField("base","test_image_search", "image", "detail", {height: "160"});
+            field.render();
             expect(field.width).toEqual(160);
             expect(field.height).toEqual(160);
 
             field = SugarTest.createField("base","test_image_search", "image", "detail", {width: "180", height: 100});
+            field.render();
             expect(field.width).toEqual(180);
             expect(field.height).toEqual(100);
         });
 
         it("should resize height", function() {
-            field.$el.html($('<span></span>').addClass('image_field').addClass('image_detail').html('<label></label><input>'));
-            field.resizeHeight(300);
-            expect(field.$("input").height()).toEqual(300);
+            field.render();
             field.resizeHeight(200);
-            expect(field.$("label").height()).toEqual(200);
+            expect(field.$(".image_field").height()).toEqual(200);
             field.resizeHeight(100);
             expect(field.$(".image_field").height()).toEqual(100);
 
-
             //Must add 18 for the edit button on edit views !
-            field.$el.html( $('<span></span>').addClass('image_field').addClass('image_edit').html('<label></label><input>') );
-            field.$('.image_field').append( $('<span></span>').addClass('image_btn').css({height: '15px', borderWidth: '3px'}) );
+            field = SugarTest.createField("base","test_image_upload", "image", "edit", {});
+            field.render();
+            field.$('.image_btn').css({height: '15px'});
             field.resizeHeight(200);
-            expect(field.$("label").height()).toEqual(218);
-            field.$('.image_btn').css({height: '12px', borderWidth: '24px'});
+            expect(field.$(".icon-plus").css('lineHeight')).toEqual(200-15 + 'px');
+            field.$('.image_btn').css({height: '12px'});
             field.resizeHeight(100);
-            expect(field.$(".image_field").height()).toEqual(136);
+            expect(field.$(".icon-plus").css('lineHeight')).toEqual(100-12 + 'px');
         });
 
         it("should resize width", function() {
-            field.$el.html($('<span></span>').addClass('image_field').html('<label></label><input>'));
+            field.render();
             field.resizeWidth(100);
-            expect(field.$(".image_field").width()).toEqual(100);
+            expect(field.$(".image_field").css('width')).toEqual('100px');
             field.resizeWidth(200);
-            expect(field.$("label").width()).toEqual(200);
-            field.resizeWidth(300);
-            expect(field.$("label").width()).toEqual(300);
+            expect(field.$(".image_field").css('width')).toEqual('200px');
         });
 
 
@@ -93,6 +97,7 @@ describe("image field", function() {
         });
 
         it("make an api call to delete the image", function() {
+            var confirmStub = sinon.stub(window, "confirm", function() { return true });
             var deleteStub = sinon.stub(app.api, "call");
             var renderSpy = sinon.spy(field, "render");
             $("<a></a>").addClass("delete").appendTo(field.$el);
@@ -107,6 +112,7 @@ describe("image field", function() {
             expect(renderSpy).toHaveBeenCalled();
             deleteStub.restore();
             renderSpy.restore();
+            confirmStub.restore()
         });
 
     });

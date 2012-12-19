@@ -26,7 +26,7 @@
  * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 }}
-<div class="image_field image_detail hide">
+<div class="image_field image_rounded image_detail hide">
 <div class="image_preview">
 {{#if value}}
     <img src="{{value}}">

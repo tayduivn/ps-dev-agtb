@@ -344,10 +344,12 @@
             case "image":
                 var self = this;
                 app.file.checkFileFieldsAndProcessUpload(self.model, {
-                    success: function () {
-                        self.toggleField(field);
-                    }
-                });
+                        success:function () {
+                            self.toggleField(field);
+                        }
+                    },
+                    { deleteIfFails:false}
+                );
                 break;
             default:
                 this.toggleField(field);
@@ -356,22 +358,23 @@
 
     handleSave: function() {
         var self = this;
-        this.inlineEditMode = false;
+        self.inlineEditMode = false;
 
-        this.model.save({}, {
-            success: function() {
-                app.file.checkFileFieldsAndProcessUpload(self.model, {
-                    success: function () {
-
-                        if (self.createMode) {
-                            app.navigate(self.context, self.model);
-                        } else {
-                            self.render();
-                        }
-                    }
-                });
+        var finalSuccess = function () {
+            if (self.createMode) {
+                app.navigate(self.context, self.model);
+            } else {
+                self.render();
             }
-        });
+        };
+        app.file.checkFileFieldsAndProcessUpload(self.model, {
+                success:function () {
+                    self.model.save({}, {
+                        success:finalSuccess
+                    });
+                }
+            },
+            { deleteIfFails:false});
     },
 
     handleCancel: function() {

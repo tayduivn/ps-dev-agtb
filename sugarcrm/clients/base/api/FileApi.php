@@ -288,7 +288,7 @@ class FileApi extends SugarApi {
         }
 
         // @TODO Localize this exception message
-        throw new SugarApiExceptionError("Unexpected field type: $def[type]");
+        throw new SugarApiExceptionError("Unexpected field type: ".$def['type']);
     }
 
     /**
@@ -414,7 +414,7 @@ class FileApi extends SugarApi {
                 }
             } else {
                 // @TODO Localize this exception message
-                throw new SugarApiExceptionError("Unexpected field type: $def[type]");
+                throw new SugarApiExceptionError("Unexpected field type: ".$def['type']);
             }
         }
 

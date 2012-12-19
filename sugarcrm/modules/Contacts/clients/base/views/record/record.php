@@ -76,10 +76,6 @@ $viewdefs['Contacts']['base']['view']['record'] = array(
             'header' => true,
             'fields' => array(
                 array(
-                    'name' => 'img',
-                    'noedit' => true,
-                ),
-                array(
                     'name' => 'fieldset_full_name',
                     'type' => 'fieldset',
                     'fields' => array('salutation', 'first_name', 'last_name')
@@ -96,7 +92,12 @@ $viewdefs['Contacts']['base']['view']['record'] = array(
             'labelsOnTop' => true,
             'placeholders' => true,
             'fields' => array(
-                'title',
+                array(
+                    'name' => 'picture',
+                    'type' => 'image',
+                    'width' => 42,
+                    'height' => 42,
+                ),
                 'phone_mobile',
                 'department',
                 'phone_work',

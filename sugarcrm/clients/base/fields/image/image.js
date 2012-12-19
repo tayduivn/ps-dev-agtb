@@ -34,17 +34,18 @@
 
         "change input[type=file]": "selectImage"
     },
-    initialize: function(options) {
-        app.view.Field.prototype.initialize.call(this, options);
-
-        //Define default sizes
-        this.width = parseInt(this.def.width || this.def.height, 10) || 50;
-        this.height = parseInt(this.def.height, 10) || this.width;
-    },
     _render: function() {
         this.model.fileField = this.name;
         app.view.Field.prototype._render.call(this);
 
+        //Define default sizes
+        if (this.tplName === 'list') {
+            this.width = this.height = this.$el.parent().innerHeight() || 42;
+            this.def.width = this.def.height = undefined;
+        } else {
+            this.width = parseInt(this.def.width || this.def.height, 10) || 50;
+            this.height = parseInt(this.def.height, 10) || this.width;
+        }
         //Resize widget before the image is loaded
         this.resizeWidth(this.width);
         this.resizeHeight(this.height);
@@ -119,17 +120,22 @@
             self.clearError();
             self.render();
         } else {
-        //Otherwise delete the image
-            app.api.call('delete', self.buildUrl({htmlJsonFormat: false}), {}, {
-                    success: function() {
-                        self.model.set(self.name, null);
-                        self.render();
-                    },
-                    error: function(data) {
-                        // refresh token if it has expired
-                        app.error.handleHttpError(data, {});
-                    }}
-            );
+            var confirmMessage = app.lang.get('LBL_IMAGE_DELETE_CONFIRM', self.module);
+            if (confirm(confirmMessage)) {
+            //Otherwise delete the image
+                app.api.call('delete', self.buildUrl({htmlJsonFormat: false}), {}, {
+                        success: function() {
+                            //Need to fire the change event twice so model.previous(self.name) is also changed.
+                            self.model.unset(self.name);
+                            self.model.set(self.name, null);
+                            self.render();
+                        },
+                        error: function(data) {
+                            // refresh token if it has expired
+                            app.error.handleHttpError(data, {});
+                        }}
+                );
+            }
         }
     },
     /**
@@ -183,50 +189,52 @@
         var icon = this.preview === true ? 'remove' : 'trash';
         image.closest('label, a').after('<span class="image_btn delete icon-' + icon + ' " />');
     },
+    formatPX: function(size) {
+        size = parseInt(size, 10);
+        return size + 'px';
+    },
     /**
      * Resize the elements carefully to render a pretty input[type=file]
      * @param height (in pixels)
      */
     resizeHeight: function(height) {
         var $image_field = this.$('.image_field'),
-            isEdit = this.$('.image_edit').length > 0,
-            $image_btn = $image_field.find('.image_btn'),
-            totalHeight = parseInt(height, 10);
+            isEditAndIcon = this.$('.icon-plus').length > 0;
 
-        if (isEdit) {
-            var edit_btn_height = parseInt($image_btn.css('height'), 10) + parseInt($image_btn.css('borderWidth'), 10);
-            totalHeight += edit_btn_height ? edit_btn_height : 0;
+        if (isEditAndIcon) {
+            var $image_btn = $image_field.find('.image_btn');
+            var edit_btn_height = parseInt($image_btn.css('height'), 10);
+
+            var previewHeight = parseInt(height, 10);
+            //Remove the edit button height in edit view so that the icon is centered.
+            previewHeight -= edit_btn_height ? edit_btn_height : 0;
+            previewHeight = this.formatPX(previewHeight);
+
+            $image_field.find('.icon-plus').css({lineHeight:previewHeight});
         }
 
-        //Add the edit button height in edit view.
-        totalHeight += 'px';
-        $image_field.css({'height':totalHeight, minHeight:totalHeight, lineHeight:height + 'px'});
-        $image_field.find('label').css({'height':totalHeight, minHeight:totalHeight, lineHeight:height + 'px'});
-        $image_field.find('input').css({'height':height + 'px', minHeight:height + 'px'});
-    },
-    delete: function() {
-        var self = this;
-        app.api.call('delete', self.buildUrl({htmlJsonFormat: false}), {}, {
-                success: function(data) {
-                    self.model.set(self.name, null);
-                    self._render();
-                },
-                error: function(data) {
-                    // refresh token if it has expired
-                    app.error.handleHttpError(data, {});
-                }}
-        );
+
+        var totalHeight = this.formatPX(height);
+        $image_field.css({'height':totalHeight, minHeight:totalHeight, lineHeight:totalHeight});
+        $image_field.find('label').css({lineHeight:totalHeight});
     },
     /**
      * Resize the elements carefully to render a pretty input[type=file]
      * @param width (in pixels)
      */
     resizeWidth: function(width) {
-        var $image_field = this.$('.image_field');
+        var $image_field = this.$('.image_field'),
+            width = this.formatPX(width),
+            isInHeaderpane = $(this.el).closest('.headerpane').length > 0,
+            isInRowFluid = $(this.el).closest('.row-fluid').closest('.record').length > 0;
 
-        $image_field.css({'width':width + 'px'});
-        $image_field.find('label').css({'width':width + 'px'});
-        $image_field.find('input').css({'width':width + 'px'});
+        if(isInHeaderpane || !isInRowFluid) {
+            //Need to fix width
+            $image_field.css({'width':width});
+        } else {
+            //Width will be the biggest possible
+            $image_field.css({'maxWidth':width});
+        }
     },
     /**
      * Handles errors message
@@ -240,6 +248,7 @@
 
         // For each error add to error help block
         _.each(errors, function(errorContext, errorName) {
+            this.$('.help-block')
             this.$('.help-block').append(app.error.getErrorString(errorName, errorContext));
         }, this);
     },
