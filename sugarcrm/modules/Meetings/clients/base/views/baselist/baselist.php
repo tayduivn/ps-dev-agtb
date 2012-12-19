@@ -1,5 +1,5 @@
 <?php
-$viewdefs['Meetings']['base']['view']['list'] = array(
+$viewdefs['Meetings']['base']['view']['baselist'] = array(
     'panels' => array(
         array(
         'label' => 'LBL_PANEL_1',

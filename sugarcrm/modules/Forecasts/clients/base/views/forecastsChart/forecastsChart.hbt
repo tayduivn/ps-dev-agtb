@@ -28,6 +28,7 @@
 }}
 <div class="btn-toolbar pull-right">
     <form class="dropdown form-horizontal btn-group" id="forecastsChartDisplayOptions">
+        <a href="#" class="btn btn-mini btn-invisible btn-expand-full"><span class="icon-resize-full"></span></a>
         <a href="#" data-toggle="dropdown" class="dropdown-toggle btn btn-mini btn-invisible"><span class="icon-cog"></span></a>
         <ul class="dropdown-menu left carettop" id="chartDisplayOptions">
             <div class="datasetOptions">
@@ -52,8 +53,7 @@
     <div id="chart" class="tcenter">
         <div class="chartContainer">
             <div id="sbdb620e51-8350-c596-06d1-4f866bfcfd5b" class="scrollBars">
-                <div id="legenddb620e51-8350-c596-06d1-4f866bfcfd5b" class="legend"></div>
-                <div id="db620e51-8350-c596-06d1-4f866bfcfd5b" class="chartCanvas" style="width: 99%; height: 300px;"></div>
+                <div id="db620e51-8350-c596-06d1-4f866bfcfd5b" class="nv-chart"></div>
             </div>
         </div>
     </div>

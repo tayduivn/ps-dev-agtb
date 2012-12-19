@@ -26,6 +26,8 @@
 
     test.createField = function(client, name, type, viewName, fieldDef, module, model, context) {
         test.loadComponent(client, "field", type, module);
+        var context = app.context.getContext();
+
         var view = new app.view.View({ name: viewName, context: context });
         var def = { name: name, type: type };
         
