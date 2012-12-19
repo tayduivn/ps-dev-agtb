@@ -45,8 +45,8 @@
         <div class="span6">
             <div class="btn-toolbar pull-right">
                 <div class="btn-group">
-                    <a data-toggle="modal" title="Activity View Tour" id="productTour" href="javascript: void(0);"  class="btn btn-invisible"><i class="icon-road"></i> Tour</a>
-                    <a data-toggle="modal" title="Support" href="#systemSupport" class="btn btn-invisible"><i class="icon-question-sign"></i> Support</a>
+                    <a data-toggle="modal" title="Activity View Tour" id="productTour" href="javascript: void(0);"  class="btn btn-invisible"><i class="icon-road"></i> {$app_strings.LBL_TOUR}</a>
+                    <a title="Support" href="{$HELP_URL}" class="btn btn-invisible"><i class="icon-question-sign"></i> {$MODULE_NAME} {$app_strings.LNK_HELP}</a>
                 </div>
             </div>
         </div>
@@ -66,7 +66,7 @@
         }
         app.augment("forecasts", _.extend(app.forecasts, {
             initForecast: function(authAccessToken) {
-                app.viewModule = {/literal}'{$module}';{literal}
+                app.viewModule = 'Forecasts';
                 app.AUTH_ACCESS_TOKEN = authAccessToken;
                 app.AUTH_REFRESH_TOKEN = authAccessToken;
                 app.init({
@@ -96,13 +96,11 @@
 
      })(SUGAR.App);
 
-    //Call initForecast with the session id as token
-    var App = SUGAR.App.forecasts.initForecast({/literal}'{$token}'{literal});
-
-    App.api.debug = App.config.debugSugarApi;
+//Call initForecast with the session id as token
+var App = SUGAR.App.forecasts.initForecast({/literal}'{$token}'{literal});
+App.api.debug = App.config.debugSugarApi;
 
 $("#productTour").click(function(){
-           console.log('test')
     if($('#tour').length > 0){
         $('#tour').modal("show");
     }  else {
