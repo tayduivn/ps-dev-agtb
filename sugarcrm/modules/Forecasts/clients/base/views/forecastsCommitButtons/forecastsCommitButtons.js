@@ -163,20 +163,17 @@
      */
     triggerCommit: function() {
     	var commitbtn =  this.$el.find('#commit_forecast'),
-    	    savebtn = this.$el.find('#save_draft'),
-    	    self = this,
-    	    saved = 0;
-    	self.draft = 0;
+    	    savebtn = this.$el.find('#save_draft');
     	
         if(!commitbtn.hasClass("disabled")){
-            saved = this.context.forecasts.trigger("forecasts:worksheetSave", function(){
-                self.context.forecasts.set({commitForecastFlag: true});
-            }, true);
-            
-            //we didn't have anything to save (and wait to finish), so go ahead and trigger the commit
-            if(saved == 0){
-                self.context.forecasts.set({commitForecastFlag: true});
-            }
+            this.context.forecasts.on('forecasts:worksheetSaved', function(totalSaved, worksheet){
+                // turn off the event
+                this.context.forecasts.off('forecasts:worksheetSaved');
+                // now actually commit the forecast
+                this.context.forecasts.trigger('forecasts:commitForecast');
+            }, this);
+
+            this.context.forecasts.trigger("forecasts:worksheetSave");
             savebtn.addClass("disabled");
     	}        
     },

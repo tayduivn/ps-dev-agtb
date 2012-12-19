@@ -193,8 +193,8 @@
             	}
             }, this);
 
-            this.context.forecasts.on('forecasts:worksheetSave', function(callback, suppressSaveTrigger) {
-                this.saveWorksheet(callback, suppressSaveTrigger);
+            this.context.forecasts.on('forecasts:worksheetSave', function() {
+                this.saveWorksheet();
             }, this);
             
             /*
@@ -240,43 +240,46 @@
 
     /**
      *
-     * @param callback
-     * @param suppressSaveTrigger
+     * @triggers forecasts:worksheetSaved
      * @return {Number}
      */
-    saveWorksheet : function(callback, suppressSaveTrigger) {
+    saveWorksheet : function() {
         // only run the save when the worksheet is visible and it has dirty records
-        if(!this.showMe() || !this.isDirty()) { return 0; }
-        var self = this,
-            totalToSave = self.dirtyModels.length,
-            saveCount = 0;
-        self.dirtyModels.each(function(model){
-           //set properties on model to aid in save
-            model.set({
-                "draft" : 1,
-                "timeperiod_id" : self.dirtyTimeperiod || self.timePeriod,
-                "current_user" : self.dirtyUser.id || self.selectedUser.id
-            }, {silent:true});
+        var totalToSave = 0;
+        if(this.showMe()) {
+            var self = this,
+                saveCount = 0;
 
-            //set what url  is used for save
-            model.url = self.url.split("?")[0] + "/" + model.get("id");
-            model.save({}, {success: function() {
-                saveCount++;
-                //if this is the last save, go ahead and trigger the callback;
-                if(totalToSave === saveCount) {
-                   if(_.isFunction(callback)){
-                       callback();
-                   }
-                   if(suppressSaveTrigger != true){
-                       self.context.forecasts.trigger("forecasts:commitButtons:saved");
-                   }
-                }
-            }});
-        });
+            totalToSave = self.dirtyModels.length;
 
-        self.cleanUpDirtyModels();
 
-        return totalToSave;
+            if(this.isDirty()) {
+                self.dirtyModels.each(function(model){
+                   //set properties on model to aid in save
+                    model.set({
+                        "draft" : 1,
+                        "timeperiod_id" : self.dirtyTimeperiod || self.timePeriod,
+                        "current_user" : self.dirtyUser.id || self.selectedUser.id
+                    }, {silent:true});
+
+                    //set what url  is used for save
+                    model.url = self.url.split("?")[0] + "/" + model.get("id");
+                    model.save({}, {success: function() {
+                        saveCount++;
+                        //if this is the last save, go ahead and trigger the callback;
+                        if(totalToSave === saveCount) {
+                            self.context.forecasts.trigger('forecasts:worksheetSaved', totalToSave, 'mgr_worksheet');
+                        }
+                    }});
+                });
+
+                self.cleanUpDirtyModels();
+            } else {
+                this.context.forecasts.trigger('forecasts:worksheetSaved', totalToSave, 'mgr_worksheet');
+            }
+        }
+
+        return totalToSave
     },
 
     /**
@@ -446,7 +449,7 @@
         var enableCommit = self._collection.find(function(model) {
             return (model.get("version") == 0)
         }, this);
-        if (!_.isObject(enableCommit)) {
+        if (_.isObject(enableCommit)) {
             self.context.forecasts.trigger("forecasts:commitButtons:enabled");
         }
 
