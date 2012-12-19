@@ -25,13 +25,11 @@
     };
 
     test.createField = function(client, name, type, viewName, fieldDef, module, model, context) {
-        test.loadComponent(client, "field", type, module);
-        var context = app.context.getContext();
+        test.loadComponent(client, "field", type);
 
         var view = new app.view.View({ name: viewName, context: context });
         var def = { name: name, type: type };
-        
-        context = context || app.context.getContext();
+        var context = context || app.context.getContext();
 
         model = model || new Backbone.Model();
 
