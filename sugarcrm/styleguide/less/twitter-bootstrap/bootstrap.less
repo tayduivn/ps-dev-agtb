@@ -1,5 +1,5 @@
 /*!
- * Bootstrap v2.0.4
+ * Bootstrap v2.2.1
  *
  * Copyright 2012 Twitter, Inc
  * Licensed under the Apache License v2.0
@@ -9,30 +9,28 @@
  */
 
 // CSS Reset
-@import "./reset.less";
+@import "reset.less";
 
 // Core variables and mixins
-//@import "variables.less";
-//@import "fixed_variables.less"; // Modify this to defined colors, font-sizes, etc (non customizable in studio)
-@import "./mixins.less";
+//@import "variables.less"; // Modify this for custom colors, font-sizes, etc
+@import "mixins.less";
 
 // Grid system and page structure
-@import "./scaffolding.less";
-@import "./grid.less";
-@import "./layouts.less";
+@import "scaffolding.less";
+@import "grid.less";
+@import "layouts.less";
 
 // Base CSS
-@import "./type.less";
-@import "./code.less";
-@import "./forms.less";
-@import "./slider.less";
-@import "./tables.less";
+@import "type.less";
+@import "code.less";
+@import "forms.less";
+@import "tables.less";
 
 // Components: common
 @import "font-awesome.less"; //ext lib: http://fortawesome.github.com/Font-Awesome/
-@import "./dropdowns.less";
-@import "./wells.less";
-@import "./component-animations.less";
+@import "dropdowns.less";
+@import "wells.less";
+@import "component-animations.less";
 @import "close.less";
 
 // Components: Buttons & Alerts
@@ -41,35 +39,39 @@
 @import "alerts.less"; // Note: alerts share common CSS with buttons and thus have styles in buttons.less
 
 // Components: Nav
-@import "./navs.less";
-@import "./navbar.less";
-@import "./breadcrumbs.less";
-@import "./pagination.less";
-@import "./pager.less";
+@import "navs.less";
+@import "navbar.less";
+@import "breadcrumbs.less";
+@import "pagination.less";
+@import "pager.less";
 
 // Components: Popovers
-@import "./modals.less";
-@import "./tooltip.less";
-@import "./tiptip.less"; //ext lib: http://code.drewwilson.com/entry/tiptip-jquery-plugin
-@import "./popovers.less";
+@import "modals.less";
+@import "tooltip.less";
+@import "popovers.less";
 
 // Components: Misc
-@import "./thumbnails.less";
-@import "./labels-badges.less";
-@import "./progress-bars.less";
+@import "thumbnails.less";
+@import "media.less";
+@import "labels-badges.less";
+@import "progress-bars.less";
 @import "accordion.less";
 @import "carousel.less";
-@import "./hero-unit.less";
+@import "hero-unit.less";
+
+// Third-party resources
+@import "tiptip.less"; //ext lib: http://code.drewwilson.com/entry/tiptip-jquery-plugin
+@import "slider.less";
 @import "chosen.less"; //ext lib: http://harvesthq.github.com/chosen/
-@import "./datepicker.less"; //ext lib: http://www.eyecon.ro/bootstrap-datepicker
+@import "datepicker.less"; //ext lib: http://www.eyecon.ro/bootstrap-datepicker
 @import "charts.less";
 @import "datatables.less"; //ext lib: http://datatables.net/
-@import "./colorpicker.less"; //ext lib: http://www.eyecon.ro/bootstrap-colorpicker/
-@import "./jstree.less"; //ext lib: http://www.jstree.com/
-@import "./toggle.less"; //ext lib: http://acidjs.wemakesites.net/css3-iphone-buttons.html
+@import "colorpicker.less"; //ext lib: http://www.eyecon.ro/bootstrap-colorpicker/
+@import "jstree.less"; //ext lib: http://www.jstree.com/
+@import "toggle.less"; //ext lib: http://acidjs.wemakesites.net/css3-iphone-buttons.html
 
 // Utility classes
-@import "./utilities.less";
+@import "utilities.less";
 
 // Responsive
-@import "./responsive.less";
+@import "responsive-sugar.less";
