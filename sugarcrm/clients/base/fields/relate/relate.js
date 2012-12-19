@@ -69,7 +69,7 @@
                                     module: self.getSearchModule()
                                 }
                             }]
-                        }, self.afterSearchMore);
+                        }, self.setValue);
                     } else {
                         self.setValue({id: id, value: value});
                     }
@@ -84,9 +84,6 @@
         return result;
     },
     beforeSearchMore: function() {},
-    afterSearchMore: function(model) {
-        this.setValue({id: model.id, value: model.get('name')});
-    },
     bindDataChange: function() {
         if (this.model) {
             var self = this;

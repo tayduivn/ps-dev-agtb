@@ -15,7 +15,7 @@
             this.$(this.typeFieldTag).not(".chzn-done").chosen().change(function(evt) {
                 var selected = $(evt.currentTarget).find(':selected'),
                     module = selected.val();
-                self.$(self.fieldTag).children().not(":first").not("[data-searchmore]").remove();
+                self.$(self.fieldTag).children().not(":first").not("[data-searchmore=true]").remove();
                 self.checkAcl.call(self, 'edit', module);
                 self.setValue({
                     id: '',
