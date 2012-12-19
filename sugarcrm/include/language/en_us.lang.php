@@ -353,9 +353,7 @@ $app_list_strings = array (
 //BEGIN SUGARCRM flav=ent ONLY
   'commit_stage_custom_dom' => array(
       'include' => 'Include',
-      'customRange0' => 'Custom 1',
-      'customRange1' => 'Custom 2',
-      'customRange2' => 'Custom 3',
+      'upside'  => 'Upside',
       'exclude' => 'Exclude',
   ),
 //END SUGARCRM flav=ent ONLY
@@ -4504,10 +4502,9 @@ $app_list_strings['forecasts_config_ranges_options_dom'] = array(
     'show_binary' => 'Two Ranges',
     'show_buckets' => 'Three Ranges',
 //END SUGARCRM flav=pro ONLY
-//BEGIN SUGARCRM flav=int ONLY
-//TODO-sfa Tag this as 'ent' when custom buckets are implemented (SFA-295)
+//BEGIN SUGARCRM flav=ent ONLY
     'show_custom_buckets' => 'Custom Ranges',
-//END SUGARCRM flav=int ONLY
+//END SUGARCRM flav=ent ONLY
 //BEGIN SUGARCRM flav=pro ONLY
 );
 $app_list_strings['forecasts_timeperiod_types_dom'] = array(
