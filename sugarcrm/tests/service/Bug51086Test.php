@@ -56,13 +56,11 @@ class Bug51086Test extends SOAPTestCase
 
     	$this->_soapURL = $GLOBALS['sugar_config']['site_url'].'/service/v4/soap.php';
 
-        global $beanList, $beanFiles;
-		require('include/modules.php');
-
-        //Reload langauge strings
-        $GLOBALS['app_strings'] = return_application_language($GLOBALS['current_language']);
-        $GLOBALS['app_list_strings'] = return_app_list_strings_language($GLOBALS['current_language']);
-        $GLOBALS['mod_strings'] = return_module_language($GLOBALS['current_language'], 'Contacts');
+        SugarTestHelper::setUp("beanList");
+        SugarTestHelper::setUp("beanFiles");
+        SugarTestHelper::setUp("app_strings");
+        SugarTestHelper::setUp("app_list_strings");
+        SugarTestHelper::setUp("mod_strings", array('Contacts'));
 
         //Create new ACL role
         $this->_aclRole = new ACLRole();
@@ -98,12 +96,7 @@ class Bug51086Test extends SOAPTestCase
         $GLOBALS['db']->query("DELETE FROM contacts WHERE id = '".$this->_contact->id."' ");
         $GLOBALS['db']->commit();
 
-        unset($GLOBALS['beanList']);
-        unset($GLOBALS['beanFiles']);
-        unset($GLOBALS['app_list_strings']);
-        unset($GLOBALS['app_strings']);
-        unset($GLOBALS['mod_strings']);
-        unset($GLOBALS['current_user']);
+        SugarTestHelper::tearDown();
         unset($this->_aclField);
         unset($this->_aclRole);
         unset($this->_contact);

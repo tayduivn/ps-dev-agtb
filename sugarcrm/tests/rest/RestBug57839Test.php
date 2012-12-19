@@ -42,7 +42,10 @@ class RestBug57839Test extends RestTestBase
         
         parent::tearDown();
     }
-    
+
+    /**
+     * @group rest
+     */
     public function testCorrectResponseHeadersForRequestTypes()
     {
         // Create an Account - POST

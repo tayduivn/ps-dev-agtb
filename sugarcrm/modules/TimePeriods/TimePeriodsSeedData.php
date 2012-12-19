@@ -42,8 +42,7 @@ public static function populateSeedData()
 {
     //Simulate settings to create 2 forward and 2 backward timeperiods
     $settings = array();
-    $settings['timeperiod_start_month'] = 1;
-    $settings['timeperiod_start_day'] = 1;
+    $settings['timeperiod_start_date'] = date("Y") . "-01-01";
     $settings['timeperiod_interval'] = TimePeriod::ANNUAL_TYPE;
     $settings['timeperiod_leaf_interval'] = TimePeriod::QUARTER_TYPE;
     $settings['timeperiod_shown_backward'] = 2;

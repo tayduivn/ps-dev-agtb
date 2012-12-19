@@ -6,6 +6,7 @@
     initialize: function(options) {
         app.events.on("app:sync:complete", this.render, this);
         app.events.on("app:view:change", this.render, this);
+        app.user.on("change:module_list", this.render, this);
 
         app.view.View.prototype.initialize.call(this, options);
 
@@ -21,31 +22,27 @@
     _renderHtml: function() {
         if (!app.api.isAuthenticated() || app.config.appStatus == 'offline') return;
 
-        var self = this;
-        this.module_list = {};
-        if (app.metadata.getModuleNames(true, true)) {
-            _.each(app.metadata.getModuleNames(true, true), function(val, key) {
-                    self.module_list[val] = app.lang.get('LBL_MODULE_NAME',val);
-            });
-        }
+        // loadAdditionalComponents fires render before the private metadata is ready, check for this
+        if( !(_.isEmpty(app.metadata.getStrings("mod_strings"))) ) {
+            var self = this;
+            this.module_list = {};
+            if (app.metadata.getModuleNames(true, "read")) {
+                _.each(app.metadata.getModuleNames(true, "read"), function(val) {
+                    self.module_list[val] = app.lang.get('LBL_MODULE_NAME', val);
+                });
+            }
 
-        app.view.View.prototype._renderHtml.call(this);
-        this.resetMenu();
-        this.activeModule.set(app.controller.context.get("module"));
+            app.view.View.prototype._renderHtml.call(this);
+            this.resetMenu();
+            this.activeModule.set(app.controller.context.get("module"));
+        }
     },
 
     /**
      * When user clicks tab navigation in header
      */
     onModuleTabClicked: function(evt) {
-        var $target = this.$(evt.currentTarget),
-            moduleHref = $target.attr('href');
-
-        if(moduleHref.match(/^#/)) {
-            this.activeModule.set($target.closest('li').attr('class'));
-            app.router.navigate(moduleHref, {trigger: true});
-            return false;
-        }
+        this.activeModule.set(this.$(evt.currentTarget).closest('li').attr('class'));
     },
 
     /**
@@ -128,6 +125,10 @@
                 break;
             }
         }
+
+        if( $dropdown.children().length === 0 && $modules.find('.dropdown').is(":visible") ) {
+            $modules.find('.dropdown').hide();
+        }
     },
 
     /**
@@ -138,9 +139,12 @@
     removeModulesFromList: function($modules, width) {
         var $dropdown = $modules.find('.dropdown-menu'),
             $module = $modules.find('.more').prev(),
-            $next, currentWidth = $modules.outerWidth(true);
+            $next, currentWidth = $modules.outerWidth(true),
 
-        while (currentWidth >= width) {
+            // If we have an active module, # of persistent tabs = active module + sugarcube + "more" button
+            persistentTabs = this.activeModule.isActive($module) ? 3 : 2;
+
+        while (currentWidth >= width && ($modules.children().length - persistentTabs) > 0) {
             // home and currently active module should not be removed from the list
             if (this.activeModule.isActive($module) || $module.hasClass('Home')) {
                 $module = $module.prev();
@@ -151,6 +155,10 @@
 
             currentWidth = $modules.outerWidth(true);
             $module = $next;
+        }
+
+        if( $dropdown.children().length !== 0 && !$modules.find('.dropdown').is(":visible") ) {
+            $modules.find('.dropdown').show();
         }
     },
 

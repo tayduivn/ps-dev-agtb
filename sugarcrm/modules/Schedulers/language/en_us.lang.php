@@ -151,6 +151,7 @@ $mod_strings = array (
 'LBL_PROCESSWORKFLOW' => 'Process Workflow Tasks',
 'LBL_PROCESSQUEUE' => 'Run Report Generation Scheduled Tasks',
 'LBL_UPDATETRACKERSESSIONS' => 'Update Tracker Session Tables',
+'LBL_CHECKTIMEPERIODS' => 'Check TimePeriods',
 //END SUGARCRM flav=pro ONLY
 'LBL_SENDEMAILREMINDERS'=> 'Run Email Reminders Sending',
 //BEGIN SUGARCRM flav=int ONLY

@@ -50,6 +50,15 @@ class SugarWidgetSubPanelTopCreateLeadNameButton extends SugarWidgetSubPanelTopB
 		//$accesskey = $app_strings['LBL_NEW_BUTTON_KEY'];
 		$value = $app_strings['LBL_NEW_BUTTON_LABEL'];
 		$this->module = 'Leads';
+
+        /**
+         * if module is hidden or subpanel for the module is hidden - doesn't show quick create button
+         */
+        if ( SugarWidget::isModuleHidden( $this->module ) )
+        {
+            return '';
+        }
+
 		if( ACLController::moduleSupportsACL($defines['module'])  && !ACLController::checkAccess($defines['module'], 'edit', true)){
 			$button = "<input title='$title'class='button' type='button' name='button' value='  $value  ' disabled/>\n";
 			return $button;

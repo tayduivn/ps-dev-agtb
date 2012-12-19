@@ -1,8 +1,4 @@
 ({
-    events: {
-        'click #createList li a': 'onCreateClicked'
-    },
-
     initialize: function(options) {
         app.events.on("app:sync:complete", this.render, this);
         app.view.View.prototype.initialize.call(this, options);
@@ -14,14 +10,6 @@
         this.setModuleInfo();
         this.setCreateTasksList();
         app.view.View.prototype._renderHtml.call(this);
-    },
-
-    onCreateClicked: function(evt) {
-        var moduleHref, hashModule;
-        moduleHref = evt.currentTarget.hash;
-        hashModule = moduleHref.split('/')[0];
-        this.$('#module_list li').removeClass('active');
-        this.$('#module_list li a[href="'+hashModule+'"]').parent().addClass('active');
     },
 
     /**

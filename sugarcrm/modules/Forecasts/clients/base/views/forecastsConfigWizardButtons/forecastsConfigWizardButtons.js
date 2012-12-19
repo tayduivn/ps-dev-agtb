@@ -90,7 +90,7 @@
                 success: function() {
                     var url = app.api.buildURL("Forecasts/init");
                     app.api.call('GET', url, null, {success: function(forecastData) {
-                        // get default selections for filter and category
+                        // get default selections for filter and ranges
                         app.defaultSelections = forecastData.defaultSelections;
                         app.initData = forecastData.initData;
                         // only trigger modal close after save api call has returned
@@ -222,7 +222,7 @@
     switchNavigationTab:function (next) {
         $(this.navTabs[next]).removeClass('disabled');
 
-        $(this.navTabs[this.activePanel]).toggleClass('active');
+        $(this.navTabs[this.activePanel]).toggleClass('active').addClass('highlight');
         $(this.navTabs[next]).toggleClass('active');
     }
 })

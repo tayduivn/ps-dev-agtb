@@ -31,24 +31,13 @@ require_once("include/Expressions/Actions/ActionFactory.php");
 class SetValueActionTest extends Sugar_PHPUnit_Framework_TestCase
 {
 
-    public static function setUpBeforeClass()
+    public function setUp()
 	{
-	    require('include/modules.php');
-	    $GLOBALS['beanList'] = $beanList;
-	    $GLOBALS['beanFiles'] = $beanFiles;
-        global $current_user;
-	    $current_user = SugarTestUserUtilities::createAnonymousUser();
-        $current_user->setPreference('datef', "Y-m-d");
+        parent::setUp();
+        SugarTestHelper::setUp("current_user");
+        $GLOBALS['current_user']->setPreference('datef', "Y-m-d");
         //Set the time format preference to include seconds since the test uses '2001-01-10 11:45:00' which contains seconds
-        $current_user->setPreference('timef', "H:i:s");
-	}
-
-	public static function tearDownAfterClass()
-	{
-	    SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
-	    unset($GLOBALS['current_user']);
-	    unset($GLOBALS['beanList']);
-	    unset($GLOBALS['beanFiles']);
+        $GLOBALS['current_user']->setPreference('timef', "H:i:s");
 	}
 
 	public function testSetValues()

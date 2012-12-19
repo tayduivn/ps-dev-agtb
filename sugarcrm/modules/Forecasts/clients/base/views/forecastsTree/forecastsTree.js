@@ -20,7 +20,7 @@
     initialize:function (options) {
         app.view.View.prototype.initialize.call(this, options);
 
-        this.reporteesEndpoint = app.api.serverUrl + "/Forecasts/reportees/";
+        this.reporteesEndpoint = app.api.buildURL("/Forecasts/reportees/");
         this.currentTreeUrl = this.reporteesEndpoint + app.user.get('id');
         this.currentRootId = app.user.get('id');
     },

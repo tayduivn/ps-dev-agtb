@@ -62,6 +62,10 @@ class TemplateField{
 	var $formula = '';
     var $unified_search = 0;
     var $supports_unified_search = false;
+    // Bug 58560 - Allow fields to be "grouped", like address fields
+    // THIS NEEDS TO BE NULL UNLESS IT IS TO BE USED SO IT DOESN'T SAVE AS AN EMPTY
+    // VALUE IN DynamicField::saveExtendedAttributes() WHICH USES isset() RATHER THAN empty()
+    var $group = null;
 	var $vardef_map = array(
 		'name'=>'name',
 		'label'=>'vname',
@@ -69,8 +73,6 @@ class TemplateField{
 		'default_value'=>'default',
 		'default'=>'default_value',
 		'display_default'=>'default_value',
-	//		'default_value'=>'default_value',
-	//		'default'=>'default_value',
 		'len'=>'len',
 		'required'=>'required',
 		'type'=>'type',
@@ -90,6 +92,9 @@ class TemplateField{
 		'label_value'=>'label_value',
 		'unified_search'=>'unified_search',
         'full_text_search'=>'full_text_search',
+        // Bug 58560 - Add a group index here so it gets written to the custom vardefs
+        // for cases such as address fields
+        'group' => 'group',
 	//BEGIN SUGARCRM flav=pro ONLY
 		'calculated' => 'calculated',
         'formula' => 'formula',

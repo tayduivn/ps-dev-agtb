@@ -1,4 +1,4 @@
-<div class="block thumbnail">
+<div class="block thumbnail reminders-record-container">
     <ul class="nav nav-pills reminders-pillbox header">
         <li class="reminders-pills {{#if overduePillActive}}active{{/if}}"><a href="#reminders-overdue" onclick="return false;"><span class="badge reminders-badge overdue-badge {{#eq this.collection.modelList.overdue.length 0}} empty{{/eq}}">{{this.collection.modelList.overdue.length}}</span><span class="reminders-pill-text"> {{str "LBL_REMINDERS_OVERDUE"}}</span></a></li>
         <li class="reminders-pills {{#if todayPillActive}}active{{/if}}"><a href="#reminders-today" onclick="return false;"><span class="badge reminders-badge{{#eq this.collection.modelList.today.length 0}} empty{{/eq}}">{{this.collection.modelList.today.length}}</span><span class="reminders-pill-text"> {{str "LBL_EMAIL_DATE_TODAY"}}</span></a></li>

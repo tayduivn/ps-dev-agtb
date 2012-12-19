@@ -4,7 +4,7 @@
         'click [name=ok_button]' : 'ok'
     },
     initialize: function(options) {
-        this.message = options.message;
+        this.message = options.layout.confirmMessage;
         app.view.View.prototype.initialize.call(this, options);
     },
     close: function(evt) {

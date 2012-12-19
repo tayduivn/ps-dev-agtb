@@ -57,10 +57,7 @@ class RESTAPI3_1Test extends Sugar_PHPUnit_Framework_TestCase
 	{
 	    if(isset($GLOBALS['listViewDefs'])) unset($GLOBALS['listViewDefs']);
 	    if(isset($GLOBALS['viewdefs'])) unset($GLOBALS['viewdefs']);
-	    unset($GLOBALS['app_list_strings']);
-	    unset($GLOBALS['app_strings']);
-	    unset($GLOBALS['mod_strings']);
-        SugarTestHelper::tearDown();
+	    SugarTestHelper::tearDown();
 	}
 
 

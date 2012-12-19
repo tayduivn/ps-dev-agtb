@@ -30,24 +30,32 @@ class RestTestPortalBase extends RestTestBase {
 
     protected $currentPortalBean = null;
     protected $testConsumer = null;
+    protected $originalSetting = array();
 
     public function setUp()
     {
-        global $db;
-
+        // Setup the original settings
+        if (empty($GLOBALS['system_config']->settings)) {
+            $GLOBALS['system_config']->retrieveSettings();
+        }
+        
+        if (isset($GLOBALS['system_config']->settings['supportPortal_RegCreatedBy'])) {
+            $this->originalSetting['portaluserid'] = $GLOBALS['system_config']->settings['supportPortal_RegCreatedBy'];
+        }
+        
+        if (isset($GLOBALS['system_config']->settings['portal_on'])) {
+            $this->originalSetting['portalon'] = $GLOBALS['system_config']->settings['portal_on'];
+        }
+        
         parent::setUp();
 
-        // Disable the other portal users
-        $this->oldPortal = array();
-        $ret = $db->query("SELECT id FROM users WHERE portal_only = '1' AND deleted = '0'");
-        while ( $row = $db->fetchByAssoc($ret) ) {
-            $this->oldPortal[] = $row['id'];
-        }
-        $db->query("UPDATE users SET deleted = '1' WHERE portal_only = '1'");
-
+        // Make the current user a portal only user
         $this->_user->portal_only = '1';
         $this->_user->save();
+        
+        // Reset the support portal user id to the newly created user id        
         $GLOBALS ['system_config']->saveSetting('supportPortal', 'RegCreatedBy', $this->_user->id);
+        
         $this->role = $this->_getPortalACLRole();
         if (!($this->_user->check_role_membership($this->role->name))) {
             $this->_user->load_relationship('aclroles');
@@ -56,7 +64,7 @@ class RestTestPortalBase extends RestTestBase {
         }
 
         // A little bit destructive, but necessary.
-        $db->query("DELETE FROM contacts WHERE portal_name = 'unittestportal'");
+        $GLOBALS['db']->query("DELETE FROM contacts WHERE portal_name = 'unittestportal'");
 
         // Create the portal contact
         $this->contact = BeanFactory::newBean('Contacts');
@@ -84,7 +92,7 @@ class RestTestPortalBase extends RestTestBase {
         $this->currentPortalBean->getByKey('support_portal', 'oauth2');
         $this->currentPortalBean->new_with_id = true;
 
-        $db->query("DELETE FROM ".$this->testConsumer->table_name." WHERE client_type = 'support_portal'");
+        $GLOBALS['db']->query("DELETE FROM ".$this->testConsumer->table_name." WHERE client_type = 'support_portal'");
 
         // Create a unit test login ID
         $this->testConsumer->id = 'UNIT-TEST-portallogin';
@@ -114,9 +122,13 @@ class RestTestPortalBase extends RestTestBase {
         if(!empty($this->currentPortalBean->id)) {
             $this->currentPortalBean->save();
         }
-
-        $GLOBALS ['system_config']->saveSetting('supportPortal', 'RegCreatedBy', '');
-        $this->_restLogout();
+        
+        // reset the config table back to what it was originally, default if nothing was there
+        $portalUserId = isset($this->originalSetting['portaluserid']) ? $this->originalSetting['portaluserid'] : '';
+        $portalOn = empty($this->originalSetting['portalon']) ? '0' : '1';
+        $GLOBALS['system_config']->saveSetting('supportPortal', 'RegCreatedBy', $portalUserId);
+        $GLOBALS['system_config']->saveSetting('portal', 'on', $portalOn);
+        $GLOBALS['db']->commit();
         parent::tearDown();
     }
 

@@ -220,8 +220,8 @@ describe("The forecasts manager worksheet", function(){
     		expect(view.context.forecasts.on).toHaveBeenCalledWith("change:selectedTimePeriod");
     	});
     	
-    	it("forecasts.on should have been called with selectedCategory", function(){
-    		expect(view.context.forecasts.on).toHaveBeenCalledWith("change:selectedCategory");
+    	it("forecasts.on should have been called with selectedRanges", function(){
+    		expect(view.context.forecasts.on).toHaveBeenCalledWith("change:selectedRanges");
     	});
     	
     	it("forecasts.worksheet.on should have been called with change", function(){

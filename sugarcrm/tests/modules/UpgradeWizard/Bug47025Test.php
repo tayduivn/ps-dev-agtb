@@ -63,7 +63,7 @@ public function testUpgradeUserPreferencesCeToPro()
     $user->retrieve($this->user->id);
     $theme = $user->getPreference('user_theme');
     $tabs = (int)$user->getPreference('max_tabs');
-    $this->assertEquals('Sugar', $theme, 'Assert that theme is upgraded to Sugar on CE->PRO upgrade');
+    $this->assertEquals('RacerX', $theme, 'Assert that theme is upgraded to RacerX on CE->PRO upgrade');
     $this->assertEquals(10, $tabs, 'Assert that number of tabs is not changed');
 }
 
@@ -78,7 +78,7 @@ public function testUpgradeUserPreferencesCeToProWithTabValue()
     $user->retrieve($this->user->id);
     $theme = $user->getPreference('user_theme');
     $tabs = (int)$user->getPreference('max_tabs');
-    $this->assertEquals('Sugar', $theme, 'Assert that theme is upgraded to Sugar on CE->PRO upgrade');
+    $this->assertEquals('RacerX', $theme, 'Assert that theme is upgraded to RacerX on CE->PRO upgrade');
     $this->assertEquals(7, $tabs, 'Assert that number of tabs defaults to 7 if it was empty');
 }
 

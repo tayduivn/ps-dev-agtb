@@ -197,6 +197,12 @@ $app_list_strings = array (
     '2'=>'No',
   ),
 
+  'optout_dom' => array(
+      '' => '-none-',
+      'false' => 'No',
+      'true' => 'Yes',
+  ),
+
   //e.g. en franï¿½ais 'Analyst'=>'Analyste',
   'account_type_dom' =>
   array (
@@ -1781,7 +1787,7 @@ $app_strings = array (
   'LBL_PLUS_INLINE' => 'Add' /*for 508 compliance fix*/,
   'LBL_ID_FF_CLEAR' => 'Clear' /*for 508 compliance fix*/,
   'LBL_ID_FF_VCARD' => 'vCard' /*for 508 compliance fix*/,
-  'LBL_ID_FF_REMOVE' => 'Remove' /*for 508 compliance fix*/,
+  'LBL_ID_FF_REMOVE' => 'Unlink' /*for 508 compliance fix*/,
   'LBL_ADD' => 'Add' /*for 508 compliance fix*/,
   'LBL_COMPANY_LOGO' => 'Company logo' /*for 508 compliance fix*/,
   'LBL_JS_CALENDAR' => 'Calendar' /*for 508 compliance fix*/,
@@ -2540,6 +2546,9 @@ $app_strings = array (
     'LBL_MAILMERGE' => 'Mail Merge',
     'LBL_MASS_UPDATE' => 'Mass Update',
     'LBL_NO_MASS_UPDATE_FIELDS_AVAILABLE' => 'There are no fields available for the Mass Update operation',
+    'LBL_MASS_UPDATE_JOB_QUEUED' => 'Your request for mass update has been scheduled.',
+    'LBL_MASS_UPDATE_EMPTY_VALUES' => 'The following attributes have empty values: ',
+    'LBL_MASS_UPDATE_EMPTY_CONFIRM' => 'Do you want to continue?',
     'LBL_OPT_OUT_FLAG_PRIMARY' => 'Opt out Primary Email',
     'LBL_MEETINGS'=>'Meetings',
     'LBL_MEETING'=>'Meeting',
@@ -3635,6 +3644,7 @@ $app_list_strings['kbdocument_status_dom'] = array (
     );
 
   $app_list_strings['moduleList']['KBDocuments'] = 'Knowledge Base';
+$app_list_strings['moduleList']['Words'] = 'Words';
   $app_strings['LBL_CREATE_KB_DOCUMENT'] = 'Create Article';
   $app_list_strings['kbdocument_viewing_frequency_dom'] =
   array(
@@ -4440,7 +4450,7 @@ $app_strings ['documentation'] = array (
     'COM' => '05_Sugar_Community_Edition'
 );
 //BEGIN SUGARCRM flav=pro ONLY
-$app_list_strings['forecasts_config_category_options_dom'] = array(
+$app_list_strings['forecasts_config_ranges_options_dom'] = array(
     'show_binary' => 'Two Ranges',
     'show_buckets' => 'Three Ranges',
 //END SUGARCRM flav=pro ONLY
