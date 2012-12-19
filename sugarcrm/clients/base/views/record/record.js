@@ -1,14 +1,11 @@
 ({
-    editMode: false,
+    inlineEditMode: false,
     createMode: false,
+    previousModelState: null,
 
     events: {
-        'click .record-duplicate': 'duplicateClicked',    	
-        'click .record-edit': 'editClicked',
         'click .record-edit-link-wrapper': 'handleEdit',
-        'click .record-save': 'saveClicked',
-        'click .record-cancel': 'cancelClicked',
-        'click .record-delete': 'deleteClicked',
+        'click a[name=cancel_button]': 'cancelClicked',
         'click .more': 'toggleMoreLess',
         'click .less': 'toggleMoreLess'
     },
@@ -28,11 +25,16 @@
 
         // Set the save button to show if the model has been edited.
         this.model.on("change", function() {
-            if (this.editMode || this.editAllMode) {
+            if (this.inlineEditMode) {
                 this.previousModelState = this.model.previousAttributes();
                 this.setButtonStates(this.STATE.EDIT);
             }
         }, this);
+
+        this.context.on('button:edit_button:click', this.editClicked, this);
+        this.context.on('button:save_button:click', this.saveClicked, this);
+        this.context.on('button:delete_button:click', this.deleteClicked, this);
+        this.context.on('button:duplicate_button:click', this.duplicateClicked, this);
 
         if (this.createMode) {
             this.model.isNotEmpty = true;
@@ -85,10 +87,10 @@
         }, this);
 
         app.view.View.prototype.render.call(this);
+        this.setButtonStates(this.STATE.VIEW);
 
         // Check if this is a new record, if it is, enable the edit view
         if (this.createMode && this.model.isNew()) {
-            this.editAllMode = false;
             this.toggleEdit(true);
         }
     },
@@ -156,71 +158,53 @@
         return false;
     },
 
-    duplicateClicked: function(event) {
-        if (!this.$(event.target).hasClass('disabled')) {
-            app.cache.set("duplicate"+this.module, this.model.attributes);
-            app.router.navigate("#"+this.module+"/create", {trigger: true});
-        }
+    duplicateClicked: function() {
+        app.cache.set("duplicate"+this.module, this.model.attributes);
+        app.router.navigate("#"+this.module+"/create", {trigger: true});
     },
     
-    editClicked: function(event) {
-        if (!this.$(event.target).hasClass('disabled')) {
-            this.toggleEdit();
-        }
+    editClicked: function() {
+        this.previousModelState = this.model.previousAttributes();
+        this.setButtonStates(this.STATE.EDIT);
+        this.toggleEdit(true);
     },
 
-    saveClicked: function(event) {
-        if (!this.$(event.target).hasClass('disabled')) {
-            this.setButtonStates(this.STATE.VIEW);
-            this.handleSave();
-        }
+    saveClicked: function() {
+        this.setButtonStates(this.STATE.VIEW);
+        this.handleSave();
     },
 
-    cancelClicked: function(event) {
-        if (!this.$(event.target).hasClass('disabled')) {
-            this.setButtonStates(this.STATE.VIEW);
-            this.handleCancel();
-        }
+    cancelClicked: function() {
+        this.setButtonStates(this.STATE.VIEW);
+        this.handleCancel();
     },
 
-    deleteClicked: function(event) {
-        if (!this.$(event.target).hasClass('disabled')) {
-            this.handleDelete();
-        }
+    deleteClicked: function() {
+        this.handleDelete();
     },
 
-    // Handler functions
+    /**
+     * Render fields into either edit or view mode.
+     * @param isEdit
+     */
     toggleEdit: function(isEdit) {
         _.each(this.fields, function(field) {
-
-            // Exclude image picker,
+            // Exclude image picker, buttons, and button dropdowns
             // This is just a stop gap solution.
-            if (field.type == "img") {
+            if ((field.type == "img") || (field.type === 'button') || (field.type === 'buttondropdown')) {
                 return;
             }
 
-            if (_.isUndefined(isEdit)) {
-                if (this.editAllMode) {
-                    field.options.viewName = "detail";
-                    this.$('.record-edit-link-wrapper').show();
-                } else {
-                    field.options.viewName = "edit";
-                    this.$('.record-edit-link-wrapper').hide();
-                }
+            if (isEdit) {
+                field.options.viewName = "edit";
+                this.$('.record-edit-link-wrapper').hide();
             } else {
-                if (isEdit) {
-                    field.options.viewName = "edit";
-                    this.$('.record-edit-link-wrapper').hide();
-                } else {
-                    field.options.viewName = "detail";
-                    this.$('.record-edit-link-wrapper').show();
-                }
-            }
+                field.options.viewName = "detail";
+                this.$('.record-edit-link-wrapper').show();
+           }
 
             field.render();
         }, this);
-
-        this.editAllMode = (this.editAllMode) ? false : true;
     },
 
     /**
@@ -243,7 +227,7 @@
         field = this.getField(cellData.name);
 
         // Set Editing mode to on.
-        this.editMode = true;
+        this.inlineEditMode = true;
 
         // TODO: Refactor this for fields to support their own focus handling in future.
         // Add your own field type handling for focus / editing here.
@@ -267,9 +251,8 @@
 
     handleSave: function() {
         var self = this;
+        this.inlineEditMode = false;
 
-        this.editMode = false;
-        this.editAllMode = false;
         this.model.save({}, {
             success: function() {
                 if (self.createMode) {
@@ -285,8 +268,7 @@
     },
 
     handleCancel: function() {
-        this.editMode = false;
-        this.editAllMode = false;
+        this.inlineEditMode = false;
 
         if (!_.isEmpty(this.previousModelState)) {
             this.model.set(this.previousModelState);
@@ -404,30 +386,44 @@
      */
     setButtonStates: function(state) {
         var $buttons = {
-            edit:   this.$('.record-edit'),
-            save:   this.$('.record-save'),
-            cancel: this.$('.record-cancel'),
-            del:    this.$('.record-delete')
+            edit: this.getField('edit_dropdown'),
+            save: this.getField('save_dropdown'),
+            cancel: this.getField('cancel_button')
         };
 
         switch (state) {
             case this.STATE.EDIT:
-                $buttons.edit.toggleClass('hide', false).addClass('disabled');
-                $buttons.save.toggleClass('hide', false);
-                $buttons.cancel.toggleClass('hide', false);
-                $buttons.del.toggleClass('hide', false);
+                if ($buttons.edit) {
+                    $buttons.edit.hide();
+                }
+                if ($buttons.save) {
+                    $buttons.save.show();
+                }
+                if ($buttons.cancel) {
+                    $buttons.cancel.show();
+                }
                 break;
             case this.STATE.VIEW:
-                $buttons.edit.toggleClass('hide', false).removeClass('disabled');
-                $buttons.save.toggleClass('hide', true);
-                $buttons.cancel.toggleClass('hide', true);
-                $buttons.del.toggleClass('hide', false);
+                if ($buttons.edit) {
+                    $buttons.edit.show();
+                }
+                if ($buttons.save) {
+                    $buttons.save.hide();
+                }
+                if ($buttons.cancel) {
+                    $buttons.cancel.hide();
+                }
                 break;
             default:
-                $buttons.edit.toggleClass('hide', true).removeClass('disabled');
-                $buttons.save.toggleClass('hide', true);
-                $buttons.cancel.toggleClass('hide', true);
-                $buttons.del.toggleClass('hide', true);
+                if ($buttons.edit) {
+                    $buttons.edit.hide();
+                }
+                if ($buttons.save) {
+                    $buttons.save.hide();
+                }
+                if ($buttons.cancel) {
+                    $buttons.cancel.hide();
+                }
                 break;
         }
     },
