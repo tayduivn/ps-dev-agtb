@@ -833,12 +833,14 @@ if(!didThisStepRunBefore('commit')){
             $errors[] = 'Could not write config.php!';
         }
 
-		logThis('Upgrade the sugar_version', $path);
-		$sugar_config['sugar_version'] = $sugar_version;
         if (version_compare($new_sugar_version, $sugar_version, '='))
         {
             require('config.php');
         }
+        //upgrade the sugar version prior to writing config file.
+        logThis('Upgrade the sugar_version', $path);
+        $sugar_config['sugar_version'] = $sugar_version;
+
         if( !write_array_to_file( "sugar_config", $sugar_config, "config.php" ) ) {
             logThis('*** ERROR: could not write config.php! - upgrade will fail!', $path);
             $errors[] = 'Could not write config.php!';
