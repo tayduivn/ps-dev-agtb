@@ -67,6 +67,8 @@ class ViewDisplayProperties extends ViewList
    		global $current_user;
 		$access = $current_user->getDeveloperModules();
 		foreach(SugarAutoLoader::getDirFiles("modules", true) as $e) {
+            //Strip the 'modules/' portion out from beginning of $e
+            $e = substr($e, 8);
 		    if(empty($enabled_modules[$e]) && SugarAutoLoader::fileExists('modules/' . $e . '/metadata/studio.php')
 		        && SugarAutoLoader::fileExists('modules/' . $e . '/metadata/detailviewdefs.php')
 		        && isset($GLOBALS['beanList'][$e]) && (in_array($e, $access) || is_admin($current_user))) // installed modules must also exist in the beanList

@@ -55,6 +55,9 @@ class ReportsExportApiTest extends RestTestBase
         parent::tearDown();
     }
 
+    /**
+     * @group rest
+     */
     public function testReportExportBase64Api()
     {
         $rep = new SavedReport();
@@ -71,6 +74,9 @@ class ReportsExportApiTest extends RestTestBase
         $this->assertTrue(!empty($restReply), 'no file received');
     }
 
+    /**
+     * @group rest
+     */
     public function testReportExportPdfApi()
     {
         $rep = new SavedReport();
@@ -86,4 +92,28 @@ class ReportsExportApiTest extends RestTestBase
 
         $this->assertTrue(!empty($restReply), 'no file received');
     }    
+
+    /**
+     * @group rest
+     */
+    public function testReportExportSummaryPdfApi()
+    {
+        // The summary report goes through a different file and was having issues
+
+        $summaryReportDef = '{"report_type":"summary","display_columns":[],"summary_columns":[{"name":"count","label":"Count","group_function":"count","table_key":"self"},{"name":"name","label":"Team: Team Name","table_key":"self_link_0","is_group_by":"visible"},{"name":"user_name","label":"Assigned to User: User Name","table_key":"self_link_1","is_group_by":"visible"}],"filters_def":[],"filters_combiner":"AND","group_defs":[{"name":"name","label":"Team Name","table_key":"self_link_0"},{"name":"user_name","label":"User Name","table_key":"self_link_1"}],"full_table_list":{"self":{"parent":"","value":"Meetings","module":"Meetings","label":"Meetings","children":{"self_link_0":"self_link_0","self_link_1":"self_link_1"}},"self_link_0":{"parent":"self","children":[],"value":"team_link","label":"Team","link_def":{"name":"team_link","relationship_name":"meetings_team","bean_is_lhs":"","link_type":"one","label":"Team","table_key":"self_link_0"},"module":"Teams"},"self_link_1":{"parent":"self","children":[],"value":"assigned_user_link","label":"Assigned to User","link_def":{"name":"assigned_user_link","relationship_name":"meetings_assigned_user","bean_is_lhs":"","link_type":"one","label":"Assigned to User","table_key":"self_link_1"},"module":"Users"}},"module":"Meetings","report_name":"Meetings By Team By User","chart_type":"hBarF","chart_description":"","numerical_chart_column":"count","assigned_user_id":"1"}';
+
+        $rep = new SavedReport();
+        $rep->save_report(-1, $GLOBALS['current_user']->id, "Test Account Report", "Accounts","tabular",$summaryReportDef, 0, 1);
+        
+        $GLOBALS['db']->commit();
+
+        $id = $rep->id;
+        // call the Rest
+        $restReply = $this->_restCall("Reports/{$id}/pdf",
+                                    json_encode(array()),
+                                    'GET');
+
+        $this->assertTrue(!empty($restReply), 'no file received');
+    }    
+
 }
