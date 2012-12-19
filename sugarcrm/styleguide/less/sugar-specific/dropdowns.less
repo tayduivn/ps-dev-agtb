@@ -1,6 +1,7 @@
 .dropdown-menu {
   top: 34px;
   padding: 0;
+  .border-radius(4px);
   &.carettop {
     .caret-top(10px,9px,auto,auto);
   }
@@ -34,11 +35,24 @@
   }
   li:first-child a {
     border-top: none;
+    .border-radius(4px 4px 0 0);
+  }
+  li:last-child a {
+    border-bottom: none;
+    .border-radius(0 0 4px 4px);
+  }
+  //boostrap override
+  li > a {
+    padding: 8px;
   }
   a {
     margin: 0;
     padding: 8px 10px;
     border-top: 1px solid @grayLighter;
+    //background: #E1F0FA;
+    label {
+      padding-left: 0;
+    }
   }
   // Hover state
   // -----------
@@ -51,8 +65,9 @@
     color: @dropdownLinkColorHover;
     text-decoration: none;
     //this causes sharp corners on dropdown-menu
-    //background-color: @dropdownLinkBackgroundHover;
-    background-color: transparent;
+    //fixed by setting border radius on li > a
+    background: @dropdownLinkBackgroundHover;
+    //background-color: transparent;
   }
 }
 
@@ -65,3 +80,6 @@
   }
 }
 
+.caret {
+  .opacity(30);
+}

@@ -306,6 +306,21 @@ h1 input[type="text"] {
   }
 }
 
+//Generate fixed spanX modal widths
+.spanLabelX (@index) when (@index > 0) {
+  (~".form-horizontal .control-label.span@{index}") { .spanLabel(@index); }
+  .spanLabelX(@index - 1);
+}
+.spanLabelX (0) {}
+
+.spanLabel (@columns) {
+  width: (@fluidGridColumnWidth * @columns) + (@fluidGridGutterWidth * (@columns - 1));
+  *width: (@fluidGridColumnWidth * @columns) + (@fluidGridGutterWidth * (@columns - 1)) - (.5 / @gridRowWidth * 100 * 1%);
+}
+
+.spanLabelX (@gridColumns);
+
+
 .form-horizontal {
   .row-fluid.control-group {
     margin: 0;

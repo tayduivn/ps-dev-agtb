@@ -11,6 +11,10 @@
 
 // Navbar search
 .navbar-search {
+  margin-top: 8px;
+  .btn-group .dropdown-toggle {
+    box-shadow: none;
+  }
   .search-query,
   .chzn-container-multi .chzn-choices {
     color: @grayLighter;
@@ -36,7 +40,29 @@
     }
   }
   .btn-group .dropdown-toggle {
+    padding-left: 8px;
+    padding-right: 8px;
     box-shadow: none;
+  }
+  .search-query {
+    margin-bottom: 0px;
+    min-height: 1px;
+    padding: 4px 9px;
+    .border-radius(2px);
+    .transition(none);
+    // Hover states
+    &:hover {
+      color: @white;
+      background-color: @grayLight;
+      background-color: rgba(255,255,255,.5);
+    }
+    // Focus states (we use .focused since IE7-8 and down doesn't support :focus)
+    &:focus,
+    &.focused {
+      text-shadow: 0 1px 0 @white;
+      background-color: @white;
+      outline: 0;
+    }
   }
   .btn-toolbar {
     margin-top:0;
@@ -65,7 +91,9 @@
 }
 
 .navbar {
+  color: #58595B;
   .navbar-inner {
+    border: none;
     height: 44px;
     @shadow: 0 1px 3px rgba(0,0,0,.25), inset 0 -1px 0 rgba(0,0,0,.1), 0 4px 0 @BorderColor;
     .box-shadow(@shadow);
@@ -84,13 +112,30 @@
       background: red !important;
     }
   }
+  a [class^="icon-"] {
+    color: @white !important;
+    font-size: 14px;
+  }
   // fix red message button position
   .dropdown .btn {
     margin-top: 8px;
     margin-bottom: 7px;
   }
+  // TBS override
+  .pull-right > li > .dropdown-menu {
+    right: -7px;
+  }
+  .btn-group {
+    margin: 0 10px 0; // make buttons vertically centered in navbar
+  }
   // Menu position and menu carets
   .dropdown-menu {
+    .dropdownMinWidth();
+    margin-top: 0;
+    top: 44px;
+    right: -8px;
+    left: auto;
+    .border-radius(4px);
     &:before {
       border-bottom-color: rgba(0,0,0,.2);
     }
@@ -103,31 +148,27 @@
       padding: 0;
     }
   }
-  a [class^="icon-"] {
-    color: @white !important;
-    font-size: 14px;
-  }
-  .nav.pull-right#userList {
-    margin: 0;
-  }
   .advanced {
     position: absolute;
-    top: -8px;
-    right: -2px;
+    right: 0;
+    top: 0;
     .btn {
-      line-height: 19px;
-      height: 18px;
+      line-height: 17px;
+      height: 17px;
+      margin-top: 1px;
     }
     //fix advanced drop down position
     .dropdown-menu {
-      right: 35px;
+      right: 29px;
       top: 35px;
+      left: auto;
       li {
         padding: 8px;
         &.divider {
           padding: 0;
         }
       }
+      .caret-top(auto,auto,8px,7px);
     }
     &.dropdown-toggle {
       right: 31px;
@@ -142,14 +183,27 @@
       margin-right: 0;
     }
   }
+  .divider-vertical {
+    height: 44px;
+    width: 1px;
+    margin: 0;
+    overflow: hide;
+    background-color: #1A1A1A;
+    border-left: none;
+    border-right: 1px solid #404040;
+  }
   .container-fluid {
     margin-top: 0;
   }
+
   // Links
   .nav {
-    &> li {
-      &> a {
+    > li {
+      > a {
         color: lighten(@black,80%);
+        text-shadow: 0 -1px 1px rgba(0,0,0,.25);
+        padding: 12px 8px;
+        line-height: 19px;
         text-shadow: 0 -1px 1px rgba(0,0,0,.25);
         // Hover
         &:hover {
@@ -172,11 +226,21 @@
     // Active nav items
     .active > a,
     .active > a:hover {
+      text-decoration: none;
+      border-bottom: 4px solid darken(@red,15%);
+      padding-bottom: 13px;
+      text-shadow: none;
+      font-weight: bold;
       color: lighten(lightness(@PrimaryButton),100%);
       background-color: lighten(@NavigationBar,5%) !important;
-      @shadow: inset 0 -1px 0 rgba(0,0,0,.4);
-      .box-shadow(@shadow);
+      .box-shadow(~"inset 0 -1px 0 rgba(0,0,0,.4)");
       text-shadow: 0 -1px 0 rgb(0,0,0);
+      //color: @navbarLinkColorActive;
+      //background-color: @navbarLinkBackgroundActive;
+    }
+    // Secondary (floated right) nav in topbar
+    &.pull-right {
+      margin-left: 10px;
     }
   }
   .avatar {
@@ -192,6 +256,13 @@
   form .btn {
     margin-left: -11px;
     line-height: 16px;
+  }
+  //fix position and size
+  .icon-plus.icon-md {
+      line-height: 14px;
+  }
+  .icon-plus:before {
+      margin: 3px 0 -2px;
   }
 }
 
