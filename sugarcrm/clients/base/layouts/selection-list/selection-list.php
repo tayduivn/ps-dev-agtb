@@ -1,7 +1,7 @@
-{{!
+<?php
 /*********************************************************************************
  * The contents of this file are subject to the SugarCRM Master Subscription
- * Agreement (""License"") which can be viewed at
+ * Agreement ("License") which can be viewed at
  * http://www.sugarcrm.com/crm/master-subscription-agreement
  * By installing or using this file, You have unconditionally agreed to the
  * terms and conditions of the License, and You may not use this file except in
@@ -15,7 +15,7 @@
  * remove SugarCRM copyrights from the source code or user interface.
  *
  * All copies of the Covered Code must include on each user interface screen:
- *  (i) the ""Powered by SugarCRM"" logo and
+ *  (i) the "Powered by SugarCRM" logo and
  *  (ii) the SugarCRM copyright notice
  * in the same form as they appear in the distribution.  See full license for
  * requirements.
@@ -25,20 +25,12 @@
  * governing these rights and limitations under the License.  Portions created
  * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
-}}
-{{#each value}}
-    <div class="controls">
-        <select class="chzn-select inherit-width" data-placeholder="{{str "LBL_SELECT_TEAM"}}" data-index="{{@index}}">
-            <option value=""></option>
-            {{#if id}}
-                <option value="{{id}}" selected>{{name}}</option>
-            {{/if}}
-            <option data-searchmore="true" value="{{str "LBL_SEARCH_FOR_MORE"}}" class="more">{{str "LBL_SEARCH_FOR_MORE"}}</option>
-        </select>
-        <a href="javascript:void(0);" class="btn {{#if primary}}active{{/if}}" name="primary" data-index="{{@index}}"><i class="icon-star"></i></a>
-        <a href="javascript:void(0);" class="btn" name="remove" data-index="{{@index}}"><i class="icon-minus"></i></a>
-        {{#if add_button}}
-            <a href="javascript:void(0);" class="btn" name="add"><i class="icon-plus"></i></a>
-        {{/if}}
-    </div>
-{{/each}}
+
+
+$layout = MetaDataManager::getLayout('SideBarLayout');
+$layout->push('main', array('view'=>'selection-headerpane'));
+$layout->push('main', array('view'=>'selection-actions'));
+$layout->push('main', array('view'=>'selection-list'));
+$layout->push('main', array('view'=>'list-bottom'));
+$layout->push('side', array('layout'=>'sidebar'));
+$viewdefs['base']['layout']['selection-list'] = $layout->getLayout();

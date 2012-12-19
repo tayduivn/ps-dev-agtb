@@ -42,6 +42,7 @@
     },
     initialize: function(options) {
         options.meta = _.extend(app.metadata.getView(options.module, 'baselist') || {}, options.meta);
+        options.meta.type = options.meta.type || 'list';
         if(!_.isUndefined(options.meta.selection) && !_.isUndefined(options.meta.selection.type)) {
             switch (options.meta.selection.type) {
                 case "single":
@@ -55,6 +56,7 @@
             }
         }
         app.view.View.prototype.initialize.call(this, options);
+        this.template = this.template || app.template.getView('baselist') || app.template.getView('baselist', this.module) || null;
         this.fallbackFieldTemplate = 'list-header';
     },
     _render:function () {

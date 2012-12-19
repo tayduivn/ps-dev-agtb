@@ -59,9 +59,17 @@
                         searchmore = selected.data("searchmore"),
                         empty = selected.data("empty");
                     if(searchmore || empty) {
+                        self.beforeSearchMore();
                         $(evt.currentTarget).val('');
                         $(this).trigger("liszt:updated");
-                        //TODO: inline Modal for selection
+                        self.view.layout.trigger("drawer:selection:fire", {
+                            components: [{
+                                layout : 'selection-list',
+                                context: {
+                                    module: self.getSearchModule()
+                                }
+                            }]
+                        }, self.setValue);
                     } else {
                         self.setValue({id: id, value: value});
                     }
@@ -75,6 +83,7 @@
         }
         return result;
     },
+    beforeSearchMore: function() {},
     bindDataChange: function() {
         if (this.model) {
             var self = this;
