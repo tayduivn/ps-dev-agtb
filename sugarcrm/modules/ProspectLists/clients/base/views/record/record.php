@@ -45,7 +45,7 @@ $viewdefs['ProspectLists']['base']['view']['record'] = array(
             'type'    => 'button',
             'label'   => 'LBL_DUPLICATE_BUTTON_LABEL',
             'css_class' => 'record-duplicate',
-        ),            
+        ),
         array(
             'type'    => 'button',
             'label'   => 'LBL_EDIT_BUTTON_LABEL',
@@ -101,8 +101,8 @@ $viewdefs['ProspectLists']['base']['view']['record'] = array(
 
                 //BEGIN SUGARCRM flav=pro ONLY
                 array(
-                    'name' => 'team_name',
-                    'displayParams' => array('display' => true),
+                    "type" => "teamset",
+                    "name" => "team_name"
                 ),
                 //END SUGARCRM flav=pro ONLY
             )
