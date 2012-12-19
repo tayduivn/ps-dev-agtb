@@ -6450,4 +6450,13 @@ class SugarBean
         }
         return $this->duplicate_check_manager;
     }
+
+    /**
+     * Fallback file name getter, simply gets the filename for the given bean
+     *
+     * @return string
+     */
+    public function getFileName() {
+        return empty($this->filename) ? '' : $this->filename;
+    }
 }
