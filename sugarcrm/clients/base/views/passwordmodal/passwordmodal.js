@@ -27,7 +27,6 @@
 ({
     extendsFrom:'BaseeditmodalView',
     initialize: function(options) {
-        this.options.meta = this._meta.meta;
         app.view.View.prototype.initialize.call(this, options);
         this.fallbackFieldTemplate = "edit";
         if (this.layout) {
@@ -195,59 +194,5 @@
             title: app.lang.get('LBL_PORTAL_LOGIN_PASSWORD'), 
             messages: app.lang.get('LBL_PORTAL_PASSWORD_SUCCESS_CHANGED'),
             autoClose: true});
-    },
-    
-    _meta: 
-        {
-            "meta": {
-                "buttons": [
-                    {
-                        "name": "cancel_button",
-                        "type": "button",
-                        "label": app.lang.get('LBL_CANCEL_BUTTON_LABEL'),
-                        "value": "cancel",
-                        "css_class": "btn-invisible btn-link",
-                    },
-                    {
-                        "name": "save_button",
-                        "type": "button",
-                        "label": app.lang.get('LBL_SAVE_BUTTON_LABEL'),
-                        "value": "save",
-                        "css_class": "btn-primary save-profile",
-                    }
-                ],
-                "panels": [
-                    {
-                        "label": "default",
-                        "fields": [
-                            {
-                                "name": "current_password",
-                                "type": "password",
-                                "label": "LBL_OLD_PORTAL_PASSWORD",
-                                "displayParams": {
-                                    "colspan": 2
-                                }
-                            },
-                            {
-                                "name": "new_password",
-                                "type": "password",
-                                "label": "LBL_PORTAL_PASSWORD",
-                                "displayParams": {
-                                    "colspan": 2
-                                }
-                            },
-                            {
-                                "name": "confirm_password",
-                                "type": "password",
-                                "label": "LBL_CONFIRM_PORTAL_PASSWORD",
-                                "displayParams": {
-                                    "colspan": 2
-                                }
-                            }
-                        ]
-                    }
-                ]
-            }
-        }
-    
+    }
   })
