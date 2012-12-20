@@ -28,7 +28,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
-$viewdefs['base']['view']['passwordmodal'] = array(
+$viewdefs['portal']['view']['passwordmodal'] = array(
     'buttons' =>
         array(
             array(
@@ -36,7 +36,7 @@ $viewdefs['base']['view']['passwordmodal'] = array(
                 'type' => 'button',
                 'label' => 'LBL_SAVE_BUTTON_LABEL',
                 'value' => 'save',
-                'css_class' => 'btn-primary save-profile',
+                'css_class' => 'btn-primary pull-right save-profile',
             ),
             array(
                 'name' => 'cancel_button',
@@ -55,7 +55,7 @@ $viewdefs['base']['view']['passwordmodal'] = array(
                     array(
                         'name' => 'current_password',
                         'type' => 'password',
-                        'label' => 'LBL_OLD_PASSWORD',
+                        'label' => 'LBL_OLD_PORTAL_PASSWORD',
                         'displayParams' =>
                         array(
                             'colspan' => 2,
@@ -64,7 +64,7 @@ $viewdefs['base']['view']['passwordmodal'] = array(
                     array(
                         'name' => 'new_password',
                         'type' => 'password',
-                        'label' => 'LBL_NEW_PASSWORD',
+                        'label' => 'LBL_PORTAL_PASSWORD',
                         'displayParams' =>
                         array(
                             'colspan' => 2,
@@ -73,7 +73,7 @@ $viewdefs['base']['view']['passwordmodal'] = array(
                     array(
                         'name' => 'confirm_password',
                         'type' => 'password',
-                        'label' => 'LBL_NEW_PASSWORD2',
+                        'label' => 'LBL_CONFIRM_PORTAL_PASSWORD',
                         'displayParams' =>
                         array(
                             'colspan' => 2,
