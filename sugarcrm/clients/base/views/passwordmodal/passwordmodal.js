@@ -83,6 +83,7 @@
     // Since we don't have a true Bean/meta driven validation for matching two temp fields 
     // (password and confirmation password), etc., we manually add validation errors here
     handleCustomValidationError: function(field, errorMsg) {
+        field = field.parents('.control-group')
         field.addClass('error');// Note the field is row fluid control group
         field.find('.help-block').html("");
         field.find('.help-block').append(errorMsg);
@@ -93,7 +94,7 @@
         this.$('[name=save_button]').attr('data-loading-text', app.lang.get('LBL_LOADING'));
         this.$('[name=save_button]').button('loading');
     },
-    verify: function(contactModel) {
+    verify: function() {
         var self = this, currentPassword, password, confirmPassword, confirmPasswordField, isError=false,
             passwordField, maxLen, currentPasswordField;
         self.setLoading();
@@ -108,32 +109,32 @@
         confirmPassword = confirmPasswordField.val();
         
         if(!currentPassword) {
-            self.handleCustomValidationError(currentPasswordField.parents('.control-group'),app.lang.get('ERROR_FIELD_REQUIRED'));
+            self.handleCustomValidationError(currentPasswordField,app.lang.get('ERROR_FIELD_REQUIRED'));
             isError=true;
         }
         if(!password) {
-            self.handleCustomValidationError(passwordField.parents('.control-group'),app.lang.get('ERROR_FIELD_REQUIRED'));
+            self.handleCustomValidationError(passwordField,app.lang.get('ERROR_FIELD_REQUIRED'));
             isError=true;
         }
         if(!confirmPassword) {
-            self.handleCustomValidationError(confirmPasswordField.parents('.control-group'),app.lang.get('ERROR_FIELD_REQUIRED'));
+            self.handleCustomValidationError(confirmPasswordField,app.lang.get('ERROR_FIELD_REQUIRED'));
             isError=true;
         }
         if(password !== confirmPassword) {
             self.setLoading();
-            self.handleCustomValidationError(confirmPasswordField.parents('.control-group'),app.lang.get('LBL_PORTAL_PASSWORDS_MUST_MATCH'));
+            self.handleCustomValidationError(confirmPasswordField,app.lang.get('LBL_PORTAL_PASSWORDS_MUST_MATCH'));
             isError=true;
         }
         maxLen = parseInt(app.metadata.getModule('Contacts').fields.portal_password.len, 10);
         if(confirmPassword.length > maxLen) {
-            self.handleCustomValidationError(confirmPasswordField.parents('.control-group'), app.error.getErrorString('ERROR_MAX_FIELD_LENGTH', maxLen) );
+            self.handleCustomValidationError(confirmPasswordField, app.error.getErrorString('ERROR_MAX_FIELD_LENGTH', maxLen) );
             isError=true;
         }
         return !isError;
     },
     saveButton: function() {
         var self = this, contactModel = this.context.get('contactModel');
-        if(self.verify(contactModel)) {
+        if(self.verify()) {
             self.saveModel(contactModel);
         } else {
             self.resetButton();
