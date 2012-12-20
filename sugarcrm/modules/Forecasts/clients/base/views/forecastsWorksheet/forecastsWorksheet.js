@@ -305,14 +305,19 @@
     bindDataChange: function(params) {
         var self = this;
         if (this._collection) {
-            this._collection.on("reset", function() {self.render(); }, this);
-            this._collection.on("change", function() {
-                _.each(this._collection.models, function(element){
-                    if(element.hasChanged("commit_stage")) {
-                        this.gTable.fnDestroy();
-                        this.gTable = this.$('.worksheetTable').dataTable(self.gTableDefs);
-                    }
-                }, this);
+            this._collection.on("reset", function() {
+                self.cleanUpDirtyModels();
+                self.render();
+            }, this);
+
+            this._collection.on("change", function(model, changed) {
+                if(_.include(_.keys(changed.changes), 'commit_stage')) {
+                    this.gTable.fnDestroy();
+                    this.gTable = this.$('.worksheetTable').dataTable(self.gTableDefs);
+                }
+                // The Model has changed via CTE. save it in the isDirty
+                this.dirtyModels.add(model);
+                this.context.forecasts.trigger('forecasts:worksheetDirty', model, changed);
             }, this);
         }
 
