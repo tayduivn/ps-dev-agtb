@@ -87,7 +87,17 @@
             panel.grid = rows;
         }, this);
 
-        var result = app.view.View.prototype._render.call(this);
+        app.view.View.prototype._render.call(this);
+        this.initButtons();
+        this.setButtonStates(this.STATE.VIEW);
+
+        // Check if this is a new record, if it is, enable the edit view
+        if (this.createMode && this.model.isNew()) {
+            this.editAllMode = false;
+            this.toggleEdit(true);
+        }
+    },
+    initButtons: function() {
         if(this.options.meta && this.options.meta.buttons) {
             this.buttons = {};
             _.each(this.options.meta.buttons, function(button, index) {
@@ -97,14 +107,6 @@
                 }
             }, this);
         }
-        this.setButtonStates(this.STATE.VIEW);
-
-        // Check if this is a new record, if it is, enable the edit view
-        if (this.createMode && this.model.isNew()) {
-            this.editAllMode = false;
-            this.toggleEdit(true);
-        }
-        return result;
     },
 
     _renderHtml: function() {
@@ -435,6 +437,7 @@
      * @param state
      */
     setButtonStates: function(state) {
+        //TODO: Use direct show/hide function on field after sidecar is updated
         _.each(this.buttons, function(field, name) {
             if(_.isUndefined(field.def.mode) || field.def.mode == state) {
                 field.getFieldElement().show();
