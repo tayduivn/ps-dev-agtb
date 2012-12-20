@@ -6275,7 +6275,7 @@ class SugarBean
 
         /** @var Link2 $link */
         $link = $this->$linkName;
-        $relatedModuleName = $link->def['module'];
+        $relatedModuleName = $link->getRelatedModuleName();
         $relatedBeanName   = BeanFactory::getObjectName($relatedModuleName);
         $relatedLinkName   = $link->getRelatedModuleLinkName();
 
