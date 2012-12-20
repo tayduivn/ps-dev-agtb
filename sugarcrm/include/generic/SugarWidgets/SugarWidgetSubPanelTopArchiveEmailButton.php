@@ -42,6 +42,14 @@ class SugarWidgetSubPanelTopArchiveEmailButton extends SugarWidgetSubPanelTopBut
 			$temp = '';
 			return $temp;
 		}
+
+        /**
+         * if module is hidden or subpanel for the module is hidden - doesn't show quick create button
+         */
+        if ( SugarWidget::isModuleHidden( 'Emails' ) )
+        {
+            return '';
+        }
 		
 		global $app_strings;
 		global $mod_strings;

@@ -634,8 +634,8 @@ class MetaDataFiles
             // They just want one module
             $modules = array($modules);
         } else if ( count($modules) == 0 ) {
-            // They want all of the modules
-            $modules = array_keys($GLOBALS['app_list_strings']['moduleList']);
+            // They want all of the modules, so get them if they are already set
+            $modules = empty($GLOBALS['app_list_strings']['moduleList']) ? array() : array_keys($GLOBALS['app_list_strings']['moduleList']);
         }
         foreach ( $modules as $module ) {
             if ( empty($type) ) {
@@ -652,7 +652,7 @@ class MetaDataFiles
     {
         $clientCache = array();
         $cacheFile = sugar_cached('modules/'.$module.'/clients/'.$platforms[0].'/'.$type.'.php');
-        if ( !file_exists($cacheFile) ) {
+        if ( !file_exists($cacheFile) || inDeveloperMode() ) {
             self::buildModuleClientCache( $platforms, $type, $module );
         }
         $clientCache[$module][$platforms[0]][$type] = array();

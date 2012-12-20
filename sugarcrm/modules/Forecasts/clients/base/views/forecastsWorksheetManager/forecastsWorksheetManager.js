@@ -1,3 +1,29 @@
+/*********************************************************************************
+ * The contents of this file are subject to the SugarCRM Master Subscription
+ * Agreement (""License"") which can be viewed at
+ * http://www.sugarcrm.com/crm/master-subscription-agreement
+ * By installing or using this file, You have unconditionally agreed to the
+ * terms and conditions of the License, and You may not use this file except in
+ * compliance with the License.  Under the terms of the license, You shall not,
+ * among other things: 1) sublicense, resell, rent, lease, redistribute, assign
+ * or otherwise transfer Your rights to the Software, and 2) use the Software
+ * for timesharing or service bureau purposes such as hosting the Software for
+ * commercial gain and/or for the benefit of a third party.  Use of the Software
+ * may be subject to applicable fees and any use of the Software without first
+ * paying applicable fees is strictly prohibited.  You do not have the right to
+ * remove SugarCRM copyrights from the source code or user interface.
+ *
+ * All copies of the Covered Code must include on each user interface screen:
+ *  (i) the ""Powered by SugarCRM"" logo and
+ *  (ii) the SugarCRM copyright notice
+ * in the same form as they appear in the distribution.  See full license for
+ * requirements.
+ *
+ * Your Warranty, Limitations of liability and Indemnity are expressly stated
+ * in the License.  Please refer to the License for the specific language
+ * governing these rights and limitations under the License.  Portions created
+ * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
+ ********************************************************************************/
 /**
  * View that displays header for current app
  * @class View.Views.WorksheetView
@@ -68,7 +94,7 @@
         //set up base selected user
     	this.selectedUser = {id: app.user.get('id'), "isManager":app.user.get('isManager'), "showOpps": false};
         this.timePeriod = app.defaultSelections.timeperiod_id.id
-        this.category = app.defaultSelections.category.id
+        this.ranges = app.defaultSelections.ranges.id
 
         this._collection = this.context.forecasts.worksheetmanager;
         this._collection.url = this.createURL();
@@ -132,9 +158,9 @@
                 function(context, timePeriod) {
                     this.updateWorksheetBySelectedTimePeriod(timePeriod);
                 }, this);
-            this.context.forecasts.on("change:selectedCategory",
-                function(context, category) {
-                    this.updateWorksheetBySelectedCategory(category);
+            this.context.forecasts.on("change:selectedRanges",
+                function(context, ranges) {
+                    this.updateWorksheetBySelectedRanges(ranges);
                 },this);
             this.context.forecasts.worksheetmanager.on("change", function() {
             	this.calculateTotals();
@@ -306,6 +332,7 @@
                     {
                         case "int":
                         case "currency":
+                        case "editableCurrency":
                             fieldDef["sSortDataType"] = "dom-number";
                             fieldDef["sType"] = "numeric";
                             fieldDef["sClass"] = "number";
@@ -501,15 +528,15 @@
     },
 
     /**
-     * Event Handler for updating the worksheet by a selected category
+     * Event Handler for updating the worksheet by a selected ranges
      *
      * @param params is always a context
      */
-    updateWorksheetBySelectedCategory:function (params) {
-        if (this.context.forecasts.config.get('forecast_categories') != 'show_binary') {
+    updateWorksheetBySelectedRanges:function (params) {
+        if (this.context.forecasts.config.get('forecast_ranges') != 'show_binary') {
             // TODO: this.
         } else {
-            this.category = _.first(params);
+            this.ranges = _.first(params);
         }
 
         var model = this.context.forecasts.worksheetmanager;
@@ -542,8 +569,8 @@
            args['timeperiod_id'] = this.timePeriod;
         }
 
-        if(this.category) {
-            args['category'] = this.category;
+        if(this.ranges) {
+            args['ranges'] = this.ranges;
         }
 
         if(this.selectedUser)

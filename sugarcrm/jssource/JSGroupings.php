@@ -66,9 +66,17 @@
                             'include/javascript/jquery/jquery.popoverext.js'             =>   $target,
                         );
                         break;
+                    // these are the only files not in bootstrap.min.js that we need in forecasts
+                    // as bootstrap.min.js is already included in sugar_grp1_bootstrap.js
+                    case 'bootstrap_forecasts':
+                        return array(
+                            'styleguide/assets/js/bootstrap-datepicker.js' => $target,
+                            'styleguide/assets/js/bootstrapx-clickover.js' => $target,
+                        );
+                        break;
                     case 'jquery_core':
                         return array (
-                            'sidecar/lib/jquery/jquery.min.js'                    =>    $target,
+                            'include/javascript/jquery/jquery-min.js'             =>    $target,
                             'include/javascript/jquery/jquery-ui-min.js'          =>    $target,
                             'include/javascript/jquery/jquery.json-2.3.js'        =>    $target,
                         );
@@ -91,6 +99,7 @@
                             'include/javascript/jquery/jquery.effects.custombounce.js'   =>   $target,
                         );
                         break;
+                    //BEGIN SUGARCRM flav=pro ONLY
                     case 'sidecar_libs':
                         return array(
                                 'sidecar/lib/handlebars/handlebars-1.0.rc.1.js'                  =>   $target,
@@ -105,6 +114,7 @@
                                 'sidecar/lib/php-js/version_compare.js'                          =>   $target
                         );
                         break;
+                    //END SUGARCRM flav=pro ONLY
                     default:
                         break;
                 }
@@ -146,9 +156,11 @@
                 getSubgroupForTarget('bootstrap_core', 'include/javascript/sugar_grp1_jquery.js'),
                 getSubgroupForTarget('jquery_menus', 'include/javascript/sugar_grp1_jquery.js')
             ),
-            
+
+            //BEGIN SUGARCRM flav=pro ONLY
             //sidecar 3rd party libs
             $sugar_grp_sidecar_libs = getSubgroupForTarget('sidecar_libs', 'include/javascript/sugar_grp1_sidecar_libs.js'),
+            //END SUGARCRM flav=pro ONLY
 
            $sugar_field_grp = array(
                'include/SugarFields/Fields/Collection/SugarFieldCollection.js' => 'include/javascript/sugar_field_grp.js',
@@ -280,6 +292,7 @@
            //END SUGARCRM flav=ent ONLY
         );
 
+    //BEGIN SUGARCRM flav=pro ONLY
     // groupings for sidecar forecast
     // use sidecar/src/include-manifest.php file to define what files should be loaded
     // exclude lib/jquery/jquery.min.js b/s jquery is loaded and extended with sugar_grp1_jquery.js
@@ -287,8 +300,7 @@
     $cached_file = 'include/javascript/sidecar_forecasts.js';
 
     $sidecar_forecasts = array();
-    // Forecast and portal2 should include same styleguide bootstrap files
-    $sidecar_forecasts = array_merge($sidecar_forecasts, getSubgroupForTarget('bootstrap', $cached_file));
+    $sidecar_forecasts = array_merge($sidecar_forecasts, getSubgroupForTarget('bootstrap_forecasts', $cached_file));
     $sidecar_forecasts['include/javascript/sugarAuthStore.js'] = $cached_file;
     $sidecar_forecasts['include/SugarCharts/Jit/js/Jit/jit.js'] = $cached_file;
     $sidecar_forecasts['include/SugarCharts/Jit/js/sugarCharts.js'] = $cached_file;
@@ -298,10 +310,10 @@
     $sidecar_forecasts['modules/Forecasts/clients/base/lib/ForecastsUtils.js'] = $cached_file;
     $sidecar_forecasts['modules/Forecasts/tpls/SidecarView.js'] = $cached_file;
     // Forecast and portal2 should include same styleguide bootstrap files
-    $sidecar_forecasts = array_merge($sidecar_forecasts, getSubgroupForTarget('bootstrap', $cached_file));
     $sidecar_forecasts['include/javascript/jquery/jquery.nouislider.js'] = $cached_file;
 
     $js_groupings[] = $sidecar_forecasts;
+    //END SUGARCRM flav=pro ONLY
 
     /**
      * Check for custom additions to this code

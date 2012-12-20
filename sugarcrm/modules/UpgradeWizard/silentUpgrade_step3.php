@@ -257,9 +257,10 @@ $admin = new Administration();
 $admin->saveSetting('system','adminwizard',1);
 
 include("$unzip_dir/manifest.php");
-$ce_to_pro_ent = isset($manifest['name']) && ($manifest['name'] == 'SugarCE to SugarPro' || $manifest['name'] == 'SugarCE to SugarEnt'  || $manifest['name'] == 'SugarCE to SugarCorp' || $manifest['name'] == 'SugarCE to SugarUlt');
-$origVersion = getSilentUpgradeVar('origVersion');
-if(!$origVersion){
+$ce_to_pro_ent = isset($manifest['name']) && preg_match('/^SugarCE.*?(Pro|Ent|Corp|Ult)$/', $manifest['name']);
+$sugar_version = getSilentUpgradeVar('origVersion');
+if (!$sugar_version)
+{
     global $silent_upgrade_vars_loaded;
     logThis("Error retrieving silent upgrade var for origVersion: cache dir is {$GLOBALS['sugar_config']['cache_dir']} -- full cache for \$silent_upgrade_vars_loaded is ".var_export($silent_upgrade_vars_loaded, true), $path);
 }
@@ -318,16 +319,9 @@ logThis('Begin upgrade_connectors', $path);
 upgrade_connectors();
 logThis('End upgrade_connectors', $path);
 
-//Upgrade system displayed tabs and subpanels
-if(function_exists('upgradeDisplayedTabsAndSubpanels'))
-{
-	upgradeDisplayedTabsAndSubpanels($origVersion);
-}
-
 //Unlink files that have been removed
-if(function_exists('unlinkUpgradeFiles'))
-{
-	unlinkUpgradeFiles($origVersion);
+if(function_exists('unlinkUpgradeFiles')) {
+    unlinkUpgradeFiles($sugar_version, $path);
 }
 
 if(function_exists('rebuildSprites') && function_exists('imagecreatetruecolor'))
@@ -335,13 +329,15 @@ if(function_exists('rebuildSprites') && function_exists('imagecreatetruecolor'))
     rebuildSprites(true);
 }
 
+//Patch for bug57431 : Module name isn't updated in portal layout editor
+updateRenamedModulesLabels();
+
 //BEGIN SUGARCRM flav=PRO ONLY
 //setup forecast defualt settings
-if($origVersion < '670')
-{
+if (version_compare($sugar_version, '6.7.0', '<')) {
     require_once(clean_path($unzip_dir.'/scripts/upgrade_utils.php'));
     require_once($unzip_dir.'/'.$zip_from_dir.'/modules/Forecasts/ForecastsDefaults.php');
-    ForecastsDefaults::setupForecastSettings(true,$origVersion,getUpgradeVersion());
+    ForecastsDefaults::setupForecastSettings(true, $sugar_version, getUpgradeVersion());
     ForecastsDefaults::upgradeColumns();
 }
 //END SUGARCRM flav=PRO ONLY
@@ -354,7 +350,7 @@ logThis('Checking for mobile/portal metadata upgrade...');
 // handled for upgrades FROM pre-6.6 to a version POST 6.6 and MUST be
 // handled AFTER inclusion of the upgrade package files
 if (!didThisStepRunBefore('commit','upgradePortalMobileMetadata')) {
-    if ($origVersion < '660') {
+    if (version_compare($sugar_version, '6.6.0', '<')) {
         if (file_exists('modules/UpgradeWizard/SidecarUpdate/SidecarMetaDataUpgrader.php')) {
             set_upgrade_progress('commit','in_progress','upgradePortalMobileMetadata','in_progress');
             logThis('Sidecar Upgrade: Preparing to upgrade metadata to 6.6.0 compatibility through the silent upgrader ...');

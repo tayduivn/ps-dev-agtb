@@ -29,18 +29,23 @@ $ignoreCase = (substr_count(strtolower($_SERVER['SERVER_SOFTWARE']), 'apache/2')
 $htaccess_file   = getcwd() . "/.htaccess";
 $contents = '';
 
+// Adding RewriteBase path for vhost and alias configurations
+$basePath = parse_url($sugar_config['site_url'], PHP_URL_PATH);
+if(empty($basePath)) $basePath = '/';
+
 $restrict_str = <<<EOQ
 # BEGIN SUGARCRM RESTRICTIONS
 RedirectMatch 403 {$ignoreCase}.*\.log$
 RedirectMatch 403 {$ignoreCase}/+not_imported_.*\.txt
 RedirectMatch 403 {$ignoreCase}/+(soap|cache|xtemplate|data|examples|include|log4php|metadata|modules)/+.*\.(php|tpl)
 RedirectMatch 403 {$ignoreCase}/+emailmandelivery\.php
-RedirectMatch 403 {$ignoreCase}/+upload
+RedirectMatch 403 {$ignoreCase}/+upload/
 RedirectMatch 403 {$ignoreCase}/+cache/+diagnostic
 RedirectMatch 403 {$ignoreCase}/+files\.md5\$
 <IfModule mod_rewrite.c>
     Options +FollowSymLinks
     RewriteEngine On
+    RewriteBase {$basePath}
     RewriteCond %{REQUEST_FILENAME} !-d
     RewriteCond %{REQUEST_FILENAME} !-f
     RewriteRule ^rest/(.*)$ api/rest.php?__sugar_url=$1 [L,QSA]

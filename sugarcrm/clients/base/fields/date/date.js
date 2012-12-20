@@ -52,10 +52,6 @@
      * },
      * </code></pre>
      */
-    events: {
-        'click .icon-calendar': '_toggleDatepicker'
-    },
-
     datepickerVisible: false,
 
     // used by hbt template
@@ -103,13 +99,6 @@
         if (!_.isUndefined(this._setTimeValue) && _.isFunction(this._setTimeValue)) {
             this._setTimeValue();
         }
-    },
-    /**
-     * Toggles datepicker hidden or shown
-     */
-    _toggleDatepicker: function() {
-        var action = (this.datepickerVisible) ? 'hide' : 'show';
-        this.$(".datepicker").datepicker(action);
     },
     /**
      * Set up the Datepicker 

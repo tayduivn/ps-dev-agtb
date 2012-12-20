@@ -1,3 +1,29 @@
+/*********************************************************************************
+ * The contents of this file are subject to the SugarCRM Master Subscription
+ * Agreement (""License"") which can be viewed at
+ * http://www.sugarcrm.com/crm/master-subscription-agreement
+ * By installing or using this file, You have unconditionally agreed to the
+ * terms and conditions of the License, and You may not use this file except in
+ * compliance with the License.  Under the terms of the license, You shall not,
+ * among other things: 1) sublicense, resell, rent, lease, redistribute, assign
+ * or otherwise transfer Your rights to the Software, and 2) use the Software
+ * for timesharing or service bureau purposes such as hosting the Software for
+ * commercial gain and/or for the benefit of a third party.  Use of the Software
+ * may be subject to applicable fees and any use of the Software without first
+ * paying applicable fees is strictly prohibited.  You do not have the right to
+ * remove SugarCRM copyrights from the source code or user interface.
+ *
+ * All copies of the Covered Code must include on each user interface screen:
+ *  (i) the ""Powered by SugarCRM"" logo and
+ *  (ii) the SugarCRM copyright notice
+ * in the same form as they appear in the distribution.  See full license for
+ * requirements.
+ *
+ * Your Warranty, Limitations of liability and Indemnity are expressly stated
+ * in the License.  Please refer to the License for the specific language
+ * governing these rights and limitations under the License.  Portions created
+ * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
+ ********************************************************************************/
 /**
  * Events Triggered
  *
@@ -10,20 +36,24 @@
     extendsFrom:"ForecastsIndexLayout",
 
     initialize:function (options) {
-        options.context = _.extend(options.context, this.initializeAllModels(options.context));
-        options.context.forecasts = new Backbone.Model({'saveClicked' : false});
+        // If is_setup == 1 and users come back to config, the context.forecasts will already be here
+        // so only make this new config mode there is no forecasts object on the context
+        if(_.isUndefined(options.context.forecasts)) {
+            options.context = _.extend(options.context, this.initializeAllModels(options.context));
+            options.context.forecasts = new Backbone.Model({'saveClicked' : false});
 
-        // Initialize the config model
-        var ConfigModel = Backbone.Model.extend({
-            url:app.api.buildURL("Forecasts", "config"),
-            sync:function (method, model, options) {
-                var url = _.isFunction(model.url) ? model.url() : model.url;
-                return app.api.call(method, url, model, options);
-            },
-            // include metadata from config into the config model by default
-            defaults:app.metadata.getModule('Forecasts').config
-        });
-        options.context.forecasts.config = new ConfigModel();
+            // Initialize the config model
+            var ConfigModel = Backbone.Model.extend({
+                url:app.api.buildURL("Forecasts", "config"),
+                sync:function (method, model, options) {
+                    var url = _.isFunction(model.url) ? model.url() : model.url;
+                    return app.api.call(method, url, model, options);
+                },
+                // include metadata from config into the config model by default
+                defaults:app.metadata.getModule('Forecasts').config
+            });
+            options.context.forecasts.config = new ConfigModel();
+        }
 
         app.view.Layout.prototype.initialize.call(this, options);
     },
@@ -44,11 +74,22 @@
 
     _showModal:function () {
         var self = this;
+            isAdmin = false;
 
-        if (app.user.getAcls()['Forecasts'].admin == "yes") {
+        // todo-sfa: undo this change once sidecar ACLs are used again
+        // on first load, when is_setup == 0, app.initData.selectedUser.admin setting should be used
+        // because at that point there is no context.forecasts
+        // every other load there will be no app.initData so use the context
+        if(!_.isNull(app.initData) && !_.isNull(app.initData.selectedUser)) {
+            isAdmin = (app.initData.selectedUser.admin == "yes");
+        } else {
+            isAdmin = (this.context.forecasts.get('currentUser').admin == "yes");
+        }
+
+        if (isAdmin) {
             // begin building params to pass to modal
             var params = {
-                title:app.lang.get("LBL_FORECASTS_CONFIG_TITLE", "Forecasts"),
+                title:app.lang.get("LBL_FORECASTS_CONFIG_TITLE", "Forecasts") + ":",
                 span:10,
                 before:{
                     hide:self.checkSettingsAndRedirect
@@ -67,7 +108,7 @@
             var alert = app.alert.show('no_access_error', {
                     level:'error',
                     messages:app.lang.get("LBL_FORECASTS_CONFIG_USER_SPLASH", "Forecasts"),
-                    title:app.lang.get("LBL_FORECASTS_CONFIG_TITLE", "Forecasts")}
+                    title:app.lang.get("LBL_FORECASTS_CONFIG_TITLE", "Forecasts") + ":"}
             );
             alert.getCloseSelector().on('click', function () {
                 return self.checkSettingsAndRedirect();
@@ -96,9 +137,19 @@
                 title:app.lang.get("LBL_FORECASTS_WIZARD_SUCCESS_TITLE", "Forecasts") + ":",
                 messages:[app.lang.get("LBL_FORECASTS_WIZARD_SUCCESS_MESSAGE", "Forecasts")]
             });
+                       
             // only sync the metadata and then push it back to the main location
             app.metadata.sync(function() {
-                window.location.hash = "#"
+                window.location.hash = "#";
+                
+                //issue notice about setting up Opportunities, we want this to happen after the page "refreshes"
+                setTimeout(function(){
+                    app.alert.show('forecast_opp_notice', {
+                        level:'info',
+                        autoClose:false,
+                        closeable:true,
+                        messages: app.lang.get("LBL_FORECASTS_WIZARD_REFRESH_NOTICE", "Forecasts")
+                    });}, 1000);
             });
         }
     }

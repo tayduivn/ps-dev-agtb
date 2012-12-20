@@ -40,7 +40,12 @@
 //// - Run pre-db upgrades, config upgrades, etc.
 /////////////////////////////////////////////////////////////////////////////////////////
 ini_set('memory_limit',-1);
-ini_set('error_reporting',E_ALL &~E_STRICT & ~E_DEPRECATED);
+if (version_compare(PHP_VERSION, '5.3.0', '>=')) {
+    //E_DEPRECATED is available for 5.3.0 and above
+    ini_set('error_reporting', E_ALL & ~E_STRICT & ~E_DEPRECATED);
+} else {
+    ini_set('error_reporting', E_ALL & ~E_STRICT);
+}
 //Clean_string cleans out any file  passed in as a parameter
 $_SERVER['PHP_SELF'] = 'silentUpgrade.php';
 
@@ -98,6 +103,11 @@ $_SESSION['unzip_dir'] = $unzip_dir;
 $_SESSION['install_file'] = $install_file;
 $_SESSION['zip_from_dir'] = $zip_from_dir;
 
+//If this is a flavor conversion going from 6.7.0 => 6.7.0, we make sure to load the autoloader.php file
+if(version_compare($sugar_version, '6.7.0', '=')) {
+    require_once('include/utils/autoloader.php');
+}
+
 /// load old modules
 $oldModuleList = array();
 include('include/modules.php');
@@ -111,12 +121,24 @@ $GLOBALS['log']	= new FakeLogger($path);
 $zipBasePath = "$unzip_dir/{$zip_from_dir}";
 $uwFiles = findAllFiles("{$zipBasePath}/modules/UpgradeWizard", array());
 $destFiles = array();
+$newDirs = array();
 
 foreach($uwFiles as $uwFile) {
 	$destFile = str_replace($zipBasePath."/", '', $uwFile);
+
+    $dir = dirname($destFile);
+
+    //Ensure that the parent directory exists
+    if(!isset($newDirs[$dir]) && !file_exists($dir)) {
+       mkdir_recursive($dir);
+       $newDirs[$dir] = true;
+    }
+
 	copy($uwFile, $destFile);
 }
+
 require_once('modules/UpgradeWizard/uw_utils.php'); // This is the NEW uw_utils.php file
+
 removeSilentUpgradeVarsCache(); // Clear the silent upgrade vars - Note: Any calls to these functions within this file are removed here
 logThis("*** SILENT UPGRADE INITIATED.", $path);
 logThis("*** UpgradeWizard Upgraded  ", $path);
@@ -128,7 +150,7 @@ initialize_session_vars();
 // Load manifest
 require("$unzip_dir/manifest.php");
 
-$ce_to_pro_ent = isset($manifest['name']) && ($manifest['name'] == 'SugarCE to SugarPro' || $manifest['name'] == 'SugarCE to SugarEnt' || $manifest['name'] == 'SugarCE to SugarCorp' || $manifest['name'] == 'SugarCE to SugarUlt');
+$ce_to_pro_ent = isset($manifest['name']) && preg_match('/^SugarCE.*?(Pro|Ent|Corp|Ult)$/', $manifest['name']);
 $_SESSION['upgrade_from_flavor'] = $manifest['name'];
 
 global $sugar_config;
@@ -175,10 +197,8 @@ $subdirs		= array('full', 'langpack', 'module', 'patch', 'theme', 'temp');
 /// Update upgrader vars
 require_once($unzip_dir.'/scripts/upgrade_utils.php');
 $new_sugar_version = getUpgradeVersion();
-$origVersion = substr(preg_replace("/[^0-9]/", "", $sugar_version),0,3);
-$destVersion = substr(preg_replace("/[^0-9]/", "", $new_sugar_version),0,3);
-$siv_varset_1 = setSilentUpgradeVar('origVersion', $origVersion);
-$siv_varset_2 = setSilentUpgradeVar('destVersion', $destVersion);
+$siv_varset_1 = setSilentUpgradeVar('origVersion', $sugar_version);
+$siv_varset_2 = setSilentUpgradeVar('destVersion', $new_sugar_version);
 $siv_write    = writeSilentUpgradeVars();
 if(!$siv_varset_1 || !$siv_varset_2 || !$siv_write){
 	logThis("Error with silent upgrade variables: origVersion write success is ({$siv_varset_1}) ".
@@ -312,8 +332,10 @@ if(empty($errors)) {
 
 		logThis('Upgrade the sugar_version', $path);
 		$sugar_config['sugar_version'] = $sugar_version;
-		if($destVersion == $origVersion)
-			require('config.php');
+        if (version_compare($new_sugar_version, $sugar_version, '='))
+        {
+            require('config.php');
+        }
         if( !write_array_to_file( "sugar_config", $sugar_config, "config.php" ) ) {
             logThis('*** ERROR: could not write config.php! - upgrade will fail!', $path);
             $errors[] = 'Could not write config.php!';
@@ -479,7 +501,8 @@ if($ce_to_pro_ent)
 
 //Also set the tracker settings if  flavor conversion ce->pro or ce->ent
 if(isset($_SESSION['current_db_version']) && isset($_SESSION['target_db_version'])){
-	if($_SESSION['current_db_version'] == $_SESSION['target_db_version']){
+    if (version_compare($_SESSION['current_db_version'], $_SESSION['target_db_version'], '='))
+    {
 	    $_REQUEST['upgradeWizard'] = true;
 	    ob_start();
 			include('include/Smarty/internals/core.write_file.php');

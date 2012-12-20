@@ -174,7 +174,7 @@ $dictionary['ForecastSchedule'] = array('table' => 'forecast_schedule',
     ),
 
     /*
-    * expected_commit_stage is used to specify forecast commit category (Include, Likely, Omit etc.)
+    * expected_commit_stage is used to specify forecast commit ranges (Include, Likely, Omit etc.)
     */
     'expected_commit_stage' =>
     array (

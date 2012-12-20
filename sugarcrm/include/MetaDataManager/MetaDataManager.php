@@ -291,18 +291,31 @@ class MetaDataManager {
      *
      * @param string $module The module we want to fetch the ACL for
      * @param object $userObject The user object for the ACL's we are retrieving.
+     * @param object|bool $bean The SugarBean for getting specific ACL's for a module
      * @return array Array of ACL's, first the action ACL's (access, create, edit, delete) then an array of the field level acl's
      */
-    public function getAclForModule($module,$userObject) {
+    public function getAclForModule($module,$userObject,$bean=false) {
         $obj = BeanFactory::getObjectName($module);
 
         $outputAcl = array('fields'=>array());
-        if ( is_admin($userObject) || !SugarACL::moduleSupportsACL($module) ) {
+
+        if (!SugarACL::moduleSupportsACL($module)) {
             foreach ( array('admin', 'access','view','list','edit','delete','import','export','massupdate') as $action ) {
                 $outputAcl[$action] = 'yes';
             }
+            if($bean instanceof User || $bean instanceof Employee) {
+                if($bean->id == $userObject->id) {
+                    $outputAcl['delete'] = 'no';
+                }
+            }
         } else {
-            $moduleAcls = SugarACL::getUserAccess($module, array(), array('user' => $userObject));
+            $context = array(
+                    'user' => $userObject,
+                );
+            if($bean instanceof SugarBean) {
+                $context['bean'] = $bean;
+            }
+            $moduleAcls = SugarACL::getUserAccess($module, array(), $context);
 
             // Bug56391 - Use the SugarACL class to determine access to different actions within the module
             foreach(SugarACL::$all_access AS $action => $bool) {
@@ -324,7 +337,7 @@ class MetaDataManager {
                 $fieldsAcl = ACLField::getAvailableFields($module);
                 //END SUGARCRM flav=pro ONLY
                 // get the field names
-                SugarACL::listFilter($module, $fieldsAcl, array('user' => $userObject), array('add_acl' => true));
+                SugarACL::listFilter($module, $fieldsAcl, $context, array('add_acl' => true));
                 foreach ( $fieldsAcl as $field => $fieldAcl ) {
                     switch ( $fieldAcl['acl'] ) {
                         case SugarACL::ACL_READ_WRITE:
@@ -547,6 +560,7 @@ class MetaDataManager {
             MetaDataFiles::clearModuleClientCache();
         }
 
+        // Wipe out any files from the metadata cache directory
         $metadataFiles = glob(sugar_cached('api/metadata/').'*');
         if ( is_array($metadataFiles) ) {
             foreach ( $metadataFiles as $metadataFile ) {
@@ -555,6 +569,14 @@ class MetaDataManager {
                 // of many deletes.
                 unlink($metadataFile);
             }
+        }
+        
+        // clear the platform cache from sugar_cache to avoid out of date data
+        $platforms = self::getPlatformList();
+        foreach($platforms as $platform) {
+            $platformKey = $platform == "base" ?  "base" : implode(",", array($platform, "base"));
+            $hashKey = "metadata:$platformKey:hash";
+            sugar_cache_clear($hashKey);
         }
     }
     

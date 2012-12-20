@@ -20,6 +20,24 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
+//Used in rebuildExtensions
+require_once 'ModuleInstall/ModuleInstaller.php';
+
+// Used in clearExternalAPICache
+require_once 'include/externalAPI/ExternalAPIFactory.php';
+
+// Used in clearPDFFontCache
+require_once 'include/Sugarpdf/FontManager.php';
+
+// Used in clearAdditionalCaches
+require_once 'include/api/ServiceDictionary.php';
+
+//clear out the api metadata cache
+require_once "include/MetaDataManager/MetaDataManager.php";
+
+/**
+ * Class for handling repairing of the sugar installation and rebuilding of caches
+ */
 class RepairAndClear
 {
     public $module_list;
@@ -81,9 +99,15 @@ class RepairAndClear
             case 'clearAdditionalCaches':
                 $this->clearAdditionalCaches();
                 break;
+            case 'clearMetadataAPICache':
+                $this->clearMetadataAPICache();
+                break;
             //BEGIN SUGARCRM flav=pro ONLY
             case 'clearPDFFontCache':
                 $this->clearPDFFontCache();
+                break;
+            case 'resetForecasting':
+                $this->resetForecasting();
                 break;
             //END SUGARCRM flav=pro ONLY
             case 'clearAll':
@@ -204,7 +228,7 @@ class RepairAndClear
 		global $mod_strings;
 		if($this->show_output) echo $mod_strings['LBL_QR_REBUILDEXT'];
 		global $current_user;
-		require_once('ModuleInstall/ModuleInstaller.php');
+		
 		$mi = new ModuleInstaller();
 		$mi->rebuild_all(!$this->show_output);
 
@@ -377,7 +401,7 @@ class RepairAndClear
 	{
         global $mod_strings, $sugar_config;
         if($this->show_output) echo "<h3>{$mod_strings['LBL_QR_CLEAR_EXT_API']}</h3>";
-        require_once('include/externalAPI/ExternalAPIFactory.php');
+        
         ExternalAPIFactory::clearCache();
     }
 	//BEGIN SUGARCRM flav=pro ONLY
@@ -385,7 +409,7 @@ class RepairAndClear
 	{
         global $mod_strings, $sugar_config;
         if($this->show_output) echo "<h3>{$mod_strings['LBL_QR_CLEARPDFFONT']}</h3>";
-        require_once('include/Sugarpdf/FontManager.php');
+        
         $fontManager = new FontManager();
         $fontManager->clearCachedFile();
     }
@@ -399,34 +423,24 @@ class RepairAndClear
         global $mod_strings, $sugar_config;
 		if($this->show_output) echo "<h3>{$mod_strings['LBL_QR_CLEAR_ADD_CACHE']}</h3>";
         // clear out the API Cache
-        require_once('include/api/ServiceDictionary.php');
+        
         $sd = new ServiceDictionary();
         $sd->clearCache();
-        //clear out the api metadata cache
-        require_once("include/MetaDataManager/MetaDataManager.php");
-        // Bug 55141: Metadata Cache is a Smart cache so we can delete everything from the cache dir
-        $metadata_cache_dir = sugar_cached("api/metadata");
-        if(is_dir($metadata_cache_dir))
-        {
-            if ($handle = opendir($metadata_cache_dir)) {
-                while (false !== ($cache_file = readdir($handle))) {
-                    if ($cache_file != "." && $cache_file != "..") {
-                        $unlink_file = sugar_cached("api/metadata/{$cache_file}");
-                        unlink($unlink_file);
-                    }
-                }
-                closedir($handle);
-            }            
-        }
-        // clear the platform cache from sugar_cache to avoid out of date data
-        $platforms = MetaDataManager::getPlatformList();
-        foreach($platforms as $platform) {
-            $platformKey = $platform == "base" ?  "base" : implode(",", array($platform, "base"));
-            $hashKey = "metadata:$platformKey:hash";
-            sugar_cache_clear($hashKey);
-        }
-    }
         
+        // Moving this out so it is accessible without the need to wipe out the 
+        // API service dictionary cache 
+        $this->clearMetadataAPICache();
+    }
+
+    /**
+     * Clears out the metadata file cache and memory caches
+     * 
+     * Bug 55141 - Clear the metadata API cache
+     */
+    public function clearMetadataAPICache() {
+        // Bug 55141: Metadata Cache is a Smart cache so we can delete everything from the cache dir
+        MetaDataManager::clearAPICache();
+    }
 
 	//////////////////////////////////////////////////////////////
 	/////REPAIR AUDIT TABLES
@@ -511,4 +525,17 @@ class RepairAndClear
 			next($beanList);
 		}
 	}
+
+    //BEGIN SUGARCRM flav=pro ONLY
+    /**
+     * This is a private function to allow forecasts config settings to be reset
+     *
+     */
+    private function resetForecasting() {
+        $db = DBManagerFactory::getInstance();
+        $db->query("UPDATE config SET value = 0 WHERE name = 'is_setup'");
+        $db->query("UPDATE config SET value = 0 WHERE name = 'has_commits'");
+    }
+    //END SUGARCRM flav=pro ONLY
+
 }

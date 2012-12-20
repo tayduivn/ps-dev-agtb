@@ -34,6 +34,7 @@ class ForecastsViewSidecar extends SidecarView
 {
     public function __construct($bean = null, $view_object_map = array())
     {
+        //Override constructor to hide footer, subpanels and search.  Also, do not use the table container for view
         $this->options['show_footer'] = false;
         $this->options['show_subpanels'] = false;
         $this->options['show_search'] = false;
@@ -57,6 +58,17 @@ class ForecastsViewSidecar extends SidecarView
         // begin initializing all default params
         $this->ss->assign("token", session_id());
         $this->ss->assign("module", $module);
+
+        global $app_strings;
+        $this->ss->assign("app_strings", $app_strings);
+
+        $url = 'javascript:void(window.open(\'index.php?module=Administration&action=SupportPortal&view=documentation&version='.
+            $GLOBALS['sugar_version'].'&edition='.$GLOBALS['sugar_flavor'].'&lang='.$GLOBALS['current_language'].
+            '&help_module='.$module.'&key='.$GLOBALS['server_unique_key'].'\'))';
+
+        $this->ss->assign('HELP_URL', $url);
+        $this->ss->assign('MODULE_NAME', isset($GLOBALS['app_list_strings']['moduleList'][$module]) ? $GLOBALS['app_list_strings']['moduleList'][$module] : $module);
+
         $this->ss->display($displayTemplate);
     }
 
@@ -92,7 +104,7 @@ class ForecastsViewSidecar extends SidecarView
             // INVESTIGATE:  these need to be more dynamic and deal with potential customizations based on how filters are built in admin and/or studio
             $admin = BeanFactory::getBean("Administration");
             $forecastsSettings = $admin->getConfigForModule("Forecasts", "base");
-            $defaultSelections["category"] = array("include");
+            $defaultSelections["ranges"] = array("include");
             $defaultSelections["group_by"] = 'forecast';
             $defaultSelections["dataset"] = 'likely';
         }
@@ -100,34 +112,6 @@ class ForecastsViewSidecar extends SidecarView
         $returnInitData["defaultSelections"] = $defaultSelections;
 
         return $returnInitData;
-    }
-
-    /**
-     * Override the buildConfig method to create a config.js file with specific settings for Forecasts.
-     * Todo: This method will need to be removed in the future when everything shifts to the base platform
-     */
-    protected function buildConfig(){
-        global $sugar_config;
-        $sidecarConfig = array(
-            'appId' => 'SugarCRM',
-            'env' => 'dev',
-            'platform' => 'base',
-            'additionalComponents' => array(
-                'alert' => array(
-                    'target' => '#alerts'
-                )
-            ),
-            'serverUrl' => $sugar_config['site_url'].'/rest/v10',
-            'siteUrl' => $sugar_config['site_url'],
-            'loadCss' => false,
-            'unsecureRoutes' => array('login', 'error'),
-            'clientID' => 'sugar',
-            'authStore'  => 'sugarAuthStore',
-            'keyValueStore' => 'sugarAuthStore'
-        );
-        $configString = json_encode($sidecarConfig);
-        $sidecarJSConfig = '(function(app) {app.augment("config", ' . $configString . ', false);})(SUGAR.App);';
-        sugar_file_put_contents($this->configFile, $sidecarJSConfig);
     }
 
 
@@ -139,12 +123,13 @@ class ForecastsViewSidecar extends SidecarView
     {
         $this->_displayJavascriptCore();
 
-        //load sidecar.lite and 3rd party libs for sidecar
-        echo getVersionedScript("cache/include/javascript/sugar_grp1_sidecar_libs.js") . "\n";      
-        echo getVersionedScript("sidecar/minified/sidecar.lite.min.js") . "\n";
-            
+        //load 3rd party libs for sidecar
+        echo getVersionedScript("cache/include/javascript/sugar_grp1_sidecar_libs.js") . "\n";
+
         if ( !inDeveloperMode() )
-        {                                      
+        {
+            echo getVersionedScript("sidecar/minified/sidecar.lite.min.js") . "\n";
+
             if  ( !is_file(sugar_cached("include/javascript/sidecar_forecasts.js")) ) {
                 $_REQUEST['root_directory'] = ".";
                 require_once("jssource/minify_utils.php");
@@ -153,13 +138,18 @@ class ForecastsViewSidecar extends SidecarView
             echo getVersionedScript('cache/include/javascript/sidecar_forecasts.js') . "\n";
 
         } else {
-            require('sidecar/src/include-manifest.php');
-            if (!empty($buildFiles['sidecar']))
-            {                
-                foreach ( $buildFiles['sidecar'] as $file)
-                {
-                    echo "<script type='text/javascript' src='sidecar/{$file}'></script>\n";
-                }                
+
+            //Need to make sure that we really do have sidecar/src directory
+            if(file_exists('sidecar/src/include-manifest.php')) {
+                require('sidecar/src/include-manifest.php');
+                if(!empty($buildFiles['sidecar.lite'])) {
+                    foreach ( $buildFiles['sidecar.lite'] as $file)
+                    {
+                        echo "<script type='text/javascript' src='sidecar/{$file}'></script>\n";
+                    }
+                }
+            } else {
+                echo getVersionedScript("sidecar/minified/sidecar.lite.min.js") . "\n";
             }
 
             require_once('jssource/JSGroupings.php');
@@ -169,8 +159,8 @@ class ForecastsViewSidecar extends SidecarView
                 {
                     echo "<script src='".$_file."'></script>\n";
                 }
-            }            
-        }         
+            }
+        }
     }
 
     protected function _displayJavascriptCore()
@@ -213,6 +203,7 @@ EOHTML;
             }
             echo getVersionedScript('cache/include/javascript/sugar_grp1_jquery_core.js');
             echo getVersionedScript('cache/include/javascript/sugar_grp1_jquery_menus.js');
+            echo getVersionedScript('cache/include/javascript/sugar_grp1_bootstrap.js');
             echo getVersionedScript('cache/include/javascript/sugar_grp1_yui.js');
             echo getVersionedScript('cache/include/javascript/sugar_grp1.js');
             echo getVersionedScript('include/javascript/calendar.js');

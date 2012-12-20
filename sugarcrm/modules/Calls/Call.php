@@ -186,8 +186,11 @@ class Call extends SugarBean {
 	function save($check_notify = FALSE) {
 		global $timedate,$current_user;
 
-	    if(isset($this->date_start) && isset($this->duration_hours) && isset($this->duration_minutes))
+	    if(isset($this->date_start) && (isset($this->duration_hours) || isset($this->duration_minutes)))
         {
+            // Set the duration hours and minutes to 0 if one of them isn't set but the other one is.
+            $this->duration_hours = empty($this->duration_hours) ? 0 : $this->duration_hours;
+            $this->duration_minutes = empty($this->duration_minutes) ? 0 : $this->duration_minutes;
     	    $td = $timedate->fromDb($this->date_start);
     	    if($td)
     	    {
@@ -233,6 +236,25 @@ class Call extends SugarBean {
         $return_id = parent::save($check_notify);
         global $current_user;
 
+        // Previously this was handled in both the CallFormBase and the AfterImportSave function, so now it just happens every time you save a record.
+	    if ( $this->parent_type == 'Contacts' ) {
+            if ( is_array($this->contacts_arr) ) {
+                $this->contacts_arr[] = $this->parent_id;
+            }
+	        $this->load_relationship('contacts');
+	        if ( !$this->contacts->relationship_exists('contacts',array('id'=>$this->parent_id)) ) {
+	            $this->contacts->add($this->parent_id);
+            }
+	    }
+	    elseif ( $this->parent_type == 'Leads' ) {
+            if ( is_array($this->leads_arr) ) {
+                $this->leads_arr[] = $this->parent_id;
+            }
+	        $this->load_relationship('leads');
+	        if ( !$this->leads->relationship_exists('leads',array('id'=>$this->parent_id)) ) {
+	            $this->leads->add($this->parent_id);
+            }
+	    }
 
         if($this->update_vcal) {
 			vCal::cache_sugar_vcal($current_user);

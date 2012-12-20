@@ -1,3 +1,29 @@
+/*********************************************************************************
+ * The contents of this file are subject to the SugarCRM Master Subscription
+ * Agreement (""License"") which can be viewed at
+ * http://www.sugarcrm.com/crm/master-subscription-agreement
+ * By installing or using this file, You have unconditionally agreed to the
+ * terms and conditions of the License, and You may not use this file except in
+ * compliance with the License.  Under the terms of the license, You shall not,
+ * among other things: 1) sublicense, resell, rent, lease, redistribute, assign
+ * or otherwise transfer Your rights to the Software, and 2) use the Software
+ * for timesharing or service bureau purposes such as hosting the Software for
+ * commercial gain and/or for the benefit of a third party.  Use of the Software
+ * may be subject to applicable fees and any use of the Software without first
+ * paying applicable fees is strictly prohibited.  You do not have the right to
+ * remove SugarCRM copyrights from the source code or user interface.
+ *
+ * All copies of the Covered Code must include on each user interface screen:
+ *  (i) the ""Powered by SugarCRM"" logo and
+ *  (ii) the SugarCRM copyright notice
+ * in the same form as they appear in the distribution.  See full license for
+ * requirements.
+ *
+ * Your Warranty, Limitations of liability and Indemnity are expressly stated
+ * in the License.  Please refer to the License for the specific language
+ * governing these rights and limitations under the License.  Portions created
+ * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
+ ********************************************************************************/
 /**
  * View that displays header for current app
  *
@@ -25,12 +51,12 @@
  *
  * forecasts:worksheet:filtered
  *      on: context.forecasts
- *      by: updateWorksheetBySelectedCategory()
+ *      by: updateWorksheetBySelectedRanges()
  *      when: dataTable is finished filtering itself
  *
  * forecasts:worksheet:filtered
  *      on: context.forecasts
- *      by: updateWorksheetBySelectedCategory()
+ *      by: updateWorksheetBySelectedRanges()
  *      when: dataTable is finished filtering itself and has destroyed and redrawn itself
  */
 ({
@@ -46,11 +72,12 @@
     isExpandableRows:'',
     isEditableWorksheet:false,
     _collection:{},
-    columnDefs : [],    
-    mgrNeedsCommitted : false,
-    commitButtonEnabled : false,
+    columnDefs: [],
+    mgrNeedsCommitted: false,
+    commitButtonEnabled: false,
+    commitFromSafeFetch: false,
     // boolean to denote that a fetch is currently in progress
-    fetchInProgress : false,
+    fetchInProgress: false,
     
     /**
      * Initialize the View
@@ -62,12 +89,12 @@
         var self = this;
         
         self.gTableDefs = {
-                                "bAutoWidth": false,
-                                "aoColumnDefs": self.columnDefs,
-                                "aaSorting": self.aaSorting,
-                                "bInfo":false,
-                                "bPaginate":false
-                          };
+                "bAutoWidth": false,
+                "aoColumnDefs": self.columnDefs,
+                "aaSorting": self.aaSorting,
+                "bInfo":false,
+                "bPaginate":false
+          };
         
         this.viewModule = app.viewModule;
 
@@ -82,7 +109,7 @@
 
         // INIT tree with logged-in user       
         this.timePeriod = app.defaultSelections.timeperiod_id.id;
-        this.updateWorksheetBySelectedCategory(app.defaultSelections.category);
+        this.updateWorksheetBySelectedRanges(app.defaultSelections.ranges);
         this._collection.url = this.createURL();
     },
 
@@ -105,35 +132,6 @@
         url = app.api.buildURL('ForecastWorksheets', '', '', args);
         return url;
     },
-        
-    /**
-     * Sets up the save event and handler for the commit_stage dropdown fields in the worksheet.
-     *
-     * @param field the commit_stage field
-     * @return {*}
-     * @private
-     */
-    _setUpCommitStage: function (field) {
-        var forecastCategories = this.context.forecasts.config.get("forecast_categories");
-        var self = this;
-                
-        //show_binary, show_buckets, show_n_buckets
-        if(forecastCategories == "show_binary"){
-            field.type = "bool";
-            field.format = function(value){
-                return value == "include";
-            };
-            field.unformat = function(value){
-                return this.$el.find(".checkbox").prop('checked') ? "include" : "exclude";
-            };
-        }
-        else{
-            field.type = "enum";
-            field.def.options = this.context.forecasts.config.get("buckets_dom") || 'commit_stage_dom';
-        }      
-        
-        return field;
-    },
 
     /**
      * Renders a field.
@@ -144,24 +142,72 @@
      * @protected
      */
     _renderField: function(field) {
-        if(field.name == "commit_stage")
-        {
-            //Set the field.def.options value based on app.config.buckets_dom (if set)
-            field.def.options = this.context.forecasts.config.get("buckets_dom") || 'commit_stage_dom';
-            field = this._setUpCommitStage(field);
-            if(!this.isEditableWorksheet)
-            {
-                field.view = 'detail';
-            }
-        }
+        this._createFieldColumnDef(field.def);
         app.view.View.prototype._renderField.call(this, field);
 
         if (this.isEditableWorksheet === true && field.viewName !="edit" && field.def.clickToEdit === true && !_.contains(this.context.forecasts.config.get("sales_stage_won"), field.model.get('sales_stage')) && !_.contains(this.context.forecasts.config.get("sales_stage_lost"), field.model.get('sales_stage'))) {
             new app.view.ClickToEditField(field, this);
-        }
+        }        
+    },
 
-        if (this.isEditableWorksheet === true && field.name == "commit_stage") {
-            new app.view.BucketGridEnum(field, this, "ForecastWorksheets");
+    /**
+     * Adding the field to the ColumnDef for the DataTables Plugin.  If the field is already in the array it will not be
+     * added again.
+     *
+     * @param field {Object}        Field Def Information
+     * @private
+     */
+    _createFieldColumnDef: function(field) {
+        // make sure we don't already have the field in the list.
+        if(!_.isEmpty(this.columnDefs) && _.find(this.columnDefs, _.bind(function(obj) {return obj.sName == this.name }, field))) {
+            // we have the field in the columnDefs, just ignore it now.
+            return;
+        }
+        if(field.enabled) {
+            var fieldDef = {
+                "sName": field.name,
+                "aTargets": [ this.columnDefs.length ],
+                "bVisible" : this.checkConfigForColumnVisibility(field.name)
+            };
+
+            if(!_.isUndefined(field.type)) {
+                //Apply sorting for the worksheet
+                switch(field.type)
+                {
+                    case "buckets":
+                    case "enum":
+                    case "bool":
+                        // disable sorting for non-numerical fields
+                        fieldDef["bSortable"] = false;
+                        break;
+                    case "int":
+                    case "currency":
+                    case "editableCurrency":
+                        fieldDef["sSortDataType"] = "dom-number";
+                        fieldDef["sType"] = "numeric";
+                        break;
+                }
+                // apply class and width
+                switch(field.name) {
+                    case "likely_case":
+                        fieldDef["sClass"] = "number likely";
+                        fieldDef["sWidth"] = "22%";
+                        break;
+                    case "best_case":
+                        fieldDef["sClass"] = "number best";
+                        fieldDef["sWidth"] = "22%";
+                        break;
+                    case "worst_case":
+                        fieldDef["sClass"] = "number worst";
+                        fieldDef["sWidth"] = "22%";
+                        break;
+                    case "probability":
+                        fieldDef["sClass"] = "number";
+                        break;
+                }
+            }
+
+            this.columnDefs.push(fieldDef);
         }
     },
 
@@ -203,9 +249,9 @@
                 function(context, timePeriod) {
                     this.updateWorksheetBySelectedTimePeriod(timePeriod);
                 }, this);
-            this.context.forecasts.on("change:selectedCategory",
-                function(context, category) {
-                    this.updateWorksheetBySelectedCategory(category);
+            this.context.forecasts.on("change:selectedRanges",
+                function(context, ranges) {
+                    this.updateWorksheetBySelectedRanges(ranges);
                 },this);
             this.context.forecasts.worksheet.on("change", function() {
                 this.calculateTotals();
@@ -214,17 +260,23 @@
                 if(this.showMe()){
                     var model = this.context.forecasts.worksheet;
                     model.url = this.createURL();
-                    this.safeFetch();                   
-                    this.mgrNeedsCommitted = true;
-                }                
+                    this.safeFetch();
+                    if(!this.commitFromSafeFetch){
+                        this.mgrNeedsCommitted = true;
+                    }
+                    else{
+                        this.commitFromSafeFetch = false;
+                    }
+
+                }
             }, this);
-            
+
             this.context.forecasts.on("forecasts:commitButtons:enabled", function(){
                 if(_.isEqual(app.user.get('id'), self.selectedUser.id)){
                     self.commitButtonEnabled = true;
                 }
             },this);
-            
+
             this.context.forecasts.on("forecasts:commitButtons:disabled", function(){
                 self.commitButtonEnabled = false;
             },this);
@@ -252,7 +304,7 @@
                 }
             });
             */
-            this.context.forecasts.config.on('change:buckets_dom change:forecast_categories', this.render, this);
+            this.context.forecasts.config.on('change:buckets_dom change:forecast_ranges', this.render, this);
 
             var worksheet = this;
             $(window).bind("beforeunload",function(){
@@ -261,16 +313,16 @@
                     return app.lang.get("LBL_WORKSHEET_SAVE_CONFIRM_UNLOAD", "Forecasts");
                 }
                 //special manager cases for messages
-                else if((self.context.forecasts.get("currentWorksheet") == "worksheet") && self.selectedUser.isManager && self.context.forecasts.config.get("show_forecasts_commit_warnings")){
+                else if(!_.isUndefined(self.context.forecasts) && (self.context.forecasts.get("currentWorksheet") == "worksheet") && self.selectedUser.isManager && self.context.forecasts.config.get("show_forecasts_commit_warnings")){
                     /*
-                     * If the manager has a draft version saved, but hasn't committed that yet, they need to be shown a dialog that 
+                     * If the manager has a draft version saved, but hasn't committed that yet, they need to be shown a dialog that
                      * lets them know, and gives them the option of committing before the page reloads. This happens if the commit button
                      * is enabled and they are on the rep worksheet.
                      */
                     if(self.commitButtonEnabled ){
                         var msg = app.lang.get("LBL_WORKSHEET_COMMIT_CONFIRM", "Forecasts").split("<br>");
                         //show dialog
-                        return msg[0];                                       
+                        return msg[0];
                     }
                     else if(self.mgrNeedsCommitted){
                         return app.lang.get("LBL_WORKSHEET_COMMIT_ALERT", "Forecasts");
@@ -315,7 +367,7 @@
      * This function checks to see if the worksheet is dirty, and gives the user the option
      * of saving their work before the sheet is fetched.
      *
-     * @param fetch {boolean} Tells the function to go ahead and fetch if true, or runs dirty checks (saving) w/o fetching if false 
+     * @param fetch {boolean} Tells the function to go ahead and fetch if true, or runs dirty checks (saving) w/o fetching if false
      */
     safeFetch: function(fetch){
         //fetch currently already in progress, no need to duplicate
@@ -328,11 +380,11 @@
         {
             fetch = true;
         }
-        var collection = this._collection; 
+        var collection = this._collection;
         var self = this;
-        
+
         /*
-         * First we need to see if the collection is dirty. This is marked if any of the models 
+         * First we need to see if the collection is dirty. This is marked if any of the models
          * is marked as dirty. This will show the "unsaved changes" dialog
          */
         if(collection.isDirty){
@@ -342,7 +394,7 @@
             }
             //user clicked cancel, ignore and fetch if fetch is enabled
             else{
-                
+
                 collection.isDirty = false;
                 self.context.forecasts.set({reloadCommitButton: true});
                 if(fetch){
@@ -355,7 +407,7 @@
          */
         else if(self.selectedUser.isManager && (self.context.forecasts.get("currentWorksheet") == "worksheet") && self.context.forecasts.config.get("show_forecasts_commit_warnings")){
             /*
-             * If the manager has a draft version saved, but hasn't committed that yet, they need to be shown a dialog that 
+             * If the manager has a draft version saved, but hasn't committed that yet, they need to be shown a dialog that
              * lets them know, and gives them the option of committing before the page reloads. This happens if the commit button
              * is enabled and they are on the rep worksheet.
              */
@@ -364,6 +416,7 @@
                 //show dialog
                 if(confirm(msg[0] + "\n\n" + msg[1])){
                     self.context.forecasts.trigger("forecasts:forecastcommitbuttons:triggerCommit");
+                    self.commitFromSafeFetch = true;
                 }
                 //canceled, continue fetching
                 else{
@@ -371,7 +424,7 @@
                         collection.fetch();
                     }
                 }
-                    
+
             }
             else if(self.mgrNeedsCommitted){
                 alert(app.lang.get("LBL_WORKSHEET_COMMIT_ALERT", "Forecasts"));
@@ -379,7 +432,7 @@
                 if(fetch){
                     collection.fetch();
                 }
-                
+
             }
             //No popups needed, fetch like normal
             else{
@@ -389,29 +442,13 @@
             }
         }
         //default case, fetch like normal
-        else{    
+        else{
             if(fetch){
                 collection.fetch();
-            }    
+            }
         }
         //mark that the fetch is over
         this.fetchInProgress = false;
-    },
-
-    /**
-     *
-     * @param {Object} fields
-     * @private
-     */
-    _setForecastColumn: function(fields) {
-        var self = this;
-
-        _.each(fields, function(field) {
-            if (field.name == "commit_stage") {
-                field.view = self.isEditableWorksheet ? self.name : 'detail';
-            }
-        });
-
     },
 
     /**
@@ -423,126 +460,37 @@
     _render: function() {
         var self = this;
         var enableCommit = false;
-        var fields = this.meta.panels[0].fields;
-        var columnKeys = {};
 
         if(!this.showMe()){
             return false;
         }
         $("#view-sales-rep").addClass('show').removeClass('hide');
-        $("#view-manager").addClass('hide').removeClass('show');           
-        
+        $("#view-manager").addClass('hide').removeClass('show');
+
         this.context.forecasts.set({currentWorksheet: "worksheet"});
         this.isEditableWorksheet = this.isMyWorksheet();
-        this._setForecastColumn(this.meta.panels[0].fields);
+
+        // empty out the columnDefs if it's be re-rendred again
+        this.columnDefs = [];
 
         app.view.View.prototype._render.call(this);
 
-        // parse metadata into columnDefs
-        // so you can sort on the column's "name" prop from metadata
-
-        _.each(fields, function(field, key){
-            if(field.enabled)
-            {
-                var name = field.name;
-
-                var fieldDef = {
-                    "sName": name,
-                    "aTargets": [ key ],
-                    "bVisible" : self.checkConfigForColumnVisibility(field.name)
-                };
-
-                if(typeof(field.type) != "undefined")
-                {
-                    //Apply sorting for the worksheet
-                    switch(field.type)
-                    {
-                        case "enum":
-                        case "bool":
-                            // disable sorting for non-numerical fields
-                            fieldDef["bSortable"] = false;
-                            break;
-                        case "int":
-                        case "currency":
-                            fieldDef["sSortDataType"] = "dom-number";
-                            fieldDef["sType"] = "numeric";
-                            break;
-                    }
-                    // apply class and width
-                    switch(field.name) {
-                        case "likely_case":
-                            fieldDef["sClass"] = "number likely";
-                            fieldDef["sWidth"] = "22%";
-                            break;
-                        case "best_case":
-                            fieldDef["sClass"] = "number best";
-                            fieldDef["sWidth"] = "22%";
-                            break;
-                        case "worst_case":
-                            fieldDef["sClass"] = "number worst";
-                            fieldDef["sWidth"] = "22%";
-                            break;
-                        case "probability":
-                            fieldDef["sClass"] = "number";
-                            break;
-                    }
-                }
-
-                self.columnDefs.push(fieldDef);
-                columnKeys[name] = key;
-            }
-        });
-        this.gTable = this.$('.worksheetTable').dataTable(this.gTableDefs);
-
-        // set dynamic widths on currency columns showing original currency
-
-        var likelyWidths= $('.likely .converted').map(function() {
-            return $(this).width();
-        }).get();
-
-        var likelyLabelWidths= $('.likely label.original').map(function() {
-            return $(this).width();
-        }).get();
-
-        var bestWidths= $('.best .converted').map(function() {
-            return $(this).width();
-        }).get();
-
-        var bestLabelWidths= $('.best label.original').map(function() {
-            return $(this).width();
-        }).get();
-
-        var worstWidths= $('.worst .converted').map(function() {
-            return $(this).width();
-        }).get();
-
-        var worstLabelWidths= $('.worst label.original').map(function() {
-            return $(this).width();
-        }).get();
-
-        $('.likely .converted').width(_.max(likelyWidths));
-        $('.likely label.original').width(_.max(likelyLabelWidths));
-        $('.best .converted').width(_.max(bestWidths));
-        $('.best label.original').width(_.max(bestLabelWidths));
-        $('.worst .converted').width(_.max(worstWidths));
-        $('.worst label.original').width(_.max(worstLabelWidths));
-
-        // now set table column width from this value
-        $('.number .likely').width($('.likely .converted').width()+$('.likely label.original').width());
-        $('.number .best').width($('.best .converted').width()+$('.best label.original').width());
-        $('.number .worst').width($('.worst .converted').width()+$('.worst label.original').width());
-
-        // if isExpandable, add expandable row behavior
-        if (this.isExpandableRows) {
-            $('.worksheetTable tr').on('click', function () {
-                if (self.gTable.fnIsOpen(this)) {
-                    self.gTable.fnClose(this);
-                } else {
-                    self.gTable.fnOpen(this, self.formatAdditionalDetails(this), 'details');
-                }
+        // if there is no data for the worksheet, this.columnDefs will be empty
+        // but we still need the column visibility definitions
+        if(_.isEmpty(this.columnDefs)) {
+            _.each(this.options.meta.panels[0].fields, function(field) {
+                // creates column def and adds it to this.columnDefs
+                self._createFieldColumnDef(field);
             });
         }
 
+        // set the columnDefs back into the tableDefs
+        this.gTableDefs['aoColumnDefs'] = this.columnDefs;
+
+        // render the table
+        this.gTable = this.$('.worksheetTable').dataTable(this.gTableDefs);
+
+        self.adjustCurrencyColumnWidths();
         self.calculateTotals();
 
         // fix the style on the rows that contain a checkbox
@@ -562,6 +510,55 @@
             self.context.forecasts.trigger("forecasts:commitButtons:enabled");
         }
         return this;
+    },
+
+    /**
+     * set dynamic widths on currency columns showing original currency
+     */
+    adjustCurrencyColumnWidths : function() {
+
+        var likelyConverted = this.$el.find('.likely .converted'),
+            likelyOriginal = this.$el.find('.likely label.original'),
+            bestConverted = this.$el.find('.best .converted'),
+            bestOriginal = this.$el.find('.best label.original'),
+            worstConverted = this.$el.find('.worst .converted'),
+            worstOriginal = this.$el.find('.worst label.original');
+
+        var likelyWidths= likelyConverted.map(function() {
+            return $(this).width();
+        }).get();
+
+        var likelyLabelWidths= likelyOriginal.map(function() {
+            return $(this).width();
+        }).get();
+
+        var bestWidths= bestConverted.map(function() {
+            return $(this).width();
+        }).get();
+
+        var bestLabelWidths= bestOriginal.map(function() {
+            return $(this).width();
+        }).get();
+
+        var worstWidths= worstConverted.map(function() {
+            return $(this).width();
+        }).get();
+
+        var worstLabelWidths= worstOriginal.map(function() {
+            return $(this).width();
+        }).get();
+
+        likelyConverted.width(_.max(likelyWidths));
+        likelyOriginal.width(_.max(likelyLabelWidths));
+        bestConverted.width(_.max(bestWidths));
+        bestOriginal.width(_.max(bestLabelWidths));
+        worstConverted.width(_.max(worstWidths));
+        worstOriginal.width(_.max(worstLabelWidths));
+
+        // now set table column width from this value
+        this.$el.find('.number .likely').width(likelyConverted.width()+likelyOriginal.width());
+        this.$el.find('.number .best').width(bestConverted.width()+bestOriginal.width());
+        this.$el.find('.number .worst').width(worstConverted.width()+worstOriginal.width());
     },
 
     /**
@@ -710,10 +707,10 @@
      *
      * @param params is always a context
      */
-    updateWorksheetBySelectedCategory:function (params) {
+    updateWorksheetBySelectedRanges:function (params) {
         // Set the filters for the datatable then re-render
         var self = this,
-            forecast_categories_setting = this.context.forecasts.config.get('forecast_categories') || 'show_binary';
+            forecast_ranges_setting = this.context.forecasts.config.get('forecast_ranges') || 'show_binary';
 
         // start with no filters, i. e. show everything.
         $.fn.dataTableExt.afnFiltering.splice(0, $.fn.dataTableExt.afnFiltering.length);
@@ -730,9 +727,9 @@
                         selectVal,
                         rowCategory = $(_.first(aData)),
                         checkState;
-
+                    
                     //If we are in an editable worksheet get the selected dropdown/checkbox value; otherwise, get the detail/default text
-                    if (forecast_categories_setting == 'show_binary') {
+                    if (forecast_ranges_setting == 'show_binary') {
                         checkState = rowCategory.find('input').attr('checked');
                         selectVal = ((checkState == "checked") || (checkState == "on") || (checkState == "1")) ? 'include' : 'exclude';
                     } else {
