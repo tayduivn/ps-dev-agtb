@@ -161,8 +161,8 @@ $dictionary['SchedulersJob'] = array('table' => 'job_queue',
 			'type' => 'int',
 			'required' => false,
 	    	),
-		'group' => array (
-			'name' => 'group',
+		'job_group' => array (
+			'name' => 'job_group',
 			'vname' => 'LBL_JOB_GROUP',
 			'type' => 'varchar',
 			'len' => 255,
@@ -223,7 +223,7 @@ $dictionary['SchedulersJob'] = array('table' => 'job_queue',
     		'name' =>'idx_group_status',
     		'type'=>'index',
     		'fields' => array(
-                'group',
+                'job_group',
 	        	'status',
    			)
    		),
