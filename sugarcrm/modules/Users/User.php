@@ -887,9 +887,9 @@ EOQ;
 	/**
 	 * Verify that the current password is correct and write the new password to the DB.
 	 *
-	 * @param string $user name - Must be non null and at least 1 character.
 	 * @param string $user_password - Must be non null and at least 1 character.
 	 * @param string $new_password - Must be non null and at least 1 character.
+     * @param string $system_generated
 	 * @return boolean - If passwords pass verification and query succeeds, return true, else return false.
 	 */
 	function change_password($user_password, $new_password, $system_generated = '0')
@@ -903,11 +903,13 @@ EOQ;
 			return false;
 		}
 
+        // BEGIN SUGARCRM flav=pro ONLY
 		// Check new password against rules set by admin
 		if (!$this->check_password_rules($new_password)) {
 		    $this->error_string = $mod_strings['ERR_PASSWORD_CHANGE_FAILED_1'].$current_user->user_name.$mod_strings['ERR_PASSWORD_CHANGE_FAILED_3'];
 		    return false;
 		}
+        // END SUGARCRM flav=pro ONLY
 
 		if (!$current_user->isAdminForModule('Users')) {
 			//check old password first
@@ -923,6 +925,7 @@ EOQ;
 		return true;
 	}
 
+    // BEGIN SUGARCRM flav=pro ONLY
 	/**
 	 * Check new password against rules set by admin
 	 * @param string $password
@@ -968,6 +971,7 @@ EOQ;
 
 	    return true;
 	}
+    // END SUGARCRM flav=pro ONLY
 
 	function is_authenticated() {
 		return $this->authenticated;
@@ -1001,8 +1005,18 @@ EOQ;
         {
             $this->team_id = $this->default_team;
         }
-        // Set default_team_name for Campaigns WebToLeadCreation
-        $this->default_team_name = Team::getTeamName($this->team_id);
+
+        //set the team info if the team id has already been set.
+        //running only if team class exists will prevent breakage during upgrade/flavor conversions
+        if (class_exists('Team') ) {
+            // Set default_team_name for Campaigns WebToLeadCreation
+            $this->default_team_name = Team::getTeamName($this->team_id);
+        } else {
+            //if no team id exists, set the team info to blank
+            $this->default_team = '';
+            $this->default_team_name = '';
+            $this->team_set_id = '';
+        }
         
         //END SUGARCRM flav=pro ONLY
 

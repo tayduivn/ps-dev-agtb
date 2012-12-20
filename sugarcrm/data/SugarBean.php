@@ -6275,11 +6275,12 @@ class SugarBean
 
         /** @var Link2 $link */
         $link = $this->$linkName;
-        $relatedModuleName = $link->def['bean_name'];
+        $relatedModuleName = $link->def['module'];
+        $relatedBeanName   = BeanFactory::getObjectName($relatedModuleName);
         $relatedLinkName   = $link->getRelatedModuleLinkName();
 
         // iterate over related bean fields
-        foreach ($dictionary[$relatedModuleName]['fields'] as $def) {
+        foreach ($dictionary[$relatedBeanName]['fields'] as $def) {
             if (!empty($def['formula'])) {
                 $expr = Parser::evaluate($def['formula'], $this);
                 $fields = $this->get_formula_related_fields($expr, $relatedLinkName);

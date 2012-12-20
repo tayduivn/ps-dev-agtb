@@ -257,8 +257,8 @@ $errors = array();
 	$zip_from_dir	= substr($patchName, 0, strlen($patchName) - 4); // patch folder name (minus ".zip")
 	$path			= $argv[2]; // custom log file, if blank will use ./upgradeWizard.log
     $db				= &DBManagerFactory::getInstance();
-	$UWstrings		= return_module_language('en_us', 'UpgradeWizard');
-	$adminStrings	= return_module_language('en_us', 'Administration');
+	$UWstrings		= return_module_language('en_us', 'UpgradeWizard', true);
+	$adminStrings	= return_module_language('en_us', 'Administration', true);
     $app_list_strings = return_app_list_strings_language('en_us');
 	$mod_strings	= array_merge($adminStrings, $UWstrings);
 	$subdirs		= array('full', 'langpack', 'module', 'patch', 'theme', 'temp');
@@ -520,6 +520,7 @@ logThis('Begin upgrade_connectors', $path);
 upgrade_connectors();
 logThis('End upgrade_connectors', $path);
 
+//BEGIN SUGARCRM flav=pro ONLY
 if (version_compare($sugar_version, '6.5.0', '<'))
 {
     // Bug 53650 - Workflow Type Templates not saving Type upon upgrade to 6.5.0, usable as Email Templates
@@ -529,6 +530,7 @@ if (version_compare($sugar_version, '6.5.0', '<'))
         coalesce(" . $db->convert("type", "length") . ",0) = 0
     ");
 }
+//END SUGARCRM flav=pro ONLY
 
 //Unlink files that have been removed
 if(function_exists('unlinkUpgradeFiles'))
