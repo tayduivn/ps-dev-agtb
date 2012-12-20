@@ -348,6 +348,10 @@ class UnifiedSearchApi extends SugarListApi {
                 $formattedRecord['_module'] = $module;
                 // The SQL based search engine doesn't know how to score records, so set it to 1
                 $formattedRecord['_score'] = $result->getScore();
+
+                //Add highlighted text
+                $formattedRecord['_highlighted'] = $result->getHighlightedHitText();
+
                 $returnedRecords[] = $formattedRecord;
             }
             
