@@ -369,6 +369,11 @@
                    'include/javascript/jquery/jquery.popoverext.js'           => 'include/javascript/sugar_sidecar.min.js',
                    'include/javascript/jquery/jquery.effects.custombounce.js'           => 'include/javascript/sugar_sidecar.min.js',
                    'include/javascript/jquery/jquery.nouislider.js' => 'include/javascript/sugar_sidecar.min.js',
+                   //BEGIN SUGARCRM flav=pro ONLY
+                   //Expression Engine
+                   'include/Expressions/javascript/expressions.js'  => 'include/javascript/sugar_sidecar.min.js',
+                   'include/Expressions/javascript/sidecarExpressionContext.js'   => 'include/javascript/sugar_sidecar.min.js',
+                   //END SUGARCRM flav=pro ONLY
                 )
            ),
            //BEGIN SUGARCRM flav=ent ONLY

@@ -49,6 +49,13 @@
         if (this.createMode) {
             this.model.isNotEmpty = true;
         }
+
+        var slContext = new SUGAR.expressions.SidecarExpressionContext(this);
+        SUGAR.testDep = new SUGAR.forms.Dependency(
+            new SUGAR.forms.Trigger(["name", "website", "industry"], "true", slContext),
+            [new SUGAR.forms.SetValueAction("description", 'concat($name, " bar")')],
+            [], false, slContext
+        );
     },
 
     /**

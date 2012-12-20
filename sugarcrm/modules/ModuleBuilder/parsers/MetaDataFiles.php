@@ -677,6 +677,39 @@ class MetaDataFiles
             $fileList = self::getClientFiles($platforms, $type, $module);
             $moduleResults = self::getClientFileContents($fileList, $type, $module);
 
+            if ($module == "Accounts" )
+            {
+                if ($type == "view")
+                {
+                    foreach($moduleResults as $view => $defs )
+                    {
+                        if ($view == "edit")
+                        {
+                            _ppl("$module : $view");
+                            $meta = isset($defs['meta']) ? $defs['meta'] : array();
+                            $deps = array_merge(
+                                DependencyManager::getDependenciesForFields(
+                                    BeanFactory::getBean($module)->field_defs,
+                                    ucfirst($view) . "View"),
+                                DependencyManager::getDependenciesForView($meta, ucfirst($view) . "View", $module)
+                            );
+                            _ppl($deps);
+                            if (!empty($deps)) {
+                                $moduleResults[$view]['dependencies'] = array();
+                                foreach ($deps as $dep) {
+                                    _ppl($dep->getDefinition());
+                                    $moduleResults[$view]['dependencies'][] = $dep->getDefinition();
+                                }
+                            }
+                            _ppl($moduleResults[$view]);
+                        }
+
+                    }
+                }
+            }
+
+
+
             $basePath = sugar_cached('modules/'.$module.'/clients/'.$platforms[0]);
             sugar_mkdir($basePath,null,true);
             

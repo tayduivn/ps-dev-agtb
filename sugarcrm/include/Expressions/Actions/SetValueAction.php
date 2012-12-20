@@ -130,8 +130,10 @@ class SetValueAction extends AbstractAction{
 	function getDefinition() {
 		return array(
 			"action" => $this->getActionName(),
-	        "target" => $this->targetField,
-	        "value" => $this->expression,
+	        "params" => array(
+                "target" => $this->targetField,
+	            "value" => $this->expression,
+            )
 	    );
 	}
 

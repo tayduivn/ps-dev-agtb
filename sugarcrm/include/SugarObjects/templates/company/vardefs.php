@@ -203,6 +203,8 @@ $vardefs= array (
     'full_text_search' => array('boost' => 1),
     'comment' => 'The office phone number',
     'merge_filter' => 'enabled',
+    'calculated' => true,
+    'formula' => 'concat($name, " Test 2")',
   ),
     'phone_alternate' => 
   array (
