@@ -4741,7 +4741,7 @@ img {
 }
 .thumbnail .listed li:last-child { border-bottom:none; }
 .thumbnail .table { margin-bottom:0px; }
-.thumbnail .viz.expanded {
+.thumbnail.viz.expanded {
   position:fixed;
   top:48px;
   left:0;
@@ -4750,9 +4750,9 @@ img {
   margin-right:0 !important;
   z-index:1000;
 }
-.thumbnail .viz.expanded .nv-chart { padding:20px 20px 10px; }
-.thumbnail .viz.expanded svg text { font-size:14px; }
-.thumbnail .viz.expanded .nvd3 .nv-x.nv-axis text { font-size:12px; }
+.thumbnail.viz.expanded .nv-chart { padding:20px 20px 10px; }
+.thumbnail.viz.expanded svg text { font-size:14px; }
+.thumbnail.viz.expanded .nvd3 .nv-x.nv-axis text { font-size:12px; }
 .side .block .listed { margin:-10px 0 0; }
 .label, .badge {
   font-weight:normal;

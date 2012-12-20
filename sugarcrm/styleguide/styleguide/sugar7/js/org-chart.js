@@ -1,65 +1,6 @@
-<!DOCTYPE html>
-<html>
-  <head>
-    <meta http-equiv="Content-Type" content="text/html;charset=utf-8">
-    <title>Org Chart</title>
-    <link href="../css/nv.d3.css" rel="stylesheet" type="text/css">
-    <script src="../js/nvd3/lib/d3.v2.js"></script>
-    <script src="../js/nvd3/nv.d3.js"></script>
-    <script src="../js/nvd3/src/utils.js"></script>
-    <style type="text/css">
-      body {
-        background: url(../img/texture-noise.png);
-        overflow: hidden;
-        font-size: 14px;
-        font-family: "Helvetica Neue", Helvetica;
-      }
-      #org {
-        border: 1px solid black;
-        position: absolute;
-        left: 20px;
-        right: 20px;
-        top: 20px;
-        bottom: 20px;
-      }
-      .nv-card {
-        fill: #e6e6e6;
-        stroke: #999;
-        stroke-width: 1px;
-        -moz-box-shadow: -5px -5px 5px #888;
-        -webkit-box-shadow: -5px -5px 5px #888;
-        box-shadow: -5px -5px 5px #888;
-      }
-      .nv-card circle {
-        cursor: pointer;
-        /*stroke: steelblue;*/
-        stroke-width: 0;
-      }
-      .nv-card text {
-        stroke: none;
-      }
-      .nv-card line {
-        stroke-width: 2;
-      }
-      .nv-card text.nv-cardName  {
-        fill: steelblue;
-      }
-      .nv-card text.nv-cardTitle  {
-        fill: black;
-      }
-      path.link {
-        fill: none;
-        stroke: #ccc;
-        stroke-width: 1.5px;
-      }
-    </style>
-  </head>
-  <body>
-    <div id="org"></div>
-
-    <script type="text/javascript">
-
-SimpleGraph = function(elemid, options) {
+// all hail, stepheneb
+// https://gist.github.com/1182434
+SimpleGraph = function(elemid, options, json_path) {
   var self = this;
 
   this.container = d3.select(elemid).node();
@@ -68,45 +9,51 @@ SimpleGraph = function(elemid, options) {
   this.options.r = options.r || 5.5;
   this.options.duration = options.duration || 700;
   this.options.padding = options.padding || { top:0, right: 0, bottom:0, left: 0 };
+  this.options.offset = options.offset || { top: 0, left: 0};
+  this.options.nodesize = options.nodesize || { width: 115, height: 42};
+  this.options.nodeimgpath = options.nodeimgpath || '../img/';
 
   this.size = {
     "width":  this.container.clientWidth - this.options.padding.left - this.options.padding.right,
     "height": this.container.clientHeight - this.options.padding.top  - this.options.padding.bottom
   };
 
-  this.root = {};
-
-
+  this.options.offset.top = this.options.offset.top+this.options.nodesize.height;
+  this.zoom = 1;
+  this.scale = 1;
+  this.trans = [ 0, 0 ];
+  this.shift = [ 0, 0 ];
+  this.bbox = false;
 
   this.diagonal = d3.svg.diagonal();
 
   this.svg = d3.select(this.container).append("svg:svg")
     .append("g")
-      .attr("transform", "translate(" + 0 + "," + 0 + ")")
-      .call(d3.behavior.zoom().scaleExtent([.25, 4]).on("zoom", function () {
-        self.chart.attr("transform", "translate(" + d3.event.translate + ")scale(" + d3.event.scale + ")");
+      .attr("transform", "translate("+ 0 +","+ 0 +")")
+      .call(d3.behavior.zoom().scaleExtent([.25, 2]).on("zoom", function () {
+        self.zoom = d3.event.scale;
+        self.trans = d3.event.translate;
+        self.chart.attr("transform", "translate("+ [
+          (d3.event.translate[0]+self.options.offset.left+self.shift[0])*self.scale,
+          (d3.event.translate[1]+self.options.offset.top+self.shift[1])*self.scale
+        ] +")scale("+ self.scale*self.zoom +")");
       }));
 
-  this.svg.append('svg:rect')
+  this.backg = this.svg.append('svg:rect')
+    .attr("id","backg")
     .attr("width", this.size.width)
     .attr("height", this.size.height)
     .style("fill", "transparent");
 
   this.chart = this.svg.append('g')
-    .attr("transform", "translate(" + 0 + "," + 0 + ")");
-
-  this.vis = this.chart.append('g')
     .attr("id","vis")
-    .attr("transform", "translate(" + 0 + "," + 40 + ")")
-    //.attr("width", 1000);
+    .attr("transform", "translate("+ this.trans +")");
 
   this.defs = this.svg.append('defs');
-  this.dropShadow = nv.uti
+  this.dropShadow = nv.utils.dropShadow( 'cardShadow', this.defs, {height:'120%', offset: 1.5, blur:1} );
 
-  this.load_data();
-
-  this.bbox = false;
-  this.bbox_padding = { w:16, h:10 };
+  this.root = {};
+  this.load_data(json_path);
 
   nv.utils.windowResize(winresize(this));
 
@@ -115,16 +62,37 @@ SimpleGraph = function(elemid, options) {
 
     return function() {
       self.size = {
-        "width":  self.container.clientWidth - self.options.padding.left - self.options.padding.right,
-        "height": self.container.clientHeight - self.options.padding.top  - self.options.padding.bottom
+        "width":  self.container.clientWidth-self.options.padding.left-self.options.padding.right,
+        "height": self.container.clientHeight-self.options.padding.top-self.options.padding.bottom
       };
+
+      self.svg.select('#backg')
+        .attr("width", self.size.width)
+        .attr("height", self.size.height);
+
       self.update();
     }
   }
 
+  return this;
 };
 
 
+SimpleGraph.prototype.resize = function() {
+  var self = this;
+  return function() {
+    self.size = {
+      "width":  self.container.clientWidth-self.options.padding.left-self.options.padding.right,
+      "height": self.container.clientHeight-self.options.padding.top-self.options.padding.bottom
+    };
+
+    self.svg.select('#backg')
+      .attr("width", self.size.width)
+      .attr("height", self.size.height);
+
+    self.update();
+  }
+};
 
 SimpleGraph.prototype.update = function(source) {
   var self = this;
@@ -132,31 +100,37 @@ SimpleGraph.prototype.update = function(source) {
   // Compute the new tree layout.
 
   var tree = d3.layout.tree()
-        //.size([this.size.width,this.size.height])
-        //.size([3000,500])
         .size(null)
-        .elementsize([this.bbox||110,1])
+        .elementsize([this.options.nodesize.width,1])
         .separation( function separation(a,b) {
-          //console.log(a)
           return a.parent == b.parent ? 1 : 1;
         });
 
   var nodes = tree.nodes(self.root);
 
-  var chartwidth = d3.min(nodes,function(d){return d.x}) + d3.max(nodes,function(d){return d.x});
-  if ( self.width < chartwidth) {
-    //self.vis.attr("transform", "scale("+self.width/chartwidth+")");
-    console.log(self.width);
-    console.log(chartwidth)
-  }
   //nodes = nodes.sort(function(a, b) { return (a.x+((6-a.depth)*10000)) - (b.x+((6-b.depth)*10000)); });
+
+  var chartWidth = d3.min(nodes,function(d){return d.x})+d3.max(nodes,function(d){return d.x});
+  var chartHeight = ( d3.min(nodes,function(d){return d.y})+d3.max(nodes,function(d){return d.y}) )*100 + (self.options.nodesize.height);
+  self.scale = d3.min([ self.size.width/chartWidth, self.size.height/chartHeight ]);
+
+  if (self.size.width/chartWidth < self.size.height/chartHeight) {
+    //width controls, set center height
+    self.shift = [ 0, ((self.size.height/self.scale*self.zoom)-chartHeight)/2 ];
+  } else {
+    self.shift = [ ((self.size.width/self.scale*self.zoom)-chartWidth)/2, 0 ];
+  }
+  self.chart.attr("transform", "translate("+ [
+    (self.trans[0]+self.options.offset.left+self.shift[0])*self.scale,
+    (self.trans[1]+self.options.offset.top+self.shift[1])*self.scale
+  ] +")scale("+ self.scale*self.zoom +")");
 
   nodes.forEach(function(d) {
     d.y = d.depth * 100;
   });
 
   // Update the nodes…
-  var node = self.vis.selectAll("g.nv-card")
+  var node = self.chart.selectAll("g.nv-card")
       .data(nodes, function (d) {
         return d.id;
       });
@@ -164,10 +138,7 @@ SimpleGraph.prototype.update = function(source) {
   // Enter any new nodes at the parent's previous position.
   var nodeEnter = node.enter().append("svg:g")
       .attr("class", "nv-card")
-      .attr("id",function(d){return "nv-card-"+d.id})
-      // .attr("transform", function(d) {
-      //   return "translate(" + source.x0 + "," + source.y0 + ")scale(.5)";
-      // })
+      .attr("id",function(d){return "nv-card-"+ d.id})
       .on("click", function(d) {
         toggle(d);
         self.update(d);
@@ -177,9 +148,9 @@ SimpleGraph.prototype.update = function(source) {
   nodeEnter
     .append("image")
       .attr('class', 'nv-cardAvatar')
-      .attr("xlink:href", function(d){return "../img/" + d.image})
+      .attr("xlink:href", function(d){return self.options.nodeimgpath + d.image})
       .attr("x", -54)
-      .attr("y", -30)
+      .attr("y", -36)
       .attr("width", 32)
       .attr("height", 32)
       .style('opacity', 1e-6);
@@ -187,7 +158,7 @@ SimpleGraph.prototype.update = function(source) {
     .append('svg:text')
       .attr('class', 'nv-cardName')
       .attr('x', -18)
-      .attr('y', -18)
+      .attr('y', -24)
       .attr('text-anchor', 'start')
       .text(function(d){return d.name})
       .style('fill-opacity', 1e-6)
@@ -196,7 +167,7 @@ SimpleGraph.prototype.update = function(source) {
     .append('svg:text')
       .attr('class', 'nv-cardTitle')
       .attr('x', -18)
-      .attr('y', -4)
+      .attr('y', -10)
       .attr('text-anchor', 'start')
       .text(function(d){return d.title})
       .style('fill-opacity', 1e-6)
@@ -211,9 +182,8 @@ SimpleGraph.prototype.update = function(source) {
           self.bbox = nodeEnter.node().getBBox();
         }
         //(x, y, width, height, radius)
-        console.log(self.bbox_padding)
         return nv.utils.roundedRectangle(
-          -((self.bbox.width+16)/2), -(self.bbox.height+2), self.bbox.width+self.bbox_padding.w, self.bbox.height+self.bbox_padding.h, 3
+          -((self.bbox.width+16)/2), -(self.bbox.height+4), self.bbox.width+16, self.bbox.height+6, 3
         )
       })
       .style('stroke-opacity', 1e-6)
@@ -222,8 +192,7 @@ SimpleGraph.prototype.update = function(source) {
 
   // node control
   var xcCircle = nodeEnter
-        .append('svg:g').attr('class','nv-expcoll')
-          .attr('transform', 'translate(0,'+ ( self.options.r + 0.5 ) +')');
+        .append('svg:g').attr('class','nv-expcoll');
       xcCircle
         .append("svg:circle").attr('class','nv-circ-back')
           .attr("r",1e-6);
@@ -239,7 +208,7 @@ SimpleGraph.prototype.update = function(source) {
   //Transition nodes to their new position.
   var nodeUpdate = node.transition()
           .duration(self.options.duration)
-          .attr("transform", function(d) { return "translate(" + d.x + "," + d.y + ")"; });
+          .attr("transform", function(d) { return "translate("+ d.x +","+ d.y +")"; });
       nodeUpdate.select(".nv-circ-back")
           .attr("r", self.options.r)
           .style("stroke-opacity", function(d) { return d.children || d._children ? 1 : 0; })
@@ -265,7 +234,7 @@ SimpleGraph.prototype.update = function(source) {
   // Transition exiting nodes to the parent's new position.
   var nodeExit = node.exit().transition()
           .duration(self.options.duration)
-          .attr("transform", function(d) { return "translate(" + source.x + "," + source.y + ")"; })
+          .attr("transform", function(d) { return "translate("+ source.x +","+ source.y +")"; })
           .remove();
       nodeExit.selectAll("circle")
           .attr("r", 1e-6);
@@ -283,7 +252,7 @@ SimpleGraph.prototype.update = function(source) {
 
 
   // Update the links
-  var link = self.vis.selectAll("path.link")
+  var link = self.chart.selectAll("path.link")
       .data(tree.links(nodes), function (d) {
         return d.source.id + "-" + d.target.id;
       });
@@ -316,29 +285,6 @@ SimpleGraph.prototype.update = function(source) {
       d.x0 = d.x;
       d.y0 = d.y;
     });
-// console.log(nodes);
-
-//   var i = 0, l = nodes.length, increase = 0;
-
-//   while( i < l-1 ) {
-//       // console.log(nodes[i].x0);
-//       // console.log(nodes[i+1].x0)
-//     if ( nodes[i].depth === nodes[i+1].depth && nodes[i].x0 + bbox.width+16 > nodes[i+1].x0 )
-//     {
-//       console.log(nodes[i])
-//       console.log(nodes[i+1])
-
-//       increase = nodes[i].x0 + bbox.width+16 - nodes[i+1].x0;
-//       break;
-//     }
-//     i++;
-//   }
-//   if (increase !== 0){
-//     console.log('increase='+increase)
-//     self.size.width += increase;
-//     increase = 0;
-//     self.update();
-//   }
 
   // Toggle children.
   function toggle(d) {
@@ -350,12 +296,14 @@ SimpleGraph.prototype.update = function(source) {
       d._children = null;
     }
   }
+
+// console.log(nodes);
 };
 
-SimpleGraph.prototype.load_data = function() {
+SimpleGraph.prototype.load_data = function(json_path) {
   var self = this;
 
-  d3.json("../js/nvd3/data/tree_data.json", function(json) {
+  d3.json(json_path, function(json) {
     self.root = json;
     self.root.x0 = 0;
     self.root.y0 = 0;
@@ -373,16 +321,3 @@ SimpleGraph.prototype.load_data = function() {
     self.update(self.root);
   });
 };
-
-    </script>
-
-    <script type="text/javascript">
-      graph = new SimpleGraph("#org", {
-          "xmax": 60, "xmin": 0,
-          "ymax": 40, "ymin": 0
-        });
-    </script>
-
-  </body>
-</html>
-
