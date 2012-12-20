@@ -130,6 +130,7 @@ $dictionary['SchedulersJob'] = array('table' => 'job_queue',
 			'type' => 'tinyint',
 			'required' => false,
 			'reportable' => true,
+		    'readonly' => true,
 		),
 		'failure_count' => array (
 			'name' => 'failure_count',
@@ -160,6 +161,14 @@ $dictionary['SchedulersJob'] = array('table' => 'job_queue',
 			'type' => 'int',
 			'required' => false,
 	    	),
+		'group' => array (
+			'name' => 'group',
+			'vname' => 'LBL_JOB_GROUP',
+			'type' => 'varchar',
+			'len' => 255,
+			'required' => false,
+			'reportable' => true,
+		),
 	    'schedulers' => array (
 			'name'            => 'schedulers',
 			'vname'            => 'LBL_SCHEDULER_ID',
@@ -210,7 +219,15 @@ $dictionary['SchedulersJob'] = array('table' => 'job_queue',
 	        	'date_modified',
    			)
    		),
-   	),
+		array(
+    		'name' =>'idx_group_status',
+    		'type'=>'index',
+    		'fields' => array(
+                'group',
+	        	'status',
+   			)
+   		),
+	),
 );
 
 VardefManager::createVardef('SchedulersJobs','SchedulersJob', array('assignable'));
