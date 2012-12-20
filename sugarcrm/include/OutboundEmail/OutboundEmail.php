@@ -484,7 +484,7 @@ class OutboundEmail {
 		foreach($values as $k => $val) {
 		        $updvalues[] = "{$updateFields[$k]} = $val";
 		}
-        $query = "UPDATE outbound_email set {$updvalues} WHERE type='system-override' ";
+        $query = "UPDATE outbound_email set ".implode(', ', $updvalues)." WHERE type='system-override' ";
 
 	    $this->db->query($query);
 	}
