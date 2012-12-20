@@ -340,7 +340,7 @@ class MetaDataManager {
 
                 // if the bean is not sent it set the owner override
                 // this will allow fields marked Owner to pass through ok.
-                if($bean == false) {
+                if($bean == false || empty($bean->id) || (isset($bean->new_with_id) && $bean->new_with_id == true)) {
                     $context['owner_override'] = true;
                 }
 

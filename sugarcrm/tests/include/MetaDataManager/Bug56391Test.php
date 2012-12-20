@@ -314,6 +314,107 @@ class Bug56391Test extends Sugar_PHPUnit_Framework_TestCase
         $this->assertEquals($expected_bean_result['access'], $acls, 'Access Failed');
     }
 
+  /**
+     * Test Owner Create Access
+     *
+     * Test if Create = Owner that we can create a bean.
+     *
+     * @group Bug56391
+     */
+    public function testModuleOwnerCreateAccess()
+    {
+        $modules = array('Accounts', );
+
+
+        $expected_bean_result['access'] = array(
+                                'access' => 'yes',
+                                'admin' => 'no',
+                                'create' => 'yes',
+                                'view' => 'yes',
+                                'list' => 'yes',
+                                'edit' => 'yes',
+                                'delete' => 'yes',
+                                'import' => 'no',
+                                'export' => 'yes',
+                                'massupdate' => 'no',            
+            );
+
+
+
+        $role = $this->createRole('UNIT TEST ' . create_guid(), $modules, array('access', 'view', 'list', 'edit', 'delete', 'export'), array('create', 'edit'));
+
+        if (!($GLOBALS['current_user']->check_role_membership($role->name))) {
+            $GLOBALS['current_user']->load_relationship('aclroles');
+            $GLOBALS['current_user']->aclroles->add($role);
+            $GLOBALS['current_user']->save();
+        }
+        $id = $GLOBALS['current_user']->id;
+        $GLOBALS['current_user'] = BeanFactory::getBean('Users', $id);
+        unset($_SESSION['ACL']);
+
+        $mm = new MetaDataManager($GLOBALS['current_user']);
+
+        $acls = $mm->getAclForModule('Accounts', $GLOBALS['current_user'], BeanFactory::newBean('Accounts'));
+        unset($acls['_hash']);
+        // not checking fields right now
+        unset($acls['fields']);
+
+        $this->assertEquals($expected_bean_result['access'], $acls, 'Access Failed');
+    }
+
+ /**
+     * Test Owner Create Access 2
+     *
+     * Test if Create = Owner that we can create a bean.
+     *
+     * @group Bug56391
+     */
+    public function testModuleOwnerCreateNewWithIdAccess()
+    {
+        $modules = array('Accounts', );
+
+
+        $expected_bean_result['access'] = array(
+                                'access' => 'yes',
+                                'admin' => 'no',
+                                'create' => 'yes',
+                                'view' => 'yes',
+                                'list' => 'yes',
+                                'edit' => 'yes',
+                                'delete' => 'yes',
+                                'import' => 'no',
+                                'export' => 'yes',
+                                'massupdate' => 'no',            
+            );
+
+
+
+        $role = $this->createRole('UNIT TEST ' . create_guid(), $modules, array('access', 'view', 'list', 'edit', 'delete', 'export'), array('create', 'edit'));
+
+        if (!($GLOBALS['current_user']->check_role_membership($role->name))) {
+            $GLOBALS['current_user']->load_relationship('aclroles');
+            $GLOBALS['current_user']->aclroles->add($role);
+            $GLOBALS['current_user']->save();
+        }
+        $id = $GLOBALS['current_user']->id;
+        $GLOBALS['current_user'] = BeanFactory::getBean('Users', $id);
+        unset($_SESSION['ACL']);
+
+        $account = BeanFactory::newBean('Accounts');
+        $account->new_with_id = true;
+        $account->id = create_guid();
+        $account->name = "Tis Awesome";
+
+        $mm = new MetaDataManager($GLOBALS['current_user']);
+
+        $acls = $mm->getAclForModule('Accounts', $GLOBALS['current_user'], $account);
+        unset($acls['_hash']);
+        // not checking fields right now
+        unset($acls['fields']);
+
+        $this->assertEquals($expected_bean_result['access'], $acls, 'Access Failed');
+    }
+
     public function testModuleOwnerNoAccess() {
         $modules = array('Accounts', );
 
