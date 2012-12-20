@@ -227,7 +227,7 @@
 
 
 
-                      <h3>List view</h3>
+                      <h3 id="89elistv">List view</h3>
 
 <table class="table datatable table-striped">
   <thead>
@@ -264,7 +264,7 @@
       <td><input type="checkbox"> <span><i class="icon-favorite" rel="tooltip" data-title="Add to favorites"></i></span></td>
       <td><a href="partial/lead/lead-view.html" data-toggle="proto" data-target="#view .record" data-mode="view">Plato's LED MFT</a></td>
       <td><span class="dblclick">Cupertino</span></td>
-      <td><span class="dblclick">USA</span></td>
+      <td><span class="dblclick">$1,299,000</span></td>
       <td><span class="dblclick">(408) 555-5271</span></td>
       <td><a href="mailto:sales@perkins.com">sales@perkins.com</a></td>
       <td>
@@ -282,28 +282,54 @@
 
     <tr id="edit-id-6943901" class="tr-inline-edit single">
       <td style="padding-bottom:10px"><a class="btn btn-link btn-invisible inline-cancel" href="">Cancel</a></td>
-      <td><div class="controls span12"><input type="text" value="Plato's LED MFT" class="inherit-width"></div></td>
-      <td><div class="controls span12"><input type="text" value="Cupertino" class="inherit-width"></div></td>
+      <td><div class="controls span12"><input type="text" value="Plato's LED MFT" class="local-error inherit-width" rel="tooltip-error" data-original-title="<span class='tooltip-error'>Error: This field is required</span>"></div></td>
+      <td><div class="controls span12"><input type="text" value="Cupertino" class="local-error inherit-width" rel="tooltip-error" data-original-title="<span class='tooltip-error'>Error: This field is required</span>"></div></td>
       
-      <td>
-        <div class="controls span12">
-          <select name="priority" class="chzn-select chzn-narrow inherit-width chzn-done" tabindex="-1" id="sel4H9" style="display: none;">
-            <option value="one" selected="">One</option>
-            <option value="two">Two</option>
-            <option value="three">Three</option>
-            <option value="four">Four-</option>
-          </select><div id="sel4H9_chzn" class="chzn-container chzn-container-single chzn-container-single-nosearch" style="width: 100%;"><a href="javascript:void(0)" class="chzn-single" tabindex="-1"><span>One</span><div><b></b></div></a><div class="chzn-drop" style="left: -9000px; width: auto; top: 28px;"><div class="chzn-search"><input type="text" autocomplete="off" style="width: auto;" tabindex="3" value="USA"></div><ul class="chzn-results"><li id="sel4H9_chzn_o_0" class="active-result result-selected" style="">One</li><li id="sel4H9_chzn_o_1" class="active-result" style="">Two</li><li id="sel4H9_chzn_o_2" class="active-result" style="">Three</li><li id="sel4H9_chzn_o_3" class="active-result" style="">Four-</li></ul></div></div>
-        </div>
-      </td>
-      <td><div class="controls span12"><input type="text" value="(408) 555-5271" class="inherit-width"></div></td>
-      <td><div class="controls span12"><input type="text" value="sales@perkins.com" class="inherit-width"></div></td>
-      <td class="tcenter">
-        <input type="button" value="Save" class="btn btn-primary inline-save disabled">
-      </td></tr>
+      <td><div class="controls span12"><input type="text" value="$1,000,000" class="local-error inherit-width" rel="tooltip-error" data-original-title="<span class='tooltip-error'>Error: This field is required</span>"></div></td>
 
+      <td><div class="controls span12"><input type="text" value="(408) 555-5271" class="local-error inherit-width" rel="tooltip-error" data-original-title="<span class='tooltip-error'>Error: This field is required</span>"></div></td>
+      <td><div class="controls span12"><input type="text" value="sales@perkins.com" class="local-error inherit-width" rel="tooltip-error" data-original-title="<span class='tooltip-error'>Error: This field is required</span>"></div></td>
+      <td class="tcenter"><input type="button" value="Save" class="btn btn-primary inline-save disabled"></td>
+    </tr>
+
+
+    <tr id="edit-id-6943901" class="tr-inline-edit single">
+      <td style="padding-bottom:10px"><a class="btn btn-link btn-invisible inline-cancel" href="">Cancel</a></td>
+      <td><div class="controls span12"><input type="text" value="Plato's LED MFT" class="local-error inherit-width"><span class="add-on" style="margin-left: -20px;position: relative;color: #B60000;" rel="tooltip-error" data-original-title="<span class='tooltip-error'>Error: This field is required</span>"><i class="icon-exclamation-sign"></i></span></div></td>
+      <td><div class="controls span12"><input type="text" value="Cupertino" class="local-error inherit-width"><span class="add-on" style="margin-left: -20px;position: relative;color: #B60000;"><i class="icon-exclamation-sign" rel="tooltip-error" data-original-title="<span class='tooltip-error'>Error: This field is required</span>"></i></span></div></td>
+      
+      <td><div class="controls span12"><input type="text" value="$1,000,000" class="local-error inherit-width"><span class="add-on" style="margin-left: -20px;position: relative;color: #B60000;"><i class="icon-exclamation-sign" rel="tooltip-error" data-original-title="<span class='tooltip-error'>Error: This field is required</span>"></i></span></div></td>
+
+      <td><div class="controls span12"><input type="text" value="(408) 555-5271" class="local-error inherit-width"><span class="add-on" style="margin-left: -20px;position: relative;color: #B60000;"><i class="icon-exclamation-sign" rel="tooltip-error" data-original-title="<span class='tooltip-error'>Error: This field is required</span>"></i></span></div></td>
+      <td><div class="controls span12"><input type="text" value="sales@perkins.com" class="local-error inherit-width"><span class="add-on" style="margin-left: -20px;position: relative;color: #B60000;"><i class="icon-exclamation-sign" rel="tooltip-error" data-original-title="<span class='tooltip-error'>Error: This field is required</span>"></i></span></div></td>
+      <td class="tcenter"><input type="button" value="Save" class="btn btn-primary inline-save disabled"></td>
+    </tr>
+
+
+    <tr id="edit-id-6943901" class="tr-inline-edit single">
+      <td style="padding-bottom:10px"><a class="btn btn-link btn-invisible inline-cancel" href="">Cancel</a></td>
+      <td><div class="controls span12"><input type="text" value="Plato's LED MFT" class="local-error inherit-width" rel="tooltip-error" data-original-title="<span class='tooltip-error'>Error: This field is required</span>"><div class="add-on-corner">!</div></div></td>
+      <td><div class="controls span12"><input type="text" value="Cupertino" class="local-error inherit-width" rel="tooltip-error" data-original-title="<span class='tooltip-error'>Error: This field is required</span>"><div class="add-on-corner">!</div></div></td>
+      
+      <td><div class="controls span12"><input type="text" value="$1,000,000" class="local-error inherit-width" rel="tooltip-error" data-original-title="<span class='tooltip-error'>Error: This field is required</span>"><div class="add-on-corner">!</div></div></td>
+
+      <td><div class="controls span12"><input type="text" value="(408) 555-5271" class="local-error inherit-width" rel="tooltip-error" data-original-title="<span class='tooltip-error'>Error: This field is required</span>"><div class="add-on-corner">!</div></div></td>
+      <td><div class="controls span12"><input type="text" value="sales@perkins.com" class="local-error inherit-width" rel="tooltip-error" data-original-title="<span class='tooltip-error'>Error: This field is required</span>"><div class="add-on-corner">!</div></div></td>
+      <td class="tcenter"><input type="button" value="Save" class="btn btn-primary inline-save disabled"></td>
+    </tr>
 
   </tbody>
 </table>
+
+
+
+
+
+
+
+<style>
+
+</style>
 
 
 
@@ -1080,6 +1106,8 @@
       }
 
       $(".longUrl[rel=tooltip]").tooltip({placement:'top'});
+
+      $("[rel=tooltip-error]").tooltip({placement:'top',html:'true',cssClass:'xxx'});
 
     });
   </script>

@@ -7754,6 +7754,35 @@ h1 input[type="text"] {
   -moz-box-shadow:inset 0 1px 1px rgba(0,0,0,0.5);
   box-shadow:inset 0 1px 1px rgba(0,0,0,0.5);
 }
+textarea.local-error, input[type="text"].local-error, input[type="password"].local-error, input[type="datetime"].local-error, input[type="datetime-local"].local-error, input[type="date"].local-error, input[type="month"].local-error, input[type="time"].local-error, input[type="week"].local-error, input[type="number"].local-error, input[type="email"].local-error, input[type="url"].local-error, input[type="search"].local-error, input[type="tel"].local-error, input[type="color"].local-error, .uneditable-input.local-error {
+  border-color:#b60000;
+  color:#b60000;
+}
+span.tooltip-error {
+  color:#ffffff;
+  width:100%;
+  height:100%;
+  background-color:#b60000;
+}
+.add-on-corner {
+  width:0;
+  height:0;
+  border-bottom:14px solid transparent;
+  border-right:14px solid #b60000;
+  display:inline-block;
+  margin-left:-15px;
+  position:relative;
+  top:-2px;
+  font-weight:500;
+  font-size:8px;
+  text-indent:9px;
+  line-height:9px;
+  color:white;
+}
+.xxx {
+  color:yellow !important;
+  background:yellow !important;
+}
 @media (max-width: 480px) {
   .error .input-append > .add-on {
     position:relative !important;
