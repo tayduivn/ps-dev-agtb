@@ -52,8 +52,8 @@
      * @private
      */
     app.view.ClickToEditField.prototype._checkDatatype = function(field, value) {
-        var ds = app.utils.regexEscape(app.user.get('decimal_separator')) || '.';
-        var gs = app.utils.regexEscape(app.user.get('number_grouping_separator')) || ',';
+        var ds = app.utils.regexEscape(app.user.getPreference('decimal_separator')) || '.';
+        var gs = app.utils.regexEscape(app.user.getPreference('number_grouping_separator')) || ',';
         // matches a valid positive decimal number
         var reg1 = new RegExp("^\\+?(\\d+|\\d{1,3}("+gs+"\\d{3})*)?("+ds+"\\d+)?\\%?$");
         // matches a valid decimal percentage
@@ -153,10 +153,10 @@
                         // format for currency/float editing, remove markup
                         return app.utils.formatNumber(
                             fieldValue,
-                            app.user.get('decimal_precision'),
-                            app.user.get('decimal_precision'),
+                            app.user.getPreference('decimal_precision'),
+                            app.user.getPreference('decimal_precision'),
                             '',
-                            app.user.get('decimal_separator')
+                            app.user.getPreference('decimal_separator')
                         );
                     } else {
                         return fieldValue;
