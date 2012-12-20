@@ -76,7 +76,7 @@ class ExportApi extends SugarApi {
         $seed = BeanFactory::newBean($args['module']);
 
         if (!$seed->ACLAccess('export')) {
-            throw new SugarApiExceptionNotAuthorized('No access to export records for module: '.$args['module']);
+            throw new SugarApiExceptionNotAuthorized($GLOBALS['app_strings']['ERR_EXPORT_DISABLED']);
         }
 
         //Bug 30094, If zlib is enabled, it can break the calls to header() due to output buffering. This will only work php5.2+
