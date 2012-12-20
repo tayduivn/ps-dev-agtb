@@ -29,30 +29,36 @@ class RestCallHelperTest extends RestTestBase {
     public function tearDown()
     {
         parent::tearDown();
-        $GLOBALS['db']->query("DELETE FROM calls WHERE id = '{$this->call_id}'");
+        $GLOBALS['db']->query("DELETE FROM Calls WHERE id = '{$this->Call_id}'");
     }
 
-    public function testcall() {
+    public function testCall() {
 
-        // create a call linked to yourself, a contact, and a lead, verify the call is linked to each and on your calendar
+        // create a Call linked to yourself, a contact, and a lead, verify the Call is linked to each and on your calendar
         $call = array(
-            'name' => 'Test call',
+            'name' => 'Test Call',
             'duration' => 1,
             'start_date' => date('Y-m-d'),
-            'assigned_user_id' => $GLOBALS['current_user']->id,
+            'assigned_user_id' => 1,
         );
 
         $restReply = $this->_restCall('Calls/', json_encode($call), 'POST');
 
-        $this->assertTrue(isset($restReply['reply']['id']), 'call was not created, reply was: ' . print_r($restReply['reply'], true));
+        $this->assertTrue(isset($restReply['reply']['id']), 'Call was not created, reply was: ' . print_r($restReply['reply'], true));
 
         $call_id = $restReply['reply']['id'];
         $this->call_id = $call_id;
 
-        // verify the user has the meeting, which will validate on calendar
-        $restReplyUser = $this->_restCall("Users/{$GLOBALS['current_user']->id}/link/calls");
 
-        $this->assertEquals($call_id, $restReplyUser['reply']['records'][0]['id'], "The Users call was incorrect");
+        // verify the user has the Call, which will validate on calendar
+        $restReplyUsers = $this->_restCall("Calls/{$call_id}/link/users");
+        $users_linked = array();
+        foreach($restReplyUsers['reply']['records'] AS $record) {
+            $users_linked[] = $record['id'];
+        }
+
+        $this->assertTrue(in_array($GLOBALS['current_user']->id, $users_linked), "Current User was not successfully linked");
+        $this->assertTrue(in_array(1, $users_linked), "Assigned User was not successfully linked");
 
 
     }
