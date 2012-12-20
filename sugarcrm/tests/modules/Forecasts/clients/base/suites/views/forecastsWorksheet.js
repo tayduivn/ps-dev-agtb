@@ -47,7 +47,11 @@ describe("The forecasts worksheet", function(){
             "defaults": fixtures.metadata.modules.Forecasts.config
         }));
 
-        view = SugarTest.createView('../modules/Forecasts/clients/base', 'Forecasts', "forecastsWorksheet", {}, context);
+        var meta = {
+            panels : [{'fields' : []}]
+        };
+
+        view = SugarTest.createView('../modules/Forecasts/clients/base', 'Forecasts', "forecastsWorksheet", meta, context);
 
         // remove the window watcher event
         $(window).unbind("beforeunload");
