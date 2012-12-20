@@ -29,14 +29,14 @@ class RestCallHelperTest extends RestTestBase {
     public function tearDown()
     {
         parent::tearDown();
-        $GLOBALS['db']->query("DELETE FROM Calls WHERE id = '{$this->Call_id}'");
+        $GLOBALS['db']->query("DELETE FROM calls WHERE id = '{$this->Call_id}'");
     }
 
     public function testCall() {
 
-        // create a Call linked to yourself, a contact, and a lead, verify the Call is linked to each and on your calendar
+        // create a call linked to yourself, a contact, and a lead, verify the call is linked to each and on your calendar
         $call = array(
-            'name' => 'Test Call',
+            'name' => 'Test call',
             'duration' => 1,
             'start_date' => date('Y-m-d'),
             'assigned_user_id' => 1,
@@ -44,7 +44,7 @@ class RestCallHelperTest extends RestTestBase {
 
         $restReply = $this->_restCall('Calls/', json_encode($call), 'POST');
 
-        $this->assertTrue(isset($restReply['reply']['id']), 'Call was not created, reply was: ' . print_r($restReply['reply'], true));
+        $this->assertTrue(isset($restReply['reply']['id']), 'call was not created, reply was: ' . print_r($restReply['reply'], true));
 
         $call_id = $restReply['reply']['id'];
         $this->call_id = $call_id;
