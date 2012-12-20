@@ -26,7 +26,8 @@ describe("The forecasts manager worksheet", function(){
     beforeEach(function() {
         app = SugarTest.app;
         SugarTest.loadFile("../modules/Forecasts/clients/base/lib", "ForecastsUtils", "js", function(d) { return eval(d); });
-        SugarTest.loadFile("../styleguide/styleguide/js", "jquery.datatables", "js", function(d) { return eval(d); });
+        SugarTest.loadFile("../include/javascript/jquery/", "jquery.dataTables.min", "js", function(d) { return eval(d); });
+        SugarTest.loadFile("../include/javascript/jquery/", "jquery.dataTables.customSort", "js", function(d) { return eval(d); });
 
         app.user.set({'id' : 'test_userid', 'isManager' : true});
 
