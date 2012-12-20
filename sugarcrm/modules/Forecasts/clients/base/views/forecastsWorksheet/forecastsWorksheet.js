@@ -476,9 +476,14 @@
             //unsaved changes, ask if you want to save.
             if(confirm(app.lang.get("LBL_WORKSHEET_SAVE_CONFIRM", "Forecasts"))){
                 self.context.forecasts.set({reloadCommitButton: true});
-                this.saveWorksheet(function(){
+
+                var svWkFn = function() {
+                    self.context.forecasts.off('forecasts:worksheetSaved', svWkFn);
                     collection.fetch();
-                })
+                };
+
+                self.context.forecasts.on('forecasts:worksheetSaved', svWkFn);
+                this.saveWorksheet()
             }
             //user clicked cancel, ignore and fetch if fetch is enabled
             else{
