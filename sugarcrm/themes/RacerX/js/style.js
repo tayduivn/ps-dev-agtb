@@ -76,7 +76,8 @@ SUGAR.append(SUGAR.themes, {
             var menuNode = $(el).parent();
             menuNode.remove();
             $("#moduleTabExtraMenu" + sugar_theme_gm_current).before(menuNode);
-            
+            menuNode.find('ul.megamenu').css('left','0px');
+            menuNode.find('ul.megamenu').css('top','auto');
             //kill menu and reload it so all events are assigned properly
 
 			$("#moduleList").find("a").unbind();
