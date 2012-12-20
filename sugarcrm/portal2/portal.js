@@ -111,8 +111,8 @@
 
             app.alert.show("no-sidecar-access", {
                 level: "error",
-                title: app.lang.getAppStrings("LBL_PORTAL_ERROR"),
-                messages: [app.lang.getAppStrings(msg)]
+                title: app.lang.getAppString("LBL_PORTAL_ERROR"),
+                messages: [app.lang.getAppString(msg)]
             });
         }
 
@@ -239,8 +239,8 @@
                     app.Controller.__super__.loadView.call(self, params);
                     app.alert.show('appOffline', {
                         level: "error",
-                        title: app.lang.getAppStrings('LBL_PORTAL_ERROR'),
-                        messages: app.lang.getAppStrings('LBL_PORTAL_OFFLINE'),
+                        title: app.lang.getAppString('LBL_PORTAL_ERROR'),
+                        messages: app.lang.getAppString('LBL_PORTAL_OFFLINE'),
                         autoclose: false
                     });
                 };
