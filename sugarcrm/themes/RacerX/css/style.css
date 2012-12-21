@@ -5834,8 +5834,7 @@ padding:0px;
 position: fixed;
 top: 0;
 width:100%;
-
-    z-index:1030;
+z-index:1;
 }
 #globalLinksSubnav, #quickCreateULSubnav {
     z-index: 20;
@@ -6876,9 +6875,8 @@ ul#globalLinks.clickMenu li > span {
 
 ul#globalLinks.clickMenu li > span a {
     color: #FFFFFF;
-    font-size: 14px;
     margin-top: 13px;
-	padding: 0px 10px !important;
+	padding: 1px 10px !important;
 }
 
 
@@ -8897,6 +8895,13 @@ h3.popover-title {
     margin-bottom: 10px;
     text-align: left;
 }
+
+.modal.tour .well {
+    background-color: #fff;
+    padding: 10px;
+    border: 1px solid rgba(0,0,0,.2);
+}
+
 #tour ul.unstyled,
 #tour ol.unstyled {
     margin-left: 0;

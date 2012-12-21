@@ -1,5 +1,4 @@
 <?php
-//FILE SUGARCRM flav=pro ONLY
 /*********************************************************************************
  * The contents of this file are subject to the SugarCRM Professional End User
  * License Agreement ("License") which can be viewed at
@@ -22,42 +21,50 @@
  * Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.;
  * All Rights Reserved.
  ********************************************************************************/
-
-/**
- * Bug49982Test.php
- * This test tests that the error message is returned after an upload that exceeds post_max_size
- *
- * @ticket 49982
- */
-class Bug49982Test extends Sugar_PHPUnit_Framework_TestCase
+class CurrencyCacheClearTest extends Sugar_PHPUnit_Framework_TestCase
 {
-	public function setUp()
+    protected $testCacheFile;
+
+    public function setUp()
     {
-        $_POST = array();
-        $_FILES = array();
-        $_SERVER['REQUEST_METHOD'] = null;
-	}
+        //Create an anonymous user for login purposes/
+        $this->_user = SugarTestUserUtilities::createAnonymousUser();
+        $GLOBALS['current_user'] = $this->_user;
+        SugarTestHelper::setUp('app_list_strings');
+        SugarTestHelper::setUp('app_strings');
+        SugarTestHelper::setUp('beanFiles');
+        SugarTestHelper::setUp('beanList');
+        
+        $this->testCacheFile = sugar_cached('api/metadata/metadata_unit_test.php');
+    }
 
     public function tearDown()
     {
-        unset($_SERVER['REQUEST_METHOD']);
+        $_POST = array();
+        if ( file_exists($this->testCacheFile) ) {
+            @unlink($this->testCacheFile);
+        }
+        SugarTestHelper::tearDown();
+        SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
     }
 
-    /**
-     * testUploadSizeError
-     * We want to simulate uploading a file that is bigger than the post max size. However the $_FILES global array cannot be overwritten
-     * without triggering php errors so we can't trigger the error codes directly.
-     * In the scenario we are trying to simulate, the post AND files array are returned empty by php, so let's simulate that
-     * in order to test the error message from home page
-     */
-    function testSaveUploadError() {
-        require_once('include/MVC/View/SugarView.php');
-        $sv = new SugarView();
-        $this->assertFalse($sv->checkPostMaxSizeError(),'Sugar view indicated an upload error when there should be none.');
 
-        //now lets simulate that we are coming from a post, which along with the empty file and post array should trigger the error message
-        $_SERVER['REQUEST_METHOD'] = 'POST';
-        $this->assertTrue($sv->checkPostMaxSizeError(),'Sugar view list did not return an error, however conditions dictate that an upload with a file exceeding post_max_size has occurred.');
-	}
+    public function testResetMetadataCache()
+    {
+        MetaDataManager::clearAPICache(true);
 
+        mkdir_recursive(dirname($this->testCacheFile));
+        file_put_contents($this->testCacheFile,"<!-- This is for unit tests. -->");
+
+        $this->assertTrue(file_exists($this->testCacheFile),"Didn't create the fake metadata cache file.");
+
+        // We don't actually need to update, just calling the save is enough
+        $defaultCurrency = BeanFactory::newBean('Currencies');
+        $defaultCurrency = $defaultCurrency->retrieve('-99');
+
+        $defaultCurrency->save();
+
+        $this->assertFalse(file_exists($this->testCacheFile),"Didn't clear out the fake metadata cache file.");
+
+    }
 }

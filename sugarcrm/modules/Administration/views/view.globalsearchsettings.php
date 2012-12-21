@@ -23,7 +23,10 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 //BEGIN SUGARCRM flav=pro ONLY
 require_once('include/SugarSearchEngine/SugarSearchEngineFullIndexer.php');
 require_once('include/SugarSearchEngine/SugarSearchEngineMetadataHelper.php');
+require_once('include/SugarSearchEngine/SugarSearchEngineFactory.php');
+require_once('include/SugarSearchEngine/SugarSearchEngineAbstractBase.php');
 //END SUGARCRM flav=pro ONLY
+require_once('modules/Administration/Administration.php');
 
 class AdministrationViewGlobalsearchsettings extends SugarView
 {
@@ -107,12 +110,32 @@ class AdministrationViewGlobalsearchsettings extends SugarView
 
     protected function isFTSConnectionValid()
     {
-        require_once('include/SugarSearchEngine/SugarSearchEngineFactory.php');
         $searchEngine = SugarSearchEngineFactory::getInstance();
         $result = $searchEngine->getServerStatus();
-        if($result['valid'])
+        if($result['valid']) {
+            $this->setFTSUp();
             return TRUE;
-        else
+        }
+        else {
             return FALSE;
+        }
+    }
+
+    /**
+     * This method sets the full text search to available when a scheduled FTS Index occurs.  
+     * An indexing can only occur with a valid connection
+     * 
+     * TODO: XXX Fix this to use admin settings not config options
+     * @return bool
+     */
+    protected function setFTSUp() {
+        $cfg = new Configurator();
+        $cfg->config['fts_disable_notification'] = false;
+        $cfg->handleOverride();
+        // set it up
+        SugarSearchEngineAbstractBase::markSearchEngineStatus(false);
+        $admin = BeanFactory::newBean('Administration');
+        $admin->retrieveSettings(FALSE, TRUE);
+        return TRUE;
     }
 }

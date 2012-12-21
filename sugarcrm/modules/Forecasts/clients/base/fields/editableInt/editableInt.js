@@ -6,7 +6,7 @@
         'mouseleave span.editable': 'togglePencil',
         'click span.editable': 'onClick',
         'blur span.edit input': 'onBlur',
-        'keypress span.edit input': 'onKeypress'
+        'keyup span.edit input': 'onKeypress'
     },
 
     inputSelector: 'span.edit input',
@@ -74,7 +74,13 @@
     togglePencil: function (evt) {
         evt.preventDefault();
         if (!this.isEditable()) return;
-        this.$el.find('i').toggleClass('icon-pencil icon-small');
+        if(evt.type == 'mouseenter') {
+            this.$el.find('.edit-icon').removeClass('hide');
+            this.$el.find('.edit-icon').addClass('show');
+        } else {
+            this.$el.find('.edit-icon').removeClass('show');
+            this.$el.find('.edit-icon').addClass('hide');
+        }
     },
 
     /**
@@ -98,11 +104,13 @@
      * @param evt
      */
     onKeypress: function (evt) {
-        // submit if pressed return or tab
-        if (evt.which == 13 || evt.which == 9) {
+        if (evt.which == 27) {
+            this.$el.find(this.inputSelector).val(this.value);
+            this.$el.find(this.inputSelector).blur();
+        } else if (evt.which == 13 || evt.which == 9) {
+            // blur if value is unchanged
             var ogVal = this.value,
                 ngVal = this.$el.find(this.inputSelector).val();
-
             if (_.isEqual(ogVal, ngVal)) {
                 this.$el.find(this.inputSelector).blur();
             }

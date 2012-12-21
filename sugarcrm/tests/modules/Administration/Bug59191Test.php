@@ -23,41 +23,45 @@
  * All Rights Reserved.
  ********************************************************************************/
 
-/**
- * Bug49982Test.php
- * This test tests that the error message is returned after an upload that exceeds post_max_size
- *
- * @ticket 49982
- */
-class Bug49982Test extends Sugar_PHPUnit_Framework_TestCase
-{
-	public function setUp()
-    {
-        $_POST = array();
-        $_FILES = array();
-        $_SERVER['REQUEST_METHOD'] = null;
-	}
+require_once ('modules/Administration/views/view.globalsearchsettings.php');
 
+class Bug59191Test extends Sugar_PHPUnit_Framework_TestCase {
+    public function setup()
+    {
+        SugarTestHelper::setUp('beanFiles');
+        SugarTestHelper::setUp('beanList');
+        SugarTestHelper::setUp('app_list_strings');
+        SugarTestHelper::setUp('current_user');
+    }
+    
     public function tearDown()
     {
-        unset($_SERVER['REQUEST_METHOD']);
+        SugarTestHelper::tearDown();
     }
 
-    /**
-     * testUploadSizeError
-     * We want to simulate uploading a file that is bigger than the post max size. However the $_FILES global array cannot be overwritten
-     * without triggering php errors so we can't trigger the error codes directly.
-     * In the scenario we are trying to simulate, the post AND files array are returned empty by php, so let's simulate that
-     * in order to test the error message from home page
-     */
-    function testSaveUploadError() {
-        require_once('include/MVC/View/SugarView.php');
-        $sv = new SugarView();
-        $this->assertFalse($sv->checkPostMaxSizeError(),'Sugar view indicated an upload error when there should be none.');
+    public function testFTSFlagStatus() {
+        $GLOBALS['current_user']->is_admin = 1;
+        $admin = BeanFactory::newBean('Administration');
+        $admin->saveSetting('info', 'fts_down', 1);
 
-        //now lets simulate that we are coming from a post, which along with the empty file and post array should trigger the error message
-        $_SERVER['REQUEST_METHOD'] = 'POST';
-        $this->assertTrue($sv->checkPostMaxSizeError(),'Sugar view list did not return an error, however conditions dictate that an upload with a file exceeding post_max_size has occurred.');
+        $cfg = new Configurator();
+        $cfg->config['fts_disable_notification'] = true;
+        $cfg->handleOverride();
+        
+
+        $vsql = new AdministrationViewGlobalsearchsettingsMock();
+        $vsql->checkFTSSettingUp();
+
+        $cfg->loadConfig();
+        $this->assertFalse($cfg->config['fts_disable_notification'], "FTS Disabled Notification is not false, it was: " . var_export($cfg->config['fts_disable_notification'], true));
+        $settings = $admin->retrieveSettings();
+        $this->assertEmpty($settings->settings['info_fts_down'], "FTS Index Done Flag not cleared, it was: " . var_export($settings->settings['info_fts_down'], true));
+
+    }
+}
+
+class AdministrationViewGlobalsearchsettingsMock extends AdministrationViewGlobalsearchsettings {
+	public function checkFTSSettingUp() {
+		$this->setFTSUp();
 	}
-
 }

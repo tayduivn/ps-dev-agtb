@@ -298,9 +298,15 @@ class MetaDataManager {
         $obj = BeanFactory::getObjectName($module);
 
         $outputAcl = array('fields'=>array());
-        if ( is_admin($userObject) || !SugarACL::moduleSupportsACL($module) ) {
+
+        if (!SugarACL::moduleSupportsACL($module)) {
             foreach ( array('admin', 'access','view','list','edit','delete','import','export','massupdate') as $action ) {
                 $outputAcl[$action] = 'yes';
+            }
+            if($bean instanceof User || $bean instanceof Employee) {
+                if($bean->id == $userObject->id) {
+                    $outputAcl['delete'] = 'no';
+                }
             }
         } else {
             $context = array(
@@ -554,6 +560,7 @@ class MetaDataManager {
             MetaDataFiles::clearModuleClientCache();
         }
 
+        // Wipe out any files from the metadata cache directory
         $metadataFiles = glob(sugar_cached('api/metadata/').'*');
         if ( is_array($metadataFiles) ) {
             foreach ( $metadataFiles as $metadataFile ) {
@@ -562,6 +569,14 @@ class MetaDataManager {
                 // of many deletes.
                 unlink($metadataFile);
             }
+        }
+        
+        // clear the platform cache from sugar_cache to avoid out of date data
+        $platforms = self::getPlatformList();
+        foreach($platforms as $platform) {
+            $platformKey = $platform == "base" ?  "base" : implode(",", array($platform, "base"));
+            $hashKey = "metadata:$platformKey:hash";
+            sugar_cache_clear($hashKey);
         }
     }
     
