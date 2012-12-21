@@ -153,7 +153,7 @@
      */
     createBuckets: function(){
         var self = this;
-        self.buckets = $.data(document.body, "buckets");
+        self.buckets = $.data(document.body, "commitStageBuckets");
         
         if(_.isUndefined(self.buckets)){
             var options = app.lang.getAppListStrings(this.def.options) || 'commit_stage_dom';
@@ -163,7 +163,7 @@
                 self.buckets += "<option value='" + key + "'>" + item + "</options>"
             });
             self.buckets += "</select>";
-            $.data(document.body, "buckets", self.buckets);
+            $.data(document.body, "commitStageBuckets", self.buckets);
         }
     },
     

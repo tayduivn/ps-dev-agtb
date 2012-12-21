@@ -19,7 +19,7 @@
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
-describe("forecast buckets field", function() {
+describe("forecast commitStage field", function() {
     var field, fieldDef, context;
     
     beforeEach(function() {
@@ -61,7 +61,7 @@ describe("forecast buckets field", function() {
                     return {id:"tester"};                    
                 };
                 model = new Backbone.Model({sales_stage: "Open"});
-                field = SugarTest.createField("../modules/Forecasts/clients/base", "buckets", "buckets", "detail", fieldDef, "Forecasts", model, context);                
+                field = SugarTest.createField("../modules/Forecasts/clients/base", "commitStage", "commitStage", "detail", fieldDef, "Forecasts", model, context);                
             });
             
             it("should have def.view set to bool", function(){
@@ -88,7 +88,7 @@ describe("forecast buckets field", function() {
                 };
                 
                 model = new Backbone.Model({sales_stage: "Closed Lost"});
-                field = SugarTest.createField("../modules/Forecasts/clients/base", "buckets", "buckets", "detail", fieldDef, "Forecasts", model, context); 
+                field = SugarTest.createField("../modules/Forecasts/clients/base", "commitStage", "commitStage", "detail", fieldDef, "Forecasts", model, context); 
             });
             
             it("should have def.view set to bool", function(){
@@ -116,7 +116,7 @@ describe("forecast buckets field", function() {
                 };
                 
                 model = new Backbone.Model({sales_stage: "Open"});
-                field = SugarTest.createField("../modules/Forecasts/clients/base", "buckets", "buckets", "detail", fieldDef, "Forecasts", model, context); 
+                field = SugarTest.createField("../modules/Forecasts/clients/base", "commitStage", "commitStage", "detail", fieldDef, "Forecasts", model, context); 
             });
             it("should have def.view set to bool", function(){
                 expect(field.def.view).toBe("bool");
@@ -142,7 +142,7 @@ describe("forecast buckets field", function() {
                 };
                 
                 model = new Backbone.Model({sales_stage: "Closed Lost"});
-                field = SugarTest.createField("../modules/Forecasts/clients/base", "buckets", "buckets", "detail", fieldDef, "Forecasts", model, context); 
+                field = SugarTest.createField("../modules/Forecasts/clients/base", "commitStage", "commitStage", "detail", fieldDef, "Forecasts", model, context); 
             });
             it("should have def.view set to bool", function(){
                 expect(field.def.view).toBe("bool");
@@ -183,7 +183,7 @@ describe("forecast buckets field", function() {
                 };
                 
                 model = new Backbone.Model({sales_stage: "Open"});
-                field = SugarTest.createField("../modules/Forecasts/clients/base", "buckets", "buckets", "detail", fieldDef, "Forecasts", model, context);                
+                field = SugarTest.createField("../modules/Forecasts/clients/base", "commitStage", "commitStage", "detail", fieldDef, "Forecasts", model, context);                
             });
             
             afterEach(function(){
@@ -195,7 +195,7 @@ describe("forecast buckets field", function() {
             });
             
             it("should have called createBuckets", function(){
-                expect($.data(document.body, "buckets")).toBeTruthy();
+                expect($.data(document.body, "commitStageBuckets")).toBeTruthy();
             });
             
             //this should be called, but since things aren't stubbed out, it returns
@@ -224,7 +224,7 @@ describe("forecast buckets field", function() {
                 };
                 
                 model = new Backbone.Model({sales_stage: "Closed Lost"});
-                field = SugarTest.createField("../modules/Forecasts/clients/base", "buckets", "buckets", "detail", fieldDef, "Forecasts", model, context);                
+                field = SugarTest.createField("../modules/Forecasts/clients/base", "commitStage", "commitStage", "detail", fieldDef, "Forecasts", model, context);                
             });
             
             afterEach(function(){
@@ -253,7 +253,7 @@ describe("forecast buckets field", function() {
                 };
                 
                 model = new Backbone.Model({sales_stage: "Open"});
-                field = SugarTest.createField("../modules/Forecasts/clients/base", "buckets", "buckets", "detail", fieldDef, "Forecasts", model, context); 
+                field = SugarTest.createField("../modules/Forecasts/clients/base", "commitStage", "commitStage", "detail", fieldDef, "Forecasts", model, context); 
             });
             
             afterEach(function(){
@@ -282,7 +282,7 @@ describe("forecast buckets field", function() {
                 };
                 
                 model = new Backbone.Model({sales_stage: "Closed Lost"});
-                field = SugarTest.createField("../modules/Forecasts/clients/base", "buckets", "buckets", "detail", fieldDef, "Forecasts", model, context); 
+                field = SugarTest.createField("../modules/Forecasts/clients/base", "commitStage", "commitStage", "detail", fieldDef, "Forecasts", model, context); 
             });
             
             afterEach(function(){
