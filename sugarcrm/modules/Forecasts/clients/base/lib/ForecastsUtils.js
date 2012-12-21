@@ -130,7 +130,7 @@
             // This will always have a value and Format the date according to the user date and time preferences
             var newestModelDate = new Date(Date.parse(newestModel.get('date_entered'))),
                 text2 = '',
-                newestModelDisplayDate = app.date.format(newestModelDate, app.user.get('datepref') + ' ' + app.user.get('timepref'));
+                newestModelDisplayDate = app.date.format(newestModelDate, app.user.getPreference('datepref') + ' ' + app.user.getPreference('timepref'));
 
             if(!_.isEmpty(oldestDateEntered)) {
                 var oldestModelDate = new Date(Date.parse(oldestDateEntered)),

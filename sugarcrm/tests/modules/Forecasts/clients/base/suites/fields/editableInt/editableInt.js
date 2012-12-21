@@ -26,7 +26,7 @@ describe("forecast editableInt field", function () {
         var app = SugarTest.app;
         context = app.context.getContext();
 
-        app.user = new Backbone.Model({'decimal_precision': 2});
+        app.user = SugarTest.app.user;
 
         context.forecasts = new Backbone.Model();
         context.forecasts.config = new Backbone.Model({"sales_stage_won" : [], "sales_stage_lost" : []});
