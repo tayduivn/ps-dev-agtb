@@ -1,5 +1,5 @@
-<form class="form-search">
-<div class="mu extend {{#unless visible}}hide{{/unless}}">
+<form class="form-search {{#unless visible}}hide{{/unless}}">
+<div class="mu extend">
     <article class="filter-header">
         <strong>{{str "LBL_MASS_UPDATE"}}</strong>
         <div class="pull-right">

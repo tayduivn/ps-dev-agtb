@@ -101,11 +101,12 @@
     fireSearch:function (term) {
         var options = {
             limit:this.limit || null,
-            params:{
-                q:term
-            },
+            params:{},
             fields:this.collection.fields || {}
         };
+        if(term) {
+            options.params.q = term;
+        }
         //TODO: This should be handled automagically by the collection by checking its own tie to the context
         if (this.context.get('link')) {
             options.relate = true;
