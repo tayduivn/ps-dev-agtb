@@ -20,7 +20,7 @@
  ********************************************************************************/
 
 describe("forecast commitStage field", function() {
-    var field, fieldDef, context;
+    var field, fieldDef, context, model;
     
     beforeEach(function() {
         fieldDef = {
