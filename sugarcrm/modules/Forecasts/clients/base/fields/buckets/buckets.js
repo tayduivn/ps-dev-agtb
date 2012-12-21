@@ -89,7 +89,8 @@
         if(!self.disabled && self.currentView == "enum"){
             self.$el.off("click");            
                         
-            //custom namespaced window click event to destroy the chosen dropdown on "blur"
+            //custom namespaced window click event to destroy the chosen dropdown on "blur".
+            //this is removed in this.resetBuckets
             $(window).on("click." + self.model.get("id"), function(e){
                 if(!_.isEqual(self.model.get("id"), $(e.target).attr("itemid"))){
                     self.resetBucket();
