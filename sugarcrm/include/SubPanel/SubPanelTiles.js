@@ -244,7 +244,6 @@ function got_data(args, inline)
 			subpanel.appendChild(listDiv);
 			listDiv.appendChild(inlineTable);
 		}
-        SUGAR.util.evalScript(args.responseText);
 		subpanel.style.display = '';
 		set_div_cookie(subpanel.cookie_name, '');
 

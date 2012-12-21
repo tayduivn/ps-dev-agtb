@@ -45,10 +45,9 @@ EOQ;
 		$this->script .= 'addAlert("' . addslashes($type) .'", "' . addslashes($name). '","' . addslashes($subtitle). '", "'. addslashes(str_replace(array("\r", "\n"), array('','<br>'),$description)) . '",' . $countdown . ',"'.addslashes($redirect).'")' . "\n";
 	}
 
-    function getScript()
-    {
-        return "<script>alertList = [];" . $this->script . "</script>";
-    }
+	function getScript(){
+		return "<script>" . $this->script . "</script>";
+	}
 
 	function addActivities(){
 		global $app_list_strings, $timedate, $current_user, $app_strings;

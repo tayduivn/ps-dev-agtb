@@ -32,7 +32,11 @@ class ViewRetrieveSource extends ViewList {
  	function ViewRetrieveSource(){
  		parent::ViewList();
  	}
-
+    
+ 	function process() {
+ 	    parent::process();
+ 	}
+ 	
     function display() {
     	
         $source_id = $_REQUEST['source_id'];
@@ -165,3 +169,4 @@ class ViewRetrieveSource extends ViewList {
     }
 }
 
+?>
