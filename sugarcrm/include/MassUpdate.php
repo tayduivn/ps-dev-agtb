@@ -429,14 +429,7 @@ eoq;
         }
 
         if($moduleName == 'Contacts') {
-            $fielddefs['sync'] = array(
-                'name' => 'Sync',
-                'type' => 'enum',
-                'label' => 'LBL_SYNC_CONTACT',
-                'options' => 'optout_dom',
-                'massupdate' => true,
-                'source' => 'non-db'
-            );
+            $fielddefs['sync_contact']["massupdate"] = true;
         } else if($moduleName == 'Employees') {
             $fielddefs['employee_status']['massupdate'] = true;
             $fielddefs['employee_status']['type'] = 'enum';
