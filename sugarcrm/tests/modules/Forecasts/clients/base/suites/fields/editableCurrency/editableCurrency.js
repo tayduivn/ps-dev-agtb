@@ -27,6 +27,7 @@ describe("forecast editableCurrency field", function () {
         context = app.context.getContext();
 
         app.user = SugarTest.app.user;
+        app.user.setPreference('decimal_precision', 2);
 
         context.forecasts = new Backbone.Model();
         context.forecasts.config = new Backbone.Model({"sales_stage_won" : [], "sales_stage_lost" : []});
