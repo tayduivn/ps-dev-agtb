@@ -127,6 +127,8 @@ class SugarWidgetReportField extends SugarWidgetField
 				return $alias;
     	}
 
+        $alias = $this->reporter->db->convert($alias, 'IFNULL', array(0));
+
         // for a field with type='currency' conversion of values into a user-preferred currency
         if ($layout_def['type'] == 'currency' && strpos($layout_def['name'], '_usdoll') === false) {
             $currency = $this->reporter->currency_obj;

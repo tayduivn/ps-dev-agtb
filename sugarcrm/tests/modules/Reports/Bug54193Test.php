@@ -140,6 +140,7 @@ class Bug54193Test extends Sugar_PHPUnit_Framework_TestCase
         $this->report->run_total_query();
         $total = $this->report->get_summary_total_row();
 
+        $this->assertInternalType('array', $total);
         $this->assertArrayHasKey('cells', $total);
         $this->assertInternalType('array', $total['cells']);
         $total = $total['cells'];
