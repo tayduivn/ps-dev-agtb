@@ -111,6 +111,20 @@ class SugarView
             $GLOBALS['logic_hook']->call_custom_logic('', 'after_ui_frame');
         }
 
+        // We have to update jsAlerts as soon as possible
+        if (
+            !isset($_SESSION['isMobile'])
+            &&
+            (
+                $this instanceof ViewList
+                || $this instanceof ViewDetail
+                || $this instanceof ViewEdit
+            )
+        ) {
+            $jsAlerts = new jsAlerts();
+            echo $jsAlerts->getScript();
+        }
+
         if ($this->_getOption('show_subpanels') && !empty($_REQUEST['record'])) $this->_displaySubPanels();
 
         if ($this->action === 'Login') {
@@ -916,11 +930,6 @@ EOHTML;
         if (isset($sugar_config['showThemePicker'])) {
             $showThemePicker = $sugar_config['showThemePicker'];
         }
-
-        echo "<!-- crmprint -->";
-        $jsalerts = new jsAlerts();
-        if ( !isset($_SESSION['isMobile']) )
-            echo $jsalerts->getScript();
 
         $ss = new Sugar_Smarty();
         $ss->assign("AUTHENTICATED",isset($_SESSION["authenticated_user_id"]));
