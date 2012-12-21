@@ -131,6 +131,8 @@ describe("Forecasts Commit Buttons Component", function(){
             view.$el = {
                     find: function(){
                         return {
+                            length : 1,
+
                             hasClass:function(){
                                 return false;
                             }

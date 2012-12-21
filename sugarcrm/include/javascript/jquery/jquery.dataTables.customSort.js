@@ -19,7 +19,7 @@
             if(_.isEmpty(sortString)) {
                 sortString = this.textContent;
             }
-            aData.push(SUGAR.App.currency.unformatAmount(sortString, SUGAR.App.user.get('number_grouping_separator'), SUGAR.App.user.get('decimal_separator'), false));
+            aData.push(SUGAR.App.currency.unformatAmount(sortString, SUGAR.App.user.getPreference('number_grouping_separator'), SUGAR.App.user.getPreference('decimal_separator'), false));
         });
         return aData;
     }
