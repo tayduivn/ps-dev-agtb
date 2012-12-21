@@ -104,10 +104,10 @@
         // set the edit input string to an unformatted number
         var formattedValue = app.utils.formatNumber(
             this.model.get(this.name),
-            app.user.get('decimal_precision'),
-            app.user.get('decimal_precision'),
+            app.user.getPreference('decimal_precision'),
+            app.user.getPreference('decimal_precision'),
             '',
-            app.user.get('decimal_separator')
+            app.user.getPreference('decimal_separator')
         );
         this.$el.find(this.inputSelector).val(formattedValue);
 
@@ -153,8 +153,8 @@
      * @return {Boolean}
      */
     isValid: function (value) {
-        var ds = app.utils.regexEscape(app.user.get('decimal_separator')) || '.',
-            gs = app.utils.regexEscape(app.user.get('number_grouping_separator')) || ',',
+        var ds = app.utils.regexEscape(app.user.getPreference('decimal_separator')) || '.',
+            gs = app.utils.regexEscape(app.user.getPreference('number_grouping_separator')) || ',',
             // matches a valid positive decimal number
             reg = new RegExp("^\\+?(\\d+|\\d{1,3}("+gs+"\\d{3})*)?("+ds+"\\d+)?\\%?$"),
             hb = Handlebars.compile("{{str_format key module args}}"),
