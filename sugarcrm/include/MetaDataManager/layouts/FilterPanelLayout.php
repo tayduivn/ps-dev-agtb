@@ -6,7 +6,7 @@
  */
 class FilterPanelLayout
 {
-    protected $defaultTab = array("name" => "Activity Stream", "toggles" => array("activitystream", "timeline", "calendar"));
+    protected $defaultTab = array("name" => "Activity Stream", "toggles" => array("activitystream", "timeline"));
     protected $layout;
     protected $baseLayout;
     protected $count = 0;
@@ -21,7 +21,7 @@ class FilterPanelLayout
     public function __construct($opts = array())
     {
         $this->layout = MetaDataManager::getLayout('GenericLayout', array('name' => 'tabbed-layout', 'type' => 'tabbed-layout'));
-        $this->baseLayout = MetaDataManager::getLayout('GenericLayout', array('name' => 'base'));;
+        $this->baseLayout = MetaDataManager::getLayout('GenericLayout', array('name' => 'base'));
 
         if (!isset($opts["override"])) {
             $this->push($this->defaultTab);

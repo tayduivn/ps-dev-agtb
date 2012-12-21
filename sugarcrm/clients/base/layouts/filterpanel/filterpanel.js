@@ -6,7 +6,6 @@
     availableToggles: {
         "activitystream" : "icon-th-list",
         "timeline" : "icon-time",
-        "calendar" : "icon-calendar",
         "list" : "icon-table"
     },
 
