@@ -23,7 +23,7 @@
  ********************************************************************************/
  
 require_once 'modules/Users/User.php';
-require_once 'modules/Employees/EmployeeStatus.php';
+// require_once 'modules/Employees/EmployeeStatus.php';
 require_once 'SugarTestUserUtilities.php';
 
 
@@ -58,6 +58,7 @@ class Bug36615Test extends Sugar_PHPUnit_Framework_TestCase
 
 	public function testEmployeeStatusAdminEditView()
 	{
+        $this->markTestIncomplete('The employee status dropdown is now handled by a field-level ACL');
 
 		$this->current_user->retrieve('1');
 		$GLOBALS['current_user'] = $this->current_user;
@@ -74,6 +75,7 @@ class Bug36615Test extends Sugar_PHPUnit_Framework_TestCase
 
 	public function testEmployeeStatusAdminDeatilView()
 	{
+        $this->markTestIncomplete('The employee status dropdown is now handled by a field-level ACL');
 
 		$this->current_user->retrieve('1');
 		$GLOBALS['current_user'] = $this->current_user;
@@ -95,6 +97,7 @@ class Bug36615Test extends Sugar_PHPUnit_Framework_TestCase
 	public function testEmployeeStatusRegularUserDeatilView()
 	{
 
+        $this->markTestIncomplete('The employee status dropdown is now handled by a field-level ACL');
 		$GLOBALS['current_user'] = $this->current_user;
 
 		$this->view = "DetailView";
@@ -110,6 +113,7 @@ class Bug36615Test extends Sugar_PHPUnit_Framework_TestCase
 
 	public function testEmployeeStatusRegularUserEditView()
 	{
+        $this->markTestIncomplete('The employee status dropdown is now handled by a field-level ACL');
 
 		$GLOBALS['current_user'] = $this->current_user;
 
