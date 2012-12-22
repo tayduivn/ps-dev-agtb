@@ -146,16 +146,16 @@ class Bug54193Test extends Sugar_PHPUnit_Framework_TestCase
         $total = $total['cells'];
 
         // Amount (US Dollar): $130 = $10 + 15€ + 75€
-        $this->assertEquals(130, $total[0]);
+        $this->assertEquals('$130.00', $total[0]);
 
         // Custom field: $150 = $20 + 22.5€ + 75€
-        $this->assertEquals(150, $total[1]);
+        $this->assertEquals('$150.00', $total[1]);
 
         // Amount (US Dollar) in related table: $120 = 15€ + 75€ + 0
-        $this->assertEquals(120, $total[2]);
+        $this->assertEquals('$120.00', $total[2]);
 
         // Custom field in related table: $130 = 22.5€ + 75€ + 0
-        $this->assertEquals(130, $total[3]);
+        $this->assertEquals('$130.00', $total[3]);
     }
 
     /**

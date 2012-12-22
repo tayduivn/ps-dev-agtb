@@ -56,6 +56,8 @@ class Report
     var $module = 'Accounts';
     var $focus;
     var $currency_symbol;
+
+    /** @var Currency */
     var $currency_obj;
     var $name;
     var $select_fields = array();
@@ -2186,9 +2188,9 @@ return str_replace(' > ','_',
 
                 global $locale;
                 $params = array();
-                $params['currency_id'] = $locale->getPrecedentPreference('currency');
+                $params['currency_id'] = -99;
                 $params['convert'] = true;
-                $params['currency_symbol'] = $locale->getPrecedentPreference('default_currency_symbol');
+                $params['currency_symbol'] = $this->currency_obj->getDefaultCurrencySymbol();
 
                 // Pre-process the value to be converted if it is in different currency than US Dollar (-99)
                 // Because conversion_rates change and the amount_usdollar column isn't updated accordingly
