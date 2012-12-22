@@ -2961,22 +2961,25 @@ SUGAR.util = function () {
                         {
                             // Bug #49205 : Subpanels fail to load when selecting subpanel tab
                             // Create a YUI instance using the io-base module.
-                            YUI().use("io-base", function(Y) {
-                                var cfg, response;
-                                cfg = {
-                                    method: 'GET',
-                                    sync: true,
-                                    on: {
-                                        success: function(transactionid, response, arguments)
-                                        {
-                                            SUGAR.util.globalEval(response.responseText);
+                            (function (srcResult) {
+                                YUI().use("io-base",function(Y)
+                                {
+                                    var cfg,response;
+                                    cfg={
+                                        method:'GET',
+                                        sync:true,
+                                        on:{
+                                            success:function(transactionid,response,arguments)
+                                            {
+                                                SUGAR.util.globalEval(response.responseText);
+                                            }
                                         }
-                                    }
-                                };
-                                // Call synchronous request to load javascript content
-                                // restonse will be processed in success function
-                                response = Y.io(srcResult, cfg);
-                            });
+                                    };
+                                    // Call synchronous request to load javascript content
+                                    // restonse will be processed in success function
+                                    response=Y.io(srcResult,cfg);
+                                });
+                            })(srcResult);
                         }
                   	}else{
                         // Bug #49205 : Subpanels fail to load when selecting subpanel tab
