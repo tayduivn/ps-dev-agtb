@@ -121,6 +121,7 @@ $dictionary['Holiday'] = array('table' => 'holidays'
     'vname' => 'LBL_RESOURCE_NAME',
   ),
 ),
+'acls' => array('SugarACLUserAdminWrite' => true),
   'indices' =>
   array (
     array('name' =>'holidayspk', 'type' =>'primary', 'fields'=>array('id')),

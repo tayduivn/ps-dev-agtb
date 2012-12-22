@@ -114,8 +114,9 @@ $dictionary['TaxRate'] = array('table' => 'taxrates'
     'importable' => 'required',
     'required' => true,
   ),
-)
-                                                      , 'indices' => array (
+),
+'acls' => array('SugarACLQuotesAdminWrite' => true),
+'indices' => array (
        array('name' =>'taxratespk', 'type' =>'primary', 'fields'=>array('id')),
        array('name' =>'idx_taxrates', 'type'=>'index', 'fields'=>array('name','deleted')),
                                                       )

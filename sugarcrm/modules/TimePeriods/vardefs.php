@@ -164,8 +164,9 @@ $dictionary['TimePeriod'] = array('table' => 'timeperiods'
     'side' => 'left',
     'source'=>'non-db',
     ),
-)
-, 'indices' => array (
+),
+'acls' => array('SugarACLForecastsAdminWrite' => true),
+'indices' => array (
        array('name' =>'timeperiodspk', 'type' =>'primary', 'fields'=>array('id'),),
        array('name' =>'idx_timestamps', 'type' =>'index', 'fields'=>array('id','start_date_timestamp','end_date_timestamp'))
   )

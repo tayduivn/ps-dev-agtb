@@ -153,8 +153,9 @@ $dictionary['ProductCategory'] = array('table' => 'product_categories',
   ),
 
   //END SUGARCRM flav=pro ONLY
-)
-,'indices' =>
+),
+'acls' => array('SugarACLProductsAdminWrite' => true),
+'indices' =>
         array (
             array('name' =>'product_categoriespk', 'type' =>'primary', 'fields'=>array('id')),
             array('name' =>'idx_productcategories', 'type'=>'index', 'fields'=>array('name','deleted')),

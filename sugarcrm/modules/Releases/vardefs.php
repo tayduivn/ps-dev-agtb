@@ -103,8 +103,9 @@ $dictionary['Release'] = array('table' => 'releases'
     'len' => 100,
     'importable' => 'required',
   ),
-)
-                                                      , 'indices' => array (
+),
+'acls' => array('SugarACLBugsAdminWrite' => true),
+'indices' => array (
        array('name' =>'releasespk', 'type' =>'primary', 'fields'=>array('id')),
        array('name' =>'idx_releases', 'type'=>'index', 'fields'=>array('name','deleted')),
                                                       )

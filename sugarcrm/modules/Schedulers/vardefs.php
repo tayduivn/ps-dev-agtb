@@ -132,6 +132,7 @@ $dictionary['Scheduler'] = array('table' => 'schedulers',
 			'source'		=> 'non-db',
 		),
 	),
+    'acls' => array('SugarACLModuleAdminOnly' => true),
 	'indices' => array (
 		array(
 		'name' =>'idx_schedule',
