@@ -28,6 +28,8 @@ class Bug59196Test extends Sugar_PHPUnit_Framework_TestCase
 {
     protected $_request;
     protected $_customFile = 'custom/include/MVC/Controller/wireless_module_registry.php';
+    protected $_backedUp;
+
     public function setUp()
     {
         SugarTestHelper::setUp('app_strings');
