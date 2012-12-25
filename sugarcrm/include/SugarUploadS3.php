@@ -56,7 +56,6 @@ class SugarUploadS3 extends UploadStream
             || empty($GLOBALS['sugar_config']['aws']['aws_secret'])
             || empty($GLOBALS['sugar_config']['aws']['upload_bucket'])
             ) {
-            $GLOBALS['log']->fatal("S3 keys are not set!");
             throw new Exception("S3 keys are not set!");
         }
         // TODO: add location support for buckets
