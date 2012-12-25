@@ -158,7 +158,7 @@ class SugarUploadS3 extends UploadStream
      */
     public function isUploadUrl($path)
     {
-        return substr(strlen(self::STREAM_NAME)+3) == self::STREAM_NAME."://";
+        return substr($path, strlen(self::STREAM_NAME)+3) == self::STREAM_NAME."://";
     }
 
     /**
