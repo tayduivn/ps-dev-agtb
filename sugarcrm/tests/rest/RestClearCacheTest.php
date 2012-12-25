@@ -32,6 +32,13 @@ class RestClearCacheTest extends RestTestBase {
     protected $_customFile = 'custom/clients/base/api/PongApi.php';
     protected $_customDirMade = false;
 
+    public function tearDown()
+    {
+        if (file_exists($this->_customFile)) {
+            SugarAutoLoader::unlink($this->_customFile, true);
+        }
+    }
+
     /**
      * @group rest
      */
@@ -68,10 +75,9 @@ class PongApi extends SugarApi {
 EOQ;
         SugarAutoLoader::put($this->_customFile, $file_contents, true);
         // verify ping
-
         // verify pong isn't there
         $replyPong = $this->_restCall('ping');
-        $this->assertNotEquals('ping', $replyPong['reply']);
+        $this->assertNotEquals('ping', $replyPong['reply'], "Wrong reply: ".var_export($replyPong, true));
 
         // run repair and rebuild
         $old_user = $GLOBALS['current_user'];
