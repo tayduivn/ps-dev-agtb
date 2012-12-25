@@ -72,12 +72,12 @@ class BeanFactory {
 
         if (!empty($id))
         {
-            if (empty(self::$loadedBeans[$module][$id]))
+            if (!$encode || empty(self::$loadedBeans[$module][$id]))
             {
                 $bean = new $beanClass();
                 //BEGIN SUGARCRM flav=pro ONLY
                 // Pro+ versions, to disable team check if we have rights
-                // to change the parent bean, but not the related (e.g. change Account Name of Opportunity) 
+                // to change the parent bean, but not the related (e.g. change Account Name of Opportunity)
                 if (!empty($params['disable_row_level_security'])) {
                     $bean->disable_row_level_security = true;
                 }
@@ -86,7 +86,9 @@ class BeanFactory {
                 if($result == null)
                     return FALSE;
                 else
-                    self::registerBean($module, $bean, $id);
+                    if($encode) {
+                        self::registerBean($module, $bean, $id);
+                    }
             } else
             {
                 self::$hits++;
@@ -189,8 +191,8 @@ class BeanFactory {
             }
         }
 
-        if(!empty($bean->id))
-           $id = $bean->id;
+         if(!empty($bean->id))
+            $id = $bean->id;
 
         if ($id)
         {
