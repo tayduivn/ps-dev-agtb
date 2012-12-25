@@ -24,10 +24,8 @@ describe("ClickToEdit", function(){
 
     beforeEach(function() {
         app = SugarTest.app;
-        app.user.set({
-            'decimal_separator' : '.',
-            'number_grouping_separator' : ','
-        });
+        app.user.setPreference('decimal_separator', '.');
+        app.user.setPreference('number_grouping_separator', ',');
         editable = SugarTest.loadFile("../include/javascript/jquery", "jquery.jeditable", "js", function(d) { return eval(d); });
         clickToEdit = SugarTest.loadFile("../modules/Forecasts/clients/base/lib", "ClickToEdit", "js", function(d) { return eval(d); });
         view = {
