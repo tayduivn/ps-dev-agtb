@@ -187,7 +187,9 @@ class ForecastsDefaults
             }
             if($isUsDollar) {
                 //update base_rate where usdollar fields exist, reverse calculate the rate
-                $db->query("UPDATE {$table} t SET t.base_rate = t.{$amount_usdollar} / t.{$amount} WHERE t.base_rate IS NULL AND t.{$amount_usdollar} IS NOT NULL and t.{$amount} IS NOT NULL");
+                $db->query("UPDATE {$table} t SET t.base_rate = t.{$amount_usdollar} / t.{$amount} WHERE t.base_rate IS NULL AND t.{$amount_usdollar} IS NOT NULL and t.{$amount} IS NOT NULL and t.{$amount} != 0");
+                // if base_rate is still null, set to 1
+                $db->query("UPDATE {$table} t SET t.base_rate = 1 WHERE t.base_rate IS NULL");
             }
             // Update currency_id to base (-99) with NULL values
             $db->query("UPDATE {$table} t SET t.currency_id='-99' WHERE t.currency_id IS NULL");

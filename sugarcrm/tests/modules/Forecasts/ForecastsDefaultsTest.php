@@ -292,6 +292,24 @@ class ForecastsDefaultsTest extends Sugar_PHPUnit_Framework_TestCase
         $base_rate = $db->getOne("select base_rate from opportunities where id='{$opp4->id}'");
         $this->assertEquals(1.0,$base_rate,'',2);
 
+        // base_rate should get calculated from usdollar field, even with currency_id set
+        $opp5 = SugarTestOpportunityUtilities::createOpportunity();
+        $opp5->currency_id = $currency->id;
+        $opp5->amount = 0;
+        $opp5->base_rate = null;
+        $opp5->amount_usdollar = 2000;
+        $opp5->save();
+
+        // force values to be null in db as in a possible upgrade situation.
+        $db->query("update opportunities set base_rate=NULL, amount=0 where id='{$opp5->id}'");
+
+        // upgrade currency columns
+        ForecastsDefaults::upgradeColumns();
+
+        // see if upgrade took effect
+        $base_rate = $db->getOne("select base_rate from opportunities where id='{$opp5->id}'");
+        $this->assertEquals(1.0,$base_rate,'',2);
+
 
     }
 
