@@ -41,12 +41,13 @@
         this.$(this.fieldTag).trigger("liszt:updated");
     },
     setValue: function(model) {
+        var silent = model.silent || false;
         if(app.acl.hasAccess(this.action, this.model.module, this.model.get('assigned_user_id'), this.name)) {
             if(model.module) {
-                this.model.set('parent_type', model.module);
+                this.model.set('parent_type', model.module, {silent: silent});
             }
-            this.model.set('parent_id', model.id);
-            this.model.set('parent_name', model.value);
+            this.model.set('parent_id', model.id, {silent: silent});
+            this.model.set('parent_name', model.value, {silent: silent});
         }
     },
     getSearchModule: function() {

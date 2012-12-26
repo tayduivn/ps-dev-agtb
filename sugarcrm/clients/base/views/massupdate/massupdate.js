@@ -23,9 +23,21 @@
                 massFields = [];
             _.each(moduleMetadata.fields, function(field){
                 if(field.massupdate) {
-                    //TODO: Add or Replace option for Teamset
+                    //TODO: Add or Replace option for Teamset (team_name_type)
 
                     field.label = field.label || field.vname;
+                    //TODO: Remove hack code for teamset after metadata return correct team type
+                    if(field.name == 'team_name') {
+                        var team_field = _.clone(field);
+                        field = {
+                            type: 'fieldset',
+                            name: team_field.name,
+                            label: team_field.label,
+                            fields: [
+                                team_field
+                            ]
+                        };
+                    }
                     if(field.type === 'bool') {
                         field.type = 'enum';
                         field.options = 'checkbox_dom';

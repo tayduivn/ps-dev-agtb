@@ -36,12 +36,15 @@
     },
     setValue: function(model) {
         var index = _.isUndefined(this.currentIndex) ? this.$(".chzn-container-active").prev().data('index') : this.currentIndex,
-            team = this.value;
+            team = this.value,
+            silent = model.silent || false;
         team[index].id = model.id;
         team[index].name = model.value;
-        this.model.set(this.def.name, team);
-        if(this.tplName === 'detail') {
-            this.render();
+        this.model.set(this.def.name, team, {silent: true});
+        //Since team is an array form, onchange backbone triggers only the team_name array is added or removed.
+        //Replacing among the list item should call onchange function.
+        if(!silent) {
+            this.model.trigger("change:" + this.def.name);
         }
     },
     format: function(value) {
