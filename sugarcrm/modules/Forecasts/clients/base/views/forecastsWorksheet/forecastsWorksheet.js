@@ -831,11 +831,11 @@
                         self.context.forecasts.trigger('forecasts:worksheet:filtered');
 
                         return (_.contains(params, selectVal));
-
                     }
                 );
             }
         }
+
         if(!_.isUndefined(this.gTable.fnDestroy)){
             this.gTable.fnDestroy();
             this.gTable = this.$('.worksheetTable').dataTable(self.gTableDefs);
