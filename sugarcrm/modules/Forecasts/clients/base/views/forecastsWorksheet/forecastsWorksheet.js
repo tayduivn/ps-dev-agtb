@@ -215,9 +215,10 @@
      * Clean up any left over bound data to our context
      */
     unbindData : function() {
-        if(this._collection) this._collection.off(null, null, this);
-        if(this.context.forecasts) this.context.forecasts.off(null, null, this);
-        if(this.context.forecasts.worksheet) this.context.forecasts.worksheet.off(null, null, this);
+        if(this._collection) { this._collection.off(null, null, this) };
+        if(this.context.forecasts) { this.context.forecasts.off(null, null, this) };
+        if(this.context.forecasts.config) { this.context.forecasts.config.off(null, null, this) };
+        if(this.context.forecasts.worksheet) { this.context.forecasts.worksheet.off(null, null, this) };
         app.view.View.prototype.unbindData.call(this);
     },
 

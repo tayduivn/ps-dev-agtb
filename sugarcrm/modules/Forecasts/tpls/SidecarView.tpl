@@ -37,7 +37,8 @@
         </div>
     </div>
 </div>
-<footer>
+<div id="arrow" title="Show" class="up"><i class="icon-chevron-down"></i></div>
+<footer id="footer">
     <div class="row-fluid">
         <div class="span6">
             <span class="logo">SugarCRM</span>

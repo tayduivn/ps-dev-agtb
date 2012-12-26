@@ -8,7 +8,7 @@
         'mouseleave span.editable': 'togglePencil',
         'click span.editable': 'onClick',
         'blur span.edit input': 'onBlur',
-        'keypress span.edit input': 'onKeypress'
+        'keyup span.edit input': 'onKeypress'
     },
 
     inputSelector: 'span.edit input',
@@ -117,16 +117,18 @@
     },
 
     /**
-     * Handle when return/enter and tab keys are pressed
+     * Handle when esc/return/enter and tab keys are pressed
      *
      * @param evt
      */
     onKeypress: function (evt) {
-        // submit if pressed return or tab
-        if (evt.which == 13 || evt.which == 9) {
+        if (evt.which == 27) {
+            this.$el.find(this.inputSelector).val(this.value);
+            this.$el.find(this.inputSelector).blur();
+        } else if (evt.which == 13 || evt.which == 9) {
+            // blur if value is unchanged
             var ogVal = this.value,
                 ngVal = this.$el.find(this.inputSelector).val();
-
             if (_.isEqual(ogVal, ngVal)) {
                 this.$el.find(this.inputSelector).blur();
             }

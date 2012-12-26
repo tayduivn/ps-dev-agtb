@@ -124,6 +124,16 @@
         if (!this.context.forecasts.config.get('is_setup')) {
             // this should only ever happen on the wizard view
             window.location.hash = '#Home';
+
+            //issue notice about setting up Opportunities, we want this to happen after the page "refreshes"
+            setTimeout(function(){
+                app.alert.show('forecast_opp_notice', {
+                    level:'info',
+                    autoClose:false,
+                    closeable:true,
+                    messages: app.lang.get("LBL_FORECASTS_WIZARD_REFRESH_NOTICE", "Forecasts")
+                });}, 1000);
+
         } else if (app.metadata.getModule('Forecasts').config.is_setup == 1 && this.context.forecasts.get('saveClicked') == false) {
             // this should only ever happen on the tabbed view when cancel is clicked
             window.location.hash = '#Forecasts/layout/index';
@@ -140,6 +150,7 @@
                        
             // only sync the metadata and then push it back to the main location
             app.metadata.sync(function() {
+
                 window.location.hash = "#Forecasts/layout/index";
                 
                 //issue notice about setting up Opportunities, we want this to happen after the page "refreshes"
