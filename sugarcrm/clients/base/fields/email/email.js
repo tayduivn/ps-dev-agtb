@@ -39,7 +39,7 @@
     add:function (evt) {
         if (!evt) return;
         // Destroy the tooltips open on this button because they wont go away if we rerender
-        $(evt.currentTarget).tooltip('hide');
+        if ($(evt.currentTarget).tooltip) $(evt.currentTarget).tooltip('hide');
         var newAddress = this.$('.newEmail').val(),
             existingAddresses = _.clone(this.model.get(this.name)) || [];
         var newObj = {email_address:newAddress};
@@ -56,7 +56,8 @@
      */
     remove:function (evt) {
         if (!evt) return;
-        $(evt.currentTarget).tooltip('hide');
+        // Destroy the tooltips open on this button because they wont go away if we rerender
+        if ($(evt.currentTarget).tooltip) $(evt.currentTarget).tooltip('hide');
         var emailAddress = $(evt.target).data('parentemail') || $(evt.target).parent().data('parentemail'),
             existingAddresses = _.clone(this.model.get(this.name));
 
@@ -74,7 +75,7 @@
     updateExistingProperty:function (evt) {
         if (!evt) return;
         // Destroy the tooltips open on this button because they wont go away if we rerender
-        $(evt.currentTarget).tooltip('hide');
+        if ($(evt.currentTarget).tooltip) $(evt.currentTarget).tooltip('hide');
         var existingAddresses, emailAddress, parent, target, property;
         target = $(evt.currentTarget);
         parent = target.parent();
@@ -101,6 +102,10 @@
 
         this.updateModel(existingAddresses);
     },
+    /**
+     * Updates model and triggers appropriate change events;
+     * @param value
+     */
     updateModel:function(value) {
         this.model.set(this.name, _.compact(value));
         this.model.trigger('change');
