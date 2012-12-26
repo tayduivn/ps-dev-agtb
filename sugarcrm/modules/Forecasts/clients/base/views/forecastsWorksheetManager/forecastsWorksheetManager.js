@@ -136,6 +136,8 @@
         if(this._collection) this._collection.off(null, null, this);
         if(this.context.forecasts) this.context.forecasts.off(null, null, this);
         if(this.context.forecasts.worksheetmanager) this.context.forecasts.worksheetmanager.off(null, null, this);
+        //if we don't unbind this, then recycle of this view if a change in rendering occurs will result in multiple bound events to possibly out of date functions
+        $(window).unbind("beforeunload");
         app.view.View.prototype.unbindData.call(this);
     },
 
