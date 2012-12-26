@@ -1368,8 +1368,6 @@ background-image:url(../../../../index.php?entryPoint=getImage&imageName=form-bu
 #arrow {
     height:20px;
     width:25px;
-    background-image:url(../../../../index.php?entryPoint=getImage&imageName=footer.png);
-    background-position:  0 -70px;
     background-color:#fff;
     right:0px;
     position:fixed;
@@ -1381,12 +1379,22 @@ background-image:url(../../../../index.php?entryPoint=getImage&imageName=form-bu
     border-left:1px solid #ccc;
     border-right:1px solid #ccc;
 }
-.up {
+
+#arrow.up {
     background-color: transparent !important;
-    background-position: 0 0 !important;
     border: 0 none !important;
     bottom: 11px;
 }
+
+#arrow.up i.icon-chevron-down {
+    margin-left: 4px;
+}
+
+#arrow i.icon-chevron-up {
+    margin-left: 6px;
+}
+
+
 #footer 
 {
 

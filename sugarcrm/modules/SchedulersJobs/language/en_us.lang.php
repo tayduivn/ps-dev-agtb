@@ -33,6 +33,7 @@ $mod_strings = array (
 'LBL_INTERVAL' 	=> 'Minimum interval between tries',
 'LBL_CLIENT' 	=> 'Owning client',
 'LBL_PERCENT'	=> 'Pecent complete',
+'LBL_JOB_GROUP' => 'Job group',
 // Errors
 'ERR_CALL' 	=> "Cannot call function: %s",
 'ERR_CURL' => "No CURL - cannot run URL jobs",
