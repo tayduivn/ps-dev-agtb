@@ -312,7 +312,6 @@
             var worksheet = this;
             $(window).bind("beforeunload",function(){
                 //if the record is dirty, warn the user.
-                debugger;
                 if(worksheet._collection.isDirty){
                     return app.lang.get("LBL_WORKSHEET_SAVE_CONFIRM_UNLOAD", "Forecasts");
                 }
