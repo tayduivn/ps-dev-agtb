@@ -29,6 +29,7 @@
                     //TODO: Remove hack code for teamset after metadata return correct team type
                     if(field.name == 'team_name') {
                         var team_field = _.clone(field);
+                        team_field.type = 'teamset';
                         field = {
                             type: 'fieldset',
                             name: team_field.name,

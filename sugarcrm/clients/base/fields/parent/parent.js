@@ -51,7 +51,7 @@
         }
     },
     getSearchModule: function() {
-        return this.model.get('parent_type');
+        return this.model.get('parent_type') || this.$(this.typeFieldTag).val();
     },
     format: function(value) {
         //TODO: The label should be the parent module name
