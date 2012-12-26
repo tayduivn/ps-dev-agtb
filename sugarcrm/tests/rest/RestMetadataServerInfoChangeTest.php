@@ -59,9 +59,9 @@ class RestMetadataServerInfoChangeTest extends RestTestBase {
 
         $this->assertEquals($new_server_info['fts'], $server_info['fts'], "New Server Info not equal");
 
-        $_REQUEST['type'] = 'Elastic';
-        $_REQUEST['host'] = 'localhost';
-        $_REQUEST['port'] = '9200';
+        $_REQUEST['type'] = '';
+        $_REQUEST['host'] = '';
+        $_REQUEST['port'] = '';
 
         ob_start();
         $ac->action_saveglobalsearchsettings();
