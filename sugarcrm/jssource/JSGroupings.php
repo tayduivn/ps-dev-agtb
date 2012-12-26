@@ -185,6 +185,7 @@
             $summer_splash_js = array(
                 "sidecar/lib/jquery/jquery.min.js" => "summer/summer-splash.min.js",
                 "summer/splash/login.js" => "summer/summer-splash.min.js",
+                "styleguide/assets/js/bootstrap-alert.js" => "summer/summer-splash.min.js",
             ),
 
             $summer_splash_css = array(
