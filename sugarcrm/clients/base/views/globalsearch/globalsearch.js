@@ -1,7 +1,8 @@
 ({
     events: {
         'click .typeahead a': 'clearSearch',
-        'click .navbar-search span.add-on': 'gotoFullSearchResultsPage'
+        'click .navbar-search span.add-on': 'gotoFullSearchResultsPage',
+        'click .globalsearch-adv': 'persistMenu'
     },
 
     _renderHtml: function() {
@@ -78,5 +79,12 @@
      */
     clearSearch: function(evt) {
         this.$('.search-query').val('');
+    },
+
+    /**
+     * This will prevent the dropup menu from closing when clicking anywhere on it
+     */
+    persistMenu: function(e) {
+        e.stopPropagation();
     }
 })

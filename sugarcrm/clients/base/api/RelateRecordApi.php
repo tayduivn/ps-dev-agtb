@@ -189,7 +189,10 @@ class RelateRecordApi extends ModuleApi {
 
         $relatedData = $this->getRelatedFields($api, $args, $primaryBean, $linkName, $relatedBean);
         $primaryBean->$linkName->add(array($relatedBean),$relatedData);
-
+        // need to add the or to satisfy edge cases around some relationships that use both parent and tables [like leads calls]
+        if($primaryBean->$linkName->isParentRelationship() || (isset($relatedBean->field_defs['parent_type']) && (empty($relatedBean->parent_type) || empty($relatedBean->parent_id)))) {
+            $this->setParentProperties($primaryBean, $relatedBean);
+        }
         //Clean up any hanging related records.
         SugarRelationship::resaveRelatedBeans();
 
@@ -210,7 +213,10 @@ class RelateRecordApi extends ModuleApi {
 
         $relatedData = $this->getRelatedFields($api, $args, $primaryBean, $linkName, $relatedBean);
         $primaryBean->$linkName->add(array($relatedBean),$relatedData);
-        
+        // need to add the or to satisfy edge cases around some relationships that use both parent and tables [like leads calls]
+        if($primaryBean->$linkName->isParentRelationship() || (isset($relatedBean->field_defs['parent_type']) && (empty($relatedBean->parent_type) || empty($relatedBean->parent_id)))) {
+            $this->setParentProperties($primaryBean, $relatedBean);
+        }
         //Clean up any hanging related records.
         SugarRelationship::resaveRelatedBeans();
 
@@ -233,6 +239,11 @@ class RelateRecordApi extends ModuleApi {
 
         $relatedData = $this->getRelatedFields($api, $args, $primaryBean, $linkName, $relatedBean);
         $primaryBean->$linkName->add(array($relatedBean),$relatedData);
+        
+        // need to add the or to satisfy edge cases around some relationships that use both parent and tables [like leads calls]
+        if($primaryBean->$linkName->isParentRelationship() || (isset($relatedBean->field_defs['parent_type']) && (empty($relatedBean->parent_type) || empty($relatedBean->parent_id)))) {
+            $this->setParentProperties($primaryBean, $relatedBean);
+        }
         
         //Clean up any hanging related records.
         SugarRelationship::resaveRelatedBeans();
@@ -257,5 +268,14 @@ class RelateRecordApi extends ModuleApi {
         return $this->formatNearAndFarRecords($api,$args,$primaryBean, $this->formatBean($api, $args, $relatedBean));
     }
 
+    function setParentProperties(SugarBean $primaryBean, SugarBean $relatedBean) {
+        if(empty($relatedBean->parent_id)) {
+            $relatedBean->parent_id = $primaryBean->id;
+        }
+        if(empty($relatedBean->parent_type) && $primaryBean->id == $relatedBean->parent_id) {
+            $relatedBean->parent_type = $primaryBean->module_dir;
+        }
+        $relatedBean->save(); 
 
+   }
 }

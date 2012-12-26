@@ -8,42 +8,9 @@ describe("Drawer Layout", function() {
         SugarTest.testMetadata.init();
         SugarTest.loadHandlebarsTemplate('record', 'view', 'base');
         SugarTest.loadHandlebarsTemplate('button', 'field', 'base', 'edit');
-        SugarTest.loadComponent('base', 'view', 'record');
-        SugarTest.loadComponent('base', 'view', viewName);
         SugarTest.loadComponent('base', 'layout', 'modal');
-        SugarTest.testMetadata.addViewDefinition(viewName, {
-            "type":"record",
-            "buttons":[
-                {
-                    "name":"cancel_button",
-                    "type":"button",
-                    "label":"LBL_CANCEL_BUTTON_LABEL",
-                    "css_class":"btn-invisible btn-link"
-                }, {
-                    "name":"restore_button",
-                    "type":"button",
-                    "label":"LBL_RESTORE",
-                    "css_class":"hide btn-invisible btn-link"
-                }, {
-                    "name":"save_create_button",
-                    "type":"button",
-                    "label":"LBL_SAVE_AND_CREATE_ANOTHER",
-                    "css_class":"hide btn-invisible btn-link"
-                }, {
-                    "name":"save_view_button",
-                    "type":"button",
-                    "label":"LBL_SAVE_AND_VIEW",
-                    "css_class":"hide btn-invisible btn-link"
-                }, {
-                    "name":"save_button",
-                    "type":"button",
-                    "label":"LBL_SAVE_BUTTON_LABEL",
-                    "css_class":"disabled"
-                }, {
-                    "name":"sidebar_toggle",
-                    "type":"sidebartoggle"
-                }
-            ],
+        SugarTest.loadComponent('base', 'view', 'record');
+        SugarTest.testMetadata.addViewDefinition('record', {
             "panels":[
                 {
                     "name":"panel_header",
@@ -77,6 +44,41 @@ describe("Drawer Layout", function() {
                 }
             ]
         }, moduleName);
+        SugarTest.loadComponent('base', 'view', viewName);
+        SugarTest.testMetadata.addViewDefinition(viewName, {
+            "type":"record",
+            "buttons":[
+                {
+                    "name":"cancel_button",
+                    "type":"button",
+                    "label":"LBL_CANCEL_BUTTON_LABEL",
+                    "css_class":"btn-invisible btn-link"
+                }, {
+                    "name":"restore_button",
+                    "type":"button",
+                    "label":"LBL_RESTORE",
+                    "css_class":"hide btn-invisible btn-link"
+                }, {
+                    "name":"save_create_button",
+                    "type":"button",
+                    "label":"LBL_SAVE_AND_CREATE_ANOTHER",
+                    "css_class":"hide btn-invisible btn-link"
+                }, {
+                    "name":"save_view_button",
+                    "type":"button",
+                    "label":"LBL_SAVE_AND_VIEW",
+                    "css_class":"hide btn-invisible btn-link"
+                }, {
+                    "name":"save_button",
+                    "type":"button",
+                    "label":"LBL_SAVE_BUTTON_LABEL",
+                    "css_class":"disabled"
+                }, {
+                    "name":"sidebar_toggle",
+                    "type":"sidebartoggle"
+                }
+            ]
+        }, moduleName);
         SugarTest.testMetadata.set();
         SugarTest.app.data.declareModels();
 
@@ -90,7 +92,7 @@ describe("Drawer Layout", function() {
         context.prepare();
 
         layout = SugarTest.createLayout('base', moduleName, layoutName, {
-            "type": "fluid",
+            "type": "drawer",
             "components": [
                 {"view":"create"}
             ]

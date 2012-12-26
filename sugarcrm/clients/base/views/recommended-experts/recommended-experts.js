@@ -38,14 +38,14 @@
     },
 
     getRecommendations: function() {
-        var self = this,
-            jobTitle = this.$(".job-title").val();
+        var self = this;
+            this.jobTitle = this.$(".job-title").val();
 
-        if( jobTitle.length ) {
+        if( this.jobTitle.length ) {
             // build the URL for the custom "experts" REST endpoint
             var url = app.api.buildURL(this.module, "experts",
                 {"id": app.controller.context.get("model").id},
-                {"title": jobTitle});
+                {"title": this.jobTitle});
 
             app.api.call("read", url, null, { success: function(data) {
                 self.collection.reset();

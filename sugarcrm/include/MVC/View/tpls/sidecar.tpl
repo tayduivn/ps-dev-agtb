@@ -43,7 +43,7 @@
 
         <!-- CSS -->
         <link rel="stylesheet" href="sidecar/lib/chosen/chosen.css"/>
-        <link rel="stylesheet" href="styleguide/styleguide/css/bootstrap.css"/>
+        <link rel="stylesheet" href="{$css_url}"/>
         <link rel="stylesheet" href="sidecar/lib/jquery-ui/css/smoothness/jquery-ui-1.8.18.custom.css"/>
         <link rel="stylesheet" href="include/javascript/jquery/bootstrap-wysihtml5/bootstrap-wysihtml5.css"/>
     </head>

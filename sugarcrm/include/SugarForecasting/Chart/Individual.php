@@ -43,7 +43,7 @@ class SugarForecasting_Chart_Individual extends SugarForecasting_Chart_AbstractC
      *
      * @var string
      */
-    protected $category = array();
+    protected $ranges = array();
 
     /**
      * The labels to be used in the legend and how to parse the data
@@ -74,20 +74,14 @@ class SugarForecasting_Chart_Individual extends SugarForecasting_Chart_AbstractC
      */
     public function __construct($args)
     {
-        if (isset($args['category']))
-        {
-            if(is_array($args['category']))
-            {
-                $this->category = $args['category'];
+        if (isset($args['ranges'])) {
+            if(is_array($args['ranges'])) {
+                $this->ranges = $args['ranges'];
+            } else {
+                $this->ranges = array($args['ranges']);
             }
-            else
-            {
-                $this->category = array($args['category']);
-            }
-        }
-        else
-        {
-            $this->category = array();
+        } else {
+            $this->ranges = array();
         }
 
         if (isset($args['group_by']) && !empty($args['group_by']))
@@ -130,7 +124,7 @@ class SugarForecasting_Chart_Individual extends SugarForecasting_Chart_AbstractC
      */
     protected function parseCategory()
     {
-        if (empty($this->category))
+        if (empty($this->ranges))
         {
             // display in chart all products (opps) from the worksheet
             return;
@@ -138,7 +132,7 @@ class SugarForecasting_Chart_Individual extends SugarForecasting_Chart_AbstractC
 
         foreach ($this->dataArray as $key => $val)
         {
-            if (in_array($val['commit_stage'], $this->category))
+            if (in_array($val['commit_stage'], $this->ranges))
             {
                 continue;
             }

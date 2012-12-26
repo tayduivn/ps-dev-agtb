@@ -21,7 +21,7 @@
 
 describe("The forecasts worksheet", function(){
 
-    var app, view, field, _renderClickToEditStub, _renderFieldStub, _setUpCommitStageSpy, testMethodStub, testValue;
+    var app, view, field, _renderClickToEditStub, _renderFieldStub, testMethodStub, testValue;
 
     beforeEach(function() {
         app = SugarTest.app;
@@ -47,6 +47,7 @@ describe("The forecasts worksheet", function(){
                 def:{
                     clickToEdit:true
                 },
+                options : {},
                 model : {
                     get : function(param) {
                         return [testValue];
@@ -186,77 +187,6 @@ describe("The forecasts worksheet", function(){
         });
     });
 
-    describe("commit_stage fields", function() {
-
-        beforeEach(function() {
-            view.isEditableWorksheet = true;
-
-            var model = new Backbone.Model();
-
-            context = { forecasts : {
-                            config : model,
-                            on : function() {}
-                      }
-            };
-
-            view.context = context;
-            _renderClickToEditStub = sinon.stub(app.view, "ClickToEditField");
-            _renderFieldStub = sinon.stub(app.view.View.prototype, "_renderField");
-            field = {
-                viewName:'worksheet',
-                name:'commit_stage',
-                type:'enum',
-                def: {
-                    clickToEdit: 'false'
-                },
-                delegateEvents: function() {}
-            };
-        });
-
-        afterEach(function(){
-            view.isEditableWorksheet = true;
-            _renderClickToEditStub.restore();
-            _renderFieldStub.restore();
-        });
-
-        it("should have format and unformat handlers on field when config is set to forecast_categories show_binary", function() {
-            sinon.stub(view.context.forecasts.config, "get", function(key) {
-                return "show_binary";
-            });
-
-            expect(field.format).not.toBeDefined();
-            expect(field.unformat).not.toBeDefined();
-            field = view._setUpCommitStage(field);
-            expect(field.format).toBeDefined();
-            expect(field.unformat).toBeDefined();
-        })
-
-        it("should be rendered on a user's own worksheet", function() {
-            testMethodStub = sinon.stub(view, "isMyWorksheet", function() {
-                return true;
-            });
-            _setUpCommitStageSpy = sinon.spy(view, "_setUpCommitStage");
-            view._renderField(field);
-            expect(_setUpCommitStageSpy).toHaveBeenCalled();
-            expect(field.view).toBeUndefined();
-            _setUpCommitStageSpy.restore();
-            testMethodStub.restore();
-        });
-
-        it("should not be rendered when a user is viewing a worksheet that is not their own", function() {
-            view.isEditableWorksheet = false;
-            testMethodStub = sinon.stub(view, "isMyWorksheet", function() {
-                return false;
-            });
-            _setUpCommitStageSpy = sinon.spy(view, "_setUpCommitStage");
-            view._renderField(field);
-            expect(_setUpCommitStageSpy).toHaveBeenCalled();
-            expect(field.view == "detail").toBeTruthy();
-            _setUpCommitStageSpy.restore();
-            testMethodStub.restore();
-        });
-    });
-
     describe("Forecast Worksheet Config functions tests", function() {
         it("should test checkConfigForColumnVisibility passing in Null", function() {
             var testVal = null;
@@ -343,8 +273,8 @@ describe("The forecasts worksheet", function(){
     		expect(view.context.forecasts.on).toHaveBeenCalledWith("change:selectedTimePeriod");
     	});
     	
-    	it("forecasts.on should have been called with selectedCategory", function(){
-    		expect(view.context.forecasts.on).toHaveBeenCalledWith("change:selectedCategory");
+    	it("forecasts.on should have been called with selectedRanges", function(){
+    		expect(view.context.forecasts.on).toHaveBeenCalledWith("change:selectedRanges");
     	});
     	
     	it("forecasts.worksheet.on should have been called with change", function(){

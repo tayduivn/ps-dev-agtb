@@ -1,3 +1,29 @@
+/*********************************************************************************
+ * The contents of this file are subject to the SugarCRM Master Subscription
+ * Agreement (""License"") which can be viewed at
+ * http://www.sugarcrm.com/crm/master-subscription-agreement
+ * By installing or using this file, You have unconditionally agreed to the
+ * terms and conditions of the License, and You may not use this file except in
+ * compliance with the License.  Under the terms of the license, You shall not,
+ * among other things: 1) sublicense, resell, rent, lease, redistribute, assign
+ * or otherwise transfer Your rights to the Software, and 2) use the Software
+ * for timesharing or service bureau purposes such as hosting the Software for
+ * commercial gain and/or for the benefit of a third party.  Use of the Software
+ * may be subject to applicable fees and any use of the Software without first
+ * paying applicable fees is strictly prohibited.  You do not have the right to
+ * remove SugarCRM copyrights from the source code or user interface.
+ *
+ * All copies of the Covered Code must include on each user interface screen:
+ *  (i) the ""Powered by SugarCRM"" logo and
+ *  (ii) the SugarCRM copyright notice
+ * in the same form as they appear in the distribution.  See full license for
+ * requirements.
+ *
+ * Your Warranty, Limitations of liability and Indemnity are expressly stated
+ * in the License.  Please refer to the License for the specific language
+ * governing these rights and limitations under the License.  Portions created
+ * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
+ ********************************************************************************/
 (function(app) {
     /**
      *
@@ -9,6 +35,8 @@
     app.view.ClickToEditField = function (field, view) {
         // set attr so tabbing can locate next field
         field.$el.attr('jeditable','true');
+        field.$el.wrapInner('<span class="click format"></span>');
+        field.$el.wrapInner('<div class="sugareditable"></div>');
         this.field = field;
         this.view = view;
         this.numberTypes = ['int', 'float', 'currency'];
@@ -134,23 +162,27 @@
                  * @return {String}
                  */
                 data: function(value, settings) {
-                  if(settings.field.type !== 'currency') {
-                      return value;
-                  }
+                    // run a safety check here.  we can't always be assured that the model contains a value
+                    var fieldValue = settings.field.model.get(settings.field.name);
 
-                  // run a safety check here.  we can't always be assured that the model contains a value
-                  var fieldValue = settings.field.model.get(settings.field.name);
-                  if(fieldValue == null)
-                  {
-                     return 0;
-                  }
-                  // format for currency editing, remove markup
-                  return app.utils.formatNumber(
-                      fieldValue,
-                      app.user.get('decimal_precision'),
-                      app.user.get('decimal_precision'),
-                      '',
-                      app.user.get('decimal_separator'));
+                    if(settings.field.type == 'int') {
+                        return (fieldValue == null) ? 0 : fieldValue;
+                    } else if (settings.field.type == 'currency' || settings.field.type == 'float') {
+                        if(fieldValue == null)
+                        {
+                          return 0;
+                        }
+                        // format for currency/float editing, remove markup
+                        return app.utils.formatNumber(
+                            fieldValue,
+                            app.user.get('decimal_precision'),
+                            app.user.get('decimal_precision'),
+                            '',
+                            app.user.get('decimal_separator')
+                        );
+                    } else {
+                        return fieldValue;
+                    }
                 },
                 /**
                  * sets up the field for editing
@@ -296,14 +328,12 @@
         // add events
         this.field.showCteIcon = function() {
             if(!this.isEditing) {
-                //this.$el.parent().css('overflow-x', 'visible');
-                this.$el.before(this.cteIcon);
+                this.$el.find('.click.format').before(this.cteIcon);
             }
         };
 
         this.field.hideCteIcon = function() {
             this.$el.parent().find(this.cteIcon).detach();
-            //this.$el.parent().css('overflow-x', 'hidden');
         };
 
         var events = this.field.events || {};

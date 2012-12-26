@@ -40,7 +40,7 @@ describe("Bug 55880", function() {
 
             // Set up context.forecasts for the view
             metadata = fixtures.metadata;
-            app.viewModule = "";
+            app.viewModule = "Forecasts";
             app.initData = {};
             app.defaultSelections = {
                 timeperiod_id: {},

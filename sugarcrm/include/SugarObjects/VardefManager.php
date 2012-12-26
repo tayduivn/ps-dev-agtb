@@ -33,6 +33,7 @@
 class VardefManager{
     static $custom_disabled_modules = array();
     static $linkFields;
+    public static $inReload = array();
 
     /**
      * this method is called within a vardefs.php file which extends from a SugarObject.
@@ -322,6 +323,7 @@ class VardefManager{
         if(!empty($dictionary[$object])) {
             VardefManager::saveCache($module, $object);
         }
+
         if(isset($guard["$module:$object"])) {
             if($guard["$module:$object"] > 1) {
                 $guard["$module:$object"]--;

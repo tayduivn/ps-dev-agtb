@@ -197,5 +197,43 @@ class RestRelateTest extends RestTestBase {
         }
     }
 
+    /**
+     * @group rest
+     */
+    public function testRelateListOrderBy() {
+        // Make sure there is at least one page of each of the related modules
+        $account = new Account();
+        $account->name = "UNIT TEST PART 2 - ".create_guid();
+        $account->billing_address_postalcode = "90210";
+        $account->save();
+        $this->accounts[] = $account;
+        for ( $i = 0 ; $i < 3 ; $i++ ) {
+            $contact = new Contact();
+            $contact->first_name = "UNIT".($i+1);
+            $contact->last_name = create_guid();
+            $contact->title = sprintf("%08d",($i+1));
+            // We need to manually tweak the date modified's so that they come out in an order we expect.
+            $contact->date_modified = '2012-10-01 1'.$i.':14:15';
+            $contact->update_date_modified = false;
+            $contact->save();
+            $this->contacts[] = $contact;
+            
+            $contact->load_relationship('accounts');
+            $contact->accounts->add(array($account));
+        }
+
+        $reply = $this->_restCall('Accounts/'.$account->id.'/link/contacts?fields=id,first_name,last_name,date_modified');
+
+        $this->assertEquals($this->contacts[2]->id,$reply['reply']['records'][0]['id'],"First record didn't match");
+        $this->assertEquals($this->contacts[1]->id,$reply['reply']['records'][1]['id'],"Second record didn't match");
+        $this->assertEquals($this->contacts[0]->id,$reply['reply']['records'][2]['id'],"Third record didn't match");
+
+        $reply = $this->_restCall('Accounts/'.$account->id.'/link/contacts?order_by=first_name:ASC&fields=id,first_name,last_name,date_modified');
+
+        $this->assertEquals($this->contacts[0]->id,$reply['reply']['records'][0]['id'],"First record didn't match (2)");
+        $this->assertEquals($this->contacts[1]->id,$reply['reply']['records'][1]['id'],"Second record didn't match (2)");
+        $this->assertEquals($this->contacts[2]->id,$reply['reply']['records'][2]['id'],"Third record didn't match (2)");
+    }
+
 }
 

@@ -24,13 +24,12 @@ describe("forecast historyLog field", function() {
     describe("test handleDeferredRender", function() {
         it("should trigger _render when both deferred objects are resolved", function() {
             var fieldDef = {
-                "name": "forecast",
+                "name": "forecastHistoryLog",
                 "type": "historyLog",
-                "view": "detail"
+                "view": "historyLog"
             };
-            this.field = SugarTest.createField("../modules/Forecasts/clients/base", "historyLog", "historyLog", "detail", fieldDef, "Forecasts");
-            this.field._render = function() { };
-            var renderSpy = sinon.spy(this.field, "_render");
+            this.field = SugarTest.createField("../modules/Forecasts/clients/base", "historyLog", "historyLog", "detail", fieldDef);
+            var renderSpy = sinon.stub(this.field, "_render", function() { });
             this.field.handleDeferredRender();
             this.field.mDeferred.resolve();
             this.field.wDeferred.resolve();
@@ -43,9 +42,8 @@ describe("forecast historyLog field", function() {
                 "type": "historyLog",
                 "view": "detail"
             };
-            this.field = SugarTest.createField("../modules/Forecasts/clients/base", "historyLog", "historyLog", "detail", fieldDef, "Forecasts");
-            this.field._render = function() { };
-            var renderSpy = sinon.spy(this.field, "_render");
+            this.field = SugarTest.createField("../modules/Forecasts/clients/base", "historyLog", "historyLog", "detail", fieldDef);
+            var renderSpy = sinon.stub(this.field, "_render", function() { });
             this.field.handleDeferredRender();
             this.field.mDeferred.resolve();
             expect(renderSpy).not.toHaveBeenCalled();
@@ -65,7 +63,7 @@ describe("forecast historyLog field", function() {
                 "view": "detail"
             };
 
-            field = SugarTest.createField("../modules/Forecasts/clients/base", "historyLog", "historyLog", "detail", fieldDef, "Forecasts");
+            field = SugarTest.createField("../modules/Forecasts/clients/base", "historyLog", "historyLog", "detail", fieldDef);
 
             committedView = SugarTest.loadFile("../modules/Forecasts/clients/base/views/forecastsCommitted", "forecastsCommitted", "js", function (d) {
                 return eval(d);

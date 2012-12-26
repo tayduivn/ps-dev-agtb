@@ -72,6 +72,7 @@ MBLoader.addModule({
     requires: ["datatable", "dragdrop", "treeview", "tabview"]
 });
 MBLoader.insert();
+SUGAR.themes.resizeMenu();
 {/literal}
 </script>
 <div id="footerHTML" class="y-hidden">
