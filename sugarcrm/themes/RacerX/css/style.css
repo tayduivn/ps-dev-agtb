@@ -4127,7 +4127,7 @@ ul.megamenu .MMShortcuts li.sfHover a.sf-with-ul,
 ul.moduleTabMore li.sfHover a.sf-with-ul,
 ul.sf-sub-modulelist li.sfHover > a.sf-with-ul{
     color: #fff !important;
-    background:		#355B7E;
+    background:		#444;
 }
 
 #globalLinksModule ul.clickMenu.SugarActionMenu li a:hover,
@@ -4211,7 +4211,7 @@ ul.moduleTabMore,
 
 ul.sf-sub-modulelist .selected,
 #moduleList .more .selected{
-background-color: #355b7e;
+background-color: #fff;
 color: #fff;
 }
 
@@ -4422,6 +4422,10 @@ ul#quickCreateULSubnav.showMore .moduleMenuOverFlowMore, ul#quickCreateULSubnav.
 {
 display: none !important;
 visibilility: hidden !important;
+}
+
+#moduleList .home img {
+    margin-top: 2px;
 }
 
 #subModuleList 
