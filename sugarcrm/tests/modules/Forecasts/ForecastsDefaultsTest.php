@@ -308,8 +308,7 @@ class ForecastsDefaultsTest extends Sugar_PHPUnit_Framework_TestCase
 
         // see if upgrade took effect
         $base_rate = $db->getOne("select base_rate from opportunities where id='{$opp5->id}'");
-        $this->assertEquals(1.0,$base_rate,'',2);
-
+        $this->assertEquals(78.87,$base_rate,'',2);
 
     }
 
