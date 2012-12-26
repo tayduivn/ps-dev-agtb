@@ -1,6 +1,6 @@
 <?php
 if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
-/********************************************************************************
+/*********************************************************************************
  *The contents of this file are subject to the SugarCRM Professional End User License Agreement
  *("License") which can be viewed at http://www.sugarcrm.com/EULA.
  *By installing or using this file, You have unconditionally agreed to the terms and conditions of the License, and You may
@@ -20,24 +20,37 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
-require_once 'clients/base/api/CurrentUserApi.php';
+require_once "include/generic/SugarWidgets/SugarWidget.php";
 
-class CurrentUserMobileApi extends CurrentUserApi {
-    public function getModuleList() {
-        // replicate the essential part of the behavior of the private loadMapping() method in SugarController
-        foreach(SugarAutoLoader::existingCustom('include/MVC/Controller/wireless_module_registry.php') as $file){
-            require $file;
-        }
+class SugarWidgetTest extends Sugar_PHPUnit_Framework_TestCase
+{
 
-        // Forcibly add the Users module, it needs to be there for things like assigned users
-        // So if they have removed it (it is a default module), re-add it here
-        if ( !isset($wireless_module_registry['Users']) ) {
-            $wireless_module_registry['Users'] = array();
-        }
-
-        // $wireless_module_registry is defined in the file loaded above
-        return isset($wireless_module_registry) && is_array($wireless_module_registry) ?
-            $this->list2Array($wireless_module_registry) :
-            array();
+    public static function setUpBeforeClass()
+    {
+        SugarTestHelper::setUp('beanFiles');
+        SugarTestHelper::setUp('beanList');
     }
+
+    public static function tearDownAfterClass()
+    {
+        SugarTestHelper::tearDown();
+    }
+
+    /**
+     * This is a test to ensure that the global list of exempt modules will not cause SugarWidget::isModuleHidden to return true
+     *
+     */
+    public function testIsHiddenModuleForExemptModules() {
+        global $modules_exempt_from_availability_check;
+        $expectedCount = count($modules_exempt_from_availability_check);
+        $falseCount = 0;
+        foreach($modules_exempt_from_availability_check as $module) {
+            if(!SugarWidget::isModuleHidden($module)) {
+                $falseCount++;
+            }
+        }
+
+        $this->assertEquals($expectedCount, $falseCount, "Failed asserting that modules in \$modules_exempt_from_availability_check return false");
+    }
+
 }

@@ -127,16 +127,7 @@ class CurrentUserApi extends SugarApi {
         
         // Get the basics
         $user_data = $this->getBasicUserInfo();
-        if ( !isset($user_data['datepref']) ) {
-            $user_data['datepref'] = $GLOBALS['sugar_config']['datef'];
-        }
-        if ( !isset($user_data['timepref']) ) {
-            $user_data['timepref'] = $GLOBALS['sugar_config']['default_time_format'];
-        }
-        if ( !isset($user_data['timezone']) ) {
-            $user_data['timezone'] = 'GMT';
-        }
-        
+
         if ( isset($args['platform']) ) {
             $platform = array(basename($args['platform']),'base');
         } else {
@@ -150,7 +141,7 @@ class CurrentUserApi extends SugarApi {
         $user_data['acl'] = $this->getAcls($platform);
         //BEGIN SUGARCRM flav=pro ONLY
         require_once('modules/Teams/TeamSetManager.php');
-        $user_data['primary_team'] = array("id" => $current_user->team_id, "name" => $current_user->team_name);
+
         $teams = $current_user->get_my_teams();
         $my_teams = array();
         foreach($teams AS $id => $name) {
@@ -158,17 +149,17 @@ class CurrentUserApi extends SugarApi {
         }
         $user_data['my_teams'] = $my_teams;
 
-        $user_data['default_teams'] = TeamSetManager::getTeamsFromSet($current_user->team_set_id);
-        foreach($user_data['default_teams'] AS $id => $team) {
-            $user_data['default_teams'][$id]['primary'] = false;
-            if($team['id'] == $user_data['primary_team']['id']) {
-                $user_data['default_teams'][$id]['primary'] = true;
+        $defaultTeams = TeamSetManager::getTeamsFromSet($current_user->team_set_id);
+        foreach($defaultTeams AS $id => $team) {
+            $defaultTeams[$id]['primary'] = false;
+            if($team['id'] == $current_user->team_id) {
+                $defaultTeams[$id]['primary'] = true;
             }
         }
+        $user_data['preferences']['default_teams'] = $defaultTeams;
+
         //END SUGARCRM flav=pro ONLY
-        if(isset($current_user->preferred_language)) {
-            $user_data['preferred_language'] = $current_user->preferred_language;
-        }
+
         return array('current_user' => $user_data);
     }
     
@@ -331,27 +322,38 @@ class CurrentUserApi extends SugarApi {
     protected function getBasicUserInfo() {
         global $current_user;
         global $locale;
-        
+
         $user_data = array(
-            'timezone' => $current_user->getPreference('timezone'),
-            'datepref' => $current_user->getPreference('datef'),
-            'timepref' => $current_user->getPreference('timef'),
+            'preferences' => array(
+                'timezone' => $current_user->getPreference('timezone'),
+                'datepref' => $current_user->getPreference('datef'),
+                'timepref' => $current_user->getPreference('timef'),
+            ),
         );
+
+        // FIXME getPreference is already calling the system defaults but not for timezone
+        if (!isset($user_data['preferences']['timezone'])) {
+            $user_data['preferences']['timezone'] = 'GMT';
+        }
 
         // user currency prefs
         $currency = BeanFactory::getBean('Currencies');
         $currency_id = $current_user->getPreference('currency');
         $currency->retrieve($currency_id);
-        $user_data['currency_id'] = $currency->id;
-        $user_data['currency_name'] = $currency->name;
-        $user_data['currency_symbol'] = $currency->symbol;
-        $user_data['currency_iso'] = $currency->iso4217;
-        $user_data['currency_rate'] = $currency->conversion_rate;
+        $user_data['preferences']['currency_id'] = $currency->id;
+        $user_data['preferences']['currency_name'] = $currency->name;
+        $user_data['preferences']['currency_symbol'] = $currency->symbol;
+        $user_data['preferences']['currency_iso'] = $currency->iso4217;
+        $user_data['preferences']['currency_rate'] = $currency->conversion_rate;
         // user number formatting prefs
-        $user_data['decimal_precision'] = $locale->getPrecision();
-        $user_data['decimal_separator'] = $locale->getDecimalSeparator();
-        $user_data['number_grouping_separator'] = $locale->getNumberGroupingSeparator();
+        $user_data['preferences']['decimal_precision'] = $locale->getPrecision();
+        $user_data['preferences']['decimal_separator'] = $locale->getDecimalSeparator();
+        $user_data['preferences']['number_grouping_separator'] = $locale->getNumberGroupingSeparator();
         $user_data['module_list'] = $this->getModuleList();
+
+        if(isset($current_user->preferred_language)) {
+            $user_data['preferences']['language'] = $current_user->preferred_language;
+        }
 
         return $user_data;
     }

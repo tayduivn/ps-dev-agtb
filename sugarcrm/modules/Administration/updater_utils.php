@@ -474,6 +474,13 @@ function authenticateDownloadKey(){
 	$data['license_num_portal_users'] = intval($GLOBALS['license']->settings['license_num_portal_users']);
 	$data['license_vk_end_date'] = $GLOBALS['license']->settings['license_vk_end_date'];
 	$data['license_key'] = $GLOBALS['license']->settings['license_key'];
+    if(isset($GLOBALS['license']->settings['license_enforce_portal_user_limit'])) {
+        $data['enforce_portal_user_limit'] = intval($GLOBALS['license']->settings['license_enforce_portal_user_limit']);
+    }
+    if(isset($GLOBALS['license']->settings['license_enforce_user_limit'])) {
+    	$data['enforce_user_limit'] = intval($GLOBALS['license']->settings['license_enforce_user_limit']);
+    }
+
 	if(empty($GLOBALS['license']->settings['license_validation_key'])) return false;
 	$og = unserialize(sugarDecode('validation', $GLOBALS['license']->settings['license_validation_key']));
 
