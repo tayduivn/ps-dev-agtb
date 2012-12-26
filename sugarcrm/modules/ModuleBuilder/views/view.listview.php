@@ -28,13 +28,10 @@ if (! defined ( 'sugarEntry' ) || ! sugarEntry)
  * by SugarCRM are Copyright (C) 2006 SugarCRM, Inc.; All Rights Reserved.
  */
 
-//Load the parent view class if it exists.  Check for custom file first
-loadParentView('edit');
-
 require_once 'modules/ModuleBuilder/parsers/constants.php' ;
 require_once ('include/SubPanel/SubPanel.php') ;
 
-class ViewListView extends ViewEdit
+class ViewListView extends SugarView
 {
     /**
 	 * @see SugarView::_getModuleTitleParams()
