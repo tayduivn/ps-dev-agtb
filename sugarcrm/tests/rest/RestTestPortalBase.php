@@ -70,6 +70,7 @@ class RestTestPortalBase extends RestTestBase {
             $this->_user->save();
         }
 
+
         // A little bit destructive, but necessary.
         $GLOBALS['db']->query("DELETE FROM contacts WHERE portal_name = 'unittestportal'");
 
@@ -84,6 +85,7 @@ class RestTestPortalBase extends RestTestBase {
         $this->contact->portal_name = "unittestportal";
         $this->contact->portal_active = '1';
         $this->contact->portal_password = User::getPasswordHash("unittest");
+        $this->contact->assigned_user_id = $this->_user->id;
         $this->contact->save();
 
         $this->portalGuy = $this->contact;

@@ -40,6 +40,30 @@ class RestCurrentUserPortalTest extends RestTestPortalBase {
     /**
      * @group rest
      */
+    public function testAcls() {
+        $allowedModules = array(
+                                'Accounts' => array( 'edit' => 'no', 'create' => 'no'),
+                                'Bugs' => array('edit' => 'no', 'create' => 'yes'), 
+                                'Cases' => array('edit' => 'no', 'create' => 'yes'), 
+                                'Notes' => array('edit' => 'no', 'create' => 'yes'), 
+                                'KBDocuments' => array('edit' => 'no', 'create' => 'no'), 
+                                // edit is yes because they can edit themselves
+                                'Contacts' => array('edit' => 'yes', 'create' => 'yes'),
+                            );
+
+        $restReply = $this->_restCall("me");
+        $user_acls = $restReply['reply']['current_user']['acl'];
+        foreach($allowedModules AS $module => $acls) {
+            foreach($acls AS $action => $access) {
+                $this->assertEquals($user_acls[$module][$action], $access, "{$module} - {$action} Did not have the correct access");
+            }
+        }
+
+    }
+
+    /**
+     * @group rest
+     */
     public function testUpdate() {
         $restReply = $this->_restCall("me", json_encode(array('first_name' => 'UNIT TEST - AFTER')), "PUT");
         $this->assertNotEquals(stripos($restReply['reply']['current_user']['full_name'], 'UNIT TEST - AFTER'), false);

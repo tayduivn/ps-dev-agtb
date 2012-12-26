@@ -396,6 +396,7 @@ class RestListTest extends RestTestBase {
 
         // get the counts
         $result = $GLOBALS['db']->query("SELECT count(*) AS employee_count FROM users WHERE employee_status = 'Active'");
+
         $row = $GLOBALS['db']->fetchByAssoc($result);
         $employee_count = $row['employee_count'];
 
@@ -428,6 +429,7 @@ class RestListTest extends RestTestBase {
         $user->save();        
         
         $current_employee_count = $employee_count-1;
+
         $current_user_count = $user_count-1;
 
         $restReply = $this->_restCall('Employees');
