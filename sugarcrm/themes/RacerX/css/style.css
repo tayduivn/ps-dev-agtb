@@ -4424,6 +4424,10 @@ display: none !important;
 visibilility: hidden !important;
 }
 
+#moduleList .home img {
+    margin-top: 2px;
+}
+
 #subModuleList 
 {
 	background-color:#4e8ccf;
