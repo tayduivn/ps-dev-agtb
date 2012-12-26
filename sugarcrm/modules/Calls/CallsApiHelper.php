@@ -38,6 +38,9 @@ class CallsApiHelper extends SugarBeanApiHelper
         if($bean->status != 'Held') {
 
             $userInvitees[] = $bean->assigned_user_id;
+            if($bean->assigned_user_id != $GLOBALS['current_user']->id) {
+                $userInvitees[] = $GLOBALS['current_user']->id;
+            }            
              // Call the Call module's save function to handle saving other fields besides
             // the users and contacts relationships
 
@@ -49,8 +52,10 @@ class CallsApiHelper extends SugarBeanApiHelper
 
             $bean->setUserInvitees($userInvitees);
 
-
             vCal::cache_sugar_vcal(BeanFactory::getBean('Users', $bean->assigned_user_id));
+            if($bean->assigned_user_id != $GLOBALS['current_user']->id) {
+                vCal::cache_sugar_vcal(BeanFactory::getBean('Users', $GLOBALS['current_user']->id));
+            }            
         }
 
 
