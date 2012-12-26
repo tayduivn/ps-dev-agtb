@@ -4126,8 +4126,8 @@ ul.sf-sub-modulelist li.sfHover div.megawrapper {
 ul.megamenu .MMShortcuts li.sfHover a.sf-with-ul,
 ul.moduleTabMore li.sfHover a.sf-with-ul,
 ul.sf-sub-modulelist li.sfHover > a.sf-with-ul{
-    color: #fff !important;
-    background:		#355B7E;
+    color: #666 !important;
+    background:		#444;
 }
 
 #globalLinksModule ul.clickMenu.SugarActionMenu li a:hover,
@@ -4211,7 +4211,7 @@ ul.moduleTabMore,
 
 ul.sf-sub-modulelist .selected,
 #moduleList .more .selected{
-background-color: #355b7e;
+background-color: #444;
 color: #fff;
 }
 
