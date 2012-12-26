@@ -35,11 +35,14 @@
         'click .btn[name=primary]' : 'setPrimaryItem'
     },
     setValue: function(model) {
-        var index = this.$(".chzn-container-active").prev().data('index'),
+        var index = _.isUndefined(this.currentIndex) ? this.$(".chzn-container-active").prev().data('index') : this.currentIndex,
             team = this.value;
         team[index].id = model.id;
         team[index].name = model.value;
         this.model.set(this.def.name, team);
+        if(this.tplName === 'detail') {
+            this.render();
+        }
     },
     format: function(value) {
         if(_.isArray(value)) {
@@ -86,6 +89,9 @@
         this.setPrimary(index);
         this.$(".btn[name=primary]").removeClass("active");
         this.$(".btn[name=primary][data-index=" + index + "]").addClass("active");
+    },
+    beforeSearchMore: function() {
+        this.currentIndex = this.$(".chzn-container-active").prev().data('index');
     },
     throttleSearch: function(evt) {
         this.$(this.fieldTag).attr("disabled", true);

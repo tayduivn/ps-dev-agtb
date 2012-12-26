@@ -1,3 +1,29 @@
+/*********************************************************************************
+ * The contents of this file are subject to the SugarCRM Master Subscription
+ * Agreement (""License"") which can be viewed at
+ * http://www.sugarcrm.com/crm/master-subscription-agreement
+ * By installing or using this file, You have unconditionally agreed to the
+ * terms and conditions of the License, and You may not use this file except in
+ * compliance with the License.  Under the terms of the license, You shall not,
+ * among other things: 1) sublicense, resell, rent, lease, redistribute, assign
+ * or otherwise transfer Your rights to the Software, and 2) use the Software
+ * for timesharing or service bureau purposes such as hosting the Software for
+ * commercial gain and/or for the benefit of a third party.  Use of the Software
+ * may be subject to applicable fees and any use of the Software without first
+ * paying applicable fees is strictly prohibited.  You do not have the right to
+ * remove SugarCRM copyrights from the source code or user interface.
+ *
+ * All copies of the Covered Code must include on each user interface screen:
+ *  (i) the ""Powered by SugarCRM"" logo and
+ *  (ii) the SugarCRM copyright notice
+ * in the same form as they appear in the distribution.  See full license for
+ * requirements.
+ *
+ * Your Warranty, Limitations of liability and Indemnity are expressly stated
+ * in the License.  Please refer to the License for the specific language
+ * governing these rights and limitations under the License.  Portions created
+ * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
+ ********************************************************************************/
 (function(app) {
     if(!_.has(app, 'forecasts')) {
         app.forecasts = {}
@@ -323,6 +349,29 @@
                 returnValue = true;
             }
             return returnValue;
+        },
+
+        /**
+         * Get the Datasets for the specified app list string that are only present via the specified config key list string combination
+         *
+         * @param app_list_dataset_name {String} variable to pull from app list strings for the datasets needed
+         * @param cfg_key_prefix {String} config key part to prepend to the values of the app list string dataset, and will create a key to match within the config vars
+         * @param cfg {Backbone.Model} the Config model from the view
+         * @return {Object}
+         */
+        getAppConfigDatasets: function(app_list_dataset_name, cfg_key_prefix, cfg) {
+            var self = this;
+            var ds = app.metadata.getStrings('app_list_strings')[app_list_dataset_name] || [];
+
+            var returnDs = {};
+            _.each(ds, function(value, key){
+                if(cfg.get(cfg_key_prefix + key) == 1) {
+                    returnDs[key] = value
+                }
+            }, self);
+            return returnDs;
         }
+
+
     };
 })(SUGAR.App);

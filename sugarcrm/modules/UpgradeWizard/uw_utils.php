@@ -4230,7 +4230,7 @@ function add_unified_search_to_custom_modules_vardefs()
  *
  * @param $version String value of current system version (pre upgrade)
  */
-function unlinkUpgradeFiles($version)
+function unlinkUpgradeFiles($version, $path)
 {
 	if(!isset($version))
 	{
@@ -4239,16 +4239,6 @@ function unlinkUpgradeFiles($version)
 
     //First check if we even have the scripts_for_patch/files_to_remove directory
     require_once('modules/UpgradeWizard/UpgradeRemoval.php');
-
-    /*
-    if(empty($_SESSION['unzip_dir']))
-    {
-        global $sugar_config;
-        $base_upgrade_dir		= $sugar_config['upload_dir'] . "/upgrades";
-        $base_tmp_upgrade_dir	= "$base_upgrade_dir/temp";
-        $_SESSION['unzip_dir'] = mk_temp_dir( $base_tmp_upgrade_dir );
-    }
-    */
 
     if(isset($_SESSION['unzip_dir']) && file_exists($_SESSION['unzip_dir'].'/scripts/files_to_remove'))
     {
@@ -4267,14 +4257,14 @@ function unlinkUpgradeFiles($version)
 
                 //Check to make sure we should load and run this UpgradeRemoval instance
                 $upgradeInstance = new $upgradeClass();
-                if ($upgradeInstance instanceof UpgradeRemoval && version_compare($upgradeInstance->version, $version, '<='))
+                if ($upgradeInstance instanceof UpgradeRemoval && version_compare($upgradeInstance->version, $version, '>='))
                 {
-                    logThis('Running UpgradeRemoval instance ' . $upgradeClass);
-                    logThis('Files will be backed up to custom/backup');
+                    logThis('Running UpgradeRemoval instance ' . $upgradeClass, $path);
+                    logThis('Files will be backed up to custom/backup', $path);
                     $files = $upgradeInstance->getFilesToRemove($version);
                     foreach($files as $file)
                     {
-                       logThis($file);
+                       logThis($file, $path);
                     }
                     $upgradeInstance->processFilesToRemove($files);
                 }
@@ -4307,7 +4297,7 @@ function unlinkUpgradeFiles($version)
 	       	   	   	  $files = $upgradeInstance->getFilesToRemove($version);
 	       	   	   	  foreach($files as $file)
 	       	   	   	  {
-	       	   	   	  	 logThis($file);
+	       	   	   	  	 logThis($file, $path);
 	       	   	   	  }
 	       	   	   	  $upgradeInstance->processFilesToRemove($files);
        	   	   }

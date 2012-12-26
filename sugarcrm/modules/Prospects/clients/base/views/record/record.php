@@ -43,6 +43,11 @@ $viewdefs['Prospects']['base']['view']['record'] = array(
         ),
         array(
             'type'    => 'button',
+            'label'   => 'LBL_DUPLICATE_BUTTON_LABEL',
+            'css_class' => 'record-duplicate',
+        ),
+        array(
+            'type'    => 'button',
             'label'   => 'LBL_EDIT_BUTTON_LABEL',
             'css_class' => 'record-edit',
         ),
@@ -115,7 +120,10 @@ $viewdefs['Prospects']['base']['view']['record'] = array(
                 'referred_by', //TODO: does not exist so the columns are thrown off. remove and make phone_other a span of 12 and the columns dispaly correctly
                 'assigned_user_name',
                 'date_modified',
-                'team_name',
+                array(
+                    "type" => "teamset",
+                    "name" => "team_name"
+                ),
                 'date_entered', //TODO: this won't show until the teams widget is fixed
             ),
         ),

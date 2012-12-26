@@ -52,7 +52,8 @@ if(!empty($config['cleanCache'])){
 
 if(!empty($config['base_dir'])){
 	$config['base_dir'] = realpath($config['base_dir']);
-    if(!empty($config['file'])){
+
+	if(!empty($config['file'])){
 		if(file_exists($config['file'])) {
 			$config['file'] = realpath($config['file']);
 		} else {
@@ -93,6 +94,7 @@ if(!empty($config['base_dir'])){
 		$latin = new Latin($rome, $config['languages']['gitPath'], $config['base_dir'], $config['ver']);
 		$latin->copyTranslations();
 	}
+
     $build_dir = $rome->getBuildDir();
     if (!empty($config['sidecar'])) {
         foreach ( $config['builds'] as $build ) {

@@ -34,6 +34,7 @@ class ForecastsViewSidecar extends SidecarView
 {
     public function __construct($bean = null, $view_object_map = array())
     {
+        //Override constructor to hide footer, subpanels and search.  Also, do not use the table container for view
         $this->options['show_footer'] = false;
         $this->options['show_subpanels'] = false;
         $this->options['show_search'] = false;
@@ -57,6 +58,17 @@ class ForecastsViewSidecar extends SidecarView
         // begin initializing all default params
         $this->ss->assign("token", session_id());
         $this->ss->assign("module", $module);
+
+        global $app_strings;
+        $this->ss->assign("app_strings", $app_strings);
+
+        $url = 'javascript:void(window.open(\'index.php?module=Administration&action=SupportPortal&view=documentation&version='.
+            $GLOBALS['sugar_version'].'&edition='.$GLOBALS['sugar_flavor'].'&lang='.$GLOBALS['current_language'].
+            '&help_module='.$module.'&key='.$GLOBALS['server_unique_key'].'\'))';
+
+        $this->ss->assign('HELP_URL', $url);
+        $this->ss->assign('MODULE_NAME', isset($GLOBALS['app_list_strings']['moduleList'][$module]) ? $GLOBALS['app_list_strings']['moduleList'][$module] : $module);
+
         $this->ss->display($displayTemplate);
     }
 
@@ -191,6 +203,7 @@ EOHTML;
             }
             echo getVersionedScript('cache/include/javascript/sugar_grp1_jquery_core.js');
             echo getVersionedScript('cache/include/javascript/sugar_grp1_jquery_menus.js');
+            echo getVersionedScript('cache/include/javascript/sugar_grp1_bootstrap.js');
             echo getVersionedScript('cache/include/javascript/sugar_grp1_yui.js');
             echo getVersionedScript('cache/include/javascript/sugar_grp1.js');
             echo getVersionedScript('include/javascript/calendar.js');

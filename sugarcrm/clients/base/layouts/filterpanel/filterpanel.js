@@ -26,11 +26,15 @@
 
     renderHtml: function() {
         // Enable toggles
-        var toggles = _.pluck(this.options.meta.components, "view");
         this.toggles = [];
-
-        _.each(toggles, function(toggle) {
-            if (this.availableToggles[toggle]) {
+        _.each(this.options.meta.components, function(component) {
+            var toggle;
+            if(component.view) {
+                toggle = component.view;
+            } else if(component.layout) {
+                toggle = (_.isString(component.layout)) ? component.layout : component.layout.name;
+            }
+            if (toggle && this.availableToggles[toggle]) {
                 this.toggles.push({toggle: toggle, class: this.availableToggles[toggle]});
             }
         }, this);

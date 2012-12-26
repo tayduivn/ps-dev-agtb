@@ -168,6 +168,11 @@ class MetaDataManager {
         require_once('include/SugarSearchEngine/SugarSearchEngineMetadataHelper.php');
         //END SUGARCRM flav=pro ONLY
         $vardefs = $this->getVarDef($moduleName);
+        if (!empty($vardefs['fields']) && is_array($vardefs['fields']))
+        {
+            require_once("include/MassUpdate.php");
+            $vardefs['fields'] = MassUpdate::setMassUpdateFielddefs($vardefs['fields'], $moduleName);
+        }
 
         $data['fields'] = isset($vardefs['fields']) ? $vardefs['fields'] : array();
         $data['views'] = $this->getModuleViews($moduleName);
@@ -309,9 +314,15 @@ class MetaDataManager {
         $obj = BeanFactory::getObjectName($module);
 
         $outputAcl = array('fields'=>array());
-        if ( is_admin($userObject) || !SugarACL::moduleSupportsACL($module) ) {
+
+        if (!SugarACL::moduleSupportsACL($module)) {
             foreach ( array('admin', 'access','view','list','edit','delete','import','export','massupdate') as $action ) {
                 $outputAcl[$action] = 'yes';
+            }
+            if($bean instanceof User || $bean instanceof Employee) {
+                if($bean->id == $userObject->id) {
+                    $outputAcl['delete'] = 'no';
+                }
             }
         } else {
             $moduleAcls = SugarACL::getUserAccess($module, array(), array('user' => $userObject));
@@ -582,6 +593,7 @@ class MetaDataManager {
             MetaDataFiles::clearModuleClientCache();
         }
 
+        // Wipe out any files from the metadata cache directory
         $metadataFiles = glob(sugar_cached('api/metadata/').'*');
         if ( is_array($metadataFiles) ) {
             foreach ( $metadataFiles as $metadataFile ) {
@@ -590,6 +602,14 @@ class MetaDataManager {
                 // of many deletes.
                 unlink($metadataFile);
             }
+        }
+        
+        // clear the platform cache from sugar_cache to avoid out of date data
+        $platforms = self::getPlatformList();
+        foreach($platforms as $platform) {
+            $platformKey = $platform == "base" ?  "base" : implode(",", array($platform, "base"));
+            $hashKey = "metadata:$platformKey:hash";
+            sugar_cache_clear($hashKey);
         }
     }
     

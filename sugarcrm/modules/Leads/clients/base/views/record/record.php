@@ -43,6 +43,11 @@ $viewdefs['Leads']['base']['view']['record'] = array(
         ),
         array(
             'type'    => 'button',
+            'label'   => 'LBL_DUPLICATE_BUTTON_LABEL',
+            'css_class' => 'record-duplicate',
+        ),
+        array(
+            'type'    => 'button',
             'label'   => 'LBL_EDIT_BUTTON_LABEL',
             'css_class' => 'record-edit',
         ),
@@ -97,6 +102,29 @@ $viewdefs['Leads']['base']['view']['record'] = array(
                         'primary_address_country',
                     ),
                 ),
+                array(
+                    'name' => 'fieldset_altaddress',
+                    'type' => 'fieldset',
+                    'label' => 'Other Address',
+                    'fields' => array(
+                        'alt_address_street',
+                        'alt_address_city',
+                        'alt_address_state',
+                        'alt_address_postalcode',
+                        'alt_address_country',
+                        array(
+                            'name' => 'copy',
+                            'type' => 'copy',
+                            'mapping' => array(
+                                'primary_address_street' => 'alt_address_street',
+                                'primary_address_city' => 'alt_address_city',
+                                'primary_address_state' => 'alt_address_state',
+                                'primary_address_postalcode' => 'alt_address_postalcode',
+                                'primary_address_country' => 'alt_address_country',
+                            ),
+                        ),
+                    ),
+                ),
                 'phone_work',
                 'do_not_call',
                 'phone_fax',
@@ -121,23 +149,14 @@ $viewdefs['Leads']['base']['view']['record'] = array(
                 'lead_source_description',
                 'campaign_name',
                 'opportunity_amount',
-                array(
-                    'name' => 'fieldset_altaddress',
-                    'type' => 'fieldset',
-                    'label' => 'Other Address',
-                    'fields' => array(
-                        'alt_address_street',
-                        'alt_address_city',
-                        'alt_address_state',
-                        'alt_address_postalcode',
-                        'alt_address_country'
-                    )
-                ),
                 'refered_by',
                 'assigned_user_name',
                 'date_modified',
                 //BEGIN SUGARCRM flav=pro ONLY
-                'team_name',
+                array(
+                    "type" => "teamset",
+                    "name" => "team_name"
+                ),
                 //END SUGARCRM flav=pro ONLY
                 'date_entered'
             )

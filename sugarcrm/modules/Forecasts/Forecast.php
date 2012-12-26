@@ -294,7 +294,7 @@ class Forecast extends SugarBean
         // since the committed end point only sends the data as the base currency format
         if(empty($this->currency_id)) {
             // use user preferences for currency
-            $currency = SugarCurrency::getUserLocaleCurrency();
+            $currency = SugarCurrency::getBaseCurrency();
             $this->currency_id = $currency->id;
         } else {
             $currency = SugarCurrency::getCurrencyByID($this->currency_id);
