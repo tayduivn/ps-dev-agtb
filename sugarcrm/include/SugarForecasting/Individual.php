@@ -209,6 +209,5 @@ class SugarForecasting_Individual extends SugarForecasting_AbstractForecast impl
 
         $seed->setWorksheetArgs($this->args);
         $seed->save();
-        return $seed->id;
     }
 }
