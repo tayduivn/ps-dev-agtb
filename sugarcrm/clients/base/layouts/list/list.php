@@ -1,5 +1,8 @@
 <?php
 
 $layout = MetaDataManager::getLayout("FilterPanelLayout", array("override" => true, "notabs" => true));
-$layout->push(array("toggles" => array("list")));
+$listLayout = MetaDataManager::getLayout("GenericLayout", array("name" => "list"));
+$listLayout->push(array("view" => "massupdate"));
+$listLayout->push(array("view" => "list"));
+$layout->push(array("toggles" => $listLayout->getLayout(true)));
 $viewdefs['base']['layout']['list'] = $layout->getLayout();

@@ -28,7 +28,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  */
 
 
-$viewdefs['Contacts']['base']['view']['list'] = array(
+$viewdefs['Contacts']['base']['view']['baselist'] = array(
     'panels' =>
     array(
         0 =>
