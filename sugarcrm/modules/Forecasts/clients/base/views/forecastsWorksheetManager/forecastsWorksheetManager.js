@@ -291,9 +291,6 @@
      */
     _renderField: function(field) {
         app.view.View.prototype._renderField.call(this, field);
-        if (field.viewName !="edit" && field.def.clickToEdit === true && _.isEqual(this.selectedUser.id, app.user.get('id'))) {
-            field = new app.view.ClickToEditField(field, this);
-        }
     },
 
     /**

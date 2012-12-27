@@ -31,6 +31,6 @@
         <span class="edit-icon hide">
             <i class="icon-pencil icon-sm"></i>
         </span>
-        <span class="click format">{{value}}</span>
+        <span class="click format">{{this.dateValue}}</span>
     </div>
 </span>
