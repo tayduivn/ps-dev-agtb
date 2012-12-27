@@ -835,6 +835,19 @@
 
 				CAL.cut_record(item.record + id_suffix);				
 				//CAL.arrange_slot("t_" + time_cell + suffix);
+
+				// Bug59353 - fix of appointment overlaps to another user on shared Calendar
+				if (CAL.view == "shared"){
+				    var end_time = $("#"+slot.id).parents("div:first").children("div:last").attr("time");
+				    var end_time_id = $("#"+slot.id).parents("div:first").children("div:last").attr("id");
+				    if (end_time && end_time_id){
+				        var end_time_min = end_time.match(/[0-9]+:([0-9]+)[a|p]/)[1];
+				        var end_timestamp = parseInt(end_time_id.match(/t_([0-9]+)_.*/)[1]) + 1800;
+				        var share_coef = (end_timestamp - parseInt(item.timestamp)) / 1800;
+				        if (share_coef < duration_coef)
+				            el.style.height = parseInt((CAL.slot_height + 1) * share_coef - 1) + "px";
+				    }
+				}
 			}
 				
 	}
