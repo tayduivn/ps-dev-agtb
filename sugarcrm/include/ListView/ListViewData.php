@@ -74,11 +74,14 @@ class ListViewData {
             $_SESSION['lvd']['last_ob'] = $orderBy;
         }
 		else {
+            $userPreferenceOrder = $GLOBALS['current_user']->getPreference('listviewOrder', $this->var_name);
 			if(!empty($_SESSION[$this->var_order_by])) {
 				$orderBy = $_SESSION[$this->var_order_by]['orderBy'];
 				$direction = $_SESSION[$this->var_order_by]['direction'];
-			}
-			else{
+            } elseif (!empty($userPreferenceOrder)) {
+                $orderBy = $userPreferenceOrder['orderBy'];
+                $direction = $userPreferenceOrder['sortOrder'];
+            } else {
 				$orderBy = 'date_entered';
 				$direction = 'DESC';
 			}
@@ -236,12 +239,6 @@ class ListViewData {
             $order = $this->getOrderBy(); // retreive from $_REQUEST
         }
 
-        // else use stored preference
-        $userPreferenceOrder = $current_user->getPreference('listviewOrder', $this->var_name);
-
-        if(empty($order['orderBy']) && !empty($userPreferenceOrder)) {
-            $order = $userPreferenceOrder;
-        }
         // still empty? try to use settings passed in $param
         if(empty($order['orderBy']) && !empty($params['orderBy'])) {
             $order['orderBy'] = $params['orderBy'];
