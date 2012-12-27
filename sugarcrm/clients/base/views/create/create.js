@@ -13,7 +13,7 @@
      * for the current layout.
      */
     initialize: function(options) {
-        _.extend(this.events, {
+        this.events = _.extend({}, this.events, {
             'click [name=save_button]': 'save',
             'click [name=cancel_button]': 'cancel',
             'click [name=save_create_button]': 'saveAndCreate',
