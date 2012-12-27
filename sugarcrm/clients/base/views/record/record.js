@@ -326,15 +326,10 @@
         field = (field.parent) ? field.parent : field;
         fields = field.fields || [field];
 
-        if (field.options.viewName != "edit" && !close) { // About to be switched to edit
-            var self = this;
-            $(document).on("mousedown.record" + field.name, {field: field, cell: cell}, function(event) {
-                // Need to call in a separate "thread" because it changes to detail view before it sets
-                // the value of the textarea in the model.
-                setTimeout(function(){
-                    self.fieldClose(event);
-                }, 0);
-            });
+        if (field.options.viewName != "edit" && !close) {
+            // Need to call this.fieldClose() in a separate "thread" because it changes to detail view
+            // before it sets the value of the textarea in the model.
+            $(document).on("mousedown.record" + field.name, {field: field, cell: cell}, _.debounce(this.fieldClose, 0));
         }
 
         if (close) {
