@@ -159,6 +159,11 @@ class Contact extends Person {
 		parent::__construct();
 	}
 
+
+	/**
+	 * Sets the Sync Contact flag if Contacts Users Id is not empty
+	 * @return bool
+	 */
 	public function setSyncContact() {
 		if(!empty($this->contacts_users_id)) {
 			$this->sync_contact = true;
@@ -168,10 +173,18 @@ class Contact extends Person {
 		return false;
 	}
 
+	/**
+	 * Set the Current User as the Contacts User Id
+	 * @param type SugarBean $user 
+	 */
 	public function setCurrentUserContactsUserId(SugarBean $user) {
 		$this->contacts_users_id = $user->id;
 	}
 
+	/**
+	 * Remove the Current User as the Contacts User Id
+	 * @param type SugarBean $user 
+	 */
 	public function removeCurrentUserContactsUserId(SugarBean $user) {
 		if(!isset($this->users)) {
 			$this->load_relationship('user_sync');
