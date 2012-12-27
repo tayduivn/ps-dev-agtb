@@ -31,7 +31,7 @@
         meta = app.view.views.BaselistView.prototype.addMultiSelectionAction.call(this, meta);
         if(meta.favorite) {
             _.each(meta.panels, function(panel){
-                panel.fields[0].fields.push('favorite');
+                panel.fields[0].fields.push({type: 'favorite'});
             });
         }
         return meta;
