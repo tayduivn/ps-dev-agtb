@@ -563,7 +563,8 @@ class RestRelateRecordTest extends RestTestBase {
 
         $restReply = $this->_restCall("Calls/{$call->id}/link/notes", $post, 'POST');
 
-        $this->notes[] = $restReply['reply']['related_record']['id'];
+        $this->assertNotEmpty($restReply['reply']['related_record']['id'], "ID was not set for the related record");
+        $this->notes[] = BeanFactory::getBean('Notes', $restReply['reply']['related_record']['id']);
         $this->assertEquals($restReply['reply']['related_record']['parent_id'], $call->id, "Call ID was not the parent id of the note.");
         $this->assertEquals($restReply['reply']['related_record']['parent_type'], 'Calls', "Call Module was not the parent type of the note.");
 
@@ -578,8 +579,9 @@ class RestRelateRecordTest extends RestTestBase {
             );
 
         $restReply = $this->_restCall("Leads/{$lead->id}/link/calls", $post, 'POST');
+        $this->assertNotEmpty($restReply['reply']['related_record']['id'], "ID was not set for the related record");
+        $this->calls[] = BeanFactory::getBean('Calls', $restReply['reply']['related_record']['id']);
 
-        $this->calls[] = $restReply['reply']['related_record']['id'];
         $this->assertEquals($restReply['reply']['related_record']['parent_id'], $lead->id, "Lead ID was not the parent id of the call.");
         $this->assertEquals($restReply['reply']['related_record']['parent_type'], 'Leads', "Leads Module was not the parent type of the call.");
     }
@@ -602,8 +604,8 @@ class RestRelateRecordTest extends RestTestBase {
             );
 
         $restReply = $this->_restCall("Calls/{$call->id}/link/notes", $post, 'POST');
-
-        $this->notes[] = $restReply['reply']['related_record']['id'];
+        $this->assertNotEmpty($restReply['reply']['related_record']['id'], "ID was not set for the related record");
+        $this->notes[] = BeanFactory::getBean('Notes', $restReply['reply']['related_record']['id']);
         $this->assertEquals($restReply['reply']['related_record']['parent_id'], $call->id, "Call ID was not the parent id of the note.");
         $this->assertEquals($restReply['reply']['related_record']['parent_type'], 'Calls', "Call Module was not the parent type of the note.");
 
@@ -619,8 +621,9 @@ class RestRelateRecordTest extends RestTestBase {
             );
 
         $restReply = $this->_restCall("Leads/{$lead->id}/link/calls", $post, 'POST');
+        $this->assertNotEmpty($restReply['reply']['related_record']['id'], "ID was not set for the related record");
+        $this->calls[] = BeanFactory::getBean('Calls', $restReply['reply']['related_record']['id']);
 
-        $this->calls[] = $restReply['reply']['related_record']['id'];
         $this->assertEquals($restReply['reply']['related_record']['parent_id'], $lead->id, "Lead ID was not the parent id of the call.");
         $this->assertEquals($restReply['reply']['related_record']['parent_type'], 'Leads', "Leads Module was not the parent type of the call.");
     }
@@ -643,8 +646,8 @@ class RestRelateRecordTest extends RestTestBase {
             );
 
         $restReply = $this->_restCall("Calls/{$call->id}/link/notes", $post, 'POST');
-
-        $this->notes[] = $restReply['reply']['related_record']['id'];
+        $this->assertNotEmpty($restReply['reply']['related_record']['id'], "ID was not set for the related record");
+        $this->notes[] = BeanFactory::getBean('Notes',$restReply['reply']['related_record']['id']);
         $this->assertEquals($restReply['reply']['related_record']['parent_id'], $call->id, "Call ID was not the parent id of the note.");
         $this->assertEquals($restReply['reply']['related_record']['parent_type'], 'Calls', "Call Module was not the parent type of the note.");
 
@@ -660,8 +663,8 @@ class RestRelateRecordTest extends RestTestBase {
             );
 
         $restReply = $this->_restCall("Leads/{$lead->id}/link/calls", $post, 'POST');
-
-        $this->calls[] = $restReply['reply']['related_record']['id'];
+        $this->assertNotEmpty($restReply['reply']['related_record']['id'], "ID was not set for the related record");
+        $this->calls[] = BeanFactory::getBean('Calls', $restReply['reply']['related_record']['id']);
         $this->assertEquals($restReply['reply']['related_record']['parent_id'], $lead->id, "Lead ID was not the parent id of the call.");
         $this->assertEquals($restReply['reply']['related_record']['parent_type'], 'Leads', "Leads Module was not the parent type of the call.");
     }
@@ -684,8 +687,8 @@ class RestRelateRecordTest extends RestTestBase {
             );
 
         $restReply = $this->_restCall("Calls/{$call->id}/link/notes", $post, 'POST');
-
-        $this->notes[] = $restReply['reply']['related_record']['id'];
+        $this->assertNotEmpty($restReply['reply']['related_record']['id'], "ID was not set for the related record");
+        $this->notes[] = BeanFactory::getBean('Notes', $restReply['reply']['related_record']['id']);
         $this->assertEquals($restReply['reply']['related_record']['parent_id'], $call->id, "Call ID was not the parent id of the note.");
         $this->assertEquals($restReply['reply']['related_record']['parent_type'], 'Calls', "Call Module was not the parent type of the note.");
 
@@ -702,8 +705,8 @@ class RestRelateRecordTest extends RestTestBase {
             );
 
         $restReply = $this->_restCall("Leads/{$lead->id}/link/calls", $post, 'POST');
-
-        $this->calls[] = $restReply['reply']['related_record']['id'];
+        $this->assertNotEmpty($restReply['reply']['related_record']['id'], "ID was not set for the related record");
+        $this->calls[] = BeanFactory::getBean('Calls', $restReply['reply']['related_record']['id']);
         $this->assertEquals($restReply['reply']['related_record']['parent_id'], $lead->id, "Lead ID was not the parent id of the call.");
         $this->assertEquals($restReply['reply']['related_record']['parent_type'], 'Leads', "Leads Module was not the parent type of the call.");
     }

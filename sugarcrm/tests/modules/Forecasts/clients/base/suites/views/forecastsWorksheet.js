@@ -26,14 +26,44 @@ describe("The forecasts worksheet", function(){
     beforeEach(function() {
         app = SugarTest.app;
         SugarTest.loadFile("../modules/Forecasts/clients/base/lib", "ForecastsUtils", "js", function(d) { return eval(d); });
-        view = SugarTest.loadFile("../modules/Forecasts/clients/base/views/forecastsWorksheet", "forecastsWorksheet", "js", function(d) { return eval(d); });
-        view.context = {};
-        view.context.forecasts = {};
-        view.context.forecasts.config = new (Backbone.Model.extend({
+        SugarTest.loadFile("../include/javascript/jquery/", "jquery.dataTables.min", "js", function(d) { return eval(d); });
+        SugarTest.loadFile("../include/javascript/jquery/", "jquery.dataTables.customSort", "js", function(d) { return eval(d); });
+
+        app.user.set({'id' : 'test_userid'});
+
+        app.defaultSelections = {
+                timeperiod_id: {
+                    'id' : 'test_timeperiod'
+                },
+                group_by: {},
+                dataset: {},
+                selectedUser: {},
+                ranges: {}
+            };
+
+        var context = app.context.getContext();
+        context.forecasts = new Backbone.Model({'selectedTimePeriod' : new Backbone.Model({'id' : 'fake_id'})});
+        context.forecasts.worksheet = new Backbone.Collection();
+        context.forecasts.config = new (Backbone.Model.extend({
             "defaults": fixtures.metadata.modules.Forecasts.config
         }));
+
+        var meta = {
+            panels : [{'fields' : []}]
+        };
+
+        view = SugarTest.createView('../modules/Forecasts/clients/base', 'Forecasts', "forecastsWorksheet", meta, context);
+
+        // remove the window watcher event
+        $(window).unbind("beforeunload");
+
         var cte = SugarTest.loadFile("../modules/Forecasts/clients/base/lib", "ClickToEdit", "js", function(d) { return eval(d); });
         var bge = SugarTest.loadFile("../modules/Forecasts/clients/base/lib", "BucketGridEnum", "js", function(d) { return eval(d); });
+    });
+
+    afterEach(function() {
+        app.user.unset('id');
+        view.unbindData();
     });
 
     describe("clickToEdit field", function() {
@@ -194,12 +224,6 @@ describe("The forecasts worksheet", function(){
         });
         it("should test checkConfigForColumnVisibility passing in found key", function() {
             var testVal = 'best_case';
-            // have to build the context.forecasts.config model
-            view.context = {};
-            view.context.forecasts = {};
-            view.context.forecasts.config = new (Backbone.Model.extend({
-                "defaults": fixtures.metadata.modules.Forecasts.config
-            }));
             expect(view.checkConfigForColumnVisibility(testVal)).toBe(true);
         });
         it("should test checkConfigForColumnVisibility passing in random key not found", function() {
@@ -229,23 +253,124 @@ describe("The forecasts worksheet", function(){
     		expect(view._collection.fetch).toHaveBeenCalled();
     	});
     });
+
+    describe('Forecasts Worksheet Dirty Models', function() {
+        var m;
+        beforeEach(function(){
+            m = new Backbone.Model({'hello' : 'world'});
+            view._collection.add(m);
+    	});
+
+    	afterEach(function(){
+            view._collection.reset();
+            m = undefined;
+    	});
+
+        it('isDirty should return false', function() {
+            expect(view.isDirty()).toBeFalsy();
+        });
+
+        it('isDirty should return true', function() {
+            m.set({'hello' : 'jon1'});
+            expect(view.isDirty()).toBeTruthy();
+        });
+
+        it('should not be dirty after main collection reset', function() {
+            m.set({'hello' : 'jon1'});
+            expect(view.isDirty()).toBeTruthy();
+            view._collection.reset();
+            expect(view.isDirty()).toBeFalsy();
+        })
+    });
+
+    describe('Forecast Worksheet Save Dirty Models', function() {
+        var m, saveStub;
+        beforeEach(function(){
+            m = new Backbone.Model({'hello' : 'world'});
+            saveStub = sinon.stub(m, 'save', function(){});
+            view._collection.add(m);
+    	});
+
+    	afterEach(function(){
+            view._collection.reset();
+            saveStub.restore();
+            m = undefined;
+    	});
+
+        it('should return zero with no dirty models', function() {
+            expect(view.saveWorksheet()).toEqual(0);
+        });
+
+        it('should return 1 when one model is dirty', function() {
+            m.set({'hello':'jon1'});
+            expect(view.saveWorksheet()).toEqual(1);
+            expect(saveStub).toHaveBeenCalled();
+        });
+    });
+
+    describe("Forecasts worksheet save dirty models with correct timeperiod after timeperiod changes", function() {
+        var m, saveStub, safeFetchStub;
+        beforeEach(function(){
+            m = new Backbone.Model({'hello' : 'world'});
+            saveStub = sinon.stub(m, 'save', function(){});
+            safeFetchStub = sinon.stub(view, 'safeFetch', function(){});
+            view._collection.add(m);
+    	});
+
+    	afterEach(function(){
+            view._collection.reset();
+            saveStub.restore();
+            safeFetchStub.restore();
+            m = undefined;
+    	});
+
+        it('model should contain the old timeperiod id', function() {
+            m.set({'hello':'jon1'});
+            view.updateWorksheetBySelectedTimePeriod({'id' : 'my_new_timeperiod'});
+            expect(view.saveWorksheet()).toEqual(1);
+            expect(saveStub).toHaveBeenCalled();
+            expect(safeFetchStub).toHaveBeenCalled();
+
+            expect(m.get('timeperiod_id')).toEqual('test_timeperiod');
+            expect(view.timePeriod).toEqual('my_new_timeperiod');
+            expect(view.dirtyTimeperiod).toEqual('');
+        });
+    });
+
+    describe("Forecasts worksheet save dirty models with correct user_id after selected_user changes", function() {
+        var m, saveStub, safeFetchStub, viewStub;
+        beforeEach(function(){
+            m = new Backbone.Model({'hello' : 'world'});
+            saveStub = sinon.stub(m, 'save', function(){});
+            safeFetchStub = sinon.stub(view, 'safeFetch', function(){});
+            view._collection.add(m);
+            viewStub = sinon.stub(view._collection, 'fetch', function(){});
+
+    	});
+
+    	afterEach(function(){
+            view._collection.reset();
+            saveStub.restore();
+            safeFetchStub.restore();
+            m = undefined;
+    	});
+
+        it('model should contain the old userid', function() {
+            m.set({'hello':'jon1'});
+            view.updateWorksheetBySelectedUser({'id' : 'my_new_user_id'});
+            expect(view.saveWorksheet()).toEqual(1);
+            expect(saveStub).toHaveBeenCalled();
+            expect(safeFetchStub).toHaveBeenCalled();
+
+            expect(m.get('current_user')).toEqual('test_userid');
+            expect(view.selectedUser.id).toEqual('my_new_user_id');
+            expect(view.dirtyUser).toEqual('');
+        });
+    });
+
     
     describe("Forecasts worksheet bindings ", function(){
     	beforeEach(function(){
-    		view.context = {
-                forecasts:{
-                    on: function(event, fcn){},
-                    worksheet:{
-                        on: function(event, fcn){}
-                    },
-                    config:{
-                        on: function(event, fcn){}
-                    }
-                }
-    		};
-    		view._collection.on = function(){};
-    		
-    		sinon.spy(view._collection, "on");
     		sinon.spy(view.context.forecasts, "on");
     		sinon.spy(view.context.forecasts.worksheet, "on");
     		sinon.spy(view.context.forecasts.config, "on");
@@ -253,12 +378,9 @@ describe("The forecasts worksheet", function(){
     	});
     	
     	afterEach(function(){
-    		view._collection.on.restore();
     		view.context.forecasts.on.restore();
     		view.context.forecasts.worksheet.on.restore();
     		view.context.forecasts.config.on.restore();
-    		delete view.context;
-    		view.context = {};
     	});
     	
     	it("collection.on should have been called with reset", function(){
