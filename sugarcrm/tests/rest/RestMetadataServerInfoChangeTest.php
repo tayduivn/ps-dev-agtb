@@ -23,43 +23,49 @@
  ********************************************************************************/
 
 require_once('tests/rest/RestTestBase.php');
+require_once('include/MetaDataManager/MetaDataManager.php');
+require_once('modules/Administration/controller.php');
 
-class RestCallHelperTest extends RestTestBase {
+class RestMetadataServerInfoChangeTest extends RestTestBase {
+    /**
+     * @group rest
+     */    
+    public function testServerInfoChangeTest() {
+        $GLOBALS['current_user']->is_admin = 1;
+        $GLOBALS['current_user']->save();
 
-    public function tearDown()
-    {
-        parent::tearDown();
-        $GLOBALS['db']->query("DELETE FROM calls WHERE id = '{$this->call_id}'");
-    }
+        $mm = new MetaDataManager($GLOBALS['current_user'], 'mobile', false);
+        $original_server_info = $mm->getServerInfo();
 
-    public function testCall() {
+        $restReply = $this->_restCall('metadata?platform=mobile');
+        $server_info = $restReply['reply']['server_info'];
 
-        // create a call linked to yourself, a contact, and a lead, verify the call is linked to each and on your calendar
-        $call = array(
-            'name' => 'Test call',
-            'duration' => 1,
-            'start_date' => date('Y-m-d'),
-            'assigned_user_id' => 1,
-        );
+        $this->assertEquals($original_server_info['fts'], $server_info['fts'], "Server Info not equal");
 
-        $restReply = $this->_restCall('Calls/', json_encode($call), 'POST');
+        $new_server_info = $original_server_info;
+        $new_server_info['fts']= array('enabled' => true, 'type' => 'Elastic');
 
-        $this->assertTrue(isset($restReply['reply']['id']), 'call was not created, reply was: ' . print_r($restReply['reply'], true));
+        $ac = new AdministrationController();
+        $_REQUEST['type'] = 'Elastic';
+        $_REQUEST['host'] = 'localhost';
+        $_REQUEST['port'] = '9200';
 
-        $call_id = $restReply['reply']['id'];
-        $this->call_id = $call_id;
+        ob_start();
+        $ac->action_saveglobalsearchsettings();
+        ob_end_clean();
 
+        $restReply = $this->_restCall('metadata?platform=mobile');
+        $server_info = $restReply['reply']['server_info'];
 
-        // verify the user has the Call, which will validate on calendar
-        $restReplyUsers = $this->_restCall("Calls/{$call_id}/link/users");
-        $users_linked = array();
-        foreach($restReplyUsers['reply']['records'] AS $record) {
-            $users_linked[] = $record['id'];
-        }
+        $this->assertEquals($new_server_info['fts'], $server_info['fts'], "New Server Info not equal");
 
-        $this->assertTrue(in_array($GLOBALS['current_user']->id, $users_linked), "Current User was not successfully linked");
-        $this->assertTrue(in_array(1, $users_linked), "Assigned User was not successfully linked");
+        $_REQUEST['type'] = '';
+        $_REQUEST['host'] = '';
+        $_REQUEST['port'] = '';
 
+        ob_start();
+        $ac->action_saveglobalsearchsettings();
+        ob_end_clean();
 
     }
 }

@@ -722,7 +722,7 @@ function swapChart(chartId,jsonFilename,css,chartConfig){
             table += "</div>";
 
 
-            if(legend['wmlegend'] != "undefined") {
+            if(typeof legend['wmlegend'] != "undefined") {
 
                 table += "<div class='col2'>";
                 for(var i=0;i<legend['wmlegend']['name'].length;i++) {

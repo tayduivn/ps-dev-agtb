@@ -71,11 +71,11 @@ class PersonUnifiedSearchApi extends UnifiedSearchApi {
      * @return string
      */
     protected function getCustomWhereForModule($module) {
-        $prefix = '';
+
         if ($module == 'Employees') {
-            $prefix = "users.employee_status = 'Active' AND ";
+            return "users.employee_status = 'Active'";
         } 
         
-        return $prefix . "users.status = 'Active'";
+        return "users.status = 'Active'";
     }
 }

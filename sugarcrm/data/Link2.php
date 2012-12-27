@@ -33,6 +33,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 ********************************************************************************/
 global $dictionary;
 require_once("data/Relationships/RelationshipFactory.php");
+require_once("data/Link.php");
 
 /**
  * Represents a relationship from a single beans perspective.
