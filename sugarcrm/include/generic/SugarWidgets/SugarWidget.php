@@ -108,6 +108,11 @@ class SugarWidget
      */
     static public function isModuleHidden( $moduleName )
     {
+        global $modules_exempt_from_availability_check;
+        if(isset($modules_exempt_from_availability_check[$moduleName])) {
+            return false;
+        }
+
         require_once('modules/MySettings/TabController.php');
         require_once('include/SubPanel/SubPanelDefinitions.php');
         $tabs = new TabController();

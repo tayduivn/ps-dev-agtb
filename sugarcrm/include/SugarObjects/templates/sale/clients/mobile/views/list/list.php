@@ -59,7 +59,7 @@ $viewdefs[$module_name]['mobile']['view']['list'] = array(
                     'enabled' => true,
                 ),
                 array(
-                    'name' => $OBJECT_NAME.'_type',
+                    'name' => $module_name .'_type',
                     'width' => '15',
                     'label' => 'LBL_TYPE',
                 ),

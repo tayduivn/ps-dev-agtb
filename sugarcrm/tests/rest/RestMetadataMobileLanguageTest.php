@@ -24,42 +24,24 @@
 
 require_once('tests/rest/RestTestBase.php');
 
-class RestCallHelperTest extends RestTestBase {
+class RestMetadataMobileLanguageTest extends RestTestBase {
+    /**
+     * @group rest
+     */    
+    public function testMobileMetadataLanguageFiles() {
+        $restReply = $this->_restCall('metadata?platform=mobile');
+        $labels = $restReply['reply']['labels'];
 
-    public function tearDown()
-    {
-        parent::tearDown();
-        $GLOBALS['db']->query("DELETE FROM calls WHERE id = '{$this->call_id}'");
-    }
+        unset($labels['_hash']);
+        $default = $labels['default'];
+        unset($labels['default']);
 
-    public function testCall() {
+        $output = array();
 
-        // create a call linked to yourself, a contact, and a lead, verify the call is linked to each and on your calendar
-        $call = array(
-            'name' => 'Test call',
-            'duration' => 1,
-            'start_date' => date('Y-m-d'),
-            'assigned_user_id' => 1,
-        );
-
-        $restReply = $this->_restCall('Calls/', json_encode($call), 'POST');
-
-        $this->assertTrue(isset($restReply['reply']['id']), 'call was not created, reply was: ' . print_r($restReply['reply'], true));
-
-        $call_id = $restReply['reply']['id'];
-        $this->call_id = $call_id;
-
-
-        // verify the user has the Call, which will validate on calendar
-        $restReplyUsers = $this->_restCall("Calls/{$call_id}/link/users");
-        $users_linked = array();
-        foreach($restReplyUsers['reply']['records'] AS $record) {
-            $users_linked[] = $record['id'];
+        foreach($labels AS $lang => $location) {
+            $lang_file = json_decode(file_get_contents($location));
+            $this->assertNotEmpty($lang_file, "Language File is empty");
         }
 
-        $this->assertTrue(in_array($GLOBALS['current_user']->id, $users_linked), "Current User was not successfully linked");
-        $this->assertTrue(in_array(1, $users_linked), "Assigned User was not successfully linked");
-
-
-    }
+    }    
 }

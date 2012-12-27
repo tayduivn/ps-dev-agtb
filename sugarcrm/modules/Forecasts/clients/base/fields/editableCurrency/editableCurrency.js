@@ -8,7 +8,7 @@
         'mouseleave span.editable': 'togglePencil',
         'click span.editable': 'onClick',
         'blur span.edit input': 'onBlur',
-        'keypress span.edit input': 'onKeypress'
+        'keyup span.edit input': 'onKeypress'
     },
 
     inputSelector: 'span.edit input',
@@ -104,10 +104,10 @@
         // set the edit input string to an unformatted number
         var formattedValue = app.utils.formatNumber(
             this.model.get(this.name),
-            app.user.get('decimal_precision'),
-            app.user.get('decimal_precision'),
+            app.user.getPreference('decimal_precision'),
+            app.user.getPreference('decimal_precision'),
             '',
-            app.user.get('decimal_separator')
+            app.user.getPreference('decimal_separator')
         );
         this.$el.find(this.inputSelector).val(formattedValue);
 
@@ -117,16 +117,18 @@
     },
 
     /**
-     * Handle when return/enter and tab keys are pressed
+     * Handle when esc/return/enter and tab keys are pressed
      *
      * @param evt
      */
     onKeypress: function (evt) {
-        // submit if pressed return or tab
-        if (evt.which == 13 || evt.which == 9) {
+        if (evt.which == 27) {
+            this.$el.find(this.inputSelector).val(this.value);
+            this.$el.find(this.inputSelector).blur();
+        } else if (evt.which == 13 || evt.which == 9) {
+            // blur if value is unchanged
             var ogVal = this.value,
                 ngVal = this.$el.find(this.inputSelector).val();
-
             if (_.isEqual(ogVal, ngVal)) {
                 this.$el.find(this.inputSelector).blur();
             }
@@ -153,8 +155,8 @@
      * @return {Boolean}
      */
     isValid: function (value) {
-        var ds = app.utils.regexEscape(app.user.get('decimal_separator')) || '.',
-            gs = app.utils.regexEscape(app.user.get('number_grouping_separator')) || ',',
+        var ds = app.utils.regexEscape(app.user.getPreference('decimal_separator')) || '.',
+            gs = app.utils.regexEscape(app.user.getPreference('number_grouping_separator')) || ',',
             // matches a valid positive decimal number
             reg = new RegExp("^\\+?(\\d+|\\d{1,3}("+gs+"\\d{3})*)?("+ds+"\\d+)?\\%?$"),
             hb = Handlebars.compile("{{str_format key module args}}"),
