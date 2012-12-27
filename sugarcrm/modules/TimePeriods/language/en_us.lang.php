@@ -55,7 +55,9 @@ $mod_strings = array (
   'LBL_SEARCH_TP_START_DATE' => 'Start Date',
   'LBL_SEARCH_TP_END_DATE' => 'End Date',
   'ERR_TIME_PERIOD_DATE_RANGE' => 'Time period end date should be later than start date.',
-  'LBL_EDITLAYOUT' => 'Edit Layout' /*for 508 compliance fix*/,
+  'LBL_EDITLAYOUT' => 'Edit Layout', /*for 508 compliance fix*/
+  'LBL_LIST_WARNING' => 'Please note that any changes made in this module might potentially break the functionality of the {0} module. The changes related to {1} should be made through the <a href="index.php?module=Forecasts&action=#config">{0} Settings</a>.',
+
 );
 
 ?>
