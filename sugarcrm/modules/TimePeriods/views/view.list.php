@@ -51,7 +51,7 @@ class TimePeriodsViewList extends ViewList
         $float = SugarThemeRegistry::current()->directionality == 'rtl' ? 'right' : 'left';
 
         $title = '<div><div class="moduleTitle"><h2>' . $app_list_strings['moduleList'][$this->module] . '</h2></div>';
-        $title .= "<div style='float:{$float}; padding-bottom:10px;'>{$warningText}</div></div>";
+        $title .= "<div class='overdueTask' style='float:{$float}; padding-bottom:10px;'>{$warningText}</div></div>";
         return $title;
     }
 
