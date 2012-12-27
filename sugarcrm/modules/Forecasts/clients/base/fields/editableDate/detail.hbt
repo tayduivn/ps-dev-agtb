@@ -26,4 +26,11 @@
  * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 }}
-<span class="editable"><i></i> {{this.dateValue}}</span>
+<span class="editable">
+    <div class="sugareditable">
+        <span class="edit-icon hide">
+            <i class="icon-pencil icon-sm"></i>
+        </span>
+        <span class="click format">{{this.dateValue}}</span>
+    </div>
+</span>

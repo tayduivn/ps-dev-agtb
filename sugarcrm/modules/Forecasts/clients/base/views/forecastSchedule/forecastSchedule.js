@@ -128,15 +128,7 @@
         }
     	
     	app.view.View.prototype._renderField.call(this, field);
-        
-    	if (this.editableWorksheet === true && field.def.clickToEdit === true) {
-            new app.view.ClickToEditField(field, this);
-        }
 
-        if (this.editableWorksheet === true && field.name == "expected_commit_stage") {
-            new app.view.BucketGridEnum(field, this, "ForecastSchedule");
-        }
-     
     },
 
     /**

@@ -3,20 +3,20 @@
 
     events: {
         'mouseenter span.editable': 'togglePencil',
-        'mouseleave span.editable': 'togglePencil'
-        //'click span.editable': 'onClick',
-        //'blur span.edit input': 'onBlur',
-        //'keypress span.edit input': 'onKeypress'
+        'mouseleave span.editable': 'togglePencil',
+        'click span.editable': 'onClick',
+        'blur input.datepicker': 'onBlur',
+        'keyup input.datepicker': 'onKeypress'
     },
 
-    inputSelector: 'div.date input',
+    inputSelector: 'input.datepicker',
 
     errorMessage: '',
 
     _canEdit: true,
 
     initialize: function (options) {
-        app.view.fields.IntField.prototype.initialize.call(this, options);
+        app.view.fields.DateField.prototype.initialize.call(this, options);
         this.checkIfCanEdit();
     },
 
@@ -24,7 +24,13 @@
      * Utility Method to check if we can edit again.
      */
     checkIfCanEdit: function() {
-        return;
+        if (!_.isUndefined(this.context.forecasts) && !_.isUndefined(this.context.forecasts.config)) {
+            this._canEdit = !_.contains(
+                // join the two variable together from the config
+                this.context.forecasts.config.get("sales_stage_won").concat(
+                    this.context.forecasts.config.get("sales_stage_lost")
+                ), this.model.get('sales_stage'));
+        }
     },
 
     /**
@@ -46,7 +52,13 @@
     togglePencil: function (evt) {
         evt.preventDefault();
         if (!this.isEditable()) return;
-        this.$el.find('i').toggleClass('icon-pencil icon-small');
+        if(evt.type == 'mouseenter') {
+            this.$el.find('.edit-icon').removeClass('hide');
+            this.$el.find('.edit-icon').addClass('show');
+        } else {
+            this.$el.find('.edit-icon').removeClass('show');
+            this.$el.find('.edit-icon').addClass('hide');
+        }
     },
 
     /**
@@ -54,14 +66,16 @@
      * @param evt
      */
     onClick : function(evt) {
+        console.log('onClick');
         evt.preventDefault();
         if (!this.isEditable()) return;
 
-        this.options.viewName = 'edit';
+        //this.options.viewName = 'edit';
+        this.options.def.view = 'edit';
         this.render();
 
         // put the focus on the input
-        //this.$el.find(this.inputSelector).focus().select();
+        this.$el.find(this.inputSelector).focus().select();
     },
 
     /**
@@ -70,7 +84,15 @@
      * @param evt
      */
     onKeypress: function (evt) {
-        return;
+        // submit if pressed return or tab
+        if (evt.which == 13 || evt.which == 9) {
+            var ogVal = this.value,
+                ngVal = this.$el.find(this.inputSelector).val();
+
+            if (_.isEqual(ogVal, ngVal)) {
+                this.$el.find(this.inputSelector).blur();
+            }
+        }
     },
 
     /**
@@ -82,7 +104,8 @@
      */
     onBlur : function(evt) {
         evt.preventDefault();
-        this.options.viewName = 'detail';
+        //this.options.viewName = 'detail';
+        this.options.def.view = 'detail';
         this.render();
     },
 
@@ -112,10 +135,13 @@
     showErrors : function() {
         // attach error styles
         /*
-        this.$el.find('.error-message').html(this.errorMessage);
-        this.$el.find('.control-group').addClass('error');
-        this.$el.find('.help-inline.editable-error').removeClass('hide').addClass('show');
-        */
-    }
+         this.$el.find('.error-message').html(this.errorMessage);
+         this.$el.find('.control-group').addClass('error');
+         this.$el.find('.help-inline.editable-error').removeClass('hide').addClass('show');
+         */
+    },
 
+    _setDateIfDefaultValue: function() {
+
+    }
 })
