@@ -62,8 +62,8 @@ $viewdefs['Forecasts']['base']['view']['forecastsWorksheet'] = array(
                     'sortable' => true,
                     'default' => true,
                     'enabled' => true,
-                    'type' => 'date',
-                    'view' => 'default',					
+                    'type' => 'editableDate',
+                    'view' => 'detail',
                 ),
 
                 array(
