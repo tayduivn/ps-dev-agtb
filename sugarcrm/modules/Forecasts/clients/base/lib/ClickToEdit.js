@@ -52,16 +52,16 @@
      * @private
      */
     app.view.ClickToEditField.prototype._checkDatatype = function(field, value) {
-        var ds = app.utils.regexEscape(app.user.get('decimal_separator')) || '.',
-            gs = app.utils.regexEscape(app.user.get('number_grouping_separator')) || ',',
-            // matches a valid decimal number
-            reg1 = new RegExp("^[\\+\\-]?(\\d+|\\d{1,3}("+gs+"\\d{3})*)?("+ds+"\\d+)?\\%?$"),
-            // matches a valid decimal percentage
-            reg2 = new RegExp("^[\\+\\-]?(\\d+)?("+ds+"\\d+)?\\%$"),
-            // matches valid integer
-            reg3 = new RegExp("^[\\+\\-]?\\d+$"),
-            hb = Handlebars.compile("{{str_format key module args}}"),
-            labelText = app.lang.get(field.def.label, 'Forecasts');
+        var ds = app.utils.regexEscape(app.user.getPreference('decimal_separator')) || '.';
+        var gs = app.utils.regexEscape(app.user.getPreference('number_grouping_separator')) || ',';
+        // matches a valid positive decimal number
+        var reg1 = new RegExp("^\\+?(\\d+|\\d{1,3}("+gs+"\\d{3})*)?("+ds+"\\d+)?\\%?$");
+        // matches a valid decimal percentage
+        var reg2 = new RegExp("^[\\+\\-]?\\d+?("+ds+"\\d+)?\\%$");
+        var reg3 = new RegExp("^\\+?\\d+$");
+        hb = Handlebars.compile("{{str_format key module args}}"),
+        labelText = app.lang.get(field.def.label, 'Forecasts');
+
     	switch(field.type){
             case "int":
                 if(_.isNull(value.match(reg3))) {
@@ -175,10 +175,10 @@
                         // format for currency/float editing, remove markup
                         return app.utils.formatNumber(
                             fieldValue,
-                            app.user.get('decimal_precision'),
-                            app.user.get('decimal_precision'),
+                            app.user.getPreference('decimal_precision'),
+                            app.user.getPreference('decimal_precision'),
                             '',
-                            app.user.get('decimal_separator')
+                            app.user.getPreference('decimal_separator')
                         );
                     } else {
                         return fieldValue;

@@ -41,11 +41,11 @@ class RestCurrentUserTest extends RestTestBase {
     public function testRetrieve() {
         $restReply = $this->_restCall("me");
         $this->assertNotEmpty($restReply['reply']['current_user']['id']);
-        $this->assertNotEmpty($restReply['reply']['current_user']['currency_id']);
-        $this->assertNotEmpty($restReply['reply']['current_user']['decimal_precision']);
+        $this->assertNotEmpty($restReply['reply']['current_user']['preferences']['currency_id']);
+        $this->assertNotEmpty($restReply['reply']['current_user']['preferences']['decimal_precision']);
+        $this->assertNotEmpty($restReply['reply']['current_user']['preferences']['language']);
         //BEGIN SUGARCRM flav=pro ONLY
-        $this->assertNotEmpty($restReply['reply']['current_user']['primary_team']);
-        $this->assertNotEmpty($restReply['reply']['current_user']['default_teams']);
+        $this->assertNotEmpty($restReply['reply']['current_user']['preferences']['default_teams']);
         $this->assertNotEmpty($restReply['reply']['current_user']['my_teams']);
         //END SUGARCRM flav=pro ONLY
     }
@@ -64,8 +64,8 @@ class RestCurrentUserTest extends RestTestBase {
         $current_user = $real_current_user;
 
         $restReply = $this->_restCall('me');
-        $this->assertEquals($sugar_config['datef'],$restReply['reply']['current_user']['datepref'],"trd: Date pref is not the default");
-        $this->assertEquals($sugar_config['default_time_format'],$restReply['reply']['current_user']['timepref'],"trd: Time pref is not the default");
+        $this->assertEquals($sugar_config['datef'],$restReply['reply']['current_user']['preferences']['datepref'],"trd: Date pref is not the default");
+        $this->assertEquals($sugar_config['default_time_format'],$restReply['reply']['current_user']['preferences']['timepref'],"trd: Time pref is not the default");
 
         $current_user->setPreference('datef','m/d/Y');
         $current_user->setPreference('timef','H:i a');
@@ -74,8 +74,8 @@ class RestCurrentUserTest extends RestTestBase {
         // Need to logout and log back in, preferences are cached in the session.
         $this->_restLogin();
         $restReply = $this->_restCall('me');
-        $this->assertEquals('m/d/Y',$restReply['reply']['current_user']['datepref'],"trd: Date pref is not the configured value");
-        $this->assertEquals('H:i a',$restReply['reply']['current_user']['timepref'],"trd: Time pref is not the configured value");
+        $this->assertEquals('m/d/Y',$restReply['reply']['current_user']['preferences']['datepref'],"trd: Date pref is not the configured value");
+        $this->assertEquals('H:i a',$restReply['reply']['current_user']['preferences']['timepref'],"trd: Time pref is not the configured value");
     }
     
     /**

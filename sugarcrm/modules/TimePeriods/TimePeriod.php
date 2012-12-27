@@ -377,8 +377,8 @@ class TimePeriod extends SugarBean {
         {
             $timedate = TimeDate::getInstance();
             $db = DBManagerFactory::getInstance();
-            $queryDate = $timedate->getNow();
-            $date = $db->convert($db->quoted($queryDate->asDbDate()), 'date');
+            $queryDate = $timedate->getNow(true);
+            $date = $db->convert($db->quoted($queryDate->asDbDate(false)), 'date');
             $query = "SELECT id FROM timeperiods WHERE start_date <= {$date} AND end_date >= {$date} AND type = '{$type}' AND deleted = 0 ORDER BY start_date_timestamp DESC";
 
             $result = $db->limitQuery($query, 0 , 1);

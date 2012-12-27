@@ -107,8 +107,6 @@ class LanguageManager
 		$key = self::getLanguageCacheKey($module,$lang);
 		sugar_cache_put($key,$loaded_mod_strings);
         
-        // Handle metadata cache clearing
-        MetaDataManager::clearAPICache();        
 	}
 
 	/**

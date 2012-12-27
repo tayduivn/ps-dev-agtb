@@ -72,8 +72,8 @@
      * @param  {Object} options the options
      */
     initialize: function(options) {
-        this.userTimePrefs  = app.user.get('timepref');
-        this.usersDatePrefs = app.user.get('datepref');
+        this.userTimePrefs  = app.user.getPreference('timepref');
+        this.usersDatePrefs = app.user.getPreference('datepref');
 
         // Only for derived widgets that actually have a showAmPm property
         if (!_.isUndefined(this.showAmPm)) {

@@ -252,7 +252,7 @@
             dateEntered = previousModel.get('date_entered');
         }
         // set the previous date entered in the users format
-        self.previousDateEntered = app.date.format(dateEntered, app.user.get('datepref') + ' ' + app.user.get('timepref'));
+        self.previousDateEntered = app.date.format(dateEntered, app.user.getPreference('datepref') + ' ' + app.user.getPreference('timepref'));
         
         //loop through from oldest to newest to build the log correctly
         var loopPreviousModel = '';

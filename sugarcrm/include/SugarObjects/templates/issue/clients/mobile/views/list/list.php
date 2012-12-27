@@ -35,7 +35,7 @@ $viewdefs[$module_name]['mobile']['view']['list'] = array(
             'label' => 'LBL_PANEL_DEFAULT',
             'fields' => array(
                 array(
-                    'name' => $OBJECT_NAME . '_number',
+                    'name' => $module_name . '_number',
                     'width' => '5',
                     'label' => 'LBL_NUMBER',
                     'link' => true,

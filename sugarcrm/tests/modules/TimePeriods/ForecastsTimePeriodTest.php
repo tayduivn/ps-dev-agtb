@@ -58,6 +58,7 @@ class ForecastsTimePeriodTest extends Sugar_PHPUnit_Framework_TestCase
     public static function tearDownAfterClass()
     {
         SugarTestHelper::tearDown();
+        SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
         $GLOBALS['sugar_config']['datef'] = self::$configDateFormat;
     }
 
@@ -663,4 +664,111 @@ class ForecastsTimePeriodTest extends Sugar_PHPUnit_Framework_TestCase
         SugarTestTimePeriodUtilities::$_createdTimePeriods[] = $timePeriod;
     }
 
+
+    /**
+     * This is a test for checking the edge time periods and crossed timeperiods
+     *
+     * @group forecasts
+     * @group timeperiods
+     */
+    public function testCurrentTimePeriodAcrossTimeZones () {
+        //store the current global user
+        $user = $GLOBALS['current_user'];
+        $GLOBALS['disable_date_format'] = 0;
+        //create my anonymous users
+        $userA = SugarTestUserUtilities::createAnonymousUser(true);
+        $userB = SugarTestUserUtilities::createAnonymousUser(true);
+        //get timeDate instance and disable timedate chaching
+        $timedate = TimeDate::getInstance();
+        $timedate->allow_cache = false;
+
+        //get timezones to find
+        $timeZones = DateTimeZone::listIdentifiers();
+        //need to find two timezones that cross dates of each other
+        $timeZoneA = new DateTimeZone($timeZones[0]);
+        $timeZoneANow = new SugarDateTime("now", $timeZoneA);
+        $timeZoneADay = $timeZoneANow->format("j");
+        foreach($timeZones as $tz) {
+            $timeZoneB = new DateTimeZone($tz);
+            $timeZoneBNow = new SugarDateTime("now", $timeZoneB);
+            $timeZoneBDay = $timeZoneBNow->format("j");
+            if($timeZoneBDay != $timeZoneADay)
+            {
+                //check if they are in reverse order, we want A to come before B
+                if($timeZoneBDay < $timeZoneADay)
+                {
+                    $timeZoneB = new DateTimeZone($timeZones[0]);
+                    $timeZoneA = new DateTimeZone($tz);
+                    $timeZoneANow = new SugarDateTime("now", $timeZoneA);
+                    $timeZoneBNow = new SugarDateTime("now", $timeZoneB);
+                }
+                break;
+            }
+        }
+
+        //set users to be in different timezones
+        $userA->setPreference('timezone', $timeZoneA->getName());
+        $userA->savePreferencesToDB();
+        $userB->setPreference('timezone', $timeZoneB->getName());
+        $userB->savePreferencesToDB();
+
+        //destroy existing time periods created by setup
+        $db = DBManagerFactory::getInstance();
+
+        $db->query("UPDATE timeperiods set deleted = 1");
+
+        $admin = BeanFactory::newBean('Administration');
+
+        //change settings as needed to reset dates
+        $currentForecastSettings = $admin->getConfigForModule('Forecasts', 'base');
+        $currentForecastSettings['is_upgrade'] = 0;
+
+        //set start date to be today by the later time zone standards, which may be today or tomorrow
+        $currentForecastSettings['timeperiod_start_date'] = $timeZoneBNow->asDbDate(false);
+
+        //rebuild time periods
+        $timePeriod = TimePeriod::getByType(TimePeriod::ANNUAL_TYPE);
+        $timePeriod->rebuildForecastingTimePeriods(array(), $currentForecastSettings);
+
+        //add all of the newly created timePeriods to the test utils
+        $result = $db->query('SELECT id, start_date, end_date, type FROM timeperiods WHERE deleted = 0');
+        $createdTimePeriods = array();
+
+        while($row = $db->fetchByAssoc($result))
+        {
+            $createdTimePeriods[] = TimePeriod::getBean($row['id']);
+        }
+
+        SugarTestTimePeriodUtilities::setCreatedTimePeriods($createdTimePeriods);
+
+        //reset current user to use the later time zone
+        $GLOBALS['current_user'] = $userB;
+        //update timedate to pertain to userb
+        $timedate->setUser($userB);
+        $timedate->setNow($timeZoneBNow);
+
+        $timeZoneBCurrentTimePeriod = TimePeriod::getTimePeriod();
+
+        //now get timeperiods for UserA
+        $GLOBALS['current_user'] = $userA;
+        $timedate->setUser($userA);
+        $timedate->setNow($timeZoneANow);
+
+        //clear current ids cached in timeperiod
+        TimePeriod::$currentId = array();
+        //get timeperiod per userA's timezone
+        $timeZoneACurrentTimePeriod = TimePeriod::getTimePeriod();
+
+        //make assertions, Users should have timeperiods based on timezones
+        $this->assertNotEquals($timeZoneACurrentTimePeriod->id, $timeZoneBCurrentTimePeriod->id, "time periods were equal, users were in same time zone");
+
+        //check that today for user a matches the timeperiod end date
+        $this->assertEquals($timeZoneANow->asDbDate(false), $timeZoneACurrentTimePeriod->end_date, "User in Time Zone A current date should have matched the timeperiod end date, but it didn't");
+
+        //check that today for user b matches the timeperiod start date
+        $this->assertEquals($timeZoneBNow->asDbDate(false), $timeZoneBCurrentTimePeriod->start_date, "User in Time Zone B current date should have matched the timeperiod start date, but it didn't");
+
+        //reset current user back to the original user
+        $GLOBALS['current_user'] = $user;
+    }
 }
