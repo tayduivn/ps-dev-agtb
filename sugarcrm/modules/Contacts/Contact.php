@@ -159,6 +159,27 @@ class Contact extends Person {
 		parent::__construct();
 	}
 
+	public function setSyncContact() {
+		if(!empty($this->contacts_users_id)) {
+			$this->sync_contact = true;
+			return true;
+		}
+		$this->sync_contact = false;
+		return false;
+	}
+
+	public function setCurrentUserContactsUserId(SugarBean $user) {
+		$this->contacts_users_id = $user->id;
+	}
+
+	public function removeCurrentUserContactsUserId(SugarBean $user) {
+		if(!isset($this->users)) {
+			$this->load_relationship('user_sync');
+		}
+		$this->contacts_users_id = null;
+		$this->user_sync->delete($this->id, $user->id);
+	}
+
 	function add_list_count_joins(&$query, $where)
 	{
 		// accounts.name
@@ -410,9 +431,8 @@ class Contact extends Person {
 		 * Notes, etc.
 		 */
 		$this->name = $locale->getLocaleFormattedName($this->first_name, $this->last_name);
-        if(!empty($this->contacts_users_id)) {
-		   $this->sync_contact = true;
-		}
+
+		$this->setSyncContact();
 
 		if(!empty($this->portal_active) && $this->portal_active == 1) {
 		   $this->portal_active = true;
