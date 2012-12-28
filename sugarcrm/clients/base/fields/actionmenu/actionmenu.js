@@ -67,12 +67,12 @@
             massCollection.off("reset", null, modelId);
 
             massCollection.on("add", function(model) {
-                if(model.id == self.model.id) {
+                if(self.model && model.id == self.model.id) {
                     self.$(self.fieldTag).attr("checked", true);
                 }
             }, modelId);
             massCollection.on("remove", function(model){
-                if(model.id == self.model.id) {
+                if(self.model && model.id == self.model.id) {
                     self.$(self.fieldTag).attr("checked", false);
                 }
             }, modelId);

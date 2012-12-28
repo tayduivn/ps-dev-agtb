@@ -78,25 +78,16 @@
                         value = selected.text(),
                         id = selected.val();
 
-                    self.setValue({id: id, value: value});
+                    self.setValue({id: id, value: value, silent: true});
                 });
         }
         return result;
     },
     beforeSearchMore: function() {},
-    bindDataChange: function() {
-        if (this.model) {
-            var self = this;
-            this.model.on("change:" + this.name, function() {
-                if(self.tplName !== 'edit') {
-                    self.render();
-                }
-            }, this);
-        }
-    },
     setValue: function(model) {
-        this.model.set(this.def.id_name, model.id);
-        this.model.set(this.def.name, model.value);
+        var silent = model.silent || false;
+        this.model.set(this.def.id_name, model.id, {silent: silent});
+        this.model.set(this.def.name, model.value, {silent: silent});
     },
     /**
      * Throttles search ajax

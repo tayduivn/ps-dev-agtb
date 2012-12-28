@@ -26,11 +26,7 @@
  * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 }}
-<span class="editable">
-    <div class="sugareditable">
-        <span class="edit-icon hide">
-            <i class="icon-pencil icon-sm"></i>
-        </span>
-        <span class="click format">{{value}}</span>
-    </div>
-</span>
+<div class="input-append date" rel="datepicker">
+    <input type="text" class="datepicker input-small focused" value="{{this.dateValue}}" rel="datepicker">
+    <span class="add-on"><i class="icon-calendar"></i></span>
+</div>

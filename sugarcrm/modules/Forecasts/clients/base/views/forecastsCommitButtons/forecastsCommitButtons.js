@@ -301,7 +301,7 @@
         url += '&user_id=' + this.context.forecasts.get('selectedUser').id;
         url += '&timeperiod_id=' + $("#timeperiod").val();
         
-        if(!savebtn.hasClass("disabled")){
+        if(savebtn.length > 0 && !savebtn.hasClass("disabled")){
             if(confirm(app.lang.get("LBL_WORKSHEET_EXPORT_CONFIRM", "Forecasts"))){
                 this.runExport(url);
             }

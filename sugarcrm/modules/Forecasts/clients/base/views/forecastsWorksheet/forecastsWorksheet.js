@@ -144,10 +144,6 @@
     _renderField: function(field) {
         this._createFieldColumnDef(field.def);
         app.view.View.prototype._renderField.call(this, field);
-
-        if (this.isEditableWorksheet === true && field.viewName !="edit" && field.def.clickToEdit === true && !_.contains(this.context.forecasts.config.get("sales_stage_won"), field.model.get('sales_stage')) && !_.contains(this.context.forecasts.config.get("sales_stage_lost"), field.model.get('sales_stage'))) {
-            new app.view.ClickToEditField(field, this);
-        }        
     },
 
     /**
@@ -159,7 +155,7 @@
      */
     _createFieldColumnDef: function(field) {
         // make sure we don't already have the field in the list.
-        if(_.find(this.columnDefs, _.bind(function(obj) {return obj.sName == this.name }, field))) {
+        if(!_.isEmpty(this.columnDefs) && _.find(this.columnDefs, _.bind(function(obj) {return obj.sName == this.name }, field))) {
             // we have the field in the columnDefs, just ignore it now.
             return;
         }
@@ -215,9 +211,10 @@
      * Clean up any left over bound data to our context
      */
     unbindData : function() {
-        if(this._collection) this._collection.off(null, null, this);
-        if(this.context.forecasts) this.context.forecasts.off(null, null, this);
-        if(this.context.forecasts.worksheet) this.context.forecasts.worksheet.off(null, null, this);
+        if(this._collection) { this._collection.off(null, null, this) };
+        if(this.context.forecasts) { this.context.forecasts.off(null, null, this) };
+        if(this.context.forecasts.config) { this.context.forecasts.config.off(null, null, this) };
+        if(this.context.forecasts.worksheet) { this.context.forecasts.worksheet.off(null, null, this) };
         app.view.View.prototype.unbindData.call(this);
     },
 
@@ -267,16 +264,16 @@
                     else{
                         this.commitFromSafeFetch = false;
                     }
-                    
-                }                
+
+                }
             }, this);
-            
+
             this.context.forecasts.on("forecasts:commitButtons:enabled", function(){
                 if(_.isEqual(app.user.get('id'), self.selectedUser.id)){
                     self.commitButtonEnabled = true;
                 }
             },this);
-            
+
             this.context.forecasts.on("forecasts:commitButtons:disabled", function(){
                 self.commitButtonEnabled = false;
             },this);
@@ -313,16 +310,16 @@
                     return app.lang.get("LBL_WORKSHEET_SAVE_CONFIRM_UNLOAD", "Forecasts");
                 }
                 //special manager cases for messages
-                else if((self.context.forecasts.get("currentWorksheet") == "worksheet") && self.selectedUser.isManager && self.context.forecasts.config.get("show_forecasts_commit_warnings")){
+                else if(!_.isUndefined(self.context.forecasts) && (self.context.forecasts.get("currentWorksheet") == "worksheet") && self.selectedUser.isManager && self.context.forecasts.config.get("show_forecasts_commit_warnings")){
                     /*
-                     * If the manager has a draft version saved, but hasn't committed that yet, they need to be shown a dialog that 
+                     * If the manager has a draft version saved, but hasn't committed that yet, they need to be shown a dialog that
                      * lets them know, and gives them the option of committing before the page reloads. This happens if the commit button
                      * is enabled and they are on the rep worksheet.
                      */
                     if(self.commitButtonEnabled ){
                         var msg = app.lang.get("LBL_WORKSHEET_COMMIT_CONFIRM", "Forecasts").split("<br>");
                         //show dialog
-                        return msg[0];                                       
+                        return msg[0];
                     }
                     else if(self.mgrNeedsCommitted){
                         return app.lang.get("LBL_WORKSHEET_COMMIT_ALERT", "Forecasts");
@@ -367,7 +364,7 @@
      * This function checks to see if the worksheet is dirty, and gives the user the option
      * of saving their work before the sheet is fetched.
      *
-     * @param fetch {boolean} Tells the function to go ahead and fetch if true, or runs dirty checks (saving) w/o fetching if false 
+     * @param fetch {boolean} Tells the function to go ahead and fetch if true, or runs dirty checks (saving) w/o fetching if false
      */
     safeFetch: function(fetch){
         //fetch currently already in progress, no need to duplicate
@@ -380,11 +377,11 @@
         {
             fetch = true;
         }
-        var collection = this._collection; 
+        var collection = this._collection;
         var self = this;
-        
+
         /*
-         * First we need to see if the collection is dirty. This is marked if any of the models 
+         * First we need to see if the collection is dirty. This is marked if any of the models
          * is marked as dirty. This will show the "unsaved changes" dialog
          */
         if(collection.isDirty){
@@ -394,7 +391,7 @@
             }
             //user clicked cancel, ignore and fetch if fetch is enabled
             else{
-                
+
                 collection.isDirty = false;
                 self.context.forecasts.set({reloadCommitButton: true});
                 if(fetch){
@@ -407,7 +404,7 @@
          */
         else if(self.selectedUser.isManager && (self.context.forecasts.get("currentWorksheet") == "worksheet") && self.context.forecasts.config.get("show_forecasts_commit_warnings")){
             /*
-             * If the manager has a draft version saved, but hasn't committed that yet, they need to be shown a dialog that 
+             * If the manager has a draft version saved, but hasn't committed that yet, they need to be shown a dialog that
              * lets them know, and gives them the option of committing before the page reloads. This happens if the commit button
              * is enabled and they are on the rep worksheet.
              */
@@ -424,7 +421,7 @@
                         collection.fetch();
                     }
                 }
-                    
+
             }
             else if(self.mgrNeedsCommitted){
                 alert(app.lang.get("LBL_WORKSHEET_COMMIT_ALERT", "Forecasts"));
@@ -432,7 +429,7 @@
                 if(fetch){
                     collection.fetch();
                 }
-                
+
             }
             //No popups needed, fetch like normal
             else{
@@ -442,10 +439,10 @@
             }
         }
         //default case, fetch like normal
-        else{    
+        else{
             if(fetch){
                 collection.fetch();
-            }    
+            }
         }
         //mark that the fetch is over
         this.fetchInProgress = false;
@@ -460,13 +457,13 @@
     _render: function() {
         var self = this;
         var enableCommit = false;
-        
+
         if(!this.showMe()){
             return false;
         }
         $("#view-sales-rep").addClass('show').removeClass('hide');
-        $("#view-manager").addClass('hide').removeClass('show');           
-        
+        $("#view-manager").addClass('hide').removeClass('show');
+
         this.context.forecasts.set({currentWorksheet: "worksheet"});
         this.isEditableWorksheet = this.isMyWorksheet();
 
@@ -474,6 +471,15 @@
         this.columnDefs = [];
 
         app.view.View.prototype._render.call(this);
+
+        // if there is no data for the worksheet, this.columnDefs will be empty
+        // but we still need the column visibility definitions
+        if(_.isEmpty(this.columnDefs)) {
+            _.each(this.options.meta.panels[0].fields, function(field) {
+                // creates column def and adds it to this.columnDefs
+                self._createFieldColumnDef(field);
+            });
+        }
 
         // set the columnDefs back into the tableDefs
         this.gTableDefs['aoColumnDefs'] = this.columnDefs;

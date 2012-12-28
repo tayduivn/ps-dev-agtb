@@ -698,7 +698,7 @@ $_SESSION['step'][$steps['files'][$_REQUEST['step']]] =($stop) ? 'failed' : 'suc
 //Unlink files that have been removed
 if(function_exists('unlinkUpgradeFiles'))
 {
-	unlinkUpgradeFiles($_SESSION['current_db_version'], $path);
+	unlinkUpgradeFiles($_SESSION['current_db_version']);
 }
 
 // clear out the theme cache

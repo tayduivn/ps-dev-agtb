@@ -97,6 +97,7 @@ class RestPortalSecurityTest extends RestTestPortalBase {
             $contact->first_name = "UNIT".($i+1);
             $contact->last_name = create_guid();
             $contact->title = sprintf("%08d",($i+1));
+            $contact->assigned_user_id = 1;
             $contact->save();
             $this->contacts[$i] = $contact;
 
@@ -278,6 +279,10 @@ class RestPortalSecurityTest extends RestTestPortalBase {
         $restReply = $this->_restCall("Contacts/".$this->contacts[1]->id);
         $this->assertEquals($this->contacts[1]->id,$restReply['reply']['id']);
 
+        // verify edit and create are no for this contact
+        $this->assertEquals("no", $restReply['reply']['_acl']['edit'], "Edit is not no");
+        $this->assertEquals("no", $restReply['reply']['_acl']['create'], "Create is not no");
+
         // Positive test: Should be able to change the name of our Contact
         $restReply = $this->_restCall("Contacts/".$this->portalGuy->id,json_encode(array('last_name'=>'UnitTestMyGuy')),'PUT');
         $this->assertEquals('UnitTestMyGuy',$restReply['reply']['last_name']);
@@ -290,7 +295,7 @@ class RestPortalSecurityTest extends RestTestPortalBase {
 
         // Fetch contacts, make sure we can only see the correct ones.
         $restReply = $this->_restCall("Contacts");
-
+        
         foreach ( $restReply['reply']['records'] as $record ) {
             // We should be linked to accounts[1] and accounts[2]
             $this->assertNotEquals($this->accounts[0]->id,$record['account_id']);

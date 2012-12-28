@@ -46,13 +46,15 @@
                     </div>
                 </div>
             </div>
+
             <div class="span4 tab-content" id="folded">
                 <div class="tab-pane active" id="overview">
+                    <div class="view-forecastsProgress"></div>
+                    <div class="clearfix"></div>
                     <div class="thumbnail viz">
                         <div class="view-forecastsChart"></div>
                     </div>
                     <div class="clearfix"></div>
-                    <div class="view-forecastsProgress"></div>
                 </div>
             </div>
         </div>

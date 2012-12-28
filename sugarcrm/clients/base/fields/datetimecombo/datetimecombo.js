@@ -102,7 +102,7 @@
         };
         this.timeValue = value['time'];
         this.dateValue = value['date'];
-        this.$(".datepicker").datepicker('update', this.dateValue);
+        this._setDatepickerValue(this.dateValue);
 
         return value;
     },
