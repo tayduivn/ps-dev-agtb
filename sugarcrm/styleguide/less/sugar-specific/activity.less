@@ -18,16 +18,28 @@
 .related-tabs {
   .tabbable {
     padding-left: 16px;
-    li a {
-      background-color: @grayLight;
-    }
-    li.active a {
-      background-color: @grayLighter;
-
+    li {
+      border: none;
+      position: relative;
+      z-index: 2;
+      a {
+        background-color: @white;
+        border: none;
+      }
+      a:hover {
+        background: @dropdownLinkBackgroundHover;
+      }
+      &.active a {
+        background-color: @grayLighter;
+        border: 1px solid darken(@grayLighter, 5%);
+        border-bottom: 1px solid @grayLighter;
+      }
     }
   }
+  //These changes are an override of bootstrap native colors
   .nav-tabs {
-    margin-bottom: 0;
+    margin: 0;
+    border-bottom: none;
   }
 }
 
