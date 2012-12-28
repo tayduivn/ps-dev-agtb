@@ -681,11 +681,10 @@ class MetaDataFiles
             {
                 if ($type == "view")
                 {
-                    foreach($moduleResults as $view => $defs )
+                    foreach ($moduleResults as $view => $defs)
                     {
-                        if ($view == "edit")
+                        if (is_array($defs))
                         {
-                            _ppl("$module : $view");
                             $meta = isset($defs['meta']) ? $defs['meta'] : array();
                             $deps = array_merge(
                                 DependencyManager::getDependenciesForFields(
@@ -693,15 +692,17 @@ class MetaDataFiles
                                     ucfirst($view) . "View"),
                                 DependencyManager::getDependenciesForView($meta, ucfirst($view) . "View", $module)
                             );
-                            _ppl($deps);
-                            if (!empty($deps)) {
-                                $moduleResults[$view]['dependencies'] = array();
+                            if (!empty($deps) && is_array(($moduleResults[$view]['meta'])))
+                            {
+                                if (!isset($moduleResults[$view]['meta']['dependencies']) ||
+                                    !is_array($moduleResults[$view]['meta']['dependencies']))
+                                {
+                                    $moduleResults[$view]['meta']['dependencies'] = array();
+                                }
                                 foreach ($deps as $dep) {
-                                    _ppl($dep->getDefinition());
-                                    $moduleResults[$view]['dependencies'][] = $dep->getDefinition();
+                                    $moduleResults[$view]['meta']['dependencies'][] = $dep->getDefinition();
                                 }
                             }
-                            _ppl($moduleResults[$view]);
                         }
 
                     }

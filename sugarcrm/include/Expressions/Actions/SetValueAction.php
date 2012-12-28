@@ -37,8 +37,13 @@ class SetValueAction extends AbstractAction{
 	static function getJavascriptClass() {
 		return  "
 		SUGAR.forms.SetValueAction = function(target, valExpr) {
-			this.expr = valExpr;
-			this.target = target;
+			if (_.isObject(target)){
+			    this.expr = target.value;
+			    this.target = target.target;
+			} else {
+                this.expr = valExpr;
+                this.target = target;
+			}
 		};
 		SUGAR.util.extend(SUGAR.forms.SetValueAction, SUGAR.forms.AbstractAction, {
 			exec : function(context)

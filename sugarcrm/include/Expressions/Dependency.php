@@ -35,6 +35,7 @@ class Dependency
 	protected $falseActions = array();
 	protected $id = "";
 	protected $fireOnLoad = false;
+    protected $hooks = array();
 
 	function Dependency($id) {
 		$this->id = $id;
@@ -130,14 +131,41 @@ class Dependency
 	 * Returns the definition of the dependency in array format.
 	 */
 	function getDefinition() {
-		$def = array (
+		array(
+            'hooks' => array("edit"),
+            'trigger' => 'true', //Optional, the trigger for the dependency. Defaults to 'true'.
+            'triggerFields' => array('status'),
+            'onload' => true,
+            //Actions is a list of actions to fire when the trigger is true
+            'actions' => array(
+                array(
+                    'name' => 'SetRequired',
+                    //The parameters passed in will depend on the action type set in 'name'
+                    'params' => array(
+                        'target' => 'resolution',
+                        'label' => 'resolution_label', //id of the label to add the required symbol to
+                        'value' => 'equal($status, "Closed")' //Set required if the status is closed
+                    )
+                ),
+            ),
+            //Actions fire if the trigger is false. Optional.
+            'notActions' => array(),
+        );
+        $def = array (
 			"name" => $this->id,
-	        "condition" => $this->trigger->getCondition(),
+            "hooks" => !empty($this->hooks) ? $this->hooks : array("all"),
+	        "trigger" => $this->trigger->getCondition(),
+            "triggerFields" => $this->trigger->getFields(),
+            "onload" => $this->fireOnLoad,
 			"actions" => array(),
+            "notActions" => array(),
 		);
 
 		foreach($this->actions as $action) {
 			$def['actions'][] = $action->getDefinition();
+		}
+        foreach($this->falseActions as $action) {
+			$def['notActions'][] = $action->getDefinition();
 		}
 
 		return  $def;
@@ -190,6 +218,10 @@ class Dependency
 	{
 		return $this->fireOnLoad;
 	}
+
+    function addHook(String $hook) {
+        $this->hooks[] = $hook;
+    }
 
 }
 ?>

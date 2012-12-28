@@ -305,7 +305,7 @@ SEC.evalVariableExpression = function(expression, view)
  */
 SUGAR.forms.Dependency = function(trigger, actions, falseActions, testOnLoad, context)
 {
-	this.actions = actions;
+    this.actions = actions;
 	this.falseActions = falseActions;
 	this.context = context;
     trigger.setContext(this.context);
@@ -315,6 +315,42 @@ SUGAR.forms.Dependency = function(trigger, actions, falseActions, testOnLoad, co
 	    context.fireOnLoad(this);
 	}
 
+}
+
+SUGAR.forms.Dependency.fromMeta = function(meta, context){
+    var condition = meta.trigger || "true",
+        triggerFields = meta.triggerFields || SEC.parser.getFieldsFromExpression(condition),
+        actions = meta.actions || [],
+        falseActions = meta.notActions || [],
+        onLoad = meta.onload || false,
+        actionObjects = [],
+        falseActionObjects = [];
+
+    //Without any trigger fields (or a condition with variables), we can't create a trigger
+    if (_.isEmpty(triggerFields))
+        return null;
+    //No actions means no reason to create a dependency
+    if (_.isEmpty(actions) && _.isEmpty(falseActions))
+        return null;
+
+
+    _.each(actions, function(actionDef)
+    {
+        if (!actionDef.action || !SUGAR.forms[actionDef.action + "Action"])
+            return;
+        actionObjects.push(new SUGAR.forms[actionDef.action + "Action"](actionDef.params));
+    });
+    _.each(falseActions, function(actionDef)
+    {
+        if (!actionDef.action || !SUGAR.forms[actionDef.action + "Action"])
+            return;
+        falseActionObjects.push(new SUGAR.forms[actionDef.action + "Action"](actionDef.params));
+    });
+
+    return new SUGAR.forms.Dependency(
+        new SUGAR.forms.Trigger(triggerFields, condition, context),
+        actionObjects, falseActionObjects, false, context
+    );
 }
 
 
@@ -386,6 +422,7 @@ SUGAR.forms.Dependency.prototype.getRelatedFields = function () {
     }
 
     SUGAR.forms.AbstractAction.prototype.evalExpression = function (exp, context) {
+        context = context || this.context;
         return SEC.parser.evaluate(exp, context).evaluate();
     }
 

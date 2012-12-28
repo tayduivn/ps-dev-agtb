@@ -74,7 +74,7 @@ abstract class AbstractAction {
 	 */
 	function getDefinition() {
 		return array(
-			"action" => $this->getActionName(),
+			"name" => $this->getActionName(),
 	        "params" => $this->params,
 	    );
 	}

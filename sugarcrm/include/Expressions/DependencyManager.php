@@ -282,6 +282,8 @@ class DependencyManager
      */
     public static function getDependenciesForView($viewdef, $view = "", $module = "")
     {
+        _ppl($view);
+        _ppl($viewdef);
         global $currentModule;
 
         if (empty($module))
@@ -294,7 +296,7 @@ class DependencyManager
                 $deps[] = self::getPanelDependency(strtoupper($id), $expr);
             }
         }
-        if ($view == "EditView" || strpos($view, "QuickCreate") !== false) {
+        if ($view == "RecordView" || $view == "EditView" || strpos($view, "QuickCreate") !== false) {
             $deps = array_merge($deps, self::getModuleDependenciesForAction($module, 'edit', $view));
         }
         else

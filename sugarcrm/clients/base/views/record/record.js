@@ -50,12 +50,13 @@
             this.model.isNotEmpty = true;
         }
 
+        this.deps = [];
         var slContext = new SUGAR.expressions.SidecarExpressionContext(this);
-        SUGAR.testDep = new SUGAR.forms.Dependency(
-            new SUGAR.forms.Trigger(["name", "website", "industry"], "true", slContext),
-            [new SUGAR.forms.SetValueAction("description", 'concat($name, " bar")')],
-            [], false, slContext
-        );
+        _.each(options.meta.dependencies, function(dep) {
+            var newDep = SUGAR.forms.Dependency.fromMeta(dep, slContext);
+            if (newDep)
+                this.deps.push(newDep);
+        }, this);
     },
 
     /**
