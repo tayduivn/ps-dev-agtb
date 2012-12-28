@@ -7,8 +7,9 @@
             } catch (e) {
                 app.logger.error("Failed to eval view controller for " + name + ": " + e + ":\n" + data);
             }
-            app.view.declareComponent(type, name, null, data, null, true);
+            app.view.declareComponent(type, name, null, data, true);
         });
+
     };
 
     test.createField = function(client, name, type, viewName, fieldDef, module, model, context) {

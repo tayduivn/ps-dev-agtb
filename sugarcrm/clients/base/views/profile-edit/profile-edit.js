@@ -25,91 +25,35 @@
  * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 /**
- * View that displays edit view on a profile. 
+ * View that displays profile edit.
  * @class View.Views.ProfileEditView
- * @alias SUGAR.App.layout.ProfileEditView
- * @extends View.View
+ * @alias SUGAR.App.view.ProfileEditView
+ * @extends View.Views.EditView
  */
 ({
+    extendsFrom: "EditView",
     events: {
         'click [name=save_button]': 'saveModel', // bottom save button
-        'click a.password': 'changePassword' 
+        'click a.password': 'changePassword'
     },
     initialize: function(options) {
-        this.options.meta = app.metadata.getView('Contacts', 'edit');
-        app.view.View.prototype.initialize.call(this, options);
-        this.meta.type = 'edit'; // will use edit sugar fields
+        this.options.meta   = app.metadata.getView(this.options.module, 'edit');
+        app.view.views.EditView.prototype.initialize.call(this, options);
         this.template = app.template.get("edit");
-        this.fallbackFieldTemplate = "edit";
-        this.context.off("subnav:save", null, this);
-        this.context.on("subnav:save", this.saveModel, this);
-    },
-    render: function() {
-        var self = this, currentUserAttributes;
-
-        if(app.user.isSupportPortalUser()) {
-            currentUserAttributes = {id: app.user.get('id')}; 
-            self.loadCurrentUser(currentUserAttributes, function(data) {
-                if(data) {
-                    app.user.addSalutationToFullName(data);
-                    self.setModelAndContext(data);
-                    app.view.View.prototype.render.call(self);
-                    self.$('a.password').text(app.lang.get('LBL_CONTACT_EDIT_PASSWORD_LNK_TEXT'));
-                    self.renderSubnav(data);
-                } 
-            });
-        } else {
-            app.router.goBack();
-            app.alert.show('not_portal_enabled_user', {level:'error', title: app.lang.getAppString('LBL_PORTAL_PAGE_NOT_AVAIL'), messages: app.lang.getAppString('LBL_PORTAL_NOT_ENABLED_MSG'), autoClose: true});
-        }
-    },
-    loadCurrentUser: function(currentUserAttributes, cb) {
-        var self = this;
-        app.alert.show('fetch_edit_contact_record', {level:'process', title:app.lang.getAppString('LBL_PORTAL_LOADING')});
-        app.api.records("read", "Contacts", currentUserAttributes, null, {
-            success: function(data) {
-                app.alert.dismiss('fetch_edit_contact_record');
-                cb(data);
-            },
-            error: function(error) {
-                app.alert.dismiss('fetch_edit_contact_record');
-                app.error.handleHttpError(error, self);
-            }
-        });
-    },
-    renderSubnav: function(data) {
-        var self = this, fullName = '', subnavModel = null;
-        if (self.context.get('subnavModel')) {
-            fullName = data.name ? data.full_name : data.first_name +' '+data.last_name;
-            self.context.get('subnavModel').set({
-                'title': fullName,
-                'meta': self.meta
-            });
-            
-            // Bypass subnav click handler
-            $('.subnav').find('[name=save_button]').on('click', function(e) {
-                e.stopPropagation();
-                e.preventDefault();
-                self.saveModel();
-            });
-        }
-    },
-    setModelAndContext: function(data) {
-        this.model = app.data.createBean("Contacts", data);
-        this.context.set({
-            'model': this.model,
-            'module': 'Contacts'
-        });
+        this.model.on("change", function() {
+            this.$('a.password')
+                .attr('href', 'javascript:void(0)').
+                text(app.lang.get('LBL_CONTACT_EDIT_PASSWORD_LNK_TEXT'));
+        }, this);
     },
     changePassword: function() {
         // triggers an event to show the modal
-        this.layout.trigger("app:view:password:editmodal", this);
+        this.layout.trigger("app:view:password:editmodal");
         return false;
     },
-    
     saveModel: function() {
         var self = this, options;
-        app.alert.show('save_profile_edit_view', {level:'process', title:app.lang.getAppString('LBL_PORTAL_SAVING')});
+        app.alert.show('save_profile_edit_view', {level:'process', title:app.lang.getAppString('LBL_SAVING')});
         options = {
             success: function() {
                 app.alert.dismiss('save_profile_edit_view');
@@ -136,5 +80,4 @@
         self.model.unset('portal_password1', {silent: true});
         self.model.save(null, options);
     }
-
 })

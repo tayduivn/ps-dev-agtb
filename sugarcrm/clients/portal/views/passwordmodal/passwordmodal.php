@@ -36,7 +36,7 @@ $viewdefs['portal']['view']['passwordmodal'] = array(
                 'type' => 'button',
                 'label' => 'LBL_SAVE_BUTTON_LABEL',
                 'value' => 'save',
-                'css_class' => 'btn-primary pull-right save-profile',
+                'css_class' => 'btn-primary save-profile',
             ),
             array(
                 'name' => 'cancel_button',
