@@ -12,7 +12,7 @@
 
     initialize: function(options) {
         app.view.layouts.ModalLayout.prototype.initialize.call(this, options, true);
-        this.$el.addClass("drawer");
+        this.$el.addClass("drawer").hide();
     },
 
     _placeComponent: function(component) {
