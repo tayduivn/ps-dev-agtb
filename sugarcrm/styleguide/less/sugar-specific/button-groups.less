@@ -23,6 +23,7 @@
   margin-left: 8px;
 }
 
+
 // Optional: Group multiple button groups together for a toolbar
 .btn-toolbar {
   margin-top: @baseLineHeight / 2;
@@ -105,11 +106,16 @@
 // Split button dropdowns
 // ----------------------
 
+// Remove top embossing
+.btn-group > .btn + .dropdown-toggle {
+  .box-shadow(none);
+}
 // Give the line between buttons some depth
 .btn-group .btn .dropdown-toggle {
   padding-left: 8px;
   padding-right: 8px;
-  .box-shadow(~"inset 1px 0 0 rgba(255,255,255,.125), inset 0 1px 0 rgba(255,255,255,.2), 0 1px 3px rgba(0,0,0,.1)");
+  //.box-shadow(~"inset 1px 0 0 rgba(255,255,255,.125), inset 0 1px 0 rgba(255,255,255,.2), 0 1px 3px rgba(0,0,0,.1)");
+  .box-shadow(none);
   *padding-top: 5px;
   *padding-bottom: 5px;
 }
