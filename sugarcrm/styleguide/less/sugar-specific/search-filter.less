@@ -3,20 +3,20 @@
 .form-search {
   position: relative;
   margin: -1px 1px 0 0;
-  padding: 5px;
+  padding: 5px 8px 5px 20px;
   border-top: 1px solid darken(@grayLighter, 5%);
   background: @grayLighter;
   border-bottom: 1px solid darken(@grayLighter, 5%);
-  z-index: 1000;
+  //z-index: 1000;
 
   .myfilter {
     position: relative;
   }
 
-  .control-group.filter {
+  .filter {
     position: relative;
-    margin-left: 15px;
-    margin-right: 150px;
+    margin-left: 0px;
+    //margin-right: 150px;
     .chzn-container {
       .chzn-drop {
         //padding: 10px;
@@ -65,9 +65,17 @@
     padding: 4px 8px;
   }
 
-  .actions {
+  /*.actions {
     position: absolute;
   }
+  .actions {
+    right: 10px !important;
+    top: 8px !important;
+  }
+  .actions {
+    right: 0 !important;
+    top: 0 !important;
+  }*/
 
   .extend {
     background: darken(@grayLighter, 5%);
@@ -164,7 +172,8 @@
     }
   }
   .chzn-results {
-    .icon-ok {
+    .icon-ok,
+    .icon-plus {
       position: absolute;
       margin-top: -27px;
       margin-left: 6px;
