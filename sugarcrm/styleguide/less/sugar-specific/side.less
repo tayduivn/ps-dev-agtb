@@ -82,23 +82,6 @@ body.preview {
   .side-pane.active {
     display: none;
   }
-  table.table.dataTable{
-    th.preview.above,
-    td.preview.above {
-      .box-shadow(~"inset 0px -6px 3px -5px rgba(0, 0, 0, 0.25)");
-    }
-    th.preview.below,
-    td.preview.below {
-      .box-shadow(~"inset 0px 5px 6px -5px rgba(0, 0, 0, 0.25)");
-    }
-    tr.highlighted td,
-    td.highlighted {
-      background-image: url('@{textureSecondary}');
-    }
-    td.highlighted:last-child {
-      z-index: 2;
-    }
-  }
 }
 
 .preview-headerbar {
