@@ -376,7 +376,7 @@
             value  = app.date.format(jsDate, this.usersDatePrefs);
         }
         this.dateValue = value;
-        this.$(".datepicker").datepicker('update', this.dateValue);
+        this._setDatepickerValue(this.dateValue);
         jsDate = app.date.parse(value);
         return app.date.format(jsDate, this.usersDatePrefs);
     },
