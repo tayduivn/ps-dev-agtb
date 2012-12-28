@@ -320,12 +320,51 @@ h1 input[type="text"] {
 
 .spanLabelX (@gridColumns);
 
+// for use by controls not in form-horizontal
+.controls {
+  margin-left: @fluidGridGutterWidth;
+  padding: 0;
+  &.controls-four {
+    padding-right: 144px;
+  }
+  &.controls-three {
+    padding-right: 108px;
+  }
+  &.controls-two {
+    padding-right: 72px;
+  }
+  &.controls-one {
+    padding-right: 36px;
+  }
+  &.btn-fit {
+    position: relative;
+    .btn {
+      position: absolute;
+      top: 0;
+      right: 0px;
+      padding: 5px 7px 3px;
+      &.fourth {
+        right: 108px;
+      }
+      &.third {
+        right: 72px;
+      }
+      &.second {
+        right: 36px;
+      }
+      &.first {
+        /* right:___; default  */
+      }
+    }
+  }
+}
 
 .form-horizontal {
   .row-fluid.control-group {
     margin: 0;
     padding: 0;
   }
+
   .controls {
     margin-left: @fluidGridGutterWidth;
     padding: 0;
@@ -333,34 +372,35 @@ h1 input[type="text"] {
     &.controls-four {
       padding-right: 144px;
     }
-
     &.controls-three {
       padding-right: 108px;
     }
-
     &.controls-two {
       padding-right: 72px;
     }
-
     &.controls-one {
       padding-right: 36px;
     }
-
     &.btn-fit {
+      .tooltip {
+        word-wrap: normal;
+        white-space: nowrap;
+      }
       .btn {
         position: absolute;
         top: 0;
         right: 0px;
-        &:nth-child(5) {
+        padding: 5px 8px 3px;
+        &.fourth {
           right: 108px;
         }
-        &:nth-child(4) {
+        &.third {
           right: 72px;
         }
-        &:nth-child(3) {
+        &.second {
           right: 36px;
         }
-        &:nth-child(2) {
+        &.first {
           /* right:___; default  */
         }
       }
