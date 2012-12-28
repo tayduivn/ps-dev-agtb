@@ -368,7 +368,10 @@ h1 input[type="text"] {
   .controls {
     margin-left: @fluidGridGutterWidth;
     padding: 0;
-
+    > span {
+      padding: 6px 0;
+      display: inline-block;
+    }
     &.controls-four {
       padding-right: 144px;
     }
@@ -418,7 +421,7 @@ h1 input[type="text"] {
   div.control-label {
     float: left;
     /*width: 140px;*/
-    padding: 5px 0 8px;
+    padding: 6px 0 7px;
     text-align: right;
     border-left: 1px solid lighten(@grayLight,14%);
     border-right: 1px solid lighten(@grayLight,14%);
@@ -426,6 +429,7 @@ h1 input[type="text"] {
     background-color:#f7f7f7;
     label {
       color: lighten(@gray,20%);
+      font-size: 11px;
     }
   }
   .help-block {
