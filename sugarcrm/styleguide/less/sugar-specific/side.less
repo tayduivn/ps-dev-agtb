@@ -33,17 +33,6 @@
   >.preview-pane {
     width: 100%;
     border: none;
-    .block {
-      padding: 28px 5% 0;
-    }
-    .card2 {
-      .span4 {
-        text-align: right;
-      }
-      .span8 {
-        font-weight: bold;
-      }
-    }
   }
   .accordion {
     margin: -10px 0 0 0;
@@ -98,10 +87,18 @@ body.preview {
 }
 
 .preview-data {
+  padding: 28px 5% 0;
   margin: 8px;
   .row-fluid {
-    span:first-child {
-      padding: 8px;
+    .span5 {
+      text-align: right;
+      padding: 6px;
+      font-size: 11px;
+      color: lighten(@gray,15%);
+    }
+    .span7 {
+      font-weight: bold;
+      padding: 6px;
     }
     label.original {
       margin-bottom: 0px;
