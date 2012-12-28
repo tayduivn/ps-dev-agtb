@@ -159,18 +159,17 @@
     $('body').on( 'click', 'a[data-toggle="proto"]', function (e){
       //e.relatedTarget // previous tab
       e.preventDefault();
-      e.stopPropagation();
-
+      //e.stopPropagation();
       var link = $(this)
         , source = link.attr('href')
         , target = link.data('target')
         , mode = link.data('mode')
         , method = link.data('method');
-    // console.log(source);
-    // console.log(target);
-    // console.log(mode);
-    // console.log(mode);
-    // console.log('==============');
+      // console.log(source);
+      // console.log(target);
+      // console.log(mode);
+      // console.log(mode);
+      // console.log('==============');
       loadContent(source,target,mode,method);
     });
 
