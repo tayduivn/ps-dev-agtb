@@ -28,8 +28,11 @@
 }
 
 .more, .less {
-  //margin: 0 20px 20px;
-  color: @linkMore;
+  &.padded {
+    padding: 8px 20px;
+    display: inline-block;
+  }
+  //color: @linkMore;
   &:hover {
     color: @linkMore;
     text-decoration: none;
