@@ -14,7 +14,7 @@
     <tr><td>team_name</td><td>team array</td><td>optional</td></tr>
     <tr><td>team_name_type</td><td>replace or add teams</td><td>requred when team_name is used</td></tr>
     <tr><td>entire</td><td>true for all records</td><td>optional</td></tr>
-    <tr><td>current_search</td><td>current search array</td><td>optional</td></tr>
+    <tr><td>filter</td><td>filter array</td><td>optional</td></tr>
     <tr><td>delete</td><td>true to delete records</td><td>optional, default is false</td></tr>
 </table>
 </div>
@@ -47,21 +47,12 @@
         )
         <br>
 
-        PUT parameters to update do_not_call field for all contacts, with basic search ('name'='airline'):
+        PUT parameters to update do_not_call field for all contacts, with a filter ('name'='airline'):
         "massupdate_params": array(
             "module":"Contacts",
             "entire":true,
             "do_not_call":1,
-            "current_search":array("search_type"=>"basic", "name"=>"airline"),
-        )
-        <br>
-
-        PUT parameters to update do_not_call field for all contacts, with advanced search ('first_name'='airline' and 'assigned_user_id'=user1 or user2):
-        "massupdate_params": array(
-            "module":"Contacts",
-            "entire":true,
-            "do_not_call":1,
-            "current_search":array("search_type"=>"advanced", "first_name"=>"airline", "assigned_user_id"=>array(0=>id1,1=>id2)),
+            "filter":array(array('name'=>'airline')),
         )
         <br>
 
@@ -86,23 +77,18 @@
             "module":"Contacts",
             "delete":true
             "entire":true,
-            "current_search":array("search_type"=>"basic", "name"=>"airline"),
-        )
-        <br>
-
-        DELETE parameters to delete all searched contacts, using advanced search ('name'='airline' and 'assigned_user_id'=user1 or user2):
-        "massupdate_params": array(
-            "module":"Contacts",
-            "delete":true
-            "entire":true,
-            "current_search":array("search_type"=>"advanced", "first_name"=>"airline", "assigned_user_id"=>array(0=>id1,1=>id2)),
+            "filter":array(array('name'=>'airline')),
         )
     </code>
 </div>
 <div class="output">
   <h2>Output Example:</h2>
     <code class="codesample">
-        ok
+        If mass update is done:
+        array('status'=>'done')
+        <br>
+        If mass update job is queued:
+        array('status'=>'queued', 'jobId'=>jobId)
     </code>
 </code>
 </div>

@@ -516,8 +516,8 @@ function sendEmailReminders(){
  */
 function asyncMassUpdate($schedulerJob, $data)
 {
-    require_once('include/MassUpdateJob.php');
-    $job = new MassUpdateJob();
+    require_once('include/SugarQueue/jobs/SugarJobMassUpdate.php');
+    $job = new SugarJobMassUpdate();
     $job->run($schedulerJob, $data);
     return true;
 }
