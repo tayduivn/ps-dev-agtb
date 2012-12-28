@@ -42,7 +42,7 @@
 
 // Links
 // -------------------------
-@linkColor:             @blue;
+@linkColor:             lighten(@PrimaryButton,10%);
 @linkColorHover:        darken(@linkColor, 10%);
 @linkMore:              @PrimaryButton;
 
@@ -132,10 +132,8 @@
 
 @dropdownLinkColor:             @grayDark;
 @dropdownLinkColorHover:        @linkColor;
-@dropdownLinkBackgroundHover:   lighten(@linkColor, 52%);
-
-@dropdownLinkBackgroundActive:  #E1F0FA; //@linkColor;
-@dropdownLinkBackgroundHover:   @dropdownLinkBackgroundActive;
+@dropdownLinkBackgroundHover:   lighten(@PrimaryButton,45%);
+@dropdownLinkBackgroundActive:  lighten(@PrimaryButton,80%);//#E1F0FA; //@linkColor;
 
 
 
