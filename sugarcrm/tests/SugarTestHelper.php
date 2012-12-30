@@ -138,13 +138,23 @@ $GLOBALS['db']->commit();
 
 define('CHECK_FILE_MAPS', false);
 // define our testcase subclass
+if(function_exists("shadow_get_config") && shadow_get_config() != false) {
+    // shadow is enabled
+    define('SHADOW_ENABLED', true);
+    define('SHADOW_CHECK', true); // disable for faster tests
+} else {
+    define('SHADOW_ENABLED', false);
+    define('SHADOW_CHECK', false);
+}
 class Sugar_PHPUnit_Framework_TestCase extends PHPUnit_Framework_TestCase
 {
     protected $backupGlobals = FALSE;
 
     protected $useOutputBuffering = true;
 
-    protected function getFiles()
+    protected $file_map;
+
+    public static function getFiles()
     {
         $dir = realpath(dirname(__FILE__)."/..");
         $files = `find $dir -name cache -prune -o -name custom -prune -o -name upload -prune -o -name tests -prune -o -name sugarcrm\\*.log -prune -o -type f -print | sort`;
@@ -229,6 +239,19 @@ class Sugar_PHPUnit_Framework_TestCase extends PHPUnit_Framework_TestCase
         }
         return true;
     }
+
+    public function runBare()
+    {
+        if(SHADOW_CHECK && empty($this->file_map)) {
+        	$this->file_map = self::getFiles();
+        }
+        parent::runBare();
+        if(SHADOW_CHECK) {
+            $oldfiles = $this->file_map;
+            $this->file_map = self::getFiles();
+            $this->assertEquals($oldfiles, $this->file_map);
+        }
+    }
 }
 
 // define output testcase subclass
@@ -238,15 +261,6 @@ class Sugar_PHPUnit_Framework_OutputTestCase extends PHPUnit_Extensions_OutputTe
 
     protected $_notRegex;
     protected $_outputCheck;
-
-    protected function getFiles()
-    {
-        $dir = realpath(dirname(__FILE__)."/..");
-        $files = `find $dir -name cache -prune -o -name custom -prune -o -name upload -prune -o -name tests -prune -o -name sugarcrm\*.log -prune -o -type f -print | sort`;
-        $flist = explode("\n", $files);
-        sort($flist);
-        return join("\n", $flist);
-    }
 
     protected function assertPreConditions()
     {
@@ -327,6 +341,19 @@ class Sugar_PHPUnit_Framework_OutputTestCase extends PHPUnit_Extensions_OutputTe
             }
         }
     }
+
+    public function runBare()
+    {
+    	if(SHADOW_CHECK && empty($this->file_map)) {
+    		$this->file_map = Sugar_PHPUnit_Framework_TestCase::getFiles();
+    	}
+    	parent::runBare();
+    	if(SHADOW_CHECK) {
+    		$newfiles = Sugar_PHPUnit_Framework_TestCase::getFiles();
+    		$this->assertEquals($this->file_map, $newfiles);
+    	}
+    }
+
 }
 
 // define a mock logger interface; used for capturing logging messages emited
@@ -803,6 +830,13 @@ class SugarTestHelper
     protected static function tearDown_files()
     {
         foreach ( self::$oldFiles as $filename => $filecontents ) {
+            if(SHADOW_ENABLED) {
+                if(substr($filename, 0, 7) != 'custom/' && substr($filename, 0, 6) != 'cache/' && file_exists($filename)) {
+                    // Delete shadow files always
+                    @SugarAutoLoader::unlink($filename, false);
+                    continue;
+                }
+            }
         	if ( $filecontents == self::NOFILE_DATA ) {
         		if ( file_exists($filename) ) {
         			SugarAutoLoader::unlink($filename, false);
