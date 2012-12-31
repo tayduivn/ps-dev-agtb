@@ -3143,28 +3143,28 @@ function check_iis_version($sys_iis_version = '') {
 
     return $retval;
 }
-
-function pre_login_check(){
-	global $action, $login_error;
-	if(!empty($action)&& $action == 'Login'){
-
-		if(!empty($login_error)){
-			$login_error = htmlentities($login_error);
-			$login_error = str_replace(array("&lt;pre&gt;","&lt;/pre&gt;","\r\n", "\n"), "<br>", $login_error);
-			$_SESSION['login_error'] = $login_error;
-			echo '<script>
-						function set_focus() {}
-						if(document.getElementById("post_error")) {
-							document.getElementById("post_error").innerHTML="'. $login_error. '";
-							document.getElementById("cant_login").value=1;
-							document.getElementById("login_button").disabled = true;
-							document.getElementById("user_name").disabled = true;
-							//document.getElementById("user_password").disabled = true;
-						}
-						</script>';
-		}
-	}
-}
+// no longer needed
+//function pre_login_check(){
+//	global $action, $login_error;
+//	if(!empty($action)&& $action == 'Login'){
+//
+//		if(!empty($login_error)){
+//			$login_error = htmlentities($login_error);
+//			$login_error = str_replace(array("&lt;pre&gt;","&lt;/pre&gt;","\r\n", "\n"), "<br>", $login_error);
+//			$_SESSION['login_error'] = $login_error;
+//			echo '<script>
+//						function set_focus() {}
+//						if(document.getElementById("post_error")) {
+//							document.getElementById("post_error").innerHTML="'. $login_error. '";
+//							document.getElementById("cant_login").value=1;
+//							document.getElementById("login_button").disabled = true;
+//							document.getElementById("user_name").disabled = true;
+//							//document.getElementById("user_password").disabled = true;
+//						}
+//						</script>';
+//		}
+//	}
+//}
 
 /**
  * Get Sugar root directory
@@ -3230,7 +3230,7 @@ function sugar_cleanup($exit = false) {
 
 	}
 
-	pre_login_check();
+//	pre_login_check();
 	if(class_exists('DBManagerFactory')) {
 		$db = DBManagerFactory::getInstance();
 		$db->disconnect();
