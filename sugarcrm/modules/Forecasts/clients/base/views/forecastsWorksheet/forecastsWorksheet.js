@@ -275,14 +275,14 @@
                         saveCount++;
                         //if this is the last save, go ahead and trigger the callback;
                         if(totalToSave === saveCount) {
-                            self.context.forecasts.trigger('forecasts:worksheetSaved', totalToSave, 'rep_worksheet');
+                            self.context.forecasts.trigger('forecasts:worksheetSaved', totalToSave, 'rep_worksheet', isDraft);
                         }
                     }});
                 });
 
                 self.cleanUpDirtyModels();
             } else {
-                this.context.forecasts.trigger('forecasts:worksheetSaved', totalToSave, 'rep_worksheet');
+                this.context.forecasts.trigger('forecasts:worksheetSaved', totalToSave, 'rep_worksheet', isDraft);
             }
         }
 
