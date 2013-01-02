@@ -44,6 +44,7 @@ class vCardApiTest extends Sugar_PHPUnit_Framework_OutputTestCase
     public function tearDown()
     {
         SugarTestHelper::tearDown();
+        unset($_FILES);
     }
 
     public function testvCardSave()
@@ -65,4 +66,52 @@ class vCardApiTest extends Sugar_PHPUnit_Framework_OutputTestCase
         $this->expectOutputRegex('/BEGIN\:VCARD/', 'Failed to get contact vCard.');
     }
 
-}
+    /**
+     * @group vcardapi_vCardImportPost
+     */
+    public function testvCardImportPost_NoFilePosted_ReturnsError()
+    {
+        unset($_FILES);
+        $api = new RestService();
+        $api->user = $GLOBALS['current_user'];
+
+        $args = array(
+            'module' => 'Contacts',
+        );
+
+        $this->setExpectedException('SugarApiExceptionMissingParameter');
+        $apiClass = new vCardApi();
+        $apiClass->vCardImport($api, $args);
+    }
+
+    /**
+     * @group vcardapi_vCardImportPost
+     */
+    public function testvCardImportPost_FileExists_ImportsPersonRecord()
+    {
+        $_FILES = array(
+            'vcard_import'    =>  array(
+                'name'      =>  'simplevcard.vcf',
+                'tmp_name'  =>  dirname(__FILE__)."/SimpleVCard.vcf",
+                'type'      =>  'text/directory',
+                'size'      =>  42,
+                'error'     =>  0
+            )
+        );
+
+        $api = new RestService();
+        $api->user = $GLOBALS['current_user'];
+
+        $args = array(
+            'module' => 'Contacts',
+        );
+
+        $apiClass = new vCardApi();
+        $results = $apiClass->vCardImport($api, $args);
+
+        $this->assertEquals(true,is_array($results), 'Incorrect number of items returned');
+        $this->assertEquals(true, array_key_exists('vcard_import', $results), 'Incorrect field name returned');
+
+        $GLOBALS['db']->query("DELETE FROM contacts WHERE id = \'" . $results['vcard_import']  . "'");
+    }
+ }

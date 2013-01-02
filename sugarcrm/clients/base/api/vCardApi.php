@@ -47,6 +47,15 @@ class vCardApi extends SugarApi {
                 'shortHelp' => 'An API to download a contact as a vCard.',
                 'longHelp' => 'include/api/help/vCard.html',
             ),
+            'vCardImportPost' => array(
+                'reqType' => 'POST',
+                'path' => array('<module>', 'file', 'vcard_import'),
+                'pathVars' => array('module', '', ''),
+                'method' => 'vCardImport',
+                'rawPostContents' => true,
+                'shortHelp' => 'Imports a person record from a vcard',
+                'longHelp' => 'include/api/help/vCardImportPost.html',
+            ),
         );
     }
 
@@ -70,5 +79,28 @@ class vCardApi extends SugarApi {
         $vcard->loadContact($args['id'], $module);
 
         $vcard->saveVCard();
+    }
+
+    /**
+     * vCardImport
+     * @param $api ServiceBase The API class of the request, used in cases where the API changes how the fields are pulled from the args array.
+     * @param $args array The arguments array passed in from the API
+     * @return String
+     */
+    public function vCardImport($api, $args) {
+        var_dump('here');
+        if (isset($_FILES) && count($_FILES) > 0 ) {
+            reset($_FILES);
+            $first_key = key($_FILES);
+            if (isset($_FILES[$first_key]['tmp_name']) && isset($_FILES[$first_key]['size']) > 0 ) {
+                $vcard = new vCard();
+                $recordId = $vcard->importVCard($_FILES[$first_key]['tmp_name'],$args['module']);
+                $results = array($first_key => $recordId);
+                return $results;
+            }
+        }
+        else {
+            throw new SugarApiExceptionMissingParameter('File was missing');
+        }
     }
 }

@@ -27,52 +27,9 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * governing these rights and limitations under the License.  Portions created
  * by SugarCRM are Copyright (C) 2006 SugarCRM, Inc.; All Rights Reserved.
  */
-$layout = MetaDataManager::getLayout('SideBarLayout');
-$layout->push('main', array(
-    'layout' => array(
-        'type' => 'drawer',
-        'showEvent' => array(
-            "delegate" => true,
-            "event" => "click [name=create_button]",
-        ),
-        'components' => array(
-            array(
-                'layout' => 'create',
-                'context' => array(
-                    'create' => true,
-                ),
-            )
-        )
-    ),
-));
-$layout->push('main', array(
-        'layout' => array(
-            'type' => 'drawer',
-            'showEvent' => array(
-                "delegate" => true,
-                "event" => "click [name=create_button]",
-            ),
-            'components' => array(
-                array(
-                    'layout' => 'create',
-                    'context' => array(
-                        'create' => true,
-                    ),
-                )
-            )
-        ),
-    ));
-
-$layout->push('main', array(
-        'layout' => array(
-            'type' => 'drawer',
-            'showEvent' => array(
-                "drawer:vcard:import:fire"
-            )
-        ),
-    ));
-$layout->push('main', array('view' => 'headerpane'));
-$layout->push('main', array('layout' => 'list'));
-$layout->push('side', array('layout' => 'list-sidebar'));
+$layout = MetaDataManager::getLayout("SideBarLayout");
+$layout->push('main', array("view" => "vcard-import-headerpane"));
+$layout->push('main', array("view" => "vcard-import"));
+$layout->push('side', array('layout'=>'sidebar'));
 $layout->push('preview', array('layout' => 'preview'));
-$viewdefs['base']['layout']['records'] = $layout->getLayout();
+$viewdefs['base']['layout']['vcard-import'] = $layout->getLayout();
