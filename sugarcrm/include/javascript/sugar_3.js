@@ -123,6 +123,7 @@ var maxHours = 24;
 var requiredTxt = 'Missing Required Field:';
 var invalidTxt = 'Invalid Value:';
 var secondsSinceLoad = 0;
+var alertsTimeoutId;
 var inputsWithErrors = new Array();
 var tabsWithErrors = new Array();
 var lastSubmitTime = 0;
@@ -196,7 +197,7 @@ function checkAlerts() {
 		}
 	}
 
-	setTimeout("checkAlerts()", 1000);
+    alertsTimeoutId = setTimeout("checkAlerts()", 1000);
 }
 
 function toggleDisplay(id) {
