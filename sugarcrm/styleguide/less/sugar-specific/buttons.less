@@ -16,7 +16,7 @@
   //background-color: darken(@grayLighter, 5%);
   //color: @gray !important;
   text-shadow: none;
-  .box-shadow(~"inset 0 1px 8px rgba(0,0,0,.2) !important");
+  .box-shadow(~"inset 0 1px 6px rgba(0,0,0,.2) !important");
 }
 
 // Reposition the caret
@@ -73,6 +73,9 @@
   font-weight: normal;
 }
 
+.btn-dark [class^="icon-"] {
+  color: lighten(@gray,10%) !important;
+}
 
 // invisible appears as no button
 .btn-invisible {
