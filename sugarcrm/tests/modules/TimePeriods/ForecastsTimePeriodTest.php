@@ -427,6 +427,7 @@ class ForecastsTimePeriodTest extends Sugar_PHPUnit_Framework_TestCase
         return array
         (
             //Going from 2 to 4 creates 2 additional annual timeperiods backwards (2 annual, 8 quarters)
+
             array(0, 2, 4, TimePeriod::ANNUAL_TYPE, TimePeriod::QUARTER_TYPE, 1, 1, '-2 year', 2, 8, 'backward'),
 
             array(0, 2, 4, TimePeriod::ANNUAL_TYPE, TimePeriod::QUARTER_TYPE, 7, 1, '-2 year', 2, 8, 'backward'),
@@ -461,14 +462,16 @@ class ForecastsTimePeriodTest extends Sugar_PHPUnit_Framework_TestCase
             array(0, 0, 4, TimePeriod::QUARTER_TYPE, TimePeriod::MONTH_TYPE, 1, 1, '1 year', 4, 12, 'forward', 10, 1, 12, 1),
             array(0, 4, 12, TimePeriod::QUARTER_TYPE, TimePeriod::MONTH_TYPE, 1, 1, '2 year', 8, 24, 'forward', 10, 1, 12, 1),
             array(0, 12, 6, TimePeriod::QUARTER_TYPE, TimePeriod::MONTH_TYPE, 1, 1, '0 year', 0, 0, 'forward', 10, 1, 12, 1),
-            //Simulating upgrades
-            //No backward timeperiods will be created
 
+            //Simulating upgrades
+            //No backward TimePeriods will be created
             array(1, 2, 4, TimePeriod::ANNUAL_TYPE, TimePeriod::QUARTER_TYPE, 1, 1, '0 year', 0, 0, 'backward'),
             array(1, 2, 4, TimePeriod::QUARTER_TYPE, TimePeriod::MONTH_TYPE, 1, 1, '0 year', 0, 0, 'backward'),
 
+            //Forward TimePeriods will be created
             array(1, 2, 2, TimePeriod::ANNUAL_TYPE, TimePeriod::QUARTER_TYPE, 1, 1, '2 year', 2, 8, 'forward'),
             array(1, 2, 4, TimePeriod::QUARTER_TYPE, TimePeriod::MONTH_TYPE, 1, 1, '1 year', 4, 12, 'forward'),
+
         );
     }
 
@@ -542,20 +545,101 @@ class ForecastsTimePeriodTest extends Sugar_PHPUnit_Framework_TestCase
 
         $tp = $direction == 'backward' ? TimePeriod::getEarliest($parentType) : TimePeriod::getLatest($parentType);
 
-
         $this->assertEquals($expectedDate->asDbDate(), $tp->start_date, "Failed creating {$expectedParents} new {$direction} timeperiods");
-
-        $tp = $direction == 'backward' ? TimePeriod::getEarliest($leafType) : TimePeriod::getLatest($leafType);
-
-        $expectedDate = $timedate->getNow()->setDate($timedate->fromDbDate($expectedSeedLeaf->start_date)->modify($dateModifier)->format('Y'), $expectedLeafMonth, $expectedLeafDay);
 
         //If this is an upgrade the expectedDate should be forward from what the current time period is
         if($isUpgrade && $direction == 'forward') {
+            $tp = TimePeriod::getLatest($leafType);
             $start_date = $db->getOne("SELECT max(start_date) FROM timeperiods WHERE type = '{$leafType}' AND deleted = 0");
             $expectedDate = $timedate->fromDbDate(substr($start_date, 0, 10));
+            $this->assertEquals($expectedDate->asDbDate(), $tp->start_date, "Failed creating {$expectedLeaves} leaf timeperiods");
         }
 
-        $this->assertEquals($expectedDate->asDbDate(), $tp->start_date, "Failed creating {$expectedLeaves} leaf timeperiods");
+    }
+
+    /**
+     * This is the data provider to simulate arguments we pass to the testCreateTimePeriodsForUpgrade test
+     *
+     */
+    public function testCreateTimePeriodsForUpgradeProvider() {
+        return array(
+
+            //This data set simulates case where the start date specified is the same as current date
+            array(0, TimePeriod::ANNUAL_TYPE, TimePeriod::QUARTER_TYPE, TimeDate::getInstance()->getNow()->modify('first day of january'), 2, TimeDate::getInstance()->getNow()->modify('first day of january'), 14, TimeDate::getInstance()->getNow()->modify('first day of october'), TimeDate::getInstance()->getNow()->modify('last day of december')),
+            array(0, TimePeriod::ANNUAL_TYPE, TimePeriod::QUARTER_TYPE, TimeDate::getInstance()->getNow()->modify('first day of january'), 4, TimeDate::getInstance()->getNow()->modify('first day of january'), 24, TimeDate::getInstance()->getNow()->modify('first day of october'), TimeDate::getInstance()->getNow()->modify('last day of december')),
+            array(0, TimePeriod::QUARTER_TYPE, TimePeriod::MONTH_TYPE, TimeDate::getInstance()->getNow()->modify('first day of january'), 2, TimeDate::getInstance()->getNow()->modify('first day of january'), 9, TimeDate::getInstance()->getNow()->modify('first day of january'), TimeDate::getInstance()->getNow()->modify('last day of march')),
+            array(0, TimePeriod::QUARTER_TYPE, TimePeriod::MONTH_TYPE, TimeDate::getInstance()->getNow()->modify('first day of january'), 4, TimeDate::getInstance()->getNow()->modify('first day of january'), 17, TimeDate::getInstance()->getNow()->modify('first day of january'), TimeDate::getInstance()->getNow()->modify('last day of march')),
+            array(8, TimePeriod::QUARTER_TYPE, TimePeriod::MONTH_TYPE, TimeDate::getInstance()->getNow()->modify('first day of january'), 2, TimeDate::getInstance()->getNow()->modify('first day of january'), 9, TimeDate::getInstance()->getNow()->modify('first day of september'), TimeDate::getInstance()->getNow()->modify('last day of september')),
+            array(16, TimePeriod::QUARTER_TYPE, TimePeriod::MONTH_TYPE, TimeDate::getInstance()->getNow()->modify('first day of january'), 4, TimeDate::getInstance()->getNow()->modify('first day of january'), 17, TimeDate::getInstance()->getNow()->modify('+1 year')->modify('first day of march'), TimeDate::getInstance()->getNow()->modify('+1 year')->modify('last day of march')),
+
+            //This data set simulates case where the start date specified is before the current date
+            array(0, TimePeriod::ANNUAL_TYPE, TimePeriod::QUARTER_TYPE, TimeDate::getInstance()->getNow()->modify('first day of february'), 2, TimeDate::getInstance()->getNow()->modify('first day of march'), 14, TimeDate::getInstance()->getNow()->modify('first day of november'), TimeDate::getInstance()->getNow()->modify('+1 year')->modify('last day of january')),
+            array(0, TimePeriod::ANNUAL_TYPE, TimePeriod::QUARTER_TYPE, TimeDate::getInstance()->getNow()->modify('first day of february'), 4, TimeDate::getInstance()->getNow()->modify('first day of march'), 24, TimeDate::getInstance()->getNow()->modify('first day of november'), TimeDate::getInstance()->getNow()->modify('+1 year')->modify('last day of january')),
+            array(0, TimePeriod::QUARTER_TYPE, TimePeriod::MONTH_TYPE, TimeDate::getInstance()->getNow()->modify('first day of february'), 2, TimeDate::getInstance()->getNow()->modify('first day of march'), 10, TimeDate::getInstance()->getNow()->modify('first day of april'), TimeDate::getInstance()->getNow()->modify('last day of april')),
+            array(0, TimePeriod::QUARTER_TYPE, TimePeriod::MONTH_TYPE, TimeDate::getInstance()->getNow()->modify('first day of february'), 4, TimeDate::getInstance()->getNow()->modify('first day of march'), 18, TimeDate::getInstance()->getNow()->modify('first day of april'), TimeDate::getInstance()->getNow()->modify('last day of april')),
+            array(13, TimePeriod::ANNUAL_TYPE, TimePeriod::QUARTER_TYPE, TimeDate::getInstance()->getNow()->modify('first day of february'), 2, TimeDate::getInstance()->getNow()->modify('first day of march'), 14, TimeDate::getInstance()->getNow()->modify('+2 year')->modify('first day of november'), TimeDate::getInstance()->getNow()->modify('+3 year')->modify('last day of january')),
+            array(23, TimePeriod::ANNUAL_TYPE, TimePeriod::QUARTER_TYPE, TimeDate::getInstance()->getNow()->modify('first day of february'), 4, TimeDate::getInstance()->getNow()->modify('first day of march'), 24, TimeDate::getInstance()->getNow()->modify('+4 year')->modify('first day of november'), TimeDate::getInstance()->getNow()->modify('+5 year')->modify('last day of january')),
+
+            //This data set simulates case where the start date specified is after the current date
+            array(0, TimePeriod::ANNUAL_TYPE, TimePeriod::QUARTER_TYPE, TimeDate::getInstance()->getNow()->modify('first day of march'), 2, TimeDate::getInstance()->getNow()->modify('first day of february'), 14, TimeDate::getInstance()->getNow()->modify('first day of december'), TimeDate::getInstance()->getNow()->modify('+1 year')->modify('last day of february')),
+            array(0, TimePeriod::ANNUAL_TYPE, TimePeriod::QUARTER_TYPE, TimeDate::getInstance()->getNow()->modify('first day of march'), 4, TimeDate::getInstance()->getNow()->modify('first day of february'), 24, TimeDate::getInstance()->getNow()->modify('first day of december'), TimeDate::getInstance()->getNow()->modify('+1 year')->modify('last day of february')),
+            array(0, TimePeriod::QUARTER_TYPE, TimePeriod::MONTH_TYPE, TimeDate::getInstance()->getNow()->modify('first day of march'), 2, TimeDate::getInstance()->getNow()->modify('first day of february'), 11, TimeDate::getInstance()->getNow()->modify('first day of may'), TimeDate::getInstance()->getNow()->modify('last day of may')),
+            array(0, TimePeriod::QUARTER_TYPE, TimePeriod::MONTH_TYPE, TimeDate::getInstance()->getNow()->modify('first day of march'), 4, TimeDate::getInstance()->getNow()->modify('first day of february'), 19, TimeDate::getInstance()->getNow()->modify('first day of may'), TimeDate::getInstance()->getNow()->modify('last day of may')),
+            array(10, TimePeriod::QUARTER_TYPE, TimePeriod::MONTH_TYPE, TimeDate::getInstance()->getNow()->modify('first day of march'), 2, TimeDate::getInstance()->getNow()->modify('first day of february'), 11, TimeDate::getInstance()->getNow()->modify('first day of november'), TimeDate::getInstance()->getNow()->modify('last day of november')),
+            array(18, TimePeriod::QUARTER_TYPE, TimePeriod::MONTH_TYPE, TimeDate::getInstance()->getNow()->modify('first day of march'), 4, TimeDate::getInstance()->getNow()->modify('first day of february'), 19, TimeDate::getInstance()->getNow()->modify('+1 year')->modify('first day of may'), TimeDate::getInstance()->getNow()->modify('+1 year')->modify('last day of may')),
+        );
+
+    }
+
+    /**
+     * This is a test for the createTimePeriodsForUpgrade method
+     *
+     * @group forecasts
+     * @group timeperiods
+     * @dataProvider testCreateTimePeriodsForUpgradeProvider
+     * @param $createdTimePeriodToCheck int value of the created TimePeriod index to check
+     * @param $interval The TimePeriod interval type
+     * @param $leafInterval The TimePeriod leaf interval type
+     * @param $startDate TimeDate instance of chosen start date for the TimePeriod interval
+     * @param $shownForward The number of forward TimePeriod intervals to create
+     * @param $currentDate TimeDate instance of the current date
+     * @param $expectedTimePeriods int value of the expected TimePeriods created
+     * @param $startDateFirstCreated TimeDate instance of the start date of first created TimePeriod
+     * @param $endDateFirstCreated TimeDate instance of the end date of first created TimePeriod
+     *
+     * @outputBuffering disabled
+     */
+    public function testCreateTimePeriodsForUpgrade(
+        $createdTimePeriodToCheck,
+        $interval,
+        $leafInterval,
+        $startDate,
+        $shownForward,
+        $currentDate,
+        $expectedTimePeriods,
+        $startDateFirstCreated,
+        $endDateFirstCreated)
+    {
+
+        $currentSettings = array();
+        $currentSettings['timeperiod_interval'] = $interval;
+        $currentSettings['timeperiod_leaf_interval'] = $leafInterval;
+        $currentSettings['timeperiod_start_date'] = $startDate->asDbDate();
+        $currentSettings['timeperiod_shown_forward'] = $shownForward;
+
+        $timePeriod = TimePeriod::getByType($interval);
+        $created = $timePeriod->createTimePeriodsForUpgrade($currentSettings, $currentDate);
+
+        /*
+        foreach($created as $tp) {
+            echo $tp->name . " " . $tp->start_date . '-' . $tp->end_date . ', ' . $tp->leaf_cycle . "\n";
+        }
+        */
+
+        $this->assertEquals($expectedTimePeriods, count($created));
+        $firstTimePeriod = $created[$createdTimePeriodToCheck];
+        $this->assertEquals($startDateFirstCreated->asDbDate(), $firstTimePeriod->start_date, 'Failed asserting that the start date of first backward timeperiod is ' . $startDateFirstCreated);
+        $this->assertEquals($endDateFirstCreated->asDbDate(), $firstTimePeriod->end_date, 'Failed asserting that the end date of first backward timeperiod is ' . $firstTimePeriod->end_date);
     }
 
     /**
