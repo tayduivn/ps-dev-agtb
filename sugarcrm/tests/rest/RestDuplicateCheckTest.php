@@ -62,11 +62,12 @@ class RestDuplicateCheckTest extends RestTestBase {
      */
     public function testDuplicateCheck_TwoFieldsPassed_ReturnsOneResult() {
         $restReply = $this->_restCall("Leads/duplicateCheck",
-            json_encode(array('field_data' => array('first_name'=>$this->newLead->first_name, 'last_name' => $this->newLead->last_name))),
+            json_encode(array('first_name'=>$this->newLead->first_name, 'last_name' => $this->newLead->last_name)),
             'POST');
-        $this->assertEquals(1, count($restReply['reply']), "Should only return one result");
-        $this->assertEquals($this->newLead->first_name, $restReply['reply'][0]['first_name'], "Should find lead with correct first name");
-        $this->assertEquals($this->newLead->last_name, $restReply['reply'][0]['last_name'], "Should find lead with correct last name");
+        $records = $restReply['reply']['records'];
+        $this->assertEquals(1, count($records), "Should only return one result");
+        $this->assertEquals($this->newLead->first_name, $records[0]['first_name'], "Should find lead with correct first name");
+        $this->assertEquals($this->newLead->last_name, $records[0]['last_name'], "Should find lead with correct last name");
     }
 
     /**
@@ -75,11 +76,12 @@ class RestDuplicateCheckTest extends RestTestBase {
      */
     public function testDuplicateCheck_OneFieldsPassedAndOneFieldBlank_ReturnsTwoResults() {
         $restReply = $this->_restCall("Leads/duplicateCheck",
-            json_encode(array('field_data' => array('first_name'=>'', 'last_name' => $this->newLead->last_name))),
+            json_encode(array('first_name'=>'', 'last_name' => $this->newLead->last_name)),
             'POST');
-        $this->assertEquals(2, count($restReply['reply']), "Should return two results");
-        $this->assertEquals($this->newLead->last_name, $restReply['reply'][0]['last_name'], "Should find lead with correct last name");
-        $this->assertEquals($this->newLead2->last_name, $restReply['reply'][1]['last_name'], "Should find lead with correct last name");
+        $records = $restReply['reply']['records'];
+        $this->assertEquals(2, count($records), "Should return two results");
+        $this->assertEquals($this->newLead->last_name, $records[0]['last_name'], "Should find lead with correct last name");
+        $this->assertEquals($this->newLead2->last_name, $records[1]['last_name'], "Should find lead with correct last name");
     }
 
     /**
@@ -88,11 +90,12 @@ class RestDuplicateCheckTest extends RestTestBase {
      */
     public function testDuplicateCheck_OneFieldsPassedAndOneFieldOmmitted_ReturnsTwoResults() {
         $restReply = $this->_restCall("Leads/duplicateCheck",
-            json_encode(array('field_data' => array('last_name' => $this->newLead->last_name))),
+            json_encode(array('last_name' => $this->newLead->last_name)),
             'POST');
-        $this->assertEquals(2, count($restReply['reply']), "Should return two results");
-        $this->assertEquals($this->newLead->last_name, $restReply['reply'][0]['last_name'], "Should find lead with correct last name");
-        $this->assertEquals($this->newLead2->last_name, $restReply['reply'][1]['last_name'], "Should find lead with correct last name");
+        $records = $restReply['reply']['records'];
+        $this->assertEquals(2, count($records), "Should return two results");
+        $this->assertEquals($this->newLead->last_name, $records[0]['last_name'], "Should find lead with correct last name");
+        $this->assertEquals($this->newLead2->last_name, $records[1]['last_name'], "Should find lead with correct last name");
     }
 
 }

@@ -64,10 +64,9 @@ class DuplicateCheckApi extends FilterApi
         //build filter to hand off to the FilterApi
         $dupeCheckMetadata = $this->retrieveDupeCheckMetadata($args['module']);
         $dupeCheckFilterTemplate = $dupeCheckMetadata['filter_template'];
-        $fieldData = $args['field_data'];
-        $filter = $this->buildDupeCheckFilter($dupeCheckFilterTemplate, $fieldData);
-        if (!empty($fieldData['id'])) {
-            $filter = $this->addFilterForEdits($filter[0], $fieldData['id']);
+        $filter = $this->buildDupeCheckFilter($dupeCheckFilterTemplate, $args);
+        if (!empty($args['id'])) {
+            $filter = $this->addFilterForEdits($filter[0], $args['id']);
         }
         $args['filter'] = $filter;
         $args['max_num'] = self::FILTER_QUERY_LIMIT;
