@@ -1,5 +1,6 @@
 <?php
-if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
+if (!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
+
 /*********************************************************************************
  * The contents of this file are subject to the SugarCRM Master Subscription
  * Agreement ("License") which can be viewed at
@@ -27,36 +28,20 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
-require_once('include/DuplicateCheck/DuplicateCheckFactory.php');
-
-class DuplicateCheckApi extends SugarApi
+/**
+ * Factory to create duplicate check services.
+ */
+class DuplicateCheckFactory
 {
-    public function registerApiRest()
-    {
-        return array(
-            'duplicateCheck' => array(
-                'reqType' => 'POST',
-                'path' => array('<module>','duplicateCheck'),
-                'pathVars' => array('module',''),
-                'method' => 'checkForDuplicates',
-                'shortHelp' => 'Check for duplicate records within a module',
-                'longHelp' => 'include/api/help/duplicateCheck.html',
-            ),
-        );
-    }
-
     /**
-     * Using the appropriate duplicate check service, search for duplicates in the system
+     * Currently this only returns one duplicate check service, but in the future we can plug in multiple
+     * duplicate check implementations based on an admin configuration.
      *
-     * @param ServiceBase $api
-     * @param array $args
+     * @return IDuplicateCheck A duplicate check service object.
      */
-    function checkForDuplicates(ServiceBase $api, array $args)
+    public static function getDuplicateCheckService()
     {
-        //retrieve the correct duplicate check service
-        $dupeCheckService = DuplicateCheckFactory::getDuplicateCheckService();
-
-        //invoke the duplicate check service
-        return $dupeCheckService->findDuplicates($args['module'], $args);
+        require_once('include/DuplicateCheck/FilterDuplicateCheck.php');
+        return new FilterDuplicateCheck();
     }
 }
