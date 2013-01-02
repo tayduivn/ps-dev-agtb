@@ -102,7 +102,7 @@
       );
   }
   var filterFields = {
-    'default': {'field':'name','opera':'matches','value':''},
+    'default': {'label':'','opera':'','value':'','disabled':false,'text':true},
     'name': {'label':'Name','opera':'matches,contains,not matches,not contains,true,false','disabled':false,'text':true},
     'assigned': {'label':'Assigned to','opera':'matches','disabled':true,'text':true},
     'stage': {'label':'Sales Stage','opera':'prospecting,value proposition,closed won,closed lost','disabled':false,'text':false},
@@ -156,6 +156,7 @@
       // create new filter
       _results.on('click', '.filter-new', function(e){
           editFilterForm( availableFilters.length-1, true );
+          _select.trigger("liszt:close");
           e.preventDefault();
           e.stopPropagation();
       });
@@ -165,6 +166,8 @@
           if ( !$(this).parents('li').hasClass('filter-disabled') ) {
               editFilterForm( $(this).attr('rel'), false );
           }
+          _select.trigger("liszt:activate");
+          _select.trigger("liszt:close");
           e.preventDefault();
           e.stopPropagation();
       });
@@ -191,7 +194,7 @@
           });
 
           // add new defalt row
-          createFilterRow('new', filterFields['default'], true);
+          createFilterRow('new', {'field':'default','opera':'','value':''}, true);
 
           // if click save button then update the filter spec
           // and close filter editor
@@ -331,22 +334,31 @@
           function setFilterRowInputs() {
 
               //set the field
-              field.val(spec.field);
+              if (spec.field!=='') {
+                field.val(spec.field);
+              }
 
               //set the operations
               opera.find('option').remove();
+
               if (fieldDef.opera==='') {
                   opera.hide();
               } else {
+                  opera.append('<option value=""></option>');
                   $.each( fieldDef.opera.split(','), function(index,value){
                       opera.append('<option value="'+ value +'">'+ value +'</option>');
                   });
                   //set opera selected to spec value
-                  opera.val(spec.opera);
+                  if (spec.opera!=='') {
+                      opera.val(spec.opera);
+                  }
                   //set opera enabled to field enabled
                   if (fieldDef.disabled) {
                       opera.attr('disabled','disabled');
+                  } else {
+                    opera.removeAttr('disabled');
                   }
+
               }
               opera.trigger("liszt:updated");
 

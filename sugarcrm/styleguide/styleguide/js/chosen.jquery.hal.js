@@ -435,6 +435,9 @@ Copyright (c) 2011 by Harvest
       this.form_field_jq.bind("liszt:open", function(evt) {
         return _this.container_mousedown(evt);
       });
+      this.form_field_jq.bind("liszt:close", function(evt) {
+        return _this.close_field(evt);
+      });
       this.search_field.blur(function(evt) {
         return _this.input_blur(evt);
       });
