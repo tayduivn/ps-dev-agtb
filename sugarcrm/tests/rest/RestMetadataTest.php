@@ -79,7 +79,7 @@ class RestMetadataTest extends RestTestBase {
             $this->markTestSkipped('This test will not pass with APC enabled.');
             return;
         }
-        $langContent = "<?php\n\$app_strings = array('LBL_KEYBOARD_SHORTCUTS_HELP_TITLE' => 'UnitTest');\n";
+        $langContent = "<?php\n\$app_strings['LBL_KEYBOARD_SHORTCUTS_HELP_TITLE'] = 'UnitTest';\n";
 
         $fileLoc = "custom/include/language/en_us.lang.php";
         $this->createdFiles[] = $fileLoc;
@@ -99,7 +99,6 @@ class RestMetadataTest extends RestTestBase {
 
         // Current user is logged in & submit language
         $restReply = $this->_restCall('metadata');
-
         $this->assertArrayHasKey('en_us',$restReply['reply']['labels']);
         $en_us = json_decode(file_get_contents($restReply['reply']['labels']['en_us']),true);
         $this->assertEquals($en_us['app_strings']['LBL_KEYBOARD_SHORTCUTS_HELP_TITLE'], "UnitTest");

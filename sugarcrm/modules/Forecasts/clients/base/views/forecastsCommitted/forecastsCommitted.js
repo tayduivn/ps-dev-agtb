@@ -232,12 +232,8 @@
                     self.updateTotals(totals);
                 }
             }, this);
-            this.context.forecasts.on("change:commitForecastFlag", function(context, flag) {
-                if(flag) {
-                    // reset flag without triggering event
-                    self.context.forecasts.set({commitForecastFlag : false}, {silent:true})
+            this.context.forecasts.on("forecasts:commitForecast", function(context, flag) {
                     self.commitForecast();
-                }
             }, this);
         }
     },
@@ -368,8 +364,7 @@
         self.context.forecasts.trigger("forecasts:commitButtons:disabled");
 
         //If the totals have not been set, don't save
-        if(!self.totals)
-        {
+        if(!self.totals) {
             return;
         }
 
