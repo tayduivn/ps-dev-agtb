@@ -125,6 +125,7 @@
      * @param isAdmin
      */
     checkSettingsAndRedirect:function (isSetup, isAdmin) {
+        var self = this;
         //3 conditions exist
         //1: If the user is not an admin, then the user will be redirected to the main Sugar index
         //2: The user is an admin, but setup has been performed and the cancel has been clicked,
@@ -137,31 +138,25 @@
         } else if (isSetup == 1 && this.context.forecasts.get('saveClicked') == false) {
             // this should only ever happen on the tabbed view when cancel is clicked
             window.location.hash = '#';
+        } else if (this.context.forecasts.get('saveClicked') == false) {
+            window.location = 'index.php?module=Forecasts';
         } else {
             // can happen on both views but it's the same methods/messages
             // we have a success save, so we need to call the app.metadata.sync() and then redirect back to the index
-            app.alert.show('success', {
-                level:'success',
-                autoClose:true,
-                closeable:false,
-                title:app.lang.get("LBL_FORECASTS_WIZARD_SUCCESS_TITLE", "Forecasts") + ":",
-                messages:[app.lang.get("LBL_FORECASTS_WIZARD_SUCCESS_MESSAGE", "Forecasts")]
-            });
-            if(!isSetup){
-                //issue notice about setting up Opportunities, we want this to happen after the page "refreshes"
-                setTimeout(function(){
-                    app.alert.show('forecast_opp_notice', {
-                        level:'info',
-                        autoClose:false,
-                        closeable:true,
-                        messages: app.lang.get("LBL_FORECASTS_WIZARD_REFRESH_NOTICE", "Forecasts")
-                    });}, 1000);
-            }
-                       
+        app.alert.show('success', {
+            level:'success',
+            autoClose:true,
+            closeable:false,
+            title:app.lang.get("LBL_FORECASTS_WIZARD_SUCCESS_TITLE", "Forecasts") + ":",
+            messages:[app.lang.get("LBL_FORECASTS_WIZARD_SUCCESS_MESSAGE", "Forecasts")]
+        });
+
+        //give the alert a few seconds to show then sync and reload
+        setTimeout(function(){
             // only sync the metadata and then push it back to the main location
             app.metadata.sync(function() {
                 window.location.hash = "#";
             });
-        }
+        },2500);
     }
 })

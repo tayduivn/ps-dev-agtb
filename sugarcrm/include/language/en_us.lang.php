@@ -3301,6 +3301,7 @@ $app_strings = array (
     'LBL_CANCEL_BUTTON_KEY' => 'l',
     'LBL_CANCEL_BUTTON_LABEL' => 'Cancel',
     'LBL_CANCEL_BUTTON_TITLE' => 'Cancel',
+    'LBL_CONFIRM_BUTTON_LABEL' => 'OK',
     'LBL_START_BUTTON_LABEL' => 'Start',
     'LBL_START_BUTTON_TITLE' => 'Start',
     'LBL_FINISH_BUTTON_LABEL' => 'Finish',
