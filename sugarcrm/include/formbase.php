@@ -504,14 +504,6 @@ function add_to_prospect_list($query_panel,$parent_module,$parent_type,$parent_i
     if(empty($thisPanel)) {
         return false;
     }
-
-    // bugfix #57850  filter prospect list based on marketing_id (if it's present)
-    $mkt_id = $_REQUEST['marketing_id'];
-    if (!empty($mkt_id) && $mkt_id != 'all')
-    {
-        $thisPanel->_instance_properties['function_parameters']['EMAIL_MARKETING_ID_VALUE'] = $mkt_id;
-    }
-
     $result = SugarBean::get_union_related_list($parent, '', '', '', 0, -99,-99,'', $thisPanel);
 
     if(!empty($result['list'])) {

@@ -141,12 +141,6 @@ class SugarWidgetSubPanelTopSelectButton extends SugarWidgetSubPanelTopButton
 			),
 		);
 
-                // bugfix #57850 add marketing_id to the request data to allow filtering based on it
-                if (!empty($_REQUEST['mkt_id']))
-                {
-                    $popup_request_data['passthru_data']['marketing_id'] = $_REQUEST['mkt_id'];
-                }
-
 		if (is_array($this->button_properties) && !empty($this->button_properties['add_to_passthru_data'])) {
 			$popup_request_data['passthru_data']= array_merge($popup_request_data['passthru_data'],$this->button_properties['add_to_passthru_data']);
 		}
