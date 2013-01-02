@@ -261,7 +261,7 @@ AH.getValue = function(variable, view, ignoreLinks) {
 	{
 		var asNum = SUGAR.expressions.unFormatNumber(field.value);
 		if ( (/^(\-)?[0-9]+(\.[0-9]+)?$/).exec(asNum) != null ) {
-			return asNum;
+			return parseFloat(asNum);
 		}
 		return field.value;
 	}

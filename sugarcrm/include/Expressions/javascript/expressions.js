@@ -984,7 +984,6 @@ SUGAR.expressions.unFormatNumber = function(num) {
     };
     num = SE.replaceAll(num, ts, "");
     num = SE.replaceAll(num, ds, ".");
-    num = parseFloat(num);
     }
     return num;
 };
