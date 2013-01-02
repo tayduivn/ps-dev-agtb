@@ -43,6 +43,7 @@ class SugarACLStatic extends SugarACLStrategy
                 }
                 if(ACLAction::getUserAccessLevel($user_id, $module, 'admin') == ACL_ALLOW_ADMIN
                     || ACLAction::getUserAccessLevel($user_id, $module, 'admin') == ACL_ALLOW_ADMIN_DEV) {
+
                         // disable team security for admins
                         return false;
                     }
@@ -89,6 +90,7 @@ class SugarACLStatic extends SugarACLStrategy
         'editview' => 1,
         'save' => 1,
         'edit' => 1,
+        'delete' => 1,
     );
 
     static $action_translate = array(
