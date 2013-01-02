@@ -34,18 +34,6 @@ require_once('clients/mobile/api/CurrentUserMobileApi.php');
  */
 class Bug59548Test extends Sugar_PHPUnit_Framework_TestCase
 {
-
-    public function setUp(){
-        SugarTestHelper::setUp('beanList');
-        SugarTestHelper::setUp('beanFiles');
-        SugarTestHelper::setUp('current_user', array(true, 1));
-    }
-
-    public function tearDown()
-    {
-        SugarTestHelper::tearDown();
-    }
-
     public function testUsersWirelessModuleList() {
         $cuma = new CurrentUserMobileApi();
         $module_list = $cuma->getModuleList();
