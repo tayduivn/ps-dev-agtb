@@ -68,9 +68,13 @@ abstract class PreparedStatement{
 
     protected $preparedStatementHndl = null;
 
+    protected $preparedStatementResult = null;
+
     abstract public function preparePreparedStatement($sqlText,  array $fieldDefs,  $msg = '' );
 
     abstract public function executePreparedStatement(array $data,  $msg = '' );
+
+    abstract public function preparedStatementFetch( $msg = '' );
 
     /**
      * Create Prepared Statement object from sql in the form of "INSERT INTO testPreparedStatement(id) VALUES(?int, ?varchar)"

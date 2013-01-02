@@ -188,7 +188,6 @@ class MysqliManager extends MysqlManager
         }
 
         $this->checkError($msg.' Query Failed: ' . $sql, $dieOnError);
-
         return $result;
     }
 

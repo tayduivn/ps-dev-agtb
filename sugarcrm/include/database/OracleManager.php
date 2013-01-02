@@ -846,7 +846,7 @@ class OracleManager extends DBManager
     /**
 	 * @see DBManager::massageValue()
 	 */
-	public function massageValue($val, $fieldDef)
+	public function massageValue($val, $fieldDef, $useQuotes = true)
     {
         $type = $this->getFieldType($fieldDef);
         $ctype = $this->getColumnType($type);
@@ -864,7 +864,7 @@ class OracleManager extends DBManager
             return parent::massageValue($val[0], $fieldDef);            // get the date portion
         }
 
-        return parent::massageValue($val, $fieldDef);
+        return parent::massageValue($val, $fieldDef, $useQuotes);
     }
 
 	/**

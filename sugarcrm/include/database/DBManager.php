@@ -88,7 +88,7 @@ abstract class DBManager
 	/**
 	 * Records the execution time of the last query
 	 */
-	protected $query_time = 0;
+	public $query_time = 0;
 
 	/**
 	 * Last error message from the DB backend
@@ -630,11 +630,15 @@ protected function checkQuery($sql, $object_name = false)
 	public function insertParams($table, $field_defs, $data, $field_map = null, $execute = true, $usePrepared=false)
 	{
 
-        if ( isset($usePreparedStatements) AND ( $usePreparedStatements == true) )
+        if ( isset($this->usePreparedStatements) AND ( $this->usePreparedStatements == true) ) {
             $usePrepared = true;
-        else if (!isset($usePrepared))
-            $usePrepared = false;
-        $useQuotes = !$usePrepared;
+        }
+		if ( isset($usePrepared) AND ($usePrepared == true) ) {
+			$useQuotes = false;
+		}
+		else {
+			$useQuotes = true;
+		}
 
         $values = array();
 		foreach ($field_defs as $field => $fieldDef)
@@ -681,8 +685,6 @@ protected function checkQuery($sql, $object_name = false)
             return $execute?$this->query($query):$query;
         }
         else {  //Prepared Statement
-            //echo "DBManager: insertParams: building prepared query\n";
-
             $query = "INSERT INTO $table (".implode(",", array_keys($values)).") VALUES (";
             $delimiter = "";
             foreach($values as $valueKey => $value) {
@@ -2315,8 +2317,6 @@ protected function checkQuery($sql, $object_name = false)
 					$where";
         }
         else {  //Prepared Statement
-            //echo "DBManager: updateSQL: building prepared query\n";
-
             $query = "UPDATE ".$bean->getTableName()."
 					 SET ".implode(",", $columns)."
 					 $where";

@@ -48,6 +48,11 @@ class MysqliPreparedStatement extends PreparedStatement
      */
     protected $bound_vars = array();
 
+    /**
+     * Place to bind query output vars to
+     * @var array
+     */
+    protected $output_vars = array();
 
     /*
      * Maps MySQL column datatypes to MySQL bind variable types
@@ -149,6 +154,7 @@ class MysqliPreparedStatement extends PreparedStatement
          $this->bound_vars[$i] = array_shift($data);
       }
 
+      $this->preparedStatementResult = null;
       $res = $this->stmt->execute();
 
       $this->query_time = microtime(true) - $this->query_time;
@@ -169,4 +175,41 @@ class MysqliPreparedStatement extends PreparedStatement
       return $this->stmt;
    }
 
+
+   public function preparedStatementFetch( $msg = '' ) {
+
+       // first time, create an array of column names from the returned data set
+       if (empty($this->preparedStatementResult)) {
+
+          $fieldCount = $this->stmt->field_count;
+
+          $returnVars = array();
+
+          $statement='';
+          $this->preparedStatmentResult = $this->stmt->result_metadata();
+          if (is_object($this->preparedStatmentResult))  {
+              $fields = $this->preparedStatmentResult->fetch_fields();
+              foreach($fields as $field) {
+                  $returnVars[]['name'] = $field->name;
+                  if(empty($statement)){
+                      $statement.="\$out_vars['".$field->name."']";
+                  }else{
+                      $statement.=", \$out_vars['".$field->name."']";
+                  }
+              }
+              $statement="\$this->stmt->bind_result($statement);";
+
+          }
+
+           $out_vars = array(); //array_fill(0, $fieldCount, null);
+           eval($statement);
+
+       }
+
+
+       // Get the next results
+       $this->stmt->fetch();
+
+       return $out_vars;
+   }
 }

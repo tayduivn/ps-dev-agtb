@@ -2039,7 +2039,6 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
         {
             $str .= $basestr;
             $size = strlen($str);
-            //echo "$size\n";
             $this->_db->insertParams($tablename, $fielddefs, array('id' => $size, 'test' => $str, 'dummy' => $str));
 
             $select = "SELECT test FROM $tablename WHERE id = '{$size}'";
@@ -2851,8 +2850,8 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
 
         $result = $this->_db->query("select id, last_name from contacts where id = '{$bean->id}'");
         $row = $this->_db->fetchByAssoc($result);
-        $this->assertEquals($row['last_name'],$bean->last_name);
-        $this->assertEquals($row['id'],$bean->id);
+        $this->assertEquals(trim($row['last_name']),trim($bean->last_name), 'last_name failed');
+        $this->assertEquals(trim($row['id']),$bean->id,'id failed');
 
 
 
@@ -2861,8 +2860,8 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
         $this->_db->updateSQL($bean, array('id'=>$bean->id), true);
         $result = $this->_db->query("select id, last_name from contacts where id = '{$bean->id}'");
         $row = $this->_db->fetchByAssoc($result);
-        $this->assertEquals($row['last_name'],$bean->last_name);
-        $this->assertEquals($row['id'],$bean->id);
+        $this->assertEquals(trim($row['last_name']),$bean->last_name, 'last_name failed');
+        $this->assertEquals(trim($row['id']),$bean->id, 'id failed');
 
 
 
@@ -2871,54 +2870,25 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
         $this->_db->query($sql,true,"Error deleting from table");
         $result = $this->_db->query("select deleted from contacts where id = '{$bean->id}'");
         $row = $this->_db->fetchByAssoc($result);
-        var_dump($row);
-        $this->assertEquals($row['deleted'],'1');
+        $this->assertEquals(trim($row['deleted']),'1');
 
 
 
-        /*
         // "== simple SQL Select Test  ==\n";
         $sql = "SELECT * FROM testPreparedStatement WHERE ID = ?int ";
         $fieldDefs = array( array( 'name' => 'id', ),
             array( 'name' => 'col1', ),
             array( 'name' => 'col2', ),
         );
+        $fieldDefs = array( array( 'name' => 'id', ) );
         $data = array(1);
-        $ps = $this->_db->prepareStatement($sql, $data, $fieldDefs);
-        $ps->executeStatement($data);
-        echo "DBManagerTest is done. ps:\n";
-        print_r($ps);
-        $ps->bind_result($p1);
-        while ($ps->fetch()) {
-            print_r($p1);
-        }
-        */
+        $ps = $this->_db->prepareStatement($sql, $fieldDefs);
+        $ps->executePreparedStatement($data);
 
-        //$resultsCnt = 0;
-        //while(($row = $this->_db->fetchByAssoc($result)) != null)
-        //    $resultsCnt++;
-        //$this->assertEquals($resultsCnt, 1, "Incorrect number of records. Found: $resultsCnt Expected: 2");
+        $row = $ps->preparedStatementFetch();
+		$this->assertEquals(trim($row['id']), '1', "Incorrect ID or number of records. ");
+        $row = $ps->preparedStatementFetch();
 
-/*
-
-        // "== complex SQL Select Test  ==\n";
-        $sql = "SELECT * FROM testPreparedStatement(id,col1,col2) WHERE ID = ?int "
-             . " AND ID = (SELECT col1 FROM testPreparedStatement WHERE ID = ?int)";
-        $fieldDefs = array( array( 'name' => 'id', ),
-            array( 'name' => 'col1', ),
-            array( 'name' => 'col2', ),
-        );
-        $data = array(1, 2);
-        $ps = $this->_db->prepareStatement($sql, $data, $fieldDefs);
-        $result=$ps->executeStatement($data);
-        var_dump($result);
-
-        //$resultsCnt = 0;
-        //while(($row = $this->_db->fetchByAssoc($result)) != null)
-        //    $resultsCnt++;
-        //$this->assertEquals($resultsCnt, 1, "Incorrect number of records. Found: $resultsCnt Expected: 2");
-
-*/
         // turn off prepared statements
         $this->_db->usePreparedStatements = false;
 
@@ -2926,7 +2896,5 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
         $this->_db->query("delete from contacts where id = '{$bean->id}'");
         $this->_db->dropTableName($tableName);
     }
-
-
 
 }

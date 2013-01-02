@@ -1738,7 +1738,7 @@ EOQ;
     /**
 	 * @see DBManager::massageValue()
 	 */
-    public function massageValue($val, $fieldDef)
+    public function massageValue($val, $fieldDef, $useQuotes = true)
     {
        $type = $this->getFieldType($fieldDef);
        $ctype = $this->getColumnType($type);
@@ -1760,7 +1760,7 @@ EOQ;
            return $massagedValue;
        }
 
-       return parent::massageValue($val, $fieldDef);
+       return parent::massageValue($val, $fieldDef, $useQuotes);
     }
 
 

@@ -56,6 +56,7 @@ class IBMDB2PreparedStatement extends PreparedStatement
     //     DB2_LONG      SMALLINT, INTEGER, or BIGINT
 
     public $ps_type_map = array(
+
         'int'      =>  DB2_LONG,
         'double'   =>  DB2_DOUBLE,
         'float'    =>  DB2_DOUBLE,
@@ -120,7 +121,7 @@ class IBMDB2PreparedStatement extends PreparedStatement
       call_user_func_array(array($this->stmt, "bind_param"), $bound);
       */
 
-      $this->checkError(" QueryPrepare Failed: $msg for sql: $sqlText ::", $dieOnError);
+      $this->DBM->checkError(" QueryPrepare Failed: $msg for sql: $sqlText ::", $dieOnError);
 
       return $this;
   }
@@ -130,7 +131,7 @@ class IBMDB2PreparedStatement extends PreparedStatement
 
    public function executePreparedStatement(array $data,  $msg = ''){
 
-       parent::countQuery($this->sqlText);
+       //parent::countQuery($this->sqlText);
        $GLOBALS['log']->info('Query:' . $this->sqlText);
 
        /*
@@ -143,26 +144,49 @@ class IBMDB2PreparedStatement extends PreparedStatement
       }
       */
 
-      $this->query_time = microtime(true);
+      $this->DBM->query_time = microtime(true);
 
-      $res = db2_execute($this->stmt, $data);
+      $this->preparedStatementResult = db2_execute($this->stmt, $data);
 
-      $this->query_time = microtime(true) - $this->query_time;
-      $GLOBALS['log']->info('Query Execution Time:'.$this->query_time);
+      $this->DBM->query_time = microtime(true) - $this->DBM->query_time;
+      $GLOBALS['log']->info('Query Execution Time:'.$this->DBM->query_time);
 
-       if (!$res) {
+       if (!$this->preparedStatementResult) {
            $this->log->error("Query Failed: $this->sqlText");
            $this->stmt = false; // Making sure we don't use the statement resource for error reporting
       }
        else {
 
-           if($this->dump_slow_queries($this->sqlText)) {
-               $this->track_slow_queries($this->sqlText);
+           if($this->DBM->dump_slow_queries($this->sqlText)) {
+               $this->DBM->track_slow_queries($this->sqlText);
            }
        }
-       $this->checkError($msg.' Query Failed:' . $this->sqlText . '::', $dieOnError);
+       $this->DBM->checkError($msg.' Query Failed:' . $this->sqlText . '::', $dieOnError);
 
       return $this->stmt;
+   }
+
+
+   public function preparedStatementFetch( $msg = '' ) {
+
+       //return db2_fetch_assoc($this->stmt);
+
+       $row = db2_fetch_assoc($this->stmt);
+       if ( !$row )
+           return false;
+       if (!$this->DBM->checkError("Fetch error", false, $this->stmt)) {
+           $temp = $row;
+           $row = array();
+           foreach ($temp as $key => $val)
+               // make the column keys as lower case. Trim the val returned
+               $row[strtolower($key)] = trim($val);
+       }
+       else
+           return false;
+
+       return $row;
+
+
    }
 
 }
