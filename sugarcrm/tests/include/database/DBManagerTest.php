@@ -11,6 +11,7 @@
  */
 
 
+
 require_once 'include/database/DBManagerFactory.php';
 require_once 'modules/Contacts/Contact.php';
 require_once 'tests/include/database/TestBean.php';
@@ -2896,5 +2897,143 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
         $this->_db->query("delete from contacts where id = '{$bean->id}'");
         $this->_db->dropTableName($tableName);
     }
+
+        /**
+         * @group preparedStatements
+         */
+    public function testPreparedStatementsDatatypes()
+    {
+        if ( !$this->_db->supports('prepared_statements') )
+        {
+            $this->markTestSkipped('DBManager does not support prepared statements');
+        }
+
+        $tableName = "testPreparedStatementTypes";
+        $params =  array( 'id'                  =>array ('name'=>'id',                  'type'=>'id','required'=>true),
+                          'int_param'           =>array ('name'=>'int_param',           'type'=>'int'),
+                          'double_param'        =>array ('name'=>'double_param',        'type'=>'double'),     //len,precision
+                          'float_param'         =>array ('name'=>'float_param',         'type'=>'float'),
+                          'uint_param'          =>array ('name'=>'uint_param',          'type'=>'uint'),
+                          'ulong_param'         =>array ('name'=>'ulong_param',         'type'=>'ulong'),
+                          'long_param'          =>array ('name'=>'long_param',          'type'=>'long'),
+                          'short_param'         =>array ('name'=>'short_param',         'type'=>'short'),
+                          'varchar_param'       =>array ('name'=>'varchar_param',       'type'=>'varchar'),
+                          'text_param'          =>array ('name'=>'text_param',          'type'=>'text'),
+                          'longtext_param'      =>array ('name'=>'longtext_param',      'type'=>'longtext'),
+                          'date_param'          =>array ('name'=>'date_param',          'type'=>'date'),
+                          'enum_param'          =>array ('name'=>'enum_param',          'type'=>'enum'),
+                          'relate_param'        =>array ('name'=>'relate_param',        'type'=>'relate'),
+                          'multienum_param'     =>array ('name'=>'multienum_param',     'type'=>'multienum'),
+                          'html_param'          =>array ('name'=>'html_param',          'type'=>'html'),
+                          'longhtml_param'      =>array ('name'=>'longhtml_param',      'type'=>'longhtml'),
+                          'datetime_param'      =>array ('name'=>'datetime_param',      'type'=>'datetime'),
+                          'datetimecombo_param' =>array ('name'=>'datetimecombo_param', 'type'=>'datetimecombo'),
+                          'time_param'          =>array ('name'=>'time_param',          'type'=>'time'),
+                          'bool_param'          =>array ('name'=>'bool_param',          'type'=>'bool'),
+                          'tinyint_param'       =>array ('name'=>'tinyint_param',       'type'=>'tinyint'),
+                          'char_param'          =>array ('name'=>'char_param',          'type'=>'char'),
+                          'id_param'            =>array ('name'=>'id_param',            'type'=>'id'),
+                          'blob_param'          =>array ('name'=>'blob_param',          'type'=>'blob'),
+                          'longblob_param'      =>array ('name'=>'longblob_param',      'type'=>'longblob'),
+                          'currency_param'      =>array ('name'=>'currency_param',      'type'=>'currency'),
+                          'decimal_param'       =>array ('name'=>'decimal_param',       'type'=>'decimal', 'len' => 10, 'precision' => 4),
+                          'decimal2_param'      =>array ('name'=>'decimal2_param',      'type'=>'decimal2', 'len' => 10, 'precision' => 4),
+                          'url_param'           =>array ('name'=>'url_param',           'type'=>'url'),
+                          'encrypt_param'       =>array ('name'=>'encrypt_param',       'type'=>'encrypt'),
+                          'file_param'          =>array ('name'=>'file_param',          'type'=>'file'),
+                          'decimal_tpl_param'   =>array ('name'=>'decimal_tpl_param',   'type'=>'decimal_tpl', 'len' => 10, 'precision' => 4),
+                        );
+
+        $indexes = array(
+            array(
+                'name'   => 'idx_'. $tableName .'_id',
+                'type'   => 'primary',
+                'fields' => array('id'),
+            ),
+        );
+        if($this->_db->tableExists($tableName)) {
+            $this->_db->dropTableName($tableName);
+        }
+        $this->_db->createTableParams($tableName, $params, $indexes);
+
+        // turn on prepared statements
+        $this->_db->usePreparedStatements = true;
+        $id = '1';
+
+        // "== Prepared Statement API Test ==\n";
+        $data = array(  'id'                  => $id,
+                        'int_param'           => 1,
+                        'double_param'        => 1,
+                        'float_param'         => 1.1,
+                        'uint_param'          => 1,
+                        'ulong_param'         => 1,
+                        'long_param'          => 1,
+                        'short_param'         => 1,
+                        'varchar_param'       => 'varchar',
+                        'text_param'          => 'text',
+                        'longtext_param'      => 'longtext',
+                        'date_param'          => '2012-12-31',
+                        'enum_param'          => 'enum',
+                        'relate_param'        => 'relate',
+                        'multienum_param'     => 'multienum',
+                        'html_param'          => 'html',
+                        'longhtml_param'      => 'longhtml',
+                        'datetime_param'      => '2012-12-31 01:01:01',
+                        'datetimecombo_param' => '2012-12-31 01:01:01',
+                        'time_param'          => '01:01:01',
+                        'bool_param'          => '1',
+                        'tinyint_param'       => 1,
+                        'char_param'          => 'char',
+                        'id_param'            => 'id',
+                        'blob_param'          => 'blob',
+                        'longblob_param'      => 'longblob',
+                        'currency_param'      => 123.456,
+                        'decimal_param'       => 12.34,
+                        'decimal2_param'      => 12.34,
+                        'url_param'           => 'utl',
+                        'encrypt_param'       => 'encrypt',
+                        'file_param'          => 'file',
+                        'decimal_tpl_param'   => 12.34,
+        );
+
+
+        $this->_db->insertParams($tableName, $params, $data, null, true, true);
+        $result = $this->_db->query("SELECT * FROM $tableName WHERE ID = $id");
+        while(($row = $this->_db->fetchByAssoc($result)) != null) {
+            $this->assertEquals($row['id'], $data['id'], "Failed prepared statement data compare for id. Found: {$row['id']} Expected: {$data['id']}");
+            $this->assertEquals($row['int_param'], $data['int_param'], "Failed prepared statement data compare for int_param. Found: {$row['int_param']} Expected: {$data['int_param']}");
+            $this->assertEquals($row['double_param'], $data['double_param'], "Failed prepared statement data compare for double_param. Found: {$row['double_param']} Expected: {$data['double_param']}");
+            $this->assertEquals($row['float_param'], $data['float_param'], "Failed prepared statement data compare for float_param. Found: {$row['float_param']} Expected: {$data['float_param']}");
+            $this->assertEquals($row['uint_param'], $data['uint_param'], "Failed prepared statement data compare for uint_param. Found: {$row['uint_param']} Expected: {$data['uint_param']}");
+            $this->assertEquals($row['ulong_param'], $data['ulong_param'], "Failed prepared statement data compare for ulong_param. Found: {$row['ulong_param']} Expected: {$data['ulong_param']}");
+            $this->assertEquals($row['long_param'], $data['long_param'], "Failed prepared statement data compare for long_param. Found: {$row['long_param']} Expected: {$data['long_param']}");
+            $this->assertEquals($row['short_param'], $data['short_param'], "Failed prepared statement data compare for short_param. Found: {$row['short_param']} Expected: {$data['short_param']}");
+            $this->assertEquals($row['varchar_param'], $data['varchar_param'], "Failed prepared statement data compare for varchar_param. Found: {$row['varchar_param']} Expected: {$data['varchar_param']}");
+            $this->assertEquals($row['text_param'], $data['text_param'], "Failed prepared statement data compare for text_param. Found: {$row['text_param']} Expected: {$data['text_param']}");
+            $this->assertEquals($row['longtext_param'], $data['longtext_param'], "Failed prepared statement data compare for longtext_param. Found: {$row['longtext_param']} Expected: {$data['longtext_param']}");
+            $this->assertEquals($row['date_param'], $data['date_param'], "Failed prepared statement data compare for date_param. Found: {$row['date_param']} Expected: {$data['date_param']}");
+            $this->assertEquals($row['enum_param'], $data['enum_param'], "Failed prepared statement data compare for enum_param. Found: {$row['enum_param']} Expected: {$data['enum_param']}");
+            $this->assertEquals($row['relate_param'], $data['relate_param'], "Failed prepared statement data compare for relate_param. Found: {$row['relate_param']} Expected: {$data['relate_param']}");
+            $this->assertEquals($row['multienum_param'], $data['multienum_param'], "Failed prepared statement data compare for multienum_param. Found: {$row['multienum_param']} Expected: {$data['multienum_param']}");
+            $this->assertEquals($row['html_param'], $data['html_param'], "Failed prepared statement data compare for html_param. Found: {$row['html_param']} Expected: {$data['html_param']}");
+            $this->assertEquals($row['longhtml_param'], $data['longhtml_param'], "Failed prepared statement data compare for longhtml_param. Found: {$row['longhtml_param']} Expected: {$data['longhtml_param']}");
+            $this->assertEquals($row['datetime_param'], $data['datetime_param'], "Failed prepared statement data compare for datetime_param. Found: {$row['datetime_param']} Expected: {$data['datetime_param']}");
+            $this->assertEquals($row['datetimecombo_param'], $data['datetimecombo_param'], "Failed prepared statement data compare for datetimecombo_param. Found: {$row['datetimecombo_param']} Expected: {$data['datetimecombo_param']}");
+            $this->assertEquals($row['time_param'], $data['time_param'], "Failed prepared statement data compare for time_param. Found: {$row['time_param']} Expected: {$data['time_param']}");
+            $this->assertEquals($row['bool_param'], $data['bool_param'], "Failed prepared statement data compare for bool_param. Found: {$row['bool_param']} Expected: {$data['bool_param']}");
+            $this->assertEquals($row['tinyint_param'], $data['tinyint_param'], "Failed prepared statement data compare for tinyint_param. Found: {$row['tinyint_param']} Expected: {$data['tinyint_param']}");
+            $this->assertEquals($row['char_param'], $data['char_param'], "Failed prepared statement data compare for . Found: {$row['char_param']} Expected: {$data['char_param']}");
+            $this->assertEquals($row['id_param'], $data['id_param'], "Failed prepared statement data compare for id_param. Found: {$row['id_param']} Expected: {$data['id_param']}");
+            $this->assertEquals($row['currency_param'], $data['currency_param'], "Failed prepared statement data compare for currency_param. Found: {$row['currency_param']} Expected: {$data['currency_param']}");
+            $this->assertEquals($row['decimal_param'], $data['decimal_param'], "Failed prepared statement data compare for decimal_param. Found: {$row['decimal_param']} Expected: {$data['decimal_param']}");
+            $this->assertEquals($row['decimal2_param'], $data['decimal2_param'], "Failed prepared statement data compare for . Found: {$row['decimal2_param']} Expected: {$data['decimal2_param']}");
+            $this->assertEquals($row['url_param'], $data['url_param'], "Failed prepared statement data compare for url_param. Found: {$row['url_param']} Expected: {$data['url_param']}");
+            $this->assertEquals($row['encrypt_param'], $data['encrypt_param'], "Failed prepared statement data compare for encrypt_param. Found: {$row['encrypt_param']} Expected: {$data['encrypt_param']}");
+            $this->assertEquals($row['file_param'], $data['file_param'], "Failed prepared statement data compare for file_param. Found: {$row['file_param']} Expected: {$data['file_param']}");
+            $this->assertEquals($row['decimal_tpl_param'], $data['decimal_tpl_param'], "Failed prepared statement data compare for decimal_tpl_param. Found: {$row['decimal_tpl_param']} Expected: {$data['decimal_tpl_param']}");
+        }
+
+    }
+
 
 }
