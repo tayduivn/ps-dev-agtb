@@ -8,7 +8,7 @@ describe("Forecasts.Layout.Inspector", function() {
         actual = null;
         SugarTest.loadComponent("base", "layout", "inspector");
         SugarTest.loadComponent("base", "view", "inspector-header");
-        SugarTest.loadModuleComponent("Forecasts", "base", "layout", "inspector");
+        SugarTest.loadComponent("base", "layout", "inspector", "Forecasts");
         parent = (function(){
             return {
                 caller : {},
@@ -79,11 +79,11 @@ describe("Forecasts.Layout.Inspector", function() {
 
             layout.unbind();
 
-            layout.onShow = function() {
+            layout.onHide = function() {
                 sinon.stub();
             };
 
-            layout.onBeforeShow = function() {
+            layout.onBeforeHide = function() {
                 sinon.stub();
             };
 
