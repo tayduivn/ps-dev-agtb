@@ -148,8 +148,8 @@ class SugarWidgetSubPanelTopSelectButton extends SugarWidgetSubPanelTopButton
                 }
 
                 if (is_array($this->button_properties) && !empty($this->button_properties['add_to_passthru_data'])) {
-			$popup_request_data['passthru_data']= array_merge($popup_request_data['passthru_data'],$this->button_properties['add_to_passthru_data']);
-		}
+                    $popup_request_data['passthru_data']= array_merge($popup_request_data['passthru_data'],$this->button_properties['add_to_passthru_data']);
+                }
 
 		if (is_array($this->button_properties) && !empty($this->button_properties['add_to_passthru_data']['return_type'])) {
 
