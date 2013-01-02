@@ -212,4 +212,10 @@ class MysqliPreparedStatement extends PreparedStatement
 
        return $out_vars;
    }
+
+   public function preparedStatementClose() {
+
+       $this->stmt->close();
+
+   }
 }

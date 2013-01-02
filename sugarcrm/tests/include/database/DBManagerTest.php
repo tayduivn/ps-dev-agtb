@@ -2887,7 +2887,7 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
 
         $row = $ps->preparedStatementFetch();
 		$this->assertEquals(trim($row['id']), '1', "Incorrect ID or number of records. ");
-        $row = $ps->preparedStatementFetch();
+        $ps->preparedStatementClose();
 
         // turn off prepared statements
         $this->_db->usePreparedStatements = false;

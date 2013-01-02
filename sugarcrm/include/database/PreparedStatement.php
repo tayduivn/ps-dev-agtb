@@ -76,6 +76,12 @@ abstract class PreparedStatement{
 
     abstract public function preparedStatementFetch( $msg = '' );
 
+    public function preparedStatementClose() {
+
+        return;
+
+    }
+
     /**
      * Create Prepared Statement object from sql in the form of "INSERT INTO testPreparedStatement(id) VALUES(?int, ?varchar)"
      */
