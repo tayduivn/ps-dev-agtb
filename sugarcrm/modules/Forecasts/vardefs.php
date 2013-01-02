@@ -650,6 +650,7 @@ $dictionary['Worksheet'] =  array('table' => 'worksheet', 'fields' => array (
 	  'vname' => 'LBL_WK_VERSION',
 	  'type'=>'int',
 	  'default' => 1,
+      'studio' => false,
 	  'comment' => 'Worksheet version - draft = 0'
 	),
     'revision' =>
@@ -658,6 +659,7 @@ $dictionary['Worksheet'] =  array('table' => 'worksheet', 'fields' => array (
       'vname' => 'LBL_WK_REVISION',
       'type'=>'double',
       'default' => 0,
+      'studio' => false,
       'comment' => 'Revision # - microtime of save.'
     ),
  ),
