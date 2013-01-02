@@ -538,7 +538,12 @@ class SugarWidgetFieldDateTime extends SugarWidgetReportField
      */
     function queryOrderByMonth($layout_def)
     {
-        $orderBy = $this->reporter->db->convert($this->_get_column_select($layout_def), "date_format", array('%Y-%m'));
+        $orderBy = $this->reporter->db->convert(
+            $this->reporter->db->convert(
+                $this->_get_column_select($layout_def),
+                'add_tz_offset'),
+            "date_format",
+            array('%Y-%m'));
 
         if (empty($layout_def['sort_dir']) || $layout_def['sort_dir'] == 'a')
         {

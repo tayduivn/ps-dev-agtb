@@ -14,7 +14,6 @@ class Bug59310Test extends Sugar_PHPUnit_Framework_TestCase
 
     public function getFields() {
         return array(
-            array('mail_smtpauth_req'),
             array('mail_smtpssl'),
             array('mail_smtpport'),
             array('mail_smtppass'),
@@ -33,13 +32,13 @@ class Bug59310Test extends Sugar_PHPUnit_Framework_TestCase
         $ob->type = 'test';
         $ob->id = create_guid();
         $ob->new_with_id = true;
-        $ob->name = 'Sugar Test '.$ob->id;
+        $ob->name = 'Test '.$ob->id;
         $ob->user_id = '1';
         $ob->$field = mt_rand()." test \\ 'test' ".mt_rand();
         $ob->save();
         // testing update
         $ob->new_with_id = false;
-        $ob->name = 'Sugar Test Update '.$ob->id;
+        $ob->name = 'Update '.$ob->id;
         $ob->user_id = '1';
         $ob->$field = mt_rand()." test2 \\ 'test2' ".mt_rand();
         $ob->save();

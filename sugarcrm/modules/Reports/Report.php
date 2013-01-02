@@ -1397,6 +1397,7 @@ return str_replace(' > ','_',
             if (!empty($display_column['column_key'])
                 && !empty($this->all_fields[$display_column['column_key']])
                 && !empty($display_column['group_function'])
+                && isset($display_column['field_type'])
                 && $display_column['field_type'] == 'currency'
                 && strpos($display_column['name'], '_usdoll') === false
                 && isset($display_column['currency_alias'])
