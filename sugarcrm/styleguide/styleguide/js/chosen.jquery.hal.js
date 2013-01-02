@@ -183,7 +183,7 @@ Copyright (c) 2011 by Harvest
       }
     };
 
-    AbstractChosen.prototype.result_add_option = function(option) {
+    AbstractChosen.prototype.result_add_option = function(option,searchResultConstructor) {
       var classes, style;
       if (!option.disabled) {
         option.dom_id = this.container_id + "_o_" + option.array_index;
@@ -198,7 +198,11 @@ Copyright (c) 2011 by Harvest
           classes.push(option.classes);
         }
         style = option.style.cssText !== "" ? " style=\"" + option.style + "\"" : "";
-        return '<li id="' + option.dom_id + '" class="' + classes.join(' ') + '"' + style + '>' + option.html + '</li>';
+	    if ( typeof searchResultConstructor === 'function' && option.classes.indexOf('custom-result')!==-1  ) {
+	      return searchResultConstructor(option.dom_id,classes.join(' '),style,option.html,option.array_index);
+        } else {  
+	      return '<li id="' + option.dom_id + '" class="' + classes.join(' ') + '"' + style + '>' + option.html + '</li>';
+        }
       } else {
         return "";
       }
@@ -294,7 +298,7 @@ Copyright (c) 2011 by Harvest
 
 
 (function() {
-  var $, Chosen, get_side_border_padding, root, fullWidth, searchChoiceConstructor,
+  var $, Chosen, get_side_border_padding, root, fullWidth, searchChoiceConstructor, searchResultConstructor,
     __hasProp = {}.hasOwnProperty,
     __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
 
@@ -309,8 +313,11 @@ Copyright (c) 2011 by Harvest
       }
       fullWidth = (options && options.fullWidth) ? true : false;
 
-      if (options && typeof options.searchChoiceConstructor === 'function') {
+      if (options && typeof options.searchChoiceConstructor !== 'undefined') {
         searchChoiceConstructor = options.searchChoiceConstructor;
+      }
+      if (options && typeof options.searchResultConstructor !== 'undefined') {
+        searchResultConstructor = options.searchResultConstructor;
       }
 
       return this.each(function(input_field) {
@@ -451,6 +458,7 @@ Copyright (c) 2011 by Harvest
       }
     };
 
+    // disable chosen if select field is disabled
     Chosen.prototype.search_field_disabled = function() {
       this.is_disabled = this.form_field_jq[0].disabled;
       if (this.is_disabled) {
@@ -554,7 +562,7 @@ Copyright (c) 2011 by Harvest
         if (data.group) {
           content += this.result_add_group(data);
         } else if (!data.empty) {
-          content += this.result_add_option(data);
+          content += this.result_add_option(data,searchResultConstructor);
           if (data.selected && this.is_multiple) {
             this.choice_build(data);
           } else if (data.selected && !this.is_multiple) {
@@ -675,7 +683,6 @@ Copyright (c) 2011 by Harvest
       if ( target.hasClass("disabled") ) {
         this.results_hide();
         this.result_clear_highlight()
-      console.log(target)
       } else if (target.length) {
         this.result_highlight = target;
         this.result_select(evt);
@@ -704,6 +711,7 @@ Copyright (c) 2011 by Harvest
       }
     };
 
+    // removes choice when clicking "X" icon
     Chosen.prototype.choice_build = function(item) {
       var choice_id, html, link,
         _this = this;
@@ -715,13 +723,17 @@ Copyright (c) 2011 by Harvest
       }
       choice_id = this.container_id + "_c_" + item.array_index;
       this.choices += 1;
-      if (item.disabled) {
-        html = '<li class="search-choice search-choice-disabled" id="' + choice_id + '"><span>' + item.html + '</span></li>';
-      } else if ( typeof searchChoiceConstructor === 'function' ) {
-        html = searchChoiceConstructor(choice_id,item.html,item.array_index);
+
+      if ( typeof searchChoiceConstructor === 'function' && item.classes.indexOf('custom-choice')!==-1 ) {
+       	html = searchChoiceConstructor(choice_id,item);
       } else {
-        html = '<li class="search-choice" id="' + choice_id + '"><span>' + item.html + '</span><a href="javascript:void(0)" class="search-choice-close" rel="' + item.array_index + '"></a></li>';
+        if (item.disabled) {
+	      html = '<li class="search-choice search-choice-disabled" id="' + choice_id + '"><span>' + item.html + '</span></li>';
+        } else {
+          html = '<li class="search-choice" id="' + choice_id + '"><span>' + item.html + '</span><a href="javascript:void(0)" class="search-choice-close" rel="' + item.array_index + '"></a></li>';
+        }
       }
+      
       this.search_container.before(html);
       link = $('#' + choice_id).find("a").first();
       return link.click(function(evt) {
@@ -820,7 +832,7 @@ Copyright (c) 2011 by Harvest
     Chosen.prototype.result_deselect = function(pos) {
       var result, result_data;
       result_data = this.results_data[pos];
-      if (!this.form_field.options[result_data.options_index].disabled) {
+      if ( result_data && !this.form_field.options[result_data.options_index].disabled) {
         result_data.selected = false;
         this.form_field.options[result_data.options_index].selected = false;
         result = $("#" + this.container_id + "_o_" + pos);
