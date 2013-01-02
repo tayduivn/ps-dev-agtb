@@ -4,10 +4,6 @@
         <div class="filter controls controls-four btn-fit">
             <div class="search">
                 <select id="search_filter" class="chzn-select search" multiple data-placeholder=" ">
-                  <option value="favorites">My Favorites</option>
-                  <option value="my{{title}}">My {{title}}</option>
-                  <option value="mycustomfilter">My Custom Filter</option>
-                  <option class="primary filter-new">Create a filter</option>
                 </select>
             </div>
             <div class="actions" data-toggle="buttons-radio">
@@ -21,10 +17,17 @@
 
     <div class="filter-options extend hide">
         <article class="filter-header">
-            <input type="text" placeholder="Enter new filter name...">
-            <div class="pull-right">
-                <a href="#save" class="btn btn-primary disabled">Save</a>
-                <a href="#" class="btn btn-invisible filter-close"><i class="icon-remove"></i></a>
+            <div class="row-fluid">
+                <div class="controls span6">
+                    <input name="filter" type="text" value="" class="inherit-width" placeholder="Enter new filter name...">
+                    <input name="id" type="hidden" value="">
+                </div>
+                <div class="span6">
+                    <div class="pull-right">
+                        <a href="#save" class="btn btn-primary disabled">Save</a>
+                        <a href="#" class="filter-close btn btn-invisible btn-dark"><i class="icon-remove"></i></a>
+                    </div>
+                </div>
             </div>
         </article>
         <article class="filter-body">
@@ -53,24 +56,23 @@
         <article class="filter-body">
             <div class="row-fluid">
                 <div class="controls span3">
-                    <select class="chzn-select chzn-inherit-width buildit">
-                        <option>
-                            Name
-                        </option>
-                        <option>
-                            Sales Stage
-                        </option>
+                    <select name="field" class="chzn-select chzn-inherit-width buildit">
+                        <option data-values="matches,contains,not matches,not contains" data-text="true" data-enabled="true">Name</option>
+                        <option data-values="matches" data-text="true" data-enabled="false">Assigned to</option>
+                        <option data-values="prospecting,value proposition,closed won,closed lost" data-text="false" data-enabled="true">Sales Stage</option>
+                        <option data-values="true" data-text="false" data-enabled="false">Favorite</option>
                     </select>
                 </div>
                 <div class="controls span3">
-                    <select class="chzn-select chzn-inherit-width">
-                        <option>
-                            matches
-                        </option>
+                    <select name="opera" class="chzn-select chzn-inherit-width">
+                        <option>matches</option>
+                        <option>contains</option>
+                        <option>not matches</option>
+                        <option>not matches</option>
                     </select>
                 </div>
                 <div class="filter-value controls span6">
-                    <input type="text" class="inherit-width" placeholder="Enter a name...">
+                    <input name="value" type="text" class="inherit-width" placeholder="Enter a name...">
                     <a href="" class="btn btn-invisible addme"><i class="icon-plus"></i></a>
                 </div>
             </div>
@@ -79,150 +81,324 @@
 </form>
 
 <script>
-  //TODO: add new filter to dropdown
+  var availableFilters = [
+    {"label":"My Favorites", "id":"filter_1", "disabled":false, "selected":false, "classes":"", "spec":[
+      {'field':'favorite','opera':'true'}
+    ]},
+    {"label":"My {{title}}", "id":"filter_2", "disabled":false, "selected":false, "classes":"", "spec":[
+      {'field':'assigned','opera':'matches','value':'westin'}
+    ]},
+    {"label":"My Custom Filter", "id":"filter_3", "disabled":false, "selected":false, "classes":"", "spec":[
+      {'field':'assigned','opera':'matches','value':'westin'},
+      {'field':'stage','opera':'closed won'},
+      {'field':'created','opera':'Last 7 days'}
+    ]},
+    {"label":"Create New Filter", "id":"filter_new", "disabled":false, "selected":false, "classes":"primary filter-new", "spec":[]}
+  ];
+  // add the current module as default chosen filter
+  if ( window.location.pathname.split('/').pop() !== 'dashboard.html') {
+      availableFilters.unshift(
+          {"label":"{{title}}", "id":"filter_module", "disabled":true, "selected":true, "classes":"filter-disabled", "spec":[]}
+      );
+  }
+  var filterFields = {
+    'default': {'field':'name','opera':'matches','value':''},
+    'name': {'label':'Name','opera':'matches,contains,not matches,not contains,true,false','disabled':false,'text':true},
+    'assigned': {'label':'Assigned to','opera':'matches','disabled':true,'text':true},
+    'stage': {'label':'Sales Stage','opera':'prospecting,value proposition,closed won,closed lost','disabled':false,'text':false},
+    'favorite': {'label':'Favorite','opera':'true,false','disabled':false,'text':false},
+    'created': {'label':'Created','opera':'Last 7 days,Last 30 days,Last 90 days,Last year','disabled':false,'text':false},
+  };
+//TODO: do we need an apply or does a search happen each time a filter row is added or updated
+//TODO: do we need a cancel and delete link?
+//TODO: when result is chosen, should we remove filter row choices or keep them and set create filter to use existing filter row choices.
+
   $(document).ready(function() {
 
-      // load first filter option row
-      loadContent('partial/common/search-filter-row.html', '.filter-options', undefined, 'append');
+      // define global elements
+      var _form = $('#{{sourceid}}'),
+          _select = $('#{{sourceid}} #search_filter'),
+          _options = $('#{{sourceid}} .filter-options'),
+          _header = $('#{{sourceid}} .filter-header'),
+          _choices,
+          _results;
 
-      // toggle module search (needs tap logic for mobile)
-      $('#{{sourceid}}.form-search').on('click', '.addit', function(e) {
-          $(this).toggleClass('active');
-          $(this).parent().parent().parent().find('.form-addit').toggleClass('hide');
-          e.stopPropagation();
-          e.preventDefault();
+      // set up filter result options
+      $.each(availableFilters, function(index,value){
+          _select.append(
+              '<option value="'+ value.id +'"'+
+              ' class="custom-choice custom-result '+ (value.classes!==''?value.classes:'') +'"' +
+              (value.selected?' selected="selected"':'') +
+              (value.disabled?' disabled="disabled"':'') +'>'+
+              value.label +
+              '</option>'
+          );
       });
-
-
-      // select filter dropdown option
-//       $("{{sourceid}} #search_filter_chzn .chzn-results > li").bind('click',function(e){
-//           var li_active = $("#{{sourceid}} ul.chzn-choices").find('.search-choice').first().attr('id'),
-//               li_orig = li_active.replace("_chzn_c_","_chzn_o_");
-// console.log(li_orig)
-//           // if active filter "pills" exist, remove pill from dom
-//           // if($("ul.chzn-choices").find('.search-choice').length > 1) {
-//           //   $("ul.chzn-choices").find('.search-choice').first().remove();
-//           // }
-//           $("#{{sourceid}} #"+li_orig).removeClass("result-selected").addClass("active-result");
-
-//           if($('#{{sourceid}} .chzn-container').hasClass('chzn-container-active') === true ) {
-//               $('#{{sourceid}} .chzn-container').removeClass('chzn-container-active');
-//           }
-//           e.stopPropagation();
-//           e.preventDefault();
-//       });
-
-
-      // table - mass update
-      $('body').on('click', '.tmu', function(e) {
-          $('.mu').show();
-          e.stopPropagation();
-          e.preventDefault();
-      });
-
-
-      /* New Filter Form
-      ---------------------- */
-
-      // if filter name changes or is erased
-      $('#{{sourceid}} .filter-header input[type="text"]').on('keyup change', function(){
-          $('#{{sourceid}} .filter-header a[href="#save"]').toggleClass( 'disabled', $('#{{sourceid}} .filter-header input[type="text"]').val()==='' );
-      });
-
-      // if click save button
-      $('#{{sourceid}} .filter-header a[href="#save"]').on('click', function(e){
-          var choicesLength = $('#{{sourceid}} #search_filter_chzn .chzn-choices li').length;
-          if ( !$(this).hasClass('disabled') ) {
-              $('#{{sourceid}} #search_filter_chzn .chzn-choices li').slice(1,choicesLength-1).remove();
-              $('#{{sourceid}} #search_filter_chzn .search-field').before(
-                  searchChoiceConstructor(2, $('#{{sourceid}} .filter-header input[type="text"]').val(), 99 )
-              );
-          }
-          e.stopPropagation();
-          e.preventDefault();
-      });
-
-      // close filter option extend
-      $('#{{sourceid}} .filter-header .filter-close').on('click', function(e){
-          $(this).parents('.form-search').find('.filter-options').addClass('hide');
-          $('#{{sourceid}} .filter-header input[type="text"]').val('');
-          e.stopPropagation();
-          e.preventDefault();
-      });
-
-
-      /* Filter Option Rows
-      ---------------------- */
-
-      // add search filter row to current filter set
-      $('#{{sourceid}}.form-search').on('click', '.addme', function(e) {
-          var article = $(this).parents('article');
-          $(this).after('<a href="#" class="removeme btn btn-invisible"><i class="icon-minus"></i></a>');
-          $('.form-search ul.chzn-choices li.search-field').before('<li class="search-choice search-choice-option" id="'+article.attr('id')+'_choice"><span>'+article.find('.buildit').val()+'</span><a>'+article.find('.operator').val()+'</a></li>');
-          loadContent('partial/common/search-filter-row.html', '.filter-options', undefined, 'append');
-          e.preventDefault();
-      });
-
-      // remove filter option
-      $('#{{sourceid}} .filter-options').on('click', '.removeme', function(e) {
-          $(this).parents('.filter-body').remove();
-          e.preventDefault();
-      });
-
-      // on search filter input click
-      // $('.form-search').on('click', '.search', function() {
-      //     $(this).toggleClass('active');
-      //     // $(this).parent().parent().parent().find('.dataTables_filter').toggle( function () {
-      //     //   $(this).find('input').focus();
-      //     // });
-      //     $(this).parent().parent().parent().find('.form-search').toggle(function() {
-      //         $(this).find('input').focus();
-      //     });
-      //     $(this).parent().parent().parent().find('.form-search').toggleClass('hide');
-      //     return false;
-      // });
-
-
-      /* HTML setup
-      ---------------------- */
-
-      // add the current module as default filter
-      if ( window.location.pathname.split('/').pop() !== 'dashboard.html') {
-          $('#{{sourceid}}.form-search ul.chzn-choices').prepend('<li class="search-choice search-choice-option" id="search_filter_00_choice"><span>Module</span><span>{{title}}</span></li>');
-      }
-
-      // prepend legend to .chzn-choices
-      $('#{{sourceid}} #search_filter_chzn .chzn-choices').prepend(
-          '<legend class="chzn-select-legend">Filter <i class="icon-caret-down"></i></legend>'
-      );
-
-      // append create filter icon
-      //$('#{{sourceid}} #search_filter_chzn').append('<div class="filter-create"><i class="icon-plus"></i></div>');
-      $('#{{sourceid}} .filter-new').on('mousedown click', function(e){
-          $(this).parents('.form-search').find('.filter-options').removeClass('hide');
-          e.stopPropagation();
-          e.preventDefault();
-      });
-
-      // append checkmarks to filter dropdown results
-      $('#{{sourceid}} #search_filter_chzn .chzn-results li:not(.primary)').after("<span class='icon-ok' />");
-      $('#{{sourceid}} #search_filter_chzn .chzn-results li.primary').after("<span class='icon-plus' />");
 
       // instatiate filter select chosen
-      $("#{{sourceid}} #search_filter").chosen({ searchChoiceConstructor: searchChoiceConstructor });
+      _select.chosen({
+        searchResultConstructor: function (id,classes,style,html,index) {
+            var rtn = '<li id="'+ id +'" class="'+ classes +'" style="'+ style +'">'+ html +'</li>';
+                rtn += (html.indexOf('Create New Filter')===-1) ? '<span class="icon-ok"></span>' : '<span class="icon-plus"></span>';
+            return rtn;
+        },
+        searchChoiceConstructor: searchChoiceConstructor
+      });
+      _select.trigger("liszt:updated");
+
+      // define global chosen elements
+      _choices = $('#{{sourceid}} #search_filter_chzn .chzn-choices');
+      _results = $('#{{sourceid}} #search_filter_chzn .chzn-results');
+
+      // prepend legend to .chzn-choices
+      _choices.prepend('<legend class="chzn-select-legend">Filter <i class="icon-caret-down"></i></legend>');
+
+      // create new filter
+      _results.on('click', '.filter-new', function(e){
+          editFilterForm( availableFilters.length-1, true );
+          e.preventDefault();
+          e.stopPropagation();
+      });
+
+      // edit existing filter
+      _choices.on('click', 'a', function(e){
+          if ( !$(this).parents('li').hasClass('filter-disabled') ) {
+              editFilterForm( $(this).attr('rel'), false );
+          }
+          e.preventDefault();
+          e.stopPropagation();
+      });
+
+      // if form changes enable save button
+      _form.on('change', function(){
+          enableSaveFilterButton();
+      });
+      _header.find('input[name="filter"]').on('keyup', function(){
+          enableSaveFilterButton();
+      });
+
+      function editFilterForm (index,isNewFilter) {
+
+          var data = availableFilters[index];
+
+          _options.find('article[id*="filter_row_"]').remove();
+          _header.find('input[name="filter"]').val( data.classes.indexOf('filter-new')>-1?'':data.label );
+          _header.find('input[name="id"]').val(data.id);
+
+          // populate filter rows
+          $.each(data.spec, function(index,value){
+              createFilterRow(index, value, false);
+          });
+
+          // add new defalt row
+          createFilterRow('new', filterFields['default'], true);
+
+          // if click save button then update the filter spec
+          // and close filter editor
+          _header.find('a[href="#save"]').off('click').on('click', function(e){
+              if ( !$(this).hasClass('disabled') ) {
+                  saveFilter(index,data);
+              }
+              _select.trigger("liszt:updated");
+              _results.find('.filter-new').removeClass('result-selected').addClass('active-result');
+              _options.addClass('hide');
+              e.preventDefault();
+              e.stopPropagation();
+          });
+
+          // close filter option extend
+          // and reinstate the filter being edited
+          _header.find('.filter-close').off('click').on('click', function(e){
+              _select.trigger("liszt:updated");
+              _results.find('.filter-new').removeClass('result-selected').addClass('active-result');
+              _options.addClass('hide');
+              e.preventDefault();
+              e.stopPropagation();
+          });
+
+          // add filter row
+          _options.off('click','.addme').on('click', '.addme', function(e) {
+              var row = $(this).parents('.filter-body'),
+                  isNewRow = (row.attr('id')==='filter_row_new'?true:false),
+                  filterRows = _options.find('article[id*="filter_row_"]');
+
+              if (isNewRow) {
+                  row.attr('id', 'filter_row_'+ (filterRows.length?(parseInt(filterRows.last().attr('id').substr(11),10)+1):0));
+                  enableRemoveFilterRow( row );
+                  createFilterRow('new', filterFields['default'], true);
+                  if (isNewFilter) {
+                      createFieldRowChoice( row, _choices, isNewFilter );
+                  }
+              }
+
+              enableSaveFilterButton();
+              e.preventDefault();
+              e.stopPropagation();
+          });
+
+          // remove filter row
+          _options.off('click','.removeme').on('click', '.removeme', function(e) {
+              var row = $(this).parents('.filter-body'),
+                  id = 'search_filter_chzn_f_'+ parseInt(row.attr('id').substr(11),10);
+              _choices.find('#'+id).remove();
+              row.remove();
+              e.preventDefault();
+              e.stopPropagation();
+          });
+
+          // show edit filter options form
+          _options.removeClass('hide');
+      }
+
+      function saveFilter (index,data) {
+
+          var title = _header.find('input[type="text"]').val(),
+              filterRows = _options.find('article[id*="filter_row_"]'),
+              row,
+              filter = {};
+
+              filter.label = title;
+              filter.id = data.id;
+              filter.disabled = false;
+              filter.selected = true;
+              filter.classes = '';
+              filter.spec = [];
+
+          filterRows.each( function(index,value) {
+              row = $(value);
+              if ( row.attr('id')!=='filter_row_new' ) {
+                  filter.spec.push({
+                      'field': row.find('select[name="field"]').val(),
+                      'opera': row.find('select[name="opera"]').val(),
+                      'value': row.find('input[name="value"]').val()
+                  });
+              }
+          });
+
+          // check to see if this is a new filter
+          if ( data.id==='filter_new' ) {
+              filter.id = 'filter_'+ availableFilters.length;
+              var option = '<option value="'+ filter.id +'" selected="selected" class="custom-choice">'+ title +'</option>';
+
+              // if module filter exists,
+              if ( _select.find('option').first().hasClass('filter-disabled') ) {
+                  // insert at second else first
+                  _select.find('option').first().after( option );
+                  availableFilters.splice(1,0,filter);
+              } else {
+                  // create new result at top
+                  _select.prepend( option );
+                  availableFilters.unshift(filter);
+              }
+          } else {
+              availableFilters[index] = filter;
+              _select.find( 'option[value="'+ data.id +'"]' ).text(title).attr('selected', 'selected');
+          }
+
+          // remove field specific filter choices
+          _choices.find('li[id*="search_filter_chzn_f_"]').remove();
+      }
+
+      function createFilterRow (index,spec,isNewRow) {
+
+          loadContent('partial/common/search-filter-row.html', '.filter-options', undefined, 'append');
+
+          _form.find('#filter_row_new').attr('id','filter_row_'+ index);
+
+          var row = _form.find('#filter_row_'+ index),
+              field = row.find('select[name="field"]'),
+              opera = row.find('select[name="opera"]'),
+              value = row.find('input[name="value"]'),
+              fieldDef = filterFields[spec.field];
+
+          setFilterRowInputs();
+
+          // enable chosen for filter row
+          row.find('.chzn-select').chosen({
+              disable_search_threshold: 7, searchChoiceConstructor: searchChoiceConstructor
+          });
+
+          if (!isNewRow) {
+              enableRemoveFilterRow( row );
+          }
+
+          field.on('change', function(){
+              spec.field = field.val();
+              fieldDef = filterFields[spec.field];
+              setFilterRowInputs();
+          });
+
+          function setFilterRowInputs() {
+
+              //set the field
+              field.val(spec.field);
+
+              //set the operations
+              opera.find('option').remove();
+              if (fieldDef.opera==='') {
+                  opera.hide();
+              } else {
+                  $.each( fieldDef.opera.split(','), function(index,value){
+                      opera.append('<option value="'+ value +'">'+ value +'</option>');
+                  });
+                  //set opera selected to spec value
+                  opera.val(spec.opera);
+                  //set opera enabled to field enabled
+                  if (fieldDef.disabled) {
+                      opera.attr('disabled','disabled');
+                  }
+              }
+              opera.trigger("liszt:updated");
+
+              // hide text input if spect text is false
+              value.css('display', (fieldDef.text?'inline-block':'none'));
+
+              // set text input value if spec value is not empty
+              value.val(spec.value);
+          }
+      }
+
+      function enableRemoveFilterRow (filterRow) {
+          filterRow.find('.addme').after(
+            '<a href="#" class="removeme btn btn-invisible btn-dark"><i class="icon-minus"></i></a>'
+          );
+      }
+
+      function enableSaveFilterButton () {
+          _header.find('a[href="#save"]').toggleClass( 'disabled', _header.find('input[type="text"]').val()==='' );
+      }
+
+      function createFieldRowChoice (filterRow,choices) {
+          var id = 'search_filter_chzn_f_'+ parseInt(filterRow.attr('id').substr(11),10),
+              field = filterRow.find('select[name="field"] option:selected').text(),
+              opera = filterRow.find('select[name="opera"]').val(),
+              html = filterRow.find('input[name="value"]').val(),
+              index = 99;
+
+          if (html ==='') {
+              html = opera;
+          }
+
+          if (_choices.find('#'+id).length ) {
+              _choices.find('#'+id).find('a').text(html);
+              return false;
+          } else {
+              $('#{{sourceid}} #search_filter_chzn .search-field').before(
+                  searchChoiceConstructor(id, {html:html,array_index:index,classes:'search-choice-field'}, field )
+              );
+              return true;
+          }
+      }
+
+      function searchChoiceConstructor (id,item,type) {
+
+          if (typeof type==='undefined') {
+            type = item.classes.indexOf('filter-disabled')!==-1 ? 'Module' : 'Filter';
+          }
+          return item.classes.indexOf('filter-new')===-1 ? '<li class="search-choice search-choice-option '+ item.classes +'" id="'+ id +'"><span>'+ type +'</span><a href="javascript:void(0)" rel="'+ item.array_index +'">'+ item.html +'</a></li>' : '';
+      }
+
 
   });
-  function invokeSaveButtons(){
-      $('.form-change-actions .btn').show();
-  }
-  function searchChoiceConstructor (id,html,index){
-    if (html.indexOf('Create a filter')===-1)
-    {
-      return '<li class="search-choice search-choice-option" id="search_filter_'+index+'_choice"><span>Filter</span><a>'+html+'</a></li>';
-    }
-    else {
-      return '';
-    }
-  }
-</script>
 
+</script>

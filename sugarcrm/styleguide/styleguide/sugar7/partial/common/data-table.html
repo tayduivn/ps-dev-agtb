@@ -218,10 +218,15 @@
 
 <script src="js/datatables.js"></script>
 <script>
-  // $('.form-search .actions .btn').removeClass('active');
-  $('.form-search .actions a[data-view="list"]').addClass('active');
-  // loadPartials([
-  //   {"file":"common/header","target":"#view .headerpane","method":"replace"},
-  //   {"file":"common/search-filter","target":"#view .record","method":"replace"}
-  // ]);
+  $(document).ready(function() {
+    // table - mass update
+    $('body').on('click', '.tmu', function(e) {
+        $('.mu').show();
+        e.stopPropagation();
+        e.preventDefault();
+    });
+
+    // $('.form-search .actions .btn').removeClass('active');
+    $('.form-search .actions a[data-view="list"]').addClass('active');
+  });
 </script>
