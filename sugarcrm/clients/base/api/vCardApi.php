@@ -88,7 +88,6 @@ class vCardApi extends SugarApi {
      * @return String
      */
     public function vCardImport($api, $args) {
-        var_dump('here');
         if (isset($_FILES) && count($_FILES) > 0 ) {
             reset($_FILES);
             $first_key = key($_FILES);
