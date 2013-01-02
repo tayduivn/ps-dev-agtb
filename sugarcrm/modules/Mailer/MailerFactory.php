@@ -64,7 +64,9 @@ class MailerFactory
      */
     public static function getMailerForUser(User $user) {
         // get the configuration that the Mailer needs
-        $mailConfiguration = static::getOutboundEmailConfiguration($user);
+        $mailConfiguration = self::getOutboundEmailConfiguration($user);
+        // Bug #59513
+        // until PHP 5.3 is standard on test environments, static:: cannot be used for late static binding
 
         // generate the Mailer
         $mailer = self::getMailer($mailConfiguration);

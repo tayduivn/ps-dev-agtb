@@ -43,6 +43,11 @@ $viewdefs['Documents']['base']['view']['record'] = array(
         ),
         array(
             'type'    => 'button',
+            'label'   => 'LBL_DUPLICATE_BUTTON_LABEL',
+            'css_class' => 'record-duplicate',
+        ),            
+        array(
+            'type'    => 'button',
             'label'   => 'LBL_EDIT_BUTTON_LABEL',
             'css_class' => 'record-edit',
         ),

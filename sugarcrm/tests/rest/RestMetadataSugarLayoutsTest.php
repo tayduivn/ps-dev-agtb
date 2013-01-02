@@ -62,6 +62,7 @@ class RestMetadataSugarLayoutsTest extends RestTestBase {
 //END SUGARCRM flav=pro ONLY
         $this->_restLogin('','','base');
         $this->baseAuthToken = $this->authToken;
+        $this->_clearMetadataCache();
     }
 
     public function tearDown()
@@ -81,6 +82,7 @@ class RestMetadataSugarLayoutsTest extends RestTestBase {
      * @group rest
      */
     public function testBaseLayoutRequestAll() {
+        $this->_clearMetadataCache();
         $reply = $this->_restCall('metadata');
         $this->assertNotEmpty($reply['reply']['layouts'], 'Layouts return data is missing');
         $this->assertTrue(isset($reply['reply']['layouts']['_hash']), 'Layout hash is missing.');
@@ -90,6 +92,7 @@ class RestMetadataSugarLayoutsTest extends RestTestBase {
      * @group rest
      */
     public function testBaseLayoutRequestLayoutsOnly() {
+        $this->_clearMetadataCache();
         $reply = $this->_restCall('metadata?type_filter=layouts');
         $this->assertNotEmpty($reply['reply']['layouts'], 'Layouts return data is missing');
         $this->assertTrue(isset($reply['reply']['layouts']['_hash']), 'Layout hash is missing.');
@@ -101,6 +104,7 @@ class RestMetadataSugarLayoutsTest extends RestTestBase {
      */
     public function testMobileLayoutRequestAll() {
         $this->authToken = $this->mobileAuthToken;
+        $this->_clearMetadataCache();
         $reply = $this->_restCall('metadata');
         $this->assertNotEmpty($reply['reply']['layouts'], 'Layouts return data is missing');
         $this->assertTrue(isset($reply['reply']['layouts']['_hash']), 'Layout hash is missing.');
@@ -111,6 +115,7 @@ class RestMetadataSugarLayoutsTest extends RestTestBase {
      */
     public function testMobileLayoutRequestLayoutsOnly() {
         $this->authToken = $this->mobileAuthToken;
+        $this->_clearMetadataCache();
         $reply = $this->_restCall('metadata?type_filter=layouts');
         $this->assertNotEmpty($reply['reply']['layouts'], 'Layouts return data is missing');
         $this->assertTrue(isset($reply['reply']['layouts']['_hash']), 'Layout hash is missing.');

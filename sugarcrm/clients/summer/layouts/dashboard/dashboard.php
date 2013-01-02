@@ -1,6 +1,7 @@
 <?php
 
 $layout = MetaDataManager::getLayout('SideBarLayout');
+$layout->push('main', array('view'=>'headerpane'));
 $layout->push('main', array('layout' => 'subpanel'));
 $layout->push('side', array('view' => 'agenda'));
 $layout->push('side', array('view' => 'gdrive'));

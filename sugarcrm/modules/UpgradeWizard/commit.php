@@ -266,7 +266,7 @@ eoq;
 
 		//Also add the three-way merge here. The idea is after the 451 html files have
 		//been converted run the 3-way merge. If 500 then just run the 3-way merge
-        $ce_to_pro_ent = isset($manifest['name']) && ($manifest['name'] == 'SugarCE to SugarPro' || $manifest['name'] == 'SugarCE to SugarEnt' || $manifest['name'] == 'SugarCE to SugarCorp' || $manifest['name'] == 'SugarCE to SugarUlt');
+        $ce_to_pro_ent = isset($manifest['name']) && preg_match('/^SugarCE.*?(Pro|Ent|Corp|Ult)$/', $manifest['name']);
 
 		if(file_exists('modules/UpgradeWizard/SugarMerge/SugarMerge.php')){
 		    require_once('modules/UpgradeWizard/SugarMerge/SugarMerge.php');
@@ -361,7 +361,8 @@ eoq;
 
 	   require("sugar_version.php");
 
-       if($_SESSION['current_db_version'] != $_SESSION['target_db_version']){
+       if (version_compare($_SESSION['current_db_version'], $_SESSION['target_db_version'], '!='))
+       {
 			logThis('Performing UWrebuild()...');
 			UWrebuild();
 			logThis('UWrebuild() done.');
@@ -396,8 +397,8 @@ eoq;
 	///////////////////////////////////////////////////////////////////////////////
 
 logThis('check if current_db_version in $_SESSION equals target_db_version in $_SESSION');
-if($_SESSION['current_db_version'] == $_SESSION['target_db_version']){
-
+if (version_compare($_SESSION['current_db_version'], $_SESSION['target_db_version'], '='))
+{
 	logThis('current_db_version in $_SESSION and target_db_version in $_SESSION are equal');
 	$_SESSION['license_seats_needed'] = '';
 	//Clean modules from cache
@@ -501,10 +502,12 @@ $customized_mods_Desc = '';
 $old_schema= '';
 $old_schema_opt = '';
 $skipped_queries = '';
-if($_SESSION['current_db_version'] != $_SESSION['target_db_version']){
+if (version_compare($_SESSION['current_db_version'], $_SESSION['target_db_version'], '!='))
+{
     global $sugar_version;
-    $origVersion = substr(preg_replace("/[^0-9]/", "", $_SESSION['current_db_version']),0,3);
-	$destVersion = substr(preg_replace("/[^0-9]/", "", $_SESSION['target_db_version']),0,3);
+
+    $origVersion = implodeVersion($_SESSION['current_db_version']);
+    $destVersion = implodeVersion($_SESSION['target_db_version']);
 
 	//old schema to be dropped
 	$old_schema_contents = '';
@@ -692,6 +695,12 @@ $stepRecheck = $_REQUEST['step'];
 
 $_SESSION['step'][$steps['files'][$_REQUEST['step']]] =($stop) ? 'failed' : 'success';
 
+//Unlink files that have been removed
+if(function_exists('unlinkUpgradeFiles'))
+{
+	unlinkUpgradeFiles($_SESSION['current_db_version']);
+}
+
 // clear out the theme cache
 if(!class_exists('SugarThemeRegistry')){
     require_once('include/SugarTheme/SugarTheme.php');
@@ -726,7 +735,7 @@ $_REQUEST['root_directory'] = getcwd();
 $_REQUEST['js_rebuild_concat'] = 'rebuild';
 require_once('jssource/minify.php');
 
-//The buld registry call above will reload the default theme for what was written to the config file during flav conversions
+//The build registry call above will reload the default theme for what was written to the config file during flavor conversions
 //which we don't want to happen until after this request as we have already started rendering with a specific theme.
 $themeName = (string) $themeObject;
 if($themeName != $GLOBALS['sugar_config']['default_theme'])

@@ -40,7 +40,7 @@ describe("The forecasts index layout controller", function(){
         });
 
         stubs = [];
-        app.viewModule = "";
+        app.viewModule = "Forecasts";
         app.initData = {};
         app.defaultSelections = {
             timeperiod_id: {},

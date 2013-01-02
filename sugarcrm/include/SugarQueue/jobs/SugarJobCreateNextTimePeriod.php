@@ -88,7 +88,7 @@ class SugarJobCreateNextTimePeriod implements RunnableSchedulerJob
         }
 
         $leafCycle = $latestTimePeriod->leaf_cycle;
-
+    
         //If the current start data that was modified according to the shown forward period is past the latest leaf period we need to build more timeperiods
         while($correctStartDate > $latestStartDate)
         {
@@ -103,14 +103,15 @@ class SugarJobCreateNextTimePeriod implements RunnableSchedulerJob
               $parentTimePeriod = TimePeriod::getByType($timeperiodInterval);
               $parentTimePeriod->setStartDate($startDate->asDbDate());
               $year = $startDate->format('Y');
-              $parentTimePeriod->name = $parentTimePeriod->getTimePeriodName($leafCycle, $year);
+              $parentTimePeriod->name = $parentTimePeriod->getTimePeriodName($leafCycle);
               $parentTimePeriod->save();
            }
 
            $leafTimePeriod = TimePeriod::getByType($timeperiodLeafInterval);
            $leafTimePeriod->setStartDate($startDate->asDbDate());
-           $leafTimePeriod->name = $leafTimePeriod->getTimePeriodName($leafCycle, $year);
+           $leafTimePeriod->name = $leafTimePeriod->getTimePeriodName($leafCycle);
            $leafTimePeriod->leaf_cycle = $leafCycle;
+           $leafTimePeriod->parent_id = $parentTimePeriod->id;
            $leafTimePeriod->save();
         }
         return true;

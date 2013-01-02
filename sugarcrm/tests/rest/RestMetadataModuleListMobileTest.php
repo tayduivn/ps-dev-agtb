@@ -60,6 +60,7 @@ class RestMetadataModuleListMobileTest extends RestTestBase {
             require $file;
         }
 
+
         // $wireless_module_registry is defined in the file loaded above
         $enabledMobile = array_keys($wireless_module_registry);
 
@@ -76,7 +77,7 @@ class RestMetadataModuleListMobileTest extends RestTestBase {
         SugarAutoLoader::ensureDir('custom/include/MVC/Controller');
         SugarAutoLoader::put('custom/include/MVC/Controller/wireless_module_registry.php','<'."?php\n".'$wireless_module_registry = array("Accounts"=>"Accounts","Contacts"=>"Contacts","Opportunities"=>"Opportunities");', true);
 
-        $enabledMobile = array('Accounts','Contacts','Opportunities');
+        $enabledMobile = array('Accounts','Contacts','Opportunities', 'Users');
 
         $this->_clearMetadataCache();
         $restReply = $this->_restCall('me');

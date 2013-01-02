@@ -32,9 +32,10 @@ class TrackerQueriesDatabaseStore implements Store {
 
     public function flush($monitor)
     {
+        $db = DBManagerFactory::getInstance();
         if($monitor->run_count > 1) {
             $query = "UPDATE $monitor->table_name set run_count={$monitor->run_count}, sec_avg={$monitor->sec_avg}, sec_total={$monitor->sec_total}, date_modified='{$monitor->date_modified}' where query_hash = '{$monitor->query_hash}'";
-            $GLOBALS['db']->query($query);
+            $db->query($query);
             return;
         }
 
@@ -53,6 +54,6 @@ class TrackerQueriesDatabaseStore implements Store {
        }
 
        $fields['id'] = array('auto_increment' => true, "name" => "id", "type" => "int");
-       $GLOBALS['db']->insertParams($monitor->table_name, $fields, $values);
+       $db->insertParams($monitor->table_name, $fields, $values);
     }
 }

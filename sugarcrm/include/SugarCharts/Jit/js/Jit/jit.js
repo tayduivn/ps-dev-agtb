@@ -13572,8 +13572,10 @@ $jit.BarChart = new Class({
 	  	backgroundColor = config.backgroundColor,
 	  	size = canvas.getSize(),
 	   	ctx = canvas.getCtx();
+        ctx.globalCompositeOperation = "destination-over";
 	    ctx.fillStyle = backgroundColor;
-   	    ctx.fillRect(-size.width/2,-size.height/2,size.width,size.height);  	
+   	    ctx.fillRect(-size.width/2,-size.height/2,size.width,size.height);
+        ctx.globalCompositeOperation = "source-over";
   },
   
   clear: function() {

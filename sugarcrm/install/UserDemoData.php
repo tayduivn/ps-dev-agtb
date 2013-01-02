@@ -102,6 +102,7 @@ class UserDemoData {
 		$u->status = 'Active';
 		$u->employee_status = 'Active';
 		$u->is_admin = $is_admin;
+        $u->is_group = 0;
 		//$u->user_password = $u->encrypt_password($user_name);
 		$u->user_hash = User::getPasswordHash($user_name);
 		$u->reports_to_id = $reports_to;

@@ -35,17 +35,16 @@ if(!empty($config['cleanCache'])){
         if(is_dir($path . "/sugarcrm")) {
             $path .= "/sugarcrm";
         }
+        $rome->remove($path ."/cache/file_map.php");
+        $rome->remove($path ."/cache/api");
         $rome->remove($path ."/cache/jsLanguage");
         $rome->remove($path ."/cache/modules");
         $rome->remove($path ."/cache/smarty");
         $rome->remove($path ."/cache/Expressions");
         $rome->remove($path ."/cache/themes");
         $rome->remove($path ."/cache/blowfish");
-        $rome->remove($path ."/cache/javascript");
-        $rome->remove($path ."/cache/include/javascript");
         $rome->remove($path ."/cache/dashlets");
         $rome->remove($path ."/cache/include/api");
-        $rome->remove($path ."/cache/include/file_map.php");
         $rome->remove($path ."/cache/include/javascript/sugar_grp1.js");
         $rome->remove($path ."/cache/include/javascript/sugar_grp1_yui.js");
     }
@@ -53,7 +52,8 @@ if(!empty($config['cleanCache'])){
 
 if(!empty($config['base_dir'])){
 	$config['base_dir'] = realpath($config['base_dir']);
-    if(!empty($config['file'])){
+
+	if(!empty($config['file'])){
 		if(file_exists($config['file'])) {
 			$config['file'] = realpath($config['file']);
 		} else {
@@ -94,6 +94,7 @@ if(!empty($config['base_dir'])){
 		$latin = new Latin($rome, $config['languages']['gitPath'], $config['base_dir'], $config['ver']);
 		$latin->copyTranslations();
 	}
+
     $build_dir = $rome->getBuildDir();
     if (!empty($config['sidecar'])) {
         foreach ( $config['builds'] as $build ) {

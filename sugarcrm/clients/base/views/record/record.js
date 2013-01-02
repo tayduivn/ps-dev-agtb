@@ -3,6 +3,7 @@
     createMode: false,
 
     events: {
+        'click .record-duplicate': 'duplicateClicked',    	
         'click .record-edit': 'editClicked',
         'click .record-edit-link-wrapper': 'handleEdit',
         'click .record-save': 'saveClicked',
@@ -155,6 +156,20 @@
         return false;
     },
 
+    duplicateClicked: function(event) {
+        if (!this.$(event.target).hasClass('disabled')) {
+            app.cache.set("duplicate"+this.module, this.model.attributes);  
+            this.layout.trigger("drawer:create:fire", {
+                components: [{
+                    layout : 'create',
+                    context: {
+                        create: true
+                    }
+                }]
+            }, this);
+        }
+    },
+    
     editClicked: function(event) {
         if (!this.$(event.target).hasClass('disabled')) {
             this.toggleEdit();
@@ -311,8 +326,10 @@
         field = (field.parent) ? field.parent : field;
         fields = field.fields || [field];
 
-        if (field.options.viewName != "edit" && !close) { // About to be switched to edit
-            $(document).on("mousedown.record" + field.name, {field: field, cell: cell}, this.fieldClose);
+        if (field.options.viewName != "edit" && !close) {
+            // Need to call this.fieldClose() in a separate "thread" because it changes to detail view
+            // before it sets the value of the textarea in the model.
+            $(document).on("mousedown.record" + field.name, {field: field, cell: cell}, _.debounce(this.fieldClose, 0));
         }
 
         if (close) {

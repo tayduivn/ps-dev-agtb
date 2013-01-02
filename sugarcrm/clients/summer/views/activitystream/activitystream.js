@@ -108,15 +108,25 @@
         event.preventDefault();
     },
 
-    showAddComment: function(event) {
-        var currentTarget = this.$(event.currentTarget);
+    /**
+     * Event handler for clicking comment button -- shows a post's comment box.
+     * @param  {Event} e
+     */
+    showAddComment: function(e) {
+        var currentTarget = this.$(e.currentTarget);
 
         currentTarget.closest('li').find('.activitystream-comment').toggle();
         currentTarget.closest('li').find('.activitystream-comment').find('.sayit').focus();
 
-        event.preventDefault();
+        e.preventDefault();
     },
 
+    /**
+     * Helper method for adding a post or a comment. Handles attachments too.
+     * @param {string} url         Endpoint for posting message
+     * @param {string} contents    Some type of message (may have HTML due to tags)
+     * @param {array}  attachments Attachments to save to the post.
+     */
     _addPostComment: function(url, contents, attachments) {
         var self = this,
             callback = _.after(1 + attachments.length, function() {
@@ -161,6 +171,11 @@
         }});
     },
 
+    /**
+     * Helper method to convert HTML from tags to a text-based format.
+     * @param  {string} postHTML
+     * @return {string}
+     */
     _processTags: function(postHTML) {
         var contents = '';
         $(postHTML).contents().each(function() {
@@ -169,12 +184,22 @@
             } else if (this.nodeName == "SPAN") {
                 var el = $(this);
                 var data = el.data();
-                contents += '@[' + data.module + ':' + data.id + ']';
+
+                // Check if the span is a tag, else append el text to the post's content
+                if( data.module && data.id ) {
+                    contents += '@[' + data.module + ':' + data.id + ']';
+                } else {
+                    contents += el.text();
+                }
             }
         }).html();
         return contents.replace(/&nbsp;/gi, ' ');
     },
 
+    /**
+     * Creates a new comment on a post.
+     * @param {Event} event
+     */
     addComment: function(event) {
         var self = this,
             myPost = this.$(event.currentTarget).closest('li'),
@@ -187,6 +212,9 @@
         this._addPostComment(myPostUrl, myPostContents, attachments);
     },
 
+    /**
+     * Creates a new post.
+     */
     addPost: function() {
         var self = this,
             myPost = this.$(".activitystream-post"),
@@ -278,7 +306,7 @@
                         container.append("<div>No preview available</div>");
                     }
 
-                    self.$(event.currentTarget).after(container);
+                    container.appendTo(self.$(event.currentTarget).parent());
                 };
             })(file);
 
@@ -286,6 +314,10 @@
         }, this);
     },
 
+    /**
+     * Handles dragging an attachment off the page.
+     * @param  {Event} event
+     */
     saveAttachment: function(event) {
         // The following is only true for Chrome.
         if (event.dataTransfer && event.dataTransfer.constructor == Clipboard &&
@@ -426,11 +458,6 @@
         // If we're typing text.
         if (event.keyCode > 47) {
             this._getEntities(event);
-        } else {
-            // Fixes issue where a random font tag appears. ABE-128.
-            if (currentTarget.text().length === 0) {
-                currentTarget.html('');
-            }
         }
     },
 
@@ -457,6 +484,11 @@
         tag.data("id", data.id).data("module", data.module).data("name", data.name);
         var substring = body.html().substring(0, lastIndex);
         $(body).html(substring).append(tag).append("&nbsp;");
+
+        if($(body).children().length == 1) {
+            // Fixes issue where a random font tag appears. ABE-128.
+            $(body).prepend("&nbsp;");
+        }
 
         // Since the data is stored as an object, it's not preserved when we add the tag.
         // For this reason, we need to add it again.
@@ -493,6 +525,10 @@
         });
     },
 
+    /**
+     * Handler for previewing a record listed on the activity stream.
+     * @param  {Event} event
+     */
     previewRecord: function(event) {
         var self = this,
             el = this.$(event.currentTarget),
@@ -597,6 +633,9 @@
         return app.view.View.prototype._renderHtml.call(this);
     },
 
+    /**
+     * Data change event.
+     */
     bindDataChange: function() {
         if (this.model) {
             this.model.on("change", function() {

@@ -1,3 +1,29 @@
+/*********************************************************************************
+ * The contents of this file are subject to the SugarCRM Master Subscription
+ * Agreement (""License"") which can be viewed at
+ * http://www.sugarcrm.com/crm/master-subscription-agreement
+ * By installing or using this file, You have unconditionally agreed to the
+ * terms and conditions of the License, and You may not use this file except in
+ * compliance with the License.  Under the terms of the license, You shall not,
+ * among other things: 1) sublicense, resell, rent, lease, redistribute, assign
+ * or otherwise transfer Your rights to the Software, and 2) use the Software
+ * for timesharing or service bureau purposes such as hosting the Software for
+ * commercial gain and/or for the benefit of a third party.  Use of the Software
+ * may be subject to applicable fees and any use of the Software without first
+ * paying applicable fees is strictly prohibited.  You do not have the right to
+ * remove SugarCRM copyrights from the source code or user interface.
+ *
+ * All copies of the Covered Code must include on each user interface screen:
+ *  (i) the ""Powered by SugarCRM"" logo and
+ *  (ii) the SugarCRM copyright notice
+ * in the same form as they appear in the distribution.  See full license for
+ * requirements.
+ *
+ * Your Warranty, Limitations of liability and Indemnity are expressly stated
+ * in the License.  Please refer to the License for the specific language
+ * governing these rights and limitations under the License.  Portions created
+ * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
+ ********************************************************************************/
 /**
  * View that displays a chart
  * @class View.Views.ForecastsChartView
@@ -6,7 +32,7 @@
  */
 ({
     values: new Backbone.Model(),
-    url:'rest/v10/Forecasts/chart',
+    url: app.api.buildURL('Forecasts/chart'),
 
     chart: null,
 
@@ -29,6 +55,13 @@
     events : {
         'click #forecastsChartDisplayOptions div.datasetOptions label.radio' : 'changeDisplayOptions',
         'click #forecastsChartDisplayOptions div.groupByOptions label.radio' : 'changeGroupByOptions'
+    },
+
+    initialize : function(options) {
+        app.view.View.prototype.initialize.call(this, options);
+
+        // clear out the values if the object is re-inited.
+        this.values.clear({silent: true});
     },
 
     /**
@@ -114,7 +147,7 @@
             timeperiod_id : app.defaultSelections.timeperiod_id.id,
             group_by : _.first(this.getCheckedOptions('groupByOptions')),
             dataset : this.getCheckedOptions('datasetOptions'),
-            category : app.defaultSelections.category
+            ranges: app.defaultSelections.ranges
         };
 
         this.handleRenderOptions(values);
@@ -174,9 +207,9 @@
                 self.handleRenderOptions({group_by: groupBy});
             }
         });
-        this.context.forecasts.on('change:selectedCategory', function(context, value) {
+        this.context.forecasts.on('change:selectedRanges', function(context, value) {
             if(!_.isEmpty(self.chart)) {
-                self.handleRenderOptions({category: value});
+                self.handleRenderOptions({ranges: value});
             }
         });
         this.context.forecasts.on('change:hiddenSidebar', function(context, value){
@@ -225,6 +258,7 @@
         }
 
         var chart,
+            self = this,
             chartId = "db620e51-8350-c596-06d1-4f866bfcfd5b",
             css = {
                 "gridLineColor":"#cccccc",
@@ -235,7 +269,7 @@
                 "orientation":"vertical",
                 "barType": this.values.get('display_manager') ? "grouped" : "stacked",
                 "tip":"name",
-                "chartType":"barChart",
+                "chartType":"d3-barChart",
                 "imageExportType":"png",
                 "showNodeLabels":false,
                 "showAggregates":false,
@@ -243,9 +277,9 @@
                 "dataPointSize":"5"
             };
 
-        var oldChart = $("#" + chartId + "-canvaswidget");
+        var oldChart = $("#" + chartId );
         if(!_.isEmpty(oldChart)) {
-            oldChart.remove();
+            d3.select('#' + chartId + ' svg').remove();
         }
 
         SUGAR.charts = $.extend(SUGAR.charts,
@@ -260,12 +294,61 @@
                   url = app.api.buildURL('Forecasts', 'chart', '', data);
 
                   app.api.call('read', url, data, {success : success});
-              }
+              },
+                translateDataToD3 : function( json, params )
+                {
+                    return {
+                        'properties':{
+                            'title': json.properties[0].title
+                            , 'quota': parseInt(json.values[0].goalmarkervalue[0],10)
+                            // bar group data (x-axis)
+                            , 'groupData': json.values.map( function(d,i){
+                                return {
+                                    'group': i
+                                    , 'l': json.values[i].label
+                                    , 't': json.values[i].values.reduce( function(p, c, i, a){
+                                        return parseInt(p,10) + parseInt(c,10);
+                                    })
+                                }
+                            })
+                        }
+                        // series data
+                        , 'data': json.label.map( function(d,i){
+                            return {
+                                'key': d
+                                , 'type': 'bar'
+                                , 'series': i
+                                , 'values': json.values.map( function(e,j){
+                                    return { 'series': i, 'x': j+1, 'y': parseInt(e.values[i],10), y0: 0 };
+                                })
+                                , 'valuesOrig': json.values.map( function(e,j){
+                                    return { 'series': i, 'x': j+1, 'y': parseInt(e.values[i],10), y0: 0 };
+                                })
+                            }
+                        }).concat(
+                            json.properties[0].goal_marker_label.filter( function(d,i){
+                                return d !== 'Quota';
+                            }).map( function(d,i){
+                                    return {
+                                        'key': d
+                                        , 'type': 'line'
+                                        , 'series': i
+                                        , 'values': json.values.map( function(e,j){
+                                            return { 'series': i, 'x': j+1, 'y': parseInt(e.goalmarkervalue[i+1],10) };
+                                        })
+                                        , 'valuesOrig': json.values.map( function(e,j){
+                                            return { 'series': i, 'x': j+1, 'y': parseInt(e.goalmarkervalue[i+1],10) };
+                                        })
+                                    }
+                                })
+                        )
+                    };
+                }
             }
         );
 
         if(this.values.get('display_manager') === true) {
-            this.values.set({category: 'include'}, {silent: true});
+            this.values.set({ranges: 'include'}, {silent: true});
         }
 
         // update the chart title
@@ -276,6 +359,7 @@
         var params = this.values.toJSON() || {};
         params.contentEl = 'chart';
         params.minColumnWidth = 120;
+        params.chartId = chartId;
 
         chart = new loadSugarChart(chartId, this.url, css, chartConfig, params, _.bind(function(chart){
             this.chart = chart;

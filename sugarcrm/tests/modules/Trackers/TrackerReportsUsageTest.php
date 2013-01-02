@@ -75,11 +75,7 @@ class TrackerReportsUsageTest extends Sugar_PHPUnit_Framework_TestCase
         //END SUGARCRM flav=pro ONLY
         $trackerManager->save();
 
-        $beanList = array();
-        $beanFiles = array();
-        require('include/modules.php');
-        $GLOBALS['beanList'] = $beanList;
-        $GLOBALS['beanFiles'] = $beanFiles;
+        parent::setUp();
     }
     
     public function tearDown()
@@ -88,9 +84,6 @@ class TrackerReportsUsageTest extends Sugar_PHPUnit_Framework_TestCase
         $GLOBALS['db']->query($query);
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
         SugarTestTrackerUtility::restore();
-        
-        unset($GLOBALS['beanList']);
-        unset($GLOBALS['beanFiles']);
     }
     
     public function testUsageMetricsDay()
