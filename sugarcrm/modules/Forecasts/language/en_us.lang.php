@@ -62,6 +62,8 @@ $mod_strings = array (
     'LBL_CREATED_BY' => 'Created by',
     'LBL_DELETED' => 'Deleted',
     'LBL_MODIFIED_USER_ID'=>'Modified By',
+    'LBL_WK_VERSION' => 'Version',
+    'LBL_WK_REVISION' => 'Revision',
 
     //Quick Commit labels.
     'LBL_QC_TIME_PERIOD' => 'Time Period:',
