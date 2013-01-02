@@ -544,6 +544,10 @@ class MetadataApi extends SugarApi {
                 }
                 $stringData['mod_strings'] = $modStrings;
             }
+            // cast the app list strings to objects to make integer key usage in them consistent for the clients
+            foreach ($stringData['app_list_strings'] as $listIndex => $listArray) {
+                $stringData['app_list_strings'][$listIndex] = (object) $listArray;
+            }
             $stringData['_hash'] = md5(serialize($stringData));
             $fileList[$language] = sugar_cached('api/metadata/lang_'.$language.'_'.$stringData['_hash'].'.json');
             sugar_file_put_contents_atomic($fileList[$language],json_encode($stringData));
