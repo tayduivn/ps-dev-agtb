@@ -809,7 +809,6 @@
             if (!_.isEmpty(params)) {
                 $.fn.dataTableExt.afnFiltering.push (
                     function(oSettings, aData, iDataIndex) {
-
                         // This is required to prevent manager view from filtering incorrectly, since datatables does filtering globally
                         if(oSettings.nTable == _.first($('.worksheetManagerTable'))) {
                             return true;
@@ -825,7 +824,7 @@
                             checkState = rowCategory.find('input').attr('checked');
                             selectVal = ((checkState == "checked") || (checkState == "on") || (checkState == "1")) ? 'include' : 'exclude';
                         } else {
-                            selectVal = editable ? rowCategory.find("select").attr("value") : rowCategory.text().trim().toLowerCase();
+                            selectVal = rowCategory.text().trim().toLowerCase();
                         }
 
                         self.context.forecasts.trigger('forecasts:worksheet:filtered');
