@@ -43,7 +43,6 @@ class SugarACLStatic extends SugarACLStrategy
                 }
                 if(ACLAction::getUserAccessLevel($user_id, $module, 'admin') == ACL_ALLOW_ADMIN
                     || ACLAction::getUserAccessLevel($user_id, $module, 'admin') == ACL_ALLOW_ADMIN_DEV) {
-
                         // disable team security for admins
                         return false;
                     }
