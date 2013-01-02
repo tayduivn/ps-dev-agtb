@@ -154,6 +154,36 @@ function isSupportedIE() {
 	}
 }
 
+SUGAR.isSupportedBrowser = function(){
+    var supportedBrowsers = {
+        msie : {min:9, max:10},
+        safari : {min:500},
+        mozilla : {min:13},
+        chrome : {min:500}
+    };
+    for (var b in supportedBrowsers) {
+        if ($.browser[b]){
+            var current = parseInt($.browser.version);
+            var supported = supportedBrowsers[b];
+            return current >= supported.min && (!supported.max || current <= supported.max);
+        }
+    }
+}
+
+SUGAR.isIECompatibilityMode = function(){
+    var agentStr = navigator.userAgent;
+    var mode = false;
+    if (agentStr.indexOf("MSIE 7.0") > -1 &&
+        (agentStr.indexOf("Trident/5.0") > -1 || // IE9 Compatibility View
+         agentStr.indexOf("Trident/4.0") > -1    // IE8 Compatibility View
+        )
+    )
+    {
+        mode = true;
+    }
+    return mode;
+}
+
 SUGAR.isIE = isSupportedIE();
 var isSafari = (navigator.userAgent.toLowerCase().indexOf('safari')!=-1);
 
