@@ -44,9 +44,9 @@
             <span class="logo">SugarCRM</span>
         </div>
         <div class="span2">
-            <a href="http://www.sugarcrm.com" target="_blank" class="copyright">© 2012 SugarCRM Inc.</a>
+            <a href="http://www.sugarcrm.com" target="_blank" class="copyright">&copy; {$copyYear} SugarCRM Inc.</a>
             <script>
-                var logoStats = "&#169; 2004-2012 SugarCRM Inc. All Rights Reserved. {$STATISTICS|addslashes}";
+                var logoStats = "&#169; 2004-{$copyYear} SugarCRM Inc. All Rights Reserved. {$STATISTICS|addslashes}";
             </script>
         </div>
         <div class="span5">
