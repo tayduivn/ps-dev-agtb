@@ -40,10 +40,16 @@
 <div id="arrow" title="Show" class="up"><i class="icon-chevron-down"></i></div>
 <footer id="footer">
     <div class="row-fluid">
-        <div class="span6">
+        <div class="span5">
             <span class="logo">SugarCRM</span>
         </div>
-        <div class="span6">
+        <div class="span2">
+            <a href="http://www.sugarcrm.com" target="_blank" class="copyright">© 2012 SugarCRM Inc.</a>
+            <script>
+                var logoStats = "&#169; 2004-2012 SugarCRM Inc. All Rights Reserved. {$STATISTICS|addslashes}";
+            </script>
+        </div>
+        <div class="span5">
             <div class="btn-toolbar pull-right">
                 <div class="btn-group">
                     <a data-toggle="modal" title="Activity View Tour" id="productTour" href="javascript: void(0);"  class="btn btn-invisible"><i class="icon-road"></i> {$app_strings.LBL_TOUR}</a>
