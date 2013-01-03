@@ -16,6 +16,17 @@
                 opts.layout = "create";
             }
 
+            var oldCollection = app.controller.context.get('collection');
+            var oldListCollection = app.controller.context.get('listCollection');
+            //If we come from a list view, we get the current collection
+            if (oldCollection && oldCollection.module === module && oldCollection.get(id)) {
+                opts.listCollection = oldCollection;
+            }
+            //If we come from a detail view, we need to get the cached collection
+            if (oldListCollection && oldListCollection.module === module && oldListCollection.get(id)) {
+                opts.listCollection = oldListCollection;
+            }
+
             app.controller.loadView(opts);
         }
 
