@@ -99,7 +99,7 @@
     }
 
     article:last-child {
-      .box-shadow(~"inset 0px -2px 6px -3px rgba(0, 0, 0, 0.5)");
+      .box-shadow(~"inset 0px -2px 6px -6px rgba(0, 0, 0, 0.5)");
     }
   }
 
@@ -178,6 +178,11 @@
       }
       &.filter-disabled a {
         background: @grayLighter;
+        color: @gray;
+        cursor: pointer;
+        &:hover {
+          color: @gray;
+        }
       }
     }
     &.search-choice-focus {
@@ -196,6 +201,10 @@
       margin-top: -29px;
       margin-left: 9px;
       z-index: 1;
+    }
+    .icon-plus {
+      z-index: 2;
+
     }
     &> li {
       position: relative;

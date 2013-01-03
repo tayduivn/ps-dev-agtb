@@ -24,6 +24,7 @@
                 </div>
                 <div class="span6">
                     <div class="pull-right">
+                        <a href="#delete" class="btn btn-link btn-invisible hide">Delete</a>
                         <a href="#save" class="btn btn-primary disabled">Save</a>
                         <a href="#" class="filter-close btn btn-invisible btn-dark"><i class="icon-remove"></i></a>
                     </div>
@@ -102,7 +103,7 @@
       );
   }
   var filterFields = {
-    'default': {'label':'','opera':'','value':'','disabled':false,'text':true},
+    'default': {'label':'','opera':'','value':'','disabled':true,'text':false},
     'name': {'label':'Name','opera':'matches,contains,not matches,not contains,true,false','disabled':false,'text':true},
     'assigned': {'label':'Assigned to','opera':'matches','disabled':true,'text':true},
     'stage': {'label':'Sales Stage','opera':'prospecting,value proposition,closed won,closed lost','disabled':false,'text':false},
@@ -110,9 +111,9 @@
     'created': {'label':'Created','opera':'Last 7 days,Last 30 days,Last 90 days,Last year','disabled':false,'text':false},
   };
 //TODO: do we need an apply or does a search happen each time a filter row is added or updated
-//TODO: do we need a cancel and delete link?
 //TODO: when result is chosen, should we remove filter row choices or keep them and set create filter to use existing filter row choices.
-
+//TODO: remove choice on single backspace
+//TODO: prevent adding blank filter row
   $(document).ready(function() {
 
       // define global elements
@@ -184,6 +185,10 @@
 
           var data = availableFilters[index];
 
+          if (data.classes.indexOf('filter-new')===-1) {
+              _results.find('.filter-new').removeClass('result-selected').addClass('active-result');
+          }
+
           _options.find('article[id*="filter_row_"]').remove();
           _header.find('input[name="filter"]').val( data.classes.indexOf('filter-new')>-1?'':data.label );
           _header.find('input[name="id"]').val(data.id);
@@ -195,18 +200,25 @@
 
           // add new defalt row
           createFilterRow('new', {'field':'default','opera':'','value':''}, true);
+          _header.find('a[href="#delete"]').toggleClass( 'hide', (_header.find('input[name="id"]').val()==='filter_new') );
 
           // if click save button then update the filter spec
           // and close filter editor
           _header.find('a[href="#save"]').off('click').on('click', function(e){
               if ( !$(this).hasClass('disabled') ) {
                   saveFilter(index,data);
+                  _select.trigger("liszt:updated");
+                  _results.find('.filter-new').removeClass('result-selected').addClass('active-result');
+                  _options.addClass('hide');
               }
-              _select.trigger("liszt:updated");
-              _results.find('.filter-new').removeClass('result-selected').addClass('active-result');
-              _options.addClass('hide');
               e.preventDefault();
               e.stopPropagation();
+          });
+
+          _header.find('a[href="#delete"]').off('click').on('click', function(e){
+                removeFilter(index,data);
+                _select.trigger("liszt:updated");
+                  _options.addClass('hide');
           });
 
           // close filter option extend
@@ -226,14 +238,13 @@
                   filterRows = _options.find('article[id*="filter_row_"]');
 
               if (isNewRow) {
-                  row.attr('id', 'filter_row_'+ (filterRows.length?(parseInt(filterRows.last().attr('id').substr(11),10)+1):0));
+                  row.attr('id', 'filter_row_'+ filterRows.length);
                   enableRemoveFilterRow( row );
-                  createFilterRow('new', filterFields['default'], true);
-                  if (isNewFilter) {
-                      createFieldRowChoice( row, _choices, isNewFilter );
-                  }
+                  createFilterRow('new', {'field':'default','opera':'','value':''}, true);
               }
-
+              if (isNewFilter) {
+                  createFieldRowChoice( row, _choices, isNewFilter );
+              }
               enableSaveFilterButton();
               e.preventDefault();
               e.stopPropagation();
@@ -281,7 +292,7 @@
           // check to see if this is a new filter
           if ( data.id==='filter_new' ) {
               filter.id = 'filter_'+ availableFilters.length;
-              var option = '<option value="'+ filter.id +'" selected="selected" class="custom-choice">'+ title +'</option>';
+              var option = '<option value="'+ filter.id +'" selected="selected" class="custom-choice custom-result">'+ title +'</option>';
 
               // if module filter exists,
               if ( _select.find('option').first().hasClass('filter-disabled') ) {
@@ -302,24 +313,28 @@
           _choices.find('li[id*="search_filter_chzn_f_"]').remove();
       }
 
+      function removeFilter (index,data) {
+          availableFilters.splice(index,1);
+          _select.find( 'option[value="'+ data.id +'"]' ).remove();
+      }
+
       function createFilterRow (index,spec,isNewRow) {
 
           loadContent('partial/common/search-filter-row.html', '.filter-options', undefined, 'append');
 
-          _form.find('#filter_row_new').attr('id','filter_row_'+ index);
+          if (!isNaN(index)) {
+              _form.find('#filter_row_new').attr('id','filter_row_'+ index);
+          }
 
           var row = _form.find('#filter_row_'+ index),
               field = row.find('select[name="field"]'),
               opera = row.find('select[name="opera"]'),
-              value = row.find('input[name="value"]'),
-              fieldDef = filterFields[spec.field];
-
-          setFilterRowInputs();
+              value = row.find('input[name="value"]');
 
           // enable chosen for filter row
-          row.find('.chzn-select').chosen({
-              disable_search_threshold: 7, searchChoiceConstructor: searchChoiceConstructor
-          });
+          row.find('.chzn-select').chosen({ disable_search_threshold: 7 });
+
+          setFilterRowInputs( spec, filterFields[spec.field] );
 
           if (!isNewRow) {
               enableRemoveFilterRow( row );
@@ -327,38 +342,40 @@
 
           field.on('change', function(){
               spec.field = field.val();
-              fieldDef = filterFields[spec.field];
-              setFilterRowInputs();
+              setFilterRowInputs( spec, filterFields[spec.field] );
           });
 
-          function setFilterRowInputs() {
+          function setFilterRowInputs(spec,fieldDef) {
 
               //set the field
               if (spec.field!=='') {
                 field.val(spec.field);
               }
+              field.trigger("liszt:updated");
 
               //set the operations
               opera.find('option').remove();
-
-              if (fieldDef.opera==='') {
-                  opera.hide();
+              opera.append('<option value=""></option>');
+              $.each( fieldDef.opera.split(','), function(index,value){
+                  opera.append('<option value="'+ value +'">'+ value +'</option>');
+              });
+              //opera.css('display','inline-block');
+              //set opera selected to spec value
+              if (spec.opera!=='') {
+                  opera.val(spec.opera);
+              } else if ( fieldDef.disabled==true && fieldDef.opera!=='' ) {
+                  opera.val(fieldDef.opera);
+              }
+              if (spec.opera!=='' || fieldDef.opera!=='') {
+                  row.find('#'+opera.attr('id')+'_chzn').show();
               } else {
-                  opera.append('<option value=""></option>');
-                  $.each( fieldDef.opera.split(','), function(index,value){
-                      opera.append('<option value="'+ value +'">'+ value +'</option>');
-                  });
-                  //set opera selected to spec value
-                  if (spec.opera!=='') {
-                      opera.val(spec.opera);
-                  }
-                  //set opera enabled to field enabled
-                  if (fieldDef.disabled) {
-                      opera.attr('disabled','disabled');
-                  } else {
-                    opera.removeAttr('disabled');
-                  }
-
+                  row.find('#'+opera.attr('id')+'_chzn').hide();
+              }
+              //set opera enabled to field enabled
+              if (fieldDef.disabled) {
+                  opera.attr('disabled','disabled');
+              } else {
+                opera.removeAttr('disabled');
               }
               opera.trigger("liszt:updated");
 
@@ -377,7 +394,7 @@
       }
 
       function enableSaveFilterButton () {
-          _header.find('a[href="#save"]').toggleClass( 'disabled', _header.find('input[type="text"]').val()==='' );
+          _header.find('a[href="#save"]').toggleClass( 'disabled', _header.find('input[name="filter"]').val()==='' );
       }
 
       function createFieldRowChoice (filterRow,choices) {
@@ -403,14 +420,11 @@
       }
 
       function searchChoiceConstructor (id,item,type) {
-
           if (typeof type==='undefined') {
             type = item.classes.indexOf('filter-disabled')!==-1 ? 'Module' : 'Filter';
           }
           return item.classes.indexOf('filter-new')===-1 ? '<li class="search-choice search-choice-option '+ item.classes +'" id="'+ id +'"><span>'+ type +'</span><a href="javascript:void(0)" rel="'+ item.array_index +'">'+ item.html +'</a></li>' : '';
       }
-
-
   });
 
 </script>
