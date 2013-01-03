@@ -42,6 +42,11 @@ $viewdefs['Contacts']['base']['view']['record'] = array(
             'css_class' => 'hide record-cancel',
         ),
         array(
+            'type'    => 'button',
+            'label'   => 'LBL_DUPLICATE_BUTTON_LABEL',
+            'css_class' => 'record-duplicate',
+        ),            
+        array(
             'type' => 'button',
             'label' => 'LBL_EDIT_BUTTON_LABEL',
             'css_class' => 'record-edit',
@@ -88,11 +93,36 @@ $viewdefs['Contacts']['base']['view']['record'] = array(
                 array(
                     'name' => 'fieldset_address',
                     'type' => 'fieldset',
-                    'label' => 'Primay Address',
-                    'fields' => array('primary_address_street', 'primary_address_city', 'primary_address_state', 'primary_address_postalcode')
+                    'label' => 'Primary Address',
+                    'fields' => array(
+                        'primary_address_street',
+                        'primary_address_city',
+                        'primary_address_state',
+                        'primary_address_postalcode',
+                    ),
                 ),
-                'email'
-
+                array(
+                    'name' => 'fieldset_alt_address',
+                    'type' => 'fieldset',
+                    'label' => 'Alternate Address',
+                    'fields' => array(
+                        'alt_address_street',
+                        'alt_address_city',
+                        'alt_address_state',
+                        'alt_address_postalcode',
+                        array(
+                            'name' => 'copy',
+                            'type' => 'copy',
+                            'mapping' => array(
+                                'primary_address_street' => 'alt_address_street',
+                                'primary_address_city' => 'alt_address_city',
+                                'primary_address_state' => 'alt_address_state',
+                                'primary_address_postalcode' => 'alt_address_postalcode',
+                            ),
+                        ),
+                    ),
+                ),
+                'email',
             ),
         ),
         array(
@@ -118,13 +148,6 @@ $viewdefs['Contacts']['base']['view']['record'] = array(
                 'team_name',
                 'date_modified',
                 'date_entered',
-                array(
-                    'name' => 'fieldset_alt_address',
-                    'type' => 'fieldset',
-                    'label' => 'Alternate Address',
-                    'fields' => array('alt_address_street', 'alt_address_city', 'alt_address_state', 'alt_address_postalcode')
-                ),
-
             )
         )
     ),

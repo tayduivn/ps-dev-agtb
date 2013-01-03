@@ -116,6 +116,10 @@ class ForecastsController extends SugarController
         $content = $obj->process();
 
         $obj->export($content);
+
+        // Bug 59329 : Stack 88: CSV is created with some garbage info after the records
+        // prevent rendering view
+        sugar_cleanup(true);
     }
 
 }

@@ -34,6 +34,8 @@ class SugarFieldLinkTest extends Sugar_PHPUnit_Framework_TestCase
         $this->note->field_defs['testurl_c']['default'] = 'http://test/{assigned_user_id}';
         $this->note->assigned_user_id = $GLOBALS['current_user']->id;
         $this->note->fetched_row['assigned_user_id'] = $this->note->assigned_user_id;
+        $this->note->testurl_c1 = "www.sugarcrm.com";
+        $this->note->field_defs['testurl_c1']['type']='url';
 	}
 
     public function tearDown()
@@ -52,5 +54,14 @@ class SugarFieldLinkTest extends Sugar_PHPUnit_Framework_TestCase
         $data = array();
         $sf->apiFormatField($data, $this->note, array(), 'testurl_c',array());
         $this->assertEquals('http://test/'.$GLOBALS['current_user']->id, $data['testurl_c']);
+    }
+    /**
+     * @jira task sc50 url fields not coming across on api
+     */
+    public function testURLField() {
+        $sf = SugarFieldHandler::getSugarField('url');
+        $data = array();
+        $sf->apiFormatField($data, $this->note, array(), 'testurl_c1',array());
+        $this->assertEquals('www.sugarcrm.com', $data['testurl_c1']);
     }
 }

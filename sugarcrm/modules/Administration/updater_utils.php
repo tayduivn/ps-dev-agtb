@@ -464,6 +464,13 @@ function authenticateDownloadKey(){
 	$data['license_num_portal_users'] = intval($GLOBALS['license']->settings['license_num_portal_users']);
 	$data['license_vk_end_date'] = $GLOBALS['license']->settings['license_vk_end_date'];
 	$data['license_key'] = $GLOBALS['license']->settings['license_key'];
+    if(isset($GLOBALS['license']->settings['license_enforce_portal_user_limit'])) {
+        $data['enforce_portal_user_limit'] = intval($GLOBALS['license']->settings['license_enforce_portal_user_limit']);
+    }
+    if(isset($GLOBALS['license']->settings['license_enforce_user_limit'])) {
+    	$data['enforce_user_limit'] = intval($GLOBALS['license']->settings['license_enforce_user_limit']);
+    }
+
 	if(empty($GLOBALS['license']->settings['license_validation_key'])) return false;
 	$og = unserialize(sugarDecode('validation', $GLOBALS['license']->settings['license_validation_key']));
 
@@ -764,7 +771,13 @@ function loginLicense(){
 			set_last_check_date_config_setting("$current_date_time");
 			include('sugar_version.php');
 
-			if(!empty($version)&& count($version) == 1 && $version[0]['version'] > $sugar_version  && is_admin($current_user))
+            $newVersion = '';
+            if (!empty($version) && count($version) == 1)
+            {
+                $newVersion = $version[0]['version'];
+            }
+
+            if (version_compare($newVersion, $sugar_version, '>') && is_admin($current_user))
 			{
 				//set session variables.
 				$_SESSION['available_version']=$version[0]['version'];
@@ -793,12 +806,3 @@ function loginLicense(){
 	  //END SUGARCRM lic=sub ONLY
 
 }
-
-
-
-
-
-
-
-
-?>

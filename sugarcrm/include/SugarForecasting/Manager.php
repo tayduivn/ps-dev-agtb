@@ -49,8 +49,8 @@ class SugarForecasting_Manager extends SugarForecasting_AbstractForecast impleme
                               "forecast" => 0,
                               "forecast_id" => '',
                               "worksheet_id" => '',
-                              "currency_id" => '',
-                              "base_rate" => 0,
+                              "currency_id" => '-99',
+                              "base_rate" => 1.0,
                               "show_opps" => false,
                               "timeperiod_id" => '',
                               "id" => '',
@@ -74,9 +74,6 @@ class SugarForecasting_Manager extends SugarForecasting_AbstractForecast impleme
 
         // set the default data timeperiod to the set timeperiod
         $this->defaultData['timeperiod_id'] = $this->getArg('timeperiod_id');
-        // set currency to current user prefs
-        $this->defaultData['currency_id'] = SugarCurrency::getUserLocaleCurrency()->id;
-        $this->defaultData['base_rate'] = SugarCurrency::getUserLocaleCurrency()->conversion_rate;
     }
 
     /**
@@ -443,6 +440,5 @@ GROUP BY u.user_name";
 
         $seed->setWorksheetArgs($this->getArgs());
         $seed->save();
-        return $seed->id;
     }
 }

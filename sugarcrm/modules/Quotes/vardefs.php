@@ -224,6 +224,13 @@ $dictionary['Quote'] = array('table' => 'quotes','audited'=>true, 'unified_searc
     'type' => 'currency',
     'len' => '26,6',
     'audited'=>true,
+    'studio' => array(
+        'wirelesseditview' => false,
+        'wirelessdetailview' => false,
+        'wirelesslistview' => false,
+        'wireless_basic_search' => false,
+        'wireless_advanced_search' => false,
+    ),
   ),
   'shipping' =>
   array (
@@ -241,6 +248,13 @@ $dictionary['Quote'] = array('table' => 'quotes','audited'=>true, 'unified_searc
     'dbType' => 'decimal',
     'type' => 'currency',
     'len' => '26,6',
+    'studio' => array(
+      'wirelesseditview' => false,
+      'wirelessdetailview' => false,
+      'wirelesslistview' => false,
+      'wireless_basic_search' => false,
+      'wireless_advanced_search' => false,
+    ),
   ),
     'discount' =>
   array (
@@ -265,6 +279,13 @@ $dictionary['Quote'] = array('table' => 'quotes','audited'=>true, 'unified_searc
     'dbType' => 'decimal',
     'type' => 'decimal',
     'len' => '26,2',
+    'studio' => array(
+      'wirelesseditview' => false,
+      'wirelessdetailview' => false,
+      'wirelesslistview' => false,
+      'wireless_basic_search' => false,
+      'wireless_advanced_search' => false,
+    ),
   ),
   'new_sub' =>
   array (
@@ -281,6 +302,13 @@ $dictionary['Quote'] = array('table' => 'quotes','audited'=>true, 'unified_searc
     'dbType' => 'decimal',
     'type' => 'currency',
     'len' => '26,6',
+    'studio' => array(
+      'wirelesseditview' => false,
+      'wirelessdetailview' => false,
+      'wirelesslistview' => false,
+      'wireless_basic_search' => false,
+      'wireless_advanced_search' => false,
+    ),
   ),
   'tax' =>
   array (
@@ -299,6 +327,13 @@ $dictionary['Quote'] = array('table' => 'quotes','audited'=>true, 'unified_searc
     'type' => 'currency',
     'len' => '26,6',
     'audited'=>true,
+    'studio' => array(
+      'wirelesseditview' => false,
+      'wirelessdetailview' => false,
+      'wirelesslistview' => false,
+      'wireless_basic_search' => false,
+      'wireless_advanced_search' => false,
+    ),
   ),
   'total' =>
   array (
@@ -319,7 +354,6 @@ $dictionary['Quote'] = array('table' => 'quotes','audited'=>true, 'unified_searc
     'audited'=>true,
   	'enable_range_search' => true,
   	'options' => 'numeric_range_search_dom',
-//BEGIN SUGARCRM flav=pro ONLY
     'studio' => array(
         'wirelesseditview' => false,
         'wirelessdetailview' => false,
@@ -327,7 +361,6 @@ $dictionary['Quote'] = array('table' => 'quotes','audited'=>true, 'unified_searc
         'wireless_basic_search' => false,
         'wireless_advanced_search' => false,
     ),
-//END SUGARCRM flav=pro ONLY
   ),
   'billing_address_street' =>
   array (

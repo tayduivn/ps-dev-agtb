@@ -1,3 +1,29 @@
+/*********************************************************************************
+ * The contents of this file are subject to the SugarCRM Master Subscription
+ * Agreement (""License"") which can be viewed at
+ * http://www.sugarcrm.com/crm/master-subscription-agreement
+ * By installing or using this file, You have unconditionally agreed to the
+ * terms and conditions of the License, and You may not use this file except in
+ * compliance with the License.  Under the terms of the license, You shall not,
+ * among other things: 1) sublicense, resell, rent, lease, redistribute, assign
+ * or otherwise transfer Your rights to the Software, and 2) use the Software
+ * for timesharing or service bureau purposes such as hosting the Software for
+ * commercial gain and/or for the benefit of a third party.  Use of the Software
+ * may be subject to applicable fees and any use of the Software without first
+ * paying applicable fees is strictly prohibited.  You do not have the right to
+ * remove SugarCRM copyrights from the source code or user interface.
+ *
+ * All copies of the Covered Code must include on each user interface screen:
+ *  (i) the ""Powered by SugarCRM"" logo and
+ *  (ii) the SugarCRM copyright notice
+ * in the same form as they appear in the distribution.  See full license for
+ * requirements.
+ *
+ * Your Warranty, Limitations of liability and Indemnity are expressly stated
+ * in the License.  Please refer to the License for the specific language
+ * governing these rights and limitations under the License.  Portions created
+ * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
+ ********************************************************************************/
 /**
  *
  * Create a modal popup that renders popup layout container
@@ -10,16 +36,18 @@
  *      @params Parameters - [Object] {
  *              span - [int] size of modal[1-12]
  *              options - (Optional) 3rd party options goes here
- *              context - [Object] configured context attributes
+ *
+ *              components - [Array] list of either views or layouts (optional for single layout)
+ *                           i.e. [ {view: ... } , {layout: ..., context: ... }, ...]
+ *
+ *                  context should be within the each component metadata.
+ *                  context - [Object] configured context attributes
  *                        i.e. { module:..., link:..., modelId:... }
  *                        {
  *                            module - [String] Module name (i.e. Accounts, Contacts, etc) (optional),
  *                            link - [String] related module name (optional),
  *                            modelId - [String] model ID (optional)
  *                        }
- *
- *              components - [Array] list of either views or layouts (optional for single layout)
- *                           i.e. [ {view: ... } , {layout: ...}, ...]
  *      }
  *
  *      @params callback - [function(model)] - called by trigger "modal:callback" with correponded model
@@ -39,12 +67,14 @@
     baseComponents: [
         { 'view' : 'modal-header' }
     ],
-    initialize: function(options) {
+    initialize: function(options, skipModalJsCheck) {
         var self = this,
             showEvent = options.meta.showEvent;
 
-        if(!_.isFunction(this.$el.modal)) {
-            app.logger.error("Unable to load modal.js: Needs bootstrap modal plugin.");
+        if (!skipModalJsCheck) {
+            if(!_.isFunction(this.$el.modal)) {
+                app.logger.error("Unable to load modal.js: Needs bootstrap modal plugin.");
+            }
         }
 
         this.metaComponents = options.meta.components;
@@ -55,13 +85,16 @@
             });
         }
         app.view.Layout.prototype.initialize.call(this, options);
-        if(_.isArray(showEvent)) {
-            //Bind the multiple event handler names
-            _.each(showEvent, function(evt, index) {
-                self._bindShowEvent(evt);
-            });
-        } else {
-            self._bindShowEvent(showEvent);
+        options.meta.components = this.metaComponents; //revert components metadata back to original
+        if (showEvent) {
+            if(_.isArray(showEvent)) {
+                //Bind the multiple event handler names
+                _.each(showEvent, function(evt, index) {
+                    self._bindShowEvent(evt);
+                });
+            } else {
+                self._bindShowEvent(showEvent);
+            }
         }
     },
     _bindShowEvent : function(event, delegate){
@@ -116,7 +149,8 @@
             components = (params.components || this.metaComponents || []),
             title = (params.title || this.meta.title) + '';
         if(message && components.length == 0) {
-            components.push({view: 'modal-confirm', message: message});
+            this.confirmMessage = message;
+            components.push({view: 'modal-confirm'});
         }
         //stops for empty component elements
         if(components.length == 0) {

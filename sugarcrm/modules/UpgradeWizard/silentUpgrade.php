@@ -58,24 +58,31 @@ if (substr($sapi_type, 0, 3) != 'cli') {
 }
 //End of #52872
 
-$php_path = '';
+if(defined('PHP_BINDIR')) {
+    $php_path = PHP_BINDIR."/";
+} else {
+    $php_path = '';
+}
 
 $php_file = $argv[0];
 $p_info = pathinfo($php_file);
-$php_dir = (isset($p_info['dirname']) && $p_info['dirname'] != '.') ?  $p_info['dirname'] . '/' : '';
+$php_dir = (isset($p_info['dirname']) && $p_info['dirname'] != '.') ?  $p_info['dirname'] . DIRECTORY_SEPARATOR : '';
 
-$step1 = $php_path."php -f {$php_dir}silentUpgrade_step1.php " . build_argument_string($argv);
-passthru($step1, $output);
-if($output != 0) {
-    echo "***************         step1 failed         ***************: $output\n";
-}
-$has_error = $output == 0 ? false : true;
-
-if(!$has_error) {
-	$step2 = "php -f {$php_dir}silentUpgrade_step2.php " . build_argument_string($argv);
-	passthru($step2, $output);
+//Make sure that the php executable really exists; if not, just default back assuming the executable is set
+if(!file_exists($php_path . 'php')) {
+    $php_path = '';
 }
 
-if($output != 0) {
-   echo "***************         silentupgrade failed         ***************: $output\n";
+for($step=1;$step<=3;$step++) {
+    $step_cmd = $php_path."php -f {$php_dir}silentUpgrade_step{$step}.php " . build_argument_string($argv);
+    passthru($step_cmd, $output);
+    if($output != 0) {
+	    echo "***************         Step {$step} failed         ***************: $output\n";
+	    exit(1);
+    } else {
+        echo "***************         Step {$step} OK\n";
+    }
 }
+
+echo "***************         SUCCESS!\n";
+exit(0);

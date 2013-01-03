@@ -90,7 +90,7 @@ abstract class SugarApi {
      */
     protected function htmlDecodeReturn(&$data) {
         foreach($data AS $key => $value) {
-            if(is_array($value) && !empty($value)) {
+            if((is_object($value) || is_array($value)) && !empty($value)) {
                 $this->htmlDecodeReturn($value);
             }
             elseif(!empty($data) && !empty($value)) {
@@ -184,7 +184,7 @@ abstract class SugarApi {
         $fav_id = SugarFavorites::generateGUID($module,$record);
 
         // get it even if its deleted
-        $fav = BeanFactory::getBean('SugarFavorites', $fav_id, array("deleted" => true));
+        $fav = BeanFactory::getBean('SugarFavorites', $fav_id, array("deleted" => false));
 
         // already exists
         if(!empty($fav->id)) {

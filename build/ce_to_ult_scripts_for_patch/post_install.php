@@ -138,10 +138,13 @@ function post_install()
     _logThis("Rebuilding Dashlets", $path);
     rebuild_dashlets();
 
+    require_once("install/install_utils.php");
+    _logThis("Building sidecar config", $path);
+    handleSidecarConfig();
+
     ///////////////////////////////////////////////////////////////////////////
 	////	BUILD PORTAL CONFIG
     _logThis("Building portal config", $path);
-    require_once("install/install_utils.php");
     handlePortalConfig();
 
     _logThis('Set default_theme to Sugar', $path);

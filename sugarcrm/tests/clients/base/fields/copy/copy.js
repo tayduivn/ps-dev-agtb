@@ -8,8 +8,6 @@ describe('copy field', function() {
         beforeEach(function() {
 
             app = SugarTest.app;
-            app.view.Field.prototype._renderHtml = function() {
-            };
 
             model = new Backbone.Model({
                 int: 1234567890,
@@ -36,7 +34,7 @@ describe('copy field', function() {
                     'description': 'subject'
                 }
             };
-            field = SugarTest.createField('base', 'copy_from_master', 'copy', 'edit', fieldDef);
+            field = SugarTest.createField('base', 'copy_from_master', 'copy', 'edit', fieldDef, undefined, model);
             sinon.stub(field, '_loadTemplate', function() {
                 this.template = function() {
                     return '{{#if def.sync}}<label><input type="checkbox"{{#if value}} checked{{/if}}/>{{label}}</label>{{else}}<button type="button" class="btn">{{label}}</button>{{/if}}';
@@ -68,9 +66,7 @@ describe('copy field', function() {
 
             var prev = model.clone();
 
-            field.model = model;
             field.render();
-            field._renderHtml();
 
             _.each(field.def.mapping, function(target, source) {
                 expect(field.model.get(target)).toEqual(prev.get(target));
@@ -100,9 +96,7 @@ describe('copy field', function() {
 
             var prev = model.clone();
 
-            field.model = model;
             field.render();
-            field._renderHtml();
 
             _.each(field.def.mapping, function(target, source) {
                 expect(field.model.get(target)).toEqual(prev.get(target));
@@ -118,9 +112,7 @@ describe('copy field', function() {
 
             var prev = model.clone();
 
-            field.model = model;
             field.render();
-            field._renderHtml();
 
             _.each(field.def.mapping, function(target, source) {
                 expect(field.model.get(target)).toEqual(prev.get(target));
@@ -151,9 +143,7 @@ describe('copy field', function() {
 
             var prev = model.clone();
 
-            field.model = model;
             field.render();
-            field._renderHtml();
 
             _.each(field.def.mapping, function(target, source) {
                 expect(field.model.get(target)).toEqual(prev.get(target));
@@ -175,9 +165,7 @@ describe('copy field', function() {
             field.def.sync = false;
             expect(field.def.sync).toBeFalsy();
 
-            field.model = model;
             field.render();
-            field._renderHtml();
 
             _.each(field.def.mapping, function(target, source) {
                 expect(field.model.get(target)).toEqual(prev.get(target));

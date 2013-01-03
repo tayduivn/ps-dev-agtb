@@ -318,7 +318,7 @@ function handleSave($prefix,$redirect=true, $useRequired=false) {
                 $_REQUEST['return_action'] = 'EditView';
                 handleRedirect('', 'Meetings');
             }
-            
+
             $focus->setUserInvitees($userInvitees, $existingUsers);
             $focus->setContactInvitees($contactInvitees, $existingContacts);
             $focus->setLeadInvitees($leadInvitees, $existingLeads);

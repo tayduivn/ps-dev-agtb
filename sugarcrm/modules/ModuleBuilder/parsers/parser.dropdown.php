@@ -21,7 +21,9 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * $Id: additionalDetails.php 13782 2006-06-06 17:58:55Z majed $
  *********************************************************************************/
 
-require_once('modules/ModuleBuilder/parsers/ModuleBuilderParser.php');
+require_once 'modules/ModuleBuilder/parsers/ModuleBuilderParser.php';
+require_once 'modules/Administration/Common.php';
+require_once 'include/MetaDataManager/MetaDataManager.php';
 
 class ParserDropDown extends ModuleBuilderParser {
 
@@ -32,7 +34,6 @@ class ParserDropDown extends ModuleBuilderParser {
      * @param REQUEST params  $params
      */
     function saveDropDown($params){
-        require_once('modules/Administration/Common.php');
 		$emptyMarker = translate('LBL_BLANK');
 		$selected_lang = (!empty($params['dropdown_lang'])?$params['dropdown_lang']:$_SESSION['authenticated_user_language']);
 		$type = $_REQUEST['view_package'];
@@ -106,6 +107,9 @@ class ParserDropDown extends ModuleBuilderParser {
 		}
 		sugar_cache_reset();
 		clearAllJsAndJsLangFilesWithoutOutput();
+        
+        // Clear out the api metadata cache
+        MetaDataManager::clearAPICache();
     }
 
     /**

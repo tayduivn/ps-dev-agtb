@@ -11,7 +11,7 @@
                 app.logger.error("Failed to eval view controller for " + name + ": " + e + ":\n" + data);
             }
             app.view.declareComponent(type, name, module, data, null, true);
-            test.testMetadata.addController(name, type, data, module, client);
+            test.testMetadata.addController(name, type, data, module);
         });
     };
 
@@ -20,17 +20,18 @@
         var path = "/clients/" + client + "/" + type + "s/" + name;
         path = (module) ? "../modules/" + module + path : ".." + path;
         SugarTest.loadFile(path, templateName, "hbt", function(data) {
-            test.testMetadata.addTemplate(name, type, data, templateName, module, client);
+            test.testMetadata.addTemplate(name, type, data, templateName, module);
         });
     };
 
-    test.createField = function(client, name, type, viewName, fieldDef, module) {
-        test.loadComponent(client, "field", type, module);
-        var context = app.context.getContext();
+    test.createField = function(client, name, type, viewName, fieldDef, module, model, context) {
+        test.loadComponent(client, "field", type);
+
         var view = new app.view.View({ name: viewName, context: context });
         var def = { name: name, type: type };
+        var context = context || app.context.getContext();
 
-        var model = new Backbone.Model();
+        model = model || new Backbone.Model();
 
         if (fieldDef) {
             model.fields = {};
@@ -100,45 +101,42 @@
             this._data.fields = this._data.fields || {};
         },
 
-        addController: function(name, type, controller, module, platform) {
+        addController: function(name, type, controller, module) {
             type = type + 's';
-            platform = platform || 'base';
             if (this.isInitialized()) {
                 if (module) {
                     this._initModuleStructure(module, type, name);
                     this._data.modules[module][type][name].controller = controller;
                 } else {
-                    this._data[type][platform][name] = this._data[type][platform][name] || {};
-                    this._data[type][platform][name].controller = controller;
+                    this._data[type][name] = this._data[type][name] || {};
+                    this._data[type][name].controller = controller;
                 }
             }
         },
 
-        addTemplate: function(name, type, template, templateName, module, platform) {
+        addTemplate: function(name, type, template, templateName, module) {
             type = type + 's';
-            platform = platform || 'base';
             if (this.isInitialized()) {
                 if (module) {
                     this._initModuleStructure(module, type, name);
                     this._data.modules[module][type][name].template = template;
                 } else {
-                    this._data[type][platform][name] = this._data[type][platform][name] || {};
-                    this._data[type][platform][name].templates = this._data[type][platform][name].templates || {};
-                    this._data[type][platform][name].templates[templateName] = template;
+                    this._data[type][name] = this._data[type][name] || {};
+                    this._data[type][name].templates = this._data[type][name].templates || {};
+                    this._data[type][name].templates[templateName] = template;
                 }
             }
         },
 
-        addViewDefinition: function(name, viewDef, module, platform) {
+        addViewDefinition: function(name, viewDef, module) {
             var type = 'views';
-            platform = platform || 'base';
             if (this.isInitialized()) {
                 if (module) {
                     this._initModuleStructure(module, type, name);
                     this._data.modules[module][type][name].meta = viewDef;
                 } else {
-                    this._data[type][platform][name] = this._data[type][platform][name] || {};
-                    this._data[type][platform][name].meta = viewDef;
+                    this._data[type][name] = this._data[type][name] || {};
+                    this._data[type][name].meta = viewDef;
                 }
             }
         },

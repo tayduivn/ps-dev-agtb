@@ -57,8 +57,7 @@ class RestBug57210Test extends RestFileTestBase {
         // we want here since it will overwrite the global! So we build line by line.
         $newContents = "<?php\n";
         foreach ($sugar_config as $key => $value) {
-            $value = ($value) ? $value : '0';
-            $newContents .= '$sugar_config["'.$key.'"] = "'.$value.'"' . ";\n";
+            $newContents .= override_value_to_string_recursive2('sugar_config', $key, $value);
         }
         SugarAutoLoader::put($this->_config_override_name, $newContents, true);
     }

@@ -144,6 +144,7 @@ $mod_strings = array (
 'LBL_PERFORMFULLFTSINDEX' => 'Full-text Search Index System',
 
 'LBL_RUNMASSEMAILCAMPAIGN' => 'Run Nightly Mass Email Campaigns',
+'LBL_ASYNCMASSUPDATE' => 'Perform Asynchronous Mass Updates',
 'LBL_POLLMONITOREDINBOXESFORBOUNCEDCAMPAIGNEMAILS' => 'Run Nightly Process Bounced Campaign Emails',
 'LBL_PRUNEDATABASE' => 'Prune Database on 1st of Month',
 'LBL_TRIMTRACKER' => 'Prune Tracker Tables',
@@ -151,6 +152,7 @@ $mod_strings = array (
 'LBL_PROCESSWORKFLOW' => 'Process Workflow Tasks',
 'LBL_PROCESSQUEUE' => 'Run Report Generation Scheduled Tasks',
 'LBL_UPDATETRACKERSESSIONS' => 'Update Tracker Session Tables',
+'LBL_CHECKTIMEPERIODS' => 'Check TimePeriods',
 //END SUGARCRM flav=pro ONLY
 'LBL_SENDEMAILREMINDERS'=> 'Run Email Reminders Sending',
 //BEGIN SUGARCRM flav=int ONLY

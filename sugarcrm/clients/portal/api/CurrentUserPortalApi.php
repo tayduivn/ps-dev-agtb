@@ -50,7 +50,7 @@ class CurrentUserPortalApi extends CurrentUserApi {
         $user_data['full_name'] = $contact->full_name;
         $user_data['portal_name'] = $contact->portal_name;
         if(isset($contact->preferred_language)) {
-            $user_data['preferred_language'] = $contact->preferred_language;
+            $user_data['preferences']['language'] = $contact->preferred_language;
         }
         
         return array('current_user'=>$user_data);

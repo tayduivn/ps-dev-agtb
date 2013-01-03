@@ -9,8 +9,8 @@ describe("sugarfields", function() {
                 myUser = SUGAR.App.user;
             field = _.extend(field, controller);
             
-            myUser.set('datepref','m/d/Y');
-            myUser.set('timepref','H:i');
+            myUser.setPreference('datepref','m/d/Y');
+            myUser.setPreference('timepref','H:i');
 
             unformatedValue = '2012-02-14T13:15:17-0600';
             expectedValue = '02/14/2012';

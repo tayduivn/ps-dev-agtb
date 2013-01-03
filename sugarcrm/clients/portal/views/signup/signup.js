@@ -85,7 +85,7 @@
         this.model.set({"email": oEmail}, {silent: true});
         if (validFlag) {
             $('#content').hide();
-            app.alert.show('signup', {level:'process', title:'LBL_PORTAL_SIGNUP_PROCESS', autoClose:false});
+            app.alert.show('signup', {level:'process', title:app.lang.getAppString('LBL_PORTAL_SIGNUP_PROCESS'), autoClose:false});
             
             var contactData = {
                 first_name: this.model.get("first_name"),
@@ -195,14 +195,16 @@
                                     type: "button",
                                     label: "LBL_CANCEL_BUTTON_LABEL",
                                     value: "signup",
-                                    primary: false
+                                    primary: false,
+                                    'class': 'pull-left'
                                 },
                                 {
                                     name: "signup_button",
                                     type: "button",
                                     label: "LBL_SIGNUP_BUTTON_LABEL",
                                     value: "signup",
-                                    primary: true
+                                    primary: true,
+                                    'class': 'pull-right'
                                 }
                             ],
                             "panels": [

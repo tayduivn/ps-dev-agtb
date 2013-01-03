@@ -286,8 +286,8 @@ SE.accounts = {
                 var viewH = YAHOO.util.Dom.getViewportHeight();
                 if (this.header && el && viewH - 50 < el.clientHeight) {
                     var body = this.header.nextElementSibling;
-					body.style.overflow = "hidden";
-                    body.style.height = "100%";
+					body.style.overflow = "auto";
+                    body.style.height = "460px";
                 }
             }, EAD);
             EAD.setHeader(mod_strings.LBL_EMAIL_ACCOUNTS_INBOUND);
