@@ -84,6 +84,21 @@
      * If the timeperiod is changed and we have dirtyModels, keep the previous one to use if they save the models
      */
     dirtyUser : '',
+    
+    /**
+     * A Collection to keep track of draft models
+     */
+    draftModels: new Backbone.Collection(),
+    
+    /**
+     * If the timeperiod is changed and we have draftModels, keep the previous one to use if they save the models
+     */
+    draftTimeperiod : '',
+
+    /**
+     * If the timeperiod is changed and we have draftModels, keep the previous one to use if they save the models
+     */
+    draftUser : '',    
 
     /**
      * Handle Any Events
@@ -135,6 +150,7 @@
         if(this.isDirty()) {
             // since the model is dirty, save it so we can use it later
             this.dirtyUser = this.selectedUser;
+            this.draftUser = this.selectedUser;
         }
         this.selectedUser = selectedUser;
         if(!this.showMe()){
@@ -162,7 +178,7 @@
             }, this);
 
             this._collection.on("change", function(model, changed) {
-                // The Model has changed vai CTE. save it in the isDirty
+                // The Model has changed via CTE. save it in the isDirty
                 this.dirtyModels.add(model);
                 this.context.forecasts.trigger('forecasts:worksheetDirty', model, changed);
             }, this);
@@ -250,20 +266,25 @@
             var self = this,
                 saveCount = 0;
 
-            totalToSave = self.dirtyModels.length;
-
-
             if(this.isDirty()) {
+                totalToSave = self.dirtyModels.length;
+                
                 self.dirtyModels.each(function(model){
                    //set properties on model to aid in save
                     model.set({
                         "draft" : (isDraft && isDraft == true) ? 1 : 0,
                         "timeperiod_id" : self.dirtyTimeperiod || self.timePeriod,
                         "current_user" : self.dirtyUser.id || self.selectedUser.id
-                    }, {silent:true});
-
+                    }, {silent:true});                                     
+                    
                     //set what url  is used for save
                     model.url = self.url.split("?")[0] + "/" + model.get("id");
+                    
+                    //add to draft structure so committing knows what to save as non-draft
+                    if(isDraft && isDraft == true){
+                        self.draftModels.add(model, {merge: true});
+                    }                    
+                    
                     model.save({}, {success: function() {
                         saveCount++;
                         //if this is the last save, go ahead and trigger the callback;
@@ -274,7 +295,32 @@
                 });
 
                 self.cleanUpDirtyModels();
-            } else {
+            }            
+            else if(!isDraft && self.draftModels.length > 0){
+                totalToSave = self.draftModels.length;
+               
+                self.draftModels.each(function(model){
+                    model.set({
+                        draft : 0,
+                        timeperiod_id : self.draftTimeperiod || self.timePeriod,
+                        current_user : self.draftUser.id || self.selectedUser.id
+                    }, {silent:true});   
+                    model.url = self.url.split("?")[0] + "/" + model.get("id");
+                    
+                    model.save({}, {success: function() {
+                        saveCount++;
+                        //if this is the last save, go ahead and trigger the callback;
+                        if(totalToSave === saveCount) {
+                            self.context.forecasts.trigger('forecasts:worksheetSaved', totalToSave, 'mgr_worksheet', isDraft);
+                        }
+                    }});
+                });
+                
+                //Need to clean up dirty models too as the save event above triggers a change event on the worksheet.
+                self.cleanUpDirtyModels();
+                self.cleanUpDraftModels();
+            }            
+            else {
                 this.context.forecasts.trigger('forecasts:worksheetSaved', totalToSave, 'mgr_worksheet', isDraft);
             }
         }
@@ -290,6 +336,16 @@
         this.dirtyModels.reset();
         this.dirtyTimeperiod = '';
         this.dirtyUser = '';
+    },
+    
+    /**
+     * Clean Up the Draft Modules Collection and dirtyVariables
+     */
+    cleanUpDraftModels : function() {
+        // clean up the draft records and variables
+        this.draftModels.reset();
+        this.draftTimeperiod = '';
+        this.draftUser = '';
     },
 
 
@@ -451,7 +507,12 @@
 
         //see if anything in the model is a draft version
         var enableCommit = self._collection.find(function(model) {
-            return (model.get("version") == 0)
+            if(model.get("version") == 0){
+                self.draftModels.add(model, {merge: true});
+                return true;
+            }
+            
+            return false;            
         }, this);
         if (_.isObject(enableCommit)) {
             self.context.forecasts.trigger("forecasts:commitButtons:enabled");
@@ -639,6 +700,7 @@
         if(this.isDirty()) {
             // since the model is dirty, save it so we can use it later
             this.dirtyTimeperiod = this.timePeriod;
+            this.draftTimeperiod = this.timePeriod;
         }
     	this.timePeriod = params.id;
         var model = this.context.forecasts.worksheetmanager;
