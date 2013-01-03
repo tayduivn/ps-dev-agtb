@@ -33,6 +33,7 @@
             {{#if id}}
                 <option value="{{id}}" selected>{{name}}</option>
             {{/if}}
+            <option data-searchmore="true" value="{{str "LBL_SEARCH_FOR_MORE"}}" class="more">{{str "LBL_SEARCH_FOR_MORE"}}</option>
         </select>
         <a href="javascript:void(0);" class="btn {{#if primary}}active{{/if}}" name="primary" data-index="{{@index}}"><i class="icon-star"></i></a>
         <a href="javascript:void(0);" class="btn" name="remove" data-index="{{@index}}"><i class="icon-minus"></i></a>

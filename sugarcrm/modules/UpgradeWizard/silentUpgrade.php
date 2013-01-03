@@ -66,7 +66,12 @@ if(defined('PHP_BINDIR')) {
 
 $php_file = $argv[0];
 $p_info = pathinfo($php_file);
-$php_dir = (isset($p_info['dirname']) && $p_info['dirname'] != '.') ?  $p_info['dirname'] . '/' : '';
+$php_dir = (isset($p_info['dirname']) && $p_info['dirname'] != '.') ?  $p_info['dirname'] . DIRECTORY_SEPARATOR : '';
+
+//Make sure that the php executable really exists; if not, just default back assuming the executable is set
+if(!file_exists($php_path . 'php')) {
+    $php_path = '';
+}
 
 for($step=1;$step<=3;$step++) {
     $step_cmd = $php_path."php -f {$php_dir}silentUpgrade_step{$step}.php " . build_argument_string($argv);

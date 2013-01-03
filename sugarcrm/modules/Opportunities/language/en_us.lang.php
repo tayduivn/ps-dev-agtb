@@ -86,6 +86,7 @@ $mod_strings = array (
   'LBL_AMOUNT_USDOLLAR' => 'Amount:',
   'LBL_CURRENCY' => 'Currency:',
   'LBL_DATE_CLOSED' => 'Expected Close Date:',
+  'LBL_DATE_CLOSED_TIMESTAMP' => 'Expected Close Date Timestamp',
   'LBL_TYPE' => 'Type:',
   'LBL_CAMPAIGN' => 'Campaign:',
   'LBL_NEXT_STEP' => 'Next Step:',

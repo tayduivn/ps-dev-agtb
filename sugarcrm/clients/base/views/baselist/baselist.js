@@ -42,6 +42,7 @@
     },
     initialize: function(options) {
         options.meta = _.extend(app.metadata.getView(options.module, 'baselist') || {}, options.meta);
+        options.meta.type = options.meta.type || 'list';
         if(!_.isUndefined(options.meta.selection) && !_.isUndefined(options.meta.selection.type)) {
             switch (options.meta.selection.type) {
                 case "single":
@@ -58,6 +59,7 @@
             options.meta = this.addRowActions(options.meta);
         }
         app.view.View.prototype.initialize.call(this, options);
+        this.template = this.template || app.template.getView('baselist') || app.template.getView('baselist', this.module) || null;
         this.fallbackFieldTemplate = 'list-header';
     },
     _render:function () {
@@ -102,11 +104,12 @@
     fireSearch:function (term) {
         var options = {
             limit:this.limit || null,
-            params:{
-                q:term
-            },
+            params:{},
             fields:this.collection.fields || {}
         };
+        if(term) {
+            options.params.q = term;
+        }
         //TODO: This should be handled automagically by the collection by checking its own tie to the context
         if (this.context.get('link')) {
             options.relate = true;

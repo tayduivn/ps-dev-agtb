@@ -19,13 +19,36 @@
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
-require_once("include/SugarForecasting/Progress/AbstractProgress.php");
-class SugarForecasting_Progress_Manager extends SugarForecasting_Progress_AbstractProgress
+require_once("include/SugarForecasting/Manager.php");
+class SugarForecasting_Progress_Manager extends SugarForecasting_Manager
 {
     /**
      * @var Opportunity
      */
     protected $opportunity;
+    /**
+     * Class Constructor
+     * @param array $args       Service Arguments
+     */
+    public function __construct($args)
+    {
+        parent::__construct($args);
+
+        $this->loadConfigArgs();
+    }
+
+    /**
+     * Get Settings from the Config Table.
+     */
+    public function loadConfigArgs() {
+        /* @var $admin Administration */
+        $admin = BeanFactory::getBean('Administration');
+        $settings = $admin->getConfigForModule('Forecasts');
+
+        // decode and json decode the settings from the administration to set the sales stages for closed won and closed lost
+        $this->setArg('sales_stage_won', $settings["sales_stage_won"]);
+        $this->setArg('sales_stage_lost', $settings["sales_stage_lost"]);
+    }
 
     /**
      * Process the code to return the values that we need
@@ -58,7 +81,7 @@ class SugarForecasting_Progress_Manager extends SugarForecasting_Progress_Abstra
         if($targetedUser->reports_to_id != "") {
             $quotaData = $quota->getRollupQuota($this->getArg('timeperiod_id'), $this->getArg('user_id'), true);
         } else {
-            $quotaData["amount"] = $this->getTopLevelManagerQuota($targetedUser->id, $this->getArg('timeperiod_id'));
+            $quotaData["amount"] = $this->getQuotaTotalFromData();
         }
 
         //get data
@@ -73,53 +96,29 @@ class SugarForecasting_Progress_Manager extends SugarForecasting_Progress_Abstra
     }
 
     /**
-     * Get quota figures for top level manager
-     *
-     * @param $user_id
-     * @param $timeperiod_id
-     * @return int sum for quota
+     * utilizes some of the functions from the base manager class to load data and sum the quota figures
+     * @return float
      */
-    public function getTopLevelManagerQuota($user_id, $timeperiod_id)
+    public function getQuotaTotalFromData()
     {
-        $dataArray = array();
-        global $current_user;
-        $db = DBManagerFactory::getInstance();
-
-        //get quotas for current user (top level manager) and their reportees
-        $query = "select u.user_name user_name, q.amount quota " .
-                 " FROM quotas q " .
-                 " INNER JOIN users u " .
-                 " ON q.user_id = u.id " .
-                 " AND (( u.id = ". $db->quoted($user_id) . " AND quota_type = " . $db->quoted('Direct') . ")" .
-                 " OR ( u.reports_to_id = ". $db->quoted($user_id) ." AND quota_type = " . $db->quoted('Rollup') . "))" .
-                 " WHERE q.deleted = 0 and q.timeperiod_id = " . $db->quoted($timeperiod_id);
-
-        $result = $db->query($query);
-
-        while(($row=$db->fetchByAssoc($result))!=null)
-        {
-            $dataArray[$row['user_name']]['quota'] = $row['quota'];
+        try {
+            $this->loadUsers();
+        } catch (SugarForecasting_Exception $sfe) {
+            return "";
         }
 
-        //get worksheet data for top level manager to override in event a draft is saved
-        $reportees_query = sprintf("SELECT u.user_name, w.quota FROM users u INNER JOIN worksheet w ON w.user_id = u.id AND w.timeperiod_id = %s WHERE u.id = %s and w.deleted = 0 and w.version = 0 ORDER BY w.date_modified desc" , $db->quoted($timeperiod_id), $db->quoted($user_id));
+        $this->loadUsersQuota();
+        $this->loadWorksheetAdjustedValues();
 
-        $result = $db->limitQuery($reportees_query,0,1);
-        //override the quota values for where the worksheet has a value to override the quota for the top manager
-        while(($row=$db->fetchByAssoc($result))!=null)
-        {
-            $dataArray[$row['user_name']]['quota'] = $row['quota'];
-        }
         $quota = 0;
 
-        //sum the quota values
-        foreach ($dataArray as $data) {
-            $quota += $data['quota'];
+        foreach ($this->dataArray as $data) {
+            $quota += SugarCurrency::convertAmountToBase($data['quota'], $data['currency_id']);
         }
 
         return $quota;
-    }
 
+    }
 
     /**
      * retreives the number of opportunities set to be used in this forecast period, excludes only the closed stages

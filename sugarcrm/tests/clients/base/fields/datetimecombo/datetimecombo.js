@@ -8,8 +8,8 @@ describe("datetimecombo field", function() {
     beforeEach(function() {
         app = SugarTest.app;
         myUser = SUGAR.App.user;
-        myUser.set('datepref','m/d/Y');
-        myUser.set('timepref','H:i');
+        myUser.setPreference('datepref','m/d/Y');
+        myUser.setPreference('timepref','H:i');
 
         baseDateField = SugarTest.createField("base", "date", "date", "edit");
         field = SugarTest.createField("base", "datetimecombo", "datetimecombo", "edit");
