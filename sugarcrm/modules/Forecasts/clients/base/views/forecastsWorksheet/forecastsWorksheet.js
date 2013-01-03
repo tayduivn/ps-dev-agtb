@@ -834,7 +834,6 @@
                         }
 
                         self.context.forecasts.trigger('forecasts:worksheet:filtered');
-
                         return (_.contains(params, selectVal));
                     }
                 );
