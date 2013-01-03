@@ -128,8 +128,20 @@
             this.$el.find(this.inputSelector).blur();
         } else if (evt.which == 13 || evt.which == 9) {
             // blur if value is unchanged
-            var ogVal = this.value,
-                ngVal = this.$el.find(this.inputSelector).val();
+            var ogVal = app.utils.formatNumber(
+                    app.currency.unformatAmountLocale(this.value),
+                    app.user.getPreference('decimal_precision'),
+                    app.user.getPreference('decimal_precision'),
+                    '',
+                    app.user.getPreference('decimal_separator')
+                ),
+                ngVal = app.utils.formatNumber(
+                    this.$el.find(this.inputSelector).val(),
+                    app.user.getPreference('decimal_precision'),
+                    app.user.getPreference('decimal_precision'),
+                    '',
+                    app.user.getPreference('decimal_separator')
+                );
             if (_.isEqual(ogVal, ngVal)) {
                 this.$el.find(this.inputSelector).blur();
             }
