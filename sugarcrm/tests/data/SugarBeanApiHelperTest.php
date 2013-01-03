@@ -63,8 +63,6 @@ class SugarBeanApiHelperTest extends Sugar_PHPUnit_Framework_TestCase {
         $this->beanApiHelper = new SugarBeanApiHelper(new ServiceMockup());
     }
 
-    public function tearDown() {
-    }
 
     /**
      * @dataProvider providerFunction
