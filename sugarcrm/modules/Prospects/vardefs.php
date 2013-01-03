@@ -220,16 +220,14 @@ $dictionary['Prospect'] = array(
 	),
     'duplicate_check' => array(
         'filter_template' => array(
-            array('$or' => array(
-                array('$and' => array(
-                    array('first_name' => array('$starts' => '$first_name')),
-                    array('last_name' => array('$starts' => '$last_name')),
-                )),
-                array('email1' => array('$equals' => '$email1')),
-                array('email1' => array('$equals' => '$email2')),
-                array('email2' => array('$equals' => '$email2')),
-                array('email2' => array('$equals' => '$email1')),
+            array('$and' => array(
+                array('first_name' => array('$starts' => '$first_name')),
+                array('last_name' => array('$starts' => '$last_name')),
             ))
+        ),
+        'ranking_fields' => array(
+            array('in_field_name' => 'last_name', 'dupe_field_name' => 'last_name'),
+            array('in_field_name' => 'first_name', 'dupe_field_name' => 'first_name'),
         )
     )
 );
