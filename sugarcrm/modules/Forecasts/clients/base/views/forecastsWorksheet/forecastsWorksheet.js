@@ -824,7 +824,13 @@
                             checkState = rowCategory.find('input').attr('checked');
                             selectVal = ((checkState == "checked") || (checkState == "on") || (checkState == "1")) ? 'include' : 'exclude';
                         } else {
-                            selectVal = rowCategory.text().trim().toLowerCase();
+                            //we need to check to see if the select exists, becuase this gets fired before the commitStage field rerenders itself back
+                            //to a text field.
+                            if(rowCategory.find("select").length == 0){
+                                selectVal = rowCategory.text().trim().toLowerCase();
+                            } else {
+                                selectVal = rowCategory.find("select")[0].value.toLowerCase();                               
+                            }
                         }
 
                         self.context.forecasts.trigger('forecasts:worksheet:filtered');
@@ -834,7 +840,7 @@
                 );
             }
         }
-
+        
         if(!_.isUndefined(this.gTable.fnDestroy)){
             this.gTable.fnDestroy();
             this.gTable = this.$('.worksheetTable').dataTable(self.gTableDefs);
