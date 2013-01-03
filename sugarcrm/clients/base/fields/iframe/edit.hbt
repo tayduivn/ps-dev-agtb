@@ -27,6 +27,5 @@
  ********************************************************************************/
 }}
 
-        <input type="text" name="{{name}}" value="{{#if value}}{{value}}{{else}}http://{{/if}}"
-               class="input-xlarge wide tleft">
-        <p class="help-block"></p>
+<input type="text" name="{{name}}" value="{{value}}">
+<p class="help-block"></p>
