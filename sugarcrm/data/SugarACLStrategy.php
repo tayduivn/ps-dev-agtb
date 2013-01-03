@@ -202,9 +202,9 @@ abstract class SugarACLStrategy
     public function isWriteOperation($view, $context)
     {
         // Let's make it a little easier on ourselves and fix up the actions nice and quickly
-        $action = SugarACLStrategy::fixUpActionName($view);
+        $action = self::fixUpActionName($view);
         if ( $action == 'field' ) {
-            $action = SugarACLStrategy::fixUpActionName($context['action']);
+            $action = self::fixUpActionName($context['action']);
         }
 
         if ( $action == 'edit' || $action == 'delete' || $action == 'import' || $action == 'massupdate' ) {
