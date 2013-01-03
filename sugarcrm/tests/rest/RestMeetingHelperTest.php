@@ -44,7 +44,7 @@ class RestMeetingHelperTest extends RestTestBase {
 
         $restReply = $this->_restCall('Meetings/', json_encode($meeting), 'POST');
 
-        $this->assertTrue(isset($restReply['reply']['id']), 'Meeting was not created, reply was: ' . print_r($restReply['reply'], true));
+        $this->assertTrue(isset($restReply['reply']['id']), 'Meeting was not created, reply was: ' . print_r($restReply, true));
 
         $meeting_id = $restReply['reply']['id'];
         $this->meeting_id = $meeting_id;
