@@ -102,6 +102,6 @@ class RestBug57507Test extends RestTestBase
         
         $reply = $this->_restCall("Calls/".$call->id);
 
-        $this->assertTrue($reply['reply']['repeat_count'] === NULL,'Repeat count is different from null');
+        $this->assertNull($reply['reply']['repeat_count'],'Repeat count is different from null');
     }
 }
