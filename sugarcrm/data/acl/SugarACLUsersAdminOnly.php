@@ -21,7 +21,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  ********************************************************************************/
 require_once('data/acl/SugarACLModuleAdminOnly.php');
 
-class SugarACLUserAdminOnly extends SugarACLModuleAdminOnly
+class SugarACLUsersAdminOnly extends SugarACLModuleAdminOnly
 {
     /**
      * Only allow access to users with the user admin setting

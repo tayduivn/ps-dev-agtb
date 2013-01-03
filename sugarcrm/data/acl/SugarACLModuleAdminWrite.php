@@ -37,13 +37,14 @@ class SugarACLModuleAdminWrite extends SugarACLStrategy
         }
 
         $current_user = $this->getCurrentUser($context);
+        if ( !$current_user ) {
+            return false;
+        }
 
         if($current_user->isAdminForModule($module)) {
             return true;
         } else {
-            if ( $view == 'view' || $view == 'ListView' || $view == 'list' || $view == 'DetailView' || $view == 'detail' || $view == 'access' ) {
-                return true;
-            } else if ( $view == 'field' && ( $context['action'] == 'view' || $context['action'] == 'list' || $context['action'] == 'access' ) ) {
+            if ( !$this->isWriteOperation($view, $context) ) {
                 return true;
             } else {
                 return false;

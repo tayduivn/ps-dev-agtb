@@ -121,7 +121,7 @@ $dictionary['ACLField'] = array('table' => 'acl_fields', 'comment' => 'Determine
     'comment' => 'Unique identifier'
   ),
 ),
-'acls' => array('SugarACLUserAdminOnly' => true),
+'acls' => array('SugarACLUsersAdminOnly' => true),
 'indices' => array (
       array('name' =>'aclfieldid', 'type' =>'primary', 'fields'=>array('id')),
       array('name' =>'idx_aclfield_role_del', 'type' =>'index', 'fields'=>array('role_id','category', 'deleted')),

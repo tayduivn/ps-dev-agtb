@@ -46,6 +46,12 @@ class SugarACLUsers extends SugarACLStrategy
         $bean = self::loadBean($module, $context);
         $myself = !empty($bean->id) && $bean->id == $current_user->id;
 
+        // Let's make it a little easier on ourselves and fix up the actions nice and quickly
+        $view = SugarACLStrategy::fixUpActionName($view);
+        if ( $view == 'field' ) {
+            $context['action'] = SugarACLStrategy::fixUpActionName($context['action']);
+        }
+
         // even an admin can't delete themselves
         if( $myself ) {
             if ( $view == 'delete') {
@@ -70,7 +76,7 @@ class SugarACLUsers extends SugarACLStrategy
         }
 
         // We can edit ourself
-        if( $myself && ( $view == 'edit' || $view == 'save' ) ) {
+        if( $myself && $view == 'edit' ) {
             return true;
         }
 
@@ -79,7 +85,7 @@ class SugarACLUsers extends SugarACLStrategy
             return false;
         }
 
-        if($view == 'view' || $view == 'ListView' || $view == 'list' || $view == 'field' || $view == 'DetailView' || $view == 'detail' || $view == 'team_security'  || $view == 'access') {
+        if($view == 'view' || $view == 'list' || $view == 'field' || $view == 'team_security' ) {
             if($view == 'field' && ($context['field'] == 'password' || $context['field'] == 'user_hash') ) {
                 return false;
             }

@@ -134,4 +134,83 @@ abstract class SugarACLStrategy
         }
         return $access;
     }
+
+    /**
+     * Fix up the ACL actions into a sanitized subset
+     * @param string $actionToCheck Which access you are checking, for example: 'ListView', 'edit', 'Save'
+     * @returns string The canonical version of that string, for example:       'list',     'edit', 'edit'
+     */
+    public static function fixUpActionName($actionToCheck)
+    {
+        if ( empty($actionToCheck) ) {
+            return $actionToCheck;
+        }
+        $input = strtolower($actionToCheck);
+        switch ($input)
+        {
+            case 'list':
+            case 'index':
+            case 'listview':
+            case 'subpanel':
+                $output = 'list';
+                break;
+            case 'edit':
+            case 'save':
+            case 'popupeditview':
+            case 'editview':
+            case 'create':
+                $output = 'edit';
+                break;
+            case 'access':
+            case 'view':
+            case 'detail':
+            case 'detailview':
+                $output = 'view';
+                break;
+            case 'delete':
+                $output = 'delete';
+                break;
+            case 'export':
+                $output = 'export';
+                break;
+            case 'import':
+                $output = 'import';
+                break;
+            case 'field':
+                $output = 'field';
+                break;
+            case 'team_security':
+                $output = 'team_security';
+                break;
+            case 'massupdate':
+                $output = 'massupdate';
+                break;
+            default:
+                $GLOBALS['log']->debug("Came across an unknown ACL action: ".$input);
+                $output = $input;
+        }
+
+        return $output;
+    }
+    
+    /**
+     * Helper function to determine if a user is attempting to perform a write operation
+     * @param string $view A view name as passed in to checkAccess, will be sanitized using fixUpActionName
+     * @param array $context The additional context information passed in to checkAccess
+     * @return bool This is a write operation
+     */
+    public function isWriteOperation($view, $context)
+    {
+        // Let's make it a little easier on ourselves and fix up the actions nice and quickly
+        $action = SugarACLStrategy::fixUpActionName($view);
+        if ( $action == 'field' ) {
+            $action = SugarACLStrategy::fixUpActionName($context['action']);
+        }
+
+        if ( $action == 'edit' || $action == 'delete' || $action == 'import' || $action == 'massupdate' ) {
+            return true;
+        } else {
+            return false;
+        }
+    }
 }

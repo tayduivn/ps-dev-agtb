@@ -37,6 +37,9 @@ class SugarACLModuleAdminOnly extends SugarACLStrategy
         }
 
         $current_user = $this->getCurrentUser($context);
+        if ( !$current_user ) {
+            return false;
+        }
 
         if($current_user->isAdminForModule($module)) {
             return true;

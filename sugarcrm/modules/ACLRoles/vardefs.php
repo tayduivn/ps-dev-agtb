@@ -116,7 +116,7 @@ $dictionary['ACLRole'] = array('table' => 'acl_roles', 'comment' => 'ACL Role de
 	'vname'=>'LBL_USERS',
   ),
 ),
-'acls' => array('SugarACLUserAdminOnly' => true),
+'acls' => array('SugarACLUsersAdminOnly' => true),
 'indices' => array (
        array('name' =>'aclrolespk', 'type' =>'primary', 'fields'=>array('id')),
        array('name' =>'idx_aclrole_id_del', 'type' =>'index', 'fields'=>array('id', 'deleted')),
