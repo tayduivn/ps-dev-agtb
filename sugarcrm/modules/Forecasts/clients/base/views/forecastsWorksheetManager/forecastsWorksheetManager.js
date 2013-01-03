@@ -174,6 +174,7 @@
         if (this._collection) {
             this._collection.on("reset", function() {
                 self.cleanUpDirtyModels();
+                self.cleanUpDraftModels();
                 self.render();
             }, this);
 

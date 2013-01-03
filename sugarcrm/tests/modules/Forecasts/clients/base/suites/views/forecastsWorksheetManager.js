@@ -224,7 +224,7 @@ describe("The forecasts manager worksheet", function(){
 
         it('isDirty should return true', function() {
             m.set({'hello' : 'jon1'});
-            expect(view.isDirty()).toBeTruthy();
+            expect(view.isDirty()).toBeTruthy();            
         });
 
         it('should not be dirty after main collection reset', function() {
@@ -250,14 +250,50 @@ describe("The forecasts manager worksheet", function(){
     	});
 
         it('should return zero with no dirty models', function() {
-            expect(view.saveWorksheet()).toEqual(0);
+            expect(view.saveWorksheet()).toEqual(0);           
+        });
+        
+        it('should not have any draft models with no dirty models', function() {
+            view.saveWorksheet();
+            expect(view.draftModels.length).toEqual(0);
         });
 
         it('should return 1 when one model is dirty', function() {
             m.set({'hello':'jon1'});
             expect(view.saveWorksheet()).toEqual(1);
-            expect(saveStub).toHaveBeenCalled()
+            expect(saveStub).toHaveBeenCalled();
         });
+        
+        it('should not have draft models on a commit save', function() {
+            m.set({'hello':'jon1'});
+            expect(view.saveWorksheet()).toEqual(1);
+            expect(saveStub).toHaveBeenCalled();
+            expect(view.draftModels.length).toEqual(0);
+        });
+        
+        it('should have draft models on a draft save', function() {
+            m.set({'hello':'jon1'});
+            expect(view.saveWorksheet(true)).toEqual(1);
+            expect(saveStub).toHaveBeenCalled();
+            expect(view.draftModels.length).toEqual(1);
+        });
+        
+        it('should save the draft models as committed models on "commit"', function() {
+            var clearDirtySpy = sinon.spy(view, "cleanUpDirtyModels"),
+                clearDraftSpy = sinon.spy(view, "cleanUpDraftModels");
+ 
+            //first save to populate the draft models
+            m.set({'hello':'jon1'});
+            view.saveWorksheet(true);
+            expect(view.draftModels.length).toEqual(1);
+            
+            //save again for the "commit"
+            view.saveWorksheet(false);
+            expect(clearDirtySpy).toHaveBeenCalled();
+            expect(clearDraftSpy).toHaveBeenCalled();
+            expect(view.draftModels.length).toEqual(0);
+        });
+        
     });
     describe("Forecasts worksheet save dirty models with correct timeperiod after timeperiod changes", function() {
         var m, saveStub, safeFetchStub;
