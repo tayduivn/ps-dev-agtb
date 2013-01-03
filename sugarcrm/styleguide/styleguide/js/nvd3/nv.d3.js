@@ -405,16 +405,21 @@ nv.utils.roundedRectangle = function (x, y, width, height, radius)
        + "z";
 }
 
-nv.utils.dropShadow = function (id, defs)
+nv.utils.dropShadow = function (id, defs, options)
 {
+  var opt = options || {}
+    , h = opt.height || '130%'
+    , o = opt.offset || 2
+    , b = opt.blur || 1;
+
   var filter = defs.append('filter')
-        .attr('id', id)
-        .attr('height', '130%');
+        .attr('id',id)
+        .attr('height',h);
   var offset = filter.append('feOffset')
         .attr('in','SourceGraphic')
         .attr('result','offsetBlur')
-        .attr('dx',2)
-        .attr('dy',2); //how much to offset
+        .attr('dx',o)
+        .attr('dy',o); //how much to offset
   var color = filter.append('feColorMatrix')
         .attr('in','offsetBlur')
         .attr('result','matrixOut')
@@ -423,7 +428,7 @@ nv.utils.dropShadow = function (id, defs)
   var blur = filter.append('feGaussianBlur')
         .attr('in','matrixOut')
         .attr('result','blurOut')
-        .attr('stdDeviation',1); //stdDeviation is how much to blur
+        .attr('stdDeviation',b); //stdDeviation is how much to blur
   var merge = filter.append('feMerge');
       merge.append('feMergeNode'); //this contains the offset blurred image
       merge.append('feMergeNode')

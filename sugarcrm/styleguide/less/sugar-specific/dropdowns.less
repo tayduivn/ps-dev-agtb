@@ -43,16 +43,36 @@
   }
   //boostrap override
   li > a {
-    padding: 8px;
-  }
-  a {
-    margin: 0;
     padding: 8px 10px;
+  }
+  //replicate bootstrap styles from li > a
+  a {
+    display: block;
+    padding: 8px 10px;
+    clear: both;
+    font-weight: normal;
+    line-height: 18px;
+    color: @gray;
+    white-space: nowrap;
+
+    margin: 0;
     border-top: 1px solid @grayLighter;
     //background: #E1F0FA;
     label {
       padding-left: 0;
     }
+  }
+  // Gray out text and ensure the hover state remains gray
+  a.disabled,
+  a.disabled:hover {
+    color: @grayLight;
+  }
+  // Nuke hover effects
+  a.disabled:hover {
+    text-decoration: none;
+    background-color: transparent;
+    background-image: none; // Remove CSS gradient
+    cursor: default;
   }
   // Hover state
   // -----------

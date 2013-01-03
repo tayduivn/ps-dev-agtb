@@ -21,12 +21,14 @@ table [class^="icon-favorite"] {
 .icon-favorite {
   color: @grayLight;
   cursor: pointer;
-}
-.active.icon-favorite {
-  color: @yellow_favorite;
-  cursor: pointer;
+  &.active {
+    color: @yellow_favorite !important;
+  }
 }
 
+.btn:hover .icon-favorite.active {
+  color: @yellow_favorite !important;
+}
 /*
 .active .icon-ban-circle, .active .icon-exclamation-sign {
 color: @red;

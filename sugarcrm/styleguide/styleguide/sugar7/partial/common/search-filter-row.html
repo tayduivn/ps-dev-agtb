@@ -1,30 +1,22 @@
-<article class="filter-body" id="search_option_">
+<article class="filter-body" id="filter_row_new">
   <div class="row-fluid">
-    <div class="controls span3">
-      <select class="chzn-select chzn-inherit-width buildit">
-          <option>
-              Name
-          </option>
-          <option>
-              Sales Stage
-          </option>
+    <div class="filter-field controls span3">
+      <select name="field" class="chzn-select chzn-inherit-width" data-placeholder="Select field name...">
+          <option value=""></option>
+          <option value="name">Name</option>
+          <option value="assigned">Assigned to</option>
+          <option value="stage">Sales Stage</option>
+          <option value="favorite">Favorite</option>
+          <option value="created">Created</option>
       </select>
     </div>
-    <div class="controls span3">
-      <select class="chzn-select chzn-inherit-width operator">
-          <option>
-              matches
-          </option>
+    <div class="filter-opera controls span3">
+      <select name="opera" class="chzn-select chzn-inherit-width" data-placeholder="Select operator...">
       </select>
     </div>
     <div class="filter-value controls span6">
-      <input type="text" class="inherit-width" placeholder="Enter a name...">
-      <a href="#" class="btn btn-invisible addme"><i class="icon-plus"></i></a>
+      <input name="value" type="text" class="inherit-width" placeholder="Enter a name...">
+      <a href="#" class="addme btn btn-invisible btn-dark"><i class="icon-plus"></i></a>
     </div>
   </div>
 </article>
-
-<script>
-  $('.filter-options').find('article').last().attr( 'id', 'search_option_'+$('.filtered').find('article').length );
-  $('.chzn-select').chosen({ disable_search_threshold: 5, searchChoiceConstructor: searchChoiceConstructor });
-</script>

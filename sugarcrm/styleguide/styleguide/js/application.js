@@ -68,16 +68,17 @@
       $(this).parent().parent().parent().parent().parent().append('<tr class="alert alert-warning"><td colspan="7" style="text-align: center;">You have selected 10 records. Do you want select <a href="" class="triggermass">select all 300</a> records.</td></tr>');
     });
 
-    // toggle star
-    $('body').on('click', '.icon-star', function () {
-      $(this).parent().toggleClass('active');
-      return false;
+    // toggle star button
+    $('body').on('click', '.fav-star', function (e) {
+      e.preventDefault();
+      $(this).find('.icon-favorite').toggleClass('active');
     });
 
-    // toggle favorites
-    $('body').on('click', '.icon-favorite', function () {
+    //toggle favorites in list
+    $('body').on('click', '.icon-favorite', function (e) {
+      e.preventDefault();
+      e.stopPropagation();
       $(this).toggleClass('active');
-      return false;
     });
 
     // toggle more...less blocks
@@ -158,18 +159,17 @@
     $('body').on( 'click', 'a[data-toggle="proto"]', function (e){
       //e.relatedTarget // previous tab
       e.preventDefault();
-      e.stopPropagation();
-
+      //e.stopPropagation();
       var link = $(this)
         , source = link.attr('href')
         , target = link.data('target')
         , mode = link.data('mode')
         , method = link.data('method');
-    // console.log(source);
-    // console.log(target);
-    // console.log(mode);
-    // console.log(mode);
-    // console.log('==============');
+      // console.log(source);
+      // console.log(target);
+      // console.log(mode);
+      // console.log(mode);
+      // console.log('==============');
       loadContent(source,target,mode,method);
     });
 

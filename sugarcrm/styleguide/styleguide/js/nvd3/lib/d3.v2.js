@@ -4814,7 +4814,7 @@
     return children && (n = children.length) ? d3_layout_clusterRight(children[n - 1]) : node;
   }
   d3.layout.tree = function() {
-    var hierarchy = d3.layout.hierarchy().sort(null).value(null), separation = d3_layout_treeSeparation, size = [ 1, 1 ];
+    var hierarchy = d3.layout.hierarchy().sort(null).value(null), separation = d3_layout_treeSeparation, size = [ 1, 1 ], elementsize = [1, 1];
     function tree(d, i) {
       var nodes = hierarchy.call(this, d, i), root = nodes[0];
       function firstWalk(node, previousSibling) {
@@ -4895,9 +4895,20 @@
       firstWalk(root);
       secondWalk(root, -root._tree.prelim);
       var left = d3_layout_treeSearch(root, d3_layout_treeLeftmost), right = d3_layout_treeSearch(root, d3_layout_treeRightmost), deep = d3_layout_treeSearch(root, d3_layout_treeDeepest), x0 = left.x - separation(left, right) / 2, x1 = right.x + separation(right, left) / 2, y1 = deep.depth || 1;
+      // d3_layout_treeVisitAfter(root, function(node) {
+      //   node.x = (node.x - x0) / (x1 - x0) * size[0];
+      //   node.y = node.depth / y1 * size[1];
+      //   delete node._tree;
+      // });
       d3_layout_treeVisitAfter(root, function(node) {
-        node.x = (node.x - x0) / (x1 - x0) * size[0];
-        node.y = node.depth / y1 * size[1];
+        if(size === undefined || size == null) {
+          node.x = (node.x - x0) * elementsize[0];
+          node.y = node.depth * elementsize[1];
+        }
+        else {
+          node.x = (node.x - x0) / (x1 - x0) * size[0];
+          node.y = node.depth / y1 * size[1];
+        }
         delete node._tree;
       });
       return nodes;
@@ -4910,6 +4921,11 @@
     tree.size = function(x) {
       if (!arguments.length) return size;
       size = x;
+      return tree;
+    };
+    tree.elementsize = function(x) {
+      if (!arguments.length) return elementsize;
+      elementsize = x;
       return tree;
     };
     return d3_layout_hierarchyRebind(tree, hierarchy);

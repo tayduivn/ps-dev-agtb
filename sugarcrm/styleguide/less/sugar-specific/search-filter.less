@@ -2,21 +2,20 @@
 // search filter widget
 .form-search {
   position: relative;
-  margin: -1px 1px 0 0;
-  padding: 5px;
+  margin: -1px 0 0 0;
+  padding: 5px 8px 5px 20px;
   border-top: 1px solid darken(@grayLighter, 5%);
   background: @grayLighter;
   border-bottom: 1px solid darken(@grayLighter, 5%);
-  z-index: 1000;
+  //z-index: 1000;
 
   .myfilter {
     position: relative;
   }
 
-  .control-group.filter {
+  .filter {
     position: relative;
-    margin-left: 15px;
-    margin-right: 150px;
+    margin-left: 0px;
     .chzn-container {
       .chzn-drop {
         //padding: 10px;
@@ -30,13 +29,20 @@
     .indicator {
       cursor: pointer;
     }
-
-    .chzn-container-multi .chzn-drop .result-selected {
-      display: block;
-      font-weight: bold;
-      /*&:before { //content:"â\00a0\00a0\00a0";
-      //content:"\f00c\00a0\00a0\00a0";
-      }*/
+    .chzn-container-multi {
+      .search-field {
+        height: 20px;
+        input {
+          padding: 0 0 0 8px;
+        }
+      }
+      .chzn-drop .result-selected {
+        display: block;
+        font-weight: bold;
+        /*&:before { //content:"â\00a0\00a0\00a0";
+        //content:"\f00c\00a0\00a0\00a0";
+        }*/
+      }
     }
     .search {
       .chzn-container-active .chzn-drop {
@@ -65,13 +71,21 @@
     padding: 4px 8px;
   }
 
-  .actions {
+  /*.actions {
     position: absolute;
   }
+  .actions {
+    right: 10px !important;
+    top: 8px !important;
+  }
+  .actions {
+    right: 0 !important;
+    top: 0 !important;
+  }*/
 
   .extend {
     background: darken(@grayLighter, 5%);
-    margin: 5px -5px -5px;
+    margin: 5px -8px -5px -20px;
     text-align: left;
 
     article:nth-child(even),
@@ -83,11 +97,15 @@
     }
 
     article.filter-header {
-      padding: 11px 4px 7px 20px;
+      padding: 9px 8px 7px 20px;
       .box-shadow(~"inset 0px 4px 8px -4px rgba(0, 0, 0, 0.5)");
       input {
-        margin-top: 2px;
+        //margin-top: 0px;
       }
+    }
+
+    article:last-child {
+      .box-shadow(~"inset 0px -2px 6px -6px rgba(0, 0, 0, 0.5)");
     }
   }
 
@@ -99,14 +117,17 @@
   }
 
   .filter-value {
-    padding-right: 60px;
+    padding-right: 64px;
     position: relative;
+  }
+  .filter-close {
+    margin-left: 4px;
   }
   .addme,
   .removeme {
     position: absolute;
     top: 0;
-    padding: 5px 6px 3px;
+    padding: 5px 7px 3px;
   }
   .addme {
     right: 0;
@@ -119,14 +140,14 @@
 
 #search_filter_chzn {
   width: 100% !important;
-  margin-bottom: 4px;
+  //margin-bottom: 4px;
   .search-choice {
     .border-radius(10px);
     border: none !important;
     background-color: #E4E4E4;
     margin-top: 6px;
     font-size: 12px;
-    padding: 4px 0;
+    padding: 0;
     &>a {
       height: 12px;
       width: 12px;
@@ -135,7 +156,7 @@
       background-image: url('@{baseUrl}/img/chosen-sprite-invert.png');
     }
     &.search-choice-option {
-      margin-top: 5px;
+      margin: 4px 4px 4px;
       font-size: 11px;
       .border-radius(0);
       background: none;
@@ -161,14 +182,38 @@
       &>a:hover {
         text-decoration: none;
       }
+      &.filter-disabled a {
+        background: @grayLighter;
+        color: @gray;
+        cursor: pointer;
+        &:hover {
+          color: @gray;
+        }
+      }
+    }
+    &.search-choice-focus {
+      border-color: rgba(82, 168, 236, 0.8);
+      outline: 0;
+      outline: thin dotted 9;
+      .box-shadow(~"0 0px 4px 2px rgba(0, 0, 0, .075), 0 0px 8px 3px rgba(82, 168, 236, .6)");
+      .border-radius(11px);
+      background-color: rgba(82, 168, 236, 0.4);
     }
   }
+  .chzn-choices {
+    padding: 3px 70px 3px 0;
+  }
   .chzn-results {
-    .icon-ok {
+    .icon-ok,
+    .icon-plus {
       position: absolute;
-      margin-top: -27px;
-      margin-left: 6px;
+      margin-top: -29px;
+      margin-left: 9px;
       z-index: 1;
+    }
+    .icon-plus {
+      z-index: 2;
+
     }
     &> li {
       position: relative;

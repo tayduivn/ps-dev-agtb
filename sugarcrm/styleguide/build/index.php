@@ -65,7 +65,7 @@ foreach ($themesClientsDir as $platform) {
         <div class="subnav row-fluid">
             <div class="btn-toolbar pull-left">
                 <div>
-
+                    <input type="text" name="split_css" value="asdf">
                     <input id="min-false" type="radio" name="min" value="false" checked>
                     <label style="display: inline;" for="min-false">Uncompressed</label>
                     <input id="min-true" type="radio" name="min" value="true">

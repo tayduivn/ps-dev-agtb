@@ -10,20 +10,20 @@
     }
   }
   &.chzn-container-multi {
-    height:28px;
+    min-height:28px;
     .chzn-choices {
       border: 1px solid @grayLight;
       .border-radius(4px);
       @shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
       .box-shadow(@shadow);
       background-image: none;
+      /*22+3+3=28*/
       .search-field {
         float: none !important;
         height: 28px;
         input {
           margin: 0;
-          padding: 3px 0 0 8px;
-          height: 26px;
+          padding: 3px 0 3px 8px;
           line-height: 19px;
           height: 22px !important;
         }
@@ -53,6 +53,10 @@
     li {
       line-height: 26px;
       border-bottom: 1px solid darken(@grayLighter, 5%);
+    }
+    li:hover {
+      background: @dropdownLinkBackgroundHover;
+      color: @dropdownLinkColorHover;
     }
     .highlighted {
       background: @dropdownLinkBackgroundHover;

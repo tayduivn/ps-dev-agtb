@@ -3,6 +3,7 @@
 <head>
   <meta charset="utf-8">
   <link href="../css/bootstrap.css" rel="stylesheet">
+  <link href="../css/sugar.css" rel="stylesheet">
   <script>
     var page = {
         "title": "Leads"
@@ -10,7 +11,7 @@
       , "convertLead": function () {
           return function (text, render) {
             if (render(text) === 'lead') {
-              return '<li id="convert_lead_option"><a href="partial/lead/lead-convert.html" data-toggle="proto" data-target="#edit .record" data-mode="edit" class="btn btn-invisible btn-link">Convert Lead</a></li>';
+              return '<li id="convert_lead_option"><a href="partial/lead/lead-convert.html" data-toggle="proto" data-target="#edit .record" data-mode="edit">Convert Lead</a></li>';
             }
           }
         }
@@ -21,7 +22,7 @@
         , {"file":"common/footer-master","target":"#footer","method":"append"}
         , {"file":"common/edit-drawer","target":".module-view","method":"append"}
         , {"file":"common/search-filter","target":"#view .search-filter","method":"replace"}
-        , {"file":"lead/lead-table","target":"#view .main-content","method":"replace"}
+        , {"file":"common/data-table","target":"#view .main-content","method":"replace"}
         , {"file":"widget/widget-control","target":"#overview","method":"replace"}
         , {"file":"widget/interactions-widget","target":"#overview","method":"append"}
       ]
@@ -90,7 +91,7 @@
   <script src="../../assets/js/bootstrap.min.js"></script>
   <script src="../../assets/js/bootstrapx-clickover.js"></script>
   <script src="../../assets/js/bootstrap-datepicker.js"></script>
-  <script type="text/javascript" src="../../assets/js/jquery.form.js"></script>
+  <script src="../../assets/js/jquery.form.js"></script>
 
   <script src="../js/jquery.datatables.js"></script>
   <script src="../js/FixedColumns.min.js"></script>

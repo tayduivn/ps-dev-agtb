@@ -4,7 +4,9 @@
   <script src="js/jquery-1.7.2.min.js"></script>
   <script src="js/ICanHaz.min.js" ></script>
   <script src="js/styleguide.js"></script>
+  <script src="js/application.js"></script>
   <link href="css/bootstrap.css" rel="stylesheet">
+  <link href="css/sugar.css" rel="stylesheet">
   <script>
     var page = {
         "title": "Base CSS"
@@ -62,6 +64,91 @@
         <h6>h6. Heading 6</h6>
       </div>
     </div>
+  </div>
+
+
+  <h2 id="4jfAel">Usage of ellipsis for long text strings</h2>
+
+  <div class="row">
+    <div class="span8">
+      <p>Ellipsis&nbsp;&mdash; a series of dots that usually indicate an intentional omission of a word, sentence or whole section from the original text being quoted...</p>
+      <p>To avoid wrapping a string of text such as label, heading, etc, ellipsis should be used in conjunction with <a href="widgets.html#tooltips">tooltips</a> or <a href="widgets.html#popovers">popovers</a> to let user still see what the full text string says.</p>
+
+      <h4>General markup</h4>
+<p><pre class="prettyprint linenums">
+&lt;p class="ellipsis_inline" rel="tooltip" data-original-title="p. This is a very long paragraph that need to be truncated"&gt;
+  p. This is a very long paragraph that need to be truncated
+&lt;/p&gt;
+</pre></p>
+      <h4>Notes</h4>
+      <p>Enclose string that is to be truncated in an HTML element with class <code>ellipsis_inline</code>. This element is to be displayed as a block with its width attribute being optional as it is being inherited from its parent. If any siblings are to be displayed on the same line with truncated text, ensure they're float'ing right or left. See examples in the right column.</p>
+    </div>
+
+    <div class="span4">
+      <div class="well">
+        <h2 class="ellipsis_inline" rel="tooltip" data-original-title="h2. This is a very long heading that need to be truncated 2">h2. This is a very long heading that need to be truncated 2</h2>
+        <h3 class="ellipsis_inline" rel="tooltip" data-original-title="h3. This is a very long heading that need to be truncated 3">h3. This is a very long heading that need to be truncated 3</h3>
+        <p class="ellipsis_inline" rel="tooltip" data-original-title="p. This is a very long paragraph that need to be truncated">p. This is a very long paragraph that need to be truncated</p>
+        <div class="ellipsis_inline" rel="tooltip" data-original-title="div. This is a very long div that need to be truncated">span. This is a very long span that need to be truncated</div>
+      </div>
+
+  
+
+      <div class="well">
+        <div class="btn-group pull-right">
+          <a href="#" class="btn btn-small btn-primary" style="top:-5px">Primary action</a>
+        </div>
+        <div class="ellipsis_inline" rel="tooltip" data-original-title="div. This is a very long div that need to be truncated">div. This is a very long div that need to be truncated</div>
+      <hr>
+        <div class="pull-left">
+          <i class="icon-warning-sign" style="color:#D14"></i>&nbsp;
+        </div>
+        <div class="btn-group pull-right">
+          <a href="#" class="btn btn-small btn-primary" style="top:-5px">Primary action</a>
+        </div>
+        <div class="ellipsis_inline" rel="tooltip" data-original-title="div. This is a very long div that need to be truncated">div. This is a very long div that need to be truncated</div>
+      <hr>
+        <div class="pull-left">
+          <i class="icon-warning-sign" style="color:#D14"></i> <i class="icon-headphones"></i> <i class="icon-chevron-right"></i>&nbsp;
+        </div>
+        <div class="btn-group pull-right">
+          <a href="#" class="btn btn-small btn-primary" style="top:-5px">Primary action</a>
+        </div>
+        <div class="ellipsis_inline" rel="tooltip" data-original-title="div. This is a very long div that need to be truncated">div. This is a very long div that need to be truncated</div>
+      <hr>
+        <div class="row-fluid">
+          <div class="span3" style="border:1px dotted #ccc">
+            <div class="ellipsis_inline" rel="tooltip" data-original-title="div. This is a very long div that need to be truncated">div. This is a very long div that need to be truncated</div>
+          </div>
+          <div class="span3" style="border:1px dotted #ccc">
+            <div class="ellipsis_inline" rel="tooltip" data-original-title="div. This is a very long div that need to be truncated">div. This is a very long div that need to be truncated</div>
+          </div>
+          <div class="span6" style="border:1px dotted #ccc">
+            <div class="ellipsis_inline" rel="tooltip" data-original-title="div. This is a very long div that need to be truncated">div. This is a very long div that need to be truncated</div>
+          </div>
+        </div>
+      <hr>
+
+
+      <div class="row-fluid control-group">
+        <div class="span3">
+          <label class="control-label ellipsis_inline" for="name" rel="tooltip" data-original-title="Label of the field">Label of the field</label>
+        </div>
+        <div class="span9">
+          <span sfuuid="1">
+            <input type="text" name="name" id="name" value="" class="input-medium" >
+            <p class="help-block">
+            </p>
+          </span>
+          <p class="help-block">
+          </p>
+        </div>
+      </div>
+
+    </div>
+
+
+
   </div>
 
   <!-- Misc Elements -->

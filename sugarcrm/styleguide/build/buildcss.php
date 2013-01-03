@@ -10,18 +10,33 @@ try {
     $variablesLess = file_get_contents( $root . 'variables.less' );
     $variables = getCustomThemeVars($variablesLess);
     $variables['baseUrl'] = '"../../assets"';
+    $minify = (isset($_GET["min"]) && $_GET["min"]=="true");
+    $split_css = (isset($_GET["split_css"]) && $_GET["split_css"]="asdf");
 
-    //build bootstrap.css
-    $less = new lessc('../less/clients/' . $client . '/config.less');
-    if (isset($_GET["min"]) && $_GET["min"]=="true") $less->setFormatter("compressed");
-    file_put_contents('../styleguide/css/bootstrap.css', $less->parse($variables));
+
+    if ($split_css) {
+        // //build bootstrap.css
+        $less = new lessc('../less/clients/' . $client . '/bootstrap.less');
+        if ($minify) $less->setFormatter("compressed");
+        file_put_contents('../styleguide/css/bootstrap.css', $less->parse($variables));
+
+        // //build sugar.css
+        $less = new lessc('../less/clients/' . $client . '/sugar.less');
+        if ($minify) $less->setFormatter("compressed");
+        file_put_contents('../styleguide/css/sugar.css', $less->parse($variables));
+    } else {
+        //build bootstrap.css
+        $less = new lessc('../less/clients/' . $client . '/config.less');
+        if ($minify) $less->setFormatter("compressed");
+        file_put_contents('../styleguide/css/bootstrap.css', $less->parse($variables));
+    }
 
     //$variables['baseUrl'] = '"../../../../../styleguide/assets"';
     //file_put_contents('../../cache/themes/clients/base/default/bootstrap.css', $less->parse($variables));
 
     //build bootstrap-mobile.css
     $less = new lessc('../less/clients/mobile/config.less');
-    if (isset($_GET["min"]) && $_GET["min"]=="true") $less->setFormatter("compressed");
+    if ($minify) $less->setFormatter("compressed");
     file_put_contents('../styleguide/css/bootstrap-mobile.css', $less->parse($variables));
 
     //build utility css files
@@ -30,15 +45,18 @@ try {
 
     foreach ($modulesFile as $module) {
         $less = new lessc($modulesRoot . '/' . $module);
-        if (isset($_GET["min"]) && $_GET["min"]=="true") $less->setFormatter("compressed");
+        if ($minify) $less->setFormatter("compressed");
         file_put_contents('../styleguide/css/' . str_replace('.less','.css',$module), $less->parse($variables));
     }
 
     // echo '<h2>bootstrap.css successfully generated.</h2>';
     // echo '<p><a href="./../styleguide/">Go to the styleguide</a></p>';
     // echo '<p><a href="./index.php">Back</a></p>';
-    echo 'bootstrap.css successfully generated.';
-
+    if ($split_css) {
+        echo 'sugar.css and bootstrap.css successfully generated.';
+    } else {
+        echo 'bootstrap.css successfully generated.';
+    }
 } catch (exception $ex) {
     exit('lessc fatal error:'.$ex->getMessage());
 }

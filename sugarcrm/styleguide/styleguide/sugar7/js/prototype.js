@@ -59,7 +59,6 @@
     if ( typeof method === 'undefined' ) {
       method = 'replace';
     }
-
     if ( mode != undefined )
     {
       if ( mode !== 'edit' && mode !== 'preview' ) {
@@ -75,7 +74,6 @@
 
     if ( source.indexOf('partial') === 0 )
     {
-
       loadPartial(source);
 
       page.target_id = 'id="'+ source.replace(/\//g,'_').replace('.html','') + '"';
