@@ -143,20 +143,40 @@
         } else {
             // can happen on both views but it's the same methods/messages
             // we have a success save, so we need to call the app.metadata.sync() and then redirect back to the index
-        app.alert.show('success', {
+            if(!isSetup){
+                //issue notice about setting up Opportunities
+                var alert = app.alert.show('forecast_opp_notice', {
+                    level:'confirmation',
+                    showCancel:true,
+                    onConfirm: self.displaySuccessAndReload,
+                    messages: app.lang.get("LBL_FORECASTS_WIZARD_REFRESH_NOTICE", "Forecasts")
+                });
+
+                //add alert listener for the close click, in case user clicks the X instead of the confirm button.
+                alert.getCloseSelector().on('click', self.displaySuccessAndReload);
+            } else {
+                this.displaySuccessAndReload();
+            }
+        }
+    },
+
+    /**
+     * Displays an alert  and reloads the page
+     */
+    displaySuccessAndReload:function () {
+        var alert = app.alert.show('success', {
             level:'success',
             autoClose:true,
-            closeable:false,
+            closeable:true,
             title:app.lang.get("LBL_FORECASTS_WIZARD_SUCCESS_TITLE", "Forecasts") + ":",
             messages:[app.lang.get("LBL_FORECASTS_WIZARD_SUCCESS_MESSAGE", "Forecasts")]
         });
 
-        //give the alert a few seconds to show then sync and reload
-        setTimeout(function(){
+        alert.getCloseSelector().on('click', function () {
             // only sync the metadata and then push it back to the main location
             app.metadata.sync(function() {
                 window.location.hash = "#";
             });
-        },2500);
+        })
     }
 })

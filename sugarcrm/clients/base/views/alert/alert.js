@@ -55,7 +55,7 @@
             if(_.isUndefined(options)) {
                 return this;
             }
-            var template = this.getAlertTemplate(options.level, options.messages, options.title);
+            var template = this.getAlertTemplate(options.level, options.messages, options.title, options.showCancel);
             this.$el.html(template);
 
             // set confirmation dialog as a modal
@@ -100,12 +100,14 @@
          * @param level
          * @param messages
          * @param title (optional)
+         * @param showCancel (optional) boolean flag
          * @return {String}
          */
-        getAlertTemplate: function(level, messages, title) {
+        getAlertTemplate: function(level, messages, title, showCancel) {
             var template,
                 alertClasses = this.getAlertClasses(level),
-                title = title ? title : this.getDefaultTitle(level);
+                title = title ? title : this.getDefaultTitle(level),
+                showCancel = showCancel ? showCancel : true;
 
             switch (level) {
                 case this.LEVEL.PROCESS:
@@ -131,7 +133,7 @@
                         '<a class="close">×</a>' +
                         '{{#if title}}<strong>{{title}}</strong>{{/if}}' +
                         ' {{#each messages}}{{{this}}}{{/each}}' +
-                        '<a class="btn cancel">' + app.lang.get('LBL_CANCEL_BUTTON_LABEL') + '</a>' +
+                        '{{#if showCancel}}<a class="btn cancel">' + app.lang.get('LBL_CANCEL_BUTTON_LABEL') + '</a>{{/if}}' +
                         '<a class="btn btn-primary pull-right confirm">' + app.lang.get('LBL_CONFIRM_BUTTON_LABEL') + '</a>' +
                         '</div>';
                     break;
