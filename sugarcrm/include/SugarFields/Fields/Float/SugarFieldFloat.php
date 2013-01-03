@@ -39,7 +39,7 @@ class SugarFieldFloat extends SugarFieldInt
     }
 
     public function apiFormatField(&$data, $bean, $args, $fieldName, $properties){
-        $data[$fieldName] = empty($bean->$fieldName) ? NULL : (float)$bean->$fieldName;
+        $data[$fieldName] = is_numeric($bean->$fieldName) ? (float)$bean->$fieldName : null;
     }
 
     public function unformatField($formattedField, $vardef){

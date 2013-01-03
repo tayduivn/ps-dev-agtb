@@ -86,6 +86,10 @@ class SugarBeanApiHelperTest extends Sugar_PHPUnit_Framework_TestCase {
             array('testDecimal', '1', 1.0, "Decimal type conversion of '1' failed"),
             array('testInt', 1.0, 1, "Int type conversion of 1.0 failed"),
             array('testDecimal', 1, 1.0, "Decimal type conversion of 1 failed"),
+            array('testInt', '0', 0, "Int type conversion of '0' failed"),
+            array('testDecimal', '0', 0.0, "Decimal type conversion of '0' failed"),
+            array('testInt', 0.0, 0, "Int type conversion of 0.0 failed"),
+            array('testDecimal', 0, 0.0, "Decimal type conversion of 0 failed"),
         );
     }
 }
