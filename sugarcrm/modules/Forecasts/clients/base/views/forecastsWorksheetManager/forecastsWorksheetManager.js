@@ -273,7 +273,7 @@
                 self.dirtyModels.each(function(model){
                    //set properties on model to aid in save
                     model.set({
-                        "draft" : (isDraft && isDraft == true) ? 1 : 0,
+                        "draft" : (isDraft == true) ? 1 : 0,
                         "timeperiod_id" : self.dirtyTimeperiod || self.timePeriod,
                         "current_user" : self.dirtyUser.id || self.selectedUser.id
                     }, {silent:true});                                     
@@ -282,7 +282,7 @@
                     model.url = self.url.split("?")[0] + "/" + model.get("id");
                     
                     //add to draft structure so committing knows what to save as non-draft
-                    if(isDraft && isDraft == true){
+                    if(isDraft == true){
                         self.draftModels.add(model, {merge: true});
                     }                    
                     
@@ -296,8 +296,7 @@
                 });
 
                 self.cleanUpDirtyModels();
-            }            
-            else if(!isDraft && self.draftModels.length > 0){
+            } else if(!isDraft && self.draftModels.length > 0){
                 totalToSave = self.draftModels.length;
                
                 self.draftModels.each(function(model){
@@ -320,8 +319,7 @@
                 //Need to clean up dirty models too as the save event above triggers a change event on the worksheet.
                 self.cleanUpDirtyModels();
                 self.cleanUpDraftModels();
-            }            
-            else {
+            } else {
                 this.context.forecasts.trigger('forecasts:worksheetSaved', totalToSave, 'mgr_worksheet', isDraft);
             }
         }
