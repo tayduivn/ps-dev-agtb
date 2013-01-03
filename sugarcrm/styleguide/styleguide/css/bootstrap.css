@@ -626,9 +626,18 @@ select:focus, input[type="file"]:focus, input[type="radio"]:focus, input[type="c
   width:auto;
   height:auto;
 }
-input:-moz-placeholder, textarea:-moz-placeholder { color:#cdcccb; }
-input:-ms-input-placeholder, textarea:-ms-input-placeholder { color:#cdcccb; }
-input::-webkit-input-placeholder, textarea::-webkit-input-placeholder { color:#cdcccb; }
+input:-moz-placeholder, textarea:-moz-placeholder {
+  color:#cdcccb;
+  font-weight:normal;
+}
+input:-ms-input-placeholder, textarea:-ms-input-placeholder {
+  color:#cdcccb;
+  font-weight:normal;
+}
+input::-webkit-input-placeholder, textarea::-webkit-input-placeholder {
+  color:#cdcccb;
+  font-weight:normal;
+}
 .radio, .checkbox {
   min-height:18px;
   padding-left:20px;
@@ -2690,9 +2699,18 @@ button.btn.btn-mini, input[type="submit"].btn.btn-mini {
   -o-transition:none;
   transition:none;
 }
-.navbar-inverse .navbar-search .search-query:-moz-placeholder { color:#cccccc; }
-.navbar-inverse .navbar-search .search-query:-ms-input-placeholder { color:#cccccc; }
-.navbar-inverse .navbar-search .search-query::-webkit-input-placeholder { color:#cccccc; }
+.navbar-inverse .navbar-search .search-query:-moz-placeholder {
+  color:#cccccc;
+  font-weight:normal;
+}
+.navbar-inverse .navbar-search .search-query:-ms-input-placeholder {
+  color:#cccccc;
+  font-weight:normal;
+}
+.navbar-inverse .navbar-search .search-query::-webkit-input-placeholder {
+  color:#cccccc;
+  font-weight:normal;
+}
 .navbar-inverse .navbar-search .search-query:focus, .navbar-inverse .navbar-search .search-query.focused {
   padding:5px 15px;
   color:#343433;

@@ -545,6 +545,44 @@ h1 input[type="text"] {
 }
 
 
+textarea,
+input[type="text"],
+input[type="password"],
+input[type="datetime"],
+input[type="datetime-local"],
+input[type="date"],
+input[type="month"],
+input[type="time"],
+input[type="week"],
+input[type="number"],
+input[type="email"],
+input[type="url"],
+input[type="search"],
+input[type="tel"],
+input[type="color"],
+.uneditable-input {
+  &.local-error {
+    border-color: @errorText;
+    color: @errorText;
+  }
+}
+
+.add-on.local {
+  line-height: 10px;
+  display: inline-block;
+  height: 10px;
+  width: 10px;
+  margin-left: -20px;
+  position: relative;
+  color: @errorText;
+  border: 1px solid @errorText;
+  box-shadow: 0 0 0 5px @white;
+  -webkit-box-shadow: 0 0 0 5px @white;
+  -moz-box-shadow: 0 0 0 5px @white;
+  .border-radius(10px);
+  background: @white;
+}
+
 //54580: use media queries to also position symbol properly
 //43d1a253e5dae2f5d02b9273f527f9e43ff2dd6c
 
