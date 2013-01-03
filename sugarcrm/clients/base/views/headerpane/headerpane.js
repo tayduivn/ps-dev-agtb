@@ -28,22 +28,20 @@
     initialize: function(options) {
         app.view.View.prototype.initialize.call(this, options);
 
+        if (this.meta && this.meta.title) {
+            this.title = this.meta.title;
+        }
+
         this.context.on("headerpane:title",function(title){
-            this.title = app.lang.get(title, this.module);
+            this.title = title;
             this.render();
         }, this);
     },
 
     _renderHtml: function() {
-       if (this.meta && this.meta.title) {
-            this.title = app.lang.get(this.meta.title, this.module);
-        }
-        else if (this.title) {
-            this.title = title;
-        }
-        else {
-            this.title = app.lang.get(this.module, this.module);
-        }
+        var title = this.title || this.module;
+        this.title = app.lang.get(title, this.module);
+
         app.view.View.prototype._renderHtml.call(this);
     }
 })

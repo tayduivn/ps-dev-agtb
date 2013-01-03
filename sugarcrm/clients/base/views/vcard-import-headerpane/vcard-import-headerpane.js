@@ -30,9 +30,6 @@
         'click [name=vcard_finish_button]': 'initiateFinish',
         'click [name=vcard_cancel_button]': 'initiateCancel'
     },
-    initialize: function(options) {
-        app.view.views.HeaderpaneView.prototype.initialize.call(this, options);
-    },
 
     initiateFinish: function() {
         this.context.trigger('vcard:import:finish');
@@ -40,7 +37,9 @@
 
     initiateCancel : function() {
         this.context.trigger("drawer:hide");
-        if (this.context.parent)
+        if (this.context.parent) {
             this.context.parent.trigger("drawer:hide");
+        }
+
     }
 })

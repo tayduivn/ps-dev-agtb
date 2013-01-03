@@ -45,23 +45,6 @@ $layout->push('main', array(
         )
     ),
 ));
-$layout->push('main', array(
-        'layout' => array(
-            'type' => 'drawer',
-            'showEvent' => array(
-                "delegate" => true,
-                "event" => "click [name=create_button]",
-            ),
-            'components' => array(
-                array(
-                    'layout' => 'create',
-                    'context' => array(
-                        'create' => true,
-                    ),
-                )
-            )
-        ),
-    ));
 
 $layout->push('main', array(
         'layout' => array(

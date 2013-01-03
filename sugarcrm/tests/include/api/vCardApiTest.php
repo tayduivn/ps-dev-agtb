@@ -109,9 +109,19 @@ class vCardApiTest extends Sugar_PHPUnit_Framework_OutputTestCase
         $apiClass = new vCardApi();
         $results = $apiClass->vCardImport($api, $args);
 
-        $this->assertEquals(true,is_array($results), 'Incorrect number of items returned');
+        $this->assertEquals(true, is_array($results), 'Incorrect number of items returned');
         $this->assertEquals(true, array_key_exists('vcard_import', $results), 'Incorrect field name returned');
 
-        $GLOBALS['db']->query("DELETE FROM contacts WHERE id = \'" . $results['vcard_import']  . "'");
+        //verifying that the contact and account was created from vcard.
+        $contact = BeanFactory::getBean('Contacts', $results['vcard_import']);
+
+        SugarTestContactUtilities::setCreatedContact(array($results['vcard_import']));
+        SugarTestContactUtilities::removeAllCreatedContacts();
+        SugarTestContactUtilities::removeCreatedContactsEmailAddresses();
+
+        if(!empty($contact->account_id)) {
+            SugarTestAccountUtilities::setCreatedAccount(array($contact->account_id));
+            SugarTestAccountUtilities::removeAllCreatedAccounts();
+        }
     }
  }

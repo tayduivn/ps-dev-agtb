@@ -41,7 +41,7 @@
 
         app.file.checkFileFieldsAndProcessUpload(self.model, {
             success: function (data) {
-                route = app.router.buildRoute(self.module, data.vcard_import, 'record');
+                var route = app.router.buildRoute(self.module, data.vcard_import, 'record');
                 app.router.navigate(route, {trigger: true});
                 app.alert.show('vcard-import-saved', {
                     level: 'success',

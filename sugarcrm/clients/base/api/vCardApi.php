@@ -88,12 +88,18 @@ class vCardApi extends SugarApi {
      * @return String
      */
     public function vCardImport($api, $args) {
+        $this->requireArgs($args, array('module'));
+
         if (isset($_FILES) && count($_FILES) > 0 ) {
             reset($_FILES);
             $first_key = key($_FILES);
             if (isset($_FILES[$first_key]['tmp_name']) && isset($_FILES[$first_key]['size']) > 0 ) {
                 $vcard = new vCard();
                 $recordId = $vcard->importVCard($_FILES[$first_key]['tmp_name'],$args['module']);
+
+                if(empty($recordId)) {
+                    throw new SugarApiExceptionRequestMethodFailure('Failed to parse vcf file');
+                }
                 $results = array($first_key => $recordId);
                 return $results;
             }
