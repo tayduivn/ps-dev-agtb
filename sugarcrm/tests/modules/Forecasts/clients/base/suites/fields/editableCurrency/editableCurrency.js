@@ -87,7 +87,6 @@ describe("forecast editableCurrency field", function () {
         afterEach(function() {
             field.value = '';
         });
-
         it("should return model value if not a percentage", function() {
             expect(field.parsePercentage(field.value)).toEqual(field.value);
         });
