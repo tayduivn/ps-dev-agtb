@@ -23,22 +23,22 @@
 
 ({
 
-        /**
-         * Saved Labels to use for the Breadcrumbs
-         */
-        breadCrumbLabels: [],
+    /**
+     * Saved Labels to use for the Breadcrumbs
+     */
+    breadCrumbLabels: [],
 
-        initialize: function (options) {
-            var modelUrl = app.api.buildURL("Forecasts", "config"),
-                modelSync = function(method, model, options) {
-                    var url = _.isFunction(model.url) ? model.url() : model.url;
-                    return app.api.call(method, url, model, options);
-                };
+    initialize: function (options) {
+        var modelUrl = app.api.buildURL("Forecasts", "config"),
+            modelSync = function(method, model, options) {
+                var url = _.isFunction(model.url) ? model.url() : model.url;
+                return app.api.call(method, url, model, options);
+            };
 
-            options.context.set("model", this._getConfigModel(options, modelUrl, modelSync));
+        options.context.set("model", this._getConfigModel(options, modelUrl, modelSync));
 
-            app.view.Layout.prototype.initialize.call(this, options);
-        },
+        app.view.Layout.prototype.initialize.call(this, options);
+    },
 
     /**
      * Gets a config model for the config settings dialog.
@@ -73,34 +73,34 @@
         return settingsModel;
     },
 
-        /**
-         * Register a new breadcrumb label
-         *
-         * @param {string} label
-         */
-        registerBreadCrumbLabel : function(label) {
-            var labelObj = {
-                    'index': this.breadCrumbLabels.length,
-                    'label': label
-                },
-                found = false;
-            _.each(this.breadCrumbLabels, function(crumb) {
-                if(crumb.label == label) {
-                    found = true;
-                }
-            })
-            if(!found) {
-                this.breadCrumbLabels.push(labelObj);
+    /**
+     * Register a new breadcrumb label
+     *
+     * @param {string} label
+     */
+    registerBreadCrumbLabel : function(label) {
+        var labelObj = {
+                'index': this.breadCrumbLabels.length,
+                'label': label
+            },
+            found = false;
+        _.each(this.breadCrumbLabels, function(crumb) {
+            if(crumb.label == label) {
+                found = true;
             }
-        },
-
-        /**
-         * Get the current registered breadcrumb labels
-         *
-         * @return {*}
-         */
-        getBreadCrumbLabels : function(){
-            return this.breadCrumbLabels;
+        })
+        if(!found) {
+            this.breadCrumbLabels.push(labelObj);
         }
+    },
+
+    /**
+     * Get the current registered breadcrumb labels
+     *
+     * @return {*}
+     */
+    getBreadCrumbLabels : function(){
+        return this.breadCrumbLabels;
+    }
 
 })

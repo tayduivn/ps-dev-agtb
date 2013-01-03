@@ -111,33 +111,33 @@ describe("The forecastsWizardConfig layout controller", function(){
         });
 
         it("should get a model", function() {
-                    testLayout = new app.view.layouts.ForecastsWizardConfigLayout(options);
-                    var getModelStub = sinon.stub(testLayout, '_getConfigModel');
-                    testLayout.initialize(options);
-                    expect(getModelStub).toHaveBeenCalled();
-                    getModelStub.restore();
+            testLayout = new app.view.layouts.ForecastsWizardConfigLayout(options);
+            var getModelStub = sinon.stub(testLayout, '_getConfigModel');
+            testLayout.initialize(options);
+            expect(getModelStub).toHaveBeenCalled();
+            getModelStub.restore();
+        });
+
+        describe("model for config panel", function() {
+            it("should be a new model if one does not exist", function () {
+                testLayout = new app.view.layouts.ForecastsWizardConfigLayout(options);
+                var testModel = testLayout._getConfigModel(options, 'testUrl', function(){});
+                expect(testModel).toBeDefined();
+                expect(testModel.attributes).toEqual({});
+            });
+
+            it("should be a copy of the model if one exists, so a cancel will not keep values lying around", function() {
+                options.context.forecasts.config = new Backbone.Model({
+                    defaults: {
+                        test: 'test'
+                    }
                 });
 
-                describe("model for config panel", function() {
-                    it("should be a new model if one does not exist", function () {
-                        testLayout = new app.view.layouts.ForecastsWizardConfigLayout(options);
-                        var testModel = testLayout._getConfigModel(options, 'testUrl', function(){});
-                        expect(testModel).toBeDefined();
-                        expect(testModel.attributes).toEqual({});
-                    });
-
-                    it("should be a copy of the model if one exists, so a cancel will not keep values lying around", function() {
-                        options.context.forecasts.config = new Backbone.Model({
-                            defaults: {
-                                test: 'test'
-                            }
-                        });
-
-                        testLayout = new app.view.layouts.ForecastsWizardConfigLayout(options);
-                        var testModel = testLayout._getConfigModel(options, 'testUrl', function(){});
-                        expect(testModel).not.toBe(options.context.forecasts.config);
-                        expect(testModel.attributes).toEqual(options.context.forecasts.config.attributes);
-                    });
-                });
+                testLayout = new app.view.layouts.ForecastsWizardConfigLayout(options);
+                var testModel = testLayout._getConfigModel(options, 'testUrl', function(){});
+                expect(testModel).not.toBe(options.context.forecasts.config);
+                expect(testModel.attributes).toEqual(options.context.forecasts.config.attributes);
+            });
+        });
     });
 });
