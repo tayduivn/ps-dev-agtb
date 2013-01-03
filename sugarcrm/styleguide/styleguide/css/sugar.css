@@ -685,10 +685,7 @@ code { padding:3px 4px; }
 .tleft { text-align:left !important; }
 .tright { text-align:right !important; }
 #log { padding-left:80px; }
-body {
-  padding:47px 0;
-  overflow:hidden;
-}
+body { padding:47px 0; }
 body.scroll { overflow:auto; }
 .link {
   margin-top:6px;
@@ -2300,7 +2297,7 @@ table [class^="icon-favorite"] { margin-left:18px; }
   left:auto;
   right:9px;
 }
-.chzn-container.chzn-container-multi { height:28px; }
+.chzn-container.chzn-container-multi { min-height:28px; }
 .chzn-container.chzn-container-multi .chzn-choices {
   border:1px solid #cdcccb;
   background-image:none;
@@ -2317,8 +2314,7 @@ table [class^="icon-favorite"] { margin-left:18px; }
 }
 .chzn-container.chzn-container-multi .chzn-choices .search-field input {
   margin:0;
-  padding:3px 0 0 8px;
-  height:26px;
+  padding:3px 0 3px 8px;
   line-height:19px;
   height:22px !important;
 }
@@ -2411,6 +2407,8 @@ table [class^="icon-favorite"] { margin-left:18px; }
 }
 .form-search .filter .chzn-container .chzn-single-with-drop div b { background-position:0px 0px; }
 .form-search .filter .indicator { cursor:pointer; }
+.form-search .filter .chzn-container-multi .search-field { height:20px; }
+.form-search .filter .chzn-container-multi .search-field input { padding:0 0 0 8px; }
 .form-search .filter .chzn-container-multi .chzn-drop .result-selected {
   display:block;
   font-weight:bold;
@@ -2464,10 +2462,7 @@ table [class^="icon-favorite"] { margin-left:18px; }
 }
 .form-search .addme { right:0; }
 .form-search .removeme { right:30px; }
-#search_filter_chzn {
-  width:100% !important;
-  margin-bottom:4px;
-}
+#search_filter_chzn { width:100% !important; }
 #search_filter_chzn .search-choice {
   border:none !important;
   background-color:#e4e4e4;
@@ -2488,7 +2483,7 @@ table [class^="icon-favorite"] { margin-left:18px; }
   border-radius:6px;
 }
 #search_filter_chzn .search-choice.search-choice-option {
-  margin:8px 4px;
+  margin:4px 4px 4px;
   font-size:11px;
   background:none;
   border:none !important;
@@ -2535,6 +2530,7 @@ table [class^="icon-favorite"] { margin-left:18px; }
   -moz-border-radius:11px;
   border-radius:11px;
 }
+#search_filter_chzn .chzn-choices { padding:3px 70px 3px 0; }
 #search_filter_chzn .chzn-results .icon-ok, #search_filter_chzn .chzn-results .icon-plus {
   position:absolute;
   margin-top:-29px;
@@ -2662,10 +2658,7 @@ input[type="file"] {
   box-shadow:none;
 }
 input[type="file"] { line-height:18px \9; }
-select {
-  background-color:#ffffff;
-  border:inherit;
-}
+select { background-color:#ffffff; }
 input[type="image"] { border:0; }
 input[type="radio"], input[type="checkbox"], input[type="image"] {
   width:auto;
