@@ -728,8 +728,7 @@ array (
         'filter_template' => array(
             array('$and' => array(
                 array('first_name' => array('$starts' => '$first_name')),
-                array('last_name' => array('$equals' => '$last_name')),
-                array('id' => array('$not_equals' => '$id')),
+                array('last_name' => array('$starts' => '$last_name')),
             ))
         ),
         'ranking_fields' => array(
