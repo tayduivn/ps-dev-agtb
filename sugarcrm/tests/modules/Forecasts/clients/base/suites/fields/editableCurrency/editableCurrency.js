@@ -29,7 +29,7 @@ describe("forecast editableCurrency field", function () {
         app.user = SugarTest.app.user;
         app.user.setPreference('decimal_precision', 2);
 
-        context.forecasts = new Backbone.Model();
+        context.forecasts = new Backbone.Model({"selectedUser" : {'id' : app.user.get('id')}});
         context.forecasts.config = new Backbone.Model({"sales_stage_won" : [], "sales_stage_lost" : []});
 
         model = new Backbone.Model({"sales_stage" : 'test_sales_stage', 'editableCurrency' : '50.50'});
@@ -40,9 +40,7 @@ describe("forecast editableCurrency field", function () {
             "view": "detail"
         };
         SugarTest.loadComponent('base', 'field', 'int');
-        field = SugarTest.createField("../modules/Forecasts/clients/base", "editableCurrency", "editableCurrency", "detail", fieldDef, "Forecasts");
-        field.context = context;
-        field.model = model;
+        field = SugarTest.createField("../modules/Forecasts/clients/base", "editableCurrency", "editableCurrency", "detail", fieldDef, "Forecasts", model, context);
     });
 
     afterEach(function() {
@@ -70,14 +68,20 @@ describe("forecast editableCurrency field", function () {
     });
 
     describe("isEditable", function() {
-        it("should be false", function() {
+        it("should be false with same user and configured excluded sales stage", function() {
             field.context.forecasts.config.set('sales_stage_won', ["test_sales_stage"]);
             field.checkIfCanEdit();
             expect(field.isEditable()).toBeFalsy();
         });
-        it("should be true", function() {
+        it("should be true with same user and no configured excluded sales stage", function() {
             expect(field.isEditable()).toBeTruthy();
-        })
+        });
+
+        it("should be false with different user and no configured excluded sales stage", function() {
+            field.context.forecasts.set({"selectedUser" : {"id" : "doh"}});
+            field.checkIfCanEdit();
+            expect(field.isEditable()).toBeFalsy();
+        });
     });
 
     describe("parsePercentage", function() {
