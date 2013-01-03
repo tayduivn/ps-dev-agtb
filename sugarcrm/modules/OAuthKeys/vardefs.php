@@ -82,7 +82,7 @@ $dictionary['OAuthKey'] = array('table' => 'oauth_consumer',
             'vname'=>'LBL_CLIENT_TYPE',
           ),
     ),
-    'acls' => array('SugarACLModuleAdminOnly' => true),
+    'acls' => array('SugarACLAdminOnly' => true),
     'indices' => array (
        array('name' =>'ckey', 'type' =>'unique', 'fields'=>array('c_key')),
     )

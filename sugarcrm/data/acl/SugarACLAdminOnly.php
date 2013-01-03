@@ -21,8 +21,26 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  ********************************************************************************/
 require_once('data/SugarACLStrategy.php');
 
-class SugarACLModuleAdminWrite extends SugarACLStrategy
+/**
+ * This class is used to enforce ACLs on modules that are restricted to admins only.
+ */
+class SugarACLAdminOnly extends SugarACLStrategy
 {
+    protected $allowUserRead = false;
+    protected $adminFor = '';
+
+    public function __construct($aclOptions)
+    {
+        if ( is_array($aclOptions) ) {
+            if ( !empty($aclOptions['allowUserRead']) ) {
+                $this->allowUserRead = true;
+            }
+            if ( !empty($aclOptions['adminFor']) ) {
+                $this->adminFor = $aclOptions['adminFor'];
+            }
+        }
+    }
+
     /**
      * Only allow access to users with the user admin setting
      * @param string $module
@@ -30,12 +48,17 @@ class SugarACLModuleAdminWrite extends SugarACLStrategy
      * @param array $context
      * @return bool|void
      */
-    public function checkAccess($module, $view, $context) {
+    public function checkAccess($module, $view, $context)
+    {
         if ( $view == 'team_security' ) {
             // Let the other modules decide
             return true;
         }
 
+        if ( !empty($this->adminFor) ) {
+            $module = $this->adminFor;
+        }
+        
         $current_user = $this->getCurrentUser($context);
         if ( !$current_user ) {
             return false;
@@ -44,7 +67,7 @@ class SugarACLModuleAdminWrite extends SugarACLStrategy
         if($current_user->isAdminForModule($module)) {
             return true;
         } else {
-            if ( !$this->isWriteOperation($view, $context) ) {
+            if ( $this->allowUserRead && !$this->isWriteOperation($view, $context) ) {
                 return true;
             } else {
                 return false;

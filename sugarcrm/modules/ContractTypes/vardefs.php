@@ -94,7 +94,7 @@ $dictionary['ContractType'] = array('table' => 'contract_types',
 		'vname'=>'LBL_DOCUMENTS',
   	),
   ),
-'acls' => array('SugarACLModuleAdminOnly' => true),
+'acls' => array('SugarACLAdminOnly' => true),
 'indices' => array (
       array('name' =>'contract_types_pk', 'type' =>'primary', 'fields'=>array('id')),
  )

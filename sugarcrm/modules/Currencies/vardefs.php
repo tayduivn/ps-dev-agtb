@@ -118,7 +118,7 @@ $dictionary['Currency'] = array('table' => 'currencies',
   	'comment' => 'User ID who created record'
   ),
 ),
-'acls' => array('SugarACLModuleAdminWrite' => true),
+'acls' => array('SugarACLAdminOnly' => array('allowUserRead' => true)),
 'indices' => array (
    array('name' =>'currenciespk', 'type' =>'primary', 'fields'=>array('id')),
    array('name' =>'idx_currency_name', 'type' =>'index', 'fields'=>array('name','deleted'))

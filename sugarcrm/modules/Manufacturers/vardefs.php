@@ -113,7 +113,7 @@ $dictionary['Manufacturer'] = array('table' => 'manufacturers', 'comment' => 'Ma
   ),
 
 ),
-'acls' => array('SugarACLProductsAdminWrite' => true),
+'acls' => array('SugarACLAdminOnly' => array('adminFor' => 'Products', 'allowUserRead' => true)),
 'indices' => array (
        array('name' =>'manufacturerspk', 'type' =>'primary', 'fields'=>array('id')),
        array('name' =>'idx_manufacturers', 'type'=>'index', 'fields'=>array('name','deleted'))

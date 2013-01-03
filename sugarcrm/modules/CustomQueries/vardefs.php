@@ -139,7 +139,7 @@ $dictionary['CustomQuery'] = array('table' => 'custom_queries',
     'comment' => 'Indicates whether query body (the SQL statement) can be changed'
   ),
 ),
-'acls' => array('SugarACLModuleAdminWrite' => true),
+'acls' => array('SugarACLAdminOnly' => array('allowUserRead' => true)),
 'indices' => array (
        array('name' =>'custom_queriespk', 'type' =>'primary', 'fields'=>array('id')),
        array('name' =>'idx_customqueries', 'type'=>'index', 'fields'=>array('name','deleted')),

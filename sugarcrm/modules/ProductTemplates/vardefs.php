@@ -516,7 +516,7 @@ $dictionary['ProductTemplate'] = array('table' => 'product_templates',
 */
 
 ),
-'acls' => array('SugarACLProductsAdminWrite' => true),
+'acls' => array('SugarACLAdminOnly' => array('adminFor' => 'Products', 'allowUserRead' => true)),
 'indices' => array (
 	array('name' =>'procuct_templatespk', 'type' =>'primary', 'fields'=>array('id')),
 	array('name' =>'idx_product_template', 'type'=>'index', 'fields'=>array('name','deleted')),

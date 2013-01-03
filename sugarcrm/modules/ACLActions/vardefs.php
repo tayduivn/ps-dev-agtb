@@ -129,7 +129,7 @@ $dictionary['ACLAction'] = array('table' => 'acl_actions', 'comment' => 'Determi
 	'vname'=>'LBL_USERS',
   ),
 ),
-'acls' => array('SugarACLUsersAdminOnly' => true),
+'acls' => array('SugarACLAdminOnly' => array('adminFor' => 'Users')),
 
 'indices' => array (
        array('name' =>'aclactionid', 'type' =>'primary', 'fields'=>array('id')),
