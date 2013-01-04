@@ -62,6 +62,8 @@ class WorkFlow extends SugarBean
 
 	//used for the writing of triggers
 	var $secondary_count = 0;
+    // Used for schedule update for time elapsed workflows
+    private $secondary_triggers;
 
 	var $table_name = "workflow";
 	var $module_dir = "WorkFlow";
@@ -696,33 +698,26 @@ $alert_file_contents = "";
 
 
 			if($row['type']=='Time'){
-
-
-
 				$trigger_object = BeanFactory::getBean('WorkFlowTriggerShells');
 
 				$time_interval_array = $trigger_object->get_time_int($row['triggershell_id']);
 
+                // Set-up the $time_array for Time type triggers
+                $timeArray = '';
+                if ($row['trigger_type']=="compare_any_time") {
+                    $timeArray .= "\t \$time_array['time_int'] = '" . $row['parameters'] . "';\n";
+                    $timeArray .= "\t \$time_array['parameters'] = \$focus->" . $row['target_field'] . ";\n";
+                    $timeArray .= "\t \$time_array['time_int_type'] = 'normal';\n";
+                    $timeArray .= "\t \$time_array['target_field'] = 'none';\n";
+                } else {
+                    $timeArray .= "\t \$trigger_time_count = '" . $trigger_time_count . "';\n ";
+                    $timeArray .= "\t \$time_array['time_int'] = '" . $time_interval_array['time_int'] . "';\n";
+                    $timeArray .= "\t \$time_array['time_int_type'] = '" . $time_interval_array['time_int_type'] . "';\n";
+                    $timeArray .= "\t \$time_array['target_field'] = '" . $time_interval_array['target_field'] . "';\n";
+                }
+                $eval_dump .= $timeArray;
+                $eval_dump .= "\t \$workflow_id = '" . $row['id'] . "'; \n\n";
 
-
-
-				//check the triggershell type
-				if($row['trigger_type']=="compare_any_time"){
-				$eval_dump .= "\t \$time_array['time_int'] = '".$row['parameters']."'; \n\n";
-				$eval_dump .= "\t \$time_array['parameters'] = \$focus->".$row['target_field']."; \n\n";
-				$eval_dump .= "\t \$time_array['time_int_type'] = 'normal'; \n\n";
-				$eval_dump .= "\t \$time_array['target_field'] = 'none'; \n\n";
-				//end if compare_any_time is the trigger type
-				} else {
-					$eval_dump .= "\t \$trigger_time_count = '".$trigger_time_count."'; \n\n ";
-					$eval_dump .= "\t \$time_array['time_int'] = '".$time_interval_array['time_int']."'; \n\n";
-					$eval_dump .= "\t \$time_array['time_int_type'] = '".$time_interval_array['time_int_type']."'; \n\n";
-					$eval_dump .= "\t \$time_array['target_field'] = '".$time_interval_array['target_field']."'; \n\n";
-				}
-
-
-
-				$eval_dump .= "\t \$workflow_id = '".$row['id']."'; \n\n";
 				$eval_dump .= 'if(!empty($_SESSION["workflow_cron"]) && $_SESSION["workflow_cron"]=="Yes" &&
 				!empty($_SESSION["workflow_id_cron"]) && $_SESSION["workflow_id_cron"]==$workflow_id){
 				';
@@ -763,14 +758,10 @@ $alert_file_contents = "";
 			//END infinit loop catch
 			$eval_dump.= "\t}\n";
 
-			if($row['type']=='Time'){
-				$eval_dump .= "}\n\n";
-				++ $trigger_time_count;
-				$eval_dump .= "else{\n";
-				$eval_dump .= get_time_contents($row['id']);
-				$eval_dump .= "}\n\n";
-			//end if type is time
-			}
+            // Close braces
+            if ($row['type'] == 'Time') {
+                $eval_dump .= "}\n\n";
+            }
 
 			$eval_dump .= " \n\n";
 
@@ -784,7 +775,6 @@ $alert_file_contents = "";
 			$eval_dump .= " //End if trigger is true \n";
 			$eval_dump .= " } \n\n";
 
-
 			///END check to see if this is new, update, or all
 			if($record_type_needed===true){
 				$eval_dump .= "\t\t //End if new, update, or all record";
@@ -793,6 +783,46 @@ $alert_file_contents = "";
 
 			++$trigger_count;
 
+            // Update date_expired in case it's a new row, or any of the fields got updated
+            if ($row['type'] == 'Time') {
+                $eval_dump .= "// Hack for skipping the check if field has changed, just check values\n";
+                $eval_dump .= "if (!empty(\$_SESSION['workflow_cron'])) {\n";
+                $eval_dump .= "\t\$saveWorkflowCron = \$_SESSION['workflow_cron'];\n";
+                $eval_dump .= "}\n";
+
+                $eval_dump .= "\$_SESSION['workflow_cron'] = 'Yes';\n";
+                ++ $trigger_time_count;
+                $eval_dump .= "\$checkFields = array('for' => 'activity', ";
+                $eval_dump .= "'field_filter' => array(";
+                $additionalEval = array();
+                if ($row['trigger_type'] != 'compare_any_time') {
+                    $additionalEval[] = "({$eval})";
+                }
+                foreach ($this->secondary_triggers as $secondaryTrigger) {
+                    $eval_dump .= "'" . $secondaryTrigger['field'] . "', ";
+
+                    if ($secondaryTrigger['type'] != 'compare_any_time' && !empty($secondaryTrigger['eval'])) {
+                        $additionalEval[] = $secondaryTrigger['eval'];
+                    }
+                }
+                $eval_dump .= "'" . $row['target_field'] . "'));\n";
+                $eval_dump .= "\$dataChanged = \$GLOBALS['db']->getDataChanges(\$focus, \$checkFields);\n";
+                $eval_dump .= "if ((empty(\$focus->fetched_row) || !empty(\$dataChanged)) && (";
+                $eval_dump .= implode(' && ', $additionalEval);
+                $eval_dump .= ")) {\n";
+                // Need to add the $timeArray and $workflow_id here for check_for_schedule() call
+                $eval_dump .= $timeArray;
+                $eval_dump .= "\$workflow_id = '" . $row['id'] . "'; \n\n";
+                $eval_dump .= get_time_contents($row['id']);
+                $eval_dump .= "}\n";
+
+                $eval_dump .= "// Revert to original value\n";
+                $eval_dump .= "if (!empty(\$saveWorkflowCron)) {\n";
+                $eval_dump .= "\t\$_SESSION['workflow_cron'] = \$saveWorkflowCron;\n";
+                $eval_dump .= "} else {\n";
+                $eval_dump .= "\tunset(\$_SESSION['workflow_cron']);\n";
+                $eval_dump .= "}\n";
+            }
 		//end while
 		}
 
@@ -841,6 +871,7 @@ function get_front_triggers_secondary($workflow_id, & $trigger_count){
 		$result = $this->db->query($query,true," Error getting trigger contents for trigger write: ");
 
 		$secondary_count = 0;
+        $secondary_triggers = array();
 			$eval .= "\t //Secondary Triggers \n";
 		// Get the id and the name.
 		while($row = $this->db->fetchByAssoc($result, false)){
@@ -856,6 +887,7 @@ function get_front_triggers_secondary($workflow_id, & $trigger_count){
 			if($row['type']=="filter_field"){
 				$eval .= "\t if(";
 				$eval .= html_entity_decode($row['eval'], ENT_QUOTES);
+                $secondaryTriggersEval = html_entity_decode($row['eval'], ENT_QUOTES);
 				$eval .= "\t ){ \n";
 				$eval_reached = true;
 			}
@@ -889,6 +921,7 @@ function get_front_triggers_secondary($workflow_id, & $trigger_count){
 
 						$eval .= "\t if(";
 						$eval .= $eval_array['eval'];
+                        $secondaryTriggersEval = $eval_array['eval'];
 						$eval .= "\t ){ \n";
 						$eval_reached=true;
 
@@ -903,17 +936,24 @@ function get_front_triggers_secondary($workflow_id, & $trigger_count){
 			if($eval_reached == false){
 				$eval .= "\t if(";
 				$eval .= html_entity_decode($row['eval'], ENT_QUOTES);
+                $secondaryTriggersEval = html_entity_decode($row['eval'], ENT_QUOTES);
 				$eval .= "\t ){ \n";
 			}
 
 			$eval .= "\t \n\n";
 
 
+            $secondary_triggers[$secondary_count] = array(
+                'field' => $row['field'],
+                'type' => $row['type'],
+                'eval' => !empty($secondaryTriggersEval) ? $secondaryTriggersEval : '',
+            );
 			++$secondary_count;
 
 		//end while
 		}
 
+        $this->secondary_triggers = $secondary_triggers;
 		$this->secondary_count = $secondary_count;
 		return $eval;
 

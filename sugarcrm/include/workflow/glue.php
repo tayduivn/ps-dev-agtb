@@ -86,8 +86,13 @@ class WorkFlowGlue {
         }
         return $this->operator_array[$operatorName];
     }
-    
-	private function getCompareText($shell_object)
+
+    /**
+     * @param $shell_object object
+     * @param $is_equal bool set separator to condition '==' if true and '!=' if false
+     * @return string
+     */
+	private function getCompareText($shell_object, $is_equal)
     {
         //We need to parse datetime fields as they may come from the DB in a different format from the one in save which
         //would cause a normal string compare to fail
@@ -113,8 +118,11 @@ class WorkFlowGlue {
             }
         }
 
+        // Use identical instead of equal
+        $sep = $is_equal ? '===' : '!==';
+
         // Remove check if old value is set. This should trigger when old value was empty, and new value is entered
-        return " ( isset(\$focus->".$shell_object->field.") && ( empty(\$focus->fetched_row) || array_key_exists('".$shell_object->field."', \$focus->fetched_row) ) && \$focus->fetched_row['".$shell_object->field."'] != \$focus->".$shell_object->field.") ";
+        return " ( isset(\$focus->".$shell_object->field.") && ( empty(\$focus->fetched_row) || array_key_exists('".$shell_object->field."', \$focus->fetched_row) ) && \$focus->fetched_row['".$shell_object->field."'] " . $sep . " \$focus->".$shell_object->field.") ";
     }
 
 	function glue_normal_compare_change(& $shell_object){
@@ -123,7 +131,7 @@ class WorkFlowGlue {
 
 
 
-		$this->temp_eval .= $this->getCompareText($shell_object);
+        $this->temp_eval .= $this->getCompareText($shell_object, false);
 
 
 		return $this->temp_eval;
@@ -136,7 +144,7 @@ class WorkFlowGlue {
 		if(empty($this->temp_eval)) $this->temp_eval = "";
 
 		$this->temp_eval .= " ( ";
-		$this->temp_eval .= $this->getCompareText($shell_object) . " || ( \$focus->fetched_row['".$shell_object->field."'] == null && !isset(\$focus->".$shell_object->field.") )";
+        $this->temp_eval .= $this->getCompareText($shell_object, true) . " || ( \$focus->fetched_row['".$shell_object->field."'] == null && !isset(\$focus->".$shell_object->field.") )";
 		$this->temp_eval .= " ) ";
 		$this->temp_eval .= " || ";
 		$this->temp_eval .= " ( ";

@@ -238,24 +238,25 @@ class WorkFlowSchedule extends SugarBean {
      */
     function get_expiry_date($bean_object, $time_interval, $is_update = false, $target_field="none")
     {
-        if($is_update) {
-            if($target_field=="none"){
+        $target_stamp = null;
+
+        if ($is_update) {
+            if ($target_field == "none") {
                 $target_stamp = TimeDate::getInstance()->nowDb();
             } else {
-                //Date fields need to be reformated to datetimes to be used with scheduler
-                if ($bean_object->field_defs[$target_field]['type'] == "date" &&
-                    is_string($bean_object->$target_field))
-                {
-                    $date = TimeDate::getInstance()->fromDbDate($bean_object->$target_field);
-                    $target_stamp = TimeDate::getInstance()->asDb($date);
-                }
-                else {
-                    $target_stamp = $bean_object->$target_field;
+                if (!empty($bean_object->$target_field)) {
+                    //Date fields need to be reformated to datetimes to be used with scheduler
+                    if ($bean_object->field_defs[$target_field]['type'] == "date" &&
+                        is_string($bean_object->$target_field)) {
+                        $date = TimeDate::getInstance()->fromDbDate($bean_object->$target_field);
+                        $target_stamp = TimeDate::getInstance()->asDb($date);
+                    } else {
+                        $target_stamp = $bean_object->$target_field;
+                    }
                 }
             }
-        } else {
-            $target_stamp = null;
         }
+
         return get_expiry_date("datetime", $time_interval, false, $is_update, $target_stamp);
     }
 
