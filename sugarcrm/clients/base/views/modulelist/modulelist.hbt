@@ -1,13 +1,25 @@
 <ul class="nav" id="module_list">
     <li class="Home"><a class="cube" href="#" rel="tooltip" title="{{str "LBL_TABGROUP_HOME"}}"></a></li>
-    {{#eachOptions module_list}}
-    <li class="{{key}}" data-tour="tour-navbar-{{key}}">
-        <a href="#{{key}}">{{value}}</a>
-    </li>
-    {{/eachOptions}}
+    {{#each module_list}}
+        {{#notEq name 'Home'}}
+        <li class="dropdown" data-module="{{name}}">
+            <a id="{{name}}Drop" href="#{{name}}" role="button" class="dropdown-toggle dtoggle" data-toggle="dropdown" data-tour="tour-navbar-{{name}}">{{label}}<b class="caret"></b></a>
+            <ul class="dropdown-menu" role="menu" aria-labelledby="{{name}}Drop">
+                {{#each menu}}
+                    <li><a tabindex="-1" href="{{route}}">{{str label ../name}}</a></li>
+                {{/each}}
+                <li></li>
+                <li class="divider"></li>
+                <li><a tabindex="-1" href="#">Loading recently viewed...</a></li>
+                <li class="divider"></li>
+                <li><a tabindex="-1" href="#">Loading favorites...</a></li>
+            </ul>
+        </li>
+        {{/notEq}}
+    {{/each}}
     <li class="dropdown more">
         <a href="javascript:void(0)" class="dropdown-toggle" data-toggle="dropdown">{{str "LBL_LINK_MORE"}} <b class="caret"></b></a>
-        <ul class="dropdown-menu">
+        <ul class="dropdown-menu more-drop-container">
         </ul>
     </li>
 </ul>

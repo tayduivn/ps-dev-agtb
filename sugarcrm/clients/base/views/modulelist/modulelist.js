@@ -1,6 +1,7 @@
 ({
     events: {
-        'click #module_list li a': 'onModuleTabClicked'
+        'click #module_list li a': 'onModuleTabClicked',
+        'mouseover .dtoggle': 'toggleDropdown'
     },
 
     initialize: function(options) {
@@ -14,7 +15,9 @@
             this.layout.on("view:resize", this.resize, this);
         }
     },
-
+    toggleDropdown: function(event) {
+      this.$(event.target).dropdown('toggle');
+    },
     /**
      * Render list of modules
      * @private
@@ -31,25 +34,47 @@
                     self.module_list[val] = app.lang.get('LBL_MODULE_NAME', val);
                 });
             }
-
+            this.module_list = this.completeMenuMeta(this.module_list);
             app.view.View.prototype._renderHtml.call(this);
             this.resetMenu();
             this.activeModule.set(app.controller.context.get("module"));
         }
     },
 
+    completeMenuMeta: function(module_list) {
+        var actions, meta, returnList = [];
+        _.each(module_list, function(value, key) {
+            actions = {label: value, name: key};
+            meta = app.metadata.getModule(key);
+            if (meta && meta.menu && meta.menu.header) {
+                actions.menu = meta.menu.header.meta;
+            } else {
+                actions.menu = new Array();
+            }
+            returnList.push(actions);
+
+        });
+        return returnList;
+    },
+
     /**
      * When user clicks tab navigation in header
      */
     onModuleTabClicked: function(evt) {
-        this.activeModule.set(this.$(evt.currentTarget).closest('li').attr('class'));
+        console.log("module tab is being clicked");
+        var module = this.$(evt.currentTarget).closest('li').data('module');
+        this.activeModule.set(module);
+        if (module) {
+            app.router.navigate(module, {trigger: true});
+        }
+
     },
 
     /**
      * Reset the module list to the full list
      */
     resetMenu: function() {
-        this.$('.more').before(this.$('#module_list .dropdown-menu').children());
+        this.$('.more').before(this.$('#module_list .more-drop-container').children());
         this.$('.dropdown.open').removeClass('open');
     },
 
@@ -99,7 +124,7 @@
      * @param width
      */
     addModulesToList: function($modules, width) {
-        var $dropdown = $modules.find('.dropdown-menu'),
+        var $dropdown = $modules.find('.more-drop-container'),
             $moduleToInsert = $dropdown.children("li:first"),
             $more = $modules.find('.more'),
             $lastModuleInList, $nextModule,
@@ -137,7 +162,7 @@
      * @param width
      */
     removeModulesFromList: function($modules, width) {
-        var $dropdown = $modules.find('.dropdown-menu'),
+        var $dropdown = $modules.find('.more-drop-container'),
             $module = $modules.find('.more').prev(),
             $next, currentWidth = $modules.outerWidth(true),
 
@@ -178,7 +203,6 @@
 
                 $modules = this._moduleList.$('#module_list');
                 $module = $modules.find('.' + module);
-
                 $module.addClass(this._class);
 
                 // remember which module is supposed to be next to the active module so that
@@ -186,7 +210,7 @@
                 if (!this._next) {
                     $next = $module.next();
                     if ($next.hasClass('more')) {
-                        $next = $modules.find('.dropdown-menu li:first');
+                        $next = $modules.find('.more-drop-container li:first');
                     }
                     this._next = $next.attr('class');
                 }
