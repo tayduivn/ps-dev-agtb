@@ -143,14 +143,14 @@
      */
     compareValuesLocale: function(val1, val2) {
         var ogVal = app.utils.formatNumber(
-                val1,
+                app.utils.unformatNumberStringLocale(val1),
                 app.user.getPreference('decimal_precision'),
                 app.user.getPreference('decimal_precision'),
                 '',
                 app.user.getPreference('decimal_separator')
             ),
             ngVal = app.utils.formatNumber(
-                val2,
+                app.utils.unformatNumberStringLocale(val2),
                 app.user.getPreference('decimal_precision'),
                 app.user.getPreference('decimal_precision'),
                 '',
