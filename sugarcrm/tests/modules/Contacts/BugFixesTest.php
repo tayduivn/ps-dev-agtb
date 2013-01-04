@@ -24,7 +24,7 @@
 require_once('modules/Contacts/Contact.php');
 require_once('modules/Accounts/Account.php');
 
-class Bug59675Test extends Sugar_PHPUnit_Framework_TestCase
+class BugFixesTest extends Sugar_PHPUnit_Framework_TestCase
 {
 
     public function setUp() {
@@ -36,7 +36,7 @@ class Bug59675Test extends Sugar_PHPUnit_Framework_TestCase
         SugarTestHelper::tearDown();
     }
 
-	function testSyncContacts() {
+	public function Bug59675_ContactFormBase_Refactor_Test() {
         $c = BeanFactory::newBean('Contacts');
         $c->first_name = 'Test';
         $c->last_name = create_guid();
@@ -53,5 +53,9 @@ class Bug59675Test extends Sugar_PHPUnit_Framework_TestCase
 
         unset($c);
     }
+
+    public function Bug59675_sync_contact_is_not_fetched_Test() {
+        
+    } 
 }
 ?>

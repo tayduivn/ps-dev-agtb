@@ -473,10 +473,10 @@ function handleSave($prefix, $redirect=true, $useRequired=false){
 	{
 
 		if (!empty($_POST[$prefix.'sync_contact']) || $focus->setSyncContact()){
-			 $focus->setCurrentUserContactsUserId($current_user);
+			 $focus->setCurrentUserContactsUserId($current_user->id);
 		}
 		else{
-			$focus->removeCurrentUserContactsUserId($current_user);
+			$focus->removeCurrentUserContactsUserId($current_user->id);
 		}
 	}
 

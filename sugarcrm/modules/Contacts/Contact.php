@@ -162,7 +162,7 @@ class Contact extends Person {
 
 	/**
 	 * Sets the Sync Contact flag if Contacts Users Id is not empty
-	 * @return bool
+	 * @return bool true if the sync_contact is set, false if not
 	 */
 	public function setSyncContact() {
 		if(!empty($this->contacts_users_id)) {
@@ -174,23 +174,23 @@ class Contact extends Person {
 	}
 
 	/**
-	 * Set the Current User as the Contacts User Id
-	 * @param type SugarBean $user 
+	 * Set the passed in user id as the Contacts User Id
+	 * @param type string guid 
 	 */
-	public function setCurrentUserContactsUserId(SugarBean $user) {
-		$this->contacts_users_id = $user->id;
+	public function setCurrentUserContactsUserId($user_id) {
+		$this->contacts_users_id = $user_id;
 	}
 
 	/**
-	 * Remove the Current User as the Contacts User Id
+	 * Remove the passed in user id as the Contacts User Id
 	 * @param type SugarBean $user 
 	 */
-	public function removeCurrentUserContactsUserId(SugarBean $user) {
+	public function removeCurrentUserContactsUserId($user_id) {
 		if(!isset($this->users)) {
 			$this->load_relationship('user_sync');
 		}
 		$this->contacts_users_id = null;
-		$this->user_sync->delete($this->id, $user->id);
+		$this->user_sync->delete($this->id, $user_id);
 	}
 
 	function add_list_count_joins(&$query, $where)
