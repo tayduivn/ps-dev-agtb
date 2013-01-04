@@ -177,6 +177,9 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
                     if($date instanceof TimeDate) {
                         $keyValues[$fieldName] = $timedate->asIso($date, null, array('stripTZColon' => true));
                     }
+                    else {
+                        $GLOBALS['log']->error("TimeDate Conversion Failed for " . get_class($bean) . "->{$fieldName}");
+                    }
                 }
                 else {
                     $keyValues[$fieldName] = $bean->$fieldName;
@@ -571,8 +574,8 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
     {
         $requireOwner = ACLController::requireOwner($module, 'list');
 
-        $class = $GLOBALS['beanList'][$module];
-        $seed = new $class();
+        $seed = BeanFactory::newBean($module);
+
         $hasAdminAccess = $GLOBALS['current_user']->isAdminForModule($seed->getACLCategory());
         
         $moduleFilter = new Elastica_Filter_And();
@@ -744,8 +747,7 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
             {
                 foreach ($options['moduleFilter'] as $moduleName)
                 {
-                    $class = $GLOBALS['beanList'][$moduleName];
-                    $seed = new $class();
+                    $seed = BeanFactory::newBean($moduleName);
                     // only add the module to the list if it can be viewed
                     if ($seed->ACLAccess('ListView'))
                     {
