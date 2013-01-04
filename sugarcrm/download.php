@@ -191,10 +191,8 @@ else {
             {
                 header("Content-type: application/octet-stream");
             }
-
-            if (!$check_image) {
-                header("Content-Disposition: attachment; filename=\"".$name."\";");
-            }
+               header("Content-Disposition: attachment; filename=\"".$name."\";");
+            
 		}
 		// disable content type sniffing in MSIE
 		header("X-Content-Type-Options: nosniff");
