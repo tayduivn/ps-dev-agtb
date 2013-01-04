@@ -85,6 +85,10 @@ class ForecastsCurrentUserApi extends CurrentUserApi {
     public function forecastsInitialization($api, $args) {
         global $current_user, $app_list_strings;
 
+        if(!SugarACL::checkAccess('Forecasts', 'access')) {
+            throw new SugarApiExceptionNotAuthorized();
+        }
+
         $returnInitData = array();
         $defaultSelections = array();
 
