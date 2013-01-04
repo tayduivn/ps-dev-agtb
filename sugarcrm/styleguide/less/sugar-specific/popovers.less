@@ -1,16 +1,37 @@
+.popover {
+  background-color: @grayDark;
+  width: 292px;
+  padding: 2px;
+  .close {
+    position: absolute;
+    top: 10px;
+    right: 20px;
+  }
+  .icon-remove {
+    color: @white !important;
+  }
+  &.right .arrow {
+    margin-top: -5px;
+    border-width: 5px 0 5px 5px;
+    border-right: 5px solid @black;
+  }
+  &.left .arrow {
+    margin-top: -5px;
+    border-width: 5px 5px 5px 0;
+    border-left: 5px solid @black;
+  }
+}
 
 .popover-inner {
-  padding: 2px;
-  width: 288px;
   overflow: hide;
-  background: @grayDark; // has to be full background declaration for IE fallback
-  .border-radius(4px);
+  background: @white; // has to be full background declaration for IE fallback
+  .border-radius(2px);
 }
 .popover-title {
   background-color: @grayDark;
   border-bottom:1px solid @black;
   .border-radius(2px 2px 0 0);
-  font-size: 13px; 
+  font-size: 13px;
   color: #fff;
 }
 .popover-content {
@@ -19,17 +40,9 @@
   overflow-y: auto;
   overflow-x: hidden;
   max-height: 400px;
-}
+  .no-padding {
+    padding: 0;
+    background-color: @white;
 
-.no-padding .popover-content {
-  padding: 0;
-}
-
-.popover .close {
-  position: absolute;
-  top: 10px;
-  right: 20px;
-}
-.popover .icon-remove {
-  color: @white !important;
+  }
 }
