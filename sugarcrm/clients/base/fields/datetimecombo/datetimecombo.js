@@ -297,7 +297,7 @@
         hour = parseInt(timeParts[1]*1, 10);
 
         // We have am/pm part (ostensibly 12 hour format)
-        if (!_.isUndefined(timeParts[3])) {
+        if (!_.isEmpty(timeParts[3])) {
 
             amPm = (timeParts[3] === 'a') ? 'am' : 'pm';
 
