@@ -159,6 +159,15 @@ class Contact extends Person {
 		parent::__construct();
 	}
 
+	public function save($check_notify = FALSE) {
+		$this->sync_contact = (bool)$this->sync_contact;
+		if($this->sync_contact == true) {
+			$this->setUserContactsUserId($GLOBALS['current_user']->id);
+		}
+		// if they want to remove a user they will need to do this with the removeUserContactsUserId method, 
+		// doing so within the save causes sync'ing issues 
+		return parent::save($check_notify);
+	}
 
 	/**
 	 * Sets the Sync Contact flag if Contacts Users Id is not empty
@@ -177,7 +186,7 @@ class Contact extends Person {
 	 * Set the passed in user id as the Contacts User Id
 	 * @param type string guid 
 	 */
-	public function setCurrentUserContactsUserId($user_id) {
+	public function setUserContactsUserId($user_id) {
 		$this->contacts_users_id = $user_id;
 	}
 
@@ -185,7 +194,7 @@ class Contact extends Person {
 	 * Remove the passed in user id as the Contacts User Id
 	 * @param type SugarBean $user 
 	 */
-	public function removeCurrentUserContactsUserId($user_id) {
+	public function removeUserContactsUserId($user_id) {
 		if(!isset($this->users)) {
 			$this->load_relationship('user_sync');
 		}

@@ -42,11 +42,11 @@ class ContactsTest extends Sugar_PHPUnit_Framework_TestCase
 
         $this->assertFalse($c->setSyncContact());
 
-        $c->setCurrentUserContactsUserId($GLOBALS['current_user']);
+        $c->setUserContactsUserId($GLOBALS['current_user']->id);
 
         $this->assertTrue($c->setSyncContact());
 
-        $c->removeCurrentUserContactsUserId($GLOBALS['current_user']);
+        $c->removeUserContactsUserId($GLOBALS['current_user']->id);
 
         $this->assertFalse($c->setSyncContact());
 

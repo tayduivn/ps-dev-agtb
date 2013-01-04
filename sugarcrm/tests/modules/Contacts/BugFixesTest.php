@@ -23,6 +23,9 @@
  ********************************************************************************/
 require_once('modules/Contacts/Contact.php');
 require_once('modules/Accounts/Account.php');
+require_once('modules/Contacts/ContactFormBase.php');
+require_once('include/api/ServiceBase.php');
+require_once('clients/base/api/ModuleApi.php');
 
 class BugFixesTest extends Sugar_PHPUnit_Framework_TestCase
 {
@@ -30,32 +33,90 @@ class BugFixesTest extends Sugar_PHPUnit_Framework_TestCase
     public function setUp() {
         SugarTestHelper::setUp('current_user');
         SugarTestHelper::setUp('app_list_strings');
+        $this->fields = array('first_name' => 'contact', 'last_name' => 'unitTester', 'sync_contact' => '1');
+        $this->prefix = 'unittest_contacts_bugfixes';
+        $this->contacts = array();
     }
 
     public function tearDown() {
+        foreach($this->fields AS $fieldName => $fieldValue) {
+            unset($_POST[$fieldName]);
+        }
+        foreach($this->contacts AS $contact) {
+            $contact->mark_deleted($contact->id);
+        }
         SugarTestHelper::tearDown();
     }
 
-	public function Bug59675_ContactFormBase_Refactor_Test() {
-        $c = BeanFactory::newBean('Contacts');
-        $c->first_name = 'Test';
-        $c->last_name = create_guid();
+	public function testBug59675ContactFormBaseRefactor() {
+        $formBase = new ContactFormBase();
+        foreach ($this->fields as $fieldName => $fieldValue) {
+            $_POST[$this->prefix . $fieldName] = $fieldValue;
+        }
+        $_POST['record'] = 'asdf';
+        $_REQUEST['action'] = 'save';
 
-        $this->assertFalse($c->setSyncContact());
+        $bean = $formBase->handleSave($this->prefix, false);
+        $this->contacts[] = $bean;
 
-        $c->setCurrentUserContactsUserId($GLOBALS['current_user']);
+        $this->assertTrue($bean->sync_contact, "Sync Contact was not set to true");
 
-        $this->assertTrue($c->setSyncContact());
+        unset($bean);
+        $_POST[$this->prefix . 'sync_contact'] = '0';        
 
-        $c->removeCurrentUserContactsUserId($GLOBALS['current_user']);
+        $bean = $formBase->handleSave($this->prefix, false);
+        $this->contacts[] = $bean;
 
-        $this->assertFalse($c->setSyncContact());
+        $this->assertFalse($bean->sync_contact, "Sync Contact was not set to false");
 
-        unset($c);
+
     }
 
-    public function Bug59675_sync_contact_is_not_fetched_Test() {
-        
-    } 
+    public function testBug59675ContactSaveRefactor() {
+
+        $bean = BeanFactory::newBean('Contacts');
+        foreach($this->fields AS $fieldName => $fieldValue) {
+            $bean->$fieldName = $fieldValue;
+        }
+        $bean->save();
+        $this->contacts[] = $bean;
+
+        $this->assertTrue($bean->sync_contact, "Sync Contact was not set to true");
+        unset($bean);
+
+        $bean = BeanFactory::newBean('Contacts');
+        foreach($this->fields AS $fieldName => $fieldValue) {
+            $bean->$fieldName = $fieldValue;
+        }
+        $bean->sync_contact = '0';
+        $bean->save();
+        $this->contacts[] = $bean;
+
+        $this->assertFalse($bean->sync_contact, "Sync Contact was not set to false");
+    }
+
+    public function testBug59675SyncContactIsNotSet() {
+        $mapi = new ModuleApi();
+        $sm = new ServiceMockup();
+        $args = $this->fields;
+        $args['module'] = 'Contacts';
+        $return = $mapi->createRecord($sm, $args);
+        $this->assertTrue(!empty($return['id']), "Bean was not created");
+        $sync_contact = (bool)$return['sync_contact'];
+        $this->assertTrue($sync_contact, "Sync Contact was not set to true - " . print_r($return, true));
+        $this->contacts[] = BeanFactory::getBean("Contacts", $return['id']);
+
+        $args['sync_contact'] = '0';
+        $return = $mapi->createRecord($sm, $args);
+        $this->assertTrue(!empty($return['id']), "Bean was not created");
+        $sync_contact = (bool)$return['sync_contact'];
+        $this->assertFalse($sync_contact, "Sync Contact was not set to false - " . print_r($return, true));
+        $this->contacts[] = BeanFactory::getBean("Contacts", $return['id']);
+    }
+}
+
+class ServiceMockup extends ServiceBase {
+    public function execute() {}
+    protected function handleException(Exception $exception) {}
 }
 ?>
