@@ -1,14 +1,23 @@
 /* Icons
 ------------------------- */
-[class^="icon-"] {
+[class^="icon-"],
+[class*=" icon-"] {
   font-size: 14px;
   -webkit-font-smoothing: antialiased;
 }
 
-a [class^="icon-"] {color: @grayLight !important;}
-a:hover [class^="icon-"] {color: @gray !important;}
-a:active [class^="icon-"] {color: @black !important;}
-a.active [class^="icon-"] {color: @grayDarker !important;}
+a [class^="icon-"] {
+  color: @grayLight !important;
+}
+a:hover [class^="icon-"] {
+  color: @gray !important;
+}
+a:active [class^="icon-"] {
+  color: @black !important;
+}
+a.active [class^="icon-"] {
+  color: @grayDarker !important;
+}
 
 .icon-favorite:before {
   content: "\f005";
@@ -115,4 +124,10 @@ color: @red;
  {
   &-updated        { color: @blue; }
   &-added         { color: @green; }
+}
+
+i.icon-white,
+btn.icon-white,
+span.icon-white {
+  color: @white !important;
 }
