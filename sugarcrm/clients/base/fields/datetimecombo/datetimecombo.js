@@ -81,6 +81,11 @@
         } else if (!value) {
             return value;
         } else {
+            // If the date value in our datebox is invalid, leave it alone and return. It will
+            // get handled upstream by sidecar (which uniformly handles field validation errors).
+            if(_.isNaN(Date.parse(value))) {
+                return value;
+            }
             // In case ISO 8601 get it back to js native date which date.format understands
             // Note: if stripIsoTZ true, time zone won't matter since it's already been removed.
             jsDate = new Date(value);
