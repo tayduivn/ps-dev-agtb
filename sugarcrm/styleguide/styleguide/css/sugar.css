@@ -3016,11 +3016,10 @@ textarea.local-error, input[type="text"].local-error, input[type="password"].loc
   line-height:10px;
   display:inline-block;
   height:10px;
-  width:10.5px;
+  width:10px;
   margin-left:-20px;
   position:relative;
   color:#b60000;
-  border:1px solid #b60000;
   box-shadow:0 0 0 5px #ffffff;
   -webkit-box-shadow:0 0 0 5px #ffffff;
   -moz-box-shadow:0 0 0 5px #ffffff;
@@ -3029,10 +3028,6 @@ textarea.local-error, input[type="text"].local-error, input[type="password"].loc
   -webkit-border-radius:10px;
   -moz-border-radius:10px;
   border-radius:10px;
-}
-.add-on.local [class^="icon-"], .add-on.local [class*=" icon-"] {
-  font-size:12px;
-  line-height:11px;
 }
 @media (max-width: 480px) {
   .error .input-append > .add-on {
