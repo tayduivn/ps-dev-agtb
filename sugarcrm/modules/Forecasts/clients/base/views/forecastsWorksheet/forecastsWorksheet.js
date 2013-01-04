@@ -796,13 +796,13 @@
     /**
      * Event Handler for updating the worksheet by a selected category
      *
-     * @param params is always a context
+     * @param params array of selected filters
      */
     updateWorksheetBySelectedRanges:function (params) {
         // Set the filters for the datatable then re-render
         var self = this,
             forecast_ranges_setting = this.context.forecasts.config.get('forecast_ranges') || 'show_binary';
-
+        
         // start with no filters, i. e. show everything.
         if(!_.isUndefined($.fn.dataTableExt)) {
             $.fn.dataTableExt.afnFiltering.splice(0, $.fn.dataTableExt.afnFiltering.length);
@@ -824,17 +824,22 @@
                             checkState = rowCategory.find('input').attr('checked');
                             selectVal = ((checkState == "checked") || (checkState == "on") || (checkState == "1")) ? 'include' : 'exclude';
                         } else {
-                            selectVal = rowCategory.text().trim().toLowerCase();
+                            //we need to check to see if the select exists, because this gets fired before the commitStage field re-renders itself back
+                            //to a text field.
+                            if(rowCategory.find("select").length == 0){
+                                selectVal = rowCategory.text().trim().toLowerCase();
+                            } else {
+                                selectVal = rowCategory.find("select")[0].value.toLowerCase();                               
+                            }
                         }
 
                         self.context.forecasts.trigger('forecasts:worksheet:filtered');
-
                         return (_.contains(params, selectVal));
                     }
                 );
             }
         }
-
+        
         if(!_.isUndefined(this.gTable.fnDestroy)){
             this.gTable.fnDestroy();
             this.gTable = this.$('.worksheetTable').dataTable(self.gTableDefs);
