@@ -159,6 +159,11 @@ class Contact extends Person {
 		parent::__construct();
 	}
 
+	/**
+	 * The Contact Save function.  Overloads the bean save to check sync contact and set the contacts_user_id if needed
+	 * @param bool $check_notify 
+	 * @return string - the beans guid
+	 */
 	public function save($check_notify = FALSE) {
 		// if sync contact exists, and contacts_user_id is empty we want to populate it
 		if(isset($this->sync_contact) && empty($this->contacts_users_id)) {
