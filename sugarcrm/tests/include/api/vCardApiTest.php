@@ -80,8 +80,13 @@ class vCardApiTest extends Sugar_PHPUnit_Framework_OutputTestCase
         );
 
         $this->setExpectedException('SugarApiExceptionMissingParameter');
-        $apiClass = new vCardApi();
-        $apiClass->vCardImport($api, $args);
+
+        $apiClassMock = $this->getMock('vCardApi', array('isUploadedFile'), array());
+
+        $apiClassMock->expects($this->never())
+            ->method('isUploadedFile');
+
+        $apiClassMock->vCardImport($api, $args);
     }
 
     /**
@@ -106,8 +111,13 @@ class vCardApiTest extends Sugar_PHPUnit_Framework_OutputTestCase
             'module' => 'Contacts',
         );
 
-        $apiClass = new vCardApi();
-        $results = $apiClass->vCardImport($api, $args);
+        $apiClassMock = $this->getMock('vCardApi', array('isUploadedFile'), array());
+
+        $apiClassMock->expects($this->once())
+            ->method('isUploadedFile')
+            ->will($this->returnValue(true));
+
+        $results = $apiClassMock->vCardImport($api, $args);
 
         $this->assertEquals(true, is_array($results), 'Incorrect number of items returned');
         $this->assertEquals(true, array_key_exists('vcard_import', $results), 'Incorrect field name returned');

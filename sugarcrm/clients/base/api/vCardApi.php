@@ -90,16 +90,18 @@ class vCardApi extends SugarApi {
     public function vCardImport($api, $args) {
         $this->requireArgs($args, array('module'));
 
-        if (isset($_FILES) && count($_FILES) > 0 ) {
+        if (isset($_FILES) && count($_FILES) === 1) {
             reset($_FILES);
             $first_key = key($_FILES);
-            if (isset($_FILES[$first_key]['tmp_name']) && isset($_FILES[$first_key]['size']) > 0 ) {
+            if (isset($_FILES[$first_key]['tmp_name'])  && $this->isUploadedFile($_FILES[$first_key]['tmp_name']) && isset($_FILES[$first_key]['size']) > 0 ) {
                 $vcard = new vCard();
-                $recordId = $vcard->importVCard($_FILES[$first_key]['tmp_name'],$args['module']);
-
-                if(empty($recordId)) {
+                try {
+                    $recordId = $vcard->importVCard($_FILES[$first_key]['tmp_name'],$args['module']);
+                }
+                catch(Exception $e) {
                     throw new SugarApiExceptionRequestMethodFailure('Failed to parse vcf file');
                 }
+
                 $results = array($first_key => $recordId);
                 return $results;
             }
@@ -107,5 +109,14 @@ class vCardApi extends SugarApi {
         else {
             throw new SugarApiExceptionMissingParameter('File was missing');
         }
+    }
+
+    /**
+     * This function is a wrapper for checking if the file was uploaded so that the php built in function can be mocked
+     * @param string FileName
+     * @return boolean
+     */
+    protected function isUploadedFile ($fileName) {
+        return is_uploaded_file($fileName);
     }
 }
