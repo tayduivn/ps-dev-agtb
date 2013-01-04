@@ -50,7 +50,7 @@ class BugFixesTest extends Sugar_PHPUnit_Framework_TestCase
             'len' => '25',
         );
         
-        $mm = new MetaDataManagerBug56505($GLOBALS['current_user']);
+        $mm = new MetaDataManagerBugFixes($GLOBALS['current_user']);
         $newdefs = $mm->getNormalizedFielddefs($defs);
         
         $this->assertFalse(array_key_exists('len', $newdefs));
@@ -60,7 +60,7 @@ class BugFixesTest extends Sugar_PHPUnit_Framework_TestCase
 /**
  * Accessor class to the metadatamanager to allow access to protected methods
  */
-class MetaDataManagerBug56505 extends MetaDataManager
+class MetaDataManagerBugFixes extends MetaDataManager
 {
     public function getNormalizedFielddefs($defs)
     {
