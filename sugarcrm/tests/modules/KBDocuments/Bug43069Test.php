@@ -27,6 +27,7 @@
  * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
+
 /**
  * Bug #43069
  *
@@ -36,8 +37,10 @@
  */
 class Bug43069Test extends Sugar_PHPUnit_Framework_OutputTestCase
 {
+    protected $role;
     public function setUp()
     {
+        global $current_user;
         SugarTestHelper::setUp('app_list_strings');
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('beanList');
@@ -46,6 +49,14 @@ class Bug43069Test extends Sugar_PHPUnit_Framework_OutputTestCase
         SugarTestHelper::setUp('app_strings');
 
         $_SESSION['ACL'] = array();
+
+        $this->role = new ACLRole();
+        $this->role->id = create_guid();
+        $this->role->new_with_id = true;
+        $this->role->name = 'test43069role3';
+        $this->role->load_relationship('users');
+        $this->role->users->add($current_user);
+        $this->role->save();
     }
 
     /**
@@ -60,11 +71,13 @@ class Bug43069Test extends Sugar_PHPUnit_Framework_OutputTestCase
         $acl = new ACLAction();
         $acl->name = 'access';
         $acl->category = 'KBDocuments';
-        $acl->aclaccess = ACL_ALLOW_ALL;
+        $acl->aclaccess = ACL_ALLOW_ENABLED;
         $acl->acltype = 'module';
         $acl->modified_user_id = 1;
         $acl->created_by = 1;
         $acl->save();
+
+        $this->role->setAction($this->role->id, $acl->id, ACL_ALLOW_ENABLED);
 
         $acl = new ACLAction();
         $acl->name = 'edit';
@@ -75,7 +88,7 @@ class Bug43069Test extends Sugar_PHPUnit_Framework_OutputTestCase
         $acl->created_by = 1;
         $acl->save();
 
-        DBManagerFactory::getInstance()->commit();
+        $this->role->setAction($this->role->id, $acl->id, ACL_ALLOW_ALL);
 
         ACLAction::getUserActions($current_user->id, true, 'KBDocuments', 'module');
 
@@ -100,7 +113,7 @@ class Bug43069Test extends Sugar_PHPUnit_Framework_OutputTestCase
         $acl->created_by = 1;
         $acl->save();
 
-        DBManagerFactory::getInstance()->commit();
+        $this->role->setAction($this->role->id, $acl->id, ACL_ALLOW_DISABLED);
 
         ACLAction::getUserActions($current_user->id, true, 'KBDocuments', 'module');
 
@@ -122,7 +135,7 @@ class Bug43069Test extends Sugar_PHPUnit_Framework_OutputTestCase
     public function tearDown()
     {
         ACLAction::removeActions('KBDocuments');
-        DBManagerFactory::getInstance()->commit();
+        $this->role->mark_deleted($this->role->id);
         unset($_SESSION['ACL']);
         SugarTestHelper::tearDown();
     }
