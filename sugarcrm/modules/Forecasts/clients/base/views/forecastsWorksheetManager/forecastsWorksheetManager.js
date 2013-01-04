@@ -84,6 +84,21 @@
      * If the timeperiod is changed and we have dirtyModels, keep the previous one to use if they save the models
      */
     dirtyUser : '',
+    
+    /**
+     * A Collection to keep track of draft models
+     */
+    draftModels: new Backbone.Collection(),
+    
+    /**
+     * If the timeperiod is changed and we have draftModels, keep the previous one to use if they save the models
+     */
+    draftTimeperiod : '',
+
+    /**
+     * If the timeperiod is changed and we have draftModels, keep the previous one to use if they save the models
+     */
+    draftUser : '',    
 
     /**
      * Handle Any Events
@@ -135,6 +150,7 @@
         if(this.isDirty()) {
             // since the model is dirty, save it so we can use it later
             this.dirtyUser = this.selectedUser;
+            this.draftUser = this.selectedUser;
         }
         this.selectedUser = selectedUser;
         if(!this.showMe()){
@@ -158,11 +174,12 @@
         if (this._collection) {
             this._collection.on("reset", function() {
                 self.cleanUpDirtyModels();
+                self.cleanUpDraftModels();
                 self.render();
             }, this);
 
             this._collection.on("change", function(model, changed) {
-                // The Model has changed vai CTE. save it in the isDirty
+                // The Model has changed via CTE. save it in the isDirty
                 this.dirtyModels.add(model);
                 this.context.forecasts.trigger('forecasts:worksheetDirty', model, changed);
             }, this);
@@ -249,37 +266,63 @@
         if(this.showMe()) {
             var self = this,
                 saveCount = 0;
-
-            totalToSave = self.dirtyModels.length;
-
-
+            
+            /**
+             * If the sheet is dirty, save the dirty rows. Else, if the save is for a commit, and we have 
+             * draft models (things saved as draft), we need to resave those as committed (version 1). If neither
+             * of these conditions are true, then we need to fall through and signal that the save is complete so other
+             * actions listening for this can continue.
+             */
             if(this.isDirty()) {
+                totalToSave = self.dirtyModels.length;
+                
                 self.dirtyModels.each(function(model){
-                   //set properties on model to aid in save
-                    model.set({
-                        "draft" : (isDraft && isDraft == true) ? 1 : 0,
-                        "timeperiod_id" : self.dirtyTimeperiod || self.timePeriod,
-                        "current_user" : self.dirtyUser.id || self.selectedUser.id
-                    }, {silent:true});
-
-                    //set what url  is used for save
-                    model.url = self.url.split("?")[0] + "/" + model.get("id");
-                    model.save({}, {success: function() {
-                        saveCount++;
-                        //if this is the last save, go ahead and trigger the callback;
-                        if(totalToSave === saveCount) {
-                            self.context.forecasts.trigger('forecasts:worksheetSaved', totalToSave, 'mgr_worksheet', isDraft);
-                        }
-                    }});
+                    self._worksheetSaveHelper(totalToSave, saveCount, model, isDraft, self.dirtyTimeperiod, self.dirtyUser.id);
+                                       
+                    //add to draft structure so committing knows what to save as non-draft
+                    if(isDraft == true){
+                        self.draftModels.add(model, {merge: true});
+                    }
                 });
 
                 self.cleanUpDirtyModels();
+            } else if(!isDraft && self.draftModels.length > 0){
+                totalToSave = self.draftModels.length;
+               
+                self.draftModels.each(function(model){
+                    self._worksheetSaveHelper(totalToSave, saveCount, model, false, self.draftTimeperiod, self.draftUser.id);
+                });
+                
+                //Need to clean up dirty models too as the save event above triggers a change event on the worksheet.
+                self.cleanUpDirtyModels();
+                self.cleanUpDraftModels();
             } else {
                 this.context.forecasts.trigger('forecasts:worksheetSaved', totalToSave, 'mgr_worksheet', isDraft);
             }
         }
 
         return totalToSave
+    },
+    
+    /**
+     * Helper function for worksheet save
+     */
+    _worksheetSaveHelper: function(totalToSave, saveCount, model, isDraft, timeperiod, userId){
+        var self = this;
+        model.set({
+            draft : (isDraft == true) ? 1 : 0,
+            timeperiod_id : timeperiod || self.timePeriod,
+            current_user : userId|| self.selectedUser.id
+        }, {silent:true});   
+        model.url = self.url.split("?")[0] + "/" + model.get("id");
+        
+        model.save({}, {success: function() {
+            saveCount++;
+            //if this is the last save, go ahead and trigger the callback;
+            if(totalToSave === saveCount) {
+                self.context.forecasts.trigger('forecasts:worksheetSaved', totalToSave, 'mgr_worksheet', isDraft);
+            }
+        }});
     },
 
     /**
@@ -290,6 +333,16 @@
         this.dirtyModels.reset();
         this.dirtyTimeperiod = '';
         this.dirtyUser = '';
+    },
+    
+    /**
+     * Clean Up the Draft Modules Collection and dirtyVariables
+     */
+    cleanUpDraftModels : function() {
+        // clean up the draft records and variables
+        this.draftModels.reset();
+        this.draftTimeperiod = '';
+        this.draftUser = '';
     },
 
 
@@ -451,7 +504,12 @@
 
         //see if anything in the model is a draft version
         var enableCommit = self._collection.find(function(model) {
-            return (model.get("version") == 0)
+            if(model.get("version") == 0){
+                self.draftModels.add(model, {merge: true});
+                return true;
+            }
+            
+            return false;            
         }, this);
         if (_.isObject(enableCommit)) {
             self.context.forecasts.trigger("forecasts:commitButtons:enabled");
@@ -639,6 +697,7 @@
         if(this.isDirty()) {
             // since the model is dirty, save it so we can use it later
             this.dirtyTimeperiod = this.timePeriod;
+            this.draftTimeperiod = this.timePeriod;
         }
     	this.timePeriod = params.id;
         var model = this.context.forecasts.worksheetmanager;
