@@ -142,6 +142,9 @@ describe("forecast editableCurrency field", function () {
         it("should return false when value is whitespace", function() {
             expect(field.isValid(" ")).toBeFalsy();
         });
+        it("should return false when value is invalid", function() {
+            expect(field.isValid("abcd")).toBeFalsy();
+        });
     });
 
 });

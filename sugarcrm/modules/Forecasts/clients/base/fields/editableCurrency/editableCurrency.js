@@ -58,12 +58,9 @@
                 self.model.set(self.name, self.unformat(value));
                 self.$el.find(self.inputSelector).blur();
             } else {
-                // will generate error styles here, for now log to console
-                var langString = app.lang.get(self.def.label,'Forecasts'),
-                    hb = Handlebars.compile("{{str_format key module args}}"),
-                    args = [];
+                var hb = Handlebars.compile("{{str_format key module args}}"),
+                    args = [app.lang.get(self.def.label,'Forecasts')];
 
-                args = [langString];
                 self.errorMessage = hb({'key' : 'LBL_EDITABLE_INVALID', 'module' : 'Forecasts', 'args' : args});
 
                 self.showErrors();
@@ -196,7 +193,7 @@
             reg = new RegExp("^\\+?(\\d+|\\d{1,3}("+gs+"\\d{3})*)?("+ds+"\\d+)?\\%?$");
 
         // always make sure that we have a string here, since match only works on strings
-        if (value.length == 0 || _.isNull(value.toString().match(reg))) {
+        if (value.length == 0 || _.isNull(value.match(reg))) {
             return false;
         }
 
