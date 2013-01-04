@@ -74,9 +74,9 @@ class Bug56584Test extends Sugar_PHPUnit_Framework_TestCase
     public function tearDown()
     {
         $uid  = $GLOBALS['current_user']->id;
-        $done = $GLOBALS['db']->query("DELETE FROM contacts " .
+        $GLOBALS['db']->query("DELETE FROM contacts " .
             "WHERE created_by = '$uid' ");
-        $done = $GLOBALS['db']->query("DELETE FROM tasks " .
+        $GLOBALS['db']->query("DELETE FROM tasks " .
             "WHERE created_by = '$uid' ");
 
         SugarTestHelper::tearDown();
@@ -94,9 +94,9 @@ class Bug56584Test extends Sugar_PHPUnit_Framework_TestCase
 
         $importer->import();
 
-        $result = $db->query('SELECT id, first_name, last_name ' .
-                             'FROM ' . $contactBean->table_name . ' ' .
-                             'WHERE created_by="' . $current_user->id . '"');
+        $result = $db->query("SELECT id, first_name, last_name " .
+                             "FROM $contactBean->table_name " .
+                             "WHERE created_by='$current_user->id'");
 
         while ($row = $db->fetchRow($result))
         {
