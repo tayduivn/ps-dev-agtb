@@ -36,7 +36,7 @@ $viewdefs['Forecasts']['base']['view']['forecastsWorksheet'] = array(
             array(
                 array(
                     'name' => 'commit_stage',
-                    'type' => 'buckets',
+                    'type' => 'commitStage',
                     'options' => 'commit_stage_dom',
                     'searchBarThreshold' => 5,
                     'label' => 'LBL_FORECAST',
@@ -62,8 +62,8 @@ $viewdefs['Forecasts']['base']['view']['forecastsWorksheet'] = array(
                     'sortable' => true,
                     'default' => true,
                     'enabled' => true,
-                    'type' => 'date',
-                    'view' => 'default',					
+                    'type' => 'editableDate',
+                    'view' => 'detail',
                 ),
 
                 array(

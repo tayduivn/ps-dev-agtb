@@ -32,13 +32,6 @@ $viewdefs ['Bugs']['portal']['view']['edit'] =
         'buttons' =>
         array(
             array(
-                'name' => 'save_button',
-                'type' => 'button',
-                'label' => 'LBL_SAVE_BUTTON_LABEL',
-                'value' => 'save',
-                'css_class' => 'btn-primary',
-            ),
-            array(
                 'name' => 'cancel_button',
                 'type' => 'button',
                 'label' => 'LBL_CANCEL_BUTTON_LABEL',
@@ -48,6 +41,13 @@ $viewdefs ['Bugs']['portal']['view']['edit'] =
                     'click' => 'function(){ window.history.back(); }',
                 ),
                 'css_class' => 'btn-invisible btn-link',
+            ),
+            array(
+                'name' => 'save_button',
+                'type' => 'button',
+                'label' => 'LBL_SAVE_BUTTON_LABEL',
+                'value' => 'save',
+                'css_class' => 'btn-primary',
             ),
         ),
         'templateMeta' =>

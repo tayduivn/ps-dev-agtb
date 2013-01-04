@@ -20,7 +20,6 @@ $layout->push('main', array(
 ));
 $layout->push('main', array('view' => 'headerpane'));
 $layout->push('main', array('layout' => 'list'));
-$layout->push('main', array('view' => 'list-bottom'));
 $layout->push('side', array('layout' => 'list-sidebar'));
 $layout->push('preview', array('layout' => 'preview'));
 $viewdefs['base']['layout']['records'] = $layout->getLayout();

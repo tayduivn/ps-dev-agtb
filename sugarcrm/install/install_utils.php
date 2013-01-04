@@ -891,11 +891,9 @@ function handlePortalConfig()
             ),
             'footer' => array(
                 'target' => '#footer'
-            ),
-            'alert' => array(
-                'target' => '#alert'
             )
         ),
+        'alertsEl'=> '#alert',
         'serverUrl' => $sugar_config['site_url'] . '/rest/v10',
         'siteUrl' => $sugar_config['site_url'],
         'unsecureRoutes' => array('signup', 'error'),

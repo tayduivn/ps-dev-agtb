@@ -1368,8 +1368,6 @@ background-image:url(../../../../index.php?entryPoint=getImage&imageName=form-bu
 #arrow {
     height:20px;
     width:25px;
-    background-image:url(../../../../index.php?entryPoint=getImage&imageName=footer.png);
-    background-position:  0 -70px;
     background-color:#fff;
     right:0px;
     position:fixed;
@@ -1381,12 +1379,22 @@ background-image:url(../../../../index.php?entryPoint=getImage&imageName=form-bu
     border-left:1px solid #ccc;
     border-right:1px solid #ccc;
 }
-.up {
+
+#arrow.up {
     background-color: transparent !important;
-    background-position: 0 0 !important;
     border: 0 none !important;
     bottom: 11px;
 }
+
+#arrow.up i.icon-chevron-down {
+    margin-left: 4px;
+}
+
+#arrow i.icon-chevron-up {
+    margin-left: 6px;
+}
+
+
 #footer 
 {
 
@@ -3684,7 +3692,6 @@ button, input[type=submit], input[type=reset], input[type=button], .button, .but
     line-height: 18px;
     color: #262627;
     font-weight: 500;
-    font-family: 'Helvetica Neue';
     text-align: center;
     text-shadow: 0 1px 0 rgba(255, 255, 255, 0.75);
     vertical-align: middle;
@@ -4119,7 +4126,7 @@ ul.megamenu .MMShortcuts li.sfHover a.sf-with-ul,
 ul.moduleTabMore li.sfHover a.sf-with-ul,
 ul.sf-sub-modulelist li.sfHover > a.sf-with-ul{
     color: #fff !important;
-    background:		#355B7E;
+    background:		#444;
 }
 
 #globalLinksModule ul.clickMenu.SugarActionMenu li a:hover,
@@ -4203,7 +4210,7 @@ ul.moduleTabMore,
 
 ul.sf-sub-modulelist .selected,
 #moduleList .more .selected{
-background-color: #355b7e;
+background-color: #343433;
 color: #fff;
 }
 
@@ -4414,6 +4421,10 @@ ul#quickCreateULSubnav.showMore .moduleMenuOverFlowMore, ul#quickCreateULSubnav.
 {
 display: none !important;
 visibilility: hidden !important;
+}
+
+#moduleList .home img {
+    margin-top: 2px;
 }
 
 #subModuleList 
@@ -5834,8 +5845,7 @@ padding:0px;
 position: fixed;
 top: 0;
 width:100%;
-
-    z-index:1030;
+z-index:1;
 }
 #globalLinksSubnav, #quickCreateULSubnav {
     z-index: 20;
@@ -7614,7 +7624,6 @@ div.hoverscroll div.fixed-arrow.bottom {
     line-height: 18px;
     color: #262627;
     font-weight: 500;
-    font-family: 'Helvetica Neue';
     text-align: center;
     text-shadow: 0 1px 0 rgba(255, 255, 255, 0.75);
     vertical-align: middle;

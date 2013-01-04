@@ -102,11 +102,13 @@
      */
     copy: function(from, to) {
 
-        if (_.isUndefined(this._initialValues[to])) {
-            this._initialValues[to] = this.model.get(to);
-        }
+        if (this.model.has(from)) {
+            if (_.isUndefined(this._initialValues[to])) {
+                this._initialValues[to] = this.model.get(to);
+            }
 
-        this.model.set(to, this.model.get(from));
+            this.model.set(to, this.model.get(from));
+        }
     },
 
     /**

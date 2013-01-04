@@ -50,12 +50,9 @@ $sync_modules = array(
 				 array('name'=>'Shippers', 'direction'=>'down', 'related'=>array()),
 				 array('name'=>'TaxRates', 'direction'=>'down', 'related'=>array()),
 				array('name'=>'TimePeriods', 'direction'=>'both', 'related'=>array()),
-				array('name'=>'Forecasts', 'direction'=>'both', 'related'=>array()),
-				array('name'=>'ForecastSchedule', 'direction'=>'both', 'related'=>array()),
 				array('name'=>'Quotas', 'direction'=>'both', 'related'=>array()),
 				array('name'=>'Currencies', 'direction'=>'both', 'related'=>array()),
 				array('name'=>'Contracts', 'direction'=>'both', 'related'=>array()),
-				array('name'=>'Worksheet', 'direction'=>'both', 'related'=>array()),
 				array('name'=>'EmailAddresses', 'direction'=>'both', 'related'=>array()),
 				 // A Special Sync is done for users array('name'=>'Users', 'related'=>array()),
 			);
@@ -73,8 +70,6 @@ $moduleList =  array(
 				 'Opportunities',
 				 'Quotes',
 				 'Products',
-				 'Forecasts'
-				 
 			);
 			
 $read_only_override = array(

@@ -4229,8 +4229,9 @@ function add_unified_search_to_custom_modules_vardefs()
  * This is a helper function to clean up
  *
  * @param $version String value of current system version (pre upgrade)
+ * @param $path String value to the path of the log file; defaults to empty
  */
-function unlinkUpgradeFiles($version, $path)
+function unlinkUpgradeFiles($version, $path='')
 {
 	if(!isset($version))
 	{

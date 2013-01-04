@@ -73,7 +73,7 @@ class BeanFactory {
 
         if (!empty($id))
         {
-            if (empty(self::$loadedBeans[$module][$id]))
+            if (!$encode || empty(self::$loadedBeans[$module][$id]))
             {
                 // $bean = new $beanClass();
                 $bean = SugarBean::_createBean($beanClass);
@@ -85,13 +85,14 @@ class BeanFactory {
                 }
                 //END SUGARCRM flav=pro ONLY
                 $result = $bean->retrieve($id, $encode, $deleted);
+
                 if(empty($result)) {
                     if(empty($params['strict_retrieve'])) {
                         return $bean;
                     } else {
                         return null;
                     }
-                } else {
+                } else if ($encode) {
                     self::registerBean($module, $bean, $id);
                 }
             } else {
@@ -258,8 +259,8 @@ class BeanFactory {
             }
         }
 
-        if(!empty($bean->id))
-           $id = $bean->id;
+         if(!empty($bean->id))
+            $id = $bean->id;
 
         if ($id)
         {
