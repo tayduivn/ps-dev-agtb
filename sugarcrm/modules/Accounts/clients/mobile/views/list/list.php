@@ -26,48 +26,75 @@ if (!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * All Rights Reserved.
  * Contributor(s): ______________________________________..
  ********************************************************************************/
-
-$viewdefs['Meetings']['mobile']['view']['edit'] = array(
-    'templateMeta' => array(
-        'maxColumns' => '1',
-        'widths' => array(
-            array('label' => '10', 'field' => '30'),
-        ),
-    ),
+$viewdefs['Accounts']['mobile']['view']['list'] = array(
     'panels' => array(
         array(
             'label' => 'LBL_PANEL_DEFAULT',
             'fields' => array(
                 array(
                     'name' => 'name',
-                    'displayParams' => array(
-                        'required' => true,
-                        'wireless_edit_only' => true,)),
-                'date_start',
-                'status',
-                array(
-                    'name' => 'duration',
-                    'type' => 'fieldset',
-                    'related_fields' => array('duration_hours', 'duration_minutes'),
-                    'label' => "LBL_DURATION",
-                    'fields' => array(
-                        array(
-                            'name' => 'duration_hours',
-                        ),
-                        array(
-                            'name' => 'duration_minutes',
-                            'type' => 'enum',
-                            'options' => 'duration_intervals'
-                        ),
-                    ),
+                    'label' => 'LBL_NAME',
+                    'default' => true,
+                    'enabled' => true,
+                    'link' => true,
+                    'width' => '10%',
                 ),
-                'description',
-                'assigned_user_name',
-                //BEGIN SUGARCRM flav=pro ONLY
-                'team_name',
-                //END SUGARCRM flav=pro ONLY
-            )
-        )
+                array(
+                    'name' => 'team_name',
+                    'enabled' => true,
+                    'width' => '10%',
+                    'default' => true,
+                ),
+                array(
+                    'name' => 'website',
+                    'default' => true,
+                    'enabled' => true,
+                    'link' => true,
+                    'width' => '10%',
+                ),
+                array(
+                    'name' => 'phone_office',
+                    'enabled' => true,
+                    'width' => '10%',
+                    'default' => true,
+                ),
+                array(
+                    'name' => 'email1',
+                    'enabled' => true,
+                    'width' => '10%',
+                    'default' => true,
+                ),
+                array(
+                    'name' => 'billing_address_street',
+                    'enabled' => true,
+                    'width' => '10%',
+                    'default' => true,
+                ),
+                array(
+                    'name' => 'billing_address_city',
+                    'enabled' => true,
+                    'width' => '10%',
+                    'default' => true,
+                ),
+                array(
+                    'name' => 'billing_address_state',
+                    'enabled' => true,
+                    'width' => '10%',
+                    'default' => true,
+                ),
+                array(
+                    'name' => 'billing_address_postalcode',
+                    'enabled' => true,
+                    'width' => '10%',
+                    'default' => true,
+                ),
+                array(
+                    'name' => 'billing_address_country',
+                    'enabled' => true,
+                    'width' => '10%',
+                    'default' => true,
+                ),
+            ),
+        ),
     ),
 );
-?>

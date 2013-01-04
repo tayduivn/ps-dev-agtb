@@ -44,6 +44,8 @@ $dictionary['Call'] = array('table' => 'calls', 'comment' => 'A Call is an activ
     'len' => '2',
     'comment' => 'Call duration, hours portion',
 	'required' => true,
+    'studio' => array('wirelesseditview'=>false, 'wirelessdetailview'=>false, 'wirelesslistview'=>false, 'wireless_basic_search'=>false),
+
   ),
   'duration_minutes' =>
   array (
@@ -54,7 +56,8 @@ $dictionary['Call'] = array('table' => 'calls', 'comment' => 'A Call is an activ
     'len' => '2',
     'group'=>'duration_hours',
     'importable' => 'required',
-    'comment' => 'Call duration, minutes portion'
+    'comment' => 'Call duration, minutes portion',
+    'studio' => array('wirelesseditview'=>false, 'wirelessdetailview'=>false, 'wirelesslistview'=>false, 'wireless_basic_search'=>false),
   ),
 
    'date_start' =>
