@@ -360,6 +360,7 @@
                'styleguide/assets/js/bootstrap-popover.js' => 'include/javascript/sugar_sidecar.min.js',
                'styleguide/assets/js/bootstrap-modal.js'   => 'include/javascript/sugar_sidecar.min.js',
                'styleguide/assets/js/bootstrap-alert.js'   => 'include/javascript/sugar_sidecar.min.js',
+               'styleguide/assets/js/bootstrap-tab.js'   => 'include/javascript/sugar_sidecar.min.js',
                "styleguide/styleguide/js/nvd3/lib/d3.v2.js" => "include/javascript/sugar_sidecar.min.js",
                // To add more models to NV D3, run the makefile in styleguide.
                "styleguide/styleguide/js/nvd3/nv.d3.min.js" => "include/javascript/sugar_sidecar.min.js",
