@@ -28,6 +28,7 @@ describe("forecast editableCurrency field", function () {
 
         app.user = SugarTest.app.user;
         app.user.setPreference('decimal_precision', 2);
+        app.user.setPreference('decimal_separator', '.');
 
         context.forecasts = new Backbone.Model({"selectedUser" : {'id' : app.user.get('id')}});
         context.forecasts.config = new Backbone.Model({"sales_stage_won" : [], "sales_stage_lost" : []});
@@ -106,6 +107,18 @@ describe("forecast editableCurrency field", function () {
         it("should return 53 with percentage is +5%", function() {
             expect(field.parsePercentage("+5%")).toEqual(53.03);
         });
-    })
+    });
+
+    describe("compareValuesLocale", function() {
+        it("should return true when identical", function() {
+            expect(field.compareValuesLocale("1200.00","1200.00")).toBeTruthy();
+        });
+        it("should return true when decimal ommitted", function() {
+            expect(field.compareValuesLocale("1200.00","1200")).toBeTruthy();
+        });
+        it("should return false when not equal", function() {
+            expect(field.compareValuesLocale("1200.00","1200.01")).toBeFalsy();
+        });
+    });
 
 });

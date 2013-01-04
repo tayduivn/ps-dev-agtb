@@ -128,24 +128,28 @@
             this.$el.find(this.inputSelector).blur();
         } else if (evt.which == 13 || evt.which == 9) {
             // blur if value is unchanged
-            var ogVal = app.utils.formatNumber(
-                    app.currency.unformatAmountLocale(this.value),
-                    app.user.getPreference('decimal_precision'),
-                    app.user.getPreference('decimal_precision'),
-                    '',
-                    app.user.getPreference('decimal_separator')
-                ),
-                ngVal = app.utils.formatNumber(
-                    this.$el.find(this.inputSelector).val(),
-                    app.user.getPreference('decimal_precision'),
-                    app.user.getPreference('decimal_precision'),
-                    '',
-                    app.user.getPreference('decimal_separator')
-                );
-            if (_.isEqual(ogVal, ngVal)) {
+            if(this.compareValuesLocale(app.currency.unformatAmountLocale(this.value), this.$el.find(this.inputSelector).val())) {
                 this.$el.find(this.inputSelector).blur();
             }
         }
+    },
+
+    compareValuesLocale: function(val1, val2) {
+        var ogVal = app.utils.formatNumber(
+                val1,
+                app.user.getPreference('decimal_precision'),
+                app.user.getPreference('decimal_precision'),
+                '',
+                app.user.getPreference('decimal_separator')
+            ),
+            ngVal = app.utils.formatNumber(
+                val2,
+                app.user.getPreference('decimal_precision'),
+                app.user.getPreference('decimal_precision'),
+                '',
+                app.user.getPreference('decimal_separator')
+            );
+        return _.isEqual(ogVal, ngVal);
     },
 
     /**
