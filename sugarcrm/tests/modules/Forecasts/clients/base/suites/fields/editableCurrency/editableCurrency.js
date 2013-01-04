@@ -119,6 +119,9 @@ describe("forecast editableCurrency field", function () {
         it("should return true when comma is present", function() {
             expect(field.compareValuesLocale("1,200.00","1200.00")).toBeTruthy();
         });
+        it("should return true when comma is present on second var", function() {
+            expect(field.compareValuesLocale("1200.00","1,200.00")).toBeTruthy();
+        });
         it("should return false when not equal", function() {
             expect(field.compareValuesLocale("1200.00","1200.01")).toBeFalsy();
         });
