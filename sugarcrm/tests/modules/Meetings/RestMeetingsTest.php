@@ -78,6 +78,35 @@ class RestMeetingsTest extends RestTestBase {
     /**
      * @group rest
      */
+    public function testCreateNoContact() {
+        $restReply = $this->_restCall("Meetings/",
+                                      json_encode(array(
+                                                      'name'=>'UNIT TEST - Meeting with no minutes', 
+                                                      "deleted" => "0",
+                                                      "status" => "Planned",
+                                                      "reminder_time" => -1,
+                                                      "email_reminder_time" => -1,
+                                                      "email_reminder_sent" => 0,
+                                                      "repeat_interval" => 1,
+                                                      "assigned_user_id" => $GLOBALS['current_user']->id,
+                                                      "team_name" => array(array("id" => 1,"name" => "Global", "primary" => true)),
+                                                      "date_start" => "2012-12-06T00:00:00.000Z",
+                                                      "direction" => "Inbound",
+                                                      "duration_hours" => "23"
+                                                      )),
+                                      'POST');
+        $this->assertTrue(isset($restReply['reply']['id']),
+                          "An Meeting was not created (or if it was, the ID was not returned)");
+
+        $this->meeting_id = $restReply['reply']['id'];
+
+        $this->assertEquals('',$restReply['reply']['contact_name'],
+                            'The contact name was not correct');
+    }    
+
+    /**
+     * @group rest
+     */
     public function testCreateWithParentContact() {
         $contact = BeanFactory::newBean('Contacts');
         $contact->first_name = "UNIT";
