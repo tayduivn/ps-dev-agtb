@@ -162,10 +162,9 @@ $dictionary['Opportunity'] = array('table' => 'opportunities','audited'=>true, '
     'audited'=>true,
     'comment' => 'Formatted amount of the opportunity',
     'studio' => array(
-//BEGIN SUGARCRM flav=pro ONLY
+        'wirelesslistview'=>false,
         'wirelesseditview'=>false,
         'wirelessdetailview'=>false,
-//END SUGARCRM flav=pro ONLY
         'editview'=>false,
         'detailview'=>false,
         'quickcreate'=>false,
@@ -226,7 +225,7 @@ $dictionary['Opportunity'] = array('table' => 'opportunities','audited'=>true, '
     'date_closed_timestamp' =>
     array (
         'name' => 'date_closed_timestamp',
-        'vname' => 'LBL_DATE_CLOSED',
+        'vname' => 'LBL_DATE_CLOSED_TIMESTAMP',
         'type' => 'int',
         'studio' => false
     ),

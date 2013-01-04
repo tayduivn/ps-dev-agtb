@@ -282,7 +282,6 @@
                 array(
                     'portal2/error.js'               => 'portal2/portal.min.js',
                     'portal2/user.js'                => 'portal2/portal.min.js',
-                    'portal2/views/alert-view.js'    => 'portal2/portal.min.js',
                     'portal2/portal.js'              => 'portal2/portal.min.js',
                     'portal2/portal-ui.js'           => 'portal2/portal.min.js',
                     'include/javascript/jquery/jquery.popoverext.js'           => 'portal2/portal.min.js',
@@ -305,8 +304,6 @@
     $sidecar_forecasts['include/SugarCharts/Jit/js/Jit/jit.js'] = $cached_file;
     $sidecar_forecasts['include/SugarCharts/Jit/js/sugarCharts.js'] = $cached_file;
     $sidecar_forecasts['modules/Forecasts/clients/base/helper/hbt-helpers.js'] = $cached_file;
-    $sidecar_forecasts['modules/Forecasts/clients/base/lib/ClickToEdit.js'] = $cached_file;
-    $sidecar_forecasts['modules/Forecasts/clients/base/lib/BucketGridEnum.js'] = $cached_file;
     $sidecar_forecasts['modules/Forecasts/clients/base/lib/ForecastsUtils.js'] = $cached_file;
     $sidecar_forecasts['modules/Forecasts/tpls/SidecarView.js'] = $cached_file;
     // Forecast and portal2 should include same styleguide bootstrap files

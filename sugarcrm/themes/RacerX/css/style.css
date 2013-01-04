@@ -3692,7 +3692,6 @@ button, input[type=submit], input[type=reset], input[type=button], .button, .but
     line-height: 18px;
     color: #262627;
     font-weight: 500;
-    font-family: 'Helvetica Neue';
     text-align: center;
     text-shadow: 0 1px 0 rgba(255, 255, 255, 0.75);
     vertical-align: middle;
@@ -7625,7 +7624,6 @@ div.hoverscroll div.fixed-arrow.bottom {
     line-height: 18px;
     color: #262627;
     font-weight: 500;
-    font-family: 'Helvetica Neue';
     text-align: center;
     text-shadow: 0 1px 0 rgba(255, 255, 255, 0.75);
     vertical-align: middle;
