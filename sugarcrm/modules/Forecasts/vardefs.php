@@ -462,7 +462,7 @@ $dictionary['Forecast'] = array('table' => 'forecasts'
 	array (
 		'name' => 'end_date',
     	'type' => 'date',
-		'source'=>'no-db',
+		'source'=>'non-db',
 		'table' => 'timeperiods',
   	),
 //timeperiod's name
