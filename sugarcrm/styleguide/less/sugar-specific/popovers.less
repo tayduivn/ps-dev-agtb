@@ -1,6 +1,6 @@
 .popover {
-  background-color: @grayDark;
-  width: 292px;
+ background-color: @grayDark;
+/*   width: 292px;*/
   padding: 2px;
   .close {
     position: absolute;
@@ -11,14 +11,20 @@
     color: @white !important;
   }
   &.right .arrow {
-    margin-top: -5px;
-    border-width: 5px 0 5px 5px;
-    border-right: 5px solid @black;
+    margin-top: -8px;
+    border-width: 8px 0 8px 5px;
+    border-right: 8px solid @black;
+    &::after{
+      margin-left:2px;
+    }
   }
   &.left .arrow {
-    margin-top: -5px;
-    border-width: 5px 5px 5px 0;
-    border-left: 5px solid @black;
+    margin-top: -8px;
+    border-width: 8px 5px 8px 0;
+    border-left: 8px solid @black;
+    &::after{
+      margin-right:2px;
+    }
   }
 }
 
