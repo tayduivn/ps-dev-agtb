@@ -59,6 +59,13 @@
                 self.$el.find(self.inputSelector).blur();
             } else {
                 // will generate error styles here, for now log to console
+                var langString = app.lang.get(self.def.label,'Forecasts'),
+                    hb = Handlebars.compile("{{str_format key module args}}"),
+                    args = [];
+
+                args = [langString];
+                self.errorMessage = hb({'key' : 'LBL_EDITABLE_INVALID', 'module' : 'Forecasts', 'args' : args});
+
                 self.showErrors();
                 self.$el.find(self.inputSelector).focus().select();
             }
@@ -179,18 +186,17 @@
      * @return {Boolean}
      */
     isValid: function (value) {
+
+        // trim off any whitespace
+        value = value.toString().trim();
+
         var ds = app.utils.regexEscape(app.user.getPreference('decimal_separator')) || '.',
             gs = app.utils.regexEscape(app.user.getPreference('number_grouping_separator')) || ',',
             // matches a valid positive decimal number
-            reg = new RegExp("^\\+?(\\d+|\\d{1,3}("+gs+"\\d{3})*)?("+ds+"\\d+)?\\%?$"),
-            hb = Handlebars.compile("{{str_format key module args}}"),
-            args = [];
+            reg = new RegExp("^\\+?(\\d+|\\d{1,3}("+gs+"\\d{3})*)?("+ds+"\\d+)?\\%?$");
 
         // always make sure that we have a string here, since match only works on strings
-        if (_.isNull(value.toString().match(reg))) {
-            var langString = app.lang.get(this.def.label,'Forecasts');
-            args = [langString];
-            this.errorMessage = hb({'key' : 'LBL_EDITABLE_INVALID', 'module' : 'Forecasts', 'args' : args});
+        if (value.length == 0 || _.isNull(value.toString().match(reg))) {
             return false;
         }
 
