@@ -21,7 +21,7 @@
 
 describe("The forecasts worksheet", function(){
 
-    var app, view, field, _renderClickToEditStub, _renderFieldStub, testMethodStub, testValue;
+    var app, view, field, _renderFieldStub, testMethodStub, testValue;
 
     beforeEach(function() {
         app = SugarTest.app;
@@ -56,9 +56,6 @@ describe("The forecasts worksheet", function(){
 
         // remove the window watcher event
         $(window).unbind("beforeunload");
-
-        var cte = SugarTest.loadFile("../modules/Forecasts/clients/base/lib", "ClickToEdit", "js", function(d) { return eval(d); });
-        var bge = SugarTest.loadFile("../modules/Forecasts/clients/base/lib", "BucketGridEnum", "js", function(d) { return eval(d); });
     });
 
     afterEach(function() {
@@ -66,120 +63,6 @@ describe("The forecasts worksheet", function(){
         view.unbindData();
     });
 
-    describe("clickToEdit field", function() {
-
-        beforeEach(function() {
-            testValue = 'testValue';
-            _renderClickToEditStub = sinon.stub(app.view, "ClickToEditField");
-            _renderFieldStub = sinon.stub(app.view.View.prototype, "_renderField");
-            field = {
-                viewName:'worksheet',
-                def:{
-                    clickToEdit:true
-                },
-                options : {},
-                model : {
-                    get : function(param) {
-                        return [testValue];
-                    }
-                }
-            };
-        });
-
-        afterEach(function(){
-            _renderClickToEditStub.restore();
-            _renderFieldStub.restore();
-            testMethodStub.restore();
-        })
-
-        describe("should render", function() {
-            beforeEach(function() {
-                view.isEditableWorksheet = true;
-                testMethodStub = sinon.stub(view, "isMyWorksheet", function() {
-                    return true;
-                });
-            });
-
-            afterEach(function() {
-                testMethodStub.restore();
-            });
-
-
-            it("has clickToEdit set to true in metadata and a user is viewing their own worksheet", function() {
-                view._renderField(field);
-                expect(_renderFieldStub).toHaveBeenCalled();
-                expect(_renderClickToEditStub).toHaveBeenCalled();
-            });
-        });
-
-        describe("should not render", function() {
-            beforeEach(function(){
-                testMethodStub = sinon.stub(view, "isMyWorksheet", function() {
-                    return true;
-                });
-            });
-
-            afterEach(function(){
-                testMethodStub.restore();
-            });
-
-            it("does not contain a value for clickToEdit in metadata", function() {
-                field = {
-                    viewName:'worksheet',
-                    def:{}
-                };
-                view._renderField(field);
-                expect(_renderFieldStub).toHaveBeenCalled();
-                expect(_renderClickToEditStub).not.toHaveBeenCalled();
-            });
-
-            it("has clickToEdit set to something other than true in metadata", function() {
-                field = {
-                    viewName:'worksheet',
-                    def:{
-                        clickToEdit: 'true'
-                    }
-                };
-                view._renderField(field);
-                expect(_renderFieldStub).toHaveBeenCalled();
-                expect(_renderClickToEditStub).not.toHaveBeenCalled();
-            });
-
-            it("has clickToEdit set to false in metadata", function() {
-                field = {
-                    viewName:'worksheet',
-                    def:{
-                        clickToEdit: false
-                    }
-                };
-                view._renderField(field);
-                expect(_renderFieldStub).toHaveBeenCalled();
-                expect(_renderClickToEditStub).not.toHaveBeenCalled();
-            });
-
-            it("is an edit view", function() {
-                field = {
-                    viewName:'edit',
-                    def:{
-                        clickToEdit: true
-                    }
-                };
-                view._renderField(field);
-                expect(_renderFieldStub).toHaveBeenCalled();
-                expect(_renderClickToEditStub).not.toHaveBeenCalled();
-            });
-
-            it("is a user not viewing their own worksheet (i.e. manager viewing a reportee)", function() {
-                testMethodStub.restore();
-                testMethodStub = sinon.stub(view, "isMyWorksheet", function() {
-                    return false;
-                });
-                view._renderField(field);
-                expect(_renderFieldStub).toHaveBeenCalled();
-                expect(_renderClickToEditStub).not.toHaveBeenCalled();
-            });
-        });
-    });
 
     describe("isMyWorksheet method", function() {
         beforeEach(function() {
