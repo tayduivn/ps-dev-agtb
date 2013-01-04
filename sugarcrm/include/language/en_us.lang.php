@@ -2664,6 +2664,7 @@ $app_strings = array (
     'LBL_SELECT_TEAMS_KEY' => 'Z',
     'LBL_SELECT_TEAMS_LABEL' => 'Add Team(s)',
     'LBL_SELECT_TEAMS_TITLE' => 'Add Teams(s)',
+    'LBL_SELECT_APPEND_TEAMS' => 'Append Team(s)',
     'LBL_BROWSE_DOCUMENTS_BUTTON_KEY' => 'B',
     'LBL_BROWSE_DOCUMENTS_BUTTON_LABEL' => 'Browse Documents',
     'LBL_BROWSE_DOCUMENTS_BUTTON_TITLE' => 'Browse Documents',
