@@ -161,8 +161,12 @@
                 minutes: '00'
             };
         }
-        dateValue  = this._getDatepickerValue();
-        model.set(fieldName, this._buildUnformatted(dateValue, hrsMins.hours, hrsMins.minutes), {silent: true});
+        dateValue = this._getDatepickerValue();
+        if(_.isNaN(Date.parse(dateValue))) {
+            model.set(fieldName, dateValue, hrsMins.hours, hrsMins.minutes, {silent: true});
+        } else {
+            model.set(fieldName, this._buildUnformatted(dateValue, hrsMins.hours, hrsMins.minutes), {silent: true});
+        }
     },
     _buildUnformatted: function(d, h, m) {
         var parsedDate = app.date.parse(d, this.usersDatePrefs);
