@@ -42,7 +42,7 @@ input[type="file"] {
 // Chrome on Linux and Mobile Safari need background-color
 select {
   background-color: @inputBackground;
-  border: inherit;
+  /*border: inherit; makes select boxes have sharp corners*/
 }
 
 input[type="image"] {
@@ -101,18 +101,6 @@ input[type="hidden"] {
 
 // Placeholder text gets special styles; can't be bundled together though for some reason
 .placeholder(@grayLight);
-
-//commit 54580: enhance error icons next to input fields, do not change size
-//Revert "54580: one more css fix"
-/*.input-prepend,
-.input-append {
-  margin-bottom: 5px;
-  input,
-  select,
-  .uneditable-input {
-    .border-radius(0 0 0 0);
-  }
-}*/
 
 .error .input-append > .add-on {
   position:absolute;
@@ -174,10 +162,7 @@ h1 input[type="text"] {
     background:transparent !important;
     margin-left:-26px;
     position:relative;
-    /*
-    top:0;
-    right:0;
-    */
+    font-size: @baseFontSize;
   }
   &.textarea,
   &.select,
@@ -185,22 +170,23 @@ h1 input[type="text"] {
   &.radio {
     padding-left:0;
       .add-on {
-        top:-0px;
-        right:0;
+        top: 1px;
+        right: 0;
         background:transparent !important;
-        border:none;
+        border: none;
       }
   }
   &.checkbox,
   &.radio {
     .add-on {
-      margin-left:0;
+      margin-left: 0;
+      padding: 0;
     }
   }
   &.select,
   &.textarea {
     .add-on {
-      position:absolute;
+      //position:absolute;
     }
   }
   &.widget {
@@ -228,6 +214,7 @@ h1 input[type="text"] {
 
 .control-group {
   margin-bottom:0;
+  /*this clear both is preventing two column. Needed for forms.html only. Remove*/
   clear: both;
   .btn-toolbar {
     margin: 0 0 0 5px !important;
@@ -342,7 +329,7 @@ h1 input[type="text"] {
       position: absolute;
       top: 0;
       right: 0px;
-      padding: 5px 7px 3px;
+      //padding: 5px 7px 3px;
       &.fourth {
         right: 108px;
       }
@@ -393,7 +380,7 @@ h1 input[type="text"] {
         position: absolute;
         top: 0;
         right: 0px;
-        padding: 5px 8px 3px;
+        //padding: 5px 8px 3px;
         &.fourth {
           right: 108px;
         }
