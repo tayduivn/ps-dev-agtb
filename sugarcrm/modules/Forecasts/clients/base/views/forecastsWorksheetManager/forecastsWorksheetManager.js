@@ -266,33 +266,23 @@
         if(this.showMe()) {
             var self = this,
                 saveCount = 0;
-
+            
+            /**
+             * If the sheet is dirty, save the dirty rows. Else, if the save is for a commit, and we have 
+             * draft models (things saved as draft), we need to resave those as committed (version 1). If neither
+             * of these conditions are true, then we need to fall through and signal that the save is complete so other
+             * actions listening for this can continue.
+             */
             if(this.isDirty()) {
                 totalToSave = self.dirtyModels.length;
                 
                 self.dirtyModels.each(function(model){
-                   //set properties on model to aid in save
-                    model.set({
-                        "draft" : (isDraft == true) ? 1 : 0,
-                        "timeperiod_id" : self.dirtyTimeperiod || self.timePeriod,
-                        "current_user" : self.dirtyUser.id || self.selectedUser.id
-                    }, {silent:true});                                     
-                    
-                    //set what url  is used for save
-                    model.url = self.url.split("?")[0] + "/" + model.get("id");
-                    
+                    self._worksheetSaveHelper(totalToSave, saveCount, model, isDraft, self.dirtyTimeperiod, self.dirtyUser.id);
+                                       
                     //add to draft structure so committing knows what to save as non-draft
                     if(isDraft == true){
                         self.draftModels.add(model, {merge: true});
-                    }                    
-                    
-                    model.save({}, {success: function() {
-                        saveCount++;
-                        //if this is the last save, go ahead and trigger the callback;
-                        if(totalToSave === saveCount) {
-                            self.context.forecasts.trigger('forecasts:worksheetSaved', totalToSave, 'mgr_worksheet', isDraft);
-                        }
-                    }});
+                    }
                 });
 
                 self.cleanUpDirtyModels();
@@ -300,20 +290,7 @@
                 totalToSave = self.draftModels.length;
                
                 self.draftModels.each(function(model){
-                    model.set({
-                        draft : 0,
-                        timeperiod_id : self.draftTimeperiod || self.timePeriod,
-                        current_user : self.draftUser.id || self.selectedUser.id
-                    }, {silent:true});   
-                    model.url = self.url.split("?")[0] + "/" + model.get("id");
-                    
-                    model.save({}, {success: function() {
-                        saveCount++;
-                        //if this is the last save, go ahead and trigger the callback;
-                        if(totalToSave === saveCount) {
-                            self.context.forecasts.trigger('forecasts:worksheetSaved', totalToSave, 'mgr_worksheet', isDraft);
-                        }
-                    }});
+                    self._worksheetSaveHelper(totalToSave, saveCount, model, false, self.draftTimeperiod, self.draftUser.id);
                 });
                 
                 //Need to clean up dirty models too as the save event above triggers a change event on the worksheet.
@@ -325,6 +302,27 @@
         }
 
         return totalToSave
+    },
+    
+    /**
+     * Helper function for worksheet save
+     */
+    _worksheetSaveHelper: function(totalToSave, saveCount, model, isDraft, timeperiod, userId){
+        var self = this;
+        model.set({
+            draft : (isDraft == true) ? 1 : 0,
+            timeperiod_id : timeperiod || self.timePeriod,
+            current_user : userId|| self.selectedUser.id
+        }, {silent:true});   
+        model.url = self.url.split("?")[0] + "/" + model.get("id");
+        
+        model.save({}, {success: function() {
+            saveCount++;
+            //if this is the last save, go ahead and trigger the callback;
+            if(totalToSave === saveCount) {
+                self.context.forecasts.trigger('forecasts:worksheetSaved', totalToSave, 'mgr_worksheet', isDraft);
+            }
+        }});
     },
 
     /**
