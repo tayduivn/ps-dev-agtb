@@ -134,6 +134,13 @@
         }
     },
 
+    /**
+     * compare two numeric values according to user locale
+     *
+     * @param val1
+     * @param val2
+     * @return boolean
+     */
     compareValuesLocale: function(val1, val2) {
         var ogVal = app.utils.formatNumber(
                 val1,
