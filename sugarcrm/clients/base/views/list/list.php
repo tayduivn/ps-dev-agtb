@@ -55,6 +55,18 @@ $viewdefs['base']['view']['list'] = array(
                     }'
                 ),
             ),
+            array(
+                'name' => 'export_button',
+                'type' => 'button',
+                'label' => 'LBL_EXPORT',
+                'value' => 'export',
+                'primary' => true,
+                'events' => array(
+                    'click' => 'function(e){
+                    this.view.layout.trigger("list:massexport:fire");
+                    }'
+                ),
+            ),
         ),
     ),
     'rowactions' => array(

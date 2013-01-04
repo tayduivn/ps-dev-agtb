@@ -75,6 +75,8 @@
         this.layout.on("list:massupdate:fire", this.show, this);
         this.layout.off("list:massdelete:fire", null, this);
         this.layout.on("list:massdelete:fire", this.confirmDelete, this);
+        this.layout.off("list:massexport:fire", null, this);
+        this.layout.on("list:massexport:fire", this.massExport, this);
 
         if(this.fields.length == 0) {
             this.hide();
@@ -204,6 +206,23 @@
                 }
             }
         });
+    },
+    massExport: function(evt) {
+        this.hide();
+        var massExport = this.context.get("mass_collection");
+        if (massExport) {
+            app.alert.show('massexport_loading', {level: 'process', title: app.lang.getAppString('LBL_PORTAL_LOADING')});
+            app.api.export({
+                    module: this.module,
+                    uid: massExport.pluck('id')
+                },
+                this.$el,
+                {
+                    complete: function(data) {
+                        app.alert.dismiss('massexport_loading');
+                    }
+                });
+        }
     },
     save: function() {
         var massUpdate = this.getMassUpdateModel(this.module),
