@@ -463,11 +463,6 @@ class ForecastsTimePeriodTest extends Sugar_PHPUnit_Framework_TestCase
             array(0, 4, 12, TimePeriod::QUARTER_TYPE, TimePeriod::MONTH_TYPE, 1, 1, '2 year', 8, 24, 'forward', 10, 1, 12, 1),
             array(0, 12, 6, TimePeriod::QUARTER_TYPE, TimePeriod::MONTH_TYPE, 1, 1, '0 year', 0, 0, 'forward', 10, 1, 12, 1),
 
-            //Simulating upgrades
-            //No backward TimePeriods will be created
-            array(1, 2, 4, TimePeriod::ANNUAL_TYPE, TimePeriod::QUARTER_TYPE, 1, 1, '0 year', 0, 0, 'backward'),
-            array(1, 2, 4, TimePeriod::QUARTER_TYPE, TimePeriod::MONTH_TYPE, 1, 1, '0 year', 0, 0, 'backward'),
-
             //Forward TimePeriods will be created
             array(1, 2, 2, TimePeriod::ANNUAL_TYPE, TimePeriod::QUARTER_TYPE, 1, 1, '2 year', 2, 8, 'forward'),
             array(1, 2, 4, TimePeriod::QUARTER_TYPE, TimePeriod::MONTH_TYPE, 1, 1, '1 year', 4, 12, 'forward'),
@@ -562,8 +557,8 @@ class ForecastsTimePeriodTest extends Sugar_PHPUnit_Framework_TestCase
      *
      */
     public function testCreateTimePeriodsForUpgradeProvider() {
-        return array(
 
+        return array(
             //This data set simulates case where the start date specified is the same as current date
             array(0, TimePeriod::ANNUAL_TYPE, TimePeriod::QUARTER_TYPE, TimeDate::getInstance()->getNow()->modify('first day of january'), 2, TimeDate::getInstance()->getNow()->modify('first day of january'), 14, TimeDate::getInstance()->getNow()->modify('first day of october'), TimeDate::getInstance()->getNow()->modify('last day of december')),
             array(0, TimePeriod::ANNUAL_TYPE, TimePeriod::QUARTER_TYPE, TimeDate::getInstance()->getNow()->modify('first day of january'), 4, TimeDate::getInstance()->getNow()->modify('first day of january'), 24, TimeDate::getInstance()->getNow()->modify('first day of october'), TimeDate::getInstance()->getNow()->modify('last day of december')),
@@ -587,6 +582,31 @@ class ForecastsTimePeriodTest extends Sugar_PHPUnit_Framework_TestCase
             array(0, TimePeriod::QUARTER_TYPE, TimePeriod::MONTH_TYPE, TimeDate::getInstance()->getNow()->modify('first day of march'), 4, TimeDate::getInstance()->getNow()->modify('first day of february'), 19, TimeDate::getInstance()->getNow()->modify('first day of may'), TimeDate::getInstance()->getNow()->modify('last day of may')),
             array(10, TimePeriod::QUARTER_TYPE, TimePeriod::MONTH_TYPE, TimeDate::getInstance()->getNow()->modify('first day of march'), 2, TimeDate::getInstance()->getNow()->modify('first day of february'), 11, TimeDate::getInstance()->getNow()->modify('first day of november'), TimeDate::getInstance()->getNow()->modify('last day of november')),
             array(18, TimePeriod::QUARTER_TYPE, TimePeriod::MONTH_TYPE, TimeDate::getInstance()->getNow()->modify('first day of march'), 4, TimeDate::getInstance()->getNow()->modify('first day of february'), 19, TimeDate::getInstance()->getNow()->modify('+1 year')->modify('first day of may'), TimeDate::getInstance()->getNow()->modify('+1 year')->modify('last day of may')),
+
+            //This data set simulates case where the start date specified is before current date and there are no existing current TimePeriods for the current date
+            array(0, TimePeriod::ANNUAL_TYPE, TimePeriod::QUARTER_TYPE, TimeDate::getInstance()->getNow()->modify('+2 year')->modify('first day of january'), 2, TimeDate::getInstance()->getNow()->modify('+2 year')->modify('first day of january')->modify('+1 day'), 14, TimeDate::getInstance()->getNow()->modify('+2 year')->modify('first day of october'), TimeDate::getInstance()->getNow()->modify('+2 year')->modify('last day of december')),
+
+            //This data set simulates upgrades using variable TimePeriods so that we are not bound to the TimePeriods created in the setUp method
+            array(0, TimePeriod::ANNUAL_TYPE, TimePeriod::QUARTER_TYPE, TimeDate::getInstance()->fromDbDate('2013-01-01'), 2, TimeDate::getInstance()->fromDbDate('2013-01-02'), 14, TimeDate::getInstance()->fromDbDate('2013-10-01'), TimeDate::getInstance()->fromDbDate('2013-12-31'),
+                array("INSERT into timeperiods (id, name, start_date, end_date, parent_id, deleted) values ('abc1', 'Q4 2013', '2013-10-01', '2013-12-31', 'abc5', 0)",
+                      "INSERT into timeperiods (id, name, start_date, end_date, parent_id, deleted) values ('abc2', 'Q3 2013', '2013-07-01', '2013-09-31', 'abc5', 0)",
+                      "INSERT into timeperiods (id, name, start_date, end_date, parent_id, deleted) values ('abc3', 'Q2 2013', '2013-04-01', '2013-06-31', 'abc5', 0)",
+                      "INSERT into timeperiods (id, name, start_date, end_date, deleted) values ('abc5', 'Year 2013', '2013-10-01', '2013-12-31', 0)",
+                      "INSERT into timeperiods (id, name, start_date, end_date, parent_id, deleted) values ('abc4', 'Q1 2013', '2013-01-01', '2013-03-31', 'abc5', 0)"
+                )
+            ),
+
+
+            array(0, TimePeriod::QUARTER_TYPE, TimePeriod::MONTH_TYPE, TimeDate::getInstance()->fromDbDate('2013-01-01'), 2, TimeDate::getInstance()->fromDbDate('2013-01-02'), 9, TimeDate::getInstance()->fromDbDate('2013-01-01'), TimeDate::getInstance()->fromDbDate('2013-03-31'),
+                array("INSERT into timeperiods (id, name, start_date, end_date, parent_id, deleted) values ('abc1', 'Q4 2013', '2013-10-01', '2013-12-31', 'abc5', 0)",
+                      "INSERT into timeperiods (id, name, start_date, end_date, parent_id, deleted) values ('abc2', 'Q3 2013', '2013-07-01', '2013-09-31', 'abc5', 0)",
+                      "INSERT into timeperiods (id, name, start_date, end_date, parent_id, deleted) values ('abc3', 'Q2 2013', '2013-04-01', '2013-06-31', 'abc5', 0)",
+                      "INSERT into timeperiods (id, name, start_date, end_date, deleted) values ('abc5', 'Year 2013', '2013-10-01', '2013-12-31', 0)",
+                      "INSERT into timeperiods (id, name, start_date, end_date, parent_id, deleted) values ('abc4', 'Q1 2013', '2013-01-01', '2013-03-31', 'abc5', 0)"
+                )
+            ),
+
+
         );
 
     }
@@ -606,7 +626,7 @@ class ForecastsTimePeriodTest extends Sugar_PHPUnit_Framework_TestCase
      * @param $expectedTimePeriods int value of the expected TimePeriods created
      * @param $startDateFirstCreated TimeDate instance of the start date of first created TimePeriod
      * @param $endDateFirstCreated TimeDate instance of the end date of first created TimePeriod
-     *
+     * @param $overrideEntries
      * @outputBuffering disabled
      */
     public function testCreateTimePeriodsForUpgrade(
@@ -618,8 +638,21 @@ class ForecastsTimePeriodTest extends Sugar_PHPUnit_Framework_TestCase
         $currentDate,
         $expectedTimePeriods,
         $startDateFirstCreated,
-        $endDateFirstCreated)
+        $endDateFirstCreated,
+        $overrideEntries = array())
     {
+
+        if(!empty($overrideEntries)) {
+            $db = DBManagerFactory::getInstance();
+            //Get rid of all non-deleted timeperiods
+            $db->query("DELETE FROM timeperiods WHERE deleted = 0");
+            foreach($overrideEntries as $entry) {
+                $db->query($entry);
+            }
+
+            TimePeriod::$currentId = array();
+        }
+
 
         $currentSettings = array();
         $currentSettings['timeperiod_interval'] = $interval;

@@ -494,7 +494,7 @@ class TimePeriod extends SugarBean {
        $currentDate = $timedate->getNow();
 
        $db = DBManagerFactory::getInstance();
-       $count = $db->getOne('SELECT count(id) FROM timeperiods WHERE parent_id IS NULL deleted = 0');
+       $count = $db->getOne('SELECT count(id) FROM timeperiods WHERE parent_id IS NULL AND deleted = 0');
 
        $isUpgrade = !empty($currentSettings['is_upgrade']);
 
@@ -652,8 +652,12 @@ class TimePeriod extends SugarBean {
            $previousLeafTimePeriodStartDate = $previousLeafTimePeriodStartDate->modify($leaf->previous_date_modifier);
         }
 
+        //Remove the existing current timeperiod entry and re-create it with the selected leaf type
+        $db->query(sprintf("DELETE FROM timeperiods WHERE id = %s", $db->quoted($currentTimePeriod->id)));
+
         //The current TimePeriod end date is now the last unadjusted previousLeafTimePeriodStartDate value
         $newCurrentTimePeriod = TimePeriod::getByType($leaf->type);
+        $newCurrentTimePeriod->new_with_id = true;
         $newCurrentTimePeriod->id = $currentTimePeriod->id;
         $newCurrentTimePeriod->setStartDate($currentTimePeriod->start_date);
         $newCurrentTimePeriod->end_date = $previousLeafTimePeriodStartDate->modify($leaf->next_date_modifier)->modify('-1 day')->asDbDate();
