@@ -91,12 +91,12 @@ if(!empty($_REQUEST['demo'])){
         callback: function(app) {
 
             app.start();
+
             app.api.me("read", null, null, {
                 success: function(data) {
                     if (data.current_user) {
-                        app.user._reset(data ? data.current_user : null);
+                        app.user.set(data.current_user);
                     }
-                    //callback(null, data);
                 }
             });
 

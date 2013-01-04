@@ -44,6 +44,9 @@ class FilterPanelLayout
         } else {
             $filteredLayout = MetaDataManager::getLayout("GenericLayout", array("type" => "filterpanel"));
 
+            // Add a filter view
+            $filteredLayout->push(array("view" => "filter"));
+
             if (isset($tab["name"])) {
                 $filteredLayout->set("name", $tab["name"]);
             }

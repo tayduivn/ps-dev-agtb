@@ -26,7 +26,7 @@
 
     renderHtml: function() {
         // Enable toggles
-        this.toggles = [];
+            this.toggles = [];
         _.each(this.options.meta.components, function(component) {
             var toggle;
             if(component.view) {
@@ -42,8 +42,14 @@
         this.$el.html(this.template(this));
     },
 
-    _placeComponent: function(component) {
-        this.$el.append(component.el);
+    _placeComponent: function(component, def) {
+        // Specifically target the filter view to render on the toolbar.
+        if (def.view == "filter") {
+            this.$(".filter-view").append(component.el);
+            return;
+        } else {
+            this.$el.append(component.el);
+        }
 
         if (this.first) {
             this.first = false;
