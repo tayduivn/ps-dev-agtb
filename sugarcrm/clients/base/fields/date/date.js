@@ -162,11 +162,21 @@
             };
         }
         dateValue = this._getDatepickerValue();
-        if(_.isNaN(Date.parse(dateValue))) {
-            model.set(fieldName, dateValue, hrsMins.hours, hrsMins.minutes, {silent: true});
-        } else {
+        if (this._verifyDateString(dateValue)) {
             model.set(fieldName, this._buildUnformatted(dateValue, hrsMins.hours, hrsMins.minutes), {silent: true});
+        } else {
+            model.set(fieldName, dateValue, hrsMins.hours, hrsMins.minutes, {silent: true});
         }
+    },
+    _verifyDateString: function(value) {
+        // First try generic date parse (since we might have an ISO)
+        if(_.isNaN(Date.parse(value))) {
+            // Safari chokes on '.', '-', (both supported by the datepicker), so try with those replaced
+            if(_.isNaN(Date.parse(value.replace(/[\.\-]/g, '/')))) {
+                return false;
+            }
+        }
+        return true;
     },
     _buildUnformatted: function(d, h, m) {
         var parsedDate = app.date.parse(d, this.usersDatePrefs);

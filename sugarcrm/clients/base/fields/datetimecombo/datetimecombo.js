@@ -83,7 +83,7 @@
         } else {
             // If the date value in our datebox is invalid, leave it alone and return. It will
             // get handled upstream by sidecar (which uniformly handles field validation errors).
-            if(_.isNaN(Date.parse(value))) {
+            if (!this._verifyDateString(value)) {
                 return value;
             }
             // In case ISO 8601 get it back to js native date which date.format understands
