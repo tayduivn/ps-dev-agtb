@@ -1,5 +1,5 @@
 <table class="add-to-target-table table table-striped filter">
-  <tr>
+  <tr class="add-to-target-list-header">
     <td style="border-bottom:1px solid #ddd">
       <strong>Add to target list</strong>
 
@@ -82,6 +82,9 @@
 <script>
 
   $(document).ready(function() {
+
+    $('tr.add-to-target-list-header').remove();
+
     $('.chzn-select').chosen({ disable_search_threshold: 5 });
 
     $('.add-to-target-table-duplicates').dataTable({
@@ -107,6 +110,7 @@
       throwMessage('<strong>Success!</strong> You successfully updated target list', 'success', true);
       $('table.add-to-target-table').remove();
     });
+
 
     $('body').on('click', '.create-a-new-target-list', function(){
       $('.side-pane.active .howto').remove();
