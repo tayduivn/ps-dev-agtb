@@ -27,8 +27,6 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
-require_once('include/DuplicateCheck/DuplicateCheckFactory.php');
-
 class DuplicateCheckApi extends SugarApi
 {
     public function registerApiRest()
@@ -53,10 +51,26 @@ class DuplicateCheckApi extends SugarApi
      */
     function checkForDuplicates(ServiceBase $api, array $args)
     {
-        //retrieve the correct duplicate check service
-        $dupeCheckService = DuplicateCheckFactory::getDuplicateCheckService();
+        //create a new bean & check ACLs
+        $bean = BeanFactory::newBean($args['module']);
+        if (!$bean->ACLAccess('read')) {
+            throw new SugarApiExceptionNotAuthorized('No access to read records for module: '.$args['module']);
+        }
 
-        //invoke the duplicate check service
-        return $dupeCheckService->findDuplicates($args['module'], $args);
+        //populate bean
+        $errors = ApiHelper::getHelper($api,$bean)->populateFromApi($bean,$args);
+        if ( $errors !== true ) {
+            throw new SugarApiExceptionInvalidParameter('There were validation errors on the submitted data. Record was not saved.');
+        }
+
+        //retrieve possible duplicates
+        $results = $bean->findDuplicates();
+
+        if ($results) {
+            return $results;
+        } else {
+            return array();
+        }
+
     }
 }

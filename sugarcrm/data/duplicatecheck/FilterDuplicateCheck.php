@@ -28,54 +28,50 @@ if (!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
-require_once('include/DuplicateCheck/IDuplicateCheck.php');
 require_once('clients/base/api/FilterApi.php');
 
 /**
  * This method of duplicate check passes a configurable set of filters off to the Filter API to find duplicates.
  */
-class FilterDuplicateCheck implements IDuplicateCheck
+class FilterDuplicateCheck extends DuplicateCheckStrategy
 {
     const DUPE_CHECK_RANK = 'duplicate_check_rank';
     const FIELD_PLACEHOLDER = '$';
     const FILTER_QUERY_LIMIT = 20;
+
+    var $filterTemplate = array();
+    var $rankingFields = array();
+
+    /**
+     * Parses out the duplicate check filter and rankings into protected variables
+     *
+     * @param $metadata
+     */
+    protected function setMetadata($metadata)
+    {
+        $this->filterTemplate = $metadata['filter_template'];
+        $this->rankingFields = $metadata['ranking_fields'];
+    }
 
     /**
      * Finds possible duplicate records for a given set of field data.
      *
      * @access public
      */
-    public function findDuplicates($module, $fieldData)
+    public function findDuplicates()
     {
         //build filter to hand off to the FilterApi
-        $dupeCheckMetadata = $this->retrieveDupeCheckMetadata($module);
-        $dupeCheckFilterTemplate = $dupeCheckMetadata['filter_template'];
-        $filter = $this->buildDupeCheckFilter($dupeCheckFilterTemplate, $fieldData);
-        if (!empty($fieldData['id'])) {
-            $filter = $this->addFilterForEdits($filter[0], $fieldData['id']);
+        $filter = $this->buildDupeCheckFilter($this->filterTemplate);
+        if (!empty($this->bean->id)) {
+            $filter = $this->addFilterForEdits($filter[0], $this->bean->id);
         }
 
-        $duplicates = $this->callFilterApi($filter, $module);
+        $duplicates = $this->callFilterApi($filter);
 
         //rank the duplicates found
-        $rankingFields = $dupeCheckMetadata['ranking_fields'];
-        $duplicates = $this->rankAndSortDuplicates($duplicates, $rankingFields, $fieldData);
+        $duplicates = $this->rankAndSortDuplicates($duplicates);
 
         return $duplicates;
-    }
-
-    /**
-     * Retrieve the filter and ranking metadata from the vardef
-     *
-     * @param $moduleName
-     * @return array
-     */
-    protected function retrieveDupeCheckMetadata($moduleName)
-    {
-        global $current_user;
-        $mm = new MetaDataManager($current_user);
-        $varDef = $mm->getVarDef($moduleName);
-        return $varDef['duplicate_check'];
     }
 
     /**
@@ -83,21 +79,20 @@ class FilterDuplicateCheck implements IDuplicateCheck
      * Based on the filter template in the vardef
      *
      * @param array $dupeCheckFilterTemplate
-     * @param array $fieldData
      * @return array
      */
-    protected function buildDupeCheckFilter($dupeCheckFilterTemplate, $fieldData)
+    protected function buildDupeCheckFilter($dupeCheckFilterTemplate)
     {
         foreach ($dupeCheckFilterTemplate as &$filterDef) {
             foreach ($filterDef as $field => &$filter) {
                 if ($field == '$or' || $field == '$and') {
-                    $filter = $this->buildDupeCheckFilter($filter,$fieldData);
+                    $filter = $this->buildDupeCheckFilter($filter);
                 } else {
                     foreach ($filter as $op => &$value) {
                         $inField = $this->getIncomingFieldFromPlaceholder($value);
                         if ($inField !== false) {
-                            if (isset($fieldData[$inField]) && !empty($fieldData[$inField])) {
-                                $value = $fieldData[$inField];
+                            if (isset($this->bean->$inField) && !empty($this->bean->$inField)) {
+                                $value = $this->bean->$inField;
                             } else {
                                 unset($filterDef[$inField]);
                             }
@@ -141,14 +136,14 @@ class FilterDuplicateCheck implements IDuplicateCheck
         return false;
     }
 
-    protected function callFilterApi($filter, $module)
+    protected function callFilterApi($filter)
     {
         // call filter to get data
         $filterApi = new FilterApi();
         $api = new RestService();
         $filterArgs = array(
             'filter' => $filter,
-            'module' => $module,
+            'module' => $this->bean->module_name,
             'max_num' => self::FILTER_QUERY_LIMIT,
         );
         return $filterApi->filterList($api, $filterArgs);
@@ -158,24 +153,22 @@ class FilterDuplicateCheck implements IDuplicateCheck
      * Rank the duplicates returned from the Filter API based on the ranking field metadata from the vardef
      *
      * @param array $duplicates
-     * @param array $rankingFields
-     * @param array $fieldData
      * @return array
      */
-    protected function rankAndSortDuplicates($results, $rankingFields, $fieldData)
+    protected function rankAndSortDuplicates($results)
     {
         $duplicates = $results['records'];
         //calculate rank of each duplicate based on rank field metadata
-        $startingFieldWeight = count($rankingFields);
+        $startingFieldWeight = count($this->rankingFields);
         foreach ($duplicates as &$duplicate) {
             $rank = 0;
             $fieldWeight = $startingFieldWeight;
-            foreach ($rankingFields as $rankingField) {
+            foreach ($this->rankingFields as $rankingField) {
                 $inFieldName = $rankingField['in_field_name'];
                 $dupeFieldName = $rankingField['dupe_field_name'];
                 //if ranking field is on the dupe and on the field data passed to the api...
-                if (isset($fieldData[$inFieldName]) && isset($duplicate[$dupeFieldName])) {
-                    $rank += $this->calculateFieldMatchQuality($fieldData[$inFieldName], $duplicate[$dupeFieldName], $fieldWeight);
+                if (isset($this->bean->$inFieldName) && isset($duplicate[$dupeFieldName])) {
+                    $rank += $this->calculateFieldMatchQuality($this->bean->$inFieldName, $duplicate[$dupeFieldName], $fieldWeight);
                 }
                 $fieldWeight--;
             }

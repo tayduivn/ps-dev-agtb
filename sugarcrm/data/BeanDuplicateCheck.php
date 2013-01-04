@@ -29,17 +29,41 @@ if (!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  ********************************************************************************/
 
 /**
- * This defines the basic interface for duplicate check services.
- *
- * @interface
+ * Bean duplicate check manager
  */
-interface IDuplicateCheck
+class BeanDuplicateCheck
 {
     /**
-     * Finds possible duplicate records for a given set of field data.
-     *
-     * @abstract
-     * @access public
+     * Strategy for performing dupe check for this bean
+     * @var DuplicateCheckStrategy
      */
-    public function findDuplicates($module, $fieldData);
+    protected $strategy = false;
+
+    /**
+     * @param SugarBean $bean
+     * @param array $metadata
+     */
+    public function __construct($bean, $metadata)
+    {
+        if (count($metadata) !== 1) return; //force only one strategy
+
+        reset($metadata);
+        $dupe_check_class = key($metadata);
+        $this->strategy = new $dupe_check_class($bean, $metadata[$dupe_check_class]);
+    }
+
+    /**
+     * Ask the strategy for the possible duplicates
+     *
+     * @return array
+     */
+    public function findDuplicates()
+    {
+        if ($this->strategy) {
+            return $this->strategy->findDuplicates();
+        } else {
+            return null;
+        }
+
+    }
 }

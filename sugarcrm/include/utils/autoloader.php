@@ -81,6 +81,7 @@ class SugarAutoLoader
 	 */
 	public static $dirMap = array(
 	    "data/visibility/",
+	    "data/duplicatecheck/",
 	    "include/SugarSearchEngine/",
 	    "include/",
 	);

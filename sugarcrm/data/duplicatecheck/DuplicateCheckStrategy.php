@@ -29,19 +29,40 @@ if (!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  ********************************************************************************/
 
 /**
- * Factory to create duplicate check services.
+ * Base class for duplicate check strategy implementations
+ * @abstract
  */
-class DuplicateCheckFactory
+abstract class DuplicateCheckStrategy
 {
     /**
-     * Currently this only returns one duplicate check service, but in the future we can plug in multiple
-     * duplicate check implementations based on an admin configuration.
-     *
-     * @return IDuplicateCheck A duplicate check service object.
+     * Parent bean
+     * @var SugarBean
      */
-    public static function getDuplicateCheckService()
+    protected $bean;
+
+    /**
+     * @param SugarBean $bean
+     * @param array $metadata
+     */
+    public function __construct($bean, $metadata)
     {
-        require_once('include/DuplicateCheck/FilterDuplicateCheck.php');
-        return new FilterDuplicateCheck();
+        $this->bean = $bean;
+        $this->setMetadata($metadata);
     }
+
+    /**
+     * Parse the provided metadata into appropriate protected properties
+     *
+     * @abstract
+     * @access protected
+     */
+    abstract protected function setMetadata($metadata);
+
+    /**
+     * Finds possible duplicate records for a given set of field data.
+     *
+     * @abstract
+     * @access public
+     */
+    abstract public function findDuplicates();
 }

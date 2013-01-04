@@ -259,12 +259,6 @@ class MetaDataManager {
             if (!isset($data['relationships'])) {
                 $data['relationships'] = array();
             }
-            if (!isset($data['duplicate_check'])) {
-                $data['duplicate_check'] = array(
-                    'filter_template' => array(),
-                    'ranking_fields' => array()
-                );
-            }
 
             return $data;
         }
