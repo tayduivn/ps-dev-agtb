@@ -160,12 +160,16 @@ class Contact extends Person {
 	}
 
 	public function save($check_notify = FALSE) {
-		$this->sync_contact = (bool)$this->sync_contact;
-		if($this->sync_contact == true) {
-			$this->setUserContactsUserId($GLOBALS['current_user']->id);
+		if(isset($this->sync_contact)) {
+			$this->sync_contact = (bool)$this->sync_contact;
+			if($this->sync_contact == true) {
+				$this->setUserContactsUserId($GLOBALS['current_user']->id);
+			}
+			elseif(!empty($this->contacts_users_id) && $this->sync_contact == false) {
+				$this->removeUserContactsUserId($GLOBALS['current_user']->id);
+			}
+
 		}
-		// if they want to remove a user they will need to do this with the removeUserContactsUserId method, 
-		// doing so within the save causes sync'ing issues 
 		return parent::save($check_notify);
 	}
 
@@ -187,7 +191,10 @@ class Contact extends Person {
 	 * @param type string guid 
 	 */
 	public function setUserContactsUserId($user_id) {
-		$this->contacts_users_id = $user_id;
+		if($this->contacts_users_id != $user_id) {
+			$this->contacts_users_id = $user_id;
+			$this->sync_contact = true;
+		}
 	}
 
 	/**
@@ -200,6 +207,7 @@ class Contact extends Person {
 		}
 		$this->contacts_users_id = null;
 		$this->user_sync->delete($this->id, $user_id);
+		$this->sync_contact = false;
 	}
 
 	function add_list_count_joins(&$query, $where)
