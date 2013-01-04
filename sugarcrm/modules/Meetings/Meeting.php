@@ -263,7 +263,7 @@ class Meeting extends SugarBean {
             }
 	    }
 	    elseif ( $this->parent_type == 'Leads' ) {
-            if ( is_array($this->leads_arr) ) {
+            if ( isset($this->leads_arr) && is_array($this->leads_arr) ) {
                 $this->leads_arr[] = $this->parent_id;
             }
 	        $this->load_relationship('leads');
