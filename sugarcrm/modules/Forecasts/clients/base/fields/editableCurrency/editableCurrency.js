@@ -128,12 +128,35 @@
             this.$el.find(this.inputSelector).blur();
         } else if (evt.which == 13 || evt.which == 9) {
             // blur if value is unchanged
-            var ogVal = this.value,
-                ngVal = this.$el.find(this.inputSelector).val();
-            if (_.isEqual(ogVal, ngVal)) {
+            if(this.compareValuesLocale(app.currency.unformatAmountLocale(this.value), this.$el.find(this.inputSelector).val())) {
                 this.$el.find(this.inputSelector).blur();
             }
         }
+    },
+
+    /**
+     * compare two numeric values according to user locale
+     *
+     * @param val1
+     * @param val2
+     * @return boolean
+     */
+    compareValuesLocale: function(val1, val2) {
+        var ogVal = app.utils.formatNumber(
+                app.utils.unformatNumberStringLocale(val1),
+                app.user.getPreference('decimal_precision'),
+                app.user.getPreference('decimal_precision'),
+                '',
+                app.user.getPreference('decimal_separator')
+            ),
+            ngVal = app.utils.formatNumber(
+                app.utils.unformatNumberStringLocale(val2),
+                app.user.getPreference('decimal_precision'),
+                app.user.getPreference('decimal_precision'),
+                '',
+                app.user.getPreference('decimal_separator')
+            );
+        return _.isEqual(ogVal, ngVal);
     },
 
     /**
