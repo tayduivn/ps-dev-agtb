@@ -469,16 +469,6 @@ function handleSave($prefix, $redirect=true, $useRequired=false){
 			ACLController::displayNoAccess(true);
 			sugar_cleanup(true);
 	}
-	if($_REQUEST['action'] != 'BusinessCard' && $_REQUEST['action'] != 'ConvertLead' && $_REQUEST['action'] != 'ConvertProspect')
-	{
-
-		if (!empty($_POST[$prefix.'sync_contact']) || $focus->setSyncContact()){
-			 $focus->setUserContactsUserId($current_user->id);
-		}
-		else{
-			$focus->removeUserContactsUserId($current_user->id);
-		}
-	}
 
 	if (isset($GLOBALS['check_notify'])) {
 		$check_notify = $GLOBALS['check_notify'];

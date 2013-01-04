@@ -160,12 +160,13 @@ class Contact extends Person {
 	}
 
 	public function save($check_notify = FALSE) {
-		if(isset($this->sync_contact)) {
+		// if sync contact exists, and contacts_user_id is empty we want to populate it
+		if(isset($this->sync_contact) && empty($this->contacts_users_id)) {
 			$this->sync_contact = (bool)$this->sync_contact;
 			if($this->sync_contact == true) {
 				$this->setUserContactsUserId($GLOBALS['current_user']->id);
 			}
-			elseif(!empty($this->contacts_users_id) && $this->sync_contact == false) {
+			elseif($this->sync_contact == false) {
 				$this->removeUserContactsUserId($GLOBALS['current_user']->id);
 			}
 
