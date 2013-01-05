@@ -440,6 +440,5 @@ GROUP BY u.user_name";
 
         $seed->setWorksheetArgs($this->getArgs());
         $seed->save();
-        return $seed->id;
     }
 }

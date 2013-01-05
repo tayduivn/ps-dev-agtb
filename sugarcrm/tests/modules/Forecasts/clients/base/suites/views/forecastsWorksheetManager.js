@@ -26,13 +26,43 @@ describe("The forecasts manager worksheet", function(){
     beforeEach(function() {
         app = SugarTest.app;
         SugarTest.loadFile("../modules/Forecasts/clients/base/lib", "ForecastsUtils", "js", function(d) { return eval(d); });
-        view = SugarTest.loadFile("../modules/Forecasts/clients/base/views/forecastsWorksheetManager", "forecastsWorksheetManager", "js", function(d) { return eval(d); });
-        view.context = {};
-        view.context.forecasts = {};
-        view.context.forecasts.config = new (Backbone.Model.extend({
+        SugarTest.loadFile("../include/javascript/jquery/", "jquery.dataTables.min", "js", function(d) { return eval(d); });
+        SugarTest.loadFile("../include/javascript/jquery/", "jquery.dataTables.customSort", "js", function(d) { return eval(d); });
+
+        app.user.set({'id' : 'test_userid', 'isManager' : true});
+
+        app.defaultSelections = {
+                timeperiod_id: {
+                    'id' : 'test_timeperiod'
+                },
+                group_by: {},
+                dataset: {},
+                selectedUser: {},
+                ranges: {}
+            };
+
+        var context = app.context.getContext();
+        context.forecasts = new Backbone.Model({'selectedTimePeriod' : new Backbone.Model({'id' : 'fake_id'})});
+        context.forecasts.worksheetmanager = new Backbone.Collection();
+        context.forecasts.config = new (Backbone.Model.extend({
             "defaults": fixtures.metadata.modules.Forecasts.config
         }));
+
+        var meta = {
+            panels : [{'fields' : []}]
+        };
+
+        view = SugarTest.createView('../modules/Forecasts/clients/base', 'Forecasts', "forecastsWorksheetManager", meta, context);
+
+        // remove the window watcher event
+        $(window).unbind("beforeunload");
         var cte = SugarTest.loadFile("../modules/Forecasts/clients/base/lib", "ClickToEdit", "js", function(d) { return eval(d); });
+    });
+
+    afterEach(function() {
+        app.user.unset('id');
+        app.user.set('isManager', false);
+        //view.unbindData();
     });
 
     describe("clickToEdit field", function() {
@@ -175,6 +205,119 @@ describe("The forecasts manager worksheet", function(){
     		expect(view._collection.fetch).toHaveBeenCalled();
     	});
     });
+
+    describe('Forecasts Worksheet Dirty Models', function() {
+        var m;
+        beforeEach(function(){
+            m = new Backbone.Model({'hello' : 'world'});
+            view._collection.add(m);
+    	});
+
+    	afterEach(function(){
+            view._collection.reset();
+            m = undefined;
+    	});
+
+        it('isDirty should return false', function() {
+            expect(view.isDirty()).toBeFalsy();
+        });
+
+        it('isDirty should return true', function() {
+            m.set({'hello' : 'jon1'});
+            expect(view.isDirty()).toBeTruthy();
+        });
+
+        it('should not be dirty after main collection reset', function() {
+            m.set({'hello' : 'jon1'});
+            expect(view.isDirty()).toBeTruthy();
+            view._collection.reset();
+            expect(view.isDirty()).toBeFalsy();
+        })
+    });
+
+    describe('Forecast Worksheet Save Dirty Models', function() {
+        var m, saveStub;
+        beforeEach(function(){
+            m = new Backbone.Model({'hello' : 'world'});
+            saveStub = sinon.stub(m, 'save', function(){});
+            view._collection.add(m);
+    	});
+
+    	afterEach(function(){
+            view._collection.reset();
+            saveStub.restore();
+            m = undefined;
+    	});
+
+        it('should return zero with no dirty models', function() {
+            expect(view.saveWorksheet()).toEqual(0);
+        });
+
+        it('should return 1 when one model is dirty', function() {
+            m.set({'hello':'jon1'});
+            expect(view.saveWorksheet()).toEqual(1);
+            expect(saveStub).toHaveBeenCalled()
+        });
+    });
+    describe("Forecasts worksheet save dirty models with correct timeperiod after timeperiod changes", function() {
+        var m, saveStub, safeFetchStub;
+        beforeEach(function(){
+            m = new Backbone.Model({'hello' : 'world'});
+            saveStub = sinon.stub(m, 'save', function(){});
+            safeFetchStub = sinon.stub(view, 'safeFetch', function(){});
+            view._collection.add(m);
+    	});
+
+    	afterEach(function(){
+            view._collection.reset();
+            saveStub.restore();
+            safeFetchStub.restore();
+            m = undefined;
+    	});
+
+        it('model should contain the old timeperiod id', function() {
+            m.set({'hello':'jon1'});
+            view.updateWorksheetBySelectedTimePeriod({'id' : 'my_new_timeperiod'});
+            expect(view.saveWorksheet()).toEqual(1);
+            expect(saveStub).toHaveBeenCalled();
+            expect(safeFetchStub).toHaveBeenCalled();
+
+            expect(m.get('timeperiod_id')).toEqual('test_timeperiod');
+            expect(view.timePeriod).toEqual('my_new_timeperiod');
+            expect(view.dirtyTimeperiod).toEqual('');
+        });
+    });
+
+    describe("Forecasts worksheet save dirty models with correct user_id after selected_user changes", function() {
+        var m, saveStub, safeFetchStub, viewStub;
+        beforeEach(function(){
+            m = new Backbone.Model({'hello' : 'world'});
+            saveStub = sinon.stub(m, 'save', function(){});
+            safeFetchStub = sinon.stub(view, 'safeFetch', function(){});
+            view._collection.add(m);
+            viewStub = sinon.stub(view._collection, 'fetch', function(){});
+
+    	});
+
+    	afterEach(function(){
+            view._collection.reset();
+            saveStub.restore();
+            safeFetchStub.restore();
+            m = undefined;
+    	});
+
+        it('model should contain the old userid', function() {
+            m.set({'hello':'jon1'});
+            view.updateWorksheetBySelectedUser({'id' : 'my_new_user_id', 'isManager': true, 'showOpps' : false});
+            expect(view.saveWorksheet()).toEqual(1);
+            expect(saveStub).toHaveBeenCalled();
+            expect(safeFetchStub).toHaveBeenCalled();
+
+            expect(m.get('current_user')).toEqual('test_userid');
+            expect(view.selectedUser.id).toEqual('my_new_user_id');
+            expect(view.dirtyUser).toEqual('');
+        });
+    });
     
     describe("Forecasts manager worksheet bindings ", function(){
     	beforeEach(function(){
@@ -187,8 +330,7 @@ describe("The forecasts manager worksheet", function(){
     					config:{
         					on: function(event, fcn){}
         				} 
-    				},
-    				   				
+    				}
     		};
     		view._collection.on = function(){};
     		

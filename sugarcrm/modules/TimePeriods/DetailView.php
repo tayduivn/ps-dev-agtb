@@ -93,6 +93,7 @@ $xtpl->parse("main");
 $xtpl->out("main");
 
 
+/*
 echo "<BR>\n";
 $sub_xtpl = $xtpl;
 
@@ -114,5 +115,5 @@ if(!empty($forecastschedulepanel))$sub_xtpl->assign('FORECASTSCHEDULE', $forecas
 
 $sub_xtpl->parse("subpanel");
 $sub_xtpl->out("subpanel");
-
+*/
 ?>
