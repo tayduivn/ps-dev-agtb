@@ -50,6 +50,7 @@ class SugarEmailAddressAddChangeTest extends Sugar_PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
+        SugarTestHelper::setUp('current_user');
         $this->email = SugarTestSugarEmailAddressUtilities::createEmailAddress($this->old_email);
         $this->old_uuid = SugarTestSugarEmailAddressUtilities::fetchEmailIdByAddress($this->old_email);
     }
@@ -58,6 +59,7 @@ class SugarEmailAddressAddChangeTest extends Sugar_PHPUnit_Framework_TestCase
     {
         SugarTestSugarEmailAddressUtilities::removeCreatedContactAndRelationships();
         SugarTestSugarEmailAddressUtilities::removeAllCreatedEmailAddresses();
+        SugarTestHelper::tearDown();
     }
 
     /**

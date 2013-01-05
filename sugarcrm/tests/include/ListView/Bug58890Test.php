@@ -1,5 +1,4 @@
 <?php
-
 /*********************************************************************************
  * The contents of this file are subject to the SugarCRM Master Subscription
  * Agreement ("License") which can be viewed at
@@ -27,52 +26,64 @@
  * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
-class Bug33036Test extends Sugar_PHPUnit_Framework_TestCase
+require_once('include/ListView/ListViewData.php');
+
+/**
+ * Bug #58890
+ * ListView Does Not Retain Sort Order
+ *
+ * @author mgusev@sugarcrm.com
+ * @ticked 58890
+ */
+class Bug58890Test extends Sugar_PHPUnit_Framework_TestCase
 {
-    private $obj;
-    
-    public static function setUpBeforeClass()
+    public function setUp()
     {
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('beanList');
         SugarTestHelper::setUp('current_user');
-	}
+    }
 
-	public static function tearDownAfterClass()
-	{
-        SugarTestHelper::tearDown();
-	}
-
-	public function setUp()
-	{
-	    $this->obj = new Contact();
-	}
-
-	public function tearDown()
-	{
-        if (! empty($this->obj->id)) {
-            $this->obj->db->query("DELETE FROM contacts WHERE id = '" . $this->obj->id . "'");
-        }
-        unset($this->obj);
-	}
-
-    public function testAuditForRelatedFields() 
+    public function tearDown()
     {
-        $test_account_name = 'test account name after';
-        
-        $account = SugarTestAccountUtilities::createAccount();
-        
-        $this->obj->field_defs['account_name']['audited'] = 1;
-        $this->obj->name = 'test';
-        $this->obj->account_id = $account->id;
-        $this->obj->save();
-        
-        $this->obj->retrieve();
-        $this->obj->account_name = $test_account_name;
-        $changes = $this->obj->db->getAuditDataChanges($this->obj);
-        
-        $this->assertEquals($changes['account_name']['after'], $test_account_name);
-        
-        SugarTestAccountUtilities::removeAllCreatedAccounts();
+        SugarTestHelper::tearDown();
+    }
+
+    /**
+     * Test asserts order by value
+     *
+     * @group 58890
+     * @return void
+     */
+    public function testOrderBy()
+    {
+        $bean = new SugarBean58890();
+        $listViewData = new ListViewData();
+        $listViewData->listviewName = $bean->module_name;
+
+        $listViewData->getListViewData($bean, '', -1, -1, array('id' => 'id', 'name' => 'name'));
+        $this->assertEquals('date_entered DESC', $bean->orderByString58890, 'Order by date_entered DESC should be used');
+
+        $GLOBALS['current_user']->setPreference('listviewOrder', array(
+            'orderBy' => 'name',
+            'sortOrder' => 'ASC'
+        ), 0, $listViewData->var_name);
+
+        $listViewData->getListViewData($bean, '', -1, -1, array('id' => 'id', 'name' => 'name'));
+        $this->assertEquals('name ASC', $bean->orderByString58890, 'User\'s preference should be used');
+    }
+}
+
+class SugarBean58890 extends Account
+{
+    /**
+     * @var string
+     */
+    public $orderByString58890 = '';
+
+    public function create_new_list_query($order_by, $where, $filter = array(), $params = array(), $show_deleted = 0, $join_type = '', $return_array = false, $parentbean = null, $singleSelect = false, $ifListForExport = false)
+    {
+        $this->orderByString58890 = $order_by;
+        return parent::create_new_list_query($order_by, $where, $filter, $params, $show_deleted, $join_type, $return_array, $parentbean, $singleSelect, $ifListForExport);
     }
 }

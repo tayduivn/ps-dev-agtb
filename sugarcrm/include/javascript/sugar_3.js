@@ -2848,7 +2848,7 @@ SUGAR.util = function () {
                     parts.push(encodeURIComponent(i) + '=' + encodeURIComponent(params[i]));
                 }
             }
-            return parts.join("&");
+            return parts.join("&")+"&";
         },
         // Evaluates a script in a global context
         // Workarounds based on findings by Jim Driscoll

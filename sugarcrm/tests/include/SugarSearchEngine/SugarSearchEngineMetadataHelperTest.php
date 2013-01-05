@@ -40,6 +40,8 @@ class SugarSearchEngineMetadataHelperTest extends Sugar_PHPUnit_Framework_TestCa
 
     public function setUp()
     {
+        SugarTestHelper::setUp('beanFiles');
+        SugarTestHelper::setUp('beanList');
         $this->_cacheFile = sugar_cached('modules/ftsModulesCache.php');
         $this->_backupCacheFile = sugar_cached('modules/ftsModulesCache.php').'.save';
 
@@ -67,6 +69,7 @@ class SugarSearchEngineMetadataHelperTest extends Sugar_PHPUnit_Framework_TestCa
         {
             unlink($this->_cacheFile);
         }
+        SugarTestHelper::tearDown();
     }
 
     public function testGetFtsSearchFields()

@@ -1,4 +1,6 @@
 <?php
+//FILE SUGARCRM flav=pro ONLY
+if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 /*********************************************************************************
  * The contents of this file are subject to the SugarCRM Master Subscription
@@ -27,52 +29,33 @@
  * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
-class Bug33036Test extends Sugar_PHPUnit_Framework_TestCase
-{
-    private $obj;
-    
-    public static function setUpBeforeClass()
+require_once('include/MVC/View/views/view.detail.php');
+
+class CasesViewDetail extends ViewDetail {
+
+    public function preDisplay()
     {
-        SugarTestHelper::setUp('beanFiles');
-        SugarTestHelper::setUp('beanList');
-        SugarTestHelper::setUp('current_user');
-	}
-
-	public static function tearDownAfterClass()
-	{
-        SugarTestHelper::tearDown();
-	}
-
-	public function setUp()
-	{
-	    $this->obj = new Contact();
-	}
-
-	public function tearDown()
-	{
-        if (! empty($this->obj->id)) {
-            $this->obj->db->query("DELETE FROM contacts WHERE id = '" . $this->obj->id . "'");
+        parent::preDisplay();
+        if(ACLController::checkAccess('KBDocuments', 'edit', true))
+        {
+            array_push($this->dv->defs['templateMeta']['form']['buttons'], array(
+                    'customCode'=>'<input title="{$MOD.LBL_CREATE_KB_DOCUMENT}" accessKey="M" class="button" onclick="this.form.return_module.value=\'Cases\'; this.form.return_action.value=\'DetailView\';this.form.action.value=\'EditView\';this.form.module.value=\'KBDocuments\';" type="submit" name="button" value="{$MOD.LBL_CREATE_KB_DOCUMENT}">',
+                    'sugar_html' => array(
+                        'type' => 'submit',
+                        'value' => '{$MOD.LBL_CREATE_KB_DOCUMENT}',
+                        'htmlOptions' => array(
+                            'title' => '{$MOD.LBL_CREATE_KB_DOCUMENT}',
+                            'accessKey' => 'M',
+                            'class' => 'button',
+                            'onclick' => 'this.form.return_module.value=\'Cases\'; this.form.return_action.value=\'DetailView\';this.form.action.value=\'EditView\';this.form.module.value=\'KBDocuments\';',
+                            'name' => 'button',
+                        ),
+                    ),
+                )
+            );
         }
-        unset($this->obj);
-	}
-
-    public function testAuditForRelatedFields() 
-    {
-        $test_account_name = 'test account name after';
-        
-        $account = SugarTestAccountUtilities::createAccount();
-        
-        $this->obj->field_defs['account_name']['audited'] = 1;
-        $this->obj->name = 'test';
-        $this->obj->account_id = $account->id;
-        $this->obj->save();
-        
-        $this->obj->retrieve();
-        $this->obj->account_name = $test_account_name;
-        $changes = $this->obj->db->getAuditDataChanges($this->obj);
-        
-        $this->assertEquals($changes['account_name']['after'], $test_account_name);
-        
-        SugarTestAccountUtilities::removeAllCreatedAccounts();
+        $this->dv->th->deleteTemplate($this->dv->module, $this->dv->view);
     }
 }
+
+?>
