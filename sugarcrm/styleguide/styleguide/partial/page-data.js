@@ -49,6 +49,7 @@ var pages = {
       , "description":"Modals, dropdowns, and other Twitter Bootstrap Javascript widgets."
       , "sections":[
           {"label":"Modals", "description":"A streamlined, but flexible, take on the traditional javascript modal plugin with only the minimum required functionality and smart defaults."}
+        , {"label":"Drawers", "description":"Add dropdown menus to nearly anything with this simple plugin. Features full dropdown menu support on in the navbar, tabs, and pills."}
         , {"label":"Dropdowns", "description":"Add dropdown menus to nearly anything with this simple plugin. Features full dropdown menu support on in the navbar, tabs, and pills."}
         , {"label":"Scrollspy", "description":"Use scrollspy to automatically update the links in your navbar to show the current active link based on scroll position."}
         , {"label":"Togglable tabs", "description":"Use this plugin to make tabs and pills more useful by allowing them to toggle through tabbable panes of local content."}

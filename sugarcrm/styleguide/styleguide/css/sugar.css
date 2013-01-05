@@ -3550,6 +3550,22 @@ article .actions,
 .select2-container .select2-single-with-drop div b {
   background-position: 0px 0px;
 }
+.select2-container.select2-dropdown-open .select2-choices {
+  -webkit-border-radius: 4px 4px 0 0;
+  -moz-border-radius: 4px 4px 0 0;
+  border-radius: 4px 4px 0 0;
+  -webkit-border-radius: 4px 4px 0 0;
+  -moz-border-radius: 4px 4px 0 0;
+  border-radius: 4px 4px 0 0;
+}
+.select2-container.select2-dropdown-open.select2-drop-above .select2-choices {
+  -webkit-border-radius: 0 0 4px 4px;
+  -moz-border-radius: 0 0 4px 4px;
+  border-radius: 0 0 4px 4px;
+  -webkit-border-radius: 0 0 4px 4px;
+  -moz-border-radius: 0 0 4px 4px;
+  border-radius: 0 0 4px 4px;
+}
 .select2-container .select2-choices {
   padding: 3px 70px 3px 0;
   min-height: 20px;
@@ -3682,29 +3698,15 @@ article .actions,
 .select2-container .select2-choice div b {
   background-position: 0px 0px;
 }
+.select2-container .select2-choice span {
+  margin-right: 28px;
+}
 .select2-container .select2-choice abbr {
   top: 6px;
+  right: 18px;
 }
 .select2-drop-error {
   border-color: #b60000;
-}
-.select2-drop-error .select2-results li:first-child {
-  border-top: none;
-  -webkit-border-radius: 4px 4px 0 0;
-  -moz-border-radius: 4px 4px 0 0;
-  border-radius: 4px 4px 0 0;
-  -webkit-border-radius: 4px 4px 0 0;
-  -moz-border-radius: 4px 4px 0 0;
-  border-radius: 4px 4px 0 0;
-}
-.select2-drop-error .select2-results li:last-child {
-  border-bottom: none;
-  -webkit-border-radius: 0 0 4px 4px;
-  -moz-border-radius: 0 0 4px 4px;
-  border-radius: 0 0 4px 4px;
-  -webkit-border-radius: 0 0 4px 4px;
-  -moz-border-radius: 0 0 4px 4px;
-  border-radius: 0 0 4px 4px;
 }
 .select2-container-multi .select2-choices .select2-search-field input {
   margin: 0;
@@ -3750,16 +3752,42 @@ article .actions,
   max-height: 235px;
 }
 .select2-results .select2-result-label {
-  padding: 6px 8px;
+  padding: 8px 10px;
 }
-.select2-results li {
-  line-height: 26px;
-  border-bottom: 1px solid #e8e8e8;
+.select2-results li div {
+  line-height: 18px;
 }
-.select2-results li:hover,
+.select2-results li div:hover,
 .select2-results .select2-highlighted {
   background: #e5f1fc;
   color: #4398ec;
+}
+.select2-results li:last-child {
+  border-bottom: none;
+  -webkit-border-radius: 0 0 4px 4px;
+  -moz-border-radius: 0 0 4px 4px;
+  border-radius: 0 0 4px 4px;
+  -webkit-border-radius: 0 0 4px 4px;
+  -moz-border-radius: 0 0 4px 4px;
+  border-radius: 0 0 4px 4px;
+}
+.select2-drop-above .select2-results li:first-child {
+  border-top: none;
+  -webkit-border-radius: 4px 4px 0 0;
+  -moz-border-radius: 4px 4px 0 0;
+  border-radius: 4px 4px 0 0;
+  -webkit-border-radius: 4px 4px 0 0;
+  -moz-border-radius: 4px 4px 0 0;
+  border-radius: 4px 4px 0 0;
+}
+.select2-drop-above .select2-results li:last-child {
+  border-bottom: none;
+  -webkit-border-radius: 0;
+  -moz-border-radius: 0;
+  border-radius: 0;
+  -webkit-border-radius: 0;
+  -moz-border-radius: 0;
+  border-radius: 0;
 }
 .form-search {
   position: relative;
@@ -3901,6 +3929,14 @@ article .actions,
 .form-search .select2-container .select2-search-choice a.select2-search-choice-close {
   display: none;
 }
+.form-search .select2-container .select2-search-choice .filter-disabled a {
+  background: #f5f5f5;
+  color: #58595B;
+  cursor: pointer;
+}
+.form-search .select2-container .select2-search-choice .filter-disabled a:hover {
+  color: #58595B;
+}
 .form-search .select2-container .select2-select-legend .icon-plus {
   margin-top: 3px;
   line-height: 4px;
@@ -4031,9 +4067,6 @@ article .actions,
   margin: 0;
   padding: 0;
   max-height: 235px;
-}
-.search-filter-dropdown .select2-results .select2-result-label {
-  padding: 6px 8px;
 }
 .search-filter-dropdown .select2-results li {
   line-height: 26px;
@@ -4535,6 +4568,7 @@ h1 input[type="text"] {
 .control-group.error .chzn-choices,
 .control-group.error .chzn-container-single > a.chzn-single,
 .control-group.error .select2-choice,
+.control-group.error .select2-choices,
 .control-group.error .upload-field-custom.btn.avatar {
   border-color: #b60000;
 }
