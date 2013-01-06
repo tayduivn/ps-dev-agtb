@@ -2,11 +2,19 @@
 /* Buttons
 -----------------*/
 .btn {
-  padding: 4px 10px;
+  //padding: 4px 10px;
   *line-height: 20px; //tbs=18px
   font-weight: 500;
   .box-shadow(none);
   //.buttonBackground(@btnBackground, @btnBackgroundHighlight, @gray, 0 1px 1px rgba(255,255,255,.75));
+  /* keeps button widths with icons the same regardless of icon width */
+  [class^="icon-"],
+  [class*=" icon-"] {
+    width: 12px;
+    height: 12px;
+    display: inline-block;
+    line-height: 12px;
+  }
 }
 //.buttonBackground(@startColor, @endColor, @textColor: #fff, @textShadow: 0 -1px 0 rgba(0,0,0,.25)) {
 
@@ -61,6 +69,7 @@
   [class^="icon-"],
   [class*=" icon-"] {
     color: @white !important;
+    margin-right: 4px;
   }
 }
 
