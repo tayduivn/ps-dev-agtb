@@ -275,7 +275,7 @@
     $('body')
       .off('click', '.drawerTrig')
       .on('click', '.drawerTrig', function (e) {
-        $(this).find('i').toggleClass('icon-chevron-left').toggleClass('icon-chevron-right');
+        $(this).find('i').toggleClass('icon-double-angle-left').toggleClass('icon-double-angle-right');
         $('.side').toggleClass('hide');
         $('.main-pane').toggleClass('span8').toggleClass('span12');
         e.preventDefault();

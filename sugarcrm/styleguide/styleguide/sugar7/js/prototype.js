@@ -18,6 +18,8 @@
     }
   }
 
+ ich.addTemplate('drawerTrig', '<a href="#overview" title="Collapse sidebar" class="btn btn-invisible drawerTrig"><i class="icon-double-angle-right"></i></a>');
+
   function loadPage(page) {
     page.module = page.title.replace(/ies$/,'y').replace(/s$/,'').toLowerCase();
     if (page.templates) {

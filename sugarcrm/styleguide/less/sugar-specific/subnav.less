@@ -103,8 +103,7 @@ header .subnav {
   }
 
   .drawerTrig {
-    margin: 0 8px 0 8px;
-    padding: 5px 6px 3px 7px;
+    margin: 0 8px;
     color: @grayLight;
     &.pull-right {
       .border-radius(0 2px 2px 0);
@@ -121,16 +120,11 @@ header .subnav {
     }
     i[class*="icon-"]{
         //.opacity(20);
-        font-size: 15px;
-        width: 7px;
+        font-size: 25px;
+        font-weight: 700;
     }
-    i.one {
-        position: relative;
-        //left: 2px;
-    }
-    i.two {
-        position: relative;
-        //left: -2px;
+    i.icon-double-angle-left {
+        margin: 0 2px 0 -2px;
     }
   }
 
@@ -169,9 +163,15 @@ header .subnav {
   }
 
   .fav-star {
-    padding: 4px 5px 1px;
-    margin-right: 5px;
+    padding: 3px;
+    //margin-right: 5px;
     font-size: 20px;
+    i.icon-favorite {
+      font-size: 20px;
+      width: 20px;
+      height: 20px;
+      line-height: 20px;
+    }
   }
 
   .avatar {
