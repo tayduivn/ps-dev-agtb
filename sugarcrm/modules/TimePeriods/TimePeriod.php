@@ -650,7 +650,7 @@ class TimePeriod extends SugarBean {
            $previousLeafTimePeriod->setStartDate($previousLeafTimePeriodStartDate->asDbDate());
            $previousLeafTimePeriod->leaf_cycle = $leafCycle;
            $previousLeafTimePeriod->name = $previousLeafTimePeriod->getTimePeriodName($leafCycle);
-           $previousLeafTimePeriod->parent_id = $timePeriod->id;
+           $previousLeafTimePeriod->parent_id = $currentParentTimePeriodInstance->id;
            $previousLeafTimePeriod->save();
            $created[] = $previousLeafTimePeriod;
            $leafCycle--;
@@ -661,7 +661,7 @@ class TimePeriod extends SugarBean {
         $newCurrentTimePeriod = TimePeriod::getByType($leaf->type);
         $newCurrentTimePeriod->new_with_id = true;
         $newCurrentTimePeriod->id = $currentTimePeriod->id;
-        $newCurrentTimePeriod->parent_id = $timePeriod->id;
+        $newCurrentTimePeriod->parent_id = $currentParentTimePeriodInstance->id;
         $newCurrentTimePeriod->setStartDate($currentTimePeriod->start_date);
         $newCurrentTimePeriod->end_date = $previousLeafTimePeriodStartDate->modify($leaf->next_date_modifier)->modify('-1 day')->asDbDate();
         $newCurrentTimePeriod->leaf_cycle = $leafCycle;
