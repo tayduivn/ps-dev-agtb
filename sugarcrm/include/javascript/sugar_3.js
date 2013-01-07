@@ -157,17 +157,32 @@ function isSupportedIE() {
 SUGAR.isSupportedBrowser = function(){
     var supportedBrowsers = {
         msie : {min:9, max:10},
-        safari : {min:500},
-        mozilla : {min:13},
-        chrome : {min:500}
+        safari : {min:534},
+        mozilla : {min:16},
+        chrome : {min:537}
     };
-    for (var b in supportedBrowsers) {
-        if ($.browser[b]){
-            var current = parseInt($.browser.version);
-            var supported = supportedBrowsers[b];
-            return current >= supported.min && (!supported.max || current <= supported.max);
+    var current;
+    var supported;
+    if ($.browser.msie){ // Internet Explorer
+        supported = supportedBrowsers['msie'];
+    }
+    else if ($.browser.mozilla) { // Firefox
+        supported = supportedBrowsers['mozilla'];
+    }
+    else {
+        $.browser.chrome = /chrome/.test(navigator.userAgent.toLowerCase());
+        if($.browser.chrome){ // Chrome
+            supported = supportedBrowsers['chrome'];
+        }
+        else if($.browser.safari){ // Safari
+            supported = supportedBrowsers['safari'];
         }
     }
+    current = parseInt($.browser.version);
+    if (supported)
+        return current >= supported.min && (!supported.max || current <= supported.max);
+    else
+        return false;
 }
 
 SUGAR.isIECompatibilityMode = function(){
