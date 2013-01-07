@@ -281,10 +281,7 @@ class PopupSmarty extends ListViewSmarty{
 			$params['orderBy'] = $this->_popupMeta['orderBy'];
 		}
 
-	    $fieldsfile = SugarAutoLoader::loadWithMetafiles($this->module, 'SearchFields', 'searchfields');
-        if($fieldsfile) {
-        	require $fieldsfile;
-        }
+		$searchFields = SugarAutoLoader::loadSearchFields($this->module);
 
         $this->searchdefs[$this->module]['templateMeta']['maxColumns'] = 2;
         $this->searchdefs[$this->module]['templateMeta']['widths']['label'] = 10;
