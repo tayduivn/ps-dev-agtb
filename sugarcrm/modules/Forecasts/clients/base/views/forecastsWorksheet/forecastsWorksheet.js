@@ -58,6 +58,11 @@
  *      on: context.forecasts
  *      by: updateWorksheetBySelectedRanges()
  *      when: dataTable is finished filtering itself and has destroyed and redrawn itself
+ *      
+ * forecasts:worksheet:saved
+ *      on: context.forecasts
+ *      by: saveWorksheet()
+ *      when: saving the worksheet.
  */
 ({
 
@@ -248,7 +253,7 @@
 
     /**
      *
-     * @triggers forecasts:worksheetSaved
+     * @triggers forecasts:worksheet:saved
      * @return {Number}
      */
     saveWorksheet : function(isDraft) {
@@ -275,14 +280,14 @@
                         saveCount++;
                         //if this is the last save, go ahead and trigger the callback;
                         if(totalToSave === saveCount) {
-                            self.context.forecasts.trigger('forecasts:worksheetSaved', totalToSave, 'rep_worksheet', isDraft);
+                            self.context.forecasts.trigger('forecasts:worksheet:saved', totalToSave, 'rep_worksheet', isDraft);
                         }
                     }});
                 });
 
                 self.cleanUpDirtyModels();
             } else {
-                this.context.forecasts.trigger('forecasts:worksheetSaved', totalToSave, 'rep_worksheet', isDraft);
+                this.context.forecasts.trigger('forecasts:worksheet:saved', totalToSave, 'rep_worksheet', isDraft);
             }
         }
 
@@ -339,7 +344,7 @@
             this.context.forecasts.worksheet.on("change", function() {
                 this.calculateTotals();
             }, this);
-            this.context.forecasts.on("forecasts:committed:saved", function(){
+            this.context.forecasts.on("forecasts:committed:saved forecasts:worksheet:saved", function(){
                 if(this.showMe()){
                     var model = this.context.forecasts.worksheet;
                     model.url = this.createURL();
@@ -368,9 +373,6 @@
                 this.saveWorksheet(isDraft);
             }, this);
             
-            this.context.forecasts.on('forecasts:worksheetSaved', function(){
-                this.render();
-            }, this);
 
             /*
              * // TODO: tagged for 6.8 see SFA-253 for details
@@ -483,11 +485,11 @@
                 self.context.forecasts.set({reloadCommitButton: true});
 
                 var svWkFn = function() {
-                    self.context.forecasts.off('forecasts:worksheetSaved', svWkFn);
+                    self.context.forecasts.off('forecasts:worksheet:saved', svWkFn);
                     collection.fetch();
                 };
 
-                self.context.forecasts.on('forecasts:worksheetSaved', svWkFn);
+                self.context.forecasts.on('forecasts:worksheet:saved', svWkFn);
                 this.saveWorksheet()
             }
             //user clicked cancel, ignore and fetch if fetch is enabled

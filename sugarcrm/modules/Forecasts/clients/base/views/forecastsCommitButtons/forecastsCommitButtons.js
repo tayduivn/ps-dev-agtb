@@ -31,9 +31,6 @@
  *      on: context.forecasts
  *      by: change:selectedUser, change:selectedTimePeriod
  * 
- * forecasts:commitButtons:saved
- *      on: context.forecasts
- *      by: triggerSaveDraft()
  *
  * modal:forecastsTabbedConfig:open - to cause modal.js to pop up
  *      on: layout
@@ -170,12 +167,12 @@
 
             wkstCallBack = function(totalSaved, worksheet){
                 // turn off the event
-                self.context.forecasts.off('forecasts:worksheetSaved', wkstCallBack);
+                self.context.forecasts.off('forecasts:worksheet:saved', wkstCallBack);
                 // now actually commit the forecast
                 self.context.forecasts.trigger('forecasts:commitForecast');
             };
 
-            self.context.forecasts.on('forecasts:worksheetSaved', wkstCallBack);
+            self.context.forecasts.on('forecasts:worksheet:saved', wkstCallBack);
 
             this.context.forecasts.trigger("forecasts:worksheetSave", false);
             savebtn.addClass("disabled");

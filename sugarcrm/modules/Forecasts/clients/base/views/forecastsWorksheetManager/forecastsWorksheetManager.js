@@ -48,6 +48,10 @@
  *      by: safeFetch()
  *      when: user performs an action that causes a check to be made against dirty data
  *
+ * forecasts:worksheet:saved
+ *      on: context.forecasts
+ *      by: saveWorksheet()
+ *      when: saving the worksheet.
  */
 ({
     url: 'rest/v10/ForecastManagerWorksheets',
@@ -203,7 +207,7 @@
             this.context.forecasts.worksheetmanager.on("change", function() {
             	this.calculateTotals();
             }, this);
-            this.context.forecasts.on("forecasts:committed:saved forecasts:commitButtons:saved", function(){
+            this.context.forecasts.on("forecasts:committed:saved forecasts:worksheet:saved", function(){
             	if(this.showMe()){
             		this.context.forecasts.worksheetmanager.url = this.createURL();
             		this.safeFetch();
@@ -212,10 +216,6 @@
 
             this.context.forecasts.on('forecasts:worksheetSave', function(isDraft) {
                 this.saveWorksheet(isDraft);
-            }, this);
-            
-            this.context.forecasts.on('forecasts:worksheetSaved', function(){
-                this.render();
             }, this);
             
             /*
@@ -261,7 +261,7 @@
 
     /**
      *
-     * @triggers forecasts:worksheetSaved
+     * @triggers forecasts:worksheet:saved
      * @return {Number}
      */
     saveWorksheet : function(isDraft) {
@@ -301,7 +301,7 @@
                 self.cleanUpDirtyModels();
                 self.cleanUpDraftModels();
             } else {
-                this.context.forecasts.trigger('forecasts:worksheetSaved', totalToSave, 'mgr_worksheet', isDraft);
+                this.context.forecasts.trigger('forecasts:worksheet:saved', totalToSave, 'mgr_worksheet', isDraft);
             }
         }
 
@@ -324,7 +324,7 @@
             saveCount++;
             //if this is the last save, go ahead and trigger the callback;
             if(totalToSave === saveCount) {
-                self.context.forecasts.trigger('forecasts:worksheetSaved', totalToSave, 'mgr_worksheet', isDraft);
+                self.context.forecasts.trigger('forecasts:worksheet:saved', totalToSave, 'mgr_worksheet', isDraft);
             }
         }});
     },
@@ -403,11 +403,11 @@
     		if(confirm(app.lang.get("LBL_WORKSHEET_SAVE_CONFIRM", "Forecasts"))){
                 self.context.forecasts.set({reloadCommitButton: true});
                 var svWkFn = function() {
-                    self.context.forecasts.off('forecasts:worksheetSaved', svWkFn);
+                    self.context.forecasts.off('forecasts:worksheet:saved', svWkFn);
                     collection.fetch();
                 };
 
-                self.context.forecasts.on('forecasts:worksheetSaved', svWkFn);
+                self.context.forecasts.on('forecasts:worksheet:saved', svWkFn);
                 this.saveWorksheet()
 		    } else {
     			//ignore, fetch still

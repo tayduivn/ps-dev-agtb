@@ -218,25 +218,25 @@ describe("The forecasts chart view", function () {
             });
 
             it("should fire renderChart when one row saved and isDraft is true", function(){
-                view.context.forecasts.trigger('forecasts:worksheetSaved', 1, 'rep_worksheet', true);
+                view.context.forecasts.trigger('forecasts:worksheet:saved', 1, 'rep_worksheet', true);
 
                 expect(renderChartStub).toHaveBeenCalled();
             });
 
             it("should NOT fire renderChart when one row saved and isDraft is false", function(){
-                view.context.forecasts.trigger('forecasts:worksheetSaved', 1, 'rep_worksheet', false);
+                view.context.forecasts.trigger('forecasts:worksheet:saved', 1, 'rep_worksheet', false);
 
                 expect(renderChartStub).not.toHaveBeenCalled();
             });
 
             it("should NOT fire renderChart when zero rows are saved and isDraft is true", function(){
-                view.context.forecasts.trigger('forecasts:worksheetSaved', 0, 'rep_worksheet', true);
+                view.context.forecasts.trigger('forecasts:worksheet:saved', 0, 'rep_worksheet', true);
 
                 expect(renderChartStub).not.toHaveBeenCalled();
             });
 
             it("should NOT fire renderChart when zero rows are saved and isDraft is false", function(){
-                view.context.forecasts.trigger('forecasts:worksheetSaved', 0, 'rep_worksheet', false);
+                view.context.forecasts.trigger('forecasts:worksheet:saved', 0, 'rep_worksheet', false);
 
                 expect(renderChartStub).not.toHaveBeenCalled();
             });

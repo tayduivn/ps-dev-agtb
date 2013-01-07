@@ -89,7 +89,7 @@
     },
 
     /**
-     * bind to data changes in teh context model.
+     * bind to data changes in the context model.
      */
     bindDataChange: function () {
 
@@ -112,7 +112,7 @@
             this.context.forecasts.on("forecasts:commitForecast", function(context, flag) {
                     this.updateProgress();
             }, this);
-            this.context.forecasts.on("forecasts:commitButtons:saved forecasts:committed:saved", function(){
+            this.context.forecasts.on("forecasts:worksheet:saved forecasts:committed:saved", function(){
                 self.updateProgress();
             });
 
