@@ -57,6 +57,12 @@
    	list_nav(jsonObjs[index], 'CommitEditView');
    }
 
+   $(document).ready(function(){
+       $("ul.clickMenu").each(function(index, node){
+           $(node).sugarActionMenu();
+       });
+   });
+
    {/literal}
 </script>
 
