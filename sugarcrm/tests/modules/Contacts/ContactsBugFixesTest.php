@@ -97,7 +97,7 @@ class ContactsBugFixesTest extends Sugar_PHPUnit_Framework_TestCase
 
     public function testBug59675SyncContactIsNotSet() {
         $mapi = new ModuleApi();
-        $sm = new ServiceMockup();
+        $sm = new ContactsBugFixesServiceMockup();
         $args = $this->fields;
         $args['module'] = 'Contacts';
         $return = $mapi->createRecord($sm, $args);
@@ -115,7 +115,7 @@ class ContactsBugFixesTest extends Sugar_PHPUnit_Framework_TestCase
     }
 }
 
-class ServiceMockup extends ServiceBase {
+class ContactsBugFixesServiceMockup extends ServiceBase {
     public function execute() {}
     protected function handleException(Exception $exception) {}
 }
