@@ -24,7 +24,7 @@
 
 require_once 'include/MetaDataManager/MetaDataManager.php';
 
-class BugFixesTest extends Sugar_PHPUnit_Framework_TestCase
+class MetaDataManagerBugFixesTest extends Sugar_PHPUnit_Framework_TestCase
 {
     public function setUp()
     {
