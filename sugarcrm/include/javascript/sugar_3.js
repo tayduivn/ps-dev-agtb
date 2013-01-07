@@ -155,6 +155,51 @@ function isSupportedIE() {
 	}
 }
 
+SUGAR.isSupportedBrowser = function(){
+    var supportedBrowsers = {
+        msie : {min:9, max:10},
+        safari : {min:534},
+        mozilla : {min:16},
+        chrome : {min:537}
+    };
+    var current;
+    var supported;
+    if ($.browser.msie){ // Internet Explorer
+        supported = supportedBrowsers['msie'];
+    }
+    else if ($.browser.mozilla) { // Firefox
+        supported = supportedBrowsers['mozilla'];
+    }
+    else {
+        $.browser.chrome = /chrome/.test(navigator.userAgent.toLowerCase());
+        if($.browser.chrome){ // Chrome
+            supported = supportedBrowsers['chrome'];
+        }
+        else if($.browser.safari){ // Safari
+            supported = supportedBrowsers['safari'];
+        }
+    }
+    current = parseInt($.browser.version);
+    if (supported)
+        return current >= supported.min && (!supported.max || current <= supported.max);
+    else
+        return false;
+}
+
+SUGAR.isIECompatibilityMode = function(){
+    var agentStr = navigator.userAgent;
+    var mode = false;
+    if (agentStr.indexOf("MSIE 7.0") > -1 &&
+        (agentStr.indexOf("Trident/5.0") > -1 || // IE9 Compatibility View
+         agentStr.indexOf("Trident/4.0") > -1    // IE8 Compatibility View
+        )
+    )
+    {
+        mode = true;
+    }
+    return mode;
+}
+
 SUGAR.isIE = isSupportedIE();
 var isSafari = (navigator.userAgent.toLowerCase().indexOf('safari')!=-1);
 
