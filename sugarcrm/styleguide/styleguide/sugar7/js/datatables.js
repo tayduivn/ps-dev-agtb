@@ -114,9 +114,12 @@ $(document).ready(function() {
 
   $('body').on('click', '.edit-all-records', function(){
 
-    $('#DataTables_Table_0').addClass('inline-edit-active');
 
-    $('#DataTables_Table_0 tbody tr').each(function(){
+
+
+    $('#example').addClass('inline-edit-active');
+
+    $('#example tbody tr').each(function(){
       var editid = Math.floor(Math.random()*999999);
       $('<tr id="edit-id-'+editid+'" class="tr-inline-edit"></tr>').insertAfter($(this));
       loadPartials([
@@ -146,7 +149,7 @@ $(document).ready(function() {
   });
 
   $('body').on('click', '.headerpane.ellipsis .inline-save', function(){
-    $('#DataTables_Table_0').removeClass('inline-edit-active');
+    $('#example').removeClass('inline-edit-active');
     $('tr.tr-inline-edit').remove();
     $('tr.hide').removeClass('hide')
     throwMessage('<strong>Success!</strong> Your edits have been saved.', 'success', true);
