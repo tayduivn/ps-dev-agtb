@@ -151,6 +151,42 @@ describe("The forecasts chart view", function () {
             expect(handleRenderOptionsStub).toHaveBeenCalled()
         });
 
+        describe("worksheet save draft", function() {
+            var renderChartStub;
+
+            beforeEach(function(){
+                renderChartStub = sinon.stub(view, "renderChart", function(){})
+            });
+
+            afterEach(function(){
+                renderChartStub.restore();
+            });
+
+            it("should fire renderChart when one row saved and isDraft is true", function(){
+                view.context.forecasts.trigger('forecasts:worksheetSaved', 1, 'rep_worksheet', true);
+
+                expect(renderChartStub).toHaveBeenCalled();
+            });
+
+            it("should NOT fire renderChart when one row saved and isDraft is false", function(){
+                view.context.forecasts.trigger('forecasts:worksheetSaved', 1, 'rep_worksheet', false);
+
+                expect(renderChartStub).not.toHaveBeenCalled();
+            });
+
+            it("should NOT fire renderChart when zero rows are saved and isDraft is true", function(){
+                view.context.forecasts.trigger('forecasts:worksheetSaved', 0, 'rep_worksheet', true);
+
+                expect(renderChartStub).not.toHaveBeenCalled();
+            });
+
+            it("should NOT fire renderChart when zero rows are saved and isDraft is false", function(){
+                view.context.forecasts.trigger('forecasts:worksheetSaved', 0, 'rep_worksheet', false);
+
+                expect(renderChartStub).not.toHaveBeenCalled();
+            });
+        });
+
         describe("hiddenSidebar listener, stopRender value", function(){
 
             var renderChartStub;

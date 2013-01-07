@@ -487,8 +487,13 @@ class StudioModule
         }
     }
 
-
-
+	
+    /**
+     * Gets a list of source metadata view types. Used in resetting a module and
+     * for the field removal process.
+     * 
+     * @return array
+     */
 	public function getViewMetadataSources() {
 		$sources = $this->getViews();
         $sources[] = array('type'  => MB_BASICSEARCH);
@@ -499,8 +504,11 @@ class StudioModule
         $sources[] = array('type'  => MB_QUICKCREATE);
         //BEGIN SUGARCRM flav=pro ONLY
         $sources = array_merge($sources, $this->getWirelessLayouts());
-        //END SUGARCRM flav=pro ONLY
-
+        //END SUGARCRM flav=pro ONLY 
+        //BEGIN SUGARCRM flav=ent ONLY
+        $sources = array_merge($sources, $this->getPortalLayoutSources());
+        //END SUGARCRM flav=ent ONLY
+		
 		return $sources;
 	}
 
@@ -528,7 +536,6 @@ class StudioModule
             array('type' => MB_PORTALDETAILVIEW),
             array('type' => MB_PORTALEDITVIEW),
             array('type' => MB_PORTALLISTVIEW),
-            array('type' => MB_PORTALSEARCHVIEW),
         );
     }
     //END SUGARCRM flav=ent ONLY

@@ -36,13 +36,15 @@ class Bug44896Test extends Sugar_PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        if (!is_dir(dirname(Bug44896PackageManger::$location))) {
-            sugar_mkdir(dirname(Bug44896PackageManger::$location));
+        if (is_dir(dirname(Bug44896PackageManger::$location))) {
+            rmdir_recursive(dirname(Bug44896PackageManger::$location));
         }
-        if (!is_dir(Bug44896PackageManger::$location))
+        sugar_mkdir(dirname(Bug44896PackageManger::$location));
+        if (is_dir(Bug44896PackageManger::$location))
         {
-            sugar_mkdir(Bug44896PackageManger::$location);
+            rmdir_recursive(Bug44896PackageManger::$location);
         }
+        sugar_mkdir(Bug44896PackageManger::$location);
 
         $manage = new Bug44896PackageManger();
         $manage->createTempModule();
@@ -50,7 +52,9 @@ class Bug44896Test extends Sugar_PHPUnit_Framework_TestCase
 
     public function tearDown()
     {
-        if (is_dir(Bug44896PackageManger::$location)) {
+        unlink(Bug44896PackageManger::$manifest_location);
+        if (is_dir(dirname(Bug44896PackageManger::$location))) {
+            rmdir_recursive(Bug44896PackageManger::$location);
             rmdir_recursive(dirname(Bug44896PackageManger::$location));
         }
     }

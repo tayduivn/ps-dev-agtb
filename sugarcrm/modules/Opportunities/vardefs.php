@@ -160,10 +160,9 @@ $dictionary['Opportunity'] = array('table' => 'opportunities','audited'=>true, '
     'audited'=>true,
     'comment' => 'Formatted amount of the opportunity',
     'studio' => array(
-//BEGIN SUGARCRM flav=pro ONLY
+        'wirelesslistview'=>false,
         'wirelesseditview'=>false,
         'wirelessdetailview'=>false,
-//END SUGARCRM flav=pro ONLY
         'editview'=>false,
         'detailview'=>false,
         'quickcreate'=>false,

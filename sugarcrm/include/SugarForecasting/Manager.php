@@ -227,7 +227,7 @@ class SugarForecasting_Manager extends SugarForecasting_AbstractForecast impleme
 
 		if($args['user_id'] == $current_user->id)
 		{
-			$reportees_query .=	"and w.date_modified = (select max(date_modified) from worksheet " .
+			$reportees_query .=	"and w.revision = (select max(revision) from worksheet " .
 						   								"where user_id = u.id and related_id = u2.id " .
 						   										"and timeperiod_id = '" . $args['timeperiod_id'] . "')";
 		}
