@@ -740,6 +740,10 @@ class TimeDateTest extends Sugar_PHPUnit_Framework_TestCase
 			array("date" => "11:42", "mer" => "pm", "tf" => "h:iA", "display" => "11:42pm"),
 			array("date" => "03", "mer" => "AM", "tf" => "ha", "display" => "03AM"),
 			array("date" => "15", "mer" => "AM", "tf" => "H", "display" => "15"),
+            // bug 58924 - what if we have spaces in our time format?
+            array("date" => "11.13", "mer" => "AM", "tf" => "h.i A", "display" => "11.13 AM"),
+            array("date" => "11.14", "mer" => "PM", "tf" => "h.i A", "display" => "11.14 PM"),
+            array("date" => "10.15", "mer" => "am", "tf" => "h.i a", "display" => "10.15 am"),
 		);
 	}
 
