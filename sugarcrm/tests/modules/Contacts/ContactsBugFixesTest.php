@@ -27,7 +27,7 @@ require_once('modules/Contacts/ContactFormBase.php');
 require_once('include/api/ServiceBase.php');
 require_once('clients/base/api/ModuleApi.php');
 
-class BugFixesTest extends Sugar_PHPUnit_Framework_TestCase
+class ContactsBugFixesTest extends Sugar_PHPUnit_Framework_TestCase
 {
 
     public function setUp() {
