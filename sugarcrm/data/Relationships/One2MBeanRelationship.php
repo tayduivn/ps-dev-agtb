@@ -167,10 +167,11 @@ class One2MBeanRelationship extends One2MRelationship
         if ($link->getSide() == REL_RHS)
         {
             $rhsID = $this->def['rhs_key'];
-            $id = $link->getFocus()->$rhsID;
-            if (!empty($id))
-            {
-                $rows[$id] = array('id' => $id);
+            if(isset($link->getFocus()->$rhsID)){
+                $id = $link->getFocus()->$rhsID;
+                if (!empty($id)) {
+                    $rows[$id] = array('id' => $id);
+                }                
             }
         }
         else //If the link is LHS, we need to query to get the full list and load all the beans.

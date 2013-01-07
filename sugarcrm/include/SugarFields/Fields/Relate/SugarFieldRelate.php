@@ -218,7 +218,7 @@ class SugarFieldRelate extends SugarFieldBase {
     }
 
     function formatField($rawField, $vardef) {
-    	if ('contact_name' == $vardef['name']){
+    	if ('contact_name' == $vardef['name'] && !empty($rawField)){
     	    $default_locale_name_format = $GLOBALS['current_user']->getPreference('default_locale_name_format');
     	    $default_locale_name_format = trim(preg_replace('/s/i', '', $default_locale_name_format));
             $new_field = '';
@@ -364,4 +364,15 @@ class SugarFieldRelate extends SugarFieldBase {
 
         return $value;
     }
+
+    /**
+     * For Relate fields we should not be sending the len vardef back
+     * @param array $vardef
+     * @return array of $vardef
+     */
+    public function getNormalizedDefs($vardef) {
+        unset($vardef['len']);
+        return parent::getNormalizedDefs($vardef);
+    }
+
 }

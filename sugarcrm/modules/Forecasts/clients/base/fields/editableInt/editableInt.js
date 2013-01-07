@@ -47,12 +47,14 @@
         var self = this;
         var el = this.$el.find(this.fieldTag);
         el.on("change", function () {
-            var value = self.parsePercentage(self.$el.find(self.inputSelector).val());
-            if (self.isValid(value)) {
+            var value = self.parsePercentage(self.$el.find(self.inputSelector).val()),
+                errorObj = self.isValid(value);
+            if (!_.isObject(errorObj)) {
                 self.model.set(self.name, self.unformat(value));
                 self.$el.find(self.inputSelector).blur();
             } else {
-                // will generate error styles here, for now log to console
+                var hb = Handlebars.compile("{{str_format key module args}}");
+                self.errorMessage = hb({'key' : errorObj.labelId, 'module' : 'Forecasts', 'args' : errorObj.args});
                 self.showErrors();
                 self.$el.find(self.inputSelector).focus().select();
             }
@@ -135,30 +137,21 @@
      * Is the new value valid for this field.
      *
      * @param value
-     * @return {Boolean}
+     * @return {Boolean|String} true, or error id on error
      */
     isValid: function (value) {
-        var regex = new RegExp("^[+-]?\\d+$"),
-            hb = Handlebars.compile("{{str_format key module args}}"),
-            args = [];
-
-        text2 = hb({'key' : 'LBL_COMMITTED_THIS_MONTH', 'module' : 'Forecasts', 'args' : args});
+        var regex = new RegExp("^[+-]?\\d+$");
 
         // always make sure that we have a string here, since match only works on strings
         if (_.isNull(value.toString().match(regex))) {
-            var langString = app.lang.get(this.def.label,'Forecasts');
-            args = [langString];
-            this.errorMessage = hb({'key' : 'LBL_EDITABLE_INVALID', 'module' : 'Forecasts', 'args' : args});
-            return false;
+            return {'labelId': 'LBL_EDITABLE_INVALID', 'args': [app.lang.get(this.def.label,'Forecasts')]};
         }
 
         // we have digits, lets make sure it's int a valid range is one is specified
         if (!_.isUndefined(this.def.minValue) && !_.isUndefined(this.def.maxValue)) {
             // we have a min and max value
             if(value < this.def.minValue || value > this.def.maxValue) {
-                args = [this.def.minValue, this.def.maxValue];
-                this.errorMessage = hb({'key' : 'LBL_EDITABLE_INVALID_RANGE', 'module' : 'Forecasts', 'args' : args});
-                return false;
+                return {'labelId': 'LBL_EDITABLE_INVALID_RANGE', 'args': [this.def.minValue, this.def.maxValue]};
             }
         }
 
