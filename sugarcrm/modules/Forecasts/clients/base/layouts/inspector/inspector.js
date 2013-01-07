@@ -50,7 +50,7 @@
             // when the time-period changes, we need to hide this.
             self.hide();
         });
-        this.layout.on('worksheetRows', function(newRows) {
+        this.context.forecasts.on('forecasts:change:worksheetRows', function(newRows) {
             var row = self.removeHighlight(self.findHighlighted());
             self.setRows(newRows, row);
         });

@@ -58,6 +58,10 @@
  *      on: context.forecasts
  *      by: updateWorksheetBySelectedRanges()
  *      when: dataTable is finished filtering itself and has destroyed and redrawn itself
+ *
+ * forecasts:change:worksheetRows
+ *      on: context.forecasts
+ *      after: this.updateWorksheetBySelectedRanges() is ran in the change:selectedRanges event handler
  */
 ({
 
@@ -101,7 +105,7 @@
 
     inspector: function(evt) {
         var nTr = $(evt.target).parents('tr'),
-            uid = $(evt.target).attr('data-uid'),
+            uid = $(evt.target).data('uid'),
             totalRows = $(evt.target).parents('table').find('tr.odd, tr.even'),
             selIndex = -1;
         _.each(totalRows, function(element, index){
@@ -364,7 +368,7 @@
             this.context.forecasts.on("change:selectedRanges",
                 function(context, ranges) {
                     this.updateWorksheetBySelectedRanges(ranges);
-                    self.layout.trigger('worksheetRows', self.$el.find('tr.odd, tr.even'));
+                    this.context.forecasts.trigger('forecasts:change:worksheetRows', self.$el.find('tr.odd, tr.even'));
                 },this);
             this.context.forecasts.worksheet.on("change", function() {
                 this.calculateTotals();

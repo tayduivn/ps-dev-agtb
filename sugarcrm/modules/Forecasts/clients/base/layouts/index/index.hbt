@@ -55,9 +55,9 @@
                         <div class="thumbnail viz">
                             <div class="view-forecastsChart"></div>
                         </div>
-                        <div class="clearfix"></div>
                     </div>
                     <div class="view-inspector"></div>
+                    <div class="clearfix"></div>
                 </div>
             </div>
         </div>
