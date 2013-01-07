@@ -367,6 +367,10 @@
             this.context.forecasts.on('forecasts:worksheetSave', function(isDraft) {
                 this.saveWorksheet(isDraft);
             }, this);
+            
+            this.context.forecasts.on('forecasts:worksheetSaved', function(){
+                this.render();
+            }, this);
 
             /*
              * // TODO: tagged for 6.8 see SFA-253 for details
