@@ -43,52 +43,52 @@ class SugarForecasting_Filter_TimePeriodFilter extends SugarForecasting_Abstract
         $forward = $settings['timeperiod_shown_forward'];
         $backward = $settings['timeperiod_shown_backward'];
         $type = $settings['timeperiod_interval'];
+        $leafType = $settings['timeperiod_leaf_interval'];
+        $timedate = TimeDate::getInstance();
 
         $timePeriods = array();
 
         $current = TimePeriod::getCurrentTimePeriod($type);
 
+        //If the current TimePeriod cannot be found for the type, just create one using the current date as a reference point
         if(empty($current)) {
-            return $timePeriods;
+            $current = TimePeriod::getByType($type);
+            $current->setStartDate($timedate->getNow()->asDbDate());
         }
 
-        $iterator = $current;
-        $found = array();
+        $startDate = $timedate->fromDbDate($current->start_date);
+
+        //Move back for the number of backward TimePeriod(s)
         while($backward-- > 0) {
-            $previous = $iterator->getPreviousTimePeriod();
-            if(!empty($previous)) {
-                array_push($found, $previous);
-                $iterator = $previous;
-            }
+            $startDate->modify($current->previous_date_modifier);
         }
 
-        while($tp = array_pop($found)) {
-            $children = $tp->getLeaves();
-            foreach($children as $tp) {
-                $timePeriods[$tp->id] = $tp->name;
-            }
-        }
+        $endDate = $timedate->fromDbDate($current->start_date);
 
-        //Add current timeperiods
-        $children = $current->getLeaves();
-        foreach($children as $tp) {
-            $timePeriods[$tp->id] = $tp->name;
-        }
+        //Get the current TimePeriod set
+        $endDate->modify($current->next_date_modifier);
 
-        //Add future timeperiods
-        $iterator = $current;
+        //Increment for the number of forward TimePeriod(s)
         while($forward-- > 0) {
-            $next = $iterator->getNextTimePeriod();
-            if(!empty($next)) {
-                $children = $next->getLeaves();
-                foreach($children as $tp) {
-                    $timePeriods[$tp->id] = $tp->name;
-                }
-                $iterator = $next;
+            $endDate->modify($current->next_date_modifier);
+        }
+
+        $db = DBManagerFactory::getInstance();
+        $query = sprintf("SELECT id, name FROM timeperiods WHERE type = %s AND deleted = 0 AND start_date >= %s AND start_date <= %s ORDER BY start_date ASC",
+            $db->quoted($leafType),
+            $db->convert($db->quoted($startDate->asDbDate()), 'date'),
+            $db->convert($db->quoted($endDate->asDbDate()), 'date')
+        );
+
+        $result = $db->query($query);
+        if(!empty($result)) {
+            while(($row = $db->fetchByAssoc($result))) {
+               $timePeriods[$row['id']] = $row['name'];
             }
         }
 
         return $timePeriods;
+
     }
 
 }
