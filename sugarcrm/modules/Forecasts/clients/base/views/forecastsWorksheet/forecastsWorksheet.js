@@ -369,7 +369,7 @@
                 self.commitButtonEnabled = false;
             },this);
 
-            this.context.forecasts.on('forecasts:worksheetSave', function(isDraft) {
+            this.context.forecasts.on('forecasts:worksheet:saveWorksheet', function(isDraft) {
                 this.saveWorksheet(isDraft);
             }, this);
             

@@ -31,6 +31,9 @@
  *      on: context.forecasts
  *      by: change:selectedUser, change:selectedTimePeriod
  * 
+ * forecasts:worksheet:saveWorksheet
+ *      on:context.forecasts
+ *      by: triggerCommit(), triggerSaveDraft()
  *
  * modal:forecastsTabbedConfig:open - to cause modal.js to pop up
  *      on: layout
@@ -174,7 +177,7 @@
 
             self.context.forecasts.on('forecasts:worksheet:saved', wkstCallBack);
 
-            this.context.forecasts.trigger("forecasts:worksheetSave", false);
+            this.context.forecasts.trigger("forecasts:worksheet:saveWorksheet", false);
             savebtn.addClass("disabled");
     	}        
     },
@@ -186,7 +189,7 @@
     	var savebtn = this.$el.find('#save_draft');
     	
     	if(!savebtn.hasClass("disabled")){
-            this.context.forecasts.trigger("forecasts:worksheetSave", true);
+            this.context.forecasts.trigger("forecasts:worksheet:saveWorksheet", true);
     	    savebtn.addClass("disabled");
     		this.enableCommitButton();
     	}
