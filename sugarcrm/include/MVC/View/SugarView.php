@@ -970,7 +970,7 @@ EOHTML;
 
         //BEGIN SUGARCRM flav=com  && dep=os ONLY
 
-        $copyright = '&copy; 2004-2012 SugarCRM Inc. The Program is provided AS IS, without warranty.  Licensed under <a href="LICENSE.txt" target="_blank" class="copyRightLink">AGPLv3</a>.<br>This program is free software; you can redistribute it and/or modify it under the terms of the <br><a href="LICENSE.txt" target="_blank" class="copyRightLink"> GNU Affero General Public License version 3</a> as published by the Free Software Foundation, including the additional permission set forth in the source code header.<br>';
+        $copyright = '&copy; 2004-2013 SugarCRM Inc. The Program is provided AS IS, without warranty.  Licensed under <a href="LICENSE.txt" target="_blank" class="copyRightLink">AGPLv3</a>.<br>This program is free software; you can redistribute it and/or modify it under the terms of the <br><a href="LICENSE.txt" target="_blank" class="copyRightLink"> GNU Affero General Public License version 3</a> as published by the Free Software Foundation, including the additional permission set forth in the source code header.<br>';
 
         //END SUGARCRM flav=com  && dep=os ONLY
 
@@ -979,7 +979,7 @@ EOHTML;
 
         //BEGIN SUGARCRM flav=pro  && dep=od && reg=zh_cn  ONLY
 
-        $copyright = 'é™�ä¸­å›½åœ°åŒºä½¿ç�1ￄ1�7�1�7�1�7r> &copy; 2004-2012 <a href="http://www.sugarcrm.com" target="_blank" class="copyRightLink">SugarCRM Inc.</a> ç‰ˆæ�ƒæ‰€æœ 1�7�1�7r>';
+        $copyright = 'é™�ä¸­å›½åœ°åŒºä½¿ç�1ￄ1�7�1�7�1�7r> &copy; 2004-2013 <a href="http://www.sugarcrm.com" target="_blank" class="copyRightLink">SugarCRM Inc.</a> ç‰ˆæ�ƒæ‰€æœ 1�7�1�7r>';
 
         //END SUGARCRM flav=pro  && dep=od && reg=zh_cn  ONLY
 
@@ -987,7 +987,7 @@ EOHTML;
 
           //BEGIN SUGARCRM lic=sub ONLY
 
-        $copyright = '&copy; 2004-2012 <a href="http://www.sugarcrm.com" target="_blank" class="copyRightLink">SugarCRM Inc.</a> All Rights Reserved.<br>';
+        $copyright = '&copy; 2004-2013 <a href="http://www.sugarcrm.com" target="_blank" class="copyRightLink">SugarCRM Inc.</a> All Rights Reserved.<br>';
 
           //END SUGARCRM lic=sub ONLY
 
