@@ -43,15 +43,15 @@
  *      by: _render()
  *      when: done rendering
  *
- * forecasts:forecastcommitbuttons:triggerSaveDraft
- *      on: context.forecasts
- *      by: safeFetch()
- *      when: user performs an action that causes a check to be made against dirty data
- *
  * forecasts:worksheet:saved
  *      on: context.forecasts
  *      by: saveWorksheet()
  *      when: saving the worksheet.
+ * 
+ * forecasts:worksheet:dirty
+ *      on: context.forecasts
+ *      by: change:worksheet
+ *      when: the worksheet is changed.
  */
 ({
     url: 'rest/v10/ForecastManagerWorksheets',
@@ -185,7 +185,7 @@
             this._collection.on("change", function(model, changed) {
                 // The Model has changed via CTE. save it in the isDirty
                 this.dirtyModels.add(model);
-                this.context.forecasts.trigger('forecasts:worksheetDirty', model, changed);
+                this.context.forecasts.trigger('forecasts:worksheet:dirty', model, changed);
             }, this);
         }
         // listening for updates to context for selectedUser:change

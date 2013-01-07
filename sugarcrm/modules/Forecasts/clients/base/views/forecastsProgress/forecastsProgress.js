@@ -109,7 +109,7 @@
             }, this);
 
             //commits could have changed quotas or any other number being used in the projected panel, do a fresh pull
-            this.context.forecasts.on("forecasts:commitForecast", function(context, flag) {
+            this.context.forecasts.on("forecasts:committed:commit", function(context, flag) {
                     this.updateProgress();
             }, this);
             this.context.forecasts.on("forecasts:worksheet:saved forecasts:committed:saved", function(){

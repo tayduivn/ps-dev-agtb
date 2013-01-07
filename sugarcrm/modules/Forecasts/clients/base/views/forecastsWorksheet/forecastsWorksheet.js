@@ -34,15 +34,10 @@
  *
  * Events Triggered
  *
- * forecasts:forecastcommitbuttons:triggerCommit
+ * forecasts:commitButtons:triggerCommit
  *      on: context.forecasts
  *      by: safeFetch()
  *      when: user clicks ok on confirm dialog that they want to commit data
- *
- * forecasts:forecastcommitbuttons:triggerSaveDraft
- *      on: context.forecasts
- *      by: safeFetch()
- *      when: user performs an action that causes a check to be made against dirty data
  *
  * forecasts:worksheet:rendered
  *      on: context.forecasts
@@ -63,6 +58,11 @@
  *      on: context.forecasts
  *      by: saveWorksheet()
  *      when: saving the worksheet.
+ *      
+ * forecasts:worksheet:dirty
+ *      on: context.forecasts
+ *      by: change:worksheet
+ *      when: the worksheet is changed.
  */
 ({
 
@@ -323,7 +323,7 @@
                 }
                 // The Model has changed via CTE. save it in the isDirty
                 this.dirtyModels.add(model);
-                this.context.forecasts.trigger('forecasts:worksheetDirty', model, changed);
+                this.context.forecasts.trigger('forecasts:worksheet:dirty', model, changed);
             }, this);
         }
 
@@ -515,7 +515,7 @@
                 var msg = app.lang.get("LBL_WORKSHEET_COMMIT_CONFIRM", "Forecasts").split("<br>");
                 //show dialog
                 if(confirm(msg[0] + "\n\n" + msg[1])){
-                    self.context.forecasts.trigger("forecasts:forecastcommitbuttons:triggerCommit");
+                    self.context.forecasts.trigger("forecasts:commitButtons:triggerCommit");
                     self.commitFromSafeFetch = true;
                 }
                 //canceled, continue fetching
