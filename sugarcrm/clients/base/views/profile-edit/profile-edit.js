@@ -40,6 +40,7 @@
         this.options.meta   = app.metadata.getView(this.options.module, 'edit');
         app.view.views.EditView.prototype.initialize.call(this, options);
         this.template = app.template.get("edit");
+        this.fallbackFieldTemplate = "edit";
         this.model.on("change", function() {
             this.$('a.password')
                 .attr('href', 'javascript:void(0)').
