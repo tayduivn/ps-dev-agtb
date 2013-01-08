@@ -22,23 +22,9 @@
  ********************************************************************************/
 
 /**
- * SugarFieldTeamset.php
+ * SugarFieldJson.php
  * 
- * This class handles the processing of the new Team selection widget.
- * The main thing to note is that the getDetailViewSmarty, getEditViewSmarty and
- * getSearchViewSmarty methods are called from the cached .tpl files that are generated 
- * via the MVC/Metadata framework.  The cached .tpl files include Smarty code rendered from
- * the include/SugarFields/Fields/SugarFieldTeamset/Teamset.tpl file which in turn
- * calls this file.  When the plugin function is run (see include/Smarty/plugins/function.sugarvar_teamset.php), 
- * it will call SugarFieldTeamset's render method.  From there, the corresponding method is invoked.
- * 
- * For the MassUpdate section, there is no cached .tpl file created so the contents are rendered without
- * using the Teamset.tpl approach.
- * 
- * For classic views (where PHP files use the XTemplate processing) we provide the
- * getClassicView method.  Also note, the getClassicViewQS method.  For some classic views,
- * we use this method in situations where the quick search sections need to be generated 
- * separately from the widget code.
+ * A sugar field that json encodes the content of the field.
  *
  */
 
@@ -53,7 +39,7 @@ class SugarFieldJson extends SugarFieldBase {
      * @param array $properties - Any properties for this field
      */
     public function apiSave(SugarBean $bean, array $params, $fieldName, $properties) {
-        // Find the primary team id, or the first one, if nothing is set to primary
+        // json encode the content
     	$bean->$fieldName = json_encode($params[$fieldName]);
     }
 
