@@ -290,25 +290,21 @@ class SugarAutoLoaderTest extends Sugar_PHPUnit_Framework_TestCase
         $metafiles['AutoLoaderTest'] = array("editviewdefs" => "modules/AutoLoaderTest/metadata/meta-editviewdefs.php");
         $this->put("modules/AutoLoaderTest/metadata/metafiles.php", "<?php \$metafiles = ".var_export($metafiles, true).";");
         $this->assertEquals("modules/AutoLoaderTest/metadata/editviewdefs.php",
-            SugarAutoLoader::loadWithMetafiles("AutoLoaderTest", "editviewdefs"));
+        SugarAutoLoader::loadWithMetafiles("AutoLoaderTest", "editviewdefs"));
         $this->assertEmpty(SugarAutoLoader::loadWithMetafiles("AutoLoaderTest", "editviewdefsblah", "editviewdefs"));
         // now create meta-defs
         $this->touch("modules/AutoLoaderTest/metadata/meta-editviewdefs.php");
         $this->assertEquals("modules/AutoLoaderTest/metadata/meta-editviewdefs.php",
-        		SugarAutoLoader::loadWithMetafiles("AutoLoaderTest", "editviewdefs"));
-        $this->assertEquals("modules/AutoLoaderTest/metadata/meta-editviewdefs.php",
-        		SugarAutoLoader::loadWithMetafiles("AutoLoaderTest", "editviewdefsblah", "editviewdefs"));
+        SugarAutoLoader::loadWithMetafiles("AutoLoaderTest", "editviewdefs"));
 
         // now custom
         $this->touch("custom/modules/AutoLoaderTest/metadata/editviewdefs.php");
         $this->assertEquals("custom/modules/AutoLoaderTest/metadata/editviewdefs.php",
-        		SugarAutoLoader::loadWithMetafiles("AutoLoaderTest", "editviewdefs"));
-        $this->assertEquals("modules/AutoLoaderTest/metadata/meta-editviewdefs.php",
-        		SugarAutoLoader::loadWithMetafiles("AutoLoaderTest", "editviewdefsblah", "editviewdefs"));
+        SugarAutoLoader::loadWithMetafiles("AutoLoaderTest", "editviewdefs"));
         // other def
         $this->touch("modules/AutoLoaderTest/metadata/detailviewdefs.php");
         $this->assertEquals("modules/AutoLoaderTest/metadata/detailviewdefs.php",
-        		SugarAutoLoader::loadWithMetafiles("AutoLoaderTest", "detailviewdefs"));
+        SugarAutoLoader::loadWithMetafiles("AutoLoaderTest", "detailviewdefs"));
 
     }
 
