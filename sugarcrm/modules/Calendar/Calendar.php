@@ -220,8 +220,10 @@ class Calendar {
 						}				
 					}
 
-					$focus = BeanFactory::getBean($act->sugar_bean->parent_type, $act->sugar_bean->parent_id);
-					$item['related_to'] = $focus->name;
+                    if (!empty($act->sugar_bean->parent_type) && !empty($act->sugar_bean->parent_id)) {
+                        $focus = BeanFactory::getBean($act->sugar_bean->parent_type, $act->sugar_bean->parent_id);
+                        $item['related_to'] = $focus->name;
+                    }
 
 					if(!isset($item['duration_hours']) || empty($item['duration_hours']))
 						$item['duration_hours'] = 0;
