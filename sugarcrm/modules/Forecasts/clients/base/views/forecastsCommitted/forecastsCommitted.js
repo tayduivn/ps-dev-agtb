@@ -232,7 +232,7 @@
                     self.updateTotals(totals);
                 }
             }, this);
-            this.context.forecasts.on("forecasts:commitForecast", function(context, flag) {
+            this.context.forecasts.on("forecasts:committed:commit", function(context, flag) {
                     self.commitForecast();
             }, this);
         }

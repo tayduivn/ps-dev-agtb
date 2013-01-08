@@ -34,15 +34,10 @@
  *
  * Events Triggered
  *
- * forecasts:forecastcommitbuttons:triggerCommit
+ * forecasts:commitButtons:triggerCommit
  *      on: context.forecasts
  *      by: safeFetch()
  *      when: user clicks ok on confirm dialog that they want to commit data
- *
- * forecasts:forecastcommitbuttons:triggerSaveDraft
- *      on: context.forecasts
- *      by: safeFetch()
- *      when: user performs an action that causes a check to be made against dirty data
  *
  * forecasts:worksheet:rendered
  *      on: context.forecasts
@@ -58,6 +53,16 @@
  *      on: context.forecasts
  *      by: updateWorksheetBySelectedRanges()
  *      when: dataTable is finished filtering itself and has destroyed and redrawn itself
+ *      
+ * forecasts:worksheet:saved
+ *      on: context.forecasts
+ *      by: saveWorksheet()
+ *      when: saving the worksheet.
+ *      
+ * forecasts:worksheet:dirty
+ *      on: context.forecasts
+ *      by: change:worksheet
+ *      when: the worksheet is changed.
  */
 ({
 
@@ -248,7 +253,7 @@
 
     /**
      *
-     * @triggers forecasts:worksheetSaved
+     * @triggers forecasts:worksheet:saved
      * @return {Number}
      */
     saveWorksheet : function(isDraft) {
@@ -275,14 +280,14 @@
                         saveCount++;
                         //if this is the last save, go ahead and trigger the callback;
                         if(totalToSave === saveCount) {
-                            self.context.forecasts.trigger('forecasts:worksheetSaved', totalToSave, 'rep_worksheet', isDraft);
+                            self.context.forecasts.trigger('forecasts:worksheet:saved', totalToSave, 'rep_worksheet', isDraft);
                         }
                     }});
                 });
 
                 self.cleanUpDirtyModels();
             } else {
-                this.context.forecasts.trigger('forecasts:worksheetSaved', totalToSave, 'rep_worksheet', isDraft);
+                this.context.forecasts.trigger('forecasts:worksheet:saved', totalToSave, 'rep_worksheet', isDraft);
             }
         }
 
@@ -318,7 +323,7 @@
                 }
                 // The Model has changed via CTE. save it in the isDirty
                 this.dirtyModels.add(model);
-                this.context.forecasts.trigger('forecasts:worksheetDirty', model, changed);
+                this.context.forecasts.trigger('forecasts:worksheet:dirty', model, changed);
             }, this);
         }
 
@@ -339,7 +344,7 @@
             this.context.forecasts.worksheet.on("change", function() {
                 this.calculateTotals();
             }, this);
-            this.context.forecasts.on("forecasts:committed:saved", function(){
+            this.context.forecasts.on("forecasts:committed:saved forecasts:worksheet:saved", function(){
                 if(this.showMe()){
                     var model = this.context.forecasts.worksheet;
                     model.url = this.createURL();
@@ -364,9 +369,10 @@
                 self.commitButtonEnabled = false;
             },this);
 
-            this.context.forecasts.on('forecasts:worksheetSave', function(isDraft) {
+            this.context.forecasts.on('forecasts:worksheet:saveWorksheet', function(isDraft) {
                 this.saveWorksheet(isDraft);
             }, this);
+            
 
             /*
              * // TODO: tagged for 6.8 see SFA-253 for details
@@ -479,11 +485,11 @@
                 self.context.forecasts.set({reloadCommitButton: true});
 
                 var svWkFn = function() {
-                    self.context.forecasts.off('forecasts:worksheetSaved', svWkFn);
+                    self.context.forecasts.off('forecasts:worksheet:saved', svWkFn);
                     collection.fetch();
                 };
 
-                self.context.forecasts.on('forecasts:worksheetSaved', svWkFn);
+                self.context.forecasts.on('forecasts:worksheet:saved', svWkFn);
                 this.saveWorksheet()
             }
             //user clicked cancel, ignore and fetch if fetch is enabled
@@ -509,7 +515,7 @@
                 var msg = app.lang.get("LBL_WORKSHEET_COMMIT_CONFIRM", "Forecasts").split("<br>");
                 //show dialog
                 if(confirm(msg[0] + "\n\n" + msg[1])){
-                    self.context.forecasts.trigger("forecasts:forecastcommitbuttons:triggerCommit");
+                    self.context.forecasts.trigger("forecasts:commitButtons:triggerCommit");
                     self.commitFromSafeFetch = true;
                 }
                 //canceled, continue fetching

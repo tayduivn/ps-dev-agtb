@@ -8,7 +8,7 @@
         'mouseleave span.editable': 'togglePencil',
         'click span.editable': 'onClick',
         'blur span.edit input': 'onBlur',
-        'keyup span.edit input': 'onKeypress'
+        'keyup span.edit input': 'onKeyup'
     },
 
     inputSelector: 'span.edit input',
@@ -48,16 +48,25 @@
      *
      */
     bindDomChange: function () {
+        // override parent, do nothing
+    },
+
+    /**
+     *
+     */
+    handleEvent: function (evt) {
         if (!this.isEditable()) return;
         if (!(this.model instanceof Backbone.Model)) return;
         var self = this;
         var el = this.$el.find(this.fieldTag);
-        el.on("change", function () {
+        // test if value changed
+        if(!this.compareValuesLocale(self.$el.find(self.inputSelector).val(), this.model.get(this.name))) {
             var value = self.parsePercentage(self.$el.find(self.inputSelector).val());
             if (self.isValid(value)) {
                 self.model.set(self.name, self.unformat(value));
-                self.$el.find(self.inputSelector).blur();
+                this.renderDetail();
             } else {
+                // render error
                 var hb = Handlebars.compile("{{str_format key module args}}"),
                     args = [app.lang.get(self.def.label,'Forecasts')];
 
@@ -65,16 +74,26 @@
 
                 self.showErrors();
                 self.$el.find(self.inputSelector).focus().select();
+                // Focus doesn't always change when tabbing through inputs on IE9 (Bug54717)
+                // This prevents change events from being fired appropriately on IE9
+                if ($.browser.msie && el.is("input")) {
+                    el.on("input", function () {
+                        // Set focus on input element receiving user input
+                        el.focus();
+                    });
+                }
             }
-        });
-        // Focus doesn't always change when tabbing through inputs on IE9 (Bug54717)
-        // This prevents change events from being fired appropriately on IE9
-        if ($.browser.msie && el.is("input")) {
-            el.on("input", function () {
-                // Set focus on input element receiving user input
-                el.focus();
-            });
+        } else {
+            this.renderDetail();
         }
+    },
+
+    /**
+     * renders the detail view
+     */
+    renderDetail: function () {
+        this.options.viewName = 'detail';
+        this.render();
     },
 
     /**
@@ -93,7 +112,6 @@
             this.$el.find('.edit-icon').addClass('hide');
         }
     },
-
 
     /**
      * Switch the view to the Edit view if the field is editable and it's clicked on
@@ -122,20 +140,39 @@
     },
 
     /**
-     * Handle when esc/return/enter and tab keys are pressed
+     * Handle when esc/enter/tab and tab keys are pressed
      *
      * @param evt
      */
-    onKeypress: function (evt) {
+    onKeyup: function (evt) {
+        evt.preventDefault();
         if (evt.which == 27) {
-            this.$el.find(this.inputSelector).val(this.value);
-            this.$el.find(this.inputSelector).blur();
+            // esc key, cancel edits
+            this.cancelEdits(evt);
         } else if (evt.which == 13 || evt.which == 9) {
-            // blur if value is unchanged
-            if(this.compareValuesLocale(app.currency.unformatAmountLocale(this.value), this.$el.find(this.inputSelector).val())) {
-                this.$el.find(this.inputSelector).blur();
-            }
+            // enter or tab, handle event
+            this.handleEvent(evt);
         }
+    },
+
+    /**
+     * reset value to model and view detail template
+     *
+     * evt {Object}
+     */
+    cancelEdits: function(evt) {
+        this.$el.find(this.inputSelector).val(this.value);
+        this.renderDetail();
+    },
+
+    /**
+     * Handle when field is blurred
+     *
+     * @param evt
+     */
+    onBlur: function (evt) {
+        evt.preventDefault();
+        this.handleEvent(evt);
     },
 
     /**
@@ -143,7 +180,7 @@
      *
      * @param val1
      * @param val2
-     * @return boolean
+     * @return {Boolean} true if equal
      */
     compareValuesLocale: function(val1, val2) {
         var ogVal = app.utils.formatNumber(
@@ -164,20 +201,7 @@
     },
 
     /**
-     * Blur event handler
-     *
-     * This forces the field to re-render as the DetailView
-     *
-     * @param evt
-     */
-    onBlur : function(evt) {
-        evt.preventDefault();
-        this.options.viewName = 'detail';
-        this.render();
-    },
-
-    /**
-     * Is the new value valid for this field.
+     * field validator
      *
      * @param value
      * @return {Boolean}
@@ -237,9 +261,14 @@
      */
     showErrors : function() {
         // attach error styles
+        var self = this;
         this.$el.find('.error-message').html(this.errorMessage);
         this.$el.find('.control-group').addClass('error');
         this.$el.find('.help-inline.editable-error').removeClass('hide').addClass('show');
+        // make error message button cancel edits
+        this.$el.find('.btn.btn-danger').on("click", function(evt) {
+            self.cancelEdits.call(self, evt);
+        });
     }
 
 })
