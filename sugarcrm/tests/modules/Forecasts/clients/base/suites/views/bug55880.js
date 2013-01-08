@@ -27,7 +27,6 @@ describe("Bug 55880", function() {
         view,
         layout,
         field,
-        _renderClickToEditStub,
         _renderFieldStub,
         _renderFieldSpy,
         _setForecastColumnStub,
@@ -71,22 +70,17 @@ describe("Bug 55880", function() {
             layout = new app.view.layouts.ForecastsLayout(options);
 
             view = SugarTest.loadFile("../modules/Forecasts/clients/base/views/forecastSchedule", "forecastSchedule", "js", function(d) { return eval(d); });
-            var cte = SugarTest.loadFile("../modules/Forecasts/clients/base/lib", "ClickToEdit", "js", function(d) { return eval(d); });
-            _renderClickToEditStub = sinon.stub(app.view, "ClickToEditField");
             _renderFieldStub = sinon.stub(app.view.View.prototype, "_renderField");
             _renderFieldSpy = sinon.spy(view, "_renderField");
 
             field = {
                 name:'expected_best_case',
                 viewName:'worksheet',
-                def:{
-                    clickToEdit:true
-                }
+                def:{}
             };
         });
 
         afterEach(function () {
-            _renderClickToEditStub.restore();
             _renderFieldStub.restore();
             // restore the local stubs
             _.each(stubs, function(stub) {
@@ -99,7 +93,6 @@ describe("Bug 55880", function() {
             view._renderField(field);
             expect(_renderFieldStub).toHaveBeenCalled();
             expect(_renderFieldSpy).toHaveBeenCalled();
-            expect(_renderClickToEditStub).toHaveBeenCalled();
         });
 
         xit("should not be click to editable on a worksheet that does not belong to the user.", function () {
@@ -107,7 +100,6 @@ describe("Bug 55880", function() {
             view._renderField(field);
             expect(_renderFieldStub).toHaveBeenCalled();
             expect(_renderFieldSpy).toHaveBeenCalled();
-            expect(_renderClickToEditStub).not.toHaveBeenCalled();
         });
 
         describe("editableWorksheet property", function () {

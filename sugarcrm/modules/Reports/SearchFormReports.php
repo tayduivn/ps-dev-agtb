@@ -148,11 +148,7 @@ class SearchFormReports extends SearchForm
          if($defs) {
              require $defs;
          }
-
-         $defs = SugarAutoLoader::loadWithMetafiles('Reports', 'SearchFields', 'searchfields');
-         if($defs) {
-         	require $defs;
-         }
+         $searchFields = SugarAutoLoader::loadSearchFields('Reports');
 
          return array('searchdefs' => $searchdefs, 'searchFields' => $searchFields );
      }
