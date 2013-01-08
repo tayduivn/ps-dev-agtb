@@ -81,11 +81,18 @@ SUGAR.util.extend(SEC, SE.ExpressionContext, {
     },
     setValue : function(varname, value)
     {
-        var el = this.getElement(varname);
-        if (el) {
-            SUGAR.forms.FlashField(el, null, varname);
+        this.lockedFields = this.lockedFields || [];
+        if (!this.lockedFields[varname])
+        {
+            this.lockedFields[varname] = true;
+            var el = this.getElement(varname);
+            if (el) {
+                SUGAR.forms.FlashField(el, null, varname);
+            }
+            var ret = this.view.context.get("model").set(varname, value);
+            this.lockedFields = [];
+            return  ret;
         }
-        return  this.view.context.get("model").set(varname, value);
     },
     addListener : function(varname, callback, scope)
     {
@@ -97,6 +104,45 @@ SUGAR.util.extend(SEC, SE.ExpressionContext, {
         var field = this.view.getField(varname);
         if (field && field.el)
             return field.el;
+    },
+    addClass : function(varname, css_class, includeLabel){
+        var def = this.view.getFieldMeta(varname),
+            props = includeLabel ? ["css_class", "cell_css"] : ["css_class"],
+            el = this.getElement(varname),
+                        parent = $(el).closest('div.record-cell');
+
+        _.each(props, function(prop) {
+            if (!def[prop]) {
+                def[prop] = css_class;
+            } else if (def[prop].indexOf(css_class) == -1){
+                def[prop] += " " + css_class;
+            }
+        });
+        this.view.setFieldMeta(varname, def);
+
+        $(el).addClass(css_class);
+        if (includeLabel && parent) {
+            parent.addClass(css_class);
+        }
+
+    },
+    removeClass : function(varname, css_class, includeLabel) {
+        var def = this.view.getFieldMeta(varname),
+            props = includeLabel ? ["css_class", "cell_css"] : ["css_class"],
+            el = this.getElement(varname),
+            parent = $(el).closest('div.record-cell');
+
+        _.each(props, function(prop) {
+            if (def[prop] && def[prop].indexOf(css_class) != -1) {
+                def[prop] = $.trim((" " + def[prop] + " ").replace(new RegExp(' ' + css_class + ' '), ""));
+            }
+        });
+        this.view.setFieldMeta(varname, def);
+
+        $(el).removeClass(css_class);
+        if (includeLabel && parent) {
+            parent.removeClass(css_class);
+        }
     },
     getLink : function(variable, view) {
         if (!view) view = AH.lastView;

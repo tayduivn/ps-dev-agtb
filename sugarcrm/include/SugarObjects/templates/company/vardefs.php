@@ -33,6 +33,8 @@ $vardefs= array (
     'full_text_search' => array('boost' => 3),
     'audited' => true,
 	'required'=>true,
+    //'calculated' => true,
+    //'formula' => 'concat($phone_office, " + Name")',
     'importable' => 'required',
     'merge_filter' => 'selected',  //field will be enabled for merge and will be a part of the default search criteria..other valid values for this property are enabled and disabled, default value is disabled.
                             //property value is case insensitive.
@@ -107,6 +109,7 @@ $vardefs= array (
     'unified_search' => true,
     'full_text_search' => array('boost' => 1),
     'comment' => 'The fax phone number of this company',
+    'dependency' => 'greaterThan(5, strlen($name))',
   ), 
   
   'billing_address_street' => 

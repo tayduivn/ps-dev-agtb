@@ -57,6 +57,7 @@
             if (newDep)
                 this.deps.push(newDep);
         }, this);
+        console.log(this.deps);
     },
 
     /**

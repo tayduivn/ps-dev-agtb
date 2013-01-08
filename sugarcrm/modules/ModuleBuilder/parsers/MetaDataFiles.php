@@ -28,6 +28,7 @@
  ********************************************************************************/
 require_once 'modules/ModuleBuilder/Module/StudioModuleFactory.php';
 require_once 'modules/ModuleBuilder/parsers/constants.php';
+require_once 'include/Expressions/DependencyManager.php';
 class MetaDataFiles
 {
     /**
@@ -677,34 +678,28 @@ class MetaDataFiles
             $fileList = self::getClientFiles($platforms, $type, $module);
             $moduleResults = self::getClientFileContents($fileList, $type, $module);
 
-            if ($module == "Accounts" )
-            {
-                if ($type == "view")
-                {
-                    foreach ($moduleResults as $view => $defs)
-                    {
-                        if (is_array($defs))
-                        {
-                            $meta = isset($defs['meta']) ? $defs['meta'] : array();
+            if ($type == "view") {
+                foreach ($moduleResults as $view => $defs) {
+                    if (is_array($defs)) {
+                        $meta = isset($defs['meta']) ? $defs['meta'] : array();
+                        $seed = BeanFactory::getBean($module);
+                        if (!empty($seed) && !empty($seed->field_defs))
                             $deps = array_merge(
                                 DependencyManager::getDependenciesForFields(
-                                    BeanFactory::getBean($module)->field_defs,
+                                    $seed->field_defs,
                                     ucfirst($view) . "View"),
                                 DependencyManager::getDependenciesForView($meta, ucfirst($view) . "View", $module)
                             );
-                            if (!empty($deps) && is_array(($moduleResults[$view]['meta'])))
-                            {
-                                if (!isset($moduleResults[$view]['meta']['dependencies']) ||
-                                    !is_array($moduleResults[$view]['meta']['dependencies']))
-                                {
-                                    $moduleResults[$view]['meta']['dependencies'] = array();
-                                }
-                                foreach ($deps as $dep) {
-                                    $moduleResults[$view]['meta']['dependencies'][] = $dep->getDefinition();
-                                }
+                        if (!empty($deps) && is_array(($moduleResults[$view]['meta']))) {
+                            if (!isset($moduleResults[$view]['meta']['dependencies']) ||
+                                !is_array($moduleResults[$view]['meta']['dependencies'])
+                            ) {
+                                $moduleResults[$view]['meta']['dependencies'] = array();
+                            }
+                            foreach ($deps as $dep) {
+                                $moduleResults[$view]['meta']['dependencies'][] = $dep->getDefinition();
                             }
                         }
-
                     }
                 }
             }

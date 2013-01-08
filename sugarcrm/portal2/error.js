@@ -27,7 +27,7 @@
 /**
  * Portal specific error handlers.
  */
-(function(app) {
+;(function(app) {
     app.error = _.extend(app.error);
 
     function backToLogin(bDismiss) {

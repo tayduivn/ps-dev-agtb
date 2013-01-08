@@ -131,7 +131,7 @@ class Dependency
 	 * Returns the definition of the dependency in array format.
 	 */
 	function getDefinition() {
-		array(
+		/*array(
             'hooks' => array("edit"),
             'trigger' => 'true', //Optional, the trigger for the dependency. Defaults to 'true'.
             'triggerFields' => array('status'),
@@ -150,7 +150,7 @@ class Dependency
             ),
             //Actions fire if the trigger is false. Optional.
             'notActions' => array(),
-        );
+        );*/
         $def = array (
 			"name" => $this->id,
             "hooks" => !empty($this->hooks) ? $this->hooks : array("all"),

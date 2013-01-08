@@ -52,16 +52,10 @@ class SetValueAction extends AbstractAction{
 				    context = this.context;
 
 				try {
-				//BEGIN SUGARCRM flav=een ONLY
-				SUGAR.forms.AssignmentHandler.clearError(this.target);
-				//END SUGARCRM flav=een ONLY
 				    var val = this.evalExpression(this.expr, context);
 				    context.setValue(this.target, val);
 				} catch (e) {
-	                //BEGIN SUGARCRM flav=een ONLY
-			        SUGAR.forms.AssignmentHandler.showError(this.target, e + '');
-		            //END SUGARCRM flav=een ONLY
-			        context.setValue(this.target, '');
+	                context.setValue(this.target, '');
 			    }
 	       }
 		});";

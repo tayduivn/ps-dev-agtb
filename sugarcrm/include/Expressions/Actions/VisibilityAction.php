@@ -38,15 +38,20 @@ class VisibilityAction extends AbstractAction{
 	 */
 	static function getJavascriptClass() {
 		return "
-		SUGAR.forms.VisibilityAction = function(target, expr, view)
+		SUGAR.forms.SetVisibilityAction = function(target, expr, view)
 		{
+			if (_.isObject(target)){
+			    expr = target.value;
+			    target = target.target
+			}
 			this.target = target;
 			this.expr	= 'cond(' + expr + ', \"\", \"none\")';
 			this.view = view;
-			if (!SUGAR.forms.VisibilityAction.initialized)
+
+			if (!SUGAR.forms.SetVisibilityAction.initialized)
 			{
 			    var head = document.getElementsByTagName('head')[0];
-                var cssdef = 'td.vis_action_hidden * { visibility:hidden}'
+                var cssdef = '.vis_action_hidden * { visibility:hidden}'
 			    var newStyle = document.createElement('style');
                 newStyle.setAttribute('type', 'text/css');
 				if (newStyle.styleSheet)
@@ -54,14 +59,14 @@ class VisibilityAction extends AbstractAction{
 			    else
 			        newStyle.innerHTML = cssdef;
 			    head.appendChild(newStyle);
-                SUGAR.forms.VisibilityAction.initialized = true;
+                SUGAR.forms.SetVisibilityAction.initialized = true;
 			}
 		}
 		
 		/**
 		 * Triggers this dependency to be re-evaluated again.
 		 */
-		SUGAR.util.extend(SUGAR.forms.VisibilityAction, SUGAR.forms.AbstractAction, {
+		SUGAR.util.extend(SUGAR.forms.SetVisibilityAction, SUGAR.forms.AbstractAction, {
 		
 			/**
 			 * Triggers the style dependencies.
@@ -71,35 +76,65 @@ class VisibilityAction extends AbstractAction{
 				if (typeof(context) == 'undefined')
                     context = this.context;
                 try {
-                    var Dom = YAHOO.util.Dom;
                     var exp = this.evalExpression(this.expr, context);
 					var hide =  exp == 'none' || exp == 'hidden';
-					var target = SUGAR.forms.AssignmentHandler.getElement(this.target);
+					var target = context.getElement(this.target);
 					if (target != null) {
-					    var inv_class = 'vis_action_hidden';
-						var inputTD = Dom.getAncestorByTagName(target, 'TD');
-						var labelTD = Dom.getPreviousSiblingBy(inputTD, function(e){
-							if (e.tagName == 'TD') return true;
-							return false;
-						});
-						this.wrapContent(labelTD);
-						this.wrapContent(inputTD);
-						var wasHidden = Dom.hasClass(labelTD, inv_class);
-						if (hide)
-						{
-						    Dom.addClass(labelTD, inv_class);
-						    Dom.addClass(inputTD, inv_class);
-						}
-						else
-						{
-						    Dom.removeClass(labelTD, inv_class);
-						    Dom.removeClass(inputTD, inv_class);
-						    if (wasHidden && this.view == 'EditView')
-						        SUGAR.forms.FlashField(target);
-						}
-						this.checkRow(Dom.getAncestorByTagName(inputTD, 'TR'), inv_class);
+					    if (SUGAR.App)
+					        this.sidecarExec(context, target, hide);
+					    else
+					        this.legacyExec(context, target, hide);
 					}
-				} catch (e) {if (console && console.log) console.log(e);}
+					//The view may not be rendered when we are fired the first time.
+					else if (context.view && _.isEmpty(context.view.fields))
+					{
+					    context.view.once('render', function(){
+					        this.exec();
+					    }, this);
+					}
+				} catch (e) {
+				    debugger;
+				    if (console && console.log) console.log(e);
+				}
+			},
+			sidecarExec : function(context, target, hide) {
+			    var inv_class = 'vis_action_hidden';
+                    wasHidden = $(target).hasClass(inv_class);
+                if (hide)
+                {
+                    context.addClass(this.target, inv_class, true);
+                }
+                else
+                {
+                    context.removeClass(this.target, inv_class, true);
+                    if (wasHidden)
+                        SUGAR.forms.FlashField(target, null, this.target);
+                }
+			},
+			legacyExec : function(context, target, hide) {
+                var inv_class = 'vis_action_hidden',
+                    inputTD = Dom.getAncestorByTagName(target, 'TD'),
+                    labelTD = Dom.getPreviousSiblingBy(inputTD, function(e){
+                if (e.tagName == 'TD') return true;
+                    return false;
+                });
+                this.wrapContent(labelTD);
+                this.wrapContent(inputTD);
+                var wasHidden = Dom.hasClass(labelTD, inv_class);
+                if (hide)
+                {
+                    Dom.addClass(labelTD, inv_class);
+                    Dom.addClass(inputTD, inv_class);
+                }
+                else
+                {
+                    Dom.removeClass(labelTD, inv_class);
+                    Dom.removeClass(inputTD, inv_class);
+                    if (wasHidden && this.view == 'EditView')
+                        SUGAR.forms.FlashField(target);
+                }
+                this.checkRow(Dom.getAncestorByTagName(inputTD, 'TR'), inv_class);
+
 			},
 			//we need to wrap plain text nodes in a span in order to hide the contents without hiding the TD itesef
 			wrapContent: function(el)
@@ -154,7 +189,7 @@ class VisibilityAction extends AbstractAction{
 	 * @return string javascript.
 	 */
 	function getJavascriptFire() {
-		return "new SUGAR.forms.VisibilityAction('{$this->targetField}','{$this->expression}', '{$this->view}')";
+		return "new SUGAR.forms.SetVisibilityAction('{$this->targetField}','{$this->expression}', '{$this->view}')";
 	}
 	
 	/**
