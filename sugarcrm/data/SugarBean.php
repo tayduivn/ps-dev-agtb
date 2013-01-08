@@ -5268,8 +5268,8 @@ class SugarBean
         if ( ( (!$current_user->isAdminForModule($this->module_dir)) || $force_admin ) &&
         !$this->disable_row_level_security	&& ($this->module_dir != 'WorkFlow')){
 
-            $query .= " " . $join_type . " JOIN (select tst.team_set_id from team_sets_teams tst";
-            $query .= " " . $join_type . " JOIN team_memberships {$team_table_alias} ON tst.team_id = {$team_table_alias}.team_id
+            $query .= $join_type . " JOIN (select tst.team_set_id from team_sets_teams tst ";
+            $query .= $join_type . " JOIN team_memberships {$team_table_alias} ON tst.team_id = {$team_table_alias}.team_id
                                     AND {$team_table_alias}.user_id = '$current_user->id'
                                     AND {$team_table_alias}.deleted=0 group by tst.team_set_id) {$table_alias}_tf on {$table_alias}_tf.team_set_id  = {$table_alias}.team_set_id ";
 
