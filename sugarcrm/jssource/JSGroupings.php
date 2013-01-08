@@ -171,9 +171,9 @@
                 "styleguide/assets/js/bootstrap-modal.js" => "summer/summer.min.js",
                 "styleguide/assets/js/bootstrap-alert.js" => "summer/summer.min.js",
                 "summer/summer-ui.js" => "summer/summer.min.js",
-                "styleguide/styleguide/js/nvd3/lib/d3.v2.js" => "summer/summer.min.js",
+                "styleguide/assets/js/nvd3/lib/d3.v2.min.js" => "summer/summer.min.js",
                 // To add more models to NV D3, run the makefile in styleguide.
-                "styleguide/styleguide/js/nvd3/nv.d3.min.js" => "summer/summer.min.js",
+                "styleguide/assets/js/nvd3/nv.d3.min.js" => "summer/summer.min.js",
                 "modules/Forecasts/clients/base/lib/ForecastsUtils.js" => "summer/summer.min.js",
                 "modules/Forecasts/clients/base/lib/BucketGridEnum.js" => "summer/summer.min.js",
                 "modules/Forecasts/clients/base/lib/ClickToEdit.js" => "summer/summer.min.js",
@@ -187,7 +187,7 @@
                 "sidecar/lib/chosen/chosen.css" => "summer/summer.min.css",
                 "summer/lib/fullcalendar/fullcalendar.css" => "summer/summer.min.css",
                 "sidecar/lib/jquery-ui/css/smoothness/jquery-ui-1.8.18.custom.css" => "summer/summer.min.css",
-                "styleguide/styleguide/css/nv.d3.css" => "summer/summer.min.css",
+                //"styleguide/styleguide/css/nv.d3.css" => "summer/summer.min.css",
                 "summer/lib/TimelineJS/css/timeline.css" => "summer/summer.min.css",
             ),
 
