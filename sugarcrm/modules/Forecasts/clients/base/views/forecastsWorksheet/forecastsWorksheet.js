@@ -240,6 +240,8 @@
         if(this.context.forecasts) { this.context.forecasts.off(null, null, this) };
         if(this.context.forecasts.config) { this.context.forecasts.config.off(null, null, this) };
         if(this.context.forecasts.worksheet) { this.context.forecasts.worksheet.off(null, null, this) };
+        //if we don't unbind this, then recycle of this view if a change in rendering occurs will result in multiple bound events to possibly out of date functions
+        $(window).unbind("beforeunload");
         app.view.View.prototype.unbindData.call(this);
     },
 
