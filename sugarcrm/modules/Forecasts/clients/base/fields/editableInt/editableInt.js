@@ -6,7 +6,7 @@
         'mouseleave span.editable': 'togglePencil',
         'click span.editable': 'onClick',
         'blur span.edit input': 'onBlur',
-        'keyup span.edit input': 'onKeypress'
+        'keyup span.edit input': 'onKeyup'
     },
 
     inputSelector: 'span.edit input',
@@ -42,31 +42,48 @@
      *
      */
     bindDomChange: function () {
+        // override parent, do nothing
+    },
+
+    /**
+     *
+     */
+    handleEvent: function (evt) {
         if (!this.isEditable()) return;
         if (!(this.model instanceof Backbone.Model)) return;
         var self = this;
         var el = this.$el.find(this.fieldTag);
-        el.on("change", function () {
+        if(!_.isEqual(self.$el.find(self.inputSelector).val(), this.model.get(this.name))) {
             var value = self.parsePercentage(self.$el.find(self.inputSelector).val()),
                 errorObj = self.isValid(value);
             if (!_.isObject(errorObj)) {
                 self.model.set(self.name, self.unformat(value));
-                self.$el.find(self.inputSelector).blur();
+                self.renderDetail();
             } else {
                 var hb = Handlebars.compile("{{str_format key module args}}");
                 self.errorMessage = hb({'key' : errorObj.labelId, 'module' : 'Forecasts', 'args' : errorObj.args});
                 self.showErrors();
                 self.$el.find(self.inputSelector).focus().select();
             }
-        });
-        // Focus doesn't always change when tabbing through inputs on IE9 (Bug54717)
-        // This prevents change events from being fired appropriately on IE9
-        if ($.browser.msie && el.is("input")) {
-            el.on("input", function () {
-                // Set focus on input element receiving user input
-                el.focus();
-            });
+            // Focus doesn't always change when tabbing through inputs on IE9 (Bug54717)
+            // This prevents change events from being fired appropriately on IE9
+            if ($.browser.msie && el.is("input")) {
+                el.on("input", function () {
+                    // Set focus on input element receiving user input
+                    el.focus();
+                });
+            }
+        } else {
+            this.renderDetail();
         }
+    },
+
+    /**
+     * renders the detail view
+     */
+    renderDetail: function () {
+        this.options.viewName = 'detail';
+        this.render();
     },
 
     /**
@@ -106,18 +123,25 @@
      *
      * @param evt
      */
-    onKeypress: function (evt) {
+    onKeyup: function (evt) {
+        evt.preventDefault();
         if (evt.which == 27) {
-            this.$el.find(this.inputSelector).val(this.value);
-            this.$el.find(this.inputSelector).blur();
+            // esc key, cancel edits
+            this.cancelEdits(evt);
         } else if (evt.which == 13 || evt.which == 9) {
-            // blur if value is unchanged
-            var ogVal = this.value,
-                ngVal = this.$el.find(this.inputSelector).val();
-            if (_.isEqual(ogVal, ngVal)) {
-                this.$el.find(this.inputSelector).blur();
-            }
+            // enter or tab, handle event
+            this.handleEvent(evt);
         }
+    },
+
+    /**
+     * reset value to model and view detail template
+     *
+     * evt {Object}
+     */
+    cancelEdits: function(evt) {
+        this.$el.find(this.inputSelector).val(this.value);
+        this.renderDetail();
     },
 
     /**
@@ -129,8 +153,7 @@
      */
     onBlur : function(evt) {
         evt.preventDefault();
-        this.options.viewName = 'detail';
-        this.render();
+        this.handleEvent(evt);
     },
 
     /**
@@ -195,10 +218,15 @@
      * Method to show the error message
      */
     showErrors : function() {
+        var self = this;
         // attach error styles
         this.$el.find('.error-message').html(this.errorMessage);
         this.$el.find('.control-group').addClass('error');
         this.$el.find('.help-inline.editable-error').removeClass('hide').addClass('show');
+        // make error message button cancel edits
+        this.$el.find('.btn.btn-danger').on("click", function(evt) {
+            self.cancelEdits.call(self, evt);
+        });
     }
 
 })

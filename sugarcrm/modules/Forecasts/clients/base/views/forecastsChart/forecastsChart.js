@@ -190,7 +190,7 @@
             self.renderChart();
         });
 
-        this.context.forecasts.on("forecasts:worksheetSaved", function(totalSaved, worksheet, isDraft) {
+        this.context.forecasts.on("forecasts:worksheet:saved", function(totalSaved, worksheet, isDraft) {
             // we only want this to run if the totalSaved was greater than zero and we are saving the draft version
             if(totalSaved > 0 && isDraft == true) {
                 self.renderChart();
