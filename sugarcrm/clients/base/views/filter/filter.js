@@ -1,4 +1,8 @@
 ({
+    events: {
+        'click .filter-new': 'toggleOpen'
+    },
+
     initialize: function(opts) {
         console.log("creating a filter view");
         app.view.View.prototype.initialize.call(this, opts);
@@ -44,6 +48,13 @@
     },
 
     pill: function(id, html, index) {
+        console.log(arguments);
         return '<li class="search-choice search-choice-option" id="search_filter_' + index + '_choice"><span>Filter</span><a>' + html + '</a></li>';
+    },
+
+    toggleOpen: function() {
+        this.layout.trigger("filter:create:open:fire");
+        this.$(".search_filter").trigger("liszt:close");
+        return true;
     }
 })

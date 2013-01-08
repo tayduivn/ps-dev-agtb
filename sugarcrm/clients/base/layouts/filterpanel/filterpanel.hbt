@@ -10,28 +10,6 @@
         </div>
     </div>
 
-    <div class="filter-options extend hide">
-        <article class="filter-header">
-            <input type="text" placeholder="Enter new filter name...">
-            <div class="pull-right">
-                <a href="#save" class="btn btn-primary disabled">Save</a>
-                <a href="#" class="btn btn-invisible filter-close"><i class="icon-remove"></i></a>
-            </div>
-        </article>
-        <article class="filter-body">
-          <div class="row-fluid">
-            <div class="controls span3">
-                <input type="text" value="Module" disabled="disabled" class="disabled inherit-width">
-            </div>
-            <div class="controls span3">
-                <input type="text" value="{{title}}" disabled="disabled" class="disabled inherit-width">
-            </div>
-            <div class="filter-value controls span6">
-            </div>
-          </div>
-        </article>
-    </div>
-
     <div class="mu extend hide">
         <article class="filter-header">
             <strong>

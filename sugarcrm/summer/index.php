@@ -92,7 +92,6 @@ if(!empty($_REQUEST['demo'])){
 
             app.start();
 
-            app.api.me("read", null, null, {
                 success: function(data) {
                     if (data.current_user) {
                         app.user.set(data.current_user);

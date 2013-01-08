@@ -12,10 +12,18 @@
     initialize: function(opts) {
         _.bindAll(this);
 
-        this.first = true;
         this.processMeta();
         this.template = app.template.get("l.filterpanel");
         this.renderHtml();
+
+        this.off("filter:create:open:fire");
+        this.off("filter:create:close:fire");
+        this.on("filter:create:open:fire", function() {
+            this.$('.filter-options').removeClass('hide');
+        });
+        this.on("filter:create:close:fire", function() {
+            this.$('.filter-options').addClass('hide');
+        });
 
         app.view.Layout.prototype.initialize.call(this, opts);
     },
@@ -47,15 +55,13 @@
         if (def.view == "filter") {
             this.$(".filter-view").append(component.el);
             return;
+        } else if(def.view == "filter-create") {
+            this.$(".form-search").append(component.el);
         } else {
             this.$el.append(component.el);
         }
 
-        if (this.first) {
-            this.first = false;
-        } else {
-            component.hide();
-        }
+        console.log(component, this.first);
     },
 
     toggleView: function(e) {

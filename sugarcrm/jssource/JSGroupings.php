@@ -42,7 +42,7 @@
              * many clients (so that we don't end up with duplication from client to client).
              * @param  string $subGroup The sub-group
              * @param  string $target The target file to point to e.g. '<app>/<app>.min.js',
-             * @return array array of key vals where the keys are source files and values are the $target passed in. 
+             * @return array array of key vals where the keys are source files and values are the $target passed in.
              */
             function getSubgroupForTarget ($subGroup, $target) {
                 // Add more sub-groups as needed here if client include duplication in $js_groupings

@@ -64,6 +64,9 @@ class FilterPanelLayout
                     $filteredLayout->push($component);
                 }
             }
+
+            // Add the filter create view.
+            $filteredLayout->push(array("view" => "filter-create"));
         }
 
         $this->layout->push($filteredLayout->getLayout(true));
@@ -72,7 +75,7 @@ class FilterPanelLayout
     }
 
     /**
-     * Returns metadata that renders the componennts for the Filter layout.
+     * Returns metadata that renders the components for the Filter layout.
      * @return array
      */
     public function getLayout()
