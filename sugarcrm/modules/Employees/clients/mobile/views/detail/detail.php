@@ -52,6 +52,7 @@ $viewdefs['Employees']['mobile']['view']['detail'] = array(
                 'phone_work',
                 'phone_mobile',
                 'email1',
+                'picture',
             )
         ),
     )

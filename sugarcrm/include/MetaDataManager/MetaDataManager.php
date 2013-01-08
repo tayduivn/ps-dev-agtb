@@ -347,7 +347,10 @@ class MetaDataManager {
                 //END SUGARCRM flav=pro ONLY
                 // get the field names
 
-                $context = array('user' => $userObject);
+                // define context variable as to not have it throw a notice when it doesn't exist
+                // SI Bug-60007
+                $context = array();
+
                 // if the bean is not set, or a new bean.. set the owner override
                 // this will allow fields marked Owner to pass through ok.
                 if($bean == false || empty($bean->id) || (isset($bean->new_with_id) && $bean->new_with_id == true)) {
@@ -458,7 +461,7 @@ class MetaDataManager {
 
     /**
      * The collector method for the app strings
-     * 
+     *
      * @param string $lang The language you wish to fetch the app strings for
      * @return array The app strings for the requested language
      */
@@ -469,7 +472,7 @@ class MetaDataManager {
                 $strings[$k] = $this->decodeStrings($v);
             }
         }
-        return $strings;        
+        return $strings;
     }
 
     /**
@@ -485,7 +488,7 @@ class MetaDataManager {
                 $strings[$k] = $this->decodeStrings($v);
             }
         }
-        return $strings;        
+        return $strings;
     }
 
 
@@ -607,7 +610,7 @@ class MetaDataManager {
                 unlink($metadataFile);
             }
         }
-        
+
         // clear the platform cache from sugar_cache to avoid out of date data
         $platforms = self::getPlatformList();
         foreach($platforms as $platform) {
@@ -616,10 +619,10 @@ class MetaDataManager {
             sugar_cache_clear($hashKey);
         }
     }
-    
+
     /**
      * Gets server information
-     * 
+     *
      * @return array of ServerInfo
      */
     public function getServerInfo() {
@@ -629,7 +632,7 @@ class MetaDataManager {
 
         $data['flavor'] = $sugar_flavor;
         $data['version'] = $sugar_version;
-        
+
         //BEGIN SUGARCRM flav=pro ONLY
         $fts_enabled = SugarSearchEngineFactory::getFTSEngineNameFromConfig();
         if(!empty($fts_enabled) && $fts_enabled != 'SugarSearchEngine') {

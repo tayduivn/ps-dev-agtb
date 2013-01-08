@@ -141,10 +141,7 @@ class SugarWebServiceUtilv3_1 extends SugarWebServiceUtilv3
         $manager->loadVardef( $moduleName , $beanName ) ;
 
         // obtain the field definitions used by generateSearchWhere (duplicate code in view.list.php)
-        $defs = SugarAutoLoader::loadWithMetafiles($moduleName, 'SearchFields', 'searchfields');
-        if($defs) {
-            require $defs;
-        }
+        $searchFields = SugarAutoLoader::loadSearchFields($moduleName);
 
         $fields = array();
         foreach ( $dictionary [ $beanName ][ 'fields' ] as $field => $def )

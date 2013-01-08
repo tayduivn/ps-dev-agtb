@@ -125,20 +125,9 @@
             self.value = self.$el.find("select")[0].value;
             values[self.def.name] = self.value;
         }
-                  
-        values["timeperiod_id"] = self.context.forecasts.get("selectedTimePeriod").id;
-        values["current_user"] = app.user.get('id');
-        values["isDirty"] = true;
-        
-        //If there is an id, add it to the URL
-        if(self.model.isNew())
-        {
-            self.model.url = app.api.buildURL(moduleName, 'create');
-        } else {
-            self.model.url = app.api.buildURL(moduleName, 'update', {"id":self.model.get('id')});
-        }
         
         self.model.set(values);
+        
         if(self.currentView == "enum"){
             self.resetBucket();
         }

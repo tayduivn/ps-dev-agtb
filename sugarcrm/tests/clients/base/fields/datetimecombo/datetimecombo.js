@@ -307,7 +307,6 @@ describe("datetimecombo field", function() {
             actual = field._getHoursMinutes({"val": function() { return '23:59'; }});
             expect(actual.hours).toEqual('23');
             expect(actual.minutes).toEqual('59');
-            expect(actual.amPm).toEqual('pm');
         });
 
     });
