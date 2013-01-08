@@ -245,6 +245,7 @@ hr.soften {
   margin-right: 15px;
 }
 
+
 .no-link {
   text-decoration: none;
   color: @textColor;
@@ -258,51 +259,84 @@ hr.soften {
   }
 }
 
-.filter.controls {margin-left: 0 !important;}
 
-.subpanel.out .subpanel-list {
-  display: none;
+
+
+
+
+
+/*
+
+
+*/
+
+
+
+
+.main-pane {
+  background-image: url('@{textureSecondary}');
+  .dashboard.layout_Home {
+    margin: 0 18px;
+    &> ul.rows {
+      padding-top: 18px;
+      margin: 0;
+      border-top: 1px solid @white;
+      list-style: none;
+      .row-fluid {
+        margin: 0;
+        list-style: 0;
+        .widget-container {
+          .widget {
+            min-height: 60px;
+            div.widget-content {
+              padding: 10px;
+            }
+          }
+          .empty {
+            margin: 0;
+            &.thumbnail {
+              .box-shadow(none);
+              border: 3px dashed lighten(@grayLight,8%);
+              p {
+                font-size: 13px;
+                font-weight: 500px;
+                text-align: center;
+                color: lighten(@grayLight,8%);
+              }
+              p:last-child {
+                font-size: 60px;
+                font-weight: 900;
+              }
+            }
+          }
+        }
+        &>ul {
+          margin: 0;
+        }
+      }
+    }
+  }
 }
 
-.subpanel.out i.icon-chevron-down::before {
-  content: "\f077";
-}
 
-.subpanel-header {
-  border-bottom: 1px solid #eee;
-  height: 44px; 
-  display: block;
-}
 
-.subpanel-header h4 {
-  line-height: 26px;
-  font-weight: normal;
-}
 
-.subpanel-header .label-module-sm {
-  width: 21px;
-  height: 26px;
-  margin: 7px 10px 7px 20px;
-}
 
-.subpanel-header a.btn {
-  width: 28px;
-  box-sizing: border-box;
-}
 
-.results .subpanel .actions {
-  right: 0 !important;
-  margin: -4px 0 -4px 0;
-}
 
-.subpanel-header .btn-toolbar > .btn-group {
-  margin-left: 16px !important;
-  margin-right: 10px !important;
-}
 
-.subpanel tbody {
-  border-bottom: 1px solid #ddd;
-}
-.subpanel .more{
-  height: 32px;
-}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
