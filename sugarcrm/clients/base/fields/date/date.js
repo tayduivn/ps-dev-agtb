@@ -169,7 +169,14 @@
         }
     },
     _verifyDateString: function(value) {
-        return this.$(".datepicker").data('datepicker').verifyDate(value);
+        var dateFormat = (this.usersDatePrefs) ? app.date.toDatepickerFormat(this.usersDatePrefs) : 'mm-dd-yyyy';
+        // First try generic date parse (since we might have an ISO). This should generally work with the
+        // ISO date strings we get from server.
+        if(_.isNaN(Date.parse(value))) {
+            // use datepicker plugin to verify datepicker format 
+            return $.prototype.DateVerifier(value, dateFormat);
+        }
+        return true;
     },
     _buildUnformatted: function(d, h, m) {
         var parsedDate = app.date.parse(d, this.usersDatePrefs);
@@ -368,8 +375,12 @@
             // e.g. new Date("2011-10-10" ) // in my version of chrome browser returns
             // Sun Oct 09 2011 17:00:00 GMT-0700 (PDT)
             parts = value.match(/(\d+)/g);
-            jsDate = new Date(parts[0], parts[1]-1, parts[2]); //months are 0-based
-            value  = app.date.format(jsDate, this.usersDatePrefs);
+            if (parts) {
+                jsDate = new Date(parts[0], parts[1]-1, parts[2]); //months are 0-based
+                value  = app.date.format(jsDate, this.usersDatePrefs);
+            } else {
+                return value;
+            }
         }
         this.dateValue = value;
         this.$(".datepicker").datepicker('update', this.dateValue);
@@ -382,7 +393,12 @@
      */
     unformat:function(value) {
         // In case ISO 8601 get it back to js native date which date.format understands
-        var jsDate = app.date.parse(value);
+        var jsDate = new Date(value);
+
+        // Safari chokes on '.', '-', (supported by datepicker), so retry replacing with '/'
+        if (!jsDate || jsDate.toString() === 'Invalid Date') {
+            jsDate = new Date(value.replace(/[\.\-]/g, '/')); 
+        }
         return app.date.format(jsDate, this.serverDateFormat);
 
     },
