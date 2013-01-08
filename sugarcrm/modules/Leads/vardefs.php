@@ -594,8 +594,13 @@ $dictionary['Lead'] = array('table' => 'leads','audited'=>true, 'unified_search'
                     array('status' => array('$not_equals' => 'Converted')),
                     array('status' => array('$is_null' => '')),
                 )),
-                array('first_name' => array('$starts' => '$first_name')),
-                array('last_name' => array('$starts' => '$last_name')),
+                array('$or' => array(
+                    array('$and' => array(
+                        array('first_name' => array('$starts' => '$first_name')),
+                        array('last_name' => array('$starts' => '$last_name')),
+                    )),
+                    array('phone_work' => array('$equals' => '$phone_work')),
+                )),
                 array('account_name' => array('$equals' => '$account_name')),
             ))
         ),
