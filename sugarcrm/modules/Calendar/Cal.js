@@ -284,7 +284,9 @@
 			if(params.content_style != "") {
 			    related_to.style[params.content_style] = params.content_style_value;
 			}
-			related_to.innerHTML = params.related_to;
+			if (params.related_to){
+			    related_to.innerHTML = params.related_to;
+			}
 			el.appendChild(related_to);
 		}
 		
