@@ -341,6 +341,7 @@ class RestService extends ServiceBase {
             }
         }
         if ( $crazyEncoding ) {
+            header("HTTP/1.0 200 Success");
             echo($reply);
             die();
         }
