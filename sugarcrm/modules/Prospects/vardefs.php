@@ -218,7 +218,7 @@ $dictionary['Prospect'] = array(
 						  		),
 
 	),
-    'duplicate_check' => array(
+    'duplicate_check' => array('FilterDuplicateCheck' => array(
         'filter_template' => array(
             array('$or' => array(
                 array('$and' => array(
@@ -232,7 +232,7 @@ $dictionary['Prospect'] = array(
             array('in_field_name' => 'last_name', 'dupe_field_name' => 'last_name'),
             array('in_field_name' => 'first_name', 'dupe_field_name' => 'first_name'),
         )
-    )
+    ))
 );
 VardefManager::createVardef('Prospects','Prospect', array('default', 'assignable',
 //BEGIN SUGARCRM flav=pro ONLY

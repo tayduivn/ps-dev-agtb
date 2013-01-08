@@ -822,14 +822,14 @@ $dictionary['Quote'] = array('table' => 'quotes','audited'=>true, 'unified_searc
         'rhs_module'=> 'Quotes', 'rhs_table'=> 'quotes', 'rhs_key' => 'created_by',
         'relationship_type'=>'one-to-many'),
 	),
-    'duplicate_check' => array(
+    'duplicate_check' => array('FilterDuplicateCheck' => array(
         'filter_template' => array(
             array('name' => array('$starts' => '$name')),
         ),
         'ranking_fields' => array(
             array('in_field_name' => 'name', 'dupe_field_name' => 'name'),
         )
-    ),
+    )),
 );
 VardefManager::createVardef('Quotes','Quote', array('default', 'assignable',
 //BEGIN SUGARCRM flav=pro ONLY

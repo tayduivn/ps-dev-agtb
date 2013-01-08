@@ -487,7 +487,7 @@ $dictionary['Account'] = array('table' => 'accounts', 'audited'=>true, 'activity
   'relationship_type'	=>'one-to-many'),
 
   ),
-    'duplicate_check' => array(
+    'duplicate_check' => array('FilterDuplicateCheck' => array(
         'filter_template' => array(
             array('$and' => array(
                 array('name' => array('$starts' => '$name')),
@@ -502,7 +502,7 @@ $dictionary['Account'] = array('table' => 'accounts', 'audited'=>true, 'activity
             array('in_field_name' => 'billing_address_city', 'dupe_field_name' => 'billing_address_city'),
             array('in_field_name' => 'shipping_address_city', 'dupe_field_name' => 'shipping_address_city'),
         )
-    ),
+    )),
   //This enables optimistic locking for Saves From EditView
   'optimistic_locking'=>true,
 );
