@@ -2168,6 +2168,10 @@ li.noBullet.active .dashletPanel{
 padding-bottom: 2px;
 }
 
+.dashletPanel .sugarFeedDashlet {
+    position:inherit;
+}
+
 table.tabForm td ul li {
 list-style-type: none;
 margin-bottom: 10px;
