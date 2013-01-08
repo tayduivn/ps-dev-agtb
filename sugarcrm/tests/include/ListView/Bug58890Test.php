@@ -61,7 +61,7 @@ class Bug58890Test extends Sugar_PHPUnit_Framework_TestCase
         $listViewData = new ListViewData();
         $listViewData->listviewName = $bean->module_name;
 
-        $listViewData->getListViewData($bean, '', -1, -1, array('id' => 'id', 'name' => 'name'));
+        $listViewData->getListViewData($bean, '', -1, -1, array('id' => array(), 'name' => array()));
         $this->assertEquals('date_entered DESC', $bean->orderByString58890, 'Order by date_entered DESC should be used');
 
         $GLOBALS['current_user']->setPreference('listviewOrder', array(
@@ -69,7 +69,7 @@ class Bug58890Test extends Sugar_PHPUnit_Framework_TestCase
             'sortOrder' => 'ASC'
         ), 0, $listViewData->var_name);
 
-        $listViewData->getListViewData($bean, '', -1, -1, array('id' => 'id', 'name' => 'name'));
+        $listViewData->getListViewData($bean, '', -1, -1, array('id' => array(), 'name' => array()));
         $this->assertEquals('name ASC', $bean->orderByString58890, 'User\'s preference should be used');
     }
 }
