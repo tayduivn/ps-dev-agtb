@@ -24,12 +24,11 @@
 
 require_once('tests/rest/RestTestBase.php');
 
-class RestMetadataViewTemplatesTest extends RestTestBase {
+class RestMetadataViewTemplatesTest extends RestTestBase
+{
     public function setUp()
     {
         parent::setUp();
-
-        $this->oldFiles = array();
 
 //BEGIN SUGARCRM flav=pro ONLY
         $this->_restLogin('','','mobile');
@@ -39,23 +38,7 @@ class RestMetadataViewTemplatesTest extends RestTestBase {
         $this->baseAuthToken = $this->authToken;
 
     }
-    /**
-     * @group rest
-     */
-    public function tearDown()
-    {
-        foreach ( $this->oldFiles as $filename => $filecontents ) {
-            if ( $filecontents == '_NO_FILE' ) {
-                if ( file_exists($filename) ) {
-                    SugarAutoLoader::unlink($filename);
-                }
-            } else {
-                SugarAutoLoader::put($filename,$filecontents);
-            }
-        }
-        SugarAutoLoader::saveMap();
-        parent::tearDown();
-    }
+
     /**
      * @group rest
      */
@@ -80,16 +63,8 @@ class RestMetadataViewTemplatesTest extends RestTestBase {
             ),
             //END SUGARCRM flav=pro ONLY
         );
-
-        foreach ( $filesToCheck as $client => $files) {
-            foreach ($files as $filename ) {
-                if ( file_exists($filename) ) {
-                    $this->oldFiles[$filename] = file_get_contents($filename);
-                } else {
-                    $this->oldFiles[$filename] = '_NO_FILE';
-                }
-            }
-        }
+        SugarTestHelper::saveFile($filesToCheck['base']);
+        SugarTestHelper::saveFile($filesToCheck['mobile']);
 
         $dirsToMake = array(
             'base' => array(

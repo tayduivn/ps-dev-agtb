@@ -45,6 +45,22 @@ $viewdefs['Meetings']['mobile']['view']['edit'] = array(
                         'wireless_edit_only' => true,)),
                 'date_start',
                 'status',
+                array(
+                    'name' => 'duration',
+                    'type' => 'fieldset',
+                    'related_fields' => array('duration_hours', 'duration_minutes'),
+                    'label' => "LBL_DURATION",
+                    'fields' => array(
+                        array(
+                            'name' => 'duration_hours',
+                        ),
+                        array(
+                            'name' => 'duration_minutes',
+                            'type' => 'enum',
+                            'options' => 'duration_intervals'
+                        ),
+                    ),
+                ),
                 'description',
                 'assigned_user_name',
                 //BEGIN SUGARCRM flav=pro ONLY

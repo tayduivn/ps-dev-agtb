@@ -2168,6 +2168,10 @@ li.noBullet.active .dashletPanel{
 padding-bottom: 2px;
 }
 
+.dashletPanel .sugarFeedDashlet {
+    position:inherit;
+}
+
 table.tabForm td ul li {
 list-style-type: none;
 margin-bottom: 10px;
@@ -2995,7 +2999,11 @@ embed
   	clear:both;
 	}
 		
-	.dashletPanel.dc {
+
+        .dashletPanel.dc {
+        margin-left: 2%;
+        margin-right: 2%;
+
 	box-shadow: 0 2px 10px #999999;
 	-moz-box-shadow: 0 2px 10px #999999;
 	-webkit-box-shadow: 0 2px 10px #999999;
@@ -3692,7 +3700,6 @@ button, input[type=submit], input[type=reset], input[type=button], .button, .but
     line-height: 18px;
     color: #262627;
     font-weight: 500;
-    font-family: 'Helvetica Neue';
     text-align: center;
     text-shadow: 0 1px 0 rgba(255, 255, 255, 0.75);
     vertical-align: middle;
@@ -5846,7 +5853,7 @@ padding:0px;
 position: fixed;
 top: 0;
 width:100%;
-z-index:1;
+z-index:2;
 }
 #globalLinksSubnav, #quickCreateULSubnav {
     z-index: 20;
@@ -7625,7 +7632,6 @@ div.hoverscroll div.fixed-arrow.bottom {
     line-height: 18px;
     color: #262627;
     font-weight: 500;
-    font-family: 'Helvetica Neue';
     text-align: center;
     text-shadow: 0 1px 0 rgba(255, 255, 255, 0.75);
     vertical-align: middle;

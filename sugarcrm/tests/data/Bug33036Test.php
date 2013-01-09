@@ -30,18 +30,17 @@
 class Bug33036Test extends Sugar_PHPUnit_Framework_TestCase
 {
     private $obj;
-    
+
     public static function setUpBeforeClass()
     {
-        SugarTestHelper::setUp('beanFiles');
+        SugarTestHelper::setUp('current_user');
         SugarTestHelper::setUp('beanList');
-        $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
-	}
+        SugarTestHelper::setUp('beanFiles');
+    }
 
 	public static function tearDownAfterClass()
 	{
-	    SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
-        unset($GLOBALS['current_user']);
+        SugarTestHelper::tearDown();
 	}
 
 	public function setUp()
@@ -57,24 +56,24 @@ class Bug33036Test extends Sugar_PHPUnit_Framework_TestCase
         unset($this->obj);
 	}
 
-    public function testAuditForRelatedFields() 
+    public function testAuditForRelatedFields()
     {
         $test_account_name = 'test account name after';
-        
+
         $account = SugarTestAccountUtilities::createAccount();
-        
+
         $this->obj->field_defs['account_name']['audited'] = 1;
         $this->obj->name = 'test';
         $this->obj->account_id = $account->id;
         $this->obj->save();
-        
+
         $this->obj->retrieve($this->obj->id);
         $this->obj->account_name = $test_account_name;
         $changes = $this->obj->db->getDataChanges($this->obj);
-        
+
         $this->assertTrue(isset($changes['account_name']),"The account name was not in the list of changes");
         $this->assertEquals($changes['account_name']['after'], $test_account_name);
-        
+
         SugarTestAccountUtilities::removeAllCreatedAccounts();
     }
 }

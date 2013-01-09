@@ -6,7 +6,7 @@
         'mouseleave span.editable': 'togglePencil',
         'click span.editable': 'onClick',
         'blur span.edit input': 'onBlur',
-        'keyup span.edit input': 'onKeypress'
+        'keyup span.edit input': 'onKeyup'
     },
 
     inputSelector: 'span.edit input',
@@ -24,8 +24,9 @@
      * Utility Method to check if we can edit again.
      */
     checkIfCanEdit: function() {
+        var selectedUser = this.context.forecasts.get('selectedUser');
         if (!_.isUndefined(this.context.forecasts) && !_.isUndefined(this.context.forecasts.config)) {
-            this._canEdit = !_.contains(
+            this._canEdit = _.isEqual(app.user.get('id'), selectedUser.id) && !_.contains(
                 // join the two variable together from the config
                 this.context.forecasts.config.get("sales_stage_won").concat(
                     this.context.forecasts.config.get("sales_stage_lost")
@@ -41,29 +42,48 @@
      *
      */
     bindDomChange: function () {
+        // override parent, do nothing
+    },
+
+    /**
+     *
+     */
+    handleEvent: function (evt) {
         if (!this.isEditable()) return;
         if (!(this.model instanceof Backbone.Model)) return;
         var self = this;
         var el = this.$el.find(this.fieldTag);
-        el.on("change", function () {
-            var value = self.parsePercentage(self.$el.find(self.inputSelector).val());
-            if (self.isValid(value)) {
+        if(!_.isEqual(self.$el.find(self.inputSelector).val(), this.model.get(this.name))) {
+            var value = self.parsePercentage(self.$el.find(self.inputSelector).val()),
+                errorObj = self.isValid(value);
+            if (!_.isObject(errorObj)) {
                 self.model.set(self.name, self.unformat(value));
-                self.$el.find(self.inputSelector).blur();
+                self.renderDetail();
             } else {
-                // will generate error styles here, for now log to console
+                var hb = Handlebars.compile("{{str_format key module args}}");
+                self.errorMessage = hb({'key' : errorObj.labelId, 'module' : 'Forecasts', 'args' : errorObj.args});
                 self.showErrors();
                 self.$el.find(self.inputSelector).focus().select();
             }
-        });
-        // Focus doesn't always change when tabbing through inputs on IE9 (Bug54717)
-        // This prevents change events from being fired appropriately on IE9
-        if ($.browser.msie && el.is("input")) {
-            el.on("input", function () {
-                // Set focus on input element receiving user input
-                el.focus();
-            });
+            // Focus doesn't always change when tabbing through inputs on IE9 (Bug54717)
+            // This prevents change events from being fired appropriately on IE9
+            if ($.browser.msie && el.is("input")) {
+                el.on("input", function () {
+                    // Set focus on input element receiving user input
+                    el.focus();
+                });
+            }
+        } else {
+            this.renderDetail();
         }
+    },
+
+    /**
+     * renders the detail view
+     */
+    renderDetail: function () {
+        this.options.viewName = 'detail';
+        this.render();
     },
 
     /**
@@ -103,18 +123,25 @@
      *
      * @param evt
      */
-    onKeypress: function (evt) {
+    onKeyup: function (evt) {
+        evt.preventDefault();
         if (evt.which == 27) {
-            this.$el.find(this.inputSelector).val(this.value);
-            this.$el.find(this.inputSelector).blur();
+            // esc key, cancel edits
+            this.cancelEdits(evt);
         } else if (evt.which == 13 || evt.which == 9) {
-            // blur if value is unchanged
-            var ogVal = this.value,
-                ngVal = this.$el.find(this.inputSelector).val();
-            if (_.isEqual(ogVal, ngVal)) {
-                this.$el.find(this.inputSelector).blur();
-            }
+            // enter or tab, handle event
+            this.handleEvent(evt);
         }
+    },
+
+    /**
+     * reset value to model and view detail template
+     *
+     * evt {Object}
+     */
+    cancelEdits: function(evt) {
+        this.$el.find(this.inputSelector).val(this.value);
+        this.renderDetail();
     },
 
     /**
@@ -126,38 +153,28 @@
      */
     onBlur : function(evt) {
         evt.preventDefault();
-        this.options.viewName = 'detail';
-        this.render();
+        this.handleEvent(evt);
     },
 
     /**
      * Is the new value valid for this field.
      *
      * @param value
-     * @return {Boolean}
+     * @return {Boolean|String} true, or error id on error
      */
     isValid: function (value) {
-        var regex = new RegExp("^[+-]?\\d+$"),
-            hb = Handlebars.compile("{{str_format key module args}}"),
-            args = [];
-
-        text2 = hb({'key' : 'LBL_COMMITTED_THIS_MONTH', 'module' : 'Forecasts', 'args' : args});
+        var regex = new RegExp("^[+-]?\\d+$");
 
         // always make sure that we have a string here, since match only works on strings
         if (_.isNull(value.toString().match(regex))) {
-            var langString = app.lang.get(this.def.label,'Forecasts');
-            args = [langString];
-            this.errorMessage = hb({'key' : 'LBL_EDITABLE_INVALID', 'module' : 'Forecasts', 'args' : args});
-            return false;
+            return {'labelId': 'LBL_EDITABLE_INVALID', 'args': [app.lang.get(this.def.label,'Forecasts')]};
         }
 
         // we have digits, lets make sure it's int a valid range is one is specified
         if (!_.isUndefined(this.def.minValue) && !_.isUndefined(this.def.maxValue)) {
             // we have a min and max value
             if(value < this.def.minValue || value > this.def.maxValue) {
-                args = [this.def.minValue, this.def.maxValue];
-                this.errorMessage = hb({'key' : 'LBL_EDITABLE_INVALID_RANGE', 'module' : 'Forecasts', 'args' : args});
-                return false;
+                return {'labelId': 'LBL_EDITABLE_INVALID_RANGE', 'args': [this.def.minValue, this.def.maxValue]};
             }
         }
 
@@ -201,10 +218,15 @@
      * Method to show the error message
      */
     showErrors : function() {
+        var self = this;
         // attach error styles
         this.$el.find('.error-message').html(this.errorMessage);
         this.$el.find('.control-group').addClass('error');
         this.$el.find('.help-inline.editable-error').removeClass('hide').addClass('show');
+        // make error message button cancel edits
+        this.$el.find('.btn.btn-danger').on("click", function(evt) {
+            self.cancelEdits.call(self, evt);
+        });
     }
 
 })
