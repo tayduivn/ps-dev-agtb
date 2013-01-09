@@ -108,6 +108,7 @@ class MetadataApi extends SugarApi {
 
         //If we failed to load the metadata from cache, load it now the hard way.
         if (empty($data)) {
+            ini_set('max_execution_time', 0);
             $data = $this->loadMetadata();
             $this->putMetadataCache($data, $this->platforms[0], false);
         }

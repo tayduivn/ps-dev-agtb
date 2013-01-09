@@ -238,8 +238,8 @@ class VardefManager{
             self::$inReload[$guard_name]++;
             if(self::$inReload[$guard_name] > 2) {
                 $GLOBALS['log']->fatal("Loop in refreshVardefs: $guard_name");
-                echo "<pre>";
-                debug_print_backtrace();
+                //echo "<pre>";
+                //debug_print_backtrace();
                 return;
             }
         } else {
@@ -277,7 +277,7 @@ class VardefManager{
             // since in case somebody calls us with wrong module name we need bean
             // to get $module_dir. This may cause a loop but since the second call will
             // have the right module name the loop should be short.
-            $bean = $params['bean'] = BeanFactory::newBean($module);
+            $bean = BeanFactory::newBean($module);
         }
         //Some modules have multiple beans, we need to see if this object has a module_dir that is different from its module_name
         if(!$found){
@@ -286,15 +286,18 @@ class VardefManager{
                 $object_name = BeanFactory::getObjectName($bean->module_dir);
                 if ($bean->module_dir != $bean->module_name && !empty($object_name))
                 {
+                    unset($params["bean"]); // don't pass this bean down - it may be wrong bean for that module
                     self::refreshVardefs($bean->module_dir, $object_name, $additional_search_paths, $cacheCustom, $params);
                 }
             }
         }
 
         //Some modules like cases have a bean name that doesn't match the object name
-        if (empty($dictionary[$object])) {
-            $newName = BeanFactory::getObjectName($module);
-            $object = $newName != false ? $newName : $object;
+        if(empty($dictionary[$object])) {
+             $newName = BeanFactory::getObjectName($module);
+             if(!empty($newName)) {
+                $object = $newName;
+            }
         }
 
         if (empty($params['ignore_rel_calc_fields'])) {
