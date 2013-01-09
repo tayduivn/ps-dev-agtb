@@ -208,5 +208,38 @@
             $parent.data('value_field', '');
         }
         $parent.find('.addme').addClass('hide');
+    },
+
+    _getJSON: function() {
+        var obj = {
+            filter: [{}]
+        }, default_op = "and";
+        obj.filter[0]["$"+default_op] = [];
+
+        var fields = {};
+        _.each(this.$el.find('.filter-body'), function(el) {
+            var $el = $(el);
+            var field_name = $el.find("select.field_name").val();
+
+            if(field_name) {
+                if(_.isUndefined(fields[field_name])) {
+                    fields[field_name] = [];
+                }
+                var op = $el.find("select.operator").val(),
+                    str = $el.find(".filter-value input").first().val();
+                var o = {};
+                o[op] = str;
+                fields[field_name].push(o);
+            }
+        });
+        _.each(fields, function(v, k) {
+            if (v.length === 1) {
+                v = v[0];
+            }
+            var foo = {};
+            foo[k] = v;
+            obj.filter[0]["$"+default_op].push(foo);
+        });
+        return obj;
     }
 })
