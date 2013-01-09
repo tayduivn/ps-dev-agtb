@@ -1,7 +1,14 @@
 ({
     events: {
         'click a.filter-close': 'triggerClose',
-        'click a.addme': 'addRow'
+        'click a.addme': 'addRow',
+        'click a.removeme': 'removeRow',
+        'click a.updateme': 'updateRow',
+        'click .save_button': 'save',
+        'click .delete_button': 'removeAll',
+        'change .field_name': 'chooseField',
+        'change .operator': 'chooseOperator',
+        'change .filter-value': 'modifyValue'
     },
 
     rowTemplate: Handlebars.compile('<article class="filter-body" id="filter_row_new">' +
@@ -40,24 +47,117 @@
     },
 
     initialize: function(opts) {
+        // Remove the next line later:
+        this.isSaved = false;
+
         var self = this;
         this.title = app.controller.context.get('module');
         app.view.View.prototype.initialize.call(this, opts);
+        this.filterFields = [];
+        _.each(app.metadata.getModule(this.title).fields, function(value, key) {
+            self.filterFields.push({
+                name: key,
+                string: app.lang.getAppString(value.vname),
+                type: value.type
+            });
+        });
+        this.filterFields = _.filter(this.filterFields, function(el) {
+            // Double-bang intended. Coerces values like 'undefined' to a bool.
+            return !!self.filterOperatorMap[el.type];
+        });
     },
 
     render: function() {
         app.view.View.prototype.render.call(this);
-        this.fields = app.metadata.getModule(this.title).fields;
-        _.each(this.fields, function(value, key) {
-            var el = $("<option />").attr('value', key).text(app.lang.getAppString(value.vname));
-            self.$('#filter_row_new select.field_name').append(el);
-        });
+        this.addRow();
     },
 
     addRow: function(e) {
+        var stuff = this.rowTemplate(this),
+            old = this.$("#filter_row_new");
+        if(old.length) {
+            old.attr('id', '');
+            old.find('.removeme').removeClass('hide');
+            old.find('.addme').addClass('hide');
+        }
+        if(_.isUndefined(e)) {
+            this.$(".filter-options").append(stuff);
+        } else {
+            var target = this.$(e.currentTarget).parents('.filter-options');
+            target.append(stuff);
+        }
+    },
+
+    removeRow: function(e) {
+        this.notSaved();
+        this.$(e.currentTarget).parents('.filter-body').remove();
+    },
+
+    chooseField: function(e) {
+        this.notSaved();
+        var $el = this.$(e.currentTarget),
+            $parent = $el.parents('.filter-body'),
+            fieldName = $el.val(),
+            fieldType = app.metadata.getModule(this.title).fields[fieldName].type;
+        $parent.find('.filter-operator').removeClass('hide').find('option').remove();
+        $parent.find('.filter-value').addClass('hide').empty();
+        var types = this.filterOperatorMap[fieldType] || this.filterOperatorMap['base'];
+        if(types[0] !== '') types.unshift('');
+        _.each(types, function(t) {
+            $('<option />').appendTo($parent.find('select.operator')).attr('value', t).text(t);
+        });
+    },
+
+    chooseOperator: function(e) {
+        var $el = this.$(e.currentTarget),
+            $parent = $el.parents('.filter-body'),
+            operation = $el.val(),
+            fieldName = $parent.find('select.field_name').val(),
+            fieldType = app.metadata.getModule(this.title).fields[fieldName].type;
+        if(fieldType == 'datetime') {
+            fieldType = 'datetimecombo';
+        }
+        var obj = {};
+        if(fieldType == 'enum') {
+            obj = {def: {
+                options: app.lang.getAppListStrings(fieldName + '_dom')
+            }};
+        }
+        var fieldTpl = app.metadata.getField(fieldType) || app.metadata.getField('base'),
+            tpl = Handlebars.compile(fieldTpl.templates.edit)(obj);
+
+        $parent.find('.filter-value').removeClass('hide').find('input, select').remove();
+        $(tpl).appendTo($parent.find('.filter-value'));
+    },
+
+    modifyValue: function(e) {
+        var $el = this.$(e.currentTarget),
+            $parent = $el.parents('.filter-body');
+        $parent.find('.updateme').removeClass('hide');
+    },
+
+    updateRow: function(e) {
+        var $el = this.$(e.currentTarget),
+            $parent = $el.parents('.filter-body');
+        $parent.find('.updateme').addClass('hide');
     },
 
     triggerClose: function() {
         this.layout.trigger("filter:create:close:fire");
+    },
+
+    notSaved: function() {
+        this.$(".save_button").removeClass("disabled");
+        this.$(".delete_button").removeClass("hide");
+    },
+
+    save: function() {
+        this.$(".save_button").addClass("disabled");
+        this.$(".delete_button").removeClass("hide");
+    },
+
+    removeAll: function() {
+        // TODO: Make a delete request to the server.
+        this.render();
     }
 })
