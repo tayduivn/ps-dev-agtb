@@ -1,4 +1,6 @@
 ({
+    searchFilterId: "",
+    previousValues: [],
     events: {
         'click .filter-new': 'toggleOpen',
         'click .chzn-results li': 'toggleSelected'
@@ -41,7 +43,8 @@
 
 
         // Enable chosen on the menu
-        this.$(".search_filter").chosen().change(function(){
+        this.$(".search_filter").chosen().change(function(e){
+            console.log($(e.target).val());
             self.changeToPill();
         });
         this.$el.find(".chzn-choices").prepend("<li class='search-choice search-choice-option filter-disabled'><span>Module</span><a>" + this.module + "</a></li>");
@@ -64,11 +67,13 @@
             menuItem = this.$("#" + this.searchFilterId + "_chzn_o_" + latestItem.attr("id").slice(latestItem.attr("id").indexOf("c_") + 2));
         
         latestItem.addClass("search-choice search-choice-option " + this.getFilterID(latestItemValue));
-        latestItemLink.removeClass();
-        latestItemLink.html(latestItemValue);
+        latestItem.append($("<a>" + latestItemValue + "</a>"));
+        latestItemLink.removeClass().addClass("closer").hide();
+        latestItemLink.html("");
         latestSpan.html("Placeholder");
-        //$.data(menuItem[0], "selected", true);
         
+        //$.data(menuItem[0], "selected", true);
+        $.data(menuItem[0], "pillId", latestItem.attr("id"));
     },
     
     getFilterID: function(name){
@@ -81,7 +86,8 @@
             var target = $(e.currentTarget);
             target.removeClass("result-selected");
             target.addClass("active-result");
-            this.$("." + this.getFilterID(target.html())).remove();
+            $("#" + $.data(e.currentTarget, "pillId") + " .closer").trigger("click");
+            $("#" + $.data(e.currentTarget, "pillId")).remove();
         }
         else{
             $.data(e.currentTarget, "selected", true);
