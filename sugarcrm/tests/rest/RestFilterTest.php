@@ -263,4 +263,26 @@ class RestFilterTest extends RestTestBase
 
     }
 
+    public function testsPreviouslyUsedFilters()
+    {
+        global $current_user;
+
+        $filter = SugarTestFilterUtilities::createUserFilter($current_user->id, 'test_user_filter', json_encode(array('name'=>'TEST 1 Account')));
+        $this->assertEquals($filter->name, 'test_user_filter');
+        $this->assertEquals($filter->filter_definition, '{"name":"TEST 1 Account"}');
+
+        $reply = $this->_restCall('Filters/Accounts/used/'. $filter->id, array(), 'PUT');
+        $this->assertEquals($filter->id,$reply['reply'][0]['id']);
+
+        $reply = $this->_restCall('Filters/Accounts/used/');
+        $this->assertEquals($filter->id,$reply['reply'][0]['id']);
+
+        $reply = $this->_restCall('Filters/Accounts/used/'. $filter->id, array(), 'DELETE');
+        foreach($reply['reply'] as $record) {
+            $this->assertNotEquals($filter->id,$record['id']);
+        }
+
+    }
+
+
 }
