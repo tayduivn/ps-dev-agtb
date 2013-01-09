@@ -13,33 +13,12 @@
             <input type="text" value="Module" disabled="disabled" class="disabled inherit-width">
         </div>
         <div class="controls span3">
+            <input type="text" value="matches" disabled="disabled" class="disabled inherit-width">
+        </div>
+        <div class="controls span4">
             <input type="text" value="{{title}}" disabled="disabled" class="disabled inherit-width">
         </div>
-        <div class="filter-value controls span6">
-        </div>
-      </div>
-    </article>
-    <article class="filter-body" id="filter_row_new">
-      <div class="row-fluid">
-        <div class="filter-field controls span3">
-          <select name="field" class="field_name chzn-select chzn-inherit-width" data-placeholder="Select field name...">
-              <option value=""></option>
-              <option value="name">Name</option>
-              <option value="assigned">Assigned to</option>
-              <option value="stage">Sales Stage</option>
-              <option value="favorite">Favorite</option>
-              <option value="created">Created</option>
-          </select>
-        </div>
-        <div class="filter-opera controls span3">
-          <select name="opera" class="chzn-select chzn-inherit-width" data-placeholder="Select operator...">
-          </select>
-        </div>
-        <div class="filter-value controls span6">
-          <input name="value" type="text" class="inherit-width" placeholder="Enter a value">
-          <a class="removeme btn btn-invisible btn-dark"><i class="icon-minus"></i></a>
-
-          <a class="addme btn btn-invisible btn-dark"><i class="icon-plus"></i></a>
+        <div class="filter-value controls span2">
         </div>
       </div>
     </article>
