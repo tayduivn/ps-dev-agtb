@@ -75,7 +75,7 @@
         latestItem.append($("<a>" + latestItemValue + "</a>"));
         latestItemLink.removeClass().addClass("closer").hide();
         latestItemLink.html("");
-        latestSpan.html("Placeholder");
+        latestSpan.html("Filter");
         
         $.data(menuItem[0], "pillId", latestItem.attr("id"));
     },
