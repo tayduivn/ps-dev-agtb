@@ -1,6 +1,3 @@
 <select id="{{searchFilterId}}" class="chzn-select search search_filter" multiple data-placeholder=" ">
-    <option value="favorites">My Favorites</option>
-    <option value="my{{title}}">My {{title}}</option>
-    <option value="mycustomfilter">My Custom Filter</option>
     <option class="primary disabled filter-new">+ Create a filter</option>
 </select>
