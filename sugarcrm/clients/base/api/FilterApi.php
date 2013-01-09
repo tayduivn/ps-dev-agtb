@@ -88,12 +88,12 @@ class FilterApi extends SugarApi {
 
 
     public function getUserFilterByName(ServiceBase $api, array $args) {
-        $bean = BeanFactory::newBean('UserPreferences');
+        $bean = new UserPreference($GLOBALS['current_user']);
         return array('filter' => $bean->getPreference($args['name']));
     }
 
     public function createUserFilter(ServiceBase $api, array $args) {
-        $bean = BeanFactory::newBean('UserPreferences');
+        $bean = new UserPreference($GLOBALS['current_user']);
         $doesExist = $bean->getPreference($args['name']);
         if(isset($doesExist)) {
             throw new SugarApiExceptionNotAuthorized('EXCEPTION_CREATE_MODULE_NOT_AUTHORIZED', $args);
@@ -107,13 +107,13 @@ class FilterApi extends SugarApi {
     }
 
     public function updateUserFilter(ServiceBase $api, array $args) {
-        $bean = BeanFactory::newBean('UserPreferences');
+        $bean = new UserPreference($GLOBALS['current_user']);
         $bean->setPreference($args['name'], $args['filter']);
         return array('name'=>$args['name']);
     }
 
     public function deleteUserFilter(ServiceBase $api, array $args) {
-        $bean = BeanFactory::newBean('UserPreferences');
+        $bean = new UserPreference($GLOBALS['current_user']);
         $bean->removePreference($args['name']);
         return array('name'=>$args['name']);
     }        
