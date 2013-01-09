@@ -98,8 +98,10 @@
     },
 
     removeRow: function(e) {
+        var $parent = this.$(e.currentTarget).parents('.filter-body');
         this.notSaved();
-        this.$(e.currentTarget).parents('.filter-body').remove();
+        this._disposeField($parent);
+        $parent.remove();
     },
 
     chooseField: function(e) {
@@ -120,10 +122,7 @@
             disable_search_threshold: 10
         });
         $parent.find("select.operator").trigger("liszt:updated");
-        if(_($parent.data('value_field')).isObject()) {
-            $parent.data('value_field').dispose();
-            $parent.data('value_field', '');
-        }
+        this._disposeField($parent);
     },
 
     chooseOperator: function(e) {
@@ -133,10 +132,7 @@
             fieldName = $parent.find('select.field_name').val(),
             fieldType = app.metadata.getModule(this.title).fields[fieldName].type;
 
-        if(_($parent.data('value_field')).isObject()) {
-            $parent.data('value_field').dispose();
-            $parent.data('value_field', '');
-        }
+        this._disposeField($parent);
 
         if(operation !== '') {
             if(fieldType == 'datetime') {
@@ -191,6 +187,17 @@
 
     removeAll: function() {
         // TODO: Make a delete request to the server.
+        var self = this;
+        _.each(this.$(".filter-body"), function(el) {
+            self._disposeField($(el));
+        });
         this.render();
+    },
+
+    _disposeField: function($parent) {
+        if(_($parent.data('value_field')).isObject()) {
+            $parent.data('value_field').dispose();
+            $parent.data('value_field', '');
+        }
     }
 })
