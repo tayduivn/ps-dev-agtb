@@ -36,6 +36,7 @@ $viewdefs['Accounts']['base']['view']['record'] = array(
             'name' => 'cancel_button',
             'label' => 'LBL_CANCEL_BUTTON_LABEL',
             'css_class' => 'btn-invisible btn-link',
+            'mode' => 'edit',
         ),
         array(
             'type' => 'buttondropdown',
@@ -54,6 +55,7 @@ $viewdefs['Accounts']['base']['view']['record'] = array(
                     'label' => 'LBL_DUPLICATE_BUTTON_LABEL',
                 ),
             ),
+            'mode' => 'view',
         ),
         array(
             'type' => 'buttondropdown',
@@ -68,6 +70,7 @@ $viewdefs['Accounts']['base']['view']['record'] = array(
                     'label' => 'LBL_DELETE_BUTTON_LABEL',
                 ),
             ),
+            'mode' => 'edit',
         ),
         array(
             'name' => 'sidebar_toggle',
@@ -80,6 +83,10 @@ $viewdefs['Accounts']['base']['view']['record'] = array(
             'header' => true,
             'fields' => array(
                 'name',
+                array(
+                    'type' => 'favorite',
+                    'noedit' => true,
+                ),
             )
         ),
         array(

@@ -37,7 +37,7 @@ class RestRelateRecordTest extends RestTestBase {
         $this->notes = array();
         $this->leads = array();
     }
-    
+
     public function tearDown()
     {
         $accountIds = array();
@@ -58,7 +58,11 @@ class RestRelateRecordTest extends RestTestBase {
 
         $callsIds = array();
         foreach ( $this->calls as $call ) {
-            $callsIds[] = $call->id;
+            if(is_string($call)) {
+                $callsIds[] = $call;
+            } else {
+                $callsIds[] = $call->id;
+            }
         }
         $callsIds = "('".implode("','",$callsIds)."')";
 
@@ -70,11 +74,15 @@ class RestRelateRecordTest extends RestTestBase {
 
         $noteIds = array();
         foreach ( $this->notes as $note ) {
-            $noteIds[] = $note->id;
+            if(is_string($note)) {
+                $noteIds[] = $note;
+            } else {
+                $noteIds[] = $note->id;
+            }
         }
         $noteIds = "('".implode("','",$noteIds)."')";
 
-        
+
         $GLOBALS['db']->query("DELETE FROM accounts WHERE id IN {$accountIds}");
         if ($GLOBALS['db']->tableExists('accounts_cstm')) {
             $GLOBALS['db']->query("DELETE FROM accounts_cstm WHERE id_c IN {$accountIds}");
@@ -153,7 +161,7 @@ class RestRelateRecordTest extends RestTestBase {
 
         // Test normal fetch
         $restReply = $this->_restCall("Opportunities/".$this->opps[0]->id."/link/contacts/".$this->contacts[0]->id);
-        
+
         $this->assertEquals($this->contacts[0]->id,$restReply['reply']['id'],"Did not fetch the related contact");
         $this->assertNotEmpty($restReply['reply']['opportunity_role'],"The role field on the Opportunity -> Contact relationship was not populated.");
         $this->assertEquals($this->contacts[0]->opportunity_role, $restReply['reply']['opportunity_role'],"The role field on the Opportunity -> Contact relationship does not match the bean.");
@@ -322,7 +330,7 @@ class RestRelateRecordTest extends RestTestBase {
 
 
         $ret = $db->query("SELECT * FROM opportunities_contacts WHERE opportunity_id ='".$this->opps[0]->id."' AND contact_id = '".$this->contacts[0]->id."'");
-        
+
         $row = $db->fetchByAssoc($ret);
         $this->assertEquals('Primary Decision Maker',$row['contact_role'],"Did not set the related contact's role");
     }
@@ -380,11 +388,11 @@ class RestRelateRecordTest extends RestTestBase {
         $this->assertEquals("Test O Chango",$restReply['reply']['related_record']['last_name'],"Did not change the related contact");
 
         $ret = $db->query("SELECT * FROM opportunities_contacts WHERE opportunity_id ='".$this->opps[0]->id."' AND contact_id = '".$this->contacts[1]->id."'");
-        
+
         $row = $db->fetchByAssoc($ret);
         $this->assertEquals('Primary Decision Maker',$row['contact_role'],"Did not set the related contact's role");
         $this->assertEquals('Primary Decision Maker',$restReply['reply']['related_record']['opportunity_role'],"Did not set the related contact's role");
-        
+
     }
 
     /**
@@ -424,7 +432,7 @@ class RestRelateRecordTest extends RestTestBase {
         // get how many opps and contacts there currently are
         $oppCountQuery = $db->query("SELECT count(*) AS count FROM opportunities");
         $contactCountQuery = $db->query("SELECT count(*) AS count FROM contacts");
-        
+
         $oppCountRow = $db->fetchByAssoc($oppCountQuery);
         $oppCount = $oppCountRow['count'];
 
@@ -439,16 +447,16 @@ class RestRelateRecordTest extends RestTestBase {
         $this->assertEquals($this->contacts[1]->id,$restReply['reply']['related_record']['id'],"Did not link the related contact");
         $this->assertEquals($this->contacts[1]->opportunity_role,$restReply['reply']['related_record']['opportunity_role'],"Did not fetch the related contact's role");
 
-        
+
         $ret = $db->query("SELECT * FROM opportunities_contacts WHERE opportunity_id ='".$this->opps[0]->id."' AND contact_id = '".$this->contacts[1]->id."'");
-        
+
         $row = $db->fetchByAssoc($ret);
         $this->assertEquals($this->contacts[1]->opportunity_role,$row['contact_role'],"Did not set the related contact's role");
 
         //verify no duplicate contact or opportunity was created with this link
         $oppCountQuery = $db->query("SELECT count(*) AS count FROM opportunities");
         $contactCountQuery = $db->query("SELECT count(*) AS count FROM contacts");
-        
+
         $oppCountRow = $db->fetchByAssoc($oppCountQuery);
         $oppCountNew = $oppCountRow['count'];
 
@@ -503,7 +511,7 @@ class RestRelateRecordTest extends RestTestBase {
         $GLOBALS['db']->commit();
 
         $ret = $db->query("SELECT COUNT(*) AS link_count FROM opportunities_contacts WHERE opportunity_id ='".$this->opps[0]->id."' AND deleted = 0");
-        
+
         $row = $db->fetchByAssoc($ret);
         $this->assertEquals('2',$row['link_count'],"The links were not properly generated");
 
@@ -511,12 +519,12 @@ class RestRelateRecordTest extends RestTestBase {
                                       '','DELETE');
 
         $ret = $db->query("SELECT COUNT(*) AS link_count FROM opportunities_contacts WHERE opportunity_id ='".$this->opps[0]->id."' AND deleted = 0");
-        
+
         $row = $db->fetchByAssoc($ret);
         $this->assertEquals('1',$row['link_count'],"The first link was not properly deleted");
 
         $ret = $db->query("SELECT COUNT(*) AS link_count FROM opportunities_contacts WHERE opportunity_id ='".$this->opps[0]->id."' AND contact_id = '".$this->contacts[0]->id."' AND deleted = 0");
-        
+
         $row = $db->fetchByAssoc($ret);
         $this->assertEquals('1',$row['link_count'],"The wrong link was deleted");
 
@@ -524,16 +532,58 @@ class RestRelateRecordTest extends RestTestBase {
                                       '','DELETE');
 
         $ret = $db->query("SELECT COUNT(*) AS link_count FROM opportunities_contacts WHERE opportunity_id ='".$this->opps[0]->id."' AND deleted = 0");
-        
+
         $row = $db->fetchByAssoc($ret);
         $this->assertEquals('0',$row['link_count'],"The second link was not properly deleted");
 
         $ret = $db->query("SELECT COUNT(*) AS link_count FROM opportunities_contacts WHERE opportunity_id ='".$this->opps[0]->id."' AND contact_id = '".$this->contacts[0]->id."' AND deleted = 0");
-        
+
         $row = $db->fetchByAssoc($ret);
         $this->assertEquals('0',$row['link_count'],"The second link was never deleted");
 
 
+    }
+
+    public function testCreateWithModuleWithOutParentInfo() {
+        $call = BeanFactory::newBean('Calls');
+        $call->name = "UNIT TEST" . create_guid();
+        $call->date_start = TimeDate::getInstance()->getNow()->asDb();
+
+        $call->save();
+
+        $this->calls[] = $call;
+
+        $post = array(
+                'embed_flag'        => 0,
+                'deleted'           => 0,
+                'name'              => 'Test Note',
+                'description'       => 'This is a test note',
+                'assigned_user_id'  => 1,
+            );
+
+        $restReply = $this->_restCall("Calls/{$call->id}/link/notes", $post, 'POST');
+
+        $this->assertNotEmpty($restReply['reply']['related_record']['id'], "ID was not set for the related record");
+        $this->notes[] = BeanFactory::getBean('Notes', $restReply['reply']['related_record']['id']);
+        $this->assertEquals($restReply['reply']['related_record']['parent_id'], $call->id, "Call ID was not the parent id of the note.");
+        $this->assertEquals($restReply['reply']['related_record']['parent_type'], 'Calls', "Call Module was not the parent type of the note.");
+
+        // try with leads and notes
+        $lead = BeanFactory::newBean('Leads');
+        $lead->name = "Unit Test" . create_guid();
+        $lead->save();
+        $this->leads[] = $lead;
+
+        $post = array(
+            'name' => 'CALL FOR LEAD ' . create_guid(),
+            );
+
+        $restReply = $this->_restCall("Leads/{$lead->id}/link/calls", $post, 'POST');
+        $this->assertNotEmpty($restReply['reply']['related_record']['id'], "ID was not set for the related record");
+        $this->calls[] = BeanFactory::getBean('Calls', $restReply['reply']['related_record']['id']);
+
+        $this->assertEquals($restReply['reply']['related_record']['parent_id'], $lead->id, "Lead ID was not the parent id of the call.");
+        $this->assertEquals($restReply['reply']['related_record']['parent_type'], 'Leads', "Leads Module was not the parent type of the call.");
     }
 
     public function testCreateWithModuleWithParentType() {
@@ -554,8 +604,8 @@ class RestRelateRecordTest extends RestTestBase {
             );
 
         $restReply = $this->_restCall("Calls/{$call->id}/link/notes", $post, 'POST');
-
-        $this->notes[] = $restReply['reply']['related_record']['id'];
+        $this->assertNotEmpty($restReply['reply']['related_record']['id'], "ID was not set for the related record");
+        $this->notes[] = BeanFactory::getBean('Notes', $restReply['reply']['related_record']['id']);
         $this->assertEquals($restReply['reply']['related_record']['parent_id'], $call->id, "Call ID was not the parent id of the note.");
         $this->assertEquals($restReply['reply']['related_record']['parent_type'], 'Calls', "Call Module was not the parent type of the note.");
 
@@ -567,11 +617,96 @@ class RestRelateRecordTest extends RestTestBase {
 
         $post = array(
             'name' => 'CALL FOR LEAD ' . create_guid(),
+            'parent_type' => 'Leads',
             );
 
         $restReply = $this->_restCall("Leads/{$lead->id}/link/calls", $post, 'POST');
+        $this->assertNotEmpty($restReply['reply']['related_record']['id'], "ID was not set for the related record");
+        $this->calls[] = BeanFactory::getBean('Calls', $restReply['reply']['related_record']['id']);
 
-        $this->calls[] = $restReply['reply']['related_record']['id'];
+        $this->assertEquals($restReply['reply']['related_record']['parent_id'], $lead->id, "Lead ID was not the parent id of the call.");
+        $this->assertEquals($restReply['reply']['related_record']['parent_type'], 'Leads', "Leads Module was not the parent type of the call.");
+    }
+
+    public function testCreateWithModuleWithParentId() {
+        $call = BeanFactory::newBean('Calls');
+        $call->name = "UNIT TEST" . create_guid();
+        $call->date_start = TimeDate::getInstance()->getNow()->asDb();
+
+        $call->save();
+
+        $this->calls[] = $call;
+
+        $post = array(
+                'embed_flag'        => 0,
+                'deleted'           => 0,
+                'name'              => 'Test Note',
+                'description'       => 'This is a test note',
+                'assigned_user_id'  => 1,
+            );
+
+        $restReply = $this->_restCall("Calls/{$call->id}/link/notes", $post, 'POST');
+        $this->assertNotEmpty($restReply['reply']['related_record']['id'], "ID was not set for the related record");
+        $this->notes[] = BeanFactory::getBean('Notes',$restReply['reply']['related_record']['id']);
+        $this->assertEquals($restReply['reply']['related_record']['parent_id'], $call->id, "Call ID was not the parent id of the note.");
+        $this->assertEquals($restReply['reply']['related_record']['parent_type'], 'Calls', "Call Module was not the parent type of the note.");
+
+        // try with leads and notes
+        $lead = BeanFactory::newBean('Leads');
+        $lead->name = "Unit Test" . create_guid();
+        $lead->save();
+        $this->leads[] = $lead;
+
+        $post = array(
+            'name' => 'CALL FOR LEAD ' . create_guid(),
+            'parent_id' => $lead->id,
+            );
+
+        $restReply = $this->_restCall("Leads/{$lead->id}/link/calls", $post, 'POST');
+        $this->assertNotEmpty($restReply['reply']['related_record']['id'], "ID was not set for the related record");
+        $this->calls[] = BeanFactory::getBean('Calls', $restReply['reply']['related_record']['id']);
+        $this->assertEquals($restReply['reply']['related_record']['parent_id'], $lead->id, "Lead ID was not the parent id of the call.");
+        $this->assertEquals($restReply['reply']['related_record']['parent_type'], 'Leads', "Leads Module was not the parent type of the call.");
+    }
+
+   public function testCreateWithModuleWithParentInfo() {
+        $call = BeanFactory::newBean('Calls');
+        $call->name = "UNIT TEST" . create_guid();
+        $call->date_start = TimeDate::getInstance()->getNow()->asDb();
+
+        $call->save();
+
+        $this->calls[] = $call;
+
+        $post = array(
+                'embed_flag'        => 0,
+                'deleted'           => 0,
+                'name'              => 'Test Note',
+                'description'       => 'This is a test note',
+                'assigned_user_id'  => 1,
+            );
+
+        $restReply = $this->_restCall("Calls/{$call->id}/link/notes", $post, 'POST');
+        $this->assertNotEmpty($restReply['reply']['related_record']['id'], "ID was not set for the related record");
+        $this->notes[] = BeanFactory::getBean('Notes', $restReply['reply']['related_record']['id']);
+        $this->assertEquals($restReply['reply']['related_record']['parent_id'], $call->id, "Call ID was not the parent id of the note.");
+        $this->assertEquals($restReply['reply']['related_record']['parent_type'], 'Calls', "Call Module was not the parent type of the note.");
+
+        // try with leads and notes
+        $lead = BeanFactory::newBean('Leads');
+        $lead->name = "Unit Test" . create_guid();
+        $lead->save();
+        $this->leads[] = $lead;
+
+        $post = array(
+            'name' => 'CALL FOR LEAD ' . create_guid(),
+            'parent_id' => $lead->id,
+            'parent_type' => 'Leads'
+            );
+
+        $restReply = $this->_restCall("Leads/{$lead->id}/link/calls", $post, 'POST');
+        $this->assertNotEmpty($restReply['reply']['related_record']['id'], "ID was not set for the related record");
+        $this->calls[] = BeanFactory::getBean('Calls', $restReply['reply']['related_record']['id']);
         $this->assertEquals($restReply['reply']['related_record']['parent_id'], $lead->id, "Lead ID was not the parent id of the call.");
         $this->assertEquals($restReply['reply']['related_record']['parent_type'], 'Leads', "Leads Module was not the parent type of the call.");
     }

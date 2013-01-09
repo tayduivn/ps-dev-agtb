@@ -93,7 +93,7 @@ class ParserModifyPortalConfig extends ModuleBuilderParser
             $portalConfig['on'] = 0;
         }
         //TODO: Remove after we resolve issues with test associated to this
-        $GLOBALS['log']->fatal("Updating portal config");
+        $GLOBALS['log']->info("Updating portal config");
         foreach ($portalConfig as $fieldKey => $fieldValue) {
 
             if(!$GLOBALS ['system_config']->saveSetting('portal', $fieldKey, json_encode($fieldValue), 'support')){
@@ -101,6 +101,14 @@ class ParserModifyPortalConfig extends ModuleBuilderParser
             }
 
         }
+
+        $cachedPublicMetadata = sugar_cached('api/metadata/metadata_portal_public.php');
+        $cachedPrivateMetadata = sugar_cached('api/metadata/metadata_portal_private.php');
+        // Clear the cached public and private metadata files
+        if (file_exists($cachedPublicMetadata))
+            unlink($cachedPublicMetadata);
+        if (file_exists($cachedPrivateMetadata))
+            unlink($cachedPrivateMetadata);
 
         // Clear the Contacts file b/c portal flag affects rendering
         if (file_exists($cachedfile = sugar_cached('modules/Contacts/EditView.tpl')))
@@ -144,11 +152,11 @@ class ParserModifyPortalConfig extends ModuleBuilderParser
             $user->portal_only = '1';
             $user->save();
             $id = $user->id;
-            
+
             // Make the oauthkey record for this portal user now if it doesn't exists
             $clientSeed = BeanFactory::newBean('OAuthKeys');
             $clientBean = $clientSeed->fetchKey('support_portal', 'oauth2');
-            
+
             if (!$clientBean) {
                 $newKey = BeanFactory::newBean('OAuthKeys');
                 $newKey->oauth_type = 'oauth2';

@@ -46,6 +46,13 @@ $viewdefs['Notes']['mobile']['view']['list'] = array(
                     'width' => '10%',
                     'default' => true,
                 ),
+                array(
+                    'name' => 'filename',
+                    'label' => 'LBL_FILENAME',
+                    'enabled' => true,
+                    'width' => '10%',
+                    'default' => true,
+                ),
             ),
         ),
     ),

@@ -9,7 +9,7 @@
         'click .more': 'toggleMoreLess',
         'click .less': 'toggleMoreLess'
     },
-
+    buttons: {},
     // button states
     STATE: {
         EDIT: 'edit',
@@ -27,6 +27,9 @@
         this.model.on("change", function() {
             if (this.inlineEditMode) {
                 this.previousModelState = this.model.previousAttributes();
+                if(this.buttons['record-save']) {
+                    this.buttons['record-save'].setDisabled(false);
+                }
                 this.setButtonStates(this.STATE.EDIT);
             }
         }, this);
@@ -41,7 +44,7 @@
         }
     },
 
-    render: function() {
+    _render: function() {
         var totalFieldCount = 0;
 
         _.each(this.meta.panels, function(panel) {
@@ -86,12 +89,24 @@
             panel.grid = rows;
         }, this);
 
-        app.view.View.prototype.render.call(this);
+        app.view.View.prototype._render.call(this);
+        this.initButtons();
         this.setButtonStates(this.STATE.VIEW);
 
         // Check if this is a new record, if it is, enable the edit view
         if (this.createMode && this.model.isNew()) {
             this.toggleEdit(true);
+        }
+    },
+    initButtons: function() {
+        if(this.options.meta && this.options.meta.buttons) {
+            this.buttons = {};
+            _.each(this.options.meta.buttons, function(button, index) {
+                var field = this.getField(button.name);
+                if(field) {
+                    this.buttons[field.name || index] = field;
+                }
+            }, this);
         }
     },
 
@@ -158,9 +173,18 @@
         return false;
     },
 
-    duplicateClicked: function() {
-        app.cache.set("duplicate"+this.module, this.model.attributes);
-        app.router.navigate("#"+this.module+"/create", {trigger: true});
+    duplicateClicked: function(event) {
+        if (!this.$(event.target).hasClass('disabled')) {
+            app.cache.set("duplicate"+this.module, this.model.attributes);  
+            this.layout.trigger("drawer:create:fire", {
+                components: [{
+                    layout : 'create',
+                    context: {
+                        create: true
+                    }
+                }]
+            }, this);
+        }
     },
     
     editClicked: function() {
@@ -301,8 +325,10 @@
         field = (field.parent) ? field.parent : field;
         fields = field.fields || [field];
 
-        if (field.options.viewName != "edit" && !close) { // About to be switched to edit
-            $(document).on("mousedown.record" + field.name, {field: field, cell: cell}, this.fieldClose);
+        if (field.options.viewName != "edit" && !close) {
+            // Need to call this.fieldClose() in a separate "thread" because it changes to detail view
+            // before it sets the value of the textarea in the model.
+            $(document).on("mousedown.record" + field.name, {field: field, cell: cell}, _.debounce(this.fieldClose, 0));
         }
 
         if (close) {
@@ -385,47 +411,14 @@
      * @param state
      */
     setButtonStates: function(state) {
-        var $buttons = {
-            edit: this.getField('edit_dropdown'),
-            save: this.getField('save_dropdown'),
-            cancel: this.getField('cancel_button')
-        };
-
-        switch (state) {
-            case this.STATE.EDIT:
-                if ($buttons.edit) {
-                    $buttons.edit.hide();
-                }
-                if ($buttons.save) {
-                    $buttons.save.show();
-                }
-                if ($buttons.cancel) {
-                    $buttons.cancel.show();
-                }
-                break;
-            case this.STATE.VIEW:
-                if ($buttons.edit) {
-                    $buttons.edit.show();
-                }
-                if ($buttons.save) {
-                    $buttons.save.hide();
-                }
-                if ($buttons.cancel) {
-                    $buttons.cancel.hide();
-                }
-                break;
-            default:
-                if ($buttons.edit) {
-                    $buttons.edit.hide();
-                }
-                if ($buttons.save) {
-                    $buttons.save.hide();
-                }
-                if ($buttons.cancel) {
-                    $buttons.cancel.hide();
-                }
-                break;
-        }
+        //TODO: Use direct show/hide function on field after sidecar is updated
+        _.each(this.buttons, function(field, name) {
+            if(_.isUndefined(field.def.mode) || field.def.mode == state) {
+                field.getFieldElement().show();
+            } else {
+                field.getFieldElement().hide();
+            }
+        });
     },
 
     /**

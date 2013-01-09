@@ -246,13 +246,35 @@ class Meeting extends SugarBean {
 			$this->type = 'Sugar';
 		}
 
+        // Make sure we have an ID so we can build relationships
+        if ( !isset($this->id) || empty($this->id) ) {
+            $this->id = create_guid();
+            $this->new_with_id = true;
+        }
+        // Previously this was handled in both the MeetingFormBase and the AfterImportSave function, so now it just happens every time you save a record.
+	    if ( $this->parent_type == 'Contacts' ) {
+            if ( is_array($this->contacts_arr) ) {
+                $this->contacts_arr[] = $this->parent_id;
+            }
+	        $this->load_relationship('contacts');
+	        if ( !$this->contacts->relationship_exists('contacts',array('id'=>$this->parent_id)) ) {
+	            $this->contacts->add($this->parent_id);
+            }
+	    }
+	    elseif ( $this->parent_type == 'Leads' ) {
+            if ( isset($this->leads_arr) && is_array($this->leads_arr) ) {
+                $this->leads_arr[] = $this->parent_id;
+            }
+	        $this->load_relationship('leads');
+	        if ( !$this->leads->relationship_exists('leads',array('id'=>$this->parent_id)) ) {
+	            $this->leads->add($this->parent_id);
+            }
+	    }
+
+
         if ( isset($api) && is_a($api,'WebMeeting') && empty($this->in_relationship_update) ) {
             // Make sure the API initialized and it supports Web Meetings
-            // Also make suer we have an ID, the external site needs something to reference
-            if ( !isset($this->id) || empty($this->id) ) {
-                $this->id = create_guid();
-                $this->new_with_id = true;
-            }
+            // Also make sure we have an ID, the external site needs something to reference
             $response = $api->scheduleMeeting($this);
             if ( $response['success'] == TRUE ) {
                 // Need to send out notifications
@@ -818,25 +840,6 @@ class Meeting extends SugarBean {
        parent::save_relationship_changes($is_update, $exclude);
 	}
 
-
-	/**
-	 * @see SugarBean::afterImportSave()
-	 */
-	public function afterImportSave()
-	{
-	    if ( $this->parent_type == 'Contacts' ) {
-	        $this->load_relationship('contacts');
-	        if ( !$this->contacts->relationship_exists('contacts',array('id'=>$this->parent_id)) )
-	            $this->contacts->add($this->parent_id);
-	    }
-	    elseif ( $this->parent_type == 'Leads' ) {
-	        $this->load_relationship('leads');
-	        if ( !$this->leads->relationship_exists('leads',array('id'=>$this->parent_id)) )
-	            $this->leads->add($this->parent_id);
-	    }
-
-	    parent::afterImportSave();
-	}
 
     public function getDefaultStatus()
     {

@@ -42,7 +42,7 @@
 </div>
 
 <div class="clear"></div>
-<div id="arrow" title="Show" class="up"></div>
+<div id="arrow" title="Show" class="up"><i class="icon-chevron-down"></i></div>
 <div id="footer">
 {if $COMPANY_LOGO_URL}
     <img src="{$COMPANY_LOGO_URL}" class="logo" id="logo" title="{$STATISTICS}" border="0"/>

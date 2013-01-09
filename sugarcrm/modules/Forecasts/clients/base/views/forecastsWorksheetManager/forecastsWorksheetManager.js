@@ -1,3 +1,29 @@
+/*********************************************************************************
+ * The contents of this file are subject to the SugarCRM Master Subscription
+ * Agreement (""License"") which can be viewed at
+ * http://www.sugarcrm.com/crm/master-subscription-agreement
+ * By installing or using this file, You have unconditionally agreed to the
+ * terms and conditions of the License, and You may not use this file except in
+ * compliance with the License.  Under the terms of the license, You shall not,
+ * among other things: 1) sublicense, resell, rent, lease, redistribute, assign
+ * or otherwise transfer Your rights to the Software, and 2) use the Software
+ * for timesharing or service bureau purposes such as hosting the Software for
+ * commercial gain and/or for the benefit of a third party.  Use of the Software
+ * may be subject to applicable fees and any use of the Software without first
+ * paying applicable fees is strictly prohibited.  You do not have the right to
+ * remove SugarCRM copyrights from the source code or user interface.
+ *
+ * All copies of the Covered Code must include on each user interface screen:
+ *  (i) the ""Powered by SugarCRM"" logo and
+ *  (ii) the SugarCRM copyright notice
+ * in the same form as they appear in the distribution.  See full license for
+ * requirements.
+ *
+ * Your Warranty, Limitations of liability and Indemnity are expressly stated
+ * in the License.  Please refer to the License for the specific language
+ * governing these rights and limitations under the License.  Portions created
+ * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
+ ********************************************************************************/
 /**
  * View that displays header for current app
  * @class View.Views.WorksheetView
@@ -17,17 +43,22 @@
  *      by: _render()
  *      when: done rendering
  *
- * forecasts:forecastcommitbuttons:triggerSaveDraft
+ * forecasts:worksheet:saved
  *      on: context.forecasts
- *      by: safeFetch()
- *      when: user performs an action that causes a check to be made against dirty data
- *
+ *      by: saveWorksheet()
+ *      when: saving the worksheet.
+ * 
+ * forecasts:worksheet:dirty
+ *      on: context.forecasts
+ *      by: change:worksheet
+ *      when: the worksheet is changed.
  */
 ({
     url: 'rest/v10/ForecastManagerWorksheets',
     show: false,
     viewModule: {},
     selectedUser: {},
+    timePeriod: '',
     gTable:'',
     // boolean for enabled expandable row behavior
     isExpandableRows:'',
@@ -45,6 +76,33 @@
      * Template to use when we are fetching the commit history
      */
     commitLogLoadingTemplate : _.template('<div class="extend results"><article><%= loadingMessage %></article></div>'),
+
+    dirtyModels : new Backbone.Collection(),
+
+    /**
+     * If the timeperiod is changed and we have dirtyModels, keep the previous one to use if they save the models
+     */
+    dirtyTimeperiod : '',
+
+    /**
+     * If the timeperiod is changed and we have dirtyModels, keep the previous one to use if they save the models
+     */
+    dirtyUser : '',
+    
+    /**
+     * A Collection to keep track of draft models
+     */
+    draftModels: new Backbone.Collection(),
+    
+    /**
+     * If the timeperiod is changed and we have draftModels, keep the previous one to use if they save the models
+     */
+    draftTimeperiod : '',
+
+    /**
+     * If the timeperiod is changed and we have draftModels, keep the previous one to use if they save the models
+     */
+    draftUser : '',    
 
     /**
      * Handle Any Events
@@ -72,7 +130,6 @@
 
         this._collection = this.context.forecasts.worksheetmanager;
         this._collection.url = this.createURL();
-        this._collection.isDirty = false;
 
         this.totalModel = new (Backbone.Model.extend(
             {
@@ -94,12 +151,16 @@
      * @param params is always a context
      */
     updateWorksheetBySelectedUser:function (selectedUser) {
+        if(this.isDirty()) {
+            // since the model is dirty, save it so we can use it later
+            this.dirtyUser = this.selectedUser;
+            this.draftUser = this.selectedUser;
+        }
         this.selectedUser = selectedUser;
         if(!this.showMe()){
         	return false;
         }
-        this._collection = this.context.forecasts.worksheetmanager;
-        this._collection.url = this.createURL();
+        this.context.forecasts.worksheetmanager.url = this.createURL();
         this.safeFetch(true);
     },
 
@@ -114,10 +175,17 @@
     },
 
     bindDataChange: function() {
-        if(this._collection)
-        {
-            this._collection.on("reset", function(){
-            	this.render();
+        if (this._collection) {
+            this._collection.on("reset", function() {
+                self.cleanUpDirtyModels();
+                self.cleanUpDraftModels();
+                self.render();
+            }, this);
+
+            this._collection.on("change", function(model, changed) {
+                // The Model has changed via CTE. save it in the isDirty
+                this.dirtyModels.add(model);
+                this.context.forecasts.trigger('forecasts:worksheet:dirty', model, changed);
             }, this);
         }
         // listening for updates to context for selectedUser:change
@@ -139,12 +207,15 @@
             this.context.forecasts.worksheetmanager.on("change", function() {
             	this.calculateTotals();
             }, this);
-            this.context.forecasts.on("forecasts:committed:saved forecasts:commitButtons:saved", function(){
+            this.context.forecasts.on("forecasts:committed:saved forecasts:worksheet:saved", function(){
             	if(this.showMe()){
-            		var model = this.context.forecasts.worksheetmanager;
-            		model.url = this.createURL();
+            		this.context.forecasts.worksheetmanager.url = this.createURL();
             		this.safeFetch();
             	}
+            }, this);
+
+            this.context.forecasts.on('forecasts:worksheet:saveWorksheet', function(isDraft) {
+                this.saveWorksheet(isDraft);
             }, this);
             
             /*
@@ -173,11 +244,109 @@
             
             var worksheet = this;
             $(window).bind("beforeunload",function(){
-                if(worksheet._collection.isDirty){
+                if(worksheet.isDirty()){
                 	return app.lang.get("LBL_WORKSHEET_SAVE_CONFIRM_UNLOAD", "Forecasts");
                 }            	
             });
         }
+    },
+
+    /**
+     * Is this worksheet dirty or not?
+     * @return {boolean}
+     */
+    isDirty : function() {
+        return (this.dirtyModels.length > 0);
+    },
+
+    /**
+     *
+     * @triggers forecasts:worksheet:saved
+     * @return {Number}
+     */
+    saveWorksheet : function(isDraft) {
+        // only run the save when the worksheet is visible and it has dirty records
+        var totalToSave = 0;
+        if(this.showMe()) {
+            var self = this,
+                saveCount = 0;
+            
+            /**
+             * If the sheet is dirty, save the dirty rows. Else, if the save is for a commit, and we have 
+             * draft models (things saved as draft), we need to resave those as committed (version 1). If neither
+             * of these conditions are true, then we need to fall through and signal that the save is complete so other
+             * actions listening for this can continue.
+             */
+            if(this.isDirty()) {
+                totalToSave = self.dirtyModels.length;
+                
+                self.dirtyModels.each(function(model){
+                    self._worksheetSaveHelper(totalToSave, saveCount, model, isDraft, self.dirtyTimeperiod, self.dirtyUser.id);
+                                       
+                    //add to draft structure so committing knows what to save as non-draft
+                    if(isDraft == true){
+                        self.draftModels.add(model, {merge: true});
+                    }
+                });
+
+                self.cleanUpDirtyModels();
+            } else if(!isDraft && self.draftModels.length > 0){
+                totalToSave = self.draftModels.length;
+               
+                self.draftModels.each(function(model){
+                    self._worksheetSaveHelper(totalToSave, saveCount, model, false, self.draftTimeperiod, self.draftUser.id);
+                });
+                
+                //Need to clean up dirty models too as the save event above triggers a change event on the worksheet.
+                self.cleanUpDirtyModels();
+                self.cleanUpDraftModels();
+            } else {
+                this.context.forecasts.trigger('forecasts:worksheet:saved', totalToSave, 'mgr_worksheet', isDraft);
+            }
+        }
+
+        return totalToSave
+    },
+    
+    /**
+     * Helper function for worksheet save
+     */
+    _worksheetSaveHelper: function(totalToSave, saveCount, model, isDraft, timeperiod, userId){
+        var self = this;
+        model.set({
+            draft : (isDraft == true) ? 1 : 0,
+            timeperiod_id : timeperiod || self.timePeriod,
+            current_user : userId|| self.selectedUser.id
+        }, {silent:true});   
+        model.url = self.url.split("?")[0] + "/" + model.get("id");
+        
+        model.save({}, {success: function() {
+            saveCount++;
+            //if this is the last save, go ahead and trigger the callback;
+            if(totalToSave === saveCount) {
+                self.context.forecasts.trigger('forecasts:worksheet:saved', totalToSave, 'mgr_worksheet', isDraft);
+            }
+        }});
+    },
+
+    /**
+     * Clean Up the Dirty Modules Collection and dirtyVariables
+     */
+    cleanUpDirtyModels : function() {
+        // clean up the dirty records and variables
+        this.dirtyModels.reset();
+        this.dirtyTimeperiod = '';
+        this.dirtyUser = '';
+    },
+    
+    /**
+     * Clean Up the Draft Modules Collection and dirtyVariables
+     */
+    cleanUpDraftModels : function() {
+        // clean up the draft records and variables
+        this.draftModels.reset();
+        this.draftTimeperiod = '';
+        this.draftUser = '';
     },
 
 
@@ -224,20 +393,24 @@
         }
         //mark that a fetch is in process so no duplicate fetches begin
         this.fetchInProgress = true;
-        if(typeof fetch == 'undefined')
-        {
+        if(_.isUndefined(fetch)) {
             fetch = true;
         }
     	var collection = this._collection;
     	var self = this;
-    	if(collection.isDirty){
+    	if(this.isDirty()){
     		//unsaved changes, ask if you want to save.
     		if(confirm(app.lang.get("LBL_WORKSHEET_SAVE_CONFIRM", "Forecasts"))){
-                self.context.forecasts.trigger("forecasts:forecastcommitbuttons:triggerSaveDraft");
-		    }
-    		else {
+                self.context.forecasts.set({reloadCommitButton: true});
+                var svWkFn = function() {
+                    self.context.forecasts.off('forecasts:worksheet:saved', svWkFn);
+                    collection.fetch();
+                };
+
+                self.context.forecasts.on('forecasts:worksheet:saved', svWkFn);
+                this.saveWorksheet()
+		    } else {
     			//ignore, fetch still
-    			collection.isDirty = false;
     			self.context.forecasts.set({reloadCommitButton: true});
     			if(fetch){
     				collection.fetch();
@@ -265,9 +438,6 @@
      */
     _renderField: function(field) {
         app.view.View.prototype._renderField.call(this, field);
-        if (field.viewName !="edit" && field.def.clickToEdit === true && _.isEqual(this.selectedUser.id, app.user.get('id'))) {
-            field = new app.view.ClickToEditField(field, this);
-        }
     },
 
     /**
@@ -275,7 +445,6 @@
      */
     _render:function () {
         var self = this;
-        var enableCommit = false;
       
         if(!this.showMe()){
         	return false;
@@ -300,12 +469,13 @@
                 };
 
                 //Apply sorting for the worksheet
-                if(typeof(fields[i].type) != "undefined")
+                if(!_.isUndefined(fields[i].type))
                 {
                     switch(fields[i].type)
                     {
                         case "int":
                         case "currency":
+                        case "editableCurrency":
                             fieldDef["sSortDataType"] = "dom-number";
                             fieldDef["sType"] = "numeric";
                             fieldDef["sClass"] = "number";
@@ -334,15 +504,18 @@
         );
 
         //see if anything in the model is a draft version
-        _.each(this._collection.models, function(model, index){
-        	if(model.get("version") == 0){
-        		enableCommit = true;
-        	}
-        });
-        if (enableCommit) {
-        	self.context.forecasts.trigger("forecasts:commitButtons:enabled");
+        var enableCommit = self._collection.find(function(model) {
+            if(model.get("version") == 0){
+                self.draftModels.add(model, {merge: true});
+                return true;
+            }
+            
+            return false;            
+        }, this);
+        if (_.isObject(enableCommit)) {
+            self.context.forecasts.trigger("forecasts:commitButtons:enabled");
         }
-        
+
         this.calculateTotals();
         self.context.forecasts.trigger('forecasts:worksheetmanager:rendered');
 
@@ -447,17 +620,16 @@
         }
 
 
-        _.each(self._collection.models, function (model) {
-
-           var base_rate = parseFloat(model.get('base_rate'));
-           amount 			+= app.currency.convertWithRate(model.get('amount'), base_rate);
-           quota 			+= app.currency.convertWithRate(model.get('quota'), base_rate);
-           best_case 		+= app.currency.convertWithRate(model.get('best_case'), base_rate);
-           best_adjusted 	+= app.currency.convertWithRate(model.get('best_adjusted'), base_rate);
-           likely_case 		+= app.currency.convertWithRate(model.get('likely_case'), base_rate);
-           likely_adjusted 	+= app.currency.convertWithRate(model.get('likely_adjusted'), base_rate);
-           worst_case       += app.currency.convertWithRate(model.get('worst_case'), base_rate);
-           worst_adjusted 	+= app.currency.convertWithRate(model.get('worst_adjusted'), base_rate);
+        self._collection.forEach(function (model) {
+            var base_rate = parseFloat(model.get('base_rate'));
+            amount 			+= app.currency.convertWithRate(model.get('amount'), base_rate);
+            quota 			+= app.currency.convertWithRate(model.get('quota'), base_rate);
+            best_case 		+= app.currency.convertWithRate(model.get('best_case'), base_rate);
+            best_adjusted 	+= app.currency.convertWithRate(model.get('best_adjusted'), base_rate);
+            likely_case 		+= app.currency.convertWithRate(model.get('likely_case'), base_rate);
+            likely_adjusted 	+= app.currency.convertWithRate(model.get('likely_adjusted'), base_rate);
+            worst_case       += app.currency.convertWithRate(model.get('worst_case'), base_rate);
+            worst_adjusted 	+= app.currency.convertWithRate(model.get('worst_adjusted'), base_rate);
         });
 
         self.totalModel.set({
@@ -492,12 +664,9 @@
      * Determines if this Worksheet should be rendered
      */
     showMe: function(){
-    	var selectedUser = this.selectedUser;
-    	this.show = false;
-    	if(!selectedUser.showOpps && selectedUser.isManager){
-    		this.show = true;
-    	}
-    	return this.show;
+    	var selectedUser = (this.isDirty() && this.dirtyUser) ? this.dirtyUser : this.selectedUser;
+
+        return (!selectedUser.showOpps && selectedUser.isManager)
     },
 
     /**
@@ -526,6 +695,11 @@
      * @param params is always a context
      */
     updateWorksheetBySelectedTimePeriod:function (params) {
+        if(this.isDirty()) {
+            // since the model is dirty, save it so we can use it later
+            this.dirtyTimeperiod = this.timePeriod;
+            this.draftTimeperiod = this.timePeriod;
+        }
     	this.timePeriod = params.id;
         var model = this.context.forecasts.worksheetmanager;
         if(!this.showMe()){

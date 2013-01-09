@@ -29,9 +29,11 @@ class CurrentUserMobileApi extends CurrentUserApi {
             require $file;
         }
 
-        // Forcibly remove the Users module, it needs to be in the wireless_module_registry
-        // because the old wireless code needs it, but the new one uses the Employees module
-        unset($wireless_module_registry['Users']);
+        // Forcibly remove the Users module
+        // So if they have added it, remove it here
+        if ( isset($wireless_module_registry['Users']) ) {
+            unset($wireless_module_registry['Users']);
+        }
 
         // $wireless_module_registry is defined in the file loaded above
         return isset($wireless_module_registry) && is_array($wireless_module_registry) ?

@@ -58,7 +58,7 @@ class UnifiedSearchApi extends SugarListApi {
     protected function parseSearchOptions(ServiceBase $api, array $args) {
         $options = array();
 
-        if ( count($args['module_list']) == 1 ) {
+        if ( isset($args['module_list']) && count($args['module_list']) == 1 ) {
             // We can create a bean of this type
             $seed = BeanFactory::newBean($args['module_list']);
         } else {
@@ -303,7 +303,7 @@ class UnifiedSearchApi extends SugarListApi {
      * @param $options array An array of options to pass through to the search engine, they get translated to the $searchOptions array so you can see exactly what gets passed through
      * @return array Two elements, 'records' the list of returned records formatted through FormatBean, and 'next_offset' which will indicate to the user if there are additional records to be returned.
      */
-    protected function globalSearchFullText(ServiceBase $api, array $args, SugarSearchEngineElastic $searchEngine, array $options)
+    protected function globalSearchFullText(ServiceBase $api, array $args, SugarSearchEngineAbstractBase $searchEngine, array $options)
     {
         $options['append_wildcard'] = 1;
         if(empty($options['moduleList']))

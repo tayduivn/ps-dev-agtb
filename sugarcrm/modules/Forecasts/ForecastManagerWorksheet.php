@@ -57,7 +57,7 @@ class ForecastManagerWorksheet extends SugarBean
     	if(isset($this->draft) && $this->draft == 1){
 			$version = 0;
 		}
-		
+
 		if(($this->user_id == $GLOBALS["current_user"]->id) || !$this->isManager)
 		{
 			$relatedType = "Direct";
@@ -234,7 +234,7 @@ class ForecastManagerWorksheet extends SugarBean
 	 */
 	 protected function recalcQuotas()
 	 {
-	 	//don't recalc if we are editing the manager row
+        //don't recalc if we are editing the manager row
 	 	if($this->user_id != $this->current_user)
 	 	{
 			//Recalc Manager direct

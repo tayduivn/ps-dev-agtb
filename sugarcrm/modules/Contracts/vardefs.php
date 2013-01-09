@@ -193,7 +193,12 @@ $dictionary['Contract'] = array(
 			'dbType' => 'decimal',
 			'type' => 'currency',
 			'len' => '26,6',
-			'comment' => 'The overall contract value expressed in USD'
+			'comment' => 'The overall contract value expressed in USD',
+            'studio' => array(
+                'wirelesslistview'=>false,
+                'wirelesseditview'=>false,
+                'wirelessdetailview'=>false,
+            ),
 		),
 		'status' => array (
 			'name' => 'status',

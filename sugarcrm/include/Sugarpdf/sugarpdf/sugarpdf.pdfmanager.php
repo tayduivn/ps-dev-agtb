@@ -79,6 +79,9 @@ class SugarpdfPdfmanager extends SugarpdfSmarty
             $fields = array();
         }
 
+        // to show footer (page number)
+        $this->print_footer = true;
+
         if ($this->module == 'Quotes' && $previewMode === FALSE) {
             global $locale;
             require_once 'modules/Quotes/Quote.php';

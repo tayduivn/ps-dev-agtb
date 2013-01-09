@@ -65,6 +65,14 @@
                             'include/javascript/jquery/jquery.popoverext.js'             =>   $target,
                         );
                         break;
+                    // these are the only files not in bootstrap.min.js that we need in forecasts
+                    // as bootstrap.min.js is already included in sugar_grp1_bootstrap.js
+                    case 'bootstrap_forecasts':
+                        return array(
+                            'styleguide/assets/js/bootstrap-datepicker.js' => $target,
+                            'styleguide/assets/js/bootstrapx-clickover.js' => $target,
+                        );
+                        break;
                     case 'jquery_core':
                         return array (
                             'include/javascript/jquery/jquery-min.js'             =>    $target,
@@ -352,6 +360,7 @@
                'styleguide/assets/js/bootstrap-popover.js' => 'include/javascript/sugar_sidecar.min.js',
                'styleguide/assets/js/bootstrap-modal.js'   => 'include/javascript/sugar_sidecar.min.js',
                'styleguide/assets/js/bootstrap-alert.js'   => 'include/javascript/sugar_sidecar.min.js',
+               'styleguide/assets/js/bootstrap-tab.js'   => 'include/javascript/sugar_sidecar.min.js',
                "styleguide/styleguide/js/nvd3/lib/d3.v2.js" => "include/javascript/sugar_sidecar.min.js",
                // To add more models to NV D3, run the makefile in styleguide.
                "styleguide/styleguide/js/nvd3/nv.d3.min.js" => "include/javascript/sugar_sidecar.min.js",
@@ -367,7 +376,6 @@
                 array(
                     'portal2/error.js'               => 'portal2/portal.min.js',
                     'portal2/user.js'                => 'portal2/portal.min.js',
-                    'portal2/views/alert-view.js'    => 'portal2/portal.min.js',
                     'portal2/portal.js'              => 'portal2/portal.min.js',
                     'portal2/portal-ui.js'           => 'portal2/portal.min.js',
                     'include/javascript/jquery/jquery.popoverext.js'           => 'portal2/portal.min.js',
@@ -385,8 +393,6 @@
     $cached_file = 'include/javascript/sidecar_forecasts.js';
 
     $sidecar_forecasts = array();
-
-//    $sidecar_forecasts = array_merge($sidecar_forecasts, getSubgroupForTarget('jquery_menus', $cached_file));
     $sidecar_forecasts['include/javascript/jquery/jquery.dataTables.min.js'] = $cached_file;
     $sidecar_forecasts['include/javascript/jquery/jquery.dataTables.customSort.js'] = $cached_file;
     $sidecar_forecasts['include/javascript/jquery/jquery.jeditable.js'] = $cached_file;
@@ -396,8 +402,6 @@
     $sidecar_forecasts['include/SugarCharts/Jit/js/Jit/jit.js'] = $cached_file;
     $sidecar_forecasts['include/SugarCharts/Jit/js/sugarCharts.js'] = $cached_file;
     $sidecar_forecasts['modules/Forecasts/clients/base/helper/hbt-helpers.js'] = $cached_file;
-    $sidecar_forecasts['modules/Forecasts/clients/base/lib/ClickToEdit.js'] = $cached_file;
-    $sidecar_forecasts['modules/Forecasts/clients/base/lib/BucketGridEnum.js'] = $cached_file;
     $sidecar_forecasts['modules/Forecasts/clients/base/lib/ForecastsUtils.js'] = $cached_file;
     $sidecar_forecasts['styleguide/assets/js/nvd3/lib/d3.v2.min.js'] = $cached_file;
     $sidecar_forecasts['styleguide/assets/js/nvd3/nv.d3.min.js'] = $cached_file;

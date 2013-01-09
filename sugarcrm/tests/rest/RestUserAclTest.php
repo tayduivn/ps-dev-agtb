@@ -63,6 +63,12 @@ class RestUserAclTest extends RestTestBase {
 
         $this->_restLogin($user->user_name, 'awesome');
 
+        // make sure he can't delete himself..that would be silly
+        $restReply = $this->_restCall("Users/{$user->id}", array(), "DELETE");
+
+        $this->assertEquals($restReply['reply']['error'], 'not_authorized',
+            "You just deleted yourself..");
+
         $restReply = $this->_restCall("Users/",
             json_encode(array('first_name'=>'UNIT TEST', 'last_name' => '- AFTER', 'is_admin' => true)),
             'POST');

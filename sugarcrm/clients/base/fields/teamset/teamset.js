@@ -35,13 +35,24 @@
         'click .btn[name=primary]' : 'setPrimaryItem'
     },
     setValue: function(model) {
-        var index = this.$(".chzn-container-active").prev().data('index'),
-            team = this.value;
+        var index = _.isUndefined(this.currentIndex) ? this.$(".chzn-container-active").prev().data('index') : this.currentIndex,
+            team = this.value,
+            silent = model.silent || false;
         team[index].id = model.id;
         team[index].name = model.value;
-        this.model.set(this.def.name, team);
+        this.model.set(this.def.name, team, {silent: true});
+        //Since team is an array form, onchange backbone triggers only the team_name array is added or removed.
+        //Replacing among the list item should call onchange function.
+        if(!silent) {
+            this.model.trigger("change:" + this.def.name);
+        }
     },
     format: function(value) {
+        if(this.model.isNew()) {
+            //load the default team setting that is specified in the user profile settings
+            value = value || app.user.getPreference("default_teams");
+        }
+
         if(_.isArray(value)) {
             value = _.sortBy(value, function(team) {
                 delete team.add_button;
@@ -86,6 +97,9 @@
         this.setPrimary(index);
         this.$(".btn[name=primary]").removeClass("active");
         this.$(".btn[name=primary][data-index=" + index + "]").addClass("active");
+    },
+    beforeSearchMore: function() {
+        this.currentIndex = this.$(".chzn-container-active").prev().data('index');
     },
     throttleSearch: function(evt) {
         this.$(this.fieldTag).attr("disabled", true);

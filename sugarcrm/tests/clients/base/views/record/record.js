@@ -9,21 +9,29 @@ describe("Record View", function() {
         SugarTest.loadComponent('base', 'view', viewName);
         SugarTest.testMetadata.addViewDefinition(viewName, {
             "buttons": [{
+                "name" : "record-save",
                 "type": "button",
                 "label": "LBL_SAVE_BUTTON_LABEL",
-                "css_class": "hide btn-primary record-save"
+                "css_class": "btn-primary record-save",
+                "mode" : "edit"
             }, {
+                "name" : "record-cancel",
                 "type": "button",
                 "label": "LBL_CANCEL_BUTTON_LABEL",
-                "css_class": "hide record-cancel"
+                "css_class": "hide record-cancel",
+                "mode" : "edit"
             }, {
+                "name" : "record-edit",
                 "type": "button",
                 "label": "LBL_EDIT_BUTTON_LABEL",
-                "css_class": "record-edit"
+                "css_class": "record-edit",
+                "mode" : "view"
             }, {
+                "name" : "record-delete",
                 "type": "button",
                 "label": "LBL_DELETE_BUTTON_LABEL",
-                "css_class": "record-delete"
+                "css_class": "record-delete",
+                "mode" : "view"
             }],
             "panels": [{
                 "name": "panel_header",
@@ -55,6 +63,7 @@ describe("Record View", function() {
 
     afterEach(function() {
         SugarTest.testMetadata.dispose();
+        SugarTest.app.view.reset();
         sinonSandbox.restore();
         view = null;
     });
@@ -202,25 +211,31 @@ describe("Record View", function() {
         });
 
         it("Should show save and cancel buttons and disable edit button when data changes", function() {
+
+            view.model.set({
+                name: 'Name',
+                case_number: 123,
+                description: 'Description'
+            });
             view.render();
+            view.editMode = true;
             view.model.set({
                 name: 'Foo',
                 case_number: 123,
                 description: 'Description'
             });
-
-            expect(view.$('.record-save').hasClass('hide')).toBe(true);
-            expect(view.$('.record-cancel').hasClass('hide')).toBe(true);
-            expect(view.$('.record-edit').hasClass('disabled')).toBe(false);
+            expect(view.getField('record-save').getFieldElement().css('display')).not.toBe('none');
+            expect(view.getField('record-cancel').getFieldElement().css('display')).not.toBe('none');
+            expect(view.getField('record-edit').isDisabled()).toBe(false);
 
             view.$('.record-edit').click();
             view.model.set({
                 name: 'Bar'
             });
 
-            expect(view.$('.record-save').hasClass('hide')).toBe(false);
-            expect(view.$('.record-cancel').hasClass('hide')).toBe(false);
-            expect(view.$('.record-edit').hasClass('disabled')).toBe(true);
+            expect(view.getField('record-save').getFieldElement().css('display')).not.toBe('none');
+            expect(view.getField('record-cancel').getFieldElement().css('display')).not.toBe('none');
+            expect(view.getField('record-edit').getFieldElement().css('display')).toBe('none');
         });
 
         it("Should revert data back to the old value when the cancel button is clicked after data has been changed", function() {

@@ -144,6 +144,7 @@ $mod_strings = array (
 'LBL_PERFORMFULLFTSINDEX' => 'Full-text Search Index System',
 
 'LBL_RUNMASSEMAILCAMPAIGN' => 'Run Nightly Mass Email Campaigns',
+'LBL_ASYNCMASSUPDATE' => 'Perform Asynchronous Mass Updates',
 'LBL_POLLMONITOREDINBOXESFORBOUNCEDCAMPAIGNEMAILS' => 'Run Nightly Process Bounced Campaign Emails',
 'LBL_PRUNEDATABASE' => 'Prune Database on 1st of Month',
 'LBL_TRIMTRACKER' => 'Prune Tracker Tables',

@@ -32,28 +32,45 @@ if (!defined('sugarEntry') || !sugarEntry) {
 $viewdefs['Tasks']['base']['view']['record'] = array(
     'buttons' => array(
         array(
-            'type' => 'button',
-            'label' => 'LBL_SAVE_BUTTON_LABEL',
-            'css_class' => 'hide btn-primary record-save',
+            'name' => 'record-save',
+            'type'    => 'button',
+            'label'   => 'LBL_SAVE_BUTTON_LABEL',
+            'css_class' => 'hide btn-primary record-save disabled',
+            'mode' => 'edit',
         ),
         array(
-            'type' => 'button',
-            'label' => 'LBL_CANCEL_BUTTON_LABEL',
-            'css_class' => 'hide record-cancel',
+            'name' => 'record-cancel',
+            'type'    => 'button',
+            'label'   => 'LBL_CANCEL_BUTTON_LABEL',
+            'css_class' => 'hide record-cancel btn-invisible',
+            'mode' => 'edit',
         ),
         array(
-            'type' => 'button',
-            'label' => 'LBL_EDIT_BUTTON_LABEL',
-            'css_class' => 'record-edit',
+            'name' => 'record-duplicate',
+            'type'    => 'button',
+            'label'   => 'LBL_DUPLICATE_BUTTON_LABEL',
+            'css_class' => 'record-duplicate',
+            'mode' => 'view',
         ),
         array(
-            'type' => 'button',
-            'label' => 'LBL_DELETE_BUTTON_LABEL',
+            'name' => 'record-edit',
+            'type'    => 'button',
+            'label'   => 'LBL_EDIT_BUTTON_LABEL',
+            'css_class' => 'record-edit btn-primary',
+            'mode' => 'view',
+        ),
+        array(
+            'name' => 'record-delete',
+            'type'    => 'button',
+            'label'   => 'LBL_DELETE_BUTTON_LABEL',
             'css_class' => 'record-delete',
+            'mode' => 'view',
         ),
         array(
+            'name' => 'record-close-new',
             'type' => 'button',
             'label' => 'LBL_CLOSE_AND_CREATE_BUTTON_TITLE',
+            'mode' => 'view',
             'events' => array(
                 'click' => 'function(e){
                 var self = this;                    
@@ -63,7 +80,14 @@ $viewdefs['Tasks']['base']['view']['record'] = array(
                     success: function() {
                         app.alert.dismiss("close_task");
                         app.cache.set("duplicate"+self.module, self.model.attributes);
-                        app.router.navigate("#"+self.module+"/create", {trigger: true});                    
+                        self.view.layout.trigger("drawer:create:fire", {
+                            components: [{
+                                layout : "create",
+                                context: {
+                                    create: true
+                                }
+                            }]
+                        }, self);                    
                     },
                     error:function(error) {
                         app.alert.dismiss("close_task");
@@ -74,8 +98,10 @@ $viewdefs['Tasks']['base']['view']['record'] = array(
             }'),
         ),            
         array(
+            'name' => 'record-close',
             'type' => 'button',
             'label' => 'LBL_CLOSE_BUTTON_TITLE',
+            'mode' => 'view',
             'events' => array(
                 'click' => 'function(e){
                 var self = this; 
@@ -105,6 +131,10 @@ $viewdefs['Tasks']['base']['view']['record'] = array(
             'header' => true,
             'fields' => array(
                 'name',
+                array(
+                    'type' => 'favorite',
+                    'noedit' => true,
+                ),
             )
         ),
         array(
