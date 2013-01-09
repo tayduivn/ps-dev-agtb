@@ -46,6 +46,7 @@ class FilterApi extends SugarApi {
                 'path' => array('filter','?'),
                 'pathVars' => array('filter','name'),
                 'method' => 'getUserFilterByName',
+                'rawReply' => true,
                 'shortHelp' => 'Get a Users Filter By Name',
                 'longHelp' => '',
             ),
