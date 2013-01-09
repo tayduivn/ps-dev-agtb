@@ -58,10 +58,18 @@ class PreviouslyUsedFiltersApi extends SugarApi {
     public function setUsed($api, $args) {
         $user_preference = new UserPreference($GLOBALS['current_user']);
         $used_filters = $user_preference->getPreference($args['module_name'], 'filters');
-        $used_filters[$args['record']] = $args['record'];
+        $used_filters[] = $args['record'];
         $user_preference->setPreference($args['module_name'], $used_filters, 'filters');
         $user_preference->savePreferencesToDB(true);
-        return $used_filters;
+        foreach($used_filters AS $id) {
+            $args['module'] = 'Filters';
+            $args['record'] = $id;
+            $beans[] = $this->loadBean($api, $args, 'view');
+        }
+
+        $data = $this->formatBeans($api, $args, $beans);
+
+        return $data;
     }
 
     public function getUsed($api, $args) {
@@ -81,8 +89,8 @@ class PreviouslyUsedFiltersApi extends SugarApi {
     public function deleteUsed($api, $args) {
         $user_preference = new UserPreference($GLOBALS['current_user']);
         $used_filters = $user_preference->getPreference($args['module_name'], 'filters');
-        if(isset($used_filters[$args['record']])) {
-            unset($used_filters[$args['record']]);
+        if($key = array_search($args['record'], $used_filters)) {
+            unset($used_filters[$key]);
         }
         $user_preference->setPreference($args['module_name'], $used_filters, 'filters');
         $user_preference->savePreferencesToDB(true);
