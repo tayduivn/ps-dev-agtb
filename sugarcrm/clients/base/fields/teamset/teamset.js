@@ -48,6 +48,11 @@
         }
     },
     format: function(value) {
+        if(this.model.isNew()) {
+            //load the default team setting that is specified in the user profile settings
+            value = value || app.user.getPreference("default_teams");
+        }
+
         if(_.isArray(value)) {
             value = _.sortBy(value, function(team) {
                 delete team.add_button;
