@@ -87,6 +87,8 @@
             var target = this.$(e.currentTarget).parents('.filter-options');
             target.append(stuff);
         }
+        // Can't use 'old' because that will point to the old row.
+        this.$("#filter_row_new select.field_name").chosen();
     },
 
     editName: function(e) {
@@ -113,6 +115,11 @@
         _.each(types, function(t) {
             $('<option />').appendTo($parent.find('select.operator')).attr('value', t).text(t);
         });
+        $parent.find("select.operator").chosen({
+            allow_single_deselect: true,
+            disable_search_threshold: 10
+        });
+        $parent.find("select.operator").trigger("liszt:updated");
     },
 
     chooseOperator: function(e) {
