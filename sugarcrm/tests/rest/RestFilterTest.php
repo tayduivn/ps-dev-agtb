@@ -79,7 +79,8 @@ class RestFilterTest extends RestTestBase
         //END SUGARCRM flav=pro ONLY
 
         $this->_cleanUpRecords();
-    }
+        SugarTestFilterUtilities::removeAllCreatedFilters();
+   }
 
     public function testSimpleFilter()
     {
@@ -237,11 +238,29 @@ class RestFilterTest extends RestTestBase
 
     public function testUserFilterByName()
     {
-        $reply = $this->_restCall('filter', json_encode(array('name'=>'test_user_filter', 'filter_definition'=>'[{"name":"TEST 7 Account"}]')), 'POST');
+        global $current_user;
+
+        $filter = SugarTestFilterUtilities::createUserFilter($current_user->id, 'test_user_filter', json_encode(array('name'=>'TEST 1 Account')));
+        $this->assertEquals($filter->name, 'test_user_filter');
+        $this->assertEquals($filter->filter_definition, '{"name":"TEST 1 Account"}');
+
+        $reply = $this->_restCall('Filters/'. $filter->id);
         $this->assertEquals('test_user_filter',$reply['reply']['name']);
-        $reply = $this->_restCall('filter/test_user_filter');
-        print_r($reply);
-        $this->assertEquals('[{"name":"TEST 7 Account"}]', $reply['reply']['filter']);
+        $this->assertEquals(json_decode('{"name":"TEST 1 Account"}',true),$reply['reply']['filter_definition']);
+
+        $reply = $this->_restCall('Filters', json_encode(array('name'=>'test_user_filter2','filter_definition'=>'TEST 2 Account')), 'POST');
+        $this->assertEquals('test_user_filter2',$reply['reply']['name']);
+        $this->assertEquals('TEST 2 Account',$reply['reply']['filter_definition']);
+
+        $id = $reply['reply']['id'];
+
+        $reply = $this->_restCall('Filters/' . $id, json_encode(array('name'=>'test_user_filter3','filter_definition'=>'TEST 3 Account')), 'PUT');
+        $this->assertEquals('test_user_filter3',$reply['reply']['name']);
+        $this->assertEquals('TEST 3 Account',$reply['reply']['filter_definition']);
+
+        $reply = $this->_restCall('Filters/' . $id, array(), 'DELETE');
+        $this->assertEquals($id, $reply['reply']['id']);
+
     }
 
 }

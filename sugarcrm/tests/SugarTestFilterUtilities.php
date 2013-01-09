@@ -36,24 +36,25 @@ class SugarTestFilterUtilities
     private function __construct() {}
 
     /**
-     * Creates and returns a new filter object
+     * Creates and returns a new user filter object
      *
-     * @param string $id the id for the currency record
+     * @param string $assigned_user_id the name of user to own the filter
      * @param string $name the name of the filter
      * @param string $filter_definition the body of the filter (JSON)
+     * @param string $id Optional the id for the currency record
      * @return Filter
      */
-    public static function createFilter($id = null, $name = null, $filter_definition = null)
+    public static function createUserFilter($assigned_user_id, $name, $filter_definition, $id = null)
     {
-        $time = mt_rand();
-        $filter = new Filter();
+        $filter = new Filters();
         if(!empty($id))
         {
             $filter->new_with_id = true;
             $filter->id = $id;
         }
-        $filter->name = !empty($name) ? $name : 'SugarFilter' . $time;
-        $filter->filter_definition = !empty($filter_definition) ? $filter_definition : null;
+        $filter->assigned_user_id = $assigned_user_id;
+        $filter->name = $name;
+        $filter->filter_definition = $filter_definition;
         $filter->save();
         $GLOBALS['db']->commit();
         self::$_createdFilters[] = $filter;
