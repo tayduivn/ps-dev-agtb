@@ -128,24 +128,27 @@
             operation = $el.val(),
             fieldName = $parent.find('select.field_name').val(),
             fieldType = app.metadata.getModule(this.title).fields[fieldName].type;
-        if(fieldType == 'datetime') {
-            fieldType = 'datetimecombo';
-        }
-        var obj = {
-            view: this,
-            viewName: 'edit',
-            def: {
-                type: fieldType
-            }
-        };
-        if(fieldType == 'enum') {
-            obj.def.options = app.lang.getAppListStrings(fieldName + '_dom');
-        }
-        var field = app.view.createField(obj);
 
-        $parent.find('.filter-value').removeClass('hide').find('input, select').remove();
-        $(field.getPlaceholder().string).appendTo($parent.find('.filter-value'));
-        this._renderField(field);
+        if(operation !== '') {
+            if(fieldType == 'datetime') {
+                fieldType = 'datetimecombo';
+            }
+            var obj = {
+                view: this,
+                viewName: 'edit',
+                def: {
+                    type: fieldType
+                }
+            };
+            if(fieldType == 'enum') {
+                obj.def.options = app.lang.getAppListStrings(fieldName + '_dom');
+            }
+            var field = app.view.createField(obj);
+
+            $parent.find('.filter-value').removeClass('hide').find('input, select').remove();
+            $(field.getPlaceholder().string).appendTo($parent.find('.filter-value'));
+            this._renderField(field);
+        }
     },
 
     modifyValue: function(e) {
