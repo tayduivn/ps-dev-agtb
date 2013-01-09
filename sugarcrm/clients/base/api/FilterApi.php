@@ -43,10 +43,10 @@ class FilterApi extends SugarApi {
             ),
             'getUserFilterByName' => array(
                 'reqType' => 'GET',
-                'path' => array('filter','<name>'),
+                'path' => array('filter','?'),
                 'pathVars' => array('filter','name'),
                 'method' => 'getUserFilterByName',
-                'shortHelp' => '',
+                'shortHelp' => 'Get a Users Filter By Name',
                 'longHelp' => '',
             ),
             'createFilter' => array(
@@ -54,23 +54,23 @@ class FilterApi extends SugarApi {
                 'path' => array('filter',),
                 'pathVars' => array('filter',),
                 'method' => 'createUserFilter',
-                'shortHelp' => '',
+                'shortHelp' => 'Create a Users Filter',
                 'longHelp' => '',
             ),
             'updateFilter' => array(
                 'reqType' => 'PUT',
-                'path' => array('filter','<name>'),
+                'path' => array('filter','?'),
                 'pathVars' => array('filter','name'),
                 'method' => 'updateUserFilter',
-                'shortHelp' => '',
+                'shortHelp' => 'Update A Users Filter',
                 'longHelp' => '',
             ),
             'deleteFilter' => array(
                 'reqType' => 'DELETE',
-                'path' => array('filter','<name>'),
+                'path' => array('filter','?'),
                 'pathVars' => array('filter','name'),
                 'method' => 'deleteUserFilter',
-                'shortHelp' => '',
+                'shortHelp' => 'Delete A Users Filter',
                 'longHelp' => '',
             ),                                    
 
@@ -89,7 +89,7 @@ class FilterApi extends SugarApi {
 
     public function getUserFilterByName(ServiceBase $api, array $args) {
         $bean = BeanFactory::newBean('UserPreferences');
-        return $bean->getPreference($args['name']);
+        return array('filter' => $bean->getPreference($args['name']));
     }
 
     public function createUserFilter(ServiceBase $api, array $args) {
