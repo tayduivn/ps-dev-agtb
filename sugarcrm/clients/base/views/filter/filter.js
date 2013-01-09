@@ -19,6 +19,11 @@
      */
     changedByenter: false,
 
+    /**
+     * Template fragment for select options
+     */
+    optionTemplate: Handlebars.compile("<option value='{{val}}' {{#if selected}}SELECTED{{/if}}>{{val}}</option>"),
+
     events: {
         'click .filter-new': 'toggleOpen',
         'click .chzn-results li': 'toggleSelected',
@@ -28,8 +33,11 @@
     initialize: function(opts) {
         _.bindAll(this);
         app.view.View.prototype.initialize.call(this, opts);
-        //this.searchFilterId = _.uniqueId("search_filter");
+
+//        this.searchFilterId = _.uniqueId("search_filter");
         this.searchFilterId = "search_filter";
+        this.filters = [];
+        this.getFilters();
     },
 
     render: function() {
@@ -54,6 +62,64 @@
         
         // append checkmarks to filter dropdown results
         this.$('.chzn-results').find('li').after("<span class='icon-ok' />");
+
+        if (this.filters.length > 0) {
+            // Iterate over the filters and render the pills
+            _.each(this.filters, function(filter) {
+                var params = {
+                    val: filter.name,
+                    selected: (filter.default) ? true : false
+                };
+
+                this.$(".search_filter option.disabled").before(this.optionTemplate(params));
+            }, this);
+
+            this.$(".search_filter").trigger("liszt:updated");
+            this.changeToPill();
+        }
+    },
+
+    /**
+     * Retrieve filters from the server.
+     */
+    getFilters: function() {
+        // Temperorarily mock filter data
+        var filters = [
+            {
+                name: "My Filter",
+                filter_definition: {
+                    filter: [
+                        {
+                            $or: [
+                                {name: "Nelson Inc"},
+                                {name: "Nelson LLC"}
+                            ]
+                        },
+                        {$owner: "_this"}
+                    ],
+                    max_num: 30
+                }
+            },
+            {
+                name: "My Little Pony",
+                filter_definition: {
+                    filter: [
+
+                        {name: "Nelson Inc"}
+                    ]
+                },
+                default: true
+            },
+            {
+                name: "My Favorites",
+                filter_definition: {
+                    name: {$starts: "Nelson"}
+                }
+            }
+        ];
+
+        this.filters = filters;
+        this.render();
     },
 
     /**
