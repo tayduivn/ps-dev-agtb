@@ -27,6 +27,8 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * Contributor(s): ______________________________________..
  ********************************************************************************/
 
+require_once('include/SugarQuery/SugarQuery.php');
+
 class UserPreference extends SugarBean
 {
     public $db;

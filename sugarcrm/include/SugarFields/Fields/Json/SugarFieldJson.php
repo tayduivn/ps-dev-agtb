@@ -40,9 +40,22 @@ class SugarFieldJson extends SugarFieldBase {
      */
     public function apiSave(SugarBean $bean, array $params, $fieldName, $properties) {
         // json encode the content
+        $GLOBALS['log']->fatal("THIS IS THE FIELD VAL: " . urldecode($params[$fieldName]));
     	$bean->$fieldName = json_encode($params[$fieldName]);
     }
-
+    
+    /**
+     * This function will decode the json
+     * 
+     * @param array     $data
+     * @param SugarBean $bean
+     * @param array     $args
+     * @param string    $fieldName
+     * @param array     $properties
+     */
+    public function apiFormatField(array &$data, SugarBean $bean, array $args, $fieldName, $properties) {
+        $data[$fieldName] = json_decode($bean->$fieldName);
+    }
     
 }
 ?>
