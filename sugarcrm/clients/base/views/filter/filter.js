@@ -1,7 +1,22 @@
 ({
+    /**
+     * Id of the select box that chosen is built from
+     */
     searchFilterId: "",
+    
+    /**
+     * Array of previously selected values
+     */
     previousValues: [],
+    
+    /**
+     * Array of curretnly selected values
+     */
     currentValues: [],
+    
+    /**
+     * Flag for if the filter was selectd by typing and hitting enter
+     */
     changedByenter: false,
 
     events: {
@@ -41,6 +56,12 @@
         this.$('.chzn-results').find('li').after("<span class='icon-ok' />");
     },
 
+    /**
+     * Changes UI element of the "pill" to match the styleguide
+     * 
+     * This function is an augmentation to chosen to allow us to restyle the breadcrum "pills" after
+     * they have been rendered.
+     */
     changeToPill: function() {
         var selectedItems = this.$el.find(".chzn-choices li.search-choice"),
             latestItem = $(selectedItems[selectedItems.length - 1]),
@@ -50,7 +71,7 @@
             filterName = latestItemValue.replace(/ /g, ""),
             menuItem = this.$("#" + this.searchFilterId + "_chzn_o_" + latestItem.attr("id").slice(latestItem.attr("id").indexOf("c_") + 2));
         
-        latestItem.addClass("search-choice search-choice-option " + this.getFilterID(latestItemValue));
+        latestItem.addClass("search-choice search-choice-option");
         latestItem.append($("<a>" + latestItemValue + "</a>"));
         latestItemLink.removeClass().addClass("closer").hide();
         latestItemLink.html("");
@@ -59,10 +80,10 @@
         $.data(menuItem[0], "pillId", latestItem.attr("id"));
     },
     
-    getFilterID: function(name){
-        return "filter_" + name.replace(/ /g, "");
-    },
-    
+    /**
+     * Toggles selected items from the chosen dropdown.  Enables and disables pills, and unselects
+     * items.
+     */
     toggleSelected: function(e){
         var selectId = e.currentTarget.id.slice(e.currentTarget.id.indexOf("o_")+2),
             selectValue = $("#" + this.searchFilterId + " option")[selectId].value;
@@ -77,12 +98,19 @@
         this.previousValues = this.currentValues;
     },
 
+    /**
+     * Fires an event for the Filter editing widget to pop up.
+     */
     toggleOpen: function() {
         this.layout.trigger("filter:create:open:fire");
         this.$(".search_filter").trigger("liszt:close");
         return true;
     },
     
+    /**
+     * Sets a boolean if the chosen option was selected by pressing Enter (and not clicking 
+     * an item in the filter dropdown)
+     */
     selectedByEnter: function(e){
         if(e.keyCode == 13){
             this.changedByEnter = true;
