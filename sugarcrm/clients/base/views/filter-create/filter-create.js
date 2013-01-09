@@ -38,13 +38,29 @@
 
     filterOperatorMap: {
         'enum': ['is', 'is not'],
-        'varchar': ['matches', 'does not match', 'contains', 'does not contains', 'starts with', 'does not start with', 'ends with', 'does not end with'],
-        'name': ['matches', 'does not match', 'contains', 'does not contains', 'starts with', 'does not start with', 'ends with', 'does not end with'],
+        'varchar': ['matches', 'does not match', 'contains', 'starts with', 'ends with'],
+        'name': ['matches', 'does not match', 'contains', 'starts with', 'ends with'],
         'currency': ['is equal to', 'is greater than', 'is greater than or equal to', 'is less than', 'is less than or equal to'],
         'int': ['is equal to', 'is greater than', 'is greater than or equal to', 'is less than', 'is less than or equal to'],
         'double': ['is equal to', 'is greater than', 'is greater than or equal to', 'is less than', 'is less than or equal to'],
-        'datetime': ['datetime operator'],
+        'datetime': ['between'],
         'base': ['fall through to this case']
+    },
+
+    filterMap: {
+        'is': 'equals',
+        'is not': 'notEquals',
+        'matches': 'equals',
+        'does not match': 'notEquals',
+        'contains': 'contains',
+        'starts with': 'starts',
+        'ends with': 'ends',
+        'is equal to': 'equals',
+        'is greater than': 'gt',
+        'is greater than or equal to': 'gte',
+        'is less than': 'lt',
+        'is less than or equal to': 'lte',
+        'between': 'between'
     },
 
     initialize: function(opts) {
@@ -112,13 +128,15 @@
         var $el = this.$(e.currentTarget),
             $parent = $el.parents('.filter-body'),
             fieldName = $el.val(),
-            fieldType = app.metadata.getModule(this.title).fields[fieldName].type;
+            fieldType = app.metadata.getModule(this.title).fields[fieldName].type,
+            self = this;
         $parent.find('.filter-operator').removeClass('hide').find('option').remove();
         $parent.find('.filter-value').addClass('hide').empty();
         var types = this.filterOperatorMap[fieldType] || this.filterOperatorMap['base'];
         if(types[0] !== '') types.unshift('');
         _.each(types, function(t) {
-            $('<option />').appendTo($parent.find('select.operator')).attr('value', t).text(t);
+            $('<option />').appendTo($parent.find('select.operator'))
+                .attr('value', self.filterMap[t] || '').text(t);
         });
         $parent.find("select.operator").chosen({
             allow_single_deselect: true,
