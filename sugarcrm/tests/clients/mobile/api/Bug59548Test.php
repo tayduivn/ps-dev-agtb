@@ -1,6 +1,8 @@
+<?php
+//FILE SUGARCRM flav=pro ONLY
 /*********************************************************************************
  * The contents of this file are subject to the SugarCRM Master Subscription
- * Agreement (""License"") which can be viewed at
+ * Agreement ("License") which can be viewed at
  * http://www.sugarcrm.com/crm/master-subscription-agreement
  * By installing or using this file, You have unconditionally agreed to the
  * terms and conditions of the License, and You may not use this file except in
@@ -14,7 +16,7 @@
  * remove SugarCRM copyrights from the source code or user interface.
  *
  * All copies of the Covered Code must include on each user interface screen:
- *  (i) the ""Powered by SugarCRM"" logo and
+ *  (i) the "Powered by SugarCRM" logo and
  *  (ii) the SugarCRM copyright notice
  * in the same form as they appear in the distribution.  See full license for
  * requirements.
@@ -24,51 +26,19 @@
  * governing these rights and limitations under the License.  Portions created
  * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
-(function(app) {
 
-    app.view.BucketGridEnum = function (field, view, module) {
-        this.field = field;
-        this.view = view;
-        this.moduleName = module;
-        return this.render();
-    };
+require_once('include/api/SugarApi.php');
+require_once('clients/mobile/api/CurrentUserMobileApi.php');
+/**
+ * @group Bug59548
+ */
+class Bug59548Test extends Sugar_PHPUnit_Framework_TestCase
+{
+    public function testUsersWirelessModuleList() {
+        $cuma = new CurrentUserMobileApi();
+        $module_list = $cuma->getModuleList();
 
-    app.view.BucketGridEnum.prototype.render = function() {
-    	
-    	var self = this;
-           
-        this.field.changed = function(){
-        	var values = {};
-        	var moduleName = self.moduleName;
-        	
-        	if(self.field.type == "bool"){
-        		self.field.value = self.field.unformat();
-        		values[self.field.name] = self.field.value;
-        	}
-        	        	
-            values["timeperiod_id"] = self.field.context.forecasts.get("selectedTimePeriod").id;
-			values["current_user"] = app.user.get('id');
-			values["isDirty"] = true;
-			
-			//If there is an id, add it to the URL
-            if(self.field.model.isNew())
-            {
-            	self.field.model.url = app.api.buildURL(moduleName, 'create');
-            } else {
-            	self.field.model.url = app.api.buildURL(moduleName, 'update', {"id":self.field.model.get('id')});
-            }
-            
-            self.field.model.set(values);
-        };
+        $this->assertFalse(array_key_exists('Users', $module_list), 'Users Exists in the module list and it should not.');
+    }
+}
 
-        var events = this.field.events || {};
-        this.field.events = _.extend(events, {
-            'change'  : 'changed'
-        });
-                
-        this.field.delegateEvents();
-
-        return this.field;
-    };
-
-})(SUGAR.App);

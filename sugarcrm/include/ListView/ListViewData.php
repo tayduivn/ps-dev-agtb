@@ -600,9 +600,9 @@ class ListViewData {
     /**
      * generates the additional details values
      *
-     * @param unknown_type $fields
-     * @param unknown_type $adFunction
-     * @param unknown_type $editAccess
+     * @param array $fields
+     * @param string $adFunction
+     * @param boolean $editAccess
      * @return array string to attach to field
      */
     function getAdditionalDetails($fields, $adFunction, $editAccess)
