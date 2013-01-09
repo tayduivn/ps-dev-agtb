@@ -137,17 +137,19 @@
             window.location = 'index.php?module=Home';
         } else if (isSetup == 1 && this.context.forecasts.get('saveClicked') == false) {
             // this should only ever happen on the tabbed view when cancel is clicked
-            window.location.hash = '#';
+            this.reloadForecasts();
         } else if (this.context.forecasts.get('saveClicked') == false) {
             window.location = 'index.php?module=Forecasts';
         } else {
+            // only sync the metadata
+            app.metadata.sync();
             // can happen on both views but it's the same methods/messages
             // we have a success save, so we need to call the app.metadata.sync() and then redirect back to the index
             if(!isSetup){
                 //issue notice about setting up Opportunities
                 var alert = app.alert.show('forecast_opp_notice', {
                     level:'confirmation',
-                    showCancel:true,
+                    showCancel:false,
                     onConfirm: self.displaySuccessAndReload,
                     messages: app.lang.get("LBL_FORECASTS_WIZARD_REFRESH_NOTICE", "Forecasts")
                 });
@@ -168,15 +170,18 @@
             level:'success',
             autoClose:true,
             closeable:true,
+            onAutoClose: this.reloadForecasts,
             title:app.lang.get("LBL_FORECASTS_WIZARD_SUCCESS_TITLE", "Forecasts") + ":",
             messages:[app.lang.get("LBL_FORECASTS_WIZARD_SUCCESS_MESSAGE", "Forecasts")]
         });
 
-        alert.getCloseSelector().on('click', function () {
-            // only sync the metadata and then push it back to the main location
-            app.metadata.sync(function() {
-                window.location.hash = "#";
-            });
-        })
+        alert.getCloseSelector().on('click', this.reloadForecasts);
+    },
+
+    /**
+     * refresh the page to reload forecasting module
+     */
+    reloadForecasts:function() {
+        window.location.hash = "#";
     }
 })
