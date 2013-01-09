@@ -75,18 +75,18 @@
 
     addRow: function(e) {
         var stuff = this.rowTemplate(this),
-            old = this.$(".newRow");
-        if(old.length) {
-            old.removeClass('newRow');
-            old.find('.addme').addClass('hide');
-        }
+            target;
         if(_.isUndefined(e)) {
-            this.$(".filter-options").append(stuff);
+            target = this.$(".filter-options");
         } else {
-            var target = this.$(e.currentTarget).parents('.filter-options');
-            target.append(stuff);
+            var $parent = this.$(e.currentTarget).parents('.filter-body'), old;
+            target = this.$(e.currentTarget).parents('.filter-options');
+            if($parent.hasClass('newRow')) {
+                $parent.removeClass('newRow');
+                $parent.find('.addme').addClass('hide');
+            }
         }
-        // Can't use 'old' because that will point to the old row.
+        target.append(stuff);
         this.$(".newRow select.field_name").chosen();
     },
 
