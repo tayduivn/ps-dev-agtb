@@ -75,6 +75,10 @@ $viewdefs['Notes']['base']['view']['record'] = array(
             'header' => true,
             'fields' => array(
                 'name',
+                array(
+                    'type' => 'favorite',
+                    'noedit' => true,
+                ),
             )
         ),
         array(

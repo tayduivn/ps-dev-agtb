@@ -90,6 +90,10 @@ $viewdefs['Contacts']['base']['view']['record'] = array(
                     'type' => 'fieldset',
                     'fields' => array('salutation', 'first_name', 'last_name')
                 ),
+                array(
+                    'type' => 'favorite',
+                    'noedit' => true,
+                ),
             )
         ),
         array(
