@@ -65,7 +65,8 @@ class vCardApi extends SugarApi {
      * @param $args array The arguments array passed in from the API
      * @return String
      */
-    public function vCardSave($api, $args) {
+    public function vCardSave($api, $args)
+    {
         $this->requireArgs($args, array('id'));
 
         $vcard = new vCard();
@@ -87,27 +88,32 @@ class vCardApi extends SugarApi {
      * @param $args array The arguments array passed in from the API
      * @return String
      */
-    public function vCardImport($api, $args) {
+    public function vCardImport($api, $args)
+    {
         $this->requireArgs($args, array('module'));
+
+        $bean = BeanFactory::getBean(array('module'));
+        if (!$bean->ACLAccess('save') || !$bean->ACLAccess('import')) {
+            throw new SugarApiExceptionNotAuthorized('EXCEPTION_NOT_AUTHORIZED');
+        }
 
         if (isset($_FILES) && count($_FILES) === 1) {
             reset($_FILES);
             $first_key = key($_FILES);
-            if (isset($_FILES[$first_key]['tmp_name'])  && $this->isUploadedFile($_FILES[$first_key]['tmp_name']) && isset($_FILES[$first_key]['size']) > 0 ) {
+            if (isset($_FILES[$first_key]['tmp_name']) && $this->isUploadedFile($_FILES[$first_key]['tmp_name']) && isset($_FILES[$first_key]['size']) > 0
+            ) {
                 $vcard = new vCard();
                 try {
-                    $recordId = $vcard->importVCard($_FILES[$first_key]['tmp_name'],$args['module']);
-                }
-                catch(Exception $e) {
-                    throw new SugarApiExceptionRequestMethodFailure('Failed to parse vcf file');
+                    $recordId = $vcard->importVCard($_FILES[$first_key]['tmp_name'], $args['module']);
+                } catch (Exception $e) {
+                    throw new SugarApiExceptionRequestMethodFailure('ERR_VCARD_FILE_PARSE');
                 }
 
                 $results = array($first_key => $recordId);
                 return $results;
             }
-        }
-        else {
-            throw new SugarApiExceptionMissingParameter('File was missing');
+        } else {
+            throw new SugarApiExceptionMissingParameter('ERR_VCARD_FILE_MISSING');
         }
     }
 
@@ -116,7 +122,8 @@ class vCardApi extends SugarApi {
      * @param string FileName
      * @return boolean
      */
-    protected function isUploadedFile ($fileName) {
+    protected function isUploadedFile ($fileName)
+    {
         return is_uploaded_file($fileName);
     }
 }
