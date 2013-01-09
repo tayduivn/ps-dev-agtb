@@ -52,6 +52,20 @@ describe("Base.Field.Teamset", function() {
         expect(actual_name).toEqual(expected_name);
     });
 
+    it("should load the default team setting that is specified in the user profile settings", function(){
+        field.model = new Backbone.Model();
+        var expected = [{
+            id:'1', name: 'global'
+        }],
+            getPreference = sinon.stub(app.user, 'getPreference', function() {
+            return expected;
+        });
+        field.render();
+        var actual = field.value;
+        expect(expected).toEqual(actual);
+        getPreference.restore();
+    });
+
     it("should add or remove team from the list", function() {
         field.render();
         var expected = (field.model.get(field.def.name)).length + 1;

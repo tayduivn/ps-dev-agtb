@@ -85,6 +85,10 @@ $viewdefs['Documents']['base']['view']['record'] = array(
                     'span' => 12, 
                     'label' => '',                        
                 ),
+                array(
+                    'type' => 'favorite',
+                    'noedit' => true,
+                ),
             )
         ),
         array(
