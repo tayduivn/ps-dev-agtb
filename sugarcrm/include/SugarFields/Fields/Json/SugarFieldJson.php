@@ -52,11 +52,13 @@ class SugarFieldJson extends SugarFieldBase {
      * @param string    $fieldName
      * @param array     $properties
      */
+    
     public function apiFormatField(array &$data, SugarBean $bean, array $args, $fieldName, $properties) {
         if(isset($bean->$fieldName)) {
             $data[$fieldName] = json_decode($bean->$fieldName, true);
         }
     }
+
     
 }
 ?>

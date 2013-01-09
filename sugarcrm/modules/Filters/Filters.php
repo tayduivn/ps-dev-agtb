@@ -64,7 +64,10 @@ class Filters extends Basic {
 			case 'ACL': return true;
 		}
 		return false;
-}
-		
+	}
+
+	public function retrieve($id='-1', $encode=false,$deleted=true) {
+		return parent::retrieve($id, false, $deleted);
+	}		
 }
 ?>
