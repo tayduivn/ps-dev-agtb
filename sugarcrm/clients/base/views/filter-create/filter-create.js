@@ -6,6 +6,7 @@
         'click a.updateme': 'updateRow',
         'click .save_button': 'save',
         'click .delete_button': 'removeAll',
+        'change .filter-header': 'editName',
         'change .field_name': 'chooseField',
         'change .operator': 'chooseOperator',
         'change .filter-value': 'modifyValue'
@@ -88,6 +89,12 @@
         }
     },
 
+    editName: function(e) {
+        if(this.$(e.currentTarget).find('input').val() === '') {
+            this.$(".save_button").addClass("disabled");
+        }
+    },
+
     removeRow: function(e) {
         this.notSaved();
         this.$(e.currentTarget).parents('.filter-body').remove();
@@ -147,7 +154,9 @@
     },
 
     notSaved: function() {
-        this.$(".save_button").removeClass("disabled");
+        if(this.$(".filter-header").find('input').val() !== '') {
+            this.$(".save_button").removeClass("disabled");
+        }
         this.$(".delete_button").removeClass("hide");
     },
 
