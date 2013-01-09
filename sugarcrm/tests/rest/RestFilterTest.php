@@ -235,4 +235,17 @@ class RestFilterTest extends RestTestBase
         
     }
 
+    public function testGetUserFilterByName()
+    {
+        $userPrefs = new UserPreference($GLOBALS['current_user']);
+        $userPrefs->setPreference('test_user_filter','[{"name":"TEST 7 Account"}]');
+        $userPrefs->savePreferencesToDB(true);
+        $this->_restLogin();
+
+        $reply = $this->_restCall('filter/test_user_filter');
+        print_r($reply);
+        $this->assertEquals('[{"name":"TEST 7 Account"}]',$reply['reply']['filter']);
+    }
+
+
 }
