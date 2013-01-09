@@ -217,7 +217,7 @@ class SugarForecasting_Individual extends SugarForecasting_AbstractForecast impl
         // get the values for the worksheet
         $return = $this->process();
 
-        // find the one we jsut saved and return it
+        // find the one we just saved and return it
         foreach($return as $worksheet) {
             if($worksheet['id'] == $seed->id) {
                 return $worksheet;
