@@ -24,43 +24,56 @@
 
 require_once 'modules/Filters/Filters.php';
 
+/**
+ * SugarTestFilterUtilities
+ *
+ * utility class for filters
+ */
 class SugarTestFilterUtilities
 {
     private static $_createdFilters = array();
 
     private function __construct() {}
 
-    public static function createFilter($id = '')
+    /**
+     * Creates and returns a new filter object
+     *
+     * @param string $id the id for the currency record
+     * @param string $name the name of the filter
+     * @param string $filter_definition the body of the filter (JSON)
+     * @return Filter
+     */
+    public static function createFilter($id = null, $name = null, $filter_definition = null)
     {
         $time = mt_rand();
-        $name = 'SugarFilter';
         $filter = new Filter();
-        $filter->name = $name . $time;
         if(!empty($id))
         {
             $filter->new_with_id = true;
             $filter->id = $id;
         }
+        $filter->name = !empty($name) ? $name : 'SugarFilter' . $time;
+        $filter->filter_definition = !empty($filter_definition) ? $filter_definition : null;
         $filter->save();
         $GLOBALS['db']->commit();
         self::$_createdFilters[] = $filter;
         return $filter;
     }
 
-    public static function setCreatedFilter($filter_ids) {
-        foreach($filter_ids as $filter_id) {
-            $filter = new Filter();
-            $filter->id = $filter_id;
-            self::$_createdFilters[] = $filter;
-        } // foreach
-    } // fn
-
+    /**
+     * remove all created filters from this utility
+     */
     public static function removeAllCreatedFilters()
     {
         $filter_ids = self::getCreatedFilterIds();
         $GLOBALS['db']->query('DELETE FROM filters WHERE id IN (\'' . implode("', '", $filter_ids) . '\')');
     }
 
+    /**
+     * get list of created filters by id
+     *
+     * @return array filter ids
+     */
     public static function getCreatedFilterIds()
     {
         $filter_ids = array();
