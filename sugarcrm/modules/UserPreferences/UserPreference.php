@@ -145,6 +145,15 @@ class UserPreference extends SugarBean
 
     }
 
+    public function removePreference($name, $category='global') {
+        $user = $this->_userFocus;
+        if(isset($_SESSION[$user->user_name . '_PREFERENCES'][$category][$name])) {
+            unset($_SESSION[$user->user_name . '_PREFERENCES'][$category][$name]);
+        }
+
+        $this->savePreferencesToDB(true);
+    }
+
     /**
      * Set preference by name and category. Saving will be done in utils.php -> sugar_cleanup
      *

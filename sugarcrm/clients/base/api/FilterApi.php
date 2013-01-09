@@ -41,6 +41,38 @@ class FilterApi extends SugarApi {
                 'shortHelp' => 'Filter records from a single module',
                 'longHelp' => 'include/api/help/filterModulePost.html',
             ),
+            'getUserFilterByName' => array(
+                'reqType' => 'GET',
+                'path' => array('filter','<name>'),
+                'pathVars' => array('filter','name'),
+                'method' => 'getUserFilterByName',
+                'shortHelp' => '',
+                'longHelp' => '',
+            ),
+            'createFilter' => array(
+                'reqType' => 'POST',
+                'path' => array('filter',),
+                'pathVars' => array('filter',),
+                'method' => 'createUserFilter',
+                'shortHelp' => '',
+                'longHelp' => '',
+            ),
+            'updateFilter' => array(
+                'reqType' => 'PUT',
+                'path' => array('filter','<name>'),
+                'pathVars' => array('filter','name'),
+                'method' => 'updateUserFilter',
+                'shortHelp' => '',
+                'longHelp' => '',
+            ),
+            'deleteFilter' => array(
+                'reqType' => 'DELETE',
+                'path' => array('filter','<name>'),
+                'pathVars' => array('filter','name'),
+                'method' => 'deleteUserFilter',
+                'shortHelp' => '',
+                'longHelp' => '',
+            ),                                    
 
         );
     }
@@ -53,6 +85,38 @@ class FilterApi extends SugarApi {
         global $current_user;
         $this->current_user = $current_user;
     }
+
+
+    public function getUserFilterByName(ServiceBase $api, array $args) {
+        $bean = BeanFactory::newBean('UserPreferences');
+        return $bean->getPreference($args['name']);
+    }
+
+    public function createUserFilter(ServiceBase $api, array $args) {
+        $bean = BeanFactory::newBean('UserPreferences');
+        $doesExist = $bean->getPreference($args['name']);
+        if(isset($doesExist)) {
+            throw new SugarApiExceptionNotAuthorized('EXCEPTION_CREATE_MODULE_NOT_AUTHORIZED', $args);
+        }
+
+        if(empty($args['filter'])) {
+            throw new SugarApiExceptionNotAuthorized('EXCEPTION_CREATE_MODULE_NOT_AUTHORIZED', $args);            
+        }
+        $bean->setPreference($args['name'], $args['filter']);
+        return array('name'=>$args['name']);
+    }
+
+    public function updateUserFilter(ServiceBase $api, array $args) {
+        $bean = BeanFactory::newBean('UserPreferences');
+        $bean->setPreference($args['name'], $args['filter']);
+        return array('name'=>$args['name']);
+    }
+
+    public function deleteUserFilter(ServiceBase $api, array $args) {
+        $bean = BeanFactory::newBean('UserPreferences');
+        $bean->removePreference($args['name']);
+        return array('name'=>$args['name']);
+    }        
 
     function parseOptions(ServiceBase $api, array $args, SugarBean $seed)
     {
