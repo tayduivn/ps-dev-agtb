@@ -28,11 +28,13 @@ class Bug44324Test extends Sugar_PHPUnit_Framework_OutputTestCase
 
 	public function setUp()
 	{
-        $GLOBALS['app_list_strings'] = return_app_list_strings_language($GLOBALS['current_language']);
-        $GLOBALS['app_strings'] = return_application_language($GLOBALS['current_language']);
-        $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
-        $GLOBALS['app_list_strings'] = return_app_list_strings_language('en_us');
-        $GLOBALS['app_strings'] = return_application_language($GLOBALS['current_language']);
+        SugarTestHelper::setUp('beanFiles');
+        SugarTestHelper::setUp('beanList');
+        SugarTestHelper::setUp('app_strings');
+        SugarTestHelper::setUp('app_list_strings');
+        SugarTestHelper::setUp('mod_strings', array('Contacts'));
+        SugarTestHelper::setUp('current_user');
+
         $this->contact = SugarTestContactUtilities::createContact();	
         $this->contact->salutation = 'Ms.';
         $this->contact->first_name = 'Lady';
@@ -43,9 +45,8 @@ class Bug44324Test extends Sugar_PHPUnit_Framework_OutputTestCase
 	
 	public function tearDown()
 	{
-	    SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
-        unset($GLOBALS['current_user']);
-        SugarTestContactUtilities::removeAllCreatedContacts();		
+        SugarTestContactUtilities::removeAllCreatedContacts();
+        SugarTestHelper::tearDown();
 	}
 	
     public function testSearchNamePopulatedCorrectly()

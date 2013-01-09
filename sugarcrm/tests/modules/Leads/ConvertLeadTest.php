@@ -36,6 +36,8 @@ class ConvertLeadTest extends Sugar_PHPUnit_Framework_TestCase
 
     public function setUp()
     {
+        SugarTestHelper::setUp('beanFiles');
+        SugarTestHelper::setUp('beanList');
         SugarTestHelper::setUp('app_list_strings');
         SugarTestHelper::setUp('mod_strings', array('Leads'));
         SugarTestHelper::setUp('current_user');
