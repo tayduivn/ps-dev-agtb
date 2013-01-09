@@ -76,6 +76,10 @@ $viewdefs['Bugs']['base']['view']['record'] = array(
             'fields' => array(
                 array('name'=>'bug_number', 'noedit'=>true),
                 'name',
+                array(
+                    'type' => 'favorite',
+                    'noedit' => true,
+                ),
             )
         ),
         array(

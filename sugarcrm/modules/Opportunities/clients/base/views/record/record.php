@@ -85,6 +85,10 @@ $viewdefs['Opportunities']['base']['view']['record'] = array(
                     'type' => 'fieldset',
                     'fields' => array('name'),
                 ),
+                array(
+                    'type' => 'favorite',
+                    'noedit' => true,
+                ),
             )
         ),
         array(
