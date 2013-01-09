@@ -150,7 +150,6 @@
                 var alert = app.alert.show('forecast_opp_notice', {
                     level:'confirmation',
                     showCancel:false,
-                    onConfirm: self.displaySuccessAndReload,
                     messages: app.lang.get("LBL_FORECASTS_WIZARD_REFRESH_NOTICE", "Forecasts")
                 });
 
@@ -170,18 +169,15 @@
             level:'success',
             autoClose:true,
             closeable:true,
-            onAutoClose: this.reloadForecasts,
+            onAutoClose: function() {
+                window.location.hash = "#";
+            },
             title:app.lang.get("LBL_FORECASTS_WIZARD_SUCCESS_TITLE", "Forecasts") + ":",
             messages:[app.lang.get("LBL_FORECASTS_WIZARD_SUCCESS_MESSAGE", "Forecasts")]
         });
 
-        alert.getCloseSelector().on('click', this.reloadForecasts);
-    },
-
-    /**
-     * refresh the page to reload forecasting module
-     */
-    reloadForecasts:function() {
-        window.location.hash = "#";
+        alert.getCloseSelector().on('click', function() {
+            window.location.hash = "#";
+        });
     }
 })
