@@ -233,6 +233,8 @@ class VardefManager{
     {
         // Some of the vardefs do not correctly define dictionary as global.  Declare it first.
         global $dictionary, $beanList;
+        // some tests do new SugarBean(), we can't do much with it here.
+        if(empty($module)) return;
         $guard_name = "$module:$object";
         if(isset(self::$inReload[$guard_name])) {
             self::$inReload[$guard_name]++;
