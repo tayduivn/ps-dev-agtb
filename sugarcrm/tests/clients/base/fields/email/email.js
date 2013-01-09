@@ -66,5 +66,21 @@ describe("Email field", function() {
             var emails = model.get('email');
             expect(emails.length).toEqual(1);
         });
+        it("should add an e-mail hyperlink only to addresses that are not opt-out or invalid", function(){
+            var values = [
+                {emailAddress: "foo@foo.com"},
+                {emailAddress: "foo@foo.com", opt_out:"1", invalid_email:"0"},
+                {emailAddress: "foo@foo.com", opt_out:"0", invalid_email:"1"},
+                {emailAddress: "foo@foo.com", opt_out:"0", invalid_email:"0"},
+                {emailAddress: "foo@foo.com", opt_out:"1", invalid_email:"1"}
+            ];
+            model.set({email:values});
+            field._render();
+            expect(values[0].hasAnchor).toBeTruthy();
+            expect(values[1].hasAnchor).toBeFalsy();
+            expect(values[2].hasAnchor).toBeFalsy();
+            expect(values[3].hasAnchor).toBeTruthy();
+            expect(values[4].hasAnchor).toBeFalsy();
+        });
     });
 });

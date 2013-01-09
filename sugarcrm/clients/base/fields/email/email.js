@@ -51,6 +51,18 @@
         this.updateModel(existingAddresses);
     },
     /**
+     * On render, determine which e-mail addresses need anchor tag included
+     * @param {Array} value set of e-mail addresses
+     * @private
+     */
+    _render:function() {
+        var emails = this.model.get('email');
+        _.each(emails, function(emailAddress){
+            emailAddress.hasAnchor = emailAddress.opt_out != "1" && emailAddress.invalid_email != "1";
+        }, this);
+        app.view.Field.prototype._render.call(this);
+    },
+    /**
      * Removes email address from dom and model
      * @param {Object} event
      */

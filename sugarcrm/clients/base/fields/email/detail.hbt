@@ -29,7 +29,7 @@
         {{#each value}}
         <div class="control-group email">
             <div class="controls pull-left span4" title="{{email_address}}">
-            {{email_address}}
+                {{#if hasAnchor}}<a href="mailto:{{email_address}}">{{/if}}{{email_address}}{{#if hasAnchor}}</a>{{/if}}
             </div>
             <div class="btn-toolbar pull-left">
                 <div class="btn-group">
