@@ -90,7 +90,7 @@ class FilterApi extends SugarApi {
 
     public function getUserFilterByName(ServiceBase $api, array $args) {
         $bean = new UserPreference($GLOBALS['current_user']);
-        return array('filter' => $bean->getPreference($args['name']));
+        return $bean->getPreference($args['name']);
     }
 
     public function createUserFilter(ServiceBase $api, array $args) {
