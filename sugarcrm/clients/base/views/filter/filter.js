@@ -10,12 +10,12 @@
     previousValues: [],
     
     /**
-     * Array of curretnly selected values
+     * Array of currently selected values
      */
     currentValues: [],
     
     /**
-     * Flag for if the filter was selectd by typing and hitting enter
+     * Flag for if the filter was selected by typing and hitting enter
      */
     changedByenter: false,
 
@@ -59,7 +59,7 @@
     /**
      * Changes UI element of the "pill" to match the styleguide
      * 
-     * This function is an augmentation to chosen to allow us to restyle the breadcrum "pills" after
+     * This function is an augmentation to chosen to allow us to restyle the breadcrumb "pills" after
      * they have been rendered.
      */
     changeToPill: function() {
