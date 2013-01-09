@@ -81,6 +81,11 @@
         } else if (!value) {
             return value;
         } else {
+            // If the date value in our datebox is invalid, leave it alone and return. It will
+            // get handled upstream by sidecar (which uniformly handles field validation errors).
+            if (!this._verifyDateString(value)) {
+                return value;
+            }
             // In case ISO 8601 get it back to js native date which date.format understands
             // Note: if stripIsoTZ true, time zone won't matter since it's already been removed.
             jsDate = new Date(value);
@@ -292,7 +297,7 @@
         hour = parseInt(timeParts[1]*1, 10);
 
         // We have am/pm part (ostensibly 12 hour format)
-        if (!_.isUndefined(timeParts[3])) {
+        if (!_.isEmpty(timeParts[3])) {
 
             amPm = (timeParts[3] === 'a') ? 'am' : 'pm';
 

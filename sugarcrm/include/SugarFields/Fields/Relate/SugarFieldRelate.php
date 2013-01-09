@@ -364,4 +364,15 @@ class SugarFieldRelate extends SugarFieldBase {
 
         return $value;
     }
+
+    /**
+     * For Relate fields we should not be sending the len vardef back
+     * @param array $vardef
+     * @return array of $vardef
+     */
+    public function getNormalizedDefs($vardef) {
+        unset($vardef['len']);
+        return parent::getNormalizedDefs($vardef);
+    }
+
 }

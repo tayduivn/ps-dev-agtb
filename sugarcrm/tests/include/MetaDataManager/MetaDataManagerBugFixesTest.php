@@ -22,41 +22,48 @@
  * All Rights Reserved.
  ********************************************************************************/
 
-require_once 'modules/SchedulersJobs/SchedulersJob.php';
+require_once 'include/MetaDataManager/MetaDataManager.php';
 
-class Bug27344Test extends Sugar_PHPUnit_Framework_TestCase
+class MetaDataManagerBugFixesTest extends Sugar_PHPUnit_Framework_TestCase
 {
-	private $_url;
-    private $_initial_server_port;
-    private $_has_initial_server_port;
-    private $_cron_test_file = 'cronUnitTestBug27344.php';
-
     public function setUp()
     {
-
-        $this->_has_initial_server_port = isset($_SERVER['SERVER_PORT']);
-        if ($this->_has_initial_server_port) {
-            $this->_initial_server_port = $_SERVER['SERVER_PORT'];
-        }
+        SugarTestHelper::setUp('current_user');
+        SugarTestHelper::setUp('app_list_strings');
     }
-
+    
     public function tearDown()
     {
-        if ($this->_has_initial_server_port) {
-            $_SERVER['SERVER_PORT'] = $this->_initial_server_port;
-        } else {
-            unset($_SERVER['SERVER_PORT']);
-        }
+        SugarTestHelper::tearDown();
     }
 
-    public function testLocalServerPortNotUsed()
+    /**
+     * Tests that relate fields do not contain the len array
+     * 
+     * @group Bug59676
+     */
+    public function testBug59676Test()
     {
-
-        $url = $GLOBALS['sugar_config']['site_url'] . '/maintenance.php';
-
-        $_SERVER['SERVER_PORT'] = '9090';
-        $sJob = new SchedulersJob(FALSE);
-        $this->assertTrue($sJob->fireUrl($url));
+        $defs['aaa_test_c'] = array(
+            'type' => 'relate',
+            'name' => 'aaa_test_c',
+            'len' => '25',
+        );
+        
+        $mm = new MetaDataManagerBugFixes($GLOBALS['current_user']);
+        $newdefs = $mm->getNormalizedFielddefs($defs);
+        
+        $this->assertFalse(array_key_exists('len', $newdefs));
     }
+}
 
+/**
+ * Accessor class to the metadatamanager to allow access to protected methods
+ */
+class MetaDataManagerBugFixes extends MetaDataManager
+{
+    public function getNormalizedFielddefs($defs)
+    {
+        return $this->normalizeFielddefs($defs);
+    }
 }

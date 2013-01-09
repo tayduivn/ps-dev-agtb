@@ -1,4 +1,4 @@
-<?php
+<?php 
 /*********************************************************************************
  * The contents of this file are subject to the SugarCRM Professional End User
  * License Agreement ("License") which can be viewed at
@@ -21,42 +21,36 @@
  * Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.;
  * All Rights Reserved.
  ********************************************************************************/
+require_once('modules/Contacts/Contact.php');
 
-require_once 'modules/SchedulersJobs/SchedulersJob.php';
-
-class Bug27344Test extends Sugar_PHPUnit_Framework_TestCase
+class ContactsTest extends Sugar_PHPUnit_Framework_TestCase
 {
-	private $_url;
-    private $_initial_server_port;
-    private $_has_initial_server_port;
-    private $_cron_test_file = 'cronUnitTestBug27344.php';
 
-    public function setUp()
-    {
-
-        $this->_has_initial_server_port = isset($_SERVER['SERVER_PORT']);
-        if ($this->_has_initial_server_port) {
-            $this->_initial_server_port = $_SERVER['SERVER_PORT'];
-        }
+    public function setUp() {
+        SugarTestHelper::setUp('current_user');
+        SugarTestHelper::setUp('app_list_strings');
     }
 
-    public function tearDown()
-    {
-        if ($this->_has_initial_server_port) {
-            $_SERVER['SERVER_PORT'] = $this->_initial_server_port;
-        } else {
-            unset($_SERVER['SERVER_PORT']);
-        }
+    public function tearDown() {
+        SugarTestHelper::tearDown();
     }
 
-    public function testLocalServerPortNotUsed()
-    {
+	function testSyncContacts() {
+        $c = BeanFactory::newBean('Contacts');
+        $c->first_name = 'Test';
+        $c->last_name = create_guid();
 
-        $url = $GLOBALS['sugar_config']['site_url'] . '/maintenance.php';
+        $this->assertFalse($c->setSyncContact());
 
-        $_SERVER['SERVER_PORT'] = '9090';
-        $sJob = new SchedulersJob(FALSE);
-        $this->assertTrue($sJob->fireUrl($url));
+        $c->setUserContactsUserId($GLOBALS['current_user']->id);
+
+        $this->assertTrue($c->setSyncContact());
+
+        $c->removeUserContactsUserId($GLOBALS['current_user']->id);
+
+        $this->assertFalse($c->setSyncContact());
+
+        unset($c);
     }
-
 }
+?>

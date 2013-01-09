@@ -144,13 +144,7 @@ class SugarSpot
 	 */
 	protected static function getSearchFields( $moduleName )
 	{
-		$searchFields = array();
-		$fieldsfile = SugarAutoLoader::loadWithMetafiles($moduleName, 'SearchFields', 'searchfields');
-		if($fieldsfile) {
-			require $fieldsfile;
-		}
-
-		return $searchFields;
+	    return SugarAutoLoader::loadSearchFields($moduleName);
 	}
 
 	//BEGIN SUGARCRM flav=spotactions ONLY
@@ -517,13 +511,13 @@ class SugarSpot
                 }
                 $selectFields = rtrim($selectFields,', ');
             }
-            
+
             if(empty($where_clauses))
             {
                 if ( $allowBlankSearch ) {
 
                     $ret_array = $seed->create_new_list_query($orderBy, '', $return_fields, $options, 0, '', true, $seed, true);
-                    
+
                     if (!empty($selectFields)) {
                         $ret_array['select'] = "SELECT DISTINCT ".$selectFields;
                     }
@@ -540,7 +534,7 @@ class SugarSpot
                         }
 
                         // If there are no where clauses but there is a custom
-                        // where but there is no return array where clause add 
+                        // where but there is no return array where clause add
                         // an AND, otherwise you will get a situation where there
                         // is a where condition without an adjoining clause. This
                         // happens in Unified Search where there is team security
@@ -549,7 +543,7 @@ class SugarSpot
                         if (stripos($ret_array['where'], 'where') === false) {
                             $ret_array['where'] .= ' AND ';
                         }
-                        
+
                         $ret_array['where'] .= $custom_where;
                     }
 
