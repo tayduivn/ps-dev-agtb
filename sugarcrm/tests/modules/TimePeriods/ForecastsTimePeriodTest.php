@@ -30,6 +30,7 @@ class ForecastsTimePeriodTest extends Sugar_PHPUnit_Framework_TestCase
 {
     private $preTestIds = array();
     private static $configDateFormat;
+    private static $currentYear;
 
     //These are the default forecast configuration settings we will use to test
     private static $forecastConfigSettings = array (
@@ -65,6 +66,7 @@ class ForecastsTimePeriodTest extends Sugar_PHPUnit_Framework_TestCase
 
     public function setUp()
     {
+        self::$currentYear = date('Y');
         $this->preTestIds = TimePeriod::get_timeperiods_dom();
 
         $db = DBManagerFactory::getInstance();
@@ -73,7 +75,7 @@ class ForecastsTimePeriodTest extends Sugar_PHPUnit_Framework_TestCase
 
         $admin = BeanFactory::getBean('Administration');
 
-        self::$forecastConfigSettings[3]['timeperiod_start_date']['value'] = TimeDate::getInstance()->getNow()->modify('first day of january')->asDbDate();
+        self::$forecastConfigSettings[3]['timeperiod_start_date']['value'] = TimeDate::getInstance()->getNow()->setDate(date('Y'), 1, 1)->asDbDate();
         foreach(self::$forecastConfigSettings as $config)
         {
             $admin->saveSetting($config['category'], $config['name'], $config['value'], $config['platform']);
@@ -561,32 +563,33 @@ class ForecastsTimePeriodTest extends Sugar_PHPUnit_Framework_TestCase
         return array(
             //This data set simulates case where the start date specified is the same as current date
 
-            array(1, TimePeriod::ANNUAL_TYPE, TimePeriod::QUARTER_TYPE, TimeDate::getInstance()->getNow()->modify('first day of january'), 2, TimeDate::getInstance()->getNow()->modify('first day of january'), 15, TimeDate::getInstance()->getNow()->modify('first day of october'), TimeDate::getInstance()->getNow()->modify('last day of december')),
-            array(1, TimePeriod::ANNUAL_TYPE, TimePeriod::QUARTER_TYPE, TimeDate::getInstance()->getNow()->modify('first day of january'), 4, TimeDate::getInstance()->getNow()->modify('first day of january'), 25, TimeDate::getInstance()->getNow()->modify('first day of october'), TimeDate::getInstance()->getNow()->modify('last day of december')),
-            array(1, TimePeriod::QUARTER_TYPE, TimePeriod::MONTH_TYPE, TimeDate::getInstance()->getNow()->modify('first day of january'), 2, TimeDate::getInstance()->getNow()->modify('first day of january'), 10, TimeDate::getInstance()->getNow()->modify('first day of january'), TimeDate::getInstance()->getNow()->modify('last day of march')),
-            array(1, TimePeriod::QUARTER_TYPE, TimePeriod::MONTH_TYPE, TimeDate::getInstance()->getNow()->modify('first day of january'), 4, TimeDate::getInstance()->getNow()->modify('first day of january'), 18, TimeDate::getInstance()->getNow()->modify('first day of january'), TimeDate::getInstance()->getNow()->modify('last day of march')),
-            array(9, TimePeriod::QUARTER_TYPE, TimePeriod::MONTH_TYPE, TimeDate::getInstance()->getNow()->modify('first day of january'), 2, TimeDate::getInstance()->getNow()->modify('first day of january'), 10, TimeDate::getInstance()->getNow()->modify('first day of september'), TimeDate::getInstance()->getNow()->modify('last day of september')),
-            array(17, TimePeriod::QUARTER_TYPE, TimePeriod::MONTH_TYPE, TimeDate::getInstance()->getNow()->modify('first day of january'), 4, TimeDate::getInstance()->getNow()->modify('first day of january'), 18, TimeDate::getInstance()->getNow()->modify('+1 year')->modify('first day of march'), TimeDate::getInstance()->getNow()->modify('+1 year')->modify('last day of march')),
+            array(1, TimePeriod::ANNUAL_TYPE, TimePeriod::QUARTER_TYPE, TimeDate::getInstance()->getNow()->setDate(date('Y'), 1, 1), 2, TimeDate::getInstance()->getNow()->setDate(date('Y'), 1, 1), 15, TimeDate::getInstance()->getNow()->setDate(date('Y'), 10, 1), TimeDate::getInstance()->getNow()->setDate(date('Y'), 12, 31)),
+
+            array(1, TimePeriod::ANNUAL_TYPE, TimePeriod::QUARTER_TYPE, TimeDate::getInstance()->getNow()->setDate(date('Y'), 1, 1), 4, TimeDate::getInstance()->getNow()->setDate(date('Y'), 1, 1), 25, TimeDate::getInstance()->getNow()->setDate(date('Y'), 10, 1), TimeDate::getInstance()->getNow()->setDate(date('Y'), 12, 31)),
+            array(1, TimePeriod::QUARTER_TYPE, TimePeriod::MONTH_TYPE, TimeDate::getInstance()->getNow()->setDate(date('Y'), 1, 1), 2, TimeDate::getInstance()->getNow()->setDate(date('Y'), 1, 1), 10, TimeDate::getInstance()->getNow()->setDate(date('Y'), 1, 1), TimeDate::getInstance()->getNow()->setDate(date('Y'), 3, 31)),
+            array(1, TimePeriod::QUARTER_TYPE, TimePeriod::MONTH_TYPE, TimeDate::getInstance()->getNow()->setDate(date('Y'), 1, 1), 4, TimeDate::getInstance()->getNow()->setDate(date('Y'), 1, 1), 18, TimeDate::getInstance()->getNow()->setDate(date('Y'), 1, 1), TimeDate::getInstance()->getNow()->setDate(date('Y'), 3, 31)),
+            array(9, TimePeriod::QUARTER_TYPE, TimePeriod::MONTH_TYPE, TimeDate::getInstance()->getNow()->setDate(date('Y'), 1, 1), 2, TimeDate::getInstance()->getNow()->setDate(date('Y'), 1, 1), 10, TimeDate::getInstance()->getNow()->setDate(date('Y'), 9, 1), TimeDate::getInstance()->getNow()->setDate(date('Y'), 9, 30)),
+            array(17, TimePeriod::QUARTER_TYPE, TimePeriod::MONTH_TYPE, TimeDate::getInstance()->getNow()->setDate(date('Y'), 1, 1), 4, TimeDate::getInstance()->getNow()->setDate(date('Y'), 1, 1), 18, TimeDate::getInstance()->getNow()->setDate(date('Y')+1, 3, 1), TimeDate::getInstance()->getNow()->setDate(date('Y')+1, 3, 31)),
 
             //This data set simulates case where the start date specified is before the current date
-            array(1, TimePeriod::ANNUAL_TYPE, TimePeriod::QUARTER_TYPE, TimeDate::getInstance()->getNow()->modify('first day of february'), 2, TimeDate::getInstance()->getNow()->modify('first day of march'), 15, TimeDate::getInstance()->getNow()->modify('first day of november'), TimeDate::getInstance()->getNow()->modify('+1 year')->modify('last day of january')),
+            array(1, TimePeriod::ANNUAL_TYPE, TimePeriod::QUARTER_TYPE, TimeDate::getInstance()->getNow()->setDate(date('Y'), 2, 1), 2, TimeDate::getInstance()->getNow()->setDate(date('Y'), 3, 1), 15, TimeDate::getInstance()->getNow()->setDate(date('Y'), 11, 1), TimeDate::getInstance()->getNow()->setDate(date('Y')+1, 1, 31)),
 
-            array(1, TimePeriod::ANNUAL_TYPE, TimePeriod::QUARTER_TYPE, TimeDate::getInstance()->getNow()->modify('first day of february'), 4, TimeDate::getInstance()->getNow()->modify('first day of march'), 25, TimeDate::getInstance()->getNow()->modify('first day of november'), TimeDate::getInstance()->getNow()->modify('+1 year')->modify('last day of january')),
-            array(1, TimePeriod::QUARTER_TYPE, TimePeriod::MONTH_TYPE, TimeDate::getInstance()->getNow()->modify('first day of february'), 2, TimeDate::getInstance()->getNow()->modify('first day of march'), 11, TimeDate::getInstance()->getNow()->modify('first day of april'), TimeDate::getInstance()->getNow()->modify('last day of april')),
-            array(1, TimePeriod::QUARTER_TYPE, TimePeriod::MONTH_TYPE, TimeDate::getInstance()->getNow()->modify('first day of february'), 4, TimeDate::getInstance()->getNow()->modify('first day of march'), 19, TimeDate::getInstance()->getNow()->modify('first day of april'), TimeDate::getInstance()->getNow()->modify('last day of april')),
-            array(14, TimePeriod::ANNUAL_TYPE, TimePeriod::QUARTER_TYPE, TimeDate::getInstance()->getNow()->modify('first day of february'), 2, TimeDate::getInstance()->getNow()->modify('first day of march'), 15, TimeDate::getInstance()->getNow()->modify('+2 year')->modify('first day of november'), TimeDate::getInstance()->getNow()->modify('+3 year')->modify('last day of january')),
-            array(24, TimePeriod::ANNUAL_TYPE, TimePeriod::QUARTER_TYPE, TimeDate::getInstance()->getNow()->modify('first day of february'), 4, TimeDate::getInstance()->getNow()->modify('first day of march'), 25, TimeDate::getInstance()->getNow()->modify('+4 year')->modify('first day of november'), TimeDate::getInstance()->getNow()->modify('+5 year')->modify('last day of january')),
+            array(1, TimePeriod::ANNUAL_TYPE, TimePeriod::QUARTER_TYPE, TimeDate::getInstance()->getNow()->setDate(date('Y'), 2, 1), 4, TimeDate::getInstance()->getNow()->setDate(date('Y'), 3, 1), 25, TimeDate::getInstance()->getNow()->setDate(date('Y'), 11, 1), TimeDate::getInstance()->getNow()->setDate(date('Y')+1, 1, 31)),
+            array(1, TimePeriod::QUARTER_TYPE, TimePeriod::MONTH_TYPE, TimeDate::getInstance()->getNow()->setDate(date('Y'), 2, 1), 2, TimeDate::getInstance()->getNow()->setDate(date('Y'), 3, 1), 11, TimeDate::getInstance()->getNow()->setDate(date('Y'), 4, 1), TimeDate::getInstance()->getNow()->setDate(date('Y'), 4, 30)),
+            array(1, TimePeriod::QUARTER_TYPE, TimePeriod::MONTH_TYPE, TimeDate::getInstance()->getNow()->setDate(date('Y'), 2, 1), 4, TimeDate::getInstance()->getNow()->setDate(date('Y'), 3, 1), 19, TimeDate::getInstance()->getNow()->setDate(date('Y'), 4, 1), TimeDate::getInstance()->getNow()->setDate(date('Y'), 4, 30)),
+            array(14, TimePeriod::ANNUAL_TYPE, TimePeriod::QUARTER_TYPE, TimeDate::getInstance()->getNow()->setDate(date('Y'), 2, 1), 2, TimeDate::getInstance()->getNow()->setDate(date('Y'), 3, 1), 15, TimeDate::getInstance()->getNow()->setDate(date('Y')+2, 11, 1), TimeDate::getInstance()->getNow()->setDate(date('Y')+3, 1, 31)),
+            array(24, TimePeriod::ANNUAL_TYPE, TimePeriod::QUARTER_TYPE, TimeDate::getInstance()->getNow()->setDate(date('Y'), 2, 1), 4, TimeDate::getInstance()->getNow()->setDate(date('Y'), 3, 1), 25, TimeDate::getInstance()->getNow()->setDate(date('Y')+4, 11, 1), TimeDate::getInstance()->getNow()->setDate(date('Y')+5, 1, 31)),
 
             //This data set simulates case where the start date specified is after the current date
-            array(1, TimePeriod::ANNUAL_TYPE, TimePeriod::QUARTER_TYPE, TimeDate::getInstance()->getNow()->modify('first day of march'), 2, TimeDate::getInstance()->getNow()->modify('first day of february'), 15, TimeDate::getInstance()->getNow()->modify('first day of december'), TimeDate::getInstance()->getNow()->modify('+1 year')->modify('last day of february')),
-            array(1, TimePeriod::ANNUAL_TYPE, TimePeriod::QUARTER_TYPE, TimeDate::getInstance()->getNow()->modify('first day of march'), 4, TimeDate::getInstance()->getNow()->modify('first day of february'), 25, TimeDate::getInstance()->getNow()->modify('first day of december'), TimeDate::getInstance()->getNow()->modify('+1 year')->modify('last day of february')),
-            array(1, TimePeriod::QUARTER_TYPE, TimePeriod::MONTH_TYPE, TimeDate::getInstance()->getNow()->modify('first day of march'), 2, TimeDate::getInstance()->getNow()->modify('first day of february'), 12, TimeDate::getInstance()->getNow()->modify('first day of may'), TimeDate::getInstance()->getNow()->modify('last day of may')),
-            array(1, TimePeriod::QUARTER_TYPE, TimePeriod::MONTH_TYPE, TimeDate::getInstance()->getNow()->modify('first day of march'), 4, TimeDate::getInstance()->getNow()->modify('first day of february'), 20, TimeDate::getInstance()->getNow()->modify('first day of may'), TimeDate::getInstance()->getNow()->modify('last day of may')),
-            array(11, TimePeriod::QUARTER_TYPE, TimePeriod::MONTH_TYPE, TimeDate::getInstance()->getNow()->modify('first day of march'), 2, TimeDate::getInstance()->getNow()->modify('first day of february'), 12, TimeDate::getInstance()->getNow()->modify('first day of november'), TimeDate::getInstance()->getNow()->modify('last day of november')),
-            array(19, TimePeriod::QUARTER_TYPE, TimePeriod::MONTH_TYPE, TimeDate::getInstance()->getNow()->modify('first day of march'), 4, TimeDate::getInstance()->getNow()->modify('first day of february'), 20, TimeDate::getInstance()->getNow()->modify('+1 year')->modify('first day of may'), TimeDate::getInstance()->getNow()->modify('+1 year')->modify('last day of may')),
+            array(1, TimePeriod::ANNUAL_TYPE, TimePeriod::QUARTER_TYPE, TimeDate::getInstance()->getNow()->setDate(date('Y'), 3, 1), 2, TimeDate::getInstance()->getNow()->setDate(date('Y'), 2, 1), 15, TimeDate::getInstance()->getNow()->setDate(date('Y'), 12, 1), TimeDate::getInstance()->getNow()->setDate(date('Y')+1, 2, 28)),
+            array(1, TimePeriod::ANNUAL_TYPE, TimePeriod::QUARTER_TYPE, TimeDate::getInstance()->getNow()->setDate(date('Y'), 3, 1), 4, TimeDate::getInstance()->getNow()->setDate(date('Y'), 2, 1), 25, TimeDate::getInstance()->getNow()->setDate(date('Y'), 12, 1), TimeDate::getInstance()->getNow()->setDate(date('Y')+1, 2, 28)),
+            array(1, TimePeriod::QUARTER_TYPE, TimePeriod::MONTH_TYPE, TimeDate::getInstance()->getNow()->setDate(date('Y'), 3, 1), 2, TimeDate::getInstance()->getNow()->setDate(date('Y'), 2, 1), 12, TimeDate::getInstance()->getNow()->setDate(date('Y'), 5, 1), TimeDate::getInstance()->getNow()->setDate(date('Y'), 5, 31)),
+            array(1, TimePeriod::QUARTER_TYPE, TimePeriod::MONTH_TYPE, TimeDate::getInstance()->getNow()->setDate(date('Y'), 3, 1), 4, TimeDate::getInstance()->getNow()->setDate(date('Y'), 2, 1), 20, TimeDate::getInstance()->getNow()->setDate(date('Y'), 5, 1), TimeDate::getInstance()->getNow()->setDate(date('Y'), 5, 31)),
+            array(11, TimePeriod::QUARTER_TYPE, TimePeriod::MONTH_TYPE, TimeDate::getInstance()->getNow()->setDate(date('Y'), 3, 1), 2, TimeDate::getInstance()->getNow()->setDate(date('Y'), 2, 1), 12, TimeDate::getInstance()->getNow()->setDate(date('Y'), 11, 1), TimeDate::getInstance()->getNow()->setDate(date('Y'), 11, 30)),
+            array(19, TimePeriod::QUARTER_TYPE, TimePeriod::MONTH_TYPE, TimeDate::getInstance()->getNow()->setDate(date('Y'), 3, 1), 4, TimeDate::getInstance()->getNow()->setDate(date('Y'), 2, 1), 20, TimeDate::getInstance()->getNow()->setDate(date('Y')+1, 5, 1), TimeDate::getInstance()->getNow()->setDate(date('Y')+1, 5, 31)),
 
             //This data set simulates case where the start date specified is before current date and there are no existing current TimePeriods for the current date
-            array(1, TimePeriod::ANNUAL_TYPE, TimePeriod::QUARTER_TYPE, TimeDate::getInstance()->getNow()->modify('+2 year')->modify('first day of january'), 2, TimeDate::getInstance()->getNow()->modify('+2 year')->modify('first day of january')->modify('+1 day'), 15, TimeDate::getInstance()->getNow()->modify('+2 year')->modify('first day of october'), TimeDate::getInstance()->getNow()->modify('+2 year')->modify('last day of december')),
+            array(1, TimePeriod::ANNUAL_TYPE, TimePeriod::QUARTER_TYPE, TimeDate::getInstance()->getNow()->setDate(date('Y')+2, 1, 1), 2, TimeDate::getInstance()->getNow()->setDate(date('Y')+2, 1, 1)->modify('+1 day'), 15, TimeDate::getInstance()->getNow()->setDate(date('Y')+2, 10, 1), TimeDate::getInstance()->getNow()->setDate(date('Y')+2, 12, 31)),
 
             //This data set simulates upgrades using variable TimePeriods so that we are not bound to the TimePeriods created in the setUp method
             array(1, TimePeriod::ANNUAL_TYPE, TimePeriod::QUARTER_TYPE, TimeDate::getInstance()->fromDbDate('2013-01-01'), 2, TimeDate::getInstance()->fromDbDate('2013-01-02'), 15, TimeDate::getInstance()->fromDbDate('2013-10-01'), TimeDate::getInstance()->fromDbDate('2013-12-31'),
