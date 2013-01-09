@@ -32,29 +32,39 @@ if (!defined('sugarEntry') || !sugarEntry) {
 $viewdefs['Accounts']['base']['view']['record'] = array(
     'buttons' => array(
         array(
+            'name' => 'record-save',
             'type'    => 'button',
             'label'   => 'LBL_SAVE_BUTTON_LABEL',
-            'css_class' => 'hide btn-primary record-save',
+            'css_class' => 'btn-primary record-save disabled',
+            'mode' => 'edit',
         ),
         array(
+            'name' => 'record-cancel',
             'type'    => 'button',
             'label'   => 'LBL_CANCEL_BUTTON_LABEL',
-            'css_class' => 'hide record-cancel',
+            'css_class' => 'record-cancel btn-invisible',
+            'mode' => 'edit',
         ),
         array(
+            'name' => 'record-edit',
+            'type'    => 'button',
+            'label'   => 'LBL_EDIT_BUTTON_LABEL',
+            'css_class' => 'record-edit btn-primary',
+            'mode' => 'view',
+        ),
+        array(
+            'name' => 'record-duplicate',
             'type'    => 'button',
             'label'   => 'LBL_DUPLICATE_BUTTON_LABEL',
             'css_class' => 'record-duplicate',
-        ),            
-        array(
-            'type'    => 'button',
-            'label'   => 'LBL_EDIT_BUTTON_LABEL',
-            'css_class' => 'record-edit',
+            'mode' => 'view',
         ),
         array(
+            'name' => 'record-delete',
             'type'    => 'button',
             'label'   => 'LBL_DELETE_BUTTON_LABEL',
             'css_class' => 'record-delete',
+            'mode' => 'view',
         ),
         array(
             'name' => 'sidebar_toggle',
@@ -67,6 +77,10 @@ $viewdefs['Accounts']['base']['view']['record'] = array(
             'header' => true,
             'fields' => array(
                 'name',
+                array(
+                    'type' => 'favorite',
+                    'noedit' => true,
+                ),
             )
         ),
         array(

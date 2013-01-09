@@ -102,7 +102,7 @@ class SugarUploadS3 extends UploadStream
     protected function urlToBucketName($path, $prefix = true)
     {
         // cut off upload://, then replace /s with _s, then add prefix back
-        $bucket = str_replace("/", "-", substr($path, strlen(self::STREAM_NAME)+3));
+        $bucket = trim(str_replace("/", "-", substr($path, strlen(self::STREAM_NAME)+3)), '-');
         // remove invalid chars
         $bucket = preg_replace('/[^a-z0-9\.-]/', 'X', $bucket);
     	return ($prefix?self::STREAM_NAME."://":"").$this->bucket."-".$bucket;
@@ -159,7 +159,7 @@ class SugarUploadS3 extends UploadStream
      */
     public function isUploadUrl($path)
     {
-        return substr(strlen(self::STREAM_NAME)+3) == self::STREAM_NAME."://";
+        return substr($path, strlen(self::STREAM_NAME)+3) == self::STREAM_NAME."://";
     }
 
     /**

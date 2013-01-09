@@ -555,10 +555,7 @@ function generateSearchWhere($module, $query)
             require $searchdefs_file;
         }
 
-        $searchfields_file = SugarAutoLoader::loadWithMetafiles($module, 'SearchFields', 'searchfields');
-        if($searchfields_file) {
-            require $searchfields_file;
-        }
+        $searchFields = SugarAutoLoader::loadSearchFields($module);
         if(empty($searchdefs) || empty($searchFields)) {
            //for some modules, such as iframe, it has massupdate, but it doesn't have search function, the where sql should be empty.
             return;
