@@ -83,6 +83,10 @@ $viewdefs['Cases']['base']['view']['record'] = array(
                 ),
                 */
                 'name',
+                array(
+                    'type' => 'favorite',
+                    'noedit' => true,
+                ),
             )
         ),
         array(
