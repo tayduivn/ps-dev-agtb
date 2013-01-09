@@ -102,13 +102,13 @@ class FilterApi extends SugarApi {
         if(empty($args['filter'])) {
             throw new SugarApiExceptionNotAuthorized('EXCEPTION_CREATE_MODULE_NOT_AUTHORIZED', $args);            
         }
-        $bean->setPreference($args['name'], $args['filter']);
+        $bean->setPreference($args['name'], $args['filter_definition']);
         return array('name'=>$args['name']);
     }
 
     public function updateUserFilter(ServiceBase $api, array $args) {
         $bean = new UserPreference($GLOBALS['current_user']);
-        $bean->setPreference($args['name'], $args['filter']);
+        $bean->setPreference($args['name'], $args['filter_definition']);
         return array('name'=>$args['name']);
     }
 
