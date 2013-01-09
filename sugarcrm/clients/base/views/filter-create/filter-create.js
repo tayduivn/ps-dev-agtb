@@ -120,6 +120,10 @@
             disable_search_threshold: 10
         });
         $parent.find("select.operator").trigger("liszt:updated");
+        if(_($parent.data('value_field')).isObject()) {
+            $parent.data('value_field').dispose();
+            $parent.data('value_field', '');
+        }
     },
 
     chooseOperator: function(e) {
@@ -128,6 +132,11 @@
             operation = $el.val(),
             fieldName = $parent.find('select.field_name').val(),
             fieldType = app.metadata.getModule(this.title).fields[fieldName].type;
+
+        if(_($parent.data('value_field')).isObject()) {
+            $parent.data('value_field').dispose();
+            $parent.data('value_field', '');
+        }
 
         if(operation !== '') {
             if(fieldType == 'datetime') {
@@ -148,6 +157,7 @@
             $parent.find('.filter-value').removeClass('hide').find('input, select').remove();
             $(field.getPlaceholder().string).appendTo($parent.find('.filter-value'));
             this._renderField(field);
+            $parent.data('value_field', field);
         }
     },
 
