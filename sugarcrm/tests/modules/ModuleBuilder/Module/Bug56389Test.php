@@ -82,6 +82,7 @@ class Bug56389Test extends Sugar_PHPUnit_Framework_TestCase
         SugarTestHelper::setUp('beanList');
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('app_list_strings');
+        SugarTestHelper::setUp('files');
 
         // Run through our test files and make sure customs, working and core
         // metadata files are backed up. Core files will restore regardless, but
@@ -90,47 +91,23 @@ class Bug56389Test extends Sugar_PHPUnit_Framework_TestCase
             // Set aside custom and working files.
             $custom = "custom/$file";
             $working = "custom/working/$file";
-
             $filesets = array($custom, $working);
+            SugarTestHelper::saveFile($filesets);
+            SugarTestHelper::saveFile($file);
             foreach ($filesets as $filepath) {
-                $backup = $filepath . '.unittest';
-
-                // Backup custom first
                 if (file_exists($filepath)) {
-                    if (rename($filepath, $backup)) {
-                        $this->filesBackedUp[] = $backup;
-                    }
-                } else {
-                    $this->filesToTearDown[] = $filepath;
+                    SugarAutoLoader::unlink($filepath, false);
                 }
-            }
 
-            // Now do core metadata files
-            $backup = $file . '.unittest';
-            if (file_exists($file)) {
-                if (copy($file, $backup)) {
-                    $this->filesBackedUp[] = $backup;
-                }
             }
         }
+        parent::setUp();
     }
 
     public function tearDown()
     {
-        // Customs were renamed, defaults were copied, both are just moved back
-        foreach ($this->filesBackedUp as $file) {
-            $restore = str_replace('.unittest', '', $file);
-            rename($file, $restore);
-        }
-
-        // Kill of any custom files that were made
-        foreach ($this->filesToTearDown as $file) {
-            if (file_exists($file)) {
-                SugarAutoLoader::unlink($file, true);
-            }
-        }
-
         SugarTestHelper::tearDown();
+        parent::tearDown();
     }
 
     /**
