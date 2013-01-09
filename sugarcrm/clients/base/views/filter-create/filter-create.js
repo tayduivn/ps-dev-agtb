@@ -12,7 +12,7 @@
         'change .filter-value': 'modifyValue'
     },
 
-    rowTemplate: Handlebars.compile('<article class="filter-body" id="filter_row_new">' +
+    rowTemplate: Handlebars.compile('<article class="filter-body newRow">' +
 '     <div class="row-fluid">' +
 '       <div class="filter-field controls span3">' +
 '         <select name="field" class="field_name chzn-select chzn-inherit-width" data-placeholder="Select field name..."> ' +
@@ -75,9 +75,9 @@
 
     addRow: function(e) {
         var stuff = this.rowTemplate(this),
-            old = this.$("#filter_row_new");
+            old = this.$(".newRow");
         if(old.length) {
-            old.attr('id', '');
+            old.removeClass('newRow');
             old.find('.removeme').removeClass('hide');
             old.find('.addme').addClass('hide');
         }
@@ -88,7 +88,7 @@
             target.append(stuff);
         }
         // Can't use 'old' because that will point to the old row.
-        this.$("#filter_row_new select.field_name").chosen();
+        this.$(".newRow select.field_name").chosen();
     },
 
     editName: function(e) {
