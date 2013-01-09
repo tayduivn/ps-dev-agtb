@@ -27,13 +27,14 @@ class SugarBeanTest extends Sugar_PHPUnit_Framework_TestCase
 
     public static function setUpBeforeClass()
     {
-        $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
+        SugarTestHelper::setUp('current_user');
+        SugarTestHelper::setUp('beanList');
+        SugarTestHelper::setUp('beanFiles');
 	}
 
 	public static function tearDownAfterClass()
 	{
-	    SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
-        unset($GLOBALS['current_user']);
+	    SugarTestHelper::tearDown();
 	}
 
     public function testGetObjectName(){
@@ -45,7 +46,7 @@ class SugarBeanTest extends Sugar_PHPUnit_Framework_TestCase
         $bean = new BeanMockTestObjectName();
         $this->assertEquals($bean->get_audit_table_name(), 'my_table_audit', "SugarBean->get_audit_table_name() is not returning the correct audit table name.");
     }
-    
+
     /**
      * @ticket 47261
      */
