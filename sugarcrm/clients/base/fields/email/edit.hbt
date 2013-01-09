@@ -26,13 +26,12 @@
  * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 }}
-<div class="existing">
 {{#each value}}
 <div class="control-group email" data-emailaddress="{{email_address}}">
    <div class="span6">
       <div class="input-append widget">
           <div class="row-fluid">
-            <input type="text" class="span12 input-append existing" id="{{email_address}}" placeholder="email address" value="{{email_address}}">
+            <input type="text" class="span12 existingAddress" data-id="{{email_address}}" placeholder="email address" value="{{email_address}}">
           </div>
       </div>
    </div>
@@ -48,7 +47,6 @@
    </div>
 </div>
 {{/each}}
-</div>
 <div class="control-group email">
 <div class="span6 pull-left">
       <div class="input-append widget">
