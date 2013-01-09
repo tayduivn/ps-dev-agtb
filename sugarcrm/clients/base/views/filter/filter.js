@@ -1,13 +1,17 @@
 ({
     searchFilterId: "",
     previousValues: [],
+    currentValues: [],
+    changedByenter: false,
+
     events: {
         'click .filter-new': 'toggleOpen',
-        'click .chzn-results li': 'toggleSelected'
+        'click .chzn-results li': 'toggleSelected',
+        'keypress .chzn-choices .search-field input': 'selectedByEnter'
     },
 
     initialize: function(opts) {
-        console.log("creating a filter view");
+        _.bindAll(this);
         app.view.View.prototype.initialize.call(this, opts);
         //this.searchFilterId = _.uniqueId("search_filter");
         this.searchFilterId = "search_filter";
@@ -16,45 +20,25 @@
     render: function() {
         var self = this;
         app.view.View.prototype.render.call(this);
-        
-        /* HTML setup
-         ---------------------- */
-
-        // copied from styleguide
-
-        // add the current module as default filter
-//        if (window.location.pathname.split('/').pop() !== 'dashboard.html') {
-//            $('#{{sourceid}}.form-search ul.chzn-choices').prepend('<li class="search-choice search-choice-option" id="search_filter_00_choice"><span>Module</span><span>{{title}}</span></li>');
-//        }
-
-        // prepend legend to .chzn-choices
-//        $('#{{sourceid}} #search_filter_chzn .chzn-choices').prepend(
-//            '<legend class="chzn-select-legend">Filter <i class="icon-caret-down"></i></legend>'
-//        );
-
-
-        // append create filter icon
-        //$('#{{sourceid}} #search_filter_chzn').append('<div class="filter-create"><i class="icon-plus"></i></div>');
-//        $('#{{sourceid}} .filter-new').on('mousedown click', function(e) {
-//            $(this).parents('.form-search').find('.filter-options').removeClass('hide');
-//            e.stopPropagation();
-//            e.preventDefault();
-//        });
-
-
+    
         // Enable chosen on the menu
         this.$(".search_filter").chosen().change(function(e){
-            console.log($(e.target).val());
+            self.previousValues = self.currentValues;
+            self.currentValues = $(e.target).val();
             self.changeToPill();
+            if(self.changedByEnter){
+                self.previousValues = self.currentValues;
+                self.changedByEnter = false;
+            }
+            
         });
+        
+        //mods to chosen
         this.$el.find(".chzn-choices").prepend("<li class='search-choice search-choice-option filter-disabled'><span>Module</span><a>" + this.module + "</a></li>");
-
         this.$(".chzn-choices").prepend('<legend class="chzn-select-legend">Filter <i class="icon-caret-down"></i></legend>');
-
-
+        
         // append checkmarks to filter dropdown results
         this.$('.chzn-results').find('li').after("<span class='icon-ok' />");
-
     },
 
     changeToPill: function() {
@@ -72,7 +56,6 @@
         latestItemLink.html("");
         latestSpan.html("Placeholder");
         
-        //$.data(menuItem[0], "selected", true);
         $.data(menuItem[0], "pillId", latestItem.attr("id"));
     },
     
@@ -81,22 +64,28 @@
     },
     
     toggleSelected: function(e){
-        if($.data(e.currentTarget, "selected")){
-            $.data(e.currentTarget, "selected", false);
+        var selectId = e.currentTarget.id.slice(e.currentTarget.id.indexOf("o_")+2),
+            selectValue = $("#" + this.searchFilterId + " option")[selectId].value;
+        
+        if($.inArray(selectValue, this.previousValues) != -1){
             var target = $(e.currentTarget);
             target.removeClass("result-selected");
             target.addClass("active-result");
             $("#" + $.data(e.currentTarget, "pillId") + " .closer").trigger("click");
             $("#" + $.data(e.currentTarget, "pillId")).remove();
         }
-        else{
-            $.data(e.currentTarget, "selected", true);
-        }
+        this.previousValues = this.currentValues;
     },
 
     toggleOpen: function() {
         this.layout.trigger("filter:create:open:fire");
         this.$(".search_filter").trigger("liszt:close");
         return true;
+    },
+    
+    selectedByEnter: function(e){
+        if(e.keyCode == 13){
+            this.changedByEnter = true;
+        }   
     }
 })
