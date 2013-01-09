@@ -124,17 +124,21 @@
         if(fieldType == 'datetime') {
             fieldType = 'datetimecombo';
         }
-        var obj = {};
+        var obj = {
+            view: this,
+            viewName: 'edit',
+            def: {
+                type: fieldType
+            }
+        };
         if(fieldType == 'enum') {
-            obj = {def: {
-                options: app.lang.getAppListStrings(fieldName + '_dom')
-            }};
+            obj.def.options = app.lang.getAppListStrings(fieldName + '_dom');
         }
-        var fieldTpl = app.metadata.getField(fieldType) || app.metadata.getField('base'),
-            tpl = Handlebars.compile(fieldTpl.templates.edit)(obj);
+        var field = app.view.createField(obj);
 
         $parent.find('.filter-value').removeClass('hide').find('input, select').remove();
-        $(tpl).appendTo($parent.find('.filter-value'));
+        $(field.getPlaceholder().string).appendTo($parent.find('.filter-value'));
+        this._renderField(field);
     },
 
     modifyValue: function(e) {
