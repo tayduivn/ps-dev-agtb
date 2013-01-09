@@ -73,16 +73,16 @@ class PreviouslyUsedFiltersApi extends SugarApi {
             $beans[] = $this->loadBean($api, $args, 'view');
         }
 
-        $data = $this->formatBean($api, $args, $beans);
+        $data = $this->formatBeans($api, $args, $beans);
 
-        return $used_filters;        
+        return $data;        
     }
 
     public function deleteUsed($api, $args) {
         $user_preference = new UserPreference($GLOBALS['current_user']);
         $used_filters = $user_preference->getPreference($args['module_name'], 'filters');
-        if(isset($user_filters[$args['record']])) {
-            unset($user_filters[$args['record']]);
+        if(isset($used_filters[$args['record']])) {
+            unset($used_filters[$args['record']]);
         }
         $user_preference->setPreference($args['module_name'], $used_filters, 'filters');
         $user_preference->savePreferencesToDB(true);
