@@ -73,8 +73,8 @@ class MysqliPreparedStatement extends PreparedStatement
         'varchar'          => 's', // varchar, enum, relate, url, encrypt, file
         'text'             => 's', // text, multienum, html,
         'longtext'         => 's', // longtext, longhtml
-        'blob'             => 'b', // blob
-        'longblob'         => 'b', // longblob
+        'blob'             => 's', // blob       todo b?
+        'longblob'         => 's', // longblob   todo b?
 
         // floating point types
         'double'           => 'd', // double

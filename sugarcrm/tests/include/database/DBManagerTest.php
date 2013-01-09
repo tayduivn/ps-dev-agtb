@@ -2524,258 +2524,23 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
         $GLOBALS['sugar_config']['search_wildcard_infront'] = $defaultWildcardInFront;
     }
 
-
     /*
      *    Prepared Statement Unit Tests
      *
      */
 
-    private function setupPreparedStatementStructure()
-    {
-        /* VARDEF - id -  ROW[name] => 'id'
-                            [vname] => 'LBL_ID'
-                         [required] => 'true'
-                             [type] => 'char'
-                       [reportable] => ''
-                          [comment] => 'Unique identifier'
-                           [dbType] => 'id'
-                              [len] => '36'
-         */
-
-
-        // Note the new element 'data' in the fieldDef. This is just a convience for defining the test data
-        // It will be pulled out later and put in to a simple data only array for actually calling the ps methods
-
-        $today=getdate();
-        $tableName = 'testPreparedStatement'; // . mt_rand();
-        $fieldDefs =  array(
-            'intTest'  => array (
-                'name' => 'intTest',
-                'type' => 'int',
-                'len'  => '6',
-                'data' => array(-1,-2,-3,-4,-5,-6,-7,-8,-9,-10),
-            ),
-            'doubleTest' => array (
-                'name' => 'doubleTest',
-                'type' => 'double',
-                'len'  => '6,2',
-                'data' => array(-1.11,-2.22,-3.33,-4.44,-5.55,-6.66,-7.77,-8.88,-9.99,-10.10),
-            ),
-            'floatTest' => array (
-                'name' => 'floatTest',
-                'type' => 'float',
-                'len'  => '6,2',
-                'data' => array(-1.11,-2.22,-3.33,-4.44,-5.55,-6.66,-7.77,-8.88,-9.99,-10.10),
-            ),
-            'uintTest' => array (
-                'name' => 'uintTest',
-                'type' => 'uint',
-                'len'  => '6',
-                'data' => array(1,2,3,4,5,6,7,8,9,10),
-            ),
-            'ulongTest'=> array (
-                'name' => 'ulongTest',
-                'type' => 'ulong',
-                'len'  => '6',
-                'data' => array(1,2,3,4,5,6,7,8,9,10),
-            ),
-            'longTest' => array (
-                'name' => 'longTest',
-                'type' => 'long',
-                'len'  => '6',
-                'data' => array(-1,-2,-3,-4,-5,-6,-7,-8,-9,-10),
-            ),
-            'shortTest'=> array (
-                'name' => 'shortTest',
-                'type' => 'short',
-                'len'  => '3',
-                'data' => array(-1,-2,-3,-4,-5,-6,-7,-8,-9,-10),
-            ),
-            'varcharTest' => array (
-                'name' => 'varcharTest',
-                'type' => 'varchar',
-                'len'  => '255',
-                'data' => array('One','Two','Three','Four','Five','Six','Seven','Eight','Nine','Ten'),
-            ),
-            'textTest' => array (
-                'name' => 'textTest',
-                'type' => 'text',
-                'len'  => '255',
-                'data' => array('One','Two','Three','Four','Five','Six','Seven','Eight','Nine','Ten'),
-            ),
-            'longTextTest' => array (
-                'name' => 'longTextTest',
-                'type' => 'longText',
-                'len'  => '255',
-                'data' => array('One','Two','Three','Four','Five','Six','Seven','Eight','Nine','Ten'),
-            ),
-            'dateTest' => array (
-                'name' => 'dateTest',
-                'type' => 'date',
-                'data' => array($today,$today,$today,$today,$today,$today,$today,$today,$today,$today),
-            ),
-            'enumTest' => array (
-                'name' => 'enumTest',
-                'type' => 'enum',
-                'len'  => '255',
-                'data' => array('One','Two','Three','Four','Five','Six','Seven','Eight','Nine','Ten'),
-            ),
-            'relateTest' => array (
-                'name' => 'relateTest',
-                'type' => 'relate',
-                'len'  => '255',
-                'data' => array('One','Two','Three','Four','Five','Six','Seven','Eight','Nine','Ten'),
-            ),
-            'multienumTest' => array (
-                'name' => 'multienumTestTest',
-                'type' => 'multienumTest',
-                'len'  => '255',
-                'data' => array('One;Two','Two;Three','Three;Four','Four;Five','Five;Six','Six;Seven','Seven;Eight','Eight;Nine','Nine;ten','Ten;Eleven'),
-            ),
-            'htmlTest' => array (
-                'name' => 'htmlTest',
-                'type' => 'html',
-                'len'  => '255',
-                'data' => array('HTML 1','HTML 2','HTML 3','HTML 4','HTML 5','HTML 6','HTML 7','HTML 8','HTML 9','HTML 10'),
-            ),
-            'longhtmlTest' => array (
-                'name' => 'longhtmlTest',
-                'type' => 'longhtml',
-                'len'  => '255',
-                'data' => array('HTML 1','HTML 2','HTML 3','HTML 4','HTML 5','HTML 6','HTML 7','HTML 8','HTML 9','HTML 10'),
-            ),
-            'datetimeTest' => array (
-                'name' => 'datetimeTest',
-                'type' => 'datetime',
-                'data' => array('One','Two','Three','Four','Five','Six','Seven','Eight','Nine','Ten'),
-            ),
-            'datetimecomboTest' => array (
-                'name' => 'datetimecomboTest',
-                'type' => 'datetimecombo',
-                'data' => array($today,$today,$today,$today,$today,$today,$today,$today,$today,$today),
-            ),
-            'timeTest' => array (
-                'name' => 'timeTest',
-                'type' => 'time',
-                'data' => array($today,$today,$today,$today,$today,$today,$today,$today,$today,$today),
-            ),
-            'boolTest' => array (
-                'name' => 'Testbool',
-                'type' => 'bool',
-                'data' => array(true, false, true, false, true, false, true, false, true, false),
-            ),
-            'tinyintTest' => array (
-                'name' => 'tinyintTest',
-                'type' => 'tinyint',
-                'len'  => '3',
-                'data' => array(-1,-2,-3,-4,-5,-6,-7,-8,-9,-10),
-            ),
-            'charTest' => array (
-                'name' => 'charTest',
-                'type' => 'char',
-                'len'  => '255',
-                'data' => array('One','Two','Three','Four','Five','Six','Seven','Eight','Nine','Ten'),
-            ),
-            'blobTest' => array (
-                'name' => 'blobTest',
-                'type' => 'blob',
-                'len'  => '255',
-                'data' => array('One','Two','Three','Four','Five','Six','Seven','Eight','Nine','Ten'),
-            ),
-            'longBlobTest' => array (
-                'name' => 'longBlobTest',
-                'type' => 'longBlob',
-                'len'  => '255',
-                'data' => array('One','Two','Three','Four','Five','Six','Seven','Eight','Nine','Ten'),
-            ),
-            'currencyTest' => array (
-                'name' => 'currencyTest',
-                'type' => 'currency',
-                'len'  => '10,6',
-                'data' => array(-1.111111,-2.222222,-3.333333,-4.444444,-5.555555,-6.666666,-7.777777,-8.888888,-9.999999,-10.101010),
-            ),
-            'decimalTest' => array (
-                'name' => 'decimalTest',
-                'type' => 'decimal',
-                'len'  => '10,2',
-                'data' => array(-1.11,-2.22,-3.33,-4.44,-5.55,-6.66,-7.77,-8.88,-9.99,-10.10),
-                'len' => '',
-            ),
-            'decimal2Test' => array (
-                'name' => 'decimal2Test',
-                'type' => 'decimal2',
-                'len'  => '10,6',
-                'data' => array(-1.111111,-2.222222,-3.333333,-4.444444,-5.555555,-6.666666,-7.777777,-8.888888,-9.999999,-10.101010),
-                'len' => '',
-            ),
-            'id' => array (
-                'name' => 'id',
-                'type' => 'id',
-                'required'=>true,
-                'data'=> array(1,2,3,4,5,6,7,8,9,10),
-            ),
-            'urlTest' => array (
-                'name' => 'urlTest',
-                'type' => 'url',
-                'len'  => '255',
-                'data' => array('http://127.0.0.0','http://127.0.0.0','http://127.0.0.0','http://127.0.0.0','http://127.0.0.0',
-                                'http://127.0.0.0','http://127.0.0.0','http://127.0.0.0','http://127.0.0.0','http://127.0.0.0'),
-            ),
-            'encryptTest' => array (
-                'name' => 'encryptTest',
-                'type' => 'encrypt',
-                'len'  => '255',
-                'data' => array('One','Two','Three','Four','Five','Six','Seven','Eight','Nine','Ten'),
-            ),
-            'fileTest' => array (
-                'name' => 'fileTest',
-                'type' => 'file',
-                'len'  => '255',
-                'data' => array('One','Two','Three','Four','Five','Six','Seven','Eight','Nine','Ten'),
-            ),
-            'decimal_tplTest' => array (
-                'name' => 'decimal_tplTest',
-                'type' => 'decimal_tpl',
-                'len' => '10,6',
-                'data' => array(-1.111111,-2.222222,-3.333333,-4.444444,-5.555555,-6.666666,-7.777777,-8.888888,-9.999999,-10.101010),
-            ),
-
-        );
-        $indexes = array(
-            array(
-                'name'   => 'idx_'. $tableName .'_id',
-                'type'   => 'primary',
-                'fields' => array('id'),
-            ),
-        );
-        if($this->_db->tableExists($tableName)) {
-            return $tableName;
-            $this->_db->dropTableName($tableName);
-        }
-        $this->_db->createTableParams($tableName, $fieldDefs, $indexes);
-
-        return array($tableName, $fieldDefs);
-    }
-
-
-    private function setupPreparedStatementTestData(array $fieldDefs)
-    {
-
-
-        return $psDataArray;
-    }
-
 
     /**
      * @group preparedStatements
      */
-    public function testPreparedStatements()
-    {
+    public function setupPreparedStatementsInsertStructure() {
+
         if ( !$this->_db->supports('prepared_statements') )
         {
-            $this->markTestSkipped('DBManager does not support prepared statements');
+            $this->markTestSkipped('This DBManager does not support prepared statements');
         }
 
+        // create test table for operational testing
         $tableName = "testPreparedStatement";
         $params =  array(
             'id' => array (
@@ -2791,7 +2556,7 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
             'col2' => array (
                 'name' => 'col2',
                 'type' => 'varchar',
-                'len' => '100',
+                'len' =>'200000',
             ),
         );
         $indexes = array(
@@ -2806,42 +2571,113 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
         }
         $this->_db->createTableParams($tableName, $params, $indexes);
 
+        // Disable automatic destruction of the table after each test completes
+        unset($this->created[$tableName]);
+
+        return array('tableName' => $tableName,
+                     'params' => $params);
+    }
+
+
+    /**
+     * @group preparedStatements
+     */
+    public function providerPreparedStatementsInsert()
+    {
+        return array( array( array('id'=>1, 'col1'=>"col1 data", 'col2'=>"col2 data") ),
+                      array( array('id'=>2, 'col1'=>"2", 'col2'=>"col2 data") ),
+                          );
+    }
+
+    /**
+     * @dataProvider providerPreparedStatementsInsert
+     * @group preparedStatements
+     * @param $data
+     */
+    public function testPreparedStatementsInsertSql($data){
+
         // turn on prepared statements
         $this->_db->usePreparedStatements = true;
 
-
-        // "== Prepared Statement API Test ==\n";
-        $data = array(1, "col1 data", "col2 data");
-        $sql = "INSERT INTO testPreparedStatement(id,col1,col2) VALUES(?int, ?, ?varchar)";
-        $fieldDefs = array( array( 'name' => 'id', ),
-                            array( 'name' => 'col1', ),
-                            array( 'name' => 'col2', ),
-                          );
-
-        $ps = $this->_db->prepareStatement($sql, $fieldDefs);     // $data,
-        $ps->executePreparedStatement($data);    //executeStatement
-        $data = array(2, "1", "col2 data");
+        $dataStructure = $this->setupPreparedStatementsInsertStructure();
+        $params = $dataStructure['params'];
+        $tableName = $dataStructure['tableName'];
+        $sql = "INSERT INTO {$tableName}(id,col1,col2) VALUES(?int, ?, ?varchar)";
+        $ps = $this->_db->prepareStatement($sql, $params);
         $ps->executePreparedStatement($data);
-        $result = $this->_db->query("SELECT * FROM $tableName WHERE ID in (1,2)");
+        $resultsCntExpected=1;
+
+        $result = $this->_db->query("SELECT * FROM $tableName");
         $resultsCnt = 0;
         while(($row = $this->_db->fetchByAssoc($result)) != null)
             $resultsCnt++;
-        $this->assertEquals($resultsCnt, 2, "Incorrect number or records. Found: $resultsCnt Expected: 2");
+        $this->assertEquals($resultsCnt, $resultsCntExpected, "Incorrect number or records. Found: $resultsCnt Expected: $resultsCntExpected");
+        $this->_db->query("DELETE FROM $tableName");
+    }
 
 
-        // "== insertParams Test ==\n";
-        $id = mt_rand();
-        $data =  array('id' => $id, 'col1' => "col1 data for id $id", 'col2' => "col2 data for id $id");
+    /**
+     * @dataProvider providerPreparedStatementsInsert
+     * @group preparedStatements
+     * @param $data
+     */
+    public function testPreparedStatementsInsertParams($data){
+
+        // turn on prepared statements
+        $this->_db->usePreparedStatements = true;
+
+        $dataStructure = $this->setupPreparedStatementsInsertStructure();
+        $params = $dataStructure['params'];
+        $tableName = $dataStructure['tableName'];
         $this->_db->insertParams($tableName, $params, $data, null, true, true);
-        $result = $this->_db->query("SELECT * FROM $tableName WHERE ID = $id");
+        $resultsCntExpected = 1;
+
+        $result = $this->_db->query("SELECT * FROM $tableName");
         $resultsCnt = 0;
-        while(($row = $this->_db->fetchByAssoc($result)) != null)
+        while(($row = $this->_db->fetchByAssoc($result)) != null)  {
             $resultsCnt++;
-        $this->assertEquals($resultsCnt, 1, "Incorrect number or records. Found: $resultsCnt Expected: 1 row for ID: $id");
+        }
+        $this->assertEquals($resultsCnt, $resultsCntExpected, "Incorrect number or records. Found: $resultsCnt Expected: $resultsCntExpected");
+        $this->_db->query("DELETE FROM $tableName");
+    }
 
 
+    /**
+     * @group preparedStatements
+     */
+    public function testPreparedStatementsInsertBlob(){
 
-        // "== insert Bean Test  ==\n";
+        // turn on prepared statements
+        $this->_db->usePreparedStatements = true;
+
+        $dataStructure = $this->setupPreparedStatementsInsertStructure();
+        $params = $dataStructure['params'];
+        $tableName = $dataStructure['tableName'];
+        $this->_db->query("DELETE FROM $tableName");
+
+        $blobData = '0123456789abcdefghijklmnopqrstuvwxyz';
+        while(strlen($blobData) < 100000)
+            $blobData .= $blobData;
+
+        $data = array( 'id'=> '1', 'col1' => '10', 'col2' => $blobData);
+        $this->_db->insertParams($tableName, $params, $data, null, true, true);
+
+        $result = $this->_db->query("SELECT * FROM $tableName");
+        $row = $this->_db->fetchByAssoc($result);
+        $foundLen = strlen($row['col2']);
+        $expectedLen = strlen($blobData);
+        $this->assertEquals($row['col2'], $blobData, "Failed test writing blob data. Found: $foundLen chars, Expected: $expectedLen");
+        //$this->_db->query("DELETE FROM $tableName");
+    }
+
+
+    /**
+     * @group preparedStatements
+     */
+    public function testPreparedStatementsBean() {
+
+
+        // insert test
         $bean = new Contact();
         $bean->last_name = 'foobar' . mt_rand();
         $bean->id   = 'test' . mt_rand();
@@ -2854,9 +2690,7 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertEquals(trim($row['last_name']),trim($bean->last_name), 'last_name failed');
         $this->assertEquals(trim($row['id']),$bean->id,'id failed');
 
-
-
-        // "== update Bean Test  ==\n";
+        // update test
         $bean->last_name = 'newfoobar' . mt_rand();   // change their lastname field
         $this->_db->updateSQL($bean, array('id'=>$bean->id), true);
         $result = $this->_db->query("select id, last_name from contacts where id = '{$bean->id}'");
@@ -2864,84 +2698,59 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertEquals(trim($row['last_name']),$bean->last_name, 'last_name failed');
         $this->assertEquals(trim($row['id']),$bean->id, 'id failed');
 
-
-
-        // "== delete Bean Test  ==\n";
+        // delete test
         $sql=$this->_db->deleteSQL($bean,array('id'=>$bean->id), true);
         $this->_db->query($sql,true,"Error deleting from table");
         $result = $this->_db->query("select deleted from contacts where id = '{$bean->id}'");
         $row = $this->_db->fetchByAssoc($result);
         $this->assertEquals(trim($row['deleted']),'1');
 
-
-
-        // "== simple SQL Select Test  ==\n";
-        $sql = "SELECT * FROM testPreparedStatement WHERE ID = ?int ";
-        $fieldDefs = array( array( 'name' => 'id', ),
-            array( 'name' => 'col1', ),
-            array( 'name' => 'col2', ),
-        );
-        $fieldDefs = array( array( 'name' => 'id', ) );
-        $data = array(1);
-        $ps = $this->_db->prepareStatement($sql, $fieldDefs);
-        $ps->executePreparedStatement($data);
-
-        $row = $ps->preparedStatementFetch();
-		$this->assertEquals(trim($row['id']), '1', "Incorrect ID or number of records. ");
-        $ps->preparedStatementClose();
-
-        // turn off prepared statements
-        $this->_db->usePreparedStatements = false;
-
-        // cleanup
-        $this->_db->query("delete from contacts where id = '{$bean->id}'");
-        $this->_db->dropTableName($tableName);
     }
+
+
+
 
         /**
          * @group preparedStatements
          */
-    public function testPreparedStatementsDatatypes()
-    {
-        if ( !$this->_db->supports('prepared_statements') )
-        {
-            $this->markTestSkipped('DBManager does not support prepared statements');
-        }
+    private function setupPreparedStatementsDataTypesStructure() {
+
+        // create test table for datatType testing
 
         $tableName = "testPreparedStatementTypes";
         $params =  array( 'id'                  =>array ('name'=>'id',                  'type'=>'id','required'=>true),
-                          'int_param'           =>array ('name'=>'int_param',           'type'=>'int'),
-                          'double_param'        =>array ('name'=>'double_param',        'type'=>'double'),     //len,precision
-                          'float_param'         =>array ('name'=>'float_param',         'type'=>'float'),
-                          'uint_param'          =>array ('name'=>'uint_param',          'type'=>'uint'),
-                          'ulong_param'         =>array ('name'=>'ulong_param',         'type'=>'ulong'),
-                          'long_param'          =>array ('name'=>'long_param',          'type'=>'long'),
-                          'short_param'         =>array ('name'=>'short_param',         'type'=>'short'),
-                          'varchar_param'       =>array ('name'=>'varchar_param',       'type'=>'varchar'),
-                          'text_param'          =>array ('name'=>'text_param',          'type'=>'text'),
-                          'longtext_param'      =>array ('name'=>'longtext_param',      'type'=>'longtext'),
+                            'int_param'           =>array ('name'=>'int_param',           'type'=>'int',     'default'=>1),
+                            'double_param'        =>array ('name'=>'double_param',        'type'=>'double',  'default'=>1),     //len,precision
+                            'float_param'         =>array ('name'=>'float_param',         'type'=>'float',   'default'=>1),
+                            'uint_param'          =>array ('name'=>'uint_param',          'type'=>'uint',    'default'=>1),
+                            'ulong_param'         =>array ('name'=>'ulong_param',         'type'=>'ulong',   'default'=>1),
+                            'long_param'          =>array ('name'=>'long_param',          'type'=>'long',    'default'=>1),
+                            'short_param'         =>array ('name'=>'short_param',         'type'=>'short',   'default'=>1),
+                            'varchar_param'       =>array ('name'=>'varchar_param',       'type'=>'varchar', 'default'=>'test'),
+                            'text_param'          =>array ('name'=>'text_param',          'type'=>'text',    'default'=>'test'),
+                            'longtext_param'      =>array ('name'=>'longtext_param',      'type'=>'longtext','default'=>'test'),
                           'date_param'          =>array ('name'=>'date_param',          'type'=>'date'),
-                          'enum_param'          =>array ('name'=>'enum_param',          'type'=>'enum'),
-                          'relate_param'        =>array ('name'=>'relate_param',        'type'=>'relate'),
-                          'multienum_param'     =>array ('name'=>'multienum_param',     'type'=>'multienum'),
-                          'html_param'          =>array ('name'=>'html_param',          'type'=>'html'),
-                          'longhtml_param'      =>array ('name'=>'longhtml_param',      'type'=>'longhtml'),
+                            'enum_param'          =>array ('name'=>'enum_param',          'type'=>'enum',    'default'=>'test'),
+                            'relate_param'        =>array ('name'=>'relate_param',        'type'=>'relate',  'default'=>'test'),
+                            'multienum_param'     =>array ('name'=>'multienum_param',     'type'=>'multienum', 'default'=>'test'),
+                            'html_param'          =>array ('name'=>'html_param',          'type'=>'html',    'default'=>'test'),
+                            'longhtml_param'      =>array ('name'=>'longhtml_param',      'type'=>'longhtml','default'=>'test'),
                           'datetime_param'      =>array ('name'=>'datetime_param',      'type'=>'datetime'),
                           'datetimecombo_param' =>array ('name'=>'datetimecombo_param', 'type'=>'datetimecombo'),
                           'time_param'          =>array ('name'=>'time_param',          'type'=>'time'),
                           'bool_param'          =>array ('name'=>'bool_param',          'type'=>'bool'),
                           'tinyint_param'       =>array ('name'=>'tinyint_param',       'type'=>'tinyint'),
-                          'char_param'          =>array ('name'=>'char_param',          'type'=>'char'),
-                          'id_param'            =>array ('name'=>'id_param',            'type'=>'id'),
-                          'blob_param'          =>array ('name'=>'blob_param',          'type'=>'blob'),
-                          'longblob_param'      =>array ('name'=>'longblob_param',      'type'=>'longblob'),
-                          'currency_param'      =>array ('name'=>'currency_param',      'type'=>'currency'),
-                          'decimal_param'       =>array ('name'=>'decimal_param',       'type'=>'decimal', 'len' => 10, 'precision' => 4),
-                          'decimal2_param'      =>array ('name'=>'decimal2_param',      'type'=>'decimal2', 'len' => 10, 'precision' => 4),
-                          'url_param'           =>array ('name'=>'url_param',           'type'=>'url'),
-                          'encrypt_param'       =>array ('name'=>'encrypt_param',       'type'=>'encrypt'),
-                          'file_param'          =>array ('name'=>'file_param',          'type'=>'file'),
-                          'decimal_tpl_param'   =>array ('name'=>'decimal_tpl_param',   'type'=>'decimal_tpl', 'len' => 10, 'precision' => 4),
+                            'char_param'          =>array ('name'=>'char_param',          'type'=>'char',    'default'=>'test'),
+                            'id_param'            =>array ('name'=>'id_param',            'type'=>'id',      'default'=>'test'),
+                            'blob_param'          =>array ('name'=>'blob_param',          'type'=>'blob',    'default'=>'test'),
+                            'longblob_param'      =>array ('name'=>'longblob_param',      'type'=>'longblob','default'=>'test'),
+                            'currency_param'      =>array ('name'=>'currency_param',      'type'=>'currency','default'=>1.11),
+                            'decimal_param'       =>array ('name'=>'decimal_param',       'type'=>'decimal', 'len' => 10, 'precision' => 4,    'default'=>1.11),
+                            'decimal2_param'      =>array ('name'=>'decimal2_param',      'type'=>'decimal2', 'len' => 10, 'precision' => 4,    'default'=>1.11),
+                            'url_param'           =>array ('name'=>'url_param',           'type'=>'url',     'default'=>'test'),
+                            'encrypt_param'       =>array ('name'=>'encrypt_param',       'type'=>'encrypt', 'default'=>'test'),
+                            'file_param'          =>array ('name'=>'file_param',          'type'=>'file',    'default'=>'test'),
+                            'decimal_tpl_param'   =>array ('name'=>'decimal_tpl_param',   'type'=>'decimal_tpl', 'len' => 10, 'precision' => 4,    'default'=>1.11),
                         );
 
         $indexes = array(
@@ -2956,12 +2765,22 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
         }
         $this->_db->createTableParams($tableName, $params, $indexes);
 
-        // turn on prepared statements
-        $this->_db->usePreparedStatements = true;
-        $id = '1';
+        // Disable automatic destruction of the table after each test completes
+        unset($this->created[$tableName]);
 
-        // "== Prepared Statement API Test ==\n";
-        $data = array(  'id'                  => $id,
+        return array('tableName' => $tableName,
+                     'params' => $params);
+    }
+
+
+    /**
+     * @group preparedStatements
+     *
+     *  Each row is inserted and then read back and checked, including defaults.
+     */
+    public function setupPreparedStatementsDataTypesData()
+    {
+        return array(array( 'id'                  => 1,
                         'int_param'           => 1,
                         'double_param'        => 1,
                         'float_param'         => 1.1,
@@ -2994,46 +2813,150 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
                         'encrypt_param'       => 'encrypt',
                         'file_param'          => 'file',
                         'decimal_tpl_param'   => 12.34,
+                          ),
+                     array( 'id'                  => 2,
+                            'int_param'           => 2,
+                            'double_param'        => 2,
+                            'float_param'         => 2.2,
+                            'uint_param'          => 2,
+                            'ulong_param'         => 2,
+                            'long_param'          => 2,
+                            'short_param'         => 2,
+                            'varchar_param'       => 'varchar',
+                            'text_param'          => 'text',
+                            'longtext_param'      => 'longtext',
+                            'date_param'          => '2012-12-31',
+                            'enum_param'          => 'enum',
+                            'relate_param'        => 'relate',
+                            'multienum_param'     => 'multienum',
+                            'html_param'          => 'html',
+                            'longhtml_param'      => 'longhtml',
+                            'datetime_param'      => '2012-12-31 01:01:01',
+                            'datetimecombo_param' => '2012-12-31 01:01:01',
+                            'time_param'          => '01:01:01',
+                            'bool_param'          => '1',
+                            'tinyint_param'       => 1,
+                            'char_param'          => 'char',
+                            'id_param'            => 'id',
+                            'blob_param'          => 'blob',
+                            'longblob_param'      => 'longblob',
+                            'currency_param'      => 123.456,
+                            'decimal_param'       => 12.34,
+                            'decimal2_param'      => 12.34,
+                            'url_param'           => 'utl',
+                            'encrypt_param'       => 'encrypt',
+                            'file_param'          => 'file',
+                            'decimal_tpl_param'   => 12.34,
+                          ),
+                     array( 'id'                  => 3,
+                            'int_param'           => 3,
+                            'double_param'        => 3,
+                        ),
         );
+    }
 
 
-        $this->_db->insertParams($tableName, $params, $data, null, true, true);
-        $result = $this->_db->query("SELECT * FROM $tableName WHERE ID = $id");
-        while(($row = $this->_db->fetchByAssoc($result)) != null) {
-            $this->assertEquals($row['id'], $data['id'], "Failed prepared statement data compare for id. Found: {$row['id']} Expected: {$data['id']}");
-            $this->assertEquals($row['int_param'], $data['int_param'], "Failed prepared statement data compare for int_param. Found: {$row['int_param']} Expected: {$data['int_param']}");
-            $this->assertEquals($row['double_param'], $data['double_param'], "Failed prepared statement data compare for double_param. Found: {$row['double_param']} Expected: {$data['double_param']}");
-            $this->assertEquals($row['float_param'], $data['float_param'], "Failed prepared statement data compare for float_param. Found: {$row['float_param']} Expected: {$data['float_param']}");
-            $this->assertEquals($row['uint_param'], $data['uint_param'], "Failed prepared statement data compare for uint_param. Found: {$row['uint_param']} Expected: {$data['uint_param']}");
-            $this->assertEquals($row['ulong_param'], $data['ulong_param'], "Failed prepared statement data compare for ulong_param. Found: {$row['ulong_param']} Expected: {$data['ulong_param']}");
-            $this->assertEquals($row['long_param'], $data['long_param'], "Failed prepared statement data compare for long_param. Found: {$row['long_param']} Expected: {$data['long_param']}");
-            $this->assertEquals($row['short_param'], $data['short_param'], "Failed prepared statement data compare for short_param. Found: {$row['short_param']} Expected: {$data['short_param']}");
-            $this->assertEquals($row['varchar_param'], $data['varchar_param'], "Failed prepared statement data compare for varchar_param. Found: {$row['varchar_param']} Expected: {$data['varchar_param']}");
-            $this->assertEquals($row['text_param'], $data['text_param'], "Failed prepared statement data compare for text_param. Found: {$row['text_param']} Expected: {$data['text_param']}");
-            $this->assertEquals($row['longtext_param'], $data['longtext_param'], "Failed prepared statement data compare for longtext_param. Found: {$row['longtext_param']} Expected: {$data['longtext_param']}");
-            $this->assertEquals($row['date_param'], $data['date_param'], "Failed prepared statement data compare for date_param. Found: {$row['date_param']} Expected: {$data['date_param']}");
-            $this->assertEquals($row['enum_param'], $data['enum_param'], "Failed prepared statement data compare for enum_param. Found: {$row['enum_param']} Expected: {$data['enum_param']}");
-            $this->assertEquals($row['relate_param'], $data['relate_param'], "Failed prepared statement data compare for relate_param. Found: {$row['relate_param']} Expected: {$data['relate_param']}");
-            $this->assertEquals($row['multienum_param'], $data['multienum_param'], "Failed prepared statement data compare for multienum_param. Found: {$row['multienum_param']} Expected: {$data['multienum_param']}");
-            $this->assertEquals($row['html_param'], $data['html_param'], "Failed prepared statement data compare for html_param. Found: {$row['html_param']} Expected: {$data['html_param']}");
-            $this->assertEquals($row['longhtml_param'], $data['longhtml_param'], "Failed prepared statement data compare for longhtml_param. Found: {$row['longhtml_param']} Expected: {$data['longhtml_param']}");
-            $this->assertEquals($row['datetime_param'], $data['datetime_param'], "Failed prepared statement data compare for datetime_param. Found: {$row['datetime_param']} Expected: {$data['datetime_param']}");
-            $this->assertEquals($row['datetimecombo_param'], $data['datetimecombo_param'], "Failed prepared statement data compare for datetimecombo_param. Found: {$row['datetimecombo_param']} Expected: {$data['datetimecombo_param']}");
-            $this->assertEquals($row['time_param'], $data['time_param'], "Failed prepared statement data compare for time_param. Found: {$row['time_param']} Expected: {$data['time_param']}");
-            $this->assertEquals($row['bool_param'], $data['bool_param'], "Failed prepared statement data compare for bool_param. Found: {$row['bool_param']} Expected: {$data['bool_param']}");
-            $this->assertEquals($row['tinyint_param'], $data['tinyint_param'], "Failed prepared statement data compare for tinyint_param. Found: {$row['tinyint_param']} Expected: {$data['tinyint_param']}");
-            $this->assertEquals($row['char_param'], $data['char_param'], "Failed prepared statement data compare for . Found: {$row['char_param']} Expected: {$data['char_param']}");
-            $this->assertEquals($row['id_param'], $data['id_param'], "Failed prepared statement data compare for id_param. Found: {$row['id_param']} Expected: {$data['id_param']}");
-            $this->assertEquals($row['currency_param'], $data['currency_param'], "Failed prepared statement data compare for currency_param. Found: {$row['currency_param']} Expected: {$data['currency_param']}");
-            $this->assertEquals($row['decimal_param'], $data['decimal_param'], "Failed prepared statement data compare for decimal_param. Found: {$row['decimal_param']} Expected: {$data['decimal_param']}");
-            $this->assertEquals($row['decimal2_param'], $data['decimal2_param'], "Failed prepared statement data compare for . Found: {$row['decimal2_param']} Expected: {$data['decimal2_param']}");
-            $this->assertEquals($row['url_param'], $data['url_param'], "Failed prepared statement data compare for url_param. Found: {$row['url_param']} Expected: {$data['url_param']}");
-            $this->assertEquals($row['encrypt_param'], $data['encrypt_param'], "Failed prepared statement data compare for encrypt_param. Found: {$row['encrypt_param']} Expected: {$data['encrypt_param']}");
-            $this->assertEquals($row['file_param'], $data['file_param'], "Failed prepared statement data compare for file_param. Found: {$row['file_param']} Expected: {$data['file_param']}");
-            $this->assertEquals($row['decimal_tpl_param'], $data['decimal_tpl_param'], "Failed prepared statement data compare for decimal_tpl_param. Found: {$row['decimal_tpl_param']} Expected: {$data['decimal_tpl_param']}");
+
+    /**
+     * @group preparedStatements
+     * @params $data
+     */
+    public function testPreparedStatementsDataTypes()
+    {
+        if ( !$this->_db->supports('prepared_statements') )
+        {
+            $this->markTestSkipped('DBManager does not support prepared statements');
         }
 
+        // turn on prepared statements
+        $this->_db->usePreparedStatements = true;
+
+        // create data table
+        $dataStructure = $this->setupPreparedStatementsDataTypesStructure();
+        $params = $dataStructure['params'];
+        $tableName = $dataStructure['tableName'];
+
+        // load and test each data record
+        $dataArray = $this->setupPreparedStatementsDataTypesData();
+
+        foreach($dataArray as $data) {  // insert a single row of data and check it column by column
+
+        $this->_db->insertParams($tableName, $params, $data, null, true, true);
+            $id = $data['id'];
+        $result = $this->_db->query("SELECT * FROM $tableName WHERE ID = $id");
+        while(($row = $this->_db->fetchByAssoc($result)) != null) {
+
+                /*
+                foreach ($row as $colKey => $col ) {
+                    $found=$row[$colKey];
+                    $expected=$data[$colKey];
+                    if (empty($expected)) { // if null then compare to the table defined default
+                        $expected = $params[$colKey]['default'];
+        }
+                    $this->assertEquals( $found, $expected, "Failed prepared statement data compare for column $colKey. Found: $found  Expected: $expected");
+
+                } */
+                foreach ($data as $colKey => $col ) {
+                    $found=$row[$colKey];
+                    $expected=$data[$colKey];
+                    if (empty($expected)) { // if null then compare to the table defined default
+                        $expected = $params[$colKey]['default'];
+                    }
+                    $this->assertEquals( $found, $expected, "Failed prepared statement data compare for column $colKey. Found: $found  Expected: $expected");
+
+                }
+
+            }
+
+        }
+        //do not delete the data. It will be used by testPreparedStatementsSqlSelect for select testing
     }
+
+
+    /**
+     * @group preparedStatements
+     */
+    public function providerPreparedStatementsSqlSelect()
+    {
+        return array( array( "SELECT id FROM testPreparedStatementTypes WHERE ID = ?int",
+                             array( 'id' => 1,),
+                             array( 'id' => 1,)
+                           ),
+                      array( "SELECT id FROM testPreparedStatementTypes WHERE ID = ?int",
+                             array( 'id' => 2,),
+                             array( 'id' => 2,)
+                           ),
+
+                    );
+
+    }
+
+
+    /**
+     * @group preparedStatements
+     *  testPreparedStatementsDataTypes
+     * @dataProvider providerPreparedStatementsSqlSelect
+     * @param $sql
+     * @param $executeData
+     * @param $resultsData
+     */
+    public function testPreparedStatementsSqlSelect($sql, $executeData, $resultsData) {
+
+        $ps = $this->_db->prepareStatement($sql, $executeData);
+        $ps->executePreparedStatement($executeData);
+
+        $row = $ps->preparedStatementFetch();
+        foreach ($resultsData as $key => $expected ) {
+            $found = trim($row[$key]);
+            $this->assertEquals($expected, $found, "Incorrect data returned. Found $found, expected $expected");
+        }
+        $ps->preparedStatementClose();
+    }
+
+
+    // todo drop tables
+
+
 
 
 }

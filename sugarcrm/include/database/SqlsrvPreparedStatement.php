@@ -264,8 +264,8 @@ class SqlsrvPreparedStatement extends PreparedStatement
       }
       else {
 
-          if($this->dump_slow_queries($this->sqlText)) {
-              $this->track_slow_queries($this->sqlText);
+          if($this->DBM->dump_slow_queries($this->sqlText)) {
+              $this->DBM->track_slow_queries($this->sqlText);
    }
       }
       $this->DBM->checkError($msg.' Query Failed:' . $this->sqlText . '::', $dieOnError);

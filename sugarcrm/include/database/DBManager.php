@@ -2188,7 +2188,13 @@ protected function checkQuery($sql, $object_name = false)
 	}
 
 
-
+    /**
+     * create a prepareStatement object and create the statement in the DB
+     *
+     * @param $sql                 The preparted statement sql text
+     * @param array $fieldDefs     a vardef like set of field dfinitions
+     * @return mixed
+     */
     abstract public function prepareStatement($sql,  array $fieldDefs = array() );
 
 
