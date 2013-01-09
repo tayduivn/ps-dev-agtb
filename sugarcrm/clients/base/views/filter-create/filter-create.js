@@ -31,7 +31,7 @@
 '       <div class="filter-actions span2">' +
 '         <a class="removeme btn btn-invisible btn-dark"><i class="icon-minus"></i></a>' +
 '         <a class="updateme btn btn-invisible hide btn-dark"><i class="icon-refresh"></i></a>' +
-'         <a class="addme btn btn-invisible disabled btn-dark"><i class="icon-plus"></i></a>' +
+'         <a class="addme btn btn-invisible hide btn-dark"><i class="icon-plus"></i></a>' +
 '       </div>' +
 '     </div>' +
 '   </article>'),
@@ -162,8 +162,13 @@
 
     modifyValue: function(e) {
         var $el = this.$(e.currentTarget),
-            $parent = $el.parents('.filter-body');
-        $parent.find('.updateme').removeClass('hide');
+            $parent = $el.parents('.filter-body'),
+            modified = false,
+            kls = $parent.hasClass('newRow') ? '.addme' : '.updateme';
+        _.each($el.find('input'), function(i) {
+            if($(i).val() !== '') modified = true;
+        });
+        $parent.find(kls).toggleClass('hide', !modified);
     },
 
     updateRow: function(e) {
@@ -202,5 +207,6 @@
             $parent.data('value_field').dispose();
             $parent.data('value_field', '');
         }
+        $parent.find('.addme').addClass('hide');
     }
 })
