@@ -65,7 +65,9 @@
                                     {{/unless}}
                                     <div class="span{{this.span}} record-cell{{#if cell_css}} {{cell_css}}{{/if}}" data-type="{{type}}" data-name="{{name}}">
                                         {{#if ../../this.labelsOnTop}}
-                                        <div class='record-label'>{{str this.label ../../../../../this.model.module}}</div>
+                                            {{#if ../../../this.labels}}
+                                        <div class='record-label'>{{str ../this.label ../../../../../../this.model.module}}</div>
+                                            {{/if}}
                                         {{/if}}
                                         {{#if name}}
                                             <span class='normal{{#if css}} {{css}}{{/if}} index{{index}}' data-fieldname="{{name}}" data-index="{{index}}" data-tour="tour-{{../../../../this.module}}-{{name}}">
