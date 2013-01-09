@@ -230,7 +230,7 @@ class SugarBeanApiHelper
             
             $type = !empty($properties['custom_type']) ? $properties['custom_type'] : $properties['type'];
             $field = $sfh->getSugarField($type);
-
+            
             if ( $field != null ) {
                 $field->apiSave($bean, $submittedData, $fieldName, $properties);
             }

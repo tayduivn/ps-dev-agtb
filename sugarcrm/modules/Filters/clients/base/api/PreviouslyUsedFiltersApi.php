@@ -54,13 +54,23 @@ class PreviouslyUsedFiltersApi extends SugarApi {
             ),   
         );
     }
-
+    /**
+     * Set a filter as used
+     * @param RestService $api 
+     * @param array $args 
+     * @return array of formatted Beans
+     */
     public function setUsed($api, $args) {
         $user_preference = new UserPreference($GLOBALS['current_user']);
         $used_filters = $user_preference->getPreference($args['module_name'], 'filters');
-        $used_filters[] = $args['record'];
-        $user_preference->setPreference($args['module_name'], $used_filters, 'filters');
-        $user_preference->savePreferencesToDB(true);
+
+        // If the record is not already in the used filters array add it
+        if(!array_search($args['record'], $used_filters)) {
+            $used_filters[] = $args['record'];
+            $user_preference->setPreference($args['module_name'], $used_filters, 'filters');
+            $user_preference->savePreferencesToDB(true);
+        }
+        // loop over and get the Filters to return
         foreach($used_filters AS $id) {
             $args['module'] = 'Filters';
             $args['record'] = $id;
@@ -71,10 +81,16 @@ class PreviouslyUsedFiltersApi extends SugarApi {
 
         return $data;
     }
-
+    /**
+     * Get filters from previously used
+     * @param RestService $api 
+     * @param array $args 
+     * @return array of formatted Beans
+     */
     public function getUsed($api, $args) {
         $user_preference = new UserPreference($GLOBALS['current_user']);
         $used_filters = $user_preference->getPreference($args['module_name'], 'filters');
+        // loop over the filters and return them
         foreach($used_filters AS $id) {
             $args['module'] = 'Filters';
             $args['record'] = $id;
@@ -86,14 +102,31 @@ class PreviouslyUsedFiltersApi extends SugarApi {
         return $data;        
     }
 
+    /**
+     * Delete a filter from previously used
+     * @param RestService $api 
+     * @param array $args 
+     * @return array of formatted Beans
+     */
     public function deleteUsed($api, $args) {
         $user_preference = new UserPreference($GLOBALS['current_user']);
         $used_filters = $user_preference->getPreference($args['module_name'], 'filters');
+
+        // if the record exists unset it
         if($key = array_search($args['record'], $used_filters)) {
             unset($used_filters[$key]);
         }
         $user_preference->setPreference($args['module_name'], $used_filters, 'filters');
         $user_preference->savePreferencesToDB(true);
-        return $used_filters;        
+
+        foreach($used_filters AS $id) {
+            $args['module'] = 'Filters';
+            $args['record'] = $id;
+            $beans[] = $this->loadBean($api, $args, 'view');
+        }
+
+        $data = $this->formatBeans($api, $args, $beans);
+
+        return $data;        
     }
 }

@@ -41,6 +41,7 @@ class FilterApi extends SugarApi {
                 'shortHelp' => 'Filter records from a single module',
                 'longHelp' => 'include/api/help/filterModulePost.html',
             ),
+
         );
     }
 
