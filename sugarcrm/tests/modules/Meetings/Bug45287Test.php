@@ -36,6 +36,7 @@ class Bug45287Test extends Sugar_PHPUnit_Framework_TestCase
 
     public function setup()
     {
+        SugarTestHelper::setUp('app_strings');
         global $current_user;
         // Create Anon User setted on GMT+2 TimeZone
         $current_user = SugarTestUserUtilities::createAnonymousUser();
@@ -108,6 +109,7 @@ class Bug45287Test extends Sugar_PHPUnit_Framework_TestCase
         unset($this->timedate);
 
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
+        SugarTestHelper::tearDown();
     }
 
 
