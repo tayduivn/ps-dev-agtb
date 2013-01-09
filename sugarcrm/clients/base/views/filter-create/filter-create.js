@@ -29,7 +29,7 @@
 '       <div class="filter-value hide controls span4">' +
 '       </div>' +
 '       <div class="filter-actions span2">' +
-'         <a class="removeme btn btn-invisible hide btn-dark"><i class="icon-minus"></i></a>' +
+'         <a class="removeme btn btn-invisible btn-dark"><i class="icon-minus"></i></a>' +
 '         <a class="updateme btn btn-invisible hide btn-dark"><i class="icon-refresh"></i></a>' +
 '         <a class="addme btn btn-invisible disabled btn-dark"><i class="icon-plus"></i></a>' +
 '       </div>' +
@@ -78,7 +78,6 @@
             old = this.$(".newRow");
         if(old.length) {
             old.removeClass('newRow');
-            old.find('.removeme').removeClass('hide');
             old.find('.addme').addClass('hide');
         }
         if(_.isUndefined(e)) {
@@ -99,9 +98,13 @@
 
     removeRow: function(e) {
         var $parent = this.$(e.currentTarget).parents('.filter-body');
+        var newRow = $parent.hasClass('newRow');
         this.notSaved();
         this._disposeField($parent);
         $parent.remove();
+        if(newRow) {
+            this.addRow();
+        }
     },
 
     chooseField: function(e) {
