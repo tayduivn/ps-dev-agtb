@@ -287,14 +287,19 @@ hr.soften {
         list-style: 0;
         .widget-container {
           .widget {
-            min-height: 60px;
+            /*min-height: 60px;*/
+            padding: 0;
             div.widget-content {
               padding: 10px;
             }
           }
           .empty {
+            padding: 30px 0;
             margin: 0;
             &.thumbnail {
+              h4 {
+                cursor: move;
+              }
               .box-shadow(none);
               border: 3px dashed lighten(@grayLight,8%);
               p {
@@ -304,12 +309,23 @@ hr.soften {
                 color: lighten(@grayLight,8%);
               }
               .add-dashlet {
+                cursor: pointer;
                 color: lighten(@grayLight,8%);
-                font-size: 60px;
-                font-weight: 900;
                 text-align: center;
                 small {
                   font-size: 12px;
+                }
+                strong {
+                  font-size: 60px;
+                  font-weight: 900;
+                }
+              }
+            }
+            .options {
+              a {
+                padding:0 12px;
+                &:hover {
+                  color: @grayLight;
                 }
               }
             }
