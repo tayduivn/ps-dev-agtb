@@ -32,6 +32,7 @@
       <div class="input-append widget">
           <div class="row-fluid">
             <input type="text" class="span12 existingAddress" data-id="{{email_address}}" placeholder="email address" value="{{email_address}}">
+            <p class="help-block"></p>
           </div>
       </div>
    </div>
@@ -52,6 +53,7 @@
       <div class="input-append widget">
           <div class="row-fluid">
               <input type="text" class="span12 newEmail input-append" placeholder="Add Email">
+              <p class="help-block"></p>
           </div>
       </div>
 </div>
