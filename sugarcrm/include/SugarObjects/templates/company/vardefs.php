@@ -208,6 +208,7 @@ $vardefs= array (
     'merge_filter' => 'enabled',
     'calculated' => true,
     'formula' => 'concat($name, " Test 2")',
+    'enforced' => true,
   ),
     'phone_alternate' => 
   array (

@@ -35,3 +35,12 @@
     {{/eachOptions}}
 </select>
 <p class="help-block"></p>
+<select data-placeholder=" " name="{{name}}" {{#if def.isMultiSelect}} multiple="multiple"{{/if}}>
+    {{#if hasBlank}}
+    <option value=""{{#has "" value}}selected{{/has}}></option>
+    {{/if}}
+    {{#eachOptions items}}
+    <option value="{{{this.key}}}" {{#has this.key ../value}}selected{{/has}}>{{this.value}}</option>
+    {{/eachOptions}}
+</select>
+<p class="help-block"></p>

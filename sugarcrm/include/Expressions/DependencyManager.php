@@ -65,7 +65,7 @@ class DependencyManager
                     if ($includeReadOnly) {
                         $readOnlyDep = new Dependency("readOnly$field");
                         $readOnlyDep->setFireOnLoad(true);
-                        $readOnlyDep->setTrigger(new Trigger('true', array()));
+                        $readOnlyDep->setTrigger(new Trigger('true', $triggerFields));
                         $readOnlyDep->addAction(ActionFactory::getNewAction('ReadOnly',
                             array('target' => $field,
                                 'value' => 'true')));
@@ -282,8 +282,6 @@ class DependencyManager
      */
     public static function getDependenciesForView($viewdef, $view = "", $module = "")
     {
-        _ppl($view);
-        _ppl($viewdef);
         global $currentModule;
 
         if (empty($module))

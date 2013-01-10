@@ -40,6 +40,7 @@ class VisibilityAction extends AbstractAction{
 		return "
 		SUGAR.forms.SetVisibilityAction = function(target, expr, view)
 		{
+			this.afterRender = true;
 			if (_.isObject(target)){
 			    expr = target.value;
 			    target = target.target
@@ -84,13 +85,6 @@ class VisibilityAction extends AbstractAction{
 					        this.sidecarExec(context, target, hide);
 					    else
 					        this.legacyExec(context, target, hide);
-					}
-					//The view may not be rendered when we are fired the first time.
-					else if (context.view && _.isEmpty(context.view.fields))
-					{
-					    context.view.once('render', function(){
-					        this.exec();
-					    }, this);
 					}
 				} catch (e) {
 				    debugger;

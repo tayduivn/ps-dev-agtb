@@ -410,18 +410,24 @@ SUGAR.forms.Dependency.prototype.fire = function(undo)
 		if (undo && this.falseActions != null)
 			actions = this.falseActions;
 
-		if (actions instanceof SUGAR.forms.AbstractAction) {
-			actions.setContext(this.context);
-			actions.exec();
-		} else {
-			for (var i in actions) {
-				var action = actions[i];
-				if (typeof action.exec == "function") {
-					action.setContext(this.context);
-					action.exec();
-				}
-			}
-		}
+        if (actions instanceof SUGAR.forms.AbstractAction)
+            actions = [actions];
+
+	    for (var i in actions) {
+            var action = actions[i];
+            if (typeof action.exec == "function") {
+                action.setContext(this.context);
+                if (this.context.view && _.isEmpty(this.context.view.fields) && action.afterRender)
+                {
+                    this.context.view.once('render', function(){
+                        this.exec();
+                    }, action);
+                } else {
+                    action.exec();
+                }
+            }
+        }
+
 	} catch (e) {
 		if (!SUGAR.isIE && console && console.log){
 			console.log('ERROR: ' + e);

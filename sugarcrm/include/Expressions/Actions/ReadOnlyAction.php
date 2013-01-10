@@ -24,6 +24,7 @@ class ReadOnlyAction extends AbstractAction{
 	protected $expression =  "";
 
 	function ReadOnlyAction($params) {
+        $this->params = $params;
 		$this->targetField = $params['target'];
 		$this->expression = str_replace("\n", "",$params['value']);
 	}
@@ -36,6 +37,10 @@ class ReadOnlyAction extends AbstractAction{
 	static function getJavascriptClass() {
 		return  "
 		SUGAR.forms.ReadOnlyAction = function(target, expr) {
+			if (_.isObject(target)){
+                expr = target.value;
+                target = target.target
+            }
 			this.target = target;
 			this.expr = expr;
 		}
@@ -47,15 +52,25 @@ class ReadOnlyAction extends AbstractAction{
 			exec: function(context)
 			{
 				if (typeof(context) == 'undefined') context = this.context;
+				var val = this.evalExpression(this.expr, context),
+					set = val == SUGAR.expressions.Expression.TRUE;
 				
-				var el = SUGAR.forms.AssignmentHandler.getElement(this.target);
-				if (!el)
-				    return;
+				if (context.view) {
+                    var field = context.view.getField(this.target);
+			        if (field) {
+			            field.setDisabled(set);
+			        }
+			        context.view.setFieldMeta(this.target, {'noedit':set});
+				}
+				else {
+			        var el = SUGAR.forms.AssignmentHandler.getElement(this.target);
+                    if (!el)
+                        return;
 
-				var val = this.evalExpression(this.expr, context);
-				var set = val == SUGAR.expressions.Expression.TRUE;
-				this.setReadOnly(el, set);
-				this.setDateField(el, set);
+                    this.setReadOnly(el, set);
+                        this.setDateField(el, set);
+				}
+
 			},
 
 			setReadOnly: function(el, set)
