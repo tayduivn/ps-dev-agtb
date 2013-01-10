@@ -75,10 +75,13 @@
             } else if(isInFilters){
                 self.node.select2("val", "");
                 self.node.select2("val", [e.added.id]);
+                self.filterDataSet(e.added.id);
                 self.$("a[rel=" + e.added.id + "]").on("click", function(){
                     self.toggleOpen(self.filters.get(e.added.id));
                 });
             }
+        } else {
+            this.filterDataSet('');
         }
     },
 
@@ -121,12 +124,12 @@
         return true;
     },
 
-    filterDataSet: function(activeFilter) {
+    filterDataSet: function(activeFilterId) {
         var ctx = app.controller.context,
-            url = app.api.buildURL(this.module, "filter/" + activeFilter.id);
+            url = app.api.buildURL(this.module, "filter/" + activeFilterId);
         app.api.call("read", url, null, {
             success: function(data) {
-                ctx.get('collection').reset(data);
+                ctx.get('collection').reset(data.records);
             }
         });
     }

@@ -48,23 +48,23 @@
     },
 
     filterMap: {
-        'is': 'equals',
-        'is not': 'notEquals',
-        'matches': 'equals',
-        'does not match': 'notEquals',
-        'contains': 'contains',
-        'starts with': 'starts',
-        'ends with': 'ends',
-        'is equal to': 'equals',
-        'is greater than': 'gt',
-        'is greater than or equal to': 'gte',
-        'is less than': 'lt',
-        'is less than or equal to': 'lte',
-        'on': 'equals',
-        'before': 'lt',
-        'on or before': 'lte',
-        'after': 'gt',
-        'on or after': 'gte'
+        'is': '$equals',
+        'is not': '$notEquals',
+        'matches': '$equals',
+        'does not match': '$notEquals',
+        'contains': '$contains',
+        'starts with': '$starts',
+        'ends with': '$ends',
+        'is equal to': '$equals',
+        'is greater than': '$gt',
+        'is greater than or equal to': '$gte',
+        'is less than': '$lt',
+        'is less than or equal to': '$lte',
+        'on': '$equals',
+        'before': '$lt',
+        'on or before': '$lte',
+        'after': '$gt',
+        'on or after': '$gte'
     },
 
     initialize: function(opts) {
@@ -93,15 +93,19 @@
         });
     },
 
-    render: function() {
+    render: function(model) {
         app.view.View.prototype.render.call(this);
-        this.addRow();
 
+        this.addRow();
         // Render the filter widget by default with "name" "contains" for fast searching
         this.$("select.field_name option[value='name']").attr("selected", true);
         this.$(".field_name").trigger("liszt:updated").change();
         this.$("select.operator option[value='starts']").attr("selected", true);
         this.$(".operator").trigger("liszt:updated").change();
+    },
+
+    purgeAllRows: function() {
+        this.$(".filter-body").filter(":not(:first-child)").remove();
     },
 
     addRow: function(e) {
@@ -120,6 +124,8 @@
 
     populateFilter: function(f) {
         var self = this;
+        this.purgeAllRows();
+        this.$(".filter-header").data("model", f);
         this.$(".filter-header input").val(f.get("name"));
         _.each(this._applyJSON(f.get("filter_definition")), function(row) {
             self.populateRow(row);
@@ -225,7 +231,6 @@
         _.each($el.find(fieldTag), function(i) {
             if($(i).val() !== '') modified = true;
         });
-        console.log(kls, modified);
         $parent.find(kls).toggleClass('hide', !modified);
     },
 
@@ -247,6 +252,7 @@
     },
 
     save: function() {
+        var self = this;
         var val = this.$(".filter-header input").val();
         if(val) {
             this.$(".save_button").addClass("disabled");
@@ -255,25 +261,30 @@
                 filter_definition: this._getJSON(),
                 name: val,
                 default_filter: false,
-                module_name: this.title,
-                editable: true
+                module_name: this.title
             };
-            var filter = app.data.createBean('Filters', obj);
 
-            if(filter.get('editable')) {
-                filter.save({success: this.setLastUsed});
-            } else {
-                this.setLastUsed(filter);
+            var filter = this.$(".filter-header").data("model");
+
+            if(!filter || !filter.get("default_filter")) {
+                filter = app.data.createBean('Filters');
             }
+
+            filter.save(obj, {success: function(model) {
+                self.setLastUsed(model);
+                self.$(".filter-header").data("model", model);
+            }});
+
             this.triggerClose();
         }
     },
 
     setLastUsed: function(model) {
+        var self = this;
         var url = app.api.buildURL('Filters/' + this.title + '/used', "update", model);
         app.api.call("update", url, null, {
             success: function() {
-                this.layout.trigger("filter:refresh");
+                self.layout.trigger("filter:refresh");
             }
         });
     },
@@ -281,6 +292,14 @@
     removeAll: function() {
         // TODO: Make a delete request to the server.
         var self = this;
+        if(this.$(".filter-header").data("model")) {
+            this.$(".filter-header").data("model").destroy({
+                success: function() {
+                    self.$(".filter-header").data("model", null);
+                    self.layout.trigger("filter:refresh");
+                }
+            });
+        }
         _.each(this.$(".filter-body"), function(el) {
             self._disposeField($(el));
         });
