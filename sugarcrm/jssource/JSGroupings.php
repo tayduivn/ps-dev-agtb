@@ -305,6 +305,7 @@
     $sidecar_forecasts['include/SugarCharts/Jit/js/sugarCharts.js'] = $cached_file;
     $sidecar_forecasts['modules/Forecasts/clients/base/helper/hbt-helpers.js'] = $cached_file;
     $sidecar_forecasts['modules/Forecasts/clients/base/lib/ForecastsUtils.js'] = $cached_file;
+    $sidecar_forecasts['modules/Forecasts/clients/base/lib/error.js'] = $cached_file;
     $sidecar_forecasts['modules/Forecasts/tpls/SidecarView.js'] = $cached_file;
     // Forecast and portal2 should include same styleguide bootstrap files
     $sidecar_forecasts['include/javascript/jquery/jquery.nouislider.js'] = $cached_file;
