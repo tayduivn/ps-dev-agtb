@@ -99,6 +99,8 @@ $dictionary['Filters'] = array(
 ),
 	'relationships'=>array (
 ),
+'acls' => array('SugarACLFilters' => true),
+
 	'optimistic_locking'=>true,
 		'unified_search'=>true,
 	);
