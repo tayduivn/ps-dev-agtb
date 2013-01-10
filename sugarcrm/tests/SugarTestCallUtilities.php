@@ -63,7 +63,7 @@ class SugarTestCallUtilities
 
     public static function addCallUserRelation($call_id, $user_id) {
         $id = create_guid();
-        $GLOBALS['db']->query("INSERT INTO calls_users (id, $call_id, user_id) values ('{$id}', '{$call_id}', '{$user_id}')");
+        $GLOBALS['db']->query("INSERT INTO calls_users (id, call_id, user_id) values ('{$id}', '{$call_id}', '{$user_id}')");
         return $id;
     }
 
