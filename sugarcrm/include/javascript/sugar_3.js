@@ -155,14 +155,34 @@ function isSupportedIE() {
 	}
 }
 
+function checkMinSupported(c, s) {
+    var current = c.split(".");
+    var supported = s.split(".");
+    for (var i in supported) {
+        if (current[i] && parseInt(current[i]) > parseInt(supported[i])) return true;
+        else if (current[i] && parseInt(current[i]) < parseInt(supported[i])) return false;
+    }
+    return true;
+}
+
+function checkMaxSupported(c, s) {
+    var current = c.split(".");
+    var supported = s.split(".");
+    for (var i in supported) {
+        if (current[i] && parseInt(current[i]) > parseInt(supported[i])) return false;
+        else if (current[i] && parseInt(current[i]) < parseInt(supported[i])) return true;
+    }
+    return true;
+}
+
 SUGAR.isSupportedBrowser = function(){
     var supportedBrowsers = {
-        msie : {min:9, max:10},
+        msie : {min:8, max:10},
         safari : {min:534},
         mozilla : {min:16},
-        chrome : {min:537}
+        chrome : {min:537.11}
     };
-    var current;
+    var current = String($.browser.version);
     var supported;
     if ($.browser.msie){ // Internet Explorer
         supported = supportedBrowsers['msie'];
@@ -179,9 +199,8 @@ SUGAR.isSupportedBrowser = function(){
             supported = supportedBrowsers['safari'];
         }
     }
-    current = parseInt($.browser.version);
-    if (supported)
-        return current >= supported.min && (!supported.max || current <= supported.max);
+    if (current && supported)
+        return checkMinSupported(current, String(supported.min)) && (!supported.max || checkMaxSupported(current, String(supported.max)));
     else
         return false;
 }
