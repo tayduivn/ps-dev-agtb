@@ -263,7 +263,7 @@
     },
 
     setLastUsed: function(model) {
-        var url = app.api.buildURL('Filters', "used", model);
+        var url = app.api.buildURL('Filters/' + this.title + '/used', "update", model);
         app.api.call("update", url, null, {
             success: function() {
                 // Fire event.
