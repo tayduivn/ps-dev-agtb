@@ -52,11 +52,16 @@
     },
 
     formatSelection: function(item) {
-        return '<span>Filter</span><a href="javascript:void(0)" rel="'+ item.id +'">'+ item.text +'</a>';
+        var self = this;
+        
+        if (item.id === item.text) {
+            return item.text;
+        } else {
+            return '<span>Filter</span><a href="javascript:void(0)" rel="' + item.id +'">'+ item.text +'</a>';
+        }
     },
 
     formatResult: function (item) {
-        console.log('result',item);
         var rtn = '<span data-value="'+ item.id +'">'+ item.text +'</span>';
             rtn += '<span class="'+ (item.text.indexOf('Create New Filter')===-1?'icon-ok':'icon-plus') +'"></span>';
         return rtn;
