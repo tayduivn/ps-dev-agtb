@@ -214,9 +214,14 @@ class ForecastsWorksheetsApiTest extends RestTestBase
 
         $response = $this->_restCall("ForecastWorksheets/" . $id, json_encode($postData), "PUT");
 
+        // just a test to see
+        $resp_get = $this->_restCall(
+            "ForecastWorksheets?user_id=" . self::$repData["id"] . "&timeperiod_id=" . self::$timeperiod->id
+        );
+
         //check to see if the data to the Worksheet table was saved
-        $this->assertEquals($probability, $response['reply']['probability'], "Worksheet probability was not saved.");
-        $this->assertEquals($best_case, $response['reply']['best_case'], "Worksheet best_case was not saved.");
+        $this->assertEquals($probability, $response['reply']['probability'], "Put Response: " . var_export($response['reply'], true) . "Get Response: " . var_export($resp_get['reply'][0], true));
+        $this->assertEquals($best_case, $response['reply']['best_case'], "Put Response: " . var_export($response['reply'], true) . "Get Response: " . var_export($resp_get['reply'][0], true));
 
         // make sure the worksheet was not modified via the date_modified from the worksheet
         $this->assertEquals($worksheets[0]['w_date_modified'], $response['reply']['w_date_modified']);
