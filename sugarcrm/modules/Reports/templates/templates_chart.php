@@ -302,6 +302,14 @@ function draw_chart(& $reporter, $chart_type, $is_dashlet=false, $id='', $report
 		$sugarChart->setData($chart_rows);
         $sugarChart->setProperties($chartTitle, '', $chartType, 'on', 'value', 'on', $do_thousands);
 
+        // fill group_by property in order to know how many group levels we have
+        $groupByNames = array();
+        foreach ($reporter->report_def['group_defs'] as $group_def)
+        {
+            $groupByNames[] = $group_def['name'];
+        }
+        $sugarChart->group_by = $groupByNames;
+
 		$xmlFile = get_cache_file_name($reporter);
 
 		$sugarChart->saveXMLFile($xmlFile, $sugarChart->generateXML());
