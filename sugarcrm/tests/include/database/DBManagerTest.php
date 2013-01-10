@@ -2613,6 +2613,7 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
             $resultsCnt++;
         $this->assertEquals($resultsCnt, $resultsCntExpected, "Incorrect number or records. Found: $resultsCnt Expected: $resultsCntExpected");
         $this->_db->query("DELETE FROM $tableName");
+        $this->_db->usePreparedStatements = false;
     }
 
 
@@ -2639,6 +2640,7 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
         }
         $this->assertEquals($resultsCnt, $resultsCntExpected, "Incorrect number or records. Found: $resultsCnt Expected: $resultsCntExpected");
         $this->_db->query("DELETE FROM $tableName");
+        $this->_db->usePreparedStatements = false;
     }
 
 
@@ -2667,7 +2669,8 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
         $foundLen = strlen($row['col2']);
         $expectedLen = strlen($blobData);
         $this->assertEquals($row['col2'], $blobData, "Failed test writing blob data. Found: $foundLen chars, Expected: $expectedLen");
-        //$this->_db->query("DELETE FROM $tableName");
+        $this->_db->query("DELETE FROM $tableName");
+        $this->_db->usePreparedStatements = false;
     }
 
 
@@ -2676,6 +2679,7 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testPreparedStatementsBean() {
 
+        $this->_db->usePreparedStatements = true;
 
         // insert test
         $bean = new Contact();
@@ -2705,6 +2709,7 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
         $row = $this->_db->fetchByAssoc($result);
         $this->assertEquals(trim($row['deleted']),'1');
 
+        $this->_db->usePreparedStatements = false;
     }
 
 
@@ -2910,6 +2915,7 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
 
         }
         //do not delete the data. It will be used by testPreparedStatementsSqlSelect for select testing
+        $this->_db->usePreparedStatements = false;
     }
 
 
@@ -2942,6 +2948,8 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testPreparedStatementsSqlSelect($sql, $executeData, $resultsData) {
 
+        $this->_db->usePreparedStatements = true;
+
         $ps = $this->_db->prepareStatement($sql, $executeData);
         $ps->executePreparedStatement($executeData);
 
@@ -2951,6 +2959,7 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
             $this->assertEquals($expected, $found, "Incorrect data returned. Found $found, expected $expected");
         }
         $ps->preparedStatementClose();
+        $this->_db->usePreparedStatements = false;
     }
 
 
