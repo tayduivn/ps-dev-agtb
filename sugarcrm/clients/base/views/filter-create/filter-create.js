@@ -43,7 +43,7 @@
         'currency': ['is equal to', 'is greater than', 'is greater than or equal to', 'is less than', 'is less than or equal to'],
         'int': ['is equal to', 'is greater than', 'is greater than or equal to', 'is less than', 'is less than or equal to'],
         'double': ['is equal to', 'is greater than', 'is greater than or equal to', 'is less than', 'is less than or equal to'],
-        'datetime': ['between'],
+        'datetime': ['on', 'before', 'on or before', 'after', 'on or after'],
         'base': ['fall through to this case']
     },
 
@@ -60,7 +60,11 @@
         'is greater than or equal to': 'gte',
         'is less than': 'lt',
         'is less than or equal to': 'lte',
-        'between': 'between'
+        'on': 'equals',
+        'before': 'lt',
+        'on or before': 'lte',
+        'after': 'gt',
+        'on or after': 'gte'
     },
 
     initialize: function(opts) {
@@ -167,7 +171,7 @@
                 }
             };
             if(fieldType == 'enum') {
-                obj.def.options = app.lang.getAppListStrings(fieldName + '_dom');
+                obj.def.options = fieldName + '_dom';
             }
             var field = app.view.createField(obj);
 
@@ -182,8 +186,9 @@
         var $el = this.$(e.currentTarget),
             $parent = $el.parents('.filter-body'),
             modified = false,
+            fieldTag = $parent.data('value_field').fieldTag,
             kls = $parent.hasClass('newRow') ? '.addme' : '.updateme';
-        _.each($el.find('input'), function(i) {
+        _.each($el.find(fieldTag), function(i) {
             if($(i).val() !== '') modified = true;
         });
         $parent.find(kls).toggleClass('hide', !modified);
@@ -207,8 +212,19 @@
     },
 
     save: function() {
-        this.$(".save_button").addClass("disabled");
-        this.$(".delete_button").removeClass("hide");
+        var val = this.$(".filter-header input").val();
+        if(val) {
+            this.$(".save_button").addClass("disabled");
+            this.$(".delete_button").removeClass("hide");
+            var obj = {
+                filter_definition: this._getJSON(),
+                name: val,
+                default_filter: false,
+                module_name: this.title
+            };
+            var filter = app.data.createBean('Filters', obj);
+            filter.save();
+        }
     },
 
     removeAll: function() {
@@ -246,6 +262,7 @@
                     fieldTag = $el.data('value_field').fieldTag,
                     str = $el.data('value_field').val() || $el.find(".filter-value " + fieldTag).first().val(),
                     o = {};
+
                 o[op] = str;
                 fields[field_name].push(o);
             }
