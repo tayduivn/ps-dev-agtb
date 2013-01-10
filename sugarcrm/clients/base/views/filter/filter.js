@@ -25,14 +25,22 @@
 
         app.view.View.prototype.render.call(this);
         self.node = self.$("#" + self.searchFilterId);
-        
+
         _.each(self.filters, function(item){
             data.push({id:item.id, text:item.name});
             if(item.default){
                 defaultId = item.id;
             }
         }, this);
-        self.node.select2({tags:data, multiple:true, maximumSelectionSize:2});
+
+        self.node.select2({
+            tags:data,
+            multiple:true,
+            maximumSelectionSize:2,
+            formatSelection: self.formatSelection,
+            formatResult: self.formatResult
+        });
+
         if(defaultId){
             self.node.select2("val", defaultId);
         }
@@ -40,7 +48,18 @@
             self.sanitizeFilter(e);
         });
     },
-    
+
+    formatSelection: function(item) {
+        return '<span>Filter</span><a href="javascript:void(0)" rel="'+ item.id +'">'+ item.text +'</a>';
+    },
+
+    formatResult: function (item) {
+        console.log('result',item);
+        var rtn = '<span data-value="'+ item.id +'">'+ item.text +'</span>';
+            rtn += '<span class="'+ (item.text.indexOf('Create New Filter')===-1?'icon-ok':'icon-plus') +'"></span>';
+        return rtn;
+    },
+
     sanitizeFilter: function(e){
         var self = this;
         if(_.contains(_.pluck(self.filters, "id"), e.added.id)){
