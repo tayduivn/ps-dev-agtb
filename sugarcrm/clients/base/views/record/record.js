@@ -59,11 +59,14 @@
             _.each(panel.fields, function(field, index) {
                 var maxSpan;
 
+                //labels: visibility for the label
+                //labelsOnTop: true for on the top of the field
+                //             false for on the left of the field
                 if (_.isUndefined(panel.labels)) {
                     panel.labels = true;
                 }
                 //8 for span because we are using a 2/3 ratio between field span and label span with a max of 12
-                maxSpan = (panel.labels) ? 8 : 12;
+                maxSpan = (panel.labelsOnTop === false && panel.labels) ? 8 : 12;
 
                 if (_.isUndefined(field.span)) {
                     field.span = Math.floor(maxSpan / columns);
@@ -293,7 +296,11 @@
                 break;
             default:
                 this.toggleCell(field, cell);
-                field.$el.find("input").focus().val(field.$el.find("input").val());
+                if (_.isFunction(field.focus)) {
+                    field.focus();
+                } else {
+                    field.$el.find("input").focus().val(field.$el.find("input").val());
+                }
         }
     },
 
