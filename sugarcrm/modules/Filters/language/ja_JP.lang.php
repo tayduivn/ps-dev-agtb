@@ -1,7 +1,7 @@
-{{!
+<?php
 /*********************************************************************************
  * The contents of this file are subject to the SugarCRM Master Subscription
- * Agreement (""License"") which can be viewed at
+ * Agreement ("License") which can be viewed at
  * http://www.sugarcrm.com/crm/master-subscription-agreement
  * By installing or using this file, You have unconditionally agreed to the
  * terms and conditions of the License, and You may not use this file except in
@@ -15,7 +15,7 @@
  * remove SugarCRM copyrights from the source code or user interface.
  *
  * All copies of the Covered Code must include on each user interface screen:
- *  (i) the ""Powered by SugarCRM"" logo and
+ *  (i) the "Powered by SugarCRM" logo and
  *  (ii) the SugarCRM copyright notice
  * in the same form as they appear in the distribution.  See full license for
  * requirements.
@@ -25,9 +25,40 @@
  * governing these rights and limitations under the License.  Portions created
  * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
-}}
-<div class="input-append date" rel="datepicker">
-    <input type="text" class="datepicker" value="{{this.dateValue}}" rel="datepicker">
-    <span class="add-on"><i class="icon-calendar"></i></span>
-    <input type="text" class="ui-timepicker-input" value="{{this.timeValue}}" rel="timepicker" autocomplete="off">
-</div>
+
+$mod_strings = array (
+  'LBL_TEAM' => 'チーム',
+  'LBL_TEAMS' => 'チーム',
+  'LBL_TEAM_ID' => 'チームID',
+  'LBL_ASSIGNED_TO_ID' => 'アサイン先ID',
+  'LBL_ASSIGNED_TO_NAME' => 'アサイン先',
+  'LBL_CREATED' => '作成者',
+  'LBL_CREATED_ID' => '作成者ID',
+  'LBL_CREATED_USER' => '作成者',
+  'LBL_DATE_ENTERED' => '作成日',
+  'LBL_DATE_MODIFIED' => '更新日',
+  'LBL_DELETED' => '削除済み',
+  'LBL_DESCRIPTION' => '詳細',
+  'LBL_EDIT_BUTTON' => '編集',
+  'LBL_ID' => 'ID',
+  'LBL_LIST_NAME' => '名前',
+  'LBL_MODIFIED' => '更新者',
+  'LBL_MODIFIED_ID' => '更新者ID',
+  'LBL_MODIFIED_NAME' => '更新者',
+  'LBL_MODIFIED_USER' => '更新者',
+  'LBL_NAME' => '名前',
+  'LBL_REMOVE' => '削除',
+  'LBL_LIST_FORM_TITLE' => 'Filters 一覧',
+  'LBL_MODULE_NAME' => 'Filters',
+  'LBL_MODULE_TITLE' => 'Filters',
+  'LBL_HOMEPAGE_TITLE' => '私の Filters',
+  'LNK_NEW_RECORD' => '作成 Filters',
+  'LNK_LIST' => '画面 Filters',
+  'LNK_IMPORT_API_FILTERS' => 'Import Filters',
+  'LBL_SEARCH_FORM_TITLE' => '検索 Filters',
+  'LBL_HISTORY_SUBPANEL_TITLE' => '履歴',
+  'LBL_ACTIVITIES_SUBPANEL_TITLE' => '活動',
+  'LBL_API_FILTERS_SUBPANEL_TITLE' => 'Filters',
+  'LBL_NEW_FORM_TITLE' => '新規 Filters',
+  'LBL_FILTER_DEFINITION' => 'Filter Definition',
+);

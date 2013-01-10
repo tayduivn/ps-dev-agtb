@@ -1,7 +1,7 @@
-{{!
+<?php
 /*********************************************************************************
  * The contents of this file are subject to the SugarCRM Master Subscription
- * Agreement (""License"") which can be viewed at
+ * Agreement ("License") which can be viewed at
  * http://www.sugarcrm.com/crm/master-subscription-agreement
  * By installing or using this file, You have unconditionally agreed to the
  * terms and conditions of the License, and You may not use this file except in
@@ -15,7 +15,7 @@
  * remove SugarCRM copyrights from the source code or user interface.
  *
  * All copies of the Covered Code must include on each user interface screen:
- *  (i) the ""Powered by SugarCRM"" logo and
+ *  (i) the "Powered by SugarCRM" logo and
  *  (ii) the SugarCRM copyright notice
  * in the same form as they appear in the distribution.  See full license for
  * requirements.
@@ -25,9 +25,40 @@
  * governing these rights and limitations under the License.  Portions created
  * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
-}}
-<div class="input-append date" rel="datepicker">
-    <input type="text" class="datepicker" value="{{this.dateValue}}" rel="datepicker">
-    <span class="add-on"><i class="icon-calendar"></i></span>
-    <input type="text" class="ui-timepicker-input" value="{{this.timeValue}}" rel="timepicker" autocomplete="off">
-</div>
+
+$mod_strings = array (
+  'LBL_TEAM' => 'Timovi',
+  'LBL_TEAMS' => 'Timovi',
+  'LBL_TEAM_ID' => 'ID broj tima',
+  'LBL_ASSIGNED_TO_ID' => 'ID broj dodeljenog korisnika',
+  'LBL_ASSIGNED_TO_NAME' => 'Korisnik',
+  'LBL_CREATED' => 'Autor',
+  'LBL_CREATED_ID' => 'ID broj korisnika koji je kreirao',
+  'LBL_CREATED_USER' => 'Kreirao korisnik',
+  'LBL_DATE_ENTERED' => 'Datum kreiranja',
+  'LBL_DATE_MODIFIED' => 'Datum izmene',
+  'LBL_DELETED' => 'Obrisan',
+  'LBL_DESCRIPTION' => 'Opis',
+  'LBL_EDIT_BUTTON' => 'Izmeni',
+  'LBL_ID' => 'ID',
+  'LBL_LIST_NAME' => 'Ime',
+  'LBL_MODIFIED' => 'Promenio',
+  'LBL_MODIFIED_ID' => 'ID broj korisnika koji je promenio',
+  'LBL_MODIFIED_NAME' => 'Ime korisnika koji je promenio',
+  'LBL_MODIFIED_USER' => 'Promenio korisnik',
+  'LBL_NAME' => 'Ime',
+  'LBL_REMOVE' => 'Ukloni',
+  'LBL_LIST_FORM_TITLE' => 'Filters Lista',
+  'LBL_MODULE_NAME' => 'Filters',
+  'LBL_MODULE_TITLE' => 'Filters',
+  'LBL_HOMEPAGE_TITLE' => 'Moja Filters',
+  'LNK_NEW_RECORD' => 'Kreiraj Filters',
+  'LNK_LIST' => 'Pregled Filters',
+  'LNK_IMPORT_API_FILTERS' => 'Import Filters',
+  'LBL_SEARCH_FORM_TITLE' => 'Pretraga Filters',
+  'LBL_HISTORY_SUBPANEL_TITLE' => 'Pregled istorije',
+  'LBL_ACTIVITIES_SUBPANEL_TITLE' => 'Aktivnosti',
+  'LBL_API_FILTERS_SUBPANEL_TITLE' => 'Filters',
+  'LBL_NEW_FORM_TITLE' => 'Novo Filters',
+  'LBL_FILTER_DEFINITION' => 'Filter Definition',
+);

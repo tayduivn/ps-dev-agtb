@@ -1,7 +1,7 @@
-{{!
+<?php
 /*********************************************************************************
  * The contents of this file are subject to the SugarCRM Master Subscription
- * Agreement (""License"") which can be viewed at
+ * Agreement ("License") which can be viewed at
  * http://www.sugarcrm.com/crm/master-subscription-agreement
  * By installing or using this file, You have unconditionally agreed to the
  * terms and conditions of the License, and You may not use this file except in
@@ -15,7 +15,7 @@
  * remove SugarCRM copyrights from the source code or user interface.
  *
  * All copies of the Covered Code must include on each user interface screen:
- *  (i) the ""Powered by SugarCRM"" logo and
+ *  (i) the "Powered by SugarCRM" logo and
  *  (ii) the SugarCRM copyright notice
  * in the same form as they appear in the distribution.  See full license for
  * requirements.
@@ -25,9 +25,40 @@
  * governing these rights and limitations under the License.  Portions created
  * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
-}}
-<div class="input-append date" rel="datepicker">
-    <input type="text" class="datepicker" value="{{this.dateValue}}" rel="datepicker">
-    <span class="add-on"><i class="icon-calendar"></i></span>
-    <input type="text" class="ui-timepicker-input" value="{{this.timeValue}}" rel="timepicker" autocomplete="off">
-</div>
+
+$mod_strings = array (
+  'LBL_TEAM' => 'Tímy',
+  'LBL_TEAMS' => 'Tímy',
+  'LBL_TEAM_ID' => 'ID tímu',
+  'LBL_ASSIGNED_TO_ID' => 'Pridelené užívateľské ID',
+  'LBL_ASSIGNED_TO_NAME' => 'Pridelený k',
+  'LBL_CREATED' => 'Vytvoril podľa',
+  'LBL_CREATED_ID' => 'Vytvoril podľa ID',
+  'LBL_CREATED_USER' => 'Vytvorené používateľom',
+  'LBL_DATE_ENTERED' => 'Dátum vytvorenia',
+  'LBL_DATE_MODIFIED' => 'Dátum úpravy',
+  'LBL_DELETED' => 'Vymazaný',
+  'LBL_DESCRIPTION' => 'Popis',
+  'LBL_EDIT_BUTTON' => 'Upraviť',
+  'LBL_ID' => 'ID',
+  'LBL_LIST_NAME' => 'Názov',
+  'LBL_MODIFIED' => 'Zmenil',
+  'LBL_MODIFIED_ID' => 'Zmenil podľa ID',
+  'LBL_MODIFIED_NAME' => 'Zmenil podľa mena',
+  'LBL_MODIFIED_USER' => 'Zmenené používateľom',
+  'LBL_NAME' => 'Názov dokumentu',
+  'LBL_REMOVE' => 'Odstrániť',
+  'LBL_LIST_FORM_TITLE' => 'Filters Zoznam',
+  'LBL_MODULE_NAME' => 'Filters',
+  'LBL_MODULE_TITLE' => 'Filters',
+  'LBL_HOMEPAGE_TITLE' => 'Moje Filters',
+  'LNK_NEW_RECORD' => 'Vytvoriť Filters',
+  'LNK_LIST' => 'zobrazenie Filters',
+  'LNK_IMPORT_API_FILTERS' => 'Import Filters',
+  'LBL_SEARCH_FORM_TITLE' => 'Vyhľadávanie Filters',
+  'LBL_HISTORY_SUBPANEL_TITLE' => 'Zobraziť Históriu',
+  'LBL_ACTIVITIES_SUBPANEL_TITLE' => 'Aktivity',
+  'LBL_API_FILTERS_SUBPANEL_TITLE' => 'Filters',
+  'LBL_NEW_FORM_TITLE' => 'Nový Filters',
+  'LBL_FILTER_DEFINITION' => 'Filter Definition',
+);

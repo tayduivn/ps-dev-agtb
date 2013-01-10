@@ -1,7 +1,7 @@
-{{!
+<?php
 /*********************************************************************************
  * The contents of this file are subject to the SugarCRM Master Subscription
- * Agreement (""License"") which can be viewed at
+ * Agreement ("License") which can be viewed at
  * http://www.sugarcrm.com/crm/master-subscription-agreement
  * By installing or using this file, You have unconditionally agreed to the
  * terms and conditions of the License, and You may not use this file except in
@@ -15,7 +15,7 @@
  * remove SugarCRM copyrights from the source code or user interface.
  *
  * All copies of the Covered Code must include on each user interface screen:
- *  (i) the ""Powered by SugarCRM"" logo and
+ *  (i) the "Powered by SugarCRM" logo and
  *  (ii) the SugarCRM copyright notice
  * in the same form as they appear in the distribution.  See full license for
  * requirements.
@@ -25,9 +25,40 @@
  * governing these rights and limitations under the License.  Portions created
  * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
-}}
-<div class="input-append date" rel="datepicker">
-    <input type="text" class="datepicker" value="{{this.dateValue}}" rel="datepicker">
-    <span class="add-on"><i class="icon-calendar"></i></span>
-    <input type="text" class="ui-timepicker-input" value="{{this.timeValue}}" rel="timepicker" autocomplete="off">
-</div>
+
+$mod_strings = array (
+  'LBL_TEAM' => 'Darba grupa',
+  'LBL_TEAMS' => 'Darba grupas',
+  'LBL_TEAM_ID' => 'Darba grupas ID',
+  'LBL_ASSIGNED_TO_ID' => 'Piešķirts lietotājam ar Id',
+  'LBL_ASSIGNED_TO_NAME' => 'Piešķirts lietotājam',
+  'LBL_CREATED' => 'Izveidoja',
+  'LBL_CREATED_ID' => 'Izveidotāja ID',
+  'LBL_CREATED_USER' => 'Izveidoja',
+  'LBL_DATE_ENTERED' => 'Izveidots',
+  'LBL_DATE_MODIFIED' => 'Modificēts',
+  'LBL_DELETED' => 'Dzēsts',
+  'LBL_DESCRIPTION' => 'Apraksts',
+  'LBL_EDIT_BUTTON' => 'Rediģēt',
+  'LBL_ID' => 'ID',
+  'LBL_LIST_NAME' => 'Nosaukums',
+  'LBL_MODIFIED' => 'Modificēja',
+  'LBL_MODIFIED_ID' => 'Modificētāja ID',
+  'LBL_MODIFIED_NAME' => 'Modificēja',
+  'LBL_MODIFIED_USER' => 'Modificēja lietotājs',
+  'LBL_NAME' => 'Nosaukums',
+  'LBL_REMOVE' => 'Noņemt',
+  'LBL_LIST_FORM_TITLE' => 'Filters Saraksts',
+  'LBL_MODULE_NAME' => 'Filters',
+  'LBL_MODULE_TITLE' => 'Filters',
+  'LBL_HOMEPAGE_TITLE' => 'Mans Filters',
+  'LNK_NEW_RECORD' => 'Izveidot Filters',
+  'LNK_LIST' => 'Skats Filters',
+  'LNK_IMPORT_API_FILTERS' => 'Import Filters',
+  'LBL_SEARCH_FORM_TITLE' => 'Meklēt Filters',
+  'LBL_HISTORY_SUBPANEL_TITLE' => 'Aplūkot vēsturi',
+  'LBL_ACTIVITIES_SUBPANEL_TITLE' => 'Darbības',
+  'LBL_API_FILTERS_SUBPANEL_TITLE' => 'Filters',
+  'LBL_NEW_FORM_TITLE' => 'Jauns Filters',
+  'LBL_FILTER_DEFINITION' => 'Filter Definition',
+);
