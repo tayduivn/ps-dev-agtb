@@ -1,5 +1,5 @@
 {{#with def}}
-    <div class="btn-group">
+    <div class="btn-group {{css_class}}">
         <a href="#" class="btn btn-primary {{default.css_class}}" name="{{default.name}}">{{str default.label module}}</a>
         <a href="#" class="btn btn-primary dropdown-toggle" data-toggle="dropdown"><span class="caret"></span></a>
         <ul class="dropdown-menu">

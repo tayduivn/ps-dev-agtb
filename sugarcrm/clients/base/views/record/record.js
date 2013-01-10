@@ -9,6 +9,7 @@
         'click .more': 'toggleMoreLess',
         'click .less': 'toggleMoreLess'
     },
+    // button fields defined in view definition
     buttons: {},
     // button states
     STATE: {
@@ -34,14 +35,18 @@
             }
         }, this);
 
-        this.context.on('button:edit_button:click', this.editClicked, this);
-        this.context.on('button:save_button:click', this.saveClicked, this);
-        this.context.on('button:delete_button:click', this.deleteClicked, this);
-        this.context.on('button:duplicate_button:click', this.duplicateClicked, this);
+        this.delegateButtonEvents();
 
         if (this.createMode) {
             this.model.isNotEmpty = true;
         }
+    },
+
+    delegateButtonEvents: function() {
+        this.context.on('button:edit_button:click', this.editClicked, this);
+        this.context.on('button:save_button:click', this.saveClicked, this);
+        this.context.on('button:delete_button:click', this.deleteClicked, this);
+        this.context.on('button:duplicate_button:click', this.duplicateClicked, this);
     },
 
     _render: function() {
@@ -98,6 +103,7 @@
             this.toggleEdit(true);
         }
     },
+
     initButtons: function() {
         if(this.options.meta && this.options.meta.buttons) {
             this.buttons = {};
@@ -215,7 +221,7 @@
         _.each(this.fields, function(field) {
             // Exclude image picker, buttons, and button dropdowns
             // This is just a stop gap solution.
-            if ((field.type == "img") || (field.type === 'button') || (field.type === 'buttondropdown')) {
+            if ((field.type == "img") || (field.name && this.buttons[field.name])) {
                 return;
             }
 
