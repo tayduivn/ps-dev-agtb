@@ -45,6 +45,7 @@
 
         if(defaultId){
             self.node.select2("val", defaultId);
+            self.sanitizeFilter({added:{id:defaultId}});
         }
         self.node.on("change", function(e){
             self.sanitizeFilter(e);
@@ -81,6 +82,9 @@
             } else if(isInFilters){
                 self.node.select2("val", "");
                 self.node.select2("val", e.added.id);
+                self.$("a[rel=" + e.added.id + "]").on("click", function(){
+                    self.toggleOpen(self.filters.get(e.added.id));
+                });
             }
         }
     },
@@ -155,9 +159,8 @@
     /**
      * Fires an event for the Filter editing widget to pop up.
      */
-    toggleOpen: function() {
-        this.layout.trigger("filter:create:new");
-        this.$(".search_filter").trigger("liszt:close");
+    toggleOpen: function(filter) {
+        this.layout.trigger("filter:create:new", filter));
         return true;
     }
 })
