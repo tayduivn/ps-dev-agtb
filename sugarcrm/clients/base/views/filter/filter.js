@@ -11,8 +11,7 @@
         _.bindAll(this);
         app.view.View.prototype.initialize.call(this, opts);
 
-//        this.searchFilterId = _.uniqueId("search_filter");
-        this.searchFilterId = "search_filter";
+        this.searchFilterId = _.uniqueId("search_filter");
         this.getFilters();
         this.layout.off("filter:refresh");
         this.layout.on("filter:refresh", this.getFilters);
@@ -82,7 +81,7 @@
                 self.toggleOpen();
             } else if(isInFilters){
                 self.node.select2("val", "");
-                self.node.select2("val", e.added.id);
+                self.node.select2("val", [e.added.id]);
                 self.$("a[rel=" + e.added.id + "]").on("click", function(){
                     self.toggleOpen(self.filters.get(e.added.id));
                 });
@@ -97,7 +96,7 @@
      */
     isInFilters: function(filter){
         var self = this;
-        if(_.contains(_.pluck(self.filters, "id"), filter)){
+        if(!_.isUndefined(self.filters.get(filter))){
             return true;
         }
         return false;
