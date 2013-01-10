@@ -61,7 +61,7 @@
                     if(searchmore || empty) {
                         self.beforeSearchMore();
                         $(evt.currentTarget).val('');
-                        $(this).trigger("liszt:updated");
+                        self.setValue({id: '', value: ''});
                         self.view.layout.trigger("drawer:selection:fire", {
                             components: [{
                                 layout : 'selection-list',
