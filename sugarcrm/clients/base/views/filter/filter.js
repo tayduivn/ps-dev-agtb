@@ -149,7 +149,7 @@
      * Fires an event for the Filter editing widget to pop up.
      */
     toggleOpen: function() {
-        this.layout.trigger("filter:create:open:fire");
+        this.layout.trigger("filter:create:new");
         this.$(".search_filter").trigger("liszt:close");
         return true;
     }
