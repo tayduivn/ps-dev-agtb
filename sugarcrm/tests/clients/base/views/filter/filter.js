@@ -7,6 +7,9 @@ describe("Filter View", function() {
         view.model = new Backbone.Model();
         view.collection = new Backbone.Collection(view.model);
         view.collection.fields = _.keys(fixtures.metadata.modules.Cases.fields);
+        view.layout = {
+                trigger: function(){}
+        };
         app = SUGAR.App;
     });
 
@@ -19,13 +22,25 @@ describe("Filter View", function() {
     });
 
 
-    describe("filter", function() {
-        it("should return a set of search fields for a given module", function() {
-            var stub = sinon.stub(app.metadata, "getModule", function(){
-                return fixtures.metadata.modules.Cases
-            });
-            expect(view.getSearchFields()).toEqual([fixtures.metadata.modules.Cases.fields.name.vname]);
-            stub.restore();
+    describe("toggleOpen", function() {
+        it("should have triggered filter:create:open:fire", function() {
+            var triggerSpy = sinon.spy(view.layout, "trigger");
+            view.toggleOpen();
+            expect(triggerSpy).toHaveBeenCalledWith("filter:create:open:fire");
+        });
+    });
+    
+    describe("selectedByEnter", function() {
+        it("should set changedByEnter to true on enter (13)", function() {
+            view.selectedByEnter({keyCode:13});
+            expect(view.changedByEnter).toBeTruthy();
+        });
+    });
+    
+    describe("selectedByEnter", function() {
+        it("should set changedByEnter to false on other (12)", function() {
+            view.selectedByEnter({keyCode:12});
+            expect(view.changedByEnter).toBeFalsy();
         });
     });
 
