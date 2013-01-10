@@ -2,132 +2,133 @@
 --------------*/
 
 .bcard1 .icon-pencil {
-  position: absolute;
-  right: 0; top: 6px;
+    position: absolute;
+    right: 0; top: 6px;
 }
 
 .card2 .icon-pencil {
-  position: absolute;
-  left: -16px;
-  top: 0px;
-  padding: 0 2px !important;
-  .opacity(60);
+    position: absolute;
+    left: -16px;
+    top: 0px;
+    padding: 0 2px !important;
+    .opacity(60);
 }
 
 .inlined {
-  margin: 0;
-  position: absolute !important;
+    margin: 0;
+    position: absolute !important;
 }
 
 
 /* Inline Editable Fields */
 .inline-editable-wrap {
-  height:30px;
-  a.btn-mini.urleditable:not(:hover) {
+    height:30px;
+a.btn-mini.urleditable:not(:hover) {
     background:transparent;
     border-color:transparent;
     -webkit-box-shadow:none;
     -moz-box-shadow:none;
     box-shadow:none;
-  }
-  .inline-editable {
+}
+.inline-editable {
     .icon-pencil {
-      visibility:hidden;
+        visibility:hidden;
     }
-  }
-  form {
+}
+form {
     display:inline;
-      input {
+    input {
         width:210px;
-      }
-  }
-  .editable-trigger {
+    }
+}
+.editable-trigger {
     margin-right:6px;
-  }
-  &:hover .icon-pencil {
+}
+&:hover .icon-pencil {
     visibility:visible;
-  }
-  .editable-field {
+}
+.editable-field {
     &> a {
-      width:210px;
-      overflow:hidden;
-      display:inline-block;
-      text-overflow:ellipsis;
+        width:210px;
+        overflow:hidden;
+        display:inline-block;
+        text-overflow:ellipsis;
     }
     form input {
-      padding-top:0px;
-      top:2px;
-      left:1px;
-      height:20px;
+        padding-top:0px;
+        top:2px;
+        left:1px;
+        height:20px;
     }
-  }
 }
+    }
 
 .inline-error {
-  label,
-  .record-label {
-    font-weight: 500;
-    color:@errorText;
-  }
-  .help-block {
-    color:@errorText;
-    position:relative;
-  }
-  .add-on {
-    color:@errorText;
-    position:relative;
-    margin-left:-20px;
-    z-index:2;
-    top: 2px;
-  }
-  input {
-    border-color:@errorText;
-    color:@errorText;
-    &:focus {
-      z-index:3;
+    label,
+    .record-label {
+        font-weight: 500;
+        color:@errorText;
     }
-  }
+    .help-block {
+        color:@errorText;
+        position:relative;
+    }
+    .add-on {
+        color:@errorText;
+        position:relative;
+        margin-left:-20px;
+        z-index:2;
+        top: 2px;
+    }
+    input {
+        border-color:@errorText;
+        margin-bottom: 0px;
+        color:@errorText;
+        &:focus {
+            z-index:3;
+        }
+    }
 }
 
 /* Editable URLs */
 .urleditable-wrap {
-  height:30px;
-  a.btn-mini.urleditable:not(:hover) {
+    height:30px;
+a.btn-mini.urleditable:not(:hover) {
     background:transparent;
     border-color:transparent;
     -webkit-box-shadow:none;
     -moz-box-shadow:none;
     box-shadow:none;
-  }
-  .urleditable {
+}
+.urleditable {
     .icon-pencil {
-      visibility:hidden;
+        visibility:hidden;
     }
-  }
-  form {
+}
+form {
     display:inline;
-      input {
+    input {
         width:210px;
-      }
-  }
-  .editable-trigger {
+    }
+}
+.editable-trigger {
     margin-right:6px;
-  }
-  &:hover .icon-pencil {
+}
+&:hover .icon-pencil {
     visibility:visible;
-  }
-  .urleditable-field {
+}
+.urleditable-field {
     &> a {
-      width:210px;
-      overflow:hidden;
-      display:inline-block;
-      text-overflow:ellipsis;
+        width:210px;
+        overflow:hidden;
+        display:inline-block;
+        text-overflow:ellipsis;
     }
     form input {
-      padding-top:0px;
-      top:2px;
-      left:1px;
-      height:20px;
+        padding-top:0px;
+        top:2px;
+        left:1px;
+        height:20px;
     }
-  }
 }
+    }
