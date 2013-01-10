@@ -28,8 +28,8 @@ $filter->module_name = 'Accounts';
 $filter->default_filter = true;
 $filter->name = 'Assigned to Me';
 $filter->filter_definition = '{
-	“filter”: [
-		{ “assigned_user_id”: “$owner” }
+	"filter": [
+		{ "$owner": "" }
 	]
 }';
 $filter->save();
@@ -39,8 +39,8 @@ $filter->module_name = 'Accounts';
 $filter->default_filter = true;
 $filter->name = 'Recently Viewed';
 $filter->filter_definition = '{
-	“filter”: [
-		{ “date_modified”: {"$fromDays" : "-7"} }
+	"filter": [
+		{ "date_modified": {"$tracker" : "-7 DAY"} }
 	]
 }';
 $filter->save();
@@ -50,8 +50,8 @@ $filter->module_name = 'Accounts';
 $filter->default_filter = true;
 $filter->name = 'New';
 $filter->filter_definition = '{
-	“filter”: [
-		{ “date_created”: {"$fromDay" : "-7"} }
+	"filter": [
+		{ "date_entered": {"$fromDays" : "-7"} }
 	]
 }';
 $filter->save();

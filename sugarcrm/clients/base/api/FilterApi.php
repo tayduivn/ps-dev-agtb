@@ -236,8 +236,16 @@ class FilterApi extends SugarApi {
                             case '$gte':
                                 $where->gte($field,$value);
                                 break;
-                            case '$fromDay':
-                                $where->addRaw("DATE_ADD ({$field}, INTERVAL {$value} DAY)");
+                            case '$fromDays':
+                                $where->addRaw("{$field} >= DATE_ADD(NOW(), INTERVAL {$value} DAY)");
+                                break;
+                            case '$tracker':
+                                $where->addRaw("{$q->from->getTableName()}.id in
+                                (select item_id from tracker
+                                    where module_name='{$q->from->module_name}'
+                                    and user_id='{$GLOBALS['current_user']->id}'
+                                    and DATE_ADD({$field}, INTERVAL {$value})
+                                )");
                                 break;
                             default:
                                 throw new SugarApiExceptionInvalidParameter("Did not recognize the operand: ".$op);
