@@ -43,7 +43,7 @@
         'currency': ['is equal to', 'is greater than', 'is greater than or equal to', 'is less than', 'is less than or equal to'],
         'int': ['is equal to', 'is greater than', 'is greater than or equal to', 'is less than', 'is less than or equal to'],
         'double': ['is equal to', 'is greater than', 'is greater than or equal to', 'is less than', 'is less than or equal to'],
-        'datetime': ['between'],
+        'datetime': ['on', 'before', 'on or before', 'after', 'on or after'],
         'base': ['fall through to this case']
     },
 
@@ -60,7 +60,11 @@
         'is greater than or equal to': 'gte',
         'is less than': 'lt',
         'is less than or equal to': 'lte',
-        'between': 'between'
+        'on': 'equals',
+        'before': 'lt',
+        'on or before': 'lte',
+        'after': 'gt',
+        'on or after': 'gte'
     },
 
     initialize: function(opts) {
