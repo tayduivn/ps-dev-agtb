@@ -16,12 +16,15 @@
         this.template = app.template.get("l.filterpanel");
         this.renderHtml();
 
-        this.off("filter:create:open:fire");
-        this.off("filter:create:close:fire");
-        this.on("filter:create:open:fire", function() {
+        this.off("filter:create:new");
+        this.off("filter:create:close");
+        this.on("filter:create:new", function(filter) {
             this.$('.filter-options').removeClass('hide');
+            if(!_.isUndefined(filter)) {
+                this.trigger('filter:populate', filter);
+            }
         });
-        this.on("filter:create:close:fire", function() {
+        this.on("filter:create:close", function() {
             this.$('.filter-options').addClass('hide');
         });
 

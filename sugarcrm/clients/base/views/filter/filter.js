@@ -1,11 +1,10 @@
-({  
+({
     /**
      * Template fragment for select options
      */
     optionTemplate: Handlebars.compile("<option value='{{val}}' {{#if selected}}defaultSelected{{/if}}>{{val}}</option>"),
 
     events: {
-        'click .filter-new': 'toggleOpen'
     },
 
     initialize: function(opts) {
@@ -14,8 +13,9 @@
 
 //        this.searchFilterId = _.uniqueId("search_filter");
         this.searchFilterId = "search_filter";
-        this.filters = [];
         this.getFilters();
+        this.layout.off("filter:refresh");
+        this.layout.on("filter:refresh", this.getFilters);
     },
 
     render: function() {
@@ -23,18 +23,18 @@
             data = [],
             defaultId = "";
 
-        app.view.View.prototype.render.call(this);
-        self.node = self.$("#" + self.searchFilterId);
-
-        _.each(self.filters, function(item){
-            data.push({id:item.id, text:item.name});
-            if(item.default){
-                defaultId = item.id;
+        _.each(self.filters.models, function(model){
+            data.push({id:model.id, text:model.get("name")});
+            if(model.get("default_filter")){
+                defaultId = model.id;
             }
         }, this);
 
 		data.push({id:-1, text:"Create New"});
 
+        app.view.View.prototype.render.call(this);
+
+        self.node = self.$("#" + self.searchFilterId);
         self.node.select2({
             tags:data,
             multiple:true,
@@ -50,11 +50,12 @@
         self.node.on("change", function(e){
             self.sanitizeFilter(e);
         });
+
     },
 
     formatSelection: function(item) {
         var self = this;
-        
+
         if (item.id === item.text) {
             return item.text;
         } else {
@@ -67,7 +68,7 @@
             rtn += '<span class="'+ (item.text.indexOf('Create New Filter')===-1?'icon-ok':'icon-plus') +'"></span>';
         return rtn;
     },
-    
+
     /**
      * Contains business logic to control the behavior of new filters being added.
      */
@@ -75,7 +76,7 @@
         if(!_.isUndefined(e.added) && !_.isUndefined(e.added.id)){
             var self = this,
             isInFilters = self.isInFilters(e.added.id);
-        
+
             if((e.added.id == -1) && !isInFilters){
                 self.node.select2("val", _.without(self.node.select2("val"), e.added.id.toString()));
                 self.toggleOpen();
@@ -88,10 +89,10 @@
             }
         }
     },
-    
+
     /**
      * Utility function to determine if the typed in filter is in the standard filter array
-     * 
+     *
      * @return boolean True if part of the set, false if not.
      */
     isInFilters: function(filter){
@@ -107,60 +108,34 @@
      */
     getFilters: function() {
         var self = this;
-       
-        /*console.log(app.api.buildURL("Filters"));
-        app.api.call("read", "", app.api.buildURL("Filters"), function(data){
-            console.log("Here");
-            self.filters = data;
-        });
-        console.log(self.filters);
-        */
-        // Temperorarily mock filter data
-        var filters = [
-            {
-                id: 1,
-                name: "My Filter",
-                filter_definition: {
-                    filter: [
-                        {
-                            $or: [
-                                {name: "Nelson Inc"},
-                                {name: "Nelson LLC"}
-                            ]
-                        },
-                        {$owner: "_this"}
-                    ],
-                    max_num: 30
-                }
-            },
-            {
-                id: 2,
-                name: "My Little Pony",
-                filter_definition: {
-                    filter: [
 
-                        {name: "Nelson Inc"}
-                    ]
-                },
-                default: true
-            },
-            {
-                id:3,
-                name: "My Favorites",
-                filter_definition: {
-                    name: {$starts: "Nelson"}
-                }
-            }
-        ];
-
-        this.filters = filters;
+        this.filters = app.data.createBeanCollection('Filters');
+        this.filters.fetch({success: function() {
+            self.render();
+        }});
     },
 
     /**
      * Fires an event for the Filter editing widget to pop up.
      */
     toggleOpen: function(filter) {
-        this.layout.trigger("filter:create:new", filter));
+        this.layout.trigger("filter:create:new", filter);
+        var valueInputs = this.layout.$el.find(".filter-value input");
+
+        // Focus when the default filter is the only row present
+        if( valueInputs.length && valueInputs.length < 3 ) {
+            $(valueInputs[1]).focus();
+        }
         return true;
+    },
+
+    filterDataSet: function(activeFilter) {
+        var ctx = app.controller.context,
+            url = app.api.buildURL(this.module, "filter/" + activeFilter.id);
+        app.api.call("read", url, null, {
+            success: function(data) {
+                ctx.get('collection').reset(data);
+            }
+        });
     }
 })

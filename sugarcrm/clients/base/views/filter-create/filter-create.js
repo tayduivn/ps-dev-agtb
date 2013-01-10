@@ -9,7 +9,7 @@
         'change .filter-header': 'editName',
         'change .field_name': 'chooseField',
         'change .operator': 'chooseOperator',
-        'change .filter-value': 'modifyValue'
+        'blur .filter-value': 'modifyValue'
     },
 
     rowTemplate: Handlebars.compile('<article class="filter-body newRow">' +
@@ -26,9 +26,9 @@
 '         <select name="operator" class="operator chzn-select chzn-inherit-width" data-placeholder="Select operator...">' +
 '         </select>' +
 '       </div>' +
-'       <div class="filter-value hide controls span4">' +
+'       <div class="filter-value hide controls span5">' +
 '       </div>' +
-'       <div class="filter-actions span2">' +
+'       <div class="filter-actions span1">' +
 '         <a class="removeme btn btn-invisible btn-dark"><i class="icon-minus"></i></a>' +
 '         <a class="updateme btn btn-invisible hide btn-dark"><i class="icon-refresh"></i></a>' +
 '         <a class="addme btn btn-invisible hide btn-dark"><i class="icon-plus"></i></a>' +
@@ -86,28 +86,54 @@
             // Double-bang intended. Coerces values like 'undefined' to a bool.
             return !!self.filterOperatorMap[el.type];
         });
+
+        this.layout.off("filter:populate");
+        this.layout.on("filter:populate", function(filter) {
+            self.populateFilter(filter);
+        });
     },
 
     render: function() {
         app.view.View.prototype.render.call(this);
         this.addRow();
+
+        // Render the filter widget by default with "name" "contains" for fast searching
+        this.$("select.field_name option[value='name']").attr("selected", true);
+        this.$(".field_name").trigger("liszt:updated").change();
+        this.$("select.operator option[value='starts']").attr("selected", true);
+        this.$(".operator").trigger("liszt:updated").change();
     },
 
     addRow: function(e) {
         var stuff = this.rowTemplate(this),
             target;
+        this.$('.newRow').removeClass('newRow').find('.addme').addClass('hide');
+
         if(_.isUndefined(e)) {
             target = this.$(".filter-options");
         } else {
-            var $parent = this.$(e.currentTarget).parents('.filter-body'), old;
             target = this.$(e.currentTarget).parents('.filter-options');
-            if($parent.hasClass('newRow')) {
-                $parent.removeClass('newRow');
-                $parent.find('.addme').addClass('hide');
-            }
         }
         target.append(stuff);
         this.$(".newRow select.field_name").chosen();
+    },
+
+    populateFilter: function(f) {
+        var self = this;
+        this.$(".filter-header input").val(f.get("name"));
+        _.each(this._applyJSON(f.get("filter_definition")), function(row) {
+            self.populateRow(row);
+        });
+    },
+
+    populateRow: function(r) {
+        this.addRow();
+        var $row = this.$('.newRow');
+        $row.data('value', r.value);
+        $row.find("select.field_name option[value='" + r.field + "']").attr("selected", true);
+        $row.find(".field_name").trigger("liszt:updated").change();
+        $row.find("select.operator option[value='" + r.op + "']").attr("selected", true);
+        $row.find(".operator").trigger("liszt:updated").change();
     },
 
     editName: function(e) {
@@ -163,22 +189,30 @@
             if(fieldType == 'datetime') {
                 fieldType = 'datetimecombo';
             }
+
+            var model = app.data.createBean(this.title);
+            model.set(fieldName, $parent.data('value') || '');
             var obj = {
                 view: this,
                 viewName: 'edit',
+                model: model,
                 def: {
+                    name: fieldName,
                     type: fieldType
                 }
             };
             if(fieldType == 'enum') {
                 obj.def.options = fieldName + '_dom';
             }
+
             var field = app.view.createField(obj);
 
             $parent.find('.filter-value').removeClass('hide').find('input, select').remove();
-            $(field.getPlaceholder().string).appendTo($parent.find('.filter-value'));
+            var fieldContainer = $(field.getPlaceholder().string).appendTo($parent.find('.filter-value'));
             this._renderField(field);
             $parent.data('value_field', field);
+            fieldContainer.find('input, select').addClass('inherit-width');
+            model.change();
         }
     },
 
@@ -191,6 +225,7 @@
         _.each($el.find(fieldTag), function(i) {
             if($(i).val() !== '') modified = true;
         });
+        console.log(kls, modified);
         $parent.find(kls).toggleClass('hide', !modified);
     },
 
@@ -201,7 +236,7 @@
     },
 
     triggerClose: function() {
-        this.layout.trigger("filter:create:close:fire");
+        this.layout.trigger("filter:create:close");
     },
 
     notSaved: function() {
@@ -220,11 +255,27 @@
                 filter_definition: this._getJSON(),
                 name: val,
                 default_filter: false,
-                module_name: this.title
+                module_name: this.title,
+                editable: true
             };
             var filter = app.data.createBean('Filters', obj);
-            filter.save();
+
+            if(filter.get('editable')) {
+                filter.save({success: this.setLastUsed});
+            } else {
+                this.setLastUsed(filter);
+            }
+            this.triggerClose();
         }
+    },
+
+    setLastUsed: function(model) {
+        var url = app.api.buildURL('Filters/' + this.title + '/used', "update", model);
+        app.api.call("update", url, null, {
+            success: function() {
+                this.layout.trigger("filter:refresh");
+            }
+        });
     },
 
     removeAll: function() {
@@ -249,7 +300,6 @@
             filter: [{}]
         }, default_op = "and";
         obj.filter[0]["$"+default_op] = [];
-
         var fields = {};
         _.each(this.$el.find('.filter-body'), function(el) {
             var $el = $(el);
@@ -259,10 +309,16 @@
                 if(_.isUndefined(fields[field_name])) {
                     fields[field_name] = [];
                 }
-                var op = $el.find("select.operator").val(),
-                    fieldTag = $el.data('value_field').fieldTag,
+                var field = $el.data('value_field'),
+                    op = $el.find("select.operator").val(),
+                    fieldTag = field.fieldTag,
+                    str, o = {};
+                if(_.has(field, 'val')) {
+                    str = field.val();
+                } else {
                     str = $el.find(".filter-value " + fieldTag).first().val();
-                var o = {};
+                }
+
                 o[op] = str;
                 fields[field_name].push(o);
             }
@@ -275,6 +331,29 @@
             foo[k] = v;
             obj.filter[0]["$"+default_op].push(foo);
         });
+
         return obj;
+    },
+
+    _applyJSON: function(obj) {
+        // TODO: Make this usable for OR filters too.
+        var stuff = obj.filter[0]["$and"], ret = [];
+        _.each(stuff, function(el) {
+            _.each(el, function(val, field_name) {
+                if(!_.isArray(val)) {
+                    val = [val];
+                }
+                _.each(val, function(o) {
+                    _.each(o, function(value, operator) {
+                        ret.push({
+                            field: field_name,
+                            op: operator,
+                            value: value
+                        });
+                    });
+                });
+            });
+        });
+        return ret;
     }
 })

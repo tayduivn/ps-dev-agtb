@@ -43,7 +43,7 @@ class SugarACLFilters extends SugarACLStrategy
         $bean = self::loadBean($module, $context);
 
         // non-admin users cannot edit a default filter
-        if(!is_admin($current_user) && isset($bean) && $bean instanceof SugarBean && $bean->default_filter == 1 && ($view == 'edit' || $view == 'massupdate' || $view == 'delete')) {
+        if(!is_admin($current_user) && isset($bean) && $bean instanceof SugarBean && isset($bean->default_filter) && $bean->default_filter == 1 && ($view == 'edit' || $view == 'massupdate' || $view == 'delete')) {
             return false;
         }
         else {
