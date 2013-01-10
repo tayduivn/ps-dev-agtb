@@ -1,4 +1,4 @@
-({
+({  
     /**
      * Template fragment for select options
      */
@@ -43,21 +43,48 @@
         });
     },
     
+    /**
+     * Contains business logic to control the behavior of new filters being added.
+     */
     sanitizeFilter: function(e){
-        var self = this;
-        if(e.added.id == -1){
+        var self = this,
+            isInFilters = self.isInFilters(e.added.id);
+        
+        if((e.added.id == -1) && !isInFilters){
             self.node.select2("val", _.without(self.node.select2("val"), e.added.id.toString()));
             self.toggleOpen();
-        } else if(_.contains(_.pluck(self.filters, "id"), e.added.id)){
+        } else if(isInFilters){
             self.node.select2("val", "");
             self.node.select2("val", e.added.id);
         }
+    },
+    
+    /**
+     * Utility function to determine if the typed in filter is in the standard filter array
+     * 
+     * @return boolean True if part of the set, false if not.
+     */
+    isInFilters: function(filter){
+        var self = this;
+        if(_.contains(_.pluck(self.filters, "id"), filter)){
+            return true;
+        }
+        return false;
     },
 
     /**
      * Retrieve filters from the server.
      */
     getFilters: function() {
+        var self = this;
+       
+        /*console.log(app.api.buildURL("Filters"));
+        app.api.call("read", "", app.api.buildURL("Filters"), function(data){
+            console.log("Here");
+            self.filters = data;
+        });
+        console.log(self.filters);
+        */
         // Temperorarily mock filter data
         var filters = [
             {
