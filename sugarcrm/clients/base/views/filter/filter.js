@@ -47,9 +47,11 @@
         this.$('.chzn-results').find('li').after("<span class='icon-ok' />");
     },
 
-    pill: function(id, html, index) {
-        console.log(arguments);
-        return '<li class="search-choice search-choice-option" id="search_filter_' + index + '_choice"><span>Filter</span><a>' + html + '</a></li>';
+    pill: function(id, item, type) {
+        if(typeof type==='undefined') {
+            type = item.classes.indexOf('filter-disabled')!==-1 ? 'Module' : 'Filter';
+        }
+        return item.classes.indexOf('filter-new')===-1 ? '<li class="search-choice search-choice-option '+ item.classes +'" id="'+ id +'"><span>'+ type +'</span><a href="javascript:void(0)" rel="'+ item.array_index +'">'+ item.html +'</a></li>' : '';
     },
 
     toggleOpen: function() {
