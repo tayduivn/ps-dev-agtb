@@ -91,7 +91,7 @@
     render: function() {
         app.view.View.prototype.render.call(this);
         this.addRow();
-        
+
         // Render the filter widget by default with "name" "contains" for fast searching
         this.$("select.field_name option[value='name']").attr("selected", true);
         this.$(".field_name").trigger("liszt:updated").change();
@@ -102,18 +102,33 @@
     addRow: function(e) {
         var stuff = this.rowTemplate(this),
             target;
+        this.$('.newRow').removeClass('newRow').find('.addme').addClass('hide');
+
         if(_.isUndefined(e)) {
             target = this.$(".filter-options");
         } else {
-            var $parent = this.$(e.currentTarget).parents('.filter-body'), old;
             target = this.$(e.currentTarget).parents('.filter-options');
-            if($parent.hasClass('newRow')) {
-                $parent.removeClass('newRow');
-                $parent.find('.addme').addClass('hide');
-            }
         }
         target.append(stuff);
         this.$(".newRow select.field_name").chosen();
+    },
+
+    populateFilter: function(f) {
+        var self = this;
+        this.$(".filter-header input").val(f.name);
+        _.each(this._applyJSON(f.filter_definition), function(row) {
+            self.populateRow(row);
+        });
+    },
+
+    populateRow: function(r) {
+        this.addRow();
+        var $row = this.$('.newRow');
+        $row.data('value', r.value);
+        $row.find("select.field_name option[value='" + r.field + "']").attr("selected", true);
+        $row.find(".field_name").trigger("liszt:updated").change();
+        $row.find("select.operator option[value='" + r.op + "']").attr("selected", true);
+        $row.find(".operator").trigger("liszt:updated").change();
     },
 
     editName: function(e) {
@@ -169,16 +184,22 @@
             if(fieldType == 'datetime') {
                 fieldType = 'datetimecombo';
             }
+
+            var model = app.data.createBean(this.title);
+            model.set(fieldName, $parent.data('value') || '');
             var obj = {
                 view: this,
                 viewName: 'edit',
+                model: model,
                 def: {
+                    name: fieldName,
                     type: fieldType
                 }
             };
             if(fieldType == 'enum') {
                 obj.def.options = fieldName + '_dom';
             }
+
             var field = app.view.createField(obj);
 
             $parent.find('.filter-value').removeClass('hide').find('input, select').remove();
@@ -186,6 +207,7 @@
             this._renderField(field);
             $parent.data('value_field', field);
             fieldContainer.find('input, select').addClass('inherit-width');
+            model.change();
         }
     },
 
@@ -265,10 +287,15 @@
                 if(_.isUndefined(fields[field_name])) {
                     fields[field_name] = [];
                 }
-                var op = $el.find("select.operator").val(),
-                    fieldTag = $el.data('value_field').fieldTag,
-                    str = $el.data('value_field').val() || $el.find(".filter-value " + fieldTag).first().val(),
-                    o = {};
+                var field = $el.data('value_field'),
+                    op = $el.find("select.operator").val(),
+                    fieldTag = field.fieldTag,
+                    str, o = {};
+                if(_.has(field, 'val')) {
+                    str = field.val();
+                } else {
+                    str = $el.find(".filter-value " + fieldTag).first().val();
+                }
 
                 o[op] = str;
                 fields[field_name].push(o);
@@ -284,5 +311,27 @@
         });
 
         return obj;
+    },
+
+    _applyJSON: function(obj) {
+        // TODO: Make this usable for OR filters too.
+        var stuff = obj.filter[0]["$and"], ret = [];
+        _.each(stuff, function(el) {
+            _.each(el, function(val, field_name) {
+                if(!_.isArray(val)) {
+                    val = [val];
+                }
+                _.each(val, function(o) {
+                    _.each(o, function(value, operator) {
+                        ret.push({
+                            field: field_name,
+                            op: operator,
+                            value: value
+                        });
+                    });
+                });
+            });
+        });
+        return ret;
     }
 })

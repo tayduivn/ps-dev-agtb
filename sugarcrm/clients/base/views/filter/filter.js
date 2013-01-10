@@ -58,7 +58,7 @@
         this.layout.trigger("filter:create:open:fire");
         this.$(".search_filter").trigger("liszt:close");
         var valueInputs = this.layout.$el.find(".filter-value input");
-        
+
         // Focus when the default filter is the only row present
         if( valueInputs.length && valueInputs.length < 3 ) {
             $(valueInputs[1]).focus();
