@@ -182,8 +182,9 @@
         var $el = this.$(e.currentTarget),
             $parent = $el.parents('.filter-body'),
             modified = false,
+            fieldTag = $parent.data('value_field').fieldTag,
             kls = $parent.hasClass('newRow') ? '.addme' : '.updateme';
-        _.each($el.find('input'), function(i) {
+        _.each($el.find(fieldTag), function(i) {
             if($(i).val() !== '') modified = true;
         });
         $parent.find(kls).toggleClass('hide', !modified);
@@ -244,7 +245,8 @@
                     fields[field_name] = [];
                 }
                 var op = $el.find("select.operator").val(),
-                    str = $el.find(".filter-value input").first().val();
+                    fieldTag = $el.data('value_field').fieldTag,
+                    str = $el.find(".filter-value " + fieldTag).first().val();
                 var o = {};
                 o[op] = str;
                 fields[field_name].push(o);
