@@ -233,7 +233,6 @@
             filter: [{}]
         }, default_op = "and";
         obj.filter[0]["$"+default_op] = [];
-
         var fields = {};
         _.each(this.$el.find('.filter-body'), function(el) {
             var $el = $(el);
@@ -244,8 +243,9 @@
                     fields[field_name] = [];
                 }
                 var op = $el.find("select.operator").val(),
-                    str = $el.find(".filter-value input").first().val();
-                var o = {};
+                    fieldTag = $el.data('value_field').fieldTag,
+                    str = $el.data('value_field').val() || $el.find(".filter-value " + fieldTag).first().val(),
+                    o = {};
                 o[op] = str;
                 fields[field_name].push(o);
             }
@@ -258,6 +258,7 @@
             foo[k] = v;
             obj.filter[0]["$"+default_op].push(foo);
         });
+
         return obj;
     }
 })
