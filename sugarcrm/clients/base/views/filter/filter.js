@@ -5,7 +5,6 @@
     optionTemplate: Handlebars.compile("<option value='{{val}}' {{#if selected}}defaultSelected{{/if}}>{{val}}</option>"),
 
     events: {
-        'click .filter-new': 'toggleOpen'
     },
 
     initialize: function(opts) {
@@ -15,6 +14,8 @@
 //        this.searchFilterId = _.uniqueId("search_filter");
         this.searchFilterId = "search_filter";
         this.getFilters();
+        this.layout.off("filter:refresh");
+        this.layout.on("filter:refresh", this.getFilters);
     },
 
     render: function() {
@@ -53,7 +54,7 @@
 
     formatSelection: function(item) {
         var self = this;
-        
+
         if (item.id === item.text) {
             return item.text;
         } else {
@@ -126,9 +127,12 @@
     },
 
     filterDataSet: function(activeFilter) {
-        var ctx = app.controller.context;
-        activeFilter.get("filter_definition");
-        var url = app.api.buildURL(this.module, "filter");
-        app.api.call("read", url);
+        var ctx = app.controller.context,
+            url = app.api.buildURL(this.module, "filter/" + activeFilter.id);
+        app.api.call("read", url, null, {
+            success: function(data) {
+                ctx.get('collection').reset(data);
+            }
+        });
     }
 })

@@ -18,8 +18,11 @@
 
         this.off("filter:create:new");
         this.off("filter:create:close");
-        this.on("filter:create:new", function() {
+        this.on("filter:create:new", function(filter) {
             this.$('.filter-options').removeClass('hide');
+            if(!_.isUndefined(filter)) {
+                this.trigger('filter:populate', filter);
+            }
         });
         this.on("filter:create:close", function() {
             this.$('.filter-options').addClass('hide');

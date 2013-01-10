@@ -86,6 +86,11 @@
             // Double-bang intended. Coerces values like 'undefined' to a bool.
             return !!self.filterOperatorMap[el.type];
         });
+
+        this.layout.off("filter:populate");
+        this.layout.on("filter:populate", function(filter) {
+            self.populateFilter(filter);
+        });
     },
 
     render: function() {
@@ -115,8 +120,8 @@
 
     populateFilter: function(f) {
         var self = this;
-        this.$(".filter-header input").val(f.name);
-        _.each(this._applyJSON(f.filter_definition), function(row) {
+        this.$(".filter-header input").val(f.get("name"));
+        _.each(this._applyJSON(f.get("filter_definition")), function(row) {
             self.populateRow(row);
         });
     },
@@ -268,7 +273,7 @@
         var url = app.api.buildURL('Filters/' + this.title + '/used', "update", model);
         app.api.call("update", url, null, {
             success: function() {
-                // Fire event.
+                this.layout.trigger("filter:refresh");
             }
         });
     },
