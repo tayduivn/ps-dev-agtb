@@ -113,7 +113,8 @@ class PreviouslyUsedFiltersApi extends SugarApi {
         $used_filters = $user_preference->getPreference($args['module_name'], 'filters');
 
         // if the record exists unset it
-        if($key = array_search($args['record'], $used_filters)) {
+        $key = array_search($args['record'], $used_filters);
+        if($key !== false) {
             unset($used_filters[$key]);
         }
         $user_preference->setPreference($args['module_name'], $used_filters, 'filters');
