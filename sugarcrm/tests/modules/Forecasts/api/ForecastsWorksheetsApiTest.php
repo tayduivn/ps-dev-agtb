@@ -176,17 +176,18 @@ class ForecastsWorksheetsApiTest extends RestTestBase
         $GLOBALS["current_user"] = $tempUser;
         $this->authToken = "";
 
-        return $response['reply'];
+        return $response['reply'][0];
     }
 
     /**
      * @group forecastapi
      * @group forecasts
-     *
      * @depends testForecastWorksheets
      *
+     * @param array $worksheet  The worksheet we want to workwith though out the test
+     * @return array
      */
-    public function testForecastWorksheetSaveDraft($worksheets)
+    public function testForecastWorksheetSaveDraft($worksheet)
     {
         $oldUser = $GLOBALS["current_user"];
 
@@ -195,20 +196,20 @@ class ForecastsWorksheetsApiTest extends RestTestBase
         $GLOBALS["current_user"] = $this->_user;
         $this->authToken = "";
 
-        $best_case = $worksheets[0]["best_case"] + 100;
-        $probability = $worksheets[0]["probability"] + 10;
-        $id = $worksheets[0]["id"];
+        $best_case = $worksheet["best_case"] + 100;
+        $probability = $worksheet["probability"] + 10;
+        $id = $worksheet["id"];
 
         $postData = array(
             "best_case" => $best_case,
-            "likely_case" => $worksheets[0]["likely_case"],
+            "likely_case" => $worksheet["likely_case"],
             "probability" => $probability,
-            "commit_stage" => $worksheets[0]["commit_stage"],
+            "commit_stage" => $worksheet["commit_stage"],
             "id" => $id,
-            "worksheet_id" => $worksheets[0]["worksheet_id"],
-            "product_id" => $worksheets[0]["product_id"],
+            "worksheet_id" => $worksheet["worksheet_id"],
+            "product_id" => $worksheet["product_id"],
             "timeperiod_id" => self::$timeperiod->id,
-            "assigned_user_id" => $worksheets[0]["assigned_user_id"],
+            "assigned_user_id" => $worksheet["assigned_user_id"],
             "draft" => 1
         );
 
@@ -219,19 +220,21 @@ class ForecastsWorksheetsApiTest extends RestTestBase
         $this->assertEquals($best_case, $response['reply']['best_case'], "Put Response: " . var_export($response['reply'], true) . "Post Data: " . var_export($postData, true));
 
         // make sure the worksheet was not modified via the date_modified from the worksheet
-        $this->assertEquals($worksheets[0]['w_date_modified'], $response['reply']['w_date_modified']);
+        $this->assertEquals($worksheet['w_date_modified'], $response['reply']['w_date_modified']);
 
         // set the current user to original user
         $this->_user = $oldUser;
         $GLOBALS["current_user"] = $oldUser;
         $this->authToken = "";
 
-        return $worksheets[0];
+        return $worksheet;
 
     }
 
     /**
      * @depends testForecastWorksheetSaveDraft
+     * @group forecastapi
+     * @group forecasts
      * @param array $worksheet
      * @return array
      */
@@ -268,6 +271,8 @@ class ForecastsWorksheetsApiTest extends RestTestBase
 
     /**
      * @depends testForecastWorksheetManagerDoesNotSeeDraftDataForChangedOpportunity
+     * @group forecastapi
+     * @group forecasts
      * @param array $worksheet
      */
     public function testForecastWorksheetRepCommit($worksheet)
@@ -316,6 +321,8 @@ class ForecastsWorksheetsApiTest extends RestTestBase
 
     /**
      * @depends testForecastWorksheetRepCommit
+     * @group forecastapi
+     * @group forecasts
      * @param $worksheet
      */
     public function testForecastWorksheetManagerSeesCommittedData($worksheet)
