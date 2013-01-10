@@ -208,8 +208,19 @@
     },
 
     save: function() {
-        this.$(".save_button").addClass("disabled");
-        this.$(".delete_button").removeClass("hide");
+        var val = this.$(".filter-header input").val();
+        if(val) {
+            this.$(".save_button").addClass("disabled");
+            this.$(".delete_button").removeClass("hide");
+            var obj = {
+                filter_definition: this._getJSON(),
+                name: val,
+                default_filter: false,
+                module_name: this.title
+            };
+            var filter = app.data.createBean('Filters', obj);
+            filter.save();
+        }
     },
 
     removeAll: function() {
