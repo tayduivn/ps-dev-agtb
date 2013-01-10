@@ -167,7 +167,7 @@
                 }
             };
             if(fieldType == 'enum') {
-                obj.def.options = app.lang.getAppListStrings(fieldName + '_dom');
+                obj.def.options = fieldName + '_dom';
             }
             var field = app.view.createField(obj);
 
