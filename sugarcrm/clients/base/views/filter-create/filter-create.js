@@ -9,7 +9,7 @@
         'change .filter-header': 'editName',
         'change .field_name': 'chooseField',
         'change .operator': 'chooseOperator',
-        'change .filter-value': 'modifyValue'
+        'blur .filter-value': 'modifyValue'
     },
 
     rowTemplate: Handlebars.compile('<article class="filter-body newRow">' +
@@ -220,6 +220,7 @@
         _.each($el.find(fieldTag), function(i) {
             if($(i).val() !== '') modified = true;
         });
+        console.log(kls, modified);
         $parent.find(kls).toggleClass('hide', !modified);
     },
 
@@ -230,7 +231,7 @@
     },
 
     triggerClose: function() {
-        this.layout.trigger("filter:create:close:fire");
+        this.layout.trigger("filter:create:close");
     },
 
     notSaved: function() {
@@ -259,6 +260,7 @@
             } else {
                 this.setLastUsed(filter);
             }
+            this.triggerClose();
         }
     },
 
