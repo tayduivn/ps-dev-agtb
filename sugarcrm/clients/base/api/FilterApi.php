@@ -41,6 +41,14 @@ class FilterApi extends SugarApi {
                 'shortHelp' => 'Filter records from a single module',
                 'longHelp' => 'include/api/help/filterModulePost.html',
             ),
+            'filterModuleById' => array(
+                'reqType' => 'GET',
+                'path' => array('<module>','filter', '?'),
+                'pathVars' => array('module','', 'record'),
+                'method' => 'filterById',
+                'shortHelp' => 'Filter records from a single module by a predefined filter',
+                'longHelp' => 'include/api/help/filterModulePost.html',
+            ),
 
         );
     }
@@ -52,6 +60,13 @@ class FilterApi extends SugarApi {
     public function __construct() {
         global $current_user;
         $this->current_user = $current_user;
+    }
+
+    public function filterById(ServiceBase $api, array $args) {
+        $filter = BeanFactory::getBean('Filters', $args['record']);
+        $args['filter'] = $filter->filter_definition;
+        unset($args['record']);
+        return $this->filterList($api, $args);
     }
 
     function parseOptions(ServiceBase $api, array $args, SugarBean $seed)
