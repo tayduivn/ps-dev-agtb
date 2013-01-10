@@ -5,9 +5,7 @@
     optionTemplate: Handlebars.compile("<option value='{{val}}' {{#if selected}}defaultSelected{{/if}}>{{val}}</option>"),
 
     events: {
-        'click .filter-new': 'toggleOpen',
-        'click .chzn-results li': 'toggleSelected',
-        'keypress .chzn-choices .search-field input': 'selectedByEnter'
+        'click .filter-new': 'toggleOpen'
     },
 
     initialize: function(opts) {
@@ -23,8 +21,10 @@
     render: function() {
         var self = this,
             data = [],
-            defaultId = ""; 
+            defaultId = "";
+
         app.view.View.prototype.render.call(this);
+        self.node = self.$("#" + self.searchFilterId);
         
         _.each(self.filters, function(item){
             data.push({id:item.id, text:item.name});
@@ -32,9 +32,20 @@
                 defaultId = item.id;
             }
         }, this);
-        $("#" + self.searchFilterId).select2({tags:data, multiple:true});
+        self.node.select2({tags:data, multiple:true, maximumSelectionSize:2});
         if(defaultId){
-            $("#" + self.searchFilterId).select2("val", defaultId);
+            self.node.select2("val", defaultId);
+        }
+        self.node.on("change", function(e){
+            self.sanitizeFilter(e);
+        });
+    },
+    
+    sanitizeFilter: function(e){
+        var self = this;
+        if(_.contains(_.pluck(self.filters, "id"), e.added.id)){
+            self.node.select2("val", "");
+            self.node.select2("val", e.added.id);
         }
     },
 
@@ -81,5 +92,14 @@
         ];
 
         this.filters = filters;
+    },
+
+    /**
+     * Fires an event for the Filter editing widget to pop up.
+     */
+    toggleOpen: function() {
+        this.layout.trigger("filter:create:open:fire");
+        this.$(".search_filter").trigger("liszt:close");
+        return true;
     }
 })
