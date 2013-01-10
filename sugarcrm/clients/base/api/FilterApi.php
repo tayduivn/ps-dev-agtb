@@ -221,6 +221,9 @@ class FilterApi extends SugarApi {
                             case '$gte':
                                 $where->gte($field,$value);
                                 break;
+                            case '$fromDay':
+                                $where->addRaw("DATE_ADD ({$field}, INTERVAL {$value} DAY)");
+                                break;
                             default:
                                 throw new SugarApiExceptionInvalidParameter("Did not recognize the operand: ".$op);
                         }
