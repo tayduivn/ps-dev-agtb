@@ -10,7 +10,7 @@ describe("Base.Field.TextArea", function() {
         template = SugarTest.loadHandlebarsTemplate("textarea", "field", "base", "detail");
         SugarTest.testMetadata.set();
         field = SugarTest.createField("base",fieldName, "textarea", "detail");
-        field.maxDisplayLength = 5; //for testing
+        field.maxDisplayLength = shortText.length; //for testing
     });
 
     afterEach(function() {
@@ -18,6 +18,11 @@ describe("Base.Field.TextArea", function() {
         app.view.reset();
         delete Handlebars.templates;
         field = null;
+    });
+
+    it('verify test text lengths', function() {
+        expect(shortText.length).toBeLessThan(field.maxDisplayLength)
+        expect(longText.length).toBeGreaterThan(field.maxDisplayLength)
     });
 
     it('short values should not have more link', function() {
