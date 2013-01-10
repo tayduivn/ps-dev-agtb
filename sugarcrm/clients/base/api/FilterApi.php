@@ -64,7 +64,8 @@ class FilterApi extends SugarApi {
 
     public function filterById(ServiceBase $api, array $args) {
         $filter = BeanFactory::getBean('Filters', $args['record']);
-        $args['filter'] = $filter->filter_definition;
+        $filter_definition = json_decode($filter->filter_definition, true);
+        $args = array_merge($args, $filter_definition);
         unset($args['record']);
         return $this->filterList($api, $args);
     }
@@ -142,7 +143,7 @@ class FilterApi extends SugarApi {
         $q->limit($options['limit']+1);
         $q->offset($options['offset']);
 
-        // return $q->compileSql();
+        $GLOBALS['log']->fatal($q->compileSql());
         $idRows = $q->execute();
         // return $idRows;
         
