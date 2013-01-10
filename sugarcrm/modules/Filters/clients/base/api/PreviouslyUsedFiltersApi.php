@@ -65,7 +65,7 @@ class PreviouslyUsedFiltersApi extends SugarApi {
         $used_filters = $user_preference->getPreference($args['module_name'], 'filters');
 
         // If the record is not already in the used filters array add it
-        if(!array_search($args['record'], $used_filters)) {
+        if(!is_array($used_filters) || !array_search($args['record'], $used_filters)) {
             $used_filters[] = $args['record'];
             $user_preference->setPreference($args['module_name'], $used_filters, 'filters');
             $user_preference->savePreferencesToDB(true);
