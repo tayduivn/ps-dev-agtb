@@ -33,6 +33,14 @@
         if (value && !value.match(/^(http|https):\/\//)) {
             value = "http://" + value;
         }
+        if(this.def.gen == "1"){
+            var regex = /{(.+?)}/;
+            var result = regex.exec(value);
+            while(result){
+                value = value.replace(result[0], this.model.get(result[1]));
+                result = regex.exec(value);
+            }
+        }
         return value;
     }
 })

@@ -26,6 +26,9 @@
  * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 }}
-
-<input type="text" name="{{name}}" value="{{value}}">
+{{#if def.gen}}
+    {{! Render nothing since URL is generated }}
+{{else}}
+<input type="text" name="{{name}}" value="{{value}}"{{#if def.len}} maxlength="{{def.len}}"{{/if}}{{#if def.placeholder}} placeholder='{{str def.placeholder this.model.module}}'{{/if}} class="input-large">
 <p class="help-block"></p>
+{{/if}}
