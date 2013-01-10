@@ -249,11 +249,26 @@
                 filter_definition: this._getJSON(),
                 name: val,
                 default_filter: false,
-                module_name: this.title
+                module_name: this.title,
+                editable: true
             };
             var filter = app.data.createBean('Filters', obj);
-            filter.save();
+
+            if(filter.get('editable')) {
+                filter.save({success: this.setLastUsed});
+            } else {
+                this.setLastUsed(filter);
+            }
         }
+    },
+
+    setLastUsed: function(model) {
+        var url = app.api.buildURL('Filters', "used", model);
+        app.api.call("update", url, null, {
+            success: function() {
+                // Fire event.
+            }
+        });
     },
 
     removeAll: function() {
