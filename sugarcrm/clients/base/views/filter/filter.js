@@ -38,8 +38,7 @@
             tags:data,
             multiple:true,
             maximumSelectionSize:2,
-            formatSelection: self.formatSelection,
-            formatResult: self.formatResult
+            formatSelection: self.formatSelection
         });
 
         if(defaultId){
@@ -60,12 +59,6 @@
         } else {
             return '<span>Filter</span><a href="javascript:void(0)" rel="' + item.id +'">'+ item.text +'</a>';
         }
-    },
-
-    formatResult: function (item) {
-        var rtn = '<span data-value="'+ item.id +'">'+ item.text +'</span>';
-            rtn += '<span class="'+ (item.text.indexOf('Create New Filter')===-1?'icon-ok':'icon-plus') +'"></span>';
-        return rtn;
     },
 
     /**
