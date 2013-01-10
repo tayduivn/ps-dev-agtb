@@ -66,15 +66,17 @@
      * Contains business logic to control the behavior of new filters being added.
      */
     sanitizeFilter: function(e){
-        var self = this,
+        if(!_.isUndefined(e.added) && !_.isUndefined(e.added.id)){
+            var self = this,
             isInFilters = self.isInFilters(e.added.id);
         
-        if((e.added.id == -1) && !isInFilters){
-            self.node.select2("val", _.without(self.node.select2("val"), e.added.id.toString()));
-            self.toggleOpen();
-        } else if(isInFilters){
-            self.node.select2("val", "");
-            self.node.select2("val", e.added.id);
+            if((e.added.id == -1) && !isInFilters){
+                self.node.select2("val", _.without(self.node.select2("val"), e.added.id.toString()));
+                self.toggleOpen();
+            } else if(isInFilters){
+                self.node.select2("val", "");
+                self.node.select2("val", e.added.id);
+            }
         }
     },
     
