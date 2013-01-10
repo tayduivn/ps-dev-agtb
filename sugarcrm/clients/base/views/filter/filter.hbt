@@ -1,3 +1,1 @@
-<select id="{{searchFilterId}}" class="chzn-select search search_filter" multiple data-placeholder=" ">
-    <option class="primary disabled filter-new">+ Create a filter</option>
-</select>
+<input id="{{searchFilterId}}" type="hidden" style="width:100%"></input>
