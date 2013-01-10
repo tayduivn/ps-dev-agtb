@@ -63,7 +63,7 @@ class PreviouslyUsedFiltersApi extends SugarApi {
     public function setUsed($api, $args) {
         $user_preference = new UserPreference($GLOBALS['current_user']);
         $used_filters = $user_preference->getPreference($args['module_name'], 'filters');
-
+        
         // If the record is not already in the used filters array add it
         if(!is_array($used_filters) || !array_search($args['record'], $used_filters)) {
             $used_filters[] = $args['record'];
@@ -71,12 +71,8 @@ class PreviouslyUsedFiltersApi extends SugarApi {
             $user_preference->savePreferencesToDB(true);
         }
         // loop over and get the Filters to return
-        foreach($used_filters AS $id) {
-            $args['module'] = 'Filters';
-            $args['record'] = $id;
-            $beans[] = $this->loadBean($api, $args, 'view');
-        }
-
+        $beans = $this->loadFilters($used_filters);
+        
         $data = $this->formatBeans($api, $args, $beans);
 
         return $data;
@@ -91,13 +87,11 @@ class PreviouslyUsedFiltersApi extends SugarApi {
         $user_preference = new UserPreference($GLOBALS['current_user']);
         $used_filters = $user_preference->getPreference($args['module_name'], 'filters');
         // loop over the filters and return them
-        foreach($used_filters AS $id) {
-            $args['module'] = 'Filters';
-            $args['record'] = $id;
-            $beans[] = $this->loadBean($api, $args, 'view');
+        $beans = $this->loadFilters($used_filters);
+        $data = array();
+        if(!empty($beans)) {
+            $data = $this->formatBeans($api, $args, $beans);
         }
-
-        $data = $this->formatBeans($api, $args, $beans);
 
         return $data;        
     }
@@ -117,17 +111,30 @@ class PreviouslyUsedFiltersApi extends SugarApi {
         if($key !== false) {
             unset($used_filters[$key]);
         }
+
+
+        $beans = $this->loadFilters($used_filters);
+
         $user_preference->setPreference($args['module_name'], $used_filters, 'filters');
         $user_preference->savePreferencesToDB(true);
 
-        foreach($used_filters AS $id) {
-            $args['module'] = 'Filters';
-            $args['record'] = $id;
-            $beans[] = $this->loadBean($api, $args, 'view');
-        }
 
         $data = $this->formatBeans($api, $args, $beans);
 
         return $data;        
+    }
+
+    protected function loadFilters( &$used_filters ) {
+        $return = array();
+        foreach($used_filters AS $key => $id) {
+            $bean = BeanFactory::getBean('Filters', $id);
+            if($bean instanceof SugarBean && !empty($bean->id)) {
+                $return[] = $bean;
+            }
+            else {
+                unset($used_filters[$key]);
+            }
+        }
+        return $return;
     }
 }
