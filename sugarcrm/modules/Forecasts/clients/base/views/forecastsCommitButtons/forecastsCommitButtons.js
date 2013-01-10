@@ -78,7 +78,7 @@
 
     initialize: function (options) {
         app.view.View.prototype.initialize.call(this, options);
-        this.showConfigButton = (this.context.forecasts.get('currentUser').admin == "yes");
+        this.showConfigButton = (app.user.getAcls()['Forecasts'].admin == "yes");
     },
 
     /**
