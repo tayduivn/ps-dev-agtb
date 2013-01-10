@@ -26,9 +26,9 @@
 '         <select name="operator" class="operator chzn-select chzn-inherit-width" data-placeholder="Select operator...">' +
 '         </select>' +
 '       </div>' +
-'       <div class="filter-value hide controls span4">' +
+'       <div class="filter-value hide controls span5">' +
 '       </div>' +
-'       <div class="filter-actions span2">' +
+'       <div class="filter-actions span1">' +
 '         <a class="removeme btn btn-invisible btn-dark"><i class="icon-minus"></i></a>' +
 '         <a class="updateme btn btn-invisible hide btn-dark"><i class="icon-refresh"></i></a>' +
 '         <a class="addme btn btn-invisible hide btn-dark"><i class="icon-plus"></i></a>' +
@@ -176,9 +176,10 @@
             var field = app.view.createField(obj);
 
             $parent.find('.filter-value').removeClass('hide').find('input, select').remove();
-            $(field.getPlaceholder().string).appendTo($parent.find('.filter-value'));
+            var fieldContainer = $(field.getPlaceholder().string).appendTo($parent.find('.filter-value'));
             this._renderField(field);
             $parent.data('value_field', field);
+            fieldContainer.find('input, select').addClass('inherit-width');
         }
     },
 

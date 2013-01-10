@@ -1,6 +1,6 @@
 <div class="filter-options extend hide">
     <article class="filter-header">
-        <input type="text" placeholder="Enter new filter name...">
+        <input type="text" placeholder="Enter new filter name&hellip;" class="span6">
         <div class="pull-right">
             <a class="btn btn-link btn-invisible hide delete_button">{{str "LBL_DELETE"}}</a>
             <a class="btn btn-primary disabled save_button">{{str "LBL_SAVE_BUTTON_LABEL"}}</a>
@@ -15,10 +15,10 @@
         <div class="controls span3">
             <input type="text" value="matches" disabled="disabled" class="disabled inherit-width">
         </div>
-        <div class="controls span4">
+        <div class="controls span5">
             <input type="text" value="{{title}}" disabled="disabled" class="disabled inherit-width">
         </div>
-        <div class="filter-value controls span2">
+        <div class="filter-value controls span1">
         </div>
       </div>
     </article>
