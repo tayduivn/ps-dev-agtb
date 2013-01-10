@@ -32,6 +32,8 @@
                 defaultId = item.id;
             }
         }, this);
+        data.push({id:-1, text:"Create New"});
+        
         self.node.select2({tags:data, multiple:true, maximumSelectionSize:2});
         if(defaultId){
             self.node.select2("val", defaultId);
@@ -43,7 +45,10 @@
     
     sanitizeFilter: function(e){
         var self = this;
-        if(_.contains(_.pluck(self.filters, "id"), e.added.id)){
+        if(e.added.id == -1){
+            self.node.select2("val", _.without(self.node.select2("val"), e.added.id.toString()));
+            self.toggleOpen();
+        } else if(_.contains(_.pluck(self.filters, "id"), e.added.id)){
             self.node.select2("val", "");
             self.node.select2("val", e.added.id);
         }
