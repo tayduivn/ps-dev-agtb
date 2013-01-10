@@ -91,6 +91,12 @@
     render: function() {
         app.view.View.prototype.render.call(this);
         this.addRow();
+        
+        // Render the filter widget by default with "name" "contains" for fast searching
+        this.$("select.field_name option[value='name']").attr("selected", true);
+        this.$(".field_name").trigger("liszt:updated").change();
+        this.$("select.operator option[value='starts']").attr("selected", true);
+        this.$(".operator").trigger("liszt:updated").change();
     },
 
     addRow: function(e) {
