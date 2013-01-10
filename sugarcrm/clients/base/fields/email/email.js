@@ -30,8 +30,15 @@
         'change .existingAddress':'updateExistingAddress',
         'click .btn-edit':'updateExistingProperty',
         'click .removeEmail':'remove',
-        'click .addEmail':'add'
+        'click .addEmail':'add',
+        'change .newEmail': 'newEmailChanged'
     },
+    // Need to debounce otherwise we sometimes can get multiple e-mails added at once
+    newEmailChanged:_.debounce(function(evt){
+        if($(evt.currentTarget).val().length > 0){
+            this.add(evt);
+        }
+    }, 100),
     /**
      * Adds email address to dom and model. Note added emails only get checked
      * upon Save button being clicked (which triggers the model validations).
@@ -72,12 +79,19 @@
         if ($(evt.currentTarget).tooltip) $(evt.currentTarget).tooltip('hide');
         var emailAddress = $(evt.target).data('parentemail') || $(evt.target).parent().data('parentemail'),
             existingAddresses = _.clone(this.model.get(this.name));
-
+        var wasPrimary = false;
         _.each(existingAddresses, function (emailInfo, index) {
             if (emailInfo.email_address == emailAddress) {
+                wasPrimary = existingAddresses[index]['primary_address'] == '1';
                 existingAddresses[index] = false;
             }
         });
+        if(wasPrimary){
+            var address = _.find(existingAddresses, function (emailInfo, index) {
+                return !existingAddresses[index];
+            });
+            address['primary_address'] == '1';
+        }
         this.updateModel(existingAddresses);
     },
     /**
