@@ -1,7 +1,7 @@
-{{!
+<?php
 /*********************************************************************************
  * The contents of this file are subject to the SugarCRM Master Subscription
- * Agreement (""License"") which can be viewed at
+ * Agreement ("License") which can be viewed at
  * http://www.sugarcrm.com/crm/master-subscription-agreement
  * By installing or using this file, You have unconditionally agreed to the
  * terms and conditions of the License, and You may not use this file except in
@@ -15,7 +15,7 @@
  * remove SugarCRM copyrights from the source code or user interface.
  *
  * All copies of the Covered Code must include on each user interface screen:
- *  (i) the ""Powered by SugarCRM"" logo and
+ *  (i) the "Powered by SugarCRM" logo and
  *  (ii) the SugarCRM copyright notice
  * in the same form as they appear in the distribution.  See full license for
  * requirements.
@@ -25,9 +25,40 @@
  * governing these rights and limitations under the License.  Portions created
  * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
-}}
-<div class="input-append date" rel="datepicker">
-    <input type="text" class="datepicker" value="{{this.dateValue}}" rel="datepicker">
-    <span class="add-on"><i class="icon-calendar"></i></span>
-    <input type="text" class="ui-timepicker-input" value="{{this.timeValue}}" rel="timepicker" autocomplete="off">
-</div>
+
+$mod_strings = array (
+  'LBL_TEAMS' => 'Team',
+  'LBL_TEAM_ID' => 'Team Id',
+  'LBL_TEAM' => 'Team',
+  'LBL_ASSIGNED_TO_ID' => 'Tilldelad användare',
+  'LBL_ASSIGNED_TO_NAME' => 'Tilldelad användare',
+  'LBL_CREATED' => 'Skapat Av',
+  'LBL_CREATED_ID' => 'Skapat Av',
+  'LBL_CREATED_USER' => 'Skapat Av Användare',
+  'LBL_DATE_ENTERED' => 'Skapat Datum',
+  'LBL_DATE_MODIFIED' => 'Modifierat Datum',
+  'LBL_DELETED' => 'Raderad',
+  'LBL_DESCRIPTION' => 'Beskrivning',
+  'LBL_EDIT_BUTTON' => 'Redigera',
+  'LBL_ID' => 'ID',
+  'LBL_LIST_NAME' => 'Namn',
+  'LBL_MODIFIED' => 'Modifierat Av',
+  'LBL_MODIFIED_ID' => 'Modifierat Av Id',
+  'LBL_MODIFIED_NAME' => 'Modifierat Av Namn',
+  'LBL_MODIFIED_USER' => 'Modifierat Av Användare',
+  'LBL_NAME' => 'Namn',
+  'LBL_REMOVE' => 'Ta bort',
+  'LBL_LIST_FORM_TITLE' => 'Filters List',
+  'LBL_MODULE_NAME' => 'Filters',
+  'LBL_MODULE_TITLE' => 'Filters',
+  'LBL_HOMEPAGE_TITLE' => 'My Filters',
+  'LNK_NEW_RECORD' => 'Create Filters',
+  'LNK_LIST' => 'Visa Filters',
+  'LNK_IMPORT_API_FILTERS' => 'Import Filters',
+  'LBL_SEARCH_FORM_TITLE' => 'Search Filters',
+  'LBL_HISTORY_SUBPANEL_TITLE' => 'History',
+  'LBL_ACTIVITIES_SUBPANEL_TITLE' => 'Activities',
+  'LBL_API_FILTERS_SUBPANEL_TITLE' => 'Filters',
+  'LBL_NEW_FORM_TITLE' => 'New Filters',
+  'LBL_FILTER_DEFINITION' => 'Filter Definition',
+);

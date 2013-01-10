@@ -1,7 +1,7 @@
-{{!
+<?php
 /*********************************************************************************
  * The contents of this file are subject to the SugarCRM Master Subscription
- * Agreement (""License"") which can be viewed at
+ * Agreement ("License") which can be viewed at
  * http://www.sugarcrm.com/crm/master-subscription-agreement
  * By installing or using this file, You have unconditionally agreed to the
  * terms and conditions of the License, and You may not use this file except in
@@ -15,7 +15,7 @@
  * remove SugarCRM copyrights from the source code or user interface.
  *
  * All copies of the Covered Code must include on each user interface screen:
- *  (i) the ""Powered by SugarCRM"" logo and
+ *  (i) the "Powered by SugarCRM" logo and
  *  (ii) the SugarCRM copyright notice
  * in the same form as they appear in the distribution.  See full license for
  * requirements.
@@ -25,9 +25,40 @@
  * governing these rights and limitations under the License.  Portions created
  * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
-}}
-<div class="input-append date" rel="datepicker">
-    <input type="text" class="datepicker" value="{{this.dateValue}}" rel="datepicker">
-    <span class="add-on"><i class="icon-calendar"></i></span>
-    <input type="text" class="ui-timepicker-input" value="{{this.timeValue}}" rel="timepicker" autocomplete="off">
-</div>
+
+$mod_strings = array (
+  'LBL_TEAM' => 'Grupet',
+  'LBL_TEAMS' => 'Grupet',
+  'LBL_TEAM_ID' => 'Id e grupit',
+  'LBL_ASSIGNED_TO_ID' => 'Id e përdoruesit të caktuar',
+  'LBL_ASSIGNED_TO_NAME' => 'Përdorues',
+  'LBL_CREATED' => 'Krijuar nga',
+  'LBL_CREATED_ID' => 'Krijuar nga Id',
+  'LBL_CREATED_USER' => 'Krijuar nga përdoruesi',
+  'LBL_DATE_ENTERED' => 'Të dhënat e krijuara',
+  'LBL_DATE_MODIFIED' => 'Të dhënat e modifikuara',
+  'LBL_DELETED' => 'E fshirë',
+  'LBL_DESCRIPTION' => 'Përshkrim',
+  'LBL_EDIT_BUTTON' => 'Ndrysho',
+  'LBL_ID' => 'ID',
+  'LBL_LIST_NAME' => 'Emri',
+  'LBL_MODIFIED' => 'Modifikuar nga',
+  'LBL_MODIFIED_ID' => 'Modifikuar nga Id',
+  'LBL_MODIFIED_NAME' => 'Modifikuar nga emri',
+  'LBL_MODIFIED_USER' => 'Modifikuar nga përdoruesi',
+  'LBL_NAME' => 'Emri',
+  'LBL_REMOVE' => 'Fshijë',
+  'LBL_LIST_FORM_TITLE' => 'Filters lista',
+  'LBL_MODULE_NAME' => 'Filters',
+  'LBL_MODULE_TITLE' => 'Filters',
+  'LBL_HOMEPAGE_TITLE' => 'Mia Filters',
+  'LNK_NEW_RECORD' => 'Krijo Filters',
+  'LNK_LIST' => 'Pamje Filters',
+  'LNK_IMPORT_API_FILTERS' => 'Import Filters',
+  'LBL_SEARCH_FORM_TITLE' => 'Kërkim Filters',
+  'LBL_HISTORY_SUBPANEL_TITLE' => 'shiko historinë',
+  'LBL_ACTIVITIES_SUBPANEL_TITLE' => 'Aktivitetet',
+  'LBL_API_FILTERS_SUBPANEL_TITLE' => 'Filters',
+  'LBL_NEW_FORM_TITLE' => 'E re Filters',
+  'LBL_FILTER_DEFINITION' => 'Filter Definition',
+);

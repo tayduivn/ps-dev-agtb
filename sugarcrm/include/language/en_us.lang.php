@@ -132,6 +132,7 @@ $app_list_strings = array (
 
     'OAuthKeys' => 'OAuth Consumer Keys',
     'OAuthTokens' => 'OAuth Tokens',
+    'Filters' => 'Filters'
   ),
 
   'moduleListSingular' =>
@@ -188,6 +189,7 @@ $app_list_strings = array (
     'Users' => 'User',
   'SugarFavorites'=>'SugarFavorites',
    'Employees' => 'Employee',
+   'Filters' => 'Filter',
 
         ),
 

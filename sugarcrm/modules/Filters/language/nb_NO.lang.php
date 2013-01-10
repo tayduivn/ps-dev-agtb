@@ -1,7 +1,7 @@
-{{!
+<?php
 /*********************************************************************************
  * The contents of this file are subject to the SugarCRM Master Subscription
- * Agreement (""License"") which can be viewed at
+ * Agreement ("License") which can be viewed at
  * http://www.sugarcrm.com/crm/master-subscription-agreement
  * By installing or using this file, You have unconditionally agreed to the
  * terms and conditions of the License, and You may not use this file except in
@@ -15,7 +15,7 @@
  * remove SugarCRM copyrights from the source code or user interface.
  *
  * All copies of the Covered Code must include on each user interface screen:
- *  (i) the ""Powered by SugarCRM"" logo and
+ *  (i) the "Powered by SugarCRM" logo and
  *  (ii) the SugarCRM copyright notice
  * in the same form as they appear in the distribution.  See full license for
  * requirements.
@@ -25,9 +25,38 @@
  * governing these rights and limitations under the License.  Portions created
  * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
-}}
-<div class="input-append date" rel="datepicker">
-    <input type="text" class="datepicker" value="{{this.dateValue}}" rel="datepicker">
-    <span class="add-on"><i class="icon-calendar"></i></span>
-    <input type="text" class="ui-timepicker-input" value="{{this.timeValue}}" rel="timepicker" autocomplete="off">
-</div>
+
+$mod_strings = array (
+  'LBL_TEAMS' => 'Team',
+  'LBL_TEAM_ID' => 'Team Id',
+  'LBL_TEAM' => 'Team',
+  'LBL_ASSIGNED_TO_ID' => 'Tildelt bruker Id',
+  'LBL_ASSIGNED_TO_NAME' => 'Tildelt til',
+  'LBL_LIST_NAME' => 'Navn',
+  'LBL_ID' => 'ID',
+  'LBL_DATE_ENTERED' => 'Opprettelse Dato',
+  'LBL_DATE_MODIFIED' => 'Endret Dato',
+  'LBL_MODIFIED' => 'Endret av',
+  'LBL_MODIFIED_ID' => 'Endret av Id',
+  'LBL_MODIFIED_NAME' => 'Endret av Navn',
+  'LBL_CREATED' => 'Opprettet av',
+  'LBL_CREATED_ID' => 'Opprettet av Id',
+  'LBL_DESCRIPTION' => 'Beskrivelse',
+  'LBL_DELETED' => 'Slettet',
+  'LBL_NAME' => 'Navn',
+  'LBL_CREATED_USER' => 'Opprettet av bruker',
+  'LBL_MODIFIED_USER' => 'Endret av bruker',
+  'LBL_LIST_FORM_TITLE' => 'Filters Liste',
+  'LBL_MODULE_NAME' => 'Filters',
+  'LBL_MODULE_TITLE' => 'Filters',
+  'LBL_HOMEPAGE_TITLE' => 'Min Filters',
+  'LNK_NEW_RECORD' => 'Opprett Filters',
+  'LNK_LIST' => 'Vis Filters',
+  'LNK_IMPORT_API_FILTERS' => 'Import Filters',
+  'LBL_SEARCH_FORM_TITLE' => 'Søk Filters',
+  'LBL_HISTORY_SUBPANEL_TITLE' => 'Historie',
+  'LBL_ACTIVITIES_SUBPANEL_TITLE' => 'Aktiviteter',
+  'LBL_API_FILTERS_SUBPANEL_TITLE' => 'Filters',
+  'LBL_NEW_FORM_TITLE' => 'Ny Filters',
+  'LBL_FILTER_DEFINITION' => 'Filter Definition',
+);

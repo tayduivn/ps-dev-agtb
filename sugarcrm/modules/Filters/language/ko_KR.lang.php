@@ -1,7 +1,7 @@
-{{!
+<?php
 /*********************************************************************************
  * The contents of this file are subject to the SugarCRM Master Subscription
- * Agreement (""License"") which can be viewed at
+ * Agreement ("License") which can be viewed at
  * http://www.sugarcrm.com/crm/master-subscription-agreement
  * By installing or using this file, You have unconditionally agreed to the
  * terms and conditions of the License, and You may not use this file except in
@@ -15,7 +15,7 @@
  * remove SugarCRM copyrights from the source code or user interface.
  *
  * All copies of the Covered Code must include on each user interface screen:
- *  (i) the ""Powered by SugarCRM"" logo and
+ *  (i) the "Powered by SugarCRM" logo and
  *  (ii) the SugarCRM copyright notice
  * in the same form as they appear in the distribution.  See full license for
  * requirements.
@@ -25,9 +25,40 @@
  * governing these rights and limitations under the License.  Portions created
  * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
-}}
-<div class="input-append date" rel="datepicker">
-    <input type="text" class="datepicker" value="{{this.dateValue}}" rel="datepicker">
-    <span class="add-on"><i class="icon-calendar"></i></span>
-    <input type="text" class="ui-timepicker-input" value="{{this.timeValue}}" rel="timepicker" autocomplete="off">
-</div>
+
+$mod_strings = array (
+  'LBL_TEAM' => '팀',
+  'LBL_TEAMS' => '팀',
+  'LBL_TEAM_ID' => '팀 ID',
+  'LBL_ASSIGNED_TO_ID' => '지정 사용자 ID',
+  'LBL_ASSIGNED_TO_NAME' => '지정자',
+  'LBL_CREATED' => '생성자',
+  'LBL_CREATED_ID' => '생성자 ID',
+  'LBL_CREATED_USER' => '사용자에 의해 생성',
+  'LBL_DATE_ENTERED' => '생성일자:',
+  'LBL_DATE_MODIFIED' => '수정일자:',
+  'LBL_DELETED' => '삭제',
+  'LBL_DESCRIPTION' => '설명',
+  'LBL_EDIT_BUTTON' => '수정하기',
+  'LBL_ID' => 'ID:',
+  'LBL_LIST_NAME' => '성명',
+  'LBL_MODIFIED' => '수정자:',
+  'LBL_MODIFIED_ID' => '수정자 ID',
+  'LBL_MODIFIED_NAME' => '사용자명에 의해 수정',
+  'LBL_MODIFIED_USER' => '사용자에 의해 수정',
+  'LBL_NAME' => '이름',
+  'LBL_REMOVE' => '제거하기',
+  'LBL_LIST_FORM_TITLE' => 'Filters 목록',
+  'LBL_MODULE_NAME' => 'Filters',
+  'LBL_MODULE_TITLE' => 'Filters',
+  'LBL_HOMEPAGE_TITLE' => '나의 Filters',
+  'LNK_NEW_RECORD' => '새로 만들기 Filters',
+  'LNK_LIST' => '보기 Filters',
+  'LNK_IMPORT_API_FILTERS' => 'Import Filters',
+  'LBL_SEARCH_FORM_TITLE' => '검색 Filters',
+  'LBL_HISTORY_SUBPANEL_TITLE' => '연혁보기',
+  'LBL_ACTIVITIES_SUBPANEL_TITLE' => '활동내역',
+  'LBL_API_FILTERS_SUBPANEL_TITLE' => 'Filters',
+  'LBL_NEW_FORM_TITLE' => '신규 Filters',
+  'LBL_FILTER_DEFINITION' => 'Filter Definition',
+);

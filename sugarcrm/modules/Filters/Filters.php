@@ -1,7 +1,7 @@
-{{!
+<?PHP
 /*********************************************************************************
  * The contents of this file are subject to the SugarCRM Master Subscription
- * Agreement (""License"") which can be viewed at
+ * Agreement ("License") which can be viewed at
  * http://www.sugarcrm.com/crm/master-subscription-agreement
  * By installing or using this file, You have unconditionally agreed to the
  * terms and conditions of the License, and You may not use this file except in
@@ -15,7 +15,7 @@
  * remove SugarCRM copyrights from the source code or user interface.
  *
  * All copies of the Covered Code must include on each user interface screen:
- *  (i) the ""Powered by SugarCRM"" logo and
+ *  (i) the "Powered by SugarCRM" logo and
  *  (ii) the SugarCRM copyright notice
  * in the same form as they appear in the distribution.  See full license for
  * requirements.
@@ -25,9 +25,49 @@
  * governing these rights and limitations under the License.  Portions created
  * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
-}}
-<div class="input-append date" rel="datepicker">
-    <input type="text" class="datepicker" value="{{this.dateValue}}" rel="datepicker">
-    <span class="add-on"><i class="icon-calendar"></i></span>
-    <input type="text" class="ui-timepicker-input" value="{{this.timeValue}}" rel="timepicker" autocomplete="off">
-</div>
+
+class Filters extends Basic {
+	var $new_schema = true;
+	var $module_dir = 'Filters';
+	var $object_name = 'Filters';
+	var $table_name = 'filters';
+	var $importable = false;
+	var $id;
+	var $name;
+	var $date_entered;
+	var $date_modified;
+	var $modified_user_id;
+	var $modified_by_name;
+	var $created_by;
+	var $created_by_name;
+	var $deleted;
+	var $created_by_link;
+	var $modified_user_link;
+	var $team_id;
+	var $team_set_id;
+	var $team_count;
+	var $team_name;
+	var $team_link;
+	var $team_count_link;
+	var $teams;
+	var $assigned_user_id;
+	var $assigned_user_name;
+	var $assigned_user_link;
+	var $filter_definition;
+		
+	public function __construct(){
+		parent::__construct();
+	}
+	
+	public function bean_implements($interface){
+		switch($interface){
+			case 'ACL': return true;
+		}
+		return false;
+	}
+
+	public function retrieve($id='-1', $encode=false,$deleted=true) {
+		return parent::retrieve($id, false, $deleted);
+	}		
+}
+?>

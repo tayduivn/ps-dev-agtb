@@ -1,7 +1,7 @@
-{{!
+<?php
 /*********************************************************************************
  * The contents of this file are subject to the SugarCRM Master Subscription
- * Agreement (""License"") which can be viewed at
+ * Agreement ("License") which can be viewed at
  * http://www.sugarcrm.com/crm/master-subscription-agreement
  * By installing or using this file, You have unconditionally agreed to the
  * terms and conditions of the License, and You may not use this file except in
@@ -15,7 +15,7 @@
  * remove SugarCRM copyrights from the source code or user interface.
  *
  * All copies of the Covered Code must include on each user interface screen:
- *  (i) the ""Powered by SugarCRM"" logo and
+ *  (i) the "Powered by SugarCRM" logo and
  *  (ii) the SugarCRM copyright notice
  * in the same form as they appear in the distribution.  See full license for
  * requirements.
@@ -25,9 +25,40 @@
  * governing these rights and limitations under the License.  Portions created
  * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
-}}
-<div class="input-append date" rel="datepicker">
-    <input type="text" class="datepicker" value="{{this.dateValue}}" rel="datepicker">
-    <span class="add-on"><i class="icon-calendar"></i></span>
-    <input type="text" class="ui-timepicker-input" value="{{this.timeValue}}" rel="timepicker" autocomplete="off">
-</div>
+
+$mod_strings = array (
+  'LBL_TEAM' => 'Echipe',
+  'LBL_TEAMS' => 'Echipe',
+  'LBL_TEAM_ID' => 'Echipa ID',
+  'LBL_ASSIGNED_TO_ID' => 'Atribuit ID Utilizator',
+  'LBL_ASSIGNED_TO_NAME' => 'Utilizator',
+  'LBL_CREATED' => 'Creat de',
+  'LBL_CREATED_ID' => 'Creata de ID',
+  'LBL_CREATED_USER' => 'Creata de Utilizator',
+  'LBL_DATE_ENTERED' => 'Data Crearii',
+  'LBL_DATE_MODIFIED' => 'Data Modificarii',
+  'LBL_DELETED' => 'Sters',
+  'LBL_DESCRIPTION' => 'Descriere',
+  'LBL_EDIT_BUTTON' => 'Editeaza',
+  'LBL_ID' => 'ID',
+  'LBL_LIST_NAME' => 'Nume',
+  'LBL_MODIFIED' => 'Modificat de',
+  'LBL_MODIFIED_ID' => 'Modificata de ID',
+  'LBL_MODIFIED_NAME' => 'Modificata de Nume',
+  'LBL_MODIFIED_USER' => 'Modificata de Utilizator',
+  'LBL_NAME' => 'Nume',
+  'LBL_REMOVE' => 'Inlatura',
+  'LBL_LIST_FORM_TITLE' => 'Filters Lista',
+  'LBL_MODULE_NAME' => 'Filters',
+  'LBL_MODULE_TITLE' => 'Filters',
+  'LBL_HOMEPAGE_TITLE' => 'Al meu Filters',
+  'LNK_NEW_RECORD' => 'Creeaza Filters',
+  'LNK_LIST' => 'Vizualizare Filters',
+  'LNK_IMPORT_API_FILTERS' => 'Import Filters',
+  'LBL_SEARCH_FORM_TITLE' => 'Cauta Filters',
+  'LBL_HISTORY_SUBPANEL_TITLE' => 'Vizualizare Istoric',
+  'LBL_ACTIVITIES_SUBPANEL_TITLE' => 'Activitati',
+  'LBL_API_FILTERS_SUBPANEL_TITLE' => 'Filters',
+  'LBL_NEW_FORM_TITLE' => 'Nou Filters',
+  'LBL_FILTER_DEFINITION' => 'Filter Definition',
+);

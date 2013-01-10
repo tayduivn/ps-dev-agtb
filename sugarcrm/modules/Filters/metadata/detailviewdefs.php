@@ -1,7 +1,7 @@
-{{!
+<?php
 /*********************************************************************************
  * The contents of this file are subject to the SugarCRM Master Subscription
- * Agreement (""License"") which can be viewed at
+ * Agreement ("License") which can be viewed at
  * http://www.sugarcrm.com/crm/master-subscription-agreement
  * By installing or using this file, You have unconditionally agreed to the
  * terms and conditions of the License, and You may not use this file except in
@@ -15,7 +15,7 @@
  * remove SugarCRM copyrights from the source code or user interface.
  *
  * All copies of the Covered Code must include on each user interface screen:
- *  (i) the ""Powered by SugarCRM"" logo and
+ *  (i) the "Powered by SugarCRM" logo and
  *  (ii) the SugarCRM copyright notice
  * in the same form as they appear in the distribution.  See full license for
  * requirements.
@@ -25,9 +25,45 @@
  * governing these rights and limitations under the License.  Portions created
  * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
-}}
-<div class="input-append date" rel="datepicker">
-    <input type="text" class="datepicker" value="{{this.dateValue}}" rel="datepicker">
-    <span class="add-on"><i class="icon-calendar"></i></span>
-    <input type="text" class="ui-timepicker-input" value="{{this.timeValue}}" rel="timepicker" autocomplete="off">
-</div>
+
+$module_name = 'Filters';
+$viewdefs[$module_name]['DetailView'] = array(
+'templateMeta' => array('form' => array('buttons'=>array('EDIT', 'DUPLICATE', 'DELETE', 'FIND_DUPLICATES',
+                                                         )),
+                        'maxColumns' => '2',
+                        'widths' => array(
+                                        array('label' => '10', 'field' => '30'),
+                                        array('label' => '10', 'field' => '30')
+                                        ),
+                        ),
+
+'panels' =>array (
+
+  array (
+    'name',
+    'assigned_user_name',
+  ),
+  array (
+
+    'team_name',''
+  ),
+
+  array (
+	array (
+      'name' => 'date_entered',
+      'customCode' => '{$fields.date_entered.value} {$APP.LBL_BY} {$fields.created_by_name.value}',
+      'label' => 'LBL_DATE_ENTERED',
+    ),
+    array (
+      'name' => 'date_modified',
+      'customCode' => '{$fields.date_modified.value} {$APP.LBL_BY} {$fields.modified_by_name.value}',
+      'label' => 'LBL_DATE_MODIFIED',
+    ),
+  ),
+
+  array (
+    'description',
+  ),
+)
+);
+?>
