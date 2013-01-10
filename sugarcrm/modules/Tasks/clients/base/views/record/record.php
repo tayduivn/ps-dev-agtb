@@ -140,7 +140,6 @@ $viewdefs['Tasks']['base']['view']['record'] = array(
         array(
             'name' => 'panel_body',
             'columns' => 2,
-            'labels' => false,
             'labelsOnTop' => true,
             'placeholders' => true,
             'fields' => array(
