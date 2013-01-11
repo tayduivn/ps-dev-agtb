@@ -220,6 +220,11 @@ function handleSave($prefix,$redirect=true, $useRequired=false) {
         }
     }
 
+    $newBean = true;
+    if (!empty($focus->id)) {
+        $newBean = false;
+    }
+
 	//add assigned user and current user if this is the first time bean is saved
   	if(empty($focus->id) && !empty($_REQUEST['return_module']) && $_REQUEST['return_module'] =='Meetings' && !empty($_REQUEST['return_action']) && $_REQUEST['return_action'] =='DetailView'){
 		//if return action is set to detail view and return module to meeting, then this is from the long form, do not add the assigned user (only the current user)
@@ -465,7 +470,7 @@ function handleSave($prefix,$redirect=true, $useRequired=false) {
             
 	    	// CCL - Comment out call to set $current_user as invitee
 	    	// set organizer to auto-accept
-            if ($focus->assigned_user_id == $current_user->id) {
+            if ($focus->assigned_user_id == $current_user->id && $newBean) {
 	    	$focus->set_accept_status($current_user, 'accept');
             }
 

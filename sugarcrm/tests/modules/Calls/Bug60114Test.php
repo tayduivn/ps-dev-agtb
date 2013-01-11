@@ -44,8 +44,6 @@ class Bug60114Test extends Sugar_PHPUnit_Framework_TestCase
 
     public function tearDown()
     {
-        SugarTestCallUtilities::removeCallUsers();
-        SugarTestCallUtilities::removeAllCreatedCalls();
         SugarTestHelper::tearDown();
     }
 
@@ -54,18 +52,13 @@ class Bug60114Test extends Sugar_PHPUnit_Framework_TestCase
         global $current_user;
         global $db;
 
-        $call = SugarTestCallUtilities::createCall();
-        SugarTestCallUtilities::addCallUserRelation($call->id, $current_user->id);
-
-        $_POST['record'] = $call->id;
-        $_REQUEST['record'] = $call->id;
         $_POST['user_invitees'] = $current_user->id;
         $_POST['module'] = 'Calls';
         $_POST['action'] = 'Save';
         $_POST['assigned_user_id'] = $current_user->id;
 
         $formBase = new CallFormBase();
-        $formBase->handleSave('', false, false);
+        $call = $formBase->handleSave('', false, false);
 
         $sql = "SELECT accept_status FROM calls_users WHERE call_id='{$call->id}' AND user_id='{$current_user->id}'";
         $result = $db->query($sql);
