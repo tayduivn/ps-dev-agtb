@@ -61,18 +61,6 @@ $layout_defs['Accounts'] = array(
 					'subpanel_name' => 'ForActivities',
 					'get_subpanel_data' => 'tasks',
 				),
-				'emails' => array(
-					'module' => 'Emails',
-					'subpanel_name' => 'ForHistory',
-					'get_subpanel_data' => 'emails',
-				),
-				'linkedemails' => array(
-					'module' => 'Emails',
-					'subpanel_name' => 'ForUnlinkedEmailHistory',
-					'get_subpanel_data' => 'function:get_unlinked_email_query',
-					'generate_select'=> true,
-					'function_parameters' => array('return_as_array'=>'true'),
-				),
 //BEGIN SUGARCRM flav!=dce ONLY
                 'meetings' => array(
                     'module' => 'Meetings',
