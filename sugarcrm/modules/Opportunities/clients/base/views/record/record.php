@@ -120,7 +120,7 @@ $viewdefs['Opportunities']['base']['view']['record'] = array(
                 'campaign_id',
                 'lead_source',
                 'opportunity_type',
-                'assigned_user_id',
+                'assigned_user_name',
                 'team_id',
                 'next_step',
                 'description',
