@@ -480,7 +480,9 @@ function handleSave($prefix,$redirect=true,$useRequired=false) {
             
 	    	// CCL - Comment out call to set $current_user as invitee
 	    	//set organizer to auto-accept
+            if ($focus->assigned_user_id == $current_user->id) {
 	    	$focus->set_accept_status($current_user, 'accept');
+            }
 
 	    	////	END REBUILD INVITEE RELATIONSHIPS
 	    	///////////////////////////////////////////////////////////////////////////
