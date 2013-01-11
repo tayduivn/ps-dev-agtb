@@ -101,7 +101,12 @@
         });
         var url = app.api.buildURL('theme', '', {}, {});
         app.api.call(method, url, params,
-            { success: successCallback },
+            {
+                success: successCallback ,
+                error: function(error) {
+                    app.error.handleHttpError(error);
+                }
+            },
             { context: self }
         );
     },
