@@ -44,8 +44,6 @@ class Bug58012Test extends Sugar_PHPUnit_Framework_TestCase
 
     public function tearDown()
     {
-        SugarTestMeetingUtilities::removeMeetingUsers();
-        SugarTestMeetingUtilities::removeAllCreatedMeetings();
         SugarTestHelper::tearDown();
     }
 
@@ -54,18 +52,13 @@ class Bug58012Test extends Sugar_PHPUnit_Framework_TestCase
         global $current_user;
         global $db;
 
-        $meeting = SugarTestMeetingUtilities::createMeeting();
-        SugarTestMeetingUtilities::addMeetingUserRelation($meeting->id, $current_user->id);
-
-        $_POST['record'] = $meeting->id;
-        $_REQUEST['record'] = $meeting->id;
         $_POST['user_invitees'] = $current_user->id;
         $_POST['module'] = 'Meetings';
         $_POST['action'] = 'Save';
         $_POST['assigned_user_id'] = $current_user->id;
 
         $formBase = new MeetingFormBase();
-        $formBase->handleSave('', false, false);
+        $meeting = $formBase->handleSave('', false, false);
 
         $sql = "SELECT accept_status FROM meetings_users WHERE meeting_id='{$meeting->id}' AND user_id='{$current_user->id}'";
         $result = $db->query($sql);
