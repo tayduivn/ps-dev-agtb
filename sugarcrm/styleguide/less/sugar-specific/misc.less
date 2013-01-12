@@ -105,6 +105,12 @@ img.pull-left {
   visibility: hide;
 }
 
+.ui-draggable-dragging {
+  @shadow: 0 2px 10px rgba(0,0,0,.1), 0 0 10px rgba(0,0,0,.4), -1px -1px 20px rgba(0,0,0,.1), 1px 1px 20px rgba(0,0,0,.1);
+//  @shadow: 0 2px 1px rgba(0,0,0,.1), 0 0 1px rgba(0,0,0,.4), -1px -1px 2px rgba(0,0,0,.1), 1px 1px 2px rgba(0,0,0,.1);
+  .box-shadow(@shadow);
+}
+
 .titlebar {
   .buttonBackground(@white, @grayLight);
   .border-radius(3px 3px 0 0);
@@ -273,66 +279,90 @@ hr.soften {
 
 
 
-.main-pane {
+.dashboard {
   background-image: url('@{textureSecondary}');
-  .dashboard.layout_Home {
+  &> .rows {
     margin: 0 18px;
-    &> div.rows {
-      padding-top: 18px;
-      border-top: 1px solid @white;
-      list-style: none;
-      .row-fluid {
-        .widget-container {
-          .widget {
-            /*min-height: 60px;*/
-            padding: 0;
-            div.widget-content {
-              padding: 10px;
-            }
-            h4 {
-              cursor: move;
+    padding-top: 18px;
+    border-top: 1px solid @white;
+    list-style: none;
+    .row-fluid {
+      .widget-container {
+        .widget {
+          /*min-height: 60px;*/
+          padding: 0;
+          div.widget-content {
+            padding: 10px;
+          }
+          h4 {
+            cursor: move;
+          }
+        }
+        .empty {
+          padding: 30px 0;
+          margin-bottom: 20px;
+          border: 3px dashed lighten(@grayLight,8%);
+          background-color: @white;
+          cursor: pointer;
+          p {
+            font-size: 13px;
+            font-weight: 500px;
+            text-align: center;
+            color: lighten(@grayLight,8%);
+            &.header {
+              line-height: 40px;
             }
           }
-          .empty {
-            padding: 30px 0;
-            margin: 0;
-            &.thumbnail {
-              .box-shadow(none);
-              border: 3px dashed lighten(@grayLight,8%);
-              p {
-                font-size: 13px;
-                font-weight: 500px;
-                text-align: center;
-                color: lighten(@grayLight,8%);
-                &.header {
-                  line-height: 40px;
-                }
-              }
-              .add-dashlet {
-                cursor: pointer;
-                color: lighten(@grayLight,8%);
-                text-align: center;
-                small {
-                  font-size: 12px;
-                }
-                strong {
-                  font-size: 60px;
-                  font-weight: 900;
-                }
-              }
+          .add-dashlet {
+            color: lighten(@grayLight,8%);
+            text-align: center;
+            small {
+              font-size: 12px;
             }
-            .options {
-              a {
-                padding:0 12px;
-                &:hover {
-                  text-decoration: none;
-                }
-              }
+            strong {
+              font-size: 60px;
+              font-weight: 900;
             }
           }
         }
-        &>ul {
-          margin: 0;
+      }
+      &>ul {
+        margin: 0;
+      }
+    }
+  }
+  &> .add-row {
+    position: relative;
+    margin: 0 18px;
+    padding-top: 18px;
+    border: 3px dashed lighten(@grayLight,8%);
+    background-color: @white;
+    cursor: pointer;
+    p {
+      font-size: 13px;
+      font-weight: 500px;
+      text-align: center;
+      color: lighten(@grayLight,8%);
+      &.header {
+        line-height: 40px;
+      }
+    }
+    .add-dashlet {
+      color: lighten(@grayLight,8%);
+      text-align: center;
+      small {
+        font-size: 12px;
+      }
+      strong {
+        font-size: 60px;
+        font-weight: 900;
+      }
+    }
+    .options {
+      a {
+        padding:0 12px;
+        &:hover {
+          text-decoration: none;
         }
       }
     }
