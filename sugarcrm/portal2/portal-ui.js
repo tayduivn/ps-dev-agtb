@@ -42,6 +42,17 @@
         this.$("[rel=popover]").popover();
         this.$("[rel=popoverTop]").popover({placement: "top"});
 
+        this.$(".subnav > .btn-toolbar > h1").each(function(el){
+              if(isEllipsis($(this))===true) {
+                $(this).attr({'data-original-title':$(this).text(),'rel':'tooltip'}).tooltip({placement: "bottom"});
+              }
+
+        });
+
+        function isEllipsis(el) {
+             return (el[0].offsetWidth < el[0].scrollWidth);
+        }
+
         if ($.fn.timeago) {
             $("span.relativetime").timeago({
                 logger: SUGAR.App.logger,
