@@ -63,8 +63,6 @@
         } else {
             this.$el.append(component.el);
         }
-
-        console.log(component, this.first);
     },
 
     toggleView: function(e) {

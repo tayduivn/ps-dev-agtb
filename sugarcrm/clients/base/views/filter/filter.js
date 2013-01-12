@@ -22,7 +22,7 @@
             data = [],
             defaultId = "";
 
-        _.each(self.filters.models, function(model){
+        _.each(this.filters.models, function(model){
             data.push({id:model.id, text:model.get("name")});
             if(model.get("default_filter")){
                 defaultId = model.id;
@@ -33,27 +33,25 @@
 
         app.view.View.prototype.render.call(this);
 
-        self.node = self.$("#" + self.searchFilterId);
-        self.node.select2({
+        this.node = this.$("#" + this.searchFilterId);
+        this.node.select2({
             tags:data,
             multiple:true,
             maximumSelectionSize:2,
-            formatSelection: self.formatSelection
+            formatSelection: this.formatSelection
         });
 
         if(defaultId){
-            self.node.select2("val", defaultId);
-            self.sanitizeFilter({added:{id:defaultId}});
+            this.node.select2("val", defaultId);
+            this.sanitizeFilter({added:{id:defaultId}});
         }
-        self.node.on("change", function(e){
+        this.node.on("change", function(e){
             self.sanitizeFilter(e);
         });
 
     },
 
     formatSelection: function(item) {
-        var self = this;
-
         if (item.id === item.text) {
             return item.text;
         } else {
@@ -67,16 +65,16 @@
     sanitizeFilter: function(e){
         if(!_.isUndefined(e.added) && !_.isUndefined(e.added.id)){
             var self = this,
-            isInFilters = self.isInFilters(e.added.id);
+            isInFilters = this.isInFilters(e.added.id);
 
             if((e.added.id == -1) && !isInFilters){
-                self.node.select2("val", _.without(self.node.select2("val"), e.added.id.toString()));
-                self.toggleOpen();
+                this.node.select2("val", _.without(this.node.select2("val"), e.added.id.toString()));
+                this.toggleOpen();
             } else if(isInFilters){
-                self.node.select2("val", "");
-                self.node.select2("val", [e.added.id]);
-                self.filterDataSet(e.added.id);
-                self.$("a[rel=" + e.added.id + "]").on("click", function(){
+                this.node.select2("val", "");
+                this.node.select2("val", [e.added.id]);
+                this.filterDataSet(e.added.id);
+                this.$("a[rel=" + e.added.id + "]").on("click", function(){
                     self.toggleOpen(self.filters.get(e.added.id));
                 });
             }
@@ -91,8 +89,7 @@
      * @return boolean True if part of the set, false if not.
      */
     isInFilters: function(filter){
-        var self = this;
-        if(!_.isUndefined(self.filters.get(filter))){
+        if(!_.isUndefined(this.filters.get(filter))){
             return true;
         }
         return false;
@@ -116,11 +113,6 @@
     toggleOpen: function(filter) {
         this.layout.trigger("filter:create:new", filter);
         var valueInputs = this.layout.$el.find(".filter-value input");
-
-        // Focus when the default filter is the only row present
-        if( valueInputs.length && valueInputs.length < 3 ) {
-            $(valueInputs[1]).focus();
-        }
         return true;
     },
 
