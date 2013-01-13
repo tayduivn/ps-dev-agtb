@@ -555,7 +555,8 @@ input[type="color"],
     border-color: @errorText;
     color: @errorText;
   }
-  margin-bottom: 10px;
+  // this is breaking forms with tight spacing around inputs like .form=search and .form-horizontal
+  //margin-bottom: 10px;
 }
 
 .add-on.local {
