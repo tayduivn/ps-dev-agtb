@@ -33,7 +33,7 @@
  */
 ({
 
-    extendsFrom:"ForecastsIndexLayout",
+    extendsFrom:"ForecastsRecordsLayout",
 
     initialize:function (options) {
         // If is_setup == 1 and users come back to config, the context.forecasts will already be here
