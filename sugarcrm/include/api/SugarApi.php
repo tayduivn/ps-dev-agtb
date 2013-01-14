@@ -179,6 +179,8 @@ abstract class SugarApi {
     protected function toggleFavorites($module, $record, $favorite)
     {
         
+        $reindexBean = false;
+
         $favorite = (bool) $favorite;
 
         $fav_id = SugarFavorites::generateGUID($module,$record);
@@ -192,10 +194,9 @@ abstract class SugarApi {
         if(!empty($fav->id)) {
             $deleted = ($favorite) ? 0 : 1;
             $fav->toggleExistingFavorite($fav_id, $deleted);
-            return true;
+            $reindexBean = true;
         }
-
-        if($favorite) {
+        elseif($favorite && empty($fav->id)) {
             $fav = new SugarFavorites();
             $fav->id = $fav_id;
             $fav->new_with_id = true;
@@ -205,7 +206,16 @@ abstract class SugarApi {
             $fav->assigned_user_id = $GLOBALS['current_user']->id;
             $fav->deleted = 0;
             $fav->save();
-            return true;
+            $reindexBean = true;
+        }
+
+        // Bug59888 - If a Favorite is toggled, we need to reindex the bean for FTS engines so that the document will be updated with this change
+        if($reindexBean === true) {
+            $searchEngine = SugarSearchEngineFactory::getInstance(SugarSearchEngineFactory::getFTSEngineNameFromConfig());
+
+            if($searchEngine instanceof SugarSearchEngineAbstractBase) {
+                $searchEngine->indexSingleBean(BeanFactory::getBean($module, $record));
+            }
         }
 
         return true;
