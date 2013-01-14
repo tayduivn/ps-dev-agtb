@@ -31,24 +31,34 @@
         'click .btn-edit':'updateExistingProperty',
         'click .removeEmail':'remove',
         'click .addEmail':'add',
-        'change .newEmail': 'newEmailChanged'
+        'change .newEmail': '_newEmailChanged'
     },
-    // Need to debounce otherwise we sometimes can get multiple e-mails added at once
-    newEmailChanged:_.debounce(function(evt){
+    /**
+     * On change of the .newEmail input, we want to test if a new e-mail needs to be added
+     * @param {Event} evt
+     * @private
+     */
+    _newEmailChanged:function(evt){
         if($(evt.currentTarget).val().length > 0){
-            this.add(evt);
+            this.add(evt, $(evt.currentTarget).val());
         }
-    }, 100),
+    },
     /**
      * Adds email address to dom and model. Note added emails only get checked
      * upon Save button being clicked (which triggers the model validations).
+     *
+     * This method is debounced to prevent multiple duplicate e-mails from being added at once
+     *
+     * @param {Event} evt DOM event
+     * @param {String} [newEmail] E-Mail string to be added, will default to value currently in .newEmail input if not provided
      */
-    add:function (evt) {
+    //
+    add:_.debounce(function (evt, newEmail) {
         if (!evt) return;
-        // Destroy the tooltips open on this button because they wont go away if we rerender
+        // Destroy the tooltips open on this button because they wont go away if we re-render
         if ($(evt.currentTarget).tooltip) $(evt.currentTarget).tooltip('hide');
-        var newAddress = this.$('.newEmail').val(),
-            existingAddresses = _.clone(this.model.get(this.name)) || [];
+        var newAddress = (newEmail) ? newEmail : this.$('.newEmail').val();
+        var existingAddresses = _.clone(this.model.get(this.name)) || [];
         var newObj = {email_address:newAddress};
         if (existingAddresses.length < 1) {
             newObj.primary_address = true;
@@ -56,7 +66,7 @@
         existingAddresses.push(newObj);
 
         this.updateModel(existingAddresses);
-    },
+    }, 100),
     /**
      * On render, determine which e-mail addresses need anchor tag included
      * @param {Array} value set of e-mail addresses
@@ -71,7 +81,7 @@
     },
     /**
      * Removes email address from dom and model
-     * @param {Object} event
+     * @param {Object} evt DOM event
      */
     remove:function (evt) {
         if (!evt) return;
@@ -88,15 +98,17 @@
         });
         if(wasPrimary){
             var address = _.find(existingAddresses, function (emailInfo, index) {
-                return !existingAddresses[index];
+                return existingAddresses[index];
             });
-            address['primary_address'] == '1';
+            if(address){
+                address['primary_address'] = '1';
+            }
         }
         this.updateModel(existingAddresses);
     },
     /**
      * Updates true false properties on field
-     * @param event
+     * @param {Event} evt DOM event
      */
     updateExistingProperty:function (evt) {
         if (!evt) return;
@@ -147,12 +159,12 @@
     massUpdateProperty:function (emails, propName, value) {
         _.each(emails, function (emailInfo, index) {
             emails[index][propName] = value;
-        })
+        });
         return emails;
     },
     /**
      * Updates existing address that change event was fired on
-     * @param {Object} event
+     * @param {Object} evt DOM event
      */
     updateExistingAddress:function (evt) {
         if (evt && $(evt.currentTarget).val() != $(evt.currentTarget).data('id')) {
