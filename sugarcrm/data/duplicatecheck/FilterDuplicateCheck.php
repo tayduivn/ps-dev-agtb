@@ -131,7 +131,7 @@ class FilterDuplicateCheck extends DuplicateCheckStrategy
     protected function getIncomingFieldFromPlaceholder($filterValue)
     {
         if (strpos($filterValue, self::FIELD_PLACEHOLDER) === 0) {
-            return str_replace(self::FIELD_PLACEHOLDER, '', $filterValue);
+            return substr($filterValue, 1);
         }
         return false;
     }
