@@ -195,7 +195,7 @@
                 //Apply sorting for the worksheet
                 switch(field.type)
                 {
-                    case "buckets":
+                    case "commitStage":
                     case "enum":
                     case "bool":
                         // disable sorting for non-numerical fields
