@@ -48,7 +48,9 @@ class Bug59144Test extends Sugar_PHPUnit_Framework_TestCase
      */
     public function setUp()
     {
-        $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
+        SugarTestHelper::setUp('beanFiles');
+        SugarTestHelper::setUp('beanList');
+        SugarTestHelper::setUp('current_user');
         $this->lead = SugarTestLeadUtilities::createLead();
         $this->call = SugarTestCallUtilities::createCall();
 
@@ -65,8 +67,7 @@ class Bug59144Test extends Sugar_PHPUnit_Framework_TestCase
         SugarTestLeadUtilities::removeAllCreatedLeads();
         SugarTestCallUtilities::removeAllCreatedCalls();
 
-        SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
-        unset($GLOBALS['current_user']);
+        SugarTestHelper::tearDown();
     }
 
     public function testQueryIsNotBroken()
