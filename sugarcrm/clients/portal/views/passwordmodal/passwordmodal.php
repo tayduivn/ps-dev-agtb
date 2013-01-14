@@ -1,4 +1,6 @@
 <?php
+
+if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 /*********************************************************************************
  * The contents of this file are subject to the SugarCRM Master Subscription
  * Agreement ("License") which can be viewed at
@@ -25,38 +27,59 @@
  * governing these rights and limitations under the License.  Portions created
  * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
-$viewdefs['base']['layout']['profileedit'] = array(
-    'type' => 'simple',
-    'components' =>
-    array(
-        0 => array(
-            'view' => 'subnav',
-            'meta' => 'edit'
-        ),
-        1 => array(
-            'layout' =>
+
+$viewdefs['portal']['view']['passwordmodal'] = array(
+    'buttons' =>
+        array(
             array(
-                'type' => 'fluid',
-                'components' =>
+                'name' => 'save_button',
+                'type' => 'button',
+                'label' => 'LBL_SAVE_BUTTON_LABEL',
+                'value' => 'save',
+                'css_class' => 'btn-primary save-profile',
+            ),
+            array(
+                'name' => 'cancel_button',
+                'type' => 'button',
+                'label' => 'LBL_CANCEL_BUTTON_LABEL',
+                'value' => 'cancel',
+                'css_class' => 'btn-invisible btn-link',
+            ),
+        ),
+    'panels' =>
+        array(
+            array(
+                'label' => 'LBL_PANEL_DEFAULT',
+                'fields' =>
                 array(
-                    0 => array(
-                        'layout' =>
+                    array(
+                        'name' => 'current_password',
+                        'type' => 'password',
+                        'label' => 'LBL_OLD_PORTAL_PASSWORD',
+                        'displayParams' =>
                         array(
-                            'type' => 'simple',
-                            'span' => 7,
-                            'components' =>
-                            array(
-                                0 => array(
-                                    'view' => 'profile-edit',
-                                ),
-                                1 => array(
-                                    'view' => 'passwordmodal',
-                                ),
-                            ),
+                            'colspan' => 2,
+                        ),
+                    ),
+                    array(
+                        'name' => 'new_password',
+                        'type' => 'password',
+                        'label' => 'LBL_PORTAL_PASSWORD',
+                        'displayParams' =>
+                        array(
+                            'colspan' => 2,
+                        ),
+                    ),
+                    array(
+                        'name' => 'confirm_password',
+                        'type' => 'password',
+                        'label' => 'LBL_CONFIRM_PORTAL_PASSWORD',
+                        'displayParams' =>
+                        array(
+                            'colspan' => 2,
                         ),
                     ),
                 ),
             ),
         ),
-    ),
 );

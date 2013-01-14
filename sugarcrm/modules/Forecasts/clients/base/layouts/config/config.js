@@ -73,18 +73,9 @@
     },
 
     _showModal:function () {
-        var self = this;
-            isAdmin = false;
-
-        // todo-sfa: undo this change once sidecar ACLs are used again
-        // on first load, when is_setup == 0, app.initData.selectedUser.admin setting should be used
-        // because at that point there is no context.forecasts
-        // every other load there will be no app.initData so use the context
-        if(!_.isNull(app.initData) && !_.isNull(app.initData.selectedUser)) {
-            isAdmin = (app.initData.selectedUser.admin == "yes");
-        } else {
-            isAdmin = (this.context.forecasts.get('currentUser').admin == "yes");
-        }
+        var self = this,
+            isAdmin = app.user.getAcls()['Forecasts'].admin == "yes",
+            isSetup = this.context.forecasts.config.get('is_setup');
 
         if (isAdmin) {
             // begin building params to pass to modal
@@ -92,7 +83,9 @@
                 title:app.lang.get("LBL_FORECASTS_CONFIG_TITLE", "Forecasts") + ":",
                 span:10,
                 before:{
-                    hide:self.checkSettingsAndRedirect
+                    hide: function() {
+                        self.checkSettingsAndRedirect(isSetup,isAdmin);
+                    }
                 },
                 components: [
                     { layout: (this.context.forecasts.config.get('is_setup') == 1) ? "tabbedConfig" : "wizardConfig" }
@@ -101,7 +94,7 @@
             // callback has to be a function returning the checkSettingsAndRedirect function
             // to maintain the proper context otherwise from modal, "this" is the Window
             var callback = function () {
-                return self.checkSettingsAndRedirect
+                return self.checkSettingsAndRedirect(isSetup,isAdmin)
             };
             this.trigger("modal:forecastsConfig:open", params, callback);
         } else {
@@ -111,7 +104,7 @@
                     title:app.lang.get("LBL_FORECASTS_CONFIG_TITLE", "Forecasts") + ":"}
             );
             alert.getCloseSelector().on('click', function () {
-                return self.checkSettingsAndRedirect();
+                return self.checkSettingsAndRedirect(isSetup,isAdmin);
             })
         }
 
@@ -119,21 +112,20 @@
 
     /**
      * Checks the is_setup config setting and determines where to send the user
+     * @param isSetup variable to show whether
+     * @param isAdmin
      */
-    checkSettingsAndRedirect:function () {
-        if (!this.context.forecasts.config.get('is_setup')) {
-            // this should only ever happen on the wizard view
+    checkSettingsAndRedirect:function (isSetup, isAdmin) {
+        //3 conditions exist
+        //1: If the user is not an admin, then the user will be redirected to the main Sugar index
+        //2: The user is an admin, but setup has been performed and the cancel has been clicked,
+        // then redirect user to Forecasts module
+        //3: The user is an admin and setup is complete.  A success message is displayed.  An additional
+        // message regarding opportunity setup is displayed if this is the initial setup
+        if (!isAdmin) {
+            // this should only ever happen on the wizard view and if the user accessing is not an admin
             window.location = 'index.php?module=Home';
-
-            //issue notice about setting up Opportunities, we want this to happen after the page "refreshes"
-            setTimeout(function(){
-                app.alert.show('forecast_opp_notice', {
-                    level:'info',
-                    autoClose:false,
-                    closeable:true,
-                    messages: app.lang.get("LBL_FORECASTS_WIZARD_REFRESH_NOTICE", "Forecasts")
-                });}, 1000);
-        } else if (app.metadata.getModule('Forecasts').config.is_setup == 1 && this.context.forecasts.get('saveClicked') == false) {
+        } else if (isSetup == 1 && this.context.forecasts.get('saveClicked') == false) {
             // this should only ever happen on the tabbed view when cancel is clicked
             window.location.hash = '#';
         } else {
@@ -146,6 +138,16 @@
                 title:app.lang.get("LBL_FORECASTS_WIZARD_SUCCESS_TITLE", "Forecasts") + ":",
                 messages:[app.lang.get("LBL_FORECASTS_WIZARD_SUCCESS_MESSAGE", "Forecasts")]
             });
+            if(!isSetup){
+                //issue notice about setting up Opportunities, we want this to happen after the page "refreshes"
+                setTimeout(function(){
+                    app.alert.show('forecast_opp_notice', {
+                        level:'info',
+                        autoClose:false,
+                        closeable:true,
+                        messages: app.lang.get("LBL_FORECASTS_WIZARD_REFRESH_NOTICE", "Forecasts")
+                    });}, 1000);
+            }
                        
             // only sync the metadata and then push it back to the main location
             app.metadata.sync(function() {

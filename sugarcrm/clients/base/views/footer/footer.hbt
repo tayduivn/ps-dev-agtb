@@ -33,7 +33,7 @@
             <div class="btn-toolbar pull-right">
                 {{#if isAuthenticated}}
                 <div class="btn-group">
-                    <a title="{{str "LBL_TOUR"}}" class="btn btn-invisible" id="tour"><i class="icon-road"></i> {{str "LNK_TOUR"}}</a>
+                    <a title="{{str "LBL_ACTIVITY_VIEW_TOUR"}}" class="btn btn-invisible" id="tour"><i class="icon-road"></i> {{str "LNK_TOUR"}}</a>
                 </div>
                 <div class="btn-group">
                     <a id="print" class="btn btn-invisible"><i class="icon-print"></i> {{str "LBL_PRINT"}}</a>

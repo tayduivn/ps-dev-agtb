@@ -37,21 +37,6 @@ class RestMetadataSugarViewsTest extends RestTestBase {
         $this->baseAuthToken = $this->authToken;
     }
 
-    public function tearDown()
-    {
-        foreach ( $this->oldFiles as $filename => $filecontents ) {
-            if ( $filecontents == '_NO_FILE' ) {
-                if ( file_exists($filename) ) {
-                    SugarAutoLoader::unlink($filename);
-                }
-            } else {
-                SugarAutoLoader::put($filename,$filecontents);
-            }
-        }
-        SugarAutoLoader::saveMap();
-        SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
-        parent::tearDown();
-    }
     /**
      * @group rest
      */
@@ -85,14 +70,7 @@ class RestMetadataSugarViewsTest extends RestTestBase {
             'clients/portal/views/address/detailView.hbt',
             //END SUGARCRM flav=ent ONLY
         );
-
-        foreach ( $filesToCheck as $filename ) {
-            if ( file_exists($filename) ) {
-                $this->oldFiles[$filename] = SugarAutoLoader::put($filename);
-            } else {
-                $this->oldFiles[$filename] = '_NO_FILE';
-            }
-        }
+        SugarTestHelper::saveFile($filesToCheck);
 
         $dirsToMake = array(
                             'clients/base/views/address',

@@ -330,7 +330,7 @@ class SugarForecasting_Manager extends SugarForecasting_AbstractForecast impleme
                 // make sure that adjusted is not equal to zero, this might be over written by the loadWorksheetAdjustedValues call
                 $this->dataArray[$user_name]['worst_adjusted'] = $row['worst_case'];
                 $this->dataArray[$user_name]['forecast_id'] = $row['id'];
-                $this->dataArray[$user_name]['date_modified'] = $this->convertDateTimeToISO($row['date_modified']);
+                $this->dataArray[$user_name]['date_modified'] = $this->convertDateTimeToISO($db->fromConvert($row['date_modified'], 'datetime'));
                 $this->dataArray[$user_name]['currency_id'] = $row['currency_id'];
                 $this->dataArray[$user_name]['base_rate'] = $row['base_rate'];
             }

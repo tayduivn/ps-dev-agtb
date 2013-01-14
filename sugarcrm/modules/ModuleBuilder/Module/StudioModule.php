@@ -46,7 +46,12 @@ class StudioModule
         							'detailviewdefs.php' => array ( 'name' => translate('LBL_DETAILVIEW') , 'type' => MB_DETAILVIEW , 'image' => 'DetailView' ) ,
         							'listviewdefs.php' => array ( 'name' => translate('LBL_LISTVIEW') , 'type' => MB_LISTVIEW , 'image' => 'ListView' ) ) ;
 
-        $moduleNames = array_change_key_case ( $GLOBALS [ 'app_list_strings' ] [ 'moduleList' ] ) ;
+        $moduleList = $GLOBALS [ 'app_list_strings' ] [ 'moduleList' ];
+        if(empty($moduleList) && !is_array($moduleList)) {
+            $moduleList = array();
+        }
+
+        $moduleNames = array_change_key_case ( $moduleList ) ;
         $this->name = isset ( $moduleNames [ strtolower ( $module ) ] ) ? $moduleNames [ strtolower ( $module ) ] : strtolower ( $module ) ;
         $this->module = $module ;
         $this->seed = BeanFactory::getBean($this->module);
