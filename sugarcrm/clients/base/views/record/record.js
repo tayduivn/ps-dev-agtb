@@ -182,7 +182,7 @@
         return false;
     },
 
-    duplicateClicked: function(event) {
+    duplicateClicked: function() {
         app.cache.set("duplicate"+this.module, this.model.attributes);
         this.layout.trigger("drawer:create:fire", {
             components: [{
