@@ -266,16 +266,14 @@
      */
     saveWorksheet : function(isDraft) {
         // only run the save when the worksheet is visible and it has dirty records
-        //var totalToSave = 0;
         if(this.showMe()) {
             var self = this,
-                saveCount = 0;
                 saveObj = {totalToSave: 0, 
                            saveCount: 0, 
                            model: "", 
                            isDraft: isDraft, 
                            timeperiod:self.dirtyTimeperiod, 
-                           userId:self.dirtyUser.id}
+                           userId:self.dirtyUser.id};
             
             /**
              * If the sheet is dirty, save the dirty rows. Else, if the save is for a commit, and we have 
