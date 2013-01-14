@@ -136,7 +136,7 @@
 
         } else if (app.metadata.getModule('Forecasts').config.is_setup == 1 && this.context.forecasts.get('saveClicked') == false) {
             // this should only ever happen on the tabbed view when cancel is clicked
-            window.location.hash = '#Forecasts/layout/index';
+            window.location.hash = '#Forecasts';
         } else {
             // can happen on both views but it's the same methods/messages
             // we have a success save, so we need to call the app.metadata.sync() and then redirect back to the index
