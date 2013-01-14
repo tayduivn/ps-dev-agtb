@@ -15,7 +15,7 @@ describe("Email field", function() {
             },
             {
                 email_address: "test2@test.com",
-                primary_address: "1",
+                primary_address: "0",
                 opt_out: "1"
             }
         ];
@@ -40,6 +40,31 @@ describe("Email field", function() {
             field.add(mockEvent);
             var emails = model.get('email');
             expect(emails[2].email_address).toEqual("test3@test.com");
+        });
+        it("should select another primary e-mail address if the primary is deleted", function(){
+            var emails = model.get('email');
+            expect(emails.length).toEqual(2);
+            expect(emails[0].primary_address).toEqual("1");
+            expect(emails[1].primary_address).toEqual("0");
+            var mockEvent = {
+                target: field.$el.find('button')[0]
+            };
+            field.remove(mockEvent);
+            emails = model.get('email');
+            expect(emails.length).toEqual(1);
+            expect(emails[0].primary_address).toEqual("1");
+        });
+        it("should add an e-mail address automatically when newEmail input changes", function(){
+            runs(function(){
+                field.$('.newEmail').val("newEmail@test.com");
+                field.$('.newEmail').change();
+            });
+            waitsFor(function(){
+                if(model.get('email').length == 3){
+                    return model.get('email')[2].email_address == "newEmail@test.com";
+                }
+                return false;
+            }, "new e-mail address", 150);
         });
         it("should update email addresses on the model", function() {
             field.$el.find('input').val("testChanged@test.com");

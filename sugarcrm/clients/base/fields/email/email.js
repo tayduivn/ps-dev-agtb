@@ -30,7 +30,7 @@
         'change .existingAddress':'updateExistingAddress',
         'click .btn-edit':'updateExistingProperty',
         'click .removeEmail':'remove',
-        'click .addEmail':'add',
+        'click .addEmail':'_add',
         'change .newEmail': '_newEmailChanged'
     },
     /**
@@ -40,20 +40,26 @@
      */
     _newEmailChanged:function(evt){
         if($(evt.currentTarget).val().length > 0){
-            this.add(evt, $(evt.currentTarget).val());
+            this._add(evt, $(evt.currentTarget).val());
         }
     },
     /**
+     * Debounced call to add() method to prevent multiple duplicate e-mails from being added at once
+     * @param {Event} evt DOM event
+     * @param {String} newEmail e-mail address to add
+     * @private
+     */
+    _add: _.debounce(function(evt, newEmail){
+        _.bind(this.add, this, evt, newEmail)();
+    }, 100),
+    /**
      * Adds email address to dom and model. Note added emails only get checked
      * upon Save button being clicked (which triggers the model validations).
-     *
-     * This method is debounced to prevent multiple duplicate e-mails from being added at once
-     *
      * @param {Event} evt DOM event
      * @param {String} [newEmail] E-Mail string to be added, will default to value currently in .newEmail input if not provided
      */
     //
-    add:_.debounce(function (evt, newEmail) {
+    add:function (evt, newEmail) {
         if (!evt) return;
         // Destroy the tooltips open on this button because they wont go away if we re-render
         if ($(evt.currentTarget).tooltip) $(evt.currentTarget).tooltip('hide');
@@ -61,12 +67,12 @@
         var existingAddresses = _.clone(this.model.get(this.name)) || [];
         var newObj = {email_address:newAddress};
         if (existingAddresses.length < 1) {
-            newObj.primary_address = true;
+            newObj.primary_address = "1";
         }
         existingAddresses.push(newObj);
 
         this.updateModel(existingAddresses);
-    }, 100),
+    },
     /**
      * On render, determine which e-mail addresses need anchor tag included
      * @param {Array} value set of e-mail addresses
@@ -96,9 +102,10 @@
                 existingAddresses[index] = false;
             }
         });
+        // If a removed address was the primary e-mail, we need to pick an existing e-mail and make it the new primary
         if(wasPrimary){
-            var address = _.find(existingAddresses, function (emailInfo, index) {
-                return existingAddresses[index];
+            var address = _.find(existingAddresses, function (emailInfo) {
+                return emailInfo;
             });
             if(address){
                 address['primary_address'] = '1';
