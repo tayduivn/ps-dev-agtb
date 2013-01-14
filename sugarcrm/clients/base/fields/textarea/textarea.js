@@ -49,6 +49,10 @@
         if (this.isTooLong) {
             this.showLess();
         }
+
+        if(this.tplName === 'disabled') {
+            this.$(this.fieldTag).attr("disabled", "disabled");
+        }
     },
 
     toggleMoreText: function() {

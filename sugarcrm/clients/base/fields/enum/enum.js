@@ -64,9 +64,12 @@
         chosenOptions.disable_search_threshold = this.def.searchBarThreshold?this.def.searchBarThreshold:0;
 
         app.view.Field.prototype._render.call(this);
-
-        this.$(this.fieldTag).chosen(chosenOptions);
-        this.$(".chzn-container").addClass("tleft");
+        if(this.tplName === 'edit') {
+            this.$(this.fieldTag).not(".chzn-done").chosen(chosenOptions);
+            this.$(".chzn-container").addClass("tleft");
+        } else if(this.tplName === 'disabled') {
+            this.$(this.fieldTag).attr("disabled", "disabled").not(".chzn-done").chosen();
+        }
         return this;
     },
     unformat:function(value) {

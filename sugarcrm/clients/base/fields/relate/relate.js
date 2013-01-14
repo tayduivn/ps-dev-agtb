@@ -80,6 +80,8 @@
 
                     self.setValue({id: id, value: value, silent: true});
                 });
+        } else if(this.tplName === 'disabled') {
+            this.$(this.fieldTag).attr("disabled", "disabled").not(".chzn-done").chosen();
         }
         return result;
     },
