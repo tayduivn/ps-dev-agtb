@@ -1400,12 +1400,7 @@ EOQ;
 
     protected function getSearchFields($module)
     {
-     	$searchfields_file = SugarAutoLoader::loadWithMetafiles($module, 'SearchFields', 'searchfields');
- 		if($searchfields_file) {
- 			require $searchfields_file;
- 		}
-
-        return isset($searchFields) ? $searchFields : array();
+        return SugarAutoLoader::loadSearchFields($module);
     }
     /**
      * This is kinda a hack how it is implimented, but will tell us whether or not a focus has

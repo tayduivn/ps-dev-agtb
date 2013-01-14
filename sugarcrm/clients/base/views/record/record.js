@@ -1,17 +1,15 @@
 ({
-    editMode: false,
+    inlineEditMode: false,
     createMode: false,
+    previousModelState: null,
 
     events: {
-        'click .record-duplicate': 'duplicateClicked',    	
-        'click .record-edit': 'editClicked',
         'click .record-edit-link-wrapper': 'handleEdit',
-        'click .record-save': 'saveClicked',
-        'click .record-cancel': 'cancelClicked',
-        'click .record-delete': 'deleteClicked',
+        'click a[name=cancel_button]': 'cancelClicked',
         'click .more': 'toggleMoreLess',
         'click .less': 'toggleMoreLess'
     },
+    // button fields defined in view definition
     buttons: {},
     // button states
     STATE: {
@@ -28,7 +26,7 @@
 
         // Set the save button to show if the model has been edited.
         this.model.on("change", function() {
-            if (this.editMode || this.editAllMode) {
+            if (this.inlineEditMode) {
                 this.previousModelState = this.model.previousAttributes();
                 if(this.buttons['record-save']) {
                     this.buttons['record-save'].setDisabled(false);
@@ -37,9 +35,18 @@
             }
         }, this);
 
+        this.delegateButtonEvents();
+
         if (this.createMode) {
             this.model.isNotEmpty = true;
         }
+    },
+
+    delegateButtonEvents: function() {
+        this.context.on('button:edit_button:click', this.editClicked, this);
+        this.context.on('button:save_button:click', this.saveClicked, this);
+        this.context.on('button:delete_button:click', this.deleteClicked, this);
+        this.context.on('button:duplicate_button:click', this.duplicateClicked, this);
     },
 
     _render: function() {
@@ -59,11 +66,14 @@
             _.each(panel.fields, function(field, index) {
                 var maxSpan;
 
+                //labels: visibility for the label
+                //labelsOnTop: true for on the top of the field
+                //             false for on the left of the field
                 if (_.isUndefined(panel.labels)) {
                     panel.labels = true;
                 }
                 //8 for span because we are using a 2/3 ratio between field span and label span with a max of 12
-                maxSpan = (panel.labels) ? 8 : 12;
+                maxSpan = (panel.labelsOnTop === false && panel.labels) ? 8 : 12;
 
                 if (_.isUndefined(field.span)) {
                     field.span = Math.floor(maxSpan / columns);
@@ -93,10 +103,10 @@
 
         // Check if this is a new record, if it is, enable the edit view
         if (this.createMode && this.model.isNew()) {
-            this.editAllMode = false;
             this.toggleEdit(true);
         }
     },
+
     initButtons: function() {
         if(this.options.meta && this.options.meta.buttons) {
             this.buttons = {};
@@ -186,73 +196,48 @@
         }
     },
     
-    editClicked: function(event) {
-        if (!this.$(event.target).hasClass('disabled')) {
-            this.setButtonStates(this.STATE.EDIT);
-            this.toggleEdit();
-        }
+    editClicked: function() {
+        this.previousModelState = this.model.previousAttributes();
+        this.setButtonStates(this.STATE.EDIT);
+        this.toggleEdit(true);
     },
 
-    saveClicked: function(event) {
-        if (!this.$(event.target).hasClass('disabled')) {
-            this.setButtonStates(this.STATE.VIEW);
-            this.handleSave();
-        }
+    saveClicked: function() {
+        this.setButtonStates(this.STATE.VIEW);
+        this.handleSave();
     },
 
-    cancelClicked: function(event) {
-        if (!this.$(event.target).hasClass('disabled')) {
-            if(this.buttons['record-save']) {
-                this.buttons['record-save'].setDisabled(true);
-            }
-            this.setButtonStates(this.STATE.VIEW);
-            this.handleCancel();
-        }
+    cancelClicked: function() {
+        this.setButtonStates(this.STATE.VIEW);
+        this.handleCancel();
     },
 
-    deleteClicked: function(event) {
-        if (!this.$(event.target).hasClass('disabled')) {
-            this.handleDelete();
-        }
+    deleteClicked: function() {
+        this.handleDelete();
     },
 
-    // Handler functions
+    /**
+     * Render fields into either edit or view mode.
+     * @param isEdit
+     */
     toggleEdit: function(isEdit) {
         _.each(this.fields, function(field) {
-
-            // Exclude buttons
-            if(field.name && this.buttons[field.name]) {
-                return;
-            }
-
-            // Exclude image picker,
+            // Exclude image picker, buttons, and button dropdowns
             // This is just a stop gap solution.
-            if (field.type == "img") {
+            if ((field.type == "img") || (field.name && this.buttons[field.name])) {
                 return;
             }
 
-            if (_.isUndefined(isEdit)) {
-                if (this.editAllMode) {
-                    field.options.viewName = "detail";
-                    this.$('.record-edit-link-wrapper').show();
-                } else {
-                    field.options.viewName = "edit";
-                    this.$('.record-edit-link-wrapper').hide();
-                }
+            if (isEdit) {
+                field.options.viewName = "edit";
+                this.$('.record-edit-link-wrapper').hide();
             } else {
-                if (isEdit) {
-                    field.options.viewName = "edit";
-                    this.$('.record-edit-link-wrapper').hide();
-                } else {
-                    field.options.viewName = "detail";
-                    this.$('.record-edit-link-wrapper').show();
-                }
-            }
+                field.options.viewName = "detail";
+                this.$('.record-edit-link-wrapper').show();
+           }
 
             field.render();
         }, this);
-
-        this.editAllMode = (this.editAllMode) ? false : true;
     },
 
     /**
@@ -275,7 +260,7 @@
         field = this.getField(cellData.name);
 
         // Set Editing mode to on.
-        this.editMode = true;
+        this.inlineEditMode = true;
 
         // TODO: Refactor this for fields to support their own focus handling in future.
         // Add your own field type handling for focus / editing here.
@@ -293,15 +278,18 @@
                 break;
             default:
                 this.toggleCell(field, cell);
-                field.$el.find("input").focus().val(field.$el.find("input").val());
+                if (_.isFunction(field.focus)) {
+                    field.focus();
+                } else {
+                    field.$el.find("input").focus().val(field.$el.find("input").val());
+                }
         }
     },
 
     handleSave: function() {
         var self = this;
+        this.inlineEditMode = false;
 
-        this.editMode = false;
-        this.editAllMode = false;
         this.model.save({}, {
             success: function() {
                 if (self.createMode) {
@@ -317,8 +305,7 @@
     },
 
     handleCancel: function() {
-        this.editMode = false;
-        this.editAllMode = false;
+        this.inlineEditMode = false;
 
         if (!_.isEmpty(this.previousModelState)) {
             this.model.set(this.previousModelState);

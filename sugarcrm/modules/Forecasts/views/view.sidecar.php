@@ -68,6 +68,11 @@ class ForecastsViewSidecar extends SidecarView
 
         $this->ss->assign('HELP_URL', $url);
         $this->ss->assign('MODULE_NAME', isset($GLOBALS['app_list_strings']['moduleList'][$module]) ? $GLOBALS['app_list_strings']['moduleList'][$module] : $module);
+        $this->ss->assign('copyYear', date('Y'));
+
+        if (SugarConfig::getInstance()->get('calculate_response_time', false)) {
+            $this->ss->assign('STATISTICS',$this->_getStatistics());
+        }
 
         $this->ss->display($displayTemplate);
     }

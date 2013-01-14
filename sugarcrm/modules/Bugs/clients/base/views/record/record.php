@@ -76,13 +76,16 @@ $viewdefs['Bugs']['base']['view']['record'] = array(
             'fields' => array(
                 array('name'=>'bug_number', 'noedit'=>true),
                 'name',
+                array(
+                    'type' => 'favorite',
+                    'noedit' => true,
+                ),
             )
         ),
         array(
             'name' => 'panel_body',
             //'label' => 'LBL_PANEL_2',
             'columns' => 2,
-            'labels' => false,
             'labelsOnTop' => true,
             'placeholders' => true,
             'fields' => array(

@@ -2879,6 +2879,7 @@ $app_strings = array (
     'ERROR_MINVALUE' => 'Error. This minimum value of this field is {{this}}.',
     'ERROR_MAXVALUE' => 'Error. This maximum value of this field is {{this}}.',
     'ERROR_DATETIME' => 'Error. This field requires a valid date.',
+    'ERROR_NUMBER' => 'Error. This field requires a valid number.',
     'ERROR_NO_BEAN' => 'Failed to get bean.',
     'ERROR_ACCESS_MODULE' => 'You do not have access to this module.',
     'LBL_DUP_MERGE'=>'Find Duplicates',

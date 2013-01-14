@@ -85,12 +85,15 @@ $viewdefs['Documents']['base']['view']['record'] = array(
                     'span' => 12, 
                     'label' => '',                        
                 ),
+                array(
+                    'type' => 'favorite',
+                    'noedit' => true,
+                ),
             )
         ),
         array(
             'name' => 'panel_body',
             'columns' => 2,
-            'labels' => false,
             'labelsOnTop' => true,
             'placeholders' => true,
             'fields' => array(

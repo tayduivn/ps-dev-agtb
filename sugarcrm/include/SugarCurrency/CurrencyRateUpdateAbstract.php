@@ -183,7 +183,7 @@ abstract class CurrencyRateUpdateAbstract
         $rate = $this->db->getOne(sprintf("SELECT conversion_rate FROM currencies WHERE id = '%s'", $currencyId));
 
         // setup SQL statement
-        $query = sprintf("UPDATE %s t SET t.%s = %d WHERE t.currency_id = '%s'",
+        $query = sprintf("UPDATE %s SET %s = %d WHERE currency_id = '%s'",
             $table,
             $column,
             $rate,
@@ -262,7 +262,7 @@ abstract class CurrencyRateUpdateAbstract
     protected function doUpdateUsDollarRate($tableName, $usDollarColumn, $amountColumn, $currencyId)
     {
         // setup SQL statement
-        $query = sprintf("UPDATE %s t SET t.%s = t.base_rate * t.%s where t.currency_id = '%s'",
+        $query = sprintf("UPDATE %s SET %s = base_rate * %s where currency_id = '%s'",
             $tableName,
             $usDollarColumn,
             $amountColumn,
