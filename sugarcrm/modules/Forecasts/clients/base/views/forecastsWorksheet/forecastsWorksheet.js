@@ -202,6 +202,7 @@
                         fieldDef["bSortable"] = false;
                         break;
                     case "int":
+                    case "editableInt":
                     case "currency":
                     case "editableCurrency":
                         fieldDef["sSortDataType"] = "dom-number";
