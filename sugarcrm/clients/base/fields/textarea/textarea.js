@@ -40,7 +40,7 @@
     _render: function() {
         //figure out if we need to display the show more link
         var value = this.model.get(this.name);
-        if (value.length > this.maxDisplayLength) {
+        if ((!_.isUndefined(value)) && (value.length > this.maxDisplayLength)) {
             this.isTooLong = true;
         }
 
