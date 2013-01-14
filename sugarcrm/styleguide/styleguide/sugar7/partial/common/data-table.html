@@ -31,7 +31,7 @@
   <tbody id="listed">
     <tr>
       <td><input type="checkbox"> <span><i class="icon-favorite" rel="tooltip" data-title="Add to favorites"></i></span></td>
-      <td><a href="{{module}}/{{module}}-view.html" data-toggle="proto" data-target="#view .record" data-mode="view">Plato's LED MFT</a></td>
+      <td><a id="8fRfg" href="{{module}}/{{module}}-view.html" data-toggle="proto" data-target="#view .record" data-mode="view">Plato's LED MFT</a></td>
       <td><span class="dblclick">Cupertino</span></td>
       <td><span class="dblclick">USA</span></td>
       <td><span class="dblclick">(408) 555-5271</span></td>
@@ -228,5 +228,11 @@
 
     // $('.form-search .actions .btn').removeClass('active');
     $('.form-search .actions a[data-view="list"]').addClass('active');
+
+    $('body').on('click', 'a.convert_lead', function(){
+      $('#8fRfg').trigger('click');
+      window.location = '#trigger_convert_lead';
+      return false;
+    });
   });
 </script>
