@@ -41,4 +41,24 @@ describe("Base.Field.Button", function() {
         expect(field.callback).not.toBe("blur excuted");
         expect(field.callback).toBeUndefined();
     });
+
+    it("should setDisabled with CSS 'disabled'", function() {
+        var def = {
+            'events' : {
+                'click .btn' : 'function() { this.callback = "stuff excuted"; }',
+                'blur .btn' : 'function() { this.callback = "blur excuted"; }'
+            }
+        };
+        field = SugarTest.createField("base","button", "button", "edit", def);
+        field._loadTemplate = function() {  this.template = function(){ return '<a class="btn" href="javascript:void(0);"></a>'}; };
+
+        expect(field.getFieldElement().hasClass("disabled")).toBeFalsy();
+        field.render();
+        field.setDisabled(true);
+        expect(field.getFieldElement().hasClass("disabled")).toBeTruthy();
+        field.setDisabled(false);
+        expect(field.getFieldElement().hasClass("disabled")).toBeFalsy();
+        field.setDisabled();
+        expect(field.getFieldElement().hasClass("disabled")).toBeTruthy();
+    });
 });

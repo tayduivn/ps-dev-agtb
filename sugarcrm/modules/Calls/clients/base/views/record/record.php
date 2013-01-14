@@ -77,12 +77,15 @@ $viewdefs['Calls']['base']['view']['record'] = array(
             'header' => true,
             'fields' => array(
                 'name',
+                array(
+                    'type' => 'favorite',
+                    'noedit' => true,
+                ),
             )
         ),
         array(
             'name' => 'panel_body',
             'columns' => 2,
-            'labels' => false,
             'labelsOnTop' => true,
             'placeholders' => true,
             'fields' => array(

@@ -26,7 +26,23 @@
  ********************************************************************************/
 ({
     unformat:function(value){
-        value = (value!='' && value!='http://') ? value : "";
+        value = (value!='' && value!='http://') ? value.trim() : "";
+        return value;
+    },
+    format:function(value){
+        if (value && !value.match(/^(http|https):\/\//)) {
+            value = "http://" + value.trim();
+        }
+        if(this.def.gen == "1"){
+            var regex = /{(.+?)}/;
+            var result = null;
+            do{
+                result = regex.exec(value);
+                if(result){
+                    value = value.replace(result[0], this.model.get(result[1]));
+                }
+            }while(result);
+        }
         return value;
     }
 })
