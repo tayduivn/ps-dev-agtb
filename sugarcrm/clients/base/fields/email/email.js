@@ -30,26 +30,24 @@
         'change .existingAddress':'updateExistingAddress',
         'click .btn-edit':'updateExistingProperty',
         'click .removeEmail':'remove',
-        'click .addEmail':'_add',
-        'change .newEmail': '_newEmailChanged'
+        'click .addEmail':'addButton',
+        'change .newEmail': 'newEmailChanged'
     },
     /**
-     * On change of the .newEmail input, we want to test if a new e-mail needs to be added
+     * Event handler for change of the .newEmail input, we want to test if a new e-mail needs to be added
      * @param {Event} evt
-     * @private
      */
-    _newEmailChanged:function(evt){
+    newEmailChanged:function(evt){
         if($(evt.currentTarget).val().length > 0){
-            this._add(evt, $(evt.currentTarget).val());
+            this.addButton(evt, $(evt.currentTarget).val());
         }
     },
     /**
-     * Debounced call to add() method to prevent multiple duplicate e-mails from being added at once
+     * Event handler that debounces call to add() method to prevent multiple duplicate e-mails from being added at once
      * @param {Event} evt DOM event
      * @param {String} newEmail e-mail address to add
-     * @private
      */
-    _add: _.debounce(function(evt, newEmail){
+    addButton: _.debounce(function(evt, newEmail){
         _.bind(this.add, this, evt, newEmail)();
     }, 100),
     /**
