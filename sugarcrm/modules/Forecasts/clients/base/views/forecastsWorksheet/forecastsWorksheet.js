@@ -284,7 +284,7 @@
                         if(totalToSave === saveCount) {
                             self.context.forecasts.trigger('forecasts:worksheet:saved', totalToSave, 'rep_worksheet', isDraft);
                         }
-                    }});
+                    }, silent: true});
                 });
 
                 self.cleanUpDirtyModels();

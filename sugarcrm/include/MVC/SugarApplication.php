@@ -139,7 +139,7 @@ class SugarApplication
 		//set cookies
 		if(isset($_SESSION['authenticated_user_id'])){
 			$GLOBALS['log']->debug("setting cookie ck_login_id_20 to ".$_SESSION['authenticated_user_id']);
-			self::setCookie('ck_login_id_20', $_SESSION['authenticated_user_id'], time() + 86400 * 90);
+			self::setCookie('ck_login_id_20', $_SESSION['authenticated_user_id'], time() + 86400 * 90, '/', null, null, true);
 		}
 		if(isset($_SESSION['authenticated_user_theme'])){
 			$GLOBALS['log']->debug("setting cookie ck_login_theme_20 to ".$_SESSION['authenticated_user_theme']);

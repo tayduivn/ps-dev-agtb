@@ -1,8 +1,6 @@
-<?php
-
 /*********************************************************************************
  * The contents of this file are subject to the SugarCRM Master Subscription
- * Agreement ("License") which can be viewed at
+ * Agreement (""License"") which can be viewed at
  * http://www.sugarcrm.com/crm/master-subscription-agreement
  * By installing or using this file, You have unconditionally agreed to the
  * terms and conditions of the License, and You may not use this file except in
@@ -16,7 +14,7 @@
  * remove SugarCRM copyrights from the source code or user interface.
  *
  * All copies of the Covered Code must include on each user interface screen:
- *  (i) the "Powered by SugarCRM" logo and
+ *  (i) the ""Powered by SugarCRM"" logo and
  *  (ii) the SugarCRM copyright notice
  * in the same form as they appear in the distribution.  See full license for
  * requirements.
@@ -27,53 +25,41 @@
  * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
-class Bug33036Test extends Sugar_PHPUnit_Framework_TestCase
-{
-    private $obj;
+/**
+ * Forecasts specific error handlers.
+ */
+(function(app) {
+    /**
+     * Generic Forecasts API Error handler, should be passed into the app.api.call callbacks param as the error handler
+     *
+     * @param error
+     */
+    app.error.handleForecastAPIError = function(error) {
+        // remove any html currently in #alerts
+        // especially for page-load errors when "Loading" is still in the div
+        $('#alerts').empty()
 
-    public static function setUpBeforeClass()
-    {
-        SugarTestHelper::setUp('current_user');
-        SugarTestHelper::setUp('beanList');
-        SugarTestHelper::setUp('beanFiles');
-    }
+        var key='',
+            errorMsg='',
+            errorTitle='';
 
-	public static function tearDownAfterClass()
-	{
-        SugarTestHelper::tearDown();
-	}
-
-	public function setUp()
-	{
-	    $this->obj = new Contact();
-	}
-
-	public function tearDown()
-	{
-        if (! empty($this->obj->id)) {
-            $this->obj->db->query("DELETE FROM contacts WHERE id = '" . $this->obj->id . "'");
+        switch(error.status) {
+            // can handle custom HTTP status error cases here
+            // eg: case 404:
+            default:
+                key = error.code;
+                errorTitle = error.errorThrown;
+                errorMsg = error.message;
+                break;
         }
-        unset($this->obj);
-	}
 
-    public function testAuditForRelatedFields()
-    {
-        $test_account_name = 'test account name after';
+        app.alert.show(key,
+            {
+                level: 'error',
+                messages: errorMsg,
+                title: errorTitle
+            }
+        );
+    };
+})(SUGAR.App);
 
-        $account = SugarTestAccountUtilities::createAccount();
-
-        $this->obj->field_defs['account_name']['audited'] = 1;
-        $this->obj->name = 'test';
-        $this->obj->account_id = $account->id;
-        $this->obj->save();
-
-        $this->obj->retrieve($this->obj->id);
-        $this->obj->account_name = $test_account_name;
-        $changes = $this->obj->db->getDataChanges($this->obj);
-
-        $this->assertTrue(isset($changes['account_name']),"The account name was not in the list of changes");
-        $this->assertEquals($changes['account_name']['after'], $test_account_name);
-
-        SugarTestAccountUtilities::removeAllCreatedAccounts();
-    }
-}

@@ -389,7 +389,7 @@
      */
     unformat:function(value) {
         // In case ISO 8601 get it back to js native date which date.format understands
-        var jsDate = new Date(value);
+        var jsDate = app.date.parse(value);
         return app.date.format(jsDate, this.serverDateFormat);
 
     },

@@ -24,75 +24,42 @@
  * governing these rights and limitations under the License.  Portions created
  * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
-({
-
 /**
- * View that displays search results.
+ * View that displays profile detail.
  * @class View.Views.ProfileView
- * @alias SUGAR.App.layout.ProfileView
- * @extends View.View
+ * @alias SUGAR.App.view.ProfileView
+ * @extends View.Views.DetailView
  */
-    events: {},
+({
+    extendsFrom: "DetailView",
     initialize: function(options) {
-        this.options.meta   = app.metadata.getView('Contacts', 'detail');
-        app.view.View.prototype.initialize.call(this, options);
+        this.options.meta   = app.metadata.getView(this.options.module, 'detail');
+        app.view.views.DetailView.prototype.initialize.call(this, options);
         this.template = app.template.get("detail");
-        this.fallbackFieldTemplate = "detail"; // will use detail sugar fields
     },
-    render: function() {
-        var self = this, currentUserAttributes;
-
-        if(app.user.isSupportPortalUser()) {
-            currentUserAttributes = {id: app.user.get('id')}; 
-
-            self.loadCurrentUser(currentUserAttributes, function(data) {
-                if(data) {
-                    app.user.addSalutationToFullName(data);
-                    self.setModelAndContext(data);
-                    app.view.View.prototype.render.call(self);
-                    self.renderSubnav(data);
-                } 
-            });
-        } else {
-            app.router.goBack();
-            app.alert.show('not_portal_enabled_user', {level:'error', title: app.lang.getAppString('LBL_PORTAL_PAGE_NOT_AVAIL'), messages: app.lang.getAppString('LBL_PORTAL_NOT_ENABLED_MSG'), autoClose: true});
+    getFullName: function() {
+        var full_name = this.model.get('full_name') || this.model.get('first_name') + ' ' + this.model.get('last_name') || this.model.get('name'),
+            salutation = this.model.get('salutation');
+        if (!_.isEmpty(salutation)) {
+            var salutation_dom = app.lang.getAppListStrings(this.model.fields.salutation.options);
+            salutation = salutation_dom[salutation] || salutation;
+            full_name = salutation + ' ' + full_name;
         }
+        return full_name;
     },
-    loadCurrentUser: function(currentUserAttributes, cb) {
-        var self = this;
-        app.alert.show('fetch_contact_record', {level:'process', title:app.lang.getAppString('LBL_PORTAL_LOADING')});
-        app.api.records("read", "Contacts", currentUserAttributes, null, {
-            success: function(data) {
-                app.alert.dismiss('fetch_contact_record');
-                cb(data);
-                self.$('.modelNotLoaded').hide();
-                self.$('.modelLoaded').show();
-            },
-            error: function(error) {
-                app.alert.dismiss('fetch_contact_record');
-                app.error.handleHttpError(error, self);
-            }
-        });
-    },
-    /**
-     * Updates model for this contact.
-     */
-    setModelAndContext: function(data) {
-        this.model = app.data.createBean("Contacts", data);
-        this.model.isNotEmpty = true;
-        this.context.set({
-            'model': this.model,
-            'module': 'Contacts',
-            _dataFetched: true
-        });
-    },
-    renderSubnav: function(data) {
-        var self = this, subnavModel = null;
-        if (self.context.get('subnavModel')) {
-            self.context.get('subnavModel').set({
-                'title': data.full_name,
-                'meta': self.meta
-            });
+    bindDataChange:function () {
+        if (this.model) {
+            this.model.on("change", function () {
+                this.fieldsToDisplay = _.toArray(this.model.fields).length;
+                if (this.context.get('subnavModel')) {
+                    this.context.get('subnavModel').set({
+                        'title':this.getFullName(),
+                        'meta':this.meta
+                    });
+                    this.model.isNotEmpty = true;
+                    this.render();
+                }
+            }, this);
         }
     }
 })
