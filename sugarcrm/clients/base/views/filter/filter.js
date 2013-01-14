@@ -20,13 +20,10 @@
     render: function() {
         var self = this,
             data = [],
-            defaultId = "";
+            defaultId = this.defaultId || "";
 
         _.each(this.filters.models, function(model){
             data.push({id:model.id, text:model.get("name")});
-            if(model.get("default_filter")){
-                defaultId = model.id;
-            }
         }, this);
 
 		data.push({id:-1, text:"Create New"});
@@ -48,7 +45,6 @@
         this.node.on("change", function(e){
             self.sanitizeFilter(e);
         });
-
     },
 
     formatSelection: function(item) {
@@ -69,13 +65,16 @@
 
             if((e.added.id == -1) && !isInFilters){
                 this.node.select2("val", _.without(this.node.select2("val"), e.added.id.toString()));
-                this.toggleOpen();
+                this.openPanel();
             } else if(isInFilters){
                 this.node.select2("val", "");
                 this.node.select2("val", [e.added.id]);
                 this.filterDataSet(e.added.id);
+                if(!this.layout.$(".filter-options").hasClass('hide')) {
+                    self.openPanel(self.filters.get(e.added.id));
+                }
                 this.$("a[rel=" + e.added.id + "]").on("click", function(){
-                    self.toggleOpen(self.filters.get(e.added.id));
+                    self.openPanel(self.filters.get(e.added.id));
                 });
             }
         } else {
@@ -98,10 +97,11 @@
     /**
      * Retrieve filters from the server.
      */
-    getFilters: function() {
+    getFilters: function(defaultId) {
         var self = this;
 
         this.filters = app.data.createBeanCollection('Filters');
+        this.defaultId = defaultId;
         this.filters.fetch({success: function() {
             self.render();
         }});
@@ -110,10 +110,8 @@
     /**
      * Fires an event for the Filter editing widget to pop up.
      */
-    toggleOpen: function(filter) {
+    openPanel: function(filter) {
         this.layout.trigger("filter:create:new", filter);
-        var valueInputs = this.layout.$el.find(".filter-value input");
-        return true;
     },
 
     filterDataSet: function(activeFilterId) {

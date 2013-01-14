@@ -81,10 +81,21 @@
             return !!self.filterOperatorMap[el.type] && !_.isUndefined(el.text);
         });
 
-        this.layout.off("filter:populate");
-        this.layout.on("filter:populate", function(filter) {
-            self.populateFilter(filter);
+        this.layout.off("filter:create:new");
+        this.layout.off("filter:create:close");
+        this.layout.on("filter:create:new", function(filter) {
+            if(_.isUndefined(filter)) {
+                self.render();
+            } else {
+                self.populateFilter(filter);
+            }
+            self.$('.filter-options').removeClass('hide');
+
         });
+        this.layout.on("filter:create:close", function() {
+            self.$('.filter-options').addClass('hide');
+        });
+
     },
 
     render: function(model) {
@@ -93,6 +104,7 @@
     },
 
     purgeAllRows: function() {
+        this.$(".filter-header input").val("");
         this.$(".filter-body").filter(":not(:first-child)").remove();
     },
 
@@ -284,7 +296,7 @@
         var url = app.api.buildURL('Filters/' + this.title + '/used', "update", model);
         app.api.call("update", url, null, {
             success: function() {
-                self.layout.trigger("filter:refresh");
+                self.layout.trigger("filter:refresh", model.id);
             }
         });
     },
