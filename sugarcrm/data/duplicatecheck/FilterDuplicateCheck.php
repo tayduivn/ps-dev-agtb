@@ -152,7 +152,7 @@ class FilterDuplicateCheck extends DuplicateCheckStrategy
     /**
      * Rank the duplicates returned from the Filter API based on the ranking field metadata from the vardef
      *
-     * @param array $duplicates
+     * @param array $results
      * @return array
      */
     protected function rankAndSortDuplicates($results)
