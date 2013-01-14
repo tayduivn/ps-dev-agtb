@@ -56,7 +56,7 @@ $(document).ready(function() {
 
     // init edit mode
     if($(this).hasClass('edit') ){
-      $('#DataTables_Table_0').addClass('inline-edit-active');
+      $('#example').addClass('inline-edit-active');
       var editid = Math.floor(Math.random()*999999);
       $('<tr id="edit-id-'+editid+'" class="tr-inline-edit single"></tr>').insertAfter($(this).closest('tr'));
       loadPartials([
@@ -93,7 +93,7 @@ $(document).ready(function() {
     if($(this).hasClass('inline-save')) {
       throwMessage('<strong>Success!</strong> Your edits have been saved.', 'success', true);
     }
-    $('#DataTables_Table_0').removeClass('inline-edit-active');
+    $('#example').removeClass('inline-edit-active');
     return false;
   });
 
@@ -106,7 +106,7 @@ $(document).ready(function() {
   });
 
   $('body').on('click', '.cancel', function(){
-      $('#DataTables_Table_0').removeClass('inline-edit-active');
+      $('#example').removeClass('inline-edit-active');
       loadPartials([
          {"file":"common/header","target":".headerpane.ellipsis","method":"replace"},
       ]);
@@ -114,9 +114,9 @@ $(document).ready(function() {
 
   $('body').on('click', '.edit-all-records', function(){
 
-    $('#DataTables_Table_0').addClass('inline-edit-active');
+    $('#example').addClass('inline-edit-active');
 
-    $('#DataTables_Table_0 tbody tr').each(function(){
+    $('#example tr').each(function(){
       var editid = Math.floor(Math.random()*999999);
       $('<tr id="edit-id-'+editid+'" class="tr-inline-edit"></tr>').insertAfter($(this));
       loadPartials([
@@ -146,7 +146,7 @@ $(document).ready(function() {
   });
 
   $('body').on('click', '.headerpane.ellipsis .inline-save', function(){
-    $('#DataTables_Table_0').removeClass('inline-edit-active');
+    $('#example').removeClass('inline-edit-active');
     $('tr.tr-inline-edit').remove();
     $('tr.hide').removeClass('hide')
     throwMessage('<strong>Success!</strong> Your edits have been saved.', 'success', true);
