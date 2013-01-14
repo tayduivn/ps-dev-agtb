@@ -44,5 +44,15 @@
         });
         listView.view = meta.dupelisttype;
         return meta;
+    },
+
+    loadData: function(options) {
+        var self = this;
+        options = options || {};
+        options.endpoint = function(options, callbacks) {
+            var url = app.api.buildURL(self.module, "duplicateCheck");
+            return app.api.call('create', url, self.model.attributes, callbacks); //Dupe Check API requires POST
+        }
+        app.view.Layout.prototype.loadData.call(this, options);
     }
 })
