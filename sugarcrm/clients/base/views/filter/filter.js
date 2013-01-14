@@ -38,7 +38,9 @@
             tags:data,
             multiple:true,
             maximumSelectionSize:2,
-            formatSelection: this.formatSelection
+            formatSelection: this.formatSelection,
+            dropdownCss: {width:'auto'},
+            dropdownCssClass: 'search-filter-dropdown'
         });
 
         if(defaultId){
