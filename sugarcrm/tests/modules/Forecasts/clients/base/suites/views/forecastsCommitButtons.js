@@ -193,8 +193,8 @@ describe("Forecasts Commit Buttons Component", function(){
     		expect(view.context.forecasts.on).toHaveBeenCalledWith("change:reloadCommitButton");
     	});
     	
-    	it("forecasts.on should have been called with forecasts:forecastcommitbuttons:triggerCommit", function(){
-    		expect(view.context.forecasts.on).toHaveBeenCalledWith("forecasts:forecastcommitbuttons:triggerCommit");
+    	it("forecasts.on should have been called with forecasts:commitButtons:triggerCommit", function(){
+    		expect(view.context.forecasts.on).toHaveBeenCalledWith("forecasts:commitButtons:triggerCommit");
     	});
     	
     	it("forecasts.on should have been called with forecasts:commitButtons:enabled", function(){

@@ -89,6 +89,7 @@ class SugarACLStatic extends SugarACLStrategy
         'editview' => 1,
         'save' => 1,
         'edit' => 1,
+        'delete' => 1,
     );
 
     static $action_translate = array(

@@ -1,0 +1,1 @@
+<iframe class="htmleditable {{#if this.options.def.span}}span{{this.options.def.span}}{{/if}}" frameborder="0"></iframe>
