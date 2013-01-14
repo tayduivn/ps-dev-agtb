@@ -47,6 +47,9 @@ $viewdefs['Accounts']['base']['view']['record'] = array(
             'labelsOnTop' => true,
             'placeholders' => true,
             'fields' => array(
+                'account_type',
+                'industry',
+
                 'website',
                 array(
                     "name" => "phone_office",
@@ -110,8 +113,6 @@ $viewdefs['Accounts']['base']['view']['record'] = array(
                     'name' => 'description',
                     'span' => 12
                 ),
-                'account_type',
-                'industry',
                 'annual_revenue',
                 'employees',
                 'sic_code',

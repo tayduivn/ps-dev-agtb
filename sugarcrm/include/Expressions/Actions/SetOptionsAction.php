@@ -68,6 +68,10 @@ class SetOptionsAction extends AbstractAction{
                     else
                         field.items = _.object(keys, labels);
 
+                    slContext = context;
+
+                    field.model.fields[this.target].options = field.items;
+
                     var visAction = new SUGAR.forms.SetVisibilityAction(this.target, (empty ? 'false' : 'true'), '');
                     visAction.setContext(context);
                     visAction.exec();
