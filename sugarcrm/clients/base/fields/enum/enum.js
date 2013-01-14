@@ -28,6 +28,8 @@
     fieldTag: "select",
     _render: function() {
 
+        app.view.Field.prototype._render.call(this);
+
         var optionsKeys = [];
         if(_.isString(this.def.options)) {
             optionsKeys = _.keys(app.lang.getAppListStrings(this.def.options));
@@ -47,10 +49,10 @@
             }
         }
 
-        var chosenOptions = {};
+        var select2Options = {};
         var emptyIdx = _.indexOf(optionsKeys, "");
         if (emptyIdx !== -1) {
-            chosenOptions.allow_single_deselect = true;
+            select2Options.allowClear = true;
             // if the blank option isn't at the top of the list we have to add it manually
             if (emptyIdx > 1) {
                 this.hasBlank = true;
@@ -61,12 +63,10 @@
          The forecasts module requirements indicate that the search bar only shows up for fields with 5 or more values,
          this adds the ability to specify that threshold in metadata.
           */
-        chosenOptions.disable_search_threshold = this.def.searchBarThreshold?this.def.searchBarThreshold:0;
+        select2Options.minimumResultsForSearch = this.def.searchBarThreshold?this.def.searchBarThreshold:0;
 
-        app.view.Field.prototype._render.call(this);
-
-        this.$(this.fieldTag).chosen(chosenOptions);
-        this.$(".chzn-container").addClass("tleft");
+        this.$(this.fieldTag).select2(select2Options);
+        this.$(".select2-container").addClass("tleft");
         return this;
     },
     unformat:function(value) {
@@ -105,7 +105,7 @@
         var result = defaultString.split(",");
         _.each(result, function(value, key) {
             result[key] = value.replace(/\^/g,"");
-        })
+        });
         return result;
     }
 })
