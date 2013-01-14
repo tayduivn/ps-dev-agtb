@@ -557,6 +557,8 @@ input[type="color"],
   }
   // this is breaking forms with tight spacing around inputs like .form=search and .form-horizontal
   //margin-bottom: 10px;
+  //tbs default is 9px but that is through off the alignment of addons so setting to 0px
+  margin-bottom: 0;
 }
 
 .add-on.local {
@@ -564,7 +566,7 @@ input[type="color"],
   display: inline-block;
   height: 10px;
   width: 10px;
-  margin-left: -20px;
+  margin-left: -18px;
   position: relative;
   color: @errorText;
 /*
