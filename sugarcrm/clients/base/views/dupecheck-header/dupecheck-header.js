@@ -35,7 +35,6 @@
     },
 
     updateCount: function() {
-        debugger;
         translatedString = app.lang.get(
             'LBL_DUPLICATES_FOUND',
             this.module,
