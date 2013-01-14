@@ -7,10 +7,10 @@
                 </select>
             </div>
             <div class="actions" data-toggle="buttons-radio">
-                <a href="partial/{{module}}/{{module}}-activitystream.html" class="btn btn-invisible btn-dark fourth" data-view="activitystream" data-toggle="proto" data-target="#view .main-content" data-mode="view" rel="tooltip" data-original-title="Activity stream"><i class="icon-th-list"></i></a>
+                <a href="{{module}}/{{module}}-activitystream.html" class="btn btn-invisible btn-dark fourth" data-view="activitystream" data-toggle="proto" data-target="#view .main-content" data-mode="view" rel="tooltip" data-original-title="Activity stream"><i class="icon-th-list"></i></a>
                 <a href="#" class="btn btn-invisible btn-dark third" data-view="timeline" data-mode="view" rel="tooltip" data-original-title="Timeline"><i class="icon-time"></i></a>
                 <a href="#" class="btn btn-invisible btn-dark second" data-view="calendar" data-mode="view" rel="tooltip" data-original-title="Calendar"><i class="icon-calendar"></i></a>
-                <a href="partial/common/data-table.html" class="btn btn-invisible btn-dark first" data-view="list" data-toggle="proto" data-target="#view .main-content" data-mode="view" rel="tooltip" data-original-title="List"><i class="icon-table"></i></a>
+                <a href="common/data-table.html" class="btn btn-invisible btn-dark first" data-view="list" data-toggle="proto" data-target="#view .main-content" data-mode="view" rel="tooltip" data-original-title="List"><i class="icon-table"></i></a>
             </div>
         </div>
     </div>
@@ -320,7 +320,7 @@
 
       function createFilterRow (index,spec,isNewRow) {
 
-          loadContent('partial/common/search-filter-row.html', '.filter-options', undefined, 'append');
+          loadContent('common/search-filter-row.html', '.filter-options', undefined, 'append');
 
           if (!isNaN(index)) {
               _form.find('#filter_row_new').attr('id','filter_row_'+ index);
@@ -355,9 +355,13 @@
 
               //set the operations
               opera.find('option').remove();
-              opera.append('<option value=""></option>');
+              $('<option>').appendTo(opera).attr('value','');
+              // $.each( fieldDef.opera.split(','), function(index,value){
+              //     opera.append('<option value="'+ value +'">'+ value +'</option>');
+              // });
+
               $.each( fieldDef.opera.split(','), function(index,value){
-                  opera.append('<option value="'+ value +'">'+ value +'</option>');
+                  $('<option>').appendTo(opera).attr('value', value).text(value);
               });
               //opera.css('display','inline-block');
               //set opera selected to spec value

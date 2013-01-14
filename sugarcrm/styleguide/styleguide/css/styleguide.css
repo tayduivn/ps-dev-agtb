@@ -64,7 +64,26 @@
   height:18px;
   border:1px solid #eeeeee;
 }
+body {
+  padding:0;
+  overflow:auto;
+}
+.subnav { z-index:1020; }
+.subnav-fixed { top:0; }
+.dropdown-menu-container {
+  position:relative;
+  display:inline-block;
+  z-index:1030;
+}
+.dropdown-menu-container a { padding-left:5px; }
+.dropdown-menu-container ul { font-size:12px; }
 .hero-unit {
   padding:20px;
   font-size:24px;
 }
+.hero-unit .cube { background-position:0 1px; }
+.hero-unit h1 {
+  display:inline-block;
+  margin-top:0;
+}
+.hero-unit #find_patterns_chzn { z-index:1030; }

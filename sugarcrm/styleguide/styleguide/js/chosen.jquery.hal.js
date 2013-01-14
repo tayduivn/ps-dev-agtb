@@ -1,6 +1,6 @@
 // Chosen, a Select Box Enhancer for jQuery and Protoype
 // by Patrick Filler for Harvest, http://getharvest.com
-// 
+//
 // Version 0.9.11
 // Full source at https://github.com/harvesthq/chosen
 // Copyright (c) 2011 Harvest http://getharvest.com
@@ -185,7 +185,7 @@ Copyright (c) 2011 by Harvest
       }
     };
 
-	/*sugar mod: custom renderers*/
+	/*sugar mod: pass custom search result renderer*/
     AbstractChosen.prototype.result_add_option = function(option,searchResultConstructor) {
       var classes, style;
       if (!option.disabled) {
@@ -201,9 +201,10 @@ Copyright (c) 2011 by Harvest
           classes.push(option.classes);
         }
         style = option.style.cssText !== "" ? " style=\"" + option.style + "\"" : "";
+	    /*sugar mod: use custom search result renderer*/
 	    if ( typeof searchResultConstructor === 'function' && option.classes.indexOf('custom-result')!==-1  ) {
 	      return searchResultConstructor(option.dom_id,classes.join(' '),style,option.html,option.array_index);
-        } else {  
+        } else {
 	      return '<li id="' + option.dom_id + '" class="' + classes.join(' ') + '"' + style + '>' + option.html + '</li>';
         }
       } else {
@@ -301,7 +302,7 @@ Copyright (c) 2011 by Harvest
 
 
 (function() {
-/*sugar mod: custom renderers, fullWidth*/
+  /*sugar mod: passing custom search choice and result renderers, and fullWidth option*/
   var $, Chosen, get_side_border_padding, root, fullWidth, searchChoiceConstructor, searchResultConstructor,
     __hasProp = {}.hasOwnProperty,
     __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
@@ -315,6 +316,7 @@ Copyright (c) 2011 by Harvest
       if ($.browser.msie && ($.browser.version === "6.0" || ($.browser.version === "7.0" && document.documentMode === 7))) {
         return this;
       }
+      /*sugar mod: set this scope variables passed in options*/
       fullWidth = (options && options.fullWidth) ? true : false;
 
       if (options && typeof options.searchChoiceConstructor !== 'undefined') {
@@ -323,7 +325,6 @@ Copyright (c) 2011 by Harvest
       if (options && typeof options.searchResultConstructor !== 'undefined') {
         searchResultConstructor = options.searchResultConstructor;
       }
-
       return this.each(function(input_field) {
         var $this;
         $this = $(this);
@@ -398,7 +399,7 @@ Copyright (c) 2011 by Harvest
         sf_width = dd_width - get_side_border_padding(this.search_container) - get_side_border_padding(this.search_field);
         this.search_field.css({
           //"width": sf_width + "px"
-          'width': this.form_field_jq.hasClass('chzn-narrow') ? 'auto' : (sf_width + 'px')
+          'width': this.form_field_jq.hasClass('chzn-narrow') ? 'auto' : this.form_field_jq.hasClass('chzn-inherit-width') ? '100%' : (sf_width + 'px')
         });
       }
       this.results_build();

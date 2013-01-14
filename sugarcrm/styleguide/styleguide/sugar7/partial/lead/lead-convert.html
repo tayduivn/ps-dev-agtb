@@ -36,14 +36,14 @@
         $('a.btn-primary.save').addClass('associated_contact');
         invokeSaveButtons();
         $('.lead-convert-continue').attr({
-          'href':'partial/lead/lead-convert-duplicates-table.html',
+          'href':'lead/lead-convert-duplicates-table.html',
           'data-target':'.step_2_container .step_extend'
         });
       });
     $('body').on('change', 'form', function(){
       invokeSaveButtons();
       $('.lead-convert-continue').attr({
-        'href':'partial/lead/lead-convert-duplicates-table.html',
+        'href':'lead/lead-convert-duplicates-table.html',
         'data-target':'.step_2_container .step_extend'
       });
     });

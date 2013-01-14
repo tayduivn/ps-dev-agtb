@@ -68,7 +68,44 @@
   border: 1px solid #eee;
 }
 
+/* Reset general styles
+-------------------------------------------------- */
+
+body {
+  padding: 0;
+  overflow: auto;
+}
+
+.subnav {
+  z-index: 1020;
+}
+
+.subnav-fixed {
+  top: 0;
+}
+.dropdown-menu-container {
+  position:relative;
+  display:inline-block;
+  z-index: 1030;
+  a {
+    padding-left: 5px;
+  }
+  ul {
+    font-size: 12px;
+  }
+}
+
 .hero-unit {
   padding: 20px;
   font-size: 24px;
+  .cube {
+     background-position: 0 1px;
+  }
+  h1 {
+    display: inline-block;
+    margin-top: 0;
+  }
+  #find_patterns_chzn {
+    z-index: 1030;
+  }
 }

@@ -3,7 +3,9 @@
 <head>
   <script src="js/jquery-1.7.2.min.js"></script>
   <script src="js/ICanHaz.min.js" ></script>
+  <script src="js/prototype.js"></script>
   <script src="js/styleguide.js"></script>
+  <script src="partial/section-data.js"></script>
   <link href="css/bootstrap.css" rel="stylesheet">
   <link href="css/sugar.css" rel="stylesheet">
   <script>
@@ -12,12 +14,17 @@
       , "description": "Description of styleguide page contents."
       , "sections": ["Section 1","Section 2","Section 3"]
       , "sectionLink": sectionLink
-      , "templates":"head,navbar,masthead,libraries"
+      , "templates": [
+          {"file":"head","target":"head","method":"append"}
+        , {"file":"navbar","target":"body","method":"prepend"}
+        , {"file":"masthead","target":"#page-content","method":"prepend"}
+        , {"file":"libraries","target":"body","method":"append"}
+      ]
     };
   </script>
 </head>
 <body data-spy="scroll" data-target=".subnav" data-offset="200">
-<div class="container">
+<div class="container" id="page-content">
 
   <section id="section-1">
     <div class="page-header">

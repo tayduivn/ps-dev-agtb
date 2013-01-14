@@ -4,6 +4,15 @@
   'use strict';
   $(function (){
 
+    // load snippets
+    ich.addTemplate('drawerTrig', '<a href="#overview" title="Collapse sidebar" class="btn btn-invisible drawerTrig"><i class="icon-double-angle-right"></i></a>');
+
+    // load prototype framework
+    if (page) {
+      page.rand = function(){return Math.floor((Math.random()*100)+1);};
+      loadPage(page);
+    }
+
     // fix sub nav on scroll
     var $win = $(window)
       , $nav = $('.subnav')
@@ -155,37 +164,14 @@
       //$('#'+target).modal('show');
     });
 
-    // load tab content into DOM and show proto
-    $('body').on( 'click', 'a[data-toggle="proto"]', function (e){
-      //e.relatedTarget // previous tab
-      e.preventDefault();
-      //e.stopPropagation();
-      var link = $(this)
-        , source = link.attr('href')
-        , target = link.data('target')
-        , mode = link.data('mode')
-        , method = link.data('method');
-      // console.log(source);
-      // console.log(target);
-      // console.log(mode);
-      // console.log(mode);
-      // console.log('==============');
-      loadContent(source,target,mode,method);
-    });
+    // if (window.location.hash === '#view' || window.location.hash === '#edit') {
+    //   var module = window.location.pathname.split('/').pop().split('.')[0].replace(/ies$/,'y').replace(/s$/,'')
+    //     , mode = window.location.hash.substring(1)
+    //     , source = 'partial/' + module + '/' + module +'-' + mode + '.html'
+    //     , target = window.location.hash + ' .record';
 
-    // load prototype framework
-    if (page) {
-      loadPage(page);
-    }
-
-    if (window.location.hash === '#view' || window.location.hash === '#edit') {
-      var module = window.location.pathname.split('/').pop().split('.')[0].replace(/ies$/,'y').replace(/s$/,'')
-        , mode = window.location.hash.substring(1)
-        , source = 'partial/' + module + '/' + module +'-' + mode + '.html'
-        , target = window.location.hash + ' .record';
-
-      loadContent(source,target,mode,method);
-    }
+    //   loadContent(source,target,mode,method);
+    // }
 
     // timeout the alerts
     setTimeout( function (){$('.timeten').fadeOut().remove();}, 3000);

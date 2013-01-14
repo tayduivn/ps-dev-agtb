@@ -1,202 +1,23 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <script src="js/jquery-1.7.2.min.js"></script>
-  <script src="js/ICanHaz.min.js" ></script>
-  <script src="js/styleguide.js"></script>
+  <meta charset="utf-8">
   <link href="css/bootstrap.css" rel="stylesheet">
   <link href="css/sugar.css" rel="stylesheet">
+  <script src="partial/page-data.js"></script>
   <script>
-    var page = {
-        "title": "Javascript"
-      , "description": "Dozens of reusable components are built in to provide navigation, alerts, popovers, and much more."
-      , "sections": [
-              "Modals"
-            , "Dropdowns"
-            , "Scrollspy"
-            , "Togglable tabs"
-            , "Tooltips"
-            , "Popovers"
-            , "Alert messages"
-            , "Buttons"
-            , "Collapse"
-            , "Carousel"
-            , "Typeahead"
-            , "Transitions"
-            , "Chosen"
-            , "Date/time picker"
-            , "jsTree"
-            , "Slider"
-            , "Wizard"
-            , "DataTable"
-        ]
-      , "sectionLink": function(){
-        var regx = /[\s\,\/]+/g;
-        return '<li><a class="widget-link" href="widgets.html#' + this['.'].replace(regx,'-').toLowerCase() + '">' + this['.'] + '</a></li>';
-      }
-      , "templates":"head,navbar,masthead,libraries"
-    };
-    $('.widget-link').live( 'click', function (e){
-      e.preventDefault();
-      e.stopPropagation();
-      $('body').scrollTop(0);
-      var url = 'partial/widgets/'+ $(this).attr('href').replace('widgets.html#','') + '.html';
-      jQuery.ajax({
-        url: url,
-        dataType:"text",
-        async: false,
-        success: function(data) {
-            if(data !== undefined){
-              $('#widget-content').html(data);
-              //console.log( $('section')[0].offsetTop - parseInt( $('body').css('padding-top'), 10 ))
-              $(window).scrollTop( 170 );
-            }
-        }
-      });
-    });
+    var page = pages['widgets'];
   </script>
 </head>
-<body data-spy="scroll" data-target=".subnav" data-offset="200" class="scroll">
-<div class="container">
-
-  <!-- Masthead
-  ================================================== -->
-  <!-- <header class="jumbotron subhead">
-    <h1>Javascript</h1>
-    <p class="lead">Dynamic widgets for the front end</p>
-  </header> -->
-
-  <!-- Using Javascript w/ Bootstrap
-  ================================================== -->
-  <div id="widget-content">
-    <section id="widget-menu">
-     <!--  <div class="page-header">
-        <h1>jQuery plugins <small>Dynamic widgets for the front end</small></h1>
-      </div> -->
-      <div class="row">
-        <div class="span3">
-          <label>
-            <h3 id="modals"><a class="widget-link" href="widgets.html#modals">Modals</a></h3>
-            <p>A streamlined, but flexible, take on the traditional javascript modal plugin with only the minimum required functionality and smart defaults.</p>
-          </label>
-        </div>
-        <div class="span3">
-          <label>
-            <h3 id="dropdowns"><a class="widget-link" href="widgets.html#dropdowns">Dropdowns</a></h3>
-            <p>Add dropdown menus to nearly anything with this simple plugin. Features full dropdown menu support on in the navbar, tabs, and pills.</p>
-          </label>
-        </div>
-        <div class="span3">
-          <label>
-            <h3 id="scrollspy"><a class="widget-link" href="widgets.html#scrollspy">Scrollspy</a></h3>
-            <p>Use scrollspy to automatically update the links in your navbar to show the current active link based on scroll position.</p>
-          </label>
-        </div>
-        <div class="span3">
-          <label>
-            <h3 id="togglable-tabs"><a class="widget-link" href="widgets.html#tabs">Togglable tabs</a></h3>
-            <p>Use this plugin to make tabs and pills more useful by allowing them to toggle through tabbable panes of local content.</p>
-          </label>
-        </div>
-      </div> <!-- /row -->
-      <div class="row">
-        <div class="span3">
-          <label>
-            <h3 id="tooltips"><a class="widget-link" href="widgets.html#tooltips">Tooltips</a></h3>
-            <p>A new take on the jQuery Tipsy plugin, Tooltips don't rely on images, uss CSS3 for animations, and data-attributes for local title storage.</p>
-          </label>
-        </div>
-        <div class="span3">
-          <label>
-            <h3 id="popovers"><a class="widget-link" href="widgets.html#popovers">Popovers</a> <small class="muted">*</small></h3>
-            <p>Add small overlays of content, like those on the iPad, to any element for housing secondary information.</p>
-            <p class="muted"><strong>*</strong> Requires <a href="#tooltips">Tooltips</a> to be included</p>
-          </label>
-        </div>
-        <div class="span3">
-          <label>
-            <h3 id="alert-messages"><a class="widget-link" href="widgets.html#alerts">Alert messages</a></h3>
-            <p>The alert plugin is a tiny class for adding close functionality to alerts.</p>
-          </label>
-        </div>
-        <div class="span3">
-          <label>
-            <h3 id="buttons"><a class="widget-link" href="widgets.html#buttons">Buttons</a></h3>
-            <p>Do more with buttons. Control button states or create groups of buttons for more components like toolbars.</p>
-          </label>
-        </div>
-      </div> <!-- /row -->
-      <div class="row" style="margin-bottom: 9px;">
-        <div class="span3">
-          <label>
-            <h3 id="collapse"><a class="widget-link" href="widgets.html#collapse">Collapse</a></h3>
-            <p>Get base styles and flexible support for collapsible components like accordions and navigation.</p>
-          </label>
-        </div>
-        <div class="span3">
-          <label>
-            <h3 id="carousel"><a class="widget-link" href="widgets.html#carousel">Carousel</a></h3>
-            <p>Create a merry-go-round of any content you wish to provide an interactive slideshow of content.</p>
-          </label>
-        </div>
-        <div class="span3">
-          <label>
-            <h3 id="typeahead"><a class="widget-link" href="widgets.html#typeahead">Typeahead</a></h3>
-            <p>A basic, easily extended plugin for quickly creating elegant typeaheads with any form text input.</p>
-          </label>
-        </div>
-        <div class="span3">
-          <label>
-            <h3 id="transitions">Transitions <small class="muted">*</small></h3>
-            <p>For simple transition effects, include bootstrap-transition.js once to slide in modals or fade out alerts.</p>
-            <p class="muted"><strong>*</strong> Required for animation in plugins</p>
-          </label>
-        </div>
-      </div> <!-- /row -->
-      <div class="row" style="margin-bottom: 9px;">
-        <div class="span3">
-          <label>
-            <h3 id="chosen"><a class="widget-link" href="widgets.html#chosen">Chosen inputs</a></h3>
-            <p>Lightweight and user friendly select boxes for streamlined data selection. Great for dropdowns, single- and multi-selects.</p>
-          </label>
-        </div>
-        <div class="span3">
-          <label>
-            <h3 id="date-time-picker"><a class="widget-link" href="widgets.html#date-time-picker">Date/time picker</a></h3>
-            <p>Lightweight date/time picker</p>
-          </label>
-        </div>
-        <div class="span3">
-          <label>
-            <h3 id="jstree"><a class="widget-link" href="widgets.html#jstree">jsTree</a></h3>
-            <p>jsTree is a javascript based, cross browser tree component.</p>
-          </label>
-        </div>
-        <div class="span3">
-          <label>
-              <h3 id="slider"><a class="widget-link" href="widgets.html#slider">Slider</a></h3>
-              <p>jQuery range picker</p>
-          </label>
-        </div>
-      </div> <!-- /row -->
-      <div class="row" style="margin-bottom: 9px;">
-        <div class="span3">
-          <label>
-              <h3 id="wizard"><a class="widget-link" href="widgets.html#wizard">Wizard</a></h3>
-              <p>Wizard takes advantage of bootstrap modals and sets up a framework for taking a user through multiple steps to complete a task.</p>
-          </label>
-        </div>
-        <div class="span3">
-          <label>
-              <h3 id="datatable"><a class="widget-link" href="widgets.html#datatable">DataTable</a></h3>
-              <p>DataTables is a highly flexible tool, based upon the foundations of progressive enhancement, which will add advanced interaction controls to any HTML table.</p>
-          </label>
-        </div>
-      </div>
-
-      <div class="alert alert-info"><strong>Heads up!</strong> All javascript plugins require the latest version of jQuery.</div>
-    </section>
+<body data-spy="scroll" data-target=".subnav" data-offset="100">
+  <div class="container" id="page-content">
+    <div id="section-content">
+    </div>
+    <div class="alert alert-info"><strong>Heads up!</strong> All javascript plugins require the latest version of jQuery.</div>
   </div>
-</div>
+  <script src="js/jquery-1.7.2.min.js"></script>
+  <script src="js/ICanHaz.min.js" ></script>
+  <script src="js/prototype.js"></script>
+  <script src="js/styleguide.js"></script>
 </body>
 </html>

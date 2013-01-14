@@ -6,11 +6,11 @@
     <a href="javascript:void(0)" class="btn next-row"><i class="icon-chevron-right"></i></a>
   </div>
   <div id="pageConfig" class="btn-group">
-    <a href="partial/{{module}}/{{module}}-edit.html" data-toggle="proto" data-target="#view .record" data-mode="view" title="Edit {{module}}" class="btn btn-primary">Edit</a><a class="btn btn-primary dropdown-toggle" data-toggle="dropdown" href="#">
+    <a href="{{module}}/{{module}}-edit.html" data-toggle="proto" data-target="#view .record" data-mode="view" title="Edit {{module}}" class="btn btn-primary">Edit</a><a class="btn btn-primary dropdown-toggle" data-toggle="dropdown" href="#">
       <span class="caret"></span>
     </a>
     <ul class="dropdown-menu">
-      <li><a href="partial/{{module}}/{{module}}-create.html" data-toggle="proto" data-target="#edit .record" data-mode="edit">Create new</a></li>
+       <li><a href="{{module}}/{{module}}-create.html" data-toggle="proto" data-target="#edit .record" data-mode="edit">Create new</a></li>
       {{#convertLead}}{{module}}{{/convertLead}}
       <li><a href="#">Delete</a></li>
       <!-- <li><a href="#">Settings</a></li> -->
