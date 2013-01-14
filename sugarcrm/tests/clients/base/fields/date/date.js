@@ -216,11 +216,12 @@ describe("date field", function() {
         });
 
         it('should update model when datepicker selected for datetimecombo', function() {
-            var stub, stubDatepickerInputValue, conditionallyCalledStub, expected;
+            var stub, stubDatepickerInputValue, stubVerifyDateString, conditionallyCalledStub, expected;
 
             field.type ='datetimecombo';
             stub = sinon.stub(field, '_buildUnformatted');
             stubDatepickerInputValue = sinon.stub(field, '_getDatepickerValue', function() { return '11-11-1999'; });
+            stubVerifyDateString = sinon.stub(field, '_verifyDateString', function() { return true; });
             field._getHoursMinutes = function() {}; // since defined in the child classes ;)
             field._setTimepickerValue = function() {};
 
@@ -239,12 +240,13 @@ describe("date field", function() {
         });
 
         it('should update model when datepicker selected for type date', function() {
-            var stub, stubDatepickerInputValue, conditionallyCalledStub, expected;
+            var stub, stubDatepickerInputValue, stubVerifyDateString, conditionallyCalledStub, expected;
 
             field.type ='date';
             stub = sinon.stub(field, '_buildUnformatted');
             stubDatepickerInputValue = sinon.stub(field, '_getDatepickerValue', function() { return '11-11-1999'; });
-            
+            stubVerifyDateString = sinon.stub(field, '_verifyDateString', function() { return true; });
+
             // Test date path - we update just before hiding datepicker
             field.hideDatepicker({});
             expected = {
@@ -256,12 +258,14 @@ describe("date field", function() {
         });
 
         it('should update model when datepicker dismissed but leaves bogus date value so error handling kicks in', function() {
-            var stub, stubBadDatepickerInputValue, conditionallyCalledStub, expected;
+            var stub, stubBadDatepickerInputValue, stubVerifyDateString, conditionallyCalledStub, expected;
 
             field.type ='datetimecombo';
             stub = sinon.stub(field, '_buildUnformatted');
             // purposely bad date value..we now leave these in so sidecar error handling uniformly can handle upstream
             stubBadDatepickerInputValue = sinon.stub(field, '_getDatepickerValue', function() { return '13-32-123456789'; });
+            stubVerifyDateString = sinon.stub(field, '_verifyDateString', function() { return false; });
+
             field._getHoursMinutes = function() {}; // since defined in the child classes ;)
             field._setTimepickerValue = function() {};
             expected = {
