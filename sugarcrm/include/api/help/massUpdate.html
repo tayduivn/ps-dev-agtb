@@ -8,14 +8,12 @@
 <table>
     <tr><th>Param</td><th>Description</td><th>Optional</td></tr>
     <tr><td>massupdate_params</td><td>Mass update parameters that include the information below</td><td></td></tr>
-    <tr><td>module</td><td>module name</td><td></td></tr>
     <tr><td>uid</td><td>comma separated ids</td><td></td></tr>
     <tr><td>[field name]</td><td>field to be modified</td><td>optional</td></tr>
     <tr><td>team_name</td><td>team array</td><td>optional</td></tr>
     <tr><td>team_name_type</td><td>replace or add teams</td><td>requred when team_name is used</td></tr>
     <tr><td>entire</td><td>true for all records</td><td>optional</td></tr>
     <tr><td>filter</td><td>filter array</td><td>optional</td></tr>
-    <tr><td>delete</td><td>true to delete records</td><td>optional, default is false</td></tr>
 </table>
 </div>
 <div class="input">
@@ -23,7 +21,6 @@
     <code class="codesample">
         PUT parameters to update do_not_call field for contacts, given ids:
         "massupdate_params": array(
-            "module":"Contacts",
             "uid":array("b57a80d7-be94-8f16-f875-5022a90e05fc,c4f0ac35-b23b-5ccb-e974-5022a90c08da"),
             "do_not_call":1,
         )
@@ -31,7 +28,6 @@
 
         PUT parameters to replace team IDs and set primary team id for contacts, given ids:
         "massupdate_params": array(
-            "module":"Contacts",
             "uid":array("b57a80d7-be94-8f16-f875-5022a90e05fc,c4f0ac35-b23b-5ccb-e974-5022a90c08da"),
             "team_name":array(0 => array('id' => $team1->id, 'primary' => true),
                               1 => array('id' => $team2->id, 'primary' => false),),
@@ -41,7 +37,6 @@
 
         PUT parameters to update do_not_call field for all contacts:
         "massupdate_params": array(
-            "module":"Contacts",
             "entire":true,
             "do_not_call":1,
         )
@@ -49,7 +44,6 @@
 
         PUT parameters to update do_not_call field for all contacts, with a filter ('name'='airline'):
         "massupdate_params": array(
-            "module":"Contacts",
             "entire":true,
             "do_not_call":1,
             "filter":array(array('name'=>'airline')),
@@ -58,24 +52,18 @@
 
         DELETE parameters to delete contacts, given ids:
         "massupdate_params": array(
-            "module":"Contacts",
-            "delete":true
             "uid":array("b57a80d7-be94-8f16-f875-5022a90e05fc,c4f0ac35-b23b-5ccb-e974-5022a90c08da"),
         )
         <br>
 
         DELETE parameters to delete all contacts:
         "massupdate_params": array(
-            "module":"Contacts",
-            "delete":true
             "entire":true,
         )
         <br>
 
         DELETE parameters to delete all searched contacts, using basic search ('name'='airline'):
         "massupdate_params": array(
-            "module":"Contacts",
-            "delete":true
             "entire":true,
             "filter":array(array('name'=>'airline')),
         )
