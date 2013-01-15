@@ -42,12 +42,35 @@
         this.$("[rel=popover]").popover();
         this.$("[rel=popoverTop]").popover({placement: "top"});
 
-        this.$(".subnav > .btn-toolbar > h1").each(function(el){
-              if(isEllipsis($(this))===true) {
-                $(this).attr({'data-original-title':$(this).text(),'rel':'tooltip'}).tooltip({placement: "bottom"});
-              }
+        headerTooltipCheck();
 
+        var resize_detect_timer,
+            windw = $(window).width();
+
+        function resize_process(width){
+          if(width != $(window).width()){
+            windw = $(window).width(); // Save new width
+            headerTooltipCheck();
+          }
+        }
+
+        $(window).resize(function() {
+            clearTimeout(resize_detect_timer);
+            resize_detect_t = setTimeout(function() {
+                resize_process(windw);
+            }, 250);
         });
+
+        function headerTooltipCheck(){
+            this.$(".subnav > .btn-toolbar > h1").each(function(el){
+                  var $el = $(this);
+                  if(isEllipsis($(this))===true) {
+                    $el.attr({'data-original-title':$(this).text(),'rel':'tooltip'}).tooltip({placement: "bottom"});
+                  } else {
+                    $el.removeAttr('data-original-title rel');
+                  }
+            });
+        }
 
         function isEllipsis(el) {
              return (el[0].offsetWidth < el[0].scrollWidth);
