@@ -1249,8 +1249,7 @@ class SugarBean
         {
             foreach ($fieldDefs as $name=>$properties)
             {
-                if (array_search('link',$properties) === 'type')
-                {
+                if (isset($properties['type']) && $properties['type'] == 'link' ) {
                     $linked_fields[$name]=$properties;
                 }
             }
@@ -4711,7 +4710,7 @@ class SugarBean
 
         foreach($this->field_defs as $field)
         {
-            if(0 == strcmp($field['type'],'relate') && !empty($field['module']))
+            if($field['type'] == 'relate' && !empty($field['module']))
             {
                 $name = $field['name'];
                 if(empty($this->$name))

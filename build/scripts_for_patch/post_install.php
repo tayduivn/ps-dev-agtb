@@ -443,6 +443,12 @@ function post_install() {
     if (version_compare($sugar_version, '6.5.4', '>') && version_compare($sugar_version, '6.6.1', '<')) {
         process_email_address_relationships();
     }
+
+    // The module builder has been generating incorrect one-to-many relationships
+    // The new API's don't like these bad versions so we have to correct them.
+    if (version_compare($sugar_version, '6.7.0', '<')) {
+        upgradeIncorrectRelationships();
+    }
 }
 
 
@@ -526,6 +532,81 @@ function write_to_modules_ext_php($class, $module, $path, $show=false) {
 		$moduleInstaller->merge_files('Ext/Include', 'modules.ext.php', '', true);
 	}
 
+}
+
+/**
+ *  upgradeIncorrectRelationships
+ */
+function upgradeIncorrectRelationships()
+{
+    foreach(glob('custom/Extension/modules/*/Ext/Vardefs/*.php') as $fileToFix) {
+        $filename = basename($fileToFix);
+        $dictionary = array();
+
+        require($fileToFix);
+        $tmp = array_keys($dictionary);
+        if ( count($tmp) < 1 ) {
+            // Empty dictionary
+            return;
+        }
+        $dictKey = $tmp[0];
+        if ( !isset($dictionary[$dictKey]['fields']) ) {
+            // Not modifying any fields, this isn't a relationship
+            return;
+        }
+        
+        $isBadRelate = false;
+        $idName = '';
+        foreach ( $dictionary[$dictKey]['fields'] as $fieldName => $field ) {
+            if ( isset($field['id_name']) && $fieldName != $field['id_name'] ) {
+                if ( isset($field['type']) && $field['type'] == 'link' ) {
+                    // This looks promising
+                    if ( isset($dictionary[$dictKey]['fields'][$field['id_name']]) ) {
+                        $idField = $dictionary[$dictKey]['fields'][$field['id_name']];
+                        if ( isset($idField['type']) && $idField['type'] == 'link' ) {
+                            // This looks like a winner
+                            $idName = $field['id_name'];
+                            $isBadRelate = true;
+                            $linkField = $field;
+                        }
+                    }
+                }
+                if ( isset($field['type']) && $field['type'] == 'relate' ) {
+                    $relateField = $field;
+                }
+        }
+
+        if ( !$isBadRelate ) {
+            return;
+        }
+        
+        $newIdField = array(
+            'name' => $idName,
+            'type' => 'id',
+            'source' => 'non-db',
+            'vname' => $idField['vname'],
+            'id_name' => $idName,
+            'link' => $linkField['link'],
+            'table' => $relateField['table'],
+            'module' => $relateField['module'],
+            'rname' => 'id',
+            'reportable' => false,
+            'side' => $idField['side'],
+            'massupdate' => false,
+            'duplicate_merge' => 'disabled',
+            'hideacl' => true,
+        );
+        
+
+        $outputText = "<"."?php\n// updated: ".gmdate('Y-m-d H:i:s')."\n";
+        foreach($dictionary as $firstPart => $firstData) {
+            foreach($firstData as $secondPart => $secondData) {
+                foreach($secondData as $thirdPart => $thirdData) {
+                    
+                }
+            }
+        }
+    }
 }
 
 /**
