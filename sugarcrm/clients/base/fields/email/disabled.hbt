@@ -49,7 +49,7 @@
     <div class="span6 pull-left">
         <div class="input-append widget">
             <div class="row-fluid">
-                <input type="text" class="span12 newEmail input-append" placeholder="Add Email" disabled>
+                <input type="text" class="span12 newEmail input-append" placeholder="{{str "LBL_EMAIL_ADD"}}" disabled>
                 <p class="help-block"></p>
             </div>
         </div>
