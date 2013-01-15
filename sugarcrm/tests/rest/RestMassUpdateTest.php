@@ -89,14 +89,13 @@ class RestMassUpdateTest extends Sugar_PHPUnit_Framework_TestCase
 
         $args = array(
             'massupdate_params' => array(
-                'module' => 'Contacts',
-                'delete' => true,
                 'uid' => array($contact1->id, $contact2->id),
             ),
+            'module' => 'Contacts',
         );
 
         $apiClass = new MassUpdateApi();
-        $apiClass->massUpdate($api, $args);
+        $apiClass->massDelete($api, $args);
 
         global $db;
         $rec = $db->query("select deleted from contacts where id='{$contact1->id}'");
@@ -133,14 +132,13 @@ class RestMassUpdateTest extends Sugar_PHPUnit_Framework_TestCase
 
         $args = array(
             'massupdate_params' => array(
-                'module' => 'Contacts',
-                'delete' => true,
                 'uid' => array($contact1->id, $contact2->id),
             ),
+            'module' => 'Contacts',
         );
 
         $apiClass = new MassUpdateApi();
-        $apiClass->massUpdate($api, $args);
+        $apiClass->massDelete($api, $args);
 
         $this->runJob($apiClass->getJobId());
 
@@ -184,14 +182,13 @@ class RestMassUpdateTest extends Sugar_PHPUnit_Framework_TestCase
 
         $args = array(
             'massupdate_params' => array(
-                'module' => 'Contacts',
-                'delete' => true,
                 'entire' => true, // entire selected list
             ),
+            'module' => 'Contacts',
         );
 
         $apiClass = new MassUpdateApi();
-        $apiClass->massUpdate($api, $args);
+        $apiClass->massDelete($api, $args);
 
         $this->runJob($apiClass->getJobId());
 
@@ -235,15 +232,14 @@ class RestMassUpdateTest extends Sugar_PHPUnit_Framework_TestCase
 
         $args = array(
             'massupdate_params' => array(
-                'module' => 'Contacts',
                 'entire' => true, // entire selected list
-                'delete' => true,
                 'filter' => array(array('first_name'=>'Airline')),
             ),
+            'module' => 'Contacts',
         );
 
         $apiClass = new MassUpdateApi();
-        $apiClass->massUpdate($api, $args);
+        $apiClass->massDelete($api, $args);
 
         $this->runJob($apiClass->getJobId());
 
@@ -285,10 +281,10 @@ class RestMassUpdateTest extends Sugar_PHPUnit_Framework_TestCase
 
         $args = array(
             'massupdate_params' => array(
-                'module' => 'Contacts',
                 'uid' => array($contact1->id, $contact2->id),
                 'do_not_call' => 1,
             ),
+            'module' => 'Contacts',
         );
 
         $apiClass = new MassUpdateApi();
@@ -322,10 +318,10 @@ class RestMassUpdateTest extends Sugar_PHPUnit_Framework_TestCase
 
         $args = array(
             'massupdate_params' => array(
-                'module' => 'Contacts',
                 'uid' => array($contact1->id),
                 'sync_contact' => true,
             ),
+            'module' => 'Contacts',
         );
 
         $apiClass = new MassUpdateApi();
@@ -360,10 +356,10 @@ class RestMassUpdateTest extends Sugar_PHPUnit_Framework_TestCase
 
         $args = array(
             'massupdate_params' => array(
-                'module' => 'Contacts',
                 'uid' => array($contact1->id, $contact2->id),
                 'do_not_call' => 1,
             ),
+            'module' => 'Contacts',
         );
 
         $apiClass = new MassUpdateApi();
@@ -412,10 +408,10 @@ class RestMassUpdateTest extends Sugar_PHPUnit_Framework_TestCase
         $api->user = $GLOBALS['current_user'];
         $args = array(
             'massupdate_params' => array(
-                'module' => 'Contacts',
                 'uid' => array($contact1->id),
                 'do_not_call' => 1,
             ),
+            'module' => 'Contacts',
         );
 
         $apiClass = new MassUpdateApi();
@@ -425,10 +421,10 @@ class RestMassUpdateTest extends Sugar_PHPUnit_Framework_TestCase
         $api2->user = $GLOBALS['current_user'];
         $args2 = array(
             'massupdate_params' => array(
-                'module' => 'Contacts',
                 'uid' => array($contact2->id),
                 'do_not_call' => 1,
             ),
+            'module' => 'Contacts',
         );
 
         $apiClass2 = new MassUpdateApi();
@@ -474,13 +470,13 @@ class RestMassUpdateTest extends Sugar_PHPUnit_Framework_TestCase
 
         $args = array(
             'massupdate_params' => array(
-                'module' => 'Contacts',
                 'uid' => array($contact1->id, $contact2->id),
                 'team_name' => array(
                     0 => array('id' => $team->id, 'primary' => true),
                 ),
                 'team_name_type' => 'replace',
             ),
+            'module' => 'Contacts',
         );
 
         $apiClass = new MassUpdateApi();
@@ -522,13 +518,13 @@ class RestMassUpdateTest extends Sugar_PHPUnit_Framework_TestCase
 
         $args = array(
             'massupdate_params' => array(
-                'module' => 'Contacts',
                 'uid' => array($contact1->id, $contact2->id),
                 'team_name' => array(
                     0 => array('id' => $team->id, 'primary' => true),
                 ),
                 'team_name_type' => 'replace',
             ),
+            'module' => 'Contacts',
         );
 
         $apiClass = new MassUpdateApi();
@@ -574,7 +570,6 @@ class RestMassUpdateTest extends Sugar_PHPUnit_Framework_TestCase
 
         $args = array(
             'massupdate_params' => array(
-                'module' => 'Contacts',
                 'uid' => array($contact1->id),
                 'team_name' => array(
                     0 => array('id' => $team1->id, 'primary' => true),
@@ -582,6 +577,7 @@ class RestMassUpdateTest extends Sugar_PHPUnit_Framework_TestCase
                 ),
                 'team_name_type' => 'replace',
             ),
+            'module' => 'Contacts',
         );
 
         $apiClass = new MassUpdateApi();
@@ -628,7 +624,6 @@ class RestMassUpdateTest extends Sugar_PHPUnit_Framework_TestCase
 
         $args = array(
             'massupdate_params' => array(
-                'module' => 'Contacts',
                 'uid' => array($contact1->id),
                 'team_name' => array(
                     0 => array('id' => $team1->id, 'primary' => true),
@@ -636,6 +631,7 @@ class RestMassUpdateTest extends Sugar_PHPUnit_Framework_TestCase
                 ),
                 'team_name_type' => 'replace',
             ),
+            'module' => 'Contacts',
         );
 
         $apiClass = new MassUpdateApi();
@@ -687,10 +683,10 @@ class RestMassUpdateTest extends Sugar_PHPUnit_Framework_TestCase
 
         $args = array(
             'massupdate_params' => array(
-                'module' => 'Contacts',
                 'do_not_call' => 1, // the field to update
                 'entire' => true, // entire selected list
             ),
+            'module' => 'Contacts',
         );
 
         $apiClass = new MassUpdateApi();
@@ -731,11 +727,11 @@ class RestMassUpdateTest extends Sugar_PHPUnit_Framework_TestCase
 
         $args = array(
             'massupdate_params' => array(
-                'module' => 'Accounts',
                 'description' => 'test', // the field to update
                 'entire' => true, // entire selected list
                 'filter' => array(array('name'=>$account1->name)),
             ),
+            'module' => 'Accounts',
         );
 
         $apiClass = new MassUpdateApi();

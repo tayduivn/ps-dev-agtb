@@ -41,13 +41,22 @@ class MassUpdateApi extends SugarApi {
      */
     public function registerApiRest() {
         return array(
-            'massUpdate' => array(
+            'massUpdatePut' => array(
                 'reqType' => 'PUT',
-                'path' => array('MassUpdate'),
-                'pathVars' => array(''),
+                'path' => array('<module>','MassUpdate'),
+                'pathVars' => array('module',''),
                 'jsonParams' => array('filter'),
                 'method' => 'massUpdate',
                 'shortHelp' => 'An API to handle mass update.',
+                'longHelp' => 'include/api/help/massUpdate.html',
+            ),
+            'massUpdateDelete' => array(
+                'reqType' => 'DELETE',
+                'path' => array('<module>','MassUpdate'),
+                'pathVars' => array('module',''),
+                'jsonParams' => array('filter'),
+                'method' => 'massDelete',
+                'shortHelp' => 'An API to handle mass delete.',
                 'longHelp' => 'include/api/help/massUpdate.html',
             ),
         );
@@ -69,6 +78,21 @@ class MassUpdateApi extends SugarApi {
     protected $jobId = null;
 
     /**
+     * To perform mass delete
+     * @param $api ServiceBase The API class of the request, used in cases where the API changes how the fields are pulled from the args array.
+     * @param $args array The arguments array passed in from the API
+     * @return String
+     */
+    public function massDelete($api, $args)
+    {
+        $this->requireArgs($args, array('massupdate_params', 'module'));
+        $this->delete = true;
+        $args['massupdate_params']['Delete'] = $args['massupdate_params']['delete'] = true;
+
+        return $this->massUpdate($api, $args);
+    }
+
+    /**
      * To perform massupdate, either update or delete, based on the args parameter
      * @param $api ServiceBase The API class of the request, used in cases where the API changes how the fields are pulled from the args array.
      * @param $args array The arguments array passed in from the API
@@ -76,10 +100,10 @@ class MassUpdateApi extends SugarApi {
      */
     public function massUpdate($api, $args)
     {
-        $this->requireArgs($args, array('massupdate_params'));
-        $this->requireArgs($args['massupdate_params'], array('module'));
+        $this->requireArgs($args, array('massupdate_params', 'module'));
 
         $mu_params = $args['massupdate_params'];
+        $mu_params['module'] = $args['module'];
 
         // should have either uid or entire specified
         if (empty($mu_params['uid']) && empty($mu_params['entire']))
@@ -93,11 +117,6 @@ class MassUpdateApi extends SugarApi {
             unset($mu_params['sync_contact']);
         }
 
-        if (!empty($mu_params['delete'])) {
-            // mass delete
-            $this->delete = true;
-            $mu_params['Delete'] = $mu_params['delete'] = true;
-        }
         if (isset($mu_params['entire']) && empty($mu_params['entire'])) {
             unset($mu_params['entire']);
         }
