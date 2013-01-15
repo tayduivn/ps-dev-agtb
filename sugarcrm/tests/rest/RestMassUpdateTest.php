@@ -170,7 +170,6 @@ class RestMassUpdateTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testMassDeleteEntireListWithoutFilter()
     {
-        $this->markTestIncomplete('Skipping this for now due to a php error in MetaDataManager::getAclForModule (context not defined).');
         if (isset($_REQUEST)) {
             unset($_REQUEST);
         }
@@ -214,7 +213,6 @@ class RestMassUpdateTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testMassDeleteEntireListWithFilter()
     {
-        $this->markTestIncomplete('Skipping this for now due to a php error in MetaDataManager::getAclForModule (context not defined).');
         $contact1 = SugarTestContactUtilities::createContact();
         $contact1->first_name = 'Airline';
         $contact1->save();
@@ -671,7 +669,6 @@ class RestMassUpdateTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testMassUpdateEntireListWithoutFilter()
     {
-        $this->markTestIncomplete('Skipping this for now due to a php error in MetaDataManager::getAclForModule (context not defined).');
         if (isset($_REQUEST)) {
             unset($_REQUEST);
         }
@@ -715,7 +712,6 @@ class RestMassUpdateTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testMassUpdateEntireListWithFilter()
     {
-        $this->markTestIncomplete('Skipping this for now due to a php error in MetaDataManager::getAclForModule (context not defined).');
         if (isset($_REQUEST)) {
             unset($_REQUEST);
         }
