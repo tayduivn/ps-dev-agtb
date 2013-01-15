@@ -27,12 +27,13 @@ require_once('include/MVC/View/views/view.detail.php');
 class ViewDetailTest extends Sugar_PHPUnit_Framework_TestCase
 {
     public function testConstructor()
-	{
+    {
         $view = new ViewDetail();
         $this->assertEquals('detail', $view->type);
-	}
+    }
 
-    public function testSubclasses() {
+    public function testSubclasses()
+    {
         $view = new MockViewDetailDirect();
         $this->assertEquals('detail', $view->type);
 
@@ -42,15 +43,18 @@ class ViewDetailTest extends Sugar_PHPUnit_Framework_TestCase
 
 }
 
-class MockViewDetailDirect extends ViewDetail {
-
-    public function __construct() {
+class MockViewDetailDirect extends ViewDetail
+{
+    public function __construct()
+    {
         parent::ViewDetail();
     }
 }
 
-class MockViewDetailConstructor extends ViewDetail {
-    public function __construct() {
+class MockViewDetailConstructor extends ViewDetail
+{
+    public function __construct()
+    {
         parent::__construct();
     }
 }

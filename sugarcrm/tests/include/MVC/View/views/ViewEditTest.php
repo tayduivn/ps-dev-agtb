@@ -27,10 +27,10 @@ require_once('include/MVC/View/views/view.edit.php');
 class ViewEditTest extends Sugar_PHPUnit_Framework_TestCase
 {
     public function testConstructor()
-	{
+    {
         $view = new ViewEdit();
         $this->assertEquals('edit', $view->type);
-	}
+    }
 
     public function testSubclasses() {
         $view = new MockViewEditDirect();

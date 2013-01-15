@@ -17,7 +17,8 @@ class ViewEdit extends SugarView
      *
      * @see SugarView::SugarView()
      */
-    public function __construct($bean = null, $view_object_map = array()) {
+    public function __construct($bean = null, $view_object_map = array())
+    {
         parent::__construct($bean, $view_object_map);
     }
 
@@ -26,7 +27,8 @@ class ViewEdit extends SugarView
      * @deprecated Use the PHP 5.x style __construct instead
      * @see SugarView::SugarView()
      */
-    public function ViewEdit($bean = null, $view_object_map = array()) {
+    public function ViewEdit($bean = null, $view_object_map = array())
+    {
         parent::SugarView($bean, $view_object_map);
     }
 

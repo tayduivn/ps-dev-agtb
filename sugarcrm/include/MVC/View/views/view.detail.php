@@ -27,7 +27,8 @@ class ViewDetail extends SugarView
      *
      * @see SugarView::SugarView()
      */
-    public function __construct($bean = null, $view_object_map = array()) {
+    public function __construct($bean = null, $view_object_map = array())
+    {
         parent::__construct($bean, $view_object_map);
     }
 
