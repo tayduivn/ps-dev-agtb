@@ -93,6 +93,9 @@ function loadContent(source,target,mode,method) {
     } else {
       $('body').toggleClass('preview',(source !== '#'));
     }
+    page.mode = mode;
+  } else {
+    page.mode = 'list';
   }
 
   //if ( source.indexOf('partial') === 0 ) {

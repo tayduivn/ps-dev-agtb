@@ -83,19 +83,56 @@
 
 <script>
   var availableFilters = [
-    {"label":"My Favorites", "id":"filter_1", "disabled":false, "selected":false, "classes":"", "spec":[
+    {"label":"Recent", "id":"filter_1", "disabled":false, "selected":false, "classes":"", "spec":[
+      {'field':'created','opera':'Last 7 days','value':''}
+    ]},
+    {"label":"Favorites", "id":"filter_2", "disabled":false, "selected":false, "classes":"", "spec":[
       {'field':'favorite','opera':'true'}
     ]},
-    {"label":"My {{title}}", "id":"filter_2", "disabled":false, "selected":false, "classes":"", "spec":[
-      {'field':'assigned','opera':'matches','value':'westin'}
-    ]},
-    {"label":"My Custom Filter", "id":"filter_3", "disabled":false, "selected":false, "classes":"", "spec":[
+    {"label":"My Saved Filter", "id":"filter_3", "disabled":false, "selected":false, "classes":"", "spec":[
       {'field':'assigned','opera':'matches','value':'westin'},
       {'field':'stage','opera':'closed won'},
       {'field':'created','opera':'Last 7 days'}
     ]},
-    {"label":"Create New Filter", "id":"filter_new", "disabled":false, "selected":false, "classes":"primary filter-new", "spec":[]}
+    {"label":"Contacts", "id":"filter_4", "disabled":false, "selected":false, "editor":true, "classes":"result-related result-separator", "spec":[
+      {'field':'module','opera':'Contacts','value':''},
+      {'field':'related','opera':'true','value':''}
+    ]},
+    {"label":"Accounts", "id":"filter_5", "disabled":false, "selected":false, "editor":true, "classes":"result-related", "spec":[
+      {'field':'module','opera':'Accounts','value':''},
+      {'field':'related','opera':'true','value':''}
+    ]},
+    {"label":"Leads", "id":"filter_6", "disabled":false, "selected":false, "editor":true, "classes":"result-related", "spec":[
+      {'field':'module','opera':'Leads','value':''},
+      {'field':'related','opera':'true','value':''}
+    ]},
+    {"label":"Opportunities", "id":"filter_7", "disabled":false, "selected":false, "editor":true, "classes":"result-related", "spec":[
+      {'field':'module','opera':'Opportunities','value':''},
+      {'field':'related','opera':'true','value':''}
+    ]},
+    {"label":"History", "id":"filter_8", "disabled":false, "selected":false, "editor":true, "classes":"result-related", "spec":[
+      {'field':'module','opera':'History','value':''},
+      {'field':'related','opera':'true','value':''}
+    ]},
+    {"label":"Quotes", "id":"filter_9", "disabled":false, "selected":false, "editor":true, "classes":"result-related", "spec":[
+      {'field':'module','opera':'Quotes','value':''},
+      {'field':'related','opera':'true','value':''}
+    ]},
+    {"label":"Create New Filter", "id":"filter_new", "disabled":false, "selected":false, "classes":"primary filter-new result-separator", "spec":[]}
   ];
+
+  // disable related record filter for current module
+  $.each(availableFilters, function(index,value){
+    if (value.label === '{{title}}')
+    {
+      value.disabled = true;
+    }
+    if ((!page.mode || page.mode === 'list') && value.classes.indexOf('result-related')!==-1) {
+      value.disabled = true;
+    }
+  });
+  // disable all related record filters for list view
+
   // add the current module as default chosen filter
   if ( window.location.pathname.split('/').pop() !== 'dashboard.html') {
       availableFilters.unshift(
@@ -108,7 +145,9 @@
     'assigned': {'label':'Assigned to','opera':'matches','disabled':true,'text':true},
     'stage': {'label':'Sales Stage','opera':'prospecting,value proposition,closed won,closed lost','disabled':false,'text':false},
     'favorite': {'label':'Favorite','opera':'true,false','disabled':false,'text':false},
+    'related': {'label':'Related','opera':'true,false','disabled':false,'text':false},
     'created': {'label':'Created','opera':'Last 7 days,Last 30 days,Last 90 days,Last year','disabled':false,'text':false},
+    'module': {'label':'Module','opera':'Leads,Accounts,Contacts,Opportunities,Quotes','disabled':false,'text':false},
   };
 //TODO: do we need an apply or does a search happen each time a filter row is added or updated
 //TODO: when result is chosen, should we remove filter row choices or keep them and set create filter to use existing filter row choices.
@@ -153,6 +192,22 @@
 
       // prepend legend to .chzn-choices
       _choices.prepend('<legend class="chzn-select-legend">Filter <i class="icon-caret-down"></i></legend>');
+
+      // select related module filter
+      _results.find('li').on('click', function(e){
+          var $selected = $(this)
+            , id = parseInt($selected.attr('id').substr(21),10); //search_filter_chzn_o_1
+
+          if ($selected.hasClass('result-related')) {
+            editFilterForm( id, true );
+            _select.trigger("liszt:close");
+            if ($selected.text()==='History' && $selected.hasClass('result-selected')) {
+              loadContent('{{module}}/{{module}}-activitystream.html', '#view .main-content', undefined, 'replace');
+            } else {
+              loadContent('common/data-table.html', '#view .main-content', undefined, 'replace');
+            }
+          }
+      });
 
       // create new filter
       _results.on('click', '.filter-new', function(e){

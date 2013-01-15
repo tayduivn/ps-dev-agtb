@@ -103,7 +103,7 @@
 
   loadPartials([
     {"file":"common/header-view","target":"#view .headerpane","method":"replace"},
-    {"file":"common/related-tabs","target":"#view .related-tabs","method":"replace"},
+    //{"file":"common/related-tabs","target":"#view .related-tabs","method":"replace"},
     {"file":"common/search-filter","target":"#view .search-filter","method":"replace"},
     {"file":"common/omnibar","target":"#view .main-content","method":"replace"},
     {"file":"lead/lead-activitystream","target":"#view .main-content","method":"append"}
@@ -114,8 +114,8 @@
     $('.chzn-select').chosen({ disable_search_threshold: 5 });
     $('.chzn-select-deselect').chosen({allow_single_deselect:true});
 
-    setTimeout(function(){ 
-      var spl = window.location.href.split('#');  
+    setTimeout(function(){
+      var spl = window.location.href.split('#');
       if(spl[1] == "trigger_convert_lead") {
         $('a.convert_lead').trigger('click');
         window.location = "#";
