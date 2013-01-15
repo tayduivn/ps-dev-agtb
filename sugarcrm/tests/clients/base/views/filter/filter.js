@@ -22,21 +22,21 @@ describe("Filter View", function() {
     });
 
 
-    describe("toggleOpen", function() {
+    describe("openPanel", function() {
         it("should have triggered filter:create:open:fire", function() {
             var triggerSpy = sinon.spy(view.layout, "trigger");
-            view.toggleOpen();
+            view.openPanel();
             expect(triggerSpy).toHaveBeenCalledWith("filter:create:open:fire");
         });
     });
-    
+
     describe("selectedByEnter", function() {
         it("should set changedByEnter to true on enter (13)", function() {
             view.selectedByEnter({keyCode:13});
             expect(view.changedByEnter).toBeTruthy();
         });
     });
-    
+
     describe("selectedByEnter", function() {
         it("should set changedByEnter to false on other (12)", function() {
             view.selectedByEnter({keyCode:12});
