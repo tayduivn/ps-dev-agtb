@@ -76,13 +76,13 @@ foreach ($themesClientsDir as $platform) {
                     </label>
                 </div>
                 <div>
-                    <label style="display: inline;" for="split_css-false">
-                        <input id="split_css-false" type="radio" name="split_css" value="false" checked>
-                        Combined
-                    </label>
                     <label style="display: inline;" for="split_css-true">
-                        <input id="split_css-true" type="radio" name="split_css" value="true">
+                        <input id="split_css-true" type="radio" name="split_css" value="true" checked>
                         Split
+                    </label>
+                    <label style="display: inline;" for="split_css-false">
+                        <input id="split_css-false" type="radio" name="split_css" value="false">
+                        Combined
                     </label>
                 </div>
                 <div>
