@@ -21,109 +21,47 @@
 
 describe("The forecasts manager worksheet", function(){
 
-    var view, field, _renderClickToEditStub, _renderFieldStub, testMethodStub;
+    var view, field, _renderFieldStub, testMethodStub;
 
     beforeEach(function() {
         app = SugarTest.app;
         SugarTest.loadFile("../modules/Forecasts/clients/base/lib", "ForecastsUtils", "js", function(d) { return eval(d); });
-        view = SugarTest.loadFile("../modules/Forecasts/clients/base/views/forecastsWorksheetManager", "forecastsWorksheetManager", "js", function(d) { return eval(d); });
-        view.context = {};
-        view.context.forecasts = {};
-        view.context.forecasts.config = new (Backbone.Model.extend({
+        SugarTest.loadFile("../include/javascript/jquery/", "jquery.dataTables.min", "js", function(d) { return eval(d); });
+        SugarTest.loadFile("../include/javascript/jquery/", "jquery.dataTables.customSort", "js", function(d) { return eval(d); });
+
+        app.user.set({'id' : 'test_userid', 'isManager' : true});
+
+        app.defaultSelections = {
+                timeperiod_id: {
+                    'id' : 'test_timeperiod'
+                },
+                group_by: {},
+                dataset: {},
+                selectedUser: {},
+                ranges: {}
+            };
+
+        var context = app.context.getContext();
+        context.forecasts = new Backbone.Model({'selectedTimePeriod' : new Backbone.Model({'id' : 'fake_id'})});
+        context.forecasts.worksheetmanager = new Backbone.Collection();
+        context.forecasts.config = new (Backbone.Model.extend({
             "defaults": fixtures.metadata.modules.Forecasts.config
         }));
-        var cte = SugarTest.loadFile("../modules/Forecasts/clients/base/lib", "ClickToEdit", "js", function(d) { return eval(d); });
+
+        var meta = {
+            panels : [{'fields' : []}]
+        };
+
+        view = SugarTest.createView('../modules/Forecasts/clients/base', 'Forecasts', "forecastsWorksheetManager", meta, context);
+
+        // remove the window watcher event
+        $(window).unbind("beforeunload");
     });
 
-    describe("clickToEdit field", function() {
-
-        beforeEach(function() {
-            _renderClickToEditStub = sinon.stub(app.view, "ClickToEditField");
-            _renderFieldStub = sinon.stub(app.view.View.prototype, "_renderField");
-            field = {
-                viewName:'forecastsWorksheetManager',
-                def:{
-                    clickToEdit:true
-                }
-            };
-        });
-
-        afterEach(function(){
-            _renderClickToEditStub.restore();
-            _renderFieldStub.restore();
-        })
-
-        describe("should render", function() {
-            beforeEach(function() {
-                view.selectedUser.id = "test_user_id";
-                testMethodStub = sinon.stub(app.user, "get", function(property){
-                    var user = {
-                        id: "test_user_id"
-                    }
-                    return user[property];
-                });
-            });
-
-            afterEach(function() {
-                view.selectedUser.id = null;
-                testMethodStub.restore();
-            })
-
-            it("has clickToEdit set to true in metadata", function() {
-                view._renderField(field);
-                expect(_renderFieldStub).toHaveBeenCalled();
-                expect(_renderClickToEditStub).toHaveBeenCalled();
-            });
-        });
-
-        describe("should not render", function() {
-            it("does not contain a value for clickToEdit in metadata", function() {
-                field = {
-                    viewName:'forecastsWorksheetManager',
-                    def:{}
-                };
-                view._renderField(field);
-                expect(_renderFieldStub).toHaveBeenCalled();
-                expect(_renderClickToEditStub).not.toHaveBeenCalled();
-            });
-
-            it("has clickToEdit set to something other than true in metadata", function() {
-                field = {
-                    viewName:'forecastsWorksheetManager',
-                    def:{
-                        clickToEdit: 'true'
-                    }
-                };
-                view._renderField(field);
-                expect(_renderFieldStub).toHaveBeenCalled();
-                expect(_renderClickToEditStub).not.toHaveBeenCalled();
-            });
-
-            it("has clickToEdit set to false in metadata", function() {
-                field = {
-                    viewName:'forecastsWorksheetManager',
-                    def:{
-                        clickToEdit: false
-                    }
-                };
-                view._renderField(field);
-                expect(_renderFieldStub).toHaveBeenCalled();
-                expect(_renderClickToEditStub).not.toHaveBeenCalled();
-            });
-
-            it("is an edit view", function() {
-                field = {
-                    viewName:'edit',
-                    def:{
-                        clickToEdit: true
-                    }
-                };
-                view._renderField(field);
-                expect(_renderFieldStub).toHaveBeenCalled();
-                expect(_renderClickToEditStub).not.toHaveBeenCalled();
-            });
-        });
-
+    afterEach(function() {
+        app.user.unset('id');
+        app.user.set('isManager', false);
+        //view.unbindData();
     });
 
     describe("Forecast Manager Worksheet Config functions tests", function() {
@@ -175,6 +113,155 @@ describe("The forecasts manager worksheet", function(){
     		expect(view._collection.fetch).toHaveBeenCalled();
     	});
     });
+
+    describe('Forecasts Worksheet Dirty Models', function() {
+        var m;
+        beforeEach(function(){
+            m = new Backbone.Model({'hello' : 'world'});
+            view._collection.add(m);
+    	});
+
+    	afterEach(function(){
+            view._collection.reset();
+            m = undefined;
+    	});
+
+        it('isDirty should return false', function() {
+            expect(view.isDirty()).toBeFalsy();
+        });
+
+        it('isDirty should return true', function() {
+            m.set({'hello' : 'jon1'});
+            expect(view.isDirty()).toBeTruthy();            
+        });
+
+        it('should not be dirty after main collection reset', function() {
+            m.set({'hello' : 'jon1'});
+            expect(view.isDirty()).toBeTruthy();
+            view._collection.reset();
+            expect(view.isDirty()).toBeFalsy();
+        })
+    });
+
+    describe('Forecast Worksheet Save Dirty Models', function() {
+        var m, saveStub;
+        beforeEach(function(){
+            m = new Backbone.Model({'hello' : 'world'});
+            saveStub = sinon.stub(m, 'save', function(){});
+            view._collection.add(m);
+    	});
+
+    	afterEach(function(){
+            view._collection.reset();
+            saveStub.restore();
+            m = undefined;
+    	});
+
+        it('should return zero with no dirty models', function() {
+            expect(view.saveWorksheet()).toEqual(0);           
+        });
+        
+        it('should not have any draft models with no dirty models', function() {
+            view.saveWorksheet();
+            expect(view.draftModels.length).toEqual(0);
+        });
+
+        it('should return 1 when one model is dirty', function() {
+            m.set({'hello':'jon1'});
+            expect(view.saveWorksheet()).toEqual(1);
+            expect(saveStub).toHaveBeenCalled();
+        });
+        
+        it('should not have draft models on a commit save', function() {
+            m.set({'hello':'jon1'});
+            expect(view.saveWorksheet()).toEqual(1);
+            expect(saveStub).toHaveBeenCalled();
+            expect(view.draftModels.length).toEqual(0);
+        });
+        
+        it('should have draft models on a draft save', function() {
+            m.set({'hello':'jon1'});
+            expect(view.saveWorksheet(true)).toEqual(1);
+            expect(saveStub).toHaveBeenCalled();
+            expect(view.draftModels.length).toEqual(1);
+        });
+        
+        it('should save the draft models as committed models on "commit"', function() {
+            var clearDirtySpy = sinon.spy(view, "cleanUpDirtyModels"),
+                clearDraftSpy = sinon.spy(view, "cleanUpDraftModels");
+ 
+            //first save to populate the draft models
+            m.set({'hello':'jon1'});
+            view.saveWorksheet(true);
+            expect(view.draftModels.length).toEqual(1);
+            
+            //save again for the "commit"
+            view.saveWorksheet(false);
+            expect(clearDirtySpy).toHaveBeenCalled();
+            expect(clearDraftSpy).toHaveBeenCalled();
+            expect(view.draftModels.length).toEqual(0);
+        });
+        
+    });
+    describe("Forecasts worksheet save dirty models with correct timeperiod after timeperiod changes", function() {
+        var m, saveStub, safeFetchStub;
+        beforeEach(function(){
+            m = new Backbone.Model({'hello' : 'world'});
+            saveStub = sinon.stub(m, 'save', function(){});
+            safeFetchStub = sinon.stub(view, 'safeFetch', function(){});
+            view._collection.add(m);
+    	});
+
+    	afterEach(function(){
+            view._collection.reset();
+            saveStub.restore();
+            safeFetchStub.restore();
+            m = undefined;
+    	});
+
+        it('model should contain the old timeperiod id', function() {
+            m.set({'hello':'jon1'});
+            view.updateWorksheetBySelectedTimePeriod({'id' : 'my_new_timeperiod'});
+            expect(view.saveWorksheet()).toEqual(1);
+            expect(saveStub).toHaveBeenCalled();
+            expect(safeFetchStub).toHaveBeenCalled();
+
+            expect(m.get('timeperiod_id')).toEqual('test_timeperiod');
+            expect(view.timePeriod).toEqual('my_new_timeperiod');
+            expect(view.dirtyTimeperiod).toEqual('');
+        });
+    });
+
+    describe("Forecasts worksheet save dirty models with correct user_id after selected_user changes", function() {
+        var m, saveStub, safeFetchStub, viewStub;
+        beforeEach(function(){
+            m = new Backbone.Model({'hello' : 'world'});
+            saveStub = sinon.stub(m, 'save', function(){});
+            safeFetchStub = sinon.stub(view, 'safeFetch', function(){});
+            view._collection.add(m);
+            viewStub = sinon.stub(view._collection, 'fetch', function(){});
+
+    	});
+
+    	afterEach(function(){
+            view._collection.reset();
+            saveStub.restore();
+            safeFetchStub.restore();
+            m = undefined;
+    	});
+
+        it('model should contain the old userid', function() {
+            m.set({'hello':'jon1'});
+            view.updateWorksheetBySelectedUser({'id' : 'my_new_user_id', 'isManager': true, 'showOpps' : false});
+            expect(view.saveWorksheet()).toEqual(1);
+            expect(saveStub).toHaveBeenCalled();
+            expect(safeFetchStub).toHaveBeenCalled();
+
+            expect(m.get('current_user')).toEqual('test_userid');
+            expect(view.selectedUser.id).toEqual('my_new_user_id');
+            expect(view.dirtyUser).toEqual('');
+        });
+    });
     
     describe("Forecasts manager worksheet bindings ", function(){
     	beforeEach(function(){
@@ -187,8 +274,7 @@ describe("The forecasts manager worksheet", function(){
     					config:{
         					on: function(event, fcn){}
         				} 
-    				},
-    				   				
+    				}
     		};
     		view._collection.on = function(){};
     		
@@ -220,8 +306,8 @@ describe("The forecasts manager worksheet", function(){
     		expect(view.context.forecasts.on).toHaveBeenCalledWith("change:selectedTimePeriod");
     	});
     	
-    	it("forecasts.on should have been called with selectedCategory", function(){
-    		expect(view.context.forecasts.on).toHaveBeenCalledWith("change:selectedCategory");
+    	it("forecasts.on should have been called with selectedRanges", function(){
+    		expect(view.context.forecasts.on).toHaveBeenCalledWith("change:selectedRanges");
     	});
     	
     	it("forecasts.worksheet.on should have been called with change", function(){

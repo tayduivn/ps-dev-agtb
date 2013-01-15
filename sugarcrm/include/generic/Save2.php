@@ -97,10 +97,7 @@ else {
  			require $searchdefs_file;
  		}
 
- 		$searchfields_file = SugarAutoLoader::loadWithMetafiles($module, 'SearchFields', 'searchfields');
- 		if($searchfields_file) {
- 			require $searchfields_file;
- 		}
+ 		$searchFields = SugarAutoLoader::loadSearchFields($module);
 
         if(!empty($searchdefs) && !empty($searchFields)) {
         	$searchForm = new SearchForm($seed, $module);

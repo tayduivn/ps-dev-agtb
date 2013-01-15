@@ -20,7 +20,9 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 require_once('include/SearchForm/SugarSpot.php');
-class UnifiedSearchApi extends SugarApi {
+require_once('include/api/SugarListApi.php');
+
+class UnifiedSearchApi extends SugarListApi {
     public function registerApiRest() {
         return array(
             'globalSearch' => array(
@@ -56,28 +58,22 @@ class UnifiedSearchApi extends SugarApi {
     protected function parseSearchOptions(ServiceBase $api, array $args) {
         $options = array();
 
+        if ( isset($args['module_list']) && count($args['module_list']) == 1 ) {
+            // We can create a bean of this type
+            $seed = BeanFactory::newBean($args['module_list']);
+        } else {
+            $seed = null;
+        }
+        $options = parent::parseArguments($api, $args, $seed);
+        
         $options['query'] = '';
         if ( !empty($args['q']) ) {
             $options['query'] = trim($args['q']);
         }
 
-        $options['limit'] = $this->defaultLimit;
-        if ( !empty($args['max_num']) ) {
-            $options['limit'] = (int)$args['max_num'];
-        }
-
         $options['limitPerModule'] = $this->defaultModuleLimit;
         if ( !empty($args['max_num_module']) ) {
             $options['limitPerModule'] = (int)$args['max_num_module'];
-        }
-
-        $options['offset'] = 0;
-        if ( !empty($args['offset']) ) {
-            if ( $args['offset'] === 'end' ) {
-                $options['offset'] = 'end';
-            } else {
-                $options['offset'] = (int)$args['offset'];
-            }
         }
 
         $options['selectFields'] = array('id');
@@ -307,7 +303,7 @@ class UnifiedSearchApi extends SugarApi {
      * @param $options array An array of options to pass through to the search engine, they get translated to the $searchOptions array so you can see exactly what gets passed through
      * @return array Two elements, 'records' the list of returned records formatted through FormatBean, and 'next_offset' which will indicate to the user if there are additional records to be returned.
      */
-    protected function globalSearchFullText(ServiceBase $api, array $args, SugarSearchEngineElastic $searchEngine, array $options)
+    protected function globalSearchFullText(ServiceBase $api, array $args, SugarSearchEngineAbstractBase $searchEngine, array $options)
     {
         $options['append_wildcard'] = 1;
         if(empty($options['moduleList']))

@@ -73,7 +73,7 @@
 
         if (this.model.isValid()) {
             $('#content').hide();
-            app.alert.show('login', {level:'process', title:'LBL_PORTAL_LOADING', autoClose:false});
+            app.alert.show('login', {level:'process', title:app.lang.getAppString('LBL_PORTAL_LOADING'), autoClose:false});
             var args = {password: this.model.get("password"), username: this.model.get("username")};
 
             app.login(args, null, {
@@ -147,7 +147,7 @@
                                     name: "login_button",
                                     type: "button",
                                     label: "LBL_LOGIN_BUTTON_LABEL",
-                                    'class': "login-submit",
+                                    'class': "login-submit pull-right",
                                     value: "login",
                                     primary: true
                                 },

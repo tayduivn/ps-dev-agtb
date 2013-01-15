@@ -43,12 +43,17 @@ class SugarTestUserUtilities
         
         $time = mt_rand();
     	$userId = 'SugarUser';
-    	$user = new User();
+    	$user = BeanFactory::getBean("Users");
         $user->user_name = $userId . $time;
         $user->user_hash = md5($userId.$time);
         $user->first_name = $userId;
         $user->last_name = $time;
         $user->status='Active';
+        $user->is_group = 0;
+        //BEGIN SUGARCRM flav=ent ONLY
+        $user->portal_only = 0;
+        //END SUGARCRM flav=ent ONLY
+
         if ($is_admin) {
             $user->is_admin = 1;
         }

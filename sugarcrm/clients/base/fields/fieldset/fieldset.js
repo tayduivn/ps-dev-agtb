@@ -85,6 +85,15 @@
         return this;
     },
 
+    setDisabled: function(disable) {
+        disable = _.isUndefined(disable) ? true : disable;
+        app.view.Field.prototype.setDisabled.call(this, disable);
+        _.each(this.fields, function(field){
+            field.setDisabled(disable);
+        }, this);
+    },
+
+
     /**
      * {@inheritdoc}
      *

@@ -1,3 +1,31 @@
+<!--
+/*********************************************************************************
+ * The contents of this file are subject to the SugarCRM Master Subscription
+ * Agreement (""License"") which can be viewed at
+ * http://www.sugarcrm.com/crm/master-subscription-agreement
+ * By installing or using this file, You have unconditionally agreed to the
+ * terms and conditions of the License, and You may not use this file except in
+ * compliance with the License.  Under the terms of the license, You shall not,
+ * among other things: 1) sublicense, resell, rent, lease, redistribute, assign
+ * or otherwise transfer Your rights to the Software, and 2) use the Software
+ * for timesharing or service bureau purposes such as hosting the Software for
+ * commercial gain and/or for the benefit of a third party.  Use of the Software
+ * may be subject to applicable fees and any use of the Software without first
+ * paying applicable fees is strictly prohibited.  You do not have the right to
+ * remove SugarCRM copyrights from the source code or user interface.
+ *
+ * All copies of the Covered Code must include on each user interface screen:
+ *  (i) the ""Powered by SugarCRM"" logo and
+ *  (ii) the SugarCRM copyright notice
+ * in the same form as they appear in the distribution.  See full license for
+ * requirements.
+ *
+ * Your Warranty, Limitations of liability and Indemnity are expressly stated
+ * in the License.  Please refer to the License for the specific language
+ * governing these rights and limitations under the License.  Portions created
+ * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
+ ********************************************************************************/
+-->
 <div class="longHelpTitle">Retrieve a Forecasting Information In SugarChart Format</div>
 <div class="summary">
     <h2>Summary:</h2>
@@ -32,9 +60,123 @@
             <td>Optional</td>
         </tr>
         <tr>
-            <td>category</td>
+            <td>ranges</td>
+            <td>Pipeline or Committed are valid values.</td>
+            <td>Optional</td>
+        </tr>
+        <tr>
+            <td>display_manager</td>
             <td>Pipeline or Committed are valid values.</td>
             <td>Optional</td>
         </tr>
     </table>
+</div>
+<div class="input">
+    <h2>Input Example:</h2>
+    <code class="codesample">
+{
+    'user_id':'seed_max_id,
+    'timeperiod_id':'36f7085a-5889-ea75-84c8-50f42bd1a5ba',
+    'display_manager':'false',
+    'group_by': 'forecast',
+    'dataset': 'likely',
+    'ranges': 'include',
+}
+    </code>
+</div>
+<div class="output">
+    <h2>Output Example:</h2>
+    <code class="codesample">
+        { "color" : [ "#8c2b2b",
+              "#468c2b",
+              "#2b5d8c",
+              "#cd5200",
+              "#e6bf00",
+              "#7f3acd",
+              "#00a9b8",
+              "#572323",
+              "#004d00",
+              "#000087",
+              "#e48d30",
+              "#9fba09",
+              "#560066",
+              "#009f92",
+              "#b36262",
+              "#38795c",
+              "#3D3D99",
+              "#99623d",
+              "#998a3d",
+              "#994e78",
+              "#3d6899",
+              "#CC0000",
+              "#00CC00",
+              "#0000CC",
+              "#cc5200",
+              "#ccaa00",
+              "#6600cc",
+              "#005fcc"
+            ],
+          "label" : [ "Include" ],
+          "properties" : [ { "gauge_target_list" : "Array",
+                "goal_marker_color" : [ "#000000",
+                    "#7D12B2"
+                  ],
+                "goal_marker_label" : [ "Quota",
+                    "Likely Case"
+                  ],
+                "goal_marker_type" : [ "group",
+                    "pareto"
+                  ],
+                "label_name" : "Include in Forecast",
+                "labels" : "value",
+                "legend" : "on",
+                "print" : "on",
+                "subtitle" : "",
+                "thousands" : "",
+                "title" : null,
+                "type" : "bar chart",
+                "value_name" : "Likely Case"
+              } ],
+          "values" : [ { "goalmarkervalue" : [ "111000.00",
+                    "36000.00"
+                  ],
+                "goalmarkervaluelabel" : [ "$111,000.00",
+                    "$36,000.00"
+                  ],
+                "gvalue" : 36000,
+                "gvaluelabel" : "$36,000.00",
+                "label" : "January 2013",
+                "links" : [ "" ],
+                "valuelabels" : [ "$36,000.00" ],
+                "values" : [ 36000 ]
+              },
+              { "goalmarkervalue" : [ "111000.00",
+                    "61500.00"
+                  ],
+                "goalmarkervaluelabel" : [ "$111,000.00",
+                    "$61,500.00"
+                  ],
+                "gvalue" : 25500,
+                "gvaluelabel" : "$25,500.00",
+                "label" : "February 2013",
+                "links" : [ "" ],
+                "valuelabels" : [ "$25,500.00" ],
+                "values" : [ 25500 ]
+              },
+              { "goalmarkervalue" : [ "111000.00",
+                    "61500.00"
+                  ],
+                "goalmarkervaluelabel" : [ "$111,000.00",
+                    "$61,500.00"
+                  ],
+                "gvalue" : 0,
+                "gvaluelabel" : "$0.00",
+                "label" : "March 2013",
+                "links" : [ "" ],
+                "valuelabels" : [ "$0.00" ],
+                "values" : [ 0 ]
+              }
+            ]
+        }
+    </code>
 </div>

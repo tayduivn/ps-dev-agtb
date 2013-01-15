@@ -32,13 +32,9 @@ class Bug41985Test extends Sugar_PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        $beanList = array();
-        $beanFiles = array();
-        require('include/modules.php');
-        $GLOBALS['beanList'] = $beanList;
-        $GLOBALS['beanFiles'] = $beanFiles;
-
-        $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
+        SugarTestHelper::setUp("beanList");
+        SugarTestHelper::setUp("beanFiles");
+        SugarTestHelper::setUp("current_user");
         $GLOBALS['current_user']->status = 'Active';
         $GLOBALS['current_user']->is_admin = 1;
         $GLOBALS['current_user']->save();
@@ -99,11 +95,7 @@ class Bug41985Test extends Sugar_PHPUnit_Framework_TestCase
         SugarTestContactUtilities::removeAllCreatedContacts();
         SugarTestAccountUtilities::removeAllCreatedAccounts();
 
-        SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
-        unset($GLOBALS['current_user']);
-
-        unset($GLOBALS['beanFiles']);
-        unset($GLOBALS['beanList']);
+        SugarTestHelper::tearDown();
     }
 
     public function testGetRelationshipsWithCustomFields()

@@ -1368,8 +1368,6 @@ background-image:url(../../../../index.php?entryPoint=getImage&imageName=form-bu
 #arrow {
     height:20px;
     width:25px;
-    background-image:url(../../../../index.php?entryPoint=getImage&imageName=footer.png);
-    background-position:  0 -70px;
     background-color:#fff;
     right:0px;
     position:fixed;
@@ -1381,12 +1379,22 @@ background-image:url(../../../../index.php?entryPoint=getImage&imageName=form-bu
     border-left:1px solid #ccc;
     border-right:1px solid #ccc;
 }
-.up {
+
+#arrow.up {
     background-color: transparent !important;
-    background-position: 0 0 !important;
     border: 0 none !important;
     bottom: 11px;
 }
+
+#arrow.up i.icon-chevron-down {
+    margin-left: 4px;
+}
+
+#arrow i.icon-chevron-up {
+    margin-left: 6px;
+}
+
+
 #footer 
 {
 
@@ -3684,7 +3692,6 @@ button, input[type=submit], input[type=reset], input[type=button], .button, .but
     line-height: 18px;
     color: #262627;
     font-weight: 500;
-    font-family: 'Helvetica Neue';
     text-align: center;
     text-shadow: 0 1px 0 rgba(255, 255, 255, 0.75);
     vertical-align: middle;
@@ -4047,13 +4054,19 @@ ul.megamenu a, ul.moduleTabMore a, ul.sf-sub-modulelist a,
 	width: 100%;
 }
 
+/*bug 59030 - chrome specific bug due to jit charts */
+@media screen and (-webkit-min-device-pixel-ratio:0) {
+    #moduleList .sf-menu li a, ul.megamenu li a, ul.moduleTabMore li a, ul.sf-sub-modulelist li a {
+    opacity: .99;
+    }
+}
 
 #moduleList .sf-menu li a, ul.megamenu li a, ul.moduleTabMore li a, ul.sf-sub-modulelist li a {
     padding: 13px 12px 12px 12px;
     line-height: 19px;
     text-decoration: none;
     font-size: 12px;
-    border-right: none;;
+    border-right: none;
 }
 
 #moduleList .sf-menu li a.more, ul.megamenu li a.more, ul.moduleTabMore li a.more, ul.sf-sub-modulelist li a.more {
@@ -4113,7 +4126,7 @@ ul.megamenu .MMShortcuts li.sfHover a.sf-with-ul,
 ul.moduleTabMore li.sfHover a.sf-with-ul,
 ul.sf-sub-modulelist li.sfHover > a.sf-with-ul{
     color: #fff !important;
-    background:		#355B7E;
+    background:		#444;
 }
 
 #globalLinksModule ul.clickMenu.SugarActionMenu li a:hover,
@@ -4197,7 +4210,7 @@ ul.moduleTabMore,
 
 ul.sf-sub-modulelist .selected,
 #moduleList .more .selected{
-background-color: #355b7e;
+background-color: #343433;
 color: #fff;
 }
 
@@ -4408,6 +4421,10 @@ ul#quickCreateULSubnav.showMore .moduleMenuOverFlowMore, ul#quickCreateULSubnav.
 {
 display: none !important;
 visibilility: hidden !important;
+}
+
+#moduleList .home img {
+    margin-top: 2px;
 }
 
 #subModuleList 
@@ -5828,8 +5845,7 @@ padding:0px;
 position: fixed;
 top: 0;
 width:100%;
-
-    z-index:1030;
+z-index:2;
 }
 #globalLinksSubnav, #quickCreateULSubnav {
     z-index: 20;
@@ -5929,6 +5945,13 @@ top:0px;
 
 #dcmenuitems img.icon,#dcmenuSugarCube img.icon, #glblSearchBtn img.icon {
 	border:0px;
+}
+
+/*bug 59030 - chrome specific bug due to jit charts */
+@media screen and (-webkit-min-device-pixel-ratio:0) {
+    #glblSearchBtn .icon.icon-search {
+        opacity: .99;
+    }
 }
 
 #glblSearchBtn {
@@ -6045,6 +6068,12 @@ cursor: default;
 	background-size: 24px 24px;
     margin: 9px 5px 0px 5px;
     border-radius: 2px;
+}
+/*bug 59030 - chrome specific bug due to jit charts */
+@media screen and (-webkit-min-device-pixel-ratio:0) {
+    #dcmenuSugarCube .notifCount {
+        opacity: .99;
+    }
 }
 
 #dcmenuSugarCube .notifCount{
@@ -6254,6 +6283,14 @@ margin-left:10px;
 	position: relative;
     float: left;
 }
+
+/*bug 59030 - chrome specific bug due to jit charts */
+@media screen and (-webkit-min-device-pixel-ratio:0) {
+    #sugar_spot_search {
+        opacity: .99;
+    }
+}
+
 #sugar_spot_search {
 	width:235px;
     height: 16px;
@@ -6840,11 +6877,17 @@ ul#globalLinks.clickMenu li > span {
     padding-right: 8px;
 }
 
+/*bug 59030 - chrome specific bug due to jit charts */
+@media screen and (-webkit-min-device-pixel-ratio:0) {
+    ul#globalLinks.clickMenu li > span a  {
+        opacity: .99;
+    }
+}
+
 ul#globalLinks.clickMenu li > span a {
     color: #FFFFFF;
-    font-size: 14px;
     margin-top: 13px;
-	padding: 0px 10px !important;
+	padding: 1px 10px !important;
 }
 
 
@@ -7581,7 +7624,6 @@ div.hoverscroll div.fixed-arrow.bottom {
     line-height: 18px;
     color: #262627;
     font-weight: 500;
-    font-family: 'Helvetica Neue';
     text-align: center;
     text-shadow: 0 1px 0 rgba(255, 255, 255, 0.75);
     vertical-align: middle;
@@ -8863,6 +8905,13 @@ h3.popover-title {
     margin-bottom: 10px;
     text-align: left;
 }
+
+.modal.tour .well {
+    background-color: #fff;
+    padding: 10px;
+    border: 1px solid rgba(0,0,0,.2);
+}
+
 #tour ul.unstyled,
 #tour ol.unstyled {
     margin-left: 0;

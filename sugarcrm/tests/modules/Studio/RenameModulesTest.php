@@ -32,6 +32,9 @@ class RenameModulesTest extends Sugar_PHPUnit_Framework_TestCase
 
     public function setup()
     {
+        parent::setUp();
+        SugarTestHelper::setUp("current_user");
+
         $mods = array('Accounts', 'Contacts', 'Campaigns');
         foreach($mods as $mod)
         {
@@ -42,24 +45,14 @@ class RenameModulesTest extends Sugar_PHPUnit_Framework_TestCase
             }
         }
 
-        $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
         $this->language = 'en_us';
-
-        $beanList = array();
-        $beanFiles = array();
-        require('include/modules.php');
-        $GLOBALS['beanList'] = $beanList;
-        $GLOBALS['beanFiles'] = $beanFiles;
     }
 
     public function tearDown()
     {
         $this->removeCustomAppStrings();
         $this->removeModuleStrings(array('Accounts'));
-        SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
-        unset($GLOBALS['current_user']);
-        unset($GLOBALS['beanList']);
-        unset($GLOBALS['beanFiles']);
+
         SugarCache::$isCacheReset = false;
 
         if(!empty($this->language_contents))
@@ -69,6 +62,7 @@ class RenameModulesTest extends Sugar_PHPUnit_Framework_TestCase
                 SugarAutoLoader::put("custom/modules/{$key}/language/en_us.lang.php", $contents, true);
             }
         }
+        SugarTestHelper::tearDown();
     }
 
 

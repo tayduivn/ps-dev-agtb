@@ -2,14 +2,6 @@
     render: function() {
         if (this.name != 'crunchbase') {
             app.view.View.prototype.render.call(this);
-            this.$("a.googledoc-fancybox").fancybox({
-                'width': '95%',
-                'height': '95%',
-                'autoScale': true,
-                'transitionIn': 'fadeIn',
-                'transitionOut': 'fadeOut',
-                'type': 'iframe'
-            });
         }
     },
 

@@ -39,7 +39,7 @@ describe("The forecastsWizardConfig layout controller", function(){
             return eval(d);
         });
         stubs = [];
-        app.viewModule = "";
+        app.viewModule = "Forecasts";
         app.initData = {};
 
         stubs.push(sinon.stub(app.metadata, "getLayout", function(layout){
@@ -110,22 +110,34 @@ describe("The forecastsWizardConfig layout controller", function(){
             delete testLayout;
         });
 
-        it("should create a new model if one does not exist", function () {
+        it("should get a model", function() {
             testLayout = new app.view.layouts.ForecastsWizardConfigLayout(options);
-            expect(testLayout.options.context.attributes.model).toBeDefined();
+            var getModelStub = sinon.stub(testLayout, '_getConfigModel');
+            testLayout.initialize(options);
+            expect(getModelStub).toHaveBeenCalled();
+            getModelStub.restore();
         });
 
-        it("should create a copy of the model if one exists, so a cancel will not keep values lying around", function() {
-
-            options.context.forecasts.config = new Backbone.Model({
-                defaults: {
-                    test: 'test'
-                }
+        describe("model for config panel", function() {
+            it("should be a new model if one does not exist", function () {
+                testLayout = new app.view.layouts.ForecastsWizardConfigLayout(options);
+                var testModel = testLayout._getConfigModel(options, 'testUrl', function(){});
+                expect(testModel).toBeDefined();
+                expect(testModel.attributes).toEqual({});
             });
 
-            testLayout = new app.view.layouts.ForecastsWizardConfigLayout(options);
-            expect(testLayout.options.context.attributes.model).not.toBe(options.context.forecasts.config);
-            expect(testLayout.options.context.attributes.model.attributes).toEqual(options.context.forecasts.config.attributes);
+            it("should be a copy of the model if one exists, so a cancel will not keep values lying around", function() {
+                options.context.forecasts.config = new Backbone.Model({
+                    defaults: {
+                        test: 'test'
+                    }
+                });
+
+                testLayout = new app.view.layouts.ForecastsWizardConfigLayout(options);
+                var testModel = testLayout._getConfigModel(options, 'testUrl', function(){});
+                expect(testModel).not.toBe(options.context.forecasts.config);
+                expect(testModel.attributes).toEqual(options.context.forecasts.config.attributes);
+            });
         });
     });
 });

@@ -52,10 +52,19 @@ class MailerFactoryTest extends Sugar_PHPUnit_Framework_TestCase
     }
 
     /**
+     * @group bug59513
      * @group email
      * @group mailer
      */
     public function testGetMailerForUser_UserHasNoMailConfigurations_ThrowsMailerException() {
+        // Bug #59513
+        // This test case requires mocking a static method, which requires use of late static binding. Late static
+        // binding is available as of PHP 5.3, which is the minimum supported version for SugarCRM v7.0 and above.
+        // However, test environments are still running PHP 5.2. Even the code the this case tests is specific to 7.0+,
+        // until PHP 5.3 is standard on test environments, this test must be skipped.
+        // Reference about mocking static methods in PHP Unit:
+        // http://sebastian-bergmann.de/archives/883-Stubbing-and-Mocking-Static-Methods.html
+        self::markTestSkipped("This is a 7.0+ test only, which requires ");
         $mockMailerFactory = self::getMockClass("MailerFactory", array("getOutboundEmailConfiguration"));
         $mockMailerFactory::staticExpects(self::any())
             ->method("getOutboundEmailConfiguration")

@@ -197,6 +197,12 @@ $app_list_strings = array (
     '2'=>'No',
   ),
 
+  'optout_dom' => array(
+      '' => '-none-',
+      'false' => 'No',
+      'true' => 'Yes',
+  ),
+
   //e.g. en franï¿½ais 'Analyst'=>'Analyste',
   'account_type_dom' =>
   array (
@@ -1781,7 +1787,7 @@ $app_strings = array (
   'LBL_PLUS_INLINE' => 'Add' /*for 508 compliance fix*/,
   'LBL_ID_FF_CLEAR' => 'Clear' /*for 508 compliance fix*/,
   'LBL_ID_FF_VCARD' => 'vCard' /*for 508 compliance fix*/,
-  'LBL_ID_FF_REMOVE' => 'Remove' /*for 508 compliance fix*/,
+  'LBL_ID_FF_REMOVE' => 'Unlink' /*for 508 compliance fix*/,
   'LBL_ADD' => 'Add' /*for 508 compliance fix*/,
   'LBL_COMPANY_LOGO' => 'Company logo' /*for 508 compliance fix*/,
   'LBL_JS_CALENDAR' => 'Calendar' /*for 508 compliance fix*/,
@@ -2271,6 +2277,7 @@ $app_strings = array (
     'LBL_TEAM_SET_ID' => 'Team Set ID',
     'LBL_EXPORT_TEAM_SET_ID' => 'Teams',
     'LBL_TEAM_SET'=>'Team Set',
+    'LBL_SELECT_TEAM' => 'Select a Team',
     'LBL_SEARCH_UNAVAILABLE' => 'Search unavailable, please try again later.',
     'ERR_NO_PRIMARY_TEAM_SPECIFIED' => 'No Primary Team specified',
     'LBL_REMOVE_PRIMARY_TEAM_ERROR' => 'Error attempting to remove primary team id [{0}] for [{1}] module with id [{2}]',
@@ -2539,6 +2546,9 @@ $app_strings = array (
     'LBL_MAILMERGE' => 'Mail Merge',
     'LBL_MASS_UPDATE' => 'Mass Update',
     'LBL_NO_MASS_UPDATE_FIELDS_AVAILABLE' => 'There are no fields available for the Mass Update operation',
+    'LBL_MASS_UPDATE_JOB_QUEUED' => 'Your request for mass update has been scheduled.',
+    'LBL_MASS_UPDATE_EMPTY_VALUES' => 'The following attributes have empty values: ',
+    'LBL_MASS_UPDATE_EMPTY_CONFIRM' => 'Do you want to continue?',
     'LBL_OPT_OUT_FLAG_PRIMARY' => 'Opt out Primary Email',
     'LBL_MEETINGS'=>'Meetings',
     'LBL_MEETING'=>'Meeting',
@@ -2654,6 +2664,7 @@ $app_strings = array (
     'LBL_SELECT_TEAMS_KEY' => 'Z',
     'LBL_SELECT_TEAMS_LABEL' => 'Add Team(s)',
     'LBL_SELECT_TEAMS_TITLE' => 'Add Teams(s)',
+    'LBL_SELECT_APPEND_TEAMS' => 'Append Team(s)',
     'LBL_BROWSE_DOCUMENTS_BUTTON_KEY' => 'B',
     'LBL_BROWSE_DOCUMENTS_BUTTON_LABEL' => 'Browse Documents',
     'LBL_BROWSE_DOCUMENTS_BUTTON_TITLE' => 'Browse Documents',
@@ -2868,6 +2879,7 @@ $app_strings = array (
     'ERROR_MINVALUE' => 'Error. This minimum value of this field is {{this}}.',
     'ERROR_MAXVALUE' => 'Error. This maximum value of this field is {{this}}.',
     'ERROR_DATETIME' => 'Error. This field requires a valid date.',
+    'ERROR_NUMBER' => 'Error. This field requires a valid number.',
     'ERROR_NO_BEAN' => 'Failed to get bean.',
     'ERROR_ACCESS_MODULE' => 'You do not have access to this module.',
     'LBL_DUP_MERGE'=>'Find Duplicates',
@@ -2876,9 +2888,9 @@ $app_strings = array (
     'LBL_SUBSCRIBE'=>'Subscribe',
     'LBL_UNSUBSCRIBE'=>'Unsubscribe',
     // Ajax status strings
-    'LBL_LOADING' => 'Loading ...',
+    'LBL_LOADING' => 'Loading...',
     'LBL_SEARCHING' => 'Searching...',
-    'LBL_SAVING_LAYOUT' => 'Saving Layout ...',
+    'LBL_SAVING_LAYOUT' => 'Saving Layout...',
     'LBL_SAVED_LAYOUT' => 'Layout has been saved.',
     'LBL_SAVED' => 'Saved',
     'LBL_SAVING' => 'Saving',
@@ -3278,12 +3290,14 @@ $app_strings = array (
     'LBL_SELECT_THIS_ROW_TITLE' => 'Select this row',
     'LBL_TEAM_SELECTED_TITLE' => 'Team Selected ',
     'LBL_TEAM_SELECT_AS_PRIM_TITLE' => 'Select to make this team primary',
+    'LBL_SEARCH_AND_SELECT' => 'Search and select {{module}}',
 
     //for upload errors
     'UPLOAD_ERROR_TEXT'          => 'ERROR: There was an error during upload. Error code: {0} - {1}',
     'UPLOAD_ERROR_TEXT_SIZEINFO' => 'ERROR: There was an error during upload. Error code: {0} - {1}. The upload_maxsize is {2} ',
     'UPLOAD_ERROR_HOME_TEXT'     => 'ERROR: There was an error during your upload, please contact an administrator for help.',
     'UPLOAD_MAXIMUM_EXCEEDED'    => 'Size of Upload ({0} bytes) Exceeded Allowed Maximum: {1} bytes',
+    'UPLOAD_REQUEST_ERROR'    => 'An error has occured. Please refresh your page and try again.',
 
 
     //508 used Access Keys
@@ -3384,20 +3398,18 @@ $app_strings = array (
     'LBL_TOUR_CALENDAR_URL_2' => 'Retrieve your new shared calendar URL.',
     //END SUGARCRM flav=PRO ONLY
 
-    //begin portal
-    //BEGIN SUGARCRM flav=ent ONLY
     // for nomad mobile
     'LBL_OPTIONAL' => 'Optional',
-    'LBL_RELATED_MODULE' => 'Related {{this}}',
-    'LBL_RELATED_MODULE_PLURAL' => 'Related {{this}}',
-    'LBL_CREATE_MODULE' => 'Create {{this}}',
-    'LBL_EDIT' => 'Edit {{this}}',
-    'LBL_ASSOC' => 'Associate {{this}}',
-    'LBL_ASSIGN' => 'Select {{this}}',
-    'LBL_EDIT_RELATED' => 'Edit Related {{this}}',
-    'LBL_CREATE_RELATED' => 'Create Related {{this}}',
-    'LBL_ASSOC_EXISTING' => 'Associate Existing {{this}}',
-    'LBL_SEARCH_ALL' => 'Search all {{this}}',
+    'LBL_RELATED_MODULE' => 'Related {{{this}}}',
+    'LBL_RELATED_MODULE_PLURAL' => 'Related {{{this}}}',
+    'LBL_CREATE_MODULE' => 'Create {{{this}}}',
+    'LBL_EDIT' => 'Edit {{{this}}}',
+    'LBL_ASSOC' => 'Associate {{{this}}}',
+    'LBL_ASSIGN' => 'Select {{{this}}}',
+    'LBL_EDIT_RELATED' => 'Edit Related {{{this}}}',
+    'LBL_CREATE_RELATED' => 'Create Related {{{this}}}',
+    'LBL_ASSOC_EXISTING' => 'Associate Existing {{{this}}}',
+    'LBL_SEARCH_ALL' => 'Search all {{{this}}}',
     'LBL_SEARCH_ALL_RECORDS' => 'Search all records',
     'LBL_OK' => 'OK',
     'LBL_YES' => 'Yes',
@@ -3408,6 +3420,7 @@ $app_strings = array (
     'LBL_UNLINK_BUTTON' => 'Unlink',
     'LBL_MAP_BUTTON' => 'Map',
     'LBL_FILE_BUTTON' => 'File',
+    'LBL_URL_BUTTON' => 'Web',
     'LBL_WARNING' => 'Warning',
     'LBL_CONFIRM' => 'Confirm',
     'LBL_CREATE_RELATED_RECORD' => 'Create Related Record',
@@ -3421,17 +3434,17 @@ $app_strings = array (
     'LBL_UNLINKING' => 'Unlinking...',
     'LBL_UNLINKED' => 'Unlinked',
     'LBL_LEGAL' => 'Legal',
-    'LBL_UPCOMING' => 'Upcoming',
-    'LBL_RECENTLY_UPDATED' => 'Recent',
+    'LBL_UPCOMING' => 'My Upcoming Events',
+    'LBL_RECENTLY_UPDATED' => 'Recently Updated',
     'LBL_NOTES_SUBPANEL_TITLE' => 'Notes',
     'LBL_MEETINGS_SUBPANEL_TITLE' => 'Meetings',
     'LBL_TASKS_SUBPANEL_TITLE' => 'Tasks',
     'LBL_CALLS_SUBPANEL_TITLE' => 'Calls',
     'LBL_EMAILS_SUBPANEL_TITLE' => 'Emails',
     'LNK_SETTINGS' => 'Settings',
+    'LBL_MOBILE_SUPPORT' => 'Support',
+    'LBL_SUPPORT_EMAIL_SUBJECT' => 'Support request',
 
-    //BEGIN SUGARCRM flav=pro ONLY
-    // for nomad mobile
     'LBL_MOBILE_SHOW_MORE' => 'Show more...',
     'LBL_MOBILE_SHOW_MORE_TOP' => 'Show more...',
     'LBL_MOBILE_NO_RECORDS' => 'No records found',
@@ -3462,18 +3475,56 @@ $app_strings = array (
     'ERR_MOBILE_INVALID_CREDS' => 'Invalid username or password.',
     'ERR_MOBILE_SESSION_EXPIRED' => 'Your session expired.',
     'ERR_MOBILE_NOT_FOUND' => 'Resource not found.',
-    'ERR_MOBILE_TIMEOUT' => 'Request timeout.',
+    'ERR_MOBILE_TIMEOUT' => 'Server is not responding.',
     'ERR_MOBILE_CONNECTION_FAILED' => 'Can\'t reach the server.',
     'ERR_MOBILE_NOT_FOUND_LOGIN' => 'Server not found at the given URL.',
     'ERR_MOBILE_TIMEOUT_LOGIN' => 'Server is not responding at the given URL.',
     'ERR_MOBILE_CONNECTION_FAILED_LOGIN' => 'Server unavailable at the given URL.',
     'ERR_MOBILE_INTERNET_UNAVAILABLE' => 'Internet connection unavailable.',
-    'ERR_MOBILE_INTERNAL' => 'Internal error ({{code}}). Please try again later.',
+    'ERR_MOBILE_INTERNAL' => 'Internal error ({{{code}}}). Please try again later.',
     'ERR_MOBILE_VALIDATION' => 'Record is invalid',
+    'ERR_SERVER_INCOMPATIBLE' => 'Incompatible server version',
     'ERR_MOBILE_EMAIL' => 'Error. Invalid Email Address.',
-    'LBL_MOBILE_FILE_NOT_SUPPORTED' => 'This document type is unsupported.',
-    'LBL_MOBILE_GENERIC_NATIVE_ERROR' => 'An unexpected error has occurred.',
-    //END SUGARCRM flav=pro ONLY
+    'ERR_MOBILE_FILE_NOT_SUPPORTED' => 'This document type is unsupported.',
+    'ERR_MOBILE_BROWSER_NOT_AUTHORIZED' => 'Authentication failed.',
+    'ERR_MOBILE_BROWSER_PAGE_NOT_FOUND' => 'Requested resource not found.',
+    'ERR_MOBILE_BROWSER_INTERNAL_SERVER_ERROR' => 'Internal server error.',
+    'ERR_MOBILE_BROWSER_FORBIDDEN' => 'Forbidden.',
+    'ERR_MOBILE_BROWSER_SERVICE_UNAVAILABLE' => 'Service unavailable.',
+    'ERR_MOBILE_GENERIC_NATIVE_ERROR' => 'An unexpected error has occurred.',
+
+    // Nomad Tutorial
+    'LBL_MOBILE_TUTORIAL_HOME_INTRO' => 'Welcome to SugarCRM.<br/><br/> Allow us to highlight some new features...',
+    'LBL_MOBILE_TUTORIAL_HOME_LOGO' => 'Main menu navigation.',
+    'LBL_MOBILE_TUTORIAL_HOME_CREATE' => 'Available actions per view.',
+    'LBL_MOBILE_TUTORIAL_HOME_SEARCH' => 'Global search for records.',
+    'LBL_MOBILE_TUTORIAL_HOME_FAVORITES_BTN' => 'Filter the list to show my favorite records.',
+    'LBL_MOBILE_TUTORIAL_HOME_MY_ITEMS_BTN' => 'Filter the list to show records assigned to me.',
+    'LBL_MOBILE_TUTORIAL_HOME_FAVORITES_ICON' => 'Mark record as a favorite.',
+    'LBL_MOBILE_TUTORIAL_HOME_UPCOMING' => 'My upcoming events starting today.',
+    'LBL_MOBILE_TUTORIAL_HOME_RECENT' => 'Most recently modified records.',
+    'LBL_MOBILE_TUTORIAL_HOME_GRIP' => 'Available actions on a record.',
+    'LBL_MOBILE_TUTORIAL_HOME_END' => 'Enjoy all the new features!',
+
+    'LBL_MOBILE_TUTORIAL_PLUS_MENU_INTRO' => 'This is the plus menu.',
+    'LBL_MOBILE_TUTORIAL_PLUS_MENU_CREATE' => 'Close the plus menu.',
+    'LBL_MOBILE_TUTORIAL_PLUS_MENU_ACTIONS' => 'Select the specific action to view to perform.',
+
+    'LBL_MOBILE_TUTORIAL_HOME_MENU_INTRO' => 'This is the home menu.',
+    'LBL_MOBILE_TUTORIAL_HOME_MENU_LOGO' => 'Close the home menu.',
+    'LBL_MOBILE_TUTORIAL_HOME_MENU_MODULES' => 'View a specific module.',
+    'LBL_MOBILE_TUTORIAL_HOME_MENU_SETTINGS' => 'Customize the application.',
+    'LBL_MOBILE_TUTORIAL_HOME_MENU_DESKTOP' => 'Open Sugar in the web browser.',
+    'LBL_MOBILE_TUTORIAL_HOME_MENU_PROFILE' => 'View your profile.',
+
+    'LBL_MOBILE_TUTORIAL_DETAIL_INTRO' => 'This is the detail page.',
+    'LBL_MOBILE_TUTORIAL_DETAIL_CARD' => 'The most important information about a record.',
+    'LBL_MOBILE_TUTORIAL_DETAIL_RIGHT_ACTION' => 'View additional information or edit a record.',
+    'LBL_MOBILE_TUTORIAL_DETAIL_RECORD_ACTIONS' => 'Available actions on a record.',
+    'LBL_MOBILE_TUTORIAL_DETAIL_BACK' => 'Go to the previous page.',
+
+    //begin portal
+    //BEGIN SUGARCRM flav=ent ONLY
 
     //for portal
 
@@ -3634,6 +3685,7 @@ $app_list_strings['kbdocument_status_dom'] = array (
     );
 
   $app_list_strings['moduleList']['KBDocuments'] = 'Knowledge Base';
+$app_list_strings['moduleList']['Words'] = 'Words';
   $app_strings['LBL_CREATE_KB_DOCUMENT'] = 'Create Article';
   $app_list_strings['kbdocument_viewing_frequency_dom'] =
   array(
@@ -4439,7 +4491,7 @@ $app_strings ['documentation'] = array (
     'COM' => '05_Sugar_Community_Edition'
 );
 //BEGIN SUGARCRM flav=pro ONLY
-$app_list_strings['forecasts_config_category_options_dom'] = array(
+$app_list_strings['forecasts_config_ranges_options_dom'] = array(
     'show_binary' => 'Two Ranges',
     'show_buckets' => 'Three Ranges',
 //END SUGARCRM flav=pro ONLY

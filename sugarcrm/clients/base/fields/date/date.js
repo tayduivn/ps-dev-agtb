@@ -72,8 +72,8 @@
      * @param  {Object} options the options
      */
     initialize: function(options) {
-        this.userTimePrefs  = app.user.get('timepref');
-        this.usersDatePrefs = app.user.get('datepref');
+        this.userTimePrefs  = app.user.getPreference('timepref');
+        this.usersDatePrefs = app.user.getPreference('datepref');
 
         // Only for derived widgets that actually have a showAmPm property
         if (!_.isUndefined(this.showAmPm)) {
@@ -172,8 +172,22 @@
                 minutes: '00'
             };
         }
-        dateValue  = this._getDatepickerValue();
-        model.set(fieldName, this._buildUnformatted(dateValue, hrsMins.hours, hrsMins.minutes), {silent: true});
+        dateValue = this._getDatepickerValue();
+        if (this._verifyDateString(dateValue)) {
+            model.set(fieldName, this._buildUnformatted(dateValue, hrsMins.hours, hrsMins.minutes), {silent: true});
+        } else {
+            model.set(fieldName, dateValue, hrsMins.hours, hrsMins.minutes, {silent: true});
+        }
+    },
+    _verifyDateString: function(value) {
+        // First try generic date parse (since we might have an ISO)
+        if(_.isNaN(Date.parse(value))) {
+            // Safari chokes on '.', '-', (both supported by the datepicker), so try with those replaced
+            if(_.isNaN(Date.parse(value.replace(/[\.\-]/g, '/')))) {
+                return false;
+            }
+        }
+        return true;
     },
     _buildUnformatted: function(d, h, m) {
         var parsedDate = app.date.parse(d, this.usersDatePrefs);
@@ -376,7 +390,7 @@
             value  = app.date.format(jsDate, this.usersDatePrefs);
         }
         this.dateValue = value;
-        this.$(".datepicker").datepicker('update', this.dateValue);
+        this._setDatepickerValue(this.dateValue);
         jsDate = app.date.parse(value);
         return app.date.format(jsDate, this.usersDatePrefs);
     },

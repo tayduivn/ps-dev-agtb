@@ -395,6 +395,10 @@ class SugarBean
             //END SUGARCRM flav=int ONLY
 
             $refresh = inDeveloperMode() || !empty($_SESSION['developerMode']);
+            if($refresh && !empty(VardefManager::$inReload["{$this->module_dir}:{$this->object_name}"])) {
+                // if we're already reloading this vardef, no need to do it again
+                $refresh = false;
+            }
             VardefManager::loadVardef($this->module_dir, $this->object_name, $refresh, array("bean" => $this));
 
             // build $this->column_fields from the field_defs if they exist
@@ -4804,10 +4808,12 @@ class SugarBean
                         , array("disable_row_level_security" => true)
                         //END SUGARCRM flav=pro ONLY
                         );
-                        if (!empty($field['rname'])) {
-                        	$this->$name = $mod->$field['rname'];
-                        } else if (isset($mod->name)) {
-                        	$this->$name = $mod->name;
+                        if ($mod){
+                            if (!empty($field['rname'])) {
+                                $this->$name = $mod->$field['rname'];
+                            } else if (isset($mod->name)) {
+                                $this->$name = $mod->name;
+                            }
                         }
                     }
                     if(!empty($this->$id_name) && isset($this->$name))

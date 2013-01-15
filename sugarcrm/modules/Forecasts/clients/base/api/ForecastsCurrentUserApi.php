@@ -71,6 +71,14 @@ class ForecastsCurrentUserApi extends CurrentUserApi {
         $data['current_user']['first_name'] = $current_user->first_name;
         $data['current_user']['last_name'] = $current_user->last_name;
 
+        /**
+         * todo-sfa: when teams/ACLs are implemented, we won't need this anymore
+         *           and we can just use sidecar acl's via app.user
+         *
+         * Mimic the future sidecar ACLs behavior with "yes"/"no"
+         */
+        $data['current_user']['admin'] = ($current_user->isAdminForModule("Forecasts")) ? 'yes' : 'no';
+
         return $data;
     }
 
@@ -106,12 +114,14 @@ class ForecastsCurrentUserApi extends CurrentUserApi {
 
         $returnInitData["initData"]['forecasts_setup'] = (isset($forecastsSettings['is_setup'])) ? $forecastsSettings['is_setup'] : 0;
 
-        $defaultSelections["category"] = array("include");
+        $defaultSelections["ranges"] = array("include");
         $defaultSelections["group_by"] = 'forecast';
         $defaultSelections["dataset"] = 'likely';
 
         // push in defaultSelections
         $returnInitData["defaultSelections"] = $defaultSelections;
+
+        $returnInitData["forecastsJavascript"] = getVersionedPath(sugar_cached('include/javascript/sidecar_forecasts.js'));
 
         return $returnInitData;
     }

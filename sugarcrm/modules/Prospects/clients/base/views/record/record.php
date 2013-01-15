@@ -32,24 +32,45 @@ if (!defined('sugarEntry') || !sugarEntry) {
 $viewdefs['Prospects']['base']['view']['record'] = array(
     'buttons' => array(
         array(
-            'type'    => 'button',
-            'label'   => 'LBL_SAVE_BUTTON_LABEL',
-            'css_class' => 'hide btn-primary record-save',
+            'type' => 'button',
+            'name' => 'cancel_button',
+            'label' => 'LBL_CANCEL_BUTTON_LABEL',
+            'css_class' => 'btn-invisible btn-link',
+            'mode' => 'edit',
         ),
         array(
-            'type'    => 'button',
-            'label'   => 'LBL_CANCEL_BUTTON_LABEL',
-            'css_class' => 'hide record-cancel',
+            'type' => 'buttondropdown',
+            'name' => 'edit_dropdown',
+            'default' => array(
+                'name' => 'edit_button',
+                'label' => 'LBL_EDIT_BUTTON_LABEL',
+            ),
+            'dropdown' => array(
+                array(
+                    'name' => 'delete_button',
+                    'label' => 'LBL_DELETE_BUTTON_LABEL',
+                ),
+                array(
+                    'name' => 'duplicate_button',
+                    'label' => 'LBL_DUPLICATE_BUTTON_LABEL',
+                ),
+            ),
+            'mode' => 'view',
         ),
         array(
-            'type'    => 'button',
-            'label'   => 'LBL_EDIT_BUTTON_LABEL',
-            'css_class' => 'record-edit',
-        ),
-        array(
-            'type'    => 'button',
-            'label'   => 'LBL_DELETE_BUTTON_LABEL',
-            'css_class' => 'record-delete',
+            'type' => 'buttondropdown',
+            'name' => 'save_dropdown',
+            'default' => array(
+                'name' => 'save_button',
+                'label' => 'LBL_SAVE_BUTTON_LABEL',
+            ),
+            'dropdown' => array(
+                array(
+                    'name' => 'delete_button',
+                    'label' => 'LBL_DELETE_BUTTON_LABEL',
+                ),
+            ),
+            'mode' => 'edit',
         ),
         array(
             'name' => 'sidebar_toggle',
@@ -65,6 +86,10 @@ $viewdefs['Prospects']['base']['view']['record'] = array(
                     'name' => 'fieldset_name',
                     'type' => 'fieldset',
                     'fields' => array('salutation', 'first_name', 'last_name'),
+                ),
+                array(
+                    'type' => 'favorite',
+                    'noedit' => true,
                 ),
             ),
         ),
@@ -115,7 +140,10 @@ $viewdefs['Prospects']['base']['view']['record'] = array(
                 'referred_by', //TODO: does not exist so the columns are thrown off. remove and make phone_other a span of 12 and the columns dispaly correctly
                 'assigned_user_name',
                 'date_modified',
-                'team_name',
+                array(
+                    "type" => "teamset",
+                    "name" => "team_name"
+                ),
                 'date_entered', //TODO: this won't show until the teams widget is fixed
             ),
         ),

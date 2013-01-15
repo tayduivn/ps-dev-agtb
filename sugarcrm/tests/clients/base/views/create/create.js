@@ -8,40 +8,7 @@ describe("Create View", function() {
         SugarTest.loadHandlebarsTemplate('record', 'view', 'base');
         SugarTest.loadHandlebarsTemplate('button', 'field', 'base', 'edit');
         SugarTest.loadComponent('base', 'view', 'record');
-        SugarTest.loadComponent('base', 'view', viewName);
-        SugarTest.testMetadata.addViewDefinition(viewName, {
-            "type":"record",
-            "buttons":[
-                {
-                    "name":"cancel_button",
-                    "type":"button",
-                    "label":"LBL_CANCEL_BUTTON_LABEL",
-                    "css_class":"btn-invisible btn-link"
-                }, {
-                    "name":"restore_button",
-                    "type":"button",
-                    "label":"LBL_RESTORE",
-                    "css_class":"hide btn-invisible btn-link"
-                }, {
-                    "name":"save_create_button",
-                    "type":"button",
-                    "label":"LBL_SAVE_AND_CREATE_ANOTHER",
-                    "css_class":"hide btn-invisible btn-link"
-                }, {
-                    "name":"save_view_button",
-                    "type":"button",
-                    "label":"LBL_SAVE_AND_VIEW",
-                    "css_class":"hide btn-invisible btn-link"
-                }, {
-                    "name":"save_button",
-                    "type":"button",
-                    "label":"LBL_SAVE_BUTTON_LABEL",
-                    "css_class":"disabled"
-                }, {
-                    "name":"sidebar_toggle",
-                    "type":"sidebartoggle"
-                }
-            ],
+        SugarTest.testMetadata.addViewDefinition('record', {
             "panels":[
                 {
                     "name":"panel_header",
@@ -72,6 +39,44 @@ describe("Create View", function() {
                         "phone_office",
                         "full_name"
                     ]
+                }
+            ]
+        }, moduleName);
+        SugarTest.loadComponent('base', 'view', viewName);
+        SugarTest.testMetadata.addViewDefinition(viewName, {
+            "type":"record",
+            "buttons":[
+                {
+                    "name":"cancel_button",
+                    "type":"button",
+                    "label":"LBL_CANCEL_BUTTON_LABEL",
+                    "css_class":"btn-invisible btn-link"
+                }, {
+                    "name":"restore_button",
+                    "type":"button",
+                    "label":"LBL_RESTORE",
+                    "css_class":"hide btn-invisible btn-link",
+                    "mode" : "edit"
+                }, {
+                    "name":"save_create_button",
+                    "type":"button",
+                    "label":"LBL_SAVE_AND_CREATE_ANOTHER",
+                    "css_class":"hide btn-invisible btn-link",
+                    "mode" : "save"
+                }, {
+                    "name":"save_view_button",
+                    "type":"button",
+                    "label":"LBL_SAVE_AND_VIEW",
+                    "css_class":"hide btn-invisible btn-link",
+                    "mode" : "save"
+                }, {
+                    "name":"save_button",
+                    "type":"button",
+                    "label":"LBL_SAVE_BUTTON_LABEL",
+                    "css_class":"disabled"
+                }, {
+                    "name":"sidebar_toggle",
+                    "type":"sidebartoggle"
                 }
             ]
         }, moduleName);
@@ -118,8 +123,7 @@ describe("Create View", function() {
     describe('Buttons', function() {
         it("Should disable the save button when the form is empty", function() {
             view.render();
-
-            expect(view.$('[name=save_button]').hasClass('disabled')).toBe(true);
+            expect(view.buttons[view.saveButtonName].isDisabled()).toBe(true);
         });
 
         it("Should enable the save button when the model is valid", function() {
@@ -129,7 +133,7 @@ describe("Create View", function() {
                 last_name: 'bar'
             });
 
-            expect(view.$('[name=save_button]').hasClass('disabled')).toBe(false);
+            expect(view.buttons[view.saveButtonName].isDisabled()).toBe(false);
         });
     });
 });

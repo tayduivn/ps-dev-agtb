@@ -30,14 +30,9 @@ class JSAlertsTest extends Sugar_PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        require('include/modules.php');
-        $GLOBALS['beanList'] = $beanList;
-        $GLOBALS['beanFiles'] = $beanFiles;
+        parent::setUp();
+        SugarTestHelper::setUp("current_user");
 
-        global $current_user;
-        $this->beans = array();
-        $this->old_user = $current_user;
-        $current_user = $this->_user = SugarTestUserUtilities::createAnonymousUser();
         $GLOBALS['app_list_strings'] = return_app_list_strings_language($GLOBALS['current_language']);
         $GLOBALS['app_strings'] = return_application_language($GLOBALS['current_language']);
     }
@@ -47,13 +42,8 @@ class JSAlertsTest extends Sugar_PHPUnit_Framework_TestCase
         foreach($this->beans as $bean) {
             $bean->mark_deleted($bean->id);
         }
-        SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
 
-		unset($GLOBALS['app_list_strings']);
-		unset($GLOBALS['current_user']);
-		unset($GLOBALS['app_strings']);
-        unset($GLOBALS['beanList']);
-        unset($GLOBALS['beanFiles']);
+        parent::tearDown();
     }
 
     protected function createNewMeeting()

@@ -1,3 +1,29 @@
+/*********************************************************************************
+ * The contents of this file are subject to the SugarCRM Master Subscription
+ * Agreement (""License"") which can be viewed at
+ * http://www.sugarcrm.com/crm/master-subscription-agreement
+ * By installing or using this file, You have unconditionally agreed to the
+ * terms and conditions of the License, and You may not use this file except in
+ * compliance with the License.  Under the terms of the license, You shall not,
+ * among other things: 1) sublicense, resell, rent, lease, redistribute, assign
+ * or otherwise transfer Your rights to the Software, and 2) use the Software
+ * for timesharing or service bureau purposes such as hosting the Software for
+ * commercial gain and/or for the benefit of a third party.  Use of the Software
+ * may be subject to applicable fees and any use of the Software without first
+ * paying applicable fees is strictly prohibited.  You do not have the right to
+ * remove SugarCRM copyrights from the source code or user interface.
+ *
+ * All copies of the Covered Code must include on each user interface screen:
+ *  (i) the ""Powered by SugarCRM"" logo and
+ *  (ii) the SugarCRM copyright notice
+ * in the same form as they appear in the distribution.  See full license for
+ * requirements.
+ *
+ * Your Warranty, Limitations of liability and Indemnity are expressly stated
+ * in the License.  Please refer to the License for the specific language
+ * governing these rights and limitations under the License.  Portions created
+ * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
+ ********************************************************************************/
 /**
  * View that displays a list of models pulled from the context's collection.
  * @class View.Views.ForecastsFilterView
@@ -12,7 +38,8 @@
 
     events:{
         'focus .chzn-container input': 'dropFocus',
-        'click .chzn-container .chzn-drop' : 'chznClick'
+        'click .chzn-container .chzn-drop' : 'chznClick',
+        'click .chzn-select-legend': 'chznContainerClick'
     },
 
     dropFocus:function (evt) {
@@ -28,6 +55,16 @@
 
     chznClick: function(evt) {
         $(evt.target).css("right","auto");
+    },
+
+    /**
+     * handler for click event on filter
+     * @param evt
+     */
+    chznContainerClick: function (evt)
+    {
+        var chosen = this.fields.ranges.$el.find('select').data('chosen');
+        chosen.results_toggle();
     },
 
     /**
@@ -57,7 +94,7 @@
         if (this.context && this.context.forecasts) {
             this.context.forecasts.on("change:selectedUser", function (context, user) {
                 self.selectedUser = user;
-                this.toggleCategoryFieldVisibility();
+                this.toggleRangesFieldVisibility();
             }, this);
         }
     },
@@ -65,31 +102,35 @@
     /**
      * Method to toggle the field visibility of the group by field
      */
-    toggleCategoryFieldVisibility:function () {
-        if (!_.isUndefined(this.fields['category']) && this.selectedUser.isManager && this.selectedUser.showOpps === false) {
-            this.fields['category'].$el.hide();
+    toggleRangesFieldVisibility:function () {
+        if (!_.isUndefined(this.fields['ranges']) && this.selectedUser.isManager && this.selectedUser.showOpps === false) {
+            this.fields['ranges'].$el.hide();
         } else {
-            this.fields['category'].$el.show();
+            this.fields['ranges'].$el.show();
         }
     },
 
     /**
      * Overriding _renderField because we need to determine whether the config settings are set to show buckets or
-     * binary for forecasts and adjusts the category filter accordingly
+     * binary for forecasts and adjusts the ranges filter accordingly
      * @param field
      * @private
      */
     _renderField:function (field) {
-        if (field.name == 'category') {
+        if (field.name == 'ranges') {
             field.def.options = this.context.forecasts.config.get('buckets_dom') || 'show_binary_dom';
-            field.def.value = this.context.forecasts.has("selectedCategory") ? this.context.forecasts.get("selectedCategory") : app.defaultSelections.category;
-            field = this._setUpCategoryField(field);
+            field.def.value = this.context.forecasts.has("selectedRanges") ? this.context.forecasts.get("selectedRanges") : app.defaultSelections.ranges;
+            field = this._setUpRangesField(field);
         }
         app.view.View.prototype._renderField.call(this, field);
 
         field.$el.find('.chzn-container').css("width", "100%");
         field.$el.find('.chzn-choices').prepend('<legend class="chzn-select-legend">Filter <i class="icon-caret-down"></i></legend>');
         field.$el.find('.chzn-results li').after("<span class='icon-ok' />");
+
+        // override default behavior of chosen - @see #58125
+        var chosen = field.$el.find('select').data('chosen');
+        chosen.container_mousedown = function(){};
 
         this.fields[field.name] = field;
     },
@@ -103,7 +144,7 @@
         app.view.View.prototype._render.call(this);
 
         // toggle the visibility of the group by field for the initial render
-        this.toggleCategoryFieldVisibility();
+        this.toggleRangesFieldVisibility();
 
         return this;
     },
@@ -114,7 +155,7 @@
      * @return {*}
      * @private
      */
-    _setUpCategoryField:function (field) {
+    _setUpRangesField:function (field) {
 
         field.events = _.extend({"change select":"_updateSelections"}, field.events);
         field.bindDomChange = function () {
@@ -127,30 +168,30 @@
          * @private
          */
         field._updateSelections = function (event, input) {
-            var selectedCategory = this.context.forecasts.get("selectedCategory");
+            var selectedRanges = this.context.forecasts.get("selectedRanges");
             var selectElement = this.$el.find("select");
             var id;
 
-            if (!_.isArray(selectedCategory)) {
-                selectedCategory = new Array();
+            if (!_.isArray(selectedRanges)) {
+                selectedRanges= new Array();
             }
 
             if (this.def.multi) { // if it's a multiselect we need to add or drop the correct values from the filter model
                 if (_.has(input, "selected")) {
                     id = input.selected;
-                    if (!_.contains(selectedCategory, id)) {
-                        selectedCategory = _.union(selectedCategory, id);
+                    if (!_.contains(selectedRanges, id)) {
+                        selectedRanges = _.union(selectedRanges, id);
                     }
                 } else if (_.has(input, "deselected")) {
                     id = input.deselected;
-                    if (_.contains(selectedCategory, id)) {
-                        selectedCategory = _.without(selectedCategory, id);
+                    if (_.contains(selectedRanges, id)) {
+                        selectedRanges = _.without(selectedRanges, id);
                     }
                 }
             } else {  // not multi, just set the selected filter
-                selectedCategory = new Array(input.selected);
+                selectedRanges = new Array(input.selected);
             }
-            this.context.forecasts.set('selectedCategory', selectedCategory);
+            this.context.forecasts.set('selectedRanges', selectedRanges);
         };
 
         return field;

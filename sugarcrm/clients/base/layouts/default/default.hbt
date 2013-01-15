@@ -1,7 +1,7 @@
 <div class="row-fluid">
     <div class="main-pane"></div>
     <div class="side sidebar-content">
-        <div class="side-pane"></div>
-        <div class="preview-pane hide"></div>
+        <div class="side-pane active"></div>
+        <div class="preview-pane"></div>
     </div>
 </div>

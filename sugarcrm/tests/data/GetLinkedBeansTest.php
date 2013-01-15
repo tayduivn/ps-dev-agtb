@@ -27,16 +27,11 @@ class GetLinkedBeansTest extends Sugar_PHPUnit_Framework_TestCase
 
     public function setUp()
 	{
-	    $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
+        parent::setUp();
+        SugarTestHelper::setUp("current_user");
         $GLOBALS['current_user']->setPreference('timezone', "America/Los_Angeles");
 	    $GLOBALS['current_user']->setPreference('datef', "m/d/Y");
 		$GLOBALS['current_user']->setPreference('timef', "h.iA");
-
-        $beanList = array();
-        $beanFiles = array();
-        require('include/modules.php');
-        $GLOBALS['beanList'] = $beanList;
-        $GLOBALS['beanFiles'] = $beanFiles;
 	}
 
 	public function tearDown()
@@ -52,7 +47,7 @@ class GetLinkedBeansTest extends Sugar_PHPUnit_Framework_TestCase
                 unlink($file);
         }
 
-        unset($GLOBALS['beanFiles'], $GLOBALS['beanList']);
+        parent::tearDown();
 	}
 
     public function testGetLinkedBeans()

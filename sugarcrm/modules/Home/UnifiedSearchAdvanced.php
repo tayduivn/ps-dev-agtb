@@ -368,10 +368,7 @@ class UnifiedSearchAdvanced {
 			$manager->loadVardef( $moduleName , $beanName ) ;
 
 			// obtain the field definitions used by generateSearchWhere (duplicate code in view.list.php)
-			$defs = SugarAutoLoader::loadWithMetafiles($moduleName, 'SearchFields', 'searchfields');
-			if($defs) {
-			    require $defs;
-			}
+			$searchFields = SugarAutoLoader::loadSearchFields($moduleName);
 
             //If there are $searchFields are empty, just continue, there are no search fields defined for the module
             if(empty($searchFields[$moduleName]))

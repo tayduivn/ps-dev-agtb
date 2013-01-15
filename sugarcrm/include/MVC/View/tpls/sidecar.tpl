@@ -43,7 +43,7 @@
 
         <!-- CSS -->
         <link rel="stylesheet" href="sidecar/lib/chosen/chosen.css"/>
-        <link rel="stylesheet" href="styleguide/styleguide/css/bootstrap.css"/>
+        <link rel="stylesheet" href="{$css_url}"/>
         <link rel="stylesheet" href="sidecar/lib/jquery-ui/css/smoothness/jquery-ui-1.8.18.custom.css"/>
         <link rel="stylesheet" href="include/javascript/jquery/bootstrap-wysihtml5/bootstrap-wysihtml5.css"/>
     </head>
@@ -54,14 +54,10 @@
                 <div id="header"></div>
                 <div id="content">
                     <div class="container welcome">
-                        <div class="row">
-                            <div class="span4 offset4 thumbnail">
-                                <div class="modal-header tcenter">
-                                    <img src="include/javascript/twitterbootstrap/img/throbber.gif" />
-                                </div>
-                                <div class="modal-footer">
-                                    Loading...
-                                </div>
+                        <div class="alert alert-process">
+                            <strong>Loading</strong>
+                            <div class="loading">
+                                <span class="l1"></span><span class="l2"></span><span class="l3"></span>
                             </div>
                         </div>
                     </div>

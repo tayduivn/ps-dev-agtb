@@ -1,6 +1,6 @@
 ({
     events:{
-        'click .accordion-heading.enabled': 'handlePanelHeaderClick',
+        'click .header.enabled': 'handlePanelHeaderClick',
         'click [name=lead_convert_finish_button].enabled': 'initiateFinish'
     },
 
@@ -30,7 +30,7 @@
             });
 
             //This is because backbone injects a wrapper element.
-            view.$el.addClass('accordion-group');
+            view.$el.addClass('accordion-group filter_el step_1_container');
             view.$el.data('module', moduleMeta.module);
 
             self.addComponent(view); //places panel in the layout
@@ -61,7 +61,7 @@
     },
 
     handlePanelHeaderClick: function(event) {
-        var panelHeader = this.$(event.target).closest('.accordion-heading'),
+        var panelHeader = this.$(event.target).closest('.header'),
             nextModule = panelHeader.attr('data-module');
 
         this.initiateShow(nextModule);

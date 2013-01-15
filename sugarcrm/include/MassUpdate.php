@@ -375,6 +375,83 @@ eoq;
 		}
 		$disable_date_format = $old_value;
 	}
+
+    public static function setMassUpdateFielddefs(Array $fielddefs, $moduleName) {
+        $banned = array('date_modified'=>1, 'date_entered'=>1, 'created_by'=>1, 'modified_user_id'=>1, 'deleted'=>1,'modified_by_name'=>1, 'last_activity_date'=>1,);
+
+        foreach ($fielddefs as $name => $def) {
+            if(isset($def['type'])){
+                if(!isset($banned[$def['name']]) && (!isset($def['massupdate']) || !empty($def['massupdate']))) {
+                    switch($def['type']) {
+                        case "relate":
+                            if(isset($def['id_name'])) {
+                                $def['massupdate'] = true;
+                            } else if($name == 'team_name') {
+
+                            }
+                            break;
+                        case "contact_id":
+                        case "assigned_user_name":
+                        case "account_id":
+                        case "account_name":
+                        case "bool":
+                        case "parent":
+                        case "enum":
+                        case "multienum":
+                        case "radioenum":
+                        case "datetime":
+                        case "date":
+                            $def['massupdate'] = true;
+                            break;
+                        case "int":
+                            if(!empty($field['massupdate']) && empty($field['auto_increment'])) {
+                                $def['massupdate'] = true;
+                            }
+                            break;
+                        case "inbound":
+                            if($moduleName == 'Emails') {
+                                //TODO:Archive emails
+                            }
+                            break;
+                    }
+
+                    if(isset($def['id_name'])) {
+                        $fielddefs[$def['id_name']]['massupdate'] = false;
+                    }
+                }
+                //BEGIN SUGARCRM flav=pro ONLY
+                elseif ($name == "team_name") {
+                    $def['massupdate'] = true;
+                }
+                //END SUGARCRM flav=pro ONLY
+                $fielddefs[$name] = $def;
+            }
+        }
+
+        if($moduleName == 'Contacts') {
+            $fielddefs['sync_contact']["massupdate"] = true;
+        } else if($moduleName == 'Employees') {
+            $fielddefs['employee_status']['massupdate'] = true;
+            $fielddefs['employee_status']['type'] = 'enum';
+            $fielddefs['employee_status']['options'] = 'employee_status_dom';
+        } else if($moduleName == 'InboundEmail') {
+            $fielddefs['status']['massupdate'] = true;
+            $fielddefs['status']['type'] = 'enum';
+            $fielddefs['status']['options'] = 'user_status_dom';
+        }
+        if(in_array($moduleName, array("Contacts", "Accounts", "Leads", "Prospects"))) {
+            $fielddefs['optout_primary'] = array(
+                'name' => 'sync',
+                'type' => 'enum',
+                'label' => 'LBL_OPT_OUT_FLAG_PRIMARY',
+                'massupdate' => true,
+                'source' => 'non-db',
+                'options' => 'optout_dom',
+            );
+        }
+        return $fielddefs;
+    }
+
 	/**
   	  * Displays the massupdate form
   	  */
@@ -1323,12 +1400,7 @@ EOQ;
 
     protected function getSearchFields($module)
     {
-     	$searchfields_file = SugarAutoLoader::loadWithMetafiles($module, 'SearchFields', 'searchfields');
- 		if($searchfields_file) {
- 			require $searchfields_file;
- 		}
-
-        return isset($searchFields) ? $searchFields : array();
+        return SugarAutoLoader::loadSearchFields($module);
     }
     /**
      * This is kinda a hack how it is implimented, but will tell us whether or not a focus has

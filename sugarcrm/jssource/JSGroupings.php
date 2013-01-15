@@ -65,6 +65,14 @@
                             'include/javascript/jquery/jquery.popoverext.js'             =>   $target,
                         );
                         break;
+                    // these are the only files not in bootstrap.min.js that we need in forecasts
+                    // as bootstrap.min.js is already included in sugar_grp1_bootstrap.js
+                    case 'bootstrap_forecasts':
+                        return array(
+                            'styleguide/assets/js/bootstrap-datepicker.js' => $target,
+                            'styleguide/assets/js/bootstrapx-clickover.js' => $target,
+                        );
+                        break;
                     case 'jquery_core':
                         return array (
                             'include/javascript/jquery/jquery-min.js'             =>    $target,
@@ -82,11 +90,11 @@
                             'include/javascript/jquery/jquery.sugarMenu.js'              =>   $target,
                             'include/javascript/jquery/jquery.highLight.js'              =>   $target,
                             'include/javascript/jquery/jquery.showLoading.js'            =>   $target,
+                            'include/javascript/jquery/jquery.chosen.min.js'             =>   $target,
+                            'include/javascript/jquery/jquery.jstree.js'              	 =>   $target,
                             'include/javascript/jquery/jquery.dataTables.min.js'         =>   $target,
                             'include/javascript/jquery/jquery.dataTables.customSort.js'  =>   $target,
                             'include/javascript/jquery/jquery.jeditable.js'              =>   $target,
-                            'include/javascript/jquery/jquery.chosen.min.js'             =>   $target,
-                            'include/javascript/jquery/jquery.jstree.js'              	 =>   $target,                            
                             'include/javascript/jquery/jquery.effects.custombounce.js'   =>   $target,
                         );
                         break;
@@ -109,14 +117,13 @@
                 "sidecar/lib/chosen/chosen.jquery.js" => "summer/summer.min.js",
                 "sidecar/lib/sugar/sugar.searchahead.js" => "summer/summer.min.js",
                 "sidecar/lib/sugar/sugar.timeago.js" => "summer/summer.min.js",
-                "summer/lib/jquery/jquery.fancybox-1.3.4.js" => "summer/summer.min.js",
-                "summer/lib/Crypto/Crypto.js" => "summer/summer.min.js",
                 "summer/lib/TimelineJS/js/storyjs-embed.js" => "summer/summer.min.js",
                 "summer/lib/fullcalendar/fullcalendar.js" => "summer/summer.min.js",
                 "sidecar/lib/sugarapi/sugarapi.js" => "summer/summer.min.js",
                 "sidecar/src/app.js" => "summer/summer.min.js",
                 "sidecar/src/utils/date.js" => "summer/summer.min.js",
                 "sidecar/src/utils/utils.js" => "summer/summer.min.js",
+                "sidecar/src/utils/math.js" => "summer/summer.min.js",
                 "sidecar/src/utils/currency.js" => "summer/summer.min.js",
                 "sidecar/src/core/cache.js" => "summer/summer.min.js",
                 "sidecar/src/core/events.js" => "summer/summer.min.js",
@@ -172,6 +179,7 @@
                 "modules/Forecasts/clients/base/helper/hbt-helpers.js" => "summer/summer.min.js",
                 "include/javascript/twitterbootstrap/js/sugarCharts.js" => "summer/summer.min.js",
                 "include/javascript/jquery/jquery.jstree.js" => "summer/summer.min.js",
+                "include/javascript/phpjs/base64_encode.js" => "summer/summer.min.js",
             ),
 
             $summer_css = array(
@@ -191,6 +199,7 @@
                 "sidecar/lib/chosen/chosen.css" => "summer/summer-splash.min.css",
                 "summer/lib/twitterbootstrap/css/bootstrap.css" => "summer/summer-splash.min.css",
                 "sidecar/lib/jquery-ui/css/smoothness/jquery-ui-1.8.18.custom.css" => "summer/summer-splash.min.css",
+                "summer/splash/static/css/splash.css" => "summer/summer-splash.min.css",
             ),
            $sugar_grp1 = array(
                 //scripts loaded on first page
@@ -293,9 +302,9 @@
 			),
 
             $sugar_grp_yui2 = array(
-               //YUI combination 2
-               'include/javascript/yui/build/dragdrop/dragdrop-min.js'    => 'include/javascript/sugar_grp_yui2.js',
-               'include/javascript/yui/build/container/container-min.js'  => 'include/javascript/sugar_grp_yui2.js',
+            //YUI combination 2
+            'include/javascript/yui/build/dragdrop/dragdrop-min.js'    => 'include/javascript/sugar_grp_yui2.js',
+            'include/javascript/yui/build/container/container-min.js'  => 'include/javascript/sugar_grp_yui2.js',
             ),
 
             //Grouping for emails module.
@@ -351,6 +360,7 @@
                'styleguide/assets/js/bootstrap-popover.js' => 'include/javascript/sugar_sidecar.min.js',
                'styleguide/assets/js/bootstrap-modal.js'   => 'include/javascript/sugar_sidecar.min.js',
                'styleguide/assets/js/bootstrap-alert.js'   => 'include/javascript/sugar_sidecar.min.js',
+               'styleguide/assets/js/bootstrap-tab.js'   => 'include/javascript/sugar_sidecar.min.js',
                "styleguide/styleguide/js/nvd3/lib/d3.v2.js" => "include/javascript/sugar_sidecar.min.js",
                'styleguide/assets/js/bootstrap-collapse.js'   => 'include/javascript/sugar_sidecar.min.js',
                // To add more models to NV D3, run the makefile in styleguide.
@@ -367,7 +377,6 @@
                 array(
                     'portal2/error.js'               => 'portal2/portal.min.js',
                     'portal2/user.js'                => 'portal2/portal.min.js',
-                    'portal2/views/alert-view.js'    => 'portal2/portal.min.js',
                     'portal2/portal.js'              => 'portal2/portal.min.js',
                     'portal2/portal-ui.js'           => 'portal2/portal.min.js',
                     'include/javascript/jquery/jquery.popoverext.js'           => 'portal2/portal.min.js',
@@ -377,6 +386,7 @@
            //END SUGARCRM flav=ent ONLY
         );
 
+    //BEGIN SUGARCRM flav=pro ONLY
     // groupings for sidecar forecast
     // use sidecar/src/include-manifest.php file to define what files should be loaded
     // exclude lib/jquery/jquery.min.js b/s jquery is loaded and extended with sugar_grp1_jquery.js
@@ -384,25 +394,32 @@
     $cached_file = 'include/javascript/sidecar_forecasts.js';
 
     $sidecar_forecasts = array();
-    // Forecast and portal2 should include same styleguide bootstrap files
-    $sidecar_forecasts = array_merge($sidecar_forecasts, getSubgroupForTarget('bootstrap', $cached_file));
-    $sidecar_forecasts['include/javascript/sugarAuthStore.js'] = $cached_file;
+    $sidecar_forecasts['include/javascript/jquery/jquery.dataTables.min.js'] = $cached_file;
+    $sidecar_forecasts['include/javascript/jquery/jquery.dataTables.customSort.js'] = $cached_file;
+    $sidecar_forecasts['include/javascript/jquery/jquery.jeditable.js'] = $cached_file;
+    $sidecar_forecasts['include/javascript/jquery/jquery.jstree.js'] = $cached_file;
+    // cookie.js is needed by jit.js, including in case we need to display legacy (i. e. non-NVD3) charts in Forecasts
+    $sidecar_forecasts['include/javascript/cookie.js'] = $cached_file;
     $sidecar_forecasts['include/SugarCharts/Jit/js/Jit/jit.js'] = $cached_file;
     $sidecar_forecasts['include/SugarCharts/Jit/js/sugarCharts.js'] = $cached_file;
     $sidecar_forecasts['modules/Forecasts/clients/base/helper/hbt-helpers.js'] = $cached_file;
-    $sidecar_forecasts['modules/Forecasts/clients/base/lib/ClickToEdit.js'] = $cached_file;
-    $sidecar_forecasts['modules/Forecasts/clients/base/lib/BucketGridEnum.js'] = $cached_file;
     $sidecar_forecasts['modules/Forecasts/clients/base/lib/ForecastsUtils.js'] = $cached_file;
-    $sidecar_forecasts['modules/Forecasts/tpls/SidecarView.js'] = $cached_file;
-    // Forecast and portal2 should include same styleguide bootstrap files
-    $sidecar_forecasts = array_merge($sidecar_forecasts, getSubgroupForTarget('bootstrap', $cached_file));
+    $sidecar_forecasts['styleguide/assets/js/nvd3/lib/d3.v2.min.js'] = $cached_file;
+    $sidecar_forecasts['styleguide/assets/js/nvd3/nv.d3.min.js'] = $cached_file;
     $sidecar_forecasts['include/javascript/jquery/jquery.nouislider.js'] = $cached_file;
 
     $js_groupings[] = $sidecar_forecasts;
+    //END SUGARCRM flav=pro ONLY
 
     /**
      * Check for custom additions to this code
      */
+
+    if(!class_exists('SugarAutoLoader')) {
+        // This block is required because this file could be called from a non-entrypoint (such as jssource/minify.php).
+        require_once('include/utils/autoloader.php');
+        SugarAutoLoader::init();
+    }
 
     foreach(SugarAutoLoader::existing("custom/jssource/JSGroupings.php", SugarAutoLoader::loadExtension("jsgroupings")) as $file) {
         require $file;

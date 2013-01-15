@@ -140,15 +140,51 @@ describe("The forecasts chart view", function () {
             expect(handleRenderOptionsStub).toHaveBeenCalled()
         });
 
-        it("trigger change:selectedCategory should not call handleRenderOptions", function() {
-            view.context.forecasts.set('selectedCategory', {hello: 'world'});
+        it("trigger change:selectedRanges should not call handleRenderOptions", function() {
+            view.context.forecasts.set('selectedRanges', {hello: 'world'});
             expect(handleRenderOptionsStub).not.toHaveBeenCalled()
         });
 
-        it("trigger change:selectedCategory should call handleRenderOptions", function() {
+        it("trigger change:selectedRanges should call handleRenderOptions", function() {
             view.chart = {'chart_object' : 'obj'};
-            view.context.forecasts.set('selectedCategory', {hello: 'world'});
+            view.context.forecasts.set('selectedRanges', {hello: 'world'});
             expect(handleRenderOptionsStub).toHaveBeenCalled()
+        });
+
+        describe("worksheet save draft", function() {
+            var renderChartStub;
+
+            beforeEach(function(){
+                renderChartStub = sinon.stub(view, "renderChart", function(){})
+            });
+
+            afterEach(function(){
+                renderChartStub.restore();
+            });
+
+            it("should fire renderChart when one row saved and isDraft is true", function(){
+                view.context.forecasts.trigger('forecasts:worksheet:saved', 1, 'rep_worksheet', true);
+
+                expect(renderChartStub).toHaveBeenCalled();
+            });
+
+            it("should NOT fire renderChart when one row saved and isDraft is false", function(){
+                view.context.forecasts.trigger('forecasts:worksheet:saved', 1, 'rep_worksheet', false);
+
+                expect(renderChartStub).not.toHaveBeenCalled();
+            });
+
+            it("should NOT fire renderChart when zero rows are saved and isDraft is true", function(){
+                view.context.forecasts.trigger('forecasts:worksheet:saved', 0, 'rep_worksheet', true);
+
+                expect(renderChartStub).not.toHaveBeenCalled();
+            });
+
+            it("should NOT fire renderChart when zero rows are saved and isDraft is false", function(){
+                view.context.forecasts.trigger('forecasts:worksheet:saved', 0, 'rep_worksheet', false);
+
+                expect(renderChartStub).not.toHaveBeenCalled();
+            });
         });
 
         describe("hiddenSidebar listener, stopRender value", function(){

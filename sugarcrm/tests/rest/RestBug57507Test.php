@@ -61,26 +61,32 @@ class RestBug57507Test extends RestTestBase
         parent::tearDown();
     }
 
+    /**
+     * @group rest
+     */
     public function testEmptySaveInt()
     {
         $reply = $this->_restCall("Calls/",
                                   json_encode(array('name' => 'Test call, empty int',
                                                     'duration_hours' => 1,
                                                     'duration_minutes' => 15,
-                                                    'date_start' => TimeDate::getInstance()->getNow()->asDb(),
+                                                    'date_start' => TimeDate::getInstance()->asIso(TimeDate::getInstance()->getNow()),
                                                     'status' => 'Not Held',
                                                     'direction' => 'Incoming',
                                                     'repeat_count' => null,
                                                   )),
                                   'POST');
-        $this->assertTrue(!empty($reply['reply']['id']),'Could not create a call');
+        $this->assertTrue(!empty($reply['reply']['id']),'Could not create a call..response was: ' . print_r($reply, true));
         $call = BeanFactory::getBean('Calls',$reply['reply']['id']);
         $this->calls[] = $call;
 
         $this->assertTrue($call->repeat_count == '',"The repeat count has a value.");
         
     }
-    
+
+    /**
+     * @group rest
+     */
     public function testEmptyRetrieveInt()
     {
         $call = BeanFactory::newBean('Calls');
@@ -96,7 +102,6 @@ class RestBug57507Test extends RestTestBase
         
         $reply = $this->_restCall("Calls/".$call->id);
 
-        $this->assertTrue(empty($reply['reply']['repeat_count']),"Repeat count isn't empty");
-        $this->assertTrue($reply['reply']['repeat_count']=='','Repeat count has a value');
+        $this->assertNull($reply['reply']['repeat_count'],'Repeat count is different from null');
     }
 }

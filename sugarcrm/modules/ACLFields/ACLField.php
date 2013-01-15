@@ -37,6 +37,24 @@ class ACLField  extends ACLAction
     //END SUGARCRM flav=pro ONLY
 
     /**
+     * This is a depreciated method, please start using __construct() as this method will be removed in a future version
+     *
+     * @see __construct
+     * @deprecated
+     */
+    public function ACLField()
+    {
+        $this->__construct();
+    }
+
+    public function __construct(){
+        parent::__construct();
+        //BEGIN SUGARCRM flav=pro ONLY
+        $this->disable_row_level_security =true;
+        //END SUGARCRM flav=pro ONLY
+    }
+
+    /**
     * static getAvailableFields($module, $object=false)
     * Adds available fields for module
     * @internal
@@ -306,7 +324,7 @@ class ACLField  extends ACLAction
      */
     function setAccessControl($module, $role_id, $field_id, $access)
     {
-        $acl = BeanFactory::getBean('ACLFields');
+        $acl = new ACLField();
         $id = md5($module. $role_id . $field_id);
         if(!$acl->retrieve($id) ){
             //if we don't have a value and its never been saved no need to start now

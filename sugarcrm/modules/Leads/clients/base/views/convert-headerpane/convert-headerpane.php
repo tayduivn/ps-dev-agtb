@@ -34,7 +34,7 @@ $viewdefs['Leads']['base']['view']['convert-headerpane'] = array(
             'name'    => 'cancel_button',
             'type'    => 'button',
             'label'   => 'LBL_CANCEL_BUTTON_LABEL',
-            'css_class' => 'btn-primary',
+            'css_class' => 'btn btn-invisible btn-link cancel',
         ),
         array(
             'name'    => 'lead_convert_finish_button',

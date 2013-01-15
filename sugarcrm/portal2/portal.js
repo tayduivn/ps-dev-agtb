@@ -111,8 +111,8 @@
 
             app.alert.show("no-sidecar-access", {
                 level: "error",
-                title: "LBL_PORTAL_ERROR",
-                messages: [msg]
+                title: app.lang.getAppString("LBL_PORTAL_ERROR"),
+                messages: [app.lang.getAppString(msg)]
             });
         }
 
@@ -190,11 +190,11 @@
             }
 
             // need to add error styling to parent view element
-            this.$el.parent().parent().addClass("error");
+            this.$el.parents('.control-group').addClass("error");
             var ftag = this.fieldTag || '';
 
             // Reset Field
-            if (this.$el.parent().parent().find('.input-append').length > 0) {
+            if (this.$el.parents('.control-group').find('.input-append').length > 0) {
                 this.$el.unwrap()
             }
             self.$('.help-block').html('');
@@ -239,8 +239,8 @@
                     app.Controller.__super__.loadView.call(self, params);
                     app.alert.show('appOffline', {
                         level: "error",
-                        title: 'LBL_PORTAL_ERROR',
-                        messages: 'LBL_PORTAL_OFFLINE',
+                        title: app.lang.getAppString('LBL_PORTAL_ERROR'),
+                        messages: app.lang.getAppString('LBL_PORTAL_OFFLINE'),
                         autoclose: false
                     });
                 };
@@ -345,7 +345,7 @@
 
         // Process attachment uploads
         if (filesToUpload > 0) {
-            app.alert.show('upload', {level: 'process', title: 'LBL_UPLOADING', autoclose: false});
+            app.alert.show('upload', {level: 'process', title: app.lang.get('LBL_UPLOADING', model.module), autoclose: false});
 
             // Field by field
             for (file in $files) {

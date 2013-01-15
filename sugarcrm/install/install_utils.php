@@ -870,14 +870,83 @@ function handleSugarConfig() {
     return $bottle;
 }
 
+//BEGIN SUGARCRM flav=ent ONLY
+/**
+ * handles portal config creation
+ */
+function handlePortalConfig()
+{
+    if (!isset($sugar_config)) {
+        global $sugar_config;
+    }
+
+    $portalConfig = array(
+        'appId' => 'SupportPortal',
+        'appStatus' => 'offline',
+        'env' => 'dev',
+        'platform' => 'portal',
+        'additionalComponents' => array(
+            'header' => array(
+                'target' => '#header'
+            ),
+            'footer' => array(
+                'target' => '#footer'
+            )
+        ),
+        'alertsEl'=> '#alert',
+        'serverUrl' => $sugar_config['site_url'] . '/rest/v10',
+        'siteUrl' => $sugar_config['site_url'],
+        'unsecureRoutes' => array('signup', 'error'),
+        'loadCss' => 'url',
+        'clientID' => 'support_portal',
+        'maxSearchQueryResult'=>'5'
+    );
+    $configString = json_encode($portalConfig);
+    $portalJSConfig = '(function(app) {app.augment("config", ' . $configString . ', false);})(SUGAR.App);';
+    sugar_file_put_contents('portal2/config.js', $portalJSConfig);
+
+}
+//END SUGARCRM flav=ent ONLY
+
+//BEGIN SUGARCRM flav=pro ONLY
+function handleSidecarConfig() {
+
+    global $sugar_config;
+
+    $sidecarConfig = array(
+        'appId' => 'SugarCRM',
+        'env' => 'dev',
+        'platform' => 'base',
+        'additionalComponents' => array(
+            'alert' => array(
+                'target' => '#alerts'
+            )
+        ),
+        'serverUrl' => $sugar_config['site_url'].'/rest/v10',
+        'siteUrl' => $sugar_config['site_url'],
+        'loadCss' => false,
+        'unsecureRoutes' => array('login', 'error'),
+        'clientID' => 'sugar',
+        'authStore'  => 'sugarAuthStore',
+        'keyValueStore' => 'sugarAuthStore'
+    );
+    sugar_file_put_contents('config.js', '(function(app) {app.augment("config", ' . json_encode($sidecarConfig) . ', false);})(SUGAR.App);');
+}
+//END SUGARCRM flav=pro ONLY
+
 /**
  * (re)write the .htaccess file to prevent browser access to the log file
  */
 function handleHtaccess(){
-global $mod_strings;
+global $mod_strings, $sugar_config;
 $ignoreCase = (substr_count(strtolower($_SERVER['SERVER_SOFTWARE']), 'apache/2') > 0)?'(?i)':'';
 $htaccess_file   = ".htaccess";
 $contents = '';
+
+// Adding RewriteBase path for vhost and alias configurations
+$basePath = parse_url($sugar_config['site_url'], PHP_URL_PATH);
+if(empty($basePath)) $basePath = '/';
+
 $restrict_str = <<<EOQ
 
 # BEGIN SUGARCRM RESTRICTIONS
@@ -892,13 +961,14 @@ RedirectMatch 403 {$ignoreCase}.*\.log$
 RedirectMatch 403 {$ignoreCase}/+not_imported_.*\.txt
 RedirectMatch 403 {$ignoreCase}/+(soap|cache|xtemplate|data|examples|include|log4php|metadata|modules)/+.*\.(php|tpl)
 RedirectMatch 403 {$ignoreCase}/+emailmandelivery\.php
-RedirectMatch 403 {$ignoreCase}/+upload
+RedirectMatch 403 {$ignoreCase}/+upload/
 RedirectMatch 403 {$ignoreCase}/+custom/+blowfish
 RedirectMatch 403 {$ignoreCase}/+cache/+diagnostic
 RedirectMatch 403 {$ignoreCase}/+files\.md5$
 <IfModule mod_rewrite.c>
     Options +FollowSymLinks
     RewriteEngine On
+    RewriteBase {$basePath}
     RewriteCond %{REQUEST_FILENAME} !-d
     RewriteCond %{REQUEST_FILENAME} !-f
     RewriteRule ^rest/(.*)$ api/rest.php?__sugar_url=$1 [L,QSA]

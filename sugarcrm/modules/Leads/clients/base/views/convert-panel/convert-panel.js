@@ -57,7 +57,6 @@
     },
 
     insertDuplicateViewInPanel: function(moduleMeta) {
-        debugger;
         var self = this,
             def = {
                 'view':'duplicate-list',
@@ -70,7 +69,6 @@
     },
 
     insertRecordViewInPanel: function(moduleMeta) {
-        debugger;
         var self = this,
             def = {
                 'view':'create',
@@ -104,7 +102,6 @@
         var self = this,
             context = self.context.getChildContext(def.context);
 
-       // context.set('create', true);
         context.set('limit', 3); //todo: set this to 10? once we have style that will limit the rows displayed & make scrollable
 
         context.prepare();
@@ -119,12 +116,11 @@
 
         this.$('.' + contentType + 'View').append(view.el);
         view.render();
-
         return view;
     },
 
     handleShow: function() {
-        this.$('.accordion-heading').addClass('active');
+        this.$('.header').addClass('active');
         this.showBody();
         this.showSubViewToggle();
     },
@@ -135,13 +131,13 @@
     },
 
     handleHide: function() {
-        this.$('.accordion-heading').removeClass('active');
+        this.$('.header').removeClass('active');
         this.updatePanelHeader();
         this.hideSubViewToggle();
     },
 
     handleEnablePanel: function() {
-        this.$('.accordion-heading').removeClass('disabled').addClass('enabled');
+        this.$('.header').removeClass('disabled').addClass('enabled');
     },
 
     handleToggleClick: function(event) {
@@ -170,7 +166,7 @@
         var newTitle;
 
         if (this.getStatus() === this.STATUS_COMPLETE) {
-            this.$('.completed').show();
+            this.$('.step-circle-right').addClass('complete');
             newTitle = app.lang.get(
                 'LBL_CONVERT_MODULE_ASSOCIATED',
                 this.module,
@@ -180,7 +176,7 @@
                 this.$('.optional').hide();
             }
         } else {
-            this.$('.completed').hide();
+            this.$('.step-circle-right').removeClass('complete');
             newTitle = app.lang.get(
                 'LBL_CONVERT_ASSOCIATE_MODULE',
                 this.module,
@@ -210,7 +206,7 @@
                     this.module,
                     {'duplicateCount': this.currentState.duplicateCount}
                 );
-                newSubTitle = '> ' + translatedString;
+                newSubTitle = ' ' + translatedString;
             }
         } else if (this.currentState.activeView === this.RECORD_VIEW) {
             translatedString = app.lang.get(
@@ -218,7 +214,7 @@
                 this.module,
                 {'moduleName': this.meta.moduleSingular}
             );
-            newSubTitle = '> ' + translatedString;
+            newSubTitle = ' ' + translatedString;
         } else {
             return;
         }
@@ -301,6 +297,7 @@
             var view = this.recordView,
                 model = view.model;
 
+            //TODO:  Add validation back into the form
           //  if (model.isValid(view.getFields(view.module))) {
                 this.setStatus(this.STATUS_COMPLETE);
                 callback();
