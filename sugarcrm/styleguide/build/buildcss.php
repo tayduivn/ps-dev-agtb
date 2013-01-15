@@ -1,63 +1,59 @@
 <?php
 require 'lessc.inc.php';
 
-if (!isset($_GET["variables"])) die('You must specify a theme folder');
+if (!isset($_GET["variables"])) {
+    die('You must specify a theme folder');
+}
 
 // Start generating bootstrap.css
 try {
     $client = $_GET["client"];
     $root = $_GET["variables"];
-    $variablesLess = file_get_contents( $root . 'variables.less' );
+    $variablesLess = file_get_contents($root . 'variables.less');
     $variables = getCustomThemeVars($variablesLess);
     $variables['baseUrl'] = '"../../assets"';
-    $minify = (isset($_GET["min"]) && $_GET["min"]=="true");
-    $split_css = (isset($_GET["split_css"]) && $_GET["split_css"]="asdf");
+    $files = array();
 
+    // Build bootstrap.css.
+    $files[] = array(
+        'in' => '../less/clients/' . $client . '/config.less',
+        'out' => '../styleguide/css/bootstrap.css',
+    );
+    // Build bootstrap-mobile.css.
+    $files[] = array(
+        'in' => '../less/clients/mobile/config.less',
+        'out' => '../styleguide/css/bootstrap-mobile.css',
+    );
 
-    if ($split_css) {
-        // //build bootstrap.css
-        $less = new lessc('../less/clients/' . $client . '/bootstrap.less');
-        if ($minify) $less->setFormatter("compressed");
-        file_put_contents('../styleguide/css/bootstrap.css', $less->parse($variables));
-
-        // //build sugar.css
-        $less = new lessc('../less/clients/' . $client . '/sugar.less');
-        if ($minify) $less->setFormatter("compressed");
-        file_put_contents('../styleguide/css/sugar.css', $less->parse($variables));
-    } else {
-        //build bootstrap.css
-        $less = new lessc('../less/clients/' . $client . '/config.less');
-        if ($minify) $less->setFormatter("compressed");
-        file_put_contents('../styleguide/css/bootstrap.css', $less->parse($variables));
-    }
-
-    //$variables['baseUrl'] = '"../../../../../styleguide/assets"';
-    //file_put_contents('../../cache/themes/clients/base/default/bootstrap.css', $less->parse($variables));
-
-    //build bootstrap-mobile.css
-    $less = new lessc('../less/clients/mobile/config.less');
-    if ($minify) $less->setFormatter("compressed");
-    file_put_contents('../styleguide/css/bootstrap-mobile.css', $less->parse($variables));
-
-    //build utility css files
+    // Build utility CSS files.
     $modulesRoot = '../less/modules';
     $modulesFile = array_diff(scandir($modulesRoot), array(".", "..", ".DS_Store"));
 
     foreach ($modulesFile as $module) {
-        $less = new lessc($modulesRoot . '/' . $module);
-        if ($minify) $less->setFormatter("compressed");
-        file_put_contents('../styleguide/css/' . str_replace('.less','.css',$module), $less->parse($variables));
+        $files[] = array(
+            'in' => $modulesRoot . '/' . $module,
+            'out' => '../styleguide/css/' . str_replace('.less', '.css', $module),
+        );
+    }
+
+    // Set up the parser.
+    $less = new lessc;
+    $less->setVariables($variables);
+    if (isset($_GET["min"]) && $_GET["min"]=="true") {
+        $less->setFormatter("compressed");
+    }
+
+    // Compile the files.
+    foreach ($files as $file) {
+        $less->compileFile($file['in'], $file['out']);
     }
 
     // echo '<h2>bootstrap.css successfully generated.</h2>';
     // echo '<p><a href="./../styleguide/">Go to the styleguide</a></p>';
     // echo '<p><a href="./index.php">Back</a></p>';
-    if ($split_css) {
-        echo 'sugar.css and bootstrap.css successfully generated.';
-    } else {
-        echo 'bootstrap.css successfully generated.';
-    }
-} catch (exception $ex) {
+    echo 'bootstrap.css successfully generated.';
+
+} catch (Exception $ex) {
     exit('lessc fatal error:'.$ex->getMessage());
 }
 
@@ -73,13 +69,13 @@ function getCustomThemeVars($variablesLess)
     $output = array();
 
     // Parses the hex colors     @varName:      #aaaaaa;
-    $output = array_merge( $output, parse_file("/@([^:|@]+):(\s+)(\#.*?);/", $variablesLess) );
+    $output = array_merge($output, parseFile("/@([^:|@]+):(\s+)(\#.*?);/", $variablesLess));
     // Parses the rgba colors     @varName:      rgba(0,0,0,0);
-    $output = array_merge( $output, parse_file("/@([^:|@]+):(\s+)(rgba\(.*?\));/", $variablesLess) );
+    $output = array_merge($output, parseFile("/@([^:|@]+):(\s+)(rgba\(.*?\));/", $variablesLess));
     // Parses the related colors     @varName:      @relatedVar;
-    $output = array_merge( $output, parse_file("/@([^:|@]+):(\s+)(@.*?);/", $variablesLess) );
+    $output = array_merge($output, parseFile("/@([^:|@]+):(\s+)(@.*?);/", $variablesLess));
     // Parses the backgrounds     @varNamePath:      "./path/to/img.jpg";
-    $output = array_merge( $output, parse_file("/@([^:|@]+Path):(\s+)\"(.*?)\";/", $variablesLess) );
+    $output = array_merge($output, parseFile("/@([^:|@]+Path):(\s+)\"(.*?)\";/", $variablesLess));
 
     return $output;
 }
@@ -93,7 +89,7 @@ function getCustomThemeVars($variablesLess)
  * @param bool $formatAsCollection
  * @return array
  */
-function parse_file($regex, $input, $formatAsCollection = false)
+function parseFile($regex, $input, $formatAsCollection = false)
 {
     $output = array();
     preg_match_all($regex, $input, $match, PREG_PATTERN_ORDER);
