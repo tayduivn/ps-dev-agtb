@@ -42,14 +42,18 @@ class ViewEditTest extends Sugar_PHPUnit_Framework_TestCase
 
 }
 
-class MockViewEditDirect extends ViewEdit {
-    public function __construct() {
+class MockViewEditDirect extends ViewEdit
+{
+    public function __construct()
+    {
         parent::ViewEdit();
     }
 }
 
-class MockViewEditConstructor extends ViewEdit {
-    public function __construct() {
+class MockViewEditConstructor extends ViewEdit
+{
+    public function __construct()
+    {
         parent::__construct();
     }
 }
