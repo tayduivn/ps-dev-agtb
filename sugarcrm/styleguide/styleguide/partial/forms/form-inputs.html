@@ -143,7 +143,7 @@
         <div class="span2">Full Width Dynamic</div>
         <div class="span10">
           <span sfuuid="3">
-            <select name="priority" class="chzn-select chzn-inherit-width" tabindex="3" data-placeholder="Choose a priority...">
+            <select name="priority" class="chzn-select2" tabindex="3" data-placeholder="Choose a priority...">
               <option value="none"></option>
               <option value="Urgent">Urgent</option>
               <option value="High">High</option>
@@ -179,7 +179,7 @@
         <div class="span10">
           <div class="input-append select">
             <span sfuuid="1">
-              <select name="priority" class="chzn-select chzn-inherit-width" tabindex="3" data-placeholder="Choose a priority...">
+              <select name="priority" class="chzn-select2 chzn-inherit-width" tabindex="3" data-placeholder="Choose a priority...">
                 <option value="none"></option>
                 <option value="Urgent">Urgent</option>
                 <option value="High">High</option>
@@ -201,7 +201,7 @@
           <div class="span2">Label</div>
           <div class="span10">
              <span sfuuid="1">
-              <select name="select" size="3" multiple="multiple" class="chzn-select">
+              <select name="select" size="3" multiple="multiple" class="chzn-select2">
                   <option selected="selected"></option>
                   <option>Option 2</option>
                   <option>Option 3</option>
@@ -217,11 +217,11 @@
           <div class="span10">
             <div class="input-append select">
               <span sfuuid="1">
-                <select name="select" size="3" multiple="multiple" class="chzn-select">
-                    <option selected="selected"></option>
-                    <option>Option 2</option>
-                    <option>Option 3</option>
-                    <option>Option 4</option>
+                <select name="select" size="3" class="chzn-select2">
+                    <option selected="selected" value=""></option>
+                    <option value="2">Option 2</option>
+                    <option value="3">Option 3</option>
+                    <option value="4">Option 4</option>
                 </select>
                 <span class="add-on"><i class="icon-exclamation-sign"></i></span>
               </span>
@@ -237,7 +237,7 @@
 <script src="js/chosen.jquery.hal.js"></script>
 <script>
   if ($(".chzn-select").length) {
-    $(".chzn-select").chosen({ disable_search_threshold: 5 });
+    $(".chzn-select2").select2({ minimumResultsForSearch: 7, width: '100%' });
     $(".chzn-select-deselect").chosen({ allow_single_deselect:true });
   }
 </script>

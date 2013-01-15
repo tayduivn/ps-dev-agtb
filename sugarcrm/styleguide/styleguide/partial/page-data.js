@@ -1,5 +1,4 @@
-var pages =
-{
+var pages = {
     "scaffolding":{
         "title":"Scaffolding"
       , "description":"Built on a responsive 12-column grid including fixed- and fluid-width layouts based on that system."
@@ -11,16 +10,22 @@ var pages =
     }
   , "base-css":{
         "title":"Base CSS"
-      , "description":"On top of the scaffolding, basic HTML elements are styled and enhanced with extensible classes to provide a fresh, consistent look and feel."
+      , "description":"Basic HTML elements styled and enhanced with extensible classes for a fresh, consistent look and feel."
       , "sections":[
           {"label":"Typography", "description":"Headings, paragraphs, lists, and other inline type elements."}
         , {"label":"Code", "description":"Inline and block code snippets."}
         , {"label":"Tables", "description":"For, you guessed it, tabular data."}
-        , {"label":"Forms", "description":"Basic form elements and layouts."}
-        , {"label":"Buttons", "description":"Standard css only button styles ."}
         , {"label":"Icons", "description":"Font Awesome icon library for scalable font based icons and glyphs for a full array of web-related actions."}
         , {"label":"Variables", "description":"LESS variables, HTML values, and usage guidelines."}
         , {"label":"Mixins", "description":"Include or generate snippets of CSS with parameters."}
+      ]
+    }
+  , "forms":{
+        "title":"Forms"
+      , "description":"Basic form elements and layouts for a consistent editing experience."
+      , "sections":[
+          {"label":"Form basics", "description":"Basic form elements and layouts."}
+        , {"label":"Buttons", "description":"Standard css only button styles ."}
         , {"label":"Editable", "description":"Inline form edit inputs."}
         , {"label":"Form inputs", "description":"Basic form field types with error addons."}
         , {"label":"Form layouts", "description":"Customized layouts of field components."}
@@ -39,8 +44,8 @@ var pages =
       ]
     }
   , "widgets":{
-        "title":"Javascript"
-      , "description":"Dozens of reusable components are built in to provide navigation, alerts, popovers, and much more."
+        "title":"Bootstrap Widgets"
+      , "description":"Modals, dropdowns, and other Twitter Bootstrap Javascript widgets."
       , "sections":[
           {"label":"Modals", "description":"A streamlined, but flexible, take on the traditional javascript modal plugin with only the minimum required functionality and smart defaults."}
         , {"label":"Dropdowns", "description":"Add dropdown menus to nearly anything with this simple plugin. Features full dropdown menu support on in the navbar, tabs, and pills."}
@@ -56,19 +61,23 @@ var pages =
         , {"label":"Carousel", "description":"Create a merry-go-round of any content you wish to provide an interactive slideshow of content."}
         , {"label":"Typeahead", "description":"A basic, easily extended plugin for quickly creating elegant typeaheads with any form text input."}
         , {"label":"Transitions", "description":"For simple transition effects, include bootstrap-transition.js once to slide in modals or fade out alerts."}
-
-        , {"label":"Chosen", "description":"Lightweight and user friendly select boxes for streamlined data selection. Great for dropdowns, single- and multi-selects."}
-        , {"label":"Date/time picker", "description":"Lightweight date/time picker"}
+      ]
+    }
+  , "plugins":{
+        "title":"jQuery Plugins"
+      , "description":"Dynamic UI elements with Javascript (jQuery) plugins."
+      , "sections":[
+          {"label":"Chosen", "description":"Lightweight and user friendly select boxes for streamlined data selection. Great for dropdowns, single- and multi-selects."}
         , {"label":"jsTree", "description":"jsTree is a javascript based, cross browser tree component."}
         , {"label":"Slider", "description":"jQuery range picker"}
-
         , {"label":"Wizard", "description":"Wizard takes advantage of bootstrap modals and sets up a framework for taking a user through multiple steps to complete a task."}
         , {"label":"DataTable", "description":"DataTables is a highly flexible tool, based upon the foundations of progressive enhancement, which will add advanced interaction controls to any HTML table."}
+        , {"label":"Date-time picker", "description":"Lightweight date/time picker"}
       ]
     }
   , "charting":{
         "title":"Charting"
-      , "description":"Implementing standard and custom SVG charts for Sugar7 release using the <a href=\"http://d3js.org/\">D3 library</a> and the <a href=\"http://nvd3.com/\">NVD3 framework</a>."
+      , "description":"Standard and custom SVG charts for Sugar7 using the <a href=\"http://d3js.org/\">D3 library</a> and the <a href=\"http://nvd3.com/\">NVD3 framework</a>."
       , "sections":[
           {"label":"Line", "description":"Used for comparing data series."}
         , {"label":"Horizontal Bar", "description":"Used for comparing many values in a single series."}
@@ -77,5 +86,10 @@ var pages =
         , {"label":"Custom", "description":"Used for comparing values in a process."}
         , {"label":"Implementation", "description":"Patterns for inserting and configuring charts."}
       ]
+    }
+  , "prototypes": {
+        "title":"Sugar7 Prototypes"
+      , "url":"sugar7/index.html"
+      , "description":"Clickable prototypes for the next generation of SugarCRM."
     }
 };

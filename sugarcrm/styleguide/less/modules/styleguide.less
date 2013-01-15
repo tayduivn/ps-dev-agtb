@@ -99,7 +99,8 @@ body {
   padding: 20px;
   font-size: 24px;
   .cube {
-     background-position: 0 1px;
+    height: 28px;
+    background-position: 0 1px;
   }
   h1 {
     display: inline-block;
@@ -107,5 +108,30 @@ body {
   }
   #find_patterns_chzn {
     z-index: 1030;
+  }
+}
+
+.section-search {
+  input {
+    width: 100%;
+    font-size: 18px;
+    height: 38px;
+    padding: 5px 28px 5px 8px;
+    box-sizing: border-box;
+  }
+  .btn-toolbar {
+    padding: 0;
+  }
+  .btn-group {
+    width: 100%;
+  }
+  .btn {
+    line-height: 28px;
+    float: none;
+    margin-left: -45px;
+    width: 26px;
+    border: none;
+    border-left: 1px solid #CDCCCB;
+    color: @gray;
   }
 }

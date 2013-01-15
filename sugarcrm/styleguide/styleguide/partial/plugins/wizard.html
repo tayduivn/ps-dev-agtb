@@ -141,7 +141,8 @@
                 }
             }
         });
-    });</pre>
+    });
+</pre>
 </div>
 </div>
 </section>
@@ -151,7 +152,7 @@
     $('#launch_simple_wizard').on('click', function() {
         wizard.init({
             id: 'wizardSimpleDemo',
-            modalUrl: 'partial/widgets/wizard-modal.html',
+            modalUrl: 'partial/plugins/wizard-modal.html',
             className: 'setup',
             headerText: 'Simple Wizard Demo',
             navMenu: new Array('Screen Two','Screen Screen Three','Screen Four')
@@ -161,7 +162,7 @@
     $('#launch_wizard').on('click', function() {
         wizard.init({
             id: 'wizardDemo',
-            modalUrl: 'partial/widgets/wizard-modal.html',
+            modalUrl: 'partial/plugins/wizard-modal.html',
             className: 'setup',
             headerText: 'Custom Wizard Demo',
             navMenu: new Array('Screen Two','Screen Screen Three','Screen Four'),

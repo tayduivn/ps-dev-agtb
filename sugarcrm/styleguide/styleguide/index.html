@@ -3,70 +3,69 @@
 <head>
   <link href="css/bootstrap.css" rel="stylesheet">
   <link href="css/sugar.css" rel="stylesheet">
-  <script src="partial/section-data.js"></script>
+  <script src="partial/page-data.js"></script>
   <script>
     var page = {
         "title": "SugarCRM Patterns and Styleguide"
       , "description": "Simple and flexible HTML, CSS, and Javascript for popular user interface components and interactions."
-      , "templates": [
-          {"file":"head","target":"head","method":"append"}
-        , {"file":"masthead","target":"#page-content","method":"prepend"}
-        , {"file":"libraries","target":"body","method":"append"}
-      ]
       , "subnav": false
+      , "search": false
     };
   </script>
 </head>
 <body id="index">
   <div class="container" id="page-content">
-  <div id="section-content">
-  </div>
-    <div class="marketing">
-      <div class="row">
-        <div class="span3">
-          <h3><a href="scaffolding.html">Scaffold</a></h3>
-          <p>A responsive 12-column grid. We've also included fixed- and fluid-width layouts based on that system.</p>
-        </div>
-        <div class="span3">
-          <h3><a href="base-css.html">Base CSS</a></h3>
-          <p>On top of the scaffolding, basic HTML elements are styled and enhanced with extensible classes to provide a fresh, consistent look and feel.</p>
-        </div>
-        <div class="span3">
-          <h3><a href="components.html">Components</a></h3>
-          <p>Dozens of reusable components are built in to provide navigation, alerts, popovers, and much more.</p>
-        </div>
-        <div class="span3">
-          <h3><a href="widgets.html">Dynamic Widgets</a></h3>
-          <p>Modals, dropdowns, dynamic ui elements, javascript (jquery) widgets</p>
+    <form class="filterform" action="#">
+      <div class="row section-search">
+        <div class="btn-toolbar span4 offset4">
+          <div class="btn-group">
+            <input type="text" name="section_search" class="filterinput" value="" placeholder="Find any pattern&hellip;">
+            <a class="btn" href="#"><i class="icon icon-search"></i></a>
+          </div>
         </div>
       </div>
-      <div class="row">
-        <!-- <div class="span3">
-          <h3><a href="less.html">Quick Styles</a></h3>
-          <p>Standard LESS variables and mixins for consistent color palette and formating.</p>
-        </div>
-        <div class="span3">
-          <h3><a href="theming.html">Theming</a></h3>
-          <p>An engine for editing and compiling CSS files using default, platform and custom LESS variables.</p>
-        </div> -->
-        <div class="span3">
-          <h3><a href="charting.html">Charting</a></h3>
-          <p>Implementing standard and custom charts using D3 library.</p>
-        </div>
-        <div class="span3">
-          <h3><a href="sugar7/forms.html">Forms and Validation</a></h3>
-          <p>Forms, input and error message patterns.</p>
-        </div>
-        <div class="span3">
-          <h3><a href="sugar7">Sugar 7.0</a> <sup>Prototype</sup></h3>
-          <p>Next generation of SugarCRM</p>
-        </div>
+      <div id="section-content">
       </div>
-    </div>
+    </form>
   </div>
   <script src="js/jquery-1.7.2.min.js"></script>
   <script src="js/ICanHaz.min.js" ></script>
   <script src="js/prototype.js"></script>
   <script src="js/styleguide.js"></script>
+  <script>
+    /* adapted from: http://papermashup.com/jquery-list-filtering/ */
+    (function ($) {
+      jQuery.expr[':'].Contains = function(a,i,m){
+        return ( a.textContent || a.innerText || "").toUpperCase().indexOf(m[3].toUpperCase() ) >= 0;
+      };
+
+      function filterList($input, $list) {
+        $input
+          .change( function () {
+            var filter = $(this).val();
+            if ( filter )
+            {
+              $list.find('p').hide();
+              var $matches = $list.find('ul').find('a:Contains('+ filter +')').parent();
+              $('li', $list).not($matches).slideUp();
+              $matches.slideDown();
+            }
+            else
+            {
+              $list.find('p').show();
+              $list.find("li").slideDown();
+            }
+            return false;
+          })
+          .keyup( function () {
+            $(this).change();
+          });
+      }
+
+      $(function () {
+        filterList($(".filterinput"), $("#section-content"));
+      });
+    }(jQuery));
+  </script>
 </body>
 </html>

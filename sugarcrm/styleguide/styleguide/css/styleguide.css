@@ -81,9 +81,30 @@ body {
   padding:20px;
   font-size:24px;
 }
-.hero-unit .cube { background-position:0 1px; }
+.hero-unit .cube {
+  height:28px;
+  background-position:0 1px;
+}
 .hero-unit h1 {
   display:inline-block;
   margin-top:0;
 }
 .hero-unit #find_patterns_chzn { z-index:1030; }
+.section-search input {
+  width:100%;
+  font-size:18px;
+  height:38px;
+  padding:5px 28px 5px 8px;
+  box-sizing:border-box;
+}
+.section-search .btn-toolbar { padding:0; }
+.section-search .btn-group { width:100%; }
+.section-search .btn {
+  line-height:28px;
+  float:none;
+  margin-left:-45px;
+  width:26px;
+  border:none;
+  border-left:1px solid #cdcccb;
+  color:;
+}
