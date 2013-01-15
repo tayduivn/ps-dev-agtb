@@ -56,19 +56,6 @@ class ForecastsSeedData {
                     $forecastopp->current_user_id = $commit_type_array[0];
                     $opp_summary_array= $forecastopp->get_opportunity_summary(false);
 
-                    $fcst_schedule = new ForecastSchedule();
-                    $fcst_schedule->timeperiod_id=$timeperiod_id;
-                    $fcst_schedule->user_id=$commit_type_array[0];
-                    $fcst_schedule->cascade_hierarchy=0;
-                    $fcst_schedule->forecast_start_date=$timeperiod_id;
-                    $fcst_schedule->expected_amount = $opp_summary_array['WEIGHTEDVALUENUMBER'];
-                    $fcst_schedule->expected_best_case = $opp_summary_array['WEIGHTEDVALUENUMBER'];
-                    $fcst_schedule->expected_likely_case = $opp_summary_array['WEIGHTEDVALUENUMBER'] * .8;
-                    $fcst_schedule->expected_worst_case = $opp_summary_array['WEIGHTEDVALUENUMBER'] * .5;
-                    $fcst_schedule->expected_commit_stage = 'exclude';
-                    $fcst_schedule->status='Active';
-                    $fcst_schedule->save();
-
                     if($opp_summary_array['OPPORTUNITYCOUNT'] == 0)
                     {
                         continue;
