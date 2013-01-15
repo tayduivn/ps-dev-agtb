@@ -79,9 +79,14 @@
     _render:function() {
         var emails = this.model.get('email');
         _.each(emails, function(emailAddress){
+            // Needed for handlebars template, can't accomplish this boolean expression with handlebars
             emailAddress.hasAnchor = emailAddress.opt_out != "1" && emailAddress.invalid_email != "1";
         }, this);
         app.view.Field.prototype._render.call(this);
+        _.each(emails, function(emailAddress, index){
+            // Remove handlebars cruft from e-mails so we only send valid fields back on save
+            emails[index] = _.pick(emailAddress, 'email_address', 'primary_address', 'opt_out', 'invalid_email');
+        });
     },
     /**
      * Removes email address from dom and model
@@ -96,15 +101,15 @@
         var wasPrimary = false;
         _.each(existingAddresses, function (emailInfo, index) {
             if (emailInfo.email_address == emailAddress) {
-                wasPrimary = existingAddresses[index]['primary_address'] == '1';
-                existingAddresses[index] = false;
+                wasPrimary = existingAddresses[index]['primary_address'] == '1';  // Remember if it was primary
+                existingAddresses[index] = undefined;                             // then delete it
             }
         });
+        // Remove deleted (undefined) e-mails
+        existingAddresses = _.compact(existingAddresses);
         // If a removed address was the primary e-mail, we need to pick an existing e-mail and make it the new primary
         if(wasPrimary){
-            var address = _.find(existingAddresses, function (emailInfo) {
-                return emailInfo;
-            });
+            var address = _.first(existingAddresses);
             if(address){
                 address['primary_address'] = '1';
             }
@@ -150,7 +155,7 @@
      * @param value
      */
     updateModel:function(value) {
-        this.model.set(this.name, _.compact(value));
+        this.model.set(this.name, value);
         this.model.trigger('change');
         this.model.trigger('change:'+this.name);
     },
