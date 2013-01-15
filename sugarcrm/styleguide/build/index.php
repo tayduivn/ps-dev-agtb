@@ -64,12 +64,26 @@ foreach ($themesClientsDir as $platform) {
         </div>
         <div class="subnav row-fluid">
             <div class="btn-toolbar pull-left">
+
                 <div>
-                    <input type="text" name="split_css" value="asdf">
-                    <input id="min-false" type="radio" name="min" value="false" checked>
-                    <label style="display: inline;" for="min-false">Uncompressed</label>
-                    <input id="min-true" type="radio" name="min" value="true">
-                    <label style="display: inline;" for="min-true">Compressed</label>
+                    <label style="display: inline;" for="min-false">
+                        <input id="min-false" type="radio" name="min" value="false" checked>
+                        Uncompressed
+                    </label>
+                    <label style="display: inline;" for="min-true">
+                        <input id="min-true" type="radio" name="min" value="true">
+                        Compressed
+                    </label>
+                </div>
+                <div>
+                    <label style="display: inline;" for="split_css-false">
+                        <input id="split_css-false" type="radio" name="split_css" value="false" checked>
+                        Combined
+                    </label>
+                    <label style="display: inline;" for="split_css-true">
+                        <input id="split_css-true" type="radio" name="split_css" value="true">
+                        Split
+                    </label>
                 </div>
                 <div>
                 <?php
@@ -79,8 +93,9 @@ foreach ($themesClientsDir as $platform) {
                 foreach ($lessClientsDir as $client) {
                     $checked = '';
                     if ($client == 'base') $checked = ' checked';
-                    echo '<input type="radio" name="client" value="' . $client . '"' . $checked . '>';
-                    echo '<label style="display: inline;" for="client">' . $client . '</label><br>';
+                    echo '<label style="display: inline;" for="client_'. $client .'">';
+                    echo '<input type="radio" name="client" id="client_'. $client .'"value="' . $client . '"' . $checked . '>';
+                    echo ' ' . $client . '</label><br>';
                 }
                 ?>
                 </div>

@@ -12,13 +12,27 @@ try {
     $variablesLess = file_get_contents($root . 'variables.less');
     $variables = getCustomThemeVars($variablesLess);
     $variables['baseUrl'] = '"../../assets"';
+    $split_css = (isset($_GET["split_css"]) && $_GET["split_css"]=="true");
     $files = array();
 
-    // Build bootstrap.css.
-    $files[] = array(
-        'in' => '../less/clients/' . $client . '/config.less',
-        'out' => '../styleguide/css/bootstrap.css',
-    );
+    if ($split_css) {
+        // Build bootstrap.css and sugar.css.
+        $files[] = array(
+            'in' => '../less/clients/' . $client . '/bootstrap.less',
+            'out' => '../styleguide/css/bootstrap.css',
+        );
+        $files[] = array(
+            'in' => '../less/clients/' . $client . '/sugar.less',
+            'out' => '../styleguide/css/sugar.css',
+        );
+    } else {
+        // Build bootstrap.css.
+        $files[] = array(
+            'in' => '../less/clients/' . $client . '/config.less',
+            'out' => '../styleguide/css/bootstrap.css',
+        );
+    }
+
     // Build bootstrap-mobile.css.
     $files[] = array(
         'in' => '../less/clients/mobile/config.less',
