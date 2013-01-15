@@ -195,13 +195,14 @@
                 //Apply sorting for the worksheet
                 switch(field.type)
                 {
-                    case "buckets":
+                    case "commitStage":
                     case "enum":
                     case "bool":
                         // disable sorting for non-numerical fields
                         fieldDef["bSortable"] = false;
                         break;
                     case "int":
+                    case "editableInt":
                     case "currency":
                     case "editableCurrency":
                         fieldDef["sSortDataType"] = "dom-number";
