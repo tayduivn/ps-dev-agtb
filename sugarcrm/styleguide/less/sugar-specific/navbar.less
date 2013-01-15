@@ -231,7 +231,8 @@
       padding-bottom: 13px;
       text-shadow: none;
       font-weight: bold;
-      color: lighten(lightness(@PrimaryButton),100%);
+      color: @navbarLinkColorActive;
+      //color: contrast(@NavigationBar, @black, @white, 43%);
       background-color: lighten(@NavigationBar,5%) !important;
       .box-shadow(~"inset 0 -1px 0 rgba(0,0,0,.4)");
       text-shadow: 0 -1px 0 rgb(0,0,0);
