@@ -28,6 +28,10 @@
      */
     breadCrumbLabels: [],
 
+    /**
+     * Holds the $.Deferred object that gets resolved after the AJAX call to retrieve the forecasts initialization
+     * completes successfully, which then carries out the render for the forecasts module.
+     */
     deferredRender: {},
 
     initialize: function (options) {
