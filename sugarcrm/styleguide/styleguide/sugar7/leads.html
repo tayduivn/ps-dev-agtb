@@ -25,6 +25,8 @@
         , {"file":"common/data-table","target":"#view .main-content","method":"replace"}
         , {"file":"widget/widget-control","target":"#overview","method":"replace"}
         , {"file":"widget/interactions-widget","target":"#overview","method":"append"}
+        , {"file":"widget/stats-widget","target":"#overview","method":"append"}
+        , {"file":"widget/email-widget","target":"#overview","method":"append"}
       ]
     };
   </script>
@@ -101,6 +103,8 @@
   <script src="../js/jquery.nouislider.min.js"></script>
   <script src="../js/chosen.jquery.min.js"></script>
 
+  <script src="../../assets/js/jquery-ui-1.8.18.custom.min.js"></script>
+
   <!-- new D3 charting library files -->
   <script src="../../assets/js/nvd3/lib/d3.v2.min.js"></script>
   <script src="../../assets/js/nvd3/nv.d3.min.js"></script>
@@ -110,5 +114,14 @@
   <script src="../js/cookie.js"></script>
 
   <script src="../js/application.js"></script>
+  <script>
+    $(document).ready(function() {
+      $("#overview").sortable({
+        items: ".thumbnail.widget",
+        axis: "y",
+      });
+
+    });
+  </script>
 </body>
 </html>

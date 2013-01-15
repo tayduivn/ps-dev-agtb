@@ -36,6 +36,10 @@ img {
   -webkit-box-shadow:0 2px 1px rgba(0,0,0,0.1), 0 0 1px rgba(0,0,0,0.4), -1px -1px 2px rgba(0,0,0,0.1), 1px 1px 2px rgba(0,0,0,0.1);
   -moz-box-shadow:0 2px 1px rgba(0,0,0,0.1), 0 0 1px rgba(0,0,0,0.4), -1px -1px 2px rgba(0,0,0,0.1), 1px 1px 2px rgba(0,0,0,0.1);
   box-shadow:0 2px 1px rgba(0,0,0,0.1), 0 0 1px rgba(0,0,0,0.4), -1px -1px 2px rgba(0,0,0,0.1), 1px 1px 2px rgba(0,0,0,0.1);
+  -webkit-transition:0;
+  -moz-transition:0;
+  -o-transition:0;
+  transition:0;
 }
 .thumbnail h2, .thumbnail p {
   padding:0 5px;
@@ -3106,26 +3110,28 @@ textarea.local-error, input[type="text"].local-error, input[type="password"].loc
   margin:0;
   position:absolute !important;
 }
-.inline-editable-wrap { height:30px; }
-.inline-editable-wrap a.btn-mini.urleditable:not(:hover) {
+.inline-editable-wrap, .urleditable-wrap { height:30px; }
+.inline-editable-wrap a.btn-mini.urleditable:not(:hover), .urleditable-wrap a.btn-mini.urleditable:not(:hover) {
   background:transparent;
   border-color:transparent;
   -webkit-box-shadow:none;
   -moz-box-shadow:none;
   box-shadow:none;
 }
-.inline-editable-wrap .inline-editable .icon-pencil { visibility:hidden; }
-.inline-editable-wrap form { display:inline; }
-.inline-editable-wrap form input { width:210px; }
-.inline-editable-wrap .editable-trigger { margin-right:6px; }
-.inline-editable-wrap:hover .icon-pencil { visibility:visible; }
-.inline-editable-wrap .editable-field> a {
+.inline-editable-wrap .inline-editable .icon-pencil, .urleditable-wrap .inline-editable .icon-pencil { visibility:hidden; }
+.inline-editable-wrap form, .urleditable-wrap form { display:inline; }
+.inline-editable-wrap form input, .urleditable-wrap form input {
   width:210px;
+  display:block;
+}
+.inline-editable-wrap .editable-trigger, .urleditable-wrap .editable-trigger { margin-right:6px; }
+.inline-editable-wrap:hover .icon-pencil, .urleditable-wrap:hover .icon-pencil { visibility:visible; }
+.inline-editable-wrap .editable-field> a, .urleditable-wrap .editable-field> a {
   overflow:hidden;
-  display:inline-block;
+  display:block;
   text-overflow:ellipsis;
 }
-.inline-editable-wrap .editable-field form input {
+.inline-editable-wrap .editable-field form input, .urleditable-wrap .editable-field form input {
   padding-top:0px;
   top:2px;
   left:1px;
@@ -3152,31 +3158,6 @@ textarea.local-error, input[type="text"].local-error, input[type="password"].loc
   color:#b60000;
 }
 .inline-error input:focus { z-index:3; }
-.urleditable-wrap { height:30px; }
-.urleditable-wrap a.btn-mini.urleditable:not(:hover) {
-  background:transparent;
-  border-color:transparent;
-  -webkit-box-shadow:none;
-  -moz-box-shadow:none;
-  box-shadow:none;
-}
-.urleditable-wrap .urleditable .icon-pencil { visibility:hidden; }
-.urleditable-wrap form { display:inline; }
-.urleditable-wrap form input { width:210px; }
-.urleditable-wrap .editable-trigger { margin-right:6px; }
-.urleditable-wrap:hover .icon-pencil { visibility:visible; }
-.urleditable-wrap .urleditable-field> a {
-  width:210px;
-  overflow:hidden;
-  display:inline-block;
-  text-overflow:ellipsis;
-}
-.urleditable-wrap .urleditable-field form input {
-  padding-top:0px;
-  top:2px;
-  left:1px;
-  height:20px;
-}
 .upload-field-custom {
   overflow:hidden;
   display:inline-block;
