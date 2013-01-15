@@ -112,7 +112,11 @@ describe("The forecastsWizardConfig layout controller", function(){
 
         it("should get a model", function() {
             testLayout = new app.view.layouts.ForecastsWizardConfigLayout(options);
-            var getModelStub = sinon.stub(testLayout, '_getConfigModel');
+            var getModelStub = sinon.stub(testLayout, '_getConfigModel', function() {
+                return {
+                    fetch: function(){}
+                }
+            });
             testLayout.initialize(options);
             expect(getModelStub).toHaveBeenCalled();
             getModelStub.restore();

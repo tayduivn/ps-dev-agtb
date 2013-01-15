@@ -116,16 +116,22 @@
      * @param isAdmin
      */
     checkSettingsAndRedirect:function (isSetup, isAdmin) {
-        //3 conditions exist
-        //1: If the user is not an admin, then the user will be redirected to the main Sugar index
-        //2: The user is an admin, but setup has been performed and the cancel has been clicked,
-        // then redirect user to Forecasts module
-        //3: The user is an admin and setup is complete.  A success message is displayed.  An additional
-        // message regarding opportunity setup is displayed if this is the initial setup
-        if (!isAdmin) {
+        var saveClicked = this.context.forecasts.get('saveClicked');
+
+        /**
+         * 4 conditions exist
+         * 1a: If the user is not an admin, then the user will be redirected to the main Sugar index
+         * 1b: User is an admin, and has clicked cancel/X to close the modal without saving
+         *      and module has never been set up
+         * 2: The user is an admin, but setup has been performed and the cancel has been clicked,
+         *      then redirect user to Forecasts module
+         * 3: The user is an admin and setup is complete.  A success message is displayed.  An additional
+         *      message regarding opportunity setup is displayed if this is the initial setup
+         */
+        if (!isAdmin || (isAdmin && isSetup == 0 && saveClicked == false)) {
             // this should only ever happen on the wizard view and if the user accessing is not an admin
             window.location = 'index.php?module=Home';
-        } else if (isSetup == 1 && this.context.forecasts.get('saveClicked') == false) {
+        } else if (isSetup == 1 && saveClicked == false) {
             // this should only ever happen on the tabbed view when cancel is clicked
             window.location.hash = '#';
         } else {
