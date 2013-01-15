@@ -26,8 +26,8 @@
  * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
-$viewdefs['Forecasts']['base']['layout']['index'] = array(
-    'type' => 'index',
+$viewdefs['Forecasts']['base']['layout']['records'] = array(
+    'type' => 'records',
     'components' => array(
         array(
             'view' => 'forecastsChart',

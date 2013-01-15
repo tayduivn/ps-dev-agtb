@@ -36,7 +36,7 @@ class ForecastsWorksheetManagerApi extends ForecastsChartApi
                 'pathVars' => array('', ''),
                 'method' => 'forecastManagerWorksheet',
                 'shortHelp' => 'Returns a collection of ForecastManagerWorksheet models',
-                'longHelp' => 'include/api/html/modules/Forecasts/ForecastWorksheetManagerApi.html#forecastWorksheetManager',
+                'longHelp' => 'modules/Forecasts/clients/base/api/help/ForecastWorksheetManagerGet.html',
             ),
             'forecastManagerWorksheetSave' => array(
                 'reqType' => 'PUT',
@@ -44,12 +44,20 @@ class ForecastsWorksheetManagerApi extends ForecastsChartApi
                 'pathVars' => array('module', 'record'),
                 'method' => 'forecastManagerWorksheetSave',
                 'shortHelp' => 'Update a ForecastManagerWorksheet model',
-                'longHelp' => 'include/api/html/modules/Forecasts/ForecastWorksheetManagerApi.html#forecastWorksheetManagerSave',
+                'longHelp' => 'modules/Forecasts/clients/base/api/help/ForecastWorksheetManagerPut.html',
             )
         );
         return $parentApi;
     }
 
+    /**
+     * This method handles the /ForecastsWorksheetManager REST endpoint and returns an Array of manager worksheet data Array entries
+     *
+     * @param $api ServiceBase The API class of the request, used in cases where the API changes how the fields are pulled from the args array.
+     * @param $args array The arguments array passed in from the API
+     * @return Array of manager worksheet data entries
+     * @throws SugarApiExceptionNotAuthorized
+     */
     public function forecastManagerWorksheet($api, $args)
     {
         // Load up a seed bean
@@ -67,6 +75,15 @@ class ForecastsWorksheetManagerApi extends ForecastsChartApi
     }
 
 
+
+    /**
+     * This method handles saving data for the /ForecastManagerWorksheet REST endpoint
+     *
+     * @param $api ServiceBase The API class of the request, used in cases where the API changes how the fields are pulled from the args array.
+     * @param $args array The arguments array passed in from the API
+     * @return Array of worksheet data entries
+     * @throws SugarApiExceptionNotAuthorized
+     */
     public function forecastManagerWorksheetSave($api, $args)
     {
         $obj = $this->getClass($args);

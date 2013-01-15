@@ -2,7 +2,7 @@ describe("Base.Field.TextArea", function() {
     var app, field,
         fieldName = 'foo',
         shortText = '12345',
-        longText = '1234567890';
+        longText = shortText + shortText;
 
     beforeEach(function() {
         app = SugarTest.app;
@@ -18,11 +18,6 @@ describe("Base.Field.TextArea", function() {
         app.view.reset();
         delete Handlebars.templates;
         field = null;
-    });
-
-    it('verify test text lengths', function() {
-        expect(shortText.length).toBeLessThan(field.maxDisplayLength)
-        expect(longText.length).toBeGreaterThan(field.maxDisplayLength)
     });
 
     it('short values should not have more link', function() {
