@@ -26,7 +26,67 @@
  ********************************************************************************/
 ({
     fieldTag : "textarea",
+    maxDisplayLength: 450,
+    isTruncated: false,
+
+    events: {
+        'click .show-more-text': 'toggleMoreText'
+    },
+
     format: function(value) {
         return value || '';
+    },
+
+    _render: function() {
+        //figure out if we need to display the show more link
+        var value = this.model.get(this.name);
+        if ((!_.isUndefined(value)) && (value.length > this.maxDisplayLength)) {
+            this.isTooLong = true;
+        }
+
+        app.view.Field.prototype._render.call(this);
+
+        if (this.isTooLong) {
+            this.showLess();
+        }
+
+        if(this.tplName === 'disabled') {
+            this.$(this.fieldTag).attr("disabled", "disabled");
+        }
+    },
+
+    toggleMoreText: function() {
+        var self = this;
+        if (self.isTruncated) {
+            this.showMore();
+        } else {
+            this.showLess();
+        }
+    },
+
+    showMore: function() {
+        this._toggleTextLength('more');
+    },
+
+    showLess: function() {
+        this._toggleTextLength('less');
+    },
+
+    _toggleTextLength: function(mode) {
+        var displayValue,
+            newLinkLabel;
+
+        if (mode === "more") {
+            displayValue = this.value;
+            this.isTruncated = false;
+            newLinkLabel = app.lang.get('LBL_LESS', this.module).toLocaleLowerCase();
+        } else {
+            displayValue = this.value.substring(0, this.maxDisplayLength) + '...';
+            this.isTruncated = true;
+            newLinkLabel = app.lang.get('LBL_MORE', this.module).toLocaleLowerCase();
+        }
+        this.$(".textarea-text").text(displayValue);
+        this.$(".show-more-text").text(newLinkLabel);
     }
+
 })

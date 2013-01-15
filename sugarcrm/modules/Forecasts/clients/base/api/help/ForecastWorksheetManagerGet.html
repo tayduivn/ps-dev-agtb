@@ -1,0 +1,114 @@
+<!--
+/*********************************************************************************
+ * The contents of this file are subject to the SugarCRM Master Subscription
+ * Agreement (""License"") which can be viewed at
+ * http://www.sugarcrm.com/crm/master-subscription-agreement
+ * By installing or using this file, You have unconditionally agreed to the
+ * terms and conditions of the License, and You may not use this file except in
+ * compliance with the License.  Under the terms of the license, You shall not,
+ * among other things: 1) sublicense, resell, rent, lease, redistribute, assign
+ * or otherwise transfer Your rights to the Software, and 2) use the Software
+ * for timesharing or service bureau purposes such as hosting the Software for
+ * commercial gain and/or for the benefit of a third party.  Use of the Software
+ * may be subject to applicable fees and any use of the Software without first
+ * paying applicable fees is strictly prohibited.  You do not have the right to
+ * remove SugarCRM copyrights from the source code or user interface.
+ *
+ * All copies of the Covered Code must include on each user interface screen:
+ *  (i) the ""Powered by SugarCRM"" logo and
+ *  (ii) the SugarCRM copyright notice
+ * in the same form as they appear in the distribution.  See full license for
+ * requirements.
+ *
+ * Your Warranty, Limitations of liability and Indemnity are expressly stated
+ * in the License.  Please refer to the License for the specific language
+ * governing these rights and limitations under the License.  Portions created
+ * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
+ ********************************************************************************/
+-->
+<div class="longHelpTitle">Returns a collection of ForecastManagerWorksheet models</div>
+<div class="summary">
+    <h2>Summary:</h2>
+    This endpoint is used to return the json Data for an array of manager worksheet data array entries.  Has an ACL check to limit listing for managers only.
+</div>
+<div class="params">
+    <h2>Query Parameters:</h2>
+    <table>
+        <tr>
+            <td><strong>Param</strong></td>
+            <td><strong>Description</strong></td>
+            <td><strong>Optional</strong></td>
+        </tr>
+        <tr>
+            <td>user_id</td>
+            <td>Show for a specific user, defaults to current user if not defined</td>
+            <td>Optional</td>
+        </tr>
+        <tr>
+            <td>timeperiod_id</td>
+            <td>Show for a specific time period, defaults to the current time period if one is not passed</td>
+            <td>Optional</td>
+        </tr>
+    </table>
+</div>
+<div class="input">
+    <h2>Input Example:</h2>
+    <code class="codesample">
+{
+    'user_id':'seed_sarah_id,
+    'timeperiod_id':'36f7085a-5889-ea75-84c8-50f42bd1a5ba',
+}
+    </code>
+</div>
+<div class="output">
+    <h2>Output Example:</h2>
+    <code class="codesample">
+        [ { "amount" : "85000.000000",
+            "base_rate" : "1",
+            "best_adjusted" : "85000.000000",
+            "best_case" : "8800.000000",
+            "currency_id" : "-99",
+            "date_modified" : "2013-01-14T10:58:27-05:00",
+            "forecast" : 0,
+            "forecast_id" : "c0555ea9-a99b-a8c6-7412-50f42ba81ba7",
+            "id" : "seed_sarah_id",
+            "label" : "Sarah Smith",
+            "likely_adjusted" : "85000.000000",
+            "likely_case" : "8600.000000",
+            "name" : "Opportunities (Sarah Smith)",
+            "quota" : "42500.000000",
+            "quota_id" : "c1533ff2-4932-e94e-8bc8-50f42bdc55db",
+            "show_opps" : true,
+            "timeperiod_id" : "36f7085a-5889-ea75-84c8-50f42bd1a5ba",
+            "user_id" : "seed_sarah_id",
+            "version" : "1",
+            "worksheet_id" : "4128558a-ba71-eca8-df5c-50f42bfb204a",
+            "worst_adjusted" : "85000.000000",
+            "worst_case" : "8700.000000"
+          },
+          { "amount" : "210000.000000",
+            "base_rate" : "1",
+            "best_adjusted" : "200500.000000",
+            "best_case" : "70200.000000",
+            "currency_id" : "-99",
+            "date_modified" : "2013-01-14T10:58:27-05:00",
+            "forecast" : 0,
+            "forecast_id" : "cc1479d9-1619-edb8-8f65-50f42bb8e802",
+            "id" : "seed_sally_id",
+            "label" : "Sally Bronsen",
+            "likely_adjusted" : "200500.000000",
+            "likely_case" : "70000.000000",
+            "name" : "Sally Bronsen",
+            "quota" : "80000.000000",
+            "quota_id" : "cf40dfd5-05d4-ef39-ccde-50f42b96a195",
+            "show_opps" : true,
+            "timeperiod_id" : "36f7085a-5889-ea75-84c8-50f42bd1a5ba",
+            "user_id" : "seed_sally_id",
+            "version" : "1",
+            "worksheet_id" : "32a185f3-6e15-4ff5-df13-50f42b065bd3",
+            "worst_adjusted" : "200500.000000",
+            "worst_case" : "70100.000000"
+          }
+        ]
+    </code>
+</div>

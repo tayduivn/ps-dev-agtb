@@ -1,4 +1,4 @@
-{{!
+<?php
 /*********************************************************************************
  * The contents of this file are subject to the SugarCRM Master Subscription
  * Agreement (""License"") which can be viewed at
@@ -25,7 +25,47 @@
  * governing these rights and limitations under the License.  Portions created
  * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
-}}
 
-        <input type="text" name="{{name}}" value="{{value}}" class="input-large">
-        <p class="help-block"></p>
+$viewdefs['Forecasts']['base']['layout']['records'] = array(
+    'type' => 'records',
+    'components' => array(
+        array(
+            'view' => 'forecastsChart',
+        ),
+        array(
+            'view' => 'forecastsProgress',
+        ),
+        array(
+            'view' => 'forecastsWorksheet',
+            'contextCollection' => array(
+                'module' => 'ForecastWorksheets',
+                'name' => 'Worksheet'
+            ),
+        ),
+        array(
+            'view' => 'forecastsWorksheetTotals'
+        ),
+        array(
+            'view' => 'forecastsWorksheetManager',
+            'contextCollection' => array(
+                'module' => 'ForecastManagerWorksheets',
+                'name' => 'WorksheetManager'
+            ),
+        ),
+        array(
+            'view' => 'forecastsWorksheetManagerTotals'
+        ),
+        array(
+            'view' => 'forecastsTitle',
+        ),
+        array(
+            'view' => 'forecastsTree',
+        ),
+        array(
+            'view' => 'forecastsCommitButtons',
+        ),
+        array(
+            'layout' => 'info'
+        ),
+    ),
+);

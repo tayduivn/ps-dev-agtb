@@ -2375,8 +2375,8 @@ class Email extends SugarBean {
 
 		//BUG 17098 - MFH changed $this->from_addr to $this->to_addrs
 		$email_fields['CONTACT_NAME']		= empty($this->contact_name) ? '</a>'.$this->trimLongTo($this->to_addrs).'<a>' : $this->contact_name;
-		$email_fields['CONTACT_ID']		= empty($this->contact_id) ? '' : $this->contact_id;
-		$email_fields['ATTACHMENT_IMAGE']	= $this->attachment_image;
+		$email_fields['CONTACT_ID']         = empty($this->contact_id) ? '' : $this->contact_id;
+        $email_fields['ATTACHMENT_IMAGE']	= empty($this->attachment_image) ? '' : $this->attachment_image;
 		$email_fields['LINK_ACTION']		= $this->link_action;
 
     	if(isset($this->type_name))

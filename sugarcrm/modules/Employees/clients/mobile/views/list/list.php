@@ -122,6 +122,13 @@ $viewdefs['Employees']['mobile']['view']['list'] = array(
                     'label' => 'LBL_DATE_ENTERED',
                     'default' => false,
                 ),
+                array (
+                    'name' => 'picture',
+                    'label' => 'LBL_PICTURE_FILE',
+                    'enabled' => true,
+                    'width' => '10%',
+                    'default' => true,
+                ),
 //BEGIN SUGARCRM flav=pro ONLY
                 array(
                     'name' => 'team_name',

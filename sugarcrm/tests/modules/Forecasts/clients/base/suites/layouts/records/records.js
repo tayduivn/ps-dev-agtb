@@ -19,7 +19,7 @@
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
-describe("The forecasts index layout controller", function(){
+describe("The forecasts records layout controller", function(){
 
     var app, layout, stubs;
 
@@ -27,7 +27,7 @@ describe("The forecasts index layout controller", function(){
         var options = {
             context: new Backbone.Model(),
             meta: {
-                type: 'index',
+                type: 'records',
                 components: {}
             }
         };
@@ -35,7 +35,7 @@ describe("The forecasts index layout controller", function(){
         options.context.forecasts = new Backbone.Model();
 
         app = SugarTest.app;
-        var indexController = SugarTest.loadFile("../modules/Forecasts/clients/base/layouts/index", "index", "js", function(d) {
+        var recordsController = SugarTest.loadFile("../modules/Forecasts/clients/base/layouts/records", "records", "js", function(d) {
             return eval(d);
         });
 
@@ -69,11 +69,11 @@ describe("The forecasts index layout controller", function(){
         stubs.push(sinon.stub(app.view.Layout.prototype, "initialize", function (options) {}));
 
         layout = SugarTest.createComponent('Layout', {
-            name: "index",
+            name: "records",
             module: "Forecasts",
             context: options.context,
             meta : options.meta,
-            controller: indexController
+            controller: recordsController
         });
     });
 

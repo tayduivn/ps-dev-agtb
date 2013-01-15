@@ -61,10 +61,7 @@ class TemplateRange extends TemplateText
 			if(isset($_REQUEST['view_module']))
 			{
 				$module = $_REQUEST['view_module'];
-				$file = SugarAutoLoader::loadWithMetafiles($module, 'SearchFields', 'searchfields');
-				if($file) {
-				    require $file;
-				}
+				$searchFields = SugarAutoLoader::loadSearchFields($module);
 
                 $field_name = $this->get_field_name($module, $_REQUEST['name']);
 
