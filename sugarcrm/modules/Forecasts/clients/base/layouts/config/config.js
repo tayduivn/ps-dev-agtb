@@ -116,27 +116,11 @@
      * @param isAdmin
      */
     checkSettingsAndRedirect:function (isSetup, isAdmin) {
-        var saveClicked = this.context.forecasts.get('saveClicked');
+        var saveClicked = this.context.forecasts.get('saveClicked'),
+            location = this.getRedirectURL(isSetup, isAdmin, saveClicked),
+            self = this;
 
-        /**
-         * 4 conditions exist
-         * 1a: If the user is not an admin, then the user will be redirected to the main Sugar index
-         * 1b: User is an admin, and has clicked cancel/X to close the modal without saving
-         *      and module has never been set up
-         * 2: The user is an admin, but setup has been performed and the cancel has been clicked,
-         *      then redirect user to Forecasts module
-         * 3: The user is an admin and setup is complete.  A success message is displayed.  An additional
-         *      message regarding opportunity setup is displayed if this is the initial setup
-         */
-        if (!isAdmin || (isAdmin && isSetup == 0 && saveClicked == false)) {
-            // this should only ever happen on the wizard view and if the user accessing is not an admin
-            window.location = 'index.php?module=Home';
-        } else if (isSetup == 1 && saveClicked == false) {
-            // this should only ever happen on the tabbed view when cancel is clicked
-            this.reloadForecasts();
-        } else if (this.context.forecasts.get('saveClicked') == false) {
-            window.location = 'index.php?module=Forecasts';
-        } else {
+        if(isAdmin && saveClicked == true) {
             // only sync the metadata
             app.metadata.sync();
             // can happen on both views but it's the same methods/messages
@@ -150,11 +134,48 @@
                 });
 
                 //add alert listener for the close click, in case user clicks the X instead of the confirm button.
-                alert.getCloseSelector().on('click', self.displaySuccessAndReload);
+                alert.getCloseSelector().on('click', function() {
+                    self.displaySuccessAndReload(location);
+                });
             } else {
-                this.displaySuccessAndReload();
+                this.displaySuccessAndReload(location);
             }
+        } else {
+            window.location = location;
         }
+    },
+
+    /**
+     * Checks the variables provided to determine what the reload/forward location ought to be
+     *
+     * @param isSetup
+     * @param isAdmin
+     * @param saveClicked
+     * @return {string} url to send page to
+     */
+    getRedirectURL:function (isSetup, isAdmin, saveClicked) {
+        /**
+         * 4 conditions exist
+         * 1a: If the user is not an admin, then the user will be redirected to the main Sugar index
+         * 1b: User is an admin, and has clicked cancel/X to close the modal without saving
+         *      and module has never been set up
+         * 2: The user is an admin, but setup has been performed and the cancel has been clicked,
+         *      then redirect user to Forecasts module
+         * 3: The user is an admin and setup is complete.  A success message is displayed.  An additional
+         *      message regarding opportunity setup is displayed if this is the initial setup
+         */
+        if (!isAdmin || (isAdmin && isSetup == 0 && saveClicked == false)) {
+            // this should only ever happen on the wizard view and if the user accessing is not an admin
+            return 'index.php?module=Home';
+        } else if (isSetup == 1 && saveClicked == false) {
+            // this should only ever happen on the tabbed view when cancel is clicked
+            return window.location;
+        } else if (this.context.forecasts.get('saveClicked') == false) {
+            return 'index.php?module=Forecasts';
+        } else {
+            return window.location;
+        }
+
     },
 
     /**
