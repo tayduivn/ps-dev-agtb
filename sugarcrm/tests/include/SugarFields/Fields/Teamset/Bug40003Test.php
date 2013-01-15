@@ -46,12 +46,21 @@ class Bug40003Test extends Sugar_PHPUnit_Framework_TestCase
 
     public function setUp()
     {
+        SugarTestHelper::setUp('beanFiles');
+        SugarTestHelper::setUp('beanList');
         $_REQUEST['record'] = '';
         $_REQUEST['module'] = 'Reports';
         $this->fields = array('team_name' => array('name' => 'team_name'));
         $this->sft = new SugarFieldTeamset('Teamset');
     }
     
+    public function tearDown()
+    {
+        $_REQUEST = array();
+        $_POST = array();
+        SugarTestHelper::tearDown();
+    }
+
     /**
      * @dataProvider provider
      * @group 40003

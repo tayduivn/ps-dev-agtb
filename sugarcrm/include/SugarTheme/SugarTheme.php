@@ -326,9 +326,19 @@ class SugarTheme
      */
     public function __destruct()
     {
-        // Bug 28309 - Set the current directory to one which we expect it to be (i.e. the root directory of the install
-        set_include_path(realpath(dirname(__FILE__) . '/../..') . PATH_SEPARATOR . get_include_path());
-        chdir(dirname(__FILE__) . '/../..'); // destruct can be called late, and chdir could change
+        // Set the current directory to one which we expect it to be (i.e. the root directory of the install
+        $dir = realpath(dirname(__FILE__) . '/../..');
+        static $includePathIsPatched = false;
+        if ($includePathIsPatched == false)
+        {
+            $path = explode(PATH_SEPARATOR, get_include_path());
+            if (in_array($dir, $path) == false)
+            {
+                set_include_path($dir . PATH_SEPARATOR . get_include_path());
+            }
+            $includePathIsPatched = true;
+        }
+        chdir($dir); // destruct can be called late, and chdir could change
         $cachedir = sugar_cached($this->getFilePath());
         sugar_mkdir($cachedir, 0775, true);
         // clear out the cache on destroy if we are asked to
@@ -1098,9 +1108,10 @@ class SugarThemeRegistry
         )
     {
         // make sure the we know the sugar version
-        if ( !isset($GLOBALS['sugar_version']) ) {
+        global $sugar_version;
+        if (empty($sugar_version))
+        {
             include('sugar_version.php');
-            $GLOBALS['sugar_version'] = $sugar_version;
         }
 
         // Assume theme is designed for 5.5.x if not specified otherwise

@@ -30,8 +30,11 @@ require_once('modules/UpgradeWizard/UpgradeRemoval.php');
 
 class UpgradeRemoval62x extends UpgradeRemoval
 {
-	
-	
+    /**
+     * @var string minimal version for removal
+     */
+    public $version = '6.2.2';
+
 /**
  * getFilesToRemove
  * Return an array of files/directories to remove for 62x upgrades
@@ -48,7 +51,7 @@ $files = array();
 // 4) Upgraded TinyMCE from 2.x to 3.x version
 // We will additionally clean up the legacy include/utils/external_cache direcotry
 
-if($version < '622')
+if (version_compare($version, $this->version, '<'))
 {
 	$files[] = 'include/utils/external_cache';
 	$files[] = 'include/jsolait';
@@ -85,7 +88,7 @@ if($version < '622')
 	$files[] = 'modules/Activities/OpenListView.php';
 }
 
-if($version < '624')
+if (version_compare($version, '6.2.4', '<'))
 {
         $files[] = 'modules/Emails/EditView.html';
         $files[] = 'json.php';
@@ -96,5 +99,3 @@ return $files;
 	
 		
 }
-
-?>

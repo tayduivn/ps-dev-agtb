@@ -715,6 +715,11 @@ function get_team_name($team_id)
  */
 function get_team_array($add_blank = FALSE) {
 	global  $current_user;
+    if (empty($current_user) || empty($current_user->id))
+    {
+        return array();
+    }
+
 	$team_array = get_register_value('team_array', $add_blank.'ADDBLANK'.$current_user->id);
 
 	if(!empty($team_array))
@@ -1787,13 +1792,15 @@ function get_select_options_with_id_separate_key ($label_list, $key_list, $selec
 
 /**
  * Call this method instead of die().
- * Then we call the die method with the error message that is passed in.
+ * We print the error message and then die with an appropriate
+ * exit code.
  */
-function sugar_die($error_message)
+function sugar_die($error_message, $exit_code = 1)
 {
 	global $focus;
 	sugar_cleanup();
-	die($error_message);
+	echo $error_message;
+	die($exit_code);
 }
 
 
@@ -5323,7 +5330,7 @@ function getDuplicateRelationListWithTitle($def, $var_def, $module)
         $temp_module_strings = return_module_language($current_language, $module);
         $temp_duplicate_array = array_diff_assoc($def, $select_array);
         $temp_duplicate_array = array_merge($temp_duplicate_array, array_intersect($select_array, $temp_duplicate_array));
-        
+
         foreach ($temp_duplicate_array as $temp_key => $temp_value)
         {
             // Don't add duplicate relationships
@@ -5340,7 +5347,6 @@ function getDuplicateRelationListWithTitle($def, $var_def, $module)
             $select_array[$key] .= ' (' . $key . ')';
         }
     }
-    
     asort($select_array);
     return $select_array;
 }

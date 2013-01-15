@@ -1,4 +1,5 @@
 <?php
+//FILE SUGARCRM flav=pro ONLY
 /*********************************************************************************
  * The contents of this file are subject to the SugarCRM Professional End User
  * License Agreement ("License") which can be viewed at
@@ -21,55 +22,30 @@
  * Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.;
  * All Rights Reserved.
  ********************************************************************************/
- 
-require_once('modules/UpgradeWizard/uw_utils.php');
-require_once('modules/MySettings/TabController.php');
 
-class Bug42490Test extends Sugar_PHPUnit_Framework_TestCase 
+require_once('include/TimeDate.php');
+require_once ('modules/SNIP/iCalParser.php');
+
+/**
+ * @ticket 53942
+ */
+class Bug53942Test extends Sugar_PHPUnit_Framework_TestCase
 {
-	private $_originalEnabledTabs;
-	private $_tc;
-	
-    public function setUp()
-    {
-        SugarTestHelper::setUp('moduleList');
-        SugarTestHelper::setUp('current_user', array(true, 1));
-        $this->_tc = new TabController();
-        $tabs = $this->_tc->get_tabs_system();
-        $this->_originalEnabledTabs = $tabs[0];
-    }
-
-	public function tearDown() 
+	public function testImportTZWithQuotes()
 	{
-        if (!empty($this->_originalEnabledTabs))
-        {
-            $this->_tc->set_system_tabs($this->_originalEnabledTabs);
-        }
-	}
-
-	public function testUpgradeDisplayedTabsAndSubpanels() 
-	{
-        $modules_to_add = array(
-            //BEGIN SUGARCRM flav!=dce ONLY
-            'Calls',
-            'Meetings',
-            'Tasks',
-            'Notes',
-            //BEGIN SUGARCRM flav!=sales ONLY
-            'Prospects',
-            'ProspectLists',
-            //END SUGARCRM flav!=sales ONLY
-            //END SUGARCRM flav!=dce ONLY
-        );
-
-		upgradeDisplayedTabsAndSubpanels('610');
-		
-		$all_tabs = $this->_tc->get_tabs_system();
-		$tabs = $all_tabs[0];
-		
-		foreach($modules_to_add as $module)
-		{
-            $this->assertArrayHasKey($module, $tabs, 'Assert that ' . $module . ' tab is set for system tabs');
-		}
+	    $ic = new iCalendar();
+	    $ic->parse(file_get_contents(dirname(__FILE__).'/Bug53942Test.ics'));
+	    $event = null;
+	    foreach ($ic->data['calendar'] as $calendar_key=>$calendar_val) {
+	    	foreach ($calendar_val->stack as $key=>$val) {
+	    		if($val instanceof vEvent) {
+	    		    $event = $val;
+	    		    break;
+	    		}
+	    	}
+	    }
+	    $this->assertNotEmpty($event, "Event not found!");
+        $this->assertEquals("2012-06-21 16:00:00", $event->event->date_start);
+        $this->assertEquals("2012-06-21 16:30:00", $event->event->date_end);
 	}
 }

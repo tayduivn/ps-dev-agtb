@@ -36,6 +36,11 @@ class Person extends Basic
      */
     var $createLocaleFormattedName = true;
 
+    /**
+     * @var Link2
+     */
+    public $email_addresses;
+
 	public function Person()
 	{
 		parent::Basic();

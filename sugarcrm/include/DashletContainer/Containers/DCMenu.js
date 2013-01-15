@@ -19,7 +19,7 @@
  ********************************************************************************/
 
 //Use loader to grab the modules needed
-var DCMenu = YUI({combine: true, timeout: 10000, base:"include/javascript/yui3/build/", comboBase:"index.php?entryPoint=getYUIComboFile&"}).use('event', 'dd-plugin', 'anim', 'cookie', 'json', 'node-menunav', 'io-base','io-form', 'io-upload-iframe', "overlay", function(Y) {
+var DCMenu = YUI({debug:false,combine: true, timeout: 10000, base:"include/javascript/yui3/build/", comboBase:"index.php?entryPoint=getYUIComboFile&"}).use('event', 'dd-plugin', 'anim', 'cookie', 'json', 'node-menunav', 'io-base','io-form', 'io-upload-iframe', "overlay", function(Y) {
     //Make this an Event Target so we can bubble to it
     var requests = {};
     var overlays = [];
@@ -329,7 +329,7 @@ var DCMenu = YUI({combine: true, timeout: 10000, base:"include/javascript/yui3/b
 		overlay.set('y', 90);
 	}
 	DCMenu.history = function(q){
-		quickRequest('spot', 'index.php?to_pdf=1&module=' + this.module + '&action=modulelistmenu', spotResults);
+		quickRequest('spot', 'index.php?append_wildcard=true&to_pdf=1&module=' + this.module + '&action=modulelistmenu', spotResults);
 	}
     DCMenu.startSearch = function(e){
         if (window.event) { e = window.event; }
@@ -344,15 +344,15 @@ var DCMenu = YUI({combine: true, timeout: 10000, base:"include/javascript/yui3/b
             return;
         DCMenu.closeQView();
 	    ajaxStatus.showStatus(SUGAR.language.get('app_strings', 'LBL_LOADING'));
-		quickRequest('spot', 'index.php?to_pdf=1&module=' + this.module + '&action=spot&record=' + this.record + '&q=' + encodeURIComponent(q), spotResults);
+		quickRequest('spot', 'index.php?append_wildcard=true&to_pdf=1&module=' + this.module + '&action=spot&record=' + this.record + '&q=' + encodeURIComponent(q), spotResults);
 	}
         Y.spotFull = function(q){
         DCMenu.closeQView();
             ajaxStatus.showStatus(SUGAR.language.get('app_strings', 'LBL_LOADING'));
-                quickRequest('spot', 'index.php?to_pdf=1&module=' + this.module + '&action=spot&full=true&ajax=true&record=' + this.record + '&q=' + encodeURIComponent(q), fullResults);
+                quickRequest('spot', 'index.php?append_wildcard=true&to_pdf=1&module=' + this.module + '&action=spot&full=true&ajax=true&record=' + this.record + '&q=' + encodeURIComponent(q), fullResults);
         }
 	DCMenu.spotZoom = function(q, module, offset){
-		quickRequest('spot', 'index.php?to_pdf=1&module=' + this.module + '&action=spot&record=' + this.record + '&q=' + encodeURIComponent(q) + '&zoom=' + module + '&offset=' + offset,  spotResults);
+		quickRequest('spot', 'index.php?append_wildcard=true&to_pdf=1&module=' + this.module + '&action=spot&record=' + this.record + '&q=' + encodeURIComponent(q) + '&zoom=' + module + '&offset=' + offset,  spotResults);
 	}
         fullResults = function(id, data){
             var resultsDiv = document.getElementById('sugar_full_search_results');

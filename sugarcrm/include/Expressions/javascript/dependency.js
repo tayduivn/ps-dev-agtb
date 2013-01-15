@@ -249,6 +249,11 @@ AH.getValue = function(variable, view, ignoreLinks) {
 	//For DetailViews where value is enclosed in a span tag
     if (field.tagName.toLowerCase() == "span")
     {
+        if (field.hasAttribute("data-id-value"))
+        {
+            return field.getAttribute("data-id-value");
+        }
+
         return document.all ? trim(field.innerText) : trim(field.textContent);
     }
 
@@ -617,6 +622,8 @@ AH.loadComplete = function()
         fields = $.merge(fields, AH.QUEUEDDEPS[i].getRelatedFields());
     }
 
+    AH.getRelatedFieldValues(fields);
+
     //Now fire all the queued dependencies
     for (var i = 0; i < AH.QUEUEDDEPS.length; i++)
     {
@@ -660,7 +667,7 @@ AH.getRelatedFieldValues = function(fields, module, record)
                 var linkDef = SUGAR.forms.AssignmentHandler.getLink(fields[i].link);
                 if (linkDef && linkDef.id_name && linkDef.module) {
                     var idField = document.getElementById(linkDef.id_name);
-                    if (idField && idField.tagName == "INPUT")
+                    if (idField && (idField.tagName == "INPUT" || idField.hasAttribute("data-id-value")))
                     {
                         fields[i].relId = SUGAR.forms.AssignmentHandler.getValue(linkDef.id_name, false, true);
                         fields[i].relModule = linkDef.module;
@@ -711,7 +718,11 @@ AH.getRelatedField = function(link, ftype, field, view){
 
     if (typeof(linkDef[ftype]) == "undefined"
         || (field && typeof(linkDef[ftype][field]) == "undefined")
-        || (ftype == "related" && linkDef.relId != currId)
+
+        // make sure that at least one of old and new value of the relate field is not empty.
+        // otherwise the cache considered invalid in case when both values are empty but have
+        // different types (null, false, undefined or empty string)
+        || (ftype == "related" && (linkDef.relId || currId) && linkDef.relId != currId)
     ){
         var params = {link: link, type: ftype};
         if (field)

@@ -1135,9 +1135,35 @@ SUGAR.kb = function() {
                 }, scope: myDialog, correctScope:true});
                 myDialog.cfg.queueProperty("keylisteners", listeners);
                 myDialog.show();
-                myDialog.center();
                 SUGAR.util.evalScript(result['body']);
                 window.setTimeout('ajaxStatus.hideStatus()', 1000);
+				
+				// Limits the height of tags tree so that the dialog never
+				// exceeds the window height and centers the dialog
+				YUI().use('node', function (Y) {
+					var viewPortHeight = parseInt(YAHOO.util.Dom.getViewportHeight(), 10);
+					var tree = Y.one('#tagstree');
+					var dialogTitleBar = Y.one('.yui-module .hd');
+					var dialogBody = Y.one('.yui-module .bd');
+					var search = Y.one('#searchAndCreate');
+
+					var titleBarHeight = parseInt(dialogTitleBar.getComputedStyle('height'), 10);
+					titleBarHeight += parseInt(dialogTitleBar.getComputedStyle('padding-top'), 10);
+					titleBarHeight += parseInt(dialogTitleBar.getComputedStyle('padding-bottom'), 10);
+
+					var searchHeight = parseInt(search.getComputedStyle('height'), 10);
+					searchHeight += parseInt(search.getComputedStyle('margin-top'), 10);
+					searchHeight += parseInt(search.getComputedStyle('margin-bottom'), 10);
+
+					var offset = parseInt(dialogBody.getComputedStyle('padding-top'), 10);
+					offset += parseInt(dialogBody.getComputedStyle('padding-bottom'), 10);
+					offset += 30; // various borders and free space
+
+					var maxHeight = viewPortHeight - titleBarHeight - searchHeight - offset;
+					tree.setStyle('max-height', maxHeight);
+					tree.setStyle('overflow', 'auto');
+					myDialog.center();
+				});
             }
             var postData = 'tagsMode=' + YAHOO.lang.JSON.stringify(selectCreateTags) + '&module=KBTags&action=SelectCreateApplyAndMoveTags&to_pdf=1';
             var callback = {success: fillInTags, failure: fillInTags};

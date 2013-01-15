@@ -440,7 +440,7 @@ class ListViewData {
 				    $pageData['tag'][$dataIndex] = $pageData['tag'][$idIndex[$row[$id_field]][0]];
 				}
 				//BEGIN SUGARCRM flav=pro ONLY
-				$temp->updateDependentFieldForListView();
+				$temp->updateDependentFieldForListView('', $filter_fields);
 				//END SUGARCRM flav=pro ONLY
 				$data[$dataIndex] = $temp->get_list_view_data($filter_fields);
 				//BEGIN SUGARCRM flav=pro ONLY

@@ -658,7 +658,6 @@ class SugarView
             require_once('include/SugarSearchEngine/SugarSearchEngineFactory.php');
 			$dcm = DCFactory::getContainer(null, 'DCMenu');
 			$notifData = $dcm->getNotifications();
-			$dcjs = getVersionedScript('include/DashletContainer/Containers/DCMenu.js');
 			$ss->assign('NOTIFCLASS', $notifData['class']);
 			$ss->assign('NOTIFCODE', $notifData['code']);
 			$ss->assign('NOTIFICON', $notifData['icon']);
@@ -685,7 +684,6 @@ class SugarView
 			} else {
 				$ss->assign('ISADMIN', false);
 			}
-			$ss->assign('SUGAR_DCJS', $dcjs);
 			//$ss->assign('SUGAR_DCMENU', $data['html']);
 		}
 		/******************END DC MENU*********************/

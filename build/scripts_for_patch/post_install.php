@@ -84,25 +84,13 @@ function rebuild_dashlets(){
         unlink('cache/dashlets/dashlets.php');
     }
 
-    global $sugar_version;
-    if($sugar_version < '5.5.0') {
-        require_once('include/SugarTheme/SugarTheme.php');
-    }
-
     require_once('include/Dashlets/DashletCacheBuilder.php');
-
     $dc = new DashletCacheBuilder();
     $dc->buildCache();
 }
 // BEGIN SUGARCRM flav=pro ONLY
-function rebuild_teams(){
-	global $sugar_version;
-    if($sugar_version < '5.5.0') {
-    	require_once('modules/Teams/TeamMembership.php');
-    	require_once('modules/Teams/Team.php');
-    }
+function rebuild_teams() {
     require_once('modules/Administration/RepairTeams.php');
-
     process_team_access(false, false,true,'1');
 }
 // END SUGARCRM flav=pro ONLY
@@ -112,10 +100,6 @@ function rebuild_roles(){
   global $ACLActions, $beanList, $beanFiles;
   include('modules/ACLActions/actiondefs.php');
   include('include/modules.php');
-  global $sugar_version;
-  if($sugar_version < '5.5.0') {
-  	require_once('include/ListView/ListView.php');
-  }
   include("modules/ACL/install_actions.php");
 }
 
@@ -143,8 +127,9 @@ function runSqlFiles($origVersion,$destVersion,$queryType,$resumeFromQuery=''){
 	if(!isset($_SESSION['schema_change']) || /* pre-4.5.0 upgrade wizard */
 		$_SESSION['schema_change'] == 'sugar') {
 		_logThis("Upgrading the database from {$origVersion} to version {$destVersion}", $path);
-		$origVersion = substr($origVersion, 0, 2) . 'x';
-		$destVersion = substr($destVersion, 0, 2) . 'x';
+
+        $origVersion = implodeVersion($origVersion, 3, 'x');
+        $destVersion = implodeVersion($destVersion, 3, 'x');
 
 		$schemaFileName = $origVersion."_to_".$destVersion;
 
@@ -316,28 +301,24 @@ function post_install() {
 
 	///////////////////////////////////////////////////////////////////////////
 	////	PUT DATABASE UPGRADE SCRIPT HANDLING HERE
-	$new_sugar_version = getUpgradeVersion();
-	$origVersion = substr(preg_replace("/[^0-9]/", "", $sugar_version),0,3);
-	$destVersion = substr(preg_replace("/[^0-9]/", "", $new_sugar_version),0,3);
+    $new_sugar_version = getUpgradeVersion();
 
     $post_action = status_post_install_action('sql_query');
 	if($post_action != null){
 	   if($post_action != 'done'){
 			//continue from where left in previous run
-			runSqlFiles($origVersion,$destVersion,'sql_query',$post_action);
+            runSqlFiles($sugar_version, $new_sugar_version, 'sql_query', $post_action);
 		  	$currProg['sql_query'] = 'done';
 		  	post_install_progress($currProg,'set');
 		}
 	 }
 	 else{
 		//never ran before
-		runSqlFiles($origVersion,$destVersion,'sql_query');
+        runSqlFiles($sugar_version, $new_sugar_version, 'sql_query');
 	  	$currProg['sql_query'] = 'done';
 	  	post_install_progress($currProg,'set');
 	  }
 
-	//if upgrading from 50GA we only need to do the version update.
-	if ($origVersion>'500') {
 		genericFunctions();
 
 		//BEGIN SUGARCRM flav=pro ONLY
@@ -346,15 +327,10 @@ function post_install() {
 		ACLAction::addActions('Users', 'module');
 		//END SUGARCRM flav=pro ONLY
 		upgradeDbAndFileVersion($new_sugar_version);
-	}
 
-	//Set the chart engine
-	if ($origVersion < '620') {
-		_logThis('Set chartEngine in config.php to JS Charts', $path);
-		$sugar_config['chartEngine'] = 'Jit';
-	}
     // Bug 51075 JennyG - We increased the upload_maxsize in 6.4.
-    if ($origVersion < '642') {
+    if (version_compare($sugar_version, '6.4.2', '<'))
+    {
         _logThis('Set upload_maxsize to the new limit that was introduced in 6.4', $path);
         $sugar_config['upload_maxsize'] = 30000000;
     }
@@ -383,6 +359,7 @@ function post_install() {
     upgradeGroupInboundEmailAccounts();
     upgrade_custom_duration_defs();
     upgrade_panel_tab_defs();
+
 
 	//BEGIN SUGARCRM flav=pro ONLY
 	//add language pack config information to config.php
@@ -428,7 +405,8 @@ function post_install() {
            _logThis('Renamed cache/blowfish to custom/blowfish');
     }
 
-    if($origVersion < '650') {
+    if (version_compare($sugar_version, '6.5.0', '<'))
+    {
        // move uploads dir
        if($sugar_config['upload_dir'] == $sugar_config['cache_dir'].'upload/') {
 
@@ -483,7 +461,8 @@ function post_install() {
        }
     }
 
-    if($origVersion < '651') {
+    if (version_compare($sugar_version, '6.5.1', '<'))
+    {
         // add cleanJobQueue job if not there
         $job = new Scheduler();
         $job->retrieve_by_string_fields(array("job" => 'function::cleanJobQueue'));
@@ -578,6 +557,12 @@ function updateRenamedModulesLabels()
                 $klass->changeModuleModStrings($moduleId, $replacementLabels);
             }
         }
+    }
+    //bug 57426 was introduced in 655, and it's effects need to be repaired during upgrade.
+    //Run the repair script if the original version is greater than 654, but less than 661
+    //(bug fix was introduced into 658 and 661 branches)
+    if (version_compare($sugar_version, '6.5.4', '>') && version_compare($sugar_version, '6.6.1', '<')) {
+        process_email_address_relationships();
     }
 }
 
