@@ -183,18 +183,16 @@
         return false;
     },
 
-    duplicateClicked: function(event) {
-        if (!this.$(event.target).hasClass('disabled')) {
-            app.cache.set("duplicate"+this.module, this.model.attributes);  
-            this.layout.trigger("drawer:create:fire", {
-                components: [{
-                    layout : 'create',
-                    context: {
-                        create: true
-                    }
-                }]
-            }, this);
-        }
+    duplicateClicked: function() {
+        app.cache.set("duplicate"+this.module, this.model.attributes);
+        this.layout.trigger("drawer:create:fire", {
+            components: [{
+                layout : 'create',
+                context: {
+                    create: true
+                }
+            }]
+        }, this);
     },
     
     editClicked: function() {
