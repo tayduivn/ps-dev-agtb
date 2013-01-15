@@ -35,7 +35,10 @@ class SugarACL
     // matches ACLField::hasAccess returns for compatibility
     const ACL_NO_ACCESS = 0;
     const ACL_READ_ONLY = 1;
+    const ACL_WRITE_ONLY = 2;
+    const ACL_CREATE_ONLY = 3;
     const ACL_READ_WRITE = 4;
+
 
     /**
      * Load bean from context
@@ -138,10 +141,16 @@ class SugarACL
      */
     public static function getFieldAccess($module, $field, $context = array())
     {
+        
+        
         $read = self::checkField($module, $field, "detail", $context);
-        if(!$read) return self::ACL_NO_ACCESS;
+        $create = self::checkField($module, $field, "create", $context);
         $write = self::checkField($module, $field, "edit", $context);
+        
+        if($create && !$read && !$write) return sefl::ACL_CREATE_ONLY;
+        if(!$read && !$create) return self::ACL_NO_ACCESS;
         if($write) return self::ACL_READ_WRITE;
+        
         return self::ACL_READ_ONLY;
     }
 
@@ -304,7 +313,7 @@ class SugarACL
         }
     }
 
-    public static $all_access = array('access' => true,'view' => true,'list' => true,'edit' => true,
+    public static $all_access = array('access' => true,'view' => true,'list' => true,'create' => true, 'edit' => true,
         'delete' => true,'import' => true,'export' => true,'massupdate' => true);
 
     /**

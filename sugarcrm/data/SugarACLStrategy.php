@@ -97,6 +97,8 @@ abstract class SugarACLStrategy
         foreach($field_list as $key => $field) {
             if($this->checkAccess($module, "field", $context + array("field" => $field, "action" => "edit"))) {
                 $result[$key] = SugarACL::ACL_READ_WRITE;
+            } else if($this->checkAccess($module, "field", $context + array("field" => $field, "action" => "create"))) {
+                $result[$key] = SugarACL::ACL_CREATE_ONLY;
             } else if($this->checkAccess($module, "field", $context + array("field" => $field, "action" => "detail"))) {
                 $result[$key] = SugarACL::ACL_READ_ONLY;
             } else {

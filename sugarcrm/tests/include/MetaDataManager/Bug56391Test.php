@@ -274,7 +274,7 @@ class Bug56391Test extends Sugar_PHPUnit_Framework_TestCase
         $expected_bean_result['access'] = array(
                                 'access' => 'yes',
                                 'admin' => 'no',
-                                'create' => 'yes',
+                                'create' => 'no',
                                 'view' => 'yes',
                                 'list' => 'yes',
                                 'edit' => 'yes',
@@ -330,7 +330,7 @@ class Bug56391Test extends Sugar_PHPUnit_Framework_TestCase
         $expected_bean_result['access'] = array(
                                 'access' => 'yes',
                                 'admin' => 'no',
-                                'create' => 'yes',
+                                'create' => 'no',
                                 'view' => 'yes',
                                 'list' => 'yes',
                                 'edit' => 'yes',
@@ -378,7 +378,7 @@ class Bug56391Test extends Sugar_PHPUnit_Framework_TestCase
         $expected_bean_result['access'] = array(
                                 'access' => 'yes',
                                 'admin' => 'no',
-                                'create' => 'yes',
+                                'create' => 'no',
                                 'view' => 'yes',
                                 'list' => 'yes',
                                 'edit' => 'yes',
@@ -422,7 +422,7 @@ class Bug56391Test extends Sugar_PHPUnit_Framework_TestCase
         $expected_bean_result['no_access'] = array(
                                 'access' => 'yes',
                                 'admin' => 'no',
-                                'create' => 'no',
+                                'create' => 'yes',
                                 'view' => 'yes',
                                 'list' => 'yes',
                                 'edit' => 'no',
@@ -439,7 +439,7 @@ class Bug56391Test extends Sugar_PHPUnit_Framework_TestCase
         $this->accounts['no_access'] = $account->id;
 
         unset($account);
-        $role = $this->createRole('UNIT TEST ' . create_guid(), $modules, array('access', 'view', 'list', 'edit', 'delete', 'export'), array('edit',));
+        $role = $this->createRole('UNIT TEST ' . create_guid(), $modules, array('access', 'view', 'list', 'edit', 'delete', 'export', 'create'), array('edit','create'));
 
         if (!($GLOBALS['current_user']->check_role_membership($role->name))) {
             $GLOBALS['current_user']->load_relationship('aclroles');

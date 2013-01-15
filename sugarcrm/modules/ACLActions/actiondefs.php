@@ -82,6 +82,12 @@ $GLOBALS['ACLActions'] = array(
 									'label'=>'LBL_ACTION_LIST',
 									'default'=>ACL_ALLOW_ALL,
 								),
+						'create' =>
+							array(
+									'aclaccess'=>array(ACL_ALLOW_ALL,ACL_ALLOW_DEFAULT, ACL_ALLOW_NONE),
+									'label'=>'LBL_ACTION_CREATE',
+									'default'=>ACL_ALLOW_ALL,								
+								),
 						'edit'=>
 								array(
 									'aclaccess'=>array(ACL_ALLOW_ALL,ACL_ALLOW_OWNER,ACL_ALLOW_DEFAULT, ACL_ALLOW_NONE),

@@ -300,7 +300,7 @@ class MetaDataManager {
         $outputAcl = array('fields'=>array());
 
         if (!SugarACL::moduleSupportsACL($module)) {
-            foreach ( array('admin', 'access','view','list','edit','delete','import','export','massupdate') as $action ) {
+            foreach ( array('admin', 'access','create', 'view','list','edit','delete','import','export','massupdate') as $action ) {
                 $outputAcl[$action] = 'yes';
             }
         } else {
@@ -331,9 +331,6 @@ class MetaDataManager {
             // Only loop through the fields if we have a reason to, admins give full access on everything, no access gives no access to anything
             if ( $outputAcl['access'] == 'yes') {
 
-                // Currently create just uses the edit permission, but there is probably a need for a separate permission for create
-                $outputAcl['create'] = $outputAcl['edit'];
-
                 // Now time to dig through the fields
                 $fieldsAcl = array();
                 //BEGIN SUGARCRM flav=pro ONLY
@@ -341,7 +338,7 @@ class MetaDataManager {
                 //END SUGARCRM flav=pro ONLY
                 // get the field names
                 SugarACL::listFilter($module, $fieldsAcl, $context, array('add_acl' => true));
-
+                
                 foreach ( $fieldsAcl as $field => $fieldAcl ) {
                     switch ( $fieldAcl['acl'] ) {
                         case SugarACL::ACL_READ_WRITE:
@@ -351,7 +348,10 @@ class MetaDataManager {
                             $outputAcl['fields'][$field]['write'] = 'no';
                             $outputAcl['fields'][$field]['create'] = 'no';
                             break;
-                        case 2:
+                        case SugarACL::ACL_CREATE_ONLY:
+                            $outputAcl['fields'][$field]['write'] = 'no';
+                            $outputAcl['fields'][$field]['read'] = 'no';                            
+                        case SugarACL::ACL_WRITE_ONLY:
                             $outputAcl['fields'][$field]['read'] = 'no';
                             break;
                         case SugarACL::ACL_NO_ACCESS:

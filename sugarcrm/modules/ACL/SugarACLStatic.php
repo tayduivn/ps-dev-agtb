@@ -133,6 +133,9 @@ class SugarACLStatic extends SugarACLStrategy
             case 'detail':
                 $access = 1;
                 break;
+            case 'create':
+                $access = 2;
+                break;
             case 'write':
             case 'edit':
                 $access = 3;
