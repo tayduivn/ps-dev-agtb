@@ -46,7 +46,6 @@ $viewdefs['Users']['summer']['view']['record'] = array(
         array(
             'name' => 'panel_head',
             'columns' => 2,
-            'labels' => false,
             'labelsOnTop' => false,
             'placeholders' => true,
             'fields' => array(

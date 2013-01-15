@@ -59,9 +59,17 @@
                         searchmore = selected.data("searchmore"),
                         empty = selected.data("empty");
                     if(searchmore || empty) {
+                        self.beforeSearchMore();
                         $(evt.currentTarget).val('');
-                        $(this).trigger("liszt:updated");
-                        //TODO: inline Modal for selection
+                        self.setValue({id: '', value: ''});
+                        self.view.layout.trigger("drawer:selection:fire", {
+                            components: [{
+                                layout : 'selection-list',
+                                context: {
+                                    module: self.getSearchModule()
+                                }
+                            }]
+                        }, self.setValue);
                     } else {
                         self.setValue({id: id, value: value});
                     }
@@ -70,24 +78,16 @@
                         value = selected.text(),
                         id = selected.val();
 
-                    self.setValue({id: id, value: value});
+                    self.setValue({id: id, value: value, silent: true});
                 });
         }
         return result;
     },
-    bindDataChange: function() {
-        if (this.model) {
-            var self = this;
-            this.model.on("change:" + this.name, function() {
-                if(self.tplName !== 'edit') {
-                    self.render();
-                }
-            }, this);
-        }
-    },
+    beforeSearchMore: function() {},
     setValue: function(model) {
-        this.model.set(this.def.id_name, model.id);
-        this.model.set(this.def.name, model.value);
+        var silent = model.silent || false;
+        this.model.set(this.def.id_name, model.id, {silent: silent});
+        this.model.set(this.def.name, model.value, {silent: silent});
     },
     /**
      * Throttles search ajax

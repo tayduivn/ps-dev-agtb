@@ -314,7 +314,8 @@ class MetaDataManager {
         $obj = BeanFactory::getObjectName($module);
 
         $outputAcl = array('fields'=>array());
-        if ( is_admin($userObject) || !SugarACL::moduleSupportsACL($module) ) {
+
+        if (!SugarACL::moduleSupportsACL($module)) {
             foreach ( array('admin', 'access','view','list','edit','delete','import','export','massupdate') as $action ) {
                 $outputAcl[$action] = 'yes';
             }
@@ -345,7 +346,19 @@ class MetaDataManager {
                 $fieldsAcl = ACLField::getAvailableFields($module);
                 //END SUGARCRM flav=pro ONLY
                 // get the field names
-                SugarACL::listFilter($module, $fieldsAcl, array('user' => $userObject), array('add_acl' => true));
+
+                // define context variable as to not have it throw a notice when it doesn't exist
+                // SI Bug-60007
+                $context = array();
+
+                // if the bean is not set, or a new bean.. set the owner override
+                // this will allow fields marked Owner to pass through ok.
+                if($bean == false || empty($bean->id) || (isset($bean->new_with_id) && $bean->new_with_id == true)) {
+                    $context['owner_override'] = true;
+                }
+
+                SugarACL::listFilter($module, $fieldsAcl, $context, array('add_acl' => true));
+
                 foreach ( $fieldsAcl as $field => $fieldAcl ) {
                     switch ( $fieldAcl['acl'] ) {
                         case SugarACL::ACL_READ_WRITE:
@@ -587,6 +600,7 @@ class MetaDataManager {
             MetaDataFiles::clearModuleClientCache();
         }
 
+        // Wipe out any files from the metadata cache directory
         $metadataFiles = glob(sugar_cached('api/metadata/').'*');
         if ( is_array($metadataFiles) ) {
             foreach ( $metadataFiles as $metadataFile ) {
@@ -595,6 +609,14 @@ class MetaDataManager {
                 // of many deletes.
                 unlink($metadataFile);
             }
+        }
+        
+        // clear the platform cache from sugar_cache to avoid out of date data
+        $platforms = self::getPlatformList();
+        foreach($platforms as $platform) {
+            $platformKey = $platform == "base" ?  "base" : implode(",", array($platform, "base"));
+            $hashKey = "metadata:$platformKey:hash";
+            sugar_cache_clear($hashKey);
         }
     }
     

@@ -48,14 +48,18 @@ class FilterPanelLayout
                 $filteredLayout->set("name", $tab["name"]);
             }
 
-            foreach ($tab["toggles"] as $toggle) {
-                $component = array("view" => $toggle);
+            foreach ($tab["toggles"] as $type => $toggle) {
+                if(is_string($type)) {
+                    $filteredLayout->push(array($type => $toggle));
+                } else {
+                    $component = array("view" => $toggle);
 
-                if (isset($tab["context"])) {
-                    $component["context"] = $tab["context"];
+                    if (isset($tab["context"])) {
+                        $component["context"] = $tab["context"];
+                    }
+
+                    $filteredLayout->push($component);
                 }
-
-                $filteredLayout->push($component);
             }
         }
 

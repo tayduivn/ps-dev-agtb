@@ -100,9 +100,9 @@ string_format($GLOBALS['app_strings']['ERR_DB_QUERY'],array('OpportunitiesCurren
         $stages = $this->getClosedStages();
 
         // setup SQL statement
-        $query = sprintf("UPDATE %s t SET t.%s = t.base_rate * t.%s
-            WHERE t.sales_stage NOT IN ('%s')
-            AND t.currency_id = '%s'",
+        $query = sprintf("UPDATE %s SET %s = base_rate * %s
+            WHERE sales_stage NOT IN ('%s')
+            AND currency_id = '%s'",
             $tableName,
             $usDollarColumn,
             $amountColumn,

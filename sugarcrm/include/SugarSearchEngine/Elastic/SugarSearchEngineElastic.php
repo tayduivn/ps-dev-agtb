@@ -170,15 +170,21 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
                 if(!isset($fieldDef['type']) || $fieldDef['type'] != 'datetimecombo') {
                     $keyValues[$fieldName] = strval(html_entity_decode($bean->$fieldName,ENT_QUOTES));
                 }
-                else {
+                elseif(isset($fieldDef['type']) && $fieldDef['type'] == 'datetimecombo') {
                     // dates have to be in ISO-8601 without the : in the TZ
                     global $timedate;
                     $date = $timedate->fromDb($bean->$fieldName);
-                    $keyValues[$fieldName] = $timedate->asIso($date, null, array('stripTZColon' => true));
+                    if($date instanceof TimeDate) {
+                        $keyValues[$fieldName] = $timedate->asIso($date, null, array('stripTZColon' => true));
+                    }
+                    else {
+                        $GLOBALS['log']->error("TimeDate Conversion Failed for " . get_class($bean) . "->{$fieldName}");
+                    }
                 }
-                
+                else {
+                    $keyValues[$fieldName] = $bean->$fieldName;
+                }
             }
-
         }
 
         //Always add our module
@@ -568,37 +574,26 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
     {
         $requireOwner = ACLController::requireOwner($module, 'list');
 
-        $class = $GLOBALS['beanList'][$module];
-        $seed = new $class();
+        $seed = BeanFactory::newBean($module);
+
         $hasAdminAccess = $GLOBALS['current_user']->isAdminForModule($seed->getACLCategory());
+        
+        $moduleFilter = new Elastica_Filter_And();
 
         if ($hasAdminAccess)
         {
+            $typeTermFilter = $this->getTypeTermFilter($module);
+            $moduleFilter->addFilter($typeTermFilter);
             // user has admin access for this module, skip team filter
             if ($requireOwner)
             {
-                // need to be document owner to view
-                $moduleFilter = new Elastica_Filter_And();
-
-                // type term filter
-                $typeTermFilter = $this->getTypeTermFilter($module);
-                $moduleFilter->addFilter($typeTermFilter);
-
                 // owner term filter
                 $ownerTermFilter = $this->getOwnerTermFilter();
                 $moduleFilter->addFilter($ownerTermFilter);
             }
-            else
-            {
-                // do not need to be document owner to view
-                // a single type term filter is all we need
-                $moduleFilter = $this->getTypeTermFilter($module);
-            }
         }
         else
         {
-            // user does not have admin access, need team filter
-            $moduleFilter = new Elastica_Filter_And();
 
             // team filter
             $teamFilter = $this->constructTeamFilter();
@@ -629,7 +624,6 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
         foreach ($finalTypes as $module)
         {
             $moduleFilter = $this->constructModuleLevelFilter($module);
-            
             // if we want myitems add more to the module filter
             if(isset($options['my_items']) && $options['my_items'] !== false) {
                 $moduleFilter = $this->myItemsSearch($moduleFilter);
@@ -638,14 +632,14 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
                 $moduleFilter = $this->constructRangeFilter($moduleFilter, $options['filter']);
             }
             //BEGIN SUGARCRM flav=pro ONLY
-            
+
             // we only want JUST favorites if the option is 2
             // if the option is 1 that means we want all including favorites,
             // which in FTS is a normal search parameter
             if(isset($options['favorites']) && $options['favorites'] == 2) {
-                $moduleFilter = $this->constructMyFavoritesFilter($moduleFilter);
+                $favoritesFilter = $this->constructMyFavoritesFilter();
+                $moduleFilter->addFilter($favoritesFilter);
             }
-
             //END SUGARCRM flav=pro ONLY
 
             $mainFilter->addFilter($moduleFilter);
@@ -664,15 +658,14 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
      * @return object $moduleFilter
      */
 
-    protected function constructMyFavoritesFilter($moduleFilter)
+    protected function constructMyFavoritesFilter()
     {
         $ownerTermFilter = new Elastica_Filter_Term();
         // same bug as team set id, looking into a fix in elastic search to allow -'s without tokenizing
 
         $ownerTermFilter->setTerm('user_favorites', str_replace('-','',$GLOBALS['current_user']->id));
 
-        $moduleFilter->addFilter($ownerTermFilter);
-        return $moduleFilter;
+        return $ownerTermFilter;
     }
     //END SUGARCRM flav=pro ONLY
 
@@ -737,16 +730,6 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
                 $queryObj = new Elastica_Query_QueryString($qString);
                 $queryObj->setAnalyzeWildcard(true);
                 $queryObj->setAutoGeneratePhraseQueries(false);
-                if( !empty($options['append_wildcard']) ) {
-                    // see https://github.com/elasticsearch/elasticsearch/issues/1186 for details
-                    $queryObj->setRewrite('top_terms_5');
-
-                    // bug_54567: whitespace analyzer is only used for query that searches email address now
-                    // it makes whitespace the divider for the query keyword
-                    if (preg_match('/@/', $qString)) {
-                        $queryObj->setAnalyzer('whitespace');
-                    }
-                }
 
                 // set query string fields
                 $options['addSearchBoosts'] = true;
@@ -762,20 +745,13 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
             $finalTypes = array();
             if(!empty($options['moduleFilter']))
             {
-                if( is_admin($GLOBALS['current_user']) ) {
-                    $finalTypes = $options['moduleFilter'];
-                }
-                else
+                foreach ($options['moduleFilter'] as $moduleName)
                 {
-                    foreach ($options['moduleFilter'] as $moduleName)
+                    $seed = BeanFactory::newBean($moduleName);
+                    // only add the module to the list if it can be viewed
+                    if ($seed->ACLAccess('ListView'))
                     {
-                        $class = $GLOBALS['beanList'][$moduleName];
-                        $seed = new $class();
-                        // only add the module to the list if it can be viewed
-                        if ($seed->ACLAccess('ListView'))
-                        {
-                            $finalTypes[] = $moduleName;
-                        }
+                        $finalTypes[] = $moduleName;
                     }
                 }
                 if (!empty($finalTypes))
@@ -784,18 +760,13 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
                 }
             }
 
-            if( !is_admin($GLOBALS['current_user']) ) {
-                // main filter
-                $mainFilter = $this->constructMainFilter($finalTypes, $options);
+            
+            // main filter
+            $mainFilter = $this->constructMainFilter($finalTypes, $options);
 
-                $query = new Elastica_Query($queryObj);
-                $query->setFilter($mainFilter);
-            }
-            else
-            {
-                $query = new Elastica_Query($queryObj);
-            }
-
+            $query = new Elastica_Query($queryObj);
+            $query->setFilter($mainFilter);
+        
             if(isset($options['sort']) && is_array($options['sort'])) {
                 foreach($options['sort'] AS $sort) {
                     $query->addSort($sort);
@@ -831,7 +802,6 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
             $this->checkException($e);
             return null;
         }
-
         return $results;
     }
 

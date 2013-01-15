@@ -23,9 +23,27 @@
                 massFields = [];
             _.each(moduleMetadata.fields, function(field){
                 if(field.massupdate) {
-                    //TODO: Add or Replace option for Teamset
+                    //TODO: Add or Replace option for Teamset (team_name_type)
 
                     field.label = field.label || field.vname;
+                    //TODO: Remove hack code for teamset after metadata return correct team type
+                    if(field.name == 'team_name') {
+                        var team_field = _.clone(field);
+                        team_field.type = 'teamset';
+                        field = {
+                            type: 'fieldset',
+                            name: team_field.name,
+                            label: team_field.label,
+                            fields: [
+                                team_field,
+                                {
+                                    'name' : 'team_name_type',
+                                    'type' : 'bool',
+                                    'label' : 'LBL_SELECT_APPEND_TEAMS'
+                                }
+                            ]
+                        };
+                    }
                     if(field.type === 'bool') {
                         field.type = 'enum';
                         field.options = 'checkbox_dom';
@@ -158,84 +176,113 @@
     confirmDelete: function(evt) {
         var self = this;
         this.hide();
-        //TODO: Use modal window to confirm the message
-        if(confirm(app.lang.get('NTC_DELETE_CONFIRMATION_MULTIPLE'))) {
-            var massUpdate = self.getMassUpdateModel(self.module);
-            if(massUpdate) {
-                app.alert.show('load_list_view', {level: 'process', title: app.lang.getAppString('LBL_PORTAL_LOADING')});
+        app.alert.show('delete_confirmation', {
+            level: 'confirmation',
+            messages: app.lang.get('NTC_DELETE_CONFIRMATION_MULTIPLE'),
+            onConfirm: function() {
+                var massUpdate = self.getMassUpdateModel(self.module);
+                if(massUpdate) {
+                    app.alert.show('load_list_view', {level: 'process', title: app.lang.getAppString('LBL_PORTAL_LOADING')});
+                    massUpdate.fetch({
+                        method: 'delete',
+                        error: function() {
+                            app.alert.show('error_while_mass_update', {level:'error', title: app.lang.getAppString('ERR_INTERNAL_ERR_MSG'), messages: app.lang.getAppString('ERR_HTTP_500_TEXT'), autoClose: true});
+                        },
+                        success: function(data, response) {
+                            massUpdate.reset();
+                            if(response.status == 'done') {
+                                self.layout.trigger("list:search:fire");
+                            } else if(response.status == 'queued') {
+                                app.alert.show('jobqueue_notice', {level: 'success', title: app.lang.getAppString('LBL_MASS_UPDATE_JOB_QUEUED'), autoClose: true});
+                            }
+                        },
+                        complete: function(data) {
+                            app.alert.dismiss('load_list_view');
+                        }
+                    });
 
-                massUpdate.fetch({
-                    method: 'delete',
-                    error: function() {
-                        app.alert.show('error_while_mass_update', {level:'error', title: app.lang.getAppString('ERR_INTERNAL_ERR_MSG'), messages: app.lang.getAppString('ERR_HTTP_500_TEXT'), autoClose: true});
-                    },
-                    success: function(data) {
-                        massUpdate.reset();
-                        self.layout.trigger("list:search:fire");
-                    },
-                    complete: function(data) {
-                        app.alert.dismiss('load_list_view');
-                    }
-                });
-
+                }
             }
-        }
+        });
     },
     save: function() {
         var massUpdate = this.getMassUpdateModel(this.module),
             attributes = this.model.attributes,
-            self = this,
-            fields = _.initial(this.fieldValues).concat(this.defaultOption);
-        var emptyValues = [],
+            self = this;
+
+        var validate = this.checkValidationError();
+
+        var errors = validate.errors,
+            emptyValues = validate.emptyValues,
             confirmMessage = app.lang.getAppString('LBL_MASS_UPDATE_EMPTY_VALUES');
-        var errors = {}, validator = {};
-        _.each(fields , function(field) {
-            if(field.name) {
-                validator = {};
-                validator[field.name] = field;
-                field.required = (_.isBoolean(field.required) && field.required) || (field.required && field.required == 'true') || false;
-                errors = _.extend(self.model._doValidate(validator), errors);
-                var value = self.model.get(field.name);
-                if(!value) {
-                    emptyValues.push(app.lang.get(field.label, self.model.module));
-                    self.model.set(field.name, '', {silent: true});
-                    if(field.id_name) {
-                        self.model.set(field.id_name, '', {silent: true});
-                    }
-                }
-            }
-        });
 
         this.$(".fieldPlaceHolder .error").removeClass("error");
         this.$(".fieldPlaceHolder .help-block").hide();
 
         if(_.isEmpty(errors)) {
-            confirmMessage += '\n[' + emptyValues.join(',') + ']\n' + app.lang.getAppString('LBL_MASS_UPDATE_EMPTY_CONFIRM');
-            //TODO: Use modal window to confirm the message
-            if(massUpdate && (emptyValues.length == 0 || confirm(confirmMessage))) {
-                app.alert.show('load_massupdate', {level: 'process', title: app.lang.getAppString('LBL_PORTAL_LOADING')});
+            confirmMessage += '<br>[' + emptyValues.join(',') + ']<br>' + app.lang.getAppString('LBL_MASS_UPDATE_EMPTY_CONFIRM') + '<br>';
+            if(massUpdate) {
+                var fetchMassupdate = function() {
+                    app.alert.show('load_massupdate', {level: 'process', title: app.lang.getAppString('LBL_PORTAL_LOADING')});
 
-                massUpdate.fetch({
-                    attributes: attributes,
-                    error: function() {
-                        app.alert.show('error_while_mass_update', {level:'error', title: app.lang.getAppString('ERR_INTERNAL_ERR_MSG'), messages: app.lang.getAppString('ERR_HTTP_500_TEXT'), autoClose: true});
-                    },
-                    success: function(data, response) {
-                        massUpdate.reset();
-                        if(response.status == 'done') {
-                            self.layout.trigger("list:search:fire");
-                        } else if(response.status == 'queued') {
-                            app.alert.show('jobqueue_notice', {level: 'success', title: app.lang.getAppString('LBL_MASS_UPDATE_JOB_QUEUED'), autoClose: true});
+                    massUpdate.fetch({
+                        attributes: attributes,
+                        error: function() {
+                            app.alert.show('error_while_mass_update', {level:'error', title: app.lang.getAppString('ERR_INTERNAL_ERR_MSG'), messages: app.lang.getAppString('ERR_HTTP_500_TEXT'), autoClose: true});
+                        },
+                        success: function(data, response) {
+                            massUpdate.reset();
+                            if(response.status == 'done') {
+                                self.layout.trigger("list:search:fire");
+                            } else if(response.status == 'queued') {
+                                app.alert.show('jobqueue_notice', {level: 'success', title: app.lang.getAppString('LBL_MASS_UPDATE_JOB_QUEUED'), autoClose: true});
+                            }
+                        },
+                        complete: function(data) {
+                            app.alert.dismiss('load_massupdate');
                         }
-                    },
-                    complete: function(data) {
-                        app.alert.dismiss('load_massupdate');
-                    }
-                });
+                    });
+                };
+                if(emptyValues.length == 0) {
+                    fetchMassupdate.call(this);
+                } else {
+                    app.alert.show('empty_confirmation', {
+                        level: 'confirmation',
+                        messages: confirmMessage,
+                        onConfirm: fetchMassupdate
+                    });
+                }
             }
         } else {
             this.handleValidationError(errors);
         }
+    },
+    checkValidationError: function() {
+        var emptyValues = [],
+            errors = {},
+            validator = {},
+            fields = _.initial(this.fieldValues).concat(this.defaultOption);
+        _.each(fields , function(field) {
+            if(field.name) {
+                validator = {};
+                validator[field.name] = field;
+                field.required = (_.isBoolean(field.required) && field.required) || (field.required && field.required == 'true') || false;
+                errors = _.extend(this.model._doValidate(validator), errors);
+                var value = this.model.get(field.name);
+                if(!value) {
+                    emptyValues.push(app.lang.get(field.label, this.model.module));
+                    this.model.set(field.name, '', {silent: true});
+                    if(field.id_name) {
+                        this.model.set(field.id_name, '', {silent: true});
+                    }
+                }
+            }
+        }, this);
+
+        return {
+            errors: errors,
+            emptyValues: emptyValues
+        };
     },
     handleValidationError: function(errors) {
         var self = this;

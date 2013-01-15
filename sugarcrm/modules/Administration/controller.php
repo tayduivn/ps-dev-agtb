@@ -20,6 +20,8 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
+require_once('include/MetaDataManager/MetaDataManager.php');
+
 class AdministrationController extends SugarController
 {
     public function action_savetabs()
@@ -113,7 +115,6 @@ class AdministrationController extends SugarController
             sugar_cache_reset();
             
             // Bug 59121 - Clear the metadata cache
-            require_once 'include/MetaDataManager/MetaDataManager.php';
             MetaDataManager::clearAPICache();
         }
 
@@ -220,6 +221,8 @@ class AdministrationController extends SugarController
                  $this->cfg->handleOverride();
              }
 
+             MetaDataManager::clearAPICache();
+             
              if(!$ftsConnectionValid)
                  echo $GLOBALS['mod_strings']['LBL_FTS_CONNECTION_INVALID'];
              else

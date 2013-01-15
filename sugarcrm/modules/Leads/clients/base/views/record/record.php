@@ -30,33 +30,53 @@ if (!defined('sugarEntry') || !sugarEntry) {
  ********************************************************************************/
 
 $viewdefs['Leads']['base']['view']['record'] = array(
-    'buttons' =>
-    array(
+    'buttons' => array(
         array(
-            'type'    => 'button',
-            'label'   => 'LBL_SAVE_BUTTON_LABEL',
-            'css_class' => 'hide btn-primary record-save',
+            'type' => 'button',
+            'name' => 'cancel_button',
+            'label' => 'LBL_CANCEL_BUTTON_LABEL',
+            'css_class' => 'btn-invisible btn-link',
+            'mode' => 'edit',
         ),
         array(
-            'type'    => 'button',
-            'label'   => 'LBL_CANCEL_BUTTON_LABEL',
-            'css_class' => 'hide record-cancel',
+            'type' => 'buttondropdown',
+            'name' => 'edit_dropdown',
+            'default' => array(
+                'name' => 'edit_button',
+                'label' => 'LBL_EDIT_BUTTON_LABEL',
+            ),
+            'dropdown' => array(
+                array(
+                    'name' => 'delete_button',
+                    'label' => 'LBL_DELETE_BUTTON_LABEL',
+                ),
+                array(
+                    'name' => 'duplicate_button',
+                    'label' => 'LBL_DUPLICATE_BUTTON_LABEL',
+                ),
+                array(
+                    'type'    => 'button',
+                    'label'   => 'LBL_CONVERT_BUTTON_LABEL',
+                    'css_class' => 'btn-primary lead-convert',
+                    'name'    => 'lead_convert_button'
+                ),
+            ),
+            'mode' => 'view',
         ),
         array(
-            'type'    => 'button',
-            'label'   => 'LBL_EDIT_BUTTON_LABEL',
-            'css_class' => 'record-edit',
-        ),
-        array(
-            'type'    => 'button',
-            'label'   => 'LBL_CONVERT_BUTTON_LABEL',
-            'css_class' => 'btn-primary lead-convert',
-            'name'    => 'lead_convert_button'
-        ),
-        array(
-            'type'    => 'button',
-            'label'   => 'LBL_DELETE_BUTTON_LABEL',
-            'css_class' => 'record-delete',
+            'type' => 'buttondropdown',
+            'name' => 'save_dropdown',
+            'default' => array(
+                'name' => 'save_button',
+                'label' => 'LBL_SAVE_BUTTON_LABEL',
+            ),
+            'dropdown' => array(
+                array(
+                    'name' => 'delete_button',
+                    'label' => 'LBL_DELETE_BUTTON_LABEL',
+                ),
+            ),
+            'mode' => 'edit',
         ),
         array(
             'name' => 'sidebar_toggle',
@@ -77,7 +97,11 @@ $viewdefs['Leads']['base']['view']['record'] = array(
                     'type' => 'badge',
                     'noedit'=> true,
                     'related_fields' => array('converted', 'account_id', 'contact_id', 'contact_name', 'opportunity_id', 'opportunity_name'),
-                )
+                ),
+                array(
+                    'type' => 'favorite',
+                    'noedit' => true,
+                ),
             )
         ),
         array(
@@ -109,6 +133,29 @@ $viewdefs['Leads']['base']['view']['record'] = array(
                         'primary_address_country',
                     ),
                 ),
+                array(
+                    'name' => 'fieldset_altaddress',
+                    'type' => 'fieldset',
+                    'label' => 'Other Address',
+                    'fields' => array(
+                        'alt_address_street',
+                        'alt_address_city',
+                        'alt_address_state',
+                        'alt_address_postalcode',
+                        'alt_address_country',
+                        array(
+                            'name' => 'copy',
+                            'type' => 'copy',
+                            'mapping' => array(
+                                'primary_address_street' => 'alt_address_street',
+                                'primary_address_city' => 'alt_address_city',
+                                'primary_address_state' => 'alt_address_state',
+                                'primary_address_postalcode' => 'alt_address_postalcode',
+                                'primary_address_country' => 'alt_address_country',
+                            ),
+                        ),
+                    ),
+                ),
                 'phone_work',
                 'do_not_call',
                 'phone_fax',
@@ -133,23 +180,14 @@ $viewdefs['Leads']['base']['view']['record'] = array(
                 'lead_source_description',
                 'campaign_name',
                 'opportunity_amount',
-                array(
-                    'name' => 'fieldset_altaddress',
-                    'type' => 'fieldset',
-                    'label' => 'Other Address',
-                    'fields' => array(
-                        'alt_address_street',
-                        'alt_address_city',
-                        'alt_address_state',
-                        'alt_address_postalcode',
-                        'alt_address_country'
-                    )
-                ),
                 'refered_by',
                 'assigned_user_name',
                 'date_modified',
                 //BEGIN SUGARCRM flav=pro ONLY
-                'team_name',
+                array(
+                    "type" => "teamset",
+                    "name" => "team_name"
+                ),
                 //END SUGARCRM flav=pro ONLY
                 'date_entered'
             )

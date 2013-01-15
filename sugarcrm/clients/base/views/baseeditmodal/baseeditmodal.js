@@ -57,7 +57,9 @@
     },
     cancelButton: function() {
         this.$('.modal').modal('hide').find('form').get(0).reset();
-        this.context.get('createModel').clear();
+        if (this.context.has('createModel')) {
+            this.context.get('createModel').clear();
+        }
     },
     saveComplete: function() {
         //reset the form

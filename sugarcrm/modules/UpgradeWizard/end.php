@@ -293,12 +293,6 @@ if (version_compare($_SESSION['current_db_version'], '6.5.0', '<'))
     ");
 }
 
-//Unlink files that have been removed
-if(function_exists('unlinkUpgradeFiles'))
-{
-	unlinkUpgradeFiles($_SESSION['current_db_version']);
-}
-
 if(function_exists('rebuildSprites') && function_exists('imagecreatetruecolor'))
 {
     rebuildSprites(true);

@@ -43,6 +43,7 @@ class Worksheet extends SugarBean {
     public $op_probability;
     public $quota;
     public $version;
+    public $revision;
 
     public $table_name = "worksheet";
 
@@ -69,10 +70,11 @@ class Worksheet extends SugarBean {
      */
     public function save($check_notify = false){
         if(empty($this->id) || $this->new_with_id == true) {
-        	$currency = SugarCurrency::getUserLocaleCurrency();
+        	$currency = SugarCurrency::getBaseCurrency();
             $this->currency_id = $currency->id;
             $this->base_rate = $currency->conversion_rate;
         }
+        $this->revision = microtime(true);
         
         return parent::save($check_notify);
     }

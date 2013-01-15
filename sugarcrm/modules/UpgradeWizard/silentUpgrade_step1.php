@@ -46,7 +46,11 @@
 //// - Run 3-way merges
 /////////////////////////////////////////////////////////////////////////////////////////
 ini_set('memory_limit',-1);
-ini_set('error_reporting',E_ALL &~E_STRICT & ~E_DEPRECATED);
+if (version_compare(PHP_VERSION, '5.3.0', '>=')) {
+    ini_set('error_reporting', E_ALL & ~E_STRICT & ~E_DEPRECATED);
+} else {
+    ini_set('error_reporting', E_ALL & ~E_STRICT);
+}
 ///////////////////////////////////////////////////////////////////////////////
 
 function verifyArguments($argv,$usage_regular)
@@ -259,7 +263,14 @@ copy($argv[1], $install_file);
 ///////////////////////////////////////////////////////////////////////////////
 ////	MAKE SURE PATCH IS COMPATIBLE
 if(is_file("$unzip_dir/manifest.php")) {
-    require_once("{$zipBasePath}/modules/UpgradeWizard/uw_utils.php");
+
+    //Check if uw_utils.php exists in zip package, fall back to existing file if not found (needed for flavor conversions)
+    if(file_exists("{$zipBasePath}/modules/UpgradeWizard/uw_utils.php")) {
+        require_once("{$zipBasePath}/modules/UpgradeWizard/uw_utils.php");
+    } else {
+        require_once("modules/UpgradeWizard/uw_utils.php");
+    }
+
     // provides $manifest array
 	include("$unzip_dir/manifest.php");
 	if(!isset($manifest)) {
