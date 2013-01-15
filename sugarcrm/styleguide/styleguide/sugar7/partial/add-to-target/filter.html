@@ -1,0 +1,62 @@
+<style>
+.add-to-target-table {
+  margin-bottom:0;
+}
+
+.add-to-target-table tr,
+.add-to-target-table tr td {
+  background:#E8E8E8 !important;
+}
+</style>
+
+<table class="add-to-target-table table table-striped filter">
+  <tr>
+    <td style="border-bottom:1px solid #ddd">
+      <strong>Add to target list</strong>
+
+      <span class="pull-right">
+        <a href="#"  style="padding:0 1em">Create new target list</a>
+        <input type="button" class="btn" value="Update">
+        <i class="add-targter-filter-close icon-remove" style="padding:0 1em"></i>
+      </span>
+    </td>
+  </tr>
+
+  <tr>
+    <td style="">
+      <span class="pull-left">
+          <select id="select01a" data-placeholder="Select target list..." class="chzn-select choose-region">
+            <option value="pk0"></option>
+            <option value="pk1">Global Atlantic, default</option>
+            <option value="pk2">Global East, default</option>
+            <option value="pk3">Global North, default</option>
+            <option value="pk4">Global Pacific, default</option>
+            <option value="pk5">Global Pacific, seed</option>
+            <option value="pk6">Search for more...</option>
+          </select>
+      </span>
+
+      <span class="pull-right">
+        <i class="add-targter-filter-add icon-plus" style="padding:0 1em"></i>
+      </span>
+    </td>
+  </tr>
+</table>
+
+
+<script>
+
+  $(document).ready(function() {
+    $('.chzn-select').chosen({ disable_search_threshold: 5 });
+    $('body').on('click', '#select01a_chzn .active-result', function(){
+      drawer(true);
+      loadPartials([
+        {"file":"add-to-target/search-and-select-target-lists","target":"#edit .record","method":"replace"},
+        {"file":"add-to-target/buttons","target":"#edit .headerpane","method":"replace"},
+        {"file":"add-to-target/how-to-search-target","target":".side-pane.active","method":"append"},
+
+      ]);
+    });
+
+  });
+</script>
