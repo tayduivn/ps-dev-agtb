@@ -2056,11 +2056,7 @@ class SugarBean
                 $mailer->setSubject($subject);
 
                 // set the body of the email...
-
-                // the compared strings will be the same if strip_tags had no affect
-                // if the compared strings are equal, then it's a text-only message
                 $textOnly = EmailFormatter::isTextOnly($body);
-
                 if ($textOnly) {
                     $mailer->setTextBody($body);
                 } else {
