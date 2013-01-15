@@ -89,6 +89,7 @@ class SugarUploadS3 extends UploadStream
             $bucket = $this->bucket;
             $object = $url['host'];
         }
+        $bucket = preg_replace('/[^a-z0-9\.-]/', 'x', $bucket);
         return ($prefix?self::STREAM_NAME."://":"").$bucket."/".$object;
     }
 
@@ -103,7 +104,7 @@ class SugarUploadS3 extends UploadStream
         // cut off upload://, then replace /s with _s, then add prefix back
         $bucket = trim(str_replace("/", "-", substr($path, strlen(self::STREAM_NAME)+3)), '-');
         // remove invalid chars
-        $bucket = preg_replace('/[^a-z0-9\.-]/', 'X', $bucket);
+        $bucket = preg_replace('/[^a-z0-9\.-]/', 'x', $bucket);
     	return ($prefix?self::STREAM_NAME."://":"").$this->bucket."-".$bucket;
     }
 
@@ -179,6 +180,9 @@ class SugarUploadS3 extends UploadStream
      */
     public function checkDir($path)
     {
+        if(!parent::checkDir($path)) {
+            parent::createDir($path);
+        }
         return $this->s3->isBucketAvailable($this->urlToBucketName($path, false));
     }
 
