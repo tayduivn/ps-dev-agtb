@@ -31,13 +31,17 @@
  *      on: context.forecasts
  *      by: change:selectedUser, change:selectedTimePeriod
  * 
- * forecasts:commitButtons:saved
- *      on: context.forecasts
- *      by: triggerSaveDraft()
+ * forecasts:worksheet:saveWorksheet
+ *      on:context.forecasts
+ *      by: triggerCommit(), triggerSaveDraft()
  *
  * modal:forecastsTabbedConfig:open - to cause modal.js to pop up
  *      on: layout
  *      by: triggerConfigModal()
+ *      
+ * forecasts:committed:commit
+ *      on: context.forecasts
+ *      by: triggerCommit()
  */
 ({
 
@@ -105,12 +109,12 @@
             	self._render();
             }, self);
             //this.context.forecasts.worksheet.on("change", this.showSaveButton, self);
-            this.context.forecasts.on('forecasts:worksheetDirty', function(model, changed){
+            this.context.forecasts.on('forecasts:worksheet:dirty', function(model, changed){
                 this.$el.find('#save_draft').removeClass("disabled");
 		        this.context.forecasts.trigger("forecasts:commitButtons:enabled");
             }, self);
-            this.context.forecasts.on("forecasts:forecastcommitbuttons:triggerCommit", this.triggerCommit, self);
-            this.context.forecasts.on("forecasts:forecastcommitbuttons:triggerSaveDraft", this.triggerSaveDraft, self);
+            this.context.forecasts.on("forecasts:commitButtons:triggerCommit", this.triggerCommit, self);
+            this.context.forecasts.on("forecasts:commitButtons:triggerSaveDraft", this.triggerSaveDraft, self);
             this.context.forecasts.on("change:selectedUser", function(){
             	this.context.forecasts.trigger("forecasts:commitButtons:disabled");
             }, this);
@@ -167,18 +171,17 @@
     	
         if(!commitbtn.hasClass("disabled")){
             var self = this;
-
+            this.disableCommitButton();
+            
             wkstCallBack = function(totalSaved, worksheet){
                 // turn off the event
-                self.context.forecasts.off('forecasts:worksheetSaved', wkstCallBack);
+                self.context.forecasts.off('forecasts:worksheet:saved', wkstCallBack);
                 // now actually commit the forecast
-                self.context.forecasts.trigger('forecasts:commitForecast');
+                self.context.forecasts.trigger('forecasts:committed:commit');
             };
 
-            self.context.forecasts.on('forecasts:worksheetSaved', wkstCallBack);
-
-            this.context.forecasts.trigger("forecasts:worksheetSave", false);
-            savebtn.addClass("disabled");
+            self.context.forecasts.on('forecasts:worksheet:saved', wkstCallBack);
+            this.context.forecasts.trigger("forecasts:worksheet:saveWorksheet", false);            
     	}        
     },
 
@@ -189,7 +192,7 @@
     	var savebtn = this.$el.find('#save_draft');
     	
     	if(!savebtn.hasClass("disabled")){
-            this.context.forecasts.trigger("forecasts:worksheetSave", true);
+            this.context.forecasts.trigger("forecasts:worksheet:saveWorksheet", true);
     	    savebtn.addClass("disabled");
     		this.enableCommitButton();
     	}

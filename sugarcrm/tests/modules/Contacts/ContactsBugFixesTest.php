@@ -27,7 +27,7 @@ require_once('modules/Contacts/ContactFormBase.php');
 require_once('include/api/ServiceBase.php');
 require_once('clients/base/api/ModuleApi.php');
 
-class BugFixesTest extends Sugar_PHPUnit_Framework_TestCase
+class ContactsBugFixesTest extends Sugar_PHPUnit_Framework_TestCase
 {
 
     public function setUp() {
@@ -97,7 +97,7 @@ class BugFixesTest extends Sugar_PHPUnit_Framework_TestCase
 
     public function testBug59675SyncContactIsNotSet() {
         $mapi = new ModuleApi();
-        $sm = new ServiceMockup();
+        $sm = new ContactsBugFixesServiceMockup();
         $args = $this->fields;
         $args['module'] = 'Contacts';
         $return = $mapi->createRecord($sm, $args);
@@ -115,7 +115,7 @@ class BugFixesTest extends Sugar_PHPUnit_Framework_TestCase
     }
 }
 
-class ServiceMockup extends ServiceBase {
+class ContactsBugFixesServiceMockup extends ServiceBase {
     public function execute() {}
     protected function handleException(Exception $exception) {}
 }

@@ -43,11 +43,15 @@
  *      by: _render()
  *      when: done rendering
  *
- * forecasts:forecastcommitbuttons:triggerSaveDraft
+ * forecasts:worksheet:saved
  *      on: context.forecasts
- *      by: safeFetch()
- *      when: user performs an action that causes a check to be made against dirty data
- *
+ *      by: saveWorksheet()
+ *      when: saving the worksheet.
+ * 
+ * forecasts:worksheet:dirty
+ *      on: context.forecasts
+ *      by: change:worksheet
+ *      when: the worksheet is changed.
  */
 ({
     url: 'rest/v10/ForecastManagerWorksheets',
@@ -167,6 +171,8 @@
         if(this._collection) this._collection.off(null, null, this);
         if(this.context.forecasts) this.context.forecasts.off(null, null, this);
         if(this.context.forecasts.worksheetmanager) this.context.forecasts.worksheetmanager.off(null, null, this);
+        //if we don't unbind this, then recycle of this view if a change in rendering occurs will result in multiple bound events to possibly out of date functions
+        $(window).unbind("beforeunload");
         app.view.View.prototype.unbindData.call(this);
     },
 
@@ -181,7 +187,7 @@
             this._collection.on("change", function(model, changed) {
                 // The Model has changed via CTE. save it in the isDirty
                 this.dirtyModels.add(model);
-                this.context.forecasts.trigger('forecasts:worksheetDirty', model, changed);
+                this.context.forecasts.trigger('forecasts:worksheet:dirty', model, changed);
             }, this);
         }
         // listening for updates to context for selectedUser:change
@@ -203,14 +209,14 @@
             this.context.forecasts.worksheetmanager.on("change", function() {
             	this.calculateTotals();
             }, this);
-            this.context.forecasts.on("forecasts:committed:saved forecasts:commitButtons:saved", function(){
+            this.context.forecasts.on("forecasts:committed:saved forecasts:worksheet:saved", function(){
             	if(this.showMe()){
             		this.context.forecasts.worksheetmanager.url = this.createURL();
             		this.safeFetch();
             	}
             }, this);
 
-            this.context.forecasts.on('forecasts:worksheetSave', function(isDraft) {
+            this.context.forecasts.on('forecasts:worksheet:saveWorksheet', function(isDraft) {
                 this.saveWorksheet(isDraft);
             }, this);
             
@@ -257,7 +263,7 @@
 
     /**
      *
-     * @triggers forecasts:worksheetSaved
+     * @triggers forecasts:worksheet:saved
      * @return {Number}
      */
     saveWorksheet : function(isDraft) {
@@ -297,7 +303,7 @@
                 self.cleanUpDirtyModels();
                 self.cleanUpDraftModels();
             } else {
-                this.context.forecasts.trigger('forecasts:worksheetSaved', totalToSave, 'mgr_worksheet', isDraft);
+                this.context.forecasts.trigger('forecasts:worksheet:saved', totalToSave, 'mgr_worksheet', isDraft);
             }
         }
 
@@ -320,9 +326,9 @@
             saveCount++;
             //if this is the last save, go ahead and trigger the callback;
             if(totalToSave === saveCount) {
-                self.context.forecasts.trigger('forecasts:worksheetSaved', totalToSave, 'mgr_worksheet', isDraft);
+                self.context.forecasts.trigger('forecasts:worksheet:saved', totalToSave, 'mgr_worksheet', isDraft);
             }
-        }});
+        }, silent: true});
     },
 
     /**
@@ -399,11 +405,11 @@
     		if(confirm(app.lang.get("LBL_WORKSHEET_SAVE_CONFIRM", "Forecasts"))){
                 self.context.forecasts.set({reloadCommitButton: true});
                 var svWkFn = function() {
-                    self.context.forecasts.off('forecasts:worksheetSaved', svWkFn);
+                    self.context.forecasts.off('forecasts:worksheet:saved', svWkFn);
                     collection.fetch();
                 };
 
-                self.context.forecasts.on('forecasts:worksheetSaved', svWkFn);
+                self.context.forecasts.on('forecasts:worksheet:saved', svWkFn);
                 this.saveWorksheet()
 		    } else {
     			//ignore, fetch still

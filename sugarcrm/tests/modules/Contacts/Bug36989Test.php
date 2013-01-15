@@ -1,4 +1,4 @@
-<?php 
+<?php
 /*********************************************************************************
  * The contents of this file are subject to the SugarCRM Professional End User
  * License Agreement ("License") which can be viewed at
@@ -34,40 +34,29 @@ class Bug36989Test extends Sugar_PHPUnit_Framework_TestCase
 
      public function setUp()
     {
-          //$this->markTestIncomplete('This test is not working.');
-          $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
-		  require('include/modules.php');
-		  $GLOBALS['beanList'] = $beanList;
-		  $GLOBALS['beanFiles'] = $beanFiles;
-          $GLOBALS['app_strings'] = return_application_language($GLOBALS['current_language']);
+          SugarTestHelper::setUp('files');
+          SugarTestHelper::setUp('beanList');
+          SugarTestHelper::setUp('beanFiles');
+          SugarTestHelper::setUp('current_user');
+          SugarTestHelper::setUp('app_strings');
 
-
-         if(file_exists('custom/modules/Contacts/metadata/SearchFields.php'))
+          SugarTestHelper::saveFile('custom/modules/Contacts/metadata/SearchFields.php');
+          if(file_exists('custom/modules/Contacts/metadata/SearchFields.php'))
           {
-              $this->customSearchFields = file_get_contents('custom/modules/Contacts/metadata/SearchFields.php');
               unlink('custom/modules/Contacts/metadata/SearchFields.php');
           }
 
-          $this->searchFieldsBackup = file_get_contents('modules/Contacts/metadata/SearchFields.php');
+          SugarTestHelper::saveFile('modules/Contacts/metadata/SearchFields.php');
           file_put_contents('modules/Contacts/metadata/SearchFields.php', '<?php $searchFields[\'Contacts\'] = array(\'test\' => array());');
-
+          parent::setUp();
      }
 
     public function tearDown()
     {
-         file_put_contents('modules/Contacts/metadata/SearchFields.php', $this->searchFieldsBackup);
-
-         if(!empty($this->customSearchFields))
-         {
-             file_put_contents('custom/modules/Contacts/metadata/SearchFields.php', $this->customSearchFields);
-         }
-
-         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
-         unset($GLOBALS['current_user']);
-         unset($GLOBALS['app_strings']);
-
+        SugarTestHelper::tearDown();
+        parent::tearDown();
     }
-    
+
      function testOverrideSearchFields() {
           $list = new ViewList();
           $list->module = "Contacts";
@@ -76,4 +65,3 @@ class Bug36989Test extends Sugar_PHPUnit_Framework_TestCase
           $this->assertTrue(isset($list->searchForm->searchFields['test']));
     }
 }
-?>

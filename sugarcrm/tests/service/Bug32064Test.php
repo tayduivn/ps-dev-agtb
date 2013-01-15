@@ -1,6 +1,6 @@
 <?php
-
-/* * *******************************************************************************
+//FILE SUGARCRM flav=pro ONLY
+/*********************************************************************************
  * The contents of this file are subject to the SugarCRM Master Subscription
  * Agreement ("License") which can be viewed at
  * http://www.sugarcrm.com/crm/master-subscription-agreement

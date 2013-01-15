@@ -20,15 +20,20 @@
  ********************************************************************************/
 
 describe("forecast editableCurrency field", function () {
-    var field, fieldDef, context, model;
+    var field, fieldDef, context, model, app;
 
     beforeEach(function () {
-        var app = SugarTest.app;
+        app = SugarTest.app;
         context = app.context.getContext();
 
         app.user = SugarTest.app.user;
         app.user.setPreference('decimal_precision', 2);
         app.user.setPreference('decimal_separator', '.');
+        app.user.setPreference('number_grouping_separator', ',');
+
+        SugarTest.loadFile("../sidecar/src/utils", "utils", "js", function (d) {
+            return eval(d);
+        });
 
         context.forecasts = new Backbone.Model({"selectedUser" : {'id' : app.user.get('id')}});
         context.forecasts.config = new Backbone.Model({"sales_stage_won" : [], "sales_stage_lost" : []});
@@ -119,12 +124,33 @@ describe("forecast editableCurrency field", function () {
         it("should return true when comma is present", function() {
             expect(field.compareValuesLocale("1,200.00","1200.00")).toBeTruthy();
         });
-        it("should return true when comma is present on second var", function() {
-            expect(field.compareValuesLocale("1200.00","1,200.00")).toBeTruthy();
-        });
         it("should return false when not equal", function() {
             expect(field.compareValuesLocale("1200.00","1200.01")).toBeFalsy();
         });
     });
+
+    describe("isValid", function() {
+        it("should return true when value is valid", function() {
+            expect(field.isValid("1200.00")).toBeTruthy();
+        });
+        it("should return false when value empty", function() {
+            expect(field.isValid("")).toBeFalsy();
+        });
+        it("should return false when value is whitespace", function() {
+            expect(field.isValid(" ")).toBeFalsy();
+        });
+        it("should return false when value is invalid", function() {
+            expect(field.isValid("abcd")).toBeFalsy();
+        });
+    });
+
+    describe("compareValuesLocale", function() {
+        it("should return true when value is equal and in different locale than model", function() {
+            app.user.setPreference('decimal_separator', ',');
+            app.user.setPreference('number_grouping_separator', '.');
+            expect(field.compareValuesLocale('125.000,00','125000.00')).toBeTruthy();
+        });
+    });
+
 
 });
