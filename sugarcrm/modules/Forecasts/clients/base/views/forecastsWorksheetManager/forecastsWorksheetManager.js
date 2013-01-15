@@ -559,9 +559,9 @@
         var options = {
             timeperiod_id : this.timePeriod,
             user_id : $(event.target).attr('data-uid'),
-            forecast_type : 'direct'
+            forecast_type : !_.isEqual($(event.target).attr('data-uid'), this.selectedUser.id)? "rollup" : "direct"
         };
-
+        
         var dataCommitDate = $(event.target).attr('data-commitdate');
 
         return app.api.call('read',
