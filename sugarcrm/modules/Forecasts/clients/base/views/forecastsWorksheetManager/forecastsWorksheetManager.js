@@ -556,14 +556,14 @@
      * @return {*}
      */
     fetchUserCommitHistory: function(event, nTr) {
-        var options = {
+        var jTarget = $(event.target),
+            dataCommitDate = jTarget.data('commitdate'),
+            options = {
             timeperiod_id : this.timePeriod,
-            user_id : $(event.target).data('uid'),
-            forecast_type : !_.isEqual($(event.target).data('uid'), this.selectedUser.id)? "rollup" : "direct"
-        };
-        
-        var dataCommitDate = $(event.target).attr('data-commitdate');
-
+            user_id : jTarget.data('uid'),
+            forecast_type : !_.isEqual(jTarget.data('uid'), this.selectedUser.id)? "rollup" : "direct"
+        }; 
+         
         return app.api.call('read',
              app.api.buildURL('Forecasts', 'committed', null, options),
             null,
