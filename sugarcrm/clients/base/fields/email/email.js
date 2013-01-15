@@ -99,14 +99,17 @@
         var emailAddress = $(evt.target).data('parentemail') || $(evt.target).parent().data('parentemail'),
             existingAddresses = _.clone(this.model.get(this.name));
         var wasPrimary = false;
-        _.each(existingAddresses, function (emailInfo, index) {
+        existingAddresses = _.filter(existingAddresses, function (emailInfo, index) {
             if (emailInfo.email_address == emailAddress) {
-                wasPrimary = existingAddresses[index]['primary_address'] == '1';  // Remember if it was primary
-                existingAddresses[index] = undefined;                             // then delete it
+                // Remove deleted e-mails
+                if(!wasPrimary){
+                    wasPrimary = existingAddresses[index]['primary_address'] == '1';
+                }
+                return false;
+            } else {
+                return true;
             }
         });
-        // Remove deleted (undefined) e-mails
-        existingAddresses = _.compact(existingAddresses);
         // If a removed address was the primary e-mail, we need to pick an existing e-mail and make it the new primary
         if(wasPrimary){
             var address = _.first(existingAddresses);
