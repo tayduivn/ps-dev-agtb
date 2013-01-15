@@ -8,7 +8,9 @@
         app.view.views.HeaderpaneView.prototype.initialize.call(this, options);
     },
     _renderHtml: function() {
-        this.title = app.lang.get("LBL_CONVERTLEAD_TITLE", this.module) + ': ' + this.model.get('name');
+        var leadsModel = this.context.get('leadsModel');
+        var name = !_.isUndefined(leadsModel.get('name')) ? leadsModel.get('name') : leadsModel.get('first_name') + ' ' + leadsModel.get('last_name');
+        this.title = app.lang.get("LBL_CONVERTLEAD_TITLE", this.module) + ': ' + name;
         app.view.views.HeaderpaneView.prototype._renderHtml.call(this);
     },
     initiateFinish: function() {

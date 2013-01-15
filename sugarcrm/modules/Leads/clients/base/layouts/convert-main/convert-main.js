@@ -33,7 +33,7 @@
             view.$el.addClass('accordion-group filter_el step_1_container');
             view.$el.data('module', moduleMeta.module);
 
-            self.addComponent(view); //places panel in the layout
+            self.addComponent(view);
         });
     },
 
@@ -49,9 +49,8 @@
         this.$el.addClass('accordion');
         this.$el.attr('id','convert-accordion');
 
-     //   $('#content>.layout_Leads').addClass('container-fluid');
         this.$(".collapse").collapse({toggle:false, parent:'#convert-accordion'});
-        this.context.trigger("lead:convert:populate", this.model);
+        this.context.trigger("lead:convert:populate", this.context.get('leadsModel'));
 
         //show first panel
         firstModule = _.first(this.meta.modules).module;
@@ -81,6 +80,9 @@
         }
     },
 
+    /*
+    * This method checks whether a module is active depending on other modules being completed.
+    */
     checkDependentModules: function() {
         var self = this,
             modulesMeta = this.meta.modules;
@@ -199,7 +201,8 @@
         app.alert.show('processing_convert', {level: 'process', title: app.lang.getAppString('LBL_PORTAL_SAVING')});
 
         //create parent convert model to hold all sub-models
-        convertModel = this.createConvertModel(this.context.get('modelId'));
+        var leadsModel = this.context.get('leadsModel');
+        convertModel = this.createConvertModel(leadsModel.id);
 
         //grab the associated model for each module
         _.each(this.meta.modules, function (moduleMeta) {
@@ -209,12 +212,12 @@
                 models[moduleMeta.module] = associatedModel;
             }
         });
-        convertModel.set('modules', models);
 
+        convertModel.set('modules', models);
         convertModel.save(null, {
             success:function (data) {
                 app.alert.dismiss('processing_convert');
-                app.navigate(self.context, self.model, 'record');
+                app.navigate(self.context, leadsModel, 'record');
             }
         });
     }

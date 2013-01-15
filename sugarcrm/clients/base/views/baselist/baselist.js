@@ -223,7 +223,7 @@
             success: function(model) {
                 model.set("_module", module);
 
-                if( _.isUndefined(self.context._callbacks) ) {
+                if( _.isUndefined(self.context._callbacks) || self.context.parent) {
                     // Clicking preview on a related module, need the parent context instead
                     self.context.parent.trigger("togglePreview", model, self.collection);
                 }
