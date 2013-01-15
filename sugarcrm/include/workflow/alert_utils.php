@@ -507,7 +507,7 @@ function create_email_body(&$focus, &$mail_object, &$admin, $alert_msg, $alert_s
 
         // the compared strings will be the same if strip_tags had no affect
         // if the compared strings are equal, then it's a text-only message
-        $textOnly = (strcmp($body, strip_tags($body)) == 0);
+        $textOnly = EmailFormatter::isTextOnly($body);
 
         if ($textOnly) {
             $mail_object->setTextBody($body);
@@ -1161,7 +1161,7 @@ function get_system_default_body(&$mail_object, $focus, &$notify_user) {
 
     // the compared strings will be the same if strip_tags had no affect
     // if the compared strings are equal, then it's a text-only message
-    $textOnly = (strcmp($body, strip_tags($body)) == 0);
+    $textOnly = EmailFormatter::isTextOnly($body);
 
     if ($textOnly) {
         $mail_object->setTextBody($body);

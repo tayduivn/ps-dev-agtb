@@ -151,7 +151,7 @@ foreach ($reportsToEmail as $scheduleInfo) {
 
             // the compared strings will be the same if strip_tags had no affect
             // if the compared strings are equal, then it's a text-only message
-            $textOnly = (strcmp($body, strip_tags($body)) == 0);
+            $textOnly = EmailFormatter::isTextOnly($body);
 
             if ($textOnly) {
                 $mailer->setTextBody($body);
