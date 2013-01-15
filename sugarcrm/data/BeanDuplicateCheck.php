@@ -105,4 +105,14 @@ class BeanDuplicateCheck
             }
         }
     }
+
+    /**
+     * Return the selected strategy. This is specifically used for unit tests.
+     *
+     * @return bool|DuplicateCheckStrategy  false=No strategy; object=Instance of the strategy
+     */
+    public function getStrategy()
+    {
+        return $this->strategy;
+    }
 }
