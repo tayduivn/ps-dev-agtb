@@ -31,6 +31,11 @@ require_once 'include/SugarObjects/VardefManager.php';
  */
 class Bug60047Test extends Sugar_PHPUnit_Framework_TestCase
 {
+    public static function setUpBeforeClass()
+    {
+        SugarTestHelper::setUp('beanFiles');
+        SugarTestHelper::setUp('beanList');
+    }
 
     public function testForecastBean()
     {

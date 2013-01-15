@@ -162,8 +162,8 @@ class SugarForecasting_Individual extends SugarForecasting_AbstractForecast impl
     /**
      * Save the Individual Worksheet
      *
-     * @return mixed
-     * @throws SugarApiExceptionNotAuthorized
+     * @return mixed|string
+     * @throws SugarApiException
      */
     public function save()
     {
@@ -173,12 +173,10 @@ class SugarForecasting_Individual extends SugarForecasting_AbstractForecast impl
         $seed->loadFromRow($this->args);
         $sfh = new SugarFieldHandler();
 
-        foreach ($seed->field_defs as $properties)
-        {
+        foreach ($seed->field_defs as $properties) {
             $fieldName = $properties['name'];
 
-            if(!isset($this->args[$fieldName]))
-            {
+            if(!isset($this->args[$fieldName])) {
                continue;
             }
 
@@ -193,8 +191,7 @@ class SugarForecasting_Individual extends SugarForecasting_AbstractForecast impl
             $type = !empty($properties['custom_type']) ? $properties['custom_type'] : $properties['type'];
             $field = $sfh->getSugarField($type);
 
-            if($field != null)
-            {
+            if(!is_null($field)) {
                $field->save($seed, $this->args, $fieldName, $properties);
             }
         }
@@ -204,10 +201,31 @@ class SugarForecasting_Individual extends SugarForecasting_AbstractForecast impl
         $settings = $admin->getConfigForModule('Forecasts');
         if (!isset($settings['has_commits']) || !$settings['has_commits']) {
             $admin->saveSetting('Forecasts', 'has_commits', true, 'base');
+            MetaDataManager::clearAPICache();
         }
-
 
         $seed->setWorksheetArgs($this->args);
         $seed->save();
+
+        // now lets return the row we just updated
+
+        // make sure that user_id is set, if it's not get the user from the assigned_user_id variable
+        $obj_arg_user = $this->getArg('user_id');
+        if(empty($obj_arg_user)) {
+            $this->setArg('user_id', $this->getArg('assigned_user_id'));
+        }
+
+        // get the values for the worksheet
+        $return = $this->process();
+
+        // find the one we just saved and return it
+        foreach($return as $worksheet) {
+            if($worksheet['id'] == $seed->id) {
+                return $worksheet;
+            }
+        }
+
+        // just return empty, although this should never happen
+        return '';
     }
 }
