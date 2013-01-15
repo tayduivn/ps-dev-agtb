@@ -650,13 +650,23 @@ $dictionary['Worksheet'] =  array('table' => 'worksheet', 'fields' => array (
 	  'vname' => 'LBL_WK_VERSION',
 	  'type'=>'int',
 	  'default' => 1,
+      'studio' => false,
 	  'comment' => 'Worksheet version - draft = 0'
 	),
+    'revision' =>
+    array (
+      'name' => 'revision',
+      'vname' => 'LBL_WK_REVISION',
+      'type'=>'double',
+      'default' => 0,
+      'studio' => false,
+      'comment' => 'Revision # - microtime of save.'
+    ),
  ),
  'indices' => array (
        array('name' =>'worksheetpk', 'type' =>'primary', 'fields'=>array('id')),
        array('name' =>'idx_worksheet_user_id', 'type' =>'index', 'fields'=>array('user_id')),
-       array('name' =>'idx_worksheet_rel_id_del', 'type' =>'index', 'fields'=>array('related_id', 'user_id', 'deleted', 'version')),
+       array('name' =>'idx_worksheet_rel_id_del', 'type' =>'index', 'fields'=>array('related_id', 'user_id', 'deleted', 'version', 'revision')),
  )
 
 );

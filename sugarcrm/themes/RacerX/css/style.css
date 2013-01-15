@@ -3692,7 +3692,6 @@ button, input[type=submit], input[type=reset], input[type=button], .button, .but
     line-height: 18px;
     color: #262627;
     font-weight: 500;
-    font-family: 'Helvetica Neue';
     text-align: center;
     text-shadow: 0 1px 0 rgba(255, 255, 255, 0.75);
     vertical-align: middle;
@@ -4211,7 +4210,7 @@ ul.moduleTabMore,
 
 ul.sf-sub-modulelist .selected,
 #moduleList .more .selected{
-background-color: #fff;
+background-color: #343433;
 color: #fff;
 }
 
@@ -5846,7 +5845,7 @@ padding:0px;
 position: fixed;
 top: 0;
 width:100%;
-z-index:1;
+z-index:2;
 }
 #globalLinksSubnav, #quickCreateULSubnav {
     z-index: 20;
@@ -7625,7 +7624,6 @@ div.hoverscroll div.fixed-arrow.bottom {
     line-height: 18px;
     color: #262627;
     font-weight: 500;
-    font-family: 'Helvetica Neue';
     text-align: center;
     text-shadow: 0 1px 0 rgba(255, 255, 255, 0.75);
     vertical-align: middle;

@@ -126,7 +126,7 @@
     },
 
     /**
-     * bind to data changes in teh context model.
+     * bind to data changes in the context model.
      */
     bindDataChange: function () {
 
@@ -146,12 +146,10 @@
             }, this);
 
             //commits could have changed quotas or any other number being used in the projected panel, do a fresh pull
-            this.context.forecasts.on("change:commitForecastFlag", function(context, flag) {
-                if(flag) {
+            this.context.forecasts.on("forecasts:committed:commit", function(context, flag) {
                     this.updateProgress();
-                }
             }, this);
-            this.context.forecasts.on("forecasts:commitButtons:saved forecasts:committed:saved", function(){
+            this.context.forecasts.on("forecasts:worksheet:saved forecasts:committed:saved", function(){
                 self.updateProgress();
             });
 

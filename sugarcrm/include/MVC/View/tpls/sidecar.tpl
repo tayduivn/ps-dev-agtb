@@ -54,14 +54,10 @@
                 <div id="header"></div>
                 <div id="content">
                     <div class="container welcome">
-                        <div class="row">
-                            <div class="span4 offset4 thumbnail">
-                                <div class="modal-header tcenter">
-                                    <img src="include/javascript/twitterbootstrap/img/throbber.gif" />
-                                </div>
-                                <div class="modal-footer">
-                                    Loading...
-                                </div>
+                        <div class="alert alert-process">
+                            <strong>Loading</strong>
+                            <div class="loading">
+                                <span class="l1"></span><span class="l2"></span><span class="l3"></span>
                             </div>
                         </div>
                     </div>

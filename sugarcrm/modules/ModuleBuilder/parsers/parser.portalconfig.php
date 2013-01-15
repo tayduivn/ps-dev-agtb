@@ -102,6 +102,14 @@ class ParserModifyPortalConfig extends ModuleBuilderParser
 
         }
 
+        $cachedPublicMetadata = sugar_cached('api/metadata/metadata_portal_public.php');
+        $cachedPrivateMetadata = sugar_cached('api/metadata/metadata_portal_private.php');
+        // Clear the cached public and private metadata files
+        if (file_exists($cachedPublicMetadata))
+            unlink($cachedPublicMetadata);
+        if (file_exists($cachedPrivateMetadata))
+            unlink($cachedPrivateMetadata);
+
         // Clear the Contacts file b/c portal flag affects rendering
         if (file_exists($cachedfile = sugar_cached('modules/Contacts/EditView.tpl')))
             unlink($cachedfile);

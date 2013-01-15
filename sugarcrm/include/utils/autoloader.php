@@ -519,23 +519,21 @@ class SugarAutoLoader
 	}
 
 	/**
-	 * Load viewdefs file using the following logic:
+	 * Get viewdefs file name using the following logic:
 	 * 1. Check custom/module/metadata/$varname.php
 	 * 2. If not there, check metafiles.php
 	 * 3. If still not found, use module/metadata/$varname.php
+	 * This is used for Studio-enabled definitions. Only one file is loaded
+	 * because Studio should be able to delete fields.
 	 * @param string $module
 	 * @param string $varname Name of the vardef file (listviewdef, etc.) - no .php
-	 * @param string $defname metafiles definition name, if different from $varname
 	 * @return string|null Suitable metadata file or null
 	 */
-	public static function loadWithMetafiles($module, $varname, $defname = null)
+	public static function loadWithMetafiles($module, $varname)
 	{
-	    if(empty($defname)) {
-	        $defname = $varname;
-	    }
 	    $vardef = self::existingCustomOne("modules/{$module}/metadata/{$varname}.php");
 	    if(!empty($vardef) && substr($vardef, 0, 7) == "custom/") {
-	        // custom goes first
+	        // custom goes first, because this is how Studio overrides defaults
 	        return $vardef;
 	    }
 	    // otherwise check metadata
@@ -546,8 +544,8 @@ class SugarAutoLoader
     	    	require $meta;
     	    }
 	    }
-	    if(!empty($metafiles[$module][$defname])) {
-	        $defs = self::existing($metafiles[$module][$defname], $vardef);
+	    if(!empty($metafiles[$module][$varname])) {
+	        $defs = self::existing($metafiles[$module][$varname], $vardef);
 	    } else {
 	        $defs = self::existing($vardef);
 	    }
@@ -559,7 +557,45 @@ class SugarAutoLoader
 	}
 
 	/**
+     * Load search fields
+     * Search fields are loaded differently since they are not Studio metadata file,
+     * so they are combined instead of being overloaded.
+     * NOTE: unlike generic loadWithMetafiles, this one returns defs, not filenames
+     * Also note that even though $module is given, the defs are not in $searchFields but in $searchFields[$module]
+     * for BC reasons.
+	 * @param string $module
+	 * @return array searchFields def
+	 */
+	public static function loadSearchFields($module)
+	{
+		// load metadata first
+		global $metafiles;
+		if(!isset($metafiles[$module])) {
+			$meta = self::existingCustomOne('modules/'.$module.'/metadata/metafiles.php');
+			if($meta) {
+				require $meta;
+			}
+		}
+        // Then get all files that are revevant
+		if(!empty($metafiles[$module]['searchfields'])) {
+			$defs = $metafiles[$module]['searchfields'];
+		} else {
+			$defs = "modules/$module/metadata/SearchFields.php";
+		}
+
+		foreach(self::existingCustom($defs) as $file) {
+		    require $file;
+		}
+		if(empty($searchFields)) {
+		    return array();
+		}
+		return $searchFields;
+	}
+
+	/**
 	 * Load popupdefs metadata file
+	 * Allows to override 'popupdefs' with $metadata variable
+     * NOTE: unlike generic loadWithMetafiles, this one returns defs, not filenames
 	 * @param string $module
 	 * @param string $metadata metadata name override
 	 * @return array popup defs data or NULL
