@@ -20,16 +20,22 @@
  ********************************************************************************/
 
 describe("forecast editableCurrency field", function () {
-    var field, fieldDef, context, model;
+    var field, fieldDef, context, model, app;
 
     beforeEach(function () {
-        var app = SugarTest.app;
+        app = SugarTest.app;
         context = app.context.getContext();
 
         app.user = SugarTest.app.user;
         app.user.setPreference('decimal_precision', 2);
+        app.user.setPreference('decimal_separator', '.');
+        app.user.setPreference('number_grouping_separator', ',');
 
-        context.forecasts = new Backbone.Model();
+        SugarTest.loadFile("../sidecar/src/utils", "utils", "js", function (d) {
+            return eval(d);
+        });
+
+        context.forecasts = new Backbone.Model({"selectedUser" : {'id' : app.user.get('id')}});
         context.forecasts.config = new Backbone.Model({"sales_stage_won" : [], "sales_stage_lost" : []});
 
         model = new Backbone.Model({"sales_stage" : 'test_sales_stage', 'editableCurrency' : '50.50'});
@@ -40,9 +46,7 @@ describe("forecast editableCurrency field", function () {
             "view": "detail"
         };
         SugarTest.loadComponent('base', 'field', 'int');
-        field = SugarTest.createField("../modules/Forecasts/clients/base", "editableCurrency", "editableCurrency", "detail", fieldDef, "Forecasts");
-        field.context = context;
-        field.model = model;
+        field = SugarTest.createField("../modules/Forecasts/clients/base", "editableCurrency", "editableCurrency", "detail", fieldDef, "Forecasts", model, context);
     });
 
     afterEach(function() {
@@ -70,14 +74,20 @@ describe("forecast editableCurrency field", function () {
     });
 
     describe("isEditable", function() {
-        it("should be false", function() {
+        it("should be false with same user and configured excluded sales stage", function() {
             field.context.forecasts.config.set('sales_stage_won', ["test_sales_stage"]);
             field.checkIfCanEdit();
             expect(field.isEditable()).toBeFalsy();
         });
-        it("should be true", function() {
+        it("should be true with same user and no configured excluded sales stage", function() {
             expect(field.isEditable()).toBeTruthy();
-        })
+        });
+
+        it("should be false with different user and no configured excluded sales stage", function() {
+            field.context.forecasts.set({"selectedUser" : {"id" : "doh"}});
+            field.checkIfCanEdit();
+            expect(field.isEditable()).toBeFalsy();
+        });
     });
 
     describe("parsePercentage", function() {
@@ -102,6 +112,45 @@ describe("forecast editableCurrency field", function () {
         it("should return 53 with percentage is +5%", function() {
             expect(field.parsePercentage("+5%")).toEqual(53.03);
         });
-    })
+    });
+
+    describe("compareValuesLocale", function() {
+        it("should return true when identical", function() {
+            expect(field.compareValuesLocale("1200.00","1200.00")).toBeTruthy();
+        });
+        it("should return true when decimal ommitted", function() {
+            expect(field.compareValuesLocale("1200.00","1200")).toBeTruthy();
+        });
+        it("should return true when comma is present", function() {
+            expect(field.compareValuesLocale("1,200.00","1200.00")).toBeTruthy();
+        });
+        it("should return false when not equal", function() {
+            expect(field.compareValuesLocale("1200.00","1200.01")).toBeFalsy();
+        });
+    });
+
+    describe("isValid", function() {
+        it("should return true when value is valid", function() {
+            expect(field.isValid("1200.00")).toBeTruthy();
+        });
+        it("should return false when value empty", function() {
+            expect(field.isValid("")).toBeFalsy();
+        });
+        it("should return false when value is whitespace", function() {
+            expect(field.isValid(" ")).toBeFalsy();
+        });
+        it("should return false when value is invalid", function() {
+            expect(field.isValid("abcd")).toBeFalsy();
+        });
+    });
+
+    describe("compareValuesLocale", function() {
+        it("should return true when value is equal and in different locale than model", function() {
+            app.user.setPreference('decimal_separator', ',');
+            app.user.setPreference('number_grouping_separator', '.');
+            expect(field.compareValuesLocale('125.000,00','125000.00')).toBeTruthy();
+        });
+    });
+
 
 });

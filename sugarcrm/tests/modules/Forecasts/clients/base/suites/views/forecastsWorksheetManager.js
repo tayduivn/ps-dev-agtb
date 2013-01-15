@@ -21,7 +21,7 @@
 
 describe("The forecasts manager worksheet", function(){
 
-    var view, field, _renderClickToEditStub, _renderFieldStub, testMethodStub;
+    var view, field, _renderFieldStub, testMethodStub;
 
     beforeEach(function() {
         app = SugarTest.app;
@@ -56,104 +56,12 @@ describe("The forecasts manager worksheet", function(){
 
         // remove the window watcher event
         $(window).unbind("beforeunload");
-        var cte = SugarTest.loadFile("../modules/Forecasts/clients/base/lib", "ClickToEdit", "js", function(d) { return eval(d); });
     });
 
     afterEach(function() {
         app.user.unset('id');
         app.user.set('isManager', false);
         //view.unbindData();
-    });
-
-    describe("clickToEdit field", function() {
-
-        beforeEach(function() {
-            _renderClickToEditStub = sinon.stub(app.view, "ClickToEditField");
-            _renderFieldStub = sinon.stub(app.view.View.prototype, "_renderField");
-            field = {
-                viewName:'forecastsWorksheetManager',
-                def:{
-                    clickToEdit:true
-                }
-            };
-        });
-
-        afterEach(function(){
-            _renderClickToEditStub.restore();
-            _renderFieldStub.restore();
-        })
-
-        describe("should render", function() {
-            beforeEach(function() {
-                view.selectedUser.id = "test_user_id";
-                testMethodStub = sinon.stub(app.user, "get", function(property){
-                    var user = {
-                        id: "test_user_id"
-                    }
-                    return user[property];
-                });
-            });
-
-            afterEach(function() {
-                view.selectedUser.id = null;
-                testMethodStub.restore();
-            })
-
-            it("has clickToEdit set to true in metadata", function() {
-                view._renderField(field);
-                expect(_renderFieldStub).toHaveBeenCalled();
-                expect(_renderClickToEditStub).toHaveBeenCalled();
-            });
-        });
-
-        describe("should not render", function() {
-            it("does not contain a value for clickToEdit in metadata", function() {
-                field = {
-                    viewName:'forecastsWorksheetManager',
-                    def:{}
-                };
-                view._renderField(field);
-                expect(_renderFieldStub).toHaveBeenCalled();
-                expect(_renderClickToEditStub).not.toHaveBeenCalled();
-            });
-
-            it("has clickToEdit set to something other than true in metadata", function() {
-                field = {
-                    viewName:'forecastsWorksheetManager',
-                    def:{
-                        clickToEdit: 'true'
-                    }
-                };
-                view._renderField(field);
-                expect(_renderFieldStub).toHaveBeenCalled();
-                expect(_renderClickToEditStub).not.toHaveBeenCalled();
-            });
-
-            it("has clickToEdit set to false in metadata", function() {
-                field = {
-                    viewName:'forecastsWorksheetManager',
-                    def:{
-                        clickToEdit: false
-                    }
-                };
-                view._renderField(field);
-                expect(_renderFieldStub).toHaveBeenCalled();
-                expect(_renderClickToEditStub).not.toHaveBeenCalled();
-            });
-
-            it("is an edit view", function() {
-                field = {
-                    viewName:'edit',
-                    def:{
-                        clickToEdit: true
-                    }
-                };
-                view._renderField(field);
-                expect(_renderFieldStub).toHaveBeenCalled();
-                expect(_renderClickToEditStub).not.toHaveBeenCalled();
-            });
-        });
-
     });
 
     describe("Forecast Manager Worksheet Config functions tests", function() {
@@ -224,7 +132,7 @@ describe("The forecasts manager worksheet", function(){
 
         it('isDirty should return true', function() {
             m.set({'hello' : 'jon1'});
-            expect(view.isDirty()).toBeTruthy();
+            expect(view.isDirty()).toBeTruthy();            
         });
 
         it('should not be dirty after main collection reset', function() {
@@ -250,14 +158,50 @@ describe("The forecasts manager worksheet", function(){
     	});
 
         it('should return zero with no dirty models', function() {
-            expect(view.saveWorksheet()).toEqual(0);
+            expect(view.saveWorksheet()).toEqual(0);           
+        });
+        
+        it('should not have any draft models with no dirty models', function() {
+            view.saveWorksheet();
+            expect(view.draftModels.length).toEqual(0);
         });
 
         it('should return 1 when one model is dirty', function() {
             m.set({'hello':'jon1'});
             expect(view.saveWorksheet()).toEqual(1);
-            expect(saveStub).toHaveBeenCalled()
+            expect(saveStub).toHaveBeenCalled();
         });
+        
+        it('should not have draft models on a commit save', function() {
+            m.set({'hello':'jon1'});
+            expect(view.saveWorksheet()).toEqual(1);
+            expect(saveStub).toHaveBeenCalled();
+            expect(view.draftModels.length).toEqual(0);
+        });
+        
+        it('should have draft models on a draft save', function() {
+            m.set({'hello':'jon1'});
+            expect(view.saveWorksheet(true)).toEqual(1);
+            expect(saveStub).toHaveBeenCalled();
+            expect(view.draftModels.length).toEqual(1);
+        });
+        
+        it('should save the draft models as committed models on "commit"', function() {
+            var clearDirtySpy = sinon.spy(view, "cleanUpDirtyModels"),
+                clearDraftSpy = sinon.spy(view, "cleanUpDraftModels");
+ 
+            //first save to populate the draft models
+            m.set({'hello':'jon1'});
+            view.saveWorksheet(true);
+            expect(view.draftModels.length).toEqual(1);
+            
+            //save again for the "commit"
+            view.saveWorksheet(false);
+            expect(clearDirtySpy).toHaveBeenCalled();
+            expect(clearDraftSpy).toHaveBeenCalled();
+            expect(view.draftModels.length).toEqual(0);
+        });
+        
     });
     describe("Forecasts worksheet save dirty models with correct timeperiod after timeperiod changes", function() {
         var m, saveStub, safeFetchStub;

@@ -8,7 +8,7 @@
         'mouseleave span.editable': 'togglePencil',
         'click span.editable': 'onClick',
         'blur span.edit input': 'onBlur',
-        'keyup span.edit input': 'onKeypress'
+        'keyup span.edit input': 'onKeyup'
     },
 
     inputSelector: 'span.edit input',
@@ -30,8 +30,9 @@
      * Utility Method to check if we can edit again.
      */
     checkIfCanEdit: function() {
+        var selectedUser = this.context.forecasts.get('selectedUser');
         if (!_.isUndefined(this.context.forecasts) && !_.isUndefined(this.context.forecasts.config)) {
-            this._canEdit = !_.contains(
+            this._canEdit = _.isEqual(app.user.get('id'), selectedUser.id) && !_.contains(
                 // join the two variable together from the config
                 this.context.forecasts.config.get("sales_stage_won").concat(
                     this.context.forecasts.config.get("sales_stage_lost")
@@ -47,29 +48,52 @@
      *
      */
     bindDomChange: function () {
+        // override parent, do nothing
+    },
+
+    /**
+     *
+     */
+    handleEvent: function (evt) {
         if (!this.isEditable()) return;
         if (!(this.model instanceof Backbone.Model)) return;
         var self = this;
         var el = this.$el.find(this.fieldTag);
-        el.on("change", function () {
+        // test if value changed
+        if(!this.compareValuesLocale(self.$el.find(self.inputSelector).val(), this.model.get(this.name))) {
             var value = self.parsePercentage(self.$el.find(self.inputSelector).val());
             if (self.isValid(value)) {
                 self.model.set(self.name, self.unformat(value));
-                self.$el.find(self.inputSelector).blur();
+                this.renderDetail();
             } else {
-                // will generate error styles here, for now log to console
+                // render error
+                var hb = Handlebars.compile("{{str_format key module args}}"),
+                    args = [app.lang.get(self.def.label,'Forecasts')];
+
+                self.errorMessage = hb({'key' : 'LBL_EDITABLE_INVALID', 'module' : 'Forecasts', 'args' : args});
+
                 self.showErrors();
                 self.$el.find(self.inputSelector).focus().select();
+                // Focus doesn't always change when tabbing through inputs on IE9 (Bug54717)
+                // This prevents change events from being fired appropriately on IE9
+                if ($.browser.msie && el.is("input")) {
+                    el.on("input", function () {
+                        // Set focus on input element receiving user input
+                        el.focus();
+                    });
+                }
             }
-        });
-        // Focus doesn't always change when tabbing through inputs on IE9 (Bug54717)
-        // This prevents change events from being fired appropriately on IE9
-        if ($.browser.msie && el.is("input")) {
-            el.on("input", function () {
-                // Set focus on input element receiving user input
-                el.focus();
-            });
+        } else {
+            this.renderDetail();
         }
+    },
+
+    /**
+     * renders the detail view
+     */
+    renderDetail: function () {
+        this.options.viewName = 'detail';
+        this.render();
     },
 
     /**
@@ -88,7 +112,6 @@
             this.$el.find('.edit-icon').addClass('hide');
         }
     },
-
 
     /**
      * Switch the view to the Edit view if the field is editable and it's clicked on
@@ -117,56 +140,84 @@
     },
 
     /**
-     * Handle when esc/return/enter and tab keys are pressed
+     * Handle when esc/enter/tab and tab keys are pressed
      *
      * @param evt
      */
-    onKeypress: function (evt) {
+    onKeyup: function (evt) {
+        evt.preventDefault();
         if (evt.which == 27) {
-            this.$el.find(this.inputSelector).val(this.value);
-            this.$el.find(this.inputSelector).blur();
+            // esc key, cancel edits
+            this.cancelEdits(evt);
         } else if (evt.which == 13 || evt.which == 9) {
-            // blur if value is unchanged
-            var ogVal = this.value,
-                ngVal = this.$el.find(this.inputSelector).val();
-            if (_.isEqual(ogVal, ngVal)) {
-                this.$el.find(this.inputSelector).blur();
-            }
+            // enter or tab, handle event
+            this.handleEvent(evt);
         }
     },
 
     /**
-     * Blur event handler
+     * reset value to model and view detail template
      *
-     * This forces the field to re-render as the DetailView
-     *
-     * @param evt
+     * evt {Object}
      */
-    onBlur : function(evt) {
-        evt.preventDefault();
-        this.options.viewName = 'detail';
-        this.render();
+    cancelEdits: function(evt) {
+        this.$el.find(this.inputSelector).val(this.value);
+        this.renderDetail();
     },
 
     /**
-     * Is the new value valid for this field.
+     * Handle when field is blurred
+     *
+     * @param evt
+     */
+    onBlur: function (evt) {
+        evt.preventDefault();
+        this.handleEvent(evt);
+    },
+
+    /**
+     * compare two numeric values according to user locale
+     *
+     * @param val1
+     * @param val2
+     * @return {Boolean} true if equal
+     */
+    compareValuesLocale: function(val1, val2) {
+        var ogVal = app.utils.formatNumber(
+                app.utils.unformatNumberStringLocale(val1),
+                app.user.getPreference('decimal_precision'),
+                app.user.getPreference('decimal_precision'),
+                '',
+                app.user.getPreference('decimal_separator')
+            ),
+            ngVal = app.utils.formatNumber(
+                val2,
+                app.user.getPreference('decimal_precision'),
+                app.user.getPreference('decimal_precision'),
+                '',
+                app.user.getPreference('decimal_separator')
+            );
+        return _.isEqual(ogVal, ngVal);
+    },
+
+    /**
+     * field validator
      *
      * @param value
      * @return {Boolean}
      */
     isValid: function (value) {
+
+        // trim off any whitespace
+        value = value.toString().trim();
+
         var ds = app.utils.regexEscape(app.user.getPreference('decimal_separator')) || '.',
             gs = app.utils.regexEscape(app.user.getPreference('number_grouping_separator')) || ',',
             // matches a valid positive decimal number
-            reg = new RegExp("^\\+?(\\d+|\\d{1,3}("+gs+"\\d{3})*)?("+ds+"\\d+)?\\%?$"),
-            hb = Handlebars.compile("{{str_format key module args}}"),
-            args = [];
+            reg = new RegExp("^\\+?(\\d+|\\d{1,3}("+gs+"\\d{3})*)?("+ds+"\\d+)?\\%?$");
 
         // always make sure that we have a string here, since match only works on strings
-        if (_.isNull(value.toString().match(reg))) {
-            var langString = app.lang.get(this.def.label,'Forecasts');
-            args = [langString];
-            this.errorMessage = hb({'key' : 'LBL_EDITABLE_INVALID', 'module' : 'Forecasts', 'args' : args});
+        if (value.length == 0 || _.isNull(value.match(reg))) {
             return false;
         }
 
@@ -210,9 +261,14 @@
      */
     showErrors : function() {
         // attach error styles
+        var self = this;
         this.$el.find('.error-message').html(this.errorMessage);
         this.$el.find('.control-group').addClass('error');
         this.$el.find('.help-inline.editable-error').removeClass('hide').addClass('show');
+        // make error message button cancel edits
+        this.$el.find('.btn.btn-danger').on("click", function(evt) {
+            self.cancelEdits.call(self, evt);
+        });
     }
 
 })

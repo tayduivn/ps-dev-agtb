@@ -68,6 +68,7 @@
      * event handler to update which dataset is used.
      */
     changeDisplayOptions : function(evt) {
+        evt.preventDefault();
         this.handleRenderOptions({dataset: this.handleOptionChange(evt)})
     },
 
@@ -75,6 +76,7 @@
      * Handle any group by changes
      */
     changeGroupByOptions: function(evt) {
+        evt.preventDefault();
         this.handleRenderOptions({group_by:_.first(this.handleOptionChange(evt))});
     },
 
@@ -186,10 +188,17 @@
         
         //This is fired when anything in the worksheets is saved.  We want to wait until this happens
         //before we go and grab new chart data.
-        this.context.forecasts.on("forecasts:commitButtons:saved forecasts:committed:saved", function(){
+        this.context.forecasts.on("forecasts:committed:saved", function(){
             self.renderChart();
-        });  
-        
+        });
+
+        this.context.forecasts.on("forecasts:worksheet:saved", function(totalSaved, worksheet, isDraft) {
+            // we only want this to run if the totalSaved was greater than zero and we are saving the draft version
+            if(totalSaved > 0 && isDraft == true) {
+                self.renderChart();
+            }
+        });
+
         this.context.forecasts.on('change:selectedUser', function (context, user) {
             if(!_.isEmpty(self.chart)) {
                 self.handleRenderOptions({user_id: user.id, display_manager : (user.showOpps === false && user.isManager === true)});

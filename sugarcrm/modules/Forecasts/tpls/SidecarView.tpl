@@ -28,7 +28,7 @@
 *}
 <link rel="stylesheet" type="text/css" href="{$css_url}" />
 <div class="content" id="forecasts">
-    <div class="alert-top">
+    <div id="alerts" class="alert-top">
         <div class="alert alert-process">
             <strong>Loading</strong>
             <div class="loading">
@@ -40,10 +40,16 @@
 <div id="arrow" title="Show" class="up"><i class="icon-chevron-down"></i></div>
 <footer id="footer">
     <div class="row-fluid">
-        <div class="span6">
+        <div class="span5">
             <span class="logo">SugarCRM</span>
         </div>
-        <div class="span6">
+        <div class="span2">
+            <a href="http://www.sugarcrm.com" target="_blank" class="copyright">&copy; {$copyYear} SugarCRM Inc.</a>
+            <script>
+                var logoStats = "&#169; 2004-{$copyYear} SugarCRM Inc. All Rights Reserved. {$STATISTICS|addslashes}";
+            </script>
+        </div>
+        <div class="span5">
             <div class="btn-toolbar pull-right">
                 <div class="btn-group">
                     <a data-toggle="modal" title="Activity View Tour" id="productTour" href="javascript: void(0);"  class="btn btn-invisible"><i class="icon-road"></i> {$app_strings.LBL_TOUR}</a>
@@ -76,19 +82,22 @@
                     //keyValueStore: app.sugarAuthStore, //override the keyValueStore
                     callback: function(app) {
                         var url = app.api.buildURL("Forecasts/init");
-                        app.api.call('GET', url, null, {success: function(forecastData) {
-                            // get default selections for filter and ranges
-                            app.defaultSelections = forecastData.defaultSelections;
-                            app.initData = forecastData.initData;
-                            app.user.set(app.initData.selectedUser);
+                        app.api.call('GET', url, null, {
+                            success: function(forecastData) {
+                                // get default selections for filter and ranges
+                                app.defaultSelections = forecastData.defaultSelections;
+                                app.initData = forecastData.initData;
+                                app.user.set(app.initData.selectedUser);
 
-                            if(forecastData.initData.forecasts_setup == 0) {
-                                window.location.hash = "#config";
-                            }
-                            // resize the top menu after the layout has been initialized
-                            SUGAR.themes.resizeMenu();
-                            app.start();
-                        }});
+                                if(forecastData.initData.forecasts_setup == 0) {
+                                    window.location.hash = "#config";
+                                }
+                                // resize the top menu after the layout has been initialized
+                                SUGAR.themes.resizeMenu();
+                                app.start();
+                            },
+                            error:  app.error.handleForecastAPIError
+                        });
                     }
                 });
                 return app;

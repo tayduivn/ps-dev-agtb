@@ -795,7 +795,7 @@ $dictionary['User'] = array(
             'source' => 'non-db',
             'vname' => 'LBL_EMAILS'
         ),
-//BEGIN SUGARCRM flav=pro ONLY        
+//BEGIN SUGARCRM flav=pro ONLY
         'holidays' => array(
             'name' => 'holidays',
             'type' => 'link',
@@ -826,7 +826,7 @@ $dictionary['User'] = array(
         'source'=>'non-db',
         'side' => 'left',
       ),
-//BEGIN SUGARCRM flav=pro ONLY      
+//BEGIN SUGARCRM flav=pro ONLY
         'project_resource'=>
 		array (
 			'name' => 'project_resource',
@@ -1021,6 +1021,6 @@ $dictionary['User'] = array(
 	   //END SUGARCRM flav=pro ONLY
     ),
 
-    'acls' => array('SugarACLUsers' => true),
+    'acls' => array('SugarACLUsers' => true, 'SugarACLStatic' => true),
 
 );

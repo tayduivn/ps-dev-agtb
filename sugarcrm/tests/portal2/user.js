@@ -1,48 +1,23 @@
 describe("Portal User extensions", function () {
 
+    var app;
+
     beforeEach(function () {
-        SUGAR.App.metadata.set(fixtures.metadata, false, true);
+        app = SUGAR.App;
+        app.user.clear();
     });
 
-    describe("app.user.addSalutationToFullName", function () {
-        it("should patch Contact response data by adding salutation to full name", function () {
-            var app = SUGAR.App;
-            var data = {
-                first_name: "Joe",
-                last_name: "Plumber",
-                salutation: "MR."
-            };
-            app.user.addSalutationToFullName(data);
-            expect(data.full_name).toBe("Mr. Joe Plumber");
+    describe("app.user.isSupportPortalUser", function () {
 
-            data = {
-                name: "Who",
-                full_name: "Who",
-                salutation: "DR."
-            };
-            app.user.addSalutationToFullName(data);
-            expect(data.full_name).toBe("Dr. Who");
-
-            data = {
-                first_name: "Mister",
-                last_name: "Boots"
-            };
-            app.user.addSalutationToFullName(data);
-            expect(data.full_name).toBe("Mister Boots");
-
-            data = {
-                first_name: "Mister",
-                last_name: "Boots",
-                salutation: ""
-            };
-            app.user.addSalutationToFullName(data);
-            expect(data.full_name).toBe("Mister Boots");
-
+        it("should be a portal user", function () {
+            app.user.set('type', 'support_portal');
+            expect(app.user.isSupportPortalUser()).toBeTruthy();
         });
-    });
 
-    afterEach(function() {
-        SUGAR.App.metadata.reset();
+
+        it("should be a portal user", function () {
+            expect(app.user.isSupportPortalUser()).toBeFalsy();
+        });
     });
 
 });

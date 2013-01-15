@@ -1,8 +1,9 @@
 <?php
+//FILE SUGARCRM flav=pro || flav=sales ONLY
 /*********************************************************************************
- * The contents of this file are subject to the SugarCRM Master Subscription
- * Agreement ("License") which can be viewed at
- * http://www.sugarcrm.com/crm/master-subscription-agreement
+ * The contents of this file are subject to the SugarCRM Enterprise End User
+ * License Agreement ("License") which can be viewed at
+ * http://www.sugarcrm.com/crm/products/sugar-enterprise-eula.html
  * By installing or using this file, You have unconditionally agreed to the
  * terms and conditions of the License, and You may not use this file except in
  * compliance with the License.  Under the terms of the license, You shall not,
@@ -23,40 +24,28 @@
  * Your Warranty, Limitations of liability and Indemnity are expressly stated
  * in the License.  Please refer to the License for the specific language
  * governing these rights and limitations under the License.  Portions created
- * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
+ * by SugarCRM are Copyright (C) 2004-2006 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
-$viewdefs['base']['layout']['profileedit'] = array(
-    'type' => 'simple',
-    'components' =>
-    array(
-        0 => array(
-            'view' => 'subnav',
-            'meta' => 'edit'
-        ),
-        1 => array(
-            'layout' =>
-            array(
-                'type' => 'fluid',
-                'components' =>
-                array(
-                    0 => array(
-                        'layout' =>
-                        array(
-                            'type' => 'simple',
-                            'span' => 7,
-                            'components' =>
-                            array(
-                                0 => array(
-                                    'view' => 'profile-edit',
-                                ),
-                                1 => array(
-                                    'view' => 'passwordmodal',
-                                ),
-                            ),
-                        ),
-                    ),
-                ),
-            ),
+$viewdefs['Quotes']['mobile']['view']['detail'] = array(
+    'templateMeta' => array(
+        'maxColumns' => '1',
+        'widths' => array(
+            array('label' => '10', 'field' => '30'),
+            array('label' => '10', 'field' => '30')
         ),
     ),
+    'panels' => array (
+        array (
+            'label' => 'LBL_PANEL_DEFAULT',
+            'fields' => array(
+                'quote_num',
+                array (
+                    'name' => 'name',
+                    'label' => 'LBL_QUOTE_NAME',
+                ),
+                'account_name',
+                'quote_stage',
+            ),
+    	),
+	),
 );

@@ -27,29 +27,28 @@
 ({
     extendsFrom:'BaseeditmodalView',
     initialize: function(options) {
-        this.options.meta = this._meta.meta;
         app.view.View.prototype.initialize.call(this, options);
         this.fallbackFieldTemplate = "edit";
         if (this.layout) {
-            this.layout.on("app:view:password:editmodal", function(profileEditView) {
-                this.context.set('contactModel', profileEditView.context.get('model'));
+            this.layout.on("app:view:password:editmodal", function() {
+                this.model = this.context.get('model');
                 this.render();
                 this.$('.modal').modal('show');
-                this.context.get('contactModel').on("error:validation", function() {
+                this.model.on("error:validation", function() {
                     this.resetButton();
                 }, this);
             }, this);
         }
         this.bindDataChange();
     },
-    _render: function() {
+    _renderHtml: function() {
         this.saveButtonWasClicked = false;
-        app.view.View.prototype._render.call(this);
-        this.events = _.extend(this.events, {
+        this.events = _.clone(this.events);
+        _.extend(this.events, {
             "focusin input[name=new_password]" : "verifyCurrentPassword",
             "focusin input[name=confirm_password]" : "verifyCurrentPassword"
         });
-        this.delegateEvents();
+        app.view.View.prototype._renderHtml.call(this);
     },
     verifyCurrentPassword: function() {
         var self = this, currentPassword;
@@ -64,8 +63,8 @@
                     if(!self.checkUpdatePassWorked(data)) {
                         app.alert.show('pass_verification_failed', {
                             level: 'error',
-                            title: app.lang.get('LBL_PORTAL_LOGIN_PASSWORD'),
-                            messages: app.lang.get('LBL_PORTAL_PASSWORD_VERIFICATION_FAILED'),
+                            title: app.lang.get('LBL_PASSWORD', self.module),
+                            messages: app.lang.get('ERR_PASSWORD_MISMATCH', self.module),
                             autoClose: true});
                         self.$('[name=current_password]').val('');
                         self.$('[name=current_password]').focus();
@@ -83,6 +82,7 @@
     // Since we don't have a true Bean/meta driven validation for matching two temp fields 
     // (password and confirmation password), etc., we manually add validation errors here
     handleCustomValidationError: function(field, errorMsg) {
+        field = field.parents('.control-group')
         field.addClass('error');// Note the field is row fluid control group
         field.find('.help-block').html("");
         field.find('.help-block').append(errorMsg);
@@ -93,7 +93,7 @@
         this.$('[name=save_button]').attr('data-loading-text', app.lang.get('LBL_LOADING'));
         this.$('[name=save_button]').button('loading');
     },
-    verify: function(contactModel) {
+    verify: function() {
         var self = this, currentPassword, password, confirmPassword, confirmPasswordField, isError=false,
             passwordField, maxLen, currentPasswordField;
         self.setLoading();
@@ -108,62 +108,58 @@
         confirmPassword = confirmPasswordField.val();
         
         if(!currentPassword) {
-            self.handleCustomValidationError(currentPasswordField.parents('.control-group'),app.lang.get('ERROR_FIELD_REQUIRED'));
+            self.handleCustomValidationError(currentPasswordField,app.lang.get('ERR_ENTER_OLD_PASSWORD', self.module));
             isError=true;
         }
         if(!password) {
-            self.handleCustomValidationError(passwordField.parents('.control-group'),app.lang.get('ERROR_FIELD_REQUIRED'));
+            self.handleCustomValidationError(passwordField,app.lang.get('ERR_ENTER_NEW_PASSWORD', self.module));
             isError=true;
         }
         if(!confirmPassword) {
-            self.handleCustomValidationError(confirmPasswordField.parents('.control-group'),app.lang.get('ERROR_FIELD_REQUIRED'));
+            self.handleCustomValidationError(confirmPasswordField,app.lang.get('ERR_ENTER_CONFIRMATION_PASSWORD', self.module));
             isError=true;
         }
         if(password !== confirmPassword) {
             self.setLoading();
-            self.handleCustomValidationError(confirmPasswordField.parents('.control-group'),app.lang.get('LBL_PORTAL_PASSWORDS_MUST_MATCH'));
+            self.handleCustomValidationError(confirmPasswordField,app.lang.get('ERR_REENTER_PASSWORDS'), self.module);
             isError=true;
         }
-        maxLen = parseInt(app.metadata.getModule('Contacts').fields.portal_password.len, 10);
-        if(confirmPassword.length > maxLen) {
-            self.handleCustomValidationError(confirmPasswordField.parents('.control-group'), app.error.getErrorString('ERROR_MAX_FIELD_LENGTH', maxLen) );
+
+        var passwordField = self.context.get('passwordField'),
+            mod = app.metadata.getModule(self.module);
+        maxLen = mod[passwordField] ? parseInt(mod[passwordField].len, 10) : 0;
+        if(maxLen > 0 && confirmPassword.length > maxLen) {
+            self.handleCustomValidationError(confirmPasswordField, app.error.getErrorString('ERROR_MAX_FIELD_LENGTH', maxLen) );
             isError=true;
         }
         return !isError;
     },
     saveButton: function() {
-        var self = this, contactModel = this.context.get('contactModel');
-        if(self.verify(contactModel)) {
-            self.saveModel(contactModel);
+        if(this.verify()) {
+            this.saveModel();
         } else {
-            self.resetButton();
+            this.resetButton();
         }
     },
-    saveModel: function(contactModel) {
+    saveModel: function() {
         var self = this, 
-            oldPass = contactModel.get('current_password'),
-            newPass = contactModel.get('new_password');
+            oldPass = self.model.get('current_password'),
+            newPass = self.model.get('new_password');
 
         this.saveButtonWasClicked = true;
 
-        // Add the new pass to portal_password and remove temp fields
-        contactModel.unset('current_password', {silent: true});
-        contactModel.unset('confirm_password', {silent: true});
-        contactModel.unset('new_password', {silent: true});
-
-        app.alert.show('passreset', {level: 'error', title: app.lang.get('LBL_PORTAL_LOGIN_PASSWORD'), autoClose: false});
+        app.alert.show('passreset', {level: 'process', title: app.lang.get('LBL_PASSWORD', self.module), messages: app.lang.get('LBL_PROCESSING', self.module), autoClose: false});
 
         app.api.updatePassword(oldPass, newPass, {
             success: function(data) {
                 app.alert.dismiss('passreset');
-                contactModel.set({'portal_password': 'value_setvalue_setvalue_set'}, {silent: true});
                 if(self.checkUpdatePassWorked(data)) {
                     self.saveComplete();
                 } else {
                     app.alert.show('pass_update_failed', {
                         level: 'error',
-                        title: app.lang.get('LBL_PORTAL_LOGIN_PASSWORD'),
-                        messages: app.lang.get('LBL_PORTAL_PASSWORD_UPDATE_FAILED'),
+                        title: app.lang.get('LBL_PASSWORD', self.module),
+                        messages: app.lang.get('LBL_CANNOT_SEND_PASSWORD'),
                         autoClose: true});
                     self.$('.modal').modal().find('input:text, input:password').val('');
                     self.resetButton();
@@ -184,69 +180,21 @@
         return true;
     },
     saveComplete: function() {
+        var self = this;
+        // Remove temp fields
+        self.model.unset('current_password', {silent: true});
+        self.model.unset('confirm_password', {silent: true});
+        self.model.unset('new_password', {silent: true});
+
         //reset the form
-        this.$('.modal').modal('hide').find('form').get(0).reset();
+        self.$('.modal').modal('hide').find('form').get(0).reset();
         //reset the `Save` button
-        this.resetButton();
+        self.resetButton();
         //"Your password has been successfully updated."
         app.alert.show('pass_successfully_changes', {
             level: 'success', 
-            title: app.lang.get('LBL_PORTAL_LOGIN_PASSWORD'), 
-            messages: app.lang.get('LBL_PORTAL_PASSWORD_SUCCESS_CHANGED'),
+            title: app.lang.get('LBL_PASSWORD', self.module),
+            messages: app.lang.get('LBL_NEW_USER_PASSWORD_1', self.module),
             autoClose: true});
-    },
-    
-    _meta: 
-        {
-            "meta": {
-                "buttons": [
-                    {
-                        "name": "cancel_button",
-                        "type": "button",
-                        "label": app.lang.get('LBL_CANCEL_BUTTON_LABEL'),
-                        "value": "cancel",
-                        "css_class": "btn-invisible btn-link",
-                    },
-                    {
-                        "name": "save_button",
-                        "type": "button",
-                        "label": app.lang.get('LBL_SAVE_BUTTON_LABEL'),
-                        "value": "save",
-                        "css_class": "btn-primary save-profile",
-                    }
-                ],
-                "panels": [
-                    {
-                        "label": "default",
-                        "fields": [
-                            {
-                                "name": "current_password",
-                                "type": "password",
-                                "label": "LBL_OLD_PORTAL_PASSWORD",
-                                "displayParams": {
-                                    "colspan": 2
-                                }
-                            },
-                            {
-                                "name": "new_password",
-                                "type": "password",
-                                "label": "LBL_PORTAL_PASSWORD",
-                                "displayParams": {
-                                    "colspan": 2
-                                }
-                            },
-                            {
-                                "name": "confirm_password",
-                                "type": "password",
-                                "label": "LBL_CONFIRM_PORTAL_PASSWORD",
-                                "displayParams": {
-                                    "colspan": 2
-                                }
-                            }
-                        ]
-                    }
-                ]
-            }
-        }
-    
-  })
+    }
+})
