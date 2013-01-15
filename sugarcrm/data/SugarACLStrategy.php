@@ -148,13 +148,11 @@ abstract class SugarACLStrategy
         $input = strtolower($actionToCheck);
         switch ($input)
         {
-            case 'list':
             case 'index':
             case 'listview':
             case 'subpanel':
                 $output = 'list';
                 break;
-            case 'edit':
             case 'save':
             case 'popupeditview':
             case 'editview':
@@ -162,31 +160,11 @@ abstract class SugarACLStrategy
                 $output = 'edit';
                 break;
             case 'access':
-            case 'view':
             case 'detail':
             case 'detailview':
                 $output = 'view';
                 break;
-            case 'delete':
-                $output = 'delete';
-                break;
-            case 'export':
-                $output = 'export';
-                break;
-            case 'import':
-                $output = 'import';
-                break;
-            case 'field':
-                $output = 'field';
-                break;
-            case 'team_security':
-                $output = 'team_security';
-                break;
-            case 'massupdate':
-                $output = 'massupdate';
-                break;
             default:
-                $GLOBALS['log']->debug("Came across an unknown ACL action: ".$input);
                 $output = $input;
         }
 
