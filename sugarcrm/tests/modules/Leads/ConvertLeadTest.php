@@ -31,31 +31,51 @@ class ConvertLeadTest extends Sugar_PHPUnit_Framework_TestCase
 {
     public function setUp()
     {
-        $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
-        $GLOBALS['app_list_strings'] = return_app_list_strings_language($GLOBALS['current_language']);
+        SugarTestHelper::setUp('files');
+        SugarTestHelper::setUp('current_user');
+        SugarTestHelper::setUp('app_list_strings');
+        SugarTestHelper::saveFile('custom/modules/Leads/metadata/editviewdefs.php');
+        @SugarAutoLoader::unlink('custom/modules/Leads/metadata/editviewdefs.php');
     }
 
-    public static function setUpBeforeClass()
-    {
-        if(file_exists('custom/modules/Leads/metadata/editviewdefs.php')) {
-           rename('custom/modules/Leads/metadata/editviewdefs.php', 'custom/modules/Leads/metadata/editviewdefs.php.bak');
-        }
-    }
-
-    public static function tearDownAfterClass()
-    {
-        if(file_exists('custom/modules/Leads/metadata/editviewdefs.php.bak')) {
-            rename('custom/modules/Leads/metadata/editviewdefs.php.bak', 'custom/modules/Leads/metadata/editviewdefs.php');
-        }
-    }
-    
     public function tearDown()
     {
-        SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
-        unset($GLOBALS['app_list_strings']);
-        unset($GLOBALS['current_user']);
+        SugarTestHelper::tearDown();
+        SugarTestLeadUtilities::removeAllCreatedLeads();
+        SugarTestStudioUtilities::removeAllCreatedFields();
+        if(!empty($this->relation_id)) {
+            SugarTestMeetingUtilities::deleteMeetingLeadRelation($this->relation_id);
+        }
+        SugarTestMeetingUtilities::removeMeetingContacts();
+        SugarTestMeetingUtilities::removeMeetingUsers();
+        SugarTestMeetingUtilities::removeAllCreatedMeetings();
+        SugarTestContactUtilities::removeAllCreatedContacts();
+        SugarTestLeadUtilities::removeAllCreatedLeads();
+        SugarTestAccountUtilities::removeAllCreatedAccounts();
+        unset($GLOBALS['app']->controller);
+        unset($_REQUEST['module']);
+        unset($_REQUEST['action']);
+        unset($_REQUEST['record']);
+        if(!empty($this->meeting) && !empty($this->contact)) {
+            $GLOBALS['db']->query("delete from meetings_contacts where meeting_id='{$this->meeting->id}' and contact_id= '{$this->contact->id}'");
+        }
+        if(!empty($this->contact)) {
+            $GLOBALS['db']->query("delete from meetings where parent_id='{$this->contact->id}' and parent_type= 'Contacts'");
+        }
+        if(!empty($this->contact_id)) {
+            $GLOBALS['db']->query("delete from meetings where parent_id='{$this->contact_id}' and parent_type= 'Contacts'");
+        }
+        if(!empty($this->lead)) {
+            $GLOBALS['db']->query("delete from meetings where parent_id='{$this->lead->id}' and parent_type= 'Leads'");
+        }
+        if(!empty($this->new_meeting_id) && !empty($this->contact)) {
+            $GLOBALS['db']->query("delete from meetings_contacts where meeting_id='{$this->new_meeting_id}' and contact_id= '{$this->contact->id}'");
+        }
+        if(!empty($this->new_meeting_id) && !empty($this->contact_id)) {
+            $GLOBALS['db']->query("delete from meetings_contacts where meeting_id='{$this->new_meeting_id}' and contact_id= '{$this->contact_id}'");
+        }
     }
-    
+
     /**
     * @group bug39787
     */
@@ -64,11 +84,11 @@ class ConvertLeadTest extends Sugar_PHPUnit_Framework_TestCase
         $lead = SugarTestLeadUtilities::createLead();
         $lead->opportunity_name = 'SBizzle Dollar Store';
         $lead->save();
-        
+
         $_REQUEST['module'] = 'Leads';
         $_REQUEST['action'] = 'ConvertLead';
         $_REQUEST['record'] = $lead->id;
-        
+
         // Check that the opportunity name doesn't get populated when it's not in the Leads editview layout
         require_once('include/MVC/Controller/ControllerFactory.php');
         require_once('include/MVC/View/ViewFactory.php');
@@ -76,7 +96,7 @@ class ConvertLeadTest extends Sugar_PHPUnit_Framework_TestCase
         ob_start();
         $GLOBALS['app']->controller->execute();
         $output = ob_get_clean();
-        
+
         $matches_one = array();
         $pattern = '/SBizzle Dollar Store/';
         preg_match($pattern, $output, $matches_one);
@@ -84,7 +104,7 @@ class ConvertLeadTest extends Sugar_PHPUnit_Framework_TestCase
 
         // Add the opportunity_name to the Leads EditView
         SugarTestStudioUtilities::addFieldToLayout('Leads', 'editview', 'opportunity_name');
-        
+
         // Check that the opportunity name now DOES get populated now that it's in the Leads editview layout
         ob_start();
         $GLOBALS['app']->controller = ControllerFactory::getController($_REQUEST['module']);
@@ -94,13 +114,6 @@ class ConvertLeadTest extends Sugar_PHPUnit_Framework_TestCase
         $pattern = '/SBizzle Dollar Store/';
         preg_match($pattern, $output, $matches_two);
         $this->assertTrue(count($matches_two) > 0, "Opportunity name did not carry over to the Convert Leads page when it should have.");
-        
-        SugarTestStudioUtilities::removeAllCreatedFields();
-        unset($GLOBALS['app']->controller);
-        unset($_REQUEST['module']);
-        unset($_REQUEST['action']);
-        unset($_REQUEST['record']);
-        SugarTestLeadUtilities::removeAllCreatedLeads();
     }
 
     /**
@@ -109,7 +122,7 @@ class ConvertLeadTest extends Sugar_PHPUnit_Framework_TestCase
     public function testActivityMove() {
         // init
         $lead = SugarTestLeadUtilities::createLead();
-        $contact = SugarTestContactUtilities::createContact();
+        $this->contact = $contact = SugarTestContactUtilities::createContact();
         $meeting = SugarTestMeetingUtilities::createMeeting();
         SugarTestMeetingUtilities::addMeetingParent($meeting->id, $lead->id);
         $relation_id = SugarTestMeetingUtilities::addMeetingLeadRelation($meeting->id, $lead->id);
@@ -117,7 +130,7 @@ class ConvertLeadTest extends Sugar_PHPUnit_Framework_TestCase
 
         // refresh the meeting to include parent_id and parent_type
         $meeting_id = $meeting->id;
-        $meeting = new Meeting();
+        $this->meeting = $meeting = new Meeting();
         $meeting->retrieve($meeting_id);
 
         // action: move meeting from lead to contact
@@ -143,29 +156,22 @@ class ConvertLeadTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertFalse(empty($row), "Meeting-Contact relationship is not added.");
 
         // clean up
-        unset($_REQUEST['record']);
-        $GLOBALS['db']->query("delete from meetings_contacts where meeting_id='{$meeting->id}' and contact_id= '{$contact->id}'");
-        SugarTestMeetingUtilities::deleteMeetingLeadRelation($relation_id);
-        SugarTestMeetingUtilities::removeMeetingContacts();
-        SugarTestMeetingUtilities::removeAllCreatedMeetings();
-        SugarTestContactUtilities::removeAllCreatedContacts();
-        SugarTestLeadUtilities::removeAllCreatedLeads();
     }
 
 
     public function testActivityCopyWithParent() {
         // lets the run the activity copy again, only this time we pass in a parent account
-        $lead = SugarTestLeadUtilities::createLead();
-        $contact = SugarTestContactUtilities::createContact();
+        $this->lead = $lead = SugarTestLeadUtilities::createLead();
+        $this->contact = $contact = SugarTestContactUtilities::createContact();
         $meeting = SugarTestMeetingUtilities::createMeeting();
         $account = SugarTestAccountUtilities::createAccount();
         SugarTestMeetingUtilities::addMeetingParent($meeting->id, $lead->id);
-                $relation_id = SugarTestMeetingUtilities::addMeetingLeadRelation($meeting->id, $lead->id);
+        $this->relation_id = SugarTestMeetingUtilities::addMeetingLeadRelation($meeting->id, $lead->id);
         $_REQUEST['record'] = $lead->id;
 
         // refresh the meeting to include parent_id and parent_type
         $meeting_id = $meeting->id;
-        $meeting = new Meeting();
+        $this->meeting = $meeting = new Meeting();
         $meeting->retrieve($meeting_id);
 
         // action: copy meeting from lead to contact
@@ -189,19 +195,19 @@ class ConvertLeadTest extends Sugar_PHPUnit_Framework_TestCase
 
     }
 
-    
+
     public function testActivityCopyWithNoParent() {
         // init
-        $lead = SugarTestLeadUtilities::createLead();
-        $contact = SugarTestContactUtilities::createContact();
+        $this->lead = $lead = SugarTestLeadUtilities::createLead();
+        $this->contact = $contact = SugarTestContactUtilities::createContact();
         $meeting = SugarTestMeetingUtilities::createMeeting();
         SugarTestMeetingUtilities::addMeetingParent($meeting->id, $lead->id);
-        $relation_id = SugarTestMeetingUtilities::addMeetingLeadRelation($meeting->id, $lead->id);
+        $this->relation_id = $relation_id = SugarTestMeetingUtilities::addMeetingLeadRelation($meeting->id, $lead->id);
         $_REQUEST['record'] = $lead->id;
 
         // refresh the meeting to include parent_id and parent_type
         $meeting_id = $meeting->id;
-        $meeting = new Meeting();
+        $this->meeting = $meeting = new Meeting();
         $meeting->retrieve($meeting_id);
 
         // action: copy meeting from lead to contact
@@ -225,7 +231,7 @@ class ConvertLeadTest extends Sugar_PHPUnit_Framework_TestCase
                   $new_meeting_id = $row['id'];
                   $this->assertEmpty($row['parent_id'],'parent id of meeting should be empty as no parent was sent in ');
               }
-
+              $this->new_meeting_id = $new_meeting_id;
 
 
         // 3. record should not be deleted from meetings_leads table
@@ -239,17 +245,6 @@ class ConvertLeadTest extends Sugar_PHPUnit_Framework_TestCase
         $result = $GLOBALS['db']->query($sql);
         $row = $GLOBALS['db']->fetchByAssoc($result);
         $this->assertFalse(empty($row), "Meeting-Contact relationship has not been added.");
-
-        // clean up
-        unset($_REQUEST['record']);
-        $GLOBALS['db']->query("delete from meetings where parent_id='{$contact->id}' and parent_type= 'Contacts'");
-        $GLOBALS['db']->query("delete from meetings where parent_id='{$lead->id}' and parent_type= 'Leads'");
-        $GLOBALS['db']->query("delete from meetings_contacts where meeting_id='{$new_meeting_id}' and contact_id= '{$contact->id}'");
-        SugarTestMeetingUtilities::deleteMeetingLeadRelation($relation_id);
-        SugarTestMeetingUtilities::removeMeetingContacts();
-        SugarTestMeetingUtilities::removeAllCreatedMeetings();
-        SugarTestContactUtilities::removeAllCreatedContacts();
-        SugarTestLeadUtilities::removeAllCreatedLeads();
     }
 
     /**
@@ -263,7 +258,7 @@ class ConvertLeadTest extends Sugar_PHPUnit_Framework_TestCase
         $account = SugarTestAccountUtilities::createAccount();
         $meeting = SugarTestMeetingUtilities::createMeeting();
         SugarTestMeetingUtilities::addMeetingParent($meeting->id, $lead->id);
-        $relation_id = SugarTestMeetingUtilities::addMeetingLeadRelation($meeting->id, $lead->id);
+        $this->relation_id = $relation_id = SugarTestMeetingUtilities::addMeetingLeadRelation($meeting->id, $lead->id);
         $_REQUEST['record'] = $lead->id;
 
         // set the request/post parameters before converting the lead
@@ -281,16 +276,16 @@ class ConvertLeadTest extends Sugar_PHPUnit_Framework_TestCase
 
         // refresh meeting
         $meeting_id = $meeting->id;
-        $meeting = new Meeting();
+        $this->meeting = $meeting = new Meeting();
         $meeting->retrieve($meeting_id);
 
         // refresh lead
         $lead_id = $lead->id;
-        $lead = new Lead();
+        $this->lead = $lead = new Lead();
         $lead->retrieve($lead_id);
 
         // retrieve the new contact id from the conversion
-        $contact_id = $lead->contact_id;
+        $this->contact_id = $contact_id = $lead->contact_id;
 
         // 1. Lead's contact_id should not be null
         $this->assertNotNull($contact_id, 'Lead has null contact id after conversion.');
@@ -315,18 +310,6 @@ class ConvertLeadTest extends Sugar_PHPUnit_Framework_TestCase
         $result = $GLOBALS['db']->query($sql);
         $row = $GLOBALS['db']->fetchByAssoc($result);
         $this->assertFalse(empty($row), "Meeting-Contact relationship is not added.");
-
-        // clean up
-        unset($_REQUEST['record']);
-        $GLOBALS['db']->query("delete from meetings where parent_id='{$lead->id}' and parent_type= 'Leads'");
-        $GLOBALS['db']->query("delete from meetings where parent_id='{$contact_id}' and parent_type= 'Contacts'");
-        $GLOBALS['db']->query("delete from contacts where id='{$contact_id}'");
-        $GLOBALS['db']->query("delete from meetings_contacts where meeting_id='{$meeting->id}' and contact_id= '{$contact_id}'");
-        SugarTestMeetingUtilities::deleteMeetingLeadRelation($relation_id);
-        SugarTestMeetingUtilities::removeMeetingContacts();
-        SugarTestMeetingUtilities::removeAllCreatedMeetings();
-        SugarTestAccountUtilities::removeAllCreatedAccounts();
-        SugarTestLeadUtilities::removeAllCreatedLeads();
     }
 
     /**
@@ -340,7 +323,7 @@ class ConvertLeadTest extends Sugar_PHPUnit_Framework_TestCase
         $account = SugarTestAccountUtilities::createAccount();
         $meeting = SugarTestMeetingUtilities::createMeeting();
         SugarTestMeetingUtilities::addMeetingParent($meeting->id, $lead->id);
-        $relation_id = SugarTestMeetingUtilities::addMeetingLeadRelation($meeting->id, $lead->id);
+        $this->relation_id = $relation_id = SugarTestMeetingUtilities::addMeetingLeadRelation($meeting->id, $lead->id);
         $_REQUEST['record'] = $lead->id;
 
         // set the request/post parameters before converting the lead
@@ -358,16 +341,16 @@ class ConvertLeadTest extends Sugar_PHPUnit_Framework_TestCase
 
         // refresh meeting
         $meeting_id = $meeting->id;
-        $meeting = new Meeting();
+        $this->meeting = $meeting = new Meeting();
         $meeting->retrieve($meeting_id);
 
         // refresh lead
         $lead_id = $lead->id;
-        $lead = new Lead();
+        $this->lead = $lead = new Lead();
         $lead->retrieve($lead_id);
 
         // retrieve the new contact id from the conversion
-        $contact_id = $lead->contact_id;
+        $this->contact_id = $contact_id = $lead->contact_id;
 
         // 1. Lead's contact_id should not be null
         $this->assertNotNull($contact_id, 'Lead has null contact id after conversion.');
@@ -403,19 +386,6 @@ class ConvertLeadTest extends Sugar_PHPUnit_Framework_TestCase
 
         // 8. the parent_id of the new meeting should be contact id
         $this->assertEmpty($row['parent_id'], 'Parent id of the new meeting should be empty.');
-
-       // clean up
-        unset($_REQUEST['record']);
-        $GLOBALS['db']->query("delete from meetings where parent_id='{$lead->id}' and parent_type= 'Leads'");
-        $GLOBALS['db']->query("delete from meetings where parent_id='{$contact_id}' and parent_type= 'Contacts'");
-        $GLOBALS['db']->query("delete from contacts where id='{$contact_id}'");
-        $GLOBALS['db']->query("delete from meetings_leads where meeting_id='{$meeting->id}' and lead_id= '{$lead_id}'");
-        $GLOBALS['db']->query("delete from meetings_contacts where contact_id= '{$contact_id}'");
-        SugarTestMeetingUtilities::deleteMeetingLeadRelation($relation_id);
-        SugarTestMeetingUtilities::removeMeetingContacts();
-        SugarTestMeetingUtilities::removeAllCreatedMeetings();
-        SugarTestAccountUtilities::removeAllCreatedAccounts();
-        SugarTestLeadUtilities::removeAllCreatedLeads();
     }
 
     /**
@@ -446,16 +416,16 @@ class ConvertLeadTest extends Sugar_PHPUnit_Framework_TestCase
 
         // refresh meeting
         $meeting_id = $meeting->id;
-        $meeting = new Meeting();
+        $this->meeting = $meeting = new Meeting();
         $meeting->retrieve($meeting_id);
 
         // refresh lead
         $lead_id = $lead->id;
-        $lead = new Lead();
+        $this->lead = $lead = new Lead();
         $lead->retrieve($lead_id);
 
         // retrieve the new contact id from the conversion
-        $contact_id = $lead->contact_id;
+        $this->contact_id = $contact_id = $lead->contact_id;
 
         // 1. Lead's contact_id should not be null
         $this->assertNotNull($contact_id, 'Lead has null contact id after conversion.');
@@ -480,19 +450,6 @@ class ConvertLeadTest extends Sugar_PHPUnit_Framework_TestCase
         $result = $GLOBALS['db']->query($sql);
         $row = $GLOBALS['db']->fetchByAssoc($result);
         $this->assertFalse($row, "Meeting-Contact relationship should not be added.");
-
-        // clean up
-        unset($_REQUEST['record']);
-        $GLOBALS['db']->query("delete from meetings where parent_id='{$lead->id}' and parent_type= 'Leads'");
-        $GLOBALS['db']->query("delete from meetings where parent_id='{$contact_id}' and parent_type= 'Contacts'");
-        $GLOBALS['db']->query("delete from contacts where id='{$contact_id}'");
-        $GLOBALS['db']->query("delete from meetings_leads where meeting_id='{$meeting->id}' and lead_id= '{$lead_id}'");
-        $GLOBALS['db']->query("delete from meetings_contacts where contact_id= '{$contact_id}'");
-        SugarTestMeetingUtilities::deleteMeetingLeadRelation($relation_id);
-        SugarTestMeetingUtilities::removeMeetingContacts();
-        SugarTestMeetingUtilities::removeAllCreatedMeetings();
-        SugarTestAccountUtilities::removeAllCreatedAccounts();
-        SugarTestLeadUtilities::removeAllCreatedLeads();
     }
 
     public function testMeetingsUsersRelationships()
@@ -508,9 +465,6 @@ class ConvertLeadTest extends Sugar_PHPUnit_Framework_TestCase
         }
 
         $this->assertTrue(is_object($bean->users), "Relationship wasn't set.");
-
-        SugarTestMeetingUtilities::removeMeetingUsers();
-        SugarTestMeetingUtilities::removeAllCreatedMeetings();
     }
 }
 
@@ -527,18 +481,15 @@ class TestViewConvertLead extends ViewConvertLead
     public function testMeetingsUsersRelationships()
     {
         global $current_user;
-        
+
         $bean = SugarTestMeetingUtilities::createMeeting();
         $convert_lead = SugarTestViewConvertLeadUtilities::createViewConvertLead();
-        
+
         if ($bean->object_name == "Meeting")
         {
             $convert_lead->setMeetingsUsersRelationship($bean);
         }
-        
+
         $this->assertTrue(is_object($bean->users), "Relationship wasn't set.");
-        
-        SugarTestMeetingUtilities::removeMeetingUsers();
-        SugarTestMeetingUtilities::removeAllCreatedMeetings();
     }
 }

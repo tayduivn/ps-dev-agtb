@@ -22,7 +22,6 @@
  * All Rights Reserved.
  ********************************************************************************/
 
-require_once 'modules/ModuleBuilder/Module/StudioModule.php';
 require_once 'modules/ModuleBuilder/parsers/ParserFactory.php';
 
 class Bug59825Test extends Sugar_PHPUnit_Framework_TestCase
@@ -35,8 +34,9 @@ class Bug59825Test extends Sugar_PHPUnit_Framework_TestCase
     protected static $_module = 'Bugs';
 
     /**
-     * To support the data provider these need to be done before the class is 
-     * setup
+     * Rather than setting up and tearing down for each iteration of the data 
+     * provider, set up once and tear down once, as these are used as-is throughout
+     * each test.
      */
     public static function setUpBeforeClass()
     {
@@ -66,18 +66,41 @@ class Bug59825Test extends Sugar_PHPUnit_Framework_TestCase
     }
 
     /**
-     * Gets a list of 'types' of metadata views to be used in the test.
+     * Gets a list of 'types' of metadata views to be used in the test. Includes
+     * basic layouts from all OOTB and, where applicable, wireless and portal
+     * layouts.
+     * 
      * @return array
      */
     public function _layoutProvider()
     {
-        $return = array();
-        $sm = new StudioModule(self::$_module);
-        $data = $sm->getViewMetadataSources();
-        foreach ($data as $row) {
-            $return[] = array('type' => $row['type']);
-        }
-        
-        return $return;
+        return array(
+            // Basic types for all OOTB installations
+            // This simulates StudioModule::getViewMetadataSources()
+            array('type' => MB_EDITVIEW),
+            array('type' => MB_DETAILVIEW),
+            array('type' => MB_LISTVIEW),
+            array('type' => MB_BASICSEARCH),
+            array('type' => MB_ADVANCEDSEARCH),
+            array('type' => MB_DASHLET),
+            array('type' => MB_DASHLETSEARCH),
+            array('type' => MB_POPUPLIST),
+            array('type' => MB_QUICKCREATE),
+            //BEGIN SUGARCRM flav=pro ONLY
+            // Wireless types
+            // This simulates StudioModule::getWirelessLayouts()
+            array('type' => MB_WIRELESSEDITVIEW),
+            array('type' => MB_WIRELESSDETAILVIEW),
+            array('type' => MB_WIRELESSLISTVIEW),
+            array('type' => MB_WIRELESSBASICSEARCH),
+            //END SUGARCRM flav=pro ONLY
+            //BEGIN SUGARCRM flav=ent ONLY
+            // Portal types not including search, which was the cause of the bug
+            // This simulates StudioModule::getPortalLayoutSources()
+            array('type' => MB_PORTALEDITVIEW),
+            array('type' => MB_PORTALDETAILVIEW),
+            array('type' => MB_PORTALLISTVIEW),
+            //END SUGARCRM flav=ent ONLY
+        );
     }
 }

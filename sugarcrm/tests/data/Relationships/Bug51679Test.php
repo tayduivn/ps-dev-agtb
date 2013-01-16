@@ -30,8 +30,9 @@ class Bug51679Test extends Sugar_PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        global $beanFiles, $beanList, $current_user;
-        $current_user = SugarTestUserUtilities::createAnonymousUser();
+        SugarTestHelper::setUp('current_user');
+        SugarTestHelper::setUp('beanList');
+        SugarTestHelper::setUp('beanFiles');
         $this->account = SugarTestAccountUtilities::createAccount();
         $this->contact = SugarTestContactUtilities::createContact();
         $this->account->load_relationship('contacts');
@@ -44,7 +45,7 @@ class Bug51679Test extends Sugar_PHPUnit_Framework_TestCase
     {
         SugarTestAccountUtilities::removeAllCreatedAccounts();
         SugarTestContactUtilities::removeAllCreatedContacts();
-        SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
+        SugarTestHelper::tearDown();
     }
 
     /**

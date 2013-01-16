@@ -1,7 +1,7 @@
-{{!
+<?php
 /*********************************************************************************
  * The contents of this file are subject to the SugarCRM Master Subscription
- * Agreement (""License"") which can be viewed at
+ * Agreement ("License") which can be viewed at
  * http://www.sugarcrm.com/crm/master-subscription-agreement
  * By installing or using this file, You have unconditionally agreed to the
  * terms and conditions of the License, and You may not use this file except in
@@ -15,7 +15,7 @@
  * remove SugarCRM copyrights from the source code or user interface.
  *
  * All copies of the Covered Code must include on each user interface screen:
- *  (i) the ""Powered by SugarCRM"" logo and
+ *  (i) the "Powered by SugarCRM" logo and
  *  (ii) the SugarCRM copyright notice
  * in the same form as they appear in the distribution.  See full license for
  * requirements.
@@ -25,29 +25,42 @@
  * governing these rights and limitations under the License.  Portions created
  * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
-}}
-<div class="modal hide">
-    <div class="modal-header">
-        <a class="close" data-dismiss="modal"><i class="icon-remove"></i></a>
-        <h3>{{str "LBL_PASSWORD_CHANGE_FORM_TITLE" context.attributes.module}}</h3>
-    </div>
-    <div class="modal-body">
-        <form class="form-horizontal" method="POST">
-            <fieldset>
-                {{#each meta.panels}}
-                {{#each fields}}
-                <div class="row-fluid control-group">
-                    <div class="span4">{{str label ../../context.attributes.module}}</div>
-                    <div class="span6">{{field ../../this ../../context.attributes.contactModel}}</div>
-                </div>
-                {{/each}}
-                {{/each}}
-            </fieldset>
-        </form>
-    </div>
-    <div class="modal-footer">
-        {{#each meta.buttons}}
-        {{field ../this ../contactModel}}
-        {{/each}}
-    </div>
-</div>
+$viewdefs['base']['layout']['profile-edit'] = array(
+    'type' => 'simple',
+    'components' =>
+    array(
+        0 => array(
+            'view' => 'subnavedit',
+        ),
+        1 => array(
+            'layout' =>
+            array(
+                'type' => 'fluid',
+                'components' =>
+                array(
+                    0 => array(
+                        'layout' =>
+                        array(
+                            'type' => 'simple',
+                            'span' => 7,
+                            'components' =>
+                            array(
+                                0 => array(
+                                    'view' => 'profile-edit',
+                                ),
+                                1 => array(
+                                    'view' => 'passwordmodal',
+                                    'context' => array(
+                                        'module' => 'Contacts',
+                                        'create' => true,
+                                        'passwordField' => 'portal_password'
+                                    ),
+                                ),
+                            ),
+                        ),
+                    ),
+                ),
+            ),
+        ),
+    ),
+);

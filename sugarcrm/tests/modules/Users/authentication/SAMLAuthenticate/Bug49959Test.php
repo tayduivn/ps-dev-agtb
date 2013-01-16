@@ -68,7 +68,7 @@ class Bug49959Test extends Sugar_PHPUnit_Framework_TestCase
      */
     public static function tearDownAfterClass()
     {
-        self::$user->mark_deleted(self::$user_id);
+        $GLOBALS['db']->query("DELETE FROM users WHERE user_name='".self::$user_name."'");
     }
 
     /**

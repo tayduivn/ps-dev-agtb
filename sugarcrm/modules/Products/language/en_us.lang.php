@@ -142,6 +142,12 @@ $mod_strings = array (
 	'LBL_EDITLAYOUT' => 'Edit Layout' /*for 508 compliance fix*/,
     //For export labels
     'LBL_EXPORT_CURRENCY_ID' => 'Currency ID',
+
+    'LBL_CURRENCY_RATE' => 'Currency Rate',
+    'LBL_DATE_CLOSED' => 'Expected Close Date',
+    'LBL_DATE_CLOSED_TIMESTAMP' => 'Expected Close Date Timestamp',
+    'LBL_COMMIT_STAGE' => 'Commit Stage',
+    'LBL_PROBABILITY' => 'Probability (%)',
 );
 
 ?>
