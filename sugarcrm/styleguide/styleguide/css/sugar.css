@@ -2549,7 +2549,7 @@ date {
   top: 5px;
 }
 .widget h4 {
-  cursor: pointer;
+  cursor: ns-resize;
   margin: 0;
 }
 .widget.out {
