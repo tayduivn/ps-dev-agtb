@@ -5,14 +5,10 @@ $layout->push("main",array(
         'layout'=> array(
             'type' => 'drawer',
             'showEvent' => array(
-                "delegate" => true,
-                "event" => "click [name=lead_convert_button]",
+                "drawer:selection:fire",
+                "drawer:create:fire",
+                "drawer:lead:convert:fire"
             ),
-            'components' => array(
-                array(
-                    'layout' => 'convert',
-                )
-            )
         ),
     ));
 $layout->push('main', array('view'=>'record'));

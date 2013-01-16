@@ -51,7 +51,7 @@ $viewdefs['Leads']['base']['layout']['convert-main'] = array(
         array(
             'module' => 'Opportunities',
             'required' => false,
-            'duplicateCheck' => false,
+            'duplicateCheck' => true, //duplicate check should be turned off when the dependent modules is turned on
             'fieldMapping' => array(
                 //opportunity field => lead field
                 'name' => 'opportunity_name',
@@ -60,10 +60,11 @@ $viewdefs['Leads']['base']['layout']['convert-main'] = array(
                 'campaign_id' => 'campaign_id',
                 'lead_source' => 'lead_source',
             ),
-            'dependentModules' => array(
+            /*'dependentModules' => array(
                 'Contacts',
                 'Accounts'
-            )
+            )*/
+            //dependent modules should be turned on when the filter api is able to filter based on related fields
         ),
     )
 );

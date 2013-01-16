@@ -56,18 +56,37 @@
         }
     },
 
+    /**
+     * Inserts the duplicate list view into module panel based on metadata
+     */
     insertDuplicateViewInPanel: function(moduleMeta) {
         var self = this,
             def = {
                 'view':'duplicate-list',
                 'context':{'module':moduleMeta.module, forceNew:true}
-            };
+            },
+            context = self.context.getChildContext(def.context);
 
-        this.duplicateView = this.insertViewInPanel(moduleMeta, this.DUPLICATE_VIEW, def);
+        context.set('limit', 3); //todo: set this to 10? once we have style that will limit the rows displayed & make scrollable
+        context.prepare();
+
+        this.duplicateView = app.view.createView({
+            context: context,
+            name: def.view,
+            module: moduleMeta.module,
+            layout: self,
+            id: def.id
+        });
+
+        this.$('.' + this.DUPLICATE_VIEW + 'View').append(this.duplicateView.el);
+        this.duplicateView.render();
         this.duplicateView.context.on('change:selection_model', this.selectDuplicate, self);
         this.duplicateView.validationStatus = this.STATUS_INIT;
     },
 
+    /**
+     * Insert the create/record view into the module panel based on metadata
+     */
     insertRecordViewInPanel: function(moduleMeta) {
         var self = this,
             def = {
@@ -93,30 +112,7 @@
         this.recordView.enableHeaderPane = false;
         this.recordView.render();
 
-       // this.recordView = this.insertViewInPanel(moduleMeta, this.RECORD_VIEW, def);
-
         this.recordView.validationStatus = this.STATUS_DIRTY;
-    },
-
-    insertViewInPanel:function (moduleMeta, contentType, def) {
-        var self = this,
-            context = self.context.getChildContext(def.context);
-
-        context.set('limit', 3); //todo: set this to 10? once we have style that will limit the rows displayed & make scrollable
-
-        context.prepare();
-
-        var view = app.view.createView({
-            context:context,
-            name:def.view,
-            module:moduleMeta.module,
-            layout:self,
-            id:def.id
-        });
-
-        this.$('.' + contentType + 'View').append(view.el);
-        view.render();
-        return view;
     },
 
     handleShow: function() {
@@ -290,8 +286,9 @@
             } else if (!this.meta.required || !force) {
                 callback();
             } else {
-                //todo: better error
-                app.alert.show('failed_validation', {level:'error', title: 'Failed Validation', messages: 'Failed Validation', autoClose: true});
+                var title = app.lang.get('LBL_CONVERT_FAILED_VALIDATION_TITLE', 'Leads');
+                var message = app.lang.get('LBL_CONVERT_FAILED_VALIDATION_MESSAGE', 'Leads');
+                app.alert.show('failed_validation', {level:'error', title: title, messages: message, autoClose: true});
             }
         } else {
             var view = this.recordView,
