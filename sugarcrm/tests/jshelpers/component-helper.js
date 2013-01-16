@@ -10,7 +10,7 @@
             } catch (e) {
                 app.logger.error("Failed to eval view controller for " + name + ": " + e + ":\n" + data);
             }
-            app.view.declareComponent(type, name, module, data, null, true);
+            app.view.declareComponent(type, name, module, data, true);
             test.testMetadata.addController(name, type, data, module);
         });
     };
@@ -119,7 +119,7 @@
             if (this.isInitialized()) {
                 if (module) {
                     this._initModuleStructure(module, type, name);
-                    this._data.modules[module][type][name].template = template;
+                    this._data.modules[module][type][name].templates[templateName] = template;
                 } else {
                     this._data[type][name] = this._data[type][name] || {};
                     this._data[type][name].templates = this._data[type][name].templates || {};
@@ -145,6 +145,7 @@
             this._data.modules[module] = this._data.modules[module] || {};
             this._data.modules[module][type] = this._data.modules[module][type] || {};
             this._data.modules[module][type][name] = this._data.modules[module][type][name] || {};
+            this._data.modules[module][type][name].templates = this._data.modules[module][type][name].templates || {};
         },
 
         set: function() {
