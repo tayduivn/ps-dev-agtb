@@ -56,14 +56,14 @@
      */
     bindDataChange: function () {
         var self = this;
-        self.context.on('field:currency:open', function() {
+        self.context.on('field:editable:open', function() {
             // another CTE field has been opened
             if(self.isErrorState) {
                 // I am open with an error, send the message
-                self.context.trigger('field:currency:error', self.cid);
+                self.context.trigger('field:editable:error', self.cid);
             }
         }, self);
-        self.context.on('field:currency:error', function(cid) {
+        self.context.on('field:editable:error', function(cid) {
             if (!_.isEqual(cid, self.cid) && this.options.viewName == 'edit') {
                 // some other field is open with an error, close myself
                 self.renderDetail();
@@ -155,7 +155,7 @@
         this.$el.find(this.inputSelector).focus().select();
 
         // inform other fields that I am opening
-        this.context.trigger('field:currency:open');
+        this.context.trigger('field:editable:open');
     },
 
     /**
