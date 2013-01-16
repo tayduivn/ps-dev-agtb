@@ -601,7 +601,7 @@ $dictionary['Lead'] = array('table' => 'leads','audited'=>true, 'unified_search'
                     )),
                     array('phone_work' => array('$equals' => '$phone_work')),
                 )),
-                array('account_name' => array('$equals' => '$account_name')),
+                array('account_name' => array('$starts' => '$account_name')),
             ))
         ),
         'ranking_fields' => array(
