@@ -4958,8 +4958,7 @@ function getUrls($string)
  */
 function verify_image_file($path, $jpeg = false)
 {
-    if(!empty($path))
-    {
+    if(!empty($path)) {
         if(function_exists('imagepng') && function_exists('imagejpeg') && function_exists('imagecreatefromstring')) {
             $img = imagecreatefromstring(file_get_contents($path));
             if(!$img) {
@@ -4992,7 +4991,9 @@ function verify_image_file($path, $jpeg = false)
         } else {
             // check image manually
             $fp = fopen($path, "rb");
-            if(!$fp) return false;
+            if(!$fp) {
+                return false;
+            }
             $data = '';
             // read the whole file in chunks
             while(!feof($fp)) {
