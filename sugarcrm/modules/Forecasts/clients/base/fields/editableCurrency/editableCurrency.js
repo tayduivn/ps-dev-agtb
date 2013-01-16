@@ -15,6 +15,8 @@
 
     errorMessage: '',
 
+    isErrorState: false,
+
     _canEdit: true,
 
     initialize: function (options) {
@@ -52,11 +54,42 @@
     },
 
     /**
+     * Only one CTE field can be open/active at a time.
+     * When a CTE field is clicked, it sends a message to inform the others.
+     * If another field is open with an error, it sends a message
+     * and any other open fields will immediately close. This keeps
+     * other fields from opening while an errored field is active.
+     */
+    bindDataChange: function () {
+        var self = this;
+        self.context.on('field:currency:open', function() {
+            // another CTE field has been opened
+            if(self.isErrorState) {
+                // I am open with an error, send the message
+                self.context.trigger('field:currency:error', self.cid);
+            }
+        }, self);
+        self.context.on('field:currency:error', function(cid) {
+            if (!_.isEqual(cid, self.cid) && this.options.viewName == 'edit') {
+                // some other field is open with an error, close myself
+                self.renderDetail();
+            }
+        }, self);
+    },
+
+    /**
+     * handle click/blur/keypress events in one place
      *
+     * @param {Object} evt
+     * @return {Boolean}
      */
     handleEvent: function (evt) {
-        if (!this.isEditable()) return;
-        if (!(this.model instanceof Backbone.Model)) return;
+        if(!_.isObject(evt)
+            || this.options.viewName != 'edit'
+            || !this.isEditable()
+            || !(this.model instanceof Backbone.Model)) {
+            return false;
+        }
         var self = this;
         var el = this.$el.find(this.fieldTag);
         // test if value changed
@@ -64,9 +97,10 @@
             var value = self.parsePercentage(self.$el.find(self.inputSelector).val());
             if (self.isValid(value)) {
                 self.model.set(self.name, self.unformat(value));
-                this.renderDetail();
+                self.renderDetail();
             } else {
                 // render error
+                self.isErrorState = true;
                 var hb = Handlebars.compile("{{str_format key module args}}"),
                     args = [app.lang.get(self.def.label,'Forecasts')];
 
@@ -84,14 +118,16 @@
                 }
             }
         } else {
-            this.renderDetail();
+            self.renderDetail();
         }
+        return true;
     },
 
     /**
      * renders the detail view
      */
     renderDetail: function () {
+        this.isErrorState = false;
         this.options.viewName = 'detail';
         this.render();
     },
@@ -136,6 +172,9 @@
 
         // put the focus on the input
         this.$el.find(this.inputSelector).focus().select();
+
+        // inform other fields that I am opening
+        this.context.trigger('field:currency:open');
 
     },
 
