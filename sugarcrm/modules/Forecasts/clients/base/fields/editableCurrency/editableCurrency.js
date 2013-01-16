@@ -84,12 +84,12 @@
      * @return {Boolean}
      */
     handleEvent: function (evt) {
-        // must have valid event object
-        if(!_.isObject(evt)) return false;
-        // if field is not in edit state, do nothing
-        if (this.options.viewName != 'edit') return false;
-        if (!this.isEditable()) return false;
-        if (!(this.model instanceof Backbone.Model)) return false;
+        if(!_.isObject(evt)
+            || this.options.viewName != 'edit'
+            || !this.isEditable()
+            || !(this.model instanceof Backbone.Model)) {
+            return false;
+        }
         var self = this;
         var el = this.$el.find(this.fieldTag);
         // test if value changed
