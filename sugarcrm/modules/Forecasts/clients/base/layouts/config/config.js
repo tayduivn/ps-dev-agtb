@@ -32,7 +32,6 @@
  *      by: _showConfigModal()
  */
 ({
-
     extendsFrom:"ForecastsIndexLayout",
 
     initialize:function (options) {
@@ -43,19 +42,40 @@
             options.context.forecasts = new Backbone.Model({'saveClicked' : false});
 
             // Initialize the config model
-            var ConfigModel = Backbone.Model.extend({
-                url:app.api.buildURL("Forecasts", "config"),
-                sync:function (method, model, options) {
+            var modelUrl = app.api.buildURL("Forecasts", "config"),
+                modelSync = function(method, model, options) {
                     var url = _.isFunction(model.url) ? model.url() : model.url;
                     return app.api.call(method, url, model, options);
-                },
-                // include metadata from config into the config model by default
-                defaults:app.metadata.getModule('Forecasts').config
-            });
-            options.context.forecasts.config = new ConfigModel();
+                };
+            options.context.forecasts.config = this._getConfigModel(options, modelUrl, modelSync);
+
         }
 
         app.view.Layout.prototype.initialize.call(this, options);
+    },
+
+    /**
+     * Gets a config model for the config settings dialog.
+     *
+     * If we're using this layout from inside the Forecasts module and forecasts already has a config model, config
+     * will use that config model as our current context so we're updating a clone of the same model.
+     * The clone facilitates not saving to a "live" model, so if a user hits cancel, the values will go back to the
+     * correct setting the next time the admin panel is accessed.
+     *
+     * If we're not coming in from the Forecasts module (e.g. Admin)
+     * creates a new model and config will use that to change/save
+     * @return {Object} the model for config
+     */
+    _getConfigModel: function(options, syncUrl, syncFunction) {
+        var SettingsModel = Backbone.Model.extend({
+            url: syncUrl,
+            sync: syncFunction
+        });
+
+        // jQuery.extend is used with the `true` parameter to do a deep copy
+        return (_.has(options.context,'forecasts') && _.has(options.context.forecasts,'config')) ?
+            new SettingsModel($.extend(true, {}, options.context.forecasts.config.attributes)) :
+            new SettingsModel();
     },
 
     /**
@@ -120,6 +140,14 @@
             location = this.getRedirectURL(isSetup, isAdmin, saveClicked),
             self = this;
 
+        /**
+         * 2 conditions exist here.
+         * 1) If the user is an admin and clicked save, then messages are displayed
+         *    and the module is reloaded
+         * 2) Otherwise, the user is not an admin or has clicked cancel/X, in which case
+         *    we reload the module or forward them to the home module immediately.  Which
+         *    is to occur is determined by the getRedirectURL
+         */
         if(isAdmin && saveClicked == true) {
             // only sync the metadata
             app.metadata.sync();
@@ -155,27 +183,20 @@
      */
     getRedirectURL:function (isSetup, isAdmin, saveClicked) {
         /**
-         * 4 conditions exist
+         * 3 conditions exist here
          * 1a: If the user is not an admin, then the user will be redirected to the main Sugar index
          * 1b: User is an admin, and has clicked cancel/X to close the modal without saving
          *      and module has never been set up
-         * 2: The user is an admin, but setup has been performed and the cancel has been clicked,
-         *      then redirect user to Forecasts module
-         * 3: The user is an admin and setup is complete.  A success message is displayed.  An additional
-         *      message regarding opportunity setup is displayed if this is the initial setup
+         * 2: The user is an admin and forecasts has been setup.  At this point, it won't
+         *    matter if cancel was clicked or save, the result is the same, the location
+         *    to redirect to will be to reload the forecasts module
          */
         if (!isAdmin || (isAdmin && isSetup == 0 && saveClicked == false)) {
             // this should only ever happen on the wizard view and if the user accessing is not an admin
             return 'index.php?module=Home';
-        } else if (isSetup == 1 && saveClicked == false) {
-            // this should only ever happen on the tabbed view when cancel is clicked
-            return window.location;
-        } else if (this.context.forecasts.get('saveClicked') == false) {
-            return 'index.php?module=Forecasts';
         } else {
-            return window.location;
+            return 'index.php?module=Forecasts';
         }
-
     },
 
     /**
