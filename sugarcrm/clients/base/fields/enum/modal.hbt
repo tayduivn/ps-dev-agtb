@@ -26,11 +26,12 @@
  * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 }}
-    <select data-placeholder="{{label}}" name="{{name}}">
-        <option value="" selected></option>
-        {{#eachOptions def.options}}
+<select data-placeholder="{{label}}" name="{{name}}">
+    {{#if hasBlank}}
+        <option value=""{{#has "" value}}selected{{/has}}></option>
+    {{/if}}
+    {{#eachOptions def.options}}
         <option value="{{{this.key}}}" {{#has this.key ../value}}selected{{/has}}>{{this.value}}</option>
-        {{/eachOptions}}</select>
-
-    <p class="help-block">
-    </p>
+    {{/eachOptions}}
+</select>
+<p class="help-block"></p>

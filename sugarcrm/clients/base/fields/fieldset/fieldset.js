@@ -72,7 +72,7 @@
      * support for templates on fieldset widgets.
      */
     _render: function() {
-
+        this._loadTemplate();
         _.each(this.fields, function(field) {
             field.render();
         }, this);
@@ -91,6 +91,31 @@
         _.each(this.fields, function(field){
             field.setDisabled(disable);
         }, this);
+    },
+
+    setViewName: function(view) {
+        app.view.Field.prototype.setViewName.call(this, view);
+        _.each(this.fields, function(field){
+            field.setViewName(view);
+        }, this);
+    },
+
+    setMode: function(name) {
+        app.view.Field.prototype.setMode.call(this, name);
+        _.each(this.fields, function(field){
+            field.setMode(name);
+        }, this);
+    },
+
+    focus: function() {
+        var firstField = _.first(this.fields);
+        if(_.isFunction(firstField)) {
+            firstField.focus();
+        } else {
+            var $el = firstField.$(firstField.fieldTag + ":first");
+            $el.focus().val($el.val());
+        }
+
     },
 
 
