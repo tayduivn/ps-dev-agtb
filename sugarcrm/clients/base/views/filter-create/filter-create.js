@@ -8,8 +8,7 @@
         'click .delete_button': 'removeAll',
         'change .filter-header': 'editName',
         'change .field_name': 'chooseField',
-        'change .operator': 'chooseOperator',
-        'blur .filter-value': 'modifyValue'
+        'change .operator': 'chooseOperator'
     },
 
     rowTemplate: Handlebars.compile('<article class="filter-body newRow">' +
@@ -34,6 +33,7 @@
         'enum': ['is', 'is not'],
         'varchar': ['matches', 'does not match', 'contains', 'starts with', 'ends with'],
         'name': ['matches', 'does not match', 'contains', 'starts with', 'ends with'],
+        'text': ['matches', 'does not match', 'contains', 'starts with', 'ends with'],
         'currency': ['is equal to', 'is greater than', 'is greater than or equal to', 'is less than', 'is less than or equal to'],
         'int': ['is equal to', 'is greater than', 'is greater than or equal to', 'is less than', 'is less than or equal to'],
         'double': ['is equal to', 'is greater than', 'is greater than or equal to', 'is less than', 'is less than or equal to'],
@@ -62,24 +62,24 @@
     },
 
     initialize: function(opts) {
+        _.bindAll(this);
         // Remove the next line later:
         this.isSaved = false;
 
         var self = this;
-        this.title = app.controller.context.get('module');
         app.view.View.prototype.initialize.call(this, opts);
         this.filterFields = [];
-        _.each(app.metadata.getModule(this.title).fields, function(value, key) {
-            self.filterFields.push({
+        _.each(app.metadata.getModule(this.module).fields, function(value, key) {
+            this.filterFields.push({
                 id: key,
-                text: app.lang.getAppString(value.vname),
+                text: app.lang.get(value.vname, this.module),
                 type: value.type
             });
-        });
+        }, this);
         this.filterFields = _.filter(this.filterFields, function(el) {
             // Double-bang intended. Coerces values like 'undefined' to a bool.
-            return !!self.filterOperatorMap[el.type] && !_.isUndefined(el.text);
-        });
+            return !!this.filterOperatorMap[el.type] && !_.isUndefined(el.text);
+        }, this);
 
         this.layout.off("filter:create:new");
         this.layout.off("filter:create:close");
@@ -108,14 +108,19 @@
         this.$(".filter-body").filter(":not(:first-child)").remove();
     },
 
-    addRow: function(e) {
+    addRow: function() {
         var tpl = this.rowTemplate(this),
             self = this;
 
         this.$('.newRow').removeClass('newRow').find('.addme').addClass('hide');
         this.$(".filter-options").append(tpl);
+
+        // minimumResultsForSearch set to 9999 to hide the search field,
+        // See: https://github.com/ivaynberg/select2/issues/414
         this.$(".newRow .field_name").select2({
             data: this.filterFields,
+            width: "element",
+            minimumResultsForSearch: 9999,
             placeholder: app.lang.getAppString("LBL_FILTER_SELECT_FIELD"),
             initSelection: function(el, callback) {
                 var data = _(self.filterFields).find(function(i) {
@@ -134,6 +139,7 @@
         _.each(this._applyJSON(f.get("filter_definition")), function(row) {
             self.populateRow(row);
         });
+        this.addRow();
     },
 
     populateRow: function(r) {
@@ -166,7 +172,7 @@
         var $el = this.$(e.currentTarget),
             $parent = $el.parents('.filter-body'),
             fieldName = $el.val(),
-            fieldType = app.metadata.getModule(this.title).fields[fieldName].type,
+            fieldType = app.metadata.getModule(this.module).fields[fieldName || 'name'].type,
             payload = [],
             self = this;
         $parent.find('.filter-operator').removeClass('hide').find('option').remove();
@@ -178,8 +184,13 @@
                 text: t
             });
         });
+
+        // minimumResultsForSearch set to 9999 to hide the search field,
+        // See: https://github.com/ivaynberg/select2/issues/414
         $parent.find(".operator").select2({
             data: payload,
+            width: "element",
+            minimumResultsForSearch: 9999,
             placeholder: app.lang.getAppString("LBL_FILTER_SELECT_OPERATOR"),
             initSelection: function(el, callback) {
                 var data = _(payload).find(function(i) {
@@ -187,63 +198,70 @@
                 });
                 callback(data);
             }
-        });
+        }).focus();
         this._disposeField($parent);
     },
 
     chooseOperator: function(e) {
-        var $el = this.$(e.currentTarget),
+        var self = this,
+            $el = this.$(e.currentTarget),
             $parent = $el.parents('.filter-body'),
             operation = $el.val(),
             fieldName = $parent.find('input.field_name').val(),
-            fieldType = app.metadata.getModule(this.title).fields[fieldName].type;
+            fieldType = app.metadata.getModule(this.module).fields[fieldName].type;
+
+        // Patching metadata
+        var fields = app.metadata._patchFields(this.module, app.metadata.getModule(this.module), JSON.parse(JSON.stringify(app.metadata.getModule(this.module).fields)));
 
         this._disposeField($parent);
 
         if(operation !== '') {
-            if(fieldType === 'datetime') {
-                fieldType = 'datetimecombo';
-            }
-
-            var model = app.data.createBean(this.title);
+            var model = app.data.createBean(this.module);
             model.set(fieldName, $parent.data('value') || '');
             var obj = {
-                view: this,
-                viewName: 'edit',
+                meta: {
+                    view: "edit"
+                },
+                def: fields[fieldName],
                 model: model,
-                def: {
-                    name: fieldName,
-                    type: fieldType
-                }
+                context: app.controller.context,
+                viewName: "edit",
+                view: this
             };
-            if(fieldType === 'enum') {
-                obj.def.options = fieldName + '_dom';
-            }
 
-            var field = app.view.createField(obj);
 
-            $parent.find('.filter-value').removeClass('hide').find('input, input').remove();
+            var field = app.view.createField(obj),
+                $fieldValue = $parent.find('.filter-value');
+
+            $fieldValue.removeClass('hide').find('input, select').remove();
             var fieldContainer = $(field.getPlaceholder().string).appendTo($parent.find('.filter-value'));
             this._renderField(field);
             $parent.data('value_field', field);
-            fieldContainer.find('input, input').addClass('inherit-width');
-            model.change();
+            fieldContainer.find('input, select').addClass('inherit-width');
+            model.on("change", this.modifyValue($fieldValue));
         }
     },
 
-    modifyValue: function(e) {
-        var $el = this.$(e.currentTarget),
+    modifyValue: function($el) {
+        var self = this,
             $parent = $el.parents('.filter-body'),
-            modified = false,
-            fieldTag = $parent.data('value_field').fieldTag,
-            kls = $parent.hasClass('newRow') ? '.addme' : '.updateme';
+            fieldTag = $parent.data('value_field').fieldTag;
 
-        _.each($el.find(fieldTag), function(i) {
-            if( $(i).val() !== '') {
-                modified = true;
+        return function() {
+            var modified = false,
+                kls = $parent.hasClass('newRow') ? '.addme' : '.updateme';
+            _.each($el.find(fieldTag), function(i) {
+                if( $(i).val() !== '' ) {
+                    modified = true;
+                }
+            });
+
+            $parent.find(kls).toggleClass('hide', !modified);
+
+            if($parent.hasClass('newRow')) {
+                self.addRow();
             }
-        });
-        $parent.find(kls).toggleClass('hide', !modified);
+        };
     },
 
     updateRow: function(e) {
@@ -273,7 +291,7 @@
                 filter_definition: this._getJSON(),
                 name: val,
                 default_filter: false,
-                module_name: this.title
+                module_name: this.module
             };
 
             var filter = this.$(".filter-header").data("model");
@@ -293,7 +311,7 @@
 
     setLastUsed: function(model) {
         var self = this;
-        var url = app.api.buildURL('Filters/' + this.title + '/used', "update", model);
+        var url = app.api.buildURL('Filters/' + this.module + '/used', "update", model);
         app.api.call("update", url, null, {
             success: function() {
                 self.layout.trigger("filter:refresh", model.id);
@@ -302,7 +320,6 @@
     },
 
     removeAll: function() {
-        // TODO: Make a delete request to the server.
         var self = this;
         if(this.$(".filter-header").data("model")) {
             this.$(".filter-header").data("model").destroy({
@@ -322,6 +339,7 @@
         if(_($parent.data('value_field')).isObject()) {
             $parent.data('value_field').dispose();
             $parent.data('value_field', '');
+            $parent.data('value', '');
         }
         $parent.find('.addme').addClass('hide');
     },

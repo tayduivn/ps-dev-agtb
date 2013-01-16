@@ -59,6 +59,11 @@
             }
         }
 
+        /* From http://ivaynberg.github.com/select2/#documentation:
+         * "Calculate the width of the container div to the source element"
+         */
+        select2Options.width = "element";
+
         /*
          The forecasts module requirements indicate that the search bar only shows up for fields with 5 or more values,
          this adds the ability to specify that threshold in metadata.
