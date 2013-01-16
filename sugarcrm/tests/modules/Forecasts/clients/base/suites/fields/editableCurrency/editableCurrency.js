@@ -162,13 +162,13 @@ describe("forecast editableCurrency field", function () {
         });
         it("should not fire error event if is not error state", function() {
             field.isErrorState = false;
-            field.context.trigger('field:currency:open');
-            expect(field.context.trigger).not.toHaveBeenCalledWith('field:currency:error');
+            field.context.trigger('field:editable:open');
+            expect(field.context.trigger).not.toHaveBeenCalledWith('field:editable:error');
         });
         it("should fire error event if is error state", function() {
             field.isErrorState = true;
-            field.context.trigger('field:currency:open');
-            expect(field.context.trigger).toHaveBeenCalledWith('field:currency:error');
+            field.context.trigger('field:editable:open');
+            expect(field.context.trigger).toHaveBeenCalledWith('field:editable:error');
         });
     });
 
