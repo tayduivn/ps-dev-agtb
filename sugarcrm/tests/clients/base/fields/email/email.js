@@ -56,16 +56,9 @@ describe("Email field", function() {
             expect(emails[0].primary_address).toEqual("1");
         });
         it("should add an e-mail address automatically when newEmail input changes", function(){
-            runs(function(){
-                field.$('.newEmail').val("newEmail@test.com");
-                field.$('.newEmail').change();
-            });
-            waitsFor(function(){
-                if(model.get('email').length == 3){
-                    return model.get('email')[2].email_address == "newEmail@test.com";
-                }
-                return false;
-            }, "new e-mail address", 150);
+            field.$('.newEmail').val("newEmail@test.com");
+            field.$('.newEmail').change();
+            expect(model.get('email')[2].email_address).toEqual("newEmail@test.com");
         });
         it("should update email addresses on the model", function() {
             field.$el.find('input').val("testChanged@test.com");

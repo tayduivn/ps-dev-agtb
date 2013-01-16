@@ -30,7 +30,7 @@
         'change .existingAddress':'updateExistingAddress',
         'click .btn-edit':'updateExistingProperty',
         'click .removeEmail':'remove',
-        'click .addEmail':'addButton',
+        'click .addEmail':'add',
         'change .newEmail': 'newEmailChanged'
     },
     /**
@@ -39,26 +39,20 @@
      */
     newEmailChanged:function(evt){
         if($(evt.currentTarget).val().length > 0){
-            this.addButton(evt, $(evt.currentTarget).val());
+            this.add(evt, $(evt.currentTarget).val());
         }
     },
-    /**
-     * Event handler that debounces call to add() method to prevent multiple duplicate e-mails from being added at once
-     * @param {Event} evt DOM event
-     * @param {String} newEmail e-mail address to add
-     */
-    addButton: _.debounce(function(evt, newEmail){
-        _.bind(this.add, this, evt, newEmail)();
-    }, 100),
+    // Tracks if we're currently adding email
+    _adding: false,
     /**
      * Adds email address to dom and model. Note added emails only get checked
      * upon Save button being clicked (which triggers the model validations).
      * @param {Event} evt DOM event
      * @param {String} [newEmail] E-Mail string to be added, will default to value currently in .newEmail input if not provided
      */
-    //
     add:function (evt, newEmail) {
-        if (!evt) return;
+        if (!evt || this._adding) return;  //if event isn't valid or if add() is currently being called, don't add new e-mail
+        this._adding = true;
         // Destroy the tooltips open on this button because they wont go away if we re-render
         if ($(evt.currentTarget).tooltip) $(evt.currentTarget).tooltip('hide');
         var newAddress = (newEmail) ? newEmail : this.$('.newEmail').val();
@@ -70,6 +64,7 @@
         existingAddresses.push(newObj);
 
         this.updateModel(existingAddresses);
+        this._adding = false;
     },
     /**
      * On render, determine which e-mail addresses need anchor tag included
