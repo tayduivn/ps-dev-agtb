@@ -45,6 +45,7 @@ class vCardApiTest extends Sugar_PHPUnit_Framework_OutputTestCase
     {
         SugarTestHelper::tearDown();
         unset($_FILES);
+        unset($_SESSION['ACL']);
     }
 
     public function testvCardSave()
@@ -133,5 +134,57 @@ class vCardApiTest extends Sugar_PHPUnit_Framework_OutputTestCase
             SugarTestAccountUtilities::setCreatedAccount(array($contact->account_id));
             SugarTestAccountUtilities::removeAllCreatedAccounts();
         }
+    }
+
+    /**
+     * @group vcardapi_vCardImportPost
+     */
+    public function testvCardImportPost_FailsACLCheck_ThrowsNotAuthorizedException()
+    {
+        $_FILES = array(
+            'vcard_import'    =>  array(
+                'name'      =>  'simplevcard.vcf',
+                'tmp_name'  =>  dirname(__FILE__)."/SimpleVCard.vcf",
+                'type'      =>  'text/directory',
+                'size'      =>  42,
+                'error'     =>  0
+            )
+        );
+        //Setting access to be denied for import and read
+        $_SESSION['ACL'] = array();
+        $_SESSION['ACL'][$GLOBALS['current_user']->id]['Contacts']['module']['access']['aclaccess'] = ACL_ALLOW_DISABLED;
+        $_SESSION['ACL'][$GLOBALS['current_user']->id]['Contacts']['module']['import']['aclaccess'] = ACL_ALLOW_DISABLED;
+        // reset cached ACLs
+        SugarACL::$acls = array();
+
+        $api = new RestService();
+        $api->user = $GLOBALS['current_user'];
+
+        $args = array(
+            'module' => 'Contacts',
+        );
+
+        $this->setExpectedException('SugarApiExceptionNotAuthorized');
+
+        $apiClassMock = $this->getMock('vCardApi', array('isUploadedFile'), array());
+        $apiClassMock->vCardImport($api, $args);
+    }
+
+    /**
+     * @group vcardapi_vCardImportPost2
+     */
+    public function testvCardImportPost_NoFileExists_ThrowsMissingParameterException()
+    {
+        $api = new RestService();
+        $api->user = $GLOBALS['current_user'];
+
+        $args = array(
+            'module' => 'Contacts',
+        );
+
+        $this->setExpectedException('SugarApiExceptionMissingParameter');
+
+        $apiClassMock = $this->getMock('vCardApi', array('isUploadedFile'), array());
+        $apiClassMock->vCardImport($api, $args);
     }
  }
