@@ -25,27 +25,6 @@
 require_once('tests/rest/RestTestBase.php');
 
 class RestPublicMetadataViewTemplatesTest extends RestTestBase {
-    public function setUp()
-    {
-        parent::setUp();
-
-        $this->oldFiles = array();
-    }
-
-    public function tearDown()
-    {
-        foreach ( $this->oldFiles as $filename => $filecontents ) {
-            if ( $filecontents == '_NO_FILE' ) {
-                if ( file_exists($filename) ) {
-                    SugarAutoLoader::unlink($filename);
-                }
-            } else {
-                SugarAutoLoader::put($filename,$filecontents);
-            }
-        }
-        SugarAutoLoader::saveMap();
-        parent::tearDown();
-    }
 
     /**
      * @group rest
@@ -72,16 +51,7 @@ class RestPublicMetadataViewTemplatesTest extends RestTestBase {
                 'custom/clients/base/views/edit/edit.hbt',
             ),
         );
-
-        foreach ( $filesToCheck as $platformFiles) {
-            foreach ($platformFiles as $filename){
-                if ( file_exists($filename) ) {
-                    $this->oldFiles[$filename] = file_get_contents($filename);
-                } else {
-                    $this->oldFiles[$filename] = '_NO_FILE';
-                }
-            }
-        }
+        SugarTestHelper::saveFile($filesToCheck);
 
         $dirsToMake = array(
             //BEGIN SUGARCRM flav=ent ONLY

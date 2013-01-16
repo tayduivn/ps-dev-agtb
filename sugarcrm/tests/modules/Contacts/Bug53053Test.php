@@ -26,6 +26,12 @@ require_once('modules/Contacts/ContactFormBase.php');
 
 class Bug53053Test extends Sugar_PHPUnit_Framework_TestCase
 {
+    public function setUp()
+    {
+        SugarTestHelper::setUp('beanList');
+        SugarTestHelper::setUp('beanFiles');
+    }
+
     public function tearDown()
     {
         if ( count($this->contactsToClean) > 0) {
@@ -42,7 +48,8 @@ class Bug53053Test extends Sugar_PHPUnit_Framework_TestCase
         unset($_POST['record']);
         unset($_POST[$this->prefix . 'id']);
         unset($_REQUEST['action']);
-
+        SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
+        SugarTestHelper::tearDown();
         parent::tearDown();
     }
 
@@ -121,6 +128,5 @@ class Bug53053Test extends Sugar_PHPUnit_Framework_TestCase
         $this->assertEmpty($contact->portal_password);
 
 
-        SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
     }
 }

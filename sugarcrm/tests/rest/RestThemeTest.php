@@ -32,11 +32,6 @@ class RestThemeTest extends RestTestBase
     private $platformTest = 'platform_TEST_123456789';
     private $themeTest = 'theme_TEST_123456789';
 
-    public function setUp()
-    {
-        parent::setUp();
-    }
-    
     public function tearDown()
     {
         $GLOBALS['db']->query("DELETE FROM config WHERE category = '" . $this->platformTest . "' AND name = 'css'");
@@ -83,7 +78,7 @@ class RestThemeTest extends RestTestBase
 
         // TEST= GET bootstrap.css with another set of arguments
         $restReply2 = $this->_restCall('css'.$this->rawurlencode($args2));
-        
+
         // TEST the two generated css are different
         $this->assertNotEquals($restReply1['replyRaw'], $restReply2['replyRaw']);
     }
