@@ -4958,53 +4958,56 @@ function getUrls($string)
  */
 function verify_image_file($path, $jpeg = false)
 {
-	if(function_exists('imagepng') && function_exists('imagejpeg') && function_exists('imagecreatefromstring')) {
-        $img = imagecreatefromstring(file_get_contents($path));
-    	if(!$img) {
-    	    return false;
-    	}
-    	$img_size = getimagesize($path);
-		$filetype = $img_size['mime'];
-		//if filetype is jpeg or if we are only allowing jpegs, create jpg image
-        if($filetype == "image/jpeg" || $jpeg) {
-            ob_start();
-            imagejpeg($img);
-            $image = ob_get_clean();
-            // not writing directly because imagejpeg does not work with streams
-            if(file_put_contents($path, $image)) {
-                return true;
+    if(!empty($path))
+    {
+        if(function_exists('imagepng') && function_exists('imagejpeg') && function_exists('imagecreatefromstring')) {
+            $img = imagecreatefromstring(file_get_contents($path));
+            if(!$img) {
+                return false;
             }
-        } elseif ($filetype == "image/png") {
-            // else if the filetype is png, create png
-        	imagealphablending($img, true);
-        	imagesavealpha($img, true);
-        	ob_start();
-            imagepng($img);
-            $image = ob_get_clean();
-    	    if(file_put_contents($path, $image)) {
-                return true;
-    	    }
+            $img_size = getimagesize($path);
+            $filetype = $img_size['mime'];
+            //if filetype is jpeg or if we are only allowing jpegs, create jpg image
+            if($filetype == "image/jpeg" || $jpeg) {
+                ob_start();
+                imagejpeg($img);
+                $image = ob_get_clean();
+                // not writing directly because imagejpeg does not work with streams
+                if(file_put_contents($path, $image)) {
+                    return true;
+                }
+            } elseif ($filetype == "image/png") {
+                // else if the filetype is png, create png
+                imagealphablending($img, true);
+                imagesavealpha($img, true);
+                ob_start();
+                imagepng($img);
+                $image = ob_get_clean();
+                if(file_put_contents($path, $image)) {
+                    return true;
+                }
+            } else {
+                return false;
+            }
         } else {
-        	return false;
-        }
-	} else {
-	    // check image manually
-        $fp = fopen($path, "rb");
-        if(!$fp) return false;
-        $data = '';
-        // read the whole file in chunks
-        while(!feof($fp)) {
-            $data .= fread($fp,8192);
-        }
+            // check image manually
+            $fp = fopen($path, "rb");
+            if(!$fp) return false;
+            $data = '';
+            // read the whole file in chunks
+            while(!feof($fp)) {
+                $data .= fread($fp,8192);
+            }
 
-	    fclose($fp);
-	    if(preg_match("/<(\?php|html|!doctype|script|body|head|plaintext|table|img |pre(>| )|frameset|iframe|object|link|base|style|font|applet|meta|center|form|isindex)/i",
-	         $data, $m)) {
-	        $GLOBALS['log']->fatal("Found {$m[0]} in $path, not allowing upload");
-	        return false;
-	    }
-	    return true;
-	}
+            fclose($fp);
+            if(preg_match("/<(\?php|html|!doctype|script|body|head|plaintext|table|img |pre(>| )|frameset|iframe|object|link|base|style|font|applet|meta|center|form|isindex)/i",
+                 $data, $m)) {
+                $GLOBALS['log']->fatal("Found {$m[0]} in $path, not allowing upload");
+                return false;
+            }
+            return true;
+        }
+    }
 	return false;
 }
 
