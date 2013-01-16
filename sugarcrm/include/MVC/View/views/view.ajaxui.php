@@ -27,6 +27,7 @@ class ViewAjaxUI extends SugarView
  	{
  		$user = $GLOBALS["current_user"];
  		$etag = $user->id . $user->getETagSeed("mainMenuETag");
+        $etag .= $GLOBALS['current_language'];
         //BEGIN SUGARCRM flav=pro ONLY
          //Include fts engine name in etag so we don't cache searchbar.
         $etag .= SugarSearchEngineFactory::getFTSEngineNameFromConfig();

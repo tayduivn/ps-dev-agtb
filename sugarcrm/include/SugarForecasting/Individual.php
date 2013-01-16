@@ -201,6 +201,7 @@ class SugarForecasting_Individual extends SugarForecasting_AbstractForecast impl
         $settings = $admin->getConfigForModule('Forecasts');
         if (!isset($settings['has_commits']) || !$settings['has_commits']) {
             $admin->saveSetting('Forecasts', 'has_commits', true, 'base');
+            MetaDataManager::clearAPICache();
         }
 
         $seed->setWorksheetArgs($this->args);
