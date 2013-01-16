@@ -35,12 +35,17 @@
                 this.setButtonStates(this.STATE.EDIT);
             }
         }, this);
+        this.context.on("change:record_label", this.setLabel, this);
 
         this.delegateButtonEvents();
 
         if (this.createMode) {
             this.model.isNotEmpty = true;
         }
+    },
+
+    setLabel: function(context, value) {
+        this.$(".record-label[data-name=" + value.field + "]").text(value.label);
     },
 
     delegateButtonEvents: function() {
