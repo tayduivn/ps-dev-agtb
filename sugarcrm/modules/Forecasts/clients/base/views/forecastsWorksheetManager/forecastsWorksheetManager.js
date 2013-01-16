@@ -268,15 +268,15 @@
      */
     saveWorksheet : function(isDraft) {
         // only run the save when the worksheet is visible and it has dirty records
+        var self = this,
+            saveObj = {totalToSave: 0, 
+                       saveCount: 0, 
+                       model: "", 
+                       isDraft: isDraft, 
+                       timeperiod:self.dirtyTimeperiod, 
+                       userId:self.dirtyUser.id};
+        
         if(this.showMe()) {
-            var self = this,
-                saveObj = {totalToSave: 0, 
-                           saveCount: 0, 
-                           model: "", 
-                           isDraft: isDraft, 
-                           timeperiod:self.dirtyTimeperiod, 
-                           userId:self.dirtyUser.id};
-            
             /**
              * If the sheet is dirty, save the dirty rows. Else, if the save is for a commit, and we have 
              * draft models (things saved as draft), we need to resave those as committed (version 1). If neither
