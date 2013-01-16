@@ -55,17 +55,20 @@ describe("Create View", function() {
                     "name":"restore_button",
                     "type":"button",
                     "label":"LBL_RESTORE",
-                    "css_class":"hide btn-invisible btn-link"
+                    "css_class":"hide btn-invisible btn-link",
+                    "mode" : "edit"
                 }, {
                     "name":"save_create_button",
                     "type":"button",
                     "label":"LBL_SAVE_AND_CREATE_ANOTHER",
-                    "css_class":"hide btn-invisible btn-link"
+                    "css_class":"hide btn-invisible btn-link",
+                    "mode" : "save"
                 }, {
                     "name":"save_view_button",
                     "type":"button",
                     "label":"LBL_SAVE_AND_VIEW",
-                    "css_class":"hide btn-invisible btn-link"
+                    "css_class":"hide btn-invisible btn-link",
+                    "mode" : "save"
                 }, {
                     "name":"save_button",
                     "type":"button",
@@ -120,8 +123,7 @@ describe("Create View", function() {
     describe('Buttons', function() {
         it("Should disable the save button when the form is empty", function() {
             view.render();
-
-            expect(view.$('[name=save_button]').hasClass('disabled')).toBe(true);
+            expect(view.buttons[view.saveButtonName].isDisabled()).toBe(true);
         });
 
         it("Should enable the save button when the model is valid", function() {
@@ -131,7 +133,7 @@ describe("Create View", function() {
                 last_name: 'bar'
             });
 
-            expect(view.$('[name=save_button]').hasClass('disabled')).toBe(false);
+            expect(view.buttons[view.saveButtonName].isDisabled()).toBe(false);
         });
     });
 });

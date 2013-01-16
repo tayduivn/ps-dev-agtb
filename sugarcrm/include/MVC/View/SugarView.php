@@ -1212,7 +1212,7 @@ EOHTML;
         $this->fileResources = count(get_included_files());
     }
 
-    private function _getStatistics()
+    protected function _getStatistics()
     {
         $endTime = microtime(true);
         $deltaTime = $endTime - $GLOBALS['startTime'];

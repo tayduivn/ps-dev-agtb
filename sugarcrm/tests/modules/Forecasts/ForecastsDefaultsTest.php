@@ -247,7 +247,7 @@ class ForecastsDefaultsTest extends Sugar_PHPUnit_Framework_TestCase
         $opp2->save();
 
         // force values to be null in db as in a possible upgrade situation.
-        $db->query("update opportunities set base_rate=NULL where id='{$opp2->id}'");
+        $db->query("update opportunities set base_rate=NULL, amount_usdollar=2000 where id='{$opp2->id}'");
 
         // upgrade currency columns
         ForecastsDefaults::upgradeColumns();

@@ -83,11 +83,11 @@ class SugarFieldRelateTest extends Sugar_PHPUnit_Framework_TestCase
 	    $sfr = new SugarFieldRelate('relate');
 	    
 	    $this->assertEquals(
-            trim($sfr->formatField($value,$vardef)),
+            $sfr->formatField($value,$vardef),
             ''
             );
     }
-    
+
     public function testFormatOtherField()
 	{
         $GLOBALS['current_user']->setPreference('default_locale_name_format','l f');

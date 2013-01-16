@@ -36,36 +36,46 @@
 <h2>Query Parameters:</h2>
 <table>
   <tr><th>Param</td><th>Description</td><th>Optional</td></tr>
-  <tr><td>uid</td><td>Coma separated bean ids.</td><td>Optional</td></tr>
+  <tr><td>uid</td><td>One or an array of bean ids.</td><td>Optional</td></tr>
   <tr><td>filter</td><td>The filter expression. Filter expressions can be found in filter api document.</td><td>Optional</td></tr>
   <tr><td>sample</td><td>Boolean to indicate whether to download sample data.</td><td>Optional</td></tr>
 </table>
 </div>
 <div class="input">
 <h2>Input Example:</h2>
+<br>
+    This would filter the records in the module and find records that had the name "Avery Software Co" and export the data in csv format.
+<br>
 <code class="codesample">
 {
     "filter":[{"name":"Avery Software Co"}]
 }
 </code>
 <br>
-This would filter the records in the module and find records that had the name "Avery Software Co" and export the data in csv format.
+This would export a single record with the given id.
 <br>
 <code class="codesample">
 {
-    "uid":"9279a9cb-48cd-a1fb-beae-50c7bd9247b5,c85fe675-0c09-ce23-9ec8-50c7bdee969c"
+    "uid":"9279a9cb-48cd-a1fb-beae-50c7bd9247b5"
 }
 </code>
 <br>
-This would export the records with the given ids.
+    This would export records with the array of given ids.
+<br>
+<code class="codesample">
+{
+    "uid":["9279a9cb-48cd-a1fb-beae-50c7bd9247b5","c85fe675-0c09-ce23-9ec8-50c7bdee969c"]
+}
+</code>
+<br>
+    This would export the sample records with some description.
 <br>
 <code class="codesample">
 {
     "sample":true
 }
 </code>
-<br>
-This would export the sample records with some description.
+
 </div>
 <div class="output">
 <h2>Output Example:</h2>

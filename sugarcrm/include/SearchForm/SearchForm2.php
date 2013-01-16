@@ -1225,17 +1225,12 @@ require_once('include/EditView/EditView2.php');
       */
      public static function retrieveSearchDefs($module)
      {
+         $searchFields = SugarAutoLoader::loadSearchFields($module);
+
          $searchdefs = array();
-         $searchFields = array();
-
-         $defsfile = SugarAutoLoader::loadWithMetafiles($module, 'searchdefs');
-         if($defsfile) {
-             require $defsfile;
-         }
-
-         $fieldsfile = SugarAutoLoader::loadWithMetafiles($module, 'SearchFields', 'searchfields');
-         if($fieldsfile) {
-         	require $fieldsfile;
+         $file = SugarAutoLoader::loadWithMetafiles($module, 'searchdefs');
+         if($file) {
+         	require $file;
          }
 
          return array('searchdefs' => $searchdefs, 'searchFields' => $searchFields );

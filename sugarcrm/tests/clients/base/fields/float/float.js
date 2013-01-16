@@ -25,5 +25,13 @@ describe("float field", function() {
             expect(field.unformat("12,351,616,461.2550")).toEqual("12351616461.2550");
         });
 
+        it("should truncate to specified precision", function() {
+            var defaultField = SugarTest.createField("base","foo","float","detail",{
+                precision: 8
+            });
+            expect(defaultField.format("123456.123456789")).toEqual("123456.12345679");
+            expect(defaultField.format("123456.987654321")).toEqual("123456.98765432");
+        });
+
     });
 });
