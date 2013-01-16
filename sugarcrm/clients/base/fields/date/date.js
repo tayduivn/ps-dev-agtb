@@ -273,10 +273,14 @@
     // Patches our dom_cal_* metadata for use with our datepicker plugin since they're very similar.
     _patchDatepickerMeta: function() {
         var pickerMap = [], pickerMapKey, calMapIndex, mapLen, domCalKey, 
-            calProp, appListStrings, calendarPropsMap, i;
+            calProp, appListStrings, calendarPropsMap, i, filterIterator;
 
         appListStrings = app.metadata.getStrings('app_list_strings');
-            
+
+        filterIterator = function(v, k, l) { 
+            return v !== "";
+        };
+
         // Note that ordering here is used in following for loop 
         calendarPropsMap = ['dom_cal_day_long', 'dom_cal_day_short', 'dom_cal_month_long', 'dom_cal_month_short'];
 
@@ -285,15 +289,15 @@
             domCalKey = calendarPropsMap[calMapIndex];
             calProp  = appListStrings[domCalKey];
 
-            // Patches the metadata to work w/datepicker (which is almost the same).
-            // Meta "calProp" will look something like:
-            // ["", "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]
+            // Patches the metadata to work w/datepicker; initially, "calProp" will look like:
+            // {0: "", 1: "Sunday", 2: "Monday", 3: "Tuesday", 4: "Wednesday", 5: "Thursday", 6: "Friday", 7: "Saturday"}
             // But we need:
             // ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
-            // So here we check if the first element is falsy, if so, splice it out, and copy, first to last.
-            if (calProp && calProp.length>1 && !calProp[0]) {
-                calProp.shift();
-                calProp.push(calProp[0]);
+            if (!_.isUndefined(calProp) && !_.isNull(calProp)) {
+                // Reject the first 0: "" element
+                calProp = _.filter(calProp, filterIterator);
+                //e.g. pushed the Sun in front to end (as required by datepicker)
+                calProp.push(calProp[0]); 
             }
             switch (calMapIndex) {
                 case 0:
@@ -312,7 +316,7 @@
             pickerMap[pickerMapKey] = calProp;
         }
 
-        // Now add a daysMin property with just two chars per day
+        // Now add a daysMin property with just two chars per day Su Mo, etc.
         pickerMap['daysMin'] = _.map(pickerMap.daysShort, function(day) {
             return (day.length > 1) ? day.substr(0,2) : day;
         });
