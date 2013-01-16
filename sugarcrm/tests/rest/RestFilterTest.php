@@ -271,14 +271,14 @@ class RestFilterTest extends RestTestBase
         $this->assertEquals($filter->name, 'test_user_filter');
         $this->assertEquals($filter->filter_definition, '{"name":"TEST 1 Account"}');
 
-        $reply = $this->_restCall('Filters/Accounts/used/'. $filter->id, array(), 'PUT');
+        $reply = $this->_restCall('Filters/Accounts/used/', json_encode(array('filters' => array($filter->id,))), 'PUT');
         $this->assertEquals($filter->id,$reply['reply'][0]['id'], 'Test Put');
 
         $reply = $this->_restCall('Filters/Accounts/used/');
         $this->assertEquals($filter->id,$reply['reply'][0]['id'], 'Test Get');
 
         $reply = $this->_restCall('Filters/Accounts/used/'. $filter->id, array(), 'DELETE');
-        $GLOBALS['log']->fatal(print_r($reply, true));
+        
         if(!empty($reply['reply'])) {
             foreach($reply['reply'] as $record) {
                 $this->assertNotEquals($filter->id, $record['id'], 'Test Delete');
