@@ -27,6 +27,7 @@
 ({
     initialize: function(options) {
         app.view.View.prototype.initialize.call(this, options);
+        this.fallbackFieldTemplate = 'edit';
         this.context.off("vcard:import:finish", null, this);
         this.context.on("vcard:import:finish", this.importVCard, this);
     },
