@@ -78,13 +78,18 @@
     },
 
     /**
+     * handle click/blur/keypress events in one place
      *
+     * @param {Object} evt
+     * @return {Boolean}
      */
     handleEvent: function (evt) {
+        // must have valid event object
+        if(!_.isObject(evt)) return false;
         // if field is not in edit state, do nothing
-        if (this.options.viewName != 'edit') return;
-        if (!this.isEditable()) return;
-        if (!(this.model instanceof Backbone.Model)) return;
+        if (this.options.viewName != 'edit') return false;
+        if (!this.isEditable()) return false;
+        if (!(this.model instanceof Backbone.Model)) return false;
         var self = this;
         var el = this.$el.find(this.fieldTag);
         // test if value changed
@@ -115,6 +120,7 @@
         } else {
             self.renderDetail();
         }
+        return true;
     },
 
     /**
