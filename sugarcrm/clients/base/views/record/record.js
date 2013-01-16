@@ -23,6 +23,7 @@
         app.view.View.prototype.initialize.call(this, options);
 
         this.createMode = this.context.get("create") ? true : false;
+        this.action = this.createMode ? 'edit' : 'detail';
 
         // Set the save button to show if the model has been edited.
         this.model.on("change", function() {
@@ -219,6 +220,11 @@
      * @param isEdit
      */
     toggleEdit: function(isEdit) {
+        if (isEdit) {
+            this.$('.record-edit-link-wrapper').hide();
+        } else {
+            this.$('.record-edit-link-wrapper').show();
+        }
         _.each(this.fields, function(field) {
             // Exclude image picker, buttons, and button dropdowns
             // This is just a stop gap solution.
@@ -227,14 +233,11 @@
             }
 
             if (isEdit) {
-                field.options.viewName = "edit";
-                this.$('.record-edit-link-wrapper').hide();
+                field.setMode('edit');
             } else {
-                field.options.viewName = "detail";
-                this.$('.record-edit-link-wrapper').show();
+                field.setMode('detail');
            }
 
-            field.render();
         }, this);
     },
 
@@ -265,21 +268,13 @@
         switch (field.type) {
             case "img":
                 break;
-            case "fieldset":
-                this.toggleCell(field, cell);
-                if (field.focus) {
-                    field.focus();
-                } else {
-                    // If it is a field set, we need all the fields to switch to edit mode.
-                    cell.find("input").first().focus().val(cell.find("input").first().val());
-                }
-                break;
             default:
                 this.toggleCell(field, cell);
                 if (_.isFunction(field.focus)) {
                     field.focus();
                 } else {
-                    field.$el.find("input").focus().val(field.$el.find("input").val());
+                    var $el = field.$(field.fieldTag + ":first");
+                    $el.focus().val($el.val());
                 }
         }
     },
@@ -330,13 +325,8 @@
      * @param cell {jQuery Node} Current target cell
      */
     toggleCell: function(field, cell, close) {
-        var fields;
 
-        // If field is part of a fieldset, set the field to fieldset.
-        field = (field.parent) ? field.parent : field;
-        fields = field.fields || [field];
-
-        if (field.options.viewName != "edit" && !close) {
+        if (field.tplName === "detail" && !close) {
             // Need to call this.fieldClose() in a separate "thread" because it changes to detail view
             // before it sets the value of the textarea in the model.
             $(document).on("mousedown.record" + field.name, {field: field, cell: cell}, _.debounce(this.fieldClose, 0));
@@ -346,9 +336,7 @@
             $(document).off("mousedown.record" + field.name);
         }
 
-        _.each(fields, function(field) {
-            this.toggleField(field, cell, close);
-        }, this);
+        this.toggleField(field, cell, close);
     },
 
     /**
@@ -360,16 +348,13 @@
      */
     toggleField: function(field, cell, close) {
         cell.toggleClass('edit-mode');
-
-        var viewName = ((!field.options.viewName || field.options.viewName == "detail") && !close)
+        var viewName = (field.tplName === 'detail' && !close)
             ? "edit" : "detail";
 
-        field.setViewName(viewName);
+        field.setMode(viewName);
 
-        field.render();
-
-        if (field.options.viewName == "edit") {
-            field.$el.on("keydown.record", "input", {field: field, cell: cell}, this.handleKeyDown);
+        if (viewName === "edit") {
+            field.$el.on("keydown.record", field.fieldTag, {field: field, cell: cell}, this.handleKeyDown);
         } else if (close) {
             field.$el.off("keydown.record");
         }
@@ -382,13 +367,13 @@
             currFieldParent,
             targetParent;
 
-        if (field.options.viewName == "detail") {
+        if (field.tplName === "detail") {
             return;
         }
 
         currFieldParent = $(cell);
         targetParent = self.$(e.target).parents(".record-cell");
-        field.$el.find("input").trigger("change");
+        field.$(field.fieldTag).trigger("change");
 
         if (currFieldParent[0] == targetParent[0]) {
             return;
@@ -405,7 +390,7 @@
 
         if (e.which == 9) { // If tab
             e.preventDefault();
-            field.$el.find("input").trigger("change");
+            field.$(field.fieldTag).trigger("change");
             nextCell = this.getNextCell(index, field, cell);
 
             if (nextCell && (nextCell[0] !== cell[0])) { // Next tab element not within same cell
@@ -422,12 +407,11 @@
      * @param state
      */
     setButtonStates: function(state) {
-        //TODO: Use direct show/hide function on field after sidecar is updated
         _.each(this.buttons, function(field, name) {
             if(_.isUndefined(field.def.mode) || field.def.mode == state) {
-                field.getFieldElement().show();
+                field.show();
             } else {
-                field.getFieldElement().hide();
+                field.hide();
             }
         });
     },
