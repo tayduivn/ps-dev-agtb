@@ -1754,10 +1754,9 @@ function get_select_options_with_id_separate_key ($label_list, $key_list, $selec
  */
 function sugar_die($error_message)
 {
-	global $focus;
-	sugar_cleanup();
 	@header("HTTP/1.0 500 Server Error");
 	@header("Status: 500 Server Error");
+	sugar_cleanup();
 	die($error_message);
 }
 
