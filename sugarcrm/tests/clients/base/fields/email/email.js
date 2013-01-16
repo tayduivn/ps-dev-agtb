@@ -65,7 +65,7 @@ describe("Email field", function() {
                     return model.get('email')[2].email_address == "newEmail@test.com";
                 }
                 return false;
-            }, "new e-mail address", 150);
+            }, "new e-mail address", 250);
         });
         it("should update email addresses on the model", function() {
             field.$el.find('input').val("testChanged@test.com");
