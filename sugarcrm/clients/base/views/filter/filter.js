@@ -153,6 +153,7 @@
         var self = this,
             url = app.api.buildURL('Filters', "filter");
 
+        this.activeFilterId = defaultId;
         this.filters = app.data.createBeanCollection('Filters');
 
         app.api.call("create", url, {"filter": [{"created_by": app.user.id}]}, {
