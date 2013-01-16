@@ -61,7 +61,6 @@
      * When user clicks tab navigation in header
      */
     onModuleTabClicked: function(evt) {
-        console.log("module tab is being clicked");
         var module = this.$(evt.currentTarget).closest('li').data('module');
         this.activeModule.set(module);
         if (module) {
