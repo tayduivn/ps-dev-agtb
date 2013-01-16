@@ -2,12 +2,14 @@
 <div class="container-fluid">
     {{#if ../model.isNotEmpty}}
         {{#each fields}}
+            {{#if this.show}}
             <div class="row-fluid">
-            <div class="span6 tright">{{str this.label ../../../module}}:</div>
-            <div class="span6" name="{{this.name}}">
-                <strong>{{field ../../.. ../../../model}}</strong>
+                <div class="span6 tright">{{str this.label ../../../../module}}:</div>
+                <div class="span6" name="{{this.name}}">
+                    <strong>{{field ../../../.. ../../../../model}}</strong>
+                </div>
             </div>
-        </div>
+            {{/if}}
         {{/each}}
     {{else}}
     <div class="row-fluid">
