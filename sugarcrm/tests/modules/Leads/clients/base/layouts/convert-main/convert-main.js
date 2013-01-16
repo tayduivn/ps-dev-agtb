@@ -1,23 +1,27 @@
 describe("ConvertLeadLayout", function() {
+    var app, leadModel;
 
     beforeEach(function() {
+        app = SugarTest.app;
         SugarTest.testMetadata.init();
-        SugarTest.loadHandlebarsTemplate('convert-main', 'layout', 'base', 'Leads');
-        SugarTest.loadHandlebarsTemplate('convert-panel', 'view', 'base', 'Leads');
+        SugarTest.loadHandlebarsTemplate('headerpane', 'view', 'base');
+        SugarTest.loadHandlebarsTemplate('convert-panel', 'view', 'base', null, 'Leads');
 
         SugarTest.loadComponent('base', 'layout', 'convert-main', 'Leads');
-        SugarTest.loadComponent('base', 'layout', 'convert', 'Leads');
 
         SugarTest.loadComponent('base', 'view', 'convert-panel', 'Leads');
         SugarTest.loadComponent('base', 'view', 'convert-results', 'Leads');
         SugarTest.loadComponent('base', 'view', 'alert');
 
-        SugarTest.testMetadata.addController('base', 'duplicate-list', 'view', createMockDupeView());
-        SugarTest.testMetadata.addController('base', 'edit', 'view', createMockRecordView());
+        SugarTest.testMetadata.addController('duplicate-list', 'view', createMockDupeView());
+        SugarTest.testMetadata.addController('create', 'view', createMockRecordView());
         SugarTest.testMetadata.set();
     });
 
     afterEach(function() {
+        app.cache.cutAll();
+        app.view.reset();
+        delete Handlebars.templates;
         SugarTest.testMetadata.dispose();
     });
 
@@ -52,6 +56,8 @@ describe("ConvertLeadLayout", function() {
             ]
         };
         var layout = SugarTest.createLayout('base', 'Leads', 'convert-main', meta, null, true);
+        leadModel = new Backbone.Model();
+        layout.context.set("leadsModel", leadModel);
 
         return layout;
     };
@@ -103,24 +109,28 @@ describe("ConvertLeadLayout", function() {
 
         it("first component is active, other two are not", function() {
             layout.render();
-            debugger;
-            expect(layout._components[0].$('.accordion-heading').hasClass('active')).toBeTruthy();
-            expect(layout._components[1].$('.accordion-heading').hasClass('active')).toBeFalsy();
-            expect(layout._components[2].$('.accordion-heading').hasClass('active')).toBeFalsy();
+            expect(layout._components[0].$('.header').hasClass('active')).toBeTruthy();
+            expect(layout._components[1].$('.header').hasClass('active')).toBeFalsy();
+            expect(layout._components[2].$('.header').hasClass('active')).toBeFalsy();
         });
 
         it("first two components enabled, last is not because of dependency", function() {
             layout.render();
-            expect(layout._components[0].$('.accordion-heading').hasClass('enabled')).toBeTruthy();
-            expect(layout._components[1].$('.accordion-heading').hasClass('enabled')).toBeTruthy();
+            expect(layout._components[0].$('.header').hasClass('enabled')).toBeTruthy();
+            expect(layout._components[1].$('.header').hasClass('enabled')).toBeTruthy();
 
-            expect(layout._components[2].$('.accordion-heading').hasClass('enabled')).toBeFalsy();
-            expect(layout._components[2].$('.accordion-heading').hasClass('disabled')).toBeTruthy();
+            expect(layout._components[2].$('.header').hasClass('enabled')).toBeFalsy();
+            expect(layout._components[2].$('.header').hasClass('disabled')).toBeTruthy();
         });
 
         it("finish button is disabled", function() {
+            var finishButtonEnabled = true;
+            var stub = sinon.stub(layout, 'toggleFinishButton', function(enable) {
+                finishButtonEnabled = enable;
+            });
             layout.render();
-            expect(layout.$('[name="lead_convert_finish_button"]').hasClass('disabled')).toBeTruthy();
+            expect(finishButtonEnabled).toBeFalsy();
+            stub.restore();
         });
 
         it("create views are prepopulated with lead data", function() {
@@ -128,9 +138,9 @@ describe("ConvertLeadLayout", function() {
                 account_name = 'myaccname',
                 opportunity_name = 'myoppname'
 
-            layout.model.set('last_name', last_name);
-            layout.model.set('account_name', account_name);
-            layout.model.set('opportunity_name', opportunity_name);
+            leadModel.set('last_name', last_name);
+            leadModel.set('account_name', account_name);
+            leadModel.set('opportunity_name', opportunity_name);
             layout.render();
             expect(layout._components[0].recordView.model.get("last_name")).toEqual(last_name);
             expect(layout._components[1].recordView.model.get("name")).toEqual(account_name);
@@ -151,7 +161,6 @@ describe("ConvertLeadLayout", function() {
         it("dupe view is skipped if no dupes found", function() {
             mockDupesToFind = 0;
             layout.render();
-
             expect(layout._components[1].currentState.activeView).toEqual(layout._components[1].RECORD_VIEW);
         });
     });
@@ -162,9 +171,9 @@ describe("ConvertLeadLayout", function() {
         beforeEach(function() {
             layout = initializeLayout();
             layout.render();
-            $contactHeader = layout._components[0].$('.accordion-heading');
-            $accountHeader = layout._components[1].$('.accordion-heading');
-            $opportunityHeader = layout._components[2].$('.accordion-heading');
+            $contactHeader = layout._components[0].$('.header');
+            $accountHeader = layout._components[1].$('.header');
+            $opportunityHeader = layout._components[2].$('.header');
         });
 
         afterEach(function() {
@@ -200,10 +209,16 @@ describe("ConvertLeadLayout", function() {
         });
 
         it("completing required panels enables finish button", function() {
+            var finishButtonEnabled = false;
+            var stub = sinon.stub(layout, 'toggleFinishButton', function(enable) {
+                finishButtonEnabled = enable;
+            });
+            layout.render();
             $accountHeader.click(); //complete contact panel by navigating to account
             $accountHeader.find('.show-record').click(); //switching to record mode puts panel in dirty state, ready for validation
             $opportunityHeader.click(); //complete account panel by navigating to opportunity
-            expect(layout.$('[name="lead_convert_finish_button"]').hasClass('enabled')).toBeTruthy();
+            expect(finishButtonEnabled).toBeTruthy();
+            stub.restore();
         });
     });
 
@@ -220,7 +235,7 @@ describe("ConvertLeadLayout", function() {
         });
 
         it("clicking on ignore duplicates switches to create/record view and back", function() {
-            layout._components[1].$('.accordion-heading').click(); //go to account panel
+            layout._components[1].$('.header').click(); //go to account panel
             expect(layout._components[1].currentState.activeView).toEqual(layout._components[1].DUPLICATE_VIEW);
             layout._components[1].$('.show-record').click();
             expect(layout._components[1].currentState.activeView).toEqual(layout._components[1].RECORD_VIEW);
@@ -263,24 +278,26 @@ describe("ConvertLeadLayout", function() {
         };
 
         it("clicking on finish after completing all panels bundles up models from each panel and calls the API", function() {
-            sinon.stub(layout, 'createConvertModel', getMockCreateConvertModel(
+            var stub = sinon.stub(layout, 'createConvertModel', getMockCreateConvertModel(
                 '{"modules":{"Contacts":{"last_name":"'+last_name+'"},"Accounts":{"name":"'+account_name+'"},"Opportunities":{"name":"'+opportunity_name+'"}}}'
             ));
 
-            layout._components[1].$('.accordion-heading').click(); //click Account to complete Contact
-            layout._components[1].$('.accordion-heading').find('.show-record').click();
-            layout._components[2].$('.accordion-heading').click(); //click Opportunity to complete Account
+            layout._components[1].$('.header').click(); //click Account to complete Contact
+            layout._components[1].$('.header').find('.show-record').click();
+            layout._components[2].$('.header').click(); //click Opportunity to complete Account
             layout.$('[name="lead_convert_finish_button"]').click(); //click finish to complete Opportunity
+            stub.restore();
         });
 
         it("clicking on finish when optional panels have not been completed should not pass the optional model to API", function() {
-            sinon.stub(layout, 'createConvertModel', getMockCreateConvertModel(
+            var stub = sinon.stub(layout, 'createConvertModel', getMockCreateConvertModel(
                 '{"modules":{"Contacts":{"last_name":"'+last_name+'"},"Accounts":{"name":"'+account_name+'"}}}'
             ));
 
-            layout._components[1].$('.accordion-heading').click(); //click Account to complete Contact
-            layout._components[1].$('.accordion-heading').find('.show-record').click();
+            layout._components[1].$('.header').click(); //click Account to complete Contact
+            layout._components[1].$('.header').find('.show-record').click();
             layout.$('[name="lead_convert_finish_button"]').click(); //click Finish to complete Account
+            stub.restore();
         });
     });
 
@@ -292,9 +309,6 @@ describe("ConvertLeadLayout", function() {
 
     var createMockDupeView = function() {
         return {
-            'render': function() {
-                if (this.collection.length > 0) {debugger;}
-            },
             'loadData': function() {
                 var mockDupesFound = [];
                 for (i = 0; i < mockDupesToFind; i++) {
