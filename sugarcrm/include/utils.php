@@ -1756,6 +1756,8 @@ function sugar_die($error_message)
 {
 	global $focus;
 	sugar_cleanup();
+	@header("HTTP/1.0 500 Server Error");
+	@header("Status: 500 Server Error");
 	die($error_message);
 }
 
