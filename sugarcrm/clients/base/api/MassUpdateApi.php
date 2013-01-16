@@ -94,6 +94,14 @@ class MassUpdateApi extends SugarApi {
             unset($mu_params['entire']);
         }
 
+        if(isset($mu_params['team_name'])) {
+            if(isset($mu_params['team_name_type']) && $mu_params['team_name_type'] == "1") {
+                $mu_params['team_name_type'] = "add";
+            } else {
+                $mu_params['team_name_type'] = "replace";
+            }
+        }
+
         // check ACL
         $bean = BeanFactory::newBean($mu_params['module']);
         $action = $this->delete? 'delete': 'save';

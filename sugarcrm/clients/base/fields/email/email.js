@@ -25,75 +25,123 @@
  * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 ({
-    fieldTag: "input",
 
-    events: {
-        'change .existing': 'updateExistingAddress',
-        'click .btn-edit': 'updateExistingProperty',
-        'click .removeEmail': 'remove',
-        'change .newEmail': 'add'
+    events:{
+        'change .existingAddress':'updateExistingAddress',
+        'click .btn-edit':'updateExistingProperty',
+        'click .removeEmail':'remove',
+        'click .addEmail':'addButton',
+        'change .newEmail': 'newEmailChanged'
     },
+    /**
+     * Event handler for change of the .newEmail input, we want to test if a new e-mail needs to be added
+     * @param {Event} evt
+     */
+    newEmailChanged:function(evt){
+        if($(evt.currentTarget).val().length > 0){
+            this.addButton(evt, $(evt.currentTarget).val());
+        }
+    },
+    /**
+     * Event handler that debounces call to add() method to prevent multiple duplicate e-mails from being added at once
+     * @param {Event} evt DOM event
+     * @param {String} newEmail e-mail address to add
+     */
+    addButton: _.debounce(function(evt, newEmail){
+        _.bind(this.add, this, evt, newEmail)();
+    }, 100),
     /**
      * Adds email address to dom and model. Note added emails only get checked
      * upon Save button being clicked (which triggers the model validations).
+     * @param {Event} evt DOM event
+     * @param {String} [newEmail] E-Mail string to be added, will default to value currently in .newEmail input if not provided
      */
-    add: function() {
-        var newAddress = this.$('.newEmail').val(),
-            existingAddresses = this.model.get(this.name) || [];
-        var newObj = {email_address: newAddress};
-        if (existingAddresses.length<1) {
-            newObj.primary_address = true;
+    //
+    add:function (evt, newEmail) {
+        if (!evt) return;
+        // Destroy the tooltips open on this button because they wont go away if we re-render
+        if ($(evt.currentTarget).tooltip) $(evt.currentTarget).tooltip('hide');
+        var newAddress = (newEmail) ? newEmail : this.$('.newEmail').val();
+        var existingAddresses = _.clone(this.model.get(this.name)) || [];
+        var newObj = {email_address:newAddress};
+        if (existingAddresses.length < 1) {
+            newObj.primary_address = "1";
         }
         existingAddresses.push(newObj);
-        this.model.set(this.name, existingAddresses);
 
-        this.$('.newEmail').removeClass('newEmail');//Bug 56555
-        this.render();
+        this.updateModel(existingAddresses);
+    },
+    /**
+     * On render, determine which e-mail addresses need anchor tag included
+     * @param {Array} value set of e-mail addresses
+     * @private
+     */
+    _render:function() {
+        var emails = this.model.get('email');
+        _.each(emails, function(emailAddress){
+            // Needed for handlebars template, can't accomplish this boolean expression with handlebars
+            emailAddress.hasAnchor = emailAddress.opt_out != "1" && emailAddress.invalid_email != "1";
+        }, this);
+        app.view.Field.prototype._render.call(this);
+        _.each(emails, function(emailAddress, index){
+            // Remove handlebars cruft from e-mails so we only send valid fields back on save
+            emails[index] = _.pick(emailAddress, 'email_address', 'primary_address', 'opt_out', 'invalid_email');
+        });
     },
     /**
      * Removes email address from dom and model
-     * @param {Object} event
+     * @param {Object} evt DOM event
      */
-    remove: function(evt) {
-        if(evt) {
-            var emailAddress = $(evt.target).data('parentemail') || $(evt.target).parent().data('parentemail'),
-                existingAddresses = this.model.get(this.name);
-
-            _.each(existingAddresses, function(emailInfo, index) {
-                if (emailInfo.email_address == emailAddress) {
-                    existingAddresses[index] = false;
+    remove:function (evt) {
+        if (!evt) return;
+        // Destroy the tooltips open on this button because they wont go away if we rerender
+        if ($(evt.currentTarget).tooltip) $(evt.currentTarget).tooltip('hide');
+        var emailAddress = $(evt.target).data('parentemail') || $(evt.target).parent().data('parentemail'),
+            existingAddresses = _.clone(this.model.get(this.name));
+        var wasPrimary = false;
+        existingAddresses = _.filter(existingAddresses, function (emailInfo, index) {
+            if (emailInfo.email_address == emailAddress) {
+                // Remove deleted e-mails
+                if(!wasPrimary){
+                    wasPrimary = existingAddresses[index]['primary_address'] == '1';
                 }
-            });
-            this.model.set(this.name, _.compact(existingAddresses));
-            this.$('[data-emailaddress="' + emailAddress + '"]').remove();
+                return false;
+            } else {
+                return true;
+            }
+        });
+        // If a removed address was the primary e-mail, we need to pick an existing e-mail and make it the new primary
+        if(wasPrimary){
+            var address = _.first(existingAddresses);
+            if(address){
+                address['primary_address'] = '1';
+            }
         }
+        this.updateModel(existingAddresses);
     },
     /**
      * Updates true false properties on field
-     * @param event
+     * @param {Event} evt DOM event
      */
-    updateExistingProperty: function(evt) {
+    updateExistingProperty:function (evt) {
+        if (!evt) return;
+        // Destroy the tooltips open on this button because they wont go away if we rerender
+        if ($(evt.currentTarget).tooltip) $(evt.currentTarget).tooltip('hide');
         var existingAddresses, emailAddress, parent, target, property;
-        evt.stopPropagation();
-        evt.preventDefault();
-        target = $(evt.target);
+        target = $(evt.currentTarget);
         parent = target.parent();
         emailAddress = parent.data('parentemail') || parent.parent().data('parentemail');
-        property = $(evt.target).data('emailproperty') || parent.data('emailproperty');
-        existingAddresses = this.model.get(this.name);
+        property = target.data('emailproperty') || parent.data('emailproperty');
+        // need a shallow clone or we won't update the model later
+        existingAddresses = _.clone(this.model.get(this.name));
 
         // Remove all active classes and set all with emails with this property false
         if (property == 'primary_address') {
-            existingAddresses=this.massUpdateProperty(existingAddresses, property, "0");
-            this.$('.is_primary').removeClass('active');
+            existingAddresses = this.massUpdateProperty(existingAddresses, property, "0");
         }
 
-        // Now toggle currently clicked
-        $(target).toggleClass('active');
-        $(parent).toggleClass('active');
-
         // Toggle property for clicked button
-        _.each(existingAddresses, function(emailInfo, index) {
+        _.each(existingAddresses, function (emailInfo, index) {
             if (emailInfo.email_address == emailAddress) {
                 if (existingAddresses[index][property] == "1") {
                     existingAddresses[index][property] = "0";
@@ -102,8 +150,18 @@
                 }
             }
         });
-    },
 
+        this.updateModel(existingAddresses);
+    },
+    /**
+     * Updates model and triggers appropriate change events;
+     * @param value
+     */
+    updateModel:function(value) {
+        this.model.set(this.name, value);
+        this.model.trigger('change');
+        this.model.trigger('change:'+this.name);
+    },
     /**
      * Mass updates a property for all email addresses
      * @param {Array} emails emails array off a model
@@ -111,27 +169,27 @@
      * @param {Mixed} value
      * @return {Array}
      */
-    massUpdateProperty: function(emails, propName, value) {
-        _.each(emails, function(emailInfo, index) {
+    massUpdateProperty:function (emails, propName, value) {
+        _.each(emails, function (emailInfo, index) {
             emails[index][propName] = value;
-        })
+        });
         return emails;
     },
     /**
      * Updates existing address that change event was fired on
-     * @param {Object} event
+     * @param {Object} evt DOM event
      */
-    updateExistingAddress: function(evt) {
-        if ($(evt.target).val() != $(evt.target).attr('id')) {
-            var oldEmail = $(evt.target).attr('id');
-            var newEmail = $(evt.target).val();
-            var existingEmails = this.model.get(this.name);
-            _.each(existingEmails, function(emailInfo, index) {
+    updateExistingAddress:function (evt) {
+        if (evt && $(evt.currentTarget).val() != $(evt.currentTarget).data('id')) {
+            var oldEmail = $(evt.currentTarget).data('id');
+            var newEmail = $(evt.currentTarget).val();
+            var existingEmails = _.clone(this.model.get(this.name));
+            _.each(existingEmails, function (emailInfo, index) {
                 if (emailInfo.email_address == oldEmail) {
                     existingEmails[index].email_address = newEmail;
                 }
             });
-            this.render();
+            this.updateModel(existingEmails);
         }
     },
     /**
@@ -139,27 +197,22 @@
      * @param {Backbone.Model} model model this field is bound to.
      * @param {String} fieldName field name.
      */
-    bindDomChange: function() {
-        // This condition allows you to create a custom edit template for the `email` field, and let it behave as a
-        // generic `text` field. You should attach a `textField` class to the input element, and on 'save' action
-        // format the email as an array with sugar parameters.
+    bindDomChange:function () {
 
-        if (this.$el.find(this.fieldTag).length === 1 && this.$el.find(this.fieldTag).hasClass('textField')) {
-            app.view.Field.prototype.bindDomChange.call(this);
-        } else {
-            // Bind all tooltips on page
-            function bindAll(sel) {
-                this.$(sel).each(function(index) {
-                    $(this).tooltip({
-                        placement: "bottom"
-                    });
+        // Bind all tooltips on page
+        function bindAll(sel) {
+            this.$(sel).each(function (index) {
+                $(this).tooltip({
+                    placement:"bottom"
                 });
-            }
-            bindAll('.btn-edit');
-            bindAll('.addEmail');
-            bindAll('.removeEmail');
-
-            this.delegateEvents();
+            });
         }
+
+        bindAll('.btn-edit');
+        bindAll('.addEmail');
+        bindAll('.removeEmail');
+    },
+    focus:function () {
+        this.$('input').first().focus();
     }
 })

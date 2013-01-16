@@ -34,15 +34,10 @@
  *
  * Events Triggered
  *
- * forecasts:forecastcommitbuttons:triggerCommit
+ * forecasts:commitButtons:triggerCommit
  *      on: context.forecasts
  *      by: safeFetch()
  *      when: user clicks ok on confirm dialog that they want to commit data
- *
- * forecasts:forecastcommitbuttons:triggerSaveDraft
- *      on: context.forecasts
- *      by: safeFetch()
- *      when: user performs an action that causes a check to be made against dirty data
  *
  * forecasts:worksheet:rendered
  *      on: context.forecasts
@@ -58,6 +53,16 @@
  *      on: context.forecasts
  *      by: updateWorksheetBySelectedRanges()
  *      when: dataTable is finished filtering itself and has destroyed and redrawn itself
+ *      
+ * forecasts:worksheet:saved
+ *      on: context.forecasts
+ *      by: saveWorksheet()
+ *      when: saving the worksheet.
+ *      
+ * forecasts:worksheet:dirty
+ *      on: context.forecasts
+ *      by: change:worksheet
+ *      when: the worksheet is changed.
  */
 ({
 
@@ -244,7 +249,7 @@
 
     /**
      *
-     * @triggers forecasts:worksheetSaved
+     * @triggers forecasts:worksheet:saved
      * @return {Number}
      */
     saveWorksheet : function(isDraft) {
@@ -271,14 +276,14 @@
                         saveCount++;
                         //if this is the last save, go ahead and trigger the callback;
                         if(totalToSave === saveCount) {
-                            self.context.forecasts.trigger('forecasts:worksheetSaved', totalToSave, 'rep_worksheet');
+                            self.context.forecasts.trigger('forecasts:worksheet:saved', totalToSave, 'rep_worksheet', isDraft);
                         }
                     }});
                 });
 
                 self.cleanUpDirtyModels();
             } else {
-                this.context.forecasts.trigger('forecasts:worksheetSaved', totalToSave, 'rep_worksheet');
+                this.context.forecasts.trigger('forecasts:worksheet:saved', totalToSave, 'rep_worksheet', isDraft);
             }
         }
 
@@ -314,7 +319,7 @@
                 }
                 // The Model has changed via CTE. save it in the isDirty
                 this.dirtyModels.add(model);
-                this.context.forecasts.trigger('forecasts:worksheetDirty', model, changed);
+                this.context.forecasts.trigger('forecasts:worksheet:dirty', model, changed);
             }, this);
         }
 
@@ -335,7 +340,7 @@
             this.context.forecasts.worksheet.on("change", function() {
                 this.calculateTotals();
             }, this);
-            this.context.forecasts.on("forecasts:committed:saved", function(){
+            this.context.forecasts.on("forecasts:committed:saved forecasts:worksheet:saved", function(){
                 if(this.showMe()){
                     var model = this.context.forecasts.worksheet;
                     model.url = this.createURL();
@@ -360,9 +365,10 @@
                 self.commitButtonEnabled = false;
             },this);
 
-            this.context.forecasts.on('forecasts:worksheetSave', function(isDraft) {
+            this.context.forecasts.on('forecasts:worksheet:saveWorksheet', function(isDraft) {
                 this.saveWorksheet(isDraft);
             }, this);
+            
 
             /*
              * // TODO: tagged for 6.8 see SFA-253 for details
@@ -475,11 +481,11 @@
                 self.context.forecasts.set({reloadCommitButton: true});
 
                 var svWkFn = function() {
-                    self.context.forecasts.off('forecasts:worksheetSaved', svWkFn);
+                    self.context.forecasts.off('forecasts:worksheet:saved', svWkFn);
                     collection.fetch();
                 };
 
-                self.context.forecasts.on('forecasts:worksheetSaved', svWkFn);
+                self.context.forecasts.on('forecasts:worksheet:saved', svWkFn);
                 this.saveWorksheet()
             }
             //user clicked cancel, ignore and fetch if fetch is enabled
@@ -505,7 +511,7 @@
                 var msg = app.lang.get("LBL_WORKSHEET_COMMIT_CONFIRM", "Forecasts").split("<br>");
                 //show dialog
                 if(confirm(msg[0] + "\n\n" + msg[1])){
-                    self.context.forecasts.trigger("forecasts:forecastcommitbuttons:triggerCommit");
+                    self.context.forecasts.trigger("forecasts:commitButtons:triggerCommit");
                     self.commitFromSafeFetch = true;
                 }
                 //canceled, continue fetching
@@ -792,20 +798,19 @@
     /**
      * Event Handler for updating the worksheet by a selected range
      *
-     * @param params is always a context
+     * @param params array of selected filters
      */
     updateWorksheetBySelectedRanges:function (params) {
         // Set the filters for the datatable then re-render
         var self = this,
             forecast_ranges_setting = this.context.forecasts.config.get('forecast_ranges') || 'show_binary';
-
+        
         // start with no filters, i. e. show everything.
         if(!_.isUndefined($.fn.dataTableExt)) {
             $.fn.dataTableExt.afnFiltering.splice(0, $.fn.dataTableExt.afnFiltering.length);
             if (!_.isEmpty(params)) {
                 $.fn.dataTableExt.afnFiltering.push (
                     function(oSettings, aData, iDataIndex) {
-
                         // This is required to prevent manager view from filtering incorrectly, since datatables does filtering globally
                         if(oSettings.nTable == _.first($('.worksheetManagerTable'))) {
                             return true;
@@ -821,17 +826,22 @@
                             checkState = rowCategory.find('input').attr('checked');
                             selectVal = ((checkState == "checked") || (checkState == "on") || (checkState == "1")) ? 'include' : 'exclude';
                         } else {
-                            selectVal = editable ? rowCategory.find("select").attr("value") : rowCategory.text().trim().toLowerCase();
+                            //we need to check to see if the select exists, because this gets fired before the commitStage field re-renders itself back
+                            //to a text field.
+                            if(rowCategory.find("select").length == 0){
+                                selectVal = rowCategory.text().trim().toLowerCase();
+                            } else {
+                                selectVal = rowCategory.find("select")[0].value.toLowerCase();                               
+                            }
                         }
 
                         self.context.forecasts.trigger('forecasts:worksheet:filtered');
-
                         return (_.contains(params, selectVal));
                     }
                 );
             }
         }
-
+        
         if(!_.isUndefined(this.gTable.fnDestroy)){
             this.gTable.fnDestroy();
             this.gTable = this.$('.worksheetTable').dataTable(self.gTableDefs);

@@ -76,18 +76,13 @@ class SearchForm {
      * @param string $tpl template to use, defaults to moduleDir/SearchForm.html
      *
      */
-    function SearchForm($module, &$seedBean, $tpl = null)
+    function SearchForm($module, $seedBean, $tpl = null)
     {
         global $app_strings;
 
         $this->module = $module;
 
-        $fieldsfile = SugarAutoLoader::loadWithMetafiles($module, 'SearchFields', 'searchfields');
-        if($fieldsfile) {
-        	require $fieldsfile;
-        }
-
-        //require_once('modules/' . $module . '/metadata/SearchFields.php');
+        $searchFields = SugarAutoLoader::loadSearchFields($module);
         $this->searchFields = $searchFields[$module];
         if(empty($tpl)) {
             if(!empty($GLOBALS['layout_edit_mode'])){

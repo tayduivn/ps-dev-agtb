@@ -49,8 +49,10 @@ function getDelimiter() {
 
 /**
  * builds up a delimited string for export
- * @param string type the bean-type to export
- * @param array records an array of records if coming directly from a query
+ * @param string $type the bean-type to export
+ * @param array $records an array of records if coming directly from a query
+ * @param boolean $members
+ * @param boolean $sample return a sample of records for testing
  * @return string delimited string for export
  */
 function export($type, $records = null, $members = false, $sample=false) {
@@ -75,7 +77,7 @@ function export($type, $records = null, $members = false, $sample=false) {
 
     if($records) {
         $records = explode(',', $records);
-        $records = "'" . implode("','", $records) . "'";
+        $records = "'" . implode("','", array_map(array($db,'quote'),$records)) . "'";
         $where = "{$focus->table_name}.id in ($records)";
     } elseif (isset($_REQUEST['all']) ) {
         $where = '';
@@ -190,7 +192,10 @@ function exportFromApi($args, $sample=false) {
     $db = DBManagerFactory::getInstance();
 
     if($records) {
-        $records = explode(',', $records);
+        // we take an array, but we'll make an exception for one record.
+        if (!is_array($records)) {
+            $records = array($records);
+        }
         $records = "'" . implode("','", $records) . "'";
         $where = "{$focus->table_name}.id in ($records)";
     } elseif (isset($args['all']) ) {
@@ -555,10 +560,7 @@ function generateSearchWhere($module, $query)
             require $searchdefs_file;
         }
 
-        $searchfields_file = SugarAutoLoader::loadWithMetafiles($module, 'SearchFields', 'searchfields');
-        if($searchfields_file) {
-            require $searchfields_file;
-        }
+        $searchFields = SugarAutoLoader::loadSearchFields($module);
         if(empty($searchdefs) || empty($searchFields)) {
            //for some modules, such as iframe, it has massupdate, but it doesn't have search function, the where sql should be empty.
             return;

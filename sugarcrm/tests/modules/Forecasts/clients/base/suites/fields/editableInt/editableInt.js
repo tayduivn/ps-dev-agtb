@@ -29,7 +29,11 @@ describe("forecast editableInt field", function () {
         app.user = SugarTest.app.user;
         app.user.setPreference('decimal_precision', 2);
 
-        context.forecasts = new Backbone.Model();
+        SugarTest.loadFile("../sidecar/src/utils", "utils", "js", function (d) {
+            return eval(d);
+        });
+
+        context.forecasts = new Backbone.Model({"selectedUser" : {'id' : app.user.get('id')}});
         context.forecasts.config = new Backbone.Model({"sales_stage_won" : [], "sales_stage_lost" : []});
 
         model = new Backbone.Model({"sales_stage" : 'test_sales_stage'});
@@ -37,12 +41,12 @@ describe("forecast editableInt field", function () {
         fieldDef = {
             "name": "editableInt",
             "type": "editableInt",
-            "view": "detail"
+            "view": "detail",
+            "maxValue": 100,
+            "minValue": 0
         };
         SugarTest.loadComponent('base', 'field', 'int');
-        field = SugarTest.createField("../modules/Forecasts/clients/base", "editableInt", "editableInt", "detail", fieldDef, "Forecasts");
-        field.context = context;
-        field.model = model;
+        field = SugarTest.createField("../modules/Forecasts/clients/base", "editableInt", "editableInt", "detail", fieldDef, "Forecasts", model, context);
     });
 
     afterEach(function() {
@@ -70,14 +74,20 @@ describe("forecast editableInt field", function () {
     });
 
     describe("isEditable", function() {
-        it("should be false", function() {
+        it("should be false with same user and configured excluded sales stage", function() {
             field.context.forecasts.config.set('sales_stage_won', ["test_sales_stage"]);
             field.checkIfCanEdit();
             expect(field.isEditable()).toBeFalsy();
         });
-        it("should be true", function() {
+        it("should be true with same user and no configured excluded sales stage", function() {
             expect(field.isEditable()).toBeTruthy();
-        })
+        });
+
+        it("should be false with different user and no configured excluded sales stage", function() {
+            field.context.forecasts.set({"selectedUser" : {"id" : "doh"}});
+            field.checkIfCanEdit();
+            expect(field.isEditable()).toBeFalsy();
+        });
     });
 
     describe("parsePercentage", function() {
@@ -104,6 +114,30 @@ describe("forecast editableInt field", function () {
             field.value = "50";
             expect(field.parsePercentage("+5%")).toEqual(53);
         });
-    })
+    });
+
+    describe("isValid", function() {
+        it("should return true when value is valid int", function() {
+            expect(field.isValid("55")).toBeTruthy();
+        });
+        it("should return error when value empty", function() {
+            expect(_.isObject(field.isValid(""))).toBeTruthy();
+        });
+        it("should return error when value is whitespace", function() {
+            expect(_.isObject(field.isValid(" "))).toBeTruthy();
+        });
+        it("should return error when value is invalid chars", function() {
+            expect(_.isObject(field.isValid("abcd"))).toBeTruthy();
+        });
+        it("should return error when value is invalid decimal", function() {
+            expect(_.isObject(field.isValid("12.34"))).toBeTruthy();
+        });
+        it("should return error when value is invalid range low", function() {
+            expect(_.isObject(field.isValid("-44"))).toBeTruthy();
+        });
+        it("should return error when value is invalid range high", function() {
+            expect(_.isObject(field.isValid("109"))).toBeTruthy();
+        });
+    });
 
 });

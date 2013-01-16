@@ -38,29 +38,45 @@ if (!defined('sugarEntry') || !sugarEntry) {
 $viewdefs['Opportunities']['base']['view']['record'] = array(
     'buttons' => array(
         array(
-            'type'    => 'button',
-            'label'   => 'LBL_SAVE_BUTTON_LABEL',
-            'css_class' => 'hide btn-primary record-save',
+            'type' => 'button',
+            'name' => 'cancel_button',
+            'label' => 'LBL_CANCEL_BUTTON_LABEL',
+            'css_class' => 'btn-invisible btn-link',
+            'mode' => 'edit',
         ),
         array(
-            'type'    => 'button',
-            'label'   => 'LBL_CANCEL_BUTTON_LABEL',
-            'css_class' => 'hide record-cancel',
+            'type' => 'buttondropdown',
+            'name' => 'edit_dropdown',
+            'default' => array(
+                'name' => 'edit_button',
+                'label' => 'LBL_EDIT_BUTTON_LABEL',
+            ),
+            'dropdown' => array(
+                array(
+                    'name' => 'delete_button',
+                    'label' => 'LBL_DELETE_BUTTON_LABEL',
+                ),
+                array(
+                    'name' => 'duplicate_button',
+                    'label' => 'LBL_DUPLICATE_BUTTON_LABEL',
+                ),
+            ),
+            'mode' => 'view',
         ),
         array(
-            'type'    => 'button',
-            'label'   => 'LBL_DUPLICATE_BUTTON_LABEL',
-            'css_class' => 'record-duplicate',
-        ),            
-        array(
-            'type'    => 'button',
-            'label'   => 'LBL_EDIT_BUTTON_LABEL',
-            'css_class' => 'record-edit',
-        ),
-        array(
-            'type'    => 'button',
-            'label'   => 'LBL_DELETE_BUTTON_LABEL',
-            'css_class' => 'record-delete',
+            'type' => 'buttondropdown',
+            'name' => 'save_dropdown',
+            'default' => array(
+                'name' => 'save_button',
+                'label' => 'LBL_SAVE_BUTTON_LABEL',
+            ),
+            'dropdown' => array(
+                array(
+                    'name' => 'delete_button',
+                    'label' => 'LBL_DELETE_BUTTON_LABEL',
+                ),
+            ),
+            'mode' => 'edit',
         ),
         array(
             'name' => 'sidebar_toggle',
@@ -76,6 +92,10 @@ $viewdefs['Opportunities']['base']['view']['record'] = array(
                     'name' => 'fieldset_name',
                     'type' => 'fieldset',
                     'fields' => array('name'),
+                ),
+                array(
+                    'type' => 'favorite',
+                    'noedit' => true,
                 ),
             )
         ),
@@ -108,7 +128,7 @@ $viewdefs['Opportunities']['base']['view']['record'] = array(
                 'campaign_id',
                 'lead_source',
                 'opportunity_type',
-                'assigned_user_id',
+                'assigned_user_name',
                 'team_id',
                 'next_step',
                 'description',

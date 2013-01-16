@@ -359,6 +359,10 @@ class MetaDataManager {
                 //END SUGARCRM flav=pro ONLY
                 // get the field names
 
+                // define context variable as to not have it throw a notice when it doesn't exist
+                // SI Bug-60007
+                $context = array();
+
                 // if the bean is not set, or a new bean.. set the owner override
                 // this will allow fields marked Owner to pass through ok.
                 if($bean == false || empty($bean->id) || (isset($bean->new_with_id) && $bean->new_with_id == true)) {

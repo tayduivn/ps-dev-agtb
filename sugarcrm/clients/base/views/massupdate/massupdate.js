@@ -35,7 +35,12 @@
                             name: team_field.name,
                             label: team_field.label,
                             fields: [
-                                team_field
+                                team_field,
+                                {
+                                    'name' : 'team_name_type',
+                                    'type' : 'bool',
+                                    'label' : 'LBL_SELECT_APPEND_TEAMS'
+                                }
                             ]
                         };
                     }
@@ -203,27 +208,13 @@
     save: function() {
         var massUpdate = this.getMassUpdateModel(this.module),
             attributes = this.model.attributes,
-            self = this,
-            fields = _.initial(this.fieldValues).concat(this.defaultOption);
-        var emptyValues = [],
+            self = this;
+
+        var validate = this.checkValidationError();
+
+        var errors = validate.errors,
+            emptyValues = validate.emptyValues,
             confirmMessage = app.lang.getAppString('LBL_MASS_UPDATE_EMPTY_VALUES');
-        var errors = {}, validator = {};
-        _.each(fields , function(field) {
-            if(field.name) {
-                validator = {};
-                validator[field.name] = field;
-                field.required = (_.isBoolean(field.required) && field.required) || (field.required && field.required == 'true') || false;
-                errors = _.extend(self.model._doValidate(validator), errors);
-                var value = self.model.get(field.name);
-                if(!value) {
-                    emptyValues.push(app.lang.get(field.label, self.model.module));
-                    self.model.set(field.name, '', {silent: true});
-                    if(field.id_name) {
-                        self.model.set(field.id_name, '', {silent: true});
-                    }
-                }
-            }
-        });
 
         this.$(".fieldPlaceHolder .error").removeClass("error");
         this.$(".fieldPlaceHolder .help-block").hide();
@@ -265,6 +256,33 @@
         } else {
             this.handleValidationError(errors);
         }
+    },
+    checkValidationError: function() {
+        var emptyValues = [],
+            errors = {},
+            validator = {},
+            fields = _.initial(this.fieldValues).concat(this.defaultOption);
+        _.each(fields , function(field) {
+            if(field.name) {
+                validator = {};
+                validator[field.name] = field;
+                field.required = (_.isBoolean(field.required) && field.required) || (field.required && field.required == 'true') || false;
+                errors = _.extend(this.model._doValidate(validator), errors);
+                var value = this.model.get(field.name);
+                if(!value) {
+                    emptyValues.push(app.lang.get(field.label, this.model.module));
+                    this.model.set(field.name, '', {silent: true});
+                    if(field.id_name) {
+                        this.model.set(field.id_name, '', {silent: true});
+                    }
+                }
+            }
+        }, this);
+
+        return {
+            errors: errors,
+            emptyValues: emptyValues
+        };
     },
     handleValidationError: function(errors) {
         var self = this;

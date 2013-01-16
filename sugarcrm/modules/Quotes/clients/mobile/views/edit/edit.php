@@ -1,8 +1,9 @@
 <?php
+//FILE SUGARCRM flav=pro || flav=sales ONLY
 /*********************************************************************************
- * The contents of this file are subject to the SugarCRM Master Subscription
- * Agreement (""License"") which can be viewed at
- * http://www.sugarcrm.com/crm/master-subscription-agreement
+ * The contents of this file are subject to the SugarCRM Enterprise End User
+ * License Agreement ("License") which can be viewed at
+ * http://www.sugarcrm.com/crm/products/sugar-enterprise-eula.html
  * By installing or using this file, You have unconditionally agreed to the
  * terms and conditions of the License, and You may not use this file except in
  * compliance with the License.  Under the terms of the license, You shall not,
@@ -15,7 +16,7 @@
  * remove SugarCRM copyrights from the source code or user interface.
  *
  * All copies of the Covered Code must include on each user interface screen:
- *  (i) the ""Powered by SugarCRM"" logo and
+ *  (i) the "Powered by SugarCRM" logo and
  *  (ii) the SugarCRM copyright notice
  * in the same form as they appear in the distribution.  See full license for
  * requirements.
@@ -23,49 +24,30 @@
  * Your Warranty, Limitations of liability and Indemnity are expressly stated
  * in the License.  Please refer to the License for the specific language
  * governing these rights and limitations under the License.  Portions created
- * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
+ * by SugarCRM are Copyright (C) 2004-2006 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
-
-$viewdefs['Forecasts']['base']['layout']['index'] = array(
-    'type' => 'index',
-    'components' => array(
-        array(
-            'view' => 'forecastsChart',
+$viewdefs['Quotes']['mobile']['view']['edit'] = array(
+    'templateMeta' => array(
+        'maxColumns' => '1',
+        'widths' => array(
+            array('label' => '10', 'field' => '30'),
+            array('label' => '10', 'field' => '30')
         ),
-        array(
-            'view' => 'forecastsProgress',
-        ),
-        array(
-            'view' => 'forecastsWorksheet',
-            'contextCollection' => array(
-                'module' => 'ForecastWorksheets',
-                'name' => 'Worksheet'
+    ),
+    'panels' => array (
+        array (
+            'label' => 'LBL_PANEL_DEFAULT',
+            'fields' => array(
+                'quote_num',
+                'name',
+                'account_name',
+                'quote_stage',
+                'total',
+                'date_quote_expected_closed',
+                'quote_type',
+                'description',
+                'assigned_user_name',
             ),
-        ),
-        array(
-            'view' => 'forecastsWorksheetTotals'
-        ),
-        array(
-            'view' => 'forecastsWorksheetManager',
-            'contextCollection' => array(
-                'module' => 'ForecastManagerWorksheets',
-                'name' => 'WorksheetManager'
-            ),
-        ),
-        array(
-            'view' => 'forecastsWorksheetManagerTotals'
-        ),
-        array(
-            'view' => 'forecastsTitle',
-        ),
-        array(
-            'view' => 'forecastsTree',
-        ),
-        array(
-            'view' => 'forecastsCommitButtons',
-        ),
-        array(
-            'layout' => 'info'
         ),
     ),
 );
