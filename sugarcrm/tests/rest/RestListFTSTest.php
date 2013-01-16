@@ -240,6 +240,8 @@ class RestListFTSTest extends RestTestBase {
         
         $this->assertEquals(5,$restReply['reply']['next_offset'],"Next offset was set incorrectly.");
 
+        $this->assertNotEmpty($restReply['reply']['records'][0]['_search']['_highlighted'], "No highlighted Property");
+
         // Test Offset
         $restReply2 = $this->_restCall("search/?offset=".$restReply['reply']['next_offset']);
 

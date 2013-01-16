@@ -183,6 +183,8 @@ CIA;
     createFTSLogicHook('Extension/application/Ext/LogicHooks/SugarFTSHooks.php');
 }
 
+$db = DBManagerFactory::getInstance();
+
 //First repair the databse to ensure it is up to date with the new vardefs/tabledefs
 logThis('About to repair the database.', $path);
 //Use Repair and rebuild to update the database.
@@ -210,7 +212,7 @@ foreach ($beanFiles as $bean => $file) {
 		if (($focus instanceOf SugarBean)) {
 			if(!isset($repairedTables[$focus->table_name]))
 			{
-				$sql = $GLOBALS['db']->repairTable($focus, true);
+				$sql = $db->repairTable($focus, true);
                 if(trim($sql) != '')
                 {
 				    logThis('Running sql:' . $sql, $path);
@@ -238,7 +240,7 @@ foreach ($dictionary as $meta) {
 
 	$fielddefs = $meta['fields'];
 	$indices = $meta['indices'];
-	$sql = $GLOBALS['db']->repairTableParams($tablename, $fielddefs, $indices, true);
+	$sql = $db->repairTableParams($tablename, $fielddefs, $indices, true);
 	if(!empty($sql)) {
 	    logThis($sql, $path);
 	    $repairedTables[$tablename] = true;
@@ -251,6 +253,11 @@ logThis('database repaired', $path);
 logThis('Start rebuild relationships.', $path);
 @rebuildRelations();
 logThis('End rebuild relationships.', $path);
+
+//Make sure to call preInstall on database instance to setup additional tables for hierarchies if needed
+if($db->supports('recursive_query')) {
+    $db->preInstall();
+}
 
 require_once('modules/Administration/Administration.php');
 $admin = new Administration();
@@ -297,7 +304,7 @@ if($ce_to_pro_ent) {
         logThis(" Finish modules/Administration/upgradeTeams.php", $path);
 
     if(check_FTS()){
-    	$GLOBALS['db']->full_text_indexing_setup();
+    	$db->full_text_indexing_setup();
     }
 }
 

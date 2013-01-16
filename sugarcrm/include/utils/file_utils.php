@@ -471,22 +471,23 @@ function cleanDirName($name)
 /**
  * Attempts to use PHPs mime type getters, where available, to get the content
  * type of a file. Checks existence of the file
- * 
+ *
  * @param string $file The filepath to get the mime type for
  * @param string $default An optional mimetype string to return if one cannot be found
- * @return string The string content type of the file or false if the file does 
- *                not exist 
+ * @return string The string content type of the file or false if the file does
+ *                not exist
  */
 function get_file_mime_type($file, $default = false)
 {
     // If the file is readable then use it
     if (is_readable($file)) {
+        $file = UploadFile::realpath($file);
         // Default the return
         $mime = '';
-        
+
         // Check first for the finfo functions needed to use built in functions
         // Suppressing warnings since some versions of PHP are choking on
-        // getting the mime type by reading the file contents even though the 
+        // getting the mime type by reading the file contents even though the
         // file is readable
         if (mime_is_detectable_by_finfo()) {
             $finfo = finfo_open(FILEINFO_MIME_TYPE);
@@ -502,24 +503,24 @@ function get_file_mime_type($file, $default = false)
                 $mime = @ext2mime($file);
             }
         }
-           
+
         // If mime is empty, set it manually... this can happen from either not
-        // being able to detect the mime type using core PHP functions or in the 
+        // being able to detect the mime type using core PHP functions or in the
         // case of a failure of one of the core PHP functions for some reason
         if (empty($mime)) {
             $mime = 'application/octet-stream';
         }
-        
+
         return $mime;
     }
-    
+
     return $default;
 }
 
 /**
  * Helper function to determine whether the functions needed to fetch a mime type
  * natively with PHP exist.
- * 
+ *
  * @return bool
  */
 function mime_is_detectable()
@@ -530,10 +531,10 @@ function mime_is_detectable()
 
 /**
  * Helper function to determine whether the native PHP FileInfo functions are
- * available. FileInfo is now included with PHP 5.3+. Prior to that it was a 
+ * available. FileInfo is now included with PHP 5.3+. Prior to that it was a
  * PECL extension.
  * http://us2.php.net/manual/en/fileinfo.installation.php
- * 
+ *
  * @return bool
  */
 function mime_is_detectable_by_finfo()

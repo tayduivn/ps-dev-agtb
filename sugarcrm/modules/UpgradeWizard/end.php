@@ -81,6 +81,8 @@ if(method_exists($rac, 'clearExternalAPICache'))
 
 $repairedTables = array();
 
+$db = DBManagerFactory::getInstance();
+
 foreach ($beanFiles as $bean => $file) {
 	if(file_exists($file)){
 		require_once ($file);
@@ -90,7 +92,7 @@ foreach ($beanFiles as $bean => $file) {
 		{
 			if(!isset($repairedTables[$focus->table_name]))
 			{
-				$sql = $GLOBALS['db']->repairTable($focus, true);
+				$sql = $db->repairTable($focus, true);
                 if(trim($sql) != '')
                 {
 				    logThis('Running sql:' . $sql, $path);
@@ -116,7 +118,7 @@ foreach ($dictionary as $meta) {
 	if (isset($repairedTables[$tablename])) continue;
 	$fielddefs = $meta['fields'];
 	$indices = $meta['indices'];
-	$sql = $GLOBALS['db']->repairTableParams($tablename, $fielddefs, $indices, true);
+	$sql = $db->repairTableParams($tablename, $fielddefs, $indices, true);
     if(trim($sql) != '')
     {
 	    logThis('Running sql:' . $sql, $path);
@@ -127,6 +129,13 @@ foreach ($dictionary as $meta) {
 		$dictionary = $olddictionary;
 
 logThis('database repaired', $path);
+
+
+//Make sure to call preInstall on database instance to setup additional tables for hierarchies if needed
+if($db->supports('recursive_query')) {
+    $db->preInstall();
+}
+
 
 $ce_to_pro_ent = isset($_SESSION['upgrade_from_flavor']) && preg_match('/^SugarCE.*?(Pro|Ent|Corp|Ult)$/', $_SESSION['upgrade_from_flavor']);
 
@@ -153,7 +162,7 @@ if($ce_to_pro_ent)
     logThis("Finished rebuilding team_set_id for folders table", $path);
 
     if(check_FTS()) {
-    	$GLOBALS['db']->full_text_indexing_setup();
+    	$db->full_text_indexing_setup();
     }
 }
 

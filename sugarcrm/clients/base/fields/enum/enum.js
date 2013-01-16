@@ -70,47 +70,15 @@
           */
         select2Options.minimumResultsForSearch = this.def.searchBarThreshold?this.def.searchBarThreshold:0;
 
-        this.$(this.fieldTag).select2(select2Options);
-        this.$(".select2-container").addClass("tleft");
+        if(this.tplName === 'edit') {
+            this.$(this.fieldTag).select2(select2Options);
+            this.$(".select2-container").addClass("tleft");
+        } else if(this.tplName === 'disabled') {
+            this.$(this.fieldTag).attr("disabled", "disabled").select2();
+        }
         return this;
     },
     unformat:function(value) {
         return value;
-    },
-    format:function(value) {
-        var newval = '', optionsObject, optionLabels;
-
-        if(this.def.isMultiSelect && this.view.name !== 'edit') {
-            // Gets the dropdown options e.g. {foo:foolbl, bar:barlbl ...}
-            optionsObject = app.lang.getAppListStrings(this.def.options);
-
-            // value are selected option keys .. grab corresponding labels
-            _.each(value, function(p) {
-                if(_.has(optionsObject, p)) {
-                    newval += optionsObject[p]+', ';
-                }
-            });
-            newval = newval.slice(0, newval.length - 2); // strips extra ', '
-        } else {
-            // Normal dropdown, just get selected
-            newval = this.model.get(this.name);
-        }
-        // dropdown with default string so convert it to something we understand
-        if(this.def.isMultiSelect && this.view.name === 'edit' && this.def.default && typeof newval ==='string') {
-            newval = this.convertMultiSelectDefaultString(newval);
-        }
-        return newval;
-    },
-    /**
-     * Converts multiselect default strings into array of option keys for template
-     * @param {String} defaultString string of the format "^option1^,^option2^,^option3^"
-     * @return {Array} of the format ["option1","option2","option3"]
-     */
-    convertMultiSelectDefaultString: function(defaultString) {
-        var result = defaultString.split(",");
-        _.each(result, function(value, key) {
-            result[key] = value.replace(/\^/g,"");
-        });
-        return result;
     }
 })

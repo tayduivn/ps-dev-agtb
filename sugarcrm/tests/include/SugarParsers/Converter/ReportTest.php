@@ -37,6 +37,8 @@ class SugarParsers_Converter_ReportTest extends Sugar_PHPUnit_Framework_TestCase
 
     public function setUp()
     {
+        SugarTestHelper::setUp('beanList');
+        SugarTestHelper::setUp('beanFiles');
         $this->converter = new SugarParsers_Converter_Report($this->createTestReportBuilder());
         $this->filter = new SugarParsers_Filter(new Account());
     }

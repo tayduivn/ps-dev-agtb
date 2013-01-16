@@ -783,8 +783,12 @@ function swapChart(chartId,jsonFilename,css,chartConfig){
          */
         generateLegend: function(chart, chartId) {
             var list = $jit.id('legend'+chartId);
-            var legend = chart.getLegend(),
-                table = "<div class='col'>";
+            var legend = chart.getLegend();
+            if(legend['wmlegend']['name'].length > 0) {
+                var table = "<div class='col'>";
+            } else {
+                var table = "<div class='row'>";
+            }
             for(var i=0;i<legend['name'].length;i++) {
                 if(legend["name"][i] != undefined) {
                     table += "<div class='legendGroup'>";
@@ -800,7 +804,7 @@ function swapChart(chartId,jsonFilename,css,chartConfig){
             table += "</div>";
 
 
-            if(typeof legend['wmlegend'] != "undefined") {
+            if(legend['wmlegend']['name'].length > 0) {
 
                 table += "<div class='col2'>";
                 for(var i=0;i<legend['wmlegend']['name'].length;i++) {
@@ -815,18 +819,22 @@ function swapChart(chartId,jsonFilename,css,chartConfig){
 
             list.innerHTML = table;
 
-
             //adjust legend width to chart width
             jQuery('#legend'+chartId).ready(function() {
                 var chartWidth = jQuery('#'+chartId).width();
                 chartWidth = chartWidth - 20;
                 $('#legend'+chartId).width(chartWidth);
                 var legendGroupWidth = new Array();
-                $('.col .legendGroup').each(function(index) {
+                if(legend['wmlegend']['name'].length > 0) {
+                    var sel = ".col .legendGroup";
+                } else {
+                    var sel = ".row .legendGroup";
+                }
+                $(sel).each(function(index) {
                     legendGroupWidth[index] = $(this).width();
                 });
                 var largest = Math.max.apply(Math, legendGroupWidth);
-                $('.col .legendGroup').width(largest+2);
+                $(sel).width(largest+2);
             });
 
 

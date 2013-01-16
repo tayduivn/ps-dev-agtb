@@ -24,11 +24,11 @@
      */
     initialize: function(options) {
         this.events = _.extend({}, this.events, {
-            'click [name=save_button]': 'save',
-            'click [name=cancel_button]': 'cancel',
-            'click [name=save_create_button]': 'saveAndCreate',
-            'click [name=save_view_button]': 'saveAndView',
-            'click [name=restore_button]': 'restoreModel'
+            'click a[name=save_button]': 'save',
+            'click a[name=cancel_button]': 'cancel',
+            'click a[name=save_create_button]': 'saveAndCreate',
+            'click a[name=save_view_button]': 'saveAndView',
+            'click a[name=restore_button]': 'restoreModel'
         });
 
         app.view.views.RecordView.prototype.initialize.call(this, options);
@@ -54,6 +54,10 @@
 
         //extend the record view definition
         this.meta = _.extend({}, app.metadata.getView(this.module, 'record'), this.meta);
+    },
+
+    delegateButtonEvents: function() {
+        //override record view's button delegation
     },
 
     render: function() {

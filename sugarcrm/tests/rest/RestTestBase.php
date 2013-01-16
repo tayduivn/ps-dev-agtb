@@ -41,16 +41,16 @@ abstract class RestTestBase extends Sugar_PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        SugarTestHelper::setUp('app_list_strings');
-        SugarTestHelper::setUp('app_strings');
-        SugarTestHelper::setUp('beanFiles');
-        SugarTestHelper::setUp('beanList');
-
         //Create an anonymous user for login purposes/
         $this->_user = SugarTestUserUtilities::createAnonymousUser();
         $GLOBALS['current_user'] = $this->_user;
         // call a commit for transactional dbs
         $GLOBALS['db']->commit();
+        SugarTestHelper::setUp('app_list_strings');
+        SugarTestHelper::setUp('app_strings');
+        SugarTestHelper::setUp('beanFiles');
+        SugarTestHelper::setUp('beanList');
+        SugarTestHelper::setUp('files');
     }
 
     public function tearDown()
@@ -212,6 +212,15 @@ abstract class RestTestBase extends Sugar_PHPUnit_Framework_TestCase
                 $httpAction = 'POST';
                 curl_setopt($ch, CURLOPT_POST, 1); // This sets the POST array
                 $requestMethodSet = true;
+            }
+            // For Mothership, uploads need special hack because of stream support
+            if(is_array($postBody)) {
+                foreach($postBody as $k => $v) {
+                    if($v[0] == '@') {
+                        $name = substr($v, 1);
+                        $postBody[$k] = "@".UploadFile::realpath($name);
+                    }
+                }
             }
 
             curl_setopt($ch, CURLOPT_POSTFIELDS, $postBody);
