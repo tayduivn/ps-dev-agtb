@@ -35,22 +35,22 @@ class SugarViewTest extends Sugar_PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        global $moduleList, $beanList, $beanFiles;
-        require('include/modules.php');
+        SugarTestHelper::setUp('beanList');
+        SugarTestHelper::setUp('beanFiles');
+        SugarTestHelper::setUp('moduleList');
+        SugarTestHelper::setUp('current_user');
+        SugarTestHelper::setUp('app_strings');
+        SugarTestHelper::setUp('mod_strings', array('Users'));
         $this->_view = new SugarViewTestMock();
-        $GLOBALS['app_strings'] = return_application_language($GLOBALS['current_language']);
-        $GLOBALS['mod_strings'] = return_module_language($GLOBALS['current_language'], 'Users');
-        $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
-        $this->_backup['currentTheme'] = SugarThemeRegistry::current();
+        parent::setUp();
+        $this->dir = getcwd();
     }
 
     public function tearDown()
     {
-    	unset($GLOBALS['mod_strings']);
-    	unset($GLOBALS['app_strings']);
-        SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
-        unset($GLOBALS['current_user']);
-        SugarThemeRegistry::set($this->_backup['currentTheme']->dirName);
+        SugarTestHelper::tearDown();
+        parent::tearDown();
+        chdir($this->dir);
     }
 
     public function testGetModuleTab()
@@ -180,6 +180,7 @@ class SugarViewTest extends Sugar_PHPUnit_Framework_TestCase
 
     public function testGetBreadCrumbSymbolForLTRTheme()
     {
+        SugarTestHelper::setUp('theme');
         $theme = SugarTestThemeUtilities::createAnonymousTheme();
         SugarThemeRegistry::set($theme);
 
@@ -191,6 +192,7 @@ class SugarViewTest extends Sugar_PHPUnit_Framework_TestCase
 
     public function testGetBreadCrumbSymbolForRTLTheme()
     {
+        SugarTestHelper::setUp('theme');
         $theme = SugarTestThemeUtilities::createAnonymousRTLTheme();
         SugarThemeRegistry::set($theme);
 

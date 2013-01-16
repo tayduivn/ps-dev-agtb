@@ -29,6 +29,8 @@
                 this.$(this.typeFieldTag).attr("disabled", false);
             }
             this.$(this.typeFieldTag).trigger("liszt:updated");
+        } else if(this.tplName === 'disabled'){
+            this.$(this.typeFieldTag).attr("disabled", "disabled").not(".chzn-done").chosen();
         }
         return result;
     },

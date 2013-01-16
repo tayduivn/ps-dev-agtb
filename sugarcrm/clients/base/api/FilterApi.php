@@ -143,10 +143,10 @@ class FilterApi extends SugarApi {
         $q->limit($options['limit']+1);
         $q->offset($options['offset']);
 
-        $GLOBALS['log']->fatal($q->compileSql());
+        $GLOBALS['log']->info($q->compileSql());
         $idRows = $q->execute();
         // return $idRows;
-        
+
         $data = array();
         $data['next_offset'] = -1;
 

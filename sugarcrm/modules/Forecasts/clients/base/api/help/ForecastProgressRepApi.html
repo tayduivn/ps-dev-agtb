@@ -1,4 +1,4 @@
-{{!
+<!--
 /*********************************************************************************
  * The contents of this file are subject to the SugarCRM Master Subscription
  * Agreement (""License"") which can be viewed at
@@ -25,29 +25,46 @@
  * governing these rights and limitations under the License.  Portions created
  * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
-}}
-<div class="modal hide">
-    <div class="modal-header">
-        <a class="close" data-dismiss="modal"><i class="icon-remove"></i></a>
-        <h3>{{str "LBL_PASSWORD_CHANGE_FORM_TITLE" context.attributes.module}}</h3>
-    </div>
-    <div class="modal-body">
-        <form class="form-horizontal" method="POST">
-            <fieldset>
-                {{#each meta.panels}}
-                {{#each fields}}
-                <div class="row-fluid control-group">
-                    <div class="span4">{{str label ../../context.attributes.module}}</div>
-                    <div class="span6">{{field ../../this ../../context.attributes.contactModel}}</div>
-                </div>
-                {{/each}}
-                {{/each}}
-            </fieldset>
-        </form>
-    </div>
-    <div class="modal-footer">
-        {{#each meta.buttons}}
-        {{field ../this ../contactModel}}
-        {{/each}}
-    </div>
+-->
+<div class="longHelpTitle">Projected Rep Data</div>
+<div class="summary">
+    <h2>Summary:</h2>
+    This endpoint is used to return the json Data not already in client view for the Forecasts rep projected panel.
+</div>
+<div class="params">
+    <h2>Query Parameters:</h2>
+    <table>
+        <tr>
+            <td><strong>Param</strong></td>
+            <td><strong>Description</strong></td>
+            <td><strong>Optional</strong></td>
+        </tr>
+        <tr>
+            <td>user_id</td>
+            <td>Show for a specific user, defaults to current user if not defined</td>
+            <td>Optional</td>
+        </tr>
+        <tr>
+            <td>timeperiod_id</td>
+            <td>Show for a specific time period, defaults to the current time period if one is not passed</td>
+            <td>Optional</td>
+        </tr>
+    </table>
+</div>
+<div class="input">
+    <h2>Input Example:</h2>
+    <code class="codesample">
+{
+    user_id:seed_sally_id
+    timeperiod_id:36f7085a-5889-ea75-84c8-50f42bd1a5ba
+}
+    </code>
+</div>
+<div class="output">
+    <h2>Output Example:</h2>
+    <code class="codesample">
+{
+       quota_amount: "80000.000000"
+}
+    </code>
 </div>

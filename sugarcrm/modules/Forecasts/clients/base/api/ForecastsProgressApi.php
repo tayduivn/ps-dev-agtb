@@ -75,8 +75,8 @@ class ForecastsProgressApi extends ModuleApi
 				'path'      => array('Forecasts', 'progressRep'),
 				'pathVars'  => array('', ''),
 				'method'    => 'progressRep',
-				'shortHelp' => 'Progress Rep data',
-                'longHelp' => 'modules/Forecasts/clients/base/api/help/ForecastProgressApi.html#progressRep',
+				'shortHelp' => 'Projected Rep data',
+                'longHelp' => 'modules/Forecasts/clients/base/api/help/ForecastProgressRepApi.html',
 			),
             'progressManager' => array(
                 'reqType'   => 'GET',
@@ -84,7 +84,7 @@ class ForecastsProgressApi extends ModuleApi
                 'pathVars'  => array('', ''),
                 'method'    => 'progressManager',
                 'shortHelp' => 'Progress Manager data',
-                 'longHelp' => 'modules/Forecasts/clients/base/api/help/ForecastProgressApi.html#progressRep',
+                 'longHelp' => 'modules/Forecasts/clients/base/api/help/ForecastProgressManagerApi.html',
          	)
         );
 		return $parentApi;

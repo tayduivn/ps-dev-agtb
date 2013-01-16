@@ -49,6 +49,7 @@ chdir(dirname(__FILE__) . '/..');
 global $beanFiles, $beanList, $objectList, $moduleList, $modInvisList;
 require_once('include/entryPoint.php');
 require_once('include/utils/layout_utils.php');
+chdir(sugar_root_dir());
 
 $GLOBALS['db'] = DBManagerFactory::getInstance();
 
@@ -138,11 +139,30 @@ $GLOBALS['db']->commit();
 
 define('CHECK_FILE_MAPS', false);
 // define our testcase subclass
+if(function_exists("shadow_get_config") && shadow_get_config() != false) {
+    // shadow is enabled
+    define('SHADOW_ENABLED', true);
+    define('SHADOW_CHECK', true); // disable for faster tests
+} else {
+    define('SHADOW_ENABLED', false);
+    define('SHADOW_CHECK', false);
+}
 class Sugar_PHPUnit_Framework_TestCase extends PHPUnit_Framework_TestCase
 {
     protected $backupGlobals = FALSE;
 
     protected $useOutputBuffering = true;
+
+    protected $file_map;
+
+    public static function getFiles()
+    {
+        $dir = realpath(dirname(__FILE__)."/..");
+        $files = `find $dir -name cache -prune -o -name custom -prune -o -name upload -prune -o -name tests -prune -o -name sugarcrm\\*.log -prune -o -type f -print | sort`;
+        $flist = explode("\n", $files);
+        sort($flist);
+        return join("\n", $flist);
+    }
 
     protected function assertPreConditions()
     {
@@ -225,6 +245,19 @@ class Sugar_PHPUnit_Framework_TestCase extends PHPUnit_Framework_TestCase
             return false;
         }
         return true;
+    }
+
+    public function runBare()
+    {
+        if(SHADOW_CHECK && empty($this->file_map)) {
+        	$this->file_map = self::getFiles();
+        }
+        parent::runBare();
+        if(SHADOW_CHECK) {
+            $oldfiles = $this->file_map;
+            $this->file_map = self::getFiles();
+            $this->assertEquals($oldfiles, $this->file_map);
+        }
     }
 }
 
@@ -315,6 +348,19 @@ class Sugar_PHPUnit_Framework_OutputTestCase extends PHPUnit_Extensions_OutputTe
             }
         }
     }
+
+    public function runBare()
+    {
+    	if(SHADOW_CHECK && empty($this->file_map)) {
+    		$this->file_map = Sugar_PHPUnit_Framework_TestCase::getFiles();
+    	}
+    	parent::runBare();
+    	if(SHADOW_CHECK) {
+    		$newfiles = Sugar_PHPUnit_Framework_TestCase::getFiles();
+    		$this->assertEquals($this->file_map, $newfiles);
+    	}
+    }
+
 }
 
 // define a mock logger interface; used for capturing logging messages emited
@@ -762,6 +808,86 @@ class SugarTestHelper
         return true;
     }
 
+    const NOFILE_DATA = '__NO_FILE__';
+    static public $oldFiles;
+    static public $oldDirs;
+    /**
+     * Setup file preserving hooks
+     */
+    protected static function setUp_files()
+    {
+        self::$oldFiles = array();
+        self::$oldDirs = array();
+        self::$registeredVars['files'] = true;
+    }
+
+    /**
+     * Preserve a file
+     */
+    public static function saveFile($filename)
+    {
+        if(is_array($filename)) {
+            foreach($filename as $file) {
+                self::saveFile($file);
+            }
+            return;
+        }
+        if ( file_exists($filename) ) {
+        	self::$oldFiles[$filename] = file_get_contents($filename);
+        } else {
+        	self::$oldFiles[$filename] = self::NOFILE_DATA;
+        }
+    }
+
+    public static function ensureDir($dirname)
+    {
+        if(is_array($dirname)) {
+            foreach($dirname as $dir) {
+                self::ensureDir($dir);
+            }
+            return;
+        }
+        $parts = explode("/", $dir);
+        while(!empty($parts)) {
+            $path = implode("/", $parts);
+            if(!is_dir($path)) {
+                self::$oldDirs[] = $path;
+                SugarAutoLoader::ensureDir($path);
+            }
+            array_pop($parts);
+        }
+    }
+
+    /**
+     * Restore files to previous state
+     */
+    protected static function tearDown_files()
+    {
+        foreach ( self::$oldFiles as $filename => $filecontents ) {
+            if(SHADOW_ENABLED) {
+                if(substr($filename, 0, 7) != 'custom/' && substr($filename, 0, 6) != 'cache/' && file_exists($filename)) {
+                    // Delete shadow files always
+                    @SugarAutoLoader::unlink($filename, false);
+                    continue;
+                }
+            }
+        	if ( $filecontents == self::NOFILE_DATA ) {
+        		if ( file_exists($filename) ) {
+        			SugarAutoLoader::unlink($filename, false);
+        		}
+        	} else {
+        		file_put_contents($filename,$filecontents);
+        		SugarAutoLoader::addToMap($filename, false);
+        	}
+        }
+        foreach(self::$oldDirs as $dirname) {
+            rmdir($dirname);
+            SugarAutoLoader::delFromMap($filename, false);
+        }
+        SugarAutoLoader::saveMap();
+    }
+
+
     /**
      * Reinitialization of $dictionary in global scope because we can't unset that variable
      *
@@ -841,4 +967,15 @@ class SugarTestHelper
         self::$cleanModules = array();
         return true;
     }
+
+    protected static function setUp_theme()
+    {
+        self::$registeredVars['theme'] = true;
+    }
+
+    protected static function tearDown_theme()
+    {
+        SugarTestThemeUtilities::removeAllCreatedAnonymousThemes();
+    }
+
 }
