@@ -490,7 +490,7 @@ class GetAclForModuleTest extends Sugar_PHPUnit_Framework_TestCase
             unset($acls['_hash']);
             $this->assertEquals($expected_result, $acls);
         }
-    }    
+    }
 
     protected function createRole($name, $allowedModules, $allowedActions, $ownerActions = array()) {
         $role = new ACLRole();

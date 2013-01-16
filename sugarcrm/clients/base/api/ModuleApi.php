@@ -138,8 +138,7 @@ class ModuleApi extends SugarApi {
 
         $bean = BeanFactory::newBean($args['module']);
         
-        // TODO: When the create ACL goes in to effect, add it here.
-        if (!$bean->ACLAccess('save')) {
+        if (!$bean->ACLAccess('create')) {
             // No create access so we construct an error message and throw the exception
             $moduleName = null;
             if(isset($args['module'])){

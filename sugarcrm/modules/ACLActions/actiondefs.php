@@ -81,18 +81,20 @@ $GLOBALS['ACLActions'] = array(
 									'aclaccess'=>array(ACL_ALLOW_ALL,ACL_ALLOW_OWNER,ACL_ALLOW_DEFAULT, ACL_ALLOW_NONE),
 									'label'=>'LBL_ACTION_LIST',
 									'default'=>ACL_ALLOW_ALL,
+									'dependency' => 'view'
 								),
 						'create' =>
 							array(
 									'aclaccess'=>array(ACL_ALLOW_ALL,ACL_ALLOW_DEFAULT, ACL_ALLOW_NONE),
 									'label'=>'LBL_ACTION_CREATE',
-									'default'=>ACL_ALLOW_ALL,								
+									'default'=>ACL_ALLOW_ALL,
 								),
 						'edit'=>
 								array(
 									'aclaccess'=>array(ACL_ALLOW_ALL,ACL_ALLOW_OWNER,ACL_ALLOW_DEFAULT, ACL_ALLOW_NONE),
 									'label'=>'LBL_ACTION_EDIT',
 									'default'=>ACL_ALLOW_ALL,
+									'dependency' => 'view'
 
 								),
 						'delete'=>
@@ -100,25 +102,28 @@ $GLOBALS['ACLActions'] = array(
 									'aclaccess'=>array(ACL_ALLOW_ALL,ACL_ALLOW_OWNER,ACL_ALLOW_DEFAULT, ACL_ALLOW_NONE),
 									'label'=>'LBL_ACTION_DELETE',
 									'default'=>ACL_ALLOW_ALL,
-
+									'dependency' => 'edit'
 								),
 						'import'=>
 							array(
 									'aclaccess'=>array(ACL_ALLOW_ALL,ACL_ALLOW_DEFAULT, ACL_ALLOW_NONE),
 									'label'=>'LBL_ACTION_IMPORT',
 									'default'=>ACL_ALLOW_ALL,
+									'dependency' => 'create'
 								),
 						'export'=>
 							array(
 									'aclaccess'=>array(ACL_ALLOW_ALL,ACL_ALLOW_OWNER,ACL_ALLOW_DEFAULT, ACL_ALLOW_NONE),
 									'label'=>'LBL_ACTION_EXPORT',
 									'default'=>ACL_ALLOW_ALL,
+									'dependency' => 'list'
 								),
                         'massupdate'=>
 							array(
 									'aclaccess'=>array(ACL_ALLOW_ALL,ACL_ALLOW_DEFAULT, ACL_ALLOW_NONE),
 									'label'=>'LBL_ACTION_MASSUPDATE',
 									'default'=>ACL_ALLOW_ALL,
+									'dependency' => 'view'
 								),
 
 

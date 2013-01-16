@@ -24,6 +24,18 @@ require_once('data/SugarACLStrategy.php');
 class SugarACLUsers extends SugarACLStrategy
 {
     /**
+     * Fields non admin cannot edit
+     */
+    public $no_edit_fields = array(
+            'is_admin',
+            'title',
+            'department',
+            'reports_to_id',
+            'reports_to_name',
+            'reports_to_link',
+        );
+
+    /**
      * Check access a current user has on Users and Employees
      * @param string $module
      * @param string $view
@@ -65,9 +77,9 @@ class SugarACLUsers extends SugarACLStrategy
             if($view == 'field' && $context['field'] == 'password') {
                 return false;
             }
-            if($view == 'field' && $context['field'] == 'is_admin' && ($context['action'] == 'edit' || $context['action'] == 'massupdate' || $context['action'] == 'delete')) {
+            if($view == 'field' && isset($context['field']) && in_array($context['field'], $this->no_edit_fields) && ($context['action'] == 'edit' || $context['action'] == 'massupdate' || $context['action'] == 'delete')) {
                 return false;
-            }
+            }            
             return true;
         }
 

@@ -68,11 +68,75 @@ class ACLRole extends SugarBean{
  * @param int $access - the access level ACL_ALLOW_ALL ACL_ALLOW_NONE ACL_ALLOW_OWNER...
  */
 function setAction($role_id, $action_id, $access){
+    // 0 means we didn't actually set any access, so we don't want to run though this code
+    if($access != 0) {
+        $access = $this->verifyActionAccessLevel($role_id, $action_id, $access);
+    }
     $relationship_data = array('role_id'=>$role_id, 'action_id'=>$action_id,);
     $additional_data = array('access_override'=>$access);
     $this->set_relationship('acl_roles_actions',$relationship_data,true, true,$additional_data);
+
+    // now check children access levels and set them accordingly [if they aren't set, set them to this level as its the highest
+    if($access != 0) {
+        $this->setChildActionAccess($role_id, $action_id, $access);
+    }
 }
 
+/**
+ * Check all the children of an action for a module
+ * If they have access greater than the parent, the access needs to be lowered
+ * @param string $role_id - guid of the role
+ * @param string $action_id - guid of the action 
+ * @param int $access - the access level 
+ * @return null
+ */
+protected function setChildActionAccess($role_id, $action_id, $access) {
+    $actionSeed = new ACLAction;
+    $actionSeed->retrieve($action_id);
+    if($actionSeed->acltype == 'module') {
+        $actionModule = $actionSeed->category;
+        $actionName = $actionSeed->name;
+        $dependents = $actionSeed->getChildActions($actionName);
+        $roleActions = $this->getRoleActions($role_id);
+        $moduleRoleActions = $roleActions[$actionModule]['module'];
+        foreach($dependents AS $dependentAction) {
+            if($moduleRoleActions[$dependentAction]['aclaccess'] == 0 || $moduleRoleActions[$dependentAction]['aclaccess'] > $access) {
+                $relationship_data = array('role_id'=>$role_id, 'action_id'=>$moduleRoleActions[$dependentAction]['id'],);
+                $additional_data = array('access_override'=>$access);
+                $this->set_relationship('acl_roles_actions',$relationship_data,true, true,$additional_data);
+            }
+        }
+    }
+}
+
+/**
+ * Verify an access level being set
+ * Make sure the access level being set is less than the parents access level.
+ * @param guid $role_id - the role id 
+ * @param guid $action_id - the action id
+ * @param int $access - the access level 
+ * @return int - the access level allowed to be set for this action
+ */
+protected function verifyActionAccessLevel($role_id, $action_id, $access) {
+    // get action
+    $actionSeed = new ACLAction;
+    $actionSeed->retrieve($action_id);
+    if($actionSeed->acltype == 'module') {
+        $actionModule = $actionSeed->category;
+        $actionName = $actionSeed->name;
+        $parents = $actionSeed->getParentActions($actionName);
+
+        if(!empty($parents)) {
+            $roleActions = $this->getRoleActions($role_id);
+            $moduleRoleActions = $roleActions[$actionModule]['module'];
+            foreach($parents AS $parentAction) {
+                // if the parents access isn't 0 and is less than the access level currently being set then we need to set this access to the parents access, else its cool to set what was passed in
+                $access = ($moduleRoleActions[$parentAction]['aclaccess'] != 0 && $moduleRoleActions[$parentAction]['aclaccess'] < $access) ? $moduleRoleActions[$parentAction]['aclaccess'] : $access;
+            }
+        }
+    }
+    return $access;
+}
 
 /**
  * static  getUserRoles($user_id)

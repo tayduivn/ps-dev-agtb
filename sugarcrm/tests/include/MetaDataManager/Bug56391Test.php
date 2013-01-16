@@ -78,6 +78,34 @@ class Bug56391Test extends Sugar_PHPUnit_Framework_TestCase
 
     }
 
+
+    /**
+     * Test Users Module Fields
+     *
+     * @group Bug56391
+     */
+    public function testUsersModuleFields()
+    {
+        $mm = new MetaDataManager($GLOBALS['current_user']);
+        // because the user is not an admin the user should only have view and list access
+        unset($_SESSION['ACL']);
+        $expected_result = array(
+                                    'title' => array( 'write' => 'no', 'create' => 'no', ),
+                                    'department' => array( 'write' => 'no', 'create' => 'no', ),
+                                    'reports_to_id' => array( 'write' => 'no', 'create' => 'no', ),
+                                    'reports_to_name' => array( 'write' => 'no', 'create' => 'no', ),
+                                    'reports_to_link' => array( 'write' => 'no', 'create' => 'no', ),
+                                    'is_admin' => array( 'write' => 'no', 'create' => 'no' ),
+                                );
+        $acls = $mm->getAclForModule('Users', $GLOBALS['current_user']);
+        unset($acls['_hash']);
+        // not checking fields right now
+        $acls = $acls['fields'];
+
+        $this->assertEquals($expected_result, $acls);
+
+    }    
+
     /**
      * Test Users Module as Admin
      *

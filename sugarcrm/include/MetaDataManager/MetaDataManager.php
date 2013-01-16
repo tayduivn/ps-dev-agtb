@@ -333,12 +333,26 @@ class MetaDataManager {
 
                 // Now time to dig through the fields
                 $fieldsAcl = array();
-                //BEGIN SUGARCRM flav=pro ONLY
-                $fieldsAcl = ACLField::getAvailableFields($module);
-                //END SUGARCRM flav=pro ONLY
-                // get the field names
-                SugarACL::listFilter($module, $fieldsAcl, $context, array('add_acl' => true));
+
+                // we cannot use ACLField::getAvailableFields because it limits the fieldset we return.  We need all fields
+                // for instance assigned_user_id is skipped in getAvailableFields, thus making the acl's look odd if Assigned User has ACL's
+                // only assigned_user_name is returned which is a derived ["fake"] field.  We really need assigned_user_id to return as well.
+                if(empty($GLOBALS['dictionary'][$module]['fields'])){
+                    $mod = BeanFactory::newBean($module);
+                    if(empty($mod->acl_fields)) {
+                        $fieldsAcl = array();
+                    } else {
+                        $fieldsAcl = $mod->field_defs;
+                    }
+                } else{
+                    $fieldsAcl = $GLOBALS['dictionary'][$module]['fields'];
+                    if(isset($GLOBALS['dictionary'][$module]['acl_fields']) && $GLOBALS['dictionary'][$module]=== false){
+                        $fieldsAcl = array();
+                    }   
+                }          
                 
+                SugarACL::listFilter($module, $fieldsAcl, $context, array('add_acl' => true));
+                        
                 foreach ( $fieldsAcl as $field => $fieldAcl ) {
                     switch ( $fieldAcl['acl'] ) {
                         case SugarACL::ACL_READ_WRITE:
