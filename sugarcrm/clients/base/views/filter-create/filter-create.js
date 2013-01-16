@@ -311,8 +311,8 @@
 
     setLastUsed: function(model) {
         var self = this;
-        var url = app.api.buildURL('Filters/' + this.module + '/used', "update", model);
-        app.api.call("update", url, null, {
+        var url = app.api.buildURL('Filters/' + this.module + '/used', "update");
+        app.api.call("update", url, {filters: [model.id]}, {
             success: function() {
                 self.layout.trigger("filter:refresh", model.id);
             }

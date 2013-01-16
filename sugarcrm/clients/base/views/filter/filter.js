@@ -196,7 +196,7 @@
         }
         var url = app.api.buildURL(this.module, "filter"),
         ctx = app.controller.context,
-        clause;
+        clause, self = this;
         // TODO: Make this extensible for OR operator.
         if(!_.isEmpty(query)) {
             clause = {"name": {"$starts": query}};
@@ -208,6 +208,8 @@
         app.api.call("create", url, filterDef, {
             success: function(data) {
                 ctx.get('collection').reset(data.records);
+                var url = app.api.buildURL('Filters/' + self.module + '/used', "update");
+                app.api.call("update", url, {filters: [self.activeFilterId]}, {});
             }
         });
     }
