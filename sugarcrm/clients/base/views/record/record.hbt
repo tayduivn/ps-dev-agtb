@@ -9,7 +9,7 @@
                             <span class="record-cell" data-type="{{type}}" data-name="{{name}}">
                                 <h1>
                                     <span class='index{{index}}' data-fieldname="{{name}}" data-index="{{index}}" data-tour="tour-{{../../../this.module}}-{{name}}">
-                                        {{field ../../../this}}
+                                        {{field ../../../this ../../../this.model ../../../this.action}}
                                     </span>
                                     {{#unless noedit}}
                                         <span class="record-edit-link-wrapper" data-name="{{name}}">
@@ -38,7 +38,7 @@
                             <span class="record-cell" data-type="{{type}}" data-name="{{name}}">
                                 <h1>
                                     <span class='index{{index}}' data-fieldname="{{name}}" data-index="{{index}}" data-tour="tour-{{../../../this.module}}-{{name}}">
-                                        {{field ../../../this}}
+                                        {{field ../../../this ../../../this.model ../../../this.action}}
                                     </span>
                                     {{#unless noedit}}
                                         <span class="record-edit-link-wrapper" data-name="{{name}}">
@@ -71,7 +71,7 @@
                                         {{/if}}
                                         {{#if name}}
                                             <span class='normal{{#if css}} {{css}}{{/if}} index{{index}}' data-fieldname="{{name}}" data-index="{{index}}" data-tour="tour-{{../../../../this.module}}-{{name}}">
-                                                {{field ../../../../../this}}
+                                                {{field ../../../../../this ../../../../../../this.model ../../../../../../this.action}}
                                             </span>
                                         {{/if}}
                                         {{#unless ../../../../../createMode}}
@@ -89,7 +89,7 @@
                 {{/unless}}
             {{/each}}
         </div>
-        <div class="row-fluid{{#unless hiddenPanelExists}} hide{{/unless}}">
+        <div class="row-fluid{{#unless hiddenPanelExists}} hide{{/unless}} show-hide-toggle">
             <div class="record-cell">
                 <a href="javascript:void(0)" class="more">{{str "LBL_SHOW_MORE"}} <i class="icon-chevron-down"></i></a>
                 <a href="javascript:void(0)" class="less hide">{{str "LBL_SHOW_LESS"}} <i class="icon-chevron-up"></i></a>

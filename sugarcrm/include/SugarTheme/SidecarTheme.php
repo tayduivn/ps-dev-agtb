@@ -103,8 +103,12 @@ class SidecarTheme
             else {
                 // Otherwise we compile the default theme if it exists
                 $clientDefaultTheme = new SidecarTheme($this->myClient, 'default');
-                $hash = $clientDefaultTheme->compileTheme();
+                $hash = sugar_cache_retrieve($clientDefaultTheme->paths['hashKey']);
                 $cacheCSS = $clientDefaultTheme->paths['cache'].$hash.".css";
+                if (!file_exists($cacheCSS)) {
+                    $hash = $clientDefaultTheme->compileTheme();
+                    $cacheCSS = $clientDefaultTheme->paths['cache'].$hash.".css";
+                }
             }
         }
         return $cacheCSS;

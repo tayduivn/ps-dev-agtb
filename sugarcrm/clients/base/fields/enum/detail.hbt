@@ -27,7 +27,7 @@
  ********************************************************************************/
 }}
 {{#if this.def.isMultiSelect}}
-{{this.value}}
+{{#each value}}{{#eachOptions ../def.options}}{{#eq key ../this}}{{#notEq @index 0}}, {{/notEq}}{{value}}{{/eq}}{{/eachOptions}}{{/each}}
 {{else}}
 {{#eachOptions def.options}}
 {{#eq this.key ../value}}{{this.value}}{{/eq}}

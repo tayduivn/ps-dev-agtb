@@ -32,39 +32,45 @@ if (!defined('sugarEntry') || !sugarEntry) {
 $viewdefs['Accounts']['base']['view']['record'] = array(
     'buttons' => array(
         array(
-            'name' => 'record-save',
-            'type'    => 'button',
-            'label'   => 'LBL_SAVE_BUTTON_LABEL',
-            'css_class' => 'btn-primary record-save disabled',
+            'type' => 'button',
+            'name' => 'cancel_button',
+            'label' => 'LBL_CANCEL_BUTTON_LABEL',
+            'css_class' => 'btn-invisible btn-link',
             'mode' => 'edit',
         ),
         array(
-            'name' => 'record-cancel',
-            'type'    => 'button',
-            'label'   => 'LBL_CANCEL_BUTTON_LABEL',
-            'css_class' => 'record-cancel btn-invisible',
+            'type' => 'buttondropdown',
+            'name' => 'edit_dropdown',
+            'default' => array(
+                'name' => 'edit_button',
+                'label' => 'LBL_EDIT_BUTTON_LABEL',
+            ),
+            'dropdown' => array(
+                array(
+                    'name' => 'delete_button',
+                    'label' => 'LBL_DELETE_BUTTON_LABEL',
+                ),
+                array(
+                    'name' => 'duplicate_button',
+                    'label' => 'LBL_DUPLICATE_BUTTON_LABEL',
+                ),
+            ),
+            'mode' => 'view',
+        ),
+        array(
+            'type' => 'buttondropdown',
+            'name' => 'save_dropdown',
+            'default' => array(
+                'name' => 'save_button',
+                'label' => 'LBL_SAVE_BUTTON_LABEL',
+            ),
+            'dropdown' => array(
+                array(
+                    'name' => 'delete_button',
+                    'label' => 'LBL_DELETE_BUTTON_LABEL',
+                ),
+            ),
             'mode' => 'edit',
-        ),
-        array(
-            'name' => 'record-edit',
-            'type'    => 'button',
-            'label'   => 'LBL_EDIT_BUTTON_LABEL',
-            'css_class' => 'record-edit btn-primary',
-            'mode' => 'view',
-        ),
-        array(
-            'name' => 'record-duplicate',
-            'type'    => 'button',
-            'label'   => 'LBL_DUPLICATE_BUTTON_LABEL',
-            'css_class' => 'record-duplicate',
-            'mode' => 'view',
-        ),
-        array(
-            'name' => 'record-delete',
-            'type'    => 'button',
-            'label'   => 'LBL_DELETE_BUTTON_LABEL',
-            'css_class' => 'record-delete',
-            'mode' => 'view',
         ),
         array(
             'name' => 'sidebar_toggle',
@@ -159,9 +165,8 @@ $viewdefs['Accounts']['base']['view']['record'] = array(
                 'ownership',
                 'campaign_name',
                 'rating',
-                'assigned_user_name',
                 'date_modified',
-                'teams',
+                'team_name',
                 'date_entered'
             )
         )

@@ -61,7 +61,7 @@
                     if(searchmore || empty) {
                         self.beforeSearchMore();
                         $(evt.currentTarget).val('');
-                        $(this).trigger("liszt:updated");
+                        self.setValue({id: '', value: ''});
                         self.view.layout.trigger("drawer:selection:fire", {
                             components: [{
                                 layout : 'selection-list',
@@ -80,6 +80,8 @@
 
                     self.setValue({id: id, value: value, silent: true});
                 });
+        } else if(this.tplName === 'disabled') {
+            this.$(this.fieldTag).attr("disabled", "disabled").not(".chzn-done").chosen();
         }
         return result;
     },

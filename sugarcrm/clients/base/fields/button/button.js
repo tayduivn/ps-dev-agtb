@@ -34,5 +34,18 @@
     },
     getFieldElement: function() {
         return this.$(this.fieldTag);
+    },
+    setDisabled: function(disable) {
+        disable = _.isUndefined(disable) ? true : disable;
+
+        this.def.css_class = this.def.css_class || '';
+        var css_class = this.def.css_class.split(' ');
+        if(disable) {
+            css_class.push('disabled');
+        } else {
+            css_class = _.without(css_class, 'disabled');
+        }
+        this.def.css_class = _.unique(_.compact(css_class)).join(' ');
+        app.view.Field.prototype.setDisabled.call(this, disable);
     }
 })
