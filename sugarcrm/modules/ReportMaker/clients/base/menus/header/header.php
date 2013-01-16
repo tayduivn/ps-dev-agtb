@@ -91,6 +91,6 @@ $viewdefs[$module_name]['base']['menu']['header'] = array(
         'label' =>'LBL_ALL_REPORTS',
         'acl_action'=>'',
         'acl_module'=>'',
-        'icon' => '',
+        'icon' => 'icon-bar-chart',
     ),
 );

@@ -33,28 +33,28 @@ $viewdefs[$module_name]['base']['menu']['header'] = array(
         'label' =>'LNK_NEW_CALL',
         'acl_action'=>'edit',
         'acl_module'=>'Calls',
-        'icon' => '',
+        'icon' => 'icon-plus',
     ),
     array(
         'route'=>'#Meetings/create',
         'label' =>'LNK_NEW_MEETING',
         'acl_action'=>'edit',
         'acl_module'=>'Meetings',
-        'icon' => '',
+        'icon' => 'icon-plus',
     ),
     array(
         'route'=>'#Tasks/create',
         'label' =>'LNK_NEW_TASK',
         'acl_action'=>'edit',
         'acl_module'=>'Tasks',
-        'icon' => '',
+        'icon' => 'icon-plus',
     ),
     array(
         'route'=>'#'.$module_name,
         'label' =>'LNK_VIEW_CALENDAR',
         'acl_action'=>'list',
         'acl_module'=>$module_name,
-        'icon' => '',
+        'icon' => 'icon-reorder',
     ),
 
 

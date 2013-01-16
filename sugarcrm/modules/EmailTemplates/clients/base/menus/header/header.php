@@ -33,21 +33,21 @@ $viewdefs[$module_name]['base']['menu']['header'] = array(
         'label' =>'LNK_VIEW_MY_INBOX',
         'acl_action'=>'edit',
         'acl_module'=>'Emails',
-        'icon' => '',
+        'icon' => 'icon-plus',
     ),
     array(
         'route'=>'#EmailTemplates/create',
         'label' =>'LNK_NEW_EMAIL_TEMPLATE',
         'acl_action'=>'edit',
         'acl_module'=>'EmailTemplates',
-        'icon' => '',
+        'icon' => 'icon-plus',
     ),
     array(
         'route'=>'#EmailTemplates/',
         'label' =>'LNK_NEW_EMAIL_TEMPLATE',
         'acl_action'=>'list',
         'acl_module'=>'EmailTemplates',
-        'icon' => '',
+        'icon' => 'icon-reorder',
     ),
     //BEGIN SUGARCRM flav=int ONLY
     array(

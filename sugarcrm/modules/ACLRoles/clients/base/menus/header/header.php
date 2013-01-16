@@ -33,20 +33,20 @@ $viewdefs[$module_name]['base']['menu']['header'] = array(
         'label' =>'LBL_CREATE_ROLE',
         'acl_module'=>$module_name,
         'acl_action'=>'edit',
-        'icon' => '',
+        'icon' => 'icon-plus',
     ),
     array(
         'route'=>'#'.$module_name,
         'label' =>'LIST_ROLES',
         'acl_module'=>$module_name,
         'acl_action'=>'list',
-        'icon' => '',
+        'icon' => 'icon-reorder',
     ),
     array(
         'route'=>'#bwc/index.php?module=ACLRoles&action=ListUsers',
         'label' =>'LIST_ROLES_BY_USER',
         'acl_module'=>$module_name,
         'acl_action'=>'list',
-        'icon' => '',
+        'icon' => 'icon-reorder',
     ),
 );

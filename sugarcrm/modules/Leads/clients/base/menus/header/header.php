@@ -33,21 +33,21 @@ $viewdefs[$module_name]['base']['menu']['header'] = array(
         'label' =>'LNK_NEW_LEAD',
         'acl_action'=>'edit',
         'acl_module'=>$module_name,
-        'icon' => '',
+        'icon' => 'icon-plus',
     ),
     array(
         'route'=>'#bwc/index.php?module=Leads&action=ImportVCard',
         'label' =>'LNK_IMPORT_VCARD',
         'acl_action'=>'edit',
         'acl_module'=>$module_name,
-        'icon' => '',
+        'icon' => 'icon-plus',
     ),
     array(
         'route'=>'#'.$module_name,
         'label' =>'LNK_LEAD_LIST',
         'acl_action'=>'edit',
         'acl_module'=>$module_name,
-        'icon' => '',
+        'icon' => 'icon-plus',
     ),
     //BEGIN SUGARCRM flav=pro ONLY
     array(
@@ -55,7 +55,7 @@ $viewdefs[$module_name]['base']['menu']['header'] = array(
         'label' =>'LNK_IMPORT_VCARD',
         'acl_action'=>'edit',
         'acl_module'=>$module_name,
-        'icon' => '',
+        'icon' => 'icon-bar-chart',
     ),
     //END SUGARCRM flav=pro ONLY
     array(
@@ -63,6 +63,6 @@ $viewdefs[$module_name]['base']['menu']['header'] = array(
         'label' =>'LNK_IMPORT_LEADS',
         'acl_action'=>'edit',
         'acl_module'=>$module_name,
-        'icon' => '',
+        'icon' => 'icon-upload-alternative',
     ),
 );

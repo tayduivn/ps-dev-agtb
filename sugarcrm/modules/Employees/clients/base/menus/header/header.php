@@ -40,6 +40,6 @@ $viewdefs[$module_name]['base']['menu']['header'] = array(
         'label' =>'LNK_EMPLOYEE_LIST',
         'acl_action'=>'list',
         'acl_module'=>$module_name,
-        'icon' => '',
+        'icon' => 'icon-reorder',
     ),
 );

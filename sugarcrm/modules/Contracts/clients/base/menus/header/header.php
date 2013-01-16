@@ -33,20 +33,20 @@ $viewdefs[$module_name]['base']['menu']['header'] = array(
         'label' =>'LNK_NEW_CONTRACT',
         'acl_action'=>'edit',
         'acl_module'=>$module_name,
-        'icon' => '',
+        'icon' => 'icon-plus',
     ),
     array(
         'route'=>'#'.$module_name,
         'label' =>'LNK_CONTACT_LIST',
         'acl_action'=>'list',
         'acl_module'=>$module_name,
-        'icon' => '',
+        'icon' => 'icon-reorder',
     ),
     array(
         'route'=>'#bwc/index.php?module=Import&action=Step1&import_module=Contracts&return_module=Contracts&return_action=index',
         'label' =>'LNK_IMPORT_CONTRACTS',
         'acl_action'=>'import',
         'acl_module'=>$module_name,
-        'icon' => '',
+        'icon' => 'icon-upload-alternative',
     ),
 );

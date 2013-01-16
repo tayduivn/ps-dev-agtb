@@ -33,7 +33,7 @@ $viewdefs[$module_name]['base']['menu']['header'] = array(
         'label' =>'LNK_NEW_CONTACT',
         'acl_action'=>'edit',
         'acl_module'=>$module_name,
-        'icon' => '',
+        'icon' => 'icon-plus',
     ),
     array(
         'route'=>'#bwc/index.php?module=Contacts&action=ImportVCard',
@@ -47,7 +47,7 @@ $viewdefs[$module_name]['base']['menu']['header'] = array(
         'label' =>'LNK_CONTACT_LIST',
         'acl_action'=>'list',
         'acl_module'=>$module_name,
-        'icon' => '',
+        'icon' => 'icon-reorder',
     ),
     //BEGIN SUGARCRM flav=pro ONLY
     array(
@@ -55,7 +55,7 @@ $viewdefs[$module_name]['base']['menu']['header'] = array(
         'label' =>'LNK_CONTACT_REPORTS',
         'acl_action'=>'list',
         'acl_module'=>$module_name,
-        'icon' => '',
+        'icon' => 'icon-bar-chart',
     ),
     //END SUGARCRM flav=pro ONLY
     array(
@@ -63,6 +63,6 @@ $viewdefs[$module_name]['base']['menu']['header'] = array(
         'label' =>'LNK_IMPORT_CONTACTS',
         'acl_action'=>'import',
         'acl_module'=>$module_name,
-        'icon' => '',
+        'icon' => 'icon-upload-alternative',
     ),
 );

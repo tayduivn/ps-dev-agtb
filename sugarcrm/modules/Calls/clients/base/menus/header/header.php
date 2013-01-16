@@ -33,21 +33,21 @@ $viewdefs[$module_name]['base']['menu']['header'] = array(
         'label' =>'LNK_NEW_CALL',
         'acl_action'=>'edit',
         'acl_module'=>$module_name,
-        'icon' => '',
+        'icon' => 'icon-plus',
     ),
     array(
         'route'=>'#'.$module_name,
         'label' =>'LNK_CALL_LIST',
         'acl_action'=>'list',
         'acl_module'=>$module_name,
-        'icon' => '',
+        'icon' => 'icon-reorder',
     ),
     array(
         'route'=>'#bwc/index.php?module=Import&action=Step1&import_module=Accounts&return_module=Accounts&return_action=index',
         'label' =>'LNK_IMPORT_ACCOUNTS',
         'acl_action'=>'import',
         'acl_module'=>$module_name,
-        'icon' => '',
+        'icon' => 'icon-upload-alternative',
     ),
     //BEGIN SUGARCRM flav=int ONLY
     array(
@@ -55,7 +55,7 @@ $viewdefs[$module_name]['base']['menu']['header'] = array(
         'label' =>'LBL_ACTIVITIES_REPORTS',
         'acl_action'=>'',
         'acl_module'=>'',
-        'icon' => '',
+        'icon' => 'icon-bar-chart',
     ),
     //END SUGARCRM flav=int ONLY
 );

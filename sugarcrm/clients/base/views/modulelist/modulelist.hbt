@@ -6,7 +6,7 @@
             <a id="{{name}}Drop" href="#{{name}}" role="button" class="dropdown-toggle dtoggle" data-toggle="dropdown" data-tour="tour-navbar-{{name}}">{{label}}<b class="caret"></b></a>
             <ul class="dropdown-menu" role="menu" aria-labelledby="{{name}}Drop">
                 {{#each menu}}
-                    <li><a tabindex="-1" href="{{route}}">{{str label ../name}}</a></li>
+                    <li><a tabindex="-1" href="{{route}}">{{#if icon}}<i class="{{icon}}"></i>{{/if}}{{str label ../name}}</a></li>
                 {{/each}}
                 <li></li>
                 <li class="divider"></li>
