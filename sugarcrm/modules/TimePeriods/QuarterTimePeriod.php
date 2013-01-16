@@ -101,19 +101,28 @@ class QuarterTimePeriod extends TimePeriod implements TimePeriodInterface {
      * Returns the formatted chart label data for the timeperiod
      *
      * @param $chartData Array of chart data values
-     * @return formatted Array of chart data values where the labels are broken down by the timeperiod's increments
+     * @return formatted Array of chart data values where the labels are broken down by the TimePeriod's increments
      */
-    public function getChartLabels($chartData) {
+    public function getChartLabels($chartData)
+    {
         $months = array();
-
         $start = strtotime($this->start_date);
+        $isFirst = date('j', $start) == 1;
         $end = strtotime($this->end_date);
+        $count = 0;
 
-        while ($start < $end) {
+        while ($start <= $end) {
             $val = $chartData;
-            $val['label'] = date($this->chart_label, $start);
-            $months[date($this->chart_data_key, $start)] = $val;
-            $start = strtotime($this->chart_data_modifier, $start);
+            $next = strtotime($this->chart_data_modifier, $start);
+
+            if($isFirst) {
+                $val['label'] = date($this->chart_label, $start);
+            } else {
+                $val['label'] = date('n/j', $start) . '-' . TimeDate::getInstance()->fromTimestamp($next)->modify('-1 day')->format('n/j');
+            }
+
+            $months[$count++] = $val;
+            $start = $next;
         }
 
         return $months;
@@ -126,7 +135,17 @@ class QuarterTimePeriod extends TimePeriod implements TimePeriodInterface {
      * @param String The date_closed value in db date format
      * @return String value of the key to use to map to the chart labels
      */
-    public function getChartLabelsKey($dateClosed) {
-        return date($this->chart_data_key, strtotime($dateClosed));
+    public function getChartLabelsKey($dateClosed)
+    {
+        $start = strtotime($this->start_date);
+        $end = strtotime($dateClosed);
+        $count = -1;
+
+        while($start <= $end) {
+            $count++;
+            $start = strtotime($this->chart_data_modifier, $start);
+        }
+
+        return $count;
     }
 }
