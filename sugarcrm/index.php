@@ -20,6 +20,7 @@ if(!defined('sugarEntry'))define('sugarEntry', true);
  *Portions created by SugarCRM are Copyright(C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
+define('ENTRY_POINT_TYPE', 'gui');
 include ('include/MVC/preDispatch.php');
 $startTime = microtime(true);
 require_once('include/entryPoint.php');

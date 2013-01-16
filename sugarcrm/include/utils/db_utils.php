@@ -52,15 +52,6 @@ function from_db_convert($string, $type)
     return $GLOBALS['db']->fromConvert($string, $type);
 	}
 
-$toHTML = array(
-	'"' => '&quot;',
-	'<' => '&lt;',
-	'>' => '&gt;',
-	"'" => '&#039;',
-);
-$GLOBALS['toHTML_keys'] = array_keys($toHTML);
-$GLOBALS['toHTML_values'] = array_values($toHTML);
-$GLOBALS['toHTML_keys_set'] = implode("", $GLOBALS['toHTML_keys']);
 /**
  * Replaces specific characters with their HTML entity values
  * @param string $string String to check/replace
@@ -73,27 +64,12 @@ $GLOBALS['toHTML_keys_set'] = implode("", $GLOBALS['toHTML_keys']);
  * Bug 49489 - removed caching of to_html strings as it was consuming memory and
  * never releasing it
  */
-function to_html($string, $encode=true){
+function to_html($string, $encode=true)
+{
 	if (empty($string)) {
 		return $string;
 	}
-
-	global $toHTML;
-
-	if($encode && is_string($string)){
-		/*
-		 * cn: bug 13376 - handle ampersands separately
-		 * credit: ashimamura via bug portal
-		 */
-		//$string = str_replace("&", "&amp;", $string);
-
-        if(is_array($toHTML))
-        { // cn: causing errors in i18n test suite ($toHTML is non-array)
-            $string = str_ireplace($GLOBALS['toHTML_keys'],$GLOBALS['toHTML_values'],$string);
-		}
-	}
-
-    return $string;
+    return htmlspecialchars($string, ENT_QUOTES|ENT_HTML401|ENT_SUBSTITUTE);
 }
 
 
@@ -103,27 +79,12 @@ function to_html($string, $encode=true){
  * @param bool $encode Default true
  * @return string
  */
-function from_html($string, $encode=true) {
+function from_html($string, $encode=true)
+{
     if (!is_string($string) || !$encode) {
         return $string;
     }
-
-	global $toHTML;
-    static $toHTML_values = null;
-    static $toHTML_keys = null;
-    static $cache = array();
-    if (!empty($toHTML) && is_array($toHTML) && (!isset($toHTML_values) || !empty($GLOBALS['from_html_cache_clear']))) {
-        $toHTML_values = array_values($toHTML);
-        $toHTML_keys = array_keys($toHTML);
-    }
-
-    // Bug 36261 - Decode &amp; so we can handle double encoded entities
-	$string = str_ireplace("&amp;", "&", $string);
-
-    if (!isset($cache[$string])) {
-        $cache[$string] = str_ireplace($toHTML_values, $toHTML_keys, $string);
-    }
-    return $cache[$string];
+    return htmlspecialchars_decode($string, ENT_QUOTES|ENT_HTML401);
 }
 
 /*
