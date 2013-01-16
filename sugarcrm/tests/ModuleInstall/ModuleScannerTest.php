@@ -158,6 +158,7 @@ EOQ;
             $valid = $ms->isValidExtension($file);
             $this->assertFalse($valid, "The $ext extension should not be valid on $file but the ModuleScanner is saying it is");
         }
+    }
 
 	public function testCallMethodObjectOperatorFail()
     {
