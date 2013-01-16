@@ -773,18 +773,75 @@ class ForecastsTimePeriodTest extends Sugar_PHPUnit_Framework_TestCase
     */
 
 
+    public function getChartLabelsKeyProvider() {
+        return array(
+
+            array(TimePeriod::QUARTER_TYPE, '2013-01-01', '2013-01-01', '01-2013'),
+            array(TimePeriod::QUARTER_TYPE, '2013-01-01', '2013-01-31', '01-2013'),
+            array(TimePeriod::QUARTER_TYPE, '2013-01-01', '2013-02-01', '02-2013'),
+            array(TimePeriod::QUARTER_TYPE, '2013-01-01', '2013-02-28', '02-2013'),
+            array(TimePeriod::QUARTER_TYPE, '2013-01-01', '2013-03-01', '03-2013'),
+            array(TimePeriod::QUARTER_TYPE, '2013-01-01', '2013-03-31', '03-2013'),
+
+            array(TimePeriod::QUARTER_TYPE, '2013-01-15', '2013-01-15', '01-2013'),
+            array(TimePeriod::QUARTER_TYPE, '2013-01-15', '2013-01-31', '01-2013'),
+            array(TimePeriod::QUARTER_TYPE, '2013-01-15', '2013-02-13', '01-2013'),
+            array(TimePeriod::QUARTER_TYPE, '2013-01-15', '2013-02-14', '02-2013'),
+            array(TimePeriod::QUARTER_TYPE, '2013-01-15', '2013-02-28', '02-2013'),
+            array(TimePeriod::QUARTER_TYPE, '2013-01-15', '2013-03-14', '02-2013'),
+            array(TimePeriod::QUARTER_TYPE, '2013-01-15', '2013-03-15', '03-2013'),
+
+            array(TimePeriod::MONTH_TYPE, '2013-01-01', '2013-01-01', 0),
+            array(TimePeriod::MONTH_TYPE, '2013-01-01', '2013-01-07', 0),
+            array(TimePeriod::MONTH_TYPE, '2013-01-01', '2013-01-08', 1),
+            array(TimePeriod::MONTH_TYPE, '2013-01-01', '2013-01-14', 1),
+            array(TimePeriod::MONTH_TYPE, '2013-01-01', '2013-01-15', 2),
+            array(TimePeriod::MONTH_TYPE, '2013-01-01', '2013-01-21', 2),
+            array(TimePeriod::MONTH_TYPE, '2013-01-01', '2013-01-22', 3),
+            array(TimePeriod::MONTH_TYPE, '2013-01-01', '2013-01-23', 3),
+            array(TimePeriod::MONTH_TYPE, '2013-01-01', '2013-01-29', 4),
+            array(TimePeriod::MONTH_TYPE, '2013-01-01', '2013-01-31', 4),
+
+            array(TimePeriod::MONTH_TYPE, '2013-04-10', '2013-04-10', 0),
+            array(TimePeriod::MONTH_TYPE, '2013-04-10', '2013-04-16', 0),
+            array(TimePeriod::MONTH_TYPE, '2013-04-10', '2013-04-17', 1),
+            array(TimePeriod::MONTH_TYPE, '2013-04-10', '2013-04-23', 1),
+            array(TimePeriod::MONTH_TYPE, '2013-04-10', '2013-04-24', 2),
+            array(TimePeriod::MONTH_TYPE, '2013-04-10', '2013-04-30', 2),
+            array(TimePeriod::MONTH_TYPE, '2013-04-10', '2013-05-01', 3),
+            array(TimePeriod::MONTH_TYPE, '2013-04-10', '2013-05-07', 3),
+            array(TimePeriod::MONTH_TYPE, '2013-04-10', '2013-05-08', 4),
+            array(TimePeriod::MONTH_TYPE, '2013-04-10', '2013-05-10', 4),
+
+            array(TimePeriod::MONTH_TYPE, '2012-12-31', '2012-12-31', 0),
+            array(TimePeriod::MONTH_TYPE, '2012-12-31', '2013-01-06', 0),
+            array(TimePeriod::MONTH_TYPE, '2012-12-31', '2013-01-07', 1),
+            array(TimePeriod::MONTH_TYPE, '2012-12-31', '2013-01-13', 1),
+            array(TimePeriod::MONTH_TYPE, '2012-12-31', '2013-01-14', 2),
+            array(TimePeriod::MONTH_TYPE, '2012-12-31', '2013-01-20', 2),
+            array(TimePeriod::MONTH_TYPE, '2012-12-31', '2013-01-21', 3),
+            array(TimePeriod::MONTH_TYPE, '2012-12-31', '2013-01-22', 3),
+            array(TimePeriod::MONTH_TYPE, '2012-12-31', '2013-01-28', 4),
+            array(TimePeriod::MONTH_TYPE, '2012-12-31', '2013-01-30', 4),
+        );
+    }
+
     /**
-     * This is a test for the getChartLabels function
+     * This is a test for the getChartLabelsKey function
      *
+     * @outputBuffering disabled
+     * @dataProvider getChartLabelsKeyProvider
      * @group timeperiods
      * @group forecasts
      */
-    public function testGetChartLabels() {
-        $timePeriod = new MonthTimePeriod();
-        $timePeriod->setStartDate('2012-01-01');
+    public function testGetChartLabelsKey($tpType, $tpStartDate, $oppDateClosed, $expectedKey) {
+        $timePeriod = TimePeriod::getByType($tpType);
+        $timePeriod->setStartDate($tpStartDate);
         $timePeriod->save();
-
         SugarTestTimePeriodUtilities::$_createdTimePeriods[] = $timePeriod;
+
+        $chartLabelKey = $timePeriod->getChartLabelsKey($oppDateClosed);
+        $this->assertEquals($expectedKey, $chartLabelKey);
     }
 
 

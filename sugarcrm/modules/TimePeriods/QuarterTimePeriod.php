@@ -108,13 +108,17 @@ class QuarterTimePeriod extends TimePeriod implements TimePeriodInterface {
 
         $start = strtotime($this->start_date);
         $end = strtotime($this->end_date);
+        $count = 0;
 
         while ($start < $end) {
             $val = $chartData;
             $val['label'] = date($this->chart_label, $start);
-            $months[date($this->chart_data_key, $start)] = $val;
+            //$months[date($this->chart_data_key, $start)] = $val;
+            $months[$count++] = $val;
             $start = strtotime($this->chart_data_modifier, $start);
         }
+
+        $GLOBALS['log']->fatal(var_export($months, true));
 
         return $months;
     }
@@ -127,6 +131,20 @@ class QuarterTimePeriod extends TimePeriod implements TimePeriodInterface {
      * @return String value of the key to use to map to the chart labels
      */
     public function getChartLabelsKey($dateClosed) {
+        $start = strtotime($this->start_date);
+        $end = strtotime($dateClosed);
+        $count = 0;
+
+        while($start < $end) {
+            $count++;
+            $start = strtotime($this->chart_data_modifier, $start);
+        }
+
+        return $count;
+        /*
+        $GLOBALS['log']->fatal($dateClosed);
+        $GLOBALS['log']->fatal(date($this->chart_data_key, strtotime($dateClosed)));
         return date($this->chart_data_key, strtotime($dateClosed));
+        */
     }
 }

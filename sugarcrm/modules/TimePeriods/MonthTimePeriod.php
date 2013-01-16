@@ -96,9 +96,9 @@ class MonthTimePeriod extends TimePeriod implements TimePeriodInterface {
         $start = strtotime($this->start_date);
         $end = strtotime($this->end_date);
         $count = 0;
-        while ($start < $end) {
+        while ($start <= $end) {
             //Find out how many days are left for this period
-            $remainingDays = (($end - $start) / 86400);
+            $remainingDays = floor(abs($end - $start) / 86400);
 
             //Create the modifier for the timeperiod
             $modifier = $remainingDays > 6 ? '+6 day' : '+' . ceil($remainingDays) . ' day';
@@ -124,9 +124,13 @@ class MonthTimePeriod extends TimePeriod implements TimePeriodInterface {
      */
     public function getChartLabelsKey($dateClosed) {
         $start = strtotime($this->start_date);
-        $closed = strtotime($dateClosed);
-        //We are calculating the difference in days between the $dateClosed parameter and the start_date for timeperiod
-        //then we divide by 7 (days in week) and use the floor value as the key
-        return floor((($closed - $start) / 86400) / 7);
+        $end = strtotime($dateClosed);
+        $count = -1;
+        while ($start <= $end) {
+            $count++;
+            $start = strtotime($this->chart_data_modifier, $start);
+        }
+
+        return $count;
     }
 }
