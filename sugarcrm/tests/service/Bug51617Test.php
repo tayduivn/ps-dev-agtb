@@ -33,12 +33,9 @@ class Bug51617Test extends SOAPTestCase
     {
         $this->_soapURL = $GLOBALS['sugar_config']['site_url'].'/service/v2/soap.php';
 
-        SugarTestHelper::setUp('beanList');
         SugarTestHelper::setUp('beanFiles');
-        SugarTestHelper::setup('current_user');
-        $GLOBALS['current_user']->status = 'Active';
-        $GLOBALS['current_user']->is_admin = 1;
-        $GLOBALS['current_user']->save();
+        SugarTestHelper::setUp('beanList');
+        SugarTestHelper::setUp('current_user', array(true, 1));
 
         $this->field = get_widget('varchar');
         $this->field->id = 'Accountstest_custom_c';
@@ -115,7 +112,7 @@ class Bug51617Test extends SOAPTestCase
             array(
                  'session'=>$this->_sessionId,
                  "module_name" => 'Accounts',
-                 "id='".$this->_account->id."'",
+                 "accounts.id = '{$this->_account->id}'",
                  '',
                  0,
                  "select_fields" => array('id', 'name', 'test_custom_c'),

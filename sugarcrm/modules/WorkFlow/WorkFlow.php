@@ -1446,7 +1446,17 @@ function repair_workflow(){
              $controller->delete_adjust_order($this->base_module);
          }
 
-		//mark deleted the workflow object if delete_workflow_on_cascade is set to true
+        $query =  "     SELECT id FROM workflow_schedules WHERE workflow_schedules.workflow_id = '".$id."'";
+        $result = $this->db->query($query,true," Error getting workflow_schedules for workflow_id: ".$id);
+
+        // Remove each workflow schedule by id
+        $w_schedule = new WorkFlowSchedule();
+        while($row = $this->db->fetchByAssoc($result))
+        {
+            $w_schedule->remove_expired($row['id']);
+        }
+
+        //mark deleted the workflow object if delete_workflow_on_cascade is set to true
         if($this->delete_workflow_on_cascade)
         {
 		    parent::mark_deleted($id);
