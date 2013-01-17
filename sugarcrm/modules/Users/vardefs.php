@@ -409,7 +409,14 @@ $dictionary['User'] = array(
             'reportable' => false,
             'type' => 'varchar',
             'len' => '36',
-            'studio' => array('listview' => false, 'searchview'=>false, 'formula' => false),
+            'studio' => array(
+                'listview' => false,
+                'searchview'=>false,
+                'formula' => false,
+                'wirelesslistview' => false,
+                'wirelessdetailview' => false,
+                'wirelesseditview' => false,
+            ),
         ) ,
         'team_id' => array(
             'name' => 'team_id',
