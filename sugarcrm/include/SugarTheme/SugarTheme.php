@@ -565,22 +565,26 @@ class SugarTheme
 		if(!empty($GLOBALS['sugar_config']['use_sprites']) && $GLOBALS['sugar_config']['use_sprites']) {
 
 			// system wide sprites
-			if(file_exists("cache/sprites/default/sprites.css"))
+			if(file_exists(sugar_cached("sprites/default/sprites.css"))) {
 				$html .= '<link rel="stylesheet" type="text/css" href="'.getJSPath('cache/sprites/default/sprites.css').'" />';
+			}
 
 			// theme specific sprites
-			if(file_exists("cache/sprites/{$this->dirName}/sprites.css"))
+			if(file_exists(sugar_cached("sprites/{$this->dirName}/sprites.css"))) {
 				$html .= '<link rel="stylesheet" type="text/css" href="'.getJSPath('cache/sprites/'.$this->dirName.'/sprites.css').'" />';
+			}
 
 			// parent sprites
 			if($this->parentTheme && $parent = SugarThemeRegistry::get($this->parentTheme)) {
-				if(file_exists("cache/sprites/{$parent->dirName}/sprites.css"))
+				if(file_exists(sugar_cached("sprites/{$parent->dirName}/sprites.css"))) {
 					$html .= '<link rel="stylesheet" type="text/css" href="'.getJSPath('cache/sprites/'.$parent->dirName.'/sprites.css').'" />';
+				}
 			}
 
 			// repeatable sprites
-			if(file_exists("cache/sprites/Repeatable/sprites.css"))
+			if(file_exists(sugar_cached("sprites/Repeatable/sprites.css"))) {
 				$html .= '<link rel="stylesheet" type="text/css" href="'.getJSPath('cache/sprites/Repeatable/sprites.css').'" />';
+			}
 		}
 
         // for BC during upgrade
