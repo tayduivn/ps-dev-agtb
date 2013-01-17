@@ -61,13 +61,15 @@ class RestMassUpdateTest extends Sugar_PHPUnit_Framework_TestCase
         $schedulerJob->retrieve($id);
 
         $job = new SugarJobMassUpdate();
-        $ret = $job->run($schedulerJob, $schedulerJob->data);
+        $job->setJob($schedulerJob);
+        $ret = $job->run($schedulerJob->data);
         if (is_array($ret) && !empty($ret)) {
             foreach ($ret as $jid) {
                 $schedulerJob = new SchedulersJob();
                 $schedulerJob->retrieve($jid);
                 $job = new SugarJobMassUpdate();
-                $job->run($schedulerJob, $schedulerJob->data);
+                $job->setJob($schedulerJob);
+                $job->run($schedulerJob->data);
             }
         }
 
@@ -611,7 +613,7 @@ class RestMassUpdateTest extends Sugar_PHPUnit_Framework_TestCase
         if (isset($sugar_config['max_mass_update'])) {
             $cur_val = $sugar_config['max_mass_update'];
         }
-        $sugar_config['max_mass_update'] = 1; // to trigger the async mode
+        $sugar_config['max_mass_update'] = 0; // to trigger the async mode
 
         $contact1 = SugarTestContactUtilities::createContact();
         $team1 = SugarTestTeamUtilities::createAnonymousTeam();

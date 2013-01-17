@@ -87,7 +87,7 @@ class MassUpdateApi extends SugarApi {
     {
         $this->requireArgs($args, array('massupdate_params', 'module'));
         $this->delete = true;
-        $args['massupdate_params']['Delete'] = $args['massupdate_params']['delete'] = true;
+        $args['massupdate_params']['Delete'] = true;
 
         return $this->massUpdate($api, $args);
     }
@@ -131,6 +131,9 @@ class MassUpdateApi extends SugarApi {
 
         // check ACL
         $bean = BeanFactory::newBean($mu_params['module']);
+        if (!$bean instanceof SugarBean) {
+            throw new SugarApiExceptionInvalidParameter("Invalid bean, is module valid?");
+        }
         $action = $this->delete? 'delete': 'save';
         if (!$bean->ACLAccess($action))
         {

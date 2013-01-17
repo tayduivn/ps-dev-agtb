@@ -37,23 +37,39 @@ require_once('clients/base/api/FilterApi.php');
 /**
  * @api
  */
-class SugarJobMassUpdate
+class SugarJobMassUpdate implements RunnableSchedulerJob
 {
-
-    /**
-     * The max number of beans we process before starting to bulk insert so we dont hit memory issues.
-     */
-    const MAX_BULK_THRESHOLD = 1000;
-
-    /**
-     * The max number of beans we delete at a time
-     */
-    const MAX_BULK_INSERT_THRESHOLD = 1000;
 
     /**
      * the ids of the child jobs
      */
     protected $workJobIds = array();
+
+    /**
+     * @var int number of records to be updated/deleted at one time
+     */
+    protected $chunkSize = 1000;
+
+    /**
+     * constructor
+     */
+    public function __construct()
+    {
+        if (!empty($GLOBALS['sugar_config']['massupdate_chunk_size'])) {
+            $this->chunkSize = $GLOBALS['sugar_config']['massupdate_chunk_size'];
+        }
+    }
+
+    /**
+     * This method implements setJob from RunnableSchedulerJob and sets the SchedulersJob instance for the class
+     *
+     * @param SchedulersJob $job the SchedulersJob instance set by the job queue
+     *
+     */
+    public function setJob(SchedulersJob $job)
+    {
+        $this->job = $job;
+    }
 
     /**
      * Setting global variables expected by down stream classes (MassUpdate, SearchForm2, etc)
@@ -66,7 +82,11 @@ class SugarJobMassUpdate
         $_POST = array_merge($_POST, $mu_params);
         $_REQUEST['massupdate'] = true;
         if (isset($mu_params['uid'])) {
-            $_REQUEST['uid'] = $mu_params['uid'];
+            if (is_array($mu_params['uid'])) {
+                $_REQUEST['uid'] = implode(',', $mu_params['uid']);
+            } else {
+                $_REQUEST['uid'] = $mu_params['uid'];
+            }
         }
         if (!empty($mu_params['entire'])) {
             $_REQUEST['entire'] = $mu_params['entire'];
@@ -85,10 +105,10 @@ class SugarJobMassUpdate
     {
         $job = new SchedulersJob();
         $job->name = 'MassUpdate_'.$jobType;
-        $job->target = "function::asyncMassUpdate";
+        $job->target = "class::SugarJobMassUpdate";
 
         $data['_jobType_'] = $jobType;
-        $job->data = base64_encode(json_encode($data));
+        $job->data = json_encode($data);
 
         $job->assigned_user_id = $GLOBALS['current_user']->id;
 
@@ -102,20 +122,24 @@ class SugarJobMassUpdate
     /**
      * Main function that handles the asynchronous massupdate.
      *
-     * @param $job SchedulersJob object associated with this job
      * @param $data job queue data
      */
-    public function run(SchedulersJob $job, $data)
+    public function run($data)
     {
         /*
           - type:init
             - perform filter to get all records to be updated, including id
-            - create child jobs (type=work), each job has up to MAX_BULK_THRESHOLD records
+            - create child jobs (type=work), each job has up to $this->chunkSize records
           - type:work
             - do update/delete
          */
 
-        $data = json_decode(base64_decode($data), true);
+        $data = json_decode(from_html($data), true);
+
+        if (empty($data) || !is_array($data) || empty($data['_jobType_'])) {
+            $this->job->failJob('Invalid job data.');
+            return false;
+        }
 
         switch ($data['_jobType_'])
         {
@@ -129,7 +153,7 @@ class SugarJobMassUpdate
                         $data['uid'] = explode(',', $data['uid']);
                     }
 
-                    $uidChunks = array_chunk($data['uid'], self::MAX_BULK_INSERT_THRESHOLD);
+                    $uidChunks = array_chunk($data['uid'], $this->chunkSize);
                     foreach ($uidChunks as $chunk) {
                         $tmpData = $data;
                         $tmpData['uid'] = $chunk;
@@ -146,37 +170,45 @@ class SugarJobMassUpdate
                     if (isset($data['filter'])) {
                         $filterArgs['filter'] = $data['filter'];
                     }
-                    $filterArgs['max_num'] = self::MAX_BULK_THRESHOLD;
+                    $uidArray = array();
+
+                    // max_num does not need to set to chunkSize, it can be any size that makes sense
+                    $filterArgs['max_num'] = $this->chunkSize;
+
+                    // start getting all the ids
                     while ($nextOffset != -1) { // still have records to be fetched
                         $filterArgs['offset'] = $nextOffset;
                         $result = $filterApi->filterList($api, $filterArgs);
                         $nextOffset = $result['next_offset'];
-                        $uidArray = array();
                         foreach ($result['records'] as $record) {
                             if (!empty($record['id'])) {
                                 $uidArray[] = $record['id'];
                             }
                         }
+                    }
 
-                        // create a job for this chunk
-                        if (count($uidArray)) {
+                    // create one child job for each chunk
+                    if (count($uidArray)) {
+                        $uidChunks = array_chunk($uidArray, $this->chunkSize);
+                        foreach ($uidChunks as $chunk) {
                             $tmpData = $data;
-                            $tmpData['uid'] = $uidArray;
+                            $tmpData['uid'] = $chunk;
                             $this->workJobIds[] = $this->createJobQueueConsumer($tmpData, 'work');
                         }
                     }
                 } else {
-                    $job->failJob('Neither uid nor entire specified.');
+                    $this->job->failJob('Neither uid nor entire specified.');
+                    return false;
                 }
 
-                $job->succeedJob('Child jobs created.');
+                $this->job->succeedJob('Child jobs created.');
 
                 // return the ids of the child jobs that have been created
                 return $this->workJobIds;
 
             // this is the child job, do update
             case 'work':
-                return $this->updateRecords($job, $data);
+                return $this->updateRecords($this->job, $data);
 
             default:
                 break;
@@ -195,6 +227,7 @@ class SugarJobMassUpdate
     {
         if (!isset($data['uid'])) {
             $job->failJob('No uid found.');
+            return false;
         }
 
         // mass update
@@ -202,10 +235,14 @@ class SugarJobMassUpdate
         if (isset($newData['entire'])) {
             unset($newData['entire']);
         }
-        $newData['uid'] = implode(',', $data['uid']);
+
         self::preProcess($newData);
 
         $bean = BeanFactory::newBean($data['module']);
+        if (!$bean instanceof SugarBean) {
+            $job->failJob('Invalid bean');
+            return false;
+        }
         $mass = new MassUpdate();
         $mass->setSugarBean($bean);
         $mass->handleMassUpdate(false, true);
