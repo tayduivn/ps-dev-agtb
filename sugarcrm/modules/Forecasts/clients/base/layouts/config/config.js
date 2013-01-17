@@ -69,7 +69,9 @@
     _getConfigModel: function(options, syncUrl, syncFunction) {
         var SettingsModel = Backbone.Model.extend({
             url: syncUrl,
-            sync: syncFunction
+            sync: syncFunction,
+            //include metadata from config into the config model by default
+            defaults:app.metadata.getModule('Forecasts').config
         });
 
         // jQuery.extend is used with the `true` parameter to do a deep copy
@@ -136,8 +138,12 @@
      * @param isAdmin
      */
     checkSettingsAndRedirect:function (isSetup, isAdmin) {
-        var saveClicked = this.context.forecasts.get('saveClicked'),
-            location = this.getRedirectURL(isSetup, isAdmin, saveClicked),
+        var state = {
+                isSetup: isSetup,
+                isAdmin: isAdmin,
+                saveClicked: this.context.forecasts.get('saveClicked')
+            },
+            location = this.getRedirectURL(state),
             self = this;
 
         /**
@@ -148,7 +154,7 @@
          *    we reload the module or forward them to the home module immediately.  Which
          *    is to occur is determined by the getRedirectURL
          */
-        if(isAdmin && saveClicked == true) {
+        if(isAdmin && state.saveClicked == true) {
             // only sync the metadata
             app.metadata.sync();
             // can happen on both views but it's the same methods/messages
@@ -176,12 +182,10 @@
     /**
      * Checks the variables provided to determine what the reload/forward location ought to be
      *
-     * @param isSetup
-     * @param isAdmin
-     * @param saveClicked
+     * @param state object consisting of values of the current app state(isAdmin, isSetup, saveClicked, etc)
      * @return {string} url to send page to
      */
-    getRedirectURL:function (isSetup, isAdmin, saveClicked) {
+    getRedirectURL:function (state) {
         /**
          * 3 conditions exist here
          * 1a: If the user is not an admin, then the user will be redirected to the main Sugar index
@@ -191,7 +195,7 @@
          *    matter if cancel was clicked or save, the result is the same, the location
          *    to redirect to will be to reload the forecasts module
          */
-        if (!isAdmin || (isAdmin && isSetup == 0 && saveClicked == false)) {
+        if (!state.isAdmin || (state.isAdmin && state.isSetup == 0 && state.saveClicked == false)) {
             // this should only ever happen on the wizard view and if the user accessing is not an admin
             return 'index.php?module=Home';
         } else {

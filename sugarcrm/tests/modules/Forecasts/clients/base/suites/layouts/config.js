@@ -154,7 +154,7 @@ describe("The forecasts config layout controller", function(){
     });
 
     describe("getRedirectUrlScenarios", function() {
-        var options, testLayout, baseIndexLayout, homeLocation, forecastsLocation;
+        var options, testLayout, baseIndexLayout, homeLocation, forecastsLocation, state;
 
         beforeEach(function() {
             options = {
@@ -176,29 +176,55 @@ describe("The forecasts config layout controller", function(){
             delete baseIndexLayout;
             delete homeLocation;
             delete forecastsLocation;
+            delete state;
         });
        it("should go home if not admin", function() {
-           var location = testLayout.getRedirectURL(false, false, false);
+           state = {
+               isSetup: false,
+               isAdmin: false,
+               saveClicked: false
+           };
+           var location = testLayout.getRedirectURL(state);
            expect(location).toBe(homeLocation);
        });
 
         it("should go home if admin, setup is false and saveClicked is false", function() {
-            var location = testLayout.getRedirectURL(false, true, false);
+            state = {
+                isSetup: false,
+                isAdmin: true,
+                saveClicked: false
+            };
+            var location = testLayout.getRedirectURL(state);
             expect(location).toBe(homeLocation);
         });
 
         it("should go to Forecasts module if admin, isSetup is true and saveClicked is false", function() {
-            var location = testLayout.getRedirectURL(true, true, false);
+            state = {
+                isSetup: true,
+                isAdmin: true,
+                saveClicked: false
+            };
+            var location = testLayout.getRedirectURL(state);
             expect(location).toBe(forecastsLocation);
         });
 
         it("should reload current forecasts module if admin, isSetup is true and saveClicked is true", function() {
-            var location = testLayout.getRedirectURL(true, true, true);
+            state = {
+                isSetup: true,
+                isAdmin: true,
+                saveClicked: true
+            };
+            var location = testLayout.getRedirectURL(state);
             expect(location).toBe(forecastsLocation);
         });
 
         it("should reload current forecasts module if admin, isSetup is false and saveClicked is true", function() {
-            var location = testLayout.getRedirectURL(false, true, true);
+            state = {
+                isSetup: false,
+                isAdmin: true,
+                saveClicked: true
+            };
+            var location = testLayout.getRedirectURL(state);
             expect(location).toBe(forecastsLocation);
         });
     });
