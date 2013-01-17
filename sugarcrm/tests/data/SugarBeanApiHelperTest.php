@@ -72,6 +72,7 @@ class SugarBeanApiHelperTest extends Sugar_PHPUnit_Framework_TestCase {
         $this->bean->$fieldName = $fieldValue;
 
         $data = $this->beanApiHelper->formatForApi($this->bean);
+        
         $this->assertSame($expectedFormattedValue, $data[$fieldName], $message);
     }
 

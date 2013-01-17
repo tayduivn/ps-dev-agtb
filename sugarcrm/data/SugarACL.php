@@ -38,7 +38,6 @@ class SugarACL
     const ACL_CREATE_ONLY = 2;
     const ACL_READ_WRITE = 4;
 
-
     /**
      * Load bean from context
      * @static
@@ -140,8 +139,6 @@ class SugarACL
      */
     public static function getFieldAccess($module, $field, $context = array())
     {
-        
-        
         $read = self::checkField($module, $field, "detail", $context);
         $create = self::checkField($module, $field, "create", $context);
         $write = self::checkField($module, $field, "edit", $context);
@@ -149,7 +146,6 @@ class SugarACL
         if($create && !$read && !$write) return sefl::ACL_CREATE_ONLY;
         if(!$read && !$create) return self::ACL_NO_ACCESS;
         if($write) return self::ACL_READ_WRITE;
-        
         return self::ACL_READ_ONLY;
     }
 

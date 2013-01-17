@@ -29,6 +29,7 @@ require_once 'include/MetaDataManager/MetaDataManager.php';
  */
 class GetAclForModuleTest extends Sugar_PHPUnit_Framework_TestCase
 {
+    public $roles = array();
     public function setUp()
     {
         SugarTestHelper::setUp('current_user');
@@ -42,8 +43,10 @@ class GetAclForModuleTest extends Sugar_PHPUnit_Framework_TestCase
         foreach($this->accounts AS $account_id) {
             $GLOBALS['db']->query("DELETE FROM accounts WHERE id = '{$account_id}'");
         }
-        $GLOBALS['db']->query("DELETE FROM roles WHERE name LIKE 'Unit Test%'");
-        $GLOBALS['db']->query("DELETE FROM acl_roles WHERE name LIKE 'Unit Test%'");
+        foreach($this->roles AS $role) {
+            $role->mark_deleted($role->id);
+            $role->mark_relationships_deleted($role->id);
+        }
         SugarTestHelper::tearDown();
     }
 
@@ -66,7 +69,7 @@ class GetAclForModuleTest extends Sugar_PHPUnit_Framework_TestCase
                                 'massupdate' => 'no',
                             );
 
-        $role = $this->createRole('UNIT TEST ' . create_guid(), $modules, array('access', 'view', ));
+        $this->roles[] = $role = $this->createRole('UNIT TEST ' . create_guid(), $modules, array('access', 'view', ));
 
         if (!($GLOBALS['current_user']->check_role_membership($role->name))) {
             $GLOBALS['current_user']->load_relationship('aclroles');
@@ -110,7 +113,7 @@ class GetAclForModuleTest extends Sugar_PHPUnit_Framework_TestCase
                                 'massupdate' => 'no',
                             );
 
-        $role = $this->createRole('UNIT TEST ' . create_guid(), $modules, array('access', 'view', 'list', ));
+        $this->roles[] = $role = $this->createRole('UNIT TEST ' . create_guid(), $modules, array('access', 'view', 'list', ));
 
         if (!($GLOBALS['current_user']->check_role_membership($role->name))) {
             $GLOBALS['current_user']->load_relationship('aclroles');
@@ -152,7 +155,7 @@ class GetAclForModuleTest extends Sugar_PHPUnit_Framework_TestCase
                                 'massupdate' => 'no',
                             );
 
-        $role = $this->createRole('UNIT TEST ' . create_guid(), $modules, array('access', 'list', 'view'), array('list', 'view'));
+        $this->roles[] = $role = $this->createRole('UNIT TEST ' . create_guid(), $modules, array('access', 'list', 'view'), array('list', 'view'));
 
         if (!($GLOBALS['current_user']->check_role_membership($role->name))) {
             $GLOBALS['current_user']->load_relationship('aclroles');
@@ -195,7 +198,7 @@ class GetAclForModuleTest extends Sugar_PHPUnit_Framework_TestCase
                                 'massupdate' => 'no',
                             );
 
-        $role = $this->createRole('UNIT TEST ' . create_guid(), $modules, array('access', 'create', ));
+        $this->roles[] = $role = $this->createRole('UNIT TEST ' . create_guid(), $modules, array('access', 'create', ));
 
         if (!($GLOBALS['current_user']->check_role_membership($role->name))) {
             $GLOBALS['current_user']->load_relationship('aclroles');
@@ -236,7 +239,7 @@ class GetAclForModuleTest extends Sugar_PHPUnit_Framework_TestCase
                                 'massupdate' => 'no',
                             );
 
-        $role = $this->createRole('UNIT TEST ' . create_guid(), $modules, array('access', 'create', 'edit', 'view'), array('edit', 'view'));
+        $this->roles[] = $role = $this->createRole('UNIT TEST ' . create_guid(), $modules, array('access', 'create', 'edit', 'view'), array('edit', 'view'));
 
         if (!($GLOBALS['current_user']->check_role_membership($role->name))) {
             $GLOBALS['current_user']->load_relationship('aclroles');
@@ -278,7 +281,7 @@ class GetAclForModuleTest extends Sugar_PHPUnit_Framework_TestCase
                                 'massupdate' => 'yes',
                             );
 
-        $role = $this->createRole('UNIT TEST ' . create_guid(), $modules, array('access', 'create', 'view', 'list', 'edit', 'delete', 'import', 'export', 'massupdate', ));
+        $this->roles[] = $role = $this->createRole('UNIT TEST ' . create_guid(), $modules, array('access', 'create', 'view', 'list', 'edit', 'delete', 'import', 'export', 'massupdate', ));
 
         if (!($GLOBALS['current_user']->check_role_membership($role->name))) {
             $GLOBALS['current_user']->load_relationship('aclroles');
@@ -329,7 +332,7 @@ class GetAclForModuleTest extends Sugar_PHPUnit_Framework_TestCase
                                 'massupdate' => 'yes',
                             );
 
-        $role = $this->createRole('UNIT TEST ' . create_guid(), $modules, array('access', 'create', 'view', 'list', 'edit','delete','import', 'export', 'massupdate'));
+        $this->roles[] = $role = $this->createRole('UNIT TEST ' . create_guid(), $modules, array('access', 'create', 'view', 'list', 'edit','delete','import', 'export', 'massupdate'));
 
         $aclField = new ACLField();
         $aclField->setAccessControl('Accounts', $role->id, 'website', 50);
@@ -378,7 +381,7 @@ class GetAclForModuleTest extends Sugar_PHPUnit_Framework_TestCase
                                 'massupdate' => 'yes',
                             );
 
-        $role = $this->createRole('UNIT TEST ' . create_guid(), $modules, array('access', 'create', 'view', 'list', 'edit','delete','import', 'export', 'massupdate'));
+        $this->roles[] = $role = $this->createRole('UNIT TEST ' . create_guid(), $modules, array('access', 'create', 'view', 'list', 'edit','delete','import', 'export', 'massupdate'));
 
         $aclField = new ACLField();
         $aclField->setAccessControl('Accounts', $role->id, 'website', 10);
@@ -423,7 +426,7 @@ class GetAclForModuleTest extends Sugar_PHPUnit_Framework_TestCase
                                 'massupdate' => 'yes',
                             );
 
-        $role = $this->createRole('UNIT TEST ' . create_guid(), $modules, array('access', 'create', 'view', 'list', 'edit','delete','import', 'export', 'massupdate'));
+        $this->roles[] = $role = $this->createRole('UNIT TEST ' . create_guid(), $modules, array('access', 'create', 'view', 'list', 'edit','delete','import', 'export', 'massupdate'));
 
         $aclField = new ACLField();
         $aclField->setAccessControl('Accounts', $role->id, 'website', 60);
@@ -468,7 +471,7 @@ class GetAclForModuleTest extends Sugar_PHPUnit_Framework_TestCase
                                 'massupdate' => 'yes',
                             );
 
-        $role = $this->createRole('UNIT TEST ' . create_guid(), $modules, array('access', 'create', 'view', 'list', 'edit','delete','import', 'export', 'massupdate'));
+        $this->roles[] = $role = $this->createRole('UNIT TEST ' . create_guid(), $modules, array('access', 'create', 'view', 'list', 'edit','delete','import', 'export', 'massupdate'));
 
         $aclField = new ACLField();
         $aclField->setAccessControl('Accounts', $role->id, 'website', 40);

@@ -368,9 +368,6 @@ class MetaDataManager {
                             $outputAcl['fields'][$field]['write'] = 'no';
                             $outputAcl['fields'][$field]['read'] = 'no';
                             break;
-                        case SugarACL::ACL_WRITE_ONLY:
-                            $outputAcl['fields'][$field]['read'] = 'no';
-                            break;
                         case SugarACL::ACL_NO_ACCESS:
                         default:
                             $outputAcl['fields'][$field]['read'] = 'no';
