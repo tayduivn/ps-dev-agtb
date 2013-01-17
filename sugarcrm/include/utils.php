@@ -3146,6 +3146,14 @@ function pre_login_check(){
 	}
 }
 
+/**
+ * Get Sugar root directory
+ * @return string
+ */
+function sugar_root_dir()
+{
+    return realpath(dirname(__FILE__) . '/..');
+}
 
 
 function sugar_cleanup($exit = false) {
@@ -3153,7 +3161,7 @@ function sugar_cleanup($exit = false) {
 	if($called)return;
 	$called = true;
 	set_include_path(realpath(dirname(__FILE__) . '/..') . PATH_SEPARATOR . get_include_path());
-	chdir(realpath(dirname(__FILE__) . '/..'));
+	chdir(sugar_root_dir());
 	global $sugar_config;
 	require_once('include/utils/LogicHook.php');
 	LogicHook::initialize();

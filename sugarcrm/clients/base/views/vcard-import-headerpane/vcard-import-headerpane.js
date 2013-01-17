@@ -1,4 +1,3 @@
-{{!
 /*********************************************************************************
  * The contents of this file are subject to the SugarCRM Master Subscription
  * Agreement (""License"") which can be viewed at
@@ -25,29 +24,22 @@
  * governing these rights and limitations under the License.  Portions created
  * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
-}}
-<div class="modal hide">
-    <div class="modal-header">
-        <a class="close" data-dismiss="modal"><i class="icon-remove"></i></a>
-        <h3>{{str "LBL_PASSWORD_CHANGE_FORM_TITLE" context.attributes.module}}</h3>
-    </div>
-    <div class="modal-body">
-        <form class="form-horizontal" method="POST">
-            <fieldset>
-                {{#each meta.panels}}
-                {{#each fields}}
-                <div class="row-fluid control-group">
-                    <div class="span4">{{str label ../../context.attributes.module}}</div>
-                    <div class="span6">{{field ../../this ../../context.attributes.contactModel}}</div>
-                </div>
-                {{/each}}
-                {{/each}}
-            </fieldset>
-        </form>
-    </div>
-    <div class="modal-footer">
-        {{#each meta.buttons}}
-        {{field ../this ../contactModel}}
-        {{/each}}
-    </div>
-</div>
+({
+    extendsFrom: 'HeaderpaneView',
+    events:{
+        'click [name=vcard_finish_button]': 'initiateFinish',
+        'click [name=vcard_cancel_button]': 'initiateCancel'
+    },
+
+    initiateFinish: function() {
+        this.context.trigger('vcard:import:finish');
+    },
+
+    initiateCancel : function() {
+        this.context.trigger("drawer:hide");
+        if (this.context.parent) {
+            this.context.parent.trigger("drawer:hide");
+        }
+
+    }
+})

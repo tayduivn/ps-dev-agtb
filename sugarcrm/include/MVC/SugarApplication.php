@@ -159,36 +159,28 @@ class SugarApplication
         // Reset ACLs in case after_load_user hook changed ACL setups
         SugarACL::resetACLs();
 
-        //set cookies
-        if (isset($_SESSION['authenticated_user_id'])) {
-            $GLOBALS['log']->debug("setting cookie ck_login_id_20 to " . $_SESSION['authenticated_user_id']);
-            self::setCookie('ck_login_id_20', $_SESSION['authenticated_user_id'], time() + 86400 * 90);
-        }
-        if (isset($_SESSION['authenticated_user_theme'])) {
-            $GLOBALS['log']->debug("setting cookie ck_login_theme_20 to " . $_SESSION['authenticated_user_theme']);
-            self::setCookie('ck_login_theme_20', $_SESSION['authenticated_user_theme'], time() + 86400 * 90);
-        }
-        if (isset($_SESSION['authenticated_user_theme_color'])) {
-            $GLOBALS['log']->debug(
-                "setting cookie ck_login_theme_color_20 to " . $_SESSION['authenticated_user_theme_color']
-            );
-            self::setCookie(
-                'ck_login_theme_color_20', $_SESSION['authenticated_user_theme_color'], time() + 86400 * 90
-            );
-        }
-        if (isset($_SESSION['authenticated_user_theme_font'])) {
-            $GLOBALS['log']->debug(
-                "setting cookie ck_login_theme_font_20 to " . $_SESSION['authenticated_user_theme_font']
-            );
-            self::setCookie('ck_login_theme_font_20', $_SESSION['authenticated_user_theme_font'], time() + 86400 * 90);
-        }
-        if (isset($_SESSION['authenticated_user_language'])) {
-            $GLOBALS['log']->debug(
-                "setting cookie ck_login_language_20 to " . $_SESSION['authenticated_user_language']
-            );
-            self::setCookie('ck_login_language_20', $_SESSION['authenticated_user_language'], time() + 86400 * 90);
-        }
-        //check if user can access
+		//set cookies
+		if(isset($_SESSION['authenticated_user_id'])){
+			$GLOBALS['log']->debug("setting cookie ck_login_id_20 to ".$_SESSION['authenticated_user_id']);
+			self::setCookie('ck_login_id_20', $_SESSION['authenticated_user_id'], time() + 86400 * 90, '/', null, null, true);
+		}
+		if(isset($_SESSION['authenticated_user_theme'])){
+			$GLOBALS['log']->debug("setting cookie ck_login_theme_20 to ".$_SESSION['authenticated_user_theme']);
+			self::setCookie('ck_login_theme_20', $_SESSION['authenticated_user_theme'], time() + 86400 * 90);
+		}
+		if(isset($_SESSION['authenticated_user_theme_color'])){
+			$GLOBALS['log']->debug("setting cookie ck_login_theme_color_20 to ".$_SESSION['authenticated_user_theme_color']);
+			self::setCookie('ck_login_theme_color_20', $_SESSION['authenticated_user_theme_color'], time() + 86400 * 90);
+		}
+		if(isset($_SESSION['authenticated_user_theme_font'])){
+			$GLOBALS['log']->debug("setting cookie ck_login_theme_font_20 to ".$_SESSION['authenticated_user_theme_font']);
+			self::setCookie('ck_login_theme_font_20', $_SESSION['authenticated_user_theme_font'], time() + 86400 * 90);
+		}
+		if(isset($_SESSION['authenticated_user_language'])){
+			$GLOBALS['log']->debug("setting cookie ck_login_language_20 to ".$_SESSION['authenticated_user_language']);
+			self::setCookie('ck_login_language_20', $_SESSION['authenticated_user_language'], time() + 86400 * 90);
+		}
+		//check if user can access
 
     }
 

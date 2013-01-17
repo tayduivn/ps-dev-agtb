@@ -25,7 +25,7 @@
  * governing these rights and limitations under the License.  Portions created
  * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
-$viewdefs['base']['layout']['profileedit'] = array(
+$viewdefs['base']['layout']['profile-edit'] = array(
     'type' => 'simple',
     'components' =>
     array(
@@ -50,6 +50,11 @@ $viewdefs['base']['layout']['profileedit'] = array(
                                 ),
                                 1 => array(
                                     'view' => 'passwordmodal',
+                                    'context' => array(
+                                        'module' => 'Contacts',
+                                        'create' => true,
+                                        'passwordField' => 'portal_password'
+                                    ),
                                 ),
                             ),
                         ),

@@ -47,6 +47,15 @@ class vCardApi extends SugarApi {
                 'shortHelp' => 'An API to download a contact as a vCard.',
                 'longHelp' => 'include/api/help/vCard.html',
             ),
+            'vCardImportPost' => array(
+                'reqType' => 'POST',
+                'path' => array('<module>', 'file', 'vcard_import'),
+                'pathVars' => array('module', '', ''),
+                'method' => 'vCardImport',
+                'rawPostContents' => true,
+                'shortHelp' => 'Imports a person record from a vcard',
+                'longHelp' => 'include/api/help/vCardImportPost.html',
+            ),
         );
     }
 
@@ -56,7 +65,8 @@ class vCardApi extends SugarApi {
      * @param $args array The arguments array passed in from the API
      * @return String
      */
-    public function vCardSave($api, $args) {
+    public function vCardSave($api, $args)
+    {
         $this->requireArgs($args, array('id'));
 
         $vcard = new vCard();
@@ -70,5 +80,50 @@ class vCardApi extends SugarApi {
         $vcard->loadContact($args['id'], $module);
 
         $vcard->saveVCard();
+    }
+
+    /**
+     * vCardImport
+     * @param $api ServiceBase The API class of the request, used in cases where the API changes how the fields are pulled from the args array.
+     * @param $args array The arguments array passed in from the API
+     * @return String
+     */
+    public function vCardImport($api, $args)
+    {
+        $this->requireArgs($args, array('module'));
+
+        $bean = BeanFactory::getBean($args['module']);
+        if (!$bean->ACLAccess('save') || !$bean->ACLAccess('import')) {
+            throw new SugarApiExceptionNotAuthorized('EXCEPTION_NOT_AUTHORIZED');
+        }
+
+        if (isset($_FILES) && count($_FILES) === 1) {
+            reset($_FILES);
+            $first_key = key($_FILES);
+            if (isset($_FILES[$first_key]['tmp_name']) && $this->isUploadedFile($_FILES[$first_key]['tmp_name']) && isset($_FILES[$first_key]['size']) > 0
+            ) {
+                $vcard = new vCard();
+                try {
+                    $recordId = $vcard->importVCard($_FILES[$first_key]['tmp_name'], $args['module']);
+                } catch (Exception $e) {
+                    throw new SugarApiExceptionRequestMethodFailure('ERR_VCARD_FILE_PARSE');
+                }
+
+                $results = array($first_key => $recordId);
+                return $results;
+            }
+        } else {
+            throw new SugarApiExceptionMissingParameter('ERR_VCARD_FILE_MISSING');
+        }
+    }
+
+    /**
+     * This function is a wrapper for checking if the file was uploaded so that the php built in function can be mocked
+     * @param string FileName
+     * @return boolean
+     */
+    protected function isUploadedFile ($fileName)
+    {
+        return is_uploaded_file($fileName);
     }
 }

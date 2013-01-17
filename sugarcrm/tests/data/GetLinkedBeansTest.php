@@ -23,15 +23,12 @@ require_once("data/BeanFactory.php");
 class GetLinkedBeansTest extends Sugar_PHPUnit_Framework_TestCase
 {
     protected $createdBeans = array();
-    protected $createdFiles = array();
 
     public function setUp()
 	{
-        parent::setUp();
-        SugarTestHelper::setUp("current_user");
-        $GLOBALS['current_user']->setPreference('timezone', "America/Los_Angeles");
-	    $GLOBALS['current_user']->setPreference('datef', "m/d/Y");
-		$GLOBALS['current_user']->setPreference('timef', "h.iA");
+        SugarTestHelper::setUp('current_user');
+        SugarTestHelper::setUp('beanList');
+        SugarTestHelper::setUp('beanFiles');
 	}
 
 	public function tearDown()
@@ -41,13 +38,7 @@ class GetLinkedBeansTest extends Sugar_PHPUnit_Framework_TestCase
             $bean->retrieve($bean->id);
             $bean->mark_deleted($bean->id);
         }
-        foreach($this->createdFiles as $file)
-        {
-            if (is_file($file))
-                unlink($file);
-        }
-
-        parent::tearDown();
+        SugarTestHelper::tearDown();
 	}
 
     public function testGetLinkedBeans()
@@ -98,6 +89,6 @@ class GetLinkedBeansTest extends Sugar_PHPUnit_Framework_TestCase
         $contacts = $account->get_linked_beans('contacts', 'Contact', array(), 0, -1, 0, $where);
         $this->assertEquals(1, count($contacts), 'Assert that we have found the test contact linked to the test account');
     }
-    
+
 }
 ?>

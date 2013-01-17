@@ -35,12 +35,17 @@
                 this.setButtonStates(this.STATE.EDIT);
             }
         }, this);
+        this.context.on("change:record_label", this.setLabel, this);
 
         this.delegateButtonEvents();
 
         if (this.createMode) {
             this.model.isNotEmpty = true;
         }
+    },
+
+    setLabel: function(context, value) {
+        this.$(".record-label[data-name=" + value.field + "]").text(value.label);
     },
 
     delegateButtonEvents: function() {
@@ -329,7 +334,10 @@
         if (field.tplName === "detail" && !close) {
             // Need to call this.fieldClose() in a separate "thread" because it changes to detail view
             // before it sets the value of the textarea in the model.
-            $(document).on("mousedown.record" + field.name, {field: field, cell: cell}, _.debounce(this.fieldClose, 0));
+            var self = this;
+            $(document).on("mousedown.record" + field.name, _.debounce(function(evt) {
+                self.fieldClose.call(self, evt, field, cell);
+            }, 0));
         }
 
         if (close) {
@@ -354,38 +362,36 @@
         field.setMode(viewName);
 
         if (viewName === "edit") {
-            field.$el.on("keydown.record", field.fieldTag, {field: field, cell: cell}, this.handleKeyDown);
+            var self = this;
+            field.$el.on("keydown.record", function(evt) {
+                self.handleKeyDown.call(self, evt, field, cell);
+            });
         } else if (close) {
             field.$el.off("keydown.record");
         }
     },
 
-    fieldClose: function(e) {
-        var self = this,
-            cell = e.data.cell,
-            field = e.data.field,
-            currFieldParent,
-            targetParent;
-
+    fieldClose: function(e, field, cell) {
         if (field.tplName === "detail") {
             return;
         }
 
-        currFieldParent = $(cell);
-        targetParent = self.$(e.target).parents(".record-cell");
-        field.$(field.fieldTag).trigger("change");
+        var self = this,
+            currFieldParent = $(cell),
+            targetParent = self.$(e.target).parents(".record-cell");
 
-        if (currFieldParent[0] == targetParent[0]) {
+        // When mouse clicks the document, it should maintain the edit mode within the following cases
+        // - If mouse is clicked within the same field cell area
+        // - If cursor is focused among the field's input elements
+        // - If current view is blocked by drawer
+        if (currFieldParent[0] == targetParent[0] || currFieldParent.find(":focus").length > 0 || currFieldParent.parents(".drawer-squeezed").length > 0) {
             return;
         }
-
         self.toggleCell(field, cell, true);
     },
 
-    handleKeyDown: function(e) {
+    handleKeyDown: function(e, field, cell) {
         var nextCell,
-            cell = e.data.cell,
-            field = e.data.field,
             index = field.$el.parent().data("index");
 
         if (e.which == 9) { // If tab

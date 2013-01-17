@@ -171,7 +171,8 @@
     	
         if(!commitbtn.hasClass("disabled")){
             var self = this;
-
+            this.disableCommitButton();
+            
             wkstCallBack = function(totalSaved, worksheet){
                 // turn off the event
                 self.context.forecasts.off('forecasts:worksheet:saved', wkstCallBack);
@@ -180,9 +181,7 @@
             };
 
             self.context.forecasts.on('forecasts:worksheet:saved', wkstCallBack);
-
-            this.context.forecasts.trigger("forecasts:worksheet:saveWorksheet", false);
-            savebtn.addClass("disabled");
+            this.context.forecasts.trigger("forecasts:worksheet:saveWorksheet", false);            
     	}        
     },
 

@@ -2967,6 +2967,9 @@ $app_strings = array (
     'ERR_MSSQL_DB_CONTEXT' =>'Changed database context to',
   'ERR_MSSQL_WARNING' =>'Warning:',
 
+    //Import vCard
+    'ERR_VCARD_FILE_PARSE' => 'Failed to Parse vCard format',
+    'ERR_VCARD_FILE_MISSING' =>'vcf file is missing',
     //Meta-Data framework
     'ERR_MISSING_VARDEF_NAME' => 'Warning: field [[field]] does not have a mapped entry in [moduleDir] vardefs.php file',
     'ERR_CANNOT_CREATE_METADATA_FILE' => 'Error: File [[file]] is missing.  Unable to create because no corresponding HTML file was found.',
@@ -3359,7 +3362,7 @@ $app_strings = array (
     'SUGAR_API_EXCEPTION_NOT_AUTHORIZED' => 'Not allowed to edit field {0} in module: {1}',
 
     'LBL_LOGIN_BUTTON_LABEL' => 'Log In',
-    'LBL_TOUR' => 'Activity View Tour',
+    'LBL_ACTIVITY_VIEW_TOUR' => 'Activity View Tour',
     'LNK_TOUR' => 'Tour',
     'LBL_TOP' => 'Top',
     'LBL_LANGUAGE' => 'Language',
@@ -3595,12 +3598,18 @@ $app_strings = array (
     'LBL_PORTAL_ROUTE_ERROR'=>'Issue loading module. Please try again later or contact support.',
     'LBL_PORTAL_OFFLINE' =>'Sorry the application is not available at this time. Please contact the site administrator.',
     'LBL_CONTACT_EDIT_PASSWORD_LNK_TEXT' => 'Change Password',
-    'LBL_PORTAL_PASSWORDS_MUST_MATCH' => 'The passwords must match.',
-    'LBL_PORTAL_PASSWORD_UPDATE_FAILED' => 'Update password failed. Please try again or contact technical support.',
-    'LBL_PORTAL_PASSWORD_VERIFICATION_FAILED' => 'Password entered does not match that in our system.',
-    'LBL_PORTAL_PASSWORD_SUCCESS_CHANGED' => 'Your password has been successfully updated.',
     //end portal
     //END SUGARCRM flav=ent ONLY
+
+    // For passwordmodal widget
+    'LBL_PASSWORD'						=> 'Password',
+    'ERR_ENTER_CONFIRMATION_PASSWORD'	=> 'Please enter your password confirmation.',
+    'ERR_ENTER_NEW_PASSWORD'			=> 'Please enter your new password.',
+    'ERR_ENTER_OLD_PASSWORD'			=> 'Please enter your current password.',
+    'ERR_REENTER_PASSWORDS' => 'The passwords must match.',
+    'ERR_PASSWORD_MISMATCH' => 'Password entered does not match that in our system.',
+    'LBL_NEW_USER_PASSWORD_1' => 'Your password has been successfully updated.',
+    'LBL_CANNOT_SEND_PASSWORD' => 'Cannot send password',
 
     'LBL_PREFERRED_LANGUAGE' => 'Language Preference:',
 

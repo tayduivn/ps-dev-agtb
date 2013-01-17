@@ -33,9 +33,12 @@
             modelSync = function(method, model, options) {
                 var url = _.isFunction(model.url) ? model.url() : model.url;
                 return app.api.call(method, url, model, options);
-            };
+            },
+            settingsModel = this._getConfigModel(options, modelUrl, modelSync);
 
-        options.context.set("model", this._getConfigModel(options, modelUrl, modelSync));
+        settingsModel.fetch();
+
+        options.context.set("model", settingsModel);
 
         app.view.Layout.prototype.initialize.call(this, options);
     },
@@ -53,24 +56,15 @@
      * @return {Object} the model for config
      */
     _getConfigModel: function(options, syncUrl, syncFunction) {
-        var settingsModel = {};
-        if(_.has(options.context,'forecasts') && _.has(options.context.forecasts,'config') ) {
-            // jQuery.extend is used with the `true` parameter to do a deep copy
-            settingsModel = new (Backbone.Model.extend({
-                defaults: $.extend(true, {}, options.context.forecasts.config.attributes),
-                url: syncUrl,
-                sync: syncFunction
-            }))();
-        } else {
-            // if we're not coming in from the Forecasts module (e.g. Admin)
-            // create a new model and use that to change/save
-            settingsModel = new (Backbone.Model.extend({
-                url: syncUrl,
-                sync: syncFunction
-            }))();
-            settingsModel.fetch();
-        }
-        return settingsModel;
+        var SettingsModel = Backbone.Model.extend({
+            url: syncUrl,
+            sync: syncFunction
+        });
+
+        // jQuery.extend is used with the `true` parameter to do a deep copy
+        return (_.has(options.context,'forecasts') && _.has(options.context.forecasts,'config')) ?
+            new SettingsModel($.extend(true, {}, options.context.forecasts.config.attributes)) :
+            new SettingsModel();
     },
 
     /**
