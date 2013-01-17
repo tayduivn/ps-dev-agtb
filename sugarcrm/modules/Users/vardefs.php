@@ -475,9 +475,9 @@ $dictionary['User'] = array(
                     'searchview'  =>false,
                     'editview'    =>false,
                     'quickcreate' =>false,
-//BEGIN SUGARCRM flav=pro ONLY
+                    'wirelesslistview' => false,
+                    'wirelessdetailview' => false,
                     'wirelesseditview' => false,
-//END SUGARCRM flav=pro ONLY
                 ),
 			),
 			'team_link' =>
