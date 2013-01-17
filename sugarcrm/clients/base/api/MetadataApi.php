@@ -590,7 +590,9 @@ class MetadataApi extends SugarApi
     protected function getModules()
     {
         // Loading a standard module list
-        return array_keys($GLOBALS['app_list_strings']['moduleList']);
+        $base = array_keys($GLOBALS['app_list_strings']['moduleList']);
+        // TODO - need to make this more extensible through configuration
+        return array_merge($base, array('Audit'));
     }
 
     /**
