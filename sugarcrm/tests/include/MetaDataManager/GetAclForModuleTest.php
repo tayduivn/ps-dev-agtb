@@ -91,7 +91,7 @@ class GetAclForModuleTest extends Sugar_PHPUnit_Framework_TestCase
     }
 
 
-    // test list only
+    // test view + list only
 
     public function testListOnly()
     {
@@ -101,7 +101,7 @@ class GetAclForModuleTest extends Sugar_PHPUnit_Framework_TestCase
                                 'access' => 'yes',
                                 'admin' => 'no',
                                 'create' => 'no',
-                                'view' => 'no',
+                                'view' => 'yes',
                                 'list' => 'yes',
                                 'edit' => 'no',
                                 'delete' => 'no',
@@ -110,7 +110,7 @@ class GetAclForModuleTest extends Sugar_PHPUnit_Framework_TestCase
                                 'massupdate' => 'no',
                             );
 
-        $role = $this->createRole('UNIT TEST ' . create_guid(), $modules, array('access', 'list', ));
+        $role = $this->createRole('UNIT TEST ' . create_guid(), $modules, array('access', 'view', 'list', ));
 
         if (!($GLOBALS['current_user']->check_role_membership($role->name))) {
             $GLOBALS['current_user']->load_relationship('aclroles');

@@ -90,6 +90,18 @@ class Bug56391Test extends Sugar_PHPUnit_Framework_TestCase
         // because the user is not an admin the user should only have view and list access
         unset($_SESSION['ACL']);
         $expected_result = array(
+                                    'user_name' => array('write' => 'no', 'create' => 'no'),
+                                    'user_hash' => array('write' => 'no', 'create' => 'no', 'read' => 'no'),
+                                    'system_generated_password' => array('write' => 'no', 'create' => 'no', 'read' => 'no'),
+                                    'pwd_last_changed' => array('write' => 'no', 'create' => 'no', 'read' => 'no'),
+                                    'authenticate_id' => array('write' => 'no', 'create' => 'no', 'read' => 'no'),
+                                    'sugar_login' => array('write' => 'no', 'create' => 'no', 'read' => 'no'),
+                                    'external_auth_only' => array('write' => 'no', 'create' => 'no', 'read' => 'no'),
+                                    'status' => array('write' => 'no', 'create' => 'no'),
+                                    'show_on_employees' => array('write' => 'no', 'create' => 'no'),
+                                    'portal_only' => array('write' => 'no', 'create' => 'no'),
+                                    'employee_status' => array('write' => 'no', 'create' => 'no'),
+                                    'is_group' => array('write' => 'no', 'create' => 'no'),
                                     'title' => array( 'write' => 'no', 'create' => 'no', ),
                                     'department' => array( 'write' => 'no', 'create' => 'no', ),
                                     'reports_to_id' => array( 'write' => 'no', 'create' => 'no', ),
@@ -200,13 +212,13 @@ class Bug56391Test extends Sugar_PHPUnit_Framework_TestCase
                                 'view' => 'yes',
                                 'list' => 'yes',
                                 'edit' => 'no',
-                                'delete' => 'yes',
+                                'delete' => 'no',
                                 'import' => 'no',
                                 'export' => 'yes',
                                 'massupdate' => 'no',
                             );
 
-        $role = $this->createRole('UNIT TEST ' . create_guid(), $modules, array('access', 'view', 'list', 'delete', 'export'));
+        $role = $this->createRole('UNIT TEST ' . create_guid(), $modules, array('access', 'view', 'list', 'export'));
 
         if (!($GLOBALS['current_user']->check_role_membership($role->name))) {
             $GLOBALS['current_user']->load_relationship('aclroles');
@@ -257,13 +269,13 @@ class Bug56391Test extends Sugar_PHPUnit_Framework_TestCase
                                 'view' => 'yes',
                                 'list' => 'yes',
                                 'edit' => 'yes',
-                                'delete' => 'yes',
+                                'delete' => 'no',
                                 'import' => 'yes',
                                 'export' => 'yes',
                                 'massupdate' => 'yes',
                             );
 
-        $role = $this->createRole('UNIT TEST ' . create_guid(), $modules, array('access', 'create', 'view', 'list', 'edit','delete','import', 'export', 'massupdate'));
+        $role = $this->createRole('UNIT TEST ' . create_guid(), $modules, array('access', 'create', 'view', 'list', 'edit','import', 'export', 'massupdate'));
 
         $aclField = new ACLField();
         $aclField->setAccessControl('Accounts', $role->id, 'website', -99);
@@ -454,7 +466,7 @@ class Bug56391Test extends Sugar_PHPUnit_Framework_TestCase
                                 'view' => 'yes',
                                 'list' => 'yes',
                                 'edit' => 'no',
-                                'delete' => 'yes',
+                                'delete' => 'no',
                                 'import' => 'no',
                                 'export' => 'yes',
                                 'massupdate' => 'no',
@@ -467,7 +479,7 @@ class Bug56391Test extends Sugar_PHPUnit_Framework_TestCase
         $this->accounts['no_access'] = $account->id;
 
         unset($account);
-        $role = $this->createRole('UNIT TEST ' . create_guid(), $modules, array('access', 'view', 'list', 'edit', 'delete', 'export', 'create'), array('edit','create'));
+        $role = $this->createRole('UNIT TEST ' . create_guid(), $modules, array('access', 'view', 'list', 'edit', 'export', 'create'), array('edit','create'));
 
         if (!($GLOBALS['current_user']->check_role_membership($role->name))) {
             $GLOBALS['current_user']->load_relationship('aclroles');

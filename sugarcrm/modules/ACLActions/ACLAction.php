@@ -86,7 +86,6 @@ class ACLAction  extends SugarBean
         if(empty($action_name)) $action_name = $this->name;
         $children = array();
         $this->findChildActions($action_name, $children);
-        $GLOBALS['log']->fatal($children);
         return $children;
     }
 
@@ -97,7 +96,6 @@ class ACLAction  extends SugarBean
      * @return null
      */
     protected function findChildActions($action_name, &$children) {
-        $actions = $GLOBALS['ACLActions']['module']['actions'];
         foreach($actions AS $name => $params) {
             if(!isset($params['dependency'])) {
                 continue;
