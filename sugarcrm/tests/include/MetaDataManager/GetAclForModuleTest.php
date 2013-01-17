@@ -336,7 +336,6 @@ class GetAclForModuleTest extends Sugar_PHPUnit_Framework_TestCase
 
         $aclField = new ACLField();
         $aclField->setAccessControl('Accounts', $role->id, 'website', 50);
-        ACLField::loadUserFields('Accounts', 'Account', $GLOBALS['current_user']->id, true );
 
         if (!($GLOBALS['current_user']->check_role_membership($role->name))) {
             $GLOBALS['current_user']->load_relationship('aclroles');
@@ -346,6 +345,7 @@ class GetAclForModuleTest extends Sugar_PHPUnit_Framework_TestCase
         $id = $GLOBALS['current_user']->id;
         $GLOBALS['current_user'] = BeanFactory::getBean('Users', $id);
         unset($_SESSION['ACL']);
+        ACLField::loadUserFields('Accounts', 'Account', $GLOBALS['current_user']->id, true );
 
 
         $mm = new MetaDataManager($GLOBALS['current_user']);
@@ -385,7 +385,6 @@ class GetAclForModuleTest extends Sugar_PHPUnit_Framework_TestCase
 
         $aclField = new ACLField();
         $aclField->setAccessControl('Accounts', $role->id, 'website', 10);
-        ACLField::loadUserFields('Accounts', 'Account', $GLOBALS['current_user']->id, true );
 
         if (!($GLOBALS['current_user']->check_role_membership($role->name))) {
             $GLOBALS['current_user']->load_relationship('aclroles');
@@ -395,6 +394,7 @@ class GetAclForModuleTest extends Sugar_PHPUnit_Framework_TestCase
         $id = $GLOBALS['current_user']->id;
         $GLOBALS['current_user'] = BeanFactory::getBean('Users', $id);
         unset($_SESSION['ACL']);
+        ACLField::loadUserFields('Accounts', 'Account', $GLOBALS['current_user']->id, true );
 
 
         $mm = new MetaDataManager($GLOBALS['current_user']);
@@ -430,7 +430,6 @@ class GetAclForModuleTest extends Sugar_PHPUnit_Framework_TestCase
 
         $aclField = new ACLField();
         $aclField->setAccessControl('Accounts', $role->id, 'website', 60);
-        ACLField::loadUserFields('Accounts', 'Account', $GLOBALS['current_user']->id, true );
 
         if (!($GLOBALS['current_user']->check_role_membership($role->name))) {
             $GLOBALS['current_user']->load_relationship('aclroles');
@@ -440,6 +439,7 @@ class GetAclForModuleTest extends Sugar_PHPUnit_Framework_TestCase
         $id = $GLOBALS['current_user']->id;
         $GLOBALS['current_user'] = BeanFactory::getBean('Users', $id);
         unset($_SESSION['ACL']);
+        ACLField::loadUserFields('Accounts', 'Account', $GLOBALS['current_user']->id, true );
 
 
         $mm = new MetaDataManager($GLOBALS['current_user']);
@@ -475,7 +475,6 @@ class GetAclForModuleTest extends Sugar_PHPUnit_Framework_TestCase
 
         $aclField = new ACLField();
         $aclField->setAccessControl('Accounts', $role->id, 'website', 40);
-        ACLField::loadUserFields('Accounts', 'Account', $GLOBALS['current_user']->id, true );
 
         if (!($GLOBALS['current_user']->check_role_membership($role->name))) {
             $GLOBALS['current_user']->load_relationship('aclroles');
@@ -485,6 +484,7 @@ class GetAclForModuleTest extends Sugar_PHPUnit_Framework_TestCase
         $id = $GLOBALS['current_user']->id;
         $GLOBALS['current_user'] = BeanFactory::getBean('Users', $id);
         unset($_SESSION['ACL']);
+        ACLField::loadUserFields('Accounts', 'Account', $GLOBALS['current_user']->id, true );
 
 
         $mm = new MetaDataManager($GLOBALS['current_user']);

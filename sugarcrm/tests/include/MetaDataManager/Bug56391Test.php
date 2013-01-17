@@ -284,7 +284,6 @@ class Bug56391Test extends Sugar_PHPUnit_Framework_TestCase
 
         $aclField = new ACLField();
         $aclField->setAccessControl('Accounts', $role->id, 'website', -99);
-        ACLField::loadUserFields('Accounts', 'Account', $GLOBALS['current_user']->id, true );
 
         if (!($GLOBALS['current_user']->check_role_membership($role->name))) {
             $GLOBALS['current_user']->load_relationship('aclroles');
@@ -294,6 +293,7 @@ class Bug56391Test extends Sugar_PHPUnit_Framework_TestCase
         $id = $GLOBALS['current_user']->id;
         $GLOBALS['current_user'] = BeanFactory::getBean('Users', $id);
         unset($_SESSION['ACL']);
+        ACLField::loadUserFields('Accounts', 'Account', $GLOBALS['current_user']->id, true );
 
 
         $mm = new MetaDataManager($GLOBALS['current_user']);
@@ -467,7 +467,7 @@ class Bug56391Test extends Sugar_PHPUnit_Framework_TestCase
         $expected_bean_result['no_access'] = array(
                                 'access' => 'yes',
                                 'admin' => 'no',
-                                'create' => 'yes',
+                                'create' => 'no',
                                 'view' => 'yes',
                                 'list' => 'yes',
                                 'edit' => 'no',
@@ -571,8 +571,8 @@ class Bug56391Test extends Sugar_PHPUnit_Framework_TestCase
 
         // set the name field as Read Only
         $aclField = new ACLField();
-        $aclField->setAccessControl('Accounts', $role->id, 'name', ACL_READ_OWNER_WRITE);
-        ACLField::loadUserFields('Accounts', 'Account', $GLOBALS['current_user']->id, true );
+        $aclField->setAccessControl('Accounts', $role->id, 'name', 60);
+
 
         if (!($GLOBALS['current_user']->check_role_membership($role->name))) {
             $GLOBALS['current_user']->load_relationship('aclroles');
@@ -582,6 +582,7 @@ class Bug56391Test extends Sugar_PHPUnit_Framework_TestCase
         $id = $GLOBALS['current_user']->id;
         $GLOBALS['current_user'] = BeanFactory::getBean('Users', $id);
         unset($_SESSION['ACL']);
+        ACLField::loadUserFields('Accounts', 'Account', $GLOBALS['current_user']->id, true );
 
 
         $mm = new MetaDataManager($GLOBALS['current_user']);
