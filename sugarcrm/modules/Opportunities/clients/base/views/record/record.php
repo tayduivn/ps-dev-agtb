@@ -125,11 +125,14 @@ $viewdefs['Opportunities']['base']['view']['record'] = array(
             'placeholders' => true,
             'columns' => 2,
             'fields' => array(
-                'campaign_id',
+                'campaign_name',
                 'lead_source',
                 'opportunity_type',
                 'assigned_user_name',
-                'team_id',
+                array(
+                    "type" => "teamset",
+                    "name" => "team_name"
+                ),
                 'next_step',
                 'description',
             )
