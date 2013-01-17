@@ -3542,14 +3542,15 @@ SUGAR.util = function () {
                     if(isIE){
                         //IE on a Mac? Not possible, but let's assign alt anyways for completions sake
                         controlKey = 'Alt+';
-                    }else if(isWK){
+                    }else if(isWK || isFF){
                         //Chrome or safari on a mac
+                        //firefox moved to webkit standard starting with FF14
                         controlKey = 'Ctrl+Opt+';
                     }else if(isOP){
                         //Opera on a mac
                         controlKey = 'Shift+Esc: ';
                     }else{
-                        //default FF and everything else on a mac
+                        //default for everything else on a mac
                         controlKey = 'Ctrl+';
                     }
                 }else{
