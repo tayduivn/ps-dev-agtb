@@ -12,7 +12,8 @@
                 <li class="divider"></li>
                 <li><a tabindex="-1" href="#">Loading recently viewed...</a></li>
                 <li class="divider"></li>
-                <li><a tabindex="-1" href="#">Loading favorites...</a></li>
+                <li class="favoritesAnchor"><a tabindex="-1" href="#">Favorites</a></li>
+                <div class="favoritesContainer">Loading</div>
             </ul>
         </li>
         {{/notEq}}

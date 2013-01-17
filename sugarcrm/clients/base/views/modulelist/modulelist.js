@@ -1,4 +1,7 @@
 ({
+    favRowTemplate: Handlebars.compile(
+      '{{#each models}}<li><a tabindex="-1" class="favoriteLink" href="#{{modelRoute this}}"><i class="icon-favorite active"></i>{{getFieldValue this "name"}}</a></li>{{/each}}'
+    ),
     events: {
         'click #module_list li a': 'onModuleTabClicked',
         'mouseover .dtoggle': 'toggleDropdown'
@@ -15,8 +18,18 @@
             this.layout.on("view:resize", this.resize, this);
         }
     },
-    toggleDropdown: function(event) {
-      this.$(event.target).dropdown('toggle');
+    toggleDropdown:function (event) {
+        this.$(event.target).dropdown('toggle');
+        var self = this;
+        var module = this.$(event.target).parent().data('module');
+        var rowCollection = app.data.createBeanCollection(module);
+        rowCollection.fetch({favorites:true, limit:3, success:function (collection) {
+            self.populateFavorites(module, collection);
+        }});
+
+    },
+    populateFavorites: function(module, records) {
+      this.$('.favoritesContainer').html(this.favRowTemplate(records));
     },
     /**
      * Render list of modules
