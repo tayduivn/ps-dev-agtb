@@ -1048,6 +1048,21 @@ function _mergeCustomAppListStrings($file , $app_list_strings)
     //                  This way, language file can add items to save specific standard codelist from being overwritten
     $exemptDropdowns = array();
 	include($file);
+    
+    // Bug 60008
+    // There is a chance that some app_list_strings were in fact in $GLOBALS['app_list_strings'].
+    // In case of that, the customizations end up being blown away because they 
+    // are written to the global app_list_strings, not the function scope $app_list_strings.
+    // This fixes that. rgonzalez
+    if (!empty($GLOBALS['app_list_strings']) && isset($app_list_strings)) {
+        // array_diff would probably be better here, but it was failing for some reason
+        $globalALS = $GLOBALS['app_list_strings'];
+        foreach ($app_list_strings_original as $k => $v) {
+            unset($globalALS[$k]);
+        }
+        $app_list_strings = array_merge($app_list_strings, $globalALS);
+    }
+    
 	if(empty($app_list_strings) || !is_array($app_list_strings)){
 		return $app_list_strings_original;
 	}
