@@ -99,8 +99,10 @@
             platform: app.config.platform,
             themeName: self.customTheme
         });
-        var url = app.api.buildURL('theme', '', {}, {});
-        app.api.call(method, url, params,
+        var paramsGET   = (method==='read') ? params : {},
+            paramsPOST  = (method==='read') ? {} : params;
+        var url = app.api.buildURL('theme', '', {}, paramsGET);
+        app.api.call(method, url, paramsPOST,
             {
                 success: successCallback ,
                 error: function(error) {
