@@ -194,7 +194,62 @@ class DuplicateCheckApiTest extends Sugar_PHPUnit_Framework_TestCase
                 2,
                 "Filter omits 'first_name' since field is not passed in; should match two Leads",
             ),
+            array(
+                array(
+                    "last_name" => 'DO NOT MATCH ANY LAST NAMES',
+                ),
+                0,
+                "No duplicate matches, should returns 0 results",
+            ),
+            array(
+                array(
+                    "foo_name" => $this->newLeadLastName,
+                ),
+                0,
+                "None of the filter template fields are passed, should return 0 results",
+            ),
         );
+    }
+
+    public function testCheckForDuplicates_EmptyBean()
+    {
+        $args = array(
+            "module" => "FooModule"
+        );
+
+        $this->setExpectedException('SugarApiExceptionInvalidParameter');
+        $this->duplicateCheckApi->checkForDuplicates($this->api, $args);
+    }
+
+    public function testCheckForDuplicates_NotAuthorized()
+    {
+        $args = array(
+            "module" => "Leads"
+        );
+        //Setting access to be denied for read
+        $_SESSION['ACL'] = array();
+        $_SESSION['ACL'][$GLOBALS['current_user']->id][$args['module']]['module']['access']['aclaccess'] = ACL_ALLOW_DISABLED;
+        // reset cached ACLs
+        SugarACL::$acls = array();
+
+        $this->setExpectedException('SugarApiExceptionNotAuthorized');
+        $this->duplicateCheckApi->checkForDuplicates($this->api, $args);
+
+        unset($_SESSION['ACL']);
+    }
+
+    public function testCheckForDuplicates_InvalidParameter()
+    {
+        $args = array(
+            "module" => "Leads"
+        );
+
+        $this->setExpectedException('SugarApiExceptionInvalidParameter');
+        $duplicateCheckApi = $this->getMock('DuplicateCheckApi', array('populateFromApi'));
+        $duplicateCheckApi->expects($this->any())
+                          ->method('populateFromApi')
+                          ->will($this->returnValue(array()));
+        $duplicateCheckApi->checkForDuplicates($this->api, $args);
     }
 }
 

@@ -31,6 +31,7 @@ if (!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 /**
  * Base class for duplicate check strategy implementations
  * @abstract
+ * @api
  */
 abstract class DuplicateCheckStrategy
 {

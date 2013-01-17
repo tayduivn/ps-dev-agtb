@@ -30,6 +30,7 @@ if (!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 /**
  * Bean duplicate check manager
+ * @api
  */
 class BeanDuplicateCheck
 {
