@@ -18,7 +18,7 @@ describe("Url field", function() {
         field = null;
     });
 
-    describe("url", function() {
+    describe("url widget", function() {
         it("should add http if missing on format and leave https and http alone", function() {
             var completeURL = "http://www.google.com";
             var completeHttpsURL = "https://www.google.com";
@@ -30,6 +30,9 @@ describe("Url field", function() {
         });
         it("should add the target window from the field definition to the anchor tag", function(){
             field.model.set(fieldName, "http://www.google.com");
+            delete field.def.link_target;  //Default should be  _blank if link_target undefined
+            field.render();
+            expect(field.$('a').attr('target')).toEqual("_blank");
             field.def.link_target = '_blank';
             field.render();
             expect(field.$('a').attr('target')).toEqual("_blank");

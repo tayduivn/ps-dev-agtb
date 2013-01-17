@@ -27,5 +27,5 @@
  ********************************************************************************/
 }}
 
-<a  rel="tooltip" title="{{#if value}}{{value}}{{/if}}" class="{{#if def.class}}{{def.class}}{{/if}}" {{#if def.link_target}}target="{{def.link_target}}"{{/if}} href="{{#if value}}{{value}}{{else}}javascript:void(0){{/if}}">{{#if value}}{{value}}{{/if}}</a>
+<a rel="tooltip" title="{{#if value}}{{value}}{{/if}}" {{#if def.css_class}}class="{{def.css_class}}"{{/if}} {{#if def.link_target}}target="{{def.link_target}}"{{/if}} href="{{#if value}}{{value}}{{else}}javascript:void(0){{/if}}">{{#if value}}{{value}}{{/if}}</a>
 
