@@ -43,7 +43,7 @@ $viewdefs['Opportunities']['base']['view']['baselist'] = array(
             'fields' => array(
                 array(
                     'name' => 'name',
-                    'width' =>  49,
+                    'width' =>  30,
                     'link' => true,
                     'label' => 'LBL_LIST_OPPORTUNITY_NAME',
                     'enabled' => true,
@@ -51,7 +51,7 @@ $viewdefs['Opportunities']['base']['view']['baselist'] = array(
                 ),
                 array(
                     'name' => 'account_name',
-                    'width' =>  '15%',
+                    'width' =>  20,
                     'link'    => true,
                     'label' => 'LBL_LIST_ACCOUNT_NAME',
                     'enabled' => true,
@@ -65,7 +65,7 @@ $viewdefs['Opportunities']['base']['view']['baselist'] = array(
                 ),
                 array (
                     'name' => 'amount',
-                    'width' => '10%',
+                    'width' => 10,
                     'label' => 'LBL_LIST_AMOUNT',
                     'enabled' => true,
                     'default' => true,
