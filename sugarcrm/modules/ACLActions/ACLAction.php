@@ -96,6 +96,7 @@ class ACLAction  extends SugarBean
      * @return null
      */
     protected function findChildActions($action_name, &$children) {
+        $actions = $GLOBALS['ACLActions']['module']['actions'];
         foreach($actions AS $name => $params) {
             if(!isset($params['dependency'])) {
                 continue;

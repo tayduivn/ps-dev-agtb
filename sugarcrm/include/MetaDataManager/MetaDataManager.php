@@ -310,7 +310,7 @@ class MetaDataManager {
             
             // if the bean is not set, or a new bean.. set the owner override
             // this will allow fields marked Owner to pass through ok.
-            if($bean == false || empty($bean->id) || (isset($bean->new_with_id) && $bean->new_with_id == true)) {
+            if($bean == false || empty($bean->id) || (!empty($bean->new_with_id))) {
                 $context['owner_override'] = true;
             }
 
@@ -338,11 +338,13 @@ class MetaDataManager {
                 // for instance assigned_user_id is skipped in getAvailableFields, thus making the acl's look odd if Assigned User has ACL's
                 // only assigned_user_name is returned which is a derived ["fake"] field.  We really need assigned_user_id to return as well.
                 if(empty($GLOBALS['dictionary'][$module]['fields'])){
-                    $mod = BeanFactory::newBean($module);
-                    if(empty($mod->acl_fields)) {
+                    if($bean === false) {
+                        $bean = BeanFactory::newBean($module);
+                    }
+                    if(empty($bean->acl_fields)) {
                         $fieldsAcl = array();
                     } else {
-                        $fieldsAcl = $mod->field_defs;
+                        $fieldsAcl = $bean->field_defs;
                     }
                 } else{
                     $fieldsAcl = $GLOBALS['dictionary'][$module]['fields'];
@@ -358,18 +360,19 @@ class MetaDataManager {
                         case SugarACL::ACL_READ_WRITE:
                             // Default, don't need to send anything down
                             break;
-                        case SugarACL::ACL_READ_ONLY:    
+                        case SugarACL::ACL_READ_ONLY:
                             $outputAcl['fields'][$field]['write'] = 'no';
                             $outputAcl['fields'][$field]['create'] = 'no';
                             break;
                         case SugarACL::ACL_CREATE_ONLY:
                             $outputAcl['fields'][$field]['write'] = 'no';
-                            $outputAcl['fields'][$field]['read'] = 'no';                            
+                            $outputAcl['fields'][$field]['read'] = 'no';
+                            break;
                         case SugarACL::ACL_WRITE_ONLY:
                             $outputAcl['fields'][$field]['read'] = 'no';
                             break;
                         case SugarACL::ACL_NO_ACCESS:
-                        default:              
+                        default:
                             $outputAcl['fields'][$field]['read'] = 'no';
                             $outputAcl['fields'][$field]['write'] = 'no';
                             $outputAcl['fields'][$field]['create'] = 'no';

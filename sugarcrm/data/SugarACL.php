@@ -35,8 +35,7 @@ class SugarACL
     // matches ACLField::hasAccess returns for compatibility
     const ACL_NO_ACCESS = 0;
     const ACL_READ_ONLY = 1;
-    const ACL_WRITE_ONLY = 2;
-    const ACL_CREATE_ONLY = 3;
+    const ACL_CREATE_ONLY = 2;
     const ACL_READ_WRITE = 4;
 
 

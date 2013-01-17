@@ -174,6 +174,7 @@ class SugarACLStatic extends SugarACLStrategy
             case 'import':
             case 'list':
                 return ACLController::checkAccessInternal($module, $action, true);
+            case 'create':
             case 'delete':
             case 'view':
             case 'export':
