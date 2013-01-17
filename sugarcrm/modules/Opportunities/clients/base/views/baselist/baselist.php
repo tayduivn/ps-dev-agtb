@@ -105,6 +105,7 @@ $viewdefs['Opportunities']['base']['view']['baselist'] = array(
 //BEGIN SUGARCRM flav=pro ONLY
                 array(
                     'name' => 'team_name',
+                    'type' => 'teamset',
                     'width' => 5,
                     'label' => 'LBL_LIST_TEAM',
                     'default' => false
