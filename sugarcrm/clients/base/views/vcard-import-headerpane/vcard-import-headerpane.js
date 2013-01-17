@@ -25,23 +25,21 @@
  * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 ({
-    initialize: function(options) {
-        app.view.View.prototype.initialize.call(this, options);
-
-        if (this.meta && this.meta.title) {
-            this.title = this.meta.title;
-        }
-
-        this.context.on("headerpane:title",function(title){
-            this.title = title;
-            this.render();
-        }, this);
+    extendsFrom: 'HeaderpaneView',
+    events:{
+        'click [name=vcard_finish_button]': 'initiateFinish',
+        'click [name=vcard_cancel_button]': 'initiateCancel'
     },
 
-    _renderHtml: function() {
-        var title = this.title || this.module;
-        this.title = app.lang.get(title, this.module);
+    initiateFinish: function() {
+        this.context.trigger('vcard:import:finish');
+    },
 
-        app.view.View.prototype._renderHtml.call(this);
+    initiateCancel : function() {
+        this.context.trigger("drawer:hide");
+        if (this.context.parent) {
+            this.context.parent.trigger("drawer:hide");
+        }
+
     }
 })

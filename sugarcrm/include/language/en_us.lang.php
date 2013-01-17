@@ -2967,6 +2967,9 @@ $app_strings = array (
     'ERR_MSSQL_DB_CONTEXT' =>'Changed database context to',
   'ERR_MSSQL_WARNING' =>'Warning:',
 
+    //Import vCard
+    'ERR_VCARD_FILE_PARSE' => 'Failed to Parse vCard format',
+    'ERR_VCARD_FILE_MISSING' =>'vcf file is missing',
     //Meta-Data framework
     'ERR_MISSING_VARDEF_NAME' => 'Warning: field [[field]] does not have a mapped entry in [moduleDir] vardefs.php file',
     'ERR_CANNOT_CREATE_METADATA_FILE' => 'Error: File [[file]] is missing.  Unable to create because no corresponding HTML file was found.',

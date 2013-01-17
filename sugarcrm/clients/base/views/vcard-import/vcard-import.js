@@ -27,21 +27,29 @@
 ({
     initialize: function(options) {
         app.view.View.prototype.initialize.call(this, options);
-
-        if (this.meta && this.meta.title) {
-            this.title = this.meta.title;
-        }
-
-        this.context.on("headerpane:title",function(title){
-            this.title = title;
-            this.render();
-        }, this);
+        this.fallbackFieldTemplate = 'edit';
+        this.context.off("vcard:import:finish", null, this);
+        this.context.on("vcard:import:finish", this.importVCard, this);
     },
 
-    _renderHtml: function() {
-        var title = this.title || this.module;
-        this.title = app.lang.get(title, this.module);
+    importVCard: function() {
+        var self = this,
+            vcardFile = $('[name=vcard_import]');
 
-        app.view.View.prototype._renderHtml.call(this);
+        if (_.isEmpty(vcardFile.val())) {
+            app.alert.show('error_validation_vcard', {level:'error', title: app.lang.getAppString('LBL_EMPTY_VCARD'), messages: app.lang.getAppString('LBL_EMPTY_VCARD'), autoClose: true});
+        }
+
+        app.file.checkFileFieldsAndProcessUpload(self.model, {
+            success: function (data) {
+                var route = app.router.buildRoute(self.module, data.vcard_import, 'record');
+                app.router.navigate(route, {trigger: true});
+                app.alert.show('vcard-import-saved', {
+                    level: 'success',
+                    messages: app.lang.getAppString('LBL_IMPORT_VCARD_SUCCESS', self.module),
+                    autoClose: true
+                });
+            }
+        });
     }
 })

@@ -27,35 +27,26 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * governing these rights and limitations under the License.  Portions created
  * by SugarCRM are Copyright (C) 2006 SugarCRM, Inc.; All Rights Reserved.
  */
-$layout = MetaDataManager::getLayout('SideBarLayout');
-$layout->push('main', array(
-    'layout' => array(
-        'type' => 'drawer',
-        'showEvent' => array(
-            "delegate" => true,
-            "event" => "click [name=create_button]",
-        ),
-        'components' => array(
-            array(
-                'layout' => 'create',
-                'context' => array(
-                    'create' => true,
-                ),
-            )
-        )
-    ),
-));
 
-$layout->push('main', array(
-        'layout' => array(
-            'type' => 'drawer',
-            'showEvent' => array(
-                "drawer:vcard:import:fire"
-            )
+$viewdefs['base']['view']['vcard-import-headerpane'] = array(
+    'type' => 'headerpane',
+    'title' => "LBL_IMPORT_VCARD",
+    'buttons' => array(
+        array(
+            'name'    => 'vcard_cancel_button',
+            'type'    => 'button',
+            'label'   => 'LBL_CANCEL_BUTTON_LABEL',
+            'css_class' => 'btn-invisible btn-link',
         ),
-    ));
-$layout->push('main', array('view' => 'headerpane'));
-$layout->push('main', array('layout' => 'list'));
-$layout->push('side', array('layout' => 'list-sidebar'));
-$layout->push('preview', array('layout' => 'preview'));
-$viewdefs['base']['layout']['records'] = $layout->getLayout();
+        array(
+            'name'    => 'vcard_finish_button',
+            'type'    => 'button',
+            'label'   => 'LBL_CREATE_BUTTON_LABEL',
+            'css_class' => 'btn-primary',
+        ),
+        array(
+            'name' => 'sidebar_toggle',
+            'type' => 'sidebartoggle',
+        ),
+    ),
+);
