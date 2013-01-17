@@ -45,6 +45,7 @@ class DuplicateCheckApi extends SugarApi
 
     /**
      * Using the appropriate duplicate check service, search for duplicates in the system
+     * TODO: we should refactor some of the bean loading in SugarApi so we can move some of this logic there
      *
      * @param ServiceBase $api
      * @param array $args
@@ -53,15 +54,21 @@ class DuplicateCheckApi extends SugarApi
     {
         //create a new bean & check ACLs
         $bean = BeanFactory::newBean($args['module']);
+
+        $this->handleEmptyBean($bean);
+
         if (!$bean->ACLAccess('read')) {
             throw new SugarApiExceptionNotAuthorized('No access to read records for module: '.$args['module']);
         }
 
         //populate bean
-        $errors = ApiHelper::getHelper($api,$bean)->populateFromApi($bean,$args);
-        if ( $errors !== true ) {
-            throw new SugarApiExceptionInvalidParameter('There were validation errors on the submitted data. Record was not saved.');
+        $errors = $this->populateFromApi($api, $bean, $args);
+        if ($errors !== true) {
+            $displayErrors = print_r($errors, true);
+            throw new SugarApiExceptionInvalidParameter("Unable to run duplicate check. There were validation errors on the submitted data: $displayErrors");
         }
+
+        $this->handleEmptyBean($bean);
 
         //retrieve possible duplicates
         $results = $bean->findDuplicates();
@@ -72,5 +79,17 @@ class DuplicateCheckApi extends SugarApi
             return array();
         }
 
+    }
+
+    protected function handleEmptyBean($bean)
+    {
+        if (empty($bean)) {
+            throw new SugarApiExceptionInvalidParameter('Unable to run duplicate check. Bean was empty after attempting to populate from API');
+        }
+    }
+
+    protected function populateFromApi($api, $bean, $args)
+    {
+        return ApiHelper::getHelper($api,$bean)->populateFromApi($bean,$args);
     }
 }

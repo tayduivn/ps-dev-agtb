@@ -101,6 +101,7 @@ $mod_strings = array (
     'LBL_HOME_PHONE' => 'Home:',
     'LBL_ID' => 'ID:',
     'LBL_IMPORT_VCARD' => 'Import vCard',
+    'LBL_IMPORT_VCARD_SUCCESS' => 'Contact from vCard created succesfully',
     'LBL_VCARD' => 'vCard',
     'LBL_IMPORT_VCARDTEXT' => 'Automatically create a new contact by importing a vCard from your file system.',
     'LBL_INVALID_EMAIL'=>'Invalid Email:',

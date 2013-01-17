@@ -60,13 +60,17 @@
         // Load the profile
         app.router.route("profile", "profile", function() {
             app.controller.loadView({
-                layout: "profile"
+                layout: "profile",
+                module: "Contacts",
+                modelId: app.user.get("id")
             });
         });
         // Loadds profile edit
         app.router.route("profile/edit", "profileedit", function() {
             app.controller.loadView({
-                layout: "profileedit"
+                layout: "profile-edit",
+                module: "Contacts",
+                modelId: app.user.get("id")
             });
         });
     });

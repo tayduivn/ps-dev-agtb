@@ -28,7 +28,7 @@
 *}
 <link rel="stylesheet" type="text/css" href="{$css_url}" />
 <div class="content" id="forecasts">
-    <div class="alert-top">
+    <div id="alerts" class="alert-top">
         <div class="alert alert-process">
             <strong>Loading</strong>
             <div class="loading">
@@ -82,19 +82,22 @@
                     //keyValueStore: app.sugarAuthStore, //override the keyValueStore
                     callback: function(app) {
                         var url = app.api.buildURL("Forecasts/init");
-                        app.api.call('GET', url, null, {success: function(forecastData) {
-                            // get default selections for filter and ranges
-                            app.defaultSelections = forecastData.defaultSelections;
-                            app.initData = forecastData.initData;
-                            app.user.set(app.initData.selectedUser);
+                        app.api.call('GET', url, null, {
+                            success: function(forecastData) {
+                                // get default selections for filter and ranges
+                                app.defaultSelections = forecastData.defaultSelections;
+                                app.initData = forecastData.initData;
+                                app.user.set(app.initData.selectedUser);
 
-                            if(forecastData.initData.forecasts_setup == 0) {
-                                window.location.hash = "#config";
-                            }
-                            // resize the top menu after the layout has been initialized
-                            SUGAR.themes.resizeMenu();
-                            app.start();
-                        }});
+                                if(forecastData.initData.forecasts_setup == 0) {
+                                    window.location.hash = "#config";
+                                }
+                                // resize the top menu after the layout has been initialized
+                                SUGAR.themes.resizeMenu();
+                                app.start();
+                            },
+                            error:  app.error.handleForecastAPIError
+                        });
                     }
                 });
                 return app;

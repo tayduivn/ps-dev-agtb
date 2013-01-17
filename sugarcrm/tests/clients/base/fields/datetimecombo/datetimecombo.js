@@ -89,16 +89,19 @@ describe("datetimecombo field", function() {
 
     describe("datetimecombo test with 'H:i' (24 hour) time format", function() {
         it("should format the date time combo according to date prefs", function() {
-            var expectedValue, jsDate, unformatedValue, month, day, year;
+            var stubVerifyDateString, expectedValue, jsDate, unformatedValue, month, day, year;
             jsDate = new Date('2012-04-09T09:50:58Z');
+            stubVerifyDateString = sinon.stub(field, '_verifyDateString', function() { return true; });
+
             unformatedValue = jsDate.toISOString();
             expect(field.format(unformatedValue).date).toEqual('04/09/2012');
             expect(field.dateValue).toEqual('04/09/2012');
             expect(field.timeValue).toEqual("03:00");
         });
         it("should format the date time combo according to time prefs", function() {
-            var expectedValue, jsDate, unformatedValue, year, month, day, hours;
+            var expectedValue, stubVerifyDateString, jsDate, unformatedValue, year, month, day, hours;
             jsDate = new Date('2012-04-09T09:50:58Z');
+            stubVerifyDateString = sinon.stub(field, '_verifyDateString', function() { return true; });
             unformatedValue = jsDate.toISOString();
             month = forceTwoDigits(jsDate.getMonth() + 1 + '');
             day   = forceTwoDigits(jsDate.getDate() + '');
@@ -143,10 +146,12 @@ describe("datetimecombo field", function() {
             field.view.name = originalType;
         });
         it("should convert 00am to 12am if on 12 hour time format", function() {
-            var jsDate, unformatedValue, hours;
+            var jsDate, stubVerifyDateString, unformatedValue, hours;
             field.userTimePrefs = 'H:ia';  // 12 hrs
             // the field sets this based on h or H in timepref, but don't want to trigger _render ;=)
             field.showAmPm = true;
+            stubVerifyDateString = sinon.stub(field, '_verifyDateString', function() { return true; });
+
             jsDate = new Date("September 12, 1970");
             jsDate.setHours(0,0,0,0);
             hours = forceTwoDigits(jsDate.getHours() + '');
@@ -157,9 +162,10 @@ describe("datetimecombo field", function() {
             expect(field.format(unformatedValue).time).not.toEqual('00:00');
         });
         it("should NOT convert 00am to 12am if on 24 hour time format", function() {
-            var jsDate, unformatedValue;
+            var jsDate, stubVerifyDateString, unformatedValue;
             // the field sets this based on h or H in timepref, but don't want to trigger _render
             field.showAmPm = false;
+            stubVerifyDateString = sinon.stub(field, '_verifyDateString', function() { return true; });
             jsDate = new Date("September 12, 1970 00:00:00");
             unformatedValue = jsDate.toISOString();
             expect(field.format(unformatedValue).time).toEqual('00:00');
@@ -176,8 +182,10 @@ describe("datetimecombo field", function() {
         });
 
         it("should not perform any rounding unless on edit view", function() {
-            var jsDate, unformatedValue, hours, minutes;
+            var jsDate, stubVerifyDateString, unformatedValue, hours, minutes;
             jsDate = new Date('2012-04-09T09:50:58Z');
+            stubVerifyDateString = sinon.stub(field, '_verifyDateString', function() { return true; });
+
             unformatedValue = jsDate.toISOString();
             // don't round minutes up (so don't round up 50 here to 00) if non-edit view 
             hours   = forceTwoDigits(jsDate.getHours() + '');

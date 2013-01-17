@@ -1,4 +1,4 @@
-{{!
+<?php
 /*********************************************************************************
  * The contents of this file are subject to the SugarCRM Master Subscription
  * Agreement (""License"") which can be viewed at
@@ -25,29 +25,47 @@
  * governing these rights and limitations under the License.  Portions created
  * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
-}}
-<div class="modal hide">
-    <div class="modal-header">
-        <a class="close" data-dismiss="modal"><i class="icon-remove"></i></a>
-        <h3>{{str "LBL_PASSWORD_CHANGE_FORM_TITLE" context.attributes.module}}</h3>
-    </div>
-    <div class="modal-body">
-        <form class="form-horizontal" method="POST">
-            <fieldset>
-                {{#each meta.panels}}
-                {{#each fields}}
-                <div class="row-fluid control-group">
-                    <div class="span4">{{str label ../../context.attributes.module}}</div>
-                    <div class="span6">{{field ../../this ../../context.attributes.contactModel}}</div>
-                </div>
-                {{/each}}
-                {{/each}}
-            </fieldset>
-        </form>
-    </div>
-    <div class="modal-footer">
-        {{#each meta.buttons}}
-        {{field ../this ../contactModel}}
-        {{/each}}
-    </div>
-</div>
+
+$viewdefs['Forecasts']['base']['layout']['records'] = array(
+    'type' => 'records',
+    'components' => array(
+        array(
+            'view' => 'forecastsChart',
+        ),
+        array(
+            'view' => 'forecastsProgress',
+        ),
+        array(
+            'view' => 'forecastsWorksheet',
+            'contextCollection' => array(
+                'module' => 'ForecastWorksheets',
+                'name' => 'Worksheet'
+            ),
+        ),
+        array(
+            'view' => 'forecastsWorksheetTotals'
+        ),
+        array(
+            'view' => 'forecastsWorksheetManager',
+            'contextCollection' => array(
+                'module' => 'ForecastManagerWorksheets',
+                'name' => 'WorksheetManager'
+            ),
+        ),
+        array(
+            'view' => 'forecastsWorksheetManagerTotals'
+        ),
+        array(
+            'view' => 'forecastsTitle',
+        ),
+        array(
+            'view' => 'forecastsTree',
+        ),
+        array(
+            'view' => 'forecastsCommitButtons',
+        ),
+        array(
+            'layout' => 'info'
+        ),
+    ),
+);

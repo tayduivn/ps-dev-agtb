@@ -60,8 +60,13 @@ class FilterDuplicateCheck extends DuplicateCheckStrategy
      */
     public function findDuplicates()
     {
+        if (empty($this->filterTemplate)) {
+            return null;
+        }
+
         //build filter to hand off to the FilterApi
         $filter = $this->buildDupeCheckFilter($this->filterTemplate);
+
         if (!empty($this->bean->id)) {
             $filter = $this->addFilterForEdits($filter[0], $this->bean->id);
         }
@@ -131,7 +136,7 @@ class FilterDuplicateCheck extends DuplicateCheckStrategy
     protected function getIncomingFieldFromPlaceholder($filterValue)
     {
         if (strpos($filterValue, self::FIELD_PLACEHOLDER) === 0) {
-            return str_replace(self::FIELD_PLACEHOLDER, '', $filterValue);
+            return substr($filterValue, 1);
         }
         return false;
     }
@@ -152,11 +157,15 @@ class FilterDuplicateCheck extends DuplicateCheckStrategy
     /**
      * Rank the duplicates returned from the Filter API based on the ranking field metadata from the vardef
      *
-     * @param array $duplicates
+     * @param array $results
      * @return array
      */
     protected function rankAndSortDuplicates($results)
     {
+        if (empty($this->rankingFields)) {
+            return $results;
+        }
+
         $duplicates = $results['records'];
         //calculate rank of each duplicate based on rank field metadata
         $startingFieldWeight = count($this->rankingFields);
