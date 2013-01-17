@@ -110,7 +110,13 @@ class SugarCurrency
         if(empty($fromRate) || empty($toRate)) {
             return $amount;
         }
-        return round($amount / $fromRate * $toRate, $precision);
+        // do division first with higher precision
+        // so our final multiplication will be accurate
+        return SugarMath::init($amount, $precision + 4)
+            ->div($fromRate)
+            ->setScale($precision)
+            ->mul($toRate)
+            ->result();
     }
 
     /**

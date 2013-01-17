@@ -442,13 +442,13 @@ class Product extends SugarBean {
 			$userCurrency = BeanFactory::getBean('Currencies', $current_user->getPreference('currency'));
 			// If the product currency and the user default currency are different, convert to users currency
 			if ($userCurrency->id != $currency->id) {
-				$this->cost_price = $userCurrency->convertFromDollar($currency->convertToDollar($this->cost_price));
-				$this->discount_price = $userCurrency->convertFromDollar($currency->convertToDollar($this->discount_price));
-				$this->list_price = $userCurrency->convertFromDollar($currency->convertToDollar($this->list_price));
-				$this->deal_calc = $userCurrency->convertFromDollar($currency->convertToDollar($this->deal_calc));
+				$this->cost_price = $userCurrency->convertFromBase($currency->convertToBase($this->cost_price));
+				$this->discount_price = $userCurrency->convertFromBase($currency->convertToBase($this->discount_price));
+				$this->list_price = $userCurrency->convertFromBase($currency->convertToBase($this->list_price));
+				$this->deal_calc = $userCurrency->convertFromBase($currency->convertToBase($this->deal_calc));
 				
 				if (!(isset($this->discount_select) && $this->discount_select)) {
-					$this->discount_amount = $userCurrency->convertFromDollar($currency->convertToDollar($this->discount_amount));
+					$this->discount_amount = $userCurrency->convertFromBase($currency->convertToBase($this->discount_amount));
 				}
 				
 				$this->currency_symbol = $userCurrency->symbol;
@@ -529,26 +529,26 @@ class Product extends SugarBean {
 
 		//US DOLLAR
 		if(isset($this->discount_price) && (!empty($this->discount_price) || $this->discount_price == '0')) {
-			$this->discount_usdollar = $currency->convertToDollar($this->discount_price);
+			$this->discount_usdollar = $currency->convertToBase($this->discount_price);
 		}
 		if(isset($this->list_price) && (!empty($this->list_price) || $this->list_price == '0')) {
-			$this->list_usdollar = $currency->convertToDollar($this->list_price);
+			$this->list_usdollar = $currency->convertToBase($this->list_price);
 		}
 		if(isset($this->cost_price) && (!empty($this->cost_price) || $this->cost_price == '0')) {
-			$this->cost_usdollar = $currency->convertToDollar($this->cost_price);
+			$this->cost_usdollar = $currency->convertToBase($this->cost_price);
 		}
 		if(isset($this->book_value) && (!empty($this->book_value) || $this->book_value == '0')) {
-			$this->book_value_usdollar = $currency->convertToDollar($this->book_value);
+			$this->book_value_usdollar = $currency->convertToBase($this->book_value);
 		}
 	    if(isset($this->deal_calc) && (!empty($this->deal_calc) || $this->deal_calc == '0')) {
-            $this->deal_calc_usdollar = $currency->convertToDollar($this->deal_calc);
+            $this->deal_calc_usdollar = $currency->convertToBase($this->deal_calc);
         }
 	    if(isset($this->discount_amount) && (!empty($this->discount_amount) || $this->discount_amount == '0')) {
             if (isset($this->discount_select) && $this->discount_select) {
             	$this->discount_amount_usdollar = $this->discount_amount;
             }
             else {
-	    	  	$this->discount_amount_usdollar = $currency->convertToDollar($this->discount_amount);
+	    	  	$this->discount_amount_usdollar = $currency->convertToBase($this->discount_amount);
             }
         }
 		$id = parent::save($check_notify);
@@ -559,7 +559,7 @@ class Product extends SugarBean {
 			$query = "select * from quotes INNER JOIN taxrates on quotes.taxrate_id=taxrates.id where quotes.id='".$this->quote_id."' and quotes.deleted=0 and taxrates.deleted=0";
 			$result = $this->db->query($query);
 			if( $row =  $this->db->fetchByAssoc($result)){
-				$tax_rate = $row['value']/100;
+				$tax_rate = SugarMath::init()->exp('?/?',array($row['value'],100));
 				$shipping_usdollar = $row['shipping_usdollar'];
 			}
 			$query = "select product_bundles.id as bundle_id from product_bundle_product" .
@@ -590,24 +590,35 @@ class Product extends SugarBean {
 					    $subtotal_usdollar += $product->discount_usdollar * $product->quantity;
 
 					     if (isset($this->discount_select) && $this->discount_select){
-					       $deal_tot_usdollar += ($product->discount_amount / 100) * $product->discount_usdollar * $product->quantity;
+					       //$deal_tot_usdollar += ($product->discount_amount / 100) * $product->discount_usdollar * $product->quantity;
+                           $deal_tot_usdollar += SugarMath::init(0,6)->exp('(? / ?) * ? * ?',array(
+                               $product->discount_amount,
+                               100,
+                               $product->discount_usdollar,
+                               $product->quantity
+                           ));
 					    }
 					    else{
 					       $deal_tot_usdollar += $product->discount_amount;
 					    }
 					    $new_sub_usdollar = $subtotal_usdollar - $deal_tot_usdollar;
 					    if ($product->tax_class == 'Taxable') {
-					    	$tax_usdollar += ($product->discount_usdollar * $product->quantity) * $tax_rate;
+					    	//$tax_usdollar += ($product->discount_usdollar * $product->quantity) * $tax_rate;
+                            $tax_usdollar += SugarMath::init(0,6)->exp('? * ? * ?', array(
+                               $product->discount_usdollar,
+                               $product->quantity,
+                               $tax_rate
+                            ));
 
 					    }
 						$row =  $this->db->fetchByAssoc($result);
 					}
 				    $total_usdollar += $new_sub_usdollar + $tax_usdollar + $shipping_usdollar;
-				    $total = $currency->convertFromDollar($total_usdollar);
-				    $subtotal = $currency->convertFromDollar($subtotal_usdollar);
-				    $new_sub = $currency->convertFromDollar($new_sub_usdollar);
-				    $tax = $currency->convertFromDollar($tax_usdollar);
-				    $deal_tot = $currency->convertFromDollar($deal_tot_usdollar);
+				    $total = $currency->convertFromBase($total_usdollar);
+				    $subtotal = $currency->convertFromBase($subtotal_usdollar);
+				    $new_sub = $currency->convertFromBase($new_sub_usdollar);
+				    $tax = $currency->convertFromBase($tax_usdollar);
+				    $deal_tot = $currency->convertFromBase($deal_tot_usdollar);
 					$updateQuery = "update product_bundles set tax=".$tax.",tax_usdollar=".$tax_usdollar.",total=".$total.",deal_tot_usdollar=".$deal_tot_usdollar.",deal_tot=".$deal_tot.",total_usdollar=".$total_usdollar.
 					 ",new_sub=".$new_sub.",new_sub_usdollar=".$new_sub_usdollar.",subtotal=".$subtotal.
 					 ",subtotal_usdollar=".$subtotal_usdollar." where id='".$bundle_id."'";
@@ -632,13 +643,13 @@ class Product extends SugarBean {
 							$row =  $this->db->fetchByAssoc($result);
 						}*/
 					    $total_usdollar += $row['new_sub_usdollar'] + $row['tax_usdollar'] + $row['shipping_usdollar'];
-					    $total = $currency->convertFromDollar($total_usdollar);
-					    $subtotal = $currency->convertFromDollar($row['subtotal_usdollar']);
+					    $total = $currency->convertFromBase($total_usdollar);
+					    $subtotal = $currency->convertFromBase($row['subtotal_usdollar']);
 					    $deal_tot_usdollar = $row['deal_tot_usdollar'];
-					    $deal_tot = $currency->convertFromDollar($deal_tot_usdollar);
+					    $deal_tot = $currency->convertFromBase($deal_tot_usdollar);
 					    $new_sub_usdollar = $row['new_sub_usdollar'];
-					    $new_sub = $currency->convertFromDollar($new_sub_usdollar);
-					    $tax = $currency->convertFromDollar($row['tax_usdollar']);
+					    $new_sub = $currency->convertFromBase($new_sub_usdollar);
+					    $tax = $currency->convertFromBase($row['tax_usdollar']);
 						$updateQuery = "update quotes set tax=".$tax.",tax_usdollar=".$tax_usdollar.",total=".$total.",total_usdollar=".$total_usdollar.",deal_tot=".$deal_tot.",deal_tot_usdollar=".$deal_tot_usdollar.",new_sub=".$new_sub.",new_sub_usdollar=".$new_sub_usdollar.",subtotal=".$subtotal.
 						 ",subtotal_usdollar=".$subtotal_usdollar." where id='".$this->quote_id."'";
 						$result = $this->db->query($updateQuery);
