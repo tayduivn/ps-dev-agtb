@@ -1,10 +1,14 @@
 describe("Url field", function() {
 
-    var app, field;
+    var app, field, fieldName;
 
     beforeEach(function() {
         app = SugarTest.app;
-        field = SugarTest.createField("base","url", "url", "edit");
+        SugarTest.testMetadata.init();
+        template = SugarTest.loadHandlebarsTemplate("url", "field", "base", "detail");
+        SugarTest.testMetadata.set();
+        fieldName = "url";
+        field = SugarTest.createField("base", fieldName, "url", "detail");
     });
 
     afterEach(function() {
@@ -22,6 +26,20 @@ describe("Url field", function() {
             expect(field.format(completeURL)).toEqual(completeURL);
             expect(field.format(completeHttpsURL)).toEqual(completeHttpsURL);
             expect(field.format(incompURL)).toEqual(completeURL);
+            expect(field.format("ftp:/ftp.example.edu/")).toEqual("http://ftp:/ftp.example.edu/");
+        });
+        it("should add the target window from the field definition to the anchor tag", function(){
+            field.model.set(fieldName, "http://www.google.com");
+            field.def.link_target = '_blank';
+            field.render();
+            expect(field.$('a').attr('target')).toEqual("_blank");
+            field.def.link_target = '_self';
+            field.render();
+            expect(field.$('a').attr('target')).toEqual("_self");
+        });
+        it("should support URLs with schemes other than HTTP/HTTPS", function(){
+            expect(field.format("ftp://ftp.example.edu/")).toEqual("ftp://ftp.example.edu/");
+            expect(field.format("mms://ftp.example.edu/")).toEqual("mms://ftp.example.edu/");
         });
     });
 });
