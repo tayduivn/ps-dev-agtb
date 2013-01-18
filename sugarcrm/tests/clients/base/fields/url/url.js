@@ -40,6 +40,13 @@ describe("Url field", function() {
             field.render();
             expect(field.$('a').attr('target')).toEqual("_self");
         });
+        it("should support setting CSS class on HTML anchor", function(){
+            field.model.set(fieldName, "http://www.google.com");
+            field.def.css_class = "test";
+            field.render();
+            expect(field.getFieldElement()[0].tagName).toEqual("A");
+            expect(field.getFieldElement().is(".test")).toBe(true);
+        });
         it("should support URLs with schemes other than HTTP/HTTPS", function(){
             expect(field.format("ftp://ftp.example.edu/")).toEqual("ftp://ftp.example.edu/");
             expect(field.format("mms://ftp.example.edu/")).toEqual("mms://ftp.example.edu/");

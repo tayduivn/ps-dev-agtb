@@ -35,6 +35,9 @@
         value = (value!='' && value!='http://') ? value.trim() : "";
         return value;
     },
+    getFieldElement: function() {
+        return this.$('a');
+    },
     render: function() {
         this.def.link_target = _.isUndefined(this.def.link_target) ? '_blank' : this.def.link_target;
         app.view.Field.prototype.render.call(this);
