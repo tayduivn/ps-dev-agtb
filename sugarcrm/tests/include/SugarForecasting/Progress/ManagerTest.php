@@ -114,90 +114,237 @@ class SugarForecasting_Progress_ManagerTest extends Sugar_PHPUnit_Framework_Test
     public function tearDown() {
         SugarTestWorksheetUtilities::removeAllCreatedWorksheets();
     }
-
+    
     /**
-     * check process method to make sure what is returned to the endpoint is correct
-     *
+     * Check for manager with no committed forecasts, but reps with committed forecasts
+     * 
      * @group forecasts
      * @group forecastsprogress
      */
-    public function testProcess()
-    {
-        $obj = new SugarForecasting_Progress_Manager(self::$args);
+     public function testManagerNoOpsRepsCommiteedOps()
+     {
+        $manager = SugarTestForecastUtilities::createForecastUser(array(
+            'opportunities' => array(
+                'total' => 0,
+                'include_in_forecast' => 0
+            )
+        ));
+        $reportee1 = SugarTestForecastUtilities::createForecastUser(array(
+            'user' => array(
+                'reports_to' => $manager["user"]->id
+            ),
+            'opportunities' => array(
+                'total' => 2,
+                'include_in_forecast' => 2
+            ),
+        ));
+        $reportee2 = SugarTestForecastUtilities::createForecastUser(array(
+            'user' => array(
+                'reports_to' => $manager["user"]->id
+            ),
+            'opportunities' => array(
+                'total' => 2,
+                'include_in_forecast' => 2
+            ),
+        ));
+        
+        $obj = new SugarForecasting_Progress_Manager(array(
+            "timeperiod_id" => SugarTestForecastUtilities::getCreatedTimePeriod()->id,
+            "user_id" => $manager["user"]->id
+        ));
         $data = $obj->process();
-
-        //find expected quota object for the created quotas
-        foreach(SugarTestQuotaUtilities::getCreatedQuotaIds() as $quotaID) {
-            $quota = BeanFactory::getBean('Quotas', $quotaID);
-            if($quota->timeperiod_id == self::$args['timeperiod_id'] && $quota->user_id == self::$args['user_id'] && $quota->quota_type == "Rollup"){
-                break;
-            }
-        }
-
-        $expectedPipelineCount = 0;
-        $expectedClosedAmount = 0;
-        $expectedPipelineRevenue = 0;
-        $opp_ids = SugarTestOpportunityUtilities::getCreatedOpportunityIds();
-        $timeperiod = BeanFactory::getBean('TimePeriods', self::$args['timeperiod_id']);
-        $admin = BeanFactory::getBean('Administration');
-        $settings = $admin->getConfigForModule('Forecasts');
-        $excluded_sales_stages_won = $settings['sales_stage_won'];
-        $excluded_sales_stages_lost = $settings['sales_stage_lost'];
-        $managerId = self::$args['user_id'];
-        $repId = self::$users['reportee']['user']->id;
-        foreach($opp_ids as $id)
-        {
-            $opp = BeanFactory::getBean('Opportunities', $id);
-            //check user is manager or rep
-            if($opp->assigned_user_id != $repId && $opp->assigned_user_id != $managerId) {
-                continue;
-            }
-            //bypass if opp is deleted
-            if($opp->deleted == 1) {
-                continue;
-            }
-            //check opp is out of timeperiod bounds
-            if($timeperiod->start_date_timestamp >= $opp->date_closed_timestamp && $timeperiod->end_date_timestamp <= $opp->date_closed_timestamp) {
-                continue;
-            }
-            //check exclusion patterns
-            $exclude = false;
-            //check that opp is within admin bounds
-            foreach ($excluded_sales_stages_won as $exclusion)
-            {
-                if($opp->sales_stage == $exclusion)
-                {
-                    $expectedClosedAmount += ($opp->amount * $opp->base_rate);
-                    $exclude = true;
-                    break;
-                }
-            }
-            foreach ($excluded_sales_stages_lost as $exclusion)
-            {
-                if($opp->sales_stage == $exclusion)
-                {
-                    $exclude = true;
-                    break;
-                }
-            }
-            //sales stage for opp is an excluded stage
-            if($exclude)
-            {
-                continue;
-            }
-
-            //all conditions passed, add it in
-            $expectedPipelineCount += 1;
-            $expectedPipelineRevenue += round($opp->amount * $opp->base_rate,2);
-        }
-
-        //test parts of the process return
-        $this->assertEquals($quota->amount, round(floatval($data['quota_amount']),2), "Quota not matching expected amount.  Expected: ".$quota->amount." Actual: ".$data['quota_amount'],.00001);
-        $this->assertEquals($expectedPipelineCount, $data['opportunities'], "Pipeline Count not matching expected amount.  Expected: ".$expectedPipelineCount." Actual: ".$data['opportunities']);
-        $this->assertEquals($expectedClosedAmount, round(floatval($data['closed_amount']),2), "Closed amount not matching expected amount.  Expected: ".$expectedClosedAmount." Actual: ".$data['closed_amount'],.00001);
-        $this->assertEquals($expectedPipelineRevenue, round(floatval($data['pipeline_revenue']),2), "Pipeline Revenue not matching expected amount.  Expected: ".$expectedPipelineRevenue." Actual: ".$data['pipeline_revenue'],.00001);
-    }
-
+        
+        //Make sure the pipeline count includes committed ops from reps
+        $this->assertNotEquals("0", $data["opportunities"]);
+        
+        //Make sure that the pipeline revenue includes committed ops from reps
+        $this->assertNotEquals("0", $data["pipeline_revenue"]);     
+     }
+     
+     /**
+     * Check for manager with no committed forecasts, but reps with some committed forecasts and some not.
+     * 
+     * @group forecasts
+     * @group forecastsprogress
+     */
+     public function testManagerNoOpsRepsSomeCommiteedOps()
+     {
+        $manager = SugarTestForecastUtilities::createForecastUser(array(
+            'opportunities' => array(
+                'total' => 0,
+                'include_in_forecast' => 0
+            )
+        ));
+        $reportee1 = SugarTestForecastUtilities::createForecastUser(array(
+            'user' => array(
+                'reports_to' => $manager["user"]->id
+            ),
+            'opportunities' => array(
+                'total' => 2,
+                'include_in_forecast' => 1
+            ),
+        ));
+        $reportee2 = SugarTestForecastUtilities::createForecastUser(array(
+            'user' => array(
+                'reports_to' => $manager["user"]->id
+            ),
+            'opportunities' => array(
+                'total' => 2,
+                'include_in_forecast' => 1
+            ),
+        ));
+        
+        $obj = new SugarForecasting_Progress_Manager(array(
+            "timeperiod_id" => SugarTestForecastUtilities::getCreatedTimePeriod()->id,
+            "user_id" => $manager["user"]->id
+        ));
+        $data = $obj->process();
+        
+        //Make sure the pipeline count includes committed ops, and excludes non committed ops from reps
+        $this->assertEquals("2", $data["opportunities"]);
+        
+        //Make sure that the pipeline revenue includes committed ops from reps
+        $this->assertNotEquals("0", $data["pipeline_revenue"]);     
+     }
+     
+     /**
+     * Check for manager with committed forecasts and reps with committed forecasts
+     * 
+     * @group forecasts
+     * @group forecastsprogress
+     */
+     public function testManagerOpsRepsCommiteedOps()
+     {
+        $manager = SugarTestForecastUtilities::createForecastUser(array(
+            'opportunities' => array(
+                'total' => 2,
+                'include_in_forecast' => 2
+            )
+        ));
+        $reportee1 = SugarTestForecastUtilities::createForecastUser(array(
+            'user' => array(
+                'reports_to' => $manager["user"]->id
+            ),
+            'opportunities' => array(
+                'total' => 2,
+                'include_in_forecast' => 2
+            ),
+        ));
+        $reportee2 = SugarTestForecastUtilities::createForecastUser(array(
+            'user' => array(
+                'reports_to' => $manager["user"]->id
+            ),
+            'opportunities' => array(
+                'total' => 2,
+                'include_in_forecast' => 2
+            ),
+        ));
+        
+        $obj = new SugarForecasting_Progress_Manager(array(
+            "timeperiod_id" => SugarTestForecastUtilities::getCreatedTimePeriod()->id,
+            "user_id" => $manager["user"]->id
+        ));
+        $data = $obj->process();
+        
+        //Make sure the pipeline count includes committed ops from both manager and reps
+        $this->assertEquals("6", $data["opportunities"]);
+        
+         //Make sure that the pipeline revenue has something in it.
+        $this->assertNotEquals("0", $data["pipeline_revenue"]);     
+     }
+     
+     /**
+     * Check for manager with some committed forecasts and reps with committed forecasts
+     * 
+     * @group forecasts
+     * @group forecastsprogress
+     */
+     public function testManagerSomeOpsRepsCommiteedOps()
+     {
+        $manager = SugarTestForecastUtilities::createForecastUser(array(
+            'opportunities' => array(
+                'total' => 2,
+                'include_in_forecast' => 1
+            )
+        ));
+        $reportee1 = SugarTestForecastUtilities::createForecastUser(array(
+            'user' => array(
+                'reports_to' => $manager["user"]->id
+            ),
+            'opportunities' => array(
+                'total' => 2,
+                'include_in_forecast' => 2
+            ),
+        ));
+        $reportee2 = SugarTestForecastUtilities::createForecastUser(array(
+            'user' => array(
+                'reports_to' => $manager["user"]->id
+            ),
+            'opportunities' => array(
+                'total' => 2,
+                'include_in_forecast' => 2
+            ),
+        ));
+        
+        $obj = new SugarForecasting_Progress_Manager(array(
+            "timeperiod_id" => SugarTestForecastUtilities::getCreatedTimePeriod()->id,
+            "user_id" => $manager["user"]->id
+        ));
+        $data = $obj->process();
+        
+        //Make sure the pipeline count includes all ops from manager and committed ops reps
+        $this->assertEquals("6", $data["opportunities"]);
+        
+        //Make sure that the pipeline revenue has something in it.
+        $this->assertNotEquals("0", $data["pipeline_revenue"]);     
+     }
+     
+     /**
+     * Check for manager with some committed forecasts and reps with some committed forecasts
+     * 
+     * @group forecasts
+     * @group forecastsprogress
+     */
+     public function testManagerSomeOpsRepsSomeCommiteedOps()
+     {
+        $manager = SugarTestForecastUtilities::createForecastUser(array(
+            'opportunities' => array(
+                'total' => 2,
+                'include_in_forecast' => 1
+            )
+        ));
+        $reportee1 = SugarTestForecastUtilities::createForecastUser(array(
+            'user' => array(
+                'reports_to' => $manager["user"]->id
+            ),
+            'opportunities' => array(
+                'total' => 2,
+                'include_in_forecast' => 1
+            ),
+        ));
+        $reportee2 = SugarTestForecastUtilities::createForecastUser(array(
+            'user' => array(
+                'reports_to' => $manager["user"]->id
+            ),
+            'opportunities' => array(
+                'total' => 2,
+                'include_in_forecast' => 1
+            ),
+        ));
+        
+        $obj = new SugarForecasting_Progress_Manager(array(
+            "timeperiod_id" => SugarTestForecastUtilities::getCreatedTimePeriod()->id,
+            "user_id" => $manager["user"]->id
+        ));
+        $data = $obj->process();
+        
+        //Make sure the pipeline count includes all manager ops and only committed rep ops
+        $this->assertEquals("4", $data["opportunities"]);
+        
+         //Make sure that the pipeline revenue has something in it.
+        $this->assertNotEquals("0", $data["pipeline_revenue"]);     
+     }
+     
     /**
      * Dataset Provider
      *
