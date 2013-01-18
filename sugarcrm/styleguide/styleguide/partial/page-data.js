@@ -29,6 +29,7 @@ var pages = {
         , {"label":"Editable", "description":"Inline form edit inputs."}
         , {"label":"Form inputs", "description":"Basic form field types with error addons."}
         , {"label":"Form layouts", "description":"Customized layouts of field components."}
+        , {"label":"Select2", "description":"a jQuery based replacement for select boxes. It supports searching, remote data sets, and infinite scrolling of results."}
       ]
     }
   , "components":{

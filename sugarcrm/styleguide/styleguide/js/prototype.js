@@ -115,4 +115,9 @@ function loadContent(source,target,mode,method) {
       $(target).html(partial(page));
     }
   //}
+  if ( $(target).find('prettyprint').length) {
+    // make code pretty (styleguide only)
+    window.prettyPrint && prettyPrint();
+  }
+
 }

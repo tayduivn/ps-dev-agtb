@@ -164,6 +164,9 @@ h1 input[type="text"] {
     position:relative;
     font-size: @baseFontSize;
   }
+  span {
+    font-size: @baseFontSize;
+  }
   &.textarea,
   &.select,
   &.checkbox,
@@ -251,6 +254,7 @@ h1 input[type="text"] {
     }
     .chzn-choices,
     .chzn-container-single > a.chzn-single,
+    .select2-choice,
     .upload-field-custom.btn.avatar {
       border-color:@errorText;
     }
@@ -259,6 +263,9 @@ h1 input[type="text"] {
       border-top: 0;
       margin-left: -1px;
       margin-right: -1px;
+    }
+    .select2-choice > div {
+      margin-right: 18px;
     }
     .chzn-container-single > a > div > b {
       margin-left: -18px;
