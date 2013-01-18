@@ -55,9 +55,9 @@ class ForecastsFiltersApi extends ModuleApi
      *
      * //TODO, move this logic to store the values in a custom language file that contains the timeperiods for the Forecast module
      *
-     * @param array $api
-     * @param array $args
-     * @return array
+     * @param $api ServiceBase The API class of the request, used in cases where the API changes how the fields are pulled from the args array.
+     * @param $args array The arguments array passed in from the API
+     * @return array of timeperiods
      */
     public function timeperiod($api, $args)
     {
@@ -78,9 +78,9 @@ class ForecastsFiltersApi extends ModuleApi
     /**
      * Retrieve an array of Users and their tree state that report to the user that was passed in
      *
-     * @param $api
-     * @param $args
-     * @return array|string
+     * @param $api ServiceBase The API class of the request, used in cases where the API changes how the fields are pulled from the args array.
+     * @param $args array The arguments array passed in from the API
+     * @return array|string of users that reported to specified/current user
      */
     public function getReportees($api, $args)
     {
