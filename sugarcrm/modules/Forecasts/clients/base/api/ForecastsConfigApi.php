@@ -26,26 +26,27 @@ class ForecastsConfigApi extends ConfigModuleApi {
 
     public function registerApiRest()
     {
-        //Extend with test method
-        $parentApi= array (
-            'configCreate' => array(
-                'reqType' => 'POST',
-                'path' => array('Forecasts','config'),
-                'pathVars' => array('module',''),
-                'method' => 'forecastsConfigSave',
-                'shortHelp' => 'create forecasts config',
-                'longHelp' => 'include/api/help/ConfigApi.html#configCreate',
-            ),
-            'configUpdate' => array(
-                'reqType' => 'PUT',
-                'path' => array('Forecasts','config'),
-                'pathVars' => array('module',''),
-                'method' => 'forecastsConfigSave',
-                'shortHelp' => 'Update config for forecasts module',
-                'longHelp' => 'include/api/help/ConfigApi.html#configUpdate',
-            ),
+        return array_merge(
+            parent::registerApiRest(),
+            array (
+                'forecastsConfigCreate' => array (
+                    'reqType' => 'POST',
+                    'path' => array('Forecasts','config'),
+                    'pathVars' => array('module',''),
+                    'method' => 'forecastsConfigSave',
+                    'shortHelp' => 'Creates the config entries for the Forecasts module.',
+                    'longHelp' => 'include/api/help/ConfigApi.html#configCreate',
+                ),
+                'forecastsConfigUpdate' => array (
+                    'reqType' => 'PUT',
+                    'path' => array('Forecasts','config'),
+                    'pathVars' => array('module',''),
+                    'method' => 'forecastsConfigSave',
+                    'shortHelp' => 'Updates the config entries for the Forecasts module',
+                    'longHelp' => 'include/api/help/ConfigApi.html#configUpdate',
+                ),
+            )
         );
-        return $parentApi;
     }
 
     /**

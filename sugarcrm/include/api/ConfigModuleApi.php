@@ -26,23 +26,21 @@ class ConfigModuleApi extends ModuleApi {
 
     public function registerApiRest()
     {
-        //Extend with test method
-        $parentApi= array (
+        return array (
             'config' => array(
                 'reqType' => 'GET',
                 'path' => array('<module>','config'),
                 'pathVars' => array('module',''),
                 'method' => 'config',
-                'shortHelp' => 'forecasts config',
+                'shortHelp' => 'Retrieves the config settings for a given module',
                 'longHelp' => 'include/api/help/ConfigApi.html#config',
-                'noLoginRequired' => true,
             ),
             'configCreate' => array(
                 'reqType' => 'POST',
                 'path' => array('<module>','config'),
                 'pathVars' => array('module',''),
                 'method' => 'configSave',
-                'shortHelp' => 'create forecasts config',
+                'shortHelp' => 'Creates the config entries for the given module',
                 'longHelp' => 'include/api/help/ConfigApi.html#configCreate',
             ),
             'configUpdate' => array(
@@ -50,11 +48,10 @@ class ConfigModuleApi extends ModuleApi {
                 'path' => array('<module>','config'),
                 'pathVars' => array('module',''),
                 'method' => 'configSave',
-                'shortHelp' => 'Update config for given module',
+                'shortHelp' => 'Updates the config entries for given module',
                 'longHelp' => 'include/api/help/ConfigApi.html#configUpdate',
             ),
         );
-        return $parentApi;
     }
 
     /**
