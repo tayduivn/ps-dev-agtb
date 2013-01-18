@@ -565,11 +565,11 @@
         var jTarget = $(event.target),
             dataCommitDate = jTarget.data('commitdate'),
             options = {
-            timeperiod_id : this.timePeriod,
-            user_id : jTarget.data('uid'),
-            forecast_type : !_.isEqual(jTarget.data('uid'), this.selectedUser.id)? "rollup" : "direct"
-        }; 
-         
+                timeperiod_id : this.timePeriod,
+                user_id : jTarget.data('uid'),
+                forecast_type : (jTarget.data('showopps')) ? 'Direct' : 'Rollup'
+            };
+
         return app.api.call('read',
              app.api.buildURL('Forecasts', 'committed', null, options),
             null,
