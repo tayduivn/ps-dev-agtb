@@ -1,5 +1,5 @@
 describe("Base.Layout.DupeCheck", function() {
-    var app, defaultMeta,
+    var app, defaultMeta, defaultListView,
         moduleName = 'Contacts';
 
     beforeEach(function() {
@@ -31,11 +31,12 @@ describe("Base.Layout.DupeCheck", function() {
         SugarTest.loadComponent('base', 'view', 'list');
         SugarTest.loadComponent("base", "view", "dupecheck-list");
         SugarTest.testMetadata.set();
+        defaultListView = "dupecheck-list";
         defaultMeta = {
             "type": "dupecheck",
             "components": [
                 {"view":"dupecheck-header"},
-                {"view":"dupecheck-list", "name":"dupecheck-list"}
+                {"view":defaultListView, "name":"dupecheck-list"}
             ]
         };
     });
@@ -47,15 +48,22 @@ describe("Base.Layout.DupeCheck", function() {
         SugarTest.testMetadata.dispose();
     });
 
-    it("should be able to switch list view", function(){
-        //default initialize uses list view from viewdef
+    it("should have default list view type", function(){
         var layout = SugarTest.createLayout("base", moduleName, "dupecheck", defaultMeta);
-        expect(layout._components[1].name).toEqual(defaultMeta.components[1].name);
+        debugger;
+        expect(layout._components[1].name).toEqual(defaultListView);
+    });
 
-        //but if you set dupelisttype, the list view will be overridden.
-        var expectedListView = 'dupecheck-list-select';
-        defaultMeta.dupelisttype = expectedListView;
-        layout = SugarTest.createLayout("base", moduleName, "dupecheck", defaultMeta);
+    it("should be able to switch list view type", function(){
+        var expectedListView, context, layout;
+
+        //if you set dupelisttype on context, the list view will be overridden.
+        expectedListView = 'dupecheck-list-select';
+        context = app.context.getContext();
+        context.set('dupelisttype', expectedListView);
+        context.prepare();
+
+        layout = SugarTest.createLayout("base", moduleName, "dupecheck", defaultMeta, context);
         expect(layout._components[1].name).toEqual(expectedListView);
     });
 

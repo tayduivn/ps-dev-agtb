@@ -32,27 +32,38 @@
  */
 ({
     initialize: function(options) {
-        if(!_.isUndefined(options.meta.dupelisttype)) {
-            options.meta = this.switchListView(options.meta);
+        _.bindAll(this);
+        if(options.context.has('dupelisttype')) {
+            options.meta = this.switchListView(options.meta, options.context.get('dupelisttype'));
         }
         app.view.Layout.prototype.initialize.call(this, options);
+        this.context.on("dupecheck:fetch:fire", this.fetchDuplicates, this);
     },
 
-    switchListView: function(meta) {
+    switchListView: function(meta, dupelisttype) {
         var listView = _.find(meta.components, function(component) {
             return (component.name === 'dupecheck-list');
         });
-        listView.view = meta.dupelisttype;
+        listView.view = dupelisttype;
         return meta;
     },
 
     loadData: function(options) {
-        var self = this;
         options = options || {};
-        options.endpoint = function(options, callbacks) {
-            var url = app.api.buildURL(self.module, "duplicateCheck");
-            return app.api.call('create', url, self.model.attributes, callbacks); //Dupe Check API requires POST
-        }
+        options.endpoint = this.endpoint;
         app.view.Layout.prototype.loadData.call(this, options);
+    },
+
+    fetchDuplicates: function(model) {
+        this.model = model;
+        var options = {};
+        options.endpoint = this.endpoint;
+        this.collection.fetch(options);
+    },
+
+    endpoint: function(method, model, options, callbacks) {
+        var self = this;
+        var url = app.api.buildURL(self.module, "duplicateCheck");
+        return app.api.call('create', url, self.model.attributes, callbacks); //Dupe Check API requires POST
     }
 })

@@ -25,12 +25,10 @@
  * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 ({
-    extendsFrom: 'ListView',
+    extendsFrom: 'BaselistView',
 
     _renderHtml: function() {
-        app.view.views.ListView.prototype._renderHtml.call(this);
+        app.view.views.BaselistView.prototype._renderHtml.call(this);
         this.$('table.table-striped').addClass('duplicates highlight');
     }
-
-
 })

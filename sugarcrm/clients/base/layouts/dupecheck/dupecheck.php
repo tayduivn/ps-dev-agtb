@@ -30,7 +30,3 @@ $layout = MetaDataManager::getLayout('GenericLayout', array('type'=>'dupecheck')
 $layout->push(array('view'=>'dupecheck-header'));
 $layout->push(array('name' => 'dupecheck-list', 'view'=>'dupecheck-list'));
 $viewdefs['base']['layout']['dupecheck'] = $layout->getLayout();
-
-// example of setting the dupelisttype property (can be done programatically)
-// this is so that we don't need a separate layout for every view
-//$viewdefs['base']['layout']['dupecheck']['dupelisttype'] = 'dupecheck-list-edit';
