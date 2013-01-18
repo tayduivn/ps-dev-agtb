@@ -26,12 +26,10 @@
  ********************************************************************************/
 ({
     initialize: function(options) {
-        _.bindAll(this);
-        var self = this;
         app.view.View.prototype.initialize.call(this, options);
         this.collection.on("reset", function() {
-            self.updateCount();
-        });
+            this.updateCount();
+        }, this);
     },
 
     updateCount: function() {
