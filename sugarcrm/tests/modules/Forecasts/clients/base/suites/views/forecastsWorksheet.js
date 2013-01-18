@@ -286,8 +286,8 @@ describe("The forecasts worksheet", function(){
     		expect(view.context.forecasts.worksheet.on).toHaveBeenCalledWith("change");
     	});
     	
-    	it("forecasts.on should have been called with forecasts:committed:saved forecasts:worksheet:saved", function(){
-    		expect(view.context.forecasts.on).toHaveBeenCalledWith("forecasts:committed:saved forecasts:worksheet:saved");
+    	it("forecasts.on should have been called with forecasts:committed:saved", function(){
+    		expect(view.context.forecasts.on).toHaveBeenCalledWith("forecasts:committed:saved");
     	});
     	
     	it("forecasts.on should have been called with forecasts:commitButtons:enabled", function(){
