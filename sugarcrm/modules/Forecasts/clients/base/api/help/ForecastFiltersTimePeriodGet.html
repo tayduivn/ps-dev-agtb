@@ -29,7 +29,9 @@
 <div class="longHelpTitle">Forecasts Timeperiod filter info</div>
 <div class="summary">
     <h2>Summary:</h2>
-    This endpoint is used to return the json Data to be used for building the dom of the current timeperiods available for the forecasts filters
+    This returns the timeperiods with respect to the forward/backward options selected. For example, if we elect to use
+    quarterly timeperiods and 2 forward and 2 backward timeperiod intervals are set, then 5 years worth of timeperiods
+    will be returned (2 backward + current + 2 forward).
 </div>
 <div class="params">
     <h2>Query Parameters:</h2>
