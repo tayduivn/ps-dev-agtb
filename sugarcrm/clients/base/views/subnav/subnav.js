@@ -35,6 +35,8 @@
         app.view.View.prototype.initialize.call(this, options);
         this.context.set('subnavModel', new Backbone.Model());
         this.subnavModel = this.context.get('subnavModel');
+
+        $(window).on("resize.subnav", _.bind(this.resize, this));
     },
     saveModel: function() {
         this.context.trigger("subnav:save");
@@ -44,5 +46,31 @@
         if (this.subnavModel) {
             this.subnavModel.on("change", this.render, this);
         }
+    },
+    _renderHtml: function() {
+        app.view.View.prototype._renderHtml.call(this);
+        this.resize();
+    },
+    resize: function() {
+        var self = this;
+        //The resize event is fired many times during the resize process. We want to be sure the user has finished
+        //resizing the window that's why we set a timer so the code should be executed only once
+        if (self.resizeDetectTimer) {
+            clearTimeout(this.resizeDetectTimer);
+        }
+        self.resizeDetectTimer = setTimeout(function() {
+            var $el = self.$('h1');
+            //Checks if the element has ellipsis
+            if ($el[0].offsetWidth < $el[0].scrollWidth) {
+                $el.attr({'data-original-title':$el.text(),'rel':'tooltip'}).tooltip({placement: "bottom"});
+            }
+            else {
+                $el.removeAttr('data-original-title rel');
+            }
+        }, 250);
+    },
+    _dispose: function() {
+        $(window).off("resize.subnav");
+        app.view.View.prototype._dispose.call(this);
     }
 })

@@ -569,17 +569,17 @@ class SugarFieldBase {
         return $value;
     }
 
-
     /**
      * Handles export field sanitizing for field type
      *
      * @param $value string value to be sanitized
      * @param $vardef array representing the vardef definition
      * @param $focus SugarBean object
+     * @param $row Array of a row of data to be exported
      *
      * @return string sanitized value
      */
-    public function exportSanitize($value, $vardef, $focus)
+    public function exportSanitize($value, $vardef, $focus, $row=array())
     {
         return $value;
     }
