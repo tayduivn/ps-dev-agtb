@@ -153,8 +153,9 @@ class SugarThemeRegistryTest extends Sugar_PHPUnit_Framework_TestCase
         $themes = SugarThemeRegistry::allThemes();
         $this->assertTrue(isset($themes[$this->_themeName]));
 
-        if ( isset($disabled_themes) )
+        if ( isset($disabled_themes) ) {
             $GLOBALS['sugar_config']['disabled_themes'] = $disabled_themes;
+        }
     }
 
     public function testCustomThemeLoaded()
