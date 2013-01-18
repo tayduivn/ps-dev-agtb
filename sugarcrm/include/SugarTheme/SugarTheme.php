@@ -1204,7 +1204,7 @@ class SugarThemeRegistry
             return self::get($GLOBALS['sugar_config']['default_theme']);
         }
 
-        return self::get(array_pop(array_keys(self::availableThemes())));
+        return self::get(array_pop(array_keys($enabledThemes)));
     }
 
     /**
