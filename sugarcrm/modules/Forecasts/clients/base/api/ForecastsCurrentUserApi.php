@@ -32,7 +32,7 @@ class ForecastsCurrentUserApi extends CurrentUserApi {
                 'pathVars' => array(),
                 'method' => 'retrieveCurrentUser',
                 'shortHelp' => 'Returns current user',
-                'longHelp' => 'include/api/html/me.html',
+                'longHelp' => 'modules/Forecasts/clients/base/api/help/ForecastsCurrentUserApiMe.html',
             ),
             'init' => array(
                 'reqType' => 'GET',
@@ -40,15 +40,15 @@ class ForecastsCurrentUserApi extends CurrentUserApi {
                 'pathVars' => array(),
                 'method' => 'forecastsInitialization',
                 'shortHelp' => 'Returns current user data',
-                'longHelp' => 'include/api/html/init.html',
+                'longHelp' => 'modules/Forecasts/clients/base/api/help/ForecastsCurrentUserApiInit.html',
             ),
             'selecteUserObject' => array(
                 'reqType' => 'GET',
                 'path' => array('Forecasts', 'user', '?'),
-                'pathVars' => array('', '', 'userId'),
+                'pathVars' => array('', '', 'user_id'),
                 'method' => 'retrieveSelectedUser',
                 'shortHelp' => 'Returns selectedUser object for given user',
-                'longHelp' => 'include/api/html/user.html',
+                'longHelp' => 'modules/Forecasts/clients/base/api/help/ForecastsCurrentUserApiUser.html',
             ),
         );
     }
@@ -82,6 +82,15 @@ class ForecastsCurrentUserApi extends CurrentUserApi {
         return $data;
     }
 
+    /**
+     * Returns the initialization data for the module including currently logged-in user data,
+     * timeperiods, and admin config settings
+     *
+     * @param $api
+     * @param $args
+     * @return array
+     * @throws SugarApiExceptionNotAuthorized
+     */
     public function forecastsInitialization($api, $args) {
         global $current_user, $app_list_strings;
 
@@ -132,7 +141,7 @@ class ForecastsCurrentUserApi extends CurrentUserApi {
 
 
     /**
-     * Retrieves a "selecteUser" object for a given user id
+     * Retrieves user data for a given user id
      *
      * @param $api
      * @param $args
@@ -140,7 +149,7 @@ class ForecastsCurrentUserApi extends CurrentUserApi {
      */
     public function retrieveSelectedUser($api, $args) {
         global $locale;
-        $uid = $args['userId'];
+        $uid = $args['user_id'];
         $user = BeanFactory::getBean('Users', $uid);
         $data = array();
         $data['id'] = $user->id;
