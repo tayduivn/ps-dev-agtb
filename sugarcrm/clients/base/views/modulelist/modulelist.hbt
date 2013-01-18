@@ -9,9 +9,8 @@
                     <li><a tabindex="-1" href="{{route}}">{{#if icon}}<i class="{{icon}}"></i>{{/if}}{{str label ../name}}</a></li>
                 {{/each}}
                 <li></li>
-                <li class="divider"></li>
-                <li><a tabindex="-1" href="#">Loading recently viewed...</a></li>
-                <li class="divider"></li>
+                <li class="recentAnchor"><a tabindex="-1" href="#">Recently Viewed</a></li>
+                <div class="recentContainer">Loading</div>
                 <li class="favoritesAnchor"><a tabindex="-1" href="#">Favorites</a></li>
                 <div class="favoritesContainer">Loading</div>
             </ul>

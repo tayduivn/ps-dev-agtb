@@ -2,11 +2,23 @@
     favRowTemplate: Handlebars.compile(
       '{{#each models}}<li><a tabindex="-1" class="favoriteLink" href="#{{modelRoute this}}"><i class="icon-favorite active"></i>{{getFieldValue this "name"}}</a></li>{{/each}}'
     ),
+    recentRowTemplate: Handlebars.compile(
+        '{{#each models}}<li><a tabindex="-1" class="recentLink" href="#{{modelRoute this}}"><i class="icon-time active"></i>{{getFieldValue this "name"}}</a></li>{{/each}}'
+    ),
     events: {
         'click #module_list li a': 'onModuleTabClicked',
-        'mouseover .dtoggle': 'toggleDropdown'
+        'mouseover .dtoggle': 'toggleDropdown',
+        'click .more': 'showMore',
+        'mouseover .more': 'showMore',
+        'mouseleave .more-drop-container' : 'hideMore',
+        'mouseleave .more' : 'hideMore'
     },
-
+    showMore: function(event) {
+        this.$('.more-drop-container').show();
+    },
+    hideMore: function(event) {
+        this.$('.more-drop-container').hide();
+    },
     initialize: function(options) {
         app.events.on("app:sync:complete", this.render, this);
         app.events.on("app:view:change", this.render, this);
@@ -19,17 +31,45 @@
         }
     },
     toggleDropdown:function (event) {
-        this.$(event.target).dropdown('toggle');
-        var self = this;
-        var module = this.$(event.target).parent().data('module');
-        var rowCollection = app.data.createBeanCollection(module);
-        rowCollection.fetch({favorites:true, limit:3, success:function (collection) {
-            self.populateFavorites(module, collection);
-        }});
+        if (!this.$(event.target).parent().parent().hasClass('more-drop-container')) {
+            this.$(event.target).dropdown('toggle');
+            var self = this;
+            var module = this.$(event.target).parent().data('module');
+            var moduleMeta = app.metadata.getModule(module);
+            if (moduleMeta && moduleMeta.fields && !_.isArray(moduleMeta.fields)) {
+                var rowCollection = app.data.createBeanCollection(module);
+                rowCollection.fetch({favorites:true, limit:3, success:function (collection) {
+                    self.populateFavorites(module, collection);
+                    self.populateRecent(module);
+                }});
+            }
+        }
+
 
     },
     populateFavorites: function(module, records) {
-      this.$('.favoritesContainer').html(this.favRowTemplate(records));
+      this.$('[data-module='+module+'] .favoritesContainer').html(this.favRowTemplate(records));
+    },
+    populateRecent:function (module) {
+        var self = this;
+        var filter = {
+            "filter":[
+                {"date_modified":{"$tracker":"-7 DAY"}}
+            ]
+        };
+        var url = app.api.buildURL(module, 'read', {id:"filter"});
+        app.api.call('create', url, filter, {
+            success:function (data) {
+                if (data.records) {
+                    var beans = [];
+                    _.each(data.records, function (recordData) {
+                        beans.push(app.data.createBean(module, recordData));
+                    });
+                    var collection = app.data.createBeanCollection(module, beans);
+                    self.$('[data-module=' + module + '] .recentContainer').html(self.recentRowTemplate(collection));
+                }
+
+            }});
     },
     /**
      * Render list of modules
