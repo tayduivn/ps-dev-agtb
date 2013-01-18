@@ -77,4 +77,26 @@ class SugarFavoritesTest extends Sugar_PHPUnit_Framework_TestCase
         
         $this->assertFalse(SugarFavorites::isUserFavorite($_REQUEST['fav_module'],$_REQUEST['fav_id']));
     }
+
+    public function testGetUserIdsForFavoriteRecordByModuleRecord() {
+        $contactFocus = SugarTestContactUtilities::createContact();
+        
+        $_REQUEST['fav_module'] = 'Contacts';
+        $_REQUEST['fav_id'] = $contactFocus->id;
+        
+        $controller = new SugarFavoritesController;
+        $controller->loadBean();
+        $controller->pre_save();
+        $controller->action_save();
+
+
+        $assigned_user_ids = SugarFavorites::getUserIdsForFavoriteRecordByModuleRecord('Contacts', $contactFocus->id);
+
+        $this->assertNotEmpty($assigned_user_ids, "Should have got back an assigned user ID");
+
+        $assigned_user_ids = SugarFavorites::getUserIdsForFavoriteRecordByModuleRecord('TestNonExistantModule', '8675309');
+
+        $this->assertEmpty($assigned_user_ids, "Should not have got back an assigned user ID");
+
+    }
 }
