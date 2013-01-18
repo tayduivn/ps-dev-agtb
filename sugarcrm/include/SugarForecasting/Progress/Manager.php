@@ -253,9 +253,9 @@ class SugarForecasting_Progress_Manager extends SugarForecasting_Manager
                             "ON t.start_date_timestamp <= o.date_closed_timestamp " . 
                             "AND t.end_date_timestamp >= o.date_closed_timestamp " .
                         "WHERE " .
-                            "t.id = " . $db->quoted($timeperiod_id) . " " . 
+                            "t.id = {$db->quoted($timeperiod_id)} " . 
                             "AND o.deleted = 0 " .
-                            "AND o.assigned_user_id = " . $db->quoted($user_id) . " ";
+                            "AND o.assigned_user_id = {$db->quoted($user_id)} ";
         
         //only committed rep opps
         $queryRepOpps = "SELECT " . 
@@ -263,13 +263,13 @@ class SugarForecasting_Progress_Manager extends SugarForecasting_Manager
                         "FROM worksheet w " .
                         "INNER JOIN users u " .
                             "ON w.user_id = u.id " .
-                                "AND u.reports_to_id = " . $db->quoted($user_id) . " " .
+                                "AND u.reports_to_id = {$db->quoted($user_id)} " .
                         "INNER JOIN products p " .
                             "ON w.related_id = p.id " .
                         "INNER JOIN opportunities o " .
                             "ON p.opportunity_id = o.id " .
                         "WHERE " .
-                            "w.timeperiod_id = " . $db->quoted($timeperiod_id) . " " . 
+                            "w.timeperiod_id = {$db->quoted($timeperiod_id)} " . 
                             "AND w.deleted = 0 " .
                             "AND version = 1 " .
                             "AND forecast_type = 'Direct' ";
@@ -277,16 +277,16 @@ class SugarForecasting_Progress_Manager extends SugarForecasting_Manager
         //per requirements, exclude the sales stages won
         if (count($excluded_sales_stages_won)) {
             foreach ($excluded_sales_stages_won as $exclusion) {
-                $queryMgrOpps .= "AND o.sales_stage != " . $db->quoted($exclusion) . " ";
-                $queryRepOpps .= "AND o.sales_stage != " . $db->quoted($exclusion) . " ";
+                $queryMgrOpps .= "AND o.sales_stage != {$db->quoted($exclusion)} ";
+                $queryRepOpps .= "AND o.sales_stage != {$db->quoted($exclusion)} ";
             }
         }
 
         //per the requirements, exclude the sales stages for closed lost
         if (count($excluded_sales_stages_lost)) {
             foreach ($excluded_sales_stages_lost as $exclusion) {
-                $queryMgrOpps .= "AND o.sales_stage != " . $db->quoted($exclusion) . " ";
-                $queryRepOpps .= "AND o.sales_stage != " . $db->quoted($exclusion) . " ";
+                $queryMgrOpps .= "AND o.sales_stage != {$db->quoted($exclusion)} ";
+                $queryRepOpps .= "AND o.sales_stage != {$db->quoted($exclusion)} ";
             }
         }
         
