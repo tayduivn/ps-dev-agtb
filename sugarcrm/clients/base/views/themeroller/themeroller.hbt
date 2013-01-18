@@ -28,8 +28,8 @@
 }}
 <header class="subhead">
     <button href="javascript:void(0)" class="button pull-right" name="refresh_button" style="margin-left: 10px">
-        <i class="icon-refresh"></i> Reset</button>
-    <h1><small>Colors</small>
+        <i class="icon-refresh"></i> {{str "LBL_RESET"}}</button>
+    <h1><small>{{str "LBL_COLORS"}}</small>
     </h1>
 </header>
 <table class="table table-bordered table-striped">
@@ -47,9 +47,9 @@
 </table>
 <div class="row-fluid">
     <div class="btn-toolbar pull-right">
-        <a href="javascript:void(0)" name="reset_button">Restore Default Theme</a>
+        <a href="javascript:void(0)" name="reset_button">{{str "LBL_RESET_THEME_LNK"}}</a>
         <button href="javascript:void(0)" class="button btn-primary" name="save_button" style="margin-left: 10px">
-                <i class="icon-upload"></i> Save & Deploy</button>
+                <i class="icon-upload"></i> {{str "LBL_SAVE_AND_DEPLOY_BTN"}}</button>
 
     </div>
 </div>
@@ -57,14 +57,14 @@
 <div id="modal-confirm-reset" class="modal hide">
     <div class="modal-header">
       <a href="javascript:void(0)" class="close">x</a>
-      <h3>Reset default theme</h3>
+      <h3>{{str "LBL_RESET_THEME_MODAL_TITLE"}}</h3>
     </div>
     <div class="modal-body">
-      <p>You are about to erase your custom theme with the default theme.</p>
-      <p>Do you want to proceed?</p>
+      <p>{{str "LBL_RESET_THEME_MODAL_INFO"}}</p>
+      <p>{{str "LBL_RESET_THEME_MODAL_CONFIRM"}}</p>
     </div>
     <div class="modal-footer">
-      <button href="javascript:void(0)" id="buttonYes" class="button btn-danger">Yes</button>
-      <button href="javascript:void(0)" id="buttonNo" class="button">No</button>
+      <button href="javascript:void(0)" id="buttonYes" class="button btn-danger">{{str "LBL_YES"}}</button>
+      <button href="javascript:void(0)" id="buttonNo" class="button">{{str "LBL_NO"}}</button>
     </div>
 </div>

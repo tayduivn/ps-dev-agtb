@@ -75,17 +75,17 @@
         // get the value from each input
         var colors = this.getInputValues();
 
-        this.showMessage('Saving theme....');
+        this.showMessage('LBL_SAVE_THEME_PROCESS');
         this.themeApi('create', colors, function() {
-            this.showMessage('Done', 3000);
+            this.showMessage('LBL_REQUEST_PROCESSED', 3000);
         });
     },
     resetTheme: function() {
         this.toggleModal();
 
-        this.showMessage('Restoring default theme....');
+        this.showMessage('LBL_RESET_THEME_PROCESS');
         this.themeApi('create', {"reset": true}, function(data) {
-            this.showMessage('Done', 3000);
+            this.showMessage('LBL_REQUEST_PROCESSED', 3000);
             this.loadTheme();
         });
     },
@@ -123,7 +123,9 @@
         });
         return colors;
     },
-    showMessage: function(message, timer) {
+    showMessage: function(messageKey, timer) {
+
+        var message = app.lang.getAppString(messageKey);
 
         ajaxStatus = new SUGAR.ajaxStatusClass() || null;
 
@@ -134,8 +136,6 @@
             } else {
                 ajaxStatus.showStatus(message);
             }
-        } else {
-            console.log(message);
         }
     }
 })
