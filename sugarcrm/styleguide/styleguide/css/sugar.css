@@ -9186,6 +9186,7 @@ a.preview-list-item:hover {
 }
 .module-edit .record {
   position: absolute;
+  overflow: hidden;
   top: 60px;
   right: 0;
   bottom: 0;
