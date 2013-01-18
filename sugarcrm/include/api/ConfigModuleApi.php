@@ -50,7 +50,7 @@ class ConfigModuleApi extends ModuleApi {
                 'path' => array('<module>','config'),
                 'pathVars' => array('module',''),
                 'method' => 'configSave',
-                'shortHelp' => 'Update forecasts config',
+                'shortHelp' => 'Update config for given module',
                 'longHelp' => 'include/api/help/ConfigApi.html#configUpdate',
             ),
         );

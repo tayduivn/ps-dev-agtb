@@ -24,12 +24,36 @@ require_once('include/api/ConfigModuleApi.php');
 
 class ForecastsConfigApi extends ConfigModuleApi {
 
+    public function registerApiRest()
+    {
+        //Extend with test method
+        $parentApi= array (
+            'configCreate' => array(
+                'reqType' => 'POST',
+                'path' => array('Forecasts','config'),
+                'pathVars' => array('module',''),
+                'method' => 'forecastsConfigSave',
+                'shortHelp' => 'create forecasts config',
+                'longHelp' => 'include/api/help/ConfigApi.html#configCreate',
+            ),
+            'configUpdate' => array(
+                'reqType' => 'PUT',
+                'path' => array('Forecasts','config'),
+                'pathVars' => array('module',''),
+                'method' => 'forecastsConfigSave',
+                'shortHelp' => 'Update config for forecasts module',
+                'longHelp' => 'include/api/help/ConfigApi.html#configUpdate',
+            ),
+        );
+        return $parentApi;
+    }
+
     /**
-     * Save function for the config settings for a given module.
+     * Save function for the config settings for Forecasts' special needs.
      * @param $api
      * @param $args 'module' is required, 'platform' is optional and defaults to 'base'
      */
-    public function configSave($api, $args) {
+    public function forecastsConfigSave($api, $args) {
 
         //acl check, only allow if they are module admin
         if(!parent::hasAccess("Forecasts")) {
