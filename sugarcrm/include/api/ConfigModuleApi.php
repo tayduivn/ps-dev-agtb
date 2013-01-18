@@ -33,7 +33,7 @@ class ConfigModuleApi extends ModuleApi {
                 'pathVars' => array('module',''),
                 'method' => 'config',
                 'shortHelp' => 'Retrieves the config settings for a given module',
-                'longHelp' => 'include/api/help/ConfigApi.html#config',
+                'longHelp' => 'include/api/help/config_get_help.html',
             ),
             'configCreate' => array(
                 'reqType' => 'POST',
@@ -41,7 +41,7 @@ class ConfigModuleApi extends ModuleApi {
                 'pathVars' => array('module',''),
                 'method' => 'configSave',
                 'shortHelp' => 'Creates the config entries for the given module',
-                'longHelp' => 'include/api/help/ConfigApi.html#configCreate',
+                'longHelp' => 'include/api/help/config_put_help.html',
             ),
             'configUpdate' => array(
                 'reqType' => 'PUT',
@@ -49,7 +49,7 @@ class ConfigModuleApi extends ModuleApi {
                 'pathVars' => array('module',''),
                 'method' => 'configSave',
                 'shortHelp' => 'Updates the config entries for given module',
-                'longHelp' => 'include/api/help/ConfigApi.html#configUpdate',
+                'longHelp' => 'include/api/help/config_put_help.html',
             ),
         );
     }
