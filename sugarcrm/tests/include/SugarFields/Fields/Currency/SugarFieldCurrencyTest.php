@@ -74,6 +74,12 @@ class SugarFieldCurrencyTest extends Sugar_PHPUnit_Framework_TestCase
         $expectedValue = SugarCurrency::formatAmountUserLocale($obj->amount, self::$currency->id);
         $value = $field->exportSanitize($obj->amount, $vardef, $obj);
         $this->assertEquals($expectedValue, $value);
+
+        //Test that we can use the row overload feature in exportSanitize
+        $obj->currency_id = '';
+        $expectedValue = SugarCurrency::formatAmountUserLocale($obj->amount, self::$currency->id);
+        $value = $field->exportSanitize($obj->amount, $vardef, $obj, array('currency_id'=>self::$currency->id));
+        $this->assertEquals($expectedValue, $value);
     }
 
 }
