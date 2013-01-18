@@ -147,7 +147,6 @@ class SugarFavorites extends Basic
 	public static function getUserIdsForFavoriteRecordByModuleRecord($module, $id) {
 		global $db;
 		$query = "SELECT assigned_user_id FROM sugarfavorites WHERE module = '$module' AND record_id = '$id' AND deleted = 0";
-		$GLOBALS['log']->fatal($query);
 		$queryResult = $db->query($query);
 		$assigned_user_ids = array();
 		while($row = $db->fetchByAssoc($queryResult)) {
