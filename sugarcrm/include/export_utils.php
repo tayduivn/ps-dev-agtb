@@ -213,7 +213,9 @@ function export($type, $records = null, $members = false, $sample=false) {
         $field_labels[$key] = translateForExport($dbname,$focus);
     }
 
-    if ($locale->getExportCharset() == 'UTF-8')
+    $user_agent = $_SERVER['HTTP_USER_AGENT'];
+    if ($locale->getExportCharset() == 'UTF-8' &&
+        ! preg_match('/macintosh|mac os x|mac_powerpc/i', $user_agent)) // Bug 60377 - Mac Excel doesn't support UTF-8
     {
         //Bug 55520 - add BOM to the exporting CSV so any symbols are displayed correctly in Excel
         $BOM = "\xEF\xBB\xBF";
