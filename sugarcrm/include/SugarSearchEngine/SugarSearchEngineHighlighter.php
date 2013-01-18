@@ -55,7 +55,6 @@ class SugarSearchEngineHighlighter
         foreach ($resultArray as $field=>$fragments)
         {
             $ret[$field] = array('text' => '', 'module' => $this->_module, 'label' => $this->getLabel($field));
-            $field = $this->translateFieldName($field);
             $first = true;
             foreach ($fragments as $frament)
             {

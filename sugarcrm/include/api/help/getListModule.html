@@ -65,7 +65,8 @@ This endpoint does not accept any input
              "assigned_user_id":"seed_sarah_id",
              "_search": {
                 "score": "1.0",
-                "highlighted": "My String <b>Is</b> here"
+                "highlighted": "fieldName" : { "text": "My String <span class=\"highlight\">Is</span> here", "module":"ModuleName",
+                "label":"LBL_AWESOME" }
               },
              ... additional fields ...
         },
