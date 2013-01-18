@@ -34,13 +34,15 @@
         this.metaComponents = options.meta.components;
         options.meta.components = this.baseComponents;
         app.view.Layout.prototype.initialize.call(this, options);
-        if(_.isArray(showEvent)) {
-            //Bind the multiple event handler names
-            _.each(showEvent, function(evt, index) {
-                self._bindShowEvent(evt);
-            });
-        } else {
-            self._bindShowEvent(showEvent);
+        if(!_.isUndefined(showEvent)) {
+            if(_.isArray(showEvent)) {
+                //Bind the multiple event handler names
+                _.each(showEvent, function(evt, index) {
+                    self._bindShowEvent(evt);
+                });
+            } else {
+                self._bindShowEvent(showEvent);
+            }
         }
     },
     _bindShowEvent : function(event, delegate){
@@ -145,8 +147,7 @@
     },
 
     display: function(params) {
-        var self = this,
-            rowIndex = params.rowIndex;
+        var self = this;
 
         // if it's not currently visible, init the events and build out the components
         if(!this.isVisible()) {
@@ -178,13 +179,13 @@
         }
 
         // actually show the inspector window
-        this.show(rowIndex);
+        this.show();
 
         return true;
     },
 
-    show: function(rowIndex) {
-        if (!this.triggerBefore("show", this, rowIndex)) return false;
+    show: function() {
+        if (!this.triggerBefore("show", this)) return false;
 
         this.loadData();
         this.render();
@@ -192,10 +193,12 @@
         var inspector_container = this.$(".inspector:first");
         inspector_container.removeClass('hide').addClass('show');
 
-        this.trigger("show", this, rowIndex);
+        this.trigger("show", this);
         return true;
     },
     hide: function() {
+        if (!this.isVisible()) return false;
+
         if (!this.triggerBefore("hide", this)) return false;
         //restore back to the scroll position at the top
         var inspector_container = this.$(".inspector:first");
@@ -203,9 +206,14 @@
 
         this.trigger("hide", this);
 
-        // Clean up any events left
+        return true;
+    },
+
+    /**
+     * Just clean up the events when this is fired
+     */
+    unbind : function() {
         this.off();
         this.offBefore();
-        return true;
     }
 })

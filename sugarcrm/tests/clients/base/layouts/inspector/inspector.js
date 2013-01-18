@@ -131,32 +131,49 @@ describe("Base.Layout.Inspector", function() {
         });
     });
 
-    it("should invoke before/after while inspector is showing and hiding", function() {
-        var options = {
-                'components' : [ { view: 'blah' }]
-            };
-        layout = app.view.createLayout({
-            name : "inspector",
-            context : context,
-            module : null,
-            meta : options,
-            layout: parent
+    describe("should invoke before/after", function(){
+
+        var _stubs = [];
+
+        afterEach(function() {
+            _.each(_stubs, function(stub){
+                stub.restore();
+            });
+            _stubs = [];
         });
-        layout.triggerBefore = function(event) {
-            sinon.stub();
-        };
 
-        layout.trigger = function(event) {
-            sinon.stub();
-        };
-        var showOptions = {'blah' : 'yeahhh'};
-        sinon.spy(layout, "triggerBefore");
-        sinon.spy(layout, "trigger");
+        it("while inspector is showing and hiding", function() {
+            var options = {
+                    'components' : [ { view: 'blah' }]
+                };
+            layout = app.view.createLayout({
+                name : "inspector",
+                context : context,
+                module : null,
+                meta : options,
+                layout: parent
+            });
+            layout.triggerBefore = function(event) {
+                sinon.stub();
+            };
 
-        layout.show({options: showOptions});
-        expect(layout.triggerBefore.calledWith('show')).toBe(true);
-        expect(layout.triggerBefore.calledWith('hide')).toBe(false);
-        layout.hide();
-        expect(layout.triggerBefore.calledWith('hide')).toBe(true);
+            layout.trigger = function(event) {
+                sinon.stub();
+            };
+
+            _stubs.push(sinon.stub(layout, 'isVisible', function(){
+                return true;
+            }));
+
+            var showOptions = {'blah' : 'yeahhh'};
+            sinon.spy(layout, "triggerBefore");
+            sinon.spy(layout, "trigger");
+
+            layout.display({options: showOptions});
+            expect(layout.triggerBefore.calledWith('show')).toBe(true);
+            expect(layout.triggerBefore.calledWith('hide')).toBe(false);
+            layout.hide();
+            expect(layout.triggerBefore.calledWith('hide')).toBe(true);
+        });
     });
 });
