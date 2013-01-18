@@ -49,7 +49,11 @@
         if (left == "-9000px") {
             el.width(0);
         } else {
-            el.width(100).css("left", "auto").css("right", "0px");
+            if(rtl && rtl!="undefined") {
+                el.width(100).css("left", "0px").css("right", "auto");
+            } else {
+                el.width(100).css("left", "auto").css("right", "0px");
+            }
         }
     },
 
