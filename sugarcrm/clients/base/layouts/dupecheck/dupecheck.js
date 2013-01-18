@@ -63,6 +63,6 @@
 
     endpoint: function(method, model, options, callbacks) {
         var url = app.api.buildURL(this.module, "duplicateCheck");
-        return app.api.call('create', url, this.model.attributes, callbacks, options); //Dupe Check API requires POST
+        return app.api.call('create', url, this.model.attributes, callbacks); //Dupe Check API requires POST
     }
 })
