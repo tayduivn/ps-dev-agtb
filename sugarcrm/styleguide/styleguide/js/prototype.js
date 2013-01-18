@@ -20,13 +20,15 @@ $(document).ready(function () {
 
 });
 
+var cachePartials = (window.location.hostname.indexOf('nomad')!==-1)?true:false;
+
 function loadPartial(template) {
   if (!ich[template]) {
     jQuery.ajax({
       url: 'partial/'+ template + (template.indexOf('.html')===-1?'.html':''),
       dataType: 'html',
       async: false,
-      cache: false,
+      cache: cachePartials,
       success: function(data) {
         if(data !== undefined){
           ich.addTemplate(template,data);

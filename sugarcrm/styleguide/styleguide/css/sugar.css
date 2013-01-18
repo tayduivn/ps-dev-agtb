@@ -3679,6 +3679,33 @@ article .actions,
   -moz-border-radius: none;
   border-radius: none;
 }
+.select2-container .select2-choice div b {
+  background-position: 0px 0px;
+}
+.select2-container .select2-choice abbr {
+  top: 6px;
+}
+.select2-drop-error {
+  border-color: #b60000;
+}
+.select2-drop-error .select2-results li:first-child {
+  border-top: none;
+  -webkit-border-radius: 4px 4px 0 0;
+  -moz-border-radius: 4px 4px 0 0;
+  border-radius: 4px 4px 0 0;
+  -webkit-border-radius: 4px 4px 0 0;
+  -moz-border-radius: 4px 4px 0 0;
+  border-radius: 4px 4px 0 0;
+}
+.select2-drop-error .select2-results li:last-child {
+  border-bottom: none;
+  -webkit-border-radius: 0 0 4px 4px;
+  -moz-border-radius: 0 0 4px 4px;
+  border-radius: 0 0 4px 4px;
+  -webkit-border-radius: 0 0 4px 4px;
+  -moz-border-radius: 0 0 4px 4px;
+  border-radius: 0 0 4px 4px;
+}
 .select2-container-multi .select2-choices .select2-search-field input {
   margin: 0;
   padding: 3px 7px;
