@@ -156,12 +156,13 @@
         this.activeFilterId = defaultId;
         this.filters = app.data.createBeanCollection('Filters');
 
-        app.api.call("create", url, {"filter": [{"created_by": app.user.id}]}, {
+        app.api.call("create", url, {"filter": [{"created_by": app.user.id}, {"module_name": this.module}]}, {
             success: function(data) {
                 self.filters.reset(data.records);
                 if(self.isInFilters(self.currentQuery)) {
                     self.currentQuery = "";
                 }
+                self.filterDataSetAndSearch(self.currentQuery, self.activeFilterId);
                 self.render();
             }
 
@@ -195,8 +196,7 @@
                 ]
             };
         }
-        var url = app.api.buildURL(this.module, "filter"),
-        ctx = app.controller.context,
+        var ctx = app.controller.context,
         clause, self = this;
         // TODO: Make this extensible for OR operator.
         if(!_.isEmpty(query)) {
@@ -206,7 +206,16 @@
 
         filterDef = filterDef.filter[0]["$and"].length? filterDef : {};
 
-        app.api.call("create", url, filterDef, {
+        var url, method;
+        if( _.isEmpty(filterDef) ) {
+            url = app.api.buildURL(this.module);
+            method = "read";
+        } else {
+            url = app.api.buildURL(this.module, "filter");
+            method = "create";
+        }
+
+        app.api.call(method, url, filterDef, {
             success: function(data) {
                 ctx.get('collection').reset(data.records);
                 var url = app.api.buildURL('Filters/' + self.module + '/used', "update");

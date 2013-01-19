@@ -133,7 +133,9 @@ class FilterApi extends SugarApi {
             $args['filter'] = array();
         }
 
-        $this->addFilters($args['filter'],$q->where(),$q);
+        $notDeleted = $q->where()->equals("deleted", 0)->queryAnd();
+
+        $this->addFilters($args['filter'], $notDeleted,$q);
 
 
         foreach ( $options['order_by'] as $orderBy ) {

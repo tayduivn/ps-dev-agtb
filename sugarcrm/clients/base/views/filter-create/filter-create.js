@@ -325,7 +325,7 @@
             this.$(".filter-header").data("model").destroy({
                 success: function() {
                     self.$(".filter-header").data("model", null);
-                    self.layout.trigger("filter:refresh");
+                    self.layout.trigger("filter:refresh", "");
                 }
             });
         }
