@@ -54,8 +54,9 @@
         var self = this;
         var filter = {
             "filter":[
-                {"date_modified":{"$tracker":"-7 DAY"}}
-            ]
+                {"date_modified":{"$tracker":"-7 DAY"}},
+            ],
+            "max_num":3
         };
         var url = app.api.buildURL(module, 'read', {id:"filter"});
         app.api.call('create', url, filter, {
