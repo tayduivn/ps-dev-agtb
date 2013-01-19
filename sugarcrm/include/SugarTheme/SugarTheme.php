@@ -1203,12 +1203,11 @@ class SugarThemeRegistry
         if ( !isset(self::$_currentTheme) )
             self::buildRegistry();
 
-        $enabledThemes = self::availableThemes();
-        if ( isset($GLOBALS['sugar_config']['default_theme']) && self::exists($GLOBALS['sugar_config']['default_theme']) && in_array($GLOBALS['sugar_config']['default_theme'],$enabledThemes) ) {
+        if ( isset($GLOBALS['sugar_config']['default_theme']) && self::exists($GLOBALS['sugar_config']['default_theme']) ) {
             return self::get($GLOBALS['sugar_config']['default_theme']);
         }
 
-        return self::get(array_pop(array_keys($enabledThemes)));
+        return 'RacerX';
     }
 
     /**
