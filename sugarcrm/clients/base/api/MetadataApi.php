@@ -605,8 +605,9 @@ class MetadataApi extends SugarApi {
                 // PHP builds when writing to the cache because of how PHP was
                 // handling negative int array indexes. This was causing metadata 
                 // to store a different value in the cache than -99. The fix was 
-                // to add a space arround the -99 to force it to string.                
-                $currencies[$current->id . ' '] = $currency;
+                // to add a space arround the -99 to force it to string.
+                $id = $current->id == -99 ? '-99 ': $current->id;
+                $currencies[$id] = $currency;
             }
         }
         return $currencies;
@@ -655,21 +656,19 @@ class MetadataApi extends SugarApi {
     /**
      * Bug 60345
      * 
-     * Normalizes the currency ids to remove the space added to the index prior
+     * Normalizes the -99 currency id to remove the space added to the index prior
      * to storing in the cache.
      * 
      * @param array $data The metadata
      * @return array
      */
     protected function normalizeCurrencyIds($data) {
-        if (isset($data['currencies']) && is_array($data['currencies'])) {
-            foreach ($data['currencies'] as $k => $v) {
-                // Remove the old entry
-                unset($data['currencies'][$k]);
-                
-                // Replace it, trimming the index
-                $data['currencies'][trim($k)] = $v;
-            }
+        if (isset($data['currencies']['-99 '])) {
+            // Change the spaced index back to normal
+            $data['currencies']['-99'] = $data['currencies']['-99 '];
+            
+            // Ditch the spaced index
+            unset($data['currencies']['-99 ']);
         }
         
         return $data;
