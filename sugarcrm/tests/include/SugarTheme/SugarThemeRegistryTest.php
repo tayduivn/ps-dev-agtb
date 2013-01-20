@@ -103,7 +103,7 @@ class SugarThemeRegistryTest extends Sugar_PHPUnit_Framework_TestCase
     {
         unset($GLOBALS['sugar_config']['default_theme']);
 
-        $themename = array_pop(array_keys(SugarThemeRegistry::availableThemes()));
+        $themename = 'RacerX';
 
         $object = SugarThemeRegistry::getDefault();
 
