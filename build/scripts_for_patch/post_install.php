@@ -423,13 +423,9 @@ function post_install() {
             $job->save();
         }
 
-        //Check for modal.less and custom.less files and add them if they're missing
+        //Check for custom.less file and add if it is missing
         if(!file_exists('styleguide/less/clients/base/custom.less')) {
             sugar_file_put_contents('styleguide/less/clients/base/custom.less', '');
-        }
-
-        if(!file_exists('styleguide/less/sugar-specific/modal.less')) {
-            sugar_file_put_contents('styleguide/less/sugar-specific/modal.less', '');
         }
     }
 
