@@ -43,7 +43,6 @@
     },
 
     dropFocus:function (evt) {
-        console.log(rtl);
         var el = $(evt.target).parents('.chzn-container').find('.chzn-drop');
         var left = el.css('left');
         if (left == "-9000px") {
