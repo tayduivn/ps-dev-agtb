@@ -70,6 +70,7 @@ $dictionary['Quote'] = array('table' => 'quotes','audited'=>true, 'unified_searc
     'vname' => 'LBL_CURRENCY_RATE',
     'type' => 'double',
     'required' => true,
+    'studio' => false
   ),
   'taxrate_id' =>
   array (

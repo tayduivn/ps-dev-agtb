@@ -286,6 +286,7 @@ $dictionary['Product'] = array('table' => 'products','audited'=>true,
     'vname' => 'LBL_CURRENCY_RATE',
     'type' => 'double',
     'required' => true,
+    'studio' => false
   ),
   'status' =>
   array (
