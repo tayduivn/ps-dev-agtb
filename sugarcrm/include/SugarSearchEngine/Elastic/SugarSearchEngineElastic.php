@@ -186,16 +186,13 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
         $keyValues['team_set_id'] = str_replace("-", "",$bean->team_set_id);
         
         //BEGIN SUGARCRM flav=pro ONLY
-        $favorites = SugarFavorites::getFavoritesByModuleByRecord($bean->module_dir, $bean->id);
-        $module_favorites_user = array();
+        $user_ids = SugarFavorites::getUserIdsForFavoriteRecordByModuleRecord($bean->module_dir, $bean->id);
+        $keyValues['user_favorites'] = array();
         
-        foreach($favorites AS $fav) {
+        foreach($user_ids AS $user_id) {
             // need to replace -'s for elastic search, same as team_set_ids
-            $module_favorites_user[] = str_replace('-', '', strval($fav->assigned_user_id));
+            $keyValues['user_favorites'][] = str_replace('-', '', strval($user_id));
         }
-
-        
-        $keyValues['user_favorites'] = $module_favorites_user;
         //END SUGARCRM flav=pro ONLY
  
         // to index owner
