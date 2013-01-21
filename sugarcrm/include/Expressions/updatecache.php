@@ -111,7 +111,8 @@ function recursiveParse($dir, $silent = false)
 /**
  * Construct a new $entry.
  */
-SUGAR.expressions.$entry = function(params) {
+SUGAR.expressions.$entry = function(params, context) {
+	this.context = context;
 	this.init(params);
 }
 SUGAR.util.extend(SUGAR.expressions.$entry, SUGAR.expressions.$parent_class, {

@@ -84,13 +84,12 @@ class RelatedFieldExpression extends GenericExpression
 		return <<<EOQ
 		    var params = this.getParameters(),
 			    linkField = params[0].evaluate(),
-			    relField = params[1].evaluate(),
-			    AH = SUGAR.forms.AssignmentHandler;
-
-
+			    relField = params[1].evaluate();
 
 			if (typeof(linkField) == "string" && linkField != "")
 			{
+                /*
+                All of this should be in the context class
                 //We just have a field name, assume its the name of a link field
                 //and the parent module is the current module.
                 //Try and get the current module and record ID
@@ -109,9 +108,9 @@ class RelatedFieldExpression extends GenericExpression
                     //Clear the cache for this link if the id has changed
                     if (linkDef.relId && linkDef.relId != linkId)
                         AH.clearRelatedFieldCache(linkField);
-                }
+                }*/
 
-                return AH.getRelatedField(linkField, 'related', relField);
+                return this.context.getRelatedField(linkField, 'related', relField);
 			} else if (typeof(rel) == "object") {
 			    //Assume we have a Link object that we can delve into.
 			    //This is mostly used for n level dives through relationships.

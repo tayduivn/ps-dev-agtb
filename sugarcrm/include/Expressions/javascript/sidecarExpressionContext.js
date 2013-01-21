@@ -44,12 +44,12 @@ SUGAR.util.extend(SEC, SE.ExpressionContext, {
     getValue : function(varname)
     {
         var value = this.view.context.get("model").get(varname),
+            def =   this.view.context.get("model").fields[varname],
             result;
+
         //Relate fields are only string on the client side, so return the variable name back.
-        /*if(AH.LINKS[this.formName][varname])
+        if(def.type == "link")
             value = varname;
-        else
-            value = AH.getValue(varname, this.formName); */
 
         if (typeof(value) == "string")
         {
@@ -144,11 +144,10 @@ SUGAR.util.extend(SEC, SE.ExpressionContext, {
             parent.removeClass(css_class);
         }
     },
-    getLink : function(variable, view) {
-        if (!view) view = AH.lastView;
-
-        if(AH.LINKS[view][variable])
-            return AH.LINKS[view][variable];
+    getLink : function(variable) {
+        var model = this.view.context.get("model");
+        if (model && model.fields && model.fields[variable])
+            return model.fields[variable];
     },
     cacheRelatedField : function(link, ftype, value, view)
     {
@@ -225,19 +224,19 @@ SUGAR.util.extend(SEC, SE.ExpressionContext, {
     	}
     },
     setRelatedFields : function(fields){
+        var model = this.view.context.get("model");
         for (var link in fields)
         {
-            for (var type in fields[link])
-            {
-                AH.cacheRelatedField(link, type, fields[link][type]);
-            }
+            model.set(link, fields);
         }
     },
     getRelatedFieldValues : function(fields, module, record)
     {
+        var self = this,
+            api = App.api;
         if (fields.length > 0){
-            module = module || SUGAR.forms.AssignmentHandler.getValue("module") || DCMenu.module;
-            record = record || SUGAR.forms.AssignmentHandler.getValue("record") || DCMenu.record;
+            module = module || this.view.context.get("module");
+            record = record || this.view.context.get("model").get("id");
             for (var i = 0; i < fields.length; i++)
             {
                 //Related fields require a current related id
@@ -254,53 +253,54 @@ SUGAR.util.extend(SEC, SE.ExpressionContext, {
                     }
                 }
             }
-            var r = http_fetch_sync("index.php", SUGAR.util.paramsToUrl({
-                module:"ExpressionEngine",
-                action:"getRelatedValues",
-                record_id: record,
-                tmodule: module,
-                fields: YAHOO.lang.JSON.stringify(fields),
-                to_pdf: 1
-            }));
-            try {
-                var ret = YAHOO.lang.JSON.parse(r.responseText);
-                AH.setRelatedFields(ret);
-                return ret;
-            } catch(e){}
+            var data = {id: record, action:"related"},
+                params = {module: module, fields: JSON.stringify(fields)};
+                api.call("read", api.buildURL("ExpressionEngine", "related", data, params), data, params, {
+                    success: function(resp){
+                        self.setRelatedFields(resp);
+                        return resp;
+                }});
         }
         return null;
     },
-    getRelatedField : function(link, ftype, field, view){
-        if (!view)
-            view = AH.lastView;
-        else
-            AH.lastView = view;
+    getRelatedField : function(link, ftype, field){
+        console.log(this.view);
+        var self = this;
+        var linkDef = this.getLink(link),
+            currId;
 
+        if (ftype == "related"){
+            var relContext = this.view.context.getChildContext(linkDef);
+            var col = relContext.get("collection"),
+                fields = relContext.get('fields');
 
-        if(!AH.LINKS[view][link])
-            return null;
-
-        var linkDef = SUGAR.forms.AssignmentHandler.getLink(link);
-        var currId;
-        if (linkDef.id_name)
-         {
-             currId = SUGAR.forms.AssignmentHandler.getValue(linkDef.id_name, false, true);
-         }
-
-        if (typeof(linkDef[ftype]) == "undefined"
-            || (field && typeof(linkDef[ftype][field]) == "undefined")
-            || (ftype == "related" && linkDef.relId != currId)
-        ){
+            if (field && !_.contains(fields, field)) {
+                fields.push(field);
+                if (relContext._dataFetched){
+                    relContext.resetLoadFlag();
+                    relContext.loadData();
+                }
+            }
+            if (relContext._dataFetched && col.length > 0) {
+                return col.models[0].get(field);
+            } else {
+                col.once("add", function(q) {
+                    console.log("related field " + field + " fetched for link" + link);
+                    self.trigger("change:" + link);
+                });
+            }
+        }
+        //Run server side ajax Call
+        else {
             var params = {link: link, type: ftype};
             if (field)
                 params.relate = field;
-            AH.getRelatedFieldValues([params]);
-            //Reload the link now that getRelatedFieldValues has been called.
-            linkDef = SUGAR.forms.AssignmentHandler.getLink(link);
+            this.getRelatedFieldValues([params]);
         }
 
         if (typeof(linkDef[ftype]) == "undefined")
             return null;
+
         //Everything but count requires specifying a related field to use, so make sure to check that field retrieved correctly
         if (field) {
             //If we didn't load the field we wanted, return null

@@ -36,7 +36,8 @@ SUGAR.util.extend = SUGAR.util.extend || (SUGAR.App ? SUGAR.App.utils.extendFrom
 /**
  * Constructs an Expression object given the parameters.
  */
-SUGAR.expressions.Expression = function() {
+SUGAR.expressions.Expression = function(context) {
+    this.context = context;
 };
 
 
@@ -746,7 +747,7 @@ SUGAR.expressions.ExpressionParser.prototype.tokenize = function(expr)
 	// require and return the appropriate expression object
 	return {
 		type: "function",
-		name: YAHOO.lang.trim(func),
+		name: $.trim(func),
 		args: args
 	}
 }
@@ -912,7 +913,7 @@ SUGAR.expressions.ExpressionParser.prototype.evaluate = function(expr, context)
 	if ( level != 0 )	throw ("Syntax Error (Incorrectly Matched Parantheses)");
 
 	// require and return the appropriate expression object
-	return new SUGAR.FunctionMap[func](args);
+	return new SUGAR.FunctionMap[func](args, context);
 }
 
 
