@@ -105,7 +105,9 @@
             self.$el.off("mouseenter");
             self.$el.off("mouseleave");            
             self.$el.find("option[value=" + self.value + "]").attr("selected", "selected");
-            self.$el.find("select").chosen();
+            self.$el.find("select").chosen({
+                disable_search_threshold: self.def.searchBarThreshold?self.def.searchBarThreshold:0
+            });
         }
     },
     

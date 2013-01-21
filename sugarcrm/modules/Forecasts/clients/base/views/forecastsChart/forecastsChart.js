@@ -68,6 +68,7 @@
      * event handler to update which dataset is used.
      */
     changeDisplayOptions : function(evt) {
+        evt.preventDefault();
         this.handleRenderOptions({dataset: this.handleOptionChange(evt)})
     },
 
@@ -75,6 +76,7 @@
      * Handle any group by changes
      */
     changeGroupByOptions: function(evt) {
+        evt.preventDefault();
         this.handleRenderOptions({group_by:_.first(this.handleOptionChange(evt))});
     },
 

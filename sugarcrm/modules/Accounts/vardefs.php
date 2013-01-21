@@ -487,6 +487,22 @@ $dictionary['Account'] = array('table' => 'accounts', 'audited'=>true, 'activity
   'relationship_type'	=>'one-to-many'),
 
   ),
+    'duplicate_check' => array('FilterDuplicateCheck' => array(
+        'filter_template' => array(
+            array('$and' => array(
+                array('name' => array('$starts' => '$name')),
+                array('$or' => array(
+                    array('billing_address_city' => array('$starts' => '$billing_address_city')),
+                    array('shipping_address_city' => array('$starts' => '$shipping_address_city')),
+                )),
+            ))
+        ),
+        'ranking_fields' => array(
+            array('in_field_name' => 'name', 'dupe_field_name' => 'name'),
+            array('in_field_name' => 'billing_address_city', 'dupe_field_name' => 'billing_address_city'),
+            array('in_field_name' => 'shipping_address_city', 'dupe_field_name' => 'shipping_address_city'),
+        )
+    )),
   //This enables optimistic locking for Saves From EditView
   'optimistic_locking'=>true,
 );

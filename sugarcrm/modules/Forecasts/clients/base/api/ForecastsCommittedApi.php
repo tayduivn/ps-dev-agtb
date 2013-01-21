@@ -35,15 +35,7 @@ class ForecastsCommittedApi extends ModuleApi
                 'pathVars' => array('', ''),
                 'method' => 'forecastsCommitted',
                 'shortHelp' => 'A list of forecasts entries matching filter criteria',
-                'longHelp' => 'include/api/html/modules/Forecasts/ForecastWorksheetApi.html#forecastsCommitted',
-            ),
-            'forecastsCommittedMgrNeedsCommitted' => array(
-                'reqType' => 'GET',
-                'path' => array('Forecasts', 'committed', 'mgrNeedsCommitted'),
-                'pathVars' => array('', ''),
-                'method' => 'forecastsCommittedMgrNeedsCommitted',
-                'shortHelp' => 'True or False if the manager worksheet commit is older than the rep worksheet committed date.',
-                'longHelp' => 'include/api/html/modules/Forecasts/ForecastWorksheetApi.html#forecastsCommittedDateCheck',
+                'longHelp' => 'modules/Forecasts/clients/base/api/help/ForecastsCommittedGet.html',
             ),
             'forecastsCommit' => array(
                 'reqType' => 'POST',
@@ -51,7 +43,7 @@ class ForecastsCommittedApi extends ModuleApi
                 'pathVars' => array('', ''),
                 'method' => 'forecastsCommit',
                 'shortHelp' => 'Commit a forecast',
-                'longHelp' => 'include/api/html/modules/Forecasts/ForecastWorksheetApi.html#forecastsCommit',
+                'longHelp' => 'modules/Forecasts/clients/base/api/help/ForecastsCommittedPost.html',
             )
         );
         return $parentApi;

@@ -40,7 +40,9 @@ class Bug46230Test extends Sugar_PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
+        SugarTestHelper::setUp('current_user');
+        SugarTestHelper::setUp('beanList');
+        SugarTestHelper::setUp('beanFiles');
         $this->account = SugarTestAccountUtilities::createAccount();
 
         //Unset global service_object variable so that the code in updateDependencyBean is run in SugarBean.php
@@ -59,8 +61,7 @@ class Bug46230Test extends Sugar_PHPUnit_Framework_TestCase
     public function tearDown()
     {
         SugarTestAccountUtilities::removeAllCreatedAccounts();
-        SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
-        unset($GLOBALS['current_user']);
+        SugarTestHelper::tearDown();
         if(!empty($this->stored_service_object)) {
             $GLOBALS['service_object'] = $this->stored_service_object;
         }
@@ -97,7 +98,7 @@ class Bug46230Test extends Sugar_PHPUnit_Framework_TestCase
         {
             $this->assertNotEmpty($res['INDUSTRY']);
         }
-		
+
 		$this->account->updateDependentField();
 
         if ($is_industry_hidden == '1')
@@ -109,7 +110,7 @@ class Bug46230Test extends Sugar_PHPUnit_Framework_TestCase
             $this->assertNotEmpty($res['INDUSTRY']);
         }
     }
-	
+
 	/**
      * @group 54042
      */

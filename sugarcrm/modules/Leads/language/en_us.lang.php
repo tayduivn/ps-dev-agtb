@@ -108,6 +108,7 @@ $mod_strings = array (
     'LBL_HISTORY_SUBPANEL_TITLE'=>'History',
     'LBL_HOME_PHONE' => 'Home Phone:',
     'LBL_IMPORT_VCARD' => 'Import vCard',
+    'LBL_IMPORT_VCARD_SUCCESS' => 'Lead from vCard created succesfully',
     'LBL_VCARD' => 'vCard',
     'LBL_IMPORT_VCARDTEXT' => 'Automatically create a new lead by importing a vCard from your file system.',
     'LBL_INVALID_EMAIL'=>'Invalid Email:',

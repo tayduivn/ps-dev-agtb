@@ -32,6 +32,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 require_once('modules/DynamicFields/DynamicField.php');
 require_once("data/Relationships/RelationshipFactory.php");
 require_once 'data/BeanVisibility.php';
+require_once 'data/BeanDuplicateCheck.php';
 require_once 'data/SugarACL.php';
 require_once "modules/Mailer/MailerFactory.php"; // imports all of the Mailer classes that are needed
 
@@ -294,6 +295,11 @@ class SugarBean
      * set to true if dependent fields updated
      */
     protected $is_updated_dependent_fields = false;
+
+    /**
+     * duplicate check manager that interfaces with the duplicate check strategy
+     */
+    protected $duplicate_check_manager;
 
     /**
      * Blowfish encryption key
@@ -2056,11 +2062,7 @@ class SugarBean
                 $mailer->setSubject($subject);
 
                 // set the body of the email...
-
-                // the compared strings will be the same if strip_tags had no affect
-                // if the compared strings are equal, then it's a text-only message
-                $textOnly = (strcmp($body, strip_tags($body)) == 0);
-
+                $textOnly = EmailFormatter::isTextOnly($body);
                 if ($textOnly) {
                     $mailer->setTextBody($body);
                 } else {
@@ -6415,4 +6417,28 @@ class SugarBean
 	{
 	    return BeanFactory::getBean($this->module_dir);
 	}
+
+    /**
+     * Find possible duplicate records for this bean
+     * @return array
+     */
+    public function findDuplicates()
+    {
+        $dupeCheckManager = $this->loadDuplicateCheckManager();
+        return $dupeCheckManager->findDuplicates();
+    }
+
+    /**
+     * Create a duplicate check manager to handle loading the appropriate duplicate check strategy
+     *
+     * @return BeanDuplicateCheck
+     */
+    protected function loadDuplicateCheckManager()
+    {
+        if(empty($this->duplicate_check_manager)) {
+            $data = isset($GLOBALS['dictionary'][$this->object_name]['duplicate_check'])?$GLOBALS['dictionary'][$this->object_name]['duplicate_check']:array();
+            $this->duplicate_check_manager = new BeanDuplicateCheck($this, $data);
+        }
+        return $this->duplicate_check_manager;
+    }
 }

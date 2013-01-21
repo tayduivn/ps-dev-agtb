@@ -41,7 +41,7 @@
         'mouseleave tr':'hideActions'
     },
     initialize: function(options) {
-        options.meta = _.extend(app.metadata.getView(options.module, 'baselist') || {}, options.meta);
+        options.meta = $.extend(true, {}, app.metadata.getView(options.module, 'baselist') || {}, options.meta);
         options.meta.type = options.meta.type || 'list';
         if(!_.isUndefined(options.meta.selection) && !_.isUndefined(options.meta.selection.type)) {
             switch (options.meta.selection.type) {
@@ -54,6 +54,9 @@
                 default:
                     break;
             }
+        }
+        if(!_.isUndefined(options.meta.rowactions)) {
+            options.meta = this.addRowActions(options.meta);
         }
         app.view.View.prototype.initialize.call(this, options);
         this.template = this.template || app.template.getView('baselist') || app.template.getView('baselist', this.module) || null;
@@ -264,6 +267,27 @@
                 multiSelect[0].fields[0].buttons = meta.selection.actions;
             }
             panel.fields = multiSelect.concat(panel.fields);
+        });
+
+        return meta;
+    },
+    addRowActions: function(meta) {
+        meta = $.extend(true, {}, meta);
+        _.each(meta.panels, function(panel){
+            var rowActions = {
+                'type' : 'fieldset',
+                'fields' : [{
+                    'type' : 'rowactions',
+                    'buttons' : []
+                }],
+                'value' : false,
+                'sortable' : false,
+                'label' : meta.rowactions.label || ''
+            };
+            if (!_.isUndefined(meta.rowactions.actions)) {
+                rowActions.fields[0].buttons = meta.rowactions.actions;
+            }
+            panel.fields = panel.fields.concat(rowActions);
         });
 
         return meta;
