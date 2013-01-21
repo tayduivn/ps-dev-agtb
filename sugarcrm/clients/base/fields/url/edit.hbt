@@ -1,3 +1,4 @@
+{{!
 /*********************************************************************************
  * The contents of this file are subject to the SugarCRM Master Subscription
  * Agreement (""License"") which can be viewed at
@@ -24,25 +25,6 @@
  * governing these rights and limitations under the License.  Portions created
  * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
-({
-    format:function(value){
-        if (value && !value.match(/^([a-zA-Z]+):\/\//)) {
-            value = "http://" + value;
-        }
-        return value;
-    },
-    unformat:function(value){
-        value = (value!='' && value!='http://') ? value.trim() : "";
-        return value;
-    },
-    getFieldElement: function() {
-        return this.$('a');
-    },
-    render: function() {
-        this.def.link_target = _.isUndefined(this.def.link_target) ? '_blank' : this.def.link_target;
-        app.view.Field.prototype.render.call(this);
-        if($.fn.tooltip){
-            this.$('a[rel="tooltip"]').tooltip({placement: 'bottom', delay: { show: 1500, hide: 200 }});
-        }
-    }
-})
+}}
+<input type="text" name="{{name}}" value="{{value}}"{{#if def.len}} maxlength="{{def.len}}"{{/if}}{{#if def.placeholder}} placeholder='{{str def.placeholder this.model.module}}'{{/if}} class="input-large">
+<p class="help-block"></p>
