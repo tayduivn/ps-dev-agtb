@@ -8724,6 +8724,94 @@ table.duplicates.highlight tbody td {
 .carousel.slide .thumbnails .thumbnail .caption {
   text-align: center;
 }
+.merge-interface {
+  height: auto;
+  margin: 10px 0 0;
+}
+.merge-interface .fluid-div,
+.merge-interface .fixed-div {
+  padding-bottom: 4px;
+}
+.merge-interface .fixed-div {
+  width: 280px;
+}
+.merge-interface .fixed-div aside,
+.merge-interface .fixed-div label {
+  font-size: 11px;
+}
+.merge-interface .fixed-div aside a:hover {
+  text-decoration: none;
+}
+.merge-interface .fluid-div {
+  white-space: nowrap;
+  overflow-y: scroll;
+  height: auto;
+}
+.merge-interface .col {
+  width: 130px;
+  height: 100%;
+  display: inline-block;
+  margin: 2px 0 0 10px;
+}
+.merge-interface .col .box {
+  border-radius: 3px;
+  -webkit-box-shadow: 0 0 1px #aaaaaa;
+  -moz-box-shadow: 0 0 1px #aaaaaa;
+  box-shadow: 0 0 1px #aaaaaa;
+  -webkit-box-shadow: 0 0 1px #aaaaaa;
+  -moz-box-shadow: 0 0 1px #aaaaaa;
+  box-shadow: 0 0 1px #aaaaaa;
+}
+.merge-interface .col .box.border.primary {
+  background: #F7F7F7;
+  border: 1px solid #CECECE;
+}
+.merge-interface input[type=text] {
+  width: 86px;
+}
+.merge-interface .merge-row,
+.merge-interface .merge-row > label {
+  width: auto;
+  margin: 0;
+  line-height: 30px;
+  height: 30px;
+  padding: 0 5px;
+}
+.merge-interface .merge-row.odd {
+  background: #FEFBF4;
+}
+.merge-interface .merge-row.even {
+  background: #FDF9EA;
+}
+.merge-interface .merge-primary-controller {
+  width: 100%;
+  height: 30px;
+  white-space: nowrap;
+}
+.merge-interface .merge-primary-controller .col {
+  height: 18px;
+  width: 100px;
+  margin-left: 20px;
+  margin-right: 20px;
+}
+.merge-interface .merge-primary-controller .col.prim {
+  border: 1px solid #ccc;
+  -webkit-border-radius: 4px;
+  -moz-border-radius: 4px;
+  border-radius: 4px;
+  -webkit-border-radius: 4px;
+  -moz-border-radius: 4px;
+  border-radius: 4px;
+  background: #E9E9E9;
+  text-align: center;
+  font-size: 11px;
+  text-shadow: -1px -1px 1px #fff;
+  cursor: move;
+}
+.record-merge-interface {
+  overflow-y: scroll !important;
+  overflow-x: hidden !important;
+}
 .ui-timepicker-list {
   overflow: visible;
   height: 150px;
@@ -9186,7 +9274,6 @@ a.preview-list-item:hover {
 }
 .module-edit .record {
   position: absolute;
-  overflow: hidden;
   top: 60px;
   right: 0;
   bottom: 0;
