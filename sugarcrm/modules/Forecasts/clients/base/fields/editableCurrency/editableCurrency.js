@@ -191,7 +191,7 @@
                 app.user.getPreference('decimal_separator')
             ),
             ngVal = app.utils.formatNumber(
-                app.utils.unformatNumberStringLocale(val2),
+                val2,
                 app.user.getPreference('decimal_precision'),
                 app.user.getPreference('decimal_precision'),
                 '',

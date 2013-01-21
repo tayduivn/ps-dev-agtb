@@ -136,6 +136,7 @@ class CurrentUserApi extends SugarApi {
         // Fill in the rest
         $user_data['type'] = 'user';
         $user_data['id'] = $current_user->id;
+        $current_user->_create_proper_name_field();
         $user_data['full_name'] = $current_user->full_name;
         $user_data['user_name'] = $current_user->user_name;
         $user_data['picture'] = $current_user->picture;

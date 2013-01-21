@@ -34,16 +34,16 @@ class Bug47537Test extends Sugar_PHPUnit_Framework_TestCase {
     var $form;
     var $array;
 
-    public function setUp() {
-        global $beanList;
+    public function setUp()
+    {
+        SugarTestHelper::setUp('beanList');
+        SugarTestHelper::setUp('current_user');
 
         require "modules/".$this->module."/metadata/searchdefs.php";
         require "modules/".$this->module."/metadata/SearchFields.php";
         require "modules/".$this->module."/metadata/listviewdefs.php";
 
-        $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
-
-        $this->seed = new $beanList[$this->module];
+        $this->seed = BeanFactory::newBean($this->module);
         $this->form = new SearchForm($this->seed, $this->module, $this->action);
         $this->form->setup($searchdefs, $searchFields, 'include/SearchForm/tpls/SearchFormGeneric.tpl', "advanced_search", $listViewDefs);
 
@@ -57,17 +57,15 @@ class Bug47537Test extends Sugar_PHPUnit_Framework_TestCase {
             'start_quote_num_entered_advanced' => '',
             'end_quote_num_entered_advanced' => '',
         );
+        parent::setUp();
     }
 
     public function tearDown() {
         unset($this->array);
         unset($this->form);
         unset($this->seed);
-        unset($listViewDefs);
-        unset($searchFields);
-        unset($searchdefs);
-        SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
-        unset($GLOBALS['current_user']);
+        SugarTestHelper::tearDown();
+        parent::tearDown();
     }
 
     /**
@@ -100,8 +98,8 @@ class Bug47537Test extends Sugar_PHPUnit_Framework_TestCase {
         $query = $this->form->generateSearchWhere($this->seed, $this->module);
         $this->assertSame($expected, $query);
     }
-    
-    
+
+
     public function testAdvancedSearchForIntBetween() {
         $this->array['quote_num_advanced_range_choice'] = 'between';
         $this->array['start_range_quote_num_advanced'] = '1';
@@ -114,4 +112,4 @@ class Bug47537Test extends Sugar_PHPUnit_Framework_TestCase {
     }
 
 }
- 
+

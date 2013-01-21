@@ -63,6 +63,10 @@
  *      on: context.forecasts
  *      by: change:worksheet
  *      when: the worksheet is changed.
+ *
+ * forecasts:change:worksheetRows
+ *      on: context.forecasts
+ *      after: this.updateWorksheetBySelectedRanges() is ran in the change:selectedRanges event handler
  */
 ({
 
@@ -99,6 +103,39 @@
      * If the timeperiod is changed and we have dirtyModels, keep the previous one to use if they save the models
      */
     dirtyUser : '',
+
+    events : {
+        'click a["rel=inspector"]>i' : 'inspector'
+    },
+
+    inspector: function(evt) {
+        var nTr = $(evt.target).parents('tr'),
+            uid = $(evt.target).data('uid'),
+            totalRows = $(evt.target).parents('table').find('tr.odd, tr.even'),
+            selIndex = -1;
+        _.each(totalRows, function(element, index){
+            if(nTr[0] == element) {
+                selIndex = index;
+            }
+        });
+
+        // begin building params to pass to modal
+        var params = {
+            selectedIndex : selIndex,
+            dataset : totalRows,
+            title:'Preview',
+            context : {
+                module: "Opportunities",
+                model : app.data.createBean('Opportunities', {id : uid}),
+                meta  : app.metadata.getModule('Opportunities').views.forecastInspector.meta
+            },
+            components: [
+                { view: 'forecastInspector' }
+            ]
+        };
+
+        this.layout.getComponent('inspector').showInspector(params);
+    },
     
     /**
      * Initialize the View
@@ -191,13 +228,14 @@
                 //Apply sorting for the worksheet
                 switch(field.type)
                 {
-                    case "buckets":
+                    case "commitStage":
                     case "enum":
                     case "bool":
                         // disable sorting for non-numerical fields
                         fieldDef["bSortable"] = false;
                         break;
                     case "int":
+                    case "editableInt":
                     case "currency":
                     case "editableCurrency":
                         fieldDef["sSortDataType"] = "dom-number";
@@ -236,6 +274,8 @@
         if(this.context.forecasts) { this.context.forecasts.off(null, null, this) };
         if(this.context.forecasts.config) { this.context.forecasts.config.off(null, null, this) };
         if(this.context.forecasts.worksheet) { this.context.forecasts.worksheet.off(null, null, this) };
+        //if we don't unbind this, then recycle of this view if a change in rendering occurs will result in multiple bound events to possibly out of date functions
+        $(window).unbind("beforeunload");
         app.view.View.prototype.unbindData.call(this);
     },
 
@@ -278,7 +318,7 @@
                         if(totalToSave === saveCount) {
                             self.context.forecasts.trigger('forecasts:worksheet:saved', totalToSave, 'rep_worksheet', isDraft);
                         }
-                    }});
+                    }, silent: true});
                 });
 
                 self.cleanUpDirtyModels();
@@ -336,6 +376,7 @@
             this.context.forecasts.on("change:selectedRanges",
                 function(context, ranges) {
                     this.updateWorksheetBySelectedRanges(ranges);
+                    this.context.forecasts.trigger('forecasts:change:worksheetRows', self.$el.find('tr.odd, tr.even'));
                 },this);
             this.context.forecasts.worksheet.on("change", function() {
                 this.calculateTotals();

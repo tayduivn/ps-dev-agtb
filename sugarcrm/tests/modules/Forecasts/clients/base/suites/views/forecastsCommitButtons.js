@@ -170,6 +170,11 @@ describe("Forecasts Commit Buttons Component", function(){
                     on: function(event, fcn){}
                 }
     		};
+
+            // we need the view.layout to be defined since we listen for an event from there now
+            view.layout = {
+                on : function(evt, fct) {}
+            };
     		    		   		
     		sinon.spy(view.context.forecasts, "on");
     		view.bindDataChange();
