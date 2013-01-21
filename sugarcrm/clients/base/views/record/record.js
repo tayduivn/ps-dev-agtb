@@ -11,11 +11,15 @@
     },
     // button fields defined in view definition
     buttons: {},
+
     // button states
     STATE: {
         EDIT: 'edit',
         VIEW: 'view'
     },
+
+    // current button states
+    currentState: null,
 
     initialize: function(options) {
         _.bindAll(this);
@@ -28,9 +32,6 @@
         this.model.on("change", function() {
             if (this.inlineEditMode) {
                 this.previousModelState = this.model.previousAttributes();
-                if(this.buttons['record-save']) {
-                    this.buttons['record-save'].setDisabled(false);
-                }
                 this.setButtonStates(this.STATE.EDIT);
             }
         }, this);
@@ -109,13 +110,22 @@
 
     initButtons: function() {
         if(this.options.meta && this.options.meta.buttons) {
-            this.buttons = {};
-            _.each(this.options.meta.buttons, function(button, index) {
-                var field = this.getField(button.name);
-                if(field) {
-                    this.buttons[field.name || index] = field;
+            _.each(this.options.meta.buttons, function(button) {
+                if (button.type === 'buttondropdown') {
+                    _.each(button.buttons, function(dropdownButton) {
+                        this.registerFieldAsButton(dropdownButton.name);
+                    }, this);
+                } else if (button.type === 'button') {
+                    this.registerFieldAsButton(button.name);
                 }
             }, this);
+        }
+    },
+
+    registerFieldAsButton: function(buttonName) {
+        var button = this.getField(buttonName);
+        if (button) {
+            this.buttons[buttonName] = button;
         }
     },
 
@@ -222,7 +232,7 @@
         _.each(this.fields, function(field) {
             // Exclude image picker, buttons, and button dropdowns
             // This is just a stop gap solution.
-            if ((field.type == "img") || (field.name && this.buttons[field.name])) {
+            if ((field.type == 'img') || (field.type === 'button') || (field.type === 'buttondropdown')) {
                 return;
             }
 
@@ -418,16 +428,17 @@
     },
 
     /**
-     * Change the behavior of buttons depending on the state that they should be in
+     * Show/hide buttons depending on the state defined for each buttons in the metadata
      * @param state
      */
     setButtonStates: function(state) {
-        //TODO: Use direct show/hide function on field after sidecar is updated
-        _.each(this.buttons, function(field, name) {
-            if(_.isUndefined(field.def.mode) || field.def.mode == state) {
-                field.getFieldElement().show();
+        this.currentState = state;
+
+        _.each(this.buttons, function(field) {
+            if (_.isUndefined(field.showOn()) || (field.showOn() === state)) {
+                field.show();
             } else {
-                field.getFieldElement().hide();
+                field.hide();
             }
         });
     },

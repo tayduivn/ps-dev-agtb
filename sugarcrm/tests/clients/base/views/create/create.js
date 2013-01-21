@@ -7,6 +7,7 @@ describe("Create View", function() {
         SugarTest.testMetadata.init();
         SugarTest.loadHandlebarsTemplate('record', 'view', 'base');
         SugarTest.loadHandlebarsTemplate('button', 'field', 'base', 'edit');
+        SugarTest.loadComponent('base', 'field', 'button');
         SugarTest.loadComponent('base', 'view', 'record');
         SugarTest.testMetadata.addViewDefinition('record', {
             "panels":[
@@ -36,7 +37,6 @@ describe("Create View", function() {
                     "fields":[
                         "phone_work",
                         "email1",
-                        "phone_office",
                         "full_name"
                     ]
                 }
@@ -56,27 +56,24 @@ describe("Create View", function() {
                     "type":"button",
                     "label":"LBL_RESTORE",
                     "css_class":"hide btn-invisible btn-link",
-                    "mode" : "edit"
+                    "showOn" : "edit"
                 }, {
                     "name":"save_create_button",
                     "type":"button",
                     "label":"LBL_SAVE_AND_CREATE_ANOTHER",
                     "css_class":"hide btn-invisible btn-link",
-                    "mode" : "save"
+                    "showOn" : "save"
                 }, {
                     "name":"save_view_button",
                     "type":"button",
                     "label":"LBL_SAVE_AND_VIEW",
                     "css_class":"hide btn-invisible btn-link",
-                    "mode" : "save"
+                    "showOn" : "save"
                 }, {
                     "name":"save_button",
                     "type":"button",
                     "label":"LBL_SAVE_BUTTON_LABEL",
                     "css_class":"disabled"
-                }, {
-                    "name":"sidebar_toggle",
-                    "type":"sidebartoggle"
                 }
             ]
         }, moduleName);
@@ -101,7 +98,7 @@ describe("Create View", function() {
     });
 
     describe('Render', function() {
-        it("Should render 5 buttons and 6 fields", function() {
+        it("Should render 5 buttons and 5 fields", function() {
             var fields = 0,
                 buttons = 0;
 
@@ -115,7 +112,7 @@ describe("Create View", function() {
                 }
             });
 
-            expect(fields).toBe(6);
+            expect(fields).toBe(5);
             expect(buttons).toBe(5);
         });
     });
