@@ -35,7 +35,7 @@ class ForecastsConfigApi extends ConfigModuleApi {
                     'pathVars' => array('module',''),
                     'method' => 'forecastsConfigSave',
                     'shortHelp' => 'Creates the config entries for the Forecasts module.',
-                    'longHelp' => 'include/api/help/ConfigApi.html#configCreate',
+                    'longHelp' => 'modules/Forecasts/clients/base/api/help/ForecastsConfigPut.html',
                 ),
                 'forecastsConfigUpdate' => array (
                     'reqType' => 'PUT',
@@ -43,7 +43,7 @@ class ForecastsConfigApi extends ConfigModuleApi {
                     'pathVars' => array('module',''),
                     'method' => 'forecastsConfigSave',
                     'shortHelp' => 'Updates the config entries for the Forecasts module',
-                    'longHelp' => 'include/api/help/ConfigApi.html#configUpdate',
+                    'longHelp' => 'modules/Forecasts/clients/base/api/help/ForecastsConfigPut.html',
                 ),
             )
         );
