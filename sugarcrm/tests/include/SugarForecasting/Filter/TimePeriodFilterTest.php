@@ -69,7 +69,7 @@ class SugarForecasting_Filter_TimePeriodFilterTest extends Sugar_PHPUnit_Framewo
         return array(
             array(TimePeriod::ANNUAL_TYPE, TimePeriod::QUARTER_TYPE, TimeDate::getInstance()->getNow()->modify('first day of january')->asDbDate(), 1, 1, 12),
             array(TimePeriod::ANNUAL_TYPE, TimePeriod::QUARTER_TYPE, TimeDate::getInstance()->getNow()->modify('first day of january')->asDbDate(), 2, 2, 20),
-            array(TimePeriod::ANNUAL_TYPE, TimePeriod::QUARTER_TYPE, TimeDate::getInstance()->getNow()->modify('first day of februaryF')->asDbDate(), 1, 1, 12),
+            array(TimePeriod::ANNUAL_TYPE, TimePeriod::QUARTER_TYPE, TimeDate::getInstance()->getNow()->modify('first day of february')->asDbDate(), 1, 1, 12),
             array(TimePeriod::QUARTER_TYPE, TimePeriod::MONTH_TYPE, TimeDate::getInstance()->getNow()->modify('first day of january')->asDbDate(), 1, 1, 9),
             array(TimePeriod::QUARTER_TYPE, TimePeriod::MONTH_TYPE, TimeDate::getInstance()->getNow()->modify('first day of january')->asDbDate(), 2, 2, 15),
             array(TimePeriod::QUARTER_TYPE, TimePeriod::MONTH_TYPE, TimeDate::getInstance()->getNow()->modify('first day of february')->asDbDate(), 2, 2, 15),
