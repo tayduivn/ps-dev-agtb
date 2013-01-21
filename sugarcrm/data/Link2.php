@@ -341,7 +341,7 @@ class Link2 {
 
     /**
      * Build a Relationship Join with a SugarQuery Object
-     * @param SugarQuery $sugar_query 
+     * @param SugarQuery $sugar_query
      * @return SugarQuery
      */
     function buildJoinSugarQuery($sugar_query, $options = array())
@@ -567,15 +567,10 @@ class Link2 {
                 return false;
 
             $lhs = $this->getSide() == REL_LHS ? $this->focus : $key;
-            $rhs = $this->getSide() == REL_LHS ? $key : $this->focus;  
-            // create activity if enabled
-            if ($lhs->isActivityEnabled() && !$this->relationship->relationship_exists($lhs, $rhs)) {
-                $activity = new ActivityStream();
-                $activity->addRelate($lhs, $rhs);
-            }   
-            
+            $rhs = $this->getSide() == REL_LHS ? $key : $this->focus;
+
             $success = $this->relationship->add($lhs, $rhs, $additional_values);
-            
+
             if($success == false) {
                 $failures[] = $key->id;
             }
