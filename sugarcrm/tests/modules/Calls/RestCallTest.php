@@ -103,6 +103,7 @@ class RestCallTest extends RestTestBase {
                                                       "duration_minutes" => "30",
                                                       "parent_type" => "Contacts",
                                                       "parent_id" => $this->contact_id,
+                                                      "send_invites" => true,
                                                       )),
                                       'POST');
         $this->assertTrue(isset($restReply['reply']['id']),
