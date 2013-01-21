@@ -2534,6 +2534,8 @@ $app_strings = array (
     'LBL_LISTVIEW_SELECTED_ALL' => 'You have selected all records in this view.',
     'LBL_LISTVIEW_RECORDS' => ' records in the result set.',
     'LBL_LISTVIEW_CLEAR_ALL' => 'Clear All selections.',
+    'LBL_LISTVIEW_SELECT_AND_EDIT' => 'Select and edit',
+    'LBL_LISTVIEW_ACTIONS' => 'Actions',
 
     'LBL_LOCALE_NAME_EXAMPLE_FIRST' => 'David',
     'LBL_LOCALE_NAME_EXAMPLE_LAST' => 'Livingstone',
@@ -3357,6 +3359,7 @@ $app_strings = array (
     'LBL_SEARCH_BY' => 'Search by',
     'LBL_PREVIEW' => 'Preview',
     'LBL_STREAM_NO_RECORDS' => 'This record has no notes at this time. Please add a note by clicking on the add note link.',
+    'LBL_DUPLICATES_FOUND' => '{{duplicateCount}} duplicates found.',
 
     //SugarApiExceptionNotAuthorized language string
     'SUGAR_API_EXCEPTION_NOT_AUTHORIZED' => 'Not allowed to edit field {0} in module: {1}',
