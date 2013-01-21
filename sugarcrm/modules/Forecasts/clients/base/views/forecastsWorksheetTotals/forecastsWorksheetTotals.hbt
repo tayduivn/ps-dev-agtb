@@ -40,6 +40,7 @@
     {{#if show_worksheet_worst}}
             <th class="tright">{{formatCurrency worst_case "-99"}}</th>
     {{/if}}
+    <th></th>
 </tr>
 
 <tr id="forecastsWorksheetTotalsOverallTotals">
@@ -56,4 +57,5 @@
     {{#if show_worksheet_worst}}
        <th class="tright">{{formatCurrency overall_worst "-99"}}</th>
     {{/if}}
+    <th></th>
 </tr>

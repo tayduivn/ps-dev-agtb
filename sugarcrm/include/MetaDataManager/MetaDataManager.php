@@ -252,7 +252,7 @@ class MetaDataManager {
                 $data = $dictionary[$obj];
             }
 
-            // vardefs are missing something, for consistancy let's populate some arrays
+            // vardefs are missing something, for consistency let's populate some arrays
             if (!isset($data['fields'])) {
                 $data['fields'] = array();
             }

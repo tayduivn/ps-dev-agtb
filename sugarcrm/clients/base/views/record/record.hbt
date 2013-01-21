@@ -60,13 +60,13 @@
                                 <span>
                                     {{#unless ../../this.labelsOnTop}}
                                         {{#if ../../../this.labels}}
-                                            <label class="span{{../this.labelSpan}} tright record-label" >{{str ../this.label ../../../../../../this.model.module}}</label>
+                                            <label class="span{{../this.labelSpan}} tright record-label" data-name="{{../../this.name}}">{{str ../this.label ../../../../../../this.model.module}}</label>
                                         {{/if}}
                                     {{/unless}}
                                     <div class="span{{this.span}} record-cell{{#if cell_css}} {{cell_css}}{{/if}}" data-type="{{type}}" data-name="{{name}}">
                                         {{#if ../../this.labelsOnTop}}
                                             {{#if ../../../this.labels}}
-                                        <div class='record-label'>{{str ../this.label ../../../../../../this.model.module}}</div>
+                                        <div class='record-label' data-name="{{../../this.name}}">{{str ../this.label ../../../../../../this.model.module}}</div>
                                             {{/if}}
                                         {{/if}}
                                         {{#if name}}

@@ -450,6 +450,7 @@ class ModuleBuilderController extends SugarController
                 $mi->silent = true;
                 $mi->rebuild_extensions();
                 $repair = new RepairAndClear();
+                $class_name = $GLOBALS ['beanList'] [$module];
 
                 $repair->repairAndClearAll(array('rebuildExtensions', 'clearVardefs', 'clearTpls'), array($class_name), true, false);
                 if ($module == 'Users') {

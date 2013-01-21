@@ -36,7 +36,7 @@ class ForecastsFiltersApi extends ModuleApi
                 'pathVars' => array('', ''),
                 'method' => 'timeperiod',
                 'shortHelp' => 'forecast timeperiod',
-                'longHelp' => 'include/api/html/modules/Forecasts/ForecastFiltersApi.html#timeperiod',
+                'longHelp' => 'modules/Forecasts/clients/base/api/help/ForecastFiltersTimePeriodGet.html',
             ),
             'reportees' => array(
                 'reqType' => 'GET',
@@ -44,7 +44,7 @@ class ForecastsFiltersApi extends ModuleApi
                 'pathVars' => array('', '', 'user_id'),
                 'method' => 'getReportees',
                 'shortHelp' => 'Gets reportees to a user by id',
-                'longHelp' => 'include/api/html/modules/Forecasts/ForecastFiltersApi.html#reportees',
+                'longHelp' => 'modules/Forecasts/clients/base/api/help/ForecastFiltersReporteesGet.html',
             )
         );
         return $parentApi;
@@ -55,9 +55,9 @@ class ForecastsFiltersApi extends ModuleApi
      *
      * //TODO, move this logic to store the values in a custom language file that contains the timeperiods for the Forecast module
      *
-     * @param array $api
-     * @param array $args
-     * @return array
+     * @param $api ServiceBase The API class of the request, used in cases where the API changes how the fields are pulled from the args array.
+     * @param $args array The arguments array passed in from the API
+     * @return array of timeperiods
      */
     public function timeperiod($api, $args)
     {
@@ -75,6 +75,13 @@ class ForecastsFiltersApi extends ModuleApi
         return $obj->process();
     }
 
+    /**
+     * Retrieve an array of Users and their tree state that report to the user that was passed in
+     *
+     * @param $api ServiceBase The API class of the request, used in cases where the API changes how the fields are pulled from the args array.
+     * @param $args array The arguments array passed in from the API
+     * @return array|string of users that reported to specified/current user
+     */
     public function getReportees($api, $args)
     {
         $args['user_id'] = isset($args["user_id"]) ? $args["user_id"] : $GLOBALS["current_user"]->id;

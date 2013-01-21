@@ -114,6 +114,15 @@ $viewdefs['Forecasts']['base']['view']['forecastsWorksheet'] = array(
                     'convertToBase'=> true,
                     'showTransactionalAmount'=>true,
                 ),
+                array(
+                    'name' => 'user_inspector',
+                    'type' => 'inspector',
+                    'label' => '',
+                    'sortable' => false,
+                    'default' => true,
+                    'enabled' => true,
+                    'uid_field' => 'id'
+                ),
             ),
         ),
     ),

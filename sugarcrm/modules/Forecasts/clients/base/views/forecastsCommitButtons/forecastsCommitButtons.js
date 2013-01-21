@@ -64,6 +64,11 @@
      * Used to know which version to save, draft or live
      */
     draft: 0,
+
+    /**
+     * Track if the inspector is visible
+     */
+    inspectorVisible: false,
             
     /**
      * Adds event listener to elements
@@ -124,6 +129,10 @@
             this.context.forecasts.on("forecasts:commitButtons:enabled", this.enableCommitButton, this);
             this.context.forecasts.on("forecasts:commitButtons:disabled", this.disableCommitButton, this);
         }
+
+        this.layout.on('inspectorVisible', function(visible) {
+            self.inspectorVisible = visible;
+        })
     },
 
     /**
@@ -212,12 +221,16 @@
     triggerRightColumnVisibility : function(evt) {
         evt.preventDefault();
         // we need to use currentTarget so we always get the a and not any child that was clicked on
+
         var el = $(evt.currentTarget);
         el.find('i').toggleClass('icon-chevron-right icon-chevron-left');
 
-        // we need to go up and find the parent containg the two rows
-        el.parents('#contentflex').find('>div.row-fluid').find('>div:first').toggleClass('span8 span12');
-        el.parents('#contentflex').find('>div.row-fluid').find('>div:last').toggleClass('span4 hide');
+        if(!this.inspectorVisible) {
+            var container = el.parents('#contentflex').find('>div.row-fluid');
+            // we need to go up and find the parent containing the two rows
+            container.find('>div:first').toggleClass('span8 span12');
+            container.find('>div:last').toggleClass('span4 hide');
+        }
 
         // toggle the "event" to make the chart stop rendering if the sidebar is hidden
         this.context.forecasts.set({hiddenSidebar: el.find('i').hasClass('icon-chevron-left')});
