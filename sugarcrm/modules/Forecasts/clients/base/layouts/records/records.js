@@ -73,7 +73,7 @@
         app.initData = forecastData.initData;
         app.user.set(app.initData.selectedUser);
 
-        if(forecastData.initData.forecasts_setup == 0) {
+        if(forecastData.initData.forecasts_setup === 0) {
             window.location.hash = "#Forecasts/layout/config";
         }
 

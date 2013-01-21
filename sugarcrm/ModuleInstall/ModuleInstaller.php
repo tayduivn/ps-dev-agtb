@@ -289,7 +289,8 @@ class ModuleInstaller{
 					$backup_path = clean_path( remove_file_extension(urldecode(hashToFile($_REQUEST['install_file'])))."-restore");
 					if(file_exists($backup_path))
 						rmdir_recursive($backup_path);
-				}
+        }
+		SugarAutoLoader::buildCache();
 	}
 
 
@@ -322,7 +323,6 @@ class ModuleInstaller{
 			$GLOBALS['log']->debug('ModuleInstaller[uninstall_new_file] deleting directory ' . $cp['to']);
 			rmdir_recursive($cp['to']);
 		}
-
 	}
 
 	/**
@@ -1459,12 +1459,12 @@ class ModuleInstaller{
 			'pre_uninstall',
 			'uninstall_relationships',
 			'uninstall_copy',
-			'uninstall_dcactions',
-			'uninstall_dashlets',
+		    'uninstall_dcactions',
+		    'uninstall_dashlets',
 			'uninstall_connectors',
 			'uninstall_layoutfields',
 		    'uninstall_extensions',
-            'uninstall_global_search',
+		    'uninstall_global_search',
 			'disable_manifest_logichooks',
 			'post_uninstall',
 		);
@@ -1501,6 +1501,7 @@ class ModuleInstaller{
 				}
 				foreach($tasks as $task){
 					$this->$task();
+					$this->reset_file_cache();
 					if(!$this->silent){
 						$current_step++;
 						update_progress_bar('install', $current_step, $total_steps);

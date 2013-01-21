@@ -1,6 +1,6 @@
 <?php
 if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
-/********************************************************************************
+/*********************************************************************************
  *The contents of this file are subject to the SugarCRM Professional End User License Agreement
  *("License") which can be viewed at http://www.sugarcrm.com/EULA.
  *By installing or using this file, You have unconditionally agreed to the terms and conditions of the License, and You may
@@ -19,20 +19,60 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *to the License for the specific language governing these rights and limitations under the License.
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
+require_once('data/SugarACLStrategy.php');
 
-require_once 'clients/base/api/MetadataApi.php';
-require_once 'clients/mobile/api/CurrentUserMobileApi.php';
+/**
+ * This class is used to enforce ACLs on modules that are restricted to admins only.
+ */
+class SugarACLAdminOnly extends SugarACLStrategy
+{
+    protected $allowUserRead = false;
+    protected $adminFor = '';
 
-// An API to let the user in to the metadata
-class MetadataMobileApi extends MetadataApi {
-    protected function getModules() {
-        // The current user API gets the proper list of modules, we'll re-use it here
-        $currentUserApi = new CurrentUserMobileApi();
-        $modules = $currentUserApi->getModuleList();
-        // add in Users [Bug59548]
-        if(!array_search('Users', $modules)) {
-        	$modules[] = 'Users';
+    public function __construct($aclOptions)
+    {
+        if ( is_array($aclOptions) ) {
+            if ( !empty($aclOptions['allowUserRead']) ) {
+                $this->allowUserRead = true;
+            }
+            if ( !empty($aclOptions['adminFor']) ) {
+                $this->adminFor = $aclOptions['adminFor'];
+            }
         }
-        return $modules;
     }
+
+    /**
+     * Only allow access to users with the user admin setting
+     * @param string $module
+     * @param string $view
+     * @param array $context
+     * @return bool|void
+     */
+    public function checkAccess($module, $view, $context)
+    {
+        if ( $view == 'team_security' ) {
+            // Let the other modules decide
+            return true;
+        }
+
+        if ( !empty($this->adminFor) ) {
+            $module = $this->adminFor;
+        }
+        
+        $current_user = $this->getCurrentUser($context);
+        if ( !$current_user ) {
+            return false;
+        }
+
+        if($current_user->isAdminForModule($module)) {
+            return true;
+        } else {
+            if ( $this->allowUserRead && !$this->isWriteOperation($view, $context) ) {
+                return true;
+            } else {
+                return false;
+            }
+        }
+    }
+
 }

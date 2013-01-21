@@ -381,7 +381,7 @@
             this.context.forecasts.worksheet.on("change", function() {
                 this.calculateTotals();
             }, this);
-            this.context.forecasts.on("forecasts:committed:saved forecasts:worksheet:saved", function(){
+            this.context.forecasts.on("forecasts:committed:saved", function(){
                 if(this.showMe()){
                     var model = this.context.forecasts.worksheet;
                     model.url = this.createURL();
