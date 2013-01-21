@@ -543,3 +543,8 @@ ul.clickMenu li ul.subnav, ul.clickMenu ul.subnav-sub, ul.SugarActionMenuIESub {
     padding-left: 20px;
     padding-right: 0px;
 }
+
+
+.yui-ac-container {
+    left: auto !important
+}
