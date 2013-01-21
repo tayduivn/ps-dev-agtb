@@ -239,7 +239,7 @@ function getExportContentFromResult(
                 if (isset($focus->field_name_map[$fieldNameMapKey])  && $focus->field_name_map[$fieldNameMapKey]['type'])
                 {
                     $sfh = SugarFieldHandler::getSugarField($focus->field_name_map[$fieldNameMapKey]['type']);
-                    $value = $sfh->exportSanitize($value, $focus->field_defs[$key], $focus);
+                    $value = $sfh->exportSanitize($value, $focus->field_defs[$key], $focus, $val);
                 }
 
                 //BEGIN SUGARCRM flav=pro ONLY
