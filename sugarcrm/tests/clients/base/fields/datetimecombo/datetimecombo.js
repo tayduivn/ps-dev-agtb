@@ -99,7 +99,7 @@ describe("datetimecombo field", function() {
 
             // splitting on : since we're hardcoding in the beforeEach to use :
             var splitTimeValue = field.timeValue.split(":"),
-                jsDateHrs = (jsDate.getHours() <= 9) ? ("0" + (jsDate.getHours()+1)) : jsDate.getHours()+1;
+                jsDateHrs = (jsDate.getHours() <= 8) ? ("0" + (jsDate.getHours()+1)) : jsDate.getHours()+1;
             expect(splitTimeValue[0]).toEqual(jsDateHrs);
             expect(splitTimeValue[1]).toEqual("00");
         });
