@@ -40,20 +40,4 @@
         return this.get('type') === 'support_portal';
     };
 
-    /**
-     * Include salutation with full_name in Details view like the Contacts module (Bug58325)
-     *
-     * @param data Contact data being patched
-     */
-    app.user.addSalutationToFullName = function(data){
-        var contactFields = app.metadata.getModule("Contacts").fields;
-        if(_.isEmpty(data.name)){
-            data.full_name = data.first_name + ' ' + data.last_name;
-        }
-        if(!_.isEmpty(data.salutation)){
-            var salutation = app.lang.getAppListStrings(contactFields.salutation.options)[data.salutation];
-            data.full_name = salutation + ' ' + data.full_name;
-        }
-    }
-
 })(SUGAR.App);

@@ -35,7 +35,7 @@ class ForecastsWorksheetApi extends ModuleApi
                 'pathVars' => array('', ''),
                 'method' => 'forecastWorksheet',
                 'shortHelp' => 'Returns a collection of ForecastWorksheet models',
-                'longHelp' => 'include/api/html/modules/Forecasts/ForecastWorksheetApi.html#forecastWorksheet',
+                'longHelp' => 'modules/Forecasts/clients/base/api/help/ForecastWorksheetGet.html',
             ),
             'forecastWorksheetSave' => array(
                 'reqType' => 'PUT',
@@ -43,7 +43,7 @@ class ForecastsWorksheetApi extends ModuleApi
                 'pathVars' => array('module', 'record'),
                 'method' => 'forecastWorksheetSave',
                 'shortHelp' => 'Updates a ForecastWorksheet model',
-                'longHelp' => 'include/api/html/modules/Forecasts/ForecastWorksheetApi.html#forecastWorksheet',
+                'longHelp' => 'modules/Forecasts/clients/base/api/help/ForecastWorksheetPut.html',
             )
         );
         return $parentApi;

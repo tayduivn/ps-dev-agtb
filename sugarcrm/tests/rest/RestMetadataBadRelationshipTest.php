@@ -27,12 +27,8 @@ require_once('tests/rest/RestTestBase.php');
  * Bug 57782 and 57780
  */
 
-class RestMetadataBadRelationshipTest extends RestTestBase {
-    public function setUp()
-    {
-        parent::setUp();
-    }
-    
+class RestMetadataBadRelationshipTest extends RestTestBase
+{
     public function tearDown()
     {
         // delete file
@@ -44,34 +40,33 @@ class RestMetadataBadRelationshipTest extends RestTestBase {
         $user = new User();
 
         $GLOBALS['current_user'] = $user->getSystemUser();
-        
+
         // run repair and rebuild
         $_REQUEST['repair_silent']=1;
         $rc = new RepairAndClear();
         $rc->repairAndClearAll(array("clearAll"), array("Accounts"),  false, false);
-        
+
         // switch back to the user
         $GLBOALS['current_user'] = $old_user;
         parent::tearDown();
     }
-    
+
     /**
      * @group rest
      */
     public function testBadRelationship() {
 
         // write out a bad relationship vardef
-        $metadata = '
-<?php
+        $metadata = '<?php
 $dictionary[\'Account\'][\'fields\'][\'notes\'][\'relationship\'] = "accounts_notes_awesome";
 ';
-        
+
         $metadata_dir = 'custom/Extension/modules/Accounts/Ext/Vardefs';
         $metadata_file = 'accounts_notes_field.php';
         if(!is_dir($metadata_dir)) {
             mkdir("{$metadata_dir}", 0777, true);
         }
-        
+
         file_put_contents( $metadata_dir . '/' . $metadata_file, $metadata );
 
         $this->assertTrue(file_exists($metadata_dir . '/' . $metadata_file), "Did not write out the new cache file");
@@ -85,20 +80,19 @@ $dictionary[\'Account\'][\'fields\'][\'notes\'][\'relationship\'] = "accounts_no
 
         $GLOBALS['current_user'] = $user->getSystemUser();
 
-        
+
         // run repair and rebuild
         $_REQUEST['repair_silent']=1;
         $rc = new RepairAndClear();
         $rc->repairAndClearAll(array("clearAll"), array("Accounts"),  false, false);
-        
+
         // switch back to the user
         $GLBOALS['current_user'] = $old_user;
- 
-        // call module metadata
-        $this->_clearMetadataCache();
 
+        // call module metadata
+        $this->_restCall('metadata/flush', 'flush');
         $restReply = $this->_restCall('metadata?type_filter=modules');
-        
+
         // verify no 500 and results for the module
         $this->assertNotEquals($restReply['info']['http_code'], 500,'HTTP Code is 500');
 

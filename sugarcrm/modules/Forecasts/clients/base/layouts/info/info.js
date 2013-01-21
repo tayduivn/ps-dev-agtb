@@ -23,7 +23,7 @@
 
 ({
 
-        extendsFrom: "ForecastsIndexLayout",
+        extendsFrom: "ForecastsRecordsLayout",
 
         /**
          * Holds the metadata for each of the components used in forecasts

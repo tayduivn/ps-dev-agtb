@@ -31,19 +31,19 @@ require_once('tests/rest/RestTestBase.php');
 
 class RestExportTest extends RestTestBase
 {
+
+    // for now, export and MassExport use the same rest endpoints. This will change.
+    private $singleRestPath = 'Accounts/export';
+    private $massRestPath = 'Accounts/export';
+
     public function setUp()
     {
         parent::setUp();
-
-        $account = BeanFactory::newBean('Accounts');
-        $account->id = 'UNIT-TEST-' . create_guid_section(10);
-        $account->new_with_id = true;
-        $account->name = "TEST Account";
-        $account->billing_address_postalcode = "90210";
-        $account->email1 = 'abc@sugarcrm.com';
-        $account->save();
-        $this->accounts[] = $account;
-
+        // multiple uids
+        $num_accounts = 25;
+        for ($i = 0; $i < $num_accounts; $i++) {
+            $this->accounts[] = SugarTestAccountUtilities::createAccount();
+        }
     }
 
     public function tearDown()
@@ -51,31 +51,64 @@ class RestExportTest extends RestTestBase
         parent::tearDown();
 
         $this->_cleanUpRecords();
+        $this->accounts = array();
     }
 
     public function testExportWithFilter()
     {
-        $reply = $this->_restCall('Accounts/export?filter='.urlencode('[{"name":"TEST Account"}]'));
+        $reply = $this->_restCall($this->massRestPath.'?filter='.urlencode('[{"name":"'.$this->accounts[0]->name.'"}]'));
         $this->assertContains($this->accounts[0]->name, $reply['replyRaw'], 'Reply does not contain '.$this->accounts[0]->name);
 
-    }
-
-    public function testExportWithUid()
-    {
-        $reply = $this->_restCall('Accounts/export?uid='.$this->accounts[0]->id);
-        $this->assertContains($this->accounts[0]->name, $reply['replyRaw'], 'Reply does not contain '.$this->accounts[0]->name);
     }
 
     public function testExportWithoutFilter()
     {
-        $reply = $this->_restCall('Accounts/export');
+        $reply = $this->_restCall($this->massRestPath);
         $this->assertContains($this->accounts[0]->name, $reply['replyRaw'], 'Reply does not contain '.$this->accounts[0]->name);
     }
 
     public function testExportSample()
     {
-        $reply = $this->_restCall('Accounts/export?sample=true$all=true');
+        $reply = $this->_restCall($this->massRestPath.'?sample=true$all=true');
         $this->assertContains('This is a sample import file', $reply['replyRaw'], 'Reply does not contain description text');
     }
 
+
+    /**
+     * this test is to make sure our rest call can handle a GET arg in array format
+     */
+    public function testExportWithUids()
+    {
+        // single uid as array
+        $chosenIndex = 17;
+        $reply = $this->_restCall($this->massRestPath.'?uid[]='.$this->accounts[$chosenIndex]->id);
+        foreach($this->accounts as $i => $account) {
+            if ($i == $chosenIndex) {
+                $this->assertContains($account->name, $reply['replyRaw'], 'Reply does not contain chosen account '.$i.' '.$account->name);
+            }
+            else {
+                $this->assertNotContains($account->name, $reply['replyRaw'], 'Reply contains non-chosen account '.$i.' '.$account->name);
+            }
+        }
+
+        // multiple uids - emulate jQuery's $.param() method, which is used by sugarapi.js::buildURL
+        // called as $.param({uid: [a,b,c]})
+        // http://api.jquery.com/jQuery.param/
+        // we only want to retrieve accounts 0..$chosen_index-1 -- guard against case where all accounts are retrieved indiscriminately
+        $accountString = '';
+        for($i=0; $i < $chosenIndex; $i++) {
+            $accountString .= 'uid[]='.urlencode($this->accounts[$i]->id).'&';
+        }
+        $accountString = rtrim($accountString,'&');
+
+        $reply = $this->_restCall($this->massRestPath.'?'.$accountString);
+        foreach ($this->accounts as $i => $account) {
+            if ($i < $chosenIndex) {
+                $this->assertContains($account->name, $reply['replyRaw'], 'Reply does not contain chosen account '.$i.' '.$account->name);
+            }
+            else {
+                $this->assertNotContains($account->name, $reply['replyRaw'], 'Reply contains non-chosen account '.$i.' '.$account->name);
+            }
+        }
+    }
 }

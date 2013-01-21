@@ -79,7 +79,7 @@ class UWUtilsTest extends Sugar_PHPUnit_Framework_TestCase  {
         $this->assertEmpty($opp->commit_stage, 'Commit stage should be empty for old Opportunity');
 
         //unset best/worst cases
-        $db->query("UPDATE opportunities SET best_case = '', worst_case = '', probability = 80 WHERE id = '{$opp->id}'");
+        $db->query("UPDATE opportunities SET best_case = NULL, worst_case = NULL, probability = 80 WHERE id = '{$opp->id}'");
 
         $this->job = updateOpportunitiesForForecasting();
 

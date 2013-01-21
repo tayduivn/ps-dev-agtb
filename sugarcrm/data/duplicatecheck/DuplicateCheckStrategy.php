@@ -1,7 +1,9 @@
-{{!
+<?php
+if (!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
+
 /*********************************************************************************
  * The contents of this file are subject to the SugarCRM Master Subscription
- * Agreement (""License"") which can be viewed at
+ * Agreement ("License") which can be viewed at
  * http://www.sugarcrm.com/crm/master-subscription-agreement
  * By installing or using this file, You have unconditionally agreed to the
  * terms and conditions of the License, and You may not use this file except in
@@ -15,7 +17,7 @@
  * remove SugarCRM copyrights from the source code or user interface.
  *
  * All copies of the Covered Code must include on each user interface screen:
- *  (i) the ""Powered by SugarCRM"" logo and
+ *  (i) the "Powered by SugarCRM" logo and
  *  (ii) the SugarCRM copyright notice
  * in the same form as they appear in the distribution.  See full license for
  * requirements.
@@ -25,38 +27,43 @@
  * governing these rights and limitations under the License.  Portions created
  * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
-}}
-<div class="content" id="forecasts">
-    <div id="alerts" class="alert-top"></div>
-    <div id="contentflex">
-        <div class="row-fluid">
-            <div class="span8">
-                <div id="headerbar">
-                    <div class="view-forecastsTitle"></div>
-                    <div class="view-forecastsTree"></div>
-                    <div class="view-forecastsCommitButtons"></div>
-                </div>
-                <div class="view-info"></div>
-                <div>
-                    <div id="view-sales-rep" class="hide">
-                        <div class="view-forecastsWorksheet"></div>
-                    </div>
-                    <div id="view-manager" class="hide">
-                        <div class="view-forecastsWorksheetManager"></div>
-                    </div>
-                </div>
-            </div>
 
-            <div class="span4 tab-content" id="folded">
-                <div class="tab-pane active" id="overview">
-                    <div class="view-forecastsProgress"></div>
-                    <div class="clearfix"></div>
-                    <div class="thumbnail viz">
-                        <div class="view-forecastsChart"></div>
-                    </div>
-                    <div class="clearfix"></div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
+/**
+ * Base class for duplicate check strategy implementations
+ * @abstract
+ * @api
+ */
+abstract class DuplicateCheckStrategy
+{
+    /**
+     * Parent bean
+     * @var SugarBean
+     */
+    protected $bean;
+
+    /**
+     * @param SugarBean $bean
+     * @param array $metadata
+     */
+    public function __construct($bean, $metadata)
+    {
+        $this->bean = $bean;
+        $this->setMetadata($metadata);
+    }
+
+    /**
+     * Parse the provided metadata into appropriate protected properties
+     *
+     * @abstract
+     * @access protected
+     */
+    abstract protected function setMetadata($metadata);
+
+    /**
+     * Finds possible duplicate records for a given set of field data.
+     *
+     * @abstract
+     * @access public
+     */
+    abstract public function findDuplicates();
+}

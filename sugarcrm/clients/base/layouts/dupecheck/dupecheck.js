@@ -1,4 +1,3 @@
-{{!
 /*********************************************************************************
  * The contents of this file are subject to the SugarCRM Master Subscription
  * Agreement (""License"") which can be viewed at
@@ -25,29 +24,45 @@
  * governing these rights and limitations under the License.  Portions created
  * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
-}}
-<div class="modal hide">
-    <div class="modal-header">
-        <a class="close" data-dismiss="modal"><i class="icon-remove"></i></a>
-        <h3>{{str "LBL_PASSWORD_CHANGE_FORM_TITLE" context.attributes.module}}</h3>
-    </div>
-    <div class="modal-body">
-        <form class="form-horizontal" method="POST">
-            <fieldset>
-                {{#each meta.panels}}
-                {{#each fields}}
-                <div class="row-fluid control-group">
-                    <div class="span4">{{str label ../../context.attributes.module}}</div>
-                    <div class="span6">{{field ../../this ../../context.attributes.contactModel}}</div>
-                </div>
-                {{/each}}
-                {{/each}}
-            </fieldset>
-        </form>
-    </div>
-    <div class="modal-footer">
-        {{#each meta.buttons}}
-        {{field ../this ../contactModel}}
-        {{/each}}
-    </div>
-</div>
+/**
+ * Layout displays a list of duplicate records found along with a count
+ * Note: Next step will be to add ability to switch to a filter list (and back).
+ *       This is why this is in a layout.
+ * @class View.Layouts.DupecheckLayout
+ */
+({
+    initialize: function(options) {
+        _.bindAll(this);
+        if(options.context.has('dupelisttype')) {
+            options.meta = this.switchListView(options.meta, options.context.get('dupelisttype'));
+        }
+        app.view.Layout.prototype.initialize.call(this, options);
+        this.context.on("dupecheck:fetch:fire", this.fetchDuplicates);
+    },
+
+    switchListView: function(meta, dupelisttype) {
+        var listView = _.find(meta.components, function(component) {
+            return (component.name === 'dupecheck-list');
+        });
+        listView.view = dupelisttype;
+        return meta;
+    },
+
+    loadData: function(options) {
+        options = options || {};
+        options.endpoint = this.endpoint;
+        app.view.Layout.prototype.loadData.call(this, options);
+    },
+
+    fetchDuplicates: function(model) {
+        this.model = model;
+        var options = {};
+        options.endpoint = this.endpoint;
+        this.collection.fetch(options);
+    },
+
+    endpoint: function(method, model, options, callbacks) {
+        var url = app.api.buildURL(this.module, "duplicateCheck");
+        return app.api.call('create', url, this.model.attributes, callbacks); //Dupe Check API requires POST
+    }
+})

@@ -29,6 +29,53 @@ class SidecarThemeTest extends Sugar_PHPUnit_Framework_TestCase
     private $platformTest = 'platform_TEST_123456789E_1234';
     private $themeTest = 'theme_TEST_123456789E_1234';
 
+    public function testGetCSSURL()
+    {
+        // Create a stub for compileBootstrapCss().
+        $stub = $this->getMock('SidecarTheme', array('compileBootstrapCss'));
+        $stub->expects($this->any())
+             ->method('compileBootstrapCss')
+             ->will($this->returnValue('.foo {}'));
+
+        // If our theme doesn't have a variables.less file, it should cache the
+        // default file.
+        $theme = new $stub($this->platformTest, $this->themeTest);
+        $defaultTheme = new $stub($this->platformTest, 'default');
+        $themePaths = $theme->getPaths();
+        $defaultPaths = $defaultTheme->getPaths();
+
+        // Make sure variables.less doesn't exist in the file map.
+        SugarAutoLoader::delFromMap($themePaths['custom'] . 'variables.less');
+        SugarAutoLoader::delFromMap($themePaths['base'] . 'variables.less');
+        SugarAutoLoader::delFromMap($defaultPaths['custom'] . 'variables.less');
+        SugarAutoLoader::delFromMap($defaultPaths['base'] . 'variables.less');
+
+        // Make sure our environment is clean. The FileNotExists assertion works
+        // on directories as well.
+        $this->assertFileNotExists($themePaths['cache']);
+        $this->assertFileNotExists($defaultPaths['cache']);
+        $this->assertNull(sugar_cache_retrieve($themePaths['hashKey']));
+        $this->assertNull(sugar_cache_retrieve($defaultPaths['hashKey']));
+
+        sugar_mkdir($themePaths['custom'], null, true);
+        $url = $theme->getCSSURL();
+        $this->assertFileExists($url);
+
+        // The fake theme doesn't have a variables.less, so it should only set a
+        // cache key for the default theme.
+        $this->assertNull(sugar_cache_retrieve($themePaths['hashKey']));
+        $this->assertInternalType('string', sugar_cache_retrieve($defaultPaths['hashKey']));
+
+        if (is_dir('custom/themes/clients/' . $this->platformTest . '/' . $this->themeTest)) {
+            rmdir_recursive("custom/themes/clients/" . $this->platformTest);
+        }
+
+        rmdir_recursive($themePaths['cache']);
+        rmdir_recursive($defaultPaths['cache']);
+        sugar_cache_clear($themePaths['hashKey']);
+        sugar_cache_clear($defaultPaths['hashKey']);
+    }
+
     public function testParseFile()
     {
         //Initiate out test theme

@@ -25,6 +25,12 @@
  * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 ({
+    _render: function() {
+        app.view.Field.prototype._render.call(this);
+        if(this.tplName === 'disabled') {
+            this.$(this.fieldTag).attr("disabled", "disabled");
+        }
+    },
     unformat:function(value){
         value = (value!='' && value!='http://') ? value.trim() : "";
         return value;

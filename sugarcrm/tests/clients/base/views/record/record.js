@@ -186,7 +186,7 @@ describe("Record View", function() {
                 description: 'Description'
             });
 
-            expect(view.getField('name').options.viewName).toBeNull();
+            expect(view.getField('name').options.viewName).toBe(view.action);
 
             view.getField('name').$el.closest('.record-cell').find('a.record-edit-link').click();
 
@@ -203,7 +203,7 @@ describe("Record View", function() {
 
             _.each(view.fields, function(field) {
                 if ((field.type !== 'button') && (field.type !== 'buttondropdown')) {
-                    expect(field.options.viewName).toBeNull();
+                    expect(field.options.viewName).toBe(view.action);
                 }
             });
 

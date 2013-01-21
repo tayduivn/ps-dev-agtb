@@ -83,10 +83,10 @@
                     $('#content').show();
                 },
                 success: function() {
-                    $(".navbar").show();
                     var app = self.__app;
                     app.events.on('app:sync:complete', function() {
                         app.alert.dismiss('login');
+                        $(".navbar").show();
                         $('#content').show();
                     });
                 }

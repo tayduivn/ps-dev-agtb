@@ -29,6 +29,8 @@
                 this.$(this.typeFieldTag).attr("disabled", false);
             }
             this.$(this.typeFieldTag).trigger("liszt:updated");
+        } else if(this.tplName === 'disabled'){
+            this.$(this.typeFieldTag).attr("disabled", "disabled").not(".chzn-done").chosen();
         }
         return result;
     },
@@ -56,6 +58,12 @@
     format: function(value) {
         //TODO: The label should be the parent module name
         this.def.module = this.model.get('parent_type');
+
+        this.context.set("record_label", {
+            field: this.name,
+            label: (this.tplName === 'detail') ? this.def.module : app.lang.get(this.def.label, this.module)
+        });
+
         //check the user has the access to the current parent related module
         //TODO: Check hasAccessToModel for the parent related record
         if(app.acl.hasAccess('access', this.def.module, app.user.id) === false) {

@@ -108,6 +108,7 @@ class MetadataApi extends SugarApi {
 
         //If we failed to load the metadata from cache, load it now the hard way.
         if (empty($data)) {
+            ini_set('max_execution_time', 0);
             $data = $this->loadMetadata();
             $this->putMetadataCache($data, $this->platforms[0], false);
         }
@@ -543,6 +544,10 @@ class MetadataApi extends SugarApi {
                     $modStrings[$modName] = $modData;
                 }
                 $stringData['mod_strings'] = $modStrings;
+            }
+            // cast the app list strings to objects to make integer key usage in them consistent for the clients
+            foreach ($stringData['app_list_strings'] as $listIndex => $listArray) {
+                $stringData['app_list_strings'][$listIndex] = (object) $listArray;
             }
             $stringData['_hash'] = md5(serialize($stringData));
             $fileList[$language] = sugar_cached('api/metadata/lang_'.$language.'_'.$stringData['_hash'].'.json');

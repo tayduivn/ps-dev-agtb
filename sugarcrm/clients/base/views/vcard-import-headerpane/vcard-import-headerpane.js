@@ -1,7 +1,6 @@
-<?php
 /*********************************************************************************
  * The contents of this file are subject to the SugarCRM Master Subscription
- * Agreement ("License") which can be viewed at
+ * Agreement (""License"") which can be viewed at
  * http://www.sugarcrm.com/crm/master-subscription-agreement
  * By installing or using this file, You have unconditionally agreed to the
  * terms and conditions of the License, and You may not use this file except in
@@ -15,7 +14,7 @@
  * remove SugarCRM copyrights from the source code or user interface.
  *
  * All copies of the Covered Code must include on each user interface screen:
- *  (i) the "Powered by SugarCRM" logo and
+ *  (i) the ""Powered by SugarCRM"" logo and
  *  (ii) the SugarCRM copyright notice
  * in the same form as they appear in the distribution.  See full license for
  * requirements.
@@ -25,37 +24,22 @@
  * governing these rights and limitations under the License.  Portions created
  * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
-$viewdefs['base']['layout']['profileedit'] = array(
-    'type' => 'simple',
-    'components' =>
-    array(
-        0 => array(
-            'view' => 'subnavedit',
-        ),
-        1 => array(
-            'layout' =>
-            array(
-                'type' => 'fluid',
-                'components' =>
-                array(
-                    0 => array(
-                        'layout' =>
-                        array(
-                            'type' => 'simple',
-                            'span' => 7,
-                            'components' =>
-                            array(
-                                0 => array(
-                                    'view' => 'profile-edit',
-                                ),
-                                1 => array(
-                                    'view' => 'passwordmodal',
-                                ),
-                            ),
-                        ),
-                    ),
-                ),
-            ),
-        ),
-    ),
-);
+({
+    extendsFrom: 'HeaderpaneView',
+    events:{
+        'click [name=vcard_finish_button]': 'initiateFinish',
+        'click [name=vcard_cancel_button]': 'initiateCancel'
+    },
+
+    initiateFinish: function() {
+        this.context.trigger('vcard:import:finish');
+    },
+
+    initiateCancel : function() {
+        this.context.trigger("drawer:hide");
+        if (this.context.parent) {
+            this.context.parent.trigger("drawer:hide");
+        }
+
+    }
+})

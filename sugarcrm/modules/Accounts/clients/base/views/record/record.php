@@ -158,9 +158,8 @@ $viewdefs['Accounts']['base']['view']['record'] = array(
                 'ownership',
                 'campaign_name',
                 'rating',
-                'assigned_user_name',
                 'date_modified',
-                'teams',
+                'team_name',
                 'date_entered'
             )
         )

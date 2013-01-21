@@ -50,8 +50,10 @@ class Bug40003Test extends Sugar_PHPUnit_Framework_TestCase
         $_REQUEST['module'] = 'Reports';
         $this->fields = array('team_name' => array('name' => 'team_name'));
         $this->sft = new SugarFieldTeamset('Teamset');
+        SugarTestHelper::setUp('beanList');
+        SugarTestHelper::setUp('beanFiles');
     }
-    
+
     /**
      * @dataProvider provider
      * @group 40003
@@ -64,7 +66,7 @@ class Bug40003Test extends Sugar_PHPUnit_Framework_TestCase
         $_POST['id_team_name_collection_1'] = $other_team_name_id;
         $_POST['primary_team_name_collection'] = $primary_collection;
         $this->sft->initClassicView($this->fields);
-        $this->assertEquals($this->sft->getPrimaryTeamIdFromRequest($this->sft->field_name, $_POST), 
+        $this->assertEquals($this->sft->getPrimaryTeamIdFromRequest($this->sft->field_name, $_POST),
                             $this->sft->view->bean->team_set_id_values['primary']['id']);
     }
 }

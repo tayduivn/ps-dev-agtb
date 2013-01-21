@@ -43,7 +43,7 @@ $viewdefs['Opportunities']['base']['view']['baselist'] = array(
             'fields' => array(
                 array(
                     'name' => 'name',
-                    'width' =>  49,
+                    'width' =>  30,
                     'link' => true,
                     'label' => 'LBL_LIST_OPPORTUNITY_NAME',
                     'enabled' => true,
@@ -51,33 +51,84 @@ $viewdefs['Opportunities']['base']['view']['baselist'] = array(
                 ),
                 array(
                     'name' => 'account_name',
-                    'width' =>  '15%',
+                    'width' =>  20,
                     'link'    => true,
                     'label' => 'LBL_LIST_ACCOUNT_NAME',
                     'enabled' => true,
                     'default' => true
                 ),
-                array (
-                    'name' => 'date_closed',
-                    'width' => '10%',
-                    'label' => 'LBL_LIST_DATE_CLOSED',
-                    'enabled' => true,
-                    'default' => true,
+                array(
+                    'name' => 'sales_stage',
+                    'width' => 10,
+                    'label' => 'LBL_LIST_SALES_STAGE',
+                    'default' => true
                 ),
                 array (
                     'name' => 'amount',
-                    'width' => '10%',
+                    'width' => 10,
                     'label' => 'LBL_LIST_AMOUNT',
                     'enabled' => true,
                     'default' => true,
                 ),
+                array(
+                    'name' => 'opportunity_type',
+                    'width' => 15,
+                    'label' => 'LBL_TYPE'
+                ),
+                array(
+                    'name' => 'lead_source',
+                    'width' => 15,
+                    'label' => 'LBL_LEAD_SOURCE'
+                ),
+                array(
+                    'name' => 'next_step',
+                    'width' => 10,
+                    'label' => 'LBL_NEXT_STEP'
+                ),
+                array(
+                    'name' => 'probability',
+                    'width' => 10,
+                    'label' => 'LBL_PROBABILITY'
+                ),
+                array (
+                    'name' => 'date_closed',
+                    'width' => 10,
+                    'label' => 'LBL_LIST_DATE_CLOSED',
+                    'enabled' => true,
+                    'default' => true,
+                ),
+                array(
+                    'name' => 'created_by_name',
+                    'width' => 10,
+                    'label' => 'LBL_CREATED'
+                ),
+//BEGIN SUGARCRM flav=pro ONLY
+                array(
+                    'name' => 'team_name',
+                    'type' => 'teamset',
+                    'width' => 5,
+                    'label' => 'LBL_LIST_TEAM',
+                    'default' => false
+                ),
+//END SUGARCRM flav=pro ONLY
                 array (
                     'name' => 'assigned_user_name',
-                    'width' => '10%',
+                    'width' => 5,
                     'label' => 'LBL_LIST_ASSIGNED_USER',
                     'id' => 'ASSIGNED_USER_ID',
                     'enabled' => true,
                     'default' => true,
+                ),
+                array(
+                    'name' => 'modified_by_name',
+                    'width' => 5,
+                    'label' => 'LBL_MODIFIED'
+                ),
+                array(
+                    'name' => 'date_entered',
+                    'width' => 10,
+                    'label' => 'LBL_DATE_ENTERED',
+                    'default' => true
                 ),
             ),
         ),
