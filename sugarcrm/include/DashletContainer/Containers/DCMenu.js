@@ -633,7 +633,6 @@ var DCMenu = YUI({combine: true, timeout: 10000, base:"include/javascript/yui3/b
 		
 		if(isRTL) {
 			overlay.set('x',(dcmenuSugarCubeX));
-            console.log(dcmenuSugarCubeX)
 		}
 
 	}
