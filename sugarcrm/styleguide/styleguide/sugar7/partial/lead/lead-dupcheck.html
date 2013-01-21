@@ -9,7 +9,7 @@
     <div class="control-group">
       <label for="select01" class="control-label">Sales Stage:</label>
       <div class="controls">
-        <select id="select01" data-placeholder="Choose a Lead..." class="chzn-select">
+        <select id="select01" data-placeholder="Choose a Lead..." class="select2">
           <option value="pk" selected="selected">Proposal</option>
           <option value="pk">Closed Won</option>
           <option value="pk">Closed Lost</option>
@@ -19,7 +19,7 @@
     <div class="control-group">
       <label for="select02" class="control-label">Account:</label>
       <div class="controls">
-        <select id="select02" data-placeholder="Choose a Lead..." class="chzn-select">
+        <select id="select02" data-placeholder="Choose a Lead..." class="select2">
           <option value="pk" selected="selected">Perkin Kleiners</option>
           <option value="pk">Underwater Mining Inc.</option>
           <option value="pk">Weyland</option>
@@ -35,7 +35,7 @@
     <div class="control-group">
       <label for="select03" class="control-label">Assigned to:</label>
       <div class="controls">
-        <select id="select03" data-placeholder="Choose an Assignee..." class="chzn-select">
+        <select id="select03" data-placeholder="Choose an Assignee..." class="select2">
           <option value="pk" selected="selected">Sabra Khan</option>
           <option value="pk">Sally Smith</option>
           <option value="pk">Jim Brennan</option>
@@ -62,7 +62,7 @@
       <div class="control-group">
         <label for="select01" class="control-label">Teams:</label>
         <div class="controls">
-          <select data-placeholder="Choose a Lead..." class="chzn-select" tabindex="2">
+          <select data-placeholder="Choose a Lead..." class="select2" tabindex="2">
             <option value="pk" selected="selected">Global</option>
             <option value="pk">East</option>
             <option value="pk">West</option>
@@ -74,7 +74,7 @@
       <div class="control-group">
         <label for="select01" class="control-label">Assigned to:</label>
         <div class="controls">
-          <select data-placeholder="Choose a Lead..." class="chzn-select" tabindex="2">
+          <select data-placeholder="Choose a Lead..." class="select2" tabindex="2">
             <option value="pk" selected="selected">Administrator</option>
             <option value="pk">Majed Itani</option>
             <option value="pk">Uriah Welcome</option>
@@ -93,8 +93,7 @@
 
     drawer(true);
 
-    $(".chzn-select").chosen({ disable_search_threshold: 5 });
-    $(".chzn-select-deselect").chosen({allow_single_deselect:true});
+    initSelect2('select.select2');
 
     $('.more').toggle(
       function () {

@@ -3,8 +3,7 @@
     <div class="row-fluid control-group">
         <div class="filter controls controls-four btn-fit">
             <div class="search">
-                <select id="search_filter" class="chzn-select search" multiple data-placeholder=" ">
-                </select>
+              <input id="search_filter" type="hidden" class="select2 search" style="width:100%" multiple data-placeholder=" ">
             </div>
             <div class="actions" data-toggle="buttons-radio">
                 <a href="{{module}}/{{module}}-activitystream.html" class="btn btn-invisible btn-dark fourth" data-view="activitystream" data-toggle="proto" data-target="#view .main-content" data-mode="view" rel="tooltip" data-original-title="Activity stream"><i class="icon-th-list"></i></a>
@@ -57,7 +56,7 @@
         <article class="filter-body">
             <div class="row-fluid">
                 <div class="controls span3">
-                    <select name="field" class="chzn-select chzn-inherit-width buildit">
+                    <select name="field" class="select2 inherit-width buildit">
                         <option data-values="matches,contains,not matches,not contains" data-text="true" data-enabled="true">Name</option>
                         <option data-values="matches" data-text="true" data-enabled="false">Assigned to</option>
                         <option data-values="prospecting,value proposition,closed won,closed lost" data-text="false" data-enabled="true">Sales Stage</option>
@@ -65,7 +64,7 @@
                     </select>
                 </div>
                 <div class="controls span3">
-                    <select name="opera" class="chzn-select chzn-inherit-width">
+                    <select name="opera" class="select2 inherit-width">
                         <option>matches</option>
                         <option>contains</option>
                         <option>not matches</option>
@@ -121,6 +120,13 @@
     {"label":"Create New Filter", "id":"filter_new", "disabled":false, "selected":false, "classes":"primary filter-new result-separator", "spec":[]}
   ];
 
+  // add the current module as default select2 filter
+  if ( window.location.pathname.split('/').pop() !== 'dashboard.html') {
+      availableFilters.unshift(
+          {"label":"{{title}}", "id":"filter_module", "disabled":true, "selected":true, "classes":"filter-disabled", "spec":[]}
+      );
+  }
+
   // disable related record filter for current module
   $.each(availableFilters, function(index,value){
     if (value.label === '{{title}}')
@@ -131,14 +137,7 @@
       value.disabled = true;
     }
   });
-  // disable all related record filters for list view
 
-  // add the current module as default chosen filter
-  if ( window.location.pathname.split('/').pop() !== 'dashboard.html') {
-      availableFilters.unshift(
-          {"label":"{{title}}", "id":"filter_module", "disabled":true, "selected":true, "classes":"filter-disabled", "spec":[]}
-      );
-  }
   var filterFields = {
     'default': {'label':'','opera':'','value':'','disabled':true,'text':false},
     'name': {'label':'Name','opera':'matches,contains,not matches,not contains,true,false','disabled':false,'text':true},
@@ -153,6 +152,7 @@
 //TODO: when result is chosen, should we remove filter row choices or keep them and set create filter to use existing filter row choices.
 //TODO: remove choice on single backspace
 //TODO: prevent adding blank filter row
+
   $(document).ready(function() {
 
       // define global elements
@@ -164,57 +164,92 @@
           _results;
 
       // set up filter result options
-      $.each(availableFilters, function(index,value){
-          _select.append(
-              '<option value="'+ value.id +'"'+
-              ' class="custom-choice custom-result '+ (value.classes!==''?value.classes:'') +'"' +
-              (value.selected?' selected="selected"':'') +
-              (value.disabled?' disabled="disabled"':'') +'>'+
-              value.label +
-              '</option>'
-          );
+      // $.each(availableFilters, function(index,value){
+      //     _select.append(
+      //         '<option value="'+ value.id +'"'+
+      //         ' class="custom-choice custom-result '+ (value.classes!==''?value.classes:'') +'"' +
+      //         (value.selected?' selected="selected"':'') +
+      //         (value.disabled?' disabled="disabled"':'') +'>'+
+      //         value.label +
+      //         '</option>'
+      //     );
+      // });
+
+      var data = availableFilters
+                  .filter(function(d){
+                    if (d.label === '{{title}}')
+                    {
+                      return false;
+                    }
+                    if ((!page.mode || page.mode === 'list') && d.classes.indexOf('result-related')!==-1) {
+                      return false;
+                    }
+                    // if ( d.classes.indexOf('related')!==-1 )
+                    // {
+                    //   return false;
+                    // }
+                    return true;
+                  })
+                  .map(function(d,i){
+                    return {"id":d.id,"text":d.label,"classes":d.classes};
+                  });
+
+      _select.select2({
+          tags:data,
+          multiple:true,
+          maximumSelectionSize:-1,
+          formatSelection: function(item) {
+              if (item.id === item.text) {
+                  return item.text;
+              } else {
+                  return '<div class="'+ item.classes +'"><span>Filter</span><a href="javascript:void(0)" rel="' + item.id.replace('filter_','') +'">'+ item.text +'</a></div>';
+              }
+          },
+          formatResult: function (option) {
+              var rtn = '<div id="'+ option.id +'" class="'+ option.classes +'"><span class="select2-match"></span>'+ option.text +'</div>';
+              return rtn;
+          },
+          dropdownCss: {width:'auto'},
+          dropdownCssClass: 'search-filter-dropdown'
       });
 
-      // instatiate filter select chosen
-      _select.chosen({
-        searchResultConstructor: function (id,classes,style,html,index) {
-            var rtn = '<li id="'+ id +'" class="'+ classes +'" style="'+ style +'">'+ html +'</li>';
-                rtn += (html.indexOf('Create New Filter')===-1) ? '<span class="icon-ok"></span>' : '<span class="icon-plus"></span>';
-            return rtn;
-        },
-        searchChoiceConstructor: searchChoiceConstructor
-      });
-      _select.trigger("liszt:updated");
+      // add the current module as default select2 filter
+      if ( window.location.pathname.split('/').pop() !== 'dashboard.html') {
+          _select.select2('data',[{"text":"{{title}}", "id":"filter_module", "disabled":true, "selected":true, "classes":"filter-disabled", "spec":[]}]);
+      }
+      // disable all related record filters for list view
 
-      // define global chosen elements
-      _choices = $('#{{sourceid}} #search_filter_chzn .chzn-choices');
-      _results = $('#{{sourceid}} #search_filter_chzn .chzn-results');
+      // define global select2 elements
+      _choices = $('#{{sourceid}} #s2id_search_filter');
+      _results = $('.search-filter-dropdown .select2-results');
 
       // prepend legend to .chzn-choices
-      _choices.prepend('<legend class="chzn-select-legend">Filter <i class="icon-caret-down"></i></legend>');
+      // _choices.prepend('<legend class="select2-legend">Filter <i class="icon-caret-down"></i></legend>');
 
-      // select related module filter
-      _results.find('li').on('click', function(e){
-          var $selected = $(this)
-            , id = parseInt($selected.attr('id').substr(21),10); //search_filter_chzn_o_1
+      // // select related module filter
+      // _results.find('li').on('click', function(e){
+      //     var $selected = $(this)
+      //       , id = parseInt($selected.attr('id').substr(21),10); //s2id_search_filter_o_1
 
-          if ($selected.hasClass('result-related')) {
-            editFilterForm( id, true );
-            _select.trigger("liszt:close");
-            if ($selected.text()==='History' && $selected.hasClass('result-selected')) {
-              loadContent('{{module}}/{{module}}-activitystream.html', '#view .main-content', undefined, 'replace');
-            } else {
-              loadContent('common/data-table.html', '#view .main-content', undefined, 'replace');
-            }
-          }
-      });
+      //     if ($selected.hasClass('result-related')) {
+      //       editFilterForm( id, true );
+      //       _select.trigger("liszt:close");
+      //       if ($selected.text()==='History' && $selected.hasClass('result-selected')) {
+      //         loadContent('{{module}}/{{module}}-activitystream.html', '#view .main-content', undefined, 'replace');
+      //       } else {
+      //         loadContent('common/data-table.html', '#view .main-content', undefined, 'replace');
+      //       }
+      //     }
+      // });
 
       // create new filter
-      _results.on('click', '.filter-new', function(e){
-          editFilterForm( availableFilters.length-1, true );
-          _select.trigger("liszt:close");
-          e.preventDefault();
-          e.stopPropagation();
+      _results.on('mouseup', '.select2-result-label', function(e){
+          if ($(this).find('.filter-new').length) {
+            editFilterForm( availableFilters.length-1, true );
+            _select.select2('close');
+            e.preventDefault();
+            e.stopPropagation();
+          }
       });
 
       // edit existing filter
@@ -222,8 +257,6 @@
           if ( !$(this).parents('li').hasClass('filter-disabled') ) {
               editFilterForm( $(this).attr('rel'), false );
           }
-          _select.trigger("liszt:activate");
-          _select.trigger("liszt:close");
           e.preventDefault();
           e.stopPropagation();
       });
@@ -240,9 +273,9 @@
 
           var data = availableFilters[index];
 
-          if (data.classes.indexOf('filter-new')===-1) {
-              _results.find('.filter-new').removeClass('result-selected').addClass('active-result');
-          }
+          // if (data.classes.indexOf('filter-new')===-1) {
+          //     _results.find('.filter-new').removeClass('result-selected').addClass('active-result');
+          // }
 
           _options.find('article[id*="filter_row_"]').remove();
           _header.find('input[name="filter"]').val( data.classes.indexOf('filter-new')>-1?'':data.label );
@@ -262,7 +295,6 @@
           _header.find('a[href="#save"]').off('click').on('click', function(e){
               if ( !$(this).hasClass('disabled') ) {
                   saveFilter(index,data);
-                  _select.trigger("liszt:updated");
                   _results.find('.filter-new').removeClass('result-selected').addClass('active-result');
                   _options.addClass('hide');
               }
@@ -272,14 +304,12 @@
 
           _header.find('a[href="#delete"]').off('click').on('click', function(e){
                 removeFilter(index,data);
-                _select.trigger("liszt:updated");
                   _options.addClass('hide');
           });
 
           // close filter option extend
           // and reinstate the filter being edited
           _header.find('.filter-close').off('click').on('click', function(e){
-              _select.trigger("liszt:updated");
               _results.find('.filter-new').removeClass('result-selected').addClass('active-result');
               _options.addClass('hide');
               e.preventDefault();
@@ -308,7 +338,7 @@
           // remove filter row
           _options.off('click','.removeme').on('click', '.removeme', function(e) {
               var row = $(this).parents('.filter-body'),
-                  id = 'search_filter_chzn_f_'+ parseInt(row.attr('id').substr(11),10);
+                  id = 's2id_search_filter_f_'+ parseInt(row.attr('id').substr(11),10);
               _choices.find('#'+id).remove();
               row.remove();
               e.preventDefault();
@@ -365,7 +395,7 @@
           }
 
           // remove field specific filter choices
-          _choices.find('li[id*="search_filter_chzn_f_"]').remove();
+          _choices.find('li[id*="s2id_search_filter_f_"]').remove();
       }
 
       function removeFilter (index,data) {
@@ -386,8 +416,12 @@
               opera = row.find('select[name="opera"]'),
               value = row.find('input[name="value"]');
 
-          // enable chosen for filter row
-          row.find('.chzn-select').chosen({ disable_search_threshold: 7 });
+          // enable select2 for filter row
+          row.find('.select2').each(function(){
+            var $this = $(this)
+              , ctor = getSelect2Constructor($this);
+            $this.select2( ctor );
+          });
 
           setFilterRowInputs( spec, filterFields[spec.field] );
 
@@ -404,31 +438,28 @@
 
               //set the field
               if (spec.field!=='') {
-                field.val(spec.field);
+                field.select2('val',spec.field);
               }
-              field.trigger("liszt:updated");
 
               //set the operations
               opera.find('option').remove();
-              $('<option>').appendTo(opera).attr('value','');
-              // $.each( fieldDef.opera.split(','), function(index,value){
-              //     opera.append('<option value="'+ value +'">'+ value +'</option>');
-              // });
-
+              $('<option>').appendTo(opera);
               $.each( fieldDef.opera.split(','), function(index,value){
                   $('<option>').appendTo(opera).attr('value', value).text(value);
               });
-              //opera.css('display','inline-block');
+
               //set opera selected to spec value
               if (spec.opera!=='') {
-                  opera.val(spec.opera);
+                  opera.select2('val',spec.opera);
               } else if ( fieldDef.disabled==true && fieldDef.opera!=='' ) {
-                  opera.val(fieldDef.opera);
+                  opera.select2('val',fieldDef.opera);
+              } else {
+                  opera.select2('val','');
               }
               if (spec.opera!=='' || fieldDef.opera!=='') {
-                  row.find('#'+opera.attr('id')+'_chzn').show();
+                  row.find('.filter-opera .select2-container').show();
               } else {
-                  row.find('#'+opera.attr('id')+'_chzn').hide();
+                  row.find('.filter-opera .select2-container').hide();
               }
               //set opera enabled to field enabled
               if (fieldDef.disabled) {
@@ -457,7 +488,7 @@
       }
 
       function createFieldRowChoice (filterRow,choices) {
-          var id = 'search_filter_chzn_f_'+ parseInt(filterRow.attr('id').substr(11),10),
+          var id = 's2id_search_filter_f_'+ parseInt(filterRow.attr('id').substr(11),10),
               field = filterRow.find('select[name="field"] option:selected').text(),
               opera = filterRow.find('select[name="opera"]').val(),
               html = filterRow.find('input[name="value"]').val(),
@@ -471,7 +502,7 @@
               _choices.find('#'+id).find('a').text(html);
               return false;
           } else {
-              $('#{{sourceid}} #search_filter_chzn .search-field').before(
+              $('#{{sourceid}} #s2id_search_filter .search-field').before(
                   searchChoiceConstructor(id, {html:html,array_index:index,classes:'search-choice-field'}, field )
               );
               return true;

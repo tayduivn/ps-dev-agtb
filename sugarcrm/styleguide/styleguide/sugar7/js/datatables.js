@@ -63,7 +63,7 @@ $(document).ready(function() {
          {"file":"common/table-cell-edit","target":"#edit-id-"+editid,"method":"append"},
       ]);
 
-      $('.chzn-select').chosen({ disable_search_threshold: 5 });
+      initSelect2('select.select2');
 
       var tr_val = new Array(),
           tr_i = 0;
@@ -138,7 +138,7 @@ $(document).ready(function() {
         tr_i = tr_i + 1;
       });
 
-      $('.chzn-select').chosen({ disable_search_threshold: 5 });
+      initSelect2('select.select2');
       $('.headerpane.ellipsis').find('.save').addClass('disabled');
       $(this).closest('tr').addClass('hide');
     });

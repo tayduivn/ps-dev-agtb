@@ -1,7 +1,7 @@
 <article class="filter-body new" id="search_option_">
   <div class="row-fluid">
     <div class="controls span2">
-      <select class="chzn-select chzn-inherit-width buildit">
+      <select class="select2 inherit-width buildit">
           <option>
               Name
           </option>
@@ -11,7 +11,7 @@
       </select>
     </div>
     <div class="controls span2">
-      <select class="chzn-select chzn-inherit-width operator">
+      <select class="select2 inherit-width operator">
           <option>
               matches
           </option>
@@ -28,7 +28,6 @@
 </article>
 
 <script>
-
   $(document).ready(function(){
     $('body').on('click', '.addme', function(){
       $(this).closest('article').clone().prependTo($('.filter_init.duplicates')).removeClass('new');
@@ -42,5 +41,5 @@
   });
 
   $('.filter-options').find('article').last().attr( 'id', 'search_option_'+$('.filtered').find('article').length );
-  $('.chzn-select').chosen({ disable_search_threshold: 5, searchChoiceConstructor: searchChoiceConstructor });
+  $('.select2').select2({ minimumResultsForSearch: 5 });
 </script>

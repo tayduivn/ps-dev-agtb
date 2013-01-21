@@ -24,14 +24,14 @@
   <tr>
     <td style="border-top:1px solid #fff;top:1px;padding-bottom:0;">
       <span class="pull-left">
-          <select id="select01" data-placeholder="Choose a Lead..." class="chzn-select">
+          <select id="select01" data-placeholder="Choose a Lead..." class="select2">
             <option value="pk" selected="selected">Opportunity</option>
             <option value="pk">Opportunity</option>
             <option value="pk">Opportunity</option>
           </select>
       </span>
       <span class="pull-left">
-          <select id="select02" data-placeholder="Choose a Lead..." class="chzn-select">
+          <select id="select02" data-placeholder="Choose a Lead..." class="select2">
             <option value="pk" selected="selected">Contains</option>
             <option value="pk">Contains</option>
             <option value="pk">Contains</option>
@@ -49,7 +49,7 @@
 
   $(document).ready(function() {
 
-    $('.chzn-select').chosen({ disable_search_threshold: 5 });
+    initSelect2('select.select2');
 
     $('.headerpane.ellipsis .btn:not(.drawerTrig)').hide();
 

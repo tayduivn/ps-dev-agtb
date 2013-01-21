@@ -9,7 +9,7 @@
   <tr>
     <td style="">
       <span class="pull-left">
-          <select id="select01a" data-placeholder="Select target list..." class="chzn-select choose-region">
+          <select id="select01a" data-placeholder="Select target list..." class="select2 choose-region">
             <option value="pk0"></option>
             <option value="pk1">Global Atlantic, default</option>
             <option value="pk2">Global East, default</option>
@@ -85,7 +85,7 @@
 
     $('tr.add-to-target-list-header').remove();
 
-    $('.chzn-select').chosen({ disable_search_threshold: 5 });
+    initSelect2('select.select2');
 
     $('.add-to-target-table-duplicates').dataTable({
         "bPaginate": false,
@@ -97,8 +97,6 @@
     $('body').on('click', '#listed-tar input[type=radio]', function(){
       $('a.btn.select-and-update').removeClass('disabled');
     });
-
-
 
     $('body').on('change', 'form.create-new-target-form input, form.create-new-target-form textarea, form.create-new-target-form #select02az', function(){
       $('a.btn.save-and-update').removeClass('disabled');

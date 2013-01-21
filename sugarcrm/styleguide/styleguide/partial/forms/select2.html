@@ -2,7 +2,7 @@
 ================================================== -->
 <section id="select2">
   <div class="page-header">
-    <h1>Select2 <small>a jQuery based replacement for select boxes. It supports searching, remote data sets, and infinite scrolling of results. </small></h1>
+    <h1>Select2 <small>a jQuery based replacement for select boxes. It supports searching, remote data sets, and infinite scrolling of results. <a href="http://ivaynberg.github.com/select2/" target="_blank"><i class="icon-book"></i> Docs</a> </small></h1>
   </div>
 
   <div class="row">
@@ -90,7 +90,7 @@
   <div class="row">
     <div class="span12 padded">
       <label>Full Width Dynamic</label>
-      <select id="priority2" class="select2 select2-inherit-width" data-placeholder="Choose a priority...">
+      <select id="priority2" class="select2 inherit-width" data-placeholder="Choose a priority...">
         <option></option>
         <option value="Urgent">Urgent</option>
         <option value="High">High</option>
@@ -98,31 +98,6 @@
         <option disabled value="Low">Low</option>
       </select>
       <script>
-        function getSelect2Constructor($select) {
-          var _ctor = {};
-          _ctor.minimumResultsForSearch = 7;
-          _ctor.dropdownCss = {};
-          _ctor.dropdownCssClass = '';
-          _ctor.containerCss = {};
-          _ctor.containerCssClass = '';
-
-          if ( $select.hasClass('select2-narrow') ) {
-            _ctor.dropdownCss.width = 'auto';
-            _ctor.dropdownCss['border-top']='1px solid #AAA';
-            _ctor.dropdownCss['border-bottom']='1px solid #AAA';
-            _ctor.dropdownCssClass += 'select2-narrow ';
-            _ctor.containerCss.width = '100px';
-            _ctor.containerCssClass = 'select2-narrow';
-          }
-          if ( $select.hasClass('select2-inherit-width') ) {
-            //dropdownCss.width = '100%';
-            _ctor.dropdownCssClass += 'select2-inherit-width ';
-            _ctor.containerCss.width = '100%';
-            _ctor.containerCssClass = 'select2-inherit-width';
-          }
-          return _ctor;
-        }
-
         var $this = $('#priority2')
           , ctor = getSelect2Constructor($this);
         $this.select2( ctor );
@@ -135,7 +110,7 @@
 
 <pre class="prettyprint linenums" style="margin-bottom: 9px;">
  &lt;select
-      class="select2 select2-inherit-width"
+      class="select2 inherit-width"
       data-placeholder="Choose a priority..."&gt;
   &lt;option&gt;&lt;/option&gt;
   &lt;option value="Urgent"&gt;Urgent&lt;/option&gt;
@@ -150,7 +125,7 @@
 
       <div class="padded">
         <label>Small Select Container Width</label>
-        <select id="state" class="select2 select2-narrow" tabindex="3" data-placeholder="State...">
+        <select id="state" class="select2 narrow" tabindex="3" data-placeholder="State...">
           <option></option>
           <option value="NC">North Carolina</option>
           <option value="PA">Pennsylvania</option>
@@ -166,14 +141,13 @@
             , ctor = getSelect2Constructor($this);
               ctor.containerCss.width = '75px';
               ctor.formatSelection = formatStateSelection;
-
           $this.select2( ctor );
         </script>
       </div>
 
 <pre class="prettyprint linenums" style="margin-bottom: 9px;">
  &lt;select
-      id="state" class="select2 select2-narrow"
+      id="state" class="select2 narrow"
       data-placeholder="Choose a priority..."&gt;
   &lt;option&gt;&lt;/option&gt;
   &lt;option value="Urgent"&gt;Urgent&lt;/option&gt;
@@ -196,8 +170,8 @@
     </div>
 
     <div class="span6">
-      <p>We can leverage custom SugarCRM classes to control the select container width. One is <b>select2-inherit-width</b> which expands the container and dropdown to 100% of the parent div of the original select input. The other is <b>select2-narrow</b> which collapses the width of the Select2 container but expands the dropdown to allow for auto width of the selection options.</p>
-      <p>These classes are not part of Select2 but rather used by a custom function to set up four properties in the Select2 constructor: <b>dropdownCss</b>, <b>dropdownCssClass</b>, <b>containerCss</b>, <b>containerCssClass</b>. Be careful about setting the width of the dropdown to 100% because it will grow to 100% of the page since it is attached directly to the body. Feel free to add any needed styling. The default select2-inherit-width and select2-narrow as defined in the select2.less file should cover most cases.</p>
+      <p>We can leverage custom SugarCRM classes to control the select container width. One is <b>inherit-width</b> which expands the container and dropdown to 100% of the parent div of the original select input. The other is <b>narrow</b> which collapses the width of the Select2 container but expands the dropdown to allow for auto width of the selection options.</p>
+      <p>These classes are not part of Select2 but rather used by a custom function to set up four properties in the Select2 constructor: <code>dropdownCss</code>, <code>dropdownCssClass</code>, <code>containerCss</code>, <code>containerCssClass</code>. Be careful about setting the width of the dropdown to 100% because it will grow to 100% of the page since it is attached directly to the body. Feel free to add any needed styling to the constructor function. The default select2-inherit-width and select2-narrow as defined in the select2.less file should cover most cases.</p>
 <pre class="prettyprint linenums" style="margin-bottom: 9px;">
 &lt;script&gt;
   function getSelect2Constructor($select) {
@@ -207,17 +181,17 @@
     _ctor.containerCss = {};
     _ctor.containerCssClass = '';
 
-    if ( $select.hasClass('select2-narrow') ) {
+    if ( $select.hasClass('narrow') ) {
       _ctor.dropdownCss.width = 'auto';
       _ctor.dropdownCss['border-top']='1px solid #AAA';
       _ctor.dropdownCss['border-bottom']='1px solid #AAA';
-      _ctor.dropdownCssClass += 'select2-narrow ';
+      _ctor.dropdownCssClass = 'select2-narrow ';
       _ctor.containerCss.width = '100px';
       _ctor.containerCssClass = 'select2-narrow';
     }
-    if ( $select.hasClass('select2-inherit-width') ) {
+    if ( $select.hasClass('inherit-width') ) {
       //_ctor.dropdownCss.width = '100%';
-      _ctor.dropdownCssClass += 'select2-inherit-width ';
+      _ctor.dropdownCssClass = 'select2-inherit-width ';
       _ctor.containerCss.width = '100%';
       _ctor.containerCssClass = 'select2-inherit-width';
     }
@@ -289,7 +263,6 @@
 <option value="WY">Wyoming</option>
       </select>
       <script>
-      console.log( $(''))
         $('#states3').select2({width:'200px', minimumResultsForSearch:7, allowClear:true});
       </script>
     </div>
@@ -307,8 +280,8 @@
 </pre>
     </div>
     <div class="span6">
-      <p>To enable a deselect "x" icon to reset the Select2 control, pass the <b>allowClear</b> property in the constructor.</p>
-      <p>The <b></b> property is used to prevent a select option filter input if the number of select options is less than the number set.</p>
+      <p>To enable a deselect "x" icon to reset the Select2 control, pass the <code>allowClear</code> property in the constructor.</p>
+      <p>The <code>minimumResultsForSearch</code> property is used to prevent a select option filter input if the number of select options is less than the number set.</p>
     </div>
   </div>
 
@@ -484,7 +457,7 @@
         </div>
       </div>
       <script>
-        $('#multi2').select2({width:'100%'});
+        $('#multi2').select2({width:'300px'});
       </script>
     </div>
 

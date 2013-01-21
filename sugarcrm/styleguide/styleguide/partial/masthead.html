@@ -2,7 +2,7 @@
   <div class="hero-unit">
   {{#search}}
     <div class="pull-right">
-      <select name="sections" id="find_patterns" class="chzn-select search" data-placeholder="Find any pattern&hellip;">
+      <select name="sections" id="find_patterns" class="select2 search" data-placeholder="Find any pattern&hellip;">
         <option></option>
       </select>
     </div>
@@ -27,14 +27,3 @@
   </div>
 {{/subnav}}
 </header>
-<script>
-  $(document).ready(function () {
-    // build dropdown menu
-    var $section_dropdown = $('.section-dropdown .dropdown-menu');
-    $.each(pages, function (k,v) {
-      var source = (v.url) ? v.url : getFileFromLabel(k),
-          $link = $('<a/>').attr('href',source).text(v.title);
-      $('<li/>').append($link).appendTo($section_dropdown);
-    });
-  });
-</script>

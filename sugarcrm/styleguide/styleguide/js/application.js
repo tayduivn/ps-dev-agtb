@@ -247,15 +247,15 @@
     }
 
     // Select widget
-    if ($('.chzn-select').length !== 0) {
-      $(".chzn-select").chosen({ disable_search_threshold: 5 });
-      $(".chzn-select-deselect").chosen({allow_single_deselect:true});
-    }
+    // if ($('.select2').length !== 0) {
+    //   $(".select2").select2({ disable_search_threshold: 5 });
+    //   $(".select2-deselect").select2({allow_single_deselect:true});
+    // }
 
-    if ($('#moduleActivity .form-search select').length !== 0) {
-      $('#moduleActivity .form-search select').chosen();
-      //$('#moduleActivity .form-search input').quicksearch('ul.results li');
-    }
+    // if ($('#moduleActivity .form-search select').length !== 0) {
+    //   $('#moduleActivity .form-search select').select2();
+    //   //$('#moduleActivity .form-search input').quicksearch('ul.results li');
+    // }
 
     //j Toggle display of side pane
     $('body')
@@ -276,4 +276,37 @@ function throwMessage(data,status,temp) {
     '</div>';
   $('#alerts').append(msg);
   setTimeout( function (){$('.timeten').fadeOut().remove();}, 3000);
+}
+
+function getSelect2Constructor($select) {
+  var _ctor = {};
+  _ctor.minimumResultsForSearch = 7;
+  _ctor.dropdownCss = {};
+  _ctor.dropdownCssClass = '';
+  _ctor.containerCss = {};
+  _ctor.containerCssClass = '';
+  if ( $select.hasClass('narrow') ) {
+    _ctor.dropdownCss.width = 'auto';
+    _ctor.dropdownCss['border-top']='1px solid #AAA';
+    _ctor.dropdownCss['border-bottom']='1px solid #AAA';
+    _ctor.dropdownCssClass = 'select2-narrow ';
+    _ctor.containerCss.width = '100px';
+    _ctor.containerCssClass = 'select2-narrow';
+  }
+  if ( $select.hasClass('inherit-width') ) {
+    //dropdownCss.width = '100%';
+    _ctor.dropdownCssClass = 'select2-inherit-width ';
+    _ctor.containerCss.width = '100%';
+    _ctor.containerCssClass = 'select2-inherit-width';
+  }
+  return _ctor;
+}
+
+function initSelect2(selector) {
+  $(selector).each(function(){
+
+    var $this = $(this)
+      , ctor = getSelect2Constructor($this);
+    $this.select2( ctor );
+  });
 }

@@ -1,7 +1,6 @@
 <div class="form-horizontal padded">
 
   <fieldset class="card2">
-
     <div class="row-fluid avatar-widget">
      <div class="pull-left">
         <form id="imageform" method="post" enctype="multipart/form-data" action='ajaximage.php'>
@@ -42,8 +41,6 @@
   </fieldset>
 
 
-
-
 <div class="row-fluid">
   <div class="span6">
     <fieldset class="card2">
@@ -52,7 +49,7 @@
           <label for="select01">Sales Stage:</label>
         </div>
         <div class="controls span9">
-          <select id="select01" data-placeholder="Choose a Lead..." class="chzn-select chzn-inherit-width">
+          <select id="select01" data-placeholder="Choose a Lead..." class="select2 inherit-width">
             <option value="pk" selected="selected">Proposal</option>
             <option value="pk">Closed Won</option>
             <option value="pk">Closed Lost</option>
@@ -64,7 +61,7 @@
           <label for="select02">Account:</label>
         </div>
         <div class="controls span9">
-          <select id="select02" data-placeholder="Choose a Lead..." class="chzn-select chzn-inherit-width">
+          <select id="select02" data-placeholder="Choose a Lead..." class="select2 inherit-width">
             <option value="pk" selected="selected">Plato's MFT</option>
             <option value="pk">Underwater Mining Inc.</option>
             <option value="pk">Weyland</option>
@@ -96,7 +93,7 @@
           <label for="select03">Assigned to:</label>
         </div>
         <div class="controls span9">
-          <select id="select03" data-placeholder="Choose an Assignee..." class="chzn-select chzn-inherit-width">
+          <select id="select03" data-placeholder="Choose an Assignee..." class="select2 inherit-width">
             <option value="pk" selected="selected">Sabra Khan</option>
             <option value="pk">Sally Smith</option>
             <option value="pk">Jim Brennan</option>
@@ -143,7 +140,7 @@
           <label for="select01">Teams:</label>
         </div>
         <div class="controls span9">
-          <select data-placeholder="Choose a Lead..." class="chzn-select chzn-inherit-width" tabindex="2">
+          <select data-placeholder="Choose a Lead..." class="select2 inherit-width" tabindex="2">
             <option value="pk" selected="selected">Global</option>
             <option value="pk">East</option>
             <option value="pk">West</option>
@@ -170,8 +167,7 @@
 
     drawer(true);
 
-    $('.chzn-select').chosen({ disable_search_threshold: 5 });
-    $('.chzn-select-deselect').chosen({allow_single_deselect:true});
+    initSelect2('select.select2');
 
     $('[rel=datepicker]').datepicker();
 

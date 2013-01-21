@@ -44,7 +44,7 @@
           <div class="control-group">
             <label for="select01" class="control-label">Account:</label>
             <div class="controls">
-              <select data-placeholder="Choose a account..." class="chzn-select" tabindex="2">
+              <select data-placeholder="Choose a account..." class="select2" tabindex="2">
                 <option value="pk" selected="selected">Perkin Kleiners</option>
                 <option value="pk">Underwater Mining Inc.</option>
                 <option value="pk">Weyland</option>
@@ -54,7 +54,7 @@
           <div class="control-group">
             <label for="select01" class="control-label">Teams:</label>
             <div class="controls">
-              <select data-placeholder="Choose a account..." class="chzn-select" tabindex="2">
+              <select data-placeholder="Choose a account..." class="select2" tabindex="2">
                 <option value="pk" selected="selected">Global</option>
                 <option value="pk">East</option>
                 <option value="pk">West</option>
@@ -66,7 +66,7 @@
           <div class="control-group">
             <label for="select01" class="control-label">Assigned to:</label>
             <div class="controls">
-              <select data-placeholder="Choose a account..." class="chzn-select" tabindex="2">
+              <select data-placeholder="Choose a account..." class="select2" tabindex="2">
                 <option value="pk" selected="selected">Administrator</option>
                 <option value="pk">Majed Itani</option>
                 <option value="pk">Uriah Welcome</option>
@@ -85,5 +85,5 @@
   </div>
 </div>
 <script>
-  $(".chzn-select").chosen({ disable_search_threshold: 5 });
+  initSelect2('select.select2');
 </script>

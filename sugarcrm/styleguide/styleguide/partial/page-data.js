@@ -68,8 +68,7 @@ var pages = {
         "title":"jQuery Plugins"
       , "description":"Dynamic UI elements with Javascript (jQuery) plugins."
       , "sections":[
-          {"label":"Chosen", "description":"Lightweight and user friendly select boxes for streamlined data selection. Great for dropdowns, single- and multi-selects."}
-        , {"label":"jsTree", "description":"jsTree is a javascript based, cross browser tree component."}
+          {"label":"jsTree", "description":"jsTree is a javascript based, cross browser tree component."}
         , {"label":"Slider", "description":"jQuery range picker"}
         , {"label":"Wizard", "description":"Wizard takes advantage of bootstrap modals and sets up a framework for taking a user through multiple steps to complete a task."}
         , {"label":"DataTable", "description":"DataTables is a highly flexible tool, based upon the foundations of progressive enhancement, which will add advanced interaction controls to any HTML table."}

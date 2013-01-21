@@ -21,7 +21,7 @@
                     Choose the preferred fiscal year configuration:
                 </p>
                 <p>
-                    <select id="configuration" class="chzn-select" tabindex="1">
+                    <select id="configuration" class="select2" tabindex="1">
                         <option value="select">Select</option>
                         <option value="standard">Standard</option>
                         <option value="customized">Customized</option>
@@ -43,7 +43,7 @@
                   Choose the time periods you want to forecast over:
                   </p>
                   <p>
-                  <select id="time_period" class="chzn-select" tabindex="1">
+                  <select id="time_period" class="select2" tabindex="1">
                       <option value="">Quarterly</option>
                       <option value="">Yearly</option>
                   </select>
@@ -55,7 +55,7 @@
                       Choose how many future time periods you want users to see:
                   </p>
                   <p>
-                      <select id="user_future_time_periods" class="chzn-select" tabindex="5">
+                      <select id="user_future_time_periods" class="select2" tabindex="5">
                           <option value="">1</option>
                           <option value="">2</option>
                           <option value="">3</option>
@@ -68,7 +68,7 @@
                       Choose how many past time periods you want users to see:
                   </p>
                   <p>
-                      <select id="user_past_time_periods" class="chzn-select" tabindex="6">
+                      <select id="user_past_time_periods" class="select2" tabindex="6">
                           <option value="">1</option>
                           <option value="">2</option>
                           <option value="">3</option>
@@ -87,7 +87,7 @@
                         Choose the time periods you want to forecast over:
                     </p>
                     <p>
-                        <select id="time_period_c" class="chzn-select" tabindex="1">
+                        <select id="time_period_c" class="select2" tabindex="1">
                             <option value="">Select</option>
                             <option value="">Yearly</option>
                             <option value="">Quarterly</option>
@@ -99,7 +99,7 @@
                                 Where would you like your 53rd week?
                             </p>
                             <p>
-                                <select class="chzn-select" tabindex="1">
+                                <select class="select2" tabindex="1">
                                     <option value="">Q1</option>
                                     <option value="">Q2</option>
                                     <option value="">Q3</option>
@@ -114,7 +114,7 @@
                         Choose how many future time periods you want users to see:
                     </p>
                     <p>
-                        <select id="user_future_time_periods_c" class="chzn-select" tabindex="5">
+                        <select id="user_future_time_periods_c" class="select2" tabindex="5">
                             <option value="">1</option>
                             <option value="">2</option>
                             <option value="">3</option>
@@ -127,7 +127,7 @@
                         Choose how many past time periods you want users to see:
                     </p>
                     <p>
-                        <select id="user_past_time_periods_c" class="chzn-select" tabindex="6">
+                        <select id="user_past_time_periods_c" class="select2" tabindex="6">
                             <option value="">1</option>
                             <option value="">2</option>
                             <option value="">3</option>
@@ -304,7 +304,9 @@
  <script type="text/javascript">
 
      $(document).ready(function() {
-     $(".chzn-select").chosen();
+
+         initSelect2('select.select2');
+
          $('[rel="clickoverBottom"]').clickover({placement: "bottom"}) ;
 
          $(".sales_stage_formula").each(function(index){
@@ -312,20 +314,20 @@
                    $("#sales_stage_formula").html($(this).attr('value'));
              });
          });
-     $(".category_options").each(function(index){
-         $(this).click(function(){
-             $("#category_options"+index).removeClass("hide").addClass("show");
-             $(".category_options").each(function(otherIndex){
-                 if(otherIndex != index) {
-//                     console.log(otherIndex)
-                     $("#category_options"+otherIndex).removeClass("show").addClass("hide");
-                 }
 
-             })
+         $(".category_options").each(function(index){
+             $(this).click(function(){
+                 $("#category_options"+index).removeClass("hide").addClass("show");
+                 $(".category_options").each(function(otherIndex){
+                     if(otherIndex != index) {
+    //                     console.log(otherIndex)
+                         $("#category_options"+otherIndex).removeClass("show").addClass("hide");
+                     }
+                 })
+             });
          });
 
-     });
-         $("#configuration").chosen().change(function(data){
+         $("#configuration").select2().change(function(data){
              if(data.target.selectedIndex == 1) {
                  $('#standard').toggleClass("hide");
                  $('#configuration_name').toggleClass("hide");
@@ -337,11 +339,9 @@
                  $('#standard').addClass("hide");
                  $('#configuration_name').addClass("hide");
              }
-
-
          });
 
-         $("#time_period_c").chosen().change(function(data){
+         $("#time_period_c").select2().change(function(data){
              if(data.target.selectedIndex == 1) {
                  $('#lastweek').removeClass("hide");
              } else {

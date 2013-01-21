@@ -85,11 +85,19 @@
       $('#section-content').html(m);
     }
 
+    // build dropdown menu
+    var $section_dropdown = $('.section-dropdown .dropdown-menu')
+      , $find = $('#find_patterns');
+    $.each(pages, function (k,v) {
+      var source = (v.url) ? v.url : getFileFromLabel(k),
+          $link = $('<a/>').attr('href',source).text(v.title);
+      $('<li/>').append($link).appendTo($section_dropdown);
+    });
+
     // search for patterns
-    if ($("#find_patterns").length)
+    if ($find.length)
     {
-      var $find = $('#find_patterns')
-        , $optgroup;
+      var $optgroup;
 
       $.each(pages, function (k,v) {
         if ( v.sections )
@@ -119,8 +127,7 @@
         setActiveNav();
       });
 
-      $find.chosen();
-      $find.trigger("liszt:updated");
+      $find.select2();
     }
 
     $('.section-link').live('click', function (e) {
@@ -146,11 +153,7 @@
       });
     }
 
-    if ( $(".chzn-select").length )
-    {
-      $(".chzn-select").chosen({ disable_search_threshold: 5 });
-      $(".chzn-select-deselect").chosen({ allow_single_deselect:true });
-    }
+    //initSelect2('select.select2');
 
     //$('.subnav').scrollspy().find('li').removeClass('active');
 
@@ -229,4 +232,36 @@ function sectionLink(label) {
   {
     return sectionLink(this.label);
   }
+}
+
+function initSelect2(selector) {
+  $(selector).each(function(){
+    var $this = $(this)
+      , ctor = getSelect2Constructor($this);
+    $this.select2( ctor );
+  });
+}
+
+function getSelect2Constructor($select) {
+  var _ctor = {};
+  _ctor.minimumResultsForSearch = 7;
+  _ctor.dropdownCss = {};
+  _ctor.dropdownCssClass = '';
+  _ctor.containerCss = {};
+  _ctor.containerCssClass = '';
+  if ( $select.hasClass('narrow') ) {
+    _ctor.dropdownCss.width = 'auto';
+    _ctor.dropdownCss['border-top']='1px solid #AAA';
+    _ctor.dropdownCss['border-bottom']='1px solid #AAA';
+    _ctor.dropdownCssClass = 'select2-narrow ';
+    _ctor.containerCss.width = '100px';
+    _ctor.containerCssClass = 'select2-narrow';
+  }
+  if ( $select.hasClass('inherit-width') ) {
+    //dropdownCss.width = '100%';
+    _ctor.dropdownCssClass = 'select2-inherit-width ';
+    _ctor.containerCss.width = '100%';
+    _ctor.containerCssClass = 'select2-inherit-width';
+  }
+  return _ctor;
 }

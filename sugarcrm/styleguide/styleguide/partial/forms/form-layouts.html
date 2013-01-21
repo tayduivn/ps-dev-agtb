@@ -390,7 +390,7 @@
               <label for="select01">Sales Stage:</label>
             </div>
             <div class="controls span10">
-              <select id="select01" data-placeholder="Choose a Lead..." class="chzn-select chzn-inherit-width">
+              <select id="select01" data-placeholder="Choose a Lead..." class="select2 inherit-width">
                 <option value="pk" selected="selected">Proposal</option>
                 <option value="pk">Closed Won</option>
                 <option value="pk">Closed Lost</option>
@@ -402,7 +402,7 @@
               <label for="select02">Account:</label>
             </div>
             <div class="controls span4">
-              <select id="select02" data-placeholder="Choose a Lead..." class="chzn-select chzn-inherit-width">
+              <select id="select02" data-placeholder="Choose a Lead..." class="select2 inherit-width">
                 <option value="pk" selected="selected">Perkin Kleiners</option>
                 <option value="pk">Underwater Mining Inc.</option>
                 <option value="pk">Weyland</option>
@@ -529,7 +529,7 @@
             <label for="select01" class="control-label">Contact:</label>
             <div class="controls">
 
-              <select data-placeholder="Choose a user..." class="chzn-select" tabindex="2">
+              <select data-placeholder="Choose a user..." class="select2" tabindex="2">
                 <option value="pk"></option>
                 <option value="pk">Administrator</option>
                 <option value="pk">Majed Itani</option>
@@ -540,12 +540,12 @@
           <div class="control-group">
             <label for="select01" class="control-label">Related to:</label>
             <div class="controls">
-              <select data-placeholder="Choose a account..." class="chzn-select" tabindex="2">
+              <select data-placeholder="Choose a account..." class="select2" tabindex="2">
                 <option value="pk" selected="selected">Account</option>
                 <option value="pk">Contact</option>
                 <option value="pk">Opportunity</option>
               </select>
-              <select data-placeholder="Choose a account..." class="chzn-select" tabindex="2">
+              <select data-placeholder="Choose a account..." class="select2" tabindex="2">
                 <option value="pk" selected="selected">Perkin Kleiners</option>
                 <option value="pk">Underwater Mining Inc.</option>
                 <option value="pk">Weyland</option>
@@ -556,7 +556,7 @@
             <label for="select01" class="control-label">Assigned to:</label>
             <div class="controls">
 
-              <select data-placeholder="Choose a user..." class="chzn-select" tabindex="2">
+              <select data-placeholder="Choose a user..." class="select2" tabindex="2">
                 <option value="pk"></option>
                 <option value="pk">Administrator</option>
                 <option value="pk">Majed Itani</option>
@@ -567,7 +567,7 @@
           <div class="control-group">
             <label for="select01" class="control-label">Teams:</label>
             <div class="controls">
-              <select data-placeholder="Choose a account..." class="chzn-select" tabindex="2" multiple>
+              <select data-placeholder="Choose a account..." class="select2" tabindex="2" multiple>
                 <option value="pk">Global</option>
                 <option value="pk" selected="selected">East</option>
                 <option value="pk">West</option>
@@ -590,7 +590,6 @@
 </div>
 
 <script src="js/jquery.datatables.js"></script>
-<script src="js/chosen.jquery.hal.js"></script>
 <script>
   if ($('table.datatable').length !== 0) {
     $('table.datatable').dataTable({
@@ -601,10 +600,11 @@
     });
   }
 
-  if ($(".chzn-select").length) {
-    $(".chzn-select").chosen({ disable_search_threshold: 5 });
-    $(".chzn-select-deselect").chosen({ allow_single_deselect:true });
-  }
+  $("select.select2").each(function(){
+    var $this = $(this)
+      , ctor = getSelect2Constructor($this);
+    $this.select2( ctor );
+  });
 
   $("[rel=tooltip]").tooltip({placement:'top'});
 
