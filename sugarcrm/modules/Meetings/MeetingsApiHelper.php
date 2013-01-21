@@ -46,6 +46,12 @@ class MeetingsApiHelper extends SugarBeanApiHelper
             // the users and contacts relationships
             $bean->update_vcal = false;    // Bug #49195 : don't update vcal b/s related users aren't saved yet, create vcal cache below
             $bean->users_arr = $userInvitees;
+
+            if(empty($bean->id)) {
+                $bean->id = create_guid();
+                $bean->new_with_id = true;
+            }
+
             $bean->setUserInvitees($userInvitees);
 
             vCal::cache_sugar_vcal(BeanFactory::getBean('Users', $bean->assigned_user_id));
