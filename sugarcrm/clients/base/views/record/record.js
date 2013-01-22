@@ -243,7 +243,7 @@
         _.each(this.fields, function(field) {
             // Exclude image picker, buttons, and button dropdowns
             // This is just a stop gap solution.
-            if ((field.type == 'img') || (field.type === 'button') || (field.type === 'buttondropdown')) {
+            if ((field.type === 'img') || (field.type === 'button') || (field.type === 'buttondropdown')) {
                 return;
             }
 

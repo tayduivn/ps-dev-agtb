@@ -4,13 +4,13 @@
     },
 
     /**
-     * Set all fields under button dropdown as buttons
+     * Set all fields under button dropdown as buttons if not specified
      * @param options
      */
     initialize: function(options) {
         app.view.Field.prototype.initialize.call(this, options);
         _.each(this.def.buttons, function(definition) {
-            definition.type = 'button';
+            definition.type = _.isUndefined(definition.type) ? 'button' : definition.type;
         });
     },
 
