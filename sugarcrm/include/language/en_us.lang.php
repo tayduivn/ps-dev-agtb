@@ -3353,9 +3353,18 @@ $app_strings = array (
     'LBL_UPLOADING' => 'Uploading',
 
     //theme roller
+    'LBL_RESET' => 'Reset',
+    'LBL_COLORS' => 'Colors',
     'BorderColor' => 'Border Color',
     'NavigationBar' => 'Navigation Bar',
     'PrimaryButton' => 'Primary Button',
+    'LBL_SAVE_AND_DEPLOY_BTN' => 'Save & Deploy',
+    'LBL_RESET_THEME_LNK' => 'Restore Default Theme',
+    'LBL_RESET_THEME_MODAL_TITLE' => 'Reset default theme',
+    'LBL_RESET_THEME_MODAL_INFO' => 'You are about to erase your custom theme with the default theme.',
+    'LBL_RESET_THEME_MODAL_CONFIRM' => 'Do you want to proceed?',
+    'LBL_RESET_THEME_PROCESS' => 'Restoring default theme...',
+    'LBL_SAVE_THEME_PROCESS' => 'Saving theme...',
 
   	//BEGIN SUGARCRM flav=PRO ONLY
     //in app tour
@@ -3408,6 +3417,7 @@ $app_strings = array (
     'LBL_URL_BUTTON' => 'Web',
     'LBL_WARNING' => 'Warning',
     'LBL_CONFIRM' => 'Confirm',
+    'LBL_NO_ACCESS' => '(No Access)',
     'LBL_CREATE_RELATED_RECORD' => 'Create Related Record',
     'LBL_ASSOC_RELATED_RECORD' => 'Associate Existing Record',
     'LBL_CHOOSE_LINK' => 'Choose Link Type',
@@ -3456,6 +3466,7 @@ $app_strings = array (
     'LBL_MOBILE_CHOOSE_DOC' => 'Choose document',
     'LBL_MOBILE_CHOOSE_LOCATION' => 'Choose location',
     'LBL_MOBILE_NO_ACTIONS_AVAILABLE' => 'No Actions Available',
+    'ERR_SYNC_FAILED' => 'Unable to sync with server.',
     'ERR_MOBILE_NOT_AUTHORIZED' => 'Access not authorized.',
     'ERR_MOBILE_INVALID_CREDS' => 'Invalid username or password.',
     'ERR_MOBILE_SESSION_EXPIRED' => 'Your session expired.',
@@ -3468,7 +3479,8 @@ $app_strings = array (
     'ERR_MOBILE_INTERNET_UNAVAILABLE' => 'Internet connection unavailable.',
     'ERR_MOBILE_INTERNAL' => 'Internal error ({{{code}}}). Please try again later.',
     'ERR_MOBILE_VALIDATION' => 'Record is invalid',
-    'ERR_SERVER_INCOMPATIBLE' => 'Incompatible server version',
+    'ERR_SERVER_FLAVOR_INCOMPATIBLE' => 'Incompatible server flavor: {{{flavor}}}',
+    'ERR_SERVER_VERSION_INCOMPATIBLE' => 'Incompatible server version: {{{version}}}',
     'ERR_MOBILE_EMAIL' => 'Error. Invalid Email Address.',
     'ERR_MOBILE_FILE_NOT_SUPPORTED' => 'This document type is unsupported.',
     'ERR_MOBILE_BROWSER_NOT_AUTHORIZED' => 'Authentication failed.',
