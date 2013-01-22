@@ -489,9 +489,9 @@ $modules_exempt_from_availability_check['SugarFavorites'] = 'SugarFavorites';
 $modInvisList[] = 'SugarFavorites';
 //END SUGARCRM flav=pro ONLY
 
-$beanList['ActivityStream'] = 'ActivityStream';
-$beanFiles['ActivityStream'] = 'modules/ActivityStream/ActivityStream.php';
-$modInvisList[] = 'ActivityStream';
+$beanList['Activities'] = 'Activity';
+$beanFiles['Activity'] = 'modules/ActivityStream/Activities/Activity.php';
+$modInvisList[] = 'Activities';
 
 $beanList['Filters'] = 'Filters';
 $beanFiles['Filters'] = 'modules/Filters/Filters.php';
