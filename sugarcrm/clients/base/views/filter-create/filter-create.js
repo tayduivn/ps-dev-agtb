@@ -30,43 +30,21 @@
 '   </article>'),
 
     filterOperatorMap: {
-        'enum': ['is', 'is not'],
-        'varchar': ['matches', 'does not match', 'contains', 'starts with', 'ends with'],
-        'name': ['matches', 'does not match', 'contains', 'starts with', 'ends with'],
-        'text': ['matches', 'does not match', 'contains', 'starts with', 'ends with'],
-        'currency': ['is equal to', 'is greater than', 'is greater than or equal to', 'is less than', 'is less than or equal to'],
-        'int': ['is equal to', 'is greater than', 'is greater than or equal to', 'is less than', 'is less than or equal to'],
-        'double': ['is equal to', 'is greater than', 'is greater than or equal to', 'is less than', 'is less than or equal to'],
-        'datetime': ['on', 'before', 'on or before', 'after', 'on or after'],
-        'base': ['fall through to this case']
-    },
-
-    filterMap: {
-        'is': '$equals',
-        'is not': '$not_equals',
-        'matches': '$equals',
-        'does not match': '$not_equals',
-        'contains': '$contains',
-        'starts with': '$starts',
-        'ends with': '$ends',
-        'is equal to': '$equals',
-        'is greater than': '$gt',
-        'is greater than or equal to': '$gte',
-        'is less than': '$lt',
-        'is less than or equal to': '$lte',
-        'on': '$equals',
-        'before': '$lt',
-        'on or before': '$lte',
-        'after': '$gt',
-        'on or after': '$gte'
+        'enum': ['$equals', '$not_equals'],
+        'varchar': ['$equals', '$not_equals', '$contains', '$starts', '$ends'],
+        'name': ['$equals', '$not_equals', '$contains', '$starts', '$ends'],
+        'text': ['$equals', '$not_equals', '$contains', '$starts', '$ends'],
+        'currency': ['$equals', '$gt', '$gte', '$lt', '$lte'],
+        'int': ['$equals', '$gt', '$gte', '$lt', '$lte'],
+        'double': ['$equals', '$gt', '$gte', '$lt', '$lte'],
+        'datetime': ['$equals', '$lt', '$lte', '$gt', '$gte'],
+        'base': []
     },
 
     initialize: function(opts) {
-        _.bindAll(this);
         // Remove the next line later:
         this.isSaved = false;
 
-        var self = this;
         app.view.View.prototype.initialize.call(this, opts);
         this.filterFields = [];
         _.each(app.metadata.getModule(this.module).fields, function(value, key) {
@@ -85,17 +63,16 @@
         this.layout.off("filter:create:close");
         this.layout.on("filter:create:new", function(filter) {
             if(_.isUndefined(filter)) {
-                self.render();
+                this.render();
             } else {
-                self.populateFilter(filter);
+                this.populateFilter(filter);
             }
-            self.$('.filter-options').removeClass('hide');
+            this.$('.filter-options').removeClass('hide');
 
-        });
+        }, this);
         this.layout.on("filter:create:close", function() {
-            self.$('.filter-options').addClass('hide');
-        });
-
+            this.$('.filter-options').addClass('hide');
+        }, this);
     },
 
     render: function(model) {
@@ -169,19 +146,22 @@
 
     chooseField: function(e) {
         this.notSaved();
-        var $el = this.$(e.currentTarget),
+        var self = this,
+            $el = this.$(e.currentTarget),
             $parent = $el.parents('.filter-body'),
             fieldName = $el.val(),
             fieldType = app.metadata.getModule(this.module).fields[fieldName || 'name'].type,
             payload = [],
-            self = this;
+            types = this.filterOperatorMap[fieldType] || this.filterOperatorMap['base'],
+            filterStrings = app.lang.getAppListStrings('filter_operators_dom');
+
         $parent.find('.filter-operator').removeClass('hide').find('option').remove();
         $parent.find('.filter-value').addClass('hide').empty();
-        var types = this.filterOperatorMap[fieldType] || this.filterOperatorMap['base'];
-        _.each(types, function(t) {
+
+        _.each(types, function(operand) {
             payload.push({
-                id: self.filterMap[t],
-                text: t
+                id: operand,
+                text: filterStrings[fieldType][operand]
             });
         });
 
@@ -268,6 +248,8 @@
         var $el = this.$(e.currentTarget),
             $parent = $el.parents('.filter-body');
         $parent.find('.updateme').addClass('hide');
+
+        this.save();
     },
 
     triggerClose: function() {
@@ -344,6 +326,11 @@
         $parent.find('.addme').addClass('hide');
     },
 
+    /**
+     * This function converts the filter-create DOM to a JSON object
+     * that the Filter API can understand.
+     * @return {object} Filter object ready to pass up to the Filter API.
+     */
     _getJSON: function() {
         var obj = {
             filter: [{}]
@@ -384,6 +371,12 @@
         return obj;
     },
 
+    /**
+     * Converts a Filter API filter object to the filter-create DOM-representation.
+     * Essentially performs the inverse of _getJSON.
+     * @param  {object} obj The Filter API filter object.
+     * @return {array}     An array of filter-create row elements to be inserted in the DOM.
+     */
     _applyJSON: function(obj) {
         // TODO: Make this usable for OR filters too.
         var existingFilters = obj.filter[0]["$and"], ret = [];

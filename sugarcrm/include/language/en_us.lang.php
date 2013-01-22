@@ -1736,6 +1736,62 @@ $app_list_strings = array (
     'less_than_equals' => 'Less Than Or Equal To',
     'between' => 'Is Between',
   ),
+  'filter_operators_dom' =>
+  array(
+    'enum' => array(
+        '$equals' => 'is',
+        '$not_equals' => 'is not',
+      ),
+    'varchar' => array(
+        '$equals' => 'matches',
+        '$not_equals' => 'does not match',
+        '$contains' => 'contains',
+        '$starts' => 'starts with',
+        '$ends' => 'ends with'
+      ),
+    'name' => array(
+        '$equals' => 'matches',
+        '$not_equals' => 'does not match',
+        '$contains' => 'contains',
+        '$starts' => 'starts with',
+        '$ends' => 'ends with'
+      ),
+    'text' => array(
+        '$equals' => 'matches',
+        '$not_equals' => 'does not match',
+        '$contains' => 'contains',
+        '$starts' => 'starts with',
+        '$ends' => 'ends with'
+      ),
+    'currency' => array(
+        '$equals' => 'is equal to',
+        '$gt' => 'is greater than',
+        '$gte' => 'is greater than or equal to',
+        '$lt' => 'is less than',
+        '$lte' => 'is less than or equal to',
+      ),
+    'int' => array(
+        '$equals' => 'is equal to',
+        '$gt' => 'is greater than',
+        '$gte' => 'is greater than or equal to',
+        '$lt' => 'is less than',
+        '$lte' => 'is less than or equal to',
+      ),
+    'double' => array(
+        '$equals' => 'is equal to',
+        '$gt' => 'is greater than',
+        '$gte' => 'is greater than or equal to',
+        '$lt' => 'is less than',
+        '$lte' => 'is less than or equal to',
+      ),
+    'datetime' => array(
+        '$equals' => 'on',
+        '$lt' => 'before',
+        '$lte' => 'on or before',
+        '$gt' => 'after',
+        '$gte' => 'on or after'
+      ),
+  ),
   'lead_conv_activity_opt' =>
   array(
         'copy' => 'Copy',
