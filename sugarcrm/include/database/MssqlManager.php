@@ -740,7 +740,7 @@ class MssqlManager extends DBManager
     {
         //change case to lowercase
         $sql = strtolower($sql);
-        $patt = '/\s+'.trim($orderMatch).'\s*,/';
+        $patt = '/\s+'.trim($orderMatch).'\s*(,|from)/';
 
         //check for the alias, it should contain comma, may contain space, \n, or \t
         $matches = array();
