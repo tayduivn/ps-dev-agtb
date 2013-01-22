@@ -1200,15 +1200,16 @@ class SugarThemeRegistry
      */
     public static function getDefault()
     {
-        if ( !isset(self::$_currentTheme) )
+        if (!isset(self::$_currentTheme)) {
             self::buildRegistry();
+        }
 
-        $enabledThemes = self::availableThemes();
-        if ( isset($GLOBALS['sugar_config']['default_theme']) && self::exists($GLOBALS['sugar_config']['default_theme']) && in_array($GLOBALS['sugar_config']['default_theme'],$enabledThemes) ) {
+        $enabledThemes = array_keys(self::availableThemes());
+        if (isset($GLOBALS['sugar_config']['default_theme']) && self::exists($GLOBALS['sugar_config']['default_theme']) && in_array($GLOBALS['sugar_config']['default_theme'], $enabledThemes)) {
             return self::get($GLOBALS['sugar_config']['default_theme']);
         }
 
-        return self::get(array_pop(array_keys($enabledThemes)));
+        return in_array('RacerX', $enabledThemes) ? self::$_themes['RacerX'] : self::$_themes[array_pop($enabledThemes)];
     }
 
     /**

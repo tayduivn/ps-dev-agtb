@@ -445,7 +445,7 @@ if(count($prospect_lists)>0){
              $trgt_html .= "<td width='25%'><input type='hidden' size='60' maxlength='255' name='existing_tracker_list_type". $trgt_count ."'   id='existing_tracker_list_type". $trgt_count ."' value='".$pl_focus->list_type."' >".$app_list_strings['prospect_list_type_dom'][$pl_focus->list_type];
              $trgt_html .= "<input type='hidden' name='added_target_id". $trgt_count ."' id='added_target_id". $trgt_count ."' value='". $pl_focus->id ."' ></td>";
              $trgt_html .= "<td><a href='#' onclick=\"javascript:remove_existing_target('existing_trgt".$trgt_count."','".$pl_focus->id."'); \" >  ";
-             $trgt_html .= SugarThemeRegistry::current()->getImage('delete_inline', "border='0' align='absmiddle'", 12, 12, ".gif", $mod_string['LBL_DELETE'])."</a></td></tr></table></div>";
+             $trgt_html .= SugarThemeRegistry::current()->getImage('delete_inline', "border='0' align='absmiddle'", 12, 12, ".gif", $mod_strings['LBL_DELETE'])."</a></td></tr></table></div>";
 
 
 
