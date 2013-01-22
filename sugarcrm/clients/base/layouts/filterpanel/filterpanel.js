@@ -6,14 +6,12 @@
     availableToggles: {
         "activitystream" : "icon-th-list",
         "timeline" : "icon-time",
-        "calendar" : "icon-calendar",
         "list" : "icon-table"
     },
 
     initialize: function(opts) {
         _.bindAll(this);
 
-        this.first = true;
         this.processMeta();
         this.template = app.template.get("l.filterpanel");
         this.renderHtml();
@@ -27,7 +25,7 @@
 
     renderHtml: function() {
         // Enable toggles
-        this.toggles = [];
+            this.toggles = [];
         _.each(this.options.meta.components, function(component) {
             var toggle;
             if(component.view) {
@@ -43,13 +41,15 @@
         this.$el.html(this.template(this));
     },
 
-    _placeComponent: function(component) {
-        this.$el.append(component.el);
-
-        if (this.first) {
-            this.first = false;
+    _placeComponent: function(component, def) {
+        // Specifically target the filter view to render on the toolbar.
+        if (def.view == "filter") {
+            this.$(".filter-view").append(component.el);
+            return;
+        } else if(def.view == "filter-create") {
+            this.$(".form-search").append(component.el);
         } else {
-            component.hide();
+            this.$el.append(component.el);
         }
     },
 

@@ -499,6 +499,11 @@ $beanList['ActivityStream'] = 'ActivityStream';
 $beanFiles['ActivityStream'] = 'modules/ActivityStream/ActivityStream.php';
 $modInvisList[] = 'ActivityStream';
 
+$beanList['Filters'] = 'Filters';
+$beanFiles['Filters'] = 'modules/Filters/Filters.php';
+$modInvisList[] = 'Filters';
+
+
 //Object list is only here to correct for modules that break
 //the bean class name == dictionary entry/object name convention
 //No future module should need an entry here.

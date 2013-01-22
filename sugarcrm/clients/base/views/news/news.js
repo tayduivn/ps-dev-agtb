@@ -4,7 +4,7 @@
         this.getData();
     },
 
-    render: function() {
+    _render: function() {
         if (_.isEmpty(this.responseData)) {
             this.hide();
             return;
@@ -12,7 +12,7 @@
 
         this.show();
 
-        app.view.View.prototype.render.call(this);
+        app.view.View.prototype._render.call(this);
     },
 
     getData: function() {

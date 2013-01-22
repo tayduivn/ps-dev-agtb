@@ -837,4 +837,7 @@ $GLOBALS['mod_strings']  = $installerStrings;
     ForecastTreeSeedData::populateUserSeedData();
 //END SUGARCRM flav=pro ONLY
 
+require_once('modules/Filters/Filters.php');
+include_once('modules/Filters/populateSeedData.php');
+
 ?>

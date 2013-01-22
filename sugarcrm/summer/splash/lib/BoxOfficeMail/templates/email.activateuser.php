@@ -21,7 +21,7 @@ $message = <<<EOQ
 		<tr>
 			<td>
 				<center>
-			        <a style="color:#333;text-decoration:none" href="{$config['top_url']}summer/splash/activate?email={$user['email']}&amp;hash={$guid};">
+			        <a style="color:#333;text-decoration:none" href="{$config['top_url']}summer/splash/index.php?do=activate&amp;email={$user['email']}&amp;guid={$guid}">
 			            <span style="text-decoration:underline;font-weight:bold">Click here to activate your account:</span>
 			        </a>
 			    </center>
@@ -30,7 +30,7 @@ $message = <<<EOQ
 		<tr>
 			<td>
 				<center>
-			        <a style="color:#333;text-decoration:none" href="{$config['top_url']}summer/splash/activate?email={$user['email']}&amp;hash={$guid};">
+			        <a style="color:#333;text-decoration:none" href="{$config['top_url']}summer/splash/index.php?do=activate&amp;email={$user['email']}&amp;guid={$guid}">
 			            <img style="padding-top:10px" src="{$config['top_url']}summer/splash/lib/BoxOfficeMail/templates/img/activate.png">
 			        </a>
 			    </center>

@@ -5,9 +5,9 @@
         this.untouchedCollection.fetch({limit: 5, params: {untouched: 7, fields: {'Opportunities': ['name', 'last_activity_date']}, order_by: 'last_activity_date'}});
     },
 
-    render: function() {
+    _render: function() {
         if (this.untouchedCollection.isEmpty()) { return; }
-        app.view.View.prototype.render.call(this);
+        app.view.View.prototype._render.call(this);
     },
 
     bindDataChange: function() {

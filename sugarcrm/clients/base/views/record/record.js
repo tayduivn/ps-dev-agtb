@@ -107,11 +107,10 @@
         app.view.View.prototype._render.call(this);
         this.initButtons();
         this.setButtonStates(this.STATE.VIEW);
-
+        this.setEditableFields();
     },
 
-    render:function () {
-        app.view.View.prototype.render.call(this);
+    setEditableFields: function() {
         delete this.editableFields;
         this.editableFields = [];
 
