@@ -218,8 +218,11 @@ class ForecastWorksheet extends SugarBean
 
         // since we don't have sales_stage in 6.7 we need to pull it from the related opportunity
         /* @var $opp Opportunity */
+        $product->sales_stage = '';
         $opp = BeanFactory::getBean('Opportunities', $product->opportunity_id);
-        $product->sales_stage = $opp->sales_stage;
+        if($opp instanceof Opportunity) {
+            $product->sales_stage = $opp->sales_stage;
+        }
 
         $fields = array(
             'name',
