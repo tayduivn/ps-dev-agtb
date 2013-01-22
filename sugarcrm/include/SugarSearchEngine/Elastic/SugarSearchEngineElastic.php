@@ -158,7 +158,6 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
         if($searchFields == null)
             $searchFields = SugarSearchEngineMetadataHelper::retrieveFtsEnabledFieldsPerModule($bean);
 
-
         $keyValues = array();
         foreach($searchFields as $fieldName => $fieldDef)
         {
