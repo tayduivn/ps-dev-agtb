@@ -7,10 +7,10 @@
         this.guid = _.uniqueId("funnel");
     },
 
-    render: function() {
+    _render: function() {
         var self = this;
 
-        app.view.View.prototype.render.call(this);
+        app.view.View.prototype._render.call(this);
 
         // Once the data is fetched, process it, then render it.
         this.funnelCollection.on("reset", function() {

@@ -10,8 +10,8 @@
         this.collection = app.data.createBeanCollection("Users");
     },
 
-    render: function() {
-        app.view.View.prototype.render.call(this);
+    _render: function() {
+        app.view.View.prototype._render.call(this);
 
         if (this.$(".job-title") && this.typeahead_collection) {
             this.$(".job-title").typeahead({source: this.typeahead_collection});

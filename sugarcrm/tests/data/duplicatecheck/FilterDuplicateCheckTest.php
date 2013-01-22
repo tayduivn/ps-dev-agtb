@@ -263,8 +263,6 @@ class FilterDuplicateCheckTest extends Sugar_PHPUnit_Framework_TestCase
                             ),
                         ),
                     ),
-                    array(
-                    ),
                 ),
             ),
         );
@@ -272,12 +270,8 @@ class FilterDuplicateCheckTest extends Sugar_PHPUnit_Framework_TestCase
 
         // compare the complete arrays
         self::assertEquals($expected,
-                           $actual,
-                           "The original filters were lost or the new filter is not constructed properly.");
-
-        // make sure the account_name filter was removed
-        self::assertEmpty($actual[0]['$and'][2],
-                          "The account_name filter should have been removed since it's not included in the bean.");
+            $actual,
+            "The original filters were lost or the new filter is not constructed properly.");
     }
 
     /**
