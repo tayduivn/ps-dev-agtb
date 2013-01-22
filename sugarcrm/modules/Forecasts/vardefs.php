@@ -770,134 +770,98 @@ $dictionary['ForecastWorksheet'] = array('table'=>'does_not_exist',
 );
 
 
-$dictionary['ForecastManagerWorksheet'] = array('table'=>'does_not_exist',
-'acl_fields' =>false,
-'fields' => array (
-    'id' =>
-    array (
-        'name' => 'id',
-        'vname' => 'LBL_ID',
-        'type' => 'id',
+$dictionary['ForecastManagerWorksheet'] = array(
+    'table' => 'forecast_manager_worksheet',
+    'acl_fields' => false,
+    'fields' => array(
+        'quota' =>
+        array(
+            'name' => 'quota',
+            'vname' => 'LBL_QUOTA',
+            'type' => 'currency',
+        ),
+        'best_case' =>
+        array(
+            'name' => 'best_case',
+            'vname' => 'LBL_BEST_CASE',
+            'type' => 'currency',
+        ),
+        'best_case_adjusted' =>
+        array(
+            'name' => 'best_case_adjusted',
+            'vname' => 'LBL_BEST_CASE_VALUE',
+            'type' => 'currency',
+        ),
+        'likely_case' =>
+        array(
+            'name' => 'likely_case',
+            'vname' => 'LBL_LIKELY_CASE',
+            'type' => 'currency',
+        ),
+        'likely_case_adjusted' =>
+        array(
+            'name' => 'likely_case_adjusted',
+            'vname' => 'LBL_LIKELY_CASE_VALUE',
+            'type' => 'currency',
+        ),
+        'worst_case' =>
+        array(
+            'name' => 'worst_case',
+            'vname' => 'LBL_WORST_CASE',
+            'type' => 'currency',
+        ),
+        'worst_case_adjusted' =>
+        array(
+            'name' => 'worst_case_adjusted',
+            'vname' => 'LBL_WORST_CASE_VALUE',
+            'type' => 'currency',
+        ),
+        'currency_id' =>
+        array(
+            'name' => 'currency_id',
+            'vname' => 'LBL_CURRENCY_ID',
+            'type' => 'id',
+        ),
+        'base_rate' =>
+        array(
+            'name' => 'base_rate',
+            'vname' => 'LBL_BASE_RATE',
+            'type' => 'double',
+        ),
+        'timeperiod_id' =>
+        array(
+            'name' => 'timeperiod_id',
+            'vname' => 'LBL_FORECAST_TIME_ID',
+            'type' => 'id',
+        ),
+        'draft' =>
+        array(
+            'name' => 'draft',
+            'vname' => 'LBL_DRAFT',
+            'type' => 'int',
+            'default' => 0,
+        ),
+        'user_id' =>
+        array(
+            'name' => 'user_id',
+            'vname' => 'LBL_FS_USER_ID',
+            'type' => 'id',
+        ),
     ),
-    'quota_id' =>
-    array (
-        'name' => 'quota_id',
-        'vname' => 'LBL_QUOTA_ID',
-        'type' => 'id',
+    'relationships' => array(
+        // relationships that might be needed: User_id -> users, quota_id -> Quota,
     ),
-    'forecast_id' =>
-    array (
-        'name' => 'forecast_id',
-        'vname' => 'LBL_FORECAST_ID',
-        'type' => 'id',
-    ),
-    'worksheet_id' =>
-    array (
-        'name' => 'worksheet_id',
-        'vname' => 'LBL_WORKSHEET_ID',
-        'type' => 'id',
-    ),
-    'name' =>
-    array(
-        'name' => 'name',
-        'vname' => 'LBL_NAME',
-        'type' => 'varchar',
-    ),
-    'amount' =>
-    array(
-        'name' => 'amount',
-        'vname' => 'LBL_AMOUNT',
-        'type' => 'currency',
-    ),
-    'quota' =>
-    array(
-        'name' => 'quota',
-        'vname' => 'LBL_QUOTA',
-        'type' => 'currency',
-    ),
-    'best_case' =>
-    array(
-        'name' => 'best_case',
-        'vname' => 'LBL_BEST_CASE',
-        'type' => 'currency',
-    ),
-    'best_case_adjusted' =>
-    array(
-        'name' => 'best_case_adjusted',
-        'vname' => 'LBL_BEST_CASE_VALUE',
-        'type' => 'currency',
-    ),
-    'likely_case' =>
-    array(
-        'name' => 'likely_case',
-        'vname' => 'LBL_LIKELY_CASE',
-        'type' => 'currency',
-    ),
-    'likely_case_adjusted' =>
-    array(
-        'name' => 'likely_case_adjusted',
-        'vname' => 'LBL_LIKELY_CASE_VALUE',
-        'type' => 'currency',
-    ),
-    'worst_case' =>
-    array(
-        'name' => 'worst_case',
-        'vname' => 'LBL_WORST_CASE',
-        'type' => 'currency',
-    ),
-    'worst_case_adjusted' =>
-    array(
-        'name' => 'worst_case_adjusted',
-        'vname' => 'LBL_WORST_CASE_VALUE',
-        'type' => 'currency',
-    ),
-    'currency_id' =>
-    array(
-        'name' => 'currency_id',
-        'vname' => 'LBL_CURRENCY_ID',
-        'type' => 'id',
-    ),
-    'timeperiod_id' =>
-    array(
-        'name' => 'timeperiod_id',
-        'vname' => 'LBL_FORECAST_TIME_ID',
-        'type' => 'id',
-    ),
-    'base_rate' =>
-    array(
-        'name' => 'base_rate',
-        'vname' => 'LBL_BASE_RATE',
-        'type' => 'double',
-    ),
-    'version' =>
-    array(
-        'name' => 'version',
-        'vname' => 'LBL_VERSION',
-        'type' => 'int',
-    ),
-    'user_id' =>
-    array(
-        'name' => 'user_id',
-        'vname' => 'LBL_FS_USER_ID',
-        'type' => 'id',
-    ),
-    'commit_stage' =>
-    array(
-        'name' => 'commit_stage',
-        'vname' => 'LBL_COMMIT_STAGE',
-        'type' => 'enum',
-    ),
-    'label' =>
-    array(
-        'name' => 'label',
-        'vname' => 'LBL_LABEL',
-        'type' => 'varchar',
-    ),
-    'date_modified' =>
-    array(
-        'name' => 'date_modified',
-        'vname' => 'LBL_DATE_MODIFIED',
-        'type' => 'datetime',
+    'indices' => array(
+        array(
+            'name' => 'idx_manager_worksheets_user_timestamp_assigned_user',
+            'type' => 'index',
+            'fields' => array('assigned_user_id', 'user_id', 'timeperiod_id', 'draft', 'deleted')
+        )
     )
-),
 );
+
+VardefManager::createVardef('ForecastManagerWorksheets', 'ForecastManagerWorksheet', array('default', 'assignable',
+//BEGIN SUGARCRM flav=pro ONLY
+'team_security',
+//END SUGARCRM flav=pro ONLY
+));
