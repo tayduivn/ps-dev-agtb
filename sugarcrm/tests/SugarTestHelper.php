@@ -846,7 +846,7 @@ class SugarTestHelper
             }
             return;
         }
-        $parts = explode("/", $dir);
+        $parts = explode("/", $dirname);
         while(!empty($parts)) {
             $path = implode("/", $parts);
             if(!is_dir($path)) {
