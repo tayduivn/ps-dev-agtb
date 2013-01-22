@@ -301,8 +301,8 @@ class SugarMathTest extends Sugar_PHPUnit_Framework_TestCase
     public function testExpressionsEmpty()
     {
         // empty expression
-        $this->assertFalse(SugarMath::init()->exp(''));
-        $this->assertFalse(SugarMath::init()->exp('()'));
+        $this->assertEquals(0, SugarMath::init()->exp('')->result());
+        $this->assertEquals(0, SugarMath::init()->exp('()')->result());
     }
 
     /**
@@ -357,7 +357,7 @@ class SugarMathTest extends Sugar_PHPUnit_Framework_TestCase
     public function testExpressions($result, $exp, $args, $scale)
     {
         $math = SugarMath::init(0,$scale);
-        $this->assertEquals($result,$math->exp($exp,$args));
+        $this->assertEquals($result,$math->exp($exp,$args)->result());
     }
 
     /**
@@ -465,7 +465,7 @@ class SugarMathTest extends Sugar_PHPUnit_Framework_TestCase
     public function testNonStringExpressionExceptions($exp,$args,$scale)
     {
         $math = new SugarMath(0,$scale);
-        $math->exp($exp,$args);
+        $math->exp($exp,$args)->result();
     }
 
     /**
@@ -495,7 +495,7 @@ class SugarMathTest extends Sugar_PHPUnit_Framework_TestCase
     public function testNonArrayArgsExceptions($exp,$args,$scale)
     {
         $math = new SugarMath(0,$scale);
-        $math->exp($exp,$args);
+        $math->exp($exp,$args)->result();
     }
 
     /**
@@ -525,7 +525,7 @@ class SugarMathTest extends Sugar_PHPUnit_Framework_TestCase
     public function testScaleExceptions($exp,$args,$scale)
     {
         $math = new SugarMath(0,$scale);
-        $math->exp($exp,$args);
+        $math->exp($exp,$args)->result();
     }
 
     /**
@@ -555,7 +555,7 @@ class SugarMathTest extends Sugar_PHPUnit_Framework_TestCase
     public function testNonMatchingParenthesisExceptions($exp,$args,$scale)
     {
         $math = new SugarMath(0,$scale);
-        $math->exp($exp,$args);
+        $math->exp($exp,$args)->result();
     }
 
     /**
@@ -586,7 +586,7 @@ class SugarMathTest extends Sugar_PHPUnit_Framework_TestCase
     public function testNonNumericArgsExceptions($exp,$args,$scale)
     {
         $math = new SugarMath(0,$scale);
-        $math->exp($exp,$args);
+        $math->exp($exp,$args)->result();
     }
 
     /**
@@ -617,7 +617,7 @@ class SugarMathTest extends Sugar_PHPUnit_Framework_TestCase
     public function testInvalidExpressionsExceptions($exp,$args,$scale)
     {
         $math = new SugarMath(0,$scale);
-        $math->exp($exp,$args);
+        $math->exp($exp,$args)->result();
     }
 
     /**
@@ -647,7 +647,7 @@ class SugarMathTest extends Sugar_PHPUnit_Framework_TestCase
     public function testGroupedOperatorsExpressionExceptions($exp,$args,$scale)
     {
         $math = new SugarMath(0,$scale);
-        $math->exp($exp,$args);
+        $math->exp($exp,$args)->result();
     }
 
     /**

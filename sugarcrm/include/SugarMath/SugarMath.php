@@ -137,7 +137,8 @@ class SugarMath
      * @return number
      */
     public function result() {
-        return $this->value;
+        // use bcadd to trim decimals to scale
+        return bcadd($this->value, 0, $this->scale);
     }
 
     /**
@@ -321,7 +322,7 @@ class SugarMath
      *
      * Example:
      *
-     * exp("23.33 + ? * (4 - ?) / ?", array($v1, $v2, $v3));
+     * exp("23.33 + ? * (4 - ?) / ?", array($v1, $v2, $v3))->result();
      *
      * @param string   $exp math expression
      * @param array    $args values for the ? parts of the expression
@@ -329,10 +330,10 @@ class SugarMath
      * @return string result
      */
     public function exp($exp, $args = array()) {
-        // plenty of up-front error checking
         if(strlen($exp) == 0) {
-            // not an error, return silently
-            return false;
+            // expression empty, set to 0
+            $this->value = 0;
+            return $this;
         }
         if(!isset($args)) {
             $args = array();
@@ -356,6 +357,8 @@ class SugarMath
         if(substr_count($exp,'(') !== substr_count($exp,')')) {
             throw new SugarMath_Exception('parenthesis mismatch');
         }
+        // give us ample of precision for the internal calculations
+        $this->scale += 4;
         // convert infix expression into postfix (reverse polish notation)
         $output = array(); // our output queue for RPN
         $stack = array();  // our operand stack
@@ -481,8 +484,11 @@ class SugarMath
                 }
             }
         }
-        // if original expression was empty parenthesis, result will be empty
-        return !empty($result) ? $result[0] : false;
+        // if original expression was empty parenthesis, result will be 0
+        $this->value = !empty($result) ? $result[0] : 0;
+        // set scale back to original value
+        $this->scale -= 4;
+        return $this;
     }
 
 }

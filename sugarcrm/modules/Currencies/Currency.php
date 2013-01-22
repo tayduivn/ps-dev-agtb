@@ -29,10 +29,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 /**
  * Currency
  *
- * This is the Currency module for obtaining and manipulating
- * currency objects. Note that a lot of currency utility functions
- * such as conversion and formatting are now implemented in the
- * SugarCurrency utility class.
+ * This is the Currency module for obtaining and manipulating currency objects.
  *
  */
 class Currency extends SugarBean
@@ -88,7 +85,7 @@ class Currency extends SugarBean
      * convertToDollar
      *
      * This method accepts a currency amount and converts it to the US Dollar amount
-     * This method is deprecated and has been moved to SugarCurrency::convertAmountToBase()
+     * This method is deprecated, see convertToBase()
      *
      * @deprecated
      * @param  float $amount    amount to convert to US Dollars
@@ -104,7 +101,7 @@ class Currency extends SugarBean
      *
      * This method accepts a US Dollar amount and returns a currency amount
      * with the conversion rate applied to it.
-     * This method is deprecated and has been moved to SugarCurrency::convertAmountFromBase()
+     * This method is deprecated, see convertFromBase()
      *
      * @deprecated
      * @param  float $amount    currency amount in US Dollars
@@ -112,7 +109,7 @@ class Currency extends SugarBean
      * @return float  currency  value from US Dollar conversion
      */
     function convertFromDollar($amount, $precision = 6) {
-        return $this->convertFrombase($amount, $precision);
+        return $this->convertFromBase($amount, $precision);
     }
 
     /**
