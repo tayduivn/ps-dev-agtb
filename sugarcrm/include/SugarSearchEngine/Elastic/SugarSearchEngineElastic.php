@@ -158,6 +158,7 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
         if($searchFields == null)
             $searchFields = SugarSearchEngineMetadataHelper::retrieveFtsEnabledFieldsPerModule($bean);
 
+
         $keyValues = array();
         foreach($searchFields as $fieldName => $fieldDef)
         {
@@ -174,7 +175,7 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
                     // dates have to be in ISO-8601 without the : in the TZ
                     global $timedate;
                     $date = $timedate->fromDb($bean->$fieldName);
-                    if($date instanceof TimeDate) {
+                    if($date instanceof SugarDateTime) {
                         $keyValues[$fieldName] = $timedate->asIso($date, null, array('stripTZColon' => true));
                     }
                     else {
