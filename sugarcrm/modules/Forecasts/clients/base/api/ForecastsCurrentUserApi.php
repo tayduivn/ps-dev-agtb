@@ -71,14 +71,6 @@ class ForecastsCurrentUserApi extends CurrentUserApi {
         $data['current_user']['first_name'] = $current_user->first_name;
         $data['current_user']['last_name'] = $current_user->last_name;
 
-        /**
-         * todo-sfa: when teams/ACLs are implemented, we won't need this anymore
-         *           and we can just use sidecar acl's via app.user
-         *
-         * Mimic the future sidecar ACLs behavior with "yes"/"no"
-         */
-        $data['current_user']['admin'] = ($current_user->isAdminForModule("Forecasts")) ? 'yes' : 'no';
-
         return $data;
     }
 
