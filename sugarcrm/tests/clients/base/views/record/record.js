@@ -10,6 +10,7 @@ describe("Record View", function() {
         SugarTest.loadHandlebarsTemplate(viewName, 'view', 'base');
         SugarTest.loadComponent('base', 'field', 'button');
         SugarTest.loadComponent('base', 'field', 'buttondropdown');
+        SugarTest.loadComponent('base', 'view', 'editable');
         SugarTest.loadComponent('base', 'view', viewName);
         SugarTest.testMetadata.addViewDefinition(viewName, {
             "buttons": [{
@@ -201,18 +202,20 @@ describe("Record View", function() {
                 description: 'Description'
             });
 
-            _.each(view.fields, function(field) {
-                if ((field.type !== 'button') && (field.type !== 'buttondropdown')) {
-                    expect(field.options.viewName).toBe(view.action);
-                }
+            _.each(view.editableFields, function(field) {
+                expect(field.options.viewName).toBe(view.action);
             });
 
             view.context.trigger('button:edit_button:click');
 
-            _.each(view.fields, function(field) {
-                if ((field.type !== 'button') && (field.type !== 'buttondropdown')) {
+            waitsFor(function() {
+                return (_.last(view.editableFields)).options.viewName == 'edit';
+            }, 'it took too long to wait switching view', 1000);
+
+            runs(function() {
+                _.each(view.editableFields, function(field) {
                     expect(field.options.viewName).toBe('edit');
-                }
+                });
             });
         });
 

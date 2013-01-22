@@ -7,6 +7,7 @@ describe("Create View", function() {
         SugarTest.testMetadata.init();
         SugarTest.loadHandlebarsTemplate('record', 'view', 'base');
         SugarTest.loadHandlebarsTemplate('button', 'field', 'base', 'edit');
+        SugarTest.loadComponent('base', 'view', 'editable');
         SugarTest.loadComponent('base', 'field', 'button');
         SugarTest.loadComponent('base', 'view', 'record');
         SugarTest.testMetadata.addViewDefinition('record', {
@@ -94,6 +95,7 @@ describe("Create View", function() {
 
     afterEach(function() {
         SugarTest.testMetadata.dispose();
+        SugarTest.app.view.reset();
         sinonSandbox.restore();
     });
 

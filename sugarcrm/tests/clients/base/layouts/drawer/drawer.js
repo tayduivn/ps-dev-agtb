@@ -10,6 +10,7 @@ describe("Drawer Layout", function() {
         SugarTest.loadHandlebarsTemplate('button', 'field', 'base', 'edit');
         SugarTest.loadComponent('base', 'field', 'button');
         SugarTest.loadComponent('base', 'layout', 'modal');
+        SugarTest.loadComponent('base', 'view', 'editable');
         SugarTest.loadComponent('base', 'view', 'record');
         SugarTest.testMetadata.addViewDefinition('record', {
             "panels":[
@@ -101,6 +102,7 @@ describe("Drawer Layout", function() {
     });
 
     afterEach(function() {
+        SugarTest.app.view.reset();
         SugarTest.testMetadata.dispose();
         sinonSandbox.restore();
     });
