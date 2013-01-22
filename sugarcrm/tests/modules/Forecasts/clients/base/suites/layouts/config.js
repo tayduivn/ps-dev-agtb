@@ -35,11 +35,11 @@ describe("The forecasts config layout controller", function(){
         var configController = SugarTest.loadFile("../modules/Forecasts/clients/base/layouts/config", "config", "js", function(d) {
                 return eval(d);
             }),
-            indexController = SugarTest.loadFile("../modules/Forecasts/clients/base/layouts/index", "index", "js", function(d) {
+            indexController = SugarTest.loadFile("../modules/Forecasts/clients/base/layouts/records", "records", "js", function(d) {
                 return eval(d);
             });
         stubs = [];
-        SugarTest.loadFile("../modules/Forecasts/clients/base/layouts/index", "index", "js", function(d) {
+        SugarTest.loadFile("../modules/Forecasts/clients/base/layouts/records", "records", "js", function(d) {
                         return eval(d);
                     });
         app.viewModule = "";
@@ -71,7 +71,7 @@ describe("The forecasts config layout controller", function(){
         stubs.push(sinon.stub(app.view.Layout.prototype, "initialize", function (options) {}));
 
         indexLayout = SugarTest.createComponent('Layout', {
-            name: "index",
+            name: "records",
             module: "Forecasts",
             context: options.context,
             meta : options.meta,
@@ -108,7 +108,7 @@ describe("The forecasts config layout controller", function(){
                 }
             };
             options.context.forecasts = new Backbone.Model({});
-            baseIndexLayout = new app.view.layouts.ForecastsIndexLayout(options);
+            baseIndexLayout = new app.view.layouts.ForecastsRecordsLayout(options);
         });
 
         afterEach(function() {
@@ -124,9 +124,12 @@ describe("The forecasts config layout controller", function(){
                     fetch: function(){}
                 }
             });
+            sinon.stub(testLayout, 'initializeAllModels');
+
             delete options.context.forecasts;
             testLayout.initialize(options);
             expect(getModelStub).toHaveBeenCalled();
+            testLayout.initializeAllModels.restore();
             getModelStub.restore();
         });
 
@@ -164,10 +167,10 @@ describe("The forecasts config layout controller", function(){
                 }
             };
             options.context.forecasts = new Backbone.Model({});
-            baseIndexLayout = new app.view.layouts.ForecastsIndexLayout(options);
+            baseIndexLayout = new app.view.layouts.ForecastsRecordsLayout(options);
             testLayout = new app.view.layouts.ForecastsConfigLayout(options);
             homeLocation = 'index.php?module=Home';
-            forecastsLocation = 'index.php?module=Forecasts';
+            forecastsLocation = 'index.php?action=sidecar#Forecasts';
         });
 
         afterEach(function() {
