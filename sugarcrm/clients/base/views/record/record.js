@@ -118,7 +118,7 @@
 
         var previousField, firstField;
         _.each(this.fields, function(field, index) {
-            if ( field.type === "img" || field.parent || (field.name && this.buttons[field.name])) {
+            if ( field.type === "img" || field.type === "buttondropdown" || field.parent || (field.name && this.buttons[field.name])) {
                 return;
             }
             if(previousField) {
