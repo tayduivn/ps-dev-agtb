@@ -91,6 +91,7 @@ function perform_save($focus){
     {
         //We create a related product entry for any new opportunity so that we may forecast on products
         // create an empty product module
+        /* @var $product Product */
         $product = BeanFactory::getBean('Products');
         if (empty($focus->id)) {
             $focus->id = create_guid();
@@ -117,7 +118,18 @@ function perform_save($focus){
             $product->opportunity_id = $focus->id;
             $product->commit_stage = $focus->commit_stage;
             $product->save();
+
+            // save the a draft of each opportunity
+            /* @var $product_worksheet ForecastWorksheet */
+            $product_worksheet = BeanFactory::getBean('ForecastWorksheets');
+            $product_worksheet->saveRelatedProduct($product, true);
         }
+
+
+        // save the a draft of each opportunity
+        /* @var $worksheet ForecastWorksheet */
+        $worksheet = BeanFactory::getBean('ForecastWorksheets');
+        $worksheet->saveRelatedOpportunity($focus, true);
     }
     //END SUGARCRM flav=pro ONLY
 }

@@ -174,6 +174,33 @@ class SugarForecasting_Committed extends SugarForecasting_AbstractForecast imple
             $db->query($sql, true);                      
         }
 
+        // ForecastWorksheets Table Commit Version
+        /* @var $tp TimePeriod */
+        $tp = BeanFactory::getBean('TimePeriods', $args['timeperiod_id']);
+
+        // Get all the $current_users opportunities
+        $sql = "SELECT id FROM opportunities WHERE assigned_user_id = '" . $current_user->id ."'
+            and (date_closed_timestamp >= " . $tp->start_date_timestamp . " and date_closed_timestamp <=  " . $tp->end_date_timestamp . ")";
+        $result = $db->query($sql);
+
+        while($row = $db->fetchByAssoc($result)) {
+            /* @var $opportunity Opportunity */
+            $opportunity = BeanFactory::getBean('Opportunities', $row['id']);
+
+            /* @var $opp_wkst ForecastWorksheet */
+            $opp_wkst = BeanFactory::getBean('ForecastWorksheets');
+            $opp_wkst->saveRelatedOpportunity($opportunity);
+
+            // commit every product associated with the Opportunity
+            $products = $opportunity->get_linked_beans('products', 'Products');
+            /* @var $product Product */
+            foreach($products as $product) {
+                /* @var $product_wkst ForecastWorksheet */
+                $product_wkst = BeanFactory::getBean('ForecastWorksheets');
+                $product_wkst->saveRelatedProduct($product);
+            }
+        }
+
         //TODO-sfa remove this once the ability to map buckets when they get changed is implemented (SFA-215).
         $admin = BeanFactory::getBean('Administration');
         $settings = $admin->getConfigForModule('Forecasts');

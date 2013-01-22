@@ -672,103 +672,281 @@ $dictionary['Worksheet'] =  array('table' => 'worksheet', 'fields' => array (
 
 );
 
-$dictionary['ForecastWorksheet'] = array('table'=>'does_not_exist',
-'acl_fields' =>false,
-'fields' => array (
-    'id' =>
-    array (
-        'name' => 'id',
-        'vname' => 'LBL_ID',
-        'type' => 'id',
+$dictionary['ForecastWorksheet'] = array(
+    'table' => 'forecast_worksheets',
+    'studio' => false,
+    'acl_fields' => false,
+    'fields' => array(
+        'parent_id' =>
+        array(
+            'name' => 'parent_id',
+            'vname' => 'LBL_PARENT_ACCOUNT_ID',
+            'type' => 'id',
+            'required' => false,
+            'reportable' => false,
+            'audited' => false,
+            'comment' => 'Account ID of the parent of this account',
+            'studio' => false
+        ),
+        'parent_type' =>
+        array(
+            'name' => 'parent_type',
+            'vname' => 'LBL_PARENT_TYPE',
+            'type' => 'parent_type',
+            'dbType' => 'varchar',
+            'group' => 'parent_name',
+            'options' => 'parent_type_display',
+            'len' => '255',
+            'comment' => 'Sugar module the Worksheet is associated with',
+            'studio' => false
+        ),
+        'account_name' =>
+        array(
+            'name' => 'account_name',
+            'rname' => 'name',
+            'id_name' => 'account_id',
+            'vname' => 'LBL_ACCOUNT_NAME',
+            'type' => 'relate',
+            'table' => 'accounts',
+            'join_name' => 'accounts',
+            'isnull' => 'true',
+            'module' => 'Accounts',
+            'dbType' => 'varchar',
+            'link' => 'accounts',
+            'len' => '255',
+            'source' => 'non-db',
+            'unified_search' => true,
+            'required' => true,
+            'importable' => 'required',
+            'studio' => false
+        ),
+        'account_id' =>
+        array(
+            'name' => 'account_id',
+            'vname' => 'LBL_ACCOUNT_ID',
+            'type' => 'id',
+            'source' => 'non-db',
+            'audited' => false,
+            'studio' => false
+        ),
+        'likely_case' =>
+        array(
+            'name' => 'likely_case',
+            'vname' => 'LBL_LIKELY_CASE',
+            'dbType' => 'currency',
+            'type' => 'currency',
+            'len' => '26,6',
+            'validation' => array('type' => 'range', 'min' => 0),
+            'audited' => false,
+            'studio' => false
+        ),
+        'best_case' =>
+        array(
+            'name' => 'best_case',
+            'vname' => 'LBL_BEST_CASE',
+            'dbType' => 'currency',
+            'type' => 'currency',
+            'len' => '26,6',
+            'validation' => array('type' => 'range', 'min' => 0),
+            'audited' => false,
+            'studio' => false
+        ),
+        'worst_case' =>
+        array(
+            'name' => 'worst_case',
+            'vname' => 'LBL_WORST_CASE',
+            'dbType' => 'currency',
+            'type' => 'currency',
+            'len' => '26,6',
+            'validation' => array('type' => 'range', 'min' => 0),
+            'audited' => false,
+            'studio' => false
+        ),
+        'amount' =>
+        array(
+            'name' => 'amount',
+            'vname' => 'LBL_AMOUNT',
+            //'function'=>array('vname'=>'getCurrencyType'),
+            'type' => 'currency',
+            //'disable_num_format' => true,
+            'dbType' => 'currency',
+            'comment' => 'Unconverted amount of the opportunity',
+            'importable' => 'required',
+            'duplicate_merge' => '1',
+            'required' => true,
+            'options' => 'numeric_range_search_dom',
+            'enable_range_search' => true,
+            //'calculated' => true,
+            //'formula' => 'rollupSum($products, "list_price")',
+            'validation' => array('type' => 'range', 'min' => 0),
+            'studio' => false
+        ),
+        'base_rate' =>
+        array(
+            'name' => 'base_rate',
+            'vname' => 'LBL_CURRENCY_RATE',
+            'type' => 'double',
+            'required' => true,
+            'studio' => false
+        ),
+        'amount_usdollar' =>
+        array(
+            'name' => 'amount_usdollar',
+            'vname' => 'LBL_AMOUNT_USDOLLAR',
+            'type' => 'currency',
+            'group' => 'amount',
+            'dbType' => 'currency',
+            'disable_num_format' => true,
+            'duplicate_merge' => '0',
+            'audited' => false,
+            'comment' => 'Formatted amount of the opportunity',
+            'studio' => false
+        ),
+        'currency_id' =>
+        array(
+            'name' => 'currency_id',
+            'type' => 'id',
+            'group' => 'currency_id',
+            'vname' => 'LBL_CURRENCY',
+            'function' => array('name' => 'getCurrencyDropDown', 'returns' => 'html'),
+            'reportable' => false,
+            'comment' => 'Currency used for display purposes',
+            'studio' => false
+        ),
+        'currency_name' =>
+        array(
+            'name' => 'currency_name',
+            'rname' => 'name',
+            'id_name' => 'currency_id',
+            'vname' => 'LBL_CURRENCY_NAME',
+            'type' => 'relate',
+            'isnull' => 'true',
+            'table' => 'currencies',
+            'module' => 'Currencies',
+            'source' => 'non-db',
+            'function' => array('name' => 'getCurrencyNameDropDown', 'returns' => 'html'),
+            'studio' => false,
+            'duplicate_merge' => 'disabled',
+        ),
+        'currency_symbol' =>
+        array(
+            'name' => 'currency_symbol',
+            'rname' => 'symbol',
+            'id_name' => 'currency_id',
+            'vname' => 'LBL_CURRENCY_SYMBOL',
+            'type' => 'relate',
+            'isnull' => 'true',
+            'table' => 'currencies',
+            'module' => 'Currencies',
+            'source' => 'non-db',
+            'function' => array('name' => 'getCurrencySymbolDropDown', 'returns' => 'html'),
+            'studio' => false,
+            'duplicate_merge' => 'disabled',
+        ),
+        'date_closed' =>
+        array(
+            'name' => 'date_closed',
+            'vname' => 'LBL_DATE_CLOSED',
+            'type' => 'date',
+            'audited' => false,
+            'comment' => 'Expected or actual date the oppportunity will close',
+            'importable' => 'required',
+            'required' => true,
+            'enable_range_search' => true,
+            'options' => 'date_range_search_dom',
+            'studio' => false
+        ),
+        'date_closed_timestamp' =>
+        array(
+            'name' => 'date_closed_timestamp',
+            'vname' => 'LBL_DATE_CLOSED_TIMESTAMP',
+            'type' => 'int',
+            'studio' => false
+        ),
+        'sales_stage' =>
+        array(
+            'name' => 'sales_stage',
+            'vname' => 'LBL_SALES_STAGE',
+            'type' => 'enum',
+            'options' => 'sales_stage_dom',
+            'len' => '255',
+            'audited' => false,
+            'comment' => 'Indication of progression towards closure',
+            'merge_filter' => 'enabled',
+            'importable' => 'required',
+            'required' => true,
+            'studio' => false
+        ),
+        'probability' =>
+        array(
+            'name' => 'probability',
+            'vname' => 'LBL_PROBABILITY',
+            'type' => 'int',
+            'dbType' => 'double',
+            'audited' => false,
+            'comment' => 'The probability of closure',
+            'validation' => array('type' => 'range', 'min' => 0, 'max' => 100),
+            'merge_filter' => 'enabled',
+            'studio' => false
+        ),
+        'commit_stage' =>
+        array(
+            'name' => 'commit_stage',
+            'vname' => 'LBL_COMMIT_STAGE',
+            'type' => 'enum',
+            'options' => 'commit_stage_dom',
+            'len' => '20',
+            'comment' => 'Forecast commit ranges: Include, Likely, Omit etc.',
+            'studio' => false
+        ),
+        'draft' =>
+        array(
+            'name' => 'draft',
+            'vname' => 'LBL_DRAFT',
+            'default' => 0,
+            'type' => 'int',
+            'comment' => 'Is A Draft Version',
+            'studio' => false
+        ),
+        'opportunity' =>
+        array(
+            'name' => 'opportunity',
+            'type' => 'link',
+            'relationship' => 'opportunity_worksheets',
+            'source' => 'non-db',
+            'vname' => 'LBL_OPPORTUNITY',
+        ),
+        'product' =>
+        array(
+            'name' => 'product',
+            'type' => 'link',
+            'relationship' => 'products_worksheets',
+            'source' => 'non-db',
+            'vname' => 'LBL_PRODUCT',
+        )
     ),
-    'product_id' =>
-    array(
-        'name' => 'product_id',
-        'vname' => 'LBL_PRODUCT_ID',
-        'type' => 'id'
+    'indices' => array(
+        array('name' => 'idx_worksheets_parent', 'type' => 'index', 'fields' => array('parent_id', 'parent_type')),
+        array(
+            'name' => 'idx_worksheets_assigned_del',
+            'type' => 'index',
+            'fields' => array('deleted', 'assigned_user_id')
+        ),
+        array(
+            'name' => 'idx_worksheets_assigned_del_time_draft',
+            'type' => 'index',
+            'fields' => array('assigned_user_id', 'date_closed_timestamp', 'draft', 'deleted')
+        ),
     ),
-    'assigned_user_id' =>
-    array (
-        'name' => 'assigned_user_id',
-        'vname' => 'LBL_ASSIGNED_USER_ID',
-        'type' => 'id',
-    ),
-    'commit_stage' =>
-    array(
-        'name' => 'commit_stage',
-        'type' => 'enum',
-        'options' => 'commit_stage_dom',
-        'vname' => 'LBL_COMMIT_STAGE',
-    ),
-    'name' =>
-    array(
-        'name' => 'name',
-        'vname' => 'LBL_NAME',
-        'type' => 'varchar',
-    ),
-    'date_closed' =>
-    array(
-        'name' => 'date_closed',
-        'vname' => 'LBL_DATE_CLOSED',
-        'type' => 'date',
-    ),
-    'sales_stage' =>
-    array(
-        'name' => 'sales_stage',
-        'vname' => 'LBL_SALES_STAGE',
-        'type' => 'varchar',
-    ),
-    'probability' =>
-    array(
-        'name' => 'probability',
-        'vname' => 'LBL_OW_PROBABILITY',
-        'type' => 'int',
-    ),
-    'amount' =>
-    array(
-        'name' => 'amount',
-        'vname' => 'LBL_AMOUNT',
-        'type' => 'currency',
-    ),
-    'best_case' =>
-    array(
-        'name' => 'best_case',
-        'vname' => 'LBL_BEST_CASE',
-        'type' => 'currency',
-    ),
-    'likely_case' =>
-    array(
-        'name' => 'likely_case',
-        'vname' => 'LBL_LIKELY_CASE',
-        'type' => 'currency',
-    ),
-    'worst_case' =>
-    array(
-        'name' => 'worst_case',
-        'vname' => 'LBL_WORST_CASE',
-        'type' => 'currency',
-    ),
-    'currency_id' =>
-    array(
-        'name' => 'currency_id',
-        'vname' => 'LBL_CURRENCY_ID',
-        'type' => 'id',
-    ),
-    'base_rate' =>
-    array(
-        'name' => 'base_rate',
-        'vname' => 'LBL_BASE_RATE',
-        'type' => 'double',
-    ),
-    'version' =>
-    array(
-        'name' => 'version',
-        'vname' => 'LBL_VERSION',
-        'type' => 'int'
-    )
-),
+    // todo-sfa: Add Relationships Info
 );
 
+// todo-sfa: should this implement TeamSecurity?
+VardefManager::createVardef('ForecastWorksheets', 'ForecastWorksheet', array('default', 'assignable',
+//BEGIN SUGARCRM flav=pro ONLY
+'team_security',
+//END SUGARCRM flav=pro ONLY
+));
 
 $dictionary['ForecastManagerWorksheet'] = array('table'=>'does_not_exist',
 'acl_fields' =>false,
