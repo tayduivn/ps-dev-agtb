@@ -327,6 +327,10 @@ require_once('modules/UpgradeWizard/uw_utils.php');
 //Patch for bug57431 : Module name isn't updated in portal layout editor
 updateRenamedModulesLabels();
 
+if(version_compare($_SESSION['current_db_version'], '6.7.0', '<')) {
+	setupCreateRole();
+}
+
 //BEGIN SUGARCRM flav=PRO ONLY
 //setup forecast defualt settings
 if(version_compare($_SESSION['current_db_version'], '6.7.0', '<'))

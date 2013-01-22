@@ -4590,3 +4590,27 @@ function updateOpportunitiesForForecasting()
     return $job->id;
 }
 //END SUGARCRM flav=pro ONLY
+
+/**
+ * This function takes all roles that have edit overrides and sets the create action to match
+ * only when upgrading to 6.7.0
+ */
+function setupCreateRole() {
+	global $db;
+	$aclrole = BeanFactory::getBean('ACLRole');
+	// get all create actions by module [for the id]
+	$create = array();
+	$create_query = "SELECT id, category FROM acl_actions WHERE name = 'create' AND acltype = 'module' AND deleted = 0";
+	$create_results = $db->query($create_query);
+	while($row = $db->fetchByAssoc($create_results)) {
+		$create[$row['category']] = $row['id'];
+	}
+	// get all edit actions that have been overriden
+	$query = "SELECT acl_roles_actions.role_id, acl_roles_actions.access_override, acl_actions.category FROM acl_roles_actions, acl_roles, acl_actions WHERE acl_roles.id = acl_roles_actions.role_id AND acl_roles.deleted = 0 AND acl_roles_actions.deleted = 0 AND acl_roles_actions.action_id = acl_actions.id AND acl_actions.name = 'edit' AND acl_actions.acltype = 'module' AND acl_actions.deleted = 0";
+	$results = $db->query($results);
+	while($row = $db->fetchByAssoc($results)) {
+		if(isset($create[$row['category']])) {
+			$aclrole->setAction($row['role_id'], $create[$row['category']], $row['access_override']);
+		}
+	}
+}
