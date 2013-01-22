@@ -2,6 +2,7 @@
     inlineEditMode: false,
     createMode: false,
     previousModelState: null,
+    extendsFrom: 'EditableView',
 
     events: {
         'click .record-edit-link-wrapper': 'handleEdit',
@@ -11,16 +12,20 @@
     },
     // button fields defined in view definition
     buttons: {},
+
     // button states
     STATE: {
         EDIT: 'edit',
         VIEW: 'view'
     },
 
+    // current button states
+    currentState: null,
+
     initialize: function(options) {
         _.bindAll(this);
 
-        app.view.View.prototype.initialize.call(this, options);
+        app.view.views.EditableView.prototype.initialize.call(this, options);
 
         this.createMode = this.context.get("create") ? true : false;
         this.action = this.createMode ? 'edit' : 'detail';
@@ -29,9 +34,6 @@
         this.model.on("change", function() {
             if (this.inlineEditMode) {
                 this.previousModelState = this.model.previousAttributes();
-                if(this.buttons['record-save']) {
-                    this.buttons['record-save'].setDisabled(false);
-                }
                 this.setButtonStates(this.STATE.EDIT);
             }
         }, this);
@@ -106,22 +108,49 @@
         app.view.View.prototype._render.call(this);
         this.initButtons();
         this.setButtonStates(this.STATE.VIEW);
+        this.setEditableFields();
+    },
 
-        // Check if this is a new record, if it is, enable the edit view
-        if (this.createMode && this.model.isNew()) {
-            this.toggleEdit(true);
+    setEditableFields: function() {
+        delete this.editableFields;
+        this.editableFields = [];
+
+        var previousField, firstField;
+        _.each(this.fields, function(field, index) {
+            if ( field.type === "img" || field.type === "buttondropdown" || field.parent || (field.name && this.buttons[field.name])) {
+                return;
+            }
+            if(previousField) {
+                previousField.nextField = field;
+            } else {
+                firstField = field;
+            }
+            previousField = field;
+            this.editableFields.push(field);
+        }, this);
+        if(previousField) {
+            previousField.nextField = firstField;
         }
     },
 
     initButtons: function() {
         if(this.options.meta && this.options.meta.buttons) {
-            this.buttons = {};
-            _.each(this.options.meta.buttons, function(button, index) {
-                var field = this.getField(button.name);
-                if(field) {
-                    this.buttons[field.name || index] = field;
+            _.each(this.options.meta.buttons, function(button) {
+                if (button.type === 'buttondropdown') {
+                    _.each(button.buttons, function(dropdownButton) {
+                        this.registerFieldAsButton(dropdownButton.name);
+                    }, this);
+                } else if (button.type === 'button') {
+                    this.registerFieldAsButton(button.name);
                 }
             }, this);
+        }
+    },
+
+    registerFieldAsButton: function(buttonName) {
+        var button = this.getField(buttonName);
+        if (button) {
+            this.buttons[buttonName] = button;
         }
     },
 
@@ -158,34 +187,6 @@
                 }
             }, this);
         }
-    },
-
-    /**
-     * Returns the next cell. If the current cell has more "inner focus elements", check to see if
-     * we are at the end of that cell's last focus element.
-     * @param index {Number} Index number of the current field.
-     * @param field {Field} Current field that is in focus.
-     * @param cell {Cell} Cell that the current field belongs to.
-     * @return {*}
-     */
-    getNextCell: function(index, field, cell) {
-        var nextIndex = index + 1,
-            nextFieldEl = this.$(".index" + nextIndex),
-            fieldName = nextFieldEl.data("fieldname"),
-            nextField = this.getField(fieldName),
-            nextCell = nextField.$el.parents(".record-cell");
-
-        // Check to see if field has parent (usually used to get the fieldset parent of the current field).
-        field = field.parent || field;
-
-        // If the fieldset, check if it has more "inner fields" before getting the next field.
-        if (field.focus && field.focus()) {
-            return cell;
-        } else if (cell[0] !== nextCell[0]) {
-            return nextField.$el.parents(".record-cell");
-        }
-
-        return false;
     },
 
     duplicateClicked: function() {
@@ -230,20 +231,8 @@
         } else {
             this.$('.record-edit-link-wrapper').show();
         }
-        _.each(this.fields, function(field) {
-            // Exclude image picker, buttons, and button dropdowns
-            // This is just a stop gap solution.
-            if ((field.type == "img") || (field.name && this.buttons[field.name])) {
-                return;
-            }
 
-            if (isEdit) {
-                field.setMode('edit');
-            } else {
-                field.setMode('detail');
-           }
-
-        }, this);
+        this.toggleFields(this.editableFields, isEdit);
     },
 
     /**
@@ -274,13 +263,7 @@
             case "img":
                 break;
             default:
-                this.toggleCell(field, cell);
-                if (_.isFunction(field.focus)) {
-                    field.focus();
-                } else {
-                    var $el = field.$(field.fieldTag + ":first");
-                    $el.focus().val($el.val());
-                }
+                this.toggleField(field);
         }
     },
 
@@ -324,97 +307,30 @@
         });
     },
 
-    /**
-     * Toggles a cell into editing or detail mode. This should be the entry point function.
-     * @param field {View.Field} Field or fieldset to toggle
-     * @param cell {jQuery Node} Current target cell
-     */
-    toggleCell: function(field, cell, close) {
-
-        if (field.tplName === "detail" && !close) {
-            // Need to call this.fieldClose() in a separate "thread" because it changes to detail view
-            // before it sets the value of the textarea in the model.
-            var self = this;
-            $(document).on("mousedown.record" + field.name, _.debounce(function(evt) {
-                self.fieldClose.call(self, evt, field, cell);
-            }, 0));
-        }
-
-        if (close) {
-            $(document).off("mousedown.record" + field.name);
-        }
-
-        this.toggleField(field, cell, close);
-    },
-
-    /**
-     * Switches each individual field between detail and edit modes. This method should not be called directly,
-     * instead call toggleCell.
-     * @param field {View.Field} Field that needs to be toggled
-     * @param cell {jQuery Node} Cell that field belongs in
-     * @param close {Boolean} Force into detail mode
-     */
-    toggleField: function(field, cell, close) {
-        cell.toggleClass('edit-mode');
-        var viewName = (field.tplName === 'detail' && !close)
-            ? "edit" : "detail";
-
-        field.setMode(viewName);
-
-        if (viewName === "edit") {
-            var self = this;
-            field.$el.on("keydown.record", function(evt) {
-                self.handleKeyDown.call(self, evt, field, cell);
-            });
-        } else if (close) {
-            field.$el.off("keydown.record");
-        }
-    },
-
-    fieldClose: function(e, field, cell) {
-        if (field.tplName === "detail") {
-            return;
-        }
-
-        var self = this,
-            currFieldParent = $(cell),
-            targetParent = self.$(e.target).parents(".record-cell");
-
-        // When mouse clicks the document, it should maintain the edit mode within the following cases
-        // - If mouse is clicked within the same field cell area
-        // - If cursor is focused among the field's input elements
-        // - If current view is blocked by drawer
-        if (currFieldParent[0] == targetParent[0] || currFieldParent.find(":focus").length > 0 || currFieldParent.parents(".drawer-squeezed").length > 0) {
-            return;
-        }
-        self.toggleCell(field, cell, true);
-    },
-
-    handleKeyDown: function(e, field, cell) {
+    handleKeyDown: function(e, field) {
+        app.view.views.EditableView.prototype.handleKeyDown.call(this, e, field);
         var nextCell,
             index = field.$el.parent().data("index");
 
         if (e.which == 9) { // If tab
             e.preventDefault();
             field.$(field.fieldTag).trigger("change");
-            nextCell = this.getNextCell(index, field, cell);
-
-            if (nextCell && (nextCell[0] !== cell[0])) { // Next tab element not within same cell
-                this.toggleCell(field, cell, true);
-                this.handleEdit(null, nextCell);
+            if(field.nextField) {
+                this.toggleField(field, false);
+                this.toggleField(field.nextField, true);
             }
-        } else if (e.which == 27) { // If esc
-            this.toggleCell(field, cell, true);
         }
     },
 
     /**
-     * Change the behavior of buttons depending on the state that they should be in
+     * Show/hide buttons depending on the state defined for each buttons in the metadata
      * @param state
      */
     setButtonStates: function(state) {
-        _.each(this.buttons, function(field, name) {
-            if(_.isUndefined(field.def.mode) || field.def.mode == state) {
+        this.currentState = state;
+
+        _.each(this.buttons, function(field) {
+            if (_.isUndefined(field.showOn()) || (field.showOn() === state)) {
                 field.show();
             } else {
                 field.hide();

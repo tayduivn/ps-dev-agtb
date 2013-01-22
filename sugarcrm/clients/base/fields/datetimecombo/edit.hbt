@@ -26,11 +26,8 @@
  * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 }}
-<div class="well">
-    <div class="input-append date" rel="datepicker"> 
-        <input type="text" class="datepicker" value="{{this.dateValue}}" rel="datepicker">
-        <span class="add-on"><i class="icon-calendar"></i></span> 
-        <input type="text" class="ui-timepicker-input" value="{{this.timeValue}}" rel="timepicker" autocomplete="off">
-    </div> 
-    <p class="help-block"></p>
+<div class="input-append date" rel="datepicker">
+    <input type="text" class="datepicker" value="{{this.dateValue}}" rel="datepicker">
+    <span class="add-on"><i class="icon-calendar"></i></span>
+    <input type="text" class="ui-timepicker-input" value="{{this.timeValue}}" rel="timepicker" autocomplete="off">
 </div>

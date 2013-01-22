@@ -1,11 +1,7 @@
 {{#with def}}
-    <div class="btn-group {{css_class}}">
-        <a href="#" class="btn btn-primary {{default.css_class}}" name="{{default.name}}">{{str default.label module}}</a>
+    <div class="btn-group">
+        <span class="primary-button"></span>
         <a href="#" class="btn btn-primary dropdown-toggle" data-toggle="dropdown"><span class="caret"></span></a>
-        <ul class="dropdown-menu">
-            {{#each dropdown}}
-                <li><a href="#" class="{{css_class}}" name="{{name}}">{{str label module}}</a></li>
-            {{/each}}
-        </ul>
+        <ul class="dropdown-menu"></ul>
     </div>
 {{/with}}

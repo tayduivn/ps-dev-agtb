@@ -132,6 +132,7 @@ $app_list_strings = array (
 
     'OAuthKeys' => 'OAuth Consumer Keys',
     'OAuthTokens' => 'OAuth Tokens',
+    'Filters' => 'Filters'
   ),
 
   'moduleListSingular' =>
@@ -188,6 +189,7 @@ $app_list_strings = array (
     'Users' => 'User',
   'SugarFavorites'=>'SugarFavorites',
    'Employees' => 'Employee',
+   'Filters' => 'Filter',
 
         ),
 
@@ -1734,6 +1736,62 @@ $app_list_strings = array (
     'less_than_equals' => 'Less Than Or Equal To',
     'between' => 'Is Between',
   ),
+  'filter_operators_dom' =>
+  array(
+    'enum' => array(
+        '$equals' => 'is',
+        '$not_equals' => 'is not',
+      ),
+    'varchar' => array(
+        '$equals' => 'matches',
+        '$not_equals' => 'does not match',
+        '$contains' => 'contains',
+        '$starts' => 'starts with',
+        '$ends' => 'ends with'
+      ),
+    'name' => array(
+        '$equals' => 'matches',
+        '$not_equals' => 'does not match',
+        '$contains' => 'contains',
+        '$starts' => 'starts with',
+        '$ends' => 'ends with'
+      ),
+    'text' => array(
+        '$equals' => 'matches',
+        '$not_equals' => 'does not match',
+        '$contains' => 'contains',
+        '$starts' => 'starts with',
+        '$ends' => 'ends with'
+      ),
+    'currency' => array(
+        '$equals' => 'is equal to',
+        '$gt' => 'is greater than',
+        '$gte' => 'is greater than or equal to',
+        '$lt' => 'is less than',
+        '$lte' => 'is less than or equal to',
+      ),
+    'int' => array(
+        '$equals' => 'is equal to',
+        '$gt' => 'is greater than',
+        '$gte' => 'is greater than or equal to',
+        '$lt' => 'is less than',
+        '$lte' => 'is less than or equal to',
+      ),
+    'double' => array(
+        '$equals' => 'is equal to',
+        '$gt' => 'is greater than',
+        '$gte' => 'is greater than or equal to',
+        '$lt' => 'is less than',
+        '$lte' => 'is less than or equal to',
+      ),
+    'datetime' => array(
+        '$equals' => 'on',
+        '$lt' => 'before',
+        '$lte' => 'on or before',
+        '$gt' => 'after',
+        '$gte' => 'on or after'
+      ),
+  ),
   'lead_conv_activity_opt' =>
   array(
         'copy' => 'Copy',
@@ -2465,6 +2523,8 @@ $app_strings = array (
     'LBL_EDIT_AS_NEW_BUTTON_TITLE' => 'Edit As New',
     'LBL_FAVORITES' => 'Favorites',
     'LBL_FILTER_MENU_BY' => 'Filter Menu By',
+    'LBL_FILTER_SELECT_FIELD' => 'Select field...',
+    'LBL_FILTER_SELECT_OPERATOR' => 'Select operator...',
     'LBL_VCARD' => 'vCard',
     'LBL_EMPTY_VCARD' => 'Please select a vCard file',
     'LBL_IMAGE' => 'Image',
@@ -2534,6 +2594,8 @@ $app_strings = array (
     'LBL_LISTVIEW_SELECTED_ALL' => 'You have selected all records in this view.',
     'LBL_LISTVIEW_RECORDS' => ' records in the result set.',
     'LBL_LISTVIEW_CLEAR_ALL' => 'Clear All selections.',
+    'LBL_LISTVIEW_SELECT_AND_EDIT' => 'Select and edit',
+    'LBL_LISTVIEW_ACTIONS' => 'Actions',
 
     'LBL_LOCALE_NAME_EXAMPLE_FIRST' => 'David',
     'LBL_LOCALE_NAME_EXAMPLE_LAST' => 'Livingstone',
@@ -2613,6 +2675,8 @@ $app_strings = array (
 
     // Strings for Instance Picker Widget
     'LBL_INVITE' => 'Invite',
+    'LBL_INVITED' => 'Invited',
+    'LBL_RECOMMENDED_INVITES' => 'Recommended Invites',
     'LBL_INSTANCES' => 'Instances',
     'LBL_YOUR_INSTANCES' => 'Your Instances',
     'LBL_INSTANCE_USERS' => 'Instance Users',
@@ -3357,6 +3421,7 @@ $app_strings = array (
     'LBL_SEARCH_BY' => 'Search by',
     'LBL_PREVIEW' => 'Preview',
     'LBL_STREAM_NO_RECORDS' => 'This record has no notes at this time. Please add a note by clicking on the add note link.',
+    'LBL_DUPLICATES_FOUND' => '{{duplicateCount}} duplicates found.',
 
     //SugarApiExceptionNotAuthorized language string
     'SUGAR_API_EXCEPTION_NOT_AUTHORIZED' => 'Not allowed to edit field {0} in module: {1}',

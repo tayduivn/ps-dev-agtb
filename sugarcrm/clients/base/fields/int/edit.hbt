@@ -30,6 +30,6 @@
         {{#if def.auto_increment}}
         {{#eq value "NaN"}}--{{else}}{{value}}{{/eq}}
         {{else}}
-        <input type="text" class="input-xlarge" value="{{value}}">
+        <input type="text" class="input-large" value="{{value}}">
         {{/if}}
         <p class="help-block"></p>

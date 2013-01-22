@@ -63,6 +63,10 @@
  *      on: context.forecasts
  *      by: change:worksheet
  *      when: the worksheet is changed.
+ *
+ * forecasts:change:worksheetRows
+ *      on: context.forecasts
+ *      after: this.updateWorksheetBySelectedRanges() is ran in the change:selectedRanges event handler
  */
 ({
 
@@ -99,6 +103,39 @@
      * If the timeperiod is changed and we have dirtyModels, keep the previous one to use if they save the models
      */
     dirtyUser : '',
+
+    events : {
+        'click a["rel=inspector"]>i' : 'inspector'
+    },
+
+    inspector: function(evt) {
+        var nTr = $(evt.target).parents('tr'),
+            uid = $(evt.target).data('uid'),
+            totalRows = $(evt.target).parents('table').find('tr.odd, tr.even'),
+            selIndex = -1;
+        _.each(totalRows, function(element, index){
+            if(nTr[0] == element) {
+                selIndex = index;
+            }
+        });
+
+        // begin building params to pass to modal
+        var params = {
+            selectedIndex : selIndex,
+            dataset : totalRows,
+            title:'Preview',
+            context : {
+                module: "Opportunities",
+                model : app.data.createBean('Opportunities', {id : uid}),
+                meta  : app.metadata.getModule('Opportunities').views.forecastInspector.meta
+            },
+            components: [
+                { view: 'forecastInspector' }
+            ]
+        };
+
+        this.layout.getComponent('inspector').showInspector(params);
+    },
     
     /**
      * Initialize the View
@@ -339,6 +376,7 @@
             this.context.forecasts.on("change:selectedRanges",
                 function(context, ranges) {
                     this.updateWorksheetBySelectedRanges(ranges);
+                    this.context.forecasts.trigger('forecasts:change:worksheetRows', self.$el.find('tr.odd, tr.even'));
                 },this);
             this.context.forecasts.worksheet.on("change", function() {
                 this.calculateTotals();

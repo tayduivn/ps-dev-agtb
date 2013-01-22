@@ -26,38 +26,40 @@
             this.login();
         }
     },
-    
-    render: function() {
+
+    _render: function() {
         if (app.config && app.config.logoURL) {
             this.logoURL = app.config.logoURL;
         }
-        app.view.View.prototype.render.call(this);
-        if (!SUGAR.App.api.isAuthenticated()) {
-            $(".navbar").hide();
-        }
+        app.view.View.prototype._render.call(this);
+        this.refreshAddtionalComponents();
         return this;
     },
-    
+    refreshAddtionalComponents: function() {
+        _.each(app.additionalComponents, function(component) {
+            component.render();
+        });
+    },
     login: function() {
         var self = this;
         if (this.model.isValid()) {
-            $('#content').hide();
-            app.alert.show('login', {level: 'process', title: 'Loading', autoclose: false});
+            app.$contentEl.hide();
+            app.alert.show('login', {level: 'process', title: 'Loading', autoClose: false});
             var args = {password: this.model.get("password"), username: this.model.get("username")};
 
             app.login(args, null, {
                 error: function() {
                     app.alert.dismiss('login');
-                    $('#content').show();
-                    console.log("login failed!");
+                    app.$contentEl.show();
+                    app.logger.debug("login failed!");
                 },
                 success: function() {
-                    console.log("logged in successfully!");
-                    $(".navbar").show();
+                    app.logger.debug("logged in successfully!");
                     app.events.on('app:sync:complete', function() {
-                        console.log("sync in successfully!");
+                        app.logger.debug("sync in successfully!");
+                        self.refreshAddtionalComponents();
                         app.alert.dismiss('login');
-                        $('#content').show();
+                        app.$contentEl.show();
                     });
                 }
             });
