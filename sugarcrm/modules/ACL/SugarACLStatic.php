@@ -90,6 +90,7 @@ class SugarACLStatic extends SugarACLStrategy
         'save' => 1,
         'edit' => 1,
         'delete' => 1,
+        'create' => 1,
     );
 
     static $action_translate = array(

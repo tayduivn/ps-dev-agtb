@@ -158,7 +158,6 @@ abstract class SugarACLStrategy
             case 'save':
             case 'popupeditview':
             case 'editview':
-            case 'create':
                 $output = 'edit';
                 break;
             case 'access':
@@ -187,7 +186,7 @@ abstract class SugarACLStrategy
             $action = self::fixUpActionName($context['action']);
         }
 
-        if ( $action == 'edit' || $action == 'delete' || $action == 'import' || $action == 'massupdate' ) {
+        if ( $action == 'create' || $action == 'edit' || $action == 'delete' || $action == 'import' || $action == 'massupdate' ) {
             return true;
         } else {
             return false;

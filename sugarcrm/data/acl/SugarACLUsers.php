@@ -27,26 +27,26 @@ class SugarACLUsers extends SugarACLStrategy
      * Fields non admin cannot edit
      */
     public $no_edit_fields = array(
-            'is_admin' => true,
             'title' => true,
             'department' => true,
             'reports_to_id' => true,
             'reports_to_name' => true,
             'reports_to_link' => true,
-            'is_group' => true,
             'user_name' => true,
-            'user_type' => true,
-            'portal_only' => true,
-            'show_on_employees' => true,
             'status' => true,
             'employee_status' => true,
-            'title' => true,
-            'department' => true,
+        );
+
+    public $no_access_fields = array(
+            'show_on_employees' => true,        
+            'portal_only' => true,
+            'is_admin' => true,
+            'is_group' => true,
             'system_generated_password' => true,
             'external_auth_only' => true,
             'sugar_login' => true,
             'authenticate_id' => true,
-            'pwd_last_changed' => true,
+            'pwd_last_changed' => true,        
         );
 
     /**
@@ -106,7 +106,7 @@ class SugarACLUsers extends SugarACLStrategy
             return true;
         }
 
-        if ( !$myself && $view == 'field' && !empty($this->no_edit_fields[$context['field']])) {
+        if ( !$myself && $view == 'field' && !empty($this->no_access_fields[$context['field']])) {
             // This isn't us, these aren't fields we should be poking around in.
             return false;
         }

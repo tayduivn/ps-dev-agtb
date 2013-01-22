@@ -96,23 +96,23 @@ class Bug56391Test extends Sugar_PHPUnit_Framework_TestCase
         unset($_SESSION['ACL']);
         $expected_result = array(
                                     'user_name' => array('write' => 'no', 'create' => 'no'),
-                                    'user_hash' => array('write' => 'no', 'create' => 'no', 'read' => 'no'),
-                                    'system_generated_password' => array('write' => 'no', 'create' => 'no', 'read' => 'no'),
-                                    'pwd_last_changed' => array('write' => 'no', 'create' => 'no', 'read' => 'no'),
-                                    'authenticate_id' => array('write' => 'no', 'create' => 'no', 'read' => 'no'),
-                                    'sugar_login' => array('write' => 'no', 'create' => 'no', 'read' => 'no'),
-                                    'external_auth_only' => array('write' => 'no', 'create' => 'no', 'read' => 'no'),
+                                    'user_hash' => array('read' => 'no', 'write' => 'no', 'create' => 'no', ),
+                                    'system_generated_password' => array('read' => 'no', 'write' => 'no', 'create' => 'no',),
+                                    'pwd_last_changed' => array('read' => 'no', 'write' => 'no', 'create' => 'no',),
+                                    'authenticate_id' => array('read' => 'no', 'write' => 'no', 'create' => 'no', ),
+                                    'sugar_login' => array('read' => 'no', 'write' => 'no', 'create' => 'no', ),
+                                    'external_auth_only' => array('read' => 'no', 'write' => 'no', 'create' => 'no', ),
                                     'status' => array('write' => 'no', 'create' => 'no'),
-                                    'show_on_employees' => array('write' => 'no', 'create' => 'no'),
-                                    'portal_only' => array('write' => 'no', 'create' => 'no'),
+                                    'show_on_employees' => array('read' => 'no', 'write' => 'no', 'create' => 'no'),
+                                    'portal_only' => array('read' => 'no', 'write' => 'no', 'create' => 'no',),
                                     'employee_status' => array('write' => 'no', 'create' => 'no'),
-                                    'is_group' => array('write' => 'no', 'create' => 'no'),
+                                    'is_group' => array('read' => 'no', 'write' => 'no', 'create' => 'no', ),
                                     'title' => array( 'write' => 'no', 'create' => 'no', ),
                                     'department' => array( 'write' => 'no', 'create' => 'no', ),
                                     'reports_to_id' => array( 'write' => 'no', 'create' => 'no', ),
                                     'reports_to_name' => array( 'write' => 'no', 'create' => 'no', ),
                                     'reports_to_link' => array( 'write' => 'no', 'create' => 'no', ),
-                                    'is_admin' => array( 'write' => 'no', 'create' => 'no' ),
+                                    'is_admin' => array( 'read' => 'no', 'write' => 'no', 'create' => 'no',  ),
                                 );
         $acls = $mm->getAclForModule('Users', $GLOBALS['current_user']);
         unset($acls['_hash']);
