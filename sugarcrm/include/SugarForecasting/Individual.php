@@ -205,7 +205,7 @@ class SugarForecasting_Individual extends SugarForecasting_AbstractForecast impl
         }
 
         $seed->setWorksheetArgs($this->args);
-        // we need to set the parent_type and parent_id so it finds it in the old way of saving the worksheet
+        // we need to set the parent_type and parent_id so it finds it when we try and retrieve the old records
         $seed->parent_type = 'Opportunities';
         $seed->parent_id = $this->getArg('record');
         $seed->saveWorksheet();

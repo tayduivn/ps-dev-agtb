@@ -50,12 +50,11 @@ class ForecastWorksheet extends SugarBean
     public $disable_custom_fields = true;
 
     /**
-     * Override save here to handle saving to the real tables.  Currently forecast is mapped to opportunities
+     * handle saving to the real tables for 6.7.  Currently forecast is mapped to opportunities
      * and likely_case, worst_case and best_case go to both worksheets and opportunities.
      *
      *
      * @param bool $check_notify        Should we send the notifications
-     * @return string                   SugarGUID for the Worksheet that was modified or created
      */
     public function saveWorksheet($check_notify = false)
     {
@@ -86,9 +85,6 @@ class ForecastWorksheet extends SugarBean
                     'opportunity_id'=>$opp->id
                 ));
 
-            /**
-             * This is required for 6.7.  This could be removed
-             */
             //Update the Worksheet bean
             /* @var $worksheet Worksheet */
             $worksheet = BeanFactory::getBean('Worksheet');
@@ -112,8 +108,6 @@ class ForecastWorksheet extends SugarBean
             $worksheet->version = 1; // default it to 1 as it will always be on since this is always
             $worksheet->save($check_notify);
         }
-
-        //return $worksheet->id;
     }
 
     /**
