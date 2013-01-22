@@ -141,11 +141,20 @@ class SugarACL
     {
         $read = self::checkField($module, $field, "detail", $context);
         $create = self::checkField($module, $field, "create", $context);
+
+        if(!$read && !$create) {
+            return self::ACL_NO_ACCESS;            
+        }
         $write = self::checkField($module, $field, "edit", $context);
         
-        if($create && !$read && !$write) return sefl::ACL_CREATE_ONLY;
-        if(!$read && !$create) return self::ACL_NO_ACCESS;
-        if($write) return self::ACL_READ_WRITE;
+        if($create && !$read && !$write){
+            return sefl::ACL_CREATE_ONLY;
+        }
+        
+        if($write){
+            return self::ACL_READ_WRITE;
+        }
+        
         return self::ACL_READ_ONLY;
     }
 

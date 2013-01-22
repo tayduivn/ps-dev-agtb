@@ -27,26 +27,26 @@ class SugarACLUsers extends SugarACLStrategy
      * Fields non admin cannot edit
      */
     public $no_edit_fields = array(
-            'is_admin',
-            'title',
-            'department',
-            'reports_to_id',
-            'reports_to_name',
-            'reports_to_link',
-            'is_group',
-            'user_name',
-            'user_type',
-            'portal_only',
-            'show_on_employees',
-            'status',
-            'employee_status',
-            'title',
-            'department',
-            'system_generated_password',
-            'external_auth_only',
-            'sugar_login',
-            'authenticate_id',
-            'pwd_last_changed'            
+            'is_admin' => true,
+            'title' => true,
+            'department' => true,
+            'reports_to_id' => true,
+            'reports_to_name' => true,
+            'reports_to_link' => true,
+            'is_group' => true,
+            'user_name' => true,
+            'user_type' => true,
+            'portal_only' => true,
+            'show_on_employees' => true,
+            'status' => true,
+            'employee_status' => true,
+            'title' => true,
+            'department' => true,
+            'system_generated_password' => true,
+            'external_auth_only' => true,
+            'sugar_login' => true,
+            'authenticate_id' => true,
+            'pwd_last_changed' => true,
         );
 
     /**
@@ -106,7 +106,7 @@ class SugarACLUsers extends SugarACLStrategy
             return true;
         }
 
-        if ( !$myself && $view == 'field' && in_array($context['field'],array('system_generated_password','pwd_last_changed','authenticate_id','sugar_login','external_auth_only')) ) {
+        if ( !$myself && $view == 'field' && !empty($this->no_edit_fields[$context['field']])) {
             // This isn't us, these aren't fields we should be poking around in.
             return false;
         }
@@ -117,7 +117,7 @@ class SugarACLUsers extends SugarACLStrategy
             }
             if( $view == 'field'
                 && ($context['action'] == 'edit' || $context['action'] == 'massupdate' || $context['action'] == 'delete')
-                && in_array($context['field'], $this->no_edit_fields) ) {
+                && !empty($this->no_edit_fields[$context['field']])) {
 
                 return false;
             }            

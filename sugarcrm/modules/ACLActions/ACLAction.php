@@ -57,7 +57,9 @@ class ACLAction  extends SugarBean
      * @return array $parents - parent actions
      */
     public function getParentActions($action_name = '') {
-        if(empty($action_name)) $action_name = $this->name;
+        if(empty($action_name)) {
+            $action_name = $this->name;
+        }
         $parents = array();
         $this->findParentActions($action_name, $parents);
         return $parents;
@@ -83,7 +85,9 @@ class ACLAction  extends SugarBean
      * @return array $children - child actions
      */
     public function getChildActions($action_name = '') {
-        if(empty($action_name)) $action_name = $this->name;
+        if(empty($action_name)) {
+            $action_name = $this->name;
+        }
         $children = array();
         $this->findChildActions($action_name, $children);
         return $children;
@@ -101,7 +105,7 @@ class ACLAction  extends SugarBean
             if(!isset($params['dependency'])) {
                 continue;
             }
-            if(isset($params['dependency']) && !empty($params['dependency']) && $params['dependency'] == $action_name) {
+            if(!empty($params['dependency']) && $params['dependency'] == $action_name) {
                 $children[] = $name;
                 $this->findChildActions(end($children), $children);
             }

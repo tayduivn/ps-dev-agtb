@@ -157,8 +157,7 @@ class UnifiedSearchApiTest extends Sugar_PHPUnit_Framework_TestCase {
 
                     if(in_array($actionName, $ownerActions)) {
                         $aclAllow = ACL_ALLOW_OWNER;
-                    }
-                    elseif (in_array($actionName, $allowedActions)) {
+                    } elseif (in_array($actionName, $allowedActions)) {
                         $aclAllow = ACL_ALLOW_ALL;
                     } else {
                         $aclAllow = ACL_ALLOW_NONE;

@@ -5,7 +5,7 @@ require_once 'data/SugarBean.php';
 require_once 'tests/tests/PHPUnit_Framework_SugarBeanRelated_TestCase.php';
 
 /**
- * Test class for SugarACL getUserActions
+ * Test class for SugarACL createUserActions
  */
 class SugarACLCreateTest extends PHPUnit_Framework_SugarBeanRelated_TestCase
 {
@@ -14,8 +14,7 @@ class SugarACLCreateTest extends PHPUnit_Framework_SugarBeanRelated_TestCase
     public function setUp()
     {
         SugarACL::$acls = array();
-        if(!$this->bean)
-        {
+        if(!$this->bean) {
             $this->bean = $this->getTestMock();
         }
         SugarTestHelper::setUp('beanList');
