@@ -26,7 +26,6 @@
  * by SugarCRM are Copyright (C) 2004-2011 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
-require_once("include/Expressions/Expression/String/StringExpression.php");
 /**
  * <b>subStr(String s, Number from, Number length)</b><br>
  * Returns <i>length</i> characters starting at 0-based index <i>from</i>.<br />

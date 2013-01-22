@@ -18,7 +18,6 @@
  *to the License for the specific language governing these rights and limitations under the License.
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
-require_once("include/Expressions/Expression/Numeric/NumericExpression.php");
 /**
  * <b>strlen(String s)</b><br>
  * Returns the number of characters in the String <i>s</i>.<br/>

@@ -18,7 +18,6 @@
  *to the License for the specific language governing these rights and limitations under the License.
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
-require_once('include/Expressions/Expression/Enum/EnumExpression.php');
 /**
  * <b>createList(v1, ...)</b><br/>
  * Returns a list made up of the passed in variables.<br/>
