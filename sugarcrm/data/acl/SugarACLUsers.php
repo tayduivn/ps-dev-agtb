@@ -85,8 +85,8 @@ class SugarACLUsers extends SugarACLStrategy
             return false;
         }
 
-        if($view == 'view' || $view == 'list' || $view == 'field' || $view == 'team_security' ) {
-            if($view == 'field' && ($context['field'] == 'password' || $context['field'] == 'user_hash') ) {
+        if($view == 'view' || $view == 'ListView' || $view == 'list' || $view == 'export' || $view == 'Export' || $view == 'field' || $view == 'DetailView' || $view == 'detail' || $view == 'team_security' ) {
+            if($view == 'field' && $context['field'] == 'password') {
                 return false;
             }
             if( $view == 'field'
