@@ -1,67 +1,49 @@
 <form class="form-search" action="">
-    <div class="row-fluid">
-        <div class="span9 myfilter">
-            <input value="" placeholder="Search {{module}}..." class="span12">
-
-            <div class="actions btn-group dropdown">
-                <a href="" data-toggle="dropdown" class="dropdown-toggle btn btn-invisible">Filter &nbsp;<i
-                        class="icon-caret-down"></i></a>
-                <ul class="dropdown-menu carettop">
-                    <li><a href="#myAccount">My accounts</a></li>
-                    <li><a href="#myContacts">My contacts</a></li>
-                    <li><a href="#myOpportunities">My opportunities</a></li>
-                    <li class="primary"><a href="#createFilter" class="newfilter">+ Create a filter</a></li>
-                </ul>
-            </div>
-        </div>
-        <div class="span3">
-            <div class="pull-right toolbar-btns">
+    <div class="row-fluid control-group">
+        <div class="filter controls controls-four btn-fit">
+            <div class="filter-view search"></div>
+            <div class="actions" data-toggle="buttons-radio">
                 {{#each toggles}}
-                <a href="" class="btn btn-invisible" data-view="{{toggle}}"><i class="{{class}}"></i></a>
+                    <a href="" class="btn btn-invisible" data-view="{{toggle}}"><i class="{{class}}"></i></a>
                 {{/each}}
             </div>
         </div>
     </div>
 
-    <div class="filtered extend results hide">
-        <article class="filtered-header">
-            <input placeholder="Enter new filter name...">
-
-            <div class="pull-right dropdown">
-                <a href="" class="btn">Save</a><a href="" class="btn btn-invisible"><i class="icon-remove"></i></a>
+    <div class="mu extend hide">
+        <article class="filter-header">
+            <strong>
+                Mass Update
+            </strong>
+            <div class="pull-right">
+                <a href="#" class="btn btn-primary">Update</a>
+                <a href="#" class="btn btn-invisible"><i class="icon-remove"></i></a>
             </div>
         </article>
-        <article class="filtered-body">
-            <select class="chzn-select buildit">
-                <option>Name</option>
-                <option>Sales Stage</option>
-            </select>
-            <select class="chzn-select">
-                <option>matches</option>
-            </select>
-            <input placeholder="Select a name...">
-            <a href="" class="btn btn-invisible pull-right addme"><i class="icon-plus"></i></a>
-        </article>
-    </div>
-
-    <div class="mu extend results hide">
-        <article class="filtered-header">
-            <strong>Mass Update</strong>
-
-            <div class="btn-group pull-right dropdown">
-                <a href="" class="btn">update</a>
+        <article class="filter-body">
+            <div class="row-fluid">
+                <div class="controls span3">
+                    <select class="chzn-select chzn-inherit-width buildit">
+                        <option>
+                            Name
+                        </option>
+                        <option>
+                            Sales Stage
+                        </option>
+                    </select>
+                </div>
+                <div class="controls span3">
+                    <select class="chzn-select chzn-inherit-width">
+                        <option>
+                            matches
+                        </option>
+                    </select>
+                </div>
+                <div class="filter-value controls span6">
+                    <input type="text" class="inherit-width" placeholder="Enter a name...">
+                    <a href="" class="btn btn-invisible addme"><i class="icon-plus"></i></a>
+                </div>
             </div>
-        </article>
-        <article class="filtered-body">
-            <select class="chzn-select buildit">
-                <option>Name</option>
-                <option>Sales Stage</option>
-            </select>
-            <select class="chzn-select">
-                <option>matches</option>
-            </select>
-            <input placeholder="Select a name...">
-            <a href="" class="btn btn-invisible pull-right addme"><i class="icon-plus"></i></a>
         </article>
     </div>
 </form>

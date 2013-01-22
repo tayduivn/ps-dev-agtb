@@ -1,124 +1,226 @@
-/*********************************************************************************
- * The contents of this file are subject to the SugarCRM Master Subscription
- * Agreement (""License"") which can be viewed at
- * http://www.sugarcrm.com/crm/master-subscription-agreement
- * By installing or using this file, You have unconditionally agreed to the
- * terms and conditions of the License, and You may not use this file except in
- * compliance with the License.  Under the terms of the license, You shall not,
- * among other things: 1) sublicense, resell, rent, lease, redistribute, assign
- * or otherwise transfer Your rights to the Software, and 2) use the Software
- * for timesharing or service bureau purposes such as hosting the Software for
- * commercial gain and/or for the benefit of a third party.  Use of the Software
- * may be subject to applicable fees and any use of the Software without first
- * paying applicable fees is strictly prohibited.  You do not have the right to
- * remove SugarCRM copyrights from the source code or user interface.
- *
- * All copies of the Covered Code must include on each user interface screen:
- *  (i) the ""Powered by SugarCRM"" logo and
- *  (ii) the SugarCRM copyright notice
- * in the same form as they appear in the distribution.  See full license for
- * requirements.
- *
- * Your Warranty, Limitations of liability and Indemnity are expressly stated
- * in the License.  Please refer to the License for the specific language
- * governing these rights and limitations under the License.  Portions created
- * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
- ********************************************************************************/
-/**
- * View that displays a Bar with module name and filter toggles for per module
- * search and module creation.
- *
- * @class View.Views.FilterView
- * @alias SUGAR.App.layout.FilterView
- * @extends View.View
- */
 ({
-    previousTerms: {},
-    events: {
-        'keyup .dataTables_filter input': 'queueAndDelay'
+    /**
+     * Template fragment for select options
+     */
+    optionTemplate: Handlebars.compile("<option value='{{val}}' {{#if selected}}defaultSelected{{/if}}>{{val}}</option>"),
+
+    events: {},
+
+    initialize: function(opts) {
+        _.bindAll(this);
+        app.view.View.prototype.initialize.call(this, opts);
+
+        this.currentQuery = ""; this.activeFilterId = "";
+
+        this.searchFilterId = _.uniqueId("search_filter");
+        this.getFilters();
+        this.getPreviouslyUsedFilter();
+
+        this.layout.off("filter:refresh");
+        this.layout.on("filter:refresh", this.getFilters);
     },
-    _renderHtml: function() {
-        // this needs to be reset every render because the field set on the collection changes
-        this.searchFields = this.getSearchFields();
-        app.view.View.prototype._renderHtml.call(this);
-        this.layout.off("list:search:toggle", null, this);
-        this.layout.on("list:search:toggle", this.toggleSearch, this);
-    },
-    getSearchFields: function() {
-        var self = this;
-        var moduleMeta = app.metadata.getModule(this.module);
-        var results = new Array();
-        // Allowed fields limited to int, varchar because of search limitations
-        var allowedFields = ["int","varchar","name"];
-        _.each(moduleMeta.fields, function(fieldMeta, fieldName) {
-            var fMeta = fieldMeta;
-            if(fMeta.unified_search && _.indexOf(self.collection.fields, fieldName) >= 0 && _.indexOf(allowedFields, fMeta.type) !== -1) {
-                results.push(app.lang.get(fMeta.vname, self.module));
+
+    getPreviouslyUsedFilter: function() {
+        var url = app.api.buildURL('Filters', this.module + "/used"),
+            self = this;
+        app.api.call("read", url, null, {
+            success: function(data) {
+                self.activeFilterId = _.isEmpty(data)? "" : _.last(data).id;
+                self.render();
             }
         });
-        return results;
     },
-    queueAndDelay: function(evt) {
-        var self = this;
 
-        if(!self.debounceFunction) {
-            self.debounceFunction = _.debounce(function(){
-                var term, previousTerm;
-                
-                previousTerm = self.getPreviousTerm(this.module);
-                term = self.$(evt.currentTarget).val();
-                self.setPreviousTerm(term, this.module);
-                
-                if(term && term.length) {
-                    self.setPreviousTerm(term, this.module);
-                    self.fireSearchRequest(term);
-                } else if(previousTerm && !term.length) {
-                    // If user removing characters and down to 0 chars reset table to all data
-                    this.collection.fetch({limit: this.context.get('limit') || null });
-                } 
-            }, app.config.requiredElapsed || 500);
-        } 
-        self.debounceFunction();
-    },
-    fireSearchRequest: function(term) {
-        var self = this;
-        self.setPreviousTerm(term, this.module);
-        this.layout.trigger("list:search:fire", term);
-    },
-    setPreviousTerm: function(term, module) {
-        if(app.cache.has('previousTerms')) {
-            this.previousTerms = app.cache.get('previousTerms');
+    render: function() {
+        var self = this,
+            data = [],
+            defaultId = this.activeFilterId || "";
+
+        _.each(this.filters.models, function(model){
+            data.push({id:model.id, text:model.get("name")});
+        }, this);
+
+		data.push({id:-1, text:"Create New"});
+
+        app.view.View.prototype.render.call(this);
+
+        this.node = this.$("#" + this.searchFilterId);
+        this.node.select2({
+            tags:data,
+            multiple:true,
+            maximumSelectionSize:2,
+            formatSelection: this.formatSelection,
+            placeholder: app.lang.get("LBL_MODULE_FILTER"),
+            dropdownCss: {width:'auto'},
+            dropdownCssClass: 'search-filter-dropdown'
+        });
+
+        if(defaultId){
+            this.node.select2("val", defaultId);
+            this.sanitizeFilter({added:{id:defaultId}});
         }
-        if(module) {
-            this.previousTerms[module] = term;
-        }
-        app.cache.set("previousTerms", this.previousTerms);
+        this.node.on("change", function(e){
+            self.sanitizeFilter(e);
+        });
     },
-    getPreviousTerm: function(module) {
-        if(app.cache.has('previousTerms')) {
-            this.previousTerms = app.cache.get('previousTerms');
-            return this.previousTerms[module];
+
+    formatSelection: function(item) {
+        if (item.id === item.text) {
+            return '<span>Name starts with</span><a href="javascript:void(0)" rel="' + item.id +'">'+ item.text +'</a>';
+        } else {
+            return '<span>Filter</span><a href="javascript:void(0)" rel="' + item.id +'">'+ item.text +'</a>';
         }
     },
-    toggleSearch: function() {
-        var isOpened,
-            previousTerm = this.getPreviousTerm(this.module);
-        this._renderHtml();
-        this.$('.dataTables_filter').toggle();
 
-        // Trigger toggled event. Presently, this is for the list-bottom view.
-        // If the 'Show More' button is clicked and filter is opened, 
-        // list-bottom adds q:term to pagination call. 
-        isOpened = this.$('.dataTables_filter').is(':visible');
-        this.layout.trigger('list:filter:toggled', isOpened);
+    /**
+     * Contains business logic to control the behavior of new filters being added.
+     */
+    sanitizeFilter: function(e){
+        var id, val = this.node.select2("val"), newVal = [], i, self = this;
+        if(!_.isUndefined(e.added) && !_.isUndefined(e.added.id)) {
+            id = e.added.id;
 
-        // Always clear last search term
-        this.$('.dataTables_filter input').val('').focus();
+            if( id === -1 && !this.isInFilters(id) )  {
+                // Create a new filter.
+                val = _.without(val, id.toString());
+                this.activeFilterId = "";
+                for(i = 0; i < val.length; i++) {
+                    if(!this.isInFilters(val[i])) {
+                        newVal.push(val[i]);
+                    }
+                }
+                this.openPanel();
+            } else if( this.isInFilters(id) ) {
+                // Is a valid filter.
+                this.activeFilterId = id;
+                for(i = 0; i < val.length; i++) {
+                    if(!this.isInFilters(val[i])) {
+                        newVal.push(val[i]);
+                    }
+                }
+                newVal.push(id);
+                if(!this.layout.$(".filter-options").hasClass('hide')) {
+                    self.openPanel(self.filters.get(id));
+                }
+                _.defer(function(self) {
+                    self.$("a[rel=" + id + "]").on("click", function(){
+                        self.openPanel(self.filters.get(id));
+                    });
+                }, this);
+            } else {
+                // It's a quick-search word.
+                this.currentQuery = $.trim(id);
+                for(i = 0; i < val.length; i++) {
+                    if(this.isInFilters(val[i])) {
+                        newVal.push(val[i]);
+                    }
+                }
+                newVal.push(id);
+            }
+        } else if(!_.isUndefined(e.removed) && !_.isUndefined(e.removed.id)) {
+            id = e.removed.id;
+            newVal = _.without(val, id.toString());
 
-        // If toggling filters closed, return to full "unfiltered" records 
-        if(!isOpened) {
-            this.collection.fetch({limit: this.context.get('limit') || null });
+            if( this.isInFilters(id) ) {
+                // Removing a filter.
+                this.activeFilterId = "";
+            } else {
+                // Removing a quick-search word.
+                this.currentQuery = "";
+            }
+        }
+
+        this.node.select2("val", newVal);
+        this.filterDataSetAndSearch(this.currentQuery, this.activeFilterId);
+    },
+
+    /**
+     * Utility function to determine if the typed in filter is in the standard filter array
+     *
+     * @return boolean True if part of the set, false if not.
+     */
+    isInFilters: function(filter){
+        if(!_.isUndefined(this.filters.get(filter))){
+            return true;
         }
         return false;
+    },
+
+    /**
+     * Retrieve filters from the server.
+     */
+    getFilters: function(defaultId) {
+        var self = this,
+            url = app.api.buildURL('Filters', "filter");
+
+        this.activeFilterId = defaultId;
+        this.filters = app.data.createBeanCollection('Filters');
+
+        app.api.call("create", url, {"filter": [{"created_by": app.user.id}, {"module_name": this.module}]}, {
+            success: function(data) {
+                self.filters.reset(data.records);
+                if(self.isInFilters(self.currentQuery)) {
+                    self.currentQuery = "";
+                }
+                self.filterDataSetAndSearch(self.currentQuery, self.activeFilterId);
+                self.render();
+            }
+
+        });
+    },
+
+    /**
+     * Fires an event for the Filter editing widget to pop up.
+     */
+    openPanel: function(filter) {
+        this.layout.trigger("filter:create:new", filter);
+    },
+
+    /**
+     * Filters the data set by making a create call to the filter API.
+     * @param  {string} query          Query for quick-searching, null for regular filters.
+     * @param  {string} activeFilterId GUID of the filter.
+     */
+    filterDataSetAndSearch: function(query, activeFilterId) {
+        var filterDef;
+        this.currentQuery = query;
+        this.activeFilterId = activeFilterId;
+        if (this.filters.get(activeFilterId)) {
+            filterDef = JSON.parse(JSON.stringify((this.filters.get(activeFilterId).get('filter_definition'))));
+        } else {
+            filterDef = {
+                "filter":[
+                    {
+                        "$and":[]
+                    }
+                ]
+            };
+        }
+        var ctx = app.controller.context,
+        clause, self = this;
+        // TODO: Make this extensible for OR operator.
+        if(!_.isEmpty(query)) {
+            clause = {"name": {"$starts": query}};
+            filterDef.filter[0]["$and"].push(clause);
+        }
+
+        filterDef = filterDef.filter[0]["$and"].length? filterDef : {};
+
+        var url, method;
+        if( _.isEmpty(filterDef) ) {
+            url = app.api.buildURL(this.module);
+            method = "read";
+        } else {
+            url = app.api.buildURL(this.module, "filter");
+            method = "create";
+        }
+
+        app.api.call(method, url, filterDef, {
+            success: function(data) {
+                ctx.get('collection').reset(data.records);
+                var url = app.api.buildURL('Filters/' + self.module + '/used', "update");
+                app.api.call("update", url, {filters: [self.activeFilterId]}, {});
+            }
+        });
     }
 })

@@ -41,6 +41,14 @@ class FilterApi extends SugarApi {
                 'shortHelp' => 'Filter records from a single module',
                 'longHelp' => 'include/api/help/filterModulePost.html',
             ),
+            'filterModuleById' => array(
+                'reqType' => 'GET',
+                'path' => array('<module>','filter', '?'),
+                'pathVars' => array('module','', 'record'),
+                'method' => 'filterById',
+                'shortHelp' => 'Filter records from a single module by a predefined filter',
+                'longHelp' => 'include/api/help/filterModulePost.html',
+            ),
 
         );
     }
@@ -52,6 +60,14 @@ class FilterApi extends SugarApi {
     public function __construct() {
         global $current_user;
         $this->current_user = $current_user;
+    }
+
+    public function filterById(ServiceBase $api, array $args) {
+        $filter = BeanFactory::getBean('Filters', $args['record']);
+        $filter_definition = json_decode($filter->filter_definition, true);
+        $args = array_merge($args, $filter_definition);
+        unset($args['record']);
+        return $this->filterList($api, $args);
     }
 
     function parseOptions(ServiceBase $api, array $args, SugarBean $seed)
@@ -117,7 +133,9 @@ class FilterApi extends SugarApi {
             $args['filter'] = array();
         }
 
-        $this->addFilters($args['filter'],$q->where(),$q);
+        $notDeleted = $q->where()->equals("deleted", 0)->queryAnd();
+
+        $this->addFilters($args['filter'], $notDeleted,$q);
 
 
         foreach ( $options['order_by'] as $orderBy ) {
@@ -127,10 +145,10 @@ class FilterApi extends SugarApi {
         $q->limit($options['limit']+1);
         $q->offset($options['offset']);
 
-        // return $q->compileSql();
+        $GLOBALS['log']->info($q->compileSql());
         $idRows = $q->execute();
         // return $idRows;
-        
+
         $data = array();
         $data['next_offset'] = -1;
 
@@ -220,6 +238,17 @@ class FilterApi extends SugarApi {
                                 break;
                             case '$gte':
                                 $where->gte($field,$value);
+                                break;
+                            case '$fromDays':
+                                $where->addRaw("{$field} >= DATE_ADD(NOW(), INTERVAL {$value} DAY)");
+                                break;
+                            case '$tracker':
+                                $where->addRaw("{$q->from->getTableName()}.id in
+                                (select item_id from tracker
+                                    where module_name='{$q->from->module_name}'
+                                    and user_id='{$GLOBALS['current_user']->id}'
+                                    and DATE_ADD({$field}, INTERVAL {$value})
+                                )");
                                 break;
                             default:
                                 throw new SugarApiExceptionInvalidParameter("Did not recognize the operand: ".$op);

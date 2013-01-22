@@ -27,6 +27,8 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * Contributor(s): ______________________________________..
  ********************************************************************************/
 
+require_once('include/SugarQuery/SugarQuery.php');
+
 class UserPreference extends SugarBean
 {
     public $db;
@@ -143,6 +145,15 @@ class UserPreference extends SugarBean
         if ( $name == 'email_link_type' )
             return $sugar_config['email_default_client'];
 
+    }
+
+    public function removePreference($name, $category='global') {
+        $user = $this->_userFocus;
+        if(isset($_SESSION[$user->user_name . '_PREFERENCES'][$category][$name])) {
+            unset($_SESSION[$user->user_name . '_PREFERENCES'][$category][$name]);
+        }
+
+        $this->savePreferencesToDB(true);
     }
 
     /**
