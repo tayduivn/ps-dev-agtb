@@ -8,6 +8,7 @@ describe("Record View", function() {
         SugarTest.loadHandlebarsTemplate('button', 'field', 'base', 'detail');
         SugarTest.loadHandlebarsTemplate('buttondropdown', 'field', 'base', 'detail');
         SugarTest.loadHandlebarsTemplate(viewName, 'view', 'base');
+        SugarTest.loadComponent('base', 'field', 'button');
         SugarTest.loadComponent('base', 'field', 'buttondropdown');
         SugarTest.loadComponent('base', 'view', 'editable');
         SugarTest.loadComponent('base', 'view', viewName);
@@ -17,34 +18,28 @@ describe("Record View", function() {
                 "name":"cancel_button",
                 "label":"LBL_CANCEL_BUTTON_LABEL",
                 "css_class":"btn-invisible btn-link",
-                "mode":"edit"
+                "showOn":"edit"
             }, {
                 "type":"buttondropdown",
-                "name":"edit_dropdown",
-                "default":{
+                "name":"main_dropdown",
+                "buttons":[{
                     "name":"edit_button",
-                    "label":"LBL_EDIT_BUTTON_LABEL"
-                },
-                "dropdown":[{
+                    "label":"LBL_EDIT_BUTTON_LABEL",
+                    "primary":true,
+                    "showOn":"view"
+                }, {
+                    "name":"save_button",
+                    "label":"LBL_SAVE_BUTTON_LABEL",
+                    "primary":true,
+                    "showOn":"edit"
+                }, {
                     "name":"delete_button",
                     "label":"LBL_DELETE_BUTTON_LABEL"
                 }, {
                     "name":"duplicate_button",
-                    "label":"LBL_DUPLICATE_BUTTON_LABEL"
-                }],
-                "mode":"view"
-            }, {
-                "type":"buttondropdown",
-                "name":"save_dropdown",
-                "default":{
-                    "name":"save_button",
-                    "label":"LBL_SAVE_BUTTON_LABEL"
-                },
-                "dropdown":[{
-                    "name":"delete_button",
-                    "label":"LBL_DELETE_BUTTON_LABEL"
-                }],
-                "mode":"edit"
+                    "label":"LBL_DUPLICATE_BUTTON_LABEL",
+                    "showOn":"view"
+                }]
             }],
             "panels": [{
                 "name": "panel_header",
@@ -88,7 +83,7 @@ describe("Record View", function() {
             expect(_.size(view.fields)).toBe(0);
         });
 
-        it("Should render 8 editable fields and 3 buttons", function() {
+        it("Should render 8 editable fields and 5 buttons", function() {
             var fields = 0,
                 buttons = 0;
 
@@ -100,15 +95,15 @@ describe("Record View", function() {
             });
 
             _.each(view.fields, function(field) {
-                if ((field.type === 'button') || (field.type === 'buttondropdown')) {
+                if (field.type === 'button') {
                     buttons++;
-                } else {
+                } else if (field.type !== 'buttondropdown') {
                     fields++;
                 }
             });
 
             expect(fields).toBe(8);
-            expect(buttons).toBe(3);
+            expect(buttons).toBe(5);
         });
 
         it("Should hide 4 editable fields", function() {
@@ -238,18 +233,19 @@ describe("Record View", function() {
                 case_number: 123,
                 description: 'Description'
             });
-            expect(view.getField('save_dropdown').getFieldElement().css('display')).toBe('none');
+
+            expect(view.getField('save_button').getFieldElement().css('display')).toBe('none');
             expect(view.getField('cancel_button').getFieldElement().css('display')).toBe('none');
-            expect(view.getField('edit_dropdown').getFieldElement().css('display')).not.toBe('none');
+            expect(view.getField('edit_button').getFieldElement().css('display')).not.toBe('none');
 
             view.context.trigger('button:edit_button:click');
             view.model.set({
                 name: 'Bar'
             });
 
-            expect(view.getField('save_dropdown').getFieldElement().css('display')).not.toBe('none');
+            expect(view.getField('save_button').getFieldElement().css('display')).not.toBe('none');
             expect(view.getField('cancel_button').getFieldElement().css('display')).not.toBe('none');
-            expect(view.getField('edit_dropdown').getFieldElement().css('display')).toBe('none');
+            expect(view.getField('edit_button').getFieldElement().css('display')).toBe('none');
         });
 
         it("Should revert data back to the old value when the cancel button is clicked after data has been changed", function() {
