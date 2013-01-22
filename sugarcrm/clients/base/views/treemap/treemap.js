@@ -10,8 +10,8 @@
     height: 0,
     root: null,
 
-    render: function() {
-        app.view.View.prototype.render.call(this);
+    _render: function() {
+        app.view.View.prototype._render.call(this);
 
         this.width = parseInt(this.$(".opportunities-treemap").width(), 10);
         this.height = parseInt(this.$(".opportunities-treemap" + " svg").css('max-height'), 10);

@@ -60,8 +60,8 @@
         //override record view's button delegation
     },
 
-    render: function() {
-        app.view.views.RecordView.prototype.render.call(this);
+    _render: function() {
+        app.view.views.RecordView.prototype._render.call(this);
         this.setButtonStates(this.STATE.CREATE);
 
         this.showDuplicates();
