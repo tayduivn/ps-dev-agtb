@@ -50,8 +50,13 @@ class FilterDuplicateCheck extends DuplicateCheckStrategy
      */
     protected function setMetadata($metadata)
     {
-        $this->filterTemplate = isset($metadata['filter_template']) ? $metadata['filter_template'] : $this->filterTemplate;
-        $this->rankingFields = isset($metadata['ranking_fields']) ? $metadata['ranking_fields'] : $this->rankingFields;
+        if (isset($metadata['filter_template'])) {
+            $this->filterTemplate = $metadata['filter_template'];
+        }
+
+        if (isset($metadata['ranking_fields'])) {
+            $this->rankingFields = $metadata['ranking_fields'];
+        }
     }
 
     /**

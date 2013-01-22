@@ -213,7 +213,7 @@ class DuplicateCheckApiTest extends Sugar_PHPUnit_Framework_TestCase
         );
     }
 
-    public function testCheckForDuplicates_SmallFilter_EmptyArg() {
+    public function testCheckForDuplicates_AllFilterArgumentsAreEmpty_ReturnsEmptyResultSet() {
         $GLOBALS["dictionary"]["Lead"]["duplicate_check"] = array(
             'FilterDuplicateCheck' => array(
                 'filter_template' => array(
