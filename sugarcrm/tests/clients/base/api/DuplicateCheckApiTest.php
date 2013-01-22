@@ -101,19 +101,18 @@ class DuplicateCheckApiTest extends Sugar_PHPUnit_Framework_TestCase
             $convertedLead,
             $newLead,
             $newLead2,
-            $newLeadFirstName  = "TestNewFirst",
-            $newLeadLastName   = "TestLast",
-            $newLead2FirstName = "TestNewFirst2", // different first name
-            $newLead2LastName  = "TestLast"; // same last name
+            $newLeadFirstName  = "SugarLeadNewFirst",
+            $newLeadLastName   = "SugarLeadLast",
+            $newLead2FirstName = "SugarLeadNewFirst2", // different first name
+            $newLead2LastName  = "SugarLeadLast"; // same last name
 
     public function setUp()
     {
         parent::setUp();
 
+        SugarTestHelper::setUp('dictionary');
         SugarTestHelper::setUp('app_list_strings');
         SugarTestHelper::setUp('app_strings');
-        SugarTestHelper::setUp('beanFiles');
-        SugarTestHelper::setUp('beanList');
 
         $this->copyOfLeadsDuplicateCheckVarDef = $GLOBALS["dictionary"]["Lead"]["duplicate_check"];
         $GLOBALS["dictionary"]["Lead"]["duplicate_check"] = $this->mockLeadsDuplicateCheckVarDef;
@@ -123,10 +122,13 @@ class DuplicateCheckApiTest extends Sugar_PHPUnit_Framework_TestCase
         $this->api               = new ServiceMock();
         $this->duplicateCheckApi = new DuplicateCheckApi();
 
+        //make sure any left over test leads from failed tests are removed
+        $GLOBALS['db']->query('DELETE FROM leads WHERE last_name LIKE (\'SugarLead%\')');
+
         //create test leads
         $this->convertedLead             = SugarTestLeadUtilities::createLead();
-        $this->convertedLead->first_name = 'TestConvertFirst';
-        $this->convertedLead->last_name  = 'TestLast';
+        $this->convertedLead->first_name = 'SugarLeadConvertFirst';
+        $this->convertedLead->last_name  = 'SugarLeadLast';
         $this->convertedLead->status     = 'Converted';
         $this->convertedLead->save();
 
@@ -209,6 +211,27 @@ class DuplicateCheckApiTest extends Sugar_PHPUnit_Framework_TestCase
                 "None of the filter template fields are passed, should return 0 results",
             ),
         );
+    }
+
+    public function testCheckForDuplicates_SmallFilter_EmptyArg() {
+        $GLOBALS["dictionary"]["Lead"]["duplicate_check"] = array(
+            'FilterDuplicateCheck' => array(
+                'filter_template' => array(
+                    array(
+                        'last_name' => array(
+                            '$starts' => '$last_name',
+                        ),
+                    )
+                )
+            ),
+        );
+
+        $args = array(
+            'module' => 'Leads',
+            'last_name' => ''
+        );
+        $results = $this->duplicateCheckApi->checkForDuplicates($this->api, $args);
+        self::assertEquals(array(), $results, 'When all arguments expected by the filter are empty, no records should be returned');
     }
 
     public function testCheckForDuplicates_EmptyBean()
