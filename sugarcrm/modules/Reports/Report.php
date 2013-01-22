@@ -1018,7 +1018,7 @@ class Report
 	        {
 	            $field_def['type'] = 'currency';
 	        }
-	
+
 	        // In case of DOCUMENTS table must set 'document_name' field type of to 'name' manually, because _load_all_fields() function sets field type to 'name' only if the field name is 'name' also
 	        if (strtolower($layout_def['name']) == 'document_name')
 	        {
@@ -1106,18 +1106,17 @@ class Report
 
     protected function addSecurity($query, $focus, $alias)
     {
-//BEGIN SUGARCRM flav!=sales ONLY
         $from = '';
-        $focus->addVisibilityFrom($from, $this->visibilityOpts);
+        $focus->addVisibilityFrom($from, $this->visibilityOpts+array('as_condition' => true, 'table_alias' => $alias));
         $where = '';
-        $focus->addVisibilityWhere($where, $this->visibilityOpts);
+        $focus->addVisibilityWhere($where, $this->visibilityOpts+array('table_alias' => $alias));
         if(!empty($from) || !empty($where)) {
-            if(!empty($where)) {
-                $where = "WHERE $where";
-            }
-            $query = str_replace(" {$focus->table_name} $alias ", "(SELECT {$focus->table_name}.* FROM {$focus->table_name} $from $where) $alias ", $query);
+//            if(!empty($where)) {
+//                $where = "WHERE $where";
+//            }
+//            $query = str_replace(" {$focus->table_name} $alias ", "(SELECT {$focus->table_name}.* FROM {$focus->table_name} $from $where) $alias ", $query);
+            $query .= "/* from $alias */ $from /* where $alias */ $where";
         }
-//END SUGARCRM flav!=sales ONLY
         return $query;
     }
 
