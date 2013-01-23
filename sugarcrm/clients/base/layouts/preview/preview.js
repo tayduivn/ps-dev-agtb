@@ -22,6 +22,7 @@
     },
 
     triggerClose: function() {
+        this.context.trigger("list:preview:decorate", null, this);
         this.context.trigger("preview:close:fire");
     }
 })

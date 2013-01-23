@@ -34,15 +34,16 @@
 
     initialize: function(options) {
         _.bindAll(this);
-
         app.view.View.prototype.initialize.call(this, options);
         this.fallbackFieldTemplate = "detail";
         this.context.off("renderPreview", null, this);
         this.context.on("renderPreview", this._renderPreview, this);
         this.context.off("preview:collection:change", null, this);
         this.context.on("preview:collection:change", this.updateCollection, this);
-        this.layout.off("preview:pagination:fire", null, this);
-        this.layout.on("preview:pagination:fire", this.switchPreview, this);
+        if(this.layout){
+            this.layout.off("preview:pagination:fire", null, this);
+            this.layout.on("preview:pagination:fire", this.switchPreview, this);
+        }
     },
 
     _renderHtml: function() {
@@ -84,7 +85,6 @@
      */
     renderPreview: function(model, collection) {
 
-        var fieldsToDisplay = app.config.fieldsToDisplay || 5;
         if (model && collection) {
             // Create a corresponding Bean and Context for clicked search result. It
             // might be a Case, a Bug, etc...we don't know, so we build dynamically.
@@ -97,15 +97,29 @@
             });
 
             // Get the corresponding detail view meta for said module
-            this.meta = app.metadata.getView(this.model.module, 'detail') || {};
-            // Clip meta panel fields to first N number of fields per the spec
-            this.meta.panels[0].fields = _.first(this.meta.panels[0].fields, fieldsToDisplay);
-
+            this.meta = app.metadata.getView(this.model.module, 'record') || {};
+            this.meta = this._trimPreviewMetadata(this.meta);
             app.view.View.prototype._render.call(this);
             this.context.trigger("openPreview",this);
+            this.context.trigger("list:preview:decorate", this.model, this);
         }
     },
-
+    /**
+     * Trims metadata that we show in the Preview dialog to remove data-less & favorite fields
+     * @param meta Layout metadata to be trimmed
+     * @return Returns trimmed metadata
+     * @private
+     */
+    _trimPreviewMetadata: function(meta){
+        var trimmed = _.clone(meta);
+        var self = this;
+        _.each(trimmed.panels, function(panel){
+            panel.fields = _.filter(panel.fields, function(field){
+                return !_.isEmpty(self.model.get(field.name));
+            });
+        });
+        return trimmed;
+    },
     /**
      * Switches preview to left/right model in collection.
      * @param {String} data.direction Direction that we are switching to, either 'left' or 'right'.

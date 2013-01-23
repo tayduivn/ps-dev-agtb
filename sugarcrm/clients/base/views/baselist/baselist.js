@@ -63,6 +63,7 @@
 
         this.context.on("list:preview:fire", null, this);
         this.context.on("list:preview:fire", this.previewRecord, this);
+        this.context.on("list:preview:decorate", this.decorateRow, this);
     },
     _render:function () {
         var self = this;
@@ -226,6 +227,21 @@
         }
         else {
             this.context.trigger("renderPreview", model, this.collection);
+        }
+    },
+    /**
+     * Decorate a row in the list that is being shown in Preview
+     * @param model Model for row to be decorated.  Pass a falsy value to clear decoration.
+     * @param preview Preview view that changed
+     */
+    decorateRow: function(model, preview){
+        $("tr.highlighted").removeClass("highlighted").removeClass("current").removeClass("above").removeClass("below");
+        if(model){
+            var rowName = model.get("_module")+"_"+ model.get("id");
+            var curr = $("tr[name='"+rowName+"']");
+            curr.addClass("current").addClass("highlighted");
+            curr.prev("tr").addClass("highlighted").addClass("above");
+            curr.next("tr").addClass("highlighted").addClass("below");
         }
     },
     addSingleSelectionAction: function(meta, module) {
