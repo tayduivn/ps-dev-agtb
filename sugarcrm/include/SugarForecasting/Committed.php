@@ -189,16 +189,7 @@ class SugarForecasting_Committed extends SugarForecasting_AbstractForecast imple
 
             /* @var $opp_wkst ForecastWorksheet */
             $opp_wkst = BeanFactory::getBean('ForecastWorksheets');
-            $opp_wkst->saveRelatedOpportunity($opportunity);
-
-            // commit every product associated with the Opportunity
-            $products = $opportunity->get_linked_beans('products', 'Products');
-            /* @var $product Product */
-            foreach($products as $product) {
-                /* @var $product_wkst ForecastWorksheet */
-                $product_wkst = BeanFactory::getBean('ForecastWorksheets');
-                $product_wkst->saveRelatedProduct($product);
-            }
+            $opp_wkst->saveRelatedOpportunity($opportunity, true);
         }
 
         //TODO-sfa remove this once the ability to map buckets when they get changed is implemented (SFA-215).

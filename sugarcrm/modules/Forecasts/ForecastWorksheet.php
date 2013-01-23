@@ -153,15 +153,15 @@ class ForecastWorksheet extends SugarBean
      * Save an Opportunity as a worksheet
      *
      * @param Opportunity $opp      The Opportunity that we want to save a snapshot of
-     * @param bool $isDraft         Is the Opportunity a Draft or the live version
+     * @param bool $isCommit        Is the Opportunity being committed
      */
-    public function saveRelatedOpportunity(Opportunity $opp, $isDraft = false)
+    public function saveRelatedOpportunity(Opportunity $opp, $isCommit = false)
     {
         $this->retrieve_by_string_fields(
             array(
                 'parent_type' => 'Opportunities',
                 'parent_id' => $opp->id,
-                'draft' => ($isDraft) ? 1 : 0,
+                'draft' => ($isCommit === false) ? 1 : 0,
                 'deleted' => 0,
             )
         );
@@ -192,18 +192,38 @@ class ForecastWorksheet extends SugarBean
         // set the parent types
         $this->parent_type = 'Opportunities';
         $this->parent_id = $opp->id;
-        $this->draft = ($isDraft) ? 1 : 0;
+        $this->draft = ($isCommit === false) ? 1 : 0;
 
         $this->save(false);
+
+
+        // now save all related products to the opportunity
+        // commit every product associated with the Opportunity
+        $products = $opp->get_linked_beans('products', 'Products');
+        /* @var $product Product */
+        foreach($products as $product) {
+            /* @var $product_wkst ForecastWorksheet */
+            $product_wkst = BeanFactory::getBean('ForecastWorksheets');
+            $product_wkst->saveRelatedProduct($product, $isCommit, $opp);
+            unset($product_wkst);   // clear the cache
+        }
+
     }
 
-    public function saveRelatedProduct(Product $product, $isDraft = false)
+    /**
+     * Save a snapshot of a Product to the ForecastWorksheet Table
+     *
+     * @param Product $product          The Product to commit
+     * @param bool $isCommit            Are we committing a product for the forecast
+     * @param Opportunity $opp          The related Opportunity to get the sales_stage from
+     */
+    public function saveRelatedProduct(Product $product, $isCommit = false, Opportunity $opp = null)
     {
         $this->retrieve_by_string_fields(
             array(
                 'parent_type' => 'Products',
                 'parent_id' => $product->id,
-                'draft' => ($isDraft) ? 1 : 0,
+                'draft' => ($isCommit === false) ? 1 : 0,
                 'deleted' => 0,
             )
         );
@@ -211,7 +231,9 @@ class ForecastWorksheet extends SugarBean
         // since we don't have sales_stage in 6.7 we need to pull it from the related opportunity
         /* @var $opp Opportunity */
         $product->sales_stage = '';
-        $opp = BeanFactory::getBean('Opportunities', $product->opportunity_id);
+        if(empty($opp)) {
+            $opp = BeanFactory::getBean('Opportunities', $product->opportunity_id);
+        }
         if($opp instanceof Opportunity) {
             $product->sales_stage = $opp->sales_stage;
         }
@@ -242,7 +264,7 @@ class ForecastWorksheet extends SugarBean
         // set the parent types
         $this->parent_type = 'Products';
         $this->parent_id = $product->id;
-        $this->draft = ($isDraft) ? 1 : 0;
+        $this->draft = ($isCommit === false) ? 1 : 0;
 
         $this->save(false);
     }

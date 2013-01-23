@@ -118,18 +118,13 @@ function perform_save($focus){
             $product->opportunity_id = $focus->id;
             $product->commit_stage = $focus->commit_stage;
             $product->save();
-
-            // save the a draft of each opportunity
-            /* @var $product_worksheet ForecastWorksheet */
-            $product_worksheet = BeanFactory::getBean('ForecastWorksheets');
-            $product_worksheet->saveRelatedProduct($product, true);
         }
 
 
         // save the a draft of each opportunity
         /* @var $worksheet ForecastWorksheet */
         $worksheet = BeanFactory::getBean('ForecastWorksheets');
-        $worksheet->saveRelatedOpportunity($focus, true);
+        $worksheet->saveRelatedOpportunity($focus);
     }
     //END SUGARCRM flav=pro ONLY
 }
