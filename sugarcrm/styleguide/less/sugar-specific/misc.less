@@ -281,89 +281,94 @@ hr.soften {
 
 .dashboard {
   background-image: url('@{textureSecondary}');
-  &> .rows {
+  .cols {
     margin: 0 18px;
     padding-top: 18px;
-    border-top: 1px solid @white;
     list-style: none;
-    .row-fluid {
-      .widget-container {
-        .widget {
-          /*min-height: 60px;*/
-          padding: 0;
-          div.widget-content {
-            overflow: auto;
-            width: 100%;
+    .rows{
+      margin: 0;
+      padding-top: 18px;
+      border-top: 1px solid @white;
+      list-style: none;
+      .row-fluid {
+        .widget-container {
+          .widget {
+            /*min-height: 60px;*/
+            padding: 0;
+            div.widget-content {
+              overflow: auto;
+              width: 100%;
+            }
+            h4 {
+              cursor: move;
+            }
           }
-          h4 {
-            cursor: move;
+          .empty {
+            padding: 30px 0;
+            margin-bottom: 20px;
+            border: 3px dashed lighten(@grayLight,8%);
+            background-color: @white;
+            cursor: pointer;
+            p {
+              font-size: 13px;
+              font-weight: 500px;
+              text-align: center;
+              color: lighten(@grayLight,8%);
+              &.header {
+                line-height: 40px;
+              }
+            }
+            .add-dashlet {
+              color: lighten(@grayLight,8%);
+              text-align: center;
+              small {
+                font-size: 12px;
+              }
+              strong {
+                font-size: 60px;
+                font-weight: 900;
+              }
+            }
           }
         }
-        .empty {
-          padding: 30px 0;
-          margin-bottom: 20px;
-          border: 3px dashed lighten(@grayLight,8%);
-          background-color: @white;
-          cursor: pointer;
-          p {
-            font-size: 13px;
-            font-weight: 500px;
-            text-align: center;
-            color: lighten(@grayLight,8%);
-            &.header {
-              line-height: 40px;
-            }
-          }
-          .add-dashlet {
-            color: lighten(@grayLight,8%);
-            text-align: center;
-            small {
-              font-size: 12px;
-            }
-            strong {
-              font-size: 60px;
-              font-weight: 900;
-            }
-          }
+        &>ul {
+          margin: 0;
         }
       }
-      &>ul {
-        margin: 0;
-      }
     }
-  }
-  &> .add-row {
-    position: relative;
-    margin: 0 18px;
-    padding-top: 18px;
-    border: 3px dashed lighten(@grayLight,8%);
-    background-color: @white;
-    cursor: pointer;
-    p {
-      font-size: 13px;
-      font-weight: 500px;
-      text-align: center;
-      color: lighten(@grayLight,8%);
-      &.header {
-        line-height: 40px;
+    .add-row {
+      position: relative;
+      margin: 0;
+      padding-top: 18px;
+      border: 3px dashed lighten(@grayLight,8%);
+      background-color: @white;
+      cursor: pointer;
+      p {
+        font-size: 13px;
+        font-weight: 500px;
+        text-align: center;
+        color: lighten(@grayLight,8%);
+        &.header {
+          line-height: 40px;
+        }
       }
-    }
-    .add-dashlet {
-      color: lighten(@grayLight,8%);
-      text-align: center;
-      small {
-        font-size: 12px;
+      .add-dashlet {
+        color: lighten(@grayLight,8%);
+        text-align: center;
+        small {
+          font-size: 12px;
+        }
+        strong {
+          font-size: 60px;
+          font-weight: 900;
+        }
       }
-      strong {
-        font-size: 60px;
-        font-weight: 900;
-      }
-    }
-    .options {
-      a {
-        padding:0 12px;
-        &:hover {
-          text-decoration: none;
+      .options {
+        a {
+          padding:0 12px;
+          &:hover {
+            text-decoration: none;
+          }
         }
       }
     }
