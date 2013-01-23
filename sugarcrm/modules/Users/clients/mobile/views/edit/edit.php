@@ -62,9 +62,6 @@ $viewdefs['Users']['mobile']['view']['edit'] = array(
                 'address_state',
                 'address_postalcode',
                 'address_country',
-                //BEGIN SUGARCRM flav=pro ONLY
-                'team_name',
-                //END SUGARCRM flav=pro ONLY
             ),
         ),
     ),
