@@ -287,11 +287,10 @@
             var view = this.recordView,
                 model = view.model;
 
-            //TODO:  Add validation back into the form
-          //  if (model.isValid(view.getFields(view.module))) {
+            if (model.isValid(view.getFields(view.module))) {
                 this.setStatus(this.STATUS_COMPLETE);
                 callback();
-           // }
+           }
         }
     },
 

@@ -10,10 +10,13 @@
             } catch (e) {
                 app.logger.error("Failed to eval view controller for " + name + ": " + e + ":\n" + data);
             }
-            app.view.declareComponent(type, name, module, data, true);
-            test.testMetadata.addController(name, type, data, module);
+            test.addComponent(client, type, name, data, module);
         });
+    };
 
+    test.addComponent = function(client, type, name, data, module) {
+        app.view.declareComponent(type, name, module, data, true);
+        test.testMetadata.addController(name, type, data, module);
     };
 
     test.loadHandlebarsTemplate = function(name, type, client, template, module) {
