@@ -237,6 +237,7 @@ class SugarTestForecastUtilities
                     $worksheet = SugarTestWorksheetUtilities::createWorksheet();
                     $worksheet->user_id = $user->id;
                     $worksheet->related_id = $product->id;
+                    $worksheet->related_forecast_type = 'Product';
                     $worksheet->forecast_type = "Direct";
                     $worksheet->timeperiod_id = $config['timeperiod_id'];
                     $worksheet->best_case = $opp->best_case;
