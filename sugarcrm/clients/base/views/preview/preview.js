@@ -37,8 +37,8 @@
 
         app.view.View.prototype.initialize.call(this, options);
         this.fallbackFieldTemplate = "detail";
-        this.context.off("togglePreview", null, this);
-        this.context.on("togglePreview", this.togglePreview, this);
+        this.context.off("renderPreview", null, this);
+        this.context.on("renderPreview", this._renderPreview, this);
         this.context.off("preview:collection:change", null, this);
         this.context.on("preview:collection:change", this.updateCollection, this);
         this.layout.off("preview:pagination:fire", null, this);
@@ -46,11 +46,44 @@
     },
 
     _renderHtml: function() {
-        var fieldsArray;
         app.view.View.prototype._renderHtml.call(this);
     },
 
-    togglePreview: function(model, collection) {
+    /**
+     * Renders the preview dialog with the data from the current model and collection.
+     * @param model Model for the object to preview
+     * @param collection Collection of related objects to the current model
+     * @param {Boolean} fetch Optional Indicates if model needs to be synched with server to populate with latest data
+     * @private
+     */
+    _renderPreview: function(model, collection, fetch){
+        // Fetch by default
+        fetch = _.isUndefined(fetch) ? true : fetch;
+        // Close preview if we are already displaying this model
+        if(this.model && model && this.model.get("id") == model.get("id")){
+            this.layout.$(".closeSubdetail").click();
+            this.model = null;
+            return;
+        }
+        if(fetch){
+            var self = this;
+            model.fetch({
+                success: function(model) {
+                    self.renderPreview(model, collection);
+                }
+            });
+        } else {
+            this.renderPreview(model, collection);
+        }
+    },
+
+    /**
+     * Renders the preview dialog with the data from the current model and collection
+     * @param model Model for the object to preview
+     * @param collection Collection of related objects to the current model
+     */
+    renderPreview: function(model, collection) {
+
         var fieldsToDisplay = app.config.fieldsToDisplay || 5;
         if (model && collection) {
             // Create a corresponding Bean and Context for clicked search result. It
@@ -69,9 +102,17 @@
             this.meta.panels[0].fields = _.first(this.meta.panels[0].fields, fieldsToDisplay);
 
             app.view.View.prototype._render.call(this);
+            this.context.trigger("openPreview",this);
         }
     },
 
+    /**
+     * Switches preview to left/right model in collection.
+     * @param {String} data.direction Direction that we are switching to, either 'left' or 'right'.
+     * @param index Optional current index in list
+     * @param id Optional
+     * @param module Optional
+     */
     switchPreview: function(data, index, id, module) {
         var self = this,
             currModule = module || this.model.get("_module"),
@@ -127,8 +168,9 @@
 
                     this.model.fetch({
                         success: function(model) {
-                            self.model.set("_module", targetModule);
-                            self.context.trigger("togglePreview", model, self.collection);
+                            model.set("_module", targetModule);
+                            self.model = null;
+                            self.context.trigger("renderPreview", model, self.collection, false);
                             self.switching = false;
                         }
                     });

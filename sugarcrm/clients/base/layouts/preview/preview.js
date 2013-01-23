@@ -14,6 +14,7 @@
 
     renderHtml: function() {
         this.$el.html(this.template(this));
+        this.$el.addClass("preview-pane");
     },
 
     triggerPagination: function(e) {

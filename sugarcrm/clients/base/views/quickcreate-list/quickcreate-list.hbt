@@ -1,6 +1,6 @@
 <div class="dataTables_filter">
     {{#each meta.panels}}
-    <table class="table table-striped datatable quickcreateListTable">
+    <table class="table table-striped dataTable quickcreateListTable">
         <thead>
             <tr role="row">
                 <th> actions </th>

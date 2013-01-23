@@ -27,13 +27,12 @@
 ({
     extendsFrom: 'BaselistView',
 
-    addMultiSelectionAction: function(meta) {
-        meta = app.view.views.BaselistView.prototype.addMultiSelectionAction.call(this, meta);
-        if(meta.favorite) {
-            _.each(meta.panels, function(panel){
+    initialize: function(options) {
+        app.view.views.BaselistView.prototype.initialize.call(this, options);
+        if(options.meta.favorite) {
+            _.each(options.meta.panels, function(panel){
                 panel.fields[0].fields.push({type: 'favorite'});
             });
         }
-        return meta;
     }
 })

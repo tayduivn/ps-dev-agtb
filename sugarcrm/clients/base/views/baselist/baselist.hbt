@@ -27,7 +27,7 @@
  ********************************************************************************/
 }}
 {{#each meta.panels}}
-<table class="table table-striped">
+<table class="table table-striped dataTable">
     <thead>
     <tr role="row">
         {{#each fields}}

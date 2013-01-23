@@ -34,9 +34,8 @@
      */
     events:{
         'click [class*="orderBy"]':'setOrderBy',
-        'click .preview-list-item':'previewRecord',
-        'mouseenter .preview-list-item': 'showTooltip',
-        'mouseleave .preview-list-item': 'hideTooltip',
+        'mouseenter .rowaction': 'showTooltip',
+        'mouseleave .rowaction': 'hideTooltip',
         'mouseenter tr':'showActions',
         'mouseleave tr':'hideActions'
     },
@@ -61,6 +60,9 @@
         app.view.View.prototype.initialize.call(this, options);
         this.template = this.template || app.template.getView('baselist') || app.template.getView('baselist', this.module) || null;
         this.fallbackFieldTemplate = 'list-header';
+
+        this.context.on("list:preview:fire", null, this);
+        this.context.on("list:preview:fire", this.previewRecord, this);
     },
     _render:function () {
         var self = this;
@@ -213,28 +215,18 @@
         }
         return options;
     },
-    previewRecord: function(e) {
-        var self = this,
-            el = this.$(e.currentTarget),
-            data = el.data(),
-            module = data.module,
-            id = data.id,
-            model = app.data.createBean(module);
-
-        model.set("id", id);
-        model.fetch({
-            success: function(model) {
-                model.set("_module", module);
-
-                if( _.isUndefined(self.context._callbacks) ) {
-                    // Clicking preview on a related module, need the parent context instead
-                    self.context.parent.trigger("togglePreview", model, self.collection);
-                }
-                else {
-                    self.context.trigger("togglePreview", model, self.collection);
-                }
-            }
-        });
+    /**
+     * Display a Preview for a record in the list view
+     * @param model Model for the record to be displayed in Preview
+     */
+    previewRecord: function(model) {
+        if( _.isUndefined(this.context._callbacks) ) {
+            // Clicking preview on a related module, need the parent context instead
+            this.context.parent.trigger("renderPreview", model, this.collection);
+        }
+        else {
+            this.context.trigger("renderPreview", model, this.collection);
+        }
     },
     addSingleSelectionAction: function(meta, module) {
         meta = $.extend(true, {}, meta);
@@ -286,6 +278,9 @@
             };
             if (!_.isUndefined(meta.rowactions.actions)) {
                 rowActions.fields[0].buttons = meta.rowactions.actions;
+            }
+            if (!_.isUndefined(meta.rowactions.primary)) {
+                rowActions.fields[0].primary = meta.rowactions.primary;
             }
             panel.fields = panel.fields.concat(rowActions);
         });

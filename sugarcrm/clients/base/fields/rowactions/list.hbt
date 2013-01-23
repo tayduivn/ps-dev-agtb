@@ -26,6 +26,25 @@
  * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 }}
-{{#each def.buttons}}
-    <a href="javascript:void(0)" class="rowaction" data-event="{{event}}">{{label}}</a>
-{{/each}}
+{{#if def.primary}}
+    {{! We have a primary defined, so we render the rest as part of a drop-down menu}}
+<span class="actions dropdown pull-right btn-group">
+    {{#with def.primary}}
+    <a {{#if tooltip}}rel="tooltip" data-placement="bottom" data-title="{{str tooltip}}"{{/if}}href="javascript:void(0)" class="btn rowaction" data-event="{{event}}">{{#if icon}}<i class="{{icon}}"></i>{{/if}}{{#if label}}{{str label}}{{/if}}</a>
+    {{/with}}
+    {{#if def.buttons}}
+        <a class="btn dropdown-toggle" data-toggle="dropdown" href="#"><span class="icon-caret-down"></span></a>
+        <ul class="dropdown-menu">
+        <span class="ext"></span>
+        {{#each def.buttons}}
+            <li><a {{#if tooltip}}rel="tooltip" data-placement="bottom" data-title="{{str tooltip}}"{{/if}}href="javascript:void(0)" class="rowaction" data-event="{{event}}">{{#if icon}}<i class="{{icon}}"></i>{{/if}}{{#if label}}{{str label}}{{/if}}</a></li>
+        {{/each}}
+        </ul>
+    {{/if}}
+</span>
+{{else}}
+    {{! No primary defined, so we put all actions in a row instead of a dropdown}}
+    {{#each def.buttons}}
+<a {{#if tooltip}}rel="tooltip" data-placement="bottom" data-title="{{str tooltip}}"{{/if}}href="javascript:void(0)" class="rowaction" data-event="{{event}}">{{#if icon}}<i class="{{icon}}"></i>{{/if}}{{#if label}}{{str label}}{{/if}}</a>
+    {{/each}}
+{{/if}}

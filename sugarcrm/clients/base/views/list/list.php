@@ -28,6 +28,14 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  */
 $viewdefs['base']['view']['list'] = array(
     'favorite' => true,
+    'rowactions' => array(
+        'label' => '',
+        'primary' => array(
+            'tooltip' => 'LBL_PREVIEW',
+            'event' => 'list:preview:fire',
+            'icon' => 'icon-eye-open',
+        ),
+    ),
     'selection' => array(
         'type' => 'multi',
         'actions' => array(
