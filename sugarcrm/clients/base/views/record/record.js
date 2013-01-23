@@ -72,13 +72,13 @@
         var totalFieldCount = 0;
 
         _.each(panels, function(panel) {
-            var columns  = (panel.columns) || 1,
-                rows     = [],
-                row      = [],
-                size     = panel.fields.length,
-                rowSpan  = 0,
+            var columns    = (panel.columns) || 1,
+                rows       = [],
+                row        = [],
+                size       = panel.fields.length,
+                rowSpan    = 0,
                 rowSpanMax = 12,
-                colCount = 0;
+                colCount   = 0;
 
             var _startNewRow = function() {
                 rows.push(row); // push the current row onto the grid
@@ -101,7 +101,9 @@
 
                 //The code below assumes that the field is an object but can be a string
                 if(_.isString(field)) {
-                    field = {'name': field};
+                    field = {
+                        'name': field
+                    };
                 }
 
                 //labels: visibility for the label
@@ -112,7 +114,7 @@
                 }
                 //8 for span because we are using a 2/3 ratio between field span and label span with a max of 12
                 isLabelInline = (panel.labelsOnTop === false && panel.labels);
-                maxSpan      = isLabelInline ? 8 : 12;
+                maxSpan       = isLabelInline ? 8 : 12;
 
                 if (_.isUndefined(field.span)) {
                     field.span = Math.floor(maxSpan / columns);
@@ -149,7 +151,7 @@
                     _startNewRow();
                 }
 
-                colCount++;
+                colCount++; // increment the column count now that we've filled a column
             }, this);
 
             panel.grid = rows;
