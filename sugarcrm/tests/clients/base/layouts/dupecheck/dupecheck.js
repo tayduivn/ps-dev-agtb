@@ -50,7 +50,6 @@ describe("Base.Layout.DupeCheck", function() {
 
     it("should have default list view type", function(){
         var layout = SugarTest.createLayout("base", moduleName, "dupecheck", defaultMeta);
-        debugger;
         expect(layout._components[1].name).toEqual(defaultListView);
     });
 
