@@ -64,15 +64,15 @@
     
 	<div class="modal-body">
 		<div style="float: left;"> 
-			<div style="float: left; width: 360px; margin-right: 40px;">
+			<div style="float: left; width: 360px; margin-right: 50px;">
 			<p>
 			{$APP.LBL_TOUR_REFERENCE_1} <a href="javascript:void window.open('http://support.sugarcrm.com/02_Documentation/01_Sugar_Editions/{$APP.documentation.$sugarFlavor}')">{$APP.LNK_TOUR_DOCUMENTATION}</a> {$APP.LBL_TOUR_REFERENCE_2}
 <br>
-				<i class="icon-arrow-right icon-lg" style="float: right; position: relative; right: -72px; top: -34px;"></i>
+				<i class="icon-arrow-right icon-lg" style="float: right; position: relative; right: -33px; top: -30px;"></i>
 			</p>
 			</div>
 			<div style="float: left">
-				<img src="themes/default/images/pt-profile-link.png" width="168" height="223">
+				<img src="themes/default/images/pt-profile-link.png" width="152" height="221">
 			</div>
 		</div>
 	</div>
