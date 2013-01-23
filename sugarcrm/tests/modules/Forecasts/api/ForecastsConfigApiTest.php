@@ -191,9 +191,6 @@ class ForecastsConfigModuleApiTest extends Sugar_PHPUnit_Framework_TestCase
                                 ->method('timePeriodSettingsChanged')
                                 ->with($priorSettings, $currentSettings);
 
-        error_log(print_r($args,1 ));
-        error_log(print_r($priorSettings,1 ));
-
         $result = $apiClass->forecastsConfigSave($api, $args);
     }
 
