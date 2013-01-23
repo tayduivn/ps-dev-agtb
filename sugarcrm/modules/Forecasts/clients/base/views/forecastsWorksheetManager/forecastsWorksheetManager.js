@@ -216,6 +216,18 @@
             	}
             }, this);
 
+            this.context.forecasts.on('forecasts:committed:saved', function() {
+                if(this.showMe()) {
+                    // display a success message
+                    app.alert.show('success', {
+                        level:'success',
+                        autoClose:true,
+                        title:app.lang.get("LBL_FORECASTS_WIZARD_SUCCESS_TITLE", "Forecasts") + ":",
+                        messages:[app.lang.get("LBL_FORECASTS_WORKSHEET_COMMIT_SUCCESS", "Forecasts")]
+                    });
+                }
+            }, this);
+
             this.context.forecasts.on('forecasts:worksheet:saveWorksheet', function(isDraft) {
                 this.saveWorksheet(isDraft);
             }, this);
@@ -309,6 +321,14 @@
                 self.cleanUpDirtyModels();
                 self.cleanUpDraftModels();
             } else {
+                if(isDraft) {
+                    app.alert.show('success', {
+                        level:'success',
+                        autoClose:true,
+                        title:app.lang.get("LBL_FORECASTS_WIZARD_SUCCESS_TITLE", "Forecasts") + ":",
+                        messages:[app.lang.get("LBL_FORECASTS_WORKSHEET_SAVE_DRAFT_SUCCESS", "Forecasts")]
+                    });
+                }
                 this.context.forecasts.trigger('forecasts:worksheet:saved', saveObj.totalToSave, 'mgr_worksheet', isDraft);
             }
         }
@@ -332,6 +352,14 @@
             saveObj.saveCount++;
             //if this is the last save, go ahead and trigger the callback;
             if(saveObj.totalToSave === saveObj.saveCount) {
+                if(saveObj.isDraft) {
+                    app.alert.show('success', {
+                        level:'success',
+                        autoClose:true,
+                        title:app.lang.get("LBL_FORECASTS_WIZARD_SUCCESS_TITLE", "Forecasts") + ":",
+                        messages:[app.lang.get("LBL_FORECASTS_WORKSHEET_SAVE_DRAFT_SUCCESS", "Forecasts")]
+                    });
+                }
                 self.context.forecasts.trigger('forecasts:worksheet:saved', saveObj.totalToSave, 'mgr_worksheet', saveObj.isDraft);
             }
         }, silent: true});
