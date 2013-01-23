@@ -201,8 +201,6 @@ class Bug56391Test extends Sugar_PHPUnit_Framework_TestCase
     public function testFieldAccess()
     {
 
-        $this->markTestSkipped('Skipping test as it fails and is unrelated to Prepared Statement Code' );
-
         $modules = array('Accounts');
         // user can view, list, delete, and export
         $expected_result = array(
@@ -430,9 +428,8 @@ class Bug56391Test extends Sugar_PHPUnit_Framework_TestCase
 
     }
 
-    public function testModuleFieldOwnerNoAccess()
-    {
-        $this->markTestIncomplete('Failing. Need to be fixed by FRM team');
+    public function testModuleFieldOwnerNoAccess() {
+
         $modules = array('Accounts', );
 
         $expected_bean_result['field_no_access'] = array(
@@ -451,12 +448,16 @@ class Bug56391Test extends Sugar_PHPUnit_Framework_TestCase
         $role = SugarTestACLUtilities::createRole('UNIT TEST ' . create_guid(), $modules, array(
             'access', 'view', 'list', 'edit', 'delete', 'export'), array('edit'));
 
-        SugarTestACLUtilities::createField($role->id, 'Accounts', 'name', 60);
+        // set the name field as Read Only
+        $aclField = new ACLField();
+        $aclField->setAccessControl('Accounts', $role->id, 'name', ACL_READ_OWNER_WRITE);
+        //ACLField::loadUserFields('Accounts', 'Account', $GLOBALS['current_user']->id, true );
 
         SugarTestACLUtilities::setupUser($role);
         SugarTestHelper::clearACLCache();
 
-        $mm = MetaDataManager::getManager();
+        // Fixed bug where LoadUserFields was being run before unset, per Jim B
+        ACLField::loadUserFields('Accounts', 'Account', $GLOBALS['current_user']->id, true );
 
         $acls = $mm->getAclForModule('Accounts', $GLOBALS['current_user'], BeanFactory::getBean('Accounts', $this->accounts['no_access']));
         unset($acls['_hash']);
