@@ -1,4 +1,5 @@
 describe("iframe", function() {
+    var app, field;
 
     beforeEach(function() {
         var def = {
