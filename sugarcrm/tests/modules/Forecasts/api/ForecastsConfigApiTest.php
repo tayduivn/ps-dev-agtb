@@ -166,45 +166,36 @@ class ForecastsConfigModuleApiTest extends Sugar_PHPUnit_Framework_TestCase
         $admin = BeanFactory::getBean('Administration');
         $admin->saveSetting('Forecasts', 'testSetting', $testSetting, 'base');
 
+        $priorSettings = $admin->getConfigForModule('Forecasts', 'base');
+        $currentSettings = $admin->getConfigForModule('Forecasts', 'base');
+
         $api = new RestService();
         //Fake the security
         $api->user = $GLOBALS['current_user'];
 
         $args = array(
             "module" => "Forecasts",
-            "platform" => "base",
-            "testSetting" => strrev($testSetting),
+            "platform" => "base"
         );
 
-        $apiClass = new SpyingForecastsConfigApi();
+        $args = array_merge($args, $priorSettings);
+
+        $apiClass = $this->getMock('ForecastsConfigApi', array('timePeriodSettingsChanged'));
+
+        if(empty($priorSettings['is_setup'])) {
+            $priorSettings['timeperiod_shown_forward'] = 0;
+            $priorSettings['timeperiod_shown_backward'] = 0;
+        }
+
+        $apiClass->expects($this->once())
+                                ->method('timePeriodSettingsChanged')
+                                ->with($priorSettings, $currentSettings);
+
+        error_log(print_r($args,1 ));
+        error_log(print_r($priorSettings,1 ));
+
         $result = $apiClass->forecastsConfigSave($api, $args);
-        $this->assertTrue(array_key_exists("testSetting", $result));
-        $this->assertEquals($result['testSetting'], strrev($testSetting));
-
-        $this->assertTrue($apiClass->getTimePeriodSettingsChangedCalled());
-
-        $results = $admin->getConfigForModule('Forecasts', 'base');
-
-        $this->assertTrue(array_key_exists("testSetting", $results));
-        $this->assertNotEquals($results['testSetting'], $testSetting);
-        $this->assertEquals($results['testSetting'], strrev($testSetting));
     }
 
-
-}
-
-class SpyingForecastsConfigApi extends ForecastsConfigApi {
-
-    private $timePeriodSettingsChangedCalled = false;
-    /*
-     * stubbed method to
-     */
-    public function timePeriodSettingsChanged($priorSettings, $currentSettings) {
-        $this->timePeriodSettingsChangedCalled = true;
-        return false;
-    }
-    public function getTimePeriodSettingsChangedCalled() {
-        return $this->timePeriodSettingsChangedCalled;
-    }
 
 }
