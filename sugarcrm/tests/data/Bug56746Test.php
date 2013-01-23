@@ -43,10 +43,17 @@ class Bug56746Test extends Sugar_PHPUnit_Framework_TestCase
      * @var Account
      */
     protected $account;
+    private $stored_service_object;
 
     protected function setUp()
     {
         parent::setUp();
+
+        //Unset global service_object variable so that the code in updateDependencyBean is run in SugarBean.php
+        if(isset($GLOBALS['service_object'])) {
+            $this->stored_service_object = $GLOBALS['service_object'];
+            unset($GLOBALS['service_object']);
+        }
 
         $time = mt_rand();
 
@@ -72,7 +79,10 @@ class Bug56746Test extends Sugar_PHPUnit_Framework_TestCase
 
     public function tearDown()
     {
-	unset($this->account->field_defs['checkbox_c']);
+        if(!empty($this->stored_service_object)) {
+            $GLOBALS['service_object'] = $this->stored_service_object;
+        }
+	    unset($this->account->field_defs['checkbox_c']);
         unset($this->account->field_defs['text_c']);
         parent::tearDown();
         SugarTestHelper::tearDown();
