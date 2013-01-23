@@ -13,7 +13,7 @@
     initialize:function (options) {
         app.view.View.prototype.initialize.call(this, options);
         _.bindAll(this);
-        this.context.on("lead:convert:populate", this.populateRecordsFromLeads, this);
+        this.context.on("lead:convert:populate", this.handlePopulateRecords, this);
         this.context.on("lead:convert:"+this.meta.module+":show", this.handleShow, this);
         this.context.on("lead:convert:"+this.meta.module+":hide", this.handleHide, this);
         this.context.on("lead:convert:"+this.meta.module+":validate", this.runValidation, this);
@@ -50,7 +50,6 @@
                     self.toggleSubViews(this.RECORD_VIEW);
                 }
             }, self);
-            self.duplicateView.loadData();
         } else {
             self.toggleSubViews(this.RECORD_VIEW);
         }
@@ -60,27 +59,22 @@
      * Inserts the duplicate list view into module panel based on metadata
      */
     insertDuplicateViewInPanel: function(moduleMeta) {
-        var self = this,
-            def = {
-                'view':'duplicate-list',
-                'context':{'module':moduleMeta.module, forceNew:true}
-            },
-            context = self.context.getChildContext(def.context);
-
-        context.set('limit', 3); //todo: set this to 10? once we have style that will limit the rows displayed & make scrollable
+        var context = this.context.getChildContext({
+            'module': moduleMeta.module,
+            'forceNew': true,
+            'dupelisttype': 'dupecheck-list-select'
+        });
         context.prepare();
 
-        this.duplicateView = app.view.createView({
+        this.duplicateView = app.view.createLayout({
             context: context,
-            name: def.view,
-            module: moduleMeta.module,
-            layout: self,
-            id: def.id
+            name: 'dupecheck',
+            module: context.module
         });
 
         this.$('.' + this.DUPLICATE_VIEW + 'View').append(this.duplicateView.el);
         this.duplicateView.render();
-        this.duplicateView.context.on('change:selection_model', this.selectDuplicate, self);
+        this.duplicateView.context.on('change:selection_model', this.selectDuplicate, this);
         this.duplicateView.validationStatus = this.STATUS_INIT;
     },
 
@@ -88,24 +82,18 @@
      * Insert the create/record view into the module panel based on metadata
      */
     insertRecordViewInPanel: function(moduleMeta) {
-        var self = this,
-            def = {
-                'view':'create',
-                'context':{'module':moduleMeta.module, forceNew:true, create: true}
-            };
-       var context = self.context.getChildContext(def.context);
-
-        context.set('createMode', true);
-        context.set('limit', 3); //todo: set this to 10? once we have style that will limit the rows displayed & make scrollable
-
-        context.prepare();
+       var context = this.context.getChildContext({
+           'module': moduleMeta.module,
+           forceNew: true,
+           create: true
+       });
+       context.prepare();
 
        this.recordView = app.view.createView({
-            context:context,
-            name:def.view,
-            module:moduleMeta.module,
-            layout:self,
-            id:def.id
+            context: context,
+            name: 'create',
+            module: context.module,
+            layout: this
         });
 
         this.$('.' +  this.RECORD_VIEW + 'View').append(this.recordView.el);
@@ -240,6 +228,11 @@
 
     showSubViewToggle: function() {
         this.$('.subview-toggle').show();
+    },
+
+    handlePopulateRecords: function(leadModel) {
+        this.populateRecordsFromLeads(leadModel);
+        this.duplicateView.context.trigger("dupecheck:fetch:fire", this.recordView.model);
     },
 
     populateRecordsFromLeads:function (leadModel) {
