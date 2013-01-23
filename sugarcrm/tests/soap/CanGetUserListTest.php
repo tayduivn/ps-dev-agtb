@@ -41,9 +41,20 @@ class CanGetUserListTest extends SOAPTestCase
     public function testGetUserList() 
     {
     	$this->_login();
-		$result = $this->_soapClient->call('get_entry_list',array('session'=>$this->_sessionId,"module_name" => 'Users', "query" => "id='".self::$_user->id."'"));
+		$result = $this->_soapClient->call('get_entry_list',
+                                           array('session'=>$this->_sessionId,
+                                                 "module_name" => 'Users', 
+                                                 "query" => "id='".self::$_user->id."'", 
+                                                 "order_by"=>"date_modified",
+                                                 "offset"=>0, 
+                                                 "select_fields" => array('id'), 
+                                                 "max_results" => 10, 
+                                                 "deleted" => 0,
+                                               ));
         
+
         $this->assertFalse(isset($result['error']['name']),"There is an error set, the error value is: ".$result['error']['name']);
-        print_r($result);
-    } // fn
+        
+        
+    }
 }
