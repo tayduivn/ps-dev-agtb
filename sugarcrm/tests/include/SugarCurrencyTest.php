@@ -39,6 +39,14 @@ class SugarCurrencyTest extends Sugar_PHPUnit_Framework_TestCase
     private static $sugar_config;
 
     /**
+     * @var object pointers to currency objects
+     */
+    private static $currencySGD;
+    private static $currencyPHP;
+    private static $currencyYEN;
+    private static $currencyBase;
+
+    /**
      * pre-class environment setup
      *
      */
@@ -50,9 +58,10 @@ class SugarCurrencyTest extends Sugar_PHPUnit_Framework_TestCase
         $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
 
         // setup test currencies
-        SugarTestCurrencyUtilities::createCurrency('Singapore','$','SGD',1.246171);
-        SugarTestCurrencyUtilities::createCurrency('Philippines','₱','PHP',41.82982);
-        SugarTestCurrencyUtilities::createCurrency('Yen','¥','YEN',78.87);
+        self::$currencySGD = SugarTestCurrencyUtilities::createCurrency('Singapore','$','SGD',1.246171,'currency-sgd');
+        self::$currencyPHP = SugarTestCurrencyUtilities::createCurrency('Philippines','₱','PHP',41.82982,'currency-php');
+        self::$currencyYEN = SugarTestCurrencyUtilities::createCurrency('Yen','¥','YEN',78.87,'currency-yen');
+        self::$currencyBase = BeanFactory::getBean('Currencies','-99');
     }
 
     /**
@@ -106,14 +115,13 @@ class SugarCurrencyTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testCurrencyGetByID()
     {
-        // get a currency to test with
-        $currency = SugarCurrency::getCurrencyByISO('PHP');
-        $currencyId = $currency->id;
-        // now fetch by currency_id
-        $currency2 = SugarCurrency::getCurrencyByID($currencyId);
-        $this->assertInstanceOf('Currency',$currency2);
+        // get test currency id
+        $currencyId = 'currency-php';
+        // now fetch by currency id
+        $currency = SugarCurrency::getCurrencyByID($currencyId);
+        $this->assertInstanceOf('Currency',$currency);
         // test they are the same currency
-        $this->assertEquals($currencyId,$currency2->id);
+        $this->assertEquals($currencyId,$currency->id);
     }
 
     /**
@@ -126,7 +134,7 @@ class SugarCurrencyTest extends Sugar_PHPUnit_Framework_TestCase
         $currency = SugarCurrency::getCurrencyByISO('PHP');
         $this->assertInstanceOf('Currency',$currency);
         $this->assertEquals('PHP',$currency->iso4217);
-        $this->assertEquals(41.82982,$currency->conversion_rate);
+        $this->assertEquals(self::$currencyPHP->conversion_rate,$currency->conversion_rate);
     }
 
     /**
@@ -147,9 +155,7 @@ class SugarCurrencyTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testConvertAmountToBase()
     {
-        $currency1 = SugarCurrency::getCurrencyByISO('SGD');
-
-        $amount = SugarCurrency::convertAmountToBase('1000.00',$currency1->id);
+        $amount = SugarCurrency::convertAmountToBase('1000.00',self::$currencySGD->id);
         $this->assertEquals('802.458089',$amount);
     }
 
@@ -160,9 +166,7 @@ class SugarCurrencyTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testConvertAmountFromBase()
     {
-        $currency1 = SugarCurrency::getCurrencyByISO('SGD');
-
-        $amount = SugarCurrency::convertAmountFromBase('1000.00',$currency1->id);
+        $amount = SugarCurrency::convertAmountFromBase('1000.00',self::$currencySGD->id);
         $this->assertEquals('1246.171',$amount);
     }
 
@@ -173,10 +177,7 @@ class SugarCurrencyTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testConvertAmount()
     {
-        $currency1 = SugarCurrency::getCurrencyByISO('SGD');
-        $currency2 = SugarCurrency::getCurrencyByISO('PHP');
-
-        $amount = SugarCurrency::convertAmount('1000.00', $currency1->id, $currency2->id);
+        $amount = SugarCurrency::convertAmount('1000.00', self::$currencySGD->id, self::$currencyPHP->id);
         $this->assertEquals('33566.677446', $amount);
     }
 
@@ -232,12 +233,13 @@ class SugarCurrencyTest extends Sugar_PHPUnit_Framework_TestCase
      * @access public
      */
     public static function testFormatAmountUserLocaleProvider() {
-        $currency = SugarCurrency::getCurrencyByISO('PHP');
+        $currencyId = 'currency-php';
+        $currencySymbol = '₱';
         return array(
-            array('1000',$currency->id,$currency->symbol . '1,000.00'),
-            array('1000.0',$currency->id,$currency->symbol . '1,000.00'),
-            array('1000.00',$currency->id,$currency->symbol . '1,000.00'),
-            array('1000.000',$currency->id,$currency->symbol . '1,000.00'),
+            array('1000', $currencyId, $currencySymbol . '1,000.00'),
+            array('1000.0', $currencyId, $currencySymbol . '1,000.00'),
+            array('1000.00', $currencyId, $currencySymbol . '1,000.00'),
+            array('1000.000', $currencyId, $currencySymbol . '1,000.00'),
         );
     }
 
@@ -268,38 +270,39 @@ class SugarCurrencyTest extends Sugar_PHPUnit_Framework_TestCase
      * @access public
      */
     public static function testFormatAmountProvider() {
-        $currency = SugarCurrency::getCurrencyByISO('PHP');
+        $currencyId = 'currency-php';
+        $currencySymbol = '₱';
         return array(
-            array('1000', $currency->id, 2, '.', ',', true, '', $currency->symbol . '1,000.00'),
-            array('1000', $currency->id, 2, '.', ',', true, '&nbsp;', $currency->symbol . '&nbsp;1,000.00'),
-            array('1000', $currency->id, 2, ',', '.', true, '', $currency->symbol . '1.000,00'),
-            array('1000', $currency->id, 3, '.', ',', true, '', $currency->symbol . '1,000.000'),
-            array('1000', $currency->id, 3, '.', '', true, '', $currency->symbol . '1000.000'),
-            array('1000', $currency->id, 3, ',', '.', true, '', $currency->symbol . '1.000,000'),
-            array('-1000', $currency->id, 2, '.', ',', true, '', $currency->symbol . '-1,000.00'),
-            array('-1000', $currency->id, 2, '.', ',', true, '&nbsp;', $currency->symbol . '&nbsp;-1,000.00'),
-            array('-1000', $currency->id, 2, ',', '.', true, '', $currency->symbol . '-1.000,00'),
-            array('-1000', $currency->id, 3, '.', ',', true, '', $currency->symbol . '-1,000.000'),
-            array('-1000', $currency->id, 3, '.', '', true, '', $currency->symbol . '-1000.000'),
-            array('-1000', $currency->id, 3, ',', '.', true, '', $currency->symbol . '-1.000,000'),
-            array('10000', $currency->id, 2, '.', ',', true, '', $currency->symbol . '10,000.00'),
-            array('100000', $currency->id, 2, '.', ',', true, '', $currency->symbol . '100,000.00'),
-            array('1000000', $currency->id, 2, '.', ',', true, '', $currency->symbol . '1,000,000.00'),
-            array('10000000', $currency->id, 2, '.', ',', true, '', $currency->symbol . '10,000,000.00'),
-            array('100000000', $currency->id, 2, '.', ',', true, '', $currency->symbol . '100,000,000.00'),
-            array('1000000000', $currency->id, 2, '.', ',', true, '', $currency->symbol . '1,000,000,000.00'),
-            array('-10000', $currency->id, 2, '.', ',', true, '', $currency->symbol . '-10,000.00'),
-            array('-100000', $currency->id, 2, '.', ',', true, '', $currency->symbol . '-100,000.00'),
-            array('-1000000', $currency->id, 2, '.', ',', true, '', $currency->symbol . '-1,000,000.00'),
-            array('-10000000', $currency->id, 2, '.', ',', true, '', $currency->symbol . '-10,000,000.00'),
-            array('-100000000', $currency->id, 2, '.', ',', true, '', $currency->symbol . '-100,000,000.00'),
-            array('-1000000000', $currency->id, 2, '.', ',', true, '', $currency->symbol . '-1,000,000,000.00'),
-            array('0.9', $currency->id, 2, '.', ',', true, '', $currency->symbol . '0.90'),
-            array('0.09', $currency->id, 2, '.', ',', true, '', $currency->symbol . '0.09'),
-            array('0.099', $currency->id, 2, '.', ',', true, '', $currency->symbol . '0.10'),
-            array('0.094', $currency->id, 2, '.', ',', true, '', $currency->symbol . '0.09'),
-            array('0.09499999', $currency->id, 2, '.', ',', true, '', $currency->symbol . '0.09'),
-            array('0.09499999', $currency->id, 6, '.', ',', true, '', $currency->symbol . '0.095000'),
+            array('1000', $currencyId, 2, '.', ',', true, '', $currencySymbol . '1,000.00'),
+            array('1000', $currencyId, 2, '.', ',', true, '&nbsp;', $currencySymbol . '&nbsp;1,000.00'),
+            array('1000', $currencyId, 2, ',', '.', true, '', $currencySymbol . '1.000,00'),
+            array('1000', $currencyId, 3, '.', ',', true, '', $currencySymbol . '1,000.000'),
+            array('1000', $currencyId, 3, '.', '', true, '', $currencySymbol . '1000.000'),
+            array('1000', $currencyId, 3, ',', '.', true, '', $currencySymbol . '1.000,000'),
+            array('-1000', $currencyId, 2, '.', ',', true, '', $currencySymbol . '-1,000.00'),
+            array('-1000', $currencyId, 2, '.', ',', true, '&nbsp;', $currencySymbol . '&nbsp;-1,000.00'),
+            array('-1000', $currencyId, 2, ',', '.', true, '', $currencySymbol . '-1.000,00'),
+            array('-1000', $currencyId, 3, '.', ',', true, '', $currencySymbol . '-1,000.000'),
+            array('-1000', $currencyId, 3, '.', '', true, '', $currencySymbol . '-1000.000'),
+            array('-1000', $currencyId, 3, ',', '.', true, '', $currencySymbol . '-1.000,000'),
+            array('10000', $currencyId, 2, '.', ',', true, '', $currencySymbol . '10,000.00'),
+            array('100000', $currencyId, 2, '.', ',', true, '', $currencySymbol . '100,000.00'),
+            array('1000000', $currencyId, 2, '.', ',', true, '', $currencySymbol . '1,000,000.00'),
+            array('10000000', $currencyId, 2, '.', ',', true, '', $currencySymbol . '10,000,000.00'),
+            array('100000000', $currencyId, 2, '.', ',', true, '', $currencySymbol . '100,000,000.00'),
+            array('1000000000', $currencyId, 2, '.', ',', true, '', $currencySymbol . '1,000,000,000.00'),
+            array('-10000', $currencyId, 2, '.', ',', true, '', $currencySymbol . '-10,000.00'),
+            array('-100000', $currencyId, 2, '.', ',', true, '', $currencySymbol . '-100,000.00'),
+            array('-1000000', $currencyId, 2, '.', ',', true, '', $currencySymbol . '-1,000,000.00'),
+            array('-10000000', $currencyId, 2, '.', ',', true, '', $currencySymbol . '-10,000,000.00'),
+            array('-100000000', $currencyId, 2, '.', ',', true, '', $currencySymbol . '-100,000,000.00'),
+            array('-1000000000', $currencyId, 2, '.', ',', true, '', $currencySymbol . '-1,000,000,000.00'),
+            array('0.9', $currencyId, 2, '.', ',', true, '', $currencySymbol . '0.90'),
+            array('0.09', $currencyId, 2, '.', ',', true, '', $currencySymbol . '0.09'),
+            array('0.099', $currencyId, 2, '.', ',', true, '', $currencySymbol . '0.10'),
+            array('0.094', $currencyId, 2, '.', ',', true, '', $currencySymbol . '0.09'),
+            array('0.09499999', $currencyId, 2, '.', ',', true, '', $currencySymbol . '0.09'),
+            array('0.09499999', $currencyId, 6, '.', ',', true, '', $currencySymbol . '0.095000'),
         );
     }
 
@@ -337,17 +340,11 @@ class SugarCurrencyTest extends Sugar_PHPUnit_Framework_TestCase
      * @access public
      */
     public static function testBaseCurrencyChangeProvider() {
-        $currency1 = SugarCurrency::getCurrencyByISO('SGD');
-        $currency2 = SugarCurrency::getCurrencyByISO('PHP');
-        $currency3 = SugarCurrency::getCurrencyByISO('YEN');
-        $currency4 = SugarCurrency::getBaseCurrency();
-        // retrieve values since BeanFactory caches them
-        $currency4->retrieve('-99');
         return array(
-            array('1000.00', $currency1->id, $currency2->id, '33566.677446'),
-            array('1000.00', $currency2->id, $currency3->id, '1885.496997'),
-            array('1000.00', $currency3->id, $currency4->id, '12.679092'),
-            array('1000.00', $currency4->id, $currency1->id, '1246.171'),
+            array('1000.00', 'currency-sgd', 'currency-php', '33566.677446'),
+            array('1000.00', 'currency-php', 'currency-yen', '1885.496997'),
+            array('1000.00', 'currency-yen', '-99', '12.679092'),
+            array('1000.00', '-99', 'currency-sgd', '1246.171'),
         );
     }
 

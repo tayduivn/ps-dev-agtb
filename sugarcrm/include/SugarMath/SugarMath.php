@@ -138,7 +138,7 @@ class SugarMath
      */
     public function result() {
         // use bcadd to trim decimals to scale
-        return bcadd($this->value, 0, $this->scale);
+        return $this->value;
     }
 
     /**
@@ -484,10 +484,10 @@ class SugarMath
                 }
             }
         }
-        // if original expression was empty parenthesis, result will be 0
-        $this->value = !empty($result) ? $result[0] : 0;
         // set scale back to original value
         $this->scale -= 4;
+        // if original expression was empty parenthesis, result will be 0
+        $this->value = !empty($result) ? bcadd($result[0], 0, $this->scale) : 0;
         return $this;
     }
 
