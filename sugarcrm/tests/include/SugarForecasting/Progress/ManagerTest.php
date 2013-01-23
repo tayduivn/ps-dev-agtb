@@ -368,7 +368,7 @@ class SugarForecasting_Progress_ManagerTest extends Sugar_PHPUnit_Framework_Test
                 'include_in_forecast' => 2
             ),
         ));
-        $reportee1["opportunities"][0]->sales_stage = "Closed Lost";
+        $reportee1["opportunities"][0]->sales_stage = Opportunity::STAGE_CLOSED_LOST;
         $reportee1["opportunities"][0]->save();
         
         $reportee2 = SugarTestForecastUtilities::createForecastUser(array(
@@ -381,7 +381,7 @@ class SugarForecasting_Progress_ManagerTest extends Sugar_PHPUnit_Framework_Test
             ),
         ));
         
-        $reportee2["opportunities"][0]->sales_stage = "Closed Lost";
+        $reportee2["opportunities"][0]->sales_stage = Opportunity::STAGE_CLOSED_LOST;
         $reportee2["opportunities"][0]->save();
         
         $obj = new SugarForecasting_Progress_Manager(array(
@@ -421,7 +421,7 @@ class SugarForecasting_Progress_ManagerTest extends Sugar_PHPUnit_Framework_Test
                 'include_in_forecast' => 2
             ),
         ));
-        $reportee1["opportunities"][0]->sales_stage = "Closed Won";
+        $reportee1["opportunities"][0]->sales_stage = Opportunity::STAGE_CLOSED_WON;
         $reportee1["opportunities"][0]->save();
         
         $reportee2 = SugarTestForecastUtilities::createForecastUser(array(
@@ -434,7 +434,7 @@ class SugarForecasting_Progress_ManagerTest extends Sugar_PHPUnit_Framework_Test
             ),
         ));
         
-        $reportee2["opportunities"][0]->sales_stage = "Closed Won";
+        $reportee2["opportunities"][0]->sales_stage = Opportunity::STAGE_CLOSED_WON;
         $reportee2["opportunities"][0]->save();
         
         $obj = new SugarForecasting_Progress_Manager(array(
@@ -474,7 +474,7 @@ class SugarForecasting_Progress_ManagerTest extends Sugar_PHPUnit_Framework_Test
                 'include_in_forecast' => 2
             ),
         ));
-        $reportee1["opportunities"][0]->sales_stage = "Closed Lost";
+        $reportee1["opportunities"][0]->sales_stage = Opportunity::STAGE_CLOSED_LOST;
         $reportee1["opportunities"][0]->save();
         
         $reportee2 = SugarTestForecastUtilities::createForecastUser(array(
@@ -487,7 +487,7 @@ class SugarForecasting_Progress_ManagerTest extends Sugar_PHPUnit_Framework_Test
             ),
         ));
         
-        $reportee2["opportunities"][0]->sales_stage = "Closed Won";
+        $reportee2["opportunities"][0]->sales_stage = Opportunity::STAGE_CLOSED_WON;
         $reportee2["opportunities"][0]->save();
         
         $obj = new SugarForecasting_Progress_Manager(array(
