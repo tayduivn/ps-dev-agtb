@@ -113,7 +113,7 @@ class ForecastsConfigApi extends ConfigModuleApi {
      *
      * @return boolean
      */
-    private function timePeriodSettingsChanged($priorSettings, $currentSettings) {
+    public function timePeriodSettingsChanged($priorSettings, $currentSettings) {
         if(!isset($priorSettings['timeperiod_shown_backward']) || (isset($currentSettings['timeperiod_shown_backward']) && ($currentSettings['timeperiod_shown_backward'] != $priorSettings['timeperiod_interval']))) {
             return true;
         }

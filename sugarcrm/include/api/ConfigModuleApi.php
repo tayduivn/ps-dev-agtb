@@ -66,7 +66,7 @@ class ConfigModuleApi extends ModuleApi {
         $platform = (isset($args['platform']) && !empty($args['platform']))?$args['platform']:'base';
 
         if (!empty($args['module'])) {
-            return$adminBean->getConfigForModule($args['module'], $platform);
+            return $adminBean->getConfigForModule($args['module'], $platform);
         }
         return;
     }
