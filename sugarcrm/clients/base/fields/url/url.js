@@ -41,8 +41,5 @@
     _render: function() {
         this.def.link_target = _.isUndefined(this.def.link_target) ? '_blank' : this.def.link_target;
         app.view.Field.prototype._render.call(this);
-        if($.fn.tooltip){
-            this.$('a[rel="tooltip"]').tooltip({placement: 'bottom', delay: { show: 1500, hide: 200 }});
-        }
     }
 })
