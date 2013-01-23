@@ -243,9 +243,15 @@ class CurrentUserApi extends SugarApi {
         return $user_data;
     }
 
+    /**
+     * Gets a MetaDataManager object
+     * 
+     * @param string $platform The platform to use in the metadata manager
+     * @param bool $public Whether we want a public metadata collection or not
+     * @return MetaDataManager
+     */
     protected function getMetadataManager( $platform = 'base', $public = false) {
-        $current_user = $this->getUserBean();
-        return new MetaDataManager($current_user, $platform, $public);
+        return MetaDataManager::getManager($platform, $public);
     }
 
     /**

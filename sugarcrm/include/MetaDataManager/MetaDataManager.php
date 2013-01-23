@@ -52,29 +52,91 @@ class MetaDataManager {
     protected $sfh;
 
     /**
-     * The user bean for the logged in user
-     *
-     * @var User
+     * A collection of metadata managers for use as a simple cache in the factory.
+     * 
+     * @var array
      */
-    protected $user;
+    protected static $managers = array();
+
+    /**
+     * Sections of the metadata based on visibility
+     * 
+     * @var array
+     */
+    protected static $sections = array(
+        'private' => array('modules','full_module_list','fields', 'labels', 'module_list', 'views', 'layouts','relationships','currencies', 'jssource', 'server_info'),
+        'public'  => array('fields','labels','views', 'layouts', 'config', 'jssource'),
+    );
 
     /**
      * The constructor for the class.
      *
-     * @param User $user A User bean
      * @param array $platforms A list of clients
      * @param bool $public is this a public metadata grab
      */
-    function __construct ($user, $platforms = null, $public = false) {
+    function __construct ($platforms = null, $public = false) {
         if ( $platforms == null ) {
             $platforms = array('base');
         }
-
-        $this->user = $user;
+        
         $this->platforms = $platforms;
-
     }
 
+    /**
+     * Simple factory for getting a metadata manager
+     * 
+     * @param string $platform The platform for the metadata
+     * @param bool $public Public or private
+     * @param bool $fresh Whether to skip the cache and get a new manager
+     * @return MetaDataManager
+     */
+    public static function getManager($platform = null, $public = false, $fresh = false) {
+        if ( $platform == null ) {
+            $platform = array('base');
+        }
+        
+        // Build a simple key
+        $platform = (array) $platform;
+        $key = implode(':', $platform) . ':' . intval($public);
+        
+        if ($fresh || empty(self::$managers[$key])) {
+            // TODO: employ logic here to make platform specific managers
+            $manager = new MetaDataManager($platform, $public);
+            
+            // If this is a fresh manager request, send it back without caching
+            if ($fresh) {
+                return $manager;
+            }
+            
+            // Cache it and move on
+            self::$managers[$key] = $manager;
+        }
+        
+        return self::$managers[$key];
+    }
+
+    /**
+     * Gets a fresh metadata manager, bypassing the cache if there is one.
+     * 
+     * @param string $platform The platform for the metadata
+     * @param bool $public Public or private
+     * @return MetaDataManager
+     */
+    public static function getManagerNew($platform = null, $public = false) {
+        return self::getManager($platform, $public, true);
+    }
+
+    /**
+     * Gets a list of metadata sections based on visibility
+     * 
+     * @param bool $public Public flag
+     * @return array
+     */
+    public static function getSections($public = false) {
+        $type = $public ? 'public' : 'private';
+        return self::$sections[$type];
+    }
+    
     /**
      * For a specific module get any existing Subpanel Definitions it may have
      * @param string $moduleName
@@ -472,7 +534,11 @@ class MetaDataManager {
         return $strings;        
     }
 
-
+    /**
+     * Gets a list of platforms found in the application.
+     * 
+     * @return array
+     */
     public static function getPlatformList()
     {
         $platforms = array();
@@ -580,6 +646,16 @@ class MetaDataManager {
             $hashKey = "metadata:$platformKey:hash";
             sugar_cache_clear($hashKey);
         }
+    }
+    
+    public static function buildMetadataSectionCache($section = '', $modules = array(), $platforms = array())
+    {
+        
+    }
+    
+    public static function buildMetadataCache()
+    {
+        
     }
     
     /**
