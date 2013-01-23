@@ -26,12 +26,12 @@
             this.login();
         }
     },
-    
-    render: function() {
+
+    _render: function() {
         if (app.config && app.config.logoURL) {
             this.logoURL = app.config.logoURL;
         }
-        app.view.View.prototype.render.call(this);
+        app.view.View.prototype._render.call(this);
         this.refreshAddtionalComponents();
         return this;
     },

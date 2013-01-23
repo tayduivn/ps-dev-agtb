@@ -10,7 +10,7 @@
         this.getImages();
     },
 
-    render: function() {
+    _render: function() {
         if (!this.model) {
             return;
         }
@@ -20,7 +20,7 @@
             id: this.model.id,
             field: 'picture'
         }) : false) || this.profile;
-        app.view.Field.prototype.render.call(this);
+        app.view.Field.prototype._render.call(this);
     },
 
     getImages: function() {

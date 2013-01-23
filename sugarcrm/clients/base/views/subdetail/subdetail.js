@@ -44,7 +44,7 @@
     bindDataChange: function() {
         if (this.model) {
             this.model.on("change", function() {
-                    app.view.View.prototype.render.call(this);
+                    this.render();
                 }, this
             );
         }
