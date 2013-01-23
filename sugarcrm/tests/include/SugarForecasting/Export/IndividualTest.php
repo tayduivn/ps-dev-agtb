@@ -244,6 +244,6 @@ class SugarForecasting_Export_IndividualTest extends Sugar_PHPUnit_Framework_Tes
         $timedate = TimeDate::getInstance();
         $db = DBManagerFactory::getInstance();
         $expectedDateClosed = $timedate->to_display_date($db->fromConvert($opp->date_closed, 'date'), false);
-        $this->assertContains($expectedDateClosed, $content);
+        $this->assertContains($expectedDateClosed, $content, "Failed asserting that '{$content}' contains '{$expectedDateClosed}'");
     }
 }
