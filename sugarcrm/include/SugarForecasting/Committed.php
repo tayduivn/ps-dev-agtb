@@ -176,21 +176,25 @@ class SugarForecasting_Committed extends SugarForecasting_AbstractForecast imple
 
         // ForecastWorksheets Table Commit Version
         /* @var $tp TimePeriod */
-        $tp = BeanFactory::getBean('TimePeriods', $args['timeperiod_id']);
+        //$tp = BeanFactory::getBean('TimePeriods', $args['timeperiod_id']);
 
-        // Get all the $current_users opportunities
-        $sql = "SELECT id FROM opportunities WHERE assigned_user_id = '" . $current_user->id ."' and deleted = 0
-            and (date_closed_timestamp >= " . $tp->start_date_timestamp . " and date_closed_timestamp <=  " . $tp->end_date_timestamp . ")";
-        $result = $db->query($sql);
+        global $current_user;
 
-        while($row = $db->fetchByAssoc($result)) {
-            /* @var $opportunity Opportunity */
-            $opportunity = BeanFactory::getBean('Opportunities', $row['id']);
+        $data = array(
+            'user_id' => $current_user->id,
+            'timeperiod_id' => $args['timeperiod_id']
+        );
 
-            /* @var $opp_wkst ForecastWorksheet */
-            $opp_wkst = BeanFactory::getBean('ForecastWorksheets');
-            $opp_wkst->saveRelatedOpportunity($opportunity, true);
-        }
+        $timedate = TimeDate::getInstance();
+        $job = BeanFactory::getBean('SchedulersJobs');
+        $job->execute_time = $timedate->nowDb();
+        $job->name = "Update ForecastWorksheets";
+        $job->status = SchedulersJob::JOB_STATUS_QUEUED;
+        $job->target = "class::SugarJobUpdateForecastWorksheets";
+        $job->data = json_encode($data);
+        $job->retry_count = 0;
+        $job->assigned_user_id = $current_user->id;
+        $job->save();
 
         //TODO-sfa remove this once the ability to map buckets when they get changed is implemented (SFA-215).
         $admin = BeanFactory::getBean('Administration');
