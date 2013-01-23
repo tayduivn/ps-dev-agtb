@@ -34,7 +34,6 @@
         var self = this,
             emailAddr = this.$(".invitee-input").val();
 
-        // TODO: Don't allow sending invites to yourself or already-invited users (possibly do this in the API instead)
         if( !emailAddr ) {
             return;
         }
@@ -42,7 +41,7 @@
             success: function() {
                 self.$(".invitee-input").val('');
                 app.alert.show('invited',
-                    {level: 'info', title:'Invited',
+                    {level: 'info', title: app.lang.getAppString('LBL_INVITED'),
                         messages: app.lang.getAppString('LBL_INSTANCE_INVITE_SENT') + ': ' + emailAddr, autoClose: true});
             },
             error: function(o) {

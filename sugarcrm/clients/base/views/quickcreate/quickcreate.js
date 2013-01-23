@@ -11,8 +11,8 @@
         this.model.on("error:validation", this.handleValidationError, this);
         this.model.on("change", this.clearValidationError, this);
     },
-    
-    render: function() {
+
+    _render: function() {
         var totalFieldCount = 0;
 
         _.each(this.meta.panels, function(panel) {
@@ -52,7 +52,7 @@
             panel.grid = rows;
         }, this);
 
-        app.view.View.prototype.render.call(this);
+        app.view.View.prototype._render.call(this);
         
         this.$(':input:first').focus();
     },

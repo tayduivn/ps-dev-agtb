@@ -29,6 +29,7 @@ if (!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  ********************************************************************************/
 
 require_once('clients/base/api/FilterApi.php');
+require_once('include/api/RestService.php');
 
 /**
  * This method of duplicate check passes a configurable set of filters off to the Filter API to find duplicates.
@@ -49,8 +50,13 @@ class FilterDuplicateCheck extends DuplicateCheckStrategy
      */
     protected function setMetadata($metadata)
     {
-        $this->filterTemplate = $metadata['filter_template'];
-        $this->rankingFields = $metadata['ranking_fields'];
+        if (isset($metadata['filter_template'])) {
+            $this->filterTemplate = $metadata['filter_template'];
+        }
+
+        if (isset($metadata['ranking_fields'])) {
+            $this->rankingFields = $metadata['ranking_fields'];
+        }
     }
 
     /**
@@ -66,6 +72,11 @@ class FilterDuplicateCheck extends DuplicateCheckStrategy
 
         //build filter to hand off to the FilterApi
         $filter = $this->buildDupeCheckFilter($this->filterTemplate);
+
+        //if filter is empty, don't bother continuing
+        if (empty($filter)) {
+            return null;
+        }
 
         if (!empty($this->bean->id)) {
             $filter = $this->addFilterForEdits($filter[0], $this->bean->id);
@@ -99,13 +110,14 @@ class FilterDuplicateCheck extends DuplicateCheckStrategy
                             if (isset($this->bean->$inField) && !empty($this->bean->$inField)) {
                                 $value = $this->bean->$inField;
                             } else {
-                                unset($filterDef[$inField]);
+                                unset($filterDef[$field]);
                             }
                         }
                     }
                 }
             }
         }
+        $dupeCheckFilterTemplate = array_filter($dupeCheckFilterTemplate);
         return $dupeCheckFilterTemplate;
     }
 
