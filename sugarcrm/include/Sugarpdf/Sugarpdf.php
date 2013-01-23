@@ -438,9 +438,15 @@ class Sugarpdf extends TCPDF
             $even = !$even;
             $line="";
             if($even){
-                $options["tr"]["bgcolor"] = $options['evencolor'];
+                if (isset($options['evencolor']))
+                {
+                    $options["tr"]["bgcolor"] = $options['evencolor'];
+                }
             } else {
-                $options["tr"]["bgcolor"] = $options['oddcolor'];
+                if (isset($options['oddcolor']))
+                {
+                    $options["tr"]["bgcolor"] = $options['oddcolor'];
+                }
             }
             foreach($v as $kk => $vv){
                 if(!empty($options["width"]) && isset($options["width"][$kk]))$options["td"]["width"]=$options["width"][$kk];
