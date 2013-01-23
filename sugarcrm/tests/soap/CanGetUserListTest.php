@@ -28,27 +28,27 @@ class CanGetUserListTest extends SOAPTestCase
      * Create test user
      *
      */
-	public function setUp()
+    public function setUp()
     {
-    	$this->_soapURL = $GLOBALS['sugar_config']['site_url'].'/soap.php';
-		parent::setUp();
+        $this->_soapURL = $GLOBALS['sugar_config']['site_url'].'/soap.php';
+        parent::setUp();
 
         self::$_user->is_admin = 1;
         self::$_user->save();
         $GLOBALS['db']->commit();
     }
 
-    public function testGetUserList() 
+    public function testGetUserList()
     {
-    	$this->_login();
-		$result = $this->_soapClient->call('get_entry_list',
+        $this->_login();
+        $result = $this->_soapClient->call('get_entry_list',
                                            array('session'=>$this->_sessionId,
-                                                 "module_name" => 'Users', 
-                                                 "query" => "id='".self::$_user->id."'", 
+                                                 "module_name" => 'Users',
+                                                 "query" => "id='".self::$_user->id."'",
                                                  "order_by"=>"date_modified",
-                                                 "offset"=>0, 
-                                                 "select_fields" => array('id'), 
-                                                 "max_results" => 10, 
+                                                 "offset"=>0,
+                                                 "select_fields" => array('id'),
+                                                 "max_results" => 10,
                                                  "deleted" => 0,
                                                ));
         
