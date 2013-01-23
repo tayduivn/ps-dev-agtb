@@ -77,6 +77,7 @@
                 row      = [],
                 size     = panel.fields.length,
                 rowSpan  = 0,
+                rowSpanMax = 12,
                 colCount = 0;
 
             var _startNewRow = function() {
@@ -94,7 +95,14 @@
             }
 
             _.each(panel.fields, function(field, index) {
-                var maxSpan;
+                var maxSpan,
+                    isLabelInline,
+                    fieldSpan;
+
+                //The code below assumes that the field is an object but can be a string
+                if(_.isString(field)) {
+                    field = {'name': field};
+                }
 
                 //labels: visibility for the label
                 //labelsOnTop: true for on the top of the field
@@ -103,7 +111,8 @@
                     panel.labels = true;
                 }
                 //8 for span because we are using a 2/3 ratio between field span and label span with a max of 12
-                maxSpan = (panel.labelsOnTop === false && panel.labels) ? 8 : 12;
+                isLabelInline = (panel.labelsOnTop === false && panel.labels);
+                maxSpan      = isLabelInline ? 8 : 12;
 
                 if (_.isUndefined(field.span)) {
                     field.span = Math.floor(maxSpan / columns);
@@ -118,17 +127,17 @@
                 field.index = totalFieldCount;
 
                 // by default, the field takes up the space specified by its span
-                var fieldSpan = field.span;
+                fieldSpan = field.span;
 
-                // if the labels are to the left of the field (maxSpan == 8) then the field takes up the space
+                // if the labels are to the left of the field then the field takes up the space
                 // specified by its span plus the space its label takes up
-                if (maxSpan == 8) {
+                if (isLabelInline) {
                     fieldSpan += field.labelSpan;
                 }
 
                 // if there isn't enough room remaining on the current row to contain the field or all available
                 // columns in the row have been filled, then start a new row
-                if ((rowSpan + fieldSpan) > maxSpan || colCount == columns) {
+                if ((rowSpan + fieldSpan) > rowSpanMax || colCount == columns) {
                     _startNewRow();
                 }
 
