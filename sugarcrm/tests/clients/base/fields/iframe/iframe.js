@@ -1,8 +1,11 @@
 describe("iframe", function() {
 
     beforeEach(function() {
+        var def = {
+            default:"http://www.sugarcrm.com/{ONE}"
+        };
         app = SugarTest.app;
-        field = SugarTest.createField("base","iframe", "iframe", "detail");
+        field = SugarTest.createField("base","iframe", "iframe", "detail", def);
         field.model = {get : function(key){
             var values = {
                 "ONE":"1",
@@ -35,6 +38,10 @@ describe("iframe", function() {
         });
         it("should not modify non-generated URLs", function(){
             expect(field.format("http://{ONE}/{TWO}")).toEqual("http://{ONE}/{TWO}");
+        });
+        it("should handle default values in format", function(){
+            field.def.gen = "1";
+            expect(field.format("")).toEqual("http://www.sugarcrm.com/1");
         });
     });
 });
