@@ -179,7 +179,7 @@ class SugarForecasting_Committed extends SugarForecasting_AbstractForecast imple
         $tp = BeanFactory::getBean('TimePeriods', $args['timeperiod_id']);
 
         // Get all the $current_users opportunities
-        $sql = "SELECT id FROM opportunities WHERE assigned_user_id = '" . $current_user->id ."'
+        $sql = "SELECT id FROM opportunities WHERE assigned_user_id = '" . $current_user->id ."' and deleted = 0
             and (date_closed_timestamp >= " . $tp->start_date_timestamp . " and date_closed_timestamp <=  " . $tp->end_date_timestamp . ")";
         $result = $db->query($sql);
 

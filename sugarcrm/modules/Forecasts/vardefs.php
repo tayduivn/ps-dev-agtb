@@ -762,44 +762,12 @@ $dictionary['ForecastWorksheet'] = array(
             'audited' => false,
             'studio' => false
         ),
-        'amount' =>
-        array(
-            'name' => 'amount',
-            'vname' => 'LBL_AMOUNT',
-            //'function'=>array('vname'=>'getCurrencyType'),
-            'type' => 'currency',
-            //'disable_num_format' => true,
-            'dbType' => 'currency',
-            'comment' => 'Unconverted amount of the opportunity',
-            'importable' => 'required',
-            'duplicate_merge' => '1',
-            'required' => true,
-            'options' => 'numeric_range_search_dom',
-            'enable_range_search' => true,
-            //'calculated' => true,
-            //'formula' => 'rollupSum($products, "list_price")',
-            'validation' => array('type' => 'range', 'min' => 0),
-            'studio' => false
-        ),
         'base_rate' =>
         array(
             'name' => 'base_rate',
             'vname' => 'LBL_CURRENCY_RATE',
             'type' => 'double',
             'required' => true,
-            'studio' => false
-        ),
-        'amount_usdollar' =>
-        array(
-            'name' => 'amount_usdollar',
-            'vname' => 'LBL_AMOUNT_USDOLLAR',
-            'type' => 'currency',
-            'group' => 'amount',
-            'dbType' => 'currency',
-            'disable_num_format' => true,
-            'duplicate_merge' => '0',
-            'audited' => false,
-            'comment' => 'Formatted amount of the opportunity',
             'studio' => false
         ),
         'currency_id' =>
