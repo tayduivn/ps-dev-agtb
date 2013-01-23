@@ -2,25 +2,20 @@ var login = {
 
     startup:function (status) {
         var images = [
-            {url:'http://i.imgur.com/3qLwI.jpg', text:'It\'s like chestnuts roasting on an open fire.'},
-            {url:'http://i.imgur.com/Ew5oX.jpg', text:'It\'s like Jack Frost nipping at your nose.'},
-            {url:'static/sunflower.jpg', text:'It\'s like a field of sunflowers.'},
-            {url:'static/beach.jpg', text:'It\'s like a day at the beach.'},
-            {url:'static/hotairballoon.jpg', text:'It\'s like a hot air balloon festival.'},
-            //{url:'static/flamingos.jpg', text:'It\'s like a flock of flamingos.'},
-            {url:'static/houses.jpg', text:'It\'s like a warm summer night.'},
-            //{url:'static/houses2.jpg', text:'It\'s like a flock of flamingos.'},
-            {url:'static/darkclouds.jpg', text:'It\'s like a dark stormy night.'}
+            {url:'static/img/sunflower.jpg', text:'It\'s like a field of sunflowers.'},
+            {url:'static/img/beach.jpg', text:'It\'s like a day at the beach.'},
+            {url:'static/img/hotairballoon.jpg', text:'It\'s like a hot air balloon festival.'},
+            //{url:'static/img/flamingos.jpg', text:'It\'s like a flock of flamingos.'},
+            {url:'static/img/houses.jpg', text:'It\'s like a warm summer night.'},
+            {url:'static/img/houses2.jpg', text:'It\'s like a flock of flamingos.'},
+            {url:'static/img/darkclouds.jpg', text:'It\'s like a dark stormy night.'}
         ];
         var selected = images[Math.floor(Math.random() * images.length)];
 
-        $('body').css({
+        $('.blur').css({
             background:'url(' + selected.url + ') no-repeat center center fixed ',
             'background-size':'cover'
-
         });
-
-        $('#catchphrase').html(selected.text);
 
         login.setupLoginForm($('#login'));
         login.setupRegisterForm($('#register'));
@@ -42,10 +37,10 @@ var login = {
     setupLoginForm:function (form) {
         form.submit(function (event) {
             event.preventDefault();
-            var $form = $(this)
+            var $form = $(this);
             var email = $form.find('input[name="email"]').val();
             var password = $form.find('input[name="password"]').val();
-            $form.find('input[name="password"]').val('')
+            $form.find('input[name="password"]').val('');
 
             $.post('rest/users/authenticate', {email:email, password:password}, login.response);
         });
@@ -65,9 +60,9 @@ var login = {
     setupResetForm:function (form) {
           form.submit(function (event) {
               event.preventDefault();
-              var $form = $(this)
+              var $form = $(this);
               var email = $form.find('input[name="email"]').val();
-              $form.find('input[name="email"]').val('')
+              $form.find('input[name="email"]').val('');
               if(email == '')return;
               $.post('rest/users/resetpassword', {email:email}, login.resetResponse);
           });
@@ -106,14 +101,13 @@ var login = {
             	data.info[data.info.lastIndexOf()+1] = "We were unable to detect any instances accessible to you. Please ask somebody to invite you to their instance or contact support.";
             }
             for (i in data.instances) {
-                $('#instancelist').append('<li><a href="#" class="instance" data-id="' + data.instances[i].id + '">' + data.instances[i].name + ' by ' + data.instances[i].owner.name + '</a></li>')
+                $('#instancelist').append('<li class="instance-item"><a href="#" class="instance" data-id="' + data.instances[i].id + '">' + data.instances[i].name + ' by ' + data.instances[i].owner.name + '</a></li>')
             }
             $('.instance').click(login.selectInstance);
             $('#instances_refresh').click(
             		function () { $.get("rest/instances", null, login.refreshInstances); }
             	);
             login.showInstances();
-            $('.username').html(data.user.first_name + ' ' + data.user.last_name);
         }
         login.displayMessages(data);
 
@@ -127,7 +121,7 @@ var login = {
                 data.success = [data.success];
             }
             for (i in data.success) {
-               notices += "<div class='alert alert-block alert-success fade in '><strong>" + data.success[i] + "</strong></div>"
+               notices += "<div class='alert alert-block alert-success fade in '><a class='close' data-dismiss='alert' href='#'>&times;</a><strong>" + data.success[i] + "</strong></div>"
 
             }
         }
@@ -136,7 +130,7 @@ var login = {
                 data.error = [data.error];
             }
             for (i in data.error) {
-                notices += "<div class='alert alert-block alert-error fade in '><strong>" + data.error[i] + "</strong></div>"
+                notices += "<div class='alert alert-block alert-error fade in '><a class='close' data-dismiss='alert' href='#'>&times;</a><strong>" + data.error[i] + "</strong></div>"
 
             }
         }
@@ -146,7 +140,7 @@ var login = {
                 data.info = [data.info];
             }
             for (i in data.info) {
-                notices += "<div class='alert alert-block alert-info fade in '><strong>" + data.info[i] + "</strong></div>"
+                notices += "<div class='alert alert-block alert-info fade in '><a class='close' data-dismiss='alert' href='#'>&times;</a><strong>" + data.info[i] + "</strong></div>"
 
             }
         }
@@ -157,7 +151,7 @@ var login = {
     registerResponse:function (data) {
 
         if (!data.error) {
-            $('#register').get(0).reset()
+            $('#register').get(0).reset();
             login.showLoginForm();
         }
         login.displayMessages(data);
@@ -198,12 +192,7 @@ var login = {
 
     showReset:function (event) {
         login.showForm('reset');
-    },
-
-    showResetPass:function (event) {
-        login.showForm('resetpass');
-
-     }
+    }
 };
 
 

@@ -25,6 +25,7 @@
  * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 ({
+    tagName: "span",
     fieldTag: "a",
     _render:function(){
         // buttons use the value property in metadata to denote their action for acls
@@ -47,5 +48,12 @@
         }
         this.def.css_class = _.unique(_.compact(css_class)).join(' ');
         app.view.Field.prototype.setDisabled.call(this, disable);
+    },
+    /**
+     * Defines at what state a button should be shown
+     * @return String
+     */
+    showOn: function() {
+        return this.def.showOn;
     }
 })
