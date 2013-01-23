@@ -266,46 +266,41 @@ describe("Record View", function() {
         });
     });
 
-    describe('_renderPanels method', function () {
-        describe('1 column panel', function () {
-            it("Should create panel grid with last row containing one empty column", function () {
-                var results, panelDefs = [
-                    {
-                        "name":"panel_body",
-                        "label":"LBL_PANEL_2",
-                        "columns":1,
-                        "labels":true,
-                        "labelsOnTop":true,
-                        "placeholders":true,
-                        "fields":["description", "case_number", "type"]
-                    }
-                ];
+    describe('_renderPanels with 1 column', function () {
+        it("Should create panel grid with all fields on separate rows", function () {
+            var results,
+                panelDefs = [{
+                    "name":         "panel_body",
+                    "label":        "LBL_PANEL_2",
+                    "columns":      1,
+                    "labels":       true,
+                    "labelsOnTop":  true,
+                    "placeholders": true,
+                    "fields":       ["description", "case_number", "type"]
+                }];
 
-                view._renderPanels(panelDefs);
-                results = panelDefs[0].grid;
+            view._renderPanels(panelDefs);
+            results = panelDefs[0].grid;
 
-                expect(results.length).toBe(3);
-                expect(results[0].length).toBe(1);
-                expect(results[1].length).toBe(1);
-                expect(results[2].length).toBe(1);
-            });
-
+            expect(results.length).toBe(3);
+            expect(results[0].length).toBe(1);
+            expect(results[1].length).toBe(1);
+            expect(results[2].length).toBe(1);
         });
     });
 
-    describe('2 column panel', function () {
-        it("Should create panel grid with all fields on seperate rows", function () {
-            var results, panelDefs = [
-                {
-                    "name":"panel_body",
-                    "label":"LBL_PANEL_2",
-                    "columns":2,
-                    "labels":true,
-                    "labelsOnTop":true,
-                    "placeholders":true,
-                    "fields":["description", "case_number", "type"]
-                }
-            ];
+    describe('_renderPanels with 2 columns', function () {
+        it("Should create panel grid with last row containing one empty column", function () {
+            var results,
+                panelDefs = [{
+                    "name":         "panel_body",
+                    "label":        "LBL_PANEL_2",
+                    "columns":      2,
+                    "labels":       true,
+                    "labelsOnTop":  true,
+                    "placeholders": true,
+                    "fields":       ["description", "case_number", "type"]
+                }];
 
             view._renderPanels(panelDefs);
             results = panelDefs[0].grid;
@@ -315,54 +310,52 @@ describe("Record View", function() {
             expect(results[1].length).toBe(1);
         });
 
-
-        it("Should create panel grid with field on its own row where fields span causes overflow", function () {
-            var results, panelDefs = [
-                {
-                    "name":"panel_body",
-                    "label":"LBL_PANEL_2",
-                    "columns":2,
-                    "labels":true,
-                    "labelsOnTop":true,
-                    "placeholders":true,
-                    "fields":[
+        it("Should create panel grid with second field on its own row where second field's span causes overflow", function () {
+            var results,
+                panelDefs = [{
+                    "name":         "panel_body",
+                    "label":        "LBL_PANEL_2",
+                    "columns":      2,
+                    "labels":       true,
+                    "labelsOnTop":  true,
+                    "placeholders": true,
+                    "fields":       [
                         "case_number",
                         {
-                            'name':'description',
-                            'span':12
+                            'name': 'description',
+                            'span': 12
                         },
                         "type"
                     ]
-                }
-            ];
+                }];
 
             view._renderPanels(panelDefs);
             results = panelDefs[0].grid;
+
             expect(results.length).toBe(3);
             expect(results[0].length).toBe(1);
             expect(results[1].length).toBe(1);
             expect(results[2].length).toBe(1);
         });
 
-        it("Should create panel grid with field on its own row where fields span fills the row", function () {
-            var results, panelDefs = [
-                {
-                    "name":"panel_body",
-                    "label":"LBL_PANEL_2",
-                    "columns":2,
-                    "labels":true,
-                    "labelsOnTop":true,
-                    "placeholders":true,
-                    "fields":[
+        it("Should create panel grid with first field on its own row where the first field's span fills the row", function () {
+            var results,
+                panelDefs = [{
+                    "name":         "panel_body",
+                    "label":        "LBL_PANEL_2",
+                    "columns":      2,
+                    "labels":       true,
+                    "labelsOnTop":  true,
+                    "placeholders": true,
+                    "fields":       [
                         {
-                            'name':'description',
-                            'span':12
+                            'name': 'description',
+                            'span': 12
                         },
                         "case_number",
                         "type"
                     ]
-                }
-            ];
+                }];
 
             view._renderPanels(panelDefs);
             results = panelDefs[0].grid;
@@ -373,53 +366,52 @@ describe("Record View", function() {
         });
     });
 
-    describe('3 column panel', function () {
-        it("Should create panel grid with field on its own row where fields span causes overflow", function () {
-            var results, panelDefs = [
-                {
-                    "name":"panel_body",
-                    "label":"LBL_PANEL_2",
-                    "columns":3,
-                    "labels":true,
-                    "labelsOnTop":true,
-                    "placeholders":true,
-                    "fields":[
+    describe('_renderPanels with 3 columns', function () {
+        it("Should create panel grid with last field on its own row where the last field's span causes overflow", function () {
+            var results,
+                panelDefs = [{
+                    "name":         "panel_body",
+                    "label":        "LBL_PANEL_2",
+                    "columns":      3,
+                    "labels":       true,
+                    "labelsOnTop":  true,
+                    "placeholders": true,
+                    "fields":       [
                         "case_number",
                         {
-                            'name':'description',
+                            'name': 'description',
                             'span': 6
                         },
                         "type"
                     ]
-                }
-            ];
+                }];
 
             view._renderPanels(panelDefs);
             results = panelDefs[0].grid;
+
             expect(results.length).toBe(2);
             expect(results[0].length).toBe(2);
             expect(results[1].length).toBe(1);
         });
 
-        it("Should create panel grid with field on its own row where fields span fills the row", function () {
-            var results, panelDefs = [
-                {
-                    "name":"panel_body",
-                    "label":"LBL_PANEL_2",
-                    "columns":3,
-                    "labels":true,
-                    "labelsOnTop":true,
-                    "placeholders":true,
-                    "fields":[
+        it("Should create panel grid with first field on its own row where the first field's span fills the row", function () {
+            var results,
+                panelDefs = [{
+                    "name":         "panel_body",
+                    "label":        "LBL_PANEL_2",
+                    "columns":      3,
+                    "labels":       true,
+                    "labelsOnTop":  true,
+                    "placeholders": true,
+                    "fields":       [
                         {
-                            'name':'description',
-                            'span':12
+                            'name': 'description',
+                            'span': 12
                         },
                         "case_number",
                         "type"
                     ]
-                }
-            ];
+                }];
 
             view._renderPanels(panelDefs);
             results = panelDefs[0].grid;
@@ -428,6 +420,33 @@ describe("Record View", function() {
             expect(results[0].length).toBe(1);
             expect(results[1].length).toBe(2);
         });
-    });
 
+        it("Should create panel grid with all fields on their own row when the span of the second of three fields causes fills a row", function () {
+            var results,
+                panelDefs = [{
+                    "name":         "panel_body",
+                    "label":        "LBL_PANEL_2",
+                    "columns":      3,
+                    "labels":       true,
+                    "labelsOnTop":  true,
+                    "placeholders": true,
+                    "fields":       [
+                        "case_number",
+                        {
+                            'name': 'description',
+                            'span': 12
+                        },
+                        "type"
+                    ]
+                }];
+
+            view._renderPanels(panelDefs);
+            results = panelDefs[0].grid;
+
+            expect(results.length).toBe(3);
+            expect(results[0].length).toBe(1);
+            expect(results[1].length).toBe(1);
+            expect(results[2].length).toBe(1);
+        });
+    });
 });
