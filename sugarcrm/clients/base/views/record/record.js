@@ -57,14 +57,25 @@
         this.context.on('button:duplicate_button:click', this.duplicateClicked, this);
     },
 
-    _render: function() {
+    _renderPanels: function(panels) {
         var totalFieldCount = 0;
 
-        _.each(this.meta.panels, function(panel) {
-            var columns = (panel.columns) || 1,
-                rows = [],
-                row = [],
-                size = panel.fields.length;
+        _.each(panels, function(panel) {
+            var columns  = (panel.columns) || 1,
+                rows     = [],
+                row      = [],
+                size     = panel.fields.length,
+                rowSpan  = 0,
+                colCount = 0;
+
+            var _startNewRow = function() {
+                rows.push(row); // push the current row onto the grid
+
+                // reset variables that keep track of the current row's state
+                row      = [];
+                rowSpan  = 0;
+                colCount = 0;
+            };
 
             // Set flag so that show more link can be displayed to show hidden panel.
             if (panel.hide) {
@@ -94,16 +105,39 @@
 
                 totalFieldCount++;
                 field.index = totalFieldCount;
-                row.push(field);
 
-                if ((index % columns === columns - 1) || (index === size - 1)) {
-                    rows.push(row);
-                    row = [];
+                // by default, the field takes up the space specified by its span
+                var fieldSpan = field.span;
+
+                // if the labels are to the left of the field (maxSpan == 8) then the field takes up the space
+                // specified by its span plus the space its label takes up
+                if (maxSpan == 8) {
+                    fieldSpan += field.labelSpan;
                 }
+
+                // if there isn't enough room remaining on the current row to contain the field or all available
+                // columns in the row have been filled, then start a new row
+                if ((rowSpan + fieldSpan) > maxSpan || colCount == columns) {
+                    _startNewRow();
+                }
+
+                row.push(field);
+                rowSpan += fieldSpan; // update rowSpan to account for span of the field that was just added to the row
+
+                // push the last row if there are no more fields in the panel
+                if ((index === size - 1)) {
+                    _startNewRow();
+                }
+
+                colCount++;
             }, this);
 
             panel.grid = rows;
         }, this);
+    },
+
+    _render: function() {
+        this._renderPanels(this.meta.panels);
 
         app.view.View.prototype._render.call(this);
         this.initButtons();
