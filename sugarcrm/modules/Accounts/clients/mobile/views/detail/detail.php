@@ -46,6 +46,7 @@ $viewdefs['Accounts']['mobile']['view']['detail'] = array(
                     ),
                 ),
                 'phone_office',
+                'phone_alternate',
                 array(
                     'name'=>'website',
                     'displayParams'=>array(
@@ -58,6 +59,11 @@ $viewdefs['Accounts']['mobile']['view']['detail'] = array(
                 'billing_address_state',
                 'billing_address_postalcode',
                 'billing_address_country',
+                'shipping_address_street',
+                'shipping_address_city',
+                'shipping_address_state',
+                'shipping_address_postalcode',
+                'shipping_address_country',
                 'assigned_user_name',
                 //BEGIN SUGARCRM flav=pro ONLY
                 'team_name',

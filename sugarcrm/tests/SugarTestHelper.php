@@ -848,7 +848,7 @@ class SugarTestHelper
         }
         foreach(self::$oldDirs as $dirname) {
             rmdir($dirname);
-            SugarAutoLoader::delFromMap($filename, false);
+            SugarAutoLoader::delFromMap($dirname, false);
         }
         SugarAutoLoader::saveMap();
     }
