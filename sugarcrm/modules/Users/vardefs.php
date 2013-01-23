@@ -351,30 +351,35 @@ $dictionary['User'] = array(
             'vname' => 'LBL_ADDRESS_STREET',
             'type' => 'varchar',
             'len' => '150',
+            'group' => 'address',
         ) ,
         'address_city' => array(
             'name' => 'address_city',
             'vname' => 'LBL_ADDRESS_CITY',
             'type' => 'varchar',
             'len' => '100',
+            'group' => 'address',
         ) ,
         'address_state' => array(
             'name' => 'address_state',
             'vname' => 'LBL_ADDRESS_STATE',
             'type' => 'varchar',
             'len' => '100',
+            'group' => 'address',
         ) ,
         'address_country' => array(
             'name' => 'address_country',
             'vname' => 'LBL_ADDRESS_COUNTRY',
             'type' => 'varchar',
             'len' => 100,
+            'group' => 'address',
         ) ,
         'address_postalcode' => array(
             'name' => 'address_postalcode',
             'vname' => 'LBL_ADDRESS_POSTALCODE',
             'type' => 'varchar',
             'len' => '20',
+            'group' => 'address',
         ) ,
         // This is a fake field for the edit view
         'UserType' => array(
@@ -395,7 +400,14 @@ $dictionary['User'] = array(
             'reportable' => false,
             'type' => 'varchar',
             'len' => '36',
-            'studio' => array('listview' => false, 'searchview'=>false, 'formula' => false),
+            'studio' => array(
+                'listview' => false,
+                'searchview'=>false,
+                'formula' => false,
+                'wirelesslistview' => false,
+                'wirelessdetailview' => false,
+                'wirelesseditview' => false,
+            ),
         ) ,
         'team_id' => array(
             'name' => 'team_id',
@@ -461,9 +473,9 @@ $dictionary['User'] = array(
                     'searchview'  =>false,
                     'editview'    =>false,
                     'quickcreate' =>false,
-//BEGIN SUGARCRM flav=pro ONLY
+                    'wirelesslistview' => false,
+                    'wirelessdetailview' => false,
                     'wirelesseditview' => false,
-//END SUGARCRM flav=pro ONLY
                 ),
 			),
 			'team_link' =>
@@ -570,12 +582,8 @@ $dictionary['User'] = array(
         'employee_status' => array(
             'name' => 'employee_status',
             'vname' => 'LBL_EMPLOYEE_STATUS',
-            'type' => 'varchar',
-            'function' => array(
-                'name' => 'getEmployeeStatusOptions',
-                'returns' => 'html',
-                'include' => 'modules/Employees/EmployeeStatus.php'
-            ) ,
+            'type' => 'enum',
+            'options' => 'employee_status_dom',
             'len' => 100,
         ) ,
         'messenger_id' => array(

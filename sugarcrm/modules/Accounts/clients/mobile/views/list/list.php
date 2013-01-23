@@ -40,7 +40,7 @@ $viewdefs['Accounts']['mobile']['view']['list'] = array(
                     'width' => '10%',
                 ),
                 array(
-                    'name' => 'team_name',
+                    'name' => 'billing_address_city',
                     'enabled' => true,
                     'width' => '10%',
                     'default' => true,
@@ -59,6 +59,12 @@ $viewdefs['Accounts']['mobile']['view']['list'] = array(
                     'default' => true,
                 ),
                 array(
+                    'name' => 'phone_alternate',
+                    'enabled' => true,
+                    'width' => '10%',
+                    'default' => true,
+                ),
+                array(
                     'name' => 'email1',
                     'enabled' => true,
                     'width' => '10%',
@@ -66,12 +72,6 @@ $viewdefs['Accounts']['mobile']['view']['list'] = array(
                 ),
                 array(
                     'name' => 'billing_address_street',
-                    'enabled' => true,
-                    'width' => '10%',
-                    'default' => true,
-                ),
-                array(
-                    'name' => 'billing_address_city',
                     'enabled' => true,
                     'width' => '10%',
                     'default' => true,
@@ -90,6 +90,42 @@ $viewdefs['Accounts']['mobile']['view']['list'] = array(
                 ),
                 array(
                     'name' => 'billing_address_country',
+                    'enabled' => true,
+                    'width' => '10%',
+                    'default' => true,
+                ),
+                array(
+                    'name' => 'shipping_address_street',
+                    'enabled' => true,
+                    'width' => '10%',
+                    'default' => true,
+                ),
+                array(
+                    'name' => 'shipping_address_city',
+                    'enabled' => true,
+                    'width' => '10%',
+                    'default' => true,
+                ),
+                array(
+                    'name' => 'shipping_address_state',
+                    'enabled' => true,
+                    'width' => '10%',
+                    'default' => true,
+                ),
+                array(
+                    'name' => 'shipping_address_postalcode',
+                    'enabled' => true,
+                    'width' => '10%',
+                    'default' => true,
+                ),
+                array(
+                    'name' => 'shipping_address_country',
+                    'enabled' => true,
+                    'width' => '10%',
+                    'default' => true,
+                ),
+                array(
+                    'name' => 'team_name',
                     'enabled' => true,
                     'width' => '10%',
                     'default' => true,

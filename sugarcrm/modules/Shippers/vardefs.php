@@ -128,8 +128,9 @@ $dictionary['Shipper'] = array('table' => 'shippers'
     	'vname' => 'LBL_QUOTES',
     	'source'=>'non-db',
   ),
-)
-                                                      , 'indices' => array (
+),
+'acls' => array('SugarACLAdminOnly' => array('adminFor' => 'Products', 'allowUserRead' => true)),
+'indices' => array (
        array('name' =>'shipperspk', 'type' =>'primary', 'fields'=>array('id')),
        array('name' =>'idx_shippers', 'type'=>'index', 'fields'=>array('name','deleted')),
                                                       )

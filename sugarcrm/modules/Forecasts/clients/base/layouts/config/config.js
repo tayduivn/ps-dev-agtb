@@ -43,19 +43,42 @@
             options.context.forecasts = new Backbone.Model({'saveClicked' : false});
 
             // Initialize the config model
-            var ConfigModel = Backbone.Model.extend({
-                url:app.api.buildURL("Forecasts", "config"),
-                sync:function (method, model, options) {
+            var modelUrl = app.api.buildURL("Forecasts", "config"),
+                modelSync = function(method, model, options) {
                     var url = _.isFunction(model.url) ? model.url() : model.url;
                     return app.api.call(method, url, model, options);
-                },
-                // include metadata from config into the config model by default
-                defaults:app.metadata.getModule('Forecasts').config
-            });
-            options.context.forecasts.config = new ConfigModel();
+                };
+            options.context.forecasts.config = this._getConfigModel(options, modelUrl, modelSync);
+
         }
 
         app.view.Layout.prototype.initialize.call(this, options);
+    },
+
+    /**
+     * Gets a config model for the config settings dialog.
+     *
+     * If we're using this layout from inside the Forecasts module and forecasts already has a config model, config
+     * will use that config model as our current context so we're updating a clone of the same model.
+     * The clone facilitates not saving to a "live" model, so if a user hits cancel, the values will go back to the
+     * correct setting the next time the admin panel is accessed.
+     *
+     * If we're not coming in from the Forecasts module (e.g. Admin)
+     * creates a new model and config will use that to change/save
+     * @return {Object} the model for config
+     */
+    _getConfigModel: function(options, syncUrl, syncFunction) {
+        var SettingsModel = Backbone.Model.extend({
+            url: syncUrl,
+            sync: syncFunction,
+            //include metadata from config into the config model by default
+            defaults:app.metadata.getModule('Forecasts').config
+        });
+
+        // jQuery.extend is used with the `true` parameter to do a deep copy
+        return (_.has(options.context,'forecasts') && _.has(options.context.forecasts,'config')) ?
+            new SettingsModel($.extend(true, {}, options.context.forecasts.config.attributes)) :
+            new SettingsModel();
     },
 
     /**
@@ -116,59 +139,88 @@
      * @param isAdmin
      */
     checkSettingsAndRedirect:function (isSetup, isAdmin) {
-        var saveClicked = this.context.forecasts.get('saveClicked');
+        var state = {
+                isSetup: isSetup,
+                isAdmin: isAdmin,
+                saveClicked: this.context.forecasts.get('saveClicked')
+            },
+            location = this.getRedirectURL(state),
+            self = this;
 
         /**
-         * 4 conditions exist
+         * 2 conditions exist here.
+         * 1) If the user is an admin and clicked save, then messages are displayed
+         *    and the module is reloaded
+         * 2) Otherwise, the user is not an admin or has clicked cancel/X, in which case
+         *    we reload the module or forward them to the home module immediately.  Which
+         *    is to occur is determined by the getRedirectURL
+         */
+        if(isAdmin && state.saveClicked == true) {
+            // only sync the metadata
+            app.metadata.sync();
+            // can happen on both views but it's the same methods/messages
+            // we have a success save, so we need to call the app.metadata.sync() and then redirect back to the index
+            if(!isSetup){
+                //issue notice about setting up Opportunities
+                var alert = app.alert.show('forecast_opp_notice', {
+                    level:'confirmation',
+                    showCancel:false,
+                    messages: app.lang.get("LBL_FORECASTS_WIZARD_REFRESH_NOTICE", "Forecasts")
+                });
+
+                //add alert listener for the close click, in case user clicks the X instead of the confirm button.
+                alert.getCloseSelector().on('click', function() {
+                    self.displaySuccessAndReload(location);
+                });
+            } else {
+                this.displaySuccessAndReload(location);
+            }
+        } else {
+            window.location = location;
+        }
+    },
+
+    /**
+     * Checks the variables provided to determine what the reload/forward location ought to be
+     *
+     * @param state object consisting of values of the current app state(isAdmin, isSetup, saveClicked, etc)
+     * @return {string} url to send page to
+     */
+    getRedirectURL:function (state) {
+        /**
+         * 3 conditions exist here
          * 1a: If the user is not an admin, then the user will be redirected to the main Sugar index
          * 1b: User is an admin, and has clicked cancel/X to close the modal without saving
          *      and module has never been set up
-         * 2: The user is an admin, but setup has been performed and the cancel has been clicked,
-         *      then redirect user to Forecasts module
-         * 3: The user is an admin and setup is complete.  A success message is displayed.  An additional
-         *      message regarding opportunity setup is displayed if this is the initial setup
+         * 2: The user is an admin and forecasts has been setup.  At this point, it won't
+         *    matter if cancel was clicked or save, the result is the same, the location
+         *    to redirect to will be to reload the forecasts module
          */
-        if (!isAdmin || (isAdmin && isSetup == 0 && saveClicked == false)) {
+        if (!state.isAdmin || (state.isAdmin && state.isSetup == 0 && state.saveClicked == false)) {
             // this should only ever happen on the wizard view and if the user accessing is not an admin
-            window.location = 'index.php?module=Home';
-        } else if (isSetup == 1 && saveClicked == false) {
-            // this should only ever happen on the tabbed view when cancel is clicked
-            window.location.hash = '#Forecasts';
+            return 'index.php?module=Home';
         } else {
-            // can happen on both views but it's the same methods/messages
-            // we have a success save, so we need to call the app.metadata.sync() and then redirect back to the index
-            app.alert.show('success', {
-                level:'success',
-                autoClose:true,
-                closeable:false,
-                title:app.lang.get("LBL_FORECASTS_WIZARD_SUCCESS_TITLE", "Forecasts") + ":",
-                messages:[app.lang.get("LBL_FORECASTS_WIZARD_SUCCESS_MESSAGE", "Forecasts")]
-            });
-            if(!isSetup){
-                //issue notice about setting up Opportunities, we want this to happen after the page "refreshes"
-                setTimeout(function(){
-                    app.alert.show('forecast_opp_notice', {
-                        level:'info',
-                        autoClose:false,
-                        closeable:true,
-                        messages: app.lang.get("LBL_FORECASTS_WIZARD_REFRESH_NOTICE", "Forecasts")
-                    });}, 1000);
-            }
-                       
-            // only sync the metadata and then push it back to the main location
-            app.metadata.sync(function() {
-
-                window.location.hash = "#Forecasts/layout/index";
-                
-                //issue notice about setting up Opportunities, we want this to happen after the page "refreshes"
-                setTimeout(function(){
-                    app.alert.show('forecast_opp_notice', {
-                        level:'info',
-                        autoClose:false,
-                        closeable:true,
-                        messages: app.lang.get("LBL_FORECASTS_WIZARD_REFRESH_NOTICE", "Forecasts")
-                    });}, 1000);
-            });
+            return 'index.php?action=sidecar#Forecasts';
         }
+    },
+
+    /**
+     * Displays an alert  and reloads the page
+     */
+    displaySuccessAndReload:function () {
+        var alert = app.alert.show('success', {
+            level:'success',
+            autoClose:true,
+            closeable:true,
+            onAutoClose: function() {
+                window.location.hash = "#Forecasts";
+            },
+            title:app.lang.get("LBL_FORECASTS_WIZARD_SUCCESS_TITLE", "Forecasts") + ":",
+            messages:[app.lang.get("LBL_FORECASTS_WIZARD_SUCCESS_MESSAGE", "Forecasts")]
+        });
+
+        alert.getCloseSelector().on('click', function() {
+            window.location.hash = "#Forecasts";
+        });
     }
 })

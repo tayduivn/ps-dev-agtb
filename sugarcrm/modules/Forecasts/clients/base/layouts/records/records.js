@@ -73,7 +73,7 @@
         app.initData = forecastData.initData;
         app.user.set(app.initData.selectedUser);
 
-        if(forecastData.initData.forecasts_setup == 0) {
+        if(forecastData.initData.forecasts_setup === 0) {
             window.location.hash = "#Forecasts/layout/config";
         }
 
@@ -108,15 +108,6 @@
              * (e.g. selecting a different user via the hierarchy tree or clicking in the worksheet)
              */
             selectedUser : defaultSelections.selectedUser,
-
-            /**
-             * todo-sfa: when teams/ACLs are implemented, we won't need this anymore and we can just use app.user
-             *
-             * currentUser is the currently logged-in user
-             * this is separate from selectedUser so we can maintain all of the originally passed-down data
-             * from the server on the currently logged-in user
-             */
-            currentUser : defaultSelections.selectedUser,
 
             /**
              * boolean to reload the active worksheet
