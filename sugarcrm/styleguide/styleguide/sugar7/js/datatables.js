@@ -62,23 +62,26 @@ $(document).ready(function() {
       loadPartials([
          {"file":"common/table-cell-edit","target":"#edit-id-"+editid,"method":"append"},
       ]);
-
       initSelect2('select.select2');
-
       var tr_val = new Array(),
+          tr_type_textarea = new Array(),
           tr_i = 0;
       $(this).closest('tr').find('td').each(function(el){
           //console.log($(this).text());
           tr_val[tr_i]=$(this).text();
+          tr_type_textarea[tr_i] = $(this).find('span').hasClass('textarea');
           tr_i = tr_i + 1;
       });
-
       var tr_i = 0;
       $('#edit-id-'+editid).find('td').each(function(el){
-        $(this).find('input[type=text]').attr('value',tr_val[tr_i]);
+        var this_el = $(this).find('input[type=text]');
+        this_el.attr('value',tr_val[tr_i]);
+        if(tr_type_textarea[tr_i]==true) {
+          $('<textarea class="inherit-width">' + tr_val[tr_i] + '</textarea>').insertAfter(this_el);
+          this_el.remove();
+        }
         tr_i = tr_i + 1;
       });
-
       $(this).closest('tr').addClass('hide');
     }
   });
@@ -88,12 +91,15 @@ $(document).ready(function() {
   });
 
   $('body').on('click', '.tr-inline-edit .inline-cancel, .tr-inline-edit .inline-save', function(){
+
     $(this).closest('tr').prev().removeClass('hide active');
     $(this).closest('tr').remove();
+    $('#example').removeClass('inline-edit-active');
+
     if($(this).hasClass('inline-save')) {
       throwMessage('<strong>Success!</strong> Your edits have been saved.', 'success', true);
     }
-    $('#example').removeClass('inline-edit-active');
+
     return false;
   });
 
@@ -110,13 +116,14 @@ $(document).ready(function() {
       loadPartials([
          {"file":"common/header","target":".headerpane.ellipsis","method":"replace"},
       ]);
+      $('table.datatable').addClass('dataTable');
   });
 
   $('body').on('click', '.edit-all-records', function(){
 
     $('#example').addClass('inline-edit-active');
 
-    $('#example tr').each(function(){
+    $('#example tbody tr').each(function(){
       var editid = Math.floor(Math.random()*999999);
       $('<tr id="edit-id-'+editid+'" class="tr-inline-edit"></tr>').insertAfter($(this));
       loadPartials([
@@ -125,16 +132,23 @@ $(document).ready(function() {
       ]);
 
       var tr_val = new Array(),
+          tr_type_textarea = new Array(),
           tr_i = 0;
 
       $(this).find('td').each(function(el){
           tr_val[tr_i]=$(this).text();
+          tr_type_textarea[tr_i] = $(this).find('span').hasClass('textarea');
           tr_i = tr_i + 1;
       });
 
       var tr_i = 0;
       $('#edit-id-'+editid).find('td').each(function(el){
-        $(this).find('input[type=text]').attr('value',tr_val[tr_i]);
+        var this_el = $(this).find('input[type=text]');
+        this_el.attr('value',tr_val[tr_i]);
+        if(tr_type_textarea[tr_i]==true) {
+          $('<textarea class="inherit-width">' + tr_val[tr_i] + '</textarea>').insertAfter(this_el);
+          this_el.remove();
+        }
         tr_i = tr_i + 1;
       });
 
@@ -150,6 +164,7 @@ $(document).ready(function() {
     $('tr.tr-inline-edit').remove();
     $('tr.hide').removeClass('hide')
     throwMessage('<strong>Success!</strong> Your edits have been saved.', 'success', true);
+    $('table.datatable').addClass('dataTable');
     loadPartials([
       {"file":"common/header","target":".headerpane.ellipsis","method":"replace"},
     ]);

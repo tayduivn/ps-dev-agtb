@@ -114,8 +114,10 @@ body {
   display: inline-block;
   margin-top: 0;
 }
-.hero-unit #find_patterns_chzn {
+.hero-unit #s2id_find_patterns {
   z-index: 1030;
+  font-size: 12px;
+  width: 200px;
 }
 .section-search input {
   width: 100%;

@@ -299,6 +299,9 @@ h1 input[type="text"] {
     min-height: 28px;
     .box-sizing(border-box);
   }
+  textarea.inherit-width { /* some modern browsers let you resize textarea, this ensures it doesn't go beyond parent container */
+    max-width: 100%;
+  }
 }
 
 //Generate fixed spanX modal widths
