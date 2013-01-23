@@ -34,7 +34,7 @@
     <h3>{$APP.LBL_TOUR_WELCOME}</h3>
     </div>
     
-	<div class="modal-body">
+	<div class="modal-body" {if $view_calendar_url}style="overflow: auto;"{/if}>
         <div style="float: left;">
             <div style="float: left; width: 300px;">
 				{$APP.LBL_TOUR_FEATURES}
