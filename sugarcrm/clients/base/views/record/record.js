@@ -20,7 +20,7 @@
         }
     },
     // button fields defined in view definition
-    buttons: {},
+    buttons: null,
 
     // button states
     STATE: {
@@ -35,6 +35,8 @@
         _.bindAll(this);
 
         app.view.views.EditableView.prototype.initialize.call(this, options);
+
+        this.buttons = {};
 
         this.createMode = this.context.get("create") ? true : false;
         this.action = this.createMode ? 'edit' : 'detail';
