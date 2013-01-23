@@ -54,17 +54,17 @@ class SugarSearchEngineHighlighter
         $ret = array();
         foreach ($resultArray as $field=>$fragments)
         {
-            $field = $this->translateFieldName($field);
+            $ret[$field] = array('text' => '', 'module' => $this->_module, 'label' => $this->getLabel($field));
             $first = true;
             foreach ($fragments as $frament)
             {
                 if (!$first)
                 {
-                    $ret[$field] .= '...' . $frament;
+                    $ret[$field]['text'] .= '...' . $frament;
                 }
                 else
                 {
-                    $ret[$field] = $frament;
+                    $ret[$field]['text'] = $frament;
                 }
                 $first = false;
             }
@@ -73,7 +73,7 @@ class SugarSearchEngineHighlighter
         return $ret;
     }
 
-    public function translateFieldName($field)
+    public function getLabel($field)
     {
         if(empty($this->_module))
         {
@@ -84,22 +84,11 @@ class SugarSearchEngineHighlighter
             $tmpBean = BeanFactory::getBean($this->_module, null);
             $field_defs = $tmpBean->field_defs;
             $field_def = isset($field_defs[$field]) ? $field_defs[$field] : FALSE;
-            if($field_def === FALSE || !isset($field_def['vname']))
+            if($field_def === FALSE || (!isset($field_def['vname']) && !isset($field_def['label']))) {
                 return $field;
+            }
 
-            $module_lang = return_module_language($GLOBALS['current_language'], $this->_module);
-            if(isset($module_lang[$field_def['vname']]))
-            {
-                $label = $module_lang[$field_def['vname']];
-                if( substr($label,-1) == ':')
-                    return (substr($label, 0, -1));
-                else
-                    return $label;
-            }
-            else
-            {
-                return $field;
-            }
+            return (isset($field_def['label'])) ? $field_def['label'] : $field_def['vname'];
         }
     }
 }

@@ -548,3 +548,7 @@ ul.clickMenu li ul.subnav, ul.clickMenu ul.subnav-sub, ul.SugarActionMenuIESub {
 .yui-ac-container {
     left: auto !important
 }
+
+#dcboxbody .hd .close {
+    left: 10px;
+}

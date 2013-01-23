@@ -409,7 +409,14 @@ $dictionary['User'] = array(
             'reportable' => false,
             'type' => 'varchar',
             'len' => '36',
-            'studio' => array('listview' => false, 'searchview'=>false, 'formula' => false),
+            'studio' => array(
+                'listview' => false,
+                'searchview'=>false,
+                'formula' => false,
+                'wirelesslistview' => false,
+                'wirelessdetailview' => false,
+                'wirelesseditview' => false,
+            ),
         ) ,
         'team_id' => array(
             'name' => 'team_id',
@@ -475,9 +482,9 @@ $dictionary['User'] = array(
                     'searchview'  =>false,
                     'editview'    =>false,
                     'quickcreate' =>false,
-//BEGIN SUGARCRM flav=pro ONLY
+                    'wirelesslistview' => false,
+                    'wirelessdetailview' => false,
                     'wirelesseditview' => false,
-//END SUGARCRM flav=pro ONLY
                 ),
 			),
 			'team_link' =>
