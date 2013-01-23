@@ -8,10 +8,19 @@
         'click .record-edit-link-wrapper': 'handleEdit',
         'click a[name=cancel_button]': 'cancelClicked',
         'click .more': 'toggleMoreLess',
-        'click .less': 'toggleMoreLess'
+        'click .less': 'toggleMoreLess',
+        'mouseenter .ellipsis_inline':'addTooltip'
+    },
+    addTooltip: function(event){
+        var $el = this.$(event.target);
+        if( $el[0].offsetWidth < $el[0].scrollWidth ) {
+            $el.tooltip('show');
+        } else {
+            $el.tooltip('destroy');
+        }
     },
     // button fields defined in view definition
-    buttons: {},
+    buttons: null,
 
     // button states
     STATE: {
@@ -26,6 +35,8 @@
         _.bindAll(this);
 
         app.view.views.EditableView.prototype.initialize.call(this, options);
+
+        this.buttons = {};
 
         this.createMode = this.context.get("create") ? true : false;
         this.action = this.createMode ? 'edit' : 'detail';
