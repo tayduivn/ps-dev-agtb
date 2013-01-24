@@ -95,8 +95,8 @@ class ForecastsApiTest extends RestTestBase
     public function testCheckForecastSpecificIsManager()
     {
         $restReply = $this->_restCall("Forecasts/init");
-        $currentUser = $restReply['reply']['initData']['userData'];
-        $this->assertArrayHasKey('isManager', $currentUser, "Forecasts/init did not return isManager");
+        $userData = $restReply['reply']['initData']['userData'];
+        $this->assertArrayHasKey('isManager', $userData, "Forecasts/init did not return isManager");
     }
 
     /**
@@ -107,8 +107,8 @@ class ForecastsApiTest extends RestTestBase
     public function testCheckForecastSpecificShowOpps()
     {
         $restReply = $this->_restCall("Forecasts/init");
-        $currentUser = $restReply['reply']['initData']['userData'];
-        $this->assertArrayHasKey('showOpps', $currentUser, "Forecasts/init did not return showOpps");
+        $userData = $restReply['reply']['initData']['userData'];
+        $this->assertArrayHasKey('showOpps', $userData, "Forecasts/init did not return showOpps");
     }
 
     /**
@@ -119,8 +119,8 @@ class ForecastsApiTest extends RestTestBase
     public function testCheckForecastSpecificFirstName()
     {
         $restReply = $this->_restCall("Forecasts/init");
-        $currentUser = $restReply['reply']['initData']['userData'];
-        $this->assertArrayHasKey('first_name', $currentUser, "Forecasts/init did not return first_name");
+        $userData = $restReply['reply']['initData']['userData'];
+        $this->assertArrayHasKey('first_name', $userData, "Forecasts/init did not return first_name");
     }
 
     /**
@@ -131,8 +131,8 @@ class ForecastsApiTest extends RestTestBase
     public function testCheckForecastSpecificLastName()
     {
         $restReply = $this->_restCall("Forecasts/init");
-        $currentUser = $restReply['reply']['initData']['userData'];
-        $this->assertArrayHasKey('last_name', $currentUser, "Forecasts/init did not return last_name");
+        $userData = $restReply['reply']['initData']['userData'];
+        $this->assertArrayHasKey('last_name', $userData, "Forecasts/init did not return last_name");
     }
 
     /**
