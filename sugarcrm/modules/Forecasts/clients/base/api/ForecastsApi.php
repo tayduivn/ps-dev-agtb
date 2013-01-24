@@ -1,5 +1,5 @@
 <?php
-if (!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
+if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 /********************************************************************************
  *The contents of this file are subject to the SugarCRM Professional End User License Agreement
  *("License") which can be viewed at http://www.sugarcrm.com/EULA.
@@ -20,23 +20,36 @@ if (!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
-require_once('clients/base/api/ModuleApi.php');
+require_once('include/api/SugarApi.php');
 
-class ForecastsFiltersApi extends ModuleApi
+class ForecastsApi extends SugarApi
 {
-
     public function registerApiRest()
     {
-        $parentApi = parent::registerApiRest();
-        //Extend with test method
         $parentApi = array(
+            'init' => array(
+                'reqType' => 'GET',
+                'path' => array('Forecasts','init'),
+                'pathVars' => array(),
+                'method' => 'forecastsInitialization',
+                'shortHelp' => 'Returns forecasts initialization data and additional user data',
+                'longHelp' => 'modules/Forecasts/clients/base/api/help/ForecastsApiInitGet.html',
+            ),
+            'selecteUserObject' => array(
+                'reqType' => 'GET',
+                'path' => array('Forecasts', 'user', '?'),
+                'pathVars' => array('', '', 'user_id'),
+                'method' => 'retrieveSelectedUser',
+                'shortHelp' => 'Returns selectedUser object for given user',
+                'longHelp' => 'modules/Forecasts/clients/base/api/help/ForecastsApiUserGet.html',
+            ),
             'timeperiod' => array(
                 'reqType' => 'GET',
                 'path' => array('Forecasts', 'timeperiod'),
                 'pathVars' => array('', ''),
                 'method' => 'timeperiod',
                 'shortHelp' => 'forecast timeperiod',
-                'longHelp' => 'modules/Forecasts/clients/base/api/help/ForecastFiltersTimePeriodGet.html',
+                'longHelp' => 'modules/Forecasts/clients/base/api/help/ForecastApiTimePeriodGet.html',
             ),
             'reportees' => array(
                 'reqType' => 'GET',
@@ -44,10 +57,88 @@ class ForecastsFiltersApi extends ModuleApi
                 'pathVars' => array('', '', 'user_id'),
                 'method' => 'getReportees',
                 'shortHelp' => 'Gets reportees to a user by id',
-                'longHelp' => 'modules/Forecasts/clients/base/api/help/ForecastFiltersReporteesGet.html',
+                'longHelp' => 'modules/Forecasts/clients/base/api/help/ForecastApiReporteesGet.html',
             )
         );
         return $parentApi;
+    }
+
+    /**
+     * Returns the initialization data for the module including currently logged-in user data,
+     * timeperiods, and admin config settings
+     *
+     * @param $api
+     * @param $args
+     * @return array
+     * @throws SugarApiExceptionNotAuthorized
+     */
+    public function forecastsInitialization($api, $args) {
+        global $current_user;
+
+        if(!SugarACL::checkAccess('Forecasts', 'access')) {
+            throw new SugarApiExceptionNotAuthorized();
+        }
+
+        $returnInitData = array();
+        $defaultSelections = array();
+
+        // Add Forecasts-specific items to returned data
+        $returnInitData["initData"]["userData"]['isManager'] = User::isManager($current_user->id);
+        $returnInitData["initData"]["userData"]['showOpps'] = false;
+        $returnInitData["initData"]["userData"]['first_name'] = $current_user->first_name;
+        $returnInitData["initData"]["userData"]['last_name'] = $current_user->last_name;
+
+        // TODO: These should probably get moved in with the config/admin settings, or by themselves since this file will probably going away.
+        $id = TimePeriod::getCurrentId();
+        if(!empty($id)) {
+            $timePeriod = new TimePeriod();
+            $timePeriod->retrieve($id);
+            $defaultSelections["timeperiod_id"] = array(
+                'id' => $id,
+                'label' => $timePeriod->name
+            );
+        } else {
+            $defaultSelections["timeperiod_id"]["id"] = '';
+            $defaultSelections["timeperiod_id"]["label"] = '';
+        }
+
+        // INVESTIGATE: these need to be more dynamic and deal with potential customizations based on how filters are built in admin and/or studio
+        $admin = BeanFactory::getBean("Administration");
+        $forecastsSettings = $admin->getConfigForModule("Forecasts", "base");
+
+        $returnInitData["initData"]['forecasts_setup'] = (isset($forecastsSettings['is_setup'])) ? $forecastsSettings['is_setup'] : 0;
+
+        $defaultSelections["ranges"] = array("include");
+        $defaultSelections["group_by"] = 'forecast';
+        $defaultSelections["dataset"] = 'likely';
+
+        // push in defaultSelections
+        $returnInitData["defaultSelections"] = $defaultSelections;
+
+        $returnInitData["forecastsJavascript"] = getVersionedPath(sugar_cached('include/javascript/sidecar_forecasts.js'));
+
+        return $returnInitData;
+    }
+
+    /**
+     * Retrieves user data for a given user id
+     *
+     * @param $api
+     * @param $args
+     * @return array
+     */
+    public function retrieveSelectedUser($api, $args) {
+        global $locale;
+        $uid = $args['user_id'];
+        $user = BeanFactory::getBean('Users', $uid);
+        $data = array();
+        $data['id'] = $user->id;
+        $data['user_name'] = $user->user_name;
+        $data['full_name'] = $locale->getLocaleFormattedName($user->first_name,$user->last_name);
+        $data['first_name'] = $user->first_name;
+        $data['last_name'] = $user->last_name;
+        $data['isManager'] = User::isManager($user->id);
+        return $data;
     }
 
     /**
@@ -99,5 +190,4 @@ class ForecastsFiltersApi extends ModuleApi
         $obj = new $klass($args);
         return $obj->process();
     }
-
 }
