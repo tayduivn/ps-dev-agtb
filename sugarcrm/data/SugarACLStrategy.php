@@ -96,11 +96,11 @@ abstract class SugarACLStrategy
         $result = array();
         foreach($field_list as $key => $field) {
             if($this->checkAccess($module, "field", $context + array("field" => $field, "action" => "edit"))) {
-                $result[$key] = SugarACL::ACL_READ_WRITE;
+                $result[$key] = SugarACL::ACL_READ_WRITE;                
+            } elseif((empty($context['bean']) || empty($context['bean']->id) || $context['bean']->new_with_id == true) && $this->checkAccess($module, "field", $context + array("field" => $field, "action" => "create"))) {
+                $result[$key] = SugarACL::ACL_CREATE_ONLY;
             } elseif($this->checkAccess($module, "field", $context + array("field" => $field, "action" => "detail"))) {
                 $result[$key] = SugarACL::ACL_READ_ONLY;
-            }  elseif($this->checkAccess($module, "field", $context + array("field" => $field, "action" => "create"))) {
-                $result[$key] = SugarACL::ACL_CREATE_ONLY;
             } else {
                 $result[$key] = SugarACL::ACL_NO_ACCESS;
             }

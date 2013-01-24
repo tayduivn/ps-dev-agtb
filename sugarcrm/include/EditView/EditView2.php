@@ -510,11 +510,7 @@ class EditView
                 }
             }
             //BEGIN SUGARCRM flav=pro ONLY
-            $min_access = 'edit';
-            if(empty($this->focus) || empty($this->focus->id) || $this->focus->new_with_id == true) {
-                $min_access = 'create';
-            }
-            $this->focus->ACLFilterFieldList($this->fieldDefs, array(), array("add_acl" => true, 'min_access' => $min_access));
+            $this->focus->ACLFilterFieldList($this->fieldDefs, array('bean' => $this->focus), array("add_acl" => true,));
             //END SUGARCRM flav=pro ONLY
         }
 

@@ -243,7 +243,9 @@ class SugarACL
         if(empty($options['min_access'])) {
             $min_access = 'access';
         } else {
-            if($options['min_access'] >= SugarACL::ACL_READ_WRITE) {
+            if($options['min_access'] == SugarACL::ACL_CREATE_ONLY) {
+                $min_access = 'create';
+            } elseif($options['min_access'] >= SugarACL::ACL_READ_WRITE) {
                 $min_access = "edit";
             }
         }
