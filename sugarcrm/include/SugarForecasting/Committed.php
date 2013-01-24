@@ -104,6 +104,11 @@ class SugarForecasting_Committed extends SugarForecasting_AbstractForecast imple
         }
         $forecast->save();
 
+        // roll up the committed forecast to that person manager view
+        /* @var $mgr_worksheet ForecastManagerWorksheet */
+        $mgr_worksheet = BeanFactory::getBean('ForecastManagerWorksheets');
+        $mgr_worksheet->reporteeForecastRollUp($current_user, $args);
+
         //If there are any new worksheet entries that need created, do that here.
         foreach($args["worksheetData"]["new"] as $sheet)
         {
