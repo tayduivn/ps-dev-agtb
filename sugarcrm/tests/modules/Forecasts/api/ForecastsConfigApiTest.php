@@ -155,8 +155,6 @@ class ForecastsConfigModuleApiTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertFalse(array_key_exists("testSetting", $results));
     }
 
-
-
     /**
      * test the save config calls TimePeriodSettingsChanged
      */
@@ -191,8 +189,120 @@ class ForecastsConfigModuleApiTest extends Sugar_PHPUnit_Framework_TestCase
                                 ->method('timePeriodSettingsChanged')
                                 ->with($priorSettings, $currentSettings);
 
-        $result = $apiClass->forecastsConfigSave($api, $args);
+        $apiClass->forecastsConfigSave($api, $args);
     }
 
+    /**
+   	 * @return array asserting data with the key data points changed to test each conditional
+   	 */
+   	public function getTimePeriodSettingsData()
+   	{
+   		return array(
+               array(
+                   array(
+                  ),
+                  false
+               ),
+               array(
+                   array(
+                      'timeperiod_shown_backward' => '3',
+                  ),
+                  true
+               ),
+               array(
+                   array(
+                      'timeperiod_shown_forward' => '3',
+                  ),
+                  true
+               ),
+               array(
+                   array(
+                      'timeperiod_start_date' => '2013-03-01',
+                  ),
+                  true
+               ),
+               array(
+                   array(
+                      'timeperiod_interval' => TimePeriod::QUARTER_TYPE,
+                  ),
+                  true
+               ),
+               array(
+                   array(
+                      'timeperiod_leaf_interval' => TimePeriod::MONTH_TYPE,
+                  ),
+                  true
+               ),
+               array(
+                   array(
+                      'timeperiod_type' => 'fiscal',
+                  ),
+                  true
+               ),
+   		);
+   	}
+
+    /**
+     * check the conditionals and that they return expected values for the timePeriodSettingsChanged function
+     *
+     * @dataProvider getTimePeriodSettingsData
+     * @param $changedSettings
+     * @param $expectedResult
+     */
+    public function testTimePeriodSettingsChagned($changedSettings, $expectedResult)
+   	{
+        $priorSettings = array(
+                           'timeperiod_shown_backward' => '2',
+                           'timeperiod_shown_forward' => '2',
+                           'timeperiod_start_date' => '2013-01-01',
+                           'timeperiod_interval' => TimePeriod::ANNUAL_TYPE,
+                           'timeperiod_leaf_interval' => TimePeriod::QUARTER_TYPE,
+                           'timeperiod_type' => 'chronological',
+                       );
+
+        $currentSettings = array_merge($priorSettings, $changedSettings);
+
+        $apiClass = new ForecastsConfigApi();
+        $result = $apiClass->timePeriodSettingsChanged($priorSettings, $currentSettings);
+
+        $this->assertEquals($expectedResult, $result, "TimePeriod Setting check failed for given parameters. Prior Settings: " . print_r($priorSettings,1) . " Current Settings: " . print_r($currentSettings, 1) . " result: " . print_r($result));
+    }
+
+
+    /**
+     * test the save config calls TimePeriodSettingsChanged
+     */
+    public function testSaveConfigTimePeriodSettingsChangedNotCalled() {
+        $testSetting = 'testValue';
+        /* @var $admin Administration */
+        $admin = BeanFactory::getBean('Administration');
+        $admin->saveSetting('Forecasts', 'testSetting', $testSetting, 'base');
+
+        $priorSettings = $admin->getConfigForModule('Forecasts', 'base');
+        $currentSettings = $admin->getConfigForModule('Forecasts', 'base');
+
+        $api = new RestService();
+        //Fake the security
+        $api->user = $GLOBALS['current_user'];
+
+        $args = array(
+            "module" => "Forecasts",
+            "platform" => "base"
+        );
+
+        $args = array_merge($args, $priorSettings);
+
+        $apiClass = $this->getMock('ForecastsConfigApi', array('timePeriodSettingsChanged'));
+
+        if(empty($priorSettings['is_setup'])) {
+            $priorSettings['timeperiod_shown_forward'] = 0;
+            $priorSettings['timeperiod_shown_backward'] = 0;
+        }
+
+        $apiClass->expects($this->never())
+                                ->method('timePeriodSettingsChanged');
+
+        $apiClass->configSave($api, $args);
+    }
 
 }
