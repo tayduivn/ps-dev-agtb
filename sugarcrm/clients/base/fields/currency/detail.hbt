@@ -26,4 +26,8 @@
  * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 }}
-{{#if transactionValue}}<label class="original">{{transactionValue}}</label>{{/if}}<div class="converted">{{value}}</div>
+{{#if transactionValue}}
+    <label class="original">{{transactionValue}}</label><div class="converted">{{value}}</div>
+{{else}}
+    {{value}}
+{{/if}}
