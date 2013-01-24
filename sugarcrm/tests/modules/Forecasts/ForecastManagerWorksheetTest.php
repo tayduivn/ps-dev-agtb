@@ -23,7 +23,7 @@
  * All Rights Reserved.
  ********************************************************************************/
 
-class ForecastTest extends Sugar_PHPUnit_Framework_TestCase
+class ForecastManagerWorksheetTest extends Sugar_PHPUnit_Framework_TestCase
 {
 
     /**
