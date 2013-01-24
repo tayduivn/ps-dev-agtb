@@ -201,6 +201,8 @@ class SugarForecasting_Committed extends SugarForecasting_AbstractForecast imple
         $job->assigned_user_id = $current_user->id;
         $job->save();
 
+        $mgr_worksheet->commitManagerForecast($current_user, $args['timeperiod_id']);
+
         //TODO-sfa remove this once the ability to map buckets when they get changed is implemented (SFA-215).
         $admin = BeanFactory::getBean('Administration');
         $settings = $admin->getConfigForModule('Forecasts');
