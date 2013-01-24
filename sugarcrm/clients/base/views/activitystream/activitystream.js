@@ -56,7 +56,7 @@
         this.opts.params.filter = 'all';
         this.opts.params.offset = 0;
         this.opts.params.limit = 20;
-        this.streamCollection.fetch(this.opts);
+        //this.streamCollection.fetch(this.opts);
 
         this.user_id = app.user.get('id');
         this.full_name = app.user.get('full_name');
@@ -130,7 +130,7 @@
     _addPostComment: function(url, contents, attachments) {
         var self = this,
             callback = _.after(1 + attachments.length, function() {
-                self.streamCollection.fetch(self.opts);
+                //self.streamCollection.fetch(self.opts);
             });
 
         app.api.call('create', url, {'value': contents}, {success: function(post_id) {
@@ -244,7 +244,7 @@
             myPostUrl = 'ActivityStream/' + recordModule + '/' + recordId;
 
         app.api.call('delete', app.api.buildURL(myPostUrl), {}, {success: function() {
-            self.streamCollection.fetch(self.opts);
+            // self.streamCollection.fetch(self.opts);
         }});
     },
 
@@ -640,7 +640,7 @@
     bindDataChange: function() {
         if (this.model) {
             this.model.on("change", function() {
-                this.streamCollection.fetch(this.opts);
+                // this.streamCollection.fetch(this.opts);
             }, this);
         }
 
