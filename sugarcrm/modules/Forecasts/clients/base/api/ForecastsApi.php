@@ -32,7 +32,7 @@ class ForecastsApi extends SugarApi
                 'path' => array('Forecasts','init'),
                 'pathVars' => array(),
                 'method' => 'forecastsInitialization',
-                'shortHelp' => 'Returns current user data',
+                'shortHelp' => 'Returns forecasts initialization data and additional user data',
                 'longHelp' => 'modules/Forecasts/clients/base/api/help/ForecastsApiInitGet.html',
             ),
             'selecteUserObject' => array(
