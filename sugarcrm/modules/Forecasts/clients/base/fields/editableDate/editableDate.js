@@ -25,13 +25,6 @@
      * Utility Method to check if we can edit again.
      */
     checkIfCanEdit: function() {
-        if (!_.isUndefined(this.context.forecasts) && !_.isUndefined(this.context.forecasts.config)) {
-            this._canEdit = !_.contains(
-                // join the two variable together from the config
-                this.context.forecasts.config.get("sales_stage_won").concat(
-                    this.context.forecasts.config.get("sales_stage_lost")
-                ), this.model.get('sales_stage'));
-        }
     },
 
     /**
