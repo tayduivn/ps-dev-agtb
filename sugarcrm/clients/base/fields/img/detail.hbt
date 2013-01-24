@@ -14,7 +14,5 @@
         <div class="modal-footer">
         </div>
     </div>
-    <a data-toggle="modal" href="#imagesearch">
-        <img src="{{profile}}" style='width: 64px; height: 64px;' alt=""/>
-    </a>
+    <img class="avatar" src="{{profile}}" style='width: 64px; height: 64px;' alt=""/>
 </div>
