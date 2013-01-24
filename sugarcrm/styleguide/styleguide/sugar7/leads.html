@@ -29,6 +29,7 @@
         , {"file":"widget/email-widget","target":"#overview","method":"append"}
       ]
     };
+
   </script>
 </head>
 <body>
@@ -60,6 +61,7 @@
                 <div>
                   <div data-tour="tour-Leads-businesscard">
                     <div class="headerpane ellipsis"></div>
+                    <div class="change_log_container"></div>
                     <div class="record"></div>
                     <div class="moreless"></div>
                   </div>
@@ -120,7 +122,16 @@
         items: ".thumbnail.widget",
         axis: "y",
       });
+
+      $('body').on('click', '.view_change_log', function(){
+        loadPartials([
+          {"file":"common/drawer-container.html","target":".change_log_container","method":"replace"},
+        ]);
+        $('#pageConfig .dropdown-toggle').trigger('click');
+        return false;
+      });
     });
+
   </script>
 </body>
 </html>

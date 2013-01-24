@@ -8737,6 +8737,52 @@ table.duplicates.highlight tbody td {
 .carousel.slide .thumbnails .thumbnail .caption {
   text-align: center;
 }
+.inline-drawer {
+  background: #e8e8e8;
+  border-bottom: 1px solid #CDCCCB;
+  margin: 0;
+  text-align: left;
+}
+.inline-drawer article.inline-drawer-header {
+  padding: 9px 8px 7px 20px;
+  -webkit-box-shadow: inset 0px 4px 8px -4px rgba(0, 0, 0, 0.5);
+  -moz-box-shadow: inset 0px 4px 8px -4px rgba(0, 0, 0, 0.5);
+  box-shadow: inset 0px 4px 8px -4px rgba(0, 0, 0, 0.5);
+  -webkit-box-shadow: inset 0px 4px 8px -4px rgba(0, 0, 0, 0.5);
+  -moz-box-shadow: inset 0px 4px 8px -4px rgba(0, 0, 0, 0.5);
+  box-shadow: inset 0px 4px 8px -4px rgba(0, 0, 0, 0.5);
+}
+.inline-drawer article.inline-drawer-header>div {
+  padding-right: 6px;
+}
+.inline-drawer article:nth-child(even),
+.inline-drawer article:nth-child(odd) {
+  background-color: transparent;
+  border-top: 1px solid #f5f5f5;
+  border-bottom: 1px solid #CDCCCB;
+  padding: 4px 0;
+  line-height: 28px;
+}
+.inline-drawer article> div {
+  padding: 0 20px;
+}
+.inline-drawer article:last-child {
+  -webkit-box-shadow: inset 0px -2px 6px -6px rgba(0, 0, 0, 0.5);
+  -moz-box-shadow: inset 0px -2px 6px -6px rgba(0, 0, 0, 0.5);
+  box-shadow: inset 0px -2px 6px -6px rgba(0, 0, 0, 0.5);
+  -webkit-box-shadow: inset 0px -2px 6px -6px rgba(0, 0, 0, 0.5);
+  -moz-box-shadow: inset 0px -2px 6px -6px rgba(0, 0, 0, 0.5);
+  box-shadow: inset 0px -2px 6px -6px rgba(0, 0, 0, 0.5);
+}
+.inline-drawer table tr td {
+  line-height: 28px;
+}
+.inline-drawer table th.sorting {
+  background-color: #fff;
+}
+.inline-drawer table tbody tr:last-child td {
+  border-bottom: 0 !important;
+}
 .ui-timepicker-list {
   overflow: visible;
   height: 150px;
