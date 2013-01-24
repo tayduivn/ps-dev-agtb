@@ -28,14 +28,6 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  */
 $viewdefs['base']['view']['list'] = array(
     'favorite' => true,
-    'rowactions' => array(
-        'label' => '',
-        'primary' => array(
-            'tooltip' => 'LBL_PREVIEW',
-            'event' => 'list:preview:fire',
-            'icon' => 'icon-eye-open',
-        ),
-    ),
     'selection' => array(
         'type' => 'multi',
         'actions' => array(
@@ -64,5 +56,32 @@ $viewdefs['base']['view']['list'] = array(
                 ),
             ),
         ),
-    )
+    ),
+    'rowactions' => array(
+        'label' => 'LBL_EDIT_BUTTON',
+        'css_class' => 'pull-right',
+        'actions' => array(
+            array(
+                'type' => 'rowaction',
+                'css_class' => 'btn',
+                'tooltip' => 'LBL_PREVIEW',
+                'event' => 'list:preview:fire',
+                'icon' => 'icon-eye-open',
+            ),
+            array(
+                'type' => 'rowaction',
+                'name' => 'edit_button',
+                'icon' => 'icon-pencil',
+                'label' => 'LBL_EDIT_BUTTON',
+                'event' => 'list:editrow:fire',
+            ),
+
+            array(
+                'type' => 'rowaction',
+                'icon' => 'icon-trash',
+                'event' => 'list:deleterow:fire',
+                'label' => 'LBL_DELETE_BUTTON',
+            ),
+        ),
+    ),
 );

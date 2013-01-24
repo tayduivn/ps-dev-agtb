@@ -27,12 +27,16 @@
 ({
     extendsFrom: 'BaselistView',
 
-    initialize: function(options) {
-        app.view.views.BaselistView.prototype.initialize.call(this, options);
-        if(options.meta.favorite) {
-            _.each(options.meta.panels, function(panel){
-                panel.fields[0].fields.push({type: 'favorite'});
-            });
+    populatePanelMetadata: function(panel, options) {
+        panel = app.view.views.BaselistView.prototype.populatePanelMetadata.call(this, panel, options);
+        panel = this.addFavorite(panel, options);
+        return panel;
+    },
+    addFavorite: function(panel, options) {
+        var meta = options.meta;
+
+        if(meta.favorite) {
+            panel.fields[0].fields.push({type: 'favorite'});
         }
     }
 })

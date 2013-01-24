@@ -90,15 +90,15 @@ class MonthTimePeriod extends TimePeriod implements TimePeriodInterface {
      * @param $chartData Array of chart data values
      * @return formatted Array of chart data values where the labels are broken down by the timeperiod's increments
      */
-    public function getChartLabels($chartData) {
+    public function getChartLabels($chartData)
+    {
         $weeks = array();
-
         $start = strtotime($this->start_date);
         $end = strtotime($this->end_date);
         $count = 0;
-        while ($start < $end) {
+        while ($start <= $end) {
             //Find out how many days are left for this period
-            $remainingDays = (($end - $start) / 86400);
+            $remainingDays = floor(abs($end - $start) / 86400);
 
             //Create the modifier for the timeperiod
             $modifier = $remainingDays > 6 ? '+6 day' : '+' . ceil($remainingDays) . ' day';
@@ -122,11 +122,16 @@ class MonthTimePeriod extends TimePeriod implements TimePeriodInterface {
      * @param String The date_closed value in db date format
      * @return String value of the key to use to map to the chart labels
      */
-    public function getChartLabelsKey($dateClosed) {
+    public function getChartLabelsKey($dateClosed)
+    {
         $start = strtotime($this->start_date);
-        $closed = strtotime($dateClosed);
-        //We are calculating the difference in days between the $dateClosed parameter and the start_date for timeperiod
-        //then we divide by 7 (days in week) and use the floor value as the key
-        return floor((($closed - $start) / 86400) / 7);
+        $end = strtotime($dateClosed);
+        $count = -1;
+        while ($start <= $end) {
+            $count++;
+            $start = strtotime($this->chart_data_modifier, $start);
+        }
+
+        return $count;
     }
 }

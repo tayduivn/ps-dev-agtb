@@ -178,6 +178,7 @@ $dictionary['SchedulersJob'] = array('table' => 'job_queue',
 	        'link_type' => 'one',
 	   ),
 		),
+    'acls' => array('SugarACLAdminOnly' => true),
 	'indices' => array (
 		array(
 			'name' =>'job_queuepk',

@@ -319,6 +319,7 @@ class Employee extends Person {
         //return result of search for custom fields
         return $userCustomfields;
     }
+
 }
 
 ?>
