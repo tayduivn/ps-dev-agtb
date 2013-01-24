@@ -279,19 +279,26 @@
             } else if (!this.meta.required || !force) {
                 callback();
             } else {
-                var title = app.lang.get('LBL_CONVERT_FAILED_VALIDATION_TITLE', 'Leads');
-                var message = app.lang.get('LBL_CONVERT_FAILED_VALIDATION_MESSAGE', 'Leads');
-                app.alert.show('failed_validation', {level:'error', title: title, messages: message, autoClose: true});
+                this.showValidationAlert();
             }
         } else {
             var view = this.recordView,
                 model = view.model;
 
+            //todo: remove once create view has UI validation
             if (model.isValid(view.getFields(view.module))) {
                 this.setStatus(this.STATUS_COMPLETE);
                 callback();
-           }
+            } else {
+                this.showValidationAlert();
+            }
         }
+    },
+
+    showValidationAlert: function() {
+        var title = app.lang.get('LBL_CONVERT_FAILED_VALIDATION_TITLE', 'Leads');
+        var message = app.lang.get('LBL_CONVERT_FAILED_VALIDATION_MESSAGE', 'Leads');
+        app.alert.show('failed_validation', {level:'error', title: title, messages: message, autoClose: true});
     },
 
     getStatus: function() {
