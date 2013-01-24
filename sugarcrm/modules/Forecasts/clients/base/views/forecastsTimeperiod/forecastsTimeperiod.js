@@ -33,6 +33,10 @@
  * @extends View.View
  */
 ({
+    /**
+     * the timeperiod field metadata that gets used at render time
+     */
+    timeperiod: {},
 
     initialize : function(options) {
         app.view.View.prototype.initialize.call(this, options);
