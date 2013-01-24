@@ -61,8 +61,6 @@ class ForecastsConfigApi extends ConfigModuleApi {
      * @param $args 'module' is required, 'platform' is optional and defaults to 'base'
      */
     public function forecastsConfigSave($api, $args) {
-
-        error_log("running forecasts config api save trigger");
         //acl check, only allow if they are module admin
         if(!parent::hasAccess("Forecasts")) {
             throw new SugarApiExceptionNotAuthorized("Current User not authorized to change Forecasts configuration settings");
