@@ -1,4 +1,3 @@
-{{!
 /*********************************************************************************
  * The contents of this file are subject to the SugarCRM Master Subscription
  * Agreement (""License"") which can be viewed at
@@ -25,11 +24,20 @@
  * governing these rights and limitations under the License.  Portions created
  * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
-}}
-<span class="actions dropdown">
-    {{first_button}}
-    <a href="javascript:void(0)" class="btn dropdown-toggle" data-toggle="dropdown">
-        <span class="icon-caret-down"></span>
-    </a>
-    {{dropdownPlaceHolder}}
-</span>
+({
+    extendsFrom: 'ButtonField',
+    initialize: function(options) {
+        this.options.def.events = _.extend({}, this.options.def.events, {
+            'click .rowaction': 'rowActionSelect'
+        });
+        app.view.fields.ButtonField.prototype.initialize.call(this, options);
+    },
+    rowActionSelect: function(evt) {
+        if ($(evt.currentTarget).data('event')) {
+            this.view.context.trigger($(evt.currentTarget).data('event'), this.model);
+        }
+    },
+    _render: function() {
+        app.view.fields.ButtonField.prototype._render.call(this);
+    }
+})
