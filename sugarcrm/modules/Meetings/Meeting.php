@@ -75,8 +75,9 @@ class Meeting extends SugarBean {
 	var $team_name;
 	//END SUGARCRM flav=pro ONLY
 	var $update_vcal = true;
-	var $contacts_arr;
-	var $users_arr;
+	var $contacts_arr = array();
+	var $users_arr = array();
+	var $leads_arr = array();
 	var $meetings_arr;
 	// when assoc w/ a user/contact:
 	var $minutes_value_default = 15;
@@ -297,13 +298,19 @@ class Meeting extends SugarBean {
 
 		$return_id = parent::save($check_notify);
 
-		if($this->update_vcal) {
+        $this->setUserInvitees($this->users_arr);
+
+        vCal::cache_sugar_vcal(BeanFactory::getBean('Users', $this->assigned_user_id));
+
+
+		if($this->update_vcal && $this->assigned_user_id != $GLOBALS['current_user']->id) {
 			vCal::cache_sugar_vcal($current_user);
 		}
 
 
 
 		return $return_id;
+
 	}
 
 	// this is for calendar
