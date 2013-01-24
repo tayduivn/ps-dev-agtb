@@ -33,7 +33,7 @@ class ForecastsApi extends SugarApi
                 'pathVars' => array(),
                 'method' => 'forecastsInitialization',
                 'shortHelp' => 'Returns current user data',
-                'longHelp' => 'modules/Forecasts/clients/base/api/help/ForecastsCurrentUserApiInit.html',
+                'longHelp' => 'modules/Forecasts/clients/base/api/help/ForecastsApiInitGet.html',
             ),
             'selecteUserObject' => array(
                 'reqType' => 'GET',
@@ -41,7 +41,7 @@ class ForecastsApi extends SugarApi
                 'pathVars' => array('', '', 'user_id'),
                 'method' => 'retrieveSelectedUser',
                 'shortHelp' => 'Returns selectedUser object for given user',
-                'longHelp' => 'modules/Forecasts/clients/base/api/help/ForecastsCurrentUserApiUser.html',
+                'longHelp' => 'modules/Forecasts/clients/base/api/help/ForecastsApiUserGet.html',
             ),
             'timeperiod' => array(
                 'reqType' => 'GET',
@@ -49,7 +49,7 @@ class ForecastsApi extends SugarApi
                 'pathVars' => array('', ''),
                 'method' => 'timeperiod',
                 'shortHelp' => 'forecast timeperiod',
-                'longHelp' => 'modules/Forecasts/clients/base/api/help/ForecastFiltersTimePeriodGet.html',
+                'longHelp' => 'modules/Forecasts/clients/base/api/help/ForecastApiTimePeriodGet.html',
             ),
             'reportees' => array(
                 'reqType' => 'GET',
@@ -57,7 +57,7 @@ class ForecastsApi extends SugarApi
                 'pathVars' => array('', '', 'user_id'),
                 'method' => 'getReportees',
                 'shortHelp' => 'Gets reportees to a user by id',
-                'longHelp' => 'modules/Forecasts/clients/base/api/help/ForecastFiltersReporteesGet.html',
+                'longHelp' => 'modules/Forecasts/clients/base/api/help/ForecastApiReporteesGet.html',
             )
         );
         return $parentApi;
