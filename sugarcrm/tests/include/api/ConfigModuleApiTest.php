@@ -62,7 +62,7 @@ class ConfigModuleApiTest extends Sugar_PHPUnit_Framework_TestCase
         );
         $apiClass = new ConfigModuleApi();
         $result = $apiClass->configSave($api, $args);
-        $this->assertTrue(array_key_exists("testSetting", $result));
+        $this->assertArrayHasKey("testSetting", $result);
         $this->assertEquals($result['testSetting'], "testValue");
 
         /* @var $admin Administration */
@@ -70,7 +70,7 @@ class ConfigModuleApiTest extends Sugar_PHPUnit_Framework_TestCase
 
         $results = $admin->getConfigForModule('Contacts', 'base');
 
-        $this->assertTrue(array_key_exists("testSetting", $results));
+        $this->assertArrayHasKey("testSetting", $results);
         $this->assertEquals($results['testSetting'], "testValue");
     }
 
@@ -92,7 +92,7 @@ class ConfigModuleApiTest extends Sugar_PHPUnit_Framework_TestCase
         );
         $apiClass = new ConfigModuleApi();
         $result = $apiClass->config($api, $args);
-        $this->assertTrue(array_key_exists("testSetting", $result));
+        $this->assertArrayHasKey("testSetting", $result);
         $this->assertEquals($result['testSetting'], "testValue");
     }
 
@@ -116,12 +116,12 @@ class ConfigModuleApiTest extends Sugar_PHPUnit_Framework_TestCase
         );
         $apiClass = new ConfigModuleApi();
         $result = $apiClass->configSave($api, $args);
-        $this->assertTrue(array_key_exists("testSetting", $result));
+        $this->assertArrayHasKey("testSetting", $result);
         $this->assertEquals($result['testSetting'], strrev($testSetting));
 
         $results = $admin->getConfigForModule('Contacts', 'base');
 
-        $this->assertTrue(array_key_exists("testSetting", $results));
+        $this->assertArrayHasKey("testSetting", $results);
         $this->assertNotEquals($results['testSetting'], $testSetting);
         $this->assertEquals($results['testSetting'], strrev($testSetting));
     }
@@ -153,6 +153,6 @@ class ConfigModuleApiTest extends Sugar_PHPUnit_Framework_TestCase
 
         $results = $admin->getConfigForModule('Contacts', 'base');
 
-        $this->assertFalse(array_key_exists("testSetting", $results));
+        $this->assertArrayNotHasKey("testSetting", $results);
     }
 }

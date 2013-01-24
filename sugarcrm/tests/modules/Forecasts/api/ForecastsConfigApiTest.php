@@ -46,6 +46,8 @@ class ForecastsConfigModuleApiTest extends Sugar_PHPUnit_Framework_TestCase
 
     /**
      * test the create api
+     *
+     * @group forecasts
      */
     public function testCreateConfig() {
         // Get the real data that is in the system, not the partial data we have saved
@@ -62,7 +64,7 @@ class ForecastsConfigModuleApiTest extends Sugar_PHPUnit_Framework_TestCase
         );
         $apiClass = new ForecastsConfigApi();
         $result = $apiClass->forecastsConfigSave($api, $args);
-        $this->assertTrue(array_key_exists("testSetting", $result));
+        $this->assertArrayHasKey("testSetting", $result);
         $this->assertEquals($result['testSetting'], "testValue");
 
         /* @var $admin Administration */
@@ -70,12 +72,13 @@ class ForecastsConfigModuleApiTest extends Sugar_PHPUnit_Framework_TestCase
 
         $results = $admin->getConfigForModule('Forecasts', 'base');
 
-        $this->assertTrue(array_key_exists("testSetting", $results));
+        $this->assertArrayHasKey("testSetting", $results);
         $this->assertEquals($results['testSetting'], "testValue");
     }
 
     /**
      * test the get config
+     * @group forecasts
      */
     public function testReadConfig() {
         /* @var $admin Administration */
@@ -92,12 +95,13 @@ class ForecastsConfigModuleApiTest extends Sugar_PHPUnit_Framework_TestCase
         );
         $apiClass = new ForecastsConfigApi();
         $result = $apiClass->config($api, $args);
-        $this->assertTrue(array_key_exists("testSetting", $result));
+        $this->assertArrayHasKey("testSetting", $result);
         $this->assertEquals($result['testSetting'], "testValue");
     }
 
     /**
      * test the update config
+     * @group forecasts
      */
     public function testUpdateConfig() {
         $testSetting = 'testValue';
@@ -116,12 +120,12 @@ class ForecastsConfigModuleApiTest extends Sugar_PHPUnit_Framework_TestCase
         );
         $apiClass = new ForecastsConfigApi();
         $result = $apiClass->forecastsConfigSave($api, $args);
-        $this->assertTrue(array_key_exists("testSetting", $result));
+        $this->assertArrayHasKey("testSetting", $result);
         $this->assertEquals($result['testSetting'], strrev($testSetting));
 
         $results = $admin->getConfigForModule('Forecasts', 'base');
 
-        $this->assertTrue(array_key_exists("testSetting", $results));
+        $this->assertArrayHasKey("testSetting", $results);
         $this->assertNotEquals($results['testSetting'], $testSetting);
         $this->assertEquals($results['testSetting'], strrev($testSetting));
     }
@@ -129,6 +133,7 @@ class ForecastsConfigModuleApiTest extends Sugar_PHPUnit_Framework_TestCase
     /**
      * test the create api using bad credentials, should receive a failure
      *
+     * @group forecasts
      * @expectedException SugarApiExceptionNotAuthorized
      */
     public function testCreateBadCredentialsConfig() {
@@ -152,11 +157,12 @@ class ForecastsConfigModuleApiTest extends Sugar_PHPUnit_Framework_TestCase
 
         $results = $admin->getConfigForModule('Forecasts', 'base');
 
-        $this->assertFalse(array_key_exists("testSetting", $results));
+        $this->assertArrayNotHasKey("testSetting", $results);
     }
 
     /**
      * test the save config calls TimePeriodSettingsChanged
+     * @group forecasts
      */
     public function testSaveConfigTimePeriodSettingsChangedCalled() {
         $testSetting = 'testValue';
@@ -248,6 +254,7 @@ class ForecastsConfigModuleApiTest extends Sugar_PHPUnit_Framework_TestCase
      * @dataProvider getTimePeriodSettingsData
      * @param $changedSettings
      * @param $expectedResult
+     * @group forecasts
      */
     public function testTimePeriodSettingsChagned($changedSettings, $expectedResult)
    	{
@@ -271,6 +278,7 @@ class ForecastsConfigModuleApiTest extends Sugar_PHPUnit_Framework_TestCase
 
     /**
      * test the save config calls TimePeriodSettingsChanged
+     * @group forecasts
      */
     public function testSaveConfigTimePeriodSettingsChangedNotCalled() {
         $testSetting = 'testValue';

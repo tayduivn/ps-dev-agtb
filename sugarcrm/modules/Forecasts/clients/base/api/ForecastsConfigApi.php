@@ -26,9 +26,16 @@ class ForecastsConfigApi extends ConfigModuleApi {
 
     public function registerApiRest()
     {
-        return array_merge(
-            parent::registerApiRest(),
+        return
             array (
+                'forecastsConfigGet' => array(
+                    'reqType' => 'GET',
+                    'path' => array('Forecasts','config'),
+                    'pathVars' => array('module',''),
+                    'method' => 'config',
+                    'shortHelp' => 'Retrieves the config settings for a given module',
+                    'longHelp' => 'include/api/help/config_get_help.html',
+                ),
                 'forecastsConfigCreate' => array (
                     'reqType' => 'POST',
                     'path' => array('Forecasts','config'),
@@ -45,8 +52,7 @@ class ForecastsConfigApi extends ConfigModuleApi {
                     'shortHelp' => 'Updates the config entries for the Forecasts module',
                     'longHelp' => 'modules/Forecasts/clients/base/api/help/ForecastsConfigPut.html',
                 ),
-            )
-        );
+            );
     }
 
     /**
@@ -56,6 +62,7 @@ class ForecastsConfigApi extends ConfigModuleApi {
      */
     public function forecastsConfigSave($api, $args) {
 
+        error_log("running forecasts config api save trigger");
         //acl check, only allow if they are module admin
         if(!parent::hasAccess("Forecasts")) {
             throw new SugarApiExceptionNotAuthorized("Current User not authorized to change Forecasts configuration settings");
