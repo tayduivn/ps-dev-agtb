@@ -279,8 +279,10 @@ class RestPortalSecurityTest extends RestTestPortalBase {
         $restReply = $this->_restCall("Contacts/".$this->contacts[1]->id);
         $this->assertEquals($this->contacts[1]->id,$restReply['reply']['id']);
 
-        // verify edit, create would not exist because its an edit action
+        // verify edit
         $this->assertEquals("no", $restReply['reply']['_acl']['edit'], "Edit is not no");
+        // verify create is not set [meaning its YES]
+        $this->assertTrue(!isset($restReply['reply']['_acl']['create']), "Create was set, it should not be");
         
 
         // Positive test: Should be able to change the name of our Contact

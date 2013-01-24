@@ -4597,20 +4597,38 @@ function updateOpportunitiesForForecasting()
  */
 function setupCreateRole() {
 	global $db;
-	$aclrole = new ACLRole();
-	// get all create actions by module [for the id]
 	$create = array();
-	$create_query = "SELECT id, category FROM acl_actions WHERE name = 'create' AND acltype = 'module' AND deleted = 0";
+	// get all edit actions, make a create action for each save the results so we can use them below
+	$create_query = "SELECT id, category, acltype FROM acl_actions WHERE name = 'create' AND deleted = 0";
 	$create_results = $db->query($create_query);
 	while($row = $db->fetchByAssoc($create_results)) {
-		$create[$row['category']] = $row['id'];
+		$create[$row['category']][$row['acltype']] = $row['id'];
 	}
+
+	$edit_query = "SELECT * FROM acl_actions WHERE name = 'edit' AND deleted = 0";
+	$edit_results = $db->query($edit_query);
+	while($row = $db->fetchByAssoc($edit_results)) {
+		// we already have a record for this create skip it..
+		if(isset($create[$row['category']][$row['acltype']])) {
+			continue;
+		}
+		$aclaction = new ACLAction();
+		unset($row['id']);
+		$row['name'] = 'create';
+		$row['id'] = create_guid();
+		$aclaction->populateFromRow($row);
+		$aclaction->save();
+		$create[$row['category']][$row['acltype']] = $row['id'];
+	}
+
+	$aclrole = new ACLRole();
+
 	// get all edit actions that have been overriden
 	$query = "SELECT acl_roles_actions.role_id, acl_roles_actions.access_override, acl_actions.category FROM acl_roles_actions, acl_roles, acl_actions WHERE acl_roles.id = acl_roles_actions.role_id AND acl_roles.deleted = 0 AND acl_roles_actions.deleted = 0 AND acl_roles_actions.action_id = acl_actions.id AND acl_actions.name = 'edit' AND acl_actions.acltype = 'module' AND acl_actions.deleted = 0";
 	$results = $db->query($query);
 	while($row = $db->fetchByAssoc($results)) {
 		if(isset($create[$row['category']])) {
-			$aclrole->setAction($row['role_id'], $create[$row['category']], $row['access_override']);
+			$aclrole->setAction($row['role_id'], $create[$row['category']]['module'], $row['access_override']);
 		}
 	}
 }
