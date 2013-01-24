@@ -26,7 +26,6 @@ class ForecastsApi extends SugarApi
 {
     public function registerApiRest()
     {
-        //Extend with test method
         $parentApi = array(
             'init' => array(
                 'reqType' => 'GET',
