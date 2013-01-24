@@ -6,7 +6,8 @@
         'mouseleave span.editable': 'togglePencil',
         'click span.editable': 'onClick',
         'blur input.datepicker': 'onBlur',
-        'keyup input.datepicker': 'onKeypress'
+        'keyup input.datepicker': 'onKeyUp',
+        'keydown input.datepicker': 'onKeyDown'
     },
 
     inputSelector: 'input.datepicker',
@@ -66,7 +67,6 @@
      * @param evt
      */
     onClick : function(evt) {
-        console.log('onClick');
         evt.preventDefault();
         if (!this.isEditable()) return;
 
@@ -83,15 +83,30 @@
      *
      * @param evt
      */
-    onKeypress: function (evt) {
+    onKeyUp: function (evt) {
         // submit if pressed return or tab
-        if (evt.which == 13 || evt.which == 9) {
+        if (evt.which == 13) {
             var ogVal = this.value,
                 ngVal = this.$el.find(this.inputSelector).val();
 
             if (_.isEqual(ogVal, ngVal)) {
                 this.$el.find(this.inputSelector).blur();
             }
+        }
+    },
+
+
+    /**
+     * Handle when return/enter and tab keys are pressed
+     *
+     * @param evt
+     */
+    onKeyDown: function (evt) {
+        // submit if pressed return or tab
+        if (evt.which == 9) {
+            evt.preventDefault();
+            // tab key pressed, trigger event from context
+            this.context.forecasts.trigger('forecasts:tabKeyPressed', evt.shiftKey, this);
         }
     },
 

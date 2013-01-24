@@ -440,6 +440,9 @@
                 this.saveWorksheet(isDraft);
             }, this);
 
+            this.context.forecasts.on('forecasts:tabKeyPressed', function(isShift, field) {
+                this.editableFieldNavigate(isShift, field);
+            }, this);
 
             /*
              * // TODO: tagged for 6.8 see SFA-253 for details
@@ -489,6 +492,39 @@
                 }
             });
         }
+    },
+
+    /**
+     * Navigation to another editable field
+     *
+     * @param isShift
+     * @param field
+     */
+    editableFieldNavigate : function(isShift, field) {
+        if(!this.showMe()) {
+            return -1;
+        }
+        // tab key was pressed, we cycle to the next/prev field
+        // get list of editable fields
+        var editableFields = this.$el.find('span.editable,span.edit'),
+            currentFieldIdx = editableFields.index(field.$el.find('span.edit')),
+            targetFieldIdx = 0;
+        if(!isShift) {
+            if (currentFieldIdx != (editableFields.length - 1)) {
+                // go to next field
+                targetFieldIdx = currentFieldIdx + 1;
+            } // otherwise go to first index which is default
+        } else {
+            if (currentFieldIdx == 0) {
+                // first field, go to last
+                targetFieldIdx = editableFields.length - 1;
+            } else {
+                // go to prev field
+                targetFieldIdx = currentFieldIdx - 1;
+            }
+        }
+        editableFields[targetFieldIdx].click();
+        return targetFieldIdx;
     },
 
     /**
