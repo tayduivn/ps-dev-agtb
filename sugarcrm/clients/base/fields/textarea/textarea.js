@@ -46,15 +46,23 @@
 
         app.view.Field.prototype._render.call(this);
 
-        if (this.isTooLong) {
-            this.showLess();
-        }
-
-        if(this.tplName === 'disabled') {
-            this.$(this.fieldTag).attr("disabled", "disabled");
+        //Only deal with toggling less/more when NOT on list view. List view
+        //is read only on a single line with css controlled ellipsis on overflow
+        if (this._notListView()) {
+            if (this.isTooLong) {
+                this.showLess();
+            }
+            if(this.tplName === 'disabled') {
+                this.$(this.fieldTag).attr("disabled", "disabled");
+            }
         }
     },
-
+    _notListView: function(viewName) {
+        if(this.view.name !== "list" || this.view.meta.type !== "list") {
+            return true;
+        }
+        return false;
+    },
     toggleMoreText: function() {
         var self = this;
         if (self.isTruncated) {
