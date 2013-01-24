@@ -97,7 +97,9 @@
             _.each(panel.fields, function(field, index) {
                 var maxSpan,
                     isLabelInline,
-                    fieldSpan;
+                    fieldSpan,
+                    maxSpanForFieldWithInlineLabel = 8,
+                    maxSpanForFieldWithLabelOnTop  = 12;
 
                 //The code below assumes that the field is an object but can be a string
                 if(_.isString(field)) {
@@ -114,10 +116,18 @@
                 }
                 //8 for span because we are using a 2/3 ratio between field span and label span with a max of 12
                 isLabelInline = (panel.labelsOnTop === false && panel.labels);
-                maxSpan       = isLabelInline ? 8 : 12;
+                maxSpan       = isLabelInline ? maxSpanForFieldWithInlineLabel : maxSpanForFieldWithLabelOnTop;
 
                 if (_.isUndefined(field.span)) {
                     field.span = Math.floor(maxSpan / columns);
+                }
+
+                // reset the field span if it's greater than the max span since no field can be greater than the
+                // maximum allowable span
+                // this is likely to only occur when labels are inline with the field, but that can't be guaranteed
+                // to be the only plausible scenario
+                if (field.span > maxSpan) {
+                    field.span = maxSpan;
                 }
 
                 //4 for label span because we are using a 1/3 ratio between field span and label span with a max of 12
