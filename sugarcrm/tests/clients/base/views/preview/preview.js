@@ -1,6 +1,6 @@
 describe("Preview View", function() {
 
-    var view, app;
+    var preview, app, meta;
 
     beforeEach(function() {
         SugarTest.testMetadata.init();
@@ -13,7 +13,7 @@ describe("Preview View", function() {
             "panels": [{
                 "name": "panel_header",
                 "header": true,
-                "fields": ["name"]
+                "fields": ["name", {"name":"favorite", "type":"favorite"}]
             }, {
                 "name": "panel_body",
                 "label": "LBL_PANEL_2",
@@ -33,8 +33,9 @@ describe("Preview View", function() {
         SugarTest.testMetadata.set();
         SugarTest.app.data.declareModels();
         sinonSandbox = sinon.sandbox.create();
-        view = SugarTest.createView("base", "Cases", "preview", null, null);
+        preview = SugarTest.createView("base", "Cases", "preview", null, null);
         app = SUGAR.App;
+        meta = app.metadata.getView('Cases', 'record');
     });
 
 
@@ -42,18 +43,71 @@ describe("Preview View", function() {
         app.cache.cutAll();
         app.view.reset();
         delete Handlebars.templates;
-        view = null;
+        preview = null;
+        meta = null;
     });
 
-    describe("_trimPreviewMetadata", function(){
+    describe("_previewifyMetadata", function(){
         it("should not modify metadata passed in", function(){
-
+            var trimmed = preview._previewifyMetadata(meta);
+            expect(trimmed).toNotBe(meta);
+            expect(trimmed).toNotEqual(meta);
         });
-        it("should trim metadata from empty fields", function(){
-
+        it("should convert header to regular panel", function(){
+            expect(meta.panels[0].header).toEqual(true);
+            var trimmed = preview._previewifyMetadata(meta);
+            expect(meta.panels[0].header).toEqual(true);
+            expect(trimmed.panels[0].header).toEqual(false);
+            var headers = _.filter(trimmed.panels, function(panel){
+                return panel.header == true;
+            });
+            expect(headers).toEqual([]);
         });
         it("should remove favorites field from metadata", function(){
+            var fav = _.find(meta.panels[0].fields, function(field){
+                return field.type === "favorite";
+            });
+            expect(fav).toBeTruthy();
+            var trimmed = preview._previewifyMetadata(meta);
+            fav = _.find(trimmed.panels[0].fields, function(field){
+                return field.type === "favorite";
+            });
+            expect(fav).toBeUndefined();
+        });
 
+    });
+    describe("renderPreview", function(){
+        it("should trigger 'preview:open' and 'list:preview:decorate' events", function(){
+            var dummyModel = app.data.createBean("Cases", {"id":"testid", "_module": "Cases"});
+            var dummyCollection = {};
+            dummyCollection.models = [dummyModel];
+            var openPreviewFired = false;
+            var listPreviewDecorateFired = false;
+            var triggerStub = sinon.stub(preview.context,"trigger", function(event, model){
+                expect(event).not.toBeEmpty();
+                if(event == "preview:open"){
+                    openPreviewFired = true;
+                } else if(event == "list:preview:decorate"){
+                    listPreviewDecorateFired = true;
+                    expect(model.get("id")).toEqual("testid");
+                }
+            });
+            preview.renderPreview(dummyModel, dummyCollection);
+            expect(openPreviewFired).toBe(true);
+            expect(listPreviewDecorateFired).toBe(true);
+            triggerStub.restore();
+        });
+        it("should be called on 'preview:render' event", function(){
+            var dummyModel = app.data.createBean("Cases", {"id":"testid", "_module": "Cases"});
+            var dummyCollection = {};
+            dummyCollection.models = [dummyModel];
+            var renderPreviewStub = sinon.stub(preview,"renderPreview", function(model, collection){
+               expect(model).toEqual(dummyModel);
+               expect(collection).toEqual(dummyCollection);
+            });
+            preview.context.trigger("preview:render", dummyModel, dummyCollection, false);
+            expect(renderPreviewStub).toHaveBeenCalled();
+            renderPreviewStub.restore();
         });
     });
 

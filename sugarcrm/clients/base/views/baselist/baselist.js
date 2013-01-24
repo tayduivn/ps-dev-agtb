@@ -49,7 +49,6 @@
         app.view.View.prototype.initialize.call(this, options);
         this.template = this.template || app.template.getView('baselist') || app.template.getView('baselist', this.module) || null;
         this.fallbackFieldTemplate = 'list-header';
-        this.context.on("list:preview:fire", null, this);
         this.context.on("list:preview:fire", this.previewRecord, this);
         this.context.on("list:preview:decorate", this.decorateRow, this);
     },
@@ -230,10 +229,10 @@
     previewRecord: function(model) {
         if( _.isUndefined(this.context._callbacks) ) {
             // Clicking preview on a related module, need the parent context instead
-            this.context.parent.trigger("renderPreview", model, this.collection);
+            this.context.parent.trigger("preview:render", model, this.collection);
         }
         else {
-            this.context.trigger("renderPreview", model, this.collection);
+            this.context.trigger("preview:render", model, this.collection);
         }
     },
     /**

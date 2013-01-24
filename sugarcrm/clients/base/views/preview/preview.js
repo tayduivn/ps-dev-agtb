@@ -36,8 +36,8 @@
         _.bindAll(this);
         app.view.View.prototype.initialize.call(this, options);
         this.fallbackFieldTemplate = "detail";
-        this.context.off("renderPreview", null, this);
-        this.context.on("renderPreview", this._renderPreview, this);
+        this.context.off("preview:render", null, this);
+        this.context.on("preview:render", this._renderPreview, this);
         this.context.off("preview:collection:change", null, this);
         this.context.on("preview:collection:change", this.updateCollection, this);
         if(this.layout){
@@ -84,7 +84,6 @@
      * @param collection Collection of related objects to the current model
      */
     renderPreview: function(model, collection) {
-
         if (model && collection) {
             // Create a corresponding Bean and Context for clicked search result. It
             // might be a Case, a Bug, etc...we don't know, so we build dynamically.
@@ -98,25 +97,28 @@
 
             // Get the corresponding detail view meta for said module
             this.meta = app.metadata.getView(this.model.module, 'record') || {};
-            this.meta = this._trimPreviewMetadata(this.meta);
+            this.meta = this._previewifyMetadata(this.meta);
             app.view.View.prototype._render.call(this);
-            this.context.trigger("openPreview",this);
+            this.context.trigger("preview:open",this);
             this.context.trigger("list:preview:decorate", this.model, this);
         }
     },
     /**
-     * Trims metadata that we show in the Preview dialog to remove data-less & favorite fields
+     * Normalizes the metadata, and removes favorite fields, that gets shown in Preview dialog
      * @param meta Layout metadata to be trimmed
      * @return Returns trimmed metadata
      * @private
      */
-    _trimPreviewMetadata: function(meta){
-        var trimmed = _.clone(meta);
-        var self = this;
+    _previewifyMetadata: function(meta){
+        var trimmed = $.extend(true, {}, meta); //Deep copy
         _.each(trimmed.panels, function(panel){
-            panel.fields = _.filter(panel.fields, function(field){
-                return !_.isEmpty(self.model.get(field.name));
-            });
+            if(panel.header){
+                panel.header = false;
+                panel.fields = _.filter(panel.fields, function(field){
+                    //Don't show favorite icon in Preview, it's already on list view row
+                    return field.type != 'favorite';
+                });
+            }
         });
         return trimmed;
     },
@@ -184,7 +186,7 @@
                         success: function(model) {
                             model.set("_module", targetModule);
                             self.model = null;
-                            self.context.trigger("renderPreview", model, self.collection, false);
+                            self.context.trigger("preview:render", model, self.collection, false);
                             self.switching = false;
                         }
                     });

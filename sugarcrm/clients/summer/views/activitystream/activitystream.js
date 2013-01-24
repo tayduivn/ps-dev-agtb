@@ -547,8 +547,8 @@
             model.fetch({
                 success: function(model) {
                     model.set("_module", module);
-                    self.context.trigger("openPreview");
-                    self.context.trigger("renderPreview", model, self.streamCollection);
+                    self.context.trigger("preview:open");
+                    self.context.trigger("preview:render", model, self.streamCollection);
                 }
             });
         } else {
