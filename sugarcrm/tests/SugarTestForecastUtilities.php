@@ -184,8 +184,8 @@ class SugarTestForecastUtilities
                  * setting it up.
                  */
                 /* @var $product Product */
-                $product = BeanFactory::getBean("Products");
-				$product->retrieve_by_string_fields(array("opportunity_id"=>$opp->id));
+                $product = BeanFactory::getBean('Products');
+				$product->retrieve_by_string_fields(array('opportunity_id'=>$opp->id));
 				$product->name = $opp->name;
 		        $product->best_case = $opp->best_case;
 		        $product->likely_case = $opp->amount;
@@ -210,27 +210,28 @@ class SugarTestForecastUtilities
                     $return['included_opps_totals']['likely'] += $opp->amount;
                     $return['included_opps_totals']['best'] += $opp->best_case;
                     $return['included_opps_totals']['worst'] += $opp->worst_case;
+                    
+                    if ($config['createWorksheet'] === true) {
+                        $worksheet = SugarTestWorksheetUtilities::createWorksheet();
+                        $worksheet->user_id = $user->id;
+                        $worksheet->related_id = $product->id;
+                        $worksheet->related_forecast_type = 'Product';
+                        $worksheet->forecast_type = 'Direct';
+                        $worksheet->timeperiod_id = $config['timeperiod_id'];
+                        $worksheet->best_case = $opp->best_case;
+                        $worksheet->likely_case = $opp->amount;
+                        $worksheet->worst_case = $opp->worst_case;
+                        $worksheet->op_probability = $opp->probability;
+                        $worksheet->commit_stage = $opp->commit_stage;
+                        $worksheet->currency_id = $opp->currency_id;
+                        $worksheet->save();
+    
+                        $return['opp_worksheets'][] = $worksheet;
+                    }
 
                 }
 
                 $return['opportunities_total'] += $opp_amount;
-
-                if ($config['createWorksheet'] === true) {
-                    $worksheet = SugarTestWorksheetUtilities::createWorksheet();
-                    $worksheet->user_id = $user->id;
-                    $worksheet->related_id = $product->id;
-                    $worksheet->forecast_type = "Direct";
-                    $worksheet->timeperiod_id = $config['timeperiod_id'];
-                    $worksheet->best_case = $opp->best_case;
-                    $worksheet->likely_case = $opp->amount;
-                    $worksheet->worst_case = $opp->worst_case;
-                    $worksheet->op_probability = $opp->probability;
-                    $worksheet->commit_stage = $opp->commit_stage;
-                    $worksheet->currency_id = $opp->currency_id;
-                    $worksheet->save();
-
-                    $return['opp_worksheets'][] = $worksheet;
-                }
 
                 $opportunities[] = $opp;
 
@@ -254,7 +255,7 @@ class SugarTestForecastUtilities
                 $quota->user_id = $user->id;
                 $quota->created_by = 1;
                 $quota->modified_user_id = 1;
-                $quota->quota_type = (empty($user->reports_to_id)) ? "Direct" : "Rollup";
+                $quota->quota_type = (empty($user->reports_to_id)) ? 'Direct' : 'Rollup';
                 $quota->timeperiod_id = $config['timeperiod_id'];
                 $quota->team_set_id = 1;
                 $quota->currency_id = $config['currency_id'];
@@ -268,7 +269,9 @@ class SugarTestForecastUtilities
                 $worksheet = SugarTestWorksheetUtilities::createWorksheet();
                 $worksheet->user_id = (empty($user->reports_to_id)) ? $user->id : $user->reports_to_id;
                 $worksheet->related_id = $user->id;
-                $worksheet->forecast_type = "Rollup";
+                $worksheet->related_forecast_type = 'User';
+                $worksheet->forecast_type = 'Rollup';
+                $worksheet->forecast_type = 'Rollup';
                 $worksheet->timeperiod_id = $config['timeperiod_id'];
                 $worksheet->best_case = $forecast_best_total + 100;
                 $worksheet->likely_case = $forecast_likely_total + 100;
@@ -302,7 +305,7 @@ class SugarTestForecastUtilities
         $tmpForecast->best_case = $manager['forecast']->best_case;
         $tmpForecast->worst_case = $manager['forecast']->worst_case;
         $tmpForecast->likely_case = $manager['forecast']->likely_case;
-        $tmpForecast->forecast_type = "ROLLUP";
+        $tmpForecast->forecast_type = 'ROLLUP';
 
         foreach($users as $user) {
             if($user['user']->reports_to_id == $manager['user']->id) {

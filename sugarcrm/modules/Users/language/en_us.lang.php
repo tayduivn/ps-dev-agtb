@@ -106,6 +106,8 @@ $mod_strings = array (
 	'LBL_ADDRESS_POSTALCODE'			=> 'Address Postal Code',
 	'LBL_ADDRESS_STATE'					=> 'Address State',
 	'LBL_ADDRESS_STREET'				=> 'Address Street',
+	'LBL_ADDRESS_STREET_2'				=> 'Address Street 2',
+	'LBL_ADDRESS_STREET_3'				=> 'Address Street 3',
 	'LBL_ADDRESS'						=> 'Address',
 	'LBL_ADMIN_USER'					=> 'System Administrator User',
 

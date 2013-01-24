@@ -93,15 +93,43 @@ class ForecastsWorksheetManagerApiTest extends RestTestBase
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('beanList');
 
-        self::$manager = SugarTestForecastUtilities::createForecastUser();
+        self::$manager = SugarTestForecastUtilities::createForecastUser(array(
+            'opportunities' => array(
+                'total' => 5,
+                'include_in_forecast' => 5
+            ),
+        ));
+        
         //set up another manager, and assign him to the first manager manually so his data is generated
         //correctly.
-        self::$manager2 = SugarTestForecastUtilities::createForecastUser();
+        self::$manager2 = SugarTestForecastUtilities::createForecastUser(array(
+            'opportunities' => array(
+                'total' => 5,
+                'include_in_forecast' => 5
+            ),
+        ));
+        
         self::$manager2["user"]->reports_to_id = self::$manager['user']->id;
         self::$manager2["user"]->save();
 
-        self::$reportee = SugarTestForecastUtilities::createForecastUser(array('user' => array('reports_to' => self::$manager['user']->id)));
-        self::$reportee2 = SugarTestForecastUtilities::createForecastUser(array('user' => array('reports_to' => self::$manager2['user']->id)));
+        self::$reportee = SugarTestForecastUtilities::createForecastUser(array(
+            'user' => array(
+                'reports_to' => self::$manager['user']->id
+            ),
+            'opportunities' => array(
+                'total' => 5,
+                'include_in_forecast' => 5
+            )
+        ));
+        self::$reportee2 = SugarTestForecastUtilities::createForecastUser(array(
+            'user' => array(
+                'reports_to' => self::$manager2['user']->id
+            ),
+            'opportunities' => array(
+                'total' => 5,
+                'include_in_forecast' => 5
+            )
+        ));
 
         self::$timeperiod = SugarTestForecastUtilities::getCreatedTimePeriod();
 
