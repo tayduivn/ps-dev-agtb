@@ -52,7 +52,7 @@ class SugarJobUpdateForecastWorksheetsTest extends Sugar_PHPUnit_Framework_TestC
         $this->tp = SugarTestTimePeriodUtilities::createTimePeriod('2008-01-01', '2008-03-31');
         $this->user = SugarTestUserUtilities::createAnonymousUser();
         $this->opp = SugarTestOpportunityUtilities::createOpportunity();
-        $this->opp->timeperiod_id = $this->tp->id;
+        $this->opp->date_closed ='2008-02-01';      // set the dat closed to the middle of the TP
         $this->opp->assigned_user_id = $this->user->id;
         $this->opp->save();
     }
@@ -103,9 +103,10 @@ class SugarJobUpdateForecastWorksheetsTest extends Sugar_PHPUnit_Framework_TestC
             $this->prod = $product;
             SugarTestProductUtilities::setCreatedProduct(array($product->id));
             $this->assertEquals($this->opp->id, $product->opportunity_id);
-            $result = $db->getOne("SELECT count(id) as total FROM forecast_worksheets WHERE parent_id = '{$product->id}'");
+            // make sure that we have a committed version of the product and opportunity
+            $result = $db->getOne("SELECT count(id) as total FROM forecast_worksheets WHERE parent_id = '{$product->id}' and draft = 0");
             $this->assertEquals(1, $result['total']);
-            $result = $db->getOne("SELECT count(id) as total FROM forecast_worksheets WHERE parent_id = '{$this->opp->id}'");
+            $result = $db->getOne("SELECT count(id) as total FROM forecast_worksheets WHERE parent_id = '{$this->opp->id}' and draft = 0");
             $this->assertEquals(1, $result['total']);
         }
     }

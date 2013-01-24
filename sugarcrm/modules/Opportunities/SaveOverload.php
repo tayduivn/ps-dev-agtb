@@ -117,6 +117,7 @@ function perform_save($focus){
             $product->assigned_user_id = $focus->assigned_user_id;
             $product->opportunity_id = $focus->id;
             $product->commit_stage = $focus->commit_stage;
+            $product->deleted = $focus->deleted;
             $product->save();
         }
 
