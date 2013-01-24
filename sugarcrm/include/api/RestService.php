@@ -331,18 +331,14 @@ class RestService extends ServiceBase {
 
         $GLOBALS['log']->error('An exception happened: ( '.$httpError.': '.$errorLabel.')'.$message);
 
-        $reply = $message;
-        $crazyEncoding = false;
         // For edge cases when an HTML response is needed as a wrapper to JSON
         if (isset($_REQUEST['format']) && $_REQUEST['format'] == 'sugar-html-json') {
             if (!isset($_REQUEST['platform']) || (isset($_REQUEST['platform']) && $_REQUEST['platform'] == 'portal')) {
-                $reply = htmlentities(json_encode($this->getHXRReturnArray($reply, $httpError)));
-                $crazyEncoding = true;
+                $message = htmlentities(json_encode($this->getHXRReturnArray($message, $httpError)));
+                header("HTTP/1.0 200 Success");
+                echo($message);
+                die();
             }
-        }
-        if ( $crazyEncoding ) {
-            echo($reply);
-            die();
         }
 
         // Send proper headers

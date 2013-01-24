@@ -83,9 +83,15 @@ class ForecastsWorksheetsApiTest extends RestTestBase
         // setup the test users
         self::$manager = SugarTestForecastUtilities::createForecastUser();
 
-        self::$reportee = SugarTestForecastUtilities::createForecastUser(
-            array("user" => array("reports_to" => self::$manager["user"]->id))
-        );
+        self::$reportee = SugarTestForecastUtilities::createForecastUser(array(
+            "user" => array(
+                "reports_to" => self::$manager["user"]->id
+                ),
+            "opportunities" => array(
+                "total" => 5,
+                "include_in_forecast" => 5
+            )
+        ));
 
         self::$timeperiod = SugarTestForecastUtilities::getCreatedTimePeriod();
 

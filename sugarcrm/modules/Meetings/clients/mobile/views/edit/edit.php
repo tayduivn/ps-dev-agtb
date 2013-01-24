@@ -61,6 +61,40 @@ $viewdefs['Meetings']['mobile']['view']['edit'] = array(
                         ),
                     ),
                 ),
+                array(
+                    'name' => 'reminder',
+                    'type' => 'fieldset',
+                    'orientation' => 'horizontal',
+                    'related_fields' => array('reminder_checked', 'reminder_time'),
+                    'label' => "LBL_REMINDER",
+                    'fields' => array(
+                        array(
+                            'name' => 'reminder_checked',
+                        ),
+                        array(
+                            'name' => 'reminder_time',
+                            'type' => 'enum',
+                            'options' => 'reminder_time_options'
+                        ),
+                    ),
+                ),
+                array(
+                    'name' => 'email_reminder',
+                    'type' => 'fieldset',
+                    'orientation' => 'horizontal',
+                    'related_fields' => array('email_reminder_checked', 'email_reminder_time'),
+                    'label' => "LBL_EMAIL_REMINDER",
+                    'fields' => array(
+                        array(
+                            'name' => 'email_reminder_checked',
+                        ),
+                        array(
+                            'name' => 'email_reminder_time',
+                            'type' => 'enum',
+                            'options' => 'reminder_time_options'
+                        ),
+                    ),
+                ),
                 'description',
                 'assigned_user_name',
                 //BEGIN SUGARCRM flav=pro ONLY
