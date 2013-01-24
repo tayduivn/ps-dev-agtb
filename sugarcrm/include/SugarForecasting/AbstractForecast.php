@@ -110,10 +110,11 @@ abstract class SugarForecasting_AbstractForecast extends SugarForecasting_Abstra
         $reportees = array();
 
         while ($row = $db->fetchByAssoc($result)) {
+            $reportees[$row['id']] = $row['user_name'];
+
+            //If the row matches the manager user reverse the order of the array so that the manager is first
             if ($row['id'] == $user_id) {
-                $reportees = array_merge(array($row['id'] => $row['user_name']), $reportees);
-            } else {
-                $reportees[$row['id']] = $row['user_name'];
+                $reportees = array_reverse($reportees, true);
             }
         }
 
