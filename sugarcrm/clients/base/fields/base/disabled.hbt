@@ -26,5 +26,5 @@
  * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 }}
-        <input type="text" name="{{name}}" value="{{value}}"{{#if def.placeholder}} placeholder='{{str def.placeholder this.model.module}}'{{/if}} class="input-large" disabled>
+        <input type="text" name="{{name}}" value="{{value}}"{{#if def.placeholder}} placeholder="{{str def.placeholder this.model.module}}"{{/if}} class="input-large" disabled>
         <p class="help-block"></p>
