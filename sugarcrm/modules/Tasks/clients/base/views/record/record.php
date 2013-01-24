@@ -75,7 +75,9 @@ $viewdefs['Tasks']['base']['view']['record'] = array(
                         this.model.save({}, {
                             success: function() {
                                 app.alert.dismiss("close_task");
-                                app.cache.set("duplicate"+self.module, self.model.attributes);
+                                var attributes = $.extend({}, self.model.attributes);
+                                attributes.status = "Not Started";
+                                app.cache.set("duplicate"+self.module, attributes);
                                 self.view.layout.trigger("drawer:create:fire", {
                                     components: [{
                                         layout : "create",
