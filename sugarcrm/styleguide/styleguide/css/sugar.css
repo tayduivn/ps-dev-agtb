@@ -2187,7 +2187,7 @@ table.dataTable.inline-edit-active tr td .chzn-drop {
 .morecol .dropdown-menu {
   text-align: left !important;
 }
-td span.longtext {
+td>span[sfuuid] {
   display: inline-block;
   width: 100%;
   overflow: hidden;
