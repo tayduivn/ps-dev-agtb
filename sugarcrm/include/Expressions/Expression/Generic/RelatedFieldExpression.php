@@ -18,6 +18,7 @@
  *to the License for the specific language governing these rights and limitations under the License.
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
+require_once('include/Expressions/Expression/Generic/GenericExpression.php');
 /**
  * <b>related(Relationship <i>link</i>, String <i>field</i>)</b><br>
  * Returns the value of <i>field</i> in the related module <i>link</i><br/>
@@ -62,7 +63,8 @@ class RelatedFieldExpression extends GenericExpression
                     }
                     if ($bean->field_defs[$relfield]['type'] == "bool")
                     {
-                                                if ($bean->$relfield)
+                        require_once("include/Expressions/Expression/Boolean/BooleanExpression.php");
+                        if ($bean->$relfield)
                             return BooleanExpression::$TRUE;
                         else
                             return BooleanExpression::$FALSE;

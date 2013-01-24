@@ -21,6 +21,7 @@
 require_once("include/Expressions/Dependency.php");
 require_once("include/Expressions/Actions/AbstractAction.php");
 require_once("include/Expressions/Expression/Parser/Parser.php");
+require_once("include/Expressions/Expression/AbstractExpression.php");
 
 /**
  * Expression trigger

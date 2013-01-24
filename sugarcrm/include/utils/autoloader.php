@@ -76,13 +76,6 @@ class SugarAutoLoader{
             require_once($visibility);
             return true;
         }
-        //BEGIN SUGARCRM flav=pro ONLY
-        $expression = self::getFilenameForExpressionClass($class);
-        if (!empty($expression)) {
-            require_once($expression);
-            return true;
-        }
-        //END SUGARCRM flav=pro ONLY
 
   		return false;
 	}
@@ -177,36 +170,6 @@ class SugarAutoLoader{
         }
         return false;
     }
-
-    //BEGIN SUGARCRM flav=pro ONLY
-    /**
-     * getFilenameForExpressionClass
-     *
-     * Used to autoload classes that end in "Expression". It will check in all directories found in
-     * custom/include/Expressions/Expression and include/Expressions/Expression .
-     * This method is allows for easy loading of arbitrary expression classes by the SugarLogic Expression parser.
-     *
-     * @static
-     * @param $class String name of the class to load
-     * @return String file of the Expression class; false if none found
-     */
-    protected static function getFilenameForExpressionClass($class)
-    {
-        if(substr($class, -10) == 'Expression') {
-            $file = get_custom_file_if_exists("include/Expressions/Expression/{$class}.php");
-            if (file_exists($file))
-                return $file;
-
-            $types = array("Boolean", "Date", "Enum", "Generic", "Numeric", "Relationship", "String", "Time");
-            foreach($types as $type) {
-                $file = get_custom_file_if_exists("include/Expressions/Expression/{$type}/{$class}.php");
-                if (file_exists($file))
-                    return $file;
-            }
-        }
-        return false;
-    }
-    //END SUGARCRM flav=pro ONLY
 
 	public static function loadAll(){
 		foreach(SugarAutoLoader::$map as $class=>$file){

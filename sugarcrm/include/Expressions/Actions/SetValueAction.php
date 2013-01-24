@@ -19,6 +19,7 @@
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 require_once("include/Expressions/Actions/AbstractAction.php");
+require_once("include/Expressions/Expression/Date/DateExpression.php");
 
 class SetValueAction extends AbstractAction{
 	protected $expression =  "";

@@ -25,6 +25,7 @@
  * governing these rights and limitations under the License.  Portions created
  * by SugarCRM are Copyright (C) 2004-2010 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
+require_once('include/Expressions/Expression/Generic/GenericExpression.php');
 /**
  * <b>valueAt(Number index, Enum values)</b><br>
  * Returns the value at position <i>index</i> in the collection <i>values</i>.<br/>

@@ -163,6 +163,7 @@ class VisibilityAction extends AbstractAction{
 	 * @param SugarBean $target
 	 */
 	function fire(&$target) {
+		require_once("include/Expressions/Expression/AbstractExpression.php");
 		$result = Parser::evaluate($this->expression, $target)->evaluate();
 		if ($result === AbstractExpression::$FALSE) {
 			$target->field_defs[$this->targetField]['hidden'] = true;

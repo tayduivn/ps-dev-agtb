@@ -18,8 +18,8 @@
  *to the License for the specific language governing these rights and limitations under the License.
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
-
-
+require_once("include/Expressions/Expression/Boolean/BooleanExpression.php");
+require_once("include/Expressions/Expression/Date/DateExpression.php");
 
 
 /**

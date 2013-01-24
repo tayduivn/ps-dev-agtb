@@ -18,34 +18,32 @@
  *to the License for the specific language governing these rights and limitations under the License.
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
-
-require_once( "include/Expressions/Expression/Numeric/constants.php");
-
 /**
  * Expression parser
  * @api
  */
 class Parser {
-    /**
-     * Evaluates an expression.
+	/**
+	 * Evaluates an expression.
+	 *
+	 * @param string	the expression to evaluate
      *
-     * @param string	the expression to evaluate
-     *
-     */
-    static function evaluate($expr, $context = false)
+	 */
+	static function evaluate($expr, $context = false)
 	{
-        // the function map
-        static $FUNCTION_MAP = array();
+		// the function map
+		static $FUNCTION_MAP = array();
 
-        // trim spaces, left and right, and remove newlines
-        $expr = str_replace("\n", "", trim($expr));
+		// trim spaces, left and right, and remove newlines
+		$expr = str_replace("\n", "", trim($expr));
 
-        // check if its a constant and return a constant expression
-        $const = Parser::toConstant($expr);
-        if ( isset($const) )	return $const;
+		// check if its a constant and return a constant expression
+		$const = Parser::toConstant($expr);
+		if ( isset($const) )	return $const;
 
         if (preg_match('/^\$[a-zA-Z0-9_\-]+$/', $expr))
         {
+            require_once( "include/Expressions/Expression/Generic/SugarFieldExpression.php");
             $var = substr($expr, 1);
             $ret = new SugarFieldExpression($var);
             if ($context) $ret->context = $context;
@@ -54,6 +52,8 @@ class Parser {
         //Related field shorthand
         if (preg_match('/^\$[a-zA-Z0-9_\-]+\.[a-zA-Z0-9_\-]+$/', $expr))
         {
+            require_once( "include/Expressions/Expression/Generic/SugarFieldExpression.php");
+            require_once( "include/Expressions/Expression/Generic/RelatedFieldExpression.php");
             $link = substr($expr, 1, strpos($expr, ".") - 1);
             $related = substr($expr, strpos($expr, ".") + 1);
             $linkField = new SugarFieldExpression($link);
@@ -198,7 +198,7 @@ class Parser {
         }
 
 		// require and return the appropriate expression object
-		//require_once( $FUNCTION_MAP[$func]['src'] );
+		require_once( $FUNCTION_MAP[$func]['src'] );
         $expObject = new $FUNCTION_MAP[$func]['class']($args);
         if ($context) {
             $expObject->context = $context;
@@ -211,7 +211,7 @@ class Parser {
 	 * string can be converted to a constant.
 	 */
 	static function toConstant($expr) {
-
+		require_once( "include/Expressions/Expression/Numeric/ConstantExpression.php");
 
 		// a raw numeric constant
 		if ( preg_match('/^(\-)?[0-9]+(\.[0-9]+)?$/', $expr) ) {
@@ -219,7 +219,7 @@ class Parser {
 		}
 
 		// a pre defined numeric constant
-
+		require( "include/Expressions/Expression/Numeric/constants.php");
 		if (isset($NUMERIC_CONSTANTS[$expr]))
 		{
 			return new ConstantExpression($NUMERIC_CONSTANTS[$expr]);
@@ -228,17 +228,18 @@ class Parser {
 		// a constant string literal
 		if ( preg_match('/^".*"$/', $expr) ) {
 			$expr = substr($expr, 1, -1);		// remove start/end quotes
-
+			require_once( "include/Expressions/Expression/String/StringLiteralExpression.php");
 			return new StringLiteralExpression( $expr );
 		}
 
 		// a boolean
 		if ( $expr == "true" ) {
-
+			require_once( "include/Expressions/Expression/Boolean/TrueExpression.php");
 			return new TrueExpression();
-			/*			return AbstractExpression::$TRUE;*/
+			/*require_once( "include/Expressions/Expression/Expression.php");
+			return AbstractExpression::$TRUE;*/
 		} else if ( $expr == "false" ) {
-
+			require_once( "include/Expressions/Expression/Boolean/FalseExpression.php");
 			return new FalseExpression();
 			/*require_once( "include/Expressions/Expression/Expression.php");
 			return AbstractExpression::$FALSE;*/
@@ -249,6 +250,8 @@ class Parser {
 			$day   = floatval(substr($expr, 0, 2));
 			$month = floatval(substr($expr, 3, 2));
 			$year  = floatval(substr($expr, 6, 4));
+			require_once( "include/Expressions/Expression/String/StringLiteralExpression.php");
+			require_once('include/Expressions/Expression/Date/DefineDateExpression.php');
 			//return new DefineDateExpression(array($day, $month, $year));
 			return new DefineDateExpression(new StringLiteralExpression( $expr ));
 		}
@@ -258,6 +261,8 @@ class Parser {
 			$hour   = floatval(substr($expr, 0, 2));
 			$minute = floatval(substr($expr, 3, 2));
 			$second = floatval(substr($expr, 6, 2));
+			require_once( "include/Expressions/Expression/String/StringLiteralExpression.php");
+			require_once('include/Expressions/Expression/Time/DefineTimeExpression.php');
 			//return new DefineTimeExpression(array($hour, $minute, $second));
 			return new DefineDateExpression($expr);
 		}

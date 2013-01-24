@@ -18,7 +18,7 @@
  *to the License for the specific language governing these rights and limitations under the License.
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
-
+require_once("include/Expressions/Expression/Boolean/BooleanExpression.php");
 /**
  * <b>isWithinRange(Number num, Number min, Number max)</b><br/>
  * Returns true if <i>num</i> is greater than or equal to <i>min</i> <br/>
