@@ -61,7 +61,23 @@ $viewdefs['Tasks']['base']['view']['record'] = array(
                 array(
                     'name' => 'duplicate_button',
                     'label' => 'LBL_DUPLICATE_BUTTON_LABEL',
-                    'showOn' => 'view'
+                    'showOn' => 'view',
+                    'events' => array(
+                        'click' => 'function(e){
+                            var attributes = $.extend({}, this.model.attributes);
+                            attributes.status = "Not Started";
+                            app.cache.set("duplicate"+this.module, attributes);
+                            this.view.layout.trigger("drawer:create:fire", {
+                                components: [{
+                                    layout : "create",
+                                    context: {
+                                        create: true
+                                    }
+                                }]
+                            }, this);
+                            e.stopPropagation();
+                        }',
+                    ),                        
                 ),
                 array(
                     'name' => 'record-close-new',
