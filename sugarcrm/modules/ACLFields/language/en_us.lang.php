@@ -24,6 +24,7 @@ $mod_strings = array (
 'LBL_READ_WRITE'=>'Read/Write',
 'LBL_READ_OWNER_WRITE'=>'Read/Owner Write',
 'LBL_READ_ONLY'=>'Read Only',
+'LBL_CREATE_ONLY'=>'Create Only',
 'LBL_OWNER_READ_WRITE'=>'Owner Read/Owner Write',
 'LBL_ALLOW_NONE'=>'None',
 'LBL_FIELDS'=>'Field Permissions',

@@ -300,16 +300,24 @@ class MetaDataManager {
         $outputAcl = array('fields'=>array());
 
         if (!SugarACL::moduleSupportsACL($module)) {
-            foreach ( array('admin', 'access','view','list','edit','delete','import','export','massupdate') as $action ) {
+            foreach ( array('admin', 'access','create', 'view','list','edit','delete','import','export','massupdate') as $action ) {
                 $outputAcl[$action] = 'yes';
             }
         } else {
             $context = array(
                     'user' => $userObject,
                 );
+            
+            // if the bean is not set, or a new bean.. set the owner override
+            // this will allow fields marked Owner to pass through ok.
+            if($bean == false || empty($bean->id) || (!empty($bean->new_with_id))) {
+                $context['owner_override'] = true;
+            }
+
             if($bean instanceof SugarBean) {
                 $context['bean'] = $bean;
             }
+
             $moduleAcls = SugarACL::getUserAccess($module, array(), $context);
 
             // Bug56391 - Use the SugarACL class to determine access to different actions within the module
@@ -323,23 +331,30 @@ class MetaDataManager {
             // Only loop through the fields if we have a reason to, admins give full access on everything, no access gives no access to anything
             if ( $outputAcl['access'] == 'yes') {
 
-                // Currently create just uses the edit permission, but there is probably a need for a separate permission for create
-                $outputAcl['create'] = $outputAcl['edit'];
-
                 // Now time to dig through the fields
                 $fieldsAcl = array();
-                //BEGIN SUGARCRM flav=pro ONLY
-                $fieldsAcl = ACLField::getAvailableFields($module);
-                //END SUGARCRM flav=pro ONLY
-                // get the field names
 
-                // if the bean is not set, or a new bean.. set the owner override
-                // this will allow fields marked Owner to pass through ok.
-                if($bean == false || empty($bean->id) || (isset($bean->new_with_id) && $bean->new_with_id == true)) {
-                    $context['owner_override'] = true;
-                }
-
+                // we cannot use ACLField::getAvailableFields because it limits the fieldset we return.  We need all fields
+                // for instance assigned_user_id is skipped in getAvailableFields, thus making the acl's look odd if Assigned User has ACL's
+                // only assigned_user_name is returned which is a derived ["fake"] field.  We really need assigned_user_id to return as well.
+                if(empty($GLOBALS['dictionary'][$module]['fields'])){
+                    if($bean === false) {
+                        $bean = BeanFactory::newBean($module);
+                    }
+                    if(empty($bean->acl_fields)) {
+                        $fieldsAcl = array();
+                    } else {
+                        $fieldsAcl = $bean->field_defs;
+                    }
+                } else{
+                    $fieldsAcl = $GLOBALS['dictionary'][$module]['fields'];
+                    if(isset($GLOBALS['dictionary'][$module]['acl_fields']) && $GLOBALS['dictionary'][$module]=== false){
+                        $fieldsAcl = array();
+                    }   
+                }          
+                
                 SugarACL::listFilter($module, $fieldsAcl, $context, array('add_acl' => true));
+                        
                 foreach ( $fieldsAcl as $field => $fieldAcl ) {
                     switch ( $fieldAcl['acl'] ) {
                         case SugarACL::ACL_READ_WRITE:
@@ -349,7 +364,8 @@ class MetaDataManager {
                             $outputAcl['fields'][$field]['write'] = 'no';
                             $outputAcl['fields'][$field]['create'] = 'no';
                             break;
-                        case 2:
+                        case SugarACL::ACL_CREATE_ONLY:
+                            $outputAcl['fields'][$field]['write'] = 'no';
                             $outputAcl['fields'][$field]['read'] = 'no';
                             break;
                         case SugarACL::ACL_NO_ACCESS:
