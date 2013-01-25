@@ -1,7 +1,7 @@
 ({
     events: {
         "click .imagesearch-widget-choice": "selectImage",
-        "click .avatar": "openImageModal"
+        "click .imagesearch-widget img": "openImageModal"
     },
 
     profile: "../styleguide/assets/img/profile.png",
