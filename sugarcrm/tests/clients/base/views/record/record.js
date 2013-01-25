@@ -265,4 +265,218 @@ describe("Record View", function() {
             expect(view.model.get('name')).toBe('Foo');
         });
     });
+
+    describe('_renderPanels with 1 column', function () {
+        it("Should create panel grid with all fields on separate rows", function () {
+            var results,
+                panelDefs = [{
+                    "name":         "panel_body",
+                    "label":        "LBL_PANEL_2",
+                    "columns":      1,
+                    "labels":       true,
+                    "labelsOnTop":  true,
+                    "placeholders": true,
+                    "fields":       ["description", "case_number", "type"]
+                }];
+
+            view._renderPanels(panelDefs);
+            results = panelDefs[0].grid;
+
+            expect(results.length).toBe(3);
+            expect(results[0].length).toBe(1);
+            expect(results[1].length).toBe(1);
+            expect(results[2].length).toBe(1);
+        });
+    });
+
+    describe('_renderPanels with 2 columns', function () {
+        it("Should create panel grid with last row containing one empty column", function () {
+            var results,
+                panelDefs = [{
+                    "name":         "panel_body",
+                    "label":        "LBL_PANEL_2",
+                    "columns":      2,
+                    "labels":       true,
+                    "labelsOnTop":  true,
+                    "placeholders": true,
+                    "fields":       ["description", "case_number", "type"]
+                }];
+
+            view._renderPanels(panelDefs);
+            results = panelDefs[0].grid;
+
+            expect(results.length).toBe(2);
+            expect(results[0].length).toBe(2);
+            expect(results[1].length).toBe(1);
+        });
+
+        it("Should create panel grid with second field on its own row where second field's span causes overflow", function () {
+            var results,
+                panelDefs = [{
+                    "name":         "panel_body",
+                    "label":        "LBL_PANEL_2",
+                    "columns":      2,
+                    "labels":       true,
+                    "labelsOnTop":  true,
+                    "placeholders": true,
+                    "fields":       [
+                        "case_number",
+                        {
+                            'name': 'description',
+                            'span': 12
+                        },
+                        "type"
+                    ]
+                }];
+
+            view._renderPanels(panelDefs);
+            results = panelDefs[0].grid;
+
+            expect(results.length).toBe(3);
+            expect(results[0].length).toBe(1);
+            expect(results[1].length).toBe(1);
+            expect(results[2].length).toBe(1);
+        });
+
+        it("Should create panel grid with first field on its own row where the first field's span fills the row", function () {
+            var results,
+                panelDefs = [{
+                    "name":         "panel_body",
+                    "label":        "LBL_PANEL_2",
+                    "columns":      2,
+                    "labels":       true,
+                    "labelsOnTop":  true,
+                    "placeholders": true,
+                    "fields":       [
+                        {
+                            'name': 'description',
+                            'span': 12
+                        },
+                        "case_number",
+                        "type"
+                    ]
+                }];
+
+            view._renderPanels(panelDefs);
+            results = panelDefs[0].grid;
+
+            expect(results.length).toBe(2);
+            expect(results[0].length).toBe(1);
+            expect(results[1].length).toBe(2);
+        });
+
+        it("Should create panel grid with all fields fitting within the maximum allowable span when the panel def specifies a field whose span is out of range", function () {
+            var results,
+                panelDefs = [{
+                                 "name":         "panel_body",
+                                 "label":        "LBL_PANEL_2",
+                                 "columns":      2,
+                                 "labels":       true,
+                                 "labelsOnTop":  false,
+                                 "placeholders": true,
+                                 "fields":       [
+                                     {
+                                         'name': 'description',
+                                         'span': 12 // out of range for a panel with inline labels
+                                     },
+                                     "case_number",
+                                     "type"
+                                 ]
+                             }];
+
+            view._renderPanels(panelDefs);
+            results = panelDefs[0].grid;
+
+            expect(results.length).toBe(2);
+            expect(results[0].length).toBe(1);
+            expect(results[1].length).toBe(2);
+            expect(results[0][0].span).toBe(8); // the description field's span should have been reset to 8 since 12 won't fit
+            expect(results[1][0].span).toBe(4); // verifying that the field span is calculated correctly when labels are inline
+            expect(results[1][1].span).toBe(4); // verifying that the field span is calculated correctly when labels are inline
+        });
+    });
+
+    describe('_renderPanels with 3 columns', function () {
+        it("Should create panel grid with last field on its own row where the last field's span causes overflow", function () {
+            var results,
+                panelDefs = [{
+                    "name":         "panel_body",
+                    "label":        "LBL_PANEL_2",
+                    "columns":      3,
+                    "labels":       true,
+                    "labelsOnTop":  true,
+                    "placeholders": true,
+                    "fields":       [
+                        "case_number",
+                        {
+                            'name': 'description',
+                            'span': 6
+                        },
+                        "type"
+                    ]
+                }];
+
+            view._renderPanels(panelDefs);
+            results = panelDefs[0].grid;
+
+            expect(results.length).toBe(2);
+            expect(results[0].length).toBe(2);
+            expect(results[1].length).toBe(1);
+        });
+
+        it("Should create panel grid with first field on its own row where the first field's span fills the row", function () {
+            var results,
+                panelDefs = [{
+                    "name":         "panel_body",
+                    "label":        "LBL_PANEL_2",
+                    "columns":      3,
+                    "labels":       true,
+                    "labelsOnTop":  true,
+                    "placeholders": true,
+                    "fields":       [
+                        {
+                            'name': 'description',
+                            'span': 12
+                        },
+                        "case_number",
+                        "type"
+                    ]
+                }];
+
+            view._renderPanels(panelDefs);
+            results = panelDefs[0].grid;
+
+            expect(results.length).toBe(2);
+            expect(results[0].length).toBe(1);
+            expect(results[1].length).toBe(2);
+        });
+
+        it("Should create panel grid with all fields on their own row when the span of the second of three fields causes fills a row", function () {
+            var results,
+                panelDefs = [{
+                    "name":         "panel_body",
+                    "label":        "LBL_PANEL_2",
+                    "columns":      3,
+                    "labels":       true,
+                    "labelsOnTop":  true,
+                    "placeholders": true,
+                    "fields":       [
+                        "case_number",
+                        {
+                            'name': 'description',
+                            'span': 10 // this field won't fit on the row with case_number
+                        },
+                        "type" // this field won't fit on the row with description because description's span was too large
+                    ]
+                }];
+
+            view._renderPanels(panelDefs);
+            results = panelDefs[0].grid;
+
+            expect(results.length).toBe(3);
+            expect(results[0].length).toBe(1);
+            expect(results[1].length).toBe(1);
+            expect(results[2].length).toBe(1);
+        });
+    });
 });

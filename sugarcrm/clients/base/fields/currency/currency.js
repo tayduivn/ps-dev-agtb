@@ -119,6 +119,8 @@
         var currencyDef = this.model.fields[this.def.currency_field || 'currency_id'];
         currencyDef.type = 'enum';
         currencyDef.options = app.currency.getCurrenciesSelector(Handlebars.compile('{{symbol}} ({{iso4217}})'));
+        currencyDef.enum_width = 'auto';
+        currencyDef.searchBarThreshold = this.def.searchBarThreshold || 7;
 
         this._currencyField = app.view.createField({
             def: currencyDef,
