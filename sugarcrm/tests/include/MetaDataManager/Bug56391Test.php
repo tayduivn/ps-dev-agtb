@@ -47,7 +47,9 @@ class Bug56391Test extends Sugar_PHPUnit_Framework_TestCase
         foreach($this->roles AS $role) {
             $role->mark_deleted($role->id);
             $role->mark_relationships_deleted($role->id);
-        }        
+            $GLOBALS['db']->query("DELETE FROM acl_fields WHERE role_id = '{$role->id}'");
+        }
+        unset($_SESSION['ACL']);
         
         SugarTestHelper::tearDown();
     }
