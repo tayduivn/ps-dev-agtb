@@ -26,17 +26,4 @@
  * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 }}
-        {{#each value}}
-        <div class="control-group email span12">
-            <div class="controls pull-left span6" title="{{email_address}}">
-                {{#if hasAnchor}}<a href="mailto:{{email_address}}">{{email_address}}</a>{{else}}{{email_address}}{{/if}}
-            </div>
-            <div class="btn-toolbar pull-left">
-                <div class="btn-group">
-                    <button type="button" class="btn{{#eq primary_address "1"}} active{{/eq}} disabled" rel="tooltip" data-original-title="{{str "LBL_EMAIL_PRIMARY"}}"><i class="icon-star"></i></button>
-                    <button type="button" class="btn{{#eq opt_out "1"}} active{{/eq}} disabled" rel="tooltip" data-original-title="{{str "LBL_EMAIL_OPT_OUT"}}"><i class="icon-ban-circle"></i></button>
-                    <button type="button" class="btn{{#eq invalid_email "1"}} active{{/eq}} disabled" rel="tooltip" data-original-title="{{str "LBL_EMAIL_INVALID"}}"><i class="icon-exclamation-sign"></i></button>
-                </div>
-            </div>
-        </div>
-        {{/each}}
+{{str label module}}

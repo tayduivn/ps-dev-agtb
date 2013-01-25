@@ -2553,6 +2553,7 @@ $app_strings = array (
     'LBL_LAST_VIEWED' => 'Recently Viewed',
     'LBL_SHOW_LESS' => 'Show Less',
     'LBL_SHOW_MORE' => 'Show More',
+    'LBL_SHOW_MORE_MODULE' => 'More {{str \'LBL_MODULE_NAME\' attributes.module}}...',
     'LBL_TODAYS_ACTIVITIES' => 'Today\'s Activities',
     'LBL_LEADS'=>'Leads',
     'LBL_LESS' => 'less',
