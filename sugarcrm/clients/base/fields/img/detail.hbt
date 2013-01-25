@@ -14,5 +14,5 @@
         <div class="modal-footer">
         </div>
     </div>
-    <img class="avatar" src="{{profile}}" style='width: 64px; height: 64px;' alt=""/>
+    <img src="{{profile}}"/>
 </div>
