@@ -156,7 +156,7 @@ class SugarCurrencyTest extends Sugar_PHPUnit_Framework_TestCase
     public function testConvertAmountToBase()
     {
         $amount = SugarCurrency::convertAmountToBase('1000.00',self::$currencySGD->id);
-        $this->assertEquals('802.458089',$amount);
+        $this->assertEquals('802.458090',$amount);
     }
 
     /**
