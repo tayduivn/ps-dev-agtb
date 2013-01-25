@@ -2,10 +2,8 @@
   <tr class="add-to-target-list-header">
     <td style="border-bottom:1px solid #ddd">
       <strong>Add to target list</strong>
-
     </td>
   </tr>
-
   <tr>
     <td style="">
       <span class="pull-left">
@@ -23,7 +21,6 @@
       <span>
         <input type="text" name="" value="Global">
       </span>
-
       <span class="pull-right">
         <i class="add-targter-filter-add icon-plus" style="padding:0 1em"></i>
       </span>
@@ -31,52 +28,48 @@
   </tr>
 </table>
 
+<table class="add-to-target-table-duplicates table table-striped">
+  <thead>
+    <tr>
+      <th class="nosort" style="width:3%">Select</th>
+      <th style="width:10%">Target List</th>
+      <th style="width:10%">Type</th>
+      <th style="width:30%">Description</th>
+      <th style="width:10%">User</th>
+      <th style="width:10%" class="nosort">&#8230;</th>
+    </tr>
+  </thead>
+  <tbody id="listed-tar">
 
+    <tr>
+      <td><input type="radio" name="tar1"></td>
+      <td>Global Atlantic</td>
+      <td>Suppress</td>
+      <td>Needs to be attached</td>
+      <td>jbiter</td>
+      <td>&nbsp;</td>
+    </tr>
 
-  <table class="add-to-target-table-duplicates table table-striped">
-    <thead>
-      <tr>
-        <th class="nosort" style="width:3%">Select</th>
-        <th style="width:10%">Target List</th>
-        <th style="width:10%">Type</th>
-        <th style="width:30%">Description</th>
-        <th style="width:10%">User</th>
-        <th style="width:10%" class="nosort">&#8230;</th>
-      </tr>
-    </thead>
-    <tbody id="listed-tar">
+    <tr>
+      <td><input type="radio" name="tar2"></td>
+      <td>Global East</td>
+      <td>Default</td>
+      <td> </td>
+      <td>jbiter</td>
+      <td>&nbsp;</td>
+    </tr>
 
-      <tr>
-        <td><input type="radio" name="tar1"></td>
-        <td>Global Atlantic</td>
-        <td>Suppress</td>
-        <td>Needs to be attached</td>
-        <td>jbiter</td>
-        <td>&nbsp;</td>
-      </tr>
+    <tr>
+      <td><input type="radio" name="tar3"></td>
+      <td>Global North</td>
+      <td>Default</td>
+      <td> </td>
+      <td>jbiter</td>
+      <td>&nbsp;</td>
+    </tr>
 
-      <tr>
-        <td><input type="radio" name="tar2"></td>
-        <td>Global East</td>
-        <td>Default</td>
-        <td> </td>
-        <td>jbiter</td>
-        <td>&nbsp;</td>
-      </tr>
-
-      <tr>
-        <td><input type="radio" name="tar3"></td>
-        <td>Global North</td>
-        <td>Default</td>
-        <td> </td>
-        <td>jbiter</td>
-        <td>&nbsp;</td>
-      </tr>
-
-    </tbody>
-  </table>
-
-
+  </tbody>
+</table>
 
 
 <script>
@@ -102,13 +95,11 @@
       $('a.btn.save-and-update').removeClass('disabled');
     });
 
-
     $('body').on('click', '.select-and-update, .save-and-update', function(){
       drawer(false);
       throwMessage('<strong>Success!</strong> You successfully updated target list', 'success', true);
       $('table.add-to-target-table').remove();
     });
-
 
     $('body').on('click', '.create-a-new-target-list', function(){
       $('.side-pane.active .howto').remove();
@@ -121,13 +112,3 @@
 
   });
 </script>
-
-
-
-
-
-
-
-
-
-
