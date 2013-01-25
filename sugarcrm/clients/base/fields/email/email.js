@@ -25,13 +25,22 @@
  * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 ({
-
     events:{
-        'change .existingAddress':'updateExistingAddress',
-        'click .btn-edit':'updateExistingProperty',
-        'click .removeEmail':'remove',
-        'click .addEmail':'add',
-        'change .newEmail': 'newEmailChanged'
+        'change .existingAddress': 'updateExistingAddress',
+        'click  .btn-edit':        'updateExistingProperty',
+        'click  .removeEmail':     'remove',
+        'click  .addEmail':        'add',
+        'change .newEmail':        'newEmailChanged'
+    },
+    initialize: function(options) {
+        options     = options || {};
+        options.def = options.def || {};
+        
+        if (_.isUndefined(options.def.link)) {
+            options.def.link = true;
+        }
+        
+        app.view.Field.prototype.initialize.call(this, options);
     },
     /**
      * Event handler for change of the .newEmail input, we want to test if a new e-mail needs to be added
@@ -68,20 +77,40 @@
     },
     /**
      * On render, determine which e-mail addresses need anchor tag included
-     * @param {Array} value set of e-mail addresses
-     * @private
+     * @param {string|Array} value single email address or set of email addresses
      */
-    _render:function() {
-        var emails = this.model.get('email');
-        _.each(emails, function(emailAddress){
-            // Needed for handlebars template, can't accomplish this boolean expression with handlebars
-            emailAddress.hasAnchor = emailAddress.opt_out != "1" && emailAddress.invalid_email != "1";
-        }, this);
-        app.view.Field.prototype._render.call(this);
-        _.each(emails, function(emailAddress, index){
-            // Remove handlebars cruft from e-mails so we only send valid fields back on save
-            emails[index] = _.pick(emailAddress, 'email_address', 'primary_address', 'opt_out', 'invalid_email');
-        });
+    format: function(value) {
+        // multiple emails
+        if (_.isArray(value)) {
+            _.each(value, function(email) {
+                // Needed for handlebars template, can't accomplish this boolean expression with handlebars
+                email.hasAnchor = email.opt_out != "1" && email.invalid_email != "1" && this.def.link;
+            }, this);
+        } else {
+            value = [{
+                'email_address':   value,
+                'primary_address': '1',
+                'hasAnchor':       false,
+                '_wasNotArray':    true
+             }];
+        }
+
+        return value;
+    },
+    unformat: function(value) {
+        if (_.isArray(value)) {
+            // multiple emails
+            _.each(value, function(email) {
+                if (email._wasNotArray) {
+                    return email.email_address;
+                } else {
+                    // Remove handlebars cruft from e-mails so we only send valid fields back on save
+                    email = _.pick(email, 'email_address', 'primary_address', 'opt_out', 'invalid_email');
+                }
+            });
+        }
+
+        return value;
     },
     /**
      * Removes email address from dom and model
