@@ -32,7 +32,7 @@ $viewdefs['base']['view']['list-bottom'] = array(
             'name' => 'show_more_button',
             'type' => 'button',
             'label' => 'LBL_SHOW_MORE_MODULE',
-            'css_class' => 'loading wide',
+            'css_class' => 'more padded',
         ),
     )
 );
