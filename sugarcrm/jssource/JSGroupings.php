@@ -57,7 +57,6 @@
                             'styleguide/assets/js/bootstrap-alert.js'   => $target,
                             'styleguide/assets/js/bootstrap-datepicker.js' => $target,
                             'styleguide/assets/js/bootstrapx-clickover.js' => $target,
-                            'include/javascript/jquery/jquery.nouislider.js' => $target,
                         );
                         break;
                     case 'bootstrap_core':
@@ -368,6 +367,7 @@
                    'portal2/views/alert-view.js'    => 'include/javascript/sugar_sidecar.min.js',
                    'include/javascript/jquery/jquery.popoverext.js'           => 'include/javascript/sugar_sidecar.min.js',
                    'include/javascript/jquery/jquery.effects.custombounce.js'           => 'include/javascript/sugar_sidecar.min.js',
+                   'include/javascript/jquery/jquery.nouislider.js' => 'include/javascript/sugar_sidecar.min.js',
                 )
            ),
            //BEGIN SUGARCRM flav=ent ONLY
