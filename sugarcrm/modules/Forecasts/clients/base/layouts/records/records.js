@@ -71,7 +71,9 @@
         // get default selections for filter and range
         app.defaultSelections = forecastData.defaultSelections;
         app.initData = forecastData.initData;
-        app.user.set(app.initData.selectedUser);
+
+        // Add Forecasts-specific stuff to the app.user object
+        app.user.set(app.initData.userData);
 
         if(forecastData.initData.forecasts_setup === 0) {
             window.location.hash = "#Forecasts/layout/config";
@@ -107,7 +109,7 @@
              * because selectedUser is used by other components and is changeable by most components
              * (e.g. selecting a different user via the hierarchy tree or clicking in the worksheet)
              */
-            selectedUser : defaultSelections.selectedUser,
+            selectedUser : app.user.attributes,
 
             /**
              * boolean to reload the active worksheet

@@ -46,7 +46,7 @@
                 app.router.navigate(route, {trigger: true});
                 app.alert.show('vcard-import-saved', {
                     level: 'success',
-                    messages: app.lang.getAppString('LBL_IMPORT_VCARD_SUCCESS', self.module),
+                    messages: app.lang.get('LBL_IMPORT_VCARD_SUCCESS', self.module),
                     autoClose: true
                 });
             }
