@@ -329,7 +329,7 @@ abstract class DBManager
 	 * @param string $message Message from SQL driver
 	 * @param bool $dieOnError
 	 */
-	protected function registerError($userMessage, $message, $dieOnError = false)
+	public function registerError($userMessage, $message, $dieOnError = false)
 	{
 		if(!empty($message)) {
 			if(!empty($userMessage)) {
@@ -627,18 +627,14 @@ protected function checkQuery($sql, $object_name = false)
 	 * @param bool $execute Execute or return query?
      * @return bool query result
      */
-	public function insertParams($table, $field_defs, $data, $field_map = null, $execute = true, $usePrepared=false)
+	public function insertParams($table, $field_defs, $data, $field_map = null, $execute = true, $usePreparedStatements=false)
 	{
 
-        if ( isset($this->usePreparedStatements) AND ( $this->usePreparedStatements == true) ) {
-            $usePrepared = true;
-        }
-		if ( isset($usePrepared) AND ($usePrepared == true) ) {
-			$useQuotes = false;
-		}
-		else {
-			$useQuotes = true;
-		}
+        // Global override
+        if ($this->usePreparedStatements)
+            $usePreparedStatements = true;
+
+        $useQuotes = !$usePreparedStatements;
 
         $values = array();
 		foreach ($field_defs as $field => $fieldDef)
@@ -677,7 +673,7 @@ protected function checkQuery($sql, $object_name = false)
 		if (empty($values))
 			return $execute?true:''; // no columns set
 
-        if (!$usePrepared) {
+        if (!$usePreparedStatements) {
 
             // get the entire sql
             $query = "INSERT INTO $table (".implode(",", array_keys($values)).")
@@ -2235,13 +2231,13 @@ protected function checkQuery($sql, $object_name = false)
 	 * @param  array  $where Optional, where conditions in an array
 	 * @return string SQL Create Table statement
 	 */
-	public function updateSQL(SugarBean $bean, array $where = array(), $usePrepared = false)
+	public function updateSQL(SugarBean $bean, array $where = array(), $usePreparedStatements = false)
 	{
+        // Global override
+        if ($this->usePreparedStatements)
+            $usePreparedStatements = true;
 
-        if ( isset($usePreparedStatements) AND ( $usePreparedStatements == true) )
-            $usePrepared = true;
-        else if (!isset($usePrepared))
-            $usePrepared = false;
+        $useQuotes = !$usePreparedStatements;
 
 		$primaryField = $bean->getPrimaryFieldDefinition();
 		$columns = array();
@@ -2287,9 +2283,9 @@ protected function checkQuery($sql, $object_name = false)
 			}
 
     		if(!is_null($val) || !empty($fieldDef['required'])) {
-                if ($usePrepared) {
+                if ($usePreparedStatements) {
     			    $columns[] = "{$fieldDef['name']}=?".$fieldDef['type'];
-                    $data[] = $this->massageValue($val, $fieldDef, false);
+                    $data[] = $this->massageValue($val, $fieldDef, $useQuotes);
                 }
                 else {
                     $columns[] = "{$fieldDef['name']}=".$this->massageValue($val, $fieldDef);
@@ -2297,7 +2293,7 @@ protected function checkQuery($sql, $object_name = false)
     		} elseif($this->isNullable($fieldDef)) {
     			$columns[] = "{$fieldDef['name']}=NULL";
     		} else {
-                if ($usePrepared) {
+                if ($usePreparedStatements) {
                     $columns[] = "{$fieldDef['name']}=?".$fieldDef['type'];
                     $data[] = $this->emptyValue($fieldDef['type']);
                 }
@@ -2316,7 +2312,7 @@ protected function checkQuery($sql, $object_name = false)
             $where .= " AND deleted=0";
         }
 
-        if (!$usePrepared) {
+        if (!$usePreparedStatements) {
 
             return "UPDATE ".$bean->getTableName()."
 					SET ".implode(",", $columns)."
@@ -2595,33 +2591,28 @@ protected function checkQuery($sql, $object_name = false)
 	 * @param  array  $where where conditions in an array
 	 * @return string SQL Update Statement
 	 */
-	public function deleteSQL(SugarBean $bean, array $where, $usePrepared = false)
+	public function deleteSQL(SugarBean $bean, array $where, $usePreparedStatements=false )
 	{
-		$where = $this->getWhereClause($bean, $this->updateWhereArray($bean, $where));
+        // Global override
+        if ($this->usePreparedStatements)
+            $usePreparedStatements = true;
 
-        if ( isset($usePreparedStatements) AND ( $usePreparedStatements == true) )
-            $usePrepared = true;
+        $useQuotes = !$usePreparedStatements;
 
-        if ( $usePrepared ) {
+		$where = $this->getWhereClause($bean, $this->updateWhereArray($bean, $where, $useQuotes));
 
+        if (!$usePreparedStatements) {
 		return "UPDATE ".$bean->getTableName()." SET deleted=1 $where";
-            /*
+        }
+        else {  //Prepared Statement
             $query = "UPDATE ".$bean->getTableName()." SET deleted=1 $where";
 
             // Prepare and execute the statement
-            echo "==> DBManager.updateSQL: Preparing stmt for query $query data\n";
-            $ps = $this->prepareStatement($query, array());
-
-            echo "==> DBManager: Executing stmt\n";
-            $result = $ps->executeStatement(array());
-            echo "==> DBManager: result:\n";
-            var_dump($result);
+            $ps = $this->prepareStatement($query);
+            $result = $ps->executePreparedStatement(array());  // $data
             return $result;
-            */
         }
-        else {
-            return "UPDATE ".$bean->getTableName()." SET deleted=1 $where";
-        }
+
 	}
 
     /**

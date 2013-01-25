@@ -114,12 +114,14 @@ class MysqliPreparedStatement extends PreparedStatement
 
       $this->lastsql = $sqlText;
       $GLOBALS['log']->info('QueryPrepare:' . $sqlText);
-
       if (!($this->stmt = $this->dblink->prepare($sqlText))) {
-          $this->log->error("Prepare failed: $msg for sql: $sqlText (" . $this->dblink->errno . ") " . $this->dblink->error);
+
+          $this->DBM->registerError("Prepare failed: $msg for sql: $sqlText (" . $this->dblink->errno . ") " . $this->dblink->error, null, $dieOnError);
           return false;
       }
       $num_args = $this->stmt->param_count;
+
+      if ($num_args > 0) {
       $this->bound_vars = $bound = array_fill(0, $num_args, null);
       $types = "";
       for($i=0; $i<$num_args;$i++) {
@@ -134,6 +136,7 @@ class MysqliPreparedStatement extends PreparedStatement
 
       $this->DBM->checkError(" QueryPrepare Failed: $msg for sql: $sqlText ::");
 
+      }
       return $this;
   }
 
@@ -145,14 +148,20 @@ class MysqliPreparedStatement extends PreparedStatement
       //parent::countQuery($this->sqlText);
       $GLOBALS['log']->info('Query:' . $this->sqlText);
 
-      if ($this->stmt->param_count != count($data) )
-          return "incorrect number of elements. Expected " . $this->stmt->param_count . " but got " . count($data);
-
       $this->query_time = microtime(true);
 
+      if (!empty($data)) {
+          if ($this->stmt->param_count != count($data) )  {
+              $this->DBM->registerError( "incorrect number of elements. Expected " . $this->stmt->param_count . " but got " . count($data));
+             return false;
+          }
+          // bind the variables
       for($i=0; $i<$this->stmt->param_count;$i++) {
          $this->bound_vars[$i] = array_shift($data);
       }
+
+      }
+
 
       $this->preparedStatementResult = null;
       $res = $this->stmt->execute();
@@ -161,7 +170,7 @@ class MysqliPreparedStatement extends PreparedStatement
       $GLOBALS['log']->info('Query Execution Time:'.$this->query_time);
 
       if (!$res) {
-          $this->log->error("Query Failed: $this->sqlText");
+          $this->DBM->registerError("Query Failed: $this->sqlText", null, $dieOnError);
           $this->stmt = false; // Making sure we don't use the statement resource for error reporting
       }
       else {

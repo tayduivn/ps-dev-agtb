@@ -135,15 +135,15 @@ abstract class PreparedStatement{
 
 
            }
+           // add the remaining sql
+           $cleanedSql .= $sql;
         }
 
-        // add the remaining sql
-        $cleanedSql .= $sql;
 
         //Prepare the statement in the database                  $DBM
         $preparedStatementHndl = $this->preparePreparedStatement($cleanedSql, $fieldDefs );
         if (empty($preparedStatementHndl)) {
-            $this->log->error("Prepare failed: $msg for sql: $sql (" . $this->dblink->errno . ") " . $this->dblink->error);
+            $this->log->error("Prepare failed: for sql: $sql (" . $this->dblink->errno . ") " . $this->dblink->error);
             return false;
         }
     }

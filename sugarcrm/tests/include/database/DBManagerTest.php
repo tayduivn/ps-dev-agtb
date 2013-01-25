@@ -2704,7 +2704,6 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
 
         // delete test
         $sql=$this->_db->deleteSQL($bean,array('id'=>$bean->id), true);
-        $this->_db->query($sql,true,"Error deleting from table");
         $result = $this->_db->query("select deleted from contacts where id = '{$bean->id}'");
         $row = $this->_db->fetchByAssoc($result);
         $this->assertEquals(trim($row['deleted']),'1');

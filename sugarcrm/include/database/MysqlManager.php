@@ -1508,7 +1508,8 @@ class MysqlManager extends DBManager
 
     public function prepareStatement($sql, array $fieldDefs = array() )
     {
-        return new MysqliPreparedStatement($this, $sql, $data);
+        $this->DBM->registerError("Prepared Statements not supported in this driver");
+        return false;
     }
 
 }

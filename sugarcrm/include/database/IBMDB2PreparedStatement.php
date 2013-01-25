@@ -55,6 +55,7 @@ class IBMDB2PreparedStatement extends PreparedStatement
     //     DB2_DOUBLE    DOUBLE, FLOAT, or REAL
     //     DB2_LONG      SMALLINT, INTEGER, or BIGINT
 
+    /*
     public $ps_type_map = array(
 
         'int'      =>  DB2_LONG,
@@ -91,6 +92,7 @@ class IBMDB2PreparedStatement extends PreparedStatement
         'decimal_tpl' => DB2_CHAR,
 
     );
+    */
 
 
 
@@ -100,7 +102,7 @@ class IBMDB2PreparedStatement extends PreparedStatement
       $GLOBALS['log']->info('QueryPrepare:' . $sqlText);
 
       if (!($this->stmt = db2_prepare($this->dblink, $sqlText))) {
-          $this->log->error("Prepare failed: $msg for sql: $sqlText (" . $this->dblink->errno . ") " . $this->dblink->error);
+          $this->DBM->registerError("Prepare failed: $msg for sql: $sqlText (" . $this->dblink->errno . ") " . $this->dblink->error, null, $dieOnError);
           return false;
       }
       /*
@@ -152,7 +154,7 @@ class IBMDB2PreparedStatement extends PreparedStatement
       $GLOBALS['log']->info('Query Execution Time:'.$this->DBM->query_time);
 
        if (!$this->preparedStatementResult) {
-           $this->log->error("Query Failed: $this->sqlText");
+           $this->DBM->registerError("Query Failed: $this->sqlText", null, $dieOnError);
            $this->stmt = false; // Making sure we don't use the statement resource for error reporting
       }
        else {

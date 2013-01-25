@@ -58,43 +58,6 @@ class SqlsrvPreparedStatement extends PreparedStatement
      */
     protected $bound_vars = array();
 
-    /* SQLSRV types:
-
-        SQLSRV_SQLTYPE_BIGINT (integer)
-        SQLSRV_SQLTYPE_BINARY (integer)
-        SQLSRV_SQLTYPE_BIT (integer)
-        SQLSRV_SQLTYPE_CHAR (integer)
-        SQLSRV_SQLTYPE_DATE (integer)
-        SQLSRV_SQLTYPE_DATETIME (integer)
-        SQLSRV_SQLTYPE_DATETIME2 (integer)
-        SQLSRV_SQLTYPE_DATETIMEOFFSET (integer)
-        SQLSRV_SQLTYPE_DECIMAL (integer)
-        SQLSRV_SQLTYPE_FLOAT (integer)
-        SQLSRV_SQLTYPE_IMAGE (integer)
-        SQLSRV_SQLTYPE_INT (integer)
-        SQLSRV_SQLTYPE_MONEY (integer)
-        SQLSRV_SQLTYPE_NCHAR (integer)
-        SQLSRV_SQLTYPE_NUMERIC (integer)
-        SQLSRV_SQLTYPE_NVARCHAR (integer)
-        SQLSRV_SQLTYPE_NVARCHAR('max') (integer)
-        SQLSRV_SQLTYPE_NTEXT (integer)
-        SQLSRV_SQLTYPE_REAL (integer)
-        SQLSRV_SQLTYPE_SMALLDATETIME (integer)
-        SQLSRV_SQLTYPE_SMALLINT (integer)
-        SQLSRV_SQLTYPE_SMALLMONEY (integer)
-        SQLSRV_SQLTYPE_TEXT (integer)
-        SQLSRV_SQLTYPE_TIME (integer)
-        SQLSRV_SQLTYPE_TIMESTAMP (integer)
-        SQLSRV_SQLTYPE_TINYINT (integer)
-        SQLSRV_SQLTYPE_UNIQUEIDENTIFIER (integer)
-        SQLSRV_SQLTYPE_UDT (integer)
-        SQLSRV_SQLTYPE_VARBINARY (integer)
-        SQLSRV_SQLTYPE_VARBINARY('max') (integer)
-        SQLSRV_SQLTYPE_VARCHAR (integer)
-        SQLSRV_SQLTYPE_VARCHAR('max') (integer)
-        SQLSRV_SQLTYPE_XML (integer)
-
-    */
 
     public $ps_type_map = array(
         'int'           =>  SQLSRV_SQLTYPE_INT,
@@ -131,47 +94,6 @@ class SqlsrvPreparedStatement extends PreparedStatement
         'decimal_tpl'   =>  'SQLSRV_SQLTYPE_CHAR',
 
     );
-
-
-
-  public function preparePreparedStatementOldSqlsrv($sqlText, array $fieldDefs, $msg = '' ){
-
-      $this->lastsql = $sqlText;
-      $GLOBALS['log']->info('QueryPrepare:' . $sqlText);
-
-	  $keylessData = array();
-	  foreach($data as &$dataElement) {
-          $keylessData[] = $dataElement;
-	  }
-
-      if (!($this->stmt = sqlsrv_prepare($this->dblink, $sqlText, $keylessData))) {
-          $this->log->error("Prepare failed: $msg for sql: $sqlText (" . $this->dblink->errno . ") " . $this->dblink->error);
-          return false;
-      }
-
-      /*
-      $num_args = $this->stmt->param_count;
-      echo "preparePreparedStatement: num_args from prepare: $num_args \n";
-      $this->bound_vars = $bound = array_fill(0, $num_args, null);
-      $types = "";
-      for($i=0; $i<$num_args;$i++) {
-          $types .= $this->ps_type_map[ $fieldDefs[$i] ];
-          $bound[$i] =& $this->bound_vars[$i];
-      }
-      echo "types: >$types<\n";
-      array_unshift($bound, $types);
-
-      echo "Binding the data: types then vars\n";
-      var_dump($bound);
-      // Pre-bind the internal data array to    $this->bound_vars
-      call_user_func_array(array($this->stmt, "bind_param"), $bound);
-      */
-
-      $this->checkError(" QueryPrepare Failed: $msg for sql: $sqlText ::");
-
-      return $this;
-  }
-
 
 
     public function preparePreparedStatement($sqlText,  array $fieldDefs, $msg = '' ){
@@ -220,7 +142,7 @@ class SqlsrvPreparedStatement extends PreparedStatement
         }
 
         if (!($this->stmt = sqlsrv_prepare($this->dblink, $sqlText, $params))) {
-            $this->log->error("Prepare failed: $msg for sql: $sqlText (" . $this->dblink->errno . ") " . $this->dblink->error);
+            $this->DBM->registerError("Prepare failed: $msg for sql: $sqlText (" . $this->dblink->errno . ") " . $this->dblink->error, null, $dieOnError);
             return false;
         }
 
@@ -237,8 +159,10 @@ class SqlsrvPreparedStatement extends PreparedStatement
        parent::countQuery($this->sqlText);
        $GLOBALS['log']->info('Query:' . $this->sqlText);
 
-       if ($this->stmt->param_count != count($data) )
-           return "incorrect number of elements. Expected " . $this->stmt->param_count . " but got " . count($data);
+       if ($this->stmt->param_count != count($data) ) {
+           $this->DBM->registerError("incorrect number of elements. Expected " . $this->stmt->param_count . " but got " . count($data), null, $dieOnError);
+           return false;
+       }
 
        $this->query_time = microtime(true);
 
@@ -259,7 +183,7 @@ class SqlsrvPreparedStatement extends PreparedStatement
       $GLOBALS['log']->info('Query Execution Time:'.$this->query_time);
 
       if (!$res) {
-          $this->log->error("Query Failed: $this->sqlText");
+          $this->DBM->registerError("Query Failed: $this->sqlText", null, $dieOnError);
           $this->stmt = false; // Making sure we don't use the statement resource for error reporting
       }
       else {

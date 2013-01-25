@@ -159,7 +159,7 @@ class OraclePreparedStatement extends PreparedStatement
       $GLOBALS['log']->info('QueryPrepare:' . $sqlText);
 
       // Convert ? into :var in prepared statements
-      if (!empty($fieldDefs) or (!is_array($fieldDefs))) {
+      if (!empty($fieldDefs) ) {
 
          $cleanedSql = "";
          $fields = array();
@@ -185,23 +185,22 @@ class OraclePreparedStatement extends PreparedStatement
                  $nextParam = strpos( $sqlText, "?" ); // look for another param
                  $i++;
               }
+              // add the remaining sql
+              $cleanedSql .= $sqlText;
           }
-
-          // add the remaining sql
-          $cleanedSql .= $sqlText;
 
       }
       else {
-         $this->log->error("ERROR Prepared Statements without field definitions not yet supported.");
-         return false;
+          $this->DBM->registerError("ERROR Prepared Statements without field definitions not yet supported.", null, $dieOnError);
+          $this->stmt = false; // Making sure we don't use the statement resource for error reporting      }
       }
 
       $sqlText = $cleanedSql;
 
       // do the prepare
       if (!($this->stmt = oci_parse($this->dblink, $sqlText))) {
-          $this->log->error("preparePreparedStatement: Prepare failed: $msg for sql: $sqlText (" . $this->dblink->errno . ") " . $this->dblink->error);
-          return false;
+          $this->DBM->registerError("preparePreparedStatement: Prepare failed: $msg for sql: $sqlText (" . $this->dblink->errno . ") " . $this->dblink->error, null, $dieOnError);
+          $this->stmt = false; // Making sure we don't use the statement resource for error reporting
       }
 
       // bind the array elements
@@ -218,9 +217,11 @@ class OraclePreparedStatement extends PreparedStatement
 				$len = 5000;
 
           if(!oci_bind_by_name($this->stmt, $oraBvName, $this->bound_vars[$statement_bind], $len, $dataTypes[$statement_bind])) {
-              $this->log->error("preparePreparedStatement: Bind failed: $msg for sql: $sqlText for param $bindvars[$statement_bind] "
-                                . " as type $dataTypes[$statement_bind]  lenL $len" . $this->dblink->errno . " " . $this->dblink->error);
-      }
+              $this->DBM->registerError("preparePreparedStatement: Bind failed: $msg for sql: $sqlText for param $bindvars[$statement_bind] "
+                                . " as type $dataTypes[$statement_bind]  lenL $len" . $this->dblink->errno . " " . $this->dblink->error,
+                  null, $dieOnError);
+              $this->stmt = false; // Making sure we don't use the statement resource for error reporting
+          }
       }
 
       $this->DBM->checkError(" QueryPrepare Failed: $msg for sql: $sqlText ::");
@@ -248,7 +249,8 @@ class OraclePreparedStatement extends PreparedStatement
       $GLOBALS['log']->info('Query Execution Time:'.$this->DBM->query_time);
 
       if (!$res) {
-          $this->log->error("Query Failed: $this->sqlText");           $this->stmt = false; // Making sure we don't use the statement resource for error reporting
+          $this->DBM->registerError("Query Failed: $this->sqlText", null, $dieOnError);
+          $this->stmt = false; // Making sure we don't use the statement resource for error reporting
       }
       else {
 
