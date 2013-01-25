@@ -58,12 +58,12 @@ class ConfigModuleApiTest extends Sugar_PHPUnit_Framework_TestCase
         $args = array(
             "module" => "Contacts",
             "platform" => "base",
-            "testSetting" => "testValue",
+            "testSetting" => "My voice is my passport, verify me",
         );
         $apiClass = new ConfigModuleApi();
         $result = $apiClass->configSave($api, $args);
         $this->assertArrayHasKey("testSetting", $result);
-        $this->assertEquals($result['testSetting'], "testValue");
+        $this->assertEquals($result['testSetting'], "My voice is my passport, verify me");
 
         /* @var $admin Administration */
         $admin = BeanFactory::getBean('Administration');
@@ -71,7 +71,7 @@ class ConfigModuleApiTest extends Sugar_PHPUnit_Framework_TestCase
         $results = $admin->getConfigForModule('Contacts', 'base');
 
         $this->assertArrayHasKey("testSetting", $results);
-        $this->assertEquals($results['testSetting'], "testValue");
+        $this->assertEquals($results['testSetting'], "My voice is my passport, verify me");
     }
 
     /**
@@ -80,7 +80,7 @@ class ConfigModuleApiTest extends Sugar_PHPUnit_Framework_TestCase
     public function testReadConfig() {
         /* @var $admin Administration */
         $admin = BeanFactory::getBean('Administration');
-        $admin->saveSetting('Contacts', 'testSetting', 'testValue', 'base');
+        $admin->saveSetting('Contacts', 'testSetting', 'My voice is my passport, verify me', 'base');
 
         $api = new RestService();
         //Fake the security
@@ -93,14 +93,14 @@ class ConfigModuleApiTest extends Sugar_PHPUnit_Framework_TestCase
         $apiClass = new ConfigModuleApi();
         $result = $apiClass->config($api, $args);
         $this->assertArrayHasKey("testSetting", $result);
-        $this->assertEquals($result['testSetting'], "testValue");
+        $this->assertEquals($result['testSetting'], "My voice is my passport, verify me");
     }
 
     /**
      * test the update config
      */
     public function testUpdateConfig() {
-        $testSetting = 'testValue';
+        $testSetting = 'My voice is my passport, verify me';
         /* @var $admin Administration */
         $admin = BeanFactory::getBean('Administration');
         $admin->saveSetting('Contacts', 'testSetting', $testSetting, 'base');
@@ -142,7 +142,7 @@ class ConfigModuleApiTest extends Sugar_PHPUnit_Framework_TestCase
         $args = array(
             "module" => "Contacts",
             "platform" => "base",
-            "testSetting" => "testValue",
+            "testSetting" => "My voice is my passport, verify me",
         );
         $apiClass = new ConfigModuleApi();
         $result = $apiClass->configSave($api, $args);
