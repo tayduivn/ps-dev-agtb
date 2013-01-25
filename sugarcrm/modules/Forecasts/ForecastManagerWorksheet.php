@@ -52,11 +52,6 @@ class ForecastManagerWorksheet extends SugarBean
     public $disable_custom_fields = true;
     public $isManager = false;
 
-    /*public function save()
-    {
-
-    }*/
-
     public function commitManagerForecast(User $manager, $timeperiod)
     {
 
