@@ -2,7 +2,6 @@
     events: {
         'click .reply': 'showAddComment',
         'click .postReply': 'addComment',
-        'click .addPost': 'addPost',
         'click .more': 'showAllComments',
         'dragenter .sayit': 'expandNewPost',
         'dragover .sayit': 'dragoverNewPost',
@@ -32,6 +31,9 @@
             app.events.trigger("preview:collection:change", collection);
         }, this);
 
+        this.layout.off("stream:addPost:fire", null, this);
+        this.layout.on("stream:addPost:fire", this.addPost, this);
+
         // Check to see if we need to make a related activity stream.
         // Currently the "Home" module is dubbed ActivityStreem
         if (this.module !== "ActivityStream") {
@@ -57,14 +59,6 @@
         this.opts.params.offset = 0;
         this.opts.params.limit = 20;
         //this.streamCollection.fetch(this.opts);
-
-        this.user_id = app.user.get('id');
-        this.full_name = app.user.get('full_name');
-        this.picture_url = (app.user.get('picture')) ? app.api.buildFileURL({
-            module: 'Users',
-            id: app.user.get('id'),
-            field: 'picture'
-        }) : app.config.siteUrl + "/styleguide/assets/img/profile.png";
 
         // Expose the dataTransfer object for drag and drop file uploads.
         jQuery.event.props.push('dataTransfer');
