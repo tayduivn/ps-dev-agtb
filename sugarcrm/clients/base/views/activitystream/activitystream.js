@@ -30,9 +30,8 @@
         this.layout.on("stream:addPost:fire", this.addPost, this);
 
         // Check to see if we need to make a related activity stream.
-        // Currently the "Home" module is dubbed ActivityStreem
-        if (this.module !== "ActivityStream") {
-            this.subcontext = this.context.getChildContext({module: "ActivityStream"});
+        if (this.module !== "Home") {
+            this.subcontext = this.context.getChildContext({module: "Home"});
             this.subcontext.prepare();
 
             this.opts = (this.context.get("modelId")) ? { params: { module: this.module, id: this.context.get("modelId") }} :
@@ -210,7 +209,7 @@
             myPostContents,
             attachments = myPost.find('.activitystream-pending-attachment');
 
-        if (myPostModule !== "ActivityStream") {
+        if (myPostModule !== "Home") {
             myPostUrl += '/' + myPostModule;
             if (!_.isUndefined(myPostId)) {
                 myPostUrl += '/' + myPostId;
@@ -444,7 +443,7 @@
 
     _focusOnPost: _.once(function() {
         // Only focus on the home page. Change this when we have a home module.
-        if (this.module === "ActivityStream") {
+        if (this.module === "Home") {
             _.defer(function() {
                 this.$(".activitystream-post .sayit").focus();
             });
