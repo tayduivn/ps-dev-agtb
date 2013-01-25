@@ -283,6 +283,22 @@ class SugarMath
     }
 
     /**
+     * round value to given precision
+     *
+     * @param string $value
+     * @param int $precision
+     * @return string
+     */
+    public function round($value, $precision = 0) {
+        if (false !== ($pos = strpos($value, '.')) && (strlen($value) - $pos - 1) > $precision) {
+            $zeros = str_repeat("0", $precision);
+            return bcadd($value, "0.{$zeros}5", $precision);
+        } else {
+            return $value;
+        }
+    }
+
+    /**
      * test that value is numeric
      *
      * @param number|string $value
