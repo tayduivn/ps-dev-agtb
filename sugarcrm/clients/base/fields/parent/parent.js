@@ -1,21 +1,17 @@
 ({
-    events: {
-        'keyup .chzn-select[name=parent_name] + .chzn-container .chzn-search input': 'throttleSearch'
-    },
-    minChars: 3,
+    minChars: 1,
     extendsFrom: 'RelateField',
-    fieldTag: 'select.chzn-select[name=parent_name]',
-    typeFieldTag: 'select.chzn-select[name=parent_type]',
+    fieldTag: 'input.select2[name=parent_name]',
+    typeFieldTag: 'select.select2[name=parent_type]',
     hiddenValue: '***',
     _render: function() {
         var result = app.view.fields.RelateField.prototype._render.call(this),
             self = this;
         if(this.tplName === 'edit') {
             this.checkAcl('access', this.model.get('parent_type'));
-            this.$(this.typeFieldTag).not(".chzn-done").chosen().change(function(evt) {
-                var selected = $(evt.currentTarget).find(':selected'),
-                    module = selected.val();
-                self.$(self.fieldTag).children().not(":first").not("[data-searchmore=true]").remove();
+            //this.$(this.typeFieldTag).not(".chzn-done").chosen().change(function(evt) {
+            this.$(this.typeFieldTag).select2().on("change", function(e) {
+                var module = e.val;
                 self.checkAcl.call(self, 'edit', module);
                 self.setValue({
                     id: '',

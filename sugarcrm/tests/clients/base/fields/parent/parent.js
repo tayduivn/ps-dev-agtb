@@ -22,9 +22,21 @@ describe("Base.Field.Parent", function() {
             "required": true, "importable": "required"
         };
         sinonSandbox = sinon.sandbox.create();
+
         SugarTest.loadComponent("base", "field", "relate");
         field = SugarTest.createField("base","parent_name", "parent", "edit", fieldDef);
         field.model = new Backbone.Model({parent_type: "Contacts", parent_id: "111-222-33333", parent_name: "blob"});
+
+        if (!$.fn.select2) {
+            $.fn.select2 = function(options) {
+                var obj = {
+                    on : function() {
+                        return obj;
+                    }
+                };
+                return obj;
+            };
+        }
     });
 
 

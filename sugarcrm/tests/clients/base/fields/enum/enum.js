@@ -12,6 +12,17 @@ describe("enum field", function() {
         stub_appListStrings = sinon.stub(app.lang, 'getAppListStrings', function() {
             return {"":"","Defect":"DefectValue","Feature":"FeatureValue"};
         });
+
+        if (!$.fn.select2) {
+            $.fn.select2 = function(options) {
+                var obj = {
+                    on : function() {
+                        return obj;
+                    }
+                };
+                return obj;
+            };
+        }
     });
 
     afterEach(function() {
