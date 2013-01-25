@@ -431,6 +431,14 @@ $dictionary['Call'] = array('table' => 'calls', 'comment' => 'A Call is an activ
     'reportable' => false,
     'studio' => false,
   ),
+  'send_invites' => array(
+    'name' => 'send_invites',
+    'vname' => 'LBL_SEND_INVITES',
+    'type' => 'bool',
+    'source' => 'non-db',
+    'comment' => 'checkbox indicating whether or not to send out invites (Meta-data only)',
+    'massupdate' => false,
+   ),  
 ),
 'indices' => array (
 	array(
