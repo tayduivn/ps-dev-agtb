@@ -40,23 +40,17 @@ $ent_mod_strings = return_module_language($current_language, "ReportMaker");
 $module_menu = array();
 //END SUGARCRM flav=ent ONLY
 //BEGIN SUGARCRM flav!=sales ONLY
-if(!(ACLController::checkAccess('Reports', 'create', true))) {
+if(ACLController::checkAccess('Reports', 'create', true)) {
 	$module_menu[] = array("index.php?module=Reports&report_module=&action=index&page=report&Create+Custom+Report=Create+Custom+Report", $mod_strings['LBL_CREATE_REPORT'],"CreateReport", 'Reports');
 }
 //END SUGARCRM flav!=sales ONLY
 
 $module_menu[] = array("index.php?module=Reports&action=index", $mod_strings['LBL_ALL_REPORTS'],"Reports", 'Reports');
-//BEGIN SUGARCRM flav=ent ONLY
-$module_menu[] = array("index.php?module=ReportMaker&action=index&return_module=ReportMaker&return_action=index", $ent_mod_strings['LNK_ADVANCED_REPORTING'],"ReportMaker");
-//END SUGARCRM flav=ent ONLY
-	
-if(!(ACLController::checkAccess('Reports', 'edit', true))) {
-    $module_menu[] = array("index.php?module=Reports&favorite=1&action=index", $mod_strings['LBL_FAVORITE_REPORTS'], "FavoriteReports", 'Reports');
-    $module_menu[] = array("index.php?module=Reports&action=index", $mod_strings['LBL_ALL_REPORTS'],"Reports", 'Reports');
-}
+$module_menu[] = array("index.php?module=Reports&favorite=1&action=index", $mod_strings['LBL_FAVORITE_REPORTS'], "FavoriteReports", 'Reports');
+
 
 //BEGIN SUGARCRM flav=ent ONLY
-if(!(ACLController::checkAccess('Reports', 'create', true))) {
+if(ACLController::checkAccess('Reports', 'create', true)) {
 	$module_menu[] = array("index.php?module=ReportMaker&action=index&return_module=ReportMaker&return_action=index", $ent_mod_strings['LNK_ADVANCED_REPORTING'],"ReportMaker",'Reports');
 }
 //END SUGARCRM flav=ent ONLY
