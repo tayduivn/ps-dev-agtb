@@ -189,15 +189,6 @@ table.dataTable {
     }
   }
 
-  td {
-    span.longtext {
-      display: inline-block;
-      width: 100%;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-  }
-
   &.inline-edit-active {
     tr {
       td {
@@ -229,5 +220,14 @@ table.dataTable {
   padding: 8px 23px !important;
   .dropdown-menu {
     text-align: left !important;
+  }
+}
+
+td {
+  &>span[sfuuid] {
+    display: inline-block;
+    width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 }

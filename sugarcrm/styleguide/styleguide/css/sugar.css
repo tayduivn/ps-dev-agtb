@@ -2161,12 +2161,6 @@ table.dataTable tr td:not(:hover) .dropdown.btn-group .btn {
 table.dataTable tr td:not(:hover) .dropdown.btn-group .btn.dropdown-toggle {
   visibility: hidden;
 }
-table.dataTable td span.longtext {
-  display: inline-block;
-  width: 100%;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
 table.dataTable.inline-edit-active tr td {
   overflow-x: visible !important;
 }
@@ -2192,6 +2186,12 @@ table.dataTable.inline-edit-active tr td .chzn-drop {
 }
 .morecol .dropdown-menu {
   text-align: left !important;
+}
+td>span[sfuuid] {
+  display: inline-block;
+  width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 .jstree-sugar ins:before {
   font-family: FontAwesome;
