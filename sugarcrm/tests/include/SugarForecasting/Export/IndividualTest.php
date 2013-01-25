@@ -228,8 +228,10 @@ class SugarForecasting_Export_IndividualTest extends Sugar_PHPUnit_Framework_Tes
     public function testExportValues()
     {
         $opp = $this->reportee['opportunities'][0];
-        $opp->date_closed = $this->timeperiod->start_date;
-        $opp->save();
+
+        global $current_user;
+        $temp_current_user = $current_user;
+        $current_user = BeanFactory::getBean('Users', $this->repData['id']);
 
         $args = array();
         $args['timeperiod_id'] = $this->timeperiod->id;
@@ -245,5 +247,7 @@ class SugarForecasting_Export_IndividualTest extends Sugar_PHPUnit_Framework_Tes
         $db = DBManagerFactory::getInstance();
         $expectedDateClosed = $timedate->to_display_date($db->fromConvert($opp->date_closed, 'date'), false);
         $this->assertContains($expectedDateClosed, $content, "Failed asserting that '{$content}' contains '{$expectedDateClosed}'");
+
+        $current_user = $temp_current_user;
     }
 }
