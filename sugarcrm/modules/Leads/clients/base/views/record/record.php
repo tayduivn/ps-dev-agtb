@@ -97,10 +97,7 @@ $viewdefs['Leads']['base']['view']['record'] = array(
                 'account_name',
                 'website',
                 'title',
-                array(
-                    'name' => 'email',
-                    'label' => 'LBL_EMAIL_ADDRESSES',
-                ),
+                'email',
                 'department',
                 'phone_mobile',
                 array(
