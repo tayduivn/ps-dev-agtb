@@ -3,6 +3,9 @@ describe("Theme Roller View", function() {
     var app, view;
 
     beforeEach(function() {
+        if (!$.fn.colorpicker) {
+            $.fn.colorpicker = function() {};
+        }
         SugarTest.seedMetadata(true);
         app = SugarTest.app;
         var context = app.context.getContext();
@@ -34,7 +37,7 @@ describe("Theme Roller View", function() {
     });
 
     it("should make right api call", function() {
-        var url = app.api.buildURL('theme', '', {}, {});
+        var url;
         $('<input>').attr({type:"text", name:"a", value:"aaaa"}).appendTo(view.$el);
 
 
@@ -42,10 +45,13 @@ describe("Theme Roller View", function() {
         var themeApiSpy = sinon.stub(app.api, "call");
         var showMessageSpy = sinon.stub(view, "showMessage");
         view.loadTheme();
-        expect(themeApiSpy).toHaveBeenCalledWith("read", url, {platform: "base", themeName: "default"});
+
+        url = app.api.buildURL('theme', '', {}, {platform: "base", themeName: "default"});
+        expect(themeApiSpy).toHaveBeenCalledWith("read", url, {});
 
         //Describe saveTheme
         view.saveTheme();
+        url = app.api.buildURL('theme', '', {}, {});
         expect(themeApiSpy).toHaveBeenCalledWith("create", url, {a: "aaaa", platform: "base", themeName: "default"});
 
         //Describe resetTheme

@@ -1,15 +1,15 @@
 describe("Filter View", function() {
 
-    var view, app;
+    var layout, view, app;
 
     beforeEach(function() {
-        view = SugarTest.createView("base","Cases", "filter");
+        layout = {trigger: function() {}, off: function() {}, on: function() {}};
+
+        view = SugarTest.createView("base","Cases", "filter", null, null, false, layout);
         view.model = new Backbone.Model();
         view.collection = new Backbone.Collection(view.model);
         view.collection.fields = _.keys(fixtures.metadata.modules.Cases.fields);
-        view.layout = {
-                trigger: function(){}
-        };
+
         app = SUGAR.App;
     });
 
@@ -17,30 +17,16 @@ describe("Filter View", function() {
     afterEach(function() {
         app.cache.cutAll();
         app.view.reset();
-        delete Handlebars.templates;
         view = null;
+        layout = null;
     });
 
 
     describe("openPanel", function() {
-        it("should have triggered filter:create:open:fire", function() {
+        it("should have triggered filter:create:new", function() {
             var triggerSpy = sinon.spy(view.layout, "trigger");
             view.openPanel();
-            expect(triggerSpy).toHaveBeenCalledWith("filter:create:open:fire");
-        });
-    });
-
-    describe("selectedByEnter", function() {
-        it("should set changedByEnter to true on enter (13)", function() {
-            view.selectedByEnter({keyCode:13});
-            expect(view.changedByEnter).toBeTruthy();
-        });
-    });
-
-    describe("selectedByEnter", function() {
-        it("should set changedByEnter to false on other (12)", function() {
-            view.selectedByEnter({keyCode:12});
-            expect(view.changedByEnter).toBeFalsy();
+            expect(triggerSpy).toHaveBeenCalledWith("filter:create:new");
         });
     });
 

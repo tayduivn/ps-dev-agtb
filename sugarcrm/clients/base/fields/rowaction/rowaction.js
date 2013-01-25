@@ -1,4 +1,3 @@
-{{!
 /*********************************************************************************
  * The contents of this file are subject to the SugarCRM Master Subscription
  * Agreement (""License"") which can be viewed at
@@ -25,33 +24,20 @@
  * governing these rights and limitations under the License.  Portions created
  * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
-}}
-{{#each collection.models}}
-    {{#with ../expected_commit_stage_field}}
-        {{#if enabled}}
-            <td><div style="font-weight: normal; width: 100%;" class="{{#if ../../../isBinary}}tcenter{{/if}}">{{field ../../../this ../../this }}</div></td>
-        {{/if}}
-    {{/with}}
-    <th colspan="4" class="tright"><i>{{str "LBL_EXPECTED_OPPORTUNITIES" "Forecasts"}}</i></th>
-    {{#if ../show_worksheet_likely}}
-        {{#with ../../expected_amount_field}}
-            {{#if enabled}}
-                <th>{{field ../../../../this ../../../this}}</th>
-            {{/if}}
-        {{/with}}
-    {{/if}}
-    {{#if ../show_worksheet_best}}
-        {{#with ../../expected_best_case_field}}
-            {{#if enabled}}
-                <th>{{field ../../../../this ../../../this}}</th>
-            {{/if}}
-        {{/with}}
-    {{/if}}
-    {{#if ../show_worksheet_worst}}
-        {{#with ../../expected_worst_case_field}}
-            {{#if enabled}}
-                <th>{{field ../../../../this ../../../this}}</th>
-            {{/if}}
-        {{/with}}
-    {{/if}}
-{{/each}}
+({
+    extendsFrom: 'ButtonField',
+    initialize: function(options) {
+        this.options.def.events = _.extend({}, this.options.def.events, {
+            'click .rowaction': 'rowActionSelect'
+        });
+        app.view.fields.ButtonField.prototype.initialize.call(this, options);
+    },
+    rowActionSelect: function(evt) {
+        if ($(evt.currentTarget).data('event')) {
+            this.view.context.trigger($(evt.currentTarget).data('event'), this.model);
+        }
+    },
+    _render: function() {
+        app.view.fields.ButtonField.prototype._render.call(this);
+    }
+})

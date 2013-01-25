@@ -26,6 +26,10 @@
  * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 }}
-{{#each def.buttons}}
-    <a href="javascript:void(0)" class="rowaction" data-event="{{event}}">{{label}}</a>
-{{/each}}
+<span class="actions dropdown">
+    {{first_button}}
+    <a href="javascript:void(0)" class="btn dropdown-toggle" data-toggle="dropdown">
+        <span class="icon-caret-down"></span>
+    </a>
+    {{dropdownPlaceHolder}}
+</span>

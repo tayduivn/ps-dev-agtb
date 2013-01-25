@@ -221,7 +221,7 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
      * This indexes one single bean to Elastic Search engine
      * @param SugarBean $bean
      */
-    protected function indexSingleBean($bean)
+    public function indexSingleBean($bean)
     {
         $this->logger->info("Preforming single bean index");
         try

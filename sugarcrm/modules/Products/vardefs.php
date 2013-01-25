@@ -303,6 +303,7 @@ $dictionary['Product'] = array(
             'vname' => 'LBL_CURRENCY_RATE',
             'type' => 'double',
             'required' => true,
+            'studio' => false
         ),
         'status' =>
         array(
