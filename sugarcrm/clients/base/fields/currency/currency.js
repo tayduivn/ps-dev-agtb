@@ -26,45 +26,109 @@
  ********************************************************************************/
 ({
     transactionValue: '',
+    _currencyField: null,
+
     /**
-     * setup transactional amount if flag is present and transaction currency is not base
+     * {@inheritdoc}
+     *
+     * Setup transactional amount if flag is present and transaction currency
+     * is not base.
+     * On edit view render the currency enum field associated with this field on
+     * the correct placeholder
      *
      * @return {Object} this
      * @private
      */
     _render: function() {
-        if(this.def.convertToBase && this.def.showTransactionalAmount && this.model.get('currency_id') !== '-99') {
-            this.transactionValue = app.currency.formatAmountLocale(
-              this.model.get(this.name),
-              this.model.get('currency_id')
-            );
-        }
+
         app.view.Field.prototype._render.call(this);
+
+        if (this.action === 'edit') {
+
+            this.getCurrencyField().setElement(this.$('span[sfuuid="' + this.currencySfId + '"]'));
+            this.getCurrencyField().render();
+            return this;
+        }
         return this;
     },
+
     /**
-     * unformat the field
+     * {@inheritdoc}
      *
-     * @param {String} value the displayed string
-     * @return {String} value
-     */
-    unformat: function(value) {
-        return app.currency.unformatAmountLocale(value);
-    },
-    /**
-     * format the field, convert to base if necessary
+     * Convert to base currency if flag is present.
      *
-     * @param {String} value the displayed string
-     * @return {String} value
+     * @param {Array/Object/String/Number/Boolean} value The value to format.
+     * @return {String} the formatted value based on view name.
      */
     format: function(value) {
-        var base_rate = this.model.get('base_rate');
-        var currencyId = this.model.get('currency_id');
-        // do we convert to base currency?
-        if(this.def.convertToBase) {
-            value = app.currency.convertWithRate(value, base_rate);
-            currencyId = '-99';
+
+        if (this.tplName === 'edit') {
+            this.currencySfId = this.getCurrencyField().sfId;
+
+            return app.utils.formatNumberLocale(value);
+        }
+
+        // TODO review this forecasts requirement and make it work with css defined on metadata
+        if (this.def.convertToBase &&
+            this.def.showTransactionalAmount &&
+            this.model.get(this.def.currency_field) !== app.currency.getBaseCurrencyId()
+        ) {
+
+            this.transactionValue = app.currency.formatAmountLocale(
+                this.model.get(this.name),
+                this.model.get(this.def.currency_field)
+            );
+        }
+
+        var baseRate = this.model.get(this.def.base_rate_field);
+        var currencyId = this.model.get(this.def.currency_field);
+
+        if (this.def.convertToBase) {
+            value = app.currency.convertWithRate(value, baseRate);
+            currencyId = app.currency.getBaseCurrencyId();
         }
         return app.currency.formatAmountLocale(value, currencyId);
+    },
+
+    /**
+     * {@inheritdoc}
+     *
+     * @param {String} value The value to unformat.
+     * @return {Number} Unformatted value.
+     */
+    unformat: function(value) {
+
+        if (this.tplName === 'edit') {
+            return app.utils.unformatNumberStringLocale(value);
+        }
+
+        return app.currency.unformatAmountLocale(value);
+    },
+
+    /**
+     * Get the currency field related to this currency amount.
+     *
+     * @return {View.Field} the currency field associated.
+     */
+    getCurrencyField: function() {
+
+        if (!_.isNull(this._currencyField)) {
+            return this._currencyField;
+        }
+
+        var currencyDef = this.model.fields[this.def.currency_field || 'currency_id'];
+        currencyDef.type = 'enum';
+        currencyDef.options = app.currency.getCurrenciesSelector(Handlebars.compile('{{symbol}} ({{iso4217}})'));
+        currencyDef.enum_width = 'auto';
+        currencyDef.searchBarThreshold = this.def.searchBarThreshold || 7;
+
+        this._currencyField = app.view.createField({
+            def: currencyDef,
+            view: this.view,
+            viewName: this.action,
+            model: this.model
+        });
+
+        return this._currencyField;
     }
 })

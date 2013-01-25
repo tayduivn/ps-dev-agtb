@@ -10,7 +10,7 @@
             } catch (e) {
                 app.logger.error("Failed to eval view controller for " + name + ": " + e + ":\n" + data);
             }
-            app.view.declareComponent(type, name, null, data, true);
+            app.view.declareComponent(type, name, module, data, true);
             test.testMetadata.addController(name, type, data, module);
         });
 

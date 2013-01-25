@@ -103,10 +103,16 @@ $viewdefs['Opportunities']['base']['view']['record'] = array(
                 'account_name',
                 'date_closed',
                 array(
-                    'name' => 'fieldset_amount',
-                    'type' => 'fieldset',
+                    'name' => 'amount',
+                    'type' => 'currency',
                     'label' => 'LBL_LIST_AMOUNT',
-                    'fields' => array('amount'),
+                    'related_fields' => array(
+                        'amount',
+                        'currency_id',
+                        'base_rate',
+                    ),
+                    'currency_field' => 'currency_id',
+                    'base_rate_field' => 'base_rate',
                 ),
                 array('name'=>'htmlfield', 'type'=>'html', 'default_value'=>'&nbsp;'),
             )

@@ -62,7 +62,7 @@
         /* From http://ivaynberg.github.com/select2/#documentation:
          * "Calculate the width of the container div to the source element"
          */
-        select2Options.width = "element";
+        select2Options.width = this.def.enum_width ? this.def.enum_width : 'element';
 
         /*
          The forecasts module requirements indicate that the search bar only shows up for fields with 5 or more values,
