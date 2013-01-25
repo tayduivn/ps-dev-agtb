@@ -1182,6 +1182,7 @@ h1 {
 }
 h1 span {
   margin-left: 5px;
+  display: inline-block;
 }
 h4 i {
   color: #CDCCCB;
@@ -3135,6 +3136,18 @@ hr.soften {
 }
 .divleft .block {
   margin-right: 15px;
+}
+.no-link {
+  text-decoration: none;
+  color: #58595B;
+  cursor: text;
+}
+.no-link:hover,
+.no-link:active,
+.no-link:visited {
+  text-decoration: none;
+  color: #58595B;
+  cursor: text;
 }
 [class^="icon-"],
 [class*=" icon-"] {
