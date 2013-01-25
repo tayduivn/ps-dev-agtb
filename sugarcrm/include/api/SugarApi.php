@@ -243,4 +243,32 @@ abstract class SugarApi {
         }
         //END SUGARCRM flav=pro ONLY
     }
+
+    /**
+     * Gets the platform from either the request args, the session or the service
+     * base object. Always falls back to base.
+     * 
+     * @param ServiceBase $api
+     * @param array $args
+     * @return string
+     */
+    protected function getPlatform(ServiceBase $api, $args) {
+        // Check the request args first
+        if (isset($args['platform'])) {
+            return $args['platform'];
+        }
+        
+        // Check the session next
+        if (isset($_SESSION['platform'])) {
+            return $_SESSION['platform'];
+        }
+        
+        // Check the service base last
+        if (isset($api->platform)) {
+            return $api->platform;
+        }
+        
+        // Just return the default
+        return 'base';
+    }
 }
