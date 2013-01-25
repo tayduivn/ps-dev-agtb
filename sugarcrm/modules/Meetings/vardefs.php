@@ -512,6 +512,14 @@ $dictionary['Meeting'] = array('table' => 'meetings',
 		'reportable' => false,
 		'importable' => false,
 	),
+  'send_invites' => array(
+    'name' => 'send_invites',
+    'vname' => 'LBL_SEND_INVITES',
+    'type' => 'bool',
+    'source' => 'non-db',
+    'comment' => 'checkbox indicating whether or not to send out invites (Meta-data only)',
+    'massupdate' => false,
+   ),
 ),
  'relationships' => array (
 	  'meetings_assigned_user' =>

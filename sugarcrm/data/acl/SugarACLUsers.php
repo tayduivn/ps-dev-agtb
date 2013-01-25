@@ -111,7 +111,7 @@ class SugarACLUsers extends SugarACLStrategy
             return false;
         }
 
-        if($view == 'view' || $view == 'list' || $view == 'field' || $view == 'team_security' ) {
+        if($view == 'view' || $view == 'list' || $view == 'field' || $view == 'team_security') {
             if($view == 'field' && ($context['field'] == 'password' || $context['field'] == 'user_hash') ) {
                 return false;
             }

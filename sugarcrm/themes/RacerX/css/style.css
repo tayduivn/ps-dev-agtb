@@ -1199,7 +1199,9 @@ div.indent_right {
     color-stop(1, #eeeeee)
    );
    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#eeeeee', endColorstr='#dfdfdf');	
-   
+    border-radius: 2px;
+    -moz-border-radius: 2px;
+    -webkit-border-radius: 2px;
 	background-color: #cccccc;
 	border-bottom: 1px solid #AFAFAE;
 	border-radius-bottomleft: 0px;
@@ -2650,7 +2652,13 @@ embed
 	/* Style the header with its associated corners */
 	.dashletPanel {
 	margin-bottom: 20px;
-	border: 1px solid #ccc\9;
+	border: 1px solid #ccc;
+    border-radius: 2px;
+    -moz-border-radius: 2px;
+    -webkit-border-radius: 2px;
+    box-shadow: 0px 0px 4px #ccc;
+    -moz-box-shadow: 0px 0px 4px #ccc;
+    -webkit-border-radius: 0px 0px 4px #ccc;
 	}
 	
 	.dashletPanel .hd {
@@ -2660,8 +2668,6 @@ embed
 		overflow:visible;
 		position: relative;
 		height:38px;
-		padding-left: 9px;
-		padding-right: 9px;
 		
 	}
 	
@@ -2684,11 +2690,9 @@ embed
 	}
 
 	.dashletPanel .hd  .hd-center {
-		border-width: 1px 0px 0px 0px;
-		border-color: #AFAFAE;
-		border-style: solid;
 		height: 38px;
 		border-bottom: 1px solid #AFAFAE;
+        padding: 0 10px;
 	}
 	
 	.dashletPanel .hd .tr {
@@ -2741,9 +2745,7 @@ embed
 	.dashletPanel .bd {
 		overflow:hidden;
 		padding: 0px;
-		position: relative;
 		margin-top: 1px\9;
-		top: 2px;
 	}
 	
 	
@@ -2799,7 +2801,7 @@ embed
 	-moz-border-radius: 0px;
 	border-radius: 0px;
 	-webkit-border-radius: 0px;
-	border-top: 0px none;
+	border: 0px none;
 	margin: 0px !important;
 	}
 	
@@ -2837,9 +2839,7 @@ embed
 
 
 .dashletPanel .dashletNonTable {
-	border-width: 0px 1px 0px 1px;
-	border-color: #AFAFAE;
-	border-style: solid;
+	border: 0px none;
 	padding: 10px;
 	border-bottom: 1px solid #ccc;
 	background-color:rgba(204,204,204,.2);

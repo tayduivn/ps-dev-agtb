@@ -72,7 +72,7 @@ class ModuleApi extends SugarApi {
                 'pathVars' => array('module','record', 'favorite'),
                 'method' => 'unsetFavorite',
                 'shortHelp' => 'This method unsets a record of the specified type as a favorite',
-                'longHelp' => 'include/api/help/module_favorite_help.html',
+                'longHelp' => 'include/api/help/module_unfavorite_help.html',
             ),            
             'unfavorite' => array(
                 'reqType' => 'PUT',
@@ -80,7 +80,7 @@ class ModuleApi extends SugarApi {
                 'pathVars' => array('module','record', 'unfavorite'),
                 'method' => 'unsetFavorite',
                 'shortHelp' => 'This method unsets a record of the specified type as a favorite',
-                'longHelp' => 'include/api/help/module_favorite_help.html',
+                'longHelp' => 'include/api/help/module_unfavorite_help.html',
             ),
             'enum' => array(
                 'reqType' => 'GET',
