@@ -40,7 +40,7 @@ class ForecastManagerWorksheet extends SugarBean
     public $timeperiod_id;
     public $quota_id;
     public $commit_stage;
-    public $amount;         // the quota amount
+    public $quota;
     public $best_case_adjusted;
     public $likely_case_adjusted;
     public $worst_case_adjusted;
@@ -423,7 +423,10 @@ class ForecastManagerWorksheet extends SugarBean
         //don't recalc if we are editing the manager row
         if ($this->user_id != $this->current_user) {
             //Recalc Manager direct
-            $this->recalcUserQuota($this->current_user);
+            $mgr_quota = $this->recalcUserQuota($this->current_user);
+
+            // update the quota for the managers if the reportee's have changed.
+            $this->updateManagerWorksheetQuota($this->current_user, $this->timeperiod_id, $mgr_quota);
 
             //Recalc reportee direct
             $this->recalcUserQuota($this->user_id);
@@ -431,9 +434,51 @@ class ForecastManagerWorksheet extends SugarBean
     }
 
     /**
+     * Update the manager draft record with the recalculated quota
+     *
+     * @param string $manager_id
+     * @param string $timeperiod
+     * @param number $quota
+     * @return bool
+     */
+    protected function updateManagerWorksheetQuota($manager_id, $timeperiod, $quota)
+    {
+        // safe guard to make sure user is actually a manager
+        if(!User::isManager($manager_id)) {
+            return false;
+        }
+
+        /* @var $worksheet ForecastManagerWorksheet */
+        $worksheet = BeanFactory::getBean('ForecastManagerWorksheets');
+
+        $return = $worksheet->retrieve_by_string_fields(
+            array(
+                'user_id' => $manager_id,         // user id comes from the user model
+                'assigned_user_id' => $manager_id,     // the assigned user of the row is who the user reports to
+                'timeperiod_id' => $timeperiod,      // the current timeperiod
+                'draft' => 1,                                   // we only ever update the draft row
+                'deleted' => 0,
+            )
+        );
+
+        if(is_null($return)) {
+            // no record found, just ignore this
+            return false;
+        }
+
+        if($quota != $worksheet->quota) {
+            $worksheet->quota = $quota;
+            $worksheet->save();
+        }
+
+        return true;
+    }
+
+    /**
      * Recalculates a specific user's direct quota
      *
-     * @param string $userId User Id of quota that needs recalculated.
+     * @param string $userId    User Id of quota that needs recalculated.
+     * @return number           The New total for the passed in user
      */
     protected function recalcUserQuota($userId)
     {
@@ -452,6 +497,8 @@ class ForecastManagerWorksheet extends SugarBean
         $quota->quota_type = "Direct";
         $quota->amount = $newTotal;
         $quota->save();
+
+        return $newTotal;
     }
 
 

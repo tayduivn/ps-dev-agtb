@@ -121,6 +121,38 @@ class ForecastManagerWorksheetTest extends Sugar_PHPUnit_Framework_TestCase
     }
 
     /**
+     * @depends testCommitManagerHasCommittedUserRow
+     * @group forecasts
+     */
+    public function testUserCommitsUpdatesMangerDraftAndNotCommittedVersion()
+    {
+        /* @var $worksheet ForecastManagerWorksheet */
+        $worksheet = BeanFactory::getBean('ForecastManagerWorksheets');
+        $forecast = self::$forecast->toArray();
+        $forecast_base_case_org_value = $forecast['best_case'];
+        $forecast['best_case'] += 100;
+        $ret = $worksheet->reporteeForecastRollUp(self::$user, $forecast);
+
+        // make sure that true was returned
+        $this->assertTrue($ret);
+
+        $ret = $worksheet->retrieve_by_string_fields(
+            array(
+                'assigned_user_id' => $GLOBALS['current_user']->id,
+                'user_id' => self::$user->id,
+                'draft' => 0,
+                'deleted' => 0
+            )
+        );
+
+        // just make sure that the best case on the committed version still equals the original value
+        $this->assertEquals($forecast_base_case_org_value, $worksheet->best_case);
+    }
+
+
+
+
+    /**
      * @group forecasts
      */
     public function testCommitManagerForecastReturnsFalseWhenUserNotAManager()
