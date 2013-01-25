@@ -58,7 +58,6 @@ $viewdefs['base']['view']['list'] = array(
         ),
     ),
     'rowactions' => array(
-        'label' => 'LBL_EDIT_BUTTON',
         'css_class' => 'pull-right',
         'actions' => array(
             array(
