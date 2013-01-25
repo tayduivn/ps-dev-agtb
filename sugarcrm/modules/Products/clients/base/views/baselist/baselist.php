@@ -37,7 +37,7 @@ $viewdefs['Products']['base']['view']['baselist'] = array(
             'fields' => array(
                 array(
                     'name' => 'name',
-                    'width' =>  49,
+                    'width' => 49,
                     'link' => true,
                     'label' => 'LBL_LIST_NAME',
                     'enabled' => true,
@@ -45,6 +45,7 @@ $viewdefs['Products']['base']['view']['baselist'] = array(
                 ),
                 'account_name',
                 'status',
+                'sales_stage',
                 'quantity',
                 array(
                     'name' => 'discount_usdollar',

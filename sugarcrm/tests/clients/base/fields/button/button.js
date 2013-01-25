@@ -61,4 +61,29 @@ describe("Base.Field.Button", function() {
         field.setDisabled();
         expect(field.getFieldElement().hasClass("disabled")).toBeTruthy();
     });
+
+    it("should show and hide functions must trigger hide and show events, and it should change the isHidden property", function() {
+
+        var def = {
+            'events' : {
+                'click .btn' : 'function() { this.callback = "stuff excuted"; }',
+                'blur .btn' : 'function() { this.callback = "blur excuted"; }'
+            }
+        };
+        field = SugarTest.createField("base","button", "button", "edit", def);
+        var triggers = sinon.spy(field, 'trigger');
+        field.show();
+        expect(triggers.calledOnce).toBe(true);
+        expect(triggers.calledWithExactly('show')).toBe(true);
+        expect(field.isHidden).toBe(false);
+        triggers.restore();
+
+        var triggers2 = sinon.spy(field, 'trigger');
+        field.hide();
+        expect(triggers2.calledOnce).toBe(true);
+        expect(triggers2.calledWithExactly('hide')).toBe(true);
+        expect(field.isHidden).toBe(true);
+        triggers2.restore();
+
+    });
 });

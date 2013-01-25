@@ -61,7 +61,17 @@ $viewdefs['Forecasts']['base']['view']['forecastsConfigRanges'] = array(
                             'enabled' => true,
                         ),
 // TODO-sfa: 6.8 - SFA-196: implement custom buckets
-//BEGIN SUGARCRM flav=int ONLY
+//BEGIN SUGARCRM flav=ent ONLY
+                        array(
+                            'name' => 'custom_default',
+                            'type' => 'range',
+                            'view' => 'edit',
+                            'sliderType' => 'connected',
+                            'minRange' => 0,
+                            'maxRange' => 100,
+                            'default' => true,
+                            'enabled' => true,
+                        ),
                         array(
                             'name' => 'custom',
                             'type' => 'range',
@@ -72,7 +82,17 @@ $viewdefs['Forecasts']['base']['view']['forecastsConfigRanges'] = array(
                             'default' => true,
                             'enabled' => true,
                         ),
-//END SUGARCRM flav=int ONLY
+                        array(
+                            'name' => 'custom_without_probability',
+                            'type' => 'range',
+                            'view' => 'edit',
+                            'sliderType' => 'connected',
+                            'minRange' => 0,
+                            'maxRange' => 100,
+                            'default' => true,
+                            'enabled' => true,
+                        ),
+//END SUGARCRM flav=ent ONLY
                     ),
                 ),
                 array(
@@ -81,9 +101,9 @@ $viewdefs['Forecasts']['base']['view']['forecastsConfigRanges'] = array(
                         'show_binary' => 'commit_stage_binary_dom',
                         'show_buckets' => 'commit_stage_dom',
 // TODO-sfa: 6.8 - SFA-196: implement custom buckets
-//BEGIN SUGARCRM flav=int ONLY
+//BEGIN SUGARCRM flav=ent ONLY
                         'show_custom_buckets' => 'commit_stage_custom_dom'
-//END SUGARCRM flav=int ONLY
+//END SUGARCRM flav=ent ONLY
                     )
                 )
             )

@@ -26,6 +26,18 @@ class SugarForecasting_Progress_Manager extends SugarForecasting_Manager
      * @var Opportunity
      */
     protected $opportunity;
+    
+    /**
+     * @var pipelineCount
+     */
+     protected $pipelineCount;
+     
+     /**
+     * @var pipelineRevenue
+     */
+     protected $pipelineRevenue;
+     
+     
     /**
      * Class Constructor
      * @param array $args       Service Arguments
@@ -84,11 +96,14 @@ class SugarForecasting_Progress_Manager extends SugarForecasting_Manager
             $quotaData["amount"] = $this->getQuotaTotalFromData();
         }
 
+        //Get pipeline total and count;
+        $this->getPipelineRevenue();
+
         //get data
 		$progressData = array(
             "closed_amount"     => $this->getClosedAmount(),
-            "opportunities"     => $this->getPipelineOpportunityCount(),
-            "pipeline_revenue"  => $this->getPipelineRevenue(),
+            "opportunities"     => $this->pipelineCount,
+            "pipeline_revenue"  => $this->pipelineRevenue,
             "quota_amount"      => isset($quotaData["amount"]) ? ($quotaData["amount"]) : 0
 		);
 
@@ -209,9 +224,8 @@ class SugarForecasting_Progress_Manager extends SugarForecasting_Manager
     }
 
     /**
-     * retrieves the amount of opportunities less the closed won/lost stages
+     * retrieves the amount of opportunities with count less the closed won/lost stages
      *
-     * @return int
      */
     public function getPipelineRevenue()
     {
@@ -224,36 +238,67 @@ class SugarForecasting_Progress_Manager extends SugarForecasting_Manager
         $excluded_sales_stages_won = $this->getArg('sales_stage_won');
         $excluded_sales_stages_lost = $this->getArg('sales_stage_lost');
 
-        //set user ids and timeperiods
-        $query = "SELECT sum(o.amount * o.base_rate) AS amount FROM opportunities o INNER JOIN users u ";
-        $query .= " ON o.assigned_user_id = u.id";
-        $query .= " left join timeperiods t ";
-        $query .= " ON t.start_date_timestamp <= o.date_closed_timestamp ";
-        $query .= " AND t.end_date_timestamp >= o.date_closed_timestamp ";
-        $query .= " WHERE t.id = " . $db->quoted($timeperiod_id);
-        $query .= " AND o.deleted = 0 AND (u.reports_to_id = " . $db->quoted($user_id);
-        $query .= " OR o.assigned_user_id = " . $db->quoted($user_id) . ")";
-
-
+        //Note: this will all change in sugar7 to the filter API
+        //set up outer part of the query
+        $query = "select sum(amount) as amount, sum(recordcount) as recordcount from(";
+        
+        //build up two subquery strings so we can unify the sales stage loops
+        //all manager opps 
+        $queryMgrOpps = "SELECT " .
+                            "sum(o.amount*o.base_rate) AS amount, count(*) as recordcount " .
+                        "FROM opportunities o " .
+                        "INNER JOIN users u  " .
+                            "ON o.assigned_user_id = u.id " .
+                        "LEFT JOIN timeperiods t " .
+                            "ON t.start_date_timestamp <= o.date_closed_timestamp " . 
+                            "AND t.end_date_timestamp >= o.date_closed_timestamp " .
+                        "WHERE " .
+                            "t.id = {$db->quoted($timeperiod_id)} " . 
+                            "AND o.deleted = 0 " .
+                            "AND o.assigned_user_id = {$db->quoted($user_id)} ";
+        
+        //only committed rep opps
+        $queryRepOpps = "SELECT " . 
+                            "sum(w.likely_case * w.base_rate) AS amount, count(*) as recordcount " .
+                        "FROM worksheet w " .
+                        "INNER JOIN users u " .
+                            "ON w.user_id = u.id " .
+                                "AND u.reports_to_id = {$db->quoted($user_id)} " .
+                        "INNER JOIN products p " .
+                            "ON w.related_id = p.id " .
+                        "INNER JOIN opportunities o " .
+                            "ON p.opportunity_id = o.id " .
+                        "WHERE " .
+                            "w.timeperiod_id = {$db->quoted($timeperiod_id)} " . 
+                            "AND w.deleted = 0 " .
+                            "AND version = 1 " .
+                            "AND forecast_type = 'Direct' ";
+        
         //per requirements, exclude the sales stages won
         if (count($excluded_sales_stages_won)) {
             foreach ($excluded_sales_stages_won as $exclusion) {
-                $query .= " AND o.sales_stage != " . $db->quoted($exclusion);
+                $queryMgrOpps .= "AND o.sales_stage != {$db->quoted($exclusion)} ";
+                $queryRepOpps .= "AND o.sales_stage != {$db->quoted($exclusion)} ";
             }
         }
 
         //per the requirements, exclude the sales stages for closed lost
         if (count($excluded_sales_stages_lost)) {
             foreach ($excluded_sales_stages_lost as $exclusion) {
-                $query .= " AND o.sales_stage != " . $db->quoted($exclusion);
+                $queryMgrOpps .= "AND o.sales_stage != {$db->quoted($exclusion)} ";
+                $queryRepOpps .= "AND o.sales_stage != {$db->quoted($exclusion)} ";
             }
         }
+        
+        //Union the two together
+        $query .= $queryMgrOpps . "union all " . $queryRepOpps;
+
+        //finally, finish up the outer query
+        $query .= ") sums";
 
         $result = $db->query($query);
-
         $row = $db->fetchByAssoc($result);
-        $amountSum = $row["amount"];
-
-        return is_numeric($amountSum) ? $amountSum : 0;
+        $this->pipelineRevenue = is_numeric($row["amount"]) ? $row["amount"] : 0;
+        $this->pipelineCount = is_numeric($row["recordcount"]) ? $row["recordcount"] : 0;
     }
 }

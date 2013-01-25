@@ -28,6 +28,11 @@ class MetadataMobileApi extends MetadataApi {
     protected function getModules() {
         // The current user API gets the proper list of modules, we'll re-use it here
         $currentUserApi = new CurrentUserMobileApi();
-        return $currentUserApi->getModuleList();
+        $modules = $currentUserApi->getModuleList();
+        // add in Users [Bug59548]
+        if(!array_search('Users', $modules)) {
+        	$modules[] = 'Users';
+        }
+        return $modules;
     }
 }

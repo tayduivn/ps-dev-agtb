@@ -20,27 +20,20 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
-require_once('modules/Users/User.php');
-require_once('clients/base/api/CurrentUserApi.php');
+require_once('include/api/SugarApi.php');
 
-class ForecastsCurrentUserApi extends CurrentUserApi {
-    public function registerApiRest() {
-        return array(
-            'retrieve' => array(
-                'reqType' => 'GET',
-                'path' => array('Forecasts','me'),
-                'pathVars' => array(),
-                'method' => 'retrieveCurrentUser',
-                'shortHelp' => 'Returns current user',
-                'longHelp' => 'modules/Forecasts/clients/base/api/help/ForecastsCurrentUserApiMe.html',
-            ),
+class ForecastsApi extends SugarApi
+{
+    public function registerApiRest()
+    {
+        $parentApi = array(
             'init' => array(
                 'reqType' => 'GET',
                 'path' => array('Forecasts','init'),
                 'pathVars' => array(),
                 'method' => 'forecastsInitialization',
-                'shortHelp' => 'Returns current user data',
-                'longHelp' => 'modules/Forecasts/clients/base/api/help/ForecastsCurrentUserApiInit.html',
+                'shortHelp' => 'Returns forecasts initialization data and additional user data',
+                'longHelp' => 'modules/Forecasts/clients/base/api/help/ForecastsApiInitGet.html',
             ),
             'selecteUserObject' => array(
                 'reqType' => 'GET',
@@ -48,38 +41,26 @@ class ForecastsCurrentUserApi extends CurrentUserApi {
                 'pathVars' => array('', '', 'user_id'),
                 'method' => 'retrieveSelectedUser',
                 'shortHelp' => 'Returns selectedUser object for given user',
-                'longHelp' => 'modules/Forecasts/clients/base/api/help/ForecastsCurrentUserApiUser.html',
+                'longHelp' => 'modules/Forecasts/clients/base/api/help/ForecastsApiUserGet.html',
             ),
+            'timeperiod' => array(
+                'reqType' => 'GET',
+                'path' => array('Forecasts', 'timeperiod'),
+                'pathVars' => array('', ''),
+                'method' => 'timeperiod',
+                'shortHelp' => 'forecast timeperiod',
+                'longHelp' => 'modules/Forecasts/clients/base/api/help/ForecastApiTimePeriodGet.html',
+            ),
+            'reportees' => array(
+                'reqType' => 'GET',
+                'path' => array('Forecasts', 'reportees', '?'),
+                'pathVars' => array('', '', 'user_id'),
+                'method' => 'getReportees',
+                'shortHelp' => 'Gets reportees to a user by id',
+                'longHelp' => 'modules/Forecasts/clients/base/api/help/ForecastApiReporteesGet.html',
+            )
         );
-    }
-
-    /**
-     * Retrieves the current user info
-     *
-     * @param $api
-     * @param $args
-     * @return array
-     */
-    public function retrieveCurrentUser($api, $args) {
-        global $current_user;
-
-        $data = parent::retrieveCurrentUser($api, $args);
-
-        // Add Forecasts-specific items to returned data
-        $data['current_user']['isManager'] = User::isManager($current_user->id);
-        $data['current_user']['showOpps'] = false;
-        $data['current_user']['first_name'] = $current_user->first_name;
-        $data['current_user']['last_name'] = $current_user->last_name;
-
-        /**
-         * todo-sfa: when teams/ACLs are implemented, we won't need this anymore
-         *           and we can just use sidecar acl's via app.user
-         *
-         * Mimic the future sidecar ACLs behavior with "yes"/"no"
-         */
-        $data['current_user']['admin'] = ($current_user->isAdminForModule("Forecasts")) ? 'yes' : 'no';
-
-        return $data;
+        return $parentApi;
     }
 
     /**
@@ -92,7 +73,7 @@ class ForecastsCurrentUserApi extends CurrentUserApi {
      * @throws SugarApiExceptionNotAuthorized
      */
     public function forecastsInitialization($api, $args) {
-        global $current_user, $app_list_strings;
+        global $current_user;
 
         if(!SugarACL::checkAccess('Forecasts', 'access')) {
             throw new SugarApiExceptionNotAuthorized();
@@ -101,13 +82,13 @@ class ForecastsCurrentUserApi extends CurrentUserApi {
         $returnInitData = array();
         $defaultSelections = array();
 
-        $data = $this->retrieveCurrentUser($api, array());
-        $selectedUser = $data["current_user"];
+        // Add Forecasts-specific items to returned data
+        $returnInitData["initData"]["userData"]['isManager'] = User::isManager($current_user->id);
+        $returnInitData["initData"]["userData"]['showOpps'] = false;
+        $returnInitData["initData"]["userData"]['first_name'] = $current_user->first_name;
+        $returnInitData["initData"]["userData"]['last_name'] = $current_user->last_name;
 
-        $returnInitData["initData"]["selectedUser"] = $selectedUser;
-        $defaultSelections["selectedUser"] = $selectedUser;
-
-        // TODO:  These should probably get moved in with the config/admin settings, or by themselves since this file will probably going away.
+        // TODO: These should probably get moved in with the config/admin settings, or by themselves since this file will probably going away.
         $id = TimePeriod::getCurrentId();
         if(!empty($id)) {
             $timePeriod = new TimePeriod();
@@ -121,7 +102,7 @@ class ForecastsCurrentUserApi extends CurrentUserApi {
             $defaultSelections["timeperiod_id"]["label"] = '';
         }
 
-        // INVESTIGATE:  these need to be more dynamic and deal with potential customizations based on how filters are built in admin and/or studio
+        // INVESTIGATE: these need to be more dynamic and deal with potential customizations based on how filters are built in admin and/or studio
         $admin = BeanFactory::getBean("Administration");
         $forecastsSettings = $admin->getConfigForModule("Forecasts", "base");
 
@@ -138,7 +119,6 @@ class ForecastsCurrentUserApi extends CurrentUserApi {
 
         return $returnInitData;
     }
-
 
     /**
      * Retrieves user data for a given user id
@@ -159,5 +139,55 @@ class ForecastsCurrentUserApi extends CurrentUserApi {
         $data['last_name'] = $user->last_name;
         $data['isManager'] = User::isManager($user->id);
         return $data;
+    }
+
+    /**
+     * Return the dom of the current timeperiods.
+     *
+     * //TODO, move this logic to store the values in a custom language file that contains the timeperiods for the Forecast module
+     *
+     * @param $api ServiceBase The API class of the request, used in cases where the API changes how the fields are pulled from the args array.
+     * @param $args array The arguments array passed in from the API
+     * @return array of timeperiods
+     */
+    public function timeperiod($api, $args)
+    {
+        // base file and class name
+        $file = 'include/SugarForecasting/Filter/TimePeriodFilter.php';
+        $klass = 'SugarForecasting_Filter_TimePeriodFilter';
+
+        // check for a custom file exists
+        SugarAutoLoader::requireWithCustom($file);
+        $klass = SugarAutoLoader::customClass($klass);
+        // create the class
+
+        /* @var $obj SugarForecasting_AbstractForecast */
+        $obj = new $klass($args);
+        return $obj->process();
+    }
+
+    /**
+     * Retrieve an array of Users and their tree state that report to the user that was passed in
+     *
+     * @param $api ServiceBase The API class of the request, used in cases where the API changes how the fields are pulled from the args array.
+     * @param $args array The arguments array passed in from the API
+     * @return array|string of users that reported to specified/current user
+     */
+    public function getReportees($api, $args)
+    {
+        $args['user_id'] = isset($args["user_id"]) ? $args["user_id"] : $GLOBALS["current_user"]->id;
+
+        // base file and class name
+        $file = 'include/SugarForecasting/ReportingUsers.php';
+        $klass = 'SugarForecasting_ReportingUsers';
+
+        // check for a custom file exists
+        SugarAutoLoader::requireWithCustom($file);
+        $klass = SugarAutoLoader::customClass($klass);
+        // create the class
+
+        /* @var $obj SugarForecasting_AbstractForecast */
+        $obj = new $klass($args);
+        return $obj->process();
     }
 }

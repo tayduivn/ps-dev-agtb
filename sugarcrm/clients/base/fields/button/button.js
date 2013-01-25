@@ -31,6 +31,8 @@
         // buttons use the value property in metadata to denote their action for acls
         if (app.acl.hasAccessToModel(this.def.value, this.model, this)) {
             app.view.Field.prototype._render.call(this);
+        } else {
+            this.isHidden = true;
         }
     },
     getFieldElement: function() {
@@ -55,5 +57,15 @@
      */
     showOn: function() {
         return this.def.showOn;
+    },
+    show: function() {
+        app.view.Field.prototype.show.call(this);
+        this.isHidden = false;
+        this.trigger("show");
+    },
+    hide: function() {
+        app.view.Field.prototype.hide.call(this);
+        this.isHidden = true;
+        this.trigger("hide");
     }
 })

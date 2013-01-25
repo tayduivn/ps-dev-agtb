@@ -132,7 +132,9 @@ $dictionary['Team'] = array ( 'table' => 'teams'
         'duplicate_merge'=> 'disabled',
     ),
   
-)   , 'indices' => array (
+),
+'acls' => array('SugarACLAdminOnly' => array('adminFor' => 'Users', 'allowUserRead' => true)),
+'indices' => array (
       array('name' =>'teamspk', 'type' =>'primary', 'fields'=>array('id')),
       array('name' =>'idx_team_del', 'type' =>'index', 'fields'=>array('name')),
       array('name' =>'idx_team_del_name', 'type' =>'index', 'fields'=>array('deleted','name'))
@@ -187,6 +189,7 @@ $dictionary['TeamMembership'] = array(
 			'default'=> 0, 
 		),
 	),
+    'acls' => array('SugarACLAdminOnly' => array('adminFor' => 'Users', 'allowUserRead' => true)),
 	'indices' => array(
 		array(
 			'name' => 'team_membershipspk', 
@@ -335,6 +338,7 @@ $dictionary['TeamSet'] = array(
             'duplicate_merge'=> 'disabled',
 		),
 	),
+    'acls' => array('SugarACLAdminOnly' => array('adminFor' => 'Users', 'allowUserRead' => true)),
 	'indices' => array (
        array(
        		'name' =>'team_setspk', 
@@ -379,6 +383,7 @@ $dictionary['TeamSetModule'] = array(
 				'default'=> 0, 
 			),
 	),	
+    'acls' => array('SugarACLAdminOnly' => array('adminFor' => 'Users', 'allowUserRead' => true)),
 	'indices' => array(
 		array(
 			'name' => 'team_sets_modulespk', 

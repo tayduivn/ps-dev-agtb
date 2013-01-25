@@ -47,7 +47,6 @@ $viewdefs['Users']['EditView'] = array(
             ),
             array(array(
                       'name' => 'status',
-                      'customCode' => '{if $IS_ADMIN}@@FIELD@@{else}{$STATUS_READONLY}{/if}',
                       'displayParams' => array('required'=>true),
                   ),
                   'last_name'),
@@ -59,25 +58,13 @@ $viewdefs['Users']['EditView'] = array(
             array('picture'),
         ),
         'LBL_EMPLOYEE_INFORMATION' => array(
-            array(array(
-                      'name'=>'employee_status',
-                      'customCode'=>'{if $IS_ADMIN}@@FIELD@@{else}{$EMPLOYEE_STATUS_READONLY}{/if}',
-                  ),
+            array('employee_status',
                   'show_on_employees'),
-            array(array(
-                      'name'=>'title',
-                      'customCode'=>'{if $IS_ADMIN}@@FIELD@@{else}{$TITLE_READONLY}{/if}',
-                  ),
+            array('title',
                   'phone_work'),
-            array(array(
-                      'name'=>'department',
-                      'customCode'=>'{if $IS_ADMIN}@@FIELD@@{else}{$DEPT_READONLY}{/if}',
-                  ),
+            array('department',
                   'phone_mobile'),
-            array(array(
-                      'name'=>'reports_to_name',
-                      'customCode'=>'{if $IS_ADMIN}@@FIELD@@{else}{$REPORTS_TO_READONLY}{/if}',
-                  ),
+            array('reports_to_name',
                   'phone_other'),
             array('','phone_fax'),
             array('','phone_home'),
