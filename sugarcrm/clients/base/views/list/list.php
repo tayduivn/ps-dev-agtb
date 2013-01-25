@@ -56,5 +56,30 @@ $viewdefs['base']['view']['list'] = array(
                 ),
             ),
         ),
-    )
+    ),
+    'rowactions' => array(
+        'label' => 'LBL_EDIT_BUTTON',
+        'css_class' => 'pull-right',
+        'actions' => array(
+            array(
+                'type' => 'rowaction',
+                'css_class' => 'btn preview',
+                'icon' => 'icon-eye-open',
+            ),
+            array(
+                'type' => 'rowaction',
+                'name' => 'edit_button',
+                'icon' => 'icon-pencil',
+                'label' => 'LBL_EDIT_BUTTON',
+                'event' => 'list:editrow:fire',
+            ),
+
+            array(
+                'type' => 'rowaction',
+                'icon' => 'icon-trash',
+                'event' => 'list:deleterow:fire',
+                'label' => 'LBL_DELETE_BUTTON',
+            ),
+        ),
+    ),
 );

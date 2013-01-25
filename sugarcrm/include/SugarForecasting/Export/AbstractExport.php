@@ -142,7 +142,7 @@ abstract class SugarForecasting_Export_AbstractExport extends SugarForecasting_A
                 if(isset($focus->field_defs[$key]))
                 {
                     $sfh = SugarFieldHandler::getSugarField($focus->field_defs[$key]['type']);
-                    $value = $sfh->exportSanitize($value, $focus->field_defs[$key], $focus);
+                    $value = $sfh->exportSanitize($value, $focus->field_defs[$key], $focus, $val);
                 }
 
                 $new_arr[$key] = preg_replace("/\"/", "\"\"", $value);

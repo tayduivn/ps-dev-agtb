@@ -116,6 +116,7 @@ require_once 'SugarTestTaskUtilities.php';
 require_once 'SugarTestCurrencyUtilities.php';
 require_once 'SugarTestOpportunityUtilities.php';
 require_once 'SugarTestJobQueueUtilities.php';
+require_once 'SugarTestFilterUtilities.php';
 
 //BEGIN SUGARCRM flav=pro ONLY
 require_once 'SugarTestForecastUtilities.php';
@@ -846,7 +847,7 @@ class SugarTestHelper
             }
             return;
         }
-        $parts = explode("/", $dir);
+        $parts = explode("/", $dirname);
         while(!empty($parts)) {
             $path = implode("/", $parts);
             if(!is_dir($path)) {
@@ -881,7 +882,7 @@ class SugarTestHelper
         }
         foreach(self::$oldDirs as $dirname) {
             rmdir($dirname);
-            SugarAutoLoader::delFromMap($filename, false);
+            SugarAutoLoader::delFromMap($dirname, false);
         }
         SugarAutoLoader::saveMap();
     }

@@ -83,13 +83,10 @@ class Bug51423Test extends Sugar_PHPUnit_Framework_TestCase
     public function setUp()
     {
         $this->origin_isCacheReset = SugarCache::$isCacheReset;
-        $beanList = array();
-        $beanFiles = array();
-        require('include/modules.php');
-        $GLOBALS['beanList'] = $beanList;
-        $GLOBALS['beanFiles'] = $beanFiles;
-        $GLOBALS['app_strings'] = return_application_language($GLOBALS['current_language']);
-        $GLOBALS['app_list_strings'] = return_app_list_strings_language($GLOBALS['current_language']);
+        SugarTestHelper::setUp("beanList");
+        SugarTestHelper::setUp("beanFiles");
+        SugarTestHelper::setUp("app_strings");
+        SugarTestHelper::setUp("app_list_strings");
 
         $this->_user = SugarTestUserUtilities::createAnonymousUser(false);
         $this->_user->is_admin = 1;
@@ -102,32 +99,24 @@ class Bug51423Test extends Sugar_PHPUnit_Framework_TestCase
         $mb = new ModuleBuilderController();
         $mb->action_saveField();
 
-        $this->_contact_1 = new Contact();
+        $this->_contact_1 = SugarTestContactUtilities::createContact();
         $this->_contact_1->last_name = 'Contact #1';
-        $this->_contact_1->id = create_guid();
-        $this->_contact_1->new_with_id = true;
         $this->_contact_1->team_id = 1;
         $this->_contact_1->save();
 
-        $this->_contact_2 = new Contact();
-        $this->_contact_2->id = create_guid();
-        $this->_contact_2->new_with_id = true;
+        $this->_contact_2 = SugarTestContactUtilities::createContact();
         $this->_contact_2->last_name = 'Contact #2';
         $this->_contact_2->team_id = 1;
         $this->_contact_2->save();
 
-        $this->_account_1 = new Account();
-        $this->_account_1->id = create_guid();
-        $this->_account_1->new_with_id = true;
+        $this->_account_1 = SugarTestAccountUtilities::createAccount();
         $this->_account_1->name = 'Account #1';
         $this->_account_1->contact_id_c = $this->_contact_1->id;
         $this->_account_1->team_id = 1;
         $this->_account_1->relate_contacts_c = $this->_contact_1->last_name;
         $this->_account_1->save();
 
-        $this->_account_2 = new Account();
-        $this->_account_2->id = create_guid();
-        $this->_account_2->new_with_id = true;
+        $this->_account_2 = SugarTestAccountUtilities::createAccount();
         $this->_account_2->name = 'Account #2';
         $this->_account_2->contact_id_c = $this->_contact_2->id;
         $this->_account_2->relate_contacts_c = $this->_contact_2->last_name;
@@ -145,13 +134,16 @@ class Bug51423Test extends Sugar_PHPUnit_Framework_TestCase
         $mb = new ModuleBuilderController();
         $mb->action_DeleteField();
 
-        $this->_account_1->mark_deleted($this->_account_1->id);
-        $this->_account_2->mark_deleted($this->_account_2->id);
-        $this->_contact_1->mark_deleted($this->_contact_1->id);
-        $this->_contact_2->mark_deleted($this->_contact_2->id);
+        //$this->_account_1->mark_deleted($this->_account_1->id);
+        //$this->_account_2->mark_deleted($this->_account_2->id);
+        //$this->_contact_1->mark_deleted($this->_contact_1->id);
+        //$this->_contact_2->mark_deleted($this->_contact_2->id);
 
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
         SugarCache::$isCacheReset = $this->origin_isCacheReset;
+        SugarTestHelper::tearDown();
+        SugarTestContactUtilities::removeAllCreatedContacts();
+        SugarTestAccountUtilities::removeAllCreatedAccounts();
     }
 
     /**

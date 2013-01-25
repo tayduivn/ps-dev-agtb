@@ -216,6 +216,18 @@
             	}
             }, this);
 
+            this.context.forecasts.on('forecasts:committed:saved', function() {
+                if(this.showMe()) {
+                    // display a success message
+                    app.alert.show('success', {
+                        level:'success',
+                        autoClose:true,
+                        title:app.lang.get("LBL_FORECASTS_WIZARD_SUCCESS_TITLE", "Forecasts") + ":",
+                        messages:[app.lang.get("LBL_FORECASTS_WORKSHEET_COMMIT_SUCCESS", "Forecasts")]
+                    });
+                }
+            }, this);
+
             this.context.forecasts.on('forecasts:worksheet:saveWorksheet', function(isDraft) {
                 this.saveWorksheet(isDraft);
             }, this);
@@ -268,15 +280,15 @@
      */
     saveWorksheet : function(isDraft) {
         // only run the save when the worksheet is visible and it has dirty records
+        var self = this,
+            saveObj = {totalToSave: 0, 
+                       saveCount: 0, 
+                       model: "", 
+                       isDraft: isDraft, 
+                       timeperiod:self.dirtyTimeperiod, 
+                       userId:self.dirtyUser.id};
+        
         if(this.showMe()) {
-            var self = this,
-                saveObj = {totalToSave: 0, 
-                           saveCount: 0, 
-                           model: "", 
-                           isDraft: isDraft, 
-                           timeperiod:self.dirtyTimeperiod, 
-                           userId:self.dirtyUser.id};
-            
             /**
              * If the sheet is dirty, save the dirty rows. Else, if the save is for a commit, and we have 
              * draft models (things saved as draft), we need to resave those as committed (version 1). If neither
@@ -309,6 +321,14 @@
                 self.cleanUpDirtyModels();
                 self.cleanUpDraftModels();
             } else {
+                if(isDraft) {
+                    app.alert.show('success', {
+                        level:'success',
+                        autoClose:true,
+                        title:app.lang.get("LBL_FORECASTS_WIZARD_SUCCESS_TITLE", "Forecasts") + ":",
+                        messages:[app.lang.get("LBL_FORECASTS_WORKSHEET_SAVE_DRAFT_SUCCESS", "Forecasts")]
+                    });
+                }
                 this.context.forecasts.trigger('forecasts:worksheet:saved', saveObj.totalToSave, 'mgr_worksheet', isDraft);
             }
         }
@@ -332,6 +352,14 @@
             saveObj.saveCount++;
             //if this is the last save, go ahead and trigger the callback;
             if(saveObj.totalToSave === saveObj.saveCount) {
+                if(saveObj.isDraft) {
+                    app.alert.show('success', {
+                        level:'success',
+                        autoClose:true,
+                        title:app.lang.get("LBL_FORECASTS_WIZARD_SUCCESS_TITLE", "Forecasts") + ":",
+                        messages:[app.lang.get("LBL_FORECASTS_WORKSHEET_SAVE_DRAFT_SUCCESS", "Forecasts")]
+                    });
+                }
                 self.context.forecasts.trigger('forecasts:worksheet:saved', saveObj.totalToSave, 'mgr_worksheet', saveObj.isDraft);
             }
         }, silent: true});
@@ -562,11 +590,11 @@
         var jTarget = $(event.target),
             dataCommitDate = jTarget.data('commitdate'),
             options = {
-            timeperiod_id : this.timePeriod,
-            user_id : jTarget.data('uid'),
-            forecast_type : !_.isEqual(jTarget.data('uid'), this.selectedUser.id)? "rollup" : "direct"
-        }; 
-         
+                timeperiod_id : this.timePeriod,
+                user_id : jTarget.data('uid'),
+                forecast_type : (jTarget.data('showopps')) ? 'Direct' : 'Rollup'
+            };
+
         return app.api.call('read',
              app.api.buildURL('Forecasts', 'committed', null, options),
             null,

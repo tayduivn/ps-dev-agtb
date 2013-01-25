@@ -92,6 +92,24 @@ class ForecastsConfigApi extends ConfigModuleApi {
                 $args['has_commits'] = true;
             }
         }
+
+        //BEGIN SUGARCRM flav=ent ONLY
+        if ( isset($args['show_custom_buckets_options']) )
+        {
+            $json = getJSONobj();
+            $_args = array(
+                'dropdown_lang' => isset($_SESSION['authenticated_user_language']) ? $_SESSION['authenticated_user_language'] : $GLOBALS['current_language'],
+                'dropdown_name' => 'commit_stage_custom_dom',
+                'view_package' => 'studio',
+                'list_value' => $json->encode($args['show_custom_buckets_options'])
+            );
+            $_REQUEST['view_package'] = 'studio';
+            require_once 'modules/ModuleBuilder/parsers/parser.dropdown.php';
+            $parser = new ParserDropDown ();
+            $parser->saveDropDown($_args);
+            unset($args['show_custom_buckets_options']);
+        }
+        //END SUGARCRM flav=ent ONLY
         
         if($upgraded || empty($prior_forecasts_settings['is_setup']))
         {

@@ -28,6 +28,8 @@
     fieldTag: "select",
     _render: function() {
 
+        app.view.Field.prototype._render.call(this);
+
         var optionsKeys = [];
         if(_.isString(this.def.options)) {
             optionsKeys = _.keys(app.lang.getAppListStrings(this.def.options));
@@ -47,28 +49,32 @@
             }
         }
 
-        var chosenOptions = {};
+        var select2Options = {};
         var emptyIdx = _.indexOf(optionsKeys, "");
         if (emptyIdx !== -1) {
-            chosenOptions.allow_single_deselect = true;
+            select2Options.allowClear = true;
             // if the blank option isn't at the top of the list we have to add it manually
             if (emptyIdx > 1) {
                 this.hasBlank = true;
             }
         }
 
+        /* From http://ivaynberg.github.com/select2/#documentation:
+         * "Calculate the width of the container div to the source element"
+         */
+        select2Options.width = this.def.enum_width ? this.def.enum_width : 'element';
+
         /*
          The forecasts module requirements indicate that the search bar only shows up for fields with 5 or more values,
          this adds the ability to specify that threshold in metadata.
           */
-        chosenOptions.disable_search_threshold = this.def.searchBarThreshold?this.def.searchBarThreshold:0;
+        select2Options.minimumResultsForSearch = this.def.searchBarThreshold?this.def.searchBarThreshold:0;
 
-        app.view.Field.prototype._render.call(this);
         if(this.tplName === 'edit') {
-            this.$(this.fieldTag).not(".chzn-done").chosen(chosenOptions);
-            this.$(".chzn-container").addClass("tleft");
+            this.$(this.fieldTag).select2(select2Options);
+            this.$(".select2-container").addClass("tleft");
         } else if(this.tplName === 'disabled') {
-            this.$(this.fieldTag).attr("disabled", "disabled").not(".chzn-done").chosen();
+            this.$(this.fieldTag).attr("disabled", "disabled").select2();
         }
         return this;
     },

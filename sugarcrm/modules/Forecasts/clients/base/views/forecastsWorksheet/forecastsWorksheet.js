@@ -53,12 +53,12 @@
  *      on: context.forecasts
  *      by: updateWorksheetBySelectedRanges()
  *      when: dataTable is finished filtering itself and has destroyed and redrawn itself
- *      
+ *
  * forecasts:worksheet:saved
  *      on: context.forecasts
  *      by: saveWorksheet()
  *      when: saving the worksheet.
- *      
+ *
  * forecasts:worksheet:dirty
  *      on: context.forecasts
  *      by: change:worksheet
@@ -136,7 +136,7 @@
 
         this.layout.getComponent('inspector').showInspector(params);
     },
-    
+
     /**
      * Initialize the View
      *
@@ -145,7 +145,7 @@
      */
     initialize:function (options) {
         var self = this;
-        
+
         self.gTableDefs = {
                 "bAutoWidth": false,
                 "aoColumnDefs": self.columnDefs,
@@ -153,7 +153,7 @@
                 "bInfo":false,
                 "bPaginate":false
           };
-        
+
         this.viewModule = "Forecasts";
 
         //set expandable behavior to false by default
@@ -186,7 +186,7 @@
         {
            args['user_id'] = this.selectedUser.id;
         }
-        
+
         url = app.api.buildURL('ForecastWorksheets', '', '', args);
         return url;
     },
@@ -316,6 +316,15 @@
                         saveCount++;
                         //if this is the last save, go ahead and trigger the callback;
                         if(totalToSave === saveCount) {
+                            // we only want to show this when the draft is being saved
+                            if(isDraft) {
+                                app.alert.show('success', {
+                                    level:'success',
+                                    autoClose:true,
+                                    title:app.lang.get("LBL_FORECASTS_WIZARD_SUCCESS_TITLE", "Forecasts") + ":",
+                                    messages:[app.lang.get("LBL_FORECASTS_WORKSHEET_SAVE_DRAFT_SUCCESS", "Forecasts")]
+                                });
+                            }
                             self.context.forecasts.trigger('forecasts:worksheet:saved', totalToSave, 'rep_worksheet', isDraft);
                         }
                     }, silent: true});
@@ -323,6 +332,15 @@
 
                 self.cleanUpDirtyModels();
             } else {
+                // we only want to show this when the draft is being saved
+                if(isDraft) {
+                    app.alert.show('success', {
+                        level:'success',
+                        autoClose:true,
+                        title:app.lang.get("LBL_FORECASTS_WIZARD_SUCCESS_TITLE", "Forecasts") + ":",
+                        messages:[app.lang.get("LBL_FORECASTS_WORKSHEET_SAVE_DRAFT_SUCCESS", "Forecasts")]
+                    });
+                }
                 this.context.forecasts.trigger('forecasts:worksheet:saved', totalToSave, 'rep_worksheet', isDraft);
             }
         }
@@ -381,7 +399,7 @@
             this.context.forecasts.worksheet.on("change", function() {
                 this.calculateTotals();
             }, this);
-            this.context.forecasts.on("forecasts:committed:saved forecasts:worksheet:saved", function(){
+            this.context.forecasts.on("forecasts:committed:saved", function(){
                 if(this.showMe()){
                     var model = this.context.forecasts.worksheet;
                     model.url = this.createURL();
@@ -393,6 +411,18 @@
                         this.commitFromSafeFetch = false;
                     }
 
+                }
+            }, this);
+
+            this.context.forecasts.on('forecasts:committed:saved', function() {
+                if(this.showMe()) {
+                    // display a success message
+                    app.alert.show('success', {
+                        level:'success',
+                        autoClose:true,
+                        title:app.lang.get("LBL_FORECASTS_WIZARD_SUCCESS_TITLE", "Forecasts") + ":",
+                        messages:[app.lang.get("LBL_FORECASTS_WORKSHEET_COMMIT_SUCCESS", "Forecasts")]
+                    });
                 }
             }, this);
 
@@ -409,7 +439,7 @@
             this.context.forecasts.on('forecasts:worksheet:saveWorksheet', function(isDraft) {
                 this.saveWorksheet(isDraft);
             }, this);
-            
+
 
             /*
              * // TODO: tagged for 6.8 see SFA-253 for details
@@ -531,7 +561,6 @@
             }
             //user clicked cancel, ignore and fetch if fetch is enabled
             else{
-                
                 collection.isDirty = false;
                 self.context.forecasts.set({reloadCommitButton: true});
                 if(fetch){
@@ -579,10 +608,10 @@
             }
         }
         //default case, fetch like normal
-        else{    
+        else{
             if(fetch){
                 collection.fetch();
-            }    
+            }
         }
         //mark that the fetch is over
         this.fetchInProgress = false;
@@ -596,7 +625,7 @@
      */
     _render: function() {
         var self = this;
-        
+
         if(!this.showMe()){
             return false;
         }
@@ -631,7 +660,7 @@
 
         // fix the style on the rows that contain a checkbox
         this.$el.find('td:has(span>input[type=checkbox])').addClass('center');
-                
+
         // Trigger event letting other components know worksheet finished rendering
         self.context.forecasts.trigger("forecasts:worksheet:rendered");
 
@@ -810,7 +839,7 @@
             'included_opp_count' : includedCount,
             'total_opp_count' : self._collection.models.length
         };
-       
+
         this.context.forecasts.unset("updatedTotals", {silent: true});
         this.context.forecasts.set("updatedTotals", totals);
     },
@@ -827,7 +856,7 @@
             // since the model is dirty, save it so we can use it later
             this.dirtyUser = this.selectedUser;
         }
-        this.safeFetch(false);        
+        this.safeFetch(false);
         this.selectedUser = selectedUser;
         if(!this.showMe()){
             return false;
@@ -845,7 +874,7 @@
         // Set the filters for the datatable then re-render
         var self = this,
             forecast_ranges_setting = this.context.forecasts.config.get('forecast_ranges') || 'show_binary';
-        
+
         // start with no filters, i. e. show everything.
         if(!_.isUndefined($.fn.dataTableExt)) {
             $.fn.dataTableExt.afnFiltering.splice(0, $.fn.dataTableExt.afnFiltering.length);
@@ -872,7 +901,7 @@
                             if(rowCategory.find("select").length == 0){
                                 selectVal = rowCategory.text().trim().toLowerCase();
                             } else {
-                                selectVal = rowCategory.find("select")[0].value.toLowerCase();                               
+                                selectVal = rowCategory.find("select")[0].value.toLowerCase();
                             }
                         }
 
@@ -882,7 +911,7 @@
                 );
             }
         }
-        
+
         if(!_.isUndefined(this.gTable.fnDestroy)){
             this.gTable.fnDestroy();
             this.gTable = this.$('.worksheetTable').dataTable(self.gTableDefs);

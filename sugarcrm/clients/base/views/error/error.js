@@ -40,12 +40,12 @@
         // use modal template for the fields
         this.fallbackFieldTemplate = "modal";
     },
-    render: function() {
+    _render: function() {
         if(this.context.get('errorType')) {
             attributes = this.getErrorAttributes();
             this.model.set(attributes);
         }
-        app.view.View.prototype.render.call(this);
+        app.view.View.prototype._render.call(this);
     },
     getErrorAttributes: function() {
         var attributes = {};

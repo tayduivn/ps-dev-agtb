@@ -191,6 +191,11 @@
         return this._fields[name];
     },
 
+    unformat: function(value) {
+        // TODO this should change once we save this in the db
+        return null;
+    },
+
     /**
      * {@inheritdoc}
      *

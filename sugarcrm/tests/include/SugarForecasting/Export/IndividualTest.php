@@ -217,4 +217,33 @@ class SugarForecasting_Export_IndividualTest extends Sugar_PHPUnit_Framework_Tes
         $this->assertNotContains('#039', $content);
         $this->assertContains("'", $content);
     }
+
+
+    /**
+     * This is a function to test that values are correctly exported
+     *
+     * @group export
+     * @group forecasts
+     */
+    public function testExportValues()
+    {
+        $opp = $this->reportee['opportunities'][0];
+        $opp->date_closed = $this->timeperiod->start_date;
+        $opp->save();
+
+        $args = array();
+        $args['timeperiod_id'] = $this->timeperiod->id;
+        $args['user_id'] = $this->repData['id'];
+        $args['encode_to_html'] = false;
+
+        $obj = new SugarForecasting_Export_Individual($args);
+        $content = $obj->process();
+        $this->assertNotEmpty($content, "content empty. Rep data should have returned csv file contents.");
+
+        //Test that for the date fields we do not apply timezone formatting
+        $timedate = TimeDate::getInstance();
+        $db = DBManagerFactory::getInstance();
+        $expectedDateClosed = $timedate->to_display_date($db->fromConvert($opp->date_closed, 'date'), false);
+        $this->assertContains($expectedDateClosed, $content);
+    }
 }

@@ -283,7 +283,7 @@ echo "<br>";
         }
 
         if( !$db->tableExists($table) ){
-            $db->createTableParams($table, $rel_data['fields'], $rel_data['indices']);
+            $db->createTableParams($table, $rel_data['fields'], isset($rel_data['indices']) ? $rel_data['indices'] : array());
         }
 
         SugarBean::createRelationshipMeta($rel_name,$db,$table,$rel_dictionary,'');

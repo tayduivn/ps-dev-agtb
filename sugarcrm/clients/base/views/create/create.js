@@ -9,26 +9,31 @@
 
     enableDuplicateCheck: true,
 
-    STATE: {
-        CREATE: 'create',
-        SAVE: 'save',
-        EDIT: 'edit',
-        DUPLICATE: 'duplicate'
-    },
-
     saveButtonName: 'save_button',
+    cancelButtonName: 'cancel_button',
+    saveAndCreateButtonName: 'save_create_button',
+    saveAndViewButtonName: 'save_view_button',
+    restoreButtonName: 'restore_button',
 
     /**
      * Initialize the view and prepare the model with default button metadata
      * for the current layout.
      */
     initialize: function(options) {
-        this.events = _.extend({}, this.events, {
-            'click a[name=save_button]': 'save',
-            'click a[name=cancel_button]': 'cancel',
-            'click a[name=save_create_button]': 'saveAndCreate',
-            'click a[name=save_view_button]': 'saveAndView',
-            'click a[name=restore_button]': 'restoreModel'
+        var createViewEvents = {};
+        createViewEvents['click a[name=' + this.saveButtonName + ']'] = 'save';
+        createViewEvents['click a[name=' + this.cancelButtonName + ']'] = 'cancel';
+        createViewEvents['click a[name=' + this.saveAndCreateButtonName + ']'] = 'saveAndCreate';
+        createViewEvents['click a[name=' + this.saveAndViewButtonName + ']'] = 'saveAndView';
+        createViewEvents['click a[name=' + this.restoreButtonName + ']'] = 'restoreModel';
+        this.events = _.extend({}, this.events, createViewEvents);
+
+        //add states for create view
+        this.STATE = _.extend({}, this.STATE, {
+            CREATE: 'create',
+            SAVE: 'save',
+            SELECT: 'select',
+            DUPLICATE: 'duplicate'
         });
 
         app.view.views.RecordView.prototype.initialize.call(this, options);
@@ -60,8 +65,8 @@
         //override record view's button delegation
     },
 
-    render: function() {
-        app.view.views.RecordView.prototype.render.call(this);
+    _render: function() {
+        app.view.views.RecordView.prototype._render.call(this);
         this.setButtonStates(this.STATE.CREATE);
 
         this.showDuplicates();
@@ -76,7 +81,7 @@
      * Default to saveAndClose
      */
     save: function() {
-        if (!this.$('[name=save_button]').hasClass('disabled')) {
+        if (!this.buttons[this.saveButtonName].isDisabled()) {
             switch(this.context.lastSaveAction) {
                 case this.SAVEACTIONS.SAVE_AND_CREATE:
                     this.saveAndCreate();
@@ -118,14 +123,12 @@
             this.model.on("change", function() {
                 if (this.model.isValid(undefined, true)) {
                     if (this.currentState === this.STATE.CREATE) {
-                        this.currentState = this.STATE.SAVE;
-                        this.setButtonStates(this.currentState);
+                        this.setButtonStates(this.STATE.SAVE);
                     }
                     this.enableSave();
                 } else {
                     if (this.currentState === this.STATE.SAVE) {
-                        this.currentState = this.STATE.CREATE;
-                        this.setButtonStates(this.currentState);
+                        this.setButtonStates(this.STATE.CREATE);
                     }
                     this.disableSave();
                 }
@@ -347,7 +350,7 @@
         this.toggleEdit(true);
 
         this.hideDuplicates();
-        this.setButtonStates(this.STATE.EDIT);
+        this.setButtonStates(this.STATE.SELECT);
     },
 
     /**
@@ -399,45 +402,52 @@
         this.collection.reset();
     },
 
+    /**
+     * Change the behavior of buttons depending on the state that they are in
+     * @param state
+     */
     setButtonStates: function(state) {
         app.view.views.RecordView.prototype.setButtonStates.call(this, state);
-        if(this.buttons[this.saveButtonName]) {
 
-            var $saveButtonEl = this.buttons[this.saveButtonName];
+        var $saveButtonEl = this.buttons[this.saveButtonName];
+        if ($saveButtonEl) {
             switch (state) {
                 case this.STATE.CREATE:
-                    $saveButtonEl.label = app.lang.get('LBL_SAVE_BUTTON_LABEL', this.module);
+                    $saveButtonEl.getFieldElement().text(app.lang.get('LBL_SAVE_BUTTON_LABEL', this.module));
                     this.disableSave();
                     break;
 
                 case this.STATE.SAVE:
                 case this.STATE.EDIT:
-                    $saveButtonEl.label = app.lang.get('LBL_SAVE_BUTTON_LABEL', this.module);
+                    $saveButtonEl.getFieldElement().text(app.lang.get('LBL_SAVE_BUTTON_LABEL', this.module));
                     this.enableSave();
                     break;
 
                 case this.STATE.DUPLICATE:
-                    $saveButtonEl.label = app.lang.get('LBL_IGNORE_DUPLICATE_AND_SAVE', this.module);
+                    $saveButtonEl.getFieldElement().text(app.lang.get('LBL_IGNORE_DUPLICATE_AND_SAVE', this.module));
                     this.enableSave();
                     break;
             }
         }
-        this.currentState = state;
     },
 
+    /**
+     * Enable save button
+     */
     enableSave: function() {
         if(this.buttons[this.saveButtonName]) {
             this.buttons[this.saveButtonName].setDisabled(false);
         }
     },
 
+    /**
+     * Disable save button
+     */
     disableSave: function() {
-
         if(this.buttons[this.saveButtonName]) {
             this.buttons[this.saveButtonName].setDisabled(true);
         }
     },
-
 
     alerts: {
         showSuccess: function() {

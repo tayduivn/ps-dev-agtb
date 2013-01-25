@@ -132,6 +132,7 @@ $app_list_strings = array (
 
     'OAuthKeys' => 'OAuth Consumer Keys',
     'OAuthTokens' => 'OAuth Tokens',
+    'Filters' => 'Filters'
   ),
 
   'moduleListSingular' =>
@@ -152,7 +153,7 @@ $app_list_strings = array (
     //BEGIN SUGARCRM flav=pro ONLY
     'Contracts'=>'Contract',
     'Quotes' => 'Quote',
-    'Products' => 'Product',
+    'Products' => 'Revenue Line Item',
     'Reports' => 'Report',
     'Forecasts' => 'Forecast',
     'ForecastWorksheets' => 'Forecast Worksheet',
@@ -188,6 +189,7 @@ $app_list_strings = array (
     'Users' => 'User',
   'SugarFavorites'=>'SugarFavorites',
    'Employees' => 'Employee',
+   'Filters' => 'Filter',
 
         ),
 
@@ -353,9 +355,7 @@ $app_list_strings = array (
 //BEGIN SUGARCRM flav=ent ONLY
   'commit_stage_custom_dom' => array(
       'include' => 'Include',
-      'customRange0' => 'Custom 1',
-      'customRange1' => 'Custom 2',
-      'customRange2' => 'Custom 3',
+      'upside'  => 'Upside',
       'exclude' => 'Exclude',
   ),
 //END SUGARCRM flav=ent ONLY
@@ -568,7 +568,7 @@ $app_list_strings = array (
     'Leads' => 'Lead',
     'Contacts' => 'Contacts', // cn (11/22/2005) added to support Emails
     //BEGIN SUGARCRM flav=pro ONLY
-    'ProductTemplates' => 'Product',
+    'ProductTemplates' => 'Revenue Line Item',
     'Quotes' => 'Quote',
 
     //END SUGARCRM flav=pro ONLY
@@ -599,7 +599,7 @@ $app_list_strings = array (
     //BEGIN SUGARCRM flav=pro ONLY
     'ProductTemplates' => 'Product Catalog',
     'Quotes' => 'Quote',
-    'Products' => 'Product',
+    'Products' => 'Revenue Line Item',
     'Contracts' => 'Contract',
     //END SUGARCRM flav=pro ONLY
     'Emails' => 'Email',
@@ -625,7 +625,7 @@ $app_list_strings = array (
 
     //BEGIN SUGARCRM flav=pro ONLY
 
-    'Products' => 'Product',
+    'Products' => 'Revenue Line Item',
 
     'Quotes' => 'Quote',
     //END SUGARCRM flav=pro ONLY
@@ -833,7 +833,7 @@ $app_list_strings = array (
     'Outlook Plugin' => 'Outlook Plugin',
     //BEGIN SUGARCRM flav=pro ONLY
     'Product Catalog' => 'Product Catalog',
-    'Products' => 'Products',
+    'Products' => 'Revenue Line Items',
     //END SUGARCRM flav=pro ONLY
     'Projects' => 'Projects',
     'Quotes' => 'Quotes',
@@ -1734,6 +1734,62 @@ $app_list_strings = array (
     'less_than_equals' => 'Less Than Or Equal To',
     'between' => 'Is Between',
   ),
+  'filter_operators_dom' =>
+  array(
+    'enum' => array(
+        '$equals' => 'is',
+        '$not_equals' => 'is not',
+      ),
+    'varchar' => array(
+        '$equals' => 'matches',
+        '$not_equals' => 'does not match',
+        '$contains' => 'contains',
+        '$starts' => 'starts with',
+        '$ends' => 'ends with'
+      ),
+    'name' => array(
+        '$equals' => 'matches',
+        '$not_equals' => 'does not match',
+        '$contains' => 'contains',
+        '$starts' => 'starts with',
+        '$ends' => 'ends with'
+      ),
+    'text' => array(
+        '$equals' => 'matches',
+        '$not_equals' => 'does not match',
+        '$contains' => 'contains',
+        '$starts' => 'starts with',
+        '$ends' => 'ends with'
+      ),
+    'currency' => array(
+        '$equals' => 'is equal to',
+        '$gt' => 'is greater than',
+        '$gte' => 'is greater than or equal to',
+        '$lt' => 'is less than',
+        '$lte' => 'is less than or equal to',
+      ),
+    'int' => array(
+        '$equals' => 'is equal to',
+        '$gt' => 'is greater than',
+        '$gte' => 'is greater than or equal to',
+        '$lt' => 'is less than',
+        '$lte' => 'is less than or equal to',
+      ),
+    'double' => array(
+        '$equals' => 'is equal to',
+        '$gt' => 'is greater than',
+        '$gte' => 'is greater than or equal to',
+        '$lt' => 'is less than',
+        '$lte' => 'is less than or equal to',
+      ),
+    'datetime' => array(
+        '$equals' => 'on',
+        '$lt' => 'before',
+        '$lte' => 'on or before',
+        '$gt' => 'after',
+        '$gte' => 'on or after'
+      ),
+  ),
   'lead_conv_activity_opt' =>
   array(
         'copy' => 'Copy',
@@ -2465,6 +2521,8 @@ $app_strings = array (
     'LBL_EDIT_AS_NEW_BUTTON_TITLE' => 'Edit As New',
     'LBL_FAVORITES' => 'Favorites',
     'LBL_FILTER_MENU_BY' => 'Filter Menu By',
+    'LBL_FILTER_SELECT_FIELD' => 'Select field...',
+    'LBL_FILTER_SELECT_OPERATOR' => 'Select operator...',
     'LBL_VCARD' => 'vCard',
     'LBL_EMPTY_VCARD' => 'Please select a vCard file',
     'LBL_IMAGE' => 'Image',
@@ -2534,6 +2592,8 @@ $app_strings = array (
     'LBL_LISTVIEW_SELECTED_ALL' => 'You have selected all records in this view.',
     'LBL_LISTVIEW_RECORDS' => ' records in the result set.',
     'LBL_LISTVIEW_CLEAR_ALL' => 'Clear All selections.',
+    'LBL_LISTVIEW_SELECT_AND_EDIT' => 'Select and edit',
+    'LBL_LISTVIEW_ACTIONS' => 'Actions',
 
     'LBL_LOCALE_NAME_EXAMPLE_FIRST' => 'David',
     'LBL_LOCALE_NAME_EXAMPLE_LAST' => 'Livingstone',
@@ -2613,6 +2673,8 @@ $app_strings = array (
 
     // Strings for Instance Picker Widget
     'LBL_INVITE' => 'Invite',
+    'LBL_INVITED' => 'Invited',
+    'LBL_RECOMMENDED_INVITES' => 'Recommended Invites',
     'LBL_INSTANCES' => 'Instances',
     'LBL_YOUR_INSTANCES' => 'Your Instances',
     'LBL_INSTANCE_USERS' => 'Instance Users',
@@ -3308,8 +3370,8 @@ $app_strings = array (
     'LBL_EDIT_BUTTON_LABEL' => 'Edit',
     'LBL_EDIT_BUTTON_TITLE' => 'Edit',
     'LBL_DUPLICATE_BUTTON_KEY' => 'u',
-    'LBL_DUPLICATE_BUTTON_LABEL' => 'Duplicate',
-    'LBL_DUPLICATE_BUTTON_TITLE' => 'Duplicate',
+    'LBL_DUPLICATE_BUTTON_LABEL' => 'Copy',
+    'LBL_DUPLICATE_BUTTON_TITLE' => 'Copy',
     'LBL_DELETE_BUTTON_KEY' => 'd',
     'LBL_DELETE_BUTTON_LABEL' => 'Delete',
     'LBL_DELETE_BUTTON_TITLE' => 'Delete',
@@ -3319,6 +3381,7 @@ $app_strings = array (
     'LBL_CANCEL_BUTTON_KEY' => 'l',
     'LBL_CANCEL_BUTTON_LABEL' => 'Cancel',
     'LBL_CANCEL_BUTTON_TITLE' => 'Cancel',
+    'LBL_CONFIRM_BUTTON_LABEL' => 'OK',
     'LBL_START_BUTTON_LABEL' => 'Start',
     'LBL_START_BUTTON_TITLE' => 'Start',
     'LBL_FINISH_BUTTON_LABEL' => 'Finish',
@@ -3357,6 +3420,7 @@ $app_strings = array (
     'LBL_SEARCH_BY' => 'Search by',
     'LBL_PREVIEW' => 'Preview',
     'LBL_STREAM_NO_RECORDS' => 'This record has no notes at this time. Please add a note by clicking on the add note link.',
+    'LBL_DUPLICATES_FOUND' => '{{duplicateCount}} duplicates found.',
 
     //SugarApiExceptionNotAuthorized language string
     'SUGAR_API_EXCEPTION_NOT_AUTHORIZED' => 'Not allowed to edit field {0} in module: {1}',
@@ -3371,9 +3435,18 @@ $app_strings = array (
     'LBL_UPLOADING' => 'Uploading',
 
     //theme roller
+    'LBL_RESET' => 'Reset',
+    'LBL_COLORS' => 'Colors',
     'BorderColor' => 'Border Color',
     'NavigationBar' => 'Navigation Bar',
     'PrimaryButton' => 'Primary Button',
+    'LBL_SAVE_AND_DEPLOY_BTN' => 'Save & Deploy',
+    'LBL_RESET_THEME_LNK' => 'Restore Default Theme',
+    'LBL_RESET_THEME_MODAL_TITLE' => 'Reset default theme',
+    'LBL_RESET_THEME_MODAL_INFO' => 'You are about to erase your custom theme with the default theme.',
+    'LBL_RESET_THEME_MODAL_CONFIRM' => 'Do you want to proceed?',
+    'LBL_RESET_THEME_PROCESS' => 'Restoring default theme...',
+    'LBL_SAVE_THEME_PROCESS' => 'Saving theme...',
 
   	//BEGIN SUGARCRM flav=PRO ONLY
     //in app tour
@@ -3426,6 +3499,7 @@ $app_strings = array (
     'LBL_URL_BUTTON' => 'Web',
     'LBL_WARNING' => 'Warning',
     'LBL_CONFIRM' => 'Confirm',
+    'LBL_NO_ACCESS' => '(No Access)',
     'LBL_CREATE_RELATED_RECORD' => 'Create Related Record',
     'LBL_ASSOC_RELATED_RECORD' => 'Associate Existing Record',
     'LBL_CHOOSE_LINK' => 'Choose Link Type',
@@ -3474,6 +3548,7 @@ $app_strings = array (
     'LBL_MOBILE_CHOOSE_DOC' => 'Choose document',
     'LBL_MOBILE_CHOOSE_LOCATION' => 'Choose location',
     'LBL_MOBILE_NO_ACTIONS_AVAILABLE' => 'No Actions Available',
+    'ERR_SYNC_FAILED' => 'Unable to sync with server.',
     'ERR_MOBILE_NOT_AUTHORIZED' => 'Access not authorized.',
     'ERR_MOBILE_INVALID_CREDS' => 'Invalid username or password.',
     'ERR_MOBILE_SESSION_EXPIRED' => 'Your session expired.',
@@ -3486,7 +3561,8 @@ $app_strings = array (
     'ERR_MOBILE_INTERNET_UNAVAILABLE' => 'Internet connection unavailable.',
     'ERR_MOBILE_INTERNAL' => 'Internal error ({{{code}}}). Please try again later.',
     'ERR_MOBILE_VALIDATION' => 'Record is invalid',
-    'ERR_SERVER_INCOMPATIBLE' => 'Incompatible server version',
+    'ERR_SERVER_FLAVOR_INCOMPATIBLE' => 'Incompatible server flavor: {{{flavor}}}',
+    'ERR_SERVER_VERSION_INCOMPATIBLE' => 'Incompatible server version: {{{version}}}',
     'ERR_MOBILE_EMAIL' => 'Error. Invalid Email Address.',
     'ERR_MOBILE_FILE_NOT_SUPPORTED' => 'This document type is unsupported.',
     'ERR_MOBILE_BROWSER_NOT_AUTHORIZED' => 'Authentication failed.',
@@ -4504,10 +4580,9 @@ $app_list_strings['forecasts_config_ranges_options_dom'] = array(
     'show_binary' => 'Two Ranges',
     'show_buckets' => 'Three Ranges',
 //END SUGARCRM flav=pro ONLY
-//BEGIN SUGARCRM flav=int ONLY
-//TODO-sfa Tag this as 'ent' when custom buckets are implemented (SFA-295)
+//BEGIN SUGARCRM flav=ent ONLY
     'show_custom_buckets' => 'Custom Ranges',
-//END SUGARCRM flav=int ONLY
+//END SUGARCRM flav=ent ONLY
 //BEGIN SUGARCRM flav=pro ONLY
 );
 $app_list_strings['forecasts_timeperiod_types_dom'] = array(

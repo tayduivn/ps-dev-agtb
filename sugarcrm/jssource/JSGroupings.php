@@ -42,7 +42,7 @@
              * many clients (so that we don't end up with duplication from client to client).
              * @param  string $subGroup The sub-group
              * @param  string $target The target file to point to e.g. '<app>/<app>.min.js',
-             * @return array array of key vals where the keys are source files and values are the $target passed in. 
+             * @return array array of key vals where the keys are source files and values are the $target passed in.
              */
             function getSubgroupForTarget ($subGroup, $target) {
                 // Add more sub-groups as needed here if client include duplication in $js_groupings
@@ -114,7 +114,8 @@
                 "sidecar/lib/handlebars/handlebars-1.0.rc.1.js" => "summer/summer.min.js",
                 "sidecar/lib/stash/stash.js" => "summer/summer.min.js",
                 "sidecar/lib/async/async.js" => "summer/summer.min.js",
-                "sidecar/lib/chosen/chosen.jquery.js" => "summer/summer.min.js",
+                "styleguide/styleguide/js/chosen.jquery.hal.js" => "summer/summer.min.js",
+//                "sidecar/lib/chosen/chosen.jquery.js" => "summer/summer.min.js",
                 "sidecar/lib/sugar/sugar.searchahead.js" => "summer/summer.min.js",
                 "sidecar/lib/sugar/sugar.timeago.js" => "summer/summer.min.js",
                 "summer/lib/TimelineJS/js/storyjs-embed.js" => "summer/summer.min.js",
@@ -170,9 +171,9 @@
                 "styleguide/assets/js/bootstrap-modal.js" => "summer/summer.min.js",
                 "styleguide/assets/js/bootstrap-alert.js" => "summer/summer.min.js",
                 "summer/summer-ui.js" => "summer/summer.min.js",
-                "styleguide/styleguide/js/nvd3/lib/d3.v2.js" => "summer/summer.min.js",
+                "styleguide/assets/js/nvd3/lib/d3.v2.min.js" => "summer/summer.min.js",
                 // To add more models to NV D3, run the makefile in styleguide.
-                "styleguide/styleguide/js/nvd3/nv.d3.min.js" => "summer/summer.min.js",
+                "styleguide/assets/js/nvd3/nv.d3.min.js" => "summer/summer.min.js",
                 "modules/Forecasts/clients/base/lib/ForecastsUtils.js" => "summer/summer.min.js",
                 "modules/Forecasts/clients/base/lib/BucketGridEnum.js" => "summer/summer.min.js",
                 "modules/Forecasts/clients/base/lib/ClickToEdit.js" => "summer/summer.min.js",
@@ -186,13 +187,14 @@
                 "sidecar/lib/chosen/chosen.css" => "summer/summer.min.css",
                 "summer/lib/fullcalendar/fullcalendar.css" => "summer/summer.min.css",
                 "sidecar/lib/jquery-ui/css/smoothness/jquery-ui-1.8.18.custom.css" => "summer/summer.min.css",
-                "styleguide/styleguide/css/nv.d3.css" => "summer/summer.min.css",
+                //"styleguide/styleguide/css/nv.d3.css" => "summer/summer.min.css",
                 "summer/lib/TimelineJS/css/timeline.css" => "summer/summer.min.css",
             ),
 
             $summer_splash_js = array(
                 "sidecar/lib/jquery/jquery.min.js" => "summer/summer-splash.min.js",
                 "summer/splash/login.js" => "summer/summer-splash.min.js",
+                "styleguide/assets/js/bootstrap-alert.js" => "summer/summer-splash.min.js",
             ),
 
             $summer_splash_css = array(
@@ -350,24 +352,22 @@
                 'include/javascript/jsclass_async.js'   => 'include/javascript/sugar_grp_jsolait.js',
                 'modules/Meetings/jsclass_scheduler.js'   => 'include/javascript/sugar_grp_jsolait.js',
             ),
-
-           $sugar_grp_sidecar = array(
-               'include/javascript/phpjs/base64_encode.js' => 'include/javascript/sugar_sidecar.min.js',
-               'sidecar/lib/jquery/jquery.placeholder.min.js'         => 'include/javascript/sugar_sidecar.min.js',
-               'styleguide/assets/js/bootstrap-button.js'  => 'include/javascript/sugar_sidecar.min.js',
-               'styleguide/assets/js/bootstrap-tooltip.js' => 'include/javascript/sugar_sidecar.min.js',
-               'styleguide/assets/js/bootstrap-dropdown.js'=> 'include/javascript/sugar_sidecar.min.js',
-               'styleguide/assets/js/bootstrap-popover.js' => 'include/javascript/sugar_sidecar.min.js',
-               'styleguide/assets/js/bootstrap-modal.js'   => 'include/javascript/sugar_sidecar.min.js',
-               'styleguide/assets/js/bootstrap-alert.js'   => 'include/javascript/sugar_sidecar.min.js',
-               'styleguide/assets/js/bootstrap-tab.js'   => 'include/javascript/sugar_sidecar.min.js',
-               'include/javascript/nvd3/lib/d3.v2.min.js' => 'include/javascript/sugar_sidecar.min.js',
-               // To add more models to NV D3, run the makefile in styleguide.
-               'include/javascript/nvd3/nv.d3.min.js' => 'include/javascript/sugar_sidecar.min.js',
-               'portal2/error.js'               => 'include/javascript/sugar_sidecar.min.js',
-               'portal2/views/alert-view.js'    => 'include/javascript/sugar_sidecar.min.js',
-               'include/javascript/jquery/jquery.popoverext.js'           => 'include/javascript/sugar_sidecar.min.js',
-               'include/javascript/jquery/jquery.effects.custombounce.js'           => 'include/javascript/sugar_sidecar.min.js',
+           $sugar_grp_sidecar = array_merge(
+                array('include/javascript/phpjs/base64_encode.js' => 'include/javascript/sugar_sidecar.min.js',
+               'sidecar/lib/jquery/jquery.placeholder.min.js' => 'include/javascript/sugar_sidecar.min.js'),
+                getSubgroupForTarget('bootstrap', 'include/javascript/sugar_sidecar.min.js'),
+                array(
+                   'styleguide/assets/js/bootstrap-tab.js'   => 'include/javascript/sugar_sidecar.min.js',
+                   'sidecar/lib/jquery-timepicker/jquery.timepicker.js' => 'include/javascript/sugar_sidecar.min.js',
+                   'include/javascript/nvd3/lib/d3.v2.min.js' => 'include/javascript/sugar_sidecar.min.js',
+                    "include/javascript/select2-release-3.2/select2.min.js" => "include/javascript/sugar_sidecar.min.js",
+                   // To add more models to NV D3, run the makefile in styleguide.
+                   'include/javascript/nvd3/nv.d3.min.js' => 'include/javascript/sugar_sidecar.min.js',
+                   'portal2/error.js'               => 'include/javascript/sugar_sidecar.min.js',
+                   'portal2/views/alert-view.js'    => 'include/javascript/sugar_sidecar.min.js',
+                   'include/javascript/jquery/jquery.popoverext.js'           => 'include/javascript/sugar_sidecar.min.js',
+                   'include/javascript/jquery/jquery.effects.custombounce.js'           => 'include/javascript/sugar_sidecar.min.js',
+                )
            ),
            //BEGIN SUGARCRM flav=ent ONLY
             $sugar_grp_portal2 = array_merge(

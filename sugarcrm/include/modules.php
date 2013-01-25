@@ -436,8 +436,6 @@ $beanFiles['SugarFeed'] = 'modules/SugarFeed/SugarFeed.php';
 $modInvisList[] = 'SugarFeed';
 
 
-$beanList['Words'] = 'Words';
-$beanFiles['Words'] = 'modules/Words/Words.php';
 
 //BEGIN SUGARCRM flav=pro ONLY
 $beanList['Notifications'] = 'Notifications';
@@ -500,6 +498,11 @@ $modInvisList[] = 'SugarFollowing';
 $beanList['ActivityStream'] = 'ActivityStream';
 $beanFiles['ActivityStream'] = 'modules/ActivityStream/ActivityStream.php';
 $modInvisList[] = 'ActivityStream';
+
+$beanList['Filters'] = 'Filters';
+$beanFiles['Filters'] = 'modules/Filters/Filters.php';
+$modInvisList[] = 'Filters';
+
 
 //Object list is only here to correct for modules that break
 //the bean class name == dictionary entry/object name convention
