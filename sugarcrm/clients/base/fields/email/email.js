@@ -80,34 +80,40 @@
      * @param {string|Array} value single email address or set of email addresses
      */
     format: function(value) {
-        // multiple emails
         if (_.isArray(value)) {
+            // got an array of email addresses
             _.each(value, function(email) {
                 // Needed for handlebars template, can't accomplish this boolean expression with handlebars
-                email.hasAnchor = email.opt_out != "1" && email.invalid_email != "1" && this.def.link;
+                email.hasAnchor = this.def.link && email.opt_out != "1" && email.invalid_email != "1";
             }, this);
         } else {
+            // expected an array but got a string
             value = [{
-                'email_address':   value,
-                'primary_address': '1',
-                'hasAnchor':       false,
-                '_wasNotArray':    true
-             }];
+                email_address:   value,
+                primary_address: "1",
+                hasAnchor:       false,
+                _wasNotArray:    true
+            }];
         }
 
         return value;
     },
     unformat: function(value) {
-        if (_.isArray(value)) {
-            // multiple emails
-            _.each(value, function(email) {
-                if (email._wasNotArray) {
-                    return email.email_address;
-                } else {
-                    // Remove handlebars cruft from e-mails so we only send valid fields back on save
-                    email = _.pick(email, 'email_address', 'primary_address', 'opt_out', 'invalid_email');
-                }
-            });
+        var originalNonArrayValue = null;
+
+        _.each(value, function(email, index) {
+            if (email._wasNotArray) {
+                // copy the original string representation
+                originalNonArrayValue = email.email_address;
+            } else {
+                // Remove handlebars cruft from e-mails so we only send valid fields back on save
+                value[index] = _.pick(email, 'email_address', 'primary_address', 'opt_out', 'invalid_email');
+            }
+        }, this);
+
+        if (!_.isNull(originalNonArrayValue)) {
+            // reformat the value back to the original string representation
+            value = originalNonArrayValue;
         }
 
         return value;
