@@ -54,9 +54,9 @@
         app.view.Layout.prototype.loadData.call(this, options);
     },
 
-    fetchDuplicates: function(model) {
+    fetchDuplicates: function(model, options) {
         this.model = model;
-        var options = {};
+        options = options ? options : {};
         options.endpoint = this.endpoint;
         this.collection.fetch(options);
     },
