@@ -1,60 +1,152 @@
-<style>
-.add-to-target-table {
-  margin-bottom:0;
-}
+<!-- extend header row -->
+<article class="filter-header">
+    <div class="row-fluid">
+        <div class="controls span6">
+            <strong>Add to target list</strong>
+        </div>
+        <div class="span6">
+            <div class="pull-right">
+                <a href="#create" class="add-targter-create btn btn-link btn-invisible">Create new target list</a>
+                <!-- <a href="#delete" class="btn btn-link btn-invisible hide">Delete</a> -->
+                <a href="#update" class="add-targter-save btn btn-primary disabled">Update</a>
+                <a href="#" class="add-targter-close btn btn-invisible btn-dark"><i class="icon-remove"></i></a>
+            </div>
+        </div>
+    </div>
+</article>
 
-.add-to-target-table tr,
-.add-to-target-table tr td {
-  background:#E8E8E8 !important;
-}
-</style>
-
-<table class="add-to-target-table table table-striped filter">
-  <tr>
-    <td style="border-bottom:1px solid #ddd">
-      <strong>Add to target list</strong>
-
-      <span class="pull-right">
-        <a href="#"  style="padding:0 1em">Create new target list</a>
-        <input type="button" class="btn" value="Update">
-        <i class="add-targter-filter-close icon-remove" style="padding:0 1em"></i>
-      </span>
-    </td>
-  </tr>
-
-  <tr>
-    <td style="">
-      <span class="pull-left">
-          <select id="select01a" data-placeholder="Select target list..." class="select2 choose-region">
-            <option value="pk0"></option>
-            <option value="pk1">Global Atlantic, default</option>
-            <option value="pk2">Global East, default</option>
-            <option value="pk3">Global North, default</option>
-            <option value="pk4">Global Pacific, default</option>
-            <option value="pk5">Global Pacific, seed</option>
-            <option value="pk6">Search for more...</option>
-          </select>
-      </span>
-
-      <span class="pull-right">
-        <i class="add-targter-filter-add icon-plus" style="padding:0 1em"></i>
-      </span>
-    </td>
-  </tr>
-</table>
+<!-- add to target row -->
+<article class="filter-body" id="filter_row_new">
+  <div class="row-fluid">
+    <div class="filter-field controls span5">
+      <select id="select01a" data-placeholder="Select target list..." class="select2 choose-region inherit-width">
+        <option></option>
+        <option value="pk1">Global Atlantic, default</option>
+        <option value="pk2">Global East, default</option>
+        <option value="pk3">Global North, default</option>
+        <option value="pk4">Global Pacific, default</option>
+        <option value="pk5">Global Pacific, seed</option>
+        <option value="pk6">Search for more...</option>
+      </select>
+    </div>
+    <div class="filter-value controls span5">
+      <!-- <input name="value" type="text" class="inherit-width" placeholder="Enter a name..."> -->
+    </div>
+    <div class="filter-actions controls span2">
+      <a href="#" class="addme btn btn-invisible btn-dark"><i class="icon-plus"></i></a>
+    </div>
+  </div>
+</article>
 
 <script>
   $(document).ready(function() {
-    initSelect2('select.select2');
 
-    $('body').on('click', '#select01a_chzn .active-result', function(){
-      drawer(true);
-      loadPartials([
-        {"file":"add-to-target/search-and-select-target-lists","target":"#edit .record","method":"replace"},
-        {"file":"add-to-target/buttons","target":"#edit .headerpane","method":"replace"},
-        {"file":"add-to-target/how-to-search-target","target":".side-pane.active","method":"append"},
-      ]);
-    });
+      // define global elements
+      var _form = $('#{{sourceid}}'),
+          _options = $('#{{sourceid}} .att'),
+          _header = $('#{{sourceid}} .att .filter-header'),
+          _choices,
+          _results;
+console.log(_options)
+      initSelect2('.att select.select2');
+
+      // show search and select target form
+      $('body').on('click', '#s2id_select01a .active-result', function(){
+        loadPartials([
+          {"file":"add-to-target/search-and-select-target-lists","target":"#edit .record","method":"replace"},
+          {"file":"add-to-target/buttons","target":"#edit .headerpane","method":"replace"},
+          {"file":"add-to-target/how-to-search-target","target":".side-pane.active","method":"append"},
+        ]);
+        drawer(true);
+      });
+
+
+      // if form changes enable update button
+      _form.on('change', function(){
+        alert('change')
+          enableUpdateTargetButton();
+      });
+
+      //
+      _options.find('.att article[id*="filter_row_"]').remove();
+
+
+      // if click update button then update the filter spec
+      // and close filter editor
+      _header.find('a[href="#update"]').off('click').on('click', function(e){
+          if ( !$(this).hasClass('disabled') ) {
+              _options.addClass('hide');
+          }
+          e.preventDefault();
+          e.stopPropagation();
+      });
+
+      // add filter row
+      _options.off('click','.addme').on('click', '.addme', function(e) {
+        alert('addme')
+          var row = $(this).parents('.filter-body'),
+              isNewRow = (row.attr('id')==='filter_row_new'?true:false),
+              filterRows = _options.find('article[id*="filter_row_"]');
+
+          if (isNewRow) {
+              row.attr('id', 'filter_row_'+ filterRows.length);
+              enableRemoveFilterRow( row );
+              createFilterRow('new', {'field':'default','opera':'','value':''}, true);
+          }
+          if (isNewFilter) {
+              createFieldRowChoice( row, _choices, isNewFilter );
+          }
+          enableSaveFilterButton();
+          e.preventDefault();
+          e.stopPropagation();
+      });
+
+
+      // remove filter row
+      _options.off('click','.removeme').on('click', '.removeme', function(e) {
+          var row = $(this).parents('.filter-body'),
+              id = 's2id_search_filter_f_'+ parseInt(row.attr('id').substr(11),10);
+          _choices.find('#'+id).remove();
+          row.remove();
+          e.preventDefault();
+          e.stopPropagation();
+      });
+
+      function createFilterRow (index,spec,isNewRow) {
+
+          loadContent('common/add-to-target-row.html', '.att', undefined, 'append');
+
+          if (!isNaN(index)) {
+              _form.find('#filter_row_new').attr('id','filter_row_'+ index);
+          }
+
+          var row = _form.find('#filter_row_'+ index),
+              field = row.find('select[name="field"]'),
+              opera = row.find('select[name="opera"]'),
+              value = row.find('input[name="value"]');
+
+          // enable select2 for filter row
+          row.find('.select2').each(function(){
+            var $this = $(this)
+              , ctor = getSelect2Constructor($this);
+            $this.select2( ctor );
+          });
+
+          setFilterRowInputs( spec, filterFields[spec.field] );
+
+          if (!isNewRow) {
+              enableRemoveFilterRow( row );
+          }
+
+          field.on('change', function(){
+              spec.field = field.val();
+              setFilterRowInputs( spec, filterFields[spec.field] );
+          });
+      }
+
+      function enableUpdateTargetButton () {
+          _header.find('a[href="#update"]').toggleClass( 'disabled', _header.find('input[name="filter"]').val()==='' );
+      }
 
   });
 </script>
