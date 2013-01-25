@@ -90,7 +90,7 @@ $viewdefs['Prospects']['base']['view']['record'] = array(
             'name' => 'panel_body',
             'columns' => 2,
             'labels' => true,
-            'labelsOnTop' => false,
+            'labelsOnTop' => true,
             'placeholders' => true,
             'fields' => array(
                 array(
@@ -122,7 +122,7 @@ $viewdefs['Prospects']['base']['view']['record'] = array(
             'name' => 'panel_hidden',
             'hide' => true,
             'columns' => 2,
-            'labelsOnTop' => false,
+            'labelsOnTop' => true,
             'placeholders' => true,
             'fields' => array(
                 array(
@@ -130,14 +130,13 @@ $viewdefs['Prospects']['base']['view']['record'] = array(
                     'span' => 12,
                 ),
                 'phone_other',
-                'referred_by', //TODO: does not exist so the columns are thrown off. remove and make phone_other a span of 12 and the columns dispaly correctly
-                'assigned_user_name',
                 'date_modified',
+                'assigned_user_name',
+                'date_entered',
                 array(
                     "type" => "teamset",
                     "name" => "team_name"
                 ),
-                'date_entered', //TODO: this won't show until the teams widget is fixed
             ),
         ),
     ),
