@@ -41,9 +41,9 @@ require_once('include/SugarMath/Exception.php');
  *
  * Examples:
  *
- * SugarMath::init()->exp("1+2/3*(4+5)^2");
+ * SugarMath::init()->exp("1+2/3*(4+5)^2")->result();
  * // reusable expression with params
- * SugarMath::init()->exp("1+?-4*(?+?)",array($p1,$p2,$p3));
+ * SugarMath::init()->exp("1+?-4*(?+?)",array($p1,$p2,$p3))->result();
  *
  */
 class SugarMath
@@ -52,9 +52,9 @@ class SugarMath
     /**
      * the current value being applied
      *
-     * @var number $value
+     * @var string $value
      */
-    protected $value = 0;
+    protected $value = '0';
 
     /**
      * the math decimal precision, default is 2
@@ -93,7 +93,7 @@ class SugarMath
      * @param  int   $scale
      * @return SugarMath
      */
-    static public function init( $value = 0.0, $scale = null )
+    static public function init( $value = '0', $scale = null )
     {
         return new self($value, $scale);
     }
@@ -134,11 +134,11 @@ class SugarMath
     /**
      * get the current value
      *
+     * @param bool $round round result value to given scale?
      * @return number
      */
-    public function result() {
-        // use bcadd to trim decimals to scale
-        return $this->value;
+    public function result($round = true) {
+        return $round ? $this->round($this->value) : $this->value;
     }
 
     /**
@@ -286,15 +286,18 @@ class SugarMath
      * round value to given precision
      *
      * @param string $value
-     * @param int $precision
+     * @param int $scale
      * @return string
      */
-    public function round($value, $precision = 0) {
-        if (false !== ($pos = strpos($value, '.')) && (strlen($value) - $pos - 1) > $precision) {
-            $zeros = str_repeat("0", $precision);
-            return bcadd($value, "0.{$zeros}5", $precision);
+    public function round($value, $scale = null) {
+        if(!isset($scale)) {
+            $scale = $this->scale;
+        }
+        if (false !== ($pos = strpos($value, '.')) && (strlen($value) - $pos - 1) > $scale) {
+            $zeros = str_repeat("0", $scale);
+            return bcadd($value, "0.{$zeros}5", $scale);
         } else {
-            return $value;
+            return bcadd($value, 0, $scale);
         }
     }
 
@@ -374,7 +377,7 @@ class SugarMath
             throw new SugarMath_Exception('parenthesis mismatch');
         }
         // give us ample of precision for the internal calculations
-        $this->scale += 4;
+        $this->scale += 10;
         // convert infix expression into postfix (reverse polish notation)
         $output = array(); // our output queue for RPN
         $stack = array();  // our operand stack
@@ -501,9 +504,9 @@ class SugarMath
             }
         }
         // set scale back to original value
-        $this->scale -= 4;
+        $this->scale -= 10;
         // if original expression was empty parenthesis, result will be 0
-        $this->value = !empty($result) ? bcadd($result[0], 0, $this->scale) : 0;
+        $this->value = !empty($result) ? $result[0] : 0;
         return $this;
     }
 
