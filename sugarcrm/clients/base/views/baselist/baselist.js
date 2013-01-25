@@ -286,12 +286,12 @@
             'type' : 'fieldset',
             'fields' : [{
                 'type' : 'rowactions',
+                'label' : meta.rowactions.label || '',
                 'css_class' : meta.rowactions.css_class,
                 'buttons' : []
             }],
             'value' : false,
-            'sortable' : false,
-            'label' : meta.rowactions.label || ''
+            'sortable' : false
         };
         if (!_.isUndefined(meta.rowactions.actions)) {
             rowActions.fields[0].buttons = meta.rowactions.actions;

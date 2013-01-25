@@ -240,6 +240,9 @@ class ForecastUserReassignmentTest extends  Sugar_PHPUnit_Framework_OutputTestCa
         $this->_createUser('max', 'sarah');
         $this->_createUser('chris', 'will');
         SugarTestHelper::setUp('current_user', array(true, 1));
+        global $current_user;
+        //Set the type to be of UserAdministrator
+        $current_user->userType = 'UserAdministrator';
         $this->_timeperiod = SugarTestTimePeriodUtilities::createTimePeriod();
     }
 

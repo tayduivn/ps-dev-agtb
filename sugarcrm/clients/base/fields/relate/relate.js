@@ -25,13 +25,9 @@
  * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 ({
-    events: {
-        'keyup .chzn-search input': 'throttleSearch'
-    },
     allow_single_deselect: true,
     minChars: 1,
-    _previousTerm: null,
-    fieldTag: 'select.chzn-select',
+    fieldTag: 'input.select2',
     /**
      * Initializes field and binds all function calls to this
      * @param {Object} options
@@ -40,7 +36,6 @@
         _.bindAll(this);
         this.minChars = options.def.minChars || this.minChars;
         app.view.Field.prototype.initialize.call(this, options);
-        this.optionsTemplateC = app.template.getField(this.type, "options");
     },
     /**
      * Renders relate field
@@ -49,36 +44,51 @@
         var self = this;
         var result = app.view.Field.prototype._render.call(this);
         if(this.tplName === 'edit') {
-            this.$(this.fieldTag).not(".chzn-done").chosen({
-                allow_single_deselect: self.allow_single_deselect,
-                no_results_text: app.lang.get("LBL_SEARCH_FOR")
-            }).change(function(evt){
-                    var selected = $(evt.currentTarget).find(':selected'),
-                        value = selected.text(),
-                        id = selected.val(),
-                        searchmore = selected.data("searchmore"),
-                        empty = selected.data("empty");
-                    if(searchmore || empty) {
-                        self.beforeSearchMore();
-                        $(evt.currentTarget).val('');
-                        self.setValue({id: '', value: ''});
-                        self.view.layout.trigger("drawer:selection:fire", {
-                            components: [{
-                                layout : 'selection-list',
-                                context: {
-                                    module: self.getSearchModule()
-                                }
-                            }]
-                        }, self.setValue);
-                    } else {
-                        self.setValue({id: id, value: value});
+            this.$(this.fieldTag).select2({
+                    width: 'element',
+                    initSelection: function(el, callback) {
+                        var $el = $(el),
+                            id = $el.data('id'),
+                            text = $el.val();
+                        callback({id: id, text: text});
+                    },
+                    formatSearching: function() {
+                        return app.lang.get("LBL_LOADING", self.module);
+                    },
+                    placeholder: app.lang.get(self.getSearchModule(), self.module),
+                    allowClear: self.allow_single_deselect,
+                    minimumInputLength: self.minChars,
+                    query: self.search
+                }).on("open", function() {
+                    var plugin = $(this).data('select2');
+                    if(!plugin.searchmore) {
+                        plugin.searchmore = $('<ul class="select2-results">')
+                            .append(
+                            $('<li class="select2-result">')
+                                .append($(document.createElement("div")).addClass('select2-result-label').html(app.lang.get("LBL_SEARCH_FOR_MORE")))
+                                .mousedown(function() {
+                                    plugin.opts.element.trigger($.Event("searchmore"));
+                                    plugin.close();
+                                })
+                        );
+                        plugin.dropdown.append(plugin.searchmore);
                     }
-                }).on("liszt:updated", function(evt) {
-                    var selected = $(evt.currentTarget).find(':selected'),
-                        value = selected.text(),
-                        id = selected.val();
-
-                    self.setValue({id: id, value: value, silent: true});
+                }).on("searchmore", function() {
+                    self.beforeSearchMore();
+                    self.setValue({id: '', value: ''});
+                    self.view.layout.trigger("drawer:selection:fire", {
+                        components: [{
+                            layout : 'selection-list',
+                            context: {
+                                module: self.getSearchModule()
+                            }
+                        }]
+                    }, self.setValue);
+                }).on("change", function(e) {
+                    var id = e.val,
+                        plugin = $(this).data('select2'),
+                        value = (id) ? plugin.selection.find("span").text() : '';
+                    self.setValue({id: e.val, value: value});
                 });
         } else if(this.tplName === 'disabled') {
             this.$(this.fieldTag).attr("disabled", "disabled").not(".chzn-done").chosen();
@@ -92,24 +102,11 @@
         this.model.set(this.def.name, model.value, {silent: silent});
     },
     /**
-     * Throttles search ajax
-     * @param {Object} e event object
-     * @param {Integer} interval interval to throttle
+     * {@inheritdoc}
+     *
+     * We need this empty so it won't affect refresh the select2 plugin
      */
-    throttleSearch: function(evt) {
-        var term = evt.currentTarget.value;
-        if(this._previousTerm != term) {
-            this.search(term);
-        };
-    },
-    onSearchSuccess: function(data) {
-        var self = this,
-            chosen_select = this.$(this.fieldTag).not(":disabled");
-        chosen_select.children().not(":first").remove();
-        self.selectOptions = data.models;
-        var options = self.optionsTemplateC(self);
-        chosen_select.append(options);
-        chosen_select.trigger("liszt:updated");
+    bindDomChange: function() {
     },
     getSearchModule: function() {
         return this.def.module;
@@ -118,46 +115,50 @@
      * Searches for related field
      * @param event
      */
-    search: _.debounce(function(term) {
-        var self = this,
+    search: _.debounce(function(query) {
+        var term = query.term,
+            self = this,
             searchModule = this.getSearchModule(),
-            chosen_select = this.$(this.fieldTag).not(":disabled"),
-            chosen_search_input = self.$(self.fieldTag + " + .chzn-container-active .chzn-search input"),
-            params = {
-                limit: 3
-            };
-        this._previousTerm = term;
+            params = {},
+            limit = self.def.limit || 5;
+
         if(!_.isUndefined(term) && term) {
             params.q = term;
         }
 
-        if(term.length >= this.minChars) {
-            chosen_select.children().not(":first").not(":selected").remove();
-            var adv_search = app.lang.get("LBL_LOADING"),
-                opt_adv_search = new Option(adv_search, '');
-            $(opt_adv_search).html(adv_search).appendTo(chosen_select);
+        var search_collection = query.context || app.data.createBeanCollection(searchModule);
 
-            chosen_select.trigger("liszt:updated");
-            chosen_search_input.val(term);
-
-            self.search_collection = app.data.createBeanCollection(searchModule);
-            self.search_collection.fetch({
-                context: self,
-                params: params,
-                success: function(data) {
-                    self.onSearchSuccess.call(self, data);
-                },
-                complete: function() {
-                    chosen_search_input.val(term);
-                },
-                error: function() {
-                    app.logger.error("Unable to fetch the bean collection.");
-                    chosen_select.children().not(":first").remove();
-                    var adv_search = app.lang.get("LBL_SEARCH_UNAVAILABLE"),
-                        opt_adv_search = new Option(adv_search, '');
-                    $(opt_adv_search).html(adv_search).appendTo(chosen_select);
-                }
-            });
+        if(query.context) {
+            params.offset = search_collection.next_offset
         }
+        search_collection.fetch({
+            context: self,
+            params: params,
+            limit: limit,
+            success: function(data) {
+                var fetch = {results:[], more: data.next_offset > 0, context: search_collection};
+                if(fetch.more) {
+                    var plugin = self.$(self.fieldTag).data("select2"),
+                        height = plugin.searchmore.children("li:first").children(":first").outerHeight(),
+                        //0.2 makes scroll not to touch the bottom line which avoid fetching next record set
+                        maxHeight = height * (limit - .2);
+                    plugin.results.css("max-height", maxHeight);
+                } else {
+
+                }
+                _.each(data.models, function(model){
+                    fetch.results.push({
+                        id: model.id,
+                        text: model.get('name')
+                    })
+                });
+                query.callback(fetch);
+            },
+            error: function() {
+                query.callback({results:[]});
+                app.logger.error("Unable to fetch the bean collection.");
+            }
+        });
+
     }, app.config.requiredElapsed || 500)
 })
