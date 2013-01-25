@@ -564,7 +564,6 @@ class ForecastsTimePeriodTest extends Sugar_PHPUnit_Framework_TestCase
 
         return array(
             //This data set simulates case where the start date specified is the same as current date
-
             array(1, TimePeriod::ANNUAL_TYPE, TimePeriod::QUARTER_TYPE, TimeDate::getInstance()->getNow()->setDate(date('Y'), 1, 1), 2, TimeDate::getInstance()->getNow()->setDate(date('Y'), 1, 1), 15, TimeDate::getInstance()->getNow()->setDate(date('Y'), 10, 1), TimeDate::getInstance()->getNow()->setDate(date('Y'), 12, 31)),
 
             array(1, TimePeriod::ANNUAL_TYPE, TimePeriod::QUARTER_TYPE, TimeDate::getInstance()->getNow()->setDate(date('Y'), 1, 1), 4, TimeDate::getInstance()->getNow()->setDate(date('Y'), 1, 1), 25, TimeDate::getInstance()->getNow()->setDate(date('Y'), 10, 1), TimeDate::getInstance()->getNow()->setDate(date('Y'), 12, 31)),
@@ -612,6 +611,26 @@ class ForecastsTimePeriodTest extends Sugar_PHPUnit_Framework_TestCase
                 )
             ),
 
+            array(1, TimePeriod::ANNUAL_TYPE, TimePeriod::MONTH_TYPE, TimeDate::getInstance()->fromDbDate('2013-01-01'), 2, TimeDate::getInstance()->fromDbDate('2013-01-27'), 12, TimeDate::getInstance()->fromDbDate('2012-10-01'), TimeDate::getInstance()->fromDbDate('2012-12-31'),
+                array(
+                    "INSERT INTO timeperiods (id, name, parent_id, start_date, end_date, deleted) VALUES ('103b91cc-f7a3-d597-0b73-501a8ce616ff','13 Weeks (From Oct. 1st)','40b1de01-d7cf-3031-89e1-4ffeecd30fa8','2012-10-01','2012-12-30',0)",
+                    "INSERT INTO timeperiods (id, name, parent_id, start_date, end_date, deleted) VALUES ('2d3c752b-c36b-bd0a-2f23-501a8c5e754e','13 Weeks (From Sep. 24th)','40b1de01-d7cf-3031-89e1-4ffeecd30fa8','2012-09-24','2012-12-23',0)",
+                    "INSERT INTO timeperiods (id, name, parent_id, start_date, end_date, deleted) VALUES ('32a04171-977c-fd45-3fbf-4ffeedcca0a9','Q4-2012','40b1de01-d7cf-3031-89e1-4ffeecd30fa8','2012-10-01','2012-12-31',1)",
+                    "INSERT INTO timeperiods (id, name, parent_id, start_date, end_date, deleted) VALUES ('40b1de01-d7cf-3031-89e1-4ffeecd30fa8','Year 2012',NULL,'2012-01-01','2012-12-31',0)",
+                    "INSERT INTO timeperiods (id, name, parent_id, start_date, end_date, deleted) VALUES ('410be0db-1aba-76bf-eb01-50196f23cf51','13 Weeks (From Aug. 6th)','40b1de01-d7cf-3031-89e1-4ffeecd30fa8','2012-08-06','2012-11-04',1)",
+                    "INSERT INTO timeperiods (id, name, parent_id, start_date, end_date, deleted) VALUES ('6d4ec3fa-9a02-0880-0f86-4ffeed752a7c','Second Half 2012','40b1de01-d7cf-3031-89e1-4ffeecd30fa8','2012-07-01','2012-12-31',0)",
+                    "INSERT INTO timeperiods (id, name, parent_id, start_date, end_date, deleted) VALUES ('70c1717b-72b6-726b-e15f-501a8bfb16a7','13 Weeks (From Sep. 3rd)','40b1de01-d7cf-3031-89e1-4ffeecd30fa8','2012-09-03','2012-12-02',0)",
+                    "INSERT INTO timeperiods (id, name, parent_id, start_date, end_date, deleted) VALUES ('748c6ad5-4243-c031-0597-501a8b277b04','13 Weeks (From Aug. 27th)','40b1de01-d7cf-3031-89e1-4ffeecd30fa8','2012-08-27','2012-11-25',0)",
+                    "INSERT INTO timeperiods (id, name, parent_id, start_date, end_date, deleted) VALUES ('7cc177c2-7763-f88c-46e3-501a8c06b9c4','13 Weeks (From Sep. 17th)','40b1de01-d7cf-3031-89e1-4ffeecd30fa8','2012-09-17','2012-12-16',0)",
+                    "INSERT INTO timeperiods (id, name, parent_id, start_date, end_date, deleted) VALUES ('857764f1-9c0f-947c-572e-4ff5b7776f82','2012 Q3','','2012-07-01','2012-09-30',1)",
+                    "INSERT INTO timeperiods (id, name, parent_id, start_date, end_date, deleted) VALUES ('8d0c0dcc-4bed-7a69-625c-4ff5adcaddc2','2012 Quater 3','','2012-07-01','2012-09-30',1)",
+                    "INSERT INTO timeperiods (id, name, parent_id, start_date, end_date, deleted) VALUES ('b1a67ae0-ee38-d98d-7a97-501a8aba16fd','13 Weeks (From Aug. 13th)','40b1de01-d7cf-3031-89e1-4ffeecd30fa8','2012-08-13','2012-11-11',0)",
+                    "INSERT INTO timeperiods (id, name, parent_id, start_date, end_date, deleted) VALUES ('ba4cc512-85a7-dba6-99ae-501a8b64a1b2','13 Weeks (From Aug. 20th)','40b1de01-d7cf-3031-89e1-4ffeecd30fa8','2012-08-20','2012-11-18',0)",
+                    "INSERT INTO timeperiods (id, name, parent_id, start_date, end_date, deleted) VALUES ('ca574889-868f-909b-247f-501a8b63d48e','13 Weeks (From Sep. 10th)','40b1de01-d7cf-3031-89e1-4ffeecd30fa8','2012-09-10','2012-12-09',0)",
+                    "INSERT INTO timeperiods (id, name, parent_id, start_date, end_date, deleted) VALUES ('e4623e91-6b0e-a514-b68c-4ff5b1a5c100','2012',NULL,'2012-01-01','2012-12-31',1)",
+                    "INSERT INTO timeperiods (id, name, parent_id, start_date, end_date, deleted) VALUES ('e5446401-af4d-abf2-7969-4ffeed400cdf','Q3-2012','40b1de01-d7cf-3031-89e1-4ffeecd30fa8','2012-07-01','2012-09-30',1)"
+                )
+            ),
         );
 
     }
@@ -648,7 +667,6 @@ class ForecastsTimePeriodTest extends Sugar_PHPUnit_Framework_TestCase
         $endDateFirstCreated,
         $overrideEntries = array())
     {
-
         if(!empty($overrideEntries)) {
             $db = DBManagerFactory::getInstance();
             //Get rid of all non-deleted timeperiods
@@ -672,6 +690,12 @@ class ForecastsTimePeriodTest extends Sugar_PHPUnit_Framework_TestCase
 
         $timePeriod = TimePeriod::getByType($interval);
         $created = $timePeriod->createTimePeriodsForUpgrade($currentSettings, $currentDate);
+
+        /*
+        foreach($created as $c) {
+            echo "{$c->name}, {$c->start_date} - {$c->end_date}\n";
+        }
+        */
 
         $this->assertEquals($expectedTimePeriods, count($created));
         $firstTimePeriod = $created[$createdTimePeriodToCheck];
