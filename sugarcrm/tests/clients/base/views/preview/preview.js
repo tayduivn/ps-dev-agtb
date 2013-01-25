@@ -74,6 +74,14 @@ describe("Preview View", function() {
             });
             expect(fav).toBeUndefined();
         });
+        it("should detect if at least one of the panels is hidden", function(){
+            expect(preview.hiddenPanelExists).toBe(false);
+            preview._previewifyMetadata(meta);
+            expect(preview.hiddenPanelExists).toBe(true);
+            meta.panels[2].hide = false;
+            preview._previewifyMetadata(meta);
+            expect(preview.hiddenPanelExists).toBe(false);
+        });
 
     });
     describe("renderPreview", function(){

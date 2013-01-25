@@ -26,11 +26,14 @@
  ********************************************************************************/
 ({
     events: {
-        'click .closeSubdetail': 'closePreview'
+        'click .closeSubdetail': 'closePreview',
+        'click .more': 'toggleMoreLess',
+        'click .less': 'toggleMoreLess'
     },
 
     // "binary semaphore" for the pagination click event, this is needed for async changes to the preview model
     switching: false,
+    hiddenPanelExists: false,
 
     initialize: function(options) {
         _.bindAll(this);
@@ -111,6 +114,7 @@
      */
     _previewifyMetadata: function(meta){
         var trimmed = $.extend(true, {}, meta); //Deep copy
+        this.hiddenPanelExists = false; // reset
         _.each(trimmed.panels, function(panel){
             if(panel.header){
                 panel.header = false;
@@ -119,7 +123,11 @@
                     return field.type != 'favorite';
                 });
             }
-        });
+            //Keep track if a hidden panel exists
+            if(!this.hiddenPanelExists && panel.hide){
+                this.hiddenPanelExists = true;
+            }
+        }, this);
         return trimmed;
     },
     /**
@@ -193,6 +201,11 @@
                 }
             }
         }
+    },
+    toggleMoreLess: function() {
+        this.$(".less").toggleClass("hide");
+        this.$(".more").toggleClass("hide");
+        this.$(".panel_hidden").toggleClass("hide");
     },
 
     closePreview: function() {
