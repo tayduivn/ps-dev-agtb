@@ -1,8 +1,7 @@
-<?php
- if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
+<!--
 /*********************************************************************************
  * The contents of this file are subject to the SugarCRM Master Subscription
- * Agreement ("License") which can be viewed at
+ * Agreement (""License"") which can be viewed at
  * http://www.sugarcrm.com/crm/master-subscription-agreement
  * By installing or using this file, You have unconditionally agreed to the
  * terms and conditions of the License, and You may not use this file except in
@@ -16,7 +15,7 @@
  * remove SugarCRM copyrights from the source code or user interface.
  *
  * All copies of the Covered Code must include on each user interface screen:
- *  (i) the "Powered by SugarCRM" logo and
+ *  (i) the ""Powered by SugarCRM"" logo and
  *  (ii) the SugarCRM copyright notice
  * in the same form as they appear in the distribution.  See full license for
  * requirements.
@@ -26,14 +25,43 @@
  * governing these rights and limitations under the License.  Portions created
  * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
-$module_name = '<module_name>';
-$viewdefs[$module_name]['mobile']['layout']['list'] = array(
-    'type' => 'list',
-    'components' =>
-    array(
-        0 =>
-        array(
-            'view' => 'list',
-        )
-    ),
-);
+-->
+<div class="longHelpTitle">Favorite a record of a specified type.<br></div>
+<div class="summary">
+<h2>Summary:</h2>
+  This endpoint sets a records as a favorite for the logged in user.
+</div>
+<div class="params">
+<h2>Query Parameters:</h2>
+<table>
+  <tbody><tr><th>Param</th><th>Description</th><th>Optional</th></tr>
+  <tr><td colspan="3">This endpoint does not accept any parameters.</td></tr>
+</tbody></table>
+</div><div class="input">
+<h2>Input Example:</h2> 
+</h></div><div class="output">
+  <h2>Output Example:</h2>
+<code class="codesample"> 
+{
+    "id": "f384c2b4-6edf-723d-db4e-5057a54a669f",
+    "name": "Randy Woodward",
+    "date_entered": "2012-09-17T15:33:00-0700",
+    "date_modified": "2012-09-17T15:33:00-0700",
+    "modified_user_id": "1",
+    "modified_by_name": "Administrator",
+    "created_by": "1",
+    "created_by_name": "Administrator",
+    "description": "",
+    "deleted": "0",
+    "assigned_user_id": "seed_max_id",
+    "assigned_user_name": "Max Jensen",
+    "team_name": [
+        {
+            "id": "East",
+            "name": "East",
+            "name_2": "",
+            "primary": false
+        },
+		... additional fields ...
+</code>
+</div>

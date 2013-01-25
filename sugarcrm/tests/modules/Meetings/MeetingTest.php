@@ -93,6 +93,5 @@ class MeetingTest extends Sugar_PHPUnit_Framework_TestCase
 		$this->assertTrue(in_array($meeting->id,$to_remind));
 		$GLOBALS['db']->query("DELETE FROM meetings WHERE id = '{$meeting->id}'");
 	}
-
 }
 ?>
