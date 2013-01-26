@@ -18,13 +18,14 @@
     },
     setMetadata: function(options) {
         options.meta.panels = options.meta.panels || [{fields:[]}];
+        options.meta = JSON.parse(JSON.stringify(options.meta));
         if(!options.meta.panels[0].fields || options.meta.panels[0].fields.length == 0) {
             var moduleMetadata = app.metadata.getModule(options.module),
                 massFields = [];
             _.each(moduleMetadata.fields, function(field){
                 if(field.massupdate) {
                     //TODO: Add or Replace option for Teamset (team_name_type)
-
+                    field = JSON.parse(JSON.stringify(field));
                     field.label = field.label || field.vname;
                     //TODO: Remove hack code for teamset after metadata return correct team type
                     if(field.name == 'team_name') {
