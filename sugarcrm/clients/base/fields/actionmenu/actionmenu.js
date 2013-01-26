@@ -151,6 +151,7 @@
                     model: self.model
                 });
                 self.fields.push(field);
+                field.parent = self;
                 actionMenu += '<li>' + field.getPlaceholder() + '</li>';
 
             });
@@ -158,5 +159,11 @@
             self.actionPlaceHolder = new Handlebars.SafeString(actionMenu);
         }
         return new Handlebars.SafeString(ret);
+    },
+    _loadTemplate: function() {
+        app.view.Field.prototype._loadTemplate.call(this);
+        if(this.view.action === 'list' && this.action === 'edit') {
+            this.template = app.template.empty;
+        }
     }
 })
