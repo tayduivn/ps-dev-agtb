@@ -335,9 +335,6 @@ SUGAR.ajaxUI = {
     },
     firstLoad : function()
     {
-    	// WebKit menu hack, to be used in theme style.js when setting superfish
-        SUGAR.ajaxUI.menuFix = true;
-        
         //Setup Browser History
         var url = YAHOO.util.History.getBookmarkedState('ajaxUILoc');
         var aRegex = /action=([^&#]*)/.exec(window.location);
