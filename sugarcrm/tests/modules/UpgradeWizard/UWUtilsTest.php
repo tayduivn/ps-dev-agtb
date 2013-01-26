@@ -25,6 +25,7 @@
 
 require_once('modules/UpgradeWizard/uw_utils.php');
 require_once ('modules/SchedulersJobs/SchedulersJob.php');
+require_once ('modules/ACLRoles/ACLRole.php');
 
 class UWUtilsTest extends Sugar_PHPUnit_Framework_TestCase  {
 
@@ -127,6 +128,31 @@ class UWUtilsTest extends Sugar_PHPUnit_Framework_TestCase  {
             'commit_stage' => $product->commit_stage);
 
         $this->assertEquals($exp_product, $act_product, "Product info doesn't equal to related opp's one");
+    }
+
+    public function testCreateActionSameAsEditAction() {
+        $aclrole = new ACLRole;
+        // create a role with an edit action
+        $roles = $aclrole->getAllRoles();
+
+        // get the first role
+        $role = reset($roles);
+        $role_id = $role->id;
+        $actions = $aclrole->getRoleActions($role_id);
+        // get the accounts actions;
+        $view_id = $actions['Accounts']['module']['view']['id'];
+        $edit_id = $actions['Accounts']['module']['edit']['id'];
+        $create_id = $actions['Accounts']['module']['create']['id'];
+
+        $aclrole->setAction($role_id, $view_id, 75);
+        $aclrole->setAction($role_id, $edit_id, 75);
+        // run util
+        setupCreateRole();
+        // verify create == edit
+        $actions = $aclrole->getRoleActions($role_id);
+        $this->assertEquals($actions['Accounts']['module']['create']['aclaccess'], $actions['Accounts']['module']['edit']['aclaccess'], "Create does not match edit");
+
+        $aclrole->mark_relationships_deleted($role_id);
     }
 }
 ?>

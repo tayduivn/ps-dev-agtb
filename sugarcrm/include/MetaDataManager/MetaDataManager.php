@@ -420,16 +420,24 @@ class MetaDataManager {
         $outputAcl = array('fields'=>array());
 
         if (!SugarACL::moduleSupportsACL($module)) {
-            foreach ( array('admin', 'access','view','list','edit','delete','import','export','massupdate') as $action ) {
+            foreach ( array('admin', 'access','create', 'view','list','edit','delete','import','export','massupdate') as $action ) {
                 $outputAcl[$action] = 'yes';
             }
         } else {
             $context = array(
                     'user' => $userObject,
                 );
+            
+            // if the bean is not set, or a new bean.. set the owner override
+            // this will allow fields marked Owner to pass through ok.
+            if($bean == false || empty($bean->id) || (!empty($bean->new_with_id))) {
+                $context['owner_override'] = true;
+            }
+
             if($bean instanceof SugarBean) {
                 $context['bean'] = $bean;
             }
+
             $moduleAcls = SugarACL::getUserAccess($module, array(), $context);
 
             // Bug56391 - Use the SugarACL class to determine access to different actions within the module
@@ -443,23 +451,30 @@ class MetaDataManager {
             // Only loop through the fields if we have a reason to, admins give full access on everything, no access gives no access to anything
             if ( $outputAcl['access'] == 'yes') {
 
-                // Currently create just uses the edit permission, but there is probably a need for a separate permission for create
-                $outputAcl['create'] = $outputAcl['edit'];
-
                 // Now time to dig through the fields
                 $fieldsAcl = array();
-                //BEGIN SUGARCRM flav=pro ONLY
-                $fieldsAcl = ACLField::getAvailableFields($module);
-                //END SUGARCRM flav=pro ONLY
-                // get the field names
 
-                // if the bean is not set, or a new bean.. set the owner override
-                // this will allow fields marked Owner to pass through ok.
-                if($bean == false || empty($bean->id) || (isset($bean->new_with_id) && $bean->new_with_id == true)) {
-                    $context['owner_override'] = true;
-                }
-
+                // we cannot use ACLField::getAvailableFields because it limits the fieldset we return.  We need all fields
+                // for instance assigned_user_id is skipped in getAvailableFields, thus making the acl's look odd if Assigned User has ACL's
+                // only assigned_user_name is returned which is a derived ["fake"] field.  We really need assigned_user_id to return as well.
+                if(empty($GLOBALS['dictionary'][$module]['fields'])){
+                    if($bean === false) {
+                        $bean = BeanFactory::newBean($module);
+                    }
+                    if(empty($bean->acl_fields)) {
+                        $fieldsAcl = array();
+                    } else {
+                        $fieldsAcl = $bean->field_defs;
+                    }
+                } else{
+                    $fieldsAcl = $GLOBALS['dictionary'][$module]['fields'];
+                    if(isset($GLOBALS['dictionary'][$module]['acl_fields']) && $GLOBALS['dictionary'][$module]=== false){
+                        $fieldsAcl = array();
+                    }   
+                }          
+                
                 SugarACL::listFilter($module, $fieldsAcl, $context, array('add_acl' => true));
+                        
                 foreach ( $fieldsAcl as $field => $fieldAcl ) {
                     switch ( $fieldAcl['acl'] ) {
                         case SugarACL::ACL_READ_WRITE:
@@ -469,7 +484,8 @@ class MetaDataManager {
                             $outputAcl['fields'][$field]['write'] = 'no';
                             $outputAcl['fields'][$field]['create'] = 'no';
                             break;
-                        case 2:
+                        case SugarACL::ACL_CREATE_ONLY:
+                            $outputAcl['fields'][$field]['write'] = 'no';
                             $outputAcl['fields'][$field]['read'] = 'no';
                             break;
                         case SugarACL::ACL_NO_ACCESS:
@@ -787,6 +803,12 @@ class MetaDataManager {
             $data = $this->loadMetadata();
             $this->putMetadataCache($data, $this->platforms[0], false);
         }
+        
+        // Bug 60345 - Default currency id of -99 was failing hard on 64bit 5.2.X
+        // PHP builds. This was causing metadata to store a different value in the 
+        // cache than -99. The fix was to add a space arround the -99 to force it
+        // to string. This trims that value prior to sending it to the client.
+        $data = $this->normalizeCurrencyIds($data);
         
         return $data;
     }
@@ -1141,7 +1163,15 @@ class MetaDataManager {
                 $currency['name'] = $current->name;
                 $currency['date_entered'] = $current->date_entered;
                 $currency['date_modified'] = $current->date_modified;
-                $currencies[$current->id] = $currency;
+                
+                // Bug 60345 - Default currency id of -99 was failing hard on 64bit 5.2.X
+                // PHP builds when writing to the cache because of how PHP was
+                // handling negative int array indexes. This was causing metadata 
+                // to store a different value in the cache than -99. The fix was 
+                // to add a space arround the -99 to force it to string.
+                // TODO Remove this when we no longer support PHP 5.2
+                $id = $current->id == -99 ? '-99 ': $current->id;
+                $currencies[$id] = $currency;
             }
         }
         return $currencies;
@@ -1177,5 +1207,26 @@ class MetaDataManager {
         } else {
             return null;
         }
+    }
+
+    /**
+     * Bug 60345
+     * 
+     * Normalizes the -99 currency id to remove the space added to the index prior
+     * to storing in the cache.
+     * 
+     * @param array $data The metadata
+     * @return array
+     */
+    protected function normalizeCurrencyIds($data) {
+        if (isset($data['currencies']['-99 '])) {
+            // Change the spaced index back to normal
+            $data['currencies']['-99'] = $data['currencies']['-99 '];
+            
+            // Ditch the spaced index
+            unset($data['currencies']['-99 ']);
+        }
+        
+        return $data;
     }
 }

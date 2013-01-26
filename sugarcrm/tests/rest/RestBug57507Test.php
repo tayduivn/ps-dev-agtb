@@ -80,7 +80,7 @@ class RestBug57507Test extends RestTestBase
         $call = BeanFactory::getBean('Calls',$reply['reply']['id']);
         $this->calls[] = $call;
 
-        $this->assertTrue($call->repeat_count == '',"The repeat count has a value.");
+        $this->assertTrue($call->repeat_count == '0',"The repeat count has a value.");
         
     }
 

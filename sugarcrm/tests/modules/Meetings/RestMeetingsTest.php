@@ -28,14 +28,14 @@ class RestMeetingsTest extends RestTestBase {
     public function tearDown()
     {
         if ( isset($this->meeting_id) ) {
-            $GLOBALS['db']->query("DELETE FROM meeting WHERE id = '{$this->meeting_id}'");
+            $GLOBALS['db']->query("DELETE FROM meetings WHERE id = '{$this->meeting_id}'");
             if ($GLOBALS['db']->tableExists('meetings_cstm')) {
                 $GLOBALS['db']->query("DELETE FROM meetings_cstm WHERE id_c = '{$this->meeting_id}'");
             }
         }
 
         if ( isset($this->contact_id) ) {
-            $GLOBALS['db']->query("DELETE FROM contact WHERE id = '{$this->contact_id}'");
+            $GLOBALS['db']->query("DELETE FROM contacts WHERE id = '{$this->contact_id}'");
             if ($GLOBALS['db']->tableExists('contacts_cstm')) {
                 $GLOBALS['db']->query("DELETE FROM contacts_cstm WHERE id_c = '{$this->contact_id}'");
             }
@@ -130,6 +130,7 @@ class RestMeetingsTest extends RestTestBase {
                                                       "duration_hours" => "0",
                                                       "duration_minutes" => "30",
                                                       "parent_type" => "Contacts",
+                                                      "send_invites" => "1",
                                                       "parent_id" => $this->contact_id,
                                                       )),
                                       'POST');
