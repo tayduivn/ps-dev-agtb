@@ -23,7 +23,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 require_once('data/BeanFactory.php');
 require_once('include/SugarFields/SugarFieldHandler.php');
 require_once('include/MetaDataManager/MetaDataManager.php');
-
+require_once 'include/api/SugarApi.php';
 class CurrentUserApi extends SugarApi {
     public function registerApiRest() {
         return array(

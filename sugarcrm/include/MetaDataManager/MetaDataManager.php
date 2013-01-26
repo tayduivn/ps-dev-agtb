@@ -66,6 +66,12 @@ class MetaDataManager {
     protected $public = false;
 
     /**
+     * Visibility type indicator
+     * @var string
+     */
+    protected $visibility = 'private';
+
+    /**
      * Sections of the metadata based on visibility
      * 
      * @var array
@@ -73,6 +79,27 @@ class MetaDataManager {
     protected static $sections = array(
         'private' => array('modules','full_module_list','fields', 'labels', 'module_list', 'views', 'layouts','relationships','currencies', 'jssource', 'server_info'),
         'public'  => array('fields','labels','views', 'layouts', 'config', 'jssource'),
+    );
+
+    /**
+     * Mapping of metadata sections to the methods that get the data for that
+     * section. If the value of the section index is false, the method will be
+     * build{section}() and will require the current metadata array as an argument.
+     * 
+     * @var array
+     */
+    protected $sectionMap = array(
+        'modules' => false,
+        'full_module_list' => 'getModuleList',
+        'fields' => 'getSugarFields',
+        'labels' => false,
+        'views' =>'getSugarViews', 
+        'layouts' => 'getSugarLayouts',
+        'relationships' => 'getRelationshipData',
+        'currencies' => 'getSystemCurrencies', 
+        'jssource' => false, 
+        'server_info' => 'getServerInfo', 
+        'config' => 'getConfigs',
     );
 
     /**
@@ -88,6 +115,10 @@ class MetaDataManager {
         
         $this->platforms = $platforms;
         $this->public = $public;
+        
+        if ($public) {
+            $this->visibility = 'public';
+        }
     }
 
     /**
@@ -667,12 +698,12 @@ class MetaDataManager {
         }
         
         // clear the platform cache from sugar_cache to avoid out of date data
-        $platforms = self::getPlatformList();
-        foreach($platforms as $platform) {
-            $platformKey = $platform == "base" ?  "base" : implode(",", array($platform, "base"));
-            $hashKey = "metadata:$platformKey:hash";
-            sugar_cache_clear($hashKey);
-        }
+//        $platforms = self::getPlatformList();
+//        foreach($platforms as $platform) {
+//            $platformKey = $platform == "base" ?  "base" : implode(",", array($platform, "base"));
+//            $hashKey = "metadata:$platformKey:hash";
+//            sugar_cache_clear($hashKey);
+//        }
     }
     
     public static function buildMetadataSectionCache($section = '', $modules = array(), $platforms = array())
@@ -680,9 +711,31 @@ class MetaDataManager {
         
     }
     
-    public static function buildMetadataCache()
+    public function rebuildCache() 
     {
+        $method = 'load' . ($this->public ? 'Public' : '') . 'Metadata';
+        $data = $this->$method();
+        $this->putMetadataCache($data, $this->platforms[0], $this->public);
+    }
+
+    /**
+     * Rewrites caches for all metadata manager platforms and visibility
+     * 
+     * @param array $platforms
+     */
+    public static function refreshCache($platforms = array())
+    {
+        // The basics are, for each platform, rewrite the cache for public and private
+        if (empty($platforms)) {
+            $platforms = self::getPlatformList();
+        }
         
+        foreach ($platforms as $platform) {
+            foreach (array(true, false) as $public) {
+                $mm = self::getManagerNew($platform, $public);
+                $mm->rebuildCache();
+            }
+        }
     }
     
     /**
@@ -742,23 +795,8 @@ class MetaDataManager {
         $data = $this->getMetadataCache($this->platforms[0],true);
         
         if ( empty($data) ) {
-            // since this is a public metadata call pass true to the meta data manager to only get public/
-            //$mm = $this->getMetadataManager( TRUE );
-            
-            
-            // Start collecting data
-            $data = array();
-            
-            $data['fields']  = $this->getSugarFields();
-            $data['views']   = $this->getSugarViews();
-            $data['layouts'] = $this->getSugarLayouts();
-            $data['labels'] = $this->getStringUrls($data,true);
-            $data['modules'] = array(
-                "Login" => array("fields" => array()));
-            $data['config']           = $this->getConfigs();
-            $data['jssource']         = $this->buildJSFileFromMD($data, $this->platforms[0]);        
-            $data["_hash"] = md5(serialize($data));
-            
+            // Load up the public metadata
+            $data = $this->loadPublicMetadata();            
             $this->putMetadataCache($data, $this->platforms[0], TRUE);
 
         }
@@ -766,18 +804,28 @@ class MetaDataManager {
         return $data;
     }
     
+    protected function loadPublicMetadata()
+    {
+        // Start collecting data
+        $data = array();
+        
+        $data['fields']  = $this->getSugarFields();
+        $data['views']   = $this->getSugarViews();
+        $data['layouts'] = $this->getSugarLayouts();
+        $data['labels'] = $this->getStringUrls($data,true);
+        $data['modules'] = array(
+            "Login" => array("fields" => array()));
+        $data['config']           = $this->getConfigs();
+        $data['jssource']         = $this->buildJSFileFromMD($data, $this->platforms[0]);        
+        $data["_hash"] = md5(serialize($data));
+        
+        return $data;
+    }
     // CARRYOVERS FROM METADATAAPI
 
     protected function loadMetadata() {
         // Start collecting data
         $data = $this->_populateModules(array());
-        //$mm = $this->getMetadataManager();
-        // TODO:
-        // Sadly, it's now unclear what our abstraction is here. It should be that this class
-        // is just for API stuff and $mm is for any metadata data operations. However, since
-        // we now have child classes like MetadataPortalApi overriding getModules, etc., I'm
-        // tentative to push the following three calls out to $mm. I propose refactor to instead
-        // inherit as MetadataPortalDataManager and put all accessors, etc., there.
         $data['currencies'] = $this->getSystemCurrencies();
         
         foreach($data['modules'] as $moduleName => $moduleDef) {

@@ -130,6 +130,7 @@ class RepairAndClear
                 $this->rebuildExtensions();
                 $this->rebuildAuditTables();
                 $this->repairDatabase();
+                $this->repairMetadataAPICache();
                 break;
         }
     }
@@ -440,6 +441,14 @@ class RepairAndClear
     public function clearMetadataAPICache() {
         // Bug 55141: Metadata Cache is a Smart cache so we can delete everything from the cache dir
         MetaDataManager::clearAPICache();
+    }
+
+    /**
+     * Cleans out current metadata cache and rebuilds it for
+     * each platform and visibility
+     */
+    public function repairMetadataAPICache() {
+        MetaDataManager::refreshCache();
     }
 
 	//////////////////////////////////////////////////////////////
