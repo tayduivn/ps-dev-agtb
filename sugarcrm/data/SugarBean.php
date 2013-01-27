@@ -888,12 +888,7 @@ class SugarBean
         return false;
     }
     //END SUGARCRM flav=pro ONLY
-    //BEGIN SUGARCRM flav=following ONLY
-    public function canFollow()
-    {
-        return !empty($GLOBALS['dictionary'][$this->getObjectName()]['followable']);
-    }
-    //END SUGARCRM flav=following ONLY
+
     /**
      * Returns the value for the requested field.
      *
@@ -1968,10 +1963,6 @@ class SugarBean
 
         $user_list = array($notify_user);
         return $user_list;
-        /*
-        //send notifications to followers, but ensure to not query for the assigned_user.
-        return SugarFollowing::getFollowers($this, $notify_user);
-        */
     }
 
     protected function create_notification_email($notify_user) {

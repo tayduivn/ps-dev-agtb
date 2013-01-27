@@ -121,10 +121,6 @@ $config['blackList']['free'] = array(
 'sugarcrm/include/images/sugar_md_sales.png'=>1,
 'sugarcrm/include/images/sugar_md_corp.png'=>1,
 
-'sugarcrm/modules/SugarFollowing'=>1,
-'sugarcrm/themes/default/images/user_follow.png'=>1,
-'sugarcrm/themes/default/images/user_unfollow.png'=>1,
-
 'sugarcrm/include/EditView/InlineEdit.css'=>1,
 'sugarcrm/include/EditView/InlineEdit.js'=>1,
 'sugarcrm/include/EditView/InlineEdit.php'=>1,
