@@ -131,13 +131,6 @@ input[type=radio] {
   display:inline-block;
 }
 
-//headerpane record name edit
-h1 input[type="text"] {
-  font-size: 20px;
-  height: 28px;
-  margin: 0;
-}
-
 .form-addit {
   position: relative;
   margin: -1px 1px 0 0;
@@ -542,6 +535,9 @@ h1 input[type="text"] {
     border-color: darken(@gray,10%);
     @shadow: inset 0 1px 1px rgba(0,0,0,.5);
     .box-shadow(@shadow);
+  }
+  table th:first-child, table td:first-child {
+    padding-left: 5px;
   }
 }
 

@@ -1,16 +1,297 @@
+
+//headerpane record name edit
+.headerpane {
+  &.btn-group > .btn {
+    float: none;
+  }
+  .dropdown-menu {
+    .caret-top(auto,auto,8px,7px);
+    left: auto;
+    right: 0;
+    z-index:1001;
+  }
+}
+h1 {
+  input[type="text"] {
+    font-size: 20px;
+    height: 28px;
+    margin: 0 0 0 5px;
+  }
+  span {
+    margin-left: 0;
+    display: inline-block;
+  }
+  .ellipsis_inline {
+    margin-left: 10px;
+  }
+  .record-edit-link-wrapper {
+    margin-left: 5px;
+  }
+  .select2-container {
+    margin-left: 12px;
+    .select2-choice {
+      margin-top: 1px;
+      height: 28px;
+      padding: 4px 0 4px 8px;
+      div {
+        padding: 4px 2px;
+      }
+    }
+  }
+}
+
+//main record edit
 .record {
   clear: both;
-  margin-bottom: 16px;
+  margin: 10px 30px 10px 15px;
 
-  .icon-pencil {
+  .record-cell {
+
+    display: inline-block;
     position: relative;
-    top: -1px;
-    left: 2px;
+    padding-left: 15px;
+    min-height: 58px;
+
+    .record-label {
+      font-size: 91%;
+      font-color: lighten(@gray, 20%);
+      margin-top: -2px;
+    }
+
+    .ellipsis_inline {
+      display: block !important;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      padding: 7px 0;
+    }
+
+    input[type="text"],
+    select,
+    textarea,
+    .uneditable-input {
+      position: relative;
+      z-index: 1;
+      //this has to be important because there is an input that is a .row-fluid [class*="span"]:first-child
+      margin-top: 0;
+      margin-left: -7px !important;
+      font-size: 14px;
+      padding: 6px;
+      color: lighten(@gray, 30%);
+      width: 100%;
+    }
+
+    input[type="radio"],
+    input[type="checkbox"],
+    input[type="image"] {
+      display: inline-block;
+      margin: 10px 6px 0 0;
+      vertical-align: baseline;
+    }
+
+    .input-append {
+      input[type="text"],
+      select,
+      textarea,
+      .uneditable-input {
+        vertical-align: middle;
+      }
+    }
+
+    .help-block {
+      margin: 0 0 0 8px;
+    }
+
+    &[data-type="textarea"] {
+      .normal > span {
+        display: block !important;
+        margin-bottom: 9px;
+      }
+      .textarea-text {
+        display: block !important;
+        padding: 7px 0;
+      }
+    }
+
+
+    &[data-type="email"] {
+      .normal > span {
+        display: block !important;
+        margin-bottom: 9px;
+      }
+      .control-group.email {
+        padding-right: 132px;
+        position: relative;
+        .input-append.widget {
+          margin-bottom: 0;
+          input[type="text"],
+          select,
+          textarea,
+          .uneditable-input {
+            margin-top: 0;
+            width: 100%;
+            .border-radius(0);
+            border-width: 0 1px 1px 1px;
+            &:focus {
+              z-index: 2;
+            }
+          }
+        }
+        .btn-toolbar {
+          position: absolute;
+          top: 2px;
+          right: 0;
+          width: 118px;
+          padding: 0;
+          .btn-group {
+            float: left;
+          }
+        }
+      }
+      .control-group.email:first-child .input-append.widget input[type="text"] {
+        .border-top-left-radius(3px);
+        .border-top-right-radius(3px);
+        border-width: 1px 1px 1px 1px;
+      }
+      .control-group.email:last-child .input-append.widget input[type="text"] {
+        .border-bottom-left-radius(3px);
+        .border-bottom-right-radius(3px);
+      }
+    }
+
+
+    &[data-type="bool"] {
+      label {
+        margin-bottom: 0;
+      }
+    }
+
+
+    &[data-type="enum"] {
+      .normal > span {
+        display: block !important;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        padding: 7px 0;
+        .chzn-container,
+        .select2-container {
+          margin: -5px 0 0 -9px;
+          position: absolute;
+        }
+      }
+    }
+
+
+    &[data-type="datetimecombo"] {
+      .normal > span {
+        display: block !important;
+        padding: 7px 0;
+      }
+      .input-append.date {
+        display: block !important;
+        margin-top: -7px;
+
+        input[type="text"] {
+          width: 95px;
+          //margin: -6px 4px 0 -7px;
+        }
+        .add-on {
+          z-index: 2;
+          padding: 9px 7px 5px 0;
+          margin: 0 10px 0 -20px;
+          width: 12px;
+          height: 12px;
+        }
+      }
+    }
+
+
+    &[data-type="fieldset"] {
+      margin-bottom: 9px;
+      .ellipsis_inline {
+        margin-bottom: 0;
+        padding: 7px 0;
+        height: 18px;
+      }
+      input[type="text"] {
+        .border-radius(0);
+        border-width: 0 1px 1px 1px;
+        padding: 7px 6px 6px;
+        &:focus {
+          z-index: 2;
+        }
+      }
+      .normal > span {
+        > span:first-child input[type="text"] {
+          .border-top-left-radius(3px);
+          .border-top-right-radius(3px);
+          border-width: 1px 1px 1px 1px;
+          padding: 6px;
+        }
+        > span:last-child input[type="text"] {
+          .border-bottom-left-radius(3px);
+          .border-bottom-right-radius(3px);
+        }
+      }
+
+
+      h1 {
+        .select2-container {
+          margin: 0 14px 0 -7px;
+        }
+        input[type="text"] {
+          border-width: 1px 1px 1px 1px;
+          padding: 6px;
+          .border-radius(3px);
+          margin-right: 14px;
+          width: 210px;
+          font-size: 20px;
+        }
+        .record-edit-link-wrapper {
+          display: none;
+        }
+      }
+    }
+
+    &[data-type="favorite"] {
+      display: none;
+    }
+  }
+
+  .record-edit-link-wrapper {
+    .record-edit-link {
+      position: absolute;
+      top: 18px;
+      left: -16px;
+      z-index: 0;
+      padding: 4px 7px 4px;
+    }
+    .icon-pencil {
+      display: none;
+      text-decoration: none;
+      cursor: pointer;
+    }
+  }
+
+  .record-cell:hover {
+    .record-edit-link-wrapper {
+      .icon-pencil {
+        display: inline-block;
+      }
+    }
+  }
+
+  .wide {
+    width: 100%;
   }
 
   .normal {
-    font-size: 117%;
+    font-size: 14px;
     font-weight: bold;
+    display: block;
+    width: 100%;
+    min-height: 50px;
   }
 
   .big {
@@ -20,69 +301,20 @@
   }
 
   .bigcell {
-      margin: 16px 0;
-  }
-
-  .record-label {
-    font-size: 91%;
-    font-color: lighten(@gray, 20%);
+    margin: 16px 0;
   }
 
   .record-save-btns-bar {
     margin-right: 8px;
   }
 
-  .row-fluid {
-    margin: 10px 0;
-  }
-
-  .record-edit-link-wrapper {
-    a {
-      display: none;
-      text-decoration: none;
-      cursor: pointer;
-      position: fixed;
-      left: -10px
-
-    }
-  }
-
-  .record-cell {
-    display: inline-block;
-    position: relative
-  }
-
-  .record-cell:hover > span > a {
-    display: inline;
-  }
-
   .row-fluid.toggle {
     margin-bottom: 16px;
   }
 
-    .control-group.email {
-        clear: none;
-        display: inline-block;
-        margin-left: 0px;
-        .controls.pull-left {
-            margin-bottom: 10px;
-            padding-top: 2px;
-        }
-        .input-append.widget {
-            top: -4px;
-            margin-bottom: 0px;
-        }
-        .row-fluid {
-            margin: 0px;
-        }
-
-    }
-
-    .edit-mode .control-group.email .span6 {
-        height: 38px;
-    }
 }
 
+//show more-less control
 .show-hide-toggle {
-    margin-bottom: 10px;
+  margin: 0 20px 10px 30px;
 }
