@@ -75,19 +75,34 @@ table.dataTable {
       text-decoration:none;
     }
   }
-  th.sorting {
+  th {
     font-weight:normal;
-    color:@gray;
+    &.sorting {
+      color:@gray;
+    }
   }
   th.sorting_asc,
   th.sorting_desc {
+    font-weight: bold;
   }
 
-  tbody tr.active {
+  tbody {
     td {
-      background-image: url('@{textureSecondary}');
-      .icon-eye-open {
-        color:@black !important;
+      max-width: 100px;
+      &> * {
+        display: inline-block;
+        width: 100%;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+    }
+    tr.active {
+      td {
+        background-image: url('@{textureSecondary}');
+        .icon-eye-open {
+          color:@black !important;
+        }
       }
     }
   }
@@ -220,14 +235,5 @@ table.dataTable {
   padding: 8px 23px !important;
   .dropdown-menu {
     text-align: left !important;
-  }
-}
-
-td {
-  &>span[sfuuid] {
-    display: inline-block;
-    width: 100%;
-    overflow: hidden;
-    text-overflow: ellipsis;
   }
 }
