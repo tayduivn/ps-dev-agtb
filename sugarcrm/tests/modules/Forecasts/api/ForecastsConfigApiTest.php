@@ -42,6 +42,7 @@ class ForecastsConfigModuleApiTest extends Sugar_PHPUnit_Framework_TestCase
         $db = DBManagerFactory::getInstance();
         $db->query("DELETE FROM config where name = 'testSetting' and category = 'Forecasts'");
         $db->commit();
+        SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
     }
 
     /**

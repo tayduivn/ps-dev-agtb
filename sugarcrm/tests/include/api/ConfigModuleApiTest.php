@@ -42,10 +42,12 @@ class ConfigModuleApiTest extends Sugar_PHPUnit_Framework_TestCase
         $db = DBManagerFactory::getInstance();
         $db->query("DELETE FROM config where name = 'testSetting'");
         $db->commit();
+        SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
     }
 
     /**
      * test the create api
+     * @group api
      */
     public function testCreateConfig() {
         // Get the real data that is in the system, not the partial data we have saved
@@ -76,6 +78,7 @@ class ConfigModuleApiTest extends Sugar_PHPUnit_Framework_TestCase
 
     /**
      * test the get config
+     * @group api
      */
     public function testReadConfig() {
         /* @var $admin Administration */
@@ -98,6 +101,7 @@ class ConfigModuleApiTest extends Sugar_PHPUnit_Framework_TestCase
 
     /**
      * test the update config
+     * @group api
      */
     public function testUpdateConfig() {
         $testSetting = 'My voice is my passport, verify me';
@@ -130,6 +134,7 @@ class ConfigModuleApiTest extends Sugar_PHPUnit_Framework_TestCase
      * test the create api using bad credentials, should receive a failure
      *
      * @expectedException SugarApiExceptionNotAuthorized
+     * @group api
      */
     public function testCreateBadCredentialsConfig() {
         $GLOBALS['current_user']->is_admin = 0;
@@ -146,7 +151,6 @@ class ConfigModuleApiTest extends Sugar_PHPUnit_Framework_TestCase
         );
         $apiClass = new ConfigModuleApi();
         $result = $apiClass->configSave($api, $args);
-        error_log(print_r($result,1));
 
         /* @var $admin Administration */
         $admin = BeanFactory::getBean('Administration');
