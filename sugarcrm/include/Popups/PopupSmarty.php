@@ -398,7 +398,23 @@ class PopupSmarty extends ListViewSmarty{
             }
             
         }
-        
+        else if ( isset($_REQUEST['request_data']) )
+        {
+            $request_data = get_object_vars( json_decode( htmlspecialchars_decode( $_REQUEST['request_data'] )));
+            $request_data['field_to_name'] = get_object_vars( $request_data['field_to_name_array'] );
+            if (isset($request_data['field_to_name']) && is_array($request_data['field_to_name']))
+            {
+                foreach ( $request_data['field_to_name'] as $add_field )
+                {
+                    $add_field = strtolower($add_field);
+                    if ( $add_field != 'id' && !isset($this->filter_fields[$add_field]) && isset($this->seed->field_defs[$add_field]) )
+                    {
+                        $this->filter_fields[$add_field] = true;
+                    }
+                }
+            }
+        }
+
         //BEGIN SUGARCRM flav=pro ONLY
         //check for team_set_count
         if(!empty($this->filter_fields['team_name']) && empty($this->filter_fields['team_count'])){
