@@ -1,3 +1,4 @@
+{{!
 /*********************************************************************************
  * The contents of this file are subject to the SugarCRM Master Subscription
  * Agreement (""License"") which can be viewed at
@@ -24,53 +25,5 @@
  * governing these rights and limitations under the License.  Portions created
  * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
-({
-    events: {
-        'click [rel=tooltip]': 'fixTooltip',
-        'click .search': 'showSearch',
-        'click .relate': 'showCreate',
-        'click .drawerTrig': 'toggleSidebar'
-    },
-
-    _renderHtml: function() {
-        if (app.acl.hasAccess('create', this.module)) {
-            this.context.set('isCreateEnabled', true);
-        }
-
-        app.view.View.prototype._renderHtml.call(this);
-    },
-
-    fixTooltip: function() {
-        this.$(".tooltip").hide();
-    },
-
-    showSearch: function() {
-        // Toggle on search filter and off the pagination buttons
-        this.$('.search').toggleClass('active');
-        this.layout.trigger("list:search:toggle");
-    },
-
-    showCreate: function(e) {
-        // Check to see if current module and global context module align
-        if (this.collection.module == app.controller.context.get("module")) {
-
-        } else {
-            e.preventDefault();
-
-            console.log("Show Relate");
-            this.$('.relate-bar').slideToggle('fast');
-        }
-    },
-
-    relate: function() {
-
-    },
-
-    toggleSidebar: function(e) {
-        e.preventDefault();
-        e.stopPropagation();
-        this.$('i').toggleClass('icon-double-angle-left').toggleClass('icon-double-angle-right');
-        $('.side').toggleClass('hide');
-        $('.main-pane').toggleClass('span8').toggleClass('span12');
-    }
-})
+}}
+{{str label module}}

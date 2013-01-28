@@ -26,6 +26,10 @@
  * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 }}
-<input type="text" class="center textField" value="{{value}}" placeholder="{{label}}">
+{{#each value}}
+{{#eq primary_address "1"}}
+<input type="text" class="center textField" value="{{../email_address}}" placeholder="{{../../label}}">
+{{/eq}}
+{{/each}}
 <p class="help-block">
 </p>

@@ -78,7 +78,16 @@ $viewdefs['Leads']['base']['view']['record'] = array(
                 array(
                     'name' => 'fieldset_name',
                     'type' => 'fieldset',
-                    'fields' => array('salutation', 'first_name', 'last_name'),
+                    'fields' => array(
+                        array(
+                            'name' => 'salutation',
+                            'type' => 'enum',
+                            'enum_width' => 'auto',
+                            'searchBarThreshold' => 7,
+                        ),
+                        'first_name',
+                        'last_name',
+                    ),
                 ),
                 array(
                     'type' => 'favorite',
@@ -97,10 +106,7 @@ $viewdefs['Leads']['base']['view']['record'] = array(
                 'account_name',
                 'website',
                 'title',
-                array(
-                    'name' => 'email',
-                    'label' => 'LBL_EMAIL_ADDRESSES',
-                ),
+                'email',
                 'department',
                 'phone_mobile',
                 array(

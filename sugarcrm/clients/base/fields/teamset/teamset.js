@@ -29,17 +29,31 @@
     minChars: 1,
     allow_single_deselect: false,
     events: {
-        'keyup .chzn-search input': 'throttleSearch',
         'click .btn[name=add]' : 'addItem',
         'click .btn[name=remove]' : 'removeItem',
         'click .btn[name=primary]' : 'setPrimaryItem'
+    },
+    _render: function() {
+        var result = app.view.fields.RelateField.prototype._render.call(this),
+            self = this;
+        if(this.tplName === 'edit') {
+            this.$(this.fieldTag).each(function(index, el){
+                var plugin = $(el).data("select2");
+                if(!plugin.setTeamIndex) {
+                    plugin.setTeamIndex = function() {
+                        self.currentIndex = $(this).data("index");
+                    }
+                    plugin.opts.element.on("open", plugin.setTeamIndex);
+                }
+            });
+        }
     },
     setValue: function(model) {
         var index = _.isUndefined(this.currentIndex) ? this.$(".chzn-container-active").prev().data('index') : this.currentIndex,
             team = this.value,
             silent = model.silent || false;
-        team[index].id = model.id;
-        team[index].name = model.value;
+        team[index || 0].id = model.id;
+        team[index || 0].name = model.value;
         this.model.set(this.def.name, team, {silent: true});
         //Since team is an array form, onchange backbone triggers only the team_name array is added or removed.
         //Replacing among the list item should call onchange function.
@@ -71,42 +85,37 @@
     },
     addTeam: function() {
         this.value.push({});
-        this.model.set(this.def.name, this.value);
+        this.model.set(this.def.name, this.value, {silent: true});
+        this.model.trigger("change:" + this.def.name);
     },
     removeTeam: function(index) {
-        this.value.splice(index, 1);
-        this.model.set(this.def.name, this.value);
+        if(index === 0 && this.value.length === 1) {
+            this.value[index] = {};
+        } else {
+            this.value.splice(index, 1);
+        }
+        this.model.set(this.def.name, this.value, {silent: true});
+        this.model.trigger("change:" + this.def.name);
     },
     setPrimary: function(index) {
         _.each(this.value, function(team, i) {
             team.primary = (i == index) ? true : false;
         });
-        this.model.set(this.def.name, this.value);
+        this.model.set(this.def.name, this.value, {silent: true});
     },
-    addItem: function(evt) {
+    addItem: _.debounce(function(evt) {
         this.addTeam();
-        this.render();
-    },
-    removeItem: function(evt) {
+    }, 0),
+    removeItem: _.debounce(function(evt) {
         var index = $(evt.currentTarget).data('index');
         this.removeTeam(index);
-        this.render();
-    },
-    setPrimaryItem: function(evt) {
+    }, 0),
+    setPrimaryItem: _.debounce(function(evt) {
         var index = $(evt.currentTarget).data('index');
         this.setPrimary(index);
         this.$(".btn[name=primary]").removeClass("active");
         this.$(".btn[name=primary][data-index=" + index + "]").addClass("active");
-    },
-    beforeSearchMore: function() {
-        this.currentIndex = this.$(".chzn-container-active").prev().data('index');
-    },
-    throttleSearch: function(evt) {
-        this.$(this.fieldTag).attr("disabled", true);
-        this.$(".chzn-container-active").prev().attr("disabled" , false);
-        this._previousTerm = '';
-        app.view.fields.RelateField.prototype.throttleSearch.call(this, evt);
-    },
+    }, 0),
     bindDomChange: function() {
         //To avoid re-render on change the field
     }
