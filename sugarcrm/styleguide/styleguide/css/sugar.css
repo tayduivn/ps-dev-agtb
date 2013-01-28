@@ -1180,10 +1180,6 @@ h1 {
   font-size: 20px !important;
   font-weight: normal;
 }
-h1 span {
-  margin-left: 5px;
-  display: inline-block;
-}
 h4 i {
   color: #CDCCCB;
 }
@@ -2042,9 +2038,29 @@ table.dataTable th a {
   color: #58595B;
   text-decoration: none;
 }
-table.dataTable th.sorting {
+table.dataTable th {
   font-weight: normal;
+}
+table.dataTable th.sorting {
   color: #58595B;
+}
+table.dataTable th.sorting_asc,
+table.dataTable th.sorting_desc {
+  font-weight: bold;
+}
+table.dataTable tbody td {
+  max-width: 100px;
+}
+table.dataTable tbody td> * {
+  display: inline-block;
+  width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+table.dataTable tbody td>span.dropdown {
+  width: auto;
+  overflow: visible;
 }
 table.dataTable tbody tr.active td {
   background-image: url('../../assets/img/texture/furley_bg.png');
@@ -2187,12 +2203,6 @@ table.dataTable.inline-edit-active tr td .chzn-drop {
 }
 .morecol .dropdown-menu {
   text-align: left !important;
-}
-td>span[sfuuid] {
-  display: inline-block;
-  width: 100%;
-  overflow: hidden;
-  text-overflow: ellipsis;
 }
 .jstree-sugar ins:before {
   font-family: FontAwesome;
@@ -3076,26 +3086,6 @@ form.well {
 }
 .news-article h5 {
   padding: 10px 0 5px;
-}
-.record-cell {
-  position: relative;
-  padding-left: 15px;
-}
-.record {
-  margin: 10px 20px 10px 5px;
-}
-.record .icon-pencil {
-  position: absolute !important;
-  top: 20px !important;
-  left: 0px !important;
-  z-index: 0 !important;
-  color: #CDCCCB !important;
-}
-.record input,
-.record select,
-.record textarea {
-  position: relative;
-  z-index: 1;
 }
 hr.soften {
   height: 1px;
@@ -4473,11 +4463,6 @@ textarea[readonly] {
 input[type=radio] {
   display: inline-block;
 }
-h1 input[type="text"] {
-  font-size: 20px;
-  height: 28px;
-  margin: 0;
-}
 .form-addit {
   position: relative;
   margin: -1px 1px 0 0;
@@ -4890,6 +4875,10 @@ h1 input[type="text"] {
   -webkit-box-shadow: inset 0 1px 1px rgba(0,0,0,0.5);
   -moz-box-shadow: inset 0 1px 1px rgba(0,0,0,0.5);
   box-shadow: inset 0 1px 1px rgba(0,0,0,0.5);
+}
+.datepicker table th:first-child,
+.datepicker table td:first-child {
+  padding-left: 5px;
 }
 textarea,
 input[type="text"],
@@ -5948,15 +5937,15 @@ header .subnav {
   left: 0;
   top: 0;
 }
-#contentflex #headerbar .drawerTrig i[class*="icon-"],
-.headerpane .drawerTrig i[class*="icon-"],
-.main-pane.span8 .subnav.subnav-fixed .drawerTrig i[class*="icon-"] {
+#contentflex #headerbar .drawerTrig [class*="icon-"],
+.headerpane .drawerTrig [class*="icon-"],
+.main-pane.span8 .subnav.subnav-fixed .drawerTrig [class*="icon-"] {
   font-size: 25px;
   font-weight: 700;
 }
-#contentflex #headerbar .drawerTrig i.icon-double-angle-left,
-.headerpane .drawerTrig i.icon-double-angle-left,
-.main-pane.span8 .subnav.subnav-fixed .drawerTrig i.icon-double-angle-left {
+#contentflex #headerbar .drawerTrig .icon-double-angle-left,
+.headerpane .drawerTrig .icon-double-angle-left,
+.main-pane.span8 .subnav.subnav-fixed .drawerTrig .icon-double-angle-left {
   margin: 0 2px 0 -2px;
 }
 #contentflex #headerbar .btn-toolbar,
@@ -8961,18 +8950,322 @@ li.ui-timepicker-selected .ui-timepicker-duration,
     -webkit-print-color-adjust: exact;
   }
 }
+.headerpane.btn-group > .btn {
+  float: none;
+}
+.headerpane .dropdown-menu {
+  left: auto;
+  right: 0;
+  z-index: 1001;
+}
+.headerpane .dropdown-menu:after {
+  content: '';
+  display: inline-block;
+  border-left: 6px solid transparent;
+  border-right: 6px solid transparent;
+  border-bottom: 6px solid #fff;
+  position: absolute;
+  top: -6px;
+  left: auto;
+  right: 8px;
+}
+.headerpane .dropdown-menu:before {
+  content: '';
+  display: inline-block;
+  border-left: 7px solid transparent;
+  border-right: 7px solid transparent;
+  border-bottom: 7px solid #ccc;
+  border-bottom-color: rgba(0,0,0,0.2);
+  position: absolute;
+  top: -7px;
+  left: auto;
+  right: 7px;
+}
+h1 input[type="text"] {
+  font-size: 20px;
+  height: 28px;
+  margin: 0 0 0 5px;
+}
+h1 span {
+  margin-left: 0;
+  display: inline-block;
+}
+h1 .ellipsis_inline {
+  margin-left: 10px;
+}
+h1 .record-edit-link-wrapper {
+  margin-left: 5px;
+}
+h1 .select2-container {
+  margin-left: 12px;
+}
+h1 .select2-container .select2-choice {
+  margin-top: 1px;
+  height: 28px;
+  padding: 4px 0 4px 8px;
+}
+h1 .select2-container .select2-choice div {
+  padding: 4px 2px;
+}
 .record {
   clear: both;
-  margin-bottom: 16px;
+  margin: 10px 30px 10px 15px;
 }
-.record .icon-pencil {
+.record .record-cell {
+  display: inline-block;
   position: relative;
-  top: -1px;
-  left: 2px;
+  padding-left: 15px;
+  min-height: 58px;
+}
+.record .record-cell .record-label {
+  font-size: 91%;
+  font-color: #8b8c8e;
+  margin-top: -2px;
+}
+.record .record-cell .ellipsis_inline {
+  display: block !important;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  padding: 7px 0;
+}
+.record .record-cell input[type="text"],
+.record .record-cell select,
+.record .record-cell textarea,
+.record .record-cell .uneditable-input {
+  position: relative;
+  z-index: 1;
+  margin-top: 0;
+  margin-left: -7px !important;
+  font-size: 14px;
+  padding: 6px;
+  color: #a5a6a7;
+  width: 100%;
+}
+.record .record-cell input[type="radio"],
+.record .record-cell input[type="checkbox"],
+.record .record-cell input[type="image"] {
+  display: inline-block;
+  margin: 10px 6px 0 0;
+  vertical-align: baseline;
+}
+.record .record-cell .input-append input[type="text"],
+.record .record-cell .input-append select,
+.record .record-cell .input-append textarea,
+.record .record-cell .input-append .uneditable-input {
+  vertical-align: middle;
+}
+.record .record-cell .help-block {
+  margin: 0 0 0 8px;
+}
+.record .record-cell[data-type="textarea"] .normal > span {
+  display: block !important;
+  margin-bottom: 9px;
+}
+.record .record-cell[data-type="textarea"] .textarea-text {
+  display: block !important;
+  padding: 7px 0;
+}
+.record .record-cell[data-type="email"] .normal > span {
+  display: block !important;
+  margin-bottom: 9px;
+}
+.record .record-cell[data-type="email"] .control-group.email {
+  padding-right: 132px;
+  position: relative;
+}
+.record .record-cell[data-type="email"] .control-group.email .input-append.widget {
+  margin-bottom: 0;
+}
+.record .record-cell[data-type="email"] .control-group.email .input-append.widget input[type="text"],
+.record .record-cell[data-type="email"] .control-group.email .input-append.widget select,
+.record .record-cell[data-type="email"] .control-group.email .input-append.widget textarea,
+.record .record-cell[data-type="email"] .control-group.email .input-append.widget .uneditable-input {
+  margin-top: 0;
+  width: 100%;
+  -webkit-border-radius: 0;
+  -moz-border-radius: 0;
+  border-radius: 0;
+  -webkit-border-radius: 0;
+  -moz-border-radius: 0;
+  border-radius: 0;
+  border-width: 0 1px 1px 1px;
+}
+.record .record-cell[data-type="email"] .control-group.email .input-append.widget input[type="text"]:focus,
+.record .record-cell[data-type="email"] .control-group.email .input-append.widget select:focus,
+.record .record-cell[data-type="email"] .control-group.email .input-append.widget textarea:focus,
+.record .record-cell[data-type="email"] .control-group.email .input-append.widget .uneditable-input:focus {
+  z-index: 2;
+}
+.record .record-cell[data-type="email"] .control-group.email .btn-toolbar {
+  position: absolute;
+  top: 2px;
+  right: 0;
+  width: 118px;
+  padding: 0;
+}
+.record .record-cell[data-type="email"] .control-group.email .btn-toolbar .btn-group {
+  float: left;
+}
+.record .record-cell[data-type="email"] .control-group.email:first-child .input-append.widget input[type="text"] {
+  -webkit-border-top-left-radius: 3px;
+  -moz-border-radius-topleft: 3px;
+  border-top-left-radius: 3px;
+  -webkit-border-top-left-radius: 3px;
+  -moz-border-radius-topleft: 3px;
+  border-top-left-radius: 3px;
+  -webkit-border-top-right-radius: 3px;
+  -moz-border-radius-topright: 3px;
+  border-top-right-radius: 3px;
+  -webkit-border-top-right-radius: 3px;
+  -moz-border-radius-topright: 3px;
+  border-top-right-radius: 3px;
+  border-width: 1px 1px 1px 1px;
+}
+.record .record-cell[data-type="email"] .control-group.email:last-child .input-append.widget input[type="text"] {
+  -webkit-border-bottom-left-radius: 3px;
+  -moz-border-radius-bottomleft: 3px;
+  border-bottom-left-radius: 3px;
+  -webkit-border-bottom-left-radius: 3px;
+  -moz-border-radius-bottomleft: 3px;
+  border-bottom-left-radius: 3px;
+  -webkit-border-bottom-right-radius: 3px;
+  -moz-border-radius-bottomright: 3px;
+  border-bottom-right-radius: 3px;
+  -webkit-border-bottom-right-radius: 3px;
+  -moz-border-radius-bottomright: 3px;
+  border-bottom-right-radius: 3px;
+}
+.record .record-cell[data-type="bool"] label {
+  margin-bottom: 0;
+}
+.record .record-cell[data-type="enum"] .normal > span {
+  display: block !important;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  padding: 7px 0;
+}
+.record .record-cell[data-type="enum"] .normal > span .chzn-container,
+.record .record-cell[data-type="enum"] .normal > span .select2-container {
+  margin: -5px 0 0 -9px;
+  position: absolute;
+}
+.record .record-cell[data-type="datetimecombo"] .normal > span {
+  display: block !important;
+  padding: 7px 0;
+}
+.record .record-cell[data-type="datetimecombo"] .input-append.date {
+  display: block !important;
+  margin-top: -7px;
+}
+.record .record-cell[data-type="datetimecombo"] .input-append.date input[type="text"] {
+  width: 95px;
+}
+.record .record-cell[data-type="datetimecombo"] .input-append.date .add-on {
+  z-index: 2;
+  padding: 9px 7px 5px 0;
+  margin: 0 10px 0 -20px;
+  width: 12px;
+  height: 12px;
+}
+.record .record-cell[data-type="fieldset"] {
+  margin-bottom: 9px;
+}
+.record .record-cell[data-type="fieldset"] .ellipsis_inline {
+  margin-bottom: 0;
+  padding: 7px 0;
+  height: 18px;
+}
+.record .record-cell[data-type="fieldset"] input[type="text"] {
+  -webkit-border-radius: 0;
+  -moz-border-radius: 0;
+  border-radius: 0;
+  -webkit-border-radius: 0;
+  -moz-border-radius: 0;
+  border-radius: 0;
+  border-width: 0 1px 1px 1px;
+  padding: 7px 6px 6px;
+}
+.record .record-cell[data-type="fieldset"] input[type="text"]:focus {
+  z-index: 2;
+}
+.record .record-cell[data-type="fieldset"] .normal > span > span:first-child input[type="text"] {
+  -webkit-border-top-left-radius: 3px;
+  -moz-border-radius-topleft: 3px;
+  border-top-left-radius: 3px;
+  -webkit-border-top-left-radius: 3px;
+  -moz-border-radius-topleft: 3px;
+  border-top-left-radius: 3px;
+  -webkit-border-top-right-radius: 3px;
+  -moz-border-radius-topright: 3px;
+  border-top-right-radius: 3px;
+  -webkit-border-top-right-radius: 3px;
+  -moz-border-radius-topright: 3px;
+  border-top-right-radius: 3px;
+  border-width: 1px 1px 1px 1px;
+  padding: 6px;
+}
+.record .record-cell[data-type="fieldset"] .normal > span > span:last-child input[type="text"] {
+  -webkit-border-bottom-left-radius: 3px;
+  -moz-border-radius-bottomleft: 3px;
+  border-bottom-left-radius: 3px;
+  -webkit-border-bottom-left-radius: 3px;
+  -moz-border-radius-bottomleft: 3px;
+  border-bottom-left-radius: 3px;
+  -webkit-border-bottom-right-radius: 3px;
+  -moz-border-radius-bottomright: 3px;
+  border-bottom-right-radius: 3px;
+  -webkit-border-bottom-right-radius: 3px;
+  -moz-border-radius-bottomright: 3px;
+  border-bottom-right-radius: 3px;
+}
+.record .record-cell[data-type="fieldset"] h1 .select2-container {
+  margin: 0 14px 0 -7px;
+}
+.record .record-cell[data-type="fieldset"] h1 input[type="text"] {
+  border-width: 1px 1px 1px 1px;
+  padding: 6px;
+  -webkit-border-radius: 3px;
+  -moz-border-radius: 3px;
+  border-radius: 3px;
+  -webkit-border-radius: 3px;
+  -moz-border-radius: 3px;
+  border-radius: 3px;
+  margin-right: 14px;
+  width: 210px;
+  font-size: 20px;
+}
+.record .record-cell[data-type="fieldset"] h1 .record-edit-link-wrapper {
+  display: none;
+}
+.record .record-cell[data-type="favorite"] {
+  display: none;
+}
+.record .record-edit-link-wrapper .record-edit-link {
+  position: absolute;
+  top: 18px;
+  left: -16px;
+  z-index: 0;
+  padding: 4px 7px 4px;
+}
+.record .record-edit-link-wrapper .icon-pencil {
+  display: none;
+  text-decoration: none;
+  cursor: pointer;
+}
+.record .record-cell:hover .record-edit-link-wrapper .icon-pencil {
+  display: inline-block;
+}
+.record .wide {
+  width: 100%;
 }
 .record .normal {
-  font-size: 117%;
+  font-size: 14px;
   font-weight: bold;
+  display: block;
+  width: 100%;
+  min-height: 50px;
 }
 .record .big {
   font-size: 260%;
@@ -8982,54 +9275,14 @@ li.ui-timepicker-selected .ui-timepicker-duration,
 .record .bigcell {
   margin: 16px 0;
 }
-.record .record-label {
-  font-size: 91%;
-  font-color: #8b8c8e;
-}
 .record .record-save-btns-bar {
   margin-right: 8px;
-}
-.record .row-fluid {
-  margin: 10px 0;
-}
-.record .record-edit-link-wrapper a {
-  display: none;
-  text-decoration: none;
-  cursor: pointer;
-  position: fixed;
-  left: -10px;
-}
-.record .record-cell {
-  display: inline-block;
-  position: relative;
-}
-.record .record-cell:hover > span > a {
-  display: inline;
 }
 .record .row-fluid.toggle {
   margin-bottom: 16px;
 }
-.record .control-group.email {
-  clear: none;
-  display: inline-block;
-  margin-left: 0px;
-}
-.record .control-group.email .controls.pull-left {
-  margin-bottom: 10px;
-  padding-top: 2px;
-}
-.record .control-group.email .input-append.widget {
-  top: -4px;
-  margin-bottom: 0px;
-}
-.record .control-group.email .row-fluid {
-  margin: 0px;
-}
-.record .edit-mode .control-group.email .span6 {
-  height: 38px;
-}
 .show-hide-toggle {
-  margin-bottom: 10px;
+  margin: 0 20px 10px 30px;
 }
 .highlightit img {
   filter: progid:DXImageTransform.Microsoft.Alpha(opacity=50);
