@@ -253,6 +253,7 @@
                         success: function(data, response) {
                             massUpdate.reset();
                             if(response.status == 'done') {
+                                app.alert.show('massupdate_success_notice', {level: 'success', title: app.lang.getAppString('LBL_MASS_UPDATE_SUCCESS'), autoClose: true});
                                 self.layout.trigger("list:search:fire");
                             } else if(response.status == 'queued') {
                                 app.alert.show('jobqueue_notice', {level: 'success', title: app.lang.getAppString('LBL_MASS_UPDATE_JOB_QUEUED'), autoClose: true});
