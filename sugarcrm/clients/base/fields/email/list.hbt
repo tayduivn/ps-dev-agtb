@@ -26,10 +26,8 @@
  * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 }}
-<span class="actions dropdown">
-    {{first_button}}
-    <a href="javascript:void(0)" class="btn dropdown-toggle" data-toggle="dropdown">
-        <span class="icon-caret-down"></span>
-    </a>
-    {{dropdownPlaceHolder}}
-</span>
+{{#each value}}
+{{#eq primary_address "1"}}
+{{#if ../hasAnchor}}<a href="mailto:{{../email_address}}">{{../email_address}}</a>{{else}}{{../email_address}}{{/if}}
+{{/eq}}
+{{/each}}

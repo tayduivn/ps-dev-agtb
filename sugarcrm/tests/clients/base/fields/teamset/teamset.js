@@ -22,9 +22,20 @@ describe("Base.Field.Teamset", function() {
             "required": true, "importable": "required"
         };
         sinonSandbox = sinon.sandbox.create();
-        SugarTest.loadComponent("base", "field", "teamset");
+        SugarTest.loadComponent("base", "field", "relate");
         field = SugarTest.createField("base","team_name", "teamset", "edit", fieldDef);
         field.model = new Backbone.Model({team_name: [{id: 'test-id', name: 'blahblah', primary:false}]});
+
+        if (!$.fn.select2) {
+            $.fn.select2 = function(options) {
+                var obj = {
+                    on : function() {
+                        return obj;
+                    }
+                };
+                return obj;
+            };
+        }
     });
 
 
