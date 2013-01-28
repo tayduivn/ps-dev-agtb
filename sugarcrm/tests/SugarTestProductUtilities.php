@@ -36,6 +36,7 @@ class SugarTestProductUtilities
         $time = mt_rand();
     	$name = 'SugarProduct';
     	$product = new Product();
+        $product->currency_id = '-99';
         $product->name = $name . $time;
         $product->tax_class = 'Taxable';
         $product->cost_price = '100.00';

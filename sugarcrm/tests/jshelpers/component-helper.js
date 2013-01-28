@@ -50,7 +50,7 @@
         });
     };
 
-    test.createView = function(client, module, viewName, meta, context, loadFromModule) {
+    test.createView = function(client, module, viewName, meta, context, loadFromModule, layout) {
         if (loadFromModule) {
             test.loadComponent(client, "view", viewName, module);
         } else {
@@ -68,7 +68,8 @@
             name : viewName,
             context : context,
             module : module,
-            meta : meta
+            meta : meta,
+            layout: layout
         });
     };
 

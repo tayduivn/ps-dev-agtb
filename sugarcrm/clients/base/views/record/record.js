@@ -69,14 +69,26 @@
         this.context.on('button:duplicate_button:click', this.duplicateClicked, this);
     },
 
-    _render: function() {
+    _renderPanels: function(panels) {
         var totalFieldCount = 0;
 
-        _.each(this.meta.panels, function(panel) {
-            var columns = (panel.columns) || 1,
-                rows = [],
-                row = [],
-                size = panel.fields.length;
+        _.each(panels, function(panel) {
+            var columns    = (panel.columns) || 1,
+                rows       = [],
+                row        = [],
+                size       = panel.fields.length,
+                rowSpan    = 0,
+                rowSpanMax = 12,
+                colCount   = 0;
+
+            var _startNewRow = function() {
+                rows.push(row); // push the current row onto the grid
+
+                // reset variables that keep track of the current row's state
+                row      = [];
+                rowSpan  = 0;
+                colCount = 0;
+            };
 
             // Set flag so that show more link can be displayed to show hidden panel.
             if (panel.hide) {
@@ -84,7 +96,18 @@
             }
 
             _.each(panel.fields, function(field, index) {
-                var maxSpan;
+                var maxSpan,
+                    isLabelInline,
+                    fieldSpan,
+                    maxSpanForFieldWithInlineLabel = 8,
+                    maxSpanForFieldWithLabelOnTop  = 12;
+
+                //The code below assumes that the field is an object but can be a string
+                if(_.isString(field)) {
+                    field = {
+                        'name': field
+                    };
+                }
 
                 //labels: visibility for the label
                 //labelsOnTop: true for on the top of the field
@@ -93,10 +116,19 @@
                     panel.labels = true;
                 }
                 //8 for span because we are using a 2/3 ratio between field span and label span with a max of 12
-                maxSpan = (panel.labelsOnTop === false && panel.labels) ? 8 : 12;
+                isLabelInline = (panel.labelsOnTop === false && panel.labels);
+                maxSpan       = isLabelInline ? maxSpanForFieldWithInlineLabel : maxSpanForFieldWithLabelOnTop;
 
                 if (_.isUndefined(field.span)) {
                     field.span = Math.floor(maxSpan / columns);
+                }
+
+                // reset the field span if it's greater than the max span since no field can be greater than the
+                // maximum allowable span
+                // this is likely to only occur when labels are inline with the field, but that can't be guaranteed
+                // to be the only plausible scenario
+                if (field.span > maxSpan) {
+                    field.span = maxSpan;
                 }
 
                 //4 for label span because we are using a 1/3 ratio between field span and label span with a max of 12
@@ -106,16 +138,39 @@
 
                 totalFieldCount++;
                 field.index = totalFieldCount;
-                row.push(field);
 
-                if ((index % columns === columns - 1) || (index === size - 1)) {
-                    rows.push(row);
-                    row = [];
+                // by default, the field takes up the space specified by its span
+                fieldSpan = field.span;
+
+                // if the labels are to the left of the field then the field takes up the space
+                // specified by its span plus the space its label takes up
+                if (isLabelInline) {
+                    fieldSpan += field.labelSpan;
                 }
+
+                // if there isn't enough room remaining on the current row to contain the field or all available
+                // columns in the row have been filled, then start a new row
+                if ((rowSpan + fieldSpan) > rowSpanMax || colCount == columns) {
+                    _startNewRow();
+                }
+
+                row.push(field);
+                rowSpan += fieldSpan; // update rowSpan to account for span of the field that was just added to the row
+
+                // push the last row if there are no more fields in the panel
+                if ((index === size - 1)) {
+                    _startNewRow();
+                }
+
+                colCount++; // increment the column count now that we've filled a column
             }, this);
 
             panel.grid = rows;
         }, this);
+    },
+
+    _render: function() {
+        this._renderPanels(this.meta.panels);
 
         app.view.View.prototype._render.call(this);
         this.initButtons();

@@ -147,6 +147,7 @@ $dictionary['Opportunity'] = array('table' => 'opportunities','audited'=>true, '
     'vname' => 'LBL_CURRENCY_RATE',
     'type' => 'double',
     'required' => true,
+    'studio' => false
   ),
   'amount_usdollar' =>
   array (

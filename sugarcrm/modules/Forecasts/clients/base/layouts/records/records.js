@@ -71,9 +71,11 @@
         // get default selections for filter and range
         app.defaultSelections = forecastData.defaultSelections;
         app.initData = forecastData.initData;
-        app.user.set(app.initData.selectedUser);
 
-        if(forecastData.initData.forecasts_setup == 0) {
+        // Add Forecasts-specific stuff to the app.user object
+        app.user.set(app.initData.userData);
+
+        if(forecastData.initData.forecasts_setup === 0) {
             window.location.hash = "#Forecasts/layout/config";
         }
 
@@ -107,16 +109,7 @@
              * because selectedUser is used by other components and is changeable by most components
              * (e.g. selecting a different user via the hierarchy tree or clicking in the worksheet)
              */
-            selectedUser : defaultSelections.selectedUser,
-
-            /**
-             * todo-sfa: when teams/ACLs are implemented, we won't need this anymore and we can just use app.user
-             *
-             * currentUser is the currently logged-in user
-             * this is separate from selectedUser so we can maintain all of the originally passed-down data
-             * from the server on the currently logged-in user
-             */
-            currentUser : defaultSelections.selectedUser,
+            selectedUser : app.user.attributes,
 
             /**
              * boolean to reload the active worksheet

@@ -118,6 +118,10 @@ $viewdefs['Products']['base']['view']['record'] = array(
                     'name' => 'discount_amount',
                     'type' => 'currency',
                 ),
+                array(
+                    'name' => 'commit_stage',
+                    'type' => 'enum'
+                )
             )
         ),
         array(

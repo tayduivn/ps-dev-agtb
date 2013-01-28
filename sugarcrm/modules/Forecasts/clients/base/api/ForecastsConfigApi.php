@@ -24,13 +24,43 @@ require_once('include/api/ConfigModuleApi.php');
 
 class ForecastsConfigApi extends ConfigModuleApi {
 
+    public function registerApiRest()
+    {
+        return
+            array (
+                'forecastsConfigGet' => array(
+                    'reqType' => 'GET',
+                    'path' => array('Forecasts','config'),
+                    'pathVars' => array('module',''),
+                    'method' => 'config',
+                    'shortHelp' => 'Retrieves the config settings for a given module',
+                    'longHelp' => 'include/api/help/config_get_help.html',
+                ),
+                'forecastsConfigCreate' => array (
+                    'reqType' => 'POST',
+                    'path' => array('Forecasts','config'),
+                    'pathVars' => array('module',''),
+                    'method' => 'forecastsConfigSave',
+                    'shortHelp' => 'Creates the config entries for the Forecasts module.',
+                    'longHelp' => 'modules/Forecasts/clients/base/api/help/ForecastsConfigPut.html',
+                ),
+                'forecastsConfigUpdate' => array (
+                    'reqType' => 'PUT',
+                    'path' => array('Forecasts','config'),
+                    'pathVars' => array('module',''),
+                    'method' => 'forecastsConfigSave',
+                    'shortHelp' => 'Updates the config entries for the Forecasts module',
+                    'longHelp' => 'modules/Forecasts/clients/base/api/help/ForecastsConfigPut.html',
+                ),
+            );
+    }
+
     /**
-     * Save function for the config settings for a given module.
+     * Save function for the config settings for Forecasts' special needs.
      * @param $api
      * @param $args 'module' is required, 'platform' is optional and defaults to 'base'
      */
-    public function configSave($api, $args) {
-
+    public function forecastsConfigSave($api, $args) {
         //acl check, only allow if they are module admin
         if(!parent::hasAccess("Forecasts")) {
             throw new SugarApiExceptionNotAuthorized("Current User not authorized to change Forecasts configuration settings");
@@ -62,6 +92,24 @@ class ForecastsConfigApi extends ConfigModuleApi {
                 $args['has_commits'] = true;
             }
         }
+
+        //BEGIN SUGARCRM flav=ent ONLY
+        if ( isset($args['show_custom_buckets_options']) )
+        {
+            $json = getJSONobj();
+            $_args = array(
+                'dropdown_lang' => isset($_SESSION['authenticated_user_language']) ? $_SESSION['authenticated_user_language'] : $GLOBALS['current_language'],
+                'dropdown_name' => 'commit_stage_custom_dom',
+                'view_package' => 'studio',
+                'list_value' => $json->encode($args['show_custom_buckets_options'])
+            );
+            $_REQUEST['view_package'] = 'studio';
+            require_once 'modules/ModuleBuilder/parsers/parser.dropdown.php';
+            $parser = new ParserDropDown ();
+            $parser->saveDropDown($_args);
+            unset($args['show_custom_buckets_options']);
+        }
+        //END SUGARCRM flav=ent ONLY
         
         if($upgraded || empty($prior_forecasts_settings['is_setup']))
         {
@@ -88,11 +136,11 @@ class ForecastsConfigApi extends ConfigModuleApi {
      *
      * @return boolean
      */
-    private function timePeriodSettingsChanged($priorSettings, $currentSettings) {
-        if(!isset($priorSettings['timeperiod_shown_backward']) || (isset($currentSettings['timeperiod_shown_backward']) && ($currentSettings['timeperiod_shown_backward'] != $priorSettings['timeperiod_interval']))) {
+    public function timePeriodSettingsChanged($priorSettings, $currentSettings) {
+        if(!isset($priorSettings['timeperiod_shown_backward']) || (isset($currentSettings['timeperiod_shown_backward']) && ($currentSettings['timeperiod_shown_backward'] != $priorSettings['timeperiod_shown_backward']))) {
             return true;
         }
-        if(!isset($priorSettings['timeperiod_shown_forward']) || (isset($currentSettings['timeperiod_shown_forward']) && ($currentSettings['timeperiod_shown_forward'] != $priorSettings['timeperiod_type']))) {
+        if(!isset($priorSettings['timeperiod_shown_forward']) || (isset($currentSettings['timeperiod_shown_forward']) && ($currentSettings['timeperiod_shown_forward'] != $priorSettings['timeperiod_shown_forward']))) {
             return true;
         }
         if(!isset($priorSettings['timeperiod_interval']) || (isset($currentSettings['timeperiod_interval']) && ($currentSettings['timeperiod_interval'] != $priorSettings['timeperiod_interval']))) {

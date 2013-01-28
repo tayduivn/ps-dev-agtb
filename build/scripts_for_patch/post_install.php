@@ -422,6 +422,11 @@ function post_install() {
             $job->catch_up           = '0';
             $job->save();
         }
+
+        //Check for custom.less file and add if it is missing
+        if(!file_exists('styleguide/less/clients/base/custom.less')) {
+            sugar_file_put_contents('styleguide/less/clients/base/custom.less', '');
+        }
     }
 
     //BEGIN SUGARCRM flav=pro ONLY

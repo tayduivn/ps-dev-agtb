@@ -96,7 +96,12 @@ describe("datetimecombo field", function() {
             unformatedValue = jsDate.toISOString();
             expect(field.format(unformatedValue).date).toEqual('04/09/2012');
             expect(field.dateValue).toEqual('04/09/2012');
-            expect(field.timeValue).toEqual("03:00");
+
+            // splitting on : since we're hardcoding in the beforeEach to use :
+            var splitTimeValue = field.timeValue.split(":"),
+                jsDateHrs = forceTwoDigits((jsDate.getHours() + 1).toString());
+            expect(splitTimeValue[0]).toEqual(jsDateHrs);
+            expect(splitTimeValue[1]).toEqual("00");
         });
         it("should format the date time combo according to time prefs", function() {
             var expectedValue, stubVerifyDateString, jsDate, unformatedValue, year, month, day, hours;
