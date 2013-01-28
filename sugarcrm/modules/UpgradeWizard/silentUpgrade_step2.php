@@ -314,8 +314,16 @@ if(empty($errors)) {
 			logThis('Done merge_passwordsetting', $path);
 		}
 
-		logThis('Set default_theme to Sugar', $path);
-		$sugar_config['default_theme'] = 'Sugar';
+                if (isset($sugar_config['default_theme']) && $sugar_config['default_theme'] == 'Sugar5') {
+                    logThis('Set default_theme to RacerX', $path);
+                    require_once('modules/Configurator/Configurator.php');
+                    $configurator = new Configurator();
+                    $configurator->config['default_theme'] = 'RacerX';
+                    $configurator->handleOverride();
+                } else {
+                    logThis('Set default_theme to Sugar', $path);
+                    $sugar_config['default_theme'] = 'Sugar';
+                }
 
 		if( !write_array_to_file( "sugar_config", $sugar_config, "config.php" ) ) {
             logThis('*** ERROR: could not write config.php! - upgrade will fail!', $path);
