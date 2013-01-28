@@ -1,3 +1,4 @@
+{{!
 /*********************************************************************************
  * The contents of this file are subject to the SugarCRM Master Subscription
  * Agreement (""License"") which can be viewed at
@@ -24,26 +25,13 @@
  * governing these rights and limitations under the License.  Portions created
  * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
-({
-    extendsFrom: 'BaselistView',
-
-    initialize: function(options) {
-        //turn off sorting & links for dupe check lists
-        app.view.views.BaselistView.prototype.initialize.call(this, options);
-        _.each(this.meta.panels, function(panel) {
-            _.each(panel.fields, function(field) {
-                field.sortable = false;
-            });
-        });
-        this.on("render", this._removeLinks, this);
-    },
-
-    _renderHtml: function() {
-        app.view.views.BaselistView.prototype._renderHtml.call(this);
-        this.$('table.table-striped').addClass('duplicates highlight');
-    },
-
-    _removeLinks: function() {
-        this.$('a:not(.rowaction)').contents().unwrap();
-    }
-})
+}}
+<span class="editable" cid="{{cid}}">
+{{#if this.def.isMultiSelect}}
+{{#each value}}{{#eachOptions ../def.options}}{{#eq key ../this}}{{#notEq @index 0}}, {{/notEq}}{{value}}{{/eq}}{{/eachOptions}}{{/each}}
+{{else}}
+{{#eachOptions def.options}}
+{{#eq this.key ../value}}{{this.value}}{{/eq}}
+{{/eachOptions}}
+{{/if}}
+</span>

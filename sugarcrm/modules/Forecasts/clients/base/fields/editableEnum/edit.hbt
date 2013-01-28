@@ -1,3 +1,4 @@
+{{!
 /*********************************************************************************
  * The contents of this file are subject to the SugarCRM Master Subscription
  * Agreement (""License"") which can be viewed at
@@ -24,26 +25,15 @@
  * governing these rights and limitations under the License.  Portions created
  * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
-({
-    extendsFrom: 'BaselistView',
-
-    initialize: function(options) {
-        //turn off sorting & links for dupe check lists
-        app.view.views.BaselistView.prototype.initialize.call(this, options);
-        _.each(this.meta.panels, function(panel) {
-            _.each(panel.fields, function(field) {
-                field.sortable = false;
-            });
-        });
-        this.on("render", this._removeLinks, this);
-    },
-
-    _renderHtml: function() {
-        app.view.views.BaselistView.prototype._renderHtml.call(this);
-        this.$('table.table-striped').addClass('duplicates highlight');
-    },
-
-    _removeLinks: function() {
-        this.$('a:not(.rowaction)').contents().unwrap();
-    }
-})
+}}
+<span class="edit" cid="{{cid}}">
+<select data-placeholder=" " name="{{name}}" {{#if def.isMultiSelect}} multiple="multiple"{{/if}}>
+    {{#if hasBlank}}
+        <option value=""{{#has "" value}}selected{{/has}}></option>
+    {{/if}}
+    {{#eachOptions def.options}}
+        <option value="{{{this.key}}}" {{#has this.key ../value}}selected{{/has}}>{{this.value}}</option>
+    {{/eachOptions}}
+</select>
+<p class="help-block"></p>
+</span>
