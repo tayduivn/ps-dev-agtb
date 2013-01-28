@@ -1948,6 +1948,10 @@ table tfoot td {
   background-color: transparent;
   background-image: none;
   cursor: default;
+  color: #CDCCCB;
+}
+.dropdown-menu a.disabled:hover [class*='icon'] {
+  color: #CDCCCB !important;
 }
 .dropdown-menu li > a:hover,
 .dropdown-menu li > span > a:hover,
@@ -2144,7 +2148,7 @@ table.dataTable tr td .actions span {
 table.dataTable tr td .actions a {
   padding: 5px 8px 3px;
 }
-table.dataTable tr td .actions a:hover {
+table.dataTable tr td .actions a:hover:not(.disabled) {
   color: #343433;
 }
 table.dataTable tr td .actions ul.dropdown-menu .ext {
