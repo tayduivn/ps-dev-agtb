@@ -135,16 +135,14 @@
         }             
         
         //Events
-        /* if it's not editable, we don't want to try to add the pencil
-         */
+        // if it's not editable, we don't want to try to add the pencil
         self.showCteIcon = function() {
             if((self.currentView != "edit") && (!self.disabled)){
                 self.$el.find("span").before($(cteIcon));
             }
         };
         
-        /* if it's not editable, we don't want to try to remove the pencil         
-         */
+        // if it's not editable, we don't want to try to remove the pencil
         self.hideCteIcon = function() {
             if((self.currentView != "edit") && (!self.disabled)){
                 self.$el.parent().find(".edit-icon").detach();

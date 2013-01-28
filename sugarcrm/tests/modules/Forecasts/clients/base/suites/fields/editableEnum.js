@@ -32,15 +32,14 @@ describe("forecast editableEnum field", function() {
         
         app = SugarTest.app;
         app.user.id = "tester";
-        app.lang.getAppListStrings = function(){
-            return {test:"test"};
-        };
+                
         context = app.context.getContext();
         context.forecasts = {};
         SugarTest.loadComponent('base', 'field', 'enum');
     });
     
     afterEach(function(){
+        app.user.id = null;
         delete app;
     });
                  
