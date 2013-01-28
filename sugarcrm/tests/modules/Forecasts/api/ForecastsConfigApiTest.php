@@ -30,11 +30,12 @@ class ForecastsConfigModuleApiTest extends Sugar_PHPUnit_Framework_TestCase
     protected $createdBeans = array();
 
     public function setUp(){
-        global $beanFiles, $beanList;
-        require('include/modules.php');
+        SugarTestHelper::setup('beanList');
+        SugarTestHelper::setup('moduleList');
         $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
 
         $GLOBALS['current_user']->is_admin = 1;
+        parent::setUp();
     }
 
     public function tearDown()
@@ -43,6 +44,8 @@ class ForecastsConfigModuleApiTest extends Sugar_PHPUnit_Framework_TestCase
         $db->query("DELETE FROM config where name = 'testSetting' and category = 'Forecasts'");
         $db->commit();
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
+        SugarTestHelper::tearDown();
+        parent::tearDown();
     }
 
     /**
