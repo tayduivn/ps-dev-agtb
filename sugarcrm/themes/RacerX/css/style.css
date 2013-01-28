@@ -9020,3 +9020,12 @@ i.icon-arrow-up:before {
 #pageContainer > div > table td:first-child {
     padding-right: 20px;
 }
+
+.sugar-subpanel-header-row {
+    height: auto;
+    padding: 2px 0px;
+}
+
+.sugar-subpanel-header-row input[type="button"], .button {
+    margin-top: 0px;
+}
