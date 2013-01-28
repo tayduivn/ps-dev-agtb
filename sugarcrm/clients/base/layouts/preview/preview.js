@@ -1,7 +1,7 @@
 ({
     events: {
         'click [data-direction]': 'triggerPagination',
-        'click .closeSubdetail': 'triggerClose'
+        'click .preview-headerbar .closeSubdetail': 'triggerClose'
     },
 
     initialize: function(opts) {

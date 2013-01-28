@@ -26,7 +26,6 @@
  ********************************************************************************/
 ({
     events: {
-        'click .closeSubdetail': 'closePreview',
         'click .more': 'toggleMoreLess',
         'click .less': 'toggleMoreLess'
     },
@@ -41,6 +40,8 @@
         this.fallbackFieldTemplate = "detail";
         this.context.off("preview:render", null, this);
         this.context.on("preview:render", this._renderPreview, this);
+        this.context.off("preview:close:fire", null, this);
+        this.context.on("preview:close:fire", this.closePreview,  this);
         this.context.off("preview:collection:change", null, this);
         this.context.on("preview:collection:change", this.updateCollection, this);
         if(this.layout){
@@ -61,23 +62,21 @@
      * @private
      */
     _renderPreview: function(model, collection, fetch){
-        // Fetch by default
-        fetch = _.isUndefined(fetch) ? true : fetch;
+        var self = this;
         // Close preview if we are already displaying this model
-        if(this.model && model && this.model.get("id") == model.get("id")){
-            this.layout.$(".closeSubdetail").click();
-            this.model = null;
+        if(self.model && model && self.model.get("id") == model.get("id")){
+            self.layout.$(".preview-headerbar .closeSubdetail").click();
+            self.model = null;
             return;
         }
         if(fetch){
-            var self = this;
             model.fetch({
                 success: function(model) {
                     self.renderPreview(model, collection);
                 }
             });
         } else {
-            this.renderPreview(model, collection);
+            self.renderPreview(model, collection);
         }
     },
 
