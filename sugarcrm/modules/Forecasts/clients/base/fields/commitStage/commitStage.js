@@ -113,11 +113,6 @@
                 }
             });
             
-           //custom click handler for the dropdown to set things up for the global click to not fire
-            /*self.$el.on("click", function(e){
-                $(e.target).attr("itemid", self.model.get("id"));
-            });*/
-            
             self.$el.off("mouseenter");
             self.$el.off("mouseleave");
             self.select = self.$el.find("select");
