@@ -342,6 +342,7 @@ $dictionary['Lead'] = array('table' => 'leads','audited'=>true, 'unified_search'
 			),
 			'vname' =>'LBL_ANY_EMAIL',
 			'studio' => array('visible'=>false, 'searchview'=>true),
+            'len' => 100
 		),
   'webtolead_email1' =>
   array (
