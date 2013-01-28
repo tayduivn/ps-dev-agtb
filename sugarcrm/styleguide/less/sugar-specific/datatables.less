@@ -75,19 +75,38 @@ table.dataTable {
       text-decoration:none;
     }
   }
-  th.sorting {
+  th {
     font-weight:normal;
-    color:@gray;
+    &.sorting {
+      color:@gray;
+    }
   }
   th.sorting_asc,
   th.sorting_desc {
+    font-weight: bold;
   }
 
-  tbody tr.active {
+  tbody {
     td {
-      background-image: url('@{textureSecondary}');
-      .icon-eye-open {
-        color:@black !important;
+      max-width: 100px;
+      &> * {
+        display: inline-block;
+        width: 100%;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+      &>span.dropdown {
+        width: auto;
+        overflow: visible;
+      }
+    }
+    tr.active {
+      td {
+        background-image: url('@{textureSecondary}');
+        .icon-eye-open {
+          color:@black !important;
+        }
       }
     }
   }
@@ -186,15 +205,6 @@ table.dataTable {
           visibility: hidden;
         }
       }
-    }
-  }
-
-  td {
-    span.longtext {
-      display: inline-block;
-      width: 100%;
-      overflow: hidden;
-      text-overflow: ellipsis;
     }
   }
 

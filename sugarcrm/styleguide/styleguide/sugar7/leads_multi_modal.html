@@ -29,9 +29,17 @@
         , {"file":"widget/email-widget","target":"#overview","method":"append"}
       ]
     };
-
   </script>
 </head>
+
+
+
+<aside style="position:absolute;background:rgba(0,0,0,.59);color:white;z-index:100000;bottom:.75em;right:.75em;padding:1em;">
+  <strong>tmp controller:</strong>
+  <a class="btn" onclick="javascript:stack_modal();return false;" href="">add modal</a>,
+  <a class="btn" onclick="javascript:stack_modal('remove');return false;" href="">sequentially remove modal(s)</a>
+</aside>
+
 
 <body>
   <div id="sugarcrm">
@@ -47,13 +55,13 @@
                 <div>
                   <div data-tour="tour-Leads-businesscard">
                     <div class="headerpane ellipsis"></div>
-                    <div class="change_log_container"></div>
                     <div class="record"></div>
                     <div class="moreless"></div>
                   </div>
                 </div>
                 <div class="layout_Leads">
                   <div class="related-tabs"></div>
+                  <div class="add-to-target-container"></div>
                   <div class="search-filter"></div>
                   <div class="main-content"></div>
                 </div>
@@ -125,31 +133,7 @@
         items: ".thumbnail.widget",
         axis: "y",
       });
-      $('body').on('click', '#example td input[type=checkbox]', function(){
-        var ltbl = $('#example')
-        if (ltbl.hasClass('checkbox_strike')===false) {
-          ltbl.addClass('checkbox_strike')
-        } else {
-          ltbl.find('thead .dropdown-menu li.merge').removeClass('disabled');
-        }
-      });
-      $('body').on('click', '.dropdown-menu li.merge', function(){
-        drawer(true);
-        loadPartials([
-          {"file":"merge/header-choose-primary.html","target":"#edit .headerpane","method":"replace"},
-          {"file":"merge/choose-primary.html","target":"#edit .record","method":"replace"},
-          {"file":"merge/choose-primary-sidebar.html","target":".sidebar-content .side-pane","method":"replace"}
-        ]);
-      });
-      $('body').on('click', '.view_change_log', function(){
-        loadPartials([
-          {"file":"common/drawer-container.html","target":".change_log_container","method":"replace"},
-        ]);
-        $('#pageConfig .dropdown-toggle').trigger('click');
-        return false;
-      });
     });
-
   </script>
 </body>
 </html>

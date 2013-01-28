@@ -52,14 +52,12 @@ function loadPartials(templates) {
     function(i,t){
 
       var source = t.file;
+      page.target_id = 'id="'+ source.replace(/\//g,'_').replace('.html','') + '"';
+      page.sourceid = source.split('/').pop() + '-' + Math.floor((Math.random()*100)+1);
 
       loadPartial(source);
-
-      page.target_id = 'id="'+ source.replace(/\//g,'_').replace('.html','') + '"';
-
       var partial = ich[source];
 
-      page.sourceid = t.file.split('/').pop() + '-' + Math.floor((Math.random()*100)+1);
 
       if (t.method==='prepend') {
         $(t.target).prepend(partial(page));
@@ -137,6 +135,7 @@ function loadContent(source,target,mode,method) {
     loadPartial(source);
 
     page.target_id = 'id="'+ source.replace(/\//g,'_').replace('.html','') + '"';
+    page.sourceid = source.split('/').pop() + '-' + Math.floor((Math.random()*100)+1);
 
     var partial = ich[source];
 

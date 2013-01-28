@@ -1,133 +1,102 @@
-<table class="add-to-target-table table table-striped filter">
-  <tr class="add-to-target-list-header">
-    <td style="border-bottom:1px solid #ddd">
-      <strong>Add to target list</strong>
+<form class="form-search inset-form" id="search_and_select_target">
+  <div id="add-to-target-filters" class="filter-options extend">
+  </div>
+</form>
 
-    </td>
-  </tr>
-
-  <tr>
-    <td style="">
-      <span class="pull-left">
-          <select id="select01a" data-placeholder="Select target list..." class="select2 choose-region">
-            <option value="pk0"></option>
-            <option value="pk1">Global Atlantic, default</option>
-            <option value="pk2">Global East, default</option>
-            <option value="pk3">Global North, default</option>
-            <option value="pk4">Global Pacific, default</option>
-            <option value="pk5">Global Pacific, seed</option>
-            <option value="pk6">Search for more...</option>
-          </select>
-      </span>
-      &nbsp;
-      <span>
-        <input type="text" name="" value="Global">
-      </span>
-
-      <span class="pull-right">
-        <i class="add-targter-filter-add icon-plus" style="padding:0 1em"></i>
-      </span>
-    </td>
-  </tr>
+<table id="add-to-target-table-duplicates" class="table table-striped">
+  <thead>
+    <tr>
+      <th class="nosort" style="width:3%">Select</th>
+      <th style="width:10%">Target List</th>
+      <th style="width:10%">Type</th>
+      <th style="width:30%">Description</th>
+      <th style="width:10%">User</th>
+      <th style="width:10%" class="nosort">&#8230;</th>
+    </tr>
+  </thead>
+  <tbody id="listed-tar">
+    <tr>
+      <td><input type="checkbox" name="tar1"></td>
+      <td>Global Atlantic</td>
+      <td>Suppress</td>
+      <td>Needs to be attached</td>
+      <td>jbiter</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td><input type="checkbox" name="tar2"></td>
+      <td>Global East</td>
+      <td>Default</td>
+      <td> </td>
+      <td>jbiter</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td><input type="checkbox" name="tar3"></td>
+      <td>Global North</td>
+      <td>Default</td>
+      <td> </td>
+      <td>jbiter</td>
+      <td>&nbsp;</td>
+    </tr>
+  </tbody>
 </table>
-
-
-
-  <table class="add-to-target-table-duplicates table table-striped">
-    <thead>
-      <tr>
-        <th class="nosort" style="width:3%">Select</th>
-        <th style="width:10%">Target List</th>
-        <th style="width:10%">Type</th>
-        <th style="width:30%">Description</th>
-        <th style="width:10%">User</th>
-        <th style="width:10%" class="nosort">&#8230;</th>
-      </tr>
-    </thead>
-    <tbody id="listed-tar">
-
-      <tr>
-        <td><input type="radio" name="tar1"></td>
-        <td>Global Atlantic</td>
-        <td>Suppress</td>
-        <td>Needs to be attached</td>
-        <td>jbiter</td>
-        <td>&nbsp;</td>
-      </tr>
-
-      <tr>
-        <td><input type="radio" name="tar2"></td>
-        <td>Global East</td>
-        <td>Default</td>
-        <td> </td>
-        <td>jbiter</td>
-        <td>&nbsp;</td>
-      </tr>
-
-      <tr>
-        <td><input type="radio" name="tar3"></td>
-        <td>Global North</td>
-        <td>Default</td>
-        <td> </td>
-        <td>jbiter</td>
-        <td>&nbsp;</td>
-      </tr>
-
-    </tbody>
-  </table>
-
-
-
 
 <script>
 
   $(document).ready(function() {
 
-    $('tr.add-to-target-list-header').remove();
-
+    loadPartials([
+      {"file":"add-to-target/add-to-target-filter-row","target":"#add-to-target-filters","method":"append"}
+    ]);
     initSelect2('select.select2');
+    $('select[name="field"]').select2('val','target list');
+    $('select[name="opera"]').select2('val','matches');
 
-    $('.add-to-target-table-duplicates').dataTable({
+    $('a[href="#add-target-filter-row"]').on('click', function(e){
+      loadPartials([
+        {"file":"add-to-target/add-to-target-filter-row","target":"#add-to-target-filters","method":"append"}
+      ]);
+      initSelect2('select.select2');
+      var row = $(e.target).parents('.filter-body');
+      console.log(e.target)
+      row.find('.addme').removeClass('disabled');
+      row.find('.addme').after(
+        '<a href="#" class="removeme btn btn-invisible btn-dark"><i class="icon-minus"></i></a>'
+      );
+      e.preventDefault();
+      e.stopPropagation();
+    });
+
+    $('#add-to-target-table-duplicates').dataTable({
         "bPaginate": false,
         "bFilter": true,
         "bInfo": false,
         "bAutoWidth": false
     });
 
-    $('body').on('click', '#listed-tar input[type=radio]', function(){
-      $('a.btn.select-and-update').removeClass('disabled');
+    $('body').on('click', '#listed-tar input[type=checkbox]', function(){
+      $('a[href="#select-and-update"]').removeClass('disabled');
     });
 
-    $('body').on('change', 'form.create-new-target-form input, form.create-new-target-form textarea, form.create-new-target-form #select02az', function(){
-      $('a.btn.save-and-update').removeClass('disabled');
+    $('body').on('change', '#create-new-target-form', function(){
+      $('a[href="#save-and-update"]').removeClass('disabled');
     });
 
-
-    $('body').on('click', '.select-and-update, .save-and-update', function(){
+    $('body').on('click', 'a[href="#select-and-update"], a[href="#save-and-update"]', function(){
       drawer(false);
       throwMessage('<strong>Success!</strong> You successfully updated target list', 'success', true);
-      $('table.add-to-target-table').remove();
+      $('.add-to-target-filter').remove();
     });
 
-
-    $('body').on('click', '.create-a-new-target-list', function(){
+    $('body').on('click', 'a[href="#create-a-new-target-list"]', function(){
       $('.side-pane.active .howto').remove();
       loadPartials([
         {"file":"add-to-target/buttons-create","target":"#edit .headerpane","method":"replace"},
         {"file":"add-to-target/create-new-target-form","target":"#edit .record","method":"replace"},
-        {"file":"add-to-target/how-to-create-new-target","target":".side-pane.active","method":"append"},
+        {"file":"add-to-target/how-to-create-new-target","target":".side-pane.active","method":"replace"},
       ]);
     });
 
   });
 </script>
-
-
-
-
-
-
-
-
-
-

@@ -101,10 +101,10 @@ function loadContent(source,target,mode,method) {
   }
 
   //if ( source.indexOf('partial') === 0 ) {
-    loadPartial(source);
-
     page.target_id = 'id="'+ source.replace(/\//g,'_').replace('.html','') + '"';
+    page.sourceid = source.replace(/\//g,'_').replace('.html','')  + '-' + Math.floor((Math.random()*100)+1);
 
+    loadPartial(source);
     var partial = ich[source];
 
     if ( method==='prepend' ) {

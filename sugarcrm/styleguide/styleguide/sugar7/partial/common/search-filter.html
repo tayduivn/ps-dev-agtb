@@ -1,5 +1,6 @@
 <!-- synced dom with sidecar on 11/21/2112 -->
 <form class="form-search" action="" id="{{sourceid}}">
+
     <div class="row-fluid control-group">
         <div class="filter controls controls-four btn-fit">
             <div class="search">
@@ -25,7 +26,7 @@
                     <div class="pull-right">
                         <a href="#delete" class="btn btn-link btn-invisible hide">Delete</a>
                         <a href="#save" class="btn btn-primary disabled">Save</a>
-                        <a href="#" class="filter-close btn btn-invisible btn-dark"><i class="icon-remove"></i></a>
+                        <a href="#close" class="btn btn-invisible btn-dark"><i class="icon-remove"></i></a>
                     </div>
                 </div>
             </div>
@@ -43,6 +44,7 @@
           </div>
         </article>
     </div>
+
     <div class="mu extend hide">
         <article class="filter-header">
             <strong>
@@ -78,6 +80,10 @@
             </div>
         </article>
     </div>
+
+    <div class="att extend hide">
+    </div>
+
 </form>
 
 <script>
@@ -223,7 +229,7 @@
       _choices = $('#{{sourceid}} #s2id_search_filter');
       _results = $('.search-filter-dropdown .select2-results');
 
-      // prepend legend to .chzn-choices
+      // prepend legend to .select2-choices
       // _choices.prepend('<legend class="select2-legend">Filter <i class="icon-caret-down"></i></legend>');
 
       // // select related module filter
@@ -309,7 +315,7 @@
 
           // close filter option extend
           // and reinstate the filter being edited
-          _header.find('.filter-close').off('click').on('click', function(e){
+          _header.find('a[href="#close"]').off('click').on('click', function(e){
               _results.find('.filter-new').removeClass('result-selected').addClass('active-result');
               _options.addClass('hide');
               e.preventDefault();
