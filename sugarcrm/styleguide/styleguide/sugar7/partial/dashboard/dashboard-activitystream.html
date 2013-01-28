@@ -129,6 +129,10 @@
 <script>
   $(document).ready(function() {
 
+    loadPartials([
+      {"file":"common/omnibar","target":"#view .main-content","method":"prepend"}
+    ]);
+
     $('.comment').toggle(
       function () {
         $(this).parent().parent().parent().find('.acomment').remove();
