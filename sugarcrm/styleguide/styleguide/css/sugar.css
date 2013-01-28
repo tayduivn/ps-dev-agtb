@@ -9078,132 +9078,6 @@ h1 .select2-container .select2-choice div {
   display: block !important;
   padding: 7px 0;
 }
-<<<<<<< HEAD
-.record .record-cell[data-type="email"] .normal > span {
-  display: block !important;
-  margin-bottom: 9px;
-}
-.record .record-cell[data-type="email"] .control-group.email {
-  padding-right: 132px;
-  position: relative;
-}
-.record .record-cell[data-type="email"] .control-group.email .input-append.widget {
-  margin-bottom: 0;
-}
-.record .record-cell[data-type="email"] .control-group.email .input-append.widget input[type="text"],
-.record .record-cell[data-type="email"] .control-group.email .input-append.widget select,
-.record .record-cell[data-type="email"] .control-group.email .input-append.widget textarea,
-.record .record-cell[data-type="email"] .control-group.email .input-append.widget .uneditable-input {
-  margin-top: 0;
-  width: 100%;
-  -webkit-border-radius: 0;
-  -moz-border-radius: 0;
-  border-radius: 0;
-  -webkit-border-radius: 0;
-  -moz-border-radius: 0;
-  border-radius: 0;
-  border-width: 0 1px 1px 1px;
-}
-.record .record-cell[data-type="email"] .control-group.email .input-append.widget input[type="text"]:focus,
-.record .record-cell[data-type="email"] .control-group.email .input-append.widget select:focus,
-.record .record-cell[data-type="email"] .control-group.email .input-append.widget textarea:focus,
-.record .record-cell[data-type="email"] .control-group.email .input-append.widget .uneditable-input:focus {
-  z-index: 2;
-}
-.record .record-cell[data-type="email"] .control-group.email .btn-toolbar {
-  position: absolute;
-  top: 2px;
-  right: 0;
-  width: 118px;
-  padding: 0;
-}
-.record .record-cell[data-type="email"] .control-group.email .btn-toolbar .btn-group {
-  float: left;
-}
-.record .record-cell[data-type="email"] .control-group.email:first-child .input-append.widget input[type="text"] {
-  -webkit-border-top-left-radius: 3px;
-  -moz-border-radius-topleft: 3px;
-  border-top-left-radius: 3px;
-  -webkit-border-top-left-radius: 3px;
-  -moz-border-radius-topleft: 3px;
-  border-top-left-radius: 3px;
-  -webkit-border-top-right-radius: 3px;
-  -moz-border-radius-topright: 3px;
-  border-top-right-radius: 3px;
-  -webkit-border-top-right-radius: 3px;
-  -moz-border-radius-topright: 3px;
-  border-top-right-radius: 3px;
-  border-width: 1px 1px 1px 1px;
-}
-.record .record-cell[data-type="email"] .control-group.email:last-child .input-append.widget input[type="text"] {
-  -webkit-border-bottom-left-radius: 3px;
-  -moz-border-radius-bottomleft: 3px;
-  border-bottom-left-radius: 3px;
-  -webkit-border-bottom-left-radius: 3px;
-  -moz-border-radius-bottomleft: 3px;
-  border-bottom-left-radius: 3px;
-  -webkit-border-bottom-right-radius: 3px;
-  -moz-border-radius-bottomright: 3px;
-  border-bottom-right-radius: 3px;
-  -webkit-border-bottom-right-radius: 3px;
-  -moz-border-radius-bottomright: 3px;
-  border-bottom-right-radius: 3px;
-}
-.record .record-cell[data-type="bool"] label {
-  margin-bottom: 0;
-}
-.record .record-cell[data-type="enum"] .normal > span {
-  display: block !important;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  padding: 7px 0;
-}
-.record .record-cell[data-type="enum"] .normal > span .chzn-container,
-.record .record-cell[data-type="enum"] .normal > span .select2-container {
-  margin: -5px 0 0 -9px;
-  position: absolute;
-}
-.record .record-cell[data-type="datetimecombo"] .normal > span {
-  display: block !important;
-  padding: 7px 0;
-}
-.record .record-cell[data-type="datetimecombo"] .input-append.date {
-  display: block !important;
-  margin-top: -7px;
-}
-.record .record-cell[data-type="datetimecombo"] .input-append.date input[type="text"] {
-  width: 95px;
-}
-.record .record-cell[data-type="datetimecombo"] .input-append.date .add-on {
-  z-index: 2;
-  padding: 9px 7px 5px 0;
-  margin: 0 10px 0 -20px;
-  width: 12px;
-  height: 12px;
-}
-.record .record-cell[data-type="fieldset"] {
-  margin-bottom: 9px;
-}
-.record .record-cell[data-type="fieldset"] .ellipsis_inline {
-  margin-bottom: 0;
-  padding: 7px 0;
-  height: 18px;
-}
-.record .record-cell[data-type="fieldset"] input[type="text"] {
-  -webkit-border-radius: 0;
-  -moz-border-radius: 0;
-  border-radius: 0;
-  -webkit-border-radius: 0;
-  -moz-border-radius: 0;
-  border-radius: 0;
-  border-width: 0 1px 1px 1px;
-  padding: 7px 6px 6px;
-}
-.record .record-cell[data-type="fieldset"] input[type="text"]:focus {
-  z-index: 2;
-}
-=======
 .record .record-cell[data-type="url"] .normal > span {
   display: block !important;
   margin-bottom: 9px;
@@ -9339,7 +9213,6 @@ h1 .select2-container .select2-choice div {
 .record .record-cell[data-type="fieldset"] input[type="text"]:focus {
   z-index: 2;
 }
->>>>>>> UIUX-256: updated add to target list Inset Form with filter rows
 .record .record-cell[data-type="fieldset"] .normal > span > span:first-child input[type="text"] {
   -webkit-border-top-left-radius: 3px;
   -moz-border-radius-topleft: 3px;
@@ -9663,7 +9536,7 @@ a.preview-list-item:hover {
 }
 .drawer-backdrop {
   z-index: 1010;
-  background-color: #e6e6e5;
+  background-color: #fff;
   opacity: .5;
   display: none;
   border-top: 4px solid #8b8c8e;
