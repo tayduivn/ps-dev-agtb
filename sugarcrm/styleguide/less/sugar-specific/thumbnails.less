@@ -19,7 +19,8 @@
   }
 
   h4,
-  h1 {
+  h1,
+  .dashlet-options {
     font-size: 13px !important;
     color: lighten(@gray,10%);
     line-height: @baseLineHeight;
@@ -27,9 +28,17 @@
     .border-radius(4px 4px 0 0);
     font-weight: 500;
     border-bottom: 1px solid darken(@grayLighter, 5%) !important;
-    padding: 7px 80px 7px 10px !important;
+    padding: 7px 80px 7px 10px;
     a {
       color: @textColor;
+    }
+  }
+  .dashlet-options {
+    .border-radius(0);
+    padding: 10px;
+    .select2-container,
+    .btn-group {
+      padding: 0;
     }
   }
 

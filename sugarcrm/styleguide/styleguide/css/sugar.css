@@ -62,7 +62,8 @@ img {
   margin: 0;
 }
 .thumbnail h4,
-.thumbnail h1 {
+.thumbnail h1,
+.thumbnail .dashlet-options {
   font-size: 13px !important;
   color: #717275;
   line-height: 18px;
@@ -90,11 +91,25 @@ img {
   border-radius: 4px 4px 0 0;
   font-weight: 500;
   border-bottom: 1px solid #e8e8e8 !important;
-  padding: 7px 80px 7px 10px !important;
+  padding: 7px 80px 7px 10px;
 }
 .thumbnail h4 a,
-.thumbnail h1 a {
+.thumbnail h1 a,
+.thumbnail .dashlet-options a {
   color: #58595B;
+}
+.thumbnail .dashlet-options {
+  -webkit-border-radius: 0;
+  -moz-border-radius: 0;
+  border-radius: 0;
+  -webkit-border-radius: 0;
+  -moz-border-radius: 0;
+  border-radius: 0;
+  padding: 10px;
+}
+.thumbnail .dashlet-options .select2-container,
+.thumbnail .dashlet-options .btn-group {
+  padding: 0;
 }
 .thumbnail h1 small {
   font-size: 12px;
@@ -394,6 +409,9 @@ code {
 }
 .tabs-full .listed li {
   padding: 12px;
+}
+.tabs-full.tabs-four .nav-tabs > li {
+  width: 25%;
 }
 .nav-tabs > li > a {
   background-color: #CDCCCB;
