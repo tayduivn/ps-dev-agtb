@@ -557,10 +557,18 @@
 				
 				var duration_coef = duration / CAL.t_step;
 				el.setAttribute("duration_coef",duration_coef);				
-				if(duration_coef < 1.75)
+				if(duration_coef < 1.75){
 					el.childNodes[1].style.display = "none";
-				else
+					if (el.childNodes[2]){
+					    el.childNodes[2].style.display = "none";
+					}
+				}
+				else {
 					el.childNodes[1].style.display = "";
+					if (el.childNodes[2]){
+					    el.childNodes[2].style.display = "";
+					}
+				}
 
 				var callback = {
 					success: function(o){
