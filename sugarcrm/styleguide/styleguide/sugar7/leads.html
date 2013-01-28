@@ -125,7 +125,22 @@
         items: ".thumbnail.widget",
         axis: "y",
       });
-
+      $('body').on('click', '#example td input[type=checkbox]', function(){
+        var ltbl = $('#example')
+        if (ltbl.hasClass('checkbox_strike')===false) {
+          ltbl.addClass('checkbox_strike')
+        } else {
+          ltbl.find('thead .dropdown-menu li.merge').removeClass('disabled');
+        }
+      });
+      $('body').on('click', '.dropdown-menu li.merge', function(){
+        drawer(true);
+        loadPartials([
+          {"file":"merge/header-choose-primary.html","target":"#edit .headerpane","method":"replace"},
+          {"file":"merge/choose-primary.html","target":"#edit .record","method":"replace"},
+          {"file":"merge/choose-primary-sidebar.html","target":".sidebar-content .side-pane","method":"replace"}
+        ]);
+      });
       $('body').on('click', '.view_change_log', function(){
         loadPartials([
           {"file":"common/drawer-container.html","target":".change_log_container","method":"replace"},
