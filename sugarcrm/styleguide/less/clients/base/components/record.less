@@ -113,6 +113,19 @@ h1 {
       }
     }
 
+    &[data-type="url"] {
+      .normal > span {
+        display: block !important;
+        margin-bottom: 9px;
+        a {
+          display: block !important;
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          padding: 7px 0;
+        }
+      }
+    }
 
     &[data-type="email"] {
       .normal > span {
