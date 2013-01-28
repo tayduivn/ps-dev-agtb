@@ -67,38 +67,9 @@
 			</div>
 		</div>
         {literal}
+        <script language="javascript" src="include/javascript/sugar7.js"></script>
 		<script language="javascript">
-			var syncResult, view, layout, html, App;
-
-            (function(app) {
-                app.events.on("app:init", function() {
-                    function recordHandler(module, id, action) {
-                        var opts = {
-                            module: module,
-                            layout: "record",
-                            action: (action || "detail")
-                        };
-
-                        if (id !== "create") {
-                            _.extend(opts, {modelId: id});
-                        } else {
-                            _.extend(opts, {create: true});
-                            opts.layout = "create";
-                        }
-
-                        app.controller.loadView(opts);
-                    }
-
-                    // Hack to overload the routes currently
-                    app.router.route(":module/:id", "record", recordHandler);
-                    app.router.route(":module", "list", function(module) {
-                        app.controller.loadView({
-                            module: module,
-                            layout: "records"
-                        });
-                    });
-                });
-            })(SUGAR.App);
+			var App;
 
             App = SUGAR.App.init({
                 el: "#sidecar",

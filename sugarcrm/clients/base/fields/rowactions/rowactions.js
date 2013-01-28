@@ -28,11 +28,14 @@
     extendsFrom: 'ActiondropdownField',
     _loadTemplate: function() {
         app.view.Field.prototype._loadTemplate.call(this);
-        //Hide buttons when it is inline-edit mode on list view
-        if(this.view.action === 'list' && (this.tplName === 'list-header' || this.action === 'edit')) {
-            this.hide();
-        } else {
-            this.show();
+
+        //override its container if it has own template
+        var template = app.template._getField(this.type, this.tplName, this.module, null, true)[1];
+
+        if(template) {
+            this.def.css_class = '';
+            this.$el.attr('class', '');
+            this.$el.html(template(this));
         }
     }
 })

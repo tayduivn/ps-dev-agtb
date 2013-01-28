@@ -62,7 +62,7 @@ $viewdefs['Users']['base']['view']['baselist'] = array(
                     'sortable' => true,
                 ),
                 array(
-                    'name' => 'email1',
+                    'name' => 'email',
                     'width' => '15%',
                     'label' => 'LBL_EMAIL',
                     'enabled' => true,
@@ -91,10 +91,7 @@ $viewdefs['Users']['base']['view']['baselist'] = array(
                     'default' => true,
                     'sortable' => true,
                 ),
-
-
             ),
-
         ),
     ),
 );
