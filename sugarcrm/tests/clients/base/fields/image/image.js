@@ -18,12 +18,6 @@ describe("image field", function() {
 
     describe("image", function() {
 
-        it("should format value", function() {
-            expect(field.format("")).toEqual("");
-            expect(field.format("filename3.jpg")).not.toEqual("");
-            expect(field.format("filename3.jpg")).not.toEqual("filename3.jpg");
-        });
-
         it("make an api call to delete the image", function() {
             var deleteSpy = sinon.spy(field, "delete");
             $("<a></a>").addClass("delete").appendTo(field.$el);
