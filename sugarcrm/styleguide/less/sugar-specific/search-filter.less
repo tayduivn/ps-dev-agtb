@@ -64,7 +64,7 @@
     .select2-search-field {
       height: 20px;
       input {
-        padding: 0 0 0 8px;
+        padding: 0 0 0 9px;
         line-height: 19px;
         height: 20px;
       }
@@ -397,3 +397,10 @@
   }
 }
 
+.inset-form {
+  padding-top: 0;
+  .filter-options {
+    margin-top: 0;
+    .box-shadow(~"inset 0px 4px 8px -4px rgba(0, 0, 0, 0.5)");
+  }
+}

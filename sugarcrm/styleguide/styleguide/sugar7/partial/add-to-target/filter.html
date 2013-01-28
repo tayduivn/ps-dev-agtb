@@ -38,9 +38,9 @@
           if ( $(e.target).select2('val') === 'target-search' ) {
               // show search and select target form
               loadPartials([
-                {"file":"add-to-target/search-and-select-target-lists","target":"#edit .record","method":"replace"},
                 {"file":"add-to-target/buttons","target":"#edit .headerpane","method":"replace"},
-                {"file":"add-to-target/how-to-search-target","target":".side-pane.active","method":"append"},
+                {"file":"add-to-target/search-and-select-target-lists","target":"#edit .record","method":"replace"},
+                {"file":"add-to-target/how-to-search-target","target":".side-pane.active","method":"replace"},
               ]);
               drawer(true);
           }
