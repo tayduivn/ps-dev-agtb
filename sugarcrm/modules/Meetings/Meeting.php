@@ -98,6 +98,8 @@ class Meeting extends SugarBean {
 	var $cached_get_users = null;
 	var $new_schema = true;
 
+	public $send_invites = false;
+
     /**
      * This is a depreciated method, please start using __construct() as this method will be removed in a future version
      *
@@ -200,9 +202,9 @@ class Meeting extends SugarBean {
                 $this->date_end = $td->modify("+{$this->duration_hours} hours {$this->duration_minutes} mins")->asDb();
             }
 		}
-
-		$check_notify =(!empty($_REQUEST['send_invites']) && $_REQUEST['send_invites'] == '1') ? true : false;
-		if(empty($_REQUEST['send_invites'])) {
+				
+		$check_notify = $this->send_invites;
+		if($this->send_invites == false) {
 			if(!empty($this->id)) {
 				$old_record = new Meeting();
 				$old_record->retrieve($this->id);
@@ -765,7 +767,7 @@ class Meeting extends SugarBean {
 			$this->users_arr =	array();
 		}
 
-        if(!is_array($this->leads_arr)) {
+        if(!isset($this->leads_arr) || !is_array($this->leads_arr)) {
 			$this->leads_arr =	array();
 		}
 

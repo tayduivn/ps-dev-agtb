@@ -574,6 +574,7 @@ class TimePeriod extends SugarBean {
            }
         }
 
+
         if(empty($currentTimePeriod)) {
 
             //If no currentTimePeriod instance was found, just use the most recent upcoming TimePeriod instance

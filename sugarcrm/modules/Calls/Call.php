@@ -108,6 +108,8 @@ class Call extends SugarBean {
                                         'lead_id'			=> 'leads',
 								);
 
+	public $send_invites = false;
+
     /**
      * This is a depreciated method, please start using __construct() as this method will be removed in a future version
      *
@@ -198,12 +200,9 @@ class Call extends SugarBean {
     	    }
         }
 
-		if(!empty($_REQUEST['send_invites']) && $_REQUEST['send_invites'] == '1') {
-			$check_notify = true;
-        } else {
-			$check_notify = false;
-		}
-		if(empty($_REQUEST['send_invites'])) {
+        $check_notify = $this->send_invites;
+
+		if($this->send_invites == false) {
 			if(!empty($this->id)) {
 				$old_record = new Call();
 				$old_record->retrieve($this->id);

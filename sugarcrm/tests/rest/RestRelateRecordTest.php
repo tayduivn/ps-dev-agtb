@@ -582,8 +582,9 @@ class RestRelateRecordTest extends RestTestBase {
         $this->assertNotEmpty($restReply['reply']['related_record']['id'], "ID was not set for the related record");
         $this->calls[] = BeanFactory::getBean('Calls', $restReply['reply']['related_record']['id']);
 
-        $this->assertEquals($restReply['reply']['related_record']['parent_id'], $lead->id, "Lead ID was not the parent id of the call.");
-        $this->assertEquals($restReply['reply']['related_record']['parent_type'], 'Leads', "Leads Module was not the parent type of the call.");
+        //shouldn't be set because they did not set them
+        $this->assertEquals($restReply['reply']['related_record']['parent_id'], '', "Lead ID was not the parent id of the call.");
+        $this->assertEquals($restReply['reply']['related_record']['parent_type'], '', "Leads Module was not the parent type of the call.");
     }
 
     public function testCreateWithModuleWithParentType() {
@@ -618,9 +619,11 @@ class RestRelateRecordTest extends RestTestBase {
         $post = array(
             'name' => 'CALL FOR LEAD ' . create_guid(),
             'parent_type' => 'Leads',
+            'parent_id' => $lead->id,
             );
 
         $restReply = $this->_restCall("Leads/{$lead->id}/link/calls", $post, 'POST');
+        
         $this->assertNotEmpty($restReply['reply']['related_record']['id'], "ID was not set for the related record");
         $this->calls[] = BeanFactory::getBean('Calls', $restReply['reply']['related_record']['id']);
 
@@ -660,6 +663,7 @@ class RestRelateRecordTest extends RestTestBase {
         $post = array(
             'name' => 'CALL FOR LEAD ' . create_guid(),
             'parent_id' => $lead->id,
+            'parent_type' => 'Leads',
             );
 
         $restReply = $this->_restCall("Leads/{$lead->id}/link/calls", $post, 'POST');
