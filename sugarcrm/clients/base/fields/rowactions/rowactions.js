@@ -33,9 +33,13 @@
         var template = app.template._getField(this.type, this.tplName, this.module, null, true)[1];
 
         if(template) {
-            this.def.css_class = '';
             this.$el.attr('class', '');
             this.$el.html(template(this));
+        }
+        if(this.view.action === 'list' && this.action === 'edit') {
+            this.$el.hide();
+        } else {
+            this.$el.show();
         }
     }
 })
