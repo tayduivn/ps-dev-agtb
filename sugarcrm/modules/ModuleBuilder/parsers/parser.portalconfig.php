@@ -214,7 +214,7 @@ class ParserModifyPortalConfig extends ModuleBuilderParser
                         } else {
                             $aclAllow = ACL_ALLOW_NONE;
                         }
-                        if ($moduleName == 'KBDocuments' && $actionName == 'edit') {
+                        if ($moduleName == 'KBDocuments' && ($actionName == 'edit' || $actionName == 'create')) {
                             $aclAllow = ACL_ALLOW_NONE;
                         }
                         if ($moduleName == 'Contacts') {
