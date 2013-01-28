@@ -1,4 +1,4 @@
-    <div class="header {{#if this.meta.dependentModules}}disabled{{/if}}{{#unless this.meta.dependentModules}}enabled{{/unless}}" data-module="{{this.meta.module}}">
+    <div class="header {{#if this.meta.dependentModules}}disabled{{else}}enabled{{/if}}" data-module="{{this.meta.module}}">
         <span class="pull-left step-circle">
               <span class="step-circle-left tcenter">{{this.meta.moduleNumber}}</span>
               <span class="step-circle-right tcenter"></span>
