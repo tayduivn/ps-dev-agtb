@@ -116,20 +116,21 @@
             //only if the collection contains more records
             var self = this;
             if(massCollection.entire) {
-                var selectAll = $("<a>").attr("href", "javascript:void(0);").html(app.lang.get('LBL_LISTVIEW_CLEAR_ALL')),
-                    message = $("<div>").css("textAlign", "center").html(app.lang.get('LBL_LISTVIEW_SELECTED_ALL')).append(selectAll);
-                selectAll.on("click", function(evt) {
+                var allSelected = $("<div>").css("textAlign", "center").html(app.lang.get('LBL_LISTVIEW_SELECTED_ALL'));
+                $(allSelected).find('a').on("click", function(evt) {
                     massCollection.reset();
                 });
-                this.view.layout.trigger("list:alert:show", message);
+                this.view.layout.trigger("list:alert:show", allSelected);
             } else if(massCollection.length == this.view.collection.models.length) {
-                var selectAll = $("<a>").attr("href", "javascript:void(0);").html(app.lang.get('LBL_LISTVIEW_OPTION_ENTIRE')),
-                    message = $("<div>").css("textAlign", "center").html(app.lang.get('LBL_LISTVIEW_SELECTED_NUM').replace("{num}", massCollection.length)).append(selectAll).append(app.lang.get('LBL_LISTVIEW_RECORDS'));
-                selectAll.on("click", function(evt) {
+                var selectAll = $("<div>").css("textAlign", "center").html(app.utils.formatString(
+                    app.lang.get('LBL_LISTVIEW_SELECT_ALL_RECORDS'),{
+                        "num": massCollection.length
+                    }));
+                $(selectAll).find('a').on("click", function(evt) {
                     massCollection.entire = true;
                     self.toggleShowSelectAll();
                 });
-                this.view.layout.trigger("list:alert:show", message);
+                this.view.layout.trigger("list:alert:show", selectAll);
             } else {
                 this.view.layout.trigger("list:alert:hide");
             }
