@@ -83,7 +83,7 @@ class ThemeApi extends SugarApi
         // If `preview` is defined, it means that the call was made by the Theme Editor in Studio so we want to return
         // plain text/css
         if (isset($args['preview'])) {
-            $variables = $theme->getThemeVariables(true);
+            $variables = $theme->getThemeVariables();
             $variables = array_merge($variables, $args);
             $variables['baseUrl'] = '"../../styleguide/assets"';
             $css = $theme->compileBootstrapCss($variables, $minify);
@@ -112,7 +112,7 @@ class ThemeApi extends SugarApi
 
         $theme = new SidecarTheme($platform, $themeName);
         $paths = $theme->getPaths();
-        $variables = $theme->getThemeVariables($paths['custom'], true);
+        $variables = $theme->getThemeVariables(true);
 
         return $variables;
     }

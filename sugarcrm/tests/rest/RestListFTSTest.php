@@ -240,6 +240,8 @@ class RestListFTSTest extends RestTestBase {
         
         $this->assertEquals(5,$restReply['reply']['next_offset'],"Next offset was set incorrectly.");
 
+        $this->assertNotEmpty($restReply['reply']['records'][0]['_search']['highlighted'], "No highlighted Property");
+
         // Test Offset
         $restReply2 = $this->_restCall("search/?offset=".$restReply['reply']['next_offset']);
 
@@ -258,10 +260,13 @@ class RestListFTSTest extends RestTestBase {
 
         //BEGIN SUGARCRM flav=pro ONLY
         // my favorites
+        $restReply = $this->_restCall("Accounts/{$this->accounts[0]->id}/favorite", array(), "PUT");
+        $this->assertEquals($restReply['reply']['id'], $this->accounts[0]->id, "Did not return the record");
+        $this->assertEquals((bool)$restReply['reply']['my_favorite'], true, "Did not favorite");
+
         $restReply = $this->_restCall("search?favorites=1&max_num=10");
 
-        foreach($restReply['reply']['records'] AS $record)
-        {
+        foreach($restReply['reply']['records'] AS $record) {
             $this->assertEquals('true', (bool)$record['my_favorite'], "Did not return a favorite");
         }
 

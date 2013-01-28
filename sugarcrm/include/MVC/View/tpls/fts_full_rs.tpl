@@ -44,7 +44,7 @@
                         <span class="details">
                                 {assign var="resultHits" value=$result->getHighlightedHitText()}
                                 {foreach from=$resultHits key=k item=v}
-                                {$k}: {$v}
+                                {sugar_translate label=$v.label module=$v.module}: {$v.text}
                             {/foreach}
                         </span>
                     </li>

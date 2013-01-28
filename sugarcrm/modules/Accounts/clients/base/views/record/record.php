@@ -36,16 +36,24 @@ $viewdefs['Accounts']['base']['view']['record'] = array(
             'name' => 'cancel_button',
             'label' => 'LBL_CANCEL_BUTTON_LABEL',
             'css_class' => 'btn-invisible btn-link',
-            'mode' => 'edit',
+            'showOn' => 'edit',
         ),
         array(
             'type' => 'buttondropdown',
-            'name' => 'edit_dropdown',
-            'default' => array(
-                'name' => 'edit_button',
-                'label' => 'LBL_EDIT_BUTTON_LABEL',
-            ),
-            'dropdown' => array(
+            'name' => 'main_dropdown',
+            'buttons' => array(
+                array(
+                    'name' => 'edit_button',
+                    'label' => 'LBL_EDIT_BUTTON_LABEL',
+                    'primary' => true,
+                    'showOn' => 'view',
+                ),
+                array(
+                    'name' => 'save_button',
+                    'label' => 'LBL_SAVE_BUTTON_LABEL',
+                    'primary' => true,
+                    'showOn' => 'edit',
+                ),
                 array(
                     'name' => 'delete_button',
                     'label' => 'LBL_DELETE_BUTTON_LABEL',
@@ -53,24 +61,9 @@ $viewdefs['Accounts']['base']['view']['record'] = array(
                 array(
                     'name' => 'duplicate_button',
                     'label' => 'LBL_DUPLICATE_BUTTON_LABEL',
+                    'showOn' => 'view'
                 ),
             ),
-            'mode' => 'view',
-        ),
-        array(
-            'type' => 'buttondropdown',
-            'name' => 'save_dropdown',
-            'default' => array(
-                'name' => 'save_button',
-                'label' => 'LBL_SAVE_BUTTON_LABEL',
-            ),
-            'dropdown' => array(
-                array(
-                    'name' => 'delete_button',
-                    'label' => 'LBL_DELETE_BUTTON_LABEL',
-                ),
-            ),
-            'mode' => 'edit',
         ),
         array(
             'name' => 'sidebar_toggle',

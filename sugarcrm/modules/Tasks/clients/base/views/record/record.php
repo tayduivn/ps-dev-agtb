@@ -36,16 +36,24 @@ $viewdefs['Tasks']['base']['view']['record'] = array(
             'name' => 'cancel_button',
             'label' => 'LBL_CANCEL_BUTTON_LABEL',
             'css_class' => 'btn-invisible btn-link',
-            'mode' => 'edit',
+            'showOn' => 'edit',
         ),
         array(
             'type' => 'buttondropdown',
-            'name' => 'edit_dropdown',
-            'default' => array(
-                'name' => 'edit_button',
-                'label' => 'LBL_EDIT_BUTTON_LABEL',
-            ),
-            'dropdown' => array(
+            'name' => 'main_dropdown',
+            'buttons' => array(
+                array(
+                    'name' => 'edit_button',
+                    'label' => 'LBL_EDIT_BUTTON_LABEL',
+                    'primary' => true,
+                    'showOn' => 'view',
+                ),
+                array(
+                    'name' => 'save_button',
+                    'label' => 'LBL_SAVE_BUTTON_LABEL',
+                    'primary' => true,
+                    'showOn' => 'edit',
+                ),
                 array(
                     'name' => 'delete_button',
                     'label' => 'LBL_DELETE_BUTTON_LABEL',
@@ -53,79 +61,80 @@ $viewdefs['Tasks']['base']['view']['record'] = array(
                 array(
                     'name' => 'duplicate_button',
                     'label' => 'LBL_DUPLICATE_BUTTON_LABEL',
+                    'showOn' => 'view',
+                    'events' => array(
+                        'click' => 'function(e){
+                            var attributes = $.extend({}, this.model.attributes);
+                            attributes.status = "Not Started";
+                            app.cache.set("duplicate"+this.module, attributes);
+                            this.view.layout.trigger("drawer:create:fire", {
+                                components: [{
+                                    layout : "create",
+                                    context: {
+                                        create: true
+                                    }
+                                }]
+                            }, this);
+                            e.stopPropagation();
+                        }',
+                    ),                        
                 ),
-            ),
-            'mode' => 'view',
-        ),
-        array(
-            'type' => 'buttondropdown',
-            'name' => 'save_dropdown',
-            'default' => array(
-                'name' => 'save_button',
-                'label' => 'LBL_SAVE_BUTTON_LABEL',
-            ),
-            'dropdown' => array(
                 array(
-                    'name' => 'delete_button',
-                    'label' => 'LBL_DELETE_BUTTON_LABEL',
+                    'name' => 'record-close-new',
+                    'label' => 'LBL_CLOSE_AND_CREATE_BUTTON_TITLE',
+                    'showOn' => 'view',
+                    'events' => array(
+                        'click' => 'function(e){
+                        var self = this;
+                        app.alert.show("close_task", {level: "process", title: app.lang.getAppString("LBL_PROCESSING_REQUEST")});
+                        this.model.set("status", "Completed", {silent:true});
+                        this.model.save({}, {
+                            success: function() {
+                                app.alert.dismiss("close_task");
+                                var attributes = $.extend({}, self.model.attributes);
+                                attributes.status = "Not Started";
+                                app.cache.set("duplicate"+self.module, attributes);
+                                self.view.layout.trigger("drawer:create:fire", {
+                                    components: [{
+                                        layout : "create",
+                                        context: {
+                                            create: true
+                                        }
+                                    }]
+                                }, self);
+                            },
+                            error:function(error) {
+                                app.alert.dismiss("close_task");
+                                app.alert.show("close_task_error", {level: "error", autoClose: true, title: app.lang.getAppString("ERR_AJAX_LOAD")});
+                                app.logger.error("Failed to close a task. " + error);
+                            }
+                        });
+                    }'),
+                ),
+                array(
+                    'name' => 'record-close',
+                    'label' => 'LBL_CLOSE_BUTTON_TITLE',
+                    'showOn' => 'view',
+                    'events' => array(
+                        'click' => 'function(e){
+                        var self = this;
+                        app.alert.show("close_task", {level: "process", title: app.lang.getAppString("LBL_PROCESSING_REQUEST")});
+                        this.model.set("status", "Completed", {silent:true});
+                        this.model.save({}, {
+                            success: function() {
+                                app.alert.dismiss("close_task");
+                                self.render();
+                            },
+                            error:function(error) {
+                                app.alert.dismiss("close_task");
+                                app.alert.show("close_task_error", {level: "error", autoClose: true, title: app.lang.getAppString("ERR_AJAX_LOAD")});
+                                app.logger.error("Failed to close a task. " + error);
+                            }
+                        });
+                    }'),
                 ),
             ),
-            'mode' => 'edit',
         ),
-        array(
-            'name' => 'record-close-new',
-            'type' => 'button',
-            'label' => 'LBL_CLOSE_AND_CREATE_BUTTON_TITLE',
-            'mode' => 'view',
-            'events' => array(
-                'click' => 'function(e){
-                var self = this;                    
-                app.alert.show("close_task", {level: "process", title: app.lang.getAppString("LBL_PROCESSING_REQUEST")});
-                this.model.set("status", "Completed", {silent:true});
-                this.model.save({}, {
-                    success: function() {
-                        app.alert.dismiss("close_task");
-                        app.cache.set("duplicate"+self.module, self.model.attributes);
-                        self.view.layout.trigger("drawer:create:fire", {
-                            components: [{
-                                layout : "create",
-                                context: {
-                                    create: true
-                                }
-                            }]
-                        }, self);                    
-                    },
-                    error:function(error) {
-                        app.alert.dismiss("close_task");
-                        app.alert.show("close_task_error", {level: "error", autoClose: true, title: app.lang.getAppString("ERR_AJAX_LOAD")});
-                        app.logger.error("Failed to close a task. " + error);
-                    }
-                });
-            }'),
-        ),            
-        array(
-            'name' => 'record-close',
-            'type' => 'button',
-            'label' => 'LBL_CLOSE_BUTTON_TITLE',
-            'mode' => 'view',
-            'events' => array(
-                'click' => 'function(e){
-                var self = this; 
-                app.alert.show("close_task", {level: "process", title: app.lang.getAppString("LBL_PROCESSING_REQUEST")});
-                this.model.set("status", "Completed", {silent:true});
-                this.model.save({}, {
-                    success: function() {
-                        app.alert.dismiss("close_task");            
-                        self.render();
-                    },
-                    error:function(error) {
-                        app.alert.dismiss("close_task");                     
-                        app.alert.show("close_task_error", {level: "error", autoClose: true, title: app.lang.getAppString("ERR_AJAX_LOAD")});                    
-                        app.logger.error("Failed to close a task. " + error);                 
-                    }                    
-                });                    
-            }'),                
-        ),                       
         array(
             'name' => 'sidebar_toggle',
             'type' => 'sidebartoggle',

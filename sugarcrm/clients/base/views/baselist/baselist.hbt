@@ -27,7 +27,7 @@
  ********************************************************************************/
 }}
 {{#each meta.panels}}
-<table class="table table-striped">
+<table class="table table-striped dataTable">
     <thead>
     <tr role="row">
         {{#each fields}}
@@ -43,9 +43,11 @@
     </thead>
     <tbody role="alert" aria-live="polite" aria-relevant="all">
     {{#each ../collection.models}}
-    <tr name="{{module}}_{{attributes.id}}">
+    <tr name="{{module}}_{{attributes.id}}" class="single">
         {{#each ../fields}}
-        <td>{{field ../../../this ../this}}</td>
+        <td>
+            <div class="controls span12">{{field ../../../this ../this ../../../this.viewName}}</div>
+        </td>
         {{/each}}
     </tr>
     {{/each}}

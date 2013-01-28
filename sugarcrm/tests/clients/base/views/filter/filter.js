@@ -1,12 +1,15 @@
 describe("Filter View", function() {
 
-    var view, app;
+    var layout, view, app;
 
     beforeEach(function() {
-        view = SugarTest.createView("base","Cases", "filter");
+        layout = {trigger: function() {}, off: function() {}, on: function() {}};
+
+        view = SugarTest.createView("base","Cases", "filter", null, null, false, layout);
         view.model = new Backbone.Model();
         view.collection = new Backbone.Collection(view.model);
         view.collection.fields = _.keys(fixtures.metadata.modules.Cases.fields);
+
         app = SUGAR.App;
     });
 
@@ -14,18 +17,16 @@ describe("Filter View", function() {
     afterEach(function() {
         app.cache.cutAll();
         app.view.reset();
-        delete Handlebars.templates;
         view = null;
+        layout = null;
     });
 
 
-    describe("filter", function() {
-        it("should return a set of search fields for a given module", function() {
-            var stub = sinon.stub(app.metadata, "getModule", function(){
-                return fixtures.metadata.modules.Cases
-            });
-            expect(view.getSearchFields()).toEqual([fixtures.metadata.modules.Cases.fields.name.vname]);
-            stub.restore();
+    describe("openPanel", function() {
+        it("should have triggered filter:create:new", function() {
+            var triggerSpy = sinon.spy(view.layout, "trigger");
+            view.openPanel();
+            expect(triggerSpy).toHaveBeenCalledWith("filter:create:new");
         });
     });
 

@@ -5,11 +5,11 @@
         app.view.View.prototype.initialize.call(this, options);
     },
 
-    render: function() {
+    _render: function() {
         var self = this,
             node, max, color, xy, svg, path, width, height;
 
-        app.view.View.prototype.render.call(this);
+        app.view.View.prototype._render.call(this);
 
         if (!_.isEmpty(this.results)) {
             node = $('div svg');

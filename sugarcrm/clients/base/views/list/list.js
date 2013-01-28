@@ -27,13 +27,16 @@
 ({
     extendsFrom: 'BaselistView',
 
-    addMultiSelectionAction: function(meta) {
-        meta = app.view.views.BaselistView.prototype.addMultiSelectionAction.call(this, meta);
+    populatePanelMetadata: function(panel, options) {
+        panel = app.view.views.BaselistView.prototype.populatePanelMetadata.call(this, panel, options);
+        panel = this.addFavorite(panel, options);
+        return panel;
+    },
+    addFavorite: function(panel, options) {
+        var meta = options.meta;
+
         if(meta.favorite) {
-            _.each(meta.panels, function(panel){
-                panel.fields[0].fields.push({type: 'favorite'});
-            });
+            panel.fields[0].fields.push({type: 'favorite'});
         }
-        return meta;
     }
 })

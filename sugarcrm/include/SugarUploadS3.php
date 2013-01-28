@@ -36,6 +36,8 @@ class SugarUploadS3 extends UploadStream
     protected $bucket;
     protected $metadata;
 
+    const S3_STREAM_NAME='uploads3';
+
     public function __construct()
     {
         parent::__construct();
@@ -62,7 +64,7 @@ class SugarUploadS3 extends UploadStream
         // TODO: add location support for buckets
         $this->metadata = array(Zend_Service_Amazon_S3::S3_ACL_HEADER =>Zend_Service_Amazon_S3::S3_ACL_PRIVATE);
         $this->s3 = new Zend_Service_Amazon_S3($GLOBALS['sugar_config']['aws']['aws_key'], $GLOBALS['sugar_config']['aws']['aws_secret']);
-        $this->s3->registerAsClient(self::STREAM_NAME);
+        $this->s3->registerAsClient(self::S3_STREAM_NAME);
         $this->bucket = $GLOBALS['sugar_config']['aws']['upload_bucket'];
     }
 
@@ -71,41 +73,14 @@ class SugarUploadS3 extends UploadStream
      * @param string $path
      * @return string
      */
-    public function urlToObject($path, $prefix = true)
+    public function urlToObject($path, $prefix = false)
     {
-        $url = parse_url($path);
-        if(!empty($url['path'])) {
-            $last = strrpos($url['path'], '/');
-            if($last) {
-                // add path prefix to host with
-                $url['host'] .= str_replace('/', '-', substr($url['path'], 0, $last));
-                // leave path as all after last /
-                $url['path'] = substr($url['path'], $last+1);
-            } else {
-                $url['path'] = str_replace("/", "", $url['path']);
-            }
-            $bucket = $this->bucket."-".$url['host'];
-            $object = $url['path'];
+        $object = substr($path, strlen(self::STREAM_NAME)+3); // upload://
+        if($prefix) {
+            return self::S3_STREAM_NAME."://".$this->bucket."/".$object;
         } else {
-            $bucket = $this->bucket;
-            $object = $url['host'];
+            return $this->bucket."/".$object;
         }
-        return ($prefix?self::STREAM_NAME."://":"").$bucket."/".$object;
-    }
-
-    /**
-     * Return bucket name with /'s converted to _'s
-     * @param string $path
-     * @param bool $prefix Should we retain the upload:// prefix?
-     * @return string
-     */
-    protected function urlToBucketName($path, $prefix = true)
-    {
-        // cut off upload://, then replace /s with _s, then add prefix back
-        $bucket = trim(str_replace("/", "-", substr($path, strlen(self::STREAM_NAME)+3)), '-');
-        // remove invalid chars
-        $bucket = preg_replace('/[^a-z0-9\.-]/', 'X', $bucket);
-    	return ($prefix?self::STREAM_NAME."://":"").$this->bucket."-".$bucket;
     }
 
 
@@ -118,7 +93,7 @@ class SugarUploadS3 extends UploadStream
     {
         $s3stream = new Zend_Service_Amazon_S3_Stream();
         if(count($args) > 0) {
-            $args[0] = $this->urlToObject($args[0]);
+            $args[0] = $this->urlToObject($args[0], true);
         }
         return call_user_func_array(array($s3stream, $func), $args);
     }
@@ -130,7 +105,7 @@ class SugarUploadS3 extends UploadStream
      */
     public function registerFile($path)
     {
-        return $this->s3->putFileStream(parent::getFSPath($path), $this->urlToObject($path, false),
+        return $this->s3->putFileStream(parent::getFSPath($path), $this->urlToObject($path),
             $this->metadata);
     }
 
@@ -144,7 +119,7 @@ class SugarUploadS3 extends UploadStream
         $localpath = parent::getFSPath($path);
         if (!file_exists($localpath)) {
             // TODO: can uploads be modified?
-            $s3obj = $this->s3->getObjectStream($this->urlToObject($path, false));
+            $s3obj = $this->s3->getObjectStream($this->urlToObject($path));
             if (!empty($s3obj)) {
                 copy($s3obj->getStreamName(), $localpath);
             }
@@ -162,54 +137,45 @@ class SugarUploadS3 extends UploadStream
         return substr($path, strlen(self::STREAM_NAME)+3) == self::STREAM_NAME."://";
     }
 
-    /**
-     * Create directory within uploads
-     * @param string $path
-     * @return boolean
-     */
-    public function createDir($path)
-    {
-        // TODO: support locations
-        return $this->s3->createBucket($this->urlToBucketName($path, false));
-    }
-
-    /**
-     * Check if uploads directory exists
-     * @param string $path
-     * @return boolean
-     */
-    public function checkDir($path)
-    {
-        return $this->s3->isBucketAvailable($this->urlToBucketName($path, false));
-    }
-
     public function dir_closedir()
     {
-        return $this->s3dir->dir_closedir();
+        $this->s3dir = null;
     }
 
     public function dir_opendir ($path, $options )
     {
         $this->init(); // because of php bug not calling stream ctor
-        $this->s3dir = new Zend_Service_Amazon_S3_Stream();
-        return $this->s3dir->dir_opendir($this->urlToBucketName($path), $options);
+        $this->s3dir = $this->s3->getObjectsAndPrefixesByBucket($this->bucket,
+            array("prefix" => $this->urlToObject($path), "delimiter" => "/")
+        );
+        if(!empty($this->s3dir)) {
+            $this->dir_rewinddir();
+            return true;
+        }
+        return false;
     }
 
     public function dir_readdir()
     {
-        return $this->s3dir->dir_readdir();
+        if(empty($this->s3dir)) return false;
+        // Go first through all prefixes then though all objects
+        $pref = current($this->s3dir['prefixes']);
+        if($pref !== false) {
+            next($this->s3dir['prefixes']);
+            return rtrim($pref, '/');
+        }
+        $obj = current($this->s3dir['objects']);
+        if($obj !== false) {
+        	next($this->s3dir['objects']);
+        }
+        return $obj;
     }
 
     public function dir_rewinddir()
     {
-        return $this->s3dir->dir_rewinddir();
-    }
-
-    public function mkdir($path, $mode, $options)
-    {
-        $this->init(); // because of php bug not calling stream ctor
-        $this->createDir($path);
-        return parent::mkdir($path, $mode, $options);
+        if(empty($this->s3dir)) return false;
+        reset($this->s3dir['prefixes']);
+        reset($this->s3dir['objects']);
     }
 
     public function rename($path_from, $path_to)
@@ -219,24 +185,16 @@ class SugarUploadS3 extends UploadStream
         if($this->isUploadUrl($path_to)) {
             if($this->isUploadURL($path_from)) {
                 // from S3 to S3 - copy there
-                $this->s3->copyObject($this->urlToObject(path_from, false), $this->urlToObject(path_to, false));
+                $this->s3->copyObject($this->urlToObject(path_from), $this->urlToObject(path_to));
             } else {
                 // from local to S3 - just register the copy, parent did the local part
                 $this->registerFile($path);
             }
         }
         if($this->isUploadURL($path_from)) {
-            $this->s3->removeObject($this->urlToObject($path_from, false));
+            $this->s3->removeObject($this->urlToObject($path_from));
         }
         return true;
-    }
-
-    public function rmdir($path, $options)
-    {
-        parent::rmdir($path, $options);
-        $this->init(); // because of php bug not calling stream ctor
-        $s3stream = new Zend_Service_Amazon_S3_Stream();
-        return $s3stream->rmdir($this->urlToBucketName($path), $options);
     }
 
     public function stream_flush ()

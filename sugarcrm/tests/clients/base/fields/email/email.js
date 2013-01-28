@@ -56,16 +56,9 @@ describe("Email field", function() {
             expect(emails[0].primary_address).toEqual("1");
         });
         it("should add an e-mail address automatically when newEmail input changes", function(){
-            runs(function(){
-                field.$('.newEmail').val("newEmail@test.com");
-                field.$('.newEmail').change();
-            });
-            waitsFor(function(){
-                if(model.get('email').length == 3){
-                    return model.get('email')[2].email_address == "newEmail@test.com";
-                }
-                return false;
-            }, "new e-mail address", 150);
+            field.$('.newEmail').val("newEmail@test.com");
+            field.$('.newEmail').change();
+            expect(model.get('email')[2].email_address).toEqual("newEmail@test.com");
         });
         it("should update email addresses on the model", function() {
             field.$el.find('input').val("testChanged@test.com");
@@ -92,25 +85,119 @@ describe("Email field", function() {
             var emails = model.get('email');
             expect(emails.length).toEqual(1);
         });
-        it("should add an e-mail hyperlink only to addresses that are not opt-out or invalid", function(){
-            field = SugarTest.createField("base","email", "email", "details");
-            var values = [
-                {email_address: "foo1@foo.com"},
-                {email_address: "foo2@foo.com", opt_out:"1", invalid_email:"0"},
-                {email_address: "foo3@foo.com", opt_out:"0", invalid_email:"1"},
-                {email_address: "foo4@foo.com", opt_out:"0", invalid_email:"0"},
-                {email_address: "foo5@foo.com", opt_out:"1", invalid_email:"1"}
-            ];
-            model = field.model;
-            model.set({email:values});
-            field.render();
-            // The hasAnchor property should not be part of values after render.
-            expect(values[0].hasAnchor).toBeUndefined();
-            expect(field.$('div[title="foo1@foo.com"] a').length).toEqual(1);
-            expect(field.$('div[title="foo2@foo.com"] a').length).toEqual(0);
-            expect(field.$('div[title="foo3@foo.com"] a').length).toEqual(0);
-            expect(field.$('div[title="foo4@foo.com"] a').length).toEqual(1);
-            expect(field.$('div[title="foo5@foo.com"] a').length).toEqual(0);
+
+        it("should make an email address a link when metadata allows for links and the address is not opted out or invalid", function() {
+            var emails = [
+                    {
+                        email_address: "foo@bar.com"
+                    },
+                    {
+                        email_address: "biz@baz.net",
+                        opt_out:       "0",
+                        invalid_email: "0"
+                    }
+                ],
+                actual;
+
+            actual = field.format(emails);
+            expect(actual[0].hasAnchor).toBeTruthy();
+            expect(actual[1].hasAnchor).toBeTruthy();
+        });
+
+        it("should not make an email address a link when metadata doesn't allow for links", function() {
+            var emails = [
+                    {
+                        email_address: "foo@bar.com"
+                    },
+                    {
+                        email_address: "biz@baz.net",
+                        opt_out:       "0",
+                        invalid_email: "0"
+                    }
+                ],
+                actual;
+
+            field.def.link = false;
+            actual = field.format(emails);
+            expect(actual[0].hasAnchor).toBeFalsy();
+            expect(actual[1].hasAnchor).toBeFalsy();
+        });
+
+        it("should not make an email address a link when the address is opted out", function() {
+            var emails = [{
+                    email_address: "foo@bar.com",
+                    opt_out:       "1",
+                    invalid_email: "0"
+                }],
+                actual;
+
+            actual = field.format(emails);
+            expect(actual[0].hasAnchor).toBeFalsy();
+        });
+
+        it("should not make an email address a link when the address is invalid", function() {
+            var emails = [{
+                    email_address: "foo@bar.com",
+                    opt_out:       "0",
+                    invalid_email: "1"
+                }],
+                actual;
+
+            actual = field.format(emails);
+            expect(actual[0].hasAnchor).toBeFalsy();
+        });
+
+        it("should not make an email address a link when the address is opted out and invalid", function() {
+            var emails = [{
+                    email_address: "foo@bar.com",
+                    opt_out:       "1",
+                    invalid_email: "1"
+                }],
+                actual;
+
+            actual = field.format(emails);
+            expect(actual[0].hasAnchor).toBeFalsy();
+        });
+
+        it("should convert a string representing an email address into an array containing one object", function() {
+            var expected = {
+                    email_address:   "foo@bar.com",
+                    primary_address: "1",
+                    hasAnchor:       false,
+                    _wasNotArray:    true
+                },
+                actual;
+
+            actual = field.format(expected.email_address);
+            expect(actual.length).toBe(1);
+            expect(actual[0]).toEqual(expected);
+        });
+
+        it("should remove the hasAnchor property from the email address", function() {
+            var emails = [{
+                    email_address: "foo@bar.com",
+                    opt_out:       "0",
+                    invalid_email: "0",
+                    hasAnchor:     true
+                }],
+                actual;
+
+            actual = field.unformat(emails);
+            expect(actual[0].hasAnchor).toBeUndefined();
+        });
+
+        it("should reset the email address to a string when _wasNotArray is true", function() {
+            var expected = "foo@bar.com",
+                emails   = [{
+                    email_address:   expected,
+                    primary_address: "1",
+                    hasAnchor:       false,
+                    _wasNotArray:    true
+                }],
+                actual;
+
+            actual = field.unformat(emails);
+            expect(actual).toBe(expected);
         });
     });
 });

@@ -10,9 +10,10 @@
             } catch (e) {
                 app.logger.error("Failed to eval view controller for " + name + ": " + e + ":\n" + data);
             }
-            app.view.declareComponent(type, name, module, data, null, true);
+            app.view.declareComponent(type, name, module, data, true);
             test.testMetadata.addController(name, type, data, module);
         });
+
     };
 
     test.loadHandlebarsTemplate = function(name, type, client, template, module) {
@@ -46,7 +47,7 @@
         });
     };
 
-    test.createView = function(client, module, viewName, meta, context, loadFromModule) {
+    test.createView = function(client, module, viewName, meta, context, loadFromModule, layout) {
         if (loadFromModule) {
             test.loadComponent(client, "view", viewName, module);
         } else {
@@ -64,7 +65,8 @@
             name : viewName,
             context : context,
             module : module,
-            meta : meta
+            meta : meta,
+            layout: layout
         });
     };
 

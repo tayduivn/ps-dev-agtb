@@ -42,16 +42,24 @@ $viewdefs['Opportunities']['base']['view']['record'] = array(
             'name' => 'cancel_button',
             'label' => 'LBL_CANCEL_BUTTON_LABEL',
             'css_class' => 'btn-invisible btn-link',
-            'mode' => 'edit',
+            'showOn' => 'edit',
         ),
         array(
             'type' => 'buttondropdown',
-            'name' => 'edit_dropdown',
-            'default' => array(
-                'name' => 'edit_button',
-                'label' => 'LBL_EDIT_BUTTON_LABEL',
-            ),
-            'dropdown' => array(
+            'name' => 'main_dropdown',
+            'buttons' => array(
+                array(
+                    'name' => 'edit_button',
+                    'label' => 'LBL_EDIT_BUTTON_LABEL',
+                    'primary' => true,
+                    'showOn' => 'view',
+                ),
+                array(
+                    'name' => 'save_button',
+                    'label' => 'LBL_SAVE_BUTTON_LABEL',
+                    'primary' => true,
+                    'showOn' => 'edit',
+                ),
                 array(
                     'name' => 'delete_button',
                     'label' => 'LBL_DELETE_BUTTON_LABEL',
@@ -59,24 +67,9 @@ $viewdefs['Opportunities']['base']['view']['record'] = array(
                 array(
                     'name' => 'duplicate_button',
                     'label' => 'LBL_DUPLICATE_BUTTON_LABEL',
+                    'showOn' => 'view'
                 ),
             ),
-            'mode' => 'view',
-        ),
-        array(
-            'type' => 'buttondropdown',
-            'name' => 'save_dropdown',
-            'default' => array(
-                'name' => 'save_button',
-                'label' => 'LBL_SAVE_BUTTON_LABEL',
-            ),
-            'dropdown' => array(
-                array(
-                    'name' => 'delete_button',
-                    'label' => 'LBL_DELETE_BUTTON_LABEL',
-                ),
-            ),
-            'mode' => 'edit',
         ),
         array(
             'name' => 'sidebar_toggle',
@@ -110,10 +103,16 @@ $viewdefs['Opportunities']['base']['view']['record'] = array(
                 'account_name',
                 'date_closed',
                 array(
-                    'name' => 'fieldset_amount',
-                    'type' => 'fieldset',
+                    'name' => 'amount',
+                    'type' => 'currency',
                     'label' => 'LBL_LIST_AMOUNT',
-                    'fields' => array('amount'),
+                    'related_fields' => array(
+                        'amount',
+                        'currency_id',
+                        'base_rate',
+                    ),
+                    'currency_field' => 'currency_id',
+                    'base_rate_field' => 'base_rate',
                 ),
                 array('name'=>'htmlfield', 'type'=>'html', 'default_value'=>'&nbsp;'),
             )
@@ -125,11 +124,14 @@ $viewdefs['Opportunities']['base']['view']['record'] = array(
             'placeholders' => true,
             'columns' => 2,
             'fields' => array(
-                'campaign_id',
+                'campaign_name',
                 'lead_source',
                 'opportunity_type',
                 'assigned_user_name',
-                'team_id',
+                array(
+                    "type" => "teamset",
+                    "name" => "team_name"
+                ),
                 'next_step',
                 'description',
             )

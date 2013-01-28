@@ -79,7 +79,8 @@ class RestFilterTest extends RestTestBase
         //END SUGARCRM flav=pro ONLY
 
         $this->_cleanUpRecords();
-    }
+        SugarTestFilterUtilities::removeAllCreatedFilters();
+   }
 
     public function testSimpleFilter()
     {
@@ -234,5 +235,59 @@ class RestFilterTest extends RestTestBase
         $this->assertEquals(1,count($reply['reply']['records']),'OwnerRelated: Returned too many results');
         
     }
+
+    public function testUserFilterByName()
+    {
+        global $current_user;
+
+        $filter = SugarTestFilterUtilities::createUserFilter($current_user->id, 'test_user_filter', json_encode(array('name'=>'TEST 1 Account')));
+        $this->assertEquals($filter->name, 'test_user_filter');
+        $this->assertEquals($filter->filter_definition, '{"name":"TEST 1 Account"}');
+
+        $reply = $this->_restCall('Filters/'. $filter->id);
+        $this->assertEquals('test_user_filter',$reply['reply']['name']);
+        $this->assertEquals(json_decode('{"name":"TEST 1 Account"}',true),$reply['reply']['filter_definition']);
+
+        $reply = $this->_restCall('Filters', json_encode(array('name'=>'test_user_filter2','filter_definition'=>'TEST 2 Account')), 'POST');
+        $this->assertEquals('test_user_filter2',$reply['reply']['name']);
+        $this->assertEquals('TEST 2 Account',$reply['reply']['filter_definition']);
+
+        $id = $reply['reply']['id'];
+
+        $reply = $this->_restCall('Filters/' . $id, json_encode(array('name'=>'test_user_filter3','filter_definition'=>'TEST 3 Account')), 'PUT');
+        $this->assertEquals('test_user_filter3',$reply['reply']['name']);
+        $this->assertEquals('TEST 3 Account',$reply['reply']['filter_definition']);
+
+        $reply = $this->_restCall('Filters/' . $id, array(), 'DELETE');
+        $this->assertEquals($id, $reply['reply']['id']);
+
+    }
+
+    public function testsPreviouslyUsedFilters()
+    {
+        global $current_user;
+
+        $filter = SugarTestFilterUtilities::createUserFilter($current_user->id, 'test_user_filter', json_encode(array('name'=>'TEST 1 Account')));
+        $this->assertEquals($filter->name, 'test_user_filter');
+        $this->assertEquals($filter->filter_definition, '{"name":"TEST 1 Account"}');
+
+        $reply = $this->_restCall('Filters/Accounts/used/', json_encode(array('filters' => array($filter->id,))), 'PUT');
+        $this->assertEquals($filter->id,$reply['reply'][0]['id'], 'Test Put');
+
+        $reply = $this->_restCall('Filters/Accounts/used/');
+        $this->assertEquals($filter->id,$reply['reply'][0]['id'], 'Test Get');
+
+        $reply = $this->_restCall('Filters/Accounts/used/'. $filter->id, array(), 'DELETE');
+        
+        if(!empty($reply['reply'])) {
+            foreach($reply['reply'] as $record) {
+                $this->assertNotEquals($filter->id, $record['id'], 'Test Delete');
+            }
+        } else {
+            $this->assertEmpty($reply['reply'], 'Test Delete');
+        }
+
+    }
+
 
 }

@@ -151,10 +151,10 @@ describe("date field", function() {
 
             stub_appListStrings = sinon.stub(app.metadata, 'getStrings', function() {
                 return {
-                    dom_cal_day_long: ["", "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
-                    dom_cal_day_short: ["", "Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"],
-                    dom_cal_month_long: ["", "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"],
-                    dom_cal_month_short: ["", "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
+                    dom_cal_day_long: {0: "", 1: "Sunday", 2: "Monday", 3: "Tuesday", 4: "Wednesday", 5: "Thursday", 6: "Friday", 7: "Saturday"},
+                    dom_cal_day_short: {0: "", 1: "Sun", 2: "Mon", 3: "Tue", 4: "Wed", 5: "Thu", 6: "Fri", 7: "Sat"},
+                    dom_cal_month_long: {0: "", 1: "January", 2: "February", 3: "March", 4: "April", 5: "May", 6: "June", 7: "July", 8: "August", 9: "September", 10: "October", 11: "November", 12: "December"},
+                    dom_cal_month_short: {0: "", 1: "Jan", 2: "Feb", 3: "Mar", 4: "Apr", 5: "May", 6: "Jun", 7: "Jul", 8: "Aug", 9: "Sep", 10: "Oct", 11: "Nov", 12: "Dec"}
                 };
             });
             expected = {
@@ -224,11 +224,12 @@ describe("date field", function() {
         });
 
         it('should update model when datepicker selected for datetimecombo', function() {
-            var stub, stubDatepickerInputValue, conditionallyCalledStub, expected;
+            var stub, stubDatepickerInputValue, stubVerifyDateString, conditionallyCalledStub, expected;
 
             field.type ='datetimecombo';
             stub = sinon.stub(field, '_buildUnformatted');
             stubDatepickerInputValue = sinon.stub(field, '_getDatepickerValue', function() { return '11-11-1999'; });
+            stubVerifyDateString = sinon.stub(field, '_verifyDateString', function() { return true; });
             field._getHoursMinutes = function() {}; // since defined in the child classes ;)
             field._setTimepickerValue = function() {};
 
@@ -247,12 +248,13 @@ describe("date field", function() {
         });
 
         it('should update model when datepicker selected for type date', function() {
-            var stub, stubDatepickerInputValue, conditionallyCalledStub, expected;
+            var stub, stubDatepickerInputValue, stubVerifyDateString, conditionallyCalledStub, expected;
 
             field.type ='date';
             stub = sinon.stub(field, '_buildUnformatted');
             stubDatepickerInputValue = sinon.stub(field, '_getDatepickerValue', function() { return '11-11-1999'; });
-            
+            stubVerifyDateString = sinon.stub(field, '_verifyDateString', function() { return true; });
+
             // Test date path - we update just before hiding datepicker
             field.hideDatepicker({});
             expected = {
@@ -264,12 +266,14 @@ describe("date field", function() {
         });
 
         it('should update model when datepicker dismissed but leaves bogus date value so error handling kicks in', function() {
-            var stub, stubBadDatepickerInputValue, conditionallyCalledStub, expected;
+            var stub, stubBadDatepickerInputValue, stubVerifyDateString, conditionallyCalledStub, expected;
 
             field.type ='datetimecombo';
             stub = sinon.stub(field, '_buildUnformatted');
             // purposely bad date value..we now leave these in so sidecar error handling uniformly can handle upstream
             stubBadDatepickerInputValue = sinon.stub(field, '_getDatepickerValue', function() { return '13-32-123456789'; });
+            stubVerifyDateString = sinon.stub(field, '_verifyDateString', function() { return false; });
+
             field._getHoursMinutes = function() {}; // since defined in the child classes ;)
             field._setTimepickerValue = function() {};
             expected = {

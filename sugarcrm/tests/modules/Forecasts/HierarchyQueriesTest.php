@@ -39,12 +39,13 @@ class HierarchyQueriesTest extends Sugar_PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        global $beanList, $beanFiles, $current_user;
-        require('include/modules.php');
+        SugarTestHelper::setUp('beanList');
+        SugarTestHelper::setUp('beanFiles');
 
         $db = DBManagerFactory::getInstance();
         $db->preInstall();
 
+        global $current_user;
         $current_user = SugarTestUserUtilities::createAnonymousUser();
         $current_user->user_name = 'employee0';
         $current_user->save();

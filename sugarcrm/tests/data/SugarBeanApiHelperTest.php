@@ -90,6 +90,22 @@ class SugarBeanApiHelperTest extends Sugar_PHPUnit_Framework_TestCase {
             array('testDecimal', 0, 0.0, "Decimal type conversion of 0 failed"),
         );
     }
+
+    public function testJsonFieldSave() {
+        $userPrefs = BeanFactory::newBean('UserPreferences');
+        $serviceBaseMock = new ServiceMockup();
+        $api = new SugarBeanApiHelper($serviceBaseMock);
+
+        $submittedData = array(
+            'contents' => 'abcd1234'
+        );
+
+        $api->populateFromApi($userPrefs, $submittedData);
+
+        $this->assertEquals($userPrefs->contents, json_encode($submittedData['contents']));
+
+    }
+
 }
 
 class ServiceMockup extends ServiceBase

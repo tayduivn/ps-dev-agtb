@@ -100,26 +100,32 @@ describe("Forecasts Commit Buttons Component", function(){
 
         // todo-sfa: removed this test when we're using getACLs
         it("variable should be true for an admin", function() {
-            view.context.forecasts.set({
-                currentUser : {
-                    admin : "yes"
+            sinon.stub(app.user, 'getAcls', function(){
+                return {
+                    Forecasts: {
+                        admin: "yes"
+                    }
                 }
-            })
+            });
             var options = {};
             view.initialize(options);
             expect(view.showConfigButton).toBeTruthy();
+            app.user.getAcls.restore();
         });
 
         // todo-sfa: removed this test when we're using getACLs
         it("variable should be false for a non-admin", function(){
-            view.context.forecasts.set({
-                currentUser : {
-                    admin : "no"
+            sinon.stub(app.user, 'getAcls', function(){
+                return {
+                    Forecasts: {
+                        admin: "no"
+                    }
                 }
-            })
+            });
             var options = {};
             view.initialize(options);
             expect(view.showConfigButton).toBeFalsy();
+            app.user.getAcls.restore();
         });
     });
     
@@ -170,6 +176,11 @@ describe("Forecasts Commit Buttons Component", function(){
                     on: function(event, fcn){}
                 }
     		};
+
+            // we need the view.layout to be defined since we listen for an event from there now
+            view.layout = {
+                on : function(evt, fct) {}
+            };
     		    		   		
     		sinon.spy(view.context.forecasts, "on");
     		view.bindDataChange();

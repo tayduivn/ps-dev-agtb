@@ -143,14 +143,6 @@ class ForecastWorksheet extends SugarBean {
             "where {$_object->table_name}.deleted = 0 and {$_object->table_name}.user_id = '{$fromUserId}'";
         $db->query($_query, true);
 
-        // delete Expected Oportunities
-        $_object = new ForecastSchedule();
-        $_query = "update {$_object->table_name} set ".
-            "deleted = 1, ".
-            "date_modified = '".TimeDate::getInstance()->nowDb()."' ".
-            "where {$_object->table_name}.deleted = 0 and {$_object->table_name}.user_id = '{$fromUserId}'";
-        $db->query($_query, true);
-
         // delete Quotas
         $_object = new Quota();
         $_query = "update {$_object->table_name} set ".
