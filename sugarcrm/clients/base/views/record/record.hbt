@@ -57,7 +57,6 @@
                     {{#each grid}}
                         <div class="row-fluid {{../name}} {{#if ../hide}}hide{{/if}}">
                             {{#each this}}
-                                <span>
                                     {{#unless ../../this.labelsOnTop}}
                                         {{#if ../../../this.labels}}
                                             <label class="span{{../this.labelSpan}} tright record-label" data-name="{{../../this.name}}">{{str ../this.label ../../../../../../this.model.module}}</label>
@@ -77,12 +76,11 @@
                                         {{#unless ../../../../../createMode}}
                                             {{#unless noedit}}
                                                 <span class="record-edit-link-wrapper" data-name="{{../name}}">
-                                                    <a class="record-edit-link icon-pencil" data-type="{{../type}}" data-name="{{../name}}"></a>
+                                                    <a class="record-edit-link btn btn-invisible" data-type="{{../type}}" data-name="{{../name}}"><i class="icon-pencil"></i></a>
                                                 </span>
                                             {{/unless}}
                                         {{/unless}}
                                     </div>
-                                </span>
                             {{/each}}
                         </div>
                     {{/each}}

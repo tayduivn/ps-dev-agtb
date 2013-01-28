@@ -27,8 +27,23 @@
 ({
     extendsFrom: 'BaselistView',
 
+    initialize: function(options) {
+        //turn off sorting & links for dupe check lists
+        app.view.views.BaselistView.prototype.initialize.call(this, options);
+        _.each(this.meta.panels, function(panel) {
+            _.each(panel.fields, function(field) {
+                field.sortable = false;
+            });
+        });
+        this.on("render", this._removeLinks, this);
+    },
+
     _renderHtml: function() {
         app.view.views.BaselistView.prototype._renderHtml.call(this);
         this.$('table.table-striped').addClass('duplicates highlight');
+    },
+
+    _removeLinks: function() {
+        this.$('a:not(.rowaction)').contents().unwrap();
     }
 })

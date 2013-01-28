@@ -27,6 +27,5 @@
  ********************************************************************************/
 }}
 <div class="ellipsis_inline" data-placement="bottom" data-title="{{#unless value}}{{#if def.placeholder}}{{str def.placeholder this.model.module}}{{/if}}{{/unless}}{{value}}" >
-    {{#unless value}}{{#if def.placeholder}}{{str def.placeholder this.model.module}}{{/if}}{{/unless}}
     {{value}}
 </div>

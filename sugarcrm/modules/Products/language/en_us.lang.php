@@ -30,15 +30,15 @@ if (!defined('sugarEntry') || !sugarEntry) {
  ********************************************************************************/
 
 $mod_strings = array(
-    'LBL_MODULE_NAME' => 'Products',
-    'LBL_MODULE_NAME_SINGULAR' => 'Product',
+    'LBL_MODULE_NAME' => 'Revenue Line Items',
+    'LBL_MODULE_NAME_SINGULAR' => 'Revenue Line Item',
     'LBL_MODULE_TITLE' => 'Products: Home',
     'LBL_SEARCH_FORM_TITLE' => 'Product Search',
     'LBL_LIST_FORM_TITLE' => 'Product List',
     'LBL_NEW_FORM_TITLE' => 'Create Product',
     'LBL_PRODUCT' => 'Product:',
     'LBL_RELATED_PRODUCTS' => 'Related Products',
-    'LBL_LIST_NAME' => 'Product',
+    'LBL_LIST_NAME' => 'Revenue Line Item',
     'LBL_LIST_MANUFACTURER' => 'Manufacturer',
     'LBL_LIST_LBL_MFT_PART_NUM' => 'Mft Num',
     'LBL_LIST_QUANTITY' => 'Quantity',
@@ -96,7 +96,7 @@ $mod_strings = array(
     'LBL_BOOK_VALUE' => 'Book Value:',
     'LBL_BOOK_VALUE_USDOLLAR' => 'Book Value (US Dollar):',
     'LBL_BOOK_VALUE_DATE' => 'Book Value Date:',
-    'LBL_DEFAULT_SUBPANEL_TITLE' => 'Products',
+    'LBL_DEFAULT_SUBPANEL_TITLE' => 'Revenue Line Items',
     'LBL_RELATED_PRODUCTS_TITLE' => 'Related Products',
     'LBL_WEBSITE' => 'Website',
     'LBL_COST_USDOLLAR' => 'Cost (US Dollar)',
@@ -135,7 +135,7 @@ $mod_strings = array(
     'LBL_EXT_PRICE' => 'Ext. Price',
     'LBL_CURRENCY_SYMBOL_NAME' => 'Currency Symbol Name',
     //BEGIN SUGARCRM flav=pro ONLY
-    'LBL_PRODUCTS_SUBPANEL_TITLE' => 'Products',
+    'LBL_PRODUCTS_SUBPANEL_TITLE' => 'Revenue Line Items',
     //END SUGARCRM flav=pro ONLY
     'LNK_IMPORT_PRODUCTS' => 'Import Products',
     'LBL_EDITLAYOUT' => 'Edit Layout' /*for 508 compliance fix*/,
