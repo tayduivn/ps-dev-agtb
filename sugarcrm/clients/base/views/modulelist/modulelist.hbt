@@ -9,10 +9,10 @@
                     <li><a tabindex="-1" href="{{route}}">{{#if icon}}<i class="{{icon}}"></i>{{/if}}{{str label ../name}}</a></li>
                 {{/each}}
                 <li></li>
-                <li class="recentAnchor"><a tabindex="-1" href="#">Recently Viewed</a></li>
-                <div class="recentContainer">Loading</div>
-                <li class="favoritesAnchor"><a tabindex="-1" href="#">Favorites</a></li>
-                <div class="favoritesContainer">Loading</div>
+                <li class="recentAnchor"><a tabindex="-1" href="#">{{str "LBL_LAST_VIEWED"}}</a></li>
+                <div class="recentContainer">{{str "LBL_LOADING"}}</div>
+                <li class="favoritesAnchor"><a tabindex="-1" href="#">{{str "LBL_FAVORITES"}}</a></li>
+                <div class="favoritesContainer">{{str "LBL_LOADING"}}</div>
             </ul>
         </li>
         {{/notEq}}

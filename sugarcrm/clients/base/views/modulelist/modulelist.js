@@ -30,31 +30,51 @@
             this.layout.on("view:resize", this.resize, this);
         }
     },
+    /**
+     * toggles dropdowns on mouseover
+     * @param event
+     */
     toggleDropdown:function (event) {
         if (!this.$(event.target).parent().parent().hasClass('more-drop-container')) {
             this.$(event.target).dropdown('toggle');
-            var self = this;
             var module = this.$(event.target).parent().data('module');
             var moduleMeta = app.metadata.getModule(module);
             if (moduleMeta && moduleMeta.fields && !_.isArray(moduleMeta.fields)) {
-                var rowCollection = app.data.createBeanCollection(module);
-                rowCollection.fetch({favorites:true, limit:3, success:function (collection) {
-                    self.populateFavorites(module, collection);
-                    self.populateRecent(module);
-                }});
+                this.populateFavorites(module);
+                this.populateRecent(module);
             }
         }
 
 
     },
-    populateFavorites: function(module, records) {
-      this.$('[data-module='+module+'] .favoritesContainer').html(this.favRowTemplate(records));
+    /**
+     * Populates favorites on open menu
+     * @param module
+     */
+    populateFavorites: function(module) {
+        var self = this;
+        var rowCollection = app.data.createBeanCollection(module);
+        rowCollection.fetch({
+            favorites:true,
+            limit:3,
+            success:function (collection) {
+                self.$('[data-module=' + module + '] .favoritesContainer').html(self.favRowTemplate(collection.models));
+            }
+        });
     },
+    /**
+     * Populates recents on open menu
+     * @param module
+     */
     populateRecent:function (module) {
         var self = this;
         var filter = {
             "filter":[
-                {"date_modified":{"$tracker":"-7 DAY"}},
+                {
+                    "date_modified":{
+                        "$tracker":"-7 DAY"
+                    }
+                }
             ],
             "max_num":3
         };
