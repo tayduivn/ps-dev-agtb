@@ -41,7 +41,9 @@ describe("Base.View.Massupdate", function() {
         var actual = view.defaultOption,
             expected = fixtures.metadata.modules.Contacts.fields[_.first(_.keys(fixtures.metadata.modules.Contacts.fields))];
 
-        expect(actual).toBe(expected);
+        _.each(actual, function(value, key){
+            expect(actual[key]).toBe(expected[key]);
+        });
         //available options, exclusive from assigned field values
     });
 

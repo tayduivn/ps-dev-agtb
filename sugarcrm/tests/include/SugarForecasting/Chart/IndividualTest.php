@@ -208,10 +208,13 @@ class SugarForecasting_Chart_IndividualTest extends Sugar_PHPUnit_Framework_Test
         // build out what is expected to be in the pareto lines according to the months
         $expected = 0;
         $months = array_keys($obj->convertTimeperiodToChartValues());
+
         $arrExpected = array_combine($months, array_pad(array(), count($months), 0));
+
         foreach(self::$user['opportunities'] as $opp) {
             if($opp->commit_stage == "include") {
-                $month_value_key = date('m-Y', strtotime($opp->date_closed));
+                //$month_value_key = date('m-Y', strtotime($opp->date_closed));
+                $month_value_key = self::$timeperiod->getChartLabelsKey($opp->date_closed);
                 $arrExpected[$month_value_key] += $opp->$dataset_key;
             }
         }

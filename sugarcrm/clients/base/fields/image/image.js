@@ -58,7 +58,7 @@
     },
     delete: function() {
         var self = this;
-        App.api.call('delete', self.buildUrl({htmlJsonFormat: false}), {}, {
+        app.api.call('delete', self.buildUrl({htmlJsonFormat: false}), {}, {
                 success: function(data) {
                     self.model.set(self.name, null);
                     self._render();

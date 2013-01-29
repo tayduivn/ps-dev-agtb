@@ -78,6 +78,22 @@ class RestFileTest extends RestFileTestBase
     }
 
     /**
+     * @ticket bug59995
+     * @group rest
+     */
+    public function testPostUploadCrazyEncodingErrorStatusResponse()
+    {
+        $post = array('picture' => '');
+        $reply = $this->_restCall('Contacts/' . $this->_contact_id . '/file/picture?format=sugar-html-json', $post);
+        $this->assertEquals($reply['info']['http_code'], 200,'HTTP Code should be 200 (bug59995)');
+
+
+        $post = array('picture' => '');
+        $reply = $this->_restCall('Contacts/' . $this->_contact_id . '/file/picture', $post);
+        $this->assertEquals($reply['info']['http_code'], 413,'HTTP Code is not 413 (bug59995)');
+    }
+
+    /**
      * @group rest
      */
     public function testPutUploadImageToContact()

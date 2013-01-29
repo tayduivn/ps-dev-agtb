@@ -18,16 +18,17 @@
     },
     setMetadata: function(options) {
         options.meta.panels = options.meta.panels || [{fields:[]}];
+        options.meta = JSON.parse(JSON.stringify(options.meta));
         if(!options.meta.panels[0].fields || options.meta.panels[0].fields.length == 0) {
             var moduleMetadata = app.metadata.getModule(options.module),
                 massFields = [];
             _.each(moduleMetadata.fields, function(field){
                 if(field.massupdate) {
-                    //TODO: Add or Replace option for Teamset (team_name_type)
-
+                    field = JSON.parse(JSON.stringify(field));
                     field.label = field.label || field.vname;
+                    if(!field.label) delete field.label;
                     //TODO: Remove hack code for teamset after metadata return correct team type
-                    if(field.name == 'team_name') {
+                    if(field.name === 'team_name') {
                         var team_field = _.clone(field);
                         team_field.type = 'teamset';
                         field = {
@@ -75,6 +76,8 @@
         this.layout.on("list:massupdate:fire", this.show, this);
         this.layout.off("list:massdelete:fire", null, this);
         this.layout.on("list:massdelete:fire", this.confirmDelete, this);
+        this.layout.off("list:massexport:fire", null, this);
+        this.layout.on("list:massexport:fire", this.massExport, this);
 
         if(this.fields.length == 0) {
             this.hide();
@@ -205,6 +208,23 @@
             }
         });
     },
+    massExport: function(evt) {
+        this.hide();
+        var massExport = this.context.get("mass_collection");
+        if (massExport) {
+            app.alert.show('massexport_loading', {level: 'process', title: app.lang.getAppString('LBL_PORTAL_LOADING')});
+            app.api.export({
+                    module: this.module,
+                    uid: massExport.pluck('id')
+                },
+                this.$el,
+                {
+                    complete: function(data) {
+                        app.alert.dismiss('massexport_loading');
+                    }
+                });
+        }
+    },
     save: function() {
         var massUpdate = this.getMassUpdateModel(this.module),
             attributes = this.model.attributes,
@@ -233,6 +253,7 @@
                         success: function(data, response) {
                             massUpdate.reset();
                             if(response.status == 'done') {
+                                app.alert.show('massupdate_success_notice', {level: 'success', title: app.lang.getAppString('LBL_MASS_UPDATE_SUCCESS'), autoClose: true});
                                 self.layout.trigger("list:search:fire");
                             } else if(response.status == 'queued') {
                                 app.alert.show('jobqueue_notice', {level: 'success', title: app.lang.getAppString('LBL_MASS_UPDATE_JOB_QUEUED'), autoClose: true});

@@ -352,25 +352,23 @@
                 'include/javascript/jsclass_async.js'   => 'include/javascript/sugar_grp_jsolait.js',
                 'modules/Meetings/jsclass_scheduler.js'   => 'include/javascript/sugar_grp_jsolait.js',
             ),
-
-           $sugar_grp_sidecar = array(
-               'include/javascript/phpjs/base64_encode.js' => 'include/javascript/sugar_sidecar.min.js',
-               'sidecar/lib/jquery/jquery.placeholder.min.js'         => 'include/javascript/sugar_sidecar.min.js',
-               'styleguide/assets/js/bootstrap-button.js'  => 'include/javascript/sugar_sidecar.min.js',
-               'styleguide/assets/js/bootstrap-tooltip.js' => 'include/javascript/sugar_sidecar.min.js',
-               'styleguide/assets/js/bootstrap-dropdown.js'=> 'include/javascript/sugar_sidecar.min.js',
-               'styleguide/assets/js/bootstrap-popover.js' => 'include/javascript/sugar_sidecar.min.js',
-               'styleguide/assets/js/bootstrap-modal.js'   => 'include/javascript/sugar_sidecar.min.js',
-               'styleguide/assets/js/bootstrap-alert.js'   => 'include/javascript/sugar_sidecar.min.js',
-               'styleguide/assets/js/bootstrap-tab.js'   => 'include/javascript/sugar_sidecar.min.js',
-               'include/javascript/nvd3/lib/d3.v2.min.js' => 'include/javascript/sugar_sidecar.min.js',
-               "include/javascript/select2-release-3.2/select2.min.js" => "include/javascript/sugar_sidecar.min.js",
-               // To add more models to NV D3, run the makefile in styleguide.
-               'include/javascript/nvd3/nv.d3.min.js' => 'include/javascript/sugar_sidecar.min.js',
-               'portal2/error.js'               => 'include/javascript/sugar_sidecar.min.js',
-               'portal2/views/alert-view.js'    => 'include/javascript/sugar_sidecar.min.js',
-               'include/javascript/jquery/jquery.popoverext.js'           => 'include/javascript/sugar_sidecar.min.js',
-               'include/javascript/jquery/jquery.effects.custombounce.js'           => 'include/javascript/sugar_sidecar.min.js',
+           $sugar_grp_sidecar = array_merge(
+                array('include/javascript/phpjs/base64_encode.js' => 'include/javascript/sugar_sidecar.min.js',
+               'sidecar/lib/jquery/jquery.placeholder.min.js' => 'include/javascript/sugar_sidecar.min.js'),
+                getSubgroupForTarget('bootstrap', 'include/javascript/sugar_sidecar.min.js'),
+                array(
+                   'styleguide/assets/js/bootstrap-tab.js'   => 'include/javascript/sugar_sidecar.min.js',
+                   'sidecar/lib/jquery-timepicker/jquery.timepicker.js' => 'include/javascript/sugar_sidecar.min.js',
+                   'include/javascript/nvd3/lib/d3.v2.min.js' => 'include/javascript/sugar_sidecar.min.js',
+                    "include/javascript/select2-release-3.2/select2.min.js" => "include/javascript/sugar_sidecar.min.js",
+                   // To add more models to NV D3, run the makefile in styleguide.
+                   'include/javascript/nvd3/nv.d3.min.js' => 'include/javascript/sugar_sidecar.min.js',
+                   'portal2/error.js'               => 'include/javascript/sugar_sidecar.min.js',
+                   'portal2/views/alert-view.js'    => 'include/javascript/sugar_sidecar.min.js',
+                   'include/javascript/jquery/jquery.popoverext.js'           => 'include/javascript/sugar_sidecar.min.js',
+                   'include/javascript/jquery/jquery.effects.custombounce.js'           => 'include/javascript/sugar_sidecar.min.js',
+                   'include/javascript/jquery/jquery.nouislider.js' => 'include/javascript/sugar_sidecar.min.js',
+                )
            ),
            //BEGIN SUGARCRM flav=ent ONLY
             $sugar_grp_portal2 = array_merge(
@@ -406,10 +404,7 @@
     $sidecar_forecasts['include/SugarCharts/Jit/js/sugarCharts.js'] = $cached_file;
     $sidecar_forecasts['modules/Forecasts/clients/base/helper/hbt-helpers.js'] = $cached_file;
     $sidecar_forecasts['modules/Forecasts/clients/base/lib/ForecastsUtils.js'] = $cached_file;
-    $sidecar_forecasts['styleguide/assets/js/nvd3/lib/d3.v2.min.js'] = $cached_file;
-    $sidecar_forecasts['styleguide/assets/js/nvd3/nv.d3.min.js'] = $cached_file;
     $sidecar_forecasts['modules/Forecasts/clients/base/lib/error.js'] = $cached_file;
-    $sidecar_forecasts['include/javascript/jquery/jquery.nouislider.js'] = $cached_file;
 
     $js_groupings[] = $sidecar_forecasts;
     //END SUGARCRM flav=pro ONLY

@@ -10,7 +10,7 @@
             } catch (e) {
                 app.logger.error("Failed to eval view controller for " + name + ": " + e + ":\n" + data);
             }
-            app.view.declareComponent(type, name, null, data, true);
+            app.view.declareComponent(type, name, module, data, true);
             test.testMetadata.addController(name, type, data, module);
         });
 
@@ -29,7 +29,7 @@
         test.loadComponent(client, "field", type);
 
         var view = new app.view.View({ name: viewName, context: context });
-        var def = { name: name, type: type };
+        var def = { name: name, type: type, events: (fieldDef) ? fieldDef.events : {} };
         var context = context || app.context.getContext();
 
         model = model || new Backbone.Model();
@@ -47,7 +47,7 @@
         });
     };
 
-    test.createView = function(client, module, viewName, meta, context, loadFromModule) {
+    test.createView = function(client, module, viewName, meta, context, loadFromModule, layout) {
         if (loadFromModule) {
             test.loadComponent(client, "view", viewName, module);
         } else {
@@ -65,7 +65,8 @@
             name : viewName,
             context : context,
             module : module,
-            meta : meta
+            meta : meta,
+            layout: layout
         });
     };
 

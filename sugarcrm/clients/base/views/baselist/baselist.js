@@ -25,7 +25,7 @@
  * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 ({
-
+    extendsFrom: 'EditableView',
     /**
      * View that displays a list of models pulled from the context's collection.
      * @class View.Views.ListView
@@ -34,33 +34,42 @@
      */
     events:{
         'click [class*="orderBy"]':'setOrderBy',
-        'click .preview-list-item':'previewRecord',
-        'mouseenter .preview-list-item': 'showTooltip',
-        'mouseleave .preview-list-item': 'hideTooltip',
+        'mouseenter .rowaction': 'showTooltip',
+        'mouseleave .rowaction': 'hideTooltip',
         'mouseenter tr':'showActions',
         'mouseleave tr':'hideActions'
     },
     initialize: function(options) {
         options.meta = $.extend(true, {}, app.metadata.getView(options.module, 'baselist') || {}, options.meta);
         options.meta.type = options.meta.type || 'list';
-        if(!_.isUndefined(options.meta.selection) && !_.isUndefined(options.meta.selection.type)) {
-            switch (options.meta.selection.type) {
+        _.each(options.meta.panels, function(panel) {
+            panel = this.populatePanelMetadata(panel, options);
+        }, this);
+
+        app.view.View.prototype.initialize.call(this, options);
+        this.template = this.template || app.template.getView('baselist') || app.template.getView('baselist', this.module) || null;
+        this.fallbackFieldTemplate = 'list-header';
+        this.context.on("list:preview:fire", this.previewRecord, this);
+        this.context.on("list:preview:decorate", this.decorateRow, this);
+    },
+    populatePanelMetadata: function(panel, options) {
+        var meta = options.meta;
+        if(meta.selection) {
+            switch (meta.selection.type) {
                 case "single":
-                    options.meta = this.addSingleSelectionAction(options.meta, options.module);
+                    panel = this.addSingleSelectionAction(panel, options);
                     break;
                 case "multi":
-                    options.meta = this.addMultiSelectionAction(options.meta);
+                    panel = this.addMultiSelectionAction(panel, options);
                     break;
                 default:
                     break;
             }
         }
-        if(!_.isUndefined(options.meta.rowactions)) {
-            options.meta = this.addRowActions(options.meta);
+        if(meta && meta.rowactions) {
+            panel = this.addRowActions(panel, options);
         }
-        app.view.View.prototype.initialize.call(this, options);
-        this.template = this.template || app.template.getView('baselist') || app.template.getView('baselist', this.module) || null;
-        this.fallbackFieldTemplate = 'list-header';
+        return panel;
     },
     _render:function () {
         var self = this;
@@ -213,84 +222,83 @@
         }
         return options;
     },
-    previewRecord: function(e) {
-        var self = this,
-            el = this.$(e.currentTarget),
-            data = el.data(),
-            module = data.module,
-            id = data.id,
-            model = app.data.createBean(module);
-
-        model.set("id", id);
-        model.fetch({
-            success: function(model) {
-                model.set("_module", module);
-
-                if( _.isUndefined(self.context._callbacks) ) {
-                    // Clicking preview on a related module, need the parent context instead
-                    self.context.parent.trigger("togglePreview", model, self.collection);
-                }
-                else {
-                    self.context.trigger("togglePreview", model, self.collection);
-                }
-            }
-        });
+    /**
+     * Display a Preview for a record in the list view
+     * @param model Model for the record to be displayed in Preview
+     */
+    previewRecord: function(model) {
+        if( _.isUndefined(this.context._callbacks) ) {
+            // Clicking preview on a related module, need the parent context instead
+            this.context.parent.trigger("preview:render", model, this.collection);
+        }
+        else {
+            this.context.trigger("preview:render", model, this.collection);
+        }
     },
-    addSingleSelectionAction: function(meta, module) {
-        meta = $.extend(true, {}, meta);
-        _.each(meta.panels, function(panel){
-            var singleSelect = [{
+    /**
+     * Decorate a row in the list that is being shown in Preview
+     * @param model Model for row to be decorated.  Pass a falsy value to clear decoration.
+     * @param preview Preview view that changed
+     */
+    decorateRow: function(model, preview){
+        this.$("tr.highlighted").removeClass("highlighted current above below");
+        if(model){
+            var rowName = model.module+"_"+ model.get("id");
+            var curr = this.$("tr[name='"+rowName+"']");
+            curr.addClass("current highlighted");
+            curr.prev("tr").addClass("highlighted above");
+            curr.next("tr").addClass("highlighted below");
+        }
+    },
+    addSingleSelectionAction: function(panel, options) {
+        var meta = options.meta,
+            module = options.module,
+            singleSelect = [{
                 'type' : 'selection',
                 'name' : meta.selection.name || module + '_select',
                 'sortable' : false,
                 'label' : meta.selection.label || ''
             }];
 
-            panel.fields = singleSelect.concat(panel.fields);
-        });
-
-        return meta;
+        panel.fields = singleSelect.concat(panel.fields);
+        return panel;
     },
-    addMultiSelectionAction: function(meta) {
-        meta = $.extend(true, {}, meta);
-        _.each(meta.panels, function(panel){
-            var multiSelect = [{
-                'type' : 'fieldset',
-                'fields' : [{
-                    'type' : 'actionmenu',
-                    'buttons' : []
-                }],
-                'value' : false,
-                'sortable' : false
-            }];
-            if (!_.isUndefined(meta.selection.actions)) {
-                multiSelect[0].fields[0].buttons = meta.selection.actions;
-            }
-            panel.fields = multiSelect.concat(panel.fields);
-        });
-
-        return meta;
+    addMultiSelectionAction: function(panel, options) {
+        var meta = options.meta,
+            multiSelect = [{
+            'type' : 'fieldset',
+            'fields' : [{
+                'type' : 'actionmenu',
+                'buttons' : []
+            }],
+            'value' : false,
+            'sortable' : false
+        }];
+        if (!_.isUndefined(meta.selection.actions)) {
+            multiSelect[0].fields[0].buttons = meta.selection.actions;
+        }
+        panel.fields = multiSelect.concat(panel.fields);
+        return panel;
     },
-    addRowActions: function(meta) {
-        meta = $.extend(true, {}, meta);
-        _.each(meta.panels, function(panel){
-            var rowActions = {
-                'type' : 'fieldset',
-                'fields' : [{
-                    'type' : 'rowactions',
-                    'buttons' : []
-                }],
-                'value' : false,
-                'sortable' : false,
-                'label' : meta.rowactions.label || ''
-            };
-            if (!_.isUndefined(meta.rowactions.actions)) {
-                rowActions.fields[0].buttons = meta.rowactions.actions;
-            }
-            panel.fields = panel.fields.concat(rowActions);
-        });
+    addRowActions: function(panel, options) {
+        var meta = options.meta,
+            rowActions = {
+            'type' : 'fieldset',
+            'fields' : [{
+                'type' : 'rowactions',
+                'label' : meta.rowactions.label || '',
+                'css_class' : meta.rowactions.css_class,
+                'buttons' : []
+            }],
+            'value' : false,
+            'sortable' : false
+        };
+        if (!_.isUndefined(meta.rowactions.actions)) {
+            rowActions.fields[0].buttons = meta.rowactions.actions;
+        }
+        panel.fields = panel.fields.concat(rowActions);
 
-        return meta;
+        return panel;
     },
     showTooltip: function(e) {
         this.$(e.currentTarget).tooltip("show");

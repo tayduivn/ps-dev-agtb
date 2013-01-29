@@ -25,16 +25,21 @@
  * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 ({
-    fieldTag: "a",
-    events: {
-        'click .rowaction': 'rowActionSelect'
-    },
-    getFieldElement: function() {
-        return this.$(this.fieldTag);
-    },
-    rowActionSelect: function(evt) {
-        if ($(evt.currentTarget).data('event')) {
-            this.view.context.trigger($(evt.currentTarget).data('event'), this.model);
+    extendsFrom: 'ActiondropdownField',
+    _loadTemplate: function() {
+        app.view.Field.prototype._loadTemplate.call(this);
+
+        //override its container if it has own template
+        var template = app.template._getField(this.type, this.tplName, this.module, null, true)[1];
+
+        if(template) {
+            this.$el.attr('class', '');
+            this.$el.html(template(this));
+        }
+        if(this.view.action === 'list' && this.action === 'edit') {
+            this.$el.hide();
+        } else {
+            this.$el.show();
         }
     }
 })

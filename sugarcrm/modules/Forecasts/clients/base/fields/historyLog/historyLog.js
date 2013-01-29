@@ -36,6 +36,13 @@
     uid: '',
 
     /**
+     * Show Opportunities - this param gets set on the model as a way to flag the data:
+     * TRUE - rep worksheet link or manager's Opportunities link (forecast_type: direct)
+     * FALSE - link to manager worksheet (forecast_type: rollup)
+     */
+    showOpps: '',
+
+    /**
      * Commit Date
      */
     commitDate: '',
@@ -97,7 +104,8 @@
         if(this.context) {
             this.showFieldAlert = false;
             this.uid = this.model.get('user_id');
-            
+            this.showOpps = this.model.get('show_opps');
+
             var fieldDate;
 
             if(this.model.get('date_modified')) {

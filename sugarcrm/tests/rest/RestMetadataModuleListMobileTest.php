@@ -68,7 +68,7 @@ class RestMetadataModuleListMobileTest extends RestTestBase {
         if(!empty($users_key)) {
             unset($enabledMobile[$users_key]);    
         }
-        
+
         $this->assertTrue(isset($restReply['reply']['current_user']['module_list']),'There is no mobile module list');
         $restModules = $restReply['reply']['current_user']['module_list'];
         unset($restModules['_hash']);
@@ -81,7 +81,7 @@ class RestMetadataModuleListMobileTest extends RestTestBase {
         SugarAutoLoader::ensureDir('custom/include/MVC/Controller');
         SugarAutoLoader::put('custom/include/MVC/Controller/wireless_module_registry.php','<'."?php\n".'$wireless_module_registry = array("Accounts"=>"Accounts","Contacts"=>"Contacts","Opportunities"=>"Opportunities");', true);
 
-        $enabledMobile = array('Accounts','Contacts','Opportunities', );
+        $enabledMobile = array('Accounts','Contacts','Opportunities',  );
 
         $this->_clearMetadataCache();
         $restReply = $this->_restCall('me');
@@ -93,6 +93,12 @@ class RestMetadataModuleListMobileTest extends RestTestBase {
         $this->assertEquals(count($enabledMobile),count($restModules),'There are extra modules in the mobile module list on the second pass');
 
 
+    }
+
+    public function testMetadataMobileUsers() {
+        $this->_clearMetadataCache();
+        $restReply = $this->_restCall('metadata');
+        $this->assertTrue(!empty($restReply['reply']['modules']['Users']), 'Users does not exist in the metadata list.');
     }
 
 }

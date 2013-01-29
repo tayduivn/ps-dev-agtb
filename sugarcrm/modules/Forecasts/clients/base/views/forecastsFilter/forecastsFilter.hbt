@@ -27,9 +27,5 @@
  ********************************************************************************/
 }}
 <div class="control-group filter">
-    {{#each meta.panels}}
-        {{#each fields}}
-            {{field ../../this ../../model}}
-        {{/each}}
-    {{/each}}
+    <input id="{{rangeFilterId}}" type="hidden" style="width:100%"></input>
 </div>
