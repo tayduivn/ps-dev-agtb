@@ -311,29 +311,31 @@
                             'title': json.properties[0].title
                             , 'quota': parseInt(json.values[0].goalmarkervalue[0],10)
                             // bar group data (x-axis)
-                            , 'groupData': json.values.map( function(d,i){
-                                return {
-                                    'group': i
-                                    , 'l': json.values[i].label
-                                    , 't': json.values[i].values.reduce( function(p, c, i, a){
-                                        return parseInt(p,10) + parseInt(c,10);
-                                    })
-                                }
-                            })
+                            , 'groupData': (!json.values.filter(function(d) { return d.values.length }).length) ? [] :
+                                json.label.map( function(d,i){
+                                    return {
+                                        'group': i
+                                        , 'l': json.values[i].label
+                                        , 't': json.values[i].values.reduce( function(p, c, i, a){
+                                            return parseInt(p,10) + parseInt(c,10);
+                                        })
+                                    }
+                                })
                         }
                         // series data
-                        , 'data': json.label.map( function(d,i){
-                            return {
-                                'key': d
-                                , 'type': 'bar'
-                                , 'series': i
-                                , 'values': json.values.map( function(e,j){
-                                    return { 'series': i, 'x': j+1, 'y': parseInt(e.values[i],10), y0: 0 };
-                                })
-                                , 'valuesOrig': json.values.map( function(e,j){
-                                    return { 'series': i, 'x': j+1, 'y': parseInt(e.values[i],10), y0: 0 };
-                                })
-                            }
+                        , 'data': (!json.values.filter(function(d) { return d.values.length }).length) ? [] :
+                            json.label.map( function(d,i){
+                                return {
+                                    'key': d
+                                    , 'type': 'bar'
+                                    , 'series': i
+                                    , 'values': json.values.map( function(e,j){
+                                        return { 'series': i, 'x': j+1, 'y': parseInt(e.values[i],10), y0: 0 };
+                                    })
+                                    , 'valuesOrig': json.values.map( function(e,j){
+                                        return { 'series': i, 'x': j+1, 'y': parseInt(e.values[i],10), y0: 0 };
+                                    })
+                                }
                         }).concat(
                             json.properties[0].goal_marker_label.filter( function(d,i){
                                 return d !== 'Quota';
