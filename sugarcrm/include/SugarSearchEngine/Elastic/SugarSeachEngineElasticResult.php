@@ -76,10 +76,12 @@ class SugarSeachEngineElasticResult extends SugarSearchEngineAbstractResult
 
     /**
      * This function returns an array of highlighted key-value pairs.
+     * 
+     * @var maxFields - the number of highlighted fields to return, 0 = all
      *
      * @return array of key value pairs
      */
-    public function getHighlightedHitText()
+    public function getHighlightedHitText($maxFields = 0)
     {
         $ret = array();
 
@@ -90,6 +92,9 @@ class SugarSeachEngineElasticResult extends SugarSearchEngineAbstractResult
             $highlighter = new SugarSearchEngineHighlighter();
             $highlighter->setModule($this->getModule());
             $ret = $highlighter->processHighlightText($highlights);
+            if($maxFields > 0) {
+                $ret = array_slice($ret, 0, $maxFields);
+            }
         }
 
         return $ret;

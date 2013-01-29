@@ -42,7 +42,7 @@
                     <span class="spot_fts_summary"><a href="{$url}">{$result->getSummaryText()}</a></span>
                     <br>
                     <span class="details">
-                            {foreach from=$result->getHighlightedHitText() key=k item=v}
+                            {foreach from=$result->getHighlightedHitText(1) key=k item=v}
                             <p>
                                 {sugar_translate label=$v.label module=$v.module}: {$v.text}
                                 <br>
