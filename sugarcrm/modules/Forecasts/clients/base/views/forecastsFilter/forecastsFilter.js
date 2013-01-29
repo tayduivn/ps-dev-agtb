@@ -71,9 +71,9 @@
      */
     toggleRangesFieldVisibility:function () {
         if (this.selectedUser.isManager && this.selectedUser.showOpps === false) {
-            this.$el.find("#"+this.rangeFilterId).parent().hide();
+            this.node.parent().hide();
         } else {
-            this.$el.find("#"+this.rangeFilterId).parent().show();
+            this.node.parent().show();
         }
     },
 
@@ -85,11 +85,13 @@
     _render:function () {
         app.view.View.prototype._render.call(this);
 
+        this.node = this.$("#" + this.rangeFilterId);
+        
         // toggle the visibility of the group by field for the initial render
         this.toggleRangesFieldVisibility();
 
         // set up the filters
-        this._setUpFilters("#" + this.rangeFilterId, this._getRangeFilters());
+        this._setUpFilters();
 
         return this;
     },
@@ -99,14 +101,13 @@
      * @param node the element to use as the basis for select2
      * @private
      */
-    _setUpFilters: function(element, filters) {
+    _setUpFilters: function() {
         var selectedRanges = this.context.forecasts.has("selectedRanges") ?
             this.context.forecasts.get("selectedRanges") :
-            app.defaultSelections.ranges,
-            node = $(element);
+            app.defaultSelections.ranges;
 
-        node.select2({
-            data:filters,
+        this.node.select2({
+            data:this._getRangeFilters(),
             initSelection: function(element, callback) {
                 callback(_.filter(
                     this.data,
@@ -123,10 +124,10 @@
         });
 
         // set the default selections
-        node.select2("val", selectedRanges);
+        this.node.select2("val", selectedRanges);
 
         // add a change handler that updates the forecasts context appropriately with the user's selection
-        node.change(
+        this.node.change(
             {
                 view: this
             },

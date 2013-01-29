@@ -35,9 +35,17 @@ describe("The forecasts filter view", function () {
         );
     });
 
+    afterEach(function() {
+        delete view;
+        delete app;
+    })
+
     describe("when rendering", function() {
         beforeEach(function() {
             sinon.stub(app.view.View.prototype, "_render");
+            view.$ = function(stuff) {
+                return stuff;
+            }
             sinon.stub(view, "_getRangeFilters");
             sinon.stub(view, "_setUpFilters");
             sinon.stub(view, "toggleRangesFieldVisibility");
