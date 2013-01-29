@@ -37,7 +37,9 @@ require_once('include/SugarMath/Exception.php');
  * // this will result in "8" as expected, the internal representation is 8.0
  * echo floor(SugarMath::init(0.1)->add(0.7)->mul(10)->result());
  *
- * SugarMath can also process math expressions.
+ * SugarMath can also process math expressions. Expressions have an advantage over
+ * individual computations in that they calculate the entire expression at a higher
+ * precision (+10 decimals) and then round the final value to the intended precision.
  *
  * Examples:
  *
