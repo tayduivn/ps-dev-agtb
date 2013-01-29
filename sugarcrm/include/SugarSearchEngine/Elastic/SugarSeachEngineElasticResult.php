@@ -77,7 +77,7 @@ class SugarSeachEngineElasticResult extends SugarSearchEngineAbstractResult
     /**
      * This function returns an array of highlighted key-value pairs.
      * 
-     * @var maxFields - the number of highlighted fields to return, 0 = all
+     * @param maxFields - the number of highlighted fields to return, 0 = all
      *
      * @return array of key value pairs
      */
