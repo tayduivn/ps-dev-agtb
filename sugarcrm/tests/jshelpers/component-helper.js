@@ -131,22 +131,29 @@
         },
 
         addViewDefinition: function(name, viewDef, module) {
-            var type = 'views';
-            if (this.isInitialized()) {
-                if (module) {
-                    this._initModuleStructure(module, type, name);
-                    this._data.modules[module][type][name].meta = viewDef;
-                } else {
-                    this._data[type][name] = this._data[type][name] || {};
-                    this._data[type][name].meta = viewDef;
-                }
-            }
+            this._addDefinition(name, 'views', viewDef, module);
+        },
+
+        addLayoutDefinition: function(name, layoutDef, module) {
+            this._addDefinition(name, 'layouts', layoutDef, module);
         },
 
         _initModuleStructure: function(module, type, name) {
             this._data.modules[module] = this._data.modules[module] || {};
             this._data.modules[module][type] = this._data.modules[module][type] || {};
             this._data.modules[module][type][name] = this._data.modules[module][type][name] || {};
+        },
+
+        _addDefinition: function(name, type, layoutDef, module) {
+            if (this.isInitialized()) {
+                if (module) {
+                    this._initModuleStructure(module, type, name);
+                    this._data.modules[module][type][name].meta = layoutDef;
+                } else {
+                    this._data[type][name] = this._data[type][name] || {};
+                    this._data[type][name].meta = layoutDef;
+                }
+            }
         },
 
         set: function() {
