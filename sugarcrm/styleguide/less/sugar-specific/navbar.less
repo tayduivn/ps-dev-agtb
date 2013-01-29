@@ -112,8 +112,11 @@
     }
   }
   a [class^="icon-"] {
-    color: @white !important;
+    color: @white;
     font-size: 14px;
+  }
+  a:hover .icon-favorite {
+    color:@yellow_favorite !important;
   }
   // fix red message button position
   .dropdown .btn {
@@ -129,10 +132,17 @@
   }
   // Menu position and menu carets
   .dropdown-menu {
+    a [class^="icon-"] {
+      position: absolute;
+      left: 12px;
+      text-indent: 0;
+      color: @grayLight;
+      line-height: 16px;
+    }
     .dropdownMinWidth();
     margin-top: 0;
     top: 44px;
-    right: -8px;
+    /*right: -8px;*/
     left: auto;
     .border-radius(4px);
     &:before {
@@ -141,10 +151,26 @@
     li a {
       display: block;
       padding: 8px;
+      text-indent: 32px;
     }
     li,
     li.divider {
       padding: 0;
+    }
+    .recentContainer {
+      border-top:1px solid @grayLight;
+      bottom: -1px;
+      position: relative;
+    }
+
+    .recentContainer,
+    .favoritesContainer {
+      text-indent: 40px;
+      line-height: 18px;
+      li:first-child > a {
+        border-top: 1px solid @grayLighter;
+        .border-radius(0);
+      }
     }
   }
   .advanced {
