@@ -7,6 +7,7 @@ describe("Email field", function() {
         SugarTest.testMetadata.init();
         SugarTest.loadHandlebarsTemplate('email', 'field', 'base', 'edit');
         SugarTest.loadHandlebarsTemplate('email', 'field', 'base', 'detail');
+        SugarTest.loadComponent('base', 'field', 'listeditable');
         SugarTest.testMetadata.set();
         field = SugarTest.createField("base","email", "email", "edit");
         mock_addr =  [
@@ -199,5 +200,20 @@ describe("Email field", function() {
             actual = field.unformat(emails);
             expect(actual).toBe(expected);
         });
+
+        it("should return only a single primary email address as the value in the list view", function() {
+            field.view.action = 'list';
+            field.render();
+
+            var new_email_address = 'test@blah.co',
+                new_assigned_email = field.unformat(new_email_address);
+            expected = new_email_address;
+            actual = (_.find(new_assigned_email, function(email){
+                return email.primary_address;
+            })).email_address;
+            expect(actual).toBe(expected);
+
+        });
+
     });
 });

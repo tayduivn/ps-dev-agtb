@@ -12,7 +12,8 @@
         app.view.Layout.prototype.initialize.call(this, opts);
         this.processDef();
 
-        this.context.on("togglePreview", function(model) { this.showPreview(); }, this);
+        this.context.on("preview:open", function(model) { this.showPreview(); }, this);
+        this.context.on("preview:close", function(model){ this.hidePreview();}, this);
         this.context.on("toggleSidebar", this.toggleSide, this);
     },
 
