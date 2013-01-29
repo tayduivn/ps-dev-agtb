@@ -96,7 +96,7 @@
      */
     _render:function () {
         var self = this,
-            select = null;;
+            select = null;
         app.view.Field.prototype._render.call(this);
                
         /* If we are on our own sheet, and need to show the dropdown, init things
