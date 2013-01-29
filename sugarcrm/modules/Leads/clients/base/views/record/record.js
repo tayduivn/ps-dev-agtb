@@ -1,8 +1,9 @@
 ({
     extendsFrom: 'RecordView',
 
-    events:{
-        'click [name=lead_convert_button]': 'initiateDrawer'
+    initialize: function(options) {
+        this.events = _.extend({}, this.events, {'click [name=lead_convert_button]': 'initiateDrawer'});
+        app.view.views.RecordView.prototype.initialize.call(this, options);
     },
 
     /**
