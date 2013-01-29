@@ -79,7 +79,7 @@ describe("Base.Field.TextArea", function() {
         expect(spy).toHaveBeenCalled();
         spy.restore();
     });
-    it('should return to last "more" state if coming from textarea edit mode', function() {
+    it('should return to last "more" or "less" state if coming from textarea edit mode', function() {
         field.lastMode = 'less';
         field.tplName  = 'edit';
         field.model.set(fieldName, longText);
