@@ -1,14 +1,5 @@
 <div class="thumbnail widget" {{{target_id}}}>
-  <div class="btn-toolbar pull-right">
-    <a href="#" data-toggle="widget" class="btn btn-invisible"><i class="icon-chevron-up"></i></a>
-    <a href="#" data-toggle="dropdown" class="dropdown-toggle btn btn-invisible"><i class="icon-cog"></i></a>
-    <ul class="dropdown-menu left carettop">
-      <div>
-        <li><a href="#">Settings</a></li>
-        <li><a href="#" class="widget-remove">Remove</a></li>
-      </div>
-    </ul>
-  </div>
+  {{>dashletControls}}
   <h4 data-toggle="widget">Interactions</h4>
   <div class="dashlet-options">
     <div class="row-fluid">
@@ -23,8 +14,8 @@
       </div>
       <div class="span4">
         <div class="btn-group pull-right dashlet-group" data-toggle="buttons-radio">
-          <button class="btn"><i class="icon-user"></i></button>
-          <button class="btn active"><i class="icon-group"></i></button>
+          <button class="btn" rel="tooltip" data-original-title="My Interactions" data-placement="top"><i class="icon-user"></i></button>
+          <button class="btn active" rel="tooltip" data-original-title="All Interactions" data-placement="top"><i class="icon-group"></i></button>
         </div>
       </div>
     </div>
@@ -168,10 +159,12 @@
   </div>
 </div>
 <script>
-  $(".dashlet-filter").each(function(){
-    var $this = $(this)
-      , ctor = getSelect2Constructor($this);
-    $this.select2( ctor );
+  $(document).ready(function() {
+    $(".dashlet-filter").each(function(){
+      var $this = $(this)
+        , ctor = getSelect2Constructor($this);
+      $this.select2( ctor );
+    });
+    $('.dashlet-group').button();
   });
-  $('.dashlet-group').button();
 </script>

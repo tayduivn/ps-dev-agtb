@@ -6,6 +6,7 @@
 
     // load snippets
     ich.addTemplate('drawerTrig', '<a href="#overview" title="Collapse sidebar" class="btn btn-invisible drawerTrig"><i class="icon-double-angle-right"></i></a>');
+    ich.addTemplate('dashletControls', '<div class="btn-toolbar pull-right"><a href="#" data-toggle="widget" class="btn btn-invisible" rel="tooltip" data-original-title="Collapse" data-placement="top"><i class="icon-chevron-up"></i></a><a href="#" data-toggle="dropdown" class="dropdown-toggle btn btn-invisible" rel="tooltip" data-original-title="Settings" data-placement="top"><i class="icon-cog"></i></a><ul class="dropdown-menu left carettop"><div><li><a href="#">Settings</a></li><li><a href="#" class="widget-remove">Remove</a></li></div></ul></div>');
 
     // load prototype framework
     if (page) {

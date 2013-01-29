@@ -417,9 +417,8 @@ code {
   background-color: #CDCCCB;
   color: #58595B;
   margin: 0 4px;
-  padding-top: 6px;
-  padding-bottom: 4px;
   border: 1px solid #c1bfbe;
+  padding: 6px 0 4px 0;
 }
 .nav-tabs  > li > a:hover {
   background-color: #b4b3b1;
@@ -2598,11 +2597,16 @@ date {
   border-radius: 4px;
   border-bottom: 0 !important;
 }
-.widget.out .widget-content {
+.widget.out .widget-content,
+.widget.out .dashlet-options {
   display: none;
 }
 .widget.out i.icon-chevron-up::before {
   content: "\f078";
+}
+.widget .btn-toolbar a[data-toggle="widget"] {
+  right: 32px;
+  position: absolute;
 }
 .widget-control {
   position: absolute;

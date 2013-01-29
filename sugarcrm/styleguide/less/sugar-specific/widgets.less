@@ -9,15 +9,19 @@
       border-radius: 4px;
       border-bottom: 0 !important;
     }
-    .widget-content {
+    .widget-content,
+    .dashlet-options {
       display: none;
     }
     i.icon-chevron-up::before {
       content: "\f078";
     }
   }
+  .btn-toolbar a[data-toggle="widget"] {
+    right: 32px;
+    position: absolute;
+  }
 }
-
 .widget-control {
   position: absolute;
   right: 5%;
