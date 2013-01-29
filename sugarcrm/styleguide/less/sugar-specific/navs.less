@@ -45,17 +45,16 @@
 
 // Actual tabs (as links)
 .nav-tabs > li > a {
-    background-color: @grayLight;
-    color: @gray;
-    margin: 0 4px;
-    border: 1px solid darken(@grayLight, 5%);
-    padding: 6px 0 4px 0;
-}
-
-.nav-tabs  > li > a:hover {
-  background-color: darken(@grayLight, 10%);
+  background-color: @grayLight;
+  color: @gray;
+  margin: 0 4px;
   border: 1px solid darken(@grayLight, 5%);
-  color: darken(@gray, 5%);
+  padding: 6px 0 4px 0;
+  &:hover {
+    background-color: darken(@grayLight, 10%);
+    border: 1px solid darken(@grayLight, 5%);
+    color: darken(@gray, 5%);
+  }
 }
 
 // Active state, and it's :hover to override normal :hover
@@ -121,7 +120,6 @@
 .tabs-right > .nav-tabs .active > a:hover {
   border-color: @grayLight @grayLight @grayLight transparent;
 }
-
 
 //These changes are from the initial bs commit but have changed in new bs
 .nav-list {
