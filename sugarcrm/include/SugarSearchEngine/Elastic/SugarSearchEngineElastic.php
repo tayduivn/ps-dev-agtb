@@ -174,7 +174,7 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
                     // dates have to be in ISO-8601 without the : in the TZ
                     global $timedate;
                     $date = $timedate->fromDb($bean->$fieldName);
-                    if($date instanceof TimeDate) {
+                    if($date instanceof SugarDateTime) {
                         $keyValues[$fieldName] = $timedate->asIso($date, null, array('stripTZColon' => true));
                     }
                     else {
@@ -221,7 +221,7 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
      * This indexes one single bean to Elastic Search engine
      * @param SugarBean $bean
      */
-    protected function indexSingleBean($bean)
+    public function indexSingleBean($bean)
     {
         $this->logger->info("Preforming single bean index");
         try

@@ -3302,6 +3302,7 @@ $app_strings = array (
     'LBL_CANCEL_BUTTON_KEY' => 'l',
     'LBL_CANCEL_BUTTON_LABEL' => 'Cancel',
     'LBL_CANCEL_BUTTON_TITLE' => 'Cancel',
+    'LBL_CONFIRM_BUTTON_LABEL' => 'OK',
     'LBL_START_BUTTON_LABEL' => 'Start',
     'LBL_START_BUTTON_TITLE' => 'Start',
     'LBL_FINISH_BUTTON_LABEL' => 'Finish',
@@ -3352,16 +3353,25 @@ $app_strings = array (
     'LBL_UPLOADING' => 'Uploading',
 
     //theme roller
+    'LBL_RESET' => 'Reset',
+    'LBL_COLORS' => 'Colors',
     'BorderColor' => 'Border Color',
     'NavigationBar' => 'Navigation Bar',
     'PrimaryButton' => 'Primary Button',
+    'LBL_SAVE_AND_DEPLOY_BTN' => 'Save & Deploy',
+    'LBL_RESET_THEME_LNK' => 'Restore Default Theme',
+    'LBL_RESET_THEME_MODAL_TITLE' => 'Reset default theme',
+    'LBL_RESET_THEME_MODAL_INFO' => 'You are about to erase your custom theme with the default theme.',
+    'LBL_RESET_THEME_MODAL_CONFIRM' => 'Do you want to proceed?',
+    'LBL_RESET_THEME_PROCESS' => 'Restoring default theme...',
+    'LBL_SAVE_THEME_PROCESS' => 'Saving theme...',
 
   	//BEGIN SUGARCRM flav=PRO ONLY
     //in app tour
     'LBL_TOUR_SCREEN_1_TITLE' => 'Now you can do forecasting in Sugar',
     'LBL_TOUR_SCREEN_1_DESCRIPTION' => '<div style="float: left;"><div style="float: left; width: 300px;"><ul><li class="icon-ok">Set up your forecasting parameters</li><li class="icon-ok">Keep track of your projected sales</li><li class="icon-ok">Forecast your sales team\'s projected sales</li></ul></div><div class="well" style="float: left; width: 220px; margin-left: 20px;"><img src="themes/default/images/pt-screen1-thumb.png" width="220" id="thumbnail_1" class="thumb"></div></div><div class="clear"></div>',
     'LBL_TOUR_SCREEN_2_TITLE' => 'Setup your Forecasting Parameters',
-    'LBL_TOUR_SCREEN_2_DESCRIPTION' => '<div style="float: left;"><div style="float: left; width: 300px;"><ul><li class="icon-ok">Select Fiscal Year start date</li><li class="icon-ok">Choose Yearly or Quarterly time periods</li><li class="icon-ok">Select number of Time Periods to Forecast over</li><li class="icon-ok">Select Categories to include in Forecast</li><li class="icon-ok">Select Range to forecast, such as likely, best or worst</li></ul></div><div class="well" style="float: left; width: 220px; margin-left: 20px;"><img src="themes/default/images/pt-screen2-thumb.png" width="220" id="thumbnail_2" class="thumb"></div></div><div class="clear"></div>',
+    'LBL_TOUR_SCREEN_2_DESCRIPTION' => '<div style="float: left;"><div style="float: left; width: 300px;"><ul><li class="icon-ok">Select Fiscal Year start date</li><li class="icon-ok">Choose Yearly or Quarterly time periods</li><li class="icon-ok">Select number of Time Periods to Forecast over</li><li class="icon-ok">Select Categories to include in Forecast</li><li class="icon-ok">Select Range to forecast, such as likely, best or worst</li></ul></div><div class="well" style="float: left; width: 220px; margin-left: 20px;"><img src="themes/default/images/pt-screen2-thumb.png" width="167" id="thumbnail_2" class="thumb"></div></div><div class="clear"></div>',
     'LBL_TOUR_SCREEN_3_TITLE' => 'Manage your Sales Teams Projected Sales',
     'LBL_TOUR_SCREEN_3_DESCRIPTION' => '<div style="float: left;"><div style="float: left; width: 300px;"><ul><li class="icon-ok">Select the Time Period to view</li><li class="icon-ok">See your sales team\'s committed worksheets and adjust their forecasts</li><li class="icon-ok">See Alerts when your sales team members commit new forecasts</li><li class="icon-ok">Save your Worksheet without committing or;</li><li class="icon-ok">Commit Forecast to Manager and view History of previous Commits</li></ul></div><div class="well" style="float: left; width: 220px; margin-left: 20px;"><img src="themes/default/images/pt-screen3-thumb.png" width="220" id="thumbnail_3" class="thumb"></div></div><div class="clear"></div>',
     'LBL_TOUR_SCREEN_4_TITLE' => 'Manage your Sales Teams Projected Sales',
@@ -3407,6 +3417,7 @@ $app_strings = array (
     'LBL_URL_BUTTON' => 'Web',
     'LBL_WARNING' => 'Warning',
     'LBL_CONFIRM' => 'Confirm',
+    'LBL_NO_ACCESS' => '(No Access)',
     'LBL_CREATE_RELATED_RECORD' => 'Create Related Record',
     'LBL_ASSOC_RELATED_RECORD' => 'Associate Existing Record',
     'LBL_CHOOSE_LINK' => 'Choose Link Type',
@@ -3455,6 +3466,7 @@ $app_strings = array (
     'LBL_MOBILE_CHOOSE_DOC' => 'Choose document',
     'LBL_MOBILE_CHOOSE_LOCATION' => 'Choose location',
     'LBL_MOBILE_NO_ACTIONS_AVAILABLE' => 'No Actions Available',
+    'ERR_SYNC_FAILED' => 'Unable to sync with server.',
     'ERR_MOBILE_NOT_AUTHORIZED' => 'Access not authorized.',
     'ERR_MOBILE_INVALID_CREDS' => 'Invalid username or password.',
     'ERR_MOBILE_SESSION_EXPIRED' => 'Your session expired.',
@@ -3467,7 +3479,8 @@ $app_strings = array (
     'ERR_MOBILE_INTERNET_UNAVAILABLE' => 'Internet connection unavailable.',
     'ERR_MOBILE_INTERNAL' => 'Internal error ({{{code}}}). Please try again later.',
     'ERR_MOBILE_VALIDATION' => 'Record is invalid',
-    'ERR_SERVER_INCOMPATIBLE' => 'Incompatible server version',
+    'ERR_SERVER_FLAVOR_INCOMPATIBLE' => 'Incompatible server flavor: {{{flavor}}}',
+    'ERR_SERVER_VERSION_INCOMPATIBLE' => 'Incompatible server version: {{{version}}}',
     'ERR_MOBILE_EMAIL' => 'Error. Invalid Email Address.',
     'ERR_MOBILE_FILE_NOT_SUPPORTED' => 'This document type is unsupported.',
     'ERR_MOBILE_BROWSER_NOT_AUTHORIZED' => 'Authentication failed.',
@@ -4440,10 +4453,7 @@ $app_list_strings['oauth_type_dom'] = array(
 );
 $app_list_strings['oauth_client_type_dom'] = array(
     'user' => 'Sugar User',
-    'mobile' => 'Mobile Client',
-    'plugin' => 'Plug-in',
     'support_portal' => 'Support Portal',
-    'other' => 'other',
 );
 
 $app_list_strings ['emailTemplates_type_list'] = array (

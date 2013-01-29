@@ -140,4 +140,24 @@ describe("forecast editableInt field", function () {
         });
     });
 
+    describe("test trigger events", function() {
+        beforeEach(function(){
+            sinon.spy(field.context, "trigger");
+            field.bindDataChange();
+        });
+        afterEach(function(){
+            field.context.trigger.restore();
+        });
+        it("should not fire error event if is not error state", function() {
+            field.isErrorState = false;
+            field.context.trigger('field:editable:open');
+            expect(field.context.trigger).not.toHaveBeenCalledWith('field:editable:error');
+        });
+        it("should fire error event if is error state", function() {
+            field.isErrorState = true;
+            field.context.trigger('field:editable:open');
+            expect(field.context.trigger).toHaveBeenCalledWith('field:editable:error');
+        });
+    });
+
 });

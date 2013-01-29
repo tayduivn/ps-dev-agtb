@@ -101,19 +101,41 @@ class QuarterTimePeriod extends TimePeriod implements TimePeriodInterface {
      * Returns the formatted chart label data for the timeperiod
      *
      * @param $chartData Array of chart data values
-     * @return formatted Array of chart data values where the labels are broken down by the timeperiod's increments
+     * @return formatted Array of chart data values where the labels are broken down by the TimePeriod's increments
      */
-    public function getChartLabels($chartData) {
+    public function getChartLabels($chartData)
+    {
         $months = array();
-
         $start = strtotime($this->start_date);
+        $startDate = strtotime($this->start_date);
+        $startDay = date('j', $start);
+        $isFirst = date('j', $start) == 1;
         $end = strtotime($this->end_date);
+        $count = 0;
+        $monthsToAdd = 1;
 
-        while ($start < $end) {
+        while ($start <= $end) {
             $val = $chartData;
-            $val['label'] = date($this->chart_label, $start);
-            $months[date($this->chart_data_key, $start)] = $val;
-            $start = strtotime($this->chart_data_modifier, $start);
+            $next = strtotime("+{$monthsToAdd} month", $startDate); //increment by one month
+
+            if($isFirst) {
+                $val['label'] = date($this->chart_label, $start);
+            } else {
+                $timedate = TimeDate::getInstance();
+                $nextDay = date('j', $next);
+
+                //If the startDay was greater than the 28th and the nextDay is less than the 4th we know we have skipped a month
+                //and so we subtract out the number of days we have gone over
+                if($startDay > 28 && $nextDay < 4) {
+                    $next = $timedate->fromTimestamp($next)->modify("-{$nextDay} day")->getTimestamp();
+                }
+                //When we build out the interval, the next day is modified to be -1 day
+                $val['label'] = date('n/j', $start) . '-' . $timedate->fromTimestamp($next)->modify('-1 day')->format('n/j');
+            }
+
+            $months[$count++] = $val;
+            $start = $next;
+            $monthsToAdd++;
         }
 
         return $months;
@@ -126,7 +148,32 @@ class QuarterTimePeriod extends TimePeriod implements TimePeriodInterface {
      * @param String The date_closed value in db date format
      * @return String value of the key to use to map to the chart labels
      */
-    public function getChartLabelsKey($dateClosed) {
-        return date($this->chart_data_key, strtotime($dateClosed));
+    public function getChartLabelsKey($dateClosed)
+    {
+        $start = strtotime($this->start_date);
+        $startDate = strtotime($this->start_date);
+        $startDay = date('j', $start);
+        $end = strtotime($dateClosed);
+        $count = -1;
+        $monthsToAdd = 1;
+
+        while ($start <= $end) {
+            $next = strtotime("+{$monthsToAdd} month", $startDate); //increment by one month
+            $count++;
+
+            $timedate = TimeDate::getInstance();
+            $nextDay = date('j', $next);
+
+            //If the startDay was greater than the 28th and the nextDay is less than the 4th we know we have skipped a month
+            //and so we subtract out the number of days we have gone over
+            if($startDay > 28 && $nextDay < 4) {
+                $next = $timedate->fromTimestamp($next)->modify("-{$nextDay} day")->getTimestamp();
+            }
+
+            $start = $next;
+            $monthsToAdd++;
+        }
+
+        return $count;
     }
 }

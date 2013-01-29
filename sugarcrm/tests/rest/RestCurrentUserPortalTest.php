@@ -55,7 +55,7 @@ class RestCurrentUserPortalTest extends RestTestPortalBase {
         $user_acls = $restReply['reply']['current_user']['acl'];
         foreach($allowedModules AS $module => $acls) {
             foreach($acls AS $action => $access) {
-                $this->assertEquals($user_acls[$module][$action], $access, "{$module} - {$action} Did not have the correct access");
+                $this->assertEquals($user_acls[$module][$action], $access, "{$module} - {$action} Did not have the correct access got: " . print_r($user_acls[$module][$action], true));
             }
         }
 

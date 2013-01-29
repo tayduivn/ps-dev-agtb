@@ -76,7 +76,7 @@ abstract class SugarListApi extends SugarApi {
                 }
                 
                 //BEGIN SUGARCRM flav=pro ONLY
-                if ( $this->checkAcls && ( !$seed->ACLFieldAccess($field,'list') || !isset($seed->field_defs[$field]) ) ) {
+                if ( $this->checkAcls && ( !$seed->ACLFieldAccess($field,'read') || !isset($seed->field_defs[$field]) ) ) {
                     throw new SugarApiExceptionNotAuthorized('No access to view field: '.$field.' in module: '.$args['module']);
                 }
                 //END SUGARCRM flav=pro ONLY

@@ -66,13 +66,21 @@ class ModuleApi extends SugarApi {
                 'shortHelp' => 'This method sets a record of the specified type as a favorite',
                 'longHelp' => 'include/api/help/module_favorite_help.html',
             ),
+            'deleteFavorite' => array(
+                'reqType' => 'DELETE',
+                'path' => array('<module>','?', 'favorite'),
+                'pathVars' => array('module','record', 'favorite'),
+                'method' => 'unsetFavorite',
+                'shortHelp' => 'This method unsets a record of the specified type as a favorite',
+                'longHelp' => 'include/api/help/module_unfavorite_help.html',
+            ),            
             'unfavorite' => array(
                 'reqType' => 'PUT',
                 'path' => array('<module>','?', 'unfavorite'),
                 'pathVars' => array('module','record', 'unfavorite'),
                 'method' => 'unsetFavorite',
                 'shortHelp' => 'This method unsets a record of the specified type as a favorite',
-                'longHelp' => 'include/api/help/module_favorite_help.html',
+                'longHelp' => 'include/api/help/module_unfavorite_help.html',
             ),
             'enum' => array(
                 'reqType' => 'GET',
@@ -138,8 +146,7 @@ class ModuleApi extends SugarApi {
 
         $bean = BeanFactory::newBean($args['module']);
         
-        // TODO: When the create ACL goes in to effect, add it here.
-        if (!$bean->ACLAccess('save')) {
+        if (!$bean->ACLAccess('create')) {
             // No create access so we construct an error message and throw the exception
             $moduleName = null;
             if(isset($args['module'])){

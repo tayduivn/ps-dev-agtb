@@ -1048,6 +1048,21 @@ function _mergeCustomAppListStrings($file , $app_list_strings)
     //                  This way, language file can add items to save specific standard codelist from being overwritten
     $exemptDropdowns = array();
 	include($file);
+    
+    // Bug 60008
+    // There is a chance that some app_list_strings were in fact in $GLOBALS['app_list_strings'].
+    // In case of that, the customizations end up being blown away because they 
+    // are written to the global app_list_strings, not the function scope $app_list_strings.
+    // This fixes that. rgonzalez
+    if (!empty($GLOBALS['app_list_strings']) && isset($app_list_strings)) {
+        // array_diff would probably be better here, but it was failing for some reason
+        $globalALS = $GLOBALS['app_list_strings'];
+        foreach ($app_list_strings_original as $k => $v) {
+            unset($globalALS[$k]);
+        }
+        $app_list_strings = array_merge($app_list_strings, $globalALS);
+    }
+    
 	if(empty($app_list_strings) || !is_array($app_list_strings)){
 		return $app_list_strings_original;
 	}
@@ -1754,7 +1769,8 @@ function get_select_options_with_id_separate_key ($label_list, $key_list, $selec
  */
 function sugar_die($error_message)
 {
-	global $focus;
+	@header("HTTP/1.0 500 Server Error");
+	@header("Status: 500 Server Error");
 	sugar_cleanup();
 	die($error_message);
 }
@@ -4958,53 +4974,57 @@ function getUrls($string)
  */
 function verify_image_file($path, $jpeg = false)
 {
-	if(function_exists('imagepng') && function_exists('imagejpeg') && function_exists('imagecreatefromstring')) {
-        $img = imagecreatefromstring(file_get_contents($path));
-    	if(!$img) {
-    	    return false;
-    	}
-    	$img_size = getimagesize($path);
-		$filetype = $img_size['mime'];
-		//if filetype is jpeg or if we are only allowing jpegs, create jpg image
-        if($filetype == "image/jpeg" || $jpeg) {
-            ob_start();
-            imagejpeg($img);
-            $image = ob_get_clean();
-            // not writing directly because imagejpeg does not work with streams
-            if(file_put_contents($path, $image)) {
-                return true;
+    if(!empty($path)) {
+        if(function_exists('imagepng') && function_exists('imagejpeg') && function_exists('imagecreatefromstring')) {
+            $img = imagecreatefromstring(file_get_contents($path));
+            if(!$img) {
+                return false;
             }
-        } elseif ($filetype == "image/png") {
-            // else if the filetype is png, create png
-        	imagealphablending($img, true);
-        	imagesavealpha($img, true);
-        	ob_start();
-            imagepng($img);
-            $image = ob_get_clean();
-    	    if(file_put_contents($path, $image)) {
-                return true;
-    	    }
+            $img_size = getimagesize($path);
+            $filetype = $img_size['mime'];
+            //if filetype is jpeg or if we are only allowing jpegs, create jpg image
+            if($filetype == "image/jpeg" || $jpeg) {
+                ob_start();
+                imagejpeg($img);
+                $image = ob_get_clean();
+                // not writing directly because imagejpeg does not work with streams
+                if(file_put_contents($path, $image)) {
+                    return true;
+                }
+            } elseif ($filetype == "image/png") {
+                // else if the filetype is png, create png
+                imagealphablending($img, true);
+                imagesavealpha($img, true);
+                ob_start();
+                imagepng($img);
+                $image = ob_get_clean();
+                if(file_put_contents($path, $image)) {
+                    return true;
+                }
+            } else {
+                return false;
+            }
         } else {
-        	return false;
-        }
-	} else {
-	    // check image manually
-        $fp = fopen($path, "rb");
-        if(!$fp) return false;
-        $data = '';
-        // read the whole file in chunks
-        while(!feof($fp)) {
-            $data .= fread($fp,8192);
-        }
+            // check image manually
+            $fp = fopen($path, "rb");
+            if(!$fp) {
+                return false;
+            }
+            $data = '';
+            // read the whole file in chunks
+            while(!feof($fp)) {
+                $data .= fread($fp,8192);
+            }
 
-	    fclose($fp);
-	    if(preg_match("/<(\?php|html|!doctype|script|body|head|plaintext|table|img |pre(>| )|frameset|iframe|object|link|base|style|font|applet|meta|center|form|isindex)/i",
-	         $data, $m)) {
-	        $GLOBALS['log']->fatal("Found {$m[0]} in $path, not allowing upload");
-	        return false;
-	    }
-	    return true;
-	}
+            fclose($fp);
+            if(preg_match("/<(\?php|html|!doctype|script|body|head|plaintext|table|img |pre(>| )|frameset|iframe|object|link|base|style|font|applet|meta|center|form|isindex)/i",
+                 $data, $m)) {
+                $GLOBALS['log']->fatal("Found {$m[0]} in $path, not allowing upload");
+                return false;
+            }
+            return true;
+        }
+    }
 	return false;
 }
 

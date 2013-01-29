@@ -167,9 +167,9 @@ class SugarForecasting_Individual extends SugarForecasting_AbstractForecast impl
      */
     public function save()
     {
-        require_once('modules/Forecasts/ForecastWorksheet.php');
         require_once('include/SugarFields/SugarFieldHandler.php');
-        $seed = new ForecastWorksheet();
+        /* @var $seed ForecastWorksheet */
+        $seed = BeanFactory::getBean("ForecastWorksheets");
         $seed->loadFromRow($this->args);
         $sfh = new SugarFieldHandler();
 
@@ -201,10 +201,14 @@ class SugarForecasting_Individual extends SugarForecasting_AbstractForecast impl
         $settings = $admin->getConfigForModule('Forecasts');
         if (!isset($settings['has_commits']) || !$settings['has_commits']) {
             $admin->saveSetting('Forecasts', 'has_commits', true, 'base');
+            MetaDataManager::clearAPICache();
         }
 
         $seed->setWorksheetArgs($this->args);
-        $seed->save();
+        // we need to set the parent_type and parent_id so it finds it when we try and retrieve the old records
+        $seed->parent_type = 'Opportunities';
+        $seed->parent_id = $this->getArg('record');
+        $seed->saveWorksheet();
 
         // now lets return the row we just updated
 

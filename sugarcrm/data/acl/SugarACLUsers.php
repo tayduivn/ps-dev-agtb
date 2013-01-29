@@ -24,6 +24,32 @@ require_once('data/SugarACLStrategy.php');
 class SugarACLUsers extends SugarACLStrategy
 {
     /**
+     * Fields non admin cannot edit
+     */
+    public $no_edit_fields = array(
+            'title' => true,
+            'department' => true,
+            'reports_to_id' => true,
+            'reports_to_name' => true,
+            'reports_to_link' => true,
+            'user_name' => true,
+            'status' => true,
+            'employee_status' => true,
+        );
+
+    public $no_access_fields = array(
+            'show_on_employees' => true,        
+            'portal_only' => true,
+            'is_admin' => true,
+            'is_group' => true,
+            'system_generated_password' => true,
+            'external_auth_only' => true,
+            'sugar_login' => true,
+            'authenticate_id' => true,
+            'pwd_last_changed' => true,        
+        );
+
+    /**
      * Check access a current user has on Users and Employees
      * @param string $module
      * @param string $view
@@ -36,16 +62,38 @@ class SugarACLUsers extends SugarACLStrategy
             return false;
         }
 
+        if ( $view == 'team_security' ) {
+            // Let the other modules decide
+            return true;
+        }
 
         $current_user = $this->getCurrentUser($context);
 
         $bean = self::loadBean($module, $context);
+        $myself = !empty($bean->id) && $bean->id == $current_user->id;
 
-        if(is_admin($current_user)) {
-            // even an admin can't delete themselves
-            if(!empty($bean->id) && $bean->id == $current_user->id && $view == 'delete') {
+        // Let's make it a little easier on ourselves and fix up the actions nice and quickly
+        $view = SugarACLStrategy::fixUpActionName($view);
+        if ( $view == 'field' ) {
+            $context['action'] = SugarACLStrategy::fixUpActionName($context['action']);
+        }
+
+        // even an admin can't delete themselves
+        if( $myself ) {
+            if ( $view == 'delete') {
+                // Here's the obvious way to disable yourself
                 return false;
             }
+            if ( $view == 'field' 
+                 && ( $context['action'] == 'edit' || $context['action'] == 'massupdate' || $context['action'] == 'delete' )
+                 && ( $context['field'] == 'employee_status' || $context['field'] == 'status' ) ) {
+                // This is another way to disable yourself
+                return false;
+            }
+        }
+            
+
+        if($current_user->isAdminForModule($module)) {
             return true;
         }
 
@@ -53,21 +101,26 @@ class SugarACLUsers extends SugarACLStrategy
             return true;
         }
 
-        // we can update ourselves
-        if(!empty($bean->id) && $bean->id == $current_user->id) {
-            if ( $view == 'delete' ) {
-                return false;
-            }
+        // We can edit ourself
+        if( $myself && $view == 'edit' ) {
             return true;
         }
 
-        if($view == 'view' || $view == 'ListView' || $view == 'list' || $view == 'field' || $view == 'DetailView' || $view == 'detail' || $view == 'team_security'  || $view == 'access') {
-            if($view == 'field' && $context['field'] == 'password') {
+        if ( !$myself && $view == 'field' && !empty($this->no_access_fields[$context['field']])) {
+            // This isn't us, these aren't fields we should be poking around in.
+            return false;
+        }
+
+        if($view == 'view' || $view == 'list' || $view == 'field' || $view == 'team_security') {
+            if($view == 'field' && ($context['field'] == 'password' || $context['field'] == 'user_hash') ) {
                 return false;
             }
-            if($view == 'field' && $context['field'] == 'is_admin' && ($context['action'] == 'edit' || $context['action'] == 'massupdate' || $context['action'] == 'delete')) {
+            if( $view == 'field'
+                && ($context['action'] == 'edit' || $context['action'] == 'massupdate' || $context['action'] == 'delete' || $context['action'] == 'create')
+                && !empty($this->no_edit_fields[$context['field']])) {
+
                 return false;
-            }
+            }            
             return true;
         }
 

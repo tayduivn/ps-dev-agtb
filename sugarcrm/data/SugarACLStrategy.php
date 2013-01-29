@@ -96,8 +96,10 @@ abstract class SugarACLStrategy
         $result = array();
         foreach($field_list as $key => $field) {
             if($this->checkAccess($module, "field", $context + array("field" => $field, "action" => "edit"))) {
-                $result[$key] = SugarACL::ACL_READ_WRITE;
-            } else if($this->checkAccess($module, "field", $context + array("field" => $field, "action" => "detail"))) {
+                $result[$key] = SugarACL::ACL_READ_WRITE;                
+            } elseif((empty($context['bean']) || empty($context['bean']->id) || $context['bean']->new_with_id == true) && $this->checkAccess($module, "field", $context + array("field" => $field, "action" => "create"))) {
+                $result[$key] = SugarACL::ACL_CREATE_ONLY;
+            } elseif($this->checkAccess($module, "field", $context + array("field" => $field, "action" => "detail"))) {
                 $result[$key] = SugarACL::ACL_READ_ONLY;
             } else {
                 $result[$key] = SugarACL::ACL_NO_ACCESS;
@@ -133,5 +135,62 @@ abstract class SugarACLStrategy
         	}
         }
         return $access;
+    }
+
+    /**
+     * Fix up the ACL actions into a sanitized subset
+     * @param string $actionToCheck Which access you are checking, for example: 'ListView', 'edit', 'Save'
+     * @returns string The canonical version of that string, for example:       'list',     'edit', 'edit'
+     */
+    public static function fixUpActionName($actionToCheck)
+    {
+        if ( empty($actionToCheck) ) {
+            return $actionToCheck;
+        }
+        $input = strtolower($actionToCheck);
+        switch ($input)
+        {
+            case 'index':
+            case 'listview':
+            case 'subpanel':
+                $output = 'list';
+                break;
+            case 'save':
+            case 'popupeditview':
+            case 'editview':
+                $output = 'edit';
+                break;
+            case 'read':
+            case 'access':
+            case 'detail':
+            case 'detailview':
+                $output = 'view';
+                break;
+            default:
+                $output = $input;
+        }
+
+        return $output;
+    }
+    
+    /**
+     * Helper function to determine if a user is attempting to perform a write operation
+     * @param string $view A view name as passed in to checkAccess, will be sanitized using fixUpActionName
+     * @param array $context The additional context information passed in to checkAccess
+     * @return bool This is a write operation
+     */
+    public function isWriteOperation($view, $context)
+    {
+        // Let's make it a little easier on ourselves and fix up the actions nice and quickly
+        $action = self::fixUpActionName($view);
+        if ( $action == 'field' ) {
+            $action = self::fixUpActionName($context['action']);
+        }
+
+        if ( $action == 'create' || $action == 'edit' || $action == 'delete' || $action == 'import' || $action == 'massupdate' ) {
+            return true;
+        } else {
+            return false;
+        }
     }
 }

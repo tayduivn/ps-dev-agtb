@@ -813,7 +813,7 @@ class SugarTestHelper
             }
             return;
         }
-        $parts = explode("/", $dir);
+        $parts = explode("/", $dirname);
         while(!empty($parts)) {
             $path = implode("/", $parts);
             if(!is_dir($path)) {
@@ -848,7 +848,7 @@ class SugarTestHelper
         }
         foreach(self::$oldDirs as $dirname) {
             rmdir($dirname);
-            SugarAutoLoader::delFromMap($filename, false);
+            SugarAutoLoader::delFromMap($dirname, false);
         }
         SugarAutoLoader::saveMap();
     }

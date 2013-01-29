@@ -179,7 +179,7 @@ class MysqliManager extends MysqlManager
 			$this->lastResult = $result;
         }
 
-        if (mysqli_errno($this->database) == 2006 && $this->retryCount < 1) {
+        if ($this->database && mysqli_errno($this->database) == 2006 && $this->retryCount < 1) {
             $GLOBALS['log']->fatal('mysqli has gone away, retrying');
             $this->retryCount++;
             $this->disconnect();

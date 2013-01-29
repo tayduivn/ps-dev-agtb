@@ -149,7 +149,14 @@ class SugarApplicationTest extends Sugar_PHPUnit_Framework_TestCase
 
         $this->_app->loadDisplaySettings();
 
-        $this->assertEquals($GLOBALS['theme'],
+        global $sugar_config;
+        $disabledThemes = !empty($sugar_config['disabled_themes']) ? $sugar_config['disabled_themes'] : array();
+        if(is_string($disabledThemes)) {
+            $disabledThemes = array($disabledThemes);
+        }
+        $expectedTheme = !in_array($GLOBALS['theme'], $disabledThemes) ? $GLOBALS['theme'] : 'RacerX';
+
+        $this->assertEquals($expectedTheme,
             $_REQUEST['usertheme']);
 
         $this->_removeUser();
