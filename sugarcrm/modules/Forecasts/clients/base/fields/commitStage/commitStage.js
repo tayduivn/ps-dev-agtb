@@ -116,7 +116,7 @@
             self.$el.off("mouseenter");
             self.$el.off("mouseleave");
             self.select = self.$el.find("select");
-            self.select.select2();
+            self.select.select2(!_.isUndefined(self.def.searchBarThreshold)? {minimumResultsForSearch: self.def.searchBarThreshold}:null);
             self.currentVal = self.value;
             self.select.select2("val", self.value);
             self.select.select2("open");
