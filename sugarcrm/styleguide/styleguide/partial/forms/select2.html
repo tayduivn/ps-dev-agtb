@@ -285,6 +285,42 @@
     </div>
   </div>
 
+
+  <!-- ==================== -->
+
+  <div class="row">
+    <div class="span12 padded">
+      <label>Select with Hidden Input</label>
+      <input type="hidden" id="s2_hidden" class="select2 inherit-width">
+      <script>
+        var $this = $('#s2_hidden')
+          , ctor = getSelect2Constructor($this);
+        ctor.data = [{id:0,text:'enhancement'},{id:1,text:'bug'},{id:2,text:'duplicate'},{id:3,text:'invalid'},{id:4,text:'wontfix'}];
+        ctor.placeholder = "Select a issue type...";
+        $this.select2( ctor );
+      </script>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="span6">
+<pre class="prettyprint linenums" style="margin-bottom: 9px;">
+&lt;input id="s2_hidden" class="select2 inherit-width"&gt;
+
+&lt;script&gt;
+  var $this = $('#s2_hidden')
+    , ctor = getSelect2Constructor($this);
+  ctor.data = [{id:0,text:'enhancement'},{id:1,text:'bug'},{id:2,text:'duplicate'},{id:3,text:'invalid'},{id:4,text:'wontfix'}];
+  ctor.placeholder = "Select a issue type...";
+  $this.select2( ctor );
+&lt;/script&gt;
+</pre>
+    </div>
+    <div class="span6">
+      <p>It is possible to use a <code>&lt;input type="hidden"&gt;</code> field as long as you pass data in the constructor. This example also shows the use of the <code>placeholder</code> property in the constructor.</p>
+    </div>
+  </div>
+
   <!-- ==================== -->
 <!--
   <div class="row">
