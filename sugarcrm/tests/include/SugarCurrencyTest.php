@@ -52,6 +52,7 @@ class SugarCurrencyTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public static function setUpBeforeClass()
     {
+        parent::setUpBeforeClass();
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('beanList');
         // setup test user
@@ -62,22 +63,6 @@ class SugarCurrencyTest extends Sugar_PHPUnit_Framework_TestCase
         self::$currencyPHP = SugarTestCurrencyUtilities::createCurrency('Philippines','₱','PHP',41.82982,'currency-php');
         self::$currencyYEN = SugarTestCurrencyUtilities::createCurrency('Yen','¥','YEN',78.87,'currency-yen');
         self::$currencyBase = BeanFactory::getBean('Currencies','-99');
-    }
-
-    /**
-     * object setup
-     *
-     */
-    public function setUp()
-    {
-    }
-
-    /**
-     * object teardown
-     *
-     */
-    public function tearDown()
-    {
     }
 
     /**
@@ -93,6 +78,7 @@ class SugarCurrencyTest extends Sugar_PHPUnit_Framework_TestCase
         // remove test currencies
         SugarTestCurrencyUtilities::removeAllCreatedCurrencies();
         SugarTestHelper::tearDown();
+        parent::tearDownAfterClass();
     }
 
     /**

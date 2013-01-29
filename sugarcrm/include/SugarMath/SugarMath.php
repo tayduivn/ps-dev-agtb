@@ -69,7 +69,7 @@ class SugarMath
      * @param mixed $value the starting value to apply math to
      * @param int $scale Optional math scale
      */
-    public function __construct( $value = 0.0, $scale = null ) {
+    public function __construct( $value = '0', $scale = null ) {
         $this->setValue($value);
         if(isset($scale)) {
             $this->setScale($scale);
@@ -351,7 +351,7 @@ class SugarMath
     public function exp($exp, $args = array()) {
         if(strlen($exp) == 0) {
             // expression empty, set to 0
-            $this->value = 0;
+            $this->value = '0';
             return $this;
         }
         if(!isset($args)) {
@@ -363,7 +363,7 @@ class SugarMath
         if(!is_array($args)) {
             throw new SugarMath_Exception('expression args must be an array');
         }
-        if(count($args)>0) {
+        if(count($args) > 0) {
             foreach($args as $arg) {
                 $this->testValue($arg,'numeric','arguments must be numeric');
             }
@@ -506,7 +506,7 @@ class SugarMath
         // set scale back to original value
         $this->scale -= 10;
         // if original expression was empty parenthesis, result will be 0
-        $this->value = !empty($result) ? $result[0] : 0;
+        $this->value = !empty($result) ? $result[0] : '0';
         return $this;
     }
 
