@@ -52,6 +52,7 @@
         });
 
         var lastCell = _.last(panel.fields);
+        lastCell.cell_css_class = 'overflow-visible';
         lastCell.fields.push({
             type: 'editablelistbutton',
             label: 'LBL_SAVE_BUTTON_LABEL',
