@@ -221,10 +221,15 @@ describe("Create View", function() {
             expect(view.model.get('first_name')).toBe('Foo');
             expect(view.model.get('last_name')).toBe('Bar');
 
+            var render = sinon.stub(view, 'render', function() {
+                return;
+            });
             view.buttons[view.restoreButtonName].getFieldElement().click();
 
             expect(view.model.get('first_name')).toBe('First');
             expect(view.model.get('last_name')).toBe('Last');
+
+            render.restore();
         });
     });
 
