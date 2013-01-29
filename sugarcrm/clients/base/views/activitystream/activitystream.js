@@ -26,7 +26,7 @@
             this.subcontext = this.context.getChildContext({module: "Home"});
             this.subcontext.prepare();
 
-            this.opts = (this.context.get("modelId")) ? { params: { module: this.module, id: this.context.get("modelId") }} :
+            this.opts = (this.context.get("model").id) ? { params: { module: this.module, id: this.context.get("model").id }} :
             { params: { module: this.module }};
 
             this.streamCollection = this.subcontext.get("collection");

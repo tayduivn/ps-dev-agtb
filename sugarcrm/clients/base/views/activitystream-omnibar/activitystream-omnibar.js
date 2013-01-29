@@ -22,7 +22,7 @@
     addPost: function() {
         var self = this,
             myPost = this.$(".activitystream-post"),
-            myPostId = this.context.get("modelId"),
+            myPostId = this.context.get("model").id,
             myPostModule = this.module,
             myPostUrl = 'ActivityStream',
             myPostContents,
