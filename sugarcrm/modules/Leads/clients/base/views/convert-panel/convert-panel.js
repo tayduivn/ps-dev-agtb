@@ -13,11 +13,11 @@
     initialize:function (options) {
         app.view.View.prototype.initialize.call(this, options);
         _.bindAll(this);
-        this.context.on("lead:convert:populate", this.handlePopulateRecords, this);
-        this.context.on("lead:convert:"+this.meta.module+":show", this.handleShow, this);
-        this.context.on("lead:convert:"+this.meta.module+":hide", this.handleHide, this);
-        this.context.on("lead:convert:"+this.meta.module+":validate", this.runValidation, this);
-        this.context.on("lead:convert:"+this.meta.module+":enable", this.handleEnablePanel, this);
+        this.context.on("lead:convert:populate", this.handlePopulateRecords);
+        this.context.on("lead:convert:"+this.meta.module+":show", this.handleShow);
+        this.context.on("lead:convert:"+this.meta.module+":hide", this.handleHide);
+        this.context.on("lead:convert:"+this.meta.module+":validate", this.runValidation);
+        this.context.on("lead:convert:"+this.meta.module+":enable", this.handleEnablePanel);
         this.currentState = {
             activeView: this.DUPLICATE_VIEW,
             duplicateCount: 0,
@@ -26,8 +26,8 @@
         };
     },
 
-    render:function () {
-        app.view.View.prototype.render.call(this);
+    _render:function () {
+        app.view.View.prototype._render.call(this);
         this.initiateSubComponents(this.meta);
         this.meta.moduleSingular = this.recordView.moduleSingular;
         this.updatePanelHeader();
@@ -37,21 +37,21 @@
      * Add sub-views defined by the convert metadata to the view
      */
     initiateSubComponents:function (moduleMeta) {
-        var self = this;
+        this.insertDuplicateViewInPanel(moduleMeta);
+        this.insertRecordViewInPanel(moduleMeta);
 
-        self.insertDuplicateViewInPanel(moduleMeta);
-        self.insertRecordViewInPanel(moduleMeta);
-
+        //if dupe check is turned on for module, check if dupes found
         if (moduleMeta.duplicateCheck) {
-            self.duplicateView.collection.on("reset", function(){
-                self.currentState.duplicateCount = self.duplicateView.collection.length;
-                self.updatePanelHeader();
-                if (self.duplicateView.collection.length === 0) {
-                    self.toggleSubViews(this.RECORD_VIEW);
+            this.duplicateView.collection.on("reset", function(){
+                this.currentState.duplicateCount = this.duplicateView.collection.length;
+                this.updatePanelHeader();
+                if (this.duplicateView.collection.length === 0) {
+                    //no dupes, switch over to record view
+                    this.toggleSubViews(this.RECORD_VIEW);
                 }
-            }, self);
+            }, this);
         } else {
-            self.toggleSubViews(this.RECORD_VIEW);
+            this.toggleSubViews(this.RECORD_VIEW);
         }
     },
 
@@ -74,7 +74,7 @@
 
         this.$('.' + this.DUPLICATE_VIEW + 'View').append(this.duplicateView.el);
         this.duplicateView.render();
-        this.duplicateView.context.on('change:selection_model', this.selectDuplicate, this);
+        this.duplicateView.context.on('change:selection_model', this.selectDuplicate);
         this.duplicateView.validationStatus = this.STATUS_INIT;
     },
 
@@ -103,27 +103,44 @@
         this.recordView.validationStatus = this.STATUS_DIRTY;
     },
 
+    /**
+     * Open up the panel, showing the bottom and ability to toggle the subview
+     */
     handleShow: function() {
         this.$('.header').addClass('active');
         this.showBody();
         this.showSubViewToggle();
     },
 
+    /**
+     * Show the body of the panel
+     */
     showBody: function () {
         var panelBody = '#collapse' + this.meta.module;
         this.$(panelBody).collapse('show');
     },
 
+    /**
+     * Close the panel, hide the body and ability to toggle the subview
+     */
     handleHide: function() {
         this.$('.header').removeClass('active');
         this.updatePanelHeader();
         this.hideSubViewToggle();
     },
 
+    /**
+     * Enable the panel
+     */
     handleEnablePanel: function() {
         this.$('.header').removeClass('disabled').addClass('enabled');
     },
 
+    /**
+     * Toggle the subviews based on which link was clicked
+     *
+     * @param event
+     */
     handleToggleClick: function(event) {
          if (this.$(event.target).hasClass('show-duplicate')) {
             this.toggleSubViews(this.DUPLICATE_VIEW);
@@ -133,19 +150,32 @@
         event.stopPropagation();
     },
 
-    selectDuplicate: function(e) {
-       var selectedModel = e.changed.selection_model;
+    /**
+     * When a duplicate is selected, grab the id & name and set status to dirty
+     *
+     * @param event
+     */
+    selectDuplicate: function(event) {
+       var selectedModel = event.changed.selection_model;
 
         this.currentState.selectedId = selectedModel.get('id');
         this.currentState.selectedName = selectedModel.get('name');
         this.setStatus(this.STATUS_DIRTY);
     },
 
+    /**
+     * When there is a change to the state of a panel, updates need to be made to the header
+     */
     updatePanelHeader: function() {
         this.updatePanelTitle();
         this.updatePanelSubTitle();
     },
 
+    /**
+     * Update the panel's title
+     * Includes check mark for completion as well as text indicating whether the module
+     * was associated or needs to be associated.
+     */
     updatePanelTitle: function() {
         var newTitle;
 
@@ -173,6 +203,13 @@
         this.$('.title').text(newTitle);
     },
 
+    /**
+     * Update the panel's subtitle
+     * Includes either:
+     *      the name of the associated record (if associated)
+     *      number of duplicates found (if in dupe view)
+     *      create new record heading (if in create view)
+     */
     updatePanelSubTitle: function() {
         var newSubTitle, translatedString;
 
@@ -190,7 +227,7 @@
                     this.module,
                     {'duplicateCount': this.currentState.duplicateCount}
                 );
-                newSubTitle = ' ' + translatedString;
+                newSubTitle = translatedString;
             }
         } else if (this.currentState.activeView === this.RECORD_VIEW) {
             translatedString = app.lang.get(
@@ -198,7 +235,7 @@
                 this.module,
                 {'moduleName': this.meta.moduleSingular}
             );
-            newSubTitle = ' ' + translatedString;
+            newSubTitle = translatedString;
         } else {
             return;
         }
@@ -206,6 +243,13 @@
         this.$('.sub-title').text(newSubTitle);
     },
 
+    /**
+     * Special logic for grabbing the display name for a module
+     * using the name fields if they exist or a 'name' field if it exists
+     *
+     * @param model
+     * @return {String}
+     */
     getDisplayName: function(model) {
         var moduleFields = app.metadata.getModule(this.meta.module).fields,
             displayName = '';
@@ -230,20 +274,36 @@
         this.$('.subview-toggle').show();
     },
 
+    /**
+     * When lead data has been retrieved, populate the subpanel record view
+     * and then kick off the dupe check
+     *
+     * @param leadModel
+     */
     handlePopulateRecords: function(leadModel) {
         this.populateRecordsFromLeads(leadModel);
         this.duplicateView.context.trigger("dupecheck:fetch:fire", this.recordView.model);
     },
 
+    /**
+     * Use the convert metadata to determine how to map the lead fields to module fields
+     *
+     * @param leadModel
+     */
     populateRecordsFromLeads:function (leadModel) {
-        var self = this;
-        _.each(self.meta.fieldMapping, function (sourceField, targetField) {
+        _.each(this.meta.fieldMapping, function (sourceField, targetField) {
             if (leadModel.has(sourceField)) {
-                self.recordView.model.set(targetField, leadModel.get(sourceField));
+                this.recordView.model.set(targetField, leadModel.get(sourceField));
             }
-        });
+        }, this);
     },
 
+    /**
+     * Helper method for switching subviews
+     * (also updates header and lets the layout know a panel has been updated)
+     *
+     * @param viewToShow
+     */
     toggleSubViews: function(viewToShow) {
         this.toggleDuplicateView(viewToShow === this.DUPLICATE_VIEW);
         this.toggleRecordView(viewToShow === this.RECORD_VIEW);
@@ -251,6 +311,11 @@
         this.context.trigger("lead:convert:panel:update");
     },
 
+    /**
+     * Switch on/off the duplicate view and update the current state
+     *
+     * @param show true to show, false to hide
+     */
     toggleDuplicateView: function(show) {
         this.duplicateView.$el.parent().toggle(show);
         this.$('.show-record').toggle(show);
@@ -259,6 +324,11 @@
         }
     },
 
+    /**
+     * Switch on/off the record/create view and update the current state
+     *
+     * @param show true to show, false to hide
+     */
     toggleRecordView: function(show) {
         this.recordView.$el.parent().toggle(show);
         if (this.currentState.duplicateCount > 0) {
@@ -269,6 +339,11 @@
         }
     },
 
+    /**
+     * Run validation, report errors as appropriate
+     * @param callback
+     * @param force
+     */
     runValidation: function(callback, force) {
         var force = force || false;
         if (this.currentState.activeView === this.DUPLICATE_VIEW) {
@@ -295,12 +370,20 @@
         }
     },
 
+    /**
+     * Show validation errors on the record/create view
+     */
     showValidationAlert: function() {
         var title = app.lang.get('LBL_CONVERT_FAILED_VALIDATION_TITLE', 'Leads');
         var message = app.lang.get('LBL_CONVERT_FAILED_VALIDATION_MESSAGE', 'Leads');
         app.alert.show('failed_validation', {level:'error', title: title, messages: message, autoClose: true});
     },
 
+    /**
+     * Retrieve the validation status from the currently displayed subview
+     *
+     * @return {*}
+     */
     getStatus: function() {
         if (this.currentState.activeView === this.DUPLICATE_VIEW) {
             if (this.duplicateView && this.duplicateView.validationStatus) {
@@ -317,6 +400,10 @@
         }
     },
 
+    /**
+     * Update the validation status on the currently displayed subview
+     * @param status
+     */
     setStatus: function(status) {
         if (this.currentState.activeView === this.DUPLICATE_VIEW) {
             this.duplicateView.validationStatus = status;
@@ -326,10 +413,21 @@
         this.context.trigger("lead:convert:panel:update");
     },
 
+    /**
+     * Method used the by layout for determine if this panel has been complete
+     * or (in the dupe view case) a record has been selected
+     *
+     * @return {Boolean}
+     */
     isDirtyOrComplete: function() {
        return (this.getStatus() === this.STATUS_COMPLETE || this.getStatus() === this.STATUS_DIRTY);
     },
 
+    /**
+     * Retrieve the duplicate selected or record view model to be created
+     *
+     * @return {*} backbone model containing id or full record to create
+     */
     getAssociatedModel: function() {
         var associatedModel;
 

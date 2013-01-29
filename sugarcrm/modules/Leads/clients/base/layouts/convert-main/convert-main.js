@@ -23,15 +23,14 @@
      * @param modulesMetadata
      */
     initializePanels: function(modulesMetadata) {
-        var self = this,
-            moduleNumber = 1;
+        var moduleNumber = 1;
 
         _.each(modulesMetadata, function (moduleMeta) {
             moduleMeta.moduleNumber = moduleNumber++;
             var view = app.view.createView({
-                context: self.context,
+                context: this.context,
                 name: 'convert-panel',
-                layout: self,
+                layout: this,
                 meta: moduleMeta
             });
 
@@ -39,8 +38,8 @@
             view.$el.addClass('accordion-group filter_el step_1_container');
             view.$el.data('module', moduleMeta.module);
 
-            self.addComponent(view);
-        });
+            this.addComponent(view);
+        }, this);
     },
 
     _render: function () {
@@ -103,16 +102,15 @@
      * Dependencies are defined in the convert-main.php
      */
     checkDependentModules: function() {
-        var self = this,
-            modulesMeta = this.meta.modules;
+        var modulesMeta = this.meta.modules;
 
         _.each(modulesMeta, function (moduleMeta) {
             if(!_.isUndefined(moduleMeta.dependentModules)) {
-                if (self.isDependentModulesComplete(moduleMeta)) {
-                    self.context.trigger("lead:convert:" + moduleMeta.module + ":enable");
+                if (this.isDependentModulesComplete(moduleMeta)) {
+                    this.context.trigger("lead:convert:" + moduleMeta.module + ":enable");
                 }
             }
-        });
+        }, this);
     },
 
     /**
