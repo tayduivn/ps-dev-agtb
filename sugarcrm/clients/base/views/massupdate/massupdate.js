@@ -24,11 +24,11 @@
                 massFields = [];
             _.each(moduleMetadata.fields, function(field){
                 if(field.massupdate) {
-                    //TODO: Add or Replace option for Teamset (team_name_type)
                     field = JSON.parse(JSON.stringify(field));
                     field.label = field.label || field.vname;
+                    if(!field.label) delete field.label;
                     //TODO: Remove hack code for teamset after metadata return correct team type
-                    if(field.name == 'team_name') {
+                    if(field.name === 'team_name') {
                         var team_field = _.clone(field);
                         team_field.type = 'teamset';
                         field = {
@@ -253,6 +253,7 @@
                         success: function(data, response) {
                             massUpdate.reset();
                             if(response.status == 'done') {
+                                app.alert.show('massupdate_success_notice', {level: 'success', title: app.lang.getAppString('LBL_MASS_UPDATE_SUCCESS'), autoClose: true});
                                 self.layout.trigger("list:search:fire");
                             } else if(response.status == 'queued') {
                                 app.alert.show('jobqueue_notice', {level: 'success', title: app.lang.getAppString('LBL_MASS_UPDATE_JOB_QUEUED'), autoClose: true});

@@ -1,13 +1,13 @@
 ({
     events: {
-        "click .imagesearch-widget-choice": "selectImage"
+        "click .imagesearch-widget-choice": "selectImage",
+        "click .imagesearch-widget img": "openImageModal"
     },
 
     profile: "../styleguide/assets/img/profile.png",
 
     initialize: function(options) {
         app.view.Field.prototype.initialize.call(this, options);
-        this.getImages();
     },
 
     _render: function() {
@@ -23,11 +23,10 @@
         app.view.Field.prototype._render.call(this);
     },
 
-    getImages: function() {
+    getImages: function(callback) {
         var user = "kdao@sugarcrm.com",
             name = this.model.get("name") || this.model.get("first_name") + " " + this.model.get("last_name") || this.model.get("full_name"),
             pwd = "+CTtuUW+uJeXKskFMauJguo7bcagh5RvculJnKu9kuA=";
-
         $.support.cors = true;
 
         $.ajax({
@@ -46,16 +45,15 @@
                 }, this);
 
                 this.render();
+                if(_.isFunction(callback)){
+                    callback.call(this);
+                }
             },
             error: function(jqXHR, textStatus, errorThrown) {
                 console.log(errorThrown.message);
             },
             context: this
         });
-    },
-
-    bindDataChange: function() {
-        this.model.on("change", this.getImages, this);
     },
 
     selectImage: function(e) {
@@ -65,6 +63,12 @@
         this.model.set({img: target.attr("src")});
         this.model.save();
 
+        e.stopPropagation();
+    },
+    openImageModal: function(e){
+        this.getImages(function(){
+            this.$("#imagesearch").modal('show');
+        });
         e.stopPropagation();
     }
 })

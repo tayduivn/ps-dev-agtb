@@ -45,10 +45,7 @@ $viewdefs['Contacts']['base']['view']['baselist'] = array(
                 ),
                 'title',
                 'account_name',
-                array(
-                    'name' => 'email',
-                    'label' => 'LBL_LIST_EMAIL_ADDRESS',
-                ),
+                'email',
                 'phone_work',
                 array (
                     'name' => 'assigned_user_name',

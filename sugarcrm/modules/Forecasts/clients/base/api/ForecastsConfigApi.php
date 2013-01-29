@@ -24,13 +24,43 @@ require_once('include/api/ConfigModuleApi.php');
 
 class ForecastsConfigApi extends ConfigModuleApi {
 
+    public function registerApiRest()
+    {
+        return
+            array (
+                'forecastsConfigGet' => array(
+                    'reqType' => 'GET',
+                    'path' => array('Forecasts','config'),
+                    'pathVars' => array('module',''),
+                    'method' => 'config',
+                    'shortHelp' => 'Retrieves the config settings for a given module',
+                    'longHelp' => 'include/api/help/config_get_help.html',
+                ),
+                'forecastsConfigCreate' => array (
+                    'reqType' => 'POST',
+                    'path' => array('Forecasts','config'),
+                    'pathVars' => array('module',''),
+                    'method' => 'forecastsConfigSave',
+                    'shortHelp' => 'Creates the config entries for the Forecasts module.',
+                    'longHelp' => 'modules/Forecasts/clients/base/api/help/ForecastsConfigPut.html',
+                ),
+                'forecastsConfigUpdate' => array (
+                    'reqType' => 'PUT',
+                    'path' => array('Forecasts','config'),
+                    'pathVars' => array('module',''),
+                    'method' => 'forecastsConfigSave',
+                    'shortHelp' => 'Updates the config entries for the Forecasts module',
+                    'longHelp' => 'modules/Forecasts/clients/base/api/help/ForecastsConfigPut.html',
+                ),
+            );
+    }
+
     /**
-     * Save function for the config settings for a given module.
+     * Save function for the config settings for Forecasts' special needs.
      * @param $api
      * @param $args 'module' is required, 'platform' is optional and defaults to 'base'
      */
-    public function configSave($api, $args) {
-
+    public function forecastsConfigSave($api, $args) {
         //acl check, only allow if they are module admin
         if(!parent::hasAccess("Forecasts")) {
             throw new SugarApiExceptionNotAuthorized("Current User not authorized to change Forecasts configuration settings");
@@ -106,11 +136,11 @@ class ForecastsConfigApi extends ConfigModuleApi {
      *
      * @return boolean
      */
-    private function timePeriodSettingsChanged($priorSettings, $currentSettings) {
-        if(!isset($priorSettings['timeperiod_shown_backward']) || (isset($currentSettings['timeperiod_shown_backward']) && ($currentSettings['timeperiod_shown_backward'] != $priorSettings['timeperiod_interval']))) {
+    public function timePeriodSettingsChanged($priorSettings, $currentSettings) {
+        if(!isset($priorSettings['timeperiod_shown_backward']) || (isset($currentSettings['timeperiod_shown_backward']) && ($currentSettings['timeperiod_shown_backward'] != $priorSettings['timeperiod_shown_backward']))) {
             return true;
         }
-        if(!isset($priorSettings['timeperiod_shown_forward']) || (isset($currentSettings['timeperiod_shown_forward']) && ($currentSettings['timeperiod_shown_forward'] != $priorSettings['timeperiod_type']))) {
+        if(!isset($priorSettings['timeperiod_shown_forward']) || (isset($currentSettings['timeperiod_shown_forward']) && ($currentSettings['timeperiod_shown_forward'] != $priorSettings['timeperiod_shown_forward']))) {
             return true;
         }
         if(!isset($priorSettings['timeperiod_interval']) || (isset($currentSettings['timeperiod_interval']) && ($currentSettings['timeperiod_interval'] != $priorSettings['timeperiod_interval']))) {
