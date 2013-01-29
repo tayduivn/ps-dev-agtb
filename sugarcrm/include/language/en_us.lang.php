@@ -71,6 +71,7 @@ $app_list_strings = array (
     //END SUGARCRM flav=pro ONLY
     'Activities' => 'Activities',
     'Comments' => 'Comments',
+    'Subscriptions' => 'Subscriptions',
     'Bugs' => 'Bug Tracker',
     'Feeds' => 'RSS',
     'iFrames'=>'My Sites',

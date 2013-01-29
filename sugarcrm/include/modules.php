@@ -497,6 +497,10 @@ $beanList['Comments'] = 'Comment';
 $beanFiles['Comment'] = 'modules/ActivityStream/Comments/Comment.php';
 $modInvisList[] = 'Comments';
 
+$beanList['Subscriptions'] = 'Subscription';
+$beanFiles['Subscription'] = 'modules/ActivityStream/Subscriptions/Subscription.php';
+$modInvisList[] = 'Subscriptions';
+
 $beanList['Filters'] = 'Filters';
 $beanFiles['Filters'] = 'modules/Filters/Filters.php';
 $modInvisList[] = 'Filters';
