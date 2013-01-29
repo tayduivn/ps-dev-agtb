@@ -21,6 +21,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  ********************************************************************************/
  if(!defined('ACL_READ_ONLY')){   
  	define('ACL_READ_ONLY', 50);
+ 	define('ACL_CREATE_ONLY', 10);
  	define('ACL_READ_WRITE', 99);
  	define('ACL_OWNER_READ_WRITE', 40);
  	define('ACL_READ_OWNER_WRITE', 60);
@@ -36,6 +37,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  					ACL_READ_WRITE=>'LBL_READ_WRITE',
  					ACL_READ_OWNER_WRITE=>'LBL_READ_OWNER_WRITE',
  			 		ACL_READ_ONLY=>'LBL_READ_ONLY',
+ 			 		ACL_CREATE_ONLY => 'LBL_CREATE_ONLY',
  			 		ACL_OWNER_READ_WRITE=>'LBL_OWNER_READ_WRITE',
  					ACL_ALLOW_NONE=>'LBL_ALLOW_NONE',
  					);

@@ -36,11 +36,17 @@ class SugarForecasting_AbstractForecastTest extends Sugar_PHPUnit_Framework_Test
         SugarTestHelper::setUp('timedate');
         SugarTestHelper::setUp('current_user');
         self::$obj = new MockSugarForecasting_Abstract(array());
+
+        global $current_user;
+        $reportee = SugarTestUserUtilities::createAnonymousUser();
+        $reportee->reports_to_id = $current_user->id;
+        $reportee->save();
     }
 
     public static function tearDownAfterClass()
     {
         SugarTestHelper::tearDown();
+        SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
     }
 
     /**
@@ -67,6 +73,17 @@ class SugarForecasting_AbstractForecastTest extends Sugar_PHPUnit_Framework_Test
             //array('10/15/2012 10:38', $timedate->asIso($timedate->fromDb('2012-10-15 10:38:00'), $current_user)), // from user format
         );
     }
+
+    /**
+     * This is a test to ensure that the current_user is the first element in the array from the getUserReportees function
+     * @group forecasts
+     */
+    public function testGetUserReportees() {
+        global $current_user;
+        $reportees = self::$obj->getUserReportees($current_user->id);
+        $keys = array_keys($reportees);
+        $this->assertEquals($current_user->id, $keys[0]);
+    }
 }
 
 class MockSugarForecasting_Abstract extends SugarForecasting_AbstractForecast
@@ -78,6 +95,10 @@ class MockSugarForecasting_Abstract extends SugarForecasting_AbstractForecast
      */
     public function process()
     {
+    }
+
+    public function getUserReportees($user_id) {
+        return parent::getUserReportees($user_id);
     }
 
     public function convertDateTimeToISO($dt_string)

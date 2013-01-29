@@ -144,7 +144,7 @@ class SugarWidgetSubPanelTopScheduleCallButton extends SugarWidgetSubPanelTopBut
 	function display($defines, $additionalFormFields = null)
 	{
 	    $focus = new Call;
-		if ( !$focus->ACLAccess('EditView') ) {
+		if ( !$focus->ACLAccess('create') ) {
 		    return '';
 	    }
 

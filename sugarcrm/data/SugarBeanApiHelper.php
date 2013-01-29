@@ -52,33 +52,34 @@ class SugarBeanApiHelper
         $sfh = new SugarFieldHandler();
 
         $data = array();
-        foreach ( $bean->field_defs as $fieldName => $properties ) {
-            // Prune fields before ACL check because it can be expensive (Bug58133)
-            if ( !empty($fieldList) && !in_array($fieldName,$fieldList) ) {
-                // They want to skip this field
-                continue;
+        if(!SugarACL::moduleSupportsACL($bean->module_name) || $bean->ACLAccess('view')) {
+            foreach ( $bean->field_defs as $fieldName => $properties ) {
+                // Prune fields before ACL check because it can be expensive (Bug58133)
+                if ( !empty($fieldList) && !in_array($fieldName,$fieldList) ) {
+                    // They want to skip this field
+                    continue;
+                }
+                //BEGIN SUGARCRM flav=pro ONLY
+                if ( !$bean->ACLFieldAccess($fieldName,'read') ) { 
+                    // No read access to this field, skip it.
+                    continue;
+                }
+                //END SUGARCRM flav=pro ONLY
+                
+                $type = !empty($properties['custom_type']) ? $properties['custom_type'] : $properties['type'];
+                if ( $type == 'link' ) {
+                    // There is a different API to fetch linked records, don't try to encode all of the related data.
+                    continue;
+                }
+                $field = $sfh->getSugarField($type);
+                
+                if ( $field != null && isset($bean->$fieldName) ) {
+                     $field->apiFormatField($data, $bean, $options, $fieldName, $properties);
+                }
             }
-            //BEGIN SUGARCRM flav=pro ONLY
-            if ( !$bean->ACLFieldAccess($fieldName,'read') ) { 
-                // No read access to this field, skip it.
-                continue;
-            }
-            //END SUGARCRM flav=pro ONLY
-            
-            $type = !empty($properties['custom_type']) ? $properties['custom_type'] : $properties['type'];
-            if ( $type == 'link' ) {
-                // There is a different API to fetch linked records, don't try to encode all of the related data.
-                continue;
-            }
-            $field = $sfh->getSugarField($type);
-            
-            if ( $field != null && isset($bean->$fieldName) ) {
-                 $field->apiFormatField($data, $bean, $options, $fieldName, $properties);
-            }
-        }
 
-        if (isset($bean->field_defs['email']) &&
-            (empty($fieldList) || in_array('email',$fieldList))) {
+            if (isset($bean->field_defs['email']) &&
+                (empty($fieldList) || in_array('email',$fieldList))) {
                 $emailsRaw = $bean->emailAddress->getAddressesByGUID($bean->id, $bean->module_name);
                 $emails = array();
                 $emailProps = array(
@@ -97,26 +98,31 @@ class SugarBeanApiHelper
                     array_push($emails, $formattedEmail);
                 }
                 $data['email'] = $emails;
-        }
-
-
-        //BEGIN SUGARCRM flav=pro ONLY
-
-        // get favorites
-        // mark if its a favorite
-        
-        if ( empty($fieldList) || !in_array('my_favorite',$fieldList) ) {
-            if(!isset($bean->my_favorite)) {
-                $bean->my_favorite = SugarFavorites::isUserFavorite($bean->module_dir, $bean->id, $GLOBALS['current_user']->id);
             }
-            $data['my_favorite'] = $bean->my_favorite;
+
+
+            //BEGIN SUGARCRM flav=pro ONLY
+
+            // get favorites
+            // mark if its a favorite
+            
+            if ( empty($fieldList) || !in_array('my_favorite',$fieldList) ) {
+                if(!isset($bean->my_favorite)) {
+                    $bean->my_favorite = SugarFavorites::isUserFavorite($bean->module_dir, $bean->id, $GLOBALS['current_user']->id);
+                }
+                $data['my_favorite'] = $bean->my_favorite;
+            }
+
+            //END SUGARCRM flav=pro ONLY
+
+            // set ACL
+            // if not an admin and the hashes differ, send back bean specific acl's
+            $data['_acl'] = self::getBeanAcl($bean);
+        } else {
+            if(isset($bean->id)) {
+                $data['id'] = $bean->id;
+            }
         }
-
-        //END SUGARCRM flav=pro ONLY
-
-        // set ACL
-        // if not an admin and the hashes differ, send back bean specific acl's
-        $data['_acl'] = self::getBeanAcl($bean);
 
 
         return $data;
@@ -134,7 +140,6 @@ class SugarBeanApiHelper
             $moduleAcl = $mm->getAclForModule($bean->module_dir, $GLOBALS['current_user']);
 
             $beanAcl = $mm->getAclForModule($bean->module_dir, $GLOBALS['current_user'], $bean);
-
             if($beanAcl['_hash'] != $moduleAcl['_hash']) {
                 // diff the fields separately, they are usually empty anyway so we won't diff these often.
                 $moduleAclFields = $moduleAcl['fields'];
@@ -160,7 +165,7 @@ class SugarBeanApiHelper
                  */
 
                 if(!empty($beanAclFields) && empty($moduleAclFields)) {
-                    $fieldsAcls = $beanAclFields;
+                    $fieldAcls = $beanAclFields;
                 }
                 elseif(!empty($beanAclFields) && !empty($moduleAclFields)) {
                     // we need the ones that are moduleAclFields but not in beanAclFields

@@ -72,6 +72,7 @@ public static function populateSeedData($records, $app_list_strings, $accounts
         $account = $accounts[$key];
 
         //Create new opportunities
+        /* @var $opp Opportunity */
         $opp = BeanFactory::getBean('Opportunities');
         //BEGIN SUGARCRM flav=pro ONLY
         $opp->team_id = $account->team_id;
@@ -110,6 +111,7 @@ public static function populateSeedData($records, $app_list_strings, $accounts
         $opp->id = create_guid();
         $opp->new_with_id = true;
 
+        /* @var $product Product */
         $product->name = $opp->name;
         $product->best_case = $opp->best_case;
         $product->likely_case = $opp->amount;
@@ -126,8 +128,22 @@ public static function populateSeedData($records, $app_list_strings, $accounts
         $product->commit_stage = $opp->commit_stage;
         $product->save();
         //END SUGARCRM flav=pro ONLY
-        
+
         $opp->save();
+
+        //BEGIN SUGARCRM flav=pro ONLY
+        // save a draft worksheet for the new forecasts stuff
+        /* @var $worksheet ForecastWorksheet */
+        $worksheet = BeanFactory::getBean('ForecastWorksheets');
+        $worksheet->saveRelatedOpportunity($opp, true);
+
+        // save a draft worksheet for the new forecasts stuff
+        /* @var $product_worksheet ForecastWorksheet */
+        $product_worksheet = BeanFactory::getBean('ForecastWorksheets');
+        $product_worksheet->saveRelatedProduct($product, true);
+
+        //END SUGARCRM flav=pro ONLY
+
         // Create a linking table entry to assign an account to the opportunity.
         $opp->set_relationship('accounts_opportunities', array('opportunity_id'=>$opp->id ,'account_id'=> $account->id), false);
         $opp_ids[] = $opp->id;
