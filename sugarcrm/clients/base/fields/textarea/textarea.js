@@ -28,38 +28,61 @@
     fieldTag : "textarea",
     maxDisplayLength: 450,
     isTruncated: false,
+    lastMode: null,
 
     events: {
         'click .show-more-text': 'toggleMoreText'
     },
-
     format: function(value) {
-        return value || '';
+        //We mutate this.value to match whatever is appropriate given we're in a 
+        //"more" or "less" state (original is always in model.get(this.name))
+        //So, here, we try to return whatever we've set this.value to first.
+        return this.value || value || '';
     },
-
     _render: function() {
-        //attempt to pick up css class from defs but fallback 
+        //Attempt to pick up css class from defs but fallback 
         this.def.css_class = this.def.css_class || 'textarea-text';
-        //figure out if we need to display the show more link
+
+        //Check if we've blur'd out from textarea edit mode. If so, we check "last mode"
+        //we were in before entering the edit mode. We show more or less based on that.
+        if (this.lastMode && this.tplName === 'edit') {
+            if (this.lastMode === 'more') {
+                this.showMore();
+                return;
+            }
+            this.showLess();
+            return;
+        }
+
+        //Figure out if we need to display the show more link
         var value = this.model.get(this.name);
 
         if ((!_.isUndefined(value)) && (value.length > this.maxDisplayLength)) {
             this.isTooLong = true;
         }
         app.view.Field.prototype._render.call(this);
-
         //Dynamically add the appropriate css class to this.$el (avoids extra spans)
         this.$el.addClass(this.def.css_class);
 
         //More|less not appropriate for list views (they use "overflow ellipsis")
         if (this._notListView()) {
-            if (this.isTooLong) {
-                this.showLess();
+
+            if (this.tplName !== 'edit') {
+                if (this.isTooLong) {
+                    this.showLess();
+                }
+                if(this.tplName === 'disabled') {
+                    this.$(this.fieldTag).attr("disabled", "disabled");
+                }
+            } else {
+                // Ensure that when we go to edit more textarea we have full text
+                this.value = value;
+                // Re render w/full text. tplName will not change to 'edit' until
+                // after we _render (chicken / egg); so if we don't do this and we're
+                // in the 'show more' state, we could get truncated text in our textarea!
+                app.view.Field.prototype._render.call(this);
             }
-            if(this.tplName === 'disabled') {
-                this.$(this.fieldTag).attr("disabled", "disabled");
-            }
-        }
+        } 
     },
     _notListView: function() {
         if (this.view.name !== 'list' || (this.view.meta && this.view.meta.type !== 'list')) {
@@ -68,8 +91,7 @@
         return false;
     },
     toggleMoreText: function() {
-        var self = this;
-        if (self.isTruncated) {
+        if (this.isTruncated) {
             this.showMore();
         } else {
             this.showLess();
@@ -82,22 +104,22 @@
         this._toggleTextLength('less');
     },
     _toggleTextLength: function(mode) {
-        var displayValue,
-            newLinkLabel;
-
+        var displayValue, newLinkLabel, originalValue;
+        originalValue = this.model.get(this.name);
         if (mode === "more") {
-            displayValue = this.value + '...';
+            displayValue = originalValue.trim() + '...';
             this.isTruncated = false;
             newLinkLabel = app.lang.get('LBL_LESS', this.module).toLocaleLowerCase();
         } else {
-            displayValue = this.value.substring(0, this.maxDisplayLength) + '...';
+            displayValue = originalValue.substring(0, this.maxDisplayLength).trim() + '...';
             this.isTruncated = true;
             newLinkLabel = app.lang.get('LBL_MORE', this.module).toLocaleLowerCase();
         }
-        //Repopulate the field with our updated text and append the more/less link
-        this.$el.text(displayValue)
-            .append('<a href="javascript:void(0)" class="show-more-text">'+newLinkLabel+'</a>');
-        this.delegateEvents();
+        this.value = displayValue;
+        this.$el.empty();
+        app.view.Field.prototype._render.call(this);
+        this.$('.show-more-text').text(newLinkLabel);
+        this.lastMode = mode;
     }
 
 })

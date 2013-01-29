@@ -66,7 +66,7 @@ describe("Base.Field.TextArea", function() {
     });
 
     it('should not call show less if list view', function() {
-        var showLessSpy;
+        var spy = sinon.spy(app.view.Field.prototype, '_render');
         template = SugarTest.loadHandlebarsTemplate("textarea", "field", "base", "list");
         SugarTest.testMetadata.set();
         field = SugarTest.createField("base",fieldName, "textarea", "list");
@@ -76,17 +76,31 @@ describe("Base.Field.TextArea", function() {
         field.render();
         // should be untruncated longtext since on a list view
         expect(field.$el.text().trim()).toEqual(longText);
+        expect(spy).toHaveBeenCalled();
+        spy.restore();
+    });
+    it('should return to last "more" state if coming from textarea edit mode', function() {
+        field.lastMode = 'less';
+        field.tplName  = 'edit';
+        field.model.set(fieldName, longText);
+        field.initialize(field.options);
+        field.render();
+        assertTruncated();
+        field.lastMode = 'more';
+        field.tplName  = 'edit';
+        field.render();
+        assertExpanded();
     });
 
     var assertTruncated = function() {
         expect(field.$('.show-more-text').length).toEqual(1);
         expect(field.isTruncated).toBeTruthy();
-        expect(field.$el.text()).toEqual(shortText + '...' + moreText);
+        expect(field.$el.text().trim()).toEqual(shortText + '...' + moreText);
     };
 
     var assertExpanded = function() {
         expect(field.$('.show-more-text').length).toEqual(1);
         expect(field.isTruncated).toBeFalsy();
-        expect(field.$el.text()).toEqual(longText + '...' + lessText);
+        expect(field.$el.text().trim()).toEqual(longText + '...' + lessText);
     };
 });
