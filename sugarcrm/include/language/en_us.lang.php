@@ -3450,6 +3450,9 @@ $app_strings = array (
     'LBL_RESET_THEME_PROCESS' => 'Restoring default theme...',
     'LBL_SAVE_THEME_PROCESS' => 'Saving theme...',
 
+    // image loader
+    'LBL_SELECT_PHOTO' => 'Select a Photo',
+
   	//BEGIN SUGARCRM flav=PRO ONLY
     //in app tour
     'LBL_TOUR_SCREEN_1_TITLE' => 'Now you can do forecasting in Sugar',
