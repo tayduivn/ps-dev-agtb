@@ -56,7 +56,7 @@
 
     fetchDuplicates: function(model, options) {
         this.model = model;
-        options = options ? options : {};
+        options = options || {};
         options.endpoint = this.endpoint;
         this.collection.fetch(options);
     },

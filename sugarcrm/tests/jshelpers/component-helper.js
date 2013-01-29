@@ -144,14 +144,14 @@
             this._data.modules[module][type][name] = this._data.modules[module][type][name] || {};
         },
 
-        _addDefinition: function(name, type, layoutDef, module) {
+        _addDefinition: function(name, type, def, module) {
             if (this.isInitialized()) {
                 if (module) {
                     this._initModuleStructure(module, type, name);
-                    this._data.modules[module][type][name].meta = layoutDef;
+                    this._data.modules[module][type][name].meta = def;
                 } else {
                     this._data[type][name] = this._data[type][name] || {};
-                    this._data[type][name].meta = layoutDef;
+                    this._data[type][name].meta = def;
                 }
             }
         },
