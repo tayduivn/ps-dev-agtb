@@ -25,13 +25,23 @@
  * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 ({
-
+    extendsFrom: 'ListeditableField',
     events:{
-        'change .existingAddress':'updateExistingAddress',
-        'click .btn-edit':'updateExistingProperty',
-        'click .removeEmail':'remove',
-        'click .addEmail':'add',
-        'change .newEmail': 'newEmailChanged'
+        'change .existingAddress': 'updateExistingAddress',
+        'click  .btn-edit':        'updateExistingProperty',
+        'click  .removeEmail':     'remove',
+        'click  .addEmail':        'add',
+        'change .newEmail':        'newEmailChanged'
+    },
+    initialize: function(options) {
+        options     = options || {};
+        options.def = options.def || {};
+        
+        if (_.isUndefined(options.def.link)) {
+            options.def.link = true;
+        }
+        
+        app.view.Field.prototype.initialize.call(this, options);
     },
     /**
      * Event handler for change of the .newEmail input, we want to test if a new e-mail needs to be added
@@ -68,20 +78,62 @@
     },
     /**
      * On render, determine which e-mail addresses need anchor tag included
-     * @param {Array} value set of e-mail addresses
-     * @private
+     * @param {string|Array} value single email address or set of email addresses
      */
-    _render:function() {
-        var emails = this.model.get('email');
-        _.each(emails, function(emailAddress){
-            // Needed for handlebars template, can't accomplish this boolean expression with handlebars
-            emailAddress.hasAnchor = emailAddress.opt_out != "1" && emailAddress.invalid_email != "1";
+    format: function(value) {
+        if (_.isArray(value)) {
+            // got an array of email addresses
+            _.each(value, function(email) {
+                // Needed for handlebars template, can't accomplish this boolean expression with handlebars
+                email.hasAnchor = this.def.link && email.opt_out != "1" && email.invalid_email != "1";
+            }, this);
+        } else {
+            // expected an array but got a string
+            value = [{
+                email_address:   value,
+                primary_address: "1",
+                hasAnchor:       false,
+                _wasNotArray:    true
+            }];
+        }
+
+        return value;
+    },
+    unformat: function(value) {
+        var originalNonArrayValue = null;
+        if(this.view.action === 'list') {
+            var emails = this.model.get(this.name),
+                changed = false;
+            _.each(emails, function(email, index) {
+                if(email.primary_address === '1') {
+                    if(email.email_address !== value) {
+                        changed = true;
+                        emails[index].email_address = value;
+                    }
+                }
+            }, this);
+            if(changed) {
+                this.updateModel(changed);
+            }
+            return emails;
+        }
+
+        _.each(value, function(email, index) {
+            if (email._wasNotArray) {
+                // copy the original string representation
+                originalNonArrayValue = email.email_address;
+            } else {
+                // Remove handlebars cruft from e-mails so we only send valid fields back on save
+                value[index] = _.pick(email, 'email_address', 'primary_address', 'opt_out', 'invalid_email');
+            }
         }, this);
-        app.view.Field.prototype._render.call(this);
-        _.each(emails, function(emailAddress, index){
-            // Remove handlebars cruft from e-mails so we only send valid fields back on save
-            emails[index] = _.pick(emailAddress, 'email_address', 'primary_address', 'opt_out', 'invalid_email');
-        });
+
+        if (!_.isNull(originalNonArrayValue)) {
+            // reformat the value back to the original string representation
+            value = originalNonArrayValue;
+        }
+
+        return value;
     },
     /**
      * Removes email address from dom and model
@@ -206,8 +258,15 @@
         bindAll('.btn-edit');
         bindAll('.addEmail');
         bindAll('.removeEmail');
+
+        if(this.tplName === 'list-edit') {
+            app.view.Field.prototype.bindDomChange.call(this);
+        }
     },
     focus:function () {
         this.$('input').first().focus();
+    },
+    getFieldElement: function() {
+        return this.$(this.fieldTag);
     }
 })

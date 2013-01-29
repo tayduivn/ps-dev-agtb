@@ -2553,6 +2553,7 @@ $app_strings = array (
     'LBL_LAST_VIEWED' => 'Recently Viewed',
     'LBL_SHOW_LESS' => 'Show Less',
     'LBL_SHOW_MORE' => 'Show More',
+    'LBL_SHOW_MORE_MODULE' => 'More {{str \'LBL_MODULE_NAME\' attributes.module}}...',
     'LBL_TODAYS_ACTIVITIES' => 'Today\'s Activities',
     'LBL_LEADS'=>'Leads',
     'LBL_LESS' => 'less',
@@ -2607,6 +2608,7 @@ $app_strings = array (
     'LBL_MASS_UPDATE' => 'Mass Update',
     'LBL_NO_MASS_UPDATE_FIELDS_AVAILABLE' => 'There are no fields available for the Mass Update operation',
     'LBL_MASS_UPDATE_JOB_QUEUED' => 'Your request for mass update has been scheduled.',
+    'LBL_MASS_UPDATE_SUCCESS' => 'All records were updated successfully.',
     'LBL_MASS_UPDATE_EMPTY_VALUES' => 'The following attributes have empty values: ',
     'LBL_MASS_UPDATE_EMPTY_CONFIRM' => 'Do you want to continue?',
     'LBL_OPT_OUT_FLAG_PRIMARY' => 'Opt out Primary Email',
@@ -3447,6 +3449,9 @@ $app_strings = array (
     'LBL_RESET_THEME_MODAL_CONFIRM' => 'Do you want to proceed?',
     'LBL_RESET_THEME_PROCESS' => 'Restoring default theme...',
     'LBL_SAVE_THEME_PROCESS' => 'Saving theme...',
+
+    // image loader
+    'LBL_SELECT_PHOTO' => 'Select a Photo',
 
   	//BEGIN SUGARCRM flav=PRO ONLY
     //in app tour

@@ -41,21 +41,21 @@ $viewdefs['Accounts']['base']['view']['baselist'] = array(
                     'link' => true,
                     'label' => 'LBL_LIST_ACCOUNT_NAME',
                     'enabled' => true,
-                    'default' => true
+                    'default' => true,
                 ),
                 array(
                     'name' => 'billing_address_city',
                     'width' =>  13,
                     'label' => 'LBL_LIST_CITY',
                     'enabled' => true,
-                    'default' => true
+                    'default' => true,
                 ),
                 array(
                     'name' => 'billing_address_country',
                     'width' =>  13,
                     'label' => 'LBL_BILLING_ADDRESS_COUNTRY',
                     'enabled' => true,
-                    'default' => true
+                    'default' => true,
                 ),
                 array (
                     'name' => 'phone_office',
@@ -71,12 +71,11 @@ $viewdefs['Accounts']['base']['view']['baselist'] = array(
                     'default' => true,
                 ),
                 array(
-                    'name' => 'email1',
+                    'name' => 'email',
                     'width' => '15%',
                     'label' => 'LBL_EMAIL_ADDRESS',
                     'sortable' => false,
-                    'link' => true,
-                    'default' => true
+                    'default' => true,
                 ),
                 array (
                     'name' => 'date_entered',

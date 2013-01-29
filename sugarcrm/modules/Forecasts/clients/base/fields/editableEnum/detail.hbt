@@ -26,7 +26,12 @@
  * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 }}
-<div class="row-fluid">
-    <div class="span2">{{label}}</div>
-    <div class="span4" name="{{name}}"><input type="checkbox" class="checkbox"{{#if value}} checked{{/if}} disabled></div>
-</div>
+<span class="editable" cid="{{cid}}">
+{{#if this.def.isMultiSelect}}
+{{#each value}}{{#eachOptions ../def.options}}{{#eq key ../this}}{{#notEq @index 0}}, {{/notEq}}{{value}}{{/eq}}{{/eachOptions}}{{/each}}
+{{else}}
+{{#eachOptions def.options}}
+{{#eq this.key ../value}}{{this.value}}{{/eq}}
+{{/eachOptions}}
+{{/if}}
+</span>

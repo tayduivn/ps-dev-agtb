@@ -40,6 +40,11 @@ describe("Base.Field.Button", function() {
         expect(field.callback).not.toBe("stuff excuted");
         expect(field.callback).not.toBe("blur excuted");
         expect(field.callback).toBeUndefined();
+
+        delete field.callback;
+        field.setDisabled(true);
+        field.$(".btn").trigger('click .btn');
+        expect(field.callback).not.toBe("stuff excuted");
     });
 
     it("should setDisabled with CSS 'disabled'", function() {

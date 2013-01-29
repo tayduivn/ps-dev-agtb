@@ -42,6 +42,7 @@ $viewdefs['base']['view']['list'] = array(
                     this.view.layout.trigger("list:massupdate:fire");
                     }'
                 ),
+                'minSelection' => 2,
             ),
             array(
                 'name' => 'delete_button',
@@ -55,6 +56,18 @@ $viewdefs['base']['view']['list'] = array(
                     }'
                 ),
             ),
+            array(
+                'name' => 'export_button',
+                'type' => 'button',
+                'label' => 'LBL_EXPORT',
+                'value' => 'export',
+                'primary' => true,
+                'events' => array(
+                    'click' => 'function(e){
+                    this.view.layout.trigger("list:massexport:fire");
+                    }'
+                ),
+            ),
         ),
     ),
     'rowactions' => array(
@@ -62,7 +75,9 @@ $viewdefs['base']['view']['list'] = array(
         'actions' => array(
             array(
                 'type' => 'rowaction',
-                'css_class' => 'btn preview',
+                'css_class' => 'btn',
+                'tooltip' => 'LBL_PREVIEW',
+                'event' => 'list:preview:fire',
                 'icon' => 'icon-eye-open',
             ),
             array(
