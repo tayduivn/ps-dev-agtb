@@ -26,15 +26,21 @@
  * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 }}
-<div class="card2">
+<div class="block preview-data">
 {{#each meta.panels}}
 {{#each fields}}
-    <div class="row-fluid">
-        <div class="span4">{{str  this.label ../../this.model.module}}</div>
-        <div class="span8" name="{{this.name}}">
+<div class="row-fluid {{#if ../hide}} hide panel_hidden{{/if}}">
+        <div class="span5">{{str  this.label ../../this.model.module}}</div>
+        <div class="span7" name="{{this.name}}">
             {{field ../../this}}
         </div>
     </div>
 {{/each}}
 {{/each}}
+    <div class="row-fluid">
+        <div class="{{#unless hiddenPanelExists}} hide{{/unless}} span5 show-hide-toggle">
+            <a href="javascript:void(0)" class="more">{{str "LBL_SHOW_MORE"}} <i class="icon-chevron-down"></i></a>
+            <a href="javascript:void(0)" class="less hide">{{str "LBL_SHOW_LESS"}} <i class="icon-chevron-up"></i></a>
+        </div>
+    </div>
 </div>

@@ -1,5 +1,5 @@
-<div class="headerpane clearfix">
-    <h3 class="btn-toolbar pull-left">Preview</h3>
+<div class="preview-headerbar">
+    <h1>{{str "LBL_PREVIEW"}}</h1>
     <div class="btn-toolbar pull-right">
         <div class="btn-group">
             <a class="btn" data-direction="left"><i class="icon-chevron-left"></i></a>
