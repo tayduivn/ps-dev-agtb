@@ -25,46 +25,119 @@
  * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 ({
-
+    extendsFrom: 'ListeditableField',
     events:{
-        'change .existingAddress':'updateExistingAddress',
-        'click .btn-edit':'updateExistingProperty',
-        'click .removeEmail':'remove',
-        'click .addEmail':'add'
+        'change .existingAddress': 'updateExistingAddress',
+        'click  .btn-edit':        'updateExistingProperty',
+        'click  .removeEmail':     'remove',
+        'click  .addEmail':        'add',
+        'change .newEmail':        'newEmailChanged'
     },
+    initialize: function(options) {
+        options     = options || {};
+        options.def = options.def || {};
+        
+        if (_.isUndefined(options.def.link)) {
+            options.def.link = true;
+        }
+        
+        app.view.Field.prototype.initialize.call(this, options);
+    },
+    /**
+     * Event handler for change of the .newEmail input, we want to test if a new e-mail needs to be added
+     * @param {Event} evt
+     */
+    newEmailChanged:function(evt){
+        if($(evt.currentTarget).val().length > 0){
+            this.add(evt, $(evt.currentTarget).val());
+        }
+    },
+    // Tracks if we're currently adding email
+    _adding: false,
     /**
      * Adds email address to dom and model. Note added emails only get checked
      * upon Save button being clicked (which triggers the model validations).
+     * @param {Event} evt DOM event
+     * @param {String} [newEmail] E-Mail string to be added, will default to value currently in .newEmail input if not provided
      */
-    add:function (evt) {
-        if (!evt) return;
-        // Destroy the tooltips open on this button because they wont go away if we rerender
+    add:function (evt, newEmail) {
+        if (!evt || this._adding) return;  //if event isn't valid or if add() is currently being called, don't add new e-mail
+        this._adding = true;
+        // Destroy the tooltips open on this button because they wont go away if we re-render
         if ($(evt.currentTarget).tooltip) $(evt.currentTarget).tooltip('hide');
-        var newAddress = this.$('.newEmail').val(),
-            existingAddresses = _.clone(this.model.get(this.name)) || [];
+        var newAddress = (newEmail) ? newEmail : this.$('.newEmail').val();
+        var existingAddresses = _.clone(this.model.get(this.name)) || [];
         var newObj = {email_address:newAddress};
         if (existingAddresses.length < 1) {
-            newObj.primary_address = true;
+            newObj.primary_address = "1";
         }
         existingAddresses.push(newObj);
 
         this.updateModel(existingAddresses);
+        this._adding = false;
     },
     /**
      * On render, determine which e-mail addresses need anchor tag included
-     * @param {Array} value set of e-mail addresses
-     * @private
+     * @param {string|Array} value single email address or set of email addresses
      */
-    _render:function() {
-        var emails = this.model.get('email');
-        _.each(emails, function(emailAddress){
-            emailAddress.hasAnchor = emailAddress.opt_out != "1" && emailAddress.invalid_email != "1";
+    format: function(value) {
+        if (_.isArray(value)) {
+            // got an array of email addresses
+            _.each(value, function(email) {
+                // Needed for handlebars template, can't accomplish this boolean expression with handlebars
+                email.hasAnchor = this.def.link && email.opt_out != "1" && email.invalid_email != "1";
+            }, this);
+        } else {
+            // expected an array but got a string
+            value = [{
+                email_address:   value,
+                primary_address: "1",
+                hasAnchor:       false,
+                _wasNotArray:    true
+            }];
+        }
+
+        return value;
+    },
+    unformat: function(value) {
+        var originalNonArrayValue = null;
+        if(this.view.action === 'list') {
+            var emails = this.model.get(this.name),
+                changed = false;
+            _.each(emails, function(email, index) {
+                if(email.primary_address === '1') {
+                    if(email.email_address !== value) {
+                        changed = true;
+                        emails[index].email_address = value;
+                    }
+                }
+            }, this);
+            if(changed) {
+                this.updateModel(changed);
+            }
+            return emails;
+        }
+
+        _.each(value, function(email, index) {
+            if (email._wasNotArray) {
+                // copy the original string representation
+                originalNonArrayValue = email.email_address;
+            } else {
+                // Remove handlebars cruft from e-mails so we only send valid fields back on save
+                value[index] = _.pick(email, 'email_address', 'primary_address', 'opt_out', 'invalid_email');
+            }
         }, this);
-        app.view.Field.prototype._render.call(this);
+
+        if (!_.isNull(originalNonArrayValue)) {
+            // reformat the value back to the original string representation
+            value = originalNonArrayValue;
+        }
+
+        return value;
     },
     /**
      * Removes email address from dom and model
-     * @param {Object} event
+     * @param {Object} evt DOM event
      */
     remove:function (evt) {
         if (!evt) return;
@@ -72,17 +145,30 @@
         if ($(evt.currentTarget).tooltip) $(evt.currentTarget).tooltip('hide');
         var emailAddress = $(evt.target).data('parentemail') || $(evt.target).parent().data('parentemail'),
             existingAddresses = _.clone(this.model.get(this.name));
-
-        _.each(existingAddresses, function (emailInfo, index) {
+        var wasPrimary = false;
+        existingAddresses = _.filter(existingAddresses, function (emailInfo, index) {
             if (emailInfo.email_address == emailAddress) {
-                existingAddresses[index] = false;
+                // Remove deleted e-mails
+                if(!wasPrimary){
+                    wasPrimary = existingAddresses[index]['primary_address'] == '1';
+                }
+                return false;
+            } else {
+                return true;
             }
         });
+        // If a removed address was the primary e-mail, we need to pick an existing e-mail and make it the new primary
+        if(wasPrimary){
+            var address = _.first(existingAddresses);
+            if(address){
+                address['primary_address'] = '1';
+            }
+        }
         this.updateModel(existingAddresses);
     },
     /**
      * Updates true false properties on field
-     * @param event
+     * @param {Event} evt DOM event
      */
     updateExistingProperty:function (evt) {
         if (!evt) return;
@@ -119,7 +205,7 @@
      * @param value
      */
     updateModel:function(value) {
-        this.model.set(this.name, _.compact(value));
+        this.model.set(this.name, value);
         this.model.trigger('change');
         this.model.trigger('change:'+this.name);
     },
@@ -133,12 +219,12 @@
     massUpdateProperty:function (emails, propName, value) {
         _.each(emails, function (emailInfo, index) {
             emails[index][propName] = value;
-        })
+        });
         return emails;
     },
     /**
      * Updates existing address that change event was fired on
-     * @param {Object} event
+     * @param {Object} evt DOM event
      */
     updateExistingAddress:function (evt) {
         if (evt && $(evt.currentTarget).val() != $(evt.currentTarget).data('id')) {
@@ -172,8 +258,15 @@
         bindAll('.btn-edit');
         bindAll('.addEmail');
         bindAll('.removeEmail');
+
+        if(this.tplName === 'list-edit') {
+            app.view.Field.prototype.bindDomChange.call(this);
+        }
     },
     focus:function () {
         this.$('input').first().focus();
+    },
+    getFieldElement: function() {
+        return this.$(this.fieldTag);
     }
 })

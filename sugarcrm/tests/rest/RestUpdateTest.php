@@ -133,6 +133,40 @@ class RestUpdateTest extends RestTestBase {
         
         $this->assertEquals($is_fav, (bool) $restReply['reply']['my_favorite'], "The returned favorite was not the same.");
     }
+
+    /**
+     * @group rest
+     */
+    public function testDeleteFavorite()
+    {
+        $this->account = new Account();
+        $this->account->name = "UNIT TEST - BEFORE";
+        $this->account->save();
+
+        $GLOBALS['db']->commit();
+
+        $fav = new SugarFavorites();
+        $fav->id = SugarFavorites::generateGUID('Accounts',$this->account->id);
+        $fav->new_with_id = true;
+        $fav->module = 'Accounts';
+        $fav->record_id = $this->account->id;
+        $fav->created_by = $GLOBALS['current_user']->id;
+        $fav->assigned_user_id = $GLOBALS['current_user']->id;
+        $fav->deleted = 0;
+        $fav->save();
+
+        $GLOBALS['db']->commit();
+
+        $is_fav = SugarFavorites::isUserFavorite('Accounts', $this->account->id, $this->_user->id);
+
+        $this->assertEquals($is_fav, true, "Didn't actually set the favorite");
+
+        $restReply = $this->_restCall("Accounts/{$this->account->id}/favorite",array(), "DELETE");
+        
+        $is_fav = SugarFavorites::isUserFavorite('Accounts', $this->account->id, $this->_user->id);
+        
+        $this->assertEquals($is_fav, (bool) $restReply['reply']['my_favorite'], "The returned favorite was not the same.");
+    }    
     //END SUGARCRM flav=pro ONLY
 
     /**

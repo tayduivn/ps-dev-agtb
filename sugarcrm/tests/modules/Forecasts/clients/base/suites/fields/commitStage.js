@@ -25,7 +25,7 @@ describe("forecast commitStage field", function() {
     beforeEach(function() {
         fieldDef = {
                 "name": "commit_stage",
-                "type": "buckets",
+                "type": "commitStage",
                 "options": "commit_stage_dom"
             };
         

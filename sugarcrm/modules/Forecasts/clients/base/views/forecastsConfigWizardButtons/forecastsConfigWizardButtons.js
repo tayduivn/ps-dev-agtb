@@ -112,6 +112,9 @@
             
             // push this model back to the main config model
             this.context.forecasts.config.set(this.model.toJSON());
+
+            this.context.forecasts.set({ saveClicked : true }, {silent:true});
+
             this.context.forecasts.config.save({}, {
                 success: function() {
                     var url = app.api.buildURL("Forecasts/init");

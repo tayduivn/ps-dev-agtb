@@ -116,7 +116,7 @@ class SugarWidget
         require_once('modules/MySettings/TabController.php');
         require_once('include/SubPanel/SubPanelDefinitions.php');
         $tabs = new TabController();
-        if ( !in_array($moduleName, $tabs->get_system_tabs()) || in_array(strtolower($moduleName), SubPanelDefinitions::get_hidden_subpanels()) )
+        if ( in_array(strtolower($moduleName), SubPanelDefinitions::get_hidden_subpanels()) )
         {
             return true;
         }

@@ -27,5 +27,7 @@
  ********************************************************************************/
 }}
 {{#if showFieldAlert}}
-<a href="javascript:void(0)" rel="historyLog"><i class="icon-exclamation-sign label label-warn" data-uid="{{uid}}" data-commitdate="{{commitDate}}"></i></a>
+    <a href="javascript:void(0)" rel="historyLog">
+        <i class="icon-exclamation-sign label label-warn" data-uid="{{uid}}" data-showopps="{{showOpps}}" data-commitdate="{{commitDate}}"></i>
+    </a>
 {{/if}}

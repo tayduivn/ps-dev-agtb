@@ -1,0 +1,106 @@
+<!--
+/*********************************************************************************
+ * The contents of this file are subject to the SugarCRM Master Subscription
+ * Agreement (""License"") which can be viewed at
+ * http://www.sugarcrm.com/crm/master-subscription-agreement
+ * By installing or using this file, You have unconditionally agreed to the
+ * terms and conditions of the License, and You may not use this file except in
+ * compliance with the License.  Under the terms of the license, You shall not,
+ * among other things: 1) sublicense, resell, rent, lease, redistribute, assign
+ * or otherwise transfer Your rights to the Software, and 2) use the Software
+ * for timesharing or service bureau purposes such as hosting the Software for
+ * commercial gain and/or for the benefit of a third party.  Use of the Software
+ * may be subject to applicable fees and any use of the Software without first
+ * paying applicable fees is strictly prohibited.  You do not have the right to
+ * remove SugarCRM copyrights from the source code or user interface.
+ *
+ * All copies of the Covered Code must include on each user interface screen:
+ *  (i) the ""Powered by SugarCRM"" logo and
+ *  (ii) the SugarCRM copyright notice
+ * in the same form as they appear in the distribution.  See full license for
+ * requirements.
+ *
+ * Your Warranty, Limitations of liability and Indemnity are expressly stated
+ * in the License.  Please refer to the License for the specific language
+ * governing these rights and limitations under the License.  Portions created
+ * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
+ ********************************************************************************/
+-->
+<div class="longHelpTitle">Returns a collection of ForecastWorksheet models</div>
+<div class="summary">
+    <h2>Summary:</h2>
+    This endpoint is used to return the json Data for an array of worksheet data array entries
+</div>
+<div class="params">
+    <h2>Query Parameters:</h2>
+    <table>
+        <tr>
+            <td><strong>Param</strong></td>
+            <td><strong>Description</strong></td>
+            <td><strong>Optional</strong></td>
+        </tr>
+        <tr>
+            <td>user_id</td>
+            <td>Show for a specific user, defaults to current user if not defined</td>
+            <td>Optional</td>
+        </tr>
+        <tr>
+            <td>timeperiod_id</td>
+            <td>Show for a specific time period, defaults to the current time period if one is not passed</td>
+            <td>Optional</td>
+        </tr>
+    </table>
+</div>
+<div class="input">
+    <h2>Input Example:</h2>
+    <code class="codesample">
+{
+    'user_id':'seed_max_id,
+    'timeperiod_id':'36f7085a-5889-ea75-84c8-50f42bd1a5ba',
+}
+    </code>
+</div>
+<div class="output">
+    <h2>Output Example:</h2>
+    <code class="codesample">
+        [ { "amount" : "10500.000000",
+            "assigned_user_id" : "seed_max_id",
+            "base_rate" : "1",
+            "best_case" : "10500.000000",
+            "commit_stage" : "include",
+            "currency_id" : "-99",
+            "date_closed" : "2013-01-14",
+            "date_modified" : "2013-01-14T10:58:27-05:00",
+            "id" : "347beb60-d57c-b3aa-5922-50f42b6c27d4",
+            "likely_case" : "10500.000000",
+            "name" : "RR. Talker Co - 1000 units",
+            "probability" : "90",
+            "product_id" : "34b0d547-adaf-03ea-146c-50f42b3e6f04",
+            "sales_stage" : "Value Proposition",
+            "version" : "1",
+            "w_date_modified" : "2013-01-14T10:58:27-05:00",
+            "worksheet_id" : "e0adb532-7d1c-eb49-b102-50f42b455164",
+            "worst_case" : "10500.000000"
+          },
+          { "amount" : "25500.000000",
+            "assigned_user_id" : "seed_max_id",
+            "base_rate" : "1",
+            "best_case" : "25500.000000",
+            "commit_stage" : "include",
+            "currency_id" : "-99",
+            "date_closed" : "2013-02-26",
+            "date_modified" : "2013-01-14T10:58:27-05:00",
+            "id" : "43588142-342a-e10d-4bb3-50f42b09d051",
+            "likely_case" : "25500.000000",
+            "name" : "Income Free Investing LP - 1000 units",
+            "probability" : "90",
+            "product_id" : "438d3dc0-95fc-e329-d0c0-50f42bad6c44",
+            "sales_stage" : "Negotiation/Review",
+            "version" : "1",
+            "w_date_modified" : "2013-01-14T10:58:27-05:00",
+            "worksheet_id" : "70390d1a-ffcc-69eb-9f84-50f42b5c4c2f",
+            "worst_case" : "25500.000000"
+          },
+        ]
+    </code>
+</div>

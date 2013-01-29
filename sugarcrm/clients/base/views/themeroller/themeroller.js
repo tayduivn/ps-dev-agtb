@@ -45,14 +45,16 @@
         this.customTheme = "default";
         this.loadTheme();
     },
-    _renderHtml: function() {
+    parseLessVars: function() {
         if (this.lessVars && this.lessVars.rel && this.lessVars.rel.length > 0) {
             _.each(this.lessVars.rel, function(obj, key) {
                 this.lessVars.rel[key].relname = this.lessVars.rel[key].value;
                 this.lessVars.rel[key].relname = this.lessVars.rel[key].relname.replace('@', '');
             }, this);
         }
-
+    },
+    _renderHtml: function() {
+        this.parseLessVars();
         app.view.View.prototype._renderHtml.call(this);
         _.each(this.$('.hexvar[rel=colorpicker]'), function(obj, key) {
             $(obj).blur(function() {
@@ -63,66 +65,67 @@
         this.$('.rgbavar[rel=colorpicker]').colorpicker({format: 'rgba'});
     },
     loadTheme: function() {
-        var params = {
-            platform: app.config.platform,
-            themeName: this.customTheme
-        };
-        var url = app.api.buildURL('theme', '', {}, params);
-        var self = this;
-        app.api.call('read', url, {}, {success: function(data) {
-            self.lessVars = data;
-            self.render();
-            self.previewTheme();
-        }});
+        this.themeApi('read', {}, function(data) {
+            this.lessVars = data;
+            this.render();
+            this.previewTheme();
+        });
     },
     saveTheme: function() {
-        var self = this,
-            params = {
-                platform: app.config.platform,
-                themeName: this.customTheme
-            };
-        self.showMessage('Saving theme....');
+        // get the value from each input
+        var colors = this.getInputValues();
 
-        // get the value fron each input
-        this.$('input').each(function() {
-            var $this = $(this);
-            params[$this.attr("name")] = $this.hasClass('bgvar') ? '"' + $this.val() + '"' : $this.val();
+        this.showMessage('LBL_SAVE_THEME_PROCESS');
+        this.themeApi('create', colors, function() {
+            this.showMessage('LBL_REQUEST_PROCESSED', 3000);
         });
-        // generate the URL
-        var url = app.api.buildURL('theme', '', {}, {});
-        // save the theme
-        app.api.call('create', url, params, {success: function(data) {
-            self.showMessage('Done', 3000);
-        }});
-    },
-    toggleModal: function() {
-        this.$('#modal-confirm-reset').toggleClass('hide');
     },
     resetTheme: function() {
         this.toggleModal();
 
-        var self = this,
-            params = { "reset": true,
-                platform: app.config.platform,
-                themeName: this.customTheme
-            };
-        self.showMessage('Restoring default theme....');
-
-        var url = app.api.buildURL('theme', '', {}, {});
-        app.api.call('create', url, params, {success: function(data) {
-            self.showMessage('Done', 3000);
-            self.loadTheme();
-        }});
+        this.showMessage('LBL_RESET_THEME_PROCESS');
+        this.themeApi('create', {"reset": true}, function(data) {
+            this.showMessage('LBL_REQUEST_PROCESSED', 3000);
+            this.loadTheme();
+        });
     },
     previewTheme: function() {
-        var params = {};
+        var colors = this.getInputValues();
+        this.context.set("colors", colors);
+    },
+    themeApi: function(method, params, successCallback) {
+        var self = this;
+        _.extend(params, {
+            platform: app.config.platform,
+            themeName: self.customTheme
+        });
+        var paramsGET   = (method==='read') ? params : {},
+            paramsPOST  = (method==='read') ? {} : params;
+        var url = app.api.buildURL('theme', '', {}, paramsGET);
+        app.api.call(method, url, paramsPOST,
+            {
+                success: successCallback ,
+                error: function(error) {
+                    app.error.handleHttpError(error);
+                }
+            },
+            { context: self }
+        );
+    },
+    toggleModal: function() {
+        this.$('#modal-confirm-reset').toggleClass('hide');
+    },
+    getInputValues: function() {
+        var colors = {};
         this.$('input').each(function() {
             var $this = $(this);
-            params[$this.attr("name")] = $this.hasClass('bgvar') ? '"' + $this.val() + '"' : $this.val();
+            colors[$this.attr("name")] = $this.hasClass('bgvar') ? '"' + $this.val() + '"' : $this.val();
         });
-        this.context.set("colors", params);
+        return colors;
     },
-    showMessage: function(message, timer) {
+    showMessage: function(messageKey, timer) {
+
+        var message = app.lang.getAppString(messageKey);
 
         ajaxStatus = new SUGAR.ajaxStatusClass() || null;
 
@@ -133,8 +136,6 @@
             } else {
                 ajaxStatus.showStatus(message);
             }
-        } else {
-            console.log(message);
         }
     }
 })

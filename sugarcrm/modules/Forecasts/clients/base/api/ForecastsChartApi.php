@@ -20,9 +20,9 @@ if (!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
-require_once('clients/base/api/ChartApi.php');
+require_once('include/api/SugarApi.php');
 
-class ForecastsChartApi extends ChartApi
+class ForecastsChartApi extends SugarApi
 {
     /**
      * Rest Api Registration Method

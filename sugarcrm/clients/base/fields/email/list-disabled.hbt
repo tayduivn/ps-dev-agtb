@@ -1,0 +1,2 @@
+<input type="text" name="{{name}}" value="{{value}}"{{#if def.placeholder}} placeholder="{{str def.placeholder this.model.module}}"{{/if}} class="inherit-width" disabled>
+<p class="help-block"></p>

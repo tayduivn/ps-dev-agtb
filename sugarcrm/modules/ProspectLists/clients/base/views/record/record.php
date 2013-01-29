@@ -36,16 +36,24 @@ $viewdefs['ProspectLists']['base']['view']['record'] = array(
             'name' => 'cancel_button',
             'label' => 'LBL_CANCEL_BUTTON_LABEL',
             'css_class' => 'btn-invisible btn-link',
-            'mode' => 'edit',
+            'showOn' => 'edit',
         ),
         array(
             'type' => 'buttondropdown',
-            'name' => 'edit_dropdown',
-            'default' => array(
-                'name' => 'edit_button',
-                'label' => 'LBL_EDIT_BUTTON_LABEL',
-            ),
-            'dropdown' => array(
+            'name' => 'main_dropdown',
+            'buttons' => array(
+                array(
+                    'name' => 'edit_button',
+                    'label' => 'LBL_EDIT_BUTTON_LABEL',
+                    'primary' => true,
+                    'showOn' => 'view',
+                ),
+                array(
+                    'name' => 'save_button',
+                    'label' => 'LBL_SAVE_BUTTON_LABEL',
+                    'primary' => true,
+                    'showOn' => 'edit',
+                ),
                 array(
                     'name' => 'delete_button',
                     'label' => 'LBL_DELETE_BUTTON_LABEL',
@@ -53,24 +61,9 @@ $viewdefs['ProspectLists']['base']['view']['record'] = array(
                 array(
                     'name' => 'duplicate_button',
                     'label' => 'LBL_DUPLICATE_BUTTON_LABEL',
+                    'showOn' => 'view'
                 ),
             ),
-            'mode' => 'view',
-        ),
-        array(
-            'type' => 'buttondropdown',
-            'name' => 'save_dropdown',
-            'default' => array(
-                'name' => 'save_button',
-                'label' => 'LBL_SAVE_BUTTON_LABEL',
-            ),
-            'dropdown' => array(
-                array(
-                    'name' => 'delete_button',
-                    'label' => 'LBL_DELETE_BUTTON_LABEL',
-                ),
-            ),
-            'mode' => 'edit',
         ),
         array(
             'name' => 'sidebar_toggle',
@@ -91,9 +84,7 @@ $viewdefs['ProspectLists']['base']['view']['record'] = array(
         ),
         array(
             'name' => 'panel_body',
-            'label' => 'LBL_PANEL_2',
             'columns' => 2,
-            'labels' => true,
             'labelsOnTop' => true,
             'placeholders' => true,
             'fields' => array(
@@ -106,26 +97,24 @@ $viewdefs['ProspectLists']['base']['view']['record'] = array(
                     'displayParams' => array('required' => true),
                     'span' => 12,
                 ),
-//                array(
-//                    'name' => 'domain_name',
-//                    'type' => 'secondary',
-//                    'primary' => array(
-//                        'field' => 'list_type',
-//                        'value' => 'exempt_domain',
-//                    )
-//                ),
                 'assigned_user_name',
-                'date_modified',
-                'terms', // This was defined in the PM spreadsheet, but isn't an existing field. Left here for posterity.
-                'date_created',
-
+                array(
+                    'name' => 'date_modified',
+                    'type' => 'datetimecombo',
+                    'noedit' => true,
+                ),
                 //BEGIN SUGARCRM flav=pro ONLY
                 array(
                     "type" => "teamset",
                     "name" => "team_name"
                 ),
                 //END SUGARCRM flav=pro ONLY
+                array(
+                    'name' => 'date_entered',
+                    'type' => 'datetimecombo',
+                    'noedit' => true,
+                )
             )
-        )
+        ),
     ),
 );

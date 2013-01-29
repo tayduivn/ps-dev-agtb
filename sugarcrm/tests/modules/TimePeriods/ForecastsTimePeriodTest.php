@@ -24,18 +24,20 @@
  ********************************************************************************/
 
 require_once('modules/TimePeriods/TimePeriod.php');
+require_once('include/SugarForecasting/Filter/TimePeriodFilter.php');
 
 class ForecastsTimePeriodTest extends Sugar_PHPUnit_Framework_TestCase
 {
     private $preTestIds = array();
     private static $configDateFormat;
+    private static $currentYear;
 
     //These are the default forecast configuration settings we will use to test
-    protected $forecastConfigSettings = array (
+    private static $forecastConfigSettings = array (
         array('name' => 'timeperiod_type', 'value' => 'chronological', 'platform' => 'base', 'category' => 'Forecasts'),
         array('name' => 'timeperiod_interval', 'value' => TimePeriod::ANNUAL_TYPE, 'platform' => 'base', 'category' => 'Forecasts'),
         array('name' => 'timeperiod_leaf_interval', 'value' => TimePeriod::QUARTER_TYPE, 'platform' => 'base', 'category' => 'Forecasts'),
-        array('name' => 'timeperiod_start_date', 'value' => '2012-01-01', 'platform' => 'base', 'category' => 'Forecasts'),
+        array('name' => 'timeperiod_start_date', 'value' => '2013-01-01', 'platform' => 'base', 'category' => 'Forecasts'),
         array('name' => 'timeperiod_shown_forward', 'value' => '2', 'platform' => 'base', 'category' => 'Forecasts'),
         array('name' => 'timeperiod_shown_backward', 'value' => '2', 'platform' => 'base', 'category' => 'Forecasts')
     );
@@ -50,6 +52,8 @@ class ForecastsTimePeriodTest extends Sugar_PHPUnit_Framework_TestCase
         SugarTestHelper::setUp('beanList');
         SugarTestHelper::setUp('current_user');
         self::$configDateFormat = $GLOBALS['sugar_config']['datef'];
+        $db = DBManagerFactory::getInstance();
+        $db->query('UPDATE timeperiods set deleted = 1');
     }
 
     /**
@@ -64,8 +68,7 @@ class ForecastsTimePeriodTest extends Sugar_PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        TimePeriod::$currentId = array();
-
+        self::$currentYear = date('Y');
         $this->preTestIds = TimePeriod::get_timeperiods_dom();
 
         $db = DBManagerFactory::getInstance();
@@ -74,7 +77,8 @@ class ForecastsTimePeriodTest extends Sugar_PHPUnit_Framework_TestCase
 
         $admin = BeanFactory::getBean('Administration');
 
-        foreach($this->forecastConfigSettings as $config)
+        self::$forecastConfigSettings[3]['timeperiod_start_date']['value'] = TimeDate::getInstance()->getNow()->setDate(date('Y'), 1, 1)->asDbDate();
+        foreach(self::$forecastConfigSettings as $config)
         {
             $admin->saveSetting($config['category'], $config['name'], $config['value'], $config['platform']);
         }
@@ -427,6 +431,7 @@ class ForecastsTimePeriodTest extends Sugar_PHPUnit_Framework_TestCase
         return array
         (
             //Going from 2 to 4 creates 2 additional annual timeperiods backwards (2 annual, 8 quarters)
+
             array(0, 2, 4, TimePeriod::ANNUAL_TYPE, TimePeriod::QUARTER_TYPE, 1, 1, '-2 year', 2, 8, 'backward'),
 
             array(0, 2, 4, TimePeriod::ANNUAL_TYPE, TimePeriod::QUARTER_TYPE, 7, 1, '-2 year', 2, 8, 'backward'),
@@ -461,14 +466,11 @@ class ForecastsTimePeriodTest extends Sugar_PHPUnit_Framework_TestCase
             array(0, 0, 4, TimePeriod::QUARTER_TYPE, TimePeriod::MONTH_TYPE, 1, 1, '1 year', 4, 12, 'forward', 10, 1, 12, 1),
             array(0, 4, 12, TimePeriod::QUARTER_TYPE, TimePeriod::MONTH_TYPE, 1, 1, '2 year', 8, 24, 'forward', 10, 1, 12, 1),
             array(0, 12, 6, TimePeriod::QUARTER_TYPE, TimePeriod::MONTH_TYPE, 1, 1, '0 year', 0, 0, 'forward', 10, 1, 12, 1),
-            //Simulating upgrades
-            //No backward timeperiods will be created
 
-            array(1, 2, 4, TimePeriod::ANNUAL_TYPE, TimePeriod::QUARTER_TYPE, 1, 1, '0 year', 0, 0, 'backward'),
-            array(1, 2, 4, TimePeriod::QUARTER_TYPE, TimePeriod::MONTH_TYPE, 1, 1, '0 year', 0, 0, 'backward'),
-
+            //Forward TimePeriods will be created
             array(1, 2, 2, TimePeriod::ANNUAL_TYPE, TimePeriod::QUARTER_TYPE, 1, 1, '2 year', 2, 8, 'forward'),
             array(1, 2, 4, TimePeriod::QUARTER_TYPE, TimePeriod::MONTH_TYPE, 1, 1, '1 year', 4, 12, 'forward'),
+
         );
     }
 
@@ -542,29 +544,152 @@ class ForecastsTimePeriodTest extends Sugar_PHPUnit_Framework_TestCase
 
         $tp = $direction == 'backward' ? TimePeriod::getEarliest($parentType) : TimePeriod::getLatest($parentType);
 
-
         $this->assertEquals($expectedDate->asDbDate(), $tp->start_date, "Failed creating {$expectedParents} new {$direction} timeperiods");
-
-        $tp = $direction == 'backward' ? TimePeriod::getEarliest($leafType) : TimePeriod::getLatest($leafType);
-
-        $expectedDate = $timedate->getNow()->setDate($timedate->fromDbDate($expectedSeedLeaf->start_date)->modify($dateModifier)->format('Y'), $expectedLeafMonth, $expectedLeafDay);
 
         //If this is an upgrade the expectedDate should be forward from what the current time period is
         if($isUpgrade && $direction == 'forward') {
+            $tp = TimePeriod::getLatest($leafType);
             $start_date = $db->getOne("SELECT max(start_date) FROM timeperiods WHERE type = '{$leafType}' AND deleted = 0");
             $expectedDate = $timedate->fromDbDate(substr($start_date, 0, 10));
+            $this->assertEquals($expectedDate->asDbDate(), $tp->start_date, "Failed creating {$expectedLeaves} leaf timeperiods");
         }
 
-        $this->assertEquals($expectedDate->asDbDate(), $tp->start_date, "Failed creating {$expectedLeaves} leaf timeperiods");
     }
 
     /**
-     * This is a test for TimePeriod::getCurrentId
+     * This is the data provider to simulate arguments we pass to the testCreateTimePeriodsForUpgrade test
+     *
+     */
+    public function testCreateTimePeriodsForUpgradeProvider() {
+
+        return array(
+            //This data set simulates case where the start date specified is the same as current date
+
+            array(1, TimePeriod::ANNUAL_TYPE, TimePeriod::QUARTER_TYPE, TimeDate::getInstance()->getNow()->setDate(date('Y'), 1, 1), 2, TimeDate::getInstance()->getNow()->setDate(date('Y'), 1, 1), 15, TimeDate::getInstance()->getNow()->setDate(date('Y'), 10, 1), TimeDate::getInstance()->getNow()->setDate(date('Y'), 12, 31)),
+
+            array(1, TimePeriod::ANNUAL_TYPE, TimePeriod::QUARTER_TYPE, TimeDate::getInstance()->getNow()->setDate(date('Y'), 1, 1), 4, TimeDate::getInstance()->getNow()->setDate(date('Y'), 1, 1), 25, TimeDate::getInstance()->getNow()->setDate(date('Y'), 10, 1), TimeDate::getInstance()->getNow()->setDate(date('Y'), 12, 31)),
+            array(1, TimePeriod::QUARTER_TYPE, TimePeriod::MONTH_TYPE, TimeDate::getInstance()->getNow()->setDate(date('Y'), 1, 1), 2, TimeDate::getInstance()->getNow()->setDate(date('Y'), 1, 1), 10, TimeDate::getInstance()->getNow()->setDate(date('Y'), 1, 1), TimeDate::getInstance()->getNow()->setDate(date('Y'), 3, 31)),
+            array(1, TimePeriod::QUARTER_TYPE, TimePeriod::MONTH_TYPE, TimeDate::getInstance()->getNow()->setDate(date('Y'), 1, 1), 4, TimeDate::getInstance()->getNow()->setDate(date('Y'), 1, 1), 18, TimeDate::getInstance()->getNow()->setDate(date('Y'), 1, 1), TimeDate::getInstance()->getNow()->setDate(date('Y'), 3, 31)),
+            array(9, TimePeriod::QUARTER_TYPE, TimePeriod::MONTH_TYPE, TimeDate::getInstance()->getNow()->setDate(date('Y'), 1, 1), 2, TimeDate::getInstance()->getNow()->setDate(date('Y'), 1, 1), 10, TimeDate::getInstance()->getNow()->setDate(date('Y'), 9, 1), TimeDate::getInstance()->getNow()->setDate(date('Y'), 9, 30)),
+            array(17, TimePeriod::QUARTER_TYPE, TimePeriod::MONTH_TYPE, TimeDate::getInstance()->getNow()->setDate(date('Y'), 1, 1), 4, TimeDate::getInstance()->getNow()->setDate(date('Y'), 1, 1), 18, TimeDate::getInstance()->getNow()->setDate(date('Y')+1, 3, 1), TimeDate::getInstance()->getNow()->setDate(date('Y')+1, 3, 31)),
+
+            //This data set simulates case where the start date specified is before the current date
+            array(1, TimePeriod::ANNUAL_TYPE, TimePeriod::QUARTER_TYPE, TimeDate::getInstance()->getNow()->setDate(date('Y'), 2, 1), 2, TimeDate::getInstance()->getNow()->setDate(date('Y'), 3, 1), 15, TimeDate::getInstance()->getNow()->setDate(date('Y'), 11, 1), TimeDate::getInstance()->getNow()->setDate(date('Y')+1, 1, 31)),
+
+            array(1, TimePeriod::ANNUAL_TYPE, TimePeriod::QUARTER_TYPE, TimeDate::getInstance()->getNow()->setDate(date('Y'), 2, 1), 4, TimeDate::getInstance()->getNow()->setDate(date('Y'), 3, 1), 25, TimeDate::getInstance()->getNow()->setDate(date('Y'), 11, 1), TimeDate::getInstance()->getNow()->setDate(date('Y')+1, 1, 31)),
+            array(1, TimePeriod::QUARTER_TYPE, TimePeriod::MONTH_TYPE, TimeDate::getInstance()->getNow()->setDate(date('Y'), 2, 1), 2, TimeDate::getInstance()->getNow()->setDate(date('Y'), 3, 1), 11, TimeDate::getInstance()->getNow()->setDate(date('Y'), 4, 1), TimeDate::getInstance()->getNow()->setDate(date('Y'), 4, 30)),
+            array(1, TimePeriod::QUARTER_TYPE, TimePeriod::MONTH_TYPE, TimeDate::getInstance()->getNow()->setDate(date('Y'), 2, 1), 4, TimeDate::getInstance()->getNow()->setDate(date('Y'), 3, 1), 19, TimeDate::getInstance()->getNow()->setDate(date('Y'), 4, 1), TimeDate::getInstance()->getNow()->setDate(date('Y'), 4, 30)),
+            array(14, TimePeriod::ANNUAL_TYPE, TimePeriod::QUARTER_TYPE, TimeDate::getInstance()->getNow()->setDate(date('Y'), 2, 1), 2, TimeDate::getInstance()->getNow()->setDate(date('Y'), 3, 1), 15, TimeDate::getInstance()->getNow()->setDate(date('Y')+2, 11, 1), TimeDate::getInstance()->getNow()->setDate(date('Y')+3, 1, 31)),
+            array(24, TimePeriod::ANNUAL_TYPE, TimePeriod::QUARTER_TYPE, TimeDate::getInstance()->getNow()->setDate(date('Y'), 2, 1), 4, TimeDate::getInstance()->getNow()->setDate(date('Y'), 3, 1), 25, TimeDate::getInstance()->getNow()->setDate(date('Y')+4, 11, 1), TimeDate::getInstance()->getNow()->setDate(date('Y')+5, 1, 31)),
+
+            //This data set simulates case where the start date specified is after the current date
+            array(1, TimePeriod::ANNUAL_TYPE, TimePeriod::QUARTER_TYPE, TimeDate::getInstance()->getNow()->setDate(date('Y'), 3, 1), 2, TimeDate::getInstance()->getNow()->setDate(date('Y'), 2, 1), 15, TimeDate::getInstance()->getNow()->setDate(date('Y'), 12, 1), TimeDate::getInstance()->getNow()->setDate(date('Y')+1, 2, 28)),
+            array(1, TimePeriod::ANNUAL_TYPE, TimePeriod::QUARTER_TYPE, TimeDate::getInstance()->getNow()->setDate(date('Y'), 3, 1), 4, TimeDate::getInstance()->getNow()->setDate(date('Y'), 2, 1), 25, TimeDate::getInstance()->getNow()->setDate(date('Y'), 12, 1), TimeDate::getInstance()->getNow()->setDate(date('Y')+1, 2, 28)),
+            array(1, TimePeriod::QUARTER_TYPE, TimePeriod::MONTH_TYPE, TimeDate::getInstance()->getNow()->setDate(date('Y'), 3, 1), 2, TimeDate::getInstance()->getNow()->setDate(date('Y'), 2, 1), 12, TimeDate::getInstance()->getNow()->setDate(date('Y'), 5, 1), TimeDate::getInstance()->getNow()->setDate(date('Y'), 5, 31)),
+            array(1, TimePeriod::QUARTER_TYPE, TimePeriod::MONTH_TYPE, TimeDate::getInstance()->getNow()->setDate(date('Y'), 3, 1), 4, TimeDate::getInstance()->getNow()->setDate(date('Y'), 2, 1), 20, TimeDate::getInstance()->getNow()->setDate(date('Y'), 5, 1), TimeDate::getInstance()->getNow()->setDate(date('Y'), 5, 31)),
+            array(11, TimePeriod::QUARTER_TYPE, TimePeriod::MONTH_TYPE, TimeDate::getInstance()->getNow()->setDate(date('Y'), 3, 1), 2, TimeDate::getInstance()->getNow()->setDate(date('Y'), 2, 1), 12, TimeDate::getInstance()->getNow()->setDate(date('Y'), 11, 1), TimeDate::getInstance()->getNow()->setDate(date('Y'), 11, 30)),
+            array(19, TimePeriod::QUARTER_TYPE, TimePeriod::MONTH_TYPE, TimeDate::getInstance()->getNow()->setDate(date('Y'), 3, 1), 4, TimeDate::getInstance()->getNow()->setDate(date('Y'), 2, 1), 20, TimeDate::getInstance()->getNow()->setDate(date('Y')+1, 5, 1), TimeDate::getInstance()->getNow()->setDate(date('Y')+1, 5, 31)),
+
+            //This data set simulates case where the start date specified is before current date and there are no existing current TimePeriods for the current date
+            array(1, TimePeriod::ANNUAL_TYPE, TimePeriod::QUARTER_TYPE, TimeDate::getInstance()->getNow()->setDate(date('Y')+2, 1, 1), 2, TimeDate::getInstance()->getNow()->setDate(date('Y')+2, 1, 1)->modify('+1 day'), 15, TimeDate::getInstance()->getNow()->setDate(date('Y')+2, 10, 1), TimeDate::getInstance()->getNow()->setDate(date('Y')+2, 12, 31)),
+
+            //This data set simulates upgrades using variable TimePeriods so that we are not bound to the TimePeriods created in the setUp method
+            array(1, TimePeriod::ANNUAL_TYPE, TimePeriod::QUARTER_TYPE, TimeDate::getInstance()->fromDbDate('2013-01-01'), 2, TimeDate::getInstance()->fromDbDate('2013-01-02'), 15, TimeDate::getInstance()->fromDbDate('2013-10-01'), TimeDate::getInstance()->fromDbDate('2013-12-31'),
+                array("INSERT into timeperiods (id, name, start_date, end_date, parent_id, deleted) values ('abc1', 'Q4 2013', '2013-10-01', '2013-12-31', 'abc5', 0)",
+                      "INSERT into timeperiods (id, name, start_date, end_date, parent_id, deleted) values ('abc2', 'Q3 2013', '2013-07-01', '2013-09-31', 'abc5', 0)",
+                      "INSERT into timeperiods (id, name, start_date, end_date, parent_id, deleted) values ('abc3', 'Q2 2013', '2013-04-01', '2013-06-31', 'abc5', 0)",
+                      "INSERT into timeperiods (id, name, start_date, end_date, deleted) values ('abc5', 'Year 2013', '2013-10-01', '2013-12-31', 0)",
+                      "INSERT into timeperiods (id, name, start_date, end_date, parent_id, deleted) values ('abc4', 'Q1 2013', '2013-01-01', '2013-03-31', 'abc5', 0)"
+                )
+            ),
+
+            array(1, TimePeriod::QUARTER_TYPE, TimePeriod::MONTH_TYPE, TimeDate::getInstance()->fromDbDate('2013-01-01'), 2, TimeDate::getInstance()->fromDbDate('2013-01-02'), 10, TimeDate::getInstance()->fromDbDate('2013-01-01'), TimeDate::getInstance()->fromDbDate('2013-03-31'),
+                array("INSERT into timeperiods (id, name, start_date, end_date, parent_id, deleted) values ('abc1', 'Q4 2013', '2013-10-01', '2013-12-31', 'abc5', 0)",
+                      "INSERT into timeperiods (id, name, start_date, end_date, parent_id, deleted) values ('abc2', 'Q3 2013', '2013-07-01', '2013-09-31', 'abc5', 0)",
+                      "INSERT into timeperiods (id, name, start_date, end_date, parent_id, deleted) values ('abc3', 'Q2 2013', '2013-04-01', '2013-06-31', 'abc5', 0)",
+                      "INSERT into timeperiods (id, name, start_date, end_date, deleted) values ('abc5', 'Year 2013', '2013-10-01', '2013-12-31', 0)",
+                      "INSERT into timeperiods (id, name, start_date, end_date, parent_id, deleted) values ('abc4', 'Q1 2013', '2013-01-01', '2013-03-31', 'abc5', 0)"
+                )
+            ),
+
+        );
+
+    }
+
+    /**
+     * This is a test for the createTimePeriodsForUpgrade method
+     *
+     * @group forecasts
+     * @group timeperiods
+     * @dataProvider testCreateTimePeriodsForUpgradeProvider
+     *
+     * @param $createdTimePeriodToCheck int value of the created TimePeriod index to check
+     * @param $interval The TimePeriod interval type
+     * @param $leafInterval The TimePeriod leaf interval type
+     * @param $startDate TimeDate instance of chosen start date for the TimePeriod interval
+     * @param $shownForward The number of forward TimePeriod intervals to create
+     * @param $currentDate TimeDate instance of the current date
+     * @param $expectedTimePeriods int value of the expected TimePeriods created
+     * @param $startDateFirstCreated TimeDate instance of the start date of created TimePeriod interval to test
+     * @param $endDateFirstCreated TimeDate instance of the end date of created TimePeriod interval to test
+     * @param $overrideEntries
+     *
+     * @outputBuffering disabled
+     */
+    public function testCreateTimePeriodsForUpgrade(
+        $createdTimePeriodToCheck,
+        $interval,
+        $leafInterval,
+        $startDate,
+        $shownForward,
+        $currentDate,
+        $expectedTimePeriods,
+        $startDateFirstCreated,
+        $endDateFirstCreated,
+        $overrideEntries = array())
+    {
+
+        if(!empty($overrideEntries)) {
+            $db = DBManagerFactory::getInstance();
+            //Get rid of all non-deleted timeperiods
+            $db->query("DELETE FROM timeperiods WHERE deleted = 0");
+            foreach($overrideEntries as $entry) {
+                $db->query($entry);
+            }
+        }
+
+        $currentSettings = array();
+        $currentSettings['timeperiod_interval'] = $interval;
+        $currentSettings['timeperiod_leaf_interval'] = $leafInterval;
+        $currentSettings['timeperiod_start_date'] = $startDate->asDbDate();
+        $currentSettings['timeperiod_shown_forward'] = $shownForward;
+
+        //Save the altered admin settings
+        $admin = BeanFactory::getBean('Administration');
+        foreach($currentSettings as $key=>$value) {
+            $admin->saveSetting('Forecasts', $key, $value, 'base');
+        }
+
+        $timePeriod = TimePeriod::getByType($interval);
+        $created = $timePeriod->createTimePeriodsForUpgrade($currentSettings, $currentDate);
+
+        $this->assertEquals($expectedTimePeriods, count($created));
+        $firstTimePeriod = $created[$createdTimePeriodToCheck];
+        $this->assertEquals($startDateFirstCreated->asDbDate(), $firstTimePeriod->start_date, 'Failed asserting that the start date of first backward timeperiod is ' . $startDateFirstCreated);
+        $this->assertEquals($endDateFirstCreated->asDbDate(), $firstTimePeriod->end_date, 'Failed asserting that the end date of first backward timeperiod is ' . $firstTimePeriod->end_date);
+
+        $klass = new SugarForecasting_Filter_TimePeriodFilter(array());
+        $timePeriods = $klass->process();
+        $this->assertNotEmpty($timePeriods);
+    }
+
+    /**
+     * This is a test for TimePeriod::getCurrentTimePeriod
      *
      * @group forecasts
      * @group timeperiods
      */
-    public function testGetCurrentId() {
+    public function testGetCurrentTimePeriod() {
         global $app_strings;
         global $sugar_config;
         $timedate = TimeDate::getInstance();
@@ -651,17 +776,178 @@ class ForecastsTimePeriodTest extends Sugar_PHPUnit_Framework_TestCase
 
 
     /**
-     * This is a test for the getChartLabels function
+     * This is the provider function for the testGetChartLabels method.  We return a multi-dimensional Array where each
+     * entry of the top level Array contains the arguments in the following order:
+     * 1) TimePeriod type as String
+     * 2) TimePeriod start date as String
+     * 3) Array of expected chart labels for TimePeriod
      *
+     */
+    public function getChartLabelsProvider()
+    {
+        return array(
+
+            array(TimePeriod::QUARTER_TYPE, '2013-01-01', array('January 2013', 'February 2013', 'March 2013')),
+            array(TimePeriod::QUARTER_TYPE, '2013-10-01', array('October 2013', 'November 2013', 'December 2013')),
+            array(TimePeriod::QUARTER_TYPE, '2013-11-01', array('November 2013', 'December 2013', 'January 2014')),
+            array(TimePeriod::QUARTER_TYPE, '2012-01-15', array('1/15-2/14', '2/15-3/14', '3/15-4/14')),
+            array(TimePeriod::QUARTER_TYPE, '2013-01-15', array('1/15-2/14', '2/15-3/14', '3/15-4/14')),
+
+            array(TimePeriod::QUARTER_TYPE, '2011-12-31', array('12/31-1/30', '1/31-2/28', '2/29-3/30')),
+            array(TimePeriod::QUARTER_TYPE, '2011-12-30', array('12/30-1/29', '1/30-2/28', '2/29-3/29')),
+            array(TimePeriod::QUARTER_TYPE, '2011-12-29', array('12/29-1/28', '1/29-2/28', '2/29-3/28')),
+            array(TimePeriod::QUARTER_TYPE, '2011-12-28', array('12/28-1/27', '1/28-2/27', '2/28-3/27')),
+
+            array(TimePeriod::QUARTER_TYPE, '2012-12-31', array('12/31-1/30', '1/31-2/27', '2/28-3/30')),
+            array(TimePeriod::QUARTER_TYPE, '2012-12-30', array('12/30-1/29', '1/30-2/27', '2/28-3/29')),
+            array(TimePeriod::QUARTER_TYPE, '2012-12-29', array('12/29-1/28', '1/29-2/27', '2/28-3/28')),
+            array(TimePeriod::QUARTER_TYPE, '2012-12-28', array('12/28-1/27', '1/28-2/27', '2/28-3/27')),
+
+            array(TimePeriod::MONTH_TYPE, '2013-01-01', array('1/1-1/7', '1/8-1/14', '1/15-1/21', '1/22-1/28', '1/29-1/31')),
+            array(TimePeriod::MONTH_TYPE, '2013-02-01', array('2/1-2/7', '2/8-2/14', '2/15-2/21', '2/22-2/28')),
+            array(TimePeriod::MONTH_TYPE, '2012-02-01', array('2/1-2/7', '2/8-2/14', '2/15-2/21', '2/22-2/28', '2/29-2/29')),
+            array(TimePeriod::MONTH_TYPE, '2013-04-10', array('4/10-4/16', '4/17-4/23', '4/24-4/30', '5/1-5/7', '5/8-5/9')),
+            array(TimePeriod::MONTH_TYPE, '2013-12-10', array('12/10-12/16', '12/17-12/23', '12/24-12/30', '12/31-1/6', '1/7-1/9')),
+
+        );
+    }
+
+
+    /**
+     * This is a test for the TimePeriod's instance getChartLabels function.  We are asserting that the correct label
+     * interval is shown for the given TimePeriod's start date.
+     *
+     * @dataProvider getChartLabelsProvider
      * @group timeperiods
      * @group forecasts
      */
-    public function testGetChartLabels() {
-        $timePeriod = new MonthTimePeriod();
-        $timePeriod->setStartDate('2012-01-01');
+    public function testGetChartLabels($tpType, $tpStartDate, $expectedLabels)
+    {
+        $timePeriod = TimePeriod::getByType($tpType);
+        $timePeriod->setStartDate($tpStartDate);
         $timePeriod->save();
-
         SugarTestTimePeriodUtilities::$_createdTimePeriods[] = $timePeriod;
+        $chartLabels = $timePeriod->getChartLabels(array());
+        $this->assertEquals(count($expectedLabels), count($chartLabels));
+        foreach($expectedLabels as $key=>$expectedLabel) {
+            $this->assertEquals($expectedLabel, $chartLabels[$key]['label']);
+        }
+    }
+
+
+    /**
+     * This is the dataProvider function for the testChartLabelsKey function.  We return a multi-dimensional Array where each
+     * entry of the top level Array contains the arguments in the following order:
+     * 1) TimePeriod type as String
+     * 2) TimePeriod start date as String
+     * 3) Date closed as String
+     * 4) Expected return value from the getChartLabelsKey function as an integer
+     *
+     * @return array
+     */
+    public function getChartLabelsKeyProvider()
+    {
+        return array(
+            array(TimePeriod::QUARTER_TYPE, '2013-01-01', '2013-01-01', 0),
+            array(TimePeriod::QUARTER_TYPE, '2013-01-01', '2013-01-31', 0),
+            array(TimePeriod::QUARTER_TYPE, '2013-01-01', '2013-02-01', 1),
+            array(TimePeriod::QUARTER_TYPE, '2013-01-01', '2013-02-28', 1),
+            array(TimePeriod::QUARTER_TYPE, '2013-01-01', '2013-03-01', 2),
+            array(TimePeriod::QUARTER_TYPE, '2013-01-01', '2013-03-31', 2),
+
+            array(TimePeriod::QUARTER_TYPE, '2013-01-15', '2013-01-15', 0),
+            array(TimePeriod::QUARTER_TYPE, '2013-01-15', '2013-01-31', 0),
+            array(TimePeriod::QUARTER_TYPE, '2013-01-15', '2013-02-14', 0),
+            array(TimePeriod::QUARTER_TYPE, '2013-01-15', '2013-02-15', 1),
+            array(TimePeriod::QUARTER_TYPE, '2013-01-15', '2013-02-28', 1),
+            array(TimePeriod::QUARTER_TYPE, '2013-01-15', '2013-03-15', 2),
+            array(TimePeriod::QUARTER_TYPE, '2013-01-15', '2013-03-15', 2),
+            array(TimePeriod::QUARTER_TYPE, '2013-01-15', '2013-04-14', 2),
+
+            array(TimePeriod::QUARTER_TYPE, '2012-12-27', '2013-01-26', 0),
+            array(TimePeriod::QUARTER_TYPE, '2012-12-27', '2013-01-27', 1),
+            array(TimePeriod::QUARTER_TYPE, '2012-12-27', '2013-02-26', 1),
+            array(TimePeriod::QUARTER_TYPE, '2012-12-27', '2013-02-27', 2),
+
+            array(TimePeriod::QUARTER_TYPE, '2012-12-28', '2013-02-27', 1),
+            array(TimePeriod::QUARTER_TYPE, '2012-12-29', '2013-02-27', 1),
+            array(TimePeriod::QUARTER_TYPE, '2012-12-30', '2013-02-27', 1),
+            array(TimePeriod::QUARTER_TYPE, '2012-12-31', '2013-02-27', 1),
+            array(TimePeriod::QUARTER_TYPE, '2012-12-28', '2013-02-28', 2),
+            array(TimePeriod::QUARTER_TYPE, '2012-12-29', '2013-02-28', 2),
+            array(TimePeriod::QUARTER_TYPE, '2012-12-30', '2013-02-28', 2),
+            array(TimePeriod::QUARTER_TYPE, '2012-12-31', '2013-02-28', 2),
+
+            array(TimePeriod::QUARTER_TYPE, '2011-12-28', '2012-02-27', 1),
+            array(TimePeriod::QUARTER_TYPE, '2011-12-29', '2012-02-27', 1),
+            array(TimePeriod::QUARTER_TYPE, '2011-12-30', '2012-02-27', 1),
+            array(TimePeriod::QUARTER_TYPE, '2011-12-31', '2012-02-27', 1),
+            array(TimePeriod::QUARTER_TYPE, '2011-12-28', '2012-02-29', 2),
+            array(TimePeriod::QUARTER_TYPE, '2011-12-29', '2012-02-29', 2),
+            array(TimePeriod::QUARTER_TYPE, '2011-12-30', '2012-02-29', 2),
+            array(TimePeriod::QUARTER_TYPE, '2011-12-31', '2012-02-29', 2),
+            array(TimePeriod::QUARTER_TYPE, '2012-01-01', '2012-02-29', 1),
+            array(TimePeriod::QUARTER_TYPE, '2011-12-01', '2012-02-29', 2),
+            array(TimePeriod::QUARTER_TYPE, '2012-02-01', '2012-02-29', 0),
+            array(TimePeriod::QUARTER_TYPE, '2012-02-29', '2012-02-29', 0),
+
+            array(TimePeriod::MONTH_TYPE, '2013-01-01', '2013-01-01', 0),
+            array(TimePeriod::MONTH_TYPE, '2013-01-01', '2013-01-07', 0),
+            array(TimePeriod::MONTH_TYPE, '2013-01-01', '2013-01-08', 1),
+            array(TimePeriod::MONTH_TYPE, '2013-01-01', '2013-01-14', 1),
+            array(TimePeriod::MONTH_TYPE, '2013-01-01', '2013-01-15', 2),
+            array(TimePeriod::MONTH_TYPE, '2013-01-01', '2013-01-21', 2),
+            array(TimePeriod::MONTH_TYPE, '2013-01-01', '2013-01-22', 3),
+            array(TimePeriod::MONTH_TYPE, '2013-01-01', '2013-01-23', 3),
+            array(TimePeriod::MONTH_TYPE, '2013-01-01', '2013-01-29', 4),
+            array(TimePeriod::MONTH_TYPE, '2013-01-01', '2013-01-31', 4),
+
+            array(TimePeriod::MONTH_TYPE, '2013-04-10', '2013-04-10', 0),
+            array(TimePeriod::MONTH_TYPE, '2013-04-10', '2013-04-16', 0),
+            array(TimePeriod::MONTH_TYPE, '2013-04-10', '2013-04-17', 1),
+            array(TimePeriod::MONTH_TYPE, '2013-04-10', '2013-04-23', 1),
+            array(TimePeriod::MONTH_TYPE, '2013-04-10', '2013-04-24', 2),
+            array(TimePeriod::MONTH_TYPE, '2013-04-10', '2013-04-30', 2),
+            array(TimePeriod::MONTH_TYPE, '2013-04-10', '2013-05-01', 3),
+            array(TimePeriod::MONTH_TYPE, '2013-04-10', '2013-05-07', 3),
+            array(TimePeriod::MONTH_TYPE, '2013-04-10', '2013-05-08', 4),
+            array(TimePeriod::MONTH_TYPE, '2013-04-10', '2013-05-10', 4),
+
+            array(TimePeriod::MONTH_TYPE, '2012-12-31', '2012-12-31', 0),
+            array(TimePeriod::MONTH_TYPE, '2012-12-31', '2013-01-06', 0),
+            array(TimePeriod::MONTH_TYPE, '2012-12-31', '2013-01-07', 1),
+            array(TimePeriod::MONTH_TYPE, '2012-12-31', '2013-01-13', 1),
+            array(TimePeriod::MONTH_TYPE, '2012-12-31', '2013-01-14', 2),
+            array(TimePeriod::MONTH_TYPE, '2012-12-31', '2013-01-20', 2),
+            array(TimePeriod::MONTH_TYPE, '2012-12-31', '2013-01-21', 3),
+            array(TimePeriod::MONTH_TYPE, '2012-12-31', '2013-01-22', 3),
+            array(TimePeriod::MONTH_TYPE, '2012-12-31', '2013-01-28', 4),
+            array(TimePeriod::MONTH_TYPE, '2012-12-31', '2013-01-30', 4),
+
+            array(TimePeriod::MONTH_TYPE, '2012-02-01', '2012-02-01', 0),
+            array(TimePeriod::MONTH_TYPE, '2012-02-01', '2012-02-29', 4),
+            array(TimePeriod::MONTH_TYPE, '2012-02-29', '2012-02-29', 0),
+            array(TimePeriod::MONTH_TYPE, '2012-02-29', '2012-03-31', 4),
+        );
+    }
+
+    /**
+     * This is a test for the getChartLabelsKey function.  We are asserting that the call to the TimePeriod's instance
+     * getChartLabelsKey corresponds to the correct interval so that the chart data for the dateClosed value may be
+     * rendered in the correct group.
+     *
+     * @dataProvider getChartLabelsKeyProvider
+     * @group timeperiods
+     * @group forecasts
+     */
+    public function testGetChartLabelsKey($tpType, $tpStartDate, $dateClosed, $expectedKey)
+    {
+        $timePeriod = TimePeriod::getByType($tpType);
+        $timePeriod->setStartDate($tpStartDate);
+        $timePeriod->save();
+        SugarTestTimePeriodUtilities::$_createdTimePeriods[] = $timePeriod;
+        $chartLabelKey = $timePeriod->getChartLabelsKey($dateClosed);
+        $this->assertEquals($expectedKey, $chartLabelKey);
     }
 
 
@@ -747,17 +1033,15 @@ class ForecastsTimePeriodTest extends Sugar_PHPUnit_Framework_TestCase
         $timedate->setUser($userB);
         $timedate->setNow($timeZoneBNow);
 
-        $timeZoneBCurrentTimePeriod = TimePeriod::getTimePeriod();
+        $timeZoneBCurrentTimePeriod = TimePeriod::getCurrentTimePeriod();
 
         //now get timeperiods for UserA
         $GLOBALS['current_user'] = $userA;
         $timedate->setUser($userA);
         $timedate->setNow($timeZoneANow);
 
-        //clear current ids cached in timeperiod
-        TimePeriod::$currentId = array();
         //get timeperiod per userA's timezone
-        $timeZoneACurrentTimePeriod = TimePeriod::getTimePeriod();
+        $timeZoneACurrentTimePeriod = TimePeriod::getCurrentTimePeriod();
 
         //make assertions, Users should have timeperiods based on timezones
         $this->assertNotEquals($timeZoneACurrentTimePeriod->id, $timeZoneBCurrentTimePeriod->id, "time periods were equal, users were in same time zone");

@@ -261,7 +261,7 @@ function verify_data(form)
         isError = true;
 	}
 
-	if (trim(form.user_name.value) == "") {
+	if (typeof(form.user_name) != 'undefined' && trim(form.user_name.value) == "") {
 		add_error_style('EditView',form.user_name.name,
                         SUGAR.language.get('app_strings','ERR_MISSING_REQUIRED_FIELDS') + SUGAR.language.get('Users','LBL_USER_NAME') );
         isError = true;

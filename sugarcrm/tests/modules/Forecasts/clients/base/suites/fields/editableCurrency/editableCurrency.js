@@ -20,10 +20,10 @@
  ********************************************************************************/
 
 describe("forecast editableCurrency field", function () {
-    var field, fieldDef, context, model;
+    var field, fieldDef, context, model, app;
 
     beforeEach(function () {
-        var app = SugarTest.app;
+        app = SugarTest.app;
         context = app.context.getContext();
 
         app.user = SugarTest.app.user;
@@ -41,8 +41,8 @@ describe("forecast editableCurrency field", function () {
         model = new Backbone.Model({"sales_stage" : 'test_sales_stage', 'editableCurrency' : '50.50'});
 
         fieldDef = {
-            "name": "editableInt",
-            "type": "editableInt",
+            "name": "editableCurrency",
+            "type": "editableCurrency",
             "view": "detail"
         };
         SugarTest.loadComponent('base', 'field', 'int');
@@ -124,9 +124,6 @@ describe("forecast editableCurrency field", function () {
         it("should return true when comma is present", function() {
             expect(field.compareValuesLocale("1,200.00","1200.00")).toBeTruthy();
         });
-        it("should return true when comma is present on second var", function() {
-            expect(field.compareValuesLocale("1200.00","1,200.00")).toBeTruthy();
-        });
         it("should return false when not equal", function() {
             expect(field.compareValuesLocale("1200.00","1200.01")).toBeFalsy();
         });
@@ -144,6 +141,34 @@ describe("forecast editableCurrency field", function () {
         });
         it("should return false when value is invalid", function() {
             expect(field.isValid("abcd")).toBeFalsy();
+        });
+    });
+
+    describe("compareValuesLocale", function() {
+        it("should return true when value is equal and in different locale than model", function() {
+            app.user.setPreference('decimal_separator', ',');
+            app.user.setPreference('number_grouping_separator', '.');
+            expect(field.compareValuesLocale('125.000,00','125000.00')).toBeTruthy();
+        });
+    });
+
+    describe("test trigger events", function() {
+        beforeEach(function(){
+            sinon.spy(field.context, "trigger");
+            field.bindDataChange();
+        });
+        afterEach(function(){
+            field.context.trigger.restore();
+        });
+        it("should not fire error event if is not error state", function() {
+            field.isErrorState = false;
+            field.context.trigger('field:editable:open');
+            expect(field.context.trigger).not.toHaveBeenCalledWith('field:editable:error');
+        });
+        it("should fire error event if is error state", function() {
+            field.isErrorState = true;
+            field.context.trigger('field:editable:open');
+            expect(field.context.trigger).toHaveBeenCalledWith('field:editable:error');
         });
     });
 

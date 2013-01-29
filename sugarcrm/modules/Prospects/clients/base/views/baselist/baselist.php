@@ -42,10 +42,9 @@ $viewdefs['Prospects']['base']['view']['baselist'] = array(
 					'label' => 'LBL_LIST_TITLE',
 				),
 				array(
-					'name'     => 'email1',
+					'name'     => 'email',
 					'label'    => 'LBL_LIST_EMAIL_ADDRESS',
 					'sortable' => false,
-                    'type'     => 'email',
 				),
 				array(
 					'name'  => 'phone_work',

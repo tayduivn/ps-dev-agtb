@@ -2,44 +2,63 @@
     inlineEditMode: false,
     createMode: false,
     previousModelState: null,
+    extendsFrom: 'EditableView',
 
     events: {
         'click .record-edit-link-wrapper': 'handleEdit',
         'click a[name=cancel_button]': 'cancelClicked',
         'click .more': 'toggleMoreLess',
-        'click .less': 'toggleMoreLess'
+        'click .less': 'toggleMoreLess',
+        'mouseenter .ellipsis_inline':'addTooltip'
+    },
+    addTooltip: function(event){
+        var $el = this.$(event.target);
+        if( $el[0].offsetWidth < $el[0].scrollWidth ) {
+            $el.tooltip('show');
+        } else {
+            $el.tooltip('destroy');
+        }
     },
     // button fields defined in view definition
-    buttons: {},
+    buttons: null,
+
     // button states
     STATE: {
         EDIT: 'edit',
         VIEW: 'view'
     },
 
+    // current button states
+    currentState: null,
+
     initialize: function(options) {
         _.bindAll(this);
 
-        app.view.View.prototype.initialize.call(this, options);
+        app.view.views.EditableView.prototype.initialize.call(this, options);
+
+        this.buttons = {};
 
         this.createMode = this.context.get("create") ? true : false;
+        this.action = this.createMode ? 'edit' : 'detail';
 
         // Set the save button to show if the model has been edited.
         this.model.on("change", function() {
             if (this.inlineEditMode) {
                 this.previousModelState = this.model.previousAttributes();
-                if(this.buttons['record-save']) {
-                    this.buttons['record-save'].setDisabled(false);
-                }
                 this.setButtonStates(this.STATE.EDIT);
             }
         }, this);
+        this.context.on("change:record_label", this.setLabel, this);
 
         this.delegateButtonEvents();
 
         if (this.createMode) {
             this.model.isNotEmpty = true;
         }
+    },
+
+    setLabel: function(context, value) {
+        this.$(".record-label[data-name=" + value.field + "]").text(value.label);
     },
 
     delegateButtonEvents: function() {
@@ -49,14 +68,26 @@
         this.context.on('button:duplicate_button:click', this.duplicateClicked, this);
     },
 
-    _render: function() {
+    _renderPanels: function(panels) {
         var totalFieldCount = 0;
 
-        _.each(this.meta.panels, function(panel) {
-            var columns = (panel.columns) || 1,
-                rows = [],
-                row = [],
-                size = panel.fields.length;
+        _.each(panels, function(panel) {
+            var columns    = (panel.columns) || 1,
+                rows       = [],
+                row        = [],
+                size       = panel.fields.length,
+                rowSpan    = 0,
+                rowSpanMax = 12,
+                colCount   = 0;
+
+            var _startNewRow = function() {
+                rows.push(row); // push the current row onto the grid
+
+                // reset variables that keep track of the current row's state
+                row      = [];
+                rowSpan  = 0;
+                colCount = 0;
+            };
 
             // Set flag so that show more link can be displayed to show hidden panel.
             if (panel.hide) {
@@ -64,7 +95,18 @@
             }
 
             _.each(panel.fields, function(field, index) {
-                var maxSpan;
+                var maxSpan,
+                    isLabelInline,
+                    fieldSpan,
+                    maxSpanForFieldWithInlineLabel = 8,
+                    maxSpanForFieldWithLabelOnTop  = 12;
+
+                //The code below assumes that the field is an object but can be a string
+                if(_.isString(field)) {
+                    field = {
+                        'name': field
+                    };
+                }
 
                 //labels: visibility for the label
                 //labelsOnTop: true for on the top of the field
@@ -73,10 +115,19 @@
                     panel.labels = true;
                 }
                 //8 for span because we are using a 2/3 ratio between field span and label span with a max of 12
-                maxSpan = (panel.labelsOnTop === false && panel.labels) ? 8 : 12;
+                isLabelInline = (panel.labelsOnTop === false && panel.labels);
+                maxSpan       = isLabelInline ? maxSpanForFieldWithInlineLabel : maxSpanForFieldWithLabelOnTop;
 
                 if (_.isUndefined(field.span)) {
                     field.span = Math.floor(maxSpan / columns);
+                }
+
+                // reset the field span if it's greater than the max span since no field can be greater than the
+                // maximum allowable span
+                // this is likely to only occur when labels are inline with the field, but that can't be guaranteed
+                // to be the only plausible scenario
+                if (field.span > maxSpan) {
+                    field.span = maxSpan;
                 }
 
                 //4 for label span because we are using a 1/3 ratio between field span and label span with a max of 12
@@ -86,36 +137,86 @@
 
                 totalFieldCount++;
                 field.index = totalFieldCount;
-                row.push(field);
 
-                if ((index % columns === columns - 1) || (index === size - 1)) {
-                    rows.push(row);
-                    row = [];
+                // by default, the field takes up the space specified by its span
+                fieldSpan = field.span;
+
+                // if the labels are to the left of the field then the field takes up the space
+                // specified by its span plus the space its label takes up
+                if (isLabelInline) {
+                    fieldSpan += field.labelSpan;
                 }
+
+                // if there isn't enough room remaining on the current row to contain the field or all available
+                // columns in the row have been filled, then start a new row
+                if ((rowSpan + fieldSpan) > rowSpanMax || colCount == columns) {
+                    _startNewRow();
+                }
+
+                row.push(field);
+                rowSpan += fieldSpan; // update rowSpan to account for span of the field that was just added to the row
+
+                // push the last row if there are no more fields in the panel
+                if ((index === size - 1)) {
+                    _startNewRow();
+                }
+
+                colCount++; // increment the column count now that we've filled a column
             }, this);
 
             panel.grid = rows;
         }, this);
+    },
+
+    _render: function() {
+        this._renderPanels(this.meta.panels);
 
         app.view.View.prototype._render.call(this);
         this.initButtons();
         this.setButtonStates(this.STATE.VIEW);
+        this.setEditableFields();
+    },
 
-        // Check if this is a new record, if it is, enable the edit view
-        if (this.createMode && this.model.isNew()) {
-            this.toggleEdit(true);
+    setEditableFields: function() {
+        delete this.editableFields;
+        this.editableFields = [];
+
+        var previousField, firstField;
+        _.each(this.fields, function(field, index) {
+            if ( field.type === "img" || field.type === "buttondropdown" || field.parent || (field.name && this.buttons[field.name])) {
+                return;
+            }
+            if(previousField) {
+                previousField.nextField = field;
+            } else {
+                firstField = field;
+            }
+            previousField = field;
+            this.editableFields.push(field);
+        }, this);
+        if(previousField) {
+            previousField.nextField = firstField;
         }
     },
 
     initButtons: function() {
         if(this.options.meta && this.options.meta.buttons) {
-            this.buttons = {};
-            _.each(this.options.meta.buttons, function(button, index) {
-                var field = this.getField(button.name);
-                if(field) {
-                    this.buttons[field.name || index] = field;
+            _.each(this.options.meta.buttons, function(button) {
+                if (button.type === 'buttondropdown') {
+                    _.each(button.buttons, function(dropdownButton) {
+                        this.registerFieldAsButton(dropdownButton.name);
+                    }, this);
+                } else if (button.type === 'button') {
+                    this.registerFieldAsButton(button.name);
                 }
             }, this);
+        }
+    },
+
+    registerFieldAsButton: function(buttonName) {
+        var button = this.getField(buttonName);
+        if (button) {
+            this.buttons[buttonName] = button;
         }
     },
 
@@ -152,34 +253,6 @@
                 }
             }, this);
         }
-    },
-
-    /**
-     * Returns the next cell. If the current cell has more "inner focus elements", check to see if
-     * we are at the end of that cell's last focus element.
-     * @param index {Number} Index number of the current field.
-     * @param field {Field} Current field that is in focus.
-     * @param cell {Cell} Cell that the current field belongs to.
-     * @return {*}
-     */
-    getNextCell: function(index, field, cell) {
-        var nextIndex = index + 1,
-            nextFieldEl = this.$(".index" + nextIndex),
-            fieldName = nextFieldEl.data("fieldname"),
-            nextField = this.getField(fieldName),
-            nextCell = nextField.$el.parents(".record-cell");
-
-        // Check to see if field has parent (usually used to get the fieldset parent of the current field).
-        field = field.parent || field;
-
-        // If the fieldset, check if it has more "inner fields" before getting the next field.
-        if (field.focus && field.focus()) {
-            return cell;
-        } else if (cell[0] !== nextCell[0]) {
-            return nextField.$el.parents(".record-cell");
-        }
-
-        return false;
     },
 
     duplicateClicked: function() {
@@ -219,23 +292,13 @@
      * @param isEdit
      */
     toggleEdit: function(isEdit) {
-        _.each(this.fields, function(field) {
-            // Exclude image picker, buttons, and button dropdowns
-            // This is just a stop gap solution.
-            if ((field.type == "img") || (field.name && this.buttons[field.name])) {
-                return;
-            }
+        if (isEdit) {
+            this.$('.record-edit-link-wrapper').hide();
+        } else {
+            this.$('.record-edit-link-wrapper').show();
+        }
 
-            if (isEdit) {
-                field.options.viewName = "edit";
-                this.$('.record-edit-link-wrapper').hide();
-            } else {
-                field.options.viewName = "detail";
-                this.$('.record-edit-link-wrapper').show();
-           }
-
-            field.render();
-        }, this);
+        this.toggleFields(this.editableFields, isEdit);
     },
 
     /**
@@ -265,22 +328,8 @@
         switch (field.type) {
             case "img":
                 break;
-            case "fieldset":
-                this.toggleCell(field, cell);
-                if (field.focus) {
-                    field.focus();
-                } else {
-                    // If it is a field set, we need all the fields to switch to edit mode.
-                    cell.find("input").first().focus().val(cell.find("input").first().val());
-                }
-                break;
             default:
-                this.toggleCell(field, cell);
-                if (_.isFunction(field.focus)) {
-                    field.focus();
-                } else {
-                    field.$el.find("input").focus().val(field.$el.find("input").val());
-                }
+                this.toggleField(field);
         }
     },
 
@@ -324,110 +373,33 @@
         });
     },
 
-    /**
-     * Toggles a cell into editing or detail mode. This should be the entry point function.
-     * @param field {View.Field} Field or fieldset to toggle
-     * @param cell {jQuery Node} Current target cell
-     */
-    toggleCell: function(field, cell, close) {
-        var fields;
-
-        // If field is part of a fieldset, set the field to fieldset.
-        field = (field.parent) ? field.parent : field;
-        fields = field.fields || [field];
-
-        if (field.options.viewName != "edit" && !close) {
-            // Need to call this.fieldClose() in a separate "thread" because it changes to detail view
-            // before it sets the value of the textarea in the model.
-            $(document).on("mousedown.record" + field.name, {field: field, cell: cell}, _.debounce(this.fieldClose, 0));
-        }
-
-        if (close) {
-            $(document).off("mousedown.record" + field.name);
-        }
-
-        _.each(fields, function(field) {
-            this.toggleField(field, cell, close);
-        }, this);
-    },
-
-    /**
-     * Switches each individual field between detail and edit modes. This method should not be called directly,
-     * instead call toggleCell.
-     * @param field {View.Field} Field that needs to be toggled
-     * @param cell {jQuery Node} Cell that field belongs in
-     * @param close {Boolean} Force into detail mode
-     */
-    toggleField: function(field, cell, close) {
-        cell.toggleClass('edit-mode');
-
-        var viewName = ((!field.options.viewName || field.options.viewName == "detail") && !close)
-            ? "edit" : "detail";
-
-        field.setViewName(viewName);
-
-        field.render();
-
-        if (field.options.viewName == "edit") {
-            field.$el.on("keydown.record", "input", {field: field, cell: cell}, this.handleKeyDown);
-        } else if (close) {
-            field.$el.off("keydown.record");
-        }
-    },
-
-    fieldClose: function(e) {
-        var self = this,
-            cell = e.data.cell,
-            field = e.data.field,
-            currFieldParent,
-            targetParent;
-
-        if (field.options.viewName == "detail") {
-            return;
-        }
-
-        currFieldParent = $(cell);
-        targetParent = self.$(e.target).parents(".record-cell");
-        field.$el.find("input").trigger("change");
-
-        if (currFieldParent[0] == targetParent[0]) {
-            return;
-        }
-
-        self.toggleCell(field, cell, true);
-    },
-
-    handleKeyDown: function(e) {
+    handleKeyDown: function(e, field) {
+        app.view.views.EditableView.prototype.handleKeyDown.call(this, e, field);
         var nextCell,
-            cell = e.data.cell,
-            field = e.data.field,
             index = field.$el.parent().data("index");
 
         if (e.which == 9) { // If tab
             e.preventDefault();
-            field.$el.find("input").trigger("change");
-            nextCell = this.getNextCell(index, field, cell);
-
-            if (nextCell && (nextCell[0] !== cell[0])) { // Next tab element not within same cell
-                this.toggleCell(field, cell, true);
-                this.handleEdit(null, nextCell);
+            field.$(field.fieldTag).trigger("change");
+            if(field.nextField) {
+                this.toggleField(field, false);
+                this.toggleField(field.nextField, true);
             }
-        } else if (e.which == 27) { // If esc
-            this.toggleCell(field, cell, true);
         }
     },
 
     /**
-     * Change the behavior of buttons depending on the state that they should be in
+     * Show/hide buttons depending on the state defined for each buttons in the metadata
      * @param state
      */
     setButtonStates: function(state) {
-        //TODO: Use direct show/hide function on field after sidecar is updated
-        _.each(this.buttons, function(field, name) {
-            if(_.isUndefined(field.def.mode) || field.def.mode == state) {
-                field.getFieldElement().show();
+        this.currentState = state;
+
+        _.each(this.buttons, function(field) {
+            if (_.isUndefined(field.showOn()) || (field.showOn() === state)) {
+                field.show();
             } else {
-                field.getFieldElement().hide();
+                field.hide();
             }
         });
     },

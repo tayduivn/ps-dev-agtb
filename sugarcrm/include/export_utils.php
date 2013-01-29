@@ -49,8 +49,10 @@ function getDelimiter() {
 
 /**
  * builds up a delimited string for export
- * @param string type the bean-type to export
- * @param array records an array of records if coming directly from a query
+ * @param string $type the bean-type to export
+ * @param array $records an array of records if coming directly from a query
+ * @param boolean $members
+ * @param boolean $sample return a sample of records for testing
  * @return string delimited string for export
  */
 function export($type, $records = null, $members = false, $sample=false) {
@@ -75,7 +77,7 @@ function export($type, $records = null, $members = false, $sample=false) {
 
     if($records) {
         $records = explode(',', $records);
-        $records = "'" . implode("','", $records) . "'";
+        $records = "'" . implode("','", array_map(array($db,'quote'),$records)) . "'";
         $where = "{$focus->table_name}.id in ($records)";
     } elseif (isset($_REQUEST['all']) ) {
         $where = '';
@@ -190,7 +192,10 @@ function exportFromApi($args, $sample=false) {
     $db = DBManagerFactory::getInstance();
 
     if($records) {
-        $records = explode(',', $records);
+        // we take an array, but we'll make an exception for one record.
+        if (!is_array($records)) {
+            $records = array($records);
+        }
         $records = "'" . implode("','", $records) . "'";
         $where = "{$focus->table_name}.id in ($records)";
     } elseif (isset($args['all']) ) {
@@ -481,7 +486,7 @@ function getExportContentFromResult(
                 if (isset($focus->field_name_map[$fieldNameMapKey])  && $focus->field_name_map[$fieldNameMapKey]['type'])
                 {
                     $sfh = SugarFieldHandler::getSugarField($focus->field_name_map[$fieldNameMapKey]['type']);
-                    $value = $sfh->exportSanitize($value, $focus->field_defs[$key], $focus);
+                    $value = $sfh->exportSanitize($value, $focus->field_defs[$key], $focus, $val);
                 }
 
                 //BEGIN SUGARCRM flav=pro ONLY

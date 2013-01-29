@@ -120,15 +120,6 @@ $viewdefs['Users']['mobile']['view']['list'] = array(
                     'label' => 'LBL_DATE_ENTERED',
                     'default' => false,
                 ),
-//BEGIN SUGARCRM flav=pro ONLY
-                array(
-                    'name' => 'team_name',
-                    'width' => '10',
-                    'label' => 'LBL_TEAM',
-                    'default' => true,
-                    'enabled' => true,
-                ),
-//END SUGARCRM flav=pro ONLY
             ),
         ),
     ),

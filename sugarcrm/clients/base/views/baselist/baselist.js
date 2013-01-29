@@ -25,7 +25,7 @@
  * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 ({
-
+    extendsFrom: 'EditableView',
     /**
      * View that displays a list of models pulled from the context's collection.
      * @class View.Views.ListView
@@ -41,23 +41,34 @@
         'mouseleave tr':'hideActions'
     },
     initialize: function(options) {
-        options.meta = _.extend(app.metadata.getView(options.module, 'baselist') || {}, options.meta);
+        options.meta = $.extend(true, {}, app.metadata.getView(options.module, 'baselist') || {}, options.meta);
         options.meta.type = options.meta.type || 'list';
-        if(!_.isUndefined(options.meta.selection) && !_.isUndefined(options.meta.selection.type)) {
-            switch (options.meta.selection.type) {
+        _.each(options.meta.panels, function(panel) {
+            panel = this.populatePanelMetadata(panel, options);
+        }, this);
+
+        app.view.View.prototype.initialize.call(this, options);
+        this.template = this.template || app.template.getView('baselist') || app.template.getView('baselist', this.module) || null;
+        this.fallbackFieldTemplate = 'list-header';
+    },
+    populatePanelMetadata: function(panel, options) {
+        var meta = options.meta;
+        if(meta.selection) {
+            switch (meta.selection.type) {
                 case "single":
-                    options.meta = this.addSingleSelectionAction(options.meta, options.module);
+                    panel = this.addSingleSelectionAction(panel, options);
                     break;
                 case "multi":
-                    options.meta = this.addMultiSelectionAction(options.meta);
+                    panel = this.addMultiSelectionAction(panel, options);
                     break;
                 default:
                     break;
             }
         }
-        app.view.View.prototype.initialize.call(this, options);
-        this.template = this.template || app.template.getView('baselist') || app.template.getView('baselist', this.module) || null;
-        this.fallbackFieldTemplate = 'list-header';
+        if(meta && meta.rowactions) {
+            panel = this.addRowActions(panel, options);
+        }
+        return panel;
     },
     _render:function () {
         var self = this;
@@ -233,40 +244,55 @@
             }
         });
     },
-    addSingleSelectionAction: function(meta, module) {
-        meta = $.extend(true, {}, meta);
-        _.each(meta.panels, function(panel){
-            var singleSelect = [{
+    addSingleSelectionAction: function(panel, options) {
+        var meta = options.meta,
+            module = options.module,
+            singleSelect = [{
                 'type' : 'selection',
                 'name' : meta.selection.name || module + '_select',
                 'sortable' : false,
                 'label' : meta.selection.label || ''
             }];
 
-            panel.fields = singleSelect.concat(panel.fields);
-        });
-
-        return meta;
+        panel.fields = singleSelect.concat(panel.fields);
+        return panel;
     },
-    addMultiSelectionAction: function(meta) {
-        meta = $.extend(true, {}, meta);
-        _.each(meta.panels, function(panel){
-            var multiSelect = [{
-                'type' : 'fieldset',
-                'fields' : [{
-                    'type' : 'actionmenu',
-                    'buttons' : []
-                }],
-                'value' : false,
-                'sortable' : false
-            }];
-            if (!_.isUndefined(meta.selection.actions)) {
-                multiSelect[0].fields[0].buttons = meta.selection.actions;
-            }
-            panel.fields = multiSelect.concat(panel.fields);
-        });
+    addMultiSelectionAction: function(panel, options) {
+        var meta = options.meta,
+            multiSelect = [{
+            'type' : 'fieldset',
+            'fields' : [{
+                'type' : 'actionmenu',
+                'buttons' : []
+            }],
+            'value' : false,
+            'sortable' : false
+        }];
+        if (!_.isUndefined(meta.selection.actions)) {
+            multiSelect[0].fields[0].buttons = meta.selection.actions;
+        }
+        panel.fields = multiSelect.concat(panel.fields);
+        return panel;
+    },
+    addRowActions: function(panel, options) {
+        var meta = options.meta,
+            rowActions = {
+            'type' : 'fieldset',
+            'fields' : [{
+                'type' : 'rowactions',
+                'label' : meta.rowactions.label || '',
+                'css_class' : meta.rowactions.css_class,
+                'buttons' : []
+            }],
+            'value' : false,
+            'sortable' : false
+        };
+        if (!_.isUndefined(meta.rowactions.actions)) {
+            rowActions.fields[0].buttons = meta.rowactions.actions;
+        }
+        panel.fields = panel.fields.concat(rowActions);
 
-        return meta;
+        return panel;
     },
     showTooltip: function(e) {
         this.$(e.currentTarget).tooltip("show");

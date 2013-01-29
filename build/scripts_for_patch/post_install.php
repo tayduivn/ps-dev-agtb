@@ -405,74 +405,17 @@ function post_install() {
            _logThis('Renamed cache/blowfish to custom/blowfish');
     }
 
-    if (version_compare($sugar_version, '6.5.0', '<'))
+    if (version_compare($sugar_version, '6.7.0', '<'))
     {
-       // move uploads dir
-       if($sugar_config['upload_dir'] == $sugar_config['cache_dir'].'upload/') {
-
-           $sugar_config['upload_dir'] = 'upload/';
-
-           if(file_exists('upload'))
-           {
-               _logThis("Renaming existing upload directory to upload_backup");
-               if(file_exists($sugar_config['cache_dir'].'upload/upgrades')) {
-                   //Somehow the upgrade script has been stop completely, the dump /upload path possibly exists.
-                   $ext = '';
-                   while(file_exists('upload/upgrades_backup'.$ext)) {
-                       $ext = empty($ext) ? 1 : $ext + 1;
-                   }
-                   rename('upload', 'upload_backup'.$ext);
-               } else {
-                   rename('upload', 'upload_backup');
-               }
-           }
-
-           _logThis("Renaming {$sugar_config['cache_dir']}/upload directory to upload");
-           rename($sugar_config['cache_dir'].'upload', 'upload');
-
-           if(!file_exists('upload/index.html') && file_exists('upload_backup/index.html'))
-           {
-              rename('upload_backup/index.html', 'upload/index.html');
-           }
-
-           if(!write_array_to_file( "sugar_config", $sugar_config, "config.php" ) ) {
-              _logThis('*** ERROR: could not write upload config information to config.php!!', $path);
-           }else{
-              _logThis('sugar_config array in config.php has been updated with upload config contents', $path);
-           }
-
-           mkdir($sugar_config['cache_dir'].'upgrades', 0755, true);
-           //Bug#53276: If upgrade patches exists, the move back to the its original path
-           if(file_exists('upload/upgrades/temp')) {
-               if(file_exists($sugar_config['cache_dir'].'upload/upgrades')) {
-                   //Somehow the upgrade script has been stop completely, the daump cache/upload path possibly exists.
-                   $ext = '';
-                   if(file_exists($sugar_config['cache_dir'].'upload/upgrades')) {
-                       while(file_exists($sugar_config['cache_dir'].'upload/upgrades_backup'.$ext)) {
-                           $ext = empty($ext) ? 1 : $ext + 1;
-                       }
-                       rename($sugar_config['cache_dir'].'upload/upgrades', $sugar_config['cache_dir'].'upload/upgrades_backup'.$ext);
-                   }
-               } else {
-                   mkdir($sugar_config['cache_dir'].'upload/upgrades', 0755, true);
-               }
-               rename('upload/upgrades/temp', $sugar_config['cache_dir'].'upload/upgrades/temp');
-           }
-       }
-    }
-
-    if (version_compare($sugar_version, '6.5.1', '<'))
-    {
-        // add cleanJobQueue job if not there
+        // add class::SugarJobCreateNextTimePeriod job if not there
         $job = new Scheduler();
-        $job->retrieve_by_string_fields(array("job" => 'function::cleanJobQueue'));
+        $job->retrieve_by_string_fields(array("job" => 'class::SugarJobCreateNextTimePeriod'));
         if(empty($job->id)) {
-            // not found - create
-            $job->name               = translate('LBL_OOTB_CLEANUP_QUEUE', 'Schedulers');
-            $job->job                = 'function::cleanJobQueue';
-            $job->date_time_start    = "2012-01-01 00:00:01";
-            $job->date_time_end      = "2030-12-31 23:59:59";
-            $job->job_interval       = '0::5::*::*::*';
+            $job->name               = translate('LBL_OOTB_CREATE_NEXT_TIMEPERIOD', 'Schedulers');
+            $job->job                = 'class::SugarJobCreateNextTimePeriod';
+            $job->date_time_start    = '2013-01-01 00:00:01';
+            $job->date_time_end      = '2030-12-31 23:59:59';
+            $job->job_interval       = '0::23::*::*::*';
             $job->status             = 'Active';
             $job->created_by         = '1';
             $job->modified_user_id   = '1';
@@ -480,22 +423,10 @@ function post_install() {
             $job->save();
         }
 
-		// add sendEmailReminders job if not there
-		$job = new Scheduler();
-		$job->retrieve_by_string_fields(array("job" => 'function::sendEmailReminders'));
-		if(empty($job->id)) {
-			// not found - create
-			$job->name               = translate('LBL_OOTB_SEND_EMAIL_REMINDERS', 'Schedulers');
-			$job->job                = 'function::sendEmailReminders';
-			$job->date_time_start    = "2012-01-01 00:00:01";
-			$job->date_time_end      = "2030-12-31 23:59:59";
-			$job->job_interval       = '*::*::*::*::*';
-			$job->status             = 'Active';
-			$job->created_by         = '1';
-			$job->modified_user_id   = '1';
-			$job->catch_up           = '0';
-			$job->save();
-		}
+        //Check for custom.less file and add if it is missing
+        if(!file_exists('styleguide/less/clients/base/custom.less')) {
+            sugar_file_put_contents('styleguide/less/clients/base/custom.less', '');
+        }
     }
 
     //BEGIN SUGARCRM flav=pro ONLY

@@ -1,13 +1,7 @@
-<select class="chzn-select span4" name="parent_type">
+<select class="select2 span4" name="parent_type">
     {{#eachOptions def.options}}
     <option value="{{{this.key}}}" {{#eq this.key ../def.module}}selected{{/eq}}>{{this.value}}</option>
     {{/eachOptions}}
 </select>
 
-<select data-placeholder="{{str "LBL_SEARCH_PARENT_RELATED_ITEM"}}" class="chzn-select span6" name="parent_name">
-    <option value=""></option>
-    {{#if value}}
-    <option value="{{getFieldValue model "parent_id"}}" selected>{{value}}</option>
-    {{/if}}
-    <option data-searchmore="true" value="{{str "LBL_SEARCH_FOR_MORE"}}" class="more">{{str "LBL_SEARCH_FOR_MORE"}}</option>
-</select>
+<input type="hidden" name="{{name}}" data-placeholder="{{str "LBL_SEARCH_PARENT_RELATED_ITEM"}}" class="select2 inherit-width" value="{{value}}" data-id="{{getFieldValue this.model "parent_id"}}">

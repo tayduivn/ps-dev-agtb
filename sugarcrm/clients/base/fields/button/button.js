@@ -25,11 +25,20 @@
  * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 ({
+    tagName: "span",
     fieldTag: "a",
+    initialize: function(options) {
+        this.events = _.extend({}, this.events, options.def.events, {
+            'click .disabled' : 'preventClick'
+        });
+        app.view.Field.prototype.initialize.call(this, options);
+    },
     _render:function(){
         // buttons use the value property in metadata to denote their action for acls
         if (app.acl.hasAccessToModel(this.def.value, this.model, this)) {
             app.view.Field.prototype._render.call(this);
+        } else {
+            this.isHidden = true;
         }
     },
     getFieldElement: function() {
@@ -47,5 +56,27 @@
         }
         this.def.css_class = _.unique(_.compact(css_class)).join(' ');
         app.view.Field.prototype.setDisabled.call(this, disable);
+    },
+    preventClick: function(evt) {
+        if(this.isDisabled()) {
+            return false;
+        }
+    },
+    /**
+     * Defines at what state a button should be shown
+     * @return String
+     */
+    showOn: function() {
+        return this.def.showOn;
+    },
+    show: function() {
+        app.view.Field.prototype.show.call(this);
+        this.isHidden = false;
+        this.trigger("show");
+    },
+    hide: function() {
+        app.view.Field.prototype.hide.call(this);
+        this.isHidden = true;
+        this.trigger("hide");
     }
 })

@@ -32,6 +32,7 @@
     backupStaticAttributes="false">
     <testsuites>
         <testsuite>
+            <directory>clients/base/api</directory>
             <directory>build</directory>
             <directory>data</directory>
             <directory>include</directory>

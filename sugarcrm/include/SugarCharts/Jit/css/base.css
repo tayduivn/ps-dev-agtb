@@ -63,6 +63,19 @@ border: 1px solid #999;
 padding: 10px 0px;
 float: left;
 }
+.legend .row {
+    text-align: left;
+}
+.legend .row .legendGroup {
+    display: inline-block;
+    padding:  0 10px;
+}
+
+.legend .row .legendGroup .label {
+    display: inline-block;
+    position: relative;
+    top: -4px;
+}
 
 .legend table td.label {
 padding: 0px 20px 5px 0px;

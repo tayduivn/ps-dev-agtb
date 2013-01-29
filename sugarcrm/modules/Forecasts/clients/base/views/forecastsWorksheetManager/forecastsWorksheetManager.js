@@ -171,6 +171,8 @@
         if(this._collection) this._collection.off(null, null, this);
         if(this.context.forecasts) this.context.forecasts.off(null, null, this);
         if(this.context.forecasts.worksheetmanager) this.context.forecasts.worksheetmanager.off(null, null, this);
+        //if we don't unbind this, then recycle of this view if a change in rendering occurs will result in multiple bound events to possibly out of date functions
+        $(window).unbind("beforeunload");
         app.view.View.prototype.unbindData.call(this);
     },
 
@@ -212,6 +214,18 @@
             		this.context.forecasts.worksheetmanager.url = this.createURL();
             		this.safeFetch();
             	}
+            }, this);
+
+            this.context.forecasts.on('forecasts:committed:saved', function() {
+                if(this.showMe()) {
+                    // display a success message
+                    app.alert.show('success', {
+                        level:'success',
+                        autoClose:true,
+                        title:app.lang.get("LBL_FORECASTS_WIZARD_SUCCESS_TITLE", "Forecasts") + ":",
+                        messages:[app.lang.get("LBL_FORECASTS_WORKSHEET_COMMIT_SUCCESS", "Forecasts")]
+                    });
+                }
             }, this);
 
             this.context.forecasts.on('forecasts:worksheet:saveWorksheet', function(isDraft) {
@@ -266,11 +280,15 @@
      */
     saveWorksheet : function(isDraft) {
         // only run the save when the worksheet is visible and it has dirty records
-        var totalToSave = 0;
+        var self = this,
+            saveObj = {totalToSave: 0, 
+                       saveCount: 0, 
+                       model: "", 
+                       isDraft: isDraft, 
+                       timeperiod:self.dirtyTimeperiod, 
+                       userId:self.dirtyUser.id};
+        
         if(this.showMe()) {
-            var self = this,
-                saveCount = 0;
-            
             /**
              * If the sheet is dirty, save the dirty rows. Else, if the save is for a commit, and we have 
              * draft models (things saved as draft), we need to resave those as committed (version 1). If neither
@@ -278,10 +296,11 @@
              * actions listening for this can continue.
              */
             if(this.isDirty()) {
-                totalToSave = self.dirtyModels.length;
+                saveObj.totalToSave = self.dirtyModels.length;
                 
                 self.dirtyModels.each(function(model){
-                    self._worksheetSaveHelper(totalToSave, saveCount, model, isDraft, self.dirtyTimeperiod, self.dirtyUser.id);
+                    saveObj.model = model;
+                    self._worksheetSaveHelper(saveObj);
                                        
                     //add to draft structure so committing knows what to save as non-draft
                     if(isDraft == true){
@@ -291,42 +310,59 @@
 
                 self.cleanUpDirtyModels();
             } else if(!isDraft && self.draftModels.length > 0){
-                totalToSave = self.draftModels.length;
-               
+                saveObj.totalToSave = self.draftModels.length;
+                
                 self.draftModels.each(function(model){
-                    self._worksheetSaveHelper(totalToSave, saveCount, model, false, self.draftTimeperiod, self.draftUser.id);
+                    saveObj.model = model;
+                    self._worksheetSaveHelper(saveObj);
                 });
                 
                 //Need to clean up dirty models too as the save event above triggers a change event on the worksheet.
                 self.cleanUpDirtyModels();
                 self.cleanUpDraftModels();
             } else {
-                this.context.forecasts.trigger('forecasts:worksheet:saved', totalToSave, 'mgr_worksheet', isDraft);
+                if(isDraft) {
+                    app.alert.show('success', {
+                        level:'success',
+                        autoClose:true,
+                        title:app.lang.get("LBL_FORECASTS_WIZARD_SUCCESS_TITLE", "Forecasts") + ":",
+                        messages:[app.lang.get("LBL_FORECASTS_WORKSHEET_SAVE_DRAFT_SUCCESS", "Forecasts")]
+                    });
+                }
+                this.context.forecasts.trigger('forecasts:worksheet:saved', saveObj.totalToSave, 'mgr_worksheet', isDraft);
             }
         }
 
-        return totalToSave
+        return saveObj.totalToSave
     },
     
     /**
      * Helper function for worksheet save
      */
-    _worksheetSaveHelper: function(totalToSave, saveCount, model, isDraft, timeperiod, userId){
+    _worksheetSaveHelper: function(saveObj){
         var self = this;
-        model.set({
-            draft : (isDraft == true) ? 1 : 0,
-            timeperiod_id : timeperiod || self.timePeriod,
-            current_user : userId|| self.selectedUser.id
+        saveObj.model.set({
+            draft : (saveObj.isDraft == true) ? 1 : 0,
+            timeperiod_id : saveObj.timeperiod || self.timePeriod,
+            current_user : saveObj.userId|| self.selectedUser.id
         }, {silent:true});   
-        model.url = self.url.split("?")[0] + "/" + model.get("id");
+        saveObj.model.url = self.url.split("?")[0] + "/" + saveObj.model.get("id");
         
-        model.save({}, {success: function() {
-            saveCount++;
+        saveObj.model.save({}, {success: function() {
+            saveObj.saveCount++;
             //if this is the last save, go ahead and trigger the callback;
-            if(totalToSave === saveCount) {
-                self.context.forecasts.trigger('forecasts:worksheet:saved', totalToSave, 'mgr_worksheet', isDraft);
+            if(saveObj.totalToSave === saveObj.saveCount) {
+                if(saveObj.isDraft) {
+                    app.alert.show('success', {
+                        level:'success',
+                        autoClose:true,
+                        title:app.lang.get("LBL_FORECASTS_WIZARD_SUCCESS_TITLE", "Forecasts") + ":",
+                        messages:[app.lang.get("LBL_FORECASTS_WORKSHEET_SAVE_DRAFT_SUCCESS", "Forecasts")]
+                    });
+                }
+                self.context.forecasts.trigger('forecasts:worksheet:saved', saveObj.totalToSave, 'mgr_worksheet', saveObj.isDraft);
             }
-        }});
+        }, silent: true});
     },
 
     /**
@@ -551,13 +587,13 @@
      * @return {*}
      */
     fetchUserCommitHistory: function(event, nTr) {
-        var options = {
-            timeperiod_id : this.timePeriod,
-            user_id : $(event.target).attr('data-uid'),
-            forecast_type : 'direct'
-        };
-
-        var dataCommitDate = $(event.target).attr('data-commitdate');
+        var jTarget = $(event.target),
+            dataCommitDate = jTarget.data('commitdate'),
+            options = {
+                timeperiod_id : this.timePeriod,
+                user_id : jTarget.data('uid'),
+                forecast_type : (jTarget.data('showopps')) ? 'Direct' : 'Rollup'
+            };
 
         return app.api.call('read',
              app.api.buildURL('Forecasts', 'committed', null, options),

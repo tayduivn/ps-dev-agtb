@@ -4,9 +4,9 @@
  *
  * This view is used mostly on list views for items.
  */
-class FilterPanelLayout
+class FilterPanelLayout extends TabLayout
 {
-    protected $defaultTab = array("name" => "Activity Stream", "toggles" => array("activitystream", "timeline", "calendar"));
+    protected $defaultTab = array("name" => "Activity Stream", "toggles" => array("activitystream", "timeline"));
     protected $layout;
     protected $baseLayout;
     protected $count = 0;
@@ -20,8 +20,7 @@ class FilterPanelLayout
      */
     public function __construct($opts = array())
     {
-        $this->layout = MetaDataManager::getLayout('GenericLayout', array('name' => 'tabbed-layout', 'type' => 'tabbed-layout'));
-        $this->baseLayout = MetaDataManager::getLayout('GenericLayout', array('name' => 'base'));;
+        parent::__construct();
 
         if (!isset($opts["override"])) {
             $this->push($this->defaultTab);
@@ -44,6 +43,9 @@ class FilterPanelLayout
         } else {
             $filteredLayout = MetaDataManager::getLayout("GenericLayout", array("type" => "filterpanel"));
 
+            // Add a filter view
+            $filteredLayout->push(array("view" => "filter"));
+
             if (isset($tab["name"])) {
                 $filteredLayout->set("name", $tab["name"]);
             }
@@ -61,24 +63,13 @@ class FilterPanelLayout
                     $filteredLayout->push($component);
                 }
             }
+
+            // Add the filter create view.
+            $filteredLayout->push(array("view" => "filter-create"));
         }
 
         $this->layout->push($filteredLayout->getLayout(true));
 
         $this->count++;
-    }
-
-    /**
-     * Returns metadata that renders the componennts for the Filter layout.
-     * @return array
-     */
-    public function getLayout()
-    {
-        if ($this->count == 1) {
-            $this->layout->set("onetab", true);
-        }
-        $this->baseLayout->push($this->layout->getLayout(true));
-
-        return $this->baseLayout->getLayout();
     }
 }

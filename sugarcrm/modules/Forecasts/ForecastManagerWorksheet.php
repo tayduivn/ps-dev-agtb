@@ -168,7 +168,7 @@ class ForecastManagerWorksheet extends SugarBean
 	protected function getQuotaSum($userId)
 	{
 		$sql = "SELECT sum(q.amount) amount " .
-				"FROM `quotas` q " .
+				"FROM quotas q " .
 				"INNER JOIN users u ON u.reports_to_id = '" . $userId . "' " .
 				"AND q.user_id = u.id " .
 				"AND q.timeperiod_id = '" . $this->timeperiod_id . "' " .

@@ -147,6 +147,7 @@ $dictionary['Opportunity'] = array('table' => 'opportunities','audited'=>true, '
     'vname' => 'LBL_CURRENCY_RATE',
     'type' => 'double',
     'required' => true,
+    'studio' => false
   ),
   'amount_usdollar' =>
   array (
@@ -509,7 +510,15 @@ $dictionary['Opportunity'] = array('table' => 'opportunities','audited'=>true, '
    'rhs_module'=> 'Products', 'rhs_table'=> 'products', 'rhs_key' => 'opportunity_id',
    'relationship_type'=>'one-to-many'),
    //END SUGARCRM flav=pro ONLY
-)
+),
+    'duplicate_check' => array('FilterDuplicateCheck' => array(
+        'filter_template' => array(
+            array('name' => array('$starts' => '$name')),
+        ),
+        'ranking_fields' => array(
+            array('in_field_name' => 'name', 'dupe_field_name' => 'name'),
+        )
+    ))
 
 //This enables optimistic locking for Saves From EditView
 	,'optimistic_locking'=>true,

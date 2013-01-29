@@ -347,7 +347,11 @@ class UnifiedSearchApi extends SugarListApi {
                 $formattedRecord = $this->formatBean($api,$moduleArgs,$record);
                 $formattedRecord['_module'] = $module;
                 // The SQL based search engine doesn't know how to score records, so set it to 1
-                $formattedRecord['_score'] = $result->getScore();
+                $formattedRecord['_search']['score'] = $result->getScore();
+
+                //Add highlighted text
+                $formattedRecord['_search']['highlighted'] = $result->getHighlightedHitText();
+
                 $returnedRecords[] = $formattedRecord;
             }
             
@@ -468,7 +472,7 @@ class UnifiedSearchApi extends SugarListApi {
                 $formattedRecord = $this->formatBean($api,$moduleArgs,$record);
                 $formattedRecord['_module'] = $module;
                 // The SQL based search engine doesn't know how to score records, so set it to 1
-                $formattedRecord['_score'] = 1.0;
+                $formattedRecord['_search']['score'] = 1.0;
                 $returnedRecords[] = $formattedRecord;
             }
         }

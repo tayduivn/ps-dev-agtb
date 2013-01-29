@@ -8,7 +8,9 @@ describe("Record View", function() {
         SugarTest.loadHandlebarsTemplate('button', 'field', 'base', 'detail');
         SugarTest.loadHandlebarsTemplate('buttondropdown', 'field', 'base', 'detail');
         SugarTest.loadHandlebarsTemplate(viewName, 'view', 'base');
+        SugarTest.loadComponent('base', 'field', 'button');
         SugarTest.loadComponent('base', 'field', 'buttondropdown');
+        SugarTest.loadComponent('base', 'view', 'editable');
         SugarTest.loadComponent('base', 'view', viewName);
         SugarTest.testMetadata.addViewDefinition(viewName, {
             "buttons": [{
@@ -16,34 +18,28 @@ describe("Record View", function() {
                 "name":"cancel_button",
                 "label":"LBL_CANCEL_BUTTON_LABEL",
                 "css_class":"btn-invisible btn-link",
-                "mode":"edit"
+                "showOn":"edit"
             }, {
                 "type":"buttondropdown",
-                "name":"edit_dropdown",
-                "default":{
+                "name":"main_dropdown",
+                "buttons":[{
                     "name":"edit_button",
-                    "label":"LBL_EDIT_BUTTON_LABEL"
-                },
-                "dropdown":[{
+                    "label":"LBL_EDIT_BUTTON_LABEL",
+                    "primary":true,
+                    "showOn":"view"
+                }, {
+                    "name":"save_button",
+                    "label":"LBL_SAVE_BUTTON_LABEL",
+                    "primary":true,
+                    "showOn":"edit"
+                }, {
                     "name":"delete_button",
                     "label":"LBL_DELETE_BUTTON_LABEL"
                 }, {
                     "name":"duplicate_button",
-                    "label":"LBL_DUPLICATE_BUTTON_LABEL"
-                }],
-                "mode":"view"
-            }, {
-                "type":"buttondropdown",
-                "name":"save_dropdown",
-                "default":{
-                    "name":"save_button",
-                    "label":"LBL_SAVE_BUTTON_LABEL"
-                },
-                "dropdown":[{
-                    "name":"delete_button",
-                    "label":"LBL_DELETE_BUTTON_LABEL"
-                }],
-                "mode":"edit"
+                    "label":"LBL_DUPLICATE_BUTTON_LABEL",
+                    "showOn":"view"
+                }]
             }],
             "panels": [{
                 "name": "panel_header",
@@ -87,7 +83,7 @@ describe("Record View", function() {
             expect(_.size(view.fields)).toBe(0);
         });
 
-        it("Should render 8 editable fields and 3 buttons", function() {
+        it("Should render 8 editable fields and 5 buttons", function() {
             var fields = 0,
                 buttons = 0;
 
@@ -99,15 +95,15 @@ describe("Record View", function() {
             });
 
             _.each(view.fields, function(field) {
-                if ((field.type === 'button') || (field.type === 'buttondropdown')) {
+                if (field.type === 'button') {
                     buttons++;
-                } else {
+                } else if (field.type !== 'buttondropdown') {
                     fields++;
                 }
             });
 
             expect(fields).toBe(8);
-            expect(buttons).toBe(3);
+            expect(buttons).toBe(5);
         });
 
         it("Should hide 4 editable fields", function() {
@@ -191,7 +187,7 @@ describe("Record View", function() {
                 description: 'Description'
             });
 
-            expect(view.getField('name').options.viewName).toBeNull();
+            expect(view.getField('name').options.viewName).toBe(view.action);
 
             view.getField('name').$el.closest('.record-cell').find('a.record-edit-link').click();
 
@@ -206,18 +202,20 @@ describe("Record View", function() {
                 description: 'Description'
             });
 
-            _.each(view.fields, function(field) {
-                if ((field.type !== 'button') && (field.type !== 'buttondropdown')) {
-                    expect(field.options.viewName).toBeNull();
-                }
+            _.each(view.editableFields, function(field) {
+                expect(field.options.viewName).toBe(view.action);
             });
 
             view.context.trigger('button:edit_button:click');
 
-            _.each(view.fields, function(field) {
-                if ((field.type !== 'button') && (field.type !== 'buttondropdown')) {
+            waitsFor(function() {
+                return (_.last(view.editableFields)).options.viewName == 'edit';
+            }, 'it took too long to wait switching view', 1000);
+
+            runs(function() {
+                _.each(view.editableFields, function(field) {
                     expect(field.options.viewName).toBe('edit');
-                }
+                });
             });
         });
 
@@ -235,18 +233,19 @@ describe("Record View", function() {
                 case_number: 123,
                 description: 'Description'
             });
-            expect(view.getField('save_dropdown').getFieldElement().css('display')).toBe('none');
+
+            expect(view.getField('save_button').getFieldElement().css('display')).toBe('none');
             expect(view.getField('cancel_button').getFieldElement().css('display')).toBe('none');
-            expect(view.getField('edit_dropdown').getFieldElement().css('display')).not.toBe('none');
+            expect(view.getField('edit_button').getFieldElement().css('display')).not.toBe('none');
 
             view.context.trigger('button:edit_button:click');
             view.model.set({
                 name: 'Bar'
             });
 
-            expect(view.getField('save_dropdown').getFieldElement().css('display')).not.toBe('none');
+            expect(view.getField('save_button').getFieldElement().css('display')).not.toBe('none');
             expect(view.getField('cancel_button').getFieldElement().css('display')).not.toBe('none');
-            expect(view.getField('edit_dropdown').getFieldElement().css('display')).toBe('none');
+            expect(view.getField('edit_button').getFieldElement().css('display')).toBe('none');
         });
 
         it("Should revert data back to the old value when the cancel button is clicked after data has been changed", function() {
@@ -264,6 +263,220 @@ describe("Record View", function() {
             expect(view.model.get('name')).toBe('Bar');
             view.$('a[name=cancel_button]').click();
             expect(view.model.get('name')).toBe('Foo');
+        });
+    });
+
+    describe('_renderPanels with 1 column', function () {
+        it("Should create panel grid with all fields on separate rows", function () {
+            var results,
+                panelDefs = [{
+                    "name":         "panel_body",
+                    "label":        "LBL_PANEL_2",
+                    "columns":      1,
+                    "labels":       true,
+                    "labelsOnTop":  true,
+                    "placeholders": true,
+                    "fields":       ["description", "case_number", "type"]
+                }];
+
+            view._renderPanels(panelDefs);
+            results = panelDefs[0].grid;
+
+            expect(results.length).toBe(3);
+            expect(results[0].length).toBe(1);
+            expect(results[1].length).toBe(1);
+            expect(results[2].length).toBe(1);
+        });
+    });
+
+    describe('_renderPanels with 2 columns', function () {
+        it("Should create panel grid with last row containing one empty column", function () {
+            var results,
+                panelDefs = [{
+                    "name":         "panel_body",
+                    "label":        "LBL_PANEL_2",
+                    "columns":      2,
+                    "labels":       true,
+                    "labelsOnTop":  true,
+                    "placeholders": true,
+                    "fields":       ["description", "case_number", "type"]
+                }];
+
+            view._renderPanels(panelDefs);
+            results = panelDefs[0].grid;
+
+            expect(results.length).toBe(2);
+            expect(results[0].length).toBe(2);
+            expect(results[1].length).toBe(1);
+        });
+
+        it("Should create panel grid with second field on its own row where second field's span causes overflow", function () {
+            var results,
+                panelDefs = [{
+                    "name":         "panel_body",
+                    "label":        "LBL_PANEL_2",
+                    "columns":      2,
+                    "labels":       true,
+                    "labelsOnTop":  true,
+                    "placeholders": true,
+                    "fields":       [
+                        "case_number",
+                        {
+                            'name': 'description',
+                            'span': 12
+                        },
+                        "type"
+                    ]
+                }];
+
+            view._renderPanels(panelDefs);
+            results = panelDefs[0].grid;
+
+            expect(results.length).toBe(3);
+            expect(results[0].length).toBe(1);
+            expect(results[1].length).toBe(1);
+            expect(results[2].length).toBe(1);
+        });
+
+        it("Should create panel grid with first field on its own row where the first field's span fills the row", function () {
+            var results,
+                panelDefs = [{
+                    "name":         "panel_body",
+                    "label":        "LBL_PANEL_2",
+                    "columns":      2,
+                    "labels":       true,
+                    "labelsOnTop":  true,
+                    "placeholders": true,
+                    "fields":       [
+                        {
+                            'name': 'description',
+                            'span': 12
+                        },
+                        "case_number",
+                        "type"
+                    ]
+                }];
+
+            view._renderPanels(panelDefs);
+            results = panelDefs[0].grid;
+
+            expect(results.length).toBe(2);
+            expect(results[0].length).toBe(1);
+            expect(results[1].length).toBe(2);
+        });
+
+        it("Should create panel grid with all fields fitting within the maximum allowable span when the panel def specifies a field whose span is out of range", function () {
+            var results,
+                panelDefs = [{
+                                 "name":         "panel_body",
+                                 "label":        "LBL_PANEL_2",
+                                 "columns":      2,
+                                 "labels":       true,
+                                 "labelsOnTop":  false,
+                                 "placeholders": true,
+                                 "fields":       [
+                                     {
+                                         'name': 'description',
+                                         'span': 12 // out of range for a panel with inline labels
+                                     },
+                                     "case_number",
+                                     "type"
+                                 ]
+                             }];
+
+            view._renderPanels(panelDefs);
+            results = panelDefs[0].grid;
+
+            expect(results.length).toBe(2);
+            expect(results[0].length).toBe(1);
+            expect(results[1].length).toBe(2);
+            expect(results[0][0].span).toBe(8); // the description field's span should have been reset to 8 since 12 won't fit
+            expect(results[1][0].span).toBe(4); // verifying that the field span is calculated correctly when labels are inline
+            expect(results[1][1].span).toBe(4); // verifying that the field span is calculated correctly when labels are inline
+        });
+    });
+
+    describe('_renderPanels with 3 columns', function () {
+        it("Should create panel grid with last field on its own row where the last field's span causes overflow", function () {
+            var results,
+                panelDefs = [{
+                    "name":         "panel_body",
+                    "label":        "LBL_PANEL_2",
+                    "columns":      3,
+                    "labels":       true,
+                    "labelsOnTop":  true,
+                    "placeholders": true,
+                    "fields":       [
+                        "case_number",
+                        {
+                            'name': 'description',
+                            'span': 6
+                        },
+                        "type"
+                    ]
+                }];
+
+            view._renderPanels(panelDefs);
+            results = panelDefs[0].grid;
+
+            expect(results.length).toBe(2);
+            expect(results[0].length).toBe(2);
+            expect(results[1].length).toBe(1);
+        });
+
+        it("Should create panel grid with first field on its own row where the first field's span fills the row", function () {
+            var results,
+                panelDefs = [{
+                    "name":         "panel_body",
+                    "label":        "LBL_PANEL_2",
+                    "columns":      3,
+                    "labels":       true,
+                    "labelsOnTop":  true,
+                    "placeholders": true,
+                    "fields":       [
+                        {
+                            'name': 'description',
+                            'span': 12
+                        },
+                        "case_number",
+                        "type"
+                    ]
+                }];
+
+            view._renderPanels(panelDefs);
+            results = panelDefs[0].grid;
+
+            expect(results.length).toBe(2);
+            expect(results[0].length).toBe(1);
+            expect(results[1].length).toBe(2);
+        });
+
+        it("Should create panel grid with all fields on their own row when the span of the second of three fields causes fills a row", function () {
+            var results,
+                panelDefs = [{
+                    "name":         "panel_body",
+                    "label":        "LBL_PANEL_2",
+                    "columns":      3,
+                    "labels":       true,
+                    "labelsOnTop":  true,
+                    "placeholders": true,
+                    "fields":       [
+                        "case_number",
+                        {
+                            'name': 'description',
+                            'span': 10 // this field won't fit on the row with case_number
+                        },
+                        "type" // this field won't fit on the row with description because description's span was too large
+                    ]
+                }];
+
+            view._renderPanels(panelDefs);
+            results = panelDefs[0].grid;
+
+            expect(results.length).toBe(3);
+            expect(results[0].length).toBe(1);
+            expect(results[1].length).toBe(1);
+            expect(results[2].length).toBe(1);
         });
     });
 });

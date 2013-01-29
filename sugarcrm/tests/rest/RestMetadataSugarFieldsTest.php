@@ -39,21 +39,6 @@ class RestMetadataSugarFieldsTest extends RestTestBase {
 
     }
 
-    public function tearDown()
-    {
-        foreach ( $this->oldFiles as $filename => $filecontents ) {
-            if ( $filecontents == '_NO_FILE' ) {
-                if ( file_exists($filename) ) {
-                    SugarAutoLoader::unlink($filename);
-                }
-            } else {
-                SugarAutoLoader::put($filename,$filecontents);
-            }
-        }
-        SugarAutoLoader::saveMap();
-        parent::tearDown();
-    }
-
     /**
      * @group rest
      */
@@ -81,14 +66,7 @@ class RestMetadataSugarFieldsTest extends RestTestBase {
             'custom/clients/base/fields/address/editView.hbt',
             'custom/clients/base/fields/address/detailView.hbt',
         );
-
-        foreach ( $filesToCheck as $filename ) {
-            if ( file_exists($filename) ) {
-                $this->oldFiles[$filename] = file_get_contents($filename);
-            } else {
-                $this->oldFiles[$filename] = '_NO_FILE';
-            }
-        }
+        SugarTestHelper::saveFile($filesToCheck);
 
         $dirsToMake = array(
             //BEGIN SUGARCRM flav=pro ONLY

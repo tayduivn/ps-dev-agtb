@@ -102,13 +102,15 @@
      */
     copy: function(from, to) {
 
-        if (this.model.has(from)) {
-            if (_.isUndefined(this._initialValues[to])) {
-                this._initialValues[to] = this.model.get(to);
-            }
-
-            this.model.set(to, this.model.get(from));
+        if (!this.model.has(from)) {
+            return;
         }
+
+        if (_.isUndefined(this._initialValues[to])) {
+            this._initialValues[to] = this.model.get(to);
+        }
+
+        this.model.set(to, this.model.get(from));
     },
 
     /**
@@ -119,7 +121,10 @@
 
         _.each(this._initialValues, function(value, field) {
             this.model.set(field, value);
-            var field = this.getField(field);
+        }, this);
+
+        _.each(this.def.mapping, function(target, source) {
+            var field = this.getField(target);
             if (!_.isUndefined(field)) {
                 field.setDisabled(false);
             }
@@ -189,6 +194,11 @@
         }
 
         return this._fields[name];
+    },
+
+    unformat: function(value) {
+        // TODO this should change once we save this in the db
+        return null;
     },
 
     /**

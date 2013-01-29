@@ -53,16 +53,20 @@
  *      on: context.forecasts
  *      by: updateWorksheetBySelectedRanges()
  *      when: dataTable is finished filtering itself and has destroyed and redrawn itself
- *      
+ *
  * forecasts:worksheet:saved
  *      on: context.forecasts
  *      by: saveWorksheet()
  *      when: saving the worksheet.
- *      
+ *
  * forecasts:worksheet:dirty
  *      on: context.forecasts
  *      by: change:worksheet
  *      when: the worksheet is changed.
+ *
+ * forecasts:change:worksheetRows
+ *      on: context.forecasts
+ *      after: this.updateWorksheetBySelectedRanges() is ran in the change:selectedRanges event handler
  */
 ({
 
@@ -99,7 +103,40 @@
      * If the timeperiod is changed and we have dirtyModels, keep the previous one to use if they save the models
      */
     dirtyUser : '',
-    
+
+    events : {
+        'click a["rel=inspector"]>i' : 'inspector'
+    },
+
+    inspector: function(evt) {
+        var nTr = $(evt.target).parents('tr'),
+            uid = $(evt.target).data('uid'),
+            totalRows = $(evt.target).parents('table').find('tr.odd, tr.even'),
+            selIndex = -1;
+        _.each(totalRows, function(element, index){
+            if(nTr[0] == element) {
+                selIndex = index;
+            }
+        });
+
+        // begin building params to pass to modal
+        var params = {
+            selectedIndex : selIndex,
+            dataset : totalRows,
+            title:'Preview',
+            context : {
+                module: "Opportunities",
+                model : app.data.createBean('Opportunities', {id : uid}),
+                meta  : app.metadata.getModule('Opportunities').views.forecastInspector.meta
+            },
+            components: [
+                { view: 'forecastInspector' }
+            ]
+        };
+
+        this.layout.getComponent('inspector').showInspector(params);
+    },
+
     /**
      * Initialize the View
      *
@@ -108,7 +145,7 @@
      */
     initialize:function (options) {
         var self = this;
-        
+
         self.gTableDefs = {
                 "bAutoWidth": false,
                 "aoColumnDefs": self.columnDefs,
@@ -116,7 +153,7 @@
                 "bInfo":false,
                 "bPaginate":false
           };
-        
+
         this.viewModule = "Forecasts";
 
         //set expandable behavior to false by default
@@ -149,7 +186,7 @@
         {
            args['user_id'] = this.selectedUser.id;
         }
-        
+
         url = app.api.buildURL('ForecastWorksheets', '', '', args);
         return url;
     },
@@ -191,13 +228,14 @@
                 //Apply sorting for the worksheet
                 switch(field.type)
                 {
-                    case "buckets":
+                    case "commitStage":
                     case "enum":
                     case "bool":
                         // disable sorting for non-numerical fields
                         fieldDef["bSortable"] = false;
                         break;
                     case "int":
+                    case "editableInt":
                     case "currency":
                     case "editableCurrency":
                         fieldDef["sSortDataType"] = "dom-number";
@@ -236,6 +274,8 @@
         if(this.context.forecasts) { this.context.forecasts.off(null, null, this) };
         if(this.context.forecasts.config) { this.context.forecasts.config.off(null, null, this) };
         if(this.context.forecasts.worksheet) { this.context.forecasts.worksheet.off(null, null, this) };
+        //if we don't unbind this, then recycle of this view if a change in rendering occurs will result in multiple bound events to possibly out of date functions
+        $(window).unbind("beforeunload");
         app.view.View.prototype.unbindData.call(this);
     },
 
@@ -276,13 +316,31 @@
                         saveCount++;
                         //if this is the last save, go ahead and trigger the callback;
                         if(totalToSave === saveCount) {
+                            // we only want to show this when the draft is being saved
+                            if(isDraft) {
+                                app.alert.show('success', {
+                                    level:'success',
+                                    autoClose:true,
+                                    title:app.lang.get("LBL_FORECASTS_WIZARD_SUCCESS_TITLE", "Forecasts") + ":",
+                                    messages:[app.lang.get("LBL_FORECASTS_WORKSHEET_SAVE_DRAFT_SUCCESS", "Forecasts")]
+                                });
+                            }
                             self.context.forecasts.trigger('forecasts:worksheet:saved', totalToSave, 'rep_worksheet', isDraft);
                         }
-                    }});
+                    }, silent: true});
                 });
 
                 self.cleanUpDirtyModels();
             } else {
+                // we only want to show this when the draft is being saved
+                if(isDraft) {
+                    app.alert.show('success', {
+                        level:'success',
+                        autoClose:true,
+                        title:app.lang.get("LBL_FORECASTS_WIZARD_SUCCESS_TITLE", "Forecasts") + ":",
+                        messages:[app.lang.get("LBL_FORECASTS_WORKSHEET_SAVE_DRAFT_SUCCESS", "Forecasts")]
+                    });
+                }
                 this.context.forecasts.trigger('forecasts:worksheet:saved', totalToSave, 'rep_worksheet', isDraft);
             }
         }
@@ -336,11 +394,12 @@
             this.context.forecasts.on("change:selectedRanges",
                 function(context, ranges) {
                     this.updateWorksheetBySelectedRanges(ranges);
+                    this.context.forecasts.trigger('forecasts:change:worksheetRows', self.$el.find('tr.odd, tr.even'));
                 },this);
             this.context.forecasts.worksheet.on("change", function() {
                 this.calculateTotals();
             }, this);
-            this.context.forecasts.on("forecasts:committed:saved forecasts:worksheet:saved", function(){
+            this.context.forecasts.on("forecasts:committed:saved", function(){
                 if(this.showMe()){
                     var model = this.context.forecasts.worksheet;
                     model.url = this.createURL();
@@ -352,6 +411,18 @@
                         this.commitFromSafeFetch = false;
                     }
 
+                }
+            }, this);
+
+            this.context.forecasts.on('forecasts:committed:saved', function() {
+                if(this.showMe()) {
+                    // display a success message
+                    app.alert.show('success', {
+                        level:'success',
+                        autoClose:true,
+                        title:app.lang.get("LBL_FORECASTS_WIZARD_SUCCESS_TITLE", "Forecasts") + ":",
+                        messages:[app.lang.get("LBL_FORECASTS_WORKSHEET_COMMIT_SUCCESS", "Forecasts")]
+                    });
                 }
             }, this);
 
@@ -368,7 +439,7 @@
             this.context.forecasts.on('forecasts:worksheet:saveWorksheet', function(isDraft) {
                 this.saveWorksheet(isDraft);
             }, this);
-            
+
 
             /*
              * // TODO: tagged for 6.8 see SFA-253 for details
@@ -490,7 +561,6 @@
             }
             //user clicked cancel, ignore and fetch if fetch is enabled
             else{
-                
                 collection.isDirty = false;
                 self.context.forecasts.set({reloadCommitButton: true});
                 if(fetch){
@@ -538,10 +608,10 @@
             }
         }
         //default case, fetch like normal
-        else{    
+        else{
             if(fetch){
                 collection.fetch();
-            }    
+            }
         }
         //mark that the fetch is over
         this.fetchInProgress = false;
@@ -555,7 +625,7 @@
      */
     _render: function() {
         var self = this;
-        
+
         if(!this.showMe()){
             return false;
         }
@@ -590,7 +660,7 @@
 
         // fix the style on the rows that contain a checkbox
         this.$el.find('td:has(span>input[type=checkbox])').addClass('center');
-                
+
         // Trigger event letting other components know worksheet finished rendering
         self.context.forecasts.trigger("forecasts:worksheet:rendered");
 
@@ -769,7 +839,7 @@
             'included_opp_count' : includedCount,
             'total_opp_count' : self._collection.models.length
         };
-       
+
         this.context.forecasts.unset("updatedTotals", {silent: true});
         this.context.forecasts.set("updatedTotals", totals);
     },
@@ -786,7 +856,7 @@
             // since the model is dirty, save it so we can use it later
             this.dirtyUser = this.selectedUser;
         }
-        this.safeFetch(false);        
+        this.safeFetch(false);
         this.selectedUser = selectedUser;
         if(!this.showMe()){
             return false;
@@ -804,7 +874,7 @@
         // Set the filters for the datatable then re-render
         var self = this,
             forecast_ranges_setting = this.context.forecasts.config.get('forecast_ranges') || 'show_binary';
-        
+
         // start with no filters, i. e. show everything.
         if(!_.isUndefined($.fn.dataTableExt)) {
             $.fn.dataTableExt.afnFiltering.splice(0, $.fn.dataTableExt.afnFiltering.length);
@@ -831,7 +901,7 @@
                             if(rowCategory.find("select").length == 0){
                                 selectVal = rowCategory.text().trim().toLowerCase();
                             } else {
-                                selectVal = rowCategory.find("select")[0].value.toLowerCase();                               
+                                selectVal = rowCategory.find("select")[0].value.toLowerCase();
                             }
                         }
 
@@ -841,7 +911,7 @@
                 );
             }
         }
-        
+
         if(!_.isUndefined(this.gTable.fnDestroy)){
             this.gTable.fnDestroy();
             this.gTable = this.$('.worksheetTable').dataTable(self.gTableDefs);

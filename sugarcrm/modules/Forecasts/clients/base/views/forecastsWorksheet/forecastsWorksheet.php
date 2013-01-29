@@ -69,6 +69,8 @@ $viewdefs['Forecasts']['base']['view']['forecastsWorksheet'] = array(
                 array(
                     'name' => 'sales_stage',
                     'label' => 'LBL_SALES_STAGE',
+                    'type' => 'editableEnum',
+                    'options' => 'sales_stage_dom',
                     'sortable' => false,
                     'default' => true,
                     'enabled' => true,
@@ -113,6 +115,15 @@ $viewdefs['Forecasts']['base']['view']['forecastsWorksheet'] = array(
                     'enabled' => true,
                     'convertToBase'=> true,
                     'showTransactionalAmount'=>true,
+                ),
+                array(
+                    'name' => 'user_inspector',
+                    'type' => 'inspector',
+                    'label' => '',
+                    'sortable' => false,
+                    'default' => true,
+                    'enabled' => true,
+                    'uid_field' => 'id'
                 ),
             ),
         ),

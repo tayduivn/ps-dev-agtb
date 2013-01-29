@@ -41,6 +41,28 @@ class EmailFormatter
     }
 
     /**
+     * Static helper - Does Mail Message Content Contain HTML?
+     *
+     * @access public
+     * @param string $content
+     * @return boolean
+     */
+    public static function isHtml($content) {
+        return (strcmp($content, preg_replace('/(?:<|&lt;)\/?([a-zA-Z]+) *[^\/(?:<|&lt;)]*?\/?(?:>|&gt;)/', '', $content)) != 0);
+    }
+
+    /**
+     * Static helper - Is Mail Message Content Text Only?
+     *
+     * @access public
+     * @param string $content
+     * @return boolean
+     */
+    public static function isTextOnly($content) {
+        return !self::isHtml($content);
+    }
+
+    /**
      * Performs character set and HTML character translations on the string.
      *
      * @access public

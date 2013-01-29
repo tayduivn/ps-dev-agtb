@@ -35,7 +35,7 @@
 
         app.view.View.prototype.initialize.call(this, options);
         this.customTheme = "default";
-        this.context.on("change", this.reloadIframeBootstrap, this);
+        this.context.on("change:colors", this.reloadIframeBootstrap, this);
     },
     reloadIframeBootstrap: function() {
         var self = this;

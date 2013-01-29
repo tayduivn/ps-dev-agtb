@@ -133,9 +133,12 @@
                 return false;
             }, this));
         }
-
         this.$backdrop.show();
         this.$expandTab.show();
+
+        this.$el.toggleClass('expand', true);
+        this.$backdrop.toggleClass('collapse', true);
+        this.$el.next().toggleClass('collapse', true);
     },
 
     /**

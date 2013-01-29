@@ -76,13 +76,34 @@ class SugarThemeRegistryTest extends Sugar_PHPUnit_Framework_TestCase
     }
 
     /**
+     * @ticket 60210
+     */
+    public function testGetDefaultDisabledThemeObject()
+    {
+        if ( isset($GLOBALS['sugar_config']['disabled_themes']) ) {
+            $disabled_themes = $GLOBALS['sugar_config']['disabled_themes'];
+            unset($GLOBALS['sugar_config']['disabled_themes']);
+        }
+
+        $GLOBALS['sugar_config']['disabled_themes'] = $this->_themeName;
+        $GLOBALS['sugar_config']['default_theme'] = $this->_themeName;
+
+        $object = SugarThemeRegistry::getDefault();
+        $this->assertNotEquals($object->__toString(),$this->_themeName);
+
+        if ( isset($disabled_themes) ) {
+            $GLOBALS['sugar_config']['disabled_themes'] = $disabled_themes;
+        }
+    }
+
+    /**
      * @ticket 41635
      */
     public function testGetDefaultThemeObjectWhenDefaultThemeIsNotSet()
     {
         unset($GLOBALS['sugar_config']['default_theme']);
 
-        $themename = array_pop(array_keys(SugarThemeRegistry::availableThemes()));
+        $themename = 'RacerX';
 
         $object = SugarThemeRegistry::getDefault();
 
@@ -112,8 +133,9 @@ class SugarThemeRegistryTest extends Sugar_PHPUnit_Framework_TestCase
         $themes = SugarThemeRegistry::allThemes();
         $this->assertTrue(isset($themes[$this->_themeName]));
 
-        if ( isset($disabled_themes) )
+        if ( isset($disabled_themes) ) {
             $GLOBALS['sugar_config']['disabled_themes'] = $disabled_themes;
+        }
     }
 
     public function testDisabledThemeNotInListOfAvailableThemes()
