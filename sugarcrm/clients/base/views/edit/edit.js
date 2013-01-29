@@ -52,7 +52,8 @@
                         app.alert.dismiss('save_edit_view');
                         app.navigate(self.context, self.model, 'detail');
                     }
-                });
+                },
+                { deleteIfFails: false});
 
             },
             fieldsToValidate: this.getFields(this.module)
