@@ -1,7 +1,8 @@
 describe("Record View", function() {
     var moduleName = 'Cases',
         viewName = 'record',
-        sinonSandbox, view;
+        sinonSandbox, view,
+        createListCollection;
 
     beforeEach(function() {
         SugarTest.testMetadata.init();
@@ -477,6 +478,56 @@ describe("Record View", function() {
             expect(results[0].length).toBe(1);
             expect(results[1].length).toBe(1);
             expect(results[2].length).toBe(1);
+        });
+    });
+
+    describe('Switching to next and previous record', function() {
+
+        beforeEach(function() {
+            createListCollection = function(nbModels, offsetSelectedModel) {
+                     view.context.set('listCollection', new Backbone.Collection());
+                     view.collection = new Backbone.Collection();
+
+                     var modelIds = [];
+                     for (var i=0;i<=nbModels;i++) {
+                         var model = new Backbone.Model(),
+                             id = i + '__' + Math.random().toString(36).substr(2,16);
+
+                         model.set({id: id});
+                         if (i === offsetSelectedModel) {
+                             view.model.set(model.toJSON());
+                             view.collection.add(model);
+                         }
+                         view.context.get('listCollection').add(model);
+                         modelIds.push(id);
+                     }
+                     return modelIds;
+                 };
+        });
+
+        it("Should find previous and next model from list collection", function() {
+            var modelIds = createListCollection(5, 3);
+            view.showPreviousNextBtnGroup();
+            expect(view.collection.previous).toBeDefined();
+            expect(view.collection.next).toBeDefined();
+            expect(view.collection.previous.get('id')).toEqual(modelIds[2]);
+            expect(view.collection.next.get('id')).toEqual(modelIds[4]);
+        });
+
+        it("Should find previous model from list collection", function() {
+            var modelIds = createListCollection(5, 5);
+            view.showPreviousNextBtnGroup();
+            expect(view.collection.previous).toBeDefined();
+            expect(view.collection.next).not.toBeDefined();
+            expect(view.collection.previous.get('id')).toEqual(modelIds[4]);
+        });
+
+        it("Should find next model from list collection", function() {
+            var modelIds = createListCollection(5, 0);
+            view.showPreviousNextBtnGroup();
+            expect(view.collection.previous).not.toBeDefined();
+            expect(view.collection.next).toBeDefined();
+            expect(view.collection.next.get('id')).toEqual(modelIds[1]);
         });
     });
 });

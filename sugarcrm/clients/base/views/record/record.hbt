@@ -1,36 +1,43 @@
 <div data-tour="tour-{{module}}-businesscard">
     {{#if model.isNotEmpty}}
-        {{#if enableHeaderPane}}
-            <div class="headerpane">
-                {{#unless createMode}}
-                    {{#each meta.panels}}
-                        {{#if header}}
-                            {{#each fields}}
-                                <span class="record-cell" data-type="{{type}}" data-name="{{name}}">
-                                    <h1>
-                                        <span class='index{{index}}' data-fieldname="{{name}}" data-index="{{index}}" data-tour="tour-{{../../../this.module}}-{{name}}">
-                                            {{field ../../../this ../../../this.model ../../../this.action}}
+
+        <div class="headerpane">
+            {{#unless createMode}}
+                {{#each meta.panels}}
+                    {{#if header}}
+                        {{#each fields}}
+                            <span class="record-cell" data-type="{{type}}" data-name="{{name}}">
+                                <h1>
+                                    <span class='index{{index}}' data-fieldname="{{name}}" data-index="{{index}}" data-tour="tour-{{../../../this.module}}-{{name}}">
+                                        {{field ../../../this ../../../this.model ../../../this.action}}
+                                    </span>
+                                    {{#unless noedit}}
+                                        <span class="record-edit-link-wrapper" data-name="{{name}}">
+                                            <a class="record-edit-link icon-pencil" data-type="{{type}}" data-name="{{name}}"></a>
                                         </span>
-                                        {{#unless noedit}}
-                                            <span class="record-edit-link-wrapper" data-name="{{name}}">
-                                                <a class="record-edit-link icon-pencil" data-type="{{type}}" data-name="{{name}}"></a>
-                                            </span>
-                                        {{/unless}}
-                                    </h1>
-                                </span>
-                            {{/each}}
+                                    {{/unless}}
+                                </h1>
+                            </span>
+                        {{/each}}
+                    {{/if}}
+                {{/each}}
+            {{/unless}}
+                <div class="btn-toolbar pull-right dropdown">
+                    <div class="btn-group btn-group-previous-next">
+                        {{#if collection.previous}}
+                          <a href="#{{buildRoute context collection.previous def.route.action def.route.options}}" class="btn previous-row"><i class="icon-chevron-left"></i></a>
                         {{/if}}
-                    {{/each}}
-                {{/unless}}
-                    <div class="btn-toolbar pull-right dropdown">
-                        {{#if hasAccess}}
-                            {{#each meta.buttons}}
-                                {{field ../this}}
-                            {{/each}}
+                        {{#if collection.next}}
+                          <a href="#{{buildRoute context collection.next def.route.action def.route.options}}" class="btn next-row"><i class="icon-chevron-right"></i></a>
                         {{/if}}
                     </div>
-            </div>
-        {{/if}}
+                    {{#if hasAccess}}
+                        {{#each meta.buttons}}
+                            {{field ../this}}
+                        {{/each}}
+                    {{/if}}
+                </div>
+        </div>
         <div class="record">
             {{#if createMode}}
                 {{#each meta.panels}}
