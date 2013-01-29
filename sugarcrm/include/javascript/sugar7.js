@@ -39,6 +39,7 @@
                 name: "list",
                 route: ":module",
                 callback: function(module) {
+                    console.log("listing");
                     app.controller.loadView({
                         module: module,
                         layout: "records"
@@ -64,6 +65,16 @@
                 name: "record",
                 route: ":module/:id",
                 callback: recordHandler
+            },
+            {
+                name:'config',
+                route: ':module/config',
+                callback: function(module) {
+                       app.controller.loadView({
+                           module: module,
+                           layout: 'config'
+                        });
+                }
             }
         ];
 
