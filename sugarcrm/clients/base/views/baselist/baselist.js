@@ -34,9 +34,8 @@
      */
     events:{
         'click [class*="orderBy"]':'setOrderBy',
-        'click .preview-list-item':'previewRecord',
-        'mouseenter .preview-list-item': 'showTooltip',
-        'mouseleave .preview-list-item': 'hideTooltip',
+        'mouseenter .rowaction': 'showTooltip',
+        'mouseleave .rowaction': 'hideTooltip',
         'mouseenter tr':'showActions',
         'mouseleave tr':'hideActions'
     },
@@ -50,6 +49,8 @@
         app.view.View.prototype.initialize.call(this, options);
         this.template = this.template || app.template.getView('baselist') || app.template.getView('baselist', this.module) || null;
         this.fallbackFieldTemplate = 'list-header';
+        this.context.on("list:preview:fire", this.previewRecord, this);
+        this.context.on("list:preview:decorate", this.decorateRow, this);
     },
     populatePanelMetadata: function(panel, options) {
         var meta = options.meta;
@@ -221,28 +222,33 @@
         }
         return options;
     },
-    previewRecord: function(e) {
-        var self = this,
-            el = this.$(e.currentTarget),
-            data = el.data(),
-            module = data.module,
-            id = data.id,
-            model = app.data.createBean(module);
-
-        model.set("id", id);
-        model.fetch({
-            success: function(model) {
-                model.set("_module", module);
-
-                if( _.isUndefined(self.context._callbacks) || self.context.parent) {
-                    // Clicking preview on a related module, need the parent context instead
-                    self.context.parent.trigger("togglePreview", model, self.collection);
-                }
-                else {
-                    self.context.trigger("togglePreview", model, self.collection);
-                }
-            }
-        });
+    /**
+     * Display a Preview for a record in the list view
+     * @param model Model for the record to be displayed in Preview
+     */
+    previewRecord: function(model) {
+        if( _.isUndefined(this.context._callbacks) ) {
+            // Clicking preview on a related module, need the parent context instead
+            this.context.parent.trigger("preview:render", model, this.collection);
+        }
+        else {
+            this.context.trigger("preview:render", model, this.collection);
+        }
+    },
+    /**
+     * Decorate a row in the list that is being shown in Preview
+     * @param model Model for row to be decorated.  Pass a falsy value to clear decoration.
+     * @param preview Preview view that changed
+     */
+    decorateRow: function(model, preview){
+        this.$("tr.highlighted").removeClass("highlighted current above below");
+        if(model){
+            var rowName = model.module+"_"+ model.get("id");
+            var curr = this.$("tr[name='"+rowName+"']");
+            curr.addClass("current highlighted");
+            curr.prev("tr").addClass("highlighted above");
+            curr.next("tr").addClass("highlighted below");
+        }
     },
     addSingleSelectionAction: function(panel, options) {
         var meta = options.meta,

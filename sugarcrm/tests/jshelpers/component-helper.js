@@ -32,7 +32,7 @@
         test.loadComponent(client, "field", type);
 
         var view = new app.view.View({ name: viewName, context: context });
-        var def = { name: name, type: type };
+        var def = { name: name, type: type, events: (fieldDef) ? fieldDef.events : {} };
         var context = context || app.context.getContext();
 
         model = model || new Backbone.Model();

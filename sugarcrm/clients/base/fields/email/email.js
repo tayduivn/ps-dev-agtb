@@ -25,6 +25,7 @@
  * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 ({
+    extendsFrom: 'ListeditableField',
     events:{
         'change .existingAddress': 'updateExistingAddress',
         'click  .btn-edit':        'updateExistingProperty',
@@ -100,6 +101,22 @@
     },
     unformat: function(value) {
         var originalNonArrayValue = null;
+        if(this.view.action === 'list') {
+            var emails = this.model.get(this.name),
+                changed = false;
+            _.each(emails, function(email, index) {
+                if(email.primary_address === '1') {
+                    if(email.email_address !== value) {
+                        changed = true;
+                        emails[index].email_address = value;
+                    }
+                }
+            }, this);
+            if(changed) {
+                this.updateModel(changed);
+            }
+            return emails;
+        }
 
         _.each(value, function(email, index) {
             if (email._wasNotArray) {
@@ -241,8 +258,15 @@
         bindAll('.btn-edit');
         bindAll('.addEmail');
         bindAll('.removeEmail');
+
+        if(this.tplName === 'list-edit') {
+            app.view.Field.prototype.bindDomChange.call(this);
+        }
     },
     focus:function () {
         this.$('input').first().focus();
+    },
+    getFieldElement: function() {
+        return this.$(this.fieldTag);
     }
 })

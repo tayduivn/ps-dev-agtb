@@ -204,7 +204,7 @@ class SidecarTheme
         else
             $url = 'styleguide/less/clients/base/config.less';
 
-        $less = new lessc($url);
+        $less = new lessc;
         if ($min === true) {
             $less->setFormatter('compressed');
         }
@@ -214,8 +214,10 @@ class SidecarTheme
             $variables['baseUrl'] = '"../../../../../styleguide/assets"';
         }
 
+        $less->setVariables($variables);
+
         try {
-            $css = $less->parse($variables);
+            $css = $less->compileFile($url);
             return $css;
 
         } catch (exception $e) {
