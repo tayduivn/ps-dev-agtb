@@ -20,7 +20,7 @@
 
         this._getHtmlEditableField().attr('name', this.name);
         if (this._isEditView()) {
-            this._renderEdit();
+            this._renderEdit(this.options.def.tinyConfig || null);
         } else {
             this._renderView();
         }
@@ -57,11 +57,12 @@
     /**
      * Render editor for edit view
      *
+     * @param {Array} value TinyMCE config settings
      * @private
      */
-    _renderEdit: function() {
+    _renderEdit: function(options) {
         var self = this;
-        this.initTinyMCEEditor();
+        this.initTinyMCEEditor(options);
         this._getHtmlEditableField().on('change', function(){
             self.model.set(self.name, self._getHtmlEditableField().val());
         });
@@ -199,6 +200,15 @@
         if (this._isEditView() && this._htmleditor && this._htmleditor.dom) {
             this._htmleditor.setContent(value);
         }
+    },
+
+    /**
+     * Retrieves the  TinyMCE editor content
+     *
+     * @return {String} content from the editor
+     */
+    getEditorContent: function() {
+        return this._htmleditor.getContent();
     }
 
 })
