@@ -153,7 +153,7 @@ $app_list_strings = array (
     //BEGIN SUGARCRM flav=pro ONLY
     'Contracts'=>'Contract',
     'Quotes' => 'Quote',
-    'Products' => 'Revenue Line Item',
+    'Products' => 'Product Line Item',
     'Reports' => 'Report',
     'Forecasts' => 'Forecast',
     'ForecastWorksheets' => 'Forecast Worksheet',
@@ -568,7 +568,7 @@ $app_list_strings = array (
     'Leads' => 'Lead',
     'Contacts' => 'Contacts', // cn (11/22/2005) added to support Emails
     //BEGIN SUGARCRM flav=pro ONLY
-    'ProductTemplates' => 'Revenue Line Item',
+    'ProductTemplates' => 'Product Line Item',
     'Quotes' => 'Quote',
 
     //END SUGARCRM flav=pro ONLY
@@ -599,7 +599,7 @@ $app_list_strings = array (
     //BEGIN SUGARCRM flav=pro ONLY
     'ProductTemplates' => 'Product Catalog',
     'Quotes' => 'Quote',
-    'Products' => 'Revenue Line Item',
+    'Products' => 'Product Line Item',
     'Contracts' => 'Contract',
     //END SUGARCRM flav=pro ONLY
     'Emails' => 'Email',
@@ -625,7 +625,7 @@ $app_list_strings = array (
 
     //BEGIN SUGARCRM flav=pro ONLY
 
-    'Products' => 'Revenue Line Item',
+    'Products' => 'Product Line Item',
 
     'Quotes' => 'Quote',
     //END SUGARCRM flav=pro ONLY
@@ -833,7 +833,7 @@ $app_list_strings = array (
     'Outlook Plugin' => 'Outlook Plugin',
     //BEGIN SUGARCRM flav=pro ONLY
     'Product Catalog' => 'Product Catalog',
-    'Products' => 'Revenue Line Items',
+    'Products' => 'Product Line Items',
     //END SUGARCRM flav=pro ONLY
     'Projects' => 'Projects',
     'Quotes' => 'Quotes',
@@ -2608,6 +2608,7 @@ $app_strings = array (
     'LBL_MASS_UPDATE' => 'Mass Update',
     'LBL_NO_MASS_UPDATE_FIELDS_AVAILABLE' => 'There are no fields available for the Mass Update operation',
     'LBL_MASS_UPDATE_JOB_QUEUED' => 'Your request for mass update has been scheduled.',
+    'LBL_MASS_UPDATE_SUCCESS' => 'All records were updated successfully.',
     'LBL_MASS_UPDATE_EMPTY_VALUES' => 'The following attributes have empty values: ',
     'LBL_MASS_UPDATE_EMPTY_CONFIRM' => 'Do you want to continue?',
     'LBL_OPT_OUT_FLAG_PRIMARY' => 'Opt out Primary Email',
@@ -3448,6 +3449,9 @@ $app_strings = array (
     'LBL_RESET_THEME_MODAL_CONFIRM' => 'Do you want to proceed?',
     'LBL_RESET_THEME_PROCESS' => 'Restoring default theme...',
     'LBL_SAVE_THEME_PROCESS' => 'Saving theme...',
+
+    // image loader
+    'LBL_SELECT_PHOTO' => 'Select a Photo',
 
   	//BEGIN SUGARCRM flav=PRO ONLY
     //in app tour

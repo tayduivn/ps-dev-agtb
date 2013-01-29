@@ -63,6 +63,11 @@ $viewdefs['Leads']['base']['view']['record'] = array(
                     'label'  => 'LBL_DUPLICATE_BUTTON_LABEL',
                     'showOn' => 'view',
                 ),
+                array(
+                    'name'    => 'lead_convert_button',
+                    'label'   => 'LBL_CONVERT_BUTTON_LABEL',
+                    'showOn' => 'view'
+                ),
             ),
         ),
         array(
@@ -88,6 +93,11 @@ $viewdefs['Leads']['base']['view']['record'] = array(
                         'first_name',
                         'last_name',
                     ),
+                ),
+                array(
+                    'type' => 'badge',
+                    'noedit'=> true,
+                    'related_fields' => array('converted', 'account_id', 'contact_id', 'contact_name', 'opportunity_id', 'opportunity_name'),
                 ),
                 array(
                     'type'   => 'favorite',

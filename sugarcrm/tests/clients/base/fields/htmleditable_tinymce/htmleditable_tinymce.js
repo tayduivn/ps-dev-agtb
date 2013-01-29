@@ -48,6 +48,31 @@ describe("htmleditable_tinymce", function() {
             configSpy.restore();
         });
 
+        it("should initialize TinyMCE editor with custom config options", function() {
+            var tinymceSpy = sinon.spy($.fn, 'tinymce');
+            var configSpy = sinon.spy(field, 'getTinyMCEConfig');
+
+            field.initTinyMCEEditor({
+                script_url : 'include/javascript/tiny_mce/tiny_mce.js',
+                theme : "advanced",
+                skin : "sugar7",
+                plugins : "style",
+                entity_encoding: "raw",
+                theme_advanced_buttons1 : "code",
+                theme_advanced_toolbar_location : "top",
+                theme_advanced_toolbar_align : "left",
+                theme_advanced_statusbar_location : "bottom",
+                theme_advanced_resizing : true,
+                schema: "html5"
+            });
+
+            expect(tinymceSpy.calledOnce).toBeTruthy();
+            expect(configSpy.called).toBeFalsy();
+
+            tinymceSpy.restore();
+            configSpy.restore();
+        });
+
         it("should not initialize TinyMCE editor if it already exists", function() {
             var tinymceSpy = sinon.spy($.fn, 'tinymce');
             var configSpy = sinon.spy(field, 'getTinyMCEConfig');

@@ -90,6 +90,22 @@
             massCollection.off("add", null, cid);
             massCollection.off("remove", null, cid);
             massCollection.off("reset", null, cid);
+
+
+            var setButtonsDisabled = function(fields) {
+                _.each(fields, function(field) {
+                    if(field.def.minSelection || field.def.maxSelection) {
+                        var min = field.def.minSelection || 0,
+                            max = field.def.maxSelection || massCollection.length;
+                        if(massCollection.length < min || massCollection.length > max) {
+                            field.setDisabled(true);
+                        } else {
+                            field.setDisabled(false);
+                        }
+                    }
+                }, self);
+            };
+
             massCollection.on("add", function(model) {
                 if(massCollection.length > 0) {
                     self.$(self.actionDropDownTag).removeClass("disabled");
@@ -98,6 +114,7 @@
                     self.$(self.fieldTag).attr("checked", true);
                 }
                 self.toggleShowSelectAll();
+                setButtonsDisabled(self.fields);
             }, cid);
             massCollection.on("remove reset", function(model) {
                 if(massCollection.length == 0) {
@@ -105,6 +122,7 @@
                 }
                 self.$(self.fieldTag).attr("checked", false);
                 self.toggleShowSelectAll();
+                setButtonsDisabled(self.fields);
             }, cid);
             this.action_enabled = (massCollection.length > 0);
             this.selected = (massCollection.entire);

@@ -27,8 +27,10 @@ require_once('modules/Leads/LeadConvert.php');
 
 /***
  * Used to test Lead Convert in Leads Module endpoints from LeadConvertApi.php
- *
- * @group forecasts
+ */
+/**
+ * @group api_lead_convert
+ * @group rest
  */
 class LeadConvertApiTest extends RestTestBase
 {
@@ -55,9 +57,6 @@ class LeadConvertApiTest extends RestTestBase
         parent::tearDown();
     }
 
-    /**
-     * @group leadconvertapi
-     */
     public function testConvertLead_AllNewRecords_ConvertSuccessful(){
         $postData = array(
             "leadId" => $this->lead->id,
@@ -126,9 +125,6 @@ class LeadConvertApiTest extends RestTestBase
         $this->assertEquals(1, $lead->converted, 'Lead converted field not set properly');
      }
 
-    /**
-     * @group leadconvertapi
-     */
     public function testConvertLead_RecordsExists_ConvertSuccessful(){
 
         $contact = SugarTestContactUtilities::createContact();
@@ -161,9 +157,6 @@ class LeadConvertApiTest extends RestTestBase
         $this->assertEquals(1, $lead->converted, 'Lead converted field not set properly');
     }
 
-    /**
-     * @group leadconvertapi
-     */
     public function testConvertLead_LeadDoesNotExist_ConvertFailed(){
 
         $contact = SugarTestContactUtilities::createContact();

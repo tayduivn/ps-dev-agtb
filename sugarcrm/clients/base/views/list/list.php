@@ -42,6 +42,7 @@ $viewdefs['base']['view']['list'] = array(
                     this.view.layout.trigger("list:massupdate:fire");
                     }'
                 ),
+                'minSelection' => 2,
             ),
             array(
                 'name' => 'delete_button',
@@ -74,7 +75,9 @@ $viewdefs['base']['view']['list'] = array(
         'actions' => array(
             array(
                 'type' => 'rowaction',
-                'css_class' => 'btn preview',
+                'css_class' => 'btn',
+                'tooltip' => 'LBL_PREVIEW',
+                'event' => 'list:preview:fire',
                 'icon' => 'icon-eye-open',
             ),
             array(

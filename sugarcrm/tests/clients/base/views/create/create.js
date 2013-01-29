@@ -6,7 +6,7 @@ describe("Create View", function() {
     beforeEach(function() {
         SugarTest.testMetadata.init();
         SugarTest.loadHandlebarsTemplate('record', 'view', 'base');
-        SugarTest.loadHandlebarsTemplate('button', 'field', 'base', 'edit');
+        SugarTest.loadHandlebarsTemplate('button', 'field', 'base', 'detail');
         SugarTest.loadComponent('base', 'view', 'editable');
         SugarTest.loadComponent('base', 'field', 'button');
         SugarTest.loadComponent('base', 'view', 'record');
@@ -57,24 +57,24 @@ describe("Create View", function() {
                     "type":"button",
                     "label":"LBL_RESTORE",
                     "css_class":"hide btn-invisible btn-link",
-                    "showOn" : "edit"
+                    "showOn" : "select"
                 }, {
                     "name":"save_create_button",
                     "type":"button",
                     "label":"LBL_SAVE_AND_CREATE_ANOTHER",
                     "css_class":"hide btn-invisible btn-link",
-                    "showOn" : "save"
+                    "showOn" : "create"
                 }, {
                     "name":"save_view_button",
                     "type":"button",
                     "label":"LBL_SAVE_AND_VIEW",
                     "css_class":"hide btn-invisible btn-link",
-                    "showOn" : "save"
+                    "showOn" : "create"
                 }, {
                     "name":"save_button",
                     "type":"button",
                     "label":"LBL_SAVE_BUTTON_LABEL",
-                    "css_class":"disabled"
+                    "css_class":"btn-primary"
                 }
             ]
         }, moduleName);
@@ -120,19 +120,417 @@ describe("Create View", function() {
     });
 
     describe('Buttons', function() {
-        it("Should disable the save button when the form is empty", function() {
+        it("Should hide the restore button when the form is empty", function() {
             view.render();
-            expect(view.buttons[view.saveButtonName].isDisabled()).toBe(true);
+
+            expect(view.buttons[view.saveButtonName].getFieldElement().css('display')).not.toBe('none');
+            expect(view.buttons[view.cancelButtonName].getFieldElement().css('display')).not.toBe('none');
+            expect(view.buttons[view.saveAndCreateButtonName].getFieldElement().css('display')).not.toBe('none');
+            expect(view.buttons[view.saveAndViewButtonName].getFieldElement().css('display')).not.toBe('none');
+            expect(view.buttons[view.restoreButtonName].getFieldElement().css('display')).toBe('none');
         });
 
-        it("Should enable the save button when the model is valid", function() {
-            view.render();
-            view.model.set({
-                first_name: 'foo',
-                last_name: 'bar'
+        it("Should hide all buttons except save and cancel when duplicates are found.", function() {
+            var flag = false,
+                checkForDuplicateStub = sinon.stub(view, 'checkForDuplicate', function(success, error) {
+                    var data = {
+                        "id":"f360b873-b11c-4f25-0a3e-50cb8e7ad0c2",
+                        "first_name":"Foo",
+                        "last_name":"Bar",
+                        "phone_work":"1234567890",
+                        "email1":"foobar@test.com",
+                        "full_name":"Mr Foo Bar"
+                    },
+                        model = SugarTest.app.data.createBean(moduleName, data),
+                        collection = SugarTest.app.data.createBeanCollection(moduleName, model);
+
+                    checkForDuplicateStub.restore();
+                    success(collection);
+                }),
+                handleDuplicateFoundStub = sinon.stub(view, 'handleDuplicateFound', function(collection) {
+                    handleDuplicateFoundStub.restore();
+                    view.handleDuplicateFound(collection);
+                    flag = true;
+                });
+
+            runs(function() {
+                view.render();
+                view.model.set({
+                    first_name: 'First',
+                    last_name: 'Last'
+                });
+                view.buttons[view.saveButtonName].getFieldElement().click();
             });
 
-            expect(view.buttons[view.saveButtonName].isDisabled()).toBe(false);
+            waitsFor(function() {
+                return flag;
+            }, 'handleDuplicateFound should have been called but timeout expired', 1000);
+
+            runs(function() {
+                expect(view.buttons[view.saveButtonName].getFieldElement().css('display')).not.toBe('none');
+                expect(view.buttons[view.saveButtonName].getFieldElement().text()).toBe('LBL_IGNORE_DUPLICATE_AND_SAVE');
+                expect(view.buttons[view.cancelButtonName].getFieldElement().css('display')).not.toBe('none');
+                expect(view.buttons[view.saveAndCreateButtonName].getFieldElement().css('display')).toBe('none');
+                expect(view.buttons[view.saveAndViewButtonName].getFieldElement().css('display')).toBe('none');
+                expect(view.buttons[view.restoreButtonName].getFieldElement().css('display')).toBe('none');
+            });
+        });
+
+        it("Should show restore button, along with save and cancel, when a duplicate is selected to edit.", function() {
+            var data = {
+                "id":"f360b873-b11c-4f25-0a3e-50cb8e7ad0c2",
+                "first_name":"Foo",
+                "last_name":"Bar",
+                "phone_work":"1234567890",
+                "email1":"foobar@test.com",
+                "full_name":"Mr Foo Bar"
+            };
+
+            view.render();
+            view.model.set({
+                first_name: 'First',
+                last_name: 'Last'
+            });
+            view.context.trigger('list:dupecheck-list-select-edit:fire', SugarTest.app.data.createBean(moduleName, data));
+
+            expect(view.buttons[view.saveButtonName].getFieldElement().css('display')).not.toBe('none');
+            expect(view.buttons[view.saveButtonName].getFieldElement().text()).toBe('LBL_SAVE_BUTTON_LABEL');
+            expect(view.buttons[view.cancelButtonName].getFieldElement().css('display')).not.toBe('none');
+            expect(view.buttons[view.saveAndCreateButtonName].getFieldElement().css('display')).toBe('none');
+            expect(view.buttons[view.saveAndViewButtonName].getFieldElement().css('display')).toBe('none');
+            expect(view.buttons[view.restoreButtonName].getFieldElement().css('display')).not.toBe('none');
+        });
+
+        it("Should reset to the original form values when restore is clicked.", function() {
+            var data = {
+                "id":"f360b873-b11c-4f25-0a3e-50cb8e7ad0c2",
+                "first_name":"Foo",
+                "last_name":"Bar",
+                "phone_work":"1234567890",
+                "email1":"foobar@test.com",
+                "full_name":"Mr Foo Bar"
+            };
+
+            view.render();
+            view.model.set({
+                first_name: 'First',
+                last_name: 'Last'
+            });
+            view.context.trigger('list:dupecheck-list-select-edit:fire', SugarTest.app.data.createBean(moduleName, data));
+
+            expect(view.model.get('first_name')).toBe('Foo');
+            expect(view.model.get('last_name')).toBe('Bar');
+
+            var render = sinon.stub(view, 'render', function() {
+                return;
+            });
+            view.buttons[view.restoreButtonName].getFieldElement().click();
+
+            expect(view.model.get('first_name')).toBe('First');
+            expect(view.model.get('last_name')).toBe('Last');
+
+            render.restore();
+        });
+    });
+
+    describe('Save', function() {
+        it("Should save data when save button is clicked, form data are valid, and no duplicates are found.", function() {
+            var flag = false,
+                isValidStub = sinon.stub(view.model, 'isValid', function() {
+                    return true;
+                }),
+                checkForDuplicateStub = sinon.stub(view, 'checkForDuplicate', function(success, error) {
+                    success(SugarTest.app.data.createBeanCollection(moduleName));
+                }),
+                saveModelStub = sinon.stub(view, 'saveModel', function() {
+                    flag = true;
+                });
+
+            view.render();
+
+            runs(function() {
+                view.buttons[view.saveButtonName].getFieldElement().click();
+            });
+
+            waitsFor(function() {
+                return flag;
+            }, 'Save should have been called but timeout expired', 1000);
+
+            runs(function() {
+                expect(isValidStub.calledOnce).toBe(true);
+                expect(checkForDuplicateStub.calledOnce).toBe(true);
+                expect(saveModelStub.calledOnce).toBe(true);
+
+                saveModelStub.restore();
+                isValidStub.restore();
+                checkForDuplicateStub.restore();
+            });
+        });
+
+        it("Should close drawer once save is complete", function() {
+            var flag = false,
+                isValidStub = sinon.stub(view.model, 'isValid', function() {
+                    return true;
+                }),
+                checkForDuplicateStub = sinon.stub(view, 'checkForDuplicate', function(success, error) {
+                    success(SugarTest.app.data.createBeanCollection(moduleName));
+                }),
+                saveModelStub = sinon.stub(view, 'saveModel', function(success) {
+                    success();
+                }),
+                cancelStub = sinon.stub(view, 'cancel', function() {
+                    flag = true;
+                    return;
+                });
+
+            view.render();
+
+            runs(function() {
+                view.buttons[view.saveButtonName].getFieldElement().click();
+            });
+
+            waitsFor(function() {
+                return flag;
+            }, 'cancel should have been called but timeout expired', 1000);
+
+            runs(function() {
+                expect(cancelStub.calledOnce).toBe(true);
+
+                saveModelStub.restore();
+                isValidStub.restore();
+                checkForDuplicateStub.restore();
+                cancelStub.restore();
+            });
+        });
+
+        it("Should not save data when save button is clicked but form data are invalid", function() {
+            var flag = false,
+                isValidStub = sinon.stub(view.model, 'isValid', function() {
+                    flag = true;
+                    return false;
+                }),
+                checkForDuplicateStub = sinon.stub(view, 'checkForDuplicate', function(success, error) {
+                    success(SugarTest.app.data.createBeanCollection(moduleName));
+                }),
+                saveModelStub = sinon.stub(view, 'saveModel', function() {
+                    return;
+                });
+
+            view.render();
+
+            runs(function() {
+                view.buttons[view.saveButtonName].getFieldElement().click();
+            });
+
+            waitsFor(function() {
+                return flag;
+            }, 'isValid should have been called but timeout expired', 1000);
+
+            runs(function() {
+                expect(isValidStub.calledOnce).toBe(true);
+                expect(checkForDuplicateStub.called).toBe(false);
+                expect(saveModelStub.called).toBe(false);
+
+                saveModelStub.restore();
+                isValidStub.restore();
+                checkForDuplicateStub.restore();
+            });
+        });
+
+        it("Should not save data when save button is clicked but duplicates are found", function() {
+            var flag = false,
+                isValidStub = sinon.stub(view.model, 'isValid', function() {
+                    return true;
+                }),
+                checkForDuplicateStub = sinon.stub(view, 'checkForDuplicate', function(success, error) {
+                    flag = true;
+
+                    var data = {
+                        "id":"f360b873-b11c-4f25-0a3e-50cb8e7ad0c2",
+                        "first_name":"Foo",
+                        "last_name":"Bar",
+                        "phone_work":"1234567890",
+                        "email1":"foobar@test.com",
+                        "full_name":"Mr Foo Bar"
+                    },
+                        model = SugarTest.app.data.createBean(moduleName, data),
+                        collection = SugarTest.app.data.createBeanCollection(moduleName, model);
+
+                    success(collection);
+                }),
+                saveModelStub = sinon.stub(view, 'saveModel', function() {
+                    return;
+                });
+
+            view.render();
+
+            runs(function() {
+                view.buttons[view.saveButtonName].getFieldElement().click();
+            });
+
+            waitsFor(function() {
+                return flag;
+            }, 'checkForDuplicate should have been called but timeout expired', 1000);
+
+            runs(function() {
+                expect(isValidStub.calledOnce).toBe(true);
+                expect(checkForDuplicateStub.calledOnce).toBe(true);
+                expect(saveModelStub.called).toBe(false);
+
+                saveModelStub.restore();
+                isValidStub.restore();
+                checkForDuplicateStub.restore();
+            });
+        });
+    });
+
+    describe('Ignore Duplicate and Save', function() {
+        it("Should save data and not run duplicate check when ignore duplicate and save button is clicked.", function() {
+            var flag = false,
+                isValidStub = sinon.stub(view.model, 'isValid', function() {
+                    return true;
+                }),
+                checkForDuplicateStub = sinon.stub(view, 'checkForDuplicate', function(success, error) {
+                    flag = true;
+
+                    var data = {
+                            "id":"f360b873-b11c-4f25-0a3e-50cb8e7ad0c2",
+                            "first_name":"Foo",
+                            "last_name":"Bar",
+                            "phone_work":"1234567890",
+                            "email1":"foobar@test.com",
+                            "full_name":"Mr Foo Bar"
+                        },
+                        model = SugarTest.app.data.createBean(moduleName, data),
+                        collection = SugarTest.app.data.createBeanCollection(moduleName, model);
+
+                    success(collection);
+                }),
+                saveModelStub = sinon.stub(view, 'saveModel', function(success) {
+                    success();
+                }),
+                cancelStub = sinon.stub(view, 'cancel', function() {
+                    flag = true;
+                    return;
+                });
+
+            view.render();
+
+            runs(function() {
+                expect(view.skipDupeCheck()).toBe(false);
+                view.buttons[view.saveButtonName].getFieldElement().click();
+            });
+
+            waitsFor(function() {
+                return flag;
+            }, 'checkForDuplicate should have been called but timeout expired', 1000);
+
+            runs(function() {
+                flag = false;
+                expect(view.skipDupeCheck()).toBe(true);
+                view.buttons[view.saveButtonName].getFieldElement().click();
+            });
+
+            waitsFor(function() {
+                return flag;
+            }, 'close should have been called but timeout expired', 1000);
+
+            runs(function() {
+                expect(isValidStub.calledTwice).toBe(true);
+                expect(checkForDuplicateStub.calledOnce).toBe(true);
+                expect(saveModelStub.calledOnce).toBe(true);
+                expect(cancelStub.calledOnce).toBe(true);
+
+                saveModelStub.restore();
+                isValidStub.restore();
+                checkForDuplicateStub.restore();
+                cancelStub.restore();
+            });
+        });
+    });
+
+    describe('Save and Create Another', function() {
+        it("Should save, clear out the form, but not close the drawer.", function() {
+            var flag = false,
+                isValidStub = sinon.stub(view.model, 'isValid', function() {
+                    return true;
+                }),
+                checkForDuplicateStub = sinon.stub(view, 'checkForDuplicate', function(success, error) {
+                    success(SugarTest.app.data.createBeanCollection(moduleName));
+                }),
+                saveModelStub = sinon.stub(view, 'saveModel', function(success) {
+                    success();
+                }),
+                cancelStub = sinon.stub(view, 'cancel', function() {
+                    return;
+                }),
+                clearStub = sinon.stub(view.model, 'clear', function() {
+                    flag = true;
+                });
+
+            view.render();
+            view.model.set({
+                first_name: 'First',
+                last_name: 'Last'
+            });
+
+            runs(function() {
+                view.buttons[view.saveAndCreateButtonName].getFieldElement().click();
+            });
+
+            waitsFor(function() {
+                return flag;
+            }, 'clear should have been called but timeout expired', 1000);
+
+            runs(function() {
+                expect(saveModelStub.calledOnce).toBe(true);
+                expect(cancelStub.called).toBe(false);
+                expect(clearStub.calledOnce).toBe(true);
+
+                saveModelStub.restore();
+                isValidStub.restore();
+                checkForDuplicateStub.restore();
+                cancelStub.restore();
+                clearStub.restore();
+            });
+        });
+    });
+
+    describe('Save and View', function() {
+        it("Should save, close the modal, and navigate to the detail view.", function() {
+            var flag = false,
+                isValidStub = sinon.stub(view.model, 'isValid', function() {
+                    return true;
+                }),
+                checkForDuplicateStub = sinon.stub(view, 'checkForDuplicate', function(success, error) {
+                    success(SugarTest.app.data.createBeanCollection(moduleName));
+                }),
+                saveModelStub = sinon.stub(view, 'saveModel', function(success) {
+                    success();
+                }),
+                navigateStub = sinon.stub(SugarTest.app, 'navigate', function() {
+                    flag = true;
+                });
+
+            view.render();
+
+            runs(function() {
+                view.buttons[view.saveAndViewButtonName].getFieldElement().click();
+            });
+
+            waitsFor(function() {
+                return flag;
+            }, 'navigate should have been called but timeout expired', 1000);
+
+            runs(function() {
+                expect(saveModelStub.calledOnce).toBe(true);
+                expect(navigateStub.calledOnce).toBe(true);
+
+                saveModelStub.restore();
+                isValidStub.restore();
+                checkForDuplicateStub.restore();
+                navigateStub.restore();
+            });
         });
     });
 });

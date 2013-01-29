@@ -26,32 +26,66 @@
  ********************************************************************************/
 ({
     events: {
-        'click .closeSubdetail': 'closePreview'
+        'click .more': 'toggleMoreLess',
+        'click .less': 'toggleMoreLess'
     },
 
     // "binary semaphore" for the pagination click event, this is needed for async changes to the preview model
     switching: false,
+    hiddenPanelExists: false,
 
     initialize: function(options) {
         _.bindAll(this);
-
         app.view.View.prototype.initialize.call(this, options);
         this.fallbackFieldTemplate = "detail";
-        this.context.off("togglePreview", null, this);
-        this.context.on("togglePreview", this.togglePreview, this);
+        this.context.off("preview:render", null, this);
+        this.context.on("preview:render", this._renderPreview, this);
+        this.context.off("preview:close:fire", null, this);
+        this.context.on("preview:close:fire", this.closePreview,  this);
         this.context.off("preview:collection:change", null, this);
         this.context.on("preview:collection:change", this.updateCollection, this);
-        this.layout.off("preview:pagination:fire", null, this);
-        this.layout.on("preview:pagination:fire", this.switchPreview, this);
+        if(this.layout){
+            this.layout.off("preview:pagination:fire", null, this);
+            this.layout.on("preview:pagination:fire", this.switchPreview, this);
+        }
     },
 
     _renderHtml: function() {
-        var fieldsArray;
         app.view.View.prototype._renderHtml.call(this);
     },
 
-    togglePreview: function(model, collection) {
-        var fieldsToDisplay = app.config.fieldsToDisplay || 5;
+    /**
+     * Renders the preview dialog with the data from the current model and collection.
+     * @param model Model for the object to preview
+     * @param collection Collection of related objects to the current model
+     * @param {Boolean} fetch Optional Indicates if model needs to be synched with server to populate with latest data
+     * @private
+     */
+    _renderPreview: function(model, collection, fetch){
+        var self = this;
+        // Close preview if we are already displaying this model
+        if(self.model && model && self.model.get("id") == model.get("id")){
+            self.layout.$(".preview-headerbar .closeSubdetail").click();
+            self.model = null;
+            return;
+        }
+        if(fetch){
+            model.fetch({
+                success: function(model) {
+                    self.renderPreview(model, collection);
+                }
+            });
+        } else {
+            self.renderPreview(model, collection);
+        }
+    },
+
+    /**
+     * Renders the preview dialog with the data from the current model and collection
+     * @param model Model for the object to preview
+     * @param collection Collection of related objects to the current model
+     */
+    renderPreview: function(model, collection) {
         if (model && collection) {
             // Create a corresponding Bean and Context for clicked search result. It
             // might be a Case, a Bug, etc...we don't know, so we build dynamically.
@@ -64,14 +98,44 @@
             });
 
             // Get the corresponding detail view meta for said module
-            this.meta = app.metadata.getView(this.model.module, 'detail') || {};
-            // Clip meta panel fields to first N number of fields per the spec
-            this.meta.panels[0].fields = _.first(this.meta.panels[0].fields, fieldsToDisplay);
-
+            this.meta = app.metadata.getView(this.model.module, 'record') || {};
+            this.meta = this._previewifyMetadata(this.meta);
             app.view.View.prototype._render.call(this);
+            this.context.trigger("preview:open",this);
+            this.context.trigger("list:preview:decorate", this.model, this);
         }
     },
-
+    /**
+     * Normalizes the metadata, and removes favorite fields, that gets shown in Preview dialog
+     * @param meta Layout metadata to be trimmed
+     * @return Returns trimmed metadata
+     * @private
+     */
+    _previewifyMetadata: function(meta){
+        var trimmed = $.extend(true, {}, meta); //Deep copy
+        this.hiddenPanelExists = false; // reset
+        _.each(trimmed.panels, function(panel){
+            if(panel.header){
+                panel.header = false;
+                panel.fields = _.filter(panel.fields, function(field){
+                    //Don't show favorite icon in Preview, it's already on list view row
+                    return field.type != 'favorite';
+                });
+            }
+            //Keep track if a hidden panel exists
+            if(!this.hiddenPanelExists && panel.hide){
+                this.hiddenPanelExists = true;
+            }
+        }, this);
+        return trimmed;
+    },
+    /**
+     * Switches preview to left/right model in collection.
+     * @param {String} data.direction Direction that we are switching to, either 'left' or 'right'.
+     * @param index Optional current index in list
+     * @param id Optional
+     * @param module Optional
+     */
     switchPreview: function(data, index, id, module) {
         var self = this,
             currModule = module || this.model.get("_module"),
@@ -127,14 +191,20 @@
 
                     this.model.fetch({
                         success: function(model) {
-                            self.model.set("_module", targetModule);
-                            self.context.trigger("togglePreview", model, self.collection);
+                            model.set("_module", targetModule);
+                            self.model = null;
+                            self.context.trigger("preview:render", model, self.collection, false);
                             self.switching = false;
                         }
                     });
                 }
             }
         }
+    },
+    toggleMoreLess: function() {
+        this.$(".less").toggleClass("hide");
+        this.$(".more").toggleClass("hide");
+        this.$(".panel_hidden").toggleClass("hide");
     },
 
     closePreview: function() {

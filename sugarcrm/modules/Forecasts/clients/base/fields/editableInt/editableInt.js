@@ -6,7 +6,8 @@
         'mouseleave span.editable': 'togglePencil',
         'click span.editable': 'onClick',
         'blur span.edit input': 'onBlur',
-        'keyup span.edit input': 'onKeyup'
+        'keyup span.edit input': 'onKeyUp',
+        'keydown span.edit input': 'onKeyDown'
     },
 
     inputSelector: 'span.edit input',
@@ -163,14 +164,27 @@
      *
      * @param evt
      */
-    onKeyup: function (evt) {
+    onKeyUp: function (evt) {
         evt.preventDefault();
         if (evt.which == 27) {
             // esc key, cancel edits
             this.cancelEdits(evt);
-        } else if (evt.which == 13 || evt.which == 9) {
+        } else if (evt.which == 13) {
             // enter or tab, handle event
             this.handleEvent(evt);
+        }
+    },
+
+    /**
+     * Handle event when key is pressed down (tab)
+     *
+     * @param evt
+     */
+    onKeyDown: function(evt) {
+        if(evt.which == 9) {
+            evt.preventDefault();
+            // tab key pressed, trigger event from context
+            this.context.forecasts.trigger('forecasts:tabKeyPressed', evt.shiftKey, this);
         }
     },
 
