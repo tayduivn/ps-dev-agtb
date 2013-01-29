@@ -396,7 +396,7 @@ class SugarMathTest extends Sugar_PHPUnit_Framework_TestCase
             array('1.66667','?/?',array(10,6),5),
             array('1.666667','?/?',array(10,6),6),
             array('1.6666667','?/?',array(10,6),7),
-            array('802.458089','?/?*?',array('1000','1.246171','1.0'),6),
+            array('802.458090','?/?*?',array('1000','1.246171','1.0'),6),
         );
     }
 

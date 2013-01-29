@@ -287,7 +287,7 @@ class SugarMath
      *
      * @param string $value
      * @param int $scale
-     * @return string
+     * @return string rounded value
      */
     public function round($value, $scale = null) {
         if(!isset($scale)) {
