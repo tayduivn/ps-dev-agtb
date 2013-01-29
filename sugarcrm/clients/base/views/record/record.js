@@ -4,6 +4,7 @@
     previousModelState: null,
     extendsFrom: 'EditableView',
 
+    enableHeaderPane: true,
     events: {
         'click .record-edit-link-wrapper': 'handleEdit',
         'click a[name=cancel_button]': 'cancelClicked',
@@ -198,7 +199,6 @@
             previousField.nextField = firstField;
         }
     },
-
     initButtons: function() {
         if(this.options.meta && this.options.meta.buttons) {
             _.each(this.options.meta.buttons, function(button) {
@@ -212,6 +212,12 @@
             }, this);
         }
     },
+    showPreviousNextBtnGroup:function() {
+        var listCollection = this.context.get('listCollection') || new Backbone.Collection();
+        var recordIndex = listCollection.indexOf(listCollection.get(this.model.id));
+        this.collection.previous = listCollection.models[recordIndex-1] ? listCollection.models[recordIndex-1] : undefined;
+        this.collection.next = listCollection.models[recordIndex+1] ? listCollection.models[recordIndex+1] : undefined;
+    },
 
     registerFieldAsButton: function(buttonName) {
         var button = this.getField(buttonName);
@@ -222,6 +228,7 @@
 
     _renderHtml: function() {
         this.checkAclForButtons();
+        this.showPreviousNextBtnGroup();
         app.view.View.prototype._renderHtml.call(this);
     },
 

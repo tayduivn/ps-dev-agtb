@@ -10,10 +10,13 @@
             } catch (e) {
                 app.logger.error("Failed to eval view controller for " + name + ": " + e + ":\n" + data);
             }
-            app.view.declareComponent(type, name, module, data, true);
-            test.testMetadata.addController(name, type, data, module);
+            test.addComponent(client, type, name, data, module);
         });
+    };
 
+    test.addComponent = function(client, type, name, data, module) {
+        app.view.declareComponent(type, name, module, data, true);
+        test.testMetadata.addController(name, type, data, module);
     };
 
     test.loadHandlebarsTemplate = function(name, type, client, template, module) {
@@ -29,7 +32,7 @@
         test.loadComponent(client, "field", type);
 
         var view = new app.view.View({ name: viewName, context: context });
-        var def = { name: name, type: type };
+        var def = { name: name, type: type, events: (fieldDef) ? fieldDef.events : {} };
         var context = context || app.context.getContext();
 
         model = model || new Backbone.Model();
@@ -121,7 +124,7 @@
             if (this.isInitialized()) {
                 if (module) {
                     this._initModuleStructure(module, type, name);
-                    this._data.modules[module][type][name].template = template;
+                    this._data.modules[module][type][name].templates[templateName] = template;
                 } else {
                     this._data[type][name] = this._data[type][name] || {};
                     this._data[type][name].templates = this._data[type][name].templates || {};
@@ -131,22 +134,30 @@
         },
 
         addViewDefinition: function(name, viewDef, module) {
-            var type = 'views';
-            if (this.isInitialized()) {
-                if (module) {
-                    this._initModuleStructure(module, type, name);
-                    this._data.modules[module][type][name].meta = viewDef;
-                } else {
-                    this._data[type][name] = this._data[type][name] || {};
-                    this._data[type][name].meta = viewDef;
-                }
-            }
+            this._addDefinition(name, 'views', viewDef, module);
+        },
+
+        addLayoutDefinition: function(name, layoutDef, module) {
+            this._addDefinition(name, 'layouts', layoutDef, module);
         },
 
         _initModuleStructure: function(module, type, name) {
             this._data.modules[module] = this._data.modules[module] || {};
             this._data.modules[module][type] = this._data.modules[module][type] || {};
             this._data.modules[module][type][name] = this._data.modules[module][type][name] || {};
+            this._data.modules[module][type][name].templates = this._data.modules[module][type][name].templates || {};
+        },
+
+        _addDefinition: function(name, type, def, module) {
+            if (this.isInitialized()) {
+                if (module) {
+                    this._initModuleStructure(module, type, name);
+                    this._data.modules[module][type][name].meta = def;
+                } else {
+                    this._data[type][name] = this._data[type][name] || {};
+                    this._data[type][name].meta = def;
+                }
+            }
         },
 
         set: function() {

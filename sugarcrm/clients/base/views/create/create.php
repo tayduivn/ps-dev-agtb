@@ -50,14 +50,14 @@ $viewdefs['base']['view']['create'] = array(
             'type'    => 'button',
             'label'   => 'LBL_SAVE_AND_CREATE_ANOTHER',
             'css_class' => 'btn-invisible btn-link',
-            'showOn' => 'save',
+            'showOn' => 'create',
         ),
         array(
             'name'    => 'save_view_button',
             'type'    => 'button',
             'label'   => 'LBL_SAVE_AND_VIEW',
             'css_class' => 'btn-invisible btn-link',
-            'showOn' => 'save',
+            'showOn' => 'create',
         ),
         array(
             'name'    => 'save_button',
@@ -70,4 +70,5 @@ $viewdefs['base']['view']['create'] = array(
             'type' => 'sidebartoggle',
         ),
     ),
+    'duplicateCheck' => true,
 );
