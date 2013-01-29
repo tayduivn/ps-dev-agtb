@@ -49,6 +49,20 @@
                 this.setButtonStates(this.STATE.EDIT);
             }
         }, this);
+        this.model.on("error:validation", function(errors){
+            var errorFields = _.filter(this.editableFields,function(field){
+                return errors[field.name];
+            });
+            this.toggleFields(errorFields, true);
+            _.defer(function(errorFields){ //Must defer this because field toggling is deferred as well
+                _.each(errorFields, function(field){
+                    if(field.decorateError){
+                        field.decorateError(errors[field.name]);
+                    }
+                });
+            }, errorFields);
+
+        }, this);
         this.context.on("change:record_label", this.setLabel, this);
 
         this.delegateButtonEvents();
@@ -281,8 +295,11 @@
     },
 
     saveClicked: function() {
-        this.setButtonStates(this.STATE.VIEW);
-        this.handleSave();
+        this.$('.inline-error').removeClass('inline-error');
+        if(this.model.isValid(this.getFields(this.module))){
+            this.setButtonStates(this.STATE.VIEW);
+            this.handleSave();
+        }
     },
 
     cancelClicked: function() {
@@ -343,7 +360,6 @@
     handleSave: function() {
         var self = this;
         this.inlineEditMode = false;
-
         this.model.save({}, {
             success: function() {
                 if (self.createMode) {
@@ -353,7 +369,6 @@
                 }
             }
         });
-
         this.$(".record-save-prompt").hide();
         this.render();
     },

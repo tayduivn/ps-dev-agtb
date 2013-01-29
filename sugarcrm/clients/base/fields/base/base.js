@@ -37,5 +37,26 @@
     },
     getFieldElement: function() {
         return this.$(this.fieldTag);
+    },
+    decorateError: function(errors){
+        var self = this;
+
+        // need to add error styling to parent view element
+        self.$el.parents('.record-cell').addClass("inline-error");
+        var ftag = this.fieldTag || '';
+
+        self.$('.help-block').html('');
+        // Remove previous exclamation then add back.
+        self.$('.add-on').remove();
+
+        // Add error styling
+        self.$el.addClass('input-append');
+        self.$el.addClass(ftag);
+        // For each error add to error help block
+        _.each(errors, function(errorContext, errorName) {
+            self.$('.help-block').append(app.error.getErrorString(errorName, errorContext));
+        });
+        $('<span class="add-on"><i class="icon-exclamation-sign"></i></span>').insertBefore(self.$('.help-block'));
+
     }
 })
