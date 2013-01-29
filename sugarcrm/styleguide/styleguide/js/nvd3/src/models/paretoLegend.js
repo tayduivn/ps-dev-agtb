@@ -23,10 +23,14 @@ nv.models.paretoLegend = function() {
       var availableWidth = width - margin.left - margin.right,
           container = d3.select(this);
 
+      if (!data || !data.length || !data.values || !data.values || !data.filter(function(d) { return d.values.length }).length) {
+        return chart;
+      } else {
+        container.selectAll('g.nv-legend').remove();
+      }
+
       //------------------------------------------------------------
       // Setup containers and skeleton of chart
-      container.selectAll('g.nv-legend').remove();
-
       var wrap = container.selectAll('g.nv-legend').data([data]);
       var gEnter = wrap.enter().append('g').attr('class', 'nvd3 nv-legend').append('g');
       var g = wrap.select('g');
@@ -51,6 +55,7 @@ nv.models.paretoLegend = function() {
           .on('dblclick', function(d,i) {
             dispatch.legendDblclick(d,i);
           });
+
 
       if (data[0].type==='bar')
       {

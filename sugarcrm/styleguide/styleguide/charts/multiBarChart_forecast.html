@@ -56,41 +56,43 @@
                     return {
                       'group': i
                     , 'l': json.values[i].label
-                    , 't': json.values[i].values.reduce( function(p, c, i, a){
-                        return parseInt(p,10) + parseInt(c,10);
-                      })
+                    , 't': (json.values[i].length ? json.values[i].values.reduce( function(p, c, i, a){
+                            return parseInt(p,10) + parseInt(c,10);
+                        }) : 0)
                     }
                 })
             }
             // series data
-          , 'data': json.label.map( function(d,i){
-                return {
-                    'key': d
-                  , 'type': 'bar'
-                  , 'series': i
-                  , 'values': json.values.map( function(e,j){
-                        return { 'series': i, 'x': j+1, 'y': parseInt(e.values[i],10),  y0: 0 };
-                    })
-                  , 'valuesOrig': json.values.map( function(e,j){
-                        return { 'series': i, 'x': j+1, 'y': parseInt(e.values[i],10),  y0: 0 };
-                    })
-                }
-            }).concat(
-                json.properties[0].goal_marker_label.filter( function(d,i){
-                    return d !== 'Quota';
-                  }).map( function(d,i){
+          , 'data': ( ! json.values.filter(function(d) { return d.values.length }).length ? [] :
+                json.label.map( function(d,i){
                     return {
                         'key': d
-                      , 'type': 'line'
+                      , 'type': 'bar'
                       , 'series': i
                       , 'values': json.values.map( function(e,j){
-                          return { 'series': i, 'x': j+1, 'y': parseInt(e.goalmarkervalue[i+1],10) };
+                            return { 'series': i, 'x': j+1, 'y': parseInt(e.values[i],10),  y0: 0 };
                         })
                       , 'valuesOrig': json.values.map( function(e,j){
-                          return { 'series': i, 'x': j+1, 'y': parseInt(e.goalmarkervalue[i+1],10) };
+                            return { 'series': i, 'x': j+1, 'y': parseInt(e.values[i],10),  y0: 0 };
                         })
                     }
-                })
+                }).concat(
+                    json.properties[0].goal_marker_label.filter( function(d,i){
+                        return d !== 'Quota';
+                      }).map( function(d,i){
+                        return {
+                            'key': d
+                          , 'type': 'line'
+                          , 'series': i
+                          , 'values': json.values.map( function(e,j){
+                              return { 'series': i, 'x': j+1, 'y': parseInt(e.goalmarkervalue[i+1],10) };
+                            })
+                          , 'valuesOrig': json.values.map( function(e,j){
+                              return { 'series': i, 'x': j+1, 'y': parseInt(e.goalmarkervalue[i+1],10) };
+                            })
+                        }
+                    })
+                )
             )
         };
     },
