@@ -92,8 +92,12 @@ class One2MRelationship extends M2MRelationship
     }
 
     protected function linkIsLHS($link) {
-        return ($link->getSide() == REL_LHS && !$this->selfReferencing) ||
-               ($link->getSide() == REL_RHS && $this->selfReferencing);
+        if ( $this->lhsLink != $this->rhsLink ) {
+            return $link->getSide() == REL_LHS;
+        } else {
+            return ($link->getSide() == REL_LHS && !$this->selfReferencing)
+                || ($link->getSide() == REL_RHS && $this->selfReferencing);
+        }
     }
 
     /**
@@ -119,7 +123,7 @@ class One2MRelationship extends M2MRelationship
 			// If it's a One2Many self-referencing relationship
         	// the positions of the default One (LHS) and Many (RHS) are swaped
         	// so we should clear the links from the many (left) side
-        	if ($this->selfReferencing) {
+        	if ($this->selfReferencing && ($this->rhsLink == $this->lhsLink) ) {
         		// Load right hand side relationship name
 	            $linkName = $this->rhsLink;
 	            // Load the relationship into the left hand side bean
