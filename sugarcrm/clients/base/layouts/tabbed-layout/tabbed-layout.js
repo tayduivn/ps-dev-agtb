@@ -16,7 +16,7 @@
     // Assign the tabs
     _placeComponent: function(comp, def) {
         var id = _.uniqueId('record-bottom'),
-            nav = $('<li/>').html('<a href="#' + id + '" onclick="return false;" data-toggle="tab">' + def.layout.name + '</a>'),
+            nav = $('<li/>').html('<a href="#' + id + '" onclick="return false;" data-toggle="tab">' + app.lang.get(def.layout.name, this.module) + '</a>'),
             content = $('<div/>').addClass('tab-pane').attr('id', id).html(comp.el);
 
         if (!this.firstIsActive) {

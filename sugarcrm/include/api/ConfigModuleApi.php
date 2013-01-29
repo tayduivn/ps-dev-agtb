@@ -26,35 +26,32 @@ class ConfigModuleApi extends ModuleApi {
 
     public function registerApiRest()
     {
-        //Extend with test method
-        $parentApi= array (
+        return array (
             'config' => array(
                 'reqType' => 'GET',
                 'path' => array('<module>','config'),
                 'pathVars' => array('module',''),
                 'method' => 'config',
-                'shortHelp' => 'forecasts config',
-                'longHelp' => 'include/api/help/ConfigApi.html#config',
-                'noLoginRequired' => true,
+                'shortHelp' => 'Retrieves the config settings for a given module',
+                'longHelp' => 'include/api/help/config_get_help.html',
             ),
             'configCreate' => array(
                 'reqType' => 'POST',
                 'path' => array('<module>','config'),
                 'pathVars' => array('module',''),
                 'method' => 'configSave',
-                'shortHelp' => 'create forecasts config',
-                'longHelp' => 'include/api/help/ConfigApi.html#configCreate',
+                'shortHelp' => 'Creates the config entries for the given module',
+                'longHelp' => 'include/api/help/config_put_help.html',
             ),
             'configUpdate' => array(
                 'reqType' => 'PUT',
                 'path' => array('<module>','config'),
                 'pathVars' => array('module',''),
                 'method' => 'configSave',
-                'shortHelp' => 'Update forecasts config',
-                'longHelp' => 'include/api/help/ConfigApi.html#configUpdate',
+                'shortHelp' => 'Updates the config entries for given module',
+                'longHelp' => 'include/api/help/config_put_help.html',
             ),
         );
-        return $parentApi;
     }
 
     /**
@@ -69,7 +66,7 @@ class ConfigModuleApi extends ModuleApi {
         $platform = (isset($args['platform']) && !empty($args['platform']))?$args['platform']:'base';
 
         if (!empty($args['module'])) {
-            return$adminBean->getConfigForModule($args['module'], $platform);
+            return $adminBean->getConfigForModule($args['module'], $platform);
         }
         return;
     }

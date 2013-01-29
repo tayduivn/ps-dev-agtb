@@ -7,8 +7,8 @@
 
     toggle: function() {
         var chevron = this.$('.drawerTrig span'),
-            pointRightClass = 'icon-chevron-right',
-            pointLeftClass = 'icon-chevron-left';
+            pointRightClass = 'icon-double-angle-right',
+            pointLeftClass = 'icon-double-angle-left';
 
         if (chevron.hasClass(pointRightClass)) {
             chevron
