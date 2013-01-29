@@ -8,6 +8,7 @@
     },
 
     enableDuplicateCheck: true,
+    dupecheckList: null, //duplicate list layout
 
     saveButtonName: 'save_button',
     cancelButtonName: 'cancel_button',
@@ -31,7 +32,6 @@
         //add states for create view
         this.STATE = _.extend({}, this.STATE, {
             CREATE: 'create',
-            SAVE: 'save',
             SELECT: 'select',
             DUPLICATE: 'duplicate'
         });
@@ -51,14 +51,14 @@
         //keep track of what post-save action was chosen in case user chooses to ignore dupes
         this.context.lastSaveAction = null;
 
-        //listen for the edit button
-        this.context.on('quickcreate:edit', this.editExisting, this);
-
-        //listen for the save link click on the alert
-        this.context.on('create:alert:save', this.save, this);
+        //listen for the select and edit button
+        this.context.on('list:dupecheck-list-select-edit:fire', this.editExisting, this);
 
         //extend the record view definition
         this.meta = _.extend({}, app.metadata.getView(this.module, 'record'), this.meta);
+
+        //enable or disable duplicate check?
+        this.enableDuplicateCheck = _.isUndefined(this.meta.duplicateCheck) ? true : this.meta.duplicateCheck;
     },
 
     delegateButtonEvents: function() {
@@ -69,7 +69,7 @@
         app.view.views.RecordView.prototype._render.call(this);
         this.setButtonStates(this.STATE.CREATE);
 
-        this.showDuplicates();
+        this.renderDupeCheckList();
 
         if (this.createMode) {
             this.setTitle(app.lang.get('LBL_CREATE_BUTTON_LABEL', this.module) + ' ' + this.moduleSingular);
@@ -81,22 +81,20 @@
      * Default to saveAndClose
      */
     save: function() {
-        if (!this.buttons[this.saveButtonName].isDisabled()) {
-            switch(this.context.lastSaveAction) {
-                case this.SAVEACTIONS.SAVE_AND_CREATE:
-                    this.saveAndCreate();
-                    break;
-                case this.SAVEACTIONS.SAVE_AND_VIEW:
-                    this.saveAndView();
-                    break;
-                default:
-                    this.saveAndClose();
-            }
+        switch(this.context.lastSaveAction) {
+            case this.SAVEACTIONS.SAVE_AND_CREATE:
+                this.saveAndCreate();
+                break;
+            case this.SAVEACTIONS.SAVE_AND_VIEW:
+                this.saveAndView();
+                break;
+            default:
+                this.saveAndClose();
         }
     },
 
     /**
-     * Save and close quickcreate modal window
+     * Save and close drawer
      */
     saveAndClose: function() {
         this.initiateSave(_.bind(function() {
@@ -112,28 +110,6 @@
         this.context.trigger("drawer:hide");
         if (this.context.parent)
             this.context.parent.trigger("drawer:hide");
-    },
-
-    /**
-     * Enable button to save if the model is valid.
-     */
-    bindDataChange: function() {
-        app.view.views.RecordView.prototype.bindDataChange.call(this);
-        if(this.model) {
-            this.model.on("change", function() {
-                if (this.model.isValid(undefined, true)) {
-                    if (this.currentState === this.STATE.CREATE) {
-                        this.setButtonStates(this.STATE.SAVE);
-                    }
-                    this.enableSave();
-                } else {
-                    if (this.currentState === this.STATE.SAVE) {
-                        this.setButtonStates(this.STATE.CREATE);
-                    }
-                    this.disableSave();
-                }
-            }, this);
-        }
     },
 
     /**
@@ -165,6 +141,7 @@
     restoreModel: function() {
         this.model.clear();
         this.createMode = true;
+        this.render();
         this.setButtonStates(this.STATE.CREATE);
 
         if (this._origAttributes) {
@@ -182,10 +159,7 @@
             _.bind(this.dupeCheckWaterfall, this),
             _.bind(this.createRecordWaterfall, this)
         ], _.bind(function(error) {
-            if (error) {
-                console.log("Saving failed.");
-                //TODO: handle error
-            } else {
+            if (!error) {
                 this.context.lastSaveAction = null;
                 callback();
             }
@@ -200,6 +174,7 @@
         if (this.model.isValid(this.getFields(this.module))) {
             callback(false);
         } else {
+            this.alerts.showInvalidModel();
             callback(true);
         }
     },
@@ -219,11 +194,11 @@
                 }
             }, this),
             error = _.bind(function() {
-                this.showServerError();
+                this.alerts.showServerError();
                 callback(true);
             }, this);
 
-        if (this.skipDupCheck() || !this.enableDuplicateCheck) {
+        if (this.skipDupeCheck() || !this.enableDuplicateCheck) {
             callback(false);
         } else {
             this.checkForDuplicate(success, error);
@@ -253,16 +228,11 @@
      */
     checkForDuplicate: function(success, error) {
         var options = {
-            limit: this.limit || null,
-            params: {
-                q: 'w'
-            },
-            fields: this.getFieldNames() || {},
             success: success,
             error: error
         };
 
-        this.collection.fetch(options);
+        this.context.trigger("dupecheck:fetch:fire", this.model, options);
     },
 
     /**
@@ -272,12 +242,8 @@
      */
     handleDuplicateFound: function(collection) {
         this.setButtonStates(this.STATE.DUPLICATE);
-        this.context.trigger('quickcreate:list:toggle', true);
-        this.skipDupCheck(true);
-
-        this.alerts.showDuplicateFound(collection.models.length, _.bind(function() {
-            this.context.trigger('create:alert:save');
-        }, this));
+        this.dupecheckList.show();
+        this.skipDupeCheck(true);
     },
 
     /**
@@ -285,8 +251,8 @@
      */
     resetDuplicateState: function() {
         this.setButtonStates(this.STATE.CREATE);
-        this.context.trigger('quickcreate:list:close');
-        this.skipDupCheck(false);
+        this.hideDuplicates();
+        this.skipDupeCheck(false);
     },
 
     /**
@@ -308,21 +274,21 @@
      * @param skip (boolean)
      * @return {*}
      */
-    skipDupCheck: function(skip) {
-        var skipDupCheck,
+    skipDupeCheck: function(skip) {
+        var skipDupeCheck,
             saveButton = this.buttons[this.saveButtonName].getFieldElement();
 
         if (_.isUndefined(skip)) {
-            skipDupCheck = saveButton.data('skipDupCheck');
-            if (_.isUndefined(skipDupCheck)) {
-                skipDupCheck = false;
+            skipDupeCheck = saveButton.data('skipDupeCheck');
+            if (_.isUndefined(skipDupeCheck)) {
+                skipDupeCheck = false;
             }
-            return skipDupCheck;
+            return skipDupeCheck;
         } else {
             if (skip) {
-                saveButton.data('skipDupCheck', true);
+                saveButton.data('skipDupeCheck', true);
             } else {
-                saveButton.data('skipDupCheck', false);
+                saveButton.data('skipDupeCheck', false);
             }
         }
     },
@@ -340,7 +306,8 @@
      * @param model
      */
     editExisting: function(model) {
-        var origAttributes = this.saveFormData();
+        var origAttributes = this.saveFormData(),
+            skipDupeCheck = this.skipDupeCheck();
 
         this.model.clear();
         this.model.set(this.extendModel(model, origAttributes));
@@ -350,6 +317,7 @@
         this.toggleEdit(true);
 
         this.hideDuplicates();
+        this.skipDupeCheck(skipDupeCheck);
         this.setButtonStates(this.STATE.SELECT);
     },
 
@@ -381,25 +349,29 @@
     },
 
     /**
-     * Show list of duplicates
+     * Render duplicate check list table
      */
-    showDuplicates: function() {
-        var view = app.view.createView({
-            context: this.context,
-            name: 'quickcreate-list',
-            module: this.module,
-            layout: this.layout
-        });
+    renderDupeCheckList: function() {
+        this.context.set('dupelisttype', 'dupecheck-list-edit');
 
-        this.$('.headerpane').after(view.$el);
-        view.render();
+        if (_.isNull(this.dupecheckList)) {
+            this.dupecheckList = app.view.createLayout({
+                context: this.context,
+                name: 'dupecheck',
+                module: this.module
+            });
+        }
+
+        this.$('.headerpane').after(this.dupecheckList.$el);
+        this.dupecheckList.hide();
+        this.dupecheckList.render();
     },
 
     /**
      * Clear out duplicate list
      */
     hideDuplicates: function() {
-        this.collection.reset();
+        this.dupecheckList.hide();
     },
 
     /**
@@ -413,67 +385,36 @@
         if ($saveButtonEl) {
             switch (state) {
                 case this.STATE.CREATE:
+                case this.STATE.SELECT:
                     $saveButtonEl.getFieldElement().text(app.lang.get('LBL_SAVE_BUTTON_LABEL', this.module));
-                    this.disableSave();
-                    break;
-
-                case this.STATE.SAVE:
-                case this.STATE.EDIT:
-                    $saveButtonEl.getFieldElement().text(app.lang.get('LBL_SAVE_BUTTON_LABEL', this.module));
-                    this.enableSave();
                     break;
 
                 case this.STATE.DUPLICATE:
                     $saveButtonEl.getFieldElement().text(app.lang.get('LBL_IGNORE_DUPLICATE_AND_SAVE', this.module));
-                    this.enableSave();
                     break;
             }
         }
     },
 
-    /**
-     * Enable save button
-     */
-    enableSave: function() {
-        if(this.buttons[this.saveButtonName]) {
-            this.buttons[this.saveButtonName].setDisabled(false);
-        }
-    },
-
-    /**
-     * Disable save button
-     */
-    disableSave: function() {
-        if(this.buttons[this.saveButtonName]) {
-            this.buttons[this.saveButtonName].setDisabled(true);
-        }
-    },
-
     alerts: {
         showSuccess: function() {
+            //TODO: Need correct error message
             app.alert.show('record-saved', {
                 level: 'success',
-                messages: 'Record saved.',
+                messages: app.lang.get('LBL_SAVED', this.module),
                 autoClose: true
             });
         },
-        showDuplicateFound: function(numOfDupes, clickHandler) {
-            var alert;
-
-            app.alert.show('record-duplicate', {
-                level: 'warning',
-                title: numOfDupes + ' Duplicate Records.',
-                messages: 'You can <a class="alert-action-save">ignore duplicates and save</a> or select to edit one of the duplicates.',
+        showInvalidModel: function() {
+            //TODO: Need correct error message
+            app.alert.show('invalid-data', {
+                level: 'error',
+                messages: 'Please resolve invalid field values before saving.',
                 autoClose: true
-            });
-
-            alert = app.alert.get('record-duplicate');
-            alert.$('.alert-action-save').one('click', function() {
-                clickHandler();
-                alert.close();
             });
         },
         showServerError: function() {
+            //TODO: Need correct error message
             app.alert.show('server-error', {
                 level: 'error',
                 messages: 'Error occurred while connecting to the server. Please try again.',
