@@ -9696,7 +9696,7 @@ a.preview-list-item:hover {
 }
 .drawer-backdrop {
   z-index: 1010;
-  background-color: #fff;
+  background-color: #e6e6e5;
   opacity: .5;
   display: none;
   border-top: 4px solid #8b8c8e;
