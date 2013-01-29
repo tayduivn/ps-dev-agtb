@@ -71,6 +71,7 @@ $viewdefs['Forecasts']['base']['view']['forecastsWorksheet'] = array(
                     'label' => 'LBL_SALES_STAGE',
                     'type' => 'editableEnum',
                     'options' => 'sales_stage_dom',
+                    'searchBarThreshold' => 7,
                     'sortable' => false,
                     'default' => true,
                     'enabled' => true,
