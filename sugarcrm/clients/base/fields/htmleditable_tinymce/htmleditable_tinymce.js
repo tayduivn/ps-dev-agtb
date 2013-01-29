@@ -208,7 +208,6 @@
      * @return {String} content from the editor
      */
     getEditorContent: function() {
-        debugger;
         return this._htmleditor.getContent();
     }
 
