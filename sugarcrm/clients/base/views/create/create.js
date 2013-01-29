@@ -261,8 +261,17 @@
      * @param error
      */
     saveModel: function(success, error) {
-        this.model.save(null, {
-            fieldsToValidate: this.getFields(this.module),
+        var self = this;
+        success = _.wrap(success, function (func) {
+            app.file.checkFileFieldsAndProcessUpload(self.model, {
+                    success:function () {
+                        func();
+                    }
+                },
+                { deleteIfFails:true});
+        });
+        self.model.save(null, {
+            fieldsToValidate: self.getFields(self.module),
             success: success,
             error: error
         });
