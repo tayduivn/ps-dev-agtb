@@ -52,14 +52,6 @@ class LeadConvertApi extends ModuleApi {
      */
     public function convertLead($api, $args)
     {
-        //This is just till the opp form is created
-        //TODO:  Remove the following lines
-        if (isset($args['modules']['Opportunities'])) {
-            $args['modules']['Opportunities']['curreny_id']='-99';
-            $args['modules']['Opportunities']['amount']='50000';
-            $args['modules']['Opportunities']['amount_usdollar']='50000';
-        }
-
         $leadConvert = new LeadConvert($args['leadId']);
         $modules = $this->loadModules($api, $leadConvert->getAvailableModules(), $args['modules']);
         $modules = $leadConvert->convertLead($modules);

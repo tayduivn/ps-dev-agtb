@@ -7,6 +7,7 @@ class LeadConvert
     protected $modules;
     protected $lead;
     protected $contact;
+    protected $defs;
 
     public function __construct($leadId)
     {
@@ -16,9 +17,9 @@ class LeadConvert
     public function initialize($leadId)
     {
         $this->defs = $this->getVarDefs();
-        $this->lead = BeanFactory::getBean('Leads', $leadId);
+        $this->lead = BeanFactory::getBean('Leads', $leadId, array('strict_retrieve' => true));
 
-        if ($this->lead === FALSE) {
+        if (empty($this->lead)) {
             throw new Exception('Could not find record: ' . $leadId . ' in module: ' . 'Leads');  //TODO: localize string
         }
     }
@@ -55,7 +56,6 @@ class LeadConvert
             }
 
             if ($moduleName != "Contacts" && $this->contact !=null && $this->contact instanceof Contact) {
-                //$this->copyAddressFields($this->modules[$module], $this->modules['Contacts']);
                 $this->setRelationshipsForModulesToContacts($moduleDef);
             }
 
@@ -81,6 +81,11 @@ class LeadConvert
         return $this->modules;
     }
 
+    /**
+     * Update the opportunity with account id and name
+     *
+     * @param $moduleDef
+     */
     public function updateOpportunityWithAccountInformation($moduleDef) {
         $moduleName = $moduleDef['module'];
         if (isset($this->modules['Accounts'])) {
@@ -194,8 +199,7 @@ class LeadConvert
     protected function getVarDefs()
     {
         $viewdefs = array();
-        $metaDataFile = SugarAutoLoader::existingCustomOne($this->fileName);
-        include($metaDataFile);
+        SugarAutoLoader::requireWithCustom($this->fileName);
         return $viewdefs['Leads']['base']['layout']['convert-main']['modules'];
 
     }
@@ -272,266 +276,4 @@ class LeadConvert
     {
         return $this->modules;
     }
-
-    /*
-        public function setMeetingsUsersRelationship($bean)
-        {
-            global $current_user;
-            $meetingsRel = $this->findRelationshipByName($bean, $this->defs['Meetings']['ConvertLead']['relationship']);
-            if (!empty($meetingsRel))
-            {
-                $bean->load_relationship($meetingsRel);
-                $bean->$meetingsRel->add($current_user->id);
-                return $bean;
-            }
-            else
-            {
-                return false;
-            }
-        }
-
-
-
-        protected function copyAddressFields($bean, $contact)
-        {
-            //Copy over address info from the contact to any beans with address not set
-            foreach($bean->field_defs as $field => $def)
-            {
-                if(!isset($_REQUEST[$bean->module_dir . $field]) && strpos($field, "_address_") !== false)
-                {
-                    $set = "primary";
-                    if (strpos($field, "alt_") !== false || strpos($field, "shipping_") !== false)
-                        $set = "alt";
-                    $type = "";
-
-                    if(strpos($field, "_address_street_2") !== false)
-                        $type = "_address_street_2";
-                    else if(strpos($field, "_address_street_3") !== false)
-                        $type = "_address_street_3";
-                    else if(strpos($field, "_address_street_4") !== false)
-                        $type = "";
-                    else if(strpos($field, "_address_street") !== false)
-                        $type = "_address_street";
-                    else if(strpos($field, "_address_city") !== false)
-                        $type = "_address_city";
-                    else if(strpos($field, "_address_state") !== false)
-                        $type = "_address_state";
-                    else if(strpos($field, "_address_postalcode") !== false)
-                        $type = "_address_postalcode";
-                    else if(strpos($field, "_address_country") !== false)
-                        $type = "_address_country";
-
-                    $var = $set.$type;
-                    if (isset($contact->$var))
-                        $bean->$field = $contact->$var;
-                }
-            }
-        }
-
-        protected function migrateActivitiesToContact($module) {
-            //Set the parent of activites to the new Contact
-            if (isset($this->modules[$module]->field_defs['parent_id']) && isset($this->modules[$module]->field_defs['parent_type']))
-            {
-                $this->modules[$module]->parent_id = $this->contact->id;
-                $this->modules[$module]->parent_type = "Contacts";
-            }
-        }
-
-        protected function handleActivities($lead, $beans) {
-            global $app_list_strings;
-            global $sugar_config;
-            global $app_strings;
-            $parent_types = $app_list_strings['record_type_display'];
-
-            $activities = $this->getActivitiesFromLead($lead);
-
-            //if account is being created, we will specify the account as the parent bean
-            $accountParentInfo = array();
-
-            //determine the account id info ahead of time if it is being created as part of this conversion
-            if(!empty($beans['Accounts'])){
-                $accountParentInfo = array('id'=>$beans['Accounts']->id,'type'=>'Accounts');
-            }
-
-            foreach($beans as $module => $bean)
-            {
-                if (isset($parent_types[$module]))
-                {
-                    if( isset($_POST['lead_conv_ac_op_sel']) && $_POST['lead_conv_ac_op_sel'] != 'None')
-                    {
-                        foreach($activities as $activity)
-                        {
-                            if (!isset($sugar_config['lead_conv_activity_opt']) || $sugar_config['lead_conv_activity_opt'] == 'copy') {
-                                if (isset($_POST['lead_conv_ac_op_sel'])) {
-                                    //if the copy to module(s) are defined, copy only to those module(s)
-                                    if (is_array($_POST['lead_conv_ac_op_sel'])) {
-                                        foreach ($_POST['lead_conv_ac_op_sel'] as $mod) {
-                                            if ($mod == $module) {
-                                                $this->copyActivityAndRelateToBean($activity, $bean, $accountParentInfo);
-                                                break;
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                            else if ($sugar_config['lead_conv_activity_opt'] == 'move') {
-                                // if to move activities, should be only one module selected
-                                if ($_POST['lead_conv_ac_op_sel'] == $module) {
-                                    $this->moveActivity($lead, $activity, $bean);
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    */
-    /**
-     * Change the parent id and parent type of an activity
-     * @param $activity Activity to be modified
-     * @param $bean New parent bean of the activity
-     */
-    /*
-    protected function moveActivity($lead, $activity, $bean) {
-        global $beanList;
-
-        // delete the old relationship to the old parent (lead)
-        if ($rel = $this->findRelationship($activity, $lead)) {
-            $activity->load_relationship ($rel) ;
-
-            if ($activity->parent_id && $activity->id) {
-                $activity->$rel->delete($activity->id, $activity->parent_id);
-            }
-        }
-
-        // add the new relationship to the new parent (contact, account, etc)
-        if ($rel = $this->findRelationship($activity, $bean)) {
-            $activity->load_relationship ($rel) ;
-
-            $relObj = $activity->$rel->getRelationshipObject();
-            if ( $relObj->relationship_type=='one-to-one' || $relObj->relationship_type == 'one-to-many' )
-            {
-                $key = $relObj->rhs_key;
-                $activity->$key = $bean->id;
-            }
-            $activity->$rel->add($bean);
-        }
-
-        // set the new parent id and type
-        $activity->parent_id = $bean->id;
-        $activity->parent_type = $bean->module_dir;
-
-        $activity->save();
-    }
-*/
-    /**
-     * Gets the list of activities related to the lead
-     * @param Lead $lead Lead to get activities from
-     * @return Array of Activity SugarBeans .
-     */
-    /*
-    protected function getActivitiesFromLead(
-        $lead
-    )
-    {
-        if (!$lead) return;
-
-        global $beanList, $db;
-
-        $activitesList = array("Calls", "Tasks", "Meetings", "Emails", "Notes");
-        $activities = array();
-
-        foreach($activitesList as $module)
-        {
-            $beanName = $beanList[$module];
-            $activity = new $beanName();
-            $query = "SELECT id FROM {$activity->table_name} WHERE parent_id = '{$lead->id}' AND parent_type = 'Leads'";
-            $result = $db->query($query,true);
-            while($row = $db->fetchByAssoc($result))
-            {
-                $activity = new $beanName();
-                $activity->retrieve($row['id']);
-                $activity->fixUpFormatting();
-                $activities[] = $activity;
-            }
-        }
-
-        return $activities;
-    }
-
-    protected function copyActivityAndRelateToBean(
-        $activity,
-        $bean,
-        $parentArr = array()
-    )
-    {
-        global $beanList;
-
-        $newActivity = clone $activity;
-        $newActivity->id = create_guid();
-        $newActivity->new_with_id = true;
-
-        //set the parent id and type if it was passed in, otherwise use blank to wipe it out
-        $parentID = '';
-        $parentType = '';
-        if(!empty($parentArr)){
-            if(!empty($parentArr['id'])){
-                $parentID = $parentArr['id'];
-            }
-
-            if(!empty($parentArr['type'])){
-                $parentType = $parentArr['type'];
-            }
-
-        }
-
-        //Special case to prevent duplicated tasks from appearing under Contacts multiple times
-        if ($newActivity->module_dir == "Tasks" && $bean->module_dir != "Contacts")
-        {
-            $newActivity->contact_id = $newActivity->contact_name = "";
-        }
-
-        if ($rel = $this->findRelationship($newActivity, $bean))
-        {
-            if (isset($newActivity->$rel))
-            {
-                // this comes form $activity, get rid of it and load our own
-                $newActivity->$rel = '';
-            }
-
-            $newActivity->load_relationship ($rel) ;
-            $relObj = $newActivity->$rel->getRelationshipObject();
-            if ( $relObj->relationship_type=='one-to-one' || $relObj->relationship_type == 'one-to-many' )
-            {
-                $key = $relObj->rhs_key;
-                $newActivity->$key = $bean->id;
-            }
-
-            //parent (related to field) should be blank unless it is explicitly sent in
-            //it is not sent in unless the account is being created as well during lead conversion
-            $newActivity->parent_id =  $parentID;
-            $newActivity->parent_type = $parentType;
-
-            $newActivity->update_date_modified = false; //bug 41747
-            $newActivity->save();
-            $newActivity->$rel->add($bean);
-            if ($newActivity->module_dir == "Notes" && $newActivity->filename) {
-                UploadFile::duplicate_file($activity->id, $newActivity->id,  $newActivity->filename);
-            }
-        }
-    }
-
-
-        protected function populateModuleWithContact(){
-            //Copy data from the contact to new bean
-            foreach($bean->field_defs as $field => $def)
-            {
-                if(!isset($_REQUEST[$module . $field]) && isset($lead->$field) && $field != 'id')
-                {
-                    $bean->$field = $lead->$field;
-                    if($field == 'date_entered') $bean->$field = gmdate($GLOBALS['timedate']->get_db_date_time_format()); //bug 41030
-                }
-            }
-        }
-    */
 }

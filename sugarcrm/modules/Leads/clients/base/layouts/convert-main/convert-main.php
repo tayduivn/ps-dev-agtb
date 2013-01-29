@@ -1,4 +1,16 @@
 <?php
+/**
+ * Convert Lead Metadata Definition
+ * This file defines which modules are included in the lead conversion process.
+ * Within each module we define the following properties:
+ *  * module (string): module name (plural)
+ *  * required (boolean): is the user required to create or associate an existing record for this module before converting
+ *  * duplicateCheck (boolean): should duplicate check be performed for this module?
+ *  * contactRelateField (string): field on the contact that links to this module (if set, relationship will be created to contact)
+ *  * dependentModules (array): array of module names that this module is dependent on
+ *                              if set, this module will be disabled until dependent modules are completed
+ *  * fieldMapping (array): how should lead fields be mapped to this module left side is the module and right side is the lead
+ */
 $viewdefs['Leads']['base']['layout']['convert-main'] = array(
     'modules' => array(
         array(
