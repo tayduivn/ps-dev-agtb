@@ -38,16 +38,20 @@
     },
 
     _render: function() {
+        //attempt to pick up css class from defs but fallback 
+        this.def.css_class = this.def.css_class || 'textarea-text';
         //figure out if we need to display the show more link
         var value = this.model.get(this.name);
+
         if ((!_.isUndefined(value)) && (value.length > this.maxDisplayLength)) {
             this.isTooLong = true;
         }
-
         app.view.Field.prototype._render.call(this);
 
-        //Only deal with toggling less/more when NOT on list view. List view
-        //is read only on a single line with css controlled ellipsis on overflow
+        //Dynamically add the appropriate css class to this.$el (avoids extra spans)
+        this.$el.addClass(this.def.css_class);
+
+        //More|less not appropriate for list views (they use "overflow ellipsis")
         if (this._notListView()) {
             if (this.isTooLong) {
                 this.showLess();
@@ -57,8 +61,8 @@
             }
         }
     },
-    _notListView: function(viewName) {
-        if(this.view.name !== "list" || this.view.meta.type !== "list") {
+    _notListView: function() {
+        if (this.view.name !== 'list' || (this.view.meta && this.view.meta.type !== 'list')) {
             return true;
         }
         return false;
@@ -71,21 +75,18 @@
             this.showLess();
         }
     },
-
     showMore: function() {
         this._toggleTextLength('more');
     },
-
     showLess: function() {
         this._toggleTextLength('less');
     },
-
     _toggleTextLength: function(mode) {
         var displayValue,
             newLinkLabel;
 
         if (mode === "more") {
-            displayValue = this.value;
+            displayValue = this.value + '...';
             this.isTruncated = false;
             newLinkLabel = app.lang.get('LBL_LESS', this.module).toLocaleLowerCase();
         } else {
@@ -93,8 +94,10 @@
             this.isTruncated = true;
             newLinkLabel = app.lang.get('LBL_MORE', this.module).toLocaleLowerCase();
         }
-        this.$(".textarea-text").text(displayValue);
-        this.$(".show-more-text").text(newLinkLabel);
+        //Repopulate the field with our updated text and append the more/less link
+        this.$el.text(displayValue)
+            .append('<a href="javascript:void(0)" class="show-more-text">'+newLinkLabel+'</a>');
+        this.delegateEvents();
     }
 
 })

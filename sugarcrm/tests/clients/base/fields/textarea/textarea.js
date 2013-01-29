@@ -2,6 +2,8 @@ describe("Base.Field.TextArea", function() {
     var app, field,
         fieldName = 'foo',
         shortText = '12345',
+        langLblStub, template,
+        moreText = 'more', lessText = 'less',
         longText = shortText + shortText;
 
     beforeEach(function() {
@@ -11,6 +13,15 @@ describe("Base.Field.TextArea", function() {
         SugarTest.testMetadata.set();
         field = SugarTest.createField("base",fieldName, "textarea", "detail");
         field.maxDisplayLength = shortText.length; //for testing
+
+        langLblStub = sinon.stub(app.lang, 'get', function(label) {
+            if (label === 'LBL_MORE') {
+                return moreText;
+            } else {
+                return lessText;
+            }
+        });
+
     });
 
     afterEach(function() {
@@ -18,7 +29,9 @@ describe("Base.Field.TextArea", function() {
         app.view.reset();
         delete Handlebars.templates;
         field = null;
+        langLblStub.restore();
     });
+
 
     it('short values should not have more link', function() {
         field.model.set(fieldName, shortText);
@@ -52,15 +65,28 @@ describe("Base.Field.TextArea", function() {
         assertTruncated();
     });
 
+    it('should not call show less if list view', function() {
+        var showLessSpy;
+        template = SugarTest.loadHandlebarsTemplate("textarea", "field", "base", "list");
+        SugarTest.testMetadata.set();
+        field = SugarTest.createField("base",fieldName, "textarea", "list");
+        field.maxDisplayLength = shortText.length; //for testing
+        field.model.set(fieldName, longText);
+        field.initialize(field.options);
+        field.render();
+        // should be untruncated longtext since on a list view
+        expect(field.$el.text().trim()).toEqual(longText);
+    });
+
     var assertTruncated = function() {
         expect(field.$('.show-more-text').length).toEqual(1);
         expect(field.isTruncated).toBeTruthy();
-        expect(field.$('.textarea-text').text()).toEqual(shortText + '...');
+        expect(field.$el.text()).toEqual(shortText + '...' + moreText);
     };
 
     var assertExpanded = function() {
         expect(field.$('.show-more-text').length).toEqual(1);
         expect(field.isTruncated).toBeFalsy();
-        expect(field.$('.textarea-text').text()).toEqual(longText);
+        expect(field.$el.text()).toEqual(longText + '...' + lessText);
     };
 });
