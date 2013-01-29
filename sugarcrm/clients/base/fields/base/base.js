@@ -34,5 +34,8 @@
             this.def.link = false;
         };
         app.view.Field.prototype._render.call(this);
+    },
+    getFieldElement: function() {
+        return this.$(this.fieldTag);
     }
 })
