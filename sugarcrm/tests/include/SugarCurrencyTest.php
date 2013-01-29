@@ -39,37 +39,30 @@ class SugarCurrencyTest extends Sugar_PHPUnit_Framework_TestCase
     private static $sugar_config;
 
     /**
+     * @var object pointers to currency objects
+     */
+    private static $currencySGD;
+    private static $currencyPHP;
+    private static $currencyYEN;
+    private static $currencyBase;
+
+    /**
      * pre-class environment setup
      *
      */
     public static function setUpBeforeClass()
     {
+        parent::setUpBeforeClass();
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('beanList');
         // setup test user
         $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
 
         // setup test currencies
-        SugarTestCurrencyUtilities::createCurrency('Singapore','$','SGD',1.246171);
-        SugarTestCurrencyUtilities::createCurrency('Philippines','₱','PHP',41.82982);
-        SugarTestCurrencyUtilities::createCurrency('Yen','¥','YEN',78.87);
-
-    }
-
-    /**
-     * object setup
-     *
-     */
-    public function setUp()
-    {
-    }
-
-    /**
-     * object teardown
-     *
-     */
-    public function tearDown()
-    {
+        self::$currencySGD = SugarTestCurrencyUtilities::createCurrency('Singapore','$','SGD',1.246171,'currency-sgd');
+        self::$currencyPHP = SugarTestCurrencyUtilities::createCurrency('Philippines','₱','PHP',41.82982,'currency-php');
+        self::$currencyYEN = SugarTestCurrencyUtilities::createCurrency('Yen','¥','YEN',78.87,'currency-yen');
+        self::$currencyBase = BeanFactory::getBean('Currencies','-99');
     }
 
     /**
@@ -85,6 +78,7 @@ class SugarCurrencyTest extends Sugar_PHPUnit_Framework_TestCase
         // remove test currencies
         SugarTestCurrencyUtilities::removeAllCreatedCurrencies();
         SugarTestHelper::tearDown();
+        parent::tearDownAfterClass();
     }
 
     /**
@@ -107,14 +101,13 @@ class SugarCurrencyTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testCurrencyGetByID()
     {
-        // get a currency to test with
-        $currency = SugarCurrency::getCurrencyByISO('PHP');
-        $currency_id = $currency->id;
-        // now fetch by currency_id
-        $currency2 = SugarCurrency::getCurrencyByID($currency_id);
-        $this->assertInstanceOf('Currency',$currency2);
+        // get test currency id
+        $currencyId = 'currency-php';
+        // now fetch by currency id
+        $currency = SugarCurrency::getCurrencyByID($currencyId);
+        $this->assertInstanceOf('Currency',$currency);
         // test they are the same currency
-        $this->assertEquals($currency_id,$currency2->id);
+        $this->assertEquals($currencyId,$currency->id);
     }
 
     /**
@@ -127,7 +120,7 @@ class SugarCurrencyTest extends Sugar_PHPUnit_Framework_TestCase
         $currency = SugarCurrency::getCurrencyByISO('PHP');
         $this->assertInstanceOf('Currency',$currency);
         $this->assertEquals('PHP',$currency->iso4217);
-        $this->assertEquals(41.82982,$currency->conversion_rate);
+        $this->assertEquals(self::$currencyPHP->conversion_rate,$currency->conversion_rate);
     }
 
     /**
@@ -135,189 +128,181 @@ class SugarCurrencyTest extends Sugar_PHPUnit_Framework_TestCase
      *
      * @group currency
      */
-    public function testCurrencyUserLocale()
+    public function testGetUserLocaleCurrency()
     {
         $currency = SugarCurrency::getUserLocaleCurrency();
         $this->assertInstanceOf('Currency',$currency);
+    }
+
+    /**
+     * test converting amount to base currency
+     *
+     * @group currency
+     */
+    public function testConvertAmountToBase()
+    {
+        $amount = SugarCurrency::convertAmountToBase('1000.00',self::$currencySGD->id);
+        $this->assertEquals('802.458090',$amount);
+    }
+
+    /**
+     * test converting amount from base currency
+     *
+     * @group currency
+     */
+    public function testConvertAmountFromBase()
+    {
+        $amount = SugarCurrency::convertAmountFromBase('1000.00',self::$currencySGD->id);
+        $this->assertEquals('1246.171',$amount);
+    }
+
+    /**
+     * test converting amount between currencies
+     *
+     * @group currency
+     */
+    public function testConvertAmount()
+    {
+        $amount = SugarCurrency::convertAmount('1000.00', self::$currencySGD->id, self::$currencyPHP->id);
+        $this->assertEquals('33566.677446', $amount);
     }
 
 
     /**
      * test dollar amount conversions between currencies
      *
+     * @dataProvider testConvertWithRateProvider
+     * @param $amount
+     * @param $rate
+     * @param $result
      * @group currency
      */
-    public function testCurrencyConvert()
+    public function testConvertWithRate($amount, $rate, $result)
     {
-        $currency1 = SugarCurrency::getCurrencyByISO('SGD');
-        $currency2 = SugarCurrency::getCurrencyByISO('PHP');
-
-        $this->assertEquals($currency1->iso4217,'SGD');
-        $this->assertEquals($currency2->iso4217,'PHP');
-
-        $base_currency = SugarCurrency::getBaseCurrency();
-        $this->assertInstanceOf('Currency',$currency1);
-        $this->assertInstanceOf('Currency',$currency2);
-        $this->assertTrue(is_numeric($currency1->conversion_rate));
-        $this->assertTrue(is_numeric($currency2->conversion_rate));
-        $dollar_value = 1000.00;
-
-        // test convert to base currency
-        $converted_amount = 802.45809;
-        $amount = SugarCurrency::convertAmountToBase($dollar_value,$currency1->id);
-        $this->assertTrue(is_numeric($amount));
-        $this->assertEquals($converted_amount,$amount);
-
-        // test convert from base currency
-        $converted_amount = 1246.171;
-        $amount = SugarCurrency::convertAmountFromBase($dollar_value,$currency1->id);
-        $this->assertTrue(is_numeric($amount));
-        $this->assertEquals($converted_amount,$amount);
-
-
-        // test convert from one currency to another
-        $converted_amount = 33566.677446;
-        $amount = SugarCurrency::convertAmount($dollar_value, $currency1->id, $currency2->id);
-        $this->assertTrue(is_numeric($amount));
-        $this->assertEquals($converted_amount, $amount);
-
-        // test converting with specific rate
-        $rate = 0.5;
-        $amount = 1000;
-        $this->assertEquals(2000,SugarCurrency::convertWithRate($amount, $rate));
-        $rate = 2.0;
-        $this->assertEquals(500,SugarCurrency::convertWithRate($amount, $rate));
-
+        $this->assertEquals($result,SugarCurrency::convertWithRate($amount, $rate));
     }
 
     /**
-     * test formatting of currency amount
+     * convert with rate data provider
      *
+     * @group math
+     * @access public
+     */
+    public static function testConvertWithRateProvider() {
+        return array(
+            array(1000,0.5,2000),
+            array(1000,2.0,500),
+            array('1000','0.5','2000'),
+            array('1000','2.0','500'),
+        );
+    }
+
+    /**
+     * test formatting of currency amount with user locale settings
+     *
+     * @dataProvider testFormatAmountUserLocaleProvider
+     * @param $amount
+     * @param $currencyId
+     * @param $result
      * @group currency
      */
-    public function testCurrencyFormat()
+    public function testFormatAmountUserLocale($amount, $currencyId, $result)
     {
-        // locale formatting tests
-        $currency = SugarCurrency::getCurrencyByISO('PHP');
-        $amount = 1000;
-        $format = SugarCurrency::formatAmountUserLocale($amount,$currency->id);
-        $this->assertEquals($currency->symbol . '1,000.00',$format);
-        $amount = 1000.0;
-        $format = SugarCurrency::formatAmountUserLocale($amount,$currency->id);
-        $this->assertEquals($currency->symbol . '1,000.00',$format);
-        $amount = 1000.00;
-        $format = SugarCurrency::formatAmountUserLocale($amount,$currency->id);
-        $this->assertEquals($currency->symbol . '1,000.00',$format);
-        $amount = 1000.000;
-        $format = SugarCurrency::formatAmountUserLocale($amount,$currency->id);
-        $this->assertEquals($currency->symbol . '1,000.00',$format);
-        // manual formatting tests
-        $amount = 1000;
-        $format = SugarCurrency::formatAmount($amount,$currency->id,2,'.',',',true,'');
-        $this->assertEquals($currency->symbol . '1,000.00',$format);
-        $format = SugarCurrency::formatAmount($amount,$currency->id,3,'.',',',true,'');
-        $this->assertEquals($currency->symbol . '1,000.000',$format);
-        $format = SugarCurrency::formatAmount($amount,$currency->id,2,',','',true,'');
-        $this->assertEquals($currency->symbol . '1000,00',$format);
-        $format = SugarCurrency::formatAmount($amount,$currency->id,2,',','.',true,'');
-        $this->assertEquals($currency->symbol . '1.000,00',$format);
-        $format = SugarCurrency::formatAmount($amount,$currency->id,2,'.',',',true,'&nbsp;');
-        $this->assertEquals($currency->symbol . '&nbsp;1,000.00',$format);
-        // manual formatting tests, negative amounts
-        $amount = -1000;
-        $format = SugarCurrency::formatAmount($amount,$currency->id,2,'.',',',true,'');
-        $this->assertEquals($currency->symbol . '-1,000.00',$format);
-        $format = SugarCurrency::formatAmount($amount,$currency->id,3,'.',',',true,'');
-        $this->assertEquals($currency->symbol . '-1,000.000',$format);
-        $format = SugarCurrency::formatAmount($amount,$currency->id,2,',','',true,'');
-        $this->assertEquals($currency->symbol . '-1000,00',$format);
-        $format = SugarCurrency::formatAmount($amount,$currency->id,2,',','.',true,'');
-        $this->assertEquals($currency->symbol . '-1.000,00',$format);
-        $format = SugarCurrency::formatAmount($amount,$currency->id,2,'.',',',true,'&nbsp;');
-        $this->assertEquals($currency->symbol . '&nbsp;-1,000.00',$format);
-        // large amounts
-        $amount = 10000;
-        $format = SugarCurrency::formatAmount($amount,$currency->id,2);
-        $this->assertEquals($currency->symbol . '10,000.00',$format);
-        $amount = 100000;
-        $format = SugarCurrency::formatAmount($amount,$currency->id,2);
-        $this->assertEquals($currency->symbol . '100,000.00',$format);
-        $amount = 1000000;
-        $format = SugarCurrency::formatAmount($amount,$currency->id,2);
-        $this->assertEquals($currency->symbol . '1,000,000.00',$format);
-        $amount = 10000000;
-        $format = SugarCurrency::formatAmount($amount,$currency->id,2);
-        $this->assertEquals($currency->symbol . '10,000,000.00',$format);
-        $amount = 100000000;
-        $format = SugarCurrency::formatAmount($amount,$currency->id,2);
-        $this->assertEquals($currency->symbol . '100,000,000.00',$format);
-        $amount = 1000000000;
-        $format = SugarCurrency::formatAmount($amount,$currency->id,2);
-        $this->assertEquals($currency->symbol . '1,000,000,000.00',$format);
-        $amount = -10000;
-        $format = SugarCurrency::formatAmount($amount,$currency->id,2);
-        $this->assertEquals($currency->symbol . '-10,000.00',$format);
-        $amount = -100000;
-        $format = SugarCurrency::formatAmount($amount,$currency->id,2);
-        $this->assertEquals($currency->symbol . '-100,000.00',$format);
-        $amount = -1000000;
-        $format = SugarCurrency::formatAmount($amount,$currency->id,2);
-        $this->assertEquals($currency->symbol . '-1,000,000.00',$format);
-        $amount = -10000000;
-        $format = SugarCurrency::formatAmount($amount,$currency->id,2);
-        $this->assertEquals($currency->symbol . '-10,000,000.00',$format);
-        $amount = -100000000;
-        $format = SugarCurrency::formatAmount($amount,$currency->id,2);
-        $this->assertEquals($currency->symbol . '-100,000,000.00',$format);
-        $amount = -1000000000;
-        $format = SugarCurrency::formatAmount($amount,$currency->id,2);
-        $this->assertEquals($currency->symbol . '-1,000,000,000.00',$format);
-        // decimal amounts, rounding
-        $amount = 0.9;
-        $format = SugarCurrency::formatAmount($amount,$currency->id,2);
-        $this->assertEquals($currency->symbol . '0.90',$format);
-        $amount = 0.09;
-        $format = SugarCurrency::formatAmount($amount,$currency->id,2);
-        $this->assertEquals($currency->symbol . '0.09',$format);
-        $amount = 0.099;
-        $format = SugarCurrency::formatAmount($amount,$currency->id,2);
-        $this->assertEquals($currency->symbol . '0.10',$format);
-        $amount = 0.094;
-        $format = SugarCurrency::formatAmount($amount,$currency->id,2);
-        $this->assertEquals($currency->symbol . '0.09',$format);
-        $amount = 0.09499999;
-        $format = SugarCurrency::formatAmount($amount,$currency->id,2);
-        $this->assertEquals($currency->symbol . '0.09',$format);
-        $amount = 0.09499999;
-        $format = SugarCurrency::formatAmount($amount,$currency->id,6);
-        $this->assertEquals($currency->symbol . '0.095000',$format);
-        $amount = -0.9;
-        $format = SugarCurrency::formatAmount($amount,$currency->id,2);
-        $this->assertEquals($currency->symbol . '-0.90',$format);
-        $amount = -0.09;
-        $format = SugarCurrency::formatAmount($amount,$currency->id,2);
-        $this->assertEquals($currency->symbol . '-0.09',$format);
-        $amount = -0.099;
-        $format = SugarCurrency::formatAmount($amount,$currency->id,2);
-        $this->assertEquals($currency->symbol . '-0.10',$format);
-        $amount = -0.094;
-        $format = SugarCurrency::formatAmount($amount,$currency->id,2);
-        $this->assertEquals($currency->symbol . '-0.09',$format);
-        $amount = -0.09499999;
-        $format = SugarCurrency::formatAmount($amount,$currency->id,2);
-        $this->assertEquals($currency->symbol . '-0.09',$format);
-        $amount = -0.09499999;
-        $format = SugarCurrency::formatAmount($amount,$currency->id,6);
-        $this->assertEquals($currency->symbol . '-0.095000',$format);
+        $format = SugarCurrency::formatAmountUserLocale($amount, $currencyId);
+        $this->assertEquals($result, $format);
+    }
 
+    /**
+     * convert with rate data provider
+     *
+     * @group math
+     * @access public
+     */
+    public static function testFormatAmountUserLocaleProvider() {
+        $currencyId = 'currency-php';
+        $currencySymbol = '₱';
+        return array(
+            array('1000', $currencyId, $currencySymbol . '1,000.00'),
+            array('1000.0', $currencyId, $currencySymbol . '1,000.00'),
+            array('1000.00', $currencyId, $currencySymbol . '1,000.00'),
+            array('1000.000', $currencyId, $currencySymbol . '1,000.00'),
+        );
+    }
+
+    /**
+     * test formatting of currency amount manually
+     *
+     * @dataProvider testFormatAmountProvider
+     * @param $amount
+     * @param $currencyId
+     * @param $precision
+     * @param $decimal
+     * @param $thousands
+     * @param $showSymbol
+     * @param $symbolSeparator
+     * @param $result
+     * @group currency
+     */
+    public function testFormatAmount($amount, $currencyId, $precision, $decimal, $thousands, $showSymbol, $symbolSeparator, $result)
+    {
+        $format = SugarCurrency::formatAmount($amount, $currencyId, $precision, $decimal, $thousands, $showSymbol, $symbolSeparator);
+        $this->assertEquals($result, $format);
+    }
+
+    /**
+     * format amount data provider
+     *
+     * @group math
+     * @access public
+     */
+    public static function testFormatAmountProvider() {
+        $currencyId = 'currency-php';
+        $currencySymbol = '₱';
+        return array(
+            array('1000', $currencyId, 2, '.', ',', true, '', $currencySymbol . '1,000.00'),
+            array('1000', $currencyId, 2, '.', ',', true, '&nbsp;', $currencySymbol . '&nbsp;1,000.00'),
+            array('1000', $currencyId, 2, ',', '.', true, '', $currencySymbol . '1.000,00'),
+            array('1000', $currencyId, 3, '.', ',', true, '', $currencySymbol . '1,000.000'),
+            array('1000', $currencyId, 3, '.', '', true, '', $currencySymbol . '1000.000'),
+            array('1000', $currencyId, 3, ',', '.', true, '', $currencySymbol . '1.000,000'),
+            array('-1000', $currencyId, 2, '.', ',', true, '', $currencySymbol . '-1,000.00'),
+            array('-1000', $currencyId, 2, '.', ',', true, '&nbsp;', $currencySymbol . '&nbsp;-1,000.00'),
+            array('-1000', $currencyId, 2, ',', '.', true, '', $currencySymbol . '-1.000,00'),
+            array('-1000', $currencyId, 3, '.', ',', true, '', $currencySymbol . '-1,000.000'),
+            array('-1000', $currencyId, 3, '.', '', true, '', $currencySymbol . '-1000.000'),
+            array('-1000', $currencyId, 3, ',', '.', true, '', $currencySymbol . '-1.000,000'),
+            array('10000', $currencyId, 2, '.', ',', true, '', $currencySymbol . '10,000.00'),
+            array('100000', $currencyId, 2, '.', ',', true, '', $currencySymbol . '100,000.00'),
+            array('1000000', $currencyId, 2, '.', ',', true, '', $currencySymbol . '1,000,000.00'),
+            array('10000000', $currencyId, 2, '.', ',', true, '', $currencySymbol . '10,000,000.00'),
+            array('100000000', $currencyId, 2, '.', ',', true, '', $currencySymbol . '100,000,000.00'),
+            array('1000000000', $currencyId, 2, '.', ',', true, '', $currencySymbol . '1,000,000,000.00'),
+            array('-10000', $currencyId, 2, '.', ',', true, '', $currencySymbol . '-10,000.00'),
+            array('-100000', $currencyId, 2, '.', ',', true, '', $currencySymbol . '-100,000.00'),
+            array('-1000000', $currencyId, 2, '.', ',', true, '', $currencySymbol . '-1,000,000.00'),
+            array('-10000000', $currencyId, 2, '.', ',', true, '', $currencySymbol . '-10,000,000.00'),
+            array('-100000000', $currencyId, 2, '.', ',', true, '', $currencySymbol . '-100,000,000.00'),
+            array('-1000000000', $currencyId, 2, '.', ',', true, '', $currencySymbol . '-1,000,000,000.00'),
+            array('0.9', $currencyId, 2, '.', ',', true, '', $currencySymbol . '0.90'),
+            array('0.09', $currencyId, 2, '.', ',', true, '', $currencySymbol . '0.09'),
+            array('0.099', $currencyId, 2, '.', ',', true, '', $currencySymbol . '0.10'),
+            array('0.094', $currencyId, 2, '.', ',', true, '', $currencySymbol . '0.09'),
+            array('0.09499999', $currencyId, 2, '.', ',', true, '', $currencySymbol . '0.09'),
+            array('0.09499999', $currencyId, 6, '.', ',', true, '', $currencySymbol . '0.095000'),
+        );
     }
 
     /**
      * test affects of changing base currency type
      *
+     * @dataProvider testBaseCurrencyChangeProvider
+     * @param $amount
+     * @param $currencyId1
+     * @param $currencyId2
+     * @param $result
      * @group currency
      */
-    public function testBaseCurrencyChange()
+    public function testBaseCurrencyChange($amount, $currencyId1, $currencyId2, $result)
     {
         global $sugar_config;
         // save for resetting after test
@@ -326,55 +311,28 @@ class SugarCurrencyTest extends Sugar_PHPUnit_Framework_TestCase
         $sugar_config['default_currency_name'] = 'Bitcoin';
         $sugar_config['default_currency_symbol'] = '฿';
         sugar_cache_put('sugar_config', $sugar_config);
-        // change base currency to bitcoin, test
-        // conversions in different currencies
-        $currency1 = SugarCurrency::getCurrencyByISO('SGD');
-        $currency2 = SugarCurrency::getCurrencyByISO('PHP');
-        $currency3 = SugarCurrency::getCurrencyByISO('YEN');
-        // get base currency
-        $currency4 = SugarCurrency::getBaseCurrency();
-        // retrieve values since BeanFactory caches them
-        $currency4->retrieve('-99');
-        // test the instances
-        $this->assertInstanceOf('Currency', $currency1);
-        $this->assertInstanceOf('Currency', $currency2);
-        $this->assertInstanceOf('Currency', $currency3);
-        $this->assertInstanceOf('Currency', $currency4);
-        $this->assertTrue(is_numeric($currency1->conversion_rate));
-        $this->assertTrue(is_numeric($currency2->conversion_rate));
-        $this->assertTrue(is_numeric($currency3->conversion_rate));
-        $this->assertTrue(is_numeric($currency4->conversion_rate));
-        // base currency rate is always 1.0
-        $this->assertEquals(1.0, $currency4->conversion_rate);
-        $this->assertEquals('BTC', $currency4->iso4217);
-        $dollar_value = 1000.00;
-        // converting 1000 SGD to PHP
-        $converted_amount = 33566.677446;
-        $this->assertTrue(is_numeric($converted_amount));
-        $amount = SugarCurrency::convertAmount($dollar_value, $currency1->id, $currency2->id);
-        $this->assertTrue(is_numeric($amount));
-        $this->assertEquals($converted_amount, $amount);
-        // converting 1000 PHP to YEN
-        $converted_amount = 1885.496997;
-        $this->assertTrue(is_numeric($converted_amount));
-        $amount = SugarCurrency::convertAmount($dollar_value, $currency2->id, $currency3->id);
-        $this->assertTrue(is_numeric($amount));
-        $this->assertEquals($converted_amount, $amount);
-        // converting 1000 YEN to BTC
-        $converted_amount = 12.679092;
-        $this->assertTrue(is_numeric($converted_amount));
-        $amount = SugarCurrency::convertAmount($dollar_value, $currency3->id, $currency4->id);
-        $this->assertTrue(is_numeric($amount));
-        $this->assertEquals($converted_amount, $amount);
-        // converting 1000 BTC to SGD
-        $converted_amount = 1246.171;
-        $this->assertTrue(is_numeric($converted_amount));
-        $amount = SugarCurrency::convertAmount($dollar_value, $currency4->id, $currency1->id);
-        $this->assertTrue(is_numeric($amount));
-        $this->assertEquals($converted_amount, $amount);
+
+        $this->assertEquals($result, SugarCurrency::convertAmount($amount, $currencyId1, $currencyId2));
+
         // reset config values
         $sugar_config = $orig_config;
         sugar_cache_put('sugar_config', $sugar_config);
     }
+
+    /**
+     * base rate change provider
+     *
+     * @group math
+     * @access public
+     */
+    public static function testBaseCurrencyChangeProvider() {
+        return array(
+            array('1000.00', 'currency-sgd', 'currency-php', '33566.677446'),
+            array('1000.00', 'currency-php', 'currency-yen', '1885.496997'),
+            array('1000.00', 'currency-yen', '-99', '12.679092'),
+            array('1000.00', '-99', 'currency-sgd', '1246.171'),
+        );
+    }
+
 
 }
