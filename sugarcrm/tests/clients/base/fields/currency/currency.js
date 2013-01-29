@@ -196,5 +196,20 @@ describe('currency field', function() {
             expect(field.transactionValue).toEqual('$123,456,789.12');
 
         });
+
+        it("transactional amount should be empty when using the base currency and currency_field not set", function() {
+            model = app.data.createBean(moduleName, {
+                amount: 123456789.12,
+                currency_id: '-99',
+                base_rate: 1.0
+            });
+            field.model = model;
+
+            delete field.def.currency_field;
+            field.def.convertToBase = true;
+            field.def.showTransactionalAmount = true;
+            field.render();
+            expect(field.transactionValue).toEqual('');
+        });
     });
 });
