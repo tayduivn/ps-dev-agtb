@@ -275,7 +275,7 @@ echo get_validate_chart_js();
 				} else {
 					$sum = round($row['total']*$div);
 				}
-				if($row['sales_stage'] == 'Closed Won' || $row['sales_stage'] == 'Closed Lost'){
+				if($row['sales_stage'] == Opportunity::STAGE_CLOSED_WON || $row['sales_stage'] == Opportunity::STAGE_CLOSED_LOST){
 					$salesStage = $row['sales_stage'];
 					$salesStageT = $app_list_strings['sales_stage_dom'][$row['sales_stage']];
 				} else {
