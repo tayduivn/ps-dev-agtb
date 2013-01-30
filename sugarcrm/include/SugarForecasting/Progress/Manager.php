@@ -213,9 +213,16 @@ class SugarForecasting_Progress_Manager extends SugarForecasting_Manager
                             "(select sum(f.likely_case*f.base_rate) AS amount, opp_count as recordcount, max(f.date_entered) from forecasts f " .
                                 "INNER JOIN users u " . 
                                     "ON f.user_id = u.id " .
-                                        "AND ((u.reports_to_id = {$db->quoted($user_id)} and f.forecast_type = 'Rollup') " .
-                                        "OR (u.id in('". implode("', '", $repIds) . "') and f.forecast_type='Direct')) " .
-                                "where timeperiod_id = {$db->quoted($timeperiod_id)}  " .
+                                        "AND ((u.reports_to_id = {$db->quoted($user_id)} and f.forecast_type = 'Rollup') ";
+        
+        //only include this block if we have leaf reps
+        if(count($repIds) == 0){
+            $queryRepOpps .=            ") ";
+        } else {
+        	$queryRepOpps .=            "OR (u.id in('". implode("', '", $repIds) . "') and f.forecast_type='Direct')) ";
+        }
+        
+        $queryRepOpps .=        "where timeperiod_id = {$db->quoted($timeperiod_id)}  " .
                             "group by user_id) as rollup ";
                 
         //per requirements, exclude the sales stages won
