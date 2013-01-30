@@ -59,6 +59,13 @@ class MetaDataManager {
     protected static $managers = array();
 
     /**
+     * The requested platform, or collection of platforms
+     * 
+     * @var array|string
+     */
+    protected $platforms;
+
+    /**
      * Whether this is a public or private request
      * 
      * @var bool
@@ -84,7 +91,7 @@ class MetaDataManager {
     /**
      * Mapping of metadata sections to the methods that get the data for that
      * section. If the value of the section index is false, the method will be
-     * build{section}() and will require the current metadata array as an argument.
+     * refresh{section}Section() and will require the current metadata array as an argument.
      * 
      * @var array
      */
@@ -712,19 +719,68 @@ class MetaDataManager {
                 unlink($metadataFile);
             }
         }
-        
-        // clear the platform cache from sugar_cache to avoid out of date data
-//        $platforms = self::getPlatformList();
-//        foreach($platforms as $platform) {
-//            $platformKey = $platform == "base" ?  "base" : implode(",", array($platform, "base"));
-//            $hashKey = "metadata:$platformKey:hash";
-//            sugar_cache_clear($hashKey);
-//        }
     }
     
-    public static function buildMetadataSectionCache($section = '', $modules = array(), $platforms = array())
+    protected function refreshModulesSection($data) 
     {
+        $data = $this->_populateModules($data);
+        foreach($data['modules'] as $moduleName => $moduleDef) {
+            if (!array_key_exists($moduleName, $data['full_module_list']) && array_key_exists($moduleName, $data['modules'])) {
+                unset($data['modules'][$moduleName]);
+            }
+        }
+
+        $data['full_module_list']['_hash'] = md5(serialize($data['full_module_list']));
         
+        return $data;
+    }
+    
+    protected function refreshLabelsSection($data) 
+    {
+        $data['labels'] = $this->getStringUrls($data, $this->public);
+        return $data;
+    }
+    
+    protected function refreshJssourceSection($data)
+    {
+        $data['jssource'] = $this->buildJSFileFromMD($data, $this->platforms[0]);
+        return $data;
+    }
+    
+    public function rebuildCacheSection($section = '', $modules = array())
+    {
+        // If there is no section passed then do nothing
+        if (!empty($section)) {
+            // We will always need the metadata for this process
+            $data = $this->getMetadata();
+            
+            // Handle the section(s)
+            foreach ((array) $section as $index) {
+                if (isset($this->sectionMap[$index])) {
+                    if ($this->sectionMap[$index] === false) {
+                        $method = 'refresh' . ucfirst($index) . 'Section';
+                        $data = $this->$method($data);
+                    } else {
+                        $method = $this->sectionMap[$index];
+                        $data[$index] = $this->$method();
+                    }
+                }
+            }
+            
+            // Now handle modules, if there are any
+            if (!empty($modules)) {
+                foreach ((array) $modules as $module) {
+                    if (isset($data['modules'][$module])) {
+                        $bean = BeanFactory::newBean($module);
+                        $data['modules'][$module] = $this->getModuleData($module);
+                        $this->_relateFields($data, $module, $bean);
+                    }
+                }
+            }
+            
+            // Now cache the new data
+            $this->putMetadataCache($data, $this->platforms[0], $this->public);
+        }
     }
     
     public function rebuildCache() 
@@ -746,10 +802,24 @@ class MetaDataManager {
             $platforms = self::getPlatformList();
         }
         
-        foreach ($platforms as $platform) {
+        foreach ((array) $platforms as $platform) {
             foreach (array(true, false) as $public) {
                 $mm = self::getManagerNew($platform, $public);
                 $mm->rebuildCache();
+            }
+        }
+    }
+    
+    public static function refreshCacheSection($section = '', $modules = array(), $platforms = array())
+    {
+        if (empty($platforms)) {
+            $platforms = self::getPlatformList();
+        }
+        
+        foreach ((array) $platforms as $platform) {
+            foreach (array(true, false) as $public) {
+                $mm = self::getManagerNew($platform, $public);
+                $mm->rebuildCacheSection($section, $modules);
             }
         }
     }
@@ -846,10 +916,11 @@ class MetaDataManager {
     // CARRYOVERS FROM METADATAAPI
 
     protected function loadMetadata() {
-        // Start collecting data
-        $data = $this->_populateModules(array());
-        $data['currencies'] = $this->getSystemCurrencies();
+        // Start collecting data with the modules
+        //$data = $this->refreshModulesSection(array());
         
+        $data = $this->_populateModules(array());
+
         foreach($data['modules'] as $moduleName => $moduleDef) {
             if (!array_key_exists($moduleName, $data['full_module_list']) && array_key_exists($moduleName, $data['modules'])) {
                 unset($data['modules'][$moduleName]);
@@ -858,6 +929,7 @@ class MetaDataManager {
 
         $data['full_module_list']['_hash'] = md5(serialize($data['full_module_list']));
 
+        $data['currencies'] = $this->getSystemCurrencies();
         $data['fields']  = $this->getSugarFields();
         $data['views']   = $this->getSugarViews();
         $data['layouts'] = $this->getSugarLayouts();
@@ -922,10 +994,10 @@ class MetaDataManager {
      * Gets full module list and data for each module.
      *
      * @param array $data load metadata array
+     * @param array $fullModuleList 
      * @return array
      */
     public function _populateModules($data) {
-        //$mm = $this->getMetadataManager();
         $data['full_module_list'] = $this->getModuleList();
         $data['modules'] = array();
         foreach($data['full_module_list'] as $module) {
@@ -941,7 +1013,7 @@ class MetaDataManager {
      * @param array $data load metadata array
      * @return array
      */
-    private function _relateFields($data, $module, $bean) {
+    private function _relateFields(&$data, $module, $bean) {
         if (isset($data['modules'][$module]['fields'])) {
             $fields = $data['modules'][$module]['fields'];
 
