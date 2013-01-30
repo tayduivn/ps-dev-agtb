@@ -58,7 +58,7 @@ class SugarACLUsers extends SugarACLStrategy
             'field' => true,
             'DetailView' => true,
             'detail' => true,
-            'team_security' => true, 
+            'team_security' => true,
         );
 
     /**
