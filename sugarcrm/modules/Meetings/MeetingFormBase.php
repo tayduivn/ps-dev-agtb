@@ -321,14 +321,6 @@ function handleSave($prefix,$redirect=true, $useRequired=false) {
                 handleRedirect('', 'Meetings');
             }
             
-            $focus->setUserInvitees($focus->users_arr, $existingUsers);
-            $focus->setContactInvitees($focus->contacts_arr, $existingContacts);
-            //BEGIN SUGARCRM flav!=sales ONLY
-            $focus->setLeadInvitees($focus->leads_arr, $existingLeads);
-            //END SUGARCRM flav!=sales ONLY
-
-            // Bug #49195 : update vcal
-            vCal::cache_sugar_vcal($current_user);
             
             // CCL - Comment out call to set $current_user as invitee
             // set organizer to auto-accept
