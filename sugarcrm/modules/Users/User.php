@@ -2225,25 +2225,24 @@ EOQ;
      */
      public static function getReporteesWithLeafCount($user_id, $include_deleted = false)
      {
+        $db = DBManagerFactory::getInstance();
         $deleted = ($include_deleted? 1:0);
         $returnArray = array();
-     	$query      = "SELECT u.id, count(u2.id) as total FROM users u " .
+        $query      = "SELECT u.id, count(u2.id) as total FROM users u " .
                           "LEFT JOIN users u2 " .
                               "ON u.id = u2.reports_to_id ";
-        if(!$include_deleted)
-        {
+        if(!$include_deleted){
             $query .=         "AND u2.deleted = 0 ";
         }        
-        $query     .=   "WHERE u.reports_to_id = {$GLOBALS['db']->quoted(clean_string($user_id))} ";
-        if(!$include_deleted)
-        {
+        $query     .=   "WHERE u.reports_to_id = {$db->quoted(clean_string($user_id))} ";
+        if(!$include_deleted){
             $query .=       "AND u.deleted = {$deleted} ";
         }
         $query     .=   "GROUP BY u.id";
         
-        $result = $GLOBALS["db"]->query($query);
-        while($row = $GLOBALS["db"]->fetchByAssoc($result)){
-        	$returnArray[$row["id"]] = $row["total"]; 
+        $result = $db->query($query);
+        while($row = $db->fetchByAssoc($result)){
+            $returnArray[$row["id"]] = $row["total"]; 
         }
         
         return $returnArray;
@@ -2260,12 +2259,10 @@ EOQ;
      public static function getReporteeManagers($user_id, $include_deleted = false)
      {
         $returnArray = array();
-     	$reportees = User::getReporteesWithLeafCount($user_id, $include_deleted);
-        foreach($reportees as $key=>$value)
-        {
-            if($value > 0)
-            {
-        	   $returnArray[] = $key;
+        $reportees = User::getReporteesWithLeafCount($user_id, $include_deleted);
+        foreach($reportees as $key=>$value){
+            if($value > 0){
+               $returnArray[] = $key;
             }
         }
         return $returnArray;
@@ -2283,10 +2280,8 @@ EOQ;
      {
         $returnArray = array();
         $reportees = User::getReporteesWithLeafCount($user_id, $include_deleted);
-        foreach($reportees as $key=>$value)
-        {
-            if($value == 0)
-            {
+        foreach($reportees as $key=>$value){
+            if($value == 0){
                $returnArray[] = $key;
             }
         }
