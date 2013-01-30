@@ -52,6 +52,9 @@
                             text = $el.val();
                         callback({id: id, text: text});
                     },
+                    formatInputTooShort: function() {
+                        return '';
+                    },
                     formatSearching: function() {
                         return app.lang.get("LBL_LOADING", self.module);
                     },

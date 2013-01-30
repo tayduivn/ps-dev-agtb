@@ -129,10 +129,6 @@ class Forecast extends SugarBean
 		if ( isset($this->likely_case) && !empty($this->likely_case) ) {
             $this->likely_case = SugarCurrency::convertAmountFromBase($this->likely_case, $this->currency_id);
         }
-		$this->weigh_value = ' ';
-		if ( isset($this->weigh_value) && !empty($this->weigh_value) ) {
-            $this->weigh_value = SugarCurrency::convertAmountFromBase($this->weigh_value, $this->currency_id);
-        }
 	}
 
 

@@ -191,7 +191,7 @@
                 case this.LEVEL.ERROR:
                     return 'Error!';
                 case this.LEVEL.CONFIRMATION:
-                    return 'Notice!';
+                    return 'Warning!';
                 default:
                     return '';
             }

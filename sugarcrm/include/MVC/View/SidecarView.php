@@ -10,7 +10,6 @@
  * that may wish to use the sidecar framework may extend this class to provide module
  * specific support.
  *
- * @see include/MVC/View/views/view.sidecar.php
  */
 
 require_once('include/MVC/View/SugarView.php');
