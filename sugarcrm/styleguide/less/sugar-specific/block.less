@@ -41,10 +41,14 @@
   margin: 0; border: none;
 }
 
-.block.thumbnail .nav-tabs li,
-.block.tabs-left .nav-tabs li {
+
+.block.thumbnail .nav-tabs > li,
+.block.tabs-left .nav-tabs > li {
   border-bottom: 1px solid darken(@grayLighter, 5%);
   margin-bottom: 10px;
+}
+.block.tabs-left .nav-tabs > li {
+  padding: 0 0 0 20px;
 }
 
 .block.tabs-left .nav-tabs p {
@@ -56,21 +60,23 @@
 .block.tabs-left .nav-tabs li li .avatar img {
   margin: 3px 0 0;
 }
-
-.block.tabs-left .nav-tabs li li{
+//conflicts with button group dropdown li
+/*.block.tabs-left .nav-tabs li li{
   margin: 0;
   padding: 10px 10px 10px 38px;
   border-top: 1px solid @grayLighter;
   border-bottom: none;
-}
+}*/
 .block.tabs-left .nav-tabs .commented {
   background: @grayLighter;
-  margin: 0 0 0 -20px; 
+  margin: 0 0 0 -20px;
   box-shadow: inset 0 2px 4px rgba(0,0,0,.3);
   position: relative;
 }
-.commented li {
-  padding-left: 20px;
+.block.tabs-left .nav-tabs .commented li {
+  margin: 0;
+  //padding-left: 20px;
+  padding: 10px 10px 10px 38px;
   border-top: 1px solid @white !important;
   border-bottom: 1px solid @grayLight !important;
 }
