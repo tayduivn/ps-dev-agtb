@@ -4453,10 +4453,7 @@ $app_list_strings['oauth_type_dom'] = array(
 );
 $app_list_strings['oauth_client_type_dom'] = array(
     'user' => 'Sugar User',
-    'mobile' => 'Mobile Client',
-    'plugin' => 'Plug-in',
     'support_portal' => 'Support Portal',
-    'other' => 'other',
 );
 
 $app_list_strings ['emailTemplates_type_list'] = array (
