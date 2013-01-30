@@ -75,6 +75,16 @@
                 name: "record",
                 route: ":module/:id",
                 callback: recordHandler
+            },
+            {
+                name:'config',
+                route: ':module/config',
+                callback: function(module) {
+                       app.controller.loadView({
+                           module: module,
+                           layout: 'config'
+                        });
+                }
             }
         ];
 
