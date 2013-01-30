@@ -201,15 +201,6 @@ if(!isset($sugar_config['lead_conv_activity_opt'])) {
     $sugar_config['lead_conv_activity_opt'] = 'copy';
 }
 
-// change default theme from Sugar5 to RacerX
-if (isset($sugar_config['default_theme']) && $sugar_config['default_theme']=='Sugar5') {
-    logThis('Changing default theme from Sugar5 to RacerX', $path);
-    require_once('modules/Configurator/Configurator.php');
-    $configurator = new Configurator();
-    $configurator->config['default_theme'] = 'RacerX';
-    $configurator->handleOverride();
-}
-
 if(!rebuildConfigFile($sugar_config, $sugar_version)) {
 	logThis('*** WARNING: could not write config.php!', $path);
 }
@@ -338,6 +329,15 @@ updateRenamedModulesLabels();
 
 if(version_compare($_SESSION['current_db_version'], '6.7.0', '<')) {
 	setupCreateRole();
+
+    // change default theme from Sugar5 to RacerX
+    if (isset($sugar_config['default_theme']) && $sugar_config['default_theme']=='Sugar5') {
+        logThis('Changing default theme from Sugar5 to RacerX', $path);
+        require_once('modules/Configurator/Configurator.php');
+        $configurator = new Configurator();
+        $configurator->config['default_theme'] = 'RacerX';
+        $configurator->handleOverride();
+    }
 }
 
 //BEGIN SUGARCRM flav=PRO ONLY
