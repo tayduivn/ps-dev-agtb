@@ -40,6 +40,16 @@ class SugarJobUpdateForecastWorksheetsTest extends Sugar_PHPUnit_Framework_TestC
     private $opp;
     private $prod;
 
+    /**
+     * @var Administration
+     */
+    protected $admin;
+
+    /**
+     * @var isSetup
+     */
+    private $_isSetup;
+
     public function setUp()
     {
         SugarTestHelper::setUp('app_strings');
@@ -48,6 +58,12 @@ class SugarJobUpdateForecastWorksheetsTest extends Sugar_PHPUnit_Framework_TestC
         SugarTestHelper::setUp('current_user');
         global $current_user;
         $current_user->is_admin = 1;
+
+        //Make sure this is setup
+        $this->admin = BeanFactory::getBean('Administration');
+        $adminConfig = $this->admin->getConfigForModule('Forecasts');
+        $this->_isSetup = $adminConfig['is_setup'];
+        $this->admin->saveSetting('Forecasts', 'is_setup', '1', 'base');
 
         $this->tp = SugarTestTimePeriodUtilities::createTimePeriod('2008-01-01', '2008-03-31');
         $this->user = SugarTestUserUtilities::createAnonymousUser();
@@ -69,6 +85,7 @@ class SugarJobUpdateForecastWorksheetsTest extends Sugar_PHPUnit_Framework_TestC
         SugarTestOpportunityUtilities::removeAllCreatedOpportunities();
         SugarTestProductUtilities::removeAllCreatedProducts();
         SugarTestTimePeriodUtilities::removeAllCreatedTimePeriods();
+        $this->admin->saveSetting('Forecasts', 'is_setup', $this->_isSetup, 'base');
     }
 
 

@@ -348,7 +348,7 @@ class SugarSearchEngineFullIndexer extends SugarSearchEngineIndexerBase
                 $admin->saveSetting('info', 'fts_index_done', 1);
             }
 
-            $GLOBALS['log']->fatal("FTS Indexing completed with the following statistics: " . var_export($stats, TRUE));
+            $GLOBALS['log']->info("FTS Indexing completed with the following statistics: " . var_export($stats, TRUE));
         }
 
         return TRUE;
