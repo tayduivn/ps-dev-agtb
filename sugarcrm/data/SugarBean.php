@@ -2700,7 +2700,6 @@ class SugarBean
      *
      * @param array $row Fetched row
      * @todo loop through vardefs instead
-     * @internal runs into an issue when populating from field_defs for users - corrupts user prefs
      *
      * Internal function, do not override.
      */
@@ -2709,8 +2708,6 @@ class SugarBean
         $nullvalue='';
         foreach($this->field_defs as $field=>$field_value)
         {
-            if($field == 'user_preferences' && $this->module_dir == 'Users')
-                continue;
             if(isset($row[$field]))
             {
                 $this->$field = $row[$field];
@@ -2718,15 +2715,13 @@ class SugarBean
                 if(!empty($row[$owner])){
                     $this->$owner = $row[$owner];
                 }
-            }
-            else
-            {
+            } else {
                 $this->$field = $nullvalue;
             }
         }
         // TODO: add a vardef for my_favorite
         $this->my_favorite = false;
-        if(isset($row['my_favorite']) && !empty($row['my_favorite'])) {
+        if(!empty($row['my_favorite'])) {
             $this->my_favorite = true;
         }
 

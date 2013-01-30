@@ -2238,6 +2238,42 @@ EOQ;
         return false;
     }
 
+    /**
+     * Sets value from fetched row into the bean.  Special case override for Users module otherwise we incur the
+     * unnecessary check for user_preferences field for all SugarBean instances.
+     *
+     * @param array $row Fetched row
+     * @todo loop through vardefs instead
+     * @internal runs into an issue when populating from field_defs for users - corrupts user prefs
+     *
+     */
+    function populateFromRow($row)
+    {
+        $nullvalue='';
+        foreach($this->field_defs as $field=>$field_value)
+        {
+            if($field == 'user_preferences') {
+                continue;
+            }
+
+            if(isset($row[$field]))
+            {
+                $this->$field = $row[$field];
+                $owner = $field . '_owner';
+                if(!empty($row[$owner])){
+                    $this->$owner = $row[$owner];
+                }
+            } else {
+                $this->$field = $nullvalue;
+            }
+        }
+        // TODO: add a vardef for my_favorite
+        $this->my_favorite = false;
+        if(!empty($row['my_favorite'])) {
+            $this->my_favorite = true;
+        }
+    }
+
     //BEGIN SUGARCRM flav=int ONLY
     /**
      * This is a convenience function to get all the user ids that report to the invoking user instance
