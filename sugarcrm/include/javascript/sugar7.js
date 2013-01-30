@@ -80,10 +80,10 @@
                 name:'config',
                 route: ':module/config',
                 callback: function(module) {
-                       app.controller.loadView({
-                           module: module,
-                           layout: 'config'
-                        });
+                    app.controller.loadView({
+                        module: module,
+                        layout: 'config'
+                    });
                 }
             }
         ];
