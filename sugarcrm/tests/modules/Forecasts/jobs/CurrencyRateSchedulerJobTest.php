@@ -59,7 +59,7 @@ class CurrencyRateSchedulerJobTest extends Sugar_PHPUnit_Framework_TestCase
         $this->opportunity->save();
 
         $this->opportunityClosed = SugarTestOpportunityUtilities::createOpportunity();
-        $this->opportunityClosed->sales_stage = 'Closed Won';
+        $this->opportunityClosed->sales_stage = Opportunity::STAGE_CLOSED_WON;
         $this->opportunityClosed->currency_id = $this->currency->id;
         $this->opportunityClosed->save();
 
