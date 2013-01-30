@@ -1,5 +1,7 @@
 <!-- Form inputs
 ================================================== -->
+<script src="../assets/js/chart-utils.js"></script>
+
 <section id="select2">
   <div class="page-header">
     <h1>Select2 <small>a jQuery based replacement for select boxes. It supports searching, remote data sets, and infinite scrolling of results. <a href="http://ivaynberg.github.com/select2/" target="_blank"><i class="icon-book"></i> Docs</a> </small></h1>
@@ -285,7 +287,6 @@
     </div>
   </div>
 
-
   <!-- ==================== -->
 
   <div class="row">
@@ -405,6 +406,50 @@
 
   <!-- ==================== -->
 
+  <div class="row">
+    <div class="span12 padded">
+      <label>Use images in Dropdowns</label>
+      <select name="chart_type" class="select2" data-placeholder="Choose a chart type...">
+        <option></option>
+        <option value="Donut">Donut</option>
+        <option value="Funnel">Funnel</option>
+        <option value="Horizontal">Horizontal</option>
+        <option value="Line">Line</option>
+        <option value="Pareto">Pareto</option>
+        <option value="Pie">Pie</option>
+        <option value="Stack">Stack</option>
+        <option value="Vertical">Vertical</option>
+      </select>
+      <script>
+        $('select[name="chart_type"]').select2({
+          width:'200px',
+          minimumResultsForSearch:9,
+          formatResult: select2ChartIcon,
+          formatSelection: select2ChartIcon}
+        );
+      </script>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="span6">
+<pre class="prettyprint linenums" style="margin-bottom: 9px;">
+&lt;script&gt;
+  $('select[name="priority"]').select2({
+    width:'200px',
+    minimumResultsForSearch:9,
+    formatResult: select2ChartIcon,
+    formatSelection: select2ChartIcon}
+  );
+&lt;/script&gt;
+</pre>
+    </div>
+    <div class="span6">
+      <p>Using a custom renderer, you can even use images in drop downs.</p>
+    </div>
+  </div>
+
+  <!-- ==================== -->
   <div class="row">
     <div class="span12 padded">
 
@@ -604,4 +649,6 @@
       , ctor = getSelect2Constructor($this);
     //$this.select2( ctor );
   });
+
+
 </script>

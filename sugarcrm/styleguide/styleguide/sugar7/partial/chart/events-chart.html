@@ -1,16 +1,17 @@
 <div class="thumbnail widget" {{{target_id}}}>
-  <div class="btn-toolbar pull-right">
-    <a href="#" data-toggle="widget" class="btn btn-invisible"><i class="icon-chevron-up"></i></a>
-    <a href="#" data-toggle="dropdown" class="dropdown-toggle btn btn-invisible"><i class="icon-cog"></i></a>
-    <ul class="dropdown-menu left carettop">
-      <div>
-        <li><a href="#" class="primary">Expand</a></li>
-        <li><a href="#">Chart options</a></li>
-        <li><a href="#" class="widget-remove">Remove</a></li>
-      </div>
-    </ul>
-  </div>
+  {{>dashletControls}}
   <h4 data-toggle="widget">Events</h4>
+  <div class="dashlet-options">
+    <div class="row-fluid">
+      <div class="span8">{{>chartOptions}}</div>
+      <div class="span4">
+        <div class="btn-group pull-right dashlet-group" data-toggle="buttons-radio">
+          <button class="btn" rel="tooltip" data-original-title="My Interactions" data-placement="top"><i class="icon-user"></i></button>
+          <button class="btn active" rel="tooltip" data-original-title="All Interactions" data-placement="top"><i class="icon-group"></i></button>
+        </div>
+      </div>
+    </div>
+  </div>
   <div class="widget-content">
     <div id="donut" style="height: 300px">
       <svg></svg>
@@ -19,4 +20,27 @@
 </div>
 
 <script src="../js/nvd3/data/pie_data.js"></script>
-<script src="js/dashboard-chart.js"></script>
+<script src="js/charts/events-chart.js"></script>
+<script src="../../assets/js/chart-utils.js"></script>
+
+<script>
+  var _ctor = {
+      minimumResultsForSearch: 9,
+      dropdownCss: {
+        'width': '160px',
+        'border-top': '1px solid #AAA',
+        'border-bottom': '1px solid #AAA',
+        'max-height': '290px'
+      },
+      dropdownCssClass: 'chart-results',
+      containerCss: {
+        'width': '60px'
+      },
+      containerCssClass: 'select2-narrow',
+      formatResult: select2ChartResult,
+      formatSelection: select2ChartSelection
+  };
+  $('select[name="chart_type"]').select2(_ctor);
+  $('select[name="chart_type"]').select2('val','Donut');
+
+</script>
