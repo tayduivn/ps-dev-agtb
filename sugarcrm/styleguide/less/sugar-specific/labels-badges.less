@@ -42,37 +42,45 @@
 }
 */
 
+.label-module {
+  height: 38px !important;
+  width: 38px !important;
+  font-size: 16px !important;
+  line-height: 16px !important;
+  padding: 4px 0 0 4px !important;
+  margin: 0 !important;
+  border-radius: @baseBorderRadius !important;
+  border: none !important;
+}
+
 .label,
 .badge {
-  &-Important         { background-color: @btnDangerBackground; color:@white;}
-  &-Important[href]   { background-color: darken(@btnDangerBackground, 10%); color:@white;}
-  &-Warning           { background-color: @orange; color:@white;}
-  &-Warning[href]     { background-color: darken(@orange, 10%); color:@white;}
-  &-Success           { background-color: @btnSuccessBackground; color:@white;}
-  &-Success[href]     { background-color: darken(@btnSuccessBackground, 10%); color:@white; }
-  &-Info              { background-color: @btnInfoBackground; color:@white;}
-  &-Info[href]        { background-color: darken(@btnInfoBackground, 10%); color:@white;}
-  &-Inverse           { background-color: @grayDark; color:@white;}
-  &-Inverse[href]     { background-color: darken(@grayDark, 10%); color:@white;}
-  &-Log           { background-color: @gray; color:@white;}
-  &-Log[href]     { background-color: darken(@gray, 10%); color:@white;}
-  &-Documents           { background-color: @purple; color:@white;}
-  &-Documents[href]     { background-color: darken(@purple, 10%); color:@white;}
-  &-Files           { background-color: @orange; color:@white;}
-  &-Files[href]     { background-color: darken(@orange, 10%); color:@white;}
-  &-Contacts           { background-color: @blue; color:@white;}
-  &-Contacts[href]     { background-color: darken(@blue, 10%); color:@white;}
-  &-Leads           { background-color: @green; color:@white;}
-  &-Leads[href]     { background-color: darken(@green, 10%); color:@white;}
-  &-Notes           { background-color: @warningText; color:@white;}
-  &-Notes[href]     { background-color: darken(@warningText, 10%); color:@white;}
-
-
-
-  &-Cases           { background-color: darken(@blueLight,10%); color:@white;}
-  &-Cases[href]           { background-color: darken(@blueLight, 20%); }
-  &-Bugs           { background-color: darken(@red,10%); color:@white;}
-  &-Bugs[href]           { background-color: darken(@red, 20%); }
-  &-KBDocuments           { background-color: lighten(@purple,20%); color:@white;}
-  &-KBDocuments[href]           { background-color: lighten(@purple, 10%); }
+  &-important, 
+  &-important[href]   { background-color: @btnDangerBackground; color:@white;}
+  &-warning, 
+  &-warning[href]     { background-color: @orange; color:@white;}
+  &-success, 
+  &-success[href]     { background-color: @btnSuccessBackground; color:@white;}
+  &-info, 
+  &-info[href]        { background-color: @btnInfoBackground; color:@white;}
+  &-inverse, 
+  &-inverse[href]     { background-color: @grayDark; color:@white;}
+  &-log, 
+  &-log[href]         { background-color: darken(@gray, 10%); color:@white;}
+  &-opportunity { background-color: @purple; color:@white; text-shadow: 0 -1px 1px darken(@purple, 10%); box-shadow: inset 0 -2px 0 darken(@purple, 10%), inset 0 0 1px darken(@purple, 10%);}
+  &-opportunity[href] { background-color: @purple; color:@white; text-shadow: 0 -1px 1px darken(@purple, 10%); box-shadow: inset 0 -2px 0 darken(@purple, 10%), inset 0 0 1px darken(@purple, 10%);}
+  &-files,
+  &-files[href]       { background-color: @orange; color:@white; text-shadow: 0 -1px 1px darken(@orange, 10%); box-shadow: inset 0 -2px 0 darken(@orange, 10%), inset 0 0 1px darken(@orange, 10%);}
+  &-contacts,
+  &-contacts[href]    { background-color: @blue; color:@white; text-shadow: 0 -1px 1px darken(@blue, 10%); box-shadow: inset 0 -2px 0 darken(@blue, 10%), inset 0 0 1px darken(@blue, 10%);}
+  &-account,
+  &-accounts[href]    { background-color: @green; color:@white; text-shadow: 0 -1px 1px darken(@green, 10%); box-shadow: inset 0 -2px 0 darken(@green, 10%), inset 0 0 1px darken(@green, 10%);}
+  &-notes, 
+  &-notes[href]       { background-color: @warningText; color:@white; text-shadow: 0 -1px 1px darken(@green, 10%); box-shadow: inset 0 -2px 0 darken(@green, 10%), inset 0 0 1px darken(@green, 10%);}
+  &-cases,
+  &-cases[href]       { background-color: darken(@blueLight,10%); color:@white; text-shadow: 0 -1px 1px darken(@green, 10%); box-shadow: inset 0 -2px 0 darken(@green, 10%), inset 0 0 1px darken(@green, 10%);}
+  &-bugs,
+  &-bugs[href]        { background-color: @red; color:@white; text-shadow: 0 -1px 1px darken(@red, 10%); box-shadow: inset 0 -2px 0 darken(@red, 10%), inset 0 0 1px darken(@red, 10%);}
+  &-kbdocuments,
+  &-kbdocuments[href] { background-color: lighten(@purple,20%); color:@white; text-shadow: 0 -1px 1px darken(@purple,30%); box-shadow: inset 0 -2px 0 darken(@purple,30%), inset 0 0 1px darken(@purple,30%);}
 }
