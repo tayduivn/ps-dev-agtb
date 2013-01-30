@@ -352,12 +352,15 @@ class CurrentUserApi extends SugarApi {
         $user_data['preferences']['number_grouping_separator'] = $locale->getNumberGroupingSeparator();
         $user_data['module_list'] = $this->getModuleList();
 
+        // use their current auth language if it exists
         if(!empty($_SESSION['authenticated_user_language'])) {
             $language = $_SESSION['authenticated_user_language'];
         }
+        // if current auth language doesn't exist get their preferred lang from the user obj
         elseif(empty($_SESSION['authenticated_user_language']) && !empty($current_user->preferred_language)) {
             $language = $current_user->preferred_language;
         }
+        // if nothing exists, get the sugar_config default language
         else {
             $language = $GLOBALS['sugar_config']['default_language'];
         }
