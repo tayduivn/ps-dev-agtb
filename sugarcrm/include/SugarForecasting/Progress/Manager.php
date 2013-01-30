@@ -237,6 +237,7 @@ class SugarForecasting_Progress_Manager extends SugarForecasting_Manager
         $timeperiod_id = $this->getArg('timeperiod_id');
         $excluded_sales_stages_won = $this->getArg('sales_stage_won');
         $excluded_sales_stages_lost = $this->getArg('sales_stage_lost');
+        $repIds = User::getReporteeReps($user_id);
 
         //Note: this will all change in sugar7 to the filter API
         //set up outer part of the query
@@ -258,27 +259,19 @@ class SugarForecasting_Progress_Manager extends SugarForecasting_Manager
                             "AND o.assigned_user_id = {$db->quoted($user_id)} ";
         
         //only committed rep opps
-        $queryRepOpps = "SELECT " . 
-                            "sum(w.likely_case * w.base_rate) AS amount, count(*) as recordcount " .
-                        "FROM worksheet w " .
-                        "INNER JOIN users u " .
-                            "ON w.user_id = u.id " .
-                                "AND u.reports_to_id = {$db->quoted($user_id)} " .
-                        "INNER JOIN products p " .
-                            "ON w.related_id = p.id " .
-                        "INNER JOIN opportunities o " .
-                            "ON p.opportunity_id = o.id " .
-                        "WHERE " .
-                            "w.timeperiod_id = {$db->quoted($timeperiod_id)} " . 
-                            "AND w.deleted = 0 " .
-                            "AND version = 1 " .
-                            "AND forecast_type = 'Direct' ";
-        
+        $queryRepOpps = "select amount, recordcount from " .
+                            "(select sum(f.likely_case*f.base_rate) AS amount, opp_count as recordcount, max(f.date_entered) from forecasts f " .
+                                "INNER JOIN users u " . 
+                                    "ON f.user_id = u.id " .
+                                        "AND ((u.reports_to_id = {$db->quoted($user_id)} and f.forecast_type = 'Rollup') " .
+                                        "OR (u.id in('". implode("', '", $repIds) . "') and f.forecast_type='Direct')) " .
+                                "where timeperiod_id = {$db->quoted($timeperiod_id)}  " .
+                            "group by user_id) as rollup ";
+                
         //per requirements, exclude the sales stages won
         if (count($excluded_sales_stages_won)) {
             foreach ($excluded_sales_stages_won as $exclusion) {
-                $queryMgrOpps .= "AND o.sales_stage != {$db->quoted($exclusion)} ";
-                $queryRepOpps .= "AND o.sales_stage != {$db->quoted($exclusion)} ";
+                $queryMgrOpps .= "AND o.sales_stage != {$db->quoted($exclusion)} ";                
             }
         }
 
@@ -286,7 +279,6 @@ class SugarForecasting_Progress_Manager extends SugarForecasting_Manager
         if (count($excluded_sales_stages_lost)) {
             foreach ($excluded_sales_stages_lost as $exclusion) {
                 $queryMgrOpps .= "AND o.sales_stage != {$db->quoted($exclusion)} ";
-                $queryRepOpps .= "AND o.sales_stage != {$db->quoted($exclusion)} ";
             }
         }
         
@@ -295,7 +287,7 @@ class SugarForecasting_Progress_Manager extends SugarForecasting_Manager
 
         //finally, finish up the outer query
         $query .= ") sums";
-
+        
         $result = $db->query($query);
         $row = $db->fetchByAssoc($result);
         $this->pipelineRevenue = is_numeric($row["amount"]) ? $row["amount"] : 0;
