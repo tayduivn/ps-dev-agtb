@@ -303,7 +303,7 @@
             }
             value = app.math.round(value);
         }
-        return value;
+        return value.toString();
     },
 
     /**

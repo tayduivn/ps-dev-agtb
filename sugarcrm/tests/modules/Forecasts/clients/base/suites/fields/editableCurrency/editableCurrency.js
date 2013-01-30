@@ -101,16 +101,16 @@ describe("forecast editableCurrency field", function () {
             expect(field.parsePercentage(field.value)).toEqual(field.value);
         });
         it("should return a 75 when percentage is +50%", function() {
-            expect(field.parsePercentage("+50%")).toEqual(75.75);
+            expect(field.parsePercentage("+50%")).toEqual("75.75");
         });
         it("should return a 25 when percentage is -50%", function() {
-            expect(field.parsePercentage("-50%")).toEqual(25.25);
+            expect(field.parsePercentage("-50%")).toEqual("25.25");
         });
         it("should return a 25 when percentage is 50%", function() {
-            expect(field.parsePercentage("50%")).toEqual(25.25);
+            expect(field.parsePercentage("50%")).toEqual("25.25");
         });
         it("should return 53 with percentage is +5%", function() {
-            expect(field.parsePercentage("+5%")).toEqual(53.03);
+            expect(field.parsePercentage("+5%")).toEqual("53.03");
         });
     });
 
