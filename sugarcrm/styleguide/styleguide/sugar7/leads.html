@@ -136,9 +136,9 @@
       $('body').on('click', '.dropdown-menu li.merge', function(){
         drawer(true);
         loadPartials([
-          {"file":"merge/header-choose-primary.html","target":"#edit .headerpane","method":"replace"},
-          {"file":"merge/choose-primary.html","target":"#edit .record","method":"replace"},
-          {"file":"merge/choose-primary-sidebar.html","target":".sidebar-content .side-pane","method":"replace"}
+          {"file":"merge/merge-interface-header.html","target":"#edit .headerpane","method":"replace"},
+          {"file":"merge/merge-interface.html","target":"#edit .record","method":"replace"},
+          {"file":"merge/merge-interface-sidebar.html","target":".sidebar-content .side-pane","method":"replace"}
         ]);
       });
       $('body').on('click', '.view_change_log', function(){

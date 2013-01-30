@@ -2072,7 +2072,7 @@ table.dataTable th.sorting_desc {
 table.dataTable tbody td {
   max-width: 100px;
 }
-table.dataTable tbody td> * {
+table.dataTable tbody td> *:not(.overflow-visible) {
   display: inline-block;
   width: 100%;
   overflow: hidden;
@@ -3828,7 +3828,7 @@ article .actions,
 .select2-results svg {
   width: 20px;
   height: 20px;
-  margin-right: 8px;
+  margin-right: 10px;
 }
 .chart-results .select2-results {
   max-height: 290px;
@@ -5529,8 +5529,11 @@ body.preview .side-pane.active {
   background: red !important;
 }
 .navbar a [class^="icon-"] {
-  color: #fff !important;
+  color: #fff;
   font-size: 14px;
+}
+.navbar a:hover .icon-favorite {
+  color: #FED440 !important;
 }
 .navbar .dropdown .btn {
   margin-top: 8px;
@@ -5548,7 +5551,6 @@ body.preview .side-pane.active {
   margin-left: 0;
   margin-top: 0;
   top: 44px;
-  right: -8px;
   left: auto;
   -webkit-border-radius: 4px;
   -moz-border-radius: 4px;
@@ -5557,16 +5559,44 @@ body.preview .side-pane.active {
   -moz-border-radius: 4px;
   border-radius: 4px;
 }
+.navbar .dropdown-menu a [class^="icon-"] {
+  position: absolute;
+  left: 12px;
+  text-indent: 0;
+  color: #CDCCCB;
+  line-height: 16px;
+}
 .navbar .dropdown-menu:before {
   border-bottom-color: rgba(0,0,0,0.2);
 }
 .navbar .dropdown-menu li a {
   display: block;
   padding: 8px;
+  text-indent: 32px;
 }
 .navbar .dropdown-menu li,
 .navbar .dropdown-menu li.divider {
   padding: 0;
+}
+.navbar .dropdown-menu .recentContainer {
+  border-top: 1px solid #CDCCCB;
+  bottom: -1px;
+  position: relative;
+}
+.navbar .dropdown-menu .recentContainer,
+.navbar .dropdown-menu .favoritesContainer {
+  text-indent: 40px;
+  line-height: 18px;
+}
+.navbar .dropdown-menu .recentContainer li:first-child > a,
+.navbar .dropdown-menu .favoritesContainer li:first-child > a {
+  border-top: 1px solid #f5f5f5;
+  -webkit-border-radius: 0;
+  -moz-border-radius: 0;
+  border-radius: 0;
+  -webkit-border-radius: 0;
+  -moz-border-radius: 0;
+  border-radius: 0;
 }
 .navbar .advanced {
   position: absolute;
