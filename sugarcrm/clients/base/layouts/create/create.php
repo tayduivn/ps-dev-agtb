@@ -2,5 +2,5 @@
 
 $layout = MetaDataManager::getLayout('SideBarLayout');
 $layout->push('main', array('view'=>'create'));
-$layout->push('side', array('layout'=>'sidebar'));
+$layout->push('preview', array('layout' => 'preview'));
 $viewdefs['base']['layout']['create'] = $layout->getLayout();
