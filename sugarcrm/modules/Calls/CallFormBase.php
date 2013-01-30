@@ -339,7 +339,6 @@ function handleSave($prefix,$redirect=true,$useRequired=false) {
             $focus->save(true);
             $return_id = $focus->id;
             
-            $focus->setUserInvitees($focus->users_arr, $existingUsers);
             $focus->setContactInvitees($focus->contacts_arr, $existingContacts);
             //BEGIN SUGARCRM flav!=sales ONLY
             $focus->setLeadInvitees($focus->leads_arr, $existingLeads);
