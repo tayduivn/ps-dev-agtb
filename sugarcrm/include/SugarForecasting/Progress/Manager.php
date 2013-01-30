@@ -132,57 +132,7 @@ class SugarForecasting_Progress_Manager extends SugarForecasting_Manager
         }
 
         return $quota;
-
-    }
-
-    /**
-     * retreives the number of opportunities set to be used in this forecast period, excludes only the closed stages
-     *
-     * @return mixed
-     */
-    public function getPipelineOpportunityCount()
-    {
-        $db = DBManagerFactory::getInstance();
-
-        $user_id = $this->getArg('user_id');
-        $timeperiod_id = $this->getArg('timeperiod_id');
-        $excluded_sales_stages_won = $this->getArg('sales_stage_won');
-        $excluded_sales_stages_lost = $this->getArg('sales_stage_lost');
-
-        //set user ids and timeperiods
-        $where = "( users.reports_to_id = " . $db->quoted($user_id);
-        $where .= " OR opportunities.assigned_user_id = " . $db->quoted($user_id) . ")";
-        $where .= " AND timeperiods.id = " . $db->quoted($timeperiod_id);
-
-
-        //per requirements, exclude the sales stages won
-        if (count($excluded_sales_stages_won)) {
-            foreach ($excluded_sales_stages_won as $exclusion) {
-                $where .= " AND opportunities.sales_stage != " . $db->quoted($exclusion);
-            }
-        }
-
-        //per the requirements, exclude the sales stages for closed lost
-        if (count($excluded_sales_stages_lost)) {
-            foreach ($excluded_sales_stages_lost as $exclusion) {
-                $where .= " AND opportunities.sales_stage != " . $db->quoted($exclusion);
-            }
-        }
-
-        // no deleted opportunities
-        $where .= " AND opportunities.deleted = 0";
-
-        //build the query
-        $query = $this->opportunity->create_list_query(NULL, $where);
-        $query = $this->opportunity->create_list_count_query($query);
-
-        $result = $db->query($query);
-        $row = $db->fetchByAssoc($result);
-        $opportunitiesCount = $row['c'];
-
-        return $opportunitiesCount;
-    }
-
+    }    
 
     /**
      * Retrieves the amount of closed won opportunities
