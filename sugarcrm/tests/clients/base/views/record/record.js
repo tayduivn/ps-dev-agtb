@@ -9,6 +9,7 @@ describe("Record View", function() {
         SugarTest.loadHandlebarsTemplate('button', 'field', 'base', 'detail');
         SugarTest.loadHandlebarsTemplate('buttondropdown', 'field', 'base', 'detail');
         SugarTest.loadHandlebarsTemplate(viewName, 'view', 'base');
+        SugarTest.loadComponent('base', 'field', 'base');
         SugarTest.loadComponent('base', 'field', 'button');
         SugarTest.loadComponent('base', 'field', 'buttondropdown');
         SugarTest.loadComponent('base', 'view', 'editable');
@@ -150,6 +151,27 @@ describe("Record View", function() {
             });
 
             expect(_.size(view.fields)).toBe(0);
+        });
+
+        it("should call decorateError on error fields during 'error:validation' events", function(){
+            view.render();
+            view.model.set({
+                name: 'Name',
+                case_number: 123,
+                description: 'Description'
+            });
+            var descriptionField = _.find(view.fields, function(field){
+                return field.name === 'description';
+            });
+            var stub = sinon.stub(descriptionField, 'decorateError');
+            //Simulate a 'required' error on description field
+            view.model.trigger('error:validation', {description: {required : true}});
+            //Defer expectations since decoration is deferred
+            _.defer(function(stub){
+                expect(stub).toHaveBeenCalledWith({required: true});
+                stub.restore();
+            }, stub);
+
         });
 
         it("Should display all 8 editable fields when more link is clicked", function() {
