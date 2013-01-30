@@ -330,6 +330,21 @@ if (!class_exists("ZipArchive"))
 
 }
 
+// check BCMATH support
+if (!function_exists("bcadd"))
+{
+    $bcmathStatus = "<span class='stop'><b>{$mod_strings['ERR_CHECKSYS_BCMATH']}</b></span>";
+
+    installLog("ERROR: BCMATH support not found.");
+    $error_found = true;
+    $error_txt .= '
+      <tr>
+        <td><strong>'.$mod_strings['LBL_CHECKSYS_BCMATH'].'</strong></td>
+        <td  align="right" class="error">'.$bcmathStatus.'</td>
+      </tr>';
+} else {
+    installLog("/BCMATH check passed");
+}
 
 
 $customSystemChecks = installerHook('additionalCustomSystemChecks');
