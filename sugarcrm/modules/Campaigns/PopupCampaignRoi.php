@@ -55,7 +55,7 @@ $opp_query1  = "select camp.name, camp.actual_cost,camp.budget,camp.expected_rev
                             ROUND((SUM(opp.amount) - SUM(camp.actual_cost))/(SUM(camp.actual_cost)), 2)*100 as ROI";
             $opp_query1 .= " from opportunities opp";
             $opp_query1 .= " right join campaigns camp on camp.id = opp.campaign_id";
-            $opp_query1 .= " where opp.sales_stage = 'Closed Won' and camp.id='$campaign_id'";
+            $opp_query1 .= " where opp.sales_stage = '".Opportunity::STAGE_CLOSED_WON."' and camp.id='$campaign_id'";
             $opp_query1 .= " group by camp.name";
             //$opp_query1 .= " and deleted=0";
             $opp_result1=$campaign->db->query($opp_query1);
