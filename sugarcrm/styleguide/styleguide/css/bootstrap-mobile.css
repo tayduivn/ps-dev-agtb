@@ -2227,12 +2227,10 @@ input[type="button"].btn-block {
 }
 .btn.active,
 .btn:not(.disabled):active {
-  background-color: #e8e8e8;
-  color: #58595B;
   text-shadow: none;
-  -webkit-box-shadow: inset 0 1px 8px rgba(0,0,0,.2) !important;
-  -moz-box-shadow: inset 0 1px 8px rgba(0,0,0,.2) !important;
-  box-shadow: inset 0 1px 8px rgba(0,0,0,.2) !important;
+  -webkit-box-shadow: inset 0 1px 10px rgba(0,0,0,.9) !important;
+  -moz-box-shadow: inset 0 1px 10px rgba(0,0,0,.9) !important;
+  box-shadow: inset 0 1px 10px rgba(0,0,0,.9) !important;
 }
 .btn {
   border: 1px solid #CDCCCB;
