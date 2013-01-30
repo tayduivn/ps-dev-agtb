@@ -129,7 +129,7 @@ class UserTest extends Sugar_PHPUnit_Framework_TestCase
     
     public function testGetReporteesWithLeafCount()
     {
-    	$manager = SugarTestUserUtilities::createAnonymousUser();
+        $manager = SugarTestUserUtilities::createAnonymousUser();
         
         //set up users
         $subManager1 = SugarTestUserUtilities::createAnonymousUser();
@@ -171,7 +171,7 @@ class UserTest extends Sugar_PHPUnit_Framework_TestCase
     
     public function testGetReporteeManagers()
     {
-    	$manager = SugarTestUserUtilities::createAnonymousUser();
+        $manager = SugarTestUserUtilities::createAnonymousUser();
         
         //set up users
         $subManager1 = SugarTestUserUtilities::createAnonymousUser();
