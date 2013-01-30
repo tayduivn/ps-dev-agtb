@@ -37,7 +37,13 @@
         'mouseenter .rowaction': 'showTooltip',
         'mouseleave .rowaction': 'hideTooltip',
         'mouseenter tr':'showActions',
-        'mouseleave tr':'hideActions'
+        'mouseleave tr':'hideActions',
+        'mouseenter .ellipsis_inline':'addTooltip'
+    },
+    addTooltip: function(event){
+        if (_.isFunction(app.utils.handleTooltip)) {
+            app.utils.handleTooltip(event, this);
+        }
     },
     initialize: function(options) {
         options.meta = $.extend(true, {}, app.metadata.getView(options.module, 'baselist') || {}, options.meta);

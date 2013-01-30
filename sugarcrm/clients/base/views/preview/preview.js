@@ -27,13 +27,18 @@
 ({
     events: {
         'click .more': 'toggleMoreLess',
-        'click .less': 'toggleMoreLess'
+        'click .less': 'toggleMoreLess',
+        'mouseenter .ellipsis_inline':'addTooltip'
     },
 
     // "binary semaphore" for the pagination click event, this is needed for async changes to the preview model
     switching: false,
     hiddenPanelExists: false,
-
+    addTooltip: function(event){
+        if (_.isFunction(app.utils.handleTooltip)) {
+            app.utils.handleTooltip(event, this);
+        }
+    },
     initialize: function(options) {
         _.bindAll(this);
         app.view.View.prototype.initialize.call(this, options);
