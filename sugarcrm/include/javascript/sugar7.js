@@ -39,7 +39,6 @@
                 name: "list",
                 route: ":module",
                 callback: function(module) {
-                    console.log("listing");
                     app.controller.loadView({
                         module: module,
                         layout: "records"
