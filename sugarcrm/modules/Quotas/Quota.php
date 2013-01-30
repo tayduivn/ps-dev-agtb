@@ -21,12 +21,9 @@ if ( !defined('sugarEntry') || !sugarEntry ) {
  *to the License for the specific language governing these rights and limitations under the License.
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
-/*********************************************************************************
- * $Id: Quota.php 55318 2010-03-15 16:36:53Z jmertic $
- * Description:
- ********************************************************************************/
-
-// Quotas is used to store quota information on certain users.
+/**
+ *  Quotas are used to store quota information on certain users.
+ */
 class Quota extends SugarBean
 {
 	// Stored fields
@@ -89,7 +86,7 @@ class Quota extends SugarBean
 	 {
 		 return "$this->name";
 	 }
- 
+
  */
 
 	/**
@@ -147,15 +144,15 @@ class Quota extends SugarBean
 	/*
 	 function save_relationship_changes($is_update)
 	 {
- 
+
 	 }
- 
+
 	 function clear_product_producttype_relationship($producttype_id)
 	 {
 		 $query = "UPDATE $this->rel_products set type_id='' where (type_id='$producttype_id') and deleted=0";
 		 $this->db->query($query,true,"Error clearing producttype to producttype relationship: ");
 	 }
- 
+
 	 function mark_relationships_deleted($id)
 	 {
 		 $this->clear_product_producttype_relationship($id);
@@ -427,9 +424,9 @@ class Quota extends SugarBean
 	 * @param $user_id String value of the user id to retrieve.  If NULL, the $current_user is used
 	 * @param $should_rollup boolean value indicating whether or not the quota should be a rollup calculation; false by default
 	 *
-	 * @return array [currency_id => int, amount => number, timeperiod_name => String, formatted_amount => String]
+	 * @return array [currency_id => int, amount => number, formatted_amount => String]
 	 */
-	function getRollupQuota($timeperiod_id, $user_id = NULL, $should_rollup = FALSE)
+	public function getRollupQuota($timeperiod_id, $user_id = NULL, $should_rollup = FALSE)
 	{
 		global $current_user;
 		$rollup_filter = "AND quotas.quota_type = 'Direct' ";
@@ -453,11 +450,14 @@ class Quota extends SugarBean
 		$result = $this->db->limitQuery($qry, 0, 1);
 		$row    = $this->db->fetchByAssoc($result);
 
-		if(!empty($row)) {
-            $row['formatted_amount'] = SugarCurrency::formatAmountUserLocale($row['amount'], $row['currency_id']);
+		if(empty($row)) {
+            // This is to prevent return value of false when a given timeperiod has no quota.
+            $row = array(
+                'currency_id' => -99,
+                'amount' => 0,
+            );
 		}
-
-
+        $row['formatted_amount'] = SugarCurrency::formatAmountUserLocale($row['amount'], $row['currency_id']);
 
 		return $row;
 	}
@@ -679,15 +679,15 @@ class Quota extends SugarBean
 		 $where_clauses = Array();
 		 $the_query_string = $this->db->quote($the_query_string);
 		 array_push($where_clauses, "name like '$the_query_string%'");
- 
+
 		 $the_where = "";
 		 foreach($where_clauses as $clause)
 		 {
 			 if($the_where != "") $the_where .= " or ";
 			 $the_where .= $clause;
 		 }
- 
- 
+
+
 		 return $the_where;
 	 }
  */
