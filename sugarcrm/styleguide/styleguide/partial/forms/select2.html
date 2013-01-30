@@ -424,9 +424,10 @@
         $('select[name="chart_type"]').select2({
           width:'200px',
           minimumResultsForSearch:9,
-          formatResult: select2ChartIcon,
-          formatSelection: select2ChartIcon}
-        );
+          formatResult: select2ChartResult,
+          formatSelection: select2ChartSelection,
+          dropdownCssClass: 'chart-results'
+        });
       </script>
     </div>
   </div>
@@ -438,8 +439,8 @@
   $('select[name="priority"]').select2({
     width:'200px',
     minimumResultsForSearch:9,
-    formatResult: select2ChartIcon,
-    formatSelection: select2ChartIcon}
+    formatResult: select2ChartResult,
+    formatSelection: select2ChartSelection}
   );
 &lt;/script&gt;
 </pre>
