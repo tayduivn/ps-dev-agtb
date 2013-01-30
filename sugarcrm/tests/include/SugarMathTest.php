@@ -27,7 +27,6 @@
  *
  * unit tests for math library
  *
- * @author Monte Ohrt <mohrt@sugarcrm.com>
  */
 class SugarMathTest extends Sugar_PHPUnit_Framework_TestCase
 {
@@ -94,18 +93,15 @@ class SugarMathTest extends Sugar_PHPUnit_Framework_TestCase
      * test setting value and getting result
      *
      * @dataProvider setGetValueProvider
+     * @param mixed $result
      * @param mixed $setVal the value to set
      * @param int   $scale the math precision to use
      * @group math
      * @access public
      */
-    public function testSetGetValue($setVal,$scale)
+    public function testSetGetValue($result, $setVal, $scale)
     {
-        // test initialize with object, get result
-        $math = new SugarMath($setVal,$scale);
-        $this->assertEquals($setVal, $math->result());
-        // do the same with static instance
-        $this->assertEquals($setVal, SugarMath::init($setVal)->result());
+        $this->assertSame($result, SugarMath::init($setVal, $scale)->result());
     }
 
     /**
@@ -117,18 +113,19 @@ class SugarMathTest extends Sugar_PHPUnit_Framework_TestCase
     public function setGetValueProvider()
     {
         return array(
-            array(100,0),
-            array(100.01,2),
-            array(100.0000000000000001,16),
-            array(-100,0),
-            array(-100.01,2),
-            array(-100.0000000000000001,16),
-            array('100',0),
-            array('100.01',2),
-            array('100.0000000000000001',16),
-            array('-100',0),
-            array('-100.01',2),
-            array('-100.0000000000000001',16),
+            array('100','100',0),
+            array('100.011','100.011',3),
+            array('100.0000000000000001','100.0000000000000001',16),
+            array('-100','-100',0),
+            array('-100.011','-100.011',3),
+            array('-100.0000000000000001','-100.0000000000000001',16),
+            // strings or numbers should work the same,
+            // so long as precision isn't
+            // outside the range of a double
+            array('100',100,0),
+            array('100.011',100.011,3),
+            array('-100',-100,0),
+            array('-100.011',-100.011,3),
         );
     }
 
@@ -142,10 +139,6 @@ class SugarMathTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testSetGetScale($setVal)
     {
-        // test initialize with object, get result
-        $math = new SugarMath(0,$setVal);
-        $this->assertEquals($setVal, $math->getScale());
-        // do the same with static instance
         $this->assertEquals($setVal, SugarMath::init(0,$setVal)->getScale());
     }
 
@@ -182,7 +175,7 @@ class SugarMathTest extends Sugar_PHPUnit_Framework_TestCase
     public function testBasicOperations($initVal,$method,$methodVal,$result)
     {
         $math = SugarMath::init($initVal)->$method($methodVal);
-        $this->assertEquals($result, $math->result());
+        $this->assertSame($result, $math->result());
 
     }
 
@@ -195,16 +188,16 @@ class SugarMathTest extends Sugar_PHPUnit_Framework_TestCase
     public function basicOperationsProvider()
     {
         return array(
-            array(100,'add',100,200),
-            array(100.1,'add',100.1,200.2),
-            array(100,'sub',50,50),
-            array(100,'sub',50.2,49.8),
-            array(100,'mul',100,10000),
-            array(100,'mul',100.1,10010),
-            array(100,'div',50,2),
-            array(100,'div',50.1,1.99),
-            array(100,'pow',2,10000),
-            array(100,'mod',3,1),
+            array('100','add','100','200.00'),
+            array('100.1','add','100.1','200.20'),
+            array('100','sub','50','50.00'),
+            array('100','sub','50.2','49.80'),
+            array('100','mul','100','10000.00'),
+            array('100','mul','100.1','10010.00'),
+            array('100','div','50','2.00'),
+            array('100','div','50.1','1.99'),
+            array('100','pow','2','10000.00'),
+            array('100','mod','3','1.00'),
         );
     }
 
@@ -301,8 +294,8 @@ class SugarMathTest extends Sugar_PHPUnit_Framework_TestCase
     public function testExpressionsEmpty()
     {
         // empty expression
-        $this->assertFalse(SugarMath::init()->exp(''));
-        $this->assertFalse(SugarMath::init()->exp('()'));
+        $this->assertEquals(0, SugarMath::init()->exp('')->result());
+        $this->assertEquals(0, SugarMath::init()->exp('()')->result());
     }
 
     /**
@@ -320,8 +313,8 @@ class SugarMathTest extends Sugar_PHPUnit_Framework_TestCase
     public function testLongPrecisionOperations($initVal,$method,$opVal,$result,$scale)
     {
         // 50 digits, 50 decimals, adding
-        $math = SugarMath::init($initVal,$scale)->$method($opVal);
-        $this->assertEquals($result, $math->result());
+        $math = SugarMath::init($initVal, $scale)->$method($opVal);
+        $this->assertSame((string)$result, (string)$math->result());
     }
 
     /**
@@ -335,9 +328,22 @@ class SugarMathTest extends Sugar_PHPUnit_Framework_TestCase
             array(
                 '99999999999999999999999999999999999999999999999999',
                 'add',
-                '100000000000000000000000000000000000000000000000000.00000000000000000000000000000000000000000000000001',
-                '199999999999999999999999999999999999999999999999999.00000000000000000000000000000000000000000000000001',
-                50,
+                '100000000000000000000000000000000000000000000000000.99999999999999999999999999999999999999999999999991',
+                '199999999999999999999999999999999999999999999999999.99999999999999999999999999999999999999999999999991',
+                50),
+            array(
+                '99999999999999999999999999999999999999999999999999',
+                'add',
+                '100000000000000000000000000000000000000000000000000.99999999999999999999999999999999999999999999999991',
+                '199999999999999999999999999999999999999999999999999.9999999999999999999999999999999999999999999999999',
+                49,
+            ),
+            array(
+                '99999999999999999999999999999999999999999999999999',
+                'add',
+                '100000000000000000000000000000000000000000000000000.99999999999999999999999999999999999999999999999999',
+                '199999999999999999999999999999999999999999999999999.9999999999999999999999999999999999999999999999999',
+                49,
             ),
         );
     }
@@ -357,7 +363,7 @@ class SugarMathTest extends Sugar_PHPUnit_Framework_TestCase
     public function testExpressions($result, $exp, $args, $scale)
     {
         $math = SugarMath::init(0,$scale);
-        $this->assertEquals($result,$math->exp($exp,$args));
+        $this->assertSame($result,$math->exp($exp,$args)->result());
     }
 
     /**
@@ -368,22 +374,69 @@ class SugarMathTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public static function expressionsProvider() {
         return array(
-            array(3,'1+2',null,null),
-            array(11,'1+2*3+4',null,null),
-            array(13,'(1+2)*3+4',null,null),
-            array(21,'(1+2)*(3+4)',null,null),
-            array(147,'(1+2)*(3+4)^2',null,null),
-            array(441,'((1+2)*(3+4))^2',null,null),
-            array(30.25,'(3 * 2 - (4 / 8)) ^ 2',null,null),
-            array(3.33,'10/3',null,2),
-            array(3.3333,'10/3',null,4),
-            array(3.3333333333333333333333333,'10/3',null,25),
-            array(3.33,'10/?',array(3),2),
-            array(3.33,'?/?',array(10,3),2),
-            array(200,'(?+?)*10',array(10,10),null),
-            array(1,'10%3',null,null),
+            array('3.00','1+2',null,null),
+            array('11.00','1+2*3+4',null,null),
+            array('13.00','(1+2)*3+4',null,null),
+            array('21.00','(1+2)*(3+4)',null,null),
+            array('147.00','(1+2)*(3+4)^2',null,null),
+            array('441.00','((1+2)*(3+4))^2',null,null),
+            array('30.25','(3 * 2 - (4 / 8)) ^ 2',null,null),
+            array('3.33','10/3',null,2),
+            array('3.3333','10/3',null,4),
+            array('3.3333333333333333333333333','10/3',null,25),
+            array('3.33','10/?',array(3),2),
+            array('3.33','?/?',array(10,3),2),
+            array('200.00','(?+?)*10',array(10,10),null),
+            array('1.00','10%3',null,null),
+            array('2','?/?',array(10,6),0),
+            array('1.7','?/?',array(10,6),1),
+            array('1.67','?/?',array(10,6),2),
+            array('1.667','?/?',array(10,6),3),
+            array('1.6667','?/?',array(10,6),4),
+            array('1.66667','?/?',array(10,6),5),
+            array('1.666667','?/?',array(10,6),6),
+            array('1.6666667','?/?',array(10,6),7),
+            array('802.458090','?/?*?',array('1000','1.246171','1.0'),6),
         );
     }
+
+    /**
+     * test expression engine computations
+     *
+     * @dataProvider testRoundProvider
+     * @param mixed  $result the expected result of the computation
+     * @param string $value the value to round
+     * @param int    $scale the math precision to use
+     * @group math
+     * @access public
+     */
+    public function testRound($result, $value, $scale)
+    {
+        $math = SugarMath::init(0,$scale);
+        $this->assertSame($result,$math->round($value));
+    }
+
+    /**
+     * expression engine data provider
+     *
+     * @group math
+     * @access public
+     */
+    public static function testRoundProvider() {
+        return array(
+            array('3.354999999','3.354999999',9),
+            array('3.35500000','3.354999999',8),
+            array('3.3550000','3.354999999',7),
+            array('3.355000','3.354999999',6),
+            array('3.35500','3.354999999',5),
+            array('3.3550','3.354999999',4),
+            array('3.355','3.354999999',3),
+            array('3.35','3.354999999',2),
+            array('3.4','3.354999999',1),
+            array('3','3.354999999',0),
+        );
+    }
+
 
     /**
      * test setValue exceptions on class
@@ -465,7 +518,7 @@ class SugarMathTest extends Sugar_PHPUnit_Framework_TestCase
     public function testNonStringExpressionExceptions($exp,$args,$scale)
     {
         $math = new SugarMath(0,$scale);
-        $math->exp($exp,$args);
+        $math->exp($exp,$args)->result();
     }
 
     /**
@@ -495,7 +548,7 @@ class SugarMathTest extends Sugar_PHPUnit_Framework_TestCase
     public function testNonArrayArgsExceptions($exp,$args,$scale)
     {
         $math = new SugarMath(0,$scale);
-        $math->exp($exp,$args);
+        $math->exp($exp,$args)->result();
     }
 
     /**
@@ -525,7 +578,7 @@ class SugarMathTest extends Sugar_PHPUnit_Framework_TestCase
     public function testScaleExceptions($exp,$args,$scale)
     {
         $math = new SugarMath(0,$scale);
-        $math->exp($exp,$args);
+        $math->exp($exp,$args)->result();
     }
 
     /**
@@ -555,7 +608,7 @@ class SugarMathTest extends Sugar_PHPUnit_Framework_TestCase
     public function testNonMatchingParenthesisExceptions($exp,$args,$scale)
     {
         $math = new SugarMath(0,$scale);
-        $math->exp($exp,$args);
+        $math->exp($exp,$args)->result();
     }
 
     /**
@@ -586,7 +639,7 @@ class SugarMathTest extends Sugar_PHPUnit_Framework_TestCase
     public function testNonNumericArgsExceptions($exp,$args,$scale)
     {
         $math = new SugarMath(0,$scale);
-        $math->exp($exp,$args);
+        $math->exp($exp,$args)->result();
     }
 
     /**
@@ -617,7 +670,7 @@ class SugarMathTest extends Sugar_PHPUnit_Framework_TestCase
     public function testInvalidExpressionsExceptions($exp,$args,$scale)
     {
         $math = new SugarMath(0,$scale);
-        $math->exp($exp,$args);
+        $math->exp($exp,$args)->result();
     }
 
     /**
@@ -647,7 +700,7 @@ class SugarMathTest extends Sugar_PHPUnit_Framework_TestCase
     public function testGroupedOperatorsExpressionExceptions($exp,$args,$scale)
     {
         $math = new SugarMath(0,$scale);
-        $math->exp($exp,$args);
+        $math->exp($exp,$args)->result();
     }
 
     /**

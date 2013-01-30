@@ -29,10 +29,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 /**
  * Currency
  *
- * This is the Currency module for obtaining and manipulating
- * currency objects. Note that a lot of currency utility functions
- * such as conversion and formatting are now implemented in the
- * SugarCurrency utility class.
+ * This is the Currency module for obtaining and manipulating currency objects.
  *
  */
 class Currency extends SugarBean
@@ -88,7 +85,7 @@ class Currency extends SugarBean
      * convertToDollar
      *
      * This method accepts a currency amount and converts it to the US Dollar amount
-     * This method is deprecated and has been moved to SugarCurrency::convertAmountToBase()
+     * This method is deprecated, see convertToBase()
      *
      * @deprecated
      * @param  float $amount    amount to convert to US Dollars
@@ -96,7 +93,7 @@ class Currency extends SugarBean
      * @return float  currency  value in US Dollars from conversion
      */
 	function convertToDollar($amount, $precision = 6) {
-		return round(($amount / $this->conversion_rate), $precision);
+		return $this->convertToBase($amount, $precision);
 	}
 
     /**
@@ -104,16 +101,39 @@ class Currency extends SugarBean
      *
      * This method accepts a US Dollar amount and returns a currency amount
      * with the conversion rate applied to it.
-     * This method is deprecated and has been moved to SugarCurrency::convertAmountFromBase()
+     * This method is deprecated, see convertFromBase()
      *
      * @deprecated
      * @param  float $amount    currency amount in US Dollars
      * @param  int   $precision rounding precision scale
      * @return float  currency  value from US Dollar conversion
      */
-	function convertFromDollar($amount, $precision = 6){
-		return round(($amount * $this->conversion_rate), $precision);
-	}
+    function convertFromDollar($amount, $precision = 6) {
+        return $this->convertFromBase($amount, $precision);
+    }
+
+    /**
+     * convert amount to base currency
+     *
+     * @param  float $amount    amount to convert to US Dollars
+     * @param  int   $precision rounding precision scale
+     * @return float  currency  value in US Dollars from conversion
+     */
+    function convertToBase($amount, $precision = 6) {
+        return SugarCurrency::convertWithRate($amount, $this->conversion_rate, 1.0, $precision);
+    }
+
+    /**
+     * convert amount from base currency
+     *
+     * @param  float $amount    currency amount in US Dollars
+     * @param  int   $precision rounding precision scale
+     * @return float  currency  value from US Dollar conversion
+     */
+    function convertFromBase($amount, $precision = 6) {
+        return SugarCurrency::convertWithRate($amount, 1.0, $this->conversion_rate, $precision);
+    }
+
 
     /**
      * getDefaultCurrencyName
