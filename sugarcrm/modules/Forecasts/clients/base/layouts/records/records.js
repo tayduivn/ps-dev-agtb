@@ -38,7 +38,7 @@
     componentsMeta: {},
 
     /**
-     * Stores the initial data models coming from view.sidecar.php
+     * Stores the initial data models
      * todo: use this to populate models that we already have data for; currently only holds filters, chartoptions, & user
      *
      */
@@ -76,7 +76,7 @@
         app.user.set(app.initData.userData);
 
         if(forecastData.initData.forecasts_setup === 0) {
-            window.location.hash = "#Forecasts/layout/config";
+            window.location.hash = "#Forecasts/config";
         }
 
         ctx.componentsMeta = options.meta.components;

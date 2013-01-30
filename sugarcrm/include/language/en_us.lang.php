@@ -153,7 +153,7 @@ $app_list_strings = array (
     //BEGIN SUGARCRM flav=pro ONLY
     'Contracts'=>'Contract',
     'Quotes' => 'Quote',
-    'Products' => 'Revenue Line Item',
+    'Products' => 'Product Line Item',
     'Reports' => 'Report',
     'Forecasts' => 'Forecast',
     'ForecastWorksheets' => 'Forecast Worksheet',
@@ -568,7 +568,7 @@ $app_list_strings = array (
     'Leads' => 'Lead',
     'Contacts' => 'Contacts', // cn (11/22/2005) added to support Emails
     //BEGIN SUGARCRM flav=pro ONLY
-    'ProductTemplates' => 'Revenue Line Item',
+    'ProductTemplates' => 'Product Line Item',
     'Quotes' => 'Quote',
 
     //END SUGARCRM flav=pro ONLY
@@ -599,7 +599,7 @@ $app_list_strings = array (
     //BEGIN SUGARCRM flav=pro ONLY
     'ProductTemplates' => 'Product Catalog',
     'Quotes' => 'Quote',
-    'Products' => 'Revenue Line Item',
+    'Products' => 'Product Line Item',
     'Contracts' => 'Contract',
     //END SUGARCRM flav=pro ONLY
     'Emails' => 'Email',
@@ -625,7 +625,7 @@ $app_list_strings = array (
 
     //BEGIN SUGARCRM flav=pro ONLY
 
-    'Products' => 'Revenue Line Item',
+    'Products' => 'Product Line Item',
 
     'Quotes' => 'Quote',
     //END SUGARCRM flav=pro ONLY
@@ -833,7 +833,7 @@ $app_list_strings = array (
     'Outlook Plugin' => 'Outlook Plugin',
     //BEGIN SUGARCRM flav=pro ONLY
     'Product Catalog' => 'Product Catalog',
-    'Products' => 'Revenue Line Items',
+    'Products' => 'Product Line Items',
     //END SUGARCRM flav=pro ONLY
     'Projects' => 'Projects',
     'Quotes' => 'Quotes',
