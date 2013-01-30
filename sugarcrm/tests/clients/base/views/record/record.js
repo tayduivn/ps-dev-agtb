@@ -784,4 +784,69 @@ describe("Record View", function() {
             expect(view.collection.next.get('id')).toEqual(modelIds[1]);
         });
     });
+
+    describe('duplicateClicked', function(){
+        var triggerStub;
+
+        beforeEach(function(){
+            triggerStub = sinon.stub(Backbone.Model.prototype, 'trigger', $.noop());
+        });
+        afterEach(function(){
+            if(triggerStub){
+                triggerStub.restore();
+            }
+        });
+        it("should trigger 'duplicate:before' on model prior to 'drawer:create:fire' on layout", function(){
+            view.render();
+            view.model.set({
+                name: 'Name',
+                case_number: 123,
+                description: 'Description'
+            });
+            triggerStub.reset();
+            view.layout = new Backbone.Model();
+
+            view.duplicateClicked();
+            expect(triggerStub.called).toBe(true);
+            var calls = _.last(triggerStub.args, 2);
+            var these = _.last(triggerStub.thisValues, 2);
+            expect(calls[0][0]).toEqual('duplicate:before');
+            expect(these[0]).toEqual(view.model);
+            expect(calls[1][0]).toEqual('drawer:create:fire');
+            expect(these[1]).toEqual(view.layout);
+        });
+
+        it("should trigger 'duplicate:before' event and pass model to mutate", function(){
+            view.render();
+            view.model.set({
+                name: 'Name',
+                case_number: 123,
+                description: 'Description'
+            });
+            triggerStub.reset();
+            view.layout = new Backbone.Model();
+
+            view.duplicateClicked();
+            expect(triggerStub.called).toBe(true);
+            var calls = _.last(triggerStub.args, 2);
+            expect(calls[0][0]).toEqual('duplicate:before');
+            expect(calls[0][1].get("name")).toEqual(view.model.get("name"));
+            expect(calls[0][1].get("description")).toEqual(view.model.get("description"));
+            expect(calls[0][1]).toNotEqual(view.model);
+        });
+
+        it("should fire 'drawer:create:fire' event with copied model set on context", function(){
+            view.render();
+            view.model.set({
+                name: 'Name',
+                case_number: 123,
+                description: 'Description'
+            });
+            triggerStub.reset();
+            view.layout = new Backbone.Model();
+            view.duplicateClicked();
+            expect(triggerStub.calledWith('drawer:create:fire')).toBe(true);
+            expect(triggerStub.lastCall.args[1].components[0].context.model.get("name")).toEqual(view.model.get("name"));
+        });
+    });
 });

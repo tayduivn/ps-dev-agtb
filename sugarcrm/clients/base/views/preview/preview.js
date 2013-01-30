@@ -76,10 +76,12 @@
 
     showPreviousNextBtnGroup:function() {
         var collection = this.collection;
-        var recordIndex = collection.indexOf(collection.get(this.model.id));
-        if (this.layout) {
-            this.layout.previous = collection.models[recordIndex-1] ? collection.models[recordIndex-1] : undefined;
-            this.layout.next = collection.models[recordIndex+1] ? collection.models[recordIndex+1] : undefined;
+        if(this.layout){
+            if(collection){
+                var recordIndex = collection.indexOf(collection.get(this.model.id));
+                this.layout.previous = collection.models[recordIndex-1] ? collection.models[recordIndex-1] : undefined;
+                this.layout.next = collection.models[recordIndex+1] ? collection.models[recordIndex+1] : undefined;
+            }
             // Need to rerender the preview header
             this.layout.trigger("preview:pagination:update");
         }
