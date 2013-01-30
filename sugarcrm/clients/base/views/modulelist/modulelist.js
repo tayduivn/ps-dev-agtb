@@ -11,7 +11,11 @@
         'click .more': 'showMore',
         'mouseover .more': 'showMore',
         'mouseleave .more-drop-container' : 'hideMore',
-        'mouseleave .more' : 'hideMore'
+        'mouseleave .more' : 'hideMore',
+        'mouseleave .dropdown-menu': 'hideMenu'
+    },
+    hideMenu: function(event) {
+        this.$(event.target).dropdown('toggle');
     },
     showMore: function(event) {
         this.$('.more-drop-container').show();
@@ -41,7 +45,7 @@
             var moduleMeta = app.metadata.getModule(module);
             if (moduleMeta && moduleMeta.fields && !_.isArray(moduleMeta.fields)) {
                 this.populateFavorites(module);
-                this.populateRecent(module);
+                this.populateRecents(module);
             }
         }
 
@@ -58,15 +62,18 @@
             favorites:true,
             limit:3,
             success:function (collection) {
-                self.$('[data-module=' + module + '] .favoritesContainer').html(self.favRowTemplate(collection.models));
-            }
+               if (collection.models && collection.models.length >  0) {
+                   self.$('[data-module=' + module + '] .favoritesAnchor').show();
+                   self.$('[data-module=' + module + '] .favoritesContainer').html(self.favRowTemplate(collection));
+               }
+           }
         });
     },
     /**
      * Populates recents on open menu
      * @param module
      */
-    populateRecent:function (module) {
+    populateRecents:function (module) {
         var self = this;
         var filter = {
             "filter":[
@@ -81,12 +88,13 @@
         var url = app.api.buildURL(module, 'read', {id:"filter"});
         app.api.call('create', url, filter, {
             success:function (data) {
-                if (data.records) {
+                if (data.records && data.records.length > 0) {
                     var beans = [];
                     _.each(data.records, function (recordData) {
                         beans.push(app.data.createBean(module, recordData));
                     });
                     var collection = app.data.createBeanCollection(module, beans);
+                    self.$('[data-module=' + module + '] .recentAnchor').show();
                     self.$('[data-module=' + module + '] .recentContainer').html(self.recentRowTemplate(collection));
                 }
 
@@ -118,12 +126,15 @@
     completeMenuMeta: function(module_list) {
         var actions, meta, returnList = [];
         _.each(module_list, function(value, key) {
-            actions = {label: value, name: key};
+            actions = {
+                label: value,
+                name: key
+            };
             meta = app.metadata.getModule(key);
             if (meta && meta.menu && meta.menu.header) {
                 actions.menu = meta.menu.header.meta;
             } else {
-                actions.menu = new Array();
+                actions.menu = [];
             }
             returnList.push(actions);
 
@@ -275,7 +286,7 @@
                 this.reset();
 
                 $modules = this._moduleList.$('#module_list');
-                $module = $modules.find('.' + module);
+                $module = $modules.find("[data-module='" + module+"']");
                 $module.addClass(this._class);
 
                 // remember which module is supposed to be next to the active module so that

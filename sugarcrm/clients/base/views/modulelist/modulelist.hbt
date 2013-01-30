@@ -1,5 +1,5 @@
 <ul class="nav" id="module_list">
-    <li class="Home"><a class="cube" href="#" rel="tooltip" title="{{str "LBL_TABGROUP_HOME"}}"></a></li>
+    <li class="Home" data-module="Home"><a class="cube" href="#" rel="tooltip" title="{{str "LBL_TABGROUP_HOME"}}"></a></li>
     {{#each module_list}}
         {{#notEq name 'Home'}}
         <li class="dropdown" data-module="{{name}}">
@@ -8,11 +8,10 @@
                 {{#each menu}}
                     <li><a tabindex="-1" href="{{route}}">{{#if icon}}<i class="{{icon}}"></i>{{/if}}{{str label ../name}}</a></li>
                 {{/each}}
-                <li></li>
-                <li class="recentAnchor"><a tabindex="-1" href="#">{{str "LBL_LAST_VIEWED"}}</a></li>
-                <div class="recentContainer">{{str "LBL_LOADING"}}</div>
-                <li class="favoritesAnchor"><a tabindex="-1" href="#">{{str "LBL_FAVORITES"}}</a></li>
-                <div class="favoritesContainer">{{str "LBL_LOADING"}}</div>
+                <li class="recentAnchor hide"><a tabindex="-1" href="javascript: void(0)">{{str "LBL_LAST_VIEWED"}}</a></li>
+                <div class="recentContainer "></div>
+                <li class="favoritesAnchor hide"><a tabindex="-1" href="javascript: void(0)">{{str "LBL_FAVORITES"}}</a></li>
+                <div class="favoritesContainer"></div>
             </ul>
         </li>
         {{/notEq}}

@@ -1,5 +1,4 @@
 <?php
-//FILE SUGARCRM flav=pro || flav=sales ONLY
 if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 /*********************************************************************************
  *The contents of this file are subject to the SugarCRM Professional End User License Agreement
@@ -20,11 +19,6 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *Your Warranty, Limitations of liability and Indemnity are expressly stated in the License.  Please refer
  *to the License for the specific language governing these rights and limitations under the License.
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
- ********************************************************************************/
-/*********************************************************************************
- * Portions created by SugarCRM are Copyright (C) SugarCRM, Inc.
- * All Rights Reserved.
- * Contributor(s): ______________________________________..
  ********************************************************************************/
 $module_name = 'DocumentRevisions';
 $viewdefs[$module_name]['base']['menu']['header'] = array(
