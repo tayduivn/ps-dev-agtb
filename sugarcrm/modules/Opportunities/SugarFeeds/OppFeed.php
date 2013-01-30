@@ -31,7 +31,7 @@ class OppFeed extends FeedLogicBase {
             $currency->retrieve($bean->currency_id);
             $text = '{SugarFeed.CREATED_OPPORTUNITY} [' . $bean->module_dir . ':' . $bean->id . ':' . $bean->name . '] {SugarFeed.WITH} [Accounts:' . $bean->account_id . ':' . $bean->account_name . '] {SugarFeed.FOR} ' . $currency->symbol. format_number($bean->amount);
         }else{
-            if(!empty($bean->fetched_row['sales_stage']) && $bean->fetched_row['sales_stage'] != $bean->sales_stage && $bean->sales_stage == 'Closed Won'){
+            if(!empty($bean->fetched_row['sales_stage']) && $bean->fetched_row['sales_stage'] != $bean->sales_stage && $bean->sales_stage == Opportunity::STAGE_CLOSED_WON){
                 $currency = new Currency();
                 $currency->retrieve($bean->currency_id);
                 $text = '{SugarFeed.WON_OPPORTUNITY} [' . $bean->module_dir . ':' . $bean->id . ':' . $bean->name . '] {SugarFeed.WITH} [Accounts:' . $bean->account_id . ':' . $bean->account_name . '] {SugarFeed.FOR} '. $currency->symbol . format_number($bean->amount);

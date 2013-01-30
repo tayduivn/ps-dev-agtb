@@ -138,7 +138,7 @@ class forecast_charts extends SugarView {
             $opp_query  = "select sum(" . db_convert("amount_usdollar","IFNULL",array(0))." * (" .db_convert("probability","IFNULL",array(0)). "/100)) total_value";
             $opp_query .= " from opportunities";
             $opp_query .= " where assigned_user_id IN ('$user_id', '$my_downline')";
-            $opp_query .= " and sales_stage='Closed Won'";
+            $opp_query .= " and sales_stage='".Opportunity::STAGE_CLOSED_WON."'";
             $opp_query .= " and deleted=0";
             $opp_query .= " and date_closed >= ". db_convert("'".$row['start_date']."'","datetime")." and date_closed <= ". db_convert( "'".$row['end_date']."'","datetime");
 
