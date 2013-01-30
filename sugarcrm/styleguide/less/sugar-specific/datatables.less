@@ -89,7 +89,7 @@ table.dataTable {
   tbody {
     td {
       max-width: 100px;
-      &> * {
+      &> *:not(.overflow-visible) {
         display: inline-block;
         width: 100%;
         overflow: hidden;
