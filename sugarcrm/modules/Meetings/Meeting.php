@@ -767,32 +767,38 @@ class Meeting extends SugarBean {
 			$this->users_arr =	array();
 		}
 
-        if(!isset($this->leads_arr) || !is_array($this->leads_arr)) {
+        if(!is_array($this->leads_arr)) {
 			$this->leads_arr =	array();
 		}
-
+		$GLOBALS['log']->fatal("THIS IS THE ARRAYS");
+		$GLOBALS['log']->fatal("CONTACTS ARR: " . var_export($this->contacts_arr, true));
+		$GLOBALS['log']->fatal("USERS ARR: " . var_export($this->users_arr, true));
+		$GLOBALS['log']->fatal("LEADS ARR: " . var_export($this->leads_arr, true));
 		foreach($this->users_arr as $user_id) {
-			$notify_user = new User();
-			$notify_user->retrieve($user_id);
-			$notify_user->new_assigned_user_name = $notify_user->full_name;
-			$GLOBALS['log']->info("Notifications: recipient is $notify_user->new_assigned_user_name");
-			$list[$notify_user->id] = $notify_user;
+			$notify_user = BeanFactory::getBean('Users', $user_id);
+			if(!empty($notify_user->id)) {
+				$notify_user->new_assigned_user_name = $notify_user->full_name;
+				$GLOBALS['log']->info("Notifications: recipient is $notify_user->new_assigned_user_name");
+				$list[$notify_user->id] = $notify_user;
+			}
 		}
 
 		foreach($this->contacts_arr as $contact_id) {
-			$notify_user = new Contact();
-			$notify_user->retrieve($contact_id);
-			$notify_user->new_assigned_user_name = $notify_user->full_name;
-			$GLOBALS['log']->info("Notifications: recipient is $notify_user->new_assigned_user_name");
-			$list[$notify_user->id] = $notify_user;
+			$notify_user = BeanFactory::getBean('Contacts', $contact_id);
+			if(!empty($notify_user->id)) {
+				$notify_user->new_assigned_user_name = $notify_user->full_name;
+				$GLOBALS['log']->info("Notifications: recipient is $notify_user->new_assigned_user_name");
+				$list[$notify_user->id] = $notify_user;
+			}
 		}
 
         foreach($this->leads_arr as $lead_id) {
-			$notify_user = new Lead();
-			$notify_user->retrieve($lead_id);
-			$notify_user->new_assigned_user_name = $notify_user->full_name;
-			$GLOBALS['log']->info("Notifications: recipient is $notify_user->new_assigned_user_name");
-			$list[$notify_user->id] = $notify_user;
+			$notify_user = BeanFactory::getBean('Leads', $lead_id);
+			if(!empty($notify_user->id)) {
+				$notify_user->new_assigned_user_name = $notify_user->full_name;
+				$GLOBALS['log']->info("Notifications: recipient is $notify_user->new_assigned_user_name");
+				$list[$notify_user->id] = $notify_user;
+			}
 		}
 
 		return $list;
