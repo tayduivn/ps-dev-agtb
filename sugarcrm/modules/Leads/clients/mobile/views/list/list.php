@@ -79,13 +79,6 @@ $viewdefs['Leads']['mobile']['view']['list'] = array(
                     'width' => '10%',
                     'default' => true,
                 ),
-                array (
-                    'name' => 'picture',
-                    'label' => 'LBL_PICTURE_FILE',
-                    'enabled' => true,
-                    'width' => '10%',
-                    'default' => true,
-                ),
                 array(
                     'name' => 'primary_address_street',
                     'enabled' => true,
