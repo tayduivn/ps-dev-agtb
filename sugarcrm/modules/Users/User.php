@@ -2253,7 +2253,7 @@ EOQ;
       * This function returns an array of reportee IDs that are managers
       * 
       * @param String user_id The id of the user to check
-      * @param boolean included_deleted Boolean Value indicating whether or not to unclude deleted records (defaults to false)
+      * @param boolean included_deleted Boolean Value indicating whether or not to include deleted records (defaults to false)
       * @return array Array of manager reportee IDs 
       */
      public static function getReporteeManagers($user_id, $include_deleted = false)
@@ -2273,7 +2273,7 @@ EOQ;
       * This function returns an array of reportee IDs that are sales reps
       * 
       * @param String user_id The id of the user to check
-      * @param boolean included_deleted Boolean Value indicating whether or not to unclude deleted records (defaults to false)
+      * @param boolean included_deleted Boolean Value indicating whether or not to include deleted records (defaults to false)
       * @return array Array of rep reportee IDs 
       */
      public static function getReporteeReps($user_id, $include_deleted = false)
