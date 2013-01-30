@@ -2220,7 +2220,7 @@ EOQ;
      * This function returns an array of reportees and their corresponding reportee count
      * 
      * @param String user_id The id of the user to check
-     * @param boolean included_deleted Boolean Value indicating whether or not to unclude deleted records (defaults to false)
+     * @param boolean included_deleted Boolean Value indicating whether or not to include deleted records (defaults to false)
      * @return array Array of reportee IDs and their leaf count
      */
      public static function getReporteesWithLeafCount($user_id, $include_deleted = false)
