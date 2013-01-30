@@ -35,6 +35,7 @@ class SugarACL
     // matches ACLField::hasAccess returns for compatibility
     const ACL_NO_ACCESS = 0;
     const ACL_READ_ONLY = 1;
+    const ACL_CREATE_ONLY = 2;
     const ACL_READ_WRITE = 4;
 
     /**
@@ -139,9 +140,21 @@ class SugarACL
     public static function getFieldAccess($module, $field, $context = array())
     {
         $read = self::checkField($module, $field, "detail", $context);
-        if(!$read) return self::ACL_NO_ACCESS;
+        $create = self::checkField($module, $field, "create", $context);
+
+        if(!$read && !$create) {
+            return self::ACL_NO_ACCESS;            
+        }
         $write = self::checkField($module, $field, "edit", $context);
-        if($write) return self::ACL_READ_WRITE;
+        
+        if($create && !$read && !$write){
+            return sefl::ACL_CREATE_ONLY;
+        }
+        
+        if($write){
+            return self::ACL_READ_WRITE;
+        }
+        
         return self::ACL_READ_ONLY;
     }
 
@@ -230,7 +243,9 @@ class SugarACL
         if(empty($options['min_access'])) {
             $min_access = 'access';
         } else {
-            if($options['min_access'] >= SugarACL::ACL_READ_WRITE) {
+            if($options['min_access'] == SugarACL::ACL_CREATE_ONLY) {
+                $min_access = 'create';
+            } elseif($options['min_access'] >= SugarACL::ACL_READ_WRITE) {
                 $min_access = "edit";
             }
         }
@@ -304,7 +319,7 @@ class SugarACL
         }
     }
 
-    public static $all_access = array('access' => true,'view' => true,'list' => true,'edit' => true,
+    public static $all_access = array('access' => true,'view' => true,'list' => true,'create' => true, 'edit' => true,
         'delete' => true,'import' => true,'export' => true,'massupdate' => true);
 
     /**

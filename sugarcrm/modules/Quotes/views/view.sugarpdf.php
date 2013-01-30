@@ -65,7 +65,7 @@ class QuotesViewSugarpdf extends ViewSugarpdf{
         }
 
         $this->sugarpdfBean->Output($this->sugarpdfBean->fileName,'D');
-        sugar_die("");
+        sugar_cleanup(true);
     }
 
     /**

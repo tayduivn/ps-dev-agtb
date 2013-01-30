@@ -327,6 +327,19 @@ require_once('modules/UpgradeWizard/uw_utils.php');
 //Patch for bug57431 : Module name isn't updated in portal layout editor
 updateRenamedModulesLabels();
 
+if(version_compare($_SESSION['current_db_version'], '6.7.0', '<')) {
+	setupCreateRole();
+
+    // change default theme from Sugar5 to RacerX
+    if (isset($sugar_config['default_theme']) && $sugar_config['default_theme']=='Sugar5') {
+        logThis('Changing default theme from Sugar5 to RacerX', $path);
+        require_once('modules/Configurator/Configurator.php');
+        $configurator = new Configurator();
+        $configurator->config['default_theme'] = 'RacerX';
+        $configurator->handleOverride();
+    }
+}
+
 //BEGIN SUGARCRM flav=PRO ONLY
 //setup forecast defualt settings
 if(version_compare($_SESSION['current_db_version'], '6.7.0', '<'))

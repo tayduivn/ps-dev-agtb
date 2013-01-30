@@ -402,9 +402,9 @@ GROUP BY u.user_name";
      */
     public function save()
     {
-        require_once('modules/Forecasts/ForecastManagerWorksheet.php');
         require_once('include/SugarFields/SugarFieldHandler.php');
-        $seed = new ForecastManagerWorksheet();
+        /* @var $seed ForecastManagerWorksheet */
+        $seed = BeanFactory::getBean('ForecastManagerWorksheets');
         $seed->loadFromRow($this->getArgs());
         $sfh = new SugarFieldHandler();
 
@@ -440,6 +440,6 @@ GROUP BY u.user_name";
         }
 
         $seed->setWorksheetArgs($this->getArgs());
-        $seed->save();
+        $seed->saveWorksheet();
     }
 }
