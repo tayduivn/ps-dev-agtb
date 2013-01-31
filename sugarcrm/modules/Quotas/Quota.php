@@ -270,8 +270,8 @@ class Quota extends SugarBean
                     . '" SELECTED>'
                     . $row['name']
                     . '</option>';
-            } else // print all other time periods
-            {
+            } else {
+            // print all other time periods
                 $options .= '<option value="?edit=true&action=index&module=Quotas&timeperiod_id='
                     . $row['id']
                     . '">'
@@ -338,8 +338,8 @@ class Quota extends SugarBean
         if ($row['currency_id'] == -99) // print the default currency
         {
             $row['formatted_amount'] = format_number($row['amount'], 2, 2, array('convert' => true, 'currency_symbol' => true));
-        } else // print the foreign currency, must retrieve currency symbol
-        {
+        } else {
+            // print the foreign currency, must retrieve currency symbol
             $row['formatted_amount'] = format_number($row['amount'], 2, 2, array('convert' => true, 'currency_symbol' => false)) . " ( " . $this->getCurrencySymbol($row['currency_id']) . " )";
         }
 
