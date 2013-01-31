@@ -5468,6 +5468,10 @@ input[type="color"].local-error,
   background: #fff;
   top: 1px;
 }
+.error .add-on [class^="icon-"],
+.error .add-on [class*=" icon-"] {
+  color: #b60000;
+}
 @media (max-width: 480px) {
   .error .input-append > .add-on {
     position: relative !important;
