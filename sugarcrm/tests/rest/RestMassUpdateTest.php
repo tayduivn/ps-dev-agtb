@@ -172,7 +172,6 @@ class RestMassUpdateTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testMassDeleteEntireListWithoutFilter()
     {
-        $this->markTestIncomplete('Temporarily marking test as incomplete as filter api seems to return nothing when no filter is passed');
         if (isset($_REQUEST)) {
             unset($_REQUEST);
         }
@@ -672,7 +671,6 @@ class RestMassUpdateTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testMassUpdateEntireListWithoutFilter()
     {
-        $this->markTestIncomplete('Temporarily marking test as incomplete as filter api seems to return nothing when no filter is passed');
         if (isset($_REQUEST)) {
             unset($_REQUEST);
         }
