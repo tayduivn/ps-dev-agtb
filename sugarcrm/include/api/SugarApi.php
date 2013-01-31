@@ -120,7 +120,7 @@ abstract class SugarApi {
         }
 
         if ($aclToCheck != 'view' && !$bean->ACLAccess($aclToCheck)) {
-            throw new SugarApiExceptionNotAuthorized('No access to '.$aclToCheck.' records for module: '.$args['module']);    
+            throw new SugarApiExceptionNotAuthorized('No access to '.$aclToCheck.' records for module: '.$args['module']);
         }
 
         return $bean;

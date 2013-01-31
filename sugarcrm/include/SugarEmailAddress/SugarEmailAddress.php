@@ -1180,7 +1180,7 @@ function getEmailAddressWidget($focus, $field, $value, $view, $tabindex = '0')
     $sea->setView($view);
 
     //BEGIN SUGARCRM flav=pro ONLY
-    if ((!empty($focus->id) && empty($focus->new_with_id) && $focus->ACLFieldAccess($field, "edit")) || ((empty($focus->id) || $focus->new_with_id == true) && $focus->ACLFieldAccess($field, "create"))) {
+    if ($focus->ACLFieldAccess($field, "edit")) {
         //END SUGARCRM flav=pro ONLY
         if ($view == 'EditView' || $view == 'QuickCreate' || $view == 'ConvertLead') {
             $module = $focus->module_dir;

@@ -184,7 +184,7 @@ class ParserModifyPortalConfig extends ModuleBuilderParser
     {
         global $mod_strings;
         $allowedModules = array('Bugs', 'Cases', 'Notes', 'KBDocuments', 'Contacts');
-        $allowedActions = array('edit', 'create', 'admin', 'access', 'list', 'view');
+        $allowedActions = array('edit', 'admin', 'access', 'list', 'view');
         $role = new ACLRole();
         $role->retrieve_by_string_fields(array('name' => 'Customer Self-Service Portal Role'));
         if (empty($role->id)) {
@@ -214,7 +214,7 @@ class ParserModifyPortalConfig extends ModuleBuilderParser
                         } else {
                             $aclAllow = ACL_ALLOW_NONE;
                         }
-                        if ($moduleName == 'KBDocuments' && ($actionName == 'edit' || $actionName == 'create')) {
+                        if ($moduleName == 'KBDocuments' && $actionName == 'edit') {
                             $aclAllow = ACL_ALLOW_NONE;
                         }
                         if ($moduleName == 'Contacts') {

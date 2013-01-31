@@ -917,7 +917,7 @@ VardefManager::createVardef('ForecastWorksheets', 'ForecastWorksheet', array('de
 ));
 
 $dictionary['ForecastManagerWorksheet'] = array(
-    'table' => 'forecast_manager_worksheet',
+    'table' => 'forecast_manager_worksheets',
     'acl_fields' => false,
     'fields' => array(
         'quota' =>

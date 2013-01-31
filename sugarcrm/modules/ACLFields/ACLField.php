@@ -283,7 +283,7 @@ class ACLField  extends ACLAction
     *
     * Returns 0 - for no access
     * Returns 1 - for read access
-    * returns 2 - for create only access
+    * returns 2 - for write access
     * returns 4 - for read/write access
     * @internal
     * @param String $field The name of the field to retrieve ACL access for
@@ -306,12 +306,10 @@ class ACLField  extends ACLAction
         }
         $access = $_SESSION['ACL'][$user_id][$module]['fields'][$field];
 
-        if($access == ACL_READ_WRITE || ($is_owner && ($access == ACL_READ_OWNER_WRITE || $access == ACL_OWNER_READ_WRITE))){      
+        if($access == ACL_READ_WRITE || ($is_owner && ($access == ACL_READ_OWNER_WRITE || $access == ACL_OWNER_READ_WRITE))){
             return 4;
         }elseif($access == ACL_READ_ONLY || $access==ACL_READ_OWNER_WRITE){
             return 1;
-        } elseif($access == ACL_CREATE_ONLY) {
-            return 2;
         }
         return 0;
     }
