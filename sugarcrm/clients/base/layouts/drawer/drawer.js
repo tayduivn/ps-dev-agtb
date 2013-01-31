@@ -108,6 +108,9 @@
 
         this.context.off("drawer:hide");
         this.context.on("drawer:hide", this.hide, this);
+
+        this.context.off("drawer:replace");
+        this.context.on("drawer:replace", this.show, this);
     },
 
     /**

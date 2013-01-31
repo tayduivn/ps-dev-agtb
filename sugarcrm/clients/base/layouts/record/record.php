@@ -7,6 +7,7 @@ $layout->push('main', array(
         'showEvent' => array(
             "drawer:selection:fire", 
             "drawer:create:fire",
+            "drawer:find-duplicates:fire",
         )
     ),
 ));
