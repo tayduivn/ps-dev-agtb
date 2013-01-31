@@ -17,51 +17,50 @@ a#save_draft {
   margin-right: 8px;
 }
 
-
-/* make the datatable have no top margin */
-table.dataTable {
-  margin-top: 0px !important;
-
-  td.number, tfoot th.number {
-    text-align: right;
+.control-group.datefilter {
+  .controls {
+    margin: 0;
   }
-
-  th.header-quota {
-    min-width: 70px;
+  select {
+    width: 350px;
   }
-  .converted {
-    display: inline-block;
+}
+
+.control-group.filter {
+  .indicator {
+    cursor: pointer;
   }
-  label.original {
-    margin-bottom: 0px;
-    display: inline-block;
-    background-color: @grayLight;
-    .border-radius(4px);
-    padding: 2px 4px;
+  .chzn-container {
+    .chzn-drop {
+      padding: 10px;
+      border: 1px solid @grayLight;
+      .caret-top(auto,auto,12px,11px);
+    }
   }
-
 }
 
-div.sugareditable {
-  display: inline-block;
-}
-
-div.sugareditable.focus {
-  display: inline-block;
-}
-
-
-#guages .row-fluid  {
-  padding: 10px 0 0;
-  border-bottom: 1px solid darken(@grayLighter, 5%);
-  margin: 0 3%;
-  width: 94%
-}
-#guages, #guages h4  {
-  border-bottom: 3px solid @grayLight;
-  margin: 0;
-}
 #guages {
-  margin-bottom: 10px;
+  margin: 0 0 10px 0;
+  h4 {
+    margin: 0;
+  }
+  .row-fluid  {
+    padding: 10px 0 0;
+    border-bottom: 1px solid darken(@grayLighter, 5%);
+    margin: 0 3%;
+    width: 94%;
+    &.column_details {
+      float:left;
+      width: 45%;
+    }
+    &.column_code {
+      float: left;
+      widthh: 54%;
+    }
+    &.purpose {
+      overflow: hidden;
+      height: 50px;
+      border-bottom: none;
+    }
+  }
 }
-

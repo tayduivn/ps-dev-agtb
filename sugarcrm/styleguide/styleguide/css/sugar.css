@@ -2289,7 +2289,7 @@ table td {
   position: relative;
 }
 table th:first-child,
-table td:first-child {
+table tbody td:first-child {
   padding-left: 20px;
 }
 table th {
@@ -2297,7 +2297,7 @@ table th {
   color: #58595B;
 }
 table th .btn-group {
-  margin: 0 0 0 -10px;
+  margin: 0 0 0 -5px;
 }
 table th .btn input {
   margin: -2px 0 0 0;
@@ -3023,6 +3023,13 @@ tr:hover .dropdown.hide {
 }
 tr:hover td {
   overflow: display;
+}
+table.datatable tr td .actions {
+  top: 8px;
+  right: 8px;
+}
+table.datatable tr td .actions a:hover {
+  color: #343433;
 }
 .form-change-actions .btn {
   display: none;
@@ -6955,6 +6962,7 @@ ul#quickCreateULSubnav,
   right: 0;
   background-color: #f5f5f5;
   border-top: 1px solid #CDCCCB;
+  box-sizing: border-box;
 }
 .modal-backdrop,
 .modal-backdrop.fade.in {
@@ -9031,12 +9039,27 @@ h3.popover-title {
 @media print {
   body {
     padding: 0;
+    font-family: "Arial";
+  }
+  #arrow {
+    display: none;
+  }
+  #forecasts #contentflex div.dataTables_wrapper {
+    overflow: visible;
+  }
+  @page {
+    size: landscape;
+  }
+  #forecasts #contentflex div.dataTables_wrapper table.dataTable td {
+    white-space: nowrap;
   }
   #forecasts #contentflex > .row-fluid > .span8 {
     width: 100%;
     float: none;
     margin: 0;
     border: 2px solid #fff !important;
+    overflow: visible;
+    display: inline;
   }
   #forecasts #contentflex #folded {
     width: 100%;
@@ -9073,6 +9096,9 @@ h3.popover-title {
     -moz-box-shadow: none;
     box-shadow: none;
   }
+  .dataTables_wrapper {
+    overflow-x: visible;
+  }
   .chartCanvas,
   .sorting,
   .chzn-container-single .chzn-single div b {
@@ -9081,6 +9107,18 @@ h3.popover-title {
   }
   :root {
     -webkit-print-color-adjust: exact;
+  }
+  #sales_stage_filter_chzn {
+    background: none;
+  }
+  #sales_stage_filter_chzn .chzn-choices {
+    box-shadow: none;
+  }
+  #sales_stage_filter_chzn .chzn-choices .search-choice {
+    box-shadow: none;
+  }
+  #sales_stage_filter_chzn .chzn-choices .chzn-select-legend {
+    display: none !important;
   }
 }
 .headerpane.btn-group > .btn {
