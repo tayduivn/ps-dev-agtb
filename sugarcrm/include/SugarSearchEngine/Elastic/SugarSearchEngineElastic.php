@@ -189,7 +189,7 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
 
         //Always add our module
         $keyValues['module'] = $bean->module_dir;
-        $keyValues['team_set_id'] = str_replace("-", "",$bean->team_set_id);
+        $keyValues['team_set_id'] = $this->formatGuidFields($bean->team_set_id);
         
         //BEGIN SUGARCRM flav=pro ONLY
         $favorites = SugarFavorites::getFavoritesByModuleByRecord($bean->module_dir, $bean->id);
@@ -197,7 +197,7 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
         
         foreach($favorites AS $fav) {
             // need to replace -'s for elastic search, same as team_set_ids
-            $module_favorites_user[] = str_replace('-', '', strval($fav->assigned_user_id));
+            $module_favorites_user[] = $this->formatGuidFields($fav->assigned_user_id);
         }
 
         
@@ -208,13 +208,17 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
         $ownerField = $this->getOwnerField($bean);
         if ($ownerField)
         {
-            $keyValues['doc_owner'] = str_replace('-','', strval($ownerField));
+            $keyValues['doc_owner'] = $this->formatGuidFields($ownerField);
         }
 
         if( empty($keyValues) )
             return null;
         else
             return new Elastica_Document($bean->id, $keyValues, $this->getIndexType($bean));
+    }
+
+    public function formatGuidFields($field_value) {
+        return str_replace('-','', strval($field_value));
     }
 
     /**
@@ -560,7 +564,7 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
     protected function getOwnerTermFilter()
     {
         $ownerTermFilter = new Elastica_Filter_Term();
-        $ownerTermFilter->setTerm('doc_owner', str_replace('-', '', strval($GLOBALS['current_user']->id)));
+        $ownerTermFilter->setTerm('doc_owner', $this->formatGuidFields($GLOBALS['current_user']->id));
 
         return $ownerTermFilter;
     }
@@ -663,7 +667,7 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
         $ownerTermFilter = new Elastica_Filter_Term();
         // same bug as team set id, looking into a fix in elastic search to allow -'s without tokenizing
 
-        $ownerTermFilter->setTerm('user_favorites', str_replace('-','',$GLOBALS['current_user']->id));
+        $ownerTermFilter->setTerm('user_favorites', $this->formatGuidFields($GLOBALS['current_user']->id));
 
         return $ownerTermFilter;
     }
