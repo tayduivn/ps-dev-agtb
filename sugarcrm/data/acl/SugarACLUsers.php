@@ -24,32 +24,6 @@ require_once('data/SugarACLStrategy.php');
 class SugarACLUsers extends SugarACLStrategy
 {
     /**
-     * Fields non admin cannot edit
-     */
-    public $no_edit_fields = array(
-            'title' => true,
-            'department' => true,
-            'reports_to_id' => true,
-            'reports_to_name' => true,
-            'reports_to_link' => true,
-            'user_name' => true,
-            'status' => true,
-            'employee_status' => true,
-        );
-
-    public $no_access_fields = array(
-            'show_on_employees' => true,        
-            'portal_only' => true,
-            'is_admin' => true,
-            'is_group' => true,
-            'system_generated_password' => true,
-            'external_auth_only' => true,
-            'sugar_login' => true,
-            'authenticate_id' => true,
-            'pwd_last_changed' => true,        
-        );
-
-    /**
      * Check access a current user has on Users and Employees
      * @param string $module
      * @param string $view
@@ -106,7 +80,7 @@ class SugarACLUsers extends SugarACLStrategy
             return true;
         }
 
-        if ( !$myself && $view == 'field' && !empty($this->no_access_fields[$context['field']])) {
+        if ( !$myself && $view == 'field' && in_array($context['field'],array('system_generated_password','pwd_last_changed','authenticate_id','sugar_login','external_auth_only')) ) {
             // This isn't us, these aren't fields we should be poking around in.
             return false;
         }
@@ -116,11 +90,10 @@ class SugarACLUsers extends SugarACLStrategy
                 return false;
             }
             if( $view == 'field'
-                && ($context['action'] == 'edit' || $context['action'] == 'massupdate' || $context['action'] == 'delete' || $context['action'] == 'create')
+                && ($context['action'] == 'edit' || $context['action'] == 'massupdate' || $context['action'] == 'delete')
                 && !empty($this->no_edit_fields[$context['field']])) {
-
                 return false;
-            }            
+            }
             return true;
         }
 

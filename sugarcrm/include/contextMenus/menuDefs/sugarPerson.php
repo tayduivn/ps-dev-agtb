@@ -34,19 +34,19 @@ $menuDef['sugarPerson'] = array(
     array('text' => 'LBL_CREATE_NOTE', 
           'action' => 'SUGAR.contextMenu.actions.createNote',
           'module' => 'Notes',
-          'aclAction' => 'create'),
+          'aclAction' => 'edit'),
     array('text' => 'LBL_CREATE_TASK', 
           'action' => 'SUGAR.contextMenu.actions.createTask',
           'module' => 'Tasks',
-          'aclAction' => 'create'),
+          'aclAction' => 'edit'),
     array('text' => 'LBL_SCHEDULE_MEETING', 
           'action' => 'SUGAR.contextMenu.actions.scheduleMeeting',
           'module' => 'Meetings',
-          'aclAction' => 'create'),
+          'aclAction' => 'edit'),
     array('text' => 'LBL_SCHEDULE_CALL', 
           'action' => 'SUGAR.contextMenu.actions.scheduleCall',
           'module' => 'Calls',
-          'aclAction' => 'create'),
+          'aclAction' => 'edit'),
     );
 
 ?>

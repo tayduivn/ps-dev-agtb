@@ -58,7 +58,7 @@ class SugarWidgetSubPanelTopCreateAccountNameButton extends SugarWidgetSubPanelT
             return '';
         }
 
-		if( ACLController::moduleSupportsACL($defines['module'])  && !ACLController::checkAccess($defines['module'], 'create', true)){
+		if( ACLController::moduleSupportsACL($defines['module'])  && !ACLController::checkAccess($defines['module'], 'edit', true)){
 			$button = "<input title='$title'class='button' type='button' name='button' value='  $value  ' disabled/>\n";
 			return $button;
 		}
