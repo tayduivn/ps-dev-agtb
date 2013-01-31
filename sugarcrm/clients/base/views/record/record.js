@@ -64,6 +64,7 @@
         this.context.on('button:save_button:click', this.saveClicked, this);
         this.context.on('button:delete_button:click', this.deleteClicked, this);
         this.context.on('button:duplicate_button:click', this.duplicateClicked, this);
+        this.context.on('button:find_duplicates_button:click', this.findDuplicatesClicked, this);
     },
 
     _renderPanels: function(panels) {
@@ -266,6 +267,18 @@
                 layout : 'create',
                 context: {
                     create: true
+                }
+            }]
+        }, this);
+    },
+    
+    findDuplicatesClicked: function() {
+        this.layout.trigger("drawer:find-duplicates:fire", {
+            components: [{
+                layout : 'find-duplicates',
+                context: {
+                    dupeCheckModel: this.model,
+                    dupelisttype: 'dupecheck-list-multiselect'
                 }
             }]
         }, this);

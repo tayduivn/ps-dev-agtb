@@ -52,6 +52,7 @@
         });
 
         var lastCell = _.last(panel.fields);
+        lastCell.cell_css_class = 'overflow-visible';
         lastCell.fields.push({
             type: 'editablelistbutton',
             label: 'LBL_SAVE_BUTTON_LABEL',
@@ -141,7 +142,7 @@
                     message += app.error.getErrorString(errorName, errorContext);
                 }, rowField);
                 tooltipEl.attr("data-original-title", message);
-                tooltipEl.tooltip({placement:"bottom"});
+                tooltipEl.tooltip({placement:"top"});
             }
         });
     }

@@ -1,6 +1,5 @@
 <?php
 if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
-
 /**
  * LICENSE: The contents of this file are subject to the SugarCRM Professional
  * End User License Agreement ("License") which can be viewed at
@@ -27,38 +26,12 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * governing these rights and limitations under the License.  Portions created
  * by SugarCRM are Copyright (C) 2006 SugarCRM, Inc.; All Rights Reserved.
  */
-
-$viewdefs['Prospects']['base']['view']['headerpane'] = array(
-    'buttons' => array(
-        array(
-            'name'    => 'create_button',
-            'type'    => 'button',
-            'label'   => 'LBL_CREATE_BUTTON_LABEL',
-            'css_class' => 'btn-primary',
-            'value' => 'create'
-        ),
-        array(
-            'name'    => 'import_vcard_button',
-            'type'    => 'button',
-            'label'   => 'LBL_IMPORT_VCARD',
-            'css_class' => 'btn-primary',
-            'events' => array(
-                'click' => 'function(e){
-                        this.view.layout.trigger("drawer:vcard:import:fire", {
-                                components: [{
-                                    layout : "vcard-import",
-                                    context: {
-                                        create: true
-                                    }
-                                }]
-                            }, this);
-                        }'
-            ),
-        ),
-
-        array(
-            'name' => 'sidebar_toggle',
-            'type' => 'sidebartoggle',
-        ),
+$viewdefs['base']['view']['dupecheck-list-multiselect'] = array(
+    'type' => 'list',
+    'selection' => array(
+        'type' => 'multi',
+        'label' => 'LBL_LINK_SELECT'
     ),
+    'rowactions' => array(),
+    'showPreview' => true,
 );

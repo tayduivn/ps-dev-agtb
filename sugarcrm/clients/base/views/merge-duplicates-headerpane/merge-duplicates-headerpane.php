@@ -28,34 +28,16 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * by SugarCRM are Copyright (C) 2006 SugarCRM, Inc.; All Rights Reserved.
  */
 
-$viewdefs['Prospects']['base']['view']['headerpane'] = array(
+$viewdefs['base']['view']['merge-duplicates-headerpane'] = array(
+    'type' => 'headerpane',
+    'title' => 'LBL_MERGE_DUPLICATES',
     'buttons' => array(
         array(
-            'name'    => 'create_button',
+            'name'    => 'cancel_button',
             'type'    => 'button',
-            'label'   => 'LBL_CREATE_BUTTON_LABEL',
-            'css_class' => 'btn-primary',
-            'value' => 'create'
+            'label'   => 'LBL_CANCEL_BUTTON_LABEL',
+            'css_class' => 'btn-invisible btn-link',
         ),
-        array(
-            'name'    => 'import_vcard_button',
-            'type'    => 'button',
-            'label'   => 'LBL_IMPORT_VCARD',
-            'css_class' => 'btn-primary',
-            'events' => array(
-                'click' => 'function(e){
-                        this.view.layout.trigger("drawer:vcard:import:fire", {
-                                components: [{
-                                    layout : "vcard-import",
-                                    context: {
-                                        create: true
-                                    }
-                                }]
-                            }, this);
-                        }'
-            ),
-        ),
-
         array(
             'name' => 'sidebar_toggle',
             'type' => 'sidebartoggle',

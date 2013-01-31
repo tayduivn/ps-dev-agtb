@@ -111,7 +111,7 @@
                     }
                 },
                 components: [
-                    { layout: (this.context.forecasts.config.get('is_setup') == 1) ? "tabbedConfig" : "wizardConfig" }
+                    { layout: (this.context.forecasts.config.get('is_setup') == 1) ? "tabbedConfig" : "wizardConfig", bodyComponent: true }
                 ]
             };
             // callback has to be a function returning the checkSettingsAndRedirect function

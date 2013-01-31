@@ -299,6 +299,7 @@
     clear: function() {
         this.model.clear();
         this.model.set(this.model._defaults);
+        this.render();
     },
 
     /**

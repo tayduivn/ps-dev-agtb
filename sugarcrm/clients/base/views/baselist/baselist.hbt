@@ -46,7 +46,7 @@
     <tr name="{{module}}_{{attributes.id}}" class="single">
         {{#each ../fields}}
         <td>
-            <div class="controls span12">{{field ../../../this ../this ../../../this.viewName}}</div>
+            <div class="controls span12{{#if cell_css_class}} {{cell_css_class}}{{/if}}">{{field ../../../this ../this ../../../this.viewName}}</div>
         </td>
         {{/each}}
     </tr>

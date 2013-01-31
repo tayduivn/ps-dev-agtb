@@ -153,7 +153,7 @@ $app_list_strings = array (
     //BEGIN SUGARCRM flav=pro ONLY
     'Contracts'=>'Contract',
     'Quotes' => 'Quote',
-    'Products' => 'Revenue Line Item',
+    'Products' => 'Product Line Item',
     'Reports' => 'Report',
     'Forecasts' => 'Forecast',
     'ForecastWorksheets' => 'Forecast Worksheet',
@@ -568,7 +568,7 @@ $app_list_strings = array (
     'Leads' => 'Lead',
     'Contacts' => 'Contacts', // cn (11/22/2005) added to support Emails
     //BEGIN SUGARCRM flav=pro ONLY
-    'ProductTemplates' => 'Revenue Line Item',
+    'ProductTemplates' => 'Product Line Item',
     'Quotes' => 'Quote',
 
     //END SUGARCRM flav=pro ONLY
@@ -599,7 +599,7 @@ $app_list_strings = array (
     //BEGIN SUGARCRM flav=pro ONLY
     'ProductTemplates' => 'Product Catalog',
     'Quotes' => 'Quote',
-    'Products' => 'Revenue Line Item',
+    'Products' => 'Product Line Item',
     'Contracts' => 'Contract',
     //END SUGARCRM flav=pro ONLY
     'Emails' => 'Email',
@@ -625,7 +625,7 @@ $app_list_strings = array (
 
     //BEGIN SUGARCRM flav=pro ONLY
 
-    'Products' => 'Revenue Line Item',
+    'Products' => 'Product Line Item',
 
     'Quotes' => 'Quote',
     //END SUGARCRM flav=pro ONLY
@@ -833,7 +833,7 @@ $app_list_strings = array (
     'Outlook Plugin' => 'Outlook Plugin',
     //BEGIN SUGARCRM flav=pro ONLY
     'Product Catalog' => 'Product Catalog',
-    'Products' => 'Revenue Line Items',
+    'Products' => 'Product Line Items',
     //END SUGARCRM flav=pro ONLY
     'Projects' => 'Projects',
     'Quotes' => 'Quotes',
@@ -2589,10 +2589,8 @@ $app_strings = array (
     'LBL_LISTVIEW_OPTION_ENTIRE' => 'Select All',
     'LBL_LISTVIEW_OPTION_SELECTED' => 'Selected Records',
     'LBL_LISTVIEW_SELECTED_OBJECTS' => 'Selected: ',
-    'LBL_LISTVIEW_SELECTED_NUM' => 'You have selected {num} records in this view.',
-    'LBL_LISTVIEW_SELECTED_ALL' => 'You have selected all records in this view.',
-    'LBL_LISTVIEW_RECORDS' => ' records in the result set.',
-    'LBL_LISTVIEW_CLEAR_ALL' => 'Clear All selections.',
+    'LBL_LISTVIEW_SELECTED_ALL' => 'You have selected all records in this result set.  <a href="javascript:void(0);">Clear selections</a>.',
+    'LBL_LISTVIEW_SELECT_ALL_RECORDS' => 'You have selected all {num} records in this view.  <a href="javascript:void(0);">Select all records</a> in the result set.',
     'LBL_LISTVIEW_SELECT_AND_EDIT' => 'Select and edit',
     'LBL_LISTVIEW_ACTIONS' => 'Actions',
 
@@ -3423,6 +3421,7 @@ $app_strings = array (
     'LBL_PREVIEW' => 'Preview',
     'LBL_STREAM_NO_RECORDS' => 'This record has no notes at this time. Please add a note by clicking on the add note link.',
     'LBL_DUPLICATES_FOUND' => '{{duplicateCount}} duplicates found.',
+    'LBL_MERGE_DUPLICATES' => 'Merge Duplicates',
 
     //SugarApiExceptionNotAuthorized language string
     'SUGAR_API_EXCEPTION_NOT_AUTHORIZED' => 'Not allowed to edit field {0} in module: {1}',
