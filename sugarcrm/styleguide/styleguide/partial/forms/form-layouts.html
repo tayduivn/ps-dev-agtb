@@ -664,6 +664,14 @@
     }).submit();
   });
 
+  $('.tr-inline-edit .local-error').on('focus', function(){
+    $(this).removeClass('local-error').next().hide();
+  });
+
+  $('.tr-inline-edit .local-error').on('blur', function(){
+    $(this).addClass('local-error').next().show();
+  });
+
   $('.preview.avatar').click(function(e){
       $(this).closest('.span10').find('label.file-upload span strong').trigger('click');
   });
