@@ -76,7 +76,7 @@
         app.user.set(app.initData.userData);
 
         if(forecastData.initData.forecasts_setup === 0) {
-            window.location.hash = "#Forecasts/config";
+            window.location.hash = "#Forecasts/layout/config";
         }
 
         ctx.componentsMeta = options.meta.components;
