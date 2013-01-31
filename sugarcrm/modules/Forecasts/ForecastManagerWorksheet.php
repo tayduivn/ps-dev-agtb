@@ -48,7 +48,7 @@ class ForecastManagerWorksheet extends SugarBean
     public $object_name = 'ForecastManagerWorksheet';
     public $module_name = 'ForecastManagerWorksheets';
     public $module_dir = 'Forecasts';
-    public $table_name = 'forecast_manager_worksheet';
+    public $table_name = 'forecast_manager_worksheets';
     public $disable_custom_fields = true;
     public $isManager = false;
 
