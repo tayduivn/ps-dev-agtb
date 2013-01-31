@@ -32,9 +32,11 @@ $viewdefs['base']['view']['dupecheck-list-edit'] = array(
         'label' => 'LBL_LISTVIEW_ACTIONS',
         'actions' => array(
             array(
+                'type' => 'rowaction',
                 'label' => 'LBL_LISTVIEW_SELECT_AND_EDIT',
                 'event' => 'list:dupecheck-list-select-edit:fire'
             ),
         )
-    )
+    ),
+    'showPreview' => true,
 );

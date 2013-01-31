@@ -29,7 +29,7 @@
 {{#each value}}
 <div class="control-group email" data-emailaddress="{{email_address}}">
     <div class="input-append widget">
-        <input type="text" class="existingAddress" data-id="{{email_address}}" placeholder="{{str "LBL_EMAIL_TITLE"}}" value="{{email_address}}">
+        <input type="text" class="existingAddress" {{#if ../def.len}} maxlength="{{../../def.len}}"{{/if}} data-id="{{email_address}}" placeholder="{{str "LBL_EMAIL_TITLE"}}" value="{{email_address}}">
         <p class="help-block"></p>
     </div>
    <div class="btn-toolbar">

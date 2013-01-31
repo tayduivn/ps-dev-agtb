@@ -125,6 +125,7 @@ array (
 			),
 			'vname' =>'LBL_ANY_EMAIL',
 			'studio' => array('visible'=>false, 'searchview'=>true),
+            'len' => 100
 		),
 	'opportunity_role' =>
 		array(
