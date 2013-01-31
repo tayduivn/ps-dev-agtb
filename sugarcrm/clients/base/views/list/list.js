@@ -142,7 +142,7 @@
                     message += app.error.getErrorString(errorName, errorContext);
                 }, rowField);
                 tooltipEl.attr("data-original-title", message);
-                tooltipEl.tooltip({placement:"bottom"});
+                tooltipEl.tooltip({placement:"top"});
             }
         });
     }
