@@ -2575,9 +2575,18 @@ class SugarBean
                         $reformatted = true;
                     }
                     break;
-                case 'double':
                 case 'decimal':
                 case 'currency':
+                    if ( $this->$field === '' || $this->$field == NULL || $this->$field == 'NULL') {
+                        continue;
+                    }
+                    // always want string for currency/decimal values
+                    if(!is_string($this->$field) || !is_numeric($this->$field)) {
+                        $this->$field = (string)unformat_number($this->$field);
+                        $reformatted = true;
+                    }
+                    break;
+                case 'double':
                 case 'float':
                     if ( $this->$field === '' || $this->$field == NULL || $this->$field == 'NULL') {
                         continue;
