@@ -24,7 +24,6 @@ require_once('data/SugarBean.php');
 
 class SugarBeanTest extends Sugar_PHPUnit_Framework_TestCase
 {
-
     public static function setUpBeforeClass()
     {
         SugarTestHelper::setUp('current_user');
@@ -105,12 +104,33 @@ class SugarBeanTest extends Sugar_PHPUnit_Framework_TestCase
 
     /**
      * test that currency/decimal from db is a string value
+     * @dataProvider testCurrencyFieldStringValueProvider
      */
-    public function testCurrencyFieldStringValue()
+    public function testCurrencyFieldStringValue($type, $actual, $expected)
     {
-        $quota = SugarTestQuotaUtilities::createQuota('500.01','quota_test_1');
-        $this->assertSame('500.01', $quota->amount);
-        SugarTestQuotaUtilities::removeAllCreatedQuotas();
+        $mock = new SugarBean();
+        $mock->id = 'SugarBeanMockStringTest';
+        $mock->field_defs = array(
+            'testDecimal' => array(
+                'type' => $type
+            ),
+        );
+
+        $mock->testDecimal = $actual;
+        $mock->fixUpFormatting();
+        $this->assertSame($expected, $mock->testDecimal);
+    }
+
+    public function testCurrencyFieldStringValueProvider()
+    {
+        return array(
+            array('decimal', '500.01', '500.01'),
+            array('decimal', 500.01, '500.01'),
+            array('decimal', '-500.01', '-500.01'),
+            array('currency', '500.01', '500.01'),
+            array('currency', 500.01, '500.01'),
+            array('currency', '-500.01', '-500.01'),
+        );
     }
 
 }
