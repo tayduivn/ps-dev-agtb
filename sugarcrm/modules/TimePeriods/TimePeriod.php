@@ -221,8 +221,26 @@ class TimePeriod extends SugarBean {
         //set the start/end date
         $this->start_date = $start_date;
 
-        //the end date is set to the the increment of the date_modifier value minus one day
-        $this->end_date = $timedate->fromDbDate($start_date)->modify($this->next_date_modifier)->modify('-1 day')->asDbDate();
+        $startDate = $timedate->fromDbDate($this->start_date);
+
+        $startDateDay = $startDate->format('j');
+
+        //Flag if the start date's day is the last day of the month
+        $isStartDateDayLastDayOfMonth = $startDateDay == $startDate->format('t');
+
+        $endDate = $startDate->modify($this->next_date_modifier);
+
+        $endDateDay = $endDate->format('j');
+
+        //Handle special cases where start date day is towards the last days of the month
+        if($startDateDay > 28 && $endDateDay < 4) {
+            $endDate->modify("-{$endDateDay} day");
+        } else if($isStartDateDayLastDayOfMonth) {
+            $endDate->setDate($endDate->format('Y'), $endDate->format('n'), $endDate->format('t'));
+        }
+
+        $endDate->modify('-1 day');
+        $this->end_date = $endDate->asDbDate(false);
     }
 
 
@@ -753,16 +771,11 @@ class TimePeriod extends SugarBean {
                 $leafPeriod->parent_id = $timePeriod->id;
                 $leafPeriod->leaf_cycle = $x;
                 $leafPeriod->save();
-                //edge case that end of the month end date can cause date collision on leaves
-                if($leafPeriod->end_date_timestamp > $timePeriod->end_date_timestamp) {
-                    $leafPeriod->end_date = $timePeriod->end_date;
-                    $leafPeriod->save();
-                }
                 $created[] = $leafPeriod;
-                $leafStartDate = $timedate->fromDbDate($leafStartDate)->modify($leafPeriod->next_date_modifier)->asDbDate();
+                $leafStartDate = $timedate->fromDbDate($leafPeriod->end_date)->modify('+1 day')->asDbDate(false);
             }
 
-            $startDate = $timedate->fromDbDate($startDate)->modify($dateModifier)->asDbDate();
+            $startDate = $timedate->fromDbDate($startDate)->modify($dateModifier)->asDbDate(false);
         }
 
         return $created;
