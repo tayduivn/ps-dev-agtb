@@ -33,13 +33,14 @@ class Bug33036Test extends Sugar_PHPUnit_Framework_TestCase
     
     public static function setUpBeforeClass()
     {
-        $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
+        SugarTestHelper::setUp('beanFiles');
+        SugarTestHelper::setUp('beanList');
+        SugarTestHelper::setUp('current_user');
 	}
 
 	public static function tearDownAfterClass()
 	{
-	    SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
-        unset($GLOBALS['current_user']);
+        SugarTestHelper::tearDown();
 	}
 
 	public function setUp()

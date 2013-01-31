@@ -82,10 +82,11 @@ class SugarTestUserUtilities
     public static function getCreatedUserIds() 
     {
         $user_ids = array();
-        foreach (self::$_createdUsers as $user)
-            if ( is_object($user) && $user instanceOf User )
+        foreach (self::$_createdUsers as $user) {
+            if ($user instanceOf User && $user->id != false) {
                 $user_ids[] = $user->id;
-        
+            }
+        }
         return $user_ids;
     }
 }

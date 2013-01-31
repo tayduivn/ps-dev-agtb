@@ -1075,9 +1075,7 @@ function _mergeCustomAppListStrings($file , $app_list_strings){
         // FG - bug 45525 - Specific codelists must NOT be overwritten
 	$exemptDropdowns[] = "moduleList";
 	$exemptDropdowns[] = "moduleListSingular";
-        $exemptDropdowns[] = "parent_type_display";
-        $exemptDropdowns[] = "record_type_display";
-        $exemptDropdowns[] = "record_type_display_notes";
+        $exemptDropdowns = array_merge($exemptDropdowns, getTypeDisplayList());
 
 	foreach($app_list_strings as $key=>$value)
 	{
@@ -4844,7 +4842,7 @@ function create_export_query_relate_link_patch($module, $searchFields, $where){
 			}
 		}
 	}
-	$ret_array = array('where'=>$where, 'join'=>$join['join']);
+    $ret_array = array('where'=>$where, 'join'=> isset($join['join']) ? $join['join'] : '');
 	return $ret_array;
 }
 
@@ -5350,3 +5348,51 @@ function getDuplicateRelationListWithTitle($def, $var_def, $module)
     asort($select_array);
     return $select_array;
 }
+
+/**
+ * Gets the list of "*type_display*".
+ * 
+ * @return array
+ */
+function getTypeDisplayList()
+{
+    return array('record_type_display', 'parent_type_display', 'record_type_display_notes');
+}
+
+/**
+ * Breaks given string into substring according
+ * to 'db_concat_fields' from field definition 
+ * and assigns values to corresponding properties
+ * of bean.
+ *
+ * @param SugarBean $bean
+ * @param array $fieldDef
+ * @param string $value
+ */
+function assignConcatenatedValue(SugarBean $bean, $fieldDef, $value)
+{
+    $valueParts = explode(' ',$value);
+    $valueParts = array_filter($valueParts);
+    $fieldNum   = count($fieldDef['db_concat_fields']);
+
+    if (count($valueParts) == 1 && $fieldDef['db_concat_fields'] == array('first_name', 'last_name'))
+    {
+        $bean->last_name = $value;
+    }
+    // elseif ($fieldNum >= count($valueParts))
+    else
+    {
+        for ($i = 0; $i < $fieldNum; $i++)
+        {
+            $fieldValue = array_shift($valueParts);
+            $fieldName  = $fieldDef['db_concat_fields'][$i];
+            $bean->$fieldName = $fieldValue !== false ? $fieldValue : '';
+        }
+
+        if (!empty($valueParts))
+        {
+            $bean->$fieldName .= ' ' . implode(' ', $valueParts);
+        }
+    }
+}
+

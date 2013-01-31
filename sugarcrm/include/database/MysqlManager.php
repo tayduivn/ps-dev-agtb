@@ -608,6 +608,10 @@ class MysqlManager extends DBManager
 					return "DATE_ADD($string, INTERVAL {$additional_parameters[0]} {$additional_parameters[1]})";
 			case 'add_time':
 					return "DATE_ADD($string, INTERVAL + CONCAT({$additional_parameters[0]}, ':', {$additional_parameters[1]}) HOUR_MINUTE)";
+            case 'add_tz_offset' :
+                $getUserUTCOffset = $GLOBALS['timedate']->getUserUTCOffset();
+                $operation = $getUserUTCOffset < 0 ? '-' : '+';
+                return $string . ' ' . $operation . ' INTERVAL ' . abs($getUserUTCOffset) . ' MINUTE';
 		}
 
 		return $string;

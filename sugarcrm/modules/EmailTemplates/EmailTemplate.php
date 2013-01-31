@@ -99,6 +99,11 @@ class EmailTemplate extends SugarBean {
 		'accept_status_name',
 	);
 
+    /**
+     * @var array temp storage for template variables while cleanBean
+     */
+    protected $storedVariables = array();
+
 	function EmailTemplate() {
 		parent::SugarBean();
 		//BEGIN SUGARCRM flav=pro ONLY
@@ -715,5 +720,30 @@ class EmailTemplate extends SugarBean {
 		}
 		return false;
 	}
+
+    /**
+     * Allows us to save variables of template as they are
+     */
+    public function cleanBean()
+    {
+        $this->storedVariables = array();
+        $this->body_html = preg_replace_callback('/\{::[^}]+::\}/', array($this, 'storeVariables'), $this->body_html);
+        parent::cleanBean();
+        $this->body_html = str_replace(array_values($this->storedVariables), array_keys($this->storedVariables), $this->body_html);
+    }
+
+    /**
+     * Replacing variables of templates by their md5 hash
+     *
+     * @param array $text result of preg_replace_callback
+     * @return string md5 hash of result
+     */
+    protected function storeVariables($text)
+    {
+        if (isset($this->storedVariables[$text[0]]) == false) {
+            $this->storedVariables[$text[0]] = md5($text[0]);
+        }
+        return $this->storedVariables[$text[0]];
+    }
 }
 ?>

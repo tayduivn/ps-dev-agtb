@@ -49,7 +49,9 @@ class AddTeamSecurityWhereClauseTest extends Sugar_PHPUnit_Framework_TestCase
         $query = preg_replace("/[\t \n]+/", " ", $query);
 
         $this->assertEquals(
-            "INNER JOIN (select tst.team_set_id from team_sets_teams tst INNER JOIN team_memberships team_memberships ON tst.team_id = team_memberships.team_id AND team_memberships.user_id = '{$GLOBALS['current_user']->id}' AND team_memberships.deleted=0 group by tst.team_set_id) foo_tf on foo_tf.team_set_id = foo.team_set_id ",
+            "INNER JOIN (select tst.team_set_id from team_sets_teams tst INNER JOIN team_memberships team_memberships ON tst.team_id = team_memberships.team_id
+                                    AND team_memberships.user_id = '{$GLOBALS['current_user']->id}'
+                                    AND team_memberships.deleted=0 group by tst.team_set_id) foo_tf on foo_tf.team_set_id = foo.team_set_id ",
             $query
             );
     }
@@ -65,9 +67,10 @@ class AddTeamSecurityWhereClauseTest extends Sugar_PHPUnit_Framework_TestCase
 
         $bean->add_team_security_where_clause($query,'myfoo');
         $query = preg_replace("/[\t \n]+/", " ", $query);
-
         $this->assertEquals(
-            "INNER JOIN (select tst.team_set_id from team_sets_teams tst INNER JOIN team_memberships team_membershipsmyfoo ON tst.team_id = team_membershipsmyfoo.team_id AND team_membershipsmyfoo.user_id = '{$GLOBALS['current_user']->id}' AND team_membershipsmyfoo.deleted=0 group by tst.team_set_id) myfoo_tf on myfoo_tf.team_set_id = myfoo.team_set_id ",
+            "INNER JOIN (select tst.team_set_id from team_sets_teams tst INNER JOIN team_memberships team_membershipsmyfoo ON tst.team_id = team_membershipsmyfoo.team_id
+                                    AND team_membershipsmyfoo.user_id = '{$GLOBALS['current_user']->id}'
+                                    AND team_membershipsmyfoo.deleted=0 group by tst.team_set_id) myfoo_tf on myfoo_tf.team_set_id = myfoo.team_set_id ",
             $query
             );
     }
@@ -167,6 +170,7 @@ class AddTeamSecurityWhereClauseTest extends Sugar_PHPUnit_Framework_TestCase
         $bean->module_dir = 'Foo';
         $bean->table_name = 'foo';
         $bean->addVisibilityStrategy('TeamSecurity');
+        $bean->disable_row_level_security = false;
         $query = '';
 
         $bean->add_team_security_where_clause($query,'','INNER',true);

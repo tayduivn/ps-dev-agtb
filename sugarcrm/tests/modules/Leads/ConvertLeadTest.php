@@ -29,17 +29,29 @@ require_once 'tests/SugarTestViewConvertLeadUtilities.php';
 
 class ConvertLeadTest extends Sugar_PHPUnit_Framework_TestCase
 {
+    /**
+     * @var mixed
+     */
+    protected $license_expires_in = null;
+
     public function setUp()
     {
-        $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
-        $GLOBALS['app_list_strings'] = return_app_list_strings_language($GLOBALS['current_language']);
+        SugarTestHelper::setUp('beanFiles');
+        SugarTestHelper::setUp('beanList');
+        SugarTestHelper::setUp('app_list_strings');
+        SugarTestHelper::setUp('mod_strings', array('Leads'));
+        SugarTestHelper::setUp('current_user');
+        if (isset($_SESSION['LICENSE_EXPIRES_IN']))
+        {
+            $this->license_expires_in = $_SESSION['LICENSE_EXPIRES_IN'];
+        }
+        $_SESSION['LICENSE_EXPIRES_IN'] = '5';
     }
     
     public function tearDown()
     {
-        SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
-        unset($GLOBALS['app_list_strings']);
-        unset($GLOBALS['current_user']);
+        $_SESSION['LICENSE_EXPIRES_IN'] = $this->license_expires_in;
+        SugarTestHelper::tearDown();
     }
     
     /**

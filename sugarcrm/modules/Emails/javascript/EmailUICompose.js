@@ -2069,6 +2069,12 @@ SE.composeLayout = {
             if(composePackage.to_email_addrs) {
                 document.getElementById("addressTO" + SE.composeLayout.currentInstanceId).value = composePackage.to_email_addrs;
             } // if
+
+            if (composePackage.cc_addrs) {
+                document.getElementById("addressCC" + SE.composeLayout.currentInstanceId).value = composePackage.cc_addrs;
+                SE.composeLayout.showHiddenAddress('cc', SE.composeLayout.currentInstanceId);
+            }
+
             if (composePackage.subject != null && composePackage.subject.length > 0) {
             	document.getElementById("emailSubject" + SE.composeLayout.currentInstanceId).value = composePackage.subject;
             }

@@ -61,6 +61,7 @@
         {$TOUR_LINK}
     </div>
 {/if}
+
     <a href="http://www.sugarcrm.com" target="_blank" class="copyright">&#169; 2013 SugarCRM Inc.</a>
 <script>
  	var logoStats = "&#169; 2004-2013 SugarCRM Inc. All Rights Reserved. {$STATISTICS|addslashes}";

@@ -1032,8 +1032,8 @@ class Email extends SugarBean {
 			$this->bcc_addrs_names = $this->cleanEmails($this->bcc_addrs_names);
 			$this->reply_to_addr = $this->cleanEmails($this->reply_to_addr);
 			$this->description = SugarCleaner::cleanHtml($this->description);
-			$this->description_html = SugarCleaner::cleanHtml($this->description_html, true);
-			$this->raw_source = SugarCleaner::cleanHtml($this->raw_source, true);
+            $this->description_html = SugarCleaner::cleanHtml($this->description_html, true);
+            $this->raw_source = SugarCleaner::cleanHtml($this->raw_source, true);
 			$this->saveEmailText();
 			$this->saveEmailAddresses();
 
@@ -1222,7 +1222,7 @@ class Email extends SugarBean {
 
 		if($ret) {
 			$ret->retrieveEmailText();
-		    //$ret->raw_source = SugarCleaner::cleanHtml($ret->raw_source);
+            //$ret->raw_source = SugarCleaner::cleanHtml($ret->raw_source);
 			$ret->description = to_html($ret->description);
             //$ret->description_html = SugarCleaner::cleanHtml($ret->description_html);
 			$ret->retrieveEmailAddresses();
@@ -2242,13 +2242,11 @@ class Email extends SugarBean {
 		if ($return_array) {
 			return parent::create_new_list_query($order_by, $where,$filter,$params, $show_deleted,$join_type, $return_array,$parentbean, $singleSelect);
 		}
-        $custom_join = $this->custom_fields->getJOIN();
+        $custom_join = $this->getCustomJoin();
 
 		$query = "SELECT ".$this->table_name.".*, users.user_name as assigned_user_name\n";
 
-    	if($custom_join){
-			$query .= $custom_join['select'];
-		}
+        $query .= $custom_join['select'];
     	$query .= " FROM emails\n";
     	if ($where != "" && (strpos($where, "contacts.first_name") > 0))  {
 			$query .= " LEFT JOIN emails_beans ON emails.id = emails_beans.email_id\n";
@@ -2265,9 +2263,7 @@ class Email extends SugarBean {
         $query .= " JOIN contacts ON contacts.id= emails_beans.bean_id AND emails_beans.bean_module='Contacts' and contacts.deleted=0 \n";
     	}
 
-		if($custom_join){
-			$query .= $custom_join['join'];
-		}
+        $query .= $custom_join['join'];
 
 		if($show_deleted == 0) {
 			$where_auto = " emails.deleted=0 \n";
@@ -2387,18 +2383,17 @@ class Email extends SugarBean {
 
 
 
-	function create_export_query(&$order_by, &$where) {
+	function create_export_query(&$order_by, &$where)
+    {
 		$contact_required = stristr($where, "contacts");
-		$custom_join = $this->custom_fields->getJOIN(true, true,$where);
+		$custom_join = $this->getCustomJoin(true, true, $where);
 
 		if($contact_required) {
 			$query = "SELECT emails.*, contacts.first_name, contacts.last_name";
 			//BEGIN SUGARCRM flav=pro ONLY
 			$query .= ", teams.name AS team_name";
 			//END SUGARCRM flav=pro ONLY
-			if($custom_join) {
-				$query .= $custom_join['select'];
-			}
+            $query .= $custom_join['select'];
 
 			$query .= " FROM contacts, emails, emails_contacts ";
 			$where_auto = "emails_contacts.contact_id = contacts.id AND emails_contacts.email_id = emails.id AND emails.deleted=0 AND contacts.deleted=0";
@@ -2407,9 +2402,7 @@ class Email extends SugarBean {
 			//BEGIN SUGARCRM flav=pro ONLY
 			$query .= ", teams.name AS team_name";
 			//END SUGARCRM flav=pro ONLY
-			if($custom_join) {
-				$query .= $custom_join['select'];
-			}
+            $query .= $custom_join['select'];
 
             $query .= ' FROM emails ';
             $where_auto = "emails.deleted=0";
@@ -2420,9 +2413,7 @@ class Email extends SugarBean {
 		$this->add_team_security_where_clause($query);
 		$query .= getTeamSetNameJoin('emails');
 		//END SUGARCRM flav=pro ONLY
-		if($custom_join){
-			$query .= $custom_join['join'];
-		}
+        $query .= $custom_join['join'];
 
 		if($where != "")
 			$query .= "where $where AND ".$where_auto;
@@ -2566,7 +2557,7 @@ class Email extends SugarBean {
 
 		//Perform a count query needed for pagination.
 		$countQuery = $this->create_list_count_query($fullQuery);
-
+		
 		$count_rs = $this->db->query($countQuery, false, 'Error executing count query for imported emails search');
 		$count_row = $this->db->fetchByAssoc($count_rs);
 		$total_count = ($count_row != null) ? $count_row['c'] : 0;
@@ -2682,7 +2673,7 @@ class Email extends SugarBean {
              $query['where'] .= " AND NOT EXISTS ( SELECT id FROM notes n WHERE n.parent_id = emails.id AND n.deleted = 0 AND n.filename is not null )";
 
         $fullQuery = "SELECT " . $query['select'] . " " . $query['joins'] . " " . $query['where'];
-
+        
         return $fullQuery;
     }
         /**
@@ -2716,8 +2707,8 @@ class Email extends SugarBean {
 		          $additionalWhereClause[] = "{$properties['table_name']}.$db_key $opp '$searchValue' ";
 		      }
         }
-
-
+        
+        
 
         $isDateFromSearchSet = !empty($_REQUEST['searchDateFrom']);
         $isdateToSearchSet = !empty($_REQUEST['searchDateTo']);

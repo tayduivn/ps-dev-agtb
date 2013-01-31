@@ -143,7 +143,7 @@ $dictionary['Task'] = array('table' => 'tasks',
   'contact_name' =>
   array (
     'name' => 'contact_name',
-    'rname'=>'last_name',
+    'rname'=>'name',
     'db_concat_fields'=> array(0=>'first_name', 1=>'last_name'),
     'source' => 'non-db',
     'len' => '510',

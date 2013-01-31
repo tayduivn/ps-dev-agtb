@@ -99,6 +99,7 @@ function process_alerts(&$focus, $alerts){
                     $focus->retrieve($focus->id);//This will lose all changes to emailaddress
                     if(!empty($focus->emailAddress) && isset($old_addresses)) {
                         $focus->emailAddress->addresses = $old_addresses;
+                        $focus->emailAddress->populateLegacyFields($focus);
                     }
 
                 // Bug 45142 - dates need to be converted to DB format for

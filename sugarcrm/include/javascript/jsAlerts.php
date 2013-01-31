@@ -28,10 +28,8 @@ class jsAlerts{
 	function jsAlerts(){
 		global $app_strings;
 		$this->script .= <<<EOQ
-		if(window.addEventListener){
-			window.addEventListener("load", checkAlerts, false);
-		}else{
-			window.attachEvent("onload", checkAlerts);
+		if (!alertsTimeoutId) {
+		    checkAlerts();
 		}
 
 EOQ;
@@ -47,7 +45,8 @@ EOQ;
 
     function getScript()
     {
-        return "<script>alertList = [];" . $this->script . "</script>";
+
+        return "<script>secondsSinceLoad = 0; alertList = [];" . $this->script . "</script>";
     }
 
 	function addActivities(){

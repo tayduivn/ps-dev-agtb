@@ -2342,6 +2342,39 @@ SUGAR.kb = function() {
             } else {
                 document.location.href = url;
             }
+        },
+
+        //when called, this function will make ajax call to refresh list view sort order
+        sortBrowseList:function(params, name, query)
+        {
+            // if paginating before running a sort, then name will be empty.  Handle this use case
+            if(typeof(name) =='undefined' ){
+                //we will pass in keyword PAGINATE.  This will identify this call as a pagination call
+                name = 'PAGINATE';
+            }
+
+            //convert an object params to a string
+            var stringURL = SUGAR.util.paramsToUrl(params);
+
+            //create data to send across
+            var postData = stringURL + '&sortCol='+name+ '&module=KBDocuments&action=BrowseListView&to_pdf=1';
+            if(query)
+            {
+                postData += '&query=' + query;
+            }
+
+            var callback =	{
+                //on success, refresh list
+                success: function(o) {
+                    var targetdiv=document.getElementById('selected_directory_children');
+                    targetdiv.innerHTML=o.responseText;
+                    SUGAR.util.evalScript(o.responseText);
+                },
+                //do nothing on failure
+                failure: function(o) {/*failure handler code*/}
+            };
+            //make ajax call
+            var trobj = YAHOO.util.Connect.asyncRequest('POST','index.php', callback, postData);
         }
     }
 }();
