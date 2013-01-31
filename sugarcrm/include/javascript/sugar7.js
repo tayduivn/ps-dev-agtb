@@ -34,16 +34,6 @@
             {
                 name: "record",
                 route: ":module/:id/:action"
-            },
-            {
-                name:'config',
-                route: ':module/config',
-                callback: function(module) {
-                    app.controller.loadView({
-                        module: module,
-                        layout: 'config'
-                    });
-                }
             }
         ];
 
