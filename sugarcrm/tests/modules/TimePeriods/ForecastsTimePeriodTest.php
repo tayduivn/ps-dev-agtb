@@ -974,7 +974,6 @@ class ForecastsTimePeriodTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertEquals($expectedKey, $chartLabelKey);
     }
 
-
     /**
      * This is a test for checking the edge time periods and crossed timeperiods
      *
@@ -998,14 +997,17 @@ class ForecastsTimePeriodTest extends Sugar_PHPUnit_Framework_TestCase
         $timeZoneA = new DateTimeZone($timeZones[0]);
         $timeZoneANow = new SugarDateTime("now", $timeZoneA);
         $timeZoneADay = $timeZoneANow->format("j");
+        $timeZoneAMonth = $timeZoneANow->format("n");
         foreach($timeZones as $tz) {
             $timeZoneB = new DateTimeZone($tz);
             $timeZoneBNow = new SugarDateTime("now", $timeZoneB);
             $timeZoneBDay = $timeZoneBNow->format("j");
+            $timeZoneBMonth = $timeZoneBNow->format("n");
+
             if($timeZoneBDay != $timeZoneADay)
             {
                 //check if they are in reverse order, we want A to come before B
-                if($timeZoneBDay < $timeZoneADay)
+                if($timeZoneBDay < $timeZoneADay && $timeZoneBMonth == $timeZoneAMonth)
                 {
                     $timeZoneB = new DateTimeZone($timeZones[0]);
                     $timeZoneA = new DateTimeZone($tz);
@@ -1066,7 +1068,6 @@ class ForecastsTimePeriodTest extends Sugar_PHPUnit_Framework_TestCase
 
         //get timeperiod per userA's timezone
         $timeZoneACurrentTimePeriod = TimePeriod::getCurrentTimePeriod();
-
         //make assertions, Users should have timeperiods based on timezones
         $this->assertNotEquals($timeZoneACurrentTimePeriod->id, $timeZoneBCurrentTimePeriod->id, "time periods were equal, users were in same time zone");
 
@@ -1078,5 +1079,54 @@ class ForecastsTimePeriodTest extends Sugar_PHPUnit_Framework_TestCase
 
         //reset current user back to the original user
         $GLOBALS['current_user'] = $user;
+    }
+
+    /**
+     * This is a test for checking the end of the month scenario to make sure the end date of the leaf doesn't overlap the next time period
+     *
+     * @group forecasts
+     * @group timeperiods
+     */
+    public function testCurrentTimePeriodNoOverlap () {
+        //store the current global user
+        $user = $GLOBALS['current_user'];
+        $GLOBALS['disable_date_format'] = 0;
+        //get timeDate instance
+        $timedate = TimeDate::getInstance();
+
+        //destroy existing time periods created by setup
+        $db = DBManagerFactory::getInstance();
+
+        $db->query("UPDATE timeperiods set deleted = 1");
+
+        $admin = BeanFactory::newBean('Administration');
+
+        //change settings as needed to reset dates
+        $currentForecastSettings = $admin->getConfigForModule('Forecasts', 'base');
+        $currentForecastSettings['is_upgrade'] = 0;
+
+        //set start date to be today by the later time zone standards, which may be today or tomorrow
+        $currentForecastSettings['timeperiod_start_date'] = '2013-01-31';
+
+        //rebuild time periods
+        $timePeriod = TimePeriod::getByType(TimePeriod::ANNUAL_TYPE);
+        $timePeriod->rebuildForecastingTimePeriods(array(), $currentForecastSettings);
+
+        //add all of the newly created timePeriods to the test utils
+        $result = $db->query('SELECT id, start_date, end_date, type FROM timeperiods WHERE deleted = 0');
+        $createdTimePeriods = array();
+
+        while($row = $db->fetchByAssoc($result))
+        {
+            $createdTimePeriods[] = TimePeriod::getBean($row['id']);
+        }
+
+        SugarTestTimePeriodUtilities::setCreatedTimePeriods($createdTimePeriods);
+
+        $currentTimePeriod = TimePeriod::getCurrentTimePeriod();
+
+        $overlappingPeriodId = $db->getOne("SELECT id FROM timeperiods WHERE type = '{$currentTimePeriod->type}' AND deleted = 0 and end_date = '{$currentTimePeriod->start_date}'");
+
+        $this->assertFalse($overlappingPeriodId, "Overlapping timeperiod found.  This means a timeperiod has the same end date as the current time period's start date.  TimePeriods should not overlap");
     }
 }

@@ -753,6 +753,11 @@ class TimePeriod extends SugarBean {
                 $leafPeriod->parent_id = $timePeriod->id;
                 $leafPeriod->leaf_cycle = $x;
                 $leafPeriod->save();
+                //edge case that end of the month end date can cause date collision on leaves
+                if($leafPeriod->end_date_timestamp > $timePeriod->end_date_timestamp) {
+                    $leafPeriod->end_date = $timePeriod->end_date;
+                    $leafPeriod->save();
+                }
                 $created[] = $leafPeriod;
                 $leafStartDate = $timedate->fromDbDate($leafStartDate)->modify($leafPeriod->next_date_modifier)->asDbDate();
             }
