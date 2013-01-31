@@ -78,10 +78,10 @@
           <tr id="edit-id-6943901" class="tr-inline-edit single">
             <td style="padding-bottom:10px"><a class="btn btn-link btn-invisible inline-cancel" href="">Cancel</a></td>
             <td><div class="controls span12"><input type="text" value="Plato's LED MFT" class="local-error inherit-width"><span class="add-on local" rel="tooltip" data-original-title="Error: This field is required"><i class="icon-exclamation-sign"></i></span></div></td>
-            <td><div class="controls span12"><input type="text" value="Cupertino" class="local-error inherit-width"><span class="add-on local" ><i class="icon-exclamation-sign" rel="tooltip" data-original-title="Error: This field is required"></i></span></div></td>
-            <td><div class="controls span12"><input type="text" value="$1,000,000" class="local-error inherit-width"><span class="add-on local" ><i class="icon-exclamation-sign" rel="tooltip" data-original-title="Error: This field is required"></i></span></div></td>
-            <td><div class="controls span12"><input style="width:40px;" type="text" value="(408) 555-5271" class="local-error inherit-width"><span class="add-on local" ><i class="icon-exclamation-sign" rel="tooltip" data-original-title="Error: This field is required"></i></span></div></td>
-            <td><div class="controls span12"><input type="text" value="sales@perkins.com" class="local-error inherit-width"><span class="add-on local"><i class="icon-exclamation-sign" rel="tooltip" data-original-title="Error: This field is required"></i></span></div></td>
+            <td><div class="controls span12"><input type="text" value="Cupertino" class="local-error inherit-width"><span class="add-on local" rel="tooltip" data-original-title="Error: This field is required"><i class="icon-exclamation-sign"></i></span></div></td>
+            <td><div class="controls span12"><input type="text" value="$1,000,000" class="local-error inherit-width"><span class="add-on local" rel="tooltip" data-original-title="Error: This field is required"><i class="icon-exclamation-sign"></i></span></div></td>
+            <td><div class="controls span12"><input style="width:40px;" type="text" value="(408) 555-5271" class="local-error inherit-width"><span class="add-on local" rel="tooltip" data-original-title="Error: This field is required"><i class="icon-exclamation-sign" ></i></span></div></td>
+            <td><div class="controls span12"><input type="text" value="sales@perkins.com" class="local-error inherit-width"><span class="add-on local" rel="tooltip" data-original-title="Error: This field is required"><i class="icon-exclamation-sign"></i></span></div></td>
             <td class="tcenter"><input type="button" value="Save" class="btn btn-primary inline-save disabled"></td>
           </tr>
         </tbody>
@@ -662,6 +662,14 @@
     $("#imageform").ajaxForm({
       target: '#preview1'
     }).submit();
+  });
+
+  $('.tr-inline-edit .local-error').on('focus', function(){
+    $(this).removeClass('local-error').next().hide();
+  });
+
+  $('.tr-inline-edit .local-error').on('blur', function(){
+    $(this).addClass('local-error').next().show();
   });
 
   $('.preview.avatar').click(function(e){

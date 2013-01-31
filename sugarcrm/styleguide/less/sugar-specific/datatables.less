@@ -134,6 +134,21 @@ table.dataTable {
   }
 
   tbody {
+    tr {
+      &.active {
+        td {
+          background-image: url('@{textureSecondary}');
+          .icon-eye-open {
+            color:@black !important;
+          }
+        }
+      }
+      &.tr-inline-edit {
+        td {
+          overflow: visible;
+        }
+      }
+    }
     td {
       max-width: 100px;
       &> *:not(.overflow-visible) {
@@ -146,14 +161,6 @@ table.dataTable {
       &>span.dropdown {
         width: auto;
         overflow: visible;
-      }
-    }
-    tr.active {
-      td {
-        background-image: url('@{textureSecondary}');
-        .icon-eye-open {
-          color:@black !important;
-        }
       }
     }
   }
