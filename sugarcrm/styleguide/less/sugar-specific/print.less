@@ -2,12 +2,27 @@
     /* Your styles here */
     body {
       padding: 0;
+      font-family: "Arial";
+    }
+    #arrow {
+      display: none;
+    }
+    #forecasts #contentflex div.dataTables_wrapper {
+      overflow: visible;
+      @page {
+        size: landscape
+      }
+      table.dataTable td {
+        white-space: nowrap;
+      }
     }
     #forecasts #contentflex > .row-fluid > .span8 {
       width: 100%;
       float: none;
       margin: 0;
       border: 2px solid #fff !important;
+      overflow: visible;
+      display: inline;
     }
     #forecasts #contentflex #folded {
       width: 100%;
@@ -39,6 +54,9 @@
       border: none;
       .box-shadow(none);
     }
+    .dataTables_wrapper {
+        overflow-x: visible;
+    }
     .chartCanvas,
     .sorting,
     .chzn-container-single .chzn-single div b {
@@ -47,5 +65,17 @@
     }
     :root {
       -webkit-print-color-adjust: exact;
+    }
+    #sales_stage_filter_chzn {
+      background: none;
+      .chzn-choices {
+        box-shadow: none;
+        .search-choice {
+          box-shadow: none;
+        }
+        .chzn-select-legend {
+          display: none !important;
+        }
+      }
     }
 }
