@@ -140,8 +140,8 @@ $dictionary['User'] = array(
             'type' => 'image',
             'dbType' => 'varchar',
             'len' => '255',
-            'width' => '',
-            'height' => '',
+            'width' => '42',
+            'height' => '42',
             'border' => '',
         ) ,
         //END SUGARCRM flav!=com ONLY

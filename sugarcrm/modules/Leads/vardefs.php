@@ -637,9 +637,9 @@ VardefManager::createVardef('Leads','Lead', array('default', 'assignable',
 //END SUGARCRM flav=pro ONLY
 'person'));
 
-//BEGIN SUGARCRM flav!=com ONLY
+//BEGIN SUGARCRM flav=com ONLY
 if (isset($GLOBALS['dictionary']['Lead']['fields']['picture']))
 {
    unset($GLOBALS['dictionary']['Lead']['fields']['picture']);
 }
-//END SUGARCRM flav!=com ONLY
+//END SUGARCRM flav=com ONLY
