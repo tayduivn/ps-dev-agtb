@@ -2,7 +2,8 @@
     extendsFrom: 'HeaderpaneView',
 
     events: {
-        'click a[name=cancel_button]': 'cancel'
+        'click a[name=cancel_button]': 'cancel',
+        'click a[name=merge_duplicates_button]': 'mergeDuplicates'
     },
 
     /**
@@ -51,6 +52,21 @@
         this.context.trigger("drawer:hide");
         if (this.context.parent)
             this.context.parent.trigger("drawer:hide");
+    },
+
+    mergeDuplicates: function() {
+        var mergeDupesComponent = {
+            components: [{
+                layout : 'merge-duplicates',
+                context: {
+                    selectedDuplicates: this.context.get('mass_collection')
+                }
+            }]
+        };
+        this.context.trigger("drawer:replace", mergeDupesComponent, this);
+        if (this.context.parent) {
+            this.context.parent.trigger("drawer:replace", mergeDupesComponent, this);
+        }
     }
 
 })
