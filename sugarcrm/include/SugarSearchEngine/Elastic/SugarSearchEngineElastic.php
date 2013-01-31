@@ -217,6 +217,11 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
             return new Elastica_Document($bean->id, $keyValues, $this->getIndexType($bean));
     }
 
+    /**
+     * In our current implementation we need to strip the -'s from our guids to be searchable correctly
+     * @param string $field_value 
+     * @return string
+     */
     public function formatGuidFields($field_value) {
         return str_replace('-','', strval($field_value));
     }
