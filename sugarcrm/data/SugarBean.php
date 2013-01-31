@@ -5840,12 +5840,8 @@ class SugarBean
             case 'index':
             case 'listview':
                 return ACLController::checkAccess($this->module_dir,'list', true);
-            case 'create':
             case 'edit':
             case 'save':
-                if(empty($this->id) || $this->new_with_id == true) {
-                    return ACLController::checkAccess($this->module_dir,'create', $is_owner, $this->acltype);    
-                }
                 if( !$is_owner && $not_set && !empty($this->id)){
                     $class = get_class($this);
                     $temp = new $class();

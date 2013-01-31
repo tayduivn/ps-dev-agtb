@@ -293,12 +293,7 @@ class SugarController
 		}
 		$view = ViewFactory::loadView($this->view, $this->module, $this->bean, $this->view_object_map, $this->target_module);
 		$GLOBALS['current_view'] = $view;
-
-		$action = $view->type;
-		if($action == 'edit' && (empty($this->bean) || empty($this->bean->id) || $this->bean->new_with_id == true)) {
-			$action = 'create';
-		}
-		if(!empty($this->bean) && !$this->bean->ACLAccess($action) && $action != 'list'){
+		if(!empty($this->bean) && !$this->bean->ACLAccess($view->type) && $view->type != 'list'){
 			ACLController::displayNoAccess(true);
 			sugar_cleanup(true);
 		}

@@ -128,7 +128,7 @@ class SugarACLUsers extends SugarACLStrategy
                 return false;
             }
             if( $view == 'field'
-                && ($context['action'] == 'edit' || $context['action'] == 'massupdate' || $context['action'] == 'delete' || $context['action'] == 'create')
+                && ($context['action'] == 'edit' || $context['action'] == 'massupdate' || $context['action'] == 'delete')
                 && !empty($this->no_edit_fields[$context['field']])) {
 
                 return false;

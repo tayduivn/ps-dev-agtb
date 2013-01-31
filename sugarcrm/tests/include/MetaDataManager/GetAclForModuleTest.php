@@ -180,47 +180,7 @@ class GetAclForModuleTest extends Sugar_PHPUnit_Framework_TestCase
     }
 
 
-    // test create only
-    public function testCreateOnly()
-    {
-        $modules = array('Accounts', );
-        // user can view, list, delete, and export
-        $expected_result = array(
-                                'access' => 'yes',
-                                'admin' => 'no',
-                                'create' => 'yes',
-                                'view' => 'no',
-                                'list' => 'no',
-                                'edit' => 'no',
-                                'delete' => 'no',
-                                'import' => 'no',
-                                'export' => 'no',
-                                'massupdate' => 'no',
-                            );
-
-        $this->roles[] = $role = $this->createRole('UNIT TEST ' . create_guid(), $modules, array('access', 'create', ));
-
-        if (!($GLOBALS['current_user']->check_role_membership($role->name))) {
-            $GLOBALS['current_user']->load_relationship('aclroles');
-            $GLOBALS['current_user']->aclroles->add($role);
-            $GLOBALS['current_user']->save();
-        }
-        $id = $GLOBALS['current_user']->id;
-        $GLOBALS['current_user'] = BeanFactory::getBean('Users', $id);
-        unset($_SESSION['ACL']);
-
-
-
-        $mm = new MetaDataManager($GLOBALS['current_user']);
-        foreach($modules AS $module) {
-            unset($_SESSION['ACL']);
-            $acls = $mm->getAclForModule($module, $GLOBALS['current_user']);
-            unset($acls['_hash']);
-            // not checking fields right now
-            unset($acls['fields']);
-            $this->assertEquals($expected_result, $acls);
-        }
-    }
+ 
     // test view owner + edit owner + create
     public function testViewEditOwnerCreate()
     {
@@ -355,55 +315,6 @@ class GetAclForModuleTest extends Sugar_PHPUnit_Framework_TestCase
             $this->assertEquals($expected_result, $acls);
         }
     }    
-    // test create only 1 field
-    // test read only 1 field
-    public function testCreateOnlyOneField()
-    {
-        $modules = array('Accounts');
-        // user can view, list, delete, and export
-        $expected_result = array(
-                                'fields' =>
-                                    array(
-                                            'website' => array(
-                                                        'write' => 'no',
-                                                        'read' => 'no',
-                                                ),
-                                        ),
-                                'access' => 'yes',
-                                'admin' => 'no',
-                                'create' => 'yes',
-                                'view' => 'yes',
-                                'list' => 'yes',
-                                'edit' => 'yes',
-                                'delete' => 'yes',
-                                'import' => 'yes',
-                                'export' => 'yes',
-                                'massupdate' => 'yes',
-                            );
-
-        $this->roles[] = $role = $this->createRole('UNIT TEST ' . create_guid(), $modules, array('access', 'create', 'view', 'list', 'edit','delete','import', 'export', 'massupdate'));
-
-        $aclField = new ACLField();
-        $aclField->setAccessControl('Accounts', $role->id, 'website', 10);
-
-        if (!($GLOBALS['current_user']->check_role_membership($role->name))) {
-            $GLOBALS['current_user']->load_relationship('aclroles');
-            $GLOBALS['current_user']->aclroles->add($role);
-            $GLOBALS['current_user']->save();
-        }
-        $id = $GLOBALS['current_user']->id;
-        $GLOBALS['current_user'] = BeanFactory::getBean('Users', $id);
-        unset($_SESSION['ACL']);
-        ACLField::loadUserFields('Accounts', 'Account', $GLOBALS['current_user']->id, true );
-
-
-        $mm = new MetaDataManager($GLOBALS['current_user']);
-        foreach($modules AS $module) {
-            $acls = $mm->getAclForModule($module, $GLOBALS['current_user']);
-            unset($acls['_hash']);
-            $this->assertEquals($expected_result, $acls);
-        }
-    }  
 
     // test owner write 1 field
     public function testReadOwnerWriteOneField()
