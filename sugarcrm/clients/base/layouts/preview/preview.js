@@ -1,7 +1,7 @@
 ({
     events: {
         'click [data-direction]': 'triggerPagination',
-        'click .closeSubdetail': 'triggerClose'
+        'click .preview-headerbar .closeSubdetail': 'triggerClose'
     },
 
     initialize: function(opts) {
@@ -14,6 +14,7 @@
 
     renderHtml: function() {
         this.$el.html(this.template(this));
+        this.$el.addClass("preview-pane");
     },
 
     triggerPagination: function(e) {
@@ -21,6 +22,7 @@
     },
 
     triggerClose: function() {
+        this.context.trigger("list:preview:decorate", null, this);
         this.context.trigger("preview:close:fire");
     }
 })

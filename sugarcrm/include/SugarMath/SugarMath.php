@@ -37,13 +37,15 @@ require_once('include/SugarMath/Exception.php');
  * // this will result in "8" as expected, the internal representation is 8.0
  * echo floor(SugarMath::init(0.1)->add(0.7)->mul(10)->result());
  *
- * SugarMath can also process math expressions.
+ * SugarMath can also process math expressions. Expressions have an advantage over
+ * individual computations in that they calculate the entire expression at a higher
+ * precision (+10 decimals) and then round the final value to the intended precision.
  *
  * Examples:
  *
- * SugarMath::init()->exp("1+2/3*(4+5)^2");
+ * SugarMath::init()->exp("1+2/3*(4+5)^2")->result();
  * // reusable expression with params
- * SugarMath::init()->exp("1+?-4*(?+?)",array($p1,$p2,$p3));
+ * SugarMath::init()->exp("1+?-4*(?+?)",array($p1,$p2,$p3))->result();
  *
  */
 class SugarMath
@@ -52,9 +54,9 @@ class SugarMath
     /**
      * the current value being applied
      *
-     * @var number $value
+     * @var string $value
      */
-    protected $value = 0;
+    protected $value = '0';
 
     /**
      * the math decimal precision, default is 2
@@ -69,7 +71,7 @@ class SugarMath
      * @param mixed $value the starting value to apply math to
      * @param int $scale Optional math scale
      */
-    public function __construct( $value = 0.0, $scale = null ) {
+    public function __construct( $value = '0', $scale = null ) {
         $this->setValue($value);
         if(isset($scale)) {
             $this->setScale($scale);
@@ -93,7 +95,7 @@ class SugarMath
      * @param  int   $scale
      * @return SugarMath
      */
-    static public function init( $value = 0.0, $scale = null )
+    static public function init( $value = '0', $scale = null )
     {
         return new self($value, $scale);
     }
@@ -134,10 +136,11 @@ class SugarMath
     /**
      * get the current value
      *
+     * @param bool $round round result value to given scale?
      * @return number
      */
-    public function result() {
-        return $this->value;
+    public function result($round = true) {
+        return $round ? $this->round($this->value) : $this->value;
     }
 
     /**
@@ -282,6 +285,25 @@ class SugarMath
     }
 
     /**
+     * round value to given precision
+     *
+     * @param string $value
+     * @param int $scale
+     * @return string rounded value
+     */
+    public function round($value, $scale = null) {
+        if(!isset($scale)) {
+            $scale = $this->scale;
+        }
+        if (false !== ($pos = strpos($value, '.')) && (strlen($value) - $pos - 1) > $scale) {
+            $zeros = str_repeat("0", $scale);
+            return bcadd($value, "0.{$zeros}5", $scale);
+        } else {
+            return bcadd($value, 0, $scale);
+        }
+    }
+
+    /**
      * test that value is numeric
      *
      * @param number|string $value
@@ -321,7 +343,7 @@ class SugarMath
      *
      * Example:
      *
-     * exp("23.33 + ? * (4 - ?) / ?", array($v1, $v2, $v3));
+     * exp("23.33 + ? * (4 - ?) / ?", array($v1, $v2, $v3))->result();
      *
      * @param string   $exp math expression
      * @param array    $args values for the ? parts of the expression
@@ -329,10 +351,10 @@ class SugarMath
      * @return string result
      */
     public function exp($exp, $args = array()) {
-        // plenty of up-front error checking
         if(strlen($exp) == 0) {
-            // not an error, return silently
-            return false;
+            // expression empty, set to 0
+            $this->value = '0';
+            return $this;
         }
         if(!isset($args)) {
             $args = array();
@@ -343,7 +365,7 @@ class SugarMath
         if(!is_array($args)) {
             throw new SugarMath_Exception('expression args must be an array');
         }
-        if(count($args)>0) {
+        if(count($args) > 0) {
             foreach($args as $arg) {
                 $this->testValue($arg,'numeric','arguments must be numeric');
             }
@@ -356,6 +378,8 @@ class SugarMath
         if(substr_count($exp,'(') !== substr_count($exp,')')) {
             throw new SugarMath_Exception('parenthesis mismatch');
         }
+        // give us ample of precision for the internal calculations
+        $this->scale += 10;
         // convert infix expression into postfix (reverse polish notation)
         $output = array(); // our output queue for RPN
         $stack = array();  // our operand stack
@@ -481,8 +505,11 @@ class SugarMath
                 }
             }
         }
-        // if original expression was empty parenthesis, result will be empty
-        return !empty($result) ? $result[0] : false;
+        // set scale back to original value
+        $this->scale -= 10;
+        // if original expression was empty parenthesis, result will be 0
+        $this->value = !empty($result) ? $result[0] : '0';
+        return $this;
     }
 
 }

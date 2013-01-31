@@ -210,6 +210,23 @@ $dictionary['Lead'] = array('table' => 'leads','audited'=>true, 'unified_search'
         'vname' => 'LBL_LEADS',
         'reportable' => false,
     ),
+    'contact_name' =>
+    array (
+        'name' => 'contact_name',
+        'rname' => 'name',
+        'id_name' => 'contact_id',
+        'vname' => 'LBL_CONTACT_NAME',
+        'join_name'=>'contacts',
+        'type' => 'relate',
+        'link' => 'contacts',
+        'table' => 'contacts',
+        'isnull' => 'true',
+        'module' => 'Contacts',
+        'dbType' => 'varchar',
+        'len' => '255',
+        'source' => 'non-db',
+        'unified_search' => false,
+    ),
   'account_id' =>
   array (
     'name' => 'account_id',
@@ -342,6 +359,7 @@ $dictionary['Lead'] = array('table' => 'leads','audited'=>true, 'unified_search'
 			),
 			'vname' =>'LBL_ANY_EMAIL',
 			'studio' => array('visible'=>false, 'searchview'=>true),
+            'len' => 100
 		),
   'webtolead_email1' =>
   array (

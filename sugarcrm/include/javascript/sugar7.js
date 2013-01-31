@@ -2,68 +2,48 @@
     app.events.on("app:init", function() {
         var routes;
 
-        function recordHandler(module, id, action) {
-            var opts = {
-                module: module,
-                layout: "record",
-                action: (action || "detail")
-            };
-
-            if (id !== "create") {
-                _.extend(opts, {modelId: id});
-            } else {
-                _.extend(opts, {create: true});
-                opts.layout = "create";
-            }
-
-            app.controller.loadView(opts);
-        }
-
         routes = [
             {
                 name: "index",
-                route: "",
-                callback: "index"
+                route: ""
             },
             {
                 name: "logout",
-                route: "logout",
-                callback: "logout"
+                route: "logout/?clear=:clear"
             },
             {
                 name: "logout",
-                route: "logout/?clear=:clear",
-                callback: "logout"
+                route: "logout"
             },
             {
                 name: "list",
-                route: ":module",
-                callback: function(module) {
-                    app.controller.loadView({
-                        module: module,
-                        layout: "records"
-                    });
-                }
-            },
-            {
-                name: "layout",
-                route: ":module/layout/:view",
-                callback: "layout"
-            },
-            {
-                name: "create",
-                route: ":module/create",
-                callback: "create"
-            },
-            {
-                name: "record action",
-                route: ":module/:id/:action",
-                callback: recordHandler
+                route: ":module"
             },
             {
                 name: "record",
-                route: ":module/:id",
-                callback: recordHandler
+                route: ":module/create"
+            },
+            {
+                name: "layout",
+                route: ":module/layout/:view"
+            },
+            {
+                name: "record",
+                route: ":module/:id"
+            },
+            {
+                name: "record",
+                route: ":module/:id/:action"
+            },
+            {
+                name:'config',
+                route: ':module/config',
+                callback: function(module) {
+                    app.controller.loadView({
+                        module: module,
+                        layout: 'config'
+                    });
+                }
             }
         ];
 

@@ -4,6 +4,7 @@
     previousModelState: null,
     extendsFrom: 'EditableView',
 
+    enableHeaderPane: true,
     events: {
         'click .record-edit-link-wrapper': 'handleEdit',
         'click a[name=cancel_button]': 'cancelClicked',
@@ -66,6 +67,7 @@
         this.context.on('button:save_button:click', this.saveClicked, this);
         this.context.on('button:delete_button:click', this.deleteClicked, this);
         this.context.on('button:duplicate_button:click', this.duplicateClicked, this);
+        this.context.on('button:find_duplicates_button:click', this.findDuplicatesClicked, this);
     },
 
     _renderPanels: function(panels) {
@@ -198,7 +200,6 @@
             previousField.nextField = firstField;
         }
     },
-
     initButtons: function() {
         if(this.options.meta && this.options.meta.buttons) {
             _.each(this.options.meta.buttons, function(button) {
@@ -212,6 +213,12 @@
             }, this);
         }
     },
+    showPreviousNextBtnGroup:function() {
+        var listCollection = this.context.get('listCollection') || new Backbone.Collection();
+        var recordIndex = listCollection.indexOf(listCollection.get(this.model.id));
+        this.collection.previous = listCollection.models[recordIndex-1] ? listCollection.models[recordIndex-1] : undefined;
+        this.collection.next = listCollection.models[recordIndex+1] ? listCollection.models[recordIndex+1] : undefined;
+    },
 
     registerFieldAsButton: function(buttonName) {
         var button = this.getField(buttonName);
@@ -222,6 +229,7 @@
 
     _renderHtml: function() {
         this.checkAclForButtons();
+        this.showPreviousNextBtnGroup();
         app.view.View.prototype._renderHtml.call(this);
     },
 
@@ -267,6 +275,18 @@
         }, this);
     },
     
+    findDuplicatesClicked: function() {
+        this.layout.trigger("drawer:find-duplicates:fire", {
+            components: [{
+                layout : 'find-duplicates',
+                context: {
+                    dupeCheckModel: this.model,
+                    dupelisttype: 'dupecheck-list-multiselect'
+                }
+            }]
+        }, this);
+    },
+
     editClicked: function() {
         this.previousModelState = this.model.previousAttributes();
         this.setButtonStates(this.STATE.EDIT);

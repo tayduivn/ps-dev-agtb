@@ -71,17 +71,17 @@
         // TODO review this forecasts requirement and make it work with css defined on metadata
         if (this.def.convertToBase &&
             this.def.showTransactionalAmount &&
-            this.model.get(this.def.currency_field) !== app.currency.getBaseCurrencyId()
+            this.model.get(this.def.currency_field || 'currency_id') !== app.currency.getBaseCurrencyId()
         ) {
 
             this.transactionValue = app.currency.formatAmountLocale(
                 this.model.get(this.name),
-                this.model.get(this.def.currency_field)
+                this.model.get(this.def.currency_field || 'currency_id')
             );
         }
 
-        var baseRate = this.model.get(this.def.base_rate_field);
-        var currencyId = this.model.get(this.def.currency_field);
+        var baseRate = this.model.get(this.def.base_rate_field || 'base_rate');
+        var currencyId = this.model.get(this.def.currency_field || 'currency_id');
 
         if (this.def.convertToBase) {
             value = app.currency.convertWithRate(value, baseRate);

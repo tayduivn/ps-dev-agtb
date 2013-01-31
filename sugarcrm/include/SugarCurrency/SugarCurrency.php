@@ -100,17 +100,17 @@ class SugarCurrency
      *
      * @access public
      * @param  float  $amount
-     * @param  float  $fromRate rate to convert from
+     * @param  float  $fromRate rate to convert from (default base rate)
      * @param  float  $toRate rate to convert to (default base rate)
      * @param  int    $precision Optional decimal precision
      * @return float   converted amount
      */
-    public static function convertWithRate( $amount, $fromRate, $toRate=1.0, $precision = 6 ) {
+    public static function convertWithRate( $amount, $fromRate = 1.0, $toRate = 1.0, $precision = 6 ) {
         // if rate is 0 or null, just return the amount
         if(empty($fromRate) || empty($toRate)) {
             return $amount;
         }
-        return round($amount / $fromRate * $toRate, $precision);
+        return SugarMath::init(0, $precision)->exp('?/?*?',array($amount,$fromRate,$toRate))->result();
     }
 
     /**
