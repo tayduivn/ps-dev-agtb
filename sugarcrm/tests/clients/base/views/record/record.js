@@ -7,10 +7,12 @@ describe("Record View", function() {
     beforeEach(function() {
         SugarTest.testMetadata.init();
         SugarTest.loadHandlebarsTemplate('button', 'field', 'base', 'detail');
-        SugarTest.loadHandlebarsTemplate('buttondropdown', 'field', 'base', 'detail');
+        SugarTest.loadHandlebarsTemplate('rowaction', 'field', 'base', 'detail');
         SugarTest.loadHandlebarsTemplate(viewName, 'view', 'base');
         SugarTest.loadComponent('base', 'field', 'button');
-        SugarTest.loadComponent('base', 'field', 'buttondropdown');
+        SugarTest.loadComponent('base', 'field', 'rowaction');
+        SugarTest.loadComponent('base', 'field', 'fieldset');
+        SugarTest.loadComponent('base', 'field', 'actiondropdown');
         SugarTest.loadComponent('base', 'view', 'editable');
         SugarTest.loadComponent('base', 'view', viewName);
         SugarTest.testMetadata.addViewDefinition(viewName, {
@@ -21,22 +23,29 @@ describe("Record View", function() {
                 "css_class":"btn-invisible btn-link",
                 "showOn":"edit"
             }, {
-                "type":"buttondropdown",
+                "type":"actiondropdown",
                 "name":"main_dropdown",
                 "buttons":[{
+                    "type":"rowaction",
+                    "event":"button:edit_button:click",
                     "name":"edit_button",
                     "label":"LBL_EDIT_BUTTON_LABEL",
                     "primary":true,
                     "showOn":"view"
                 }, {
+                    "type":"rowaction",
+                    "event":"button:save_button:click",
                     "name":"save_button",
                     "label":"LBL_SAVE_BUTTON_LABEL",
                     "primary":true,
                     "showOn":"edit"
                 }, {
+                    "type":"rowaction",
                     "name":"delete_button",
-                    "label":"LBL_DELETE_BUTTON_LABEL"
+                    "label":"LBL_DELETE_BUTTON_LABEL",
+                    "showOn":"view"
                 }, {
+                    "type":"rowaction",
                     "name":"duplicate_button",
                     "label":"LBL_DUPLICATE_BUTTON_LABEL",
                     "showOn":"view"
@@ -84,9 +93,7 @@ describe("Record View", function() {
             expect(_.size(view.fields)).toBe(0);
         });
 
-        it("Should render 8 editable fields and 5 buttons", function() {
-            var fields = 0,
-                buttons = 0;
+        it("Should render 8 editable fields and 6 buttons", function() {
 
             view.render();
             view.model.set({
@@ -95,16 +102,10 @@ describe("Record View", function() {
                 description: 'Description'
             });
 
-            _.each(view.fields, function(field) {
-                if (field.type === 'button') {
-                    buttons++;
-                } else if (field.type !== 'buttondropdown') {
-                    fields++;
-                }
-            });
-
-            expect(fields).toBe(8);
-            expect(buttons).toBe(5);
+            var actual_field_length = _.keys(view.editableFields).length,
+                actual_button_length = _.keys(view.buttons).length;
+            expect(actual_field_length).toBe(8);
+            expect(actual_button_length).toBe(6);
         });
 
         it("Should hide 4 editable fields", function() {
@@ -116,8 +117,8 @@ describe("Record View", function() {
                 case_number: 123,
                 description: 'Description'
             });
-            _.each(view.fields, function(field) {
-                if ((field.type !== 'button') && (field.type !== 'buttondropdown') && (field.$el.closest('.hide').length === 1)) {
+            _.each(view.editableFields, function(field) {
+                if ((field.$el.closest('.hide').length === 1)) {
                     hiddenFields++;
                 }
             });
@@ -164,14 +165,13 @@ describe("Record View", function() {
             });
 
             view.$('.more').click();
-            _.each(view.fields, function(field) {
-                if ((field.type !== 'button') && (field.type !== 'buttondropdown')) {
-                    if (field.$el.closest('.hide').length === 1) {
-                        hiddenFields++;
-                    } else {
-                        visibleFields++;
-                    }
+            _.each(view.editableFields, function(field) {
+                if (field.$el.closest('.hide').length === 1) {
+                    hiddenFields++;
+                } else {
+                    visibleFields++;
                 }
+
             });
 
             expect(hiddenFields).toBe(0);

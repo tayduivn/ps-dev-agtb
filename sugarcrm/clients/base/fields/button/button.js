@@ -62,13 +62,6 @@
             return false;
         }
     },
-    /**
-     * Defines at what state a button should be shown
-     * @return String
-     */
-    showOn: function() {
-        return this.def.showOn;
-    },
     show: function() {
         app.view.Field.prototype.show.call(this);
         this.isHidden = false;
