@@ -310,6 +310,13 @@ class MetaDataManager {
             if($bean instanceof SugarBean) {
                 $context['bean'] = $bean;
             }
+
+            // if the bean is not set, or a new bean.. set the owner override
+            // this will allow fields marked Owner to pass through ok.
+            if($bean == false || empty($bean->id) || (isset($bean->new_with_id) && $bean->new_with_id == true)) {
+                $context['owner_override'] = true;
+            }
+            
             $moduleAcls = SugarACL::getUserAccess($module, array(), $context);
 
             // Bug56391 - Use the SugarACL class to determine access to different actions within the module
@@ -328,16 +335,25 @@ class MetaDataManager {
 
                 // Now time to dig through the fields
                 $fieldsAcl = array();
-                //BEGIN SUGARCRM flav=pro ONLY
-                $fieldsAcl = ACLField::getAvailableFields($module);
-                //END SUGARCRM flav=pro ONLY
+                // we cannot use ACLField::getAvailableFields because it limits the fieldset we return.  We need all fields
+                // for instance assigned_user_id is skipped in getAvailableFields, thus making the acl's look odd if Assigned User has ACL's
+                // only assigned_user_name is returned which is a derived ["fake"] field.  We really need assigned_user_id to return as well.
+                if(empty($GLOBALS['dictionary'][$module]['fields'])){
+                    if($bean === false) {
+                        $bean = BeanFactory::newBean($module);
+                    }
+                    if(empty($bean->acl_fields)) {
+                        $fieldsAcl = array();
+                    } else {
+                        $fieldsAcl = $bean->field_defs;
+                    }
+                } else{
+                    $fieldsAcl = $GLOBALS['dictionary'][$module]['fields'];
+                    if(isset($GLOBALS['dictionary'][$module]['acl_fields']) && $GLOBALS['dictionary'][$module]=== false){
+                        $fieldsAcl = array();
+                    }   
+                }  
                 // get the field names
-
-                // if the bean is not set, or a new bean.. set the owner override
-                // this will allow fields marked Owner to pass through ok.
-                if($bean == false || empty($bean->id) || (isset($bean->new_with_id) && $bean->new_with_id == true)) {
-                    $context['owner_override'] = true;
-                }
 
                 SugarACL::listFilter($module, $fieldsAcl, $context, array('add_acl' => true));
                 foreach ( $fieldsAcl as $field => $fieldAcl ) {
