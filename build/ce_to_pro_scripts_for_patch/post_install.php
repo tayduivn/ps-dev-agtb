@@ -55,6 +55,7 @@ function post_install()
 	global $sugar_config;
 	global $sugar_version;
 	global $path;
+	global $db;
 	global $_SESSION;
     if(!isset($_SESSION['sqlSkippedQueries'])){
 	 	$_SESSION['sqlSkippedQueries'] = array();

@@ -318,13 +318,7 @@ function handleSave($prefix,$redirect=true, $useRequired=false) {
                 $_REQUEST['return_action'] = 'EditView';
                 handleRedirect('', 'Meetings');
             }
-
-            $focus->setUserInvitees($userInvitees, $existingUsers);
-            $focus->setContactInvitees($contactInvitees, $existingContacts);
-            $focus->setLeadInvitees($leadInvitees, $existingLeads);
-
-            // Bug #49195 : update vcal
-            vCal::cache_sugar_vcal($current_user);
+            
             
             // CCL - Comment out call to set $current_user as invitee
             // set organizer to auto-accept

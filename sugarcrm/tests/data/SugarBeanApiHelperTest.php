@@ -43,7 +43,9 @@ class SugarBeanApiHelperTest extends Sugar_PHPUnit_Framework_TestCase {
     var $oldDate;
     var $oldTime;
 
-    public function setUp() {
+    public function setUp()
+    {
+        SugarTestHelper::setUp('current_user');
         // Mocking out SugarBean to avoid having to deal with any dependencies other than those that we need for this test
         $mock = $this->getMock('SugarBean');
         $mock->expects($this->any())
@@ -63,6 +65,10 @@ class SugarBeanApiHelperTest extends Sugar_PHPUnit_Framework_TestCase {
         $this->beanApiHelper = new SugarBeanApiHelper(new ServiceMockup());
     }
 
+    public function tearDown()
+    {
+        SugarTestHelper::tearDown();
+    }
 
     /**
      * @dataProvider providerFunction

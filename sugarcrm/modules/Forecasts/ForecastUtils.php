@@ -76,7 +76,7 @@ function get_worksheet_defintion($user_id, $forecast_type, $timeperiod_id, $allo
 		$where .= " AND opportunities.assigned_user_id = '$user_id'";
 		$where .= " AND opportunities.date_closed >= timeperiods.start_date";
 		$where .= " AND opportunities.date_closed <= timeperiods.end_date";
-        $where .= " AND opportunities.sales_stage != 'Closed Lost'";
+        $where .= " AND opportunities.sales_stage != '".Opportunity::STAGE_CLOSED_LOST."'";
 		$where .= " AND timeperiods.id = '$timeperiod_id'";
 
 		$hhelper->get_timeperiod_start_end_date($timeperiod_id);

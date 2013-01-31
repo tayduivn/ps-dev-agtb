@@ -119,7 +119,7 @@ abstract class SugarApi {
             throw new SugarApiExceptionNotFound('Could not find record: '.$args['record'].' in module: '.$args['module']);
         }
 
-        if (!$bean->ACLAccess($aclToCheck)) {
+        if ($aclToCheck != 'view' && !$bean->ACLAccess($aclToCheck)) {
             throw new SugarApiExceptionNotAuthorized('No access to '.$aclToCheck.' records for module: '.$args['module']);
         }
 

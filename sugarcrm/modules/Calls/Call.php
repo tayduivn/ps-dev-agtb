@@ -72,9 +72,9 @@ class Call extends SugarBean {
 	var $team_name;
 	//END SUGARCRM flav=pro ONLY
 	var $update_vcal = true;
-	var $contacts_arr;
-	var $users_arr;
-	var $leads_arr;
+	var $contacts_arr = array();
+	var $users_arr = array();
+	var $leads_arr = array();
 	var $default_call_name_values = array('Assemble catalogs', 'Make travel arrangements', 'Send a letter', 'Send contract', 'Send fax', 'Send a follow-up letter', 'Send literature', 'Send proposal', 'Send quote');
 	var $minutes_value_default = 15;
 	var $minutes_values = array('0'=>'00','15'=>'15','30'=>'30','45'=>'45');
@@ -100,6 +100,8 @@ class Call extends SugarBean {
 										'note_id'			=> 'notes',
                                         'lead_id'			=> 'leads',
 								);
+
+	public $send_invites = false;
 
     /**
      * This is a depreciated method, please start using __construct() as this method will be removed in a future version
@@ -191,12 +193,9 @@ class Call extends SugarBean {
     	    }
         }
 
-		if(!empty($_REQUEST['send_invites']) && $_REQUEST['send_invites'] == '1') {
-			$check_notify = true;
-        } else {
-			$check_notify = false;
-		}
-		if(empty($_REQUEST['send_invites'])) {
+        $check_notify = $this->send_invites;
+
+		if($this->send_invites == false) {
 			if(!empty($this->id)) {
 				$old_record = BeanFactory::getBean('Calls', $this->id);
 				$old_assigned_user_id = $old_record->assigned_user_id;
@@ -248,9 +247,14 @@ class Call extends SugarBean {
             }
 	    }
 
-        if($this->update_vcal) {
+        $this->setUserInvitees($this->users_arr);
+
+        vCal::cache_sugar_vcal(BeanFactory::getBean('Users', $this->assigned_user_id));
+
+
+		if($this->update_vcal && $this->assigned_user_id != $GLOBALS['current_user']->id) {
 			vCal::cache_sugar_vcal($current_user);
-        }
+		}
 
         return $return_id;
 	}

@@ -109,7 +109,14 @@ class RestUserAclTest extends RestTestBase {
         $restReply = $this->_restCall("Users/{$this->new_user_id}", array(), "DELETE");
 
         $this->assertEquals($restReply['reply']['error'], 'not_authorized',
-            "An user was created");
+            "An user was deleted");
+
+        //test getting picture file of another user
+        $restReply = $this->_restCall("Users/1/file/picture", array());
+
+        $this->assertEmpty($restReply['reply']['error'], "An error was thrown it was: " . print_r($restReply['reply']['error'], true));
+
+        $this->assertNotEmpty($restReply['replyRaw'], "No reply");
     }
 
 }

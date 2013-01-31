@@ -283,7 +283,7 @@ class OpportunityTest extends Sugar_PHPUnit_Framework_TestCase
 
         $this->assertNotEquals($opp->best_case, $opp->amount);
         $this->assertNotEquals($opp->worst_case, $opp->amount);
-        $opp->sales_stage = 'Closed Won';
+        $opp->sales_stage = Opportunity::STAGE_CLOSED_WON;
         $opp->save();
 
         $this->assertEquals($opp->best_case, $opp->amount);

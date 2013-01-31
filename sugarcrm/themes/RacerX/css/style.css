@@ -701,9 +701,6 @@ td.paginationWrapper {
 	border: 0px none;
 }
 table.edit.view {
-box-shadow: #ccc 0px 0px 10px;
--moz-box-shadow: #ccc 0px 0px 10px;
--webkit-box-shadow: #ccc 0px 0px 10px;
 margin-top: 0;
 }
 /* search panel on top of list views ( extends .edit .view definition ) */
@@ -735,21 +732,11 @@ input#header {
 
 /* Listview styles */
 .listViewBody {
-box-shadow: #ccc 0px 0px 10px;
--moz-box-shadow: #ccc 0px 0px 10px;
--webkit-box-shadow: #ccc 0px 0px 10px;
--moz-border-radius: 6px;
-border-radius: 6px;
--webkit-border-radius: 6px;
 
 }
 
 .listViewBody .list
 {
-	-moz-border-radius: 0px 0px 6px 6px;
-	border-radius: 0px 0px 6px 6px;
-	-webkit-border-top-left-radius: 0px;
-	-webkit-border-top-right-radius: 0px;
 }
 
 .list.view
@@ -767,9 +754,6 @@ border-radius: 6px;
 
 .listViewBody.nosearch .list {
 	border-top: 1px solid;
-	-moz-border-radius: 6px;
-	border-radius: 6px;
-	-webkit-border-radius: 6px;
 }
 
 .listViewBody .list
@@ -942,9 +926,7 @@ border-radius: 6px;
 }
 /* detail view */
 .detail.view {
-box-shadow: #ccc 0px 0px 10px;
--moz-box-shadow: #ccc 0px 0px 10px;
--webkit-box-shadow: #ccc 0px 0px 10px;
+
 }
 
 .detail.view,
@@ -1217,7 +1199,9 @@ div.indent_right {
     color-stop(1, #eeeeee)
    );
    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#eeeeee', endColorstr='#dfdfdf');	
-   
+    border-radius: 2px;
+    -moz-border-radius: 2px;
+    -webkit-border-radius: 2px;
 	background-color: #cccccc;
 	border-bottom: 1px solid #AFAFAE;
 	border-radius-bottomleft: 0px;
@@ -2667,11 +2651,14 @@ embed
 
 	/* Style the header with its associated corners */
 	.dashletPanel {
-        -webkit-box-shadow: 0 2px 1px rgba(0, 0, 0, 0.1), 0 0 1px rgba(0, 0, 0, 0.4), -1px -1px 2px rgba(0, 0, 0, 0.1), 1px 1px 2px rgba(0, 0, 0, 0.1);
-        -moz-box-shadow: 0 2px 1px rgba(0, 0, 0, 0.1), 0 0 1px rgba(0, 0, 0, 0.4), -1px -1px 2px rgba(0, 0, 0, 0.1), 1px 1px 2px rgba(0, 0, 0, 0.1);
-        box-shadow: 0 2px 1px rgba(0, 0, 0, 0.1), 0 0 1px rgba(0, 0, 0, 0.4), -1px -1px 2px rgba(0, 0, 0, 0.1), 1px 1px 2px rgba(0, 0, 0, 0.1);
 	margin-bottom: 20px;
-	border: 1px solid #ccc\9;
+	border: 1px solid #ccc;
+    border-radius: 2px;
+    -moz-border-radius: 2px;
+    -webkit-border-radius: 2px;
+    box-shadow: 0px 0px 4px #ccc;
+    -moz-box-shadow: 0px 0px 4px #ccc;
+    -webkit-border-radius: 0px 0px 4px #ccc;
 	}
 	
 	.dashletPanel .hd {
@@ -2681,8 +2668,6 @@ embed
 		overflow:visible;
 		position: relative;
 		height:38px;
-		padding-left: 9px;
-		padding-right: 9px;
 		
 	}
 	
@@ -2705,11 +2690,9 @@ embed
 	}
 
 	.dashletPanel .hd  .hd-center {
-		border-width: 1px 0px 0px 0px;
-		border-color: #AFAFAE;
-		border-style: solid;
 		height: 38px;
 		border-bottom: 1px solid #AFAFAE;
+        padding: 0 10px;
 	}
 	
 	.dashletPanel .hd .tr {
@@ -2718,9 +2701,6 @@ embed
 		top:0;
 		right:0;
 		position:absolute;
-		-moz-border-radius-topright: 6px;
-		-webkit-border-top-right-radius: 6px;
-		border-radius-topright: 6px;
 		border-width: 1px 1px 0px 0px;
 		border-color: #AFAFAE;
 		border-style: solid;
@@ -2733,9 +2713,6 @@ embed
 		top:0;
 		left:0;
 		position:absolute;
-		-moz-border-radius-topleft: 6px;
-		-webkit-border-top-left-radius: 6px;
-		border-radius-topleft: 6px;
 		border-width: 1px 0px 0px 1px;
 		border-color: #AFAFAE;
 		border-style: solid;
@@ -2768,9 +2745,7 @@ embed
 	.dashletPanel .bd {
 		overflow:hidden;
 		padding: 0px;
-		position: relative;
 		margin-top: 1px\9;
-		top: 2px;
 	}
 	
 	
@@ -2826,7 +2801,7 @@ embed
 	-moz-border-radius: 0px;
 	border-radius: 0px;
 	-webkit-border-radius: 0px;
-	border-top: 0px none;
+	border: 0px none;
 	margin: 0px !important;
 	}
 	
@@ -2864,9 +2839,7 @@ embed
 
 
 .dashletPanel .dashletNonTable {
-	border-width: 0px 1px 0px 1px;
-	border-color: #AFAFAE;
-	border-style: solid;
+	border: 0px none;
 	padding: 10px;
 	border-bottom: 1px solid #ccc;
 	background-color:rgba(204,204,204,.2);
@@ -4572,22 +4545,15 @@ ul.subpanelTablist li a.activeSubTab:hover
 .list
 {
 	border-color: #AFAFAE !important;
-	-moz-border-radius: 6px;
-	border-radius: 6px;    
-	-webkit-border-radius:6px;
 }
 
 .detail.view  tr:last-child td:first-child ,.detail.view  tr:last-child th:first-child,
 .list.view  tr:last-child td:first-child ,.list.view  tr:last-child th:first-child{
-	-moz-border-radius-bottomleft: 6px;
-	-webkit-border-bottom-left-radius: 6px;
-	border-border-radius-bottomleft: 6px;
+
 }
 
 .list.view  tr:last-child td:last-child,.list.view  tr:last-child th:last-child  {
-	-moz-border-radius-bottomright: 6px;
-	-webkit-border-bottom-right-radius: 6px;
-	border-border-radius-bottomright: 6px;
+
 }
 
 .list.view  tr:last-child th,.list.view  tr:last-child td {
@@ -4595,27 +4561,14 @@ ul.subpanelTablist li a.activeSubTab:hover
 }
 
 .list tr.pagination td table td:first-child {
-	-moz-border-radius-topleft: 6px;
-	border-radius-topleft: 6px;
-	-moz-border-radius-bottomleft: 6px;
-	border-radius-bottomleft: 6px;
-	-webkit-border-bottom-left-radius: 6px;
-	-webkit-border-top-left-radius: 6px;
+
 }
 
 .list tr.pagination td table td:last-child {
-	-moz-border-radius-topright: 6px;
-	border-radius-topright: 6px;
-	-moz-border-radius-bottomright: 6px;
-	border-radius-bottomright: 6px;
-	-webkit-border-bottom-right-radius: 6px;
-	-webkit-border-top-right-radius: 6px;
+
 }
 
 #subpanel_list .list.view {
-box-shadow: #ccc 0px 0px 10px;
--moz-box-shadow: #ccc 0px 0px 10px;
--webkit-box-shadow: #ccc 0px 0px 10px;
 }
 
 .evenListRowS1 td, 
@@ -4685,9 +4638,6 @@ table.detail
 .edit, .detail, .detail > table
 {
     border: 1px solid #AFAFAE;
-	-moz-border-radius: 6px;
-	-webkit-border-radius: 6px;
-	border-radius: 6px;
 }
 
 .detail > table
@@ -5581,51 +5531,30 @@ input, select, textarea, button
 
 /* for edit and detail views */
 .edit.view th:first-child,.detail.view th:first-child {
--moz-border-radius: 6px 6px 0px 0px;
-border-radius: 6px 6px 0px 0px;
--webkit-border-topr-right-radius: 6px;
--webkit-border-top-left-radius: 6px;
+
 }
 
 .edit.view h4:first-child,.detail.view h4:first-child {
--moz-border-radius: 6px 6px 0px 0px;
-border-radius: 6px 6px 0px 0px;
--webkit-border-topr-right-radius: 6px;
--webkit-border-top-left-radius: 6px;
+
 }
 
 .edit.view.collapsed h4,.detail.view.collapsed h4 {
--moz-border-bottom-left-radius: 6px;
--moz-border-bottom-right-radius: 6px;
-border-bottom-left-radius: 6px;
-border-bottom-right-radius: 6px;
--webkit-border-bottom-right-radius: 6px;
--webkit-border-bottom-left-radius: 6px;
+
 }
 
 .collapsed .panelContainer, .collapsed .collapseLink, .expanded .expandLink { display:none; }
 
 .edit.view > table tr:first-child td:first-child,.detail.view > table:first-child tr:first-child td:first-child  {
--moz-border-radius-topleft: 6px;
-border-top-left-radius: 6px;
--webkit-border-top-left-radius: 6px;
+
 }
 
 .edit.view > tr:first-child td:last-child,.detail.view tr:first-child td:last-child   {
--moz-border-radius: 0px 6px 0px 0px;
-border-radius: 0px 6px 0px 0px;
--webkit-border-top-right-radius: 6px;
 }
 
 .edit.view > tr:last-child > td:first-child,.detail.view tr:last-child > td:first-child {
--moz-border-radius: 0px 0px 0px 6px;
-border-radius: 0px 0px 0px 6px;
--webkit-border-bottom-left-radius: 6px;
 }
 .edit.view > tr:last-child td:last-child ,.detail.view tr:last-child td:last-child{
--moz-border-radius: 0px 0px 6px 0px;
-border-radius: 0px 0px 6px 0px;
--webkit-border-bottom-right-radius: 6px;
+
 }
 .edit.view tr td tr td,
 .detail.view > table:first-child tr td tr:first-child td:first-child,
@@ -5634,12 +5563,7 @@ border-radius: 0px 0px 6px 0px;
 .detail.view tr td tr:first-child > td:last-child,
 .detail.view tr td tr:last-child > td:first-child,
 .detail.view tr td tr:last-child > td:last-child {
-    -moz-border-radius: 0px 0px 0px 0px;
-    border-radius: 0px 0px 0px 0px;
-    -webkit-border-top-left-radius: 0px;
-    -webkit-border-top-right-radius: 0px;
-    -webkit-border-bottom-left-radius: 0px;
-    -webkit-border-bottom-right-radius: 0px;
+
 }
 /*
 table.importTable .edit.view > tr:first-child > td:first-child,.detail.view tr:first-child > td:first-child,
@@ -9095,4 +9019,13 @@ i.icon-arrow-up:before {
 
 #pageContainer > div > table td:first-child {
     padding-right: 20px;
+}
+
+.sugar-subpanel-header-row {
+    height: auto;
+    padding: 2px 0px;
+}
+
+.sugar-subpanel-header-row input[type="button"], .button {
+    margin-top: 0px;
 }

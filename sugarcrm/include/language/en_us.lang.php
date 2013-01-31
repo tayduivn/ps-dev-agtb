@@ -3457,7 +3457,7 @@ $app_strings = array (
     'LBL_TOUR_SCREEN_1_TITLE' => 'Now you can do forecasting in Sugar',
     'LBL_TOUR_SCREEN_1_DESCRIPTION' => '<div style="float: left;"><div style="float: left; width: 300px;"><ul><li class="icon-ok">Set up your forecasting parameters</li><li class="icon-ok">Keep track of your projected sales</li><li class="icon-ok">Forecast your sales team\'s projected sales</li></ul></div><div class="well" style="float: left; width: 220px; margin-left: 20px;"><img src="themes/default/images/pt-screen1-thumb.png" width="220" id="thumbnail_1" class="thumb"></div></div><div class="clear"></div>',
     'LBL_TOUR_SCREEN_2_TITLE' => 'Setup your Forecasting Parameters',
-    'LBL_TOUR_SCREEN_2_DESCRIPTION' => '<div style="float: left;"><div style="float: left; width: 300px;"><ul><li class="icon-ok">Select Fiscal Year start date</li><li class="icon-ok">Choose Yearly or Quarterly time periods</li><li class="icon-ok">Select number of Time Periods to Forecast over</li><li class="icon-ok">Select Categories to include in Forecast</li><li class="icon-ok">Select Range to forecast, such as likely, best or worst</li></ul></div><div class="well" style="float: left; width: 220px; margin-left: 20px;"><img src="themes/default/images/pt-screen2-thumb.png" width="220" id="thumbnail_2" class="thumb"></div></div><div class="clear"></div>',
+    'LBL_TOUR_SCREEN_2_DESCRIPTION' => '<div style="float: left;"><div style="float: left; width: 300px;"><ul><li class="icon-ok">Select Fiscal Year start date</li><li class="icon-ok">Choose Yearly or Quarterly time periods</li><li class="icon-ok">Select number of Time Periods to Forecast over</li><li class="icon-ok">Select Categories to include in Forecast</li><li class="icon-ok">Select Range to forecast, such as likely, best or worst</li></ul></div><div class="well" style="float: left; width: 220px; margin-left: 20px;"><img src="themes/default/images/pt-screen2-thumb.png" width="167" id="thumbnail_2" class="thumb"></div></div><div class="clear"></div>',
     'LBL_TOUR_SCREEN_3_TITLE' => 'Manage your Sales Teams Projected Sales',
     'LBL_TOUR_SCREEN_3_DESCRIPTION' => '<div style="float: left;"><div style="float: left; width: 300px;"><ul><li class="icon-ok">Select the Time Period to view</li><li class="icon-ok">See your sales team\'s committed worksheets and adjust their forecasts</li><li class="icon-ok">See Alerts when your sales team members commit new forecasts</li><li class="icon-ok">Save your Worksheet without committing or;</li><li class="icon-ok">Commit Forecast to Manager and view History of previous Commits</li></ul></div><div class="well" style="float: left; width: 220px; margin-left: 20px;"><img src="themes/default/images/pt-screen3-thumb.png" width="220" id="thumbnail_3" class="thumb"></div></div><div class="clear"></div>',
     'LBL_TOUR_SCREEN_4_TITLE' => 'Manage your Sales Teams Projected Sales',
@@ -4546,10 +4546,7 @@ $app_list_strings['oauth_type_dom'] = array(
 );
 $app_list_strings['oauth_client_type_dom'] = array(
     'user' => 'Sugar User',
-    'mobile' => 'Mobile Client',
-    'plugin' => 'Plug-in',
     'support_portal' => 'Support Portal',
-    'other' => 'other',
 );
 
 $app_list_strings ['emailTemplates_type_list'] = array (

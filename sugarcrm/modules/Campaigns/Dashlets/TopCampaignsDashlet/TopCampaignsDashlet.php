@@ -61,7 +61,7 @@ class TopCampaignsDashlet extends Dashlet
        	$qry = "SELECT C.name AS campaign_name, SUM(O.amount) AS revenue, C.id as campaign_id " .
 			   "FROM campaigns C, opportunities O " .
 			   "WHERE C.id = O.campaign_id " . 
-			   "AND O.sales_stage = 'Closed Won' " .
+			   "AND O.sales_stage = '".Opportunity::STAGE_CLOSED_WON."' " .
                "AND O.deleted = 0 " .
 			   "GROUP BY C.name,C.id ORDER BY revenue desc";
 

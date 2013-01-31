@@ -185,7 +185,7 @@ class DashletTest extends Sugar_PHPUnit_Framework_TestCase
         $dashlet = new Dashlet('unit_test_run');
         
         $this->assertEquals(
-            '</div><div class="mr"></div></div><div class="ft"><div class="bl"></div><div class="ft-center"></div><div class="br"></div></div>',
+            '</div></div><div class="ft"><div class="bl"></div><div class="ft-center"></div><div class="br"></div></div>',
             $dashlet->getFooter()
             );
     }

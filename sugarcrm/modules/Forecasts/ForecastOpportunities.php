@@ -192,7 +192,7 @@ class ForecastOpportunities extends SugarBean {
         $query1 .= " AND assigned_user_id = '$this->current_user_id'";
         $query1 .= " AND opportunities.deleted = 0";
         $query1 .= " AND timeperiods.id = '$this->current_timeperiod_id'";
-        $query1 .= " AND opportunities.sales_stage != 'Closed Lost'";
+        $query1 .= " AND opportunities.sales_stage != '".Opportunity::STAGE_CLOSED_LOST."'";
         $result1 = $this->db->query($query1,true,"Error filling in opportunity details: ");
         $row1 = $this->db->fetchByAssoc($result1);
         if ($row1 == null) {
