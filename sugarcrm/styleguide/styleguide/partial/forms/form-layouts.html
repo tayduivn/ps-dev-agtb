@@ -75,10 +75,15 @@
               </span>
             </td>
           </tr>
+
           <tr id="edit-id-6943901" class="tr-inline-edit single">
             <td style="padding-bottom:10px"><a class="btn btn-link btn-invisible inline-cancel" href="">Cancel</a></td>
-            <td><div class="controls span12"><input type="text" value="Plato's LED MFT" class="local-error inherit-width"><span class="error-tooltip add-on local" rel="tooltip" data-original-title="Error: This field is required"><i class="icon-exclamation-sign"></i></span></div></td>
-            <td><div class="controls span12"><input type="text" value="Cupertino" class="local-error inherit-width"><span class="error-tooltip  add-on local" rel="tooltip" data-original-title="Error: This field is required"><i class="icon-exclamation-sign"></i></span></div></td>
+
+<td class="overflow-visible"><div class="controls span12">
+  <input type="text" value="Plato's LED MFT" class="" style="width:50%">
+  <span class="error-tooltip add-on local" rel="tooltip" data-original-title="Error: This field is required, very log validation message this isvery log validation message this is"><i class="icon-exclamation-sign"></i></span></div></td>
+
+            <td class="overflow-visible"><div class="controls span12"><input type="text" value="Cupertino" class="local-error inherit-width"><span class="error-tooltip  add-on local" rel="tooltip" data-original-title="Error: This field is requiredError: This field is requiredError: This field is requiredError: This field is requiredError: This field is required"><i class="icon-exclamation-sign"></i></span></div></td>
             <td><div class="controls span12"><input type="text" value="$1,000,000" class="local-error inherit-width"><span class="error-tooltip  add-on local" rel="tooltip" data-original-title="Error: This field is required"><i class="icon-exclamation-sign"></i></span></div></td>
             <td><div class="controls span12"><input style="width:40px;" type="text" value="(408) 555-5271" class="local-error inherit-width"><span class="error-tooltip  add-on local" rel="tooltip" data-original-title="Error: This field is required"><i class="icon-exclamation-sign" ></i></span></div></td>
             <td><div class="controls span12"><input type="text" value="sales@perkins.com" class="local-error inherit-width"><span class="error-tooltip add-on local" rel="tooltip" data-original-title="Error: This field is required"><i class="icon-exclamation-sign"></i></span></div></td>
@@ -86,6 +91,11 @@
           </tr>
         </tbody>
       </table>
+
+
+
+
+
 
       <hr>
 
@@ -606,7 +616,20 @@
     $this.select2( ctor );
   });
 
+/*
   $("[rel=tooltip]").tooltip({placement:'top'});
+
+  $(":not('table') [rel=tooltip]").tooltip({
+    placement:'top',
+  });
+*/
+
+  $("table td [rel=tooltip]").tooltip({
+    container:'body',
+    placement:'top',
+  });
+
+
 
   /* Custom file upload overrides and avatar widget */
   var uobj = [],

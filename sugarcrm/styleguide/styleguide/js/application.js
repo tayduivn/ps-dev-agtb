@@ -42,7 +42,7 @@
         selector: "[rel=tooltip]"
       });
       $('table').tooltip({
-        selector: "[rel=tooltip]"
+        selector: "[rel=tooltip]",
       });
       $('.thumbnail').tooltip({
         selector: "[rel=tooltip]",
