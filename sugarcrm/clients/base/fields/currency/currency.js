@@ -116,7 +116,7 @@
             return this._currencyField;
         }
 
-        var currencyDef = this.model.get(this.def.currency_field || 'currency_id');
+        var currencyDef = this.model.fields[this.def.currency_field || 'currency_id'];
         currencyDef.type = 'enum';
         currencyDef.options = app.currency.getCurrenciesSelector(Handlebars.compile('{{symbol}} ({{iso4217}})'));
         currencyDef.enum_width = 'auto';

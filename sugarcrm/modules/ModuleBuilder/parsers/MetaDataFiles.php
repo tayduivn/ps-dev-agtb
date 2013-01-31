@@ -673,7 +673,6 @@ class MetaDataFiles
         foreach ( $modules as $module ) {
             
             $fileList = self::getClientFiles($platforms, $type, $module);
-            
             $moduleResults = self::getClientFileContents($fileList, $type, $module);
 
             $basePath = sugar_cached('modules/'.$module.'/clients/'.$platforms[0]);
@@ -719,6 +718,7 @@ class MetaDataFiles
             // Looks at /modules/Accounts/clients/base/views/*
             // So should pull up "record","list","preview"
             $dirsInPath = SugarAutoLoader::getDirFiles($path,true);
+
             foreach ( $dirsInPath as $fullSubPath ) {
                 $subPath = basename($fullSubPath);
                 // This should find the files in each view/layout
@@ -738,14 +738,14 @@ class MetaDataFiles
                 }
             }
         }
-        
+
         return $fileList;
     }
 
     public static function getClientFileContents( $fileList, $type, $module = '' )
     {
         $results = array();
-        
+
         foreach ( $fileList as $fileIndex => $fileInfo ) {
             $extension = substr($fileInfo['path'],-3);
             switch ( $extension ) {

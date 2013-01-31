@@ -27,7 +27,10 @@
 ({
     extendsFrom: 'BaselistView',
 
+    collectionSync: null,
+
     initialize: function(options) {
+        _.bindAll(this);
         //turn off sorting & links for dupe check lists
         app.view.views.BaselistView.prototype.initialize.call(this, options);
         _.each(this.meta.panels, function(panel) {
@@ -36,6 +39,17 @@
             });
         });
         this.on("render", this._removeLinks, this);
+
+        this.context.on("dupecheck:fetch:fire", this.fetchDuplicates);
+
+        if (this.context.has('dupeCheckModel')) {
+            this.model = this.context.get('dupeCheckModel');
+        }
+
+        //save off the collection's sync so we can run our own and then run the original
+        //this is so we can switch the endpoint out
+        this.collectionSync = this.collection.sync;
+        this.collection.sync = this.sync;
     },
 
     _renderHtml: function() {
@@ -45,6 +59,22 @@
 
     _removeLinks: function() {
         this.$('a:not(.rowaction)').contents().unwrap();
+    },
+
+    sync: function(method, model, options) {
+        options = options || {};
+        options.endpoint = this.endpoint;
+        this.collectionSync(method, model, options);
+    },
+
+    endpoint: function(method, model, options, callbacks) {
+        var url = app.api.buildURL(this.module, "duplicateCheck");
+        return app.api.call('create', url, this.model.attributes, callbacks); //Dupe Check API requires POST
+    },
+
+    fetchDuplicates: function(model, options) {
+        this.model = model;
+        this.collection.fetch(options);
     },
 
     addRowActions: function(panel, options) {

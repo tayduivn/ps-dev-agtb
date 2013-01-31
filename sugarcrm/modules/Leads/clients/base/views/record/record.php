@@ -64,6 +64,11 @@ $viewdefs['Leads']['base']['view']['record'] = array(
                     'showOn' => 'view',
                 ),
                 array(
+                    'name'   => 'find_duplicates_button',
+                    'label'  => 'LBL_DUP_MERGE',
+                    'showOn' => 'view',
+                ),
+                array(
                     'name'    => 'lead_convert_button',
                     'label'   => 'LBL_CONVERT_BUTTON_LABEL',
                     'showOn' => 'view'

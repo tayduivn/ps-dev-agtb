@@ -59,7 +59,6 @@ $job_strings = array (
     //BEGIN SUGARCRM flav=pro ONLY
     13 => 'performFullFTSIndex',
     //END SUGARCRM flav=pro ONLY
-    14 => 'asyncMassUpdate',
     15 => 'cleanJobQueue',
     //BEGIN SUGARCRM flav=pro ONLY
     16 => 'checkTimePeriods',
@@ -509,17 +508,6 @@ function sendEmailReminders(){
 	require_once("modules/Activities/EmailReminder.php");
 	$reminder = new EmailReminder();
 	return $reminder->process();
-}
-
-/**
- * Job 14
- */
-function asyncMassUpdate($schedulerJob, $data)
-{
-    require_once('include/MassUpdateJob.php');
-    $job = new MassUpdateJob();
-    $job->run($schedulerJob, $data);
-    return true;
 }
 
 //BEGIN SUGARCRM flav=pro ONLY
