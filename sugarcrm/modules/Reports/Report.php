@@ -1106,16 +1106,31 @@ class Report
 
     protected function addSecurity($query, $focus, $alias)
     {
-        $from = '';
-        $focus->addVisibilityFrom($from, $this->visibilityOpts+array('as_condition' => true, 'table_alias' => $alias));
-        $where = '';
-        $focus->addVisibilityWhere($where, $this->visibilityOpts+array('table_alias' => $alias));
+        $from = ''; $where ='';
+        /*
+         * Here we have a hack because MySQL hates subqueries in joins, see bug #60288 for details
+         */
+        $as_condition = $focus->db->supports("fix:report_as_condition");
+        $options = $this->visibilityOpts;
+        if($as_condition) {
+            $options['table_alias'] = $alias;
+        }
+        $focus->addVisibilityWhere($where, $options);
+        if($as_condition) {
+            $options['as_condition'] = true;
+        }
+        $focus->addVisibilityFrom($from, $options);
         if(!empty($from) || !empty($where)) {
-//            if(!empty($where)) {
-//                $where = "WHERE $where";
-//            }
-//            $query = str_replace(" {$focus->table_name} $alias ", "(SELECT {$focus->table_name}.* FROM {$focus->table_name} $from $where) $alias ", $query);
-            $query .= "/* from $alias */ $from /* where $alias */ $where";
+            if($as_condition && strtolower(substr(ltrim($from), 0, 4)) == "and ") {
+                // check that we indeed got condition - it should start with "and "
+                $query .= "/* from $alias */ $from /* where $alias */ $where";
+            } else {
+                // if we didn't ask for condition or did not get one, get back to subquery mode
+                if(!empty($where)) {
+                    $where = "WHERE $where";
+                }
+                $query = str_replace(" {$focus->table_name} $alias ", "(SELECT {$focus->table_name}.* FROM {$focus->table_name} $from $where) $alias ", $query);
+            }
         }
         return $query;
     }

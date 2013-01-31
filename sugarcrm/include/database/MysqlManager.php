@@ -138,6 +138,7 @@ class MysqlManager extends DBManager
 	    "create_db" => true,
 	    "disable_keys" => true,
         "recursive_query" => true,
+	    "fix:report_as_condition" => true,
 	);
 
 	/**
