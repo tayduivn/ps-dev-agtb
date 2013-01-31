@@ -208,7 +208,7 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
         $ownerField = $this->getOwnerField($bean);
         if ($ownerField)
         {
-            $keyValues['doc_owner'] = strval($ownerField);
+            $keyValues['doc_owner'] = str_replace('-','', strval($ownerField));
         }
 
         if( empty($keyValues) )
@@ -560,7 +560,7 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
     protected function getOwnerTermFilter()
     {
         $ownerTermFilter = new Elastica_Filter_Term();
-        $ownerTermFilter->setTerm('doc_owner', $GLOBALS['current_user']->id);
+        $ownerTermFilter->setTerm('doc_owner', str_replace('-', '', strval($GLOBALS['current_user']->id)));
 
         return $ownerTermFilter;
     }
