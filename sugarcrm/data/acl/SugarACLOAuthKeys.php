@@ -46,8 +46,13 @@ class SugarACLOAuthKeys extends SugarACLStrategy
             $context['action'] = SugarACLStrategy::fixUpActionName($context['action']);
         }
 
+        // Other fields can only be edited when you create a record.
+        if ( (!empty($context['bean']) && !empty($context['bean']->id)) && $view == 'field' && $context['action'] == 'edit' && isset($this->create_only_fields[$context['field']]) ) {
+            return false;
+        }
+
         // We can create without further restrictions
-        if( $view == 'create' || ( $view == 'field' && $context['action'] == 'create') ) {
+        if( (empty($context['bean']) || empty($context['bean']->id) || $context['bean']->new_with_id == true) && $view == 'edit' || ( $view == 'field' && $context['action'] == 'edit') ) {
             return true;
         }
 
@@ -58,11 +63,6 @@ class SugarACLOAuthKeys extends SugarACLStrategy
                     return false;
                 }
             }
-        }
-
-        // Other fields can only be edited when you create a record.
-        if ( $view == 'field' && $context['action'] == 'edit' && isset($this->create_only_fields[$context['field']]) ) {
-            return false;
         }
 
         return true;
