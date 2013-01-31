@@ -357,7 +357,7 @@ class CurrentUserApi extends SugarApi {
             $language = $_SESSION['authenticated_user_language'];
         }
         // if current auth language doesn't exist get their preferred lang from the user obj
-        elseif(empty($_SESSION['authenticated_user_language']) && !empty($current_user->preferred_language)) {
+        elseif(!empty($current_user->preferred_language)) {
             $language = $current_user->preferred_language;
         }
         // if nothing exists, get the sugar_config default language
