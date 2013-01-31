@@ -50,7 +50,10 @@ class One2MRelationship extends M2MRelationship
                 $GLOBALS['log']->fatal("No Links found for relationship {$this->name}");
             }
             else {
-                if (!is_array($links[0])) //Only one link for a self referencing relationship, this is very bad.
+                if (!isset($links[0]) && !isset($links['name'])) {
+                    $GLOBALS['log']->fatal("Bad link found for relationship {$this->name}");
+                }
+                else if (!isset($links[1])&&isset($links['name'])) //Only one link for a self referencing relationship, this is very bad.
                 {
                     $this->lhsLinkDef = $this->rhsLinkDef = $links;
                 }
