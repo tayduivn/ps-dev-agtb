@@ -2589,10 +2589,8 @@ $app_strings = array (
     'LBL_LISTVIEW_OPTION_ENTIRE' => 'Select All',
     'LBL_LISTVIEW_OPTION_SELECTED' => 'Selected Records',
     'LBL_LISTVIEW_SELECTED_OBJECTS' => 'Selected: ',
-    'LBL_LISTVIEW_SELECTED_NUM' => 'You have selected {num} records in this view.',
-    'LBL_LISTVIEW_SELECTED_ALL' => 'You have selected all records in this view.',
-    'LBL_LISTVIEW_RECORDS' => ' records in the result set.',
-    'LBL_LISTVIEW_CLEAR_ALL' => 'Clear All selections.',
+    'LBL_LISTVIEW_SELECTED_ALL' => 'You have selected all records in this result set.  <a href="javascript:void(0);">Clear selections</a>.',
+    'LBL_LISTVIEW_SELECT_ALL_RECORDS' => 'You have selected all {num} records in this view.  <a href="javascript:void(0);">Select all records</a> in the result set.',
     'LBL_LISTVIEW_SELECT_AND_EDIT' => 'Select and edit',
     'LBL_LISTVIEW_ACTIONS' => 'Actions',
 
