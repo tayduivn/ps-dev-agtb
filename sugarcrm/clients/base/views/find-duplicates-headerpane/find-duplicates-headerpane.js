@@ -3,7 +3,7 @@
 
     events: {
         'click a[name=cancel_button]': 'cancel',
-        'click a[name=merge_duplicates_button]': 'mergeDuplicates'
+        'click a[name=merge_duplicates_button]:not(".disabled")': 'mergeDuplicates'
     },
 
     /**
