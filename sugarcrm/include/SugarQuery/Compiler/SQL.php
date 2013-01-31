@@ -111,7 +111,7 @@ class SugarQuery_Compiler_SQL
 			'encrypt'  => 'string',
 			'file'     => 'string',
 			'decimal_tpl' => 'number',
-
+            'phone'    => 'string',
 	);
 
 	public function __construct($db) {
