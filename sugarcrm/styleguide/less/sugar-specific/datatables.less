@@ -19,8 +19,10 @@ table th.nosort.select-all {
   padding-bottom: 1px;
 }
 
-table tbody tr:last-child td:last-child, table tbody tr:last-child td:first-child,
-table tfoot tr:last-child td:last-child, table tfoot tr:last-child td:first-child {
+table tbody tr:last-child td:last-child,
+table tbody tr:last-child td:first-child,
+table tfoot tr:last-child td:last-child,
+table tfoot tr:last-child td:first-child {
   .border-radius(0 0 4px 4px)
 }
 table th {
@@ -33,6 +35,11 @@ table.datatable tbody td {
 }
 table th, table td {
   position: relative;
+}
+
+table th:first-child,
+table td:first-child {
+  padding-left: 20px;
 }
 
 table th {
@@ -67,6 +74,45 @@ table tfoot td {
 }
 /*sugar specific*/
 
+
+//from nutmeg sugar-forecasts
+.layout_Forecasts {
+  .dataTables_wrapper {
+    overflow-x: auto;
+  }
+  /* make the datatable have no top margin */
+  table.dataTable {
+    margin-top: 0px !important;
+    th {
+      .rtl(@direction,ltr);
+      border-color: darken(@grayLighter,5%);
+    }
+    td {
+      .rtl(@direction,ltr);
+    }
+    td.number,
+    tfoot th.number {
+      text-align: right;
+      .rtlTextAlign(@direction,left);
+      white-space: nowrap;
+    }
+    th.header-quota {
+      min-width: 70px;
+    }
+    .converted {
+      display: inline-block;
+      margin-left: 16px;
+      .rtlMargin(@direction,0 16px 0 0);
+    }
+    label.original {
+      margin-bottom: 0px;
+      display: inline-block;
+      background-color: @grayLight;
+      .border-radius(4px);
+      padding: 2px 4px;
+    }
+  }
+}
 
 table.dataTable {
   th {
@@ -208,6 +254,15 @@ table.dataTable {
     }
   }
 
+  td {
+    span.longtext {
+      display: inline-block;
+      width: 100%;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+  }
+
   &.inline-edit-active {
     tr {
       td {
@@ -233,6 +288,23 @@ table.dataTable {
     width: 100%;
   }
 }
+
+//from nutmeg
+.dataTables_filter {
+  margin: 0;
+  text-align: center;
+  #gradient > .vertical(darken(@grayLighter, 4%), @grayLighter);
+  @shadow: inset 0 1px 0 rgba(0,0,0,.2), inset 0 -1px 0 rgba(0,0,0,.1);
+  .box-shadow(@shadow);
+}
+//from nutmeg/sugar-forecasts
+div.dataTables_wrapper {
+  overflow-x: auto;
+  .rtl(@direction,ltr);
+  table.dataTable {
+    .rtl(@direction,rtl);
+  }
+ }
 
 .morecol {
   text-align: center !important;

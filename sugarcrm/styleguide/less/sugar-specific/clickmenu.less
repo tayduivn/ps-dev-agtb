@@ -28,20 +28,28 @@ ul.clickMenu {
     *display:inline;
     *zoom:1;
 }
-ul.clickMenu form, div.action_buttons form, div.action_buttons input {float:left;}
+ul.clickMenu form,
+div.action_buttons form,
+div.action_buttons input {
+    float:left;
+}
 ul.SugarActionMenuIESub {
     font-family: 'Lucida Grande',Tahoma,Verdana,Arial,sans-serif;
 }
 
-ul#globalLinksSubnav.SugarActionMenuIESub li a:hover, ul#quickCreateULSubnav.SugarActionMenuIESub li a:hover,
-ul.clickMenu:hover > li > span > a, ul.clickMenu:hover > li > a, ul.clickMenu:hover > li > form > a {
+ul#globalLinksSubnav.SugarActionMenuIESub li a:hover,
+ul#quickCreateULSubnav.SugarActionMenuIESub li a:hover,
+ul.clickMenu:hover > li > span > a,
+ul.clickMenu:hover > li > a,
+ul.clickMenu:hover > li > form > a {
 /*color: #fff !important;*/
 }
 
 ul.clickMenu li span:hover {
     background-position: 5px 3px;
 }
-ul.clickMenu li, ul.SugarActionMenuIESub li {
+ul.clickMenu li,
+ul.SugarActionMenuIESub li {
     float: left;
     margin: 0;
     padding: 0 0 0 0;
@@ -50,7 +58,9 @@ ul.clickMenu li, ul.SugarActionMenuIESub li {
     cursor: pointer;
 }
 ul.SugarActionMenuIESub li a,
-ul.clickMenu li a, .list tr.pagination td.buttons ul.clickMenu > li > a:link, .list tr.pagination td.buttons ul.clickMenu > li > a{
+ul.clickMenu li a,
+.list tr.pagination td.buttons ul.clickMenu > li > a:link,
+.list tr.pagination td.buttons ul.clickMenu > li > a{
     display: block;
     text-decoration: none;
     float: left;
@@ -60,7 +70,8 @@ ul.clickMenu li a, .list tr.pagination td.buttons ul.clickMenu > li > a:link, .l
     font-size: 12px;
 }
 
-.list tr.pagination td.buttons ul.clickMenu:hover > li > a:link, .list tr.pagination td.buttons ul.clickMenu:hover > li > a{
+.list tr.pagination td.buttons ul.clickMenu:hover > li > a:link,
+.list tr.pagination td.buttons ul.clickMenu:hover > li > a{
 /*color: #fff;*/
 }
 
@@ -87,7 +98,9 @@ ul.clickMenu li span.subhover {
 } /*--Hover effect for trigger--*/
 div.action_buttons .subnav-sub { display:none; }
 
-ul.clickMenu li ul.subnav, ul.clickMenu ul.subnav-sub, ul.SugarActionMenuIESub {
+ul.clickMenu li ul.subnav,
+ul.clickMenu ul.subnav-sub,
+ul.SugarActionMenuIESub {
     list-style: none;
     position: absolute; /*--Important - Keeps subnav from affecting main navigation flow--*/
     left: 0; top: 23px;
@@ -106,12 +119,16 @@ ul.clickMenu li ul.subnav, ul.clickMenu ul.subnav-sub, ul.SugarActionMenuIESub {
 /*css hack for IE7*/
     *overflow:visible;
 }
-ul.clickMenu li ul.subnav.upper, ul.clickMenu ul.subnav-sub.upper, ul.SugarActionMenuIESub.upper {
+ul.clickMenu li ul.subnav.upper,
+ul.clickMenu ul.subnav-sub.upper,
+ul.SugarActionMenuIESub.upper {
     box-shadow: #999 5px 0px 10px;
     -moz-box-shadow: #999 5px 0px 10px;
     -webkit-box-shadow: #999 5px 0px 10px;
 }
-ul.clickMenu li ul.subnav li, ul.clickMenu ul.subnav-sub li, ul.SugarActionMenuIESub li{
+ul.clickMenu li ul.subnav li,
+ul.clickMenu ul.subnav-sub li,
+ul.SugarActionMenuIESub li{
     margin: 0;
     padding: 0px;
     clear: both;
@@ -190,7 +207,8 @@ ul.clickMenu li a.disabled {
     cursor:default !important;
 }
 
-.oddListRowS1:hover td ul.clickMenu.subpanel.records , .evenListRowS1:hover td ul.clickMenu.subpanel.records {
+.oddListRowS1:hover td ul.clickMenu.subpanel.records ,
+.evenListRowS1:hover td ul.clickMenu.subpanel.records {
     background-image: -moz-linear-gradient(center top,
     #ffffff 0%,
     #eeeeee 10%,
@@ -207,15 +225,20 @@ ul.clickMenu li a.disabled {
     border: 1px solid #AAAAAA;
 }
 
-.oddListRowS1:hover td ul.clickMenu.subpanel.records li a, .evenListRowS1:hover td ul.clickMenu.subpanel.records li a {
+.oddListRowS1:hover td ul.clickMenu.subpanel.records li a,
+.evenListRowS1:hover td ul.clickMenu.subpanel.records li a {
     color: #000;
 }
 
-.oddListRowS1:hover td ul.clickMenu.subpanel.records li span, .evenListRowS1:hover td ul.clickMenu.subpanel.records li span {
+.oddListRowS1:hover td ul.clickMenu.subpanel.records li span,
+.evenListRowS1:hover td ul.clickMenu.subpanel.records li span {
     opacity: 1;
 }
 
-ul.clickMenu li ul.subnav li a,ul.clickMenu li ul.subnav li input, ul.subnav-sub li a, ul.SugarActionMenuIESub li a {
+ul.clickMenu li ul.subnav li a,
+ul.clickMenu li ul.subnav li input,
+ul.subnav-sub li a,
+ul.SugarActionMenuIESub li a {
     float: left;
     background: #fff;
     padding: 3px 10px !important;
@@ -233,12 +256,19 @@ ul.clickMenu li ul.subnav li input {
 /*width: 170px;*/
     width:100%
 }
-td.paginationActionButtons ul.clickMenu li a { font-size:12px !important; }
+td.paginationActionButtons ul.clickMenu li a {
+    font-size:12px !important;
+}
 
-ul.SugarActionMenuIESub li a:hover, ul.clickMenu.SugarActionMenu li a:hover, ul.clickMenu.SugarActionMenu li span.subhover:hover,
-ul.clickMenu li ul.subnav li a:hover,ul.clickMenu li ul.subnav li input:hover, ul.clickMenu.subpanel.records li ul.subnav li a:hover, ul.clickMenu ul.subnav-sub li a:hover { /*--Hover effect for subnav links--*/
-    background-color: #355b7e;
-    color: #fff !important;
+ul.SugarActionMenuIESub li a:hover,
+ul.clickMenu.SugarActionMenu li a:hover,
+ul.clickMenu.SugarActionMenu li span.subhover:hover,
+ul.clickMenu li ul.subnav li a:hover,
+ul.clickMenu li ul.subnav li input:hover,
+ul.clickMenu.subpanel.records li ul.subnav li a:hover,
+ul.clickMenu ul.subnav-sub li a:hover { /*--Hover effect for subnav links--*/
+    background-color:  @NavigationBar;
+    color: @white !important;
     font-weight: normal !important;
     cursor: pointer;
     text-shadow: none;
@@ -246,12 +276,17 @@ ul.clickMenu li ul.subnav li a:hover,ul.clickMenu li ul.subnav li input:hover, u
     -webkit-border-radius: 0px;
 
 }
-ul.clickMenu li ul.subnav li a:hover,ul.clickMenu li ul.subnav li input:hover, ul.clickMenu.subpanel.records li ul.subnav li a:hover, ul.clickMenu ul.subnav-sub li a:hover {
+ul.clickMenu li ul.subnav li a:hover,
+ul.clickMenu li ul.subnav li input:hover,
+ul.clickMenu.subpanel.records li ul.subnav li a:hover,
+ul.clickMenu ul.subnav-sub li a:hover {
     font-size: 12px !important;
 }
 
 
-ul.clickMenu.showLess .moreOverflow , ul.clickMenu.showLess .moduleMenuOverFlowLess, ul.clickMenu.showMore .moduleMenuOverFlowMore {
+ul.clickMenu.showLess .moreOverflow ,
+ul.clickMenu.showLess .moduleMenuOverFlowLess,
+ul.clickMenu.showMore .moduleMenuOverFlowMore {
     display:none;
 }
 
@@ -259,7 +294,8 @@ ul.clickMenu.showLess .moreOverflow , ul.clickMenu.showLess .moduleMenuOverFlowL
     float: right;
     margin-right: 0px;
 }
-ul#globalLinksSubnav, ul#quickCreateULSubnav{
+ul#globalLinksSubnav,
+ul#quickCreateULSubnav{
     font-family: Arial;
 }
 ul#globalLinks.clickMenu {
@@ -278,11 +314,20 @@ ul#globalLinks.clickMenu li > span {
     padding-right: 8px;
 }
 
-ul#globalLinks.clickMenu li > span a {
+//bug 59030 - chrome specific bug due to jit charts
+@media screen and (-webkit-min-device-pixel-ratio:0) {
+    ul#globalLinks.clickMenu li > span a {
+        .opacity(99);
+    }
+}
+
+ul#globalLinks.clickMenu li > span a, 
+ul#globalLinks.clickMenu li > span a:hover {
     color: #FFFFFF;
     font-size: 14px;
     margin-top: 13px;
     padding: 0px 10px !important;
+    background-color: transparent !important;
 }
 
 
@@ -305,12 +350,15 @@ ul#selectLink.clickMenu {
     min-width: 20px;
 }
 td.paginationActionButtons ul.clickMenu .massall,
-ul#selectLink.clickMenu .massall, td.selectCol .massall{
+ul#selectLink.clickMenu .massall,
+td.selectCol .massall{
     float: left;
     margin: 4px 4px;
 }
 
-td.paginationActionButtons ul.selectmenu > li > a, td.selectCol ul.selectmenu > li > a, ul#selectLink.clickMenu > li > a {
+td.paginationActionButtons ul.selectmenu > li > a,
+td.selectCol ul.selectmenu > li > a,
+ul#selectLink.clickMenu > li > a {
     padding: 0px !important;
 }
 

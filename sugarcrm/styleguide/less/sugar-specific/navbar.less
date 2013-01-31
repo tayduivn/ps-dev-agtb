@@ -89,6 +89,12 @@
   -ms-filter: ~"progid:DXImageTransform.Microsoft.AlphaImageLoader(src='@{baseUrl}/img/badge_256.png',sizingMethod='scale')";
 }
 
+//from nutmeg
+/*.navbar .nav > li > a.btn {
+  padding: 4px 8px;
+  margin-top: 8px;
+}*/
+
 .navbar {
   color: #58595B;
   .navbar-inner {
@@ -173,6 +179,16 @@
       }
     }
   }
+
+  //from nutmeg
+  /*.advanced {
+    right: 2px;
+    top: -2px;
+    .dropdown-menu {
+      right: 35px;
+    }
+  }*/
+
   .advanced {
     position: absolute;
     right: 0;
@@ -362,20 +378,6 @@
   }
 }
 
-#guages .row-fluid  {
-  padding: 10px 0 0;
-  border-bottom: 1px solid darken(@grayLighter, 5%);
-  margin: 0 3%;
-  width: 94%
-}
-#guages, #guages h4  {
-  border-bottom: 3px solid @grayLight;
-  margin: 0;
-}
-#guages {
-  margin-bottom: 10px;
-}
-
 #riskPreview .progress {
   position: relative;
 }
@@ -392,11 +394,4 @@
   left: 50%;
   top: 8px;
   font-weight: normal;
-}
-
-.tabs-left > .nav-tabs > li > a,
-.tabs-right > .nav-tabs > li > a {
-  min-width: 32px;
-  margin-right: 0;
-  margin-bottom: 3px;
 }

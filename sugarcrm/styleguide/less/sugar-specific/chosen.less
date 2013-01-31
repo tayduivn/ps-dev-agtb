@@ -1,6 +1,8 @@
 .chzn-container {
+  //nutmeg
   //margin-top: -1px;
   //min-height: 26px;
+  font-size: 12px;
   .chzn-drop {
     white-space: nowrap;
     //border: 1px solid @grayLight;
@@ -18,6 +20,9 @@
       .box-shadow(@shadow);
       background-image: none;
       /*22+3+3=28*/
+      li {
+        .rtlFloat(@direction,right);
+      }
       .search-field {
         float: none !important;
         height: 28px;

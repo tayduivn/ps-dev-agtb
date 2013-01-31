@@ -1,4 +1,16 @@
 
+//from nutmeg
+/*.form-search {
+  margin: 0;
+  text-align: center;
+  padding: 5px;
+  #gradient > .vertical(darken(@grayLighter, 4%), @grayLighter);
+  @shadow: inset 0 1px 0 rgba(0,0,0,.2), inset 0 -1px 0 rgba(0,0,0,.1);
+  .box-shadow(@shadow);
+  margin: -11px 0 20px;
+  z-index: 0;
+}*/
+
 // search filter widget
 .form-search {
   position: relative;
@@ -13,6 +25,11 @@
   .filter {
     position: relative;
     margin-left: 0px;
+    background-color: @grayLighter;
+    padding: 5px 20px 0px 20px;
+    margin-bottom: 0px;
+    border-bottom: 1px solid darken(@grayLighter,5%);
+    border-top: 1px solid darken(@grayLighter,5%);
     .chzn-container {
       .chzn-drop {
         //padding: 10px;
@@ -31,6 +48,14 @@
     }
     .indicator {
       cursor: pointer;
+      position: absolute;
+      top: 6px;
+      right: 0;
+      padding-right: 15px;
+      .caret {
+        margin-top: 7px;
+        margin-left: 5px;
+      }
     }
     .chzn-container-multi {
       .search-field {

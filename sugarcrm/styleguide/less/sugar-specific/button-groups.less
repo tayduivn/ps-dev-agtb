@@ -11,6 +11,7 @@
     margin-left: -1px;
     font-size: @fontSize;
     .border-radius(0px) !important;
+    .rtlFloat(@direction,none);
     // Give the line between buttons some depth
     .dropdown-toggle {
       padding-left: 8px;
@@ -24,12 +25,19 @@
     margin-left: 0;
     .border-top-left-radius(3px) !important;
     .border-bottom-left-radius(3px) !important;
+    .rtlBorderRadiusTopLeft(@direction,0);
+    .rtlBorderRadiusBottomLeft(@direction,0);
+    .rtlBorderRadiusTopRight(@direction,3px);
+    .rtlBorderRadiusBottomRight(@direction,3px);
+    .rtlMargin(@direction,0 0 0 -4px);
   }
   // Need .dropdown-toggle since :last-child doesn't apply given a .dropdown-menu immediately after it
   .btn:last-child,
   .dropdown-toggle {
     .border-top-right-radius(3px) !important;
     .border-bottom-right-radius(3px) !important;
+    .rtlBorderRadiusTopLeft(@direction,3px);
+    .rtlBorderRadiusBottomLeft(@direction,3px);
   }
   // Reset corners for large buttons
   .btn.large:first-child {
@@ -47,6 +55,7 @@
   .btn:focus,
   .btn:active,
   .btn.active {
+    //nutmeg
     //z-index: 2;
     /* bug: 56864 */
     z-index: 0;

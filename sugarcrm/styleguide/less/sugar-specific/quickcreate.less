@@ -36,6 +36,7 @@
 #SpotResults li p.error
 {
   padding-top: 10px;
+  color: #ff0000;
 }
 
 #SpotResults li p.error a
@@ -47,11 +48,12 @@
 #globalLinksModule {
   float: right;
   height: 43px;
+  .rtlFloat(@direction,left);
 }
 
 
 #globalLinksModule:hover {
-  background-color:  @grayDark;
+  background-color:  lighten(@NavigationBar,20%);;
 }
 
 #globalLinksCtrl img{
@@ -61,6 +63,7 @@
 
 #quickCreate {
   float: right;
+  .rtlFloat(@direction,left);
 }
 
 #quickCreate ul.clickMenu {
@@ -77,14 +80,14 @@
 
 }
 #quickCreate ul.clickMenu li > span {
-  background: url('@{baseUrl}/img/quick-create.png') no-repeat center center;
+  background: url('@{baseUrl}/img/quickcreate.png') no-repeat center center;
   height: 43px;
   width: 50px;
 }
 #globalLinksModule ul.clickMenu li:hover span,
 #quickCreate ul.clickMenu > li:hover {
-  background-color:  @grayDark; // "transparent" is default to differentiate :hover from .active
-  color: @white;
+  background-color:  lighten(@NavigationBar,20%); // "transparent" is default to differentiate :hover from .active
+  color: lighten(desaturate(@BorderColor, 100%),100%);
   text-shadow: 0 -1px 0 rgb(0,0,0);
 }
 ul#globalLinksSubnav li { min-width: 120px;}
@@ -96,6 +99,8 @@ ul#globalLinksSubnav, ul#quickCreateULSubnav,
   padding: 10px 0px;
   border: 1px solid #999;
   width: auto;
+  .rtlLeft(@direction,0);
+  .rtlRight(@direction,auto);
 }
 
 #quickCreate ul.clickMenu li ul.subnav {
@@ -107,6 +112,8 @@ ul#globalLinksSubnav, ul#quickCreateULSubnav,
   padding: 4px 10px !important;
   color: #666666;
   line-height: 1.45;
+  .rtlFloat(@direction,right);
+  .rtlTextAlign(@direction,right);
 }
 #quickCreateULSubnav li.moduleMenuOverFlowLess a, #quickCreateULSubnav li.moduleMenuOverFlowMore a,
 #quickCreate ul.clickMenu li ul.subnav li.moduleMenuOverFlowMore a, #quickCreate ul.clickMenu li ul.subnav li.moduleMenuOverFlowLess a {

@@ -1,21 +1,4 @@
 
-/* Tables
---------------*/
-table th {
-  white-space: nowrap;
-}
-
-table.datatable tbody td {
-  white-space: nowrap;
-}
-
-table th:first-child,
-table td:first-child {
-  padding-left: 20px;
-}
-
-/* CSS for forecasts subnav
-------------------------- */
 
 /* Bug 55601 - fix for IE9 so that tree menu is properly rendered */
 .view-forecastsSubnav {
@@ -32,47 +15,6 @@ table td:first-child {
 
 a#save_draft {
   margin-right: 8px;
-}
-
-//UIUX-233: Remove color definitions to inherit custom colors
-.label, .badge {
-  font-size: 10.152px;
-  line-height: 12px;
-  //color: #000;
-  vertical-align: baseline;
-  white-space: nowrap;
-  //background-color: #cdcccb;
-  height: 12px;
-  display: inline-block;
-}
-.label {
-  padding: 1px 4px 2px;
-  -webkit-border-radius: 3px;
-  -moz-border-radius: 3px;
-  border-radius: 3px;
-}
-.badge {
-  padding: 1px 9px 2px;
-  -webkit-border-radius: 9px;
-  -moz-border-radius: 9px;
-  border-radius: 9px;
-}
-a.label:hover, a.badge:hover {
-  color: #fff;
-  text-decoration: none;
-  cursor: pointer;
-}
-
-.view-forecastsChart {
-  .dropdown.form-horizontal {
-    margin: 0px;
-  }
-  .chartContainer {
-    min-width: 400px;
-  }
-  #chart {
-    overflow-x: auto;
-  }
 }
 
 
@@ -107,3 +49,19 @@ div.sugareditable {
 div.sugareditable.focus {
   display: inline-block;
 }
+
+
+#guages .row-fluid  {
+  padding: 10px 0 0;
+  border-bottom: 1px solid darken(@grayLighter, 5%);
+  margin: 0 3%;
+  width: 94%
+}
+#guages, #guages h4  {
+  border-bottom: 3px solid @grayLight;
+  margin: 0;
+}
+#guages {
+  margin-bottom: 10px;
+}
+

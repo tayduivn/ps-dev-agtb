@@ -1,51 +1,44 @@
 .topline {
   position: relative;
 
-  .control-group.filter {
-    background-color: @grayLighter;
-    padding: 5px 20px 0px 20px;
-    margin-bottom: 0px;
-    border-bottom: 1px solid darken(@grayLighter,5%);
-    border-top: 1px solid darken(@grayLighter,5%);
-    position: relative;
-    .indicator {
-      position: absolute;
-      top: 6px;
-      right: 0;
-      padding-right: 15px;
-      .caret {
-        margin-top: 7px;
-        margin-left: 5px;
-      }
-    }
-  }
 
+  //this is the container = .chzn-container-single
   .control-group.datefilter {
     float: left;
 
-    .chzn-single span {
-      font-size: 22px;
-    }
-
+    //this is the anchor styled as select
+    .select2-choice,
     .chzn-single {
       border: 0px none;
       background-image: none;
       background-color: transparent;
       .box-shadow(none);
       padding-left: 0px;
+      //this is the font and text
+      span {
+        font-size: 22px;
+        .rtlMargin(@direction,0 0 0 26px);
+        .rtl(@direction,ltr);
+      }
+      //this is the caret
+      div {
+        right: 22px;
+        .rtlLeft(@direction,22px);
+        .rtlRight(@direction,auto);
+      }
     }
 
+    .select2-choice:focus,
     .chzn-single:focus {
       .box-shadow(none);
       border: 0 none;
     }
 
-    .chzn-container-single .chzn-single div {
-      right: 22px;
-    }
-
-    .chzn-container-single .chzn-search {
-      display: none;
+    .chzn-container-single {
+      //this is the select option filter input
+      .chzn-search {
+        display: none;
+      }
     }
 
     select {
@@ -59,8 +52,14 @@
 
   h2 {
     padding: 0 !important;
+    margin: 0;
     font-size: 20px;
     line-height: 28px;
+    display: inline;
+  }
+  //nutmeg
+  h2 {
+    margin-right: -2px;
   }
 
   hr {
@@ -72,11 +71,6 @@
   table {
     margin: 0;
   }
-
-  /*h2 {
-    padding: 0 5px 0 0 !important;
-    display: inline;
-  }*/
   .btn {
     position: absolute;
     right: 10px;
@@ -87,17 +81,25 @@
     padding: 10px 10px 0 0;
     margin-left: 20px;
     float: left;
+    .rtlFloat(@direction,right);
+    .rtlMargin(@direction,0 20px 0 0);
+    .rtlPadding(@direction,10px 0 0 10px);
   }
-
-  /*.datapoint1,
-  .log .datapoint1 {
-    right: -20px;
+  .datapoints {
+    float: right;
+    text-align: right;
+    .rtlFloat(@direction,left);
   }
-  .datapoint2,
-  .log .datapoint2 {
-    right: 110px;
-  }*/
-
+  .datapoint {
+    float: left;
+    margin-top: 10px;
+    min-width: 120px;
+    .rtlFloat(@direction,right);
+  }
+  .datapoint:last-child {
+    padding-right: 20px;
+    .rtlPadding(@direction,0px 0px 0px 20px);
+  }
   .datapoint1 {
     float: right;
     margin-top: 10px;
@@ -130,18 +132,29 @@
 
     .title {
       padding: 0px 20px 10px 0;
+      .rtlPadding(@direction,0 0 10px 20px);
     }
   }
-
-  > div.divider {
+  //nutmeg
+  .datapoint1,
+  .log .datapoint1 {
+    right: -20px;
+  }
+  .datapoint2,
+  .log .datapoint2 {
+    right: 110px;
+  }
+  div.divider {
+    float: left;
+    right: auto;
+    .rtlFloat(@direction,right);
     right: 121px;
     border-right: 1px solid darken(@grayLighter,5%);
     height: 80px;
     width: 1px;
-    float: right;
     top: 0px;
     padding-left: 10px;
-     margin-right: 10px;
+    margin-right: 10px;
   }
 
   .extend {
@@ -158,7 +171,10 @@
     margin: 0;
     padding: 0;
   }
-
+  [class^="icon-"].committed_arrow,
+  [class*=" icon-"].committed_arrow {
+    line-height: 28px;
+  }
   .icon-arrow-down:before {
     color: @red;
   }
@@ -166,31 +182,13 @@
   .icon-arrow-up:before {
     color: @green;
   }
+  //nutmeg
+  div.results {
+    max-height: 118px;
+    overflow-y: scroll;
+  }
 }
 
-/* from nutmeg
-  .topline {
-
-    div.divider {
-      float: left;
-      right: auto;
-    }
-
-    .datapoints {
-      float: right;
-    }
-
-    .datapoint {
-      float: left;
-      margin-top: 10px;
-      min-width: 120px;
-    }
-
-    .datapoint:last-child {
-      padding-right: 10px;
-    }
-  }
-  */
 .results {
   position: relative;
   margin: 0 0 0 0;

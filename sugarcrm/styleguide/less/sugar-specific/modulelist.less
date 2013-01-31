@@ -3,13 +3,42 @@
 #moduleList
 {
   float: left;
+    .rtlFloat(@direction,right);
+    .home img {
+        margin-top: 2px;
+    }
 }
 
 #globalLinksSubnav, #quickCreateULSubnav {
-  z-index: 20;
+  z-index: 1029;
 }
 ul.megamenu, ul.moduleTabMore, ul.sf-sub-modulelist{
-  z-index:20;
+  z-index:1029;
+}
+
+// from nutmeg, may not be used in sugar7
+
+.showMoreArrow, .showLessArrow {
+    background-image: url(@{baseUrl}/img/dropdown_menu_toggle_more.gif);
+    display: inline-block;
+    height: 8px;
+    margin-left: 4px;
+    opacity: 0.6;
+    width: 8px;
+}
+
+.showLessArrow {
+    background-position: center 16px;
+}
+
+a:hover .showLessArrow {
+    background-position: center 8px;
+    opacity: 1;
+}
+
+a:hover .showMoreArrow {
+    background-position: center -8px;
+    opacity: 1;
 }
 
 /* jquery module menu */
@@ -62,6 +91,7 @@ ul.moduleTabMore, ul.moduleTabMore *, ul.sf-sub-modulelist, ul.sf-sub-modulelist
 #moduleList .sf-menu li, ul.megamenu li {
   float: left;
   position: relative;
+  .rtlFloat(@direction,right);
 }
 
 ul.megamenu a, ul.moduleTabMore a, ul.sf-sub-modulelist a,
@@ -122,6 +152,12 @@ ul.megamenu a, ul.moduleTabMore a, ul.sf-sub-modulelist a,
   text-decoration:none;
   font-size: 12px;
   border-right: none;
+}
+//bug 59030 - chrome specific bug due to jit charts
+@media screen and (-webkit-min-device-pixel-ratio:0) {
+    #moduleList .sf-menu li a, ul.megamenu li a, ul.moduleTabMore li a, ul.sf-sub-modulelist li a {
+        .opacity(99);
+    }
 }
 
 #moduleList .sf-menu li a.more, ul.megamenu li a.more, ul.moduleTabMore li a.more, ul.sf-sub-modulelist li a.more {
@@ -211,8 +247,8 @@ ul.sf-sub-modulelist li.sfHover div.megawrapper {
 ul.megamenu .MMShortcuts li.sfHover a.sf-with-ul,
 ul.moduleTabMore li.sfHover a.sf-with-ul,
 ul.sf-sub-modulelist li.sfHover > a.sf-with-ul{
-  color: #fff !important;
-  background-color:  @grayDark;
+  color: @white !important;
+  background-color:  lighten(@NavigationBar,20%); // "transparent" is default to differentiate :hover from .active
 }
 
 #globalLinksModule ul.clickMenu.SugarActionMenu li a:hover,
@@ -224,7 +260,7 @@ ul.sf-sub-modulelist li.sfHover,
 #moduleList .sf-menu li a:focus,
 #moduleList .sf-menu li a:hover,
 #moduleList .sf-menu li a:active {
-  background-color:  @grayDark; // "transparent" is default to differentiate :hover from .active
+  background-color:  @NavigationBar; // "transparent" is default to differentiate :hover from .active
   color: @white;
   text-decoration: none;
 }
@@ -244,19 +280,19 @@ ul.sf-sub-modulelist li a:hover,
 #moduleList .sf-menu ul a:focus,
 #moduleList .sf-menu ul a:hover,
 #moduleList .sf-menu ul a:active {
-  background-color: @dropdownLinkBackgroundHover;
-  color: #fff;
+  background-color: @NavigationBar; // "transparent" is default to differentiate :hover from .active
+  color: @white;
   outline:      0;
 }
 
 #moduleList .sf-menu > li.current > a {
   color: @white;
   text-decoration: none;
-  background-color: @black;
+  background-color: lighten(@NavigationBar,5%) !important;
   @shadow: inset 0 -1px 0 rgba(0,0,0,.4);
   .box-shadow(@shadow);
   text-shadow: 0 -1px 0 rgb(0,0,0);
-  border-bottom: 4px solid darken(@red,15%);
+  border-bottom: 4px solid darken(@BorderColor,15%);
   font-weight: bold;
   padding-bottom: 12px;
 }
@@ -304,7 +340,7 @@ ul.moduleTabMore,
 
 ul.sf-sub-modulelist .selected,
 #moduleList .more .selected{
-  background-color: @dropdownLinkBackgroundHover;
+  background-color: @NavigationBar;
   color: #fff;
 }
 

@@ -1,37 +1,6 @@
 /* Responsive Docs
 -------------------------------------------------- */
-@media (max-width: 920px) {
-  .side .side-pane.active {
-  position: absolute !important;
-  }
-  /*.row > [class*="span"], .container-fluid .row-fluid > [class*="span"] {
-  overflow-y: auto !important;
-  margin: 0;
-  }*/
-}
-@media (max-width: 768px) {
-  #folded,
-  .row-fluid .span8.main-pane {
-    width: 100%;
-    float: none;
-  }
-  .row-fluid .side.sidebar-content.span4 {
-    width: 100%;
-    float: none;
-    margin: 0;
-    .side-pane.active {
-      padding: 20px;
-      top: auto;
-      right: auto;
-      width: 100%;
-      position: relative !important;
-      .block.thumbnail {
-        margin: 0;
-        width: 94%;
-      }
-    }
-  }
-}
+
 @media (max-width: 480px) {
 
   .span2 .block > * {
@@ -88,4 +57,42 @@
     bottom: auto;
     left: auto;
   }
+}
+
+.row-fluid [class*="span"] {
+    .rtlFloat(@direction,right);
+}
+
+@media (max-width: 768px) {
+  #folded,
+  .row-fluid .span8.main-pane {
+    width: 100%;
+    float: none;
+  }
+  .row-fluid .side.sidebar-content.span4 {
+    width: 100%;
+    float: none;
+    margin: 0;
+    .side-pane.active {
+      padding: 20px;
+      top: auto;
+      right: auto;
+      width: 100%;
+      position: relative !important;
+      .block.thumbnail {
+        margin: 0;
+        width: 94%;
+      }
+    }
+  }
+}
+
+@media (max-width: 920px) {
+  .side .side-pane.active {
+  position: absolute !important;
+  }
+  /*.row > [class*="span"], .container-fluid .row-fluid > [class*="span"] {
+  overflow-y: auto !important;
+  margin: 0;
+  }*/
 }

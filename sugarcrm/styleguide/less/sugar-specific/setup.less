@@ -34,52 +34,46 @@
         text-align: center;
         top: -10px;
         width: 20px;
-
     }
-
     #hierarchy_currency {
         width: 30%;
         float: left;
         margin-right: 20px;
         margin-top: 10px;
     }
-
     .nav.nav-tabs {
         margin-top: 5px;
     }
-
     .nav-tabs > li:first-child {
         margin-left: 10px;
     }
-
     .modal-body {
-
         .screen {
             display: none;
         }
-
         fieldset {
             border: 1px dashed @grayLight;
             margin-left: 10px;
-            padding: 5px 15px;
+            //padding: 5px 15px;
+			//nutmeg
+            padding: 5px 10px 5px 35px;
             position: relative;
         }
-
-
+	    //nutmeg
+        fieldset.active {
+            border: 1px dashed @green;
+        }
         #screen3 input[type=radio].category_options {
             position: absolute;
-            left: -7px;
+			//nutmeg
+            left: 9px;
         }
     }
-
     .modal-footer {
         .btn + .btn {
             margin-right: 10px;
         }
     }
-
-
-
 }
 
 
@@ -109,5 +103,8 @@
         left: auto;
         right: 0;
         z-index:1001;
+        li a {
+            padding: 8px;
+        }
     }
 }

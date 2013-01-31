@@ -1,9 +1,9 @@
 
 .chartContainer {
 	float: left;
-	margin: 8px auto 20px!important;
+	margin: 8px auto 20px !important;
 	width: 100%
-	}
+}
 
 .chartContainer .scrollBars {
 	overflow: auto;
@@ -13,105 +13,154 @@
 }
 
 .chartCanvas {
-    position:relative;
-    margin:auto;
-    overflow:hidden;
-    background-image: url('@{baseUrl}/img/chartBg.png');
-	background-repeat:repeat-x;
+  position:relative;
+  margin:auto;
+  overflow:hidden;
+  background-image: url('@{baseUrl}/img/chartBg.png');
+  background-repeat:repeat-x;
 }
-
-
 
 .legend {
-padding: 0;
-width: 100%;
-float: left;
-margin-left: 20px;
+  padding: 0;
+  width: 100%;
+  float: left;
+  margin-left: 20px;
 
-    .waterMark {
-        width: 10px;
-        height: 10px;
-        background-image: url('@{baseUrl}/img/watermark-white.png');
-        background-repeat: no-repeat;
-        margin-right: 5px;
-        margin-top: 3px;
-        float: left;
-    }
+  .waterMark {
+    width: 10px;
+    height: 10px;
+    background-image: url('@{baseUrl}/img/watermark-white.png');
+    background-repeat: no-repeat;
+    margin-right: 5px;
+    margin-top: 3px;
+    float: left;
+  }
 
-    .waterMark.pareto {
-        background-image: url('@{baseUrl}/img/pareto-white.png');
-    }
+  .waterMark.pareto {
+    background-image: url('@{baseUrl}/img/pareto-white.png');
+  }
 
-    .query-color {
-        width: 10px;
-        height: 10px;
-        display: inline-block;
-        margin-right: 5px;
-        border: 1px solid #999;
-        float: left;
-    }
+  .query-color {
+    width: 10px;
+    height: 10px;
+    display: inline-block;
+    margin-right: 5px;
+    border: 1px solid #999;
+    float: left;
+  }
 
-    .col {
-        float: left;
-        width: 70%;
-    }
+  .col {
+    float: left;
+    width: 70%;
+  }
 
-    .col2 {
-        float: left;
-        width: 30%;
-        text-align: right;
-    }
+  .col2 {
+    float: left;
+    width: 30%;
+    text-align: right;
+  }
 
-    .label {
-        float: left;
-        background-color: transparent;
-        color: @grayDarker;
-        font-size: 12px;
-        margin-right: 10px;
-    }
+  .label {
+    float: left;
+    background-color: transparent;
+    color: @grayDarker;
+    font-size: 12px;
+    margin-right: 10px;
+  }
 
-    .label:hover {
-        color: @grayDarker!important;
-    }
+  .label:hover {
+    color: @grayDarker!important;
+  }
 
-    .legendGroup {
-        display: inline-block;
-
-    }
-
+  .legendGroup {
+    display: inline-block;
+  }
 }
 
+//from nutmeg
+
+.view-forecastsChart {
+  .dropdown.form-horizontal,
+  .btn-toolbar.pull-right {
+    margin: 1px;
+  }
+  .btn-toolbar .btn {
+    padding: 6px 8px 1px;
+  }
+  .chartContainer {
+    min-width: 400px;
+  }
+  h4 {
+    .rtl(@direction,ltr);
+    .rtlTextAlign(@direction,right);
+  }
+}
+
+
+.view-forecastsChart {
+  .dropdown.form-horizontal {
+    margin: 0px;
+  }
+  #chart {
+    overflow-x: auto;
+  }
+}
+
+
+.thumbnail {
+  &.viz {
+
+    &.expanded {
+      position: fixed;
+      top: 48px;
+      left: 0;
+      width: 100% !important;
+      margin-left: 0 !important;
+      margin-right: 0 !important;
+      z-index: 1000;
+      .nv-chart {
+        padding: 20px 20px 10px;
+      }
+      svg text {
+        font-size: 14px;
+      }
+      .nvd3 .nv-x.nv-axis text {
+        font-size: 12px;
+      }
+    }
+  }
+}
 
 /*TOOLTIPS*/
 .tip {
-    color: #111;
-    width: auto;
-    background-color: white;
-    border:1px solid #ccc;
-    -moz-box-shadow:#555 2px 2px 8px;
-    -webkit-box-shadow:#555 2px 2px 8px;
-    -o-box-shadow:#555 2px 2px 8px;
-    box-shadow:#555 2px 2px 8px;
-    opacity:0.9;
-    filter:alpha(opacity=90);
-    font-size:11px;
-    font-family: Arial, Helvetica, sans-serif;
-    padding:7px;
-	-moz-border-radius: 6px;
-	-webkit-border-radius: 6px;
-	border-radius: 6px;
-
+  color: #111;
+  width: auto;
+  background-color: white;
+  border:1px solid #ccc;
+  -moz-box-shadow:#555 2px 2px 8px;
+  -webkit-box-shadow:#555 2px 2px 8px;
+  -o-box-shadow:#555 2px 2px 8px;
+  box-shadow:#555 2px 2px 8px;
+  opacity:0.9;
+  filter:alpha(opacity=90);
+  font-size:11px;
+  font-family: Arial, Helvetica, sans-serif;
+  padding:7px;
+  -moz-border-radius: 6px;
+  -webkit-border-radius: 6px;
+  border-radius: 6px;
 }
+
 .rotatedLabel {
--webkit-transform: rotate(-90deg);
--moz-transform: rotate(-90deg);
-filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=3);
+  -webkit-transform: rotate(-90deg);
+  -moz-transform: rotate(-90deg);
+  filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=3);
 }
 
 .rotatedLabelReverse {
--webkit-transform: rotate(-0deg);
--moz-transform: rotate(90deg);
-filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=2);
+  -webkit-transform: rotate(-0deg);
+  -moz-transform: rotate(90deg);
+  filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=2);
 }
 
 //from navbar.less

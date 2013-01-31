@@ -2,11 +2,12 @@
 /* Buttons
 -----------------*/
 .btn {
-  //padding: 2px 10px;
+  //padding: 4px 10px;
   *line-height: 20px; //tbs=18px
   font-weight: 550;
   font-size: @fontSize;
   .box-shadow(none);
+  //.buttonBackground(@btnBackground, @btnBackgroundHighlight, @gray, 0 1px 1px rgba(255,255,255,.75));
   /* keeps button widths with icons the same regardless of icon width */
   [class^="icon-"],
   [class*=" icon-"] {
@@ -17,7 +18,7 @@
     font-size: @baseFontSize + 1;
   }
 }
-
+//.buttonBackground(@startColor, @endColor, @textColor: #fff, @textShadow: 0 -1px 0 rgba(0,0,0,.25)) {
 
 // Active state
 .btn.active,
@@ -39,6 +40,8 @@
 // Reposition the caret
 .btn .caret {
   margin-top: 6px;
+  //nutmeg
+  //margin-top: 7px;
   margin-left: 0;
 }
 .btn:hover .caret,
@@ -116,10 +119,24 @@
     text-decoration: underline;
     background: none;
     border-color: transparent;
+    //from nutmeg
+    .box-shadow(none);
+    text-shadow:none;
+    color: @linkColor !important;
   }
 }
+// from nutmeg
+/*.btn-invisible:hover {
+  border: 1px solid #d0cfce;
+  *border: 0;
+  border-top-color: #c1bfbe;
+}*/
 
 // Small button dropdowns
 .btn-small .caret {
   margin-top: 3px;
+}
+
+.btn.down {
+    .buttonBackground(@btnBackgroundHighlight,@btnBackground);
 }

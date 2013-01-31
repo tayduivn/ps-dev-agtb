@@ -19,12 +19,22 @@ a.active [class^="icon-"] {
   color: @grayDarker !important;
 }
 
-.icon-favorite:before {
-  content: "\f005";
+.actions [class^="icon-"] {
+  .opacity(50);
+}
+.actions a [class^="icon-"] {
+  color: @black;
+}
+.actions a.btn.active [class^="icon-"] {
+  color: @white;
 }
 
 table [class^="icon-favorite"] {
   margin-left: 18px;
+}
+
+.icon-favorite:before {
+  content: "\f005";
 }
 
 .icon-favorite {
@@ -37,6 +47,20 @@ table [class^="icon-favorite"] {
 
 .btn:hover .icon-favorite.active {
   color: @yellow_favorite !important;
+}
+
+//nutmeg star
+table [class^="icon-star"] {
+  margin: 0 16px
+}
+
+table .icon-star, 
+.subnav .icon-star {
+  color: @grayLight;
+}
+table .active .icon-star, 
+.subnav .active .icon-star  {
+  color: @orange;
 }
 /*
 .active .icon-ban-circle, .active .icon-exclamation-sign {
