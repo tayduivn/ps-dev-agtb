@@ -103,6 +103,16 @@ class SugarBeanTest extends Sugar_PHPUnit_Framework_TestCase
         SugarTestAccountUtilities::removeAllCreatedAccounts();
     }
 
+    /**
+     * test that currency/decimal from db is a string value
+     */
+    public function testCurrencyFieldStringValue()
+    {
+        $quota = SugarTestQuotaUtilities::createQuota('500.01','quota_test_1');
+        $this->assertSame('500.01', $quota->amount);
+        SugarTestQuotaUtilities::removeAllCreatedQuotas();
+    }
+
 }
 
 // Using Mssql here because mysql needs real connection for quoting
