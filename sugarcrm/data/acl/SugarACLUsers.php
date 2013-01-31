@@ -49,6 +49,18 @@ class SugarACLUsers extends SugarACLStrategy
             'pwd_last_changed' => true,        
         );
 
+    public $view_checks = array(
+            'view' => true,
+            'ListView' => true,
+            'list' => true,
+            'export' => true,
+            'Export' => true,
+            'field' => true,
+            'DetailView' => true,
+            'detail' => true,
+            'team_security' => true,
+        );
+
     /**
      * Check access a current user has on Users and Employees
      * @param string $module
@@ -111,7 +123,7 @@ class SugarACLUsers extends SugarACLStrategy
             return false;
         }
 
-        if($view == 'view' || $view == 'list' || $view == 'field' || $view == 'team_security') {
+        if(!empty($this->view_checks[$view])) {
             if($view == 'field' && ($context['field'] == 'password' || $context['field'] == 'user_hash') ) {
                 return false;
             }

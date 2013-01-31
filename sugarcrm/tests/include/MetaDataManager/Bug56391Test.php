@@ -73,7 +73,7 @@ class Bug56391Test extends Sugar_PHPUnit_Framework_TestCase
                                     'edit' => 'no',
                                     'delete' => 'no',
                                     'import' => 'no',
-                                    'export' => 'no',
+                                    'export' => 'yes',
                                     'massupdate' => 'no',
                                 );
         $acls = $mm->getAclForModule('Users', $GLOBALS['current_user']);
