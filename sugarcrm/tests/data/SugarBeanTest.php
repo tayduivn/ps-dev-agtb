@@ -105,6 +105,8 @@ class SugarBeanTest extends Sugar_PHPUnit_Framework_TestCase
     /**
      * test that currency/decimal from db is a string value
      * @dataProvider testCurrencyFieldStringValueProvider
+     * @group sugarbean
+     * @group currency
      */
     public function testCurrencyFieldStringValue($type, $actual, $expected)
     {
