@@ -7,14 +7,6 @@
     },
 
     /**
-     * Set the title
-     */
-    _renderHtml: function() {
-        this.title = app.lang.get("LBL_DUP_MERGE");
-        app.view.views.HeaderpaneView.prototype._renderHtml.call(this);
-    },
-
-    /**
      * Wait for the mass_collection to be set up so we can add listener
      */
     bindDataChange: function() {
