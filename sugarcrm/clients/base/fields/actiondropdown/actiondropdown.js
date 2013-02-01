@@ -30,8 +30,12 @@
     getPlaceholder: function() {
         var placeholder = app.view.Field.prototype.getPlaceholder.call(this);
         var $container = $(placeholder.toString()),
-            $caret = $('<a class="btn dropdown-toggle" data-toggle="dropdown" href="#"><span class="icon-caret-down"></span></a>'),
+            $caret = $('<a class="btn dropdown-toggle" data-toggle="dropdown" href="javascript:void(0);"><span class="icon-caret-down"></span></a>'),
             $dropdown = $('<ul class="dropdown-menu"><span class="ext"></span></ul>');
+
+        if(this.def.primary) {
+            $caret.addClass('btn-primary');
+        }
 
         _.each(this.def.buttons, function(fieldDef, index) {
             var field = app.view.createField({
@@ -45,7 +49,6 @@
             field.parent = this;
             if(index == 0) {
                 $container.append(field.getPlaceholder().toString());
-                $caret.addClass(field.def.css_class);
             } else {
                 if(index == 1) {
                     $container.addClass('actions dropdown btn-group')
@@ -72,14 +75,13 @@
             } else {
                 fieldPlaceholder.toggleClass('hide', false);
                 if(index == 0) {
-                    if(this.fields[0].def.css_class) {
-                        field.getFieldElement().addClass(this.fields[0].def.css_class);
+                    field.getFieldElement().addClass("btn");
+                    if(this.def.primary) {
+                        field.getFieldElement().addClass("btn-primary");
                     }
                     this.$el.prepend(fieldPlaceholder);
                 } else {
-                    if(this.fields[0].def.css_class) {
-                        field.getFieldElement().removeClass(this.fields[0].def.css_class);
-                    }
+                    field.getFieldElement().removeClass("btn btn-primary");
                     this.$(".dropdown-menu").append($('<li>').append(fieldPlaceholder));
                 }
                 index++;

@@ -3429,6 +3429,7 @@ $app_strings = array (
     'LBL_PREVIEW' => 'Preview',
     'LBL_STREAM_NO_RECORDS' => 'This record has no notes at this time. Please add a note by clicking on the add note link.',
     'LBL_DUPLICATES_FOUND' => '{{duplicateCount}} duplicates found.',
+    'LBL_MERGE_DUPLICATES' => 'Merge Duplicates',
 
     //SugarApiExceptionNotAuthorized language string
     'SUGAR_API_EXCEPTION_NOT_AUTHORIZED' => 'Not allowed to edit field {0} in module: {1}',
