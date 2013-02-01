@@ -1069,7 +1069,6 @@ code {
 }
 body {
   padding: 47px 0;
-  overflow: hidden;
 }
 body.scroll {
   overflow: auto;
@@ -4353,6 +4352,9 @@ article .actions,
 .form-search .filter .chzn-container-multi .chzn-drop .result-selected {
   display: block;
   font-weight: bold;
+}
+.form-search .select2-container {
+  width: 100%;
 }
 .form-search .select2-container .select2-single-with-drop div b {
   background-position: 0px 0px;
@@ -9012,22 +9014,31 @@ h3.popover-title {
   .row-fluid .span8.main-pane {
     width: 100%;
     float: none;
+    position: relative;
   }
   .row-fluid .side.sidebar-content.span4 {
     width: 100%;
     float: none;
+    position: relative;
     margin: 0;
+    padding: 8px 20px 0;
+    margin-bottom: 44px;
   }
   .row-fluid .side.sidebar-content.span4 .side-pane.active {
-    padding: 20px;
+    padding: 36px 0 0;
     top: auto;
     right: auto;
-    width: 100%;
+    width: auto;
     position: relative !important;
   }
   .row-fluid .side.sidebar-content.span4 .side-pane.active .block.thumbnail {
     margin: 0;
     width: 94%;
+  }
+  .row-fluid .side.sidebar-content.span4 .widget-control {
+    position: absolute;
+    right: 0;
+    top: 0;
   }
 }
 @media (max-width: 920px) {
