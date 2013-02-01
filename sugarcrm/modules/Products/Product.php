@@ -676,7 +676,7 @@ class Product extends SugarBean {
         // only run this when the sales_status doesn't change and the sales_stage does
         if(($this->fetched_row['sales_status'] == $this->sales_status) && $this->fetched_row['sales_stage'] != $this->sales_stage) {
             // handle closed lost and closed won
-            if($this->sales_stage == Opportunity::STAGE_CLOSED_WON || $this->sales_stage == Opportunity::STAGE_CLOSED_WON) {
+            if($this->sales_stage == Opportunity::STAGE_CLOSED_LOST || $this->sales_stage == Opportunity::STAGE_CLOSED_WON) {
                 $this->sales_status = $this->sales_stage;
             } else {
                 // move it to in progress
