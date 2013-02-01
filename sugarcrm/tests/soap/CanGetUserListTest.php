@@ -21,41 +21,40 @@
  * Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.;
  * All Rights Reserved.
  ********************************************************************************/
-require_once 'tests/rest/RestTestBase.php';
-require_once 'include/MetaDataManager/MetaDataManager.php';
-
-/**
- * Bug 59868 - clients dont agree on how to handle quoted int app string keys
- */
-class RestBug59868Test extends RestTestBase
+require_once 'tests/service/SOAPTestCase.php';
+class CanGetUserListTest extends SOAPTestCase
 {
-    
+    /**
+     * Create test user
+     *
+     */
     public function setUp()
     {
+        $this->_soapURL = $GLOBALS['sugar_config']['site_url'].'/soap.php';
         parent::setUp();
 
-        // Clear the metadata cache to ensure a fresh load of data
-        $this->_clearMetadataCache();
-    }
-    
-    public function tearDown()
-    {
-        parent::tearDown();
+        self::$_user->is_admin = 1;
+        self::$_user->save();
+        $GLOBALS['db']->commit();
     }
 
-    /**
-     * @group Bug59868
-     * @group rest
-     */
-    public function testAppListStringsConvertedCorrectlyInMetadataRequest()
+    public function testGetUserList()
     {
-        $this->_clearMetadataCache();
-        $reply = $this->_restCall('metadata');
+        $this->_login();
+        $result = $this->_soapClient->call('get_entry_list',
+                                           array('session'=>$this->_sessionId,
+                                                 "module_name" => 'Users',
+                                                 "query" => "id='".self::$_user->id."'",
+                                                 "order_by"=>"date_modified",
+                                                 "offset"=>0,
+                                                 "select_fields" => array('id'),
+                                                 "max_results" => 10,
+                                                 "deleted" => 0,
+                                               ));
+        
 
-        $json = file_get_contents($reply['reply']['labels']['en_us']);
-
-        $object = json_decode($json);
-        $this->assertTrue(is_object($object->app_list_strings->Elastic_boost_options), "App list string wasnt cast to object");
-        $this->assertTrue(isset($object->app_list_strings->industry_dom->_empty_), "App list string wasnt left as an array");
+        $this->assertFalse(isset($result['error']['name']),"There is an error set, the error value is: ".$result['error']['name']);
+        
+        
     }
 }

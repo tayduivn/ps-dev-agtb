@@ -126,5 +126,95 @@ class UserTest extends Sugar_PHPUnit_Framework_TestCase
             $GLOBALS['db']->getOne("SELECT category FROM user_preferences WHERE assigned_user_id = '{$this->_user->id}' AND category = 'cat2'")
             );
     }
+    
+    public function testGetReporteesWithLeafCount()
+    {
+        $manager = SugarTestUserUtilities::createAnonymousUser();
+        
+        //set up users
+        $subManager1 = SugarTestUserUtilities::createAnonymousUser();
+        $subManager2 = SugarTestUserUtilities::createAnonymousUser();
+        $rep1 = SugarTestUserUtilities::createAnonymousUser();
+        $rep2 = SugarTestUserUtilities::createAnonymousUser();
+        
+        //set up relationships
+        $subManager1->reports_to_id = $manager->id;
+        $subManager1->save();
+        $subManager2->reports_to_id = $manager->id;
+        $subManager2->save();
+        $rep1->reports_to_id = $subManager1->id;
+        $rep1->save();
+        $rep2->reports_to_id = $subManager2->id;
+        $rep2->save();
+        
+        //get leaf arrays
+        $managerReportees = User::getReporteesWithLeafCount($manager->id);
+        $subManager1Reportees = User::getReporteesWithLeafCount($subManager1->id);
+        
+        //check normal scenario
+        $this->assertEquals("1", $managerReportees[$subManager1->id], "SubManager leaf count did not match");
+        $this->assertEquals("0", $subManager1Reportees[$rep1->id], "Rep leaf count did not match");
+        
+        //now delete one so we can check the delete code.
+        $rep1->mark_deleted($rep1->id);
+        $rep1->save();
+        
+        //first w/o deleted rows
+        $managerReportees = User::getReporteesWithLeafCount($manager->id);
+        $this->assertEquals("0", $managerReportees[$subManager1->id], "SubManager leaf count did not match after delete");
+        
+        //now with deleted rows
+        $managerReportees = User::getReporteesWithLeafCount($manager->id, true);
+        $this->assertEquals("1", $managerReportees[$subManager1->id], "SubManager leaf count did not match");
+               
+    }
+    
+    public function testGetReporteeManagers()
+    {
+        $manager = SugarTestUserUtilities::createAnonymousUser();
+        
+        //set up users
+        $subManager1 = SugarTestUserUtilities::createAnonymousUser();
+        $subManager2 = SugarTestUserUtilities::createAnonymousUser();
+        $rep1 = SugarTestUserUtilities::createAnonymousUser();
+        $rep2 = SugarTestUserUtilities::createAnonymousUser();
+        
+        //set up relationships
+        $subManager1->reports_to_id = $manager->id;
+        $subManager1->save();
+        $subManager2->reports_to_id = $manager->id;
+        $subManager2->save();
+        $rep1->reports_to_id = $subManager1->id;
+        $rep1->save();
+        $rep2->reports_to_id = $subManager2->id;
+        $rep2->save();
+        
+        $managers = User::getReporteeManagers($manager->id);
+        $this->assertEquals("2", count($managers), "Submanager count did not match");
+    }
+    
+    public function testGetReporteeReps()
+    {
+        $manager = SugarTestUserUtilities::createAnonymousUser();
+        
+        //set up users
+        $subManager1 = SugarTestUserUtilities::createAnonymousUser();        
+        $rep1 = SugarTestUserUtilities::createAnonymousUser();
+        $rep2 = SugarTestUserUtilities::createAnonymousUser();
+        $rep3 = SugarTestUserUtilities::createAnonymousUser();
+        
+        //set up relationships
+        $subManager1->reports_to_id = $manager->id;
+        $subManager1->save();        
+        $rep1->reports_to_id = $subManager1->id;
+        $rep1->save();
+        $rep2->reports_to_id = $manager->id;
+        $rep2->save();
+        $rep3->reports_to_id = $manager->id;
+        $rep3->save();
+        
+        $reps = User::getReporteeReps($manager->id);
+        $this->assertEquals("2", count($reps), "Rep count did not match");
+    }
 }
 

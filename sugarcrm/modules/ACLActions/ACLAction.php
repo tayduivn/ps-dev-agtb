@@ -52,67 +52,6 @@ class ACLAction  extends SugarBean
     }
 
     /**
-     * Get Parent Actions of a specific action name using actiondefs.php
-     * @param string $action_name - a name of an action [delete, edit, etc] if nothing is passed in then the objects name is used 
-     * @return array $parents - parent actions
-     */
-    public function getParentActions($action_name = '') {
-        if(empty($action_name)) {
-            $action_name = $this->name;
-        }
-        $parents = array();
-        $this->findParentActions($action_name, $parents);
-        return $parents;
-    }
-
-    /**
-     * Recursive function to find all parents of an action
-     * @param string $action_name  - the name of the action you are finding the parent of
-     * @param array &$parents - growing array of parent actions 
-     * @return null
-     */
-    protected function findParentActions($action_name, &$parents) {
-        $actions = $GLOBALS['ACLActions']['module']['actions'];
-        if(isset($actions[$action_name]['dependency']) && !empty($actions[$action_name]['dependency'])) {
-            $parents[] = $actions[$action_name]['dependency'];
-            $this->findParentActions(end($parents), $parents);
-        }
-    }
-
-    /**
-     * Get Child Actions of a specific action name using actiondefs.php
-     * @param string $action_name - a name of an action [delete, edit, etc] if nothing is passed in then the objects name is used 
-     * @return array $children - child actions
-     */
-    public function getChildActions($action_name = '') {
-        if(empty($action_name)) {
-            $action_name = $this->name;
-        }
-        $children = array();
-        $this->findChildActions($action_name, $children);
-        return $children;
-    }
-
-    /**
-     * Recursive function to find all children of an action
-     * @param string $action_name - the name of the action you are finding the children of
-     * @param array &$children - growing array of children
-     * @return null
-     */
-    protected function findChildActions($action_name, &$children) {
-        $actions = $GLOBALS['ACLActions']['module']['actions'];
-        foreach($actions AS $name => $params) {
-            if(!isset($params['dependency'])) {
-                continue;
-            }
-            if(!empty($params['dependency']) && $params['dependency'] == $action_name) {
-                $children[] = $name;
-                $this->findChildActions(end($children), $children);
-            }
-        }
-    }
-
-    /**
     * static addActions($category, $type='module')
     * Adds all default actions for a category/type
     *
