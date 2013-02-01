@@ -1,13 +1,13 @@
 ({
     favRowTemplate: Handlebars.compile(
-      '{{#each models}}<li><a tabindex="-1" class="favoriteLink" href="#{{modelRoute this}}"><i class="icon-favorite active"></i>{{getFieldValue this "name"}}</a></li>{{/each}}'
+      '{{#each models}}<li><a tabindex="-1" class="favoriteLink actionLink" href="#{{modelRoute this}}"><i class="icon-favorite active"></i>{{getFieldValue this "name"}}</a></li>{{/each}}'
     ),
     recentRowTemplate: Handlebars.compile(
-        '{{#each models}}<li><a tabindex="-1" class="recentLink" href="#{{modelRoute this}}"><i class="icon-time active"></i>{{getFieldValue this "name"}}</a></li>{{/each}}'
+        '{{#each models}}<li><a tabindex="-1" class="recentLink actionLink" href="#{{modelRoute this}}"><i class="icon-time active"></i>{{getFieldValue this "name"}}</a></li>{{/each}}'
     ),
     events: {
-        'click #module_list li a': 'onModuleTabClicked',
-        'mouseover .dtoggle': 'toggleDropdown',
+        'click #module_list li a.route': 'onModuleTabClicked',
+        'click .dtoggle': 'toggleDropdown',
         'click .more': 'showMore',
         'mouseover .more': 'showMore',
         'mouseleave .more-drop-container' : 'hideMore',
@@ -39,17 +39,19 @@
      * @param event
      */
     toggleDropdown:function (event) {
-        if (!this.$(event.target).parent().parent().hasClass('more-drop-container')) {
-            this.$(event.target).dropdown('toggle');
-            var module = this.$(event.target).parent().data('module');
+        if (!this.$(event.target).parent().parent().hasClass('more-drop-container') && !this.$(event.target).hasClass('actionLink')) {
+            var module = this.$(event.target).parent().parent().data('module');
             var moduleMeta = app.metadata.getModule(module);
             if (moduleMeta && moduleMeta.fields && !_.isArray(moduleMeta.fields)) {
                 this.populateFavorites(module);
                 this.populateRecents(module);
             }
+            // NOTE: this is a workaround for bootstrap dropdowns lack of support for events
+            // we manually turn this into a dropdown and get rid of its events and reapply our own
+            this.$(event.currentTarget).attr("data-toggle", "dropdown").dropdown('toggle');
+            this.$(event.currentTarget).off();
+            this.delegateEvents();
         }
-
-
     },
     /**
      * Populates favorites on open menu
