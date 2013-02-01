@@ -9,7 +9,7 @@
     fieldOptions: null,
     fieldValues: null,
     defaultOption: null,
-    fieldPlaceHolderTag: '.fieldPlaceHolder',
+    fieldPlaceHolderTag: '[name=fieldPlaceHolder]',
     initialize: function(options) {
         this.fieldValues = [{}];
         this.setMetadata(options);
@@ -31,16 +31,19 @@
                     if(field.name === 'team_name') {
                         var team_field = _.clone(field);
                         team_field.type = 'teamset';
+                        team_field.css_class = 'span9';
                         field = {
                             type: 'fieldset',
                             name: team_field.name,
                             label: team_field.label,
+                            css_class : 'row-fluid',
                             fields: [
                                 team_field,
                                 {
                                     'name' : 'team_name_type',
                                     'type' : 'bool',
-                                    'text' : 'LBL_SELECT_APPEND_TEAMS'
+                                    'text' : 'LBL_SELECT_APPEND_TEAMS',
+                                    'css_class' : 'span3'
                                 }
                             ]
                         };
@@ -59,9 +62,14 @@
         var result = app.view.View.prototype._render.call(this),
             self = this;
 
-        this.$(".chzn-select.attribute").chosen({disable_search_threshold: 5}).change(function(evt) {
-            var $el = $(evt.currentTarget),
-                name = $el.val(),
+        this.$(".select2.mu_attribute")
+            .select2({
+                width: '100%',
+                minimumResultsForSearch: 5
+            })
+            .on("change", function(evt) {
+            var $el = $(this),
+                name = $el.select2('val'),
                 index = $el.data('index');
             var option = _.find(self.fieldOptions, function(field){
                 return field.name == name;
@@ -69,7 +77,7 @@
             self.replaceUpdateField(option, index);
             self.placeField($el);
         });
-        this.$(".chzn-select.attribute").each(function(){
+        this.$(".select2.mu_attribute").each(function(){
             self.placeField($(this));
         });
         this.layout.off("list:massupdate:fire", null, this);
@@ -85,7 +93,7 @@
         return result;
     },
     placeField: function($el) {
-        var name = $el.val(),
+        var name = $el.select2('val'),
             index = $el.data('index'),
             fieldEl = this.getField(name).$el;
 

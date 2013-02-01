@@ -48,7 +48,7 @@
                 moduleString = app.lang.getAppListStrings("moduleListSingular");
 
             this.$(this.fieldTag).select2({
-                    width: 'element',
+                    width: '100%',
                     initSelection: function(el, callback) {
                         var $el = $(el),
                             id = $el.data('id'),
@@ -99,7 +99,7 @@
                     self.setValue({id: e.val, value: value});
                 });
         } else if(this.tplName === 'disabled') {
-            this.$(this.fieldTag).attr("disabled", "disabled").not(".chzn-done").chosen();
+            this.$(this.fieldTag).attr("disabled", "disabled").select2();
         }
         return result;
     },
