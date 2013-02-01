@@ -71,13 +71,13 @@
     _setUpTimeperiodField: function (field) {
 
         /**
-         * The model for the field should be context.forecasts, since that is where the value gets set for all the
+         * The model for the field should be context, since that is where the value gets set for all the
          * views using it.
          */
-        field.model = this.context.forecasts;
+        field.model = this.context;
 
         /**
-         * Overtake the way the field sets the value, since we need it set on context.forecasts as an
+         * Overtake the way the field sets the value, since we need it set on context as an
          * object containing the id and the label of the selected timeperiod
          */
         field.unformat = _.bind(

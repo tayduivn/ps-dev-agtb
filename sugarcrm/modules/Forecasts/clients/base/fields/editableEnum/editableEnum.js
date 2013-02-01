@@ -164,7 +164,7 @@
         self.disabled = false;
         
         //Check to see if you're a manager on someone else's sheet, disable changes
-        if(self.context.forecasts.get("selectedUser")["id"] != app.user.id){
+        if(self.context.get("selectedUser")["id"] != app.user.id){
             self.disabled = true; 
         }
     },
