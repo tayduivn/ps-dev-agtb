@@ -49,7 +49,7 @@ var pages = {
       , "description":"Modals, dropdowns, and other Twitter Bootstrap Javascript widgets."
       , "sections":[
           {"label":"Modals", "description":"A streamlined, but flexible, take on the traditional javascript modal plugin with only the minimum required functionality and smart defaults."}
-        , {"label":"Drawers", "description":"Add dropdown menus to nearly anything with this simple plugin. Features full dropdown menu support on in the navbar, tabs, and pills."}
+        , {"label":"Drawers", "description":"Drawer is a form of a modal that pushes main content down and expands from the top taking 100% of the screen width. It is used for various Create work flows. Content that was on screen prior to drawer trigger is visible in the drawer on the bottom part of the screen."}
         , {"label":"Dropdowns", "description":"Add dropdown menus to nearly anything with this simple plugin. Features full dropdown menu support on in the navbar, tabs, and pills."}
         , {"label":"Scrollspy", "description":"Use scrollspy to automatically update the links in your navbar to show the current active link based on scroll position."}
         , {"label":"Togglable tabs", "description":"Use this plugin to make tabs and pills more useful by allowing them to toggle through tabbable panes of local content."}
