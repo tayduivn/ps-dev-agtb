@@ -5,11 +5,11 @@
         <li class="dropdown" data-module="{{name}}">
             <div class="btn-group">
                 <a  class="btn btn-invisible route" href="#{{name}}">{{label}}</a>
-                <a id="{{name}}Drop" role="button" href="#" class="btn btn-invisible dropdown-toggle dtoggle" data-tour="tour-navbar-{{name}}"><b class="caret"></b></a>
+                <a id="{{name}}Drop" role="button" href="#" class="btn btn-invisible dropdown-toggle dtoggle" data-toggle="dropdown" data-tour="tour-navbar-{{name}}"><b class="caret"></b></a>
 
                 <ul class="dropdown-menu" role="menu" aria-labelledby="{{name}}Drop">
                     {{#each menu}}
-                        <li><a class='actionLink' tabindex="-1" href="{{route}}">{{#if icon}}<i class="{{icon}}"></i>{{/if}}{{str label ../name}}</a></li>
+                        <li><a tabindex="-1" href="{{route}}">{{#if icon}}<i class="{{icon}}"></i>{{/if}}{{str label ../name}}</a></li>
                     {{/each}}
                     <li class="recentAnchor hide"><a tabindex="-1" href="javascript: void(0)">{{str "LBL_LAST_VIEWED"}}</a></li>
                     <div class="recentContainer "></div>
