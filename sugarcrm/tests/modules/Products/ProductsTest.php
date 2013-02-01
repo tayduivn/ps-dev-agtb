@@ -27,35 +27,39 @@
  * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
-class ProductsTest extends Sugar_PHPUnit_Framework_TestCase {
+class ProductsTest extends Sugar_PHPUnit_Framework_TestCase
+{
 
     private $product;
-
     public static function setUpBeforeClass()
     {
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('beanList');
         SugarTestHelper::setUp('mod_strings', array('Products'));
+        parent::setUpBeforeClass();
     }
 
     public function setUp()
     {
         $this->product = SugarTestProductUtilities::createProduct();
+        parent::setUp();
     }
 
     public function tearDown()
     {
         SugarTestProductUtilities::removeAllCreatedProducts();
+        parent::tearDown();
     }
 
     public static function tearDownAfterClass()
     {
         SugarTestHelper::tearDown();
+        parent::tearDownAfterClass();
     }
 
     /**
      * This test checks to see that we can save a product where date_closed is set to null
-     *
+     * @group products
      */
     public function testCreateProductWithoutDateClosed()
     {
@@ -64,5 +68,139 @@ class ProductsTest extends Sugar_PHPUnit_Framework_TestCase {
         $this->assertEmpty($this->product->date_closed);
     }
 
+    /**
+     * @group products
+     */
+    public function testSalesStatusIsNewWhenProductCreatedWithOutId()
+    {
+        $product = new MockProduct();
+        $product->handleSalesStatus();
 
+        $this->assertEquals('New', $product->sales_status);
+        unset($product);
+    }
+
+    /**
+     * @group products
+     */
+    public function testSalesStatusIsNewWhenProductsCreatedWithId()
+    {
+        $product = new MockProduct();
+        $product->id = "test_id";
+        $product->new_with_id = true;
+        $product->handleSalesStatus();
+
+        $this->assertEquals('New', $product->sales_status);
+        unset($product);
+    }
+
+    /**
+     * @group products
+     */
+    public function testSalesStatusChangesFromNewToInProgressWhenSalesStageChanges()
+    {
+        $product = new MockProduct();
+        $product->id = "test_id";
+        $product->sales_status = 'New';
+        $product->sales_stage = 'test2';
+        $product->fetched_row = array(
+            'sales_status' => 'New',
+            'sales_stage' => 'test1'
+        );
+
+        $product->handleSalesStatus();
+
+        $this->assertEquals('In Progress', $product->sales_status);
+        unset($product);
+    }
+
+    /**
+     * @group products
+     */
+    public function testSalesStatusChangesFromInProgressToClosedWonWhenSalesStageEqualsClosedWon()
+    {
+        $product = new MockProduct();
+        $product->id = "test_id";
+        $product->sales_status = 'In Progress';
+        $product->sales_stage = 'Closed Won';
+        $product->fetched_row = array(
+            'sales_status' => 'In Progress',
+            'sales_stage' => 'test1'
+        );
+
+        $product->handleSalesStatus();
+
+        $this->assertEquals('Closed Won', $product->sales_status);
+        unset($product);
+    }
+
+    /**
+     * @group products
+     */
+    public function testSalesStatusChangesInProgressToClosedLostWhenSalesStageEqualsClosedLost()
+    {
+        $product = new MockProduct();
+        $product->id = "test_id";
+        $product->sales_status = 'In Progress';
+        $product->sales_stage = 'Closed Lost';
+        $product->fetched_row = array(
+            'sales_status' => 'In Progress',
+            'sales_stage' => 'test1'
+        );
+
+        $product->handleSalesStatus();
+
+        $this->assertEquals('Closed Lost', $product->sales_status);
+        unset($product);
+    }
+
+    /**
+     * @group products
+     */
+    public function testSalesStatusDoesNotChangeWhenStatusAndStageChange()
+    {
+        $product = new MockProduct();
+        $product->id = "test_id";
+        $product->sales_status = 'In Progress';
+        $product->sales_stage = 'Closed Lost';
+        $product->fetched_row = array(
+            'sales_status' => 'New',
+            'sales_stage' => 'test1'
+        );
+
+        $product->handleSalesStatus();
+
+        $this->assertEquals('In Progress', $product->sales_status);
+        unset($product);
+    }
+
+    /**
+     * @group products
+     */
+    public function testSalesStatusDoesNotChangeWhenSalesStageDoesNotChange()
+    {
+        $product = new MockProduct();
+        $product->id = "test_id";
+        $product->sales_status = 'New';
+        $product->sales_stage = 'test1';
+        $product->fetched_row = array(
+            'sales_status' => 'New',
+            'sales_stage' => 'test1'
+        );
+
+        $product->handleSalesStatus();
+
+        $this->assertEquals('New', $product->sales_status);
+        unset($product);
+    }
+
+
+}
+
+class MockProduct extends Product
+{
+    public function handleSalesStatus()
+    {
+        parent::handleSalesStatus();
+    }
 }
