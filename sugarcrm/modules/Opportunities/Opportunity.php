@@ -119,7 +119,7 @@ class Opportunity extends SugarBean {
 	function create_list_query($order_by, $where, $show_deleted = 0)
 	{
 
-        $custom_join = $this->getCustomJoin();
+$custom_join = $this->custom_fields->getJOIN();
                 $query = "SELECT ";
 
                 $query .= "
@@ -130,7 +130,9 @@ class Opportunity extends SugarBean {
                             //BEGIN SUGARCRM flav=pro ONLY
                             $query .= ",teams.name AS team_name ";
                             //END SUGARCRM flav=pro ONLY
-        $query .= $custom_join['select'];
+                            if($custom_join){
+   								$query .= $custom_join['select'];
+ 							}
                             $query .= " ,opportunities.*
                             FROM opportunities ";
 
@@ -148,7 +150,9 @@ $query .= 			"LEFT JOIN users
                             ON opportunities.id=$this->rel_account_table.opportunity_id
                             LEFT JOIN accounts
                             ON $this->rel_account_table.account_id=accounts.id ";
-        $query .= $custom_join['join'];
+			    if($custom_join){
+  					$query .= $custom_join['join'];
+				}
 		$where_auto = '1=1';
 		if($show_deleted == 0){
 			$where_auto = "
@@ -175,8 +179,9 @@ $query .= 			"LEFT JOIN users
 
     function create_export_query(&$order_by, &$where, $relate_link_join='')
     {
-        $custom_join = $this->getCustomJoin(true, true, $where);
-        $custom_join['join'] .= $relate_link_join;
+        $custom_join = $this->custom_fields->getJOIN(true, true,$where);
+		if($custom_join)
+				$custom_join['join'] .= $relate_link_join;
                                 $query = "SELECT
                                 opportunities.*,
                                 accounts.name as account_name,
@@ -184,7 +189,9 @@ $query .= 			"LEFT JOIN users
                                 //BEGIN SUGARCRM flav=pro ONLY
 								$query .= ", teams.name AS team_name ";
 								//END SUGARCRM flav=pro ONLY
-        $query .= $custom_join['select'];
+								if($custom_join){
+   									$query .= $custom_join['select'];
+ 								}
 	                            $query .= " FROM opportunities ";
 //BEGIN SUGARCRM flav=pro ONLY
 		// We need to confirm that the user is a member of the team of the item.
@@ -199,7 +206,9 @@ $query .= 			"LEFT JOIN users
                                 ON opportunities.id=$this->rel_account_table.opportunity_id
                                 LEFT JOIN accounts
                                 ON $this->rel_account_table.account_id=accounts.id ";
-        $query .= $custom_join['join'];
+								if($custom_join){
+  									$query .= $custom_join['join'];
+								}
 		$where_auto = "
 			($this->rel_account_table.deleted is null OR $this->rel_account_table.deleted=0)
 			AND (accounts.deleted is null OR accounts.deleted=0)

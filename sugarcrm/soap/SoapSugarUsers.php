@@ -2060,8 +2060,10 @@ function get_entries_count($session, $module_name, $query, $deleted) {
 	$seed->add_team_security_where_clause($sql);
 	//END SUGARCRM flav=pro ONLY
 
-    $customJoin = $seed->getCustomJoin();
-    $sql .= $customJoin['join'];
+    if (isset($seed->custom_fields)) {
+        $customJoin = $seed->custom_fields->getJOIN();
+        $sql .= $customJoin ? $customJoin['join'] : '';
+    }
 
 	// build WHERE clauses, if any
 	$where_clauses = array();

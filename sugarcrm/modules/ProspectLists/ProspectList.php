@@ -90,13 +90,15 @@ class ProspectList extends SugarBean {
 
 	function create_list_query($order_by, $where, $show_deleted = 0)
 	{
-        $custom_join = $this->getCustomJoin();
+		$custom_join = $this->custom_fields->getJOIN();
 		
 		$query = "SELECT ";
 		$query .= "users.user_name as assigned_user_name, ";
 		$query .= "prospect_lists.*";
 
-        $query .= $custom_join['select'];
+		if($custom_join){
+			$query .= $custom_join['select'];
+		}	    
         //BEGIN SUGARCRM flav=pro ONLY
         $query .= ", teams.name as team_name";
         //END SUGARCRM flav=pro ONLY
@@ -112,8 +114,10 @@ class ProspectList extends SugarBean {
 		$query .= "LEFT JOIN teams ON prospect_lists.team_id=teams.id ";
 		//END SUGARCRM flav=pro ONLY
 
-        $query .= $custom_join['join'];
-
+		if($custom_join){
+			$query .= $custom_join['join'];
+		}
+		
 			$where_auto = '1=1';
 				if($show_deleted == 0){
                 	$where_auto = "$this->table_name.deleted=0";

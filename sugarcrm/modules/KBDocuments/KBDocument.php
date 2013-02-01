@@ -227,13 +227,18 @@ class KBDocument extends SugarBean {
 
     function create_export_query(&$order_by, &$where, $relate_link_join='')
     {
-        $custom_join = $this->getCustomJoin(true, true, $where);
-        $custom_join['join'] .= $relate_link_join;
+        $custom_join = $this->custom_fields->getJOIN(true, true,$where);
+		if($custom_join)
+				$custom_join['join'] .= $relate_link_join;
 		$query = "SELECT
 						kbdocuments.*";
-        $query .=  $custom_join['select'];
+		if($custom_join){
+			$query .=  $custom_join['select'];
+		}
 		$query .= " FROM kbdocuments ";
-        $query .=  $custom_join['join'];
+		if($custom_join){
+			$query .=  $custom_join['join'];
+		}
 		$where_auto = " kbdocuments.deleted = 0";
 
 		if ($where != "")
@@ -257,10 +262,15 @@ class KBDocument extends SugarBean {
         //BEGIN SUGARCRM flav=ent ONLY
          $ret_array['select'] .= ", kbdocuments.created_by";
          //END SUGARCRM flav=ent ONLY
-        $custom_join = $this->getCustomJoin(empty($filter) ? true : $filter);
-        if((!isset($params['include_custom_fields']) || $params['include_custom_fields']))
+         $custom_join = false;
+        if((!isset($params['include_custom_fields']) || $params['include_custom_fields']) &&  isset($this->custom_fields))
         {
-            $ret_array['select'] .= $custom_join['select'];
+
+            $custom_join = $this->custom_fields->getJOIN( empty($filter)? true: $filter );
+            if($custom_join)
+            {
+                $ret_array['select'] .= ' ' .$custom_join['select'];
+            }
         }
         //BEGIN SUGARCRM flav=pro ONLY
         if (!is_admin($current_user) && !$this->disable_row_level_security){
@@ -271,6 +281,10 @@ class KBDocument extends SugarBean {
         if($custom_join)
         {
             $ret_array['from'] .= ' ' . $custom_join['join'];
+        }
+        //BEGIN SUGARCRM flav=pro ONLY
+        if (!is_admin($current_user) && !$this->disable_row_level_security){
+            $this->add_team_security_where_clause($ret_array['from']);
         }
         //BEGIN SUGARCRM flav=pro ONLY
         if (!$this->disable_row_level_security){

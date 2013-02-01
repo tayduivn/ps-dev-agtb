@@ -238,12 +238,17 @@ class Contract extends SugarBean {
 
     function create_export_query(&$order_by, &$where, $relate_link_join='')
     {
-        $custom_join = $this->getCustomJoin(true, true, $where);
-        $custom_join['join'] .= $relate_link_join;
+        $custom_join = $this->custom_fields->getJOIN(true, true,$where);
+			if($custom_join)
+				$custom_join['join'] .= $relate_link_join;
 		$query = 'SELECT contracts.* , contract_types.name type_name ';
-        $query .=  $custom_join['select'];
+		if($custom_join){
+			$query .=  $custom_join['select'];
+		}
 		$query .=  ' FROM contracts ';
-        $query .=  $custom_join['join'];
+		if($custom_join){
+			$query .=  $custom_join['join'];
+		}
 		$query .= ' LEFT JOIN contract_types on contract_types.id=contracts.type ';
 		$where_auto = ' contracts.deleted = 0';
 

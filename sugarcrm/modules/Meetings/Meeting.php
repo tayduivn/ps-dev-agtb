@@ -300,8 +300,9 @@ class Meeting extends SugarBean {
 
     function create_export_query(&$order_by, &$where, $relate_link_join='')
     {
-        $custom_join = $this->getCustomJoin(true, true, $where);
-        $custom_join['join'] .= $relate_link_join;
+        $custom_join = $this->custom_fields->getJOIN(true, true,$where);
+		if($custom_join)
+				$custom_join['join'] .= $relate_link_join;
 		$contact_required = stristr($where, "contacts");
 
 		if($contact_required) {
@@ -309,7 +310,9 @@ class Meeting extends SugarBean {
 			//BEGIN SUGARCRM flav=pro ONLY
 			$query .= ", teams.name AS team_name";
 			//END SUGARCRM flav=pro ONLY
-            $query .= $custom_join['select'];
+			if($custom_join) {
+				$query .= $custom_join['select'];
+			}
 			$query .= " FROM contacts, meetings, meetings_contacts ";
 			$where_auto = " meetings_contacts.contact_id = contacts.id AND meetings_contacts.meeting_id = meetings.id AND meetings.deleted=0 AND contacts.deleted=0";
 		} else {
@@ -317,7 +320,9 @@ class Meeting extends SugarBean {
 			//BEGIN SUGARCRM flav=pro ONLY
 			$query .= ", teams.name AS team_name";
 			//END SUGARCRM flav=pro ONLY
-            $query .= $custom_join['select'];
+			if($custom_join) {
+				$query .= $custom_join['select'];
+			}
 			$query .= ' FROM meetings ';
 			$where_auto = "meetings.deleted=0";
 		}
@@ -328,7 +333,9 @@ class Meeting extends SugarBean {
 		//END SUGARCRM flav=pro ONLY
 		$query .= "  LEFT JOIN users ON meetings.assigned_user_id=users.id ";
 
-        $query .= $custom_join['join'];
+		if($custom_join) {
+			$query .= $custom_join['join'];
+		}
 
 		if($where != "")
 			$query .= " where $where AND ".$where_auto;

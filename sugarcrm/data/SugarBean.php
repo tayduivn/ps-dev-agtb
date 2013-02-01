@@ -2597,14 +2597,23 @@ class SugarBean
         {
             $id = $this->id;
         }
-        $custom_join = $this->getCustomJoin();
+        if(isset($this->custom_fields))
+        {
+            $custom_join = $this->custom_fields->getJOIN();
+        }
+        else
+            $custom_join = false;
 
         $query_select = "{$this->table_name}.*";
         $query_from = $this->table_name;
         $where = " WHERE $this->table_name.id = ".$this->db->quoted($id);
         if ($deleted) $where .= " AND $this->table_name.deleted=0";
 
-        $query = "SELECT $this->table_name.*". $custom_join['select']. " FROM $this->table_name ";
+        if($custom_join)
+        {
+            $query_select .= " ".$custom_join['select'];
+            $query_from .= ' '.$custom_join['join'];
+        }
 
         // Add user names
         if(!empty($this->field_defs['assigned_user_name']) && !empty($this->field_defs['assigned_user_id'])) {
@@ -2622,7 +2631,6 @@ class SugarBean
         	$query_select .= $usel;
         	$query_from .= $ufrom;
         }
-
         //BEGIN SUGARCRM flav=pro ONLY
         if(!empty($this->field_defs['team_name']) && !empty($this->field_defs['team_id']) && (empty($this->field_defs['team_id']['source']))) {
             $query_select .= ", teams_tn.name as tn_name, teams_tn.name_2 as tn_name_2";
@@ -2660,6 +2668,7 @@ class SugarBean
             $this->addVisibilityWhere($query);
         }
         //END SUGARCRM flav=pro ONLY
+
         $GLOBALS['log']->debug("Retrieve $this->object_name : ".$query);
         $result = $this->db->limitQuery($query,0,1,true, "Retrieving record by id $this->table_name:$id found ");
         if(empty($result))
@@ -2689,7 +2698,7 @@ class SugarBean
         $this->processed_dates_times = array();
         $this->check_date_relationships_load();
 
-        if(isset($this->custom_fields))
+        if($custom_join)
         {
             $this->custom_fields->fill_relationships();
         }
@@ -2788,8 +2797,11 @@ class SugarBean
     */
     function add_list_count_joins(&$query, $where)
     {
-        $custom_join = $this->getCustomJoin();
-        $query .= $custom_join['join'];
+        $custom_join = $this->custom_fields->getJOIN();
+        if($custom_join)
+        {
+            $query .= $custom_join['join'];
+        }
 
     }
 
@@ -3446,23 +3458,23 @@ class SugarBean
         {
             $ret_array['secondary_select'] = '';
         }
-        $custom_join = $this->getCustomJoin( empty($filter)? true: $filter );
-        if((!isset($params['include_custom_fields']) || $params['include_custom_fields']))
+        $custom_join = false;
+        if((!isset($params['include_custom_fields']) || $params['include_custom_fields']) &&  isset($this->custom_fields))
         {
-            $ret_array['select'] .= $custom_join['select'];
+
+            $custom_join = $this->custom_fields->getJOIN( empty($filter)? true: $filter );
+            if($custom_join)
+            {
+                $ret_array['select'] .= ' ' .$custom_join['select'];
+            }
         }
 
-        //BEGIN SUGARCRM flav=pro ONLY
-        if(!$this->disable_row_level_security)
+        if($custom_join)
         {
-            $this->add_team_security_where_clause($ret_array['from']);
-            $this->add_team_security_where_clause($ret_array['from_min']);
-            if(!$singleSelect)$this->add_team_security_where_clause($ret_array['secondary_from']);
+            $ret_array['from'] .= ' ' . $custom_join['join'];
+            // Bug 52490 - Captivea (Sve) - To be able to add custom fields inside where clause in a subpanel
+            $ret_array['from_min'] .= ' ' . $custom_join['join'];
         }
-        //END SUGARCRM flav=pro ONLY
-        $ret_array['from'] .= $custom_join['join'];
-        // Bug 52490 - Captivea (Sve) - To be able to add custom fields inside where clause in a subpanel
-        $ret_array['from_min'] .= $custom_join['join'];
         $jtcount = 0;
         //LOOP AROUND FOR FIXIN VARDEF ISSUES
         require('include/VarDefHandler/listvardefoverride.php');
@@ -4989,14 +5001,21 @@ class SugarBean
         $in = $idList['in'];
     }
     // MFH - Added Support For Custom Fields in Searches
-    $custom_join = $this->getCustomJoin();
+    $custom_join="";
+    if(isset($this->custom_fields)) {
+        $custom_join = $this->custom_fields->getJOIN();
+    }
 
     $query = "SELECT id ";
 
-    $query .= $custom_join['select'];
+    if (!empty($custom_join)) {
+        $query .= $custom_join['select'];
+    }
     $query .= " FROM $this->table_name ";
 
-    $query .= $custom_join['join'];
+    if (!empty($custom_join) && !empty($custom_join['join'])) {
+        $query .= " " . $custom_join['join'];
+    }
 
     $query .= " WHERE deleted=0 AND id IN $in";
     if(!empty($where))
@@ -5272,8 +5291,17 @@ class SugarBean
     function retrieve_by_string_fields($fields_array, $encode=true, $deleted=true)
     {
         $where_clause = $this->get_where($fields_array, $deleted);
-        $custom_join = $this->getCustomJoin();
-        $query = "SELECT $this->table_name.*". $custom_join['select']. " FROM $this->table_name " . $custom_join['join'];
+        if(isset($this->custom_fields))
+        $custom_join = $this->custom_fields->getJOIN();
+        else $custom_join = false;
+        if($custom_join)
+        {
+            $query = "SELECT $this->table_name.*". $custom_join['select']. " FROM $this->table_name " . $custom_join['join'];
+        }
+        else
+        {
+            $query = "SELECT $this->table_name.* FROM $this->table_name ";
+        }
         $query .= " $where_clause";
         $GLOBALS['log']->debug("Retrieve $this->object_name: ".$query);
         //requireSingleResult has been deprecated.
@@ -6441,26 +6469,6 @@ class SugarBean
         return isset($field_def['type'])
             && $field_def['type'] == 'relate'
             && isset($field_def['link']);
-    }
-
-    /**
-     * Proxy method for DynamicField::getJOIN
-     * @param bool $expandedList
-     * @param bool $includeRelates
-     * @param string|bool $where
-     * @return array
-     */
-    public function getCustomJoin($expandedList = false, $includeRelates = false, &$where = false)
-    {
-        $result = array(
-            'select' => '',
-            'join' => ''
-        );
-        if(isset($this->custom_fields))
-        {
-            $result = $this->custom_fields->getJOIN($expandedList, $includeRelates, $where);
-        }
-        return $result;
     }
 //BEGIN SUGARCRM flav=pro ONLY
     /**

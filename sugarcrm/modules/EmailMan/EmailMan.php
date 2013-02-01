@@ -930,15 +930,18 @@ class EmailMan extends SugarBean{
 
      }
 
-    function create_export_query(&$order_by, &$where)
-    {
-        $custom_join = $this->getCustomJoin(true, true, $where);
+    function create_export_query(&$order_by, &$where) {
+        $custom_join = $this->custom_fields->getJOIN(true, true,$where);
         $query = "SELECT emailman.*";
-        $query .= $custom_join['select'];
+        if($custom_join){
+            $query .= $custom_join['select'];
+        }
 
         $query .= " FROM emailman ";
 
-        $query .= $custom_join['join'];
+        if($custom_join){
+            $query .= $custom_join['join'];
+        }
 
         $where_auto = "( emailman.deleted IS NULL OR emailman.deleted=0 )";
 
