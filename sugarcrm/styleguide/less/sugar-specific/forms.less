@@ -363,20 +363,20 @@ h1 input[type="text"] {
 .controls {
   margin-left: @fluidGridGutterWidth;
   padding: 0;
-  &.controls-four {
-    padding-right: 144px;
-  }
-  &.controls-three {
-    padding-right: 108px;
-  }
-  &.controls-two {
-    padding-right: 72px;
-  }
-  &.controls-one {
-    padding-right: 36px;
-  }
   &.btn-fit {
     position: relative;
+    &.controls-four {
+      padding-right: 144px;
+    }
+    &.controls-three {
+      padding-right: 108px;
+    }
+    &.controls-two {
+      padding-right: 72px;
+    }
+    &.controls-one {
+      padding-right: 36px;
+    }
     .btn {
       position: absolute;
       top: 0;
@@ -394,6 +394,26 @@ h1 input[type="text"] {
       &.first {
         /* right:___; default  */
       }
+    }
+  }
+  &.btn-group-fit {
+    position: relative;
+    &.controls-four {
+      padding-right: 136px;
+    }
+    &.controls-three {
+      padding-right: 100px;
+    }
+    &.controls-two {
+      padding-right: 66px;
+    }
+    &.controls-one {
+      padding-right: 28px;
+    }
+    .btn-group {
+      position: absolute;
+      top: 0;
+      right: 0px;
     }
   }
 }

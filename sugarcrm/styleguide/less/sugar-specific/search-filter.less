@@ -15,21 +15,24 @@
 .form-search {
   position: relative;
   margin: -1px 0 0 0;
-  padding: 5px 10px;
   border-top: 1px solid darken(@grayLighter, 5%);
+
+  //padding: 5px 10px;
   background: @grayLighter;
   border-bottom: 1px solid darken(@grayLighter, 5%);
   //z-index: 1000;
-
+  .control-group {
+    padding: 5px 10px 4px;
+  }
   /*chzn filter styles*/
   .filter {
     position: relative;
     margin-left: 0px;
     background-color: @grayLighter;
-    padding: 5px 20px 0px 20px;
+    //padding: 5px 20px 0px 20px;
     margin-bottom: 0px;
-    border-bottom: 1px solid darken(@grayLighter,5%);
-    border-top: 1px solid darken(@grayLighter,5%);
+    //border-bottom: 1px solid darken(@grayLighter,5%);
+    //border-top: 1px solid darken(@grayLighter,5%);
     .chzn-container {
       .chzn-drop {
         //padding: 10px;
@@ -75,6 +78,7 @@
   }
 
   .select2-container {
+    width: 100%;
     .select2-single-with-drop div b {
       background-position: 0px 0px;
     }
@@ -185,7 +189,7 @@
 
   .extend {
     background: darken(@grayLighter, 5%);
-    margin: 5px -8px -5px -20px;
+    //margin: 5px -8px -5px -20px;
     text-align: left;
 
     article:nth-child(even),
