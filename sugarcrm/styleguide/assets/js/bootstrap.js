@@ -625,6 +625,7 @@
         $this.focus()
       }
 
+      return false
     }
 
   , keydown: function (e) {
@@ -713,7 +714,8 @@
     .on('click.dropdown.data-api touchstart.dropdown.data-api'  , toggle, Dropdown.prototype.toggle)
     .on('keydown.dropdown.data-api touchstart.dropdown.data-api', toggle + ', [role=menu]' , Dropdown.prototype.keydown)
 
-}(window.jQuery);/* =========================================================
+}(window.jQuery);
+/* =========================================================
  * bootstrap-modal.js v2.2.1
  * http://twitter.github.com/bootstrap/javascript.html#modals
  * =========================================================
