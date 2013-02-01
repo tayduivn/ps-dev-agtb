@@ -45,7 +45,7 @@ describe("forecast editableCurrency field", function () {
             "type": "editableCurrency",
             "view": "detail"
         };
-        SugarTest.loadComponent('base', 'field', 'int');
+        SugarTest.loadComponent('base', 'field', 'currency');
         field = SugarTest.createField("../modules/Forecasts/clients/base", "editableCurrency", "editableCurrency", "detail", fieldDef, "Forecasts", model, context);
     });
 
