@@ -762,10 +762,7 @@ class Meeting extends SugarBean {
         if(!is_array($this->leads_arr)) {
 			$this->leads_arr =	array();
 		}
-		$GLOBALS['log']->fatal("THIS IS THE ARRAYS");
-		$GLOBALS['log']->fatal("CONTACTS ARR: " . var_export($this->contacts_arr, true));
-		$GLOBALS['log']->fatal("USERS ARR: " . var_export($this->users_arr, true));
-		$GLOBALS['log']->fatal("LEADS ARR: " . var_export($this->leads_arr, true));
+
 		foreach($this->users_arr as $user_id) {
 			$notify_user = BeanFactory::getBean('Users', $user_id);
 			if(!empty($notify_user->id)) {
