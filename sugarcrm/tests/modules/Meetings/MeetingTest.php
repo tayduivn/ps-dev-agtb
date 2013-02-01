@@ -73,6 +73,8 @@ class MeetingTest extends Sugar_PHPUnit_Framework_TestCase
 
 		$GLOBALS['db']->query("DELETE FROM leads WHERE id = '{$this->lead->id}'");
         unset($this->lead);
+
+        unset($_POST);
     }
 	
 	function testMeetingTypeSaveDefault() {
@@ -120,6 +122,7 @@ class MeetingTest extends Sugar_PHPUnit_Framework_TestCase
 	public function testMeetingFormBaseRelationshipsSetTest() {
 		global $db;
 		// setup $_POST
+		$_POST = array();
 		$_POST['name'] = 'MeetingTestMeeting';
 		$_POST['lead_invitees'] = $this->lead->id;
 		$_POST['contact_invitees'] = $this->contact->id;
