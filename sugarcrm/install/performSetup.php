@@ -266,6 +266,10 @@ foreach( $beanFiles as $bean => $file ) {
 }
 installerHook('post_createAllModuleTables');
 
+$mi = new ModuleInstaller();
+$mi->silent = true;
+$mi->rebuild_extensions();
+
 echo "<br>";
 ////    END TABLE STUFF
 

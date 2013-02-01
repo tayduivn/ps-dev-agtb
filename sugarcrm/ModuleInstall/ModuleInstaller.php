@@ -1638,96 +1638,91 @@ class ModuleInstaller{
         }
 	}
 
-	/*
-     * ModuleInstaller->merge_files runs over the list of all modules already installed in /modules. For each $module it reads the contents of every file in
-     * custom/Extension/modules/$module/<path> (_override files last) and concatenates them to custom/modules/$module/<path>/<file>.
-     * Then it does the same thing in custom/Extension/application/<path>, concatenating those files and copying the result to custom/application/<path>/<file>
+    /**
+     * Internal function used to merge extensions for a module from both core
+     * and custom sources.
+     * @param  string $module_path Path to the module's directory.
+     * @param  string $ext_path    Path for the extension used.
+     * @param  string $name        Name of file to output to.
+     * @param  string $filter      Filter for extension filename for languages.
      */
-	function merge_files($path, $name, $filter = '', $application = false){
-		if(!$application){
-		$GLOBALS['log']->debug( get_class($this)."->merge_files() : merging module files in custom/Extension/modules/<module>/$path to custom/modules/<module>/$path$name");
-		foreach($this->modules as $module){
-				$extension = "<?php \n //WARNING: The contents of this file are auto-generated\n";
-				$extpath = "modules/$module/$path";
-				$module_install  = 'custom/Extension/'.$extpath;
-				$shouldSave = false;
-				if(is_dir($module_install)){
-					$dir = dir($module_install);
-					$shouldSave = true;
-					$override = array();
-					while($entry = $dir->read()){
-						if((empty($filter) || substr_count($entry, $filter) > 0) && is_file($module_install.'/'.$entry)
-						  && $entry != '.' && $entry != '..' && strtolower(substr($entry, -4)) == ".php")
-						{
-						     if (substr($entry, 0, 9) == '_override') {
-						    	$override[] = $entry;
-						    } else {
-							    $file = file_get_contents($module_install . '/' . $entry);
-							    $GLOBALS['log']->debug(get_class($this)."->merge_files(): found {$module_install}{$entry}") ;
-							    $extension .= "\n". str_replace(array('<?php', '?>', '<?PHP', '<?'), array('','', '' ,'') , $file);
-						    }
-						}
-					}
-					foreach ($override as $entry) {
-                        $file = file_get_contents($module_install . '/' . $entry);
-                        $extension .= "\n". str_replace(array('<?php', '?>', '<?PHP', '<?'), array('','', '' ,'') , $file);
-					}
-				}
-				$extension .= "\n?>";
+    protected function mergeModuleFiles($module_path, $ext_path, $name, $filter)
+    {
+        $php_tags = array('<?php', '?>', '<?PHP', '<?');
+        $extension = "<?php\n// WARNING: The contents of this file are auto-generated.\n";
+        $shouldSave = false;
+        if ($module_path == 'application') {
+            $paths = array($ext_path);
+            $cache_path = 'custom/application/' . $ext_path;
+        } else {
+            $paths = array($module_path . '/' . $ext_path);
+            $cache_path = 'custom/modules/' . $module_path . '/' . $ext_path;
+        }
+        $paths[] = 'custom/Extension' . '/' . $module_path . '/' . $ext_path;
 
-				if($shouldSave){
-					if(!file_exists("custom/$extpath")) {
-					    mkdir_recursive("custom/$extpath", true);
-				    }
-					$out = sugar_fopen("custom/$extpath/$name", 'w');
-					fwrite($out,$extension);
-					fclose($out);
-                    SugarAutoLoader::addToMap("custom/$extpath/$name");
-				}else{
-					if(file_exists("custom/$extpath/$name")) {
-						unlink("custom/$extpath/$name");
-                        SugarAutoLoader::delFromMap("custom/$extpath/$name");
-					}
-				}
-			}
+        foreach ($paths as $path) {
+            if (is_dir($path)) {
+                $dir = dir($path);
+                $shouldSave = true;
+                $override = array();
+                while (false !== ($entry = $dir->read())) {
+                    if ($entry != '.' && $entry != '..' && is_file($path.'/'.$entry)
+                      && (empty($filter) || substr_count($entry, $filter) > 0)
+                      && strtolower(substr($entry, -4)) == ".php") {
+                        if (substr($entry, 0, 9) == '_override') {
+                            $override[] = $entry;
+                        } else {
+                            $file = file_get_contents($path . '/' . $entry);
+                            $GLOBALS['log']->debug(__METHOD__ . ": found {$path}{$entry}");
+                            $extension .= "\n". str_replace($php_tags, '', $file);
+                        }
+                    }
+                }
+                foreach ($override as $entry) {
+                    $file = file_get_contents($path . '/' . $entry);
+                    $extension .= "\n". str_replace($php_tags, '', $file);
+                }
+            }
+        }
+        if ($shouldSave) {
+            if (!file_exists($cache_path)) {
+                mkdir_recursive($cache_path, true);
+            }
+            SugarAutoLoader::put("$cache_path/$name", $extension, true);
+        } else {
+            if (file_exists("$cache_path/$name")) {
+                SugarAutoLoader::unlink("$cache_path/$name", true);
+            }
+        }
+    }
 
-		}
+    /**
+     * Merges all extension files for a module into one file.
+     *
+     * This method runs over the list of all modules already installed in the
+     * modules directory. For each module, it reads the contents of every file
+     * within custom/Extension/modules/<module>/$path, reading files that end
+     * with "_override" last. It then concatenates those files, copying the
+     * result to custom/application/<path>/<file>.
+     * @param  string  $path        Path for extension.
+     * @param  string  $name        Filename for extension.
+     * @param  string  $filter      Filter extension file name. Useful for lang.
+     * @param  boolean $application If true, process only application wide exts.
+     */
+    public function merge_files($path, $name, $filter = '', $application = false)
+    {
+        if (!$application) {
+            $GLOBALS['log']->debug(__METHOD__ . ": merging module extensions in custom/Extension/modules/<module>/$path to custom/modules/<module>/$path$name");
+            foreach ($this->modules as $module) {
+                $module_path = "modules/" . $module;
+                $this->mergeModuleFiles($module_path, $path, $name, $filter);
+            }
+        }
 
-		$GLOBALS['log']->debug("Merging application files for $name in $path");
-		//Now the application stuff
-		$extension = "<?php \n //WARNING: The contents of this file are auto-generated\n";
-		$extpath = "application/$path";
-		$module_install  = 'custom/Extension/'.$extpath;
-		$shouldSave = false;
-					if(is_dir($module_install)){
-						$dir = dir($module_install);
-						while($entry = $dir->read()){
-								$shouldSave = true;
-								if((empty($filter) || substr_count($entry, $filter) > 0) && is_file($module_install.'/'.$entry)
-								  && $entry != '.' && $entry != '..' && strtolower(substr($entry, -4)) == ".php")
-								{
-									$file = file_get_contents($module_install . '/' . $entry);
-									$extension .= "\n". str_replace(array('<?php', '?>', '<?PHP', '<?'), array('','', '' ,'') , $file);
-								}
-						}
-					}
-					$extension .= "\n?>";
-					if($shouldSave){
-						if(!file_exists("custom/$extpath")){
-							mkdir_recursive("custom/$extpath", true);
-						}
-						$out = sugar_fopen("custom/$extpath/$name", 'w');
-						fwrite($out,$extension);
-						fclose($out);
-                        SugarAutoLoader::addToMap("custom/$extpath/$name");
-					}else{
-					if(file_exists("custom/$extpath/$name")){
-						unlink("custom/$extpath/$name");
-                        SugarAutoLoader::delFromMap("custom/$extpath/$name");
-					}
-				}
-
-}
+        $GLOBALS['log']->debug(__METHOD__ . ": merging application extensions for $name in $path");
+        // Now process the application-wide extensions.
+        $this->mergeModuleFiles('application', $path, $name, $filter);
+    }
 
     function install_modules()
     {
