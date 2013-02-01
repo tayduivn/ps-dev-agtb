@@ -173,5 +173,3 @@ $mod_strings = array(
     //END SUGARCRM flav=ent ONLY
 
 );
-
-?>

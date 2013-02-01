@@ -241,6 +241,14 @@ $dictionary['Opportunity'] = array(
             'importable' => 'required',
             'required' => true,
         ),
+        'sales_status' => array(
+            'name' => 'sales_status',
+            'vname' => 'LBL_SALES_STATUS',
+            'type' => 'enum',
+            'options' => 'sales_status_dom',
+            'len' => '255',
+            'audited' => true,
+        ),
         'probability' => array(
             'name' => 'probability',
             'vname' => 'LBL_PROBABILITY',

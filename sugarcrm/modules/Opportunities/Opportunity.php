@@ -31,64 +31,65 @@ class Opportunity extends SugarBean
     const STATUS_NEW = 'New';
     const STATUS_IN_PROGRESS = 'In Progress';
 
-    var $field_name_map;
+    public $field_name_map;
     // Stored fields
-    var $id;
-    var $lead_source;
-    var $date_entered;
-    var $date_modified;
-    var $modified_user_id;
-    var $assigned_user_id;
-    var $created_by;
-    var $created_by_name;
-    var $modified_by_name;
-    var $description;
-    var $name;
-    var $opportunity_type;
-    var $amount;
-    var $amount_usdollar;
-    var $currency_id;
-    var $base_rate;
-    var $date_closed;
-    var $date_closed_timestamp;
-    var $next_step;
-    var $sales_stage;
-    var $probability;
-    var $campaign_id;
+    public $id;
+    public $lead_source;
+    public $date_entered;
+    public $date_modified;
+    public $modified_user_id;
+    public $assigned_user_id;
+    public $created_by;
+    public $created_by_name;
+    public $modified_by_name;
+    public $description;
+    public $name;
+    public $opportunity_type;
+    public $amount;
+    public $amount_usdollar;
+    public $currency_id;
+    public $base_rate;
+    public $date_closed;
+    public $date_closed_timestamp;
+    public $next_step;
+    public $sales_stage;
+    public $sales_status;
+    public $probability;
+    public $campaign_id;
     //BEGIN SUGARCRM flav=pro ONLY
-    var $team_name;
-    var $team_id;
-    var $quote_id;
+    public $team_name;
+    public $team_id;
+    public $quote_id;
     //END SUGARCRM flav=pro ONLY
 
     // These are related
-    var $account_name;
-    var $account_id;
-    var $contact_id;
-    var $task_id;
-    var $note_id;
-    var $meeting_id;
-    var $call_id;
-    var $email_id;
-    var $assigned_user_name;
+    public $account_name;
+    public $account_id;
+    public $contact_id;
+    public $task_id;
+    public $note_id;
+    public $meeting_id;
+    public $call_id;
+    public $email_id;
+    public $assigned_user_name;
 
-    var $table_name = "opportunities";
-    var $rel_account_table = "accounts_opportunities";
-    var $rel_contact_table = "opportunities_contacts";
-    var $module_dir = "Opportunities";
+    public $table_name = "opportunities";
+    public $rel_account_table = "accounts_opportunities";
+    public $rel_contact_table = "opportunities_contacts";
+    public $module_dir = "Opportunities";
 //BEGIN SUGARCRM flav=pro ONLY
-    var $rel_quote_table = "quotes_opportunities";
-    var $best_case;
-    var $worst_case;
-    var $timeperiod_id;
-    var $commit_stage;
+    public $rel_quote_table = "quotes_opportunities";
+    public $best_case;
+    public $worst_case;
+    public $timeperiod_id;
+    public $commit_stage;
 //END SUGARCRM flav=pro ONLY
 
-    var $importable = true;
-    var $object_name = "Opportunity";
+    public $importable = true;
+    public $object_name = "Opportunity";
 
     // This is used to retrieve related fields from form posts.
-    var $additional_column_fields = Array(
+    public $additional_column_fields = Array(
         'assigned_user_name',
         'assigned_user_id',
         'account_name',
@@ -105,7 +106,7 @@ class Opportunity extends SugarBean
         //END SUGARCRM flav=pro ONLY
     );
 
-    var $relationship_fields = Array(
+    public $relationship_fields = Array(
         'task_id' => 'tasks',
         'note_id' => 'notes',
         'account_id' => 'accounts',
@@ -151,16 +152,16 @@ class Opportunity extends SugarBean
     }
 
 
-    var $new_schema = true;
+    public $new_schema = true;
 
 
-    function get_summary_text()
+    public function get_summary_text()
     {
         return "$this->name";
     }
 
 
-    function create_list_query($order_by, $where, $show_deleted = 0)
+    public function create_list_query($order_by, $where, $show_deleted = 0)
     {
 
         $custom_join = $this->custom_fields->getJOIN();
@@ -231,7 +232,7 @@ class Opportunity extends SugarBean
     }
 
 
-    function create_export_query(&$order_by, &$where, $relate_link_join = '')
+    public function create_export_query(&$order_by, &$where, $relate_link_join = '')
     {
         $custom_join = $this->custom_fields->getJOIN(true, true, $where);
         if ($custom_join) {
@@ -284,7 +285,7 @@ class Opportunity extends SugarBean
     }
 
 
-    function fill_in_additional_list_fields()
+    public function fill_in_additional_list_fields()
     {
         if ($this->force_load_details == true) {
             $this->fill_in_additional_detail_fields();
@@ -292,7 +293,7 @@ class Opportunity extends SugarBean
     }
 
 
-    function fill_in_additional_detail_fields()
+    public function fill_in_additional_detail_fields()
     {
         parent::fill_in_additional_detail_fields();
 
@@ -326,7 +327,7 @@ class Opportunity extends SugarBean
      * All Rights Reserved..
      * Contributor(s): ______________________________________..
      */
-    function get_contacts()
+    public function get_contacts()
     {
         $this->load_relationship('contacts');
         $query_array = $this->contacts->getQuery(true);
@@ -352,7 +353,7 @@ class Opportunity extends SugarBean
     }
 
 
-    function update_currency_id($fromid, $toid)
+    public function update_currency_id($fromid, $toid)
     {
         $idequals = '';
 
@@ -385,7 +386,7 @@ class Opportunity extends SugarBean
     }
 
 
-    function get_list_view_data()
+    public function get_list_view_data()
     {
         global $locale, $current_language, $current_user, $mod_strings, $app_list_strings, $sugar_config;
         $app_strings = return_application_language($current_language);
@@ -398,7 +399,7 @@ class Opportunity extends SugarBean
     }
 
 
-    function get_currency_symbol()
+    public function get_currency_symbol()
     {
         if (isset($this->currency_id)) {
             $cur_qry = "select * from currencies where id ='" . $this->currency_id . "'";
@@ -418,7 +419,7 @@ class Opportunity extends SugarBean
     builds a generic search based on the query string using or
     do not include any $this-> because this is called on without having the class instantiated
      */
-    function build_generic_where_clause($the_query_string)
+    public function build_generic_where_clause($the_query_string)
     {
         $where_clauses = Array();
         $the_query_string = $GLOBALS['db']->quote($the_query_string);
@@ -436,7 +437,7 @@ class Opportunity extends SugarBean
         return $the_where;
     }
 
-    function save($check_notify = false)
+    public function save($check_notify = false)
     {
         // Bug 32581 - Make sure the currency_id is set to something
         global $current_user, $app_list_strings;
@@ -463,11 +464,40 @@ class Opportunity extends SugarBean
         SugarAutoLoader::requireWithCustom('modules/Opportunities/SaveOverload.php');
         perform_save($this);
 
+        // handle chaing the sales status field
+        $this->handleSalesStatus();
+
         return parent::save($check_notify);
     }
 
+    /**
+     * Code to make sure that the Sales Status field is mapped correctly with the Sales Stage field
+     */
+    protected function handleSalesStatus()
+    {
+        // in this class we use the values from the Opportunity module constants as they are directly mapped 1-to-1 with
+        // products
 
-    function save_relationship_changes($is_update)
+        // only run this when the sales_status doesn't change and the sales_stage does
+        if(($this->fetched_row['sales_status'] == $this->sales_status) && $this->fetched_row['sales_stage'] != $this->sales_stage) {
+            // handle closed lost and closed won
+            if($this->sales_stage == Opportunity::STAGE_CLOSED_LOST || $this->sales_stage == Opportunity::STAGE_CLOSED_WON) {
+                $this->sales_status = $this->sales_stage;
+            } else {
+                // move it to in progress
+                $this->sales_status = Opportunity::STATUS_IN_PROGRESS;
+            }
+        }
+
+        // if we have a new bean, set the sales_status to be 'New'
+        if(empty($this->id) || $this->new_with_id == true) {
+            // we have a new record set the sales_status to new;
+            $this->sales_status = Opportunity::STATUS_NEW;
+        }
+    }
+
+
+    public function save_relationship_changes($is_update)
     {
         //if account_id was replaced unlink the previous account_id.
         //this rel_fields_before_value is populated by sugarbean during the retrieve call.
@@ -487,7 +517,7 @@ class Opportunity extends SugarBean
     }
 
 
-    function set_opportunity_contact_relationship($contact_id)
+    public function set_opportunity_contact_relationship($contact_id)
     {
         global $app_list_strings;
         $default = $app_list_strings['opportunity_relationship_type_default_key'];
@@ -496,7 +526,7 @@ class Opportunity extends SugarBean
     }
 
 
-    function set_notification_body($xtpl, $oppty)
+    public function set_notification_body($xtpl, $oppty)
     {
         global $app_list_strings;
 
@@ -513,7 +543,7 @@ class Opportunity extends SugarBean
     }
 
 
-    function bean_implements($interface)
+    public function bean_implements($interface)
     {
         switch ($interface) {
             case 'ACL':
@@ -523,7 +553,7 @@ class Opportunity extends SugarBean
     }
 
 
-    function listviewACLHelper()
+    public function listviewACLHelper()
     {
         $array_assign = parent::listviewACLHelper();
         $is_owner = false;
@@ -534,12 +564,8 @@ class Opportunity extends SugarBean
                 $is_owner = $current_user->id == $this->account_id_owner;
             }
         }
-        if (!ACLController::moduleSupportsACL('Accounts') || ACLController::checkAccess(
-            'Accounts',
-            'view',
-            $is_owner
-        )
-        ) {
+        if (!ACLController::moduleSupportsACL('Accounts') ||
+            ACLController::checkAccess('Accounts', 'view', $is_owner)) {
             $array_assign['ACCOUNT'] = 'a';
         } else {
             $array_assign['ACCOUNT'] = 'span';
@@ -552,7 +578,7 @@ class Opportunity extends SugarBean
     /**
      * Static helper function for getting releated account info.
      */
-    function get_account_detail($opp_id)
+    public function get_account_detail($opp_id)
     {
         $ret_array = array();
         $db = DBManagerFactory::getInstance();
