@@ -4,4 +4,4 @@
     {{/eachOptions}}
 </select>
 
-<input type="hidden" name="{{name}}" data-placeholder="{{str "LBL_SEARCH_PARENT_RELATED_ITEM"}}" class="select2 inherit-width" value="{{value}}" data-id="{{getFieldValue this.model "parent_id"}}">
+<input type="hidden" name="{{name}}" class="select2 inherit-width" value="{{value}}" data-id="{{getFieldValue this.model "parent_id"}}">
