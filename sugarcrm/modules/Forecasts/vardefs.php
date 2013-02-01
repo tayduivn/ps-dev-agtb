@@ -906,10 +906,8 @@ $dictionary['ForecastWorksheet'] = array(
             'fields' => array('assigned_user_id', 'date_closed_timestamp', 'draft', 'deleted')
         ),
     ),
-    // todo-sfa: Add Relationships Info
 );
 
-// todo-sfa: should this implement TeamSecurity?
 VardefManager::createVardef('ForecastWorksheets', 'ForecastWorksheet', array('default', 'assignable',
 //BEGIN SUGARCRM flav=pro ONLY
 'team_security',
