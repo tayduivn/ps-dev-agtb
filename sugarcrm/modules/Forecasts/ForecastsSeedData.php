@@ -33,13 +33,11 @@ class ForecastsSeedData {
     public static function populateSeedData($timeperiods)
     {
 
-        require_once('modules/Forecasts/ForecastDirectReports.php');
         require_once('modules/Forecasts/Common.php');
-        require_once('modules/Forecasts/ForecastManagerWorksheet.php');
 
         global $timedate, $current_user, $app_list_strings;
 
-        $user = new User();
+        $user = BeanFactory::getBean('Users');
         $comm = new Common();
         $commit_order=$comm->get_forecast_commit_order();
 
@@ -52,7 +50,7 @@ class ForecastsSeedData {
                 if ($commit_type_array[1] == 'Direct') {
 
                     //commit a direct forecast for this user and timeperiod.
-                    $forecastopp = new ForecastOpportunities();
+                    $forecastopp = BeanFactory::getBean('ForecastOpportunities');
                     $forecastopp->current_timeperiod_id = $timeperiod_id;
                     $forecastopp->current_user_id = $commit_type_array[0];
                     $opp_summary_array= $forecastopp->get_opportunity_summary(false);
@@ -64,7 +62,8 @@ class ForecastsSeedData {
 
                     $multiplier = mt_rand(1,6);
 
-                    $quota = new Quota();
+                    /* @var $quota Quota */
+                    $quota = BeanFactory::getBean('Quotas');
                     $quota->timeperiod_id=$timeperiod_id;
                     $quota->user_id = $commit_type_array[0];
                     $quota->quota_type='Direct';
@@ -87,7 +86,8 @@ class ForecastsSeedData {
                     $quota->save();
 
                     if(!$user->isManager($commit_type_array[0])) {
-                        $quotaRollup = new Quota();
+                        /* @var $quotaRollup Quota */
+                        $quotaRollup = BeanFactory::getBean('Quotas');
                         $quotaRollup->timeperiod_id=$timeperiod_id;
                         $quotaRollup->user_id = $commit_type_array[0];
                         $quotaRollup->quota_type='Rollup';
@@ -108,7 +108,8 @@ class ForecastsSeedData {
                         $quotaRollup->save();
                     }
 
-                    $forecast = new Forecast();
+                    /* @var $forecast Forecast */
+                    $forecast = BeanFactory::getBean('Forecasts');
                     $forecast->timeperiod_id=$timeperiod_id;
                     $forecast->user_id =  $commit_type_array[0];
                     $forecast->opp_count= $opp_summary_array['OPPORTUNITYCOUNT'];
@@ -117,13 +118,14 @@ class ForecastsSeedData {
                     $forecast->worst_case=$opp_summary_array['WEIGHTEDVALUENUMBER'] + ($multiplier * 100);
                     $forecast->likely_case=$opp_summary_array['WEIGHTEDVALUENUMBER'] + (($multiplier-1) * 100);
                     $forecast->forecast_type='Direct';
-                    $forecast->date_committed = $timedate->asDb($timedate->getNow());
+                    $forecast->date_committed = $timedate->asDb($timedate->getNow()->modify("-1 day"));
                     $forecast->save();
 
                     self::createManagerWorksheet($commit_type_array[0], $forecast->toArray());
 
                     //Create a previous forecast to simulate change
-                    $forecast2 = new Forecast();
+                    /* @var $forecast2 Forecast */
+                    $forecast2 = BeanFactory::getBean('Forecasts');
                     $forecast2->timeperiod_id=$timeperiod_id;
                     $forecast2->user_id =  $commit_type_array[0];
                     $forecast2->opp_count= $opp_summary_array['OPPORTUNITYCOUNT'];
@@ -132,7 +134,7 @@ class ForecastsSeedData {
                     $forecast2->worst_case=$forecast->worst_case - 100;
                     $forecast2->likely_case=$forecast->likely_case - 100;
                     $forecast2->forecast_type='Direct';
-                    $forecast2->date_committed = $timedate->asDb($timedate->getNow()->modify("+1 day"));
+                    $forecast2->date_committed = $timedate->asDb($timedate->getNow());
                     $forecast2->save();
 
                     self::createManagerWorksheet($commit_type_array[0], $forecast2->toArray());
@@ -143,14 +145,16 @@ class ForecastsSeedData {
                     $where .= " AND (users.id = '$commit_type_array[0]'";
                     $where .= " or users.reports_to_id = '$commit_type_array[0]')";
                     //Get the forecasts created by the direct reports.
-                    $DirReportsFocus = new ForecastDirectReports();
+                    /* @var $DirReportsFocus ForecastDirectReports */
+                    $DirReportsFocus = BeanFactory::getbean('ForecastDirectReports');
                     $DirReportsFocus->current_user_id=$commit_type_array[0];
                     $DirReportsFocus->current_timeperiod_id=$timeperiod_id;
                     $DirReportsFocus->compute_rollup_totals('',$where,false);
 
                     $multiplier = mt_rand(1,6);
 
-                    $quota = new Quota();
+                    /* @var $quota Quota */
+                    $quota = BeanFactory::getBean('Quotas');
                     $quota->timeperiod_id=$timeperiod_id;
                     $quota->user_id = $commit_type_array[0];
                     $quota->quota_type='Rollup';
@@ -162,7 +166,8 @@ class ForecastsSeedData {
                     $quota->committed=1;
                     $quota->save();
 
-                    $forecast = new Forecast();
+                    /* @var $forecast Forecast */
+                    $forecast = BeanFactory::getBean('Forecasts');
                     $forecast->timeperiod_id=$timeperiod_id;
                     $forecast->user_id =  $commit_type_array[0];
                     $forecast->opp_count= $DirReportsFocus->total_opp_count;
@@ -192,7 +197,7 @@ class ForecastsSeedData {
     {
         /* @var $user User */
         $user = BeanFactory::getBean('Users', $user_id);
-        $worksheet = new ForecastManagerWorksheet();
+        $worksheet = BeanFactory::getBean('ForecastManagerWorksheets');
         $worksheet->reporteeForecastRollUp($user, $data);
     }
 }
